@@ -1,16 +1,15 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://cat.gd" type="Script" id=1]
-[ext_resource path="res://cat.png" type="Texture" id=2]
+[ext_resource path="res://cat_player.gd" type="Script" id=1]
+[ext_resource path="res://cat_animator.tscn" type="PackedScene" id=2]
 
 [sub_resource type="CapsuleShape2D" id=1]
 
 custom_solver_bias = 0.0
-radius = 25.0
-height = 20.0
-_sections_unfolded = [ "Resource" ]
+radius = 30.0
+height = 54.0
 
-[node name="KinematicBody2D" type="KinematicBody2D"]
+[node name="cat_player" type="KinematicBody2D"]
 
 input_pickable = false
 collision_layer = 1
@@ -18,14 +17,10 @@ collision_mask = 1
 collision/safe_margin = 0.08
 script = ExtResource( 1 )
 
-[node name="Sprite" type="Sprite" parent="." index="0"]
-
-position = Vector2( 0, -1 )
-texture = ExtResource( 2 )
+[node name="cat_animator" parent="." index="0" instance=ExtResource( 2 )]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
 
-position = Vector2( 0.314026, -5.12902 )
 rotation = 1.5708
 shape = SubResource( 1 )
 _sections_unfolded = [ "Transform" ]

@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://mytiles.tres" type="TileSet" id=1]
-[ext_resource path="res://cat.tscn" type="PackedScene" id=2]
+[ext_resource path="res://cat_player.tscn" type="PackedScene" id=2]
 
-[node name="Node" type="Node" index="0"]
+[node name="Node" type="Node"]
 
 [node name="TileMap" type="TileMap" parent="." index="0"]
 
@@ -29,8 +29,8 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="KinematicBody2D" parent="." index="1" instance=ExtResource( 2 )]
+[node name="cat_player" parent="." index="1" instance=ExtResource( 2 )]
 
-position = Vector2( 510, 300 )
+position = Vector2( 510, 260 )
 
 
