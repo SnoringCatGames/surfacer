@@ -1,19 +1,50 @@
 extends Node2D
 
-func walk_left():
-    play_animation("walk")
-    set_scale(Vector2(1,1))
+const UNFLIPPED_HORIZONTAL_SCALE = Vector2(1,1)
+const FLIPPED_HORIZONTAL_SCALE = Vector2(-1,1)
+const HEAD_UNBLINK_REGION = Rect2(26, 34, 22, 18)
+const HEAD_BLINK_REGION = Rect2(47, 86, 22, 18)
 
-func walk_right():
-    play_animation("walk")
-    set_scale(Vector2(-1,1))
+func face_left():
+    set_scale(UNFLIPPED_HORIZONTAL_SCALE)
+
+func face_right():
+    set_scale(FLIPPED_HORIZONTAL_SCALE)
 
 func rest():
-    play_animation("rest")
+    play_animation("Rest", 1.2)
 
-func play_animation(name):
+func rest_on_wall():
+    play_animation("RestOnWall", 1.2)
+
+func jump():
+    play_animation("Jump")
+
+func walk():
+    play_animation("Walk")
+
+func climb_up():
+    play_animation("Climb")
+
+func climb_down():
+    play_animation("Climb", -7.5)
+
+func blink():
+    $hip/torso/neck/head.region_rect = HEAD_BLINK_REGION
+
+func unblink():
+    $hip/torso/neck/head.region_rect = HEAD_UNBLINK_REGION
+
+func play_animation(name, playback_rate = 7.5):
     var isCurrentAnimation = $AnimationPlayer.current_animation == name
     var isPlaying = $AnimationPlayer.is_playing()
+    var isChangingDirection = ($AnimationPlayer.get_playing_speed() < 0) != (playback_rate < 0)
     
-    if !isCurrentAnimation or !isPlaying:
-        $AnimationPlayer.play(name)
+    var animationWasNotPlaying = !isCurrentAnimation or !isPlaying
+    var animationWasPlayingInWrongDirection = isCurrentAnimation and isChangingDirection
+    
+    if animationWasNotPlaying or animationWasPlayingInWrongDirection:
+        # In case we transition out mid-blink.
+        unblink()
+        
+        $AnimationPlayer.play(name, .1, playback_rate)
