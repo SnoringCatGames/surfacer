@@ -5,6 +5,11 @@ const FLIPPED_HORIZONTAL_SCALE = Vector2(-1,1)
 const HEAD_UNBLINK_REGION = Rect2(26, 34, 22, 18)
 const HEAD_BLINK_REGION = Rect2(47, 86, 22, 18)
 
+const WALK_ANIMATION_SPEED = 7.5
+const CLIMB_UP_ANIMATION_SPEED = 9
+const CLIMB_DOWN_ANIMATION_SPEED = -CLIMB_UP_ANIMATION_SPEED / 2.33
+const REST_ANIMATION_SPEED = 0.8
+
 func face_left():
     set_scale(UNFLIPPED_HORIZONTAL_SCALE)
 
@@ -18,22 +23,25 @@ func move_torse_down():
     $hip/torso/torso_sprite.z_index = -1
 
 func rest():
-    play_animation("Rest", 1.2)
+    play_animation("Rest", REST_ANIMATION_SPEED)
 
 func rest_on_wall():
-    play_animation("RestOnWall", 1.2)
+    play_animation("RestOnWall", REST_ANIMATION_SPEED)
 
-func jump():
-    play_animation("Jump")
+func jump_ascend():
+    play_animation("JumpAscend")
+
+func jump_descend():
+    play_animation("JumpDescend")
 
 func walk():
-    play_animation("Walk")
+    play_animation("Walk", WALK_ANIMATION_SPEED)
 
 func climb_up():
-    play_animation("Climb")
+    play_animation("Climb", CLIMB_UP_ANIMATION_SPEED)
 
 func climb_down():
-    play_animation("Climb", -7.5)
+    play_animation("Climb", CLIMB_DOWN_ANIMATION_SPEED)
 
 func blink():
     $hip/torso/neck/head.region_rect = HEAD_BLINK_REGION
@@ -41,7 +49,7 @@ func blink():
 func unblink():
     $hip/torso/neck/head.region_rect = HEAD_UNBLINK_REGION
 
-func play_animation(name, playback_rate = 7.5):
+func play_animation(name, playback_rate = 1):
     var isCurrentAnimation = $AnimationPlayer.current_animation == name
     var isPlaying = $AnimationPlayer.is_playing()
     var isChangingDirection = ($AnimationPlayer.get_playing_speed() < 0) != (playback_rate < 0)

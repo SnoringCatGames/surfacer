@@ -5,14 +5,14 @@ const FLOOR_MAX_ANGLE = PI / 4
 const GRAVITY = 5000.0
 const SLOW_JUMP_ASCENT_GRAVITY_MULTIPLIER = .38
 const SLOW_DOUBLE_JUMP_ASCENT_GRAVITY_MULTIPLIER = .68
-const WALK_SPEED = 300
+const WALK_SPEED = 350
 const FRICTION_MULTIPLIER = 0.01 # For calculating friction for walking
 const IN_AIR_HORIZONTAL_SPEED = 300
 const MAX_HORIZONTAL_SPEED = 400
 const MIN_HORIZONTAL_SPEED = 50
 const MAX_VERTICAL_SPEED = 4000
 const MIN_VERTICAL_SPEED = 0
-const CLIMB_UP_SPEED = -250
+const CLIMB_UP_SPEED = -350
 const CLIMB_DOWN_SPEED = 150
 const JUMP_SPEED = -1000
 const WALL_JUMP_HORIZONTAL_MULTIPLIER = 11
@@ -23,6 +23,7 @@ const DASH_DELAY = 600 # In milliseconds
 var velocity = Vector2()
 var is_ascending_from_jump = false
 var jump_count = 0
+var is_grabbing_wall = false
 
 func _physics_process(delta):
     process_input(delta)
@@ -38,12 +39,18 @@ func process_input(delta):
     var pressed_down = Input.is_action_pressed("move_down")
     var pressed_left = Input.is_action_pressed("move_left")
     var pressed_right = Input.is_action_pressed("move_right")
+    
     var which_wall = get_which_wall_collided()
+    var pressing_into_wall = (which_wall == "right" and pressed_right) or \
+            (which_wall == "left" and pressed_left)
+    var pressing_away_from_wall = (which_wall == "right" and pressed_left) or \
+            (which_wall == "left" and pressed_right)
     
     # Detect wall grabs.
-    var is_grabbing_wall = \
-            (which_wall == "right" and pressed_right) or \
-            (which_wall == "left" and pressed_left)
+    if !is_on_wall():
+        is_grabbing_wall = false
+    elif pressing_into_wall:
+        is_grabbing_wall = true
     
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if pressed_left:
@@ -101,6 +108,7 @@ func process_input(delta):
         
         # Wall jump.
         if just_pressed_jump:
+            is_grabbing_wall = false
             jump_count = 1
             is_ascending_from_jump = true
             velocity.y = JUMP_SPEED
@@ -113,6 +121,14 @@ func process_input(delta):
                 velocity.x = -WALK_SPEED * WALL_JUMP_HORIZONTAL_MULTIPLIER
         else:
             velocity.y = 0
+            
+        # Start walking.
+        if is_on_floor() and pressed_down:
+            is_grabbing_wall = false
+        
+        # Fall off.
+        if pressing_away_from_wall:
+            is_grabbing_wall = false
 
         # Climb.
         if pressed_up:
@@ -138,7 +154,10 @@ func process_input(delta):
         else:
             $cat_animator.rest()
     else:
-        $cat_animator.jump()
+        if velocity.y > 0:
+            $cat_animator.jump_descend()
+        else:
+            $cat_animator.jump_ascend()
         
         # Double jump.
         if just_pressed_jump and jump_count < MAX_JUMP_CHAIN:
