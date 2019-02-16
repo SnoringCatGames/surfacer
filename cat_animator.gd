@@ -11,6 +11,12 @@ func face_left():
 func face_right():
     set_scale(FLIPPED_HORIZONTAL_SCALE)
 
+func move_torse_up():
+    $hip/torso/torso_sprite.z_index = 0
+
+func move_torse_down():
+    $hip/torso/torso_sprite.z_index = -1
+
 func rest():
     play_animation("Rest", 1.2)
 
@@ -46,5 +52,8 @@ func play_animation(name, playback_rate = 7.5):
     if animationWasNotPlaying or animationWasPlayingInWrongDirection:
         # In case we transition out mid-blink.
         unblink()
+        
+        # Most animations need the torso to be in front of the hip.
+        move_torse_up()
         
         $AnimationPlayer.play(name, .1, playback_rate)
