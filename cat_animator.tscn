@@ -21,7 +21,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -35, 23 ) ]
+"values": [ Vector2( -36, 23 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("hip:rotation_degrees")
@@ -117,7 +117,7 @@ tracks/8/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -4 ) ]
 }
 tracks/9/type = "value"
 tracks/9/path = NodePath("hip/leg_upper_bl:rotation_degrees")
@@ -189,7 +189,7 @@ tracks/14/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -4 ) ]
 }
 tracks/15/type = "value"
 tracks/15/path = NodePath("hip/leg_upper_br:rotation_degrees")
@@ -237,7 +237,7 @@ tracks/18/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -20, -7 ) ]
 }
 tracks/19/type = "value"
 tracks/19/path = NodePath("hip/torso/leg_upper_fr:rotation_degrees")
@@ -357,7 +357,7 @@ tracks/28/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -20, -7 ) ]
 }
 tracks/29/type = "value"
 tracks/29/path = NodePath("hip/torso/leg_upper_fl:rotation_degrees")
@@ -513,7 +513,7 @@ tracks/41/keys = {
 "times": PoolRealArray( 0, 0.3, 0.4, 0.8, 1.2, 1.5, 1.6, 2 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ 32.2267, 35.5876, 35.2142, 33.7204, 32.2267, 35.5876, 35.2142, 33.7204 ]
+"values": [ 25.9092, 35.5876, 35.2142, 33.7204, 32.2267, 35.5876, 35.2142, 33.7204 ]
 }
 tracks/42/type = "value"
 tracks/42/path = NodePath("hip/torso/neck:position")
@@ -525,7 +525,7 @@ tracks/42/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -15, -1 ) ]
+"values": [ Vector2( -16, -3 ) ]
 }
 tracks/43/type = "value"
 tracks/43/path = NodePath("hip/torso/neck:rotation_degrees")
@@ -537,7 +537,7 @@ tracks/43/keys = {
 "times": PoolRealArray( 0, 0.3, 0.4, 0.8, 1.2, 1.5, 1.6, 2 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ -35.3841, -38.745, -38.3716, -36.8778, -35.3841, -38.745, -38.3716, -36.8778 ]
+"values": [ -24.3108, -38.745, -38.3716, -36.8778, -35.3841, -38.745, -38.3716, -36.8778 ]
 }
 tracks/44/type = "value"
 tracks/44/path = NodePath("hip/tail_1/tail_2/tail_3/tail_4:position")
@@ -849,7 +849,7 @@ tracks/69/keys = {
 "times": PoolRealArray( 0, 0.3, 0.4, 0.8, 1.2, 1.5, 1.6, 2 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ 3.15739, 3.15739, 3.15739, 3.15739, 3.15739, 3.15739, 3.15739, 3.15739 ]
+"values": [ -1.5984, 3.15739, 3.15739, 3.15739, 3.15739, 3.15739, 3.15739, 3.15739 ]
 }
 tracks/70/type = "value"
 tracks/70/path = NodePath("hip/torso/neck/head/Position2D/Position2D:position")
@@ -1035,7 +1035,7 @@ tracks/8/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -4 ) ]
 }
 tracks/9/type = "value"
 tracks/9/path = NodePath("hip/leg_upper_br:rotation_degrees")
@@ -1131,7 +1131,7 @@ tracks/16/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -15, -1 ) ]
+"values": [ Vector2( -15, -3 ) ]
 }
 tracks/17/type = "value"
 tracks/17/path = NodePath("hip/torso/neck:rotation_degrees")
@@ -1179,7 +1179,7 @@ tracks/20/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -17, -6 ) ]
 }
 tracks/21/type = "value"
 tracks/21/path = NodePath("hip/torso/leg_upper_fr:rotation_degrees")
@@ -1203,7 +1203,7 @@ tracks/22/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -17, -6 ) ]
 }
 tracks/23/type = "value"
 tracks/23/path = NodePath("hip/torso/leg_upper_fl:rotation_degrees")
@@ -1515,7 +1515,7 @@ tracks/48/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -4 ) ]
 }
 tracks/49/type = "value"
 tracks/49/path = NodePath("hip/leg_upper_bl:rotation_degrees")
@@ -1953,7 +1953,7 @@ tracks/8/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -4 ) ]
 }
 tracks/9/type = "value"
 tracks/9/path = NodePath("hip/leg_upper_br:rotation_degrees")
@@ -2049,7 +2049,7 @@ tracks/16/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -15, -1 ) ]
+"values": [ Vector2( -15, -3 ) ]
 }
 tracks/17/type = "value"
 tracks/17/path = NodePath("hip/torso/neck:rotation_degrees")
@@ -2433,7 +2433,7 @@ tracks/48/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -4 ) ]
 }
 tracks/49/type = "value"
 tracks/49/path = NodePath("hip/leg_upper_bl:rotation_degrees")
@@ -2786,7 +2786,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 17.1685, 15.1932 ) ]
+"values": [ Vector2( 17.1685, 18.1932 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("hip:rotation_degrees")
@@ -2822,7 +2822,7 @@ tracks/3/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ -89.8438 ]
+"values": [ -95.5 ]
 }
 tracks/4/type = "value"
 tracks/4/path = NodePath("hip/leg_upper_br/leg_lower_br/foot_br:position")
@@ -2846,7 +2846,7 @@ tracks/5/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ 42.7232 ]
+"values": [ 48.0 ]
 }
 tracks/6/type = "value"
 tracks/6/path = NodePath("hip/leg_upper_br/leg_lower_br:position")
@@ -2918,7 +2918,7 @@ tracks/11/keys = {
 "times": PoolRealArray( 0, 1.3, 1.4, 1.6, 1.7 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ -23.1995, -23.1995, -25.074, -20.9024, -22.4015 ]
+"values": [ -22.0875, -23.1995, -25.074, -20.9024, -22.4015 ]
 }
 tracks/12/type = "value"
 tracks/12/path = NodePath("hip/tail_1:position")
@@ -2942,7 +2942,7 @@ tracks/13/keys = {
 "times": PoolRealArray( 0, 1.3, 1.4, 1.6, 1.7 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ -38.6821, -38.6821, -37.8905, -42.9222, -40.4767 ]
+"values": [ -39.7941, -38.6821, -37.8905, -42.9222, -40.4767 ]
 }
 tracks/14/type = "value"
 tracks/14/path = NodePath("hip/torso/neck/head:position")
@@ -3026,7 +3026,7 @@ tracks/20/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -18.112, -4.9937 ) ]
 }
 tracks/21/type = "value"
 tracks/21/path = NodePath("hip/torso/leg_upper_fr:rotation_degrees")
@@ -3050,7 +3050,7 @@ tracks/22/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -18.112, -4.9937 ) ]
 }
 tracks/23/type = "value"
 tracks/23/path = NodePath("hip/torso/leg_upper_fl:rotation_degrees")
@@ -3302,7 +3302,7 @@ tracks/43/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ -89.9628 ]
+"values": [ -95.5 ]
 }
 tracks/44/type = "value"
 tracks/44/path = NodePath("hip/leg_upper_bl/leg_lower_bl/foot_bl:position")
@@ -3326,7 +3326,7 @@ tracks/45/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ 42.4694 ]
+"values": [ 48.0 ]
 }
 tracks/46/type = "value"
 tracks/46/path = NodePath("hip/leg_upper_bl/leg_lower_bl:position")
@@ -3736,7 +3736,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -35, 23 ) ]
+"values": [ Vector2( -37, 23 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("hip:rotation_degrees")
@@ -3832,7 +3832,7 @@ tracks/8/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -5 ) ]
 }
 tracks/9/type = "value"
 tracks/9/path = NodePath("hip/leg_upper_bl:rotation_degrees")
@@ -3904,7 +3904,7 @@ tracks/14/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -5 ) ]
 }
 tracks/15/type = "value"
 tracks/15/path = NodePath("hip/leg_upper_br:rotation_degrees")
@@ -3952,7 +3952,7 @@ tracks/18/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -20, -7 ) ]
 }
 tracks/19/type = "value"
 tracks/19/path = NodePath("hip/torso/leg_upper_fr:rotation_degrees")
@@ -4072,7 +4072,7 @@ tracks/28/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -20, -7 ) ]
 }
 tracks/29/type = "value"
 tracks/29/path = NodePath("hip/torso/leg_upper_fl:rotation_degrees")
@@ -4240,7 +4240,7 @@ tracks/42/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -15, -1 ) ]
+"values": [ Vector2( -16, -3 ) ]
 }
 tracks/43/type = "value"
 tracks/43/path = NodePath("hip/torso/neck:rotation_degrees")
@@ -4641,6 +4641,7 @@ tracks/75/keys = {
 
 [sub_resource type="Animation" id=7]
 
+loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("hip:position")
 tracks/0/interp = 1
@@ -4747,7 +4748,7 @@ tracks/8/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -6 ) ]
 }
 tracks/9/type = "value"
 tracks/9/path = NodePath("hip/leg_upper_br:rotation_degrees")
@@ -4843,7 +4844,7 @@ tracks/16/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -15, -1 ) ]
+"values": [ Vector2( -16, -3 ) ]
 }
 tracks/17/type = "value"
 tracks/17/path = NodePath("hip/torso/neck:rotation_degrees")
@@ -4891,7 +4892,7 @@ tracks/20/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -19, -7 ) ]
 }
 tracks/21/type = "value"
 tracks/21/path = NodePath("hip/torso/leg_upper_fr:rotation_degrees")
@@ -4915,7 +4916,7 @@ tracks/22/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -19, -7 ) ]
 }
 tracks/23/type = "value"
 tracks/23/path = NodePath("hip/torso/leg_upper_fl:rotation_degrees")
@@ -5227,7 +5228,7 @@ tracks/48/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -6 ) ]
 }
 tracks/49/type = "value"
 tracks/49/path = NodePath("hip/leg_upper_bl:rotation_degrees")
@@ -5592,7 +5593,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 23, -3 ) ]
+"values": [ Vector2( 23, -1 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("hip:rotation_degrees")
@@ -5688,7 +5689,7 @@ tracks/8/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -6 ) ]
 }
 tracks/9/type = "value"
 tracks/9/path = NodePath("hip/leg_upper_bl:rotation_degrees")
@@ -5760,7 +5761,7 @@ tracks/14/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( 4, -3 ) ]
+"values": [ Vector2( 4, -6 ) ]
 }
 tracks/15/type = "value"
 tracks/15/path = NodePath("hip/leg_upper_br:rotation_degrees")
@@ -5808,7 +5809,7 @@ tracks/18/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -22, -7 ) ]
 }
 tracks/19/type = "value"
 tracks/19/path = NodePath("hip/torso/leg_upper_fr:rotation_degrees")
@@ -5928,7 +5929,7 @@ tracks/28/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -18, -4 ) ]
+"values": [ Vector2( -22, -7 ) ]
 }
 tracks/29/type = "value"
 tracks/29/path = NodePath("hip/torso/leg_upper_fl:rotation_degrees")
@@ -6120,7 +6121,7 @@ tracks/44/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -15, -1 ) ]
+"values": [ Vector2( -16, -3 ) ]
 }
 tracks/45/type = "value"
 tracks/45/path = NodePath("hip/torso/neck:rotation_degrees")
@@ -6527,27 +6528,25 @@ __meta__ = {
 }
 
 [node name="hip" type="Sprite" parent="."]
-editor/display_folded = true
-position = Vector2( 23, -3 )
+position = Vector2( -37, 23 )
+rotation = 1.5708
 texture = SubResource( 1 )
 offset = Vector2( -13, 0 )
 region_enabled = true
-region_rect = Rect2( 36, 8, 48, 22 )
+region_rect = Rect2( 36, 8, 48, 28 )
 
 [node name="torso" type="Node2D" parent="hip"]
-editor/display_folded = true
 position = Vector2( -25, 0 )
-scale = Vector2( 1.03077, 1.03077 )
 
 [node name="leg_upper_fr" type="Sprite" parent="hip/torso"]
 editor/display_folded = true
-visible = false
-position = Vector2( -18, -4 )
+position = Vector2( -20, -7 )
+rotation = -0.362789
 z_index = -1
 texture = SubResource( 1 )
 offset = Vector2( 4, 7 )
 region_enabled = true
-region_rect = Rect2( 7, 91, 18, 22 )
+region_rect = Rect2( 7, 97, 18, 22 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6555,36 +6554,40 @@ __meta__ = {
 
 [node name="leg_lower_fr" type="Sprite" parent="hip/torso/leg_upper_fr"]
 position = Vector2( 8, 14 )
+rotation = 1.06422
 texture = SubResource( 1 )
 offset = Vector2( -1, 6 )
 region_enabled = true
-region_rect = Rect2( 26, 97, 10, 16 )
+region_rect = Rect2( 26, 103, 10, 16 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="foot_fr" type="Sprite" parent="hip/torso/leg_upper_fr/leg_lower_fr"]
 position = Vector2( -4, 12 )
+rotation = 0.0276382
 texture = SubResource( 1 )
 offset = Vector2( 1, 4 )
 region_enabled = true
-region_rect = Rect2( 38, 101, 6, 12 )
+region_rect = Rect2( 38, 107, 6, 12 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="toes_fr" type="Sprite" parent="hip/torso/leg_upper_fr/leg_lower_fr/foot_fr"]
-position = Vector2( 2, 8 )
+position = Vector2( 2.00001, 8.00002 )
+rotation = -1.32292
 texture = SubResource( 1 )
 offset = Vector2( -3, 2 )
 region_enabled = true
-region_rect = Rect2( 46, 107, 10, 6 )
+region_rect = Rect2( 46, 113, 10, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="Position2D" type="Position2D" parent="hip/torso/leg_upper_fr/leg_lower_fr/foot_fr/toes_fr"]
 position = Vector2( -4, 0 )
+rotation = 0.593848
 scale = Vector2( 0.999999, 0.999999 )
 __meta__ = {
 "_edit_bone_": true
@@ -6598,19 +6601,19 @@ __meta__ = {
 }
 
 [node name="torso_sprite" type="Sprite" parent="hip/torso"]
-position = Vector2( -5, 4.76837e-007 )
-scale = Vector2( 1.02687, 1.02687 )
+position = Vector2( -6, -1 )
 texture = SubResource( 1 )
 region_enabled = true
-region_rect = Rect2( 0, 8, 36, 22 )
+region_rect = Rect2( 0, 8, 36, 26 )
 
 [node name="neck" type="Sprite" parent="hip/torso"]
 editor/display_folded = true
-position = Vector2( -15, -1 )
+position = Vector2( -16, -3 )
+rotation = -0.617569
 texture = SubResource( 1 )
 offset = Vector2( -4, -9 )
 region_enabled = true
-region_rect = Rect2( 50, 31, 22, 30 )
+region_rect = Rect2( 50, 37, 22, 30 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6618,20 +6621,22 @@ __meta__ = {
 
 [node name="head" type="Sprite" parent="hip/torso/neck"]
 position = Vector2( -9, -19 )
+rotation = 0.562462
 texture = SubResource( 1 )
 offset = Vector2( -7, 3 )
 region_enabled = true
-region_rect = Rect2( 26, 33, 22, 18 )
+region_rect = Rect2( 26, 39, 22, 18 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="ear" type="Sprite" parent="hip/torso/neck/head"]
+editor/display_folded = true
 position = Vector2( -9, -6 )
 texture = SubResource( 1 )
 offset = Vector2( 2, -2 )
 region_enabled = true
-region_rect = Rect2( 18, 36, 6, 8 )
+region_rect = Rect2( 18, 42, 6, 8 )
 __meta__ = {
 "_edit_bone_": true
 }
@@ -6644,6 +6649,7 @@ __meta__ = {
 
 [node name="Position2D" type="Position2D" parent="hip/torso/neck/head"]
 position = Vector2( -14, 0 )
+rotation = 0.0551069
 __meta__ = {
 "_edit_bone_": true
 }
@@ -6657,11 +6663,12 @@ __meta__ = {
 
 [node name="leg_upper_fl" type="Sprite" parent="hip/torso"]
 editor/display_folded = true
-position = Vector2( -18, -4 )
+position = Vector2( -20, -7 )
+rotation = -0.358859
 texture = SubResource( 1 )
 offset = Vector2( 4, 7 )
 region_enabled = true
-region_rect = Rect2( 7, 46, 18, 22 )
+region_rect = Rect2( 7, 52, 18, 22 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6669,36 +6676,40 @@ __meta__ = {
 
 [node name="leg_lower_fl" type="Sprite" parent="hip/torso/leg_upper_fl"]
 position = Vector2( 8, 14 )
+rotation = 1.06655
 texture = SubResource( 1 )
 offset = Vector2( -1, 6 )
 region_enabled = true
-region_rect = Rect2( 26, 52, 10, 16 )
+region_rect = Rect2( 26, 58, 10, 16 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="foot_fl" type="Sprite" parent="hip/torso/leg_upper_fl/leg_lower_fl"]
 position = Vector2( -4, 12 )
+rotation = 0.000888083
 texture = SubResource( 1 )
 offset = Vector2( 1, 4 )
 region_enabled = true
-region_rect = Rect2( 38, 56, 6, 12 )
+region_rect = Rect2( 38, 62, 6, 12 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="toes_fl" type="Sprite" parent="hip/torso/leg_upper_fl/leg_lower_fl/foot_fl"]
-position = Vector2( 2, 8 )
+position = Vector2( 2.00002, 8.00005 )
+rotation = -1.29093
 texture = SubResource( 1 )
 offset = Vector2( -3, 2 )
 region_enabled = true
-region_rect = Rect2( 46, 62, 10, 6 )
+region_rect = Rect2( 46, 68, 10, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="Position2D" type="Position2D" parent="hip/torso/leg_upper_fl/leg_lower_fl/foot_fl/toes_fl"]
 position = Vector2( -4, 0 )
+rotation = 0.582354
 scale = Vector2( 0.999999, 0.999999 )
 __meta__ = {
 "_edit_bone_": true
@@ -6712,46 +6723,49 @@ __meta__ = {
 }
 
 [node name="leg_upper_br" type="Sprite" parent="hip"]
-editor/display_folded = true
-position = Vector2( 4, -3 )
+position = Vector2( 4, -5 )
+rotation = -0.262054
 z_index = -1
 texture = SubResource( 1 )
 offset = Vector2( -1, 5 )
 region_enabled = true
-region_rect = Rect2( 7, 114, 18, 20 )
+region_rect = Rect2( 7, 120, 18, 20 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
 }
 
 [node name="leg_lower_br" type="Sprite" parent="hip/leg_upper_br"]
-position = Vector2( -4, 11 )
+position = Vector2( -4.00001, 11 )
+rotation = -0.449522
 texture = SubResource( 1 )
 offset = Vector2( 5, 6 )
 region_enabled = true
-region_rect = Rect2( 26, 114, 18, 18 )
+region_rect = Rect2( 26, 120, 18, 18 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="foot_br" type="Sprite" parent="hip/leg_upper_br/leg_lower_br"]
 position = Vector2( 11, 12 )
+rotation = 1.44316
 z_index = -1
 texture = SubResource( 1 )
 offset = Vector2( 0, 5 )
 region_enabled = true
-region_rect = Rect2( 45, 114, 8, 14 )
+region_rect = Rect2( 45, 120, 8, 14 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="toes_br" type="Sprite" parent="hip/leg_upper_br/leg_lower_br/foot_br"]
-position = Vector2( 0, 10 )
+position = Vector2( -2.67029e-005, 10 )
+rotation = -0.731583
 scale = Vector2( 0.999999, 0.999999 )
 texture = SubResource( 1 )
 offset = Vector2( -3, 2 )
 region_enabled = true
-region_rect = Rect2( 54, 114, 10, 6 )
+region_rect = Rect2( 54, 120, 10, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
@@ -6770,9 +6784,8 @@ __meta__ = {
 }
 
 [node name="tail_1" type="Sprite" parent="hip"]
-editor/display_folded = true
 position = Vector2( 5, -9 )
-rotation = -1.05881
+rotation = 0.00697921
 texture = SubResource( 1 )
 offset = Vector2( 7, 2 )
 region_enabled = true
@@ -6784,7 +6797,7 @@ __meta__ = {
 
 [node name="tail_2" type="Sprite" parent="hip/tail_1"]
 position = Vector2( 13, 2 )
-rotation = 0.306082
+rotation = 0.207462
 texture = SubResource( 1 )
 offset = Vector2( 7, 0 )
 region_enabled = true
@@ -6795,7 +6808,7 @@ __meta__ = {
 
 [node name="tail_3" type="Sprite" parent="hip/tail_1/tail_2"]
 position = Vector2( 12, 0 )
-rotation = -0.0690815
+rotation = -0.0061407
 texture = SubResource( 1 )
 offset = Vector2( 7, 0 )
 region_enabled = true
@@ -6806,7 +6819,7 @@ __meta__ = {
 
 [node name="tail_4" type="Sprite" parent="hip/tail_1/tail_2/tail_3"]
 position = Vector2( 12, 0 )
-rotation = -0.583774
+rotation = 0.228886
 texture = SubResource( 1 )
 offset = Vector2( 5, 0 )
 region_enabled = true
@@ -6817,7 +6830,7 @@ __meta__ = {
 
 [node name="Position2D" type="Position2D" parent="hip/tail_1/tail_2/tail_3/tail_4"]
 position = Vector2( 6, 0 )
-rotation = 1.40559
+rotation = -0.242266
 __meta__ = {
 "_edit_bone_": true
 }
@@ -6830,12 +6843,12 @@ __meta__ = {
 }
 
 [node name="leg_upper_bl" type="Sprite" parent="hip"]
-editor/display_folded = true
-position = Vector2( 4, -3 )
+position = Vector2( 4, -5 )
+rotation = -0.257101
 texture = SubResource( 1 )
 offset = Vector2( -1, 5 )
 region_enabled = true
-region_rect = Rect2( 7, 69, 18, 20 )
+region_rect = Rect2( 7, 75, 18, 20 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6843,38 +6856,42 @@ __meta__ = {
 
 [node name="leg_lower_bl" type="Sprite" parent="hip/leg_upper_bl"]
 position = Vector2( -4, 11 )
+rotation = -0.455625
 texture = SubResource( 1 )
 offset = Vector2( 5, 6 )
 region_enabled = true
-region_rect = Rect2( 26, 69, 18, 18 )
+region_rect = Rect2( 26, 75, 18, 18 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="foot_bl" type="Sprite" parent="hip/leg_upper_bl/leg_lower_bl"]
 position = Vector2( 11, 12 )
+rotation = 1.44254
 z_index = -1
 texture = SubResource( 1 )
 offset = Vector2( 0, 5 )
 region_enabled = true
-region_rect = Rect2( 45, 69, 8, 14 )
+region_rect = Rect2( 45, 75, 8, 14 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="toes_bl" type="Sprite" parent="hip/leg_upper_bl/leg_lower_bl/foot_bl"]
-position = Vector2( 0, 10 )
+position = Vector2( -3.8147e-006, 9.99993 )
+rotation = -0.731101
 scale = Vector2( 0.999999, 0.999999 )
 texture = SubResource( 1 )
 offset = Vector2( -3, 2 )
 region_enabled = true
-region_rect = Rect2( 54, 69, 10, 6 )
+region_rect = Rect2( 54, 75, 10, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="Position2D" type="Position2D" parent="hip/leg_upper_bl/leg_lower_bl/foot_bl/toes_bl"]
-position = Vector2( -4, 0 )
+position = Vector2( -4, 7.62939e-006 )
+rotation = 0.00129098
 scale = Vector2( 0.999999, 0.999999 )
 __meta__ = {
 "_edit_bone_": true
