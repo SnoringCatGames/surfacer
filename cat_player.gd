@@ -15,10 +15,11 @@ const MIN_VERTICAL_SPEED = 0
 const CLIMB_UP_SPEED = -350
 const CLIMB_DOWN_SPEED = 150
 const JUMP_SPEED = -1000
-const WALL_JUMP_HORIZONTAL_MULTIPLIER = 11
+const WALL_JUMP_HORIZONTAL_MULTIPLIER = .5
 const MAX_JUMP_CHAIN = 2
 const DASH_SPEED_MULTIPLIER = 4
 const DASH_DELAY = 600 # In milliseconds
+const MIN_VERTICAL_SPEED_FOR_FLOOR_COLLISIONS = 15
 
 var velocity = Vector2()
 var is_ascending_from_jump = false
@@ -33,138 +34,166 @@ func _physics_process(delta):
     move_and_slide(velocity, UP, false, 4, FLOOR_MAX_ANGLE)
 
 func process_input(delta):
-    var just_pressed_jump = Input.is_action_just_pressed("jump")
-    var pressed_jump = Input.is_action_pressed("jump")
-    var pressed_up = Input.is_action_pressed("move_up")
-    var pressed_down = Input.is_action_pressed("move_down")
-    var pressed_left = Input.is_action_pressed("move_left")
-    var pressed_right = Input.is_action_pressed("move_right")
+    var actions = get_current_actions()
     
-    var which_wall = get_which_wall_collided()
-    var pressing_into_wall = (which_wall == "right" and pressed_right) or \
-            (which_wall == "left" and pressed_left)
-    var pressing_away_from_wall = (which_wall == "right" and pressed_left) or \
-            (which_wall == "left" and pressed_right)
+    # Flip the horizontal direction of the animation according to which way the player is facing.
+    if actions.pressed_left:
+        $cat_animator.face_left()
+    if actions.pressed_right:
+        $cat_animator.face_right()
     
     # Detect wall grabs.
     if !is_on_wall():
         is_grabbing_wall = false
-    elif pressing_into_wall:
+    elif actions.pressing_into_wall:
         is_grabbing_wall = true
     
-    # Flip the horizontal direction of the animation according to which way the player is facing.
-    if pressed_left:
-        $cat_animator.face_left()
-    if pressed_right:
-        $cat_animator.face_right()
-    
+    # Cancel any horizontal velocity when bumping into a wall.
     if is_on_wall():
         velocity.x = 0
-    
-    var horizontal_movement_sign
-    if pressed_left:
-        horizontal_movement_sign = -1
-    elif pressed_right:
-        horizontal_movement_sign = 1
-    else:
-        horizontal_movement_sign = 0
-        
-    # Horizontal movement.
-    if is_on_floor():
-        velocity.x += WALK_SPEED * horizontal_movement_sign
-        
-        # Friction.
-        var friction_offset = get_floor_friction_coefficient() * FRICTION_MULTIPLIER * GRAVITY
-        friction_offset = clamp(friction_offset, 0, abs(velocity.x))
-        velocity.x += -sign(velocity.x) * friction_offset
-    else:
-        velocity.x += IN_AIR_HORIZONTAL_SPEED * horizontal_movement_sign
-
-    # Gravity.
-    if is_on_floor() or is_on_ceiling():
-        is_ascending_from_jump = false
-        # The move_and_slide system depends on some vertical gravity always pushing the player into
-        # the floor. If we just zero this out, is_on_floor() will give false negatives.
-        velocity.y = 15
-    else:
-        if velocity.y > 0 or !pressed_jump:
-            is_ascending_from_jump = false
-        
-        # Make gravity stronger when falling. This creates a more satisfying jump.
-        var currentGravity
-        if is_ascending_from_jump:
-            if jump_count > 1:
-                currentGravity = GRAVITY * SLOW_DOUBLE_JUMP_ASCENT_GRAVITY_MULTIPLIER
-            else:
-                currentGravity = GRAVITY * SLOW_JUMP_ASCENT_GRAVITY_MULTIPLIER
-        else:
-            currentGravity = GRAVITY
-        
-        velocity.y += delta * currentGravity
 
     if is_grabbing_wall:
-        jump_count = 0
-        is_ascending_from_jump = false
-        
-        # Wall jump.
-        if just_pressed_jump:
-            is_grabbing_wall = false
-            jump_count = 1
-            is_ascending_from_jump = true
-            velocity.y = JUMP_SPEED
-            
-            # Give a little boost to get the player away from the wall, so they can still be
-            # pushing themselves into the wall when they start the jump.
-            if pressed_left:
-                velocity.x = WALK_SPEED * WALL_JUMP_HORIZONTAL_MULTIPLIER
-            else:
-                velocity.x = -WALK_SPEED * WALL_JUMP_HORIZONTAL_MULTIPLIER
-        else:
-            velocity.y = 0
-            
-        # Start walking.
-        if is_on_floor() and pressed_down:
-            is_grabbing_wall = false
-        
-        # Fall off.
-        if pressing_away_from_wall:
-            is_grabbing_wall = false
-
-        # Climb.
-        if pressed_up:
-            velocity.y = CLIMB_UP_SPEED
-            $cat_animator.climb_up()
-        elif pressed_down:
-            velocity.y = CLIMB_DOWN_SPEED
-            $cat_animator.climb_down()
-        else:
-            $cat_animator.rest_on_wall()
+        process_input_while_on_wall(delta, actions)
     elif is_on_floor():
-        jump_count = 0
-        
-        # Jump.
-        if just_pressed_jump:
-            jump_count = 1
-            is_ascending_from_jump = true
-            velocity.y = JUMP_SPEED
-        
-        # Walking animation.
-        if pressed_left or pressed_right:
-            $cat_animator.walk()
-        else:
-            $cat_animator.rest()
+        process_input_while_on_floor(delta, actions)
     else:
-        if velocity.y > 0:
-            $cat_animator.jump_descend()
-        else:
-            $cat_animator.jump_ascend()
-        
-        # Double jump.
-        if just_pressed_jump and jump_count < MAX_JUMP_CHAIN:
-            jump_count += 1
-            is_ascending_from_jump = true
-            velocity.y = JUMP_SPEED
+        process_input_while_in_air(delta, actions)
     
+    cap_velocity()
+
+func get_current_actions():
+    var actions = {
+        just_pressed_jump = Input.is_action_just_pressed("jump"),
+        pressed_jump = Input.is_action_pressed("jump"),
+        pressed_up = Input.is_action_pressed("move_up"),
+        pressed_down = Input.is_action_pressed("move_down"),
+        pressed_left = Input.is_action_pressed("move_left"),
+        pressed_right = Input.is_action_pressed("move_right"),
+        which_wall = get_which_wall_collided(),
+        pressing_into_wall = false,
+        pressing_away_from_wall = false,
+        horizontal_movement_sign = 0
+    }
+ 
+    actions.pressing_into_wall = \
+        (actions.which_wall == "right" and actions.pressed_right) or \
+        (actions.which_wall == "left" and actions.pressed_left)
+    actions.pressing_away_from_wall = \
+        (actions.which_wall == "right" and actions.pressed_left) or \
+        (actions.which_wall == "left" and actions.pressed_right)
+    
+    if actions.pressed_left:
+        actions.horizontal_movement_sign = -1
+    elif actions.pressed_right:
+        actions.horizontal_movement_sign = 1
+        
+    return actions
+
+func process_input_while_on_floor(delta, actions):
+    jump_count = 0
+    is_ascending_from_jump = false
+    
+    # The move_and_slide system depends on some vertical gravity always pushing the player into
+    # the floor. If we just zero this out, is_on_floor() will give false negatives.
+    velocity.y = MIN_VERTICAL_SPEED_FOR_FLOOR_COLLISIONS
+    
+    # Horizontal movement.
+    velocity.x += WALK_SPEED * actions.horizontal_movement_sign
+    
+    # Friction.
+    var friction_offset = get_floor_friction_coefficient() * FRICTION_MULTIPLIER * GRAVITY
+    friction_offset = clamp(friction_offset, 0, abs(velocity.x))
+    velocity.x += -sign(velocity.x) * friction_offset
+    
+    # Jump.
+    if actions.just_pressed_jump:
+        jump_count = 1
+        is_ascending_from_jump = true
+        velocity.y = JUMP_SPEED
+    
+    # Walking animation.
+    if actions.pressed_left or actions.pressed_right:
+        $cat_animator.walk()
+    else:
+        $cat_animator.rest()
+
+func process_input_while_in_air(delta, actions):
+    # Horizontal movement.
+    velocity.x += IN_AIR_HORIZONTAL_SPEED * actions.horizontal_movement_sign
+    
+    # We'll use this to descend faster than we ascend.
+    if velocity.y > 0 or !actions.pressed_jump:
+        is_ascending_from_jump = false
+    
+    # Gravity.
+    var current_gravity
+    if is_ascending_from_jump:
+        # Make gravity stronger when falling. This creates a more satisfying jump.
+        var gravity_multiplier = SLOW_DOUBLE_JUMP_ASCENT_GRAVITY_MULTIPLIER if jump_count > 1 \
+                else SLOW_JUMP_ASCENT_GRAVITY_MULTIPLIER
+        current_gravity = GRAVITY * gravity_multiplier
+    else:
+        current_gravity = GRAVITY
+    velocity.y += delta * current_gravity
+    
+    # Hit ceiling.
+    if is_on_ceiling():
+        is_ascending_from_jump = false
+        velocity.y = MIN_VERTICAL_SPEED_FOR_FLOOR_COLLISIONS
+    
+    # Double jump.
+    if actions.just_pressed_jump and jump_count < MAX_JUMP_CHAIN:
+        jump_count += 1
+        is_ascending_from_jump = true
+        velocity.y = JUMP_SPEED
+    
+    # Animate.
+    if velocity.y > 0:
+        $cat_animator.jump_descend()
+    else:
+        $cat_animator.jump_ascend()
+
+func process_input_while_on_wall(delta, actions):
+    jump_count = 0
+    is_ascending_from_jump = false
+    velocity.y = 0
+    
+    # Wall jump.
+    if actions.just_pressed_jump:
+        is_grabbing_wall = false
+        jump_count = 1
+        is_ascending_from_jump = true
+        
+        velocity.y = JUMP_SPEED
+        
+        # Give a little boost to get the player away from the wall, so they can still be
+        # pushing themselves into the wall when they start the jump.
+        var wall_sign = -1 if actions.which_wall == "right" else 1;
+        velocity.x = wall_sign * IN_AIR_HORIZONTAL_SPEED * WALL_JUMP_HORIZONTAL_MULTIPLIER
+    
+    # Fall off.
+    elif actions.pressing_away_from_wall:
+        is_grabbing_wall = false
+    
+    # Start walking.
+    elif is_on_floor() and actions.pressed_down:
+        is_grabbing_wall = false
+    
+    # Climb up.
+    elif actions.pressed_up:
+        velocity.y = CLIMB_UP_SPEED
+        $cat_animator.climb_up()
+    
+    # Climb down.
+    elif actions.pressed_down:
+        velocity.y = CLIMB_DOWN_SPEED
+        $cat_animator.climb_down()
+        
+    # Rest.
+    else:
+        $cat_animator.rest_on_wall()
+
+func cap_velocity():
     # Cap horizontal speed at a max value.
     velocity.x = clamp(velocity.x, -MAX_HORIZONTAL_SPEED, MAX_HORIZONTAL_SPEED)
     
