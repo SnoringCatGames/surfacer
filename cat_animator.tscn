@@ -6527,12 +6527,12 @@ __meta__ = {
 }
 
 [node name="hip" type="Sprite" parent="."]
+editor/display_folded = true
 position = Vector2( 23, -3 )
-rotation = -0.387291
 texture = SubResource( 1 )
 offset = Vector2( -13, 0 )
 region_enabled = true
-region_rect = Rect2( 36, 9, 48, 22 )
+region_rect = Rect2( 36, 8, 48, 22 )
 
 [node name="torso" type="Node2D" parent="hip"]
 editor/display_folded = true
@@ -6541,13 +6541,13 @@ scale = Vector2( 1.03077, 1.03077 )
 
 [node name="leg_upper_fr" type="Sprite" parent="hip/torso"]
 editor/display_folded = true
+visible = false
 position = Vector2( -18, -4 )
-rotation = 1.5755
 z_index = -1
 texture = SubResource( 1 )
 offset = Vector2( 4, 7 )
 region_enabled = true
-region_rect = Rect2( 7, 93, 18, 22 )
+region_rect = Rect2( 7, 91, 18, 22 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6555,40 +6555,36 @@ __meta__ = {
 
 [node name="leg_lower_fr" type="Sprite" parent="hip/torso/leg_upper_fr"]
 position = Vector2( 8, 14 )
-rotation = -0.653184
 texture = SubResource( 1 )
 offset = Vector2( -1, 6 )
 region_enabled = true
-region_rect = Rect2( 26, 99, 10, 16 )
+region_rect = Rect2( 26, 97, 10, 16 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="foot_fr" type="Sprite" parent="hip/torso/leg_upper_fr/leg_lower_fr"]
 position = Vector2( -4, 12 )
-rotation = 0.244838
 texture = SubResource( 1 )
 offset = Vector2( 1, 4 )
 region_enabled = true
-region_rect = Rect2( 38, 103, 6, 12 )
+region_rect = Rect2( 38, 101, 6, 12 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="toes_fr" type="Sprite" parent="hip/torso/leg_upper_fr/leg_lower_fr/foot_fr"]
 position = Vector2( 2, 8 )
-rotation = -0.843631
 texture = SubResource( 1 )
 offset = Vector2( -3, 2 )
 region_enabled = true
-region_rect = Rect2( 46, 109, 10, 6 )
+region_rect = Rect2( 46, 107, 10, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="Position2D" type="Position2D" parent="hip/torso/leg_upper_fr/leg_lower_fr/foot_fr/toes_fr"]
 position = Vector2( -4, 0 )
-rotation = -0.323526
 scale = Vector2( 0.999999, 0.999999 )
 __meta__ = {
 "_edit_bone_": true
@@ -6606,15 +6602,15 @@ position = Vector2( -5, 4.76837e-007 )
 scale = Vector2( 1.02687, 1.02687 )
 texture = SubResource( 1 )
 region_enabled = true
-region_rect = Rect2( 0, 9, 36, 22 )
+region_rect = Rect2( 0, 8, 36, 22 )
 
 [node name="neck" type="Sprite" parent="hip/torso"]
+editor/display_folded = true
 position = Vector2( -15, -1 )
-rotation = -0.657567
 texture = SubResource( 1 )
 offset = Vector2( -4, -9 )
 region_enabled = true
-region_rect = Rect2( 50, 32, 22, 30 )
+region_rect = Rect2( 50, 31, 22, 30 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6622,11 +6618,10 @@ __meta__ = {
 
 [node name="head" type="Sprite" parent="hip/torso/neck"]
 position = Vector2( -9, -19 )
-rotation = 0.657567
 texture = SubResource( 1 )
 offset = Vector2( -7, 3 )
 region_enabled = true
-region_rect = Rect2( 26, 34, 22, 18 )
+region_rect = Rect2( 26, 33, 22, 18 )
 __meta__ = {
 "_edit_bone_": true
 }
@@ -6636,7 +6631,7 @@ position = Vector2( -9, -6 )
 texture = SubResource( 1 )
 offset = Vector2( 2, -2 )
 region_enabled = true
-region_rect = Rect2( 18, 38, 6, 8 )
+region_rect = Rect2( 18, 36, 6, 8 )
 __meta__ = {
 "_edit_bone_": true
 }
@@ -6661,12 +6656,12 @@ __meta__ = {
 }
 
 [node name="leg_upper_fl" type="Sprite" parent="hip/torso"]
+editor/display_folded = true
 position = Vector2( -18, -4 )
-rotation = 1.56993
 texture = SubResource( 1 )
 offset = Vector2( 4, 7 )
 region_enabled = true
-region_rect = Rect2( 7, 48, 18, 22 )
+region_rect = Rect2( 7, 46, 18, 22 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6674,40 +6669,36 @@ __meta__ = {
 
 [node name="leg_lower_fl" type="Sprite" parent="hip/torso/leg_upper_fl"]
 position = Vector2( 8, 14 )
-rotation = -0.636049
 texture = SubResource( 1 )
 offset = Vector2( -1, 6 )
 region_enabled = true
-region_rect = Rect2( 26, 54, 10, 16 )
+region_rect = Rect2( 26, 52, 10, 16 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="foot_fl" type="Sprite" parent="hip/torso/leg_upper_fl/leg_lower_fl"]
 position = Vector2( -4, 12 )
-rotation = 0.232055
 texture = SubResource( 1 )
 offset = Vector2( 1, 4 )
 region_enabled = true
-region_rect = Rect2( 38, 58, 6, 12 )
+region_rect = Rect2( 38, 56, 6, 12 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="toes_fl" type="Sprite" parent="hip/torso/leg_upper_fl/leg_lower_fl/foot_fl"]
 position = Vector2( 2, 8 )
-rotation = -0.83591
 texture = SubResource( 1 )
 offset = Vector2( -3, 2 )
 region_enabled = true
-region_rect = Rect2( 46, 64, 10, 6 )
+region_rect = Rect2( 46, 62, 10, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="Position2D" type="Position2D" parent="hip/torso/leg_upper_fl/leg_lower_fl/foot_fl/toes_fl"]
 position = Vector2( -4, 0 )
-rotation = -0.330021
 scale = Vector2( 0.999999, 0.999999 )
 __meta__ = {
 "_edit_bone_": true
@@ -6723,12 +6714,11 @@ __meta__ = {
 [node name="leg_upper_br" type="Sprite" parent="hip"]
 editor/display_folded = true
 position = Vector2( 4, -3 )
-rotation = -1.26152
 z_index = -1
 texture = SubResource( 1 )
 offset = Vector2( -1, 5 )
 region_enabled = true
-region_rect = Rect2( 7, 116, 18, 20 )
+region_rect = Rect2( 7, 114, 18, 20 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6736,42 +6726,38 @@ __meta__ = {
 
 [node name="leg_lower_br" type="Sprite" parent="hip/leg_upper_br"]
 position = Vector2( -4, 11 )
-rotation = 0.798319
 texture = SubResource( 1 )
 offset = Vector2( 5, 6 )
 region_enabled = true
-region_rect = Rect2( 26, 116, 18, 18 )
+region_rect = Rect2( 26, 114, 18, 18 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="foot_br" type="Sprite" parent="hip/leg_upper_br/leg_lower_br"]
 position = Vector2( 11, 12 )
-rotation = -0.440359
 z_index = -1
 texture = SubResource( 1 )
 offset = Vector2( 0, 5 )
 region_enabled = true
-region_rect = Rect2( 45, 116, 8, 14 )
+region_rect = Rect2( 45, 114, 8, 14 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="toes_br" type="Sprite" parent="hip/leg_upper_br/leg_lower_br/foot_br"]
 position = Vector2( 0, 10 )
-rotation = -0.997297
 scale = Vector2( 0.999999, 0.999999 )
 texture = SubResource( 1 )
 offset = Vector2( -3, 2 )
 region_enabled = true
-region_rect = Rect2( 54, 116, 10, 6 )
+region_rect = Rect2( 54, 114, 10, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="Position2D" type="Position2D" parent="hip/leg_upper_br/leg_lower_br/foot_br/toes_br"]
 position = Vector2( -4, 0 )
-rotation = 1.90086
 __meta__ = {
 "_edit_bone_": true
 }
@@ -6786,11 +6772,11 @@ __meta__ = {
 [node name="tail_1" type="Sprite" parent="hip"]
 editor/display_folded = true
 position = Vector2( 5, -9 )
-rotation = -0.465916
+rotation = -1.05881
 texture = SubResource( 1 )
 offset = Vector2( 7, 2 )
 region_enabled = true
-region_rect = Rect2( 3, 0, 18, 8 )
+region_rect = Rect2( 2, 0, 18, 6 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6798,40 +6784,40 @@ __meta__ = {
 
 [node name="tail_2" type="Sprite" parent="hip/tail_1"]
 position = Vector2( 13, 2 )
-rotation = 0.519497
+rotation = 0.306082
 texture = SubResource( 1 )
 offset = Vector2( 7, 0 )
 region_enabled = true
-region_rect = Rect2( 22, 1, 16, 6 )
+region_rect = Rect2( 22, 0, 16, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="tail_3" type="Sprite" parent="hip/tail_1/tail_2"]
 position = Vector2( 12, 0 )
-rotation = -0.114046
+rotation = -0.0690815
 texture = SubResource( 1 )
 offset = Vector2( 7, 0 )
 region_enabled = true
-region_rect = Rect2( 39, 1, 16, 6 )
+region_rect = Rect2( 39, 0, 16, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="tail_4" type="Sprite" parent="hip/tail_1/tail_2/tail_3"]
 position = Vector2( 12, 0 )
-rotation = -0.389835
+rotation = -0.583774
 texture = SubResource( 1 )
 offset = Vector2( 5, 0 )
 region_enabled = true
-region_rect = Rect2( 56, 1, 12, 6 )
+region_rect = Rect2( 56, 0, 12, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="Position2D" type="Position2D" parent="hip/tail_1/tail_2/tail_3/tail_4"]
 position = Vector2( 6, 0 )
-rotation = 0.450298
+rotation = 1.40559
 __meta__ = {
 "_edit_bone_": true
 }
@@ -6846,11 +6832,10 @@ __meta__ = {
 [node name="leg_upper_bl" type="Sprite" parent="hip"]
 editor/display_folded = true
 position = Vector2( 4, -3 )
-rotation = -1.2463
 texture = SubResource( 1 )
 offset = Vector2( -1, 5 )
 region_enabled = true
-region_rect = Rect2( 7, 71, 18, 20 )
+region_rect = Rect2( 7, 69, 18, 20 )
 __meta__ = {
 "_edit_bone_": true,
 "_edit_ik_": true
@@ -6858,42 +6843,38 @@ __meta__ = {
 
 [node name="leg_lower_bl" type="Sprite" parent="hip/leg_upper_bl"]
 position = Vector2( -4, 11 )
-rotation = 0.774823
 texture = SubResource( 1 )
 offset = Vector2( 5, 6 )
 region_enabled = true
-region_rect = Rect2( 26, 71, 18, 18 )
+region_rect = Rect2( 26, 69, 18, 18 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="foot_bl" type="Sprite" parent="hip/leg_upper_bl/leg_lower_bl"]
 position = Vector2( 11, 12 )
-rotation = -0.427501
 z_index = -1
 texture = SubResource( 1 )
 offset = Vector2( 0, 5 )
 region_enabled = true
-region_rect = Rect2( 45, 71, 8, 14 )
+region_rect = Rect2( 45, 69, 8, 14 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="toes_bl" type="Sprite" parent="hip/leg_upper_bl/leg_lower_bl/foot_bl"]
 position = Vector2( 0, 10 )
-rotation = -1.02077
 scale = Vector2( 0.999999, 0.999999 )
 texture = SubResource( 1 )
 offset = Vector2( -3, 2 )
 region_enabled = true
-region_rect = Rect2( 54, 71, 10, 6 )
+region_rect = Rect2( 54, 69, 10, 6 )
 __meta__ = {
 "_edit_bone_": true
 }
 
 [node name="Position2D" type="Position2D" parent="hip/leg_upper_bl/leg_lower_bl/foot_bl/toes_bl"]
 position = Vector2( -4, 0 )
-rotation = 1.91976
 scale = Vector2( 0.999999, 0.999999 )
 __meta__ = {
 "_edit_bone_": true
