@@ -8,7 +8,7 @@ const SLOW_DOUBLE_JUMP_ASCENT_GRAVITY_MULTIPLIER = .68
 const WALK_SPEED = 350
 const FRICTION_MULTIPLIER = 0.01 # For calculating friction for walking
 const IN_AIR_HORIZONTAL_SPEED = 300
-const MAX_HORIZONTAL_SPEED = 400
+const DEFAULT_MAX_HORIZONTAL_SPEED = 400
 const MIN_HORIZONTAL_SPEED = 50
 const MAX_VERTICAL_SPEED = 4000
 const MIN_VERTICAL_SPEED = 0
@@ -18,13 +18,38 @@ const JUMP_SPEED = -1000
 const WALL_JUMP_HORIZONTAL_MULTIPLIER = .5
 const MAX_JUMP_CHAIN = 2
 const DASH_SPEED_MULTIPLIER = 4
-const DASH_DELAY = 600 # In milliseconds
+const DASH_VERTICAL_SPEED = -400
+const DASH_DURATION = .3
+const DASH_FADE_DURATION = .1
+const DASH_COOLDOWN = 1
 const MIN_VERTICAL_SPEED_FOR_FLOOR_COLLISIONS = 15
 
 var velocity = Vector2()
+var horizontal_facing_sign = -1
 var is_ascending_from_jump = false
 var jump_count = 0
 var is_grabbing_wall = false
+var current_max_horizontal_speed = DEFAULT_MAX_HORIZONTAL_SPEED
+var is_dashing = false
+var can_dash = true
+
+var dash_cooldown_timer
+var dash_fade_tween
+
+func _ready():
+    # Set up a Tween for the fade-out at the end of a dash.
+    dash_fade_tween = Tween.new()
+    add_child(dash_fade_tween)
+    
+    # Set up a Timer for the dash cooldown.
+    dash_cooldown_timer = Timer.new()
+    dash_cooldown_timer.one_shot = true
+    dash_cooldown_timer.connect("timeout", self, "_dash_cooldown_finished")
+    add_child(dash_cooldown_timer)
+    
+    # Start facing the right.
+    horizontal_facing_sign = 1
+    $cat_animator.face_right()
 
 func _physics_process(delta):
     process_input(delta)
@@ -38,8 +63,10 @@ func process_input(delta):
     
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if actions.pressed_left:
+        horizontal_facing_sign = -1
         $cat_animator.face_left()
     if actions.pressed_right:
+        horizontal_facing_sign = 1
         $cat_animator.face_right()
     
     # Detect wall grabs.
@@ -72,7 +99,8 @@ func get_current_actions():
         which_wall = get_which_wall_collided(),
         pressing_into_wall = false,
         pressing_away_from_wall = false,
-        horizontal_movement_sign = 0
+        horizontal_movement_sign = 0,
+        start_dash = can_dash and Input.is_action_just_pressed("dash")
     }
  
     actions.pressing_into_wall = \
@@ -111,6 +139,10 @@ func process_input_while_on_floor(delta, actions):
         is_ascending_from_jump = true
         velocity.y = JUMP_SPEED
     
+    # Dash.
+    if actions.start_dash:
+        start_dash(horizontal_facing_sign)
+    
     # Walking animation.
     if actions.pressed_left or actions.pressed_right:
         $cat_animator.walk()
@@ -147,6 +179,10 @@ func process_input_while_in_air(delta, actions):
         is_ascending_from_jump = true
         velocity.y = JUMP_SPEED
     
+    # Dash.
+    if actions.start_dash:
+        start_dash(horizontal_facing_sign)
+    
     # Animate.
     if velocity.y > 0:
         $cat_animator.jump_descend()
@@ -158,6 +194,8 @@ func process_input_while_on_wall(delta, actions):
     is_ascending_from_jump = false
     velocity.y = 0
     
+    var away_from_wall_sign = -1 if actions.which_wall == "right" else 1;
+    
     # Wall jump.
     if actions.just_pressed_jump:
         is_grabbing_wall = false
@@ -168,8 +206,7 @@ func process_input_while_on_wall(delta, actions):
         
         # Give a little boost to get the player away from the wall, so they can still be
         # pushing themselves into the wall when they start the jump.
-        var wall_sign = -1 if actions.which_wall == "right" else 1;
-        velocity.x = wall_sign * IN_AIR_HORIZONTAL_SPEED * WALL_JUMP_HORIZONTAL_MULTIPLIER
+        velocity.x = away_from_wall_sign * IN_AIR_HORIZONTAL_SPEED * WALL_JUMP_HORIZONTAL_MULTIPLIER
     
     # Fall off.
     elif actions.pressing_away_from_wall:
@@ -192,10 +229,13 @@ func process_input_while_on_wall(delta, actions):
     # Rest.
     else:
         $cat_animator.rest_on_wall()
+    
+    if actions.start_dash:
+        start_dash(away_from_wall_sign)
 
 func cap_velocity():
     # Cap horizontal speed at a max value.
-    velocity.x = clamp(velocity.x, -MAX_HORIZONTAL_SPEED, MAX_HORIZONTAL_SPEED)
+    velocity.x = clamp(velocity.x, -current_max_horizontal_speed, current_max_horizontal_speed)
     
     # Kill horizontal speed below a min value.
     if velocity.x > -MIN_HORIZONTAL_SPEED and velocity.x < MIN_HORIZONTAL_SPEED:
@@ -207,6 +247,31 @@ func cap_velocity():
     # Kill vertical speed below a min value.
     if velocity.y > -MIN_VERTICAL_SPEED and velocity.y < MIN_VERTICAL_SPEED:
         velocity.y = 0
+
+func start_dash(horizontal_movement_sign):
+    if !can_dash:
+        return
+    
+    current_max_horizontal_speed = DEFAULT_MAX_HORIZONTAL_SPEED * DASH_SPEED_MULTIPLIER
+    velocity.x = current_max_horizontal_speed * horizontal_movement_sign
+    
+    velocity.y += DASH_VERTICAL_SPEED
+    
+    dash_cooldown_timer.start(DASH_COOLDOWN)
+    dash_fade_tween.reset_all()
+    dash_fade_tween.interpolate_property(self, "current_max_horizontal_speed", \
+            DEFAULT_MAX_HORIZONTAL_SPEED * DASH_SPEED_MULTIPLIER, DEFAULT_MAX_HORIZONTAL_SPEED, \
+            DASH_FADE_DURATION, Tween.TRANS_LINEAR, Tween.EASE_IN, \
+            DASH_DURATION - DASH_FADE_DURATION)
+    dash_fade_tween.start()
+    
+    if horizontal_movement_sign > 0:
+        $cat_animator.face_right()
+    else:
+        $cat_animator.face_left()
+    
+func _dash_cooldown_finished():
+    can_dash = true
 
 func get_which_wall_collided():
     if is_on_wall():
