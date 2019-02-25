@@ -22,73 +22,82 @@ const DASH_VERTICAL_SPEED = -400
 const DASH_DURATION = .3
 const DASH_FADE_DURATION = .1
 const DASH_COOLDOWN = 1
-const MIN_VERTICAL_SPEED_FOR_FLOOR_COLLISIONS = 15
+const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION = 15
+const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION = MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * 4
 
 var velocity = Vector2()
 var horizontal_facing_sign = -1
 var is_ascending_from_jump = false
 var jump_count = 0
 var is_grabbing_wall = false
-var current_max_horizontal_speed = DEFAULT_MAX_HORIZONTAL_SPEED
-var is_dashing = false
-var can_dash = true
 
-var dash_cooldown_timer
-var dash_fade_tween
+var _toward_wall_collision_sign = 0;
+var _current_max_horizontal_speed = DEFAULT_MAX_HORIZONTAL_SPEED
+var _can_dash = true
+
+var _dash_cooldown_timer
+var _dash_fade_tween
 
 func _ready():
     # Set up a Tween for the fade-out at the end of a dash.
-    dash_fade_tween = Tween.new()
-    add_child(dash_fade_tween)
+    _dash_fade_tween = Tween.new()
+    add_child(_dash_fade_tween)
     
     # Set up a Timer for the dash cooldown.
-    dash_cooldown_timer = Timer.new()
-    dash_cooldown_timer.one_shot = true
-    dash_cooldown_timer.connect("timeout", self, "_dash_cooldown_finished")
-    add_child(dash_cooldown_timer)
+    _dash_cooldown_timer = Timer.new()
+    _dash_cooldown_timer.one_shot = true
+    _dash_cooldown_timer.connect("timeout", self, "_dash_cooldown_finished")
+    add_child(_dash_cooldown_timer)
     
     # Start facing the right.
     horizontal_facing_sign = 1
-    $cat_animator.face_right()
+    $CatAnimator.face_right()
 
 func _physics_process(delta):
-    process_input(delta)
+    _process_input(delta)
 
     # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
     # into account.
     move_and_slide(velocity, UP, false, 4, FLOOR_MAX_ANGLE)
 
-func process_input(delta):
-    var actions = get_current_actions()
+func _process_input(delta):
+    var actions = _get_current_actions()
     
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if actions.pressed_left:
         horizontal_facing_sign = -1
-        $cat_animator.face_left()
+        $CatAnimator.face_left()
     if actions.pressed_right:
         horizontal_facing_sign = 1
-        $cat_animator.face_right()
+        $CatAnimator.face_right()
     
     # Detect wall grabs.
     if !is_on_wall():
         is_grabbing_wall = false
     elif actions.pressing_into_wall:
         is_grabbing_wall = true
+        
+    # Calculate the sign of a collding wall's direction.
+    _toward_wall_collision_sign = (0 if !is_on_wall() else \
+            (1 if actions.which_wall == "right" else -1))
     
     # Cancel any horizontal velocity when bumping into a wall.
     if is_on_wall():
-        velocity.x = 0
+        # The move_and_slide system depends on maintained velocity always pushing the player into a
+        # collision, otherwise it will eventually stop the collision. If we just zero this out,
+        # is_on_wall() will give false negatives.
+        velocity.x = MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * _toward_wall_collision_sign
 
     if is_grabbing_wall:
-        process_input_while_on_wall(delta, actions)
+        _process_input_while_on_wall(delta, actions)
     elif is_on_floor():
-        process_input_while_on_floor(delta, actions)
+        _process_input_while_on_floor(delta, actions)
     else:
-        process_input_while_in_air(delta, actions)
+        _process_input_while_in_air(delta, actions)
     
-    cap_velocity()
+    _cap_velocity()
 
-func get_current_actions():
+func _get_current_actions():
     var actions = {
         just_pressed_jump = Input.is_action_just_pressed("jump"),
         pressed_jump = Input.is_action_pressed("jump"),
@@ -96,11 +105,11 @@ func get_current_actions():
         pressed_down = Input.is_action_pressed("move_down"),
         pressed_left = Input.is_action_pressed("move_left"),
         pressed_right = Input.is_action_pressed("move_right"),
-        which_wall = get_which_wall_collided(),
+        which_wall = _get_which_wall_collided(),
         pressing_into_wall = false,
         pressing_away_from_wall = false,
         horizontal_movement_sign = 0,
-        start_dash = can_dash and Input.is_action_just_pressed("dash")
+        _start_dash = _can_dash and Input.is_action_just_pressed("dash")
     }
  
     actions.pressing_into_wall = \
@@ -117,19 +126,19 @@ func get_current_actions():
         
     return actions
 
-func process_input_while_on_floor(delta, actions):
+func _process_input_while_on_floor(delta, actions):
     jump_count = 0
     is_ascending_from_jump = false
     
     # The move_and_slide system depends on some vertical gravity always pushing the player into
     # the floor. If we just zero this out, is_on_floor() will give false negatives.
-    velocity.y = MIN_VERTICAL_SPEED_FOR_FLOOR_COLLISIONS
+    velocity.y = MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
     
     # Horizontal movement.
     velocity.x += WALK_SPEED * actions.horizontal_movement_sign
     
     # Friction.
-    var friction_offset = get_floor_friction_coefficient() * FRICTION_MULTIPLIER * GRAVITY
+    var friction_offset = _get_floor_friction_coefficient() * FRICTION_MULTIPLIER * GRAVITY
     friction_offset = clamp(friction_offset, 0, abs(velocity.x))
     velocity.x += -sign(velocity.x) * friction_offset
     
@@ -140,16 +149,16 @@ func process_input_while_on_floor(delta, actions):
         velocity.y = JUMP_SPEED
     
     # Dash.
-    if actions.start_dash:
-        start_dash(horizontal_facing_sign)
+    if actions._start_dash:
+        _start_dash(horizontal_facing_sign)
     
     # Walking animation.
     if actions.pressed_left or actions.pressed_right:
-        $cat_animator.walk()
+        $CatAnimator.walk()
     else:
-        $cat_animator.rest()
+        $CatAnimator.rest()
 
-func process_input_while_in_air(delta, actions):
+func _process_input_while_in_air(delta, actions):
     # Horizontal movement.
     velocity.x += IN_AIR_HORIZONTAL_SPEED * actions.horizontal_movement_sign
     
@@ -171,7 +180,7 @@ func process_input_while_in_air(delta, actions):
     # Hit ceiling.
     if is_on_ceiling():
         is_ascending_from_jump = false
-        velocity.y = MIN_VERTICAL_SPEED_FOR_FLOOR_COLLISIONS
+        velocity.y = MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
     
     # Double jump.
     if actions.just_pressed_jump and jump_count < MAX_JUMP_CHAIN:
@@ -180,21 +189,19 @@ func process_input_while_in_air(delta, actions):
         velocity.y = JUMP_SPEED
     
     # Dash.
-    if actions.start_dash:
-        start_dash(horizontal_facing_sign)
+    if actions._start_dash:
+        _start_dash(horizontal_facing_sign)
     
     # Animate.
     if velocity.y > 0:
-        $cat_animator.jump_descend()
+        $CatAnimator.jump_descend()
     else:
-        $cat_animator.jump_ascend()
+        $CatAnimator.jump_ascend()
 
-func process_input_while_on_wall(delta, actions):
+func _process_input_while_on_wall(delta, actions):
     jump_count = 0
     is_ascending_from_jump = false
     velocity.y = 0
-    
-    var away_from_wall_sign = -1 if actions.which_wall == "right" else 1;
     
     # Wall jump.
     if actions.just_pressed_jump:
@@ -206,7 +213,7 @@ func process_input_while_on_wall(delta, actions):
         
         # Give a little boost to get the player away from the wall, so they can still be
         # pushing themselves into the wall when they start the jump.
-        velocity.x = away_from_wall_sign * IN_AIR_HORIZONTAL_SPEED * WALL_JUMP_HORIZONTAL_MULTIPLIER
+        velocity.x = -_toward_wall_collision_sign * IN_AIR_HORIZONTAL_SPEED * WALL_JUMP_HORIZONTAL_MULTIPLIER
     
     # Fall off.
     elif actions.pressing_away_from_wall:
@@ -219,23 +226,23 @@ func process_input_while_on_wall(delta, actions):
     # Climb up.
     elif actions.pressed_up:
         velocity.y = CLIMB_UP_SPEED
-        $cat_animator.climb_up()
+        $CatAnimator.climb_up()
     
     # Climb down.
     elif actions.pressed_down:
         velocity.y = CLIMB_DOWN_SPEED
-        $cat_animator.climb_down()
+        $CatAnimator.climb_down()
         
     # Rest.
     else:
-        $cat_animator.rest_on_wall()
+        $CatAnimator.rest_on_wall()
     
-    if actions.start_dash:
-        start_dash(away_from_wall_sign)
+    if actions._start_dash:
+        _start_dash(-_toward_wall_collision_sign)
 
-func cap_velocity():
+func _cap_velocity():
     # Cap horizontal speed at a max value.
-    velocity.x = clamp(velocity.x, -current_max_horizontal_speed, current_max_horizontal_speed)
+    velocity.x = clamp(velocity.x, -_current_max_horizontal_speed, _current_max_horizontal_speed)
     
     # Kill horizontal speed below a min value.
     if velocity.x > -MIN_HORIZONTAL_SPEED and velocity.x < MIN_HORIZONTAL_SPEED:
@@ -248,32 +255,32 @@ func cap_velocity():
     if velocity.y > -MIN_VERTICAL_SPEED and velocity.y < MIN_VERTICAL_SPEED:
         velocity.y = 0
 
-func start_dash(horizontal_movement_sign):
-    if !can_dash:
+func _start_dash(horizontal_movement_sign):
+    if !_can_dash:
         return
     
-    current_max_horizontal_speed = DEFAULT_MAX_HORIZONTAL_SPEED * DASH_SPEED_MULTIPLIER
-    velocity.x = current_max_horizontal_speed * horizontal_movement_sign
+    _current_max_horizontal_speed = DEFAULT_MAX_HORIZONTAL_SPEED * DASH_SPEED_MULTIPLIER
+    velocity.x = _current_max_horizontal_speed * horizontal_movement_sign
     
     velocity.y += DASH_VERTICAL_SPEED
     
-    dash_cooldown_timer.start(DASH_COOLDOWN)
-    dash_fade_tween.reset_all()
-    dash_fade_tween.interpolate_property(self, "current_max_horizontal_speed", \
+    _dash_cooldown_timer.start(DASH_COOLDOWN)
+    _dash_fade_tween.reset_all()
+    _dash_fade_tween.interpolate_property(self, "_current_max_horizontal_speed", \
             DEFAULT_MAX_HORIZONTAL_SPEED * DASH_SPEED_MULTIPLIER, DEFAULT_MAX_HORIZONTAL_SPEED, \
             DASH_FADE_DURATION, Tween.TRANS_LINEAR, Tween.EASE_IN, \
             DASH_DURATION - DASH_FADE_DURATION)
-    dash_fade_tween.start()
+    _dash_fade_tween.start()
     
     if horizontal_movement_sign > 0:
-        $cat_animator.face_right()
+        $CatAnimator.face_right()
     else:
-        $cat_animator.face_left()
+        $CatAnimator.face_left()
     
 func _dash_cooldown_finished():
-    can_dash = true
+    _can_dash = true
 
-func get_which_wall_collided():
+func _get_which_wall_collided():
     if is_on_wall():
         for i in range(get_slide_count()):
             var collision = get_slide_collision(i)
@@ -283,7 +290,7 @@ func get_which_wall_collided():
                 return "right"
     return "none"
 
-func get_floor_collision():
+func _get_floor_collision():
     if is_on_floor():
         for i in range(get_slide_count()):
             var collision = get_slide_collision(i)
@@ -291,8 +298,8 @@ func get_floor_collision():
                 return collision
     return null
 
-func get_floor_friction_coefficient():
-    var collision = get_floor_collision()
+func _get_floor_friction_coefficient():
+    var collision = _get_floor_collision()
     if collision != null and collision.collider.collision_friction != null:
         return collision.collider.collision_friction
     return 0
