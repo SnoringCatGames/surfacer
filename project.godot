@@ -55,6 +55,12 @@ dash={
  ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="walls_and_floors"
+2d_physics/layer_2="fall_through_floors"
+2d_physics/layer_3="walk_through_walls"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

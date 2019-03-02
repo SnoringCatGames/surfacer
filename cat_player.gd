@@ -22,6 +22,7 @@ const DASH_VERTICAL_SPEED = -400
 const DASH_DURATION = .3
 const DASH_FADE_DURATION = .1
 const DASH_COOLDOWN = 1
+const FALL_THROUGH_FLOOR_VELOCITY_BOOST = 100
 const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION = 15
 const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION = MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * 4
 
@@ -30,6 +31,8 @@ var horizontal_facing_sign = -1
 var is_ascending_from_jump = false
 var jump_count = 0
 var is_grabbing_wall = false
+var is_falling_through_floors = false
+var is_grabbing_walk_through_walls = false
 
 var _toward_wall_collision_sign = 0;
 var _current_max_horizontal_speed = DEFAULT_MAX_HORIZONTAL_SPEED
@@ -96,6 +99,8 @@ func _process_input(delta):
         _process_input_while_in_air(delta, actions)
     
     _cap_velocity()
+    
+    _update_collision_mask()
 
 func _get_current_actions():
     var actions = {
@@ -109,7 +114,8 @@ func _get_current_actions():
         pressing_into_wall = false,
         pressing_away_from_wall = false,
         horizontal_movement_sign = 0,
-        _start_dash = _can_dash and Input.is_action_just_pressed("dash")
+        start_dash = _can_dash and Input.is_action_just_pressed("dash"),
+        start_fall_through = false
     }
  
     actions.pressing_into_wall = \
@@ -124,11 +130,17 @@ func _get_current_actions():
     elif actions.pressed_right:
         actions.horizontal_movement_sign = 1
         
+    actions.start_fall_through = actions.pressed_down and actions.just_pressed_jump
+        
     return actions
 
 func _process_input_while_on_floor(delta, actions):
     jump_count = 0
     is_ascending_from_jump = false
+    is_falling_through_floors = false
+    
+    # Whether we should grab onto walk-through walls.
+    is_grabbing_walk_through_walls = actions.pressed_up
     
     # The move_and_slide system depends on some vertical gravity always pushing the player into
     # the floor. If we just zero this out, is_on_floor() will give false negatives.
@@ -142,14 +154,19 @@ func _process_input_while_on_floor(delta, actions):
     friction_offset = clamp(friction_offset, 0, abs(velocity.x))
     velocity.x += -sign(velocity.x) * friction_offset
     
+    # Fall-through floor.
+    if actions.start_fall_through:
+        is_falling_through_floors = true
+        velocity.y = FALL_THROUGH_FLOOR_VELOCITY_BOOST
+        
     # Jump.
-    if actions.just_pressed_jump:
+    elif actions.just_pressed_jump:
         jump_count = 1
         is_ascending_from_jump = true
         velocity.y = JUMP_SPEED
     
     # Dash.
-    if actions._start_dash:
+    if actions.start_dash:
         _start_dash(horizontal_facing_sign)
     
     # Walking animation.
@@ -159,6 +176,12 @@ func _process_input_while_on_floor(delta, actions):
         $CatAnimator.rest()
 
 func _process_input_while_in_air(delta, actions):
+    # Whether we should fall through fall-through floors.
+    is_falling_through_floors = actions.pressed_down
+    
+    # Whether we should grab onto walk-through walls.
+    is_grabbing_walk_through_walls = actions.pressed_up
+    
     # Horizontal movement.
     velocity.x += IN_AIR_HORIZONTAL_SPEED * actions.horizontal_movement_sign
     
@@ -189,7 +212,7 @@ func _process_input_while_in_air(delta, actions):
         velocity.y = JUMP_SPEED
     
     # Dash.
-    if actions._start_dash:
+    if actions.start_dash:
         _start_dash(horizontal_facing_sign)
     
     # Animate.
@@ -201,6 +224,8 @@ func _process_input_while_in_air(delta, actions):
 func _process_input_while_on_wall(delta, actions):
     jump_count = 0
     is_ascending_from_jump = false
+    is_falling_through_floors = false
+    is_grabbing_walk_through_walls = true
     velocity.y = 0
     
     # Wall jump.
@@ -237,7 +262,7 @@ func _process_input_while_on_wall(delta, actions):
     else:
         $CatAnimator.rest_on_wall()
     
-    if actions._start_dash:
+    if actions.start_dash:
         _start_dash(-_toward_wall_collision_sign)
 
 func _cap_velocity():
@@ -254,6 +279,12 @@ func _cap_velocity():
     # Kill vertical speed below a min value.
     if velocity.y > -MIN_VERTICAL_SPEED and velocity.y < MIN_VERTICAL_SPEED:
         velocity.y = 0
+
+# Update whether or not we should currently consider collisions with fall-through floors and
+# walk-through walls.
+func _update_collision_mask():
+    set_collision_mask_bit(1, !is_falling_through_floors)
+    set_collision_mask_bit(2, is_grabbing_walk_through_walls)
 
 func _start_dash(horizontal_movement_sign):
     if !_can_dash:
@@ -300,6 +331,7 @@ func _get_floor_collision():
 
 func _get_floor_friction_coefficient():
     var collision = _get_floor_collision()
+    # Collision friction is a property of the TileMap node.
     if collision != null and collision.collider.collision_friction != null:
         return collision.collider.collision_friction
     return 0
