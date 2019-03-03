@@ -77,7 +77,7 @@ func _process_input(delta):
     # Detect wall grabs.
     if !is_on_wall():
         is_grabbing_wall = false
-    elif actions.pressing_into_wall:
+    elif actions.triggering_wall_grab:
         is_grabbing_wall = true
         
     # Calculate the sign of a collding wall's direction.
@@ -111,13 +111,23 @@ func _get_current_actions():
         pressed_left = Input.is_action_pressed("move_left"),
         pressed_right = Input.is_action_pressed("move_right"),
         which_wall = _get_which_wall_collided(),
+        horizontal_movement_sign = 0,
+        facing_wall = false,
         pressing_into_wall = false,
         pressing_away_from_wall = false,
-        horizontal_movement_sign = 0,
+        triggering_wall_grab = false,
         start_dash = _can_dash and Input.is_action_just_pressed("dash"),
         start_fall_through = false
     }
- 
+    
+    if actions.pressed_left:
+        actions.horizontal_movement_sign = -1
+    elif actions.pressed_right:
+        actions.horizontal_movement_sign = 1
+     
+    actions.facing_wall = \
+        (actions.which_wall == "right" and horizontal_facing_sign > 0) or \
+        (actions.which_wall == "left" and horizontal_facing_sign < 0)
     actions.pressing_into_wall = \
         (actions.which_wall == "right" and actions.pressed_right) or \
         (actions.which_wall == "left" and actions.pressed_left)
@@ -125,13 +135,11 @@ func _get_current_actions():
         (actions.which_wall == "right" and actions.pressed_left) or \
         (actions.which_wall == "left" and actions.pressed_right)
     
-    if actions.pressed_left:
-        actions.horizontal_movement_sign = -1
-    elif actions.pressed_right:
-        actions.horizontal_movement_sign = 1
-        
+    var facing_into_wall_and_pressing_up = actions.pressed_up and (actions.facing_wall or actions.pressing_into_wall)
+    actions.triggering_wall_grab = actions.pressing_into_wall or facing_into_wall_and_pressing_up
+    
     actions.start_fall_through = actions.pressed_down and actions.just_pressed_jump
-        
+    
     return actions
 
 func _process_input_while_on_floor(delta, actions):
@@ -224,9 +232,11 @@ func _process_input_while_in_air(delta, actions):
 func _process_input_while_on_wall(delta, actions):
     jump_count = 0
     is_ascending_from_jump = false
-    is_falling_through_floors = false
     is_grabbing_walk_through_walls = true
     velocity.y = 0
+    
+    # Whether we should fall through fall-through floors.
+    is_falling_through_floors = actions.pressed_down
     
     # Wall jump.
     if actions.just_pressed_jump:

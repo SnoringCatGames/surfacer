@@ -60,6 +60,8 @@ dash={
 2d_physics/layer_1="walls_and_floors"
 2d_physics/layer_2="fall_through_floors"
 2d_physics/layer_3="walk_through_walls"
+2d_physics/layer_4="squirrels"
+2d_physics/layer_5="birds"
 
 [rendering]
 

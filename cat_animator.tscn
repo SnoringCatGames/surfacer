@@ -6528,6 +6528,7 @@ __meta__ = {
 }
 
 [node name="Hip" type="Sprite" parent="."]
+editor/display_folded = true
 position = Vector2( 23, -3 )
 texture = SubResource( 1 )
 offset = Vector2( -13, 0 )
