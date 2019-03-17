@@ -4,7 +4,7 @@
 [ext_resource path="res://cat_player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://squirrel.tscn" type="PackedScene" id=3]
 
-[node name="Node" type="Node"]
+[node name="Level1" type="Node"]
 
 [node name="WallsAndFloors" type="TileMap" parent="."]
 position = Vector2( 1280, 1280 )
