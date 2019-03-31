@@ -200,9 +200,9 @@ func _all(node: Dictionary, result: Array) -> Array:
     var nodes_to_search := []
     while node != null:
         if node.is_leaf:
-            concat(result, node.children)
+            Global.concat(result, node.children)
         else:
-            concat(nodes_to_search, node.children)
+            Global.concat(nodes_to_search, node.children)
 
         node = nodes_to_search.pop_back()
     return result
@@ -214,7 +214,7 @@ func _build(items: Array, left: int, right: int, height: int) -> Dictionary:
 
     if N <= M:
         # reached leaf level; return leaf
-        node = create_node(subarray(items, left, right + 1 - left))
+        node = create_node(Global.subarray(items, left, right + 1 - left))
         calc_bbox(node)
         return node
 
@@ -330,7 +330,7 @@ func _split(insert_path: Array, level: int) -> void:
 
     var split_index := _choose_split_index(node, m, M)
 
-    var new_node := create_node(subarray(node.children, split_index, node.children.size() - split_index))
+    var new_node := create_node(Global.subarray(node.children, split_index, node.children.size() - split_index))
     new_node.height = node.height
     new_node.is_leaf = node.is_leaf
 
@@ -825,22 +825,3 @@ class PriorityQueue extends Reference:
         items[pos] = item
 
 ###################################################################################################
-
-# TODO: Replace this with any built-in feature whenever it exists
-#       (https://github.com/godotengine/godot/issues/4715).
-static func subarray(array: Array, start: int, length: int) -> Array:
-    var result = range(length)
-    for i in result:
-        result[i] = array[start + i]
-    return result
-
-# TODO: Replace this with any built-in feature whenever it exists
-#       (https://github.com/godotengine/godot/issues/4715).
-static func concat(result: Array, other: Array) -> void:
-    var old_result_size = result.size()
-    var other_size = other.size()
-    
-    result.resize(old_result_size + other_size)
-    
-    for i in range(other_size):
-        result[old_result_size + i] = other[i]

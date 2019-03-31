@@ -1,26 +1,6 @@
 extends Reference
 class_name PlatformGraph
 
-# TODO:
-# - Update this list to use latest Trello notes
-# - pre-parsing:
-#   - parse_tilemap: parse TileMap to calculate platform nodes
-#   - find_nearby_nodes: within radius or intersecting AABB
-#   - node state:
-#     - AABB
-#     - reference to cells from TileMap
-#     - collection of connecting edges / adjacent nodes
-#   - edge state:
-#     - movement type
-#     - DON'T store instructions; dynamically calculate those when starting a given edge traversal
-# - traversal:
-#   - calculate current node for a given "state" (position, whether player is in-air, whether a wall-grab is active)
-#   - implement modified A*:
-#     - will need to also give weight to nodes, since we need to walk/climb within a node in order
-#       to get to the position where we can start an edge traversal.
-#   - Dynamically calculate instructions for the next edge when approaching a new edge traversal.
-#   - 
-
 # TODO: Map the TileMap into an RTree or QuadTree.
 
 var floors := []
@@ -40,14 +20,24 @@ var right_walls := []
 #   non-collidable tiles.
 # - The given TileMap only uses tiles with convex collision boundaries.
 func parse_tile_map(tile_map: TileMap) -> void:
+    # TODO:
+    # - Print how long each step takes to run.
+    # - Render annotations.
+    
+    print("_parse_tile_map_into_sides")
+    _parse_tile_map_into_sides(tile_map)
+    print("_merge_continuous_surfaces: floors")
+    _merge_continuous_surfaces(floors)
+    print("_merge_continuous_surfaces: left_walls")
+    _merge_continuous_surfaces(left_walls)
+    print("_merge_continuous_surfaces: right_walls")
+    _merge_continuous_surfaces(right_walls)
+
+# Parses the tiles of given TileMap into their constituent top-sides, left-sides, and right-sides.
+func _parse_tile_map_into_sides(tile_map: TileMap) -> void:
     var tile_set := tile_map.tile_set
     var cell_size := tile_map.cell_size
-    
-    var used_cells = tile_map.get_used_cells()
-    var used_cells_count = used_cells.size()
-    
-    var top_sides = Array()
-    top_sides.resize(used_cells_count)
+    var used_cells := tile_map.get_used_cells()
     
     # Transform tile shapes into world coordinates.
     for position in used_cells:
@@ -68,14 +58,14 @@ func parse_tile_map(tile_map: TileMap) -> void:
         
         # Calculate and store the polylines from this shape that correspond to the shape's
         # top-side, right-side, and left-side.
-        _parse_sides(vertices_world_coords)
+        _parse_polygon_into_sides(vertices_world_coords)
 
-# This will parse each the given polygon into separate polylines corresponding to the top-side,
-# left-side, and right-side of the shape. Each of these polylines will be stored with their
-# vertices in clockwise order.
-func _parse_sides(vertices: Array) -> void:
+# Parses the given polygon into separate polylines corresponding to the top-side, left-side, and
+# right-side of the shape. Each of these polylines will be stored with their vertices in clockwise
+# order.
+func _parse_polygon_into_sides(vertices: Array) -> void:
     var vertex_count := vertices.size()
-    var is_clockwise = _is_polygon_clockwise(vertices)
+    var is_clockwise := _is_polygon_clockwise(vertices)
     
     # Find the left-most, right-most, and bottom-most vertices.
     
@@ -231,27 +221,82 @@ func _parse_sides(vertices: Array) -> void:
     floors.push_back(top_side_vertices)
     left_walls.push_back(right_side_vertices)
     right_walls.push_back(left_side_vertices)
+
+# Merges adjacent continuous surfaces.
+func _merge_continuous_surfaces(surfaces: Array) -> void:
+    var i: int
+    var j: int
+    var count: int
+    var surface1: Array
+    var surface2: Array
+    var surface1_front: Vector2
+    var surface1_back: Vector2
+    var surface2_front: Vector2
+    var surface2_back: Vector2
+    var front_back_diff_x: float
+    var front_back_diff_y: float
+    var back_front_diff_x: float
+    var back_front_diff_y: float
     
-    # FOR DEBUGGING
-    print("************************************")
-    print("vertices")
-    print(vertices)
-    print("is_clockwise")
-    print(is_clockwise)
-    print("top_side_start_index")
-    print(top_side_start_index)
-    print("top_side_end_index")
-    print(top_side_end_index)
-    print("right_side_end_index")
-    print(right_side_end_index)
-    print("left_side_start_index")
-    print(left_side_start_index)
-    print("top_side_vertices")
-    print(top_side_vertices)
-    print("right_side_vertices")
-    print(right_side_vertices)
-    print("left_side_vertices")
-    print(left_side_vertices)
+    var merge_count := 1
+    while merge_count > 0:
+        merge_count = 0
+        count = surfaces.size()
+        i = 0
+        while i < count:
+            surface1 = surfaces[i]
+            surface1_front = surface1.front()
+            surface1_back = surface1.back()
+            
+            j = i + 1
+            while j < count:
+                surface2 = surfaces[j]
+                surface2_front = surface2.front()
+                surface2_back = surface2.back()
+                
+                # Vector equality checks, allowing for some round-off error.
+                front_back_diff_x = surface1_front.x - surface2_back.x
+                front_back_diff_y = surface1_front.y - surface2_back.y
+                back_front_diff_x = surface1_back.x - surface2_front.x
+                back_front_diff_y = surface1_back.y - surface2_front.y
+                if front_back_diff_x < Global.FLOAT_EPSILON and \
+                        front_back_diff_x > -Global.FLOAT_EPSILON and \
+                        front_back_diff_y < Global.FLOAT_EPSILON and \
+                        front_back_diff_y > -Global.FLOAT_EPSILON:
+                    # The start of surface 1 connects with the end of surface 2.
+                    
+                    # Merge the two surfaces, replacing the first surface and removing the second
+                    # surface.
+                    surface2.pop_back()
+                    Global.concat(surface2, surface1)
+                    surfaces.remove(j)
+                    surfaces[i] = surface2
+                    surface1 = surface2
+                    surface1_front = surface1.front()
+                    surface1_back = surface1.back()
+                    
+                    j -= 1
+                    count -= 1
+                    merge_count += 1
+                elif back_front_diff_x < Global.FLOAT_EPSILON and \
+                        back_front_diff_x > -Global.FLOAT_EPSILON and \
+                        back_front_diff_y < Global.FLOAT_EPSILON and \
+                        back_front_diff_y > -Global.FLOAT_EPSILON:
+                    # The end of surface 1 connects with the start of surface 2.
+                    
+                    # Merge the two surfaces, replacing the first surface and removing the second
+                    # surface.
+                    surface1.pop_back()
+                    Global.concat(surface1, surface2)
+                    surfaces.remove(j)
+                    
+                    j -= 1
+                    count -= 1
+                    merge_count += 1
+                
+                j += 1
+            
+            i += 1
 
 # Determine whether the points of the polygon are defined in a clockwise direction. This uses the
 # shoelace formula.
