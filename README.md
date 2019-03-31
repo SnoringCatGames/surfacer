@@ -36,6 +36,13 @@ The following algorithm assumes that the given `TileMap` only uses tiles with co
     - Iterate, adding segments to the result polyline, until we find either a wall segment or the rightmost vertex.
 - Repeat the above `TileMap` parsing for the right-side and left-side surfaces.
 
+#### Remove internal surfaces
+
+This will only detect internal surface segments that are equivalent with another internal segment. But for grib-based tiling systems, this can often be enough.
+
+- Check for pairs of floor+ceiling segments or left-wall+right-wall segments, such that both segments share the same vertices.
+- Remove both segments in these pairs.
+
 #### Merge any connecting surfaces
 
 - Iterate across each floor surface A.
