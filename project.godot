@@ -9,13 +9,43 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node2D",
+"class": "CatAnimator",
+"language": "GDScript",
+"path": "res://cat_animator.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "CatPlayer",
+"language": "GDScript",
+"path": "res://cat_player.gd"
+}, {
+"base": "Node",
+"class": "Global",
+"language": "GDScript",
+"path": "res://global.gd"
+}, {
+"base": "Reference",
+"class": "PlatformGraph",
+"language": "GDScript",
+"path": "res://platform_graph.gd"
+}, {
 "base": "Reference",
 "class": "RTree",
 "language": "GDScript",
 "path": "res://r_tree.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Squirrel",
+"language": "GDScript",
+"path": "res://squirrel.gd"
 } ]
 _global_script_class_icons={
-"RTree": ""
+"CatAnimator": "",
+"CatPlayer": "",
+"Global": "",
+"PlatformGraph": "",
+"RTree": "",
+"Squirrel": ""
 }
 
 [application]
@@ -23,6 +53,10 @@ _global_script_class_icons={
 config/name="Climber"
 run/main_scene="res://main.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Global="*res://global.gd"
 
 [input]
 

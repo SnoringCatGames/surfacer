@@ -6,20 +6,6 @@ class_name RTree
 # TODO: Replace this with a GDNative version (with C++ bindings) once Godot supports HTML5 export 
 #       with GDNative (https://github.com/godotengine/godot/issues/12243).
 
-# FIXME:
-# - for loops
-# - Array methods: length, push, pop, sort, ...
-# - falsey/truthy conditionals
-# - 
-
-# TODO: Replace this with any built-in feature whenever it exists
-#       (https://github.com/godotengine/godot/issues/4715).
-func subarray(array: Array, start: int, length: int):
-    var result = range(length)
-    for i in result:
-        result[i] = array[start + i]
-    return result
-
 ###################################################################################################
 # Adapted from the rbush library
 # https://github.com/mourner/rbush
@@ -54,9 +40,12 @@ var _max_entries: int
 
 func _init(maxEntries: int = 9) -> void:
     # max entries in a node is 9 by default; min node fill is 40% for best performance
+    #warning-ignore:narrowing_conversion
     _max_entries = max(4, maxEntries or 9)
+    #warning-ignore:narrowing_conversion
     _minEntries = max(2, ceil(_max_entries * 0.4))
 
+    #warning-ignore:return_value_discarded
     clear()
 
 func all() -> Array:
@@ -70,20 +59,19 @@ func search(bbox: Dictionary) -> Array:
         return result
 
     var nodes_to_search := []
-    var i: int
-    var length: int
     var child: Dictionary
-    var childBBox: Dictionary
+    var child_bbox: Dictionary
 
     while node != null:
-        for (i = 0, length = node.children.size(); i < length; i += 1):
+        for i in range(node.children.size()):
             child = node.children[i]
-            childBBox = child
+            child_bbox = child
 
-            if intersects(bbox, childBBox):
+            if intersects(bbox, child_bbox):
                 if node.is_leaf:
                     result.push_back(child)
-                elif contains(bbox, childBBox):
+                elif contains(bbox, child_bbox):
+                    #warning-ignore:return_value_discarded
                     _all(child, result)
                 else:
                     nodes_to_search.push_back(child)
@@ -98,30 +86,29 @@ func collides(bbox: Dictionary) -> bool:
         return false
 
     var nodes_to_search := []
-    var i: int
-    var length: int
     var child: Dictionary
-    var childBBox: Dictionary
+    var child_bbox: Dictionary
 
     while node != null:
-        for (i = 0, length = node.children.size(); i < length; i += 1):
+        for i in range(node.children.size()):
             child = node.children[i]
-            childBBox = child
+            child_bbox = child
 
-            if intersects(bbox, childBBox):
-                if node.is_leaf or contains(bbox, childBBox):
+            if intersects(bbox, child_bbox):
+                if node.is_leaf or contains(bbox, child_bbox):
                     return true
                 nodes_to_search.push_back(child)
         node = nodes_to_search.pop_back()
 
     return false
 
-func load(dataset: Array) -> RTree:
+func load_data(dataset: Array) -> RTree:
     if dataset == null or dataset.empty():
         return self
 
     if dataset.size() < _minEntries:
-        for (var i = 0, length = dataset.size(); i < length; i += 1):
+        for i in range(dataset.size()):
+            #warning-ignore:return_value_discarded
             insert(dataset[i])
         return self
 
@@ -139,12 +126,12 @@ func load(dataset: Array) -> RTree:
     else:
         if root.height < node.height:
             # swap trees if inserted one is bigger
-            var tmpNode := root
+            var tmp_node := root
             root = node
-            node = tmpNode
+            node = tmp_node
 
         # insert the small tree into the large tree at appropriate level
-        _insert(node, root.height - node.height - 1, true)
+        _insert(node, root.height - node.height - 1)
 
     return self
 
@@ -157,15 +144,14 @@ func clear() -> RTree:
     root = create_node([])
     return self
 
-# FIXME: equals_fn
-func remove(item: Dictionary, equals_fn) -> RTree:
+func remove(item: Dictionary, custom_equals_obj: Object = null, custom_equals_fn: String = "") -> RTree:
     if item == null:
         return self
 
-    var node := root
+    var node = root
     var bbox := item
-    var path := [],
-    var indexes := [],
+    var path := []
+    var indexes := []
     var i: int
     var parent: Dictionary
     var index: int
@@ -176,13 +162,13 @@ func remove(item: Dictionary, equals_fn) -> RTree:
         if node == null:
             # go up
             node = path.pop_back()
-            parent = path[path.length - 1]
+            parent = path[path.size() - 1]
             i = indexes.pop_back()
             going_up = true
 
         if node.is_leaf:
             # check current node
-            index = find_item(item, node.children, equals_fn)
+            index = find_item(item, node.children, custom_equals_obj, custom_equals_fn)
 
             if index != -1:
                 # item found, remove the item and condense tree upwards
@@ -214,11 +200,11 @@ func _all(node: Dictionary, result: Array) -> Array:
     var nodes_to_search := []
     while node != null:
         if node.is_leaf:
-            result.push.apply(result, node.children)
+            concat(result, node.children)
         else:
-            nodes_to_search.push.apply(nodes_to_search, node.children)
+            concat(nodes_to_search, node.children)
 
-        node = nodes_to_search.pop_Back()
+        node = nodes_to_search.pop_back()
     return result
 
 func _build(items: Array, left: int, right: int, height: int) -> Dictionary:
@@ -234,9 +220,11 @@ func _build(items: Array, left: int, right: int, height: int) -> Dictionary:
 
     if height > 0:
         # target height of the bulk-loaded tree
+        #warning-ignore:narrowing_conversion
         height = ceil(log(N) / log(M))
 
         # target number of root entries to maximize storage utilization
+        #warning-ignore:narrowing_conversion
         M = ceil(N / pow(M, height - 1))
 
     node = create_node([])
@@ -245,21 +233,23 @@ func _build(items: Array, left: int, right: int, height: int) -> Dictionary:
 
     # split the items into M mostly square tiles
 
-    var N2 := ceil(N / M)
-    var N1 := N2 * ceil(sqrt(M))
-    var i: int
-    var j: int
+    #warning-ignore:narrowing_conversion
+    var N2: int = ceil((1.0 + N) / M)
+    #warning-ignore:narrowing_conversion
+    var N1: int = N2 * ceil(sqrt(M))
     var right2: int
     var right3: int
 
     multi_select_min_y(items, left, right, N1)
 
-    for (i = left; i <= right; i += N1):
+    for i in range(left, right + 1, N1):
+        #warning-ignore:narrowing_conversion
         right2 = min(i + N1 - 1, right)
 
         multi_select_min_y(items, i, right2, N2)
 
-        for (j = i; j <= right2; j += N2):
+        for j in range(i, right2 + 1, N2):
+            #warning-ignore:narrowing_conversion
             right3 = min(j + N2 - 1, right2)
 
             # pack each entry recursively
@@ -270,8 +260,6 @@ func _build(items: Array, left: int, right: int, height: int) -> Dictionary:
     return node
 
 func _choose_subtree(bbox: Dictionary, node: Dictionary, level: int, path: Array) -> Dictionary:
-    var i: int
-    var length: int
     var child: Dictionary
     var target_node: Dictionary
     var area: float
@@ -282,13 +270,13 @@ func _choose_subtree(bbox: Dictionary, node: Dictionary, level: int, path: Array
     while true:
         path.push_back(node)
 
-        if node.is_leaf or path.length - 1 == level:
+        if node.is_leaf or path.size() - 1 == level:
             break
 
         min_area = INF
         min_enlargement = INF
 
-        for (i = 0, length = node.children.length; i < length; i += 1):
+        for i in range(node.children.size()):
             child = node.children[i]
             area = bbox_area(child)
             enlargement = enlarged_area(bbox, child) - area
@@ -309,7 +297,7 @@ func _choose_subtree(bbox: Dictionary, node: Dictionary, level: int, path: Array
 
     return node
 
-func _insert(item: Dictionary, level: int, is_node: bool) -> void:
+func _insert(item: Dictionary, level: int) -> void:
     var bbox := item
     var insert_path := []
 
@@ -318,6 +306,7 @@ func _insert(item: Dictionary, level: int, is_node: bool) -> void:
 
     # put the item into the node
     node.children.push(item)
+    #warning-ignore:return_value_discarded
     extend(node, bbox)
 
     # split on node overflow; propagate upwards if necessary
@@ -334,7 +323,7 @@ func _insert(item: Dictionary, level: int, is_node: bool) -> void:
 # split overflowed node into two
 func _split(insert_path: Array, level: int) -> void:
     var node: Dictionary = insert_path[level]
-    var M := node.children.size()
+    var M: int = node.children.size()
     var m := _minEntries
 
     _choose_split_axis(node, m, M)
@@ -361,18 +350,15 @@ func _split_root(node: Dictionary, new_node: Dictionary) -> void:
     calc_bbox(root)
 
 func _choose_split_index(node: Dictionary, m: int, M: int) -> int:
-    var i: int
     var bbox1: Dictionary
     var bbox2: Dictionary
     var overlap: float
     var area: float
-    var min_overlap: float
-    var min_area: float
+    var min_overlap := INF
+    var min_area := INF
     var index: int
 
-    min_overlap = min_area = INF
-
-    for (i = m; i <= M - m; i += 1):
+    for i in range(m, M - m + 1):
         bbox1 = dist_bbox(node, 0, i)
         bbox2 = dist_bbox(node, i, M)
 
@@ -396,31 +382,29 @@ func _choose_split_index(node: Dictionary, m: int, M: int) -> int:
 
 # sorts node children by the best axis for split
 func _choose_split_axis(node: Dictionary, m: int, M: int) -> void:
-    var x_margin := _all_dist_margin(node, m, M, _compare_min_x)
-    var y_margin := _all_dist_margin(node, m, M, _compare_min_y)
+    var x_margin := _all_dist_margin(node, m, M, self, "_compare_min_x")
+    var y_margin := _all_dist_margin(node, m, M, self, "_compare_min_y")
 
     # if total distributions margin value is minimal for x, sort by min_x,
     # otherwise it's already sorted by min_y
     if x_margin < y_margin:
-        node.children.sort(_compare_min_x)
+        node.children.sort_custom(self, "_compare_min_x")
 
 # total margin of all possible split distributions where each node is at least m full
-# FIXME: refactor compare
-func _all_dist_margin(node: Dictionary, m: int, M: int, compare) -> float:
-    node.children.sort(compare)
+func _all_dist_margin(node: Dictionary, m: int, M: int, compare_obj: Object, compare_fn: String) -> float:
+    node.children.sort_custom(compare_obj, compare_fn)
 
     var left_bbox := dist_bbox(node, 0, m)
     var right_bbox := dist_bbox(node, M - m, M)
     var margin := bbox_margin(left_bbox) + bbox_margin(right_bbox)
-    var i: int
     var child: Dictionary
 
-    for (i = m; i < M - m; i += 1):
+    for i in range(m, M - m):
         child = node.children[i]
         extend(left_bbox, child)
         margin += bbox_margin(left_bbox)
 
-    for (i = M - m - 1; i >= m; i -= 1):
+    for i in range(M - m - 1, m - 1, -1):
         child = node.children[i]
         extend(right_bbox, child)
         margin += bbox_margin(right_bbox)
@@ -429,12 +413,14 @@ func _all_dist_margin(node: Dictionary, m: int, M: int, compare) -> float:
 
 func _adjust_parent_bboxes(bbox: Dictionary, path: Array, level: int) -> void:
     # adjust bboxes along the given tree path
-    for (var i = level; i >= 0; i -= 1):
+    for i in range(level, -1, -1):
         extend(path[i], bbox)
 
 func _condense(path: Array) -> void:
+    var siblings: Array
+    
     # go through the path, removing empty nodes and updating bboxes
-    for (var i = path.size() - 1, siblings; i >= 0; i -= 1):
+    for i in range(path.size() - 1, -1, -1):
         if path[i].children.size() == 0:
             if i > 0:
                 siblings = path[i - 1].children
@@ -444,22 +430,22 @@ func _condense(path: Array) -> void:
         else:
             calc_bbox(path[i])
 
-# FIXME: refactor equals_fn
-func find_item(item: Dictionary, items: Array, equals_fn) -> int:
-    if equals_fn == null:
+func find_item(item: Dictionary, items: Array, custom_equals_obj: Object = null, custom_equals_fn: String = "") -> int:
+    if custom_equals_obj == null:
         return items.find(item)
 
-    for (var i = 0; i < items.length; i += 1):
-        if equals_fn(item, items[i]):
+    for i in range(items.size()):
+        if custom_equals_obj.call(custom_equals_fn, [item, items[i]]):
             return i
     return -1
 
 # calculate node's bbox from bboxes of its children
-func calc_bbox(node: Dictionary) -> Dictionary:
+func calc_bbox(node: Dictionary) -> void:
+    #warning-ignore:return_value_discarded
     dist_bbox(node, 0, node.children.size(), node)
 
 # min bounding rectangle of node children from k to p-1
-func dist_bbox(node: Dictionary, k: int, p: int, dest_node: Dictionary) -> Dictionary:
+static func dist_bbox(node: Dictionary, k: int, p: int, dest_node = null) -> Dictionary:
     if dest_node == null:
         dest_node = create_node(null)
     dest_node.min_x = INF
@@ -467,34 +453,37 @@ func dist_bbox(node: Dictionary, k: int, p: int, dest_node: Dictionary) -> Dicti
     dest_node.max_x = -INF
     dest_node.max_y = -INF
 
-    for (var i = k, child; i < p; i += 1):
+    var child: Dictionary
+
+    for i in range(k, p):
         child = node.children[i]
         extend(dest_node, child)
 
     return dest_node
 
-func extend(a: Dictionary, b: Dictionary) -> Dictionary:
+static func extend(a: Dictionary, b: Dictionary) -> void:
     a.min_x = min(a.min_x, b.min_x)
     a.min_y = min(a.min_y, b.min_y)
     a.max_x = max(a.max_x, b.max_x)
     a.max_y = max(a.max_y, b.max_y)
-    return a
 
-func _compare_min_x(a: Dictionary, b: Dictionary) -> float:
+static func _compare_min_x(a: Dictionary, b: Dictionary) -> float:
     return a.min_x - b.min_x
-func _compare_min_y(a: Dictionary, b: Dictionary) -> float:
+
+static func _compare_min_y(a: Dictionary, b: Dictionary) -> float:
     return a.min_y - b.min_y
 
-func bbox_area(a: Dictionary) -> float:
+static func bbox_area(a: Dictionary) -> float:
     return (a.max_x - a.min_x) * (a.max_y - a.min_y)
-func bbox_margin(a: Dictionary) -> float:
+
+static func bbox_margin(a: Dictionary) -> float:
     return (a.max_x - a.min_x) + (a.max_y - a.min_y)
 
-func enlarged_area(a: Dictionary, b: Dictionary) -> float:
+static func enlarged_area(a: Dictionary, b: Dictionary) -> float:
     return (max(b.max_x, a.max_x) - min(b.min_x, a.min_x)) * \
            (max(b.max_y, a.max_y) - min(b.min_y, a.min_y))
 
-func intersection_area(a: Dictionary, b: Dictionary) -> float:
+static func intersection_area(a: Dictionary, b: Dictionary) -> float:
     var min_x := max(a.min_x, b.min_x)
     var min_y := max(a.min_y, b.min_y)
     var max_x := min(a.max_x, b.max_x)
@@ -503,19 +492,19 @@ func intersection_area(a: Dictionary, b: Dictionary) -> float:
     return max(0, max_x - min_x) * \
            max(0, max_y - min_y)
 
-func contains(a: Dictionary, b: Dictionary) -> bool:
+static func contains(a: Dictionary, b: Dictionary) -> bool:
     return a.min_x <= b.min_x and \
            a.min_y <= b.min_y and \
            b.max_x <= a.max_x and \
            b.max_y <= a.max_y
 
-func intersects(a: Dictionary, b: Dictionary) -> bool:
+static func intersects(a: Dictionary, b: Dictionary) -> bool:
     return b.min_x <= a.max_x and \
            b.min_y <= a.max_y and \
            b.max_x >= a.min_x and \
            b.max_y >= a.min_y
 
-func create_node(children: Array) -> Dictionary:
+static func create_node(children) -> Dictionary:
     return {
         children: children,
         height: 1,
@@ -529,37 +518,45 @@ func create_node(children: Array) -> Dictionary:
 # sort an array so that items come in groups of n unsorted items, with groups sorted between each other
 # combines selection algorithm with binary divide & conquer approach
 
-func multi_select_min_x(arr: Array, left: int, right: int, n: int) -> void:
+static func multi_select_min_x(arr: Array, left: int, right: int, n: int) -> void:
     var stack := [left, right]
     var mid: int
 
     while !stack.empty():
-        right = stack.pop()
-        left = stack.pop()
+        right = stack.pop_back()
+        left = stack.pop_back()
 
         if right - left <= n:
             continue
 
-        mid = left + ceil((right - left) / n / 2) * n
+        #warning-ignore:narrowing_conversion
+        mid = left + ceil((right - left) * 1.0 / n / 2) * n
         quickselect_min_x(arr, mid, left, right)
 
-        stack.push(left, mid, mid, right)
+        stack.push_back(left)
+        stack.push_back(mid)
+        stack.push_back(mid)
+        stack.push_back(right)
 
-func multi_select_min_y(arr: Array, left: int, right: int, n: int) -> void:
+static func multi_select_min_y(arr: Array, left: int, right: int, n: int) -> void:
     var stack := [left, right]
     var mid: int
 
     while !stack.empty():
-        right = stack.pop()
-        left = stack.pop()
+        right = stack.pop_back()
+        left = stack.pop_back()
 
         if right - left <= n:
             continue
 
-        mid = left + ceil((right - left) / n / 2) * n
+        #warning-ignore:narrowing_conversion
+        mid = left + ceil((right - left) * 1.0 / n / 2) * n
         quickselect_min_y(arr, mid, left, right)
 
-        stack.push(left, mid, mid, right)
+        stack.push_back(left)
+        stack.push_back(mid)
+        stack.push_back(mid)
+        stack.push_back(right)
 
 ###################################################################################################
 # Adapted from the rbush-knn library
@@ -582,21 +579,19 @@ func multi_select_min_y(arr: Array, left: int, right: int, n: int) -> void:
 # THIS SOFTWARE.
 ###################################################################################################
 
-# FIXME: refactor predicate
-func knn(tree, x: float, y: float, n: int, predicate, max_distance: float) -> Array:
+func knn(tree, x: float, y: float, n: int, custom_predicate_obj: Object, custom_predicate_fn: String, max_distance: float) -> Array:
     var node: Dictionary = tree.root
     var result: Array = []
-    var i: int
-    var child: Variant
+    var child: Dictionary
     var dist: float
-    var candidate: Variant
+    var candidate: Dictionary
 
-    var queue = PriorityQueue.new(null)
+    var queue := PriorityQueue.new()
 
     while node != null:
-        for (i = 0; i < node.children.length; i += 1):
+        for i in range(node.children.size()):
             child = node.children[i]
-            dist = boxDist(x, y, child)
+            dist = box_dist(x, y, child)
             if max_distance == 0 or dist <= max_distance:
                 queue.push({
                     node: child,
@@ -606,7 +601,7 @@ func knn(tree, x: float, y: float, n: int, predicate, max_distance: float) -> Ar
 
         while queue.length > 0 and queue.peek().is_item:
             candidate = queue.pop().node
-            if predicate == null or predicate(candidate):
+            if custom_predicate_obj == null or custom_predicate_obj.call(custom_predicate_fn, [candidate]):
                 result.push_back(candidate)
             if n > 0 and result.size() == n:
                 return result
@@ -617,18 +612,17 @@ func knn(tree, x: float, y: float, n: int, predicate, max_distance: float) -> Ar
 
     return result
 
-func compare_dist(a: float, b: float) -> float:
+static func compare_dist(a: Dictionary, b: Dictionary) -> float:
     return a.dist - b.dist
 
-# FIXME: box type
-func boxDist(x: float, y: float, box) -> float:
+static func box_dist(x: float, y: float, box: Dictionary) -> float:
     var dx = axis_dist(x, box.min_x, box.max_x)
     var dy = axis_dist(y, box.min_y, box.max_y)
     return dx * dx + dy * dy
 
-func axis_dist(k: float, min_value: float, max_value: float) -> float:
+static func axis_dist(k: float, min_value: float, max_value: float) -> float:
     return min_value - k if k < min_value else \
-            (0 if k <= max_value else k - max_value)
+            (0.0 if k <= max_value else k - max_value)
 
 ###################################################################################################
 # Adapted from the quickselect library
@@ -651,7 +645,7 @@ func axis_dist(k: float, min_value: float, max_value: float) -> float:
 # THIS SOFTWARE.
 ###################################################################################################
 
-func quickselect_min_x(arr: Array, k: int, left: int, right: int) -> void:
+static func quickselect_min_x(arr: Array, k: int, left: int, right: int) -> void:
     while right > left:
         if right - left > 600:
             var n := right - left + 1
@@ -659,11 +653,13 @@ func quickselect_min_x(arr: Array, k: int, left: int, right: int) -> void:
             var z := log(n)
             var s := 0.5 * exp(2 * z / 3)
             var sd := 0.5 * sqrt(z * s * (n - s) / n) * (-1 if m - n / 2 < 0 else 1)
-            var new_left := max(left, floor(k - m * s / n + sd))
-            var new_right := min(right, floor(k + (n - m) * s / n + sd))
+            #warning-ignore:narrowing_conversion
+            var new_left: int = max(left, floor(k - m * s / n + sd))
+            #warning-ignore:narrowing_conversion
+            var new_right: int = min(right, floor(k + (n - m) * s / n + sd))
             quickselect_min_x(arr, k, new_left, new_right)
 
-        var t := arr[k]
+        var t: Dictionary = arr[k]
         var i := left
         var j := right
 
@@ -691,7 +687,7 @@ func quickselect_min_x(arr: Array, k: int, left: int, right: int) -> void:
         if k <= j:
             right = j - 1
 
-func quickselect_min_y(arr: Array, k: int, left: int, right: int) -> void:
+static func quickselect_min_y(arr: Array, k: int, left: int, right: int) -> void:
     while right > left:
         if right - left > 600:
             var n := right - left + 1
@@ -699,11 +695,13 @@ func quickselect_min_y(arr: Array, k: int, left: int, right: int) -> void:
             var z := log(n)
             var s := 0.5 * exp(2 * z / 3)
             var sd := 0.5 * sqrt(z * s * (n - s) / n) * (-1 if m - n / 2 < 0 else 1)
-            var new_left := max(left, floor(k - m * s / n + sd))
-            var new_right := min(right, floor(k + (n - m) * s / n + sd))
+            #warning-ignore:narrowing_conversion
+            var new_left: int = max(left, floor(k - m * s / n + sd))
+            #warning-ignore:narrowing_conversion
+            var new_right: int = min(right, floor(k + (n - m) * s / n + sd))
             quickselect_min_y(arr, k, new_left, new_right)
 
-        var t := arr[k]
+        var t: Dictionary = arr[k]
         var i := left
         var j := right
 
@@ -731,8 +729,8 @@ func quickselect_min_y(arr: Array, k: int, left: int, right: int) -> void:
         if k <= j:
             right = j - 1
 
-func _swap(arr: Array, i: int, j: int) -> void:
-    var tmp: Variant = arr[i]
+static func _swap(arr: Array, i: int, j: int) -> void:
+    var tmp = arr[i]
     arr[i] = arr[j]
     arr[j] = tmp
 
@@ -758,8 +756,6 @@ func _swap(arr: Array, i: int, j: int) -> void:
 ###################################################################################################
 
 class PriorityQueue extends Reference:
-    class_name PriorityQueue
-    
     var items: Array
     var length: int
     
@@ -768,20 +764,20 @@ class PriorityQueue extends Reference:
         length = items.size()
 
         if length > 0:
-            for (var i = (length >> 1) - 1; i >= 0; i -= 1):
+            for i in range((length >> 1) - 1, -1, -1):
                 _down(i)
 
-    func push(item: Variant) -> void:
+    func push(item) -> void:
         items.push_back(item)
         length += 1
         _up(length - 1)
 
-    func pop() -> Variant:
+    func pop():
         if length == 0:
             return null
 
-        var top: Variant = items[0]
-        var bottom: Variant = items.pop_back()
+        var top = items[0]
+        var bottom = items.pop_back()
         length -= 1
 
         if length > 0:
@@ -790,7 +786,7 @@ class PriorityQueue extends Reference:
 
         return top
 
-    func peek() -> Variant:
+    func peek():
         return items[0]
 
     func _up(pos: int) -> void:
@@ -798,9 +794,9 @@ class PriorityQueue extends Reference:
 
         while pos > 0:
             var parent := (pos - 1) >> 1
-            var current: Variant = items[parent]
+            var current = items[parent]
             
-            if compare_dist(item, current) >= 0:
+            if RTree.compare_dist(item, current) >= 0:
                 break
                 
             items[pos] = current
@@ -810,20 +806,41 @@ class PriorityQueue extends Reference:
 
     func _down(pos: int) -> void:
         var half_length := length >> 1
-        var item: Variant = items[pos]
+        var item = items[pos]
 
         while pos < half_length:
             var left := (pos << 1) + 1
-            var best: Variant = items[left]
+            var best = items[left]
             var right := left + 1
 
-            if right < length and compare_dist(items[right], best) < 0:
+            if right < length and RTree.compare_dist(items[right], best) < 0:
                 left = right
                 best = items[right]
-            if compare_dist(best, item) >= 0:
+            if RTree.compare_dist(best, item) >= 0:
                 break
 
             items[pos] = best
             pos = left
 
         items[pos] = item
+
+###################################################################################################
+
+# TODO: Replace this with any built-in feature whenever it exists
+#       (https://github.com/godotengine/godot/issues/4715).
+static func subarray(array: Array, start: int, length: int) -> Array:
+    var result = range(length)
+    for i in result:
+        result[i] = array[start + i]
+    return result
+
+# TODO: Replace this with any built-in feature whenever it exists
+#       (https://github.com/godotengine/godot/issues/4715).
+static func concat(result: Array, other: Array) -> void:
+    var old_result_size = result.size()
+    var other_size = other.size()
+    
+    result.resize(old_result_size + other_size)
+    
+    for i in range(other_size):
+        result[old_result_size + i] = other[i]
