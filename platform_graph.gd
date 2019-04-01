@@ -3,9 +3,14 @@ class_name PlatformGraph
 
 # TODO: Map the TileMap into an RTree or QuadTree.
 
-var floors := []
-var left_walls := []
-var right_walls := []
+# Collections of surfaces. Each individual surface is a PoolVector2Array.
+var floors: Array
+var ceilings: Array
+var left_walls: Array
+var right_walls: Array
+
+func _init(tile_map: TileMap) -> void:
+    parse_tile_map(tile_map)
 
 # Parses the given TileMap into a platform graph.
 # 
@@ -20,21 +25,34 @@ var right_walls := []
 #   non-collidable tiles.
 # - The given TileMap only uses tiles with convex collision boundaries.
 func parse_tile_map(tile_map: TileMap) -> void:
-    # TODO:
-    # - Print how long each step takes to run.
-    # - Render annotations.
+    var floors := []
+    var ceilings := []
+    var left_walls := []
+    var right_walls := []
     
     print("_parse_tile_map_into_sides")
-    _parse_tile_map_into_sides(tile_map)
+    _parse_tile_map_into_sides(tile_map, floors, ceilings, left_walls, right_walls)
+    print("_remove_internal_surfaces: floors+ceilings")
+    _remove_internal_surfaces(floors, ceilings)
+    print("_remove_internal_surfaces: left_walls+right_walls")
+    _remove_internal_surfaces(left_walls, right_walls)
     print("_merge_continuous_surfaces: floors")
     _merge_continuous_surfaces(floors)
+    print("_merge_continuous_surfaces: ceilings")
+    _merge_continuous_surfaces(ceilings)
     print("_merge_continuous_surfaces: left_walls")
     _merge_continuous_surfaces(left_walls)
     print("_merge_continuous_surfaces: right_walls")
     _merge_continuous_surfaces(right_walls)
+    
+    self.floors = _convert_polyline_arrays_to_pool_arrays(floors)
+    self.ceilings = _convert_polyline_arrays_to_pool_arrays(ceilings)
+    self.left_walls = _convert_polyline_arrays_to_pool_arrays(left_walls)
+    self.right_walls = _convert_polyline_arrays_to_pool_arrays(right_walls)
 
 # Parses the tiles of given TileMap into their constituent top-sides, left-sides, and right-sides.
-func _parse_tile_map_into_sides(tile_map: TileMap) -> void:
+func _parse_tile_map_into_sides(tile_map: TileMap, \
+        floors: Array, ceilings: Array, left_walls: Array, right_walls: Array) -> void:
     var tile_set := tile_map.tile_set
     var cell_size := tile_map.cell_size
     var used_cells := tile_map.get_used_cells()
@@ -58,14 +76,15 @@ func _parse_tile_map_into_sides(tile_map: TileMap) -> void:
         
         # Calculate and store the polylines from this shape that correspond to the shape's
         # top-side, right-side, and left-side.
-        _parse_polygon_into_sides(vertices_world_coords)
+        _parse_polygon_into_sides(vertices_world_coords, floors, ceilings, left_walls, right_walls)
 
 # Parses the given polygon into separate polylines corresponding to the top-side, left-side, and
 # right-side of the shape. Each of these polylines will be stored with their vertices in clockwise
 # order.
-func _parse_polygon_into_sides(vertices: Array) -> void:
+func _parse_polygon_into_sides(vertices: Array, \
+        floors: Array, ceilings: Array, left_walls: Array, right_walls: Array) -> void:
     var vertex_count := vertices.size()
-    var is_clockwise := _is_polygon_clockwise(vertices)
+    var is_clockwise: bool = Global.is_polygon_clockwise(vertices)
     
     # Find the left-most, right-most, and bottom-most vertices.
     
@@ -198,6 +217,15 @@ func _parse_polygon_into_sides(vertices: Array) -> void:
         i = (i + step) % vertex_count
     top_side_vertices.push_back(vertices[i])
     
+    # Calculate the polyline corresponding to the bottom side.
+    
+    var bottom_side_vertices := []
+    i = right_side_end_index
+    while i != left_side_start_index:
+        bottom_side_vertices.push_back(vertices[i])
+        i = (i + step) % vertex_count
+    bottom_side_vertices.push_back(vertices[i])
+    
     # Calculate the polyline corresponding to the left side.
     
     var left_side_vertices := []
@@ -219,8 +247,83 @@ func _parse_polygon_into_sides(vertices: Array) -> void:
     # Store the polylines.
     
     floors.push_back(top_side_vertices)
+    ceilings.push_back(bottom_side_vertices)
     left_walls.push_back(right_side_vertices)
     right_walls.push_back(left_side_vertices)
+
+# Removes some "internal" surfaces.
+# 
+# Specifically, this checks for pairs of floor+ceiling segments or left-wall+right-wall segments
+# that share the same vertices. Both segments in these pairs are considered internal, and are
+# removed.
+# 
+# Any surface polyline that consists of more than one segment is ignored.
+func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array) -> void:
+    var i: int
+    var j: int
+    var count_i: int
+    var count_j: int
+    var surface1: Array
+    var surface2: Array
+    var surface1_front: Vector2
+    var surface1_back: Vector2
+    var surface2_front: Vector2
+    var surface2_back: Vector2
+    var front_back_diff_x: float
+    var front_back_diff_y: float
+    var back_front_diff_x: float
+    var back_front_diff_y: float
+    
+    count_i = surfaces.size()
+    count_j = opposite_surfaces.size()
+    i = 0
+    while i < count_i:
+        surface1 = surfaces[i]
+        
+        if surface1.size() > 2:
+            i += 1
+            continue
+        
+        surface1_front = surface1.front()
+        surface1_back = surface1.back()
+        
+        j = 0
+        while j < count_j:
+            surface2 = opposite_surfaces[j]
+            
+            if surface2.size() > 2:
+                j += 1
+                continue
+            
+            surface2_front = surface2.front()
+            surface2_back = surface2.back()
+            
+            # Vector equality checks, allowing for some round-off error.
+            front_back_diff_x = surface1_front.x - surface2_back.x
+            front_back_diff_y = surface1_front.y - surface2_back.y
+            back_front_diff_x = surface1_back.x - surface2_front.x
+            back_front_diff_y = surface1_back.y - surface2_front.y
+            if front_back_diff_x < Global.FLOAT_EPSILON and \
+                    front_back_diff_x > -Global.FLOAT_EPSILON and \
+                    front_back_diff_y < Global.FLOAT_EPSILON and \
+                    front_back_diff_y > -Global.FLOAT_EPSILON and \
+                    back_front_diff_x < Global.FLOAT_EPSILON and \
+                    back_front_diff_x > -Global.FLOAT_EPSILON and \
+                    back_front_diff_y < Global.FLOAT_EPSILON and \
+                    back_front_diff_y > -Global.FLOAT_EPSILON:
+                # We found a pair of equivalent (internal) segments, so remove them.
+                surfaces.remove(i)
+                opposite_surfaces.remove(j)
+                
+                i -= 1
+                j -= 1
+                count_i -= 1
+                count_j -= 1
+                break
+            
+            j += 1
+        
+        i += 1
 
 # Merges adjacent continuous surfaces.
 func _merge_continuous_surfaces(surfaces: Array) -> void:
@@ -298,16 +401,8 @@ func _merge_continuous_surfaces(surfaces: Array) -> void:
             
             i += 1
 
-# Determine whether the points of the polygon are defined in a clockwise direction. This uses the
-# shoelace formula.
-func _is_polygon_clockwise(vertices: Array) -> bool:
-    var vertex_count := vertices.size()
-    var sum := 0.0
-    var v1: Vector2 = vertices[vertex_count - 1]
-    var v2: Vector2 = vertices[0]
-    sum += (v2.x - v1.x) * (v2.y + v1.y)
-    for i in range(vertex_count - 1):
-        v1 = vertices[i]
-        v2 = vertices[i + 1]
-        sum += (v2.x - v1.x) * (v2.y + v1.y)
-    return sum < 0
+func _convert_polyline_arrays_to_pool_arrays(surfaces: Array) -> Array:
+    var result := surfaces.duplicate()
+    for i in range(result.size()):
+        result[i] = PoolVector2Array(result[i])
+    return result

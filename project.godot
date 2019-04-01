@@ -24,10 +24,20 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://global.gd"
 }, {
+"base": "Node",
+"class": "Level",
+"language": "GDScript",
+"path": "res://level.gd"
+}, {
 "base": "Reference",
 "class": "PlatformGraph",
 "language": "GDScript",
 "path": "res://platform_graph.gd"
+}, {
+"base": "Node2D",
+"class": "PlatformGraphAnnotator",
+"language": "GDScript",
+"path": "res://platform_graph_annotator.gd"
 }, {
 "base": "Reference",
 "class": "RTree",
@@ -43,7 +53,9 @@ _global_script_class_icons={
 "CatAnimator": "",
 "CatPlayer": "",
 "Global": "",
+"Level": "",
 "PlatformGraph": "",
+"PlatformGraphAnnotator": "",
 "RTree": "",
 "Squirrel": ""
 }
