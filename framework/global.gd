@@ -9,6 +9,10 @@ const FLOOR_MAX_ANGLE := PI / 4
 const GRAVITY := 5000.0
 const FLOAT_EPSILON := 0.00001
 
+static func error(message: String) -> void:
+    print("ERROR: %s" % message)
+    assert(true)
+
 # TODO: Replace this with any built-in feature whenever it exists
 #       (https://github.com/godotengine/godot/issues/4715).
 static func subarray(array: Array, start: int, length: int) -> Array:

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/cat-parts.png-4f7c5e4b7b6db4eb2e369ff9bea64198.stex"
+path="res://.import/cat-parts.png-d66628fe002b722b44e6ab27341114e0.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://cat-parts.png"
-dest_files=[ "res://.import/cat-parts.png-4f7c5e4b7b6db4eb2e369ff9bea64198.stex" ]
+source_file="res://players/cat-parts.png"
+dest_files=[ "res://.import/cat-parts.png-d66628fe002b722b44e6ab27341114e0.stex" ]
 
 [params]
 

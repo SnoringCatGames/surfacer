@@ -1,4 +1,4 @@
-extends KinematicBody2D
+extends HumanPlayer
 class_name CatPlayer
 
 const SLOW_JUMP_ASCENT_GRAVITY_MULTIPLIER := .38
@@ -25,7 +25,6 @@ const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15
 const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * 4
 
 var velocity := Vector2()
-var horizontal_facing_sign := -1
 var is_ascending_from_jump := false
 var jump_count := 0
 var is_grabbing_wall := false
@@ -55,17 +54,24 @@ func _ready() -> void:
     horizontal_facing_sign = 1
     $CatAnimator.face_right()
 
-func _physics_process(delta: float) -> void:
-    _process_input(delta)
-
-    # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
-    # into account.
-    #warning-ignore:return_value_discarded
-    move_and_slide(velocity, Global.UP, false, 4, Global.FLOOR_MAX_ANGLE)
-
-func _process_input(delta: float) -> void:
-    var actions := _get_current_actions()
+# Calculates high-level actions from low-level inputs for the current frame.
+#
+# Stores these high-level actions on the given action map.
+# {
+#   start_dash,
+#   triggering_wall_grab,
+#   start_fall_through,
+# }
+func _calculate_actions(actions: Dictionary) -> void:
+    actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
     
+    var facing_into_wall_and_pressing_up: bool = actions.pressed_up and (actions.facing_wall or actions.pressing_into_wall)
+    actions.triggering_wall_grab = actions.pressing_into_wall or facing_into_wall_and_pressing_up
+    
+    actions.start_fall_through = actions.pressed_down and actions.just_pressed_jump
+
+# Updates physics and player states in response to the current actions.
+func _process_actions(actions: Dictionary) -> void:
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if actions.pressed_left:
         horizontal_facing_sign = -1
@@ -75,75 +81,40 @@ func _process_input(delta: float) -> void:
         $CatAnimator.face_right()
     
     # Detect wall grabs.
-    if !is_on_wall():
+    if !actions.is_on_wall:
         is_grabbing_wall = false
     elif actions.triggering_wall_grab:
         is_grabbing_wall = true
         
-    # Calculate the sign of a collding wall's direction.
-    _toward_wall_collision_sign = (0 if !is_on_wall() else \
+    # Calculate the sign of a colliding wall's direction.
+    _toward_wall_collision_sign = (0 if !actions.is_on_wall else \
             (1 if actions.which_wall == "right" else -1))
     
     # Cancel any horizontal velocity when bumping into a wall.
-    if is_on_wall():
+    if actions.is_on_wall:
         # The move_and_slide system depends on maintained velocity always pushing the player into a
         # collision, otherwise it will eventually stop the collision. If we just zero this out,
         # is_on_wall() will give false negatives.
         velocity.x = MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * _toward_wall_collision_sign
 
     if is_grabbing_wall:
-        _process_input_while_on_wall(delta, actions)
-    elif is_on_floor():
-        _process_input_while_on_floor(delta, actions)
+        _process_input_while_on_wall(actions)
+    elif actions.is_on_floor:
+        _process_input_while_on_floor(actions)
     else:
-        _process_input_while_in_air(delta, actions)
+        _process_input_while_in_air(actions)
     
     _cap_velocity()
     
     _update_collision_mask()
-
-func _get_current_actions() -> Dictionary:
-    var actions := {
-        just_pressed_jump = Input.is_action_just_pressed("jump"),
-        pressed_jump = Input.is_action_pressed("jump"),
-        pressed_up = Input.is_action_pressed("move_up"),
-        pressed_down = Input.is_action_pressed("move_down"),
-        pressed_left = Input.is_action_pressed("move_left"),
-        pressed_right = Input.is_action_pressed("move_right"),
-        which_wall = _get_which_wall_collided(),
-        horizontal_movement_sign = 0,
-        facing_wall = false,
-        pressing_into_wall = false,
-        pressing_away_from_wall = false,
-        triggering_wall_grab = false,
-        start_dash = _can_dash and Input.is_action_just_pressed("dash"),
-        start_fall_through = false
-    }
     
-    if actions.pressed_left:
-        actions.horizontal_movement_sign = -1
-    elif actions.pressed_right:
-        actions.horizontal_movement_sign = 1
-     
-    actions.facing_wall = \
-        (actions.which_wall == "right" and horizontal_facing_sign > 0) or \
-        (actions.which_wall == "left" and horizontal_facing_sign < 0)
-    actions.pressing_into_wall = \
-        (actions.which_wall == "right" and actions.pressed_right) or \
-        (actions.which_wall == "left" and actions.pressed_left)
-    actions.pressing_away_from_wall = \
-        (actions.which_wall == "right" and actions.pressed_left) or \
-        (actions.which_wall == "left" and actions.pressed_right)
-    
-    var facing_into_wall_and_pressing_up: bool = actions.pressed_up and (actions.facing_wall or actions.pressing_into_wall)
-    actions.triggering_wall_grab = actions.pressing_into_wall or facing_into_wall_and_pressing_up
-    
-    actions.start_fall_through = actions.pressed_down and actions.just_pressed_jump
-    
-    return actions
+    # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
+    # into account.
+    #warning-ignore:return_value_discarded
+    move_and_slide(velocity, Global.UP, false, 4, Global.FLOOR_MAX_ANGLE)
 
 #warning-ignore:unused_argument
-func _process_input_while_on_floor(delta: float, actions: Dictionary) -> void:
+func _process_input_while_on_floor(actions: Dictionary) -> void:
     jump_count = 0
     is_ascending_from_jump = false
     is_falling_through_floors = false
@@ -184,7 +155,7 @@ func _process_input_while_on_floor(delta: float, actions: Dictionary) -> void:
     else:
         $CatAnimator.rest()
 
-func _process_input_while_in_air(delta: float, actions: Dictionary) -> void:
+func _process_input_while_in_air(actions: Dictionary) -> void:
     # Whether we should fall through fall-through floors.
     is_falling_through_floors = actions.pressed_down
     
@@ -207,10 +178,10 @@ func _process_input_while_in_air(delta: float, actions: Dictionary) -> void:
         current_gravity = Global.GRAVITY * gravity_multiplier
     else:
         current_gravity = Global.GRAVITY
-    velocity.y += delta * current_gravity
+    velocity.y += actions.delta * current_gravity
     
     # Hit ceiling.
-    if is_on_ceiling():
+    if actions.is_on_ceiling:
         is_ascending_from_jump = false
         velocity.y = MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
     
@@ -231,7 +202,7 @@ func _process_input_while_in_air(delta: float, actions: Dictionary) -> void:
         $CatAnimator.jump_ascend()
 
 #warning-ignore:unused_argument
-func _process_input_while_on_wall(delta: float, actions: Dictionary) -> void:
+func _process_input_while_on_wall(actions: Dictionary) -> void:
     jump_count = 0
     is_ascending_from_jump = false
     is_grabbing_walk_through_walls = true
@@ -257,7 +228,7 @@ func _process_input_while_on_wall(delta: float, actions: Dictionary) -> void:
         is_grabbing_wall = false
     
     # Start walking.
-    elif is_on_floor() and actions.pressed_down:
+    elif actions.is_on_floor and actions.pressed_down:
         is_grabbing_wall = false
     
     # Climb up.

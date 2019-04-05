@@ -1,13 +1,11 @@
 [gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://cat_animator.gd" type="Script" id=1]
+[ext_resource path="res://players/cat_animator.gd" type="Script" id=1]
 
 [sub_resource type="StreamTexture" id=1]
-
 load_path = "res://.import/cat-parts.png-4f7c5e4b7b6db4eb2e369ff9bea64198.stex"
 
 [sub_resource type="Animation" id=2]
-
 length = 2.4
 loop = true
 step = 0.2
@@ -925,7 +923,6 @@ tracks/75/keys = {
 }
 
 [sub_resource type="Animation" id=3]
-
 resource_name = "JumpAscend"
 length = 0.4
 loop = true
@@ -1843,7 +1840,6 @@ tracks/75/keys = {
 }
 
 [sub_resource type="Animation" id=4]
-
 resource_name = "JumpDescend"
 length = 0.4
 loop = true
@@ -2773,7 +2769,6 @@ tracks/76/keys = {
 }
 
 [sub_resource type="Animation" id=5]
-
 length = 1.8
 loop = true
 tracks/0/type = "value"
@@ -3722,7 +3717,6 @@ tracks/77/keys = {
 }
 
 [sub_resource type="Animation" id=6]
-
 length = 1.8
 loop = true
 step = 0.2
@@ -4640,7 +4634,6 @@ tracks/75/keys = {
 }
 
 [sub_resource type="Animation" id=7]
-
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("Hip:position")
@@ -5580,7 +5573,6 @@ tracks/77/keys = {
 }
 
 [sub_resource type="Animation" id=8]
-
 length = 2.4
 loop = true
 tracks/0/type = "value"

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/squirrel-parts.png-940491d1d3e957cb694e99f270fb4f22.stex"
+path="res://.import/squirrel-parts.png-a8b47b9302569e5da9bad781d0c2eb8d.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://squirrel-parts.png"
-dest_files=[ "res://.import/squirrel-parts.png-940491d1d3e957cb694e99f270fb4f22.stex" ]
+source_file="res://players/squirrel-parts.png"
+dest_files=[ "res://.import/squirrel-parts.png-a8b47b9302569e5da9bad781d0c2eb8d.stex" ]
 
 [params]
 

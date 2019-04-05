@@ -5,7 +5,7 @@ var graph: PlatformGraph
 
 const SURFACE_DEPTH := 8.0
 const SURFACE_DEPTH_DIVISIONS_COUNT := 8
-const SURFACE_ALPHA_START := .9
+const SURFACE_ALPHA_START := .8
 const SURFACE_ALPHA_END := .1
 
 func _init(graph: PlatformGraph) -> void:
@@ -39,6 +39,7 @@ func _draw_surfaces(surfaces: Array, normal: Vector2) -> void:
                 draw_polyline(polyline, color, depth_division_size)
 #                Global.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
         else:
+            color.a = 0.6
             draw_circle(surface[0], 8.0, color)
 
 static func translate_polyline(vertices: PoolVector2Array, translation: Vector2) \

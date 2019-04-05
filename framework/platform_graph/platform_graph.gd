@@ -1,7 +1,11 @@
 extends Reference
 class_name PlatformGraph
 
+const Stopwatch = preload("res://framework/stopwatch.gd")
+
 # TODO: Map the TileMap into an RTree or QuadTree.
+
+var _stopwatch: Stopwatch
 
 # Collections of surfaces. Each individual surface is a PoolVector2Array.
 var floors: Array
@@ -10,6 +14,7 @@ var left_walls: Array
 var right_walls: Array
 
 func _init(tile_map: TileMap) -> void:
+    _stopwatch = Stopwatch.new()
     parse_tile_map(tile_map)
 
 # Parses the given TileMap into a platform graph.
@@ -30,20 +35,28 @@ func parse_tile_map(tile_map: TileMap) -> void:
     var left_walls := []
     var right_walls := []
     
-    print("_parse_tile_map_into_sides")
+    _stopwatch.start()
+    print("_parse_tile_map_into_sides...")
     _parse_tile_map_into_sides(tile_map, floors, ceilings, left_walls, right_walls)
-    print("_remove_internal_surfaces: floors+ceilings")
+    print("_parse_tile_map_into_sides duration: %sms" % _stopwatch.stop())
+    
+    _stopwatch.start()
+    print("_remove_internal_surfaces: floors+ceilings...")
     _remove_internal_surfaces(floors, ceilings)
-    print("_remove_internal_surfaces: left_walls+right_walls")
+    print("_remove_internal_surfaces: left_walls+right_walls...")
     _remove_internal_surfaces(left_walls, right_walls)
-    print("_merge_continuous_surfaces: floors")
+    print("_remove_internal_surfaces duration: %sms" % _stopwatch.stop())
+    
+    _stopwatch.start()
+    print("_merge_continuous_surfaces: floors...")
     _merge_continuous_surfaces(floors)
-    print("_merge_continuous_surfaces: ceilings")
+    print("_merge_continuous_surfaces: ceilings...")
     _merge_continuous_surfaces(ceilings)
-    print("_merge_continuous_surfaces: left_walls")
+    print("_merge_continuous_surfaces: left_walls...")
     _merge_continuous_surfaces(left_walls)
-    print("_merge_continuous_surfaces: right_walls")
+    print("_merge_continuous_surfaces: right_walls...")
     _merge_continuous_surfaces(right_walls)
+    print("_merge_continuous_surfaces duration: %sms" % _stopwatch.stop())
     
     self.floors = _convert_polyline_arrays_to_pool_arrays(floors)
     self.ceilings = _convert_polyline_arrays_to_pool_arrays(ceilings)
