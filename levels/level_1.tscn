@@ -5,9 +5,6 @@
 [ext_resource path="res://players/cat_player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://players/squirrel.tscn" type="PackedScene" id=4]
 
-
-
-
 [node name="Level1" type="Node"]
 script = ExtResource( 1 )
 
@@ -43,6 +40,6 @@ tile_data = PoolIntArray( 1376286, 5, 0, 1638427, 5, 0, 1638428, 5, 0 )
 [node name="CatPlayer" parent="." instance=ExtResource( 3 )]
 position = Vector2( 1790, 1500 )
 
-[node name="Squirrel" parent="." instance=ExtResource( 4 )]
+[node name="SquirrelPlayer" parent="." instance=ExtResource( 4 )]
 position = Vector2( 1600, 1250 )
 

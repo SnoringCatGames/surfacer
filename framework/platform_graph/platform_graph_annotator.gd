@@ -12,10 +12,10 @@ func _init(graph: PlatformGraph) -> void:
     self.graph = graph
 
 func _draw() -> void:
-    _draw_surfaces(graph.floors, Global.UP)
-    _draw_surfaces(graph.ceilings, Global.DOWN)
-    _draw_surfaces(graph.right_walls, Global.LEFT)
-    _draw_surfaces(graph.left_walls, Global.RIGHT)
+    _draw_surfaces(graph.nodes.floors, Utils.UP)
+    _draw_surfaces(graph.nodes.ceilings, Utils.DOWN)
+    _draw_surfaces(graph.nodes.right_walls, Utils.LEFT)
+    _draw_surfaces(graph.nodes.left_walls, Utils.RIGHT)
 
 func _draw_surfaces(surfaces: Array, normal: Vector2) -> void:
     var depth_division_size = SURFACE_DEPTH / SURFACE_DEPTH_DIVISIONS_COUNT
@@ -37,7 +37,7 @@ func _draw_surfaces(surfaces: Array, normal: Vector2) -> void:
                 progress = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
                 color.a = SURFACE_ALPHA_START + progress * (SURFACE_ALPHA_END - SURFACE_ALPHA_START)
                 draw_polyline(polyline, color, depth_division_size)
-#                Global.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
+#                Utils.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
         else:
             color.a = 0.6
             draw_circle(surface[0], 8.0, color)

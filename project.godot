@@ -29,11 +29,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/global.gd"
 }, {
-"base": "Reference",
-"class": "GraphNavigator",
-"language": "GDScript",
-"path": "res://framework/platform_graph/graph_navigator.gd"
-}, {
 "base": "Player",
 "class": "HumanPlayer",
 "language": "GDScript",
@@ -57,12 +52,17 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "PlatformGraphEdges",
 "language": "GDScript",
-"path": "res://framework/platform_graph/surface_edges.gd"
+"path": "res://framework/platform_graph/platform_graph_edges.gd"
+}, {
+"base": "Reference",
+"class": "PlatformGraphNavigator",
+"language": "GDScript",
+"path": "res://framework/platform_graph/platform_graph_navigator.gd"
 }, {
 "base": "Reference",
 "class": "PlatformGraphNodes",
 "language": "GDScript",
-"path": "res://framework/platform_graph/surface_nodes.gd"
+"path": "res://framework/platform_graph/platform_graph_nodes.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "Player",
@@ -75,31 +75,43 @@ _global_script_classes=[ {
 "path": "res://framework/r_tree.gd"
 }, {
 "base": "KinematicBody2D",
-"class": "Squirrel",
+"class": "SquirrelPlayer",
 "language": "GDScript",
-"path": "res://players/squirrel.gd"
+"path": "res://players/squirrel_player.gd"
 }, {
 "base": "Reference",
 "class": "Stopwatch",
 "language": "GDScript",
 "path": "res://framework/stopwatch.gd"
+}, {
+"base": "Reference",
+"class": "SurfaceState",
+"language": "GDScript",
+"path": "res://framework/surface_state.gd"
+}, {
+"base": "Node",
+"class": "Utils",
+"language": "GDScript",
+"path": "res://framework/utils.gd"
 } ]
 _global_script_class_icons={
 "CatAnimator": "",
 "CatPlayer": "",
 "ComputerPlayer": "",
 "Global": "",
-"GraphNavigator": "",
 "HumanPlayer": "",
 "Level": "",
 "PlatformGraph": "",
 "PlatformGraphAnnotator": "",
 "PlatformGraphEdges": "",
+"PlatformGraphNavigator": "",
 "PlatformGraphNodes": "",
 "Player": "",
 "RTree": "",
-"Squirrel": "",
-"Stopwatch": ""
+"SquirrelPlayer": "",
+"Stopwatch": "",
+"SurfaceState": "",
+"Utils": ""
 }
 
 [application]
@@ -110,6 +122,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
+Utils="*res://framework/utils.gd"
 Global="*res://framework/global.gd"
 
 [input]

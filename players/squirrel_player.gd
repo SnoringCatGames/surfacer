@@ -1,5 +1,5 @@
 extends KinematicBody2D
-class_name Squirrel
+class_name SquirrelPlayer
 
 const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15
 const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * 4
@@ -15,4 +15,4 @@ func _physics_process(delta: float) -> void:
 
     # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
     # into account.
-    move_and_slide(velocity, Global.UP, false, 4, Global.FLOOR_MAX_ANGLE)
+    move_and_slide(velocity, Utils.UP, false, 4, Utils.FLOOR_MAX_ANGLE)

@@ -3,35 +3,31 @@ class_name CatPlayer
 
 const SLOW_JUMP_ASCENT_GRAVITY_MULTIPLIER := .38
 const SLOW_DOUBLE_JUMP_ASCENT_GRAVITY_MULTIPLIER := .68
-const WALK_SPEED := 350
+const WALK_SPEED := 350.0
 const FRICTION_MULTIPLIER := 0.01 # For calculating friction for walking
-const IN_AIR_HORIZONTAL_SPEED := 300
-const DEFAULT_MAX_HORIZONTAL_SPEED := 400
-const MIN_HORIZONTAL_SPEED := 50
-const MAX_VERTICAL_SPEED := 4000
-const MIN_VERTICAL_SPEED := 0
-const CLIMB_UP_SPEED := -350
-const CLIMB_DOWN_SPEED := 150
-const JUMP_SPEED := -1000
+const IN_AIR_HORIZONTAL_SPEED := 300.0
+const DEFAULT_MAX_HORIZONTAL_SPEED := 400.0
+const MIN_HORIZONTAL_SPEED := 50.0
+const MAX_VERTICAL_SPEED := 4000.0
+const MIN_VERTICAL_SPEED := 0.0
+const CLIMB_UP_SPEED := -350.0
+const CLIMB_DOWN_SPEED := 150.0
+const JUMP_SPEED := -1000.0
 const WALL_JUMP_HORIZONTAL_MULTIPLIER := .5
 const MAX_JUMP_CHAIN := 2
-const DASH_SPEED_MULTIPLIER := 4
-const DASH_VERTICAL_SPEED := -400
+const DASH_SPEED_MULTIPLIER := 4.0
+const DASH_VERTICAL_SPEED := -400.0
 const DASH_DURATION := .3
 const DASH_FADE_DURATION := .1
-const DASH_COOLDOWN := 1
-const FALL_THROUGH_FLOOR_VELOCITY_BOOST := 100
-const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15
-const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * 4
+const DASH_COOLDOWN := 1.0
+const FALL_THROUGH_FLOOR_VELOCITY_BOOST := 100.0
+const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15.0
+const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * 4.0
 
 var velocity := Vector2()
 var is_ascending_from_jump := false
 var jump_count := 0
-var is_grabbing_wall := false
-var is_falling_through_floors := false
-var is_grabbing_walk_through_walls := false
 
-var _toward_wall_collision_sign := 0;
 var _current_max_horizontal_speed := DEFAULT_MAX_HORIZONTAL_SPEED
 var _can_dash := true
 
@@ -51,58 +47,44 @@ func _ready() -> void:
     add_child(_dash_cooldown_timer)
     
     # Start facing the right.
-    horizontal_facing_sign = 1
+    surface_state.horizontal_facing_sign = 1
     $CatAnimator.face_right()
 
-# Calculates high-level actions from low-level inputs for the current frame.
+# Gets actions for the current frame.
 #
-# Stores these high-level actions on the given action map.
+# Stores these additional actions on the action map.
 # {
 #   start_dash,
-#   triggering_wall_grab,
-#   start_fall_through,
 # }
-func _calculate_actions(actions: Dictionary) -> void:
+func _get_actions(delta: float) -> Dictionary:
+    var actions := ._get_actions(delta)
+    
     actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
     
-    var facing_into_wall_and_pressing_up: bool = actions.pressed_up and (actions.facing_wall or actions.pressing_into_wall)
-    actions.triggering_wall_grab = actions.pressing_into_wall or facing_into_wall_and_pressing_up
-    
-    actions.start_fall_through = actions.pressed_down and actions.just_pressed_jump
+    return actions
 
 # Updates physics and player states in response to the current actions.
 func _process_actions(actions: Dictionary) -> void:
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if actions.pressed_left:
-        horizontal_facing_sign = -1
         $CatAnimator.face_left()
     if actions.pressed_right:
-        horizontal_facing_sign = 1
         $CatAnimator.face_right()
     
-    # Detect wall grabs.
-    if !actions.is_on_wall:
-        is_grabbing_wall = false
-    elif actions.triggering_wall_grab:
-        is_grabbing_wall = true
-        
-    # Calculate the sign of a colliding wall's direction.
-    _toward_wall_collision_sign = (0 if !actions.is_on_wall else \
-            (1 if actions.which_wall == "right" else -1))
-    
     # Cancel any horizontal velocity when bumping into a wall.
-    if actions.is_on_wall:
+    if surface_state.is_touching_wall:
         # The move_and_slide system depends on maintained velocity always pushing the player into a
         # collision, otherwise it will eventually stop the collision. If we just zero this out,
         # is_on_wall() will give false negatives.
-        velocity.x = MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * _toward_wall_collision_sign
+        velocity.x = MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
+                surface_state.toward_wall_sign
 
-    if is_grabbing_wall:
-        _process_input_while_on_wall(actions)
-    elif actions.is_on_floor:
-        _process_input_while_on_floor(actions)
+    if surface_state.is_grabbing_wall:
+        _process_actions_while_on_wall(actions)
+    elif surface_state.is_on_floor:
+        _process_actions_while_on_floor(actions)
     else:
-        _process_input_while_in_air(actions)
+        _process_actions_while_in_air(actions)
     
     _cap_velocity()
     
@@ -111,32 +93,32 @@ func _process_actions(actions: Dictionary) -> void:
     # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
     # into account.
     #warning-ignore:return_value_discarded
-    move_and_slide(velocity, Global.UP, false, 4, Global.FLOOR_MAX_ANGLE)
+    move_and_slide(velocity, Utils.UP, false, 4, Utils.FLOOR_MAX_ANGLE)
 
 #warning-ignore:unused_argument
-func _process_input_while_on_floor(actions: Dictionary) -> void:
+func _process_actions_while_on_floor(actions: Dictionary) -> void:
     jump_count = 0
     is_ascending_from_jump = false
-    is_falling_through_floors = false
+    surface_state.is_falling_through_floors = false
     
     # Whether we should grab onto walk-through walls.
-    is_grabbing_walk_through_walls = actions.pressed_up
+    surface_state.is_grabbing_walk_through_walls = actions.pressed_up
     
     # The move_and_slide system depends on some vertical gravity always pushing the player into
     # the floor. If we just zero this out, is_on_floor() will give false negatives.
     velocity.y = MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
     
     # Horizontal movement.
-    velocity.x += WALK_SPEED * actions.horizontal_movement_sign
+    velocity.x += WALK_SPEED * surface_state.horizontal_movement_sign
     
     # Friction.
-    var friction_offset := _get_floor_friction_coefficient() * FRICTION_MULTIPLIER * Global.GRAVITY
+    var friction_offset := _get_floor_friction_coefficient() * FRICTION_MULTIPLIER * Utils.GRAVITY
     friction_offset = clamp(friction_offset, 0, abs(velocity.x))
     velocity.x += -sign(velocity.x) * friction_offset
     
     # Fall-through floor.
-    if actions.start_fall_through:
-        is_falling_through_floors = true
+    if surface_state.is_triggering_fall_through:
+        surface_state.is_falling_through_floors = true
         velocity.y = FALL_THROUGH_FLOOR_VELOCITY_BOOST
         
     # Jump.
@@ -147,7 +129,7 @@ func _process_input_while_on_floor(actions: Dictionary) -> void:
     
     # Dash.
     if actions.start_dash:
-        _start_dash(horizontal_facing_sign)
+        _start_dash(surface_state.horizontal_facing_sign)
     
     # Walking animation.
     if actions.pressed_left or actions.pressed_right:
@@ -155,15 +137,15 @@ func _process_input_while_on_floor(actions: Dictionary) -> void:
     else:
         $CatAnimator.rest()
 
-func _process_input_while_in_air(actions: Dictionary) -> void:
+func _process_actions_while_in_air(actions: Dictionary) -> void:
     # Whether we should fall through fall-through floors.
-    is_falling_through_floors = actions.pressed_down
+    surface_state.is_falling_through_floors = actions.pressed_down
     
     # Whether we should grab onto walk-through walls.
-    is_grabbing_walk_through_walls = actions.pressed_up
+    surface_state.is_grabbing_walk_through_walls = actions.pressed_up
     
     # Horizontal movement.
-    velocity.x += IN_AIR_HORIZONTAL_SPEED * actions.horizontal_movement_sign
+    velocity.x += IN_AIR_HORIZONTAL_SPEED * surface_state.horizontal_movement_sign
     
     # We'll use this to descend faster than we ascend.
     if velocity.y > 0 or !actions.pressed_jump:
@@ -175,13 +157,13 @@ func _process_input_while_in_air(actions: Dictionary) -> void:
         # Make gravity stronger when falling. This creates a more satisfying jump.
         var gravity_multiplier := SLOW_DOUBLE_JUMP_ASCENT_GRAVITY_MULTIPLIER if jump_count > 1 \
                 else SLOW_JUMP_ASCENT_GRAVITY_MULTIPLIER
-        current_gravity = Global.GRAVITY * gravity_multiplier
+        current_gravity = Utils.GRAVITY * gravity_multiplier
     else:
-        current_gravity = Global.GRAVITY
+        current_gravity = Utils.GRAVITY
     velocity.y += actions.delta * current_gravity
     
     # Hit ceiling.
-    if actions.is_on_ceiling:
+    if surface_state.is_touching_ceiling:
         is_ascending_from_jump = false
         velocity.y = MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
     
@@ -193,7 +175,7 @@ func _process_input_while_in_air(actions: Dictionary) -> void:
     
     # Dash.
     if actions.start_dash:
-        _start_dash(horizontal_facing_sign)
+        _start_dash(surface_state.horizontal_facing_sign)
     
     # Animate.
     if velocity.y > 0:
@@ -202,18 +184,18 @@ func _process_input_while_in_air(actions: Dictionary) -> void:
         $CatAnimator.jump_ascend()
 
 #warning-ignore:unused_argument
-func _process_input_while_on_wall(actions: Dictionary) -> void:
+func _process_actions_while_on_wall(actions: Dictionary) -> void:
     jump_count = 0
     is_ascending_from_jump = false
-    is_grabbing_walk_through_walls = true
+    surface_state.is_grabbing_walk_through_walls = true
     velocity.y = 0
     
     # Whether we should fall through fall-through floors.
-    is_falling_through_floors = actions.pressed_down
+    surface_state.is_falling_through_floors = actions.pressed_down
     
     # Wall jump.
     if actions.just_pressed_jump:
-        is_grabbing_wall = false
+        surface_state.is_grabbing_wall = false
         jump_count = 1
         is_ascending_from_jump = true
         
@@ -221,15 +203,16 @@ func _process_input_while_on_wall(actions: Dictionary) -> void:
         
         # Give a little boost to get the player away from the wall, so they can still be
         # pushing themselves into the wall when they start the jump.
-        velocity.x = -_toward_wall_collision_sign * IN_AIR_HORIZONTAL_SPEED * WALL_JUMP_HORIZONTAL_MULTIPLIER
+        velocity.x = -surface_state.toward_wall_sign * IN_AIR_HORIZONTAL_SPEED * \
+                WALL_JUMP_HORIZONTAL_MULTIPLIER
     
     # Fall off.
-    elif actions.pressing_away_from_wall:
-        is_grabbing_wall = false
+    elif surface_state.is_pressing_away_from_wall:
+        surface_state.is_grabbing_wall = false
     
     # Start walking.
-    elif actions.is_on_floor and actions.pressed_down:
-        is_grabbing_wall = false
+    elif surface_state.is_on_floor and actions.pressed_down:
+        surface_state.is_grabbing_wall = false
     
     # Climb up.
     elif actions.pressed_up:
@@ -246,7 +229,7 @@ func _process_input_while_on_wall(actions: Dictionary) -> void:
         $CatAnimator.rest_on_wall()
     
     if actions.start_dash:
-        _start_dash(-_toward_wall_collision_sign)
+        _start_dash(-surface_state.toward_wall_sign)
 
 func _cap_velocity() -> void:
     # Cap horizontal speed at a max value.
@@ -266,8 +249,8 @@ func _cap_velocity() -> void:
 # Update whether or not we should currently consider collisions with fall-through floors and
 # walk-through walls.
 func _update_collision_mask() -> void:
-    set_collision_mask_bit(1, !is_falling_through_floors)
-    set_collision_mask_bit(2, is_grabbing_walk_through_walls)
+    set_collision_mask_bit(1, !surface_state.is_falling_through_floors)
+    set_collision_mask_bit(2, surface_state.is_grabbing_walk_through_walls)
 
 func _start_dash(horizontal_movement_sign: int) -> void:
     if !_can_dash:
@@ -296,28 +279,3 @@ func _start_dash(horizontal_movement_sign: int) -> void:
     
 func _dash_cooldown_finished() -> void:
     _can_dash = true
-
-func _get_which_wall_collided() -> String:
-    if is_on_wall():
-        for i in range(get_slide_count()):
-            var collision := get_slide_collision(i)
-            if collision.normal.x > 0:
-                return "left"
-            elif collision.normal.x < 0:
-                return "right"
-    return "none"
-
-func _get_floor_collision() -> KinematicCollision2D:
-    if is_on_floor():
-        for i in range(get_slide_count()):
-            var collision := get_slide_collision(i)
-            if abs(collision.normal.angle_to(Global.UP)) <= Global.FLOOR_MAX_ANGLE:
-                return collision
-    return null
-
-func _get_floor_friction_coefficient() -> float:
-    var collision := _get_floor_collision()
-    # Collision friction is a property of the TileMap node.
-    if collision != null and collision.collider.collision_friction != null:
-        return collision.collider.collision_friction
-    return 0.0
