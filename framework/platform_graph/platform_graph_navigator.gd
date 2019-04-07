@@ -2,11 +2,6 @@ extends Reference
 class_name PlatformGraphNavigator
 
 # FIXME: LEFT OFF HERE
-# - Implement change detection for surface touch / grab state in the navigator.
-#   - Save this as fooChanged variables.
-# - Put more thought into whether there are any problems with or whether I should improve how some
-#   surface state is set in the dedicated "updated" method, but some is set in scattered locations
-#   throughout the player
 # - Update the HumanPlayer to also use a navigator, and use that to test (print) when state changes
 #   occur and calculating:
 #   - which surface was hit (it's vertices and it's type),
@@ -18,19 +13,8 @@ class_name PlatformGraphNavigator
 #   - Render a dot for the player's current PositionOnSurface
 #   - 
 
-var _was_on_floor := false
-var _was_grabbing_ceiling := false
-var _was_grabbing_left_wall := false
-var _was_grabbing_right_wall := false
-
-var _just_hit_floor := false
-var _just_grabbed_ceiling := false
-var _just_grabbed_left_wall := false
-var _just_grabbed_right_wall := false
-
 # Updates player-graph state in response to the given new SurfaceState.
 func update(surface_state: SurfaceState) -> void:
-    # TODO
     pass
 
 func find_path(start_node: PoolVector2Array, end_node: PoolVector2Array):
@@ -43,6 +27,7 @@ func traverse_edge(start: PositionOnSurface, end: PositionOnSurface) -> void:
 
 # A reference to the actual surface node, and a specification for position along that node.
 # 
+# FIXME: ACTUALLY, should the following be true? Not extending past might be both slightly more realistic as well as better for handling the offset I wanted to add before jumping landing near the edge anyway...
 # Note: A position along a surface could actually extend past the edges of the surface. This is
 # because a player's bounding box has non-zero width and height.
 # 

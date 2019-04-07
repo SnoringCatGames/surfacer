@@ -81,7 +81,7 @@ func _process_actions(actions: Dictionary) -> void:
 
     if surface_state.is_grabbing_wall:
         _process_actions_while_on_wall(actions)
-    elif surface_state.is_on_floor:
+    elif surface_state.is_grabbing_floor:
         _process_actions_while_on_floor(actions)
     else:
         _process_actions_while_in_air(actions)
@@ -99,10 +99,6 @@ func _process_actions(actions: Dictionary) -> void:
 func _process_actions_while_on_floor(actions: Dictionary) -> void:
     jump_count = 0
     is_ascending_from_jump = false
-    surface_state.is_falling_through_floors = false
-    
-    # Whether we should grab onto walk-through walls.
-    surface_state.is_grabbing_walk_through_walls = actions.pressed_up
     
     # The move_and_slide system depends on some vertical gravity always pushing the player into
     # the floor. If we just zero this out, is_on_floor() will give false negatives.
@@ -117,8 +113,8 @@ func _process_actions_while_on_floor(actions: Dictionary) -> void:
     velocity.x += -sign(velocity.x) * friction_offset
     
     # Fall-through floor.
-    if surface_state.is_triggering_fall_through:
-        surface_state.is_falling_through_floors = true
+    if surface_state.is_falling_through_floors:
+        # TODO: If we were already falling through the air, then we should instead maintain the previous velocity here.
         velocity.y = FALL_THROUGH_FLOOR_VELOCITY_BOOST
         
     # Jump.
@@ -138,12 +134,6 @@ func _process_actions_while_on_floor(actions: Dictionary) -> void:
         $CatAnimator.rest()
 
 func _process_actions_while_in_air(actions: Dictionary) -> void:
-    # Whether we should fall through fall-through floors.
-    surface_state.is_falling_through_floors = actions.pressed_down
-    
-    # Whether we should grab onto walk-through walls.
-    surface_state.is_grabbing_walk_through_walls = actions.pressed_up
-    
     # Horizontal movement.
     velocity.x += IN_AIR_HORIZONTAL_SPEED * surface_state.horizontal_movement_sign
     
@@ -187,11 +177,7 @@ func _process_actions_while_in_air(actions: Dictionary) -> void:
 func _process_actions_while_on_wall(actions: Dictionary) -> void:
     jump_count = 0
     is_ascending_from_jump = false
-    surface_state.is_grabbing_walk_through_walls = true
     velocity.y = 0
-    
-    # Whether we should fall through fall-through floors.
-    surface_state.is_falling_through_floors = actions.pressed_down
     
     # Wall jump.
     if actions.just_pressed_jump:
@@ -211,7 +197,7 @@ func _process_actions_while_on_wall(actions: Dictionary) -> void:
         surface_state.is_grabbing_wall = false
     
     # Start walking.
-    elif surface_state.is_on_floor and actions.pressed_down:
+    elif surface_state.is_touching_floor and actions.pressed_down:
         surface_state.is_grabbing_wall = false
     
     # Climb up.
