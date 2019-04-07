@@ -2,8 +2,8 @@ extends Reference
 class_name PlatformGraphNavigator
 
 # FIXME: LEFT OFF HERE
-# - Update the HumanPlayer to also use a navigator, and use that to test (print) when state changes
-#   occur and calculating:
+# - Populate PlatformGraphNodes.tile_map_index_to_surface_maps
+# - Use navigator to test (print) when state changes occur and calculating:
 #   - which surface was hit (it's vertices and it's type),
 #   - then the current PositionOnSurface,
 #   - then which other surfaces are nearby,
@@ -13,9 +13,29 @@ class_name PlatformGraphNavigator
 #   - Render a dot for the player's current PositionOnSurface
 #   - 
 
+var current_position: PositionOnSurface
+
+var _nodes: PlatformGraphNodes
+var _edges: PlatformGraphEdges
+
+func _init(player_name: String, graph: PlatformGraph) -> void:
+    _nodes = graph.nodes
+    _edges = graph.edges[player_name]
+
 # Updates player-graph state in response to the given new SurfaceState.
 func update(surface_state: SurfaceState) -> void:
-    pass
+    # TODO
+    if surface_state.is_grabbing_a_surface:
+        pass
+    else:
+        pass
+
+func calculate_grabbed_surface(surface_state: SurfaceState) -> PoolVector2Array:
+    var tile_map = surface_state.grabbed_tile_map
+    var tile_map_position: Vector2 = tile_map.world_to_map(surface_state.grab_position)
+    var tile_map_width: int = tile_map.get_used_rect().size.x
+    var tile_map_index: int = tile_map_position.y * tile_map_width + tile_map_position.x
+    return _nodes.tile_map_index_to_surface_maps[tile_map][tile_map_index]
 
 func find_path(start_node: PoolVector2Array, end_node: PoolVector2Array):
     # TODO

@@ -7,9 +7,8 @@ const PlatformGraphNodes = preload("res://framework/platform_graph/platform_grap
 var nodes: PlatformGraphNodes
 var edges := {}
 
-func _init(tile_map: TileMap, player_types: Dictionary) -> void:
-    nodes = PlatformGraphNodes.new(tile_map)
-    nodes.parse_tile_map(tile_map)
-    
+func _init(tile_maps: Array, player_types: Dictionary) -> void:
+    nodes = PlatformGraphNodes.new(tile_maps)
+
     for player_name in player_types:
         edges[player_name] = PlatformGraphEdges.new(nodes, player_types[player_name])

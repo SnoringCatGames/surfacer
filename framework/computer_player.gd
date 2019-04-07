@@ -1,6 +1,9 @@
 extends Player
 class_name ComputerPlayer
 
+func _init(player_name: String).(player_name) -> void:
+    pass
+
 # Gets actions for the current frame.
 #
 # This can be overridden separately for the human and computer players:

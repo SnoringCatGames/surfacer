@@ -74,7 +74,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/r_tree.gd"
 }, {
-"base": "KinematicBody2D",
+"base": "ComputerPlayer",
 "class": "SquirrelPlayer",
 "language": "GDScript",
 "path": "res://players/squirrel_player.gd"

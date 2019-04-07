@@ -5,7 +5,7 @@ const UP := Vector2.UP
 const DOWN := Vector2.DOWN
 const LEFT := Vector2.LEFT
 const RIGHT := Vector2.RIGHT
-const FLOOR_MAX_ANGLE := PI / 4
+const FLOOR_MAX_ANGLE := PI / 4.0
 const GRAVITY := 5000.0
 const FLOAT_EPSILON := 0.00001
 
@@ -79,3 +79,35 @@ static func draw_dashed_polyline(canvas: CanvasItem, vertices: PoolVector2Array,
         to = vertices[i + 1]
         draw_dashed_line(canvas, from, to, color, dash_length, dash_gap, dash_offset, width, \
                 antialiased)
+
+static func get_children_by_type(parent: Node, type) -> Array:
+    var result = []
+    for child in parent.get_children():
+        if child is type:
+            result.push_back(child)
+    return result
+
+static func get_which_wall_collided(body: KinematicBody2D) -> String:
+    if body.is_on_wall():
+        for i in range(body.get_slide_count()):
+            var collision := body.get_slide_collision(i)
+            if collision.normal.x > 0:
+                return "left"
+            elif collision.normal.x < 0:
+                return "right"
+    return "none"
+
+static func get_floor_friction_coefficient(body: KinematicBody2D) -> float:
+    var collision := _get_floor_collision(body)
+    # Collision friction is a property of the TileMap node.
+    if collision != null and collision.collider.collision_friction != null:
+        return collision.collider.collision_friction
+    return 0.0
+
+static func _get_floor_collision(body: KinematicBody2D) -> KinematicCollision2D:
+    if body.is_on_floor():
+        for i in range(body.get_slide_count()):
+            var collision := body.get_slide_collision(i)
+            if abs(collision.normal.angle_to(UP)) <= FLOOR_MAX_ANGLE:
+                return collision
+    return null

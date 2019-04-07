@@ -7,15 +7,21 @@ const Stopwatch = preload("res://framework/stopwatch.gd")
 
 var _stopwatch: Stopwatch
 
-# Collections of surfaces. Each individual surface is a PoolVector2Array.
-var floors: Array
-var ceilings: Array
-var left_walls: Array
-var right_walls: Array
+# Collections of surfaces.
+# Array<PoolVector2Array>
+var floors := []
+var ceilings := []
+var left_walls := []
+var right_walls := []
 
-func _init(tile_map: TileMap) -> void:
+# This supports mapping a cell in a TileMap to its corresponding surface.
+# Dictionary<TileMap, Array<PoolVector2Array>>
+var tile_map_index_to_surface_maps := {}
+
+func _init(tile_maps: Array) -> void:
     _stopwatch = Stopwatch.new()
-    parse_tile_map(tile_map)
+    for tile_map in tile_maps:
+        parse_tile_map(tile_map)
 
 # Parses the given TileMap into a set of nodes for the platform graph.
 # 
@@ -34,6 +40,8 @@ func parse_tile_map(tile_map: TileMap) -> void:
     var ceilings := []
     var left_walls := []
     var right_walls := []
+    # FIXME: LEFT OFF HERE: Populate this... Will I need to update this along the way with each step of the nodes parsing?
+    var tile_map_index_to_surface := []
     
     _stopwatch.start()
     print("_parse_tile_map_into_sides...")
@@ -58,10 +66,12 @@ func parse_tile_map(tile_map: TileMap) -> void:
     _merge_continuous_surfaces(right_walls)
     print("_merge_continuous_surfaces duration: %sms" % _stopwatch.stop())
     
-    self.floors = _convert_polyline_arrays_to_pool_arrays(floors)
-    self.ceilings = _convert_polyline_arrays_to_pool_arrays(ceilings)
-    self.left_walls = _convert_polyline_arrays_to_pool_arrays(left_walls)
-    self.right_walls = _convert_polyline_arrays_to_pool_arrays(right_walls)
+    Utils.concat(self.floors, _convert_polyline_arrays_to_pool_arrays(floors))
+    Utils.concat(self.ceilings, _convert_polyline_arrays_to_pool_arrays(ceilings))
+    Utils.concat(self.left_walls, _convert_polyline_arrays_to_pool_arrays(left_walls))
+    Utils.concat(self.right_walls, _convert_polyline_arrays_to_pool_arrays(right_walls))
+    
+    tile_map_index_to_surface_maps[tile_map] = {52: PoolVector2Array()} # FIXME # tile_map_index_to_surface
 
 # Parses the tiles of given TileMap into their constituent top-sides, left-sides, and right-sides.
 func _parse_tile_map_into_sides(tile_map: TileMap, \

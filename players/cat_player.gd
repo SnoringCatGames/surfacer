@@ -34,6 +34,9 @@ var _can_dash := true
 var _dash_cooldown_timer: Timer
 var _dash_fade_tween: Tween
 
+func _init().("cat") -> void:
+    pass
+
 func _ready() -> void:
     # Set up a Tween for the fade-out at the end of a dash.
     _dash_fade_tween = Tween.new()
@@ -108,7 +111,8 @@ func _process_actions_while_on_floor(actions: Dictionary) -> void:
     velocity.x += WALK_SPEED * surface_state.horizontal_movement_sign
     
     # Friction.
-    var friction_offset := _get_floor_friction_coefficient() * FRICTION_MULTIPLIER * Utils.GRAVITY
+    var friction_offset := \
+            Utils.get_floor_friction_coefficient(self) * FRICTION_MULTIPLIER * Utils.GRAVITY
     friction_offset = clamp(friction_offset, 0, abs(velocity.x))
     velocity.x += -sign(velocity.x) * friction_offset
     

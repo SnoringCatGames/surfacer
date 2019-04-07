@@ -1,10 +1,13 @@
-extends KinematicBody2D
+extends ComputerPlayer
 class_name SquirrelPlayer
 
 const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15
 const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * 4
 
 var velocity := Vector2()
+
+func _init().("squirrel") -> void:
+    pass
 
 func _physics_process(delta: float) -> void:
     # The move_and_slide system depends on some vertical gravity always pushing the player into
