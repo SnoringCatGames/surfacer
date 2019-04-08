@@ -40,72 +40,73 @@ func parse_tile_map(tile_map: TileMap) -> void:
     var ceilings := []
     var left_walls := []
     var right_walls := []
-    # FIXME: LEFT OFF HERE: Populate this... Will I need to update this along the way with each step of the nodes parsing?
-    var tile_map_index_to_surface := []
+    var surface_to_tile_map_index := {}
     
     _stopwatch.start()
     print("_parse_tile_map_into_sides...")
-    _parse_tile_map_into_sides(tile_map, floors, ceilings, left_walls, right_walls)
+    _parse_tile_map_into_sides(tile_map, floors, ceilings, left_walls, right_walls, \
+            surface_to_tile_map_index)
     print("_parse_tile_map_into_sides duration: %sms" % _stopwatch.stop())
     
     _stopwatch.start()
     print("_remove_internal_surfaces: floors+ceilings...")
-    _remove_internal_surfaces(floors, ceilings)
+    _remove_internal_surfaces(floors, ceilings, surface_to_tile_map_index)
     print("_remove_internal_surfaces: left_walls+right_walls...")
-    _remove_internal_surfaces(left_walls, right_walls)
+    _remove_internal_surfaces(left_walls, right_walls, surface_to_tile_map_index)
     print("_remove_internal_surfaces duration: %sms" % _stopwatch.stop())
     
     _stopwatch.start()
     print("_merge_continuous_surfaces: floors...")
-    _merge_continuous_surfaces(floors)
+    _merge_continuous_surfaces(floors, surface_to_tile_map_index)
     print("_merge_continuous_surfaces: ceilings...")
-    _merge_continuous_surfaces(ceilings)
+    _merge_continuous_surfaces(ceilings, surface_to_tile_map_index)
     print("_merge_continuous_surfaces: left_walls...")
-    _merge_continuous_surfaces(left_walls)
+    _merge_continuous_surfaces(left_walls, surface_to_tile_map_index)
     print("_merge_continuous_surfaces: right_walls...")
-    _merge_continuous_surfaces(right_walls)
+    _merge_continuous_surfaces(right_walls, surface_to_tile_map_index)
     print("_merge_continuous_surfaces duration: %sms" % _stopwatch.stop())
     
-    Utils.concat(self.floors, _convert_polyline_arrays_to_pool_arrays(floors))
-    Utils.concat(self.ceilings, _convert_polyline_arrays_to_pool_arrays(ceilings))
-    Utils.concat(self.left_walls, _convert_polyline_arrays_to_pool_arrays(left_walls))
-    Utils.concat(self.right_walls, _convert_polyline_arrays_to_pool_arrays(right_walls))
-    
-    tile_map_index_to_surface_maps[tile_map] = {52: PoolVector2Array()} # FIXME # tile_map_index_to_surface
+    _stopwatch.start()
+    print("_store_surfaces...")
+    _store_surfaces(tile_map, floors, ceilings, left_walls, right_walls, surface_to_tile_map_index)
+    print("_store_surfaces duration: %sms" % _stopwatch.stop())
 
 # Parses the tiles of given TileMap into their constituent top-sides, left-sides, and right-sides.
 func _parse_tile_map_into_sides(tile_map: TileMap, \
-        floors: Array, ceilings: Array, left_walls: Array, right_walls: Array) -> void:
+        floors: Array, ceilings: Array, left_walls: Array, right_walls: Array, \
+        surface_to_tile_map_index: Dictionary) -> void:
     var tile_set := tile_map.tile_set
     var cell_size := tile_map.cell_size
     var used_cells := tile_map.get_used_cells()
     
-    # Transform tile shapes into world coordinates.
     for position in used_cells:
+        var tile_map_index := Utils.get_tile_map_index(position, tile_map)
+        
+        # Transform tile shapes into world coordinates.
         var tile_set_index := tile_map.get_cellv(position)
         var info: Dictionary = tile_set.tile_get_shapes(tile_set_index)[0]
         # ConvexPolygonShape2D
         var shape: Shape2D = info.shape
         var shape_transform: Transform2D = info.shape_transform
         var vertex_count: int = shape.points.size()
-
-        # Transform shape vertices into world coordinates.
-        var vertices_world_coords := Array()
-        vertices_world_coords.resize(vertex_count)
+        var tile_vertices_world_coords := Array()
+        tile_vertices_world_coords.resize(vertex_count)
         for i in range(vertex_count):
             var vertex: Vector2 = shape.points[i]
             var vertex_world_coords: Vector2 = shape_transform.xform(vertex) + position * cell_size
-            vertices_world_coords[i] = vertex_world_coords
+            tile_vertices_world_coords[i] = vertex_world_coords
         
         # Calculate and store the polylines from this shape that correspond to the shape's
         # top-side, right-side, and left-side.
-        _parse_polygon_into_sides(vertices_world_coords, floors, ceilings, left_walls, right_walls)
+        _parse_polygon_into_sides(tile_vertices_world_coords, floors, ceilings, left_walls,
+                right_walls, surface_to_tile_map_index, tile_map_index)
 
 # Parses the given polygon into separate polylines corresponding to the top-side, left-side, and
 # right-side of the shape. Each of these polylines will be stored with their vertices in clockwise
 # order.
 func _parse_polygon_into_sides(vertices: Array, \
-        floors: Array, ceilings: Array, left_walls: Array, right_walls: Array) -> void:
+        floors: Array, ceilings: Array, left_walls: Array, right_walls: Array, \
+        surface_to_tile_map_index: Dictionary, tile_map_index: int) -> void:
     var vertex_count := vertices.size()
     var is_clockwise: bool = Utils.is_polygon_clockwise(vertices)
     
@@ -273,6 +274,11 @@ func _parse_polygon_into_sides(vertices: Array, \
     ceilings.push_back(bottom_side_vertices)
     left_walls.push_back(right_side_vertices)
     right_walls.push_back(left_side_vertices)
+    
+    surface_to_tile_map_index[top_side_vertices] = tile_map_index
+    surface_to_tile_map_index[bottom_side_vertices] = tile_map_index
+    surface_to_tile_map_index[right_side_vertices] = tile_map_index
+    surface_to_tile_map_index[left_side_vertices] = tile_map_index
 
 # Removes some "internal" surfaces.
 # 
@@ -281,7 +287,8 @@ func _parse_polygon_into_sides(vertices: Array, \
 # removed.
 # 
 # Any surface polyline that consists of more than one segment is ignored.
-func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array) -> void:
+func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array, \
+        surface_to_tile_map_index: Dictionary) -> void:
     var i: int
     var j: int
     var count_i: int
@@ -337,6 +344,8 @@ func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array) -> voi
                 # We found a pair of equivalent (internal) segments, so remove them.
                 surfaces.remove(i)
                 opposite_surfaces.remove(j)
+                surface_to_tile_map_index.erase(surface1)
+                surface_to_tile_map_index.erase(surface2)
                 
                 i -= 1
                 j -= 1
@@ -349,7 +358,7 @@ func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array) -> voi
         i += 1
 
 # Merges adjacent continuous surfaces.
-func _merge_continuous_surfaces(surfaces: Array) -> void:
+func _merge_continuous_surfaces(surfaces: Array, surface_to_tile_map_index: Dictionary) -> void:
     var i: int
     var j: int
     var count: int
@@ -363,6 +372,8 @@ func _merge_continuous_surfaces(surfaces: Array) -> void:
     var front_back_diff_y: float
     var back_front_diff_x: float
     var back_front_diff_y: float
+    var tile_map_index_1: int
+    var tile_map_index_2: int
     
     var merge_count := 1
     while merge_count > 0:
@@ -391,6 +402,11 @@ func _merge_continuous_surfaces(surfaces: Array) -> void:
                         front_back_diff_y > -Utils.FLOAT_EPSILON:
                     # The start of surface 1 connects with the end of surface 2.
                     
+                    tile_map_index_1 = surface_to_tile_map_index[surface1]
+                    tile_map_index_2 = surface_to_tile_map_index[surface2]
+                    surface_to_tile_map_index.erase(surface1)
+                    surface_to_tile_map_index.erase(surface2)
+                    
                     # Merge the two surfaces, replacing the first surface and removing the second
                     # surface.
                     surface2.pop_back()
@@ -401,6 +417,9 @@ func _merge_continuous_surfaces(surfaces: Array) -> void:
                     surface1_front = surface1.front()
                     surface1_back = surface1.back()
                     
+                    surface_to_tile_map_index[surface2] = tile_map_index_1
+                    surface_to_tile_map_index[surface2] = tile_map_index_2
+                                        
                     j -= 1
                     count -= 1
                     merge_count += 1
@@ -410,11 +429,19 @@ func _merge_continuous_surfaces(surfaces: Array) -> void:
                         back_front_diff_y > -Utils.FLOAT_EPSILON:
                     # The end of surface 1 connects with the start of surface 2.
                     
+                    tile_map_index_1 = surface_to_tile_map_index[surface1]
+                    tile_map_index_2 = surface_to_tile_map_index[surface2]
+                    surface_to_tile_map_index.erase(surface1)
+                    surface_to_tile_map_index.erase(surface2)
+                    
                     # Merge the two surfaces, replacing the first surface and removing the second
                     # surface.
                     surface1.pop_back()
                     Utils.concat(surface1, surface2)
                     surfaces.remove(j)
+                    
+                    surface_to_tile_map_index[surface1] = tile_map_index_1
+                    surface_to_tile_map_index[surface1] = tile_map_index_2
                     
                     j -= 1
                     count -= 1
@@ -424,8 +451,62 @@ func _merge_continuous_surfaces(surfaces: Array) -> void:
             
             i += 1
 
+func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, 
+        right_walls: Array, surface_to_tile_map_index: Dictionary) -> void:
+    var floors_pool_array = _convert_polyline_arrays_to_pool_arrays(floors)
+    var ceilings_pool_array = _convert_polyline_arrays_to_pool_arrays(ceilings)
+    var left_walls_pool_array = _convert_polyline_arrays_to_pool_arrays(left_walls)
+    var right_walls_pool_array = _convert_polyline_arrays_to_pool_arrays(right_walls)
+    
+    _swap_array_mappings_with_pool_arrays(floors, floors_pool_array, surface_to_tile_map_index)
+    _swap_array_mappings_with_pool_arrays(ceilings, ceilings_pool_array, surface_to_tile_map_index)
+    _swap_array_mappings_with_pool_arrays(left_walls, left_walls_pool_array, surface_to_tile_map_index)
+    _swap_array_mappings_with_pool_arrays(right_walls, right_walls_pool_array, surface_to_tile_map_index)
+    
+    Utils.concat(self.floors, floors_pool_array)
+    Utils.concat(self.ceilings, ceilings_pool_array)
+    Utils.concat(self.left_walls, left_walls_pool_array)
+    Utils.concat(self.right_walls, right_walls_pool_array)
+    
+    var rect = tile_map.get_used_rect()
+    var width = rect.size.x
+    var height = rect.size.y
+    var size = width * height
+    tile_map_index_to_surface_maps[tile_map] = \
+            _invert_surface_to_tile_map_mapping(surface_to_tile_map_index, size)
+
 func _convert_polyline_arrays_to_pool_arrays(surfaces: Array) -> Array:
     var result := surfaces.duplicate()
     for i in range(result.size()):
         result[i] = PoolVector2Array(result[i])
     return result
+
+func _swap_array_mappings_with_pool_arrays(array: Array, pool_array: PoolVector2Array, \
+        surface_to_tile_map_index: Dictionary) -> void:
+    var tile_map_index: int
+    for surface in array:
+        tile_map_index = surface_to_tile_map_index[surface]
+        surface_to_tile_map_index.erase(surface)
+        surface_to_tile_map_index[pool_array] = tile_map_index
+
+func _invert_surface_to_tile_map_mapping(surface_to_tile_map_index: Dictionary, \
+        size: int) -> Array:
+    var result = []
+    result.resize(size)
+    var tile_map_index
+    for surface in surface_to_tile_map_index:
+        tile_map_index = surface_to_tile_map_index[surface]
+        result[tile_map_index] = surface
+    return result
+
+class Surface:
+    var vertices_array: Array
+    var vertices_pool_array: PoolVector2Array
+    var tile_map_index: int
+
+# FIXME: LEFT OFF HERE:
+# - Refactor all this to use a custom data structure to bundle surfaces with the tile
+#   indices they map to?
+# - Call .free() on each instance afterward.
+# - I'm going to also need to refactor all this to store the tile_map_to_surface mappings
+#   separately by side type.
