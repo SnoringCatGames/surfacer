@@ -110,6 +110,10 @@ func _update_surface_state(actions: Dictionary) -> void:
     var collision = _get_attached_surface_collision(self, surface_state)
     assert((collision != null) == surface_state.is_grabbing_a_surface)
     if surface_state.is_grabbing_a_surface:
+        surface_state.grabbed_side = \
+                "floor" if surface_state.is_grabbing_floor else \
+                ("ceiling" if surface_state.is_grabbing_ceiling else \
+                ("left_wall" if surface_state.is_grabbing_left_wall else "right_wall"))
         surface_state.grabbed_tile_map = collision.collider
         surface_state.grab_position = collision.position
         surface_state.grabbed_surface = \

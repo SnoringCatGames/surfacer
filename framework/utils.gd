@@ -114,9 +114,14 @@ static func _get_floor_collision(body: KinematicBody2D) -> KinematicCollision2D:
 
 # Calculates the TileMap (grid-based) coordinates of the given position, relative to the origin of
 # the TileMap's bounding box.
-static func get_tile_map_index(position: Vector2, tile_map: TileMap) -> int:
+static func get_tile_map_index_from_world_coord(position: Vector2, tile_map: TileMap) -> int:
+    return get_tile_map_index_from_grid_coord(tile_map.world_to_map(position), tile_map)
+
+# Calculates the TileMap (grid-based) coordinates of the given position, relative to the origin of
+# the TileMap's bounding box.
+static func get_tile_map_index_from_grid_coord(position: Vector2, tile_map: TileMap) -> int:
     var used_rect := tile_map.get_used_rect()
     var tile_map_start := used_rect.position
     var tile_map_width: int = used_rect.size.x
-    var tile_map_position: Vector2 = tile_map.world_to_map(position) - tile_map_start
+    var tile_map_position: Vector2 = position - tile_map_start
     return (tile_map_position.y * tile_map_width + tile_map_position.x) as int

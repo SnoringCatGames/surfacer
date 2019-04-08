@@ -35,6 +35,8 @@ var which_wall := "none"
 var grab_position: Vector2
 var grabbed_tile_map: TileMap
 var grabbed_surface: PoolVector2Array
+# "floor"|"ceiling"|"left_wall"|"right_wall"
+var grabbed_side: String
 
 var horizontal_facing_sign := -1
 var horizontal_movement_sign := 0
