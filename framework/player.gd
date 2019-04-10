@@ -8,6 +8,8 @@ var player_name: String
 var surface_state := SurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
 
+var velocity := Vector2()
+
 func _init(player_name: String) -> void:
     self.player_name = player_name
 
@@ -116,6 +118,10 @@ func _update_surface_state(actions: Dictionary) -> void:
                 ("left_wall" if surface_state.is_grabbing_left_wall else "right_wall"))
         surface_state.grabbed_tile_map = collision.collider
         surface_state.grab_position = collision.position
+        surface_state.grab_position_tile_map_coord = Utils._get_collision_tile_map_coord( \
+                surface_state.grab_position, surface_state.grabbed_tile_map, \
+                surface_state.is_touching_floor, surface_state.is_touching_ceiling, \
+                surface_state.is_touching_left_wall, surface_state.is_touching_right_wall)
         surface_state.grabbed_surface = \
                 platform_graph_navigator.calculate_grabbed_surface(surface_state)
 

@@ -5,6 +5,8 @@ class_name PlatformGraphNavigator
 # - Populate PlatformGraphNodes.tile_map_index_to_surface_maps
 #   - Refactor Utils.get_tile_map_index_from_grid_coord to consider which side when using TileMap.world_to_map
 #     - I think it consistently "rounds" one way even though the same vertex could need to belong to any of four grid cells.
+# - Replace side String with custom enum.
+#   - Also use with which_side
 # - Use navigator to test (print) when state changes occur and calculating:
 #   - which surface was hit (it's vertices and it's type),
 #   - then the current PositionOnSurface,
@@ -33,8 +35,8 @@ func update(surface_state: SurfaceState) -> void:
         pass
 
 func calculate_grabbed_surface(surface_state: SurfaceState) -> PoolVector2Array:
-    var tile_map_index := Utils.get_tile_map_index_from_world_coord(surface_state.grab_position, \
-            surface_state.grabbed_tile_map)
+    var tile_map_index := Utils.get_tile_map_index_from_grid_coord( \
+            surface_state.grab_position_tile_map_coord, surface_state.grabbed_tile_map)
     return _nodes.get_surface_for_tile(surface_state.grabbed_tile_map, tile_map_index, \
             surface_state.grabbed_side)
 

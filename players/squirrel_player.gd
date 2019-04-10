@@ -4,8 +4,6 @@ class_name SquirrelPlayer
 const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15
 const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * 4
 
-var velocity := Vector2()
-
 func _init().("squirrel") -> void:
     pass
 

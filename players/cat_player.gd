@@ -24,7 +24,6 @@ const FALL_THROUGH_FLOOR_VELOCITY_BOOST := 100.0
 const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15.0
 const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION * 4.0
 
-var velocity := Vector2()
 var is_ascending_from_jump := false
 var jump_count := 0
 

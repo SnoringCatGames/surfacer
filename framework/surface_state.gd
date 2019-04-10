@@ -33,6 +33,7 @@ var is_grabbing_walk_through_walls := false
 var which_wall := "none"
 
 var grab_position: Vector2
+var grab_position_tile_map_coord: Vector2
 var grabbed_tile_map: TileMap
 var grabbed_surface: PoolVector2Array
 # "floor"|"ceiling"|"left_wall"|"right_wall"
