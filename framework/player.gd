@@ -110,6 +110,13 @@ func _update_surface_state(actions: Dictionary) -> void:
             surface_state.just_grabbed_right_wall
     
     var collision = _get_attached_surface_collision(self, surface_state)
+    
+    # FIXME
+    if (collision != null) != surface_state.is_grabbing_a_surface:
+        breakpoint
+        collision = _get_attached_surface_collision(self, surface_state)
+    
+    
     assert((collision != null) == surface_state.is_grabbing_a_surface)
     if surface_state.is_grabbing_a_surface:
         surface_state.grabbed_side = \
@@ -122,6 +129,17 @@ func _update_surface_state(actions: Dictionary) -> void:
                 surface_state.grab_position, surface_state.grabbed_tile_map, \
                 surface_state.is_touching_floor, surface_state.is_touching_ceiling, \
                 surface_state.is_touching_left_wall, surface_state.is_touching_right_wall)
+        
+        # FIXME
+        var tile_map_index := Utils.get_tile_map_index_from_grid_coord( \
+            surface_state.grab_position_tile_map_coord, surface_state.grabbed_tile_map)
+        if tile_map_index == 21:
+            breakpoint
+            surface_state.grab_position_tile_map_coord = Utils._get_collision_tile_map_coord( \
+                    surface_state.grab_position, surface_state.grabbed_tile_map, \
+                    surface_state.is_touching_floor, surface_state.is_touching_ceiling, \
+                    surface_state.is_touching_left_wall, surface_state.is_touching_right_wall)
+        
         surface_state.grabbed_surface = \
                 platform_graph_navigator.calculate_grabbed_surface(surface_state)
 
@@ -157,16 +175,26 @@ const WALL_ANGLE_RANGE := PI / 2.0 - Utils.FLOOR_MAX_ANGLE
 
 static func _get_attached_surface_collision( \
         body: KinematicBody2D, surface_state: SurfaceState) -> KinematicCollision2D:
+    var closest_normal_diff: float = PI
+    var closest_collision: KinematicCollision2D
+    var current_normal_diff: float
+    var current_collision: KinematicCollision2D
     for i in range(body.get_slide_count()):
-        var collision := body.get_slide_collision(i)
-        if \
-                (surface_state.is_grabbing_floor and \
-                        abs(collision.normal.angle_to(Utils.UP)) <= Utils.FLOOR_MAX_ANGLE) or \
-                (surface_state.is_grabbing_ceiling and \
-                        abs(collision.normal.angle_to(Utils.DOWN)) <= Utils.FLOOR_MAX_ANGLE) or \
-                (surface_state.is_grabbing_left_wall and \
-                        abs(collision.normal.angle_to(Utils.RIGHT)) <= WALL_ANGLE_RANGE) or \
-                (surface_state.is_grabbing_right_wall and \
-                        abs(collision.normal.angle_to(Utils.LEFT)) <= WALL_ANGLE_RANGE):
-            return collision
-    return null
+        current_collision = body.get_slide_collision(i)
+        
+        if surface_state.is_grabbing_floor:
+            current_normal_diff = abs(current_collision.normal.angle_to(Utils.UP))
+        elif surface_state.is_grabbing_ceiling:
+            current_normal_diff = abs(current_collision.normal.angle_to(Utils.DOWN))
+        elif surface_state.is_grabbing_left_wall:
+            current_normal_diff = abs(current_collision.normal.angle_to(Utils.RIGHT))
+        elif surface_state.is_grabbing_right_wall:
+            current_normal_diff = abs(current_collision.normal.angle_to(Utils.LEFT))
+        else:
+            continue
+        
+        if current_normal_diff < closest_normal_diff:
+            closest_normal_diff = current_normal_diff
+            closest_collision = current_collision
+    
+    return closest_collision

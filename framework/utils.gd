@@ -112,11 +112,18 @@ static func _get_floor_collision(body: KinematicBody2D) -> KinematicCollision2D:
                 return collision
     return null
 
+# The build-in TileMap.world_to_map generates incorrect results, so we use a custom utility.
+static func world_to_tile_map(position: Vector2, tile_map: TileMap) -> Vector2:
+    var cell_size_world_coord := tile_map.cell_size
+    var position_map_coord := position / cell_size_world_coord
+    position_map_coord = Vector2(int(position_map_coord.x), int(position_map_coord.y))
+    return position_map_coord
+
 # Calculates the TileMap (grid-based) coordinates of the given position, relative to the origin of
 # the TileMap's bounding box.
 static func get_tile_map_index_from_world_coord(position: Vector2, tile_map: TileMap, \
         side: String) -> int:
-    var position_grid_coord = tile_map.world_to_map(position)
+    var position_grid_coord = world_to_tile_map(position, tile_map)
     return get_tile_map_index_from_grid_coord(position_grid_coord, tile_map)
 
 # Calculates the TileMap (grid-based) coordinates of the given position, relative to the origin of
@@ -133,7 +140,8 @@ static func _get_collision_tile_map_coord(position_world_coord: Vector2, tile_ma
         is_touching_left_wall: bool, is_touching_right_wall: bool) -> Vector2:
     var half_cell_size = tile_map.cell_size / 2
     var used_rect = tile_map.get_used_rect()
-    var position_relative_to_tile_map = position_world_coord - used_rect.position
+    var position_relative_to_tile_map = \
+            position_world_coord - used_rect.position * tile_map.cell_size
     
     var cell_width_mod = abs(fmod(position_relative_to_tile_map.x, tile_map.cell_size.x))
     var cell_height_mod = abs(fmod(position_relative_to_tile_map.y, tile_map.cell_size.y))
@@ -143,12 +151,30 @@ static func _get_collision_tile_map_coord(position_world_coord: Vector2, tile_ma
     var is_between_cells_vertically = cell_height_mod < FLOAT_EPSILON or \
             tile_map.cell_size.y - cell_height_mod < FLOAT_EPSILON
     
+    
+    # FIXME
+    var foo = cell_width_mod
+    var bar = tile_map.cell_size.x - cell_width_mod
+    var baz = cell_height_mod
+    var qux = tile_map.cell_size.y - cell_height_mod
+    var fo = foo < FLOAT_EPSILON
+    var br = bar < FLOAT_EPSILON
+    var bz = baz < FLOAT_EPSILON
+    var qx = qux < FLOAT_EPSILON
+    print(foo)
+    print(bar)
+    print(baz)
+    print(qux)
+    
+    
+    
+    
     var tile_coord: Vector2
     
     if is_between_cells_horizontally and is_between_cells_vertically:
         var top_left_cell_coord = \
-                tile_map.world_to_map(Vector2(position_world_coord.x - half_cell_size.x, \
-                        position_world_coord.y - half_cell_size.y))
+                world_to_tile_map(Vector2(position_world_coord.x - half_cell_size.x, \
+                        position_world_coord.y - half_cell_size.y), tile_map)
         
         var is_there_a_tile_at_top_left = \
                 tile_map.get_cellv(top_left_cell_coord) >= 0
@@ -204,50 +230,54 @@ static func _get_collision_tile_map_coord(position_world_coord: Vector2, tile_ma
         
     elif is_between_cells_horizontally:
         var left_cell_coord = \
-                tile_map.world_to_map(Vector2(position_world_coord.x - half_cell_size.x, \
-                        position_world_coord.y))
+                world_to_tile_map(Vector2(position_world_coord.x - half_cell_size.x, \
+                        position_world_coord.y), tile_map)
+        var is_there_a_tile_at_left = tile_map.get_cellv(left_cell_coord) >= 0
+        var is_there_a_tile_at_right = \
+                tile_map.get_cell(left_cell_coord.x + 1, left_cell_coord.y) >= 0
         
         if is_touching_left_wall:
-            var is_there_a_tile_at_left = tile_map.get_cellv(left_cell_coord) >= 0
-            
             if is_there_a_tile_at_left:
                 tile_coord = Vector2(left_cell_coord.x, left_cell_coord.y)
             else:
                 error("Invalid state: Problem calculating colliding cell on left wall")
         elif is_touching_right_wall:
-            var is_there_a_tile_at_right = \
-                    tile_map.get_cell(left_cell_coord.x + 1, left_cell_coord.y) >= 0
-            
             if is_there_a_tile_at_right:
                 tile_coord = Vector2(left_cell_coord.x + 1, left_cell_coord.y)
             else:
                 error("Invalid state: Problem calculating colliding cell on right wall")
+        elif is_there_a_tile_at_left:
+            tile_coord = Vector2(left_cell_coord.x, left_cell_coord.y)
+        elif is_there_a_tile_at_right:
+            tile_coord = Vector2(left_cell_coord.x + 1, left_cell_coord.y)
         else:
             error("Invalid state: Problem calculating colliding cell")
         
     elif is_between_cells_vertically:
-        var top_cell_coord = tile_map.world_to_map(Vector2(position_world_coord.x, \
-                position_world_coord.y - half_cell_size.y))
+        var top_cell_coord = world_to_tile_map(Vector2(position_world_coord.x, \
+                position_world_coord.y - half_cell_size.y), tile_map)
+        var is_there_a_tile_at_bottom = \
+                tile_map.get_cell(top_cell_coord.x, top_cell_coord.y + 1) >= 0
+        var is_there_a_tile_at_top = tile_map.get_cellv(top_cell_coord) >= 0
         
         if is_touching_floor:
-            var is_there_a_tile_at_bottom = \
-                    tile_map.get_cell(top_cell_coord, top_cell_coord.y + 1) >= 0
-            
             if is_there_a_tile_at_bottom:
                 tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y + 1)
             else:
                 error("Invalid state: Problem calculating colliding cell on floor")
         elif is_touching_ceiling:
-            var is_there_a_tile_at_top = tile_map.get_cellv(top_cell_coord) >= 0
-            
             if is_there_a_tile_at_top:
                 tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y)
             else:
                 error("Invalid state: Problem calculating colliding cell on ceiling")
+        elif is_there_a_tile_at_bottom:
+            tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y + 1)
+        elif is_there_a_tile_at_top:
+            tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y)
         else:
             error("Invalid state: Problem calculating colliding cell")
         
     else:
-        tile_coord = tile_map.world_to_map(position_world_coord)
+        tile_coord = world_to_tile_map(position_world_coord, tile_map)
     
     return tile_coord
