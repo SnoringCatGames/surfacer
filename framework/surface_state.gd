@@ -36,8 +36,15 @@ var grab_position: Vector2
 var grab_position_tile_map_coord: Vector2
 var grabbed_tile_map: TileMap
 var grabbed_surface: PoolVector2Array
-# "floor"|"ceiling"|"left_wall"|"right_wall"
+# "floor"|"ceiling"|"left_wall"|"right_wall"|"none"
 var grabbed_side: String
+
+var just_changed_surface := false
+var just_changed_tile_map := false
+var just_changed_tile_map_coord := false
+var just_changed_grab_position := false
+var just_entered_air := false
+var just_left_air := false
 
 var horizontal_facing_sign := -1
 var horizontal_movement_sign := 0

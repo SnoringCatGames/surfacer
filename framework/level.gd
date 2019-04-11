@@ -2,7 +2,7 @@ extends Node
 class_name Level
 
 const PlatformGraph = preload("res://framework/platform_graph/platform_graph.gd")
-const PlatformGraphAnnotator = preload("res://framework/platform_graph/platform_graph_annotator.gd")
+const PlatformGraphAnnotator = preload("res://framework/annotators/platform_graph_annotator.gd")
 
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>

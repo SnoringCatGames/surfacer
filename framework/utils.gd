@@ -9,6 +9,13 @@ const FLOOR_MAX_ANGLE := PI / 4.0
 const GRAVITY := 5000.0
 const FLOAT_EPSILON := 0.00001
 
+const SURFACE_DEPTH := 8.0
+const SURFACE_DEPTH_DIVISIONS_COUNT := 8
+const SURFACE_ALPHA_START := .8
+const SURFACE_ALPHA_END := .1
+
+const DEPTH_DIVISION_SIZE := SURFACE_DEPTH / SURFACE_DEPTH_DIVISIONS_COUNT
+
 static func error(message: String) -> void:
     print("ERROR: %s" % message)
     assert(true)
@@ -80,6 +87,35 @@ static func draw_dashed_polyline(canvas: CanvasItem, vertices: PoolVector2Array,
         draw_dashed_line(canvas, from, to, color, dash_length, dash_gap, dash_offset, width, \
                 antialiased)
 
+static func draw_surface(canvas: CanvasItem, surface: PoolVector2Array, normal: Vector2) -> void:
+    var surface_depth_division_offset = normal * -DEPTH_DIVISION_SIZE
+    var color := Color.from_hsv(randf(), 0.8, 0.8, 1)
+    
+    var polyline: PoolVector2Array
+    var translation: Vector2
+    var progress: float
+    
+    # "Surfaces" can single vertices in the degenerate case.
+    if surface.size() > 1:
+        for i in range(SURFACE_DEPTH_DIVISIONS_COUNT):
+            translation = surface_depth_division_offset * i
+            polyline = translate_polyline(surface, translation)
+            progress = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
+            color.a = SURFACE_ALPHA_START + progress * (SURFACE_ALPHA_END - SURFACE_ALPHA_START)
+            canvas.draw_polyline(polyline, color, DEPTH_DIVISION_SIZE)
+#            Utils.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
+    else:
+        color.a = 0.6
+        canvas.draw_circle(surface[0], 8.0, color)
+
+static func translate_polyline(vertices: PoolVector2Array, translation: Vector2) \
+        -> PoolVector2Array:
+    var result := PoolVector2Array()
+    result.resize(vertices.size())
+    for i in range(vertices.size()):
+        result[i] = vertices[i] + translation
+    return result
+
 static func get_children_by_type(parent: Node, type) -> Array:
     var result = []
     for child in parent.get_children():
@@ -112,11 +148,12 @@ static func _get_floor_collision(body: KinematicBody2D) -> KinematicCollision2D:
                 return collision
     return null
 
-# The build-in TileMap.world_to_map generates incorrect results, so we use a custom utility.
+# The build-in TileMap.world_to_map generates incorrect results around cell boundaries, so we use a
+# custom utility.
 static func world_to_tile_map(position: Vector2, tile_map: TileMap) -> Vector2:
     var cell_size_world_coord := tile_map.cell_size
     var position_map_coord := position / cell_size_world_coord
-    position_map_coord = Vector2(int(position_map_coord.x), int(position_map_coord.y))
+    position_map_coord = Vector2(floor(position_map_coord.x), floor(position_map_coord.y))
     return position_map_coord
 
 # Calculates the TileMap (grid-based) coordinates of the given position, relative to the origin of
@@ -150,24 +187,6 @@ static func _get_collision_tile_map_coord(position_world_coord: Vector2, tile_ma
             tile_map.cell_size.x - cell_width_mod < FLOAT_EPSILON
     var is_between_cells_vertically = cell_height_mod < FLOAT_EPSILON or \
             tile_map.cell_size.y - cell_height_mod < FLOAT_EPSILON
-    
-    
-    # FIXME
-    var foo = cell_width_mod
-    var bar = tile_map.cell_size.x - cell_width_mod
-    var baz = cell_height_mod
-    var qux = tile_map.cell_size.y - cell_height_mod
-    var fo = foo < FLOAT_EPSILON
-    var br = bar < FLOAT_EPSILON
-    var bz = baz < FLOAT_EPSILON
-    var qx = qux < FLOAT_EPSILON
-    print(foo)
-    print(bar)
-    print(baz)
-    print(qux)
-    
-    
-    
     
     var tile_coord: Vector2
     
@@ -279,5 +298,8 @@ static func _get_collision_tile_map_coord(position_world_coord: Vector2, tile_ma
         
     else:
         tile_coord = world_to_tile_map(position_world_coord, tile_map)
+    
+    # Ensure the cell we calculated actually contains content.
+    assert(tile_map.get_cellv(tile_coord) >= 0)
     
     return tile_coord
