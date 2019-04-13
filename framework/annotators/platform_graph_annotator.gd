@@ -16,3 +16,6 @@ func _init(graph: PlatformGraph) -> void:
 func _enter_tree() -> void:
     add_child(platform_graph_surface_annotator)
     add_child(grid_indices_annotator)
+
+func check_for_update() -> void:
+    pass

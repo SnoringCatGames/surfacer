@@ -5,12 +5,10 @@ const PlayerSurfaceAnnotator = preload("res://framework/annotators/player_surfac
 const TileAnnotator = preload("res://framework/annotators/tile_annotator.gd")
 const PositionAnnotator = preload("res://framework/annotators/position_annotator.gd")
 
-var graplayerph: Player
+var player: Player
 var player_surface_annotator: PlayerSurfaceAnnotator
 var tile_annotator: TileAnnotator
 var position_annotator: PositionAnnotator
-
-# FIXME: LEFT OFF HERE: Hook up the PlayerAnnotator, implement its sub-annotators, update it on changes
 
 func _init(player: Player) -> void:
     self.player = player
@@ -19,6 +17,11 @@ func _init(player: Player) -> void:
     position_annotator = PositionAnnotator.new(player)
 
 func _enter_tree() -> void:
-    add_child(platform_graph_surface_annotator)
+    add_child(player_surface_annotator)
     add_child(tile_annotator)
     add_child(position_annotator)
+
+func check_for_update() -> void:
+    player_surface_annotator.check_for_update()
+    tile_annotator.check_for_update()
+    position_annotator.check_for_update()

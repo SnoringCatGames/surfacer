@@ -14,5 +14,5 @@ const PLAYER_TYPES := [
 ]
 
 func _enter_tree() -> void:
-    var global := get_node("/root/Global")
+    var global := $"/root/Global"
     global.register_player_types(PLAYER_TYPES)

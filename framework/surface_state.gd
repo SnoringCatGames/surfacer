@@ -38,6 +38,7 @@ var grabbed_tile_map: TileMap
 var grabbed_surface: PoolVector2Array
 # "floor"|"ceiling"|"left_wall"|"right_wall"|"none"
 var grabbed_side: String
+var grabbed_surface_normal: Vector2
 
 var just_changed_surface := false
 var just_changed_tile_map := false

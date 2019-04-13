@@ -3,6 +3,7 @@ class_name Level
 
 const PlatformGraph = preload("res://framework/platform_graph/platform_graph.gd")
 const PlatformGraphAnnotator = preload("res://framework/annotators/platform_graph_annotator.gd")
+const PlayerAnnotator = preload("res://framework/annotators/player_annotator.gd")
 
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
@@ -11,9 +12,10 @@ var human_player: HumanPlayer
 var all_players: Array
 var platform_graph: PlatformGraph
 var platform_graph_annotator: PlatformGraphAnnotator
+var player_annotator: PlayerAnnotator
 
 func _enter_tree() -> void:
-    var global := get_node("/root/Global")
+    var global := $"/root/Global"
     global.current_level = self
 
 func _ready() -> void:
@@ -29,14 +31,20 @@ func _ready() -> void:
     human_player = human_players[0]
     
     # Set up the PlatformGraph for this level.
-    var global := get_node("/root/Global")
+    var global := $"/root/Global"
     platform_graph = PlatformGraph.new(collidables, global.player_types)
 
-    # Set up an annotator that helps with debugging.
+    # Set up some annotators that help with debugging.
     platform_graph_annotator = PlatformGraphAnnotator.new(platform_graph)
     add_child(platform_graph_annotator)
+    player_annotator = PlayerAnnotator.new(human_player)
+    add_child(player_annotator)
     
     # Get references to all initial players and initialize their PlatformGraphNavigators.
     all_players = Utils.get_children_by_type(self, Player)
     for player in all_players:
         player.initialize_platform_graph_navigator(platform_graph)
+
+func descendant_physics_process_completed(descendant: Node) -> void:
+    if descendant == human_player:
+        player_annotator.check_for_update()

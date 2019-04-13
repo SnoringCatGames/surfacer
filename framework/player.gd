@@ -7,11 +7,15 @@ const SurfaceState = preload("res://framework/surface_state.gd")
 var player_name: String
 var surface_state := SurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
-
 var velocity := Vector2()
+var level
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
+
+func _enter_tree() -> void:
+    var global := $"/root/Global"
+    level = global.current_level
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
     platform_graph_navigator = PlatformGraphNavigator.new(player_name, platform_graph)
@@ -36,6 +40,7 @@ func _physics_process(delta: float) -> void:
     _update_surface_state(actions)
     platform_graph_navigator.update(surface_state)
     _process_actions(actions)
+    level.descendant_physics_process_completed(self)
 
 # Updates some basic surface-related state for player's actions and environment of the current frame.
 func _update_surface_state(actions: Dictionary) -> void:
@@ -149,6 +154,15 @@ func _update_which_side_is_grabbed() -> void:
             ("left_wall" if surface_state.is_grabbing_left_wall else \
             ("right_wall" if surface_state.is_grabbing_right_wall else \
             "none")))
+    match surface_state.grabbed_side:
+        "floor":
+            surface_state.grabbed_surface_normal = Utils.UP
+        "ceiling":
+            surface_state.grabbed_surface_normal = Utils.DOWN
+        "left_wall":
+            surface_state.grabbed_surface_normal = Utils.RIGHT
+        "right_wall":
+            surface_state.grabbed_surface_normal = Utils.LEFT
 
 func _update_which_surface_is_grabbed() -> void:
     var collision = _get_attached_surface_collision(self, surface_state)
@@ -157,11 +171,13 @@ func _update_which_surface_is_grabbed() -> void:
     if surface_state.is_grabbing_a_surface:
         var next_grab_position = collision.position
         surface_state.just_changed_grab_position = \
+                surface_state.just_left_air or \
                 next_grab_position != surface_state.grab_position
         surface_state.grab_position = next_grab_position
         
         var next_grabbed_tile_map = collision.collider
         surface_state.just_changed_tile_map = \
+                surface_state.just_left_air or \
                 next_grabbed_tile_map != surface_state.grabbed_tile_map
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
@@ -170,13 +186,22 @@ func _update_which_surface_is_grabbed() -> void:
                 surface_state.is_touching_floor, surface_state.is_touching_ceiling, \
                 surface_state.is_touching_left_wall, surface_state.is_touching_right_wall)
         surface_state.just_changed_tile_map_coord = \
+                surface_state.just_left_air or \
                 next_grab_position_tile_map_coord != surface_state.grab_position_tile_map_coord
         surface_state.grab_position_tile_map_coord = next_grab_position_tile_map_coord
         
         var next_grabbed_surface = \
                 platform_graph_navigator.calculate_grabbed_surface(surface_state)
-        surface_state.just_changed_surface = next_grabbed_surface != surface_state.grabbed_surface
+        surface_state.just_changed_surface = \
+                surface_state.just_left_air or \
+                next_grabbed_surface != surface_state.grabbed_surface
         surface_state.grabbed_surface = next_grabbed_surface
+    
+    elif surface_state.just_entered_air:
+        surface_state.just_changed_grab_position = true
+        surface_state.just_changed_tile_map = true
+        surface_state.just_changed_tile_map_coord = true
+        surface_state.just_changed_surface = true
 
 const WALL_ANGLE_RANGE := PI / 2.0 - Utils.FLOOR_MAX_ANGLE
 

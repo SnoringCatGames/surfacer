@@ -13,5 +13,7 @@ func _draw() -> void:
     _draw_surfaces(graph.nodes.left_walls, Utils.RIGHT)
 
 func _draw_surfaces(surfaces: Array, normal: Vector2) -> void:
+    var color: Color
     for surface in surfaces:
-        Utils.draw_surface(self, surface, normal)
+        color = Color.from_hsv(randf(), 0.9, 0.9, 0.2)
+        Utils.draw_surface(self, surface, normal, color)

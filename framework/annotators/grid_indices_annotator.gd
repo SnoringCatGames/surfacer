@@ -1,6 +1,8 @@
 extends Node2D
 class_name GridIndicesAnnotator
 
+var TILE_INDICES_COLOR := Color.from_hsv(0.0, 0.0, 1.0, 0.6)
+
 var graph: PlatformGraph
 
 func _init(graph: PlatformGraph) -> void:
@@ -14,7 +16,7 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
     var positions: Array
     var cell_center: Vector2
     var tile_map_index: int
-    var color = Color(1, 1, 1, 0.6)
+    var color = TILE_INDICES_COLOR
     
     var label = Label.new()
     var font = label.get_font("")

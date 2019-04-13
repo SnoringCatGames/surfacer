@@ -11,8 +11,7 @@ const FLOAT_EPSILON := 0.00001
 
 const SURFACE_DEPTH := 8.0
 const SURFACE_DEPTH_DIVISIONS_COUNT := 8
-const SURFACE_ALPHA_START := .8
-const SURFACE_ALPHA_END := .1
+const SURFACE_ALPHA_END_RATIO := .2
 
 const DEPTH_DIVISION_SIZE := SURFACE_DEPTH / SURFACE_DEPTH_DIVISIONS_COUNT
 
@@ -87,9 +86,11 @@ static func draw_dashed_polyline(canvas: CanvasItem, vertices: PoolVector2Array,
         draw_dashed_line(canvas, from, to, color, dash_length, dash_gap, dash_offset, width, \
                 antialiased)
 
-static func draw_surface(canvas: CanvasItem, surface: PoolVector2Array, normal: Vector2) -> void:
+static func draw_surface( \
+        canvas: CanvasItem, surface: PoolVector2Array, normal: Vector2, color: Color) -> void:
     var surface_depth_division_offset = normal * -DEPTH_DIVISION_SIZE
-    var color := Color.from_hsv(randf(), 0.8, 0.8, 1)
+    var alpha_start = color.a
+    var alpha_end = alpha_start * SURFACE_ALPHA_END_RATIO
     
     var polyline: PoolVector2Array
     var translation: Vector2
@@ -101,12 +102,11 @@ static func draw_surface(canvas: CanvasItem, surface: PoolVector2Array, normal: 
             translation = surface_depth_division_offset * i
             polyline = translate_polyline(surface, translation)
             progress = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
-            color.a = SURFACE_ALPHA_START + progress * (SURFACE_ALPHA_END - SURFACE_ALPHA_START)
+            color.a = alpha_start + progress * (alpha_end - alpha_start)
             canvas.draw_polyline(polyline, color, DEPTH_DIVISION_SIZE)
 #            Utils.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
     else:
-        color.a = 0.6
-        canvas.draw_circle(surface[0], 8.0, color)
+        canvas.draw_circle(surface[0], 6.0, color)
 
 static func translate_polyline(vertices: PoolVector2Array, translation: Vector2) \
         -> PoolVector2Array:
