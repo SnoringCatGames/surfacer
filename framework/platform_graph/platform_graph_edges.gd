@@ -2,6 +2,7 @@ extends Reference
 class_name PlatformGraphEdges
 
 # FIXME: LEFT OFF HERE:
+# 
 # - Add logic to translate player Node2D center position to the center position along the edge of
 #   the surface (in world coordinates)
 # - Add logic to translate that position to PositionAlongSurface.
@@ -17,12 +18,6 @@ class_name PlatformGraphEdges
 # - Add logic for each mode (during mode change) to plan the next action according to the current
 #   state and target.
 # 
-# - Define a collection of available movement types.
-# - Define an interface for them.
-# - Use get_max_upward_movement and get_max_horizontal_movement to get a bounding box and use that
-#   in Navigator.get_nearby_surfaces.
-# - Have each movement class register itself with Global
-# 
 # - Implement get_movement_instructions for jumping.
 # - Add support for creating EdgeInstructions.
 # - Add support for executing EdgeInstructions.
@@ -37,6 +32,7 @@ class_name PlatformGraphEdges
 # - Add annotations for the whole edge set.
 # - Add annotations for just the path that the navigator is currently using.
 # - Test out the accuracy of edge traversal actually matching up to our pre-calculated trajectories.
+# 
 # - Add support for actually considering the discrete physics time steps rather than assuming
 #   continuous integration?
 #   - OR, add support for fudging it?
@@ -56,6 +52,13 @@ class_name PlatformGraphEdges
 #   - Variable jump height
 #   - Double jump
 #   - Horizontal acceleration?
+# 
+# - Use get_max_upward_movement and get_max_horizontal_movement to get a bounding box and use that
+#   in Navigator.get_nearby_surfaces.
+# 
+# - Update the pre-configured Input Map in Project Settings to use more semantic keys instead of just up/down/etc.
+# - Document in a separate markdown file exactly which Input Map keys this framework depends on.
+# -  
 
 func _init(nodes: PlatformGraphNodes, player_info: Dictionary) -> void:
     # TODO

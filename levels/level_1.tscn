@@ -3,7 +3,8 @@
 [ext_resource path="res://framework/level.gd" type="Script" id=1]
 [ext_resource path="res://tileset.tres" type="TileSet" id=2]
 [ext_resource path="res://players/cat_player.tscn" type="PackedScene" id=3]
-[ext_resource path="res://players/squirrel.tscn" type="PackedScene" id=4]
+[ext_resource path="res://players/squirrel_player.tscn" type="PackedScene" id=4]
+
 
 [node name="Level1" type="Node"]
 script = ExtResource( 1 )

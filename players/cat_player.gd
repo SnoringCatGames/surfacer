@@ -1,9 +1,9 @@
 extends HumanPlayer
 class_name CatPlayer
 
-var movement_params := _get_movement_params()
-
 const FRICTION_MULTIPLIER := 0.01 # For calculating friction for walking
+
+var movement_params := _get_movement_params()
 
 var is_ascending_from_jump := false
 var jump_count := 0
@@ -78,15 +78,13 @@ func _ready() -> void:
 # {
 #   start_dash,
 # }
-func _get_actions(delta: float) -> Dictionary:
-    var actions := ._get_actions(delta)
+func _update_actions(delta: float) -> void:
+    ._update_actions(delta)
     
     actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
-    
-    return actions
 
 # Updates physics and player states in response to the current actions.
-func _process_actions(actions: Dictionary) -> void:
+func _process_actions() -> void:
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if actions.pressed_left:
         $CatAnimator.face_left()
@@ -102,11 +100,11 @@ func _process_actions(actions: Dictionary) -> void:
                 surface_state.toward_wall_sign
 
     if surface_state.is_grabbing_wall:
-        _process_actions_while_on_wall(actions)
+        _process_actions_while_on_wall()
     elif surface_state.is_grabbing_floor:
-        _process_actions_while_on_floor(actions)
+        _process_actions_while_on_floor()
     else:
-        _process_actions_while_in_air(actions)
+        _process_actions_while_in_air()
     
     _cap_velocity()
     
@@ -118,7 +116,7 @@ func _process_actions(actions: Dictionary) -> void:
     move_and_slide(velocity, Geometry.UP, false, 4, Geometry.FLOOR_MAX_ANGLE)
 
 #warning-ignore:unused_argument
-func _process_actions_while_on_floor(actions: Dictionary) -> void:
+func _process_actions_while_on_floor() -> void:
     jump_count = 0
     is_ascending_from_jump = false
     
@@ -156,7 +154,7 @@ func _process_actions_while_on_floor(actions: Dictionary) -> void:
     else:
         $CatAnimator.rest()
 
-func _process_actions_while_in_air(actions: Dictionary) -> void:
+func _process_actions_while_in_air() -> void:
     # If the player falls off a wall or ledge, then that's considered the first jump.
     jump_count = max(jump_count, 1)
     
@@ -202,7 +200,7 @@ func _process_actions_while_in_air(actions: Dictionary) -> void:
         $CatAnimator.jump_ascend()
 
 #warning-ignore:unused_argument
-func _process_actions_while_on_wall(actions: Dictionary) -> void:
+func _process_actions_while_on_wall() -> void:
     jump_count = 0
     is_ascending_from_jump = false
     velocity.y = 0

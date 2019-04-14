@@ -5,6 +5,7 @@ const PlatformGraphNavigator = preload("res://framework/platform_graph/platform_
 const PlayerSurfaceState = preload("res://framework/player_surface_state.gd")
 
 var player_name: String
+var actions := PlayerActions.new()
 var surface_state := PlayerSurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
 var velocity := Vector2()
@@ -33,24 +34,23 @@ func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
 # - The computer player will use instruction sets.
 # - The human player will use system IO.
 #warning-ignore:unused_argument
-func _get_actions(delta: float) -> Dictionary:
+func _update_actions(delta: float) -> void:
     Utils.error("abstract Player._get_actions is not implemented")
-    return {}
+    pass
 
 # Updates physics and player states in response to the current actions.
-#warning-ignore:unused_argument
-func _process_actions(actions: Dictionary) -> void:
+func _process_actions() -> void:
     Utils.error("abstract Player._process_actions is not implemented")
 
 func _physics_process(delta: float) -> void:
-    var actions := _get_actions(delta)
-    _update_surface_state(actions)
+    _update_actions(delta)
+    _update_surface_state()
     platform_graph_navigator.update()
-    _process_actions(actions)
+    _process_actions()
     level.descendant_physics_process_completed(self)
 
 # Updates some basic surface-related state for player's actions and environment of the current frame.
-func _update_surface_state(actions: Dictionary) -> void:
+func _update_surface_state() -> void:
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if actions.pressed_right:
         surface_state.horizontal_facing_sign = 1

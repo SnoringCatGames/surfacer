@@ -3,15 +3,12 @@
 [ext_resource path="res://players/squirrel_player.gd" type="Script" id=1]
 [ext_resource path="res://players/squirrel-parts.png" type="Texture" id=2]
 
-
-
 [sub_resource type="CapsuleShape2D" id=1]
-
 radius = 17.0
 height = 9.0
 
 [node name="Squirrel" type="KinematicBody2D"]
-collision_layer = 15
+collision_layer = 8
 collision_mask = 3
 script = ExtResource( 1 )
 

@@ -1,6 +1,8 @@
 extends Reference
 class_name MovementParams
 
+# FIXME: Add defaults for some of these
+
 var gravity: float
 var ascent_gravity_multiplier: float
 var ascent_double_jump_gravity_multiplier: float
