@@ -16,4 +16,4 @@ func _physics_process(delta: float) -> void:
 
     # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
     # into account.
-    move_and_slide(velocity, Utils.UP, false, 4, Utils.FLOOR_MAX_ANGLE)
+    move_and_slide(velocity, Geometry.UP, false, 4, Geometry.FLOOR_MAX_ANGLE)

@@ -2,42 +2,54 @@ extends Reference
 class_name PlatformGraphNavigator
 
 # FIXME: LEFT OFF HERE
-# - Populate PlatformGraphNodes.tile_map_index_to_surface_maps
-#   - Refactor Utils.get_tile_map_index_from_grid_coord to consider which side when using TileMap.world_to_map
-#     - I think it consistently "rounds" one way even though the same vertex could need to belong to any of four grid cells.
-# - Replace side String with custom enum.
-#   - Also use with which_side
+# - Add logic to remove internal nodes in flat-line surfaces
+# - MAKE get_nearby_surfaces MORE EFFICIENT! (force run it everyframe to ensure no lag)
 # - Use navigator to test (print) when state changes occur and calculating:
-#   - which surface was hit (it's vertices and it's type),
-#   - then the current PositionOnSurface,
-#   - then which other surfaces are nearby,
+#   - the current PositionOnSurface,
+#   - which other surfaces are nearby,
 #     - Will need to add that function for getting nearby surfaces
 #   - then a start for implemententing EdgeInstructions
-# - Implement some additional annotations that are updated dynamically as the player moves:
-#   - Render a dot for the player's current PositionOnSurface
+# - Add annotations for graph edges and navigator:
 #   - 
 
+# TODO: Adjust this
+const SURFACE_CLOSE_DISTANCE_THRESHOLD = 384
+
 var current_position: PositionOnSurface
+# Array<Surface>
+var nearby_surfaces: Array
 
-var _nodes: PlatformGraphNodes
-var _edges: PlatformGraphEdges
+var player # FIXME: Add type back
+var surface_state: PlayerSurfaceState
+var nodes: PlatformGraphNodes
+var edges: PlatformGraphEdges
+var _stopwatch: Stopwatch
 
-func _init(player_name: String, graph: PlatformGraph) -> void:
-    _nodes = graph.nodes
-    _edges = graph.edges[player_name]
+func _init(player, graph: PlatformGraph) -> void:
+    self.player = player
+    surface_state = player.surface_state
+    nodes = graph.nodes
+    edges = graph.edges[player.player_name]
+    _stopwatch = Stopwatch.new()
 
-# Updates player-graph state in response to the given new SurfaceState.
-func update(surface_state: SurfaceState) -> void:
-    # TODO
+# Updates player-graph state in response to the given new PlayerSurfaceState.
+func update() -> void:
+    # FIXME: LEFT OFF HERE
     if surface_state.is_grabbing_a_surface:
-        pass
+        if surface_state.just_changed_surface:
+            _stopwatch.start()
+            print("get_nearby_surfaces...")
+            nearby_surfaces = nodes.get_nearby_surfaces(surface_state.grabbed_surface, \
+                    SURFACE_CLOSE_DISTANCE_THRESHOLD)
+            print("get_nearby_surfaces duration: %sms" % _stopwatch.stop())
+            print(nearby_surfaces)
     else:
-        pass
+        nearby_surfaces = []
 
-func calculate_grabbed_surface(surface_state: SurfaceState) -> PoolVector2Array:
-    var tile_map_index := Utils.get_tile_map_index_from_grid_coord( \
+func calculate_grabbed_surface(surface_state: PlayerSurfaceState) -> Surface:
+    var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord( \
             surface_state.grab_position_tile_map_coord, surface_state.grabbed_tile_map)
-    return _nodes.get_surface_for_tile(surface_state.grabbed_tile_map, tile_map_index, \
+    return nodes.get_surface_for_tile(surface_state.grabbed_tile_map, tile_map_index, \
             surface_state.grabbed_side)
 
 func find_path(start_node: PoolVector2Array, end_node: PoolVector2Array):

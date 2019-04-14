@@ -1,5 +1,5 @@
 extends Reference
-class_name SurfaceState
+class_name PlayerSurfaceState
 
 var is_touching_floor := false
 var is_touching_ceiling := false
@@ -30,14 +30,13 @@ var is_triggering_fall_through := false
 var is_falling_through_floors := false
 var is_grabbing_walk_through_walls := false
 
-var which_wall := "none"
+var which_wall: int = SurfaceSide.NONE
 
 var grab_position: Vector2
 var grab_position_tile_map_coord: Vector2
 var grabbed_tile_map: TileMap
-var grabbed_surface: PoolVector2Array
-# "floor"|"ceiling"|"left_wall"|"right_wall"|"none"
-var grabbed_side: String
+var grabbed_surface: Surface
+var grabbed_side: int
 var grabbed_surface_normal: Vector2
 
 var just_changed_surface := false

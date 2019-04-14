@@ -25,6 +25,16 @@ _global_script_classes=[ {
 "path": "res://framework/computer_player.gd"
 }, {
 "base": "Node",
+"class": "DrawUtils",
+"language": "GDScript",
+"path": "res://framework/draw_utils.gd"
+}, {
+"base": "Node",
+"class": "Geometry",
+"language": "GDScript",
+"path": "res://framework/geometry.gd"
+}, {
+"base": "Node",
 "class": "Global",
 "language": "GDScript",
 "path": "res://framework/global.gd"
@@ -59,10 +69,20 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/platform_graph_edges.gd"
 }, {
+"base": "Node2D",
+"class": "PlatformGraphEdgesAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/platform_graph_edges_annotator.gd"
+}, {
 "base": "Reference",
 "class": "PlatformGraphNavigator",
 "language": "GDScript",
 "path": "res://framework/platform_graph/platform_graph_navigator.gd"
+}, {
+"base": "Node2D",
+"class": "PlatformGraphNavigatorAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/platform_graph_navigator_annotator.gd"
 }, {
 "base": "Reference",
 "class": "PlatformGraphNodes",
@@ -70,9 +90,9 @@ _global_script_classes=[ {
 "path": "res://framework/platform_graph/platform_graph_nodes.gd"
 }, {
 "base": "Node2D",
-"class": "PlatformGraphSurfaceAnnotator",
+"class": "PlatformGraphNodesAnnotator",
 "language": "GDScript",
-"path": "res://framework/annotators/platform_graph_surface_annotator.gd"
+"path": "res://framework/annotators/platform_graph_nodes_annotator.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "Player",
@@ -88,6 +108,11 @@ _global_script_classes=[ {
 "class": "PlayerSurfaceAnnotator",
 "language": "GDScript",
 "path": "res://framework/annotators/player_surface_annotator.gd"
+}, {
+"base": "Reference",
+"class": "PlayerSurfaceState",
+"language": "GDScript",
+"path": "res://framework/player_surface_state.gd"
 }, {
 "base": "Node2D",
 "class": "PositionAnnotator",
@@ -110,9 +135,14 @@ _global_script_classes=[ {
 "path": "res://framework/stopwatch.gd"
 }, {
 "base": "Reference",
-"class": "SurfaceState",
+"class": "Surface",
 "language": "GDScript",
-"path": "res://framework/surface_state.gd"
+"path": "res://framework/platform_graph/surface.gd"
+}, {
+"base": "Reference",
+"class": "SurfaceSide",
+"language": "GDScript",
+"path": "res://framework/surface_side.gd"
 }, {
 "base": "Node2D",
 "class": "TileAnnotator",
@@ -128,6 +158,8 @@ _global_script_class_icons={
 "CatAnimator": "",
 "CatPlayer": "",
 "ComputerPlayer": "",
+"DrawUtils": "",
+"Geometry": "",
 "Global": "",
 "GridIndicesAnnotator": "",
 "HumanPlayer": "",
@@ -135,17 +167,21 @@ _global_script_class_icons={
 "PlatformGraph": "",
 "PlatformGraphAnnotator": "",
 "PlatformGraphEdges": "",
+"PlatformGraphEdgesAnnotator": "",
 "PlatformGraphNavigator": "",
+"PlatformGraphNavigatorAnnotator": "",
 "PlatformGraphNodes": "",
-"PlatformGraphSurfaceAnnotator": "",
+"PlatformGraphNodesAnnotator": "",
 "Player": "",
 "PlayerAnnotator": "",
 "PlayerSurfaceAnnotator": "",
+"PlayerSurfaceState": "",
 "PositionAnnotator": "",
 "RTree": "",
 "SquirrelPlayer": "",
 "Stopwatch": "",
-"SurfaceState": "",
+"Surface": "",
+"SurfaceSide": "",
 "TileAnnotator": "",
 "Utils": ""
 }
@@ -159,6 +195,8 @@ config/icon="res://icon.png"
 [autoload]
 
 Utils="*res://framework/utils.gd"
+Geometry="*res://framework/geometry.gd"
+DrawUtils="*res://framework/draw_utils.gd"
 Global="*res://framework/global.gd"
 
 [input]

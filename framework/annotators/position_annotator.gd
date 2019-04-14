@@ -1,7 +1,7 @@
 extends Node2D
 class_name PositionAnnotator
 
-var PLAYER_POSITION_COLOR := Color.from_hsv(0.83, 0.9, 0.6, 0.4)
+var PLAYER_POSITION_COLOR := Color.from_hsv(0.17, 0.7, 0.9, 0.3)
 var GRAB_POSITION_COLOR := Color.from_hsv(0.17, 0.7, 0.9, 0.8)
 const PLAYER_POSITION_RADIUS := 3.0
 const GRAB_POSITION_LINE_WIDTH := 5.0

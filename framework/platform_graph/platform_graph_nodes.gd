@@ -8,25 +8,36 @@ const Stopwatch = preload("res://framework/stopwatch.gd")
 var _stopwatch: Stopwatch
 
 # Collections of surfaces.
-# Array<PoolVector2Array>
+# Array<Surface>
 var floors := []
 var ceilings := []
 var left_walls := []
 var right_walls := []
 
 # This supports mapping a cell in a TileMap to its corresponding surface.
-# Dictionary<TileMap, Dictionary<String, Dictionary<int, PoolVector2Array>>>
+# Dictionary<TileMap, Dictionary<String, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
 func _init(tile_maps: Array) -> void:
     _stopwatch = Stopwatch.new()
     for tile_map in tile_maps:
-        parse_tile_map(tile_map)
+        _parse_tile_map(tile_map)
 
 # Gets the surface corresponding to the given side of the given tile in the given TileMap.
 func get_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
-        side: String) -> PoolVector2Array:
+        side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
+
+# Gets all other surfaces that are near the given surface.
+func get_nearby_surfaces(target_surface: Surface, distance_threshold: float) -> Array:
+    var result := []
+    
+    _get_nearby_surfaces(target_surface, floors, distance_threshold, result)
+    _get_nearby_surfaces(target_surface, ceilings, distance_threshold, result)
+    _get_nearby_surfaces(target_surface, left_walls, distance_threshold, result)
+    _get_nearby_surfaces(target_surface, right_walls, distance_threshold, result)
+    
+    return result
 
 # Parses the given TileMap into a set of nodes for the platform graph.
 # 
@@ -40,7 +51,7 @@ func get_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
 # - The given TileMap only uses collidable tiles. Use a separate TileMap to paint any
 #   non-collidable tiles.
 # - The given TileMap only uses tiles with convex collision boundaries.
-func parse_tile_map(tile_map: TileMap) -> void:
+func _parse_tile_map(tile_map: TileMap) -> void:
     var floors := []
     var ceilings := []
     var left_walls := []
@@ -75,14 +86,14 @@ func parse_tile_map(tile_map: TileMap) -> void:
     print("_store_surfaces duration: %sms" % _stopwatch.stop())
 
 # Parses the tiles of given TileMap into their constituent top-sides, left-sides, and right-sides.
-func _parse_tile_map_into_sides(tile_map: TileMap, \
+static func _parse_tile_map_into_sides(tile_map: TileMap, \
         floors: Array, ceilings: Array, left_walls: Array, right_walls: Array) -> void:
     var tile_set := tile_map.tile_set
     var cell_size := tile_map.cell_size
     var used_cells := tile_map.get_used_cells()
     
     for position in used_cells:
-        var tile_map_index := Utils.get_tile_map_index_from_grid_coord(position, tile_map)
+        var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord(position, tile_map)
         
         # Transform tile shapes into world coordinates.
         var tile_set_index := tile_map.get_cellv(position)
@@ -106,10 +117,10 @@ func _parse_tile_map_into_sides(tile_map: TileMap, \
 # Parses the given polygon into separate polylines corresponding to the top-side, left-side, and
 # right-side of the shape. Each of these polylines will be stored with their vertices in clockwise
 # order.
-func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, \
+static func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, \
         left_walls: Array, right_walls: Array, tile_map_index: int) -> void:
     var vertex_count := vertices.size()
-    var is_clockwise: bool = Utils.is_polygon_clockwise(vertices)
+    var is_clockwise: bool = Geometry.is_polygon_clockwise(vertices)
     
     # Find the left-most, right-most, and bottom-most vertices.
     
@@ -164,8 +175,8 @@ func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, 
     v1 = vertices[i1]
     v2 = vertices[i2]
     pos_angle = abs(v1.angle_to_point(v2))
-    is_wall_segment = pos_angle > Utils.FLOOR_MAX_ANGLE and \
-            pos_angle < PI - Utils.FLOOR_MAX_ANGLE
+    is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
+            pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
     
     # If we find a non-wall segment, that's the start of the top-side. If we instead find no
     # non-wall segments until one segment after the top-most vertex, then there is no
@@ -177,8 +188,8 @@ func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, 
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Utils.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Utils.FLOOR_MAX_ANGLE
+        is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
+                pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
     
     top_side_start_index = i1
     
@@ -193,8 +204,8 @@ func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, 
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Utils.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Utils.FLOOR_MAX_ANGLE
+        is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
+                pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
     
     top_side_end_index = i1
     
@@ -209,8 +220,8 @@ func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, 
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Utils.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Utils.FLOOR_MAX_ANGLE
+        is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
+                pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
     
     right_side_end_index = i1
     
@@ -226,8 +237,8 @@ func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, 
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Utils.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Utils.FLOOR_MAX_ANGLE
+        is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
+                pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
     
     left_side_start_index = i1
     
@@ -270,16 +281,16 @@ func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, 
     right_side_vertices.push_back(vertices[i])
     
     # Store the surfaces.
-    var floor_surface = Surface.new()
+    var floor_surface = _TmpSurface.new()
     floor_surface.vertices_array = top_side_vertices
     floor_surface.tile_map_indices = [tile_map_index]
-    var ceiling_surface = Surface.new()
+    var ceiling_surface = _TmpSurface.new()
     ceiling_surface.vertices_array = bottom_side_vertices
     ceiling_surface.tile_map_indices = [tile_map_index]
-    var left_side_surface = Surface.new()
+    var left_side_surface = _TmpSurface.new()
     left_side_surface.vertices_array = right_side_vertices
     left_side_surface.tile_map_indices = [tile_map_index]
-    var right_side_surface = Surface.new()
+    var right_side_surface = _TmpSurface.new()
     right_side_surface.vertices_array = left_side_vertices
     right_side_surface.tile_map_indices = [tile_map_index]
     
@@ -295,13 +306,13 @@ func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, 
 # removed.
 # 
 # Any surface polyline that consists of more than one segment is ignored.
-func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array) -> void:
+static func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array) -> void:
     var i: int
     var j: int
     var count_i: int
     var count_j: int
-    var surface1: Surface
-    var surface2: Surface
+    var surface1: _TmpSurface
+    var surface2: _TmpSurface
     var surface1_front: Vector2
     var surface1_back: Vector2
     var surface2_front: Vector2
@@ -340,14 +351,14 @@ func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array) -> voi
             front_back_diff_y = surface1_front.y - surface2_back.y
             back_front_diff_x = surface1_back.x - surface2_front.x
             back_front_diff_y = surface1_back.y - surface2_front.y
-            if front_back_diff_x < Utils.FLOAT_EPSILON and \
-                    front_back_diff_x > -Utils.FLOAT_EPSILON and \
-                    front_back_diff_y < Utils.FLOAT_EPSILON and \
-                    front_back_diff_y > -Utils.FLOAT_EPSILON and \
-                    back_front_diff_x < Utils.FLOAT_EPSILON and \
-                    back_front_diff_x > -Utils.FLOAT_EPSILON and \
-                    back_front_diff_y < Utils.FLOAT_EPSILON and \
-                    back_front_diff_y > -Utils.FLOAT_EPSILON:
+            if front_back_diff_x < Geometry.FLOAT_EPSILON and \
+                    front_back_diff_x > -Geometry.FLOAT_EPSILON and \
+                    front_back_diff_y < Geometry.FLOAT_EPSILON and \
+                    front_back_diff_y > -Geometry.FLOAT_EPSILON and \
+                    back_front_diff_x < Geometry.FLOAT_EPSILON and \
+                    back_front_diff_x > -Geometry.FLOAT_EPSILON and \
+                    back_front_diff_y < Geometry.FLOAT_EPSILON and \
+                    back_front_diff_y > -Geometry.FLOAT_EPSILON:
                 # We found a pair of equivalent (internal) segments, so remove them.
                 surfaces.remove(i)
                 opposite_surfaces.remove(j)
@@ -365,12 +376,12 @@ func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array) -> voi
         i += 1
 
 # Merges adjacent continuous surfaces.
-func _merge_continuous_surfaces(surfaces: Array) -> void:
+static func _merge_continuous_surfaces(surfaces: Array) -> void:
     var i: int
     var j: int
     var count: int
-    var surface1: Surface
-    var surface2: Surface
+    var surface1: _TmpSurface
+    var surface2: _TmpSurface
     var surface1_front: Vector2
     var surface1_back: Vector2
     var surface2_front: Vector2
@@ -403,10 +414,10 @@ func _merge_continuous_surfaces(surfaces: Array) -> void:
                 front_back_diff_y = surface1_front.y - surface2_back.y
                 back_front_diff_x = surface1_back.x - surface2_front.x
                 back_front_diff_y = surface1_back.y - surface2_front.y
-                if front_back_diff_x < Utils.FLOAT_EPSILON and \
-                        front_back_diff_x > -Utils.FLOAT_EPSILON and \
-                        front_back_diff_y < Utils.FLOAT_EPSILON and \
-                        front_back_diff_y > -Utils.FLOAT_EPSILON:
+                if front_back_diff_x < Geometry.FLOAT_EPSILON and \
+                        front_back_diff_x > -Geometry.FLOAT_EPSILON and \
+                        front_back_diff_y < Geometry.FLOAT_EPSILON and \
+                        front_back_diff_y > -Geometry.FLOAT_EPSILON:
                     # The start of surface 1 connects with the end of surface 2.
                     
                     # Merge the two surfaces, replacing the first surface and removing the second
@@ -424,10 +435,10 @@ func _merge_continuous_surfaces(surfaces: Array) -> void:
                     j -= 1
                     count -= 1
                     merge_count += 1
-                elif back_front_diff_x < Utils.FLOAT_EPSILON and \
-                        back_front_diff_x > -Utils.FLOAT_EPSILON and \
-                        back_front_diff_y < Utils.FLOAT_EPSILON and \
-                        back_front_diff_y > -Utils.FLOAT_EPSILON:
+                elif back_front_diff_x < Geometry.FLOAT_EPSILON and \
+                        back_front_diff_x > -Geometry.FLOAT_EPSILON and \
+                        back_front_diff_y < Geometry.FLOAT_EPSILON and \
+                        back_front_diff_y > -Geometry.FLOAT_EPSILON:
                     # The end of surface 1 connects with the start of surface 2.
                     
                     # Merge the two surfaces, replacing the first surface and removing the second
@@ -448,40 +459,119 @@ func _merge_continuous_surfaces(surfaces: Array) -> void:
 
 func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, \
         right_walls: Array) -> void:
-    _store_polyline_arrays(floors, self.floors)
-    _store_polyline_arrays(ceilings, self.ceilings)
-    _store_polyline_arrays(left_walls, self.left_walls)
-    _store_polyline_arrays(right_walls, self.right_walls)
+    _populate_polyline_arrays(floors)
+    _populate_polyline_arrays(ceilings)
+    _populate_polyline_arrays(left_walls)
+    _populate_polyline_arrays(right_walls)
+    
+    _populate_surface_objects(floors, SurfaceSide.FLOOR)
+    _populate_surface_objects(ceilings, SurfaceSide.CEILING)
+    _populate_surface_objects(left_walls, SurfaceSide.LEFT_WALL)
+    _populate_surface_objects(right_walls, SurfaceSide.RIGHT_WALL)
+    
+    _copy_surfaces_to_main_collection(floors, self.floors)
+    _copy_surfaces_to_main_collection(ceilings, self.ceilings)
+    _copy_surfaces_to_main_collection(left_walls, self.left_walls)
+    _copy_surfaces_to_main_collection(right_walls, self.right_walls)
     
     var floor_mapping = _create_tile_map_mapping_from_surfaces(floors)
     var ceiling_mapping = _create_tile_map_mapping_from_surfaces(ceilings)
     var left_wall_mapping = _create_tile_map_mapping_from_surfaces(left_walls)
     var right_wall_mapping = _create_tile_map_mapping_from_surfaces(right_walls)
     
+    _free_objects(floors)
+    _free_objects(ceilings)
+    _free_objects(left_walls)
+    _free_objects(right_walls)
+    
     _tile_map_index_to_surface_maps[tile_map] = {
-        floor = floor_mapping,
-        ceiling = ceiling_mapping,
-        left_wall = left_wall_mapping,
-        right_wall = right_wall_mapping,
+        SurfaceSide.FLOOR: floor_mapping,
+        SurfaceSide.CEILING: ceiling_mapping,
+        SurfaceSide.LEFT_WALL: left_wall_mapping,
+        SurfaceSide.RIGHT_WALL: right_wall_mapping,
     }
 
-func _store_polyline_arrays(surfaces: Array, main_collection: Array) -> void:
-    var pool_array: PoolVector2Array
-    for surface in surfaces:
-        pool_array = PoolVector2Array(surface.vertices_array)
-        surface.vertices_pool_array = pool_array
-        main_collection.push_back(pool_array)
+static func _populate_polyline_arrays(tmp_surfaces: Array) -> void:
+    for tmp_surface in tmp_surfaces:
+        tmp_surface.vertices_pool_array = PoolVector2Array(tmp_surface.vertices_array)
 
-func _create_tile_map_mapping_from_surfaces(surfaces: Array) -> Dictionary:
+static func _populate_surface_objects(tmp_surfaces: Array, side: int) -> void:
+    for tmp_surface in tmp_surfaces:
+        tmp_surface.surface = Surface.new(tmp_surface.vertices_pool_array, side)
+
+static func _copy_surfaces_to_main_collection(tmp_surfaces: Array, main_collection: Array) -> void:
+    for tmp_surface in tmp_surfaces:
+        main_collection.push_back(tmp_surface.surface)
+
+static func _create_tile_map_mapping_from_surfaces(tmp_surfaces: Array) -> Dictionary:
     var result = {}
-    for surface in surfaces:
-        for tile_map_index in surface.tile_map_indices:
-            result[tile_map_index] = surface.vertices_pool_array
+    for tmp_surface in tmp_surfaces:
+        for tile_map_index in tmp_surface.tile_map_indices:
+            result[tile_map_index] = tmp_surface.surface
     return result
 
-class Surface extends Object:
+static func _free_objects(objects: Array) -> void:
+    for object in objects:
+        object.free()
+
+class _TmpSurface extends Object:
     # Array<Vector2>
     var vertices_array: Array
     var vertices_pool_array: PoolVector2Array
     # Array<int>
     var tile_map_indices: Array
+    var surface: Surface
+
+static func _get_nearby_surfaces(target_surface: Surface, other_surfaces: Array, \
+        distance_threshold: float, result: Array) -> void:
+    for other_surface in other_surfaces:
+        if _get_are_surfaces_close(target_surface, other_surface, distance_threshold) and \
+                target_surface != other_surface:
+            result.push_back(other_surface)
+
+static func _get_are_surfaces_close(surface_a: Surface, surface_b: Surface, \
+        distance_threshold: float) -> bool:
+    var vertices_a := surface_a.vertices
+    var vertices_b := surface_b.vertices
+    var vertex_a_a: Vector2
+    var vertex_a_b: Vector2
+    var vertex_b_a: Vector2
+    var vertex_b_b: Vector2
+    
+    var expanded_bounding_box_a = surface_a.bounding_box.grow(distance_threshold)
+    if expanded_bounding_box_a.intersects(surface_b.bounding_box):
+        var expanded_bounding_box_b = surface_b.bounding_box.grow(distance_threshold)
+        var distance_squared_threshold = distance_threshold * distance_threshold
+        
+        # Compare each segment in A with each vertex in B.
+        for i_a in range(vertices_a.size() - 1):
+            vertex_a_a = vertices_a[i_a]
+            vertex_a_b = vertices_a[i_a + 1]
+            
+            for i_b in range(vertices_b.size()):
+                vertex_b_a = vertices_b[i_b]
+                
+                if expanded_bounding_box_a.has_point(vertex_b_a) and \
+                        Geometry.get_distance_squared_from_point_to_segment( \
+                                vertex_b_a, vertex_a_a, vertex_a_b) <= distance_squared_threshold:
+                    return true
+        
+        # Compare each vertex in A with each segment in B.
+        for i_a in range(vertices_a.size()):
+            vertex_a_a = vertices_a[i_a]
+            
+            for i_b in range(vertices_b.size() - 1):
+                vertex_b_a = vertices_b[i_b]
+                vertex_b_b = vertices_b[i_b + 1]
+                
+                if expanded_bounding_box_b.has_point(vertex_a_a) and \
+                        Geometry.get_distance_squared_from_point_to_segment( \
+                                vertex_a_a, vertex_b_a, vertex_b_b) <= distance_squared_threshold:
+                    return true
+            
+            # Handle the degenerate case of single-vertex surfaces.
+            if vertices_b.size() == 1:
+                if vertex_a_a.distance_squared_to(vertices_b[0]) <= distance_squared_threshold:
+                    return true
+    
+    return false

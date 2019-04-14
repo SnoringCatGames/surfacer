@@ -10,7 +10,7 @@ func _init(player_name: String).(player_name) -> void:
 # - The computer player will use instruction sets.
 # - The human player will use system IO.
 # FIXME:
-# - Refactor to use a custom class (like SurfaceState) instead of a Dictionary
+# - Refactor to use a custom class (like PlayerSurfaceState) instead of a Dictionary
 # - Update the pre-configured Input Map in Project Settings to use more semantic keys instead of just up/down/etc.
 # - Document in a separate markdown file exactly which Input Map keys this framework depends on.
 func _get_actions(delta: float) -> Dictionary:

@@ -2,10 +2,10 @@ extends KinematicBody2D
 class_name Player
 
 const PlatformGraphNavigator = preload("res://framework/platform_graph/platform_graph_navigator.gd")
-const SurfaceState = preload("res://framework/surface_state.gd")
+const PlayerSurfaceState = preload("res://framework/player_surface_state.gd")
 
 var player_name: String
-var surface_state := SurfaceState.new()
+var surface_state := PlayerSurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
 var velocity := Vector2()
 var level
@@ -18,7 +18,7 @@ func _enter_tree() -> void:
     level = global.current_level
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
-    platform_graph_navigator = PlatformGraphNavigator.new(player_name, platform_graph)
+    platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
 
 # Gets actions for the current frame.
 #
@@ -38,7 +38,7 @@ func _process_actions(actions: Dictionary) -> void:
 func _physics_process(delta: float) -> void:
     var actions := _get_actions(delta)
     _update_surface_state(actions)
-    platform_graph_navigator.update(surface_state)
+    platform_graph_navigator.update()
     _process_actions(actions)
     level.descendant_physics_process_completed(self)
 
@@ -58,8 +58,8 @@ func _update_surface_state(actions: Dictionary) -> void:
     surface_state.is_touching_ceiling = is_on_ceiling()
     surface_state.is_touching_wall = is_on_wall()
     surface_state.which_wall = Utils.get_which_wall_collided(self)
-    surface_state.is_touching_left_wall = surface_state.which_wall == "left"
-    surface_state.is_touching_right_wall = surface_state.which_wall == "right"
+    surface_state.is_touching_left_wall = surface_state.which_wall == SurfaceSide.LEFT_WALL
+    surface_state.is_touching_right_wall = surface_state.which_wall == SurfaceSide.RIGHT_WALL
     surface_state.is_touching_a_surface = \
             surface_state.is_touching_floor or \
             surface_state.is_touching_ceiling or \
@@ -67,17 +67,19 @@ func _update_surface_state(actions: Dictionary) -> void:
     
     # Calculate the sign of a colliding wall's direction.
     surface_state.toward_wall_sign = (0 if !surface_state.is_touching_wall else \
-            (1 if surface_state.which_wall == "right" else -1))
+            (1 if surface_state.which_wall == SurfaceSide.RIGHT_WALL else -1))
     
     surface_state.is_facing_wall = \
-        (surface_state.which_wall == "right" and surface_state.horizontal_facing_sign > 0) or \
-        (surface_state.which_wall == "left" and surface_state.horizontal_facing_sign < 0)
+        (surface_state.which_wall == SurfaceSide.RIGHT_WALL and \
+                surface_state.horizontal_facing_sign > 0) or \
+        (surface_state.which_wall == SurfaceSide.LEFT_WALL and \
+                surface_state.horizontal_facing_sign < 0)
     surface_state.is_pressing_into_wall = \
-        (surface_state.which_wall == "right" and actions.pressed_right) or \
-        (surface_state.which_wall == "left" and actions.pressed_left)
+        (surface_state.which_wall == SurfaceSide.RIGHT_WALL and actions.pressed_right) or \
+        (surface_state.which_wall == SurfaceSide.LEFT_WALL and actions.pressed_left)
     surface_state.is_pressing_away_from_wall = \
-        (surface_state.which_wall == "right" and actions.pressed_left) or \
-        (surface_state.which_wall == "left" and actions.pressed_right)
+        (surface_state.which_wall == SurfaceSide.RIGHT_WALL and actions.pressed_left) or \
+        (surface_state.which_wall == SurfaceSide.LEFT_WALL and actions.pressed_right)
     
     var facing_into_wall_and_pressing_up: bool = actions.pressed_up and \
             (surface_state.is_facing_wall or surface_state.is_pressing_into_wall)
@@ -149,20 +151,20 @@ func _update_which_side_is_grabbed() -> void:
     surface_state.is_grabbing_a_surface = next_is_grabbing_a_surface
     
     surface_state.grabbed_side = \
-            "floor" if surface_state.is_grabbing_floor else \
-            ("ceiling" if surface_state.is_grabbing_ceiling else \
-            ("left_wall" if surface_state.is_grabbing_left_wall else \
-            ("right_wall" if surface_state.is_grabbing_right_wall else \
-            "none")))
+            SurfaceSide.FLOOR if surface_state.is_grabbing_floor else \
+            (SurfaceSide.CEILING if surface_state.is_grabbing_ceiling else \
+            (SurfaceSide.LEFT_WALL if surface_state.is_grabbing_left_wall else \
+            (SurfaceSide.RIGHT_WALL if surface_state.is_grabbing_right_wall else \
+            SurfaceSide.NONE)))
     match surface_state.grabbed_side:
-        "floor":
-            surface_state.grabbed_surface_normal = Utils.UP
-        "ceiling":
-            surface_state.grabbed_surface_normal = Utils.DOWN
-        "left_wall":
-            surface_state.grabbed_surface_normal = Utils.RIGHT
-        "right_wall":
-            surface_state.grabbed_surface_normal = Utils.LEFT
+        SurfaceSide.FLOOR:
+            surface_state.grabbed_surface_normal = Geometry.UP
+        SurfaceSide.CEILING:
+            surface_state.grabbed_surface_normal = Geometry.DOWN
+        SurfaceSide.LEFT_WALL:
+            surface_state.grabbed_surface_normal = Geometry.RIGHT
+        SurfaceSide.RIGHT_WALL:
+            surface_state.grabbed_surface_normal = Geometry.LEFT
 
 func _update_which_surface_is_grabbed() -> void:
     var collision = _get_attached_surface_collision(self, surface_state)
@@ -181,7 +183,7 @@ func _update_which_surface_is_grabbed() -> void:
                 next_grabbed_tile_map != surface_state.grabbed_tile_map
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
-        var next_grab_position_tile_map_coord = Utils._get_collision_tile_map_coord( \
+        var next_grab_position_tile_map_coord = Geometry.get_collision_tile_map_coord( \
                 surface_state.grab_position, surface_state.grabbed_tile_map, \
                 surface_state.is_touching_floor, surface_state.is_touching_ceiling, \
                 surface_state.is_touching_left_wall, surface_state.is_touching_right_wall)
@@ -203,10 +205,8 @@ func _update_which_surface_is_grabbed() -> void:
         surface_state.just_changed_tile_map_coord = true
         surface_state.just_changed_surface = true
 
-const WALL_ANGLE_RANGE := PI / 2.0 - Utils.FLOOR_MAX_ANGLE
-
 static func _get_attached_surface_collision( \
-        body: KinematicBody2D, surface_state: SurfaceState) -> KinematicCollision2D:
+        body: KinematicBody2D, surface_state: PlayerSurfaceState) -> KinematicCollision2D:
     var closest_normal_diff: float = PI
     var closest_collision: KinematicCollision2D
     var current_normal_diff: float
@@ -215,13 +215,13 @@ static func _get_attached_surface_collision( \
         current_collision = body.get_slide_collision(i)
         
         if surface_state.is_grabbing_floor:
-            current_normal_diff = abs(current_collision.normal.angle_to(Utils.UP))
+            current_normal_diff = abs(current_collision.normal.angle_to(Geometry.UP))
         elif surface_state.is_grabbing_ceiling:
-            current_normal_diff = abs(current_collision.normal.angle_to(Utils.DOWN))
+            current_normal_diff = abs(current_collision.normal.angle_to(Geometry.DOWN))
         elif surface_state.is_grabbing_left_wall:
-            current_normal_diff = abs(current_collision.normal.angle_to(Utils.RIGHT))
+            current_normal_diff = abs(current_collision.normal.angle_to(Geometry.RIGHT))
         elif surface_state.is_grabbing_right_wall:
-            current_normal_diff = abs(current_collision.normal.angle_to(Utils.LEFT))
+            current_normal_diff = abs(current_collision.normal.angle_to(Geometry.LEFT))
         else:
             continue
         

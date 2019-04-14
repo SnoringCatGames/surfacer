@@ -95,7 +95,7 @@ func _process_actions(actions: Dictionary) -> void:
     # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
     # into account.
     #warning-ignore:return_value_discarded
-    move_and_slide(velocity, Utils.UP, false, 4, Utils.FLOOR_MAX_ANGLE)
+    move_and_slide(velocity, Geometry.UP, false, 4, Geometry.FLOOR_MAX_ANGLE)
 
 #warning-ignore:unused_argument
 func _process_actions_while_on_floor(actions: Dictionary) -> void:
@@ -110,8 +110,8 @@ func _process_actions_while_on_floor(actions: Dictionary) -> void:
     velocity.x += WALK_SPEED * surface_state.horizontal_movement_sign
     
     # Friction.
-    var friction_offset := \
-            Utils.get_floor_friction_coefficient(self) * FRICTION_MULTIPLIER * Utils.GRAVITY
+    var friction_offset: float = \
+            Utils.get_floor_friction_coefficient(self) * FRICTION_MULTIPLIER * Geometry.GRAVITY
     friction_offset = clamp(friction_offset, 0, abs(velocity.x))
     velocity.x += -sign(velocity.x) * friction_offset
     
@@ -150,9 +150,9 @@ func _process_actions_while_in_air(actions: Dictionary) -> void:
         # Make gravity stronger when falling. This creates a more satisfying jump.
         var gravity_multiplier := SLOW_DOUBLE_JUMP_ASCENT_GRAVITY_MULTIPLIER if jump_count > 1 \
                 else SLOW_JUMP_ASCENT_GRAVITY_MULTIPLIER
-        current_gravity = Utils.GRAVITY * gravity_multiplier
+        current_gravity = Geometry.GRAVITY * gravity_multiplier
     else:
-        current_gravity = Utils.GRAVITY
+        current_gravity = Geometry.GRAVITY
     velocity.y += actions.delta * current_gravity
     
     # Hit ceiling.

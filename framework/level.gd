@@ -33,17 +33,17 @@ func _ready() -> void:
     # Set up the PlatformGraph for this level.
     var global := $"/root/Global"
     platform_graph = PlatformGraph.new(collidables, global.player_types)
+    
+    # Get references to all initial players and initialize their PlatformGraphNavigators.
+    all_players = Utils.get_children_by_type(self, Player)
+    for player in all_players:
+        player.initialize_platform_graph_navigator(platform_graph)
 
     # Set up some annotators that help with debugging.
     platform_graph_annotator = PlatformGraphAnnotator.new(platform_graph)
     add_child(platform_graph_annotator)
     player_annotator = PlayerAnnotator.new(human_player)
     add_child(player_annotator)
-    
-    # Get references to all initial players and initialize their PlatformGraphNavigators.
-    all_players = Utils.get_children_by_type(self, Player)
-    for player in all_players:
-        player.initialize_platform_graph_navigator(platform_graph)
 
 func descendant_physics_process_completed(descendant: Node) -> void:
     if descendant == human_player:

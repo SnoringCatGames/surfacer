@@ -36,11 +36,12 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
             positions.resize(tile_map_width * tile_map_height)
             for y in range(tile_map_height):
                 for x in range(tile_map_width):
-                    positions[y * tile_map_width + x] = Vector2(x + tile_map_start_x, y + tile_map_start_y)
+                    positions[y * tile_map_width + x] = \
+                            Vector2(x + tile_map_start_x, y + tile_map_start_y)
         
         for position in positions:
             cell_center = tile_map.map_to_world(position) + half_cell_size
-            tile_map_index = Utils.get_tile_map_index_from_grid_coord(position, tile_map)
+            tile_map_index = Geometry.get_tile_map_index_from_grid_coord(position, tile_map)
             draw_string(font, cell_center, str(tile_map_index), color)
             draw_circle(cell_center, 1.0, color)
     
