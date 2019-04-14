@@ -42,6 +42,5 @@ func _draw_surface_close_distance_threshold() -> void:
             SURFACE_CLOSE_DISTANCE_THRESHOLD_ARC_WIDTH)
 
 func _draw_nearby_surfaces() -> void:
-    # FIXME: LEFT OFF HERE: Remove the need to pass the normal
     for surface in navigator.nearby_surfaces:
         DrawUtils.draw_surface(self, surface, NEARBY_SURFACE_COLOR)

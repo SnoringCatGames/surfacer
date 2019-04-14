@@ -1,7 +1,9 @@
 extends Node
 class_name Global
 
-# Array<{
+# Dictionary<
+# String,
+# {
 #     name: String,
 #     type: String,
 #     path: String,

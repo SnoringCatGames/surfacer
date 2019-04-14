@@ -8,10 +8,17 @@ var player_name: String
 var surface_state := PlayerSurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
 var velocity := Vector2()
-var level
+var level # FIXME: Add type back in?
+# Array<EdgeMovement>
+var edge_movement_types := []
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
+    edge_movement_types = _get_edge_movement_types()
+
+func _get_edge_movement_types() -> Array:
+    Utils.error("abstract Player._get_edge_movement_types is not implemented")
+    return []
 
 func _enter_tree() -> void:
     var global := $"/root/Global"
