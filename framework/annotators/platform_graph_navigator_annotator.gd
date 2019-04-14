@@ -25,8 +25,16 @@ func _draw_surface_close_distance_threshold() -> void:
     
     # For now, just draw a circle approximately centered on the surface. Ideally, this should be 
     # updated to draw a consistent circular margin around the entire polyline.
-    var center = vertices[ceil(vertices.size() / 2)]
-    
+    var center: Vector2
+    if vertices.size() % 2 == 1:
+        # Odd: Choose the middle.
+        center = vertices[ceil(vertices.size() / 2)]
+    else:
+        # Even: Choose halfway between the two middle vertices.
+        var a = vertices[vertices.size() / 2 - 1]
+        var b = vertices[vertices.size() / 2]
+        center = a + (b - a) / 2
+        
     DrawUtils.draw_empty_circle(self, center, \
             PlatformGraphNavigator.SURFACE_CLOSE_DISTANCE_THRESHOLD, \
             SURFACE_CLOSE_DISTANCE_THRESHOLD_COLOR, \

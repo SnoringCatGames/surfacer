@@ -66,6 +66,9 @@ static func is_polygon_clockwise(vertices: Array) -> bool:
         sum += (v2.x - v1.x) * (v2.y + v1.y)
     return sum < 0
 
+static func are_points_collinear(p1: Vector2, p2: Vector2, p3: Vector2) -> bool:
+    return abs((p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y)) < FLOAT_EPSILON
+
 static func get_bounding_box_for_points(points: PoolVector2Array) -> Rect2:
     assert(points.size() > 0)
     var bounding_box = Rect2(points[0], Vector2.ZERO)

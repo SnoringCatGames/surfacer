@@ -63,22 +63,26 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     print("_parse_tile_map_into_sides duration: %sms" % _stopwatch.stop())
     
     _stopwatch.start()
-    print("_remove_internal_surfaces: floors+ceilings...")
+    print("_remove_internal_surfaces...")
     _remove_internal_surfaces(floors, ceilings)
-    print("_remove_internal_surfaces: left_walls+right_walls...")
     _remove_internal_surfaces(left_walls, right_walls)
     print("_remove_internal_surfaces duration: %sms" % _stopwatch.stop())
     
     _stopwatch.start()
-    print("_merge_continuous_surfaces: floors...")
+    print("_merge_continuous_surfaces...")
     _merge_continuous_surfaces(floors)
-    print("_merge_continuous_surfaces: ceilings...")
     _merge_continuous_surfaces(ceilings)
-    print("_merge_continuous_surfaces: left_walls...")
     _merge_continuous_surfaces(left_walls)
-    print("_merge_continuous_surfaces: right_walls...")
     _merge_continuous_surfaces(right_walls)
     print("_merge_continuous_surfaces duration: %sms" % _stopwatch.stop())
+    
+    _stopwatch.start()
+    print("_remove_internal_collinear_vertices...")
+    _remove_internal_collinear_vertices(floors)
+    _remove_internal_collinear_vertices(ceilings)
+    _remove_internal_collinear_vertices(left_walls)
+    _remove_internal_collinear_vertices(right_walls)
+    print("_remove_internal_collinear_vertices duration: %sms" % _stopwatch.stop())
     
     _stopwatch.start()
     print("_store_surfaces...")
@@ -455,6 +459,21 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                 
                 j += 1
             
+            i += 1
+
+func _remove_internal_collinear_vertices(surfaces: Array) -> void:
+    var i: int
+    var count: int
+    var vertices: Array
+    for surface in surfaces:
+        vertices = surface.vertices_array
+        i = 0
+        count = vertices.size()
+        while i + 2 < count:
+            if Geometry.are_points_collinear(vertices[i], vertices[i + 1], vertices[i + 2]):
+                vertices.remove(i + 1)
+                i -= 1
+                count -= 1
             i += 1
 
 func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, \

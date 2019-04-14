@@ -2,8 +2,9 @@ extends Reference
 class_name PlatformGraphNavigator
 
 # FIXME: LEFT OFF HERE
-# - Add logic to remove internal nodes in flat-line surfaces
 # - MAKE get_nearby_surfaces MORE EFFICIENT! (force run it everyframe to ensure no lag)
+#   - Scrap previous function; just use bounding box intersection (since I'm going to need to use
+#     better logic for determining movement patterns anyway...)
 # - Use navigator to test (print) when state changes occur and calculating:
 #   - the current PositionOnSurface,
 #   - which other surfaces are nearby,
@@ -13,7 +14,7 @@ class_name PlatformGraphNavigator
 #   - 
 
 # TODO: Adjust this
-const SURFACE_CLOSE_DISTANCE_THRESHOLD = 384
+const SURFACE_CLOSE_DISTANCE_THRESHOLD = 512
 
 var current_position: PositionOnSurface
 # Array<Surface>
@@ -34,7 +35,6 @@ func _init(player, graph: PlatformGraph) -> void:
 
 # Updates player-graph state in response to the given new PlayerSurfaceState.
 func update() -> void:
-    # FIXME: LEFT OFF HERE
     if surface_state.is_grabbing_a_surface:
         if surface_state.just_changed_surface:
             _stopwatch.start()
@@ -42,7 +42,6 @@ func update() -> void:
             nearby_surfaces = nodes.get_nearby_surfaces(surface_state.grabbed_surface, \
                     SURFACE_CLOSE_DISTANCE_THRESHOLD)
             print("get_nearby_surfaces duration: %sms" % _stopwatch.stop())
-            print(nearby_surfaces)
     else:
         nearby_surfaces = []
 
