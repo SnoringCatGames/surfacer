@@ -1,17 +1,29 @@
-# A reference to the actual surface node, and a specification for position along that node.
+# Represents a position along a surface.
 # 
-# FIXME: ACTUALLY, should the following be true? Not extending past might be both slightly more realistic as well as better for handling the offset I wanted to add before jumping landing near the edge anyway...
-# Note: A position along a surface could actually extend past the edges of the surface. This is
-# because a player's bounding box has non-zero width and height.
+# - Rather than considering polyline length, this only specifies the position along the axis the
+#   surface is aligned to.
+# - min x/y -> t = 0; max x/y -> t = 1. This ignores the ordering of the surface vertices.
 # 
 # The position always indicates the center of the player's bounding box.
 extends Reference
 class_name PositionAlongSurface
 
-func _init():
-    pass
+var surface: Surface
+# [0,1]
+var t: float
 
-# TODO
-# - A reference to the actual surface/Node
-# - Specification for position along that node.
-# - Node type
+func update(surface: Surface, position_world_coord: Vector2) -> void:
+    self.surface = surface
+    
+    var surface_start
+    var surface_range
+    var point
+    if surface.side == SurfaceSide.FLOOR or surface.side == SurfaceSide.CEILING:
+        surface_start = surface.bounding_box.position.x
+        surface_range = surface.bounding_box.size.x
+        point = position_world_coord.x
+    else: # surface.side == SurfaceSide.LEFT_WALL or surface.side == SurfaceSide.RIGHT_WALL
+        surface_start = surface.bounding_box.position.y
+        surface_range = surface.bounding_box.size.y
+        point = position_world_coord.y
+    t = (point - surface_start) / surface_range if surface_range > 0 else 0

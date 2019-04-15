@@ -15,8 +15,8 @@ static func get_distance_squared_from_point_to_segment( \
     var closest_point := get_closest_point_on_segment_to_point(point, segment_a, segment_b)
     return point.distance_squared_to(closest_point)
 
-# Calculates the minimum squared distance between two line segments.
-static func get_distance_squared_between_segments( \
+# Calculates the minimum squared distance between two NON-INTERSECTING line segments.
+static func get_distance_squared_between_non_intersecting_segments( \
         segment_1_a: Vector2, segment_1_b: Vector2, \
         segment_2_a: Vector2, segment_2_b: Vector2) -> float:
     var closest_on_2_to_1_a = \
@@ -51,6 +51,37 @@ static func get_closest_point_on_segment_to_point( \
         var distance_squared_a = point.distance_squared_to(segment_a)
         var distance_squared_b = point.distance_squared_to(segment_b)
         return segment_a if distance_squared_a < distance_squared_b else segment_b
+
+func are_segments_intersecting(segment_1_a: Vector2, segment_1_b: Vector2, \
+        segment_2_a: Vector2, segment_2_b: Vector2) -> bool:
+    var r = segment_1_b - segment_1_a
+    var s = segment_2_b - segment_2_a
+    
+    var u_numerator = (segment_2_a - segment_1_a).cross(r)
+    var denominator = r.cross(s)
+    
+    if u_numerator == 0 and denominator == 0:
+        # The segments are collinear.
+        var t0_numerator = (segment_2_a - segment_1_a) * r
+        var t1_numerator = (segment_1_a - segment_2_a) * s
+        # Determine whether the segments are overlapping or disjoint.
+        return (0 <= t0_numerator and t0_numerator <= r * r) or \
+                (0 <= t1_numerator and t1_numerator <= s * s)
+    elif denominator == 0:
+        # The segments are parallel.
+        return false
+    else:
+        # The segments are not parallel.
+        var u = u_numerator / denominator
+        var t = (segment_2_a - segment_1_a).cross(s) / denominator
+#        var intersection = segment_1_a + t * r
+        return t >= 0 and t <= 1 and u >= 0 and u <= 1
+
+static func are_points_equal_with_epsilon(a: Vector2, b: Vector2) -> bool:
+    var x_diff = b.x - a.x
+    var y_diff = b.y - a.y
+    return -FLOAT_EPSILON < x_diff and x_diff < FLOAT_EPSILON and \
+            -FLOAT_EPSILON < y_diff and y_diff < FLOAT_EPSILON
 
 # Determine whether the points of the polygon are defined in a clockwise direction. This uses the
 # shoelace formula.

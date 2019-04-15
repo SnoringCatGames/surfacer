@@ -22,7 +22,7 @@ _global_script_classes=[ {
 "base": "Player",
 "class": "ComputerPlayer",
 "language": "GDScript",
-"path": "res://framework/computer_player.gd"
+"path": "res://framework/player/computer_player.gd"
 }, {
 "base": "Node",
 "class": "DrawUtils",
@@ -57,7 +57,7 @@ _global_script_classes=[ {
 "base": "Player",
 "class": "HumanPlayer",
 "language": "GDScript",
-"path": "res://framework/human_player.gd"
+"path": "res://framework/player/human_player.gd"
 }, {
 "base": "EdgeMovement",
 "class": "JumpFromPlatformMovement",
@@ -117,12 +117,12 @@ _global_script_classes=[ {
 "base": "KinematicBody2D",
 "class": "Player",
 "language": "GDScript",
-"path": "res://framework/player.gd"
+"path": "res://framework/player/player.gd"
 }, {
 "base": "Reference",
 "class": "PlayerActions",
 "language": "GDScript",
-"path": "res://framework/player_actions.gd"
+"path": "res://framework/player/player_actions.gd"
 }, {
 "base": "Node2D",
 "class": "PlayerAnnotator",
@@ -137,7 +137,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "PlayerSurfaceState",
 "language": "GDScript",
-"path": "res://framework/player_surface_state.gd"
+"path": "res://framework/player/player_surface_state.gd"
 }, {
 "base": "Reference",
 "class": "PositionAlongSurface",
@@ -172,7 +172,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "SurfaceSide",
 "language": "GDScript",
-"path": "res://framework/surface_side.gd"
+"path": "res://framework/platform_graph/surface_side.gd"
 }, {
 "base": "Node2D",
 "class": "TileAnnotator",

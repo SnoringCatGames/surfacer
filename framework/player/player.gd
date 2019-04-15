@@ -2,7 +2,7 @@ extends KinematicBody2D
 class_name Player
 
 const PlatformGraphNavigator = preload("res://framework/platform_graph/platform_graph_navigator.gd")
-const PlayerSurfaceState = preload("res://framework/player_surface_state.gd")
+const PlayerSurfaceState = preload("res://framework/player/player_surface_state.gd")
 
 var player_name: String
 var actions := PlayerActions.new()
@@ -205,6 +205,9 @@ func _update_which_surface_is_grabbed() -> void:
                 surface_state.just_left_air or \
                 next_grabbed_surface != surface_state.grabbed_surface
         surface_state.grabbed_surface = next_grabbed_surface
+        
+        surface_state.player_center_position_along_surface.update( \
+                surface_state.grabbed_surface, position)
     
     elif surface_state.just_entered_air:
         surface_state.just_changed_grab_position = true

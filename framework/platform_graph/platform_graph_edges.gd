@@ -3,9 +3,6 @@ class_name PlatformGraphEdges
 
 # FIXME: LEFT OFF HERE:
 # 
-# - Add logic to translate player Node2D center position to the center position along the edge of
-#   the surface (in world coordinates)
-# - Add logic to translate that position to PositionAlongSurface.
 # - Add logic in navigator to determine/store what "NavigationMode" we are in:
 #   - Within a node, moving to target PositionAlongSurface (either walking or climbing)
 #   - Within a node, resting
