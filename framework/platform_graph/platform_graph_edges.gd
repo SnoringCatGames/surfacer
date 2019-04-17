@@ -3,22 +3,23 @@ class_name PlatformGraphEdges
 
 # FIXME: LEFT OFF HERE:
 # 
-# - Add logic in navigator to determine/store what "NavigationMode" we are in:
-#   - Within a node, moving to target PositionAlongSurface (either walking or climbing)
-#   - Within a node, resting
-#   - Moving along a planned edge
-#   - In the air, not on a planned edge
-#   - On a surface, not on a planned node
-# - Add logic to walk to target PositionAlongSurface when in the corresponding mode.
+# - Add logic to the Player to detect unexpected interruptions:
+#   - Hit a surface (inform the navigator; navigator returns false if unexpected; player starts a new navigation)
+#   - Hit by anything else (figure out response depending on collider; at least cancel previous navigation)
+# - Add logic to initiate next walk/climb on surface once we've landed on the desired surface.
+# - Add logic to initiate next jump when we've reached the target PositionAlongSurface when moving within node.
+# - Add logic to walk/climb to target PositionAlongSurface.
 # - Add logic to detect when we've reached the target PositionAlongSurface when moving within node.
-# - Add logic to detect when the mode changes.
-# - Add logic for each mode (during mode change) to plan the next action according to the current
-#   state and target.
+# - Add logic to inform the player when we've reached the final goal position.
+# - Add a check when current position/movement/state is further than our tolerance away from the expected state for the current path.
+#   - Throw an error.
+# - Add logic to automatically self-correct to the expected position/movement/state sometimes...
+#   - When? Each frame? Only when we're further away than our tolerance allows?
 # 
 # - Implement get_movement_instructions for jumping.
-# - Add support for creating EdgeInstructions.
-# - Add support for executing EdgeInstructions.
-# - Add annotations for the actual trajectories that are defined by EdgeInstructions
+# - Add support for creating PlatformGraphEdge.
+# - Add support for executing PlatformGraphEdge.
+# - Add annotations for the actual trajectories that are defined by PlatformGraphEdge
 # - Add annotations that draw the recent path that the player actually moved
 # - Add annotations for rendering some basic navigation mode info for the CP:
 #   - Mode name
@@ -55,7 +56,13 @@ class_name PlatformGraphEdges
 # 
 # - Update the pre-configured Input Map in Project Settings to use more semantic keys instead of just up/down/etc.
 # - Document in a separate markdown file exactly which Input Map keys this framework depends on.
-# -  
+# 
+# - MAKE get_nearby_surfaces MORE EFFICIENT? (force run it everyframe to ensure no lag)
+#   - Scrap previous function; just use bounding box intersection (since I'm going to need to use
+#     better logic for determining movement patterns anyway...)
+#   - Actually, maybe don't worry too much, because this is actually only run at the start.
+# 
+# - 
 
 func _init(nodes: PlatformGraphNodes, player_info: Dictionary) -> void:
     # TODO

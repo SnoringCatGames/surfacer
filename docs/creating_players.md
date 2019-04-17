@@ -1,3 +1,4 @@
 # Creating players
 
-- The framework assumes that the center of the players collision geometry is at (0,0).
+- Each player should have a child `CollisionShape2D` that defines its collision boundary.
+- The center of each players' collision boundary should be at (0,0).

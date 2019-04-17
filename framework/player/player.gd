@@ -12,6 +12,7 @@ var velocity := Vector2()
 var level # FIXME: Add type back in?
 # Array<EdgeMovement>
 var edge_movement_types := []
+var collider: CollisionShape2D
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
@@ -24,6 +25,11 @@ func _get_edge_movement_types() -> Array:
 func _enter_tree() -> void:
     var global := $"/root/Global"
     level = global.current_level
+
+func _ready() -> void:
+    var colliders = Utils.get_children_by_type(self, CollisionShape2D)
+    assert(colliders.size() == 1)
+    collider = colliders[0]
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
     platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
@@ -206,7 +212,7 @@ func _update_which_surface_is_grabbed() -> void:
                 next_grabbed_surface != surface_state.grabbed_surface
         surface_state.grabbed_surface = next_grabbed_surface
         
-        surface_state.player_center_position_along_surface.update( \
+        surface_state.player_center_position_along_surface.match_current_grab( \
                 surface_state.grabbed_surface, position)
     
     elif surface_state.just_entered_air:
