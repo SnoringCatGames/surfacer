@@ -15,6 +15,12 @@ static func get_distance_squared_from_point_to_segment( \
     var closest_point := get_closest_point_on_segment_to_point(point, segment_a, segment_b)
     return point.distance_squared_to(closest_point)
 
+# Calculates the minimum squared distance between a polyline and a point.
+static func get_distance_squared_from_point_to_polyline( \
+        point: Vector2, polyline: PoolVector2Array) -> float:
+    var closest_point := get_closest_point_on_polyline_to_point(point, polyline)
+    return point.distance_squared_to(closest_point)
+
 # Calculates the minimum squared distance between two NON-INTERSECTING line segments.
 static func get_distance_squared_between_non_intersecting_segments( \
         segment_1_a: Vector2, segment_1_b: Vector2, \
@@ -52,8 +58,31 @@ static func get_closest_point_on_segment_to_point( \
         var distance_squared_b = point.distance_squared_to(segment_b)
         return segment_a if distance_squared_a < distance_squared_b else segment_b
 
-func are_segments_intersecting(segment_1_a: Vector2, segment_1_b: Vector2, \
-        segment_2_a: Vector2, segment_2_b: Vector2) -> bool:
+# Calculates the minimum squared distance between a polyline and a point.
+static func get_closest_point_on_polyline_to_point( \
+        point: Vector2, polyline: PoolVector2Array) -> Vector2:
+    if polyline.size() == 1:
+        return polyline[0]
+    
+    var closest_point := get_closest_point_on_segment_to_point(point, polyline[0], polyline[1])
+    var closest_distance_squared := point.distance_squared_to(closest_point)
+    
+    var current_closest_point: Vector2
+    var current_distance_squared: float
+    for i in range(1, polyline.size() - 1):
+        current_closest_point = \
+                get_closest_point_on_segment_to_point(point, polyline[i], polyline[i + 1])
+        current_distance_squared = point.distance_squared_to(current_closest_point)
+        if current_distance_squared < closest_distance_squared:
+            closest_distance_squared = current_distance_squared
+            closest_point = current_closest_point
+    
+    return closest_point
+
+# Calculates the point of intersection between two line segments. If the segments don't intersect,
+# this returns a Vector2 with values of INFINITY.
+static func get_intersection_of_segments(segment_1_a: Vector2, segment_1_b: Vector2, \
+        segment_2_a: Vector2, segment_2_b: Vector2) -> Vector2:
     var r = segment_1_b - segment_1_a
     var s = segment_2_b - segment_2_a
     
@@ -64,18 +93,46 @@ func are_segments_intersecting(segment_1_a: Vector2, segment_1_b: Vector2, \
         # The segments are collinear.
         var t0_numerator = (segment_2_a - segment_1_a) * r
         var t1_numerator = (segment_1_a - segment_2_a) * s
-        # Determine whether the segments are overlapping or disjoint.
-        return (0 <= t0_numerator and t0_numerator <= r * r) or \
-                (0 <= t1_numerator and t1_numerator <= s * s)
+        if 0 <= t0_numerator and t0_numerator <= r * r or \
+                0 <= t1_numerator and t1_numerator <= s * s:
+            # The segments overlap. Return one of the segment endpoints that lies within the
+            # overlap region.
+            if (segment_1_a.x >= segment_2_a.x and segment_1_a.x <= segment_2_b.x) or \
+                    (segment_1_a.x <= segment_2_a.x and segment_1_a.x >= segment_2_b.x):
+                return segment_1_a
+            else:
+                return segment_1_b
+        else:
+            # The segments are disjoint.
+            return Vector2.INF
     elif denominator == 0:
         # The segments are parallel.
-        return false
+        return Vector2.INF
     else:
         # The segments are not parallel.
         var u = u_numerator / denominator
         var t = (segment_2_a - segment_1_a).cross(s) / denominator
-#        var intersection = segment_1_a + t * r
-        return t >= 0 and t <= 1 and u >= 0 and u <= 1
+        if t >= 0 and t <= 1 and u >= 0 and u <= 1:
+            # The segments intersect.
+            return segment_1_a + t * r
+        else:
+            # The segments don't touch.
+            return Vector2.INF
+
+# Calculates the point of intersection between a line segment and a polyline. If the two don't
+# intersect, this returns a Vector2 with values of INFINITY.
+static func get_intersection_of_segment_and_polyline(segment_a: Vector2, segment_b: Vector2, \
+        vertices: PoolVector2Array) -> Vector2:
+    if vertices.size() == 1:
+        if do_point_and_segment_intersect(segment_a, segment_b, vertices[0]):
+            return vertices[0]
+    else:
+        var intersection: Vector2
+        for i in range(vertices.size() - 1):
+            intersection = get_intersection_of_segments(segment_a, segment_b, vertices[i], vertices[i + 1])
+            if intersection != Vector2.INF:
+                return intersection
+    return Vector2.INF
 
 static func are_points_equal_with_epsilon(a: Vector2, b: Vector2) -> bool:
     var x_diff = b.x - a.x
@@ -100,12 +157,47 @@ static func is_polygon_clockwise(vertices: Array) -> bool:
 static func are_points_collinear(p1: Vector2, p2: Vector2, p3: Vector2) -> bool:
     return abs((p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y)) < FLOAT_EPSILON
 
+static func do_point_and_segment_intersect(point: Vector2, segment_a: Vector2, segment_b: Vector2) -> bool:
+    return are_points_collinear(point, segment_a, segment_b) and \
+            ((point.x <= segment_a.x and point.x >= segment_b.x) or \
+            (point.x >= segment_a.x and point.x <= segment_b.x))
+
 static func get_bounding_box_for_points(points: PoolVector2Array) -> Rect2:
     assert(points.size() > 0)
     var bounding_box = Rect2(points[0], Vector2.ZERO)
     for i in range(1, points.size()):
         bounding_box.expand(points[i])
     return bounding_box
+
+static func distance_squared_from_point_to_rect(point: Vector2, rect: Rect2) -> float:
+    var rect_min := rect.position
+    var rect_max := rect.end
+    
+    if point.x < rect_min.x:
+        if point.y < rect_min.y:
+            return point.distance_squared_to(rect_min)
+        elif point.y > rect_max.y:
+            return point.distance_squared_to(Vector2(rect_min.x, rect_max.y))
+        else:
+            var distance = rect_min.x - point.x
+            return distance * distance
+    elif point.x > rect_max.x:
+        if point.y < rect_min.y:
+            return point.distance_squared_to(Vector2(rect_max.x, rect_min.y))
+        elif point.y > rect_max.y:
+            return point.distance_squared_to(rect_max)
+        else:
+            var distance = point.x - rect_max.x
+            return distance * distance
+    else:
+        if point.y < rect_min.y:
+            var distance = rect_min.y - point.y
+            return distance * distance
+        elif point.y > rect_max.y:
+            var distance = point.y - rect_max.y
+            return distance * distance
+        else:
+            return 0.0
 
 # The build-in TileMap.world_to_map generates incorrect results around cell boundaries, so we use a
 # custom utility.

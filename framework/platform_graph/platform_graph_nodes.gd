@@ -39,6 +39,29 @@ func get_nearby_surfaces(target_surface: Surface, distance_threshold: float) -> 
     
     return result
 
+# Gets the closest surface to the given point.
+func get_closest_surface(target: Vector2) -> Surface:
+    var closest_surface: Surface
+    var closest_distance_squared: float
+    var current_distance_squared: float
+    
+    closest_surface = floors[0]
+    closest_distance_squared = \
+            Geometry.get_distance_squared_from_point_to_polyline(target, closest_surface.vertices)
+    
+    for surfaces in [floors, ceilings, left_walls, right_walls]:
+        for current_surface in surfaces:
+            current_distance_squared = Geometry.distance_squared_from_point_to_rect(target, \
+                    current_surface.bounding_box)
+            if current_distance_squared < closest_distance_squared:
+                current_distance_squared = Geometry.get_distance_squared_from_point_to_polyline( \
+                        target, current_surface.vertices)
+                if current_distance_squared < closest_distance_squared:
+                    closest_distance_squared = current_distance_squared
+                    closest_surface = current_surface
+    
+    return closest_surface
+
 # Parses the given TileMap into a set of nodes for the platform graph.
 # 
 # - Each "connecting" tile from the TileMap will be merged into a single surface node in the graph.

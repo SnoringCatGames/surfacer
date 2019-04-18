@@ -27,14 +27,15 @@ func _init(player, graph: PlatformGraph) -> void:
     _stopwatch = Stopwatch.new()
 
 # Starts a new navigation to the given destination.
-func start_new_navigation(destination: PositionAlongSurface) -> void:
-    # FIXME
+func start_new_navigation(destination: Vector2) -> void:
+    # FIXME: 
     pass
 
 # Finds the closest PositionAlongSurface to the given target point.
 func find_closest_position(target: Vector2) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
-    # FIXME
+    var surface := nodes.get_closest_surface(target)
+    position.match_surface_target_and_collider(surface, target, player.collider)
     return position
 
 # Updates player-graph state in response to the given new PlayerSurfaceState.
