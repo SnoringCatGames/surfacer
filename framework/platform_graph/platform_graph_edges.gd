@@ -62,6 +62,8 @@ class_name PlatformGraphEdges
 #     better logic for determining movement patterns anyway...)
 #   - Actually, maybe don't worry too much, because this is actually only run at the start.
 # 
+# - Add logic to Player when calculating touched edges to check that the collider is a stationary TileMap object
+# 
 # - 
 
 func _init(nodes: PlatformGraphNodes, player_info: Dictionary) -> void:

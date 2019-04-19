@@ -14,6 +14,11 @@ var target_point: Vector2
 # [0,1]
 var t: float
 
+func reset() -> void:
+    self.surface = null
+    self.target_point = Vector2.INF
+    self.t = 0.0
+
 func match_current_grab(surface: Surface, player_center: Vector2) -> void:
     self.surface = surface
     self.target_point = player_center

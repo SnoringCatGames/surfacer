@@ -215,11 +215,18 @@ func _update_which_surface_is_grabbed() -> void:
         surface_state.player_center_position_along_surface.match_current_grab( \
                 surface_state.grabbed_surface, position)
     
-    elif surface_state.just_entered_air:
-        surface_state.just_changed_grab_position = true
-        surface_state.just_changed_tile_map = true
-        surface_state.just_changed_tile_map_coord = true
-        surface_state.just_changed_surface = true
+    else:
+        surface_state.grab_position = Vector2.INF
+        surface_state.grabbed_tile_map = null
+        surface_state.grab_position_tile_map_coord = Vector2.INF
+        surface_state.grabbed_surface = null
+        surface_state.player_center_position_along_surface.reset()
+        
+        if surface_state.just_entered_air:
+            surface_state.just_changed_grab_position = true
+            surface_state.just_changed_tile_map = true
+            surface_state.just_changed_tile_map_coord = true
+            surface_state.just_changed_surface = true
 
 static func _get_attached_surface_collision( \
         body: KinematicBody2D, surface_state: PlayerSurfaceState) -> KinematicCollision2D:
