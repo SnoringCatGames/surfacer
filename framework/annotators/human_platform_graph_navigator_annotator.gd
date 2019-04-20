@@ -1,5 +1,5 @@
 extends Node2D
-class_name PlatformGraphNavigatorAnnotator
+class_name HumanPlatformGraphNavigatorAnnotator
 
 var NEARBY_SURFACE_COLOR := Color.from_hsv(0.5, 0.8, 0.99, 0.5)
 var SURFACE_CLOSE_DISTANCE_THRESHOLD_COLOR := Color.from_hsv(0.5, 0.8, 0.99, 0.5)
@@ -44,14 +44,3 @@ func _draw_surface_close_distance_threshold() -> void:
 func _draw_nearby_surfaces() -> void:
     for surface in navigator.nearby_surfaces:
         DrawUtils.draw_surface(self, surface, NEARBY_SURFACE_COLOR)
-
-# FIXME: LEFT OFF HERE: ********
-# navigator.just_started_new_navigation
-# navigator.path.edges
-# edge.start_position
-# edge.end_position
-# navigator.path.start_position
-# navigator.path.end_position
-# navigator.path.end_position.surface
-# navigator.path.end_position.target_point
-# navigator.path.end_position.t

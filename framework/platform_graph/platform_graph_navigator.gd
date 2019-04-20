@@ -65,7 +65,7 @@ func update() -> void:
     var is_grabbed_surface_expected := \
             surface_state.grabbed_surface == current_edge.end_position.surface
     just_collided_unexpectedly = \
-            !is_grabbed_surface_expected and player.get_slide_count().size() > 0
+            !is_grabbed_surface_expected and player.get_slide_count() > 0
     just_entered_air_unexpectedly = \
             surface_state.just_entered_air and !just_reached_start_of_edge
     just_landed_on_expected_surface = surface_state.just_left_air and \
@@ -129,6 +129,9 @@ func calculate_grabbed_surface(surface_state: PlayerSurfaceState) -> Surface:
 func _calculate_path(origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:
     var edges := []
+    # FIXME: Remove
+    var edge := PlatformGraphEdge.new(origin, destination)
+    edges.push_back(edge)
     # FIXME: Use a A* to find the edges.
     return PlatformGraphPath.new(origin, destination, edges)
 

@@ -83,18 +83,18 @@ static func get_closest_point_on_polyline_to_point( \
 # this returns a Vector2 with values of INFINITY.
 static func get_intersection_of_segments(segment_1_a: Vector2, segment_1_b: Vector2, \
         segment_2_a: Vector2, segment_2_b: Vector2) -> Vector2:
-    var r = segment_1_b - segment_1_a
-    var s = segment_2_b - segment_2_a
+    var r := segment_1_b - segment_1_a
+    var s := segment_2_b - segment_2_a
     
-    var u_numerator = (segment_2_a - segment_1_a).cross(r)
-    var denominator = r.cross(s)
+    var u_numerator := (segment_2_a - segment_1_a).cross(r)
+    var denominator := r.cross(s)
     
     if u_numerator == 0 and denominator == 0:
         # The segments are collinear.
-        var t0_numerator = (segment_2_a - segment_1_a) * r
-        var t1_numerator = (segment_1_a - segment_2_a) * s
-        if 0 <= t0_numerator and t0_numerator <= r * r or \
-                0 <= t1_numerator and t1_numerator <= s * s:
+        var t0_numerator := (segment_2_a - segment_1_a).dot(r)
+        var t1_numerator := (segment_1_a - segment_2_a).dot(s)
+        if 0 <= t0_numerator and t0_numerator <= r.dot(r) or \
+                0 <= t1_numerator and t1_numerator <= s.dot(s):
             # The segments overlap. Return one of the segment endpoints that lies within the
             # overlap region.
             if (segment_1_a.x >= segment_2_a.x and segment_1_a.x <= segment_2_b.x) or \
@@ -133,6 +133,46 @@ static func get_intersection_of_segment_and_polyline(segment_a: Vector2, segment
             if intersection != Vector2.INF:
                 return intersection
     return Vector2.INF
+
+# Calculates where the alially-aligned surface-side-normal that goes through the given point would
+# intersect with the surface.
+static func project_point_onto_surface(point: Vector2, surface: Surface) -> Vector2:
+    # Check whether the point lies outside the surface boundaries.
+    var start_vertex = surface.vertices[0]
+    var end_vertex = surface.vertices[surface.vertices.size() - 1]
+    if surface.side == SurfaceSide.FLOOR and point.x <= start_vertex.x:
+        return start_vertex
+    elif surface.side == SurfaceSide.FLOOR and point.x >= end_vertex.x:
+        return end_vertex
+    if surface.side == SurfaceSide.CEILING and point.x >= start_vertex.x:
+        return start_vertex
+    elif surface.side == SurfaceSide.CEILING and point.x <= end_vertex.x:
+        return end_vertex
+    if surface.side == SurfaceSide.RIGHT_WALL and point.y <= start_vertex.y:
+        return start_vertex
+    elif surface.side == SurfaceSide.RIGHT_WALL and point.y >= end_vertex.y:
+        return end_vertex
+    if surface.side == SurfaceSide.LEFT_WALL and point.y >= start_vertex.y:
+        return start_vertex
+    elif surface.side == SurfaceSide.LEFT_WALL and point.y <= end_vertex.y:
+        return end_vertex
+    else:
+        # Target lies within the surface boundaries.
+        
+        # Calculate a segment that represents the alially-aligned surface-side-normal.
+        var segment_a: Vector2
+        var segment_b: Vector2
+        if surface.side == SurfaceSide.FLOOR or surface.side == SurfaceSide.CEILING:
+            segment_a = Vector2(point.x, surface.bounding_box.position.y)
+            segment_b = Vector2(point.x, surface.bounding_box.end.y)
+        else: # surface.side == SurfaceSide.LEFT_WALL or surface.side == SurfaceSide.RIGHT_WALL
+            segment_a = Vector2(surface.bounding_box.position.x, point.y)
+            segment_b = Vector2(surface.bounding_box.end.x, point.y)
+        
+        var intersection: Vector2 = Geometry.get_intersection_of_segment_and_polyline(segment_a, \
+                segment_b, surface.vertices)
+        assert(intersection != Vector2.INF)
+        return intersection
 
 static func are_points_equal_with_epsilon(a: Vector2, b: Vector2) -> bool:
     var x_diff = b.x - a.x

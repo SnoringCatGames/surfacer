@@ -77,3 +77,19 @@ static func draw_surface(canvas: CanvasItem, surface: Surface, color: Color) -> 
 #            Utils.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
     else:
         canvas.draw_circle(vertices[0], 6.0, color)
+
+static func draw_position_along_surface(canvas: CanvasItem, position: PositionAlongSurface, \
+        target_point_color: Color, t_color: Color, target_point_radius := 4.0, t_length := 16.0, \
+        t_width := 4.0) -> void:
+    # Annotate the target point.
+    canvas.draw_circle(position.target_point, target_point_radius, \
+            target_point_color)
+    
+    # Annotate the t value.
+    if position.target_projection_onto_surface == null:
+        position.target_projection_onto_surface = \
+                Geometry.project_point_onto_surface(position.target_point, position.surface)
+    var normal = position.surface.normal
+    var start = position.target_projection_onto_surface + normal * t_length / 2
+    var end = position.target_projection_onto_surface - normal * t_length / 2
+    canvas.draw_line(start, end, t_color, t_width)

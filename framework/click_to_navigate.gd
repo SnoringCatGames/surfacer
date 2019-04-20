@@ -1,11 +1,11 @@
-extends Reference
+extends Node
 class_name ClickToNavigate
 
-var level: Level
+var level # FIXME: Add type back in
 var computer_player: ComputerPlayer
 var navigator: PlatformGraphNavigator
 
-func _update_level(level: Level) -> void:
+func update_level(level) -> void:
     self.level = level
     
     # Get a reference to the ComputerPlayer.

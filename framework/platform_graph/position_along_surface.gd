@@ -14,6 +14,9 @@ var target_point: Vector2
 # [0,1]
 var t: float
 
+# Used for debugging. May not always be set.
+var target_projection_onto_surface: Vector2
+
 func reset() -> void:
     self.surface = null
     self.target_point = Vector2.INF
@@ -31,9 +34,10 @@ func match_surface_target_and_collider(surface: Surface, target_point: Vector2, 
             _calculate_target_point_for_center_of_collider(surface, target_point, collider)
     self.t = _calculate_t(surface, target_point)
     
-static func _calculate_target_point_for_center_of_collider(surface: Surface, \
+func _calculate_target_point_for_center_of_collider(surface: Surface, \
         target_point: Vector2, collider: CollisionShape2D = null) -> Vector2:
-    var point_on_surface = _project_point_on_surface(surface, target_point)
+    var point_on_surface: Vector2 = Geometry.project_point_onto_surface(target_point, surface)
+    self.target_projection_onto_surface = point_on_surface
     
     if collider == null:
         return point_on_surface
@@ -76,43 +80,3 @@ static func _calculate_t(surface: Surface, target_point: Vector2) -> float:
         surface_range = surface.bounding_box.size.y
         point = target_point.y
     return (point - surface_start) / surface_range if surface_range > 0 else 0.0
-
-# Calculates where the alially-aligned surface-side-normal that goes through the given point would
-# intersect with the surface.
-static func _project_point_on_surface(surface: Surface, target: Vector2) -> Vector2:
-    # Check whether the target lies outside the surface boundaries.
-    var start_vertex = surface.vertices[0]
-    var end_vertex = surface.vertices[surface.vertices.size() - 1]
-    if surface.side == SurfaceSide.FLOOR and target.x <= start_vertex:
-        return start_vertex
-    elif surface.side == SurfaceSide.FLOOR and target.x >= end_vertex:
-        return end_vertex
-    if surface.side == SurfaceSide.CEILING and target.x >= start_vertex:
-        return start_vertex
-    elif surface.side == SurfaceSide.CEILING and target.x <= end_vertex:
-        return end_vertex
-    if surface.side == SurfaceSide.RIGHT_WALL and target.y <= start_vertex:
-        return start_vertex
-    elif surface.side == SurfaceSide.RIGHT_WALL and target.y >= end_vertex:
-        return end_vertex
-    if surface.side == SurfaceSide.LEFT_WALL and target.y >= start_vertex:
-        return start_vertex
-    elif surface.side == SurfaceSide.LEFT_WALL and target.y <= end_vertex:
-        return end_vertex
-    else:
-        # Target lies within the surface boundaries.
-        
-        # Calculate a segment that represents the alially-aligned surface-side-normal.
-        var segment_a: Vector2
-        var segment_b: Vector2
-        if surface.side == SurfaceSide.FLOOR or surface.side == SurfaceSide.CEILING:
-            segment_a = Vector2(target.x, surface.bounding_box.position.y)
-            segment_b = Vector2(target.x, surface.bounding_box.end.y)
-        else: # surface.side == SurfaceSide.LEFT_WALL or surface.side == SurfaceSide.RIGHT_WALL
-            segment_a = Vector2(surface.bounding_box.position.x, target.y)
-            segment_b = Vector2(surface.bounding_box.end.x, target.y)
-        
-        var intersection: Vector2 = Geometry.get_intersection_of_segment_and_polyline(segment_a, \
-                segment_b, surface.vertices)
-        assert(intersection != Vector2.INF)
-        return intersection
