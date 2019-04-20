@@ -14,6 +14,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://players/cat_animator.gd"
 }, {
+"base": "PlayerParams",
+"class": "CatParams",
+"language": "GDScript",
+"path": "res://players/cat_params.gd"
+}, {
 "base": "HumanPlayer",
 "class": "CatPlayer",
 "language": "GDScript",
@@ -164,6 +169,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/player_movement/player_movement.gd"
 }, {
+"base": "Reference",
+"class": "PlayerParams",
+"language": "GDScript",
+"path": "res://framework/player/player_params.gd"
+}, {
 "base": "Node2D",
 "class": "PlayerSurfaceAnnotator",
 "language": "GDScript",
@@ -188,6 +198,11 @@ _global_script_classes=[ {
 "class": "RTree",
 "language": "GDScript",
 "path": "res://framework/r_tree.gd"
+}, {
+"base": "PlayerParams",
+"class": "SquirrelParams",
+"language": "GDScript",
+"path": "res://players/squirrel_params.gd"
 }, {
 "base": "ComputerPlayer",
 "class": "SquirrelPlayer",
@@ -221,6 +236,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "CatAnimator": "",
+"CatParams": "",
 "CatPlayer": "",
 "ClickAnnotator": "",
 "ClickToNavigate": "",
@@ -251,11 +267,13 @@ _global_script_class_icons={
 "PlayerActions": "",
 "PlayerInstruction": "",
 "PlayerMovement": "",
+"PlayerParams": "",
 "PlayerSurfaceAnnotator": "",
 "PlayerSurfaceState": "",
 "PositionAlongSurface": "",
 "PositionAnnotator": "",
 "RTree": "",
+"SquirrelParams": "",
 "SquirrelPlayer": "",
 "Stopwatch": "",
 "Surface": "",

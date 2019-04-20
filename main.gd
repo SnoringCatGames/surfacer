@@ -1,18 +1,13 @@
 extends Node
 
-const PLAYER_TYPES := [
-    {
-        name = "cat",
-        type = "human",
-        path = "res://players/cat_player.gd",
-    },
-    {
-        name = "squirrel",
-        type = "computer",
-        path = "res://players/squirrel_player.gd",
-    },
+const CatParams = preload("res://players/cat_params.gd")
+const SquirrelParams = preload("res://players/squirrel_params.gd")
+
+var player_params := [
+    CatParams.new(),
+    SquirrelParams.new(),
 ]
 
 func _enter_tree() -> void:
     var global := $"/root/Global"
-    global.register_player_types(PLAYER_TYPES)
+    global.register_player_params(player_params)

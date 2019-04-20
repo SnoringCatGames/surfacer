@@ -5,28 +5,25 @@ const PlatformGraphNavigator = preload("res://framework/platform_graph/platform_
 const PlayerSurfaceState = preload("res://framework/player/player_surface_state.gd")
 
 var player_name: String
-var movement_params := _get_initial_movement_params()
+var movement_params: MovementParams
+# Array<PlayerMovement>
+var movement_types: Array
 var actions := PlayerActions.new()
 var surface_state := PlayerSurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
 var velocity := Vector2.ZERO
 var level # TODO: Add type back in?
-# Array<PlayerMovement>
-var movement_types := []
 var collider: CollisionShape2D
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
-    movement_params = _get_initial_movement_params()
-    movement_types = _get_movement_types()
-
-func _get_movement_types() -> Array:
-    Utils.error("abstract Player._get_movement_types is not implemented")
-    return []
 
 func _enter_tree() -> void:
     var global := $"/root/Global"
-    level = global.current_level
+    var type_configuration: Dictionary = global.player_types[player_name]
+    self.level = global.current_level
+    self.movement_params = type_configuration.movement_params
+    self.movement_types = type_configuration.movement_types
 
 func _ready() -> void:
     var colliders = Utils.get_children_by_type(self, CollisionShape2D)
@@ -35,10 +32,6 @@ func _ready() -> void:
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
     platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
-
-func _get_initial_movement_params() -> MovementParams:
-    Utils.error("abstract Player._get_initial_movement_params is not implemented")
-    return MovementParams.new()
 
 # Gets actions for the current frame.
 #

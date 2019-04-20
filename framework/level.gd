@@ -16,7 +16,6 @@ var all_players: Array
 var platform_graph: PlatformGraph
 var click_to_navigate: ClickToNavigate
 
-
 var platform_graph_annotator: PlatformGraphAnnotator
 var computer_player_annotator: ComputerPlayerAnnotator
 var human_player_annotator: HumanPlayerAnnotator

@@ -6,12 +6,15 @@ class_name Global
 # {
 #     name: String,
 #     type: String,
-#     path: String,
+#     movement_params: MovementParams,
+#     movement_types: Array<PlayerMovement>,
 # }>
 var player_types = {}
 
 var current_level: Level
 
-func register_player_types(player_types: Array) -> void:
-    for type in player_types:
+func register_player_params(player_params: Array) -> void:
+    var type: Dictionary
+    for params in player_params:
+        type = params.get_player_type_configuration()
         self.player_types[type.name] = type

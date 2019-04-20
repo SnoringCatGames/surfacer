@@ -62,6 +62,9 @@ class_name PlatformGraphEdges
 # 
 # - 
 
+var player_name: String
+
 func _init(nodes: PlatformGraphNodes, player_info: Dictionary) -> void:
-    # TODO
+    player_name = player_info.name
+    # TODO: player_info.movement_types
     pass
