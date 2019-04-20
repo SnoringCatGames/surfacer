@@ -5,21 +5,23 @@ const PlatformGraphNavigator = preload("res://framework/platform_graph/platform_
 const PlayerSurfaceState = preload("res://framework/player/player_surface_state.gd")
 
 var player_name: String
+var movement_params := _get_initial_movement_params()
 var actions := PlayerActions.new()
 var surface_state := PlayerSurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
-var velocity := Vector2()
-var level # FIXME: Add type back in?
-# Array<EdgeMovement>
-var edge_movement_types := []
+var velocity := Vector2.ZERO
+var level # TODO: Add type back in?
+# Array<PlayerMovement>
+var movement_types := []
 var collider: CollisionShape2D
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
-    edge_movement_types = _get_edge_movement_types()
+    movement_params = _get_initial_movement_params()
+    movement_types = _get_movement_types()
 
-func _get_edge_movement_types() -> Array:
-    Utils.error("abstract Player._get_edge_movement_types is not implemented")
+func _get_movement_types() -> Array:
+    Utils.error("abstract Player._get_movement_types is not implemented")
     return []
 
 func _enter_tree() -> void:
@@ -33,6 +35,10 @@ func _ready() -> void:
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
     platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
+
+func _get_initial_movement_params() -> MovementParams:
+    Utils.error("abstract Player._get_initial_movement_params is not implemented")
+    return MovementParams.new()
 
 # Gets actions for the current frame.
 #
@@ -52,7 +58,16 @@ func _physics_process(delta: float) -> void:
     _update_actions(delta)
     _update_surface_state()
     platform_graph_navigator.update()
+    actions.delta = delta
     _process_actions()
+    _cap_velocity()
+    _update_collision_mask()
+    
+    # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
+    # into account.
+    #warning-ignore:return_value_discarded
+    move_and_slide(velocity, Geometry.UP, false, 4, Geometry.FLOOR_MAX_ANGLE)
+    
     level.descendant_physics_process_completed(self)
 
 # Updates some basic surface-related state for player's actions and environment of the current frame.
@@ -227,6 +242,30 @@ func _update_which_surface_is_grabbed() -> void:
             surface_state.just_changed_tile_map = true
             surface_state.just_changed_tile_map_coord = true
             surface_state.just_changed_surface = true
+
+func _cap_velocity() -> void:
+    # Cap horizontal speed at a max value.
+    velocity.x = clamp(velocity.x, -movement_params.current_max_horizontal_speed, movement_params.current_max_horizontal_speed)
+    
+    # Kill horizontal speed below a min value.
+    if velocity.x > -movement_params.min_horizontal_speed and \
+            velocity.x < movement_params.min_horizontal_speed:
+        velocity.x = 0
+    
+    # Cap vertical speed at a max value.
+    velocity.y = clamp(velocity.y, -movement_params.max_vertical_speed, \
+            movement_params.max_vertical_speed)
+    
+    # Kill vertical speed below a min value.
+    if velocity.y > -movement_params.min_vertical_speed and \
+            velocity.y < movement_params.min_vertical_speed:
+        velocity.y = 0
+
+# Update whether or not we should currently consider collisions with fall-through floors and
+# walk-through walls.
+func _update_collision_mask() -> void:
+    set_collision_mask_bit(1, !surface_state.is_falling_through_floors)
+    set_collision_mask_bit(2, surface_state.is_grabbing_walk_through_walls)
 
 static func _get_attached_surface_collision( \
         body: KinematicBody2D, surface_state: PlayerSurfaceState) -> KinematicCollision2D:

@@ -5,7 +5,7 @@ const CLICK_END_RADIUS := 58.0
 var CLICK_COLOR := Color.from_hsv(0.5, 0.2, 0.99, 0.8)
 const CLICK_DURATION := 200.0
 
-var level # FIXME: Add type back
+var level # TODO: Add type back
 var click_position: Vector2
 var start_time := -CLICK_DURATION
 var end_time := -CLICK_DURATION

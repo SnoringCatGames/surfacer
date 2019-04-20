@@ -11,14 +11,37 @@
 extends Reference
 class_name PlatformGraphPath
 
-var origin: PositionAlongSurface
-var destination: PositionAlongSurface
+var surface_origin: PositionAlongSurface
+var surface_destination: PositionAlongSurface
+
 # Each PlatformGraphEdge contains a reference to its source and destination Surface nodes, so 
 # we don't need to store them separately.
 # Array<PlatformGraphEdge>
 var edges: Array
 
-func _init(origin: PositionAlongSurface, destination: PositionAlongSurface, edges: Array) -> void:
-    self.origin = origin
-    self.destination = destination
+# Optional, movement from the origin to the start of the first edge.
+# Array<PlayerInstruction>
+var start_instructions: Array
+var start_instructions_origin: Vector2
+var has_start_instructions: bool
+
+# Optional, movement from the end of the last edge to the destination.
+# Array<PlayerInstruction>
+var end_instructions: Array
+var end_instructions_destination: Vector2
+var has_end_instructions: bool
+
+func _init(surface_origin: PositionAlongSurface, surface_destination: PositionAlongSurface, \
+        edges: Array, start_instructions := [], start_instructions_origin := Vector2.INF, \
+        end_instructions := [], end_instructions_destination := Vector2.INF) -> void:
+    self.surface_origin = surface_origin
+    self.surface_destination = surface_destination
     self.edges = edges
+    
+    self.has_start_instructions = !start_instructions.empty()
+    self.start_instructions = start_instructions
+    self.start_instructions_origin = start_instructions_origin
+    
+    self.has_end_instructions = !end_instructions.empty()
+    self.end_instructions = end_instructions
+    self.end_instructions_destination = end_instructions_destination

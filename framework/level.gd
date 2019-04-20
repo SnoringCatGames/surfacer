@@ -9,7 +9,7 @@ const PlatformGraphAnnotator = preload("res://framework/annotators/platform_grap
 
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
-var collidables: Array
+var surfaces: Array
 var computer_player: ComputerPlayer
 var human_player: HumanPlayer
 var all_players: Array
@@ -30,8 +30,8 @@ func _ready() -> void:
     var scene_tree = get_tree()
     
     # Get references to the TileMaps that define the collision boundaries of this level.
-    collidables = scene_tree.get_nodes_in_group("collidables")
-    assert(collidables.size() > 0)
+    surfaces = scene_tree.get_nodes_in_group("surfaces")
+    assert(surfaces.size() > 0)
     
     # Get a reference to the ComputerPlayer.
     var computer_players = scene_tree.get_nodes_in_group("computer_players")
@@ -45,7 +45,7 @@ func _ready() -> void:
     
     # Set up the PlatformGraph for this level.
     var global := $"/root/Global"
-    platform_graph = PlatformGraph.new(collidables, global.player_types)
+    platform_graph = PlatformGraph.new(surfaces, global.player_types)
     
     # Get references to all initial players and initialize their PlatformGraphNavigators.
     all_players = Utils.get_children_by_type(self, Player)

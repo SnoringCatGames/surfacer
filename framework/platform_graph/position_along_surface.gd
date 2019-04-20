@@ -42,7 +42,8 @@ func _calculate_target_point_for_center_of_collider(surface: Surface, \
     if collider == null:
         return point_on_surface
     
-    var is_surface_horizontal = SurfaceSide.FLOOR or surface.side == SurfaceSide.CEILING
+    var is_surface_horizontal = \
+            surface.side == SurfaceSide.FLOOR or surface.side == SurfaceSide.CEILING
     var shape = collider.shape
     var rotation = collider.transform.get_rotation()
     var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2) < Geometry.FLOAT_EPSILON

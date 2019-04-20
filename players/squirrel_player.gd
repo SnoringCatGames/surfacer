@@ -1,9 +1,10 @@
 extends ComputerPlayer
 class_name SquirrelPlayer
 
-var movement_params := _get_movement_params()
+const JumpFromPlatformMovement = preload("res://framework/player_movement/jump_from_platform_movement.gd")
+const FallFromAirMovement = preload("res://framework/player_movement/fall_from_air_movement.gd")
 
-static func _get_movement_params() -> MovementParams:
+func _get_initial_movement_params() -> MovementParams:
     var movement_params := MovementParams.new()
     
     movement_params.gravity = Geometry.GRAVITY
@@ -20,6 +21,7 @@ static func _get_movement_params() -> MovementParams:
     movement_params.climb_down_speed = 150.0
     
     movement_params.max_horizontal_speed_default = 400.0
+    movement_params.current_max_horizontal_speed = movement_params.max_horizontal_speed_default
     movement_params.min_horizontal_speed = 50.0
     movement_params.max_vertical_speed = 4000.0
     movement_params.min_vertical_speed = 0.0
@@ -40,20 +42,13 @@ static func _get_movement_params() -> MovementParams:
 func _init().("squirrel") -> void:
     pass
 
-func _get_edge_movement_types() -> Array:
+func _get_movement_types() -> Array:
     return [
         JumpFromPlatformMovement.new(movement_params),
+        FallFromAirMovement.new(movement_params),
     ]
 
 # Updates physics and player states in response to the current actions.
 func _process_actions() -> void:
-    # The move_and_slide system depends on some vertical gravity always pushing the player into
-    # the floor. If we just zero this out, is_on_floor() will give false negatives.
-    velocity.y = movement_params.min_speed_to_maintain_vertical_collision
-    
     velocity.x = 0
-
-    # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
-    # into account.
-    #warning-ignore:return_value_discarded
-    move_and_slide(velocity, Geometry.UP, false, 4, Geometry.FLOOR_MAX_ANGLE)
+    velocity.y += actions.delta * movement_params.gravity

@@ -40,16 +40,20 @@ func get_nearby_surfaces(target_surface: Surface, distance_threshold: float) -> 
     return result
 
 # Gets the closest surface to the given point.
-func get_closest_surface(target: Vector2) -> Surface:
+func get_closest_surface(target: Vector2, include_ceilings := false) -> Surface:
+    var surface_collections = [floors, left_walls, right_walls]
+    if include_ceilings:
+        surface_collections.push_back(ceilings)
+    
     var closest_surface: Surface
     var closest_distance_squared: float
     var current_distance_squared: float
     
-    closest_surface = floors[0]
+    closest_surface = surface_collections[0][0]
     closest_distance_squared = \
             Geometry.get_distance_squared_from_point_to_polyline(target, closest_surface.vertices)
     
-    for surfaces in [floors, ceilings, left_walls, right_walls]:
+    for surfaces in surface_collections:
         for current_surface in surfaces:
             current_distance_squared = Geometry.distance_squared_from_point_to_rect(target, \
                     current_surface.bounding_box)

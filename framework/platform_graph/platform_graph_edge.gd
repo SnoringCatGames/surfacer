@@ -3,14 +3,12 @@
 extends Reference
 class_name PlatformGraphEdge
 
-var start_position: PositionAlongSurface
-var end_position: PositionAlongSurface
+var start: PositionAlongSurface
+var end: PositionAlongSurface
+# Array<PlayerInstruction>
+var instructions: Array
 
-func _init(start_position: PositionAlongSurface, end_position: PositionAlongSurface) -> void:
-    self.start_position = start_position
-    self.end_position = end_position
-
-# FIXME: Add...
-# - instruction set to move from start to end node
-# - instruction set to move within start node
-# - instruction set to move within end node
+func _init(start: PositionAlongSurface, end: PositionAlongSurface, instructions: Array) -> void:
+    self.start = start
+    self.end = end
+    self.instructions = instructions

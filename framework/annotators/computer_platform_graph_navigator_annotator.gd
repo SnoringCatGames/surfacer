@@ -16,6 +16,7 @@ const DESTINATION_T_LENGTH := 16.0
 const DESTINATION_T_WIDTH := 4.0
 
 var navigator: PlatformGraphNavigator
+var path: PlatformGraphPath
 
 func _init(navigator: PlatformGraphNavigator) -> void:
     self.navigator = navigator
@@ -25,28 +26,31 @@ func _draw() -> void:
         _draw_path(self, navigator.current_path)
 
 func check_for_update() -> void:
-    if navigator.just_started_new_navigation:
+    if navigator.current_path != path:
+        path = navigator.current_path
         update()
 
 func _draw_path(canvas: CanvasItem, path: PlatformGraphPath) -> void:
-    DrawUtils.draw_position_along_surface(canvas, path.origin, ORIGIN_COLOR, ORIGIN_COLOR, \
-            ORIGIN_TARGET_POINT_RADIUS, ORIGIN_T_LENGTH, ORIGIN_T_WIDTH)
-    DrawUtils.draw_position_along_surface(canvas, path.destination, DESTINATION_COLOR, \
+    # FIXME: Draw the optional movements to/from air at the start and end of the path
+    
+    DrawUtils.draw_position_along_surface(canvas, path.surface_origin, ORIGIN_COLOR, \
+            ORIGIN_COLOR, ORIGIN_TARGET_POINT_RADIUS, ORIGIN_T_LENGTH, ORIGIN_T_WIDTH, true)
+    DrawUtils.draw_position_along_surface(canvas, path.surface_destination, DESTINATION_COLOR, \
             DESTINATION_COLOR, DESTINATION_TARGET_POINT_RADIUS, DESTINATION_T_LENGTH, \
-            DESTINATION_T_WIDTH)
+            DESTINATION_T_WIDTH, true)
     
     var color := Color.from_hsv(randf(), 0.9, 0.9, 0.3)
     var edge: PlatformGraphEdge = path.edges[0]
     
-    DrawUtils.draw_position_along_surface(canvas, edge.end_position, color, color, \
+    DrawUtils.draw_position_along_surface(canvas, edge.end, color, color, \
             MID_POINT_TARGET_POINT_RADIUS, MID_POINT_T_LENGTH, MID_POINT_T_WIDTH)
     # FIXME: Draw edge line.
     
     for i in range(1, path.edges.size()):
         edge = path.edges[i]
         color = Color.from_hsv(randf(), 0.9, 0.9, 0.3)
-        DrawUtils.draw_position_along_surface(canvas, edge.start_position, color, color, \
-                MID_POINT_TARGET_POINT_RADIUS, MID_POINT_T_LENGTH, MID_POINT_T_WIDTH)
-        DrawUtils.draw_position_along_surface(canvas, edge.end_position, color, color, \
-                MID_POINT_TARGET_POINT_RADIUS, MID_POINT_T_LENGTH, MID_POINT_T_WIDTH)
+        DrawUtils.draw_position_along_surface(canvas, edge.start, color, color, \
+                MID_POINT_TARGET_POINT_RADIUS, MID_POINT_T_LENGTH, MID_POINT_T_WIDTH, true)
+        DrawUtils.draw_position_along_surface(canvas, edge.end, color, color, \
+                MID_POINT_TARGET_POINT_RADIUS, MID_POINT_T_LENGTH, MID_POINT_T_WIDTH, true)
         # FIXME: Draw edge line.

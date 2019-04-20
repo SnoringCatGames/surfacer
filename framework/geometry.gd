@@ -46,17 +46,20 @@ static func get_distance_squared_between_non_intersecting_segments( \
 static func get_closest_point_on_segment_to_point( \
         point: Vector2, segment_a: Vector2, segment_b: Vector2) -> Vector2:
     var v = segment_b - segment_a
-    var u = segment_a - point
-    var t = - v.dot(u) / v.dot(v)
+    var u = point - segment_a
+    var uv = u.dot(v)
+    var vv = v.dot(v)
     
-    if t >= 0 and t <= 1:
-        # The projection of the point lies within the bounds of the segment.
-        return (1 - t) * segment_a + t * segment_b
+    if uv <= 0.0:
+        # The projection of the point lies before the first point in the segment.
+        return segment_a
+    elif vv <= uv:
+        # The projection of the point lies after the last point in the segment.
+        return segment_b
     else:
-        # The projection of the point lies outside bounds of the segment.
-        var distance_squared_a = point.distance_squared_to(segment_a)
-        var distance_squared_b = point.distance_squared_to(segment_b)
-        return segment_a if distance_squared_a < distance_squared_b else segment_b
+        # The projection of the point lies within the bounds of the segment.
+        var t = uv / vv
+        return segment_a + t * v
 
 # Calculates the minimum squared distance between a polyline and a point.
 static func get_closest_point_on_polyline_to_point( \
@@ -67,15 +70,15 @@ static func get_closest_point_on_polyline_to_point( \
     var closest_point := get_closest_point_on_segment_to_point(point, polyline[0], polyline[1])
     var closest_distance_squared := point.distance_squared_to(closest_point)
     
-    var current_closest_point: Vector2
+    var current_point: Vector2
     var current_distance_squared: float
     for i in range(1, polyline.size() - 1):
-        current_closest_point = \
+        current_point = \
                 get_closest_point_on_segment_to_point(point, polyline[i], polyline[i + 1])
-        current_distance_squared = point.distance_squared_to(current_closest_point)
+        current_distance_squared = point.distance_squared_to(current_point)
         if current_distance_squared < closest_distance_squared:
             closest_distance_squared = current_distance_squared
-            closest_point = current_closest_point
+            closest_point = current_point
     
     return closest_point
 
@@ -148,13 +151,13 @@ static func project_point_onto_surface(point: Vector2, surface: Surface) -> Vect
         return start_vertex
     elif surface.side == SurfaceSide.CEILING and point.x <= end_vertex.x:
         return end_vertex
-    if surface.side == SurfaceSide.RIGHT_WALL and point.y <= start_vertex.y:
+    if surface.side == SurfaceSide.LEFT_WALL and point.y <= start_vertex.y:
         return start_vertex
-    elif surface.side == SurfaceSide.RIGHT_WALL and point.y >= end_vertex.y:
+    elif surface.side == SurfaceSide.LEFT_WALL and point.y >= end_vertex.y:
         return end_vertex
-    if surface.side == SurfaceSide.LEFT_WALL and point.y >= start_vertex.y:
+    if surface.side == SurfaceSide.RIGHT_WALL and point.y >= start_vertex.y:
         return start_vertex
-    elif surface.side == SurfaceSide.LEFT_WALL and point.y <= end_vertex.y:
+    elif surface.side == SurfaceSide.RIGHT_WALL and point.y <= end_vertex.y:
         return end_vertex
     else:
         # Target lies within the surface boundaries.
@@ -204,9 +207,9 @@ static func do_point_and_segment_intersect(point: Vector2, segment_a: Vector2, s
 
 static func get_bounding_box_for_points(points: PoolVector2Array) -> Rect2:
     assert(points.size() > 0)
-    var bounding_box = Rect2(points[0], Vector2.ZERO)
+    var bounding_box := Rect2(points[0], Vector2.ZERO)
     for i in range(1, points.size()):
-        bounding_box.expand(points[i])
+        bounding_box = bounding_box.expand(points[i])
     return bounding_box
 
 static func distance_squared_from_point_to_rect(point: Vector2, rect: Rect2) -> float:

@@ -3,24 +3,16 @@ class_name PlatformGraphEdges
 
 # FIXME: LEFT OFF HERE:
 # 
-# - Add logic to the Player to detect unexpected interruptions:
-#   - Hit a surface (inform the navigator; navigator returns false if unexpected; player starts a new navigation)
-#   - Hit by anything else (figure out response depending on collider; at least cancel previous navigation)
-# - Add logic to initiate next walk/climb on surface once we've landed on the desired surface.
-# - Add logic to initiate next jump when we've reached the target PositionAlongSurface when moving within node.
-# - Add logic to walk/climb to target PositionAlongSurface.
-# - Add logic to detect when we've reached the target PositionAlongSurface when moving within node.
-# - Add logic to inform the player when we've reached the final goal position.
-# - Add a check when current position/movement/state is further than our tolerance away from the expected state for the current path.
-#   - Throw an error.
-# - Add logic to automatically self-correct to the expected position/movement/state sometimes...
-#   - When? Each frame? Only when we're further away than our tolerance allows?
+# - Implement and use FallFromAirMovement
+# - Add logic to use path.start_instructions when we start a navigation while the player isn't on a surface.
+# - Add logic to use path.end_instructions when the destination is far enough from the surface AND an optional
+#     should_jump_to_reach_destination parameter is provided.
 # 
-# - Implement get_movement_instructions for jumping.
+# - Implement get_instructions_for_edge for jumping.
 # - Add support for creating PlatformGraphEdge.
 # - Add support for executing PlatformGraphEdge.
-# - Add annotations for the actual trajectories that are defined by PlatformGraphEdge
-# - Add annotations that draw the recent path that the player actually moved
+# - Add annotations for the actual trajectories that are defined by PlatformGraphEdge.
+# - Add annotations that draw the recent path that the player actually moved.
 # - Add annotations for rendering some basic navigation mode info for the CP:
 #   - Mode name
 #   - Current "input" (UP, LEFT, etc.)?
@@ -31,6 +23,9 @@ class_name PlatformGraphEdges
 # - Add annotations for just the path that the navigator is currently using.
 # - Test out the accuracy of edge traversal actually matching up to our pre-calculated trajectories.
 # 
+# - Add logic to automatically self-correct to the expected position/movement/state sometimes...
+#   - When? Each frame? Only when we're further away than our tolerance allows?
+# 
 # - Add support for actually considering the discrete physics time steps rather than assuming
 #   continuous integration?
 #   - OR, add support for fudging it?
@@ -40,8 +35,9 @@ class_name PlatformGraphEdges
 #       all?)
 #     - It's probably at least worth adding an optional mode that does this and comparing the
 #       performance.
+# 
 # - Add support for including walls in our navigation.
-# - Add support for other EdgeMovement sub-classes:
+# - Add support for other PlayerMovement sub-classes:
 #   - JumpFromWallMovement
 #   - FallFromPlatformMovement
 #   - FallFromWallMovement

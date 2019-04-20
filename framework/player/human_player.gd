@@ -10,7 +10,6 @@ func _init(player_name: String).(player_name) -> void:
 # - The computer player will use instruction sets.
 # - The human player will use system IO.
 func _update_actions(delta: float) -> void:
-    actions.delta = delta
     actions.just_pressed_jump = Input.is_action_just_pressed("jump")
     actions.pressed_jump = Input.is_action_pressed("jump")
     actions.pressed_up = Input.is_action_pressed("move_up")

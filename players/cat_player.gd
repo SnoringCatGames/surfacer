@@ -1,20 +1,20 @@
 extends HumanPlayer
 class_name CatPlayer
 
-const FRICTION_MULTIPLIER := 0.01 # For calculating friction for walking
+const JumpFromPlatformMovement = preload("res://framework/player_movement/jump_from_platform_movement.gd")
+const FallFromAirMovement = preload("res://framework/player_movement/fall_from_air_movement.gd")
 
-var movement_params := _get_movement_params()
+const FRICTION_MULTIPLIER := 0.01 # For calculating friction for walking
 
 var is_ascending_from_jump := false
 var jump_count := 0
 
-var _current_max_horizontal_speed := movement_params.max_horizontal_speed_default
 var _can_dash := true
 
 var _dash_cooldown_timer: Timer
 var _dash_fade_tween: Tween
 
-static func _get_movement_params() -> MovementParams:
+func _get_initial_movement_params() -> MovementParams:
     var movement_params := MovementParams.new()
     
     movement_params.gravity = Geometry.GRAVITY
@@ -31,6 +31,7 @@ static func _get_movement_params() -> MovementParams:
     movement_params.climb_down_speed = 150.0
     
     movement_params.max_horizontal_speed_default = 400.0
+    movement_params.current_max_horizontal_speed = movement_params.max_horizontal_speed_default
     movement_params.min_horizontal_speed = 50.0
     movement_params.max_vertical_speed = 4000.0
     movement_params.min_vertical_speed = 0.0
@@ -51,9 +52,10 @@ static func _get_movement_params() -> MovementParams:
 func _init().("cat") -> void:
     pass
 
-func _get_edge_movement_types() -> Array:
+func _get_movement_types() -> Array:
     return [
         JumpFromPlatformMovement.new(movement_params),
+        FallFromAirMovement.new(movement_params),
     ]
 
 func _ready() -> void:
@@ -105,15 +107,6 @@ func _process_actions() -> void:
         _process_actions_while_on_floor()
     else:
         _process_actions_while_in_air()
-    
-    _cap_velocity()
-    
-    _update_collision_mask()
-    
-    # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
-    # into account.
-    #warning-ignore:return_value_discarded
-    move_and_slide(velocity, Geometry.UP, false, 4, Geometry.FLOOR_MAX_ANGLE)
 
 #warning-ignore:unused_argument
 func _process_actions_while_on_floor() -> void:
@@ -244,37 +237,13 @@ func _process_actions_while_on_wall() -> void:
     if actions.start_dash:
         _start_dash(-surface_state.toward_wall_sign)
 
-func _cap_velocity() -> void:
-    # Cap horizontal speed at a max value.
-    velocity.x = clamp(velocity.x, -_current_max_horizontal_speed, _current_max_horizontal_speed)
-    
-    # Kill horizontal speed below a min value.
-    if velocity.x > -movement_params.min_horizontal_speed and \
-            velocity.x < movement_params.min_horizontal_speed:
-        velocity.x = 0
-    
-    # Cap vertical speed at a max value.
-    velocity.y = clamp(velocity.y, -movement_params.max_vertical_speed, \
-            movement_params.max_vertical_speed)
-    
-    # Kill vertical speed below a min value.
-    if velocity.y > -movement_params.min_vertical_speed and \
-            velocity.y < movement_params.min_vertical_speed:
-        velocity.y = 0
-
-# Update whether or not we should currently consider collisions with fall-through floors and
-# walk-through walls.
-func _update_collision_mask() -> void:
-    set_collision_mask_bit(1, !surface_state.is_falling_through_floors)
-    set_collision_mask_bit(2, surface_state.is_grabbing_walk_through_walls)
-
 func _start_dash(horizontal_movement_sign: int) -> void:
     if !_can_dash:
         return
     
-    _current_max_horizontal_speed = movement_params.max_horizontal_speed_default * \
+    movement_params.current_max_horizontal_speed = movement_params.max_horizontal_speed_default * \
             movement_params.dash_speed_multiplier
-    velocity.x = _current_max_horizontal_speed * horizontal_movement_sign
+    velocity.x = movement_params.current_max_horizontal_speed * horizontal_movement_sign
     
     velocity.y += movement_params.dash_vertical_boost
     
@@ -282,7 +251,7 @@ func _start_dash(horizontal_movement_sign: int) -> void:
     #warning-ignore:return_value_discarded
     _dash_fade_tween.reset_all()
     #warning-ignore:return_value_discarded
-    _dash_fade_tween.interpolate_property(self, "_current_max_horizontal_speed", \
+    _dash_fade_tween.interpolate_property(self, "movement_params.current_max_horizontal_speed", \
             movement_params.max_horizontal_speed_default * movement_params.dash_speed_multiplier, \
             movement_params.max_horizontal_speed_default, movement_params.dash_fade_duration, \
             Tween.TRANS_LINEAR, Tween.EASE_IN, \
@@ -294,6 +263,6 @@ func _start_dash(horizontal_movement_sign: int) -> void:
         $CatAnimator.face_right()
     else:
         $CatAnimator.face_left()
-    
+
 func _dash_cooldown_finished() -> void:
     _can_dash = true
