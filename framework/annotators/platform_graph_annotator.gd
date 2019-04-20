@@ -12,8 +12,8 @@ var grid_indices_annotator: GridIndicesAnnotator
 
 func _init(graph: PlatformGraph) -> void:
     self.graph = graph
-    platform_graph_edges_annotator = PlatformGraphEdgesAnnotator.new(graph)
-    platform_graph_nodes_annotator = PlatformGraphNodesAnnotator.new(graph)
+    platform_graph_edges_annotator = PlatformGraphEdgesAnnotator.new(graph.edges["squirrel"])
+    platform_graph_nodes_annotator = PlatformGraphNodesAnnotator.new(graph.nodes)
     grid_indices_annotator = GridIndicesAnnotator.new(graph)
 
 func _enter_tree() -> void:

@@ -11,7 +11,13 @@
 extends Reference
 class_name PlatformGraphPath
 
+# The initial position on the first surface in the path.
+# The player will move along the surface from this position to the start position of the first
+# edge.
 var surface_origin: PositionAlongSurface
+
+# The end position on the last surface in the path.
+# The player will move along the surface to this position from the end position of the last edge.
 var surface_destination: PositionAlongSurface
 
 # Each PlatformGraphEdge contains a reference to its source and destination Surface nodes, so 
@@ -19,13 +25,13 @@ var surface_destination: PositionAlongSurface
 # Array<PlatformGraphEdge>
 var edges: Array
 
-# Optional, movement from the origin to the start of the first edge.
+# Optional, movement from an in-air initial position to the surface_origin.
 # Array<PlayerInstruction>
 var start_instructions: Array
 var start_instructions_origin: Vector2
 var has_start_instructions: bool
 
-# Optional, movement from the end of the last edge to the destination.
+# Optional, movement from the surface_destination to an in-air final position.
 # Array<PlayerInstruction>
 var end_instructions: Array
 var end_instructions_destination: Vector2

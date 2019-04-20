@@ -3,23 +3,30 @@ class_name PlatformGraphEdges
 
 # FIXME: LEFT OFF HERE:
 # 
+# - Add support for creating PlatformGraphEdge.
+# - Add support for executing PlatformGraphEdge.
+# - Add support for actually parsing out the whole edge set (for our current simple jump, and ignoring walls).
+# - Add annotations for the whole edge set.
+# 
+# - get_fallable_surfaces: Add support to PlatformGraphNodes for finding possible platforms for falling to.
+#   - Try to make this somewhat smart; it'll be useful for fall-recovery as well as quick navigation downward.
+#     - But maybe just start with it using a triangular reachable fall region and picking the highest surface.
+#     - Make it a follow-up TODO task for actually considering changing gravity; at first just assume constant max gravity.
+#   - Use this along with get_nearby_surfaces to calculate possible edges.
+#   - Call this dynamically when starting new navigations from an in-air position (make sure it's a cheap operation!).
 # - Implement and use FallFromAirMovement
 # - Add logic to use path.start_instructions when we start a navigation while the player isn't on a surface.
 # - Add logic to use path.end_instructions when the destination is far enough from the surface AND an optional
 #     should_jump_to_reach_destination parameter is provided.
 # 
 # - Implement get_instructions_for_edge for jumping.
-# - Add support for creating PlatformGraphEdge.
-# - Add support for executing PlatformGraphEdge.
 # - Add annotations for the actual trajectories that are defined by PlatformGraphEdge.
 # - Add annotations that draw the recent path that the player actually moved.
 # - Add annotations for rendering some basic navigation mode info for the CP:
 #   - Mode name
 #   - Current "input" (UP, LEFT, etc.)?
 #   - The entirety of the current instruction-set being run?
-# - Add support for actually parsing out the whole edge set (for our current simple jump, and ignoring walls).
 # - Add support for actually navigating end-to-end to a given target point.
-# - Add annotations for the whole edge set.
 # - Add annotations for just the path that the navigator is currently using.
 # - Test out the accuracy of edge traversal actually matching up to our pre-calculated trajectories.
 # 
@@ -60,7 +67,8 @@ class_name PlatformGraphEdges
 # 
 # - Add logic to Player when calculating touched edges to check that the collider is a stationary TileMap object
 # 
-# - 
+# - Test exporting to HTML5.
+# - Start adding networking support.
 
 var player_name: String
 

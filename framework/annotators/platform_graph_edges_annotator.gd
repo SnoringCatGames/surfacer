@@ -1,10 +1,10 @@
 extends Node2D
 class_name PlatformGraphEdgesAnnotator
 
-var graph: PlatformGraph
+var edges: PlatformGraphEdges
 
-func _init(graph: PlatformGraph) -> void:
-    self.graph = graph
+func _init(edges: PlatformGraphEdges) -> void:
+    self.edges = edges
 
 func _draw() -> void:
     # FIXME
