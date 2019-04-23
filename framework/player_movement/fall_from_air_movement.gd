@@ -4,40 +4,41 @@ class_name FallFromAirMovement
 func _init(params: MovementParams).("fall_from_air", params) -> void:
     pass
 
-func get_instructions_from_air(start: Vector2, end: PositionAlongSurface) -> Array:
-    # FIXME: LEFT OFF HERE: *****
-    return []
+func get_instructions_from_air(start: Vector2, end: PositionAlongSurface, \
+        start_velocity: Vector2) -> PlayerInstructions:
+    var displacement = end.target_point - start
     
-#    # FIXME: LEFT OFF HERE: Need to reconcile PositionAlongSurface vs Vector2 (maybe I should also store Vector2 in PositionAlongSurface?)
-#    var displacement = end.player_center - start.player_center
-#    var max_vertical_displacement = -(params.jump_boost * params.jump_boost) / 2 / params.gravity
-#    var duration_to_peak = -params.jump_boost / params.gravity
-#
-#    # Check whether the vertical displacement is possible.
-#    if max_vertical_displacement < displacement.y:
-#        return null
-#
-#    var duration_from_peak_to_end = (start.y + max_vertical_displacement - end.y) / params.gravity
-#    var duration_for_horizontal_displacement = displacement.x / params.max_horizontal_speed_default
-#    var duration = duration_to_peak + duration_from_peak_to_end
-#
-#    # Check whether the horizontal displacement is possible.
-#    if duration < duration_for_horizontal_displacement:
-#        return null
-#
-#    # FIXME: LEFT OFF HERE
-#    # - Hold sideways for duration_for_horizontal_displacement
-#    # - Hold up for duration_to_peak
-#    # 
-#    var instructions = []
-#
-#
-#    return PlatformGraphEdge.new(start, end, instructions)
+    # Solve a quadratic equation for duration.
+    var discriminant = start_velocity.y * start_velocity.y - 2 * params.gravity * -displacement.y
+    if discriminant < 0:
+        # We can't reach the end position with our start position and velocity.
+        return null
+    var discriminant_sqrt = sqrt(discriminant)
+    var duration = (-start_velocity.y + discriminant_sqrt) / params.gravity
+    if duration < 0:
+        duration = (-start_velocity.y - discriminant_sqrt) / params.gravity
+    
+    var duration_for_horizontal_displacement = \
+            abs(displacement.x / params.max_horizontal_speed_default)
+    
+    # Check whether the horizontal displacement is possible.
+    if duration < duration_for_horizontal_displacement:
+        return null
+    
+    var horizontal_movement_input_name = "move_left" if displacement.x < 0 else "move_right"
+    
+    # FIXME: Add support for maintaining horizontal speed when falling, and needing to push back
+    # the other way to slow it.
+    var instructions := [
+        # The horizontal movement.
+        PlayerInstruction.new(horizontal_movement_input_name, 0, true),
+        PlayerInstruction.new(horizontal_movement_input_name, duration_for_horizontal_displacement, false),
+    ]
+    
+    return PlayerInstructions.new(instructions, duration, displacement.length())
 
-func get_max_upward_range() -> float:
-    # FIXME
+func get_max_upward_distance() -> float:
     return 0.0
 
-func get_max_horizontal_range() -> float:
-    # FIXME
+func get_max_horizontal_distance() -> float:
     return 0.0

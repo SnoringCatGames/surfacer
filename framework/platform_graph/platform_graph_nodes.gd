@@ -28,44 +28,6 @@ func get_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
 
-# Gets all other surfaces that are near the given surface.
-func get_nearby_surfaces(target_surface: Surface, distance_threshold: float) -> Array:
-    var result := []
-    
-    _get_nearby_surfaces(target_surface, floors, distance_threshold, result)
-    _get_nearby_surfaces(target_surface, ceilings, distance_threshold, result)
-    _get_nearby_surfaces(target_surface, left_walls, distance_threshold, result)
-    _get_nearby_surfaces(target_surface, right_walls, distance_threshold, result)
-    
-    return result
-
-# Gets the closest surface to the given point.
-func get_closest_surface(target: Vector2, include_ceilings := false) -> Surface:
-    var surface_collections = [floors, left_walls, right_walls]
-    if include_ceilings:
-        surface_collections.push_back(ceilings)
-    
-    var closest_surface: Surface
-    var closest_distance_squared: float
-    var current_distance_squared: float
-    
-    closest_surface = surface_collections[0][0]
-    closest_distance_squared = \
-            Geometry.get_distance_squared_from_point_to_polyline(target, closest_surface.vertices)
-    
-    for surfaces in surface_collections:
-        for current_surface in surfaces:
-            current_distance_squared = Geometry.distance_squared_from_point_to_rect(target, \
-                    current_surface.bounding_box)
-            if current_distance_squared < closest_distance_squared:
-                current_distance_squared = Geometry.get_distance_squared_from_point_to_polyline( \
-                        target, current_surface.vertices)
-                if current_distance_squared < closest_distance_squared:
-                    closest_distance_squared = current_distance_squared
-                    closest_surface = current_surface
-    
-    return closest_surface
-
 # Parses the given TileMap into a set of nodes for the platform graph.
 # 
 # - Each "connecting" tile from the TileMap will be merged into a single surface node in the graph.
@@ -567,57 +529,3 @@ class _TmpSurface extends Object:
     # Array<int>
     var tile_map_indices: Array
     var surface: Surface
-
-static func _get_nearby_surfaces(target_surface: Surface, other_surfaces: Array, \
-        distance_threshold: float, result: Array) -> void:
-    for other_surface in other_surfaces:
-        if _get_are_surfaces_close(target_surface, other_surface, distance_threshold) and \
-                target_surface != other_surface:
-            result.push_back(other_surface)
-
-static func _get_are_surfaces_close(surface_a: Surface, surface_b: Surface, \
-        distance_threshold: float) -> bool:
-    var vertices_a := surface_a.vertices
-    var vertices_b := surface_b.vertices
-    var vertex_a_a: Vector2
-    var vertex_a_b: Vector2
-    var vertex_b_a: Vector2
-    var vertex_b_b: Vector2
-    
-    var expanded_bounding_box_a = surface_a.bounding_box.grow(distance_threshold)
-    if expanded_bounding_box_a.intersects(surface_b.bounding_box):
-        var expanded_bounding_box_b = surface_b.bounding_box.grow(distance_threshold)
-        var distance_squared_threshold = distance_threshold * distance_threshold
-        
-        # Compare each segment in A with each vertex in B.
-        for i_a in range(vertices_a.size() - 1):
-            vertex_a_a = vertices_a[i_a]
-            vertex_a_b = vertices_a[i_a + 1]
-            
-            for i_b in range(vertices_b.size()):
-                vertex_b_a = vertices_b[i_b]
-                
-                if expanded_bounding_box_a.has_point(vertex_b_a) and \
-                        Geometry.get_distance_squared_from_point_to_segment( \
-                                vertex_b_a, vertex_a_a, vertex_a_b) <= distance_squared_threshold:
-                    return true
-        
-        # Compare each vertex in A with each segment in B.
-        for i_a in range(vertices_a.size()):
-            vertex_a_a = vertices_a[i_a]
-            
-            for i_b in range(vertices_b.size() - 1):
-                vertex_b_a = vertices_b[i_b]
-                vertex_b_b = vertices_b[i_b + 1]
-                
-                if expanded_bounding_box_b.has_point(vertex_a_a) and \
-                        Geometry.get_distance_squared_from_point_to_segment( \
-                                vertex_a_a, vertex_b_a, vertex_b_b) <= distance_squared_threshold:
-                    return true
-            
-            # Handle the degenerate case of single-vertex surfaces.
-            if vertices_b.size() == 1:
-                if vertex_a_a.distance_squared_to(vertices_b[0]) <= distance_squared_threshold:
-                    return true
-    
-    return false

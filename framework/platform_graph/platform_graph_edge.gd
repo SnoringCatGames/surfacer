@@ -5,10 +5,10 @@ class_name PlatformGraphEdge
 
 var start: PositionAlongSurface
 var end: PositionAlongSurface
-# Array<PlayerInstruction>
-var instructions: Array
+var instructions: PlayerInstructions
 
-func _init(start: PositionAlongSurface, end: PositionAlongSurface, instructions: Array) -> void:
+func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
+        instructions: PlayerInstructions) -> void:
     self.start = start
     self.end = end
     self.instructions = instructions

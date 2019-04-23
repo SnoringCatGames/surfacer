@@ -162,7 +162,12 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "PlayerInstruction",
 "language": "GDScript",
-"path": "res://framework/player/player_instruction.gd"
+"path": "res://framework/player_movement/player_instruction.gd"
+}, {
+"base": "Reference",
+"class": "PlayerInstructions",
+"language": "GDScript",
+"path": "res://framework/player_movement/player_instructions.gd"
 }, {
 "base": "Reference",
 "class": "PlayerMovement",
@@ -266,6 +271,7 @@ _global_script_class_icons={
 "Player": "",
 "PlayerActions": "",
 "PlayerInstruction": "",
+"PlayerInstructions": "",
 "PlayerMovement": "",
 "PlayerParams": "",
 "PlayerSurfaceAnnotator": "",

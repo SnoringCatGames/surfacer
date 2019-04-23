@@ -177,6 +177,135 @@ static func project_point_onto_surface(point: Vector2, surface: Surface) -> Vect
         assert(intersection != Vector2.INF)
         return intersection
 
+static func is_point_in_triangle(point: Vector2, a: Vector2, b: Vector2, c: Vector2) -> bool:
+    # Uses the barycentric approach.
+    
+    var ac = c - a
+    var ab = b - a
+    var ap = point - a
+    
+    var dot_ac_ac = ac.dot(ac)
+    var dot_ac_ab = ac.dot(ab)
+    var dot_ac_ap = ac.dot(ap)
+    var dot_ab_ab = ab.dot(ab)
+    var dot_ab_ap = ab.dot(ap)
+    
+    # The barycentric coordinates.
+    var inverse_denominator = 1 / (dot_ac_ac * dot_ab_ab - dot_ac_ab * dot_ac_ab)
+    var u = (dot_ab_ab * dot_ac_ap - dot_ac_ab * dot_ab_ap) * inverse_denominator
+    var v = (dot_ac_ac * dot_ab_ap - dot_ac_ab * dot_ac_ap) * inverse_denominator
+    
+    return (u >= 0) && (v >= 0) && (u + v < 1)
+
+static func do_segment_and_triangle_intersect(segment_a: Vector2, segment_b: Vector2, \
+        triangle_a: Vector2, triangle_b: Vector2, triangle_c: Vector2) -> bool:
+    return get_intersection_of_segments(segment_a, segment_b, triangle_a, triangle_b) != Vector2.INF or \
+            get_intersection_of_segments(segment_a, segment_b, triangle_a, triangle_c) != Vector2.INF or \
+            get_intersection_of_segments(segment_a, segment_b, triangle_b, triangle_c) != Vector2.INF or \
+            is_point_in_triangle(segment_a, triangle_a, triangle_b, triangle_c)
+
+# Assumes that the polygon's closing segment is implied; i.e., polygon.last != polygon.first.
+# Assumes that polygon.size() > 1.
+# Assumes that segment_a != segment_b.
+# 
+# -------------------------------------------------------------------------------------------------
+# Based on the "parametric line-clipping" approach described by Dan Sunday at
+# http://geomalgorithms.com/a13-_intersect-4.html.
+# 
+# Copyright 2001 softSurfer, 2012 Dan Sunday
+# This code may be freely used and modified for any purpose
+# providing that this copyright notice is included with it.
+# SoftSurfer makes no warranty for this code, and cannot be held
+# liable for any real or imagined damage resulting from its use.
+# Users of this code must verify correctness for their application.
+# -------------------------------------------------------------------------------------------------
+static func do_segment_and_polygon_intersect(segment_a: Vector2, segment_b: Vector2, \
+        polygon: PoolVector2Array) -> bool:
+    var count = polygon.size()
+    var segment_diff := segment_b - segment_a
+    var polygon_segment: Vector2
+    var p_to_a: Vector2
+    
+    var t_entering := 0.0
+    var t_leaving := 1.0
+    var t: float
+    var n: float
+    var d: float
+    
+    for i in range(count - 1):
+        polygon_segment = polygon[i + 1] - polygon[i]
+        p_to_a = segment_a - polygon[i]
+        n = polygon_segment.x * p_to_a.y - polygon_segment.y * p_to_a.x
+        d = polygon_segment.y * segment_diff.x - polygon_segment.x * segment_diff.y
+        
+        if abs(d) < Geometry.FLOAT_EPSILON:
+            if n < 0:
+                return false
+            else:
+                continue
+        t = n / d
+        if d < 0:
+            if t > t_entering:
+                t_entering = t
+                if t_entering > t_leaving:
+                    return false
+        else:
+            if t < t_leaving:
+                t_leaving = t
+                if t_leaving < t_entering:
+                    return false
+    
+    # Handle the last segment (from polygon last to polygon first).
+    polygon_segment = polygon[0] - polygon[count - 1]
+    p_to_a = segment_a - polygon[count - 1]
+    n = polygon_segment.x * p_to_a.y - polygon_segment.y * p_to_a.x
+    d = polygon_segment.y * segment_diff.x - polygon_segment.x * segment_diff.y
+    
+    if abs(d) < Geometry.FLOAT_EPSILON:
+        if n < 0:
+            return false
+        else:
+            return true
+    t = n / d
+    if d < 0:
+        if t > t_entering:
+            t_entering = t
+            if t_entering > t_leaving:
+                return false
+    else:
+        if t < t_leaving:
+            t_leaving = t
+            if t_leaving < t_entering:
+                return false
+    
+    # Possible point of intersection 1: segment_a + t_entering * segment_diff
+    # Possible point of intersection 2: segment_a + t_leaving * segment_diff
+    
+    return true
+
+static func do_polyline_and_triangle_intersect(vertices: PoolVector2Array, triangle_a: Vector2, \
+        triangle_b: Vector2, triangle_c: Vector2) -> bool:
+    var segment_a: Vector2
+    var segment_b: Vector2
+    for i in range(vertices.size() - 1):
+        segment_a = vertices[i]
+        segment_b = vertices[i + 1]
+        if do_segment_and_triangle_intersect(segment_a, segment_b, triangle_a, triangle_b, \
+                triangle_c):
+            return true
+    return false
+
+static func do_polyline_and_polygon_intersect(vertices: PoolVector2Array, \
+        polygon: PoolVector2Array) -> bool:
+    var segment_a: Vector2
+    var segment_b: Vector2
+    for i in range(vertices.size() - 1):
+        segment_a = vertices[i]
+        segment_b = vertices[i + 1]
+        if do_segment_and_polygon_intersect(segment_a, segment_b, polygon):
+            return true
+    return false
+
 static func are_points_equal_with_epsilon(a: Vector2, b: Vector2) -> bool:
     var x_diff = b.x - a.x
     var y_diff = b.y - a.y

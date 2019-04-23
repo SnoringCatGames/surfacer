@@ -27,27 +27,28 @@ var edges: Array
 
 # Optional, movement from an in-air initial position to the surface_origin.
 # Array<PlayerInstruction>
-var start_instructions: Array
+var start_instructions: PlayerInstructions
 var start_instructions_origin: Vector2
 var has_start_instructions: bool
 
 # Optional, movement from the surface_destination to an in-air final position.
 # Array<PlayerInstruction>
-var end_instructions: Array
+var end_instructions: PlayerInstructions
 var end_instructions_destination: Vector2
 var has_end_instructions: bool
 
+# TODO: Add PlayerInstructions type annotations.
 func _init(surface_origin: PositionAlongSurface, surface_destination: PositionAlongSurface, \
-        edges: Array, start_instructions := [], start_instructions_origin := Vector2.INF, \
-        end_instructions := [], end_instructions_destination := Vector2.INF) -> void:
+        edges: Array, start_instructions = null, start_instructions_origin := Vector2.INF, \
+        end_instructions = null, end_instructions_destination := Vector2.INF) -> void:
     self.surface_origin = surface_origin
     self.surface_destination = surface_destination
     self.edges = edges
     
-    self.has_start_instructions = !start_instructions.empty()
+    self.has_start_instructions = start_instructions != null
     self.start_instructions = start_instructions
     self.start_instructions_origin = start_instructions_origin
     
-    self.has_end_instructions = !end_instructions.empty()
+    self.has_end_instructions = end_instructions != null
     self.end_instructions = end_instructions
     self.end_instructions_destination = end_instructions_destination

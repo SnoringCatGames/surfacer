@@ -3,21 +3,25 @@ class_name PlatformGraphEdges
 
 # FIXME: LEFT OFF HERE:
 # 
+# - PlatformGraphNodes._get_closest_fallable_surface
+#   - Use this along with get_nearby_surfaces to calculate possible edges.
+#   - Call this dynamically when starting new navigations from an in-air position (make sure it's a cheap operation!).
+#   - Add TODOs:
+#     - TODO: Add support for choosing the closest "non-occluded" surface to the destination, rather than the closest surface to the origin.
+#     - TODO: Actually consider changing velocity due to gravity.
+# - Use FallFromAirMovement
+# - Use PlayerMovement.get_max_upward_distance and PlayerMovement.get_max_horizontal_distance
+# - Add logic to use path.start_instructions when we start a navigation while the player isn't on a surface.
+# - Add logic to use path.end_instructions when the destination is far enough from the surface AND an optional
+#     should_jump_to_reach_destination parameter is provided.
+# 
+# - Use get_max_upward_distance and get_max_horizontal_distance to get a bounding box and use that
+#   in Navigator.get_nearby_surfaces.
+# 
 # - Add support for creating PlatformGraphEdge.
 # - Add support for executing PlatformGraphEdge.
 # - Add support for actually parsing out the whole edge set (for our current simple jump, and ignoring walls).
 # - Add annotations for the whole edge set.
-# 
-# - get_fallable_surfaces: Add support to PlatformGraphNodes for finding possible platforms for falling to.
-#   - Try to make this somewhat smart; it'll be useful for fall-recovery as well as quick navigation downward.
-#     - But maybe just start with it using a triangular reachable fall region and picking the highest surface.
-#     - Make it a follow-up TODO task for actually considering changing gravity; at first just assume constant max gravity.
-#   - Use this along with get_nearby_surfaces to calculate possible edges.
-#   - Call this dynamically when starting new navigations from an in-air position (make sure it's a cheap operation!).
-# - Implement and use FallFromAirMovement
-# - Add logic to use path.start_instructions when we start a navigation while the player isn't on a surface.
-# - Add logic to use path.end_instructions when the destination is far enough from the surface AND an optional
-#     should_jump_to_reach_destination parameter is provided.
 # 
 # - Implement get_instructions_for_edge for jumping.
 # - Add annotations for the actual trajectories that are defined by PlatformGraphEdge.
@@ -54,9 +58,6 @@ class_name PlatformGraphEdges
 #   - Double jump
 #   - Horizontal acceleration?
 # 
-# - Use get_max_upward_movement and get_max_horizontal_movement to get a bounding box and use that
-#   in Navigator.get_nearby_surfaces.
-# 
 # - Update the pre-configured Input Map in Project Settings to use more semantic keys instead of just up/down/etc.
 # - Document in a separate markdown file exactly which Input Map keys this framework depends on.
 # 
@@ -67,6 +68,8 @@ class_name PlatformGraphEdges
 # 
 # - Add logic to Player when calculating touched edges to check that the collider is a stationary TileMap object
 # 
+# - Figure out how to configure input names/mappings (or just add docs specifying that the
+#   consumer must use these input names?)
 # - Test exporting to HTML5.
 # - Start adding networking support.
 

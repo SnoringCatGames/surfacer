@@ -9,7 +9,11 @@ extends Reference
 class_name PositionAlongSurface
 
 var surface: Surface
+
+# An approximation for the center of the player's collision boundary corresponding to this position
+# on the surface.
 var target_point: Vector2
+
 # How far the target point is along the axially-aligned range between the surface's end points.
 # [0,1]
 var t: float
