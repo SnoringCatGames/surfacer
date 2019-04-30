@@ -9,11 +9,14 @@ const PlatformGraphAnnotator = preload("res://framework/annotators/platform_grap
 
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
-var surfaces: Array
+var surface_tile_maps: Array
 var computer_player: ComputerPlayer
 var human_player: HumanPlayer
+# Array<Player>
 var all_players: Array
-var platform_graph: PlatformGraph
+var surface_parser: SurfaceParser
+# Dictionary<String, PlatformGraph>
+var platform_graphs: Dictionary
 var click_to_navigate: ClickToNavigate
 
 var platform_graph_annotator: PlatformGraphAnnotator
@@ -29,30 +32,32 @@ func _ready() -> void:
     var scene_tree = get_tree()
     
     # Get references to the TileMaps that define the collision boundaries of this level.
-    surfaces = scene_tree.get_nodes_in_group("surfaces")
-    assert(surfaces.size() > 0)
+    surface_tile_maps = scene_tree.get_nodes_in_group("surfaces")
+    assert(surface_tile_maps.size() > 0)
     
-    # Get a reference to the ComputerPlayer.
-    var computer_players = scene_tree.get_nodes_in_group("computer_players")
-    assert(computer_players.size() == 1)
-    computer_player = computer_players[0]
+    # Set up the PlatformGraphs for this level.
+    var global := $"/root/Global"
+    surface_parser = SurfaceParser.new(surface_tile_maps, global.player_types)
+    platform_graphs = _create_platform_graphs(surface_parser, global.player_types)
     
     # Get a reference to the HumanPlayer.
     var human_players = scene_tree.get_nodes_in_group("human_players")
     assert(human_players.size() == 1)
     human_player = human_players[0]
     
-    # Set up the PlatformGraph for this level.
-    var global := $"/root/Global"
-    platform_graph = PlatformGraph.new(surfaces, global.player_types)
+    # Get a reference to the ComputerPlayer.
+    var computer_players = scene_tree.get_nodes_in_group("computer_players")
+    assert(computer_players.size() == 1)# TODO: Remove, and update ComputerPlayerAnnotators
+    computer_player = computer_players[0]
     
     # Get references to all initial players and initialize their PlatformGraphNavigators.
     all_players = Utils.get_children_by_type(self, Player)
     for player in all_players:
-        player.initialize_platform_graph_navigator(platform_graph)
+        player.initialize_platform_graph_navigator(platform_graphs[player.player_name])
     
     # Set up some annotators that help with debugging.
-    platform_graph_annotator = PlatformGraphAnnotator.new(platform_graph)
+    # TODO: Eventually, update this to not be specific to squirrel
+    platform_graph_annotator = PlatformGraphAnnotator.new(platform_graphs["squirrel"])
     add_child(platform_graph_annotator)
     computer_player_annotator = ComputerPlayerAnnotator.new(computer_player)
     add_child(computer_player_annotator)
@@ -64,6 +69,13 @@ func _ready() -> void:
     click_to_navigate = ClickToNavigate.new()
     click_to_navigate.update_level(self)
     add_child(click_to_navigate)
+
+func _create_platform_graphs(surface_parser: SurfaceParser, \
+        player_types: Dictionary) -> Dictionary:
+    var graphs = {}
+    for player_name in player_types:
+        graphs[player_name] = PlatformGraph.new(surface_parser, player_types[player_name])
+    return graphs
 
 func descendant_physics_process_completed(descendant: Node) -> void:
     if descendant == human_player:

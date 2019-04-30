@@ -3,6 +3,10 @@ class_name MovementParams
 
 # FIXME: Add defaults for some of these
 
+var can_grab_walls: bool
+var can_grab_ceilings: bool
+var can_grab_floors: bool
+
 var gravity: float
 var ascent_gravity_multiplier: float
 var ascent_double_jump_gravity_multiplier: float

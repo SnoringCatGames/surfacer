@@ -2,16 +2,22 @@ extends PlayerMovement
 class_name JumpFromPlatformMovement
 
 func _init(params: MovementParams).("jump_from_platform", params) -> void:
-    pass
+    self.can_traverse_edge = true
+    self.can_traverse_to_air = true
+    self.can_traverse_from_air = false
 
-func get_instructions_for_edge(start: PositionAlongSurface, \
-        end: PositionAlongSurface) -> PlayerInstructions:
-    return _get_instructions_for_positions(start.target_point, end.target_point)
+# FIXME: Update other references to this API
+func get_all_edges_from_surface(surface: Surface) -> Array:
+    # FIXME: LEFT OFF HERE: A ***************
+    # - Get nearby and fallable
+    # - For each, determine where the best jump-off point would be from the starting surface.
+    # - call _get_possible_instructions_for_positions
+    return []
 
-func get_instructions_to_air(start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
-    return _get_instructions_for_positions(start.target_point, end)
+func get_possible_instructions_to_air(start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
+    return _get_possible_instructions_for_positions(start.target_point, end)
 
-func _get_instructions_for_positions(start: Vector2, end: Vector2) -> PlayerInstructions:
+func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> PlayerInstructions:
     var displacement: Vector2 = end - start
     var max_vertical_displacement := get_max_upward_distance()
     var duration_to_peak := -params.jump_boost / params.gravity

@@ -5,9 +5,14 @@ const PlatformGraphNavigator = preload("res://framework/platform_graph/platform_
 const PlayerSurfaceState = preload("res://framework/player/player_surface_state.gd")
 
 var player_name: String
+var can_grab_walls: bool
+var can_grab_ceilings: bool
+var can_grab_floors: bool
 var movement_params: MovementParams
 # Array<PlayerMovement>
 var movement_types: Array
+# Array<Surface>
+var possible_surfaces: Array
 var actions := PlayerActions.new()
 var surface_state := PlayerSurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
@@ -20,8 +25,11 @@ func _init(player_name: String) -> void:
 
 func _enter_tree() -> void:
     var global := $"/root/Global"
-    var type_configuration: Dictionary = global.player_types[player_name]
+    var type_configuration: PlayerTypeConfiguration = global.player_types[player_name]
     self.level = global.current_level
+    self.can_grab_walls = type_configuration.movement_params.can_grab_walls
+    self.can_grab_ceilings = type_configuration.movement_params.can_grab_ceilings
+    self.can_grab_floors = type_configuration.movement_params.can_grab_floors
     self.movement_params = type_configuration.movement_params
     self.movement_types = type_configuration.movement_types
 
@@ -31,6 +39,7 @@ func _ready() -> void:
     collider = colliders[0]
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
+    possible_surfaces = platform_graph.nodes
     platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
 
 # Gets actions for the current frame.

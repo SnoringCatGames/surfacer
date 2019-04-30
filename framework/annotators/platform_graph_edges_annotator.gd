@@ -1,9 +1,10 @@
 extends Node2D
 class_name PlatformGraphEdgesAnnotator
 
-var edges: PlatformGraphEdges
+# Array<Edge>
+var edges: Array
 
-func _init(edges: PlatformGraphEdges) -> void:
+func _init(edges: Array) -> void:
     self.edges = edges
 
 func _draw() -> void:

@@ -1,5 +1,5 @@
 extends Reference
-class_name PlatformGraphNodes
+class_name SurfaceParser
 
 const Stopwatch = preload("res://framework/stopwatch.gd")
 
@@ -14,19 +14,56 @@ var ceilings := []
 var left_walls := []
 var right_walls := []
 
+var all_surfaces := []
+var non_ceiling_surfaces := []
+var non_floor_surfaces := []
+var non_wall_surfaces := []
+var all_walls := []
+
 # This supports mapping a cell in a TileMap to its corresponding surface.
 # Dictionary<TileMap, Dictionary<String, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
-func _init(tile_maps: Array) -> void:
+func _init(tile_maps: Array, player_types: Dictionary) -> void:
     _stopwatch = Stopwatch.new()
+    
     for tile_map in tile_maps:
         _parse_tile_map(tile_map)
+    
+    # The various PlayerMovement instances need to know about the available Surfaces.
+    for player_name in player_types:
+        for movement_type in player_types[player_name].movement_types:
+            movement_type.set_surfaces(self)
 
 # Gets the surface corresponding to the given side of the given tile in the given TileMap.
 func get_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
+
+func get_subset_of_surfaces( \
+        include_walls: bool, include_ceilings: bool, include_floors: bool) -> Array:
+    if include_walls:
+        if include_ceilings:
+            if include_floors:
+                return all_surfaces
+            else:
+                return non_floor_surfaces
+        else:
+            if include_floors:
+                return non_ceiling_surfaces
+            else:
+                return all_walls
+    else:
+        if include_ceilings:
+            if include_floors:
+                return non_wall_surfaces
+            else:
+                return ceilings
+        else:
+            if include_floors:
+                return floors
+            else:
+                return []
 
 # Parses the given TileMap into a set of nodes for the platform graph.
 # 
@@ -77,6 +114,60 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     print("_store_surfaces...")
     _store_surfaces(tile_map, floors, ceilings, left_walls, right_walls)
     print("_store_surfaces duration: %sms" % _stopwatch.stop())
+
+func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, \
+        right_walls: Array) -> void:
+    _populate_polyline_arrays(floors)
+    _populate_polyline_arrays(ceilings)
+    _populate_polyline_arrays(left_walls)
+    _populate_polyline_arrays(right_walls)
+    
+    _populate_surface_objects(floors, SurfaceSide.FLOOR)
+    _populate_surface_objects(ceilings, SurfaceSide.CEILING)
+    _populate_surface_objects(left_walls, SurfaceSide.LEFT_WALL)
+    _populate_surface_objects(right_walls, SurfaceSide.RIGHT_WALL)
+    
+    _copy_surfaces_to_main_collection(floors, self.floors)
+    _copy_surfaces_to_main_collection(ceilings, self.ceilings)
+    _copy_surfaces_to_main_collection(left_walls, self.left_walls)
+    _copy_surfaces_to_main_collection(right_walls, self.right_walls)
+    
+    all_surfaces = []
+    Utils.concat(all_surfaces, self.floors)
+    Utils.concat(all_surfaces, self.right_walls)
+    Utils.concat(all_surfaces, self.left_walls)
+    Utils.concat(all_surfaces, self.ceilings)
+    non_ceiling_surfaces = []
+    Utils.concat(non_ceiling_surfaces, self.floors)
+    Utils.concat(non_ceiling_surfaces, self.right_walls)
+    Utils.concat(non_ceiling_surfaces, self.left_walls)
+    non_floor_surfaces = []
+    Utils.concat(non_floor_surfaces, self.right_walls)
+    Utils.concat(non_floor_surfaces, self.left_walls)
+    Utils.concat(non_floor_surfaces, self.ceilings)
+    non_wall_surfaces = []
+    Utils.concat(non_wall_surfaces, self.floors)
+    Utils.concat(non_wall_surfaces, self.ceilings)
+    all_walls = []
+    Utils.concat(all_walls, self.right_walls)
+    Utils.concat(all_walls, self.left_walls)
+    
+    var floor_mapping = _create_tile_map_mapping_from_surfaces(floors)
+    var ceiling_mapping = _create_tile_map_mapping_from_surfaces(ceilings)
+    var left_wall_mapping = _create_tile_map_mapping_from_surfaces(left_walls)
+    var right_wall_mapping = _create_tile_map_mapping_from_surfaces(right_walls)
+    
+    _free_objects(floors)
+    _free_objects(ceilings)
+    _free_objects(left_walls)
+    _free_objects(right_walls)
+    
+    _tile_map_index_to_surface_maps[tile_map] = {
+        SurfaceSide.FLOOR: floor_mapping,
+        SurfaceSide.CEILING: ceiling_mapping,
+        SurfaceSide.LEFT_WALL: left_wall_mapping,
+        SurfaceSide.RIGHT_WALL: right_wall_mapping,
+    }
 
 # Parses the tiles of given TileMap into their constituent top-sides, left-sides, and right-sides.
 static func _parse_tile_map_into_sides(tile_map: TileMap, \
@@ -450,7 +541,7 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
             
             i += 1
 
-func _remove_internal_collinear_vertices(surfaces: Array) -> void:
+static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
     var i: int
     var count: int
     var vertices: Array
@@ -464,40 +555,6 @@ func _remove_internal_collinear_vertices(surfaces: Array) -> void:
                 i -= 1
                 count -= 1
             i += 1
-
-func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, \
-        right_walls: Array) -> void:
-    _populate_polyline_arrays(floors)
-    _populate_polyline_arrays(ceilings)
-    _populate_polyline_arrays(left_walls)
-    _populate_polyline_arrays(right_walls)
-    
-    _populate_surface_objects(floors, SurfaceSide.FLOOR)
-    _populate_surface_objects(ceilings, SurfaceSide.CEILING)
-    _populate_surface_objects(left_walls, SurfaceSide.LEFT_WALL)
-    _populate_surface_objects(right_walls, SurfaceSide.RIGHT_WALL)
-    
-    _copy_surfaces_to_main_collection(floors, self.floors)
-    _copy_surfaces_to_main_collection(ceilings, self.ceilings)
-    _copy_surfaces_to_main_collection(left_walls, self.left_walls)
-    _copy_surfaces_to_main_collection(right_walls, self.right_walls)
-    
-    var floor_mapping = _create_tile_map_mapping_from_surfaces(floors)
-    var ceiling_mapping = _create_tile_map_mapping_from_surfaces(ceilings)
-    var left_wall_mapping = _create_tile_map_mapping_from_surfaces(left_walls)
-    var right_wall_mapping = _create_tile_map_mapping_from_surfaces(right_walls)
-    
-    _free_objects(floors)
-    _free_objects(ceilings)
-    _free_objects(left_walls)
-    _free_objects(right_walls)
-    
-    _tile_map_index_to_surface_maps[tile_map] = {
-        SurfaceSide.FLOOR: floor_mapping,
-        SurfaceSide.CEILING: ceiling_mapping,
-        SurfaceSide.LEFT_WALL: left_wall_mapping,
-        SurfaceSide.RIGHT_WALL: right_wall_mapping,
-    }
 
 static func _populate_polyline_arrays(tmp_surfaces: Array) -> void:
     for tmp_surface in tmp_surfaces:

@@ -5,17 +5,20 @@ const JumpFromPlatformMovement = preload("res://framework/player_movement/jump_f
 const FallFromAirMovement = preload("res://framework/player_movement/fall_from_air_movement.gd")
 const CatPlayer = preload("res://players/cat_player.gd")
 
-const NAME = "cat"
-const TYPE = "human"
+const NAME := "cat"
+const TYPE := PlayerType.HUMAN
+const CAN_GRAB_WALLS := true
+const CAN_GRAB_CEILINGS := false
+const CAN_GRAB_FLOORS := true
 
 func _create_player_type_configuration(movement_params: MovementParams, \
-        movement_types: Array) -> Dictionary:
-    return {
-        name = NAME,
-        type = TYPE,
-        movement_params = movement_params,
-        movement_types = movement_types,
-    }
+        movement_types: Array) -> PlayerTypeConfiguration:
+    var type_configuration = PlayerTypeConfiguration.new()
+    type_configuration.name = NAME
+    type_configuration.type = TYPE
+    type_configuration.movement_params = movement_params
+    type_configuration.movement_types = movement_types
+    return type_configuration
 
 # Array<PlayerMovement>
 func _create_movement_types(movement_params: MovementParams) -> Array:
@@ -26,6 +29,10 @@ func _create_movement_types(movement_params: MovementParams) -> Array:
 
 func _create_movement_params() -> MovementParams:
     var movement_params := MovementParams.new()
+    
+    movement_params.can_grab_walls = CAN_GRAB_WALLS
+    movement_params.can_grab_ceilings = CAN_GRAB_CEILINGS
+    movement_params.can_grab_floors = CAN_GRAB_FLOORS
     
     movement_params.gravity = Geometry.GRAVITY
     movement_params.ascent_gravity_multiplier = 0.38

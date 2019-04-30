@@ -1,16 +1,16 @@
 extends Node2D
 class_name PlatformGraphNodesAnnotator
 
-var nodes: PlatformGraphNodes
+var surface_parser: SurfaceParser
 
-func _init(nodes: PlatformGraphNodes) -> void:
-    self.nodes = nodes
+func _init(surface_parser: SurfaceParser) -> void:
+    self.surface_parser = surface_parser
 
 func _draw() -> void:
-    _draw_surfaces(nodes.floors)
-    _draw_surfaces(nodes.ceilings)
-    _draw_surfaces(nodes.right_walls)
-    _draw_surfaces(nodes.left_walls)
+    _draw_surfaces(surface_parser.floors)
+    _draw_surfaces(surface_parser.ceilings)
+    _draw_surfaces(surface_parser.right_walls)
+    _draw_surfaces(surface_parser.left_walls)
 
 func _draw_surfaces(surfaces: Array) -> void:
     var color: Color

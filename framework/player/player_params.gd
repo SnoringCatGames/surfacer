@@ -3,20 +3,21 @@ class_name PlayerParams
 
 var _movement_params: MovementParams
 var _movement_types: Array
-var _player_type_configuration: Dictionary
+var _player_type_configuration: PlayerTypeConfiguration
 
 func _init() -> void:
     _movement_params = _create_movement_params()
     _movement_types = _create_movement_types(_movement_params)
-    _player_type_configuration = _create_player_type_configuration(_movement_params, _movement_types)
+    _player_type_configuration = \
+            _create_player_type_configuration(_movement_params, _movement_types)
 
-func get_player_type_configuration() -> Dictionary:
+func get_player_type_configuration() -> PlayerTypeConfiguration:
     return _player_type_configuration
 
 func _create_player_type_configuration(movement_params: MovementParams, \
-        movement_types: Array) -> Dictionary:
+        movement_types: Array) -> PlayerTypeConfiguration:
     Utils.error("abstract PlayerParams._create_player_type_configuration is not implemented")
-    return {}
+    return null
 
 # Array<PlayerMovement>
 func _create_movement_types(movement_params: MovementParams) -> Array:
