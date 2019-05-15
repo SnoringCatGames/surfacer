@@ -1,13 +1,10 @@
 extends Reference
 class_name PlatformGraphNavigator
 
-# TODO: Adjust this
-const SURFACE_CLOSE_DISTANCE_THRESHOLD = 512
-
 var player # TODO: Add type back
 var surface_state: PlayerSurfaceState
 var surface_parser: SurfaceParser
-# Array<Edge>
+# Array<PlatformGraphEdge>
 var edges: Array
 
 var _stopwatch: Stopwatch
@@ -144,7 +141,7 @@ func _calculate_path(origin: PositionAlongSurface, \
 static func _find_closest_position_on_a_surface(target: Vector2, player) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
     var surface := _get_closest_surface(target, player.possible_surfaces)
-    position.match_surface_target_and_collider(surface, target, player.collider)
+    position.match_surface_target_and_collider(surface, target, player.collider_half_width_height)
     return position
 
 # Gets the closest surface to the given point.

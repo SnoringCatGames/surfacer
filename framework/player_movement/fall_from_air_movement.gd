@@ -8,7 +8,7 @@ func _init(params: MovementParams).("fall_from_air", params) -> void:
 
 func get_all_reachable_surface_instructions_from_air(start: Vector2, end: PositionAlongSurface, \
         start_velocity: Vector2) -> Array:
-    # FIXME: LEFT OFF HERE: B *** Model after JumpFromPlatforMovement to consider all reachable nodes
+    # FIXME: LEFT OFF HERE: B *** Model after JumpFromPlatformMovement to consider all reachable nodes
 #    var displacement = end.target_point - start
 #
 #    # Solve a quadratic equation for duration.

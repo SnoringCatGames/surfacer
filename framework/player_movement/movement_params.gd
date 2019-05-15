@@ -7,6 +7,10 @@ var can_grab_walls: bool
 var can_grab_ceilings: bool
 var can_grab_floors: bool
 
+var collider_shape: Shape2D
+var collider_rotation: float
+var collider_half_width_height: Vector2
+
 var gravity: float
 var ascent_gravity_multiplier: float
 var ascent_double_jump_gravity_multiplier: float

@@ -4,7 +4,7 @@ class_name PlatformGraph
 var surface_parser: SurfaceParser
 # Array<Surface>
 var nodes: Array
-# Array<Edge>
+# Array<PlatformGraphEdge>
 var edges: Array
 
 func _init(surface_parser: SurfaceParser, player_info: PlayerTypeConfiguration) -> void:

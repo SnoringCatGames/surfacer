@@ -10,6 +10,10 @@ const TYPE := PlayerType.COMPUTER
 const CAN_GRAB_WALLS := true
 const CAN_GRAB_CEILINGS := false
 const CAN_GRAB_FLOORS := true
+var COLLIDER_SHAPE := CapsuleShape2D.new()
+COLLIDER_SHAPE.radius = 17.0
+COLLIDER_SHAPE.height = 9.0
+const COLLIDER_ROTATION := 0.0
 
 func _create_player_type_configuration(movement_params: MovementParams, \
         movement_types: Array) -> PlayerTypeConfiguration:
@@ -33,6 +37,9 @@ func _create_movement_params() -> MovementParams:
     movement_params.can_grab_walls = CAN_GRAB_WALLS
     movement_params.can_grab_ceilings = CAN_GRAB_CEILINGS
     movement_params.can_grab_floors = CAN_GRAB_FLOORS
+    
+    movement_params.collider_shape = COLLIDER_SHAPE
+    movement_params.collider_rotation = COLLIDER_ROTATION
     
     movement_params.gravity = Geometry.GRAVITY
     movement_params.ascent_gravity_multiplier = 0.38

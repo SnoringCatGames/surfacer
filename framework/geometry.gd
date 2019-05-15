@@ -526,3 +526,35 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
     assert(tile_map.get_cellv(tile_coord) >= 0)
     
     return tile_coord
+
+static func do_shapes_match(a: Shape2D, b: Shape2D) -> bool:
+    if a is CircleShape2D:
+        return b is CircleShape2D and a.radius == b.radius
+    elif a is CapsuleShape2D:
+        return b is CapsuleShape2D and a.radius == b.radius and a.height == b.height
+    elif a is RectangleShape2D:
+        return b is RectangleShape2D and a.extents == b.extents
+    else:
+        Utils.error("Invalid Shape2D provided for do_shapes_match: %s. The supported shapes " + \
+                "are: CircleShape2D, CapsuleShape2D, RectangleShape2D." % a)
+        return false
+
+# The given rotation must be either 0 or PI.
+static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vector2:
+    var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2) < Geometry.FLOAT_EPSILON
+    
+    # Ensure that collision boundaries are only ever axially aligned.
+    assert(is_rotated_90_degrees or abs(rotation) < Geometry.FLOAT_EPSILON)
+    
+    var half_width_height: Vector2
+    if shape is CircleShape2D:
+        half_width_height = Vector2(shape.radius, shape.radius)
+    elif shape is CapsuleShape2D:
+        half_width_height = Vector2(shape.radius, shape.radius + shape.height)
+    elif shape is RectangleShape2D:
+        half_width_height = shape.extents
+    else:
+        Utils.error("Invalid Shape2D provided to calculate_half_width_height: %s. The " + \
+                "supported shapes are: CircleShape2D, CapsuleShape2D, RectangleShape2D." % shape)
+    
+    return half_width_height

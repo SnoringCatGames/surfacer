@@ -18,7 +18,7 @@ var surface_state := PlayerSurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
 var velocity := Vector2.ZERO
 var level # TODO: Add type back in?
-var collider: CollisionShape2D
+var collider_half_width_height: Vector2
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
@@ -34,9 +34,13 @@ func _enter_tree() -> void:
     self.movement_types = type_configuration.movement_types
 
 func _ready() -> void:
+    # TODO: Somehow consolidate how collider shapes are defined?
     var colliders = Utils.get_children_by_type(self, CollisionShape2D)
     assert(colliders.size() == 1)
-    collider = colliders[0]
+    var collider = colliders[0]
+    assert(Geometry.do_shapes_match(collider.shape, movement_params.collider_shape))
+    assert(collider.transform.get_rotation() == movement_params.collider_rotation)
+    collider_half_width_height = movement_params.collider_half_width_height
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
     possible_surfaces = platform_graph.nodes

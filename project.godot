@@ -57,7 +57,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "EdgeParser",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge_parser.gd"
+"path": "res://framework/edge_parser.gd"
 }, {
 "base": "PlayerMovement",
 "class": "FallFromAirMovement",

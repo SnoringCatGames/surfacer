@@ -2,6 +2,7 @@ extends Reference
 class_name Surface
 
 var vertices: PoolVector2Array
+# SurfaceSide
 var side: int
 var bounding_box: Rect2
 var normal: Vector2
