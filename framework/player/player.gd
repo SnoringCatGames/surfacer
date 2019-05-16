@@ -39,7 +39,7 @@ func _ready() -> void:
     assert(colliders.size() == 1)
     var collider = colliders[0]
     assert(Geometry.do_shapes_match(collider.shape, movement_params.collider_shape))
-    assert(collider.transform.get_rotation() == movement_params.collider_rotation)
+    assert(abs(collider.transform.get_rotation() - movement_params.collider_rotation) < Geometry.FLOAT_EPSILON)
     collider_half_width_height = movement_params.collider_half_width_height
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:

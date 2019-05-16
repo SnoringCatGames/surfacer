@@ -36,7 +36,7 @@ func _draw_surface_close_distance_threshold() -> void:
         center = a + (b - a) / 2
         
     DrawUtils.draw_empty_circle(self, center, \
-            PlatformGraphNavigator.SURFACE_CLOSE_DISTANCE_THRESHOLD, \
+            PlayerMovement.SURFACE_CLOSE_DISTANCE_THRESHOLD, \
             SURFACE_CLOSE_DISTANCE_THRESHOLD_COLOR, \
             SURFACE_CLOSE_DISTANCE_THRESHOLD_BORDER_WIDTH, \
             SURFACE_CLOSE_DISTANCE_THRESHOLD_ARC_WIDTH)

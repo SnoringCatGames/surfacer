@@ -11,18 +11,32 @@ func get_all_edges_from_surface(a: Surface) -> Array:
     var player_half_width := params.collider_half_width_height.x
     var player_half_height := params.collider_half_width_height.y
     var a_start: Vector2 = a.vertices[0]
-    var a_end: Vector2 = a.vertices[origin_surface.vertices.size() - 1]
+    var a_end: Vector2 = a.vertices[a.vertices.size() - 1]
     var b_start: Vector2
     var b_end: Vector2
+    # FIXME: Remove?
     var a_is_slope_positive := _get_is_slope_positive(a)
+    # FIXME: Remove?
     var b_is_slope_positive: bool
+    # FIXME: Remove?
     var x_overlap_type: int
+    # FIXME: Remove?
     var y_overlap_type: int
-    var start_target_point: Vector2
-    var end_target_point: Vector2
-    var start := PositionAlongSurface.new()
-    var end := PositionAlongSurface.new()
+    var a_near_end: Vector2
+    var a_far_end: Vector2
+    var a_closest_point: Vector2
+    var b_near_end: Vector2
+    var b_far_end: Vector2
+    var b_closest_point: Vector2
+    var possible_jump_points: Array
+    var possible_land_points: Array
+    var possible_jump_land_pairs := []
+    var jump_point: Vector2
+    var land_point: Vector2
+    var jump_position := PositionAlongSurface.new()
+    var land_position := PositionAlongSurface.new()
     var instructions: PlayerInstructions
+    var weight: float
     var edges = []
     
     var possible_surfaces := _get_nearby_and_fallable_surfaces(a)
@@ -32,83 +46,68 @@ func get_all_edges_from_surface(a: Surface) -> Array:
         # would be better handled by some other PlayerMovement type, so we don't handle those
         # cases here.
         
-        b_start = destination_surface.vertices[0]
-        b_end = destination_surface.vertices[b.vertices.size() - 1]
+        b_start = b.vertices[0]
+        b_end = b.vertices[b.vertices.size() - 1]
         
         b_is_slope_positive = _get_is_slope_positive(b)
         
         x_overlap_type = _get_overlap_type(a, b, true)
         y_overlap_type = _get_overlap_type(a, b, false)
         
-        # FIXME: LEFT OFF HERE: A ***************
-        # - For each, determine where the best jump-off point would be from the starting surface.
-        #   - Use the vertical or horiontal extent of the collider shape as an ideal offset from
-        #     the edge of the destination surface.
-        # - no - OR, maybe just use three positions:
-        #       - A.start
-        #       - A.end
-        #       - A.closest_to_B
-        #       - Also, add some conditional logic before calling
-        #         _get_possible_instructions_for_positions, to try to offset the x or y by half the
-        #         width/height if possible while still staying in bounds of surface.
-        #       - Add logic to first try one end of A, then the other end of A, then the closest point
-        #         on A.
-        #     - Then, think about how to actually handle the different surface alignment/overlap cases
-        #       within _get_possible_instructions_for_positions:
-        #       - Would it work to define a list of intermediate positions+side pairings, such that the
-        #         player's movement has to be on that side of that point before hitting the next
-        #         constraint or end?
-        #     - Then, handle other surface-type pairings
-        # - Enumerate all 2304 (6(x-overlap)*6(y-overlap)*2(a-slope)*2(b-slope)*4(a-side-type)*4(b-side-type))‬ possibilities of surface x/y overlap and surface slopes??:
-        #   - Calculate which case the surface pair is.
-        #   - 
-        # - Account for half-width/height offset if possible
-        # - 
+        # FIXME: Do a cheap bounding-box distance check here, before calculating any possible jump/land points
         
-        match a.side:
-            SurfaceSide.FLOOR:
-                match b.side:
-                    SurfaceSide.FLOOR:
-                        if a_end.x + player_half_width < b_start.x:
-                            # The destination is far enough away that the player could jump from
-                            # the closest point on the origin surface, and not need to have any
-                            # backward movement in their jump trajectory.
-                            start_target_point = Vector2(a_end.x, a_end_vertex.y)
-                            end_target_point = Vector2(b_start.x, destination_surface_start.y)
-                        elif a_start.x - player_half_width > b_end.x:
-                            # The destination is far enough away that the player could jump from
-                            # the closest point on the origin surface, and not need to have any
-                            # backward movement in their jump trajectory.
-                            start_target_point = Vector2(a_start.x, a_start_vertex.y)
-                            end_target_point = Vector2(b_end.x, destination_surface_end.y)
-                        elif a_start.x + player_half_width < b_start.x:
-                            # The surfaces are aligned such that the player can jump vert
-                        elif a_end.x - player_half_width > b_end.x:
-                        elif false:
-                    SurfaceSide.LEFT_WALL:
-                        pass
-                    SurfaceSide.RIGHT_WALL:
-                        pass
-                    SurfaceSide.CEILING:
-                        pass
-            SurfaceSide.LEFT_WALL:
-                pass
-            SurfaceSide.RIGHT_WALL:
-                pass
-            SurfaceSide.CEILING:
-                pass
+        # Use a bounding-box heuristic to determine which end of the surfaces are likely to be
+        # nearer and farther.
+        if Geometry.distance_squared_from_point_to_rect(a_start, b.bounding_box) < \
+                Geometry.distance_squared_from_point_to_rect(a_end, b.bounding_box):
+            a_near_end = a_start
+            a_far_end = a_end
+        else:
+            a_near_end = a_end
+            a_far_end = a_start
+        if Geometry.distance_squared_from_point_to_rect(b_start, a.bounding_box) < \
+                Geometry.distance_squared_from_point_to_rect(b_end, a.bounding_box):
+            b_near_end = b_start
+            b_far_end = b_end
+        else:
+            b_near_end = b_end
+            b_far_end = b_start
         
-        start_target_point = 
-        end_target_point = 
+        # The actual clostest points along each surface could be somewhere in the middle.
+        a_closest_point = Geometry.get_closest_point_on_polyline_to_polyline(a, b)
+        b_closest_point = Geometry.get_closest_point_on_polyline_to_polyline(b, a)
         
-        start.match_surface_target_and_collider(a, start_target_point, \
-                params.collider_half_width_height)
-        end.match_surface_target_and_collider(b, end_target_point, \
-                params.collider_half_width_height)
-        instructions = \
-                _get_possible_instructions_for_positions(start.target_point, end.target_point)
-        if instructions != null:
-            edges.push_back(PlatformGraphEdge.new(start, end, instructions))
+        # Only consider the far-end and closest points if they are distinct.
+        possible_jump_points = [a_near_end]
+        possible_land_points = [b_near_end]
+        if a.size() > 1:
+            possible_jump_points.push_back(a_far_end)
+        if a_closest_point != a_near_end and a_closest_point != a_far_end:
+            possible_jump_points.push_back(a_closest_point)
+        if b.size() > 1:
+            possible_land_points.push_back(b_far_end)
+        if b_closest_point != b_near_end and b_closest_point != b_far_end:
+            possible_land_points.push_back(b_closest_point)
+        
+        # Calculate the pairs of possible jump and land points to check.
+        possible_jump_land_pairs.clear()
+        for possible_jump_point in possible_jump_points:
+            for possible_land_point in possible_land_points:
+                possible_jump_land_pairs.push_back(possible_jump_point)
+                possible_jump_land_pairs.push_back(possible_land_point)
+        
+        for i in range(possible_jump_land_pairs.size() - 1):
+            jump_point = possible_jump_land_pairs[i]
+            land_point = possible_jump_land_pairs[i + 1]
+            
+            jump_position.match_surface_target_and_collider(a, jump_point, \
+                    params.collider_half_width_height)
+            land_position.match_surface_target_and_collider(b, land_point, \
+                    params.collider_half_width_height)
+            instructions = \
+                    _get_possible_instructions_for_positions(jump_position.target_point, land_position.target_point)
+            if instructions != null:
+                edges.push_back(PlatformGraphEdge.new(jump_position, land_position, instructions))
     
     return edges
 
@@ -126,6 +125,9 @@ static func _get_is_slope_positive(surface: Surface) -> bool:
             return start.x < end.x
         SurfaceSide.CEILING:
             return end.y < start.y
+        _:
+            Utils.error("Invalid SurfaceSide: %s" % surface.side)
+            return false
 
 # FIXME: Move to PlayerMovement or remove?
 class _Overlap:
@@ -194,6 +196,47 @@ func get_possible_instructions_to_air(start: PositionAlongSurface, end: Vector2)
     return _get_possible_instructions_for_positions(start.target_point, end)
 
 func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> PlayerInstructions:
+    # FIXME: LEFT OFF HERE: A ***************
+    # - 
+    # - How to test movement??
+    #   - Does Godot have "ray-tracing" for collidable shapes along parabolas?
+    #   - Otherwise, I could probably do some custom intersection detection via time-slicing positions along movement trajectory (but will have the tunneling problem)
+    # - 
+    # - A constraint consists of 4 pieces of information:
+    #   - At THIS coordinate, along THIS axis, movement must be on THIS side of THIS coordinate along the other axis.
+    # - 
+    # - Constraints idea...
+    #   - Try (test/emulate) jump without any constraints.
+    #   - If we hit a surface, then recursively try a constraint on either side and re-test.
+    #   - If impossible, abort.
+    # - 
+    # - [ABORT] Figure out intermediate constraints
+    #   - Assuming jump-from-floor...
+    #   - If B.side == FLOOR:
+    #     - if jump.y < land.y: # jumping up
+    #       - if jump.x < land.x: # jumping right
+    #         - if (A.start | B.start | A.end | B.end) is between jump and land:
+    #           - # "between" means between both x and y coordinates
+    #             - But we also need to consider an offset for the size of the collider
+    #           - Add a constraint
+    #           - Constraint depends on A.side, B.side, and which point is between
+    #           - Constraints could need both a horizontal and a vertical component
+    #     - Need to also calculate is_left_end, etc.
+    # - 
+    # - Account for half-width/height offset needed to clear the edge of B (if possible).
+    # - Also, account for the half-width/height offset needed to not fall onto A.
+    # - Include a margin around constraints and land position.
+    # - 
+    # - Make the 144-cell diagram in InkScape and add to docs.
+    # - Storing possibly 9 edges from A to B.
+    
+    
+    
+    
+    
+    
+    
+    
     var displacement: Vector2 = end - start
     var max_vertical_displacement := get_max_upward_distance()
     var duration_to_peak := -params.jump_boost / params.gravity

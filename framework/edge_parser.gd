@@ -30,7 +30,9 @@ class_name EdgeParser
 #   - Mode name
 #   - Current "input" (UP, LEFT, etc.)?
 #   - The entirety of the current instruction-set being run?
-# - Add support for actually navigating end-to-end to a given target point.
+# - A*-search: Add support for actually navigating end-to-end to a given target point.
+#   - Will need to consider the "weight" for moving along a surface from a previous edge's land to
+#     the potential next edge's jump.
 # - Add annotations for just the path that the navigator is currently using.
 # - Test out the accuracy of edge traversal actually matching up to our pre-calculated trajectories.
 # 
@@ -39,6 +41,9 @@ class_name EdgeParser
 # 
 # - Add logic to emulate/test/ray-trace a Player's movement across an edge. This should help with
 #   annotations (both path and boundaries) and precise detection for interfering surfaces.
+# 
+# - Add logic to consider a minimum movement distance, since jumping from floors or walls gives a
+#   set minimum displacement. 
 # 
 # - Add logic to start edge traversal from the earliest possible PositionAlongSurface (given the
 #   previous/inital/landing PositionAlongSurface), rather than from whatever pre-calculated

@@ -61,7 +61,6 @@ static func get_closest_point_on_segment_to_point( \
         var t = uv / vv
         return segment_a + t * v
 
-# Calculates the minimum squared distance between a polyline and a point.
 static func get_closest_point_on_polyline_to_point( \
         point: Vector2, polyline: PoolVector2Array) -> Vector2:
     if polyline.size() == 1:
@@ -76,6 +75,25 @@ static func get_closest_point_on_polyline_to_point( \
         current_point = \
                 get_closest_point_on_segment_to_point(point, polyline[i], polyline[i + 1])
         current_distance_squared = point.distance_squared_to(current_point)
+        if current_distance_squared < closest_distance_squared:
+            closest_distance_squared = current_distance_squared
+            closest_point = current_point
+    
+    return closest_point
+
+static func get_closest_point_on_polyline_to_polyline( \
+        a: PoolVector2Array, b: PoolVector2Array) -> Vector2:
+    if a.size() == 1:
+        return a[0]
+    
+    var closest_point: Vector2
+    var closest_distance_squared: float = INF
+    
+    var current_point: Vector2
+    var current_distance_squared: float
+    for vertex_b in b:
+        current_point = get_closest_point_on_polyline_to_point(vertex_b, a)
+        current_distance_squared = vertex_b.distance_squared_to(current_point)
         if current_distance_squared < closest_distance_squared:
             closest_distance_squared = current_distance_squared
             closest_point = current_point

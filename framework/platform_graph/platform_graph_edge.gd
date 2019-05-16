@@ -12,3 +12,5 @@ func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
     self.start = start
     self.end = end
     self.instructions = instructions
+
+# FIXME: Add a getter for weight: float that returns self.instructions.duration
