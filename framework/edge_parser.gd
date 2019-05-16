@@ -25,6 +25,8 @@ class_name EdgeParser
 # 
 # - Implement get_all_edges_from_surface for jumping.
 # - Add annotations for the actual trajectories that are defined by PlatformGraphEdge.
+#   - These will be stored on PlayerInstructions.
+#   - Also render annotations for the constraints that were used (also stored on PlayerInstructions).
 # - Add annotations that draw the recent path that the player actually moved.
 # - Add annotations for rendering some basic navigation mode info for the CP:
 #   - Mode name

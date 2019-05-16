@@ -54,7 +54,11 @@ func get_all_edges_from_surface(a: Surface) -> Array:
         x_overlap_type = _get_overlap_type(a, b, true)
         y_overlap_type = _get_overlap_type(a, b, false)
         
-        # FIXME: Do a cheap bounding-box distance check here, before calculating any possible jump/land points
+        # FIXME: D:
+        # - Do a cheap bounding-box distance check here, before calculating any possible jump/land
+        #   points.
+        # - Don't forget to also allow for fallable surfaces (more expensive).
+        # - This is still cheaper than considering all 9 jump/land pair instructions, right?
         
         # Use a bounding-box heuristic to determine which end of the surfaces are likely to be
         # nearer and farther.
@@ -198,17 +202,43 @@ func get_possible_instructions_to_air(start: PositionAlongSurface, end: Vector2)
 func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> PlayerInstructions:
     # FIXME: LEFT OFF HERE: A ***************
     # - 
-    # - How to test movement??
-    #   - Does Godot have "ray-tracing" for collidable shapes along parabolas?
-    #   - Otherwise, I could probably do some custom intersection detection via time-slicing positions along movement trajectory (but will have the tunneling problem)
-    # - 
     # - A constraint consists of 4 pieces of information:
     #   - At THIS coordinate, along THIS axis, movement must be on THIS side of THIS coordinate along the other axis.
     # - 
     # - Constraints idea...
-    #   - Try (test/emulate) jump without any constraints.
-    #   - If we hit a surface, then recursively try a constraint on either side and re-test.
+    #   - Try (test/emulate) the jump without any constraints.
+    #     - HOW TO TEST:
+    #       - Will need to implement custom time-slicing of the movement, while calculating the
+    #         collider's position along the trajectory at each slice/frame.
+    #         - This will use the same numerical approach used to calculate instruction sets.
+    #         - So this won't necessarily match the actual player movement that results from
+    #           discrete integration.
+    #       - Will need to use some Godot collision checking utility to get the TileMap-based
+    #         Collision.
+    #       - Is there a way to know exactly what interval Godot will use for the physics
+    #         timesteps? Or to explicitely tell it what interval to use?
+    #       - (Follow-up) Does Godot have "ray-tracing" for arbitrary shapes?
+    #         - More importantly, is this what they use under the hood when detecting collisions
+    #           between frame positions?
+    #         - Could be useful to solve tunneling problem between slices/frames?
+    #   - If we hit a surface, then recursively try a constraint on either side of that surface and
+    #     re-test.
+    #     - (probably) DFS with intelligently picking "better" branches accorrding to heuristics?
+    #     - (probably not) Or should we check all branches, and return multiple possible edges?
     #   - If impossible, abort.
+    #   - If we hit a vertical surface:
+    #     - For the "above" constraint branch:
+    #       - 
+    #     - For the "below" constraint branch:
+    #       - 
+    #   - We should be able to re-use slice/frame state from the last verified constraint, rather
+    #     than needing to re-compute everything from the start of the movement each time we
+    #     consider a new constraint.
+    #   - Will also want to record some other info for annotations/debugging:
+    #     - Store on PlayerInstructions.
+    #     - A polyline representation of the ultimate trajectory, including time-slice-testing and
+    #       considering constraints.
+    #     - The ultimate sequence of constraints that were used.
     # - 
     # - [ABORT] Figure out intermediate constraints
     #   - Assuming jump-from-floor...
