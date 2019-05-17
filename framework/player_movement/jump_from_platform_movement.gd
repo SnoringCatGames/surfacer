@@ -199,11 +199,83 @@ static func _get_overlap_type(a: Surface, b: Surface, check_horizontal: bool) ->
 func get_possible_instructions_to_air(start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
     return _get_possible_instructions_for_positions(start.target_point, end)
 
+class MovementConstraint extends Reference:
+    # FIXME: LEFT OFF HERE: -A *************
+    var when_passing_vertically: bool
+    var passing_point: bool
+    
+    func _init() -> void:
+        pass
+
+# Determines whether the given motion of the given shape would collide with a Surface. If a
+# collision would occur, this returns the Surface; otherwise, this returns null.
+static func test_movement(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
+        shape_query_params: Physics2DShapeQueryParameters) -> Surface:
+    # FIXME: LEFT OFF HERE: -A **************
+    # - var space_state := get_world_2d().direct_space_state (from a Node class)
+    # - Make sure that all of the level setup is called from within an early _physics_process
+    #   callback (space might have a lock otherwise).
+#    const TILE_MAP_COLLISION_LAYER := 
+#    const EDGE_MOVEMENT_MARGIN := 6.0
+#    const EDGE_MOVEMENT_TEST_MARGIN := 4.0
+#    var shape_query_params := { \
+#        collide_with_areas = false, \
+#        collide_with_bodies = true, \
+#        collision_layer = TILE_MAP_COLLISION_LAYER, \
+#        exclude = [], \
+#        margin = EDGE_MOVEMENT_TEST_MARGIN, \
+#        motion = , \
+#        shape_rid = player.collider.shape.get_rid(), \
+#        transform = Transform2D.IDENTITY, \
+#    }
+    
+    var collision_points := space_state.collide_shape(shape_query_params, 1)
+    if collision_points.empty():
+        return null
+    
+    var collision_point: Vector2 = collision_points[0]
+    var direction := shape_query_params.motion.normalized()
+    var from := collision_point - direction * 0.001
+    var to := collision_point + direction * 1000000
+    var collision := space_state.intersect_ray(from, to, shape_query_params.exclude, \
+            shape_query_params.collision_layer)
+    
+    var side: int
+    var is_touching_floor := false
+    var is_touching_ceiling := false
+    var is_touching_left_wall := false
+    var is_touching_right_wall := false
+    if abs(collision.normal.angle_to(Geometry.UP)) <= Geometry.FLOOR_MAX_ANGLE:
+        side = SurfaceSide.FLOOR
+        is_touching_floor = true
+    elif abs(collision.normal.angle_to(Geometry.DOWN)) <= Geometry.FLOOR_MAX_ANGLE:
+        side = SurfaceSide.CEILING
+        is_touching_ceiling = true
+    elif collision.normal.x > 0:
+        side = SurfaceSide.LEFT_WALL
+        is_touching_left_wall = true
+    else:
+        side = SurfaceSide.RIGHT_WALL
+        is_touching_right_wall = true
+    
+    var tile_map: TileMap = collision.collider
+    var tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
+            collision_point, tile_map, is_touching_floor, is_touching_ceiling, \
+            is_touching_left_wall, is_touching_right_wall)
+    var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord(tile_map_coord, tile_map)
+    
+    return surface_parser.get_surface_for_tile(tile_map, tile_map_index, side)
+
 func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> PlayerInstructions:
     # FIXME: LEFT OFF HERE: A ***************
+    # - Flesh out how to actually calculate constraints according to SurfaceType.
+    # - Flesh out above and below backtracking.
+    # - Put all of this bit on hold for the moment, since we can first finish the infrastructure
+    #   and test things with a bunch a false-positives from these simplistic jump-land pairs.
     # - 
     # - A constraint consists of 4 pieces of information:
     #   - At THIS coordinate, along THIS axis, movement must be on THIS side of THIS coordinate along the other axis.
+    #   - Define constraint class; think of a better name...
     # - 
     # - Constraints idea...
     #   - Try (test/emulate) the jump without any constraints.
@@ -223,14 +295,25 @@ func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> P
     #         - Could be useful to solve tunneling problem between slices/frames?
     #   - If we hit a surface, then recursively try a constraint on either side of that surface and
     #     re-test.
-    #     - (probably) DFS with intelligently picking "better" branches accorrding to heuristics?
+    #     - (probably) DFS with intelligently picking "better" branches according to heuristics?
     #     - (probably not) Or should we check all branches, and return multiple possible edges?
     #   - If impossible, abort.
+    #   - How to calculate the constraints:
+    #     - If SurfaceSide is ceiling:
+    #       - Constraint A:
+    #         - 
+    #       - Constraint B:
+    #         - 
+    #     - etc.
     #   - If we hit a vertical surface:
     #     - For the "above" constraint branch:
-    #       - 
+    #       - If we cannot reach this height with our max range, then abort.
+    #       - If we are not currently still pressing up, then we need to backtrack and re-calculate
+    #         all constraints from the moment we had released up.
     #     - For the "below" constraint branch:
     #       - 
+    #   - How to use the constraints:
+    #     - It should be simple enough to modify the original parabolic movement calculations?
     #   - We should be able to re-use slice/frame state from the last verified constraint, rather
     #     than needing to re-compute everything from the start of the movement each time we
     #     consider a new constraint.

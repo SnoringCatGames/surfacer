@@ -18,6 +18,7 @@ var surface_state := PlayerSurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
 var velocity := Vector2.ZERO
 var level # TODO: Add type back in?
+var collider: CollisionShape2D
 var collider_half_width_height: Vector2
 
 func _init(player_name: String) -> void:
@@ -37,7 +38,7 @@ func _ready() -> void:
     # TODO: Somehow consolidate how collider shapes are defined?
     var colliders = Utils.get_children_by_type(self, CollisionShape2D)
     assert(colliders.size() == 1)
-    var collider = colliders[0]
+    collider = colliders[0]
     assert(Geometry.do_shapes_match(collider.shape, movement_params.collider_shape))
     assert(abs(collider.transform.get_rotation() - movement_params.collider_rotation) < Geometry.FLOAT_EPSILON)
     collider_half_width_height = movement_params.collider_half_width_height
@@ -71,7 +72,8 @@ func _physics_process(delta: float) -> void:
     
     # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
     # into account.
-    #warning-ignore:return_value_discarded
+    # TODO: Use the remaining pre-collision movement that move_and_slide returns. This might be
+    # needed in order to move along slopes?
     move_and_slide(velocity, Geometry.UP, false, 4, Geometry.FLOOR_MAX_ANGLE)
     
     level.descendant_physics_process_completed(self)
@@ -201,23 +203,23 @@ func _update_which_side_is_grabbed() -> void:
             surface_state.grabbed_surface_normal = Geometry.LEFT
 
 func _update_which_surface_is_grabbed() -> void:
-    var collision = _get_attached_surface_collision(self, surface_state)
+    var collision := _get_attached_surface_collision(self, surface_state)
     assert((collision != null) == surface_state.is_grabbing_a_surface)
     
     if surface_state.is_grabbing_a_surface:
-        var next_grab_position = collision.position
+        var next_grab_position := collision.position
         surface_state.just_changed_grab_position = \
                 surface_state.just_left_air or \
                 next_grab_position != surface_state.grab_position
         surface_state.grab_position = next_grab_position
         
-        var next_grabbed_tile_map = collision.collider
+        var next_grabbed_tile_map := collision.collider
         surface_state.just_changed_tile_map = \
                 surface_state.just_left_air or \
                 next_grabbed_tile_map != surface_state.grabbed_tile_map
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
-        var next_grab_position_tile_map_coord = Geometry.get_collision_tile_map_coord( \
+        var next_grab_position_tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
                 surface_state.grab_position, surface_state.grabbed_tile_map, \
                 surface_state.is_touching_floor, surface_state.is_touching_ceiling, \
                 surface_state.is_touching_left_wall, surface_state.is_touching_right_wall)
@@ -226,7 +228,7 @@ func _update_which_surface_is_grabbed() -> void:
                 next_grab_position_tile_map_coord != surface_state.grab_position_tile_map_coord
         surface_state.grab_position_tile_map_coord = next_grab_position_tile_map_coord
         
-        var next_grabbed_surface = \
+        var next_grabbed_surface := \
                 platform_graph_navigator.calculate_grabbed_surface(surface_state)
         surface_state.just_changed_surface = \
                 surface_state.just_left_air or \
