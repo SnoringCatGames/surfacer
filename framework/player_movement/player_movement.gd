@@ -2,13 +2,20 @@
 extends Reference
 class_name PlayerMovement
 
+const MovementConstraint = preload("res://framework/player_movement/movement_constraint.gd")
+
 # TODO: Adjust this
-const SURFACE_CLOSE_DISTANCE_THRESHOLD = 512
-const DOWNWARD_DISTANCE_TO_CHECK_FOR_FALLING = 10000
+const SURFACE_CLOSE_DISTANCE_THRESHOLD := 512.0
+const DOWNWARD_DISTANCE_TO_CHECK_FOR_FALLING := 10000.0
+
+const TILE_MAP_COLLISION_LAYER := 2
+const EDGE_MOVEMENT_TEST_MARGIN := 4.0
+const EDGE_MOVEMENT_ACTUAL_MARGIN := 6.0
 
 var name: String
 var params: MovementParams
 var surfaces: Array
+var surface_parser: SurfaceParser
 
 var can_traverse_edge := false
 var can_traverse_to_air := false
@@ -19,20 +26,22 @@ func _init(name: String, params: MovementParams) -> void:
     self.params = params
 
 func set_surfaces(surface_parser: SurfaceParser) -> void:
+    self.surface_parser = surface_parser
     self.surfaces = surface_parser.get_subset_of_surfaces( \
             params.can_grab_walls, params.can_grab_ceilings, params.can_grab_floors)
 
-func get_all_edges_from_surface(surface: Surface) -> Array:
+func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, surface: Surface) -> Array:
     Utils.error( \
             "Abstract PlayerMovement.get_all_edges_from_surface is not implemented")
     return []
 
-func get_possible_instructions_to_air(start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
+func get_possible_instructions_to_air(space_state: Physics2DDirectSpaceState, \
+        start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
     Utils.error("Abstract PlayerMovement.get_possible_instructions_to_air is not implemented")
     return null
 
-func get_all_reachable_surface_instructions_from_air(start: Vector2, end: PositionAlongSurface, \
-        start_velocity: Vector2) -> Array:
+func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirectSpaceState, \
+        start: Vector2, end: PositionAlongSurface, start_velocity: Vector2) -> Array:
     Utils.error("Abstract PlayerMovement.get_all_reachable_surface_instructions_from_air is not implemented")
     return []
 
@@ -43,6 +52,97 @@ func get_max_upward_distance() -> float:
 func get_max_horizontal_distance() -> float:
     Utils.error("Abstract PlayerMovement.get_max_horizontal_distance is not implemented")
     return 0.0
+
+# Determines whether the given motion of the given shape would collide with a Surface. If a
+# collision would occur, this returns the Surface; otherwise, this returns null.
+func test_movement(space_state: Physics2DDirectSpaceState, \
+        shape_query_params: Physics2DShapeQueryParameters) -> Surface:
+    # FIXME: B: Check whether all of the level setup must be called from within an early
+    #   _physics_process callback (space might have a lock otherwise)?
+    
+    var collision_points := space_state.collide_shape(shape_query_params, 1)
+    if collision_points.empty():
+        return null
+    
+    var collision_point: Vector2 = collision_points[0]
+    var direction := shape_query_params.motion.normalized()
+    var from := collision_point - direction * 0.001
+    var to := collision_point + direction * 1000000
+    var collision := space_state.intersect_ray(from, to, shape_query_params.exclude, \
+            shape_query_params.collision_layer)
+    
+    var side: int
+    var is_touching_floor := false
+    var is_touching_ceiling := false
+    var is_touching_left_wall := false
+    var is_touching_right_wall := false
+    if abs(collision.normal.angle_to(Geometry.UP)) <= Geometry.FLOOR_MAX_ANGLE:
+        side = SurfaceSide.FLOOR
+        is_touching_floor = true
+    elif abs(collision.normal.angle_to(Geometry.DOWN)) <= Geometry.FLOOR_MAX_ANGLE:
+        side = SurfaceSide.CEILING
+        is_touching_ceiling = true
+    elif collision.normal.x > 0:
+        side = SurfaceSide.LEFT_WALL
+        is_touching_left_wall = true
+    else:
+        side = SurfaceSide.RIGHT_WALL
+        is_touching_right_wall = true
+    
+    var tile_map: TileMap = collision.collider
+    var tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
+            collision_point, tile_map, is_touching_floor, is_touching_ceiling, \
+            is_touching_left_wall, is_touching_right_wall)
+    var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord(tile_map_coord, tile_map)
+    
+    return surface_parser.get_surface_for_tile(tile_map, tile_map_index, side)
+
+static func _calculate_constraints( \
+        colliding_surface: Surface, constraint_offset: Vector2) -> Array:
+    var passing_point_a: Vector2
+    var constraint_a: MovementConstraint
+    var passing_point_b: Vector2
+    var constraint_b: MovementConstraint
+    
+    match colliding_surface.side:
+        SurfaceSide.FLOOR:
+            # Left end
+            passing_point_a = colliding_surface.vertices[0] + \
+                    Vector2(-constraint_offset.x, -constraint_offset.y)
+            constraint_a = MovementConstraint.new(passing_point_a, true, true)
+            # Right end
+            passing_point_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+                    Vector2(constraint_offset.x, -constraint_offset.y)
+            constraint_b = MovementConstraint.new(passing_point_b, true, false)
+        SurfaceSide.CEILING:
+            # Left end
+            passing_point_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+                    Vector2(-constraint_offset.x, constraint_offset.y)
+            constraint_a = MovementConstraint.new(passing_point_a, true, true)
+            # Right end
+            passing_point_b = colliding_surface.vertices[0] + \
+                    Vector2(constraint_offset.x, constraint_offset.y)
+            constraint_b = MovementConstraint.new(passing_point_b, true, false)
+        SurfaceSide.LEFT_WALL:
+            # Top end
+            passing_point_a = colliding_surface.vertices[0] + \
+                    Vector2(constraint_offset.x, -constraint_offset.y)
+            constraint_a = MovementConstraint.new(passing_point_a, false, true)
+            # Bottom end
+            passing_point_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+                    Vector2(constraint_offset.x, constraint_offset.y)
+            constraint_b = MovementConstraint.new(passing_point_b, false, false)
+        SurfaceSide.RIGHT_WALL:
+            # Top end
+            passing_point_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+                    Vector2(-constraint_offset.x, -constraint_offset.y)
+            constraint_a = MovementConstraint.new(passing_point_a, false, true)
+            # Bottom end
+            passing_point_b = colliding_surface.vertices[0] + \
+                    Vector2(-constraint_offset.x, constraint_offset.y)
+            constraint_b = MovementConstraint.new(passing_point_b, false, false)
+    
+    return [constraint_a, constraint_b]
 
 func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     # TODO: Prevent duplicate work from finding matching surfaces as both nearby and fallable.

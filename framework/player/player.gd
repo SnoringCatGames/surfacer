@@ -90,9 +90,13 @@ func _update_surface_state() -> void:
     else:
         surface_state.horizontal_movement_sign = 0
     
+    # Note: These might give false negatives when colliding with a corner. AFAICT, Godot will
+    # simply pick one of the corner's adjacent segments to base the collision normal off of, so the
+    # other segment will be ignored (and the other segment could correspond to floor or ceiling).
     surface_state.is_touching_floor = is_on_floor()
     surface_state.is_touching_ceiling = is_on_ceiling()
     surface_state.is_touching_wall = is_on_wall()
+    
     surface_state.which_wall = Utils.get_which_wall_collided(self)
     surface_state.is_touching_left_wall = surface_state.which_wall == SurfaceSide.LEFT_WALL
     surface_state.is_touching_right_wall = surface_state.which_wall == SurfaceSide.RIGHT_WALL

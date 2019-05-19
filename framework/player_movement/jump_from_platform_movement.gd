@@ -6,22 +6,13 @@ func _init(params: MovementParams).("jump_from_platform", params) -> void:
     self.can_traverse_to_air = true
     self.can_traverse_from_air = false
 
-# FIXME: Update other references to this API
-func get_all_edges_from_surface(a: Surface) -> Array:
+func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surface) -> Array:
     var player_half_width := params.collider_half_width_height.x
     var player_half_height := params.collider_half_width_height.y
     var a_start: Vector2 = a.vertices[0]
     var a_end: Vector2 = a.vertices[a.vertices.size() - 1]
     var b_start: Vector2
     var b_end: Vector2
-    # FIXME: Remove?
-    var a_is_slope_positive := _get_is_slope_positive(a)
-    # FIXME: Remove?
-    var b_is_slope_positive: bool
-    # FIXME: Remove?
-    var x_overlap_type: int
-    # FIXME: Remove?
-    var y_overlap_type: int
     var a_near_end: Vector2
     var a_far_end: Vector2
     var a_closest_point: Vector2
@@ -48,11 +39,6 @@ func get_all_edges_from_surface(a: Surface) -> Array:
         
         b_start = b.vertices[0]
         b_end = b.vertices[b.vertices.size() - 1]
-        
-        b_is_slope_positive = _get_is_slope_positive(b)
-        
-        x_overlap_type = _get_overlap_type(a, b, true)
-        y_overlap_type = _get_overlap_type(a, b, false)
         
         # FIXME: D:
         # - Do a cheap bounding-box distance check here, before calculating any possible jump/land
@@ -108,176 +94,24 @@ func get_all_edges_from_surface(a: Surface) -> Array:
                     params.collider_half_width_height)
             land_position.match_surface_target_and_collider(b, land_point, \
                     params.collider_half_width_height)
-            instructions = \
-                    _get_possible_instructions_for_positions(jump_position.target_point, land_position.target_point)
+            instructions = _get_possible_instructions_for_positions( \
+                    space_state, jump_position.target_point, land_position.target_point)
             if instructions != null:
                 edges.push_back(PlatformGraphEdge.new(jump_position, land_position, instructions))
     
     return edges
 
-# FIXME: Move to PlayerMovement or remove?
-static func _get_is_slope_positive(surface: Surface) -> bool:
-    var start: Vector2 = surface.vertices[0]
-    var end: Vector2 = surface.vertices[surface.vertices.size() - 1]
-    
-    match surface.side:
-        SurfaceSide.FLOOR:
-            return start.y < end.y
-        SurfaceSide.LEFT_WALL:
-            return end.x < start.x
-        SurfaceSide.RIGHT_WALL:
-            return start.x < end.x
-        SurfaceSide.CEILING:
-            return end.y < start.y
-        _:
-            Utils.error("Invalid SurfaceSide: %s" % surface.side)
-            return false
+func get_possible_instructions_to_air(space_state: Physics2DDirectSpaceState, \
+        start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
+    return _get_possible_instructions_for_positions(space_state, start.target_point, end)
 
-# FIXME: Move to PlayerMovement or remove?
-class _Overlap:
-    enum {
-        NO_OVERLAP_A_SMALLER,
-        NO_OVERLAP_B_SMALLER,
-        PARTIAL_OVERLAP_A_SMALLER,
-        PARTIAL_OVERLAP_B_SMALLER,
-        COMPLETE_OVERLAP_A_SMALLER,
-        COMPLETE_OVERLAP_B_SMALLER,
-    }
-
-# FIXME: Move to PlayerMovement or remove?
-static func _get_overlap_type(a: Surface, b: Surface, check_horizontal: bool) -> int:
-    var a_start: float
-    var a_end: float
-    var b_start: float
-    var b_end: float
-    
-    if check_horizontal:
-        a_start = a.vertices[0].x
-        a_end = a.vertices[a.vertices.size() - 1].x
-        b_start = b.vertices[0].x
-        b_end = b.vertices[b.vertices.size() - 1].x
-    else:
-        a_start = a.vertices[0].y
-        a_end = a.vertices[a.vertices.size() - 1].y
-        b_start = b.vertices[0].y
-        b_end = b.vertices[b.vertices.size() - 1].y
-    
-    var a_leftmost: float
-    var a_rightmost: float
-    var b_leftmost: float
-    var b_rightmost: float
-    
-    if a_start <= a_end:
-        a_leftmost = a_start
-        a_rightmost = a_end
-    else:
-        a_leftmost = a_end
-        a_rightmost = a_start
-    
-    if b_start <= b_end:
-        b_leftmost = b_start
-        b_rightmost = b_end
-    else:
-        b_leftmost = b_end
-        b_rightmost = b_start
-    
-    if a_rightmost < b_leftmost:
-        return _Overlap.NO_OVERLAP_A_SMALLER
-    elif a_leftmost > b_rightmost:
-        return _Overlap.NO_OVERLAP_B_SMALLER
-    elif a_leftmost < b_leftmost:
-        if a_rightmost < b_rightmost:
-            return _Overlap.PARTIAL_OVERLAP_A_SMALLER
-        else:
-            return _Overlap.COMPLETE_OVERLAP_A_SMALLER
-    else:
-        if a_rightmost > b_rightmost:
-            return _Overlap.PARTIAL_OVERLAP_B_SMALLER
-        else:
-            return _Overlap.COMPLETE_OVERLAP_B_SMALLER
-
-func get_possible_instructions_to_air(start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
-    return _get_possible_instructions_for_positions(start.target_point, end)
-
-class MovementConstraint extends Reference:
-    # FIXME: LEFT OFF HERE: -A *************
-    var when_passing_vertically: bool
-    var passing_point: bool
-    
-    func _init() -> void:
-        pass
-
-# Determines whether the given motion of the given shape would collide with a Surface. If a
-# collision would occur, this returns the Surface; otherwise, this returns null.
-static func test_movement(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
-        shape_query_params: Physics2DShapeQueryParameters) -> Surface:
-    # FIXME: LEFT OFF HERE: -A **************
-    # - var space_state := get_world_2d().direct_space_state (from a Node class)
-    # - Make sure that all of the level setup is called from within an early _physics_process
-    #   callback (space might have a lock otherwise).
-#    const TILE_MAP_COLLISION_LAYER := 
-#    const EDGE_MOVEMENT_MARGIN := 6.0
-#    const EDGE_MOVEMENT_TEST_MARGIN := 4.0
-#    var shape_query_params := { \
-#        collide_with_areas = false, \
-#        collide_with_bodies = true, \
-#        collision_layer = TILE_MAP_COLLISION_LAYER, \
-#        exclude = [], \
-#        margin = EDGE_MOVEMENT_TEST_MARGIN, \
-#        motion = , \
-#        shape_rid = player.collider.shape.get_rid(), \
-#        transform = Transform2D.IDENTITY, \
-#    }
-    
-    var collision_points := space_state.collide_shape(shape_query_params, 1)
-    if collision_points.empty():
-        return null
-    
-    var collision_point: Vector2 = collision_points[0]
-    var direction := shape_query_params.motion.normalized()
-    var from := collision_point - direction * 0.001
-    var to := collision_point + direction * 1000000
-    var collision := space_state.intersect_ray(from, to, shape_query_params.exclude, \
-            shape_query_params.collision_layer)
-    
-    var side: int
-    var is_touching_floor := false
-    var is_touching_ceiling := false
-    var is_touching_left_wall := false
-    var is_touching_right_wall := false
-    if abs(collision.normal.angle_to(Geometry.UP)) <= Geometry.FLOOR_MAX_ANGLE:
-        side = SurfaceSide.FLOOR
-        is_touching_floor = true
-    elif abs(collision.normal.angle_to(Geometry.DOWN)) <= Geometry.FLOOR_MAX_ANGLE:
-        side = SurfaceSide.CEILING
-        is_touching_ceiling = true
-    elif collision.normal.x > 0:
-        side = SurfaceSide.LEFT_WALL
-        is_touching_left_wall = true
-    else:
-        side = SurfaceSide.RIGHT_WALL
-        is_touching_right_wall = true
-    
-    var tile_map: TileMap = collision.collider
-    var tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
-            collision_point, tile_map, is_touching_floor, is_touching_ceiling, \
-            is_touching_left_wall, is_touching_right_wall)
-    var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord(tile_map_coord, tile_map)
-    
-    return surface_parser.get_surface_for_tile(tile_map, tile_map_index, side)
-
-func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> PlayerInstructions:
+func _get_possible_instructions_for_positions(space_state: Physics2DDirectSpaceState, \
+        start: Vector2, end: Vector2) -> PlayerInstructions:
     # FIXME: LEFT OFF HERE: A ***************
-    # - Flesh out how to actually calculate constraints according to SurfaceType.
-    # - Flesh out above and below backtracking.
     # - Put all of this bit on hold for the moment, since we can first finish the infrastructure
     #   and test things with a bunch a false-positives from these simplistic jump-land pairs.
     # - 
-    # - A constraint consists of 4 pieces of information:
-    #   - At THIS coordinate, along THIS axis, movement must be on THIS side of THIS coordinate along the other axis.
-    #   - Define constraint class; think of a better name...
-    # - 
-    # - Constraints idea...
+    # - Handle movement constraints:
     #   - Try (test/emulate) the jump without any constraints.
     #     - HOW TO TEST:
     #       - Will need to implement custom time-slicing of the movement, while calculating the
@@ -289,6 +123,7 @@ func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> P
     #         Collision.
     #       - Is there a way to know exactly what interval Godot will use for the physics
     #         timesteps? Or to explicitely tell it what interval to use?
+    #         - Default is 1/60.0
     #       - (Follow-up) Does Godot have "ray-tracing" for arbitrary shapes?
     #         - More importantly, is this what they use under the hood when detecting collisions
     #           between frame positions?
@@ -298,13 +133,7 @@ func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> P
     #     - (probably) DFS with intelligently picking "better" branches according to heuristics?
     #     - (probably not) Or should we check all branches, and return multiple possible edges?
     #   - If impossible, abort.
-    #   - How to calculate the constraints:
-    #     - If SurfaceSide is ceiling:
-    #       - Constraint A:
-    #         - 
-    #       - Constraint B:
-    #         - 
-    #     - etc.
+    #   - Calculate the constraints
     #   - If we hit a vertical surface:
     #     - For the "above" constraint branch:
     #       - If we cannot reach this height with our max range, then abort.
@@ -323,19 +152,6 @@ func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> P
     #       considering constraints.
     #     - The ultimate sequence of constraints that were used.
     # - 
-    # - [ABORT] Figure out intermediate constraints
-    #   - Assuming jump-from-floor...
-    #   - If B.side == FLOOR:
-    #     - if jump.y < land.y: # jumping up
-    #       - if jump.x < land.x: # jumping right
-    #         - if (A.start | B.start | A.end | B.end) is between jump and land:
-    #           - # "between" means between both x and y coordinates
-    #             - But we also need to consider an offset for the size of the collider
-    #           - Add a constraint
-    #           - Constraint depends on A.side, B.side, and which point is between
-    #           - Constraints could need both a horizontal and a vertical component
-    #     - Need to also calculate is_left_end, etc.
-    # - 
     # - Account for half-width/height offset needed to clear the edge of B (if possible).
     # - Also, account for the half-width/height offset needed to not fall onto A.
     # - Include a margin around constraints and land position.
@@ -344,6 +160,41 @@ func _get_possible_instructions_for_positions(start: Vector2, end: Vector2) -> P
     # - Storing possibly 9 edges from A to B.
     
     
+    
+#    var constraint_offset = params.collider_half_width_height + \
+#            Vector2(EDGE_MOVEMENT_ACTUAL_MARGIN, EDGE_MOVEMENT_ACTUAL_MARGIN)
+#
+#    var shape_query_params := Physics2DShapeQueryParameters.new()
+#    shape_query_params.collide_with_areas = false
+#    shape_query_params.collide_with_bodies = true
+#    shape_query_params.collision_layer = TILE_MAP_COLLISION_LAYER
+#    shape_query_params.exclude = []
+#    shape_query_params.margin = EDGE_MOVEMENT_TEST_MARGIN
+#    shape_query_params.motion = Vector2.ZERO
+#    shape_query_params.shape_rid = params.collider_shape.get_rid()
+#    shape_query_params.transform = Transform2D.IDENTITY
+#
+#    var position_prev: Vector2
+#    var position_next: Vector2
+#    var colliding_surface: Surface
+#    var constraints: Array
+#
+#    # FIXME: Setup iteration over time slices
+#
+#    position_prev = position_next
+#    position_next = Vector2.INF # FIXME: Calculate position for the current time slice
+#
+#    shape_query_params.transform = Transform2D(0.0, position_prev)
+#    shape_query_params.motion = position_next - position_prev
+#
+#    colliding_surface = test_movement(space_state, shape_query_params)
+#
+#    if colliding_surface:
+#        constraints = _calculate_constraints(colliding_surface, constraint_offset)
+#
+#        for constraint in constraints:
+#            # FIXME: Recurse
+#            pass
     
     
     

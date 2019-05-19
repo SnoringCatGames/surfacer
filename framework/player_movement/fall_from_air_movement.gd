@@ -6,8 +6,8 @@ func _init(params: MovementParams).("fall_from_air", params) -> void:
     self.can_traverse_to_air = false
     self.can_traverse_from_air = true
 
-func get_all_reachable_surface_instructions_from_air(start: Vector2, end: PositionAlongSurface, \
-        start_velocity: Vector2) -> Array:
+func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirectSpaceState, \
+        start: Vector2, end: PositionAlongSurface, start_velocity: Vector2) -> Array:
     # FIXME: LEFT OFF HERE: B *** Model after JumpFromPlatformMovement to consider all reachable nodes
 #    var displacement = end.target_point - start
 #

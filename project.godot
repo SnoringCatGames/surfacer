@@ -105,6 +105,11 @@ _global_script_classes=[ {
 "path": "res://framework/level.gd"
 }, {
 "base": "Reference",
+"class": "MovementConstraint",
+"language": "GDScript",
+"path": "res://framework/player_movement/movement_constraint.gd"
+}, {
+"base": "Reference",
 "class": "MovementParams",
 "language": "GDScript",
 "path": "res://framework/player_movement/movement_params.gd"
@@ -269,6 +274,7 @@ _global_script_class_icons={
 "HumanPlayerAnnotator": "",
 "JumpFromPlatformMovement": "",
 "Level": "",
+"MovementConstraint": "",
 "MovementParams": "",
 "PlatformGraph": "",
 "PlatformGraphAnnotator": "",

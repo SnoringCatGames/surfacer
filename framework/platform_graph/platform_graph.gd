@@ -7,7 +7,8 @@ var nodes: Array
 # Array<PlatformGraphEdge>
 var edges: Array
 
-func _init(surface_parser: SurfaceParser, player_info: PlayerTypeConfiguration) -> void:
+func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
+        player_info: PlayerTypeConfiguration) -> void:
     self.surface_parser = surface_parser
     
     # Store the subset of surfaces that this player type can interact with.
@@ -17,4 +18,4 @@ func _init(surface_parser: SurfaceParser, player_info: PlayerTypeConfiguration) 
             player_info.movement_params.can_grab_floors)
     
     # Calculate and store the edges between surface nodes that this player type can traverse.
-    self.edges = EdgeParser.calculate_edges(nodes, player_info)
+    self.edges = EdgeParser.calculate_edges(space_state, nodes, player_info)

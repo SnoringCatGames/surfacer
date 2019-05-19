@@ -93,7 +93,8 @@ class_name EdgeParser
 # - Test exporting to HTML5.
 # - Start adding networking support.
 
-static func calculate_edges(surfaces: Array, player_info: PlayerTypeConfiguration) -> Array:
+static func calculate_edges(space_state: Physics2DDirectSpaceState, surfaces: Array, \
+        player_info: PlayerTypeConfiguration) -> Array:
     var edges := []
     
     # FIXME: LEFT OFF HERE: C: Resume here after fixing others ***************
@@ -111,8 +112,8 @@ static func calculate_edges(surfaces: Array, player_info: PlayerTypeConfiguratio
 #            for surface in surfaces:
 #                # FIXME: Implement this function...
 ##                var surface_b = PlatformGraphNodes.get_nearby_or_fallable_surfaces()
-#                var all_instructions = movement_type.get_all_edges_from_surface(surface)
-#                for instructions in all_instructions:
+#                var all_edges = movement_type.get_all_edges_from_surface(space_state, surface)
+#                for edge in all_edges:
 #                    # FIXME: store the edge in the edges set
 #                    pass
     
