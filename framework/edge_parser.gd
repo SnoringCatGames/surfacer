@@ -3,24 +3,17 @@ class_name EdgeParser
 
 # FIXME: LEFT OFF HERE:
 # 
-# - PlatformGraphNodes._get_closest_fallable_surface
-#   - Use this along with get_nearby_surfaces to calculate possible edges.
-#   - Call this dynamically when starting new navigations from an in-air position (make sure it's a cheap operation!).
-#   - Add TODOs:
-#     - TODO: Add support for choosing the closest "non-occluded" surface to the destination, rather than the closest surface to the origin.
-#     - TODO: Actually consider changing velocity due to gravity.
+# - Finish everything in JumpFromPlatformMovement (edge calculations, including movement constraints from interfering surfaces)
+# - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
+# 
 # - Use FallFromAirMovement
 # - Use PlayerMovement.get_max_upward_distance and PlayerMovement.get_max_horizontal_distance
 # - Add logic to use path.start_instructions when we start a navigation while the player isn't on a surface.
 # - Add logic to use path.end_instructions when the destination is far enough from the surface AND an optional
 #     should_jump_to_reach_destination parameter is provided.
 # 
-# - Use get_max_upward_distance and get_max_horizontal_distance to get a bounding box and use that
-#   in nodes.get_nearby_surfaces.
-# 
 # - Add support for creating PlatformGraphEdge.
 # - Add support for executing PlatformGraphEdge.
-# - Add support for actually parsing out the whole edge set (for our current simple jump, and ignoring walls).
 # - Add annotations for the whole edge set.
 # 
 # - Implement get_all_edges_from_surface for jumping.
@@ -93,28 +86,18 @@ class_name EdgeParser
 # - Test exporting to HTML5.
 # - Start adding networking support.
 
+# Returns a mapping from Surfaces to their adjacent Edges.
 static func calculate_edges(space_state: Physics2DDirectSpaceState, surfaces: Array, \
-        player_info: PlayerTypeConfiguration) -> Array:
-    var edges := []
+        player_info: PlayerTypeConfiguration) -> Dictionary:
+    var edges := {}
     
-    # FIXME: LEFT OFF HERE: C: Resume here after fixing others ***************
-    # - Refactor PlayerMovement to return the collection of reachable surfaces.
-    #   - It needs to handle getting the appropriate possibilities (nearby, fallable, ...) from PlatformGraphNodes
-    # 
-    # - Implementh a new get_nearby_or_fallable_surfaces
-    # 
-    # - nodes._get_closest_fallable_surface
-    #   - start: Vector2, player_movement: PlayerMovement, surfaces: Array, can_use_horizontal_distance: bool
-    # - nodes.get_nearby_surfaces
-    #   - target_surface: Surface, distance_threshold: float, other_surfaces: Array
-#    for movement_type in player_info.movement_types[i]:
-#        if movement_type.can_traverse_edge:
-#            for surface in surfaces:
-#                # FIXME: Implement this function...
-##                var surface_b = PlatformGraphNodes.get_nearby_or_fallable_surfaces()
-#                var all_edges = movement_type.get_all_edges_from_surface(space_state, surface)
-#                for edge in all_edges:
-#                    # FIXME: store the edge in the edges set
-#                    pass
+    for surface in surfaces:
+        edges[surface] = []
+    
+    for movement_type in player_info.movement_types:
+        if movement_type.can_traverse_edge:
+            for surface in surfaces:
+                edges[surface].push_back( \
+                        movement_type.get_all_edges_from_surface(space_state, surface))
     
     return edges

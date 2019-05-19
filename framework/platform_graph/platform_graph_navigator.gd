@@ -4,8 +4,8 @@ class_name PlatformGraphNavigator
 var player # TODO: Add type back
 var surface_state: PlayerSurfaceState
 var surface_parser: SurfaceParser
-# Array<PlatformGraphEdge>
-var edges: Array
+# Dictionary<Surface, Array<PlatformGraphEdge>>
+var edges: Dictionary
 
 var _stopwatch: Stopwatch
 

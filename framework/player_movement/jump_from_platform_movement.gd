@@ -64,17 +64,19 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
             b_far_end = b_start
         
         # The actual clostest points along each surface could be somewhere in the middle.
-        a_closest_point = Geometry.get_closest_point_on_polyline_to_polyline(a, b)
-        b_closest_point = Geometry.get_closest_point_on_polyline_to_polyline(b, a)
+        a_closest_point = \
+            Geometry.get_closest_point_on_polyline_to_polyline(a.vertices, b.vertices)
+        b_closest_point = \
+            Geometry.get_closest_point_on_polyline_to_polyline(b.vertices, a.vertices)
         
         # Only consider the far-end and closest points if they are distinct.
         possible_jump_points = [a_near_end]
         possible_land_points = [b_near_end]
-        if a.size() > 1:
+        if a.vertices.size() > 1:
             possible_jump_points.push_back(a_far_end)
         if a_closest_point != a_near_end and a_closest_point != a_far_end:
             possible_jump_points.push_back(a_closest_point)
-        if b.size() > 1:
+        if b.vertices.size() > 1:
             possible_land_points.push_back(b_far_end)
         if b_closest_point != b_near_end and b_closest_point != b_far_end:
             possible_land_points.push_back(b_closest_point)
@@ -108,9 +110,6 @@ func get_possible_instructions_to_air(space_state: Physics2DDirectSpaceState, \
 func _get_possible_instructions_for_positions(space_state: Physics2DDirectSpaceState, \
         start: Vector2, end: Vector2) -> PlayerInstructions:
     # FIXME: LEFT OFF HERE: A ***************
-    # - Put all of this bit on hold for the moment, since we can first finish the infrastructure
-    #   and test things with a bunch a false-positives from these simplistic jump-land pairs.
-    # - 
     # - Handle movement constraints:
     #   - Try (test/emulate) the jump without any constraints.
     #     - HOW TO TEST:

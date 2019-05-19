@@ -150,6 +150,9 @@ func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     
     # FIXME: Update _get_closest_fallable_surface to support falling from the center of
     #        fall-through surfaces (consider the whole surface, rather than just the ends).
+    # TODO: Consider velocity changes due to gravity.
+    # TODO: Add support for choosing the closest "non-occluded" surface to the destination, rather
+    #       than the closest surface to the origin.
     # TODO: Add support for falling to surfaces other than just the closest one.
     
     var origin_vertex: Vector2

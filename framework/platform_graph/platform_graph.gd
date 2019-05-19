@@ -4,8 +4,8 @@ class_name PlatformGraph
 var surface_parser: SurfaceParser
 # Array<Surface>
 var nodes: Array
-# Array<PlatformGraphEdge>
-var edges: Array
+# Dictionary<Surface, Array<PlatformGraphEdge>>
+var edges: Dictionary
 
 func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
         player_info: PlayerTypeConfiguration) -> void:
