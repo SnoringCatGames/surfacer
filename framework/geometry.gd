@@ -330,6 +330,10 @@ static func are_points_equal_with_epsilon(a: Vector2, b: Vector2) -> bool:
     return -FLOAT_EPSILON < x_diff and x_diff < FLOAT_EPSILON and \
             -FLOAT_EPSILON < y_diff and y_diff < FLOAT_EPSILON
 
+static func are_floats_equal_with_epsilon(a: float, b: float) -> bool:
+    var diff = b - a
+    return -FLOAT_EPSILON < diff and diff < FLOAT_EPSILON
+
 # Determine whether the points of the polygon are defined in a clockwise direction. This uses the
 # shoelace formula.
 static func is_polygon_clockwise(vertices: Array) -> bool:

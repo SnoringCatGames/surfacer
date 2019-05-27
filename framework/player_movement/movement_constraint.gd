@@ -1,8 +1,12 @@
 extends Reference
 class_name MovementConstraint
 
+# This point represents the Player's position (i.e., the Player's center), NOT the corner of the
+# Surface.
 var passing_point: Vector2
+# FIXME: Remove? Is this needed?
 var passing_vertically: bool
+# FIXME: Remove? Is this needed?
 var should_stay_on_min_side: bool
 
 func _init(passing_point: Vector2, passing_vertically: bool, \

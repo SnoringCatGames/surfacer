@@ -96,149 +96,243 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
                     params.collider_half_width_height)
             land_position.match_surface_target_and_collider(b, land_point, \
                     params.collider_half_width_height)
-            instructions = _get_possible_instructions_for_positions( \
-                    space_state, jump_position.target_point, land_position.target_point)
+            instructions = _calculate_jump_instructions( \
+                    space_state, jump_position.target_point, land_position.target_point, b)
             if instructions != null:
                 edges.push_back(PlatformGraphEdge.new(jump_position, land_position, instructions))
     
     return edges
 
-func get_possible_instructions_to_air(space_state: Physics2DDirectSpaceState, \
-        start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
-    return _get_possible_instructions_for_positions(space_state, start.target_point, end)
+func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
+        start_position: PositionAlongSurface, end_position: Vector2) -> PlayerInstructions:
+    return _calculate_jump_instructions( \
+            space_state, start_position.target_point, end_position, null)
 
-func _get_possible_instructions_for_positions(space_state: Physics2DDirectSpaceState, \
-        start: Vector2, end: Vector2) -> PlayerInstructions:
+func _calculate_jump_instructions(space_state: Physics2DDirectSpaceState, \
+        start_position: Vector2, end_position: Vector2, \
+        destination_surface: Surface) -> PlayerInstructions:
+    # FIXME: LEFT OFF HERE: --A ********
+    # - Figure out how to actually handle vertical movement calculations, after working out the
+    #   backtracking for new max_heights from vertical constraints.
+    var movement_section := \
+            calculate_initial_movement_section_with_vertical_movement(start_position, end_position)
+    
+    if movement_section == null:
+        # The destination is too high to jump to.
+        return null
+    
+    var constraint_offset := params.collider_half_width_height + \
+            Vector2(EDGE_MOVEMENT_ACTUAL_MARGIN, EDGE_MOVEMENT_ACTUAL_MARGIN)
+    
+    movement_section = _calculate_movement_section_from_next_constraint( \
+            space_state, movement_section, end_position, constraint_offset, destination_surface)
+    
+    # FIXME: Add an assert checking that the instructions will end at the correct point, and
+    #        without colliding into anything else.
+    
+    return movement_section.instructions if movement_section != null else null
+    
+    # FIXME: LEFT OFF HERE: ----A ********
+    # - Will also want to record some other info for annotations/debugging:
+    #   - Store on PlayerInstructions (but on _MovementSection first, during calculation?).
+    #   - A polyline representation of the ultimate trajectory, including time-slice-testing and
+    #     considering constraints.
+    #   - The ultimate sequence of constraints that were used.
+    
     # FIXME: LEFT OFF HERE: A ***************
-    # - Handle movement constraints:
-    #   - Try (test/emulate) the jump without any constraints.
-    #     - HOW TO TEST:
-    #       - Will need to implement custom time-slicing of the movement, while calculating the
-    #         collider's position along the trajectory at each slice/frame.
-    #         - This will use the same numerical approach used to calculate instruction sets.
-    #         - So this won't necessarily match the actual player movement that results from
-    #           discrete integration.
-    #       - Will need to use some Godot collision checking utility to get the TileMap-based
-    #         Collision.
-    #       - Is there a way to know exactly what interval Godot will use for the physics
-    #         timesteps? Or to explicitely tell it what interval to use?
-    #         - Default is 1/60.0
-    #       - (Follow-up) Does Godot have "ray-tracing" for arbitrary shapes?
-    #         - More importantly, is this what they use under the hood when detecting collisions
-    #           between frame positions?
-    #         - Could be useful to solve tunneling problem between slices/frames?
-    #   - If we hit a surface, then recursively try a constraint on either side of that surface and
-    #     re-test.
-    #     - (probably) DFS with intelligently picking "better" branches according to heuristics?
-    #     - (probably not) Or should we check all branches, and return multiple possible edges?
-    #   - If impossible, abort.
-    #   - Calculate the constraints
-    #   - If we hit a vertical surface:
-    #     - For the "above" constraint branch:
-    #       - If we cannot reach this height with our max range, then abort.
-    #       - If we are not currently still pressing up, then we need to backtrack and re-calculate
-    #         all constraints from the moment we had released up.
-    #     - For the "below" constraint branch:
-    #       - 
-    #   - How to use the constraints:
-    #     - It should be simple enough to modify the original parabolic movement calculations?
-    #   - We should be able to re-use slice/frame state from the last verified constraint, rather
-    #     than needing to re-compute everything from the start of the movement each time we
-    #     consider a new constraint.
-    #   - Will also want to record some other info for annotations/debugging:
-    #     - Store on PlayerInstructions.
-    #     - A polyline representation of the ultimate trajectory, including time-slice-testing and
-    #       considering constraints.
-    #     - The ultimate sequence of constraints that were used.
     # - 
+    # - Convert between iterative and recursive?
     # - Account for half-width/height offset needed to clear the edge of B (if possible).
     # - Also, account for the half-width/height offset needed to not fall onto A.
     # - Include a margin around constraints and land position.
+    # - Allow for the player to bump into walls/ceiling if they could still reach the land point
+    #   afterward (will need to update logic to not include margin when accounting for these hits).
+    # - Update the instructions calculations to consider actual discrete timesteps rather than
+    #   using continuous algorithms.
+    # - Share per-frame state updates logic between the instruction calculations and actual Player
+    #   movements.
     # - 
     # - Make the 144-cell diagram in InkScape and add to docs.
     # - Storing possibly 9 edges from A to B.
     
+    # FIXME: Add support for maintaining horizontal speed when falling, and needing to push back
+    # the other way to slow it.
+
+func _calculate_movement_section_from_next_constraint(space_state: Physics2DDirectSpaceState, \
+        previous_movement_section: _MovementSection, end_position: Vector2, \
+        constraint_offset: Vector2, destination_surface: Surface) -> _MovementSection:
+    var colliding_surface: Surface
+    # Array<MovementConstraint>
+    var constraints: Array
     
+    var next_movement_section := update_movement_section_with_horizontal_movement( \
+            previous_movement_section, end_position)
     
-#    var constraint_offset = params.collider_half_width_height + \
-#            Vector2(EDGE_MOVEMENT_ACTUAL_MARGIN, EDGE_MOVEMENT_ACTUAL_MARGIN)
-#
-#    var shape_query_params := Physics2DShapeQueryParameters.new()
-#    shape_query_params.collide_with_areas = false
-#    shape_query_params.collide_with_bodies = true
-#    shape_query_params.collision_layer = TILE_MAP_COLLISION_LAYER
-#    shape_query_params.exclude = []
-#    shape_query_params.margin = EDGE_MOVEMENT_TEST_MARGIN
-#    shape_query_params.motion = Vector2.ZERO
-#    shape_query_params.shape_rid = params.collider_shape.get_rid()
-#    shape_query_params.transform = Transform2D.IDENTITY
-#
-#    var position_prev: Vector2
-#    var position_next: Vector2
-#    var colliding_surface: Surface
-#    var constraints: Array
-#
-#    # FIXME: Setup iteration over time slices
-#
-#    position_prev = position_next
-#    position_next = Vector2.INF # FIXME: Calculate position for the current time slice
-#
-#    shape_query_params.transform = Transform2D(0.0, position_prev)
-#    shape_query_params.motion = position_next - position_prev
-#
-#    colliding_surface = test_movement(space_state, shape_query_params)
-#
-#    if colliding_surface:
-#        constraints = _calculate_constraints(colliding_surface, constraint_offset)
-#
-#        for constraint in constraints:
-#            # FIXME: Recurse
-#            pass
+    if next_movement_section != null:
+        # It might possible to reach the destination with this PlayerMovement (depending on whether
+        # there are any intermediate Surfaces in the way).
+        
+        colliding_surface = \
+                check_movement_section_for_collision(space_state, next_movement_section)
+        
+        # FIXME: LEFT OFF HERE: -A *******
+        # - It's possible for the recursion to loop infinitely if constraints keep pushing the
+        #   movement back and forth between repeated surfaces.
+        #   - Add a list of all previously collided surfaces, and check the list before recursing.
+        
+        if colliding_surface != null and colliding_surface != destination_surface:
+            # There is a Surface interfering with this PlayerMovement, so calculate constraints
+            # to divert the movement around either side of the Surface, and test updated
+            # instructions for those constraints.
+            
+            constraints = _calculate_constraints(colliding_surface, constraint_offset)
+            
+            # FIXME: Add heuristics to pick the "better" constraint.
+            for constraint in constraints:
+                # Recurse: Calculate movement to the constraint.
+                next_movement_section = _calculate_movement_section_from_next_constraint( \
+                        space_state, previous_movement_section, constraint.passing_point, \
+                        constraint_offset, destination_surface)
+                
+                if next_movement_section == null:
+                    continue
+                
+                # FIXME: LEFT OFF HERE: ------------A ****************
+                # - Update these _MovementSection values when recursing (and with results):
+                #   - instruction_index
+                #   - active_inputs
+                #   - all others...
+                
+#                    var is_pressing_jump: bool = next_movement_section.active_inputs.has("jump")
+#                    if is_pressing_jump and next_movement_section.instructions.is_instruction_in_range( \
+#                            JUMP_RELEASE_INSTRUCTION, previous_time, current_time):
+#                        is_pressing_jump = false
+#                        next_movement_section.active_inputs.erase("jump")
+                
+                # Recurse: Calculate movement from the constraint to the original destination.
+                next_movement_section = _calculate_movement_section_from_next_constraint( \
+                        space_state, next_movement_section, end_position, \
+                        constraint_offset, destination_surface)
+                
+                # FIXME: LEFT OFF HERE: -----A *********
+                #       - Handle vertical surface constraints:
+                #         - For the "above" constraint branch:
+                #           - If we cannot reach this height with our max range, then abort.
+                #           - If we are not currently still pressing up, then we need to backtrack
+                #             and re-calculate all constraints from the moment we had released up.
+                #         - For the "below" constraint branch:
+                
+                if next_movement_section != null:
+                    # We found movement that satisfies the constraint.
+                    return next_movement_section
+            
+            # We weren't able to satisfy the constraints.
+            return null
+        
+        else:
+            # There is no Surface interfering with this PlayerMovement.
+            return next_movement_section
     
-    
-    
-    
-    
-    
-    var displacement: Vector2 = end - start
+    else:
+        # It's impossible to reach the destination with this PlayerMovement.
+        return null
+
+# Initializes a new _MovementSection with instructions for just the vertical parts of the movement.
+func calculate_initial_movement_section_with_vertical_movement( \
+        start: Vector2, end: Vector2) -> _MovementSection:
+    var total_displacement: Vector2 = end - start
     var max_vertical_displacement := get_max_upward_distance()
     var duration_to_peak := -params.jump_boost / params.gravity
     
     assert(duration_to_peak > 0)
     
     # Check whether the vertical displacement is possible.
-    if max_vertical_displacement < displacement.y:
+    if max_vertical_displacement < total_displacement.y:
         return null
     
+    var max_height = start.y + max_vertical_displacement
     var discriminant = \
-            (end.y - (start.y + max_vertical_displacement)) * 2 / \
+            (end.y - max_height) * 2 / \
             params.gravity
     if discriminant < 0:
         # We can't reach the end position with our start position.
         return null
     var duration_from_peak_to_end = sqrt(discriminant)
-    var duration_for_horizontal_displacement = \
-            abs(displacement.x / params.max_horizontal_speed_default)
     var duration = duration_to_peak + duration_from_peak_to_end
     
-    # Check whether the horizontal displacement is possible.
-    if duration < duration_for_horizontal_displacement:
-        return null
-    
-    var horizontal_movement_input_name = "move_left" if displacement.x < 0 else "move_right"
-    
-    # FIXME: Add support for maintaining horizontal speed when falling, and needing to push back
-    # the other way to slow it.
-    var instructions := [
-        # The horizontal movement.
-        PlayerInstruction.new(horizontal_movement_input_name, 0, true),
-        PlayerInstruction.new(horizontal_movement_input_name, duration_for_horizontal_displacement, false),
+    var instructions_list := [
         # The vertical movement.
-        PlayerInstruction.new("move_up", 0, true),
-        PlayerInstruction.new("move_up", duration_to_peak, false),
+        PlayerInstruction.new("jump", 0, true),
+        PlayerInstruction.new("jump", duration_to_peak, false),
     ]
     
-    return PlayerInstructions.new(instructions, duration, displacement.length())
+    var instructions = PlayerInstructions.new(instructions_list, duration, total_displacement.length())
+    
+    var movement_section := _MovementSection.new()
+    movement_section.instructions = instructions
+    movement_section.time = 0.0
+    movement_section.instruction_index = 0
+    movement_section.active_inputs = {}
+    movement_section.position = start
+    movement_section.velocity = Vector2(0, params.jump_boost)
+    movement_section.horizontal_movement_sign = 0
+    movement_section.max_height = max_height
+    
+    return movement_section
+
+# FIXME: Comment
+func update_movement_section_with_horizontal_movement( \
+        previous_movement_section: _MovementSection, end_position: Vector2) -> _MovementSection:
+    var displacement: Vector2 = end_position - previous_movement_section.position
+    
+    var duration_for_horizontal_displacement := \
+            abs(displacement.x / params.max_horizontal_speed_default)
+    
+    # Check whether the horizontal displacement is possible.
+    if previous_movement_section.instructions.duration < duration_for_horizontal_displacement:
+        return null
+    
+    var horizontal_movement_input_name: String
+    var horizontal_movement_sign: int
+    if displacement.x < 0:
+        horizontal_movement_input_name = "move_left"
+        horizontal_movement_sign = -1
+    elif displacement.x > 0:
+        horizontal_movement_input_name = "move_right"
+        horizontal_movement_sign = 1
+    else:
+        horizontal_movement_input_name = "move_right"
+        horizontal_movement_sign = 0
+    
+    var start_time := previous_movement_section.time
+    var end_time := start_time + duration_for_horizontal_displacement
+    
+    var instruction_start := \
+            PlayerInstruction.new(horizontal_movement_input_name, start_time, true)
+    var instruction_end := PlayerInstruction.new(horizontal_movement_input_name, end_time, false)
+    
+    var next_movement_section := _MovementSection.new()
+    next_movement_section.instructions = previous_movement_section.instructions.duplicate()
+    var instruction_index := next_movement_section.instructions.insert(instruction_start)
+    next_movement_section.instructions.insert(instruction_end)
+    next_movement_section.instruction_index = instruction_index
+    next_movement_section.time = end_time
+    next_movement_section.active_inputs = previous_movement_section.active_inputs.duplicate()
+    next_movement_section.position = end_position
+    next_movement_section.velocity.x = params.max_horizontal_speed_default * horizontal_movement_sign
+    next_movement_section.horizontal_movement_sign = horizontal_movement_sign
+    next_movement_section.max_height = previous_movement_section.max_height
+    
+    
+    
+    # FIXME: LEFT OFF HERE: ---A **************
+    # - Allow an optional future top-side constraint to be passed in?
+    #   - Maybe not, since we might need to back track multiple steps once we've adjusted the
+    #     max_height, so the redoing should be handled more directly...
+    
+    
+    return next_movement_section
+
 
 func get_max_upward_distance() -> float:
     return -(params.jump_boost * params.jump_boost) / 2 / params.gravity

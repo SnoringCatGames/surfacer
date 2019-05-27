@@ -62,12 +62,15 @@ func _process_actions() -> void:
     Utils.error("abstract Player._process_actions is not implemented")
 
 func _physics_process(delta: float) -> void:
+    # FIXME: Remove (after checking that this doesn't ever seem to trigger)
+    assert(Geometry.are_floats_equal_with_epsilon(delta, Utils.PHYSICS_TIME_STEP))
+    
     _update_actions(delta)
     _update_surface_state()
     platform_graph_navigator.update()
     actions.delta = delta
     _process_actions()
-    _cap_velocity()
+    velocity = PlayerMovement.cap_velocity(velocity, movement_params)
     _update_collision_mask()
     
     # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
@@ -254,24 +257,6 @@ func _update_which_surface_is_grabbed() -> void:
             surface_state.just_changed_tile_map = true
             surface_state.just_changed_tile_map_coord = true
             surface_state.just_changed_surface = true
-
-func _cap_velocity() -> void:
-    # Cap horizontal speed at a max value.
-    velocity.x = clamp(velocity.x, -movement_params.current_max_horizontal_speed, movement_params.current_max_horizontal_speed)
-    
-    # Kill horizontal speed below a min value.
-    if velocity.x > -movement_params.min_horizontal_speed and \
-            velocity.x < movement_params.min_horizontal_speed:
-        velocity.x = 0
-    
-    # Cap vertical speed at a max value.
-    velocity.y = clamp(velocity.y, -movement_params.max_vertical_speed, \
-            movement_params.max_vertical_speed)
-    
-    # Kill vertical speed below a min value.
-    if velocity.y > -movement_params.min_vertical_speed and \
-            velocity.y < movement_params.min_vertical_speed:
-        velocity.y = 0
 
 # Update whether or not we should currently consider collisions with fall-through floors and
 # walk-through walls.

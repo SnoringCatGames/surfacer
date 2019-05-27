@@ -1,6 +1,9 @@
 extends Node
 class_name Utils
 
+# In seconds.
+const PHYSICS_TIME_STEP := 1 / 60.0
+
 static func error(message: String) -> void:
     print("ERROR: %s" % message)
     assert(true)

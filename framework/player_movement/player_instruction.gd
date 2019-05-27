@@ -1,4 +1,4 @@
-# An input event to trigger at a specific time.
+# An input event to trigger (or untrigger) at a specific time.
 extends Reference
 class_name PlayerInstruction
 

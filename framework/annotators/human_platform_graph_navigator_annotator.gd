@@ -13,8 +13,9 @@ func _init(navigator: PlatformGraphNavigator) -> void:
 
 func _draw() -> void:
     if navigator.player.surface_state.is_grabbing_a_surface:
-        _draw_surface_close_distance_threshold()
-        _draw_nearby_surfaces()
+        pass
+#        _draw_surface_close_distance_threshold()
+#        _draw_nearby_surfaces()
 
 func check_for_update() -> void:
     if navigator.player.surface_state.just_changed_surface:

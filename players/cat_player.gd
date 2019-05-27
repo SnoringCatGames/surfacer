@@ -56,7 +56,7 @@ func _process_actions() -> void:
         # is_on_wall() will give false negatives.
         velocity.x = movement_params.min_speed_to_maintain_horizontal_collision * \
                 surface_state.toward_wall_sign
-
+    
     if surface_state.is_grabbing_wall:
         _process_actions_while_on_wall()
     elif surface_state.is_grabbing_floor:
@@ -107,25 +107,11 @@ func _process_actions_while_in_air() -> void:
     # If the player falls off a wall or ledge, then that's considered the first jump.
     jump_count = max(jump_count, 1)
     
-    # Horizontal movement.
-    velocity.x += movement_params.in_air_horizontal_acceleration * \
-            surface_state.horizontal_movement_sign
+    var is_first_jump := jump_count == 1
     
-    # We'll use this to descend faster than we ascend.
-    if velocity.y > 0 or !actions.pressed_jump:
-        is_ascending_from_jump = false
-    
-    # Gravity.
-    var current_gravity: float
-    if is_ascending_from_jump:
-        # Make gravity stronger when falling. This creates a more satisfying jump.
-        var gravity_multiplier := \
-                movement_params.ascent_double_jump_gravity_multiplier if jump_count > 1 \
-                else movement_params.ascent_gravity_multiplier
-        current_gravity = movement_params.gravity * gravity_multiplier
-    else:
-        current_gravity = movement_params.gravity
-    velocity.y += actions.delta * current_gravity
+    velocity = PlayerMovement.update_velocity_in_air( \
+            velocity, actions.delta, actions.pressed_jump, is_first_jump,
+            surface_state.horizontal_movement_sign, movement_params)
     
     # Hit ceiling.
     if surface_state.is_touching_ceiling:
