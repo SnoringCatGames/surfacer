@@ -1,6 +1,6 @@
 # Parameters that are used for calculating edge instructions.
 extends Reference
-class_name InstrCalcParams
+class_name MovementCalcParams
 
 const TILE_MAP_COLLISION_LAYER := 2
 const EDGE_MOVEMENT_TEST_MARGIN := 4.0
@@ -17,7 +17,7 @@ var shape_query_params: Physics2DShapeQueryParameters
 var constraint_offset: Vector2
 
 # The single vertical step for this jump movement.
-var vertical_step: InstrCalcStep
+var vertical_step: MovementCalcStep
 
 # The total duration of the overall movement.
 var total_duration: float

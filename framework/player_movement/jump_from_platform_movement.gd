@@ -1,8 +1,8 @@
 extends PlayerMovement
 class_name JumpFromPlatformMovement
 
-const InstrCalcParams = preload("res://framework/player_movement/instructions_calculation_params.gd")
-const InstrCalcStep = preload("res://framework/player_movement/instructions_calculation_step.gd")
+const MovementCalcParams = preload("res://framework/player_movement/movement_calculation_params.gd")
+const MovementCalcStep = preload("res://framework/player_movement/movement_calculation_step.gd")
 
 func _init(params: MovementParams).("jump_from_platform", params) -> void:
     self.can_traverse_edge = true
@@ -33,7 +33,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
     var weight: float
     var edges = []
     
-    var instructions_params := InstrCalcParams.new(params, space_state)
+    var movement_calc_params := MovementCalcParams.new(params, space_state)
     
     var possible_surfaces := _get_nearby_and_fallable_surfaces(a)
     
@@ -42,7 +42,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
         # would be better handled by some other PlayerMovement type, so we don't handle those
         # cases here.
         
-        instructions_params.destination_surface = b
+        movement_calc_params.destination_surface = b
         
         b_start = b.vertices[0]
         b_end = b.vertices[b.vertices.size() - 1]
@@ -104,7 +104,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
             land_position.match_surface_target_and_collider(b, land_point, \
                     params.collider_half_width_height)
             instructions = _calculate_jump_instructions( \
-                    instructions_params, jump_position.target_point, land_position.target_point)
+                    movement_calc_params, jump_position.target_point, land_position.target_point)
             if instructions != null:
                 edges.push_back(PlatformGraphEdge.new(jump_position, land_position, instructions))
     
@@ -112,33 +112,31 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
 
 func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
         position_start: PositionAlongSurface, position_end: Vector2) -> PlayerInstructions:
-    var instructions_params := InstrCalcParams.new(params, space_state)
+    var movement_calc_params := MovementCalcParams.new(params, space_state)
     
     return _calculate_jump_instructions( \
-            instructions_params, position_start.target_point, position_end)
+            movement_calc_params, position_start.target_point, position_end)
 
-func _calculate_jump_instructions(instructions_params: InstrCalcParams, \
+func _calculate_jump_instructions(movement_calc_params: MovementCalcParams, \
         position_start: Vector2, position_end: Vector2) -> PlayerInstructions:
-    # FIXME: LEFT OFF HERE: --A ********
-    # - Figure out how to actually handle vertical step calculations, after working out the
-    #   backtracking for new max_heights from vertical constraints.
-    _create_vertical_step(instructions_params, position_start, position_end)
+    _create_vertical_step(movement_calc_params, position_start, position_end)
     
-    if instructions_params.vertical_step == null:
+    if movement_calc_params.vertical_step == null:
         # The destination is out of reach.
         return null
     
-    var steps := _calculate_instruction_steps(instructions_params, null, position_end)
+    var steps := _calculate_movement_steps(movement_calc_params, null, position_end)
     
-    # FIXME: Add an assert checking that the instructions will end at the correct point, and
-    #        without colliding into anything else.
+    if steps.empty():
+        return null
     
-    # FIXME: Convert Array<InstrCalcStep> into PlayerInstructions
-    return null
+    return _convert_calculation_steps_to_player_instructions(steps, \
+            movement_calc_params.vertical_step, movement_calc_params.total_duration, \
+            position_start, position_end)
     
-    # FIXME: LEFT OFF HERE: ----A ********
+    # FIXME: LEFT OFF HERE: -A ********
     # - Will also want to record some other info for annotations/debugging:
-    #   - Store on PlayerInstructions (but on InstrCalcStep first, during calculation?).
+    #   - Store on PlayerInstructions (but on MovementCalcStep first, during calculation?).
     #   - A polyline representation of the ultimate trajectory, including time-slice-testing and
     #     considering constraints.
     #   - The ultimate sequence of constraints that were used.
@@ -163,131 +161,118 @@ func _calculate_jump_instructions(instructions_params: InstrCalcParams, \
     # - Make the 144-cell diagram in InkScape and add to docs.
     # - Storing possibly 9 edges from A to B.
     
-    # FIXME: Add support for maintaining horizontal speed when falling, and needing to push back
-    # the other way to slow it.
+    # FIXME: LEFT OFF HERE: B: Add support for maintaining horizontal speed when falling, and
+    #        needing to push back the other way to slow it.
 
-# FIXME: doc
-func _calculate_instruction_steps(instructions_params: InstrCalcParams, \
-        previous_step: InstrCalcStep, position_end: Vector2) -> Array:
-    var next_step := _create_horizontal_step(previous_step, position_end, instructions_params)
+# FIXME: LEFT OFF HERE: --A ********* doc
+func _calculate_movement_steps(movement_calc_params: MovementCalcParams, \
+        previous_step: MovementCalcStep, position_end: Vector2) -> Array:
+    var next_step := _create_horizontal_step(movement_calc_params, previous_step, position_end)
     
     # Check whether the destination is within reach of this PlayerMovement.
     if next_step == null:
         return []
     
-    var colliding_surface := _check_step_for_collision(instructions_params, next_step)
+    var colliding_surface := _check_step_for_collision(movement_calc_params, next_step)
     
     # Check whether there is no Surface interfering with this PlayerMovement, on whether we've
     # reached the destination Surface.
-    if colliding_surface == null or colliding_surface == instructions_params.destination_surface:
+    if colliding_surface == null or colliding_surface == movement_calc_params.destination_surface:
         return [next_step]
     
     # Check whether we've already considered a collision with this Surface. If so, then this
     # movement won't work.
-    if instructions_params.collided_surfaces.has(colliding_surface):
+    if movement_calc_params.collided_surfaces.has(colliding_surface):
         return []
     
-    instructions_params.collided_surfaces[colliding_surface] = true
+    movement_calc_params.collided_surfaces[colliding_surface] = true
     
     # Calculate possible constraints to divert the movement around either side of the colliding
     # Surface.
     var constraints := \
-            _calculate_constraints(colliding_surface, instructions_params.constraint_offset)
+            _calculate_constraints(colliding_surface, movement_calc_params.constraint_offset)
     
-    # Check whether either constraint can be satisfied with our current max_height.
-    # FIXME: Add heuristics to pick the "better" constraint first.
-    var steps1: Array
-    var steps2: Array
+    var steps_to_constraint: Array
+    var steps_from_constraint: Array
+    
+    # Check whether either constraint can be satisfied with our current jump height.
+    # FIXME: LEFT OFF HERE: B: Add heuristics to pick the "better" constraint first.
     for constraint in constraints:
         # Recurse: Calculate movement to the constraint.
-        steps1 = _calculate_instruction_steps( \
-                instructions_params, previous_step, constraint.passing_point)
+        steps_to_constraint = _calculate_movement_steps( \
+                movement_calc_params, previous_step, constraint.passing_point)
         
-        if steps1.empty():
+        if steps_to_constraint.empty():
             # This constraint is out of reach.
             continue
         
-        # FIXME: LEFT OFF HERE: ------------A ***************
-        # - Fix PlayerMovement.check_step_for_collision
-        # - Can I change velocity fields from Vector2 to float, and only consider the x or y
-        #   coordinate, depending on whether it's a horizontal or vertical step?
-        # - Consider initial velocity when calculating _TmpMovement horizontal and vertical
-        #   instructions.
-        # - Refactor _TmpMovement and how it stores sequences of instructions to make recursive
-        #   calculations and backtracking easier:
-        #   - Store horizontal instructions in their own separate array
-        #   - Store the single vertical instruction as its own field; no array needed, since there
-        #     will be only one
-        #   - Store start and end time, position, velocity, active inputs, etc. for each
-        #     InstrCalcStep
-        #   - Only need to store one element for each InstrCalcStep; it accounts for its start
-        #     and end
-        #   - Store index of the first horizontal instruction that overlaps with the jump button
-        #     not being pressed (the first horizontal instruction that we will need to change when\
-        #     we backtrack to change the max_height)
-        # - Then add logic to convert the temporary helper structure into the final
-        #   PlayerInstructions form that we'll actually save on final Edges
-        # - Fix start/end position/velocity assignments and updates between steps
-        # - Update these _TmpMovement values when recursing (and with results):
-        #   - horizontal_step_index
-        #   - active_inputs
-        #   - time
-        #   - position
-        #   - velocity
-        # - Account for max vertical velocity when calculating parabolic motion for vertical
-        #   InstrCalcSteps.
+        # Recurse: Calculate movement from the constraint to the original destination.
+        steps_from_constraint = _calculate_movement_steps( \
+                movement_calc_params, steps_to_constraint.back(), position_end)
         
-#                    var is_pressing_jump: bool = next_movement.active_inputs.has("jump")
-#                    if is_pressing_jump and next_movement.instructions.is_instruction_in_range( \
-#                            JUMP_RELEASE_INSTRUCTION, previous_time, current_time):
-#                        is_pressing_jump = false
-#                        next_movement.active_inputs.erase("jump")
+        if !steps_from_constraint.empty():
+            # We found movement that satisfies the constraint.
+            Utils.concat(steps_to_constraint, steps_from_constraint)
+            return steps_to_constraint
+    
+    # Check whether re-calculating the initial vertical step (and total duration) to use a higher
+    # jump would enable either constraint to be satisfied.
+    # FIXME: LEFT OFF HERE: B: Add heuristics to pick the "better" constraint first.
+    for constraint in constraints:
+        # FIXME: LEFT OFF HERE: ---A *********
+        # - Refactor vertical step stuff...:
+        #   - For the backtracking recursion, I need to be able to initialize a new vertical step
+        #     for both the section before and after the constraint.
+        #     - I will need to somehow use the total_duration from both.
+        #     - I will need to not use params.jump_boost as the initial velocity for the latter.
+        #   - Think about what structure will be useful for re-use with the fall_from_air_movement.
+        #   - Think about what structure will be useful for re-use with the jump_from_wall_movement.
+        #     - Will I need to create a separate class for jump_from_wall_movement vs jump_from_floor_movement?
+        #   - I will need to not mutate the shared movement_calc_params state between recursive calls.
+        # - Don't do the higher-jump back-tracking if we are in a recursive branch that depends on
+        #   an alternate start position.
+        # - Make sure only the new steps get concatenated and used when doing backtracking.
+        
+        # Try a higher jump (to the constraint).
+        _create_vertical_step(movement_calc_params, \
+                movement_calc_params.vertical_step.position_start, constraint.passing_point)
+        
+        if movement_calc_params.vertical_step == null:
+            # The constraint is out of reach.
+            continue
+        
+        # The new traversal can never collide with any of the Surfaces that this past traversal
+        # collided with. If it did, it would end up on a traversal branch that's identical to one
+        # we've already eliminated.
+        
+        # Recurse: Calculate movement to the constraint.
+        steps_to_constraint = _calculate_movement_steps( \
+                movement_calc_params, null, constraint.passing_point)
+        
+        if steps_to_constraint.empty():
+            # This constraint is out of reach.
+            continue
         
         # Recurse: Calculate movement from the constraint to the original destination.
-        steps2 = _calculate_instruction_steps(instructions_params, steps1.back(), position_end)
+        steps_from_constraint = _calculate_movement_steps( \
+                movement_calc_params, steps_to_constraint.back(), position_end)
         
-        if steps2 != null:
+        if !steps_from_constraint.empty():
             # We found movement that satisfies the constraint.
-            Utils.concat(steps1, steps2)
-            return steps1
-    
-    # Check whether increasing the max_height would enable either constraint to be satisfied.
-    for constraint in constraints:
-        pass
-        # FIXME: LEFT OFF HERE: -A *********
-        # - Add "backtracking" for extra height when needed:
-        # - 
-        #       - Handle vertical surface constraints:
-        #         - For the "above" constraint branch:
-        #           - If we cannot reach this height with our max range, then abort.
-        #           - If we are not currently still pressing up, then we need to backtrack
-        #             and re-calculate all constraints from the moment we had released up.
-        #         - For the "below" constraint branch:
-        # - 
-        # - Both vertical and horizontal surface constraints could pass with extra height.
-        # - For backtracking with new max height, recalculate new full instruction set to
-        #   the given constraint, then set a flag to not consider previous parents? Or can
-        #   I just return the new child, and parents aren't considered (via concatenation
-        #   or something) anyway?
-        # - Definitely maintain that list of previously collided surfaces; use the same
-        #   list whenakong new calls for whole new instruction sets based off new max
-        #   heights constraint end positions.
-        # - I'm never actually explicitly changing max height values for vertical
-        #   constraints.
-        # 
-        # 
-        # # The new traversal can never collide with any of the Surfaces that this past traversal
-        # # collided with. If it did, it would end up on a traversal branch that we've already
-        # # eliminated.
+            Utils.concat(steps_to_constraint, steps_from_constraint)
+            return steps_to_constraint
     
     # We weren't able to satisfy the constraints around the colliding Surface.
     return []
 
-# Initializes a new InstrCalcStep for the vertical part of the movement, and saves it, and the
-# total_duration, on the given InstrCalcParams.
-func _create_vertical_step(instructions_params: InstrCalcParams, start: Vector2, \
+# Initializes a new MovementCalcStep for the vertical part of the movement, and saves it, and the
+# total_duration, on the given MovementCalcParams.
+func _create_vertical_step(movement_calc_params: MovementCalcParams, start: Vector2, \
         end: Vector2) -> void:
-    # FIXME: Account for max y velocity when calculating any parabolic motion
+    # FIXME: LEFT OFF HERE: B: Account for max y velocity when calculating any parabolic motion.
+    
+    movement_calc_params.vertical_step = null
+    movement_calc_params.total_duration = INF
     
     var total_displacement: Vector2 = end - start
     var max_vertical_displacement := get_max_upward_distance()
@@ -356,7 +341,7 @@ func _create_vertical_step(instructions_params: InstrCalcParams, start: Vector2,
             duration_to_reach_downward_displacement = \
                     (-params.jump_boost - discriminant_sqrt) / params.gravity
     
-    # FIXME: Account for horizontal acceleration.
+    # FIXME: LEFT OFF HERE: B: Account for horizontal acceleration.
     var duration_to_reach_horizontal_displacement := \
             abs(total_displacement.x / params.max_horizontal_speed_default)
     
@@ -392,8 +377,7 @@ func _create_vertical_step(instructions_params: InstrCalcParams, start: Vector2,
     if time_to_release_jump_button < 0:
         time_to_release_jump_button = (-b - discriminant_sqrt) / 2 * a
     
-    var step := InstrCalcStep.new()
-    step.input_key = "jump"
+    var step := MovementCalcStep.new()
     step.time_start = 0.0
     step.time_end = time_to_release_jump_button
     step.position_start = start
@@ -403,13 +387,13 @@ func _create_vertical_step(instructions_params: InstrCalcParams, start: Vector2,
     step.horizontal_movement_sign = 0
     _update_vertical_state_for_time(step, step, step.time_end)
     
-    instructions_params.vertical_step = step
-    instructions_params.total_duration = total_duration
+    movement_calc_params.vertical_step = step
+    movement_calc_params.total_duration = total_duration
 
-# Initializes a new InstrCalcStep for the horizontal part of the movement.
-func _create_horizontal_step(previous_step: InstrCalcStep, position_end: Vector2, \
-        instructions_params: InstrCalcParams) -> InstrCalcStep:
-    var vertical_step := instructions_params.vertical_step
+# Initializes a new MovementCalcStep for the horizontal part of the movement.
+func _create_horizontal_step(movement_calc_params: MovementCalcParams, \
+        previous_step: MovementCalcStep, position_end: Vector2) -> MovementCalcStep:
+    var vertical_step := movement_calc_params.vertical_step
     
     # Get some start state from the previous step.
     var time_start: float
@@ -426,10 +410,10 @@ func _create_horizontal_step(previous_step: InstrCalcStep, position_end: Vector2
         position_start = vertical_step.position_start
         velocity_start = vertical_step.velocity_start
     
-    var time_remaining := instructions_params.total_duration - time_start
+    var time_remaining := movement_calc_params.total_duration - time_start
     var displacement: Vector2 = position_end - position_start
     
-    # FIXME: Account for horizontal acceleration.
+    # FIXME: LEFT OFF HERE: B: Account for horizontal acceleration (and velocity_start).
     var duration_for_horizontal_displacement := \
             abs(displacement.x / params.max_horizontal_speed_default)
     
@@ -437,22 +421,17 @@ func _create_horizontal_step(previous_step: InstrCalcStep, position_end: Vector2
     if time_remaining < duration_for_horizontal_displacement:
         return null
     
-    var horizontal_movement_input_name: String
     var horizontal_movement_sign: int
     if displacement.x < 0:
-        horizontal_movement_input_name = "move_left"
         horizontal_movement_sign = -1
     elif displacement.x > 0:
-        horizontal_movement_input_name = "move_right"
         horizontal_movement_sign = 1
     else:
-        horizontal_movement_input_name = "move_right"
         horizontal_movement_sign = 0
     
     var time_end := time_start + duration_for_horizontal_displacement
     
-    var step := InstrCalcStep.new()
-    step.input_key = horizontal_movement_input_name
+    var step := MovementCalcStep.new()
     step.time_start = time_start
     step.time_end = time_end
     step.position_start = position_start
@@ -464,13 +443,41 @@ func _create_horizontal_step(previous_step: InstrCalcStep, position_end: Vector2
     
     return step
 
+func _convert_calculation_steps_to_player_instructions(steps: Array, \
+        vertical_step: MovementCalcStep, duration: float, position_start: Vector2, \
+        position_end: Vector2) -> PlayerInstructions:
+    var distance := position_start.distance_to(position_end)
+    
+    var instructions := []
+    instructions.resize((steps.size() + 1) * 2)
+    
+    var input_key := "jump"
+    var press := PlayerInstruction.new(input_key, vertical_step.time_start, true)
+    var release := PlayerInstruction.new(input_key, vertical_step.time_end, false)
+    
+    instructions[0] = press
+    instructions[1] = release
+    
+    var i := 0
+    var step: MovementCalcStep
+    for i in range(steps.size()):
+        step = steps[i]
+        input_key = "move_left" if step.horizontal_movement_sign < 0 else "move_right"
+        press = PlayerInstruction.new(input_key, step.time_start, true)
+        release = PlayerInstruction.new(input_key, step.time_end, false)
+        instructions[i * 2 + 2] = press
+        instructions[i * 2 + 3] = release
+        i += 1
+    
+    return PlayerInstructions.new(instructions, duration, distance)
+
 func get_max_upward_distance() -> float:
     return -(params.jump_boost * params.jump_boost) / 2 / \
             (params.gravity * params.ascent_gravity_multiplier)
 
 func get_max_horizontal_distance() -> float:
     # Take into account the slow gravity of ascent and the fast gravity of descent.
-    # FIXME: Re-calculate this; add a multiplier (x2) to allow for additional distance when the
-    #        destination is below.
+    # FIXME: LEFT OFF HERE: B: Re-calculate this; add a multiplier (x2) to allow for additional
+    #        distance when the destination is below.
     return (-params.jump_boost / params.gravity * params.max_horizontal_speed_default) / \
             (1 + params.ascent_gravity_multiplier)

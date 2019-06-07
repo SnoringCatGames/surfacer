@@ -98,7 +98,7 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
 # by stepping through each physics frame, which should exactly emulate the actual Player trajectory
 # that would be used.
 func _check_step_for_collision( \
-        instructions_params: InstrCalcParams, step: InstrCalcStep) -> Surface:
+        movement_calc_params: MovementCalcParams, step: MovementCalcStep) -> Surface:
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
     var previous_time := step.time_start
@@ -106,10 +106,10 @@ func _check_step_for_collision( \
     var end_time := step.time_end
     var position := step.position_start
     var velocity := step.velocity_start
-    var jump_end_time := instructions_params.vertical_step.time_end
+    var jump_end_time := movement_calc_params.vertical_step.time_end
     var is_pressing_jump := jump_end_time > current_time
-    var space_state := instructions_params.space_state
-    var shape_query_params := instructions_params.shape_query_params
+    var space_state := movement_calc_params.space_state
+    var shape_query_params := movement_calc_params.shape_query_params
     var displacement: Vector2
     var colliding_surface: Surface
     
@@ -241,7 +241,7 @@ static func _calculate_constraints( \
 # Calculates the vertical component of position and velocity according to the given vertical
 # movement state and the given time. These are then stored on the given output step's end state.
 func _update_vertical_state_for_time( \
-        output_step: InstrCalcStep, vertical_step: InstrCalcStep, time: float) -> void:
+        output_step: MovementCalcStep, vertical_step: MovementCalcStep, time: float) -> void:
     var slow_ascent_gravity := params.gravity * params.ascent_gravity_multiplier
     var slow_ascent_end_time := min(time, vertical_step.time_end)
     

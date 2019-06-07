@@ -2,7 +2,7 @@
 # calculation easier. These are converted to PlayerInstructions before the Edges are finalized and
 # stored.
 extends Reference
-class_name InstrCalcStep
+class_name MovementCalcStep
 
 var input_key: String
 var time_start: float
