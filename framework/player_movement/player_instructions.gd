@@ -30,6 +30,7 @@ func remove(instruction: PlayerInstruction) -> bool:
         return false
 
 # This will mutate the time field on the given PlayerInstruction.
+# TODO: Remove?
 func is_instruction_in_range( \
         instruction: PlayerInstruction, min_time: float, max_time: float) -> bool:
     var instruction_count := instructions.size()

@@ -94,6 +94,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/human_player_annotator.gd"
 }, {
+"base": "Reference",
+"class": "InstrCalcParams",
+"language": "GDScript",
+"path": "res://framework/player_movement/instructions_calculation_params.gd"
+}, {
+"base": "Reference",
+"class": "InstrCalcStep",
+"language": "GDScript",
+"path": "res://framework/player_movement/instructions_calculation_step.gd"
+}, {
 "base": "PlayerMovement",
 "class": "JumpFromPlatformMovement",
 "language": "GDScript",
@@ -272,6 +282,8 @@ _global_script_class_icons={
 "HumanPlatformGraphNavigatorAnnotator": "",
 "HumanPlayer": "",
 "HumanPlayerAnnotator": "",
+"InstrCalcParams": "",
+"InstrCalcStep": "",
 "JumpFromPlatformMovement": "",
 "Level": "",
 "MovementConstraint": "",

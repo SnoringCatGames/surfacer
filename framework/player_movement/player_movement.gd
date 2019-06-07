@@ -9,9 +9,6 @@ const PlayerInstruction = preload("res://framework/player_movement/player_instru
 const SURFACE_CLOSE_DISTANCE_THRESHOLD := 512.0
 const DOWNWARD_DISTANCE_TO_CHECK_FOR_FALLING := 10000.0
 
-const TILE_MAP_COLLISION_LAYER := 2
-const EDGE_MOVEMENT_TEST_MARGIN := 4.0
-const EDGE_MOVEMENT_ACTUAL_MARGIN := 5.0
 var JUMP_RELEASE_INSTRUCTION = PlayerInstruction.new("jump", -1, false)
 
 var name: String
@@ -47,10 +44,12 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
     Utils.error("Abstract PlayerMovement.get_all_reachable_surface_instructions_from_air is not implemented")
     return []
 
+# FIXME: Remove. Replace with an up-front calculation when the params are initialized.
 func get_max_upward_distance() -> float:
     Utils.error("Abstract PlayerMovement.get_max_upward_distance is not implemented")
     return 0.0
 
+# FIXME: Remove. Replace with an up-front calculation when the params are initialized.
 func get_max_horizontal_distance() -> float:
     Utils.error("Abstract PlayerMovement.get_max_horizontal_distance is not implemented")
     return 0.0
@@ -95,32 +94,24 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
     
     return velocity
 
-# Checks whether a collision would occur with any Surface during the given _MovementSection. This
-# is calculated by stepping through each physics frame, which should exactly emulate the actual
-# Player trajectory that would be used.
-func check_movement_section_for_collision( \
-        space_state: Physics2DDirectSpaceState, movement_section: _MovementSection) -> Surface:
+# Checks whether a collision would occur with any Surface during the given step. This is calculated
+# by stepping through each physics frame, which should exactly emulate the actual Player trajectory
+# that would be used.
+func _check_step_for_collision( \
+        instructions_params: InstrCalcParams, step: InstrCalcStep) -> Surface:
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
-    var previous_time := movement_section.time
-    var current_time := movement_section.time
-    var end_time := movement_section.instructions.duration
-    var position := movement_section.position
-    var velocity := movement_section.velocity
-    var is_pressing_jump := movement_section.active_inputs.has("jump")
+    var previous_time := step.time_start
+    var current_time := step.time_start
+    var end_time := step.time_end
+    var position := step.position_start
+    var velocity := step.velocity_start
+    var jump_end_time := instructions_params.vertical_step.time_end
+    var is_pressing_jump := jump_end_time > current_time
+    var space_state := instructions_params.space_state
+    var shape_query_params := instructions_params.shape_query_params
     var displacement: Vector2
     var colliding_surface: Surface
-    
-    # The Godot collision-detection APIs use this data structure.
-    var shape_query_params := Physics2DShapeQueryParameters.new()
-    shape_query_params.collide_with_areas = false
-    shape_query_params.collide_with_bodies = true
-    shape_query_params.collision_layer = TILE_MAP_COLLISION_LAYER
-    shape_query_params.exclude = []
-    shape_query_params.margin = EDGE_MOVEMENT_TEST_MARGIN
-    shape_query_params.motion = Vector2.ZERO
-    shape_query_params.shape_rid = params.collider_shape.get_rid()
-    shape_query_params.transform = Transform2D.IDENTITY
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < end_time:
@@ -138,13 +129,11 @@ func check_movement_section_for_collision( \
             return colliding_surface
         
         # Determine whether the jump button is still being pressed.
-        if is_pressing_jump and movement_section.instructions.is_instruction_in_range( \
-                JUMP_RELEASE_INSTRUCTION, previous_time, current_time):
-            is_pressing_jump = false
+        is_pressing_jump = jump_end_time > current_time
         
         # Update velocity for the next frame.
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
-                movement_section.horizontal_movement_sign, params)
+                step.horizontal_movement_sign, params)
         velocity = cap_velocity(velocity, params)
     
     # Check the last frame that puts us up to end_time.
@@ -249,38 +238,39 @@ static func _calculate_constraints( \
     
     return [constraint_a, constraint_b]
 
-# This represents a partial "section" of an overall jump movement. This is used as an temporary
-# data structure during the calculation of the jump instructions. A single _MovementSection
-# represents a single portion of the jump where the player is moving in the same horizontal
-# direction.
-class _MovementSection:
-    # The same PlayerInstructions instance is shared across all temporary _MovementSections that
-    # are used during an overall jump calculation.
-    var instructions: PlayerInstructions
+# Calculates the vertical component of position and velocity according to the given vertical
+# movement state and the given time. These are then stored on the given output step's end state.
+func _update_vertical_state_for_time( \
+        output_step: InstrCalcStep, vertical_step: InstrCalcStep, time: float) -> void:
+    var slow_ascent_gravity := params.gravity * params.ascent_gravity_multiplier
+    var slow_ascent_end_time := min(time, vertical_step.time_end)
     
-    # This index enables different _MovementSection instances to reference different sections of
-    # the overall instruction set.
-    var instruction_index: int # FIXME: Remove? Do we need this?
+    # Basic equations of motion.
+    var slow_ascent_end_position := vertical_step.position_start.y + \
+            vertical_step.velocity_start.y * slow_ascent_end_time + \
+            0.5 * slow_ascent_gravity * slow_ascent_end_time * slow_ascent_end_time
+    var slow_ascent_end_velocity := \
+            vertical_step.velocity_start.y + slow_ascent_gravity * slow_ascent_end_time
     
-    # The time that this _MovementSection starts, relative to the start of the overall instruction
-    # set.
-    var time: float
+    var position: float
+    var velocity: float
+    if vertical_step.time_end >= time:
+        # We only need to consider the slow-ascent parabolic section.
+        position = slow_ascent_end_position
+        velocity = slow_ascent_end_velocity
+    else:
+        # We need to consider both the slow-ascent and fast-fall parabolic sections.
+        
+        var fast_fall_duration := time - slow_ascent_end_time
+        
+        # Basic equations of motion.
+        position = slow_ascent_end_position + \
+            slow_ascent_end_velocity * fast_fall_duration + \
+            0.5 * params.gravity * fast_fall_duration * fast_fall_duration
+        velocity = slow_ascent_end_velocity + params.gravity * fast_fall_duration
     
-    # Which inputs are currently being pressed at the start of this _MovementSection.
-    # Dictionary<string, bool>
-    var active_inputs: Dictionary
-    
-    # The position at the start of this _MovementSection.
-    var position: Vector2
-    
-    # The velocity at the start of this _MovementSection.
-    var velocity: Vector2
-    
-    # The direction of horizontal movement for this _MovementSection.
-    var horizontal_movement_sign: int
-    
-    # The maximum height of the overall jump.
-    var max_height: float
+    output_step.position_end.y = position
+    output_step.velocity_end.y = velocity
 
 func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     # TODO: Prevent duplicate work from finding matching surfaces as both nearby and fallable.
