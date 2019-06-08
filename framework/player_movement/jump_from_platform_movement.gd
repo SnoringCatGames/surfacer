@@ -117,6 +117,7 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
     return _calculate_jump_instructions( \
             movement_calc_params, position_start.target_point, position_end)
 
+# FIXME: LEFT OFF HERE: --A ********* doc
 func _calculate_jump_instructions(movement_calc_params: MovementCalcParams, \
         position_start: Vector2, position_end: Vector2) -> PlayerInstructions:
     _create_vertical_step(movement_calc_params, position_start, position_end)
@@ -125,7 +126,7 @@ func _calculate_jump_instructions(movement_calc_params: MovementCalcParams, \
         # The destination is out of reach.
         return null
     
-    var steps := _calculate_movement_steps(movement_calc_params, null, position_end)
+    var steps := _calculate_steps_from_constraint(movement_calc_params, null, position_end)
     
     if steps.empty():
         return null
@@ -133,39 +134,80 @@ func _calculate_jump_instructions(movement_calc_params: MovementCalcParams, \
     return _convert_calculation_steps_to_player_instructions(steps, \
             movement_calc_params.vertical_step, movement_calc_params.total_duration, \
             position_start, position_end)
-    
-    # FIXME: LEFT OFF HERE: -A ********
-    # - Will also want to record some other info for annotations/debugging:
-    #   - Store on PlayerInstructions (but on MovementCalcStep first, during calculation?).
-    #   - A polyline representation of the ultimate trajectory, including time-slice-testing and
-    #     considering constraints.
-    #   - The ultimate sequence of constraints that were used.
-    
-    # FIXME: LEFT OFF HERE: A ***************
-    # - 
-    # - After completing all steps, re-visit each and think about whether the approach can be
-    #   simplified now that we have our current way of thinking with total_duration being the basis
-    #   for max_height and distance and ...
-    # - Convert between iterative and recursive?
-    # - Step through all parts and re-check for correctness.
-    # - Account for half-width/height offset needed to clear the edge of B (if possible).
-    # - Also, account for the half-width/height offset needed to not fall onto A.
-    # - Include a margin around constraints and land position.
-    # - Allow for the player to bump into walls/ceiling if they could still reach the land point
-    #   afterward (will need to update logic to not include margin when accounting for these hits).
-    # - Update the instructions calculations to consider actual discrete timesteps rather than
-    #   using continuous algorithms.
-    # - Share per-frame state updates logic between the instruction calculations and actual Player
-    #   movements.
-    # - 
-    # - Make the 144-cell diagram in InkScape and add to docs.
-    # - Storing possibly 9 edges from A to B.
-    
-    # FIXME: LEFT OFF HERE: B: Add support for maintaining horizontal speed when falling, and
-    #        needing to push back the other way to slow it.
 
 # FIXME: LEFT OFF HERE: --A ********* doc
-func _calculate_movement_steps(movement_calc_params: MovementCalcParams, \
+# FIXME: LEFT OFF HERE: --A ********* move to separate file
+class MovementCalcResult extends Reference:
+    # All of the horizontal steps for this jump movement.
+    # Array<MovementCalcStep>
+    var horizontal_steps: Array
+    
+    # The single vertical step for this jump movement.
+    var vertical_step: MovementCalcStep
+    
+    # The total duration of the overall movement.
+    var total_duration: float
+    
+    # The destination for the current edge instructions calculations.
+    var destination_surface: Surface
+
+# FIXME: LEFT OFF HERE: --A ********* doc
+func _calculate_steps_with_new_jump_height(movement_calc_params: MovementCalcParams) -> MovementCalcResult:
+    # FIXME: LEFT OFF HERE: -------A *********
+    # - Implement max-height backtracking:
+    #   - Do create a new helper function for starting new recursive traversal that initializes
+    #     vertical step and movement_calc_params state.
+    #   - Pass-in new parameters for initializing vertical step:
+    #     - velocity_start
+    #       - make sure we're still using this correctly for calculating the jump_button_end time
+    #     - pass-in original start position as well as current start position.
+    #     - Maintain set of already-collided surfaces.
+    #   - Create a new data structure for returning results.
+    #   - Decide how to split apart some parameters and distinguish between local traversal and global.
+    #     - MovementCalcParams will represent global
+    #       - Remove vertical_step, total_duration, destination_surface
+    #     - Either create a new one for local, or use the new MovementCalcResult
+    return null
+
+# FIXME: LEFT OFF HERE: -A ********
+# - Will also want to record some other info for annotations/debugging:
+#   - Store on PlayerInstructions (but on MovementCalcStep first, during calculation?).
+#   - A polyline representation of the ultimate trajectory, including time-slice-testing and
+#     considering constraints.
+#   - The ultimate sequence of constraints that were used.
+
+# FIXME: LEFT OFF HERE: A ***************
+# - 
+# - Optimize a bit for collisions with vertical surfaces:
+#   - For the top constraint, change the constraint position to instead use the far side of the
+#     adjacent top-side/floor Surface.
+#   - This probably means I should store adjacent Surfaces when originally parsing the Surfaces.
+# - After completing all steps, re-visit each and think about whether the approach can be
+#   simplified now that we have our current way of thinking with total_duration being the basis
+#   for max_height and distance and ...
+# - Convert between iterative and recursive?
+# - Step through all parts and re-check for correctness.
+# - Account for half-width/height offset needed to clear the edge of B (if possible).
+# - Also, account for the half-width/height offset needed to not fall onto A.
+# - Include a margin around constraints and land position.
+# - Allow for the player to bump into walls/ceiling if they could still reach the land point
+#   afterward (will need to update logic to not include margin when accounting for these hits).
+# - Update the instructions calculations to consider actual discrete timesteps rather than
+#   using continuous algorithms.
+# - Share per-frame state updates logic between the instruction calculations and actual Player
+#   movements.
+# - 
+# - Make some diagrams in InkScape with surfaces, trajectories, and constraints to demonstrate
+#   algorithm traversal
+#   - Label/color-code parts to demonstrate separate traversal steps
+# - Make the 144-cell diagram in InkScape and add to docs.
+# - Storing possibly 9 edges from A to B.
+
+# FIXME: LEFT OFF HERE: B: Add support for maintaining horizontal speed when falling, and
+#        needing to push back the other way to slow it.
+
+# FIXME: LEFT OFF HERE: --A ********* doc
+func _calculate_steps_from_constraint(movement_calc_params: MovementCalcParams, \
         previous_step: MovementCalcStep, position_end: Vector2) -> Array:
     var next_step := _create_horizontal_step(movement_calc_params, previous_step, position_end)
     
@@ -199,7 +241,7 @@ func _calculate_movement_steps(movement_calc_params: MovementCalcParams, \
     # FIXME: LEFT OFF HERE: B: Add heuristics to pick the "better" constraint first.
     for constraint in constraints:
         # Recurse: Calculate movement to the constraint.
-        steps_to_constraint = _calculate_movement_steps( \
+        steps_to_constraint = _calculate_steps_from_constraint( \
                 movement_calc_params, previous_step, constraint.passing_point)
         
         if steps_to_constraint.empty():
@@ -207,7 +249,7 @@ func _calculate_movement_steps(movement_calc_params: MovementCalcParams, \
             continue
         
         # Recurse: Calculate movement from the constraint to the original destination.
-        steps_from_constraint = _calculate_movement_steps( \
+        steps_from_constraint = _calculate_steps_from_constraint( \
                 movement_calc_params, steps_to_constraint.back(), position_end)
         
         if !steps_from_constraint.empty():
@@ -229,8 +271,9 @@ func _calculate_movement_steps(movement_calc_params: MovementCalcParams, \
         #   - Think about what structure will be useful for re-use with the jump_from_wall_movement.
         #     - Will I need to create a separate class for jump_from_wall_movement vs jump_from_floor_movement?
         #   - I will need to not mutate the shared movement_calc_params state between recursive calls.
-        # - Don't do the higher-jump back-tracking if we are in a recursive branch that depends on
-        #   an alternate start position.
+        # - If we are in a recursive branch that depends on an alternate start position, then that
+        #   will need to have access to the original start position.
+        #   - And it will still need to re-use the same set of already-collided surfaces.
         # - Make sure only the new steps get concatenated and used when doing backtracking.
         
         # Try a higher jump (to the constraint).
@@ -246,7 +289,7 @@ func _calculate_movement_steps(movement_calc_params: MovementCalcParams, \
         # we've already eliminated.
         
         # Recurse: Calculate movement to the constraint.
-        steps_to_constraint = _calculate_movement_steps( \
+        steps_to_constraint = _calculate_steps_from_constraint( \
                 movement_calc_params, null, constraint.passing_point)
         
         if steps_to_constraint.empty():
@@ -254,7 +297,7 @@ func _calculate_movement_steps(movement_calc_params: MovementCalcParams, \
             continue
         
         # Recurse: Calculate movement from the constraint to the original destination.
-        steps_from_constraint = _calculate_movement_steps( \
+        steps_from_constraint = _calculate_steps_from_constraint( \
                 movement_calc_params, steps_to_constraint.back(), position_end)
         
         if !steps_from_constraint.empty():

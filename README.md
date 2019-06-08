@@ -1,5 +1,22 @@
-# climber
-TODO: In development
+---------------------------------------------------------
+
+# Squirrel Away
+
+_A simple 2D-platformer with cats, squirrels, and nuts._
+
+_TODO: In development. Not ready for review._
+
+TODO
+
+---------------------------------------------------------
+
+# Surfacer
+
+_A 2D-platformer framework for Godot._
+
+_TODO: In development. Not ready for review._
+
+TODO
 
 # Platformer AI
 
@@ -61,3 +78,59 @@ This will only detect internal surface segments that are equivalent with another
 ### Calculating edges
 
 TODO
+
+#### The high-level steps
+
+- Determine how high we need to jump in order to reach the destination.
+- If the destination is out of reach, ignore it.
+- If there is an intermediate Surface that the player would collide with, we need to try adjusting the jump trajectory to go around either side of the colliding Surface.
+  - Recursively check whether the jump is valid to and from either side of the colliding Surface.
+  - If we can't reach the destination when moving around the colliding Surface, then try backtracking and consider whether a higher jump height would get us there.
+
+#### Miscellaneous info
+
+- We treat horizontal and vertical motion as independent to each other. This greatly simplifies our
+  calculations.
+- We have a broad-phase check to eliminate possible surfaces that are obviously out of reach.
+  - TODO: describe it
+
+#### Calculating the steps in an edge
+
+- If we decide whether a surface could be within reach, we then check for possible collisions between the origin and destination.
+  - To do this, we simulate frame-by-frame motion using the same physics timestep and the same movement-update function calls that would be used when running the game normally. We then check for any collisions between each frame.
+- If we detect a collision, then we define two possible constraints--one for each end of the collided Surface.
+  - In order to make it around this intermediate Surface, we know the player must pass around one of the sides of this Surface.
+  - These constraints we calculate represent the minimum required deviation from the player's original path.
+  - We then recursively check whether the player could move to and from each of the constraints.
+    - If so, we concatenate and return the steps required to reach the constraint from the original starting position and the steps required to reach the original destination from the constraint.
+
+#### Calculating the total jump duration
+
+- At the start of each edge-calculation traversal, we calculate the minimum total time needed to
+  reach the destination.
+  - If the destination is above, this might be the time needed to rise that far in the jump.
+  - If the destination is below, this might be the time needed to fall that far (still taking into
+    account our initial upward jump-off velocity).
+  - If the destination is far away horizontally, this might be the time needed to move that far
+    horizontally (taking into account the horizontal movement acceleration and max speed).
+  - The greatest of these three possibilities is the minimum required total duration of the jump.
+- The minimum peak jump height can be determined from this total duration.
+- All of this takes into account our variable-height jump mechanic and the difference in
+  slow-ascent and fast-fall gravities.
+  - With our variable-height jump mechanic, there is a greater acceleration of gravity when the
+    player either is moving downward or has released the jump button.
+  - If the player releases the jump button before reaching the maximum peak of the jump, then their
+    current velocity will continue pushing them upward, but with the new stronger gravity.
+  - To determine the duration to the jump peak height in this scenario, we first construct two
+    instances of one of the basic equations of motion--one for the former part of the ascent, with
+	the slow-ascent gravity, and one for the latter part of the ascent, with the fast-fall gravity.
+	We then use algebra to substitute the equations and solve for the duration.
+
+#### Backtracking to consider a higher max jump height
+
+TODO
+
+- When backtracking, we record a set of all Surfaces that have been collided with during the overall edge-calculation traversal (before or after backtracking, while considering any max jump height).
+  - We know that a new recursive iteration can never collide with any of the Surfaces that any past
+    iteration collided with. If it did, it would end up on a traversal branch that's identical to
+	one we've already eliminated, which would lead to an infinite loop.
