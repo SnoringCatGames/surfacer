@@ -123,8 +123,8 @@ TODO
     current velocity will continue pushing them upward, but with the new stronger gravity.
   - To determine the duration to the jump peak height in this scenario, we first construct two
     instances of one of the basic equations of motion--one for the former part of the ascent, with
-	the slow-ascent gravity, and one for the latter part of the ascent, with the fast-fall gravity.
-	We then use algebra to substitute the equations and solve for the duration.
+    the slow-ascent gravity, and one for the latter part of the ascent, with the fast-fall gravity.
+    We then use algebra to substitute the equations and solve for the duration.
 
 #### Backtracking to consider a higher max jump height
 
@@ -133,4 +133,4 @@ TODO
 - When backtracking, we record a set of all Surfaces that have been collided with during the overall edge-calculation traversal (before or after backtracking, while considering any max jump height).
   - We know that a new recursive iteration can never collide with any of the Surfaces that any past
     iteration collided with. If it did, it would end up on a traversal branch that's identical to
-	one we've already eliminated, which would lead to an infinite loop.
+    one we've already eliminated, which would lead to an infinite loop.
