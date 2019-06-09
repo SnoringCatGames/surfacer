@@ -14,6 +14,8 @@ TODO
 
 _A 2D-platformer framework for Godot._
 
+_"Surfacer": Like a platformer, but with walking and climbing on all surfaces!_
+
 _TODO: In development. Not ready for review._
 
 TODO
@@ -93,6 +95,10 @@ TODO
   calculations.
 - We have a broad-phase check to eliminate possible surfaces that are obviously out of reach.
   - TODO: describe it
+- We record a set of all Surfaces that have been collided with during the overall edge-calculation traversal.
+  - We know that a new recursive iteration can never collide with any of the Surfaces that any past
+    iteration collided with. If it did, it would end up on a traversal branch that's identical to
+    one we've already eliminated, which would lead to an infinite loop.
 
 #### TODO
 
@@ -110,8 +116,8 @@ TODO
 - If we detect a collision, then we define two possible constraints--one for each end of the collided Surface.
   - In order to make it around this intermediate Surface, we know the player must pass around one of the sides of this Surface.
   - These constraints we calculate represent the minimum required deviation from the player's original path.
-  - We then recursively check whether the player could move to and from each of the constraints.
-    - If so, we concatenate and return the steps required to reach the constraint from the original starting position and the steps required to reach the original destination from the constraint.
+- We then recursively check whether the player could move to and from each of the constraints.
+- If so, we concatenate and return the steps required to reach the constraint from the original starting position and the steps required to reach the original destination from the constraint.
 
 #### Calculating the total jump duration
 
@@ -137,9 +143,7 @@ TODO
 
 #### Backtracking to consider a higher max jump height
 
-TODO
-
-- When backtracking, we record a set of all Surfaces that have been collided with during the overall edge-calculation traversal (before or after backtracking, while considering any max jump height).
-  - We know that a new recursive iteration can never collide with any of the Surfaces that any past
-    iteration collided with. If it did, it would end up on a traversal branch that's identical to
-    one we've already eliminated, which would lead to an infinite loop.
+- Sometimes, a constraint may be out of reach, given our current step's starting position and velocity.
+- However, maybe the constraint could be within reach, if we had originally jumped a little higher.
+- To account for this, we backtrack to the start of the overall movement traversal and consider whether a higher jump could reach the constraint.
+- If it could, then we use those new steps instead of our previously calculated steps, and we then recursively check whether we can reach the destination from the constraint.

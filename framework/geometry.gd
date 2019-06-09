@@ -580,3 +580,20 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
                 "supported shapes are: CircleShape2D, CapsuleShape2D, RectangleShape2D." % shape)
     
     return half_width_height
+
+# Calculates the duration to reach the destination with the given movement parameters.
+#
+# Returns INF if we cannot reach the destination with our movement parameters.
+static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: float) -> float:
+    # From a basic equation of motion:
+    #     s = s_0 + v_0*t + 1/2*a*t^2.
+    # Solve for t using the quadratic formula.
+    var discriminant := v_0 * v_0 - 2 * a * (s_0 - s)
+    if discriminant < 0:
+        # We can't reach the end position from our start position.
+        return INF
+    var discriminant_sqrt := sqrt(discriminant)
+    var t := (-v_0 + discriminant_sqrt) / a
+    if t < 0:
+        t = (-v_0 - discriminant_sqrt) / a
+    return t

@@ -44,12 +44,12 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
     Utils.error("Abstract PlayerMovement.get_all_reachable_surface_instructions_from_air is not implemented")
     return []
 
-# FIXME: Remove. Replace with an up-front calculation when the params are initialized.
+# FIXME: LEFT OFF HERE: C: Remove. Replace with an up-front calculation when the params are initialized.
 func get_max_upward_distance() -> float:
     Utils.error("Abstract PlayerMovement.get_max_upward_distance is not implemented")
     return 0.0
 
-# FIXME: Remove. Replace with an up-front calculation when the params are initialized.
+# FIXME: LEFT OFF HERE: C: Remove. Replace with an up-front calculation when the params are initialized.
 func get_max_horizontal_distance() -> float:
     Utils.error("Abstract PlayerMovement.get_max_horizontal_distance is not implemented")
     return 0.0
@@ -94,7 +94,7 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
     
     return velocity
 
-# Checks whether a collision would occur with any Surface during the given horizontal step. This
+# Checks whether a collision would occur with any surface during the given horizontal step. This
 # is calculated by stepping through each physics frame, which should exactly emulate the actual
 # Player trajectory that would be used.
 func _check_step_for_collision( \
@@ -148,8 +148,8 @@ func _check_step_for_collision( \
     
     return null
 
-# Determines whether the given motion of the given shape would collide with a Surface. If a
-# collision would occur, this returns the Surface; otherwise, this returns null.
+# Determines whether the given motion of the given shape would collide with a surface. If a
+# collision would occur, this returns the surface; otherwise, this returns null.
 func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         shape_query_params: Physics2DShapeQueryParameters) -> Surface:
     # FIXME: B: Check whether all of the level setup must be called from within an early
@@ -277,8 +277,9 @@ func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     # TODO: Prevent duplicate work from finding matching surfaces as both nearby and fallable.
     var results := _get_nearby_surfaces(origin_surface, SURFACE_CLOSE_DISTANCE_THRESHOLD, surfaces)
     
-    # FIXME: Update _get_closest_fallable_surface to support falling from the center of
-    #        fall-through surfaces (consider the whole surface, rather than just the ends).
+    # FIXME: LEFT OFF HERE: D: Update _get_closest_fallable_surface to support falling from the
+    #        center of fall-through surfaces (consider the whole surface, rather than just the
+    #        ends).
     # TODO: Consider velocity changes due to gravity.
     # TODO: Add support for choosing the closest "non-occluded" surface to the destination, rather
     #       than the closest surface to the origin.

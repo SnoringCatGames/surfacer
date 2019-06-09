@@ -17,6 +17,12 @@ var shape_query_params: Physics2DShapeQueryParameters
 # of these calculations.
 var constraint_offset: Vector2
 
+# The start position for the current edge instructions.
+var position_start: Vector2
+
+# The end position for the current edge instructions.
+var position_end: Vector2
+
 # The destination for the current edge instructions.
 var destination_surface: Surface
 

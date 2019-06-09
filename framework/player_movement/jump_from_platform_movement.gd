@@ -104,8 +104,9 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
                     params.collider_half_width_height)
             land_position.match_surface_target_and_collider(b, land_point, \
                     params.collider_half_width_height)
-            instructions = _calculate_jump_instructions( \
-                    global_calc_params, jump_position.target_point, land_position.target_point)
+            global_calc_params.position_start = jump_position.target_point
+            global_calc_params.position_end = land_position.target_point
+            instructions = _calculate_jump_instructions(global_calc_params)
             if instructions != null:
                 edges.push_back(PlatformGraphEdge.new(jump_position, land_position, instructions))
     
@@ -114,60 +115,56 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
 func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
         position_start: PositionAlongSurface, position_end: Vector2) -> PlayerInstructions:
     var global_calc_params := MovementCalcGlobalParams.new(params, space_state)
+    global_calc_params.position_start = position_start.target_point
+    global_calc_params.position_end = position_end
     
-    return _calculate_jump_instructions( \
-            global_calc_params, position_start.target_point, position_end)
+    return _calculate_jump_instructions(global_calc_params)
 
-# FIXME: LEFT OFF HERE: --A ********* doc
-func _calculate_jump_instructions(global_calc_params: MovementCalcGlobalParams, \
-        position_start: Vector2, position_end: Vector2) -> PlayerInstructions:
-    var calc_results := \
-            _calculate_steps_with_new_jump_height(global_calc_params, position_start, position_end)
+# Calculates instructions that would move the player from the given start position to the given end
+# position.
+# 
+# This considers interference from intermediate surfaces, and will only return instructions that
+# would produce valid movement without intermediate collisions.
+func _calculate_jump_instructions( \
+        global_calc_params: MovementCalcGlobalParams) -> PlayerInstructions:
+    var calc_results := _calculate_steps_with_new_jump_height( \
+            global_calc_params, global_calc_params.position_end)
     
     if calc_results == null:
         return null
     
-    return _convert_calculation_steps_to_player_instructions( \
-            calc_results, position_start, position_end)
+    return _convert_calculation_steps_to_player_instructions(global_calc_params, calc_results)
 
-# FIXME: LEFT OFF HERE: --A ********* doc
+# Calculates movement steps to reach the given destination.
+# 
+# This first calculates the one vertical step of the overall movement, using the minimum possible
+# peak jump height. It then calculates the horizontal steps.
+# 
+# This can trigger recursive calls if horizontal movement cannot be satisfied without backtracking
+# to consider a new higher jump height.
 func _calculate_steps_with_new_jump_height(global_calc_params: MovementCalcGlobalParams, \
-        position_start: Vector2, position_end: Vector2) -> MovementCalcResults:
-    var local_calc_params := _calculate_vertical_step(position_start, position_end)
+        local_position_end: Vector2) -> MovementCalcResults:
+    var local_calc_params := \
+            _calculate_vertical_step(global_calc_params.position_start, local_position_end)
     
     if local_calc_params == null:
         # The destination is out of reach.
         return null
     
     return _calculate_steps_from_constraint(global_calc_params, local_calc_params)
-    
-    # FIXME: LEFT OFF HERE: -------A *********
-    # - Implement max-height backtracking:
-    #   - Do create a new helper function for starting new recursive traversal that initializes
-    #     vertical step and global_calc_params state.
-    #   - Pass-in new parameters for initializing vertical step:
-    #     - velocity_start
-    #       - make sure we're still using this correctly for calculating the jump_button_end time
-    #     - pass-in original start position as well as current start position.
-    #     - Maintain set of already-collided surfaces.
-    #   - Create a new data structure for returning results.
-    #   - Decide how to split apart some parameters and distinguish between local traversal and global.
-    #     - MovementCalcGlobalParams will represent global
-    #       - Remove vertical_step, total_duration
-    #     - Either create a new one for local, or use the new MovementCalcLocalParams
 
-# FIXME: LEFT OFF HERE: -A ********
+# FIXME: LEFT OFF HERE: A ***************
+# - Step through and double-check each return value parameter individually through the recursion, and each input parameter.
+# - 
 # - Will also want to record some other info for annotations/debugging:
 #   - Store on PlayerInstructions (but on MovementCalcStep first, during calculation?).
 #   - A polyline representation of the ultimate trajectory, including time-slice-testing and
 #     considering constraints.
 #   - The ultimate sequence of constraints that were used.
-
-# FIXME: LEFT OFF HERE: A ***************
 # - 
 # - Optimize a bit for collisions with vertical surfaces:
 #   - For the top constraint, change the constraint position to instead use the far side of the
-#     adjacent top-side/floor Surface.
+#     adjacent top-side/floor surface.
 #   - This probably means I should store adjacent Surfaces when originally parsing the Surfaces.
 # - After completing all steps, re-visit each and think about whether the approach can be
 #   simplified now that we have our current way of thinking with total_duration being the basis
@@ -204,21 +201,23 @@ func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlobalPara
     
     var next_horizontal_step := _create_horizontal_step(local_calc_params)
     
-    # Check whether the destination is within reach of this PlayerMovement.
     if next_horizontal_step == null:
+        # The destination is out of reach.
         return null
     
-    var colliding_surface := _check_step_for_collision(global_calc_params, local_calc_params, next_horizontal_step)
+    var colliding_surface := \
+            _check_step_for_collision(global_calc_params, local_calc_params, next_horizontal_step)
     
-    # Check whether there is no Surface interfering with this PlayerMovement, on whether we've
-    # reached the destination Surface.
     if colliding_surface == null or colliding_surface == global_calc_params.destination_surface:
+        # There is no intermediate surface interfering with this movement, or we've reached the
+        # destination surface.
         return MovementCalcResults.new([next_horizontal_step], local_calc_params.vertical_step, \
                 local_calc_params.total_duration)
     
-    # Check whether we've already considered a collision with this Surface. If so, then this
-    # movement won't work.
     if global_calc_params.collided_surfaces.has(colliding_surface):
+        # We've already considered a collision with this surface, so this movement won't work.
+        # Without this check, we'd recurse through a traversal branch that is identical to one
+        # we've already considered, and we'd loop infinitely.
         return null
     
     ### RECURSIVE CASES
@@ -226,20 +225,21 @@ func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlobalPara
     global_calc_params.collided_surfaces[colliding_surface] = true
     
     # Calculate possible constraints to divert the movement around either side of the colliding
-    # Surface.
+    # surface.
     var constraints := \
             _calculate_constraints(colliding_surface, global_calc_params.constraint_offset)
     
-    # Try to satisfy the constraints without backtracking to consider a new max jump height.
+    # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := _calculate_steps_from_constraint_without_backtracking_on_height( \
             global_calc_params, local_calc_params, constraints)
     if calc_results != null:
         return calc_results
     
-    # Try to satisfy the constraints with backtracking to consider a new max jump height.
+    # Then, try to satisfy the constraints with backtracking to consider a new max jump height.
     return _calculate_steps_from_constraint_with_backtracking_on_height( \
             global_calc_params, local_calc_params, constraints)
 
+# Check whether either constraint can be satisfied with our current max jump height.
 func _calculate_steps_from_constraint_without_backtracking_on_height( \
         global_calc_params: MovementCalcGlobalParams, \
         local_calc_params: MovementCalcLocalParams, constraints: Array) -> MovementCalcResults:
@@ -248,8 +248,8 @@ func _calculate_steps_from_constraint_without_backtracking_on_height( \
     var calc_results_to_constraint: MovementCalcResults
     var calc_results_from_constraint: MovementCalcResults
     
-    # Check whether either constraint can be satisfied with our current jump height.
     # FIXME: LEFT OFF HERE: B: Add heuristics to pick the "better" constraint first.
+    
     for constraint in constraints:
         # Recurse: Calculate movement to the constraint.
         local_calc_params_to_constraint = MovementCalcLocalParams.new( \
@@ -259,7 +259,7 @@ func _calculate_steps_from_constraint_without_backtracking_on_height( \
         calc_results_to_constraint = _calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_to_constraint)
         
-        if calc_results_to_constraint.horizontal_steps.empty():
+        if calc_results_to_constraint == null:
             # This constraint is out of reach.
             continue
         
@@ -271,15 +271,26 @@ func _calculate_steps_from_constraint_without_backtracking_on_height( \
         calc_results_from_constraint = _calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_from_constraint)
         
-        if !calc_results_from_constraint.horizontal_steps.empty():
+        if calc_results_from_constraint != null:
             # We found movement that satisfies the constraint.
-            Utils.concat(calc_results_to_constraint.horizontal_steps, \
-                    calc_results_from_constraint.horizontal_steps)
-            return calc_results_to_constraint
+            if !calc_results_from_constraint.backtracked_for_new_jump_height:
+                # The movement calculations from after the constraint didn't have to backtrack and
+                # use a higher jump height.
+                Utils.concat(calc_results_to_constraint.horizontal_steps, \
+                        calc_results_from_constraint.horizontal_steps)
+                return calc_results_to_constraint
+            else:
+                # The movement calculations from after the constraint had to backtrack and use a
+                # higher jump height. This means that these post-constraint results include new
+                # steps leading up to the constraint, so we should abandon our previous
+                # pre-constraint results.
+                return calc_results_from_constraint
     
-    # We weren't able to satisfy the constraints around the colliding Surface.
+    # We weren't able to satisfy the constraints around the colliding surface.
     return null
 
+# Check whether either constraint can be satisfied if we backtrack to re-calculate the initial
+# vertical step with a higher max jump height.
 func _calculate_steps_from_constraint_with_backtracking_on_height( \
         global_calc_params: MovementCalcGlobalParams, \
         local_calc_params: MovementCalcLocalParams, constraints: Array) -> MovementCalcResults:
@@ -287,62 +298,61 @@ func _calculate_steps_from_constraint_with_backtracking_on_height( \
     var local_calc_params_from_constraint: MovementCalcLocalParams
     var calc_results_to_constraint: MovementCalcResults
     var calc_results_from_constraint: MovementCalcResults
+    var previous_step: MovementCalcStep
+    var duration_from_constraint: float
     
-    # Check whether re-calculating the initial vertical step (and total duration) to use a higher
-    # jump would enable either constraint to be satisfied.
     # FIXME: LEFT OFF HERE: B: Add heuristics to pick the "better" constraint first.
+    
     for constraint in constraints:
-        # FIXME: LEFT OFF HERE: ---A *********
-        # - Refactor vertical step stuff...:
-        #   - For the backtracking recursion, I need to be able to initialize a new vertical step
-        #     for both the section before and after the constraint.
-        #     - I will need to somehow use the total_duration from both.
-        #     - I will need to not use params.jump_boost as the initial velocity for the latter.
-        #   - Think about what structure will be useful for re-use with the fall_from_air_movement.
-        #   - Think about what structure will be useful for re-use with the jump_from_wall_movement.
-        #     - Will I need to create a separate class for jump_from_wall_movement vs jump_from_floor_movement?
-        #   - I will need to not mutate the shared global_calc_params state between recursive calls.
-        # - If we are in a recursive branch that depends on an alternate start position, then that
-        #   will need to have access to the original start position.
-        #   - And it will still need to re-use the same set of already-collided surfaces.
-        # - Make sure only the new steps get concatenated and used when doing backtracking.
-        
-        # Note: The new traversal can never collide with any of the Surfaces that this past
-        # traversal collided with. If it did, it would end up on a traversal branch that's
-        # identical to one we've already eliminated. So we re-use the same collided_surfaces
-        # parameter.
-        
         # Recurse: Backtrack and try a higher jump (to the constraint).
-        # FIXME: LEFT OFF HERE: ----------------A What happens if this local position start is not the same as the global position start?
-        calc_results_to_constraint = _calculate_steps_with_new_jump_height(global_calc_params, \
-                local_calc_params.position_start, constraint.passing_point)
+        calc_results_to_constraint = \
+                _calculate_steps_with_new_jump_height(global_calc_params, constraint.passing_point)
         
         if calc_results_to_constraint == null:
             # The constraint is out of reach.
             continue
         
+        # Update the total_duration to include the fall duration after the constraint.
+        previous_step = calc_results_to_constraint.horizontal_steps.back()
+        duration_from_constraint = Geometry.solve_for_movement_duration( \
+                constraint.passing_point.y, local_calc_params.position_end.y, \
+                previous_step.velocity_end.y, params.gravity)
+        calc_results_to_constraint.total_duration += duration_from_constraint
+        
         # Recurse: Calculate movement from the constraint to the original destination.
         local_calc_params_from_constraint = MovementCalcLocalParams.new( \
-                constraint.passing_point, local_calc_params.position_end, \
-                calc_results_to_constraint.horizontal_steps.back(), \
+                constraint.passing_point, local_calc_params.position_end, previous_step, \
                 calc_results_to_constraint.vertical_step, \
                 calc_results_to_constraint.total_duration)
         calc_results_from_constraint = _calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_from_constraint)
         
-        if !calc_results_from_constraint.horizontal_steps.empty():
+        if calc_results_from_constraint != null:
             # We found movement that satisfies the constraint.
-            Utils.concat(calc_results_to_constraint.horizontal_steps, \
-                    calc_results_from_constraint.horizontal_steps)
-            # FIXME: LEFT OFF HERE: ----------------A calculate a new total_duration to use here that adds in the fall duration from the constraint
-#            calc_results_to_constraint.total_duration = 
-            return calc_results_to_constraint
+            if !calc_results_from_constraint.backtracked_for_new_jump_height:
+                # The movement calculations from after the constraint didn't have to backtrack and
+                # use a higher jump height.
+            
+                # Combine the steps from before and after the constraint.
+                Utils.concat(calc_results_to_constraint.horizontal_steps, \
+                        calc_results_from_constraint.horizontal_steps)
+                
+                # Mark this result as having backtracked to re-calculate the previous steps.
+                calc_results_to_constraint.backtracked_for_new_jump_height = true
+                
+                return calc_results_to_constraint
+            else:
+                # The movement calculations from after the constraint had to backtrack and use a
+                # higher jump height. This means that these post-constraint results include new
+                # steps leading up to the constraint, so we should abandon our previous
+                # pre-constraint results.
+                return calc_results_from_constraint
     
-    # We weren't able to satisfy the constraints around the colliding Surface.
+    # We weren't able to satisfy the constraints around the colliding surface.
     return null
 
-# Initializes a new MovementCalcStep for the vertical part of the movement, and saves it, and the
-# total_duration, on the given MovementCalcGlobalParams.
+# Calculates a new step for the vertical part of the movement and the corresponding total jump
+# duration.
 func _calculate_vertical_step( \
         position_start: Vector2, position_end: Vector2) -> MovementCalcLocalParams:
     # FIXME: LEFT OFF HERE: B: Account for max y velocity when calculating any parabolic motion.
@@ -367,8 +377,8 @@ func _calculate_vertical_step( \
     if total_displacement.y < 0:
         # Derivation:
         # - Start with basic equations of motion
-        # - v_1^2 = v_0^2 + 2*a_0 * (s_1 - s_0)
-        # - v_2^2 = v_1^2 + 2*a_1 * (s_2 - s_1)
+        # - v_1^2 = v_0^2 + 2*a_0*(s_1 - s_0)
+        # - v_2^2 = v_1^2 + 2*a_1*(s_2 - s_1)
         # - v_2 = 0
         # - s_0 = 0
         # - Do some algebra...
@@ -379,13 +389,13 @@ func _calculate_vertical_step( \
                 (params.gravity - slow_ascent_gravity)
         assert(distance_to_release_button_for_shorter_jump < 0)
         
-        # From basic equations of motion.
-        var duration_to_release_button_for_shorter_jump := \
-                (sqrt(params.jump_boost * params.jump_boost + \
-                2 * slow_ascent_gravity * distance_to_release_button_for_shorter_jump) - \
-                params.jump_boost) / slow_ascent_gravity
+        var duration_to_release_button_for_shorter_jump: float = \
+                Geometry.solve_for_movement_duration(0, \
+                distance_to_release_button_for_shorter_jump, params.jump_boost, \
+                slow_ascent_gravity)
         
-        # From basic equations of motion.
+        # From a basic equation of motion:
+        #     v = v_0 + a*t
         var duration_to_reach_peak_after_release := \
                 -params.jump_boost - \
                         slow_ascent_gravity * duration_to_release_button_for_shorter_jump / \
@@ -398,21 +408,11 @@ func _calculate_vertical_step( \
     
     # Calculate how long it will take for the jump to reach some lower destination.
     var duration_to_reach_downward_displacement: float
-    if total_displacement.y >= 0:
-        duration_to_reach_downward_displacement = 0.0
+    if total_displacement.y > 0:
+        duration_to_reach_downward_displacement = Geometry.solve_for_movement_duration( \
+                position_start.y, position_end.y, params.jump_boost, params.gravity)
     else:
-        # From a basic equation of motion.
-        var discriminant := \
-                params.jump_boost * params.jump_boost + 2 * params.gravity * total_displacement.y
-        if discriminant < 0:
-            # We can't reach the end position from our start position.
-            return null
-        var discriminant_sqrt := sqrt(discriminant)
-        duration_to_reach_downward_displacement = \
-                (-params.jump_boost + discriminant_sqrt) / params.gravity
-        if duration_to_reach_downward_displacement < 0:
-            duration_to_reach_downward_displacement = \
-                    (-params.jump_boost - discriminant_sqrt) / params.gravity
+        duration_to_reach_downward_displacement = 0.0
     
     # FIXME: LEFT OFF HERE: B: Account for horizontal acceleration.
     var duration_to_reach_horizontal_displacement := \
@@ -446,9 +446,9 @@ func _calculate_vertical_step( \
         # We can't reach the end position from our start position.
         return null
     var discriminant_sqrt := sqrt(discriminant)
-    var time_to_release_jump_button := (-b + discriminant_sqrt) / 2 * a
+    var time_to_release_jump_button := (-b + discriminant_sqrt) / 2 / a
     if time_to_release_jump_button < 0:
-        time_to_release_jump_button = (-b - discriminant_sqrt) / 2 * a
+        time_to_release_jump_button = (-b - discriminant_sqrt) / 2 / a
     
     var step := MovementCalcStep.new()
     step.time_start = 0.0
@@ -462,7 +462,7 @@ func _calculate_vertical_step( \
     
     return MovementCalcLocalParams.new(position_start, position_end, null, step, total_duration)
 
-# Initializes a new MovementCalcStep for the horizontal part of the movement.
+# Calculates a new step for the horizontal part of the movement.
 func _create_horizontal_step(local_calc_params: MovementCalcLocalParams) -> MovementCalcStep:
     var previous_step := local_calc_params.previous_step
     var vertical_step := local_calc_params.vertical_step
@@ -516,12 +516,15 @@ func _create_horizontal_step(local_calc_params: MovementCalcLocalParams) -> Move
     
     return step
 
-func _convert_calculation_steps_to_player_instructions(calc_results: MovementCalcResults, \
-        position_start: Vector2, position_end: Vector2) -> PlayerInstructions:
+# Translates movement data from a form that is more useful when calculating the movement to a form
+# that is more useful when executing the movement.
+func _convert_calculation_steps_to_player_instructions( \
+        global_calc_params: MovementCalcGlobalParams, \
+        calc_results: MovementCalcResults) -> PlayerInstructions:
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
     
-    var distance := position_start.distance_to(position_end)
+    var distance := global_calc_params.position_start.distance_to(global_calc_params.position_end)
     
     var instructions := []
     instructions.resize((steps.size() + 1) * 2)
