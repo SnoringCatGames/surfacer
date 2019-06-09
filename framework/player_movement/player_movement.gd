@@ -94,22 +94,23 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
     
     return velocity
 
-# Checks whether a collision would occur with any Surface during the given step. This is calculated
-# by stepping through each physics frame, which should exactly emulate the actual Player trajectory
-# that would be used.
+# Checks whether a collision would occur with any Surface during the given horizontal step. This
+# is calculated by stepping through each physics frame, which should exactly emulate the actual
+# Player trajectory that would be used.
 func _check_step_for_collision( \
-        movement_calc_params: MovementCalcParams, step: MovementCalcStep) -> Surface:
+        global_calc_params: MovementCalcGlobalParams, local_calc_params: MovementCalcLocalParams, \
+        horizontal_step: MovementCalcStep) -> Surface:
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
-    var previous_time := step.time_start
-    var current_time := step.time_start
-    var end_time := step.time_end
-    var position := step.position_start
-    var velocity := step.velocity_start
-    var jump_end_time := movement_calc_params.vertical_step.time_end
+    var previous_time := horizontal_step.time_start
+    var current_time := horizontal_step.time_start
+    var end_time := horizontal_step.time_end
+    var position := horizontal_step.position_start
+    var velocity := horizontal_step.velocity_start
+    var jump_end_time := local_calc_params.vertical_step.time_end
     var is_pressing_jump := jump_end_time > current_time
-    var space_state := movement_calc_params.space_state
-    var shape_query_params := movement_calc_params.shape_query_params
+    var space_state := global_calc_params.space_state
+    var shape_query_params := global_calc_params.shape_query_params
     var displacement: Vector2
     var colliding_surface: Surface
     
@@ -133,7 +134,7 @@ func _check_step_for_collision( \
         
         # Update velocity for the next frame.
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
-                step.horizontal_movement_sign, params)
+                horizontal_step.horizontal_movement_sign, params)
         velocity = cap_velocity(velocity, params)
     
     # Check the last frame that puts us up to end_time.

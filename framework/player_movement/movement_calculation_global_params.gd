@@ -1,6 +1,7 @@
 # Parameters that are used for calculating edge instructions.
+# FIXME: LEFT OFF HERE: --A ********* doc
 extends Reference
-class_name MovementCalcParams
+class_name MovementCalcGlobalParams
 
 const TILE_MAP_COLLISION_LAYER := 2
 const EDGE_MOVEMENT_TEST_MARGIN := 4.0
@@ -16,13 +17,7 @@ var shape_query_params: Physics2DShapeQueryParameters
 # of these calculations.
 var constraint_offset: Vector2
 
-# The single vertical step for this jump movement.
-var vertical_step: MovementCalcStep
-
-# The total duration of the overall movement.
-var total_duration: float
-
-# The destination for the current edge instructions calculations.
+# The destination for the current edge instructions.
 var destination_surface: Surface
 
 # Any Surfaces that have previously been hit while calculating the current edge instructions.
