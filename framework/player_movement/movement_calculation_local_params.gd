@@ -15,13 +15,9 @@ var previous_step: MovementCalcStep
 # The single vertical step for this overall jump movement.
 var vertical_step: MovementCalcStep
 
-# The total duration of this overall jump movement.
-var total_duration: float
-
 func _init(position_start: Vector2, position_end: Vector2, previous_step: MovementCalcStep, \
-        vertical_step: MovementCalcStep, total_duration: float) -> void:
+        vertical_step: MovementCalcStep) -> void:
     self.position_start = position_start
     self.position_end = position_end
     self.previous_step = previous_step
     self.vertical_step = vertical_step
-    self.total_duration = total_duration

@@ -117,11 +117,6 @@ func _parse_tile_map(tile_map: TileMap) -> void:
 
 func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, \
         right_walls: Array) -> void:
-    _populate_polyline_arrays(floors)
-    _populate_polyline_arrays(ceilings)
-    _populate_polyline_arrays(left_walls)
-    _populate_polyline_arrays(right_walls)
-    
     _populate_surface_objects(floors, SurfaceSide.FLOOR)
     _populate_surface_objects(ceilings, SurfaceSide.CEILING)
     _populate_surface_objects(left_walls, SurfaceSide.LEFT_WALL)
@@ -556,13 +551,9 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
                 count -= 1
             i += 1
 
-static func _populate_polyline_arrays(tmp_surfaces: Array) -> void:
-    for tmp_surface in tmp_surfaces:
-        tmp_surface.vertices_pool_array = PoolVector2Array(tmp_surface.vertices_array)
-
 static func _populate_surface_objects(tmp_surfaces: Array, side: int) -> void:
     for tmp_surface in tmp_surfaces:
-        tmp_surface.surface = Surface.new(tmp_surface.vertices_pool_array, side)
+        tmp_surface.surface = Surface.new(tmp_surface.vertices_array, side)
 
 static func _copy_surfaces_to_main_collection(tmp_surfaces: Array, main_collection: Array) -> void:
     for tmp_surface in tmp_surfaces:
@@ -582,7 +573,6 @@ static func _free_objects(objects: Array) -> void:
 class _TmpSurface extends Object:
     # Array<Vector2>
     var vertices_array: Array
-    var vertices_pool_array: PoolVector2Array
     # Array<int>
     var tile_map_indices: Array
     var surface: Surface

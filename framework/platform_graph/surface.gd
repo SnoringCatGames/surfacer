@@ -7,8 +7,8 @@ var side: int
 var bounding_box: Rect2
 var normal: Vector2
 
-func _init(vertices: PoolVector2Array, side: int) -> void:
-    self.vertices = vertices
+func _init(vertices: Array, side: int) -> void:
+    self.vertices = PoolVector2Array(vertices)
     self.side = side
     bounding_box = Geometry.get_bounding_box_for_points(vertices)
     normal = _calculate_normal(side)

@@ -238,7 +238,7 @@ static func do_segment_and_triangle_intersect(segment_a: Vector2, segment_b: Vec
 # Users of this code must verify correctness for their application.
 # -------------------------------------------------------------------------------------------------
 static func do_segment_and_polygon_intersect(segment_a: Vector2, segment_b: Vector2, \
-        polygon: PoolVector2Array) -> bool:
+        polygon: Array) -> bool:
     var count = polygon.size()
     var segment_diff := segment_b - segment_a
     var polygon_segment: Vector2
@@ -313,8 +313,7 @@ static func do_polyline_and_triangle_intersect(vertices: PoolVector2Array, trian
             return true
     return false
 
-static func do_polyline_and_polygon_intersect(vertices: PoolVector2Array, \
-        polygon: PoolVector2Array) -> bool:
+static func do_polyline_and_polygon_intersect(vertices: PoolVector2Array, polygon: Array) -> bool:
     var segment_a: Vector2
     var segment_b: Vector2
     for i in range(vertices.size() - 1):
@@ -356,7 +355,7 @@ static func do_point_and_segment_intersect(point: Vector2, segment_a: Vector2, s
             ((point.x <= segment_a.x and point.x >= segment_b.x) or \
             (point.x >= segment_a.x and point.x <= segment_b.x))
 
-static func get_bounding_box_for_points(points: PoolVector2Array) -> Rect2:
+static func get_bounding_box_for_points(points: Array) -> Rect2:
     assert(points.size() > 0)
     var bounding_box := Rect2(points[0], Vector2.ZERO)
     for i in range(1, points.size()):

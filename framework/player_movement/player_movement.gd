@@ -97,54 +97,69 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
 # Checks whether a collision would occur with any surface during the given horizontal step. This
 # is calculated by stepping through each physics frame, which should exactly emulate the actual
 # Player trajectory that would be used.
-func _check_step_for_collision( \
+func _check_horizontal_step_for_collision( \
         global_calc_params: MovementCalcGlobalParams, local_calc_params: MovementCalcLocalParams, \
         horizontal_step: MovementCalcStep) -> Surface:
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
     var previous_time := horizontal_step.time_start
     var current_time := horizontal_step.time_start
-    var end_time := horizontal_step.time_end
+    var step_end_time := horizontal_step.time_step_end
+    var horizontal_instruction_end_time := horizontal_step.time_instruction_end
     var position := horizontal_step.position_start
     var velocity := horizontal_step.velocity_start
-    var jump_end_time := local_calc_params.vertical_step.time_end
-    var is_pressing_jump := jump_end_time > current_time
+    var jump_instruction_end_time := local_calc_params.vertical_step.time_instruction_end
+    var is_pressing_jump := jump_instruction_end_time > current_time
+    var is_pressing_move_horizontal := horizontal_instruction_end_time > current_time
     var space_state := global_calc_params.space_state
     var shape_query_params := global_calc_params.shape_query_params
     var displacement: Vector2
     var colliding_surface: Surface
     
+    # Record the position for edge annotation debugging.
+    horizontal_step.frame_positions.push_back(position)
+    
     # Iterate through each physics frame, checking each for a collision.
-    while current_time < end_time:
+    while current_time < step_end_time:
         # Update position for this frame.
         previous_time = current_time
         current_time += delta
         displacement = velocity * delta
         shape_query_params.transform = Transform2D(0.0, position)
         shape_query_params.motion = displacement
-        position += displacement
         
         # Check for collision.
         colliding_surface = check_frame_for_collision(space_state, shape_query_params)
         if colliding_surface != null:
             return colliding_surface
         
+        position += displacement
+        
         # Determine whether the jump button is still being pressed.
-        is_pressing_jump = jump_end_time > current_time
+        is_pressing_jump = jump_instruction_end_time > current_time
+        
+        # Determine whether the horizontal movement button is still being pressed.
+        is_pressing_move_horizontal = horizontal_instruction_end_time > current_time
         
         # Update velocity for the next frame.
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
                 horizontal_step.horizontal_movement_sign, params)
         velocity = cap_velocity(velocity, params)
+        
+        # Record the position for edge annotation debugging.
+        horizontal_step.frame_positions.push_back(position)
     
     # Check the last frame that puts us up to end_time.
-    delta = end_time - current_time
+    delta = step_end_time - current_time
     displacement = velocity * delta
     shape_query_params.transform = Transform2D(0.0, position)
     shape_query_params.motion = displacement
     colliding_surface = check_frame_for_collision(space_state, shape_query_params)
     if colliding_surface != null:
         return colliding_surface
+    
+    # Record the position for edge annotation debugging.
+    horizontal_step.frame_positions.push_back(position + displacement)
     
     return null
 
@@ -240,11 +255,12 @@ static func _calculate_constraints( \
     return [constraint_a, constraint_b]
 
 # Calculates the vertical component of position and velocity according to the given vertical
-# movement state and the given time. These are then stored on the given output step's end state.
-func _update_vertical_state_for_time( \
-        output_step: MovementCalcStep, vertical_step: MovementCalcStep, time: float) -> void:
+# movement state and the given time. These are then stored on either the given output step's
+# step-end state or instruction-end state depending on is_step_end_time.
+func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
+        vertical_step: MovementCalcStep, time: float, is_step_end_time: bool) -> void:
     var slow_ascent_gravity := params.gravity * params.ascent_gravity_multiplier
-    var slow_ascent_end_time := min(time, vertical_step.time_end)
+    var slow_ascent_end_time := min(time, vertical_step.time_instruction_end)
     
     # Basic equations of motion.
     var slow_ascent_end_position := vertical_step.position_start.y + \
@@ -255,7 +271,7 @@ func _update_vertical_state_for_time( \
     
     var position: float
     var velocity: float
-    if vertical_step.time_end >= time:
+    if vertical_step.time_instruction_end >= time:
         # We only need to consider the slow-ascent parabolic section.
         position = slow_ascent_end_position
         velocity = slow_ascent_end_velocity
@@ -270,8 +286,20 @@ func _update_vertical_state_for_time( \
             0.5 * params.gravity * fast_fall_duration * fast_fall_duration
         velocity = slow_ascent_end_velocity + params.gravity * fast_fall_duration
     
-    output_step.position_end.y = position
-    output_step.velocity_end.y = velocity
+    if is_step_end_time:
+        output_step.position_step_end.y = position
+        output_step.velocity_step_end.y = velocity
+    else:
+        output_step.position_instruction_end.y = position
+        output_step.velocity_instruction_end.y = velocity
+
+# FIXME: LEFT OFF HERE: -----------------------------A *******
+# - How to know whether we are supposed to be ascending or descending when we hit this target
+#   position?
+func _calculate_end_time_for_jumping_to_position( \
+        vertical_step: MovementCalcStep, position: Vector2) -> float:
+    # if position.y < vertical_step.position_instruction_end.y:
+    return INF
 
 func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     # TODO: Prevent duplicate work from finding matching surfaces as both nearby and fallable.
@@ -374,7 +402,7 @@ func _get_closest_fallable_surface(start: Vector2, surfaces: Array, \
         var rightmost_end = Vector2(rightmost_start.x + end_x_distance, end_y)
         
         return _get_closest_fallable_surface_intersecting_polygon(start, \
-                PoolVector2Array([leftmost_start, rightmost_start, rightmost_end, leftmost_end]), \
+                [leftmost_start, rightmost_start, rightmost_end, leftmost_end], \
                 surfaces)
     else:
         var leftmost_end = Vector2(start.x - end_x_distance, end_y)
@@ -407,8 +435,8 @@ static func _get_closest_fallable_surface_intersecting_triangle(target: Vector2,
     
     return closest_surface
 
-static func _get_closest_fallable_surface_intersecting_polygon(target: Vector2, \
-        polygon: PoolVector2Array, surfaces: Array) -> Surface:
+static func _get_closest_fallable_surface_intersecting_polygon(target: Vector2, polygon: Array, \
+        surfaces: Array) -> Surface:
     var closest_surface: Surface
     var closest_distance_squared: float = INF
     var current_distance_squared: float

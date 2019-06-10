@@ -6,21 +6,32 @@ var instructions: Array
 var duration: int
 var distance: float
 
+# For annotation debugging.
+# Array<Vector2>
+var frame_positions: PoolVector2Array
+# Array<Vector2>
+var constraint_positions: PoolVector2Array
+
 # Instructions don't need to be pre-sorted.
-func _init(instructions: Array, duration: int, distance: float) -> void:
+func _init(instructions: Array, duration: int, distance: float, frame_positions: Array, \
+        constraint_positions: Array) -> void:
     self.instructions = instructions
     self.duration = duration
     self.distance = distance
+    self.frame_positions = PoolVector2Array(frame_positions)
+    self.constraint_positions = PoolVector2Array(constraint_positions)
     
     self.instructions.sort_custom(self, "instruction_comparator")
 
 # Inserts the given instruction in sorted order.
+# TODO: Remove?
 func insert(instruction: PlayerInstruction) -> int:
     var index := instructions.bsearch_custom(instruction, self, "instruction_comparator")
     instructions.insert(index, instruction)
     return index
 
 # Removes the given instruction if it exists.
+# TODO: Remove?
 func remove(instruction: PlayerInstruction) -> bool:
     var index := instructions.bsearch_custom(instruction, self, "instruction_comparator")
     if instructions[index] == instruction:
