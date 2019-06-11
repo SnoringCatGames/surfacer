@@ -5,6 +5,71 @@ const MovementCalcGlobalParams = preload("res://framework/player_movement/moveme
 const MovementCalcLocalParams = preload("res://framework/player_movement/movement_calculation_local_params.gd")
 const MovementCalcStep = preload("res://framework/player_movement/movement_calculation_step.gd")
 
+# FIXME: LEFT OFF HERE: B ****** Should I remove this and force a slightly higher offset to target jump position directly? What about passing through constraints? Would the increased time to get to the position for a wall-top constraint result in too much downward velocity into the ceiling?
+# FIXME: LEFT OFF HERE: D ******** Tweak this
+const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
+
+# FIXME: LEFT OFF HERE: -A ***************
+# - Problem: What if we hit a ceiling surface (still moving upwards)?
+#   - We'll set a constraint to either side.
+#   - Then we'll likely need to backtrack to use a bigger jump height.
+#   - On the backtracking traversal, we'll hit the same surface again.
+#     - Solution: We should always be allowed to hit ceiling surfaces again.
+#       - Which surfaces _aren't_ we allowed to hit again?
+#         - floor, left_wall, right_wall
+#       - Important: Double-check that if collision clips a static-collidable corner, that the
+#         correct surface is returned
+# - Problem: If we allow hitting a ceiling surface repeatedly, what happens if a jump ascent cannot
+#   get around it (cannot move horizontally far enough during the ascent)?
+#   - Solution: Afer calculating constraints for a surface collision, if it's a ceiling surface,
+#     check whether the time to move horizontally exceeds the time to move upward for either
+#     constraint. If so, abandon that traversal (remove the constraint from the array before
+#     calling the sub function).
+# - Optimization: We should never consider increased-height backtracking from hitting a ceiling
+#   surface.
+
+# FIXME: LEFT OFF HERE: A ***************
+# - Create a pause menu and a level switcher.
+# - Create some sort of configuration for specifying a level as well as the set of annotations to use.
+#   - Actually use this from the menu's level switcher.
+#   - Or should the level itself specify which annotations to use?
+# - Adapt one of the levels to just render a human player and then the annotations for all edges
+#   that our algorithm thinks the human player can traverse.
+#   - Try to render all of the interesting edge pairs that I think I should test for.
+# - 
+# - Will also want to record some other info for annotations/debugging:
+#   - Store on PlayerInstructions (but on MovementCalcStep first, during calculation?).
+#   - A polyline representation of the ultimate trajectory, including time-slice-testing and
+#     considering constraints.
+#   - The ultimate sequence of constraints that were used (these are actually just the start positions of each movementcalcstep).
+# - 
+# - Step through and double-check each return value parameter individually through the recursion, and each input parameter.
+# - 
+# - Optimize a bit for collisions with vertical surfaces:
+#   - For the top constraint, change the constraint position to instead use the far side of the
+#     adjacent top-side/floor surface.
+#   - This probably means I should store adjacent Surfaces when originally parsing the Surfaces.
+# - After completing all steps, re-visit each and think about whether the approach can be
+#   simplified now that we have our current way of thinking with total_duration being the basis
+#   for max_height and distance and ...
+# - Convert between iterative and recursive?
+# - Step through all parts and re-check for correctness.
+# - Account for half-width/height offset needed to clear the edge of B (if possible).
+# - Also, account for the half-width/height offset needed to not fall onto A.
+# - Include a margin around constraints and land position.
+# - Allow for the player to bump into walls/ceiling if they could still reach the land point
+#   afterward (will need to update logic to not include margin when accounting for these hits).
+# - Update the instructions calculations to consider actual discrete timesteps rather than
+#   using continuous algorithms.
+# - Share per-frame state updates logic between the instruction calculations and actual Player
+#   movements.
+# - 
+# - Make some diagrams in InkScape with surfaces, trajectories, and constraints to demonstrate
+#   algorithm traversal
+#   - Label/color-code parts to demonstrate separate traversal steps
+# - Make the 144-cell diagram in InkScape and add to docs.
+# - Storing possibly 9 edges from A to B.
+
 func _init(params: MovementParams).("jump_from_platform", params) -> void:
     self.can_traverse_edge = true
     self.can_traverse_to_air = true
@@ -153,87 +218,6 @@ func _calculate_steps_with_new_jump_height(global_calc_params: MovementCalcGloba
     
     return _calculate_steps_from_constraint(global_calc_params, local_calc_params)
 
-# FIXME: LEFT OFF HERE: -A ***************
-# - Problem: What if we hit a ceiling surface (still moving upwards)?
-#   - We'll set a constraint to either side.
-#   - Then we'll likely need to backtrack to use a bigger jump height.
-#   - On the backtracking traversal, we'll hit the same surface again.
-#     - Solution: We should always be allowed to hit ceiling surfaces again.
-#       - Which surfaces _aren't_ we allowed to hit again?
-#         - floor, left_wall, right_wall
-#       - Important: Double-check that if collision clips a static-collidable corner, that the
-#         correct surface is returned
-# - Problem: If we allow hitting a ceiling surface repeatedly, what happens if a jump ascent cannot
-#   get around it (cannot move horizontally far enough during the ascent)?
-#   - Solution: Afer calculating constraints for a surface collision, if it's a ceiling surface,
-#     check whether the time to move horizontally exceeds the time to move upward for either
-#     constraint. If so, abandon that traversal (remove the constraint from the array before
-#     calling the sub function).
-# - Optimization: We should never consider increased-height backtracking from hitting a ceiling
-#   surface.
-# - Problem: Need to add some small epsilon boost to calculation of minimum needed jump height.
-# - Problem: Can't base horizontal step time_start off of previous step's time_end.
-#   - Because horizontal steps end when the needed horizontal movement is done, not when the
-#       overall movement to the local destination is done.
-#     - That is, there can be some straight-down falling after one horizontal step before the next.
-#   - Solution: I think we need to add an additional parameter to MovementCalcStep for
-#     time_step_end vs time_instruction_end.
-#   - Important: Check whether we also need to ever use position_instruction_end, or if our current
-#     position_step_end is enough.
-#     - Rename position_end?
-#   - Also update the vertical step to use time_step_end, time_instruction_end, and
-#     position_step_end.
-# - Problem: Similar to the above, we need to add an additional check at the end of or after each
-#   call to _check_horizontal_step_for_collision to check for any remaining straight down/up
-#   vertical movement after the horizontal bit is done.
-#   - Probably make this as a separate call after _check_horizontal_step_for_collision?
-#     - That would give us a bit more info about whether the player was moving horizontally at all
-#       when colliding with a floor/ceiling, which in the future we could potentially use to
-#       optimize something or another... (e.g., whether we even need to bother considering either
-#       constraint without backtracking?)
-
-# FIXME: LEFT OFF HERE: A ***************
-# - Create a pause menu and a level switcher.
-# - Create some sort of configuration for specifying a level as well as the set of annotations to use.
-#   - Actually use this from the menu's level switcher.
-#   - Or should the level itself specify which annotations to use?
-# - Adapt one of the levels to just render a human player and then the annotations for all edges
-#   that our algorithm thinks the human player can traverse.
-#   - Try to render all of the interesting edge pairs that I think I should test for.
-# - 
-# - Will also want to record some other info for annotations/debugging:
-#   - Store on PlayerInstructions (but on MovementCalcStep first, during calculation?).
-#   - A polyline representation of the ultimate trajectory, including time-slice-testing and
-#     considering constraints.
-#   - The ultimate sequence of constraints that were used (these are actually just the start positions of each movementcalcstep).
-# - 
-# - Step through and double-check each return value parameter individually through the recursion, and each input parameter.
-# - 
-# - Optimize a bit for collisions with vertical surfaces:
-#   - For the top constraint, change the constraint position to instead use the far side of the
-#     adjacent top-side/floor surface.
-#   - This probably means I should store adjacent Surfaces when originally parsing the Surfaces.
-# - After completing all steps, re-visit each and think about whether the approach can be
-#   simplified now that we have our current way of thinking with total_duration being the basis
-#   for max_height and distance and ...
-# - Convert between iterative and recursive?
-# - Step through all parts and re-check for correctness.
-# - Account for half-width/height offset needed to clear the edge of B (if possible).
-# - Also, account for the half-width/height offset needed to not fall onto A.
-# - Include a margin around constraints and land position.
-# - Allow for the player to bump into walls/ceiling if they could still reach the land point
-#   afterward (will need to update logic to not include margin when accounting for these hits).
-# - Update the instructions calculations to consider actual discrete timesteps rather than
-#   using continuous algorithms.
-# - Share per-frame state updates logic between the instruction calculations and actual Player
-#   movements.
-# - 
-# - Make some diagrams in InkScape with surfaces, trajectories, and constraints to demonstrate
-#   algorithm traversal
-#   - Label/color-code parts to demonstrate separate traversal steps
-# - Make the 144-cell diagram in InkScape and add to docs.
-# - Storing possibly 9 edges from A to B.
-
 # FIXME: LEFT OFF HERE: B: Add support for maintaining horizontal speed when falling, and
 #        needing to push back the other way to slow it.
 
@@ -246,7 +230,6 @@ func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlobalPara
         local_calc_params: MovementCalcLocalParams) -> MovementCalcResults:
     ### BASE CASES
     
-    # FIXME: LEFT OFF HERE: -------A ***** I think we need to pass in the intended step_end time for this horizontal movement (as a field of local_calc_params?)
     var next_horizontal_step := _create_horizontal_step(local_calc_params)
     
     if next_horizontal_step == null:
@@ -344,7 +327,6 @@ func _calculate_steps_from_constraint_with_backtracking_on_height( \
     var local_calc_params_from_constraint: MovementCalcLocalParams
     var calc_results_to_constraint: MovementCalcResults
     var calc_results_from_constraint: MovementCalcResults
-    var previous_step: MovementCalcStep
     var duration_from_constraint: float
     
     # FIXME: LEFT OFF HERE: B: Add heuristics to pick the "better" constraint first.
@@ -358,14 +340,9 @@ func _calculate_steps_from_constraint_with_backtracking_on_height( \
             # The constraint is out of reach.
             continue
         
-        # FIXME: LEFT OFF HERE ----A ******* HERE
-        # - (add common util calculation for step-end time, given jump-instruction-end time)
-        
         # Update the total duration to include the fall duration after the constraint.
-        previous_step = calc_results_to_constraint.horizontal_steps.back()
-        duration_from_constraint = Geometry.solve_for_movement_duration( \
-                constraint.passing_point.y, local_calc_params.position_end.y, \
-                previous_step.velocity_end.y, params.gravity)
+        duration_from_constraint = _calculate_end_time_for_jumping_to_position( \
+                calc_results_to_constraint.vertical_step, local_calc_params.position_end)
         calc_results_to_constraint.vertical_step.time_step_end += duration_from_constraint
         _update_vertical_end_state_for_time(calc_results_to_constraint.vertical_step, \
                 calc_results_to_constraint.vertical_step, 
@@ -373,7 +350,8 @@ func _calculate_steps_from_constraint_with_backtracking_on_height( \
         
         # Recurse: Calculate movement from the constraint to the original destination.
         local_calc_params_from_constraint = MovementCalcLocalParams.new( \
-                constraint.passing_point, local_calc_params.position_end, previous_step, \
+                constraint.passing_point, local_calc_params.position_end, \
+                calc_results_to_constraint.horizontal_steps.back(), \
                 calc_results_to_constraint.vertical_step)
         calc_results_from_constraint = _calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_from_constraint)
@@ -475,7 +453,8 @@ func _calculate_vertical_step( \
     # - The duration to reach a lower destination.
     # - The duration to cover the horizontal displacement.
     var total_duration := max(max(duration_to_reach_upward_displacement, \
-            duration_to_reach_downward_displacement), duration_to_reach_horizontal_displacement)
+            duration_to_reach_downward_displacement), \
+            duration_to_reach_horizontal_displacement) + JUMP_DURATION_INCREASE_EPSILON
     
     # Given the total duration, calculate the time to release the jump button.
     # 
@@ -562,16 +541,13 @@ func _create_horizontal_step(local_calc_params: MovementCalcLocalParams) -> Move
     var step := MovementCalcStep.new()
     step.time_start = time_start
     step.time_instruction_end = time_end
-    step.time_step_end = INF
     step.position_start = position_start
     step.position_step_end = position_end
     step.velocity_start = Vector2(0.0, velocity_start.y)
     step.velocity_step_end = Vector2(0.0, INF)
     step.horizontal_movement_sign = horizontal_movement_sign
     _update_vertical_end_state_for_time(step, vertical_step, step.time_step_end, true)
-    
-    # FIXME: LEFT OFF HERE ----A ******* HERE
-    # - (add common util calculation for step-end time, given jump-instruction-end time)
+    step.time_step_end = _calculate_end_time_for_jumping_to_position(vertical_step, position_end)
     
     return step
 

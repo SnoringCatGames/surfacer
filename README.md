@@ -99,13 +99,14 @@ TODO
   - We know that a new recursive iteration can never collide with any of the Surfaces that any past
     iteration collided with. If it did, it would end up on a traversal branch that's identical to
     one we've already eliminated, which would lead to an infinite loop.
+  - The one exception is with ceiling surfaces. If we hit a ceiling surface again, it must be because we have backtracked to consider a higher jump height, and the traversal branches after this collision can be different than those of a previously eliminated traversal.
 
 #### TODO
 
 - We consider three potential points as our jump-off and land positions along a Surface: the near end, the far end, and the closest point.
   - We check for valid edge movement instructions along each potential jump/land position pair between the two Surfaces, and we save any edges that are valid.
     - This means we could potentially save nine edges between each pair of Surfaces.
-	- Having multiple edges between a given pair gives us more flexibility to choose a more natural and efficient path depending on where the player is coming from and going to.
+    - Having multiple edges between a given pair gives us more flexibility to choose a more natural and efficient path depending on where the player is coming from and going to.
   - We only consider the closest point if it is distint from near and far ends.
   - Also, we do allow degenerate Surfaces that consiste of only a single point, so we only consider the "far end" if it is not such a Surface.
 

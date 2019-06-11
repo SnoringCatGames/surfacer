@@ -293,9 +293,23 @@ func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
         output_step.position_instruction_end.y = position
         output_step.velocity_instruction_end.y = velocity
 
-# FIXME: LEFT OFF HERE: -----------------------------A *******
-# - How to know whether we are supposed to be ascending or descending when we hit this target
-#   position?
+# FIXME: LEFT OFF HERE: -----------------------------A ********
+# - How to know whether we are ascending or descending when we hit this target position?
+#   - Keep track of colliding surface in Constraint
+#   - Save constraint that we are going toward on local_params
+#   - pass local_parmas in to this function
+#   - if local_calc_params.end_constraint.surface.side == "floor":
+#     - Then we should return whichever time is before peak
+#   - floors are after peak
+#   - PROBLEM: what about walls?
+#     - I guess we can know time-to-collide-with-wall from horizontal acceleration/velocity,
+#       time_start of step, position_start of step, and position of constraint.
+#     - time-to-collide-with-wall is the step-end time
+#     - [ignore] But... wall's mean backtracking... or falling to the bottom constraint
+#     - Actually, horizontal movement isn't good, since the constraint is actually forcing us to result in a period of straight up or down motion to get around a corner
+#     - So, instead, we should just look at whether the wall constraint is at the top or bottom edge
+#     - If top, then we should be travelling upward when we hit it
+#     - If bottom, then we should be travelling downward when we hit it
 func _calculate_end_time_for_jumping_to_position( \
         vertical_step: MovementCalcStep, position: Vector2) -> float:
     # if position.y < vertical_step.position_instruction_end.y:
