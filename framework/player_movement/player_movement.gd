@@ -219,38 +219,38 @@ static func _calculate_constraints( \
             # Left end
             passing_point_a = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
-            constraint_a = MovementConstraint.new(passing_point_a, true, true)
+            constraint_a = MovementConstraint.new(colliding_surface, passing_point_a, true, true)
             # Right end
             passing_point_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
-            constraint_b = MovementConstraint.new(passing_point_b, true, false)
+            constraint_b = MovementConstraint.new(colliding_surface, passing_point_b, true, false)
         SurfaceSide.CEILING:
             # Left end
             passing_point_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
-            constraint_a = MovementConstraint.new(passing_point_a, true, true)
+            constraint_a = MovementConstraint.new(colliding_surface, passing_point_a, true, true)
             # Right end
             passing_point_b = colliding_surface.vertices[0] + \
                     Vector2(constraint_offset.x, constraint_offset.y)
-            constraint_b = MovementConstraint.new(passing_point_b, true, false)
+            constraint_b = MovementConstraint.new(colliding_surface, passing_point_b, true, false)
         SurfaceSide.LEFT_WALL:
             # Top end
             passing_point_a = colliding_surface.vertices[0] + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
-            constraint_a = MovementConstraint.new(passing_point_a, false, true)
+            constraint_a = MovementConstraint.new(colliding_surface, passing_point_a, false, true)
             # Bottom end
             passing_point_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(constraint_offset.x, constraint_offset.y)
-            constraint_b = MovementConstraint.new(passing_point_b, false, false)
+            constraint_b = MovementConstraint.new(colliding_surface, passing_point_b, false, false)
         SurfaceSide.RIGHT_WALL:
             # Top end
             passing_point_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
-            constraint_a = MovementConstraint.new(passing_point_a, false, true)
+            constraint_a = MovementConstraint.new(colliding_surface, passing_point_a, false, true)
             # Bottom end
             passing_point_b = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
-            constraint_b = MovementConstraint.new(passing_point_b, false, false)
+            constraint_b = MovementConstraint.new(colliding_surface, passing_point_b, false, false)
     
     return [constraint_a, constraint_b]
 
@@ -293,27 +293,88 @@ func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
         output_step.position_instruction_end.y = position
         output_step.velocity_instruction_end.y = velocity
 
-# FIXME: LEFT OFF HERE: -----------------------------A ********
-# - How to know whether we are ascending or descending when we hit this target position?
-#   - Keep track of colliding surface in Constraint
-#   - Save constraint that we are going toward on local_params
-#   - pass local_parmas in to this function
-#   - if local_calc_params.end_constraint.surface.side == "floor":
-#     - Then we should return whichever time is before peak
-#   - floors are after peak
-#   - PROBLEM: what about walls?
-#     - I guess we can know time-to-collide-with-wall from horizontal acceleration/velocity,
-#       time_start of step, position_start of step, and position of constraint.
-#     - time-to-collide-with-wall is the step-end time
-#     - [ignore] But... wall's mean backtracking... or falling to the bottom constraint
-#     - Actually, horizontal movement isn't good, since the constraint is actually forcing us to result in a period of straight up or down motion to get around a corner
-#     - So, instead, we should just look at whether the wall constraint is at the top or bottom edge
-#     - If top, then we should be travelling upward when we hit it
-#     - If bottom, then we should be travelling downward when we hit it
-func _calculate_end_time_for_jumping_to_position( \
-        vertical_step: MovementCalcStep, position: Vector2) -> float:
-    # if position.y < vertical_step.position_instruction_end.y:
-    return INF
+# Calculates the time at which the movement would travel through the given position given the
+# given vertical_step.
+func _calculate_end_time_for_jumping_to_position(vertical_step: MovementCalcStep, \
+        position: Vector2, upcoming_constraint: MovementConstraint, \
+        destination_surface: Surface) -> float:
+    var position_instruction_end := vertical_step.position_instruction_end
+    var velocity_instruction_end := vertical_step.velocity_instruction_end
+    
+    var target_height := position.y
+    var start_height := vertical_step.position_start.y
+    var slow_ascent_gravity := params.gravity * params.ascent_gravity_multiplier
+    
+    var duration_of_slow_ascent: float
+    var duration_of_fast_fall: float
+    
+    var surface := \
+            upcoming_constraint.surface if upcoming_constraint != null else destination_surface
+    
+    var is_position_before_instruction_end: bool
+    var is_position_before_peak: bool
+    
+    # FIXME: doc
+    match surface.side:
+        SurfaceSide.FLOOR:
+            # Jump reaches the position after releasing the jump button (and after the peak).
+            is_position_before_instruction_end = false
+            is_position_before_peak = false
+        SurfaceSide.CEILING:
+            # Jump reaches the position before the peak.
+            is_position_before_peak = true
+            
+            assert(target_height < start_height)
+            
+            if target_height > position_instruction_end.y:
+                # Jump reaches the position before releasing the jump button.
+                is_position_before_instruction_end = true
+            else:
+                # Jump reaches the position after releasing the jump button (but before the
+                # peak).
+                is_position_before_instruction_end = false
+        _: # A wall.
+            if upcoming_constraint != null:
+                # We are considering an intermediate constraint.
+                if upcoming_constraint.should_stay_on_min_side:
+                    # Passing over the top of the wall (jump reaches the position before the peak).
+                    is_position_before_peak = true
+                    
+                    # FIXME: Check whether the vertical_step calculations will have actually supported upward velocity at this point, or whether it will be forcing downward?
+                    
+                    if target_height > position_instruction_end.y:
+                        # We assume that we will always use upward velocity when passing over a
+                        # wall.
+                        # Jump reaches the position before releasing the jump button.
+                        is_position_before_instruction_end = true
+                    else:
+                        # We assume that we will always use downward velocity when passing under a
+                        # wall.
+                        # Jump reaches the position after releasing the jump button.
+                        is_position_before_instruction_end = false
+                else:
+                    # Passing under the bottom of the wall (jump reaches the position after
+                    # releasing the jump button and after the peak).
+                    is_position_before_instruction_end = false
+                    is_position_before_peak = false
+            else:
+                # We are considering a destination surface.
+                # We assume destination walls will always use downward velocity at the end.
+                is_position_before_instruction_end = false
+                is_position_before_peak = false
+    
+    if is_position_before_instruction_end:
+        duration_of_slow_ascent = Geometry.solve_for_movement_duration( \
+                start_height, target_height, params.jump_boost, slow_ascent_gravity, \
+                true, false)
+        duration_of_fast_fall = 0.0
+    else:
+        duration_of_slow_ascent = vertical_step.time_instruction_end
+        duration_of_fast_fall = Geometry.solve_for_movement_duration( \
+                position_instruction_end.y, target_height, velocity_instruction_end.y, \
+                params.gravity, is_position_before_peak, false)
+    
+    return duration_of_fast_fall + duration_of_slow_ascent
 
 func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     # TODO: Prevent duplicate work from finding matching surfaces as both nearby and fallable.

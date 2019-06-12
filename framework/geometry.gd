@@ -213,7 +213,7 @@ static func is_point_in_triangle(point: Vector2, a: Vector2, b: Vector2, c: Vect
     var u = (dot_ab_ab * dot_ac_ap - dot_ac_ab * dot_ab_ap) * inverse_denominator
     var v = (dot_ac_ac * dot_ab_ap - dot_ac_ab * dot_ac_ap) * inverse_denominator
     
-    return (u >= 0) && (v >= 0) && (u + v < 1)
+    return u >= 0 and v >= 0 and u + v < 1
 
 static func do_segment_and_triangle_intersect(segment_a: Vector2, segment_b: Vector2, \
         triangle_a: Vector2, triangle_b: Vector2, triangle_c: Vector2) -> bool:
@@ -582,8 +582,13 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
 
 # Calculates the duration to reach the destination with the given movement parameters.
 #
-# Returns INF if we cannot reach the destination with our movement parameters.
-static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: float) -> float:
+# - Since we are dealing with a parabolic equation, there are likely two possible results.
+#   returns_lower_result indicates whether to return the lower, non-negative result.
+# - expects_only_one_positive_result indicates whether to report an error if there are two
+#   positive results.
+# - Returns INF if we cannot reach the destination with our movement parameters.
+static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: float, \
+        returns_lower_result := true, expects_only_one_positive_result := false) -> float:
     # From a basic equation of motion:
     #     s = s_0 + v_0*t + 1/2*a*t^2.
     # Solve for t using the quadratic formula.
@@ -592,7 +597,21 @@ static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: flo
         # We can't reach the end position from our start position.
         return INF
     var discriminant_sqrt := sqrt(discriminant)
-    var t := (-v_0 + discriminant_sqrt) / a
-    if t < 0:
-        t = (-v_0 - discriminant_sqrt) / a
-    return t
+    var t1 := (-v_0 + discriminant_sqrt) / a
+    var t2 := (-v_0 - discriminant_sqrt) / a
+    
+    # Optionally ensure that only one result is positive.
+    assert(!expects_only_one_positive_result or t1 < 0 or t2 < 0)
+    # Ensure that there are not two negative results.
+    assert(t1 >= 0 or t2 >= 0)
+    
+    # Use only non-negative results.
+    if t1 < 0:
+        return t2
+    elif t2 < 0:
+        return t1
+    else:
+        if returns_lower_result:
+            return min(t1, t2)
+        else:
+            return max(t1, t2)

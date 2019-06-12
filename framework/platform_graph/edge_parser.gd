@@ -91,13 +91,9 @@ static func calculate_edges(space_state: Physics2DDirectSpaceState, surfaces: Ar
         player_info: PlayerTypeConfiguration) -> Dictionary:
     var edges := {}
     
-    for surface in surfaces:
-        edges[surface] = []
-    
     for movement_type in player_info.movement_types:
         if movement_type.can_traverse_edge:
             for surface in surfaces:
-                edges[surface].push_back( \
-                        movement_type.get_all_edges_from_surface(space_state, surface))
+                edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface)
     
     return edges
