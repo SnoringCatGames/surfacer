@@ -69,7 +69,7 @@ static func update_velocity_in_air( \
     velocity.y += delta * movement_params.gravity * gravity_multiplier
     
     # Horizontal movement.
-    velocity.x += movement_params.in_air_horizontal_acceleration * horizontal_movement_sign
+    velocity.x += delta * movement_params.in_air_horizontal_acceleration * horizontal_movement_sign
     
     return velocity
 
@@ -94,12 +94,117 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
     
     return velocity
 
-# Checks whether a collision would occur with any surface during the given horizontal step. This
+# Checks whether a collision would occur with any surface during the given instructions. This
 # is calculated by stepping through each physics frame, which should exactly emulate the actual
 # Player trajectory that would be used.
+func _check_instructions_for_collision(global_calc_params: MovementCalcGlobalParams, \
+        instructions: PlayerInstructions) -> SurfaceCollision:
+    var current_instruction_index := -1
+    var next_instruction: PlayerInstruction = instructions.instructions[0]
+    var delta := Utils.PHYSICS_TIME_STEP
+    var is_first_jump := true
+    # On average, an instruction set will start halfway through a physics frame, so let's use that
+    # average here.
+    var previous_time: float = instructions.instructions[0].time - Utils.PHYSICS_TIME_STEP / 2
+    var current_time := previous_time
+    var duration := instructions.duration
+    var is_pressing_left := false
+    var is_pressing_right := false
+    var is_pressing_jump := false
+    var horizontal_movement_sign := 0
+    var position := global_calc_params.position_start
+    var velocity := Vector2.ZERO
+    var has_started_instructions := false
+    var space_state := global_calc_params.space_state
+    var shape_query_params := global_calc_params.shape_query_params
+    var displacement: Vector2
+    var collision: SurfaceCollision
+    
+    # Record the position for edge annotation debugging.
+    var frame_positions := [position]
+    
+    # Iterate through each physics frame, checking each for a collision.
+    while current_time < duration:
+        # Update position for this frame, according to the velocity from the previous frame.
+        delta = Utils.PHYSICS_TIME_STEP
+        previous_time = current_time
+        current_time += delta
+        displacement = velocity * delta
+        shape_query_params.transform = Transform2D(0.0, position)
+        shape_query_params.motion = displacement
+        position += displacement
+        
+        # Check for collision.
+        collision = check_frame_for_collision(space_state, shape_query_params)
+        if collision != null:
+            instructions.frame_positions = PoolVector2Array(frame_positions)
+            return collision
+        
+        # This point corresponds to when Player._physics_process would be called:
+        # - The position for the current frame has been calculated from the previous frame's velocity.
+        # - Any collision state has been calculated.
+        # - We can now check whether inputs have changed.
+        # - We can now calculate the velocity for the current frame.
+        
+        while next_instruction != null and next_instruction.time < current_time:
+            current_instruction_index += 1
+            
+            match next_instruction.input_key:
+                "jump":
+                    is_pressing_jump = next_instruction.is_pressed
+                "move_left":
+                    is_pressing_left = next_instruction.is_pressed
+                    horizontal_movement_sign = -1 if is_pressing_left else 0
+                "move_right":
+                    is_pressing_right = next_instruction.is_pressed
+                    horizontal_movement_sign = 1 if is_pressing_right else 0
+                _:
+                    Utils.error()
+            
+            
+            next_instruction = instructions.instructions[current_instruction_index + 1] if \
+                    current_instruction_index + 1 < instructions.instructions.size() else null
+        
+        if !has_started_instructions:
+            has_started_instructions = true
+            # When we start executing the instruction set, the current elapsed time of the
+            # instruction set will be less than a full frame. So we use a delta that represents the
+            # actual time the instruction set should have been running for so far.
+            delta = current_time - instructions.instructions[0].time
+        
+        # Update velocity for the next frame.
+        velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
+                horizontal_movement_sign, params)
+        velocity = cap_velocity(velocity, params)
+
+        # Record the position for edge annotation debugging.
+        frame_positions.push_back(position)
+    
+    # Check the last frame that puts us up to end_time.
+    delta = duration - current_time
+    displacement = velocity * delta
+    shape_query_params.transform = Transform2D(0.0, position)
+    shape_query_params.motion = displacement
+    collision = check_frame_for_collision(space_state, shape_query_params)
+    if collision != null:
+        instructions.frame_positions = PoolVector2Array(frame_positions)
+        return collision
+    
+    # Record the position for edge annotation debugging.
+    frame_positions.push_back(position + displacement)
+    instructions.frame_positions = PoolVector2Array(frame_positions)
+    
+    return null
+
+# Checks whether a collision would occur with any surface during the given horizontal step. This
+# is calculated by stepping through each physics frame, which should exactly emulate the actual
+# Player trajectory that would be used. The main error with this approach is that successive steps
+# will be tested with their start time perfectly aligned to a physics frame boundary, but when
+# executing a resulting instruction set, the physics frame boundaries will line up at different
+# times.
 func _check_horizontal_step_for_collision( \
         global_calc_params: MovementCalcGlobalParams, local_calc_params: MovementCalcLocalParams, \
-        horizontal_step: MovementCalcStep) -> Surface:
+        horizontal_step: MovementCalcStep) -> SurfaceCollision:
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
     var previous_time := horizontal_step.time_start
@@ -111,13 +216,11 @@ func _check_horizontal_step_for_collision( \
     var jump_instruction_end_time := local_calc_params.vertical_step.time_instruction_end
     var is_pressing_jump := jump_instruction_end_time > current_time
     var is_pressing_move_horizontal := horizontal_instruction_end_time > current_time
+    var horizontal_movement_sign := 0
     var space_state := global_calc_params.space_state
     var shape_query_params := global_calc_params.shape_query_params
     var displacement: Vector2
-    var colliding_surface: Surface
-    
-    # Record the position for edge annotation debugging.
-    horizontal_step.frame_positions.push_back(position)
+    var collision: SurfaceCollision
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
@@ -127,46 +230,41 @@ func _check_horizontal_step_for_collision( \
         displacement = velocity * delta
         shape_query_params.transform = Transform2D(0.0, position)
         shape_query_params.motion = displacement
+        position += displacement
         
         # Check for collision.
-        colliding_surface = check_frame_for_collision(space_state, shape_query_params)
-        if colliding_surface != null:
-            return colliding_surface
-        
-        position += displacement
+        collision = check_frame_for_collision(space_state, shape_query_params)
+        if collision != null:
+            return collision
         
         # Determine whether the jump button is still being pressed.
         is_pressing_jump = jump_instruction_end_time > current_time
         
         # Determine whether the horizontal movement button is still being pressed.
         is_pressing_move_horizontal = horizontal_instruction_end_time > current_time
+        horizontal_movement_sign = \
+                horizontal_step.horizontal_movement_sign if is_pressing_move_horizontal else 0
         
         # Update velocity for the next frame.
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
-                horizontal_step.horizontal_movement_sign, params)
+                horizontal_movement_sign, params)
         velocity = cap_velocity(velocity, params)
-        
-        # Record the position for edge annotation debugging.
-        horizontal_step.frame_positions.push_back(position)
     
     # Check the last frame that puts us up to end_time.
     delta = step_end_time - current_time
     displacement = velocity * delta
     shape_query_params.transform = Transform2D(0.0, position)
     shape_query_params.motion = displacement
-    colliding_surface = check_frame_for_collision(space_state, shape_query_params)
-    if colliding_surface != null:
-        return colliding_surface
-    
-    # Record the position for edge annotation debugging.
-    horizontal_step.frame_positions.push_back(position + displacement)
+    collision = check_frame_for_collision(space_state, shape_query_params)
+    if collision != null:
+        return collision
     
     return null
 
 # Determines whether the given motion of the given shape would collide with a surface. If a
 # collision would occur, this returns the surface; otherwise, this returns null.
 func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
-        shape_query_params: Physics2DShapeQueryParameters) -> Surface:
+        shape_query_params: Physics2DShapeQueryParameters) -> SurfaceCollision:
     # FIXME: B: Check whether all of the level setup must be called from within an early
     #   _physics_process callback (space might have a lock otherwise)?
     
@@ -180,6 +278,8 @@ func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     var to := collision_point + direction * 1000000
     var collision := space_state.intersect_ray(from, to, shape_query_params.exclude, \
             shape_query_params.collision_layer)
+    assert(collision.position == collision_point)
+    collision_point = collision.position
     
     var side: int
     var is_touching_floor := false
@@ -205,7 +305,9 @@ func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             is_touching_left_wall, is_touching_right_wall)
     var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord(tile_map_coord, tile_map)
     
-    return surface_parser.get_surface_for_tile(tile_map, tile_map_index, side)
+    var surface := surface_parser.get_surface_for_tile(tile_map, tile_map_index, side)
+    
+    return SurfaceCollision.new(surface, collision_point)
 
 static func _calculate_constraints( \
         colliding_surface: Surface, constraint_offset: Vector2) -> Array:
@@ -259,6 +361,7 @@ static func _calculate_constraints( \
 # step-end state or instruction-end state depending on is_step_end_time.
 func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
         vertical_step: MovementCalcStep, time: float, is_step_end_time: bool) -> void:
+    # FIXME: LEFT OFF HERE: B: Account for max y velocity when calculating any parabolic motion.
     var slow_ascent_gravity := params.gravity * params.ascent_gravity_multiplier
     var slow_ascent_end_time := min(time, vertical_step.time_instruction_end)
     
@@ -314,7 +417,9 @@ func _calculate_end_time_for_jumping_to_position(vertical_step: MovementCalcStep
     var is_position_before_instruction_end: bool
     var is_position_before_peak: bool
     
-    # FIXME: doc
+    # We need to know whether the position corresponding to the rising or falling sides of the jump
+    # parabola, and whether the position correpsonds to before or after the jump button is
+    # released.
     match surface.side:
         SurfaceSide.FLOOR:
             # Jump reaches the position after releasing the jump button (and after the peak).
@@ -340,7 +445,9 @@ func _calculate_end_time_for_jumping_to_position(vertical_step: MovementCalcStep
                     # Passing over the top of the wall (jump reaches the position before the peak).
                     is_position_before_peak = true
                     
-                    # FIXME: Check whether the vertical_step calculations will have actually supported upward velocity at this point, or whether it will be forcing downward?
+                    # FIXME: Double-check whether the vertical_step calculations will have actually
+                    #        supported upward velocity at this point, or whether it will be forcing
+                    #        downward?
                     
                     if target_height > position_instruction_end.y:
                         # We assume that we will always use upward velocity when passing over a

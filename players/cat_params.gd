@@ -46,7 +46,7 @@ func _create_movement_params() -> MovementParams:
     movement_params.ascent_double_jump_gravity_multiplier = 0.68
     
     movement_params.jump_boost = -1000.0
-    movement_params.in_air_horizontal_acceleration = 300.0
+    movement_params.in_air_horizontal_acceleration = 3200.0
     movement_params.max_jump_chain = 2
     movement_params.wall_jump_horizontal_multiplier = 0.5
     
@@ -56,7 +56,7 @@ func _create_movement_params() -> MovementParams:
     
     movement_params.max_horizontal_speed_default = 400.0
     movement_params.current_max_horizontal_speed = movement_params.max_horizontal_speed_default
-    movement_params.min_horizontal_speed = 50.0
+    movement_params.min_horizontal_speed = 5.0
     movement_params.max_vertical_speed = 4000.0
     movement_params.min_vertical_speed = 0.0
     

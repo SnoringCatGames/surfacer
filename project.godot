@@ -255,6 +255,11 @@ _global_script_classes=[ {
 "path": "res://framework/platform_graph/surface.gd"
 }, {
 "base": "Reference",
+"class": "SurfaceCollision",
+"language": "GDScript",
+"path": "res://framework/player_movement/surface_collision.gd"
+}, {
+"base": "Reference",
 "class": "SurfaceParser",
 "language": "GDScript",
 "path": "res://framework/platform_graph/surface_parser.gd"
@@ -324,6 +329,7 @@ _global_script_class_icons={
 "SquirrelPlayer": "",
 "Stopwatch": "",
 "Surface": "",
+"SurfaceCollision": "",
 "SurfaceParser": "",
 "SurfaceSide": "",
 "TileAnnotator": "",

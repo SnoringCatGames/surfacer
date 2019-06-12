@@ -3,13 +3,13 @@ extends Reference
 class_name PlayerInstruction
 
 var input_key: String
-var time: int
+var time: float
 # Optional
 var is_pressed: bool
 # Optional
 var position: Vector2
 
-func _init(input_key: String, time: int, is_pressed: bool = false, \
+func _init(input_key: String, time: float, is_pressed: bool = false, \
         position := Vector2.INF) -> void:
     self.input_key = input_key
     self.time = time

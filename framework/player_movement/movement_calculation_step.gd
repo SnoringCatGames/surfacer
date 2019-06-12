@@ -43,7 +43,3 @@ var velocity_step_end: Vector2
 var velocity_instruction_end: Vector2
 
 var horizontal_movement_sign: int
-
-# For annotation debugging.
-# Array<Vector2>
-var frame_positions := []

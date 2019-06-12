@@ -4,9 +4,11 @@ class_name Utils
 # In seconds.
 const PHYSICS_TIME_STEP := 1 / 60.0
 
-static func error(message: String) -> void:
+const IN_DEV_MODE := true
+
+static func error(message := "An error occurred") -> void:
     print("ERROR: %s" % message)
-    assert(true)
+    assert(false)
 
 # TODO: Replace this with any built-in feature whenever it exists
 #       (https://github.com/godotengine/godot/issues/4715).

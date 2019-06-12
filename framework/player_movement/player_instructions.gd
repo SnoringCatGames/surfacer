@@ -3,7 +3,7 @@ class_name PlayerInstructions
 
 # Array<PlayerInstruction>
 var instructions: Array
-var duration: int
+var duration: float
 var distance: float
 
 # For annotation debugging.
@@ -13,12 +13,11 @@ var frame_positions: PoolVector2Array
 var constraint_positions: PoolVector2Array
 
 # Instructions don't need to be pre-sorted.
-func _init(instructions: Array, duration: int, distance: float, frame_positions: Array, \
+func _init(instructions: Array, duration: float, distance: float, \
         constraint_positions: Array) -> void:
     self.instructions = instructions
     self.duration = duration
     self.distance = distance
-    self.frame_positions = PoolVector2Array(frame_positions)
     self.constraint_positions = PoolVector2Array(constraint_positions)
     
     self.instructions.sort_custom(self, "instruction_comparator")

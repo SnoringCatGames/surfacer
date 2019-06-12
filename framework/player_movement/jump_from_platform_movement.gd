@@ -14,8 +14,10 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 # FIXME: LEFT OFF HERE: D ******** Tweak this
 const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
 
+const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
+
 # FIXME: LEFT OFF HERE: -A ***************
-# - Add in horizontal acceleration
+# - Test anything else with our PlayerInstruction test?
 # - 
 # - Problem: What if we hit a ceiling surface (still moving upwards)?
 #   - We'll set a constraint to either side.
@@ -34,8 +36,7 @@ const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
 #     calling the sub function).
 # - Optimization: We should never consider increased-height backtracking from hitting a ceiling
 #   surface.
-
-# FIXME: LEFT OFF HERE: A ***************
+# - 
 # - Create a pause menu and a level switcher.
 # - Create some sort of configuration for specifying a level as well as the set of annotations to use.
 #   - Actually use this from the menu's level switcher.
@@ -119,6 +120,9 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
         # would be better handled by some other PlayerMovement type, so we don't handle those
         # cases here.
         
+        if a == b:
+            continue
+        
         global_calc_params.destination_surface = b
         
         b_start = b.vertices[0]
@@ -172,7 +176,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
                 possible_jump_land_pairs.push_back(possible_jump_point)
                 possible_jump_land_pairs.push_back(possible_land_point)
         
-        # FIXME: LEFT OFF HERE: A *********** Remove. This is for debugging.
+        # FIXME: LEFT OFF HERE: D *********** Remove. This is for debugging.
         if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
             continue
         else:
@@ -215,7 +219,30 @@ func _calculate_jump_instructions( \
     if calc_results == null:
         return null
     
-    return _convert_calculation_steps_to_player_instructions(global_calc_params, calc_results)
+    var instructions := \
+            _convert_calculation_steps_to_player_instructions(global_calc_params, calc_results)
+    
+    if Utils.IN_DEV_MODE:
+        _test_instructions(instructions, global_calc_params)
+    
+    return instructions
+
+# Test that the given instructions were created correctly.
+func _test_instructions(instructions: PlayerInstructions, \
+        global_calc_params: MovementCalcGlobalParams) -> bool:
+    assert(instructions.instructions.size() > 0)
+    assert(instructions.instructions.size() % 2 == 0)
+    
+    assert(instructions.instructions[0].time == 0.0)
+    
+    var collision := _check_instructions_for_collision(global_calc_params, instructions)
+    assert(collision == null or collision.surface == global_calc_params.destination_surface)
+    var final_frame_position := instructions.frame_positions[instructions.frame_positions.size() - 1]
+    # FIXME: LEFT OFF HERE: ---------------A
+#    assert(final_frame_position.distance_squared_to(global_calc_params.position_end) < \
+#            VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD)
+    
+    return true
 
 # Calculates movement steps to reach the given destination.
 # 
@@ -238,9 +265,6 @@ func _calculate_steps_with_new_jump_height(global_calc_params: MovementCalcGloba
     
     return _calculate_steps_from_constraint(global_calc_params, local_calc_params)
 
-# FIXME: LEFT OFF HERE: B: Add support for maintaining horizontal speed when falling, and
-#        needing to push back the other way to slow it.
-
 # Recursively calculates a list of movement steps to reach the given destination.
 # 
 # Normally, this function deals with horizontal movement steps. However, if we find that a
@@ -256,15 +280,15 @@ func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlobalPara
         # The destination is out of reach.
         return null
     
-    var colliding_surface := _check_horizontal_step_for_collision(global_calc_params, \
-            local_calc_params, next_horizontal_step)
+    var collision := _check_horizontal_step_for_collision(global_calc_params, local_calc_params, \
+            next_horizontal_step)
     
-    if colliding_surface == null or colliding_surface == global_calc_params.destination_surface:
+    if collision == null or collision.surface == global_calc_params.destination_surface:
         # There is no intermediate surface interfering with this movement, or we've reached the
         # destination surface.
         return MovementCalcResults.new([next_horizontal_step], local_calc_params.vertical_step)
     
-    if global_calc_params.collided_surfaces.has(colliding_surface):
+    if global_calc_params.collided_surfaces.has(collision.surface):
         # We've already considered a collision with this surface, so this movement won't work.
         # Without this check, we'd recurse through a traversal branch that is identical to one
         # we've already considered, and we'd loop infinitely.
@@ -272,12 +296,12 @@ func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlobalPara
     
     ### RECURSIVE CASES
     
-    global_calc_params.collided_surfaces[colliding_surface] = true
+    global_calc_params.collided_surfaces[collision.surface] = true
     
     # Calculate possible constraints to divert the movement around either side of the colliding
     # surface.
     var constraints := \
-            _calculate_constraints(colliding_surface, global_calc_params.constraint_offset)
+            _calculate_constraints(collision.surface, global_calc_params.constraint_offset)
     
     # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := _calculate_steps_from_constraint_without_backtracking_on_height( \
@@ -417,6 +441,14 @@ func _calculate_vertical_step( \
     if min_vertical_displacement > total_displacement.y:
         return null
     
+    var horizontal_movement_sign: int
+    if total_displacement.x < 0:
+        horizontal_movement_sign = -1
+    elif total_displacement.x > 0:
+        horizontal_movement_sign = 1
+    else:
+        horizontal_movement_sign = 0
+    
     var slow_ascent_gravity := params.gravity * params.ascent_gravity_multiplier
     
     # Calculate how long it will take for the jump to reach some minimum peak height.
@@ -467,9 +499,10 @@ func _calculate_vertical_step( \
     else:
         duration_to_reach_downward_displacement = 0.0
     
-    # FIXME: LEFT OFF HERE: B: Account for horizontal acceleration.
-    var duration_to_reach_horizontal_displacement := \
-            abs(total_displacement.x / params.max_horizontal_speed_default)
+    # FIXME: LEFT OFF HERE: B: Account for max x velocity.
+    var duration_to_reach_horizontal_displacement: float = Geometry.solve_for_movement_duration( \
+            position_start.x, position_end.x, 0.0, \
+            params.in_air_horizontal_acceleration * horizontal_movement_sign, true, true)
     
     # How high we need to jump is determined by the greatest of three durations:
     # - The duration to reach the minimum peak height (i.e., how high upward we must jump to reach
@@ -530,7 +563,7 @@ func _calculate_vertical_step( \
     step.position_step_end = Vector2.INF
     step.velocity_start = Vector2(0, params.jump_boost)
     step.velocity_step_end = Vector2.INF
-    step.horizontal_movement_sign = 0
+    step.horizontal_movement_sign = horizontal_movement_sign
     _update_vertical_end_state_for_time(step, step, step.time_step_end, true)
     _update_vertical_end_state_for_time(step, step, step.time_instruction_end, false)
     
@@ -561,14 +594,6 @@ func _create_horizontal_step(local_calc_params: MovementCalcLocalParams, \
     var time_remaining := vertical_step.time_step_end - time_start
     var displacement: Vector2 = position_end - position_start
     
-    # FIXME: LEFT OFF HERE: B: Account for horizontal acceleration (and velocity_start).
-    var duration_for_horizontal_displacement := \
-            abs(displacement.x / params.max_horizontal_speed_default)
-    
-    # Check whether the horizontal displacement is possible.
-    if time_remaining < duration_for_horizontal_displacement:
-        return null
-    
     var horizontal_movement_sign: int
     if displacement.x < 0:
         horizontal_movement_sign = -1
@@ -576,6 +601,15 @@ func _create_horizontal_step(local_calc_params: MovementCalcLocalParams, \
         horizontal_movement_sign = 1
     else:
         horizontal_movement_sign = 0
+    
+    # FIXME: LEFT OFF HERE: B: Account for max x velocity.
+    var duration_for_horizontal_displacement: float = Geometry.solve_for_movement_duration( \
+            position_start.x, position_end.x, 0.0, \
+            params.in_air_horizontal_acceleration * horizontal_movement_sign, true, true)
+    
+    # Check whether the horizontal displacement is possible.
+    if time_remaining < duration_for_horizontal_displacement:
+        return null
     
     var time_end := time_start + duration_for_horizontal_displacement
     
@@ -604,7 +638,6 @@ func _convert_calculation_steps_to_player_instructions( \
     
     var distance := global_calc_params.position_start.distance_to(global_calc_params.position_end)
     
-    var frame_positions := []
     var constraint_positions := []
     
     var instructions := []
@@ -630,10 +663,9 @@ func _convert_calculation_steps_to_player_instructions( \
         
         # Keep track of some info for edge annotation debugging.
         constraint_positions.push_back(step.position_start)
-        Utils.concat(frame_positions, step.frame_positions)
     
     return PlayerInstructions.new(instructions, vertical_step.time_step_end, distance, \
-            frame_positions, constraint_positions)
+            constraint_positions)
 
 func get_max_upward_distance() -> float:
     return -(params.jump_boost * params.jump_boost) / 2 / \

@@ -589,6 +589,7 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
 # - Returns INF if we cannot reach the destination with our movement parameters.
 static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: float, \
         returns_lower_result := true, expects_only_one_positive_result := false) -> float:
+    # FIXME: LEFT OFF HERE: B: Account for max y velocity when calculating any parabolic motion.
     # From a basic equation of motion:
     #     s = s_0 + v_0*t + 1/2*a*t^2.
     # Solve for t using the quadratic formula.
