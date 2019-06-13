@@ -483,6 +483,93 @@ func _calculate_end_time_for_jumping_to_position(vertical_step: MovementCalcStep
     
     return duration_of_fast_fall + duration_of_slow_ascent
 
+# Calculates the duration to accelerate over in order to reach the destination at the given time,
+# given that velocity continues after acceleration stops and a new backward acceleration is
+# applied.
+static func _calculate_time_to_release_acceleration(step_end_time: float, position_start: float, \
+        position_end: float, velocity_start: float, acceleration_start: float, \
+        post_release_backward_acceleration: float, returns_lower_result := true, \
+        expects_only_one_positive_result := false) -> float:
+    # Derivation:
+    # - Start with basic equations of motion
+    # - v_1 = v_0 + a_0*t_0
+    # - s_2 = s_1 + v_1*t_1 + 1/2*a_1*t_1^2
+    # - t_2 = t_0 + t_1
+    # - s_2 = s_0 + s_1
+    # - Do some algebra...
+    # - 0 = (1/2*a_1 - a_0)*t_0^2 + (a_0*t_2 - a_1*t_2 - v_0)*t_0 + (1/2*a_1*t_2^2 + v_0*t_2 - s_0)
+    # - Apply quadratic formula to solve for t_0.
+    var a := 0.5 * post_release_backward_acceleration - acceleration_start
+    var b := acceleration_start * step_end_time - \
+            post_release_backward_acceleration * step_end_time - velocity_start
+    var c := 0.5 * post_release_backward_acceleration * step_end_time * step_end_time + \
+            velocity_start * step_end_time - position_start
+    
+    # This would produce a divide-by-zero.
+    assert(a != 0)
+    
+    var discriminant := b * b - 4 * a * c
+    if discriminant < 0:
+        # We can't reach the end position from our start position.
+        return INF
+    var discriminant_sqrt := sqrt(discriminant)
+    var t1 := (-b + discriminant_sqrt) / 2 / a
+    var t2 := (-b - discriminant_sqrt) / 2 / a
+    
+    # Optionally ensure that only one result is positive.
+    assert(!expects_only_one_positive_result or t1 < 0 or t2 < 0)
+    # Ensure that there are not two negative results.
+    assert(t1 >= 0 or t2 >= 0)
+    
+    # Use only non-negative results.
+    if t1 < 0:
+        return t2
+    elif t2 < 0:
+        return t1
+    else:
+        if returns_lower_result:
+            return min(t1, t2)
+        else:
+            return max(t1, t2)
+
+# Calculates the minimum required time to reach the destination, considering a maximum velocity.
+static func _calculate_min_time_to_reach_position(position_start: float, position_end: float, \
+        velocity_start: float, velocity_max: float, acceleration: float) -> float:
+    var duration_to_reach_position_with_no_velocity_cap: float = \
+            Geometry.solve_for_movement_duration( \
+                    position_start, position_end, velocity_start, acceleration, true, true)
+    
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    var duration_to_reach_max_velocity := (velocity_max - velocity_start) / acceleration
+    
+    if duration_to_reach_max_velocity > duration_to_reach_position_with_no_velocity_cap:
+        # We won't have hit the max velocity before reaching the destination.
+        return duration_to_reach_position_with_no_velocity_cap
+    else:
+        # We will have hit the max velocity before reaching the destination.
+        
+        # From a basic equation of motion:
+        #     s = s_0 + v_0*t + 1/2*a*t^2
+        var position_when_reaching_max_velocity := position_start + \
+                velocity_start * duration_to_reach_max_velocity + \
+                0.5 * acceleration * duration_to_reach_max_velocity * \
+                        duration_to_reach_max_velocity
+        
+        # From a basic equation of motion:
+        #     s = s_0 + v*t
+        var duration_with_max_velocity := \
+                (position_end - position_when_reaching_max_velocity) / velocity_max
+        
+        return duration_to_reach_max_velocity + duration_with_max_velocity
+
+
+
+
+
+
+
+
 func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     # TODO: Prevent duplicate work from finding matching surfaces as both nearby and fallable.
     var results := _get_nearby_surfaces(origin_surface, SURFACE_CLOSE_DISTANCE_THRESHOLD, surfaces)

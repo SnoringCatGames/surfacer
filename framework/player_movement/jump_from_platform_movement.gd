@@ -17,6 +17,19 @@ const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
 # FIXME: LEFT OFF HERE: -A ***************
+# - Add actual unit tests
+#     - There is too much subtle complexity and too many edge cases to have any confidence in correctness otherwise
+#     - Google how others have shoe-horned tests into Godot before... Or just add my own system.
+#   - Create a file with a collection of simple helpers utilities
+#     - 
+#   - Enumerate areas/work-flows/methods to test, then enumerate specific edge cases within each of those
+#     - 
+#   - Implement tests
+# - 
+# - Debugging:
+#   - Would it help to add some quick and easy annotation helpers for temp debugging that I can access on global (or wherever) and just tell to render dots/lines/circles?
+#   - Then I could use that to render all sorts of temp calculation stuff from this file.
+# - 
 # - Test anything else with our PlayerInstruction test?
 # - 
 # - Problem: What if we hit a ceiling surface (still moving upwards)?
@@ -499,10 +512,10 @@ func _calculate_vertical_step( \
     else:
         duration_to_reach_downward_displacement = 0.0
     
-    # FIXME: LEFT OFF HERE: B: Account for max x velocity.
-    var duration_to_reach_horizontal_displacement: float = Geometry.solve_for_movement_duration( \
+    var duration_to_reach_horizontal_displacement := _calculate_min_time_to_reach_position( \
             position_start.x, position_end.x, 0.0, \
-            params.in_air_horizontal_acceleration * horizontal_movement_sign, true, true)
+            params.max_horizontal_speed_default, \
+            params.in_air_horizontal_acceleration * horizontal_movement_sign)
     
     # How high we need to jump is determined by the greatest of three durations:
     # - The duration to reach the minimum peak height (i.e., how high upward we must jump to reach
@@ -576,6 +589,10 @@ func _create_horizontal_step(local_calc_params: MovementCalcLocalParams, \
     var vertical_step := local_calc_params.vertical_step
     var position_end := local_calc_params.position_end
     
+    var time_step_end := _calculate_end_time_for_jumping_to_position( \
+            vertical_step, position_end, local_calc_params.upcoming_constraint, \
+            global_calc_params.destination_surface)
+    
     # Get some start state from the previous step.
     var time_start: float
     var position_start: Vector2
@@ -602,29 +619,39 @@ func _create_horizontal_step(local_calc_params: MovementCalcLocalParams, \
     else:
         horizontal_movement_sign = 0
     
+    # FIXME: Problem: Sometimes, the following step may require a minimum or maiximum starting
+    #        velocity in order to reach it's constraint. Right now, this isn't paying much
+    #        attention to the end velocity; if time_instruction_end < time_step_end, then we could
+    #        manipulate things to increase or decrease the end velocity.
+    
+    # TODO: Pass-in a post-release backward acceleration?
+    # - It might make motion feel snappier/more-efficient.
+    # - It would require updating each horizontal MovementCalcSteps to result in a second
+    #   PlayerInstruction pair for pressing the opposition direction for the remaining time between
+    #   time_instruction_end and time_step_end.
+    
     # FIXME: LEFT OFF HERE: B: Account for max x velocity.
-    var duration_for_horizontal_displacement: float = Geometry.solve_for_movement_duration( \
-            position_start.x, position_end.x, 0.0, \
-            params.in_air_horizontal_acceleration * horizontal_movement_sign, true, true)
+    
+    var duration_for_horizontal_acceleration := _calculate_time_to_release_acceleration( \
+            time_step_end, position_start.x, position_end.x, velocity_start.x, \
+            params.in_air_horizontal_acceleration * horizontal_movement_sign, 0.0, true, false)
     
     # Check whether the horizontal displacement is possible.
-    if time_remaining < duration_for_horizontal_displacement:
+    if time_remaining < duration_for_horizontal_acceleration:
         return null
     
-    var time_end := time_start + duration_for_horizontal_displacement
+    var time_instruction_end := time_start + duration_for_horizontal_acceleration
     
     var step := MovementCalcStep.new()
     step.time_start = time_start
-    step.time_instruction_end = time_end
+    step.time_instruction_end = time_instruction_end
+    step.time_step_end = time_step_end
     step.position_start = position_start
     step.position_step_end = position_end
     step.velocity_start = Vector2(0.0, velocity_start.y)
     step.velocity_step_end = Vector2(0.0, INF)
     step.horizontal_movement_sign = horizontal_movement_sign
     _update_vertical_end_state_for_time(step, vertical_step, step.time_step_end, true)
-    step.time_step_end = _calculate_end_time_for_jumping_to_position( \
-            vertical_step, position_end, local_calc_params.upcoming_constraint, \
-            global_calc_params.destination_surface)
     
     return step
 
@@ -662,7 +689,7 @@ func _convert_calculation_steps_to_player_instructions( \
         i += 1
         
         # Keep track of some info for edge annotation debugging.
-        constraint_positions.push_back(step.position_start)
+        constraint_positions.push_back(step.position_step_end)
     
     return PlayerInstructions.new(instructions, vertical_step.time_step_end, distance, \
             constraint_positions)
