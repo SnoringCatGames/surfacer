@@ -269,6 +269,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/surface_side.gd"
 }, {
+"base": "HumanPlayer",
+"class": "TestPlayer",
+"language": "GDScript",
+"path": "res://framework/test/test_data/test_player.gd"
+}, {
+"base": "PlayerParams",
+"class": "TestPlayerParams",
+"language": "GDScript",
+"path": "res://framework/test/test_data/test_player_params.gd"
+}, {
 "base": "Node2D",
 "class": "TileAnnotator",
 "language": "GDScript",
@@ -332,6 +342,8 @@ _global_script_class_icons={
 "SurfaceCollision": "",
 "SurfaceParser": "",
 "SurfaceSide": "",
+"TestPlayer": "",
+"TestPlayerParams": "",
 "TileAnnotator": "",
 "Utils": ""
 }
@@ -348,6 +360,10 @@ Utils="*res://framework/utils.gd"
 Geometry="*res://framework/geometry.gd"
 DrawUtils="*res://framework/draw_utils.gd"
 Global="*res://framework/global.gd"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "gut" )
 
 [input]
 

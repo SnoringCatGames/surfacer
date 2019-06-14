@@ -17,9 +17,10 @@ const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
 # FIXME: LEFT OFF HERE: -A ***************
-# - Add actual unit tests
-#     - There is too much subtle complexity and too many edge cases to have any confidence in correctness otherwise
-#     - Google how others have shoe-horned tests into Godot before... Or just add my own system.
+# - Tests
+#   - Choose a better name for helpers/ and to prefix levels and player
+#   - Figure out how to render the boundaries of a collision shape
+#   - Create the test Player and test Levels
 #   - Create a file with a collection of simple helpers utilities
 #     - 
 #   - Enumerate areas/work-flows/methods to test, then enumerate specific edge cases within each of those
@@ -29,6 +30,10 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 # - Debugging:
 #   - Would it help to add some quick and easy annotation helpers for temp debugging that I can access on global (or wherever) and just tell to render dots/lines/circles?
 #   - Then I could use that to render all sorts of temp calculation stuff from this file.
+#   - Add an annotation for tracing the players recent center positions.
+#   - Try rendering a path for trajectory that's closen to the calculations for parabolic motion instead of the resulting instruction positions?
+#     - Might help to see the significance of the difference.
+#     - Might be able to do this with smaller step sizes?
 # - 
 # - Test anything else with our PlayerInstruction test?
 # - 

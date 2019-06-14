@@ -9,7 +9,7 @@
 script = ExtResource( 1 )
 
 [node name="WallsAndFloors" type="TileMap" parent="." groups=[
-"collidables",
+"surfaces",
 ]]
 position = Vector2( 1280, 1280 )
 tile_set = ExtResource( 2 )

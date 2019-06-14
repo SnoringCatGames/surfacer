@@ -2,6 +2,7 @@ extends Node
 class_name Utils
 
 # In seconds.
+# FIXME: Test that this is the step-size that is actually used.
 const PHYSICS_TIME_STEP := 1 / 60.0
 
 const IN_DEV_MODE := true

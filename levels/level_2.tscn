@@ -8,7 +8,7 @@
 script = ExtResource( 1 )
 
 [node name="WallsAndFloors" type="TileMap" parent="." groups=[
-"collidables",
+"surfaces",
 ]]
 tile_set = ExtResource( 2 )
 format = 1

@@ -148,3 +148,12 @@ TODO
 - However, maybe the constraint could be within reach, if we had originally jumped a little higher.
 - To account for this, we backtrack to the start of the overall movement traversal and consider whether a higher jump could reach the constraint.
 - If it could, then we use those new steps instead of our previously calculated steps, and we then recursively check whether we can reach the destination from the constraint.
+
+## Tests
+
+Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
+
+For convenience, this is checked in the with rest of the Surfacer framework.
+
+A small edit was made to the Gut test runner: instead of prefixing filenames with "test_" Surfacer
+suffixes filenames with "_test".

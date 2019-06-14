@@ -176,7 +176,8 @@ static func _parse_tile_map_into_sides(tile_map: TileMap, \
         
         # Transform tile shapes into world coordinates.
         var tile_set_index := tile_map.get_cellv(position)
-        var info: Dictionary = tile_set.tile_get_shapes(tile_set_index)[0]
+        var shapes := tile_set.tile_get_shapes(tile_set_index)
+        var info: Dictionary = shapes[0]
         # ConvexPolygonShape2D
         var shape: Shape2D = info.shape
         var shape_transform: Transform2D = info.shape_transform
