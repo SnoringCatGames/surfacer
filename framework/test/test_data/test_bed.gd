@@ -24,6 +24,12 @@ var TEST_LEVEL_LONG_FALL := {
     },
 }
 
+const GROUPS := [
+    "surfaces",
+    "human_players",
+    "computer_players",
+]
+
 var sandbox: Node
 
 var test_player_params: TestPlayerParams
@@ -34,6 +40,16 @@ var global_calc_params: MovementCalcGlobalParams
 
 func _init(sandbox: Node) -> void:
     self.sandbox = sandbox
+
+func destroy() -> void:
+    var scene_tree := sandbox.get_tree()
+    
+    for group in GROUPS:
+        for node in scene_tree.get_nodes_in_group(group):
+            node.remove_from_group(group)
+    
+    for node in sandbox.get_children():
+        node.queue_free()
 
 func set_up_level(data: Dictionary) -> void:
     test_player_params = TestPlayerParams.new()

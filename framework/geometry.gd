@@ -323,15 +323,16 @@ static func do_polyline_and_polygon_intersect(vertices: PoolVector2Array, polygo
             return true
     return false
 
-static func are_points_equal_with_epsilon(a: Vector2, b: Vector2) -> bool:
+static func are_points_equal_with_epsilon(a: Vector2, b: Vector2, \
+        epsilon := FLOAT_EPSILON) -> bool:
     var x_diff = b.x - a.x
     var y_diff = b.y - a.y
-    return -FLOAT_EPSILON < x_diff and x_diff < FLOAT_EPSILON and \
-            -FLOAT_EPSILON < y_diff and y_diff < FLOAT_EPSILON
+    return -epsilon < x_diff and x_diff < epsilon and \
+            -epsilon < y_diff and y_diff < epsilon
 
-static func are_floats_equal_with_epsilon(a: float, b: float) -> bool:
+static func are_floats_equal_with_epsilon(a: float, b: float, epsilon := FLOAT_EPSILON) -> bool:
     var diff = b - a
-    return -FLOAT_EPSILON < diff and diff < FLOAT_EPSILON
+    return -epsilon < diff and diff < epsilon
 
 # Determine whether the points of the polygon are defined in a clockwise direction. This uses the
 # shoelace formula.

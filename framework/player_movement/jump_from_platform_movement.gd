@@ -17,8 +17,6 @@ const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
 # FIXME: LEFT OFF HERE: -A ***************
-# - Fix _get_nearby_and_fallable_surfaces et al
-# - 
 # - Tests
 #   - Choose a better name for helpers/ and to prefix levels and player
 #   - Figure out how to render the boundaries of a collision shape
@@ -100,6 +98,10 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 #   position to actually cause us to grab on to the target surface.
 #   - Solution: Add support for ensuring a minimum normal-direction speed at the end of the jump.
 #     - Faster is probably always better, since efficient/quick movements are better.
+# - 
+# - Fix _get_nearby_and_fallable_surfaces et al
+# - 
+# - Eventually, split each Test inner-class group out into its own file
 # - 
 # - Make some diagrams in InkScape with surfaces, trajectories, and constraints to demonstrate
 #   algorithm traversal
@@ -299,7 +301,7 @@ func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlobalPara
         local_calc_params: MovementCalcLocalParams) -> MovementCalcResults:
     ### BASE CASES
     
-    var next_horizontal_step := _create_horizontal_step(local_calc_params, global_calc_params)
+    var next_horizontal_step := _calculate_horizontal_step(local_calc_params, global_calc_params)
     
     if next_horizontal_step == null:
         # The destination is out of reach.
@@ -595,7 +597,7 @@ func _calculate_vertical_step( \
     return MovementCalcLocalParams.new(position_start, position_end, null, step, null)
 
 # Calculates a new step for the horizontal part of the movement.
-func _create_horizontal_step(local_calc_params: MovementCalcLocalParams, \
+func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParams, \
         global_calc_params: MovementCalcGlobalParams) -> MovementCalcStep:
     var previous_step := local_calc_params.previous_step
     var vertical_step := local_calc_params.vertical_step
