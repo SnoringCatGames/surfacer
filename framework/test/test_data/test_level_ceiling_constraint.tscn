@@ -5,7 +5,7 @@
 [ext_resource path="res://framework/test/test_data/test_player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://players/squirrel_player.tscn" type="PackedScene" id=4]
 
-[node name="TestLevelLongFall" type="Node2D"]
+[node name="TestLevelCeilingConstraint" type="Node2D"]
 script = ExtResource( 1 )
 
 [node name="WallsAndFloors" type="TileMap" parent="." groups=[
@@ -13,15 +13,15 @@ script = ExtResource( 1 )
 ]]
 tile_set = ExtResource( 2 )
 format = 1
-tile_data = PoolIntArray( 65538, 0, 0, 851972, 0, 0 )
+tile_data = PoolIntArray( 65538, 0, 0 )
 
 [node name="TestPlayer" parent="." groups=[
 "human_players",
 ] instance=ExtResource( 3 )]
-position = Vector2( 157.717, 6.25861 )
+position = Vector2( 164.517, 12.2774 )
 
 [node name="Squirrel" parent="." groups=[
 "computer_players",
 ] instance=ExtResource( 4 )]
-position = Vector2( 554.85, 928.849 )
+position = Vector2( 634.74, 909.753 )
 

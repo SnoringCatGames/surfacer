@@ -7,7 +7,7 @@ const PHYSICS_TIME_STEP := 1 / 60.0
 
 const IN_DEV_MODE := true
 
-static func error(message := "An error occurred") -> void:
+static func error(message := "An error occurred"):
     print("ERROR: %s" % message)
     assert(false)
 

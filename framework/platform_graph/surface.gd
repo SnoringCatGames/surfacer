@@ -13,6 +13,10 @@ func _init(vertices: Array, side: int) -> void:
     bounding_box = Geometry.get_bounding_box_for_points(vertices)
     normal = _calculate_normal(side)
 
+static func to_string(surface: Surface) -> String:
+    var side_str = SurfaceSide.to_string(surface.side)
+    return "Surface:%s:%s" % [side_str, surface.vertices]
+
 static func _calculate_normal(side: int) -> Vector2:
     return \
             Geometry.UP if side == SurfaceSide.FLOOR else (\

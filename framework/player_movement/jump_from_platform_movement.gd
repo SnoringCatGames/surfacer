@@ -17,6 +17,8 @@ const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
 # FIXME: LEFT OFF HERE: -A ***************
+# - Fix _get_nearby_and_fallable_surfaces et al
+# - 
 # - Tests
 #   - Choose a better name for helpers/ and to prefix levels and player
 #   - Figure out how to render the boundaries of a collision shape
@@ -26,6 +28,15 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 #   - Enumerate areas/work-flows/methods to test, then enumerate specific edge cases within each of those
 #     - 
 #   - Implement tests
+#   - Step through everything in the following and make sure its covered:
+#     - jump_from_platform_movement
+#     - player_movement
+#     - edge_parser
+#     - surface_parser
+#     - geometry
+#     - utils
+#     - platform_graph_navigator
+#     - player/human_player/computer_player?
 # - 
 # - Debugging:
 #   - Would it help to add some quick and easy annotation helpers for temp debugging that I can access on global (or wherever) and just tell to render dots/lines/circles?
@@ -75,10 +86,6 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 #   - For the top constraint, change the constraint position to instead use the far side of the
 #     adjacent top-side/floor surface.
 #   - This probably means I should store adjacent Surfaces when originally parsing the Surfaces.
-# - After completing all steps, re-visit each and think about whether the approach can be
-#   simplified now that we have our current way of thinking with total_duration being the basis
-#   for max_height and distance and ...
-# - Convert between iterative and recursive?
 # - Step through all parts and re-check for correctness.
 # - Account for half-width/height offset needed to clear the edge of B (if possible).
 # - Also, account for the half-width/height offset needed to not fall onto A.

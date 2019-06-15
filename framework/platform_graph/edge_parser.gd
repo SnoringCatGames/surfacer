@@ -94,6 +94,8 @@ static func calculate_edges(space_state: Physics2DDirectSpaceState, surfaces: Ar
     for movement_type in player_info.movement_types:
         if movement_type.can_traverse_edge:
             for surface in surfaces:
-                edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface)
+                # FIXME: Add this back in after we're done writing tests
+                pass
+#                edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface)
     
     return edges

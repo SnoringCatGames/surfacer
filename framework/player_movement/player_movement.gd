@@ -570,32 +570,45 @@ static func _calculate_min_time_to_reach_position(position_start: float, positio
 
 
 
+
+
+
+
+
 func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
-    # TODO: Prevent duplicate work from finding matching surfaces as both nearby and fallable.
-    var results := _get_nearby_surfaces(origin_surface, SURFACE_CLOSE_DISTANCE_THRESHOLD, surfaces)
+    # FIXME: LEFT OFF HERE: C
+    # - remove the temporary return value of all surfaces
+    # - _get_nearby_surfaces
+    #   - Consider up-front-calculated max range according to horizontal acceleration/max and vertical acceleration/max
+    # - For up-front edge calculations, we want to be more permissive and return more fallable surfaces
+    # - For run-time finding-path-from-new-in-air-position calculations, we want to be more restrictive and just return the best handful (5? parameterize it)
+    #   - Probably still the closest X
+    #   - Consider initial velocity?
+    # - Should either version consider occlusion at all? [no]
+    # - Consider velocity changes due to gravity.
+    return surfaces
     
     # FIXME: LEFT OFF HERE: D: Update _get_closest_fallable_surface to support falling from the
     #        center of fall-through surfaces (consider the whole surface, rather than just the
     #        ends).
-    # TODO: Consider velocity changes due to gravity.
-    # TODO: Add support for choosing the closest "non-occluded" surface to the destination, rather
-    #       than the closest surface to the origin.
-    # TODO: Add support for falling to surfaces other than just the closest one.
+
+    # TODO: Prevent duplicate work from finding matching surfaces as both nearby and fallable.
+    # var results := _get_nearby_surfaces(origin_surface, SURFACE_CLOSE_DISTANCE_THRESHOLD, surfaces)
     
-    var origin_vertex: Vector2
-    var closest_fallable_surface: Surface
+    # var origin_vertex: Vector2
+    # var closest_fallable_surface: Surface
     
-    origin_vertex = origin_surface.vertices[0]
-    closest_fallable_surface = _get_closest_fallable_surface(origin_vertex, surfaces, true)
-    if !results.has(closest_fallable_surface):
-        results.push_back(closest_fallable_surface)
+    # origin_vertex = origin_surface.vertices[0]
+    # closest_fallable_surface = _get_closest_fallable_surface(origin_vertex, surfaces, true)
+    # if !results.has(closest_fallable_surface):
+    #     results.push_back(closest_fallable_surface)
     
-    origin_vertex = origin_surface.vertices[origin_surface.vertices.size() - 1]
-    closest_fallable_surface = _get_closest_fallable_surface(origin_vertex, surfaces, true)
-    if !results.has(closest_fallable_surface):
-        results.push_back(closest_fallable_surface)
+    # origin_vertex = origin_surface.vertices[origin_surface.vertices.size() - 1]
+    # closest_fallable_surface = _get_closest_fallable_surface(origin_vertex, surfaces, true)
+    # if !results.has(closest_fallable_surface):
+    #     results.push_back(closest_fallable_surface)
     
-    return results
+    # return results
 
 # Gets all other surfaces that are near the given surface.
 static func _get_nearby_surfaces(target_surface: Surface, distance_threshold: float, \
@@ -653,6 +666,10 @@ static func _get_are_surfaces_close(surface_a: Surface, surface_b: Surface, \
                     return true
     
     return false
+
+
+
+
 
 # Gets the closest surface that can be reached by falling from the given point.
 func _get_closest_fallable_surface(start: Vector2, surfaces: Array, \

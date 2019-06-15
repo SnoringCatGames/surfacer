@@ -67,6 +67,11 @@ func _physics_process(delta: float) -> void:
     
     _update_actions(delta)
     _update_surface_state()
+    
+    # Uncomment to help with debugging.
+    if surface_state.just_left_air:
+        print("Hit surface: %s" % Surface.to_string(surface_state.grabbed_surface))
+    
     platform_graph_navigator.update()
     actions.delta = delta
     _process_actions()

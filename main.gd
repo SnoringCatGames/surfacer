@@ -4,29 +4,36 @@ const CatParams = preload("res://players/cat_params.gd")
 const SquirrelParams = preload("res://players/squirrel_params.gd")
 const TestPlayerParams = preload("res://framework/test/test_data/test_player_params.gd")
 
-const IN_TEST_MODE := false
-
-var player_params := [
+var PLAYER_PARAMS := [
     CatParams.new(),
     SquirrelParams.new(),
     TestPlayerParams.new(),
 ]
 
+const LEVEL_RESOURCE_PATHS := [
+    "res://levels/level_1.tscn",
+    "res://levels/level_2.tscn",
+    "res://levels/level_3.tscn",
+    "res://levels/level_4.tscn",
+    "res://levels/level_5.tscn",
+]
+
+const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
+
+const IN_TEST_MODE := true
+
+const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_fall.tscn"
+
 func _enter_tree() -> void:
     var global := $"/root/Global"
-    global.register_player_params(player_params)
+    global.register_player_params(PLAYER_PARAMS)
     
     if IN_TEST_MODE:
-        _run_tests()
+        _add_scene(TEST_RUNNER_SCENE_RESOURCE_PATH)
+    else:
+        _add_scene(STARTING_LEVEL_RESOURCE_PATH)
 
-func _run_tests() -> void:
-    # First, remove the normal Level.
-    var all_levels: Array = Utils.get_children_by_type(self, Level)
-    assert(all_levels.size() == 1)
-    var level: Level = all_levels[0]
-    remove_child(level)
-    
-    # Then, add the Gut test runner.
-    var tests_scene = load("res://framework/test/tests.tscn")
-    var tests = tests_scene.instance()
-    add_child(tests)
+func _add_scene(resource_path: String) -> void:
+    var tests_scene := load(resource_path)
+    var tests_node = tests_scene.instance()
+    add_child(tests_node)

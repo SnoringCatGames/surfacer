@@ -41,11 +41,11 @@ func _create_movement_params() -> MovementParams:
     movement_params.collider_rotation = COLLIDER_ROTATION
     
     movement_params.gravity = Geometry.GRAVITY
-    movement_params.ascent_gravity_multiplier = 0.38
-    movement_params.ascent_double_jump_gravity_multiplier = 0.68
+    movement_params.ascent_gravity_multiplier = 0.18
+    movement_params.ascent_double_jump_gravity_multiplier = 0.08
     
     movement_params.jump_boost = -1000.0
-    movement_params.in_air_horizontal_acceleration = 3200.0
+    movement_params.in_air_horizontal_acceleration = 1500.0
     movement_params.max_jump_chain = 2
     movement_params.wall_jump_horizontal_multiplier = 0.5
     
