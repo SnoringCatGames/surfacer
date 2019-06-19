@@ -29,13 +29,15 @@ func set_surfaces(surface_parser: SurfaceParser) -> void:
     self.surfaces = surface_parser.get_subset_of_surfaces( \
             params.can_grab_walls, params.can_grab_ceilings, params.can_grab_floors)
 
-func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, surface: Surface) -> Array:
+func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
+        surface_parser: SurfaceParser, surface: Surface) -> Array:
     Utils.error( \
             "Abstract PlayerMovement.get_all_edges_from_surface is not implemented")
     return []
 
 func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
-        start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
+        surface_parser: SurfaceParser, start: PositionAlongSurface, \
+        end: Vector2) -> PlayerInstructions:
     Utils.error("Abstract PlayerMovement.get_instructions_to_air is not implemented")
     return null
 
@@ -97,7 +99,7 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
 # Checks whether a collision would occur with any surface during the given instructions. This
 # is calculated by stepping through each physics frame, which should exactly emulate the actual
 # Player trajectory that would be used.
-func _check_instructions_for_collision(global_calc_params: MovementCalcGlobalParams, \
+static func _check_instructions_for_collision(global_calc_params: MovementCalcGlobalParams, \
         instructions: PlayerInstructions) -> SurfaceCollision:
     var current_instruction_index := -1
     var next_instruction: PlayerInstruction = instructions.instructions[0]
@@ -135,7 +137,8 @@ func _check_instructions_for_collision(global_calc_params: MovementCalcGlobalPar
         position += displacement
         
         # Check for collision.
-        collision = check_frame_for_collision(space_state, shape_query_params)
+        collision = check_frame_for_collision(space_state, shape_query_params, \
+                global_calc_params.surface_parser)
         if collision != null:
             instructions.frame_positions = PoolVector2Array(frame_positions)
             return collision
@@ -174,8 +177,8 @@ func _check_instructions_for_collision(global_calc_params: MovementCalcGlobalPar
         
         # Update velocity for the next frame.
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
-                horizontal_movement_sign, params)
-        velocity = cap_velocity(velocity, params)
+                horizontal_movement_sign, global_calc_params.movement_params)
+        velocity = cap_velocity(velocity, global_calc_params.movement_params)
 
         # Record the position for edge annotation debugging.
         frame_positions.push_back(position)
@@ -185,7 +188,8 @@ func _check_instructions_for_collision(global_calc_params: MovementCalcGlobalPar
     displacement = velocity * delta
     shape_query_params.transform = Transform2D(0.0, position)
     shape_query_params.motion = displacement
-    collision = check_frame_for_collision(space_state, shape_query_params)
+    collision = check_frame_for_collision(space_state, shape_query_params, \
+            global_calc_params.surface_parser)
     if collision != null:
         instructions.frame_positions = PoolVector2Array(frame_positions)
         return collision
@@ -202,7 +206,7 @@ func _check_instructions_for_collision(global_calc_params: MovementCalcGlobalPar
 # will be tested with their start time perfectly aligned to a physics frame boundary, but when
 # executing a resulting instruction set, the physics frame boundaries will line up at different
 # times.
-func _check_horizontal_step_for_collision( \
+static func _check_horizontal_step_for_collision( \
         global_calc_params: MovementCalcGlobalParams, local_calc_params: MovementCalcLocalParams, \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
     var delta := Utils.PHYSICS_TIME_STEP
@@ -233,7 +237,8 @@ func _check_horizontal_step_for_collision( \
         position += displacement
         
         # Check for collision.
-        collision = check_frame_for_collision(space_state, shape_query_params)
+        collision = check_frame_for_collision(space_state, shape_query_params, \
+                global_calc_params.surface_parser)
         if collision != null:
             return collision
         
@@ -247,15 +252,16 @@ func _check_horizontal_step_for_collision( \
         
         # Update velocity for the next frame.
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
-                horizontal_movement_sign, params)
-        velocity = cap_velocity(velocity, params)
+                horizontal_movement_sign, global_calc_params.movement_params)
+        velocity = cap_velocity(velocity, global_calc_params.movement_params)
     
     # Check the last frame that puts us up to end_time.
     delta = step_end_time - current_time
     displacement = velocity * delta
     shape_query_params.transform = Transform2D(0.0, position)
     shape_query_params.motion = displacement
-    collision = check_frame_for_collision(space_state, shape_query_params)
+    collision = check_frame_for_collision(space_state, shape_query_params, \
+            global_calc_params.surface_parser)
     if collision != null:
         return collision
     
@@ -263,8 +269,9 @@ func _check_horizontal_step_for_collision( \
 
 # Determines whether the given motion of the given shape would collide with a surface. If a
 # collision would occur, this returns the surface; otherwise, this returns null.
-func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
-        shape_query_params: Physics2DShapeQueryParameters) -> SurfaceCollision:
+static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
+        shape_query_params: Physics2DShapeQueryParameters, \
+        surface_parser: SurfaceParser) -> SurfaceCollision:
     # FIXME: B: Check whether all of the level setup must be called from within an early
     #   _physics_process callback (space might have a lock otherwise)?
     
@@ -272,7 +279,9 @@ func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     if collision_points.empty():
         return null
     
-    var collision_point: Vector2 = collision_points[0]
+    # Sometimes, collide_shape returns strange values. The latter value seems to usually be more
+    # accurate?
+    var collision_point: Vector2 = collision_points.back()
     var direction := shape_query_params.motion.normalized()
     var from := collision_point - direction * 0.001
     var to := collision_point + direction * 1000000
@@ -398,15 +407,15 @@ func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
 
 # Calculates the time at which the movement would travel through the given position given the
 # given vertical_step.
-func _calculate_end_time_for_jumping_to_position(vertical_step: MovementCalcStep, \
-        position: Vector2, upcoming_constraint: MovementConstraint, \
-        destination_surface: Surface) -> float:
+func _calculate_end_time_for_jumping_to_position(movement_params: MovementParams, \
+        vertical_step: MovementCalcStep, position: Vector2, \
+        upcoming_constraint: MovementConstraint, destination_surface: Surface) -> float:
     var position_instruction_end := vertical_step.position_instruction_end
     var velocity_instruction_end := vertical_step.velocity_instruction_end
     
     var target_height := position.y
     var start_height := vertical_step.position_start.y
-    var slow_ascent_gravity := params.gravity * params.ascent_gravity_multiplier
+    var slow_ascent_gravity := movement_params.gravity * movement_params.ascent_gravity_multiplier
     
     var duration_of_slow_ascent: float
     var duration_of_fast_fall: float
@@ -472,14 +481,14 @@ func _calculate_end_time_for_jumping_to_position(vertical_step: MovementCalcStep
     
     if is_position_before_instruction_end:
         duration_of_slow_ascent = Geometry.solve_for_movement_duration( \
-                start_height, target_height, params.jump_boost, slow_ascent_gravity, \
+                start_height, target_height, movement_params.jump_boost, slow_ascent_gravity, \
                 true, false)
         duration_of_fast_fall = 0.0
     else:
         duration_of_slow_ascent = vertical_step.time_instruction_end
         duration_of_fast_fall = Geometry.solve_for_movement_duration( \
                 position_instruction_end.y, target_height, velocity_instruction_end.y, \
-                params.gravity, is_position_before_peak, false)
+                movement_params.gravity, is_position_before_peak, false)
     
     return duration_of_fast_fall + duration_of_slow_ascent
 

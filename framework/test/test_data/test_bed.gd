@@ -32,11 +32,15 @@ const GROUPS := [
 
 var sandbox: Node
 
-var test_player_params: TestPlayerParams
+var movement_params: MovementParams
 var jump_from_platform_movement: JumpFromPlatformMovement
 var level: Level
+var test_player: TestPlayer
+var surface_parser: SurfaceParser
 var space_state: Physics2DDirectSpaceState
 var global_calc_params: MovementCalcGlobalParams
+var start_surface: Surface
+var end_surface: Surface
 
 func _init(sandbox: Node) -> void:
     self.sandbox = sandbox
@@ -50,17 +54,54 @@ func destroy() -> void:
     
     for node in sandbox.get_children():
         node.queue_free()
+    
+    movement_params = null
+    jump_from_platform_movement = null
+    level = null
+    test_player = null
+    surface_parser = null
+    space_state = null
+    global_calc_params = null
+    start_surface = null
+    end_surface = null
 
 func set_up_level(data: Dictionary) -> void:
-    test_player_params = TestPlayerParams.new()
-    jump_from_platform_movement = \
-            JumpFromPlatformMovement.new(test_player_params._movement_params)
-    jump_from_platform_movement.surfaces = [data.start.surface, data.end.surface]
-    
     var level_scene := load(data.scene_resource_path)
     level = level_scene.instance()
     sandbox.add_child(level)
     
+    test_player = level.human_player
+    movement_params = test_player.movement_params
+    for movement_type in test_player.movement_types:
+        if movement_type is JumpFromPlatformMovement:
+            jump_from_platform_movement = movement_type
+    assert(jump_from_platform_movement != null)
+    
+    var shape := movement_params.collider_shape
+    print(shape) # FIXME: Remove
+    var rid := shape.get_rid()
+    print(rid)
+    
+    surface_parser = level.surface_parser
     space_state = level.get_world_2d().direct_space_state
-    global_calc_params = \
-            MovementCalcGlobalParams.new(jump_from_platform_movement.params, space_state)
+    global_calc_params = MovementCalcGlobalParams.new( \
+            movement_params, space_state, surface_parser)
+    
+    _store_surfaces(data)
+
+func _store_surfaces(data: Dictionary) -> void:
+    for surface in surface_parser.all_surfaces:
+        if surface.side == data.start.surface.side and \
+                surface.vertices[0] == data.start.surface.vertices[0] and \
+                surface.vertices[1] == data.start.surface.vertices[1]:
+            start_surface = surface
+        elif surface.side == data.end.surface.side and \
+                surface.vertices[0] == data.end.surface.vertices[0] and \
+                surface.vertices[1] == data.end.surface.vertices[1]:
+            end_surface = surface
+    
+    assert(start_surface != null)
+    assert(end_surface != null)
+    
+    jump_from_platform_movement.surfaces = [start_surface, end_surface]
+    global_calc_params.destination_surface = end_surface

@@ -114,7 +114,8 @@ func _init(params: MovementParams).("jump_from_platform", params) -> void:
     self.can_traverse_to_air = true
     self.can_traverse_from_air = false
 
-func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surface) -> Array:
+func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
+        surface_parser: SurfaceParser, a: Surface) -> Array:
     var player_half_width := params.collider_half_width_height.x
     var player_half_height := params.collider_half_width_height.y
     var a_start: Vector2 = a.vertices[0]
@@ -138,7 +139,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
     var weight: float
     var edges = []
     
-    var global_calc_params := MovementCalcGlobalParams.new(params, space_state)
+    var global_calc_params := MovementCalcGlobalParams.new(params, space_state, surface_parser)
     
     var possible_surfaces := _get_nearby_and_fallable_surfaces(a)
     
@@ -226,8 +227,9 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, a: Surfa
     return edges
 
 func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
-        position_start: PositionAlongSurface, position_end: Vector2) -> PlayerInstructions:
-    var global_calc_params := MovementCalcGlobalParams.new(params, space_state)
+        surface_parser: SurfaceParser, position_start: PositionAlongSurface, \
+        position_end: Vector2) -> PlayerInstructions:
+    var global_calc_params := MovementCalcGlobalParams.new(params, space_state, surface_parser)
     global_calc_params.position_start = position_start.target_point
     global_calc_params.position_end = position_end
     
@@ -413,8 +415,9 @@ func _calculate_steps_from_constraint_with_backtracking_on_height( \
         
         # Update the total duration to include the fall duration after the constraint.
         duration_from_constraint = _calculate_end_time_for_jumping_to_position( \
-                calc_results_to_constraint.vertical_step, local_calc_params.position_end, \
-                local_calc_params.upcoming_constraint, global_calc_params.destination_surface)
+                global_calc_params.movement_params, calc_results_to_constraint.vertical_step, \
+                local_calc_params.position_end, local_calc_params.upcoming_constraint, \
+                global_calc_params.destination_surface)
         calc_results_to_constraint.vertical_step.time_step_end += duration_from_constraint
         _update_vertical_end_state_for_time(calc_results_to_constraint.vertical_step, \
                 calc_results_to_constraint.vertical_step, 
@@ -604,8 +607,8 @@ func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParams, \
     var position_end := local_calc_params.position_end
     
     var time_step_end := _calculate_end_time_for_jumping_to_position( \
-            vertical_step, position_end, local_calc_params.upcoming_constraint, \
-            global_calc_params.destination_surface)
+            global_calc_params.movement_params, vertical_step, position_end, \
+            local_calc_params.upcoming_constraint, global_calc_params.destination_surface)
     
     # Get some start state from the previous step.
     var time_start: float

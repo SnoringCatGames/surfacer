@@ -87,7 +87,8 @@ class_name EdgeParser
 # - Start adding networking support.
 
 # Returns a mapping from Surfaces to their adjacent Edges.
-static func calculate_edges(space_state: Physics2DDirectSpaceState, surfaces: Array, \
+static func calculate_edges(space_state: Physics2DDirectSpaceState, \
+        surface_parser: SurfaceParser, surfaces: Array, \
         player_info: PlayerTypeConfiguration) -> Dictionary:
     var edges := {}
     
@@ -96,6 +97,6 @@ static func calculate_edges(space_state: Physics2DDirectSpaceState, surfaces: Ar
             for surface in surfaces:
                 # FIXME: Add this back in after we're done writing tests
                 pass
-#                edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface)
+#                edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface_parser, surface)
     
     return edges

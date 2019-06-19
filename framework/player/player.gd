@@ -36,11 +36,22 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
     # TODO: Somehow consolidate how collider shapes are defined?
-    var colliders = Utils.get_children_by_type(self, CollisionShape2D)
-    assert(colliders.size() == 1)
-    collider = colliders[0]
-    assert(Geometry.do_shapes_match(collider.shape, movement_params.collider_shape))
-    assert(abs(collider.transform.get_rotation() - movement_params.collider_rotation) < Geometry.FLOAT_EPSILON)
+    
+    var shape_owners := get_shape_owners()
+    assert(shape_owners.size() == 1)
+    var owner_id: int = shape_owners[0]
+    assert(shape_owner_get_shape_count(owner_id) == 1)
+    var collider_shape := shape_owner_get_shape(owner_id, 0)
+    assert(Geometry.do_shapes_match(collider_shape, movement_params.collider_shape))
+    var transform := shape_owner_get_transform(owner_id)
+    assert(abs(transform.get_rotation() - movement_params.collider_rotation) < Geometry.FLOAT_EPSILON)
+    
+    # Ensure we use the actual Shape2D reference that is used by Godot's collision system.
+    movement_params.collider_shape = collider_shape
+    
+#    shape_owner_clear_shapes(owner_id)
+#    shape_owner_add_shape(owner_id, movement_params.collider_shape)
+    
     collider_half_width_height = movement_params.collider_half_width_height
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:

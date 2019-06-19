@@ -1,4 +1,5 @@
 extends Node
+class_name Main
 
 const CatParams = preload("res://players/cat_params.gd")
 const SquirrelParams = preload("res://players/squirrel_params.gd")
@@ -23,6 +24,7 @@ const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
 const IN_TEST_MODE := true
 
 const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_fall.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
 
 func _enter_tree() -> void:
     var global := $"/root/Global"

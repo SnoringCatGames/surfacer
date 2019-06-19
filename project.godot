@@ -104,6 +104,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/level.gd"
 }, {
+"base": "Node",
+"class": "Main",
+"language": "GDScript",
+"path": "res://main.gd"
+}, {
 "base": "Reference",
 "class": "MovementCalcGlobalParams",
 "language": "GDScript",
@@ -229,11 +234,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/position_annotator.gd"
 }, {
-"base": "Reference",
-"class": "RTree",
-"language": "GDScript",
-"path": "res://framework/r_tree.gd"
-}, {
 "base": "PlayerParams",
 "class": "SquirrelParams",
 "language": "GDScript",
@@ -314,6 +314,7 @@ _global_script_class_icons={
 "HumanPlayerAnnotator": "",
 "JumpFromPlatformMovement": "",
 "Level": "",
+"Main": "",
 "MovementCalcGlobalParams": "",
 "MovementCalcLocalParams": "",
 "MovementCalcResults": "",
@@ -339,7 +340,6 @@ _global_script_class_icons={
 "PlayerTypeConfiguration": "",
 "PositionAlongSurface": "",
 "PositionAnnotator": "",
-"RTree": "",
 "SquirrelParams": "",
 "SquirrelPlayer": "",
 "Stopwatch": "",

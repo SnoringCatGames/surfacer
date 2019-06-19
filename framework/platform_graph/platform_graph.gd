@@ -18,4 +18,4 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
             player_info.movement_params.can_grab_floors)
     
     # Calculate and store the edges between surface nodes that this player type can traverse.
-    self.edges = EdgeParser.calculate_edges(space_state, nodes, player_info)
+    self.edges = EdgeParser.calculate_edges(space_state, surface_parser, nodes, player_info)

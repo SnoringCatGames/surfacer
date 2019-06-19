@@ -7,7 +7,6 @@ const END_POSITION_CLOSE_THRESHOLD := Vector2(0.001, 0.001)
 
 class Base extends "res://addons/gut/test.gd":
     var test_bed: TestBed
-    var surface: Surface
     
     func before_each() -> void:
         test_bed = TestBed.new(self)
@@ -17,11 +16,6 @@ class Base extends "res://addons/gut/test.gd":
     
     func set_up(data: Dictionary) -> void:
         test_bed.set_up_level(data)
-        
-        surface = data.start.surface
-        
-        test_bed.global_calc_params.destination_surface = data.end.surface
-
 
 
 
@@ -47,9 +41,183 @@ class Test_check_horizontal_step_for_collision:
 
 class Test_check_frame_for_collision:
     extends Base
+
+    var half_player_width_height := 10.0
+
+    var start_tile_top_left_corner := Vector2(128, 64)
+    var start_tile_top_right_corner := Vector2(192, 64)
+    var start_tile_bottom_left_corner := Vector2(128, 128)
+    var start_tile_bottom_right_corner := Vector2(192, 128)
     
-    func test_TODO() -> void:
+    var end_tile_top_left_corner := Vector2(256, 832)
+    var end_tile_top_right_corner := Vector2(320, 832)
+    var end_tile_bottom_left_corner := Vector2(256, 896)
+    var end_tile_bottom_right_corner := Vector2(320, 896)
+    
+    var shape_query_params: Physics2DShapeQueryParameters
+    var space_state: Physics2DDirectSpaceState
+    var surface_parser: SurfaceParser
+    var jump_from_platform_movement: JumpFromPlatformMovement
+
+    func set_up(data: Dictionary) -> void:
+        .set_up(data)
+        space_state = test_bed.space_state
+        shape_query_params = test_bed.global_calc_params.shape_query_params
+        surface_parser = test_bed.surface_parser
+    
+    func set_frame_space_state(start_position: Vector2, displacement: Vector2) -> void:
+        shape_query_params.transform = Transform2D(0.0, start_position)
+        shape_query_params.motion = displacement
+    
+    func test_move_into_top_left_corner_from_left() -> void:
+        set_up(test_bed.TEST_LEVEL_LONG_FALL)
+        var start_position := \
+                start_tile_top_left_corner + \
+                Vector2(-half_player_width_height, 0) + \
+                Vector2(-1, -1)
+        var displacement := Vector2(half_player_width_height, 0)
+        set_frame_space_state(start_position, displacement)
+
+        var collision := PlayerMovement.check_frame_for_collision( \
+                space_state, shape_query_params, surface_parser)
+
+        assert_not_null(collision)
+        assert_eq(collision.surface.side, SurfaceSide.RIGHT_WALL)
+        assert_eq(collision.surface.vertices, \
+                PoolVector2Array([start_tile_bottom_left_corner, start_tile_top_left_corner]))
+        assert_eq(collision.position, Vector2(128, 73))
+    
+    func test_move_into_top_left_corner_from_above() -> void:
         pending()# FIXME
+        set_up(test_bed.TEST_LEVEL_LONG_FALL)
+        var start_position := \
+                start_tile_top_left_corner + \
+                Vector2(-half_player_width_height, 0) + \
+                Vector2(-1, -1)
+        var displacement := Vector2(half_player_width_height, 0)
+        set_frame_space_state(start_position, displacement)
+
+        var collision := PlayerMovement.check_frame_for_collision( \
+                space_state, shape_query_params, surface_parser)
+
+        assert_not_null(collision)
+        assert_eq(collision.surface.side, SurfaceSide.RIGHT_WALL)
+        assert_eq(collision.surface.vertices, \
+                PoolVector2Array([start_tile_bottom_left_corner, start_tile_top_left_corner]))
+        assert_eq(collision.position, Vector2(128, 73))
+    
+    func test_move_into_top_right_corner_from_right() -> void:
+        pending()# FIXME
+        set_up(test_bed.TEST_LEVEL_LONG_FALL)
+        var start_position := \
+                start_tile_top_left_corner + \
+                Vector2(-half_player_width_height, 0) + \
+                Vector2(-1, -1)
+        var displacement := Vector2(half_player_width_height, 0)
+        set_frame_space_state(start_position, displacement)
+
+        var collision := PlayerMovement.check_frame_for_collision( \
+                space_state, shape_query_params, surface_parser)
+
+        assert_not_null(collision)
+        assert_eq(collision.surface.side, SurfaceSide.RIGHT_WALL)
+        assert_eq(collision.surface.vertices, \
+                PoolVector2Array([start_tile_bottom_left_corner, start_tile_top_left_corner]))
+        assert_eq(collision.position, Vector2(128, 73))
+    
+    func test_move_into_top_right_corner_from_above() -> void:
+        pending()# FIXME
+        set_up(test_bed.TEST_LEVEL_LONG_FALL)
+        var start_position := \
+                start_tile_top_left_corner + \
+                Vector2(-half_player_width_height, 0) + \
+                Vector2(-1, -1)
+        var displacement := Vector2(half_player_width_height, 0)
+        set_frame_space_state(start_position, displacement)
+
+        var collision := PlayerMovement.check_frame_for_collision( \
+                space_state, shape_query_params, surface_parser)
+
+        assert_not_null(collision)
+        assert_eq(collision.surface.side, SurfaceSide.RIGHT_WALL)
+        assert_eq(collision.surface.vertices, \
+                PoolVector2Array([start_tile_bottom_left_corner, start_tile_top_left_corner]))
+        assert_eq(collision.position, Vector2(128, 73))
+    
+    func test_move_into_bottom_left_corner_from_left() -> void:
+        pending()# FIXME
+        set_up(test_bed.TEST_LEVEL_LONG_FALL)
+        var start_position := \
+                start_tile_top_left_corner + \
+                Vector2(-half_player_width_height, 0) + \
+                Vector2(-1, -1)
+        var displacement := Vector2(half_player_width_height, 0)
+        set_frame_space_state(start_position, displacement)
+
+        var collision := PlayerMovement.check_frame_for_collision( \
+                space_state, shape_query_params, surface_parser)
+
+        assert_not_null(collision)
+        assert_eq(collision.surface.side, SurfaceSide.RIGHT_WALL)
+        assert_eq(collision.surface.vertices, \
+                PoolVector2Array([start_tile_bottom_left_corner, start_tile_top_left_corner]))
+        assert_eq(collision.position, Vector2(128, 73))
+    
+    func test_move_into_bottom_left_corner_from_below() -> void:
+        pending()# FIXME
+        set_up(test_bed.TEST_LEVEL_LONG_FALL)
+        var start_position := \
+                start_tile_top_left_corner + \
+                Vector2(-half_player_width_height, 0) + \
+                Vector2(-1, -1)
+        var displacement := Vector2(half_player_width_height, 0)
+        set_frame_space_state(start_position, displacement)
+
+        var collision := PlayerMovement.check_frame_for_collision( \
+                space_state, shape_query_params, surface_parser)
+
+        assert_not_null(collision)
+        assert_eq(collision.surface.side, SurfaceSide.RIGHT_WALL)
+        assert_eq(collision.surface.vertices, \
+                PoolVector2Array([start_tile_bottom_left_corner, start_tile_top_left_corner]))
+        assert_eq(collision.position, Vector2(128, 73))
+    
+    func test_move_into_bottom_right_corner_from_right() -> void:
+        pending()# FIXME
+        set_up(test_bed.TEST_LEVEL_LONG_FALL)
+        var start_position := \
+                start_tile_top_left_corner + \
+                Vector2(-half_player_width_height, 0) + \
+                Vector2(-1, -1)
+        var displacement := Vector2(half_player_width_height, 0)
+        set_frame_space_state(start_position, displacement)
+
+        var collision := PlayerMovement.check_frame_for_collision( \
+                space_state, shape_query_params, surface_parser)
+
+        assert_not_null(collision)
+        assert_eq(collision.surface.side, SurfaceSide.RIGHT_WALL)
+        assert_eq(collision.surface.vertices, \
+                PoolVector2Array([start_tile_bottom_left_corner, start_tile_top_left_corner]))
+        assert_eq(collision.position, Vector2(128, 73))
+    
+    func test_move_into_bottom_right_corner_from_below() -> void:
+        set_up(test_bed.TEST_LEVEL_LONG_FALL)
+        var start_position := \
+                start_tile_top_left_corner + \
+                Vector2(-half_player_width_height, 0) + \
+                Vector2(-1, -1)
+        var displacement := Vector2(half_player_width_height, 0)
+        set_frame_space_state(start_position, displacement)
+
+        var collision := PlayerMovement.check_frame_for_collision( \
+                space_state, shape_query_params, surface_parser)
+
+        assert_not_null(collision)
+        assert_eq(collision.surface.side, SurfaceSide.RIGHT_WALL)
+        assert_eq(collision.surface.vertices, \
+                PoolVector2Array([start_tile_bottom_left_corner, start_tile_top_left_corner]))
+        assert_eq(collision.position, Vector2(128, 73))
 
 class Test_calculate_constraints:
     extends Base
