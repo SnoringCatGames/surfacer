@@ -46,16 +46,6 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
     Utils.error("Abstract PlayerMovement.get_all_reachable_surface_instructions_from_air is not implemented")
     return []
 
-# FIXME: LEFT OFF HERE: C: Remove. Replace with an up-front calculation when the params are initialized.
-func get_max_upward_distance() -> float:
-    Utils.error("Abstract PlayerMovement.get_max_upward_distance is not implemented")
-    return 0.0
-
-# FIXME: LEFT OFF HERE: C: Remove. Replace with an up-front calculation when the params are initialized.
-func get_max_horizontal_distance() -> float:
-    Utils.error("Abstract PlayerMovement.get_max_horizontal_distance is not implemented")
-    return 0.0
-
 static func update_velocity_in_air( \
         velocity: Vector2, delta: float, is_pressing_jump: bool, is_first_jump: bool, \
         horizontal_movement_sign: int, movement_params: MovementParams) -> Vector2:
@@ -474,10 +464,11 @@ static func _calculate_constraints( \
 # Calculates the vertical component of position and velocity according to the given vertical
 # movement state and the given time. These are then stored on either the given output step's
 # step-end state or instruction-end state depending on is_step_end_time.
-func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
-        vertical_step: MovementCalcStep, time: float, is_step_end_time: bool) -> void:
-    # FIXME: LEFT OFF HERE: B: Account for max y velocity when calculating any parabolic motion.
-    var slow_ascent_gravity := params.gravity * params.ascent_gravity_multiplier
+static func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
+        movement_params: MovementParams, vertical_step: MovementCalcStep, time: float, \
+        is_step_end_time: bool) -> void:
+    # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    var slow_ascent_gravity := movement_params.gravity * movement_params.ascent_gravity_multiplier
     var slow_ascent_end_time := min(time, vertical_step.time_instruction_end)
     
     # Basic equations of motion.
@@ -501,8 +492,8 @@ func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
         # Basic equations of motion.
         position = slow_ascent_end_position + \
             slow_ascent_end_velocity * fast_fall_duration + \
-            0.5 * params.gravity * fast_fall_duration * fast_fall_duration
-        velocity = slow_ascent_end_velocity + params.gravity * fast_fall_duration
+            0.5 * movement_params.gravity * fast_fall_duration * fast_fall_duration
+        velocity = slow_ascent_end_velocity + movement_params.gravity * fast_fall_duration
     
     if is_step_end_time:
         output_step.position_step_end.y = position
@@ -513,7 +504,7 @@ func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
 
 # Calculates the time at which the movement would travel through the given position given the
 # given vertical_step.
-func _calculate_end_time_for_jumping_to_position(movement_params: MovementParams, \
+static func _calculate_end_time_for_jumping_to_position(movement_params: MovementParams, \
         vertical_step: MovementCalcStep, position: Vector2, \
         upcoming_constraint: MovementConstraint, destination_surface: Surface) -> float:
     var position_instruction_end := vertical_step.position_instruction_end
@@ -691,7 +682,7 @@ static func _calculate_min_time_to_reach_position(position_start: float, positio
 
 
 func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
-    # FIXME: LEFT OFF HERE: C
+    # FIXME: C
     # - remove the temporary return value of all surfaces
     # - _get_nearby_surfaces
     #   - Consider up-front-calculated max range according to horizontal acceleration/max and vertical acceleration/max
@@ -703,7 +694,7 @@ func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     # - Consider velocity changes due to gravity.
     return surfaces
     
-    # FIXME: LEFT OFF HERE: D: Update _get_closest_fallable_surface to support falling from the
+    # FIXME: D: Update _get_closest_fallable_surface to support falling from the
     #        center of fall-through surfaces (consider the whole surface, rather than just the
     #        ends).
 
@@ -795,7 +786,7 @@ func _get_closest_fallable_surface(start: Vector2, surfaces: Array, \
     var end_y = start.y + DOWNWARD_DISTANCE_TO_CHECK_FOR_FALLING
     
     if can_use_horizontal_distance:
-        var start_x_distance = get_max_horizontal_distance()
+        var start_x_distance = params.max_horizontal_distance
         
         var leftmost_start = Vector2(start.x - start_x_distance, start.y)
         var rightmost_start = Vector2(start.x + start_x_distance, start.y)

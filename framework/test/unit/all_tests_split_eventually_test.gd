@@ -19,10 +19,29 @@ class Test_check_horizontal_step_for_collision:
 class Test_update_vertical_end_state_for_time:
     extends TestBed
 
+    var output_step: MovementCalcStep
+    var vertical_step: MovementCalcStep
+    
+    func set_up(state := {}) -> void:
+        output_step = MovementCalcStep.new()
+        vertical_step = MovementCalcStep.new()
+
     # FIXME: LEFT OFF HERE --------A
     
     func test_TODO() -> void:
         pending()# FIXME
+        # set_up({
+        #     time_instruction_end = 0.0,
+        #     position_start_y = 0.0,
+        #     velocity_start_y = 0.0,
+        # })
+        # var time := 0.0
+        # var is_step_end_time := true
+
+        # PlayerMovement._upgrade_vertical_end_state_for_time(output_step, vertical_step, time, is_step_end_time)
+
+        # assert_eq(output_step.position_step_end, Vector2(, ), END_POSITION_CLOSE_THRESHOLD)
+        # assert_eq(output_step.velocity_step_end, Vector2(, ), END_POSITION_CLOSE_THRESHOLD)
 
 class Test_calculate_end_time_for_jumping_to_position:
     extends TestBed

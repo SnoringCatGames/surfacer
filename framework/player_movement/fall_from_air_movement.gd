@@ -8,7 +8,7 @@ func _init(params: MovementParams).("fall_from_air", params) -> void:
 
 func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirectSpaceState, \
         start: Vector2, end: PositionAlongSurface, start_velocity: Vector2) -> Array:
-    # FIXME: LEFT OFF HERE: B *** Model after JumpFromPlatformMovement to consider all reachable nodes
+    # FIXME: B *** Model after JumpFromPlatformMovement to consider all reachable nodes
 #    var displacement = end.target_point - start
 #
 #    # Solve a quadratic equation for duration.
@@ -40,9 +40,3 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
 #
 #    return PlayerInstructions.new(instructions, duration, displacement.length())
     return []
-
-func get_max_upward_distance() -> float:
-    return 0.0
-
-func get_max_horizontal_distance() -> float:
-    return 0.0
