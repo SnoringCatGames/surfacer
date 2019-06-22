@@ -10,7 +10,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_editor_icon": ExtResource( 2 )
 }
-_tests_like = "test_move_into_top_left_corner_from_left"
+_inner_class_name = "Test_check_frame_for_collision"
 _run_on_load = true
 _yield_between_tests = false
 _file_prefix = ""

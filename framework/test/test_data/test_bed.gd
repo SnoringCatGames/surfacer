@@ -51,8 +51,10 @@ func destroy() -> void:
     for group in GROUPS:
         for node in scene_tree.get_nodes_in_group(group):
             node.remove_from_group(group)
+            node.queue_free()
     
     for node in sandbox.get_children():
+        sandbox.remove_child(node)
         node.queue_free()
     
     movement_params = null
@@ -76,11 +78,6 @@ func set_up_level(data: Dictionary) -> void:
         if movement_type is JumpFromPlatformMovement:
             jump_from_platform_movement = movement_type
     assert(jump_from_platform_movement != null)
-    
-    var shape := movement_params.collider_shape
-    print(shape) # FIXME: Remove
-    var rid := shape.get_rid()
-    print(rid)
     
     surface_parser = level.surface_parser
     space_state = level.get_world_2d().direct_space_state

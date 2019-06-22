@@ -38,6 +38,8 @@ func _init(tile_maps: Array, player_types: Dictionary) -> void:
 # Gets the surface corresponding to the given side of the given tile in the given TileMap.
 func get_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
         side: int) -> Surface:
+    var keys = _tile_map_index_to_surface_maps.keys()
+    var key = keys[0]
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
 
 func get_subset_of_surfaces( \
