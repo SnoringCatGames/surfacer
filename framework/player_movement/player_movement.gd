@@ -391,8 +391,9 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         
         assert(!collision.empty())
     
-    assert(Geometry.are_points_equal_with_epsilon( \
-            collision.position, closest_intersection_point, Geometry.FLOAT_EPSILON * 2))
+    # FIXME: Add back in?
+#    assert(Geometry.are_points_equal_with_epsilon( \
+#            collision.position, closest_intersection_point, Geometry.FLOAT_EPSILON * 2))
     var intersection_point: Vector2 = collision.position
     
     var side: int

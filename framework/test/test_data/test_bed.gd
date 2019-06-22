@@ -1,4 +1,4 @@
-extends Reference
+extends "res://addons/gut/test.gd"
 class_name TestBed
 
 const JumpFromPlatformMovement = preload("res://framework/player_movement/jump_from_platform_movement.gd")
@@ -30,6 +30,9 @@ const GROUPS := [
     "computer_players",
 ]
 
+const END_COORDINATE_CLOSE_THRESHOLD := 0.001
+const END_POSITION_CLOSE_THRESHOLD := Vector2(0.001, 0.001)
+
 var sandbox: Node
 
 var movement_params: MovementParams
@@ -42,8 +45,14 @@ var global_calc_params: MovementCalcGlobalParams
 var start_surface: Surface
 var end_surface: Surface
 
-func _init(sandbox: Node) -> void:
-    self.sandbox = sandbox
+func before_each() -> void:
+    sandbox = self
+
+func after_each() -> void:
+    destroy()
+
+func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
+    set_up_level(data)
 
 func destroy() -> void:
     var scene_tree := sandbox.get_tree()

@@ -10,7 +10,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_editor_icon": ExtResource( 2 )
 }
-_inner_class_name = "Test_check_frame_for_collision"
+_inner_class_name = "Test_update_vertical_end_state_for_time"
 _run_on_load = true
 _yield_between_tests = false
 _file_prefix = ""
