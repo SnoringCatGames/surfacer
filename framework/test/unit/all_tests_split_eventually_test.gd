@@ -1,5 +1,8 @@
 extends TestBed
 
+# Expected values were calculated using a Google spreadsheet:
+# https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
+
 ###################################################################################################
 
 class Test_check_instructions_for_collision:

@@ -580,12 +580,14 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
         duration_of_slow_ascent = Geometry.solve_for_movement_duration( \
                 start_height, target_height, movement_params.jump_boost, slow_ascent_gravity, \
                 true, false)
+        assert(duration_of_slow_ascent >= 0 and duration_of_slow_ascent != INF)
         duration_of_fast_fall = 0.0
     else:
         duration_of_slow_ascent = vertical_step.time_instruction_end
         duration_of_fast_fall = Geometry.solve_for_movement_duration( \
                 position_instruction_end.y, target_height, velocity_instruction_end.y, \
                 movement_params.gravity, is_position_before_peak, false)
+        assert(duration_of_fast_fall >= 0 and duration_of_fast_fall != INF)
     
     return duration_of_fast_fall + duration_of_slow_ascent
 
@@ -641,13 +643,18 @@ static func _calculate_time_to_release_acceleration(step_end_time: float, positi
 # Calculates the minimum required time to reach the destination, considering a maximum velocity.
 static func _calculate_min_time_to_reach_position(position_start: float, position_end: float, \
         velocity_start: float, velocity_max: float, acceleration: float) -> float:
+    # FIXME: A: Check whether any of these asserts should be replaced with `return INF`.
+    
     var duration_to_reach_position_with_no_velocity_cap: float = \
             Geometry.solve_for_movement_duration( \
                     position_start, position_end, velocity_start, acceleration, true, true)
+    assert(duration_to_reach_position_with_no_velocity_cap > 0 and \
+            duration_to_reach_position_with_no_velocity_cap != INF)
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
     var duration_to_reach_max_velocity := (velocity_max - velocity_start) / acceleration
+    assert(duration_to_reach_max_velocity > 0)
     
     if duration_to_reach_max_velocity > duration_to_reach_position_with_no_velocity_cap:
         # We won't have hit the max velocity before reaching the destination.
@@ -661,11 +668,13 @@ static func _calculate_min_time_to_reach_position(position_start: float, positio
                 velocity_start * duration_to_reach_max_velocity + \
                 0.5 * acceleration * duration_to_reach_max_velocity * \
                         duration_to_reach_max_velocity
+        assert(position_when_reaching_max_velocity > 0)
         
         # From a basic equation of motion:
         #     s = s_0 + v*t
         var duration_with_max_velocity := \
                 (position_end - position_when_reaching_max_velocity) / velocity_max
+        assert(duration_with_max_velocity > 0)
         
         return duration_to_reach_max_velocity + duration_with_max_velocity
 
@@ -815,7 +824,7 @@ static func _get_closest_fallable_surface_intersecting_triangle(target: Vector2,
         if current_distance_squared < closest_distance_squared:
             if Geometry.do_polyline_and_triangle_intersect(current_surface.vertices, \
                     triangle_a, triangle_b, triangle_c):
-                # FIXME: LEFT OFF HERE: -B: ****
+                # FIXME: -B: ****
                 # - Calculate instruction set (or determine whether it's not possible)
                 # - Reconcile this with how PlayerMovement now works...
                 current_distance_squared = \
@@ -838,7 +847,7 @@ static func _get_closest_fallable_surface_intersecting_polygon(target: Vector2, 
                 current_surface.bounding_box)
         if current_distance_squared < closest_distance_squared:
             if Geometry.do_polyline_and_polygon_intersect(current_surface.vertices, polygon):
-                # FIXME: LEFT OFF HERE: -B: **** Copy above version
+                # FIXME: -B: **** Copy above version
                 current_distance_squared = \
                         Geometry.get_distance_squared_from_point_to_polyline( \
                                 target, current_surface.vertices)

@@ -1,5 +1,5 @@
 # Parameters that are used for calculating edge instructions.
-# FIXME: LEFT OFF HERE: --A ********* doc
+# FIXME: --A ********* doc
 extends Reference
 class_name MovementCalcGlobalParams
 

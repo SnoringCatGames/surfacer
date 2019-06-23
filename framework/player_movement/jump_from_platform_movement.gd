@@ -14,6 +14,10 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 # FIXME: D ******** Tweak this
 const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
 
+# FIXME: F: Try to check that this doesn't generate Edge false positives.
+# FIXME: --------A: Use this or remove this...
+const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 0.9985
+
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
 # FIXME: -A ***************
@@ -464,9 +468,6 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     
     var total_displacement: Vector2 = position_end - position_start
     var min_vertical_displacement := movement_params.max_upward_distance
-    var duration_to_peak := -movement_params.jump_boost / movement_params.gravity
-    
-    assert(duration_to_peak > 0)
     
     # Check whether the vertical displacement is possible.
     if min_vertical_displacement > total_displacement.y:
@@ -500,24 +501,34 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
                 (0.5 * movement_params.jump_boost * movement_params.jump_boost + \
                 movement_params.gravity * total_displacement.y) / \
                 (movement_params.gravity - slow_ascent_gravity)
-#        assert(distance_to_release_button_for_shorter_jump < 0)# FIXME: Should this be here?
         
-        var duration_to_release_button_for_shorter_jump: float = \
-                Geometry.solve_for_movement_duration(0, \
-                distance_to_release_button_for_shorter_jump, movement_params.jump_boost, \
-                slow_ascent_gravity, true, false)
-        assert(duration_to_release_button_for_shorter_jump > 0)
+        var duration_to_release_button_for_shorter_jump: float
+        if distance_to_release_button_for_shorter_jump < 0:
+            # We need more motion than just the initial jump boost to reach the destination.
+            duration_to_release_button_for_shorter_jump = \
+                    Geometry.solve_for_movement_duration(0, \
+                    distance_to_release_button_for_shorter_jump, movement_params.jump_boost, \
+                    slow_ascent_gravity, true, false)
+        else:
+            # The initial jump boost is already more motion than we need to reach the destination.
+            duration_to_release_button_for_shorter_jump = 0
+        
+        assert(duration_to_release_button_for_shorter_jump >= 0 and \
+                duration_to_release_button_for_shorter_jump != INF)
         
         # From a basic equation of motion:
         #     v = v_0 + a*t
+        var velocity_when_releasing_jump_button := movement_params.jump_boost + \
+                        slow_ascent_gravity * duration_to_release_button_for_shorter_jump
+
+        # From a basic equation of motion:
+        #     v = v_0 + a*t
         var duration_to_reach_peak_after_release := \
-                -movement_params.jump_boost - \
-                        slow_ascent_gravity * duration_to_release_button_for_shorter_jump / \
-                        movement_params.gravity
-        assert(duration_to_reach_peak_after_release > 0)
+                -velocity_when_releasing_jump_button / movement_params.gravity
+        assert(duration_to_reach_peak_after_release >= 0)
+
         duration_to_reach_upward_displacement = duration_to_release_button_for_shorter_jump + \
                 duration_to_reach_peak_after_release
-        
     else:
         # We're jumping downward, so we don't need to reach any minimum peak height.
         duration_to_reach_upward_displacement = 0.0
@@ -528,6 +539,8 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
         duration_to_reach_downward_displacement = Geometry.solve_for_movement_duration( \
                 position_start.y, position_end.y, movement_params.jump_boost, \
                 movement_params.gravity, true, true)
+        assert(duration_to_reach_downward_displacement > 0 and \
+                duration_to_reach_downward_displacement != INF)
     else:
         duration_to_reach_downward_displacement = 0.0
     
@@ -535,6 +548,8 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
             position_start.x, position_end.x, 0.0, \
             movement_params.max_horizontal_speed_default, \
             movement_params.in_air_horizontal_acceleration * horizontal_movement_sign)
+    assert(duration_to_reach_horizontal_displacement > 0 and \
+            duration_to_reach_horizontal_displacement != INF)
     
     # How high we need to jump is determined by the greatest of three durations:
     # - The duration to reach the minimum peak height (i.e., how high upward we must jump to reach
@@ -576,12 +591,13 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
         time_to_release_jump_button = t1
     else:
         time_to_release_jump_button = min(t1, t2)
+    assert(time_to_release_jump_button >= 0)
     
     # Given the time to release the jump button, calculate the time to reach the peak.
     # From a basic equation of motion:
     #     v = v_0 + a*t
     var velocity_at_jump_button_release := \
-    movement_params.jump_boost + slow_ascent_gravity * time_to_release_jump_button
+            movement_params.jump_boost + slow_ascent_gravity * time_to_release_jump_button
     # From a basic equation of motion:
     #     v = v_0 + a*t
     var time_of_peak_height := -velocity_at_jump_button_release / movement_params.gravity

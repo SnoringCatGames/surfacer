@@ -44,6 +44,14 @@ class_name EdgeParser
 #   previous/inital/landing PositionAlongSurface), rather than from whatever pre-calculated
 #   PositionAlongSurface was used to determine whether the edge is possible.
 # 
+# - Add logic to test execution of TestPlayer movement over _every_ edge in a complex, hand-made
+#   test level.
+#   - Make sure that the player hits the correct destination surface without hitting any other
+#     surface on-route.
+#   - Also test that the player lands on the destination within a threshold of the expected
+#     position.
+#   - Will need to figure out how to emulate/manipulate time deltas for the test environment...
+# 
 # - Add logic to automatically self-correct to the expected position/movement/state sometimes...
 #   - When? Each frame? Only when we're further away than our tolerance allows?
 # 
@@ -56,6 +64,7 @@ class_name EdgeParser
 #       all?)
 #     - It's probably at least worth adding an optional mode that does this and comparing the
 #       performance.
+#     - Or does the GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION param fix things enough?
 # 
 # - Refactor PlayerMovement classes, so that whether the start and end posiition is on a platform
 #   or in the air is configuration that JumpFromPlatformMovement handles directly, rather than
