@@ -1,7 +1,7 @@
 extends Reference
 class_name EdgeParser
 
-# FIXME: LEFT OFF HERE:
+# FIXME: LEFT OFF HERE: Master list:
 # 
 # - Finish everything in JumpFromPlatformMovement (edge calculations, including movement constraints from interfering surfaces)
 # - Finish/polish fallable surfaces calculations (and remove old obsolete functions)

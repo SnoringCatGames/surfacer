@@ -16,7 +16,7 @@ const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
 
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
-# FIXME: LEFT OFF HERE: -A ***************
+# FIXME: -A ***************
 # - Tests
 #   - Choose a better name for helpers/ and to prefix levels and player
 #   - Figure out how to render the boundaries of a collision shape
@@ -267,7 +267,7 @@ static func _test_instructions(instructions: PlayerInstructions, \
     var collision := _check_instructions_for_collision(global_calc_params, instructions)
     assert(collision == null or collision.surface == global_calc_params.destination_surface)
     var final_frame_position := instructions.frame_positions[instructions.frame_positions.size() - 1]
-    # FIXME: LEFT OFF HERE: ---------------A
+    # FIXME: ---A: Add back in?
 #    assert(final_frame_position.distance_squared_to(global_calc_params.position_end) < \
 #            VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD)
     
@@ -565,7 +565,7 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
         # We can't reach the end position from our start position.
         return null
     var discriminant_sqrt := sqrt(discriminant)
-    # FIXME: LEFT OFF HERE: Why was I seeing this as 1.xxx when I flipped the +/- discriminant_sqrt
+    # FIXME: ----A: Why was I seeing this as 1.xxx when I flipped the +/- discriminant_sqrt
     #        and jump shouldn't have been held at all?
     var t1 := (-b - discriminant_sqrt) / 2 / a
     var t2 := (-b + discriminant_sqrt) / 2 / a
