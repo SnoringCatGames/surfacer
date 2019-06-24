@@ -158,7 +158,7 @@ For convenience, this is checked in the with rest of the Surfacer framework.
 A small edit was made to the Gut test runner: instead of prefixing filenames with "test_" Surfacer
 suffixes filenames with "_test".
 
-
+```javascript
 // FIXME: REMOVE
 function solve_for_movement_duration(s_0, s, v_0, a, returns_lower_result) {
     var discriminant = v_0 * v_0 - 2 * a * (s_0 - s);
@@ -181,8 +181,9 @@ function solve_for_movement_duration(s_0, s, v_0, a, returns_lower_result) {
 }
 var s_0 = 0;
 var v_0 = -1000;
-var a = 4992.5;
+var a = 900;
 function calc_duration_for_tests(s) {
     console.log(solve_for_movement_duration(s_0, s, v_0, a, true));
 }
-calc_duration_for_tests(-502.2558228);
+calc_duration_for_tests(/*TODO*/);
+```

@@ -14,8 +14,8 @@ func set_up(state := {}) -> void:
     output_step.velocity_instruction_end = Vector2.INF
     
     movement_params = MovementParams.new()
-    movement_params.gravity = 5000.0
-    movement_params.ascent_gravity_multiplier = 0.18
+    movement_params.gravity_fast_fall = 5000.0
+    movement_params.gravity_slow_ascent = 900.0
     
     vertical_step = MovementCalcStep.new()
     vertical_step.time_instruction_end = state.time_instruction_end

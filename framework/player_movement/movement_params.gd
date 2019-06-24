@@ -11,8 +11,9 @@ var collider_shape: Shape2D
 var collider_rotation: float
 var collider_half_width_height: Vector2
 
-var gravity: float
-var ascent_gravity_multiplier: float
+var gravity_fast_fall: float
+var slow_ascent_gravity_multiplier: float
+var gravity_slow_ascent: float
 var ascent_double_jump_gravity_multiplier: float
 
 var jump_boost: float

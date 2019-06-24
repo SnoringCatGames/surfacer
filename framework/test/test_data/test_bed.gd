@@ -95,6 +95,10 @@ func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
     set_up_level(data)
 
 func destroy() -> void:
+    # FIXME: This shouldn't be possible. Why does Gut trigger this sometimes?
+    if sandbox == null:
+        return
+    
     var scene_tree := sandbox.get_tree()
     
     for group in GROUPS:

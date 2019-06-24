@@ -54,11 +54,11 @@ static func update_velocity_in_air( \
     # Make gravity stronger when falling. This creates a more satisfying jump.
     # Similarly, make gravity stronger for double jumps.
     var gravity_multiplier := 1.0 if !is_ascending_from_jump else \
-            (movement_params.ascent_gravity_multiplier if is_first_jump \
+            (movement_params.slow_ascent_gravity_multiplier if is_first_jump \
                     else movement_params.ascent_double_jump_gravity_multiplier)
     
     # Vertical movement.
-    velocity.y += delta * movement_params.gravity * gravity_multiplier
+    velocity.y += delta * movement_params.gravity_fast_fall * gravity_multiplier
     
     # Horizontal movement.
     velocity.x += delta * movement_params.in_air_horizontal_acceleration * horizontal_movement_sign
@@ -468,15 +468,14 @@ static func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
         movement_params: MovementParams, vertical_step: MovementCalcStep, time: float, \
         is_step_end_time: bool) -> void:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
-    var slow_ascent_gravity := movement_params.gravity * movement_params.ascent_gravity_multiplier
     var slow_ascent_end_time := min(time, vertical_step.time_instruction_end)
     
     # Basic equations of motion.
     var slow_ascent_end_position := vertical_step.position_start.y + \
             vertical_step.velocity_start.y * slow_ascent_end_time + \
-            0.5 * slow_ascent_gravity * slow_ascent_end_time * slow_ascent_end_time
-    var slow_ascent_end_velocity := \
-            vertical_step.velocity_start.y + slow_ascent_gravity * slow_ascent_end_time
+            0.5 * movement_params.gravity_slow_ascent * slow_ascent_end_time * slow_ascent_end_time
+    var slow_ascent_end_velocity := vertical_step.velocity_start.y + \
+            movement_params.gravity_slow_ascent * slow_ascent_end_time
     
     var position: float
     var velocity: float
@@ -492,8 +491,8 @@ static func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
         # Basic equations of motion.
         position = slow_ascent_end_position + \
             slow_ascent_end_velocity * fast_fall_duration + \
-            0.5 * movement_params.gravity * fast_fall_duration * fast_fall_duration
-        velocity = slow_ascent_end_velocity + movement_params.gravity * fast_fall_duration
+            0.5 * movement_params.gravity_fast_fall * fast_fall_duration * fast_fall_duration
+        velocity = slow_ascent_end_velocity + movement_params.gravity_fast_fall * fast_fall_duration
     
     if is_step_end_time:
         output_step.position_step_end.y = position
@@ -512,7 +511,6 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
     
     var target_height := position.y
     var start_height := vertical_step.position_start.y
-    var slow_ascent_gravity := movement_params.gravity * movement_params.ascent_gravity_multiplier
     
     var duration_of_slow_ascent: float
     var duration_of_fast_fall: float
@@ -577,8 +575,8 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
                 is_position_before_peak = false
     
     if is_position_before_instruction_end:
-        duration_of_slow_ascent = Geometry.solve_for_movement_duration( \
-                start_height, target_height, movement_params.jump_boost, slow_ascent_gravity, \
+        duration_of_slow_ascent = Geometry.solve_for_movement_duration(start_height, \
+                target_height, movement_params.jump_boost, movement_params.gravity_slow_ascent, \
                 true, false)
         assert(duration_of_slow_ascent >= 0 and duration_of_slow_ascent != INF)
         duration_of_fast_fall = 0.0
@@ -586,7 +584,7 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
         duration_of_slow_ascent = vertical_step.time_instruction_end
         duration_of_fast_fall = Geometry.solve_for_movement_duration( \
                 position_instruction_end.y, target_height, velocity_instruction_end.y, \
-                movement_params.gravity, is_position_before_peak, false)
+                movement_params.gravity_fast_fall, is_position_before_peak, false)
         assert(duration_of_fast_fall >= 0 and duration_of_fast_fall != INF)
     
     return duration_of_fast_fall + duration_of_slow_ascent
@@ -641,19 +639,37 @@ static func _calculate_time_to_release_acceleration(step_end_time: float, positi
             return max(t1, t2)
 
 # Calculates the minimum required time to reach the destination, considering a maximum velocity.
-static func _calculate_min_time_to_reach_position(position_start: float, position_end: float, \
-        velocity_start: float, velocity_max: float, acceleration: float) -> float:
+static func _calculate_min_time_to_reach_position(s_0: float, s: float, \
+        v_0: float, speed_max: float, a: float) -> float:
     # FIXME: A: Check whether any of these asserts should be replaced with `return INF`.
     
+    if s_0 == s:
+        # The start position is the destination.
+        return 0.0
+    elif a == 0:
+        # Handle the degenerate case with no acceleration.
+        if v_0 == 0:
+            # We can't reach the destination, since we're not moving anywhere.
+            return INF 
+        elif (s - s_0 > 0) != (v_0 > 0):
+            # We can't reach the destination, since we're moving in the wrong direction.
+            return INF
+        else:
+            # s = s_0 + v_0*t
+            return (s - s_0) / v_0
+    
+    var velocity_max := speed_max if a > 0 else -speed_max
+    
     var duration_to_reach_position_with_no_velocity_cap: float = \
-            Geometry.solve_for_movement_duration( \
-                    position_start, position_end, velocity_start, acceleration, true, true)
-    assert(duration_to_reach_position_with_no_velocity_cap > 0 and \
-            duration_to_reach_position_with_no_velocity_cap != INF)
+            Geometry.solve_for_movement_duration(s_0, s, v_0, a, true, true)
+    
+    if duration_to_reach_position_with_no_velocity_cap == INF:
+        # We can't ever reach the destination.
+        return INF
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
-    var duration_to_reach_max_velocity := (velocity_max - velocity_start) / acceleration
+    var duration_to_reach_max_velocity := (velocity_max - v_0) / a
     assert(duration_to_reach_max_velocity > 0)
     
     if duration_to_reach_max_velocity > duration_to_reach_position_with_no_velocity_cap:
@@ -664,16 +680,13 @@ static func _calculate_min_time_to_reach_position(position_start: float, positio
         
         # From a basic equation of motion:
         #     s = s_0 + v_0*t + 1/2*a*t^2
-        var position_when_reaching_max_velocity := position_start + \
-                velocity_start * duration_to_reach_max_velocity + \
-                0.5 * acceleration * duration_to_reach_max_velocity * \
-                        duration_to_reach_max_velocity
+        var position_when_reaching_max_velocity := s_0 + v_0 * duration_to_reach_max_velocity + \
+                0.5 * a * duration_to_reach_max_velocity * duration_to_reach_max_velocity
         assert(position_when_reaching_max_velocity > 0)
         
         # From a basic equation of motion:
         #     s = s_0 + v*t
-        var duration_with_max_velocity := \
-                (position_end - position_when_reaching_max_velocity) / velocity_max
+        var duration_with_max_velocity := (s - position_when_reaching_max_velocity) / velocity_max
         assert(duration_with_max_velocity > 0)
         
         return duration_to_reach_max_velocity + duration_with_max_velocity

@@ -41,8 +41,8 @@ func _create_movement_params() -> MovementParams:
     movement_params.collider_shape = shape
     movement_params.collider_rotation = COLLIDER_ROTATION
     
-    movement_params.gravity = Geometry.GRAVITY
-    movement_params.ascent_gravity_multiplier = 0.38
+    movement_params.gravity_fast_fall = Geometry.GRAVITY
+    movement_params.slow_ascent_gravity_multiplier = 0.38
     movement_params.ascent_double_jump_gravity_multiplier = 0.68
     
     movement_params.jump_boost = -1000.0

@@ -591,10 +591,28 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
 static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: float, \
         returns_lower_result := true, expects_only_one_positive_result := false) -> float:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    
+    var displacement := s - s_0
+    
+    if displacement == 0:
+        # The start position is the destination.
+        return 0.0
+    elif a == 0:
+        # Handle the degenerate case with no acceleration.
+        if v_0 == 0:
+            # We can't reach the destination, since we're not moving anywhere.
+            return INF 
+        elif (displacement > 0) != (v_0 > 0):
+            # We can't reach the destination, since we're moving in the wrong direction.
+            return INF
+        else:
+            # s = s_0 + v_0*t
+            return displacement / v_0
+    
     # From a basic equation of motion:
     #     s = s_0 + v_0*t + 1/2*a*t^2.
     # Solve for t using the quadratic formula.
-    var discriminant := v_0 * v_0 - 2 * a * (s_0 - s)
+    var discriminant := v_0 * v_0 + 2 * a * displacement
     if discriminant < 0:
         # We can't reach the end position from our start position.
         return INF

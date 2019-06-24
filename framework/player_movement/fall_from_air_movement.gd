@@ -12,14 +12,14 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
 #    var displacement = end.target_point - start
 #
 #    # Solve a quadratic equation for duration.
-#    var discriminant = start_velocity.y * start_velocity.y - 2 * params.gravity * -displacement.y
+#    var discriminant = start_velocity.y * start_velocity.y - 2 * params.gravity_fast_fall * -displacement.y
 #    if discriminant < 0:
 #        # We can't reach the end position with our start position and velocity.
 #        return null
 #    var discriminant_sqrt = sqrt(discriminant)
-#    var duration = (-start_velocity.y + discriminant_sqrt) / params.gravity
+#    var duration = (-start_velocity.y + discriminant_sqrt) / params.gravity_fast_fall
 #    if duration < 0:
-#        duration = (-start_velocity.y - discriminant_sqrt) / params.gravity
+#        duration = (-start_velocity.y - discriminant_sqrt) / params.gravity_fast_fall
 #
 #    var duration_for_horizontal_displacement = \
 #            abs(displacement.x / params.max_horizontal_speed_default)

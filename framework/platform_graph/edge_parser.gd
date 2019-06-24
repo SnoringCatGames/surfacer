@@ -64,7 +64,8 @@ class_name EdgeParser
 #       all?)
 #     - It's probably at least worth adding an optional mode that does this and comparing the
 #       performance.
-#     - Or does the GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION param fix things enough?
+#     - Or would something like a GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION (~0.9985?)
+#       param fix things enough?
 # 
 # - Refactor PlayerMovement classes, so that whether the start and end posiition is on a platform
 #   or in the air is configuration that JumpFromPlatformMovement handles directly, rather than

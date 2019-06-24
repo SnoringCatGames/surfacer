@@ -10,7 +10,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_editor_icon": ExtResource( 2 )
 }
-_select_script = "calculate_vertical_step_test"
+_select_script = "calculate_end_time_for_jumping_to_position_test"
 _run_on_load = true
 _yield_between_tests = false
 _file_prefix = ""

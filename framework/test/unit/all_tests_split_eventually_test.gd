@@ -29,12 +29,6 @@ class Test_calculate_time_to_release_acceleration:
     func test_TODO() -> void:
         pending()# FIXME
 
-class Test_calculate_min_time_to_reach_position:
-    extends TestBed
-    
-    func test_TODO() -> void:
-        pending()# FIXME
-
 ###################################################################################################
 
 class Test_get_nearby_and_fallable_surfaces:
@@ -75,12 +69,6 @@ class Test_get_closest_fallable_surface_intersecting_polygon:
 
 ###################################################################################################
 
-class Test_calculate_horizontal_step:
-    extends TestBed
-    
-    func test_TODO() -> void:
-        pending()# FIXME
-        
 class Test_convert_calculation_steps_to_player_instructions:
     extends TestBed
     
@@ -88,18 +76,6 @@ class Test_convert_calculation_steps_to_player_instructions:
         pending()# FIXME
 
 ###################################################################################################
-
-class Test_get_max_horizontal_distance:
-    extends TestBed
-    
-    func test_TODO() -> void:
-        pending()# FIXME
-
-class Test_get_max_upward_distance:
-    extends TestBed
-    
-    func test_TODO() -> void:
-        pending()# FIXME
 
 class Test_test_calculate_jump_instructions:
     extends TestBed
@@ -136,5 +112,18 @@ class Test_calculate_steps_from_constraint_without_backtracking_on_height:
 class Test_calculate_steps_from_constraint_with_backtracking_on_height:
     extends TestBed
     
+    func test_TODO() -> void:
+        pending()# FIXME
+
+###################################################################################################
+
+# FIXME: Add tests to calculate_min_time_to_reach_position_test.gd
+
+class Test_solve_for_movement_duration:
+    extends TestBed
+    
+    # Expected values were calculated using a Google spreadsheet:
+    # https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
+
     func test_TODO() -> void:
         pending()# FIXME

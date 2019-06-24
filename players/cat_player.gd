@@ -78,7 +78,7 @@ func _process_actions_while_on_floor() -> void:
     
     # Friction.
     var friction_offset: float = Utils.get_floor_friction_coefficient(self) * \
-            FRICTION_MULTIPLIER * movement_params.gravity
+            FRICTION_MULTIPLIER * movement_params.gravity_fast_fall
     friction_offset = clamp(friction_offset, 0, abs(velocity.x))
     velocity.x += -sign(velocity.x) * friction_offset
     
