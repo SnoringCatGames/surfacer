@@ -8,8 +8,8 @@ func before_each() -> void:
     movement_params.jump_boost = -1000.0
     movement_params.gravity_fast_fall = 5000.0
     movement_params.gravity_slow_ascent = 900.0
-    movement_params.in_air_horizontal_acceleration = 1500
-    movement_params.max_horizontal_speed_default = 400
+    movement_params.in_air_horizontal_acceleration = 1500.0
+    movement_params.max_horizontal_speed_default = 400.0
     movement_params.max_upward_distance = \
             PlayerParams._calculate_max_upward_movement(movement_params)
 

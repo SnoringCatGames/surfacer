@@ -592,24 +592,25 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
 # Calculates the duration to accelerate over in order to reach the destination at the given time,
 # given that velocity continues after acceleration stops and a new backward acceleration is
 # applied.
-static func _calculate_time_to_release_acceleration(step_end_time: float, position_start: float, \
-        position_end: float, velocity_start: float, acceleration_start: float, \
-        post_release_backward_acceleration: float, returns_lower_result := true, \
-        expects_only_one_positive_result := false) -> float:
+static func _calculate_time_to_release_acceleration(time_start: float, time_step_end: float, \
+        position_start: float, position_end: float, velocity_start: float, \
+        acceleration_start: float, post_release_backward_acceleration: float, \
+        returns_lower_result := true, expects_only_one_positive_result := false) -> float:
+    var duration := time_step_end - time_start
+
     # Derivation:
     # - Start with basic equations of motion
     # - v_1 = v_0 + a_0*t_0
     # - s_2 = s_1 + v_1*t_1 + 1/2*a_1*t_1^2
+    # - s_0 = s_0 + v_0*t_0 + 1/2*a_0*t_0^2
     # - t_2 = t_0 + t_1
-    # - s_2 = s_0 + s_1
     # - Do some algebra...
-    # - 0 = (1/2*a_1 - a_0)*t_0^2 + (a_0*t_2 - a_1*t_2 - v_0)*t_0 + (1/2*a_1*t_2^2 + v_0*t_2 - s_0)
+    # - 0 = (1/2*(a_0 - a_1)) * t_0^2 + (t_2 * (a_1 - a_0)) * t_0 + (s_2 - s_0 - t_2 * (v_0 + 1/2*a_1*t_2))
     # - Apply quadratic formula to solve for t_0.
-    var a := 0.5 * post_release_backward_acceleration - acceleration_start
-    var b := acceleration_start * step_end_time - \
-            post_release_backward_acceleration * step_end_time - velocity_start
-    var c := 0.5 * post_release_backward_acceleration * step_end_time * step_end_time + \
-            velocity_start * step_end_time - position_start
+    var a := 0.5 * (acceleration_start - post_release_backward_acceleration)
+    var b := duration * (post_release_backward_acceleration - acceleration_start)
+    var c := position_end - position_start - duration * \
+            (velocity_start + 0.5 * post_release_backward_acceleration * duration)
     
     # This would produce a divide-by-zero.
     assert(a != 0)

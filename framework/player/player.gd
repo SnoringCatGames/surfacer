@@ -81,7 +81,11 @@ func _physics_process(delta: float) -> void:
     
     # Uncomment to help with debugging.
     if surface_state.just_left_air:
-        print("Hit surface: %s" % Surface.to_string(surface_state.grabbed_surface))
+        print("HIT surface: %8.3f:%29sP:%29sV: %s" % [OS.get_ticks_msec()/1000.0, position, \
+                velocity, Surface.to_string(surface_state.grabbed_surface)])
+    elif surface_state.just_entered_air:
+        print("LEFT surface:%8.3f:%29sP:%29sV: %s" % [OS.get_ticks_msec()/1000.0, position, \
+                velocity, Surface.to_string(surface_state.previous_grabbed_surface)])
     
     platform_graph_navigator.update()
     actions.delta = delta
@@ -256,23 +260,26 @@ func _update_which_surface_is_grabbed() -> void:
         surface_state.just_changed_surface = \
                 surface_state.just_left_air or \
                 next_grabbed_surface != surface_state.grabbed_surface
+        if surface_state.just_changed_surface:
+            surface_state.previous_grabbed_surface = surface_state.grabbed_surface
         surface_state.grabbed_surface = next_grabbed_surface
         
         surface_state.player_center_position_along_surface.match_current_grab( \
                 surface_state.grabbed_surface, position)
     
     else:
-        surface_state.grab_position = Vector2.INF
-        surface_state.grabbed_tile_map = null
-        surface_state.grab_position_tile_map_coord = Vector2.INF
-        surface_state.grabbed_surface = null
-        surface_state.player_center_position_along_surface.reset()
-        
         if surface_state.just_entered_air:
             surface_state.just_changed_grab_position = true
             surface_state.just_changed_tile_map = true
             surface_state.just_changed_tile_map_coord = true
             surface_state.just_changed_surface = true
+            surface_state.previous_grabbed_surface = surface_state.grabbed_surface
+        
+        surface_state.grab_position = Vector2.INF
+        surface_state.grabbed_tile_map = null
+        surface_state.grab_position_tile_map_coord = Vector2.INF
+        surface_state.grabbed_surface = null
+        surface_state.player_center_position_along_surface.reset()
 
 # Update whether or not we should currently consider collisions with fall-through floors and
 # walk-through walls.

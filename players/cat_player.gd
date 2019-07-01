@@ -138,7 +138,7 @@ func _process_actions_while_in_air() -> void:
 func _process_actions_while_on_wall() -> void:
     jump_count = 0
     is_ascending_from_jump = false
-    velocity.y = 0
+    velocity.y = 0.0
     
     # Wall jump.
     if actions.just_pressed_jump:

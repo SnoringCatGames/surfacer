@@ -630,7 +630,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     var position_end := local_calc_params.position_end
     
     var time_step_end := _calculate_end_time_for_jumping_to_position( \
-            global_calc_params.movement_params, vertical_step, position_end, \
+            movement_params, vertical_step, position_end, \
             local_calc_params.upcoming_constraint, global_calc_params.destination_surface)
     
     # Get some start state from the previous step.
@@ -673,8 +673,9 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     # FIXME: B: Account for max x velocity.
     
     var duration_for_horizontal_acceleration := _calculate_time_to_release_acceleration( \
-            time_step_end, position_start.x, position_end.x, velocity_start.x, \
-            movement_params.in_air_horizontal_acceleration * horizontal_movement_sign, 0.0, true, false)
+            time_start, time_step_end, position_start.x, position_end.x, velocity_start.x, \
+            movement_params.in_air_horizontal_acceleration * horizontal_movement_sign, 0.0, true, \
+            false)
     
     # Check whether the horizontal displacement is possible.
     if time_remaining < duration_for_horizontal_acceleration:
