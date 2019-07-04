@@ -11,30 +11,20 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 #   wall-top constraint result in too much downward velocity into the ceiling?
 # - Or what about the constraint offset margins? Shouldn't those actually address any needed
 #   jump-height epsilon? Is this needlessly redundant with that mechanism?
+# - Though I may need to always at least have _some_ small value here...
 # FIXME: D ******** Tweak this
 const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
 
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
+# FIXME: B: use this to record slow/fast gravities on the movement_params when initializing and
+#        update all usages to use the right one (rather than mutating the movement_params in the
+#        middle of edge calculations below).
+# FIXME: B: Update step calculation to increase durations by a slight amount (after calculating
+#        them all), in order to not have the rendered/discrete trajectory stop short?
+const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.08
+
 # FIXME: -A ***************
-# - Tests
-#   - Choose a better name for helpers/ and to prefix levels and player
-#   - Figure out how to render the boundaries of a collision shape
-#   - Create the test Player and test Levels
-#   - Create a file with a collection of simple helpers utilities
-#     - 
-#   - Enumerate areas/work-flows/methods to test, then enumerate specific edge cases within each of those
-#     - 
-#   - Implement tests
-#   - Step through everything in the following and make sure its covered:
-#     - jump_from_platform_movement
-#     - player_movement
-#     - edge_parser
-#     - surface_parser
-#     - geometry
-#     - utils
-#     - platform_graph_navigator
-#     - player/human_player/computer_player?
 # - 
 # - Debugging:
 #   - Would it help to add some quick and easy annotation helpers for temp debugging that I can access on global (or wherever) and just tell to render dots/lines/circles?
@@ -72,12 +62,6 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 #   that our algorithm thinks the human player can traverse.
 #   - Try to render all of the interesting edge pairs that I think I should test for.
 # - 
-# - Will also want to record some other info for annotations/debugging:
-#   - Store on PlayerInstructions (but on MovementCalcStep first, during calculation?).
-#   - A polyline representation of the ultimate trajectory, including time-slice-testing and
-#     considering constraints.
-#   - The ultimate sequence of constraints that were used (these are actually just the start positions of each movementcalcstep).
-# - 
 # - Step through and double-check each return value parameter individually through the recursion, and each input parameter.
 # - 
 # - Optimize a bit for collisions with vertical surfaces:
@@ -98,6 +82,11 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 #   position to actually cause us to grab on to the target surface.
 #   - Solution: Add support for ensuring a minimum normal-direction speed at the end of the jump.
 #     - Faster is probably always better, since efficient/quick movements are better.
+# - 
+# - Problem: All of the edge calculations will allow the slow-ascent gravity to also be used for
+#   the downward portion of the jump.
+#   - Either update Player controllers to also allow that,
+#   - or update all relevant edge calculation logic.
 # - 
 # - Fix _get_nearby_and_fallable_surfaces et al
 # - 
@@ -138,6 +127,10 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
     var instructions: PlayerInstructions
     var weight: float
     var edges = []
+    
+    # FIXME: B: REMOVE
+    params.gravity_fast_fall *= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    params.gravity_slow_ascent *= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     var global_calc_params := MovementCalcGlobalParams.new(params, space_state, surface_parser)
     
@@ -209,6 +202,9 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
             continue
         else:
             possible_jump_land_pairs = [a_near_end, b_near_end]
+        # FIXME: D: Remove
+        if a.side == SurfaceSide.CEILING or b.side == SurfaceSide.CEILING:
+            continue
         
         for i in range(possible_jump_land_pairs.size() - 1):
             jump_point = possible_jump_land_pairs[i]
@@ -223,6 +219,10 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
             instructions = _calculate_jump_instructions(global_calc_params)
             if instructions != null:
                 edges.push_back(PlatformGraphEdge.new(jump_position, land_position, instructions))
+    
+    # FIXME: B: REMOVE
+    params.gravity_fast_fall /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    params.gravity_slow_ascent /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     return edges
 
@@ -264,12 +264,20 @@ static func _test_instructions(instructions: PlayerInstructions, \
     
     assert(instructions.instructions[0].time == 0.0)
     
+    # FIXME: B: REMOVE
+    global_calc_params.movement_params.gravity_fast_fall /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    global_calc_params.movement_params.gravity_slow_ascent /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    
     var collision := _check_instructions_for_collision(global_calc_params, instructions)
     assert(collision == null or collision.surface == global_calc_params.destination_surface)
     var final_frame_position := instructions.frame_positions[instructions.frame_positions.size() - 1]
-    # FIXME: ---A: Add back in?
+    # FIXME: B: Add back in after fixing the use of GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION.
 #    assert(final_frame_position.distance_squared_to(global_calc_params.position_end) < \
 #            VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD)
+
+    # FIXME: B: REMOVE
+    global_calc_params.movement_params.gravity_fast_fall *= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    global_calc_params.movement_params.gravity_slow_ascent *= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     return true
 
@@ -579,11 +587,9 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
             0.5 * movement_params.gravity_fast_fall * total_duration * total_duration
     var discriminant := b * b - 4 * a * c
     if discriminant < 0:
-        # We can't reach the end position from our start position.
+        # We can't reach the end position from our start position in the given time.
         return null
     var discriminant_sqrt := sqrt(discriminant)
-    # FIXME: ----A: Why was I seeing this as 1.xxx when I flipped the +/- discriminant_sqrt
-    #        and jump shouldn't have been held at all?
     var t1 := (-b - discriminant_sqrt) / 2 / a
     var t2 := (-b + discriminant_sqrt) / 2 / a
     if t1 < -Geometry.FLOAT_EPSILON:
@@ -593,6 +599,7 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     else:
         time_to_release_jump_button = min(t1, t2)
     assert(time_to_release_jump_button >= 0)
+    assert(time_to_release_jump_button <= total_duration)
     
     # Given the time to release the jump button, calculate the time to reach the peak.
     # From a basic equation of motion:

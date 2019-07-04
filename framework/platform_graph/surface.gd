@@ -4,12 +4,15 @@ class_name Surface
 var vertices: PoolVector2Array
 # SurfaceSide
 var side: int
+# Array<int>
+var tile_map_indices: Array
 var bounding_box: Rect2
 var normal: Vector2
 
-func _init(vertices: Array, side: int) -> void:
+func _init(vertices: Array, side: int, tile_map_indices: Array) -> void:
     self.vertices = PoolVector2Array(vertices)
     self.side = side
+    self.tile_map_indices = tile_map_indices
     bounding_box = Geometry.get_bounding_box_for_points(vertices)
     normal = _calculate_normal(side)
 

@@ -4,7 +4,7 @@ var surface: Surface
 var offset: Vector2
 
 func set_up(state := {}) -> void:
-    surface = Surface.new([state.surface_start, state.surface_end], state.side)
+    surface = Surface.new([state.surface_start, state.surface_end], state.side, [INF])
     offset = Vector2(10, 10)
 
 func assert_constraint(constraint: MovementConstraint, state: Dictionary) -> void:

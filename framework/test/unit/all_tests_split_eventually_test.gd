@@ -11,24 +11,6 @@ class Test_check_instructions_for_collision:
     func test_TODO() -> void:
         pending()# FIXME
 
-class Test_check_horizontal_step_for_collision:
-    extends TestBed
-    
-    func test_TODO() -> void:
-        pending()# FIXME
-
-class Test_calculate_end_time_for_jumping_to_position:
-    extends TestBed
-    
-    func test_TODO() -> void:
-        pending()# FIXME
-
-class Test_calculate_time_to_release_acceleration:
-    extends TestBed
-    
-    func test_TODO() -> void:
-        pending()# FIXME
-
 ###################################################################################################
 
 class Test_get_nearby_and_fallable_surfaces:

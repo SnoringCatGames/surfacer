@@ -58,7 +58,7 @@ func _ready() -> void:
     
     # Set up some annotators that help with debugging.
     # TODO: Eventually, update this to not be specific to squirrel
-    platform_graph_annotator = PlatformGraphAnnotator.new(platform_graphs["squirrel"])
+    platform_graph_annotator = PlatformGraphAnnotator.new(platform_graphs["test"])
     add_child(platform_graph_annotator)
     computer_player_annotator = ComputerPlayerAnnotator.new(computer_player)
     add_child(computer_player_annotator)

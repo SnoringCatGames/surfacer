@@ -418,8 +418,8 @@ static func get_tile_map_index_from_grid_coord(position: Vector2, tile_map: Tile
     return (tile_map_position.y * tile_map_width + tile_map_position.x) as int
 
 static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map: TileMap, \
-        is_touching_floor: bool, is_touching_ceiling: bool, \
-        is_touching_left_wall: bool, is_touching_right_wall: bool) -> Vector2:
+        is_touching_floor: bool, is_touching_ceiling: bool, is_touching_left_wall: bool, \
+        is_touching_right_wall: bool, expects_a_valid_result: bool) -> Vector2:
     var half_cell_size = tile_map.cell_size / 2
     var used_rect = tile_map.get_used_rect()
     var position_relative_to_tile_map = \
@@ -433,7 +433,8 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
     var is_between_cells_vertically = cell_height_mod < FLOAT_EPSILON or \
             tile_map.cell_size.y - cell_height_mod < FLOAT_EPSILON
     
-    var tile_coord: Vector2
+    var tile_coord := Vector2.INF
+    var error_message := ""
     
     if is_between_cells_horizontally and is_between_cells_vertically:
         var top_left_cell_coord = \
@@ -461,7 +462,7 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
             elif is_there_a_tile_at_bottom_right:
                 tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y + 1)
             else:
-                Utils.error("Invalid state: Problem calculating colliding cell on floor")
+                error_message = "Invalid state: Problem calculating colliding cell on floor"
         elif is_touching_ceiling:
             if is_touching_left_wall:
                 assert(is_there_a_tile_at_top_left)
@@ -474,23 +475,23 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
             elif is_there_a_tile_at_top_right:
                 tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y)
             else:
-                Utils.error("Invalid state: Problem calculating colliding cell on ceiling")
+                error_message = "Invalid state: Problem calculating colliding cell on ceiling"
         elif is_touching_left_wall:
             if is_there_a_tile_at_top_left:
                 tile_coord = Vector2(top_left_cell_coord.x, top_left_cell_coord.y)
             elif is_there_a_tile_at_bottom_left:
                 tile_coord = Vector2(top_left_cell_coord.x, top_left_cell_coord.y + 1)
             else:
-                Utils.error("Invalid state: Problem calculating colliding cell on left wall")
+                error_message = "Invalid state: Problem calculating colliding cell on left wall"
         elif is_touching_right_wall:
             if is_there_a_tile_at_top_right:
                 tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y)
             elif is_there_a_tile_at_bottom_right:
                 tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y + 1)
             else:
-                Utils.error("Invalid state: Problem calculating colliding cell on right wall")
+                error_message = "Invalid state: Problem calculating colliding cell on right wall"
         else:
-            Utils.error("Invalid state: Problem calculating colliding cell")
+            error_message = "Invalid state: Problem calculating colliding cell"
         
     elif is_between_cells_horizontally:
         var left_cell_coord = \
@@ -504,18 +505,18 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
             if is_there_a_tile_at_left:
                 tile_coord = Vector2(left_cell_coord.x, left_cell_coord.y)
             else:
-                Utils.error("Invalid state: Problem calculating colliding cell on left wall")
+                error_message = "Invalid state: Problem calculating colliding cell on left wall"
         elif is_touching_right_wall:
             if is_there_a_tile_at_right:
                 tile_coord = Vector2(left_cell_coord.x + 1, left_cell_coord.y)
             else:
-                Utils.error("Invalid state: Problem calculating colliding cell on right wall")
+                error_message = "Invalid state: Problem calculating colliding cell on right wall"
         elif is_there_a_tile_at_left:
             tile_coord = Vector2(left_cell_coord.x, left_cell_coord.y)
         elif is_there_a_tile_at_right:
             tile_coord = Vector2(left_cell_coord.x + 1, left_cell_coord.y)
         else:
-            Utils.error("Invalid state: Problem calculating colliding cell")
+            error_message = "Invalid state: Problem calculating colliding cell"
         
     elif is_between_cells_vertically:
         var top_cell_coord = world_to_tile_map(Vector2(position_world_coord.x, \
@@ -528,26 +529,31 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
             if is_there_a_tile_at_bottom:
                 tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y + 1)
             else:
-                Utils.error("Invalid state: Problem calculating colliding cell on floor")
+                error_message = "Invalid state: Problem calculating colliding cell on floor"
         elif is_touching_ceiling:
             if is_there_a_tile_at_top:
                 tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y)
             else:
-                Utils.error("Invalid state: Problem calculating colliding cell on ceiling")
+                error_message = "Invalid state: Problem calculating colliding cell on ceiling"
         elif is_there_a_tile_at_bottom:
             tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y + 1)
         elif is_there_a_tile_at_top:
             tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y)
         else:
-            Utils.error("Invalid state: Problem calculating colliding cell")
+            error_message = "Invalid state: Problem calculating colliding cell"
         
     else:
         tile_coord = world_to_tile_map(position_world_coord, tile_map)
     
-    # Ensure the cell we calculated actually contains content.
-    assert(tile_map.get_cellv(tile_coord) >= 0)
-    
-    return tile_coord
+    if !error_message.empty():
+        if expects_a_valid_result:
+            Utils.error(error_message)
+        return Vector2.INF
+    else:
+        # Ensure the cell we calculated actually contains content.
+        assert(tile_map.get_cellv(tile_coord) >= 0)
+        
+        return tile_coord
 
 static func do_shapes_match(a: Shape2D, b: Shape2D) -> bool:
     if a is CircleShape2D:

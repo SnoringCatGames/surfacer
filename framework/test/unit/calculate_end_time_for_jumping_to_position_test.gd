@@ -22,7 +22,7 @@ func set_up(state := {}) -> void:
     
     target_position = Vector2(INF, state.target_position_y)
     
-    var surface := Surface.new([Vector2.INF], state.surface_side)
+    var surface := Surface.new([Vector2.INF], state.surface_side, [INF])
     
     if state.should_use_constraint:
         upcoming_constraint = \

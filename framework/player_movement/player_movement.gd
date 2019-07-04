@@ -126,12 +126,20 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
         shape_query_params.motion = displacement
         position += displacement
         
-        # Check for collision.
-        collision = check_frame_for_collision(space_state, shape_query_params, \
-                global_calc_params.surface_parser)
-        if collision != null:
-            instructions.frame_positions = PoolVector2Array(frame_positions)
-            return collision
+        if displacement != Vector2.ZERO:
+            # Check for collision.
+            collision = check_frame_for_collision(space_state, shape_query_params, \
+                    global_calc_params.surface_parser)
+            if collision != null:
+                instructions.frame_positions = PoolVector2Array(frame_positions)
+                return collision
+        else:
+            # Don't check for collisions if we aren't moving anywhere.
+            # We can assume that all frame starting positions are not colliding with anything;
+            # otherwise, it should have been caught from the motion of the previous frame. The
+            # collision margin could yield collision results in the initial frame, but we want to
+            # ignore these.
+            collision = null
         
         # This point corresponds to when Player._physics_process would be called:
         # - The position for the current frame has been calculated from the previous frame's velocity.
@@ -145,6 +153,8 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
             match next_instruction.input_key:
                 "jump":
                     is_pressing_jump = next_instruction.is_pressed
+                    if is_pressing_jump:
+                        velocity.y = global_calc_params.movement_params.jump_boost
                 "move_left":
                     is_pressing_left = next_instruction.is_pressed
                     horizontal_movement_sign = -1 if is_pressing_left else 0
@@ -153,7 +163,6 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
                     horizontal_movement_sign = 1 if is_pressing_right else 0
                 _:
                     Utils.error()
-            
             
             next_instruction = instructions.instructions[current_instruction_index + 1] if \
                     current_instruction_index + 1 < instructions.instructions.size() else null
@@ -201,12 +210,15 @@ static func _check_horizontal_step_for_collision( \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
-    var previous_time := horizontal_step.time_start
-    var current_time := horizontal_step.time_start
+    # On average, an instruction set will start halfway through a physics frame, so let's use that
+    # average here.
+    var previous_time := horizontal_step.time_start - Utils.PHYSICS_TIME_STEP / 2
+    var current_time := previous_time
     var step_end_time := horizontal_step.time_step_end
     var horizontal_instruction_end_time := horizontal_step.time_instruction_end
     var position := horizontal_step.position_start
     var velocity := horizontal_step.velocity_start
+    var has_started_instructions := false
     var jump_instruction_end_time := local_calc_params.vertical_step.time_instruction_end
     var is_pressing_jump := jump_instruction_end_time > current_time
     var is_pressing_move_horizontal := horizontal_instruction_end_time > current_time
@@ -226,11 +238,19 @@ static func _check_horizontal_step_for_collision( \
         shape_query_params.motion = displacement
         position += displacement
         
-        # Check for collision.
-        collision = check_frame_for_collision(space_state, shape_query_params, \
-                global_calc_params.surface_parser)
-        if collision != null:
-            return collision
+        if displacement != Vector2.ZERO:
+            # Check for collision.
+            collision = check_frame_for_collision(space_state, shape_query_params, \
+                    global_calc_params.surface_parser)
+            if collision != null:
+                return collision
+        else:
+            # Don't check for collisions if we aren't moving anywhere.
+            # We can assume that all frame starting positions are not colliding with anything;
+            # otherwise, it should have been caught from the motion of the previous frame. The
+            # collision margin could yield collision results in the initial frame, but we want to
+            # ignore these.
+            collision = null
         
         # Determine whether the jump button is still being pressed.
         is_pressing_jump = jump_instruction_end_time > current_time
@@ -239,6 +259,13 @@ static func _check_horizontal_step_for_collision( \
         is_pressing_move_horizontal = horizontal_instruction_end_time > current_time
         horizontal_movement_sign = \
                 horizontal_step.horizontal_movement_sign if is_pressing_move_horizontal else 0
+        
+        if !has_started_instructions:
+            has_started_instructions = true
+            # When we start executing the instruction, the current elapsed time of the instruction
+            # will be less than a full frame. So we use a delta that represents the actual time the
+            # instruction should have been running for so far.
+            delta = current_time - horizontal_step.time_start
         
         # Update velocity for the next frame.
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
@@ -322,6 +349,20 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     var direction := shape_query_params.motion.normalized()
     
+    # FIXME: B:
+    # - Problem: There can be pre-existing intersection points from the starting position, which
+    #   can produce collision results with surfaces when the motion normal is in an invalid
+    #   direction relative to the surface.
+    # - Solution:
+    #   - Instead of just getting the single best point from intersection_points, get a sorted list
+    #     of all of them.
+    #   - Then, iterate through each possible intersection point, checking whether it can yield a
+    #     valid surface.
+    #   - Add a comment about how we can assume that if get_collision_tile_map_coord returns a
+    #     valid result, then it's because the motion is moving into that tile and not coming from
+    #     it.
+    #   - Update unit tests to cover this.
+    
     # Choose whichever point comes first, along the direction of the motion. If two points are
     # equally close, then choose whichever point is closest to the starting position.
     
@@ -368,7 +409,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         # If the ray tracing didn't hit the collider, then try nudging it a little to either side.
         # This can happen when the point of intersection is a vertex of the collider.
         
-        var perpendicular_offset: Vector2 = direction.tangent() * Geometry.FLOAT_EPSILON
+        var perpendicular_offset: Vector2 = direction.tangent() * 0.0001
         
         collision = space_state.intersect_ray(from + perpendicular_offset, \
                 to + perpendicular_offset, shape_query_params.exclude, \
@@ -378,6 +419,16 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             collision = space_state.intersect_ray(from - perpendicular_offset, \
                     to - perpendicular_offset, shape_query_params.exclude, \
                     shape_query_params.collision_layer)
+        
+        # FIXME: E:
+        # - Problem: Single-point surfaces will fail here (empty collision Dictionary result).
+        # - Solution:
+        #   - Not sure.
+        #   - Might be able to use another space_state method?
+        #   - Or, might be able to estimate parameters from other sources:
+        #     - Normal according to the direction of motion?
+        #     - Position from closest_intersection_point
+        #     - Collider from ...
         
         assert(!collision.empty())
     
@@ -407,7 +458,14 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     var tile_map: TileMap = collision.collider
     var tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
             intersection_point, tile_map, is_touching_floor, is_touching_ceiling, \
-            is_touching_left_wall, is_touching_right_wall)
+            is_touching_left_wall, is_touching_right_wall, false)
+    
+    # If get_collision_tile_map_coord returns an invalid result, then it's because the motion is
+    # moving away from that tile and not into it. This happens when the starting position is within
+    # EDGE_MOVEMENT_TEST_MARGIN from a surface.
+    if tile_map_coord == Vector2.INF:
+        return null
+    
     var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord(tile_map_coord, tile_map)
     
     var surface := surface_parser.get_surface_for_tile(tile_map, tile_map_index, side)

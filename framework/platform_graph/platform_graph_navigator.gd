@@ -123,10 +123,8 @@ func update() -> void:
 
 # Finds the Surface the corresponds to the given PlayerSurfaceState.
 func calculate_grabbed_surface(surface_state: PlayerSurfaceState) -> Surface:
-    var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord( \
-            surface_state.grab_position_tile_map_coord, surface_state.grabbed_tile_map)
-    return surface_parser.get_surface_for_tile(surface_state.grabbed_tile_map, tile_map_index, \
-            surface_state.grabbed_side)
+    return surface_parser.get_surface_for_tile(surface_state.grabbed_tile_map, \
+            surface_state.grabbed_tile_map_index, surface_state.grabbed_side)
 
 func _calculate_path(origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:

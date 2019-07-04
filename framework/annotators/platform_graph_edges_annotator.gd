@@ -3,7 +3,9 @@ class_name PlatformGraphEdgesAnnotator
 
 const TRAJECTORY_WIDTH := 1.0
 
-const CONSTRAINT_RADIUS := 4.0 * TRAJECTORY_WIDTH
+const CONSTRAINT_WIDTH := 2.0
+const CONSTRAINT_RADIUS := 3.0 * CONSTRAINT_WIDTH
+const START_RADIUS := 1.5 * CONSTRAINT_WIDTH
 
 # Dictionary<Surface, Array<PlatformGraphEdge>>
 var edges: Dictionary
@@ -28,4 +30,7 @@ func _draw() -> void:
             
             for constraint_position in edge.instructions.constraint_positions:
                 DrawUtils.draw_empty_circle(self, constraint_position, CONSTRAINT_RADIUS, \
-                        constraint_color, TRAJECTORY_WIDTH, 4.0)
+                        constraint_color, CONSTRAINT_WIDTH, 4.0)
+            
+            DrawUtils.draw_empty_circle(self, edge.start.target_point, START_RADIUS, \
+                    constraint_color, CONSTRAINT_WIDTH, 4.0)

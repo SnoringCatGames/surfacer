@@ -86,7 +86,7 @@ static func draw_position_along_surface(canvas: CanvasItem, position: PositionAl
             target_point_color)
     
     # Annotate the t value.
-    if position.target_projection_onto_surface == null:
+    if position.target_projection_onto_surface == Vector2.INF:
         position.target_projection_onto_surface = \
                 Geometry.project_point_onto_surface(position.target_point, position.surface)
     var normal = position.surface.normal

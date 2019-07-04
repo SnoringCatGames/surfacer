@@ -19,17 +19,19 @@ var target_point: Vector2
 var t: float
 
 # Used for debugging. May not always be set.
-var target_projection_onto_surface: Vector2
+var target_projection_onto_surface := Vector2.INF
 
 func reset() -> void:
     self.surface = null
     self.target_point = Vector2.INF
     self.t = 0.0
+    self.target_projection_onto_surface = Vector2.INF
 
 func match_current_grab(surface: Surface, player_center: Vector2) -> void:
     self.surface = surface
     self.target_point = player_center
     self.t = _calculate_t(surface, player_center)
+    self.target_projection_onto_surface = Vector2.INF
 
 func match_surface_target_and_collider(surface: Surface, target_point: Vector2, \
         collider_half_width_height: Vector2) -> void:

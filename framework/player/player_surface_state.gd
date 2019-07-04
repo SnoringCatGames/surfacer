@@ -35,6 +35,7 @@ var which_wall: int = SurfaceSide.NONE
 var grab_position: Vector2
 var grab_position_tile_map_coord: Vector2
 var grabbed_tile_map: TileMap
+var grabbed_tile_map_index: int
 var grabbed_surface: Surface
 var previous_grabbed_surface: Surface
 # SurfaceSide

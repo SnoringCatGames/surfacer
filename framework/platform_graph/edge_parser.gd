@@ -95,6 +95,7 @@ class_name EdgeParser
 #   consumer must use these input names?)
 # - Test exporting to HTML5.
 # - Start adding networking support.
+# - Finish adding tests.
 
 # Returns a mapping from Surfaces to their adjacent Edges.
 static func calculate_edges(space_state: Physics2DDirectSpaceState, \
@@ -105,8 +106,8 @@ static func calculate_edges(space_state: Physics2DDirectSpaceState, \
     for movement_type in player_info.movement_types:
         if movement_type.can_traverse_edge:
             for surface in surfaces:
-                # FIXME: Add this back in after we're done writing tests
-                pass
-#                edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface_parser, surface)
+                # FIXME: Comment out when writing tests
+#                pass
+                edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface_parser, surface)
     
     return edges

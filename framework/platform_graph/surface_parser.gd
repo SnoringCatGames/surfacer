@@ -38,8 +38,6 @@ func _init(tile_maps: Array, player_types: Dictionary) -> void:
 # Gets the surface corresponding to the given side of the given tile in the given TileMap.
 func get_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
         side: int) -> Surface:
-    var keys = _tile_map_index_to_surface_maps.keys()
-    var key = keys[0]
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
 
 func get_subset_of_surfaces( \
@@ -556,7 +554,8 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
 
 static func _populate_surface_objects(tmp_surfaces: Array, side: int) -> void:
     for tmp_surface in tmp_surfaces:
-        tmp_surface.surface = Surface.new(tmp_surface.vertices_array, side)
+        tmp_surface.surface = \
+                Surface.new(tmp_surface.vertices_array, side, tmp_surface.tile_map_indices)
 
 static func _copy_surfaces_to_main_collection(tmp_surfaces: Array, main_collection: Array) -> void:
     for tmp_surface in tmp_surfaces:

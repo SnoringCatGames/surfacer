@@ -4,7 +4,6 @@ extends TestBed
 # https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
 
 var local_calc_params: MovementCalcLocalParams
-var global_calc_params: MovementCalcGlobalParams
 
 func set_up(state := {}) -> void:
     movement_params = MovementParams.new()
@@ -12,15 +11,15 @@ func set_up(state := {}) -> void:
     movement_params.jump_boost = -1000.0
     movement_params.gravity_slow_ascent = 900.0
     movement_params.gravity_fast_fall = 5000.0
+    movement_params.collider_shape = RectangleShape2D.new()
 
-    var destination_surface := Surface.new([Vector2.INF], SurfaceSide.FLOOR)
+    var destination_surface := Surface.new([Vector2.INF], SurfaceSide.FLOOR, [INF])
 
-    global_calc_params = MovementCalcGlobalParams.new()
+    global_calc_params = MovementCalcGlobalParams.new(movement_params, null, null)
     global_calc_params.movement_params = movement_params
     global_calc_params.destination_surface = destination_surface
 
-    var upcoming_constraint := MovementConstraint.new()
-    movement_constraint.surface = destination_surface
+    var upcoming_constraint := MovementConstraint.new(destination_surface, Vector2.INF, true, true)
 
     var previous_step: MovementCalcStep
     if state.includes_previous_step:
@@ -40,10 +39,9 @@ func set_up(state := {}) -> void:
     vertical_step.position_instruction_end = Vector2(INF, state.position_jump_instruction_end_y)
     vertical_step.velocity_instruction_end = Vector2(INF, state.velocity_jump_instruction_end_y)
     
-    local_calc_params = MovementCalcLocalParams.new()
-    local_calc_params.previous_step = previous_step
-    local_calc_params.vertical_step = vertical_step
-    local_calc_params.position_end = state.position_end
+    var position_start := Vector2.INF
+    local_calc_params = MovementCalcLocalParams.new(position_start, state.position_end, \
+            previous_step, vertical_step, upcoming_constraint)
 
 func assert_horizontal_step(step: MovementCalcStep, state: Dictionary) -> void:
     assert_almost_eq(step.time_start, state.time_start, Geometry.FLOAT_EPSILON)
@@ -55,38 +53,40 @@ func assert_horizontal_step(step: MovementCalcStep, state: Dictionary) -> void:
     assert_almost_eq(step.horizontal_movement_sign, state.horizontal_movement_sign, \
             Geometry.FLOAT_EPSILON)
 
-# FIXME: LEFT OFF HERE: Test cases:
-# - with no previous or next steps (start and end time are same as vertical step)
-# - with previous step (start time != vertical-step start time)
-# - with next step (end time != vertical-step end time)
-# - moving leftward and rightward
-# - Can't reach horizontal displacement in time
-
-func test_no_previous_or_next_steps() -> void:
-    pending() # FIXME
+func test_with_no_previous_or_next_steps() -> void:
+    # start and end time are same as vertical step
     set_up({
+        includes_previous_step = false,
         time_start = 0.0,
         position_start = Vector2(0.0, 0.0),
         velocity_start = Vector2(0.0, -1000.0),
-        vertical_time_step_end = 1.465,
+        vertical_time_step_end = 1.533,
         # Distance between near points in far-distance level.
-        position_end = Vector2(512.0, 0.0),
+        position_end = Vector2(556.666961, 0.0),
         vertical_step_position_start_y = 0.0,
-        time_jump_instruction_end = 0.966,
-        position_jump_instruction_end_y = -538.916363,
-        velocity_jump_instruction_end_y = -130,
+        time_jump_instruction_end = 1.066,
+        position_jump_instruction_end_y = -562.745414,
+        velocity_jump_instruction_end_y = -55,
     })
 
     var step := JumpFromPlatformMovement._calculate_horizontal_step( \
             local_calc_params, global_calc_params)
     
-    assert_horizontal_step(result, {
-        includes_previous_step = true,
+    assert_horizontal_step(step, {
         time_start = 0.0,
-        time_instruction_end = ,
-        time_step_end = 1.465,
+        time_instruction_end = 0.261164,
+        time_step_end = 1.551573,
         position_start = Vector2(0.0, 0.0),
-        position_step_end = Vector2(512.0, 0.0),
+        position_step_end = Vector2(556.666961, 0.0),
         velocity_start_y = -1000,
         horizontal_movement_sign = 1,
     })
+
+func test_with_previous_step() -> void:
+    pending() # TODO
+
+func test_with_next_step_moving_left() -> void:
+    pending() # TODO
+
+func test_cant_reach_destination() -> void:
+    pending() # TODO
