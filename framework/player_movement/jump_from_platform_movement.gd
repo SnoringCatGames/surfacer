@@ -22,6 +22,7 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 #        middle of edge calculations below).
 # FIXME: B: Update step calculation to increase durations by a slight amount (after calculating
 #        them all), in order to not have the rendered/discrete trajectory stop short?
+# FIXME: B: Update tests to use the new acceleration values.
 const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.08
 
 # FIXME: -A ***************
@@ -198,10 +199,10 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
                 possible_jump_land_pairs.push_back(possible_land_point)
         
         # FIXME: D *********** Remove. This is for debugging.
-        if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
-            continue
-        else:
-            possible_jump_land_pairs = [a_near_end, b_near_end]
+#        if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
+#            continue
+#        else:
+#            possible_jump_land_pairs = [a_near_end, b_near_end]
         # FIXME: D: Remove
         if a.side == SurfaceSide.CEILING or b.side == SurfaceSide.CEILING:
             continue
@@ -599,7 +600,10 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     else:
         time_to_release_jump_button = min(t1, t2)
     assert(time_to_release_jump_button >= 0)
-    assert(time_to_release_jump_button <= total_duration)
+    # FIXME: LEFT OFF HERE: DEBUGGING (OLD)...
+    # - Add this back in?
+    # - Should duration_to_reach_horizontal_displacement have been larger?
+#    assert(time_to_release_jump_button <= total_duration)
     
     # Given the time to release the jump button, calculate the time to reach the peak.
     # From a basic equation of motion:
