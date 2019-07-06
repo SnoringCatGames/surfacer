@@ -4,8 +4,9 @@ extends Reference
 class_name MovementCalcGlobalParams
 
 const TILE_MAP_COLLISION_LAYER := 7
-const EDGE_MOVEMENT_TEST_MARGIN := 4.0
-const EDGE_MOVEMENT_ACTUAL_MARGIN := 5.0
+# FIXME: LEFT OFF HERE: DEBUGGING: Revert to reasonable values
+const EDGE_MOVEMENT_TEST_MARGIN := 24.0#12.0#8.0#6.0#4.0#2.0
+const EDGE_MOVEMENT_ACTUAL_MARGIN := 30.0#15.0#10.0#7.5#5.0#2.5
 
 var movement_params: MovementParams
 

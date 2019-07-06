@@ -595,8 +595,12 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
 #   positive results.
 # - Returns INF if we cannot reach the destination with our movement parameters.
 static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: float, \
-        returns_lower_result := true, expects_only_one_positive_result := false) -> float:
+        returns_lower_result := true, min_duration := 0.0, \
+        expects_only_one_positive_result := false) -> float:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    
+    # Use only non-negative results.
+    assert(min_duration >= 0)
     
     var displacement := s - s_0
     
@@ -631,11 +635,18 @@ static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: flo
     # Ensure that there are not two negative results.
     assert(t1 >= 0 or t2 >= 0)
     
-    # Use only non-negative results.
-    if t1 < 0:
-        return t2
-    elif t2 < 0:
-        return t1
+    min_duration = min_duration + FLOAT_EPSILON
+    
+    if t1 < min_duration:
+        if t2 < min_duration:
+            return INF
+        else:
+            return t2
+    elif t2 < min_duration:
+        if t1 < min_duration:
+            return INF
+        else:
+            return t1
     else:
         if returns_lower_result:
             return min(t1, t2)
