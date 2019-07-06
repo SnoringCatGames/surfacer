@@ -320,6 +320,10 @@ static func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlo
     
     var collision := _check_horizontal_step_for_collision(global_calc_params, local_calc_params, \
             next_horizontal_step)
+    # FIXME: LEFT OFF HERE: DEBUGGING: Remove
+    if collision != null and collision.surface.side == SurfaceSide.CEILING:
+        collision = _check_horizontal_step_for_collision(global_calc_params, local_calc_params, \
+                next_horizontal_step)
     
     if collision == null or collision.surface == global_calc_params.destination_surface:
         # There is no intermediate surface interfering with this movement, or we've reached the

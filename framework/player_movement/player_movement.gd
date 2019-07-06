@@ -389,67 +389,34 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     #                                         /
     #                                        /
     
-    var starting_position := shape_query_params.transform.origin
     var direction := shape_query_params.motion.normalized()
-    
-    # FIXME: B:
-    # - Problem: There can be pre-existing intersection points from the starting position, which
-    #   can produce collision results with surfaces when the motion normal is in an invalid
-    #   direction relative to the surface.
-    # - Solution:
-    #   - Instead of just getting the single best point from intersection_points, get a sorted list
-    #     of all of them.
-    #   - Then, iterate through each possible intersection point, checking whether it can yield a
-    #     valid surface.
-    #   - Add a comment about how we can assume that if get_collision_tile_map_coord returns a
-    #     valid result, then it's because the motion is moving into that tile and not coming from
-    #     it.
-    #   - Update unit tests to cover this.
-    # - Other problem consideration: What about jumping through the wall that we are starting from?
-    # - Other problem consideration: What about jumping through a wall that is connected to the
-    #   edge of the floor that we are jumping from?
-    # - Two other possible solutions...:
-    #   1. Remove the margin
-    #      - Problem: Might still have collisions detected when we're just touching the surface at
-    #        the start.
-    #      - Problem: Will generate more false-positive Edges, or just edges that don't move far
-    #        enough around intermediate surfaces.
-    #   2. Add more special conditional logic to handle each possible configuration of initially
-    #      colliding surfaces.
-    #      - Problem: How to distinguish between collision points along select surfaces we care
-    #        about and other unexpected surfaces?
-    #        - FIXME: LEFT OFF HERE: ------------A ********
-    #      - Possible initial colliding surface scenarios:
-    #        - The surface that we jump from.
-    #          - Consider it a collision if we are moving toward it.
-    #        - Already touching a non-departure surface when we initially jump.
-    #          - 
-    #        - ...
-    # - IGNORE ALL OF THE ABOVE: Instead:
-    #   - Just throw away any points that we are "moving away from".
-    #   - How to calculate that:
-    #     - Any point that is in both the same x and y direction as movement from any bounding-box corner, should be kept.
-    #     - If moving rightward, ignore points that are to the left of the bounding-box left-side
-    #     - etc.
-    # - FIXME: Remove this when we fix the above (An empty array means that we were already
-    #          colliding even before any motion)
-    if space_state.cast_motion(shape_query_params).empty():
-        return null
+    var position_start := shape_query_params.transform.origin
+    var x_min_start := position_start.x - collider_half_width_height.x
+    var x_max_start := position_start.x + collider_half_width_height.x
+    var y_min_start := position_start.y - collider_half_width_height.y
+    var y_max_start := position_start.y + collider_half_width_height.y
     
     # Choose whichever point comes first, along the direction of the motion. If two points are
     # equally close, then choose whichever point is closest to the starting position.
     
     var current_projection_onto_motion: float
-    var closest_projection_onto_motion: float
+    var closest_projection_onto_motion: float = INF
     var current_intersection_point: Vector2
-    var closest_intersection_point: Vector2
+    var closest_intersection_point := Vector2.INF
     var other_closest_intersection_point := Vector2.INF
     
-    closest_intersection_point = intersection_points[0]
-    closest_projection_onto_motion = direction.dot(closest_intersection_point)
-    
-    for i in range(1, intersection_points.size()):
+    for i in intersection_points.size():
         current_intersection_point = intersection_points[i]
+        
+        # Ignore any points that we aren't moving toward. Those indicate pre-existing collisions,
+        # which should only exist from the collision margin intersecting nearby surfaces at the
+        # start of the Player's movement.
+        if direction.x <= 0 and current_intersection_point.x >= x_max_start or \
+                direction.x >= 0 and current_intersection_point.x <= x_min_start or \
+                direction.y <= 0 and current_intersection_point.y >= y_max_start or \
+                direction.y >= 0 and current_intersection_point.y <= y_min_start:
+            continue
+        
         current_projection_onto_motion = direction.dot(current_intersection_point)
         
         if Geometry.are_floats_equal_with_epsilon(current_projection_onto_motion, \
@@ -462,11 +429,16 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             closest_projection_onto_motion = current_projection_onto_motion
             other_closest_intersection_point = Vector2.INF
     
+    if closest_intersection_point == Vector2.INF:
+        # We are moving away from all of the intersection points, so we can assume that there are
+        # no new collisions this frame.
+        return null
+    
     if other_closest_intersection_point != Vector2.INF:
         # Two points of intersection were equally close against the direction of motion, so choose
         # whichever point is closest to the starting position.
-        var distance_a := closest_intersection_point.distance_squared_to(starting_position)
-        var distance_b := other_closest_intersection_point.distance_squared_to(starting_position)
+        var distance_a := closest_intersection_point.distance_squared_to(position_start)
+        var distance_b := other_closest_intersection_point.distance_squared_to(position_start)
         closest_intersection_point = closest_intersection_point if distance_a < distance_b else \
                 other_closest_intersection_point
     
@@ -536,7 +508,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     # specifically, the normal and the collider.
     var collision: Dictionary
     
-    var side: int
+    var side := SurfaceSide.NONE
     var is_touching_floor := false
     var is_touching_ceiling := false
     var is_touching_left_wall := false
@@ -585,81 +557,95 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         
         var collision_ratios := space_state.cast_motion(shape_query_params)
         
-        # An empty array means that we were already colliding even before any motion.
-        assert(collision_ratios.size() == 2)
-        # A value of 1 means that no collision was detected.
-        assert(collision_ratios[0] < 1.0)
-        
-        var position_just_before_collision: Vector2 = \
-                starting_position + shape_query_params.motion * collision_ratios[0]
-        # FIXME: Remove?
-    #    var position_just_after_collision: Vector2 = \
-    #            starting_position + shape_query_params.motion * collision_ratios[1]
-        
-        var x_min_just_before_collision := \
-                position_just_before_collision.x - collider_half_width_height.x
-        var x_max_just_before_collision := \
-                position_just_before_collision.x + collider_half_width_height.x
-        var y_min_just_before_collision := \
-                position_just_before_collision.y - collider_half_width_height.y
-        var y_max_just_before_collision := \
-                position_just_before_collision.y + collider_half_width_height.y
-        
-        var intersects_along_x := x_min_just_before_collision <= closest_intersection_point.x and \
-                x_max_just_before_collision >= closest_intersection_point.x
-        var intersects_along_y := y_min_just_before_collision <= closest_intersection_point.y and \
-                y_max_just_before_collision >= closest_intersection_point.y
-        
-        # At least one dimension should intersect just before collision.
-        assert(intersects_along_x or intersects_along_y)
-        
-        if !intersects_along_x or !intersects_along_y:
-            # If only one dimension intersects just before collision, then we use that to determine
-            # which side we're colliding with.
+        if collision_ratios.size() == 2:
+            # An array of size 2 means that there was no pre-existing collision.
             
-            if intersects_along_x:
-                if direction.y > 0:
+            # A value of 1 means that no collision was detected.
+            assert(collision_ratios[0] < 1.0)
+            
+            var position_just_before_collision: Vector2 = \
+                    position_start + shape_query_params.motion * collision_ratios[0]
+            # FIXME: Remove?
+        #    var position_just_after_collision: Vector2 = \
+        #            position_start + shape_query_params.motion * collision_ratios[1]
+            
+            var x_min_just_before_collision := \
+                    position_just_before_collision.x - collider_half_width_height.x
+            var x_max_just_before_collision := \
+                    position_just_before_collision.x + collider_half_width_height.x
+            var y_min_just_before_collision := \
+                    position_just_before_collision.y - collider_half_width_height.y
+            var y_max_just_before_collision := \
+                    position_just_before_collision.y + collider_half_width_height.y
+            
+            var intersects_along_x := x_min_just_before_collision <= closest_intersection_point.x and \
+                    x_max_just_before_collision >= closest_intersection_point.x
+            var intersects_along_y := y_min_just_before_collision <= closest_intersection_point.y and \
+                    y_max_just_before_collision >= closest_intersection_point.y
+            
+            # At least one dimension should intersect just before collision.
+            assert(intersects_along_x or intersects_along_y)
+            
+            if !intersects_along_x or !intersects_along_y:
+                # If only one dimension intersects just before collision, then we use that to determine
+                # which side we're colliding with.
+                
+                if intersects_along_x:
+                    if direction.y > 0:
+                        side = SurfaceSide.FLOOR
+                        is_touching_floor = true
+                    else: # direction.y < 0
+                        side = SurfaceSide.CEILING
+                        is_touching_ceiling = true
+                    
+                    if direction.x > 0:
+                        perpendicular_offset = Vector2(VERTEX_SIDE_NUDGE_OFFSET, 0.0)
+                    else: # direction.x < 0
+                        perpendicular_offset = Vector2(-VERTEX_SIDE_NUDGE_OFFSET, 0.0)
+                else: # intersects_along_y
+                    if direction.x > 0:
+                        side = SurfaceSide.RIGHT_WALL
+                        is_touching_right_wall = true
+                    else: # direction.x < 0
+                        side = SurfaceSide.LEFT_WALL
+                        is_touching_left_wall = true
+                    
+                    if direction.y > 0:
+                        perpendicular_offset = Vector2(0.0, VERTEX_SIDE_NUDGE_OFFSET)
+                    else: # direction.y < 0
+                        perpendicular_offset = Vector2(0.0, -VERTEX_SIDE_NUDGE_OFFSET)
+                
+                should_try_perpendicular_nudge_in_other_direction = false
+            else:
+                # If both dimensions intersect just before collision, then we use the direction of
+                # motion to determine which side we're colliding with.
+                # This can happen with Player shapes that don't just consist of axially-aligned edges.
+                
+                if abs(direction.angle_to(Geometry.DOWN)) <= Geometry.FLOOR_MAX_ANGLE:
                     side = SurfaceSide.FLOOR
                     is_touching_floor = true
-                else: # direction.y < 0
+                elif abs(direction.angle_to(Geometry.UP)) <= Geometry.FLOOR_MAX_ANGLE:
                     side = SurfaceSide.CEILING
                     is_touching_ceiling = true
-                
-                if direction.x > 0:
-                    perpendicular_offset = Vector2(VERTEX_SIDE_NUDGE_OFFSET, 0.0)
-                else: # direction.x < 0
-                    perpendicular_offset = Vector2(-VERTEX_SIDE_NUDGE_OFFSET, 0.0)
-            else: # intersects_along_y
-                if direction.x > 0:
-                    side = SurfaceSide.RIGHT_WALL
-                    is_touching_right_wall = true
-                else: # direction.x < 0
+                elif collision.normal.x > 0:
                     side = SurfaceSide.LEFT_WALL
                     is_touching_left_wall = true
+                else:
+                    side = SurfaceSide.RIGHT_WALL
+                    is_touching_right_wall = true
                 
-                if direction.y > 0:
-                    perpendicular_offset = Vector2(0.0, VERTEX_SIDE_NUDGE_OFFSET)
-                else: # direction.y < 0
-                    perpendicular_offset = Vector2(0.0, -VERTEX_SIDE_NUDGE_OFFSET)
+                perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
+                should_try_perpendicular_nudge_in_other_direction = true
             
-            should_try_perpendicular_nudge_in_other_direction = false
-        else:
-            # If both dimensions intersect just before collision, then we use the direction of
-            # motion to determine which side we're colliding with.
-            # This can happen with Player shapes that don't just consist of axially-aligned edges.
-            
-            if abs(direction.angle_to(Geometry.DOWN)) <= Geometry.FLOOR_MAX_ANGLE:
-                side = SurfaceSide.FLOOR
-                is_touching_floor = true
-            elif abs(direction.angle_to(Geometry.UP)) <= Geometry.FLOOR_MAX_ANGLE:
-                side = SurfaceSide.CEILING
-                is_touching_ceiling = true
-            elif collision.normal.x > 0:
-                side = SurfaceSide.LEFT_WALL
-                is_touching_left_wall = true
-            else:
-                side = SurfaceSide.RIGHT_WALL
-                is_touching_right_wall = true
+        else: # collision_ratios.size() == 0
+            # An empty array means that we were already colliding even before any motion.
+            # 
+            # In this case, we can assume that the closest_intersection_point is a point along
+            # the outside of a non-occluded surface, and that this surface is the closest in the
+            # direction of travel.
+            # 
+            # We'll calculate the collision side according to the collision normal, after we've
+            # found the collision.
             
             perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
             should_try_perpendicular_nudge_in_other_direction = true
@@ -686,6 +672,21 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                 shape_query_params.collision_layer)
     
     assert(!collision.empty())
+    
+    if side == SurfaceSide.NONE:
+        var collision_normal: Vector2 = collision.normal
+        if abs(collision_normal.angle_to(Geometry.UP)) <= Geometry.FLOOR_MAX_ANGLE:
+            side = SurfaceSide.FLOOR
+            is_touching_floor = true
+        elif abs(collision_normal.angle_to(Geometry.DOWN)) <= Geometry.FLOOR_MAX_ANGLE:
+            side = SurfaceSide.CEILING
+            is_touching_ceiling = true
+        elif collision_normal.x > 0:
+            side = SurfaceSide.LEFT_WALL
+            is_touching_left_wall = true
+        else:
+            side = SurfaceSide.RIGHT_WALL
+            is_touching_right_wall = true
     
     # FIXME: Add back in?
 #    assert(Geometry.are_points_equal_with_epsilon( \
@@ -816,7 +817,7 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
     var is_position_before_instruction_end: bool
     var is_position_before_peak: bool
     
-    # We need to know whether the position corresponding to the rising or falling sides of the jump
+    # We need to know whether the position corresponds to the rising or falling side of the jump
     # parabola, and whether the position correpsonds to before or after the jump button is
     # released.
     match surface.side:
