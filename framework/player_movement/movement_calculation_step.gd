@@ -28,13 +28,17 @@ var time_step_end: float
 
 # The time at which movement for this step should reach the maximum height.
 # This is only assigned on vertical steps.
-var time_of_peak_height: float
+var time_peak_height: float
 
 var position_start: Vector2
 
 var position_step_end: Vector2
 
 var position_instruction_end: Vector2
+
+# The maximum height position for this step.
+# This is only assigned on vertical steps.
+var position_peak_height: Vector2
 
 var velocity_start: Vector2
 

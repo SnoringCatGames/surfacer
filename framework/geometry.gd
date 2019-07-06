@@ -604,7 +604,7 @@ static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: flo
     
     var displacement := s - s_0
     
-    if displacement == 0:
+    if displacement == 0 and returns_lower_result:
         # The start position is the destination.
         return 0.0
     elif a == 0:

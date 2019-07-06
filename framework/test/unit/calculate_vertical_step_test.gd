@@ -19,7 +19,7 @@ func assert_vertical_step(step: MovementCalcStep, state: Dictionary) -> void:
     assert_almost_eq(step.time_instruction_end, state.time_instruction_end, \
             END_COORDINATE_CLOSE_THRESHOLD)
     assert_almost_eq(step.time_step_end, state.time_step_end, END_COORDINATE_CLOSE_THRESHOLD)
-    assert_almost_eq(step.time_of_peak_height, state.time_of_peak_height, \
+    assert_almost_eq(step.time_peak_height, state.time_peak_height, \
             END_COORDINATE_CLOSE_THRESHOLD)
     assert_eq(step.position_start, state.position_start)
     assert_almost_eq(step.velocity_start, Vector2(0, -1000.0), END_POSITION_CLOSE_THRESHOLD)
@@ -36,7 +36,7 @@ func test_duration_to_reach_upward_displacement() -> void:
     assert_vertical_step(vertical_step, {
         time_instruction_end = 0.7681523885,
         time_step_end = 0.8377213513,
-        time_of_peak_height = 0.8298849585,
+        time_peak_height = 0.8298849585,
         position_start = position_start,
         horizontal_movement_sign = -1,
     })
@@ -52,7 +52,7 @@ func test_duration_to_reach_upward_displacement_less_than_jump_boost() -> void:
     assert_vertical_step(vertical_step, {
         time_instruction_end = 0.1151850147,
         time_step_end = 0.04340910831,
-        time_of_peak_height = 0.294451712,
+        time_peak_height = 0.294451712,
         position_start = position_start,
         horizontal_movement_sign = 0,
     })
@@ -68,7 +68,7 @@ func test_duration_to_reach_downward_displacement() -> void:
     assert_vertical_step(vertical_step, {
         time_instruction_end = 0.00759730371,
         time_step_end = 0.7975701278,
-        time_of_peak_height = 0.206229789,
+        time_peak_height = 0.206229789,
         position_start = position_start,
         horizontal_movement_sign = 1,
     })
@@ -84,7 +84,7 @@ func test_duration_to_reach_horizontal_displacement() -> void:
     assert_vertical_step(vertical_step, {
         time_instruction_end = 0.9218347844,
         time_step_end = 1.421666667,
-        time_of_peak_height = 0.9559045232,
+        time_peak_height = 0.9559045232,
         position_start = position_start,
         horizontal_movement_sign = 1,
     })

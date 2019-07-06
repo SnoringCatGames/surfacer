@@ -152,7 +152,7 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
         while next_instruction != null and next_instruction.time < current_time:
             current_instruction_index += 1
             
-            # FIXME: LEFT OFF HERE: --A: ***
+            # FIXME: --A:
             # - Think about at what point the velocity change from the step instruction happens.
             # - Is this at the right time?
             # - Is it too late?
@@ -760,11 +760,11 @@ static func _calculate_constraints( \
     return [constraint_a, constraint_b]
 
 # Calculates the vertical component of position and velocity according to the given vertical
-# movement state and the given time. These are then stored on either the given output step's
-# step-end state or instruction-end state depending on is_step_end_time.
-static func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
-        movement_params: MovementParams, vertical_step: MovementCalcStep, time: float, \
-        is_step_end_time: bool) -> void:
+# movement state and the given time. These are then returned in a Vector2: x is position and y is
+# velocity.
+# FIXME: B: Fix unit tests to use the return value instead of output params.
+static func _update_vertical_end_state_for_time(movement_params: MovementParams, \
+        vertical_step: MovementCalcStep, time: float) -> Vector2:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     var slow_ascent_end_time := min(time, vertical_step.time_instruction_end)
     
@@ -792,12 +792,7 @@ static func _update_vertical_end_state_for_time(output_step: MovementCalcStep, \
             0.5 * movement_params.gravity_fast_fall * fast_fall_duration * fast_fall_duration
         velocity = slow_ascent_end_velocity + movement_params.gravity_fast_fall * fast_fall_duration
     
-    if is_step_end_time:
-        output_step.position_step_end.y = position
-        output_step.velocity_step_end.y = velocity
-    else:
-        output_step.position_instruction_end.y = position
-        output_step.velocity_instruction_end.y = velocity
+    return Vector2(position, velocity)
 
 # Calculates the time at which the movement would travel through the given position given the
 # given vertical_step.
@@ -832,7 +827,8 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
             # Jump reaches the position before the peak.
             is_position_before_peak = true
             
-            assert(target_height < start_height)
+            if target_height > start_height:
+                return INF
             
             if target_height > position_instruction_end.y:
                 # Jump reaches the position before releasing the jump button.
@@ -877,7 +873,8 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
         duration_of_slow_ascent = Geometry.solve_for_movement_duration(start_height, \
                 target_height, movement_params.jump_boost, movement_params.gravity_slow_ascent, \
                 true, min_end_time, false)
-        assert(duration_of_slow_ascent >= 0 and duration_of_slow_ascent != INF)
+        if duration_of_slow_ascent == INF:
+            return INF
         duration_of_fast_fall = 0.0
     else:
         duration_of_slow_ascent = vertical_step.time_instruction_end
@@ -885,12 +882,8 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
         duration_of_fast_fall = Geometry.solve_for_movement_duration( \
                 position_instruction_end.y, target_height, velocity_instruction_end.y, \
                 movement_params.gravity_fast_fall, is_position_before_peak, min_end_time, false)
-        # FIXME: LEFT OFF HERE: DEBUGGING: Remove
         if duration_of_fast_fall == INF:
-            duration_of_fast_fall = Geometry.solve_for_movement_duration( \
-                    position_instruction_end.y, target_height, velocity_instruction_end.y, \
-                    movement_params.gravity_fast_fall, is_position_before_peak, min_end_time, false)
-        assert(duration_of_fast_fall >= 0 and duration_of_fast_fall != INF)
+            return INF
     
     return duration_of_fast_fall + duration_of_slow_ascent
 
