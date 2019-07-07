@@ -353,19 +353,20 @@ static func _check_continuous_horizontal_step_for_collision( \
     
     # Check the last frame that puts us up to end_time.
     current_time = step_end_time
-    horizontal_state = _update_horizontal_end_state_for_time( \
-            movement_params, horizontal_step, current_time)
-    vertical_state = _update_vertical_end_state_for_time( \
-            movement_params, vertical_step, current_time)
-    current_position.x = horizontal_state.x
-    current_position.y = vertical_state.x
-    shape_query_params.transform = Transform2D(0.0, previous_position)
-    shape_query_params.motion = current_position - previous_position
-    assert(shape_query_params.motion != Vector2.ZERO)
-    collision = check_frame_for_collision(space_state, shape_query_params, \
-            collider_half_width_height, surface_parser)
-    if collision != null:
-        return collision
+    if !Geometry.are_floats_equal_with_epsilon(previous_time, current_time):
+        horizontal_state = _update_horizontal_end_state_for_time( \
+                movement_params, horizontal_step, current_time)
+        vertical_state = _update_vertical_end_state_for_time( \
+                movement_params, vertical_step, current_time)
+        current_position.x = horizontal_state.x
+        current_position.y = vertical_state.x
+        shape_query_params.transform = Transform2D(0.0, previous_position)
+        shape_query_params.motion = current_position - previous_position
+        assert(shape_query_params.motion != Vector2.ZERO)
+        collision = check_frame_for_collision(space_state, shape_query_params, \
+                collider_half_width_height, surface_parser)
+        if collision != null:
+            return collision
     
     return null
 
@@ -1114,7 +1115,7 @@ static func _calculate_min_time_to_reach_position(s_0: float, s: float, \
     var duration_to_reach_max_velocity := (velocity_max - v_0) / a
     assert(duration_to_reach_max_velocity > 0)
     
-    if duration_to_reach_max_velocity > duration_to_reach_position_with_no_velocity_cap:
+    if duration_to_reach_max_velocity >= duration_to_reach_position_with_no_velocity_cap:
         # We won't have hit the max velocity before reaching the destination.
         return duration_to_reach_position_with_no_velocity_cap
     else:
@@ -1124,7 +1125,6 @@ static func _calculate_min_time_to_reach_position(s_0: float, s: float, \
         #     s = s_0 + v_0*t + 1/2*a*t^2
         var position_when_reaching_max_velocity := s_0 + v_0 * duration_to_reach_max_velocity + \
                 0.5 * a * duration_to_reach_max_velocity * duration_to_reach_max_velocity
-        assert(position_when_reaching_max_velocity > 0)
         
         # From a basic equation of motion:
         #     s = s_0 + v*t

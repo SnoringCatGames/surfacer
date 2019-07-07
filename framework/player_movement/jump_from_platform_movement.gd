@@ -27,14 +27,12 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 # FIXME: SUB-MASTER LIST ***************
-# - LEFT OFF HERE: Add-in support for max horizontal/vertical velocity everywhere (_that's_
-#                  probably what's making trajectories fall short)
-# 12:00
-# - LEFT OFF HERE: Get the other two test levels working.
+# - LEFT OFF HERE: Add additional frame annotation positions for where continuous state would be.
+# - LEFT OFF HERE: Try to debug/test ways of getting continuous movement trajectories to be correct
+# - LEFT OFF HERE: Try to fix discrete movement trajectories afterward
 # - LEFT OFF HERE: Try a third test level that has more intermediate collisions.
 # 2:00
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
-#   - A: Add additional frame annotation positions for where continuous state would be.
 #   - B: Try instead bumping up step instruction durations for discrete frame fix (like
 #        JUMP_DURATION_INCREASE_EPSILON)?
 #   - C: Add support for executing movement along an edge.

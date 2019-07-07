@@ -23,7 +23,7 @@ const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
 
 const IN_TEST_MODE := false
 
-const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_far_distance.tscn"
+const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_rise.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
 
 func _enter_tree() -> void:
