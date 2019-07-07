@@ -621,21 +621,72 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         var intersects_along_y := y_min_just_before_collision <= closest_intersection_point.y and \
                 y_max_just_before_collision >= closest_intersection_point.y
         
-        # FIXME: LEFT OFF HERE: --------A
-        # - Moving down-right into the top-left corner of far-right floor.
-        # - Not intersecting along either dimension at moment before.
-        # - Two options:
-        #   - Go the easy route of just using the main direction, same as when colliding along both
-        #     dimensions at moment before.
-        #   - Pick the closest corner of the non-margin shape; project a line from it along motion
-        #     direction; use space_state.intersect_ray to see where that line would collide and get
-        #     the normal;
-        
-        
         # At least one dimension should intersect just before collision.
         # FIXME: LEFT OFF HERE: Add back in:
-#        assert(intersects_along_x or intersects_along_y)
-        
+        if !intersects_along_x and !intersects_along_y:
+            # Neither dimension intersects just before collision. This usually just means that
+            # `cast_motion` is using too large of a time step.
+            # 
+            # Here is our workaround:
+            # - Pick the closest corner of the non-margin shape. Project a line from it along the 
+            #   motion direction.
+            # - Determine which side of the line closest_intersection_point lies on.
+            # - Choose a target point that is nudged from closest_intersection_point slightly
+            #   toward the line.
+            # - Use `intersect_ray` to cast a line into this nudged point and get the normal.
+            
+            
+            # FIXME: LEFT OFF HERE: --------A
+            # - Moving down-right into the top-left corner of far-right floor.
+            # - Not intersecting along either dimension at moment before.
+            # - Two options:
+            #   - Go the easy route of just using the main direction, same as when colliding along both
+            #     dimensions at moment before.
+            #   - Pick the closest corner of the non-margin shape; project a line from it along motion
+            #     direction; use space_state.intersect_ray to see where that line would collide and get
+            #     the normal;
+            #
+            # Our workaround is too cast a ray
+            # from the closest Player shape corner in the direction of motion. If this raycast
+            # returns a hit, we can use that collision normal to determine the side. If the ray
+            # doesn't return a hit (because not all collisions involve the closest corner), we fall
+            # back to just guessing the side based on the direction of motion.
+            #
+            # IGNORE THE ABOVE: Instead:
+            # - Pick the closest corner of the non-margin shape; project a line from it along motion
+            #     direction;
+            # - determine which side of the line closest_intersection_point lies on
+            # - choose a target point that is nudged from closest_intersection_point slightly toward the line
+            # - use space_state.intersect_ray to cast a line into this nudged point and get the normal;
+            # - Try replacing all logic that relies on intersects_along_?
+            
+            
+            var closest_corner_x := \
+                    x_max_just_before_collision if direction.x > 0 else x_min_just_before_collision
+            var closest_corner_y := \
+                    y_max_just_before_collision if direction.y > 0 else y_min_just_before_collision
+            var closest_corner := Vector2(closest_corner_x, closest_corner_y)
+            var projected_corner := closest_corner + direction
+            perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
+            var perdendicular_point := closest_corner + perpendicular_offset
+            
+            var closest_point_side_of_ray := \
+                    (projected_corner.x - closest_corner.x) * \
+                    (closest_intersection_point.y - closest_corner.y) - \
+                    (projected_corner.y - closest_corner.y) * \
+                    (closest_intersection_point.x - closest_corner.x)
+            var perpendicular_offset_side_of_ray := \
+                    (projected_corner.x - closest_corner.x) * \
+                    (perdendicular_point.y - closest_corner.y) - \
+                    (projected_corner.y - closest_corner.y) * \
+                    (perdendicular_point.x - closest_corner.x)
+            
+            perpendicular_offset = -perpendicular_offset if \
+                    (closest_point_side_of_ray > 0) == \
+                            (perpendicular_offset_side_of_ray > 0) else \
+                    perpendicular_offset
+            should_try_without_perpendicular_nudge_first = false
+            
         if !intersects_along_x or !intersects_along_y:
             # If only one dimension intersects just before collision, then we use that to determine
             # which side we're colliding with.
@@ -691,18 +742,22 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         collision = space_state.intersect_ray(from, to, shape_query_params.exclude, \
                 shape_query_params.collision_layer)
     
+    # If the ray tracing didn't hit the collider, then try nudging it a little to either side.
+    # This can happen when the point of intersection is a vertex of the collider.
+    
     if collision.empty():
-        # If the ray tracing didn't hit the collider, then try nudging it a little to either side.
-        # This can happen when the point of intersection is a vertex of the collider.
-        
         collision = space_state.intersect_ray(from + perpendicular_offset, \
                 to + perpendicular_offset, shape_query_params.exclude, \
                 shape_query_params.collision_layer)
+    
+    if !should_try_without_perpendicular_nudge_first:
+        collision = space_state.intersect_ray(from, to, shape_query_params.exclude, \
+                shape_query_params.collision_layer)
         
-        if collision.empty():
-            collision = space_state.intersect_ray(from - perpendicular_offset, \
-                    to - perpendicular_offset, shape_query_params.exclude, \
-                    shape_query_params.collision_layer)
+    if collision.empty():
+        collision = space_state.intersect_ray(from - perpendicular_offset, \
+                to - perpendicular_offset, shape_query_params.exclude, \
+                shape_query_params.collision_layer)
     
     assert(!collision.empty())
     
