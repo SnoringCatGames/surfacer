@@ -27,7 +27,12 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 # FIXME: SUB-MASTER LIST ***************
-# - Some non-edge-calc, lighter work to do now:
+# - LEFT OFF HERE: Do the easy fix in check_frame_for_collision.
+# - LEFT OFF HERE: Add a continuous version of _check_horizontal_step_for_collision;
+#                  keep the old discrete version though, just in case...
+# - LEFT OFF HERE: Get the other two test levels working.
+# - LEFT OFF HERE: Try a third test level that has more intermediate collisions.
+# - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
 #   - A: Add additional frame annotation positions for where continuous state would be.
 #   - B: Try instead bumping up step instruction durations for discrete frame fix (like
 #        JUMP_DURATION_INCREASE_EPSILON)?
@@ -38,7 +43,7 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 #   - G: Add support for sending the CPU to a click target (configured in the specific level).
 #   - H: Add support for picking random surfaces or points-in-space to move the CPU to; resetting
 #        to a new point after the CPU reaches the old point.
-#   - I: Debug why testing edges after calculating them fails (render better annotations...).
+#   - I: Debug why _check_instructions_for_collision fails with collisions (render better annotations?).
 #   - J: Add squirrel animation
 # - 
 # - Debugging:
@@ -213,6 +218,8 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
                 possible_jump_land_pairs.push_back(possible_land_point)
         
         # FIXME: D *********** Remove. This is for debugging.
+#        if a.side != SurfaceSide.LEFT_WALL and a.side != SurfaceSide.RIGHT_WALL:
+#            continue
 #        if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
 #            continue
 #        else:
@@ -266,10 +273,8 @@ static func _calculate_jump_instructions( \
     var instructions := \
             _convert_calculation_steps_to_player_instructions(global_calc_params, calc_results)
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
-    # - To debug why this is failing, try rendering only the failing path somehow.
-#    if Utils.IN_DEV_MODE:
-#        _test_instructions(instructions, global_calc_params)
+    if Utils.IN_DEV_MODE:
+        _test_instructions(instructions, global_calc_params)
     
     return instructions
 

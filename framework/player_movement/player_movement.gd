@@ -130,8 +130,10 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
         
         if displacement != Vector2.ZERO:
             # Check for collision.
-            collision = check_frame_for_collision(space_state, shape_query_params, \
-                    movement_params.collider_half_width_height, global_calc_params.surface_parser)
+            # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
+            # - To debug why this is failing, try rendering only the failing path somehow.
+#            collision = check_frame_for_collision(space_state, shape_query_params, \
+#                    movement_params.collider_half_width_height, global_calc_params.surface_parser)
             if collision != null:
                 instructions.frame_positions = PoolVector2Array(frame_positions)
                 return collision
@@ -196,8 +198,10 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
     displacement = velocity * delta
     shape_query_params.transform = Transform2D(0.0, position)
     shape_query_params.motion = displacement
-    collision = check_frame_for_collision(space_state, shape_query_params, \
-            movement_params.collider_half_width_height, global_calc_params.surface_parser)
+    # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
+    # - To debug why this is failing, try rendering only the failing path somehow.
+#    collision = check_frame_for_collision(space_state, shape_query_params, \
+#            movement_params.collider_half_width_height, global_calc_params.surface_parser)
     if collision != null:
         instructions.frame_positions = PoolVector2Array(frame_positions)
         return collision
@@ -617,8 +621,20 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         var intersects_along_y := y_min_just_before_collision <= closest_intersection_point.y and \
                 y_max_just_before_collision >= closest_intersection_point.y
         
+        # FIXME: LEFT OFF HERE: --------A
+        # - Moving down-right into the top-left corner of far-right floor.
+        # - Not intersecting along either dimension at moment before.
+        # - Two options:
+        #   - Go the easy route of just using the main direction, same as when colliding along both
+        #     dimensions at moment before.
+        #   - Pick the closest corner of the non-margin shape; project a line from it along motion
+        #     direction; use space_state.intersect_ray to see where that line would collide and get
+        #     the normal;
+        
+        
         # At least one dimension should intersect just before collision.
-        assert(intersects_along_x or intersects_along_y)
+        # FIXME: LEFT OFF HERE: Add back in:
+#        assert(intersects_along_x or intersects_along_y)
         
         if !intersects_along_x or !intersects_along_y:
             # If only one dimension intersects just before collision, then we use that to determine
