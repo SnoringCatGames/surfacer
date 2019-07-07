@@ -15,7 +15,8 @@ func _init(edges: Dictionary) -> void:
 
 func _draw() -> void:
     var hue: float
-    var trajectory_color: Color
+    var discrete_trajectory_color: Color
+    var continuous_trajectory_color: Color
     var constraint_color: Color
     
     # Iterate over all surfaces.
@@ -23,10 +24,14 @@ func _draw() -> void:
         # Iterate over all edges from this surface.
         for edge in edges[surface]:
             hue = randf()
-            trajectory_color = Color.from_hsv(hue, 0.6, 0.9, 0.5)
+            discrete_trajectory_color = Color.from_hsv(hue, 0.6, 0.9, 0.5)
+            continuous_trajectory_color = Color.from_hsv(hue, 0.6, 0.5, 0.5)
             constraint_color = Color.from_hsv(hue, 0.6, 0.9, 0.3)
             
-            draw_polyline(edge.instructions.frame_positions, trajectory_color, TRAJECTORY_WIDTH)
+            draw_polyline(edge.instructions.frame_discrete_positions, \
+                    discrete_trajectory_color, TRAJECTORY_WIDTH)
+            draw_polyline(edge.instructions.frame_continuous_positions, \
+                    continuous_trajectory_color, TRAJECTORY_WIDTH)
             
             for constraint_position in edge.instructions.constraint_positions:
                 DrawUtils.draw_empty_circle(self, constraint_position, CONSTRAINT_RADIUS, \

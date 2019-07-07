@@ -91,7 +91,8 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
 # is calculated by stepping through each discrete physics frame, which should exactly emulate the
 # actual Player trajectory that would be used.
 static func _check_instructions_for_collision(global_calc_params: MovementCalcGlobalParams, \
-        instructions: PlayerInstructions) -> SurfaceCollision:
+        instructions: PlayerInstructions, vertical_step: MovementCalcStep, \
+        horizontal_steps: Array) -> SurfaceCollision:
     var movement_params := global_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: PlayerInstruction = instructions.instructions[0]
@@ -114,8 +115,15 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
     var displacement: Vector2
     var collision: SurfaceCollision
     
+    var current_horizontal_step_index := 0
+    var current_horizontal_step: MovementCalcStep = horizontal_steps[0]
+    var continuous_horizontal_state: Vector2
+    var continuous_vertical_state: Vector2
+    var continuous_position: Vector2
+    
     # Record the position for edge annotation debugging.
-    var frame_positions := [position]
+    var frame_discrete_positions := []
+    var frame_continuous_positions := [position]
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < duration:
@@ -125,6 +133,18 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
         shape_query_params.transform = Transform2D(0.0, position)
         shape_query_params.motion = displacement
         
+        # Iterate through the horizontal steps in order to calculate what the frame positions would
+        # be according to our continuous movement calculations.
+        while current_horizontal_step.time_step_end < current_time:
+            current_horizontal_step = horizontal_steps[current_horizontal_step_index]
+            current_horizontal_step_index += 1
+        continuous_horizontal_state = _update_horizontal_end_state_for_time( \
+                movement_params, current_horizontal_step, current_time)
+        continuous_vertical_state = _update_vertical_end_state_for_time( \
+                movement_params, vertical_step, current_time)
+        continuous_position.x = continuous_horizontal_state.x
+        continuous_position.y = continuous_vertical_state.x
+        
         if displacement != Vector2.ZERO:
             # Check for collision.
             # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
@@ -132,7 +152,8 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
 #            collision = check_frame_for_collision(space_state, shape_query_params, \
 #                    movement_params.collider_half_width_height, global_calc_params.surface_parser)
             if collision != null:
-                instructions.frame_positions = PoolVector2Array(frame_positions)
+                instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
+                instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
                 return collision
         else:
             # Don't check for collisions if we aren't moving anywhere.
@@ -184,6 +205,9 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
 #            # actual time the instruction set should have been running for so far.
 #            delta = current_time - instructions.instructions[0].time
         
+        # Record the position for edge annotation debugging.
+        frame_discrete_positions.push_back(position)
+        
         # Update state for the next frame.
         position += displacement
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
@@ -193,24 +217,33 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
         current_time += delta
         
         # Record the position for edge annotation debugging.
-        frame_positions.push_back(position)
+        frame_continuous_positions.push_back(continuous_position)
     
     # Check the last frame that puts us up to end_time.
     delta = duration - current_time
     displacement = velocity * delta
     shape_query_params.transform = Transform2D(0.0, position)
     shape_query_params.motion = displacement
+    continuous_horizontal_state = _update_horizontal_end_state_for_time( \
+            movement_params, current_horizontal_step, duration)
+    continuous_vertical_state = _update_vertical_end_state_for_time( \
+            movement_params, vertical_step, duration)
+    continuous_position.x = continuous_horizontal_state.x
+    continuous_position.y = continuous_vertical_state.x
     # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
     # - To debug why this is failing, try rendering only the failing path somehow.
 #    collision = check_frame_for_collision(space_state, shape_query_params, \
 #            movement_params.collider_half_width_height, global_calc_params.surface_parser)
     if collision != null:
-        instructions.frame_positions = PoolVector2Array(frame_positions)
+        instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
+        instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
         return collision
     
     # Record the position for edge annotation debugging.
-    frame_positions.push_back(position + displacement)
-    instructions.frame_positions = PoolVector2Array(frame_positions)
+    frame_discrete_positions.push_back(position + displacement)
+    frame_continuous_positions.push_back(continuous_position)
+    instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
+    instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
     
     return null
 
@@ -911,8 +944,8 @@ static func _update_vertical_end_state_for_time(movement_params: MovementParams,
 # velocity.
 static func _update_horizontal_end_state_for_time(movement_params: MovementParams, \
         horizontal_step: MovementCalcStep, time: float) -> Vector2:
-    assert(time >= horizontal_step.time_start)
-    assert(time <= horizontal_step.time_step_end)
+    assert(time >= horizontal_step.time_start - Geometry.FLOAT_EPSILON)
+    assert(time <= horizontal_step.time_step_end + Geometry.FLOAT_EPSILON)
     
     var position: float
     var velocity: float
@@ -924,15 +957,16 @@ static func _update_horizontal_end_state_for_time(movement_params: MovementParam
         position = horizontal_step.position_instruction_end.x + velocity * delta_time
     else:
         var delta_time := time - horizontal_step.time_start
+        var acceleration := movement_params.in_air_horizontal_acceleration * \
+                horizontal_step.horizontal_movement_sign
         # From basic equation of motion:
         #     s = s_0 + v_0*t + 1/2*a*t^2
         position = horizontal_step.position_start.x + \
                 horizontal_step.velocity_start.x * delta_time + \
-                0.5 * movement_params.in_air_horizontal_acceleration * delta_time * delta_time
+                0.5 * acceleration * delta_time * delta_time
         # From basic equation of motion:
         #     v = v_0 + a*t
-        velocity = horizontal_step.velocity_start.x + \
-                movement_params.in_air_horizontal_acceleration * delta_time
+        velocity = horizontal_step.velocity_start.x + acceleration * delta_time
     
     assert(velocity <= movement_params.max_horizontal_speed_default + 0.001)
     

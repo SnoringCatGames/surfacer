@@ -27,9 +27,7 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 # FIXME: SUB-MASTER LIST ***************
-# - LEFT OFF HERE: Add additional frame annotation positions for where continuous state would be.
-# - LEFT OFF HERE: Try to debug/test ways of getting continuous movement trajectories to be correct
-# - LEFT OFF HERE: Try to fix discrete movement trajectories afterward
+# - LEFT OFF HERE: Debug obvious false-negative edges.
 # - LEFT OFF HERE: Try a third test level that has more intermediate collisions.
 # 2:00
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
@@ -42,8 +40,14 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 #   - G: Add support for sending the CPU to a click target (configured in the specific level).
 #   - H: Add support for picking random surfaces or points-in-space to move the CPU to; resetting
 #        to a new point after the CPU reaches the old point.
-#   - I: Debug why _check_instructions_for_collision fails with collisions (render better annotations?).
-#   - J: Add squirrel animation
+# - LEFT OFF HERE: Debug obvious false negative edges.
+# - LEFT OFF HERE: Debug why discrete movement trajectories are incorrect.
+#   - Discrete trajectories are definitely peaking higher; should we cut the jump button sooner?
+#   - Not considering continous max vertical velocity might contribute to discrete vertical
+#     movement stopping short.
+#   - After fixing max vertical velocity, is there anything else I can boost?
+# - LEFT OFF HERE: Debug why _check_instructions_for_collision fails with collisions (render better annotations?).
+# - LEFT OFF HERE: Non-edge-calc, lighter work: Add squirrel animation.
 # - 
 # - Debugging:
 #   - Would it help to add some quick and easy annotation helpers for temp debugging that I can access on global (or wherever) and just tell to render dots/lines/circles?
@@ -136,13 +140,13 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
     var b_near_end: Vector2
     var b_far_end: Vector2
     var b_closest_point: Vector2
-    var possible_jump_points: Array
-    var possible_land_points: Array
+    var possible_jump_points := []
+    var possible_land_points := []
     var possible_jump_land_pairs := []
     var jump_point: Vector2
     var land_point: Vector2
-    var jump_position := PositionAlongSurface.new()
-    var land_position := PositionAlongSurface.new()
+    var jump_position: PositionAlongSurface
+    var land_position: PositionAlongSurface
     var instructions: PlayerInstructions
     var weight: float
     var edges = []
@@ -198,8 +202,10 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
             Geometry.get_closest_point_on_polyline_to_polyline(b.vertices, a.vertices)
         
         # Only consider the far-end and closest points if they are distinct.
-        possible_jump_points = [a_near_end]
-        possible_land_points = [b_near_end]
+        possible_jump_points.clear()
+        possible_land_points.clear()
+        possible_jump_points.push_back(a_near_end)
+        possible_land_points.push_back(b_near_end)
         if a.vertices.size() > 1:
             possible_jump_points.push_back(a_far_end)
         if a_closest_point != a_near_end and a_closest_point != a_far_end:
@@ -217,12 +223,10 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
                 possible_jump_land_pairs.push_back(possible_land_point)
         
         # FIXME: D *********** Remove. This is for debugging.
-#        if a.side != SurfaceSide.LEFT_WALL and a.side != SurfaceSide.RIGHT_WALL:
-#            continue
-#        if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
-#            continue
-#        else:
-#            possible_jump_land_pairs = [a_near_end, b_near_end]
+        if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
+            continue
+        else:
+            possible_jump_land_pairs = [a_near_end, b_near_end]
         # FIXME: D: Remove
         if a.side == SurfaceSide.CEILING or b.side == SurfaceSide.CEILING:
             continue
@@ -231,14 +235,17 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
             jump_point = possible_jump_land_pairs[i]
             land_point = possible_jump_land_pairs[i + 1]
             
+            jump_position = PositionAlongSurface.new()
             jump_position.match_surface_target_and_collider(a, jump_point, \
                     params.collider_half_width_height)
+            land_position = PositionAlongSurface.new()
             land_position.match_surface_target_and_collider(b, land_point, \
                     params.collider_half_width_height)
             global_calc_params.position_start = jump_position.target_point
             global_calc_params.position_end = land_position.target_point
             instructions = _calculate_jump_instructions(global_calc_params)
             if instructions != null:
+                # Can't reach land position from jump position.
                 edges.push_back(PlatformGraphEdge.new(jump_position, land_position, instructions))
     
     # FIXME: B: REMOVE
@@ -273,13 +280,13 @@ static func _calculate_jump_instructions( \
             _convert_calculation_steps_to_player_instructions(global_calc_params, calc_results)
     
     if Utils.IN_DEV_MODE:
-        _test_instructions(instructions, global_calc_params)
+        _test_instructions(instructions, global_calc_params, calc_results)
     
     return instructions
 
 # Test that the given instructions were created correctly.
 static func _test_instructions(instructions: PlayerInstructions, \
-        global_calc_params: MovementCalcGlobalParams) -> bool:
+        global_calc_params: MovementCalcGlobalParams, calc_results: MovementCalcResults) -> bool:
     assert(instructions.instructions.size() > 0)
     assert(instructions.instructions.size() % 2 == 0)
     
@@ -289,9 +296,11 @@ static func _test_instructions(instructions: PlayerInstructions, \
     global_calc_params.movement_params.gravity_fast_fall /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     global_calc_params.movement_params.gravity_slow_ascent /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
-    var collision := _check_instructions_for_collision(global_calc_params, instructions)
+    var collision := _check_instructions_for_collision(global_calc_params, instructions, \
+            calc_results.vertical_step, calc_results.horizontal_steps)
     assert(collision == null or collision.surface == global_calc_params.destination_surface)
-    var final_frame_position := instructions.frame_positions[instructions.frame_positions.size() - 1]
+    var final_frame_position := \
+            instructions.frame_discrete_positions[instructions.frame_discrete_positions.size() - 1]
     # FIXME: B: Add back in after fixing the use of GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION.
 #    assert(final_frame_position.distance_squared_to(global_calc_params.position_end) < \
 #            VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD)
@@ -733,6 +742,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
         horizontal_movement_sign = 1
     else:
         horizontal_movement_sign = 0
+    var acceleration := movement_params.in_air_horizontal_acceleration * horizontal_movement_sign
     
     # FIXME: Problem: Sometimes, the following step may require a minimum or maiximum starting
     #        velocity in order to reach it's constraint. Right now, this isn't paying much
@@ -748,8 +758,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     
     var duration_for_horizontal_acceleration := _calculate_time_to_release_acceleration( \
             time_start, time_step_end, position_start.x, position_end.x, velocity_start.x, \
-            movement_params.in_air_horizontal_acceleration * horizontal_movement_sign, 0.0, true, \
-            false)
+            acceleration, 0.0, true, false)
     
     if time_remaining < duration_for_horizontal_acceleration:
         # The horizontal displacement is out of reach.
@@ -760,12 +769,12 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     #     s = s_0 + v_0*t + 1/2*a*t^2
     var position_instruction_end_x := position_start.x + \
             velocity_start.x * duration_for_horizontal_acceleration + \
-            0.5 * movement_params.in_air_horizontal_acceleration * \
+            0.5 * acceleration * \
             duration_for_horizontal_acceleration * duration_for_horizontal_acceleration
     # From a basic equation of motion:
     #     v = v_0 + a*t
     var velocity_instruction_end_x := velocity_start.x + \
-            movement_params.in_air_horizontal_acceleration * duration_for_horizontal_acceleration
+            acceleration * duration_for_horizontal_acceleration
     var velocity_step_end_x := velocity_instruction_end_x
     
     if velocity_instruction_end_x > movement_params.max_horizontal_speed_default:

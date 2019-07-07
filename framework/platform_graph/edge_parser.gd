@@ -108,6 +108,8 @@ static func calculate_edges(space_state: Physics2DDirectSpaceState, \
             for surface in surfaces:
                 # FIXME: Comment out when writing tests
 #                pass
-                edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface_parser, surface)
+                # FIXME: LEFT OFF HERE: DEBUGGING: Remove
+                if player_info.name == "test":
+                    edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface_parser, surface)
     
     return edges
