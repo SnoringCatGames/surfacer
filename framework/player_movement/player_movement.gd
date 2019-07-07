@@ -88,8 +88,8 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
     return velocity
 
 # Checks whether a collision would occur with any surface during the given instructions. This
-# is calculated by stepping through each physics frame, which should exactly emulate the actual
-# Player trajectory that would be used.
+# is calculated by stepping through each discrete physics frame, which should exactly emulate the
+# actual Player trajectory that would be used.
 static func _check_instructions_for_collision(global_calc_params: MovementCalcGlobalParams, \
         instructions: PlayerInstructions) -> SurfaceCollision:
     var movement_params := global_calc_params.movement_params
@@ -99,8 +99,8 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
     var is_first_jump := true
     # On average, an instruction set will start halfway through a physics frame, so let's use that
     # average here.
-    var previous_time: float = instructions.instructions[0].time - Utils.PHYSICS_TIME_STEP / 2
-    var current_time := previous_time
+    var previous_time: float = instructions.instructions[0].time - delta / 2
+    var current_time := previous_time + delta
     var duration := instructions.duration
     var is_pressing_left := false
     var is_pressing_right := false
@@ -121,12 +121,9 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
     while current_time < duration:
         # Update position for this frame, according to the velocity from the previous frame.
         delta = Utils.PHYSICS_TIME_STEP
-        previous_time = current_time
-        current_time += delta
         displacement = velocity * delta
         shape_query_params.transform = Transform2D(0.0, position)
         shape_query_params.motion = displacement
-        position += displacement
         
         if displacement != Vector2.ZERO:
             # Check for collision.
@@ -178,18 +175,23 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
             next_instruction = instructions.instructions[current_instruction_index + 1] if \
                     current_instruction_index + 1 < instructions.instructions.size() else null
         
-        if !has_started_instructions:
-            has_started_instructions = true
-            # When we start executing the instruction set, the current elapsed time of the
-            # instruction set will be less than a full frame. So we use a delta that represents the
-            # actual time the instruction set should have been running for so far.
-            delta = current_time - instructions.instructions[0].time
+        # FIXME: E: After implementing instruction execution, check whether it also does this, and
+        #           whether this should be uncommented.
+#        if !has_started_instructions:
+#            has_started_instructions = true
+#            # When we start executing the instruction set, the current elapsed time of the
+#            # instruction set will be less than a full frame. So we use a delta that represents the
+#            # actual time the instruction set should have been running for so far.
+#            delta = current_time - instructions.instructions[0].time
         
-        # Update velocity for the next frame.
+        # Update state for the next frame.
+        position += displacement
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
                 horizontal_movement_sign, movement_params)
         velocity = cap_velocity(velocity, movement_params)
-
+        previous_time = current_time
+        current_time += delta
+        
         # Record the position for edge annotation debugging.
         frame_positions.push_back(position)
     
@@ -218,7 +220,7 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
 # will be tested with their start time perfectly aligned to a physics frame boundary, but when
 # executing a resulting instruction set, the physics frame boundaries will line up at different
 # times.
-static func _check_horizontal_step_for_collision( \
+static func _check_discrete_horizontal_step_for_collision( \
         global_calc_params: MovementCalcGlobalParams, local_calc_params: MovementCalcLocalParams, \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
     var movement_params := global_calc_params.movement_params
@@ -226,8 +228,8 @@ static func _check_horizontal_step_for_collision( \
     var is_first_jump := true
     # On average, an instruction set will start halfway through a physics frame, so let's use that
     # average here.
-    var previous_time := horizontal_step.time_start - Utils.PHYSICS_TIME_STEP / 2
-    var current_time := previous_time
+    var previous_time := horizontal_step.time_start - delta / 2
+    var current_time := previous_time + delta
     var step_end_time := horizontal_step.time_step_end
     var horizontal_instruction_end_time := horizontal_step.time_instruction_end
     var position := horizontal_step.position_start
@@ -244,13 +246,11 @@ static func _check_horizontal_step_for_collision( \
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
-        # Update position for this frame.
-        previous_time = current_time
-        current_time += delta
+        # Update state for the current frame.
+        delta = Utils.PHYSICS_TIME_STEP
         displacement = velocity * delta
         shape_query_params.transform = Transform2D(0.0, position)
         shape_query_params.motion = displacement
-        position += displacement
         
         if displacement != Vector2.ZERO:
             # Check for collision.
@@ -274,17 +274,22 @@ static func _check_horizontal_step_for_collision( \
         horizontal_movement_sign = \
                 horizontal_step.horizontal_movement_sign if is_pressing_move_horizontal else 0
         
-        if !has_started_instructions:
-            has_started_instructions = true
-            # When we start executing the instruction, the current elapsed time of the instruction
-            # will be less than a full frame. So we use a delta that represents the actual time the
-            # instruction should have been running for so far.
-            delta = current_time - horizontal_step.time_start
+        # FIXME: E: After implementing instruction execution, check whether it also does this, and
+        #           whether this should be uncommented.
+#        if !has_started_instructions:
+#            has_started_instructions = true
+#            # When we start executing the instruction, the current elapsed time of the instruction
+#            # will be less than a full frame. So we use a delta that represents the actual time the
+#            # instruction should have been running for so far.
+#            delta = current_time - horizontal_step.time_start
         
-        # Update velocity for the next frame.
+        # Update state for the next frame.
+        position += displacement
         velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
                 horizontal_movement_sign, movement_params)
         velocity = cap_velocity(velocity, movement_params)
+        previous_time = current_time
+        current_time += delta
     
     # Check the last frame that puts us up to end_time.
     delta = step_end_time - current_time
@@ -293,6 +298,72 @@ static func _check_horizontal_step_for_collision( \
     shape_query_params.motion = displacement
     collision = check_frame_for_collision(space_state, shape_query_params, \
             movement_params.collider_half_width_height, global_calc_params.surface_parser)
+    if collision != null:
+        return collision
+    
+    return null
+
+# Checks whether a collision would occur with any surface during the given horizontal step. This
+# is calculated by considering the continuous physics state according to the parabolic equations of
+# motion. This does not necessarily accurately reflect the actual Player trajectory that would be
+# used.
+static func _check_continuous_horizontal_step_for_collision( \
+        global_calc_params: MovementCalcGlobalParams, local_calc_params: MovementCalcLocalParams, \
+        horizontal_step: MovementCalcStep) -> SurfaceCollision:
+    var movement_params := global_calc_params.movement_params
+    var vertical_step := local_calc_params.vertical_step
+    var collider_half_width_height := movement_params.collider_half_width_height
+    var surface_parser := global_calc_params.surface_parser
+    var delta := Utils.PHYSICS_TIME_STEP
+    var previous_time := horizontal_step.time_start
+    var current_time := previous_time + delta
+    var step_end_time := horizontal_step.time_step_end
+    var previous_position := horizontal_step.position_start
+    var current_position := previous_position
+    var space_state := global_calc_params.space_state
+    var shape_query_params := global_calc_params.shape_query_params
+    var horizontal_state: Vector2
+    var vertical_state: Vector2
+    var collision: SurfaceCollision
+    
+    # Iterate through each physics frame, checking each for a collision.
+    while current_time < step_end_time:
+        # Update state for the current frame.
+        horizontal_state = _update_horizontal_end_state_for_time( \
+                movement_params, horizontal_step, current_time)
+        vertical_state = _update_vertical_end_state_for_time( \
+                movement_params, vertical_step, current_time)
+        current_position.x = horizontal_state.x
+        current_position.y = vertical_state.x
+        shape_query_params.transform = Transform2D(0.0, previous_position)
+        shape_query_params.motion = current_position - previous_position
+        
+        assert(shape_query_params.motion != Vector2.ZERO)
+        
+        # Check for collision.
+        collision = check_frame_for_collision(space_state, shape_query_params, \
+                collider_half_width_height, surface_parser)
+        if collision != null:
+            return collision
+        
+        # Update state for the next frame.
+        previous_position = current_position
+        previous_time = current_time
+        current_time += delta
+    
+    # Check the last frame that puts us up to end_time.
+    current_time = step_end_time
+    horizontal_state = _update_horizontal_end_state_for_time( \
+            movement_params, horizontal_step, current_time)
+    vertical_state = _update_vertical_end_state_for_time( \
+            movement_params, vertical_step, current_time)
+    current_position.x = horizontal_state.x
+    current_position.y = vertical_state.x
+    shape_query_params.transform = Transform2D(0.0, previous_position)
+    shape_query_params.motion = current_position - previous_position
+    assert(shape_query_params.motion != Vector2.ZERO)
+    collision = check_frame_for_collision(space_state, shape_query_params, \
+            collider_half_width_height, surface_parser)
     if collision != null:
         return collision
     
@@ -570,9 +641,6 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             
             position_just_before_collision = \
                     position_start + shape_query_params.motion * collision_ratios[0]
-            # FIXME: Remove?
-        #    var position_just_after_collision: Vector2 = \
-        #            position_start + shape_query_params.motion * collision_ratios[1]
         else: # collision_ratios.size() == 0
             # An empty array means that we were already colliding even before any motion.
             # 
@@ -621,8 +689,6 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         var intersects_along_y := y_min_just_before_collision <= closest_intersection_point.y and \
                 y_max_just_before_collision >= closest_intersection_point.y
         
-        # At least one dimension should intersect just before collision.
-        # FIXME: LEFT OFF HERE: Add back in:
         if !intersects_along_x and !intersects_along_y:
             # Neither dimension intersects just before collision. This usually just means that
             # `cast_motion` is using too large of a time step.
@@ -634,32 +700,6 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             # - Choose a target point that is nudged from closest_intersection_point slightly
             #   toward the line.
             # - Use `intersect_ray` to cast a line into this nudged point and get the normal.
-            
-            
-            # FIXME: LEFT OFF HERE: --------A
-            # - Moving down-right into the top-left corner of far-right floor.
-            # - Not intersecting along either dimension at moment before.
-            # - Two options:
-            #   - Go the easy route of just using the main direction, same as when colliding along both
-            #     dimensions at moment before.
-            #   - Pick the closest corner of the non-margin shape; project a line from it along motion
-            #     direction; use space_state.intersect_ray to see where that line would collide and get
-            #     the normal;
-            #
-            # Our workaround is too cast a ray
-            # from the closest Player shape corner in the direction of motion. If this raycast
-            # returns a hit, we can use that collision normal to determine the side. If the ray
-            # doesn't return a hit (because not all collisions involve the closest corner), we fall
-            # back to just guessing the side based on the direction of motion.
-            #
-            # IGNORE THE ABOVE: Instead:
-            # - Pick the closest corner of the non-margin shape; project a line from it along motion
-            #     direction;
-            # - determine which side of the line closest_intersection_point lies on
-            # - choose a target point that is nudged from closest_intersection_point slightly toward the line
-            # - use space_state.intersect_ray to cast a line into this nudged point and get the normal;
-            # - Try replacing all logic that relies on intersects_along_?
-            
             
             var closest_corner_x := \
                     x_max_just_before_collision if direction.x > 0 else x_min_just_before_collision
@@ -862,6 +902,38 @@ static func _update_vertical_end_state_for_time(movement_params: MovementParams,
             slow_ascent_end_velocity * fast_fall_duration + \
             0.5 * movement_params.gravity_fast_fall * fast_fall_duration * fast_fall_duration
         velocity = slow_ascent_end_velocity + movement_params.gravity_fast_fall * fast_fall_duration
+    
+    return Vector2(position, velocity)
+
+# Calculates the horizontal component of position and velocity according to the given horizontal
+# movement state and the given time. These are then returned in a Vector2: x is position and y is
+# velocity.
+static func _update_horizontal_end_state_for_time(movement_params: MovementParams, \
+        horizontal_step: MovementCalcStep, time: float) -> Vector2:
+    assert(time >= horizontal_step.time_start)
+    assert(time <= horizontal_step.time_step_end)
+    
+    var position: float
+    var velocity: float
+    if time > horizontal_step.time_instruction_end:
+        var delta_time := time - horizontal_step.time_instruction_end
+        velocity = horizontal_step.velocity_instruction_end.x
+        # From basic equation of motion:
+        #     s = s_0 + v*t
+        position = horizontal_step.position_instruction_end.x + velocity * delta_time
+    else:
+        var delta_time := time - horizontal_step.time_start
+        # From basic equation of motion:
+        #     s = s_0 + v_0*t + 1/2*a*t^2
+        position = horizontal_step.position_start.x + \
+                horizontal_step.velocity_start.x * delta_time + \
+                0.5 * movement_params.in_air_horizontal_acceleration * delta_time * delta_time
+        # From basic equation of motion:
+        #     v = v_0 + a*t
+        velocity = horizontal_step.velocity_start.x + \
+                movement_params.in_air_horizontal_acceleration * delta_time
+    
+    assert(velocity <= movement_params.max_horizontal_speed_default + 0.001)
     
     return Vector2(position, velocity)
 

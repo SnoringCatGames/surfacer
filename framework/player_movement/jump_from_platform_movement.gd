@@ -27,11 +27,12 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 # FIXME: SUB-MASTER LIST ***************
-# - LEFT OFF HERE: Do the easy fix in check_frame_for_collision.
-# - LEFT OFF HERE: Add a continuous version of _check_horizontal_step_for_collision;
-#                  keep the old discrete version though, just in case...
+# - LEFT OFF HERE: Add-in support for max horizontal/vertical velocity everywhere (_that's_
+#                  probably what's making trajectories fall short)
+# 12:00
 # - LEFT OFF HERE: Get the other two test levels working.
 # - LEFT OFF HERE: Try a third test level that has more intermediate collisions.
+# 2:00
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
 #   - A: Add additional frame annotation positions for where continuous state would be.
 #   - B: Try instead bumping up step instruction durations for discrete frame fix (like
@@ -339,8 +340,8 @@ static func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlo
         # The destination is out of reach.
         return null
     
-    var collision := _check_horizontal_step_for_collision(global_calc_params, local_calc_params, \
-            next_horizontal_step)
+    var collision := _check_continuous_horizontal_step_for_collision( \
+            global_calc_params, local_calc_params, next_horizontal_step)
     
     if collision == null or collision.surface == global_calc_params.destination_surface:
         # There is no intermediate surface interfering with this movement, or we've reached the
@@ -676,7 +677,7 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     step.time_step_end = total_duration
     step.time_peak_height = time_peak_height
     step.position_start = position_start
-    step.velocity_start = Vector2(0, movement_params.jump_boost)
+    step.velocity_start = Vector2(0.0, movement_params.jump_boost)
     step.horizontal_movement_sign = horizontal_movement_sign
     
     var instruction_end_state := \
@@ -688,7 +689,7 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     
     step.position_instruction_end = Vector2(INF, instruction_end_state.x)
     step.position_step_end = Vector2(INF, step_end_state.x)
-    step.position_peak_height = Vector2(0, peak_height_end_state.x)
+    step.position_peak_height = Vector2(INF, peak_height_end_state.x)
     step.velocity_instruction_end = Vector2(INF, instruction_end_state.y)
     step.velocity_step_end = Vector2(INF, step_end_state.y)
     
@@ -697,7 +698,7 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
 # Calculates a new step for the horizontal part of the movement.
 static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParams, \
         global_calc_params: MovementCalcGlobalParams) -> MovementCalcStep:
-    var movement_params = global_calc_params.movement_params
+    var movement_params := global_calc_params.movement_params
     var previous_step := local_calc_params.previous_step
     var vertical_step := local_calc_params.vertical_step
     var position_end := local_calc_params.position_end
@@ -745,8 +746,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     # - It would require updating each horizontal MovementCalcSteps to result in a second
     #   PlayerInstruction pair for pressing the opposition direction for the remaining time between
     #   time_instruction_end and time_step_end.
-    
-    # FIXME: B: Account for max x velocity.
+    # - Would need to also update _update_horizontal_end_state_for_time.
     
     var duration_for_horizontal_acceleration := _calculate_time_to_release_acceleration( \
             time_start, time_step_end, position_start.x, position_end.x, velocity_start.x, \
@@ -758,25 +758,39 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
         return null
     
     var time_instruction_end := time_start + duration_for_horizontal_acceleration
+    # From a basic equation of motion:
+    #     s = s_0 + v_0*t + 1/2*a*t^2
+    var position_instruction_end_x := position_start.x + \
+            velocity_start.x * duration_for_horizontal_acceleration + \
+            0.5 * movement_params.in_air_horizontal_acceleration * \
+            duration_for_horizontal_acceleration * duration_for_horizontal_acceleration
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    var velocity_instruction_end_x := velocity_start.x + \
+            movement_params.in_air_horizontal_acceleration * duration_for_horizontal_acceleration
+    var velocity_step_end_x := velocity_instruction_end_x
+    
+    if velocity_instruction_end_x > movement_params.max_horizontal_speed_default:
+        # The horizontal displacement is out of reach.
+        return null
     
     var step := MovementCalcStep.new()
     step.time_start = time_start
     step.time_instruction_end = time_instruction_end
     step.time_step_end = time_step_end
     step.position_start = position_start
-    step.velocity_start = Vector2(0.0, velocity_start.y)
-    step.velocity_step_end = Vector2(0.0, INF)
+    step.velocity_start = velocity_start
     step.horizontal_movement_sign = horizontal_movement_sign
     
-    var instruction_end_state := \
-            _update_vertical_end_state_for_time(movement_params, vertical_step, step.time_instruction_end)
-    var step_end_state := \
-            _update_vertical_end_state_for_time(movement_params, vertical_step, step.time_step_end)
+    var instruction_end_state := _update_vertical_end_state_for_time( \
+            movement_params, vertical_step, step.time_instruction_end)
+    var step_end_state := _update_vertical_end_state_for_time( \
+            movement_params, vertical_step, step.time_step_end)
     
-    step.position_instruction_end = Vector2(INF, instruction_end_state.x)
+    step.position_instruction_end = Vector2(position_instruction_end_x, instruction_end_state.x)
     step.position_step_end = position_end
-    step.velocity_instruction_end = Vector2(INF, instruction_end_state.y)
-    step.velocity_step_end = Vector2(INF, step_end_state.y)
+    step.velocity_instruction_end = Vector2(velocity_instruction_end_x, instruction_end_state.y)
+    step.velocity_step_end = Vector2(velocity_step_end_x, step_end_state.y)
     
     assert(Geometry.are_floats_equal_with_epsilon(position_end.y, step_end_state.x, 0.0001))
     
