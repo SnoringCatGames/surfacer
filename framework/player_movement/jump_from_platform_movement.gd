@@ -13,8 +13,8 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 #   jump-height epsilon? Is this needlessly redundant with that mechanism?
 # - Though I may need to always at least have _some_ small value here...
 # FIXME: D ******** Tweak this
-const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
-const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP / 2.0
+const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
+const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
 
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
@@ -27,12 +27,9 @@ const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 # FIXME: SUB-MASTER LIST ***************
-# - LEFT OFF HERE: Debug obvious false-negative edges.
-# - LEFT OFF HERE: Try a third test level that has more intermediate collisions.
-# 2:00
+# - LEFT OFF HERE: Fix the current issue in check_frame_for_collision when using level_4 with all
+#                  surfaces.
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
-#   - B: Try instead bumping up step instruction durations for discrete frame fix (like
-#        JUMP_DURATION_INCREASE_EPSILON)?
 #   - C: Add support for executing movement along an edge.
 #   - D: Add support for executing movement WITHIN an edge.
 #   - E: Create a demo level to showcase lots of interesting edges.
@@ -40,11 +37,22 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 #   - G: Add support for sending the CPU to a click target (configured in the specific level).
 #   - H: Add support for picking random surfaces or points-in-space to move the CPU to; resetting
 #        to a new point after the CPU reaches the old point.
-# - LEFT OFF HERE: Debug obvious false negative edges.
+#   - I: Fix surface annotator (doubles on part and wraps around edge wrong).
+# - LEFT OFF HERE: Add support for specifying a desired min end-x-velocity.
+#   - We need to add support for specifying a desired min end-x-velocity from the previous
+#     horizontal step (by default, all end velocities are as small as possible).
+#   - We can then use this to determine when to start the horizontal movement for the previous
+#     horizontal step (delaying movement start yields a greater end velocity).
+#   - In order to determine whether the required min end-x-velocity from the previous step, we
+#     should flip the order in which we calculate horizontal steps in the constraint recursion.
+#   - We should be able to just calculate the latter step first, since we know what its start
+#     position and time must be.
+# - LEFT OFF HERE: Check for other obvious false negative edges.
 # - LEFT OFF HERE: Debug why discrete movement trajectories are incorrect.
 #   - Discrete trajectories are definitely peaking higher; should we cut the jump button sooner?
 #   - Not considering continous max vertical velocity might contribute to discrete vertical
 #     movement stopping short.
+# - LEFT OFF HERE: Debug/stress-test intermediate collision scenarios.
 #   - After fixing max vertical velocity, is there anything else I can boost?
 # - LEFT OFF HERE: Debug why _check_instructions_for_collision fails with collisions (render better annotations?).
 # - LEFT OFF HERE: Non-edge-calc, lighter work: Add squirrel animation.
@@ -223,10 +231,10 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
                 possible_jump_land_pairs.push_back(possible_land_point)
         
         # FIXME: D *********** Remove. This is for debugging.
-        if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
-            continue
-        else:
-            possible_jump_land_pairs = [a_near_end, b_near_end]
+#        if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
+#            continue
+#        else:
+#            possible_jump_land_pairs = [a_far_end, b_far_end]
         # FIXME: D: Remove
         if a.side == SurfaceSide.CEILING or b.side == SurfaceSide.CEILING:
             continue
@@ -347,13 +355,26 @@ static func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlo
         # The destination is out of reach.
         return null
     
+    var vertical_step := local_calc_params.vertical_step
+    
+    # If this is the last horizontal step, then let's check whether whether we calculated
+    # things correctly.
+    if local_calc_params.upcoming_constraint == null:
+        assert(Geometry.are_floats_equal_with_epsilon( \
+                next_horizontal_step.time_step_end, vertical_step.time_step_end, 0.0001))
+        assert(Geometry.are_floats_equal_with_epsilon( \
+                next_horizontal_step.position_step_end.y, vertical_step.position_step_end.y, \
+                0.001))
+        assert(Geometry.are_points_equal_with_epsilon( \
+                next_horizontal_step.position_step_end, global_calc_params.position_end, 0.0001))
+    
     var collision := _check_continuous_horizontal_step_for_collision( \
             global_calc_params, local_calc_params, next_horizontal_step)
     
     if collision == null or collision.surface == global_calc_params.destination_surface:
         # There is no intermediate surface interfering with this movement, or we've reached the
         # destination surface.
-        return MovementCalcResults.new([next_horizontal_step], local_calc_params.vertical_step)
+        return MovementCalcResults.new([next_horizontal_step], vertical_step)
     
     if global_calc_params.collided_surfaces.has(collision.surface):
         # We've already considered a collision with this surface, so this movement won't work.
@@ -439,7 +460,6 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
     var calc_results_to_constraint: MovementCalcResults
     var calc_results_from_constraint: MovementCalcResults
     var vertical_step_to_constraint: MovementCalcStep
-    var duration_from_constraint: float
     var end_state: Vector2
     
     # FIXME: B: Add heuristics to pick the "better" constraint first.
@@ -456,14 +476,13 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         vertical_step_to_constraint = calc_results_to_constraint.vertical_step
         
         # Update the total duration to include the fall duration after the constraint.
-        duration_from_constraint = _calculate_end_time_for_jumping_to_position( \
+        vertical_step_to_constraint.time_step_end = _calculate_end_time_for_jumping_to_position( \
                 global_calc_params.movement_params, vertical_step_to_constraint, \
                 local_calc_params.position_end, vertical_step_to_constraint.time_step_end, \
                 local_calc_params.upcoming_constraint, global_calc_params.destination_surface)
-        if duration_from_constraint == INF:
+        if vertical_step_to_constraint.time_step_end == INF:
             # The destination is out of reach from the constraint.
             continue
-        vertical_step_to_constraint.time_step_end += duration_from_constraint
         end_state = _update_vertical_end_state_for_time(global_calc_params.movement_params, \
                 vertical_step_to_constraint, vertical_step_to_constraint.time_step_end)
         vertical_step_to_constraint.position_step_end.y = end_state.x
@@ -700,6 +719,9 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     step.velocity_instruction_end = Vector2(INF, instruction_end_state.y)
     step.velocity_step_end = Vector2(INF, step_end_state.y)
     
+    assert(Geometry.are_floats_equal_with_epsilon( \
+            step.position_step_end.y, position_end.y, 0.001))
+    
     return MovementCalcLocalParams.new(position_start, position_end, null, step, null)
 
 # Calculates a new step for the horizontal part of the movement.
@@ -777,7 +799,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
             acceleration * duration_for_horizontal_acceleration
     var velocity_step_end_x := velocity_instruction_end_x
     
-    if velocity_instruction_end_x > movement_params.max_horizontal_speed_default:
+    if velocity_instruction_end_x > movement_params.max_horizontal_speed_default + 1:
         # The horizontal displacement is out of reach.
         return null
     
