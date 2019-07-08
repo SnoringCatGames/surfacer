@@ -30,14 +30,22 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 # - LEFT OFF HERE: Fix the current issue in check_frame_for_collision when using level_4 with all
 #                  surfaces.
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
-#   - C: Add support for executing movement along an edge.
-#   - D: Add support for executing movement WITHIN an edge.
-#   - E: Create a demo level to showcase lots of interesting edges.
+#   - B: Add path finding and update logic to PlatformGraphNavigator.
+#     - Implement A*.
+#   - C: Add support for executing movement WITHIN an edge.
+#   - D: Add support for executing movement along an edge.
+#     - Implement ComputerPlayer.
+#     - Use the cat animator for now, since that will let me test/implement the animation triggers.
 #   - F: Add support for not having a human or CPU in a level.
 #   - G: Add support for sending the CPU to a click target (configured in the specific level).
 #   - H: Add support for picking random surfaces or points-in-space to move the CPU to; resetting
 #        to a new point after the CPU reaches the old point.
+#     - Implement this as an alternative to ClickToNavigate (actually, support both running at the
+#       same time).
+#     - It will need to listen for when the navigator has reached the destination though (make sure
+#       that signal is emitted).
 #   - I: Fix surface annotator (doubles on part and wraps around edge wrong).
+#   - J: Create a demo level to showcase lots of interesting edges.
 # - LEFT OFF HERE: Add support for specifying a desired min end-x-velocity.
 #   - We need to add support for specifying a desired min end-x-velocity from the previous
 #     horizontal step (by default, all end velocities are as small as possible).

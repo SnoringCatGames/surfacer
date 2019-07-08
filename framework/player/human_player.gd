@@ -45,10 +45,10 @@ func _update_actions(delta: float) -> void:
         print("STOP jump:   %8.3f:%29sP:%29sV" % \
                 [OS.get_ticks_msec()/1000.0, position, velocity])
     if just_pressed_up:
-        print("START up:  %8.3f:%29sP:%29sV" % \
+        print("START up:    %8.3f:%29sP:%29sV" % \
                 [OS.get_ticks_msec()/1000.0, position, velocity])
     if just_released_up:
-        print("STOP up:   %8.3f:%29sP:%29sV" % \
+        print("STOP up:     %8.3f:%29sP:%29sV" % \
                 [OS.get_ticks_msec()/1000.0, position, velocity])
     if just_pressed_down:
         print("START down:  %8.3f:%29sP:%29sV" % \
@@ -63,8 +63,8 @@ func _update_actions(delta: float) -> void:
         print("STOP left:   %8.3f:%29sP:%29sV" % \
                 [OS.get_ticks_msec()/1000.0, position, velocity])
     if just_pressed_right:
-        print("START right:  %8.3f:%29sP:%29sV" % \
+        print("START right: %8.3f:%29sP:%29sV" % \
                 [OS.get_ticks_msec()/1000.0, position, velocity])
     if just_released_right:
-        print("STOP right:   %8.3f:%29sP:%29sV" % \
+        print("STOP right:  %8.3f:%29sP:%29sV" % \
                 [OS.get_ticks_msec()/1000.0, position, velocity])

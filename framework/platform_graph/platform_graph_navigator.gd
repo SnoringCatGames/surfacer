@@ -128,6 +128,18 @@ func calculate_grabbed_surface(surface_state: PlayerSurfaceState) -> Surface:
 
 func _calculate_path(origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:
+    # FIXME: LEFT OFF HERE: ---------A
+    # - ABANDON the following... (don't use Godot's built-in AStar, since it assigns weights to nodes, not edges)
+    # - Rename most current uses of "nodes" to "surfaces".
+    # - Create a new concept of node for the actual jump/land points.
+    # - Assign IDs to each
+    
+    
+    
+    
+    
+    
+    ######
     var edges := []
     # FIXME: Remove
     var edge := PlatformGraphEdge.new(origin, destination, null)
