@@ -55,7 +55,7 @@ func _ready() -> void:
     collider_half_width_height = movement_params.collider_half_width_height
 
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
-    possible_surfaces = platform_graph.nodes
+    possible_surfaces = platform_graph.surfaces
     platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
 
 # Gets actions for the current frame.

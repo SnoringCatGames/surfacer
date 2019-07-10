@@ -164,8 +164,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
     var jump_position: PositionAlongSurface
     var land_position: PositionAlongSurface
     var instructions: PlayerInstructions
-    var weight: float
-    var edges = []
+    var edges := {}
     
     # FIXME: B: REMOVE
     params.gravity_fast_fall *= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
@@ -261,8 +260,9 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
             global_calc_params.position_end = land_position.target_point
             instructions = _calculate_jump_instructions(global_calc_params)
             if instructions != null:
-                # Can't reach land position from jump position.
-                edges.push_back(PlatformGraphEdge.new(jump_position, land_position, instructions))
+                # Can reach land position from jump position.
+                edges.push_back(PlatformGraphInterSurfaceEdge.new( \
+                        jump_position, land_position, instructions))
     
     # FIXME: B: REMOVE
     params.gravity_fast_fall /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION

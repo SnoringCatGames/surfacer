@@ -2,10 +2,9 @@ extends Reference
 class_name PlatformGraphNavigator
 
 var player # TODO: Add type back
+var graph: PlatformGraph
 var surface_state: PlayerSurfaceState
 var surface_parser: SurfaceParser
-# Dictionary<Surface, Array<PlatformGraphEdge>>
-var edges: Dictionary
 
 var _stopwatch: Stopwatch
 
@@ -27,9 +26,9 @@ var nearby_surfaces: Array
 
 func _init(player, graph: PlatformGraph) -> void:
     self.player = player
+    self.graph = graph
     surface_state = player.surface_state
     surface_parser = graph.surface_parser
-    edges = graph.edges
     _stopwatch = Stopwatch.new()
 
 # Starts a new navigation to the given destination.
@@ -38,7 +37,7 @@ func start_new_navigation(target: Vector2) -> void:
     
     var origin := surface_state.player_center_position_along_surface
     var destination := _find_closest_position_on_a_surface(target, player)
-    var path := _calculate_path(origin, destination)
+    var path := graph.find_path(origin, destination)
     
     current_path = path
     current_edge_index = 0
@@ -125,27 +124,6 @@ func update() -> void:
 func calculate_grabbed_surface(surface_state: PlayerSurfaceState) -> Surface:
     return surface_parser.get_surface_for_tile(surface_state.grabbed_tile_map, \
             surface_state.grabbed_tile_map_index, surface_state.grabbed_side)
-
-func _calculate_path(origin: PositionAlongSurface, \
-        destination: PositionAlongSurface) -> PlatformGraphPath:
-    # FIXME: LEFT OFF HERE: ---------A
-    # - ABANDON the following... (don't use Godot's built-in AStar, since it assigns weights to nodes, not edges)
-    # - Rename most current uses of "nodes" to "surfaces".
-    # - Create a new concept of node for the actual jump/land points.
-    # - Assign IDs to each
-    
-    
-    
-    
-    
-    
-    ######
-    var edges := []
-    # FIXME: Remove
-    var edge := PlatformGraphEdge.new(origin, destination, null)
-    edges.push_back(edge)
-    # FIXME: Use a A* to find the edges.
-    return PlatformGraphPath.new(origin, destination, edges)
 
 # Finds the closest PositionAlongSurface to the given target point.
 static func _find_closest_position_on_a_surface(target: Vector2, player) -> PositionAlongSurface:

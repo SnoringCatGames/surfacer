@@ -1,16 +1,16 @@
-# Information for how to move through the air from a start (jump) position on one surface to an
-# end (landing) position on another surface.
+# Information for how to move from a start position to an end position.
 extends Reference
 class_name PlatformGraphEdge
 
 var start: PositionAlongSurface
 var end: PositionAlongSurface
-var instructions: PlayerInstructions
 
-func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: PlayerInstructions) -> void:
+var weight: float setget ,_get_weight
+
+func _init(start: PositionAlongSurface, end: PositionAlongSurface) -> void:
     self.start = start
     self.end = end
-    self.instructions = instructions
 
-# FIXME: Add a getter for weight: float that returns self.instructions.duration
+func _get_weight() -> float:
+    Utils.error("Abstract PlatformGraphEdge._get_weight is not implemented")
+    return INF

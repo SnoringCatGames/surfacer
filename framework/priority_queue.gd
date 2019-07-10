@@ -56,7 +56,7 @@ var items := [null]
 var maintain_min: bool
 var last_power_of_two := 0
 
-func _init(items: Array, set_maintain_min := true) -> void:
+func _init(items := [], set_maintain_min := true) -> void:
     # Determines whether the smallest or largest value is maintained at the top.
     maintain_min = set_maintain_min
     

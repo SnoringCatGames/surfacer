@@ -1,5 +1,5 @@
 extends Node2D
-class_name PlatformGraphNodesAnnotator
+class_name PlatformGraphSurfacesAnnotator
 
 var surface_parser: SurfaceParser
 
