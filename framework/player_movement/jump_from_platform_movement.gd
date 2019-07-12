@@ -841,7 +841,8 @@ static func _convert_calculation_steps_to_player_instructions( \
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
     
-    var distance := global_calc_params.position_start.distance_to(global_calc_params.position_end)
+    var distance_squared := \
+            global_calc_params.position_start.distance_squared_to(global_calc_params.position_end)
     
     var constraint_positions := []
     
@@ -871,5 +872,5 @@ static func _convert_calculation_steps_to_player_instructions( \
         # Keep track of some info for edge annotation debugging.
         constraint_positions.push_back(step.position_step_end)
     
-    return PlayerInstructions.new(instructions, vertical_step.time_step_end, distance, \
+    return PlayerInstructions.new(instructions, vertical_step.time_step_end, distance_squared, \
             constraint_positions)

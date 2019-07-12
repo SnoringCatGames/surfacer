@@ -120,8 +120,8 @@ func get_size() -> int:
     return current_size
 
 # Allows duplicates of priorities.
-# Insert new element into heap at the next available slot. Calling that "hole".
-# Then percolate the element up in the heap while heap-order property is not satisfied.
+# - Insert new element into heap at the next available slot. Calling that "hole".
+# - Then percolate the element up in the heap while heap-order property is not satisfied.
 func insert(priority, value) -> bool:
     # Check validity of input.
     if typeof(priority) != TYPE_INT and typeof(priority) != TYPE_REAL:
@@ -144,10 +144,10 @@ func insert(priority, value) -> bool:
     return true
 
 # Deletes minimum element.
-# Minimum element is always at the root.
-# Heap decreases by one in size.
-# Move last element into hole at root.
-# Percolate down while heap-order not satisfied.
+# - Minimum element is always at the root.
+# - Heap decreases by one in size.
+# - Move last element into hole at root.
+# - Percolate down while heap-order not satisfied.
 func remove_root(return_array := false):
     if is_empty:
         print(str(OS.get_ticks_msec()) + ": PRIORITY QUEUE (" + str(get_instance_id()) + "): Can't delete root in empty heap! is_empty = true, current_size = " + str(current_size))

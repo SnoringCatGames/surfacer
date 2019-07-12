@@ -12,4 +12,4 @@ func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
     self.instructions = instructions
 
 func _get_weight() -> float:
-    return instructions.distance
+    return instructions.distance_squared

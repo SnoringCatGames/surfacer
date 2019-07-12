@@ -2,12 +2,12 @@
 extends PlatformGraphEdge
 class_name PlatformGraphIntraSurfaceEdge
 
-var _distance: float
+var _distance_squared: float
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface).(start, end) -> void:
     self.start = start
     self.end = end
-    self._distance = start.target_point.distance_to(end.target_point)
+    self._distance_squared = start.target_point.distance_squared_to(end.target_point)
 
 func _get_weight() -> float:
-    return _distance
+    return _distance_squared

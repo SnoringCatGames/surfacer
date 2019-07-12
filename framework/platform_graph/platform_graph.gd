@@ -111,7 +111,7 @@ var surface_parser: SurfaceParser
 var surfaces: Array
 # Dictionary<Surface, Array<PositionAlongSurface>>
 var surfaces_to_nodes: Dictionary
-# Dictionary<PositionAlongSurface, Array<PlatformGraphEdge>>
+# Dictionary<PositionAlongSurface, Dictionary<PlatformGraphEdge>>
 var nodes_to_edges: Dictionary
 
 func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
@@ -133,48 +133,52 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
 func find_path(origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:
     # FIXME: LEFT OFF HERE: ---------A
-    # - Implement A*.
+    #  - Will need to somehow also consider temporary edges from the origin to all other nodes on
+    #    the starting surface (and vice versa for destination).
+    #    - 
     
     var frontier := PriorityQueue.new([0, origin])
-    var came_from := {}
-    var cost_so_far := {}
+    var node_to_previous_node := {start = null}
+    var nodes_to_weights := {start = 0.0}
     
-    var position_a := origin
-#    var position_b: PositionAlongSurface
-#    var edges_from_a: Dictionary
+    var nodes_to_edges_for_current_node: Dictionary
+    var next_edge: PositionAlongSurface
+    var current_weight: float
+    var new_weight: float
+    var heuristic_weight: float
     
-#    PlatformGraphIntraSurfaceEdge
+    # Determine the cheapest path.
+    while !frontier.is_empty:
+        current_node = frontier.remove_root()
+        
+        if current_node == goal:
+            break
+        
+        current_weight = nodes_to_weights[current]
+        nodes_to_edges_for_current_node = nodes_to_edges[current_node]
+        
+        for next_node in nodes_to_edges_for_current_node:
+            next_edge = nodes_to_edges_for_current_node[next_node]
+            new_weight = current_weight + next_edge.weight
+            if !nodes_to_weights.has(next_node) or new_weight < nodes_to_weights[next_node]:
+                nodes_to_weights[next_node] = new_weight
+                heuristic_weight = next_node.target_point.distance_squared_to(goal.target_point)
+                priority = new_weight + heuristic_weight
+                frontier.insert(priority, next_node)
+                node_to_previous_node[next_node] = current
     
-#    surfaces_from_a = surfaces_to_edges[surface_a]
-#    for surface_b in surfaces_from_a:
-#        for surfaces_from_a_to_b in surfaces_from_a[surface_b]:
-#            pass
+    # Collect the edges for the cheapest path.
+    var edges := []
+    var current_node := destination
+    var previous_node: PositionAlongSurface = node_to_previous_node[current_node]
+    while previous_node != null:
+        edges.push_front(nodes_to_edges[previous_node][current_node])
+        current_node = previous_node
+        previous_node = node_to_previous_node[current_node]
     
-#    came_from = {}
-#    cost_so_far = {}
-#    came_from[start] = None
-#    cost_so_far[start] = 0
-#    
-#    while not frontier.empty():
-#        current = frontier.get()
-#        
-#        if current == goal:
-#            break
-#        
-#        for next in graph.neighbors(current):
-#            new_cost = cost_so_far[current] + graph.cost(current, next)
-#            if next not in cost_so_far or new_cost < cost_so_far[next]:
-#                cost_so_far[next] = new_cost
-#                priority = new_cost + heuristic(goal, next)
-#                frontier.insert(priority, next)
-#                came_from[next] = current
+    assert(!edges.empty())
     
-#    ###############
-#    # FIXME: Remove
-#    var edges := []
-#    var edge := PlatformGraphInterSurfaceEdge.new(origin, destination, null)
-#    edges.push_back(edge)
-#    return PlatformGraphPath.new(origin, destination, edges)
+    return PlatformGraphPath.new(origin, destination, edges)
 
 # Calculate and store the edges between surface nodes that this player type can traverse.
 func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
@@ -212,6 +216,11 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
         
         surfaces_to_nodes[surface] = nodes_set.values()
     
+    # Set up edge mappings.
+    for surface in surfaces_to_nodes:
+        for node in surfaces_to_nodes[surface]:
+            nodes_to_edges[node] = {}
+    
     # Calculate and record all intra-surface edges.
     var intra_surface_edge: PlatformGraphIntraSurfaceEdge
     for surface in surfaces_to_nodes:
@@ -223,21 +232,14 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
                 
                 # Record uni-directional edges in both directions.
                 intra_surface_edge = PlatformGraphIntraSurfaceEdge.new(node_a, node_b)
-                nodes_to_edges[node_a] = intra_surface_edge
+                nodes_to_edges[node_a][node_b] = intra_surface_edge
                 intra_surface_edge = PlatformGraphIntraSurfaceEdge.new(node_b, node_a)
-                nodes_to_edges[node_b] = intra_surface_edge
+                nodes_to_edges[node_b][node_a] = intra_surface_edge
     
     # Record inter-surface edges.
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
-            nodes_to_edges[edge.start] = edge
-    
-    # Sort the edges by weight.
-    for node in nodes_to_edges:
-        nodes_to_edges[node].sort_custom(self, "_compare_edge_weights")
-
-static func _compare_edge_weights(a: PlatformGraphEdge, b: PlatformGraphEdge) -> bool:
-    return a.weight < b.weight
+            nodes_to_edges[edge.start][edge.end] = edges
 
 # Checks whether a previous node with the same position has already been seen.
 # 
