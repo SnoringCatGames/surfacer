@@ -38,6 +38,7 @@ var end_instructions_destination: Vector2
 var has_end_instructions: bool
 
 # TODO: Add PlayerInstructions type annotations.
+# FIXME: LEFT OFF HERE: Remove some of these optional params. Update docs in this class.
 func _init(surface_origin: PositionAlongSurface, surface_destination: PositionAlongSurface, \
         edges: Array, start_instructions = null, start_instructions_origin := Vector2.INF, \
         end_instructions = null, end_instructions_destination := Vector2.INF) -> void:
@@ -52,3 +53,8 @@ func _init(surface_origin: PositionAlongSurface, surface_destination: PositionAl
     self.has_end_instructions = end_instructions != null
     self.end_instructions = end_instructions
     self.end_instructions_destination = end_instructions_destination
+
+static func create_same_surface_path(origin: PositionAlongSurface, \
+        destination: PositionAlongSurface) -> PlatformGraphPath:
+    var edges := [PlatformGraphIntraSurfaceEdge.new(origin, destination)]
+    return PlatformGraphPath.new(origin, destination, edges)

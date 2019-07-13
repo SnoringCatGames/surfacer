@@ -5,33 +5,11 @@ const MovementCalcGlobalParams = preload("res://framework/player_movement/moveme
 const MovementCalcLocalParams = preload("res://framework/player_movement/movement_calculation_local_params.gd")
 const MovementCalcStep = preload("res://framework/player_movement/movement_calculation_step.gd")
 
-# FIXME: B ******
-# - Should I remove this and force a slightly higher offset to target jump position directly? What
-#   about passing through constraints? Would the increased time to get to the position for a
-#   wall-top constraint result in too much downward velocity into the ceiling?
-# - Or what about the constraint offset margins? Shouldn't those actually address any needed
-#   jump-height epsilon? Is this needlessly redundant with that mechanism?
-# - Though I may need to always at least have _some_ small value here...
-# FIXME: D ******** Tweak this
-const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
-const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
-
-const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
-
-# FIXME: B: use this to record slow/fast gravities on the movement_params when initializing and
-#        update all usages to use the right one (rather than mutating the movement_params in the
-#        middle of edge calculations below).
-# FIXME: B: Update step calculation to increase durations by a slight amount (after calculating
-#        them all), in order to not have the rendered/discrete trajectory stop short?
-# FIXME: B: Update tests to use the new acceleration values.
-const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
-
 # FIXME: SUB-MASTER LIST ***************
 # - LEFT OFF HERE: Fix the current issue in check_frame_for_collision when using level_4 with all
 #                  surfaces.
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
-#   - B: Add path finding and update logic to PlatformGraphNavigator.
-#     - Implement A*.
+#   --> B: Add path finding and update logic to PlatformGraphNavigator.
 #   - C: Add support for executing movement WITHIN an edge.
 #   - D: Add support for executing movement along an edge.
 #     - Implement ComputerPlayer.
@@ -136,6 +114,27 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 #   - Label/color-code parts to demonstrate separate traversal steps
 # - Make the 144-cell diagram in InkScape and add to docs.
 # - Storing possibly 9 edges from A to B.
+
+# FIXME: B ******
+# - Should I remove this and force a slightly higher offset to target jump position directly? What
+#   about passing through constraints? Would the increased time to get to the position for a
+#   wall-top constraint result in too much downward velocity into the ceiling?
+# - Or what about the constraint offset margins? Shouldn't those actually address any needed
+#   jump-height epsilon? Is this needlessly redundant with that mechanism?
+# - Though I may need to always at least have _some_ small value here...
+# FIXME: D ******** Tweak this
+const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
+const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
+
+const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
+
+# FIXME: B: use this to record slow/fast gravities on the movement_params when initializing and
+#        update all usages to use the right one (rather than mutating the movement_params in the
+#        middle of edge calculations below).
+# FIXME: B: Update step calculation to increase durations by a slight amount (after calculating
+#        them all), in order to not have the rendered/discrete trajectory stop short?
+# FIXME: B: Update tests to use the new acceleration values.
+const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 func _init(params: MovementParams).("jump_from_platform", params) -> void:
     self.can_traverse_edge = true

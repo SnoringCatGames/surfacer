@@ -132,49 +132,108 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
 # Uses A* search.
 func find_path(origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:
-    # FIXME: LEFT OFF HERE: ---------A
-    #  - Will need to somehow also consider temporary edges from the origin to all other nodes on
-    #    the starting surface (and vice versa for destination).
-    #    - 
+    var origin_surface := origin.surface
+    var destination_surface := destination.surface
     
-    var frontier := PriorityQueue.new([0, origin])
+    if origin_surface == destination_surface:
+        # If the we are simply trying to get to a different position on the same surface, then we
+        # don't need A*.
+        return PlatformGraphPath.create_same_surface_path(origin, destination)
+    
+    var frontier := PriorityQueue.new()
     var node_to_previous_node := {start = null}
     var nodes_to_weights := {start = 0.0}
     
     var nodes_to_edges_for_current_node: Dictionary
-    var next_edge: PositionAlongSurface
+    var next_edge: PlatformGraphEdge
+    var current_node: PositionAlongSurface
     var current_weight: float
     var new_weight: float
     var heuristic_weight: float
+    var priority: float
+    
+    # Record temporary edges from the origin to each node on the origin's surface.
+    for next_node in surfaces_to_nodes[origin_surface]:
+        # Record the path to this node.
+        node_to_previous_node[next_node] = origin
+        
+        # Record this node's weight.
+        new_weight = origin.target_point.distance_squared_to(next_node.target_point)
+        nodes_to_weights[next_node] = new_weight
+        
+        # Add this node to the frontier with a priority.
+        priority = new_weight
+        frontier.insert(priority, next_node)
     
     # Determine the cheapest path.
     while !frontier.is_empty:
         current_node = frontier.remove_root()
+        current_weight = nodes_to_weights[current_node]
         
-        if current_node == goal:
+        if current_node == destination:
             break
         
-        current_weight = nodes_to_weights[current]
-        nodes_to_edges_for_current_node = nodes_to_edges[current_node]
+        if current_node.surface == destination_surface:
+            # Record a temporary edge to the destination from this current_node.
+            
+            next_node = destination
+            new_weight = current_weight + \
+                    current_node.target_point.distance_squared_to(destination.target_point)
+            
+            if !nodes_to_weights.has(next_node) or new_weight < nodes_to_weights[next_node]:
+                # We found a new or cheaper path to this next node, so record it.
+                
+                # Record the path to this node.
+                node_to_previous_node[next_node] = current_node
+                
+                # Record this node's weight.
+                nodes_to_weights[next_node] = new_weight
+                
+                # Add this node to the frontier with a priority.
+                priority = new_weight
+                frontier.insert(priority, next_node)
         
+            continue
+        
+        # Iterate through each current neighbor node, and add record their weights, paths, and
+        # priorities.
+        nodes_to_edges_for_current_node = nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
             next_edge = nodes_to_edges_for_current_node[next_node]
             new_weight = current_weight + next_edge.weight
+            
             if !nodes_to_weights.has(next_node) or new_weight < nodes_to_weights[next_node]:
+                # We found a new or cheaper path to this next node, so record it.
+                
+                # Record the path to this node.
+                node_to_previous_node[next_node] = current_node
+                
+                # Record this node's weight.
                 nodes_to_weights[next_node] = new_weight
                 heuristic_weight = next_node.target_point.distance_squared_to(goal.target_point)
+                
+                # Add this node to the frontier with a priority.
                 priority = new_weight + heuristic_weight
                 frontier.insert(priority, next_node)
-                node_to_previous_node[next_node] = current
     
     # Collect the edges for the cheapest path.
     var edges := []
-    var current_node := destination
+    current_node = destination
     var previous_node: PositionAlongSurface = node_to_previous_node[current_node]
     while previous_node != null:
-        edges.push_front(nodes_to_edges[previous_node][current_node])
+        next_edge = nodes_to_edges[previous_node][current_node]
+        
+        # next_edge should always be defined, except for with the first and last edges, which are
+        # temporary and extend from/to the origin/destination, which are not aligned with normal
+        # node positions.
+        assert(next_edge != null or edges.empty() or node_to_previous_node[previous_node] == null)
+        
+        if next_edge == null:
+            next_edge = PlatformGraphIntraSurfaceEdge.new(previous_node, current_node)
+        
+        edges.push_front(next_edge)
         current_node = previous_node
-        previous_node = node_to_previous_node[current_node]
+        previous_node = node_to_previous_node[previous_node]
     
     assert(!edges.empty())
     
