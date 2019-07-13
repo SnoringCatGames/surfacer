@@ -65,9 +65,9 @@ var TEST_LEVEL_FAR_DISTANCE := {
 }
 
 const GROUPS := [
-    "surfaces",
-    "human_players",
-    "computer_players",
+    Utils.GROUP_NAME_HUMAN_PLAYERS,
+    Utils.GROUP_NAME_COMPUTER_PLAYERS,
+    Utils.GROUP_NAME_SURFACES,
 ]
 
 const END_COORDINATE_CLOSE_THRESHOLD := 0.001

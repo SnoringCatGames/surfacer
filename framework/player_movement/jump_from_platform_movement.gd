@@ -163,7 +163,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
     var jump_position: PositionAlongSurface
     var land_position: PositionAlongSurface
     var instructions: PlayerInstructions
-    var edges := {}
+    var edges := []
     
     # FIXME: B: REMOVE
     params.gravity_fast_fall *= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION

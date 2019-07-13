@@ -22,20 +22,24 @@ const LEVEL_RESOURCE_PATHS := [
 const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
 
 const IN_TEST_MODE := false
+const IN_HUMAN_PLAYER_MODE := true
 
 const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_rise.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
+
+var level: Level
 
 func _enter_tree() -> void:
     var global := $"/root/Global"
     global.register_player_params(PLAYER_PARAMS)
     
-    if IN_TEST_MODE:
-        _add_scene(TEST_RUNNER_SCENE_RESOURCE_PATH)
-    else:
-        _add_scene(STARTING_LEVEL_RESOURCE_PATH)
+    var scene_path := TEST_RUNNER_SCENE_RESOURCE_PATH if IN_TEST_MODE else \
+            STARTING_LEVEL_RESOURCE_PATH
+    level = Utils.add_scene(self, scene_path)
 
-func _add_scene(resource_path: String) -> void:
-    var tests_scene := load(resource_path)
-    var tests_node = tests_scene.instance()
-    add_child(tests_node)
+func _ready() -> void:
+    var player_resource_path := TestPlayerParams.PLAYER_RESOURCE_PATH if IN_HUMAN_PLAYER_MODE else \
+            TestPlayerParams.PLAYER_RESOURCE_PATH
+    var position := Vector2(160.0, 0.0) if STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 \
+            else Vector2.ZERO
+    level.add_player(player_resource_path, IN_HUMAN_PLAYER_MODE, position)

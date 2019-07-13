@@ -53,8 +53,3 @@ func _init(surface_origin: PositionAlongSurface, surface_destination: PositionAl
     self.has_end_instructions = end_instructions != null
     self.end_instructions = end_instructions
     self.end_instructions_destination = end_instructions_destination
-
-static func create_same_surface_path(origin: PositionAlongSurface, \
-        destination: PositionAlongSurface) -> PlatformGraphPath:
-    var edges := [PlatformGraphIntraSurfaceEdge.new(origin, destination)]
-    return PlatformGraphPath.new(origin, destination, edges)

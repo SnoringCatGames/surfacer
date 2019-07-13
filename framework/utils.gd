@@ -7,6 +7,10 @@ const PHYSICS_TIME_STEP := 1 / 60.0
 
 const IN_DEV_MODE := true
 
+const GROUP_NAME_HUMAN_PLAYERS := "human_players"
+const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
+const GROUP_NAME_SURFACES := "surfaces"
+
 static func error(message := "An error occurred"):
     print("ERROR: %s" % message)
     assert(false)
@@ -69,3 +73,9 @@ static func _get_floor_collision(body: KinematicBody2D) -> KinematicCollision2D:
             if abs(collision.normal.angle_to(Geometry.UP)) <= Geometry.FLOOR_MAX_ANGLE:
                 return collision
     return null
+
+static func add_scene(parent: Node, resource_path: String) -> Node:
+    var scene := load(resource_path)
+    var node: Node = scene.instance()
+    parent.add_child(node)
+    return node

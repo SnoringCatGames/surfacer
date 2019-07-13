@@ -1,9 +1,7 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://framework/level.gd" type="Script" id=1]
 [ext_resource path="res://tileset.tres" type="TileSet" id=2]
-[ext_resource path="res://framework/test/test_data/test_player.tscn" type="PackedScene" id=3]
-[ext_resource path="res://players/squirrel_player.tscn" type="PackedScene" id=4]
 
 [node name="TestLevelWallTopConstraint" type="Node2D"]
 script = ExtResource( 1 )
@@ -14,14 +12,4 @@ script = ExtResource( 1 )
 tile_set = ExtResource( 2 )
 format = 1
 tile_data = PoolIntArray( 65538, 0, 0 )
-
-[node name="TestPlayer" parent="." groups=[
-"human_players",
-] instance=ExtResource( 3 )]
-position = Vector2( 166.972, 0 )
-
-[node name="Squirrel" parent="." groups=[
-"computer_players",
-] instance=ExtResource( 4 )]
-position = Vector2( 650.701, 812.762 )
 

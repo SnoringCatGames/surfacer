@@ -1,11 +1,15 @@
 extends Reference
 class_name PlayerParams
 
+var player_resource_path: String
+
 var _movement_params: MovementParams
 var _movement_types: Array
 var _player_type_configuration: PlayerTypeConfiguration
 
-func _init() -> void:
+func _init(player_resource_path: String) -> void:
+    self.player_resource_path = player_resource_path
+    
     _movement_params = _create_movement_params()
     _movement_params.gravity_slow_ascent = \
             _movement_params.gravity_fast_fall * _movement_params.slow_ascent_gravity_multiplier

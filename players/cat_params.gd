@@ -5,12 +5,16 @@ const JumpFromPlatformMovement = preload("res://framework/player_movement/jump_f
 const FallFromAirMovement = preload("res://framework/player_movement/fall_from_air_movement.gd")
 const CatPlayer = preload("res://players/cat_player.gd")
 
+const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 const NAME := "cat"
 const TYPE := PlayerType.HUMAN
 const CAN_GRAB_WALLS := true
 const CAN_GRAB_CEILINGS := false
 const CAN_GRAB_FLOORS := true
 const COLLIDER_ROTATION := PI / 2
+
+func _init().(PLAYER_RESOURCE_PATH) -> void:
+    pass
 
 func _create_player_type_configuration(movement_params: MovementParams, \
         movement_types: Array) -> PlayerTypeConfiguration:

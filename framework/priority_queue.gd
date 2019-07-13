@@ -37,6 +37,8 @@ class_name PriorityQueue
 # 
 ###################################################################################################
 
+var Self = get_script()
+
 # Holds an arbitrary number of values sorted by a weight assigned to set values.
 # 
 # Structure is a balanced BST.
@@ -212,7 +214,7 @@ func merge_with(priority_queue: PriorityQueue, set_maintain_min = true) -> Prior
                 list.append(other_queue[i])
         i -= 1
     
-    return PriorityQueue.new(list, set_maintain_min)
+    return Self.new(list, set_maintain_min)
 
 # Establishes heap order property from an arbitrary arrangement of items.
 # 

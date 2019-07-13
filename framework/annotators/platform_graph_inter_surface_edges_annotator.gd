@@ -17,13 +17,16 @@ func _draw() -> void:
     var discrete_trajectory_color: Color
     var continuous_trajectory_color: Color
     var constraint_color: Color
+    var edge: PlatformGraphEdge
     
     # Iterate over all surfaces.
     for surface in graph.surfaces_to_nodes:
         # Iterate over all nodes from this surface.
-        for node in graph.surfaces_to_nodes[surface]:
+        for node_start in graph.surfaces_to_nodes[surface]:
             # Iterate over all edges from this node.
-            for edge in graph.nodes_to_edges[node]:
+            for node_end in graph.nodes_to_edges[node_start]:
+                edge = graph.nodes_to_edges[node_start][node_end]
+                
                 # Skip intra-surface edges. They aren't as interesting to render.
                 if edge is PlatformGraphIntraSurfaceEdge:
                     continue

@@ -138,7 +138,8 @@ func find_path(origin: PositionAlongSurface, \
     if origin_surface == destination_surface:
         # If the we are simply trying to get to a different position on the same surface, then we
         # don't need A*.
-        return PlatformGraphPath.create_same_surface_path(origin, destination)
+        var edges := [PlatformGraphIntraSurfaceEdge.new(origin, destination)]
+        return PlatformGraphPath.new(origin, destination, edges)
     
     var frontier := PriorityQueue.new()
     var node_to_previous_node := {start = null}
@@ -148,6 +149,7 @@ func find_path(origin: PositionAlongSurface, \
     var next_edge: PlatformGraphEdge
     var current_node: PositionAlongSurface
     var current_weight: float
+    var next_node: PositionAlongSurface
     var new_weight: float
     var heuristic_weight: float
     var priority: float
@@ -210,7 +212,7 @@ func find_path(origin: PositionAlongSurface, \
                 
                 # Record this node's weight.
                 nodes_to_weights[next_node] = new_weight
-                heuristic_weight = next_node.target_point.distance_squared_to(goal.target_point)
+                heuristic_weight = next_node.target_point.distance_squared_to(destination.target_point)
                 
                 # Add this node to the frontier with a priority.
                 priority = new_weight + heuristic_weight
@@ -270,7 +272,7 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
         
         # Get a deduped set of all nodes on this surface.
         for edge in surfaces_to_edges[surface]:
-            cell_id = _node_to_cell_id[edge.start]
+            cell_id = _node_to_cell_id(edge.start)
             nodes_set[cell_id] = edge.start
         
         surfaces_to_nodes[surface] = nodes_set.values()
@@ -298,13 +300,13 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
     # Record inter-surface edges.
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
-            nodes_to_edges[edge.start][edge.end] = edges
+            nodes_to_edges[edge.start][edge.end] = edge
 
 # Checks whether a previous node with the same position has already been seen.
 # 
 # - If there is a match, then the previous instance is returned.
 # - Otherwise, the new new instance is recorded and returned.
-static func _dedup_node(node: PositionAlongSurface, grid_cell_to_node: {}) -> PositionAlongSurface:
+static func _dedup_node(node: PositionAlongSurface, grid_cell_to_node: Dictionary) -> PositionAlongSurface:
     var cell_id := _node_to_cell_id(node)
     
     if grid_cell_to_node.has(cell_id):

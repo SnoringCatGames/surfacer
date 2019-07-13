@@ -20,10 +20,6 @@ var just_landed_on_expected_surface := false
 var just_interrupted_navigation := false
 var just_reached_start_of_edge := false
 
-# FIXME: Remove
-# Array<Surface>
-var nearby_surfaces: Array
-
 func _init(player, graph: PlatformGraph) -> void:
     self.player = player
     self.graph = graph
@@ -108,17 +104,6 @@ func update() -> void:
         # FIXME: Detect when position is too far from expected.
         # FIXME: Continue executing movement instruction set.
         pass
-    
-    # FIXME: Remove
-#    if surface_state.is_grabbing_a_surface:
-#        if surface_state.just_changed_surface:
-#            _stopwatch.start()
-#            print("get_nearby_surfaces...")
-#            nearby_surfaces = edge_parser._get_nearby_surfaces(surface_state.grabbed_surface, \
-#                    SURFACE_CLOSE_DISTANCE_THRESHOLD, )
-#            print("get_nearby_surfaces duration: %sms" % _stopwatch.stop())
-#    else:
-#        nearby_surfaces = []
 
 # Finds the Surface the corresponds to the given PlayerSurfaceState.
 func calculate_grabbed_surface(surface_state: PlayerSurfaceState) -> Surface:
