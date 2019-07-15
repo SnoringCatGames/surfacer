@@ -1,5 +1,5 @@
 extends Reference
-class_name PlayerActions
+class_name PlayerActionState
 
 var delta: float
 

@@ -234,10 +234,15 @@ func find_path(origin: PositionAlongSurface, \
                 frontier.insert(priority, next_node)
     
     # Collect the edges for the cheapest path.
+    
     var edges := []
     current_node = destination
-    # FIXME: LEFT OFF HERE: DEBUGGING: error when clicking on some surfaces
-    var previous_node: PositionAlongSurface = node_to_previous_node[current_node]
+    var previous_node: PositionAlongSurface = node_to_previous_node.get(current_node)
+    
+    if previous_node == null:
+        # The destination cannot be reached form the origin.
+        return null
+    
     while previous_node != null:
         if node_to_previous_node[previous_node] == null or edges.empty():
             # The first and last edge are temporary and extend from/to the origin/destination,

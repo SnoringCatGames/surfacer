@@ -114,3 +114,4 @@ func _record_player_reference(is_human_player: bool) -> void:
             computer_player_annotator.initialize_platform_graph_navigator()
             
             click_to_navigate.set_computer_player(computer_player)
+            click_annotator.set_computer_player(computer_player)

@@ -2,6 +2,7 @@ extends KinematicBody2D
 class_name Player
 
 const PlatformGraphNavigator = preload("res://framework/platform_graph/platform_graph_navigator.gd")
+const PlayerActionState = preload("res://framework/player/player_action_state.gd")
 const PlayerSurfaceState = preload("res://framework/player/player_surface_state.gd")
 
 var player_name: String
@@ -13,7 +14,7 @@ var movement_params: MovementParams
 var movement_types: Array
 # Array<Surface>
 var possible_surfaces: Array
-var actions := PlayerActions.new()
+var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var platform_graph_navigator: PlatformGraphNavigator
 var velocity := Vector2.ZERO

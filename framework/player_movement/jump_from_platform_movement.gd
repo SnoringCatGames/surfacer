@@ -6,18 +6,36 @@ const MovementCalcLocalParams = preload("res://framework/player_movement/movemen
 const MovementCalcStep = preload("res://framework/player_movement/movement_calculation_step.gd")
 
 # FIXME: SUB-MASTER LIST ***************
-# - LEFT OFF HERE: Fix the current issue in check_frame_for_collision when using level_4 with all
-#                  surfaces.
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
-#   --> B: Add path finding and update logic to PlatformGraphNavigator.
+#   ---> - Implement a new ActionSource system
+#     - Player should allow multiple action_sources to be provided.
+#     - Initialize them in MovementParams?
+#     - Can probably completely remove HumanPlayer and ComputerPlayer.
+#       - This distinction would instead just be defined by two things:
+#         - Whether the node belongs to the human_players group.
+#         - Whether the player is set up to include InputActionSource.
+#   - Implement a new PlayerAction system
+#     - Essentially, each type of movement should be defined in a separate class.
+#       - jump from floor
+#       - jump from wall
+#       - jump from air
+#       - walk on floor
+#       - climb up wall
+#       - move sideways in air
+#       - fall off floor edge
+#       - fall off wall edge
+#       - dash from floor
+#       - dash from wall
+#       - dash from air
+#     - Each of these should have a pre-configured priority, to determine execution order.
+#   - Implement a new PlayerAnimator
+#     - 
+#   - Update the Player created in Level.add_player to include both input and instruction action sources (configurable via params).
+#   - Update TestPlayer to use the cat animator for now, since that will let me test/implement the animation triggers?
+# - 
+#   B: Add support for executing movement along an edge.
 #   - C: Add support for executing movement WITHIN an edge.
-#   - D: Add support for executing movement along an edge.
-#     - Implement ComputerPlayer.
-#       - Actually, why have the human-controlled logic in a separate implementation than the instructions-controlled logic?
-#       - We could just have a single Player class that accepts both.
-#       - So, we should instead refactor the Player system to just execute normalized instructions from instruction adaptors.
-#       - We should support multiple instruction adaptors being used simultaneously.
-#     - Use the cat animator for now, since that will let me test/implement the animation triggers.
+#   - D: Add path finding and update logic to PlatformGraphNavigator.
 #   - G: Add support for sending the CPU to a click target (configured in the specific level).
 #   - H: Add support for picking random surfaces or points-in-space to move the CPU to; resetting
 #        to a new point after the CPU reaches the old point.
@@ -26,7 +44,10 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 #     - It will need to listen for when the navigator has reached the destination though (make sure
 #       that signal is emitted).
 #   - I: Fix surface annotator (doubles on part and wraps around edge wrong).
-#   - J: Create a demo level to showcase lots of interesting edges.
+# - 
+# - LEFT OFF HERE: Fix the current issue in check_frame_for_collision when using level_4 with all
+#                  surfaces.
+# - LEFT OFF HERE: Create a demo level to showcase lots of interesting edges.
 # - LEFT OFF HERE: Add support for specifying a desired min end-x-velocity.
 #   - We need to add support for specifying a desired min end-x-velocity from the previous
 #     horizontal step (by default, all end velocities are as small as possible).

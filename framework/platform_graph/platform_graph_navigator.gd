@@ -28,18 +28,29 @@ func _init(player, graph: PlatformGraph) -> void:
     _stopwatch = Stopwatch.new()
 
 # Starts a new navigation to the given destination.
-func start_new_navigation(target: Vector2) -> void:
+func start_new_navigation(target: Vector2) -> bool:
     assert(surface_state.is_grabbing_a_surface) # FIXME: Remove
     
     var origin := surface_state.player_center_position_along_surface
-    var destination := _find_closest_position_on_a_surface(target, player)
+    var destination := find_closest_position_on_a_surface(target, player)
     var path := graph.find_path(origin, destination)
     
-    current_path = path
-    current_edge_index = 0
-    current_edge = current_path.edges[current_edge_index]
-    is_currently_navigating = true
-    reached_destination = false
+    if path == null:
+        # Destination cannot be reached from origin.
+        current_path = null
+        current_edge = null
+        current_edge_index = -1
+        is_currently_navigating = false
+        reached_destination = false
+        return false
+    else:
+        # Destination can be reached from origin.
+        current_path = path
+        current_edge = current_path.edges[0]
+        current_edge_index = 0
+        is_currently_navigating = true
+        reached_destination = false
+        return true
 
 func reset() -> void:
     current_path = null
@@ -111,7 +122,7 @@ func calculate_grabbed_surface(surface_state: PlayerSurfaceState) -> Surface:
             surface_state.grabbed_tile_map_index, surface_state.grabbed_side)
 
 # Finds the closest PositionAlongSurface to the given target point.
-static func _find_closest_position_on_a_surface(target: Vector2, player) -> PositionAlongSurface:
+static func find_closest_position_on_a_surface(target: Vector2, player) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
     var surface := _get_closest_surface(target, player.possible_surfaces)
     position.match_surface_target_and_collider(surface, target, player.collider_half_width_height)
