@@ -102,6 +102,18 @@ const PlatformGraphIntraSurfaceEdge = preload("res://framework/platform_graph/pl
 # - Test exporting to HTML5.
 # - Start adding networking support.
 # - Finish adding tests.
+# 
+# - Add an early-cutoff mechanism to A* for paths that deviate too far from straight-line.
+#   Otherwise, it will check every connecected surface before knowing that a destination cannot be
+#   reached.
+#   - Or look at number of surfaces visited instead of straight-line deviation?
+#   - Cons:
+#     - Can miss valid paths if they deviate too far.
+# - OR, use djikstra's algorithm, and always store every path to/from every other surface?
+#   - Cons:
+#     - Takes more space (maybe ok?).
+#     - Too expensive if the map ever changes dynamically.
+#       - Unless I have a way of localizing changes.
 
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
@@ -130,6 +142,7 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
     _calculate_nodes_and_edges(space_state, surface_parser, surfaces, player_info)
 
 # Uses A* search.
+# TODO: Add an early-cutoff mechanism for paths that deviate too far from straight-line. Otherwise, this will check every connecected surface before knowing that a destination cannot be reached.
 func find_path(origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:
     var origin_surface := origin.surface
@@ -142,8 +155,10 @@ func find_path(origin: PositionAlongSurface, \
         return PlatformGraphPath.new(origin, destination, edges)
     
     var frontier := PriorityQueue.new()
-    var node_to_previous_node := {start = null}
-    var nodes_to_weights := {start = 0.0}
+    var node_to_previous_node := {}
+    node_to_previous_node[origin] = null
+    var nodes_to_weights := {}
+    nodes_to_weights[origin] = 0.0
     
     var nodes_to_edges_for_current_node: Dictionary
     var next_edge: PlatformGraphEdge
@@ -221,21 +236,21 @@ func find_path(origin: PositionAlongSurface, \
     # Collect the edges for the cheapest path.
     var edges := []
     current_node = destination
+    # FIXME: LEFT OFF HERE: DEBUGGING: error when clicking on some surfaces
     var previous_node: PositionAlongSurface = node_to_previous_node[current_node]
     while previous_node != null:
-        next_edge = nodes_to_edges[previous_node][current_node]
-        
-        # next_edge should always be defined, except for with the first and last edges, which are
-        # temporary and extend from/to the origin/destination, which are not aligned with normal
-        # node positions.
-        assert(next_edge != null or edges.empty() or node_to_previous_node[previous_node] == null)
-        
-        if next_edge == null:
+        if node_to_previous_node[previous_node] == null or edges.empty():
+            # The first and last edge are temporary and extend from/to the origin/destination,
+            # which are not aligned with normal node positions.
             next_edge = PlatformGraphIntraSurfaceEdge.new(previous_node, current_node)
+        else:
+            next_edge = nodes_to_edges[previous_node][current_node]
+        
+        assert(next_edge != null)
         
         edges.push_front(next_edge)
         current_node = previous_node
-        previous_node = node_to_previous_node[previous_node]
+        previous_node = node_to_previous_node.get(previous_node)
     
     assert(!edges.empty())
     

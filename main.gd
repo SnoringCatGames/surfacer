@@ -22,7 +22,7 @@ const LEVEL_RESOURCE_PATHS := [
 const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
 
 const IN_TEST_MODE := false
-const IN_HUMAN_PLAYER_MODE := true
+const IN_HUMAN_PLAYER_MODE := false
 
 const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_rise.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"

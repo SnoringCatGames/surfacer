@@ -13,8 +13,11 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 #   - C: Add support for executing movement WITHIN an edge.
 #   - D: Add support for executing movement along an edge.
 #     - Implement ComputerPlayer.
+#       - Actually, why have the human-controlled logic in a separate implementation than the instructions-controlled logic?
+#       - We could just have a single Player class that accepts both.
+#       - So, we should instead refactor the Player system to just execute normalized instructions from instruction adaptors.
+#       - We should support multiple instruction adaptors being used simultaneously.
 #     - Use the cat animator for now, since that will let me test/implement the animation triggers.
-#   - F: Add support for not having a human or CPU in a level.
 #   - G: Add support for sending the CPU to a click target (configured in the specific level).
 #   - H: Add support for picking random surfaces or points-in-space to move the CPU to; resetting
 #        to a new point after the CPU reaches the old point.

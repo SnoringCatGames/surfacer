@@ -8,13 +8,20 @@ const TileAnnotator = preload("res://framework/annotators/tile_annotator.gd")
 
 var has_entered_tree := false
 
-var player: ComputerPlayer
+# TODO: Try adding player type back once Godot fixes the bug that values are silently re-assigned
+# to null when types don't match (even though they do, but Godot's type system has a bug with
+# inheritance).
+var player: KinematicBody2D
+
 var player_surface_annotator: PlayerSurfaceAnnotator
 var computer_platform_graph_navigator_annotator: ComputerPlatformGraphNavigatorAnnotator
 var position_annotator: PositionAnnotator
 var tile_annotator: TileAnnotator
 
-func _init(player: ComputerPlayer) -> void:
+# TODO: Try adding player type back once Godot fixes the bug that values are silently re-assigned
+# to null when types don't match (even though they do, but Godot's type system has a bug with
+# inheritance).
+func _init(player) -> void:
     self.player = player
     player_surface_annotator = PlayerSurfaceAnnotator.new(player)
     computer_platform_graph_navigator_annotator = null
