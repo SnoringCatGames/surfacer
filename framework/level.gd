@@ -82,8 +82,6 @@ func add_player(resource_path: String, is_human_player: bool, position: Vector2)
             Utils.GROUP_NAME_COMPUTER_PLAYERS
     player.add_to_group(group)
     
-    player.initialize_platform_graph_navigator(platform_graphs[player.player_name])
-    
     _record_player_reference(is_human_player)
     
     return player
@@ -98,12 +96,16 @@ func _record_player_reference(is_human_player: bool) -> void:
     var player: Player = players[0] if players.size() > 0 else null
     
     if player != null:
+        player.initialize_platform_graph_navigator(platform_graphs[player.player_name])
+        
         if is_human_player:
             human_player = player
             
             # Set up an annotator to help with debugging.
             human_player_annotator = HumanPlayerAnnotator.new(human_player)
             add_child(human_player_annotator)
+            
+            human_player_annotator.initialize_platform_graph_navigator()
         else:
             computer_player = player
             
