@@ -30,10 +30,9 @@ var action_sources := []
 func _init(player_name: String) -> void:
     self.player_name = player_name
 
-func set_is_human_controlled(is_human_controlled: bool) -> void:
-    # FIXME: LEFT OFF HERE: ---------------------A
+func init_action_source(is_human_controlled: bool) -> void:
     var action_source: PlayerActionSource = \
-            InputActionSource.new() if is_human_controlled else InstructionsActionSource.new()
+            InputActionSource.new(self) if is_human_controlled else InstructionsActionSource.new(self)
     action_sources.push_back(action_source)
 
 func _enter_tree() -> void:

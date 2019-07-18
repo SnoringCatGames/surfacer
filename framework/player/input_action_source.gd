@@ -9,6 +9,9 @@ const INPUT_KEYS := [
   "move_right",
 ]
 
+func _init(player).(player) -> void:
+    pass
+
 # Calculates actions for the current frame.
 func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
     var is_pressed: bool

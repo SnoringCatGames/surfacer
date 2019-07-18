@@ -1,5 +1,5 @@
 extends Node2D
-class_name ComputerPlatformGraphNavigatorAnnotator
+class_name PlatformGraphNavigatorAnnotator
 
 var EDGE_COLOR = Color.from_hsv(0.75, 0.8, 0.9, 0.35)
 const TRAJECTORY_WIDTH := 4.0

@@ -2,19 +2,19 @@ extends Node
 class_name ClickToNavigate
 
 var level # TODO: Add type back in
-var computer_player # TODO: Add type back in
+var player: Player
 var navigator: PlatformGraphNavigator
 
 func update_level(level) -> void:
     self.level = level
-    set_computer_player(level.computer_player)
+    set_player(level.computer_player)
 
-func set_computer_player(computer_player) -> void:
-    if computer_player != null:
-        self.computer_player = computer_player
-        navigator = computer_player.platform_graph_navigator
+func set_player(player: Player) -> void:
+    if player != null:
+        self.player = player
+        navigator = player.platform_graph_navigator
     else:
-        self.computer_player = null
+        self.player = null
         navigator = null
 
 func _process(delta: float) -> void:

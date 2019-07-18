@@ -2,8 +2,7 @@ extends Node2D
 class_name Level
 
 const ClickAnnotator = preload("res://framework/annotators/click_annotator.gd")
-const ComputerPlayerAnnotator = preload("res://framework/annotators/computer_player_annotator.gd")
-const HumanPlayerAnnotator = preload("res://framework/annotators/human_player_annotator.gd")
+const PlayerAnnotator = preload("res://framework/annotators/player_annotator.gd")
 const PlatformGraph = preload("res://framework/platform_graph/platform_graph.gd")
 const PlatformGraphAnnotator = preload("res://framework/annotators/platform_graph_annotator.gd")
 
@@ -20,8 +19,8 @@ var platform_graphs: Dictionary
 var click_to_navigate: ClickToNavigate
 
 var platform_graph_annotator: PlatformGraphAnnotator
-var computer_player_annotator: ComputerPlayerAnnotator
-var human_player_annotator: HumanPlayerAnnotator
+# Dictonary<Player, PlayerAnnotator>
+var player_annotators := {}
 var click_annotator: ClickAnnotator
 
 func _enter_tree() -> void:
@@ -68,10 +67,8 @@ static func _create_platform_graphs(surface_parser: SurfaceParser, \
     return graphs
 
 func descendant_physics_process_completed(descendant: Node) -> void:
-    if descendant == human_player:
-        human_player_annotator.check_for_update()
-    if descendant == computer_player:
-        computer_player_annotator.check_for_update()
+    if descendant is Player:
+        player_annotators[descendant].check_for_update()
 
 func add_player(resource_path: String, is_human_player: bool, position: Vector2) -> Player:
     var player: Player = Utils.add_scene(self, resource_path)
@@ -95,33 +92,18 @@ func _record_player_reference(is_human_player: bool) -> void:
     
     var player: Player = players[0] if players.size() > 0 else null
     
-    # FIXME: LEFT OFF HERE: DEBUGGING:
-    # - Something's up with how I instance TestPlayer.
-    # - It somehow doesn't ever instantiate the Player class, but it does instantiate KinematicBody2D??
-    # - NEXT STEP: Walk through diff of changes...
     if player != null:
         player.initialize_platform_graph_navigator(platform_graphs[player.player_name])
+        player.init_action_source(is_human_player)
+        
+        # Set up an annotator to help with debugging.
+        var player_annotator := PlayerAnnotator.new(player)
+        add_child(player_annotator)
+        player_annotators[player] = player_annotator
         
         if is_human_player:
             human_player = player
-            
-            human_player.set_is_human_controlled(true)
-            
-            # Set up an annotator to help with debugging.
-            human_player_annotator = HumanPlayerAnnotator.new(human_player)
-            add_child(human_player_annotator)
-            
-            human_player_annotator.initialize_platform_graph_navigator()
         else:
             computer_player = player
-            
-            computer_player.set_is_human_controlled(false)
-            
-            # Set up an annotator to help with debugging.
-            computer_player_annotator = ComputerPlayerAnnotator.new(computer_player)
-            add_child(computer_player_annotator)
-            
-            computer_player_annotator.initialize_platform_graph_navigator()
-            
-            click_to_navigate.set_computer_player(computer_player)
-            click_annotator.set_computer_player(computer_player)
+            click_to_navigate.set_player(computer_player)
+            click_annotator.set_player(computer_player)

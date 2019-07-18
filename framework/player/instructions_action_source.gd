@@ -4,6 +4,9 @@ class_name InstructionsActionSource
 # Array<_InstructionsPlayback>
 var _all_playback := []
 
+func _init(player).(player) -> void:
+    pass
+
 # Calculates actions for the current frame.
 func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
     var next_instruction: PlayerInstruction

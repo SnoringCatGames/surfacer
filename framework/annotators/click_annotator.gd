@@ -7,7 +7,7 @@ const CLICK_DURATION_SEC := 0.2
 
 var global # TODO: Add type back
 var level # TODO: Add type back
-var computer_player # TODO: Add type back
+var player: Player
 var click_position: Vector2
 var closest_surface_position: PositionAlongSurface
 var start_time := -CLICK_DURATION_SEC
@@ -21,8 +21,8 @@ func _init(level) -> void:
 func _ready() -> void:
     self.global = $"/root/Global"
 
-func set_computer_player(computer_player) -> void:
-    self.computer_player = computer_player
+func set_player(player: Player) -> void:
+    self.player = player
 
 func _process(delta: float) -> void:
     var current_time: float = global.elapsed_play_time_sec
@@ -30,9 +30,9 @@ func _process(delta: float) -> void:
     if Input.is_action_just_released("left_click"):
         click_position = level.get_global_mouse_position()
         
-        if computer_player != null:
+        if player != null:
             closest_surface_position = PlatformGraphNavigator.find_closest_position_on_a_surface( \
-                    click_position, computer_player)
+                    click_position, player)
         else:
             closest_surface_position = null
         

@@ -22,7 +22,7 @@ func update_for_key_press(actions: PlayerActionState, input_key: String, is_pres
             was_pressed = actions.pressed_jump
             just_pressed = !was_pressed and is_pressed
             just_released = was_pressed and !is_pressed
-            actions.is_pressed = is_pressed
+            actions.pressed_jump = is_pressed
             actions.just_pressed_jump = just_pressed
             actions.just_released_jump = just_released
             print_label = "jump"
@@ -30,7 +30,7 @@ func update_for_key_press(actions: PlayerActionState, input_key: String, is_pres
             was_pressed = actions.pressed_up
             just_pressed = !was_pressed and is_pressed
             just_released = was_pressed and !is_pressed
-            actions.is_pressed = is_pressed
+            actions.pressed_up = is_pressed
             actions.just_pressed_up = just_pressed
             actions.just_released_up = just_released
             print_label = "up"
@@ -38,7 +38,7 @@ func update_for_key_press(actions: PlayerActionState, input_key: String, is_pres
             was_pressed = actions.pressed_down
             just_pressed = !was_pressed and is_pressed
             just_released = was_pressed and !is_pressed
-            actions.is_pressed = is_pressed
+            actions.pressed_down = is_pressed
             actions.just_pressed_down = just_pressed
             actions.just_released_down = just_released
             print_label = "down"
@@ -46,7 +46,7 @@ func update_for_key_press(actions: PlayerActionState, input_key: String, is_pres
             was_pressed = actions.pressed_left
             just_pressed = !was_pressed and is_pressed
             just_released = was_pressed and !is_pressed
-            actions.is_pressed = is_pressed
+            actions.pressed_left = is_pressed
             actions.just_pressed_left = just_pressed
             actions.just_released_left = just_released
             print_label = "left"
@@ -54,7 +54,7 @@ func update_for_key_press(actions: PlayerActionState, input_key: String, is_pres
             was_pressed = actions.pressed_right
             just_pressed = !was_pressed and is_pressed
             just_released = was_pressed and !is_pressed
-            actions.is_pressed = is_pressed
+            actions.pressed_right = is_pressed
             actions.just_pressed_right = just_pressed
             actions.just_released_right = just_released
             print_label = "right"
