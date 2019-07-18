@@ -1,4 +1,4 @@
-extends HumanPlayer
+extends Player
 class_name TestPlayer
 
 const FRICTION_MULTIPLIER := 0.01 # For calculating friction for walking

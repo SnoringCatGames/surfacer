@@ -19,7 +19,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://players/cat_params.gd"
 }, {
-"base": "HumanPlayer",
+"base": "Player",
 "class": "CatPlayer",
 "language": "GDScript",
 "path": "res://players/cat_player.gd"
@@ -38,11 +38,6 @@ _global_script_classes=[ {
 "class": "ComputerPlatformGraphNavigatorAnnotator",
 "language": "GDScript",
 "path": "res://framework/annotators/computer_platform_graph_navigator_annotator.gd"
-}, {
-"base": "Player",
-"class": "ComputerPlayer",
-"language": "GDScript",
-"path": "res://framework/player/computer_player.gd"
 }, {
 "base": "Node2D",
 "class": "ComputerPlayerAnnotator",
@@ -78,11 +73,6 @@ _global_script_classes=[ {
 "class": "HumanPlatformGraphNavigatorAnnotator",
 "language": "GDScript",
 "path": "res://framework/annotators/human_platform_graph_navigator_annotator.gd"
-}, {
-"base": "Player",
-"class": "HumanPlayer",
-"language": "GDScript",
-"path": "res://framework/player/human_player.gd"
 }, {
 "base": "Node2D",
 "class": "HumanPlayerAnnotator",
@@ -274,7 +264,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://players/squirrel_params.gd"
 }, {
-"base": "ComputerPlayer",
+"base": "Player",
 "class": "SquirrelPlayer",
 "language": "GDScript",
 "path": "res://players/squirrel_player.gd"
@@ -309,7 +299,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/test/test_data/test_bed.gd"
 }, {
-"base": "HumanPlayer",
+"base": "Player",
 "class": "TestPlayer",
 "language": "GDScript",
 "path": "res://framework/test/test_data/test_player.gd"
@@ -336,7 +326,6 @@ _global_script_class_icons={
 "ClickAnnotator": "",
 "ClickToNavigate": "",
 "ComputerPlatformGraphNavigatorAnnotator": "",
-"ComputerPlayer": "",
 "ComputerPlayerAnnotator": "",
 "DrawUtils": "",
 "FallFromAirMovement": "",
@@ -344,7 +333,6 @@ _global_script_class_icons={
 "Global": "",
 "GridIndicesAnnotator": "",
 "HumanPlatformGraphNavigatorAnnotator": "",
-"HumanPlayer": "",
 "HumanPlayerAnnotator": "",
 "InputActionSource": "",
 "InstructionsActionSource": "",

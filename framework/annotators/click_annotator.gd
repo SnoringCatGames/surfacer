@@ -2,26 +2,30 @@ extends Node2D
 class_name ClickAnnotator
 
 const CLICK_END_RADIUS := 58.0
-var CLICK_COLOR := Color.from_hsv(0.5, 0.2, 0.99, 0.8)
-const CLICK_DURATION := 200.0
+var CLICK_COLOR := Color.from_hsv(0.5, 0.2, 0.99, 0.99)
+const CLICK_DURATION_SEC := 0.2
 
+var global # TODO: Add type back
 var level # TODO: Add type back
 var computer_player # TODO: Add type back
 var click_position: Vector2
 var closest_surface_position: PositionAlongSurface
-var start_time := -CLICK_DURATION
-var end_time := -CLICK_DURATION
+var start_time := -CLICK_DURATION_SEC
+var end_time := -CLICK_DURATION_SEC
 var progress := 1.0
 var is_a_click_currently_rendered := false
 
 func _init(level) -> void:
     self.level = level
 
+func _ready() -> void:
+    self.global = $"/root/Global"
+
 func set_computer_player(computer_player) -> void:
     self.computer_player = computer_player
 
 func _process(delta: float) -> void:
-    var current_time := OS.get_ticks_msec()
+    var current_time: float = global.elapsed_play_time_sec
     
     if Input.is_action_just_released("left_click"):
         click_position = level.get_global_mouse_position()
@@ -33,11 +37,11 @@ func _process(delta: float) -> void:
             closest_surface_position = null
         
         start_time = current_time
-        end_time = start_time + CLICK_DURATION
+        end_time = start_time + CLICK_DURATION_SEC
         is_a_click_currently_rendered = true
     
     if end_time > current_time or is_a_click_currently_rendered:
-        progress = (current_time - start_time) / CLICK_DURATION
+        progress = (current_time - start_time) / CLICK_DURATION_SEC
         update()
 
 func _draw() -> void:

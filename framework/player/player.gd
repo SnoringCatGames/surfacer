@@ -4,7 +4,10 @@ class_name Player
 const PlatformGraphNavigator = preload("res://framework/platform_graph/platform_graph_navigator.gd")
 const PlayerActionState = preload("res://framework/player/player_action_state.gd")
 const PlayerSurfaceState = preload("res://framework/player/player_surface_state.gd")
+const InputActionSource = preload("res://framework/player/input_action_source.gd")
+const InstructionsActionSource = preload("res://framework/player/instructions_action_source.gd")
 
+var global # TODO: Add type back
 var player_name: String
 var can_grab_walls: bool
 var can_grab_ceilings: bool
@@ -21,12 +24,20 @@ var velocity := Vector2.ZERO
 var level # TODO: Add type back in?
 var collider: CollisionShape2D
 var collider_half_width_height: Vector2
+# Array<PlayerActionSource>
+var action_sources := []
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
 
+func set_is_human_controlled(is_human_controlled: bool) -> void:
+    # FIXME: LEFT OFF HERE: ---------------------A
+    var action_source: PlayerActionSource = \
+            InputActionSource.new() if is_human_controlled else InstructionsActionSource.new()
+    action_sources.push_back(action_source)
+
 func _enter_tree() -> void:
-    var global := $"/root/Global"
+    self.global = $"/root/Global"
     var type_configuration: PlayerTypeConfiguration = global.player_types[player_name]
     self.level = global.current_level
     self.can_grab_walls = type_configuration.movement_params.can_grab_walls
@@ -59,15 +70,9 @@ func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
     possible_surfaces = platform_graph.surfaces
     platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
 
-# Gets actions for the current frame.
-#
-# This can be overridden separately for the human and computer players:
-# - The computer player will use instruction sets.
-# - The human player will use system IO.
-#warning-ignore:unused_argument
 func _update_actions(delta: float) -> void:
-    Utils.error("abstract Player._get_actions is not implemented")
-    pass
+    for action_source in action_sources:
+        action_source.update(actions, global.elapsed_play_time_sec, delta)
 
 # Updates physics and player states in response to the current actions.
 func _process_actions() -> void:
@@ -82,10 +87,10 @@ func _physics_process(delta: float) -> void:
     
     # Uncomment to help with debugging.
     if surface_state.just_left_air:
-        print("HIT surface: %8.3f:%29sP:%29sV: %s" % [OS.get_ticks_msec()/1000.0, position, \
+        print("HIT surface: %8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, position, \
                 velocity, Surface.to_string(surface_state.grabbed_surface)])
     elif surface_state.just_entered_air:
-        print("LEFT surface:%8.3f:%29sP:%29sV: %s" % [OS.get_ticks_msec()/1000.0, position, \
+        print("LEFT surface:%8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, position, \
                 velocity, Surface.to_string(surface_state.previous_grabbed_surface)])
     
     platform_graph_navigator.update()
