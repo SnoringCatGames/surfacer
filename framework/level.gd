@@ -100,6 +100,8 @@ func _record_player_reference(is_human_player: bool) -> void:
     # - It somehow doesn't ever instantiate the Player class, but it does instantiate KinematicBody2D??
     # - NEXT STEP: Walk through diff of changes...
     if player != null:
+        player.initialize_platform_graph_navigator(platform_graphs[player.player_name])
+        
         if is_human_player:
             human_player = player
             
