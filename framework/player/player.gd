@@ -24,8 +24,22 @@ var velocity := Vector2.ZERO
 var level # TODO: Add type back in?
 var collider: CollisionShape2D
 var collider_half_width_height: Vector2
+var animator: PlayerAnimator
 # Array<PlayerActionSource>
 var action_sources := []
+# Dictionary<String, bool>
+var _previous_actions_this_frame := {}
+# Array<PlayerAction>
+var action_handlers: Array
+# PlayerActionType
+var current_action_type: int
+
+var is_ascending_from_jump := false
+var jump_count := 0
+
+var _can_dash := true
+var _dash_cooldown_timer: Timer
+var _dash_fade_tween: Tween
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
@@ -44,6 +58,7 @@ func _enter_tree() -> void:
     self.can_grab_floors = type_configuration.movement_params.can_grab_floors
     self.movement_params = type_configuration.movement_params
     self.movement_types = type_configuration.movement_types
+    self.action_handlers = type_configuration.action_handlers
 
 func _ready() -> void:
     # TODO: Somehow consolidate how collider shapes are defined?
@@ -65,17 +80,28 @@ func _ready() -> void:
     
     collider_half_width_height = movement_params.collider_half_width_height
 
+    var animators: Array = Utils.get_children_by_type(self, PlayerAnimator)
+    assert(animators.size() <= 1)
+    animator = animators[0] if !animators.empty() else FakePlayerAnimator.new()
+
+    # Set up a Tween for the fade-out at the end of a dash.
+    _dash_fade_tween = Tween.new()
+    add_child(_dash_fade_tween)
+    
+    # Set up a Timer for the dash cooldown.
+    _dash_cooldown_timer = Timer.new()
+    _dash_cooldown_timer.one_shot = true
+    #warning-ignore:return_value_discarded
+    _dash_cooldown_timer.connect("timeout", self, "_dash_cooldown_finished")
+    add_child(_dash_cooldown_timer)
+    
+    # Start facing the right.
+    surface_state.horizontal_facing_sign = 1
+    animator.face_right()
+
 func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
     possible_surfaces = platform_graph.surfaces
     platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
-
-func _update_actions(delta: float) -> void:
-    for action_source in action_sources:
-        action_source.update(actions, global.elapsed_play_time_sec, delta)
-
-# Updates physics and player states in response to the current actions.
-func _process_actions() -> void:
-    Utils.error("abstract Player._process_actions is not implemented")
 
 func _physics_process(delta: float) -> void:
     # FIXME: Remove (after checking that this doesn't ever seem to trigger)
@@ -94,8 +120,15 @@ func _physics_process(delta: float) -> void:
     
     platform_graph_navigator.update()
     actions.delta = delta
+
+    # Flip the horizontal direction of the animation according to which way the player is facing.
+    if actions.pressed_left:
+        animator.face_left()
+    if actions.pressed_right:
+        animator.face_right()
+    
     _process_actions()
-    velocity = PlayerMovement.cap_velocity(velocity, movement_params)
+    _process_animation()
     _update_collision_mask()
     
     # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
@@ -106,6 +139,56 @@ func _physics_process(delta: float) -> void:
     
     level.descendant_physics_process_completed(self)
 
+func _update_actions(delta: float) -> void:
+    for action_source in action_sources:
+        action_source.update(actions, global.elapsed_play_time_sec, delta)
+
+    actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
+
+# Updates physics and player states in response to the current actions.
+func _process_actions() -> void:
+    _previous_actions_this_frame.clear()
+
+    if surface_state.is_grabbing_wall:
+        current_action_type = PlayerActionType.WALL
+    elif surface_state.is_grabbing_floor:
+        current_action_type = PlayerActionType.WALL
+    else:
+        current_action_type = PlayerActionType.AIR
+
+    for action_handler in action_handlers:
+        if action_handler.type == current_action_type or \
+                action_handler.type == PlayerActionType.OTHER:
+            _previous_actions_this_frame[action_handler.name] = action_handler.process(self)
+
+func _process_animation() -> void:
+    match current_action_type:
+        PlayerActionType.FLOOR:
+            if actions.pressed_left or actions.pressed_right:
+                animator.walk()
+            else:
+                animator.rest()
+        PlayerActionType.WALL:
+            if processed_action('WallClimbAction'):
+                if actions.pressed_up:
+                    animator.climb_up()
+                elif actions.pressed_down:
+                    animator.climb_down()
+                else:
+                    Utils.error()
+            else:
+                animator.rest_on_wall()
+        PlayerActionType.AIR:
+            if velocity.y > 0:
+                animator.jump_descend()
+            else:
+                animator.jump_ascend()
+        _:
+            Utils.error()
+
+func processed_action(name: String) -> bool:
+    return _previous_actions_this_frame.get(name) == true
+    
 # Updates some basic surface-related state for player's actions and environment of the current frame.
 func _update_surface_state() -> void:
     # Flip the horizontal direction of the animation according to which way the player is facing.
@@ -321,3 +404,33 @@ static func _get_attached_surface_collision( \
             closest_collision = current_collision
     
     return closest_collision
+
+func start_dash(horizontal_movement_sign: int) -> void:
+    if !_can_dash:
+        return
+    
+    movement_params.current_max_horizontal_speed = movement_params.max_horizontal_speed_default * \
+            movement_params.dash_speed_multiplier
+    velocity.x = movement_params.current_max_horizontal_speed * horizontal_movement_sign
+    
+    velocity.y += movement_params.dash_vertical_boost
+    
+    _dash_cooldown_timer.start(movement_params.dash_cooldown)
+    #warning-ignore:return_value_discarded
+    _dash_fade_tween.reset_all()
+    #warning-ignore:return_value_discarded
+    _dash_fade_tween.interpolate_property(self, "movement_params.current_max_horizontal_speed", \
+            movement_params.max_horizontal_speed_default * movement_params.dash_speed_multiplier, \
+            movement_params.max_horizontal_speed_default, movement_params.dash_fade_duration, \
+            Tween.TRANS_LINEAR, Tween.EASE_IN, \
+            movement_params.dash_duration - movement_params.dash_fade_duration)
+    #warning-ignore:return_value_discarded
+    _dash_fade_tween.start()
+    
+    if horizontal_movement_sign > 0:
+        animator.face_right()
+    else:
+        animator.face_left()
+
+func _dash_cooldown_finished() -> void:
+    _can_dash = true

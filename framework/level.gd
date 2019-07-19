@@ -97,7 +97,7 @@ func _record_player_reference(is_human_player: bool) -> void:
         player.init_action_source(is_human_player)
         
         # Set up an annotator to help with debugging.
-        var player_annotator := PlayerAnnotator.new(player)
+        var player_annotator := PlayerAnnotator.new(player, !is_human_player)
         add_child(player_annotator)
         player_annotators[player] = player_annotator
         

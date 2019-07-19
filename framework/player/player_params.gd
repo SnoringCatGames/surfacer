@@ -2,13 +2,17 @@ extends Reference
 class_name PlayerParams
 
 var player_resource_path: String
-
 var _movement_params: MovementParams
+# Array<PlayerMovement>
 var _movement_types: Array
+# Array<PlayerAction>
+var _action_handlers: Array
 var _player_type_configuration: PlayerTypeConfiguration
+var global: Global
 
-func _init(player_resource_path: String) -> void:
+func _init(name: String, player_resource_path: String, global: Global) -> void:
     self.player_resource_path = player_resource_path
+    self.global = global
     
     _movement_params = _create_movement_params()
     _movement_params.gravity_slow_ascent = \
@@ -19,16 +23,26 @@ func _init(player_resource_path: String) -> void:
     _movement_params.max_horizontal_distance = _calculate_max_horizontal_movement(_movement_params)
     _check_movement_params(_movement_params)
     _movement_types = _create_movement_types(_movement_params)
-    _player_type_configuration = \
-            _create_player_type_configuration(_movement_params, _movement_types)
+    _action_handlers = _create_action_handlers()
+    _player_type_configuration = _create_player_type_configuration( \
+            name, _movement_params, _movement_types, _action_handlers)
 
 func get_player_type_configuration() -> PlayerTypeConfiguration:
     return _player_type_configuration
 
-func _create_player_type_configuration(movement_params: MovementParams, \
-        movement_types: Array) -> PlayerTypeConfiguration:
-    Utils.error("abstract PlayerParams._create_player_type_configuration is not implemented")
-    return null
+func _create_player_type_configuration(name: String, movement_params: MovementParams, \
+        movement_types: Array, action_handlers: Array) -> PlayerTypeConfiguration:
+    var type_configuration = PlayerTypeConfiguration.new()
+    type_configuration.name = name
+    type_configuration.movement_params = movement_params
+    type_configuration.movement_types = movement_types
+    type_configuration.action_handlers = action_handlers
+    return type_configuration
+
+# Array<PlayerAction>
+func _create_action_handlers() -> Array:
+    Utils.error("abstract PlayerParams._create_action_handlers is not implemented")
+    return []
 
 # Array<PlayerMovement>
 func _create_movement_types(movement_params: MovementParams) -> Array:

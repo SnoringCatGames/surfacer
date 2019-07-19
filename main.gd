@@ -5,11 +5,8 @@ const CatParams = preload("res://players/cat_params.gd")
 const SquirrelParams = preload("res://players/squirrel_params.gd")
 const TestPlayerParams = preload("res://framework/test/test_data/test_player_params.gd")
 
-var PLAYER_PARAMS := [
-    CatParams.new(),
-    SquirrelParams.new(),
-    TestPlayerParams.new(),
-]
+# Array<PlayerParam>
+var PLAYER_PARAMS: Array
 
 const LEVEL_RESOURCE_PATHS := [
     "res://levels/level_1.tscn",
@@ -31,6 +28,12 @@ var level: Level
 
 func _enter_tree() -> void:
     var global := $"/root/Global"
+
+    PLAYER_PARAMS = [
+        CatParams.new(global),
+        SquirrelParams.new(global),
+        TestPlayerParams.new(global),
+    ]
     global.register_player_params(PLAYER_PARAMS)
     
     var scene_path := TEST_RUNNER_SCENE_RESOURCE_PATH if IN_TEST_MODE else \

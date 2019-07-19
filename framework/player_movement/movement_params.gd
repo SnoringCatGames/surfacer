@@ -44,3 +44,5 @@ var dash_cooldown: float
 
 var max_horizontal_distance: float
 var max_upward_distance: float
+
+var friction_multiplier: float

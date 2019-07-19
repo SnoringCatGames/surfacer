@@ -7,13 +7,6 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 
 # FIXME: SUB-MASTER LIST ***************
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
-#   ---> - Implement a new ActionSource system
-#     - Player should allow multiple action_sources to be provided.
-#     - Initialize them in MovementParams?
-#     - Can probably completely remove HumanPlayer and ComputerPlayer.
-#       - This distinction would instead just be defined by two things:
-#         - Whether the node belongs to the human_players group.
-#         - Whether the player is set up to include InputActionSource.
 #   - Implement a new PlayerAction system
 #     - Essentially, each type of movement should be defined in a separate class.
 #       - jump from floor
@@ -22,12 +15,13 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 #       - walk on floor
 #       - climb up wall
 #       - move sideways in air
-#       - fall off floor edge
-#       - fall off wall edge
 #       - dash from floor
 #       - dash from wall
 #       - dash from air
+#       - fall through floor
+#       - walk through wall
 #     - Each of these should have a pre-configured priority, to determine execution order.
+#     - Configured in MovementParams.
 #   - Implement a new PlayerAnimator
 #     - 
 #   - Update the Player created in Level.add_player to include both input and instruction action sources (configurable via params).

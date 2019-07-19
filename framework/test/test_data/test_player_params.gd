@@ -7,23 +7,33 @@ const TestPlayer = preload("res://framework/test/test_data/test_player.gd")
 
 const PLAYER_RESOURCE_PATH := "res://framework/test/test_data/test_player.tscn"
 const NAME := "test"
-const TYPE := PlayerType.HUMAN
 const CAN_GRAB_WALLS := true
 const CAN_GRAB_CEILINGS := false
 const CAN_GRAB_FLOORS := true
 const COLLIDER_ROTATION := 0.0
 
-func _init().(PLAYER_RESOURCE_PATH) -> void:
+func _init(global: Global).(NAME, PLAYER_RESOURCE_PATH, global) -> void:
     pass
 
-func _create_player_type_configuration(movement_params: MovementParams, \
-        movement_types: Array) -> PlayerTypeConfiguration:
-    var type_configuration = PlayerTypeConfiguration.new()
-    type_configuration.name = NAME
-    type_configuration.type = TYPE
-    type_configuration.movement_params = movement_params
-    type_configuration.movement_types = movement_types
-    return type_configuration
+func _create_action_handlers() -> Array:
+    return [
+        global.PLAYER_ACTIONS[AirDashAction.NAME],
+        global.PLAYER_ACTIONS[AirDefaultAction.NAME],
+        global.PLAYER_ACTIONS[AirJumpAction.NAME],
+        global.PLAYER_ACTIONS[AllDefaultAction.NAME],
+        global.PLAYER_ACTIONS[CapVelocityAction.NAME],
+        global.PLAYER_ACTIONS[FloorDashAction.NAME],
+        global.PLAYER_ACTIONS[FloorDefaultAction.NAME],
+        global.PLAYER_ACTIONS[FloorFallThroughAction.NAME],
+        global.PLAYER_ACTIONS[FloorJumpAction.NAME],
+        global.PLAYER_ACTIONS[FloorWalkAction.NAME],
+        global.PLAYER_ACTIONS[WallClimbAction.NAME],
+        global.PLAYER_ACTIONS[WallDashAction.NAME],
+        global.PLAYER_ACTIONS[WallDefaultAction.NAME],
+        global.PLAYER_ACTIONS[WallFallAction.NAME],
+        global.PLAYER_ACTIONS[WallJumpAction.NAME],
+        global.PLAYER_ACTIONS[WallWalkAction.NAME],
+    ]
 
 # Array<PlayerMovement>
 func _create_movement_types(movement_params: MovementParams) -> Array:
@@ -73,5 +83,7 @@ func _create_movement_params() -> MovementParams:
     movement_params.dash_duration = 0.3
     movement_params.dash_fade_duration = 0.1
     movement_params.dash_cooldown = 1.0
+    
+    movement_params.friction_multiplier = 0.01
     
     return movement_params

@@ -1,6 +1,27 @@
 extends Node
 class_name Global
 
+const PLAYER_ACTION_CLASSES := [
+    preload("res://framework/player/player_actions/air_dash_action.gd"),
+    preload("res://framework/player/player_actions/air_default_action.gd"),
+    preload("res://framework/player/player_actions/air_jump_action.gd"),
+    preload("res://framework/player/player_actions/all_default_action.gd"),
+    preload("res://framework/player/player_actions/cap_velocity_action.gd"),
+    preload("res://framework/player/player_actions/floor_dash_action.gd"),
+    preload("res://framework/player/player_actions/floor_default_action.gd"),
+    preload("res://framework/player/player_actions/floor_fall_through_action.gd"),
+    preload("res://framework/player/player_actions/floor_jump_action.gd"),
+    preload("res://framework/player/player_actions/floor_walk_action.gd"),
+    preload("res://framework/player/player_actions/wall_climb_action.gd"),
+    preload("res://framework/player/player_actions/wall_dash_action.gd"),
+    preload("res://framework/player/player_actions/wall_default_action.gd"),
+    preload("res://framework/player/player_actions/wall_fall_action.gd"),
+    preload("res://framework/player/player_actions/wall_jump_action.gd"),
+    preload("res://framework/player/player_actions/wall_walk_action.gd"),
+]
+
+const PLAYER_ACTIONS := {}
+
 # Dictionary<String, PlayerTypeConfiguration>
 var player_types = {}
 
@@ -29,6 +50,11 @@ func register_player_params(player_params: Array) -> void:
     for params in player_params:
         type = params.get_player_type_configuration()
         self.player_types[type.name] = type
+
+func _init() -> void:
+    # Instantiate the various PlayerActions.
+    for player_action_class in PLAYER_ACTION_CLASSES:
+        PLAYER_ACTIONS[player_action_class.NAME] = player_action_class.new()
 
 func _ready() -> void:
     _elapsed_physics_play_time_sec = 0.0

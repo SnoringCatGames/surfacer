@@ -1,0 +1,22 @@
+extends PlayerAction
+class_name WallClimbAction
+
+const NAME := 'WallClimbAction'
+const TYPE := PlayerActionType.WALL
+const PRIORITY := 140
+
+func _init().(NAME, TYPE, PRIORITY) -> void:
+    pass
+
+func process(player: Player) -> bool:
+    if !player.processed_action(WallJumpAction.NAME) and \
+            !player.processed_action(WallFallAction.NAME) and \
+            !player.processed_action(WallWalkAction.NAME):
+        if player.actions.pressed_up:
+            player.velocity.y = player.movement_params.climb_up_speed
+            return true
+        elif player.actions.pressed_down:
+            player.velocity.y = player.movement_params.climb_down_speed
+            return true
+    
+    return false
