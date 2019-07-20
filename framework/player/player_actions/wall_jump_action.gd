@@ -3,7 +3,7 @@ class_name WallJumpAction
 
 const NAME := 'WallJumpAction'
 const TYPE := PlayerActionType.WALL
-const PRIORITY := 110
+const PRIORITY := 120
 
 func _init().(NAME, TYPE, PRIORITY) -> void:
     pass

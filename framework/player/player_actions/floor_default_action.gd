@@ -3,7 +3,7 @@ class_name FloorDefaultAction
 
 const NAME := 'FloorDefaultAction'
 const TYPE := PlayerActionType.FLOOR
-const PRIORITY := 200
+const PRIORITY := 210
 
 func _init().(NAME, TYPE, PRIORITY) -> void:
     pass

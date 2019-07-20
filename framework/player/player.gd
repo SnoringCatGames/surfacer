@@ -142,20 +142,20 @@ func _physics_process(delta: float) -> void:
 func _update_actions(delta: float) -> void:
     for action_source in action_sources:
         action_source.update(actions, global.elapsed_play_time_sec, delta)
-
+    
     actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
 
 # Updates physics and player states in response to the current actions.
 func _process_actions() -> void:
     _previous_actions_this_frame.clear()
-
+    
     if surface_state.is_grabbing_wall:
         current_action_type = PlayerActionType.WALL
     elif surface_state.is_grabbing_floor:
-        current_action_type = PlayerActionType.WALL
+        current_action_type = PlayerActionType.FLOOR
     else:
         current_action_type = PlayerActionType.AIR
-
+    
     for action_handler in action_handlers:
         if action_handler.type == current_action_type or \
                 action_handler.type == PlayerActionType.OTHER:

@@ -3,7 +3,7 @@ class_name AirDashAction
 
 const NAME := 'AirDashAction'
 const TYPE := PlayerActionType.AIR
-const PRIORITY := 320
+const PRIORITY := 330
 
 func _init().(NAME, TYPE, PRIORITY) -> void:
     pass

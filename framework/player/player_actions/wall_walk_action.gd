@@ -3,7 +3,7 @@ class_name WallWalkAction
 
 const NAME := 'WallWalkAction'
 const TYPE := PlayerActionType.WALL
-const PRIORITY := 130
+const PRIORITY := 140
 
 func _init().(NAME, TYPE, PRIORITY) -> void:
     pass
@@ -11,7 +11,7 @@ func _init().(NAME, TYPE, PRIORITY) -> void:
 func process(player: Player) -> bool:
     if !player.processed_action(WallJumpAction.NAME) and \
             !player.processed_action(WallFallAction.NAME) and \
-            player.surface_state.is_touching_Wall and player.actions.pressed_down:
+            player.surface_state.is_touching_wall and player.actions.pressed_down:
         player.surface_state.is_grabbing_wall = false
         return true
     else:

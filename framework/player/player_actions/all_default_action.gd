@@ -3,7 +3,7 @@ class_name AllDefaultAction
 
 const NAME := 'AllDefaultAction'
 const TYPE := PlayerActionType.OTHER
-const PRIORITY := 0
+const PRIORITY := 10
 
 func _init().(NAME, TYPE, PRIORITY) -> void:
     pass

@@ -7,23 +7,6 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 
 # FIXME: SUB-MASTER LIST ***************
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
-#   - Implement a new PlayerAction system
-#     - Essentially, each type of movement should be defined in a separate class.
-#       - jump from floor
-#       - jump from wall
-#       - jump from air
-#       - walk on floor
-#       - climb up wall
-#       - move sideways in air
-#       - dash from floor
-#       - dash from wall
-#       - dash from air
-#       - fall through floor
-#       - walk through wall
-#     - Each of these should have a pre-configured priority, to determine execution order.
-#     - Configured in MovementParams.
-#   - Implement a new PlayerAnimator
-#     - 
 #   - Update the Player created in Level.add_player to include both input and instruction action sources (configurable via params).
 #   - Update TestPlayer to use the cat animator for now, since that will let me test/implement the animation triggers?
 # - 

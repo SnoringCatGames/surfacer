@@ -47,46 +47,6 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
     Utils.error("Abstract PlayerMovement.get_all_reachable_surface_instructions_from_air is not implemented")
     return []
 
-static func update_velocity_in_air( \
-        velocity: Vector2, delta: float, is_pressing_jump: bool, is_first_jump: bool, \
-        horizontal_movement_sign: int, movement_params: MovementParams) -> Vector2:
-    var is_ascending_from_jump := velocity.y < 0 and is_pressing_jump
-    
-    # Make gravity stronger when falling. This creates a more satisfying jump.
-    # Similarly, make gravity stronger for double jumps.
-    var gravity_multiplier := 1.0 if !is_ascending_from_jump else \
-            (movement_params.slow_ascent_gravity_multiplier if is_first_jump \
-                    else movement_params.ascent_double_jump_gravity_multiplier)
-    
-    # Vertical movement.
-    velocity.y += delta * movement_params.gravity_fast_fall * gravity_multiplier
-    
-    # Horizontal movement.
-    velocity.x += delta * movement_params.in_air_horizontal_acceleration * horizontal_movement_sign
-    
-    return velocity
-
-static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> Vector2:
-    # Cap horizontal speed at a max value.
-    velocity.x = clamp(velocity.x, -movement_params.current_max_horizontal_speed, \
-            movement_params.current_max_horizontal_speed)
-    
-    # Kill horizontal speed below a min value.
-    if velocity.x > -movement_params.min_horizontal_speed and \
-            velocity.x < movement_params.min_horizontal_speed:
-        velocity.x = 0
-    
-    # Cap vertical speed at a max value.
-    velocity.y = clamp(velocity.y, -movement_params.max_vertical_speed, \
-            movement_params.max_vertical_speed)
-    
-    # Kill vertical speed below a min value.
-    if velocity.y > -movement_params.min_vertical_speed and \
-            velocity.y < movement_params.min_vertical_speed:
-        velocity.y = 0
-    
-    return velocity
-
 # Checks whether a collision would occur with any surface during the given instructions. This
 # is calculated by stepping through each discrete physics frame, which should exactly emulate the
 # actual Player trajectory that would be used.
@@ -210,9 +170,9 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
         
         # Update state for the next frame.
         position += displacement
-        velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
-                horizontal_movement_sign, movement_params)
-        velocity = cap_velocity(velocity, movement_params)
+        velocity = AirDefaultAction.update_velocity_in_air(velocity, delta, is_pressing_jump, \
+                is_first_jump, horizontal_movement_sign, movement_params)
+        velocity = CapVelocityAction.cap_velocity(velocity, movement_params)
         previous_time = current_time
         current_time += delta
         
@@ -318,9 +278,9 @@ static func _check_discrete_horizontal_step_for_collision( \
         
         # Update state for the next frame.
         position += displacement
-        velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
-                horizontal_movement_sign, movement_params)
-        velocity = cap_velocity(velocity, movement_params)
+        velocity = AirDefaultAction.update_velocity_in_air(velocity, delta, is_pressing_jump, \
+                is_first_jump, horizontal_movement_sign, movement_params)
+        velocity = CapVelocityAction.cap_velocity(velocity, movement_params)
         previous_time = current_time
         current_time += delta
     

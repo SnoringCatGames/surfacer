@@ -23,7 +23,10 @@ func _init(name: String, player_resource_path: String, global: Global) -> void:
     _movement_params.max_horizontal_distance = _calculate_max_horizontal_movement(_movement_params)
     _check_movement_params(_movement_params)
     _movement_types = _create_movement_types(_movement_params)
+    
     _action_handlers = _create_action_handlers()
+    _action_handlers.sort_custom(self, "_compare_action_handlers")
+    
     _player_type_configuration = _create_player_type_configuration( \
             name, _movement_params, _movement_types, _action_handlers)
 
@@ -116,3 +119,6 @@ static func _calculate_max_horizontal_movement(movement_params: MovementParams) 
     
     return max_horizontal_distance_to_starting_height * \
             MULTIPLIER_TO_ALLOW_FOR_DESTINATIONS_THAT_ARE_BELOW
+
+static func _compare_action_handlers(a: PlayerAction, b: PlayerAction) -> bool:
+    return a.priority < b.priority
