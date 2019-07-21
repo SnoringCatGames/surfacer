@@ -578,6 +578,11 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
     if shape is CircleShape2D:
         half_width_height = Vector2(shape.radius, shape.radius)
     elif shape is CapsuleShape2D:
+        # FIXME: LEFT OFF HERE: -A:
+        # - For whatever reason, fixing this to the correct value triggers a bug in PlayerMovement
+        #   for tilemap-cell-position calculations. Debug that when I get back around to polishing
+        #   movement calculations.
+#        half_width_height = Vector2(shape.radius, shape.radius + shape.height / 2.0)
         half_width_height = Vector2(shape.radius, shape.radius + shape.height)
     elif shape is RectangleShape2D:
         half_width_height = shape.extents
@@ -585,6 +590,11 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
         Utils.error("Invalid Shape2D provided to calculate_half_width_height: %s. The " + \
                 "supported shapes are: CircleShape2D, CapsuleShape2D, RectangleShape2D." % shape)
     
+    if is_rotated_90_degrees:
+        var swap := half_width_height.x
+        half_width_height.x = half_width_height.y
+        half_width_height.y = swap
+        
     return half_width_height
 
 # Calculates the duration to reach the destination with the given movement parameters.
