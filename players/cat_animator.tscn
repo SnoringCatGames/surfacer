@@ -6520,7 +6520,6 @@ __meta__ = {
 }
 
 [node name="Hip" type="Sprite" parent="."]
-editor/display_folded = true
 position = Vector2( -37, 23 )
 rotation = 1.5708
 texture = SubResource( 1 )
@@ -6902,4 +6901,3 @@ anims/Rest = SubResource( 5 )
 anims/RestOnWall = SubResource( 6 )
 anims/Stand = SubResource( 7 )
 anims/Walk = SubResource( 8 )
-
