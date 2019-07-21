@@ -29,24 +29,31 @@ func _init(player, graph: PlatformGraph) -> void:
 
 # Starts a new navigation to the given destination.
 func start_new_navigation(target: Vector2) -> bool:
-    # FIXME: B: Remove
-    assert(surface_state.is_grabbing_a_surface)
-    
     reset()
     
-    var origin := surface_state.player_center_position_along_surface
-    var destination := SurfaceParser.find_closest_position_on_a_surface(target, player)
-    # FIXME: LEFT OFF HERE: ---------------------A
-    # - Address the other edge-type cases (don't just require start and end on surfaces).
-    #   - Where to create the front/back special edges? Here? Or in PlatformGraph?
-    # - Implement the instruction-calculations for the other three edge sub-classes.
-    var path := graph.find_path(origin, destination)
+    var path: PlatformGraphPath
+    if surface_state.is_grabbing_a_surface:
+        var origin := surface_state.player_center_position_along_surface
+        var destination := SurfaceParser.find_closest_position_on_a_surface(target, player)
+        path = graph.find_path(origin, destination)
+    else:
+        # FIXME: LEFT OFF HERE: ---------------------A
+        # - Address the other edge-type cases (don't just require start and end on surfaces).
+        # - Create the front/back special edges here, not in PlatformGraph.
+        # - Add helper methods to PlatformGraphPath for adding edges onto the front or back.
+        # - Create logic for calculating best point-along-surface to land at given current in-air
+        #   state and destination.
+        #   - But just add a placeholder for this for now.
+        # - Implement the instruction-calculations for the other three edge sub-classes.
+        pass
     
     if path == null:
         # Destination cannot be reached from origin.
+        print("Can not navigate to point: %s" % target)
         return false
     else:
         # Destination can be reached from origin.
+        print("Starting navigation: %s" % target)
         current_path = path
         current_edge = current_path.edges[0]
         current_edge_index = 0
@@ -92,6 +99,7 @@ func update() -> void:
         print("Edge movement interrupted")
         # FIXME: Add back in at some point...
 #        start_new_navigation(current_path.destination)
+        reset()
     elif just_reached_end_of_edge:
         var edge_type_label: String
         if just_reached_intra_surface_destination:
