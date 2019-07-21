@@ -1,7 +1,7 @@
 # Information for how to move through the air from a start (jump) position on one surface to an
 # end (landing) position on another surface.
-extends PlatformGraphEdge
-class_name PlatformGraphInterSurfaceEdge
+extends Edge
+class_name InterSurfaceEdge
 
 var start: PositionAlongSurface
 var end: PositionAlongSurface

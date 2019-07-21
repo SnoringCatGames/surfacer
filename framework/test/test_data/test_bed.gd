@@ -1,8 +1,8 @@
 extends "res://addons/gut/test.gd"
 class_name TestBed
 
-const JumpFromPlatformMovement = preload("res://framework/player_movement/jump_from_platform_movement.gd")
-const TestPlayerParams = preload("res://framework/test/test_data/test_player_params.gd")
+const JumpFromPlatformMovement := preload("res://framework/player_movement/jump_from_platform_movement.gd")
+const TestPlayerParams := preload("res://framework/test/test_data/test_player_params.gd")
 
 var TEST_LEVEL_LONG_FALL := {
     scene_resource_path = "res://framework/test/test_data/test_level_long_fall.tscn",

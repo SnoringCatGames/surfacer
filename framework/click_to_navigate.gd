@@ -3,7 +3,7 @@ class_name ClickToNavigate
 
 var level # TODO: Add type back in
 var player: Player
-var navigator: PlatformGraphNavigator
+var navigator: Navigator
 
 func update_level(level) -> void:
     self.level = level
@@ -12,7 +12,7 @@ func update_level(level) -> void:
 func set_player(player: Player) -> void:
     if player != null:
         self.player = player
-        navigator = player.platform_graph_navigator
+        navigator = player.navigator
     else:
         self.player = null
         navigator = null

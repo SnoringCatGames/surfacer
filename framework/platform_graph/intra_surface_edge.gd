@@ -2,8 +2,8 @@
 # 
 # The instructions for an intra-surface edge consist of a single directional-key press step, with
 # no corresponding release.
-extends PlatformGraphEdge
-class_name PlatformGraphIntraSurfaceEdge
+extends Edge
+class_name IntraSurfaceEdge
 
 var start: PositionAlongSurface
 var end: PositionAlongSurface

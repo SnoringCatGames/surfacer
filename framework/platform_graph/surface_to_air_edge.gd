@@ -1,6 +1,6 @@
 # Information for how to move from a surface to a position in the air.
-extends PlatformGraphEdge
-class_name PlatformGraphSurfaceToAirEdge
+extends Edge
+class_name SurfaceToAirEdge
 
 var start: PositionAlongSurface
 var end: Vector2

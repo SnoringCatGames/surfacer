@@ -1,5 +1,5 @@
 extends Node2D
-class_name PlatformGraphInterSurfaceEdgesAnnotator
+class_name InterSurfaceEdgesAnnotator
 
 const TRAJECTORY_WIDTH := 1.0
 
@@ -17,7 +17,7 @@ func _draw() -> void:
     var discrete_trajectory_color: Color
     var continuous_trajectory_color: Color
     var constraint_color: Color
-    var edge: PlatformGraphEdge
+    var edge: Edge
     
     # Iterate over all surfaces.
     for surface in graph.surfaces_to_nodes:
@@ -28,7 +28,7 @@ func _draw() -> void:
                 edge = graph.nodes_to_edges[node_start][node_end]
                 
                 # Skip intra-surface edges. They aren't as interesting to render.
-                if edge is PlatformGraphIntraSurfaceEdge:
+                if edge is IntraSurfaceEdge:
                     continue
                 
                 hue = randf()

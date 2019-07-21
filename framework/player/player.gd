@@ -1,11 +1,11 @@
 extends KinematicBody2D
 class_name Player
 
-const PlatformGraphNavigator = preload("res://framework/platform_graph/platform_graph_navigator.gd")
-const PlayerActionState = preload("res://framework/player/player_action_state.gd")
-const PlayerSurfaceState = preload("res://framework/player/player_surface_state.gd")
-const InputActionSource = preload("res://framework/player/input_action_source.gd")
-const InstructionsActionSource = preload("res://framework/player/instructions_action_source.gd")
+const Navigator := preload("res://framework/platform_graph/navigator.gd")
+const PlayerActionState := preload("res://framework/player/player_action_state.gd")
+const PlayerSurfaceState := preload("res://framework/player/player_surface_state.gd")
+const InputActionSource := preload("res://framework/player/input_action_source.gd")
+const InstructionsActionSource := preload("res://framework/player/instructions_action_source.gd")
 
 var global # TODO: Add type back
 var player_name: String
@@ -21,7 +21,7 @@ var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var platform_graph: PlatformGraph
 var surface_parser: SurfaceParser
-var platform_graph_navigator: PlatformGraphNavigator
+var navigator: Navigator
 var velocity := Vector2.ZERO
 var level # TODO: Add type back in?
 var collider: CollisionShape2D
@@ -96,7 +96,7 @@ func _ready() -> void:
     surface_state.horizontal_facing_sign = 1
     animator.face_right()
 
-func set_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
+func set_navigator(platform_graph: PlatformGraph) -> void:
     self.platform_graph = platform_graph
     self.surface_parser = platform_graph.surface_parser
     self.possible_surfaces = platform_graph.surfaces
@@ -104,9 +104,9 @@ func set_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
 func init_human_controller_action_source() -> void:
     action_sources.push_back(InputActionSource.new(self))
 
-func init_platform_graph_navigator() -> void:
-    platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
-    action_sources.push_back(platform_graph_navigator.instructions_action_source)
+func init_navigator() -> void:
+    navigator = Navigator.new(self, platform_graph)
+    action_sources.push_back(navigator.instructions_action_source)
 
 func _physics_process(delta: float) -> void:
     assert(Geometry.are_floats_equal_with_epsilon(delta, Utils.PHYSICS_TIME_STEP))
@@ -124,8 +124,8 @@ func _physics_process(delta: float) -> void:
                 surface_state.center_position, velocity, \
                 Surface.to_string(surface_state.previous_grabbed_surface)])
     
-    if platform_graph_navigator:
-        platform_graph_navigator.update()
+    if navigator:
+        navigator.update()
     actions.delta = delta
 
     # Flip the horizontal direction of the animation according to which way the player is facing.

@@ -1,6 +1,6 @@
 # Information for how to move from a start position to an end position.
 extends Reference
-class_name PlatformGraphEdge
+class_name Edge
 
 var instructions: PlayerInstructions
 

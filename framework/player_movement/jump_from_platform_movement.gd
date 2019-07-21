@@ -1,15 +1,15 @@
 extends PlayerMovement
 class_name JumpFromPlatformMovement
 
-const MovementCalcGlobalParams = preload("res://framework/player_movement/movement_calculation_global_params.gd")
-const MovementCalcLocalParams = preload("res://framework/player_movement/movement_calculation_local_params.gd")
-const MovementCalcStep = preload("res://framework/player_movement/movement_calculation_step.gd")
+const MovementCalcGlobalParams := preload("res://framework/player_movement/movement_calculation_global_params.gd")
+const MovementCalcLocalParams := preload("res://framework/player_movement/movement_calculation_local_params.gd")
+const MovementCalcStep := preload("res://framework/player_movement/movement_calculation_step.gd")
 
 # FIXME: SUB-MASTER LIST ***************
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
 #   - B: Add support for executing movement along an edge.
 #   - C: Add support for executing movement WITHIN an edge.
-#   - D: Add path finding and update logic to PlatformGraphNavigator.
+#   - D: Add path finding and update logic to Navigator.
 #   - G: Add support for sending the CPU to a click target (configured in the specific level).
 #   - H: Add support for picking random surfaces or points-in-space to move the CPU to; resetting
 #        to a new point after the CPU reaches the old point.
@@ -258,7 +258,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
             instructions = _calculate_jump_instructions(global_calc_params)
             if instructions != null:
                 # Can reach land position from jump position.
-                edges.push_back(PlatformGraphInterSurfaceEdge.new( \
+                edges.push_back(InterSurfaceEdge.new( \
                         jump_position, land_position, instructions))
     
     # FIXME: B: REMOVE

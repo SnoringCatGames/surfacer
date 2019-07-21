@@ -1,7 +1,7 @@
 extends Reference
 class_name SurfaceParser
 
-const Stopwatch = preload("res://framework/stopwatch.gd")
+const Stopwatch := preload("res://framework/stopwatch.gd")
 
 # TODO: Map the TileMap into an RTree or QuadTree.
 
@@ -578,3 +578,32 @@ class _TmpSurface extends Object:
     # Array<int>
     var tile_map_indices: Array
     var surface: Surface
+
+# Finds the closest PositionAlongSurface to the given target point.
+static func find_closest_position_on_a_surface(target: Vector2, player) -> PositionAlongSurface:
+    var position := PositionAlongSurface.new()
+    var surface := get_closest_surface(target, player.possible_surfaces)
+    position.match_surface_target_and_collider(surface, target, player.collider_half_width_height)
+    return position
+
+# Gets the closest surface to the given point.
+static func get_closest_surface(target: Vector2, surfaces: Array) -> Surface:
+    var closest_surface: Surface
+    var closest_distance_squared: float
+    var current_distance_squared: float
+    
+    closest_surface = surfaces[0]
+    closest_distance_squared = \
+            Geometry.get_distance_squared_from_point_to_polyline(target, closest_surface.vertices)
+    
+    for current_surface in surfaces:
+        current_distance_squared = Geometry.distance_squared_from_point_to_rect(target, \
+                current_surface.bounding_box)
+        if current_distance_squared < closest_distance_squared:
+            current_distance_squared = Geometry.get_distance_squared_from_point_to_polyline( \
+                    target, current_surface.vertices)
+            if current_distance_squared < closest_distance_squared:
+                closest_distance_squared = current_distance_squared
+                closest_surface = current_surface
+    
+    return closest_surface

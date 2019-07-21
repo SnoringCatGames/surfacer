@@ -4,8 +4,8 @@
 extends Reference
 class_name PlatformGraph
 
-const PriorityQueue = preload("res://framework/priority_queue.gd")
-const PlatformGraphIntraSurfaceEdge = preload("res://framework/platform_graph/platform_graph_intra_surface_edge.gd")
+const PriorityQueue := preload("res://framework/priority_queue.gd")
+const IntraSurfaceEdge := preload("res://framework/platform_graph/intra_surface_edge.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
 # 
@@ -18,12 +18,12 @@ const PlatformGraphIntraSurfaceEdge = preload("res://framework/platform_graph/pl
 # - Add logic to use path.end_instructions when the destination is far enough from the surface AND an optional
 #     should_jump_to_reach_destination parameter is provided.
 # 
-# - Add support for creating PlatformGraphEdge.
-# - Add support for executing PlatformGraphEdge.
+# - Add support for creating Edge.
+# - Add support for executing Edge.
 # - Add annotations for the whole edge set.
 # 
 # - Implement get_all_edges_from_surface for jumping.
-# - Add annotations for the actual trajectories that are defined by PlatformGraphEdge.
+# - Add annotations for the actual trajectories that are defined by Edge.
 #   - These will be stored on PlayerInstructions.
 #   - Also render annotations for the constraints that were used (also stored on PlayerInstructions).
 # - Add annotations that draw the recent path that the player actually moved.
@@ -123,7 +123,7 @@ var surface_parser: SurfaceParser
 var surfaces: Array
 # Dictionary<Surface, Array<PositionAlongSurface>>
 var surfaces_to_nodes: Dictionary
-# Dictionary<PositionAlongSurface, Dictionary<PlatformGraphEdge>>
+# Dictionary<PositionAlongSurface, Dictionary<Edge>>
 var nodes_to_edges: Dictionary
 
 func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
@@ -151,7 +151,7 @@ func find_path(origin: PositionAlongSurface, \
     if origin_surface == destination_surface:
         # If the we are simply trying to get to a different position on the same surface, then we
         # don't need A*.
-        var edges := [PlatformGraphIntraSurfaceEdge.new(origin, destination)]
+        var edges := [IntraSurfaceEdge.new(origin, destination)]
         return PlatformGraphPath.new(edges)
     
     var frontier := PriorityQueue.new()
@@ -161,7 +161,7 @@ func find_path(origin: PositionAlongSurface, \
     nodes_to_weights[origin] = 0.0
     
     var nodes_to_edges_for_current_node: Dictionary
-    var next_edge: PlatformGraphEdge
+    var next_edge: Edge
     var current_node: PositionAlongSurface
     var current_weight: float
     var next_node: PositionAlongSurface
@@ -247,7 +247,7 @@ func find_path(origin: PositionAlongSurface, \
         if node_to_previous_node[previous_node] == null or edges.empty():
             # The first and last edge are temporary and extend from/to the origin/destination,
             # which are not aligned with normal node positions.
-            next_edge = PlatformGraphIntraSurfaceEdge.new(previous_node, current_node)
+            next_edge = IntraSurfaceEdge.new(previous_node, current_node)
         else:
             next_edge = nodes_to_edges[previous_node][current_node]
         
@@ -303,7 +303,7 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
             nodes_to_edges[node] = {}
     
     # Calculate and record all intra-surface edges.
-    var intra_surface_edge: PlatformGraphIntraSurfaceEdge
+    var intra_surface_edge: IntraSurfaceEdge
     for surface in surfaces_to_nodes:
         for node_a in surfaces_to_nodes[surface]:
             for node_b in surfaces_to_nodes[surface]:
@@ -312,9 +312,9 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
                     continue
                 
                 # Record uni-directional edges in both directions.
-                intra_surface_edge = PlatformGraphIntraSurfaceEdge.new(node_a, node_b)
+                intra_surface_edge = IntraSurfaceEdge.new(node_a, node_b)
                 nodes_to_edges[node_a][node_b] = intra_surface_edge
-                intra_surface_edge = PlatformGraphIntraSurfaceEdge.new(node_b, node_a)
+                intra_surface_edge = IntraSurfaceEdge.new(node_b, node_a)
                 nodes_to_edges[node_b][node_a] = intra_surface_edge
     
     # Record inter-surface edges.

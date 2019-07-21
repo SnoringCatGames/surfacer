@@ -1,14 +1,14 @@
 extends Node2D
-class_name HumanPlatformGraphNavigatorAnnotator
+class_name HumanNavigatorAnnotator
 
 var NEARBY_SURFACE_COLOR := Color.from_hsv(0.5, 0.8, 0.99, 0.5)
 var SURFACE_CLOSE_DISTANCE_THRESHOLD_COLOR := Color.from_hsv(0.5, 0.8, 0.99, 0.5)
 var SURFACE_CLOSE_DISTANCE_THRESHOLD_BORDER_WIDTH := 4.0
 var SURFACE_CLOSE_DISTANCE_THRESHOLD_ARC_WIDTH := 16.0
 
-var navigator: PlatformGraphNavigator
+var navigator: Navigator
 
-func _init(navigator: PlatformGraphNavigator) -> void:
+func _init(navigator: Navigator) -> void:
     self.navigator = navigator
 
 func _draw() -> void:

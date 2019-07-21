@@ -1,10 +1,10 @@
 extends Node2D
 class_name Level
 
-const ClickAnnotator = preload("res://framework/annotators/click_annotator.gd")
-const PlayerAnnotator = preload("res://framework/annotators/player_annotator.gd")
-const PlatformGraph = preload("res://framework/platform_graph/platform_graph.gd")
-const PlatformGraphAnnotator = preload("res://framework/annotators/platform_graph_annotator.gd")
+const ClickAnnotator := preload("res://framework/annotators/click_annotator.gd")
+const PlayerAnnotator := preload("res://framework/annotators/player_annotator.gd")
+const PlatformGraph := preload("res://framework/platform_graph/platform_graph.gd")
+const PlatformGraphAnnotator := preload("res://framework/annotators/platform_graph_annotator.gd")
 
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
@@ -85,7 +85,7 @@ func _record_player_reference(is_human_player: bool) -> void:
     var player: Player = players[0] if players.size() > 0 else null
     
     if player != null:
-        player.set_platform_graph_navigator(platform_graphs[player.player_name])
+        player.set_navigator(platform_graphs[player.player_name])
         
         # Set up an annotator to help with debugging.
         var player_annotator := PlayerAnnotator.new(player, !is_human_player)
@@ -98,7 +98,7 @@ func _record_player_reference(is_human_player: bool) -> void:
         else:
             computer_player = player
             
-            player.init_platform_graph_navigator()
+            player.init_navigator()
             # FIXME: E: Remove after debugging CP movement.
             player.init_human_controller_action_source()
         

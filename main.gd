@@ -1,9 +1,9 @@
 extends Node
 class_name Main
 
-const CatParams = preload("res://players/cat_params.gd")
-const SquirrelParams = preload("res://players/squirrel_params.gd")
-const TestPlayerParams = preload("res://framework/test/test_data/test_player_params.gd")
+const CatParams := preload("res://players/cat_params.gd")
+const SquirrelParams := preload("res://players/squirrel_params.gd")
+const TestPlayerParams := preload("res://framework/test/test_data/test_player_params.gd")
 
 # Array<PlayerParam>
 var PLAYER_PARAMS: Array

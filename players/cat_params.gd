@@ -1,9 +1,9 @@
 extends PlayerParams
 class_name CatParams
 
-const JumpFromPlatformMovement = preload("res://framework/player_movement/jump_from_platform_movement.gd")
-const FallFromAirMovement = preload("res://framework/player_movement/fall_from_air_movement.gd")
-const CatPlayer = preload("res://players/cat_player.gd")
+const JumpFromPlatformMovement := preload("res://framework/player_movement/jump_from_platform_movement.gd")
+const FallFromAirMovement := preload("res://framework/player_movement/fall_from_air_movement.gd")
+const CatPlayer := preload("res://players/cat_player.gd")
 
 const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 const NAME := "cat"

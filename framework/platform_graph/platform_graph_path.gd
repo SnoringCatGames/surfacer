@@ -3,7 +3,7 @@
 extends Reference
 class_name PlatformGraphPath
 
-# Array<PlatformGraphEdge>
+# Array<Edge>
 var edges: Array
 
 var origin: PositionAlongSurface

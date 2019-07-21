@@ -1,5 +1,5 @@
 extends Node2D
-class_name PlatformGraphNavigatorAnnotator
+class_name NavigatorAnnotator
 
 var EDGE_COLOR = Color.from_hsv(0.75, 0.8, 0.9, 0.35)
 const TRAJECTORY_WIDTH := 4.0
@@ -9,10 +9,10 @@ const NODE_TARGET_POINT_RADIUS := 4.0
 const NODE_T_LENGTH := 16.0
 const NODE_T_WIDTH := 4.0
 
-var navigator: PlatformGraphNavigator
+var navigator: Navigator
 var path: PlatformGraphPath
 
-func _init(navigator: PlatformGraphNavigator) -> void:
+func _init(navigator: Navigator) -> void:
     self.navigator = navigator
 
 func _draw() -> void:
@@ -32,9 +32,9 @@ func _draw_path(canvas: CanvasItem, path: PlatformGraphPath) -> void:
                 NODE_T_WIDTH, true)
         
         # Draw edge.
-        if edge is PlatformGraphInterSurfaceEdge:
+        if edge is InterSurfaceEdge:
             draw_polyline(edge.instructions.frame_discrete_positions, EDGE_COLOR, TRAJECTORY_WIDTH)
-        elif edge is PlatformGraphIntraSurfaceEdge:
+        elif edge is IntraSurfaceEdge:
             draw_line(edge.start.target_point, edge.end.target_point, EDGE_COLOR, TRAJECTORY_WIDTH)
         else:
             Utils.error()

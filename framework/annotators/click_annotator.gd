@@ -31,7 +31,7 @@ func _process(delta: float) -> void:
         click_position = level.get_global_mouse_position()
         
         if player != null:
-            closest_surface_position = PlatformGraphNavigator.find_closest_position_on_a_surface( \
+            closest_surface_position = SurfaceParser.find_closest_position_on_a_surface( \
                     click_position, player)
         else:
             closest_surface_position = null

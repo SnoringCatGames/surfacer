@@ -2,8 +2,8 @@
 extends Reference
 class_name PlayerMovement
 
-const MovementConstraint = preload("res://framework/player_movement/movement_constraint.gd")
-const PlayerInstruction = preload("res://framework/player_movement/player_instruction.gd")
+const MovementConstraint := preload("res://framework/player_movement/movement_constraint.gd")
+const PlayerInstruction := preload("res://framework/player_movement/player_instruction.gd")
 
 # TODO: Adjust this
 const SURFACE_CLOSE_DISTANCE_THRESHOLD := 512.0
