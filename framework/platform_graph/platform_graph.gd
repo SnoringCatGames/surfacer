@@ -273,7 +273,7 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
                 # FIXME: Comment out when writing tests
 #                pass
                 # FIXME: LEFT OFF HERE: DEBUGGING: Remove
-                if player_info.name == "test":
+                if player_info.name == "cat":
                     # Calculate the inter-surface edges.
                     surfaces_to_edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface_parser, surface)
     

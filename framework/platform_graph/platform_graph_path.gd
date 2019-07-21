@@ -11,5 +11,5 @@ var destination: PositionAlongSurface
 
 func _init(edges: Array) -> void:
     self.edges = edges
-    self.surface_origin = edges.front().origin
-    self.surface_destination = edges.back().destination
+    self.origin = edges.front().start
+    self.destination = edges.back().end

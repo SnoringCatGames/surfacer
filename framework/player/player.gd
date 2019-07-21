@@ -96,7 +96,7 @@ func _ready() -> void:
     surface_state.horizontal_facing_sign = 1
     animator.face_right()
 
-func set_navigator(platform_graph: PlatformGraph) -> void:
+func set_platform_graph(platform_graph: PlatformGraph) -> void:
     self.platform_graph = platform_graph
     self.surface_parser = platform_graph.surface_parser
     self.possible_surfaces = platform_graph.surfaces

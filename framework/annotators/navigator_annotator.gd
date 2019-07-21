@@ -40,6 +40,6 @@ func _draw_path(canvas: CanvasItem, path: PlatformGraphPath) -> void:
             Utils.error()
     
     # Draw final end position.
-    DrawUtils.draw_position_along_surface(canvas, path.surface_destination, NODE_COLOR, \
+    DrawUtils.draw_position_along_surface(canvas, path.destination, NODE_COLOR, \
             NODE_COLOR, NODE_TARGET_POINT_RADIUS, NODE_T_LENGTH, \
             NODE_T_WIDTH, true)

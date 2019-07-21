@@ -9,7 +9,7 @@ var is_finished := false
 var active_key_presses := {}
 
 func _init(instructions: PlayerInstructions) -> void:
-    assert(!instructions.empty())
+    assert(!instructions.instructions.empty())
     self.instructions = instructions
     self.next_instruction = instructions.instructions[0]
 

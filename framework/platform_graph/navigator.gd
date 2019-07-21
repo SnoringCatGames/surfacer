@@ -36,9 +36,10 @@ func start_new_navigation(target: Vector2) -> bool:
     
     var origin := surface_state.player_center_position_along_surface
     var destination := SurfaceParser.find_closest_position_on_a_surface(target, player)
-    # FIXME: LEFT OFF HERE: -----------A
-    # - Add support for an in-air origin and destination.
-    # - Implement two new Edge sub-classes for these.
+    # FIXME: LEFT OFF HERE: ---------------------A
+    # - Address the other edge-type cases (don't just require start and end on surfaces).
+    #   - Where to create the front/back special edges? Here? Or in PlatformGraph?
+    # - Implement the instruction-calculations for the other three edge sub-classes.
     var path := graph.find_path(origin, destination)
     
     if path == null:
@@ -87,33 +88,34 @@ func update() -> void:
     
     _update_edge_navigation_state()
     
-    # FIXME: LEFT OFF HERE: ---------------------A
-    # - Address the other edge-type cases in start_new_navigation above (don't just require start
-    #   and end on surfaces).
-    # - Implement the instruction-calculations for the other three edge sub-classes.
-    
     if just_interrupted_navigation:
         print("Edge movement interrupted")
         # FIXME: Add back in at some point...
 #        start_new_navigation(current_path.destination)
-    elif just_reached_intra_surface_destination:
-        print("Reached end of intra-surface edge")
-    elif just_landed_on_expected_surface:
-        print("Reached end of inter-surface or air-to-surface edge")
-    elif just_reached_in_air_destination:
-        print("Reached end of surface-to-air or air-to-air edge")
-    elif surface_state.is_grabbing_a_surface:
-#        print("Moving along intra-surface edge")
+    elif just_reached_end_of_edge:
+        var edge_type_label: String
+        if just_reached_intra_surface_destination:
+            assert(current_edge is IntraSurfaceEdge)
+            edge_type_label = "intra-surface"
+        elif just_landed_on_expected_surface:
+            assert(current_edge is InterSurfaceEdge or current_edge is AirToSurfaceEdge)
+            edge_type_label = \
+                    "inter-surface" if current_edge is InterSurfaceEdge else "air-to-surface"
+        elif just_reached_in_air_destination:
+            assert(current_edge is SurfaceToAirEdge or current_edge is AirToAirEdge)
+            edge_type_label = \
+                    "surface-to-air" if current_edge is SurfaceToAirEdge else "air-to-air"
         
-        # The intra-surface-edge movement instruction set should continue executing.
-        pass
-    else: # Moving through the air.
-#        print("Moving along inter-surface edge")
-        
-        # FIXME: Detect when position is too far from expected. Then maybe auto-correct it?
-        
-        # The inter-surface-edge movement instruction set should continue executing.
-        pass
+        print("Reached end of %s edge" % edge_type_label)
+    else:
+        # Continuing along an edge.
+        if surface_state.is_grabbing_a_surface:
+            # print("Moving along a surface along edge")
+            pass
+        else:
+            # print("Moving through the air along an edge")
+            # FIXME: Detect when position is too far from expected. Then maybe auto-correct it?
+            pass
     
     if just_reached_end_of_edge:
         # FIXME: Assert that we are close enough to the destination position.
@@ -162,14 +164,12 @@ func _update_edge_navigation_state() -> void:
         just_reached_intra_surface_destination = false
     
     var is_moving_to_expected_in_air_destination: bool = \
-            surface_state.is_in_air and \
+            !surface_state.is_touching_a_surface and \
             (current_edge is SurfaceToAirEdge or \
             current_edge is AirToAirEdge)
     
     if is_moving_to_expected_in_air_destination:
-        # FIXME: LEFT OFF HERE: --------------------A
-        current_edge_playback.is_finished
-        pass
+        just_reached_in_air_destination = current_edge_playback.is_finished
     else:
         just_reached_in_air_destination = false
     

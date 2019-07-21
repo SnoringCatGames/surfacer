@@ -45,8 +45,6 @@ func _ready() -> void:
     add_child(click_to_navigate)
     
     # Set up some annotators that help with debugging.
-    platform_graph_annotator = PlatformGraphAnnotator.new(platform_graphs["test"])
-    add_child(platform_graph_annotator)
     click_annotator = ClickAnnotator.new(self)
     add_child(click_annotator)
 
@@ -85,12 +83,8 @@ func _record_player_reference(is_human_player: bool) -> void:
     var player: Player = players[0] if players.size() > 0 else null
     
     if player != null:
-        player.set_navigator(platform_graphs[player.player_name])
-        
-        # Set up an annotator to help with debugging.
-        var player_annotator := PlayerAnnotator.new(player, !is_human_player)
-        add_child(player_annotator)
-        player_annotators[player] = player_annotator
+        var graph: PlatformGraph = platform_graphs[player.player_name]
+        player.set_platform_graph(graph)
         
         if is_human_player:
             human_player = player
@@ -104,3 +98,10 @@ func _record_player_reference(is_human_player: bool) -> void:
         
             click_to_navigate.set_player(computer_player)
             click_annotator.set_player(computer_player)
+        
+        # Set up an annotator to help with debugging.
+        platform_graph_annotator = PlatformGraphAnnotator.new(graph)
+        add_child(platform_graph_annotator)
+        var player_annotator := PlayerAnnotator.new(player, !is_human_player)
+        add_child(player_annotator)
+        player_annotators[player] = player_annotator
