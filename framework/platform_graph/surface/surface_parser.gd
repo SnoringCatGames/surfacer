@@ -1,7 +1,7 @@
 extends Reference
 class_name SurfaceParser
 
-const Stopwatch := preload("res://framework/stopwatch.gd")
+const Stopwatch := preload("res://framework/utils/stopwatch.gd")
 
 # TODO: Map the TileMap into an RTree or QuadTree.
 

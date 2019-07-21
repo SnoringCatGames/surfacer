@@ -9,17 +9,17 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "AirDashAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/air_dash_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "AirDefaultAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/air_default_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "AirJumpAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/air_jump_action.gd"
@@ -34,12 +34,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/air_to_surface_edge.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "AllDefaultAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/all_default_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "CapVelocityAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/cap_velocity_action.gd"
@@ -72,7 +72,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "DrawUtils",
 "language": "GDScript",
-"path": "res://framework/draw_utils.gd"
+"path": "res://framework/utils/draw_utils.gd"
 }, {
 "base": "Reference",
 "class": "Edge",
@@ -82,34 +82,34 @@ _global_script_classes=[ {
 "base": "PlayerAnimator",
 "class": "FakePlayerAnimator",
 "language": "GDScript",
-"path": "res://framework/player/fake_player_animator.gd"
+"path": "res://framework/player/animator/fake_player_animator.gd"
 }, {
 "base": "PlayerMovement",
 "class": "FallFromAirMovement",
 "language": "GDScript",
 "path": "res://framework/player_movement/fall_from_air_movement.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "FloorDashAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/floor_dash_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "FloorDefaultAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/floor_default_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "FloorFallThroughAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/floor_fall_through_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "FloorJumpAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/floor_jump_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "FloorWalkAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/floor_walk_action.gd"
@@ -117,7 +117,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "Geometry",
 "language": "GDScript",
-"path": "res://framework/geometry.gd"
+"path": "res://framework/utils/geometry.gd"
 }, {
 "base": "Node",
 "class": "Global",
@@ -257,12 +257,12 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "PlayerAnimator",
 "language": "GDScript",
-"path": "res://framework/player/player_animator.gd"
+"path": "res://framework/player/animator/player_animator.gd"
 }, {
 "base": "Reference",
 "class": "PlayerAnimatorParams",
 "language": "GDScript",
-"path": "res://framework/player/player_animator_params.gd"
+"path": "res://framework/player/animator/player_animator_params.gd"
 }, {
 "base": "Node2D",
 "class": "PlayerAnnotator",
@@ -322,7 +322,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "PriorityQueue",
 "language": "GDScript",
-"path": "res://framework/priority_queue.gd"
+"path": "res://framework/utils/priority_queue.gd"
 }, {
 "base": "PlayerParams",
 "class": "SquirrelParams",
@@ -337,7 +337,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "Stopwatch",
 "language": "GDScript",
-"path": "res://framework/stopwatch.gd"
+"path": "res://framework/utils/stopwatch.gd"
 }, {
 "base": "Reference",
 "class": "Surface",
@@ -392,34 +392,34 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "Utils",
 "language": "GDScript",
-"path": "res://framework/utils.gd"
+"path": "res://framework/utils/utils.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "WallClimbAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/wall_climb_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "WallDashAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/wall_dash_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "WallDefaultAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/wall_default_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "WallFallAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/wall_fall_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "WallJumpAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/wall_jump_action.gd"
 }, {
-"base": "PlayerAction",
+"base": "PlayerActionHandler",
 "class": "WallWalkAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/wall_walk_action.gd"
@@ -518,9 +518,9 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Utils="*res://framework/utils.gd"
-Geometry="*res://framework/geometry.gd"
-DrawUtils="*res://framework/draw_utils.gd"
+Utils="*res://framework/utils/utils.gd"
+Geometry="*res://framework/utils/geometry.gd"
+DrawUtils="*res://framework/utils/draw_utils.gd"
 Global="*res://framework/global.gd"
 
 [editor_plugins]
