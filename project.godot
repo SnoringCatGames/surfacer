@@ -179,6 +179,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/platform_graph.gd"
 }, {
+"base": "PlatformGraphEdge",
+"class": "PlatformGraphAirToAirEdge",
+"language": "GDScript",
+"path": "res://framework/platform_graph/platform_graph_air_to_air_edge.gd"
+}, {
+"base": "PlatformGraphEdge",
+"class": "PlatformGraphAirToSurfaceEdge",
+"language": "GDScript",
+"path": "res://framework/platform_graph/platform_graph_air_to_surface_edge.gd"
+}, {
 "base": "Node2D",
 "class": "PlatformGraphAnnotator",
 "language": "GDScript",
@@ -218,6 +228,11 @@ _global_script_classes=[ {
 "class": "PlatformGraphPath",
 "language": "GDScript",
 "path": "res://framework/platform_graph/platform_graph_path.gd"
+}, {
+"base": "PlatformGraphEdge",
+"class": "PlatformGraphSurfaceToAirEdge",
+"language": "GDScript",
+"path": "res://framework/platform_graph/platform_graph_surface_to_air_edge.gd"
 }, {
 "base": "Node2D",
 "class": "PlatformGraphSurfacesAnnotator",
@@ -444,6 +459,8 @@ _global_script_class_icons={
 "MovementConstraint": "",
 "MovementParams": "",
 "PlatformGraph": "",
+"PlatformGraphAirToAirEdge": "",
+"PlatformGraphAirToSurfaceEdge": "",
 "PlatformGraphAnnotator": "",
 "PlatformGraphEdge": "",
 "PlatformGraphInterSurfaceEdge": "",
@@ -452,6 +469,7 @@ _global_script_class_icons={
 "PlatformGraphNavigator": "",
 "PlatformGraphNavigatorAnnotator": "",
 "PlatformGraphPath": "",
+"PlatformGraphSurfaceToAirEdge": "",
 "PlatformGraphSurfacesAnnotator": "",
 "Player": "",
 "PlayerAction": "",

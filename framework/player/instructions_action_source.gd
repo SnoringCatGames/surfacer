@@ -11,12 +11,21 @@ func _init(player).(player) -> void:
 func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
     var next_instruction: PlayerInstruction
     var is_pressed: bool
+    var non_pressed_keys := []
     
     for playback in _all_playback:
+        non_pressed_keys.clear()
+        
         # Handle all previously started keys that are still pressed.
         for input_key in playback.active_key_presses:
             is_pressed = playback.active_key_presses[input_key]
             update_for_key_press(actions, input_key, is_pressed, time_sec)
+            if !is_pressed:
+                non_pressed_keys.push_back(input_key)
+        
+        # Remove from the active set all keys that are no longer pressed.
+        for input_key in non_pressed_keys:
+            playback.update_for_key_press.erase(input_key)
         
         # Handle any new key presses.
         while playback.next_instruction != null and playback.next_instruction.time <= time_sec:
@@ -25,9 +34,12 @@ func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
             playback.increment()
     
     # Handle instructions that finish.
-    for i in range(_all_playback.size()):
+    var i := 0
+    while i < _all_playback.size():
         if _all_playback[i].next_instruction == null:
             _all_playback.remove(i)
+            i -= 1
+        i += 1
 
 func start_instructions(instructions: PlayerInstructions) -> void:
     assert(_check_instructions(instructions))

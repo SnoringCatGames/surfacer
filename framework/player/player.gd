@@ -19,6 +19,8 @@ var movement_types: Array
 var possible_surfaces: Array
 var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
+var platform_graph: PlatformGraph
+var surface_parser: SurfaceParser
 var platform_graph_navigator: PlatformGraphNavigator
 var velocity := Vector2.ZERO
 var level # TODO: Add type back in?
@@ -43,11 +45,6 @@ var _dash_fade_tween: Tween
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
-
-func init_action_source(is_human_controlled: bool) -> void:
-    var action_source: PlayerActionSource = \
-            InputActionSource.new(self) if is_human_controlled else InstructionsActionSource.new(self)
-    action_sources.push_back(action_source)
 
 func _enter_tree() -> void:
     self.global = $"/root/Global"
@@ -99,12 +96,19 @@ func _ready() -> void:
     surface_state.horizontal_facing_sign = 1
     animator.face_right()
 
-func initialize_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
-    possible_surfaces = platform_graph.surfaces
+func set_platform_graph_navigator(platform_graph: PlatformGraph) -> void:
+    self.platform_graph = platform_graph
+    self.surface_parser = platform_graph.surface_parser
+    self.possible_surfaces = platform_graph.surfaces
+
+func init_human_controller_action_source() -> void:
+    action_sources.push_back(InputActionSource.new(self))
+
+func init_platform_graph_navigator() -> void:
     platform_graph_navigator = PlatformGraphNavigator.new(self, platform_graph)
+    action_sources.push_back(platform_graph_navigator.instructions_action_source)
 
 func _physics_process(delta: float) -> void:
-    # FIXME: Remove (after checking that this doesn't ever seem to trigger)
     assert(Geometry.are_floats_equal_with_epsilon(delta, Utils.PHYSICS_TIME_STEP))
     
     _update_actions(delta)
@@ -112,13 +116,16 @@ func _physics_process(delta: float) -> void:
     
     # Uncomment to help with debugging.
     if surface_state.just_left_air:
-        print("HIT surface: %8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, position, \
-                velocity, Surface.to_string(surface_state.grabbed_surface)])
+        print("HIT surface: %8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
+                surface_state.center_position, velocity, \
+                Surface.to_string(surface_state.grabbed_surface)])
     elif surface_state.just_entered_air:
-        print("LEFT surface:%8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, position, \
-                velocity, Surface.to_string(surface_state.previous_grabbed_surface)])
+        print("LEFT surface:%8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
+                surface_state.center_position, velocity, \
+                Surface.to_string(surface_state.previous_grabbed_surface)])
     
-    platform_graph_navigator.update()
+    if platform_graph_navigator:
+        platform_graph_navigator.update()
     actions.delta = delta
 
     # Flip the horizontal direction of the animation according to which way the player is facing.
@@ -136,6 +143,10 @@ func _physics_process(delta: float) -> void:
     # TODO: Use the remaining pre-collision movement that move_and_slide returns. This might be
     # needed in order to move along slopes?
     move_and_slide(velocity, Geometry.UP, false, 4, Geometry.FLOOR_MAX_ANGLE)
+    
+    surface_state.previous_center_position = surface_state.center_position
+    surface_state.center_position = self.position
+    surface_state.collision_count = get_slide_count()
     
     level.descendant_physics_process_completed(self)
 
@@ -347,8 +358,7 @@ func _update_which_surface_is_grabbed() -> void:
             surface_state.grabbed_tile_map_index = Geometry.get_tile_map_index_from_grid_coord( \
                     surface_state.grab_position_tile_map_coord, surface_state.grabbed_tile_map)
         
-        var next_grabbed_surface := \
-                platform_graph_navigator.calculate_grabbed_surface(surface_state)
+        var next_grabbed_surface := calculate_grabbed_surface()
         surface_state.just_changed_surface = \
                 surface_state.just_left_air or \
                 next_grabbed_surface != surface_state.grabbed_surface
@@ -357,7 +367,7 @@ func _update_which_surface_is_grabbed() -> void:
         surface_state.grabbed_surface = next_grabbed_surface
         
         surface_state.player_center_position_along_surface.match_current_grab( \
-                surface_state.grabbed_surface, position)
+                surface_state.grabbed_surface, surface_state.center_position)
     
     else:
         if surface_state.just_entered_air:
@@ -379,13 +389,18 @@ func _update_collision_mask() -> void:
     set_collision_mask_bit(1, !surface_state.is_falling_through_floors)
     set_collision_mask_bit(2, surface_state.is_grabbing_walk_through_walls)
 
+# Finds the Surface the corresponds to the current PlayerSurfaceState.
+func calculate_grabbed_surface() -> Surface:
+    return surface_parser.get_surface_for_tile(surface_state.grabbed_tile_map, \
+            surface_state.grabbed_tile_map_index, surface_state.grabbed_side)
+
 static func _get_attached_surface_collision( \
         body: KinematicBody2D, surface_state: PlayerSurfaceState) -> KinematicCollision2D:
     var closest_normal_diff: float = PI
     var closest_collision: KinematicCollision2D
     var current_normal_diff: float
     var current_collision: KinematicCollision2D
-    for i in range(body.get_slide_count()):
+    for i in range(surface_state.collision_count):
         current_collision = body.get_slide_collision(i)
         
         if surface_state.is_grabbing_floor:

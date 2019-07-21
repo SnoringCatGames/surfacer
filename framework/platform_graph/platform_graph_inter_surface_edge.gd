@@ -3,13 +3,10 @@
 extends PlatformGraphEdge
 class_name PlatformGraphInterSurfaceEdge
 
-var instructions: PlayerInstructions
+var start: PositionAlongSurface
+var end: PositionAlongSurface
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: PlayerInstructions).(start, end) -> void:
+        instructions: PlayerInstructions).(instructions) -> void:
     self.start = start
     self.end = end
-    self.instructions = instructions
-
-func _get_weight() -> float:
-    return instructions.distance_squared

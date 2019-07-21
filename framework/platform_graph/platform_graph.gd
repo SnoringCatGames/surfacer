@@ -152,7 +152,7 @@ func find_path(origin: PositionAlongSurface, \
         # If the we are simply trying to get to a different position on the same surface, then we
         # don't need A*.
         var edges := [PlatformGraphIntraSurfaceEdge.new(origin, destination)]
-        return PlatformGraphPath.new(origin, destination, edges)
+        return PlatformGraphPath.new(edges)
     
     var frontier := PriorityQueue.new()
     var node_to_previous_node := {}
@@ -259,7 +259,7 @@ func find_path(origin: PositionAlongSurface, \
     
     assert(!edges.empty())
     
-    return PlatformGraphPath.new(origin, destination, edges)
+    return PlatformGraphPath.new(edges)
 
 # Calculate and store the edges between surface nodes that this player type can traverse.
 func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \

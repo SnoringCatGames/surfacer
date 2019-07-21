@@ -21,7 +21,7 @@ var constraint_positions: PoolVector2Array
 
 # Instructions don't need to be pre-sorted.
 func _init(instructions: Array, duration: float, distance_squared: float, \
-        constraint_positions: Array) -> void:
+        constraint_positions := []) -> void:
     self.instructions = instructions
     self.duration = duration
     self.distance_squared = distance_squared

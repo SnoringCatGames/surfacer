@@ -44,14 +44,6 @@ func _ready() -> void:
     click_to_navigate.update_level(self)
     add_child(click_to_navigate)
     
-    # Get references to all initial players and initialize their PlatformGraphNavigators.
-    all_players = Utils.get_children_by_type(self, Player)
-    for player in all_players:
-        player.initialize_platform_graph_navigator(platform_graphs[player.player_name])
-    
-    _record_player_reference(true)
-    _record_player_reference(false)
-    
     # Set up some annotators that help with debugging.
     platform_graph_annotator = PlatformGraphAnnotator.new(platform_graphs["test"])
     add_child(platform_graph_annotator)
@@ -93,8 +85,7 @@ func _record_player_reference(is_human_player: bool) -> void:
     var player: Player = players[0] if players.size() > 0 else null
     
     if player != null:
-        player.initialize_platform_graph_navigator(platform_graphs[player.player_name])
-        player.init_action_source(is_human_player)
+        player.set_platform_graph_navigator(platform_graphs[player.player_name])
         
         # Set up an annotator to help with debugging.
         var player_annotator := PlayerAnnotator.new(player, !is_human_player)
@@ -103,7 +94,13 @@ func _record_player_reference(is_human_player: bool) -> void:
         
         if is_human_player:
             human_player = player
+            player.init_human_controller_action_source()
         else:
             computer_player = player
+            
+            player.init_platform_graph_navigator()
+            # FIXME: E: Remove after debugging CP movement.
+            player.init_human_controller_action_source()
+        
             click_to_navigate.set_player(computer_player)
             click_annotator.set_player(computer_player)

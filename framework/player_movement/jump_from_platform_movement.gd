@@ -7,10 +7,7 @@ const MovementCalcStep = preload("res://framework/player_movement/movement_calcu
 
 # FIXME: SUB-MASTER LIST ***************
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
-#   - Update the Player created in Level.add_player to include both input and instruction action sources (configurable via params).
-#   - Update TestPlayer to use the cat animator for now, since that will let me test/implement the animation triggers?
-# - 
-#   B: Add support for executing movement along an edge.
+#   - B: Add support for executing movement along an edge.
 #   - C: Add support for executing movement WITHIN an edge.
 #   - D: Add path finding and update logic to PlatformGraphNavigator.
 #   - G: Add support for sending the CPU to a click target (configured in the specific level).

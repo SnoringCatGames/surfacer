@@ -24,7 +24,8 @@ func _draw() -> void:
         _draw_position_along_surface()
 
 func _draw_player_position() -> void:
-    draw_circle(player.position, PLAYER_POSITION_RADIUS, PLAYER_POSITION_COLOR)
+    draw_circle(player.surface_state.center_position, PLAYER_POSITION_RADIUS, \
+            PLAYER_POSITION_COLOR)
 
 func _draw_grab_position() -> void:
     var from := player.surface_state.grab_position

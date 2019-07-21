@@ -63,8 +63,8 @@ func update_for_key_press(actions: PlayerActionState, input_key: String, is_pres
     
     # Uncomment to help with debugging.
     if just_pressed:
-        print("CP START %7s%8.3f:%29sP:%29sV" % \
-                [print_label + ":", time_sec, player.position, player.velocity])
+        print("CP START %7s%8.3f:%29sP:%29sV" % [print_label + ":", time_sec, \
+                player.surface_state.center_position, player.velocity])
     if just_released:
-        print("CP STOP  %7s%8.3f:%29sP:%29sV" % \
-                [print_label + ":", time_sec, player.position, player.velocity])
+        print("CP STOP  %7s%8.3f:%29sP:%29sV" % [print_label + ":", time_sec, \
+                player.surface_state.center_position, player.velocity])
