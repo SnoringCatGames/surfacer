@@ -2,10 +2,10 @@ extends KinematicBody2D
 class_name Player
 
 const Navigator := preload("res://framework/platform_graph/navigator.gd")
-const PlayerActionState := preload("res://framework/player/player_action_state.gd")
+const InputActionSource := preload("res://framework/player/action/input_action_source.gd")
+const InstructionsActionSource := preload("res://framework/player/action/instructions_action_source.gd")
+const PlayerActionState := preload("res://framework/player/action/player_action_state.gd")
 const PlayerSurfaceState := preload("res://framework/player/player_surface_state.gd")
-const InputActionSource := preload("res://framework/player/input_action_source.gd")
-const InstructionsActionSource := preload("res://framework/player/instructions_action_source.gd")
 
 var global # TODO: Add type back
 var player_name: String
@@ -31,7 +31,7 @@ var animator: PlayerAnimator
 var action_sources := []
 # Dictionary<String, bool>
 var _previous_actions_this_frame := {}
-# Array<PlayerAction>
+# Array<PlayerActionHandler>
 var action_handlers: Array
 # PlayerActionType
 var current_action_type: int

@@ -168,6 +168,7 @@ func _update_edge_navigation_state() -> void:
     
     if is_moving_to_expected_in_air_destination:
         # FIXME: LEFT OFF HERE: --------------------A
+        current_edge_playback.is_finished
         pass
     else:
         just_reached_in_air_destination = false

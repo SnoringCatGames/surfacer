@@ -5,7 +5,7 @@ extends Reference
 class_name PlatformGraph
 
 const PriorityQueue := preload("res://framework/priority_queue.gd")
-const IntraSurfaceEdge := preload("res://framework/platform_graph/intra_surface_edge.gd")
+const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_surface_edge.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
 # 

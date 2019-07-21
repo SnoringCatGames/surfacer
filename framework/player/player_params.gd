@@ -5,7 +5,7 @@ var player_resource_path: String
 var _movement_params: MovementParams
 # Array<PlayerMovement>
 var _movement_types: Array
-# Array<PlayerAction>
+# Array<PlayerActionHandler>
 var _action_handlers: Array
 var _player_type_configuration: PlayerTypeConfiguration
 var global: Global
@@ -42,7 +42,7 @@ func _create_player_type_configuration(name: String, movement_params: MovementPa
     type_configuration.action_handlers = action_handlers
     return type_configuration
 
-# Array<PlayerAction>
+# Array<PlayerActionHandler>
 func _create_action_handlers() -> Array:
     Utils.error("abstract PlayerParams._create_action_handlers is not implemented")
     return []
@@ -120,5 +120,5 @@ static func _calculate_max_horizontal_movement(movement_params: MovementParams) 
     return max_horizontal_distance_to_starting_height * \
             MULTIPLIER_TO_ALLOW_FOR_DESTINATIONS_THAT_ARE_BELOW
 
-static func _compare_action_handlers(a: PlayerAction, b: PlayerAction) -> bool:
+static func _compare_action_handlers(a: PlayerActionHandler, b: PlayerActionHandler) -> bool:
     return a.priority < b.priority

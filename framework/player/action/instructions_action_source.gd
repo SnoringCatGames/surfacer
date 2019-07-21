@@ -1,7 +1,7 @@
 extends PlayerActionSource
 class_name InstructionsActionSource
 
-const InstructionsPlayback := preload("res://framework/player/instructions_playback.gd")
+const InstructionsPlayback := preload("res://framework/player/action/instructions_playback.gd")
 
 # Array<_InstructionsPlayback>
 var _all_playback := []

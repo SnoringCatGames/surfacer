@@ -2,22 +2,22 @@ extends Node
 class_name Global
 
 const PLAYER_ACTION_CLASSES := [
-    preload("res://framework/player/player_actions/air_dash_action.gd"),
-    preload("res://framework/player/player_actions/air_default_action.gd"),
-    preload("res://framework/player/player_actions/air_jump_action.gd"),
-    preload("res://framework/player/player_actions/all_default_action.gd"),
-    preload("res://framework/player/player_actions/cap_velocity_action.gd"),
-    preload("res://framework/player/player_actions/floor_dash_action.gd"),
-    preload("res://framework/player/player_actions/floor_default_action.gd"),
-    preload("res://framework/player/player_actions/floor_fall_through_action.gd"),
-    preload("res://framework/player/player_actions/floor_jump_action.gd"),
-    preload("res://framework/player/player_actions/floor_walk_action.gd"),
-    preload("res://framework/player/player_actions/wall_climb_action.gd"),
-    preload("res://framework/player/player_actions/wall_dash_action.gd"),
-    preload("res://framework/player/player_actions/wall_default_action.gd"),
-    preload("res://framework/player/player_actions/wall_fall_action.gd"),
-    preload("res://framework/player/player_actions/wall_jump_action.gd"),
-    preload("res://framework/player/player_actions/wall_walk_action.gd"),
+    preload("res://framework/player/action/action_handlers/air_dash_action.gd"),
+    preload("res://framework/player/action/action_handlers/air_default_action.gd"),
+    preload("res://framework/player/action/action_handlers/air_jump_action.gd"),
+    preload("res://framework/player/action/action_handlers/all_default_action.gd"),
+    preload("res://framework/player/action/action_handlers/cap_velocity_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_dash_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_default_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_fall_through_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_jump_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_walk_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_climb_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_dash_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_default_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_fall_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_jump_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_walk_action.gd"),
 ]
 
 const PLAYER_ACTIONS := {}

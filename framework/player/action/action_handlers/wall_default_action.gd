@@ -1,4 +1,4 @@
-extends PlayerAction
+extends PlayerActionHandler
 class_name WallDefaultAction
 
 const NAME := 'WallDefaultAction'

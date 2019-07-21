@@ -1,9 +1,9 @@
-extends PlayerAction
-class_name FloorDashAction
+extends PlayerActionHandler
+class_name AirDashAction
 
-const NAME := 'FloorDashAction'
-const TYPE := PlayerActionType.FLOOR
-const PRIORITY := 250
+const NAME := 'AirDashAction'
+const TYPE := PlayerActionType.AIR
+const PRIORITY := 330
 
 func _init().(NAME, TYPE, PRIORITY) -> void:
     pass

@@ -1,5 +1,5 @@
 extends Reference
-class_name PlayerAction
+class_name PlayerActionHandler
 
 var name: String
 # PlayerActionType
@@ -13,5 +13,5 @@ func _init(name: String, type: int, priority: int) -> void:
 
 # TODO: Add type back in.
 func process(player) -> bool:
-    Utils.error("abstract PlayerAction.process is not implemented")
+    Utils.error("abstract PlayerActionHandler.process is not implemented")
     return false

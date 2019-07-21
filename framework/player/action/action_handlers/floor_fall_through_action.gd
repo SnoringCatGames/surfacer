@@ -1,4 +1,4 @@
-extends PlayerAction
+extends PlayerActionHandler
 class_name FloorFallThroughAction
 
 const NAME := 'FloorFallThroughAction'

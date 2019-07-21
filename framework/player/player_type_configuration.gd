@@ -7,5 +7,5 @@ var type: int
 var movement_params: MovementParams
 # Array<PlayerMovement>
 var movement_types: Array
-# Array<PlayerAction>
+# Array<PlayerActionHandler>
 var action_handlers: Array
