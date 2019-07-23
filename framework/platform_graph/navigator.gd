@@ -28,24 +28,22 @@ func _init(player, graph: PlatformGraph) -> void:
     self.instructions_action_source = InstructionsActionSource.new(player)
 
 # Starts a new navigation to the given destination.
-func start_new_navigation(target: Vector2) -> bool:
+func navigate_to_nearest_surface(target: Vector2) -> bool:
     reset()
+    
+    var destination := SurfaceParser.find_closest_position_on_a_surface(target, player)
     
     var path: PlatformGraphPath
     if surface_state.is_grabbing_a_surface:
-        var origin := surface_state.player_center_position_along_surface
-        var destination := SurfaceParser.find_closest_position_on_a_surface(target, player)
+        var origin := surface_state.center_position_along_surface
         path = graph.find_path(origin, destination)
     else:
-        # FIXME: LEFT OFF HERE: ---------------------A
-        # - Address the other edge-type cases (don't just require start and end on surfaces).
-        # - Create the front/back special edges here, not in PlatformGraph.
-        # - Add helper methods to PlatformGraphPath for adding edges onto the front or back.
-        # - Create logic for calculating best point-along-surface to land at given current in-air
-        #   state and destination.
-        #   - But just add a placeholder for this for now.
-        # - Implement the instruction-calculations for the other three edge sub-classes.
-        pass
+        var origin := surface_state.center_position
+        var air_to_surface_edge := graph.find_a_landing_trajectory(origin, destination)
+        if air_to_surface_edge != null:
+            path = graph.find_path(air_to_surface_edge.end, destination)
+            if path != null:
+                path.push_front(air_to_surface_edge)
     
     if path == null:
         # Destination cannot be reached from origin.
@@ -98,7 +96,7 @@ func update() -> void:
     if just_interrupted_navigation:
         print("Edge movement interrupted")
         # FIXME: Add back in at some point...
-#        start_new_navigation(current_path.destination)
+#        navigate_to_nearest_surface(current_path.destination)
         reset()
     elif just_reached_end_of_edge:
         var edge_type_label: String

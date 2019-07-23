@@ -19,7 +19,7 @@ var movement_types: Array
 var possible_surfaces: Array
 var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
-var platform_graph: PlatformGraph
+var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: Navigator
 var velocity := Vector2.ZERO
@@ -96,16 +96,16 @@ func _ready() -> void:
     surface_state.horizontal_facing_sign = 1
     animator.face_right()
 
-func set_platform_graph(platform_graph: PlatformGraph) -> void:
-    self.platform_graph = platform_graph
-    self.surface_parser = platform_graph.surface_parser
-    self.possible_surfaces = platform_graph.surfaces
+func set_platform_graph(graph: PlatformGraph) -> void:
+    self.graph = graph
+    self.surface_parser = graph.surface_parser
+    self.possible_surfaces = graph.surfaces
 
 func init_human_controller_action_source() -> void:
     action_sources.push_back(InputActionSource.new(self))
 
 func init_navigator() -> void:
-    navigator = Navigator.new(self, platform_graph)
+    navigator = Navigator.new(self, graph)
     action_sources.push_back(navigator.instructions_action_source)
 
 func _physics_process(delta: float) -> void:
@@ -366,7 +366,7 @@ func _update_which_surface_is_grabbed() -> void:
             surface_state.previous_grabbed_surface = surface_state.grabbed_surface
         surface_state.grabbed_surface = next_grabbed_surface
         
-        surface_state.player_center_position_along_surface.match_current_grab( \
+        surface_state.center_position_along_surface.match_current_grab( \
                 surface_state.grabbed_surface, surface_state.center_position)
     
     else:
@@ -381,7 +381,7 @@ func _update_which_surface_is_grabbed() -> void:
         surface_state.grabbed_tile_map = null
         surface_state.grab_position_tile_map_coord = Vector2.INF
         surface_state.grabbed_surface = null
-        surface_state.player_center_position_along_surface.reset()
+        surface_state.center_position_along_surface.reset()
 
 # Update whether or not we should currently consider collisions with fall-through floors and
 # walk-through walls.

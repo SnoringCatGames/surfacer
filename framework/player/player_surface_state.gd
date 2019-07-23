@@ -44,7 +44,7 @@ var previous_grabbed_surface: Surface
 # SurfaceSide
 var grabbed_side: int
 var grabbed_surface_normal: Vector2
-var player_center_position_along_surface := PositionAlongSurface.new()
+var center_position_along_surface := PositionAlongSurface.new()
 
 var just_changed_surface := false
 var just_changed_tile_map := false

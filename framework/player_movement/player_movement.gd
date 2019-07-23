@@ -1177,7 +1177,7 @@ static func _calculate_min_time_to_reach_position(s_0: float, s: float, \
 
 
 
-
+# FIXME: B: Refactor/condense the following, and move it to PlatformGraph.
 
 func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     # FIXME: C

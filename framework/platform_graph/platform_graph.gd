@@ -261,7 +261,28 @@ func find_path(origin: PositionAlongSurface, \
     
     return PlatformGraphPath.new(edges)
 
-# Calculate and store the edges between surface nodes that this player type can traverse.
+# Finds a movement step that will result in landing on a surface, with an attempt to minimize the
+# path the player would then have to travel between surfaces to reach the given target.
+# 
+# Returns null if no possible landing exists.
+func find_a_landing_trajectory( \
+        origin: Vector2, destination: PositionAlongSurface) -> AirToSurfaceEdge:
+    var possible_landing_positions := find_possible_landing_positions(origin)
+
+    # FIXME: LEFT OFF HERE: ------------------A
+    # - Sort the landing positions by distance to the destination.
+    # - Pick the next closest, and see if there is a valid movement step that can reach it from the
+    #   current position/velocity.
+
+    return null
+
+func find_possible_landing_positions(origin: Vector2) -> Array:
+    # FIXME: LEFT OFF HERE: ------------------A
+    # - 
+
+    return []
+
+# Calculates and stores the edges between surface nodes that this player type can traverse.
 func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
         surface_parser: SurfaceParser, surfaces: Array, \
         player_info: PlayerTypeConfiguration) -> void:

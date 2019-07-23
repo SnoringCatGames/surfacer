@@ -34,7 +34,7 @@ func _draw_grab_position() -> void:
 
 func _draw_position_along_surface() -> void:
     DrawUtils.draw_position_along_surface(self, \
-            player.surface_state.player_center_position_along_surface, \
+            player.surface_state.center_position_along_surface, \
             POSITION_ALONG_SURFACE_COLOR, POSITION_ALONG_SURFACE_COLOR, \
             POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS, POSITION_ALONG_SURFACE_T_LENGTH, \
             POSITION_ALONG_SURFACE_T_WIDTH)

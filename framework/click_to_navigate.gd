@@ -23,4 +23,4 @@ func _process(delta: float) -> void:
     
     if Input.is_action_just_released("left_click"):
         var position: Vector2 = level.get_global_mouse_position()
-        navigator.start_new_navigation(position)
+        navigator.navigate_to_nearest_surface(position)
