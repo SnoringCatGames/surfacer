@@ -14,41 +14,15 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 # 
 # - Use FallFromAirMovement
 # - Use PlayerMovement.get_max_upward_distance and PlayerMovement.get_max_horizontal_distance
-# - Add logic to use path.start_instructions when we start a navigation while the player isn't on a surface.
-# - Add logic to use path.end_instructions when the destination is far enough from the surface AND an optional
-#     should_jump_to_reach_destination parameter is provided.
 # 
-# - Add support for creating Edge.
-# - Add support for executing Edge.
-# - Add annotations for the whole edge set.
-# 
-# - Implement get_all_edges_from_surface for jumping.
-# - Add annotations for the actual trajectories that are defined by Edge.
-#   - These will be stored on PlayerInstructions.
-#   - Also render annotations for the constraints that were used (also stored on PlayerInstructions).
 # - Add annotations that draw the recent path that the player actually moved.
 # - Add annotations for rendering some basic navigation mode info for the CP:
 #   - Mode name
 #   - Current "input" (UP, LEFT, etc.)?
 #   - The entirety of the current instruction-set being run?
-# - A*-search: Add support for actually navigating end-to-end to a given target point.
-#   - Will need to consider the "weight" for moving along a surface from a previous edge's land to
-#     the potential next edge's jump.
-# - Add annotations for just the path that the navigator is currently using.
-# - Test out the accuracy of edge traversal actually matching up to our pre-calculated trajectories.
-# 
-# - Add logic to check for obvious surfaces that interfere with an edge trajectory (prefer false
-#   negatives over false positives).
-# 
-# - Add logic to emulate/test/ray-trace a Player's movement across an edge. This should help with
-#   annotations (both path and boundaries) and precise detection for interfering surfaces.
 # 
 # - Add logic to consider a minimum movement distance, since jumping from floors or walls gives a
 #   set minimum displacement. 
-# 
-# - Add logic to start edge traversal from the earliest possible PositionAlongSurface (given the
-#   previous/inital/landing PositionAlongSurface), rather than from whatever pre-calculated
-#   PositionAlongSurface was used to determine whether the edge is possible.
 # 
 # - Add logic to test execution of TestPlayer movement over _every_ edge in a complex, hand-made
 #   test level.
@@ -99,7 +73,6 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 # 
 # - Figure out how to configure input names/mappings (or just add docs specifying that the
 #   consumer must use these input names?)
-# - Test exporting to HTML5.
 # - Start adding networking support.
 # - Finish adding tests.
 # 
@@ -118,6 +91,7 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 
+var movement_params: MovementParams
 var surface_parser: SurfaceParser
 # Array<Surface>
 var surfaces: Array
@@ -128,13 +102,14 @@ var nodes_to_edges: Dictionary
 
 func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
         player_info: PlayerTypeConfiguration) -> void:
+    self.movement_params = player_info.movement_params
     self.surface_parser = surface_parser
     
     # Store the subset of surfaces that this player type can interact with.
     self.surfaces = surface_parser.get_subset_of_surfaces( \
-            player_info.movement_params.can_grab_walls, \
-            player_info.movement_params.can_grab_ceilings, \
-            player_info.movement_params.can_grab_floors)
+            movement_params.can_grab_walls, \
+            movement_params.can_grab_ceilings, \
+            movement_params.can_grab_floors)
     
     self.surfaces_to_nodes = {}
     self.nodes_to_edges = {}
@@ -267,19 +242,48 @@ func find_path(origin: PositionAlongSurface, \
 # Returns null if no possible landing exists.
 func find_a_landing_trajectory( \
         origin: Vector2, destination: PositionAlongSurface) -> AirToSurfaceEdge:
-    var possible_landing_positions := find_possible_landing_positions(origin)
+    var possible_landing_surfaces := find_possible_landing_surfaces(origin)
+    possible_landing_surfaces.sort_custom(self, "_compare_surfaces_by_max_y")
 
     # FIXME: LEFT OFF HERE: ------------------A
-    # - Sort the landing positions by distance to the destination.
-    # - Pick the next closest, and see if there is a valid movement step that can reach it from the
+    # - Iterate through sorted surfaces.
+    # - For each, see if there is a valid movement step that can reach it from the
     #   current position/velocity.
+    # - Which three potential landing positions to consider?
+    #   - Just closest point and nearest end?
 
     return null
 
-func find_possible_landing_positions(origin: Vector2) -> Array:
+func find_possible_landing_surfaces(origin: Vector2) -> Array:
     # FIXME: LEFT OFF HERE: ------------------A
-    # - 
+    # - 2 fudge params:
+    #   - one to spread the initial triangle out to top-left/right
+    #     - fudge according to horizontal acc rate and gravity rate
+    #   - then the other param is what the slope of terminal fall velocityy is
+    #   - Let's assume:
+    #     - 600 down to reach max y velocity
+    #     - 300 over in that much time
+    #     - 
+    #     - 1500.0 in_air_horizontal_acceleration
+    #     - 5000 gravity
+    #     - 
+    #     - 
+    #     - 400 max_horizontal_speed_default
+    #     - 4000 max_vertical_speed
+    #     - 
 
+    # This offset should account for the extra horizontal range before the player has reached
+    # terminal velocity.
+    var start_position_horizontal_offset := movement_params.gravity / movement_params.in_air_horizontal_acceleration * 0.6
+    var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
+
+    var top_left := 
+    var top_right := 
+    var bottom_left := 
+    var bottom_right := 
+    var result := _get_surfaces_intersecting_polygon( \
+            [top_left, top_right, bottom_right, bottom_left], surfaces)
+    # return result
     return []
 
 # Calculates and stores the edges between surface nodes that this player type can traverse.
@@ -371,3 +375,27 @@ static func _node_to_cell_id(node: PositionAlongSurface) -> String:
     return "%s,%s,%s" % [node.surface.side, \
             floor((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int, \
             floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int]
+
+# This is only an approximation, since it only considers the end points of the surface rather than
+# each segment of the surface polyline.
+static func _get_surfaces_intersecting_triangle(triangle_a: Vector2, triangle_b: Vector2,
+        triangle_c: Vector2, surfaces: Array) -> Array:
+    var result := []
+    for surface in surfaces:
+        if Geometry.do_segment_and_triangle_intersect(surface.vertices.front(), \
+                surface.vertices.back(), triangle_a, triangle_b, triangle_c):
+            result.push_back(surface)
+    return result
+
+# This is only an approximation, since it only considers the end points of the surface rather than
+# each segment of the surface polyline.
+static func _get_surfaces_intersecting_polygon(polygon: Array, surfaces: Array) -> Array:
+    var result := []
+    for surface in surfaces:
+        if Geometry.do_segment_and_polygon_intersect(surface.vertices.front(), \
+                surface.vertices.back(), polygon):
+            result.push_back(surface)
+    return result
+
+static func _compare_surfaces_by_max_y(a: Surface, b: Surface) -> bool:
+    return a.bounding_box.position.y < b.bounding_box.position.y

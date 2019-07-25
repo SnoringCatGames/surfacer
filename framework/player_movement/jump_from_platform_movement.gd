@@ -7,6 +7,8 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 
 # FIXME: SUB-MASTER LIST ***************
 # - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
+#   - Test the logic for moving along a path.
+# 
 #   - B: Add support for executing movement along an edge.
 #   - C: Add support for executing movement WITHIN an edge.
 #   - D: Add path finding and update logic to Navigator.
@@ -18,7 +20,7 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #     - It will need to listen for when the navigator has reached the destination though (make sure
 #       that signal is emitted).
 #   - I: Fix surface annotator (doubles on part and wraps around edge wrong).
-# - 
+# 
 # - LEFT OFF HERE: Fix the current issue in check_frame_for_collision when using level_4 with all
 #                  surfaces.
 # - LEFT OFF HERE: Create a demo level to showcase lots of interesting edges.
@@ -40,7 +42,7 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #   - After fixing max vertical velocity, is there anything else I can boost?
 # - LEFT OFF HERE: Debug why _check_instructions_for_collision fails with collisions (render better annotations?).
 # - LEFT OFF HERE: Non-edge-calc, lighter work: Add squirrel animation.
-# - 
+# 
 # - Debugging:
 #   - Would it help to add some quick and easy annotation helpers for temp debugging that I can access on global (or wherever) and just tell to render dots/lines/circles?
 #   - Then I could use that to render all sorts of temp calculation stuff from this file.
@@ -48,9 +50,9 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #   - Try rendering a path for trajectory that's closen to the calculations for parabolic motion instead of the resulting instruction positions?
 #     - Might help to see the significance of the difference.
 #     - Might be able to do this with smaller step sizes?
-# - 
+# 
 # - Test anything else with our PlayerInstruction test?
-# - 
+# 
 # - Problem: What if we hit a ceiling surface (still moving upwards)?
 #   - We'll set a constraint to either side.
 #   - Then we'll likely need to backtrack to use a bigger jump height.
@@ -68,7 +70,7 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #     calling the sub function).
 # - Optimization: We should never consider increased-height backtracking from hitting a ceiling
 #   surface.
-# - 
+# 
 # - Create a pause menu and a level switcher.
 # - Create some sort of configuration for specifying a level as well as the set of annotations to use.
 #   - Actually use this from the menu's level switcher.
@@ -76,9 +78,9 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 # - Adapt one of the levels to just render a human player and then the annotations for all edges
 #   that our algorithm thinks the human player can traverse.
 #   - Try to render all of the interesting edge pairs that I think I should test for.
-# - 
+# 
 # - Step through and double-check each return value parameter individually through the recursion, and each input parameter.
-# - 
+# 
 # - Optimize a bit for collisions with vertical surfaces:
 #   - For the top constraint, change the constraint position to instead use the far side of the
 #     adjacent top-side/floor surface.
@@ -97,16 +99,14 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #   position to actually cause us to grab on to the target surface.
 #   - Solution: Add support for ensuring a minimum normal-direction speed at the end of the jump.
 #     - Faster is probably always better, since efficient/quick movements are better.
-# - 
+# 
 # - Problem: All of the edge calculations will allow the slow-ascent gravity to also be used for
 #   the downward portion of the jump.
 #   - Either update Player controllers to also allow that,
 #   - or update all relevant edge calculation logic.
-# - 
+# 
 # - Fix _get_nearby_and_fallable_surfaces et al
-# - 
-# - Eventually, split each Test inner-class group out into its own file
-# - 
+# 
 # - Make some diagrams in InkScape with surfaces, trajectories, and constraints to demonstrate
 #   algorithm traversal
 #   - Label/color-code parts to demonstrate separate traversal steps
