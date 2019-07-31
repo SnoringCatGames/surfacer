@@ -105,8 +105,6 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #   - Either update Player controllers to also allow that,
 #   - or update all relevant edge calculation logic.
 # 
-# - Fix _get_nearby_and_fallable_surfaces et al
-# 
 # - Make some diagrams in InkScape with surfaces, trajectories, and constraints to demonstrate
 #   algorithm traversal
 #   - Label/color-code parts to demonstrate separate traversal steps
@@ -140,26 +138,9 @@ func _init(params: MovementParams).("jump_from_platform", params) -> void:
     self.can_traverse_from_air = false
 
 func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
-        surface_parser: SurfaceParser, a: Surface) -> Array:
-    var player_half_width := params.collider_half_width_height.x
-    var player_half_height := params.collider_half_width_height.y
-    var a_start: Vector2 = a.vertices[0]
-    var a_end: Vector2 = a.vertices[a.vertices.size() - 1]
-    var b_start: Vector2
-    var b_end: Vector2
-    var a_near_end: Vector2
-    var a_far_end: Vector2
-    var a_closest_point: Vector2
-    var b_near_end: Vector2
-    var b_far_end: Vector2
-    var b_closest_point: Vector2
-    var possible_jump_points := []
-    var possible_land_points := []
-    var possible_jump_land_pairs := []
-    var jump_point: Vector2
-    var land_point: Vector2
-    var jump_position: PositionAlongSurface
-    var land_position: PositionAlongSurface
+        surface_parser: SurfaceParser, possible_surfaces: Array, a: Surface) -> Array:
+    var jump_positions: Array
+    var land_positions: Array
     var instructions: PlayerInstructions
     var edges := []
     
@@ -168,8 +149,6 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
     params.gravity_slow_ascent *= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     var global_calc_params := MovementCalcGlobalParams.new(params, space_state, surface_parser)
-    
-    var possible_surfaces := _get_nearby_and_fallable_surfaces(a)
     
     for b in possible_surfaces:
         # This makes the assumption that traversing through any fall-through/walk-through surface
@@ -181,58 +160,11 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
         
         global_calc_params.destination_surface = b
         
-        b_start = b.vertices[0]
-        b_end = b.vertices[b.vertices.size() - 1]
-        
         # FIXME: D:
         # - Do a cheap bounding-box distance check here, before calculating any possible jump/land
         #   points.
         # - Don't forget to also allow for fallable surfaces (more expensive).
         # - This is still cheaper than considering all 9 jump/land pair instructions, right?
-        
-        # Use a bounding-box heuristic to determine which end of the surfaces are likely to be
-        # nearer and farther.
-        if Geometry.distance_squared_from_point_to_rect(a_start, b.bounding_box) < \
-                Geometry.distance_squared_from_point_to_rect(a_end, b.bounding_box):
-            a_near_end = a_start
-            a_far_end = a_end
-        else:
-            a_near_end = a_end
-            a_far_end = a_start
-        if Geometry.distance_squared_from_point_to_rect(b_start, a.bounding_box) < \
-                Geometry.distance_squared_from_point_to_rect(b_end, a.bounding_box):
-            b_near_end = b_start
-            b_far_end = b_end
-        else:
-            b_near_end = b_end
-            b_far_end = b_start
-        
-        # The actual clostest points along each surface could be somewhere in the middle.
-        a_closest_point = \
-            Geometry.get_closest_point_on_polyline_to_polyline(a.vertices, b.vertices)
-        b_closest_point = \
-            Geometry.get_closest_point_on_polyline_to_polyline(b.vertices, a.vertices)
-        
-        # Only consider the far-end and closest points if they are distinct.
-        possible_jump_points.clear()
-        possible_land_points.clear()
-        possible_jump_points.push_back(a_near_end)
-        possible_land_points.push_back(b_near_end)
-        if a.vertices.size() > 1:
-            possible_jump_points.push_back(a_far_end)
-        if a_closest_point != a_near_end and a_closest_point != a_far_end:
-            possible_jump_points.push_back(a_closest_point)
-        if b.vertices.size() > 1:
-            possible_land_points.push_back(b_far_end)
-        if b_closest_point != b_near_end and b_closest_point != b_far_end:
-            possible_land_points.push_back(b_closest_point)
-        
-        # Calculate the pairs of possible jump and land points to check.
-        possible_jump_land_pairs.clear()
-        for possible_jump_point in possible_jump_points:
-            for possible_land_point in possible_land_points:
-                possible_jump_land_pairs.push_back(possible_jump_point)
-                possible_jump_land_pairs.push_back(possible_land_point)
         
         # FIXME: D *********** Remove. This is for debugging.
 #        if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
@@ -243,23 +175,20 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
         if a.side == SurfaceSide.CEILING or b.side == SurfaceSide.CEILING:
             continue
         
-        for i in range(possible_jump_land_pairs.size() - 1):
-            jump_point = possible_jump_land_pairs[i]
-            land_point = possible_jump_land_pairs[i + 1]
-            
-            jump_position = PositionAlongSurface.new()
-            jump_position.match_surface_target_and_collider(a, jump_point, \
-                    params.collider_half_width_height)
-            land_position = PositionAlongSurface.new()
-            land_position.match_surface_target_and_collider(b, land_point, \
-                    params.collider_half_width_height)
+        jump_positions = get_all_jump_positions_from_surface(a, b.vertices, b.bounding_box)
+        land_positions = get_all_jump_positions_from_surface(b, a.vertices, a.bounding_box)
+
+        for jump_position in jump_positions:
             global_calc_params.position_start = jump_position.target_point
-            global_calc_params.position_end = land_position.target_point
-            instructions = _calculate_jump_instructions(global_calc_params)
-            if instructions != null:
-                # Can reach land position from jump position.
-                edges.push_back(InterSurfaceEdge.new( \
-                        jump_position, land_position, instructions))
+
+            for land_position in land_positions:
+                global_calc_params.position_end = land_position.target_point
+
+                instructions = _calculate_jump_instructions(global_calc_params)
+                if instructions != null:
+                    # Can reach land position from jump position.
+                    edges.push_back(InterSurfaceEdge.new( \
+                            jump_position, land_position, instructions))
     
     # FIXME: B: REMOVE
     params.gravity_fast_fall /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
@@ -289,8 +218,8 @@ static func _calculate_jump_instructions( \
     if calc_results == null:
         return null
     
-    var instructions := \
-            _convert_calculation_steps_to_player_instructions(global_calc_params, calc_results)
+    var instructions := convert_calculation_steps_to_player_instructions( \
+            global_calc_params.position_start, global_calc_params.position_end, calc_results)
     
     if Utils.IN_DEV_MODE:
         _test_instructions(instructions, global_calc_params, calc_results)
@@ -399,7 +328,7 @@ static func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlo
     # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := _calculate_steps_from_constraint_without_backtracking_on_height( \
             global_calc_params, local_calc_params, constraints)
-    if calc_results != null:
+    if calc_results != null or !global_calc_params.can_backtrack_on_height:
         return calc_results
     
     # Then, try to satisfy the constraints with backtracking to consider a new max jump height.
@@ -829,45 +758,3 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     assert(Geometry.are_floats_equal_with_epsilon(position_end.y, step_end_state.x, 0.0001))
     
     return step
-
-# Translates movement data from a form that is more useful when calculating the movement to a form
-# that is more useful when executing the movement.
-static func _convert_calculation_steps_to_player_instructions( \
-        global_calc_params: MovementCalcGlobalParams, \
-        calc_results: MovementCalcResults) -> PlayerInstructions:
-    var steps := calc_results.horizontal_steps
-    var vertical_step := calc_results.vertical_step
-    
-    var distance_squared := \
-            global_calc_params.position_start.distance_squared_to(global_calc_params.position_end)
-    
-    var constraint_positions := []
-    
-    var instructions := []
-    instructions.resize((steps.size() + 1) * 2)
-    
-    var input_key := "jump"
-    var press := PlayerInstruction.new(input_key, vertical_step.time_start, true)
-    var release := PlayerInstruction.new(input_key, \
-            vertical_step.time_instruction_end + JUMP_DURATION_INCREASE_EPSILON, false)
-    
-    instructions[0] = press
-    instructions[1] = release
-    
-    var i := 0
-    var step: MovementCalcStep
-    for i in range(steps.size()):
-        step = steps[i]
-        input_key = "move_left" if step.horizontal_movement_sign < 0 else "move_right"
-        press = PlayerInstruction.new(input_key, step.time_start, true)
-        release = PlayerInstruction.new(input_key, \
-                step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON, false)
-        instructions[i * 2 + 2] = press
-        instructions[i * 2 + 3] = release
-        i += 1
-        
-        # Keep track of some info for edge annotation debugging.
-        constraint_positions.push_back(step.position_step_end)
-    
-    return PlayerInstructions.new(instructions, vertical_step.time_step_end, distance_squared, \
-            constraint_positions)

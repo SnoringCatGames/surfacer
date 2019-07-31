@@ -31,7 +31,8 @@ func set_surfaces(surface_parser: SurfaceParser) -> void:
             params.can_grab_walls, params.can_grab_ceilings, params.can_grab_floors)
 
 func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
-        surface_parser: SurfaceParser, surface: Surface) -> Array:
+        surface_parser: SurfaceParser, possible_destination_surfaces: Array, \
+        surface: Surface) -> Array:
     Utils.error( \
             "Abstract PlayerMovement.get_all_edges_from_surface is not implemented")
     return []
@@ -1167,150 +1168,149 @@ static func _calculate_min_time_to_reach_position(s_0: float, s: float, \
         
         return duration_to_reach_max_velocity + duration_with_max_velocity
 
-
-
-
-
-
-
-
-
-
-
-# FIXME: LEFT OFF HERE: -----------------------------A:
-# - Refactor/condense the following, and move it to PlatformGraph.
-# - Ignore below previous comments and functions, and just start over from scratch.
-# - Use triangle intersection for falling from an in-air position, and from vertical surfaces (just use the top offset point).
-# - Use polygon intersection for falling from horizontal surfaces.
-# - Instead of doing _any_ polyline intersection logic, only consider the end points of the surface (so just the one line segment).
-# - Return all possible surfaces in the range, not just the closest.
-# - 
-
-
-
-
-
-
-func _get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
-    # FIXME: C
-    # - remove the temporary return value of all surfaces
-    # - _get_nearby_surfaces
-    #   - Consider up-front-calculated max range according to horizontal acceleration/max and vertical acceleration/max
-    # - For up-front edge calculations, we want to be more permissive and return more fallable surfaces
-    # - For run-time finding-path-from-new-in-air-position calculations, we want to be more restrictive and just return the best handful (5? parameterize it)
-    #   - Probably still the closest X
-    #   - Consider initial velocity?
-    # - Should either version consider occlusion at all? [no]
-    # - Consider velocity changes due to gravity.
-    return surfaces
+static func get_all_jump_positions_from_surface(surface: Surface, target_vertices: Array, \
+        target_bounding_box: Rect2) -> Array:
+    var start: Vector2 = surface.vertices[0]
+    var end: Vector2 = surface.vertices[surface.vertices.size() - 1]
     
-    # FIXME: D: Update _get_closest_fallable_surface to support falling from the
-    #        center of fall-through surfaces (consider the whole surface, rather than just the
-    #        ends).
+    # Use a bounding-box heuristic to determine which end of the surfaces are likely to be
+    # nearer and farther.
+    var near_end: Vector2
+    var far_end: Vector2
+    if Geometry.distance_squared_from_point_to_rect(start, target_bounding_box) < \
+            Geometry.distance_squared_from_point_to_rect(end, target_bounding_box):
+        near_end = start
+        far_end = end
+    else:
+        near_end = end
+        far_end = start
+    
+    # Record the near-end poist.
+    var jump_position := _create_position_from_target_point( \
+            near_end, surface, params.collider_half_width_height)
+    var possible_jump_positions = [jump_position]
 
-    # TODO: Prevent duplicate work from finding matching surfaces as both nearby and fallable.
-    # var results := _get_nearby_surfaces(origin_surface, SURFACE_CLOSE_DISTANCE_THRESHOLD, surfaces)
+    # Only consider the far-end point if it is distinct.
+    if surface.vertices.size() > 1:
+        jump_position = _create_position_from_target_point( \
+                far_end, surface, params.collider_half_width_height)
+        possible_jump_positions.push_back(jump_position)
+        
+        # The actual clostest point along the surface could be somewhere in the middle.
+        # Only consider the closest point if it is distinct.
+        var closest_point: Vector2 = \
+                Geometry.get_closest_point_on_polyline_to_polyline(surface.vertices, target_vertices)
+        if closest_point != near_end and closest_point != far_end:
+            jump_position = _create_position_from_target_point( \
+                    closest_point, surface, params.collider_half_width_height)
+            possible_jump_positions.push_back(jump_position)
     
-    # var origin_vertex: Vector2
-    # var closest_fallable_surface: Surface
-    
-    # origin_vertex = origin_surface.vertices[0]
-    # closest_fallable_surface = _get_closest_fallable_surface(origin_vertex, surfaces, true)
-    # if !results.has(closest_fallable_surface):
-    #     results.push_back(closest_fallable_surface)
-    
-    # origin_vertex = origin_surface.vertices[origin_surface.vertices.size() - 1]
-    # closest_fallable_surface = _get_closest_fallable_surface(origin_vertex, surfaces, true)
-    # if !results.has(closest_fallable_surface):
-    #     results.push_back(closest_fallable_surface)
-    
-    # return results
+    return possible_jump_positions
 
-## Gets all other surfaces that are near the given surface.
-#static func _get_nearby_surfaces(target_surface: Surface, distance_threshold: float, \
-#        other_surfaces: Array) -> Array:
-#    var result := []
-#    for other_surface in other_surfaces:
-#        if _get_are_surfaces_close(target_surface, other_surface, distance_threshold) and \
-#                target_surface != other_surface:
-#            result.push_back(other_surface)
-#    return result
-#
-#static func _get_are_surfaces_close(surface_a: Surface, surface_b: Surface, \
-#        distance_threshold: float) -> bool:
-#    var vertices_a := surface_a.vertices
-#    var vertices_b := surface_b.vertices
-#    var vertex_a_a: Vector2
-#    var vertex_a_b: Vector2
-#    var vertex_b_a: Vector2
-#    var vertex_b_b: Vector2
-#
-#    var expanded_bounding_box_a = surface_a.bounding_box.grow(distance_threshold)
-#    if expanded_bounding_box_a.intersects(surface_b.bounding_box):
-#        var expanded_bounding_box_b = surface_b.bounding_box.grow(distance_threshold)
-#        var distance_squared_threshold = distance_threshold * distance_threshold
-#
-#        # Compare each segment in A with each vertex in B.
-#        for i_a in range(vertices_a.size() - 1):
-#            vertex_a_a = vertices_a[i_a]
-#            vertex_a_b = vertices_a[i_a + 1]
-#
-#            for i_b in range(vertices_b.size()):
-#                vertex_b_a = vertices_b[i_b]
-#
-#                if expanded_bounding_box_a.has_point(vertex_b_a) and \
-#                        Geometry.get_distance_squared_from_point_to_segment( \
-#                                vertex_b_a, vertex_a_a, vertex_a_b) <= distance_squared_threshold:
-#                    return true
-#
-#        # Compare each vertex in A with each segment in B.
-#        for i_a in range(vertices_a.size()):
-#            vertex_a_a = vertices_a[i_a]
-#
-#            for i_b in range(vertices_b.size() - 1):
-#                vertex_b_a = vertices_b[i_b]
-#                vertex_b_b = vertices_b[i_b + 1]
-#
-#                if expanded_bounding_box_b.has_point(vertex_a_a) and \
-#                        Geometry.get_distance_squared_from_point_to_segment( \
-#                                vertex_a_a, vertex_b_a, vertex_b_b) <= distance_squared_threshold:
-#                    return true
-#
-#            # Handle the degenerate case of single-vertex surfaces.
-#            if vertices_b.size() == 1:
-#                if vertex_a_a.distance_squared_to(vertices_b[0]) <= distance_squared_threshold:
-#                    return true
-#
-#    return false
-#
-#
-#
-#
-#
-## Gets the closest surface that can be reached by falling from the given point.
-#func _get_closest_fallable_surface(start: Vector2, surfaces: Array, \
-#        can_use_horizontal_distance := false) -> Surface:
-#    var end_x_distance = DOWNWARD_DISTANCE_TO_CHECK_FOR_FALLING * \
-#            params.max_horizontal_speed_default / \
-#            params.max_vertical_speed
-#    var end_y = start.y + DOWNWARD_DISTANCE_TO_CHECK_FOR_FALLING
-#
-#    if can_use_horizontal_distance:
-#        var start_x_distance = params.max_horizontal_distance
-#
-#        var leftmost_start = Vector2(start.x - start_x_distance, start.y)
-#        var rightmost_start = Vector2(start.x + start_x_distance, start.y)
-#        var leftmost_end = Vector2(leftmost_start.x - end_x_distance, end_y)
-#        var rightmost_end = Vector2(rightmost_start.x + end_x_distance, end_y)
-#
-#        return _get_closest_fallable_surface_intersecting_polygon(start, \
-#                [leftmost_start, rightmost_start, rightmost_end, leftmost_end], \
-#                surfaces)
-#    else:
-#        var leftmost_end = Vector2(start.x - end_x_distance, end_y)
-#        var rightmost_end = Vector2(start.x + end_x_distance, end_y)
-#
-#        return _get_closest_fallable_surface_intersecting_triangle(start, start, leftmost_end, \
-#                rightmost_end, surfaces)
-#
-#
+static func _create_position_from_target_point(target_point: Vector2, surface: Surface, \
+        collider_half_width_height: Vector2) -> PositionAlongSurface:
+    var position := PositionAlongSurface.new()
+    position.match_surface_target_and_collider(surface, target_point, collider_half_width_height)
+    return position
+
+# Calculates a new step for the vertical part of the fall movement and the corresponding total fall
+# duration.
+static func calculate_fall_vertical_step(movement_params: MovementParams, \
+        position_start: Vector2, position_end: Vector2, \
+        velocity_start: Vector2) -> MovementCalcLocalParams:
+    # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    
+    var total_displacement: Vector2 = position_end - position_start
+    var min_vertical_displacement := movement_params.max_upward_distance
+    
+    # Check whether the vertical displacement is possible.
+    if min_vertical_displacement > total_displacement.y:
+        return null
+    
+    var horizontal_movement_sign: int
+    if total_displacement.x < 0:
+        horizontal_movement_sign = -1
+    elif total_displacement.x > 0:
+        horizontal_movement_sign = 1
+    else:
+        horizontal_movement_sign = 0
+    
+    var total_duration := Geometry.solve_for_movement_duration(position_start.y, position_end.y, \
+            velocity_start.y, movement_params.gravity_fast_fall, false)
+    if total_duration == INF:
+        return null
+    
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    var time_peak_height := -velocity_start.y / movement_params.gravity_fast_fall
+    time_peak_height = max(time_peak_height, 0.0)
+    
+    var step := MovementCalcStep.new()
+    step.time_start = 0.0
+    step.time_instruction_end = 0.0
+    step.time_step_end = total_duration
+    step.time_peak_height = time_peak_height
+    step.position_start = position_start
+    step.velocity_start = velocity_start
+    step.horizontal_movement_sign = horizontal_movement_sign
+    
+    var step_end_state := \
+            _update_vertical_end_state_for_time(movement_params, step, step.time_step_end)
+    var peak_height_end_state := \
+            _update_vertical_end_state_for_time(movement_params, step, step.time_peak_height)
+    
+    step.position_instruction_end = position_start
+    step.position_step_end = Vector2(INF, step_end_state.x)
+    step.position_peak_height = Vector2(INF, peak_height_end_state.x)
+    step.velocity_instruction_end = velocity_start
+    step.velocity_step_end = Vector2(INF, step_end_state.y)
+    
+    assert(Geometry.are_floats_equal_with_epsilon( \
+            step.position_step_end.y, position_end.y, 0.001))
+    
+    return MovementCalcLocalParams.new(position_start, position_end, null, step, null)
+
+# Translates movement data from a form that is more useful when calculating the movement to a form
+# that is more useful when executing the movement.
+static func convert_calculation_steps_to_player_instructions( \
+        position_start: Vector2, position_end: Vector2, \
+        calc_results: MovementCalcResults, includes_jump := true) -> PlayerInstructions:
+    var steps := calc_results.horizontal_steps
+    var vertical_step := calc_results.vertical_step
+    
+    var distance_squared := position_start.distance_squared_to(position_end)
+    
+    var constraint_positions := []
+    
+    var instructions := []
+    instructions.resize(steps.size() * 2)
+    
+    var step: MovementCalcStep
+    var input_key: String
+    var press: PlayerInstruction
+    var release: PlayerInstruction
+
+    # Record the various sideways movement instructions.
+    for i in range(steps.size()):
+        step = steps[i]
+        input_key = "move_left" if step.horizontal_movement_sign < 0 else "move_right"
+        press = PlayerInstruction.new(input_key, step.time_start, true)
+        release = PlayerInstruction.new(input_key, \
+                step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON, false)
+        instructions[i * 2] = press
+        instructions[i * 2 + 1] = release
+        
+        # Keep track of some info for edge annotation debugging.
+        constraint_positions.push_back(step.position_step_end)
+    
+    # Record the jump instruction.
+    if includes_jump:
+        input_key = "jump"
+        press = PlayerInstruction.new(input_key, vertical_step.time_start, true)
+        release = PlayerInstruction.new(input_key, \
+                vertical_step.time_instruction_end + JUMP_DURATION_INCREASE_EPSILON, false)
+        instructions.push_front(release)
+        instructions.push_front(press)
+    
+    return PlayerInstructions.new(instructions, vertical_step.time_step_end, distance_squared, \
+            constraint_positions)

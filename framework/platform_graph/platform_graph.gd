@@ -5,25 +5,26 @@ extends Reference
 class_name PlatformGraph
 
 const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
+const AirToSurfaceEdge := preload("res://framework/platform_graph/edge/air_to_surface_edge.gd")
 const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_surface_edge.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
-# 
+#
 # - Finish everything in JumpFromPlatformMovement (edge calculations, including movement constraints from interfering surfaces)
 # - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
-# 
+#
 # - Use FallFromAirMovement
 # - Use PlayerMovement.get_max_upward_distance and PlayerMovement.get_max_horizontal_distance
-# 
+#
 # - Add annotations that draw the recent path that the player actually moved.
 # - Add annotations for rendering some basic navigation mode info for the CP:
 #   - Mode name
 #   - Current "input" (UP, LEFT, etc.)?
 #   - The entirety of the current instruction-set being run?
-# 
+#
 # - Add logic to consider a minimum movement distance, since jumping from floors or walls gives a
-#   set minimum displacement. 
-# 
+#   set minimum displacement.
+#
 # - Add logic to test execution of TestPlayer movement over _every_ edge in a complex, hand-made
 #   test level.
 #   - Make sure that the player hits the correct destination surface without hitting any other
@@ -31,10 +32,10 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 #   - Also test that the player lands on the destination within a threshold of the expected
 #     position.
 #   - Will need to figure out how to emulate/manipulate time deltas for the test environment...
-# 
+#
 # - Add logic to automatically self-correct to the expected position/movement/state sometimes...
 #   - When? Each frame? Only when we're further away than our tolerance allows?
-# 
+#
 # - Add support for actually considering the discrete physics time steps rather than assuming
 #   continuous integration?
 #   - OR, add support for fudging it?
@@ -46,7 +47,7 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 #       performance.
 #     - Or would something like a GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION (~0.9985?)
 #       param fix things enough?
-# 
+#
 # - Refactor PlayerMovement classes, so that whether the start and end posiition is on a platform
 #   or in the air is configuration that JumpFromPlatformMovement handles directly, rather than
 #   relying on a separate FallFromAir class?
@@ -60,22 +61,22 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 #   - Variable jump height
 #   - Double jump
 #   - Horizontal acceleration?
-# 
+#
 # - Update the pre-configured Input Map in Project Settings to use more semantic keys instead of just up/down/etc.
 # - Document in a separate markdown file exactly which Input Map keys this framework depends on.
-# 
+#
 # - MAKE get_nearby_surfaces MORE EFFICIENT? (force run it everyframe to ensure no lag)
 #   - Scrap previous function; just use bounding box intersection (since I'm going to need to use
 #     better logic for determining movement patterns anyway...)
 #   - Actually, maybe don't worry too much, because this is actually only run at the start.
-# 
+#
 # - Add logic to Player when calculating touched edges to check that the collider is a stationary TileMap object
-# 
+#
 # - Figure out how to configure input names/mappings (or just add docs specifying that the
 #   consumer must use these input names?)
 # - Start adding networking support.
 # - Finish adding tests.
-# 
+#
 # - Add an early-cutoff mechanism to A* for paths that deviate too far from straight-line.
 #   Otherwise, it will check every connecected surface before knowing that a destination cannot be
 #   reached.
@@ -87,6 +88,9 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 #     - Takes more space (maybe ok?).
 #     - Too expensive if the map ever changes dynamically.
 #       - Unless I have a way of localizing changes.
+# 
+# - Update things to support falling from the center of fall-through surfaces (consider the whole
+#   surface, rather than just the ends).
 
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
@@ -104,16 +108,16 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
         player_info: PlayerTypeConfiguration) -> void:
     self.movement_params = player_info.movement_params
     self.surface_parser = surface_parser
-    
+
     # Store the subset of surfaces that this player type can interact with.
     self.surfaces = surface_parser.get_subset_of_surfaces( \
             movement_params.can_grab_walls, \
             movement_params.can_grab_ceilings, \
             movement_params.can_grab_floors)
-    
+
     self.surfaces_to_nodes = {}
     self.nodes_to_edges = {}
-    
+
     _calculate_nodes_and_edges(space_state, surface_parser, surfaces, player_info)
 
 # Uses A* search.
@@ -122,19 +126,19 @@ func find_path(origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:
     var origin_surface := origin.surface
     var destination_surface := destination.surface
-    
+
     if origin_surface == destination_surface:
         # If the we are simply trying to get to a different position on the same surface, then we
         # don't need A*.
         var edges := [IntraSurfaceEdge.new(origin, destination)]
         return PlatformGraphPath.new(edges)
-    
+
     var frontier := PriorityQueue.new()
     var node_to_previous_node := {}
     node_to_previous_node[origin] = null
     var nodes_to_weights := {}
     nodes_to_weights[origin] = 0.0
-    
+
     var nodes_to_edges_for_current_node: Dictionary
     var next_edge: Edge
     var current_node: PositionAlongSurface
@@ -143,81 +147,81 @@ func find_path(origin: PositionAlongSurface, \
     var new_weight: float
     var heuristic_weight: float
     var priority: float
-    
+
     # Record temporary edges from the origin to each node on the origin's surface.
     for next_node in surfaces_to_nodes[origin_surface]:
         # Record the path to this node.
         node_to_previous_node[next_node] = origin
-        
+
         # Record this node's weight.
         new_weight = origin.target_point.distance_squared_to(next_node.target_point)
         nodes_to_weights[next_node] = new_weight
-        
+
         # Add this node to the frontier with a priority.
         priority = new_weight
         frontier.insert(priority, next_node)
-    
+
     # Determine the cheapest path.
     while !frontier.is_empty:
         current_node = frontier.remove_root()
         current_weight = nodes_to_weights[current_node]
-        
+
         if current_node == destination:
             break
-        
+
         if current_node.surface == destination_surface:
             # Record a temporary edge to the destination from this current_node.
-            
+
             next_node = destination
             new_weight = current_weight + \
                     current_node.target_point.distance_squared_to(destination.target_point)
-            
+
             if !nodes_to_weights.has(next_node) or new_weight < nodes_to_weights[next_node]:
                 # We found a new or cheaper path to this next node, so record it.
-                
+
                 # Record the path to this node.
                 node_to_previous_node[next_node] = current_node
-                
+
                 # Record this node's weight.
                 nodes_to_weights[next_node] = new_weight
-                
+
                 # Add this node to the frontier with a priority.
                 priority = new_weight
                 frontier.insert(priority, next_node)
-        
+
             continue
-        
+
         # Iterate through each current neighbor node, and add record their weights, paths, and
         # priorities.
         nodes_to_edges_for_current_node = nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
             next_edge = nodes_to_edges_for_current_node[next_node]
             new_weight = current_weight + next_edge.weight
-            
+
             if !nodes_to_weights.has(next_node) or new_weight < nodes_to_weights[next_node]:
                 # We found a new or cheaper path to this next node, so record it.
-                
+
                 # Record the path to this node.
                 node_to_previous_node[next_node] = current_node
-                
+
                 # Record this node's weight.
                 nodes_to_weights[next_node] = new_weight
                 heuristic_weight = next_node.target_point.distance_squared_to(destination.target_point)
-                
+
                 # Add this node to the frontier with a priority.
                 priority = new_weight + heuristic_weight
                 frontier.insert(priority, next_node)
-    
+
     # Collect the edges for the cheapest path.
-    
+
     var edges := []
     current_node = destination
     var previous_node: PositionAlongSurface = node_to_previous_node.get(current_node)
-    
+
     if previous_node == null:
         # The destination cannot be reached form the origin.
         return null
-    
+
     while previous_node != null:
         if node_to_previous_node[previous_node] == null or edges.empty():
             # The first and last edge are temporary and extend from/to the origin/destination,
@@ -225,71 +229,100 @@ func find_path(origin: PositionAlongSurface, \
             next_edge = IntraSurfaceEdge.new(previous_node, current_node)
         else:
             next_edge = nodes_to_edges[previous_node][current_node]
-        
+
         assert(next_edge != null)
-        
+
         edges.push_front(next_edge)
         current_node = previous_node
         previous_node = node_to_previous_node.get(previous_node)
-    
+
     assert(!edges.empty())
-    
+
     return PlatformGraphPath.new(edges)
 
 # Finds a movement step that will result in landing on a surface, with an attempt to minimize the
 # path the player would then have to travel between surfaces to reach the given target.
-# 
+#
 # Returns null if no possible landing exists.
-func find_a_landing_trajectory( \
-        origin: Vector2, destination: PositionAlongSurface) -> AirToSurfaceEdge:
+func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
+        destination: PositionAlongSurface) -> AirToSurfaceEdge:
     var possible_landing_surfaces := find_possible_landing_surfaces(origin)
     possible_landing_surfaces.sort_custom(self, "_compare_surfaces_by_max_y")
 
-    # FIXME: LEFT OFF HERE: ------------------A
-    # - Iterate through sorted surfaces.
-    # - For each, see if there is a valid movement step that can reach it from the
-    #   current position/velocity.
-    # - Which three potential landing positions to consider?
-    #   - Just closest point and nearest end?
+    var global_calc_params := MovementCalcGlobalParams.new( \
+            movement_params, space_state, surface_parser, false)
+    global_calc_params.position_start = origin
+
+    var origin_vertices := [origin]
+    var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
+
+    var possible_end_positions: Array
+    var local_calc_params: MovementCalcLocalParams
+    var calc_results: MovementCalcResults
+
+    # Find the first possible edge to a landing surface.
+    for surface in possible_landing_surfaces:
+        global_calc_params.destination_surface = surface
+        
+        possible_end_positions = PlayerMovement.get_all_jump_positions_from_surface( \
+                destination, origin_vertices, origin_bounding_box)
+        
+        for position_end in possible_end_positions:
+            global_calc_params.position_end = position_end.target_point
+            
+            local_calc_params = PlayerMovement.calculate_fall_vertical_step( \
+                    movement_params, origin, position_end.target_point, velocity_start)
+            if local_calc_params == null:
+                continue
+            
+            calc_results = _calculate_steps_from_constraint(global_calc_params, local_calc_params)
+            if calc_results != null:
+                return AirToSurfaceEdge.new(origin, position_end, calc_results)
 
     return null
 
-func find_possible_landing_surfaces(origin: Vector2) -> Array:
-    # FIXME: LEFT OFF HERE: ------------------A
-    # - 2 fudge params:
-    #   - one to spread the initial triangle out to top-left/right
-    #     - fudge according to horizontal acc rate and gravity rate
-    #   - then the other param is what the slope of terminal fall velocityy is
-    #   - Let's assume:
-    #     - 600 down to reach max y velocity
-    #     - 300 over in that much time
-    #     - 
-    #     - 1500.0 in_air_horizontal_acceleration
-    #     - 5000 gravity
-    #     - 
-    #     - 
-    #     - 400 max_horizontal_speed_default
-    #     - 4000 max_vertical_speed
-    #     - 
+func find_possible_landing_surfaces(origin: Vector2, velocity_start: Vector2) -> Array:
+    # FIXME: E: Offset the start_position_offset to account for velocity_start.
+    # TODO: Refactor this to use a more accurate bounding polygon.
 
     # This offset should account for the extra horizontal range before the player has reached
     # terminal velocity.
-    var start_position_horizontal_offset := movement_params.gravity / movement_params.in_air_horizontal_acceleration * 0.6
+    var start_position_offset := Vector2(movement_params.gravity / movement_params.in_air_horizontal_acceleration * 0.6, 0)
     var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
+    var bottom_corner_offset_from_top_corner := Vector2(100000.0, 100000.0 * slope)
 
-    var top_left := 
-    var top_right := 
-    var bottom_left := 
-    var bottom_right := 
-    var result := _get_surfaces_intersecting_polygon( \
+    var top_left := origin - start_position_offset
+    var top_right := origin + start_position_offset
+    var bottom_left := top_left + Vector2(-bottom_corner_offset_from_top_corner.x, bottom_corner_offset_from_top_corner.y)
+    var bottom_right := top_right + Vector2(bottom_corner_offset_from_top_corner.x, bottom_corner_offset_from_top_corner.y)
+    return _get_surfaces_intersecting_polygon( \
             [top_left, top_right, bottom_right, bottom_left], surfaces)
-    # return result
-    return []
+
+func get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
+    # TODO: Update this to support falling from the center of fall-through surfaces (consider the
+    #       whole surface, rather than just the ends).
+
+    # FIXME: LEFT OFF HERE: --------------A: Implement this.
+
+    # var velocity_start := Vector2(0.0, params.jump_boost)
+
+    # find_possible_landing_surfaces(origin_surface.vertices[0], velocity_start)
+
+    # var size := origin_surface.vertices.size()
+    # if size > 1:
+    #     find_possible_landing_surfaces(origin_surface.vertices[size - 1], velocity_start)
+    
+    # _get_nearby_surfaces(origin_surface, SURFACE_CLOSE_DISTANCE_THRESHOLD, surfaces)
+
+    # FIXME: Remove
+    return surfaces
 
 # Calculates and stores the edges between surface nodes that this player type can traverse.
 func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
         surface_parser: SurfaceParser, surfaces: Array, \
         player_info: PlayerTypeConfiguration) -> void:
+    var possible_destination_surfaces: Array
+    
     # Calculate all inter-surface edges.
     var surfaces_to_edges := {}
     for movement_type in player_info.movement_types:
@@ -300,33 +333,35 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
                 # FIXME: LEFT OFF HERE: DEBUGGING: Remove
                 if player_info.name == "cat":
                     # Calculate the inter-surface edges.
-                    surfaces_to_edges[surface] = movement_type.get_all_edges_from_surface(space_state, surface_parser, surface)
-    
+                    possible_destination_surfaces = get_nearby_and_fallable_surfaces(surface)
+                    surfaces_to_edges[surface] = movement_type.get_all_edges_from_surface( \
+                            space_state, possible_destination_surfaces, surface_parser, surface)
+
     # Dedup all edge-end positions (aka, nodes).
     var grid_cell_to_node := {}
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
             edge.start = _dedup_node(edge.start, grid_cell_to_node)
             edge.end = _dedup_node(edge.end, grid_cell_to_node)
-    
+
     # Record mappings from surfaces to nodes.
     var nodes_set := {}
     var cell_id: String
     for surface in surfaces_to_edges:
         nodes_set.clear()
-        
+
         # Get a deduped set of all nodes on this surface.
         for edge in surfaces_to_edges[surface]:
             cell_id = _node_to_cell_id(edge.start)
             nodes_set[cell_id] = edge.start
-        
+
         surfaces_to_nodes[surface] = nodes_set.values()
-    
+
     # Set up edge mappings.
     for surface in surfaces_to_nodes:
         for node in surfaces_to_nodes[surface]:
             nodes_to_edges[node] = {}
-    
+
     # Calculate and record all intra-surface edges.
     var intra_surface_edge: IntraSurfaceEdge
     for surface in surfaces_to_nodes:
@@ -335,25 +370,25 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
                 if node_a == node_b:
                     # Don't create intra-surface edges that start and end at the same node.
                     continue
-                
+
                 # Record uni-directional edges in both directions.
                 intra_surface_edge = IntraSurfaceEdge.new(node_a, node_b)
                 nodes_to_edges[node_a][node_b] = intra_surface_edge
                 intra_surface_edge = IntraSurfaceEdge.new(node_b, node_a)
                 nodes_to_edges[node_b][node_a] = intra_surface_edge
-    
+
     # Record inter-surface edges.
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
             nodes_to_edges[edge.start][edge.end] = edge
 
 # Checks whether a previous node with the same position has already been seen.
-# 
+#
 # - If there is a match, then the previous instance is returned.
 # - Otherwise, the new new instance is recorded and returned.
 static func _dedup_node(node: PositionAlongSurface, grid_cell_to_node: Dictionary) -> PositionAlongSurface:
     var cell_id := _node_to_cell_id(node)
-    
+
     if grid_cell_to_node.has(cell_id):
         # If we already have a node in this position, then replace the reference for this
         # edge to instead use this other node instance.
@@ -361,11 +396,11 @@ static func _dedup_node(node: PositionAlongSurface, grid_cell_to_node: Dictionar
     else:
         # If we don't yet have a node in this position, then record this node.
         grid_cell_to_node[cell_id] = node
-    
+
     return node
 
 # Get a string representation for the grid cell that the given node corresponds to.
-# 
+#
 # - Before considering each position, subtract x and y by CLUSTER_CELL_HALF_SIZE, since positions
 #   are likely to be aligned with cell boundaries, which would make cell assignment less
 #   predictable.
@@ -399,3 +434,62 @@ static func _get_surfaces_intersecting_polygon(polygon: Array, surfaces: Array) 
 
 static func _compare_surfaces_by_max_y(a: Surface, b: Surface) -> bool:
     return a.bounding_box.position.y < b.bounding_box.position.y
+
+# FIXME: LEFT OFF HERE: --------------A: Double-check this old work.
+
+# Gets all other surfaces that are near the given surface.
+static func _get_nearby_surfaces(target_surface: Surface, distance_threshold: float, \
+       other_surfaces: Array) -> Array:
+   var result := []
+   for other_surface in other_surfaces:
+       if _get_are_surfaces_close(target_surface, other_surface, distance_threshold) and \
+               target_surface != other_surface:
+           result.push_back(other_surface)
+   return result
+
+static func _get_are_surfaces_close(surface_a: Surface, surface_b: Surface, \
+       distance_threshold: float) -> bool:
+   var vertices_a := surface_a.vertices
+   var vertices_b := surface_b.vertices
+   var vertex_a_a: Vector2
+   var vertex_a_b: Vector2
+   var vertex_b_a: Vector2
+   var vertex_b_b: Vector2
+
+   var expanded_bounding_box_a = surface_a.bounding_box.grow(distance_threshold)
+   if expanded_bounding_box_a.intersects(surface_b.bounding_box):
+       var expanded_bounding_box_b = surface_b.bounding_box.grow(distance_threshold)
+       var distance_squared_threshold = distance_threshold * distance_threshold
+
+       # Compare each segment in A with each vertex in B.
+       for i_a in range(vertices_a.size() - 1):
+           vertex_a_a = vertices_a[i_a]
+           vertex_a_b = vertices_a[i_a + 1]
+
+           for i_b in range(vertices_b.size()):
+               vertex_b_a = vertices_b[i_b]
+
+               if expanded_bounding_box_a.has_point(vertex_b_a) and \
+                       Geometry.get_distance_squared_from_point_to_segment( \
+                               vertex_b_a, vertex_a_a, vertex_a_b) <= distance_squared_threshold:
+                   return true
+
+       # Compare each vertex in A with each segment in B.
+       for i_a in range(vertices_a.size()):
+           vertex_a_a = vertices_a[i_a]
+
+           for i_b in range(vertices_b.size() - 1):
+               vertex_b_a = vertices_b[i_b]
+               vertex_b_b = vertices_b[i_b + 1]
+
+               if expanded_bounding_box_b.has_point(vertex_a_a) and \
+                       Geometry.get_distance_squared_from_point_to_segment( \
+                               vertex_a_a, vertex_b_a, vertex_b_b) <= distance_squared_threshold:
+                   return true
+
+           # Handle the degenerate case of single-vertex surfaces.
+           if vertices_b.size() == 1:
+               if vertex_a_a.distance_squared_to(vertices_b[0]) <= distance_squared_threshold:
+                   return true
+
+   return false

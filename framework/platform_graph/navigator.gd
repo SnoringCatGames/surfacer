@@ -39,7 +39,7 @@ func navigate_to_nearest_surface(target: Vector2) -> bool:
         path = graph.find_path(origin, destination)
     else:
         var origin := surface_state.center_position
-        var air_to_surface_edge := graph.find_a_landing_trajectory(origin, destination)
+        var air_to_surface_edge := graph.find_a_landing_trajectory(origin, player.velocity, destination)
         if air_to_surface_edge != null:
             path = graph.find_path(air_to_surface_edge.end, destination)
             if path != null:
