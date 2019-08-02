@@ -10,6 +10,17 @@ const SURFACE_CLOSE_DISTANCE_THRESHOLD := 512.0
 const DOWNWARD_DISTANCE_TO_CHECK_FOR_FALLING := 10000.0
 const VERTEX_SIDE_NUDGE_OFFSET := 0.001
 
+# FIXME: B ******
+# - Should I remove this and force a slightly higher offset to target jump position directly? What
+#   about passing through constraints? Would the increased time to get to the position for a
+#   wall-top constraint result in too much downward velocity into the ceiling?
+# - Or what about the constraint offset margins? Shouldn't those actually address any needed
+#   jump-height epsilon? Is this needlessly redundant with that mechanism?
+# - Though I may need to always at least have _some_ small value here...
+# FIXME: D ******** Tweak this
+const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
+const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
+
 var JUMP_RELEASE_INSTRUCTION = PlayerInstruction.new("jump", -1, false)
 
 var name: String
@@ -171,9 +182,9 @@ static func _check_instructions_for_collision(global_calc_params: MovementCalcGl
         
         # Update state for the next frame.
         position += displacement
-        velocity = AirDefaultAction.update_velocity_in_air(velocity, delta, is_pressing_jump, \
-                is_first_jump, horizontal_movement_sign, movement_params)
-        velocity = CapVelocityAction.cap_velocity(velocity, movement_params)
+        velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
+                horizontal_movement_sign, movement_params)
+        velocity = cap_velocity(velocity, movement_params)
         previous_time = current_time
         current_time += delta
         
@@ -279,9 +290,9 @@ static func _check_discrete_horizontal_step_for_collision( \
         
         # Update state for the next frame.
         position += displacement
-        velocity = AirDefaultAction.update_velocity_in_air(velocity, delta, is_pressing_jump, \
-                is_first_jump, horizontal_movement_sign, movement_params)
-        velocity = CapVelocityAction.cap_velocity(velocity, movement_params)
+        velocity = update_velocity_in_air(velocity, delta, is_pressing_jump, is_first_jump, \
+                horizontal_movement_sign, movement_params)
+        velocity = cap_velocity(velocity, movement_params)
         previous_time = current_time
         current_time += delta
     
@@ -1168,8 +1179,8 @@ static func _calculate_min_time_to_reach_position(s_0: float, s: float, \
         
         return duration_to_reach_max_velocity + duration_with_max_velocity
 
-static func get_all_jump_positions_from_surface(surface: Surface, target_vertices: Array, \
-        target_bounding_box: Rect2) -> Array:
+static func get_all_jump_positions_from_surface(movement_params: MovementParams, \
+        surface: Surface, target_vertices: Array, target_bounding_box: Rect2) -> Array:
     var start: Vector2 = surface.vertices[0]
     var end: Vector2 = surface.vertices[surface.vertices.size() - 1]
     
@@ -1187,13 +1198,13 @@ static func get_all_jump_positions_from_surface(surface: Surface, target_vertice
     
     # Record the near-end poist.
     var jump_position := _create_position_from_target_point( \
-            near_end, surface, params.collider_half_width_height)
+            near_end, surface, movement_params.collider_half_width_height)
     var possible_jump_positions = [jump_position]
 
     # Only consider the far-end point if it is distinct.
     if surface.vertices.size() > 1:
         jump_position = _create_position_from_target_point( \
-                far_end, surface, params.collider_half_width_height)
+                far_end, surface, movement_params.collider_half_width_height)
         possible_jump_positions.push_back(jump_position)
         
         # The actual clostest point along the surface could be somewhere in the middle.
@@ -1202,7 +1213,7 @@ static func get_all_jump_positions_from_surface(surface: Surface, target_vertice
                 Geometry.get_closest_point_on_polyline_to_polyline(surface.vertices, target_vertices)
         if closest_point != near_end and closest_point != far_end:
             jump_position = _create_position_from_target_point( \
-                    closest_point, surface, params.collider_half_width_height)
+                    closest_point, surface, movement_params.collider_half_width_height)
             possible_jump_positions.push_back(jump_position)
     
     return possible_jump_positions
@@ -1235,8 +1246,8 @@ static func calculate_fall_vertical_step(movement_params: MovementParams, \
     else:
         horizontal_movement_sign = 0
     
-    var total_duration := Geometry.solve_for_movement_duration(position_start.y, position_end.y, \
-            velocity_start.y, movement_params.gravity_fast_fall, false)
+    var total_duration: float = Geometry.solve_for_movement_duration(position_start.y, \
+            position_end.y, velocity_start.y, movement_params.gravity_fast_fall, false)
     if total_duration == INF:
         return null
     
@@ -1314,3 +1325,43 @@ static func convert_calculation_steps_to_player_instructions( \
     
     return PlayerInstructions.new(instructions, vertical_step.time_step_end, distance_squared, \
             constraint_positions)
+
+static func update_velocity_in_air( \
+        velocity: Vector2, delta: float, is_pressing_jump: bool, is_first_jump: bool, \
+        horizontal_movement_sign: int, movement_params: MovementParams) -> Vector2:
+    var is_ascending_from_jump := velocity.y < 0 and is_pressing_jump
+    
+    # Make gravity stronger when falling. This creates a more satisfying jump.
+    # Similarly, make gravity stronger for double jumps.
+    var gravity_multiplier := 1.0 if !is_ascending_from_jump else \
+            (movement_params.slow_ascent_gravity_multiplier if is_first_jump \
+                    else movement_params.ascent_double_jump_gravity_multiplier)
+    
+    # Vertical movement.
+    velocity.y += delta * movement_params.gravity_fast_fall * gravity_multiplier
+    
+    # Horizontal movement.
+    velocity.x += delta * movement_params.in_air_horizontal_acceleration * horizontal_movement_sign
+    
+    return velocity
+
+static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> Vector2:
+    # Cap horizontal speed at a max value.
+    velocity.x = clamp(velocity.x, -movement_params.current_max_horizontal_speed, \
+            movement_params.current_max_horizontal_speed)
+    
+    # Kill horizontal speed below a min value.
+    if velocity.x > -movement_params.min_horizontal_speed and \
+            velocity.x < movement_params.min_horizontal_speed:
+        velocity.x = 0
+    
+    # Cap vertical speed at a max value.
+    velocity.y = clamp(velocity.y, -movement_params.max_vertical_speed, \
+            movement_params.max_vertical_speed)
+    
+    # Kill vertical speed below a min value.
+    if velocity.y > -movement_params.min_vertical_speed and \
+            velocity.y < movement_params.min_vertical_speed:
+        velocity.y = 0
+    
+    return velocity

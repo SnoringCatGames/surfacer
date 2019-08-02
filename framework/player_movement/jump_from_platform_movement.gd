@@ -111,17 +111,6 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 # - Make the 144-cell diagram in InkScape and add to docs.
 # - Storing possibly 9 edges from A to B.
 
-# FIXME: B ******
-# - Should I remove this and force a slightly higher offset to target jump position directly? What
-#   about passing through constraints? Would the increased time to get to the position for a
-#   wall-top constraint result in too much downward velocity into the ceiling?
-# - Or what about the constraint offset margins? Shouldn't those actually address any needed
-#   jump-height epsilon? Is this needlessly redundant with that mechanism?
-# - Though I may need to always at least have _some_ small value here...
-# FIXME: D ******** Tweak this
-const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
-const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
-
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
 # FIXME: B: use this to record slow/fast gravities on the movement_params when initializing and
@@ -175,8 +164,8 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
         if a.side == SurfaceSide.CEILING or b.side == SurfaceSide.CEILING:
             continue
         
-        jump_positions = get_all_jump_positions_from_surface(a, b.vertices, b.bounding_box)
-        land_positions = get_all_jump_positions_from_surface(b, a.vertices, a.bounding_box)
+        jump_positions = get_all_jump_positions_from_surface(params, a, b.vertices, b.bounding_box)
+        land_positions = get_all_jump_positions_from_surface(params, b, a.vertices, a.bounding_box)
 
         for jump_position in jump_positions:
             global_calc_params.position_start = jump_position.target_point
@@ -272,14 +261,14 @@ static func _calculate_steps_with_new_jump_height(global_calc_params: MovementCa
         
     local_calc_params.upcoming_constraint = upcoming_constraint
     
-    return _calculate_steps_from_constraint(global_calc_params, local_calc_params)
+    return calculate_steps_from_constraint(global_calc_params, local_calc_params)
 
 # Recursively calculates a list of movement steps to reach the given destination.
 # 
 # Normally, this function deals with horizontal movement steps. However, if we find that a
 # constraint cannot be satisfied with just horizontal movement, we may backtrack and try a new
 # recursive traversal using a higher jump height.
-static func _calculate_steps_from_constraint(global_calc_params: MovementCalcGlobalParams, \
+static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlobalParams, \
         local_calc_params: MovementCalcLocalParams) -> MovementCalcResults:
     ### BASE CASES
     
@@ -351,7 +340,7 @@ static func _calculate_steps_from_constraint_without_backtracking_on_height( \
         local_calc_params_to_constraint = MovementCalcLocalParams.new( \
                 local_calc_params.position_start, constraint.passing_point, \
                 local_calc_params.previous_step, local_calc_params.vertical_step, constraint)
-        calc_results_to_constraint = _calculate_steps_from_constraint(global_calc_params, \
+        calc_results_to_constraint = calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_to_constraint)
         
         if calc_results_to_constraint == null:
@@ -363,7 +352,7 @@ static func _calculate_steps_from_constraint_without_backtracking_on_height( \
                 constraint.passing_point, local_calc_params.position_end, \
                 calc_results_to_constraint.horizontal_steps.back(), 
                 local_calc_params.vertical_step, null)
-        calc_results_from_constraint = _calculate_steps_from_constraint(global_calc_params, \
+        calc_results_from_constraint = calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_from_constraint)
         
         if calc_results_from_constraint != null:
@@ -427,7 +416,7 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
                 constraint.passing_point, local_calc_params.position_end, \
                 calc_results_to_constraint.horizontal_steps.back(), \
                 vertical_step_to_constraint, null)
-        calc_results_from_constraint = _calculate_steps_from_constraint(global_calc_params, \
+        calc_results_from_constraint = calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_from_constraint)
         
         if calc_results_from_constraint != null:

@@ -97,6 +97,7 @@ const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 
 var movement_params: MovementParams
 var surface_parser: SurfaceParser
+var space_state: Physics2DDirectSpaceState
 # Array<Surface>
 var surfaces: Array
 # Dictionary<Surface, Array<PositionAlongSurface>>
@@ -108,6 +109,7 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
         player_info: PlayerTypeConfiguration) -> void:
     self.movement_params = player_info.movement_params
     self.surface_parser = surface_parser
+    self.space_state = space_state
 
     # Store the subset of surfaces that this player type can interact with.
     self.surfaces = surface_parser.get_subset_of_surfaces( \
@@ -118,7 +120,7 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
     self.surfaces_to_nodes = {}
     self.nodes_to_edges = {}
 
-    _calculate_nodes_and_edges(space_state, surface_parser, surfaces, player_info)
+    _calculate_nodes_and_edges(surfaces, player_info)
 
 # Uses A* search.
 # TODO: Add an early-cutoff mechanism for paths that deviate too far from straight-line. Otherwise, this will check every connecected surface before knowing that a destination cannot be reached.
@@ -246,7 +248,7 @@ func find_path(origin: PositionAlongSurface, \
 # Returns null if no possible landing exists.
 func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         destination: PositionAlongSurface) -> AirToSurfaceEdge:
-    var possible_landing_surfaces := find_possible_landing_surfaces(origin)
+    var possible_landing_surfaces := find_possible_landing_surfaces(origin, velocity_start)
     possible_landing_surfaces.sort_custom(self, "_compare_surfaces_by_max_y")
 
     var global_calc_params := MovementCalcGlobalParams.new( \
@@ -265,7 +267,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         global_calc_params.destination_surface = surface
         
         possible_end_positions = PlayerMovement.get_all_jump_positions_from_surface( \
-                destination, origin_vertices, origin_bounding_box)
+                movement_params, destination.surface, origin_vertices, origin_bounding_box)
         
         for position_end in possible_end_positions:
             global_calc_params.position_end = position_end.target_point
@@ -275,7 +277,8 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
             if local_calc_params == null:
                 continue
             
-            calc_results = _calculate_steps_from_constraint(global_calc_params, local_calc_params)
+            calc_results = JumpFromPlatformMovement.calculate_steps_from_constraint( \
+                    global_calc_params, local_calc_params)
             if calc_results != null:
                 return AirToSurfaceEdge.new(origin, position_end, calc_results)
 
@@ -318,9 +321,7 @@ func get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
     return surfaces
 
 # Calculates and stores the edges between surface nodes that this player type can traverse.
-func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
-        surface_parser: SurfaceParser, surfaces: Array, \
-        player_info: PlayerTypeConfiguration) -> void:
+func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfiguration) -> void:
     var possible_destination_surfaces: Array
     
     # Calculate all inter-surface edges.
@@ -335,7 +336,7 @@ func _calculate_nodes_and_edges(space_state: Physics2DDirectSpaceState, \
                     # Calculate the inter-surface edges.
                     possible_destination_surfaces = get_nearby_and_fallable_surfaces(surface)
                     surfaces_to_edges[surface] = movement_type.get_all_edges_from_surface( \
-                            space_state, possible_destination_surfaces, surface_parser, surface)
+                            space_state, surface_parser, possible_destination_surfaces, surface)
 
     # Dedup all edge-end positions (aka, nodes).
     var grid_cell_to_node := {}
