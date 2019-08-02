@@ -14,7 +14,7 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 # - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
 #
 # - Use FallFromAirMovement
-# - Use PlayerMovement.get_max_upward_distance and PlayerMovement.get_max_horizontal_distance
+# - Use max_horizontal_jump_distance and max_upward_jump_distance
 #
 # - Add annotations that draw the recent path that the player actually moved.
 # - Add annotations for rendering some basic navigation mode info for the CP:
@@ -65,7 +65,7 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 # - Update the pre-configured Input Map in Project Settings to use more semantic keys instead of just up/down/etc.
 # - Document in a separate markdown file exactly which Input Map keys this framework depends on.
 #
-# - MAKE get_nearby_surfaces MORE EFFICIENT? (force run it everyframe to ensure no lag)
+# - Make get_surfaces_in_jump_and_fall_range more efficient? (force run it everyframe to ensure no lag)
 #   - Scrap previous function; just use bounding box intersection (since I'm going to need to use
 #     better logic for determining movement patterns anyway...)
 #   - Actually, maybe don't worry too much, because this is actually only run at the start.
@@ -91,6 +91,8 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 # 
 # - Update things to support falling from the center of fall-through surfaces (consider the whole
 #   surface, rather than just the ends).
+# 
+# - Split apart PlayerMovement into smaller classes (after finalizing movement system architecture).
 
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
@@ -123,9 +125,12 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
     _calculate_nodes_and_edges(surfaces, player_info)
 
 # Uses A* search.
-# TODO: Add an early-cutoff mechanism for paths that deviate too far from straight-line. Otherwise, this will check every connecected surface before knowing that a destination cannot be reached.
 func find_path(origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:
+    # TODO: Add an early-cutoff mechanism for paths that deviate too far from straight-line.
+    #       Otherwise, this will check every connecected surface before knowing that a destination
+    #       cannot be reached.
+    
     var origin_surface := origin.surface
     var destination_surface := destination.surface
 
@@ -248,7 +253,9 @@ func find_path(origin: PositionAlongSurface, \
 # Returns null if no possible landing exists.
 func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         destination: PositionAlongSurface) -> AirToSurfaceEdge:
-    var possible_landing_surfaces := find_possible_landing_surfaces(origin, velocity_start)
+    var result_set := {}
+    find_surfaces_in_fall_range(result_set, origin, velocity_start)
+    var possible_landing_surfaces := result_set.keys()
     possible_landing_surfaces.sort_custom(self, "_compare_surfaces_by_max_y")
 
     var global_calc_params := MovementCalcGlobalParams.new( \
@@ -284,13 +291,15 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
 
     return null
 
-func find_possible_landing_surfaces(origin: Vector2, velocity_start: Vector2) -> Array:
+func find_surfaces_in_fall_range( \
+        result_set: Dictionary, origin: Vector2, velocity_start: Vector2) -> void:
     # FIXME: E: Offset the start_position_offset to account for velocity_start.
     # TODO: Refactor this to use a more accurate bounding polygon.
 
     # This offset should account for the extra horizontal range before the player has reached
     # terminal velocity.
-    var start_position_offset := Vector2(movement_params.gravity / movement_params.in_air_horizontal_acceleration * 0.6, 0)
+    var start_position_offset := Vector2(movement_params.gravity_fast_fall / \
+            movement_params.in_air_horizontal_acceleration * 0.6, 0)
     var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
     var bottom_corner_offset_from_top_corner := Vector2(100000.0, 100000.0 * slope)
 
@@ -298,27 +307,27 @@ func find_possible_landing_surfaces(origin: Vector2, velocity_start: Vector2) ->
     var top_right := origin + start_position_offset
     var bottom_left := top_left + Vector2(-bottom_corner_offset_from_top_corner.x, bottom_corner_offset_from_top_corner.y)
     var bottom_right := top_right + Vector2(bottom_corner_offset_from_top_corner.x, bottom_corner_offset_from_top_corner.y)
-    return _get_surfaces_intersecting_polygon( \
+    _get_surfaces_intersecting_polygon(result_set, \
             [top_left, top_right, bottom_right, bottom_left], surfaces)
 
-func get_nearby_and_fallable_surfaces(origin_surface: Surface) -> Array:
+func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Array:
     # TODO: Update this to support falling from the center of fall-through surfaces (consider the
     #       whole surface, rather than just the ends).
-
-    # FIXME: LEFT OFF HERE: --------------A: Implement this.
-
-    # var velocity_start := Vector2(0.0, params.jump_boost)
-
-    # find_possible_landing_surfaces(origin_surface.vertices[0], velocity_start)
-
-    # var size := origin_surface.vertices.size()
-    # if size > 1:
-    #     find_possible_landing_surfaces(origin_surface.vertices[size - 1], velocity_start)
     
-    # _get_nearby_surfaces(origin_surface, SURFACE_CLOSE_DISTANCE_THRESHOLD, surfaces)
-
-    # FIXME: Remove
-    return surfaces
+    var velocity_start := Vector2(0.0, movement_params.jump_boost)
+    
+    var result_set := {}
+    
+    # Get all surfaces that are within fall range from either end of the origin surface.
+    find_surfaces_in_fall_range(result_set, origin_surface.vertices[0], velocity_start)
+    var size := origin_surface.vertices.size()
+    if size > 1:
+        find_surfaces_in_fall_range(result_set, origin_surface.vertices[size - 1], velocity_start)
+    
+    _get_surfaces_in_jump_range(result_set, origin_surface, surfaces, \
+            movement_params.max_horizontal_jump_distance, movement_params.max_upward_jump_distance)
+    
+    return result_set.keys()
 
 # Calculates and stores the edges between surface nodes that this player type can traverse.
 func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfiguration) -> void:
@@ -334,7 +343,7 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
                 # FIXME: LEFT OFF HERE: DEBUGGING: Remove
                 if player_info.name == "cat":
                     # Calculate the inter-surface edges.
-                    possible_destination_surfaces = get_nearby_and_fallable_surfaces(surface)
+                    possible_destination_surfaces = get_surfaces_in_jump_and_fall_range(surface)
                     surfaces_to_edges[surface] = movement_type.get_all_edges_from_surface( \
                             space_state, surface_parser, possible_destination_surfaces, surface)
 
@@ -425,72 +434,23 @@ static func _get_surfaces_intersecting_triangle(triangle_a: Vector2, triangle_b:
 
 # This is only an approximation, since it only considers the end points of the surface rather than
 # each segment of the surface polyline.
-static func _get_surfaces_intersecting_polygon(polygon: Array, surfaces: Array) -> Array:
-    var result := []
+static func _get_surfaces_intersecting_polygon( \
+        result_set: Dictionary, polygon: Array, surfaces: Array) -> void:
     for surface in surfaces:
-        if Geometry.do_segment_and_polygon_intersect(surface.vertices.front(), \
-                surface.vertices.back(), polygon):
-            result.push_back(surface)
-    return result
+        if Geometry.do_segment_and_polygon_intersect(surface.vertices[0], \
+                surface.vertices[surface.vertices.size() - 1], polygon):
+            result_set[surface] = true
 
 static func _compare_surfaces_by_max_y(a: Surface, b: Surface) -> bool:
     return a.bounding_box.position.y < b.bounding_box.position.y
 
-# FIXME: LEFT OFF HERE: --------------A: Double-check this old work.
-
-# Gets all other surfaces that are near the given surface.
-static func _get_nearby_surfaces(target_surface: Surface, distance_threshold: float, \
-       other_surfaces: Array) -> Array:
-   var result := []
-   for other_surface in other_surfaces:
-       if _get_are_surfaces_close(target_surface, other_surface, distance_threshold) and \
-               target_surface != other_surface:
-           result.push_back(other_surface)
-   return result
-
-static func _get_are_surfaces_close(surface_a: Surface, surface_b: Surface, \
-       distance_threshold: float) -> bool:
-   var vertices_a := surface_a.vertices
-   var vertices_b := surface_b.vertices
-   var vertex_a_a: Vector2
-   var vertex_a_b: Vector2
-   var vertex_b_a: Vector2
-   var vertex_b_b: Vector2
-
-   var expanded_bounding_box_a = surface_a.bounding_box.grow(distance_threshold)
-   if expanded_bounding_box_a.intersects(surface_b.bounding_box):
-       var expanded_bounding_box_b = surface_b.bounding_box.grow(distance_threshold)
-       var distance_squared_threshold = distance_threshold * distance_threshold
-
-       # Compare each segment in A with each vertex in B.
-       for i_a in range(vertices_a.size() - 1):
-           vertex_a_a = vertices_a[i_a]
-           vertex_a_b = vertices_a[i_a + 1]
-
-           for i_b in range(vertices_b.size()):
-               vertex_b_a = vertices_b[i_b]
-
-               if expanded_bounding_box_a.has_point(vertex_b_a) and \
-                       Geometry.get_distance_squared_from_point_to_segment( \
-                               vertex_b_a, vertex_a_a, vertex_a_b) <= distance_squared_threshold:
-                   return true
-
-       # Compare each vertex in A with each segment in B.
-       for i_a in range(vertices_a.size()):
-           vertex_a_a = vertices_a[i_a]
-
-           for i_b in range(vertices_b.size() - 1):
-               vertex_b_a = vertices_b[i_b]
-               vertex_b_b = vertices_b[i_b + 1]
-
-               if expanded_bounding_box_b.has_point(vertex_a_a) and \
-                       Geometry.get_distance_squared_from_point_to_segment( \
-                               vertex_a_a, vertex_b_a, vertex_b_b) <= distance_squared_threshold:
-                   return true
-
-           # Handle the degenerate case of single-vertex surfaces.
-           if vertices_b.size() == 1:
-               if vertex_a_a.distance_squared_to(vertices_b[0]) <= distance_squared_threshold:
-                   return true
-
-   return false
+static func _get_surfaces_in_jump_range(result_set: Dictionary, target_surface: Surface, \
+        other_surfaces: Array, max_horizontal_jump_distance: float, \
+        max_upward_jump_distance: float) -> void:
+    var expanded_target_bounding_box := target_surface.bounding_box.grow_individual( \
+            max_horizontal_jump_distance, max_upward_jump_distance, max_horizontal_jump_distance, \
+            0.0)
+    
+    for other_surface in other_surfaces:
+        if expanded_target_bounding_box.intersects(other_surface.bounding_box):
+            result_set[other_surface] = true

@@ -25,7 +25,9 @@ func _draw_tile_border() -> void:
     polyline[1] = Vector2(coord.x + 1, coord.y) * cell_size
     polyline[2] = Vector2(coord.x + 1, coord.y + 1) * cell_size
     polyline[3] = Vector2(coord.x, coord.y + 1) * cell_size
-    polyline[4] = polyline[0]
+    # For some reason, this last line segment seems to have an off-by-one error that would cause
+    # the segment to not be exactly vertical, so this offset fixes that.
+    polyline[4] = polyline[0] + Vector2(0.5, 0.0)
     
     draw_polyline(polyline, TILE_BORDER_COLOR, TILE_BORDER_WIDTH)
 

@@ -5,9 +5,8 @@ class_name PlayerMovement
 const MovementConstraint := preload("res://framework/player_movement/movement_constraint.gd")
 const PlayerInstruction := preload("res://framework/player_movement/player_instruction.gd")
 
-# TODO: Adjust this
-const SURFACE_CLOSE_DISTANCE_THRESHOLD := 512.0
-const DOWNWARD_DISTANCE_TO_CHECK_FOR_FALLING := 10000.0
+
+# TODO: Adjust these
 const VERTEX_SIDE_NUDGE_OFFSET := 0.001
 
 # FIXME: B ******
@@ -1232,7 +1231,7 @@ static func calculate_fall_vertical_step(movement_params: MovementParams, \
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var total_displacement: Vector2 = position_end - position_start
-    var min_vertical_displacement := movement_params.max_upward_distance
+    var min_vertical_displacement := movement_params.max_upward_jump_distance
     
     # Check whether the vertical displacement is possible.
     if min_vertical_displacement > total_displacement.y:

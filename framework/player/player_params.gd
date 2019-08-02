@@ -19,8 +19,8 @@ func _init(name: String, player_resource_path: String, global: Global) -> void:
             _movement_params.gravity_fast_fall * _movement_params.slow_ascent_gravity_multiplier
     _movement_params.collider_half_width_height = Geometry.calculate_half_width_height( \
             _movement_params.collider_shape, _movement_params.collider_rotation)
-    _movement_params.max_upward_distance = _calculate_max_upward_movement(_movement_params)
-    _movement_params.max_horizontal_distance = _calculate_max_horizontal_movement(_movement_params)
+    _movement_params.max_upward_jump_distance = _calculate_max_upward_movement(_movement_params)
+    _movement_params.max_horizontal_jump_distance = _calculate_max_horizontal_movement(_movement_params)
     _check_movement_params(_movement_params)
     _movement_types = _create_movement_types(_movement_params)
     

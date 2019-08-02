@@ -10,10 +10,8 @@ func _init(start: PositionAlongSurface, end: Vector2) \
     self.start = start
     self.end = end
 
+# TODO: Implement this
+
 static func _calculate_instructions( \
         start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
-    # FIXME: LEFT OFF HERE: ---A
-    # - Re-use some of the helper functions from the JumpFromPlatformMovement class to calculate
-    #   instructions for this.
-    
     return null

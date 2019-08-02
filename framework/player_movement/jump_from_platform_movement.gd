@@ -6,23 +6,23 @@ const MovementCalcLocalParams := preload("res://framework/player_movement/moveme
 const MovementCalcStep := preload("res://framework/player_movement/movement_calculation_step.gd")
 
 # FIXME: SUB-MASTER LIST ***************
-# - LEFT OFF HERE: Some non-edge-calc, lighter work to do now:
-#   - Test the logic for moving along a path.
+# - LEFT OFF HERE: Fix the current issue that prevents the correct half-width-height from being
+#                  used in Geometry.
+# - LEFT OFF HERE: Fix the current issue in check_frame_for_collision when using level_4 with all
+#                  surfaces.
+# - LEFT OFF HERE: Resolve/debug all left-off commented-out places.
+# - LEFT OFF HERE: Polish correctness of inter-surface edges (check that each expected edge is
+#                  rendering correctly).
 # 
-#   - B: Add support for executing movement along an edge.
-#   - C: Add support for executing movement WITHIN an edge.
-#   - D: Add path finding and update logic to Navigator.
-#   - G: Add support for sending the CPU to a click target (configured in the specific level).
-#   - H: Add support for picking random surfaces or points-in-space to move the CPU to; resetting
+# - LEFT OFF HERE: Implement/test edge-traversal movement:
+#   - Test the logic for moving along a path.
+#   - Add support for sending the CPU to a click target (configured in the specific level).
+#   - Add support for picking random surfaces or points-in-space to move the CPU to; resetting
 #        to a new point after the CPU reaches the old point.
 #     - Implement this as an alternative to ClickToNavigate (actually, support both running at the
 #       same time).
 #     - It will need to listen for when the navigator has reached the destination though (make sure
 #       that signal is emitted).
-#   - I: Fix surface annotator (doubles on part and wraps around edge wrong).
-# 
-# - LEFT OFF HERE: Fix the current issue in check_frame_for_collision when using level_4 with all
-#                  surfaces.
 # - LEFT OFF HERE: Create a demo level to showcase lots of interesting edges.
 # - LEFT OFF HERE: Add support for specifying a desired min end-x-velocity.
 #   - We need to add support for specifying a desired min end-x-velocity from the previous
@@ -450,7 +450,7 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var total_displacement: Vector2 = position_end - position_start
-    var min_vertical_displacement := movement_params.max_upward_distance
+    var min_vertical_displacement := movement_params.max_upward_jump_distance
     
     # Check whether the vertical displacement is possible.
     if min_vertical_displacement > total_displacement.y:

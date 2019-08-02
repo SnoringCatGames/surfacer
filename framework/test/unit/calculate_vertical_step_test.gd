@@ -10,7 +10,7 @@ func before_each() -> void:
     movement_params.gravity_slow_ascent = 900.0
     movement_params.in_air_horizontal_acceleration = 1500.0
     movement_params.max_horizontal_speed_default = 400.0
-    movement_params.max_upward_distance = \
+    movement_params.max_upward_jump_distance = \
             PlayerParams._calculate_max_upward_movement(movement_params)
 
 func assert_vertical_step(step: MovementCalcStep, state: Dictionary) -> void:

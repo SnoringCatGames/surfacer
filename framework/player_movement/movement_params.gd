@@ -42,7 +42,7 @@ var dash_duration: float
 var dash_fade_duration: float
 var dash_cooldown: float
 
-var max_horizontal_distance: float
-var max_upward_distance: float
+var max_horizontal_jump_distance: float
+var max_upward_jump_distance: float
 
 var friction_multiplier: float
