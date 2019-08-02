@@ -12,4 +12,3 @@ script = ExtResource( 1 )
 tile_set = ExtResource( 2 )
 format = 1
 tile_data = PoolIntArray( -393218, 0, 0, 65538, 0, 0 )
-

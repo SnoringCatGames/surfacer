@@ -428,10 +428,10 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
     var cell_width_mod = abs(fmod(position_relative_to_tile_map.x, tile_map.cell_size.x))
     var cell_height_mod = abs(fmod(position_relative_to_tile_map.y, tile_map.cell_size.y))
     
-    var is_between_cells_horizontally = cell_width_mod < FLOAT_EPSILON or \
-            tile_map.cell_size.x - cell_width_mod < FLOAT_EPSILON
-    var is_between_cells_vertically = cell_height_mod < FLOAT_EPSILON or \
-            tile_map.cell_size.y - cell_height_mod < FLOAT_EPSILON
+    var is_between_cells_horizontally = cell_width_mod < 0.0001 or \
+            tile_map.cell_size.x - cell_width_mod < 0.0001
+    var is_between_cells_vertically = cell_height_mod < 0.0001 or \
+            tile_map.cell_size.y - cell_height_mod < 0.0001
     
     var tile_coord := Vector2.INF
     var error_message := ""
@@ -578,12 +578,7 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
     if shape is CircleShape2D:
         half_width_height = Vector2(shape.radius, shape.radius)
     elif shape is CapsuleShape2D:
-        # FIXME: LEFT OFF HERE: -A:
-        # - For whatever reason, fixing this to the correct value triggers a bug in PlayerMovement
-        #   for tilemap-cell-position calculations. Debug that when I get back around to polishing
-        #   movement calculations.
-#        half_width_height = Vector2(shape.radius, shape.radius + shape.height / 2.0)
-        half_width_height = Vector2(shape.radius, shape.radius + shape.height)
+        half_width_height = Vector2(shape.radius, shape.radius + shape.height / 2.0)
     elif shape is RectangleShape2D:
         half_width_height = shape.extents
     else:
