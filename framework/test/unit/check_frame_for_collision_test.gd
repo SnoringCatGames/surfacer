@@ -48,7 +48,7 @@ func test_move_into_top_left_corner_from_left() -> void:
     var displacement := Vector2(half_player_width_height, 0)
     set_frame_space_state(start_position, displacement)
     
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -67,7 +67,7 @@ func test_move_into_top_left_corner_from_above() -> void:
     var displacement := Vector2(0, half_player_width_height)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -86,7 +86,7 @@ func test_move_into_top_right_corner_from_right() -> void:
     var displacement := Vector2(-half_player_width_height, 0)
     set_frame_space_state(start_position, displacement)
     
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -105,7 +105,7 @@ func test_move_into_top_right_corner_from_above() -> void:
     var displacement := Vector2(0, half_player_width_height)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -124,7 +124,7 @@ func test_move_into_bottom_left_corner_from_left() -> void:
     var displacement := Vector2(half_player_width_height, 0)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -143,7 +143,7 @@ func test_move_into_bottom_left_corner_from_below() -> void:
     var displacement := Vector2(0, -half_player_width_height)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -162,7 +162,7 @@ func test_move_into_bottom_right_corner_from_right() -> void:
     var displacement := Vector2(-half_player_width_height, 0)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -181,7 +181,7 @@ func test_move_into_bottom_right_corner_from_below() -> void:
     var displacement := Vector2(0, -half_player_width_height)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -200,7 +200,7 @@ func test_move_into_bottom_side_of_bottom_right_corner_from_mostly_right() -> vo
     var displacement := Vector2(-half_player_width_height / 2.0, -3.0)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -219,7 +219,7 @@ func test_move_into_right_side_of_bottom_right_corner_from_mostly_below() -> voi
     var displacement := Vector2(-3.0, -half_player_width_height / 2.0)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -238,7 +238,7 @@ func test_move_into_left_mid_from_left() -> void:
     var displacement := Vector2(half_player_width_height, 0)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -257,7 +257,7 @@ func test_move_into_top_mid_from_above() -> void:
     var displacement := Vector2(0, half_player_width_height)
     set_frame_space_state(start_position, displacement)
 
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -276,7 +276,7 @@ func test_move_into_left_mid_from_left_with_tunnelling() -> void:
     var displacement := Vector2(tile_width + half_player_width_height * 3.0, 0)
     set_frame_space_state(start_position, displacement)
     
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {
@@ -295,7 +295,7 @@ func test_move_into_top_mid_from_above_with_tunnelling() -> void:
     var displacement := Vector2(0, tile_height + half_player_width_height * 3.0)
     set_frame_space_state(start_position, displacement)
     
-    var collision := PlayerMovement.check_frame_for_collision( \
+    var collision := FrameCollisionCheck.check_frame_for_collision( \
             space_state, shape_query_params, surface_parser)
     
     assert_collison_state(collision, {

@@ -36,7 +36,7 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #     movement stopping short.
 # - LEFT OFF HERE: Debug/stress-test intermediate collision scenarios.
 #   - After fixing max vertical velocity, is there anything else I can boost?
-# - LEFT OFF HERE: Debug why _check_instructions_for_collision fails with collisions (render better annotations?).
+# - LEFT OFF HERE: Debug why check_instructions_for_collision fails with collisions (render better annotations?).
 # - LEFT OFF HERE: Non-edge-calc, lighter work: Add squirrel animation.
 # 
 # - Debugging:
@@ -223,8 +223,8 @@ static func _test_instructions(instructions: PlayerInstructions, \
     global_calc_params.movement_params.gravity_fast_fall /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     global_calc_params.movement_params.gravity_slow_ascent /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
-    var collision := _check_instructions_for_collision(global_calc_params, instructions, \
-            calc_results.vertical_step, calc_results.horizontal_steps)
+    var collision := CollisionChecks.check_instructions_for_collision(global_calc_params, \
+            instructions, calc_results.vertical_step, calc_results.horizontal_steps)
     assert(collision == null or collision.surface == global_calc_params.destination_surface)
     var final_frame_position := \
             instructions.frame_discrete_positions[instructions.frame_discrete_positions.size() - 1]
@@ -287,7 +287,7 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
         assert(Geometry.are_points_equal_with_epsilon( \
                 next_horizontal_step.position_step_end, global_calc_params.position_end, 0.0001))
     
-    var collision := _check_continuous_horizontal_step_for_collision( \
+    var collision := CollisionChecks.check_continuous_horizontal_step_for_collision( \
             global_calc_params, local_calc_params, next_horizontal_step)
     
     if collision == null or collision.surface == global_calc_params.destination_surface:
@@ -402,7 +402,7 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         if vertical_step_to_constraint.time_step_end == INF:
             # The destination is out of reach from the constraint.
             continue
-        end_state = _update_vertical_end_state_for_time(global_calc_params.movement_params, \
+        end_state = calculate_vertical_end_state_for_time(global_calc_params.movement_params, \
                 vertical_step_to_constraint, vertical_step_to_constraint.time_step_end)
         vertical_step_to_constraint.position_step_end.y = end_state.x
         vertical_step_to_constraint.velocity_step_end.y = end_state.y
@@ -626,11 +626,11 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     step.horizontal_movement_sign = horizontal_movement_sign
     
     var instruction_end_state := \
-            _update_vertical_end_state_for_time(movement_params, step, step.time_instruction_end)
+            calculate_vertical_end_state_for_time(movement_params, step, step.time_instruction_end)
     var step_end_state := \
-            _update_vertical_end_state_for_time(movement_params, step, step.time_step_end)
+            calculate_vertical_end_state_for_time(movement_params, step, step.time_step_end)
     var peak_height_end_state := \
-            _update_vertical_end_state_for_time(movement_params, step, step.time_peak_height)
+            calculate_vertical_end_state_for_time(movement_params, step, step.time_peak_height)
     
     step.position_instruction_end = Vector2(INF, instruction_end_state.x)
     step.position_step_end = Vector2(INF, step_end_state.x)
@@ -695,7 +695,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     # - It would require updating each horizontal MovementCalcSteps to result in a second
     #   PlayerInstruction pair for pressing the opposition direction for the remaining time between
     #   time_instruction_end and time_step_end.
-    # - Would need to also update _update_horizontal_end_state_for_time.
+    # - Would need to also update calculate_horizontal_end_state_for_time.
     
     var duration_for_horizontal_acceleration := _calculate_time_to_release_acceleration( \
             time_start, time_step_end, position_start.x, position_end.x, velocity_start.x, \
@@ -730,9 +730,9 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     step.velocity_start = velocity_start
     step.horizontal_movement_sign = horizontal_movement_sign
     
-    var instruction_end_state := _update_vertical_end_state_for_time( \
+    var instruction_end_state := calculate_vertical_end_state_for_time( \
             movement_params, vertical_step, step.time_instruction_end)
-    var step_end_state := _update_vertical_end_state_for_time( \
+    var step_end_state := calculate_vertical_end_state_for_time( \
             movement_params, vertical_step, step.time_step_end)
     
     step.position_instruction_end = Vector2(position_instruction_end_x, instruction_end_state.x)
