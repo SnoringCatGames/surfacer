@@ -2,7 +2,7 @@ extends Node2D
 class_name ClickAnnotator
 
 const CLICK_END_RADIUS := 58.0
-var CLICK_COLOR := Color.from_hsv(0.5, 0.2, 0.99, 0.99)
+var CLICK_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_SOLID)
 const CLICK_DURATION_SEC := 0.2
 
 var global # TODO: Add type back

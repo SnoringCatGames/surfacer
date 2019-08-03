@@ -1,11 +1,11 @@
 extends Node2D
 class_name NavigatorAnnotator
 
-var EDGE_COLOR = Color.from_hsv(0.75, 0.8, 0.9, 0.35)
+var EDGE_COLOR = Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
 const TRAJECTORY_WIDTH := 4.0
 
-var NODE_COLOR = Color.from_hsv(0.75, 0.6, 0.9, 0.25)
-const NODE_TARGET_POINT_RADIUS := 4.0
+var NODE_COLOR = Colors.opacify(Colors.PURPLE_D, Colors.ALPHA_XFAINT)
+const NODE_TARGET_POINT_RADIUS := 6.0
 const NODE_T_LENGTH := 16.0
 const NODE_T_WIDTH := 4.0
 

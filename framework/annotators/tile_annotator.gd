@@ -1,7 +1,7 @@
 extends Node2D
 class_name TileAnnotator
 
-var TILE_BORDER_COLOR := Color.from_hsv(0.28, 0.9, 0.6, 0.4)
+var TILE_BORDER_COLOR := Colors.opacify(Colors.YELLOW, Colors.ALPHA_XXFAINT)
 const TILE_BORDER_WIDTH := 6.0
 
 var player: Player

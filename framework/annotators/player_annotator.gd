@@ -6,7 +6,7 @@ const NavigatorAnnotator := preload("res://framework/annotators/navigator_annota
 const PositionAnnotator := preload("res://framework/annotators/position_annotator.gd")
 const TileAnnotator := preload("res://framework/annotators/tile_annotator.gd")
 
-var COLLIDER_COLOR := Color.from_hsv(0.1, 0.7, 0.8, 0.3)
+var COLLIDER_COLOR := Colors.opacify(Colors.TEAL, Colors.ALPHA_XXFAINT)
 const COLLIDER_THICKNESS := 4.0
 
 var player: Player
@@ -41,8 +41,9 @@ func check_for_update() -> void:
         player_surface_annotator.check_for_update()
         position_annotator.check_for_update()
         tile_annotator.check_for_update()
-        if navigator_annotator != null:
-            navigator_annotator.check_for_update()
+    
+    if navigator_annotator != null:
+        navigator_annotator.check_for_update()
 
 func _draw() -> void:
     DrawUtils.draw_shape_outline(self, player.position, player.movement_params.collider_shape, \

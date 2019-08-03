@@ -1,13 +1,13 @@
 extends Node2D
 class_name PositionAnnotator
 
-var PLAYER_POSITION_COLOR := Color.from_hsv(0.83, 0.9, 0.6, 0.5)
-var GRAB_POSITION_COLOR := Color.from_hsv(0.17, 0.7, 0.9, 0.8)
+var PLAYER_POSITION_COLOR := Colors.opacify(Colors.TEAL, Colors.ALPHA_XXFAINT)
+var GRAB_POSITION_COLOR := Colors.opacify(Colors.TEAL_D, Colors.ALPHA_XXFAINT)
 const PLAYER_POSITION_RADIUS := 3.0
 const GRAB_POSITION_LINE_WIDTH := 5.0
 const GRAB_POSITION_LINE_LENGTH := 28.0
 
-var POSITION_ALONG_SURFACE_COLOR = Color.from_hsv(0.9, 0.7, 0.9, 0.3)
+var POSITION_ALONG_SURFACE_COLOR = Colors.opacify(Colors.TEAL, Colors.ALPHA_XFAINT)
 const POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS := 4.0
 const POSITION_ALONG_SURFACE_T_LENGTH := 16.0
 const POSITION_ALONG_SURFACE_T_WIDTH := 4.0

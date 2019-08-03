@@ -1,7 +1,7 @@
 extends Node2D
 class_name GridIndicesAnnotator
 
-var TILE_INDICES_COLOR := Color.from_hsv(0.0, 0.0, 1.0, 0.6)
+var TILE_INDICES_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_FAINT)
 
 var graph: PlatformGraph
 
