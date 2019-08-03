@@ -6,10 +6,6 @@ const MovementCalcLocalParams := preload("res://framework/player_movement/moveme
 const MovementCalcStep := preload("res://framework/player_movement/movement_calculation_step.gd")
 
 # FIXME: SUB-MASTER LIST ***************
-# - LEFT OFF HERE: Fix the current issue that prevents the correct half-width-height from being
-#                  used in Geometry.
-# - LEFT OFF HERE: Fix the current issue in check_frame_for_collision when using level_4 with all
-#                  surfaces.
 # - LEFT OFF HERE: Resolve/debug all left-off commented-out places.
 # - LEFT OFF HERE: Polish correctness of inter-surface edges (check that each expected edge is
 #                  rendering correctly).
@@ -161,8 +157,8 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
 #        else:
 #            possible_jump_land_pairs = [a_far_end, b_far_end]
         # FIXME: D: Remove
-        if a.side == SurfaceSide.CEILING or b.side == SurfaceSide.CEILING:
-            continue
+#        if a.side == SurfaceSide.CEILING or b.side == SurfaceSide.CEILING:
+#            continue
         
         jump_positions = get_all_jump_positions_from_surface(params, a, b.vertices, b.bounding_box)
         land_positions = get_all_jump_positions_from_surface(params, b, a.vertices, a.bounding_box)

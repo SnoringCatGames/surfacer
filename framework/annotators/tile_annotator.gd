@@ -17,19 +17,13 @@ func _draw() -> void:
         _draw_tile_border()
 
 func _draw_tile_border() -> void:
-    var tile_map = player.surface_state.grabbed_tile_map
-    var cell_size = tile_map.cell_size
-    var coord = player.surface_state.grab_position_tile_map_coord
+    var tile_map := player.surface_state.grabbed_tile_map
+    var cell_size := tile_map.cell_size
+    var coord := player.surface_state.grab_position_tile_map_coord
+    var center := (coord + Vector2(0.5, 0.5)) * cell_size
     
-    polyline[0] = Vector2(coord.x, coord.y) * cell_size
-    polyline[1] = Vector2(coord.x + 1, coord.y) * cell_size
-    polyline[2] = Vector2(coord.x + 1, coord.y + 1) * cell_size
-    polyline[3] = Vector2(coord.x, coord.y + 1) * cell_size
-    # For some reason, this last line segment seems to have an off-by-one error that would cause
-    # the segment to not be exactly vertical, so this offset fixes that.
-    polyline[4] = polyline[0] + Vector2(0.5, 0.0)
-    
-    draw_polyline(polyline, TILE_BORDER_COLOR, TILE_BORDER_WIDTH)
+    DrawUtils.draw_rectangle_outline( \
+            self, center, cell_size / 2.0, false, TILE_BORDER_COLOR, TILE_BORDER_WIDTH)
 
 func check_for_update() -> void:
     if player.surface_state.just_changed_tile_map_coord:

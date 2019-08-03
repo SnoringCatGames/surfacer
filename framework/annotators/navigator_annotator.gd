@@ -29,7 +29,7 @@ func _draw_path(canvas: CanvasItem, path: PlatformGraphPath) -> void:
         # Draw edge start position.
         DrawUtils.draw_position_along_surface(canvas, edge.start, NODE_COLOR, \
                 NODE_COLOR, NODE_TARGET_POINT_RADIUS, NODE_T_LENGTH, \
-                NODE_T_WIDTH, true)
+                NODE_T_WIDTH, true, true, false)
         
         # Draw edge.
         if edge is InterSurfaceEdge:
@@ -42,4 +42,4 @@ func _draw_path(canvas: CanvasItem, path: PlatformGraphPath) -> void:
     # Draw final end position.
     DrawUtils.draw_position_along_surface(canvas, path.destination, NODE_COLOR, \
             NODE_COLOR, NODE_TARGET_POINT_RADIUS, NODE_T_LENGTH, \
-            NODE_T_WIDTH, true)
+            NODE_T_WIDTH, true, true, false)

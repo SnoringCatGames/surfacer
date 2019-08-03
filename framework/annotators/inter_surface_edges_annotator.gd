@@ -42,8 +42,8 @@ func _draw() -> void:
                         continuous_trajectory_color, TRAJECTORY_WIDTH)
                 
                 for constraint_position in edge.instructions.constraint_positions:
-                    DrawUtils.draw_empty_circle(self, constraint_position, CONSTRAINT_RADIUS, \
+                    DrawUtils.draw_circle_outline(self, constraint_position, CONSTRAINT_RADIUS, \
                             constraint_color, CONSTRAINT_WIDTH, 4.0)
                 
-                DrawUtils.draw_empty_circle(self, edge.start.target_point, START_RADIUS, \
+                DrawUtils.draw_circle_outline(self, edge.start.target_point, START_RADIUS, \
                         constraint_color, CONSTRAINT_WIDTH, 4.0)

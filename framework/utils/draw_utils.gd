@@ -7,21 +7,6 @@ const SURFACE_ALPHA_END_RATIO := .2
 
 const DEPTH_DIVISION_SIZE := SURFACE_DEPTH / SURFACE_DEPTH_DIVISIONS_COUNT
 
-static func draw_empty_circle(canvas: CanvasItem, center: Vector2, radius: float, color: Color, \
-        border_width := 1.0, sector_arc_length := 4.0) -> void:
-    var sector_count := ceil(2.0 * PI * radius / sector_arc_length)
-    var delta_theta := 2.0 * PI / sector_count
-    var theta := 0.0
-    var vertices = PoolVector2Array()
-    vertices.resize(sector_count + 1)
-    var vertex: Vector2
-    
-    for i in range(sector_count + 1):
-        vertices[i] = Vector2(cos(theta), sin(theta)) * radius + center
-        theta += delta_theta
-    
-    canvas.draw_polyline(vertices, color, border_width)
-
 static func draw_dashed_line(canvas: CanvasItem, from: Vector2, to: Vector2, color: Color, \
         dash_length: float, dash_gap: float, dash_offset: float = 0.0, \
         width: float = 1.0, antialiased: bool = false) -> void:
@@ -80,20 +65,108 @@ static func draw_surface(canvas: CanvasItem, surface: Surface, color: Color) -> 
 
 static func draw_position_along_surface(canvas: CanvasItem, position: PositionAlongSurface, \
         target_point_color: Color, t_color: Color, target_point_radius := 4.0, t_length := 16.0, \
-        t_width := 4.0, draw_surface := false) -> void:
-    # Annotate the target point.
-    canvas.draw_circle(position.target_point, target_point_radius, \
-            target_point_color)
+        t_width := 4.0, t_value_drawn := true, target_point_drawn := false, \
+        surface_drawn := false) -> void:
+    # Optionally, annotate the t value.
+    if t_value_drawn:
+        if position.target_projection_onto_surface == Vector2.INF:
+            position.target_projection_onto_surface = \
+                    Geometry.project_point_onto_surface(position.target_point, position.surface)
+        var normal = position.surface.normal
+        var start = position.target_projection_onto_surface + normal * t_length / 2
+        var end = position.target_projection_onto_surface - normal * t_length / 2
+        canvas.draw_line(start, end, t_color, t_width)
     
-    # Annotate the t value.
-    if position.target_projection_onto_surface == Vector2.INF:
-        position.target_projection_onto_surface = \
-                Geometry.project_point_onto_surface(position.target_point, position.surface)
-    var normal = position.surface.normal
-    var start = position.target_projection_onto_surface + normal * t_length / 2
-    var end = position.target_projection_onto_surface - normal * t_length / 2
-    canvas.draw_line(start, end, t_color, t_width)
+    # Optionally, annotate the target point.
+    if target_point_drawn:
+        canvas.draw_circle(position.target_point, target_point_radius, \
+                target_point_color)
     
-    # Optionally, annotate the surface
-    if draw_surface:
+    # Optionally, annotate the surface.
+    if surface_drawn:
         draw_surface(canvas, position.surface, target_point_color)
+
+static func draw_shape_outline(canvas: CanvasItem, position: Vector2, shape: Shape2D, \
+        rotation: float, color: Color, thickness: float) -> void:
+    var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2) < Geometry.FLOAT_EPSILON
+    
+    # Ensure that collision boundaries are only ever axially aligned.
+    assert(is_rotated_90_degrees or abs(rotation) < Geometry.FLOAT_EPSILON)
+    
+    if shape is CircleShape2D:
+        draw_circle_outline(canvas, position, shape.radius, color, thickness)
+    elif shape is CapsuleShape2D:
+        draw_capsule_outline(canvas, position, shape.radius, shape.height, is_rotated_90_degrees, \
+                color, thickness)
+    elif shape is RectangleShape2D:
+        draw_rectangle_outline( \
+                canvas, position, shape.extents, is_rotated_90_degrees, color, thickness)
+    else:
+        Utils.error("Invalid Shape2D provided for draw_shape: %s. The supported shapes are: " + \
+                "CircleShape2D, CapsuleShape2D, RectangleShape2D." % shape)
+
+static func draw_circle_outline(canvas: CanvasItem, center: Vector2, radius: float, color: Color, \
+        border_width := 1.0, sector_arc_length := 4.0) -> void:
+    var sector_count := ceil(2.0 * PI * radius / sector_arc_length)
+    var delta_theta := 2.0 * PI / sector_count
+    var theta := 0.0
+    var vertices := PoolVector2Array()
+    vertices.resize(sector_count + 1)
+    var vertex: Vector2
+    
+    for i in range(sector_count + 1):
+        vertices[i] = Vector2(cos(theta), sin(theta)) * radius + center
+        theta += delta_theta
+    
+    canvas.draw_polyline(vertices, color, border_width)
+
+static func draw_rectangle_outline(canvas: CanvasItem, center: Vector2, \
+        half_width_height: Vector2, is_rotated_90_degrees: bool, color: Color, \
+        thickness := 1.0) -> void:
+    var x_offset: float = half_width_height.y if is_rotated_90_degrees else half_width_height.x
+    var y_offset: float = half_width_height.x if is_rotated_90_degrees else half_width_height.y
+    
+    var polyline := PoolVector2Array()
+    polyline.resize(5)
+    
+    polyline[0] = center + Vector2(-x_offset, -y_offset)
+    polyline[1] = center + Vector2(x_offset, -y_offset)
+    polyline[2] = center + Vector2(x_offset, y_offset)
+    polyline[3] = center + Vector2(-x_offset, y_offset)
+    polyline[4] = polyline[0]
+    
+    # For some reason, the first and last line segments seem to have off-by-one errors that would
+    # cause the segments to not be exactly horizontal and vertical, so these offsets fix that.
+    polyline[0] += Vector2(-0.5, 0.5)
+    polyline[4] += Vector2(0.75, 0.0)
+    
+    canvas.draw_polyline(polyline, color, thickness)
+
+static func draw_capsule_outline(canvas: CanvasItem, center: Vector2, radius: float, \
+        height: float, is_rotated_90_degrees: bool, color: Color, thickness := 1.0, \
+        sector_arc_length := 4.0) -> void:
+    var sector_count := ceil((PI * radius / sector_arc_length) / 2.0) * 2.0
+    var delta_theta := PI / sector_count
+    var theta := PI / 2.0 if is_rotated_90_degrees else 0.0
+    var capsule_end_offset := \
+            Vector2(height / 2.0, 0.0) if is_rotated_90_degrees else Vector2(0.0, height / 2.0)
+    var end_center := center - capsule_end_offset
+    var vertices := PoolVector2Array()
+    var vertex_count := (sector_count + 1) * 2 + 1
+    vertices.resize(vertex_count)
+    var vertex: Vector2
+    
+    for i in range(sector_count + 1):
+        vertices[i] = Vector2(cos(theta), sin(theta)) * radius + end_center
+        theta += delta_theta
+    
+    end_center = center + capsule_end_offset
+    theta -= delta_theta
+    
+    for i in range(sector_count + 1, (sector_count + 1) * 2):
+        vertices[i] = Vector2(cos(theta), sin(theta)) * radius + end_center
+        theta += delta_theta
+    
+    vertices[vertex_count - 1] = vertices[0]
+    
+    canvas.draw_polyline(vertices, color, thickness)

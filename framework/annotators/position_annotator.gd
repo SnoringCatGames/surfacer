@@ -13,6 +13,7 @@ const POSITION_ALONG_SURFACE_T_LENGTH := 16.0
 const POSITION_ALONG_SURFACE_T_WIDTH := 4.0
 
 var player: Player
+var previous_position: Vector2
 
 func _init(player: Player) -> void:
     self.player = player
@@ -37,7 +38,9 @@ func _draw_position_along_surface() -> void:
             player.surface_state.center_position_along_surface, \
             POSITION_ALONG_SURFACE_COLOR, POSITION_ALONG_SURFACE_COLOR, \
             POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS, POSITION_ALONG_SURFACE_T_LENGTH, \
-            POSITION_ALONG_SURFACE_T_WIDTH)
+            POSITION_ALONG_SURFACE_T_WIDTH, true, false, false)
 
 func check_for_update() -> void:
-    update()
+    if !Geometry.are_points_equal_with_epsilon(player.position, previous_position, 0.001):
+        previous_position = player.position
+        update()
