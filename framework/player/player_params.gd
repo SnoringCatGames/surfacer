@@ -8,9 +8,10 @@ var _movement_types: Array
 # Array<PlayerActionHandler>
 var _action_handlers: Array
 var _player_type_configuration: PlayerTypeConfiguration
-var global: Global
+# TODO: Add type back in.
+var global
 
-func _init(name: String, player_resource_path: String, global: Global) -> void:
+func _init(name: String, player_resource_path: String, global) -> void:
     self.player_resource_path = player_resource_path
     self.global = global
     
@@ -19,8 +20,11 @@ func _init(name: String, player_resource_path: String, global: Global) -> void:
             _movement_params.gravity_fast_fall * _movement_params.slow_ascent_gravity_multiplier
     _movement_params.collider_half_width_height = Geometry.calculate_half_width_height( \
             _movement_params.collider_shape, _movement_params.collider_rotation)
-    _movement_params.max_upward_jump_distance = _calculate_max_upward_movement(_movement_params)
-    _movement_params.max_horizontal_jump_distance = _calculate_max_horizontal_movement(_movement_params)
+    _movement_params.max_upward_jump_distance = \
+            PlayerMovement.calculate_max_upward_movement(_movement_params)
+    _movement_params.max_horizontal_jump_distance = \
+            PlayerMovement.calculate_max_horizontal_movement( \
+                    _movement_params, _movement_params.jump_boost)
     _check_movement_params(_movement_params)
     _movement_types = _create_movement_types(_movement_params)
     
@@ -80,45 +84,6 @@ func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.dash_fade_duration >= 0)
     assert(movement_params.dash_cooldown >= 0)
     assert(movement_params.dash_vertical_boost <= 0)
-
-static func _calculate_max_upward_movement(movement_params: MovementParams) -> float:
-    # From a basic equation of motion:
-    # - v^2 = v_0^2 + 2*a*(s - s_0)
-    # - s_0 = 0
-    # - v = 0
-    # - Algebra...
-    # - s = -v_0^2 / 2 / a
-    # FIXME: F: Add support for double jumps, dash, etc.
-    return -(movement_params.jump_boost * movement_params.jump_boost) / 2 / \
-            movement_params.gravity_slow_ascent
-
-static func _calculate_max_horizontal_movement(movement_params: MovementParams) -> float:
-    # Take into account the slow gravity of ascent and the fast gravity of descent.
-    # FIXME: F: Add support for double jumps, dash, etc.
-    # FIXME: B: Add a multiplier (x2?) to allow for additional distance when the destination is
-    #           below.
-    # FIXME: A: Add horizontal acceleration
-
-    # v = v_0 + a*t
-    var max_time_to_peak := -movement_params.jump_boost / movement_params.gravity_slow_ascent
-    # s = s_0 + v_0*t + 0.5*a*t*t
-    var max_peak_height := movement_params.jump_boost * max_time_to_peak + \
-            0.5 * movement_params.gravity_slow_ascent * max_time_to_peak * max_time_to_peak
-    # v^2 = v_0^2 + 2*a*(s - s_0)
-    var max_velocity_when_returning_to_starting_height := \
-            sqrt(2 * movement_params.gravity_fast_fall * -max_peak_height)
-    # v = v_0 + a*t
-    var max_time_for_descent_from_peak_to_starting_height := \
-            max_velocity_when_returning_to_starting_height / movement_params.gravity_fast_fall
-    var max_time_to_starting_height := \
-            max_time_to_peak + max_time_for_descent_from_peak_to_starting_height
-    var max_horizontal_distance_to_starting_height := \
-            max_time_to_starting_height * movement_params.max_horizontal_speed_default
-    
-    var MULTIPLIER_TO_ALLOW_FOR_DESTINATIONS_THAT_ARE_BELOW := 2.0
-    
-    return max_horizontal_distance_to_starting_height * \
-            MULTIPLIER_TO_ALLOW_FOR_DESTINATIONS_THAT_ARE_BELOW
 
 static func _compare_action_handlers(a: PlayerActionHandler, b: PlayerActionHandler) -> bool:
     return a.priority < b.priority

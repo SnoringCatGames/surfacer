@@ -10,6 +10,6 @@ func test_calculate_max_upward_movement() -> void:
     movement_params.gravity_slow_ascent = 900.0
     movement_params.max_horizontal_speed_default = 400.0
 
-    var result := PlayerParams._calculate_max_upward_movement(movement_params)
+    var result := PlayerParams.calculate_max_upward_movement(movement_params)
 
     assert_almost_eq(result, -555.5555556, Geometry.FLOAT_EPSILON)

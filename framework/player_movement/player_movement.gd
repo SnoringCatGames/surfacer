@@ -315,8 +315,6 @@ static func _calculate_time_to_release_acceleration(time_start: float, time_step
 # Calculates the minimum required time to reach the destination, considering a maximum velocity.
 static func _calculate_min_time_to_reach_position(s_0: float, s: float, \
         v_0: float, speed_max: float, a: float) -> float:
-    # FIXME: A: Check whether any of these asserts should be replaced with `return INF`.
-    
     if s_0 == s:
         # The start position is the destination.
         return 0.0
@@ -417,7 +415,7 @@ static func calculate_fall_vertical_step(movement_params: MovementParams, \
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var total_displacement: Vector2 = position_end - position_start
-    var min_vertical_displacement := movement_params.max_upward_jump_distance
+    var min_vertical_displacement := -movement_params.max_upward_jump_distance
     
     # Check whether the vertical displacement is possible.
     if min_vertical_displacement > total_displacement.y:
@@ -550,3 +548,38 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> 
         velocity.y = 0
     
     return velocity
+
+# Returns a positive value.
+static func calculate_max_upward_movement(movement_params: MovementParams) -> float:
+    # FIXME: F: Add support for double jumps, dash, etc.
+    
+    # From a basic equation of motion:
+    # - v^2 = v_0^2 + 2*a*(s - s_0)
+    # - s_0 = 0
+    # - v = 0
+    # - Algebra...
+    # - s = -v_0^2 / 2 / a
+    return (movement_params.jump_boost * movement_params.jump_boost) / 2 / \
+            movement_params.gravity_slow_ascent
+
+static func calculate_max_horizontal_movement( \
+        movement_params: MovementParams, velocity_start_y: float) -> float:
+    # FIXME: F: Add support for double jumps, dash, etc.
+    # FIXME: A: Add horizontal acceleration
+    
+    # v = v_0 + a*t
+    var max_time_to_peak := -velocity_start_y / movement_params.gravity_slow_ascent
+    # s = s_0 + v_0*t + 0.5*a*t*t
+    var max_peak_height := velocity_start_y * max_time_to_peak + \
+            0.5 * movement_params.gravity_slow_ascent * max_time_to_peak * max_time_to_peak
+    # v^2 = v_0^2 + 2*a*(s - s_0)
+    var max_velocity_when_returning_to_starting_height := \
+            sqrt(2 * movement_params.gravity_fast_fall * -max_peak_height)
+    # v = v_0 + a*t
+    var max_time_for_descent_from_peak_to_starting_height := \
+            max_velocity_when_returning_to_starting_height / movement_params.gravity_fast_fall
+    # Ascent time plus descent time.
+    var max_time_to_starting_height := \
+            max_time_to_peak + max_time_for_descent_from_peak_to_starting_height
+    # s = s_0 + v * t
+    return max_time_to_starting_height * movement_params.max_horizontal_speed_default

@@ -6,9 +6,9 @@ const MovementCalcLocalParams := preload("res://framework/player_movement/moveme
 const MovementCalcStep := preload("res://framework/player_movement/movement_calculation_step.gd")
 
 # FIXME: SUB-MASTER LIST ***************
+# - Fix fallable surface calculation; it's broken right now.
 # - LEFT OFF HERE: Resolve/debug all left-off commented-out places.
-# - LEFT OFF HERE: Polish correctness of inter-surface edges (check that each expected edge is
-#                  rendering correctly).
+# - LEFT OFF HERE: Check for other obvious false negative edges.
 # 
 # - LEFT OFF HERE: Implement/test edge-traversal movement:
 #   - Test the logic for moving along a path.
@@ -37,17 +37,15 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 # - LEFT OFF HERE: Debug/stress-test intermediate collision scenarios.
 #   - After fixing max vertical velocity, is there anything else I can boost?
 # - LEFT OFF HERE: Debug why check_instructions_for_collision fails with collisions (render better annotations?).
-# - LEFT OFF HERE: Non-edge-calc, lighter work: Add squirrel animation.
+# - LEFT OFF HERE: Add squirrel animation.
 # 
 # - Debugging:
 #   - Would it help to add some quick and easy annotation helpers for temp debugging that I can access on global (or wherever) and just tell to render dots/lines/circles?
 #   - Then I could use that to render all sorts of temp calculation stuff from this file.
 #   - Add an annotation for tracing the players recent center positions.
-#   - Try rendering a path for trajectory that's closen to the calculations for parabolic motion instead of the resulting instruction positions?
+#   - Try rendering a path for trajectory that's closer to the calculations for parabolic motion instead of the resulting instruction positions?
 #     - Might help to see the significance of the difference.
 #     - Might be able to do this with smaller step sizes?
-# 
-# - Test anything else with our PlayerInstruction test?
 # 
 # - Problem: What if we hit a ceiling surface (still moving upwards)?
 #   - We'll set a constraint to either side.
@@ -151,15 +149,6 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
         # - Don't forget to also allow for fallable surfaces (more expensive).
         # - This is still cheaper than considering all 9 jump/land pair instructions, right?
         
-        # FIXME: D *********** Remove. This is for debugging.
-#        if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
-#            continue
-#        else:
-#            possible_jump_land_pairs = [a_far_end, b_far_end]
-        # FIXME: D: Remove
-#        if a.side == SurfaceSide.CEILING or b.side == SurfaceSide.CEILING:
-#            continue
-        
         jump_positions = get_all_jump_positions_from_surface(params, a, b.vertices, b.bounding_box)
         land_positions = get_all_jump_positions_from_surface(params, b, a.vertices, a.bounding_box)
 
@@ -168,7 +157,22 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
 
             for land_position in land_positions:
                 global_calc_params.position_end = land_position.target_point
-
+                
+                # FIXME: E: DEBUGGING: Remove.
+                if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
+                    # Ignore non-floor surfaces.
+                    continue
+                elif jump_position != jump_positions.back() or \
+                        land_position != land_positions.back():
+                    # Ignore non-far-ends.
+                    continue
+                elif a.vertices[0] != Vector2(128, 64):
+                    # Ignore anything but the one origin surface we are debugging.
+                    continue
+                elif b.vertices[0] != Vector2(-128, -448):
+                    # Ignore anything but the one destination surface we are debugging.
+                    continue
+                
                 instructions = _calculate_jump_instructions(global_calc_params)
                 if instructions != null:
                     # Can reach land position from jump position.
@@ -269,6 +273,12 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     ### BASE CASES
     
     var next_horizontal_step := _calculate_horizontal_step(local_calc_params, global_calc_params)
+    
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+    # - Debugging recursion.
+    # - Get the up-left jump from floor to floor working on level long-rise.
+    # - Set a breakpoint here.
+    print("yo")
     
     if next_horizontal_step == null:
         # The destination is out of reach.
@@ -446,7 +456,7 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var total_displacement: Vector2 = position_end - position_start
-    var min_vertical_displacement := movement_params.max_upward_jump_distance
+    var min_vertical_displacement := -movement_params.max_upward_jump_distance
     
     # Check whether the vertical displacement is possible.
     if min_vertical_displacement > total_displacement.y:

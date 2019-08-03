@@ -295,14 +295,15 @@ func find_surfaces_in_fall_range( \
         result_set: Dictionary, origin: Vector2, velocity_start: Vector2) -> void:
     # FIXME: E: Offset the start_position_offset to account for velocity_start.
     # TODO: Refactor this to use a more accurate bounding polygon.
-
+    
     # This offset should account for the extra horizontal range before the player has reached
     # terminal velocity.
-    var start_position_offset := Vector2(movement_params.gravity_fast_fall / \
-            movement_params.in_air_horizontal_acceleration * 0.6, 0)
+    var start_position_offset_x: float = \
+            PlayerMovement.calculate_max_horizontal_movement(movement_params, velocity_start.y)
+    var start_position_offset := Vector2(start_position_offset_x, 0.0)
     var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
     var bottom_corner_offset_from_top_corner := Vector2(100000.0, 100000.0 * slope)
-
+    
     var top_left := origin - start_position_offset
     var top_right := origin + start_position_offset
     var bottom_left := top_left + Vector2(-bottom_corner_offset_from_top_corner.x, bottom_corner_offset_from_top_corner.y)
@@ -439,7 +440,7 @@ static func _get_surfaces_intersecting_polygon( \
     for surface in surfaces:
         if Geometry.do_segment_and_polygon_intersect(surface.vertices[0], \
                 surface.vertices[surface.vertices.size() - 1], polygon):
-            result_set[surface] = true
+            result_set[surface] = surface
 
 static func _compare_surfaces_by_max_y(a: Surface, b: Surface) -> bool:
     return a.bounding_box.position.y < b.bounding_box.position.y
@@ -451,6 +452,10 @@ static func _get_surfaces_in_jump_range(result_set: Dictionary, target_surface: 
             max_horizontal_jump_distance, max_upward_jump_distance, max_horizontal_jump_distance, \
             0.0)
     
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE
+#    if target_surface.bounding_box.position == Vector2(128, 64):
+#        print("yo")
+    
     for other_surface in other_surfaces:
         if expanded_target_bounding_box.intersects(other_surface.bounding_box):
-            result_set[other_surface] = true
+            result_set[other_surface] = other_surface

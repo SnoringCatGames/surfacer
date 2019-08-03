@@ -8,163 +8,16 @@ const VERTEX_SIDE_NUDGE_OFFSET := 0.001
 static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         shape_query_params: Physics2DShapeQueryParameters, collider_half_width_height: Vector2, \
         surface_parser: SurfaceParser, has_recursed := false) -> SurfaceCollision:
-    # FIXME: B: Check whether all of the level setup must be called from within an early
-    #   _physics_process callback (space might have a lock otherwise)?
-    
-    # FIXME: F:
-    # - Move these diagrams out of ASCII and into InkScape.
-    # - Include in markdown explanation docs.
-    # - Reference markdown from relevant points in this function.
-    # - Go through other interesting functions/edge-cases and create diagrams for them too.
-    
-    # ## How Physics2DDirectSpaceState.collide_shape works
-    # 
-    # If we have the two shapes below colliding, then the `o` characters below are the positions
-    # that collide_shape will return:
-    # 
-    #                  +-------------------+
-    #                  |                   |
-    #                  |              o----o----+
-    #                  |              |    |    | <-----
-    #                  |              |    |    |
-    #                  |              |    |    | <-----
-    #                  |              o----o----+
-    #                  |                   |
-    #                  +-------------------+
-    # 
-    #                  +-------------------+
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |              o----o----+
-    #                  |              |    |    | <-----
-    #                  +--------------o----o    |
-    #                                 |         | <-----
-    #                                 +---------+
-    # 
-    # However, collide_shapes returns incorrect results with tunnelling:
-    # 
-    #              o-------------------o
-    #              |                   |
-    # +---------+  |                   |
-    # |         | <----------------------------------
-    # |         |  |                   |
-    # |         | <----------------------------------
-    # +---------+  o                   o <== Best option
-    #              |                   |
-    #              +-------------------+
-    #
-    # Our collision calculations still work even with the incorrect results from collide_shapes.
-    # We always choose the one point of intersection that is valid.
-    
-    # ## Handing pre-existing collisions.
-    # 
-    # - These _should_ only happen due to increased margins around the actual Player shape, and at
-    #   the start of the movement; otherwise, they should have been handled in a previous frame.
-    # - We can ignore surfaces that we are moving away from, since we can assume that these aren't
-    #   valid collisions.
-    # - The valid collision points that we need to consider are any points that are in both the
-    #   same x and y direction as movement from any corner of the Player's _actual_ shape (not
-    #   considering the margin). The diagrams below illustrate this:
-    # 
-    # (Only the top three points are valid)
-    #                                          `
-    #                                  ..............
-    #                                  .       `    .
-    #                                  .    +--+    .
-    #                  +-----------o---o---o|  |    .
-    #            `   ` | `   `   `   ` . ` |+--+    .
-    #                  |               .   |        .  __
-    #                  |               o...o......... |\
-    #                  |                   |   __       \
-    #                  |                   |  |\         \
-    #                  |                   |    \
-    #                  |                   |     \
-    #                  +-------------------+
-    # 
-    # (None of the points are valid)
-    #                                       `
-    #                  +-----------------o-o`
-    #                  |               o...o.........
-    #                  |           __  .   |`       .
-    #                  |            /| .   |+--+    .
-    #                  |           /   .   ||  |    .
-    #                  |          /    .   |+--+  ` . `   `   `   `
-    #                  |               .   |        .
-    #                  |               o...o.........
-    #                  +-------------------+  __
-    #                                          /|
-    #                                         /
-    #                                        /
-    
-    # ## Choose the right side when colliding with a corner.
-    # 
-    # `space_state.intersect_ray` could return a normal from either side of an intersected corner.
-    # However, only one side is correct. The correct side is determined by which dimension
-    # intersected first. The following diagram helps illustrate this.
-    #
-    # Before collision: 
-    #                  +-------------------+
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  +-------------------+
-    #                                          +---------+
-    #                                          |         |
-    #                                          |         |
-    #                                          |         |  __
-    #                                          +---------+ |\
-    #                                              __        \
-    #                                             |\          \
-    #                                               \
-    #                                                \
-    # 
-    # After the shapes intersect along one dimension, but before they intersect along the other:
-    #     (In this example, the shapes intersect along the y axis, and the correct side for the
-    #     collision is the right side of the larger shape.)
-    #                  +-------------------+
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |+---------+
-    #                  +-------------------+|         |
-    #                                       |         |
-    #                                       |         |  __
-    #                                       +---------+ |\
-    #                                           __        \
-    #                                          |\          \
-    #                                            \
-    #                                             \
-    # 
-    # After the shapes intersect along both dimensions.
-    #                  +-------------------+
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                   |
-    #                  |                 o-o-------+
-    #                  |                 | |       |
-    #                  |                 | |       |
-    #                  +-----------------o-o       |  __
-    #                                    +---------+ |\
-    #                                        __        \
-    #                                       |\          \
-    #                                         \
-    #                                          \
-    
+    # Check for collisions during this frame; these could be new or pre-existing.
     var intersection_points := space_state.collide_shape(shape_query_params, 32)
     assert(intersection_points.size() < 32)
     if intersection_points.empty():
+        # No collision.
         return null
+    
+    
+    
+    
     
     var direction := shape_query_params.motion.normalized()
     var position_start := shape_query_params.transform.origin
@@ -206,7 +59,11 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     #     - Position from closest_intersection_point
     #     - Collider from ...
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: Remove
+    
+    
+    
+    # FIXME: LEFT OFF HERE: DEBUGGING: Is this check actually needed? (Adding it in yields false-positive adjacent-lower-wall collisions from origin tiles)
+    # FIXME: LEFT OFF HERE: DEBUGGING: Add back in. Breaks on level 4 (with wall surfaces).
     if true:
 #    if intersection_points.size() == 2:
 #        # `collide_shape` _seems_ to only return two points when we are clipping a corner on our
@@ -220,6 +77,11 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
 #
 #        perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
 #        should_try_without_perpendicular_nudge_first = true
+#
+#
+#
+#
+#
 #    else:
         # Choose whichever point comes first, along the direction of the motion. If two points are
         # equally close, then choose whichever point is closest to the starting position.
@@ -262,6 +124,12 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                     other_closest_intersection_point
         
         ray_trace_target = closest_intersection_point
+        
+        
+        
+        
+        
+        
                     
         if direction.x == 0 or direction.y == 0:
             # Moving straight sideways or up-down.
@@ -283,23 +151,20 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             
             perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
             should_try_without_perpendicular_nudge_first = true
+            
+            
         else:
             # Moving at an angle.
             
             var collision_ratios := space_state.cast_motion(shape_query_params)
             
-            var position_just_before_collision: Vector2
-            if collision_ratios.size() == 2:
-                # An array of size 2 means that there was no pre-existing collision.
-                
-                # A value of 1 means that no collision was detected.
-                assert(collision_ratios[0] < 1.0)
-                
-                position_just_before_collision = \
-                        position_start + shape_query_params.motion * collision_ratios[0]
-            else: # collision_ratios.size() == 0
-                # An empty array means that we were already colliding even before any motion.
-                # 
+            assert(collision_ratios.size() != 1)
+            
+            # An array of size 2 means that there was no pre-existing collision.
+            # An empty array means that we were already colliding even before any motion.
+            var there_was_a_preexisting_collision := collision_ratios.size() == 0
+            
+            if there_was_a_preexisting_collision:
                 # - We can assume that this collision actually involves the margin colliding and not
                 #   the actual shape.
                 # - We can assume that the closest_intersection_point is a point along the outside of a
@@ -317,8 +182,10 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                 # Increase the motion, since we can't be sure the shape would otherwise collide without
                 # the margin.
                 shape_query_params.motion = direction * original_margin * 4
+                
                 # When the Player's shape rests against another collidable, that can be interpreted as
                 # a collision, so we add a slight offset here.
+                # FIXME: LEFT OFF HERE: Is this needed?
                 shape_query_params.transform = \
                         shape_query_params.transform.translated(-direction * 0.01)
                 
@@ -330,7 +197,17 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                 shape_query_params.transform = Transform2D(0.0, position_start)
                 
                 return result
-                
+            
+            
+            
+            
+            
+            # A value of 1 means that no collision was detected.
+            assert(collision_ratios[0] < 1.0)
+            
+            var position_just_before_collision: Vector2 = \
+                    position_start + shape_query_params.motion * collision_ratios[0]
+            
             var x_min_just_before_collision := \
                     position_just_before_collision.x - collider_half_width_height.x
             var x_max_just_before_collision := \
@@ -383,7 +260,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                         perpendicular_offset
                 should_try_without_perpendicular_nudge_first = false
                 
-            if !intersects_along_x or !intersects_along_y:
+                
+            elif !intersects_along_x or !intersects_along_y:
                 # If only one dimension intersects just before collision, then we use that to determine
                 # which side we're colliding with.
                 
@@ -413,6 +291,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                         perpendicular_offset = Vector2(0.0, -VERTEX_SIDE_NUDGE_OFFSET)
                 
                 should_try_without_perpendicular_nudge_first = false
+                
+                
             else:
                 # If both dimensions intersect just before collision, then we use the direction of
                 # motion to determine which side we're colliding with.
@@ -434,6 +314,18 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                 perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
                 should_try_without_perpendicular_nudge_first = true
     
+    
+    
+    
+    
+    
+    
+    # Ray-trace to see whether there is a collision.
+    # 
+    # This attempts ray tracing with and without a slight nudge to either side of the original
+    # calculated ray. This nudging can be important when the point of intersection is a vertex of
+    # the collider.
+    
     var from := ray_trace_target - direction * 0.001
     var to := ray_trace_target + direction * 1000000
     
@@ -441,15 +333,12 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         collision = space_state.intersect_ray(from, to, shape_query_params.exclude, \
                 shape_query_params.collision_layer)
     
-    # If the ray tracing didn't hit the collider, then try nudging it a little to either side.
-    # This can happen when the point of intersection is a vertex of the collider.
-    
     if collision.empty():
         collision = space_state.intersect_ray(from + perpendicular_offset, \
                 to + perpendicular_offset, shape_query_params.exclude, \
                 shape_query_params.collision_layer)
     
-    if !should_try_without_perpendicular_nudge_first:
+    if !should_try_without_perpendicular_nudge_first and collision.empty():
         collision = space_state.intersect_ray(from, to, shape_query_params.exclude, \
                 shape_query_params.collision_layer)
         
@@ -463,6 +352,12 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     # FIXME: Add back in?
 #    assert(Geometry.are_points_equal_with_epsilon( \
 #            collision.position, ray_trace_target, perpendicular_offset.length + 0.0001))
+    
+    
+    
+    
+    
+    
     
     # If we haven't yet defined the surface side, do that now, based off the collision normal.
     if side == SurfaceSide.NONE:
@@ -496,3 +391,155 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     var surface := surface_parser.get_surface_for_tile(tile_map, tile_map_index, side)
     
     return SurfaceCollision.new(surface, intersection_point)
+
+
+
+# FIXME: F:
+# - Move these diagrams out of ASCII and into InkScape.
+# - Include in markdown explanation docs.
+# - Reference markdown from relevant points in this function.
+# - Go through other interesting functions/edge-cases and create diagrams for them too.
+
+# ## How Physics2DDirectSpaceState.collide_shape works
+# 
+# If we have the two shapes below colliding, then the `o` characters below are the positions
+# that collide_shape will return:
+# 
+#                  +-------------------+
+#                  |                   |
+#                  |              o----o----+
+#                  |              |    |    | <-----
+#                  |              |    |    |
+#                  |              |    |    | <-----
+#                  |              o----o----+
+#                  |                   |
+#                  +-------------------+
+# 
+#                  +-------------------+
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |              o----o----+
+#                  |              |    |    | <-----
+#                  +--------------o----o    |
+#                                 |         | <-----
+#                                 +---------+
+# 
+# However, collide_shapes returns incorrect results with tunnelling:
+# 
+#              o-------------------o
+#              |                   |
+# +---------+  |                   |
+# |         | <----------------------------------
+# |         |  |                   |
+# |         | <----------------------------------
+# +---------+  o                   o <== Best option
+#              |                   |
+#              +-------------------+
+#
+# Our collision calculations still work even with the incorrect results from collide_shapes.
+# We always choose the one point of intersection that is valid.
+
+# ## Handing pre-existing collisions.
+# 
+# - These _should_ only happen due to increased margins around the actual Player shape, and at
+#   the start of the movement; otherwise, they should have been handled in a previous frame.
+# - We can ignore surfaces that we are moving away from, since we can assume that these aren't
+#   valid collisions.
+# - The valid collision points that we need to consider are any points that are in both the
+#   same x and y direction as movement from any corner of the Player's _actual_ shape (not
+#   considering the margin). The diagrams below illustrate this:
+# 
+# (Only the top three points are valid)
+#                                          `
+#                                  ..............
+#                                  .       `    .
+#                                  .    +--+    .
+#                  +-----------o---o---o|  |    .
+#            `   ` | `   `   `   ` . ` |+--+    .
+#                  |               .   |        .  __
+#                  |               o...o......... |\
+#                  |                   |   __       \
+#                  |                   |  |\         \
+#                  |                   |    \
+#                  |                   |     \
+#                  +-------------------+
+# 
+# (None of the points are valid)
+#                                       `
+#                  +-----------------o-o`
+#                  |               o...o.........
+#                  |           __  .   |`       .
+#                  |            /| .   |+--+    .
+#                  |           /   .   ||  |    .
+#                  |          /    .   |+--+  ` . `   `   `   `
+#                  |               .   |        .
+#                  |               o...o.........
+#                  +-------------------+  __
+#                                          /|
+#                                         /
+#                                        /
+
+# ## Choose the right side when colliding with a corner.
+# 
+# `space_state.intersect_ray` could return a normal from either side of an intersected corner.
+# However, only one side is correct. The correct side is determined by which dimension
+# intersected first. The following diagram helps illustrate this.
+#
+# Before collision: 
+#                  +-------------------+
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  +-------------------+
+#                                          +---------+
+#                                          |         |
+#                                          |         |
+#                                          |         |  __
+#                                          +---------+ |\
+#                                              __        \
+#                                             |\          \
+#                                               \
+#                                                \
+# 
+# After the shapes intersect along one dimension, but before they intersect along the other:
+#     (In this example, the shapes intersect along the y axis, and the correct side for the
+#     collision is the right side of the larger shape.)
+#                  +-------------------+
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |+---------+
+#                  +-------------------+|         |
+#                                       |         |
+#                                       |         |  __
+#                                       +---------+ |\
+#                                           __        \
+#                                          |\          \
+#                                            \
+#                                             \
+# 
+# After the shapes intersect along both dimensions.
+#                  +-------------------+
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                   |
+#                  |                 o-o-------+
+#                  |                 | |       |
+#                  |                 | |       |
+#                  +-----------------o-o       |  __
+#                                    +---------+ |\
+#                                        __        \
+#                                       |\          \
+#                                         \
+#                                          \

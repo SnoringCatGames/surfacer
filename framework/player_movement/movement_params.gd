@@ -1,7 +1,7 @@
 extends Reference
 class_name MovementParams
 
-# FIXME: Add defaults for some of these
+# TODO: Add defaults for some of these
 
 var can_grab_walls: bool
 var can_grab_ceilings: bool
