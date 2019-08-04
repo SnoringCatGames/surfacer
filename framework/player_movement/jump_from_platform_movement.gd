@@ -6,7 +6,15 @@ const MovementCalcLocalParams := preload("res://framework/player_movement/moveme
 const MovementCalcStep := preload("res://framework/player_movement/movement_calculation_step.gd")
 
 # FIXME: SUB-MASTER LIST ***************
-# - Fix fallable surface calculation; it's broken right now.
+# - Add support for specifying a required min/max end-x-velocity.
+#   - More notes in the backtracking method.
+# - Test support for specifying a required min/max end-x-velocity.
+# 
+# - Add support for pressing away from the destination in order to slow down enough to not overshoot it.
+#   - 
+# - Test support for pressing away from the destination in order to slow down enough to not overshoot it.
+# 
+# - Fix false-negative for long-rise floor-to-floor jumping up-and-left.
 # - LEFT OFF HERE: Resolve/debug all left-off commented-out places.
 # - LEFT OFF HERE: Check for other obvious false negative edges.
 # 
@@ -20,15 +28,6 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #     - It will need to listen for when the navigator has reached the destination though (make sure
 #       that signal is emitted).
 # - LEFT OFF HERE: Create a demo level to showcase lots of interesting edges.
-# - LEFT OFF HERE: Add support for specifying a desired min end-x-velocity.
-#   - We need to add support for specifying a desired min end-x-velocity from the previous
-#     horizontal step (by default, all end velocities are as small as possible).
-#   - We can then use this to determine when to start the horizontal movement for the previous
-#     horizontal step (delaying movement start yields a greater end velocity).
-#   - In order to determine whether the required min end-x-velocity from the previous step, we
-#     should flip the order in which we calculate horizontal steps in the constraint recursion.
-#   - We should be able to just calculate the latter step first, since we know what its start
-#     position and time must be.
 # - LEFT OFF HERE: Check for other obvious false negative edges.
 # - LEFT OFF HERE: Debug why discrete movement trajectories are incorrect.
 #   - Discrete trajectories are definitely peaking higher; should we cut the jump button sooner?
@@ -274,11 +273,11 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     
     var next_horizontal_step := _calculate_horizontal_step(local_calc_params, global_calc_params)
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-    # - Debugging recursion.
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: ---A:
+    # - Debugging min step-end velocity.
     # - Get the up-left jump from floor to floor working on level long-rise.
     # - Set a breakpoint here.
-    print("yo")
+#    print("yo")
     
     if next_horizontal_step == null:
         # The destination is out of reach.
@@ -394,6 +393,60 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
     # FIXME: B: Add heuristics to pick the "better" constraint first.
     
     for constraint in constraints:
+        # FIXME: LEFT OFF HERE: --------------------------------A
+        # - Add support for specifying a required min/max end-x-velocity.
+        #   - We need to add support for specifying a desired min end-x-velocity from the previous
+        #     horizontal step (by default, all end velocities are as small as possible).
+        #   - We can then use this to determine when to start the horizontal movement for the previous
+        #     horizontal step (delaying movement start yields a greater end velocity).
+        #   - In order to determine whether the required min end-x-velocity from the previous step, we
+        #     must flip the order in which we calculate horizontal steps in the constraint recursion.
+        #   - We should be able to just calculate the latter step first, since we know what its start
+        #     position and time must be.
+        #   - ADDITIONAL CHANGE: We will need to calculate the the jump height according to
+        #     whether the needed min/max end-x-velocity exceeds the speed cap.
+        #     - The current backtracking logic doesn't support this.
+        #       - It only addresses the need to increase height according to intermediate
+        #         conflicting surfaces.
+        #       - So we need to update _calculate_vertical_step to support this.
+        #         - Include a new param: post_constraint_destination
+        #           - Or maybe just use the global_param destination?
+        #         - PROBLEM: Will need to know what the greatest-possible step-end horizontal
+        #           velocity will be for the current constraint.
+        #           - This will depend on whether we'll have had enough time to hold the sideways
+        #             button (since the last constraint position and velocity) in order to reach
+        #             the horizontal speed cap.
+        #             - I think this means that we will need to record min/max velocity on all
+        #               previous constraints and check through them when determining the next?
+        #             FIXME: LEFT OFF HERE: ----------------------------------------------------A
+        #             - Plan exactly what this constraint min/max velocity assignment and access look like.
+        #               - 
+        # 
+        #             - FOLLOW-UP CONCERN/QUESTION/PROBLEM: Regarding the current backtracking
+        #               logic and disallowal of hitting previous surfaces:
+        #               - What's to stop a new jump-height calculation from still running into the
+        #                 same old wall constraint as before, when we hit the wall before letting
+        #                 go of jump?
+        #               - I'm pretty sure nothing is.
+        #               - SOLUTION: Move the global_calc_params.collided_surfaces assignment and
+        #                 access to helper functions.
+        #                 - In the assignment function, check whether the jump button would still
+        #                   be pressed:
+        #                   - If so, then record the surface on list A: on this list any future
+        #                     encounter of the surface fails, regardless.
+        #                   - Else, list B: recording on this list uses a string value for the key,
+        #                     which is based on both the surface params and on the current
+        #                     jump-release time.
+        #                 - In the access function, the appropriate list is checked.
+        # 
+        #         - We can then use this greatest-possible step-end horizontal velocity to
+        #           determine how much longer we'd need to hold the jump button for.
+        #   - Whether to use min or max will be dependent on the horizontal_movement_sign.
+        #   - Make this part of the MovementConstraint object.
+        #   - Will definitely need to set an offset for this.
+        #     - Probably just a constant offset; not too big; will need some tweaking.
+        #   - Update README with a description of this feature.
+        
         # Recurse: Backtrack and try a higher jump (to the constraint).
         calc_results_to_constraint = _calculate_steps_with_new_jump_height( \
                 global_calc_params, constraint.passing_point, constraint)
@@ -706,6 +759,10 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     #   PlayerInstruction pair for pressing the opposition direction for the remaining time between
     #   time_instruction_end and time_step_end.
     # - Would need to also update calculate_horizontal_end_state_for_time.
+    
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: ---A
+#    if position_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
+#        print("yo")
     
     var duration_for_horizontal_acceleration := _calculate_time_to_release_acceleration( \
             time_start, time_step_end, position_start.x, position_end.x, velocity_start.x, \
