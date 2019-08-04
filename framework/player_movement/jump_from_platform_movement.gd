@@ -151,13 +151,14 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
         land_positions = get_all_jump_positions_from_surface(params, b, a.vertices, a.bounding_box)
 
         for jump_position in jump_positions:
-            global_calc_params.position_start = jump_position.target_point
+            passing_vertically = a.normal.x == 0
+            global_calc_params.origin_constraint = MovementConstraint.new(a, \
+                    jump_position.target_point, passing_vertically, false, false)
 
             for land_position in land_positions:
-                global_calc_params.position_end = land_position.target_point
                 passing_vertically = b.normal.x == 0
                 global_calc_params.destination_constraint = MovementConstraint.new(b, \
-                        global_calc_params.position_end, passing_vertically, false, true)
+                        land_position.target_point, passing_vertically, false, true)
                 
                 # FIXME: E: DEBUGGING: Remove.
                 if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
@@ -190,10 +191,12 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
         surface_parser: SurfaceParser, position_start: PositionAlongSurface, \
         position_end: Vector2) -> PlayerInstructions:
     var global_calc_params := MovementCalcGlobalParams.new(params, space_state, surface_parser)
-    global_calc_params.position_start = position_start.target_point
-    global_calc_params.position_end = position_end
-    global_calc_params.destination_constraint = MovementConstraint.new(null, \
-            global_calc_params.position_end, false, true, true)
+    var origin_surface := position_start.surface
+    var passing_vertically := origin_surface.normal.x == 0
+    global_calc_params.origin_constraint = MovementConstraint.new( \
+            origin_surface, position_start.target_point, passing_vertically, false, false)
+    global_calc_params.destination_constraint = \
+            MovementConstraint.new(null, position_end, false, true, true)
     
     return _calculate_jump_instructions(global_calc_params)
 
@@ -205,13 +208,14 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
 static func _calculate_jump_instructions( \
         global_calc_params: MovementCalcGlobalParams) -> PlayerInstructions:
     var calc_results := _calculate_steps_with_new_jump_height(global_calc_params, \
-            global_calc_params.position_end, global_calc_params.destination_constraint)
+            global_calc_params.destination_constraint)
     
     if calc_results == null:
         return null
     
     var instructions := convert_calculation_steps_to_player_instructions( \
-            global_calc_params.position_start, global_calc_params.position_end, calc_results)
+            global_calc_params.origin_constraint.position, \
+            global_calc_params.destination_constraint.position, calc_results)
     
     if Utils.IN_DEV_MODE:
         _test_instructions(instructions, global_calc_params, calc_results)
@@ -236,7 +240,8 @@ static func _test_instructions(instructions: PlayerInstructions, \
     var final_frame_position := \
             instructions.frame_discrete_positions[instructions.frame_discrete_positions.size() - 1]
     # FIXME: B: Add back in after fixing the use of GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION.
-#    assert(final_frame_position.distance_squared_to(global_calc_params.position_end) < \
+#    assert(final_frame_position.distance_squared_to( \
+#            global_calc_params.destination_constraint.position) < \
 #            VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD)
 
     # FIXME: B: REMOVE
@@ -253,17 +258,15 @@ static func _test_instructions(instructions: PlayerInstructions, \
 # This can trigger recursive calls if horizontal movement cannot be satisfied without backtracking
 # to consider a new higher jump height.
 static func _calculate_steps_with_new_jump_height(global_calc_params: MovementCalcGlobalParams, \
-        local_position_end: Vector2, \
         upcoming_constraint: MovementConstraint) -> MovementCalcResults:
     var local_calc_params := _calculate_vertical_step(global_calc_params.movement_params, \
-            global_calc_params.position_start, local_position_end, \
-            global_calc_params.destination_constraint)
+            global_calc_params.origin_constraint, global_calc_params.destination_constraint)
     
     if local_calc_params == null:
         # The destination is out of reach.
         return null
         
-    local_calc_params.upcoming_constraint = upcoming_constraint
+    local_calc_params.end_constraint = upcoming_constraint
     
     return calculate_steps_from_constraint(global_calc_params, local_calc_params)
 
@@ -278,7 +281,7 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     
     var next_horizontal_step := _calculate_horizontal_step(local_calc_params, global_calc_params)
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: ---A:
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: -A:
     # - Debugging min step-end velocity.
     # - Get the up-left jump from floor to floor working on level long-rise.
     # - Set a breakpoint here.
@@ -292,14 +295,14 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     
     # If this is the last horizontal step, then let's check whether whether we calculated
     # things correctly.
-    if local_calc_params.upcoming_constraint.is_destination:
+    if local_calc_params.end_constraint.is_destination:
         assert(Geometry.are_floats_equal_with_epsilon( \
                 next_horizontal_step.time_step_end, vertical_step.time_step_end, 0.0001))
         assert(Geometry.are_floats_equal_with_epsilon( \
                 next_horizontal_step.position_step_end.y, vertical_step.position_step_end.y, \
                 0.001))
-        assert(Geometry.are_points_equal_with_epsilon( \
-                next_horizontal_step.position_step_end, global_calc_params.position_end, 0.0001))
+        assert(Geometry.are_points_equal_with_epsilon(next_horizontal_step.position_step_end, \
+                global_calc_params.destination_constraint.position, 0.0001))
     
     var collision := CollisionChecks.check_continuous_horizontal_step_for_collision( \
             global_calc_params, local_calc_params, next_horizontal_step)
@@ -322,7 +325,7 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     # Calculate possible constraints to divert the movement around either side of the colliding
     # surface.
     var constraints := \
-            _calculate_constraints(collision.surface, global_calc_params.constraint_offset)
+            _calculate_constraints(collision.surface, global_calc_params.constraint_offset)# FIXME: LEFT OFF HERE: -------------A: Pass in previous constraint.
     
     # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := _calculate_steps_from_constraint_without_backtracking_on_height( \
@@ -348,8 +351,8 @@ static func _calculate_steps_from_constraint_without_backtracking_on_height( \
     for constraint in constraints:
         # Recurse: Calculate movement to the constraint.
         local_calc_params_to_constraint = MovementCalcLocalParams.new( \
-                local_calc_params.position_start, constraint.passing_point, \
-                local_calc_params.previous_step, local_calc_params.vertical_step, constraint)
+                local_calc_params.start_constraint, constraint, \
+                local_calc_params.previous_step, local_calc_params.vertical_step)
         calc_results_to_constraint = calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_to_constraint)
         
@@ -359,9 +362,9 @@ static func _calculate_steps_from_constraint_without_backtracking_on_height( \
         
         # Recurse: Calculate movement from the constraint to the original destination.
         local_calc_params_from_constraint = MovementCalcLocalParams.new( \
-                constraint.passing_point, local_calc_params.position_end, \
+                constraint, local_calc_params.end_constraint, \
                 calc_results_to_constraint.horizontal_steps.back(), 
-                local_calc_params.vertical_step, local_calc_params.upcoming_constraint)
+                local_calc_params.vertical_step)
         calc_results_from_constraint = calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_from_constraint)
         
@@ -514,8 +517,8 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         # - Go through above notes/thoughts and make sure all bits are acounted for.
         
         # Recurse: Backtrack and try a higher jump (to the constraint).
-        calc_results_to_constraint = _calculate_steps_with_new_jump_height( \
-                global_calc_params, constraint.passing_point, constraint)
+        calc_results_to_constraint = \
+                _calculate_steps_with_new_jump_height(global_calc_params, constraint)
         
         if calc_results_to_constraint == null:
             # The constraint is out of reach.
@@ -526,8 +529,8 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         # Update the total duration to include the fall duration after the constraint.
         vertical_step_to_constraint.time_step_end = _calculate_end_time_for_jumping_to_position( \
                 global_calc_params.movement_params, vertical_step_to_constraint, \
-                local_calc_params.position_end, vertical_step_to_constraint.time_step_end, \
-                local_calc_params.upcoming_constraint)
+                local_calc_params.end_constraint.position, vertical_step_to_constraint.time_step_end, \
+                local_calc_params.end_constraint)
         if vertical_step_to_constraint.time_step_end == INF:
             # The destination is out of reach from the constraint.
             continue
@@ -538,9 +541,9 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         
         # Recurse: Calculate movement from the constraint to the original destination.
         local_calc_params_from_constraint = MovementCalcLocalParams.new( \
-                constraint.passing_point, local_calc_params.position_end, \
+                constraint, local_calc_params.end_constraint, \
                 calc_results_to_constraint.horizontal_steps.back(), \
-                vertical_step_to_constraint, local_calc_params.upcoming_constraint)
+                vertical_step_to_constraint)
         calc_results_from_constraint = calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_from_constraint)
         
@@ -571,9 +574,12 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
 # Calculates a new step for the vertical part of the movement and the corresponding total jump
 # duration.
 static func _calculate_vertical_step(movement_params: MovementParams, \
-        position_start: Vector2, position_end: Vector2, \
+        origin_constraint: MovementConstraint, \
         destination_constraint: MovementConstraint) -> MovementCalcLocalParams:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    
+    var position_start := origin_constraint.position
+    var position_end := destination_constraint.position
     
     var total_displacement: Vector2 = position_end - position_start
     var min_vertical_displacement := -movement_params.max_upward_jump_distance
@@ -771,8 +777,7 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     assert(Geometry.are_floats_equal_with_epsilon( \
             step.position_step_end.y, position_end.y, 0.001))
     
-    return MovementCalcLocalParams.new( \
-            position_start, position_end, null, step, destination_constraint)
+    return MovementCalcLocalParams.new(origin_constraint, destination_constraint, null, step)
 
 # Calculates a new step for the horizontal part of the movement.
 static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParams, \
@@ -780,7 +785,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     var movement_params := global_calc_params.movement_params
     var previous_step := local_calc_params.previous_step
     var vertical_step := local_calc_params.vertical_step
-    var position_end := local_calc_params.position_end
+    var position_end := local_calc_params.end_constraint.position
     
     # Get some start state from the previous step.
     var time_start: float
@@ -799,7 +804,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     
     var time_step_end := _calculate_end_time_for_jumping_to_position( \
             movement_params, vertical_step, position_end, time_start, \
-            local_calc_params.upcoming_constraint)
+            local_calc_params.end_constraint)
     if time_step_end == INF:
         # The vertical displacement is out of reach.
         return null
@@ -828,7 +833,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     #   time_instruction_end and time_step_end.
     # - Would need to also update calculate_horizontal_end_state_for_time.
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: ---A
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: -A
 #    if position_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
 #        print("yo")
     

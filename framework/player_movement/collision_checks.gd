@@ -20,7 +20,7 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
     var is_pressing_right := false
     var is_pressing_jump := false
     var horizontal_movement_sign := 0
-    var position := global_calc_params.position_start
+    var position := global_calc_params.origin_constraint.position
     var velocity := Vector2.ZERO
     var has_started_instructions := false
     var space_state := global_calc_params.space_state

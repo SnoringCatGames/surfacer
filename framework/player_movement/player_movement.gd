@@ -56,48 +56,48 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
 
 static func _calculate_constraints( \
         colliding_surface: Surface, constraint_offset: Vector2) -> Array:
-    var passing_point_a: Vector2
+    var position_a: Vector2
     var constraint_a: MovementConstraint
-    var passing_point_b: Vector2
+    var position_b: Vector2
     var constraint_b: MovementConstraint
     
     match colliding_surface.side:
         SurfaceSide.FLOOR:
             # Left end
-            passing_point_a = colliding_surface.vertices[0] + \
+            position_a = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
-            constraint_a = MovementConstraint.new(colliding_surface, passing_point_a, true, true)
+            constraint_a = MovementConstraint.new(colliding_surface, position_a, true, true)
             # Right end
-            passing_point_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+            position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
-            constraint_b = MovementConstraint.new(colliding_surface, passing_point_b, true, false)
+            constraint_b = MovementConstraint.new(colliding_surface, position_b, true, false)
         SurfaceSide.CEILING:
             # Left end
-            passing_point_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+            position_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
-            constraint_a = MovementConstraint.new(colliding_surface, passing_point_a, true, true)
+            constraint_a = MovementConstraint.new(colliding_surface, position_a, true, true)
             # Right end
-            passing_point_b = colliding_surface.vertices[0] + \
+            position_b = colliding_surface.vertices[0] + \
                     Vector2(constraint_offset.x, constraint_offset.y)
-            constraint_b = MovementConstraint.new(colliding_surface, passing_point_b, true, false)
+            constraint_b = MovementConstraint.new(colliding_surface, position_b, true, false)
         SurfaceSide.LEFT_WALL:
             # Top end
-            passing_point_a = colliding_surface.vertices[0] + \
+            position_a = colliding_surface.vertices[0] + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
-            constraint_a = MovementConstraint.new(colliding_surface, passing_point_a, false, true)
+            constraint_a = MovementConstraint.new(colliding_surface, position_a, false, true)
             # Bottom end
-            passing_point_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+            position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(constraint_offset.x, constraint_offset.y)
-            constraint_b = MovementConstraint.new(colliding_surface, passing_point_b, false, false)
+            constraint_b = MovementConstraint.new(colliding_surface, position_b, false, false)
         SurfaceSide.RIGHT_WALL:
             # Top end
-            passing_point_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+            position_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
-            constraint_a = MovementConstraint.new(colliding_surface, passing_point_a, false, true)
+            constraint_a = MovementConstraint.new(colliding_surface, position_a, false, true)
             # Bottom end
-            passing_point_b = colliding_surface.vertices[0] + \
+            position_b = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
-            constraint_b = MovementConstraint.new(colliding_surface, passing_point_b, false, false)
+            constraint_b = MovementConstraint.new(colliding_surface, position_b, false, false)
     
     return [constraint_a, constraint_b]
 
@@ -407,9 +407,12 @@ static func _create_position_from_target_point(target_point: Vector2, surface: S
 # Calculates a new step for the vertical part of the fall movement and the corresponding total fall
 # duration.
 static func calculate_fall_vertical_step(movement_params: MovementParams, \
-        position_start: Vector2, position_end: Vector2, velocity_start: Vector2, \
-        destination_constraint: MovementConstraint) -> MovementCalcLocalParams:
+        origin_constraint: MovementConstraint, destination_constraint: MovementConstraint, \
+        velocity_start: Vector2) -> MovementCalcLocalParams:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    
+    var position_start := origin_constraint.position
+    var position_end := destination_constraint.position
     
     var total_displacement: Vector2 = position_end - position_start
     var min_vertical_displacement := -movement_params.max_upward_jump_distance
@@ -459,8 +462,7 @@ static func calculate_fall_vertical_step(movement_params: MovementParams, \
     assert(Geometry.are_floats_equal_with_epsilon( \
             step.position_step_end.y, position_end.y, 0.001))
     
-    return MovementCalcLocalParams.new( \
-            position_start, position_end, null, step, destination_constraint)
+    return MovementCalcLocalParams.new(origin_constraint, destination_constraint, null, step)
 
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.

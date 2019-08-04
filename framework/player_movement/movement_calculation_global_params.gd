@@ -22,18 +22,15 @@ var shape_query_params: Physics2DShapeQueryParameters
 # of these calculations.
 var constraint_offset: Vector2
 
-# The start position for the current edge instructions.
-var position_start: Vector2
+# The origin for the current edge instructions.
+var origin_constraint: MovementConstraint
 
-# The end position for the current edge instructions.
-var position_end: Vector2
+# The destination for the current edge instructions.
+var destination_constraint: MovementConstraint
 
 # Whether the calculations for the current edge are allowed to attempt backtracking to consider a
 # higher jump.
 var can_backtrack_on_height: bool
-
-# The destination for the current edge instructions.
-var destination_constraint: MovementConstraint
 
 # Any Surfaces that have previously been hit while calculating the current edge instructions.
 # Dictionary<Surface, bool>

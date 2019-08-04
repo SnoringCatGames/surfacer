@@ -260,7 +260,8 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
 
     var global_calc_params := MovementCalcGlobalParams.new( \
             movement_params, space_state, surface_parser, false)
-    global_calc_params.position_start = origin
+    global_calc_params.origin_constraint = \
+            MovementConstraint.new(null, origin, true, false, false)
 
     var origin_vertices := [origin]
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
@@ -278,13 +279,12 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
                 movement_params, destination.surface, origin_vertices, origin_bounding_box)
         
         for position_end in possible_end_positions:
-            global_calc_params.position_end = position_end.target_point
             global_calc_params.destination_constraint = MovementConstraint.new(surface, \
-                    global_calc_params.position_end, passing_vertically, false, true)
+                    position_end.target_point, passing_vertically, false, true)
             
-            local_calc_params = PlayerMovement.calculate_fall_vertical_step( \
-                    movement_params, origin, position_end.target_point, velocity_start, \
-                    global_calc_params.destination_constraint)
+            local_calc_params = PlayerMovement.calculate_fall_vertical_step(movement_params, \
+                    global_calc_params.origin_constraint, \
+                    global_calc_params.destination_constraint, velocity_start)
             if local_calc_params == null:
                 continue
             
