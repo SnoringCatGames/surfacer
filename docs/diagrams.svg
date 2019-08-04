@@ -34,7 +34,7 @@
      units="in"
      inkscape:window-width="3840"
      inkscape:window-height="2035"
-     inkscape:window-x="-13"
+     inkscape:window-x="3827"
      inkscape:window-y="-13"
      inkscape:window-maximized="1" />
   <metadata
@@ -45,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -157,10 +157,10 @@
          x="-1368.9302"
          y="-17.55085"
          style="stroke-width:0.66382116"
-         id="tspan4605">speed and max jump height could be dependant </tspan><tspan
+         id="tspan4605">speed and max jump height could be dependent </tspan><tspan
          sodipodi:role="line"
          x="-1368.9302"
-         y="15.64021"
+         y="15.640208"
          style="stroke-width:0.66382116"
          id="tspan4607">on the remaining displacement after a constraint.</tspan><tspan
          sodipodi:role="line"
@@ -190,12 +190,12 @@
          id="tspan4656">-   Attempt 3: If we increase the max jump height </tspan><tspan
          sodipodi:role="line"
          x="-1368.9302"
-         y="214.78658"
+         y="214.78656"
          style="stroke-width:0.66382116"
          id="tspan4660">                     and the step-1-end horizontal speed, </tspan><tspan
          sodipodi:role="line"
          x="-1368.9302"
-         y="247.97763"
+         y="247.97762"
          style="stroke-width:0.66382116"
          id="tspan4662">                     then we can reach the destination.</tspan></text>
     <text

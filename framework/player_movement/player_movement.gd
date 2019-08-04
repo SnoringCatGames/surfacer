@@ -174,7 +174,7 @@ static func calculate_horizontal_end_state_for_time(movement_params: MovementPar
 # FIXME: B: Update unit tests to include min_end_time.
 static func _calculate_end_time_for_jumping_to_position(movement_params: MovementParams, \
         vertical_step: MovementCalcStep, position: Vector2, min_end_time: float, \
-        upcoming_constraint: MovementConstraint, destination_surface: Surface) -> float:
+        upcoming_constraint: MovementConstraint) -> float:
     var position_instruction_end := vertical_step.position_instruction_end
     var velocity_instruction_end := vertical_step.velocity_instruction_end
     
@@ -184,16 +184,13 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
     var duration_of_slow_ascent: float
     var duration_of_fast_fall: float
     
-    var surface := \
-            upcoming_constraint.surface if upcoming_constraint != null else destination_surface
-    
     var is_position_before_instruction_end: bool
     var is_position_before_peak: bool
     
     # We need to know whether the position corresponds to the rising or falling side of the jump
     # parabola, and whether the position correpsonds to before or after the jump button is
     # released.
-    match surface.side:
+    match upcoming_constraint.surface.side:
         SurfaceSide.FLOOR:
             # Jump reaches the position after releasing the jump button (and after the peak).
             is_position_before_instruction_end = false
@@ -213,7 +210,7 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
                 # peak).
                 is_position_before_instruction_end = false
         _: # A wall.
-            if upcoming_constraint != null:
+            if !upcoming_constraint.is_destination:
                 # We are considering an intermediate constraint.
                 if upcoming_constraint.should_stay_on_min_side:
                     # Passing over the top of the wall (jump reaches the position before the peak).
@@ -410,8 +407,8 @@ static func _create_position_from_target_point(target_point: Vector2, surface: S
 # Calculates a new step for the vertical part of the fall movement and the corresponding total fall
 # duration.
 static func calculate_fall_vertical_step(movement_params: MovementParams, \
-        position_start: Vector2, position_end: Vector2, \
-        velocity_start: Vector2) -> MovementCalcLocalParams:
+        position_start: Vector2, position_end: Vector2, velocity_start: Vector2, \
+        destination_constraint: MovementConstraint) -> MovementCalcLocalParams:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var total_displacement: Vector2 = position_end - position_start
@@ -462,7 +459,8 @@ static func calculate_fall_vertical_step(movement_params: MovementParams, \
     assert(Geometry.are_floats_equal_with_epsilon( \
             step.position_step_end.y, position_end.y, 0.001))
     
-    return MovementCalcLocalParams.new(position_start, position_end, null, step, null)
+    return MovementCalcLocalParams.new( \
+            position_start, position_end, null, step, destination_constraint)
 
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.

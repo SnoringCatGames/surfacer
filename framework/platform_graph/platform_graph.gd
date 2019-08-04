@@ -266,21 +266,25 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
 
     var possible_end_positions: Array
+    var passing_vertically: bool
     var local_calc_params: MovementCalcLocalParams
     var calc_results: MovementCalcResults
 
     # Find the first possible edge to a landing surface.
     for surface in possible_landing_surfaces:
-        global_calc_params.destination_surface = surface
+        passing_vertically = surface.normal.x == 0
         
         possible_end_positions = PlayerMovement.get_all_jump_positions_from_surface( \
                 movement_params, destination.surface, origin_vertices, origin_bounding_box)
         
         for position_end in possible_end_positions:
             global_calc_params.position_end = position_end.target_point
+            global_calc_params.destination_constraint = MovementConstraint.new(surface, \
+                    global_calc_params.position_end, passing_vertically, false, true)
             
             local_calc_params = PlayerMovement.calculate_fall_vertical_step( \
-                    movement_params, origin, position_end.target_point, velocity_start)
+                    movement_params, origin, position_end.target_point, velocity_start, \
+                    global_calc_params.destination_constraint)
             if local_calc_params == null:
                 continue
             

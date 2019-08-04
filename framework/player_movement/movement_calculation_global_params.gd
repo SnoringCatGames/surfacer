@@ -33,7 +33,7 @@ var position_end: Vector2
 var can_backtrack_on_height: bool
 
 # The destination for the current edge instructions.
-var destination_surface: Surface
+var destination_constraint: MovementConstraint
 
 # Any Surfaces that have previously been hit while calculating the current edge instructions.
 # Dictionary<Surface, bool>
