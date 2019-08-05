@@ -54,52 +54,95 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
     Utils.error("Abstract PlayerMovement.get_all_reachable_surface_instructions_from_air is not implemented")
     return []
 
-static func _calculate_constraints( \
-        colliding_surface: Surface, constraint_offset: Vector2) -> Array:
+static func _calculate_constraints(colliding_surface: Surface, constraint_offset: Vector2, \
+        previous_constraint: MovementConstraint, time_jump_instruction_end: float) -> Array:
+    var passing_vertically: bool
     var position_a: Vector2
-    var constraint_a: MovementConstraint
     var position_b: Vector2
-    var constraint_b: MovementConstraint
     
     match colliding_surface.side:
         SurfaceSide.FLOOR:
+            passing_vertically = true
             # Left end
             position_a = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
-            constraint_a = MovementConstraint.new(colliding_surface, position_a, true, true)
             # Right end
             position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
-            constraint_b = MovementConstraint.new(colliding_surface, position_b, true, false)
         SurfaceSide.CEILING:
+            passing_vertically = true
             # Left end
             position_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
-            constraint_a = MovementConstraint.new(colliding_surface, position_a, true, true)
             # Right end
             position_b = colliding_surface.vertices[0] + \
                     Vector2(constraint_offset.x, constraint_offset.y)
-            constraint_b = MovementConstraint.new(colliding_surface, position_b, true, false)
         SurfaceSide.LEFT_WALL:
+            passing_vertically = false
             # Top end
             position_a = colliding_surface.vertices[0] + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
-            constraint_a = MovementConstraint.new(colliding_surface, position_a, false, true)
             # Bottom end
             position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(constraint_offset.x, constraint_offset.y)
-            constraint_b = MovementConstraint.new(colliding_surface, position_b, false, false)
         SurfaceSide.RIGHT_WALL:
+            passing_vertically = false
             # Top end
             position_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
-            constraint_a = MovementConstraint.new(colliding_surface, position_a, false, true)
             # Bottom end
             position_b = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
-            constraint_b = MovementConstraint.new(colliding_surface, position_b, false, false)
+    
+    var constraint_a := \
+            MovementConstraint.new(colling_surface, position_a, passing_vertically, true)
+    var constraint_b := \
+            MovementConstraint.new(colling_surface, position_b, passing_vertically, false)
+    
+    # FIXME: LEFT OFF HERE: ------------------------------------A
+    # - Use time_jump_instruction_end
+    # - Ignore the actual step duration, and only consider the overall duration to reach the latter
+    #   step position given the former step position and former step velocity???
+    # - Are these the fields that I need?
+    #   - Try accessing and assigning them below.
+    #   - Then, if successful, add to the MovementConstraint class.
+    #   - constraint.time_min_x_velocity
+    #   - constraint.time_max_x_velocity
+    
+    # Calculate the max step-end-x-speed for each constraint.
+    
+    var displacement_x_a := position_a.x - previous_constraint.position.x
+    if displacement_x_a < 0:
+        constraint_a.min_x_velocity = 
+        constraint_a.max_x_velocity = 
+#    else:
+#        pass
+    
+#    if displacement_x_b < 0:
+#        constraint_b.min_x_velocity = 
+#        constraint_b.max_x_velocity = 
+#    else:
+#        pass
     
     return [constraint_a, constraint_b]
+
+static func calculate_max_speed_velocity_at_end_of_interval(s_0: float, s: float, v_0: float, \
+        a_magnitude: float, speed_max: float) -> float:
+    # FIXME: C: Account for movement_sign == 0. And account for pressing sideways-move-input in
+    #           opposite direction, in order to counter too-strong velocity_start.
+    
+    # FIXME: LEFT OFF HERE: --------------------------------------------------A
+    var displacement := s - s_0
+    var movement_sign := \
+            (1 if displacement > 0 else \
+            (-1 if displacement < 0 else \
+            0))
+    var a := a_magnitude * movement_sign
+    var v_at_max_speed := speed_max * movement_sign
+    
+    var v := 
+    
+    pass
 
 # Calculates the vertical component of position and velocity according to the given vertical
 # movement state and the given time. These are then returned in a Vector2: x is position and y is

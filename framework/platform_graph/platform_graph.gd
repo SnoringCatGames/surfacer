@@ -93,6 +93,10 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 #   surface, rather than just the ends).
 # 
 # - Split apart PlayerMovement into smaller classes (after finalizing movement system architecture).
+# 
+# - Refactor the movement/navigation system to support more custom behaviors (e.g., some classic
+#   video game movements, like walking to the edge and then turning around, circling the entire
+#   circumference, bouncing forward, etc.).
 
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
