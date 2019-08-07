@@ -219,6 +219,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/player_movement/movement_params.gd"
 }, {
+"base": "MovementCalcStep",
+"class": "MovementVertCalcStep",
+"language": "GDScript",
+"path": "res://framework/player_movement/movement_vertical_calculation_step.gd"
+}, {
 "base": "Reference",
 "class": "Navigator",
 "language": "GDScript",
@@ -482,6 +487,7 @@ _global_script_class_icons={
 "MovementCalcStep": "",
 "MovementConstraint": "",
 "MovementParams": "",
+"MovementVertCalcStep": "",
 "Navigator": "",
 "NavigatorAnnotator": "",
 "PlatformGraph": "",

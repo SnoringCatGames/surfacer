@@ -13,7 +13,7 @@ func before_each() -> void:
     movement_params.max_upward_jump_distance = \
             PlayerParams.calculate_max_upward_movement(movement_params)
 
-func assert_vertical_step(step: MovementCalcStep, state: Dictionary) -> void:
+func assert_vertical_step(step: MovementVertCalcStep, state: Dictionary) -> void:
     assert_not_null(step)
     assert_eq(step.time_start, 0.0)
     assert_almost_eq(step.time_instruction_end, state.time_instruction_end, \

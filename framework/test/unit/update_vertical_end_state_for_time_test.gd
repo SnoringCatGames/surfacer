@@ -4,7 +4,7 @@ extends TestBed
 # https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
 
 var output_step: MovementCalcStep
-var vertical_step: MovementCalcStep
+var vertical_step: MovementVertCalcStep
 
 func set_up(state := {}) -> void:
     output_step = MovementCalcStep.new()

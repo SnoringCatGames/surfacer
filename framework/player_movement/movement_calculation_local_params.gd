@@ -13,10 +13,10 @@ var end_constraint: MovementConstraint
 var previous_step: MovementCalcStep
 
 # The single vertical step for this overall jump movement.
-var vertical_step: MovementCalcStep
+var vertical_step: MovementVertCalcStep
 
 func _init(start_constraint: MovementConstraint, end_constraint: MovementConstraint, \
-        previous_step: MovementCalcStep, vertical_step: MovementCalcStep) -> void:
+        previous_step: MovementCalcStep, vertical_step: MovementVertCalcStep) -> void:
     self.start_constraint = start_constraint
     self.end_constraint = end_constraint
     self.previous_step = previous_step

@@ -599,7 +599,7 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
 # - expects_only_one_positive_result indicates whether to report an error if there are two
 #   positive results.
 # - Returns INF if we cannot reach the destination with our movement parameters.
-static func solve_for_movement_duration(s_0: float, s: float, v_0: float, a: float, \
+static func calculate_movement_duration(s_0: float, s: float, v_0: float, a: float, \
         returns_lower_result := true, min_duration := 0.0, \
         expects_only_one_positive_result := false) -> float:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.

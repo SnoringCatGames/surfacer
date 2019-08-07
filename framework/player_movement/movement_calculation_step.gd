@@ -3,6 +3,8 @@
 # This is used internally to make edge calculation easier. These are converted to
 # PlayerInstructions before the edges are finalized and stored.
 # 
+# Each overall (edge) movement consists of a single vertical step and a series of horizontal steps.
+# 
 # Note: There is an important distinction between the end of the movement step and the end of the
 # input instruction within the step:
 # - "step_end": The time at which movement should reach the intended destination position for this
@@ -26,19 +28,11 @@ var time_instruction_end: float
 # part of the overall movement.
 var time_step_end: float
 
-# The time at which movement for this step should reach the maximum height.
-# This is only assigned on vertical steps.
-var time_peak_height: float
-
 var position_start: Vector2
 
 var position_step_end: Vector2
 
 var position_instruction_end: Vector2
-
-# The maximum height position for this step.
-# This is only assigned on vertical steps.
-var position_peak_height: Vector2
 
 var velocity_start: Vector2
 

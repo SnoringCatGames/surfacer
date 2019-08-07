@@ -101,7 +101,7 @@ class Test_calculate_steps_from_constraint_with_backtracking_on_height:
 
 # FIXME: Add tests to calculate_min_time_to_reach_position_test.gd
 
-class Test_solve_for_movement_duration:
+class Test_calculate_movement_duration:
     extends TestBed
     
     # Expected values were calculated using a Google spreadsheet:

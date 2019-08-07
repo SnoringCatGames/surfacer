@@ -152,13 +152,15 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
 
         for jump_position in jump_positions:
             passing_vertically = a.normal.x == 0
-            global_calc_params.origin_constraint = MovementConstraint.new(a, \
-                    jump_position.target_point, passing_vertically, false, false)
+            global_calc_params.origin_constraint = PlayerMovement.create_origin_constraint(a, \
+                    jump_position.target_point, Vector2(0.0, params.jump_boost), \
+                    passing_vertically)
 
             for land_position in land_positions:
                 passing_vertically = b.normal.x == 0
-                global_calc_params.destination_constraint = MovementConstraint.new(b, \
-                        land_position.target_point, passing_vertically, false, true)
+                global_calc_params.destination_constraint = \
+                        PlayerMovement.create_destination_constraint(b, \
+                                land_position.target_point, passing_vertically)
                 
                 # FIXME: E: DEBUGGING: Remove.
                 if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
@@ -193,10 +195,11 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
     var global_calc_params := MovementCalcGlobalParams.new(params, space_state, surface_parser)
     var origin_surface := position_start.surface
     var passing_vertically := origin_surface.normal.x == 0
-    global_calc_params.origin_constraint = MovementConstraint.new( \
-            origin_surface, position_start.target_point, passing_vertically, false, false)
+    global_calc_params.origin_constraint = PlayerMovement.create_origin_constraint( \
+            origin_surface, position_start.target_point, \
+            Vector2(0.0, params.jump_boost), passing_vertically)
     global_calc_params.destination_constraint = \
-            MovementConstraint.new(null, position_end, false, true, true)
+            PlayerMovement.create_destination_constraint(null, position_end, false)
     
     return _calculate_jump_instructions(global_calc_params)
 
@@ -261,6 +264,8 @@ static func _calculate_steps_with_new_jump_height(global_calc_params: MovementCa
         upcoming_constraint: MovementConstraint) -> MovementCalcResults:
     var local_calc_params := _calculate_vertical_step(global_calc_params.movement_params, \
             global_calc_params.origin_constraint, global_calc_params.destination_constraint)
+    global_calc_params.destination_constraint.time_passing_through = \
+            local_calc_params.vertical_step.time_step_end
     
     if local_calc_params == null:
         # The destination is out of reach.
@@ -324,8 +329,9 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     
     # Calculate possible constraints to divert the movement around either side of the colliding
     # surface.
-    var constraints := _calculate_constraints(collision.surface, \
-            global_calc_params.constraint_offset, local_calc_params.start_constraint)
+    var constraints := _calculate_constraints(global_calc_params.movement_params, \
+            vertical_step, collision.surface, global_calc_params.constraint_offset, \
+            local_calc_params.start_constraint)
     
     # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := _calculate_steps_from_constraint_without_backtracking_on_height( \
@@ -395,7 +401,7 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
     var local_calc_params_from_constraint: MovementCalcLocalParams
     var calc_results_to_constraint: MovementCalcResults
     var calc_results_from_constraint: MovementCalcResults
-    var vertical_step_to_constraint: MovementCalcStep
+    var vertical_step_to_constraint: MovementVertCalcStep
     var end_state: Vector2
     
     # FIXME: B: Add heuristics to pick the "better" constraint first.
@@ -502,11 +508,22 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         # - So, here's a possible ultimate order of events:
         #   - From front to back:
         #     **- [stored on vertical step] Calculate minimum possible overall jump-release time.
-        #     **- [stored on constraints] Calculate min and max possible (directional) step-end-x-velocity for each step.
+        #     **- [stored on constraints] Calculate the one and only time for passing through the
+        #         constraint.
+        #         - There is no separate min and max for this, since this is dependent on where we
+        #           are in the vertical movement.
+        #         - PROBLEM: How to know whether we are on the ascent or the descent of the jump?
+        #           - FIXME: LEFT OFF HERE: ------------------------------------------------------A
+        #           - Is it possible to know the x position of the jump peak?
+        #             - Or at least between which constraints the peak occurs?
+        #           - Answer??: 
+        #     **- [stored on constraints] Calculate min and max possible (directional)
+        #         step-end-x-velocity for each step.
         #   - From back to front:
         #     - For both traversal versions:
-        #       **- [stored on horizontal steps] Calculate steps in reverse order in order to require that a given step ends with
-        #         a certain x velocity.
+        #       **- [stored on horizontal steps] Calculate steps in reverse order in order to 
+        #           require that a given step ends with
+        #           a certain x velocity.
         #     - For traversal with backtracking only:
         #       **- Use a new post_constraint_destination param passed to the vertical step calc to
         #         support increasing the jump height as needed in order to reach the destination
@@ -632,170 +649,36 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     var position_start := origin_constraint.position
     var position_end := destination_constraint.position
     
-    var total_displacement: Vector2 = position_end - position_start
+    var displacement: Vector2 = position_end - position_start
     var min_vertical_displacement := -movement_params.max_upward_jump_distance
     
     # Check whether the vertical displacement is possible.
-    if min_vertical_displacement > total_displacement.y:
+    if min_vertical_displacement > displacement.y:
         return null
     
     var horizontal_movement_sign: int
-    if total_displacement.x < 0:
+    if displacement.x < 0:
         horizontal_movement_sign = -1
-    elif total_displacement.x > 0:
+    elif displacement.x > 0:
         horizontal_movement_sign = 1
     else:
         horizontal_movement_sign = 0
     
-    var time_to_release_jump_button: float
-    var velocity_at_jump_button_release: float
+    var velocity_start := Vector2(0.0, movement_params.jump_boost)
+    var can_hold_jump_button := true
     
-    # Calculate how long it will take for the jump to reach some minimum peak height.
-    # 
-    # This takes into consideration the fast-fall mechanics (i.e., that a slower gravity is applied
-    # until either the jump button is released or we hit the peak of the jump)
-    var duration_to_reach_upward_displacement: float
-    if total_displacement.y < 0:
-        # Derivation:
-        # - Start with basic equations of motion
-        # - v_1^2 = v_0^2 + 2*a_0*(s_1 - s_0)
-        # - v_2^2 = v_1^2 + 2*a_1*(s_2 - s_1)
-        # - v_2 = 0
-        # - s_0 = 0
-        # - Do some algebra...
-        # - s_1 = (1/2*v_0^2 + a_1*s_2) / (a_1 - a_0)
-        var distance_to_release_button_for_shorter_jump := \
-                (0.5 * movement_params.jump_boost * movement_params.jump_boost + \
-                movement_params.gravity_fast_fall * total_displacement.y) / \
-                (movement_params.gravity_fast_fall - movement_params.gravity_slow_ascent)
-        
-        if distance_to_release_button_for_shorter_jump < 0:
-            # We need more motion than just the initial jump boost to reach the destination.
-            time_to_release_jump_button = \
-                    Geometry.solve_for_movement_duration(0.0, \
-                    distance_to_release_button_for_shorter_jump, movement_params.jump_boost, \
-                    movement_params.gravity_slow_ascent, true, 0.0, false)
-            assert(time_to_release_jump_button != INF)
-        
-            # From a basic equation of motion:
-            #     v = v_0 + a*t
-            velocity_at_jump_button_release = movement_params.jump_boost + \
-                    movement_params.gravity_slow_ascent * time_to_release_jump_button
+    var total_duration := calculate_time_to_reach_constraint(movement_params, position_start, \
+            position_end, velocity_start, can_hold_jump_button)
     
-            # From a basic equation of motion:
-            #     v = v_0 + a*t
-            var duration_to_reach_peak_after_release := \
-                    -velocity_at_jump_button_release / movement_params.gravity_fast_fall
-            assert(duration_to_reach_peak_after_release >= 0)
-    
-            duration_to_reach_upward_displacement = time_to_release_jump_button + \
-                    duration_to_reach_peak_after_release
-        else:
-            # The initial jump boost is already more motion than we need to reach the destination.
-            # 
-            # In this case, we set up the vertical step to hit the end position while still
-            # travelling upward.
-            time_to_release_jump_button = 0
-            velocity_at_jump_button_release = movement_params.jump_boost
-            duration_to_reach_upward_displacement = Geometry.solve_for_movement_duration(0.0, \
-                    total_displacement.y, movement_params.jump_boost, \
-                    movement_params.gravity_fast_fall, true, 0.0, false)
-    else:
-        # We're jumping downward, so we don't need to reach any minimum peak height.
-        duration_to_reach_upward_displacement = 0.0
-    
-    # Calculate how long it will take for the jump to reach some lower destination.
-    var duration_to_reach_downward_displacement: float
-    if total_displacement.y > 0:
-        duration_to_reach_downward_displacement = Geometry.solve_for_movement_duration( \
-                position_start.y, position_end.y, movement_params.jump_boost, \
-                movement_params.gravity_fast_fall, true, 0.0, true)
-        assert(duration_to_reach_downward_displacement != INF)
-    else:
-        duration_to_reach_downward_displacement = 0.0
-    
-    var duration_to_reach_horizontal_displacement := _calculate_min_time_to_reach_position( \
-            position_start.x, position_end.x, 0.0, \
-            movement_params.max_horizontal_speed_default, \
-            movement_params.in_air_horizontal_acceleration * horizontal_movement_sign)
-    assert(duration_to_reach_horizontal_displacement >= 0 and \
-            duration_to_reach_horizontal_displacement != INF)
-    
-    var duration_to_reach_upward_displacement_on_descent := 0.0
-    if duration_to_reach_downward_displacement == 0.0:
-        # The total duration still isn't enough if we cannot reach the horizontal displacement
-        # before we've already past the destination vertically on the upward side of the
-        # trajectory. In that case, we need to consider the minimum time for the upward and
-        # downward motion of the jump.
-        
-        var duration_to_reach_upward_displacement_with_only_fast_fall = \
-                Geometry.solve_for_movement_duration(position_start.y, position_end.y, \
-                        movement_params.jump_boost, movement_params.gravity_fast_fall, true, 0.0, \
-                        false)
-        
-        if duration_to_reach_upward_displacement_with_only_fast_fall != INF and \
-                duration_to_reach_upward_displacement_with_only_fast_fall < \
-                duration_to_reach_horizontal_displacement:
-            duration_to_reach_upward_displacement_on_descent = \
-                    Geometry.solve_for_movement_duration(position_start.y, position_end.y, \
-                            movement_params.jump_boost, movement_params.gravity_fast_fall, \
-                            false, 0.0, false)
-            assert(duration_to_reach_upward_displacement_on_descent != INF)
-    
-    # How high we need to jump is determined by the total duration of the jump.
-    # 
-    # The total duration of the jump is at least the greatest of three durations:
-    # - The duration to reach the minimum peak height (i.e., how high upward we must jump to reach
-    #   a higher destination).
-    # - The duration to reach a lower destination.
-    # - The duration to cover the horizontal displacement.
-    # 
-    # However, that total duration still isn't enough if we cannot reach the horizontal
-    # displacement before we've already past the destination vertically on the upward side of the
-    # trajectory. In that case, we need to consider the minimum time for the upward and downward
-    # motion of the jump.
-    var total_duration := max(max(max(duration_to_reach_upward_displacement, \
-            duration_to_reach_downward_displacement), \
-            duration_to_reach_horizontal_displacement), \
-            duration_to_reach_upward_displacement_on_descent)
-    
-    # Given the total duration, calculate the time to release the jump button.
-    # 
-    # Derivation:
-    # - Start with basic equations of motion
-    # - s_1 = s_0 + v_0*t_0 + 1/2*a_0*t_0^2
-    # - s_2 = s_1 + v_1*t_1 + 1/2*a_1*t_1^2
-    # - t_2 = t_0 + t_1
-    # - v_1 = v_0 + a_0*t_0
-    # - Do some algebra...
-    # - 0 = (1/2*(a_1 - a_0))*t_0^2 + (t_2*(a_0 - a_1))*t_0 + (s_0 - s_2 + v_0*t_2 + 1/2*a_1*t_2^2)
-    # - Apply quadratic formula to solve for t_0.
-    var a := 0.5 * (movement_params.gravity_fast_fall - movement_params.gravity_slow_ascent)
-    var b := total_duration * \
-            (movement_params.gravity_slow_ascent - movement_params.gravity_fast_fall)
-    var c := position_start.y - position_end.y + movement_params.jump_boost * total_duration + \
-            0.5 * movement_params.gravity_fast_fall * total_duration * total_duration
-    var discriminant := b * b - 4 * a * c
-    if discriminant < 0:
-        # We can't reach the end position from our start position in the given time.
+    var time_to_release_jump_button := \
+            calculate_time_to_release_jump_button(movement_params, total_duration, displacement)
+    if time_to_release_jump_button == INF:
         return null
-    var discriminant_sqrt := sqrt(discriminant)
-    var t1 := (-b - discriminant_sqrt) / 2 / a
-    var t2 := (-b + discriminant_sqrt) / 2 / a
-    if t1 < -Geometry.FLOAT_EPSILON:
-        time_to_release_jump_button = t2
-    elif t2 < -Geometry.FLOAT_EPSILON:
-        time_to_release_jump_button = t1
-    else:
-        time_to_release_jump_button = min(t1, t2)
-    assert(time_to_release_jump_button >= -Geometry.FLOAT_EPSILON)
-    time_to_release_jump_button = max(time_to_release_jump_button, 0.0)
-    assert(time_to_release_jump_button <= total_duration)
     
     # Given the time to release the jump button, calculate the time to reach the peak.
     # From a basic equation of motion:
     #     v = v_0 + a*t
-    velocity_at_jump_button_release = movement_params.jump_boost + \
+    var velocity_at_jump_button_release := movement_params.jump_boost + \
             movement_params.gravity_slow_ascent * time_to_release_jump_button
     # From a basic equation of motion:
     #     v = v_0 + a*t
@@ -803,14 +686,15 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
             -velocity_at_jump_button_release / movement_params.gravity_fast_fall
     var time_peak_height := time_to_release_jump_button + duration_to_reach_peak_after_release
     
-    var step := MovementCalcStep.new()
+    var step := MovementVertCalcStep.new()
     step.time_start = 0.0
     step.time_instruction_end = time_to_release_jump_button
     step.time_step_end = total_duration
     step.time_peak_height = time_peak_height
     step.position_start = position_start
-    step.velocity_start = Vector2(0.0, movement_params.jump_boost)
+    step.velocity_start = velocity_start
     step.horizontal_movement_sign = horizontal_movement_sign
+    step.can_hold_jump_button = can_hold_jump_button
     
     var instruction_end_state := \
             calculate_vertical_end_state_for_time(movement_params, step, step.time_instruction_end)
@@ -872,7 +756,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
         horizontal_movement_sign = 0
     var acceleration := movement_params.in_air_horizontal_acceleration * horizontal_movement_sign
     
-    # FIXME: Problem: Sometimes, the following step may require a minimum or maiximum starting
+    # FIXME: A: Problem: Sometimes, the following step may require a minimum or maiximum starting
     #        velocity in order to reach it's constraint. Right now, this isn't paying much
     #        attention to the end velocity; if time_instruction_end < time_step_end, then we could
     #        manipulate things to increase or decrease the end velocity.
@@ -888,6 +772,8 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
 #    if position_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
 #        print("yo")
     
+    # We don't need to worry about whether this would exceed max speed here. That is addressed
+    # below.
     var duration_for_horizontal_acceleration := _calculate_time_to_release_acceleration( \
             time_start, time_step_end, position_start.x, position_end.x, velocity_start.x, \
             acceleration, 0.0, true, false)
