@@ -264,13 +264,13 @@ static func _calculate_steps_with_new_jump_height(global_calc_params: MovementCa
         upcoming_constraint: MovementConstraint) -> MovementCalcResults:
     var local_calc_params := _calculate_vertical_step(global_calc_params.movement_params, \
             global_calc_params.origin_constraint, global_calc_params.destination_constraint)
-    global_calc_params.destination_constraint.time_passing_through = \
-            local_calc_params.vertical_step.time_step_end
     
     if local_calc_params == null:
         # The destination is out of reach.
         return null
-        
+    
+    global_calc_params.destination_constraint.time_passing_through = \
+            local_calc_params.vertical_step.time_step_end
     local_calc_params.end_constraint = upcoming_constraint
     
     return calculate_steps_from_constraint(global_calc_params, local_calc_params)
@@ -507,23 +507,22 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         #
         # - So, here's a possible ultimate order of events:
         #   - From front to back:
-        #     **- [stored on vertical step] Calculate minimum possible overall jump-release time.
-        #     **- [stored on constraints] Calculate the one and only time for passing through the
+        #     - [stored on vertical step] Calculate minimum possible overall jump-release time.
+        #     - [stored on constraints] Calculate the one and only time for passing through the
         #         constraint.
         #         - There is no separate min and max for this, since this is dependent on where we
         #           are in the vertical movement.
         #         - PROBLEM: How to know whether we are on the ascent or the descent of the jump?
-        #           - FIXME: LEFT OFF HERE: ------------------------------------------------------A
         #           - Is it possible to know the x position of the jump peak?
         #             - Or at least between which constraints the peak occurs?
-        #           - Answer??: 
-        #     **- [stored on constraints] Calculate min and max possible (directional)
+        #           - Answer: I can compute the durations between constraints using the same step
+        #             duration logic I used in the original vertical-step calculations.
+        #     - [stored on constraints] Calculate min and max possible (directional)
         #         step-end-x-velocity for each step.
         #   - From back to front:
         #     - For both traversal versions:
         #       **- [stored on horizontal steps] Calculate steps in reverse order in order to 
-        #           require that a given step ends with
-        #           a certain x velocity.
+        #           require that a given step ends with a certain x velocity.
         #     - For traversal with backtracking only:
         #       **- Use a new post_constraint_destination param passed to the vertical step calc to
         #         support increasing the jump height as needed in order to reach the destination
@@ -567,21 +566,19 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         #     to counter too-strong velocity_start.
         
         # FIXME: LEFT OFF HERE: ACTION ITEMS: ---------A
-        # - [FALSE, remove] Double-check my thinking for storing min-max-step-end-x-velocities on MovementConstraint.
-        #   - It seems like I also need to use step-end time for these calculations (to know how much time we have to accelerate between constraints).
-        #   - Which would mean that I probably just want to use Steps anyway?
-        #   - Or am I misunderstanding the min-max-step-end-x-velocity calculations right now?
-        #     - Is it reasonable to ignore the actual step duration, and only consider the overall duration to reach the latter step position given the former step position and former step velocity???
-        # - [max step-end-x-speed] Update _calculate_constraints to record either the min or max x velocity (depending on direction).
-        #   - Set the other to INF or -INF.
-        #   - Calculate and record the other at the appropriate place...
+        # **- Update both recursive functions to calculate steps from back to front, considering
+        #   min/max horizontal velocity.
+        # **- Update _calculate_horizontal_step to use _calculate_horizontal_step when needed.
+        #   - If needed, we can maybe also calculate this in the initial constraint calc
+        #     function with the other min/max value.
         # - Update vertical step calc function to use greater of the height from both previous and new constraints.
-        # - Update vertical step calc function to consider max step-end-x-speed.
+        # **- Update vertical step calc function to consider max step-end-x-speed.
         #   - Is this all that's needed to support the backtracking version?
         # - Add logic to quit early for invalid surface collisions.
         # - Move the global_calc_params.collided_surfaces assignment and access to helper functions?
         # - Cleanup/refactor/consolidate the with-and-without-backtracking recursive functions?
         # - Go through above notes/thoughts and make sure all bits are acounted for.
+        # - Either support or add a doc+TODO for the other failing backtracking case that I scribbled.
         # - Document approach in the README.
         
         # Recurse: Backtrack and try a higher jump (to the constraint).
