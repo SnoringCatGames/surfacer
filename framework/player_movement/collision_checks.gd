@@ -175,16 +175,16 @@ static func check_discrete_horizontal_step_for_collision( \
     var is_first_jump := true
     # On average, an instruction set will start halfway through a physics frame, so let's use that
     # average here.
-    var previous_time := horizontal_step.time_start - delta / 2
+    var previous_time := horizontal_step.time_step_start - delta / 2
     var current_time := previous_time + delta
     var step_end_time := horizontal_step.time_step_end
-    var horizontal_instruction_end_time := horizontal_step.time_instruction_end
-    var position := horizontal_step.position_start
+    var position := horizontal_step.position_step_start
     var velocity := horizontal_step.velocity_start
     var has_started_instructions := false
     var jump_instruction_end_time := local_calc_params.vertical_step.time_instruction_end
     var is_pressing_jump := jump_instruction_end_time > current_time
-    var is_pressing_move_horizontal := horizontal_instruction_end_time > current_time
+    var is_pressing_move_horizontal := current_time > horizontal_step.time_instruction_start and \
+            current_time < horizontal_step.time_instruction_end
     var horizontal_movement_sign := 0
     var space_state := global_calc_params.space_state
     var shape_query_params := global_calc_params.shape_query_params
@@ -217,7 +217,8 @@ static func check_discrete_horizontal_step_for_collision( \
         is_pressing_jump = jump_instruction_end_time > current_time
         
         # Determine whether the horizontal movement button is still being pressed.
-        is_pressing_move_horizontal = horizontal_instruction_end_time > current_time
+        is_pressing_move_horizontal = current_time > horizontal_step.time_instruction_start and \
+            current_time < horizontal_step.time_instruction_end
         horizontal_movement_sign = \
                 horizontal_step.horizontal_movement_sign if is_pressing_move_horizontal else 0
         
@@ -228,7 +229,7 @@ static func check_discrete_horizontal_step_for_collision( \
 #            # When we start executing the instruction, the current elapsed time of the instruction
 #            # will be less than a full frame. So we use a delta that represents the actual time the
 #            # instruction should have been running for so far.
-#            delta = current_time - horizontal_step.time_start
+#            delta = current_time - horizontal_step.time_step_start
         
         # Update state for the next frame.
         position += displacement
@@ -262,10 +263,10 @@ static func check_continuous_horizontal_step_for_collision( \
     var collider_half_width_height := movement_params.collider_half_width_height
     var surface_parser := global_calc_params.surface_parser
     var delta := Utils.PHYSICS_TIME_STEP
-    var previous_time := horizontal_step.time_start
+    var previous_time := horizontal_step.time_step_start
     var current_time := previous_time + delta
     var step_end_time := horizontal_step.time_step_end
-    var previous_position := horizontal_step.position_start
+    var previous_position := horizontal_step.position_step_start
     var current_position := previous_position
     var space_state := global_calc_params.space_state
     var shape_query_params := global_calc_params.shape_query_params

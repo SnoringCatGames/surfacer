@@ -432,7 +432,6 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         #             the horizontal speed cap.
         #             - I think this means that we will need to record min/max velocity on all
         #               previous constraints and check through them when determining the next?
-        #             FIXME: LEFT OFF HERE: -----A
         #             - Plan exactly what this constraint min/max velocity assignment and access look like.
         #               - [Sketched out more below]
         # 
@@ -484,7 +483,7 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         #   - Because if we can't move far enough with the given starting x velocity and max
         #     height, then we could move further with a greater max height.
         #   - 
-        # - **POSSIBLE LIMITING HEURISTIC A:**
+        # - POSSIBLE LIMITING HEURISTIC A:
         #   - Just use the original default jump-release time.
         #   - This could possibly result in "max" speed values that aren't actually as high as they
         #     could be, since an earlier jump-release could give us not enough time to accelerate
@@ -508,7 +507,7 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         # - So, here's a possible ultimate order of events:
         #   - From front to back:
         #     - [stored on vertical step] Calculate minimum possible overall jump-release time.
-        #     - [stored on constraints] Calculate the one and only time for passing through the
+        #     - [stored on (previous) constraints] Calculate the one and only time for passing through the
         #         constraint.
         #         - There is no separate min and max for this, since this is dependent on where we
         #           are in the vertical movement.
@@ -517,7 +516,7 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         #             - Or at least between which constraints the peak occurs?
         #           - Answer: I can compute the durations between constraints using the same step
         #             duration logic I used in the original vertical-step calculations.
-        #     - [stored on constraints] Calculate min and max possible (directional)
+        #     - [stored on (previous) constraints] Calculate min and max possible (directional)
         #         step-end-x-velocity for each step.
         #   - From back to front:
         #     - For both traversal versions:
@@ -566,14 +565,15 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         #     to counter too-strong velocity_start.
         
         # FIXME: LEFT OFF HERE: ACTION ITEMS: ---------A
-        # **- Update both recursive functions to calculate steps from back to front, considering
-        #   min/max horizontal velocity.
         # **- Update _calculate_horizontal_step to use _calculate_horizontal_step when needed.
         #   - If needed, we can maybe also calculate this in the initial constraint calc
         #     function with the other min/max value.
+        # **- Update both recursive functions to calculate steps from back to front, considering
+        #   min/max horizontal velocity.
         # - Update vertical step calc function to use greater of the height from both previous and new constraints.
-        # **- Update vertical step calc function to consider max step-end-x-speed.
+        # **- [um, is this the wrong place?] Update vertical step calc function to consider max step-end-x-speed.
         #   - Is this all that's needed to support the backtracking version?
+        # - Step through and double-check that the correct min/max step state will be calculated at the right places in recursive traversals.
         # - Add logic to quit early for invalid surface collisions.
         # - Move the global_calc_params.collided_surfaces assignment and access to helper functions?
         # - Cleanup/refactor/consolidate the with-and-without-backtracking recursive functions?
@@ -684,11 +684,13 @@ static func _calculate_vertical_step(movement_params: MovementParams, \
     var time_peak_height := time_to_release_jump_button + duration_to_reach_peak_after_release
     
     var step := MovementVertCalcStep.new()
-    step.time_start = 0.0
-    step.time_instruction_end = time_to_release_jump_button
+    step.time_step_start = 0.0
+    step.time_instruction_start = 0.0
     step.time_step_end = total_duration
+    step.time_instruction_end = time_to_release_jump_button
     step.time_peak_height = time_peak_height
-    step.position_start = position_start
+    step.position_step_start = position_start
+    step.position_instruction_start = position_start
     step.velocity_start = velocity_start
     step.horizontal_movement_sign = horizontal_movement_sign
     step.can_hold_jump_button = can_hold_jump_button
@@ -720,29 +722,29 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     var position_end := local_calc_params.end_constraint.position
     
     # Get some start state from the previous step.
-    var time_start: float
-    var position_start: Vector2
+    var time_step_start: float
+    var position_step_start: Vector2
     var velocity_start: Vector2
     if previous_step != null:
         # The next step starts off where the previous step ended.
-        time_start = previous_step.time_step_end
-        position_start = previous_step.position_step_end
+        time_step_start = previous_step.time_step_end
+        position_step_start = previous_step.position_step_end
         velocity_start = previous_step.velocity_step_end
     else:
         # If there is no previous step, then get the initial state from the vertical step.
-        time_start = vertical_step.time_start
-        position_start = vertical_step.position_start
+        time_step_start = vertical_step.time_step_start
+        position_step_start = vertical_step.position_step_start
         velocity_start = vertical_step.velocity_start
     
     var time_step_end := _calculate_end_time_for_jumping_to_position( \
-            movement_params, vertical_step, position_end, time_start, \
+            movement_params, vertical_step, position_end, time_step_start, \
             local_calc_params.end_constraint)
     if time_step_end == INF:
         # The vertical displacement is out of reach.
         return null
     
-    var time_remaining := vertical_step.time_step_end - time_start
-    var displacement: Vector2 = position_end - position_start
+    var time_remaining := vertical_step.time_step_end - time_step_start
+    var displacement: Vector2 = position_end - position_step_start
     
     var horizontal_movement_sign: int
     if displacement.x < 0:
@@ -766,23 +768,30 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     # - Would need to also update calculate_horizontal_end_state_for_time.
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: -A
-#    if position_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
+#    if position_step_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
 #        print("yo")
+    
+    # FIXME: LEFT OFF HERE: -----------------------------------------------A
+    # - Replace the following duration calc.
+    # - Use constraint.horizontal_movement_sign_to_approach
+    # - Assign constraint.horizontal_movement_sign_to_approach
+    # - Need to ...
+    # - 
     
     # We don't need to worry about whether this would exceed max speed here. That is addressed
     # below.
     var duration_for_horizontal_acceleration := _calculate_time_to_release_acceleration( \
-            time_start, time_step_end, position_start.x, position_end.x, velocity_start.x, \
+            time_step_start, time_step_end, position_step_start.x, position_end.x, velocity_start.x, \
             acceleration, 0.0, true, false)
     
     if time_remaining < duration_for_horizontal_acceleration:
         # The horizontal displacement is out of reach.
         return null
     
-    var time_instruction_end := time_start + duration_for_horizontal_acceleration
+    var time_instruction_end := time_step_start + duration_for_horizontal_acceleration
     # From a basic equation of motion:
     #     s = s_0 + v_0*t + 1/2*a*t^2
-    var position_instruction_end_x := position_start.x + \
+    var position_instruction_end_x := position_step_start.x + \
             velocity_start.x * duration_for_horizontal_acceleration + \
             0.5 * acceleration * \
             duration_for_horizontal_acceleration * duration_for_horizontal_acceleration
@@ -796,11 +805,18 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
         # The horizontal displacement is out of reach.
         return null
     
+    # FIXME: LEFT OFF HERE: ---------------------------A
+    var time_instruction_start := time_step_start
+    # FIXME: LEFT OFF HERE: ---------------------------A
+    var position_instruction_start := position_step_start
+    
     var step := MovementCalcStep.new()
-    step.time_start = time_start
-    step.time_instruction_end = time_instruction_end
+    step.time_step_start = time_step_start
+    step.time_instruction_start = time_instruction_start
     step.time_step_end = time_step_end
-    step.position_start = position_start
+    step.time_instruction_end = time_instruction_end
+    step.position_step_start = position_step_start
+    step.position_instruction_start = position_instruction_start
     step.velocity_start = velocity_start
     step.horizontal_movement_sign = horizontal_movement_sign
     

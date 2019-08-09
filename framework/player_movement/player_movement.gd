@@ -100,9 +100,11 @@ static func _calculate_constraints(movement_params: MovementParams, \
     var time_passing_through_a := calculate_time_to_reach_constraint( \
             movement_params, previous_constraint.position, position_a, \
             vertical_step.velocity_start, vertical_step.can_hold_jump_button)
+    assert(time_passing_through_a != INF and time_passing_through_a != 0.0)
     var time_passing_through_b := calculate_time_to_reach_constraint( \
             movement_params, previous_constraint.position, position_b, \
             vertical_step.velocity_start, vertical_step.can_hold_jump_button)
+    assert(time_passing_through_b != INF and time_passing_through_b != 0.0)
     
     # Calculate the min and max velocity for each constraint.
     var duration_a := time_passing_through_a - previous_constraint.time_passing_through
@@ -132,6 +134,10 @@ static func _calculate_constraints(movement_params: MovementParams, \
     
     return [constraint_a, constraint_b]
 
+# The given parameters represent the horizontal motion of a single step. If the movement is
+# leftward, this calculates the maximum step-end x velocity. If the movement is rightward, this
+# calculates the minimum step-end x velocity.
+# 
 # A Vector2 is returned:
 # - The x property represents the min velocity.
 # - The y property represents the max velocity.
@@ -182,6 +188,8 @@ static func _calculate_min_or_max_velocity_at_end_of_interval(s_0: float, s: flo
         speed = min(speed, speed_max)
         v_max = speed * movement_sign
         
+        assert(v_max != INF)
+        
         v_min = INF
         
     elif movement_sign < 0:
@@ -213,6 +221,8 @@ static func _calculate_min_or_max_velocity_at_end_of_interval(s_0: float, s: flo
         speed = min(speed, speed_max)
         v_min = speed * movement_sign
         
+        assert(v_min != INF)
+        
         v_max = INF
         
     else:
@@ -231,7 +241,7 @@ static func calculate_vertical_end_state_for_time(movement_params: MovementParam
     var slow_ascent_end_time := min(time, vertical_step.time_instruction_end)
     
     # Basic equations of motion.
-    var slow_ascent_end_position := vertical_step.position_start.y + \
+    var slow_ascent_end_position := vertical_step.position_step_start.y + \
             vertical_step.velocity_start.y * slow_ascent_end_time + \
             0.5 * movement_params.gravity_slow_ascent * slow_ascent_end_time * slow_ascent_end_time
     var slow_ascent_end_velocity := vertical_step.velocity_start.y + \
@@ -261,24 +271,32 @@ static func calculate_vertical_end_state_for_time(movement_params: MovementParam
 # velocity.
 static func calculate_horizontal_end_state_for_time(movement_params: MovementParams, \
         horizontal_step: MovementCalcStep, time: float) -> Vector2:
-    assert(time >= horizontal_step.time_start - Geometry.FLOAT_EPSILON)
+    assert(time >= horizontal_step.time_step_start - Geometry.FLOAT_EPSILON)
     assert(time <= horizontal_step.time_step_end + Geometry.FLOAT_EPSILON)
     
     var position: float
     var velocity: float
-    if time > horizontal_step.time_instruction_end:
+    if time <= horizontal_step.time_instruction_start:
+        var delta_time := time - horizontal_step.time_step_start
+        velocity = horizontal_step.velocity_start.x
+        # From a basic equation of motion:
+        #     s = s_0 + v*t
+        position = horizontal_step.position_step_start.x + velocity * delta_time
+        
+    elif time >= horizontal_step.time_instruction_end:
         var delta_time := time - horizontal_step.time_instruction_end
         velocity = horizontal_step.velocity_instruction_end.x
-        # From basic equation of motion:
+        # From a basic equation of motion:
         #     s = s_0 + v*t
         position = horizontal_step.position_instruction_end.x + velocity * delta_time
+        
     else:
-        var delta_time := time - horizontal_step.time_start
+        var delta_time := time - horizontal_step.time_instruction_start
         var acceleration := movement_params.in_air_horizontal_acceleration * \
                 horizontal_step.horizontal_movement_sign
         # From basic equation of motion:
         #     s = s_0 + v_0*t + 1/2*a*t^2
-        position = horizontal_step.position_start.x + \
+        position = horizontal_step.position_instruction_start.x + \
                 horizontal_step.velocity_start.x * delta_time + \
                 0.5 * acceleration * delta_time * delta_time
         # From basic equation of motion:
@@ -299,7 +317,7 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
     var velocity_instruction_end := vertical_step.velocity_instruction_end
     
     var target_height := position.y
-    var start_height := vertical_step.position_start.y
+    var start_height := vertical_step.position_step_start.y
     
     var duration_of_slow_ascent: float
     var duration_of_fast_fall: float
@@ -564,11 +582,13 @@ static func calculate_fall_vertical_step(movement_params: MovementParams, \
     time_peak_height = max(time_peak_height, 0.0)
     
     var step := MovementVertCalcStep.new()
-    step.time_start = 0.0
-    step.time_instruction_end = 0.0
+    step.time_step_start = 0.0
+    step.time_instruction_start = 0.0
     step.time_step_end = total_duration
+    step.time_instruction_end = 0.0
     step.time_peak_height = time_peak_height
-    step.position_start = position_start
+    step.position_step_start = position_start
+    step.position_instruction_start = position_start
     step.velocity_start = velocity_start
     step.horizontal_movement_sign = horizontal_movement_sign
     step.can_hold_jump_button = can_hold_jump_button
@@ -613,7 +633,7 @@ static func convert_calculation_steps_to_player_instructions( \
     for i in range(steps.size()):
         step = steps[i]
         input_key = "move_left" if step.horizontal_movement_sign < 0 else "move_right"
-        press = PlayerInstruction.new(input_key, step.time_start, true)
+        press = PlayerInstruction.new(input_key, step.time_instruction_start, true)
         release = PlayerInstruction.new(input_key, \
                 step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON, false)
         instructions[i * 2] = press
@@ -625,7 +645,7 @@ static func convert_calculation_steps_to_player_instructions( \
     # Record the jump instruction.
     if includes_jump:
         input_key = "jump"
-        press = PlayerInstruction.new(input_key, vertical_step.time_start, true)
+        press = PlayerInstruction.new(input_key, vertical_step.time_instruction_start, true)
         release = PlayerInstruction.new(input_key, \
                 vertical_step.time_instruction_end + JUMP_DURATION_INCREASE_EPSILON, false)
         instructions.push_front(release)

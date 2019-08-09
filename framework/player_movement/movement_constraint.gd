@@ -29,6 +29,9 @@ var min_x_velocity := INF
 # The maximum possible x velocity when passing through this constraint.
 var max_x_velocity := INF
 
+# The sign of the horizontal displacement from the previous constraint to this constraint.
+var horizontal_movement_sign_to_approach := INF# FIXME: LEFT OFF HERE: ----------------------------------A Use this!
+
 func _init(surface: Surface, position: Vector2, passing_vertically: bool, \
         should_stay_on_min_side: bool) -> void:
     self.surface = surface

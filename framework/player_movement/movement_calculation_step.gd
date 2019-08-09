@@ -5,6 +5,15 @@
 # 
 # Each overall (edge) movement consists of a single vertical step and a series of horizontal steps.
 # 
+# - A vertical step will always have its jump instruction starting at the same time as the overall
+#   step.
+# - A vertical step usually will not have its jump instruction ending at the same time as the
+#   overall step.
+# - A horizontal step may have its move instruction starting after the start of the overall step.
+# - A horizontal step may have its move instruction ending before the overall step.
+# - A horizontal step will always have either time_instruction_end == time_step_end or
+#   time_instruction_start == time_step_start.
+# 
 # Note: There is an important distinction between the end of the movement step and the end of the
 # input instruction within the step:
 # - "step_end": The time at which movement should reach the intended destination position for this
@@ -19,16 +28,20 @@ class_name MovementCalcStep
 
 var input_key: String
 
-var time_start: float
+var time_step_start: float
 
-# The time at which the input_key should be released for this step.
-var time_instruction_end: float
+var time_instruction_start: float
 
 # The time at which movement for this step should reach the intended destination position for this
 # part of the overall movement.
 var time_step_end: float
 
-var position_start: Vector2
+# The time at which the input_key should be released for this step.
+var time_instruction_end: float
+
+var position_step_start: Vector2
+
+var position_instruction_start: Vector2
 
 var position_step_end: Vector2
 
