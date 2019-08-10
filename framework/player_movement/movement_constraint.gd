@@ -14,12 +14,6 @@ var passing_vertically: bool
 # TODO: Remove? Is this needed?
 var should_stay_on_min_side: bool
 
-# Whether this constraint is the origin for the overall movement.
-var is_origin := false
-
-# Whether this constraint is the destination for the overall movement.
-var is_destination := false
-
 # The time at which movement should pass through this constraint.
 var time_passing_through := INF
 
@@ -30,11 +24,21 @@ var min_x_velocity := INF
 var max_x_velocity := INF
 
 # The sign of the horizontal displacement from the previous constraint to this constraint.
-var horizontal_movement_sign_to_approach := INF# FIXME: LEFT OFF HERE: ----------------------------------A Use this!
+var horizontal_acceleration_sign_to_approach := INF# FIXME: LEFT OFF HERE: ----------------------------------A Use this!
+
+# Whether this constraint is the origin for the overall movement.
+var is_origin := false
+
+# Whether this constraint is the destination for the overall movement.
+var is_destination := false
 
 func _init(surface: Surface, position: Vector2, passing_vertically: bool, \
-        should_stay_on_min_side: bool) -> void:
+        should_stay_on_min_side: bool, time_passing_through: float, min_x_velocity: float, \
+        max_x_velocity: float) -> void:
     self.surface = surface
     self.position = position
     self.passing_vertically = passing_vertically
     self.should_stay_on_min_side = should_stay_on_min_side
+    self.time_passing_through = time_passing_through
+    self.min_x_velocity = min_x_velocity
+    self.max_x_velocity = max_x_velocity

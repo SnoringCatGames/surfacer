@@ -55,9 +55,9 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
     Utils.error("Abstract PlayerMovement.get_all_reachable_surface_instructions_from_air is not implemented")
     return []
 
-static func _calculate_constraints(movement_params: MovementParams, \
-        vertical_step: MovementVertCalcStep, colliding_surface: Surface, \
-        constraint_offset: Vector2, previous_constraint: MovementConstraint) -> Array:
+static func _calculate_constraints_around_surface(movement_params: MovementParams, \
+        vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
+        colliding_surface: Surface, constraint_offset: Vector2) -> Array:
     # Calculate the positions of each constraint.
     var passing_vertically: bool
     var position_a: Vector2
@@ -96,43 +96,34 @@ static func _calculate_constraints(movement_params: MovementParams, \
             position_b = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
     
-    # Calculate the time that the movement would pass through each constraint.
-    var time_passing_through_a := calculate_time_to_reach_constraint( \
-            movement_params, previous_constraint.position, position_a, \
-            vertical_step.velocity_start, vertical_step.can_hold_jump_button)
-    assert(time_passing_through_a != INF and time_passing_through_a != 0.0)
-    var time_passing_through_b := calculate_time_to_reach_constraint( \
-            movement_params, previous_constraint.position, position_b, \
-            vertical_step.velocity_start, vertical_step.can_hold_jump_button)
-    assert(time_passing_through_b != INF and time_passing_through_b != 0.0)
-    
-    # Calculate the min and max velocity for each constraint.
-    var duration_a := time_passing_through_a - previous_constraint.time_passing_through
-    var min_and_max_velocity_at_step_end_a := _calculate_min_or_max_velocity_at_end_of_interval( \
-            previous_constraint.position.x, position_a.x, duration_a, \
-            previous_constraint.min_x_velocity, previous_constraint.max_x_velocity, \
-            movement_params.max_horizontal_speed_default, \
-            movement_params.in_air_horizontal_acceleration)
-    var duration_b := time_passing_through_b - previous_constraint.time_passing_through
-    var min_and_max_velocity_at_step_end_b := _calculate_min_or_max_velocity_at_end_of_interval( \
-            previous_constraint.position.x, position_b.x, duration_b, \
-            previous_constraint.min_x_velocity, previous_constraint.max_x_velocity, \
-            movement_params.max_horizontal_speed_default, \
-            movement_params.in_air_horizontal_acceleration)
-    
-    var constraint_a := \
-            MovementConstraint.new(colliding_surface, position_a, passing_vertically, true)
-    constraint_a.time_passing_through = time_passing_through_a
-    constraint_a.min_x_velocity = min_and_max_velocity_at_step_end_a.x
-    constraint_a.max_x_velocity = min_and_max_velocity_at_step_end_a.y
-    
-    var constraint_b := \
-            MovementConstraint.new(colliding_surface, position_b, passing_vertically, false)
-    constraint_b.time_passing_through = time_passing_through_b
-    constraint_b.min_x_velocity = min_and_max_velocity_at_step_end_b.x
-    constraint_b.max_x_velocity = min_and_max_velocity_at_step_end_b.y
+    var constraint_a := _calculate_constraint(movement_params, vertical_step, \
+            previous_constraint, colliding_surface, position_a, passing_vertically, true)
+    var constraint_b := _calculate_constraint(movement_params, vertical_step, \
+            previous_constraint, colliding_surface, position_b, passing_vertically, false)
     
     return [constraint_a, constraint_b]
+
+static func _calculate_constraint(movement_params: MovementParams, \
+        vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
+        colliding_surface: Surface, position: Vector2, \
+        passing_vertically: bool, should_stay_on_min_side: bool) -> MovementConstraint:
+    # Calculate the time that the movement would pass through the constraint.
+    var time_passing_through := calculate_time_to_reach_constraint( \
+            movement_params, previous_constraint.position, position, \
+            vertical_step.velocity_start, vertical_step.can_hold_jump_button)
+    assert(time_passing_through != INF and time_passing_through != 0.0)
+    
+    # Calculate the min and max velocity for movement through the constraint.
+    var duration := time_passing_through - previous_constraint.time_passing_through
+    var min_and_max_velocity_at_step_end := _calculate_min_or_max_velocity_at_end_of_interval( \
+            previous_constraint.position.x, position.x, duration, \
+            previous_constraint.min_x_velocity, previous_constraint.max_x_velocity, \
+            movement_params.max_horizontal_speed_default, \
+            movement_params.in_air_horizontal_acceleration)
+    
+    return MovementConstraint.new(colliding_surface, position, passing_vertically, \
+            should_stay_on_min_side, time_passing_through, min_and_max_velocity_at_step_end.x, \
+            min_and_max_velocity_at_step_end.y)
 
 # The given parameters represent the horizontal motion of a single step. If the movement is
 # leftward, this calculates the maximum step-end x velocity. If the movement is rightward, this
@@ -186,8 +177,8 @@ static func _calculate_min_or_max_velocity_at_end_of_interval(s_0: float, s: flo
         # Limit max speed.
         var speed := abs(v_max)
         speed = min(speed, speed_max)
-        v_max = speed * movement_sign
         
+        v_max = speed * movement_sign
         assert(v_max != INF)
         
         v_min = INF
@@ -219,8 +210,8 @@ static func _calculate_min_or_max_velocity_at_end_of_interval(s_0: float, s: flo
         # Limit max speed.
         var speed := abs(v_min)
         speed = min(speed, speed_max)
-        v_min = speed * movement_sign
         
+        v_min = speed * movement_sign
         assert(v_min != INF)
         
         v_max = INF
@@ -546,13 +537,14 @@ static func _create_position_from_target_point(target_point: Vector2, surface: S
 
 # Calculates a new step for the vertical part of the fall movement and the corresponding total fall
 # duration.
-static func calculate_fall_vertical_step(movement_params: MovementParams, \
-        origin_constraint: MovementConstraint, destination_constraint: MovementConstraint, \
-        velocity_start: Vector2) -> MovementCalcLocalParams:
+static func calculate_fall_vertical_step(global_calc_params: MovementCalcGlobalParams, \
+        movement_params: MovementParams, origin_constraint: MovementConstraint, \
+        velocity_start: Vector2, destination_position: Vector2, \
+        destination_surface: Surface) -> MovementCalcLocalParams:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var position_start := origin_constraint.position
-    var position_end := destination_constraint.position
+    var position_end := destination_position
     
     var total_displacement: Vector2 = position_end - position_start
     var min_vertical_displacement := -movement_params.max_upward_jump_distance
@@ -606,6 +598,10 @@ static func calculate_fall_vertical_step(movement_params: MovementParams, \
     
     assert(Geometry.are_floats_equal_with_epsilon( \
             step.position_step_end.y, position_end.y, 0.001))
+    
+    var destination_constraint := create_destination_constraint(movement_params, step, \
+            origin_constraint, destination_surface, destination_position)
+    global_calc_params.destination_constraint = destination_constraint
     
     return MovementCalcLocalParams.new(origin_constraint, destination_constraint, null, step)
 
@@ -908,15 +904,17 @@ static func calculate_time_to_release_jump_button(movement_params: MovementParam
 
 static func create_origin_constraint(surface: Surface, position: Vector2, \
         velocity_start: Vector2, passing_vertically: bool) -> MovementConstraint:
-    var constraint := MovementConstraint.new(surface, position, passing_vertically, false)
+    var constraint := MovementConstraint.new(surface, position, passing_vertically, false, 0.0, \
+            velocity_start.x, velocity_start.x)
     constraint.is_origin = true
-    constraint.time_passing_through = 0.0
-    constraint.min_x_velocity = velocity_start.x
-    constraint.max_x_velocity = velocity_start.x
     return constraint
 
-static func create_destination_constraint(surface: Surface, position: Vector2, \
-        passing_vertically: bool) -> MovementConstraint:
-    var constraint := MovementConstraint.new(surface, position, passing_vertically, false)
+static func create_destination_constraint(movement_params: MovementParams, \
+        vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
+        surface: Surface, position: Vector2) -> MovementConstraint:
+    var passing_vertically := surface.normal.x == 0 if surface != null else true
+    var constraint := _calculate_constraint(movement_params, vertical_step, previous_constraint, \
+            surface, position, passing_vertically, false)
     constraint.is_destination = true
+    assert(constraint.time_passing_through == vertical_step.time_step_end)
     return constraint

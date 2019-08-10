@@ -12,7 +12,7 @@ TODO
 
 # Surfacer
 
-_A 2D-platformer framework for Godot._
+_A 2D-platformer pathfinding framework for Godot._
 
 _"Surfacer": Like a platformer, but with walking and climbing on all surfaces!_
 

@@ -10,7 +10,10 @@
 # - A vertical step usually will not have its jump instruction ending at the same time as the
 #   overall step.
 # - A horizontal step may have its move instruction starting after the start of the overall step.
+#   - This happens when the step needs to use a step-end x velocity that is greater than the
+#     minimum possible.
 # - A horizontal step may have its move instruction ending before the overall step.
+#   - This happens when the step uses the slowest step-end x velocity possible.
 # - A horizontal step will always have either time_instruction_end == time_step_end or
 #   time_instruction_start == time_step_start.
 # 
