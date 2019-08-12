@@ -264,8 +264,8 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
 
     var global_calc_params := MovementCalcGlobalParams.new( \
             movement_params, space_state, surface_parser, false)
-    global_calc_params.origin_constraint = \
-            PlayerMovement.create_origin_constraint(null, origin, velocity_start, true)
+    global_calc_params.origin_constraint = PlayerMovement.create_origin_constraint(null, origin, \
+            velocity_start, true)
 
     var origin_vertices := [origin]
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)

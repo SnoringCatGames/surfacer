@@ -907,6 +907,7 @@ static func create_origin_constraint(surface: Surface, position: Vector2, \
     var constraint := MovementConstraint.new(surface, position, passing_vertically, false, 0.0, \
             velocity_start.x, velocity_start.x)
     constraint.is_origin = true
+    constraint.horizontal_movement_sign = 0
     return constraint
 
 static func create_destination_constraint(movement_params: MovementParams, \
@@ -915,6 +916,18 @@ static func create_destination_constraint(movement_params: MovementParams, \
     var passing_vertically := surface.normal.x == 0 if surface != null else true
     var constraint := _calculate_constraint(movement_params, vertical_step, previous_constraint, \
             surface, position, passing_vertically, false)
+    
     constraint.is_destination = true
+    
+    var displacement := constraint.position - previous_constraint.position
+    constraint.horizontal_movement_sign = \
+            -1 if displacement.x < 0 else \
+            (1 if displacement.x > 0 else \
+            # For straight-vertical steps, if there was any horizontal movement through the
+            # previous, then we're going to need to backtrack in the opposition direction to reach
+            # the destination.
+            (-previous_constraint.horizontal_movement_sign))
+    
     assert(constraint.time_passing_through == vertical_step.time_step_end)
+    
     return constraint
