@@ -571,8 +571,40 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         # **- [um, is this the wrong place?] Update vertical step calc function to consider max step-end-x-speed.
         #   - Is this all that's needed to support the backtracking version?
         # - Set the destination_constraint min_x_velocity and max_x_velocity at the start, in order to latch onto the target surface.
+        #   - Also add support for specifying min/max y velocities for this?
+        # - Implement support for skipping a constraint:
+        #   - Probably do this in the recursion functions.
+        #   - When to skip:
+        #     - # If the direction of travel is the same as the side of the surface that the
+        #       # constraint lies on, then we'll keep the constraint. Otherwise, we'll skip the constraint.
+        #     - if (horizontal displacement sign from previous_constraint to new_constraint == -1) == should_stay_on_min_side:
+        #       - # Skip logic...
+        #       - FIXME: LEFT OFF HERE
+        #     - ADAPT FOR DOCS:
+        #       - PROBLEM: Sometimes we should be able to skip a constraint and go straight from the
+        #         earlier one to the later one.
+        #         - Example scenario:
+        #           - Origin is constraint #0, Destination is constraint #3
+        #           - Assume we are jumping from low-left platform to high-right platform, and there
+        #             is an intermediate block in the way.
+        #           - Our first step attempt hits the underside of the block, so we try constraints on
+        #             either side.
+        #           - After trying the left-hand constraint (#1), we then hit the left side of the
+        #             block. So we then try a top-side constraint (#2). (bottom-side fails the
+        #             surface-already-encountered check).
+        #           - After going through this new left-side (right-wall), top-side constraint, we can
+        #             successfully reach the destination.
+        #           - Problem 1: With the resulting path, we still have to go through both of the
+        #             constraints. We should should be able to skip the first constraint and go
+        #             straight from the origin to the second constraint.
+        #           - Problem 2: With the current plan-of-attack with this design, we would be forced
+        #             to be going leftward when we pass through the first constraint.
+        #       - SOLUTION:
+        #         - If horizontal _movement_ (displacement) direction from #0 to #1 is opposite from
+        #           what the normal surface-side-based constraint-pass-through-direction calculation
+        #           would yield, then ... [is this a constraint we should skip?]
         # - Step through and double-check that the correct min/max step state will be calculated at the right places in recursive traversals.
-        # - Add logic to quit early for invalid surface collisions.
+        # - Add logic to quit early for invalid surface collisions?
         # - Move the global_calc_params.collided_surfaces assignment and access to helper functions?
         # - Cleanup/refactor/consolidate the with-and-without-backtracking recursive functions?
         # - Go through above notes/thoughts and make sure all bits are acounted for.
@@ -798,25 +830,36 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     # -------------------------------------
     
     # FIXME: LEFT OFF HERE: ------------------------------------------------------------------A
-    # - Calculate velocity_start_x
+    # - Add support for optionally passing-in horizontal_movement_sign to constraint constructor.
+    #   - Especially for the case with surface == null...
+    # - Calculate origin.horizontal_movement_sign as non-zero
+    #   - Refactor create_origin_constraint to accepte a next position parameter, and use that to
+    #     calculate direction.
+    #   - This will then require refactoring callsites of create_origin_constraint to pass-in this
+    #     argument.
+    #   - This will then also require pushing down when we call create_origin_constraint in some
+    #     iterations, so that we call create_origin_constraint separately for each destination
+    #     position, rather than once before iterating through destinations.
+    #     - This is probably for the best anyway.
+    # - Create a new field: constraint.actual_x_velocity
+    # - Calculate velocity_start_x:
     #   - Use the min-possible starting speed that could get us to our required velocity_end.
     #   - Easy to do, if I know the direction of acceleration....
-    #   - How to calculate the direction of acceleration before knowing the actual velocity_start.
-    #     - next_constraint.horizontal_movement_sign != previous_constraint.horizontal_movement_sign, then it's easy
-    #     - if next_constraint.horizontal_movement_sign == previous_constraint.horizontal_movement_sign:
+    #   - Calculate the direction of acceleration (before knowing the actual velocity_start):
+    #     - if next_constraint.horizontal_movement_sign != previous_constraint.horizontal_movement_sign:
+    #       - horizontal_acceleration_sign = next_constraint.horizontal_movement_sign
+    #     - else:
     #       - We know next_constraint.actual_x_velocity
     #       - We know previous_constraint.min_x_velocity/max_x_velocity
     #         (min_speed_x_velocity/max_speed_x_velocity).
-    #       - At the very least, we could calculate what the acceleration direction would be
-    #         for min_speed_x_velocity, try that, then fallback to trying the opposite
-    #         direction if the first can't work.
+    #       - Calculate what the acceleration direction would be for min_speed_x_velocity, try
+    #         that, then fallback to trying the opposite direction if the first can't work.
     # - Update constraint calculation to force min/max to zero depending on horizontal_movement_sign.
     # - Calculate destination.actual_x_velocity
     #   - if destination.horizontal_movement_sign > 0: destination.actual_x_velocity = destination.min_x_velocity
     #   - else: destination.actual_x_velocity = destination.max_x_velocity
-    # - Use constraint.horizontal_movement_sign.
-    # - Assign constraint.horizontal_movement_sign.
     # - Refactor MovementCalcLocalParams to use previous_constraint rather than previous_step.
+    # - Fix the above logic that depends on velocity_start...
     # - Use calculate_vertical_end_state_for_time to get the y components.
     #   - Use is_ascending for whether to get the first or second possible value.
     #   - var is_ascending := constraint.time_passing_through < vertical_step.time_peak_height
@@ -824,161 +867,88 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     # - Assert that the position from calculate_vertical_end_state_for_time is approximately the constraint position.
     # - Assert that the calculated velocity_start is within the min/max range of constraint.min_x_velocity / constraint.max_x_velocity
     #   - Do we need to have already calculated and recorded the other min/max value on the constraint?
-    # 
-    # NEW THINKING...
-    #
-    #
-    # - The best value is probably:
-    #   - horizontal_velocity_diff := velocity_step_end.x - velocity_start_x
-    # - BUT, before I can calculate velocity_start_x, I have to have already decided on the direction of acceleration.
-    #   - next_constraint.horizontal_movement_sign
-    #   - Perhaps the way I can calculate this, is just according to passing_vertically and which surface side we're approaching.
-    #     **- Yes! :)
-    #       - if surface.side == SurfaceSide.LEFT_WALL, then horizontal_movement_sign_to_approach = -1
-    #       - elif surface.side == SurfaceSide.RIGHT_WALL, then horizontal_movement_sign_to_approach = 1
-    #       - elif constraint.should_stay_on_min_side, then horizontal_movement_sign_to_approach = -1
-    #       - else horizontal_movement_sign_to_approach = 1
-    #       - 
-    #         - # If the direction of travel is the same as the side of the surface that the
-    #           # constraint lies on, then we'll keep the constraint. Otherwise, we'll skip the constraint.
-    #         - if (horizontal _displacement_ sign from previous_constraint to new_constraint == -1) == should_stay_on_min_side:
-    #           - if should_stay_on_min_side, then horizontal_movement_sign_to_approach = -1
-    #           - else, horizontal_movement_sign_to_approach = 1
-    #         - else:
-    #           **- We skip the constraint.
-    #           - FIXME: LEFT OFF HERE: How to implement skipping the constraint?
-    #             - somewhere else, not here.
-    #             - so actually DO keep the simple direction calculations for ceiling/floor constraints
-    #             - the place to determine skipping is probably in the recursion functions.
-    # 
-    #             - [obsolete; solution above adapted to reflect this] No! :(
-    #               - PROBLEM: Sometimes we should be able to skip a constraint and go straight from the
-    #                 earlier one to the later one.
-    #                 - Example scenario:
-    #                   - Origin is constraint #0, Destination is constraint #3
-    #                   - Assume we are jumping from low-left platform to high-right platform, and there
-    #                     is an intermediate block in the way.
-    #                   - Our first step attempt hits the underside of the block, so we try constraints on
-    #                     either side.
-    #                   - After trying the left-hand constraint (#1), we then hit the left side of the
-    #                     block. So we then try a top-side constraint (#2). (bottom-side fails the
-    #                     surface-already-encountered check).
-    #                   - After going through this new left-side (right-wall), top-side constraint, we can
-    #                     successfully reach the destination.
-    #                   - Problem 1: With the resulting path, we still have to go through both of the
-    #                     constraints. We should should be able to skip the first constraint and go
-    #                     straight from the origin to the second constraint.
-    #                   - Problem 2: With the current plan-of-attack with this design, we would be forced
-    #                     to be going leftward when we pass through the first constraint.
-    #               - SOLUTION:
-    #                 - If horizontal _movement_ (displacement) direction from #0 to #1 is opposite from
-    #                   what the normal surface-side-based constraint-pass-through-direction calculation
-    #                   would yield, then ... [is this a constraint we should skip?]
-    # 
-    #     - Now, this is all still just _displacement_, rather than _acceleration_.
-    #       - Is acceleration necessarily the same? [NO]
-    #       - 
-    #     - Does this make it more complicated to calculate constraint.min_x_velocity/max_x_velocity?
-    #       **- It at least changes it a lot...
-    #       - 
-    #   **- Probably need to define a constant small/offset value for some min passing speed through a constraint like this.
-    #     **- Is this the same offset I should use for offsetting the destination constraint velocity?
-    # 
-    # - Probably need to create a new field: constraint.actual_x_velocity
-    # - Do I need origin.horizontal_movement_sign to be non-zero??
-    #   - If so, we'll need to refactor create_origin_constraint to accepte a next position
-    #     parameter, and use that to calculate direction.
-    #   - This will then require refactoring callsites of create_origin_constraint to pass-in this
-    #     argument.
-    #   - This will then also require pushing down when we call create_origin_constraint in some
-    #     iterations, so that we call create_origin_constraint separately for each destination
-    #     position, rather than once before iterating through destinations.
-    #     - This is probably for the best anyway.
-    # 
-    # - FIXME: LEFT OFF HERE: -------------------------------------------------A
-    #
     # - ADD TO DOCS: In general, a guiding heuristic in these calculations is to minimize movement. So, through each constraint (step-end), we try to minimize the horizontal speed of the movement at that point.
-    # 
+    # - [obsolete?] Probably need to define a constant small/offset value for some min passing speed through a constraint like this.
+    #   - Is this the same offset I should use for offsetting the destination constraint velocity?
     
-    # FIXME: Get these values from somewhere
-    var previous_constraint: MovementConstraint
-    var next_constraint: MovementConstraint
-    var velocity_step_end: Vector2
-    
-    # Calculate what start velocity would allow us to accelerate the most in order to reach the end
-    # position. This also tries to hit the max speed as soon as possible.
-    # 
-    # Derivation:
-    # - Start with basic equations of motion
-    # - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
-    # - s_2 = s_1 + v_1*t_2
-    # - v_1 = v_0 + a*t_1
-    # - t_total = t_1 + t_2
-    # - Do some algebra...
-    # - 0 = a*(s_2 - s_0 - v_1*t_total) + 1/2*v_1^2 - v_1*v_0 + 1/2*v_0^2
-    # - Apply quadratic formula to solve for v_0.
-    var v_1 := velocity_step_end.x
-    var a := 0.5
-    var b := -v_1
-    var c := acceleration * (position_end.x - position_step_start.x - v_1 * step_duration) + \
-            0.5 * v_1 * v_1
-    var discriminant := b * b - 4 * a * c
-    assert(discriminant >= 0)
-    var discriminant_sqrt := sqrt(discriminant)
-    var result_1 := (-b + discriminant_sqrt) / 2 / a
-    var result_2 := (-b - discriminant_sqrt) / 2 / a
-
-    # FIXME: LEFT OFF HERE: --------A:
-    # - I have no idea how to choose between these two possible results right now.
-    # - Set a break point and look at them.
-    # - Probably add some assertions.
-    
-    # FIXME: LEFT OFF HERE: ------------------------------------A
-    # - Use constraint.horizontal_movement_sign instead
-    # - 
-    
-    var velocity_start_x: float
-    if next_constraint.horizontal_acceleration_sign_to_approach > 0:
-        # Try to use the minimum possible v_0.
-        # This heuristic should usually result in the least amount of movement, but not always.
-        # FIXME: LEFT OFF HERE: ------A: Double-check the above heuristic statement. Is it accurate? Is there a better decision to make?
-        
-        var min_v_0_to_reach_target = min(result_1, result_2)
-        
-        if min_v_0_to_reach_target > previous_constraint.max_x_velocity:
-            # We cannot start this step with enough velocity to reach the end position.
-            return null
-        elif min_v_0_to_reach_target < previous_constraint.min_x_velocity:
-            velocity_start_x = previous_constraint.min_x_velocity
-        else:
-            velocity_start_x = min_v_0_to_reach_target
-        
-    elif next_constraint.horizontal_acceleration_sign_to_approach < 0:
-        # Try to use the maximum possible v_0.
-        # This heuristic should usually result in the least amount of movement, but not always.
-        # FIXME: LEFT OFF HERE: ------A: Double-check the above heuristic statement. Is it accurate? Is there a better decision to make?
-
-        var max_v_0_to_reach_target = max(result_1, result_2)
-
-        if max_v_0_to_reach_target < previous_constraint.min_x_velocity:
-            # We cannot start this step with enough velocity to reach the end position.
-            return null
-        elif max_v_0_to_reach_target > previous_constraint.max_x_velocity:
-            velocity_start_x = previous_constraint.max_x_velocity
-        else:
-            velocity_start_x = max_v_0_to_reach_target
-
-    else:
-        # FIXME: LEFT OFF HERE: ----------A: What to do here?
-        velocity_start_x = 0.0
-
-    var horizontal_velocity_diff := velocity_step_end.x - velocity_start_x
-    var horizontal_acceleration_sign := \
-            1 if horizontal_velocity_diff > 0 else \
-            (-1 if horizontal_velocity_diff < 0 else \
-            0)
-    assert(horizontal_acceleration_sign == \
-            next_constraint.horizontal_acceleration_sign_to_approach)
+#    # FIXME: Get these values from somewhere
+#    var previous_constraint: MovementConstraint
+#    var next_constraint: MovementConstraint
+#    var velocity_step_end: Vector2
+#
+#    # Calculate what start velocity would allow us to accelerate the most in order to reach the end
+#    # position. This also tries to hit the max speed as soon as possible.
+#    # 
+#    # Derivation:
+#    # - Start with basic equations of motion
+#    # - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
+#    # - s_2 = s_1 + v_1*t_2
+#    # - v_1 = v_0 + a*t_1
+#    # - t_total = t_1 + t_2
+#    # - Do some algebra...
+#    # - 0 = a*(s_2 - s_0 - v_1*t_total) + 1/2*v_1^2 - v_1*v_0 + 1/2*v_0^2
+#    # - Apply quadratic formula to solve for v_0.
+#    var v_1 := velocity_step_end.x
+#    var a := 0.5
+#    var b := -v_1
+#    var c := acceleration * (position_end.x - position_step_start.x - v_1 * step_duration) + \
+#            0.5 * v_1 * v_1
+#    var discriminant := b * b - 4 * a * c
+#    assert(discriminant >= 0)
+#    var discriminant_sqrt := sqrt(discriminant)
+#    var result_1 := (-b + discriminant_sqrt) / 2 / a
+#    var result_2 := (-b - discriminant_sqrt) / 2 / a
+#
+#    # FIXME: LEFT OFF HERE: --------A:
+#    # - I have no idea how to choose between these two possible results right now.
+#    # - Set a break point and look at them.
+#    # - Probably add some assertions.
+#
+#    # FIXME: LEFT OFF HERE: ------A
+#    # - Use constraint.horizontal_movement_sign instead
+#
+#    var velocity_start_x: float
+#    if next_constraint.horizontal_acceleration_sign_to_approach > 0:
+#        # Try to use the minimum possible v_0.
+#        # This heuristic should usually result in the least amount of movement, but not always.
+#        # FIXME: LEFT OFF HERE: ------A: Double-check the above heuristic statement. Is it accurate? Is there a better decision to make?
+#
+#        var min_v_0_to_reach_target = min(result_1, result_2)
+#
+#        if min_v_0_to_reach_target > previous_constraint.max_x_velocity:
+#            # We cannot start this step with enough velocity to reach the end position.
+#            return null
+#        elif min_v_0_to_reach_target < previous_constraint.min_x_velocity:
+#            velocity_start_x = previous_constraint.min_x_velocity
+#        else:
+#            velocity_start_x = min_v_0_to_reach_target
+#
+#    elif next_constraint.horizontal_acceleration_sign_to_approach < 0:
+#        # Try to use the maximum possible v_0.
+#        # This heuristic should usually result in the least amount of movement, but not always.
+#        # FIXME: LEFT OFF HERE: ------A: Double-check the above heuristic statement. Is it accurate? Is there a better decision to make?
+#
+#        var max_v_0_to_reach_target = max(result_1, result_2)
+#
+#        if max_v_0_to_reach_target < previous_constraint.min_x_velocity:
+#            # We cannot start this step with enough velocity to reach the end position.
+#            return null
+#        elif max_v_0_to_reach_target > previous_constraint.max_x_velocity:
+#            velocity_start_x = previous_constraint.max_x_velocity
+#        else:
+#            velocity_start_x = max_v_0_to_reach_target
+#
+#    else:
+#        # FIXME: LEFT OFF HERE: ----------A: What to do here?
+#        velocity_start_x = 0.0
+#
+#    var horizontal_velocity_diff := velocity_step_end.x - velocity_start_x
+#    var horizontal_acceleration_sign := \
+#            1 if horizontal_velocity_diff > 0 else \
+#            (-1 if horizontal_velocity_diff < 0 else \
+#            0)
+#    assert(horizontal_acceleration_sign == \
+#            next_constraint.horizontal_acceleration_sign_to_approach)
     
     # -------------------------------------
     

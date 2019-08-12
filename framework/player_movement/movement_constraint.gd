@@ -31,7 +31,7 @@ var passing_vertically: bool
 var should_stay_on_min_side: bool
 
 # The sign of the horizontal movement when passing through this constraint.
-var horizontal_movement_sign := 0
+var horizontal_movement_sign: int = INF
 
 # The time at which movement should pass through this constraint.
 var time_passing_through := INF
@@ -59,11 +59,13 @@ func _init(surface: Surface, position: Vector2, passing_vertically: bool, \
     self.min_x_velocity = min_x_velocity
     self.max_x_velocity = max_x_velocity
     
-    if surface.side == SurfaceSide.LEFT_WALL:
-        self.horizontal_movement_sign = -1
-    elif surface.side == SurfaceSide.RIGHT_WALL:
-        self.horizontal_movement_sign = 1
-    elif should_stay_on_min_side:
-        self.horizontal_movement_sign = -1
-    else:
-        self.horizontal_movement_sign = 1
+    if horizontal_movement_sign == INF:
+        assert(surface != null)
+        if surface.side == SurfaceSide.LEFT_WALL:
+            self.horizontal_movement_sign = -1
+        elif surface.side == SurfaceSide.RIGHT_WALL:
+            self.horizontal_movement_sign = 1
+        elif should_stay_on_min_side:
+            self.horizontal_movement_sign = -1
+        else:
+            self.horizontal_movement_sign = 1
