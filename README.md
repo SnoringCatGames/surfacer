@@ -4,6 +4,8 @@
 
 _A simple 2D-platformer with cats, squirrels, and nuts._
 
+_This is a demo for the [Surfacer](https://github.com/levilindsey/surfacer) pathfinding framework._
+
 _TODO: In development. Not ready for review._
 
 TODO
@@ -15,6 +17,8 @@ TODO
 _A 2D-platformer pathfinding framework for Godot._
 
 _"Surfacer": Like a platformer, but with walking and climbing on all surfaces!_
+
+TODO: _For an demo app using this framework, checkout [Squirrel Away](https://github.com/levilindsey/squirrel-away)_
 
 _TODO: In development. Not ready for review._
 
@@ -80,6 +84,14 @@ This will only detect internal surface segments that are equivalent with another
 ### Calculating edges
 
 TODO
+
+The `Surfacer` framework uses a procedural approach to calculate trajectories and intstructions
+for movement between surfaces. The algorithms used rely heavily on the classic [one-dimensional
+equations of motion for constant acceleration](https://physics.info/motion-equations/).
+
+A machine-learning-based approach is almost certainly the right way to solve this general problem.
+However, since I was dumb enough to implement a procedural approach, one perk is that it's easy to
+modify to perform better for any given edge-case.
 
 #### The high-level steps
 

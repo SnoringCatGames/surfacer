@@ -124,6 +124,8 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
     var jump_positions: Array
     var land_positions: Array
     var passing_vertically: bool
+    var destination_point: Vector2
+    var origin_constraint: MovementConstraint
     var instructions: PlayerInstructions
     var edges := []
     
@@ -152,9 +154,6 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
 
         for jump_position in jump_positions:
             passing_vertically = a.normal.x == 0
-            global_calc_params.origin_constraint = PlayerMovement.create_origin_constraint(a, \
-                    jump_position.target_point, Vector2(0.0, params.jump_boost), \
-                    passing_vertically)
 
             for land_position in land_positions:
                 # FIXME: E: DEBUGGING: Remove.
@@ -172,8 +171,14 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
                     # Ignore anything but the one destination surface we are debugging.
                     continue
                 
+                destination_point = land_position.target_point
+                origin_constraint = PlayerMovement.create_origin_constraint(a, \
+                        jump_position.target_point, destination_point, \
+                        Vector2(0.0, params.jump_boost), passing_vertically)
+                global_calc_params.origin_constraint = origin_constraint
+                
                 instructions = _calculate_jump_instructions( \
-                        global_calc_params, land_position.target_point, b)
+                        global_calc_params, destination_point, b)
                 if instructions != null:
                     # Can reach land position from jump position.
                     edges.push_back(InterSurfaceEdge.new( \
@@ -192,7 +197,7 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
     var origin_surface := position_start.surface
     var passing_vertically := origin_surface.normal.x == 0
     global_calc_params.origin_constraint = PlayerMovement.create_origin_constraint( \
-            origin_surface, position_start.target_point, \
+            origin_surface, position_start.target_point, position_end, \
             Vector2(0.0, params.jump_boost), passing_vertically)
     
     return _calculate_jump_instructions(global_calc_params, position_end, null)
@@ -830,18 +835,6 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     # -------------------------------------
     
     # FIXME: LEFT OFF HERE: ------------------------------------------------------------------A
-    # - Add support for optionally passing-in horizontal_movement_sign to constraint constructor.
-    #   - Especially for the case with surface == null...
-    # - Calculate origin.horizontal_movement_sign as non-zero
-    #   - Refactor create_origin_constraint to accepte a next position parameter, and use that to
-    #     calculate direction.
-    #   - This will then require refactoring callsites of create_origin_constraint to pass-in this
-    #     argument.
-    #   - This will then also require pushing down when we call create_origin_constraint in some
-    #     iterations, so that we call create_origin_constraint separately for each destination
-    #     position, rather than once before iterating through destinations.
-    #     - This is probably for the best anyway.
-    # - Create a new field: constraint.actual_x_velocity
     # - Calculate velocity_start_x:
     #   - Use the min-possible starting speed that could get us to our required velocity_end.
     #   - Easy to do, if I know the direction of acceleration....
@@ -871,84 +864,84 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     # - [obsolete?] Probably need to define a constant small/offset value for some min passing speed through a constraint like this.
     #   - Is this the same offset I should use for offsetting the destination constraint velocity?
     
-#    # FIXME: Get these values from somewhere
-#    var previous_constraint: MovementConstraint
-#    var next_constraint: MovementConstraint
-#    var velocity_step_end: Vector2
-#
-#    # Calculate what start velocity would allow us to accelerate the most in order to reach the end
-#    # position. This also tries to hit the max speed as soon as possible.
-#    # 
-#    # Derivation:
-#    # - Start with basic equations of motion
-#    # - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
-#    # - s_2 = s_1 + v_1*t_2
-#    # - v_1 = v_0 + a*t_1
-#    # - t_total = t_1 + t_2
-#    # - Do some algebra...
-#    # - 0 = a*(s_2 - s_0 - v_1*t_total) + 1/2*v_1^2 - v_1*v_0 + 1/2*v_0^2
-#    # - Apply quadratic formula to solve for v_0.
-#    var v_1 := velocity_step_end.x
-#    var a := 0.5
-#    var b := -v_1
-#    var c := acceleration * (position_end.x - position_step_start.x - v_1 * step_duration) + \
-#            0.5 * v_1 * v_1
-#    var discriminant := b * b - 4 * a * c
-#    assert(discriminant >= 0)
-#    var discriminant_sqrt := sqrt(discriminant)
-#    var result_1 := (-b + discriminant_sqrt) / 2 / a
-#    var result_2 := (-b - discriminant_sqrt) / 2 / a
-#
-#    # FIXME: LEFT OFF HERE: --------A:
-#    # - I have no idea how to choose between these two possible results right now.
-#    # - Set a break point and look at them.
-#    # - Probably add some assertions.
-#
-#    # FIXME: LEFT OFF HERE: ------A
-#    # - Use constraint.horizontal_movement_sign instead
-#
-#    var velocity_start_x: float
-#    if next_constraint.horizontal_acceleration_sign_to_approach > 0:
-#        # Try to use the minimum possible v_0.
-#        # This heuristic should usually result in the least amount of movement, but not always.
-#        # FIXME: LEFT OFF HERE: ------A: Double-check the above heuristic statement. Is it accurate? Is there a better decision to make?
-#
-#        var min_v_0_to_reach_target = min(result_1, result_2)
-#
-#        if min_v_0_to_reach_target > previous_constraint.max_x_velocity:
-#            # We cannot start this step with enough velocity to reach the end position.
-#            return null
-#        elif min_v_0_to_reach_target < previous_constraint.min_x_velocity:
-#            velocity_start_x = previous_constraint.min_x_velocity
-#        else:
-#            velocity_start_x = min_v_0_to_reach_target
-#
-#    elif next_constraint.horizontal_acceleration_sign_to_approach < 0:
-#        # Try to use the maximum possible v_0.
-#        # This heuristic should usually result in the least amount of movement, but not always.
-#        # FIXME: LEFT OFF HERE: ------A: Double-check the above heuristic statement. Is it accurate? Is there a better decision to make?
-#
-#        var max_v_0_to_reach_target = max(result_1, result_2)
-#
-#        if max_v_0_to_reach_target < previous_constraint.min_x_velocity:
-#            # We cannot start this step with enough velocity to reach the end position.
-#            return null
-#        elif max_v_0_to_reach_target > previous_constraint.max_x_velocity:
-#            velocity_start_x = previous_constraint.max_x_velocity
-#        else:
-#            velocity_start_x = max_v_0_to_reach_target
-#
-#    else:
-#        # FIXME: LEFT OFF HERE: ----------A: What to do here?
-#        velocity_start_x = 0.0
-#
-#    var horizontal_velocity_diff := velocity_step_end.x - velocity_start_x
-#    var horizontal_acceleration_sign := \
-#            1 if horizontal_velocity_diff > 0 else \
-#            (-1 if horizontal_velocity_diff < 0 else \
-#            0)
-#    assert(horizontal_acceleration_sign == \
-#            next_constraint.horizontal_acceleration_sign_to_approach)
+    # FIXME: Get these values from somewhere
+    var previous_constraint: MovementConstraint
+    var next_constraint: MovementConstraint
+    var velocity_step_end: Vector2
+
+    # Calculate what start velocity would allow us to accelerate the most in order to reach the end
+    # position. This also tries to hit the max speed as soon as possible.
+    # 
+    # Derivation:
+    # - Start with basic equations of motion
+    # - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
+    # - s_2 = s_1 + v_1*t_2
+    # - v_1 = v_0 + a*t_1
+    # - t_total = t_1 + t_2
+    # - Do some algebra...
+    # - 0 = a*(s_2 - s_0 - v_1*t_total) + 1/2*v_1^2 - v_1*v_0 + 1/2*v_0^2
+    # - Apply quadratic formula to solve for v_0.
+    var v_1 := velocity_step_end.x
+    var a := 0.5
+    var b := -v_1
+    var c := acceleration * (position_end.x - position_step_start.x - v_1 * step_duration) + \
+            0.5 * v_1 * v_1
+    var discriminant := b * b - 4 * a * c
+    assert(discriminant >= 0)
+    var discriminant_sqrt := sqrt(discriminant)
+    var result_1 := (-b + discriminant_sqrt) / 2 / a
+    var result_2 := (-b - discriminant_sqrt) / 2 / a
+    
+    # FIXME: LEFT OFF HERE: --------A:
+    # - I have no idea how to choose between these two possible results right now.
+    # - Set a break point and look at them.
+    # - Probably add some assertions.
+    
+    # FIXME: LEFT OFF HERE: ------A
+    # - Use constraint.horizontal_movement_sign instead
+    
+    var velocity_start_x: float
+    if next_constraint.horizontal_acceleration_sign_to_approach > 0:
+        # Try to use the minimum possible v_0.
+        # This heuristic should usually result in the least amount of movement, but not always.
+        # FIXME: LEFT OFF HERE: ------A: Double-check the above heuristic statement. Is it accurate? Is there a better decision to make?
+        
+        var min_v_0_to_reach_target = min(result_1, result_2)
+        
+        if min_v_0_to_reach_target > previous_constraint.max_x_velocity:
+            # We cannot start this step with enough velocity to reach the end position.
+            return null
+        elif min_v_0_to_reach_target < previous_constraint.min_x_velocity:
+            velocity_start_x = previous_constraint.min_x_velocity
+        else:
+            velocity_start_x = min_v_0_to_reach_target
+    
+    elif next_constraint.horizontal_acceleration_sign_to_approach < 0:
+        # Try to use the maximum possible v_0.
+        # This heuristic should usually result in the least amount of movement, but not always.
+        # FIXME: LEFT OFF HERE: ------A: Double-check the above heuristic statement. Is it accurate? Is there a better decision to make?
+        
+        var max_v_0_to_reach_target = max(result_1, result_2)
+        
+        if max_v_0_to_reach_target < previous_constraint.min_x_velocity:
+            # We cannot start this step with enough velocity to reach the end position.
+            return null
+        elif max_v_0_to_reach_target > previous_constraint.max_x_velocity:
+            velocity_start_x = previous_constraint.max_x_velocity
+        else:
+            velocity_start_x = max_v_0_to_reach_target
+    
+    else:
+        # FIXME: LEFT OFF HERE: ----------A: What to do here?
+        velocity_start_x = 0.0
+    
+    var horizontal_velocity_diff := velocity_step_end.x - velocity_start_x
+    var horizontal_acceleration_sign := \
+            1 if horizontal_velocity_diff > 0 else \
+            (-1 if horizontal_velocity_diff < 0 else \
+            0)
+    assert(horizontal_acceleration_sign == \
+            next_constraint.horizontal_acceleration_sign_to_approach)
     
     # -------------------------------------
     

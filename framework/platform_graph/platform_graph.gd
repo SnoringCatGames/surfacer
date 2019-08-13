@@ -264,8 +264,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
 
     var global_calc_params := MovementCalcGlobalParams.new( \
             movement_params, space_state, surface_parser, false)
-    global_calc_params.origin_constraint = PlayerMovement.create_origin_constraint(null, origin, \
-            velocity_start, true)
+    
 
     var origin_vertices := [origin]
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
@@ -273,6 +272,8 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     var possible_end_positions: Array
     var local_calc_params: MovementCalcLocalParams
     var calc_results: MovementCalcResults
+    var destination_point: Vector2
+    var origin_constraint: MovementConstraint
 
     # Find the first possible edge to a landing surface.
     for surface in possible_landing_surfaces:
@@ -280,9 +281,13 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
                 movement_params, destination.surface, origin_vertices, origin_bounding_box)
         
         for position_end in possible_end_positions:
+            destination_point = position_end.target_point
+            origin_constraint = PlayerMovement.create_origin_constraint(null, origin, \
+                    destination_point, velocity_start, true)
+            global_calc_params.origin_constraint = origin_constraint
+            
             local_calc_params = PlayerMovement.calculate_fall_vertical_step(global_calc_params, \
-                    movement_params, global_calc_params.origin_constraint, velocity_start, \
-                    position_end.target_point, surface)
+                    movement_params, origin_constraint, velocity_start, destination_point, surface)
             if local_calc_params == null:
                 continue
             

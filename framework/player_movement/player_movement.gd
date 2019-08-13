@@ -106,7 +106,8 @@ static func _calculate_constraints_around_surface(movement_params: MovementParam
 static func _calculate_constraint(movement_params: MovementParams, \
         vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
         colliding_surface: Surface, position: Vector2, \
-        passing_vertically: bool, should_stay_on_min_side: bool) -> MovementConstraint:
+        passing_vertically: bool, should_stay_on_min_side: bool, \
+        horizontal_movement_sign: int = INF) -> MovementConstraint:
     # Calculate the time that the movement would pass through the constraint.
     var time_passing_through := calculate_time_to_reach_constraint( \
             movement_params, previous_constraint.position, position, \
@@ -123,7 +124,7 @@ static func _calculate_constraint(movement_params: MovementParams, \
     
     return MovementConstraint.new(colliding_surface, position, passing_vertically, \
             should_stay_on_min_side, time_passing_through, min_and_max_velocity_at_step_end.x, \
-            min_and_max_velocity_at_step_end.y)
+            min_and_max_velocity_at_step_end.y, horizontal_movement_sign)
 
 # The given parameters represent the horizontal motion of a single step. If the movement is
 # leftward, this calculates the maximum step-end x velocity. If the movement is rightward, this
@@ -902,31 +903,41 @@ static func calculate_time_to_release_jump_button(movement_params: MovementParam
     
     return time_to_release_jump_button
 
-static func create_origin_constraint(surface: Surface, position: Vector2, \
+static func create_origin_constraint(surface: Surface, position: Vector2, next_position: Vector2, \
         velocity_start: Vector2, passing_vertically: bool) -> MovementConstraint:
+    var displacement := next_position - position
+    var horizontal_movement_sign := \
+            -1 if displacement.x < 0 else \
+            (1 if displacement.x > 0 else \
+            # For straight vertical steps, we don't have much to go off of for picking the
+            # horizontal movement direction, so just default to rightward for now.
+            1)
+    
     var constraint := MovementConstraint.new(surface, position, passing_vertically, false, 0.0, \
-            velocity_start.x, velocity_start.x)
+            velocity_start.x, velocity_start.x, horizontal_movement_sign)
+    
     constraint.is_origin = true
-    constraint.horizontal_movement_sign = 0
+    
     return constraint
 
 static func create_destination_constraint(movement_params: MovementParams, \
         vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
         surface: Surface, position: Vector2) -> MovementConstraint:
     var passing_vertically := surface.normal.x == 0 if surface != null else true
-    var constraint := _calculate_constraint(movement_params, vertical_step, previous_constraint, \
-            surface, position, passing_vertically, false)
     
-    constraint.is_destination = true
-    
-    var displacement := constraint.position - previous_constraint.position
-    constraint.horizontal_movement_sign = \
+    var displacement := position - previous_constraint.position
+    var horizontal_movement_sign := \
             -1 if displacement.x < 0 else \
             (1 if displacement.x > 0 else \
             # For straight-vertical steps, if there was any horizontal movement through the
             # previous, then we're going to need to backtrack in the opposition direction to reach
             # the destination.
             (-previous_constraint.horizontal_movement_sign))
+    
+    var constraint := _calculate_constraint(movement_params, vertical_step, previous_constraint, \
+            surface, position, passing_vertically, false, horizontal_movement_sign)
+    
+    constraint.is_destination = true
     
     assert(constraint.time_passing_through == vertical_step.time_step_end)
     
