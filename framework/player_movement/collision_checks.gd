@@ -19,7 +19,7 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
     var is_pressing_left := false
     var is_pressing_right := false
     var is_pressing_jump := false
-    var horizontal_movement_sign := 0
+    var horizontal_acceleration_sign := 0
     var position := global_calc_params.origin_constraint.position
     var velocity := Vector2.ZERO
     var has_started_instructions := false
@@ -100,10 +100,10 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
                         velocity.y = movement_params.jump_boost
                 "move_left":
                     is_pressing_left = next_instruction.is_pressed
-                    horizontal_movement_sign = -1 if is_pressing_left else 0
+                    horizontal_acceleration_sign = -1 if is_pressing_left else 0
                 "move_right":
                     is_pressing_right = next_instruction.is_pressed
-                    horizontal_movement_sign = 1 if is_pressing_right else 0
+                    horizontal_acceleration_sign = 1 if is_pressing_right else 0
                 _:
                     Utils.error()
             
@@ -125,7 +125,7 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
         # Update state for the next frame.
         position += displacement
         velocity = PlayerMovement.update_velocity_in_air(velocity, delta, is_pressing_jump, \
-                is_first_jump, horizontal_movement_sign, movement_params)
+                is_first_jump, horizontal_acceleration_sign, movement_params)
         velocity = PlayerMovement.cap_velocity(velocity, movement_params)
         previous_time = current_time
         current_time += delta
@@ -185,7 +185,7 @@ static func check_discrete_horizontal_step_for_collision( \
     var is_pressing_jump := jump_instruction_end_time > current_time
     var is_pressing_move_horizontal := current_time > horizontal_step.time_instruction_start and \
             current_time < horizontal_step.time_instruction_end
-    var horizontal_movement_sign := 0
+    var horizontal_acceleration_sign := 0
     var space_state := global_calc_params.space_state
     var shape_query_params := global_calc_params.shape_query_params
     var displacement: Vector2
@@ -219,8 +219,8 @@ static func check_discrete_horizontal_step_for_collision( \
         # Determine whether the horizontal movement button is still being pressed.
         is_pressing_move_horizontal = current_time > horizontal_step.time_instruction_start and \
             current_time < horizontal_step.time_instruction_end
-        horizontal_movement_sign = \
-                horizontal_step.horizontal_movement_sign if is_pressing_move_horizontal else 0
+        horizontal_acceleration_sign = \
+            horizontal_step.horizontal_acceleration_sign if is_pressing_move_horizontal else 0
         
         # FIXME: E: After implementing instruction execution, check whether it also does this, and
         #           whether this should be uncommented.
@@ -234,7 +234,7 @@ static func check_discrete_horizontal_step_for_collision( \
         # Update state for the next frame.
         position += displacement
         velocity = PlayerMovement.update_velocity_in_air(velocity, delta, is_pressing_jump, \
-                is_first_jump, horizontal_movement_sign, movement_params)
+                is_first_jump, horizontal_acceleration_sign, movement_params)
         velocity = PlayerMovement.cap_velocity(velocity, movement_params)
         previous_time = current_time
         current_time += delta

@@ -109,6 +109,7 @@ static func _calculate_constraint(movement_params: MovementParams, \
         passing_vertically: bool, should_stay_on_min_side: bool, \
         horizontal_movement_sign: int = INF) -> MovementConstraint:
     # Calculate the time that the movement would pass through the constraint.
+    # FIXME: LEFT OFF HERE: ------------A: Could we instead use _calculate_end_time_for_jumping_to_position here?? (will they be the same value?)
     var time_passing_through := calculate_time_to_reach_constraint( \
             movement_params, previous_constraint.position, position, \
             vertical_step.velocity_start, vertical_step.can_hold_jump_button)
@@ -285,7 +286,7 @@ static func calculate_horizontal_end_state_for_time(movement_params: MovementPar
     else:
         var delta_time := time - horizontal_step.time_instruction_start
         var acceleration := movement_params.in_air_horizontal_acceleration * \
-                horizontal_step.horizontal_movement_sign
+                horizontal_step.horizontal_acceleration_sign
         # From basic equation of motion:
         #     s = s_0 + v_0*t + 1/2*a*t^2
         position = horizontal_step.position_instruction_start.x + \
@@ -318,7 +319,7 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
     var is_position_before_peak: bool
     
     # We need to know whether the position corresponds to the rising or falling side of the jump
-    # parabola, and whether the position correpsonds to before or after the jump button is
+    # parabola, and whether the position corresponds to before or after the jump button is
     # released.
     match upcoming_constraint.surface.side:
         SurfaceSide.FLOOR:
@@ -554,13 +555,13 @@ static func calculate_fall_vertical_step(global_calc_params: MovementCalcGlobalP
     if min_vertical_displacement > total_displacement.y:
         return null
     
-    var horizontal_movement_sign: int
+    var horizontal_acceleration_sign: int
     if total_displacement.x < 0:
-        horizontal_movement_sign = -1
+        horizontal_acceleration_sign = -1
     elif total_displacement.x > 0:
-        horizontal_movement_sign = 1
+        horizontal_acceleration_sign = 1
     else:
-        horizontal_movement_sign = 0
+        horizontal_acceleration_sign = 0
     
     var can_hold_jump_button := false
     
@@ -583,7 +584,7 @@ static func calculate_fall_vertical_step(global_calc_params: MovementCalcGlobalP
     step.position_step_start = position_start
     step.position_instruction_start = position_start
     step.velocity_start = velocity_start
-    step.horizontal_movement_sign = horizontal_movement_sign
+    step.horizontal_acceleration_sign = horizontal_acceleration_sign
     step.can_hold_jump_button = can_hold_jump_button
     
     var step_end_state := \
@@ -604,7 +605,7 @@ static func calculate_fall_vertical_step(global_calc_params: MovementCalcGlobalP
             origin_constraint, destination_surface, destination_position)
     global_calc_params.destination_constraint = destination_constraint
     
-    return MovementCalcLocalParams.new(origin_constraint, destination_constraint, null, step)
+    return MovementCalcLocalParams.new(origin_constraint, destination_constraint, step)
 
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.
@@ -629,7 +630,7 @@ static func convert_calculation_steps_to_player_instructions( \
     # Record the various sideways movement instructions.
     for i in range(steps.size()):
         step = steps[i]
-        input_key = "move_left" if step.horizontal_movement_sign < 0 else "move_right"
+        input_key = "move_left" if step.horizontal_acceleration_sign < 0 else "move_right"
         press = PlayerInstruction.new(input_key, step.time_instruction_start, true)
         release = PlayerInstruction.new(input_key, \
                 step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON, false)
@@ -653,7 +654,7 @@ static func convert_calculation_steps_to_player_instructions( \
 
 static func update_velocity_in_air( \
         velocity: Vector2, delta: float, is_pressing_jump: bool, is_first_jump: bool, \
-        horizontal_movement_sign: int, movement_params: MovementParams) -> Vector2:
+        horizontal_acceleration_sign: int, movement_params: MovementParams) -> Vector2:
     var is_ascending_from_jump := velocity.y < 0 and is_pressing_jump
     
     # Make gravity stronger when falling. This creates a more satisfying jump.
@@ -666,7 +667,7 @@ static func update_velocity_in_air( \
     velocity.y += delta * movement_params.gravity_fast_fall * gravity_multiplier
     
     # Horizontal movement.
-    velocity.x += delta * movement_params.in_air_horizontal_acceleration * horizontal_movement_sign
+    velocity.x += delta * movement_params.in_air_horizontal_acceleration * horizontal_acceleration_sign
     
     return velocity
 
@@ -745,13 +746,14 @@ static func calculate_time_to_reach_constraint(movement_params: MovementParams, 
         
         var displacement: Vector2 = position_end - position_start
         
-        var horizontal_movement_sign: int
+        # FIXME: LEFT OFF HERE: --------------------------------A: Check if this is correct... (I don't think it is, since the acceleration may need to be in the other direction, in case of fast enough start velocity)
+        var horizontal_acceleration_sign: int
         if displacement.x < 0:
-            horizontal_movement_sign = -1
+            horizontal_acceleration_sign = -1
         elif displacement.x > 0:
-            horizontal_movement_sign = 1
+            horizontal_acceleration_sign = 1
         else:
-            horizontal_movement_sign = 0
+            horizontal_acceleration_sign = 0
         
         # Calculate how long it will take for the jump to reach some minimum peak height.
         # 
@@ -818,7 +820,7 @@ static func calculate_time_to_reach_constraint(movement_params: MovementParams, 
         var duration_to_reach_horizontal_displacement := _calculate_min_time_to_reach_position( \
                 position_start.x, position_end.x, 0.0, \
                 movement_params.max_horizontal_speed_default, \
-                movement_params.in_air_horizontal_acceleration * horizontal_movement_sign)
+                movement_params.in_air_horizontal_acceleration * horizontal_acceleration_sign)
         assert(duration_to_reach_horizontal_displacement >= 0 and \
                 duration_to_reach_horizontal_displacement != INF)
         

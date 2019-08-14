@@ -161,6 +161,14 @@ modify to perform better for any given edge-case.
 - To account for this, we backtrack to the start of the overall movement traversal and consider whether a higher jump could reach the constraint.
 - If it could, then we use those new steps instead of our previously calculated steps, and we then recursively check whether we can reach the destination from the constraint.
 
+#### Example jump-movement cases that aren't currently covered
+
+- A single step that needs multiple different sideways-movement instructions:
+  - E.g., backward acceleration in order to not overshoot the end position as well as forward
+    acceleration to then have enough step-end x velocity in order to reach the following
+	constraint for the next step.
+- 
+
 ## Tests
 
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.

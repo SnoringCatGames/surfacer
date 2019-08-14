@@ -54,5 +54,5 @@ var just_entered_air := false
 var just_left_air := false
 
 var horizontal_facing_sign := -1
-var horizontal_movement_sign := 0
+var horizontal_acceleration_sign := 0
 var toward_wall_sign := 0

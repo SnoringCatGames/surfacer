@@ -16,7 +16,7 @@ func process(player: Player) -> bool:
     
     player.velocity = PlayerMovement.update_velocity_in_air(player.velocity, \
             player.actions.delta, player.actions.pressed_jump, is_first_jump, \
-            player.surface_state.horizontal_movement_sign, player.movement_params)
+            player.surface_state.horizontal_acceleration_sign, player.movement_params)
     
     # Hit ceiling.
     if player.surface_state.is_touching_ceiling:

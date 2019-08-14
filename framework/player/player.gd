@@ -116,11 +116,11 @@ func _physics_process(delta: float) -> void:
     
     # Uncomment to help with debugging.
     if surface_state.just_left_air:
-        print("HIT surface: %8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
+        print("HIT surface:    %8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
                 surface_state.center_position, velocity, \
                 Surface.to_string(surface_state.grabbed_surface)])
     elif surface_state.just_entered_air:
-        print("LEFT surface:%8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
+        print("LEFT surface:   %8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
                 surface_state.center_position, velocity, \
                 Surface.to_string(surface_state.previous_grabbed_surface)])
     
@@ -205,12 +205,12 @@ func _update_surface_state() -> void:
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if actions.pressed_right:
         surface_state.horizontal_facing_sign = 1
-        surface_state.horizontal_movement_sign = 1
+        surface_state.horizontal_acceleration_sign = 1
     elif actions.pressed_left:
         surface_state.horizontal_facing_sign = -1
-        surface_state.horizontal_movement_sign = -1
+        surface_state.horizontal_acceleration_sign = -1
     else:
-        surface_state.horizontal_movement_sign = 0
+        surface_state.horizontal_acceleration_sign = 0
     
     # Note: These might give false negatives when colliding with a corner. AFAICT, Godot will
     # simply pick one of the corner's adjacent segments to base the collision normal off of, so the
@@ -420,13 +420,13 @@ static func _get_attached_surface_collision( \
     
     return closest_collision
 
-func start_dash(horizontal_movement_sign: int) -> void:
+func start_dash(horizontal_acceleration_sign: int) -> void:
     if !_can_dash:
         return
     
     movement_params.current_max_horizontal_speed = movement_params.max_horizontal_speed_default * \
             movement_params.dash_speed_multiplier
-    velocity.x = movement_params.current_max_horizontal_speed * horizontal_movement_sign
+    velocity.x = movement_params.current_max_horizontal_speed * horizontal_acceleration_sign
     
     velocity.y += movement_params.dash_vertical_boost
     
@@ -442,7 +442,7 @@ func start_dash(horizontal_movement_sign: int) -> void:
     #warning-ignore:return_value_discarded
     _dash_fade_tween.start()
     
-    if horizontal_movement_sign > 0:
+    if horizontal_acceleration_sign > 0:
         animator.face_right()
     else:
         animator.face_left()

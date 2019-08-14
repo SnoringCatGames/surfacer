@@ -48,6 +48,38 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 #     - Or would something like a GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION (~0.9985?)
 #       param fix things enough?
 #
+# - Add integration tests:
+#   - These should be much easier to write and maintain than the unit tests.
+#   - These should start with:
+#     - One player type (other types shouldn't be instantiated or considered by any logic at all)
+#     - A level that could be either simple or complicated.
+#     - We should be able to configure from the test the specific starting and ending surface and
+#       position to check.
+#       - This should then cause the PlatformGraph parsing and get_all_edges_from_surface parsing
+#         to skip all other surfaces and jump/land positions.
+#     - We should use the above configuration to target specific interesting edge use-cases.
+#       - Skipping constraints
+#       - Left/right/ceiling/floor intermediate surfaces
+#         - And then passing on min/max side of those surfaces
+#       - Zigzagging between a couple consecutive intermediate surfaces
+#         - While moving upward, downward, leftward, rightward
+#       - Jumping up around side of block to top
+#       - Jumping down around top of block to side
+#       - Jumping when a non-minimum step-end x velocity is needed
+#       - Needing vertical backtracking
+#       - Needing to press side-movement input in opposite direction of movement in order to slow
+#         velocity along the step.
+#       - Falling a long vertical distance, to test the fallable surfaces logic
+#       - Jumping a long horizontal distance, to test the reachable surfaces logic
+#       - Surface-to-surface
+#       - Surface-to-air
+#       - Air-to-surface
+#       - wall to wall
+#       - floor to wall
+#       - wall to floor
+#       - Starting on convex and concave corners between adjacent surfaces, so that the collision
+#         margin considers the other surfaces as already colliding beforehand.
+#
 # - Refactor PlayerMovement classes, so that whether the start and end posiition is on a platform
 #   or in the air is configuration that JumpFromPlatformMovement handles directly, rather than
 #   relying on a separate FallFromAir class?

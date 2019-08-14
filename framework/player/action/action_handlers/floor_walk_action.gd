@@ -11,7 +11,7 @@ func _init().(NAME, TYPE, PRIORITY) -> void:
 func process(player: Player) -> bool:
     # Horizontal movement.
     player.velocity.x += player.movement_params.walk_acceleration * \
-            player.surface_state.horizontal_movement_sign
+            player.surface_state.horizontal_acceleration_sign
     
     # Friction.
     var friction_offset: float = Utils.get_floor_friction_coefficient(player) * \

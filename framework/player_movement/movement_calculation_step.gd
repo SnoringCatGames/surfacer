@@ -56,4 +56,4 @@ var velocity_step_end: Vector2
 
 var velocity_instruction_end: Vector2
 
-var horizontal_movement_sign: int
+var horizontal_acceleration_sign: int
