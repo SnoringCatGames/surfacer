@@ -49,25 +49,13 @@ var is_origin := false
 var is_destination := false
 
 func _init(surface: Surface, position: Vector2, passing_vertically: bool, \
-        should_stay_on_min_side: bool, time_passing_through: float, min_x_velocity: float, \
-        max_x_velocity: float, horizontal_movement_sign: int = INF) -> void:
+        should_stay_on_min_side: bool, time_passing_through: float, \
+        horizontal_movement_sign: int, min_x_velocity: float, max_x_velocity: float) -> void:
     self.surface = surface
     self.position = position
     self.passing_vertically = passing_vertically
     self.should_stay_on_min_side = should_stay_on_min_side
     self.time_passing_through = time_passing_through
+    self.horizontal_movement_sign = horizontal_movement_sign
     self.min_x_velocity = min_x_velocity
     self.max_x_velocity = max_x_velocity
-    
-    if horizontal_movement_sign == INF:
-        assert(surface != null)
-        if surface.side == SurfaceSide.LEFT_WALL:
-            self.horizontal_movement_sign = -1
-        elif surface.side == SurfaceSide.RIGHT_WALL:
-            self.horizontal_movement_sign = 1
-        elif should_stay_on_min_side:
-            self.horizontal_movement_sign = -1
-        else:
-            self.horizontal_movement_sign = 1
-    else:
-        self.horizontal_movement_sign = horizontal_movement_sign

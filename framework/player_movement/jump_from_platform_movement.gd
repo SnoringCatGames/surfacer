@@ -577,7 +577,8 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         # - Set the destination_constraint min_x_velocity and max_x_velocity at the start, in order to latch onto the target surface.
         #   - Also add support for specifying min/max y velocities for this?
         # - Implement support for skipping a constraint:
-        #   - Probably do this in the recursion functions.
+        #   - Needs to be detected in the constraint-creation logic.
+        #   - Then needs to be handled in the recursion logic.
         #   - When to skip:
         #     - # If the direction of travel is the same as the side of the surface that the
         #       # constraint lies on, then we'll keep the constraint. Otherwise, we'll skip the constraint.
@@ -614,19 +615,6 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         # - Go through above notes/thoughts and make sure all bits are acounted for.
         # - Either support or add a doc+TODO for the other failing backtracking case that I scribbled.
         # - Document approach in the README.
-        # 
-        # - Add support for needing to press over in the opposite direction from the step's
-        #   displacement (e.g., if the step's start and end are directly vertical (from the bottom,
-        #   around a block's side) and there was non-zero initial x velocity).
-        #   - For horizontal step calculation: We can identify this case by looking at just the
-        #     step duration and the initial x velocity. If, with no acceleration, the step moves
-        #     too far, then we'll need to press backwards.
-        #   - For constraint min/max step-end x calculation: We can identify this case the same
-        #     way, but we'll need to look at both the min and max v_0 values separately.
-        #   - For both step and constraint calculation: We can quit early if we check the
-        #     constraint.passing_vertically and constraint.should_stay_on_min_side fields.
-        #     - if constraint.passing_vertically and constraint.should_stay_on_min_side:
-        #       - Then that constraint cannot have max_x_velocity > 0.
         
         # Recurse: Backtrack and try a higher jump (to the constraint).
         calc_results_to_constraint = _calculate_steps_with_new_jump_height(global_calc_params, \
@@ -849,7 +837,6 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
         return null
     
     # FIXME: LEFT OFF HERE: ------------------------------------------------------------------A
-    # - Update constraint calculation to force min/max to zero depending on horizontal_movement_sign.
     # - Calculate destination.actual_x_velocity
     #   - if destination.horizontal_movement_sign > 0: destination.actual_x_velocity = destination.min_x_velocity
     #   - else: destination.actual_x_velocity = destination.max_x_velocity
@@ -865,6 +852,7 @@ static func _calculate_horizontal_step(local_calc_params: MovementCalcLocalParam
     # - ADD TO DOCS: In general, a guiding heuristic in these calculations is to minimize movement. So, through each constraint (step-end), we try to minimize the horizontal speed of the movement at that point.
     # - [obsolete?] Probably need to define a constant small/offset value for some min passing speed through a constraint like this.
     #   - Is this the same offset I should use for offsetting the destination constraint velocity?
+    # - Fix remaining `FIXME: LEFT OFF HERE`s with A.
     
     # We don't need to worry about whether this would exceed max speed here. That is addressed
     # below.
@@ -936,12 +924,12 @@ static func _calculate_min_speed_velocity_start_x(horizontal_movement_sign_start
     
     # Derivation:
     # - There are two parts:
-    #   - Part 1: Constant acceleration from v_0 to v_1
+    #   - Part 1: Constant acceleration from v_0 to v_1.
     #   - Part 2: Coast at v_2 until we reach the destination.
     #   - The shorter part 1 is, the sooner we reach v_1 and the further we travel during
     #     part 2. This then means that we will need to have a lower v_0 and travel less far
     #     during part 1, which is good, since we want to choose a v_0 with the
-    #     minimum-possible speed
+    #     minimum-possible speed.
     # - Start with basic equations of motion
     # - v_1 = v_0 + a*t_1
     # - s_2 = s_1 + v_1*t_2
