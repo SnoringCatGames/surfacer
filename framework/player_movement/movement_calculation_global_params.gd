@@ -22,6 +22,9 @@ var shape_query_params: Physics2DShapeQueryParameters
 # of these calculations.
 var constraint_offset: Vector2
 
+# The initial velocity for the current edge instructions.
+var velocity_start: Vector2
+
 # The origin for the current edge instructions.
 var origin_constraint: MovementConstraint
 
@@ -37,10 +40,12 @@ var can_backtrack_on_height: bool
 var collided_surfaces: Dictionary
 
 func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceState, \
-            surface_parser: SurfaceParser, can_backtrack_on_height := true) -> void:
+            surface_parser: SurfaceParser, velocity_start: Vector2, \
+            can_backtrack_on_height := true) -> void:
     self.movement_params = movement_params
     self.space_state = space_state
     self.surface_parser = surface_parser
+    self.velocity_start = velocity_start
     self.can_backtrack_on_height = can_backtrack_on_height
     
     constraint_offset = movement_params.collider_half_width_height + \

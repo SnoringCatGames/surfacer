@@ -31,29 +31,19 @@ class_name MovementCalcStep
 
 var input_key: String
 
+var horizontal_acceleration_sign: int
+
 var time_step_start: float
-
 var time_instruction_start: float
-
-# The time at which movement for this step should reach the intended destination position for this
-# part of the overall movement.
+var time_instruction_end: float
 var time_step_end: float
 
-# The time at which the input_key should be released for this step.
-var time_instruction_end: float
-
 var position_step_start: Vector2
-
 var position_instruction_start: Vector2
-
+var position_instruction_end: Vector2
 var position_step_end: Vector2
 
-var position_instruction_end: Vector2
-
-var velocity_start: Vector2
-
-var velocity_step_end: Vector2
-
+var velocity_step_start: Vector2
+var velocity_instruction_start: Vector2
 var velocity_instruction_end: Vector2
-
-var horizontal_acceleration_sign: int
+var velocity_step_end: Vector2

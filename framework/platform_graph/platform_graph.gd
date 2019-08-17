@@ -15,6 +15,8 @@ const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_sur
 #
 # - Use FallFromAirMovement
 # - Use max_horizontal_jump_distance and max_upward_jump_distance
+# 
+# - Fix some aggregate return types to be Array instead of Vector2.
 #
 # - Add annotations that draw the recent path that the player actually moved.
 # - Add annotations for rendering some basic navigation mode info for the CP:
@@ -295,17 +297,14 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     possible_landing_surfaces.sort_custom(self, "_compare_surfaces_by_max_y")
 
     var global_calc_params := MovementCalcGlobalParams.new( \
-            movement_params, space_state, surface_parser, false)
+            movement_params, space_state, surface_parser, velocity_start, false)
     
-
     var origin_vertices := [origin]
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
 
     var possible_end_positions: Array
     var local_calc_params: MovementCalcLocalParams
     var calc_results: MovementCalcResults
-    var destination_point: Vector2
-    var origin_constraint: MovementConstraint
 
     # Find the first possible edge to a landing surface.
     for surface in possible_landing_surfaces:
@@ -313,13 +312,12 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
                 movement_params, destination.surface, origin_vertices, origin_bounding_box)
         
         for position_end in possible_end_positions:
-            destination_point = position_end.target_point
-            origin_constraint = PlayerMovement.create_origin_constraint(null, origin, \
-                    destination_point, velocity_start, true)
-            global_calc_params.origin_constraint = origin_constraint
+            terminals = PlayerMovement.create_terminal_constraints(null, origin, surface, \
+                    position_end.target_point, movement_params, velocity_start)
+            global_calc_params.origin_constraint = terminals[0]
+            global_calc_params.destination_constraint = terminals[1]
             
-            local_calc_params = PlayerMovement.calculate_fall_vertical_step(global_calc_params, \
-                    movement_params, origin_constraint, velocity_start, destination_point, surface)
+            local_calc_params = PlayerMovement.calculate_vertical_step(global_calc_params, false)
             if local_calc_params == null:
                 continue
             
@@ -327,7 +325,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
                     global_calc_params, local_calc_params)
             if calc_results != null:
                 return AirToSurfaceEdge.new(origin, position_end, calc_results)
-
+    
     return null
 
 func find_surfaces_in_fall_range( \

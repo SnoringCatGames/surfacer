@@ -58,15 +58,14 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
 static func _calculate_constraints_around_surface(movement_params: MovementParams, \
         vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
         colliding_surface: Surface, constraint_offset: Vector2) -> Array:
-    # Calculate the positions of each constraint.
     var passing_vertically: bool
-    var horizontal_movement_sign: int
     var position_a: Vector2
     var position_b: Vector2
+    
+    # Calculate the positions of each constraint.
     match colliding_surface.side:
         SurfaceSide.FLOOR:
             passing_vertically = true
-            horizontal_movement_sign = -1 if should_stay_on_min_side else 1
             # Left end
             position_a = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
@@ -75,7 +74,6 @@ static func _calculate_constraints_around_surface(movement_params: MovementParam
                     Vector2(constraint_offset.x, -constraint_offset.y)
         SurfaceSide.CEILING:
             passing_vertically = true
-            horizontal_movement_sign = -1 if should_stay_on_min_side else 1
             # Left end
             position_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
@@ -84,7 +82,6 @@ static func _calculate_constraints_around_surface(movement_params: MovementParam
                     Vector2(constraint_offset.x, constraint_offset.y)
         SurfaceSide.LEFT_WALL:
             passing_vertically = false
-            horizontal_movement_sign = -1
             # Top end
             position_a = colliding_surface.vertices[0] + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
@@ -93,7 +90,6 @@ static func _calculate_constraints_around_surface(movement_params: MovementParam
                     Vector2(constraint_offset.x, constraint_offset.y)
         SurfaceSide.RIGHT_WALL:
             passing_vertically = false
-            horizontal_movement_sign = 1
             # Top end
             position_a = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
@@ -101,51 +97,72 @@ static func _calculate_constraints_around_surface(movement_params: MovementParam
             position_b = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
     
-    var constraint_a := _calculate_constraint(movement_params, vertical_step, \
-            previous_constraint, colliding_surface, position_a, passing_vertically, true, \
-            horizontal_movement_sign)
-    var constraint_b := _calculate_constraint(movement_params, vertical_step, \
-            previous_constraint, colliding_surface, position_b, passing_vertically, false, \
-            horizontal_movement_sign)
+    var constraint_a := MovementConstraint.new( \
+            colliding_surface, position_a, passing_vertically, true)
+    var constraint_b := MovementConstraint.new( \
+            colliding_surface, position_b, passing_vertically, false)
+    
+    update_constraint(constraint_a, previous_constraint, null, movement_params, \
+            vertical_step.velocity_step_start, vertical_step.can_hold_jump_button)
+    update_constraint(constraint_b, previous_constraint, null, movement_params, \
+            vertical_step.velocity_step_start, vertical_step.can_hold_jump_button)
     
     return [constraint_a, constraint_b]
 
-static func _calculate_constraint(movement_params: MovementParams, \
-        vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
-        colliding_surface: Surface, position: Vector2, \
-        passing_vertically: bool, should_stay_on_min_side: bool, \
-        horizontal_movement_sign_from_surface: int = INF) -> MovementConstraint:
-    # Check that horizontal movement direction calculations work as expected.
-    var displacement := position - previous_constraint.position
-    var horizontal_movement_sign_from_displacement := \
-            -1 if displacement.x < 0 else \
-            (1 if displacement.x > 0 else \
-            # For straight-vertical steps, if there was any horizontal movement through the
-            # previous, then we're going to need to backtrack in the opposition direction to reach
-            # the destination.
-            (-previous_constraint.horizontal_movement_sign))
-    assert(horizontal_movement_sign_from_surface == horizontal_movement_sign_from_displacement)
+# FIXME: ---------- should velocity_step_start be the value for the current horizontal step (instead of the overall vertical one) for intermediate constraints??
+static func update_constraint(constraint: MovementConstraint, \
+        previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
+        movement_params: MovementParams, velocity_step_start: Vector2, \
+        can_hold_jump_button: bool) -> void:
+    var horizontal_movement_sign := \
+            _calculate_horizontal_movement_sign(constraint, previous_constraint, next_constraint)
     
-    # Calculate the time that the movement would pass through the constraint.
-    # FIXME: LEFT OFF HERE: ------------A: Could we instead use _calculate_end_time_for_jumping_to_position here?? (will they be the same value?)
-    var time_passing_through := calculate_time_to_reach_constraint( \
-            movement_params, previous_constraint.position, position, \
-            vertical_step.velocity_start, vertical_step.can_hold_jump_button)
-    assert(time_passing_through != INF and time_passing_through != 0.0)
+    var time_passing_through: float
+    var min_x_velocity: float
+    var max_x_velocity: float
+    var actual_x_velocity: float
+
+    if constraint.is_origin:
+        time_passing_through = 0.0
+        min_x_velocity = velocity_step_start.x
+        max_x_velocity = velocity_step_start.x
+        actual_x_velocity = velocity_step_start.x
+    else:
+        var position := constraint.position
+        var previous_position := previous_constraint.position
+        # Calculate the time that the movement would pass through the constraint.
+        # FIXME: LEFT OFF HERE: ------------A: Could we instead use _calculate_end_time_for_jumping_to_position here?? (will they be the same value?)
+        time_passing_through = calculate_time_to_reach_constraint(movement_params, \
+                previous_position, position, velocity_step_start, can_hold_jump_button)
+        assert(time_passing_through != INF and time_passing_through != 0.0)
+        
+        # Calculate the min and max velocity for movement through the constraint.
+        var duration := time_passing_through - previous_constraint.time_passing_through
+        var min_and_max_velocity_at_step_end := _calculate_min_and_max_velocity_at_end_of_interval( \
+                previous_position.x, position.x, duration, \
+                previous_constraint.min_x_velocity, previous_constraint.max_x_velocity, \
+                movement_params.max_horizontal_speed_default, \
+                movement_params.in_air_horizontal_acceleration, horizontal_movement_sign_from_surface)
+        
+        min_x_velocity = min_and_max_velocity_at_step_end.x
+        max_x_velocity = min_and_max_velocity_at_step_end.y
+        
+        if constraint.is_destination:
+            # Initialize the destination constraint's actual velocity to match whichever min/max value
+            # yields the least overall movement.
+            actual_x_velocity = \
+                    constraint.min_x_velocity if horizontal_movement_sign > 0 else \
+                    constraint.max_x_velocity
+        else:
+            # actual_x_velocity is calculated in a back-to-front pass when calculating the
+            # horizontal steps.
+            actual_x_velocity = INF
     
-    # Calculate the min and max velocity for movement through the constraint.
-    var duration := time_passing_through - previous_constraint.time_passing_through
-    var min_and_max_velocity_at_step_end := _calculate_min_and_max_velocity_at_end_of_interval( \
-            previous_constraint.position.x, position.x, duration, \
-            previous_constraint.min_x_velocity, previous_constraint.max_x_velocity, \
-            movement_params.max_horizontal_speed_default, \
-            movement_params.in_air_horizontal_acceleration, horizontal_movement_sign_from_surface)
-    
-    var constraint := MovementConstraint.new(colliding_surface, position, passing_vertically, \
-            should_stay_on_min_side, time_passing_through, horizontal_movement_sign_from_surface, \
-            min_and_max_velocity_at_step_end.x, min_and_max_velocity_at_step_end.y)
-    
-    return constraint
+    constraint.horizontal_movement_sign = horizontal_movement_sign
+    constraint.time_passing_through = time_passing_through
+    constraint.min_x_velocity = min_x_velocity
+    constraint.max_x_velocity = max_x_velocity
+    constraint.actual_x_velocity = actual_x_velocity
 
 # The given parameters represent the horizontal motion of a single step.
 # 
@@ -283,9 +300,9 @@ static func calculate_vertical_end_state_for_time(movement_params: MovementParam
     
     # Basic equations of motion.
     var slow_ascent_end_position := vertical_step.position_step_start.y + \
-            vertical_step.velocity_start.y * slow_ascent_end_time + \
+            vertical_step.velocity_step_start.y * slow_ascent_end_time + \
             0.5 * movement_params.gravity_slow_ascent * slow_ascent_end_time * slow_ascent_end_time
-    var slow_ascent_end_velocity := vertical_step.velocity_start.y + \
+    var slow_ascent_end_velocity := vertical_step.velocity_step_start.y + \
             movement_params.gravity_slow_ascent * slow_ascent_end_time
     
     var position: float
@@ -319,7 +336,7 @@ static func calculate_horizontal_end_state_for_time(movement_params: MovementPar
     var velocity: float
     if time <= horizontal_step.time_instruction_start:
         var delta_time := time - horizontal_step.time_step_start
-        velocity = horizontal_step.velocity_start.x
+        velocity = horizontal_step.velocity_step_start.x
         # From a basic equation of motion:
         #     s = s_0 + v*t
         position = horizontal_step.position_step_start.x + velocity * delta_time
@@ -338,11 +355,11 @@ static func calculate_horizontal_end_state_for_time(movement_params: MovementPar
         # From basic equation of motion:
         #     s = s_0 + v_0*t + 1/2*a*t^2
         position = horizontal_step.position_instruction_start.x + \
-                horizontal_step.velocity_start.x * delta_time + \
+                horizontal_step.velocity_step_start.x * delta_time + \
                 0.5 * acceleration * delta_time * delta_time
         # From basic equation of motion:
         #     v = v_0 + a*t
-        velocity = horizontal_step.velocity_start.x + acceleration * delta_time
+        velocity = horizontal_step.velocity_step_start.x + acceleration * delta_time
     
     assert(velocity <= movement_params.max_horizontal_speed_default + 0.001)
     
@@ -443,6 +460,7 @@ static func _calculate_end_time_for_jumping_to_position(movement_params: Movemen
 # applied.
 # 
 # Note: This could depend on a speed that exceeds the max-allowed speed.
+# TODO: Remove if no-one is still using this.
 static func _calculate_time_to_release_acceleration(time_start: float, time_step_end: float, \
         position_start: float, position_end: float, velocity_start: float, \
         acceleration_start: float, post_release_backward_acceleration: float, \
@@ -584,76 +602,6 @@ static func _create_position_from_target_point(target_point: Vector2, surface: S
     var position := PositionAlongSurface.new()
     position.match_surface_target_and_collider(surface, target_point, collider_half_width_height)
     return position
-
-# Calculates a new step for the vertical part of the fall movement and the corresponding total fall
-# duration.
-static func calculate_fall_vertical_step(global_calc_params: MovementCalcGlobalParams, \
-        movement_params: MovementParams, origin_constraint: MovementConstraint, \
-        velocity_start: Vector2, destination_position: Vector2, \
-        destination_surface: Surface) -> MovementCalcLocalParams:
-    # FIXME: B: Account for max y velocity when calculating any parabolic motion.
-    
-    var position_start := origin_constraint.position
-    var position_end := destination_position
-    
-    var total_displacement: Vector2 = position_end - position_start
-    var min_vertical_displacement := -movement_params.max_upward_jump_distance
-    
-    # Check whether the vertical displacement is possible.
-    if min_vertical_displacement > total_displacement.y:
-        return null
-    
-    var horizontal_acceleration_sign: int
-    if total_displacement.x < 0:
-        horizontal_acceleration_sign = -1
-    elif total_displacement.x > 0:
-        horizontal_acceleration_sign = 1
-    else:
-        horizontal_acceleration_sign = 0
-    
-    var can_hold_jump_button := false
-    
-    var total_duration := calculate_time_to_reach_constraint(movement_params, position_start, \
-            position_end, velocity_start, can_hold_jump_button)
-    if total_duration == INF:
-        return null
-    
-    # From a basic equation of motion:
-    #     v = v_0 + a*t
-    var time_peak_height := -velocity_start.y / movement_params.gravity_fast_fall
-    time_peak_height = max(time_peak_height, 0.0)
-    
-    var step := MovementVertCalcStep.new()
-    step.time_step_start = 0.0
-    step.time_instruction_start = 0.0
-    step.time_step_end = total_duration
-    step.time_instruction_end = 0.0
-    step.time_peak_height = time_peak_height
-    step.position_step_start = position_start
-    step.position_instruction_start = position_start
-    step.velocity_start = velocity_start
-    step.horizontal_acceleration_sign = horizontal_acceleration_sign
-    step.can_hold_jump_button = can_hold_jump_button
-    
-    var step_end_state := \
-            calculate_vertical_end_state_for_time(movement_params, step, step.time_step_end)
-    var peak_height_end_state := \
-            calculate_vertical_end_state_for_time(movement_params, step, step.time_peak_height)
-    
-    step.position_instruction_end = position_start
-    step.position_step_end = Vector2(INF, step_end_state.x)
-    step.position_peak_height = Vector2(INF, peak_height_end_state.x)
-    step.velocity_instruction_end = velocity_start
-    step.velocity_step_end = Vector2(INF, step_end_state.y)
-    
-    assert(Geometry.are_floats_equal_with_epsilon( \
-            step.position_step_end.y, position_end.y, 0.001))
-    
-    var destination_constraint := create_destination_constraint(movement_params, step, \
-            origin_constraint, destination_surface, destination_position)
-    global_calc_params.destination_constraint = destination_constraint
-    
-    return MovementCalcLocalParams.new(origin_constraint, destination_constraint, step)
 
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.
@@ -953,33 +901,498 @@ static func calculate_time_to_release_jump_button(movement_params: MovementParam
     
     return time_to_release_jump_button
 
-static func create_origin_constraint(surface: Surface, position: Vector2, next_position: Vector2, \
-        velocity_start: Vector2, passing_vertically: bool) -> MovementConstraint:
-    var displacement := next_position - position
-    var horizontal_movement_sign := \
-            -1 if displacement.x < 0 else \
-            (1 if displacement.x > 0 else \
-            # For straight vertical steps, we don't have much to go off of for picking the
-            # horizontal movement direction, so just default to rightward for now.
-            1)
+static func create_terminal_constraints(origin_surface: Surface, origin_position: Vector2, \
+        destination_surface: Surface, destination_position: Vector2, \
+        movement_params: MovementParams, velocity_start: Vector2) -> Array:
+    var origin_passing_vertically := \
+            origin_surface.normal.x == 0 if origin_surface != null else true
+    var destination_passing_vertically := \
+            destination_surface.normal.x == 0 if destination_surface != null else true
     
-    var constraint := MovementConstraint.new(surface, position, passing_vertically, false, 0.0, \
-            horizontal_movement_sign, velocity_start.x, velocity_start.x)
-    
-    constraint.is_origin = true
-    
-    return constraint
+    var origin := MovementConstraint.new( \
+            origin_surface, origin_position, origin_passing_vertically, false)
+    var destination := MovementConstraint.new( \
+            destination_surface, destination_position, destination_passing_vertically, false)
 
-static func create_destination_constraint(movement_params: MovementParams, \
-        vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
-        surface: Surface, position: Vector2) -> MovementConstraint:
-    var passing_vertically := surface.normal.x == 0 if surface != null else true
+    origin.is_origin = true
+    destination.is_destination = true
     
-    var constraint := _calculate_constraint(movement_params, vertical_step, previous_constraint, \
-            surface, position, passing_vertically, false)
+    PlayerMovement.update_constraint(origin_constraint, null, destination_constraint, \
+            movement_params, velocity_start, false)
+    PlayerMovement.update_constraint(destination_constraint, origin_constraint, null, \
+            movement_params, velocity_start, false)
     
-    constraint.is_destination = true
+    return [origin, destination]
+
+static func _calculate_horizontal_movement_sign(constraint: MovementConstraint, \
+        previous_constraint: MovementConstraint, next_constraint: MovementConstraint) -> int:
+    assert(constraint.surface != null or constraint.is_origin or constraint.is_destination)
+    assert(previous_constraint != null or constraint.is_origin)
+    assert(next_constraint != null or !constraint.is_origin)
     
-    assert(constraint.time_passing_through == vertical_step.time_step_end)
+    var surface := constraint.surface
+    var displacement := constraint.position - previous_constraint.position if \
+            previous_constraint != null else next_constraint.position - constraint.position
+    var neighbor_horizontal_movement_sign := previous_constraint.horizontal_movement_sign if \
+            previous_constraint != null else next_constraint.horizontal_movement_sign
+    var is_origin := constraint.is_origin
+    var is_destination := constraint.is_destination
+
+    var displacement_sign := \
+            0 if Geometry.are_floats_equal_with_epsilon( \
+                    displacement_from_previous.x, 0.0, 0.1) else \
+            (1 if displacement_from_previous.x > 0 else \
+            -1)
     
-    return constraint
+    var horizontal_movement_sign_from_displacement := \
+            -1 if displacement_sign == -1 else \
+            (1 if displacement_sign == 1 else \
+            # For straight-vertical steps, if there was any horizontal movement through the
+            # previous, then we're going to need to backtrack in the opposition direction to reach
+            # the destination.
+            (neighbor_horizontal_movement_sign if neighbor_horizontal_movement_sign != INF else \
+            # For straight vertical steps from the origin, we don't have much to go off of for
+            # picking the horizontal movement direction, so just default to rightward for now.
+            1))
+
+    var horizontal_movement_sign_from_surface: int
+    if is_origin:
+        horizontal_movement_sign_from_surface = \
+                1 if surface != null and surface.side == SurfaceSide.LEFT_WALL else \
+                (-1 if surface != null and surface.side == SurfaceSide.RIGHT_WALL else \
+                horizontal_movement_sign_from_displacement)
+    elif is_destination:
+        horizontal_movement_sign_from_surface = \
+                -1 if surface != null and surface.side == SurfaceSide.LEFT_WALL else \
+                (1 if surface != null and surface.side == SurfaceSide.RIGHT_WALL else \
+                horizontal_movement_sign_from_displacement)
+    else:
+        horizontal_movement_sign_from_surface = \
+                -1 if surface.side == SurfaceSide.LEFT_WALL else \
+                (1 if and surface.side == SurfaceSide.RIGHT_WALL else \
+                (-1 if constraint.should_stay_on_min_side else 1))
+    
+    assert(horizontal_movement_sign_from_surface == horizontal_movement_sign_from_displacement or \
+            (is_origin and displacement_sign == 0))
+
+    return horizontal_movement_sign_from_surface
+
+# Calculates a new step for the vertical part of the movement and the corresponding total jump
+# duration.
+static func calculate_vertical_step(global_calc_params: MovementCalcGlobalParams, \
+        can_hold_jump_button: bool) -> MovementCalcLocalParams:
+    # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    
+    var movement_params := global_calc_params.movement_params
+    var origin_constraint := global_calc_params.origin_constraint
+    var destination_constraint := global_calc_params.destination_constraint
+    var velocity_start := global_calc_params.velocity_start
+    
+    var position_start := origin_constraint.position
+    var position_end := destination_constraint.position
+    
+    var displacement: Vector2 = position_end - position_start
+    var min_vertical_displacement := -movement_params.max_upward_jump_distance
+    
+    # Check whether the vertical displacement is possible.
+    if min_vertical_displacement > displacement.y:
+        return null
+    
+    var horizontal_acceleration_sign: int
+    if displacement.x < 0:
+        horizontal_acceleration_sign = -1
+    elif displacement.x > 0:
+        horizontal_acceleration_sign = 1
+    else:
+        horizontal_acceleration_sign = 0
+    
+    var total_duration := calculate_time_to_reach_constraint(movement_params, position_start, \
+            position_end, velocity_start, can_hold_jump_button)
+    if total_duration == INF:
+        return null
+    
+    # Calculate instruction-end and peak-height state. These depend on whether or not we can hold
+    # the jump button to manipulate the jump height. 
+    if can_hold_jump_button:
+        var time_instruction_end := \
+                calculate_time_to_release_jump_button(movement_params, total_duration, displacement)
+        if time_instruction_end == INF:
+            return null
+        
+        var instruction_end_state := \
+                calculate_vertical_end_state_for_time(movement_params, step, time_instruction_end)
+        
+        position_instruction_end = Vector2(INF, instruction_end_state.x)
+        velocity_instruction_end = Vector2(INF, instruction_end_state.y)
+        
+        # Given the time to release the jump button, calculate the time to reach the peak.
+        # From a basic equation of motion:
+        #     v = v_0 + a*t
+        var velocity_at_jump_button_release := movement_params.jump_boost + \
+                movement_params.gravity_slow_ascent * time_instruction_end
+        # From a basic equation of motion:
+        #     v = v_0 + a*t
+        var duration_to_reach_peak_after_release := \
+                -velocity_at_jump_button_release / movement_params.gravity_fast_fall
+        var time_peak_height := time_instruction_end + duration_to_reach_peak_after_release
+
+    else:
+        time_instruction_end = 0.0
+        position_instruction_end = position_start
+        velocity_instruction_end = velocity_start
+        
+        # From a basic equation of motion:
+        #     v = v_0 + a*t
+        var time_peak_height := -velocity_start.y / movement_params.gravity_fast_fall
+        time_peak_height = max(time_peak_height, 0.0)
+    
+    var step_end_state := \
+            calculate_vertical_end_state_for_time(movement_params, step, total_duration)
+    var peak_height_end_state := \
+            calculate_vertical_end_state_for_time(movement_params, step, time_peak_height)
+    
+    assert(Geometry.are_floats_equal_with_epsilon(step_end_state.x, position_end.y, 0.001))
+    
+    var step := MovementVertCalcStep.new()
+    
+    step.horizontal_acceleration_sign = horizontal_acceleration_sign
+    step.can_hold_jump_button = can_hold_jump_button
+    
+    step.time_step_start = 0.0
+    step.time_instruction_start = 0.0
+    step.time_instruction_end = time_instruction_end
+    step.time_step_end = total_duration
+    step.time_peak_height = time_peak_height
+    
+    step.position_step_start = position_start
+    step.position_instruction_start = position_start
+    step.position_instruction_end = position_instruction_end
+    step.position_step_end = position_end
+    step.position_peak_height = Vector2(INF, peak_height_end_state.x)
+    
+    step.velocity_step_start = velocity_start
+    step.velocity_instruction_start = velocity_start
+    step.velocity_instruction_end = velocity_instruction_end
+    step.velocity_step_end = Vector2(INF, step_end_state.y)
+    
+    # FIXME: --------------
+    previous_constraint = 
+    update_constraint(destination_constraint, previous_constraint, null, movement_params, \
+            velocity_start, can_hold_jump_button)
+    
+    return MovementCalcLocalParams.new(origin_constraint, destination_constraint, step)
+
+# Calculates a new step for the horizontal part of the movement.
+static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams, \
+        global_calc_params: MovementCalcGlobalParams) -> MovementCalcStep:
+    var movement_params := global_calc_params.movement_params
+    var vertical_step := local_calc_params.vertical_step
+    
+    var start_constraint := local_calc_params.start_constraint
+    var position_step_start := start_constraint.position
+    var time_step_start := start_constraint.time_passing_through
+    
+    var end_constraint := local_calc_params.end_constraint
+    var position_end := end_constraint.position
+    var time_step_end := end_constraint.time_passing_through
+    var velocity_x_end := end_constraint.actual_x_velocity
+    
+    var step_duration := time_step_end - time_step_start
+    var displacement := position_end - position_step_start
+    
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: -A
+#    if position_step_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
+#        print("yo")
+    
+    var horizontal_acceleration_sign: int
+    var acceleration: float
+    var velocity_start_x: float
+    var should_accelerate_at_start: bool
+    
+    # Calculate the velocity_start_x, the direction of acceleration, and whether we should
+    # accelerate at the start of the step or at the end of the step.
+    if end_constraint.horizontal_movement_sign != start_constraint.horizontal_movement_sign:
+        # If the start and end velocities are in opposition horizontal directions, then there is
+        # only one possible acceleration direction.
+        
+        horizontal_acceleration_sign = end_constraint.horizontal_movement_sign
+        acceleration = \
+                movement_params.in_air_horizontal_acceleration * horizontal_acceleration_sign
+            
+        # First, try accelerating at the start of the step, then at the end.
+        for try_accelerate_at_start in [true, false]:
+            velocity_start_x = _calculate_min_speed_velocity_start_x( \
+                    start_constraint.horizontal_movement_sign, displacement.x, \
+                    start_constraint.min_x_velocity, start_constraint.max_x_velocity, \
+                    velocity_x_end, acceleration, step_duration, try_accelerate_at_start)
+            
+            if velocity_start_x != INF:
+                # We found a valid start velocity.
+                should_accelerate_at_start = try_accelerate_at_start
+                break
+        
+    else:
+        # If the start and end velocities are in the same horizontal direction, then it's possible
+        # for the acceleration to be in either direction.
+        
+        # Since we generally want to try to minimize movement (and minimize the speed at the start
+        # of the step), we first attempt the acceleration direction that corresponds to that min
+        # speed.
+        var min_speed_x_v_0 := start_constraint.min_x_velocity if \
+                start_constraint.horizontal_movement_sign > 0 else \
+                start_constraint.max_x_velocity
+        
+        # Determine acceleration direction.
+        var x_velocity_change := velocity_x_end - min_speed_x_v_0
+        if x_velocity_change > 0:
+            horizontal_acceleration_sign = 1
+        elif x_velocity_change < 0:
+            horizontal_acceleration_sign = -1
+        else:
+            horizontal_acceleration_sign = 0
+        
+        # First, try with the acceleration in one direction, then try the other.
+        for sign_multiplier in [horizontal_acceleration_sign, -horizontal_acceleration_sign]:
+            acceleration = movement_params.in_air_horizontal_acceleration * sign_multiplier
+            
+            # First, try accelerating at the start of the step, then at the end.
+            for try_accelerate_at_start in [true, false]:
+                velocity_start_x = _calculate_min_speed_velocity_start_x( \
+                        start_constraint.horizontal_movement_sign, displacement.x, \
+                        start_constraint.min_x_velocity, start_constraint.max_x_velocity, \
+                        velocity_x_end, acceleration, step_duration, should_accelerate_at_start)
+                
+                if velocity_start_x != INF:
+                    # We found a valid start velocity.
+                    should_accelerate_at_start = try_accelerate_at_start
+                    break
+            
+            if velocity_start_x != INF:
+                # We found a valid start velocity with acceleration in this direction.
+                horizontal_acceleration_sign = sign_multiplier
+                break
+    
+    if velocity_start_x == INF:
+        # There is no start velocity that can reach the target end position/velocity/time.
+        return null
+    
+    # FIXME: LEFT OFF HERE: ------------------------------------------------------------------A
+    # 
+    # - When to update constraints?
+    #   - For recursive case (when adding a new intermediate constraint)?
+    #   - For initial case (in create_terminal_constraints?, in create_vertical_step?)
+    # - make sure special destination-specific updates happen at the right place for recursion to re-calculate actual_x_velocity
+    # - Will need to also update the origin horizontal_movement_sign specially whenever their neighbor constraint changes
+    #   - going to need to refactor things to create separate instances of origin and destination for each branch of recursion
+    # - [old] Update constraint.min_x_velocity/max_x_velocity in response to the addition of new
+    #   intermediate constraints/steps (and actual_x_velocity, at least for destination...).
+    # 
+    # - Search for and fix all remaining "# FIXME: ------------" from the global_calc_param initialization location refactor...
+    # - What happens when fall-step needs to backtrack for new max height?
+    # - Is horizontal-end-speed-min-max-logic-according-to-acceleration-direction-from-start-velocity
+    #   set up correctly, so that when we are pressing backwards, to slow down, we actually need to
+    #   press at the start (not the end) of the step in order to end with max-speed?
+    # - Add a small constant offset value for all velocity_start_x values that would otherwise
+    #   be exactly assigned to the constraint.min_x_velocity/max_x_velocity value.
+    #   - ACTUALLY, just add the offset directly to the constraint.min_x_velocity/max_x_velocity?
+    #   - Also add a small constant offset for the destination.actual_x_velocity assignment.
+    # - Fix remaining `FIXME: LEFT OFF HERE`s with A.
+    # 
+    # - ADD TO DOCS: In general, a guiding heuristic in these calculations is to minimize movement. So, through each constraint (step-end), we try to minimize the horizontal speed of the movement at that point.
+    
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    var duration_for_horizontal_acceleration := (velocity_x_end - velocity_start_x) / acceleration
+    if step_duration < duration_for_horizontal_acceleration:
+        # The horizontal displacement is out of reach.
+        return null
+    var duration_for_horizontal_coasting := step_duration - duration_for_horizontal_acceleration
+    
+    var time_instruction_start: float
+    var time_instruction_end: float
+    var position_instruction_start_x: float
+    var position_instruction_end_x: float
+    
+    if should_accelerate_at_start:
+        time_instruction_start = time_step_start
+        time_instruction_end = time_step_start + duration_for_horizontal_acceleration
+        
+        position_instruction_start_x = position_step_start.x
+        # From a basic equation of motion:
+        #     s = s_0 + v_0*t + 1/2*a*t^2
+        position_instruction_end_x = position_step_start.x + \
+                velocity_start_x * duration_for_horizontal_acceleration + \
+                0.5 * acceleration * \
+                duration_for_horizontal_acceleration * duration_for_horizontal_acceleration
+    else:
+        time_instruction_start = time_step_end - duration_for_horizontal_acceleration
+        time_instruction_end = time_step_end
+        
+        # From a basic equation of motion:
+        #     s = s_0 + v_0*t
+        position_instruction_start_x = \
+                position_step_start.x + velocity_start_x * duration_for_horizontal_coasting
+        position_instruction_end_x = position_step_end.x
+    
+    var step_start_state := calculate_vertical_end_state_for_time( \
+            movement_params, vertical_step, time_step_start)
+    var instruction_start_state := calculate_vertical_end_state_for_time( \
+            movement_params, vertical_step, time_instruction_start)
+    var instruction_end_state := calculate_vertical_end_state_for_time( \
+            movement_params, vertical_step, time_instruction_end)
+    var step_end_state := calculate_vertical_end_state_for_time( \
+            movement_params, vertical_step, time_step_end)
+    
+    assert(Geometry.are_floats_equal_with_epsilon(step_end_state.x, position_end.y, 0.0001))
+    assert(Geometry.are_floats_equal_with_epsilon(step_start_state.x, position_start.y, 0.0001))
+    
+    var step := MovementCalcStep.new()
+    
+    step.horizontal_acceleration_sign = horizontal_acceleration_sign
+    
+    step.time_step_start = time_step_start
+    step.time_instruction_start = time_instruction_start
+    step.time_instruction_end = time_instruction_end
+    step.time_step_end = time_step_end
+    
+    step.position_step_start = position_step_start
+    step.position_instruction_start = Vector2(position_instruction_start_x, instruction_start_state.x)
+    step.position_instruction_end = Vector2(position_instruction_end_x, instruction_end_state.x)
+    step.position_step_end = position_end
+    
+    step.velocity_step_start = Vector2(velocity_start_x, step_start_state.y)
+    step.velocity_instruction_start = Vector2(velocity_start_x, instruction_start_state.y)
+    step.velocity_instruction_end = Vector2(velocity_x_end, instruction_end_state.y)
+    step.velocity_step_end = Vector2(velocity_x_end, step_end_state.y)
+    
+    previous_constraint.actual_x_velocity = step.velocity_start.x
+    
+    return step
+
+# Calculate the minimum possible start velocity to reach the given end position,
+# velocity, and time. This min start velocity corresponds to accelerating the most.
+static func _calculate_min_speed_velocity_start_x(horizontal_movement_sign_start: int, \
+        displacement: float, v_start_min: float, v_start_max: float, v_end: float, \
+        acceleration: float, duration: float, should_accelerate_at_start: bool) -> float:
+    var min_speed_x_v_0 := v_start_min if horizontal_movement_sign_start > 0 else v_start_max
+    
+    if displacement == 0:
+        # If we don't need to move horizontally at all, then let's just use the start velocity with
+        # the minimum possible speed.
+        return min_speed_x_v_0
+    
+    var a: float
+    var b: float
+    var c: float
+    
+    # - Accelerating at the start, and coasting at the end, yields a smaller starting velocity.
+    # - Accelerating at the end, and coasting at the start, yields a larger starting velocity.
+    if should_accelerate_at_start:
+        # Try accelerating at the start of the step.
+        # Derivation:
+        # - There are two parts:
+        #   - Part 1: Constant acceleration from v_0 to v_1.
+        #   - Part 2: Coast at v_1 until we reach the destination.
+        #   - The shorter part 1 is, the sooner we reach v_1 and the further we travel during
+        #     part 2. This then means that we will need to have a lower v_0 and travel less far
+        #     during part 1, which is good, since we want to choose a v_0 with the
+        #     minimum-possible speed.
+        # - Start with basic equations of motion
+        # - v_1 = v_0 + a*t_1
+        # - s_2 = s_1 + v_1*t_2
+        # - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
+        # - t_total = t_1 + t_2
+        # - Do some algebra...
+        # - 0 = 2*a*(s_2 - s_0 - v_1*t_total) + v_1^2 - 2*v_1*v_0 + v_0^2
+        # - Apply quadratic formula to solve for v_0.
+        a = 1
+        b = -2 * v_end
+        c = 2 * acceleration * (displacement - v_end * duration) + v_end * v_end
+    else:
+        # Try accelerating at the end of the step.
+        # Derivation:
+        # - There are two parts:
+        #   - Part 1: Coast at v_0 until we need to start accelerating.
+        #   - Part 2: Constant acceleration from v_0 to v_1; we reach the destination when we reach v_1.
+        #   - The longer part 1 is, the more we can accelerate during part 2, and the bigger v_1 can
+        #     be.
+        # - Start with basic equations of motion
+        # - s_1 = s_0 + v_0*t_0
+        # - v_1 = v_0 + a*t_1
+        # - v_1^2 = v_0^2 + 2*a*(s_2 - s_1)
+        # - t_total = t_0 + t_1
+        # - Do some algebra...
+        # - 0 = 2*a*(s_2 - s_0) - v_1^2 + 2*(v_1 - a*t_total)*v_0 - v_0^2
+        # - Apply quadratic formula to solve for v_0.
+        a = -1
+        b = 2 * (v_end - acceleration * duration)
+        c = 2 * acceleration * displacement - v_end * v_end
+    
+    var discriminant := b * b - 4 * a * c
+    if discriminant < 0:
+        # There is no start velocity that can satisfy these parameters.
+        return INF
+    
+    var discriminant_sqrt := sqrt(discriminant)
+    var result_1 := (-b + discriminant_sqrt) / 2 / a
+    var result_2 := (-b - discriminant_sqrt) / 2 / a
+    
+    var min_speed_v_0_to_reach_target: float
+    if horizontal_movement_sign_start > 0:
+        if result_1 < 0:
+            min_speed_v_0_to_reach_target = result_2
+        elif result_2 < 0:
+            min_speed_v_0_to_reach_target = result_1
+        else:
+            min_speed_v_0_to_reach_target = min(result_1, result_2)
+        
+        if min_speed_v_0_to_reach_target < 0:
+            # Movement must be in the expected direction, so this isn't a valid start velocity.
+            return INF
+        
+        # FIXME: LEFT OFF HERE: --------A:
+        # - I'm not sure how to choose between these two possible results right now.
+        # - Set a break point and look at them.
+        # - Probably add some assertions.
+        
+        if min_speed_v_0_to_reach_target > v_start_max:
+            # We cannot start this step with enough velocity to reach the end position.
+            return INF
+        elif min_speed_v_0_to_reach_target < v_start_min:
+            # The calculated min-speed start velocity is less than the min possible for this step,
+            # so let's try using the min possible for this step.
+            return v_start_min
+        else:
+            # The calculated velocity is somewhere within the acceptable min/max range.
+            return min_speed_v_0_to_reach_target
+    else: 
+        # horizontal_movement_sign_start < 0
+        
+        if result_1 > 0:
+            min_speed_v_0_to_reach_target = result_2
+        elif result_2 > 0:
+            min_speed_v_0_to_reach_target = result_1
+        else:
+            min_speed_v_0_to_reach_target = max(result_1, result_2)
+        
+        if min_speed_v_0_to_reach_target > 0:
+            # Movement must be in the expected direction, so this isn't a valid start velocity.
+            return INF
+        
+        # FIXME: LEFT OFF HERE: --------A:
+        # - I'm not sure how to choose between these two possible results right now.
+        # - Set a break point and look at them.
+        # - Probably add some assertions.
+        
+        if min_speed_v_0_to_reach_target < v_start_min:
+            # We cannot start this step with enough velocity to reach the end position.
+            return INF
+        elif min_speed_v_0_to_reach_target > v_start_max:
+            # The calculated min-speed start velocity is greater than the max possible for this
+            # step, so let's try using the max possible for this step.
+            return v_start_max
+        else:
+            # The calculated velocity is somewhere within the acceptable min/max range.
+            return min_speed_v_0_to_reach_target
+    
+    return INF
