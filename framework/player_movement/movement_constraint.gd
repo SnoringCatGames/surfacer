@@ -35,12 +35,12 @@ var horizontal_movement_sign: int = INF
 var time_passing_through := INF
 
 # The minimum possible x velocity when passing through this constraint.
-var min_x_velocity := INF
+var min_velocity_x := INF
 
 # The maximum possible x velocity when passing through this constraint.
-var max_x_velocity := INF
+var max_velocity_x := INF
 
-var actual_x_velocity := INF
+var actual_velocity_x := INF
 
 # Whether this constraint is the origin for the overall movement.
 var is_origin := false

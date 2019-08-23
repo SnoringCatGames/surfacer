@@ -303,6 +303,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
 
     var possible_end_positions: Array
+    var vertical_step: MovementVertCalcStep
     var local_calc_params: MovementCalcLocalParams
     var calc_results: MovementCalcResults
 
@@ -314,12 +315,18 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         for position_end in possible_end_positions:
             terminals = PlayerMovement.create_terminal_constraints(null, origin, surface, \
                     position_end.target_point, movement_params, velocity_start)
+            if terminals == null:
+                continue
+            
             global_calc_params.origin_constraint = terminals[0]
             global_calc_params.destination_constraint = terminals[1]
             
-            local_calc_params = PlayerMovement.calculate_vertical_step(global_calc_params, false)
-            if local_calc_params == null:
+            vertical_step = PlayerMovement.calculate_vertical_step(global_calc_params, false)
+            if vertical_step == null:
                 continue
+            
+            local_calc_params = MovementCalcLocalParams.new(global_calc_params.origin_constraint, \
+                    global_calc_params.destination_constraint, vertical_step)
             
             calc_results = JumpFromPlatformMovement.calculate_steps_from_constraint( \
                     global_calc_params, local_calc_params)
