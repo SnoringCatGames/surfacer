@@ -6,16 +6,19 @@ const MovementConstraint := preload("res://framework/player_movement/movement_co
 const PlayerInstruction := preload("res://framework/player_movement/player_instruction.gd")
 const MovementVertCalcStep := preload("res://framework/player_movement/movement_vertical_calculation_step.gd")
 
-# FIXME: B ******
+# FIXME: B 
 # - Should I remove this and force a slightly higher offset to target jump position directly? What
 #   about passing through constraints? Would the increased time to get to the position for a
 #   wall-top constraint result in too much downward velocity into the ceiling?
 # - Or what about the constraint offset margins? Shouldn't those actually address any needed
 #   jump-height epsilon? Is this needlessly redundant with that mechanism?
 # - Though I may need to always at least have _some_ small value here...
-# FIXME: D ******** Tweak this
+# FIXME: D Tweak this.
 const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
 const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
+
+# FIXME: D: Tweak this.
+const MIN_MAX_VELOCITY_X_OFFSET := 0.01
 
 var JUMP_RELEASE_INSTRUCTION = PlayerInstruction.new("jump", -1, false)
 
@@ -57,7 +60,8 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
 
 static func _calculate_constraints_around_surface(movement_params: MovementParams, \
         vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
-        colliding_surface: Surface, constraint_offset: Vector2) -> Array:
+        origin_constraint: MovementConstraint, colliding_surface: Surface, \
+        constraint_offset: Vector2) -> Array:
     var passing_vertically: bool
     var position_a: Vector2
     var position_b: Vector2
@@ -120,7 +124,7 @@ static func _calculate_constraints_around_surface(movement_params: MovementParam
 static func update_constraint(constraint: MovementConstraint, \
         previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
         origin_constraint: MovementConstraint, movement_params: MovementParams, \
-        velocity_start_origin: Vector2, can_hold_jump_button: bool, \
+        velocity_start_origin: Vector2, can_hold_jump_button_at_origin: bool, \
         vertical_step: MovementVertCalcStep, \
         additional_high_constraint: MovementConstraint) -> bool:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
@@ -134,13 +138,6 @@ static func update_constraint(constraint: MovementConstraint, \
     # when we're doing backtracking for a new jump-height.
     assert(additional_high_constraint == null or constraint.is_destination)
     assert(vertical_step != null or additional_high_constraint == null)
-
-    # FIXME: -------------------------- LEFT OFF HERE
-    # - Is there any additional handling needed for when we can't hold the jump button?
-    # - When doing max-height backtracking, the destination will be updated twice:
-    #   - once at the start of backtracking, to determine new max height;
-    #   - and once during whatever other process we have for updating all following constraints when a previous constraint is created/updated...
-    #     - Do I still need to create/establish that process?
 
     var horizontal_movement_sign := \
             _calculate_horizontal_movement_sign(constraint, previous_constraint, next_constraint)
@@ -173,6 +170,7 @@ static func update_constraint(constraint: MovementConstraint, \
 
             # We consider different parameters if we are starting a new movement calculation vs
             # backtracking to consider a new jump height.
+            var constraint_to_calculate_jump_release_time_for: MovementConstraint
             if vertical_step == null:
                 # We are starting a new movement calculation (not backtracking to consider a new
                 # jump height).
@@ -187,17 +185,18 @@ static func update_constraint(constraint: MovementConstraint, \
             var origin_position := origin_constraint.position
 
             var time_to_pass_through_constraint_ignoring_others := \
-                    calculate_time_to_reach_constraint(movement_params, origin_position, \
+                    calculate_time_to_jump_to_constraint(movement_params, origin_position, \
                             constraint_to_calculate_jump_release_time_for.position, \
-                            velocity_start_origin, can_hold_jump_button)
+                            velocity_start_origin, can_hold_jump_button_at_origin)
             if time_to_pass_through_constraint_ignoring_others == INF:
                 return false
             assert(time_to_pass_through_constraint_ignoring_others > 0.0)
 
-            var displacement: Vector2 = \
+            var displacement_from_origin: Vector2 = \
                     constraint_to_calculate_jump_release_time_for.position - origin_position
             time_to_release_jump = calculate_time_to_release_jump_button( \
-                    movement_params, time_to_pass_through_constraint_ignoring_others, displacement)
+                    movement_params, time_to_pass_through_constraint_ignoring_others, \
+                    displacement_from_origin)
             # If time_to_pass_through_constraint_ignoring_others was valid, then this should also
             # be valid.
             assert(time_to_release_jump != INF)
@@ -224,6 +223,25 @@ static func update_constraint(constraint: MovementConstraint, \
             time_passing_through = _calculate_time_for_passing_through_constraint( \
                     movement_params, vertical_step, constraint, \
                     previous_constraint.time_passing_through)
+            
+            var still_holding_jump_button := \
+                    time_passing_through < vertical_step.time_instruction_end
+            
+            # We can quit early for a few types of constraints.
+            if !constraint.passing_vertically and constraint.should_stay_on_min_side and \
+                    still_holding_jump_button:
+                # Quit early if we are trying to go above a wall, but we already released the jump
+                # button.
+                return false
+            elif !constraint.passing_vertically and !constraint.should_stay_on_min_side and \
+                    !still_holding_jump_button:
+                # Quit early if we are trying to go below a wall, but we are still holding the jump
+                # button.
+                return false
+            else:
+                # We should never hit a floor while still holding the jump button.
+                assert(!(constraint.surface.side == SurfaceSide.FLOOR and \
+                        still_holding_jump_button))
         
         # Calculate the min and max velocity for movement through the constraint.
         var duration := time_passing_through - previous_constraint.time_passing_through
@@ -231,12 +249,13 @@ static func update_constraint(constraint: MovementConstraint, \
                 previous_position.x, position.x, duration, \
                 previous_constraint.min_velocity_x, previous_constraint.max_velocity_x, \
                 movement_params.max_horizontal_speed_default, \
-                movement_params.in_air_horizontal_acceleration, horizontal_movement_sign_from_surface)
-        if min_and_max_velocity_at_step_end == Vector2.INF:
+                movement_params.in_air_horizontal_acceleration, \
+                horizontal_movement_sign)
+        if min_and_max_velocity_at_step_end.empty():
             return false
         
-        min_velocity_x = min_and_max_velocity_at_step_end.x
-        max_velocity_x = min_and_max_velocity_at_step_end.y
+        min_velocity_x = min_and_max_velocity_at_step_end[0]
+        max_velocity_x = min_and_max_velocity_at_step_end[1]
         
         if constraint.is_destination:
             # Initialize the destination constraint's actual velocity to match whichever min/max
@@ -254,6 +273,8 @@ static func update_constraint(constraint: MovementConstraint, \
     constraint.min_velocity_x = min_velocity_x
     constraint.max_velocity_x = max_velocity_x
     constraint.actual_velocity_x = actual_velocity_x
+    
+    return true
 
 static func _calculate_horizontal_movement_sign(constraint: MovementConstraint, \
         previous_constraint: MovementConstraint, next_constraint: MovementConstraint) -> int:
@@ -300,7 +321,7 @@ static func _calculate_horizontal_movement_sign(constraint: MovementConstraint, 
     else:
         horizontal_movement_sign_from_surface = \
                 -1 if surface.side == SurfaceSide.LEFT_WALL else \
-                (1 if and surface.side == SurfaceSide.RIGHT_WALL else \
+                (1 if surface.side == SurfaceSide.RIGHT_WALL else \
                 (-1 if constraint.should_stay_on_min_side else 1))
     
     assert(horizontal_movement_sign_from_surface == horizontal_movement_sign_from_displacement or \
@@ -315,7 +336,7 @@ static func _calculate_horizontal_movement_sign(constraint: MovementConstraint, 
 # - The y property represents the max velocity.
 static func _calculate_min_and_max_velocity_at_end_of_interval(s_0: float, s: float, t: float, \
         v_0_min_from_prev_constraint: float, v_0_max_from_prev_constraint: float, \
-        speed_max: float, a_magnitude: float, horizontal_movement_sign: int) -> Vector2:
+        speed_max: float, a_magnitude: float, horizontal_movement_sign: int) -> Array:
     var displacement := s - s_0
     
     if horizontal_movement_sign < 0:
@@ -413,7 +434,7 @@ static func _calculate_min_and_max_velocity_at_end_of_interval(s_0: float, s: fl
         # Expect that if one value is invalid, the other should be too.
         assert(v_min == INF and v_max == INF)
         # We cannot reach this constraint from the previous constraint.
-        return Vector2.INF
+        return []
     
     # Correct small floating-point errors around zero.
     if Geometry.are_floats_equal_with_epsilon(v_min, 0.0):
@@ -425,13 +446,13 @@ static func _calculate_min_and_max_velocity_at_end_of_interval(s_0: float, s: fl
     assert(v_max >= 0.0)
     
     # Limit max speed.
-    v_min = min(v_min, speed_max)
-    v_max = min(v_max, speed_max)
+    v_min = min(v_min, speed_max) + MIN_MAX_VELOCITY_X_OFFSET
+    v_max = min(v_max, speed_max) - MIN_MAX_VELOCITY_X_OFFSET
     
     if horizontal_movement_sign > 0:
-        return Vector2(v_min, v_max)
+        return [v_min, v_max]
     else:
-        return Vector2(-v_max, -v_min)
+        return [-v_max, -v_min]
 
 # Calculates the vertical component of position and velocity according to the given vertical
 # movement state and the given time. These are then returned in a Vector2: x is position and y is
@@ -869,6 +890,8 @@ static func calculate_max_horizontal_movement( \
     # s = s_0 + v * t
     return max_time_to_starting_height * movement_params.max_horizontal_speed_default
 
+# Calculates the minimum possible time it would take to jump between the given positions.
+# 
 # The total duration of the jump is at least the greatest of three durations:
 # - The duration to reach the minimum peak height (i.e., how high upward we must jump to reach
 #   a higher destination).
@@ -879,23 +902,14 @@ static func calculate_max_horizontal_movement( \
 # displacement before we've already past the destination vertically on the upward side of the
 # trajectory. In that case, we need to consider the minimum time for the upward and downward
 # motion of the jump.
-static func calculate_time_to_reach_constraint(movement_params: MovementParams, \
+static func calculate_time_to_jump_to_constraint(movement_params: MovementParams, \
         position_start: Vector2, position_end: Vector2, velocity_start: Vector2, \
-        can_hold_jump_button: bool) -> float:
-    if can_hold_jump_button:
+        can_hold_jump_button_at_start: bool) -> float:
+    if can_hold_jump_button_at_start:
         # If we can currently hold the jump button, then there is slow-ascent and
         # variable-jump-height to consider.
         
         var displacement: Vector2 = position_end - position_start
-        
-        # FIXME: LEFT OFF HERE: --------------------------------A: Check if this is correct... (I don't think it is, since the acceleration may need to be in the other direction, in case of fast enough start velocity)
-        var horizontal_acceleration_sign: int
-        if displacement.x < 0:
-            horizontal_acceleration_sign = -1
-        elif displacement.x > 0:
-            horizontal_acceleration_sign = 1
-        else:
-            horizontal_acceleration_sign = 0
         
         # Calculate how long it will take for the jump to reach some minimum peak height.
         # 
@@ -959,10 +973,26 @@ static func calculate_time_to_reach_constraint(movement_params: MovementParams, 
         else:
             duration_to_reach_downward_displacement = 0.0
         
+        var horizontal_acceleration_sign: int
+        if displacement.x < 0:
+            horizontal_acceleration_sign = -1
+        elif displacement.x > 0:
+            horizontal_acceleration_sign = 1
+        else:
+            horizontal_acceleration_sign = 0
+        
         var duration_to_reach_horizontal_displacement := _calculate_min_time_to_reach_position( \
-                position_start.x, position_end.x, 0.0, \
+                position_start.x, position_end.x, velocity_start.x, \
                 movement_params.max_horizontal_speed_default, \
                 movement_params.in_air_horizontal_acceleration * horizontal_acceleration_sign)
+        if duration_to_reach_horizontal_displacement == INF:
+            # If we can't reach the destination with that acceleration direction, try the other
+            # direction.
+            horizontal_acceleration_sign = -horizontal_acceleration_sign
+            duration_to_reach_horizontal_displacement = _calculate_min_time_to_reach_position( \
+                    position_start.x, position_end.x, velocity_start.x, \
+                    movement_params.max_horizontal_speed_default, \
+                    movement_params.in_air_horizontal_acceleration * horizontal_acceleration_sign)
         assert(duration_to_reach_horizontal_displacement >= 0 and \
                 duration_to_reach_horizontal_displacement != INF)
         
@@ -1063,73 +1093,64 @@ static func create_terminal_constraints(origin_surface: Surface, origin_position
     origin.is_origin = true
     destination.is_destination = true
     
-    var is_origin_valid := update_constraint(origin_constraint, null, destination_constraint, \
-            origin_constraint, movement_params, velocity_start, false, null, null)
-    var is_destination_valid := update_constraint(destination_constraint, origin_constraint, \
-            null, origin_constraint, movement_params, velocity_start, false, null, null)
+    var is_origin_valid := update_constraint(origin, null, destination, origin, movement_params, \
+            velocity_start, false, null, null)
+    var is_destination_valid := update_constraint(destination, origin, null, origin, \
+            movement_params, velocity_start, false, null, null)
     
     if is_origin_valid and is_destination_valid:
         return [origin, destination]
     else:
-        return null
+        return []
 
 # Calculates a new step for the vertical part of the movement and the corresponding total jump
 # duration.
-static func calculate_vertical_step(global_calc_params: MovementCalcGlobalParams, \
-        can_hold_jump_button: bool) -> MovementVertCalcStep:
+static func calculate_vertical_step( \
+        global_calc_params: MovementCalcGlobalParams) -> MovementVertCalcStep:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var movement_params := global_calc_params.movement_params
     var origin_constraint := global_calc_params.origin_constraint
     var destination_constraint := global_calc_params.destination_constraint
     var velocity_start := global_calc_params.velocity_start
+    var can_hold_jump_button := global_calc_params.can_backtrack_on_height
     
     var position_start := origin_constraint.position
     var position_end := destination_constraint.position
     var time_step_end := destination_constraint.time_passing_through
     
+    var time_instruction_end: float
+    var position_instruction_end: Vector2
+    var velocity_instruction_end: Vector2
+    
     # Calculate instruction-end and peak-height state. These depend on whether or not we can hold
     # the jump button to manipulate the jump height. 
     if can_hold_jump_button:
         var displacement: Vector2 = position_end - position_start
-        var time_instruction_end := \
+        time_instruction_end = \
                 calculate_time_to_release_jump_button(movement_params, time_step_end, displacement)
         if time_instruction_end == INF:
             return null
         
-        var instruction_end_state := \
-                calculate_vertical_end_state_for_time(movement_params, step, time_instruction_end)
-        
-        position_instruction_end = Vector2(INF, instruction_end_state.x)
-        velocity_instruction_end = Vector2(INF, instruction_end_state.y)
-        
-        # Given the time to release the jump button, calculate the time to reach the peak.
-        # From a basic equation of motion:
-        #     v = v_0 + a*t
-        var velocity_at_jump_button_release := movement_params.jump_boost + \
-                movement_params.gravity_slow_ascent * time_instruction_end
-        # From a basic equation of motion:
-        #     v = v_0 + a*t
-        var duration_to_reach_peak_after_release := \
-                -velocity_at_jump_button_release / movement_params.gravity_fast_fall
-        var time_peak_height := time_instruction_end + duration_to_reach_peak_after_release
-
+        # Need to calculate these after the step is instantiated.
+        position_instruction_end = Vector2.INF
+        velocity_instruction_end = Vector2.INF
     else:
         time_instruction_end = 0.0
         position_instruction_end = position_start
         velocity_instruction_end = velocity_start
-        
-        # From a basic equation of motion:
-        #     v = v_0 + a*t
-        var time_peak_height := -velocity_start.y / movement_params.gravity_fast_fall
-        time_peak_height = max(time_peak_height, 0.0)
     
-    var step_end_state := \
-            calculate_vertical_end_state_for_time(movement_params, step, time_step_end)
-    var peak_height_end_state := \
-            calculate_vertical_end_state_for_time(movement_params, step, time_peak_height)
-    
-    assert(Geometry.are_floats_equal_with_epsilon(step_end_state.x, position_end.y, 0.001))
+    # Given the time to release the jump button, calculate the time to reach the peak.
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    var velocity_at_jump_button_release := movement_params.jump_boost + \
+            movement_params.gravity_slow_ascent * time_instruction_end
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    var duration_to_reach_peak_after_release := \
+            -velocity_at_jump_button_release / movement_params.gravity_fast_fall
+    var time_peak_height := time_instruction_end + duration_to_reach_peak_after_release
+    time_peak_height = max(time_peak_height, 0.0)
     
     var step := MovementVertCalcStep.new()
     
@@ -1144,14 +1165,29 @@ static func calculate_vertical_step(global_calc_params: MovementCalcGlobalParams
     
     step.position_step_start = position_start
     step.position_instruction_start = position_start
-    step.position_instruction_end = position_instruction_end
     step.position_step_end = position_end
-    step.position_peak_height = Vector2(INF, peak_height_end_state.x)
     
     step.velocity_step_start = velocity_start
     step.velocity_instruction_start = velocity_start
-    step.velocity_instruction_end = velocity_instruction_end
+    
+    var step_end_state := \
+            calculate_vertical_end_state_for_time(movement_params, step, time_step_end)
+    var peak_height_end_state := \
+            calculate_vertical_end_state_for_time(movement_params, step, time_peak_height)
+    
+    assert(Geometry.are_floats_equal_with_epsilon(step_end_state.x, position_end.y, 0.001))
+    
+    step.position_peak_height = Vector2(INF, peak_height_end_state.x)
     step.velocity_step_end = Vector2(INF, step_end_state.y)
+    
+    if position_instruction_end == Vector2.INF:
+        var instruction_end_state := \
+                calculate_vertical_end_state_for_time(movement_params, step, time_instruction_end)
+        position_instruction_end = Vector2(INF, instruction_end_state.x)
+        velocity_instruction_end = Vector2(INF, instruction_end_state.y)
+    
+    step.position_instruction_end = position_instruction_end
+    step.velocity_instruction_end = velocity_instruction_end
 
     return step
 
@@ -1248,38 +1284,6 @@ static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams
     if velocity_start_x == INF:
         # There is no start velocity that can reach the target end position/velocity/time.
         return null
-    
-    # FIXME: LEFT OFF HERE: ------------------------------------------------------------------A
-    # - forward-pass: update relevant constraints when adding new ones.
-    # - forward-pass: make sure that we consider the correct previous_constraint value in vertical-step calc and other calcs.
-    # - forward-pass: make sure that we correctly consider the max-height needed according to old destination, and new constaint in vert-step calc.
-    # - backward-pass: update actual_velocity_x.
-    # - backward-pass: calculate steps in reverse order.
-    # - Make sure global_calc_params.collided_surfaces is handled correctly.
-    # 
-    # - When to update constraints?
-    #   - For recursive case (when adding a new intermediate constraint)?
-    #   - For initial case (in create_terminal_constraints?, in create_vertical_step?)
-    # - make sure special destination-specific updates happen at the right place for recursion to re-calculate actual_velocity_x
-    # - Will need to also update the origin horizontal_movement_sign specially whenever their neighbor constraint changes
-    #   - going to need to refactor things to create separate instances of origin and destination for each branch of recursion
-    # - [old] Update constraint.min_velocity_x/max_velocity_x in response to the addition of new
-    #   intermediate constraints/steps (and actual_velocity_x, at least for destination...).
-    # 
-    # - Search for and fix all remaining "# FIXME: ------------" from the global_calc_param initialization location refactor...
-    # - What happens when fall-step needs to backtrack for new max height?
-    # - Is horizontal-end-speed-min-max-logic-according-to-acceleration-direction-from-start-velocity
-    #   set up correctly, so that when we are pressing backwards, to slow down, we actually need to
-    #   press at the start (not the end) of the step in order to end with max-speed?
-    # - Add a small constant offset value for all velocity_start_x values that would otherwise
-    #   be exactly assigned to the constraint.min_velocity_x/max_velocity_x value.
-    #   - ACTUALLY, just add the offset directly to the constraint.min_velocity_x/max_velocity_x?
-    #   - Also add a small constant offset for the destination.actual_velocity_x assignment.
-    # - Fix remaining `FIXME: LEFT OFF HERE`s with A.
-    # 
-    # - ADD TO DOCS: In general, a guiding heuristic in these calculations is to minimize movement. So, through each constraint (step-end), we try to minimize the horizontal speed of the movement at that point.
-    # 
-    # - Re-organize the catch-all grab-bag that is PlayerMovement...
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
@@ -1477,3 +1481,15 @@ static func _calculate_min_speed_velocity_start_x(horizontal_movement_sign_start
             return min_speed_v_0_to_reach_target
     
     return INF
+
+static func copy_constraint(original: MovementConstraint) -> MovementConstraint:
+    var copy := MovementConstraint.new(original.surface, original.position, \
+            original.passing_vertically, original.should_stay_on_min_side)
+    copy.horizontal_movement_sign = original.horizontal_movement_sign
+    copy.time_passing_through = original.time_passing_through
+    copy.min_velocity_x = original.min_velocity_x
+    copy.max_velocity_x = original.max_velocity_x
+    copy.actual_velocity_x = original.actual_velocity_x
+    copy.is_origin = original.is_origin
+    copy.is_destination = original.is_destination
+    return copy

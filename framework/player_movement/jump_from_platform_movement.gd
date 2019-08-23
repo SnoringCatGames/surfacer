@@ -103,177 +103,24 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #   - Label/color-code parts to demonstrate separate traversal steps
 # - Make the 144-cell diagram in InkScape and add to docs.
 # - Storing possibly 9 edges from A to B.
-
-
-
-# FIXME: LEFT OFF HERE: -----A REMOVE THESE OLD, UNORGANIZED NOTES, after fininishing the step-end x-velocity update:
-# - Add support for specifying a required min/max end-x-velocity.
-#   - We need to add support for specifying a desired min end-x-velocity from the previous
-#     horizontal step (by default, all end velocities are as small as possible).
-#   - We can then use this to determine when to start the horizontal movement for the previous
-#     horizontal step (delaying movement start yields a greater end velocity).
-#   - In order to determine the required min end-x-velocity from the previous step, we
-#     must flip the order in which we calculate horizontal steps in the constraint recursion.
-#   - We should be able to just calculate the latter step first, since we know what its start
-#     position and time must be.
-#   - ADDITIONAL CHANGE: We will need to calculate the jump height according to
-#     whether the needed min/max end-x-velocity exceeds the speed cap.
-#     - The current backtracking logic doesn't support this.
-#       - It only addresses the need to increase height according to intermediate
-#         conflicting surfaces.
-#       - So we need to update calculate_vertical_step to support this.
-#         **- Include a new param: post_constraint_destination
-#           - Or maybe just use the global_param destination?
-#         - PROBLEM: Will need to know what the greatest-possible step-end horizontal
-#           velocity will be for the current constraint.
-#           - This will depend on whether we'll have had enough time to hold the sideways
-#             button (since the last constraint position and velocity) in order to reach
-#             the horizontal speed cap.
-#             - I think this means that we will need to record min/max velocity on all
-#               previous constraints and check through them when determining the next?
-#             - Plan exactly what this constraint min/max velocity assignment and access look like.
-#               - [Sketched out more below]
 # 
-#             - FOLLOW-UP CONCERN/QUESTION/PROBLEM: Regarding the current backtracking
-#               logic and disallowal of hitting previous surfaces:
-#               - What's to stop a new jump-height calculation from still running into the
-#                 same old wall constraint as before, when we hit the wall before letting
-#                 go of jump?
-#               - I'm pretty sure nothing is.
-#               **- SOLUTION: Move the global_calc_params.collided_surfaces assignment and
-#                 access to helper functions.
-#                 - In the assignment function, check whether the jump button would still
-#                   be pressed:
-#                   - If so, then record the surface on list A: on this list any future
-#                     encounter of the surface fails, regardless.
-#                   - Else, list B: recording on this list uses a string value for the key,
-#                     which is based on both the surface params and on the current
-#                     jump-release time.
-#                 - In the access function, the appropriate list is checked.
-# 
-#         - We can then use this greatest-possible step-end horizontal velocity to
-#           determine how much longer we'd need to hold the jump button for.
-#   - Whether to use min or max will be dependent on the horizontal_movement_sign.
-#   - Make this part of the MovementConstraint object.
-#   **- Will definitely need to set an offset for this.
-#     - Probably just a constant offset; not too big; will need some tweaking.
-#   - This required min/max end-x-velocity will need to be added to both recursing with and
-#     without backtracking on height.
-#     - Which means that the order inversion (calculate last step first) will happen for
-#       both.
-#   **- Update README with a description of this feature.
-# 
-# Thoughts...
-# **- Need to change jump-height-calculation to choose max of previous-height and height-for-new-constraint.
-# - By default, we are always first considering the min height and the min step-end-x-speed.
-#   - This is affected by jump height.
-#   - But the min jump height produces the min possible step-end-x-speed, so this min is accurate.
-#   - It's possible that the min becomes smaller than we can actually use if we need to increase the jump height.
-#   - However, I don't think that's a problem?
-# - We can then also save with the constraint the max step-end-x-speed.
-#   - 
-# - The min-possible step-end-x-speed is dependent on the jump height.
-#   - Because to get the min speed, we need horizontal movement to be steady over the entire step.
-#   - 
-# - The max-possible step-end-x-speed is dependent on the jump height.
-#   - Because when the jump-button is released changes the amount of time we may have to move horizontally in a step.
-#   -
-# - The jump height is dependent on the max-possible step-end-x-speed.
-#   - Because if we can't move far enough with the given starting x velocity and max
-#     height, then we could move further with a greater max height.
-#   - 
-# - POSSIBLE LIMITING HEURISTIC A:
-#   - Just use the original default jump-release time.
-#   - This could possibly result in "max" speed values that aren't actually as high as they
-#     could be, since an earlier jump-release could give us not enough time to accelerate
-#     to max step-end-speed.
-#     - But this is probably OK, since our first priority is in limiting the jump height to
-#       only what is necessary.
-#   - REVISIT, all this thinking in terms of which steps are actually affected after getting the initial implementation figured out.
-#   - We can calculate the max-possible step-end-x-speed beforehand according to:
-#     - The min-possible and max-possible (directional) step-end-x-velocities of the step-start (the previous step-end).
-#       - This will then depend on us having already calculated the min and max for all previous steps.
-#     - The horizontal displacement of the step.
-#     - The horizontal acceleration.
-#     - The horizontal speed cap.
-# - POSSIBLE LIMITING HEURISTIC B:
-#   - Assume optimal jump-release time for generating the max-possible step-end-x-speed.
-#     - What is this time: Later jump releases in general.
-#       - Since early jump-release can decrease the max-possible step-end-x-speed, since it
-#         could give us not enough time to accelerate to max speed.
-#   - Not a good solution, since this would inflate jump heights.
-#
-# - So, here's a possible ultimate order of events:
-#   - From front to back:
-#     - [stored on vertical step] Calculate minimum possible overall jump-release time.
-#     - [stored on (previous) constraints] Calculate the one and only time for passing through the
-#         constraint.
-#         - There is no separate min and max for this, since this is dependent on where we
-#           are in the vertical movement.
-#         - PROBLEM: How to know whether we are on the ascent or the descent of the jump?
-#           - Is it possible to know the x position of the jump peak?
-#             - Or at least between which constraints the peak occurs?
-#           - Answer: I can compute the durations between constraints using the same step
-#             duration logic I used in the original vertical-step calculations.
-#     - [stored on (previous) constraints] Calculate min and max possible (directional)
-#         step-end-x-velocity for each step.
-#   - From back to front:
-#     - For both traversal versions:
-#       **- [stored on horizontal steps] Calculate steps in reverse order in order to 
-#           require that a given step ends with a certain x velocity.
-#     - For traversal with backtracking only:
-#       **- Use a new post_constraint_destination param passed to the vertical step calc to
-#         support increasing the jump height as needed in order to reach the destination
-#         after the latest constraint.
-#     - [no?] Calculate jump height for each step.
-#       - [no?] This will depend on whether the jump button can still be pressed at the start of the current step.
-#       - [no?] This will probably involve keeping track of the relative jump height needed for just the displacement of the current step.
-#         - [no?] We will probably then need to add some heights together at the end.
-#       - FIXME: LEFT OFF HERE: Should I use any special conditional logic here for considering the different constraint-surface-type cases?
-#         - E.g.:
-#           - Going above a wall:
-#             - Is what I've been basing this approach off of.
-#             - Auto-fail if jump button is already released.
-#           - Going below a wall:
-#             - Auto-fail is jump button is still held.
-#             - Otherwise, min/max step-end-x-velocities should be easy enough to compute.
-#           - Around floor:
-#             - Assert jump button isn't held.
-#             - Should involve same height and min/max step-end-x-speed requirement calculations as walls.
-#             - Would it help at all to refactor destination representation to use a normal Constraint object?
-#               - Then we could treat it the same in terms of surface-type considerations, and needing to reach far enough in a given direction.
-#           - Around ceiling:
-#             - Should involve same height and min/max step-end-x-speed requirement calculations as walls.
-#     - Keep track of the max required value.
-# - Do I need to refactor how the with and without backtracking recursive calls are split apart?
-#   - Either going into the constraint or out of the constraint could require backtracking to get a higher jump height.
-#   - Maybe just start out by creating a new version of the without function, and then add whatever I need from there.
-#   - I _THINK_ that I actually do want to keep them separate now?
-#     - In the version without backtracking, it will only consider the max horizontal speed, and if that's insufficient, fail.
-#     - In the version with backtracking, it will then also consider whether the height
-#       can/should be increased.
-#     - Although, these could still be combined.
-#     - But, I guess the reason for originally splitting, was to not do the expensive
-#       backtracking calculations if a non-backtracking approach with the other constraint
-#       would work.
-#     **- At the very least, document that original motivation!
-# 
-
-# - FIXME: LEFT OFF HERE: C: (after getting current refactor to work with floor-to-floor edges):
-#   - Need to add support for pressing sideways-move-input in opposite direction, in order
-#     to counter too-strong velocity_start.
-
-# FIXME: LEFT OFF HERE: ACTION ITEMS: ---------A
-# **- Update both recursive functions to calculate steps from back to front, considering
-#   min/max horizontal velocity.
-# 
-# >>- Update vertical step calc function to use greater of the height from both previous and new constraints.
-# **- [um, is this the wrong place?] Update vertical step calc function to consider max step-end-x-speed.
-#   - Is this all that's needed to support the backtracking version?
-# 
+# FIXME: C:
 # - Set the destination_constraint min_velocity_x and max_velocity_x at the start, in order to latch onto the target surface.
 #   - Also add support for specifying min/max y velocities for this?
 # 
+# FIXME: B:
+# - Should we more explicity re-use all vertical steps from before the jump button was released?
+#   - It might simplify the logic for checking for previously collided surfaces, and make things more efficient.
+# 
+# FIXME: A: Check if we need to update following constraints when creating a new one:
+# - Unfortunately, it is possible that the creation of a new intermediate constraint could
+#   invalidate the actual_velocity_x for the following constraint(s). A fix for this would be
+#   to first recalculate the min/max x velocities for all following constraints in forward
+#   order, and then recalculate the actual x velocity for all following constraints in reverse
+#   order.
+
+
+# FIXME: LEFT OFF HERE: ---A
 # - Implement support for skipping a constraint:
 #   - Needs to be detected in the constraint-creation logic.
 #   - Then needs to be handled in the recursion logic.
@@ -306,17 +153,35 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 #         - If horizontal _movement_ (displacement) direction from #0 to #1 is opposite from
 #           what the normal surface-side-based constraint-pass-through-direction calculation
 #           would yield, then ... [is this a constraint we should skip?]
+
+
+
+
+# FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# - Step through and double-check that the correct min/max step state will be calculated at the right places in recursive traversals.
-# - Add logic to quit early for invalid surface collisions?
-# - Move the global_calc_params.collided_surfaces assignment and access to helper functions?
-# - Cleanup/refactor/consolidate the with-and-without-backtracking recursive functions?
-# - Go through above notes/thoughts and make sure all bits are acounted for.
-# - Either support or add a doc+TODO for the other failing backtracking case that I scribbled.
-# - Document approach in the README.
+# - Check that global_calc_params.collided_surfaces is handled correctly:
+#   - QUESTION/PROBLEM: Regarding the current backtracking
+#     logic and disallowal of hitting previous surfaces:
+#     - What's to stop a new jump-height calculation from still running into the
+#       same old wall constraint as before, when we hit the wall before letting
+#       go of jump?
+#     - I'm pretty sure nothing is.
+#     **- SOLUTION: Move the global_calc_params.collided_surfaces assignment and
+#       access to helper functions.
+#       - In the assignment function, check whether the jump button would still
+#         be pressed:
+#         - If so, then record the surface on list A: on this list any future
+#           encounter of the surface fails, regardless.
+#         - Else, list B: recording on this list uses a string value for the key,
+#           which is based on both the surface params and on the current
+#           jump-release time.
+#       - In the access function, the appropriate list is checked.
 # 
-# - Should we more explicity re-use all vertical steps from before the jump button was released?
-#   - It might simplify the logic for checking for previously collided surfaces, and make things more efficient.
+# - Polish description of approach in the README.
+#   - In general, a guiding heuristic in these calculations is to minimize movement. So, through each constraint (step-end), we try to minimize the horizontal speed of the movement at that point.
+# 
+# - Re-organize the catch-all grab-bag that is PlayerMovement...
+# 
 
 
 
@@ -389,7 +254,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
                 terminals = PlayerMovement.create_terminal_constraints(a, \
                         jump_position.target_point, b, land_position.target_point, params, \
                         velocity_start)
-                if terminals == null:
+                if terminals.empty():
                     continue
                 
                 global_calc_params.origin_constraint = terminals[0]
@@ -416,7 +281,7 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
     
     var terminals := PlayerMovement.create_terminal_constraints(position_start.surface, \
             position_start.target_point, null, position_end, params, velocity_start)
-    if terminals == null:
+    if terminals.empty():
         null
     
     global_calc_params.origin_constraint = terminals[0]
@@ -481,20 +346,13 @@ static func _test_instructions(instructions: PlayerInstructions, \
 # to consider a new higher jump height.
 static func _calculate_steps_with_new_jump_height( \
         global_calc_params: MovementCalcGlobalParams) -> MovementCalcResults:
-    var vertical_step := calculate_vertical_step(global_calc_params, true)
+    var vertical_step := calculate_vertical_step(global_calc_params)
     if vertical_step == null:
         # The destination is out of reach.
         return null
     
     local_calc_params = MovementCalcLocalParams.new(global_calc_params.origin_constraint, \
             global_calc_params.destination_constraint, vertical_step)
-    
-    # FIXME: --------------
-    # FIXME: LEFT OFF HERE: ----A: Move this to be inside calculate_vertical_step after working
-    # out how to better calculate max height according to both destination constraint and upcoming
-    # constraint?
-    local_calc_params.end_constraint = additional_high_constraint if additional_high_constraint != null else \
-            global_calc_params.destination_constraint
     
     return calculate_steps_from_constraint(global_calc_params, local_calc_params)
 
@@ -552,7 +410,8 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     # Calculate possible constraints to divert the movement around either side of the colliding
     # surface.
     var constraints := _calculate_constraints_around_surface(global_calc_params.movement_params, \
-            vertical_step, local_calc_params.start_constraint, collision.surface, \
+            vertical_step, local_calc_params.start_constraint, \
+            global_calc_params.origin_constraint, collision.surface, \
             global_calc_params.constraint_offset)
     if constraints.empty():
         return null
@@ -571,6 +430,10 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
 static func _calculate_steps_from_constraint_without_backtracking_on_height( \
         global_calc_params: MovementCalcGlobalParams, \
         local_calc_params: MovementCalcLocalParams, constraints: Array) -> MovementCalcResults:
+    var previous_constraint_original := local_calc_params.start_constraint
+    var next_constraint_original := local_calc_params.end_constraint
+    var previous_constraint_copy: MovementConstraint
+    var next_constraint_copy: MovementConstraint
     var local_calc_params_to_constraint: MovementCalcLocalParams
     var local_calc_params_from_constraint: MovementCalcLocalParams
     var calc_results_to_constraint: MovementCalcResults
@@ -582,7 +445,25 @@ static func _calculate_steps_from_constraint_without_backtracking_on_height( \
         # Calculate steps in reverse order in order to ensure that each step ends with a certain x
         # velocity.
         
-        # Recurse: Calculate movement from the constraint to the original destination.
+        # Make copies of the previous and next constraints. We don't want to update the originals,
+        # in case this recursion fails.
+        previous_constraint_copy = copy_constraint(previous_constraint_original)
+        local_calc_params.start_constraint = previous_constraint_copy
+        next_constraint_copy = copy_constraint(next_constraint_original)
+        local_calc_params.end_constraint = next_constraint_copy
+
+        # FIXME: LEFT OFF HERE: A: Verify this statement.
+
+        # Update the previous and next constraints, to account for this new intermediate
+        # constraint. These updates are not completely sufficient, since we may in turn need to
+        # update the min/max/actual x-velocities and movement sign for all other constraints. And
+        # these updates could then result in the addition/removal of other intermediate
+        # constraints. But we have found that these two updates are enough for most cases.
+        _update_neighbors_for_new_constraint(constraint, previous_constraint_copy, \
+                next_constraint_copy, global_calc_params, local_calc_params.vertical_step)
+
+        ### RECURSE: Calculate movement from the constraint to the original destination.
+
         local_calc_params_from_constraint = MovementCalcLocalParams.new( \
                 constraint, local_calc_params.end_constraint, \
                 local_calc_params.vertical_step)
@@ -594,25 +475,36 @@ static func _calculate_steps_from_constraint_without_backtracking_on_height( \
             continue
         
         if calc_results_from_constraint.backtracked_for_new_jump_height:
-            # The movement calculations from after the constraint had to backtrack and use a
-            # higher jump height. This means that these post-constraint results already include new
-            # steps leading up to the constraint, so we should abandon any pre-constraint results.
+            # When backtracking occurs, the result includes all steps from origin to destination,
+            # so we can just return that result here.
             return calc_results_from_constraint
         
-        # Recurse: Calculate movement to the constraint.
+        ### RECURSE: Calculate movement to the constraint.
+
         local_calc_params_to_constraint = MovementCalcLocalParams.new( \
                 local_calc_params.start_constraint, constraint, \
                 local_calc_params.vertical_step)
         calc_results_to_constraint = calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_to_constraint)
         
-        if calc_results_to_constraint != null:
-            # We found movement that satisfies the constraint.
-            Utils.concat(calc_results_to_constraint.horizontal_steps, \
-                    calc_results_from_constraint.horizontal_steps)
+        if calc_results_to_constraint == null:
+            # This constraint is out of reach with the current jump height.
+            continue
+        
+        if calc_results_to_constraint.backtracked_for_new_jump_height:
+            # When backtracking occurs, the result includes all steps from origin to destination,
+            # so we can just return that result here.
             return calc_results_to_constraint
+        
+        # We found movement that satisfies the constraint (without backtracking for a new jump
+        # height).
+        Utils.concat(calc_results_to_constraint.horizontal_steps, \
+                calc_results_from_constraint.horizontal_steps)
+        return calc_results_to_constraint
     
     # We weren't able to satisfy the constraints around the colliding surface.
+    local_calc_params.start_constraint = previous_constraint_original
+    local_calc_params.end_constraint = next_constraint_original
     return null
 
 # Check whether either constraint can be satisfied if we backtrack to re-calculate the initial
@@ -620,104 +512,59 @@ static func _calculate_steps_from_constraint_without_backtracking_on_height( \
 static func _calculate_steps_from_constraint_with_backtracking_on_height( \
         global_calc_params: MovementCalcGlobalParams, \
         local_calc_params: MovementCalcLocalParams, constraints: Array) -> MovementCalcResults:
-    var local_calc_params_to_constraint: MovementCalcLocalParams
-    var local_calc_params_from_constraint: MovementCalcLocalParams
-    var calc_results_to_constraint: MovementCalcResults
-    var calc_results_from_constraint: MovementCalcResults
-    var vertical_step_to_constraint: MovementVertCalcStep
-    var end_state: Vector2
+    var destination_original := global_calc_params.destination_constraint
+    var destination_copy: MovementConstraint
+    var is_constraint_valid: bool
+    var calc_results: MovementCalcResults
     
     # FIXME: B: Add heuristics to pick the "better" constraint first.
     
     for constraint in constraints:
-        # Calculate steps in reverse order in order to ensure that each step ends with a certain x
-        # velocity.
-        
-        # FIXME: LEFT OFF HERE: -------------------------------------------------------A
-        # - Fix update_constraint caller to provide can_hold_jump_button=false when we have stopped pressing the jump button.
-        # - Double-check that we're always using local_params.end_constraint/start_constraint and global_params.origin_constraint/destination_constraint correctly!
-        
-        # FIXME: LEFT OFF HERE: -------------------------------------------------------A
-        # >>- Should I instead be re-calculating this new vertical_step+associated-horizontal-steps
-        #   based on the same origin, just with a new param for jumping at least high enough for
-        #   this other constraint?
-        # - It seems like that should work.
-        # - And then, since we're navigating to the destination still, we should be able to rely on
-        #   this call to _calculate_steps_with_new_jump_height to handle all concatenation of steps
-        #   before/after a constraint.
-        # - So, we should just be able to return whatever _calculate_steps_with_new_jump_height
-        #   returns.
-        # - We might need to update _calculate_steps_from_constraint_without_backtracking_on_height
-        #   to be even more agressive with backtracked_for_new_jump_height?
-        # 
-        # - Can I simplify/consolidate some of the top-level methods?
-        #   - _calculate_steps_with_new_jump_height and _calculate_jump_instructions?
-        #
-        # - We should probably store can_hold_jump_button on global_calc_params.
-        #     - Nvm, it's on vertical_step...
-        #   - Make sure that it propagates through correctly.
+        # Make a copy of the destination constraint. We don't want to update the original, in case
+        # this backtracking fails.
+        destination_copy = copy_constraint(destination_original)
+        global_calc_params.destination_constraint = destination_copy
 
-        # FIXME: --------------
-        is_constraint_valid = update_constraint(global_calc_params.destination_constraint, \
+        # Update the destination constraint to support a (possibly) increased jump height, which
+        # would enable movement through this new intermediate constraint.
+        is_constraint_valid = update_constraint(destination_copy, \
                 global_calc_params.origin_constraint, null, global_calc_params.origin_constraint, \
                 global_calc_params.movement_params, \
                 global_calc_params.origin_constraint.velocity_start, true, \
                 local_calc_params.vertical_step, constraint)
-        
-
-
-
-        
-        # Recurse: Backtrack and try a higher jump (to the constraint).
-        calc_results_to_constraint = _calculate_steps_with_new_jump_height(global_calc_params)
-        
-        if calc_results_to_constraint == null:
+        if !is_constraint_valid:
             # The constraint is out of reach.
             continue
-        
-        vertical_step_to_constraint = calc_results_to_constraint.vertical_step
-        
-        # Update the total duration to include the fall duration after the constraint.
-        vertical_step_to_constraint.time_step_end = _calculate_time_for_passing_through_constraint( \
-                global_calc_params.movement_params, vertical_step_to_constraint, \
-                local_calc_params.end_constraint, vertical_step_to_constraint.time_step_end)
-        if vertical_step_to_constraint.time_step_end == INF:
-            # The destination is out of reach from the constraint.
-            continue
-        end_state = calculate_vertical_end_state_for_time(global_calc_params.movement_params, \
-                vertical_step_to_constraint, vertical_step_to_constraint.time_step_end)
-        vertical_step_to_constraint.position_step_end.y = end_state.x
-        vertical_step_to_constraint.velocity_step_end.y = end_state.y
-        
-        
-        
-        # Recurse: Calculate movement from the constraint to the original destination.
-        local_calc_params_from_constraint = MovementCalcLocalParams.new( \
-                constraint, local_calc_params.end_constraint, \
-                vertical_step_to_constraint)
-        calc_results_from_constraint = calculate_steps_from_constraint(global_calc_params, \
-                local_calc_params_from_constraint)
-        
-        if calc_results_from_constraint != null:
-            # We found movement that satisfies the constraint.
-            if !calc_results_from_constraint.backtracked_for_new_jump_height:
-                # The movement calculations from after the constraint didn't have to backtrack and
-                # use a higher jump height.
-            
-                # Combine the steps from before and after the constraint.
-                Utils.concat(calc_results_to_constraint.horizontal_steps, \
-                        calc_results_from_constraint.horizontal_steps)
-                
-                # Mark this result as having backtracked to re-calculate the previous steps.
-                calc_results_to_constraint.backtracked_for_new_jump_height = true
-                
-                return calc_results_to_constraint
-            else:
-                # The movement calculations from after the constraint had to backtrack and use a
-                # higher jump height. This means that these post-constraint results include new
-                # steps leading up to the constraint, so we should abandon our previous
-                # pre-constraint results.
-                return calc_results_from_constraint
+
+        # Recurse: Backtrack and try a higher jump (to the constraint).
+        calc_results = _calculate_steps_with_new_jump_height(global_calc_params)
+        if calc_results != null:
+            # The constraint is within reach, and we were able to find valid movement steps to the
+            # destination.
+            calc_results.backtracked_for_new_jump_height = true
+            return calc_results
     
     # We weren't able to satisfy the constraints around the colliding surface.
+    global_calc_params.destination_constraint = destination_original
     return null
+
+static func _update_neighbors_for_new_constraint(constraint: MovementConstraint, \
+        previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
+        global_calc_params: MovementCalcGlobalParams, \
+        vertical_step: MovementVertCalcStep) -> bool:
+    var origin := global_calc_params.origin_constraint
+
+    if previous_constraint.is_origin:
+        # The next constraint is only used for updates to the origin. Each other constraints just
+        # depends on their previous constraint.
+        var is_valid := update_constraint(previous_constraint, null, constraint, \
+                origin, global_calc_params.movement_params, origin.velocity_start, \
+                vertical_step.can_hold_jump_button, vertical_step, null)
+        if !is_valid:
+            return false
+    
+    # The next constraint is only used for updates to the origin. Each other constraints just
+    # depends on their previous constraint.
+    return update_constraint(next_constraint, constraint, null, \
+            origin, global_calc_params.movement_params, origin.velocity_start, \
+            vertical_step.can_hold_jump_button, vertical_step, null)

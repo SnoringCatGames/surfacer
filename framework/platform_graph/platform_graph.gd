@@ -315,13 +315,13 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         for position_end in possible_end_positions:
             terminals = PlayerMovement.create_terminal_constraints(null, origin, surface, \
                     position_end.target_point, movement_params, velocity_start)
-            if terminals == null:
+            if terminals.empty():
                 continue
             
             global_calc_params.origin_constraint = terminals[0]
             global_calc_params.destination_constraint = terminals[1]
             
-            vertical_step = PlayerMovement.calculate_vertical_step(global_calc_params, false)
+            vertical_step = PlayerMovement.calculate_vertical_step(global_calc_params)
             if vertical_step == null:
                 continue
             
