@@ -125,9 +125,9 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
         
         # Update state for the next frame.
         position += displacement
-        velocity = PlayerMovement.update_velocity_in_air(velocity, delta, is_pressing_jump, \
+        velocity = MovementUtils.update_velocity_in_air(velocity, delta, is_pressing_jump, \
                 is_first_jump, horizontal_acceleration_sign, movement_params)
-        velocity = PlayerMovement.cap_velocity(velocity, movement_params)
+        velocity = MovementUtils.cap_velocity(velocity, movement_params)
         previous_time = current_time
         current_time += delta
         
@@ -235,9 +235,9 @@ static func check_discrete_horizontal_step_for_collision( \
         
         # Update state for the next frame.
         position += displacement
-        velocity = PlayerMovement.update_velocity_in_air(velocity, delta, is_pressing_jump, \
+        velocity = MovementUtils.update_velocity_in_air(velocity, delta, is_pressing_jump, \
                 is_first_jump, horizontal_acceleration_sign, movement_params)
-        velocity = PlayerMovement.cap_velocity(velocity, movement_params)
+        velocity = MovementUtils.cap_velocity(velocity, movement_params)
         previous_time = current_time
         current_time += delta
     

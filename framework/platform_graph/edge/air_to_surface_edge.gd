@@ -13,5 +13,5 @@ func _init(start: Vector2, end: PositionAlongSurface, calc_results: MovementCalc
 static func _calculate_instructions( \
         position_start: Vector2, position_end: PositionAlongSurface, \
         calc_results: MovementCalcResults) -> PlayerInstructions:
-    return PlayerMovement.convert_calculation_steps_to_player_instructions( \
+    return MovementUtils.convert_calculation_steps_to_player_instructions( \
             position_start, position_end.target_point, calc_results)

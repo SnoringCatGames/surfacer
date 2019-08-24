@@ -451,6 +451,27 @@ static func calculate_min_and_max_velocity_at_end_of_interval(s_0: float, s: flo
     else:
         return [-v_max, -v_min]
 
+static func update_neighbors_for_new_constraint(constraint: MovementConstraint, \
+        previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
+        global_calc_params: MovementCalcGlobalParams, \
+        vertical_step: MovementVertCalcStep) -> bool:
+    var origin := global_calc_params.origin_constraint
+
+    if previous_constraint.is_origin:
+        # The next constraint is only used for updates to the origin. Each other constraints just
+        # depends on their previous constraint.
+        var is_valid := update_constraint(previous_constraint, null, constraint, origin, \
+                global_calc_params.movement_params, origin.velocity_start, \
+                vertical_step.can_hold_jump_button, vertical_step, null)
+        if !is_valid:
+            return false
+    
+    # The next constraint is only used for updates to the origin. Each other constraints just
+    # depends on their previous constraint.
+    return update_constraint(next_constraint, constraint, null, origin, \
+            global_calc_params.movement_params, origin.velocity_start, \
+            vertical_step.can_hold_jump_button, vertical_step, null)
+
 static func copy_constraint(original: MovementConstraint) -> MovementConstraint:
     var copy := MovementConstraint.new(original.surface, original.position, \
             original.passing_vertically, original.should_stay_on_min_side)

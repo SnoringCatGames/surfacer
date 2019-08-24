@@ -4,9 +4,11 @@
 extends Reference
 class_name PlatformGraph
 
-const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 const AirToSurfaceEdge := preload("res://framework/platform_graph/edge/air_to_surface_edge.gd")
 const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_surface_edge.gd")
+const MovementCalcGlobalParams := preload("res://framework/player_movement/movement_calculation_global_params.gd")
+const MovementCalcLocalParams := preload("res://framework/player_movement/movement_calculation_local_params.gd")
+const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
 #
@@ -310,7 +312,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
 
     # Find the first possible edge to a landing surface.
     for surface in possible_landing_surfaces:
-        possible_end_positions = PlayerMovement.get_all_jump_positions_from_surface( \
+        possible_end_positions = MovementUtils.get_all_jump_positions_from_surface( \
                 movement_params, destination.surface, origin_vertices, origin_bounding_box)
         
         for position_end in possible_end_positions:
@@ -329,7 +331,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
             local_calc_params = MovementCalcLocalParams.new(global_calc_params.origin_constraint, \
                     global_calc_params.destination_constraint, vertical_step)
             
-            calc_results = JumpFromPlatformMovement.calculate_steps_from_constraint( \
+            calc_results = MovementStepUtils.calculate_steps_from_constraint( \
                     global_calc_params, local_calc_params)
             if calc_results != null:
                 return AirToSurfaceEdge.new(origin, position_end, calc_results)
