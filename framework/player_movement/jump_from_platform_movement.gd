@@ -159,6 +159,8 @@ const MovementCalcStep := preload("res://framework/player_movement/movement_calc
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
+# - Fix the issue with min/max x-velocity calculations when updating constraints.
+# 
 # - Check that global_calc_params.collided_surfaces is handled correctly:
 #   - QUESTION/PROBLEM: Regarding the current backtracking
 #     logic and disallowal of hitting previous surfaces:
@@ -251,9 +253,9 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
                     # Ignore anything but the one destination surface we are debugging.
                     continue
                 
-                terminals = PlayerMovement.create_terminal_constraints(a, \
+                terminals = MovementConstraintUtils.create_terminal_constraints(a, \
                         jump_position.target_point, b, land_position.target_point, params, \
-                        velocity_start)
+                        velocity_start, true)
                 if terminals.empty():
                     continue
                 
@@ -279,8 +281,8 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
     var global_calc_params := \
             MovementCalcGlobalParams.new(params, space_state, surface_parser, velocity_start)
     
-    var terminals := PlayerMovement.create_terminal_constraints(position_start.surface, \
-            position_start.target_point, null, position_end, params, velocity_start)
+    var terminals := MovementConstraintUtils.create_terminal_constraints(position_start.surface, \
+            position_start.target_point, null, position_end, params, velocity_start, true)
     if terminals.empty():
         null
     
@@ -346,7 +348,7 @@ static func _test_instructions(instructions: PlayerInstructions, \
 # to consider a new higher jump height.
 static func _calculate_steps_with_new_jump_height( \
         global_calc_params: MovementCalcGlobalParams) -> MovementCalcResults:
-    var vertical_step := calculate_vertical_step(global_calc_params)
+    var vertical_step := VerticalMovementUtils.calculate_vertical_step(global_calc_params)
     if vertical_step == null:
         # The destination is out of reach.
         return null
@@ -365,7 +367,8 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
         local_calc_params: MovementCalcLocalParams) -> MovementCalcResults:
     ### BASE CASES
     
-    var next_horizontal_step := calculate_horizontal_step(local_calc_params, global_calc_params)
+    var next_horizontal_step := HorizontalMovementUtils.calculate_horizontal_step( \
+            local_calc_params, global_calc_params)
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: -A:
     # - Debugging min step-end velocity.
@@ -409,10 +412,10 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     
     # Calculate possible constraints to divert the movement around either side of the colliding
     # surface.
-    var constraints := _calculate_constraints_around_surface(global_calc_params.movement_params, \
-            vertical_step, local_calc_params.start_constraint, \
-            global_calc_params.origin_constraint, collision.surface, \
-            global_calc_params.constraint_offset)
+    var constraints := MovementConstraintUtils.calculate_constraints_around_surface( \
+            global_calc_params.movement_params, vertical_step, \
+            local_calc_params.start_constraint, global_calc_params.origin_constraint, \
+            collision.surface, global_calc_params.constraint_offset)
     if constraints.empty():
         return null
     
@@ -447,9 +450,10 @@ static func _calculate_steps_from_constraint_without_backtracking_on_height( \
         
         # Make copies of the previous and next constraints. We don't want to update the originals,
         # in case this recursion fails.
-        previous_constraint_copy = copy_constraint(previous_constraint_original)
+        previous_constraint_copy = \
+                MovementConstraintUtils.copy_constraint(previous_constraint_original)
         local_calc_params.start_constraint = previous_constraint_copy
-        next_constraint_copy = copy_constraint(next_constraint_original)
+        next_constraint_copy = MovementConstraintUtils.copy_constraint(next_constraint_original)
         local_calc_params.end_constraint = next_constraint_copy
 
         # FIXME: LEFT OFF HERE: A: Verify this statement.
@@ -522,12 +526,12 @@ static func _calculate_steps_from_constraint_with_backtracking_on_height( \
     for constraint in constraints:
         # Make a copy of the destination constraint. We don't want to update the original, in case
         # this backtracking fails.
-        destination_copy = copy_constraint(destination_original)
+        destination_copy = MovementConstraintUtils.copy_constraint(destination_original)
         global_calc_params.destination_constraint = destination_copy
 
         # Update the destination constraint to support a (possibly) increased jump height, which
         # would enable movement through this new intermediate constraint.
-        is_constraint_valid = update_constraint(destination_copy, \
+        is_constraint_valid = MovementConstraintUtils.update_constraint(destination_copy, \
                 global_calc_params.origin_constraint, null, global_calc_params.origin_constraint, \
                 global_calc_params.movement_params, \
                 global_calc_params.origin_constraint.velocity_start, true, \
@@ -557,14 +561,14 @@ static func _update_neighbors_for_new_constraint(constraint: MovementConstraint,
     if previous_constraint.is_origin:
         # The next constraint is only used for updates to the origin. Each other constraints just
         # depends on their previous constraint.
-        var is_valid := update_constraint(previous_constraint, null, constraint, \
-                origin, global_calc_params.movement_params, origin.velocity_start, \
+        var is_valid := MovementConstraintUtils.update_constraint(previous_constraint, null, \
+                constraint, origin, global_calc_params.movement_params, origin.velocity_start, \
                 vertical_step.can_hold_jump_button, vertical_step, null)
         if !is_valid:
             return false
     
     # The next constraint is only used for updates to the origin. Each other constraints just
     # depends on their previous constraint.
-    return update_constraint(next_constraint, constraint, null, \
+    return MovementConstraintUtils.update_constraint(next_constraint, constraint, null, \
             origin, global_calc_params.movement_params, origin.velocity_start, \
             vertical_step.can_hold_jump_button, vertical_step, null)

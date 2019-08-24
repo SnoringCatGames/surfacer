@@ -144,6 +144,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/grid_indices_annotator.gd"
 }, {
+"base": "Reference",
+"class": "HorizontalMovementUtils",
+"language": "GDScript",
+"path": "res://framework/player_movement/horizontal_movement_utils.gd"
+}, {
 "base": "PlayerActionSource",
 "class": "InputActionSource",
 "language": "GDScript",
@@ -213,6 +218,11 @@ _global_script_classes=[ {
 "class": "MovementConstraint",
 "language": "GDScript",
 "path": "res://framework/player_movement/movement_constraint.gd"
+}, {
+"base": "Reference",
+"class": "MovementConstraintUtils",
+"language": "GDScript",
+"path": "res://framework/player_movement/movement_constraint_utils.gd"
 }, {
 "base": "Reference",
 "class": "MovementParams",
@@ -414,6 +424,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/utils/utils.gd"
 }, {
+"base": "Reference",
+"class": "VerticalMovementUtils",
+"language": "GDScript",
+"path": "res://framework/player_movement/vertical_movement_utils.gd"
+}, {
 "base": "PlayerActionHandler",
 "class": "WallClimbAction",
 "language": "GDScript",
@@ -472,6 +487,7 @@ _global_script_class_icons={
 "Geometry": "",
 "Global": "",
 "GridIndicesAnnotator": "",
+"HorizontalMovementUtils": "",
 "InputActionSource": "",
 "InstructionsActionSource": "",
 "InstructionsPlayback": "",
@@ -486,6 +502,7 @@ _global_script_class_icons={
 "MovementCalcResults": "",
 "MovementCalcStep": "",
 "MovementConstraint": "",
+"MovementConstraintUtils": "",
 "MovementParams": "",
 "MovementVertCalcStep": "",
 "Navigator": "",
@@ -526,6 +543,7 @@ _global_script_class_icons={
 "TestPlayerParams": "",
 "TileAnnotator": "",
 "Utils": "",
+"VerticalMovementUtils": "",
 "WallClimbAction": "",
 "WallDashAction": "",
 "WallDefaultAction": "",

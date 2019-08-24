@@ -51,9 +51,10 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
         while current_horizontal_step.time_step_end < current_time:
             current_horizontal_step_index += 1
             current_horizontal_step = horizontal_steps[current_horizontal_step_index]
-        continuous_horizontal_state = PlayerMovement.calculate_horizontal_end_state_for_time( \
-                movement_params, current_horizontal_step, current_time)
-        continuous_vertical_state = PlayerMovement.calculate_vertical_end_state_for_time( \
+        continuous_horizontal_state = \
+                HorizontalMovementUtils.calculate_horizontal_end_state_for_time(movement_params, \
+                        current_horizontal_step, current_time)
+        continuous_vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time( \
                 movement_params, vertical_step, current_time)
         continuous_position.x = continuous_horizontal_state.x
         continuous_position.y = continuous_vertical_state.x
@@ -138,9 +139,10 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
     displacement = velocity * delta
     shape_query_params.transform = Transform2D(0.0, position)
     shape_query_params.motion = displacement
-    continuous_horizontal_state = PlayerMovement.calculate_horizontal_end_state_for_time( \
-            movement_params, current_horizontal_step, duration)
-    continuous_vertical_state = PlayerMovement.calculate_vertical_end_state_for_time( \
+    continuous_horizontal_state = \
+            HorizontalMovementUtils.calculate_horizontal_end_state_for_time(movement_params, \
+                    current_horizontal_step, duration)
+    continuous_vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time( \
             movement_params, vertical_step, duration)
     continuous_position.x = continuous_horizontal_state.x
     continuous_position.y = continuous_vertical_state.x
@@ -277,9 +279,9 @@ static func check_continuous_horizontal_step_for_collision( \
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
         # Update state for the current frame.
-        horizontal_state = PlayerMovement.calculate_horizontal_end_state_for_time( \
+        horizontal_state = HorizontalMovementUtils.calculate_horizontal_end_state_for_time( \
                 movement_params, horizontal_step, current_time)
-        vertical_state = PlayerMovement.calculate_vertical_end_state_for_time( \
+        vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time( \
                 movement_params, vertical_step, current_time)
         current_position.x = horizontal_state.x
         current_position.y = vertical_state.x
@@ -302,9 +304,9 @@ static func check_continuous_horizontal_step_for_collision( \
     # Check the last frame that puts us up to end_time.
     current_time = step_end_time
     if !Geometry.are_floats_equal_with_epsilon(previous_time, current_time):
-        horizontal_state = PlayerMovement.calculate_horizontal_end_state_for_time( \
+        horizontal_state = HorizontalMovementUtils.calculate_horizontal_end_state_for_time( \
                 movement_params, horizontal_step, current_time)
-        vertical_state = PlayerMovement.calculate_vertical_end_state_for_time( \
+        vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time( \
                 movement_params, vertical_step, current_time)
         current_position.x = horizontal_state.x
         current_position.y = vertical_state.x

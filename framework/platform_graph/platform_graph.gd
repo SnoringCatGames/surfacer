@@ -314,15 +314,15 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
                 movement_params, destination.surface, origin_vertices, origin_bounding_box)
         
         for position_end in possible_end_positions:
-            terminals = PlayerMovement.create_terminal_constraints(null, origin, surface, \
-                    position_end.target_point, movement_params, velocity_start)
+            terminals = MovementConstraintUtils.create_terminal_constraints(null, origin, \
+                    surface, position_end.target_point, movement_params, velocity_start, false)
             if terminals.empty():
                 continue
             
             global_calc_params.origin_constraint = terminals[0]
             global_calc_params.destination_constraint = terminals[1]
             
-            vertical_step = PlayerMovement.calculate_vertical_step(global_calc_params)
+            vertical_step = VerticalMovementUtils.calculate_vertical_step(global_calc_params)
             if vertical_step == null:
                 continue
             
@@ -344,7 +344,8 @@ func find_surfaces_in_fall_range( \
     # This offset should account for the extra horizontal range before the player has reached
     # terminal velocity.
     var start_position_offset_x: float = \
-            PlayerMovement.calculate_max_horizontal_movement(movement_params, velocity_start.y)
+            HorizontalMovementUtils.calculate_max_horizontal_movement(movement_params, \
+                    velocity_start.y)
     var start_position_offset := Vector2(start_position_offset_x, 0.0)
     var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
     var bottom_corner_offset_from_top_corner := Vector2(100000.0, 100000.0 * slope)
