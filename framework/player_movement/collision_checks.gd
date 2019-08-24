@@ -179,7 +179,7 @@ static func check_discrete_horizontal_step_for_collision( \
     var current_time := previous_time + delta
     var step_end_time := horizontal_step.time_step_end
     var position := horizontal_step.position_step_start
-    var velocity := horizontal_step.velocity_start
+    var velocity := horizontal_step.velocity_step_start
     var has_started_instructions := false
     var jump_instruction_end_time := local_calc_params.vertical_step.time_instruction_end
     var is_pressing_jump := jump_instruction_end_time > current_time

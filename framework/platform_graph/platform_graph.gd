@@ -303,6 +303,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
 
     var possible_end_positions: Array
+    var terminals: Array
     var vertical_step: MovementVertCalcStep
     var local_calc_params: MovementCalcLocalParams
     var calc_results: MovementCalcResults

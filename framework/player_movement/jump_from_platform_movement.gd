@@ -351,7 +351,7 @@ static func _calculate_steps_with_new_jump_height( \
         # The destination is out of reach.
         return null
     
-    local_calc_params = MovementCalcLocalParams.new(global_calc_params.origin_constraint, \
+    var local_calc_params := MovementCalcLocalParams.new(global_calc_params.origin_constraint, \
             global_calc_params.destination_constraint, vertical_step)
     
     return calculate_steps_from_constraint(global_calc_params, local_calc_params)

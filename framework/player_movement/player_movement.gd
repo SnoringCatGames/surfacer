@@ -291,9 +291,8 @@ static func _calculate_horizontal_movement_sign(constraint: MovementConstraint, 
     var is_destination := constraint.is_destination
 
     var displacement_sign := \
-            0 if Geometry.are_floats_equal_with_epsilon( \
-                    displacement_from_previous.x, 0.0, 0.1) else \
-            (1 if displacement_from_previous.x > 0 else \
+            0 if Geometry.are_floats_equal_with_epsilon(displacement.x, 0.0, 0.1) else \
+            (1 if displacement.x > 0 else \
             -1)
     
     var horizontal_movement_sign_from_displacement := \
@@ -1317,7 +1316,7 @@ static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams
         #     s = s_0 + v_0*t
         position_instruction_start_x = \
                 position_step_start.x + velocity_start_x * duration_for_horizontal_coasting
-        position_instruction_end_x = position_step_end.x
+        position_instruction_end_x = position_end.x
     
     var step_start_state := calculate_vertical_end_state_for_time( \
             movement_params, vertical_step, time_step_start)
@@ -1329,7 +1328,7 @@ static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams
             movement_params, vertical_step, time_step_end)
     
     assert(Geometry.are_floats_equal_with_epsilon(step_end_state.x, position_end.y, 0.0001))
-    assert(Geometry.are_floats_equal_with_epsilon(step_start_state.x, position_start.y, 0.0001))
+    assert(Geometry.are_floats_equal_with_epsilon(step_start_state.x, position_step_start.y, 0.0001))
     
     var step := MovementCalcStep.new()
     
@@ -1350,7 +1349,7 @@ static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams
     step.velocity_instruction_end = Vector2(velocity_end_x, instruction_end_state.y)
     step.velocity_step_end = Vector2(velocity_end_x, step_end_state.y)
     
-    previous_constraint.actual_velocity_x = step.velocity_start.x
+    start_constraint.actual_velocity_x = step.velocity_step_start.x
     
     return step
 
