@@ -6,8 +6,8 @@ class_name PlatformGraph
 
 const AirToSurfaceEdge := preload("res://framework/platform_graph/edge/air_to_surface_edge.gd")
 const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_surface_edge.gd")
-const MovementCalcGlobalParams := preload("res://framework/player_movement/movement_calculation_global_params.gd")
-const MovementCalcLocalParams := preload("res://framework/player_movement/movement_calculation_local_params.gd")
+const MovementCalcGlobalParams := preload("res://framework/player_movement/models/movement_calculation_global_params.gd")
+const MovementCalcLocalParams := preload("res://framework/player_movement/models/movement_calculation_local_params.gd")
 const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
@@ -346,7 +346,7 @@ func find_surfaces_in_fall_range( \
     # This offset should account for the extra horizontal range before the player has reached
     # terminal velocity.
     var start_position_offset_x: float = \
-            HorizontalMovementUtils.calculate_max_horizontal_movement(movement_params, \
+            HorizontalMovementUtils.calculate_max_horizontal_displacement(movement_params, \
                     velocity_start.y)
     var start_position_offset := Vector2(start_position_offset_x, 0.0)
     var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default

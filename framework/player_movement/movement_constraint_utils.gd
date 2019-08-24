@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to MovementConstraints.
 class_name MovementConstraintUtils
 
-const MovementConstraint := preload("res://framework/player_movement/movement_constraint.gd")
+const MovementConstraint := preload("res://framework/player_movement/models/movement_constraint.gd")
 
 # FIXME: D: Tweak this.
 const MIN_MAX_VELOCITY_X_OFFSET := 0.01
@@ -122,7 +122,8 @@ static func update_constraint(constraint: MovementConstraint, \
     var max_velocity_x: float
     var actual_velocity_x: float
 
-    # Calculate the time that the movement would pass through the constraint.
+    # Calculate the time that the movement would pass through the constraint, as well as the min
+    # and max x-velocity when passing through the constraint.
     if constraint.is_origin:
         time_passing_through = 0.0
         min_velocity_x = velocity_start_origin.x

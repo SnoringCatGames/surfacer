@@ -21,9 +21,9 @@ func _init(name: String, player_resource_path: String, global) -> void:
     _movement_params.collider_half_width_height = Geometry.calculate_half_width_height( \
             _movement_params.collider_shape, _movement_params.collider_rotation)
     _movement_params.max_upward_jump_distance = \
-            VerticalMovementUtils.calculate_max_upward_movement(_movement_params)
+            VerticalMovementUtils.calculate_max_upward_displacement(_movement_params)
     _movement_params.max_horizontal_jump_distance = \
-            HorizontalMovementUtils.calculate_max_horizontal_movement( \
+            HorizontalMovementUtils.calculate_max_horizontal_displacement( \
                     _movement_params, _movement_params.jump_boost)
     _check_movement_params(_movement_params)
     _movement_types = _create_movement_types(_movement_params)

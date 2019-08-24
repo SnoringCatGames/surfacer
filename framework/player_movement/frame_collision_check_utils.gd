@@ -1,4 +1,4 @@
-class_name FrameCollisionCheck
+class_name FrameCollisionCheckUtils
 
 # TODO: Adjust this.
 const VERTEX_SIDE_NUDGE_OFFSET := 0.001

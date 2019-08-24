@@ -6,7 +6,7 @@ class_name MovementUtils
 # applied.
 # 
 # Note: This could depend on a speed that exceeds the max-allowed speed.
-# TODO: Remove if no-one is still using this.
+# FIXME: F: Remove if no-one is still using this.
 static func calculate_time_to_release_acceleration(time_start: float, time_step_end: float, \
         position_start: float, position_end: float, velocity_start: float, \
         acceleration_start: float, post_release_backward_acceleration: float, \

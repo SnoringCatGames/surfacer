@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to PlayerInstructions.
 class_name MovementInstructionsUtils
 
-const PlayerInstruction := preload("res://framework/player_movement/player_instruction.gd")
+const PlayerInstruction := preload("res://framework/player_movement/models/player_instruction.gd")
 
 # FIXME: B 
 # - Should I remove this and force a slightly higher offset to target jump position directly? What
@@ -80,12 +80,15 @@ static func test_instructions(instructions: PlayerInstructions, \
     assert(instructions.instructions[0].time == 0.0)
     
     # FIXME: B: REMOVE
-    global_calc_params.movement_params.gravity_fast_fall /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    global_calc_params.movement_params.gravity_slow_ascent /= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    global_calc_params.movement_params.gravity_fast_fall /= \
+            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    global_calc_params.movement_params.gravity_slow_ascent /= \
+            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
-    var collision := CollisionChecks.check_instructions_for_collision(global_calc_params, \
+    var collision := CollisionCheckUtils.check_instructions_for_collision(global_calc_params, \
             instructions, calc_results.vertical_step, calc_results.horizontal_steps)
-    assert(collision == null or collision.surface == global_calc_params.destination_constraint.surface)
+    assert(collision == null or \
+            collision.surface == global_calc_params.destination_constraint.surface)
     var final_frame_position := \
             instructions.frame_discrete_positions[instructions.frame_discrete_positions.size() - 1]
     # FIXME: B: Add back in after fixing the use of GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION.
@@ -94,7 +97,9 @@ static func test_instructions(instructions: PlayerInstructions, \
 #            VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD)
 
     # FIXME: B: REMOVE
-    global_calc_params.movement_params.gravity_fast_fall *= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    global_calc_params.movement_params.gravity_slow_ascent *= GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    global_calc_params.movement_params.gravity_fast_fall *= \
+            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    global_calc_params.movement_params.gravity_slow_ascent *= \
+            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     return true

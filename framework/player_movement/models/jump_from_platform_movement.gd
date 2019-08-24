@@ -1,7 +1,7 @@
 extends PlayerMovement
 class_name JumpFromPlatformMovement
 
-const MovementCalcGlobalParams := preload("res://framework/player_movement/movement_calculation_global_params.gd")
+const MovementCalcGlobalParams := preload("res://framework/player_movement/models/movement_calculation_global_params.gd")
 
 # FIXME: SUB-MASTER LIST ***************
 # - Add support for specifying a required min/max end-x-velocity.

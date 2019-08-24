@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to MovementCalcSteps.
 class_name MovementStepUtils
 
-const MovementCalcLocalParams := preload("res://framework/player_movement/movement_calculation_local_params.gd")
+const MovementCalcLocalParams := preload("res://framework/player_movement/models/movement_calculation_local_params.gd")
 
 # Calculates movement steps to reach the given destination.
 # 
@@ -57,7 +57,7 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
         assert(Geometry.are_points_equal_with_epsilon(next_horizontal_step.position_step_end, \
                 global_calc_params.destination_constraint.position, 0.0001))
     
-    var collision := CollisionChecks.check_continuous_horizontal_step_for_collision( \
+    var collision := CollisionCheckUtils.check_continuous_horizontal_step_for_collision( \
             global_calc_params, local_calc_params, next_horizontal_step)
     
     if collision == null or collision.surface == global_calc_params.destination_constraint.surface:

@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to vertical movement.
 class_name VerticalMovementUtils
 
-const MovementVertCalcStep := preload("res://framework/player_movement/movement_vertical_calculation_step.gd")
+const MovementVertCalcStep := preload("res://framework/player_movement/models/movement_vertical_calculation_step.gd")
 
 # Calculates a new step for the vertical part of the movement and the corresponding total jump
 # duration.
@@ -75,16 +75,16 @@ static func calculate_vertical_step( \
     var peak_height_end_state := \
             calculate_vertical_end_state_for_time(movement_params, step, time_peak_height)
     
-    assert(Geometry.are_floats_equal_with_epsilon(step_end_state.x, position_end.y, 0.001))
+    assert(Geometry.are_floats_equal_with_epsilon(step_end_state[0], position_end.y, 0.001))
     
-    step.position_peak_height = Vector2(INF, peak_height_end_state.x)
-    step.velocity_step_end = Vector2(INF, step_end_state.y)
+    step.position_peak_height = Vector2(INF, peak_height_end_state[0])
+    step.velocity_step_end = Vector2(INF, step_end_state[1])
     
     if position_instruction_end == Vector2.INF:
         var instruction_end_state := \
                 calculate_vertical_end_state_for_time(movement_params, step, time_instruction_end)
-        position_instruction_end = Vector2(INF, instruction_end_state.x)
-        velocity_instruction_end = Vector2(INF, instruction_end_state.y)
+        position_instruction_end = Vector2(INF, instruction_end_state[0])
+        velocity_instruction_end = Vector2(INF, instruction_end_state[1])
     
     step.position_instruction_end = position_instruction_end
     step.velocity_instruction_end = velocity_instruction_end
@@ -425,7 +425,7 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
 # velocity.
 # FIXME: B: Fix unit tests to use the return value instead of output params.
 static func calculate_vertical_end_state_for_time(movement_params: MovementParams, \
-        vertical_step: MovementVertCalcStep, time: float) -> Vector2:
+        vertical_step: MovementVertCalcStep, time: float) -> Array:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     var slow_ascent_end_time := min(time, vertical_step.time_instruction_end)
     
@@ -453,10 +453,10 @@ static func calculate_vertical_end_state_for_time(movement_params: MovementParam
             0.5 * movement_params.gravity_fast_fall * fast_fall_duration * fast_fall_duration
         velocity = slow_ascent_end_velocity + movement_params.gravity_fast_fall * fast_fall_duration
     
-    return Vector2(position, velocity)
+    return [position, velocity]
 
 # Returns a positive value.
-static func calculate_max_upward_movement(movement_params: MovementParams) -> float:
+static func calculate_max_upward_displacement(movement_params: MovementParams) -> float:
     # FIXME: F: Add support for double jumps, dash, etc.
     
     # From a basic equation of motion:
