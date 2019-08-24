@@ -2,11 +2,11 @@
 extends Reference
 class_name Edge
 
-var instructions: PlayerInstructions
+var instructions: MovementInstructions
 
 var weight: float setget ,_get_weight
 
-func _init(instructions: PlayerInstructions) -> void:
+func _init(instructions: MovementInstructions) -> void:
     self.instructions = instructions
 
 func _get_weight() -> float:

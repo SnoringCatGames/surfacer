@@ -1,7 +1,7 @@
 # Some start and stop state for a single input command.
 # 
 # This is used internally to make edge calculation easier. These are converted to
-# PlayerInstructions before the edges are finalized and stored.
+# MovementInstructions before the edges are finalized and stored.
 # 
 # Each overall (edge) movement consists of a single vertical step and a series of horizontal steps.
 # 

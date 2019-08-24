@@ -1,7 +1,7 @@
-# A collection of utility functions for calculating state related to PlayerInstructions.
+# A collection of utility functions for calculating state related to MovementInstructions.
 class_name MovementInstructionsUtils
 
-const PlayerInstruction := preload("res://framework/player_movement/models/player_instruction.gd")
+const MovementInstruction := preload("res://framework/movement/models/movement_instruction.gd")
 
 # FIXME: B 
 # - Should I remove this and force a slightly higher offset to target jump position directly? What
@@ -14,7 +14,7 @@ const PlayerInstruction := preload("res://framework/player_movement/models/playe
 const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
 const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
 
-var JUMP_RELEASE_INSTRUCTION = PlayerInstruction.new("jump", -1, false)
+var JUMP_RELEASE_INSTRUCTION = MovementInstruction.new("jump", -1, false)
 
 const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
 
@@ -28,9 +28,9 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.
-static func convert_calculation_steps_to_player_instructions( \
+static func convert_calculation_steps_to_movement_instructions( \
         position_start: Vector2, position_end: Vector2, \
-        calc_results: MovementCalcResults, includes_jump := true) -> PlayerInstructions:
+        calc_results: MovementCalcResults, includes_jump := true) -> MovementInstructions:
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
     
@@ -43,15 +43,15 @@ static func convert_calculation_steps_to_player_instructions( \
     
     var step: MovementCalcStep
     var input_key: String
-    var press: PlayerInstruction
-    var release: PlayerInstruction
+    var press: MovementInstruction
+    var release: MovementInstruction
 
     # Record the various sideways movement instructions.
     for i in range(steps.size()):
         step = steps[i]
         input_key = "move_left" if step.horizontal_acceleration_sign < 0 else "move_right"
-        press = PlayerInstruction.new(input_key, step.time_instruction_start, true)
-        release = PlayerInstruction.new(input_key, \
+        press = MovementInstruction.new(input_key, step.time_instruction_start, true)
+        release = MovementInstruction.new(input_key, \
                 step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON, false)
         instructions[i * 2] = press
         instructions[i * 2 + 1] = release
@@ -62,17 +62,17 @@ static func convert_calculation_steps_to_player_instructions( \
     # Record the jump instruction.
     if includes_jump:
         input_key = "jump"
-        press = PlayerInstruction.new(input_key, vertical_step.time_instruction_start, true)
-        release = PlayerInstruction.new(input_key, \
+        press = MovementInstruction.new(input_key, vertical_step.time_instruction_start, true)
+        release = MovementInstruction.new(input_key, \
                 vertical_step.time_instruction_end + JUMP_DURATION_INCREASE_EPSILON, false)
         instructions.push_front(release)
         instructions.push_front(press)
     
-    return PlayerInstructions.new(instructions, vertical_step.time_step_end, distance_squared, \
+    return MovementInstructions.new(instructions, vertical_step.time_step_end, distance_squared, \
             constraint_positions)
 
 # Test that the given instructions were created correctly.
-static func test_instructions(instructions: PlayerInstructions, \
+static func test_instructions(instructions: MovementInstructions, \
         global_calc_params: MovementCalcGlobalParams, calc_results: MovementCalcResults) -> bool:
     assert(instructions.instructions.size() > 0)
     assert(instructions.instructions.size() % 2 == 0)

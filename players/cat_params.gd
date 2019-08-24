@@ -1,8 +1,8 @@
 extends PlayerParams
 class_name CatParams
 
-const JumpFromPlatformMovement := preload("res://framework/player_movement/models/jump_from_platform_movement.gd")
-const FallFromAirMovement := preload("res://framework/player_movement/models/fall_from_air_movement.gd")
+const JumpFromPlatformMovement := preload("res://framework/movement/models/jump_from_platform_movement.gd")
+const FallFromAirMovement := preload("res://framework/movement/models/fall_from_air_movement.gd")
 const CatPlayer := preload("res://players/cat_player.gd")
 
 const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
@@ -35,7 +35,7 @@ func _create_action_handlers() -> Array:
         global.PLAYER_ACTIONS[WallWalkAction.NAME],
     ]
 
-# Array<PlayerMovement>
+# Array<Movement>
 func _create_movement_types(movement_params: MovementParams) -> Array:
     return [
         JumpFromPlatformMovement.new(movement_params),

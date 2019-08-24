@@ -4,11 +4,11 @@ class_name CollisionCheckUtils
 # is calculated by stepping through each discrete physics frame, which should exactly emulate the
 # actual Player trajectory that would be used.
 static func check_instructions_for_collision(global_calc_params: MovementCalcGlobalParams, \
-        instructions: PlayerInstructions, vertical_step: MovementVertCalcStep, \
+        instructions: MovementInstructions, vertical_step: MovementVertCalcStep, \
         horizontal_steps: Array) -> SurfaceCollision:
     var movement_params := global_calc_params.movement_params
     var current_instruction_index := -1
-    var next_instruction: PlayerInstruction = instructions.instructions[0]
+    var next_instruction: MovementInstruction = instructions.instructions[0]
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
     # On average, an instruction set will start halfway through a physics frame, so let's use that

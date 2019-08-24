@@ -51,7 +51,7 @@ class Test_get_closest_fallable_surface_intersecting_polygon:
 
 ###################################################################################################
 
-class Test_convert_calculation_steps_to_player_instructions:
+class Test_convert_calculation_steps_to_movement_instructions:
     extends TestBed
     
     func test_TODO() -> void:

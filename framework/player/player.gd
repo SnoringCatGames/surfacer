@@ -13,7 +13,7 @@ var can_grab_walls: bool
 var can_grab_ceilings: bool
 var can_grab_floors: bool
 var movement_params: MovementParams
-# Array<PlayerMovement>
+# Array<Movement>
 var movement_types: Array
 # Array<Surface>
 var possible_surfaces: Array

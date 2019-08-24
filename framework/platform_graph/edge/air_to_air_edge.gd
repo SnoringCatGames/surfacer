@@ -12,5 +12,5 @@ func _init(start: Vector2, end: Vector2) \
 
 # TODO: Implement this
 
-static func _calculate_instructions(start: Vector2, end: Vector2) -> PlayerInstructions:
+static func _calculate_instructions(start: Vector2, end: Vector2) -> MovementInstructions:
     return null

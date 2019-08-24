@@ -1,14 +1,14 @@
 extends Reference
 class_name InstructionsPlayback
 
-var instructions: PlayerInstructions
+var instructions: MovementInstructions
 var next_index := 0
-var next_instruction: PlayerInstruction
+var next_instruction: MovementInstruction
 var is_finished := false
 # Dictionary<String, boolean>
 var active_key_presses := {}
 
-func _init(instructions: PlayerInstructions) -> void:
+func _init(instructions: MovementInstructions) -> void:
     assert(!instructions.instructions.empty())
     self.instructions = instructions
     self.next_instruction = instructions.instructions[0]

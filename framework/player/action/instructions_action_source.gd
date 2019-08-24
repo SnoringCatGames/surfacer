@@ -11,7 +11,7 @@ func _init(player).(player) -> void:
 
 # Calculates actions for the current frame.
 func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
-    var next_instruction: PlayerInstruction
+    var next_instruction: MovementInstruction
     var is_pressed: bool
     var non_pressed_keys := []
     
@@ -43,7 +43,7 @@ func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
             i -= 1
         i += 1
 
-func start_instructions(instructions: PlayerInstructions) -> InstructionsPlayback:
+func start_instructions(instructions: MovementInstructions) -> InstructionsPlayback:
     var playback := InstructionsPlayback.new(instructions)
     _all_playback.push_back(playback)
     return playback

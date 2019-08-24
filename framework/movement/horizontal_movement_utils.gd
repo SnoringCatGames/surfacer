@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to horizontal movement.
 class_name HorizontalMovementUtils
 
-const MovementCalcStep := preload("res://framework/player_movement/models/movement_calculation_step.gd")
+const MovementCalcStep := preload("res://framework/movement/models/movement_calculation_step.gd")
 
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams, \

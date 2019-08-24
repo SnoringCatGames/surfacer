@@ -19,7 +19,7 @@ func test_floor_surface() -> void:
         surface_end = Vector2(200, 0),
     })
     
-    var constraints := PlayerMovement._calculate_constraints(surface, offset)
+    var constraints := Movement._calculate_constraints(surface, offset)
     
     assert_constraint(constraints[0], {
         passing_point = Vector2(90, -10),
@@ -39,7 +39,7 @@ func test_ceiling_surface() -> void:
         surface_end = Vector2(100, 0),
     })
     
-    var constraints := PlayerMovement._calculate_constraints(surface, offset)
+    var constraints := Movement._calculate_constraints(surface, offset)
     
     assert_constraint(constraints[0], {
         passing_point = Vector2(90, 10),
@@ -59,7 +59,7 @@ func test_left_wall_surface() -> void:
         surface_end = Vector2(0, 200),
     })
     
-    var constraints := PlayerMovement._calculate_constraints(surface, offset)
+    var constraints := Movement._calculate_constraints(surface, offset)
     
     assert_constraint(constraints[0], {
         passing_point = Vector2(10, 90),
@@ -79,7 +79,7 @@ func test_right_wall_surface() -> void:
         surface_end = Vector2(0, 100),
     })
     
-    var constraints := PlayerMovement._calculate_constraints(surface, offset)
+    var constraints := Movement._calculate_constraints(surface, offset)
     
     assert_constraint(constraints[0], {
         passing_point = Vector2(-10, 90),

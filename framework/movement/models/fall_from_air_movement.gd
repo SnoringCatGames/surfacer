@@ -1,4 +1,4 @@
-extends PlayerMovement
+extends Movement
 class_name FallFromAirMovement
 
 func _init(params: MovementParams).("fall_from_air", params) -> void:
@@ -34,9 +34,9 @@ func get_all_reachable_surface_instructions_from_air(space_state: Physics2DDirec
 #    # the other way to slow it.
 #    var instructions := [
 #        # The horizontal movement.
-#        PlayerInstruction.new(horizontal_movement_input_name, 0, true),
-#        PlayerInstruction.new(horizontal_movement_input_name, duration_for_horizontal_displacement, false),
+#        MovementInstruction.new(horizontal_movement_input_name, 0, true),
+#        MovementInstruction.new(horizontal_movement_input_name, duration_for_horizontal_displacement, false),
 #    ]
 #
-#    return PlayerInstructions.new(instructions, duration, displacement.length())
+#    return MovementInstructions.new(instructions, duration, displacement.length())
     return []

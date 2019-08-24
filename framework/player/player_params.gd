@@ -3,7 +3,7 @@ class_name PlayerParams
 
 var player_resource_path: String
 var _movement_params: MovementParams
-# Array<PlayerMovement>
+# Array<Movement>
 var _movement_types: Array
 # Array<PlayerActionHandler>
 var _action_handlers: Array
@@ -51,7 +51,7 @@ func _create_action_handlers() -> Array:
     Utils.error("abstract PlayerParams._create_action_handlers is not implemented")
     return []
 
-# Array<PlayerMovement>
+# Array<Movement>
 func _create_movement_types(movement_params: MovementParams) -> Array:
     Utils.error("abstract PlayerParams._create_movement_types is not implemented")
     return []

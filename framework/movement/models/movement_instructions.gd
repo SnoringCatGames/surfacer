@@ -1,7 +1,7 @@
 extends Reference
-class_name PlayerInstructions
+class_name MovementInstructions
 
-# Array<PlayerInstruction>
+# Array<MovementInstruction>
 var instructions: Array
 var duration: float
 var distance_squared: float
@@ -31,14 +31,14 @@ func _init(instructions: Array, duration: float, distance_squared: float, \
 
 # Inserts the given instruction in sorted order.
 # TODO: Remove?
-func insert(instruction: PlayerInstruction) -> int:
+func insert(instruction: MovementInstruction) -> int:
     var index := instructions.bsearch_custom(instruction, self, "instruction_comparator")
     instructions.insert(index, instruction)
     return index
 
 # Removes the given instruction if it exists.
 # TODO: Remove?
-func remove(instruction: PlayerInstruction) -> bool:
+func remove(instruction: MovementInstruction) -> bool:
     var index := instructions.bsearch_custom(instruction, self, "instruction_comparator")
     if instructions[index] == instruction:
         instructions.remove(index)
@@ -46,12 +46,12 @@ func remove(instruction: PlayerInstruction) -> bool:
     else:
         return false
 
-# This will mutate the time field on the given PlayerInstruction.
+# This will mutate the time field on the given MovementInstruction.
 # TODO: Remove?
 func is_instruction_in_range( \
-        instruction: PlayerInstruction, min_time: float, max_time: float) -> bool:
+        instruction: MovementInstruction, min_time: float, max_time: float) -> bool:
     var instruction_count := instructions.size()
-    var possible_match: PlayerInstruction
+    var possible_match: MovementInstruction
     instruction.time = min_time
     var index := instructions.bsearch_custom(instruction, self, "instruction_comparator")
     
@@ -79,5 +79,5 @@ func is_instruction_in_range( \
     
     return false
 
-static func instruction_comparator(a: PlayerInstruction, b: PlayerInstruction) -> bool:
+static func instruction_comparator(a: MovementInstruction, b: MovementInstruction) -> bool:
     return a.time < b.time

@@ -14,7 +14,7 @@ func _init(start: PositionAlongSurface, end: PositionAlongSurface) \
     self.end = end
 
 static func _calculate_instructions( \
-        start: PositionAlongSurface, end: PositionAlongSurface) -> PlayerInstructions:
+        start: PositionAlongSurface, end: PositionAlongSurface) -> MovementInstructions:
     var is_wall_surface := \
             end.surface.side == SurfaceSide.LEFT_WALL || end.surface.side == SurfaceSide.RIGHT_WALL
     
@@ -30,6 +30,6 @@ static func _calculate_instructions( \
         else:
             input_key = "move_left"
     
-    var instruction := PlayerInstruction.new(input_key, 0.0, true)
+    var instruction := MovementInstruction.new(input_key, 0.0, true)
     var distance_squared := start.target_point.distance_squared_to(end.target_point)
-    return PlayerInstructions.new([instruction], INF, distance_squared)
+    return MovementInstructions.new([instruction], INF, distance_squared)

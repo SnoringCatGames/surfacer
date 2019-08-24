@@ -30,7 +30,7 @@ func _init(tile_maps: Array, player_types: Dictionary) -> void:
     for tile_map in tile_maps:
         _parse_tile_map(tile_map)
     
-    # The various PlayerMovement instances need to know about the available Surfaces.
+    # The various Movement instances need to know about the available Surfaces.
     for player_name in player_types:
         for movement_type in player_types[player_name].movement_types:
             movement_type.set_surfaces(self)

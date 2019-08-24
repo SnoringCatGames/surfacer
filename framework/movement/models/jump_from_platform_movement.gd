@@ -1,7 +1,7 @@
-extends PlayerMovement
+extends Movement
 class_name JumpFromPlatformMovement
 
-const MovementCalcGlobalParams := preload("res://framework/player_movement/models/movement_calculation_global_params.gd")
+const MovementCalcGlobalParams := preload("res://framework/movement/models/movement_calculation_global_params.gd")
 
 # FIXME: SUB-MASTER LIST ***************
 # - Add support for specifying a required min/max end-x-velocity.
@@ -194,7 +194,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
     var jump_positions: Array
     var land_positions: Array
     var terminals: Array
-    var instructions: PlayerInstructions
+    var instructions: MovementInstructions
     var edges := []
     
     # FIXME: B: REMOVE
@@ -209,7 +209,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
     
     for b in possible_surfaces:
         # This makes the assumption that traversing through any fall-through/walk-through surface
-        # would be better handled by some other PlayerMovement type, so we don't handle those
+        # would be better handled by some other Movement type, so we don't handle those
         # cases here.
         
         if a == b:
@@ -268,7 +268,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
 
 func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
         surface_parser: SurfaceParser, position_start: PositionAlongSurface, \
-        position_end: Vector2) -> PlayerInstructions:
+        position_end: Vector2) -> MovementInstructions:
     var velocity_start := Vector2(0.0, params.jump_boost)
     var global_calc_params := \
             MovementCalcGlobalParams.new(params, space_state, surface_parser, velocity_start)
@@ -289,14 +289,14 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
 # This considers interference from intermediate surfaces, and will only return instructions that
 # would produce valid movement without intermediate collisions.
 static func _calculate_jump_instructions( \
-        global_calc_params: MovementCalcGlobalParams) -> PlayerInstructions:
+        global_calc_params: MovementCalcGlobalParams) -> MovementInstructions:
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height(global_calc_params)
     
     if calc_results == null:
         return null
     
-    var instructions: PlayerInstructions = \
-            MovementUtils.convert_calculation_steps_to_player_instructions( \
+    var instructions: MovementInstructions = \
+            MovementUtils.convert_calculation_steps_to_movement_instructions( \
                     global_calc_params.origin_constraint.position, \
                     global_calc_params.destination_constraint.position, calc_results)
     

@@ -6,8 +6,8 @@ class_name PlatformGraph
 
 const AirToSurfaceEdge := preload("res://framework/platform_graph/edge/air_to_surface_edge.gd")
 const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_surface_edge.gd")
-const MovementCalcGlobalParams := preload("res://framework/player_movement/models/movement_calculation_global_params.gd")
-const MovementCalcLocalParams := preload("res://framework/player_movement/models/movement_calculation_local_params.gd")
+const MovementCalcGlobalParams := preload("res://framework/movement/models/movement_calculation_global_params.gd")
+const MovementCalcLocalParams := preload("res://framework/movement/models/movement_calculation_local_params.gd")
 const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
@@ -84,11 +84,11 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #       - Starting on convex and concave corners between adjacent surfaces, so that the collision
 #         margin considers the other surfaces as already colliding beforehand.
 #
-# - Refactor PlayerMovement classes, so that whether the start and end posiition is on a platform
+# - Refactor Movement classes, so that whether the start and end posiition is on a platform
 #   or in the air is configuration that JumpFromPlatformMovement handles directly, rather than
 #   relying on a separate FallFromAir class?
 # - Add support for including walls in our navigation.
-# - Add support for other PlayerMovement sub-classes:
+# - Add support for other Movement sub-classes:
 #   - JumpFromWallMovement
 #   - FallFromPlatformMovement
 #   - FallFromWallMovement
@@ -128,7 +128,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 # - Update things to support falling from the center of fall-through surfaces (consider the whole
 #   surface, rather than just the ends).
 # 
-# - Split apart PlayerMovement into smaller classes (after finalizing movement system architecture).
+# - Split apart Movement into smaller classes (after finalizing movement system architecture).
 # 
 # - Refactor the movement/navigation system to support more custom behaviors (e.g., some classic
 #   video game movements, like walking to the edge and then turning around, circling the entire

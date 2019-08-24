@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to MovementCalcSteps.
 class_name MovementStepUtils
 
-const MovementCalcLocalParams := preload("res://framework/player_movement/models/movement_calculation_local_params.gd")
+const MovementCalcLocalParams := preload("res://framework/movement/models/movement_calculation_local_params.gd")
 
 # Calculates movement steps to reach the given destination.
 # 

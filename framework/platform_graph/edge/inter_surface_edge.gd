@@ -7,6 +7,6 @@ var start: PositionAlongSurface
 var end: PositionAlongSurface
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: PlayerInstructions).(instructions) -> void:
+        instructions: MovementInstructions).(instructions) -> void:
     self.start = start
     self.end = end

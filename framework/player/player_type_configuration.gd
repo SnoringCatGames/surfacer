@@ -5,7 +5,7 @@ var name: String
 # PlayerType
 var type: int
 var movement_params: MovementParams
-# Array<PlayerMovement>
+# Array<Movement>
 var movement_types: Array
 # Array<PlayerActionHandler>
 var action_handlers: Array

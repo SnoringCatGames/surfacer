@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to vertical movement.
 class_name VerticalMovementUtils
 
-const MovementVertCalcStep := preload("res://framework/player_movement/models/movement_vertical_calculation_step.gd")
+const MovementVertCalcStep := preload("res://framework/movement/models/movement_vertical_calculation_step.gd")
 
 # Calculates a new step for the vertical part of the movement and the corresponding total jump
 # duration.

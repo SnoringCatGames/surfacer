@@ -13,5 +13,5 @@ func _init(start: PositionAlongSurface, end: Vector2) \
 # TODO: Implement this
 
 static func _calculate_instructions( \
-        start: PositionAlongSurface, end: Vector2) -> PlayerInstructions:
+        start: PositionAlongSurface, end: Vector2) -> MovementInstructions:
     return null
