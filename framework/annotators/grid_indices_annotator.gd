@@ -22,7 +22,7 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
     var font = label.get_font("")
     
     for tile_map in graph.surface_parser._tile_map_index_to_surface_maps:
-        half_cell_size = tile_map.cell_size / 2
+        half_cell_size = tile_map.cell_size * 0.5
         
         if only_render_used_indices:
             positions = tile_map.get_used_cells()

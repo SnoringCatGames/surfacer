@@ -13,7 +13,7 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
     var is_first_jump := true
     # On average, an instruction set will start halfway through a physics frame, so let's use that
     # average here.
-    var previous_time: float = instructions.instructions[0].time - delta / 2
+    var previous_time: float = instructions.instructions[0].time - delta * 0.5
     var current_time := previous_time + delta
     var duration := instructions.duration
     var is_pressing_left := false
@@ -54,8 +54,9 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
         continuous_horizontal_state = \
                 HorizontalMovementUtils.calculate_horizontal_end_state_for_time(movement_params, \
                         current_horizontal_step, current_time)
-        continuous_vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time( \
-                movement_params, vertical_step, current_time)
+        continuous_vertical_state = \
+                VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+                        movement_params, vertical_step, current_time)
         continuous_position.x = continuous_horizontal_state[0]
         continuous_position.y = continuous_vertical_state[0]
         
@@ -142,8 +143,9 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
     continuous_horizontal_state = \
             HorizontalMovementUtils.calculate_horizontal_end_state_for_time(movement_params, \
                     current_horizontal_step, duration)
-    continuous_vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time( \
-            movement_params, vertical_step, duration)
+    continuous_vertical_state = \
+            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+                    movement_params, vertical_step, duration)
     continuous_position.x = continuous_horizontal_state[0]
     continuous_position.y = continuous_vertical_state[0]
     # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
@@ -178,7 +180,7 @@ static func check_discrete_horizontal_step_for_collision( \
     var is_first_jump := true
     # On average, an instruction set will start halfway through a physics frame, so let's use that
     # average here.
-    var previous_time := horizontal_step.time_step_start - delta / 2
+    var previous_time := horizontal_step.time_step_start - delta * 0.5
     var current_time := previous_time + delta
     var step_end_time := horizontal_step.time_step_end
     var position := horizontal_step.position_step_start
@@ -284,7 +286,7 @@ static func check_continuous_horizontal_step_for_collision( \
         # Update state for the current frame.
         horizontal_state = HorizontalMovementUtils.calculate_horizontal_end_state_for_time( \
                 movement_params, horizontal_step, current_time)
-        vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time( \
+        vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
                 movement_params, vertical_step, current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
@@ -309,7 +311,7 @@ static func check_continuous_horizontal_step_for_collision( \
     if !Geometry.are_floats_equal_with_epsilon(previous_time, current_time):
         horizontal_state = HorizontalMovementUtils.calculate_horizontal_end_state_for_time( \
                 movement_params, horizontal_step, current_time)
-        vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time( \
+        vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
                 movement_params, vertical_step, current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]

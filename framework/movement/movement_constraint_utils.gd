@@ -104,9 +104,9 @@ static func update_constraint(constraint: MovementConstraint, \
         additional_high_constraint: MovementConstraint) -> bool:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
 
-    # Previous and next constraints and vertical_step should be provided when updating intermediate constraints.
+    # Previous constraint and vertical_step should be provided when updating intermediate
+    # constraints.
     assert(previous_constraint != null or constraint.is_origin)
-    assert(next_constraint != null or constraint.is_destination)
     assert(vertical_step != null or constraint.is_destination or constraint.is_origin)
 
     # additional_high_constraint should only ever be provided for the destination, and then only
@@ -145,7 +145,7 @@ static func update_constraint(constraint: MovementConstraint, \
             # We consider different parameters if we are starting a new movement calculation vs
             # backtracking to consider a new jump height.
             var constraint_to_calculate_jump_release_time_for: MovementConstraint
-            if vertical_step == null:
+            if additional_high_constraint == null:
                 # We are starting a new movement calculation (not backtracking to consider a new
                 # jump height).
                 constraint_to_calculate_jump_release_time_for = constraint
@@ -157,7 +157,7 @@ static func update_constraint(constraint: MovementConstraint, \
             #       calculations here.
 
             var origin_position := origin_constraint.position
-
+            
             var time_to_pass_through_constraint_ignoring_others := \
                     VerticalMovementUtils.calculate_time_to_jump_to_constraint(movement_params, \
                             origin_position, \
@@ -186,10 +186,20 @@ static func update_constraint(constraint: MovementConstraint, \
                 time_to_release_jump = \
                         max(vertical_step.time_instruction_end, time_to_release_jump)
                 
+                var instruction_end_state := \
+                        VerticalMovementUtils.calculate_vertical_end_state_for_time( \
+                                movement_params, time_to_release_jump, origin_position.y, \
+                                velocity_start_origin.y, time_to_release_jump)
+                
                 time_passing_through = \
                         VerticalMovementUtils.calculate_time_for_passing_through_constraint( \
-                                movement_params, vertical_step, constraint, \
-                                vertical_step.time_step_end)
+                                movement_params, constraint, vertical_step.time_step_end, \
+                                origin_position.y, time_to_release_jump, \
+                                instruction_end_state[0], instruction_end_state[1])
+                if time_passing_through == INF:
+                    # We can't reach this constraint from the previous constraint.
+                    return false
+            
             else:
                 # We are starting a new movement calculation (not backtracking to consider a new
                 # jump height).
@@ -199,8 +209,15 @@ static func update_constraint(constraint: MovementConstraint, \
             # This is an intermediate constraint (not the origin or destination).
             time_passing_through = \
                     VerticalMovementUtils.calculate_time_for_passing_through_constraint( \
-                            movement_params, vertical_step, constraint, \
-                            previous_constraint.time_passing_through)
+                            movement_params, constraint, \
+                            previous_constraint.time_passing_through, \
+                            vertical_step.position_step_start.y, \
+                            vertical_step.time_instruction_end, \
+                            vertical_step.position_instruction_end.y, \
+                            vertical_step.velocity_instruction_end.y)
+            if time_passing_through == INF:
+                # We can't reach this constraint from the previous constraint.
+                return false
             
             var still_holding_jump_button := \
                     time_passing_through < vertical_step.time_instruction_end
@@ -224,7 +241,7 @@ static func update_constraint(constraint: MovementConstraint, \
         # Calculate the min and max velocity for movement through the constraint.
         var duration := time_passing_through - previous_constraint.time_passing_through
         var min_and_max_velocity_at_step_end := \
-                calculate_min_and_max_velocity_at_end_of_interval(displacement.y, duration, \
+                calculate_min_and_max_x_velocity_at_end_of_interval(displacement.x, duration, \
                         previous_constraint.min_velocity_x, previous_constraint.max_velocity_x, \
                         movement_params.max_horizontal_speed_default, \
                         movement_params.in_air_horizontal_acceleration, \
@@ -238,9 +255,7 @@ static func update_constraint(constraint: MovementConstraint, \
         if constraint.is_destination:
             # Initialize the destination constraint's actual velocity to match whichever min/max
             # value yields the least overall movement.
-            actual_velocity_x = \
-                    constraint.min_velocity_x if horizontal_movement_sign > 0 else \
-                    constraint.max_velocity_x
+            actual_velocity_x = min_velocity_x if horizontal_movement_sign > 0 else max_velocity_x
         else:
             # actual_velocity_x is calculated in a back-to-front pass when calculating the
             # horizontal steps.
@@ -311,7 +326,7 @@ static func calculate_horizontal_movement_sign(constraint: MovementConstraint, \
 # A Vector2 is returned:
 # - The x property represents the min velocity.
 # - The y property represents the max velocity.
-static func calculate_min_and_max_velocity_at_end_of_interval(displacement: float, \
+static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: float, \
         duration: float, v_0_min_from_prev_constraint: float, \
         v_0_max_from_prev_constraint: float, speed_max: float, a_magnitude: float, \
         horizontal_movement_sign: int) -> Array:
@@ -321,10 +336,11 @@ static func calculate_min_and_max_velocity_at_end_of_interval(displacement: floa
     # Accelerating in a positive direction over the entire step, corresponds to a lower bound on
     # the start velocity, and accelerating in a negative direction over the entire step,
     # corresponds to an upper bound on the start velocity.
-    #    From a basic equation of motion:
-    #    s = s_0 + v_0*t + 1/2*a*t^2
-    #    Algebra...
-    #    v_0 = (s - s_0)/t - 1/2*a*t
+    # Derivation:
+    # - From a basic equation of motion:
+    #   s = s_0 + v_0*t + 1/2*a*t^2
+    # - Algebra...
+    #   v_0 = (s - s_0)/t - 1/2*a*t
     var min_v_0_that_can_reach_target := \
             displacement / duration - 0.5 * a_magnitude * duration
     var max_v_0_that_can_reach_target := \
@@ -453,6 +469,9 @@ static func solve_for_end_velocity(displacement: float, v_0: float, acceleration
     var a: float
     var b: float
     var c: float
+    
+    # FIXME: -------------- REMOVE: DEBUGGING
+#    duration = 1.3
 
     if should_accelerate_at_start:
         # Try accelerating at the start of the step.
@@ -469,7 +488,7 @@ static func solve_for_end_velocity(displacement: float, v_0: float, acceleration
         #   - 0 = 2*a*(s_2 - s_0) + v_0^2 - 2*(a*t_total + v_0)*v_1 + v_1^2
         # - Apply quadratic formula to solve for v_1.
         a = 1
-        b = 2 * (acceleration * duration + v_0)
+        b = -2 * (acceleration * duration + v_0)
         c = 2 * acceleration * displacement + v_0 * v_0
     else:
         # Try accelerating at the end of the step.
@@ -496,10 +515,31 @@ static func solve_for_end_velocity(displacement: float, v_0: float, acceleration
         return INF
     
     var discriminant_sqrt := sqrt(discriminant)
-    var result_1 := (-b + discriminant_sqrt) / 2 / a
-    var result_2 := (-b - discriminant_sqrt) / 2 / a
+    var result_1 := (-b + discriminant_sqrt) / 2.0 / a
+    var result_2 := (-b - discriminant_sqrt) / 2.0 / a
+    
+    # From a basic equation of motion:
+    #    v = v_0 + a*t
+    var t_result_1 := (result_1 - v_0) / acceleration
+    var t_result_2 := (result_2 - v_0) / acceleration
+    
+    # FIXME: --------------- REMOVE: DEBUGGING
+#    var disp_result_1_foo := v_0*t_result_1 + 0.5*acceleration*t_result_1*t_result_1
+#    var disp_result_1_bar := result_1*(duration-t_result_1)
+#    var disp_result_1_total := disp_result_1_foo + disp_result_1_bar
+    
+    # The results are invalid if they correspond to imaginary negative durations.
+    var is_result_1_valid := t_result_1 >= 0 and t_result_1 <= duration
+    var is_result_2_valid := t_result_2 >= 0 and t_result_2 <= duration
 
-    if should_return_min_result:
+    if !is_result_1_valid and !is_result_2_valid:
+        # There is no end velocity that can satisfy these parameters.
+        return INF
+    elif !is_result_1_valid:
+        return result_2
+    elif !is_result_2_valid:
+        return result_1
+    elif should_return_min_result:
         return min(result_1, result_2)
     else:
         return max(result_1, result_2)
@@ -514,7 +554,7 @@ static func update_neighbors_for_new_constraint(constraint: MovementConstraint, 
         # The next constraint is only used for updates to the origin. Each other constraints just
         # depends on their previous constraint.
         var is_valid := update_constraint(previous_constraint, null, constraint, origin, \
-                global_calc_params.movement_params, origin.velocity_start, \
+                global_calc_params.movement_params, vertical_step.velocity_step_start, \
                 vertical_step.can_hold_jump_button, vertical_step, null)
         if !is_valid:
             return false
@@ -522,7 +562,7 @@ static func update_neighbors_for_new_constraint(constraint: MovementConstraint, 
     # The next constraint is only used for updates to the origin. Each other constraints just
     # depends on their previous constraint.
     return update_constraint(next_constraint, constraint, null, origin, \
-            global_calc_params.movement_params, origin.velocity_start, \
+            global_calc_params.movement_params, vertical_step.velocity_step_start, \
             vertical_step.can_hold_jump_button, vertical_step, null)
 
 static func copy_constraint(original: MovementConstraint) -> MovementConstraint:

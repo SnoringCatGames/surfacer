@@ -3,6 +3,8 @@ class_name HorizontalMovementUtils
 
 const MovementCalcStep := preload("res://framework/movement/models/movement_calculation_step.gd")
 
+const MIN_MAX_VELOCITY_X_MARGIN := MovementConstraintUtils.MIN_MAX_VELOCITY_X_OFFSET * 5
+
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams, \
         global_calc_params: MovementCalcGlobalParams) -> MovementCalcStep:
@@ -131,14 +133,18 @@ static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams
                 position_step_start.x + velocity_start_x * duration_for_horizontal_coasting
         position_instruction_end_x = position_end.x
     
-    var step_start_state := VerticalMovementUtils.calculate_vertical_end_state_for_time( \
-            movement_params, vertical_step, time_step_start)
-    var instruction_start_state := VerticalMovementUtils.calculate_vertical_end_state_for_time( \
-            movement_params, vertical_step, time_instruction_start)
-    var instruction_end_state := VerticalMovementUtils.calculate_vertical_end_state_for_time( \
-            movement_params, vertical_step, time_instruction_end)
-    var step_end_state := VerticalMovementUtils.calculate_vertical_end_state_for_time( \
-            movement_params, vertical_step, time_step_end)
+    var step_start_state := \
+            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+                    movement_params, vertical_step, time_step_start)
+    var instruction_start_state := \
+            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+                    movement_params, vertical_step, time_instruction_start)
+    var instruction_end_state := \
+            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+                    movement_params, vertical_step, time_instruction_end)
+    var step_end_state := \
+            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+                    movement_params, vertical_step, time_step_end)
     
     assert(Geometry.are_floats_equal_with_epsilon(step_end_state[0], position_end.y, 0.0001))
     assert(Geometry.are_floats_equal_with_epsilon(step_start_state[0], position_step_start.y, 0.0001))
@@ -235,8 +241,8 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         return INF
     
     var discriminant_sqrt := sqrt(discriminant)
-    var result_1 := (-b + discriminant_sqrt) / 2 / a
-    var result_2 := (-b - discriminant_sqrt) / 2 / a
+    var result_1 := (-b + discriminant_sqrt) / 2.0 / a
+    var result_2 := (-b - discriminant_sqrt) / 2.0 / a
     
     var min_speed_v_0_to_reach_target: float
     if horizontal_movement_sign_start > 0:
@@ -252,10 +258,10 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         else:
             min_speed_v_0_to_reach_target = min(result_1, result_2)
         
-        if min_speed_v_0_to_reach_target > v_start_max:
+        if min_speed_v_0_to_reach_target > v_start_max + MIN_MAX_VELOCITY_X_MARGIN:
             # We cannot start this step with enough speed to reach the end position.
             return INF
-        elif min_speed_v_0_to_reach_target < v_start_min:
+        elif min_speed_v_0_to_reach_target < v_start_min - MIN_MAX_VELOCITY_X_MARGIN:
             # TODO: Check if this case is actually always an error
             Utils.error()
 
@@ -281,10 +287,10 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         else:
             min_speed_v_0_to_reach_target = max(result_1, result_2)
         
-        if min_speed_v_0_to_reach_target < v_start_min:
+        if min_speed_v_0_to_reach_target < v_start_min - MIN_MAX_VELOCITY_X_MARGIN:
             # We cannot start this step with enough speed to reach the end position.
             return INF
-        elif min_speed_v_0_to_reach_target > v_start_max:
+        elif min_speed_v_0_to_reach_target > v_start_max + MIN_MAX_VELOCITY_X_MARGIN:
             # TODO: Check if this case is actually always an error
             Utils.error()
 

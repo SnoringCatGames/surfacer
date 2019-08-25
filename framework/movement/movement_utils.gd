@@ -35,8 +35,8 @@ static func calculate_time_to_release_acceleration(time_start: float, time_step_
         # We can't reach the end position from our start position.
         return INF
     var discriminant_sqrt := sqrt(discriminant)
-    var t1 := (-b + discriminant_sqrt) / 2 / a
-    var t2 := (-b - discriminant_sqrt) / 2 / a
+    var t1 := (-b + discriminant_sqrt) / 2.0 / a
+    var t2 := (-b - discriminant_sqrt) / 2.0 / a
     
     # Optionally ensure that only one result is positive.
     assert(!expects_only_one_positive_result or t1 < 0 or t2 < 0)
@@ -53,6 +53,57 @@ static func calculate_time_to_release_acceleration(time_start: float, time_step_
             return min(t1, t2)
         else:
             return max(t1, t2)
+
+# Calculates the minimum required time to reach the displacement, considering a maximum velocity.
+static func calculate_min_time_to_reach_displacement(displacement: float, v_0: float, \
+        speed_max: float, a: float) -> float:
+    if displacement == 0.0:
+        # The start position is the destination.
+        return 0.0
+    elif a == 0:
+        # Handle the degenerate case with no acceleration.
+        if v_0 == 0:
+            # We can't reach the destination, since we're not moving anywhere.
+            return INF 
+        elif (displacement > 0) != (v_0 > 0):
+            # We can't reach the destination, since we're moving in the wrong direction.
+            return INF
+        else:
+            # s = s_0 + v_0*t
+            return displacement / v_0
+    
+    var velocity_limit := speed_max if a > 0 else -speed_max
+    
+    var duration_to_reach_position_with_no_velocity_cap: float = \
+            Geometry.calculate_movement_duration(displacement, v_0, a, true, 0.0, true)
+    
+    if duration_to_reach_position_with_no_velocity_cap == INF:
+        # We can't ever reach the destination.
+        return INF
+    
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    var duration_to_reach_velocity_limit := (velocity_limit - v_0) / a
+    assert(duration_to_reach_velocity_limit > 0)
+    
+    if duration_to_reach_velocity_limit >= duration_to_reach_position_with_no_velocity_cap:
+        # We won't have hit the max velocity before reaching the destination.
+        return duration_to_reach_position_with_no_velocity_cap
+    else:
+        # We will have hit the max velocity before reaching the destination.
+        
+        # From a basic equation of motion:
+        #     s = s_0 + v_0*t + 1/2*a*t^2
+        var position_when_reaching_max_velocity := v_0 * duration_to_reach_velocity_limit + \
+                0.5 * a * duration_to_reach_velocity_limit * duration_to_reach_velocity_limit
+        
+        # From a basic equation of motion:
+        #     s = s_0 + v*t
+        var duration_with_max_velocity := \
+                (displacement - position_when_reaching_max_velocity) / velocity_limit
+        assert(duration_with_max_velocity > 0)
+        
+        return duration_to_reach_velocity_limit + duration_with_max_velocity
 
 static func get_all_jump_positions_from_surface(movement_params: MovementParams, \
         surface: Surface, target_vertices: Array, target_bounding_box: Rect2) -> Array:

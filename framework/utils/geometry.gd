@@ -45,10 +45,10 @@ static func get_distance_squared_between_non_intersecting_segments( \
 # Calculates the closest position on a line segment to a point.
 static func get_closest_point_on_segment_to_point( \
         point: Vector2, segment_a: Vector2, segment_b: Vector2) -> Vector2:
-    var v = segment_b - segment_a
-    var u = point - segment_a
-    var uv = u.dot(v)
-    var vv = v.dot(v)
+    var v := segment_b - segment_a
+    var u := point - segment_a
+    var uv: float = u.dot(v)
+    var vv: float = v.dot(v)
     
     if uv <= 0.0:
         # The projection of the point lies before the first point in the segment.
@@ -58,7 +58,7 @@ static func get_closest_point_on_segment_to_point( \
         return segment_b
     else:
         # The projection of the point lies within the bounds of the segment.
-        var t = uv / vv
+        var t := uv / vv
         return segment_a + t * v
 
 static func get_closest_point_on_polyline_to_point( \
@@ -131,8 +131,8 @@ static func get_intersection_of_segments(segment_1_a: Vector2, segment_1_b: Vect
         return Vector2.INF
     else:
         # The segments are not parallel.
-        var u = u_numerator / denominator
-        var t = (segment_2_a - segment_1_a).cross(s) / denominator
+        var u := u_numerator / denominator
+        var t := (segment_2_a - segment_1_a).cross(s) / denominator
         if t >= 0 and t <= 1 and u >= 0 and u <= 1:
             # The segments intersect.
             return segment_1_a + t * r
@@ -198,20 +198,20 @@ static func project_point_onto_surface(point: Vector2, surface: Surface) -> Vect
 static func is_point_in_triangle(point: Vector2, a: Vector2, b: Vector2, c: Vector2) -> bool:
     # Uses the barycentric approach.
     
-    var ac = c - a
-    var ab = b - a
-    var ap = point - a
+    var ac := c - a
+    var ab := b - a
+    var ap := point - a
     
-    var dot_ac_ac = ac.dot(ac)
-    var dot_ac_ab = ac.dot(ab)
-    var dot_ac_ap = ac.dot(ap)
-    var dot_ab_ab = ab.dot(ab)
-    var dot_ab_ap = ab.dot(ap)
+    var dot_ac_ac: float = ac.dot(ac)
+    var dot_ac_ab: float = ac.dot(ab)
+    var dot_ac_ap: float = ac.dot(ap)
+    var dot_ab_ab: float = ab.dot(ab)
+    var dot_ab_ap: float = ab.dot(ap)
     
     # The barycentric coordinates.
-    var inverse_denominator = 1 / (dot_ac_ac * dot_ab_ab - dot_ac_ab * dot_ac_ab)
-    var u = (dot_ab_ab * dot_ac_ap - dot_ac_ab * dot_ab_ap) * inverse_denominator
-    var v = (dot_ac_ac * dot_ab_ap - dot_ac_ab * dot_ac_ap) * inverse_denominator
+    var inverse_denominator := 1 / (dot_ac_ac * dot_ab_ab - dot_ac_ab * dot_ac_ab)
+    var u := (dot_ab_ab * dot_ac_ap - dot_ac_ab * dot_ab_ap) * inverse_denominator
+    var v := (dot_ac_ac * dot_ab_ap - dot_ac_ab * dot_ac_ap) * inverse_denominator
     
     return u >= 0 and v >= 0 and u + v < 1
 
@@ -420,7 +420,7 @@ static func get_tile_map_index_from_grid_coord(position: Vector2, tile_map: Tile
 static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map: TileMap, \
         is_touching_floor: bool, is_touching_ceiling: bool, is_touching_left_wall: bool, \
         is_touching_right_wall: bool, expects_a_valid_result: bool) -> Vector2:
-    var half_cell_size = tile_map.cell_size / 2
+    var half_cell_size = tile_map.cell_size / 2.0
     var used_rect = tile_map.get_used_rect()
     var position_relative_to_tile_map = \
             position_world_coord - used_rect.position * tile_map.cell_size
@@ -569,7 +569,7 @@ static func do_shapes_match(a: Shape2D, b: Shape2D) -> bool:
 
 # The given rotation must be either 0 or PI.
 static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vector2:
-    var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2) < Geometry.FLOAT_EPSILON
+    var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2.0) < Geometry.FLOAT_EPSILON
     
     # Ensure that collision boundaries are only ever axially aligned.
     assert(is_rotated_90_degrees or abs(rotation) < Geometry.FLOAT_EPSILON)
