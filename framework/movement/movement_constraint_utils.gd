@@ -225,10 +225,10 @@ static func update_constraint(constraint: MovementConstraint, \
         var duration := time_passing_through - previous_constraint.time_passing_through
         var min_and_max_velocity_at_step_end := \
                 calculate_min_and_max_velocity_at_end_of_interval(displacement.y, duration, \
-                previous_constraint.min_velocity_x, previous_constraint.max_velocity_x, \
-                movement_params.max_horizontal_speed_default, \
-                movement_params.in_air_horizontal_acceleration, \
-                horizontal_movement_sign)
+                        previous_constraint.min_velocity_x, previous_constraint.max_velocity_x, \
+                        movement_params.max_horizontal_speed_default, \
+                        movement_params.in_air_horizontal_acceleration, \
+                        horizontal_movement_sign)
         if min_and_max_velocity_at_step_end.empty():
             return false
         
@@ -341,24 +341,72 @@ static func calculate_min_and_max_velocity_at_end_of_interval(displacement: floa
 
     ### Calculate min/max end velocities according to the min/max start velocities.
 
-    # The min and max possible end velocities correspond to the max and min possible start
-    # velocities, respectively.
-    #    From basic equations of motion:
-    #    v = v_0 + a*t
-    #    s = s_0 + v_0*t + 1/2*a*t^2
-    #    Algebra...
-    #    v = 2*(s - s_0)/t - v_0
-    var v_min := 2 * displacement / duration - v_0_max
-    var v_max := 2 * displacement / duration - v_0_min
-    
-    assert(v_max >= v_min)
+    # We could need to either accelerate at the start or the end of the interval, and in a forward
+    # or backward direction, in order to hit the min and max end velocity. So we consider all four
+    # combinations, and only keep the best/valid results.
+    # 
+    # Some notes about these calculations:
+    # - Min and max start velocities correspond to max and min end velocities, respectively.
+    # - If negative acceleration can be used during this interval, then we want to accelerate at
+    #   the start of the interval to find the max end velocity and accelerate at the end of the
+    #   interval to find the min end velocity.
+    # - If positive acceleration can be used during this interval, then we want to accelerate at
+    #   the end of the interval to find the min end velocity and accelerate at the start of the
+    #   interval to find the max end velocity.
+    # - All of the above is true regardless of the direction of displacement for the interval.
 
-    # Note: We did not need to consider whether the step will use acceleration at the start of the
-    #       interval or at the end. This is because we considered the absolute upper and lower
-    #       bounds that derive from accelerating over the entire interval (in either direction).
-    #       The eventual, actual-x-velocity step calculations will be able to determine whether
-    #       acceleration at the start or the end of the interval is needed depending on which
-    #       velocity is selected within this range.
+    # FIXME: If I see any problems from this logic, then just calculate the other four cases too,
+    #        and use the best valid ones from the whole set of 8.
+    
+    var v_0: float
+    var acceleration: float
+    var should_accelerate_at_start: bool
+    var should_return_min_result: bool
+
+    v_0 = v_0_max
+    acceleration = a_magnitude
+    should_accelerate_at_start = true
+    should_return_min_result = true
+    var v_min_pos_acc_at_start := solve_for_end_velocity(displacement, v_0, acceleration, \
+            duration, should_accelerate_at_start, should_return_min_result)
+
+    v_0 = v_0_min
+    acceleration = -a_magnitude
+    should_accelerate_at_start = true
+    should_return_min_result = false
+    var v_max_neg_acc_at_start := solve_for_end_velocity(displacement, v_0, acceleration, \
+            duration, should_accelerate_at_start, should_return_min_result)
+
+    v_0 = v_0_min
+    acceleration = a_magnitude
+    should_accelerate_at_start = false
+    should_return_min_result = false
+    var v_max_pos_acc_at_end := solve_for_end_velocity(displacement, v_0, acceleration, \
+            duration, should_accelerate_at_start, should_return_min_result)
+
+    v_0 = v_0_max
+    acceleration = -a_magnitude
+    should_accelerate_at_start = false
+    should_return_min_result = true
+    var v_min_neg_acc_at_end := solve_for_end_velocity(displacement, v_0, acceleration, \
+            duration, should_accelerate_at_start, should_return_min_result)
+
+    # Use the more extreme of the possible min/max values we calculated for positive/negative
+    # acceleration at the start/end.
+    var v_max := \
+            max(v_max_neg_acc_at_start, v_max_pos_acc_at_end) if \
+                    v_max_neg_acc_at_start != INF and v_max_pos_acc_at_end != INF else \
+            (v_max_neg_acc_at_start if v_max_neg_acc_at_start != INF else \
+            v_max_pos_acc_at_end)
+    var v_min := \
+            min(v_min_pos_acc_at_start, v_min_neg_acc_at_end) if \
+                    v_min_pos_acc_at_start != INF and v_min_neg_acc_at_end != INF else \
+            (v_min_pos_acc_at_start if v_min_pos_acc_at_start != INF else \
+            v_min_neg_acc_at_end)
+
+    assert(v_max != INF)
+    assert(v_min != INF)
+    assert(v_max >= v_min)
     
     # Correct small floating-point errors around zero.
     if Geometry.are_floats_equal_with_epsilon(v_min, 0.0):
@@ -398,6 +446,63 @@ static func calculate_min_and_max_velocity_at_end_of_interval(displacement: floa
         v_min = max(v_min, -speed_max)
 
     return [v_min, v_max]
+
+static func solve_for_end_velocity(displacement: float, v_0: float, acceleration: float, \
+        duration: float, should_accelerate_at_start: bool, \
+        should_return_min_result: bool) -> float:
+    var a: float
+    var b: float
+    var c: float
+
+    if should_accelerate_at_start:
+        # Try accelerating at the start of the step.
+        # Derivation:
+        # - There are two parts:
+        #   - Part 1: Constant acceleration from v_0 to v_1.
+        #   - Part 2: Coast at v_1 until we reach the destination.
+        # - Start with basic equations of motion:
+        #   - v_1 = v_0 + a*t_0
+        #   - s_2 = s_1 + v_1*t_1
+        #   - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
+        #   - t_total = t_0 + t_1
+        # - Do some algebra...
+        #   - 0 = 2*a*(s_2 - s_0) + v_0^2 - 2*(a*t_total + v_0)*v_1 + v_1^2
+        # - Apply quadratic formula to solve for v_1.
+        a = 1
+        b = 2 * (acceleration * duration + v_0)
+        c = 2 * acceleration * displacement + v_0 * v_0
+    else:
+        # Try accelerating at the end of the step.
+        # Derivation:
+        # - There are two parts:
+        #   - Part 1: Coast at v_0 until we need to start accelerating.
+        #   - Part 2: Constant acceleration from v_0 to v_1; we reach the destination when we reach
+        #     v_1.
+        # - Start with basic equations of motion:
+        #   - s_1 = s_0 + v_0*t_0
+        #   - v_1 = v_0 + a*t_1
+        #   - v_1^2 = v_0^2 + 2*a*(s_2 - s_1)
+        #   - t_total = t_0 + t_1
+        # - Do some algebra...
+        #   - 0 = 2*a*(s_2 - s_0 - t_total*v_0) - v_0^2 + 2*v_0*v_1 - v_1^2
+        # - Apply quadratic formula to solve for v_1.
+        a = -1
+        b = 2 * v_0
+        c = 2 * acceleration * (displacement - duration * v_0) - v_0 * v_0
+        
+    var discriminant := b * b - 4 * a * c
+    if discriminant < 0:
+        # There is no end velocity that can satisfy these parameters.
+        return INF
+    
+    var discriminant_sqrt := sqrt(discriminant)
+    var result_1 := (-b + discriminant_sqrt) / 2 / a
+    var result_2 := (-b - discriminant_sqrt) / 2 / a
+
+    if should_return_min_result:
+        return min(result_1, result_2)
+    else:
+        return max(result_1, result_2)
 
 static func update_neighbors_for_new_constraint(constraint: MovementConstraint, \
         previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \

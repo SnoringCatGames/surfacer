@@ -197,13 +197,13 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         #     part 2. This then means that we will need to have a lower v_0 and travel less far
         #     during part 1, which is good, since we want to choose a v_0 with the
         #     minimum-possible speed.
-        # - Start with basic equations of motion
-        # - v_1 = v_0 + a*t_1
-        # - s_2 = s_1 + v_1*t_2
-        # - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
-        # - t_total = t_1 + t_2
+        # - Start with basic equations of motion:
+        #   - v_1 = v_0 + a*t_0
+        #   - s_2 = s_1 + v_1*t_1
+        #   - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
+        #   - t_total = t_0 + t_1
         # - Do some algebra...
-        # - 0 = 2*a*(s_2 - s_0 - v_1*t_total) + v_1^2 - 2*v_1*v_0 + v_0^2
+        #   - 0 = 2*a*(s_2 - s_0 - v_1*t_total) + v_1^2 - 2*v_1*v_0 + v_0^2
         # - Apply quadratic formula to solve for v_0.
         a = 1
         b = -2 * v_end
@@ -213,16 +213,17 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         # Derivation:
         # - There are two parts:
         #   - Part 1: Coast at v_0 until we need to start accelerating.
-        #   - Part 2: Constant acceleration from v_0 to v_1; we reach the destination when we reach v_1.
-        #   - The longer part 1 is, the more we can accelerate during part 2, and the bigger v_1 can
-        #     be.
-        # - Start with basic equations of motion
-        # - s_1 = s_0 + v_0*t_0
-        # - v_1 = v_0 + a*t_1
-        # - v_1^2 = v_0^2 + 2*a*(s_2 - s_1)
-        # - t_total = t_0 + t_1
+        #   - Part 2: Constant acceleration from v_0 to v_1; we reach the destination when we reach
+        #     v_1.
+        #   - The longer part 1 is, the more we can accelerate during part 2, and the bigger v_1
+        #     can be.
+        # - Start with basic equations of motion:
+        #   - s_1 = s_0 + v_0*t_0
+        #   - v_1 = v_0 + a*t_1
+        #   - v_1^2 = v_0^2 + 2*a*(s_2 - s_1)
+        #   - t_total = t_0 + t_1
         # - Do some algebra...
-        # - 0 = 2*a*(s_2 - s_0) - v_1^2 + 2*(v_1 - a*t_total)*v_0 - v_0^2
+        #   - 0 = 2*a*(s_2 - s_0) - v_1^2 + 2*(v_1 - a*t_total)*v_0 - v_0^2
         # - Apply quadratic formula to solve for v_0.
         a = -1
         b = 2 * (v_end - acceleration * duration)

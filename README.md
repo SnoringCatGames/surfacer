@@ -201,3 +201,4 @@ FIXME: Check whether I need to add this expensive update; if not, mention the li
 - This still is not completely sufficient though, since changing the actual x velocity could change the trajectory and introduce/remove constraints.
 - Additionally, the later creation of preceding/following constraints from in-progress recursion could introduce/remove constraints.
 - HOWEVER, this might still work for most cases? Let's try it. If it works, let's just document well what types of things fail. We can't solve this efficienntly for all cases, so we have to pick reasonable heuristics at some point.
+- Mention, in general, why accelerating at the start vs end of the interval changes things.
