@@ -130,9 +130,7 @@ static func update_constraint(constraint: MovementConstraint, \
         max_velocity_x = velocity_start_origin.x
         actual_velocity_x = velocity_start_origin.x
     else:
-        var position := constraint.position
-        var previous_position := previous_constraint.position
-        var displacement := position - previous_position
+        var displacement := constraint.position - previous_constraint.position
         
         # Check whether the vertical displacement is possible.
         if displacement.y < -movement_params.max_upward_jump_distance:
@@ -225,8 +223,8 @@ static func update_constraint(constraint: MovementConstraint, \
         
         # Calculate the min and max velocity for movement through the constraint.
         var duration := time_passing_through - previous_constraint.time_passing_through
-        var min_and_max_velocity_at_step_end := calculate_min_and_max_velocity_at_end_of_interval( \
-                previous_position.x, position.x, duration, \
+        var min_and_max_velocity_at_step_end := \
+                calculate_min_and_max_velocity_at_end_of_interval(displacement.y, duration, \
                 previous_constraint.min_velocity_x, previous_constraint.max_velocity_x, \
                 movement_params.max_horizontal_speed_default, \
                 movement_params.in_air_horizontal_acceleration, \
@@ -313,144 +311,93 @@ static func calculate_horizontal_movement_sign(constraint: MovementConstraint, \
 # A Vector2 is returned:
 # - The x property represents the min velocity.
 # - The y property represents the max velocity.
-static func calculate_min_and_max_velocity_at_end_of_interval(s_0: float, s: float, t: float, \
-        v_0_min_from_prev_constraint: float, v_0_max_from_prev_constraint: float, \
-        speed_max: float, a_magnitude: float, horizontal_movement_sign: int) -> Array:
-    # FIXME: LEFT OFF HERE: -----------------------------------------------------A
-    # - This function is broken.
-    # - Need to support accelerating at the start of the step, and coasting at the end.
-    # - Need to also take another look at how we ensure that horizontal movement through the
-    #   constraint happens in the correct direction.
-    # - Need to carry-over some logic from calculate_horizontal_step...
-    # 
-    
-    var displacement := s - s_0
-    
-    if horizontal_movement_sign < 0:
-        # Swap some params, so that we can simplify the calculations to assume one direction.
-        var swap := s_0
-        s_0 = s
-        s = swap
-        swap = v_0_min_from_prev_constraint
-        v_0_min_from_prev_constraint = -v_0_max_from_prev_constraint
-        v_0_max_from_prev_constraint = -swap
-        displacement = -displacement
-    
-    var d_squared: float
-    var duration_to_hold_move_sideways: float
-    var min_v_0_that_can_reach_target: float
-    var max_v_0_that_can_reach_target: float
-    var v_0_min: float
-    var v_0_max: float
-    
-    # Calculate the max-possible end x velocity.
-    # - First, try using a forward acceleration.
-    # - Then, try a backward acceleration, if forward didn't work.
-    var v_max: float
-    for a in [a_magnitude, -a_magnitude]:
-        # The minimum possible v_0 will yield the maximum possible v. This is because if we
-        # accelerate over the entire step, we will have the max possible v, and if we start with a
-        # lower v_0, we are more likely to accelerate over more of the step.
-        # From a basic equation of motion:
-        #    s = s_0 + v_0*t + 1/2*a*t^2
-        #    Algebra...
-        #    v_0 = (s - s_0)/t - 1/2*a*t
-        min_v_0_that_can_reach_target = displacement / t - 0.5 * a * t
-        # The mimimum possible v_0 is dependent on both the duration of the current step and the
-        # minimum possible step-end v_0 from the previous step.
-        v_0_min = max(min_v_0_that_can_reach_target, v_0_min_from_prev_constraint)
-        
-        # - There are two parts:
-        #   - Part 1: Coast at v_0 until we need to start accelerating.
-        #   - Part 2: Constant acceleration from v_0 to v_1.
-        #   - The longer part 1 is, the more we can accelerate during part 2, and the bigger v_1 can
-        #     be.
-        # Derivation:
-        # - Start with basic equations of motion
-        # - s_1 = s_0 + v_0*t_1
-        # - s_2 = s_1 + v_0*t_2 + 1/2*a*t_2^2
-        # - t_total = t_1 + t_2
-        # - Do some algebra...
-        # - t_2 = sqrt(2 * (s_2 - s_0 - v_0*t_total) / a)
-        d_squared = 2 * (s - s_0 - v_0_min * t) / a
-        if d_squared < 0:
-            # We cannot reach the end with these parameters.
-            continue
-        duration_to_hold_move_sideways = sqrt(d_squared)
-        
-        # From a basic equation of motion:
-        #    v = v_0 + a*t
-        v_max = v_0_min + a * duration_to_hold_move_sideways
-    
-    # Calculate the min-possible end x velocity.
-    # - First, try using a backward acceleration.
-    # - Then, try a forward acceleration, if backward didn't work.
-    var v_min: float
-    for a in [-a_magnitude, a_magnitude]:
-        # The maximum possible v_0 will yield the minimum possible v. This is because if we
-        # decelerate over the entire step, we will have the min possible v, and if we start with a
-        # higher v_0, we are more likely to decelerate over more of the step.
-        # From a basic equation of motion:
-        #    s = s_0 + v_0*t + 1/2*a*t^2
-        #    Algebra...
-        #    v_0 = (s - s_0)/t - 1/2*a*t
-        max_v_0_that_can_reach_target = displacement / t - 0.5 * a * t
-        # The maximum possible v_0 is dependent on both the duration of the current step and the
-        # maximum possible step-end v_0 from the previous step.
-        v_0_max = min(max_v_0_that_can_reach_target, v_0_max_from_prev_constraint)
-        
-        # - There are two parts:
-        #   - Part 1: Coast at v_0 until we need to start decelerating.
-        #   - Part 2: Constant deceleration from v_0 to v_1.
-        #   - The longer part 1 is, the more we can decelerate during part 2, and the smaller v_1 can
-        #     be.
-        # Derivation:
-        # - Start with basic equations of motion
-        # - s_1 = s_0 + v_0*t_1
-        # - s_2 = s_1 + v_0*t_2 + 1/2*a*t_2^2
-        # - t_total = t_1 + t_2
-        # - Do some algebra...
-        # - t_2 = sqrt(2 * (s_2 - s_0 - v_0*t_total) / a)
-        d_squared = 2 * (s - s_0 - v_0_max * t) / a
-        if d_squared < 0:
-            # We cannot reach the end with these parameters.
-            continue
-        duration_to_hold_move_sideways = sqrt(d_squared)
-        
-        # From a basic equation of motion:
-        #    v = v_0 + a*t
-        v_min = v_0_max + a * duration_to_hold_move_sideways
-    
-    if v_min == INF or v_max == INF:
-        # Expect that if one value is invalid, the other should be too.
-        assert(v_min == INF and v_max == INF)
-        # We cannot reach this constraint from the previous constraint.
+static func calculate_min_and_max_velocity_at_end_of_interval(displacement: float, \
+        duration: float, v_0_min_from_prev_constraint: float, \
+        v_0_max_from_prev_constraint: float, speed_max: float, a_magnitude: float, \
+        horizontal_movement_sign: int) -> Array:
+    ### Calculate more tightly-bounded min/max start velocity values, according to both the
+    ### duration of the current step and the given min/max values from the previous constraint.
+
+    # Accelerating in a positive direction over the entire step, corresponds to a lower bound on
+    # the start velocity, and accelerating in a negative direction over the entire step,
+    # corresponds to an upper bound on the start velocity.
+    #    From a basic equation of motion:
+    #    s = s_0 + v_0*t + 1/2*a*t^2
+    #    Algebra...
+    #    v_0 = (s - s_0)/t - 1/2*a*t
+    var min_v_0_that_can_reach_target := \
+            displacement / duration - 0.5 * a_magnitude * duration
+    var max_v_0_that_can_reach_target := \
+            displacement / duration + 0.5 * a_magnitude * duration
+    # The min and max possible v_0 are dependent on both the duration of the current step and the
+    # min and max possible step-end v_0 from the previous step, respectively.
+    var v_0_min := max(min_v_0_that_can_reach_target, v_0_min_from_prev_constraint)
+    var v_0_max := min(max_v_0_that_can_reach_target, v_0_max_from_prev_constraint)
+
+    if v_0_min > v_0_max:
+        # Neither direction of acceleration will work with the given min/max start velocities from
+        # the previous step.
         return []
+
+    ### Calculate min/max end velocities according to the min/max start velocities.
+
+    # The min and max possible end velocities correspond to the max and min possible start
+    # velocities, respectively.
+    #    From basic equations of motion:
+    #    v = v_0 + a*t
+    #    s = s_0 + v_0*t + 1/2*a*t^2
+    #    Algebra...
+    #    v = 2*(s - s_0)/t - v_0
+    var v_min := 2 * displacement / duration - v_0_max
+    var v_max := 2 * displacement / duration - v_0_min
+    
+    assert(v_max >= v_min)
+
+    # Note: We did not need to consider whether the step will use acceleration at the start of the
+    #       interval or at the end. This is because we considered the absolute upper and lower
+    #       bounds that derive from accelerating over the entire interval (in either direction).
+    #       The eventual, actual-x-velocity step calculations will be able to determine whether
+    #       acceleration at the start or the end of the interval is needed depending on which
+    #       velocity is selected within this range.
     
     # Correct small floating-point errors around zero.
     if Geometry.are_floats_equal_with_epsilon(v_min, 0.0):
         v_min = 0.0
     if Geometry.are_floats_equal_with_epsilon(v_max, 0.0):
         v_max = 0.0
-    
-    assert(v_min >= 0.0)
-    assert(v_max >= 0.0)
-    
-    # Add a small offset to the min and max to help with round-off errors.
-    v_min += MIN_MAX_VELOCITY_X_OFFSET
-    v_max -= MIN_MAX_VELOCITY_X_OFFSET
-    
-    if v_min > speed_max:
-        # We cannot reach this constraint from the previous constraint.
+
+    if (horizontal_movement_sign > 0 and v_max < 0) or \
+        (horizontal_movement_sign < 0 and v_min > 0):
+        # We cannot reach this constraint with the needed movement direction.
         return []
+
+    # Add a small offset to the min and max to help with round-off errors.
+    if horizontal_movement_sign > 0:
+        v_min += MIN_MAX_VELOCITY_X_OFFSET
+        v_max -= MIN_MAX_VELOCITY_X_OFFSET
+    else:
+        v_min -= MIN_MAX_VELOCITY_X_OFFSET
+        v_max += MIN_MAX_VELOCITY_X_OFFSET
+
+    # Limit velocity to the expected movement direction for this constraint.
+    if horizontal_movement_sign > 0:
+        v_min = max(v_min, 0.0)
+    else:
+        v_max = min(v_max, 0.0)
     
     # Limit max speed.
-    v_max = min(v_max, speed_max)
-    
     if horizontal_movement_sign > 0:
-        return [v_min, v_max]
+        if v_min > speed_max:
+            # We cannot reach this constraint from the previous constraint.
+            return []
+        v_max = min(v_max, speed_max)
     else:
-        return [-v_max, -v_min]
+        if v_max < -speed_max:
+            # We cannot reach this constraint from the previous constraint.
+            return []
+        v_min = max(v_min, -speed_max)
+
+    return [v_min, v_max]
 
 static func update_neighbors_for_new_constraint(constraint: MovementConstraint, \
         previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
