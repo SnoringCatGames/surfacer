@@ -84,7 +84,7 @@ static func calculate_min_time_to_reach_displacement(displacement: float, v_0: f
     # From a basic equation of motion:
     #     v = v_0 + a*t
     var duration_to_reach_velocity_limit := (velocity_limit - v_0) / a
-    assert(duration_to_reach_velocity_limit > 0)
+    assert(duration_to_reach_velocity_limit >= 0)
     
     if duration_to_reach_velocity_limit >= duration_to_reach_position_with_no_velocity_cap:
         # We won't have hit the max velocity before reaching the destination.

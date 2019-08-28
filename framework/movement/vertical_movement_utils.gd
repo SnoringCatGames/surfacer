@@ -27,8 +27,8 @@ static func calculate_vertical_step( \
     # the jump button to manipulate the jump height. 
     if can_hold_jump_button:
         var displacement: Vector2 = position_end - position_start
-        time_instruction_end = \
-                calculate_time_to_release_jump_button(movement_params, time_step_end, displacement)
+        time_instruction_end = calculate_time_to_release_jump_button( \
+                movement_params, time_step_end, displacement.y)
         if time_instruction_end == INF:
             return null
         
@@ -242,7 +242,7 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
 
 # Given the total duration, calculate the time to release the jump button.
 static func calculate_time_to_release_jump_button(movement_params: MovementParams, \
-        duration: float, displacement: Vector2) -> float:
+        duration: float, displacement_y: float) -> float:
     # Derivation:
     # - Start with basic equations of motion
     # - s_1 = s_0 + v_0*t_0 + 1/2*a_0*t_0^2
@@ -254,7 +254,7 @@ static func calculate_time_to_release_jump_button(movement_params: MovementParam
     # - Apply quadratic formula to solve for t_0.
     var a := 0.5 * (movement_params.gravity_fast_fall - movement_params.gravity_slow_ascent)
     var b := duration * (movement_params.gravity_slow_ascent - movement_params.gravity_fast_fall)
-    var c := -displacement.y + movement_params.jump_boost * duration + \
+    var c := -displacement_y + movement_params.jump_boost * duration + \
             0.5 * movement_params.gravity_fast_fall * duration * duration
     var discriminant := b * b - 4 * a * c
     if discriminant < 0:
@@ -294,6 +294,10 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
     
     var is_position_before_instruction_end: bool
     var is_position_before_peak: bool
+    
+    # Add a small epsilon to the min threshold to help with round-off error.
+    if min_end_time >= 0.0001:
+        min_end_time -= 0.0001
     
     # We need to know whether the position corresponds to the rising or falling side of the jump
     # parabola, and whether the position corresponds to before or after the jump button is

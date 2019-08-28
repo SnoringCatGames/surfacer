@@ -103,12 +103,14 @@ const MovementCalcGlobalParams := preload("res://framework/movement/models/movem
 # - Storing possibly 9 edges from A to B.
 # 
 # FIXME: C:
-# - Set the destination_constraint min_velocity_x and max_velocity_x at the start, in order to latch onto the target surface.
+# - Set the destination_constraint min_velocity_x and max_velocity_x at the start, in order to
+#   latch onto the target surface.
 #   - Also add support for specifying min/max y velocities for this?
 # 
 # FIXME: B:
 # - Should we more explicity re-use all vertical steps from before the jump button was released?
-#   - It might simplify the logic for checking for previously collided surfaces, and make things more efficient.
+#   - It might simplify the logic for checking for previously collided surfaces, and make things
+#     more efficient.
 # 
 # FIXME: A: Check if we need to update following constraints when creating a new one:
 # - Unfortunately, it is possible that the creation of a new intermediate constraint could
@@ -176,9 +178,13 @@ const MovementCalcGlobalParams := preload("res://framework/movement/models/movem
 #           which is based on both the surface params and on the current
 #           jump-release time.
 #       - In the access function, the appropriate list is checked.
+#     - OR, would it be worth just refactoring collided_surfaces to instead only consider the
+#       surfaces that we've already used for backtracking?
 # 
 # - Polish description of approach in the README.
-#   - In general, a guiding heuristic in these calculations is to minimize movement. So, through each constraint (step-end), we try to minimize the horizontal speed of the movement at that point.
+#   - In general, a guiding heuristic in these calculations is to minimize movement. So, through
+#     each constraint (step-end), we try to minimize the horizontal speed of the movement at that
+#     point.
 # 
 
 
@@ -229,19 +235,19 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
         for jump_position in jump_positions:
             for land_position in land_positions:
                 # FIXME: E: DEBUGGING: Remove.
-                if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
-                    # Ignore non-floor surfaces.
-                    continue
-                elif jump_position != jump_positions.back() or \
-                        land_position != land_positions.back():
-                    # Ignore non-far-ends.
-                    continue
-                elif a.vertices[0] != Vector2(128, 64):
-                    # Ignore anything but the one origin surface we are debugging.
-                    continue
-                elif b.vertices[0] != Vector2(-128, -448):
-                    # Ignore anything but the one destination surface we are debugging.
-                    continue
+#                if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
+#                    # Ignore non-floor surfaces.
+#                    continue
+#                elif jump_position != jump_positions.back() or \
+#                        land_position != land_positions.back():
+#                    # Ignore non-far-ends.
+#                    continue
+#                elif a.vertices[0] != Vector2(128, 64):
+#                    # Ignore anything but the one origin surface we are debugging.
+#                    continue
+#                elif b.vertices[0] != Vector2(-128, -448):
+#                    # Ignore anything but the one destination surface we are debugging.
+#                    continue
                 
                 terminals = MovementConstraintUtils.create_terminal_constraints(a, \
                         jump_position.target_point, b, land_position.target_point, params, \
@@ -290,13 +296,15 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
 # would produce valid movement without intermediate collisions.
 static func _calculate_jump_instructions( \
         global_calc_params: MovementCalcGlobalParams) -> MovementInstructions:
+    global_calc_params.collided_surfaces.clear()
+    
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height(global_calc_params)
     
     if calc_results == null:
         return null
     
     var instructions: MovementInstructions = \
-            MovementUtils.convert_calculation_steps_to_movement_instructions( \
+            MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                     global_calc_params.origin_constraint.position, \
                     global_calc_params.destination_constraint.position, calc_results)
     

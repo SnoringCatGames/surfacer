@@ -134,6 +134,7 @@ static func update_constraint(constraint: MovementConstraint, \
         
         # Check whether the vertical displacement is possible.
         if displacement.y < -movement_params.max_upward_jump_distance:
+            # We can't reach this constraint.
             return false
         
         if constraint.is_destination:
@@ -155,7 +156,7 @@ static func update_constraint(constraint: MovementConstraint, \
             
             # TODO: I should probably refactor these two calls, so we're doing fewer redundant
             #       calculations here.
-
+            
             var origin_position := origin_constraint.position
             
             var time_to_pass_through_constraint_ignoring_others := \
@@ -164,47 +165,41 @@ static func update_constraint(constraint: MovementConstraint, \
                             constraint_to_calculate_jump_release_time_for.position, \
                             velocity_start_origin, can_hold_jump_button_at_origin)
             if time_to_pass_through_constraint_ignoring_others == INF:
+                # We can't reach this constraint.
                 return false
             assert(time_to_pass_through_constraint_ignoring_others > 0.0)
-
+            
+            if additional_high_constraint != null:
+                # We are backtracking to consider a new jump height.
+                # The destination jump time should account for both:
+                # - the time needed to reach any previous jump-heights before this current round of
+                #   jump-height backtracking (vertical_step.time_instruction_end),
+                # - the time needed to reach this new previously-out-of-reach constraint
+                #   (time_to_release_jump for the new constraint),
+                # - and the time needed to get to the destination from this new constraint.
+                
+                # TODO: There might be cases that this fails for? We might need to add more time.
+                #       Revisit this if we see problems.
+                
+                var time_to_get_to_destination_from_constraint := \
+                        calculate_time_to_reach_destination_from_new_constraint(movement_params, \
+                                additional_high_constraint, constraint)
+                if time_to_get_to_destination_from_constraint == INF:
+                    # We can't reach the destination from this constraint.
+                    return false
+                time_passing_through = max(vertical_step.time_step_end, \
+                        time_to_pass_through_constraint_ignoring_others + \
+                                time_to_get_to_destination_from_constraint)
+            else:
+                time_passing_through = time_to_pass_through_constraint_ignoring_others
+            
             var displacement_from_origin: Vector2 = \
                     constraint_to_calculate_jump_release_time_for.position - origin_position
             time_to_release_jump = VerticalMovementUtils.calculate_time_to_release_jump_button( \
-                    movement_params, time_to_pass_through_constraint_ignoring_others, \
-                    displacement_from_origin)
-            # If time_to_pass_through_constraint_ignoring_others was valid, then this should also
-            # be valid.
+                    movement_params, time_passing_through, displacement_from_origin.y)
+            # If time_passing_through was valid, then this should also be valid.
             assert(time_to_release_jump != INF)
-
-            if vertical_step != null:
-                # We are backtracking to consider a new jump height.
-                # The destination jump-release time should account for both:
-                # - the time needed to reach any previous jump-heights before this current round of
-                #   jump-height backtracking (vertical_step.time_instruction_end),
-                # - and the time needed to reach this new previously-out-of-reach constraint
-                #   (time_to_release_jump for the new constraint).
-                time_to_release_jump = \
-                        max(vertical_step.time_instruction_end, time_to_release_jump)
-                
-                var instruction_end_state := \
-                        VerticalMovementUtils.calculate_vertical_end_state_for_time( \
-                                movement_params, time_to_release_jump, origin_position.y, \
-                                velocity_start_origin.y, time_to_release_jump)
-                
-                time_passing_through = \
-                        VerticalMovementUtils.calculate_time_for_passing_through_constraint( \
-                                movement_params, constraint, vertical_step.time_step_end, \
-                                origin_position.y, time_to_release_jump, \
-                                instruction_end_state[0], instruction_end_state[1])
-                if time_passing_through == INF:
-                    # We can't reach this constraint from the previous constraint.
-                    return false
             
-            else:
-                # We are starting a new movement calculation (not backtracking to consider a new
-                # jump height).
-                time_passing_through = time_to_pass_through_constraint_ignoring_others
-
         else:
             # This is an intermediate constraint (not the origin or destination).
             time_passing_through = \
@@ -269,6 +264,41 @@ static func update_constraint(constraint: MovementConstraint, \
     
     return true
 
+# This only considers the time to move horizontally and the time to fall; this does not consider
+# the time to rise from the new constraint to the destination.
+# - We don't consider rise time, since that would require knowing more information around when the
+#   jump button is released and whether it could still be held.
+# - For horizontal movement time, we don't need to know about vertical velocity or the jump button.
+# - For fall time, we can assume that vertical velocity will be zero when passing through this new
+#   constraint (since it should be the highest point we reach in the jump).
+static func calculate_time_to_reach_destination_from_new_constraint( \
+        movement_params: MovementParams, new_constraint: MovementConstraint, \
+        destination: MovementConstraint) -> float:
+    var displacement := destination.position - new_constraint.position
+
+    var velocity_x_at_new_constraint: float
+    var acceleration: float
+    if displacement.x > 0:
+        velocity_x_at_new_constraint = new_constraint.max_velocity_x
+        acceleration = movement_params.in_air_horizontal_acceleration
+    else:
+        velocity_x_at_new_constraint = new_constraint.min_velocity_x
+        acceleration = -movement_params.in_air_horizontal_acceleration
+    
+    var time_to_reach_horizontal_displacement := \
+            MovementUtils.calculate_min_time_to_reach_displacement(displacement.x, \
+                    velocity_x_at_new_constraint, movement_params.max_horizontal_speed_default, \
+                    acceleration)
+
+    var time_to_reach_fall_displacement: float
+    if displacement.y > 0:
+        time_to_reach_fall_displacement = Geometry.calculate_movement_duration( \
+                displacement.y, 0.0, movement_params.gravity_fast_fall, true, 0.0, true)
+    else:
+        time_to_reach_fall_displacement = 0.0
+    
+    return max(time_to_reach_horizontal_displacement, time_to_reach_fall_displacement)
+
 static func calculate_horizontal_movement_sign(constraint: MovementConstraint, \
         previous_constraint: MovementConstraint, next_constraint: MovementConstraint) -> int:
     assert(constraint.surface != null or constraint.is_origin or constraint.is_destination)
@@ -316,8 +346,9 @@ static func calculate_horizontal_movement_sign(constraint: MovementConstraint, \
                 (1 if surface.side == SurfaceSide.RIGHT_WALL else \
                 (-1 if constraint.should_stay_on_min_side else 1))
     
-    assert(horizontal_movement_sign_from_surface == horizontal_movement_sign_from_displacement or \
-            (is_origin and displacement_sign == 0))
+    # FIXME: B: Add this back in once we have support for skipping constraints.
+#    assert(horizontal_movement_sign_from_surface == horizontal_movement_sign_from_displacement or \
+#            (is_origin and displacement_sign == 0))
 
     return horizontal_movement_sign_from_surface
 
