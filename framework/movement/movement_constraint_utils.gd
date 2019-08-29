@@ -82,11 +82,13 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
             colliding_surface, position_b, passing_vertically, false)
     
     var is_a_valid := update_constraint(constraint_a, previous_constraint, null, \
-            origin_constraint, movement_params, vertical_step.velocity_step_start, \
-            vertical_step.can_hold_jump_button, vertical_step, null)
+            origin_constraint, movement_params, constraint_offset, \
+            vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, vertical_step, \
+            null)
     var is_b_valid := update_constraint(constraint_b, previous_constraint, null, \
-            origin_constraint, movement_params, vertical_step.velocity_step_start, \
-            vertical_step.can_hold_jump_button, vertical_step, null)
+            origin_constraint, movement_params, constraint_offset, \
+            vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, vertical_step, \
+            null)
     
     var result := []
     if is_a_valid:
@@ -99,8 +101,8 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
 static func update_constraint(constraint: MovementConstraint, \
         previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
         origin_constraint: MovementConstraint, movement_params: MovementParams, \
-        velocity_start_origin: Vector2, can_hold_jump_button_at_origin: bool, \
-        vertical_step: MovementVertCalcStep, \
+        constraint_offset: Vector2, velocity_start_origin: Vector2, \
+        can_hold_jump_button_at_origin: bool, vertical_step: MovementVertCalcStep, \
         additional_high_constraint: MovementConstraint) -> bool:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
 
@@ -114,8 +116,27 @@ static func update_constraint(constraint: MovementConstraint, \
     assert(additional_high_constraint == null or constraint.is_destination)
     assert(vertical_step != null or additional_high_constraint == null)
 
-    var horizontal_movement_sign := \
-            calculate_horizontal_movement_sign(constraint, previous_constraint, next_constraint)
+    assign_horizontal_movement_sign(constraint, previous_constraint, next_constraint)
+    
+    if constraint.horizontal_movement_sign != constraint.horizontal_movement_sign_from_displacement:
+        # This constraint should be skipped, and movement should proceed directly to the next one
+        # (but we still need to keep this constraint around long enough to calculate whath that
+        # next constraint is).
+        constraint.is_fake = true
+        constraint.horizontal_movement_sign = constraint.horizontal_movement_sign_from_displacement
+        # FIXME: ------------
+        # 
+        # - Position is based off the skipped constraint, but offset by a bit.
+        #   - Either a ratio of the player's collision boundary dimensions or a ratio of the constraint
+        #     offset?
+        #   - We ideally want this offset to trigger a collision with the neighboring-side surface.
+        # 
+        # - Probably should put this position-offset logic into a separate helper function, since
+        #   it'll get pretty extended with the switch statement based off which surface-side and
+        #   min-side.
+        # - var actual_vs_test_margin_diff := MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN - MovementCalcGlobalParams.EDGE_MOVEMENT_TEST_MARGIN
+        # - constraint_offset - Vector2(actual_vs_test_margin_diff, actual_vs_test_margin_diff)
+        constraint.position = INF
     
     var time_passing_through: float
     var min_velocity_x: float
@@ -240,7 +261,7 @@ static func update_constraint(constraint: MovementConstraint, \
                         previous_constraint.min_velocity_x, previous_constraint.max_velocity_x, \
                         movement_params.max_horizontal_speed_default, \
                         movement_params.in_air_horizontal_acceleration, \
-                        horizontal_movement_sign)
+                        constraint.horizontal_movement_sign)
         if min_and_max_velocity_at_step_end.empty():
             return false
         
@@ -250,13 +271,13 @@ static func update_constraint(constraint: MovementConstraint, \
         if constraint.is_destination:
             # Initialize the destination constraint's actual velocity to match whichever min/max
             # value yields the least overall movement.
-            actual_velocity_x = min_velocity_x if horizontal_movement_sign > 0 else max_velocity_x
+            actual_velocity_x = min_velocity_x if constraint.horizontal_movement_sign > 0 \
+                    else max_velocity_x
         else:
             # actual_velocity_x is calculated in a back-to-front pass when calculating the
             # horizontal steps.
             actual_velocity_x = INF
     
-    constraint.horizontal_movement_sign = horizontal_movement_sign
     constraint.time_passing_through = time_passing_through
     constraint.min_velocity_x = min_velocity_x
     constraint.max_velocity_x = max_velocity_x
@@ -299,8 +320,8 @@ static func calculate_time_to_reach_destination_from_new_constraint( \
     
     return max(time_to_reach_horizontal_displacement, time_to_reach_fall_displacement)
 
-static func calculate_horizontal_movement_sign(constraint: MovementConstraint, \
-        previous_constraint: MovementConstraint, next_constraint: MovementConstraint) -> int:
+static func assign_horizontal_movement_sign(constraint: MovementConstraint, \
+        previous_constraint: MovementConstraint, next_constraint: MovementConstraint) -> void:
     assert(constraint.surface != null or constraint.is_origin or constraint.is_destination)
     assert(previous_constraint != null or constraint.is_origin)
     assert(next_constraint != null or !constraint.is_origin)
@@ -345,12 +366,9 @@ static func calculate_horizontal_movement_sign(constraint: MovementConstraint, \
                 -1 if surface.side == SurfaceSide.LEFT_WALL else \
                 (1 if surface.side == SurfaceSide.RIGHT_WALL else \
                 (-1 if constraint.should_stay_on_min_side else 1))
-    
-    # FIXME: B: Add this back in once we have support for skipping constraints.
-#    assert(horizontal_movement_sign_from_surface == horizontal_movement_sign_from_displacement or \
-#            (is_origin and displacement_sign == 0))
 
-    return horizontal_movement_sign_from_surface
+    constraint.horizontal_movement_sign = horizontal_movement_sign_from_surface
+    constraint.horizontal_movement_sign_from_displacement = horizontal_movement_sign_from_displacement
 
 # The given parameters represent the horizontal motion of a single step.
 # 

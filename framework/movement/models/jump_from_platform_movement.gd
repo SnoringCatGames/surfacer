@@ -120,46 +120,11 @@ const MovementCalcGlobalParams := preload("res://framework/movement/models/movem
 #   order.
 
 
-# FIXME: LEFT OFF HERE: ---A
-# - Implement support for skipping a constraint:
-#   - Needs to be detected in the constraint-creation logic.
-#   - Then needs to be handled in the recursion logic.
-#   - When to skip:
-#     - # If the direction of travel is the same as the side of the surface that the
-#       # constraint lies on, then we'll keep the constraint. Otherwise, we'll skip the constraint.
-#     - if (horizontal displacement sign from previous_constraint to new_constraint == -1) == should_stay_on_min_side:
-#       - # Skip logic...
-#       - FIXME: LEFT OFF HERE
-#     - ADAPT FOR DOCS:
-#       - PROBLEM: Sometimes we should be able to skip a constraint and go straight from the
-#         earlier one to the later one.
-#         - Example scenario:
-#           - Origin is constraint #0, Destination is constraint #3
-#           - Assume we are jumping from low-left platform to high-right platform, and there
-#             is an intermediate block in the way.
-#           - Our first step attempt hits the underside of the block, so we try constraints on
-#             either side.
-#           - After trying the left-hand constraint (#1), we then hit the left side of the
-#             block. So we then try a top-side constraint (#2). (bottom-side fails the
-#             surface-already-encountered check).
-#           - After going through this new left-side (right-wall), top-side constraint, we can
-#             successfully reach the destination.
-#           - Problem 1: With the resulting path, we still have to go through both of the
-#             constraints. We should should be able to skip the first constraint and go
-#             straight from the origin to the second constraint.
-#           - Problem 2: With the current plan-of-attack with this design, we would be forced
-#             to be going leftward when we pass through the first constraint.
-#       - SOLUTION:
-#         - If horizontal _movement_ (displacement) direction from #0 to #1 is opposite from
-#           what the normal surface-side-based constraint-pass-through-direction calculation
-#           would yield, then ... [is this a constraint we should skip?]
-
-
 
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# - Fix the issue with min/max x-velocity calculations when updating constraints.
+# >>- Finish implementing support for skipping a constraint.
 # 
 # - Check that global_calc_params.collided_surfaces is handled correctly:
 #   - QUESTION/PROBLEM: Regarding the current backtracking
@@ -235,19 +200,19 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
         for jump_position in jump_positions:
             for land_position in land_positions:
                 # FIXME: E: DEBUGGING: Remove.
-#                if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
-#                    # Ignore non-floor surfaces.
-#                    continue
-#                elif jump_position != jump_positions.back() or \
-#                        land_position != land_positions.back():
-#                    # Ignore non-far-ends.
-#                    continue
-#                elif a.vertices[0] != Vector2(128, 64):
-#                    # Ignore anything but the one origin surface we are debugging.
-#                    continue
-#                elif b.vertices[0] != Vector2(-128, -448):
-#                    # Ignore anything but the one destination surface we are debugging.
-#                    continue
+                if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
+                    # Ignore non-floor surfaces.
+                    continue
+                elif jump_position != jump_positions.front() or \
+                        land_position != land_positions.front():
+                    # Ignore non-near-ends.
+                    continue
+                elif a.vertices[0] != Vector2(128, 64):
+                    # Ignore anything but the one origin surface we are debugging.
+                    continue
+                elif b.vertices[0] != Vector2(-128, -448):
+                    # Ignore anything but the one destination surface we are debugging.
+                    continue
                 
                 terminals = MovementConstraintUtils.create_terminal_constraints(a, \
                         jump_position.target_point, b, land_position.target_point, params, \

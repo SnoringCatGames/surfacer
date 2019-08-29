@@ -59,6 +59,16 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     
     var collision := CollisionCheckUtils.check_continuous_horizontal_step_for_collision( \
             global_calc_params, local_calc_params, next_horizontal_step)
+
+    # We expect that temporary, fake constraints will always have a corresponding following
+    # collision, since we need to replace these with one of the real constraints from this
+    # collision.
+    # FIXME: B: Should this instead be an if statement that returns null? How likely is this to
+    #           happen for valid movement?
+    assert(!local_calc_params.start_constraint.is_fake or \
+            (collision != null and \
+                    (collision.surface.side == SurfaceSide.LEFT_WALL or \
+                    collision.surface.side == SurfaceSide.RIGHT_WALL)))
     
     if collision == null or collision.surface == global_calc_params.destination_constraint.surface:
         # There is no intermediate surface interfering with this movement.
@@ -82,6 +92,27 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
             collision.surface, global_calc_params.constraint_offset)
     if constraints.empty():
         return null
+
+    if local_calc_params.start_constraint.is_fake:
+        var fake_constraint_surface_side := local_calc_params.start_constraint.surface.side
+
+        # We expect that fake constraints will only be created for floor or ceiling surfaces.
+        assert(fake_constraint_surface_side == SurfaceSide.FLOOR or \
+                fake_constraint_surface_side == SurfaceSide.CEILING)
+        
+        var should_ignore_min_side_constraint := \
+                fake_constraint_surface_side == SurfaceSide.FLOOR
+        
+        # Only one of the possible constraints from the collision can be valid, depending on
+        # whether the fake constraint was from a floor or a ceiling.
+        if constraints[0].should_stay_on_min_side == should_ignore_min_side_constraint:
+            constraints.remove(0)
+        elif constraints.size() > 1 and \
+                constraints[1].should_stay_on_min_side == should_ignore_min_side_constraint:
+            constraints.remove(1)
+        
+        if constraints.empty():
+            return null
     
     # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := calculate_steps_from_constraint_without_backtracking_on_height( \
@@ -142,14 +173,28 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         if calc_results_from_constraint == null:
             # This constraint is out of reach with the current jump height.
             continue
+
+        if constraint.is_fake:
+            # We should have found a very close-by collision with a neighboring surface. We replace
+            # the fake/temporary constraint with this.
+            constraint = calc_results_from_constraint.horizontal_steps[0]
+            # calculate_steps_from_constraint shouldn't return the same fake constraint, and there
+            # shouldn't be two fake constraints in a row.
+            assert(!constraint.is_fake)
         
         if calc_results_from_constraint.backtracked_for_new_jump_height:
             # When backtracking occurs, the result includes all steps from origin to destination,
             # so we can just return that result here.
             return calc_results_from_constraint
         
+        if local_calc_params.start_constraint.is_fake:
+            # Since we're skipping the fake constraint, we don't need to calculate steps from it.
+            # Steps leading up to this new post-fake-constraint will be calculated from one-layer
+            # up in the recursion tree.
+            return calc_results_from_constraint
+        
         ### RECURSE: Calculate movement to the constraint.
-
+        
         local_calc_params_to_constraint = MovementCalcLocalParams.new( \
                 local_calc_params.start_constraint, constraint, \
                 local_calc_params.vertical_step)

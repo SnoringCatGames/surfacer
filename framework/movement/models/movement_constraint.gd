@@ -28,8 +28,15 @@ var passing_vertically: bool
 
 var should_stay_on_min_side: bool
 
-# The sign of the horizontal movement when passing through this constraint.
+# The sign of the horizontal movement when passing through this constraint. This is primarily
+# calculated according to the surface-side and whether the constraint is on the min or max side of
+# the surface.
 var horizontal_movement_sign: int = INF
+
+# The sign of horizontal movement from the previous constraint to this constraint. This should
+# always agree with the surface-side-based horizontal_movement_sign property, unless this
+# constraint is fake and should be skipped.
+var horizontal_movement_sign_from_displacement: int = INF
 
 # The time at which movement should pass through this constraint.
 var time_passing_through := INF
@@ -47,6 +54,15 @@ var is_origin := false
 
 # Whether this constraint is the destination for the overall movement.
 var is_destination := false
+
+# Fake constraints will be skipped by the final overall movement. They represent a point along an
+# edge of a floor or ceiling surface where the horizontal_movement_sign_from_surface differs from
+# the horizontal_movement_sign_from_displacement.
+# 
+# For example, the right-side of a ceiling surface when the jump movement is from the lower-right
+# of the edge; in this case, the goal is to skip the ceiling-edge constraint and moving directly to
+# the top-of-the-right-side constraint.
+var is_fake := false
 
 func _init(surface: Surface, position: Vector2, passing_vertically: bool, \
         should_stay_on_min_side: bool) -> void:

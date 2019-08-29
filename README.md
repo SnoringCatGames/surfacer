@@ -202,3 +202,21 @@ FIXME: Check whether I need to add this expensive update; if not, mention the li
 - Additionally, the later creation of preceding/following constraints from in-progress recursion could introduce/remove constraints.
 - HOWEVER, this might still work for most cases? Let's try it. If it works, let's just document well what types of things fail. We can't solve this efficienntly for all cases, so we have to pick reasonable heuristics at some point.
 - Mention, in general, why accelerating at the start vs end of the interval changes things.
+- Describe skipping constraints:
+  - Sometimes we should be able to skip a constraint and go straight from the earlier one to the later one.
+  - Example scenario:
+    - Origin is constraint #0, Destination is constraint #3
+    - Assume we are jumping from low-left platform to high-right platform, and there
+      is an intermediate block in the way.
+    - Our first step attempt hits the underside of the block, so we try constraints on
+      either side.
+    - After trying the left-hand constraint (#1), we then hit the left side of the
+      block. So we then try a top-side constraint (#2). (bottom-side fails the
+      surface-already-encountered check).
+    - After going through this new left-side (right-wall), top-side constraint, we can
+      successfully reach the destination.
+    - Problem 1: With the resulting path, we still have to go through both of the
+      constraints. We should should be able to skip the first constraint and go
+      straight from the origin to the second constraint.
+    - Problem 2: With the current plan-of-attack with this design, we would be forced
+      to be going leftward when we pass through the first constraint.
