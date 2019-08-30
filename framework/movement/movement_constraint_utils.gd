@@ -8,7 +8,7 @@ const MIN_MAX_VELOCITY_X_OFFSET := 0.01
 
 static func create_terminal_constraints(origin_surface: Surface, origin_position: Vector2, \
         destination_surface: Surface, destination_position: Vector2, \
-        movement_params: MovementParams, velocity_start: Vector2, \
+        movement_params: MovementParams, constraint_offset: Vector2, velocity_start: Vector2, \
         can_hold_jump_button: bool) -> Array:
     var origin_passing_vertically := \
             origin_surface.normal.x == 0 if origin_surface != null else true
@@ -24,9 +24,9 @@ static func create_terminal_constraints(origin_surface: Surface, origin_position
     destination.is_destination = true
     
     var is_origin_valid := update_constraint(origin, null, destination, origin, movement_params, \
-            velocity_start, can_hold_jump_button, null, null)
+            constraint_offset, velocity_start, can_hold_jump_button, null, null)
     var is_destination_valid := update_constraint(destination, origin, null, origin, \
-            movement_params, velocity_start, can_hold_jump_button, null, null)
+            movement_params, constraint_offset, velocity_start, can_hold_jump_button, null, null)
     
     if is_origin_valid and is_destination_valid:
         return [origin, destination]
@@ -118,25 +118,14 @@ static func update_constraint(constraint: MovementConstraint, \
 
     assign_horizontal_movement_sign(constraint, previous_constraint, next_constraint)
     
-    if constraint.horizontal_movement_sign != constraint.horizontal_movement_sign_from_displacement:
+    if constraint.horizontal_movement_sign != \
+            constraint.horizontal_movement_sign_from_displacement:
         # This constraint should be skipped, and movement should proceed directly to the next one
         # (but we still need to keep this constraint around long enough to calculate whath that
         # next constraint is).
         constraint.is_fake = true
         constraint.horizontal_movement_sign = constraint.horizontal_movement_sign_from_displacement
-        # FIXME: ------------
-        # 
-        # - Position is based off the skipped constraint, but offset by a bit.
-        #   - Either a ratio of the player's collision boundary dimensions or a ratio of the constraint
-        #     offset?
-        #   - We ideally want this offset to trigger a collision with the neighboring-side surface.
-        # 
-        # - Probably should put this position-offset logic into a separate helper function, since
-        #   it'll get pretty extended with the switch statement based off which surface-side and
-        #   min-side.
-        # - var actual_vs_test_margin_diff := MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN - MovementCalcGlobalParams.EDGE_MOVEMENT_TEST_MARGIN
-        # - constraint_offset - Vector2(actual_vs_test_margin_diff, actual_vs_test_margin_diff)
-        constraint.position = INF
+        constraint.position = calculate_fake_constraint_position(constraint, constraint_offset)
     
     var time_passing_through: float
     var min_velocity_x: float
@@ -284,6 +273,28 @@ static func update_constraint(constraint: MovementConstraint, \
     constraint.actual_velocity_x = actual_velocity_x
     
     return true
+
+static func calculate_fake_constraint_position(constraint: MovementConstraint, \
+        constraint_offset: Vector2) -> Vector2:
+    assert(constraint.surface.side == SurfaceSide.FLOOR or \
+            constraint.surface.side == SurfaceSide.CEILING)
+    
+    var actual_vs_test_margin_diff := MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN - \
+            MovementCalcGlobalParams.EDGE_MOVEMENT_TEST_MARGIN - 0.001
+    var player_half_height := \
+            constraint_offset.y - MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN
+    
+    var position := constraint.position
+    
+    # Undo the normal margin, and align the player closer to the surface.
+    position.x += actual_vs_test_margin_diff if constraint.should_stay_on_min_side else \
+            -actual_vs_test_margin_diff
+    position.y += actual_vs_test_margin_diff if SurfaceSide.FLOOR else -actual_vs_test_margin_diff
+    
+    # Align the player so that they are straddling the edge of the surface.
+    position.y += player_half_height if SurfaceSide.FLOOR else -player_half_height
+    
+    return position
 
 # This only considers the time to move horizontally and the time to fall; this does not consider
 # the time to rise from the new constraint to the destination.
@@ -598,21 +609,23 @@ static func update_neighbors_for_new_constraint(constraint: MovementConstraint, 
         global_calc_params: MovementCalcGlobalParams, \
         vertical_step: MovementVertCalcStep) -> bool:
     var origin := global_calc_params.origin_constraint
-
+    
     if previous_constraint.is_origin:
         # The next constraint is only used for updates to the origin. Each other constraints just
         # depends on their previous constraint.
         var is_valid := update_constraint(previous_constraint, null, constraint, origin, \
-                global_calc_params.movement_params, vertical_step.velocity_step_start, \
-                vertical_step.can_hold_jump_button, vertical_step, null)
+                global_calc_params.movement_params, global_calc_params.constraint_offset, \
+                vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
+                vertical_step, null)
         if !is_valid:
             return false
     
     # The next constraint is only used for updates to the origin. Each other constraints just
     # depends on their previous constraint.
     return update_constraint(next_constraint, constraint, null, origin, \
-            global_calc_params.movement_params, vertical_step.velocity_step_start, \
-            vertical_step.can_hold_jump_button, vertical_step, null)
+            global_calc_params.movement_params, global_calc_params.constraint_offset, \
+            vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, vertical_step, \
+            null)
 
 static func copy_constraint(original: MovementConstraint) -> MovementConstraint:
     var copy := MovementConstraint.new(original.surface, original.position, \

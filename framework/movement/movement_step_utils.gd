@@ -243,7 +243,7 @@ static func calculate_steps_from_constraint_with_backtracking_on_height( \
         # would enable movement through this new intermediate constraint.
         is_constraint_valid = MovementConstraintUtils.update_constraint(destination_copy, \
                 global_calc_params.origin_constraint, null, global_calc_params.origin_constraint, \
-                global_calc_params.movement_params, \
+                global_calc_params.movement_params, global_calc_params.constraint_offset, \
                 local_calc_params.vertical_step.velocity_step_start, true, \
                 local_calc_params.vertical_step, constraint)
         if !is_constraint_valid:

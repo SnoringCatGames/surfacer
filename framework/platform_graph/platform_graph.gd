@@ -317,7 +317,8 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         
         for position_end in possible_end_positions:
             terminals = MovementConstraintUtils.create_terminal_constraints(null, origin, \
-                    surface, position_end.target_point, movement_params, velocity_start, false)
+                    surface, position_end.target_point, movement_params, \
+                    global_calc_params.constraint_offset, velocity_start, false)
             if terminals.empty():
                 continue
             

@@ -108,16 +108,29 @@ const MovementCalcGlobalParams := preload("res://framework/movement/models/movem
 #   - Also add support for specifying min/max y velocities for this?
 # 
 # FIXME: B:
-# - Should we more explicity re-use all vertical steps from before the jump button was released?
+# - Should we more explicity re-use all horizontal steps from before the jump button was released?
 #   - It might simplify the logic for checking for previously collided surfaces, and make things
 #     more efficient.
 # 
-# FIXME: A: Check if we need to update following constraints when creating a new one:
+# FIXME: B: Check if we need to update following constraints when creating a new one:
 # - Unfortunately, it is possible that the creation of a new intermediate constraint could
 #   invalidate the actual_velocity_x for the following constraint(s). A fix for this would be
 #   to first recalculate the min/max x velocities for all following constraints in forward
 #   order, and then recalculate the actual x velocity for all following constraints in reverse
 #   order.
+# 
+# FIXME: -B: [After getting the rest of the traversal working pretty well] Refactor step-calc to
+#            be front-to-back again.
+# - The main problem comes from invalid edge-constraint positions (indicate a pre-existing
+#   collision when trying to start step navigation from there).
+# - So, instead of back-to-front, we can go front-to-back and find where the onset of collision
+#   would occur.
+# - We then _also_ need to add logic to ignore a constraint when the horizontal steps leading up
+#   to it would have found another collision.
+#   - This is because changing trajectory for the earlier collision is likely to invalidate the
+#     later collision.
+#   - In this case, the recursive call that found the additional, earlier collision will need to
+#     also then calculate all steps from this collision to the end?
 
 
 
@@ -145,6 +158,21 @@ const MovementCalcGlobalParams := preload("res://framework/movement/models/movem
 #       - In the access function, the appropriate list is checked.
 #     - OR, would it be worth just refactoring collided_surfaces to instead only consider the
 #       surfaces that we've already used for backtracking?
+# 
+# - Update surface-parsing logic to also detect adjacent surfaces and store them as a property on
+#   Surface.
+# - Then use this instead of all the complicated position-offset+collision-detection logic for
+#   skipping fake constraints.
+# 
+# - Add support for detecting invalid origin/destination positions (due to pre-existing collisions
+#   with nearby surfaces).
+#   - Shouldn't matter for convex neighbor surfaces though.
+#   - And then add support for correcting the origin/destination position to avoid the collision.
+#     - When a pre-existing collision is detected, look at the surface side direction.
+#     - If parallel to the origin/destination surface, give up.
+#     - If perpendicular, then offset the position to where the player would rest against the
+#       surface, and check whether that position is still valid along the origin/destination
+#       surface.
 # 
 # - Polish description of approach in the README.
 #   - In general, a guiding heuristic in these calculations is to minimize movement. So, through
@@ -216,7 +244,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
                 
                 terminals = MovementConstraintUtils.create_terminal_constraints(a, \
                         jump_position.target_point, b, land_position.target_point, params, \
-                        velocity_start, true)
+                        global_calc_params.constraint_offset, velocity_start, true)
                 if terminals.empty():
                     continue
                 
@@ -245,7 +273,8 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
             MovementCalcGlobalParams.new(params, space_state, surface_parser, velocity_start)
     
     var terminals := MovementConstraintUtils.create_terminal_constraints(position_start.surface, \
-            position_start.target_point, null, position_end, params, velocity_start, true)
+            position_start.target_point, null, position_end, params, \
+            global_calc_params.constraint_offset, velocity_start, true)
     if terminals.empty():
         null
     
