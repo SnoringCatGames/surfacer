@@ -137,9 +137,7 @@ const MovementCalcGlobalParams := preload("res://framework/movement/models/movem
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# >>- Finish testing support for skipping a constraint.
-# 
-# - Check that global_calc_params.collided_surfaces is handled correctly:
+# >>- Check that global_calc_params.collided_surfaces is handled correctly:
 #   - QUESTION/PROBLEM: Regarding the current backtracking
 #     logic and disallowal of hitting previous surfaces:
 #     - What's to stop a new jump-height calculation from still running into the
@@ -158,6 +156,12 @@ const MovementCalcGlobalParams := preload("res://framework/movement/models/movem
 #       - In the access function, the appropriate list is checked.
 #     - OR, would it be worth just refactoring collided_surfaces to instead only consider the
 #       surfaces that we've already used for backtracking?
+# 
+# - Finish testing support for skipping a constraint.
+# 
+# - Add a translation to the on-wall cat animations, so that they are all a bit lower; the cat's
+#   head should be about the same position as the corresponding horizontal pose that collided, and
+#   the bottom should fall from there.
 # 
 # - Update surface-parsing logic to also detect adjacent surfaces and store them as a property on
 #   Surface.
@@ -232,7 +236,7 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
                     # Ignore non-floor surfaces.
                     continue
                 elif jump_position != jump_positions.front() or \
-                        land_position != land_positions.front():
+                        land_position != land_positions.back():
                     # Ignore non-near-ends.
                     continue
                 elif a.vertices[0] != Vector2(128, 64):

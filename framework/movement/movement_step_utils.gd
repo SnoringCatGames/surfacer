@@ -59,7 +59,7 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     
     var collision := CollisionCheckUtils.check_continuous_horizontal_step_for_collision( \
             global_calc_params, local_calc_params, next_horizontal_step)
-
+    
     # We expect that temporary, fake constraints will always have a corresponding following
     # collision, since we need to replace these with one of the real constraints from this
     # collision.
@@ -72,30 +72,29 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     
     if collision == null or collision.surface == global_calc_params.destination_constraint.surface:
         # There is no intermediate surface interfering with this movement.
-        return MovementCalcResults.new([next_horizontal_step], vertical_step)
-    
-    if global_calc_params.collided_surfaces.has(collision.surface):
-        # We've already considered a collision with this surface, so this movement won't work.
-        # Without this check, we'd recurse through a traversal branch that is identical to one
-        # we've already considered, and we'd loop infinitely.
-        return null
+        return MovementCalcResults.new([next_horizontal_step], vertical_step, \
+                local_calc_params.start_constraint)
     
     ### RECURSIVE CASES
     
-    global_calc_params.collided_surfaces[collision.surface] = true
+    var previous_constraint := local_calc_params.previous_constraint_if_start_is_fake if \
+            local_calc_params.start_constraint.is_fake else local_calc_params.start_constraint
     
     # Calculate possible constraints to divert the movement around either side of the colliding
     # surface.
     var constraints := MovementConstraintUtils.calculate_constraints_around_surface( \
             global_calc_params.movement_params, vertical_step, \
-            local_calc_params.start_constraint, global_calc_params.origin_constraint, \
+            previous_constraint, global_calc_params.origin_constraint, \
             collision.surface, global_calc_params.constraint_offset)
     if constraints.empty():
         return null
-
+    
     if local_calc_params.start_constraint.is_fake:
+        # Only one of the possible constraints from the collision can be valid, depending on
+        # whether the fake constraint was from a floor or a ceiling.
+        
         var fake_constraint_surface_side := local_calc_params.start_constraint.surface.side
-
+        
         # We expect that fake constraints will only be created for floor or ceiling surfaces.
         assert(fake_constraint_surface_side == SurfaceSide.FLOOR or \
                 fake_constraint_surface_side == SurfaceSide.CEILING)
@@ -103,8 +102,7 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
         var should_ignore_min_side_constraint := \
                 fake_constraint_surface_side == SurfaceSide.FLOOR
         
-        # Only one of the possible constraints from the collision can be valid, depending on
-        # whether the fake constraint was from a floor or a ceiling.
+        # Remove the invalid constraint according to the surface side.
         if constraints[0].should_stay_on_min_side == should_ignore_min_side_constraint:
             constraints.remove(0)
         elif constraints.size() > 1 and \
@@ -120,6 +118,14 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
     if calc_results != null or !global_calc_params.can_backtrack_on_height:
         return calc_results
     
+    if global_calc_params.collided_surfaces.has(collision.surface):
+        # We've already tried backtracking for a collision with this surface, so this movement
+        # won't work. Without this check, we'd recurse through a traversal branch that is identical
+        # to one we've already considered, and we'd loop infinitely.
+        return null
+    
+    global_calc_params.collided_surfaces[collision.surface] = true
+    
     # Then, try to satisfy the constraints with backtracking to consider a new max jump height.
     return calculate_steps_from_constraint_with_backtracking_on_height( \
             global_calc_params, local_calc_params, constraints)
@@ -128,8 +134,12 @@ static func calculate_steps_from_constraint(global_calc_params: MovementCalcGlob
 static func calculate_steps_from_constraint_without_backtracking_on_height( \
         global_calc_params: MovementCalcGlobalParams, \
         local_calc_params: MovementCalcLocalParams, constraints: Array) -> MovementCalcResults:
-    var previous_constraint_original := local_calc_params.start_constraint
+    var vertical_step := local_calc_params.vertical_step
+    var is_start_constraint_fake := local_calc_params.start_constraint.is_fake
+    var previous_constraint_original := local_calc_params.previous_constraint_if_start_is_fake if \
+            is_start_constraint_fake else local_calc_params.start_constraint
     var next_constraint_original := local_calc_params.end_constraint
+    
     var previous_constraint_copy: MovementConstraint
     var next_constraint_copy: MovementConstraint
     var local_calc_params_to_constraint: MovementCalcLocalParams
@@ -147,12 +157,10 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         # in case this recursion fails.
         previous_constraint_copy = \
                 MovementConstraintUtils.copy_constraint(previous_constraint_original)
-        local_calc_params.start_constraint = previous_constraint_copy
         next_constraint_copy = MovementConstraintUtils.copy_constraint(next_constraint_original)
-        local_calc_params.end_constraint = next_constraint_copy
-
+        
         # FIXME: LEFT OFF HERE: A: Verify this statement.
-
+        
         # Update the previous and next constraints, to account for this new intermediate
         # constraint. These updates are not completely sufficient, since we may in turn need to
         # update the min/max/actual x-velocities and movement sign for all other constraints. And
@@ -160,24 +168,28 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         # constraints. But we have found that these two updates are enough for most cases.
         MovementConstraintUtils.update_neighbors_for_new_constraint(constraint, \
                 previous_constraint_copy, next_constraint_copy, global_calc_params, \
-                local_calc_params.vertical_step)
-
+                vertical_step)
+        
         ### RECURSE: Calculate movement from the constraint to the original destination.
-
+        
         local_calc_params_from_constraint = MovementCalcLocalParams.new( \
-                constraint, local_calc_params.end_constraint, \
-                local_calc_params.vertical_step)
+                constraint, next_constraint_copy, vertical_step)
+        if constraint.is_fake:
+            # If the start constraint is fake, then we will need access to the latest real
+            # constraint.
+            local_calc_params_from_constraint.previous_constraint_if_start_is_fake = \
+                    previous_constraint_copy
         calc_results_from_constraint = calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_from_constraint)
         
         if calc_results_from_constraint == null:
             # This constraint is out of reach with the current jump height.
             continue
-
+        
         if constraint.is_fake:
             # We should have found a very close-by collision with a neighboring surface. We replace
             # the fake/temporary constraint with this.
-            constraint = calc_results_from_constraint.horizontal_steps[0]
+            constraint = calc_results_from_constraint.start_constraint
             # calculate_steps_from_constraint shouldn't return the same fake constraint, and there
             # shouldn't be two fake constraints in a row.
             assert(!constraint.is_fake)
@@ -187,17 +199,17 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
             # so we can just return that result here.
             return calc_results_from_constraint
         
-        if local_calc_params.start_constraint.is_fake:
+        if is_start_constraint_fake:
             # Since we're skipping the fake constraint, we don't need to calculate steps from it.
             # Steps leading up to this new post-fake-constraint will be calculated from one-layer
             # up in the recursion tree.
+            calc_results_from_constraint.start_constraint = constraint
             return calc_results_from_constraint
         
         ### RECURSE: Calculate movement to the constraint.
         
         local_calc_params_to_constraint = MovementCalcLocalParams.new( \
-                local_calc_params.start_constraint, constraint, \
-                local_calc_params.vertical_step)
+                previous_constraint_copy, constraint, vertical_step)
         calc_results_to_constraint = calculate_steps_from_constraint(global_calc_params, \
                 local_calc_params_to_constraint)
         
@@ -217,7 +229,10 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         return calc_results_to_constraint
     
     # We weren't able to satisfy the constraints around the colliding surface.
-    local_calc_params.start_constraint = previous_constraint_original
+    if is_start_constraint_fake:
+        local_calc_params.previous_constraint_if_start_is_fake = previous_constraint_original
+    else:
+        local_calc_params.start_constraint = previous_constraint_original
     local_calc_params.end_constraint = next_constraint_original
     return null
 

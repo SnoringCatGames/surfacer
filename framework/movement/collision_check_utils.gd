@@ -290,10 +290,18 @@ static func check_continuous_horizontal_step_for_collision( \
                 movement_params, vertical_step, current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
-        shape_query_params.transform = Transform2D(0.0, previous_position)
+        shape_query_params.transform = Transform2D(PI/2.0, previous_position)# FIXME: LEFT OFF HERE: --------------
         shape_query_params.motion = current_position - previous_position
         
         assert(shape_query_params.motion != Vector2.ZERO)
+        
+        # FIXME: LEFT OFF HERE: DEBUGGING: ---------------------------------------A:
+        # - Set a breakpoint here.
+        # >>- Step from here to debug why this movement doesn't return a valid result.
+        # - !! shape_query_params.transform is not taking into consideration the rotation of the shape.
+        #   - 
+        if current_position.x > 40 and current_position.x < 61 and current_position.y < -350:
+            print("yo")
         
         # Check for collision.
         collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \

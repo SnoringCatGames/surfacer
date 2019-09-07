@@ -3,7 +3,7 @@ class_name HorizontalMovementUtils
 
 const MovementCalcStep := preload("res://framework/movement/models/movement_calculation_step.gd")
 
-const MIN_MAX_VELOCITY_X_MARGIN := MovementConstraintUtils.MIN_MAX_VELOCITY_X_OFFSET * 5
+const MIN_MAX_VELOCITY_X_MARGIN := MovementConstraintUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
 
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams, \
@@ -258,10 +258,18 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         else:
             min_speed_v_0_to_reach_target = min(result_1, result_2)
         
-        if min_speed_v_0_to_reach_target > v_start_max + MIN_MAX_VELOCITY_X_MARGIN:
+        # Correct for round-off error around the min and max boundaries.
+        if min_speed_v_0_to_reach_target < v_start_min and \
+                min_speed_v_0_to_reach_target > v_start_min - MIN_MAX_VELOCITY_X_MARGIN:
+            min_speed_v_0_to_reach_target = v_start_min
+        if min_speed_v_0_to_reach_target > v_start_max and \
+                min_speed_v_0_to_reach_target < v_start_max + MIN_MAX_VELOCITY_X_MARGIN:
+            min_speed_v_0_to_reach_target = v_start_max
+        
+        if min_speed_v_0_to_reach_target > v_start_max:
             # We cannot start this step with enough speed to reach the end position.
             return INF
-        elif min_speed_v_0_to_reach_target < v_start_min - MIN_MAX_VELOCITY_X_MARGIN:
+        elif min_speed_v_0_to_reach_target < v_start_min:
             # TODO: Check if this case is actually always an error
             Utils.error()
 
@@ -287,10 +295,18 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         else:
             min_speed_v_0_to_reach_target = max(result_1, result_2)
         
-        if min_speed_v_0_to_reach_target < v_start_min - MIN_MAX_VELOCITY_X_MARGIN:
+        # Correct for round-off error around the min and max boundaries.
+        if min_speed_v_0_to_reach_target < v_start_min and \
+                min_speed_v_0_to_reach_target > v_start_min - MIN_MAX_VELOCITY_X_MARGIN:
+            min_speed_v_0_to_reach_target = v_start_min
+        if min_speed_v_0_to_reach_target > v_start_max and \
+                min_speed_v_0_to_reach_target < v_start_max + MIN_MAX_VELOCITY_X_MARGIN:
+            min_speed_v_0_to_reach_target = v_start_max
+        
+        if min_speed_v_0_to_reach_target < v_start_min:
             # We cannot start this step with enough speed to reach the end position.
             return INF
-        elif min_speed_v_0_to_reach_target > v_start_max + MIN_MAX_VELOCITY_X_MARGIN:
+        elif min_speed_v_0_to_reach_target > v_start_max:
             # TODO: Check if this case is actually always an error
             Utils.error()
 

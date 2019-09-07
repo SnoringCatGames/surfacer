@@ -105,6 +105,10 @@ static func update_constraint(constraint: MovementConstraint, \
         can_hold_jump_button_at_origin: bool, vertical_step: MovementVertCalcStep, \
         additional_high_constraint: MovementConstraint) -> bool:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    
+    # FIXME: -------- REMOVE?
+#    # We should only calculate constraint state based off real neighbor constraints.
+#    assert(previous_constraint == null or !previous_constraint.is_fake)
 
     # Previous constraint and vertical_step should be provided when updating intermediate
     # constraints.
@@ -229,12 +233,12 @@ static func update_constraint(constraint: MovementConstraint, \
             
             # We can quit early for a few types of constraints.
             if !constraint.passing_vertically and constraint.should_stay_on_min_side and \
-                    still_holding_jump_button:
+                    !still_holding_jump_button:
                 # Quit early if we are trying to go above a wall, but we already released the jump
                 # button.
                 return false
             elif !constraint.passing_vertically and !constraint.should_stay_on_min_side and \
-                    !still_holding_jump_button:
+                    still_holding_jump_button:
                 # Quit early if we are trying to go below a wall, but we are still holding the jump
                 # button.
                 return false
@@ -276,8 +280,9 @@ static func update_constraint(constraint: MovementConstraint, \
 
 static func calculate_fake_constraint_position(constraint: MovementConstraint, \
         constraint_offset: Vector2) -> Vector2:
-    assert(constraint.surface.side == SurfaceSide.FLOOR or \
-            constraint.surface.side == SurfaceSide.CEILING)
+    var is_floor := constraint.surface.side == SurfaceSide.FLOOR
+    var is_ceiling := constraint.surface.side == SurfaceSide.CEILING
+    assert(is_floor or is_ceiling)
     
     var actual_vs_test_margin_diff := MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN - \
             MovementCalcGlobalParams.EDGE_MOVEMENT_TEST_MARGIN - 0.001
@@ -289,10 +294,11 @@ static func calculate_fake_constraint_position(constraint: MovementConstraint, \
     # Undo the normal margin, and align the player closer to the surface.
     position.x += actual_vs_test_margin_diff if constraint.should_stay_on_min_side else \
             -actual_vs_test_margin_diff
-    position.y += actual_vs_test_margin_diff if SurfaceSide.FLOOR else -actual_vs_test_margin_diff
+    position.y += MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN if is_floor else \
+            -MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN
     
     # Align the player so that they are straddling the edge of the surface.
-    position.y += player_half_height if SurfaceSide.FLOOR else -player_half_height
+    position.y += player_half_height if is_floor else -player_half_height
     
     return position
 
@@ -344,7 +350,7 @@ static func assign_horizontal_movement_sign(constraint: MovementConstraint, \
             previous_constraint != null else next_constraint.horizontal_movement_sign
     var is_origin := constraint.is_origin
     var is_destination := constraint.is_destination
-
+    
     var displacement_sign := \
             0 if Geometry.are_floats_equal_with_epsilon(displacement.x, 0.0, 0.1) else \
             (1 if displacement.x > 0 else \
