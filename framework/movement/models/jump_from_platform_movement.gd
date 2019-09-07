@@ -137,7 +137,7 @@ const MovementCalcGlobalParams := preload("res://framework/movement/models/movem
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# >>- Finish implementing support for skipping a constraint.
+# >>- Finish testing support for skipping a constraint.
 # 
 # - Check that global_calc_params.collided_surfaces is handled correctly:
 #   - QUESTION/PROBLEM: Regarding the current backtracking

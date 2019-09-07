@@ -115,8 +115,11 @@ func _physics_process(delta: float) -> void:
     _update_surface_state()
     
     # Uncomment to help with debugging.
+    if surface_state.just_touched_a_surface:
+        print("HIT surface:    %8.3f:%29sP:%29sV" % [global.elapsed_play_time_sec, \
+                surface_state.center_position, velocity])
     if surface_state.just_left_air:
-        print("HIT surface:    %8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
+        print("GRABBED surface:%8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
                 surface_state.center_position, velocity, \
                 Surface.to_string(surface_state.grabbed_surface)])
     elif surface_state.just_entered_air:
@@ -222,10 +225,16 @@ func _update_surface_state() -> void:
     surface_state.which_wall = Utils.get_which_wall_collided(self)
     surface_state.is_touching_left_wall = surface_state.which_wall == SurfaceSide.LEFT_WALL
     surface_state.is_touching_right_wall = surface_state.which_wall == SurfaceSide.RIGHT_WALL
-    surface_state.is_touching_a_surface = \
+    
+    var next_is_touching_a_surface := \
             surface_state.is_touching_floor or \
             surface_state.is_touching_ceiling or \
             surface_state.is_touching_wall
+    surface_state.just_touched_a_surface = \
+            next_is_touching_a_surface and !surface_state.is_touching_a_surface
+    surface_state.just_stopped_touching_a_surface = \
+            !next_is_touching_a_surface and surface_state.is_touching_a_surface
+    surface_state.is_touching_a_surface = next_is_touching_a_surface
     
     # Calculate the sign of a colliding wall's direction.
     surface_state.toward_wall_sign = (0 if !surface_state.is_touching_wall else \

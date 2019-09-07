@@ -396,6 +396,7 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
     # Accelerating in a positive direction over the entire step, corresponds to a lower bound on
     # the start velocity, and accelerating in a negative direction over the entire step,
     # corresponds to an upper bound on the start velocity.
+    # 
     # Derivation:
     # - From a basic equation of motion:
     #   s = s_0 + v_0*t + 1/2*a*t^2
@@ -405,11 +406,33 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
             displacement / duration - 0.5 * a_magnitude * duration
     var max_v_0_that_can_reach_target := \
             displacement / duration + 0.5 * a_magnitude * duration
+    
+    # From a basic equation of motion:
+    #    v = v_0 + a*t
+    var min_v_0_that_can_reach_max_velocity := speed_max - a_magnitude * duration
+    var max_v_0_that_can_reach_min_velocity := -speed_max + a_magnitude * duration
+    
+    if min_v_0_that_can_reach_target > min_v_0_that_can_reach_max_velocity:
+        var acceleration := a_magnitude
+        var v_1 := speed_max
+        min_v_0_that_can_reach_target = \
+                calculate_min_v_0_with_v_1_limit(displacement, duration, v_1, acceleration, true)
+        if min_v_0_that_can_reach_target == INF:
+            return []
+    
+    if max_v_0_that_can_reach_target < max_v_0_that_can_reach_min_velocity:
+        var acceleration := -a_magnitude
+        var v_1 := -speed_max
+        max_v_0_that_can_reach_target = \
+                calculate_min_v_0_with_v_1_limit(displacement, duration, v_1, acceleration, false)
+        if max_v_0_that_can_reach_target == INF:
+            return []
+    
     # The min and max possible v_0 are dependent on both the duration of the current step and the
     # min and max possible step-end v_0 from the previous step, respectively.
     var v_0_min := max(min_v_0_that_can_reach_target, v_0_min_from_prev_constraint)
     var v_0_max := min(max_v_0_that_can_reach_target, v_0_max_from_prev_constraint)
-
+    
     if v_0_min > v_0_max:
         # Neither direction of acceleration will work with the given min/max start velocities from
         # the previous step.
@@ -444,28 +467,28 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
     should_accelerate_at_start = true
     should_return_min_result = true
     var v_min_pos_acc_at_start := solve_for_end_velocity(displacement, v_0, acceleration, \
-            duration, should_accelerate_at_start, should_return_min_result)
+            duration, speed_max, should_accelerate_at_start, should_return_min_result)
 
     v_0 = v_0_min
     acceleration = -a_magnitude
     should_accelerate_at_start = true
     should_return_min_result = false
     var v_max_neg_acc_at_start := solve_for_end_velocity(displacement, v_0, acceleration, \
-            duration, should_accelerate_at_start, should_return_min_result)
+            duration, speed_max, should_accelerate_at_start, should_return_min_result)
 
     v_0 = v_0_min
     acceleration = a_magnitude
     should_accelerate_at_start = false
     should_return_min_result = false
     var v_max_pos_acc_at_end := solve_for_end_velocity(displacement, v_0, acceleration, \
-            duration, should_accelerate_at_start, should_return_min_result)
+            duration, speed_max, should_accelerate_at_start, should_return_min_result)
 
     v_0 = v_0_max
     acceleration = -a_magnitude
     should_accelerate_at_start = false
     should_return_min_result = true
     var v_min_neg_acc_at_end := solve_for_end_velocity(displacement, v_0, acceleration, \
-            duration, should_accelerate_at_start, should_return_min_result)
+            duration, speed_max, should_accelerate_at_start, should_return_min_result)
 
     # Use the more extreme of the possible min/max values we calculated for positive/negative
     # acceleration at the start/end.
@@ -480,6 +503,8 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
             (v_min_pos_acc_at_start if v_min_pos_acc_at_start != INF else \
             v_min_neg_acc_at_end)
 
+    # If we found valid v_0_min/v_0_max values, then there must be valid corresponding v_min/v_max
+    # values.
     assert(v_max != INF)
     assert(v_min != INF)
     assert(v_max >= v_min)
@@ -523,16 +548,70 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
 
     return [v_min, v_max]
 
+# Accelerating over the whole interval would result in an end velocity that exceeds the max speed.
+# So instead, we assume a 2-part movement profile with constant acceleration in the first part and
+# constant (max-speed) velocity in the second part. This 2-part movement should correspond to the
+# actual limit on v_0.
+static func calculate_min_v_0_with_v_1_limit(displacement: float, duration: float, v_1: float, \
+        acceleration: float, should_return_min_result: bool) -> float:
+    # Derivation:
+    # - From basic equations of motion:
+    #   - v_1 = v_0 + a*t_0
+    #   - s_2 = s_1 + v_1*t_1
+    #   - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
+    #   - t_total = t_0 + t_1
+    #   - diplacement = s_2 - s_0
+    # - Do some algebra...
+    #   - 0 = displacement*a/v_1 + 1/2*v_1 - a*t_total - v_0 + 1/2/v_1*v_0^2
+    # - Apply quadratic formula to solve for v_1.
+    
+    var a := 0.5 / v_1
+    var b := -1
+    var c := displacement * acceleration / v_1 + 0.5 * v_1 - acceleration * duration
+    
+    var discriminant := b * b - 4 * a * c
+    if discriminant < 0:
+        # There is no start velocity that can satisfy these parameters.
+        return INF
+    
+    var discriminant_sqrt := sqrt(discriminant)
+    var result_1 := (-b + discriminant_sqrt) / 2.0 / a
+    var result_2 := (-b - discriminant_sqrt) / 2.0 / a
+    
+    # From a basic equation of motion:
+    #    v = v_0 + a*t
+    var t_result_1 := (v_1 - result_1) / acceleration
+    var t_result_2 := (v_1 - result_2) / acceleration
+    
+    # The results are invalid if they correspond to imaginary negative durations.
+    var is_result_1_valid := (t_result_1 >= 0 and t_result_1 <= duration)
+    var is_result_2_valid := (t_result_2 >= 0 and t_result_2 <= duration)
+    
+    if !is_result_1_valid and !is_result_2_valid:
+        # There is no start velocity that can satisfy these parameters.
+        return INF
+    elif !is_result_1_valid:
+        return result_2
+    elif !is_result_2_valid:
+        return result_1
+    elif should_return_min_result:
+        return min(result_1, result_2)
+    else:
+        return max(result_1, result_2)
+
 static func solve_for_end_velocity(displacement: float, v_0: float, acceleration: float, \
-        duration: float, should_accelerate_at_start: bool, \
+        duration: float, speed_max: float, should_accelerate_at_start: bool, \
         should_return_min_result: bool) -> float:
+    var acceleration_sign := 1 if acceleration >= 0 else -1
+    var max_speed_end_velocity := speed_max * acceleration_sign
+    
     var a: float
     var b: float
     var c: float
     
     # FIXME: -------------- REMOVE: DEBUGGING
 #    duration = 1.3
-
+    
     if should_accelerate_at_start:
         # Try accelerating at the start of the step.
         # Derivation:
@@ -552,23 +631,80 @@ static func solve_for_end_velocity(displacement: float, v_0: float, acceleration
         c = 2 * acceleration * displacement + v_0 * v_0
     else:
         # Try accelerating at the end of the step.
-        # Derivation:
-        # - There are two parts:
-        #   - Part 1: Coast at v_0 until we need to start accelerating.
-        #   - Part 2: Constant acceleration from v_0 to v_1; we reach the destination when we reach
-        #     v_1.
-        # - Start with basic equations of motion:
-        #   - s_1 = s_0 + v_0*t_0
-        #   - v_1 = v_0 + a*t_1
-        #   - v_1^2 = v_0^2 + 2*a*(s_2 - s_1)
-        #   - t_total = t_0 + t_1
-        # - Do some algebra...
-        #   - 0 = 2*a*(s_2 - s_0 - t_total*v_0) - v_0^2 + 2*v_0*v_1 - v_1^2
-        # - Apply quadratic formula to solve for v_1.
-        a = -1
-        b = 2 * v_0
-        c = 2 * acceleration * (displacement - duration * v_0) - v_0 * v_0
         
+        # From a basic equation of motion:
+        #    v = v_0 + a*t
+        var time_to_max_speed := (max_speed_end_velocity - v_0) / acceleration
+        
+        # From a basic equation of motion:
+        #    s = s_0 + v_0*t + 1/2*a*t^2
+        var displacement_during_acceleration_to_max_speed := v_0 * time_to_max_speed + \
+                0.5 * acceleration * time_to_max_speed * time_to_max_speed
+        
+        var duration_of_constant_velocity := duration - time_to_max_speed
+        var displacement_with_constant_v_only_at_start := \
+                displacement_during_acceleration_to_max_speed + \
+                duration_of_constant_velocity * v_0
+        var displacement_with_constant_v_only_at_end := \
+                displacement_during_acceleration_to_max_speed + \
+                duration_of_constant_velocity * max_speed_end_velocity
+        
+        var is_time_to_max_speed_valid := time_to_max_speed <= duration
+        var is_displacement_to_max_speed_with_constant_v_only_at_start_valid := \
+                (acceleration_sign > 0 and \
+                displacement_with_constant_v_only_at_start < displacement) or \
+                (acceleration_sign < 0 and \
+                displacement_with_constant_v_only_at_start > displacement)
+        
+        if is_time_to_max_speed_valid and \
+                is_displacement_to_max_speed_with_constant_v_only_at_start_valid:
+            # Use a 3-part approach to solve for end velocity. This assumes that some time will be
+            # spent at max speed. So the three parts of the movement profile are:
+            # 1. Start with constant velocity,
+            # 2. Then use contant acceleration until we reach max speed,
+            # 3. Then use constant velocity (at max speed) until we reach the end position.
+            # 
+            # However, we don't need to calculate the durations of those three steps here. Instead,
+            # we can just calculate whether putting all the extra time at the start would cause us
+            # to under-shoot the end position, and whether putting all the extra time at the end
+            # would cause us to over-shoot the end position. If both of those are true, then this
+            # is a valid movement profile, and we can reach the end position with a max-speed end
+            # velocity.
+            
+            var is_displacement_to_max_speed_with_constant_v_only_at_end_valid := \
+                    (acceleration_sign > 0 and \
+                    displacement_with_constant_v_only_at_end > displacement) or \
+                    (acceleration_sign < 0 and \
+                    displacement_with_constant_v_only_at_end < displacement)
+            
+            if is_displacement_to_max_speed_with_constant_v_only_at_start_valid and \
+                    is_displacement_to_max_speed_with_constant_v_only_at_end_valid:
+                # The movement can satisfy these params by accelerating to max speed somewhere
+                # between as early and as late as possible.
+                return max_speed_end_velocity
+            else:
+                # The movement can't satisfy these params.
+                return INF
+        else:
+            # Use a 2-part approach to solve for end velocity. This assumes that no time will be
+            # spent at max speed (and we probably won't reach max speed at all). So the only two
+            # parts of the movement profile are:
+            # 1. Start with constrant velocity,
+            # 2. Then use constant acceleration until we reach the end position.
+            # 
+            # Derivation:
+            # - Start with basic equations of motion:
+            #   - s_1 = s_0 + v_0*t_0
+            #   - v_1 = v_0 + a*t_1
+            #   - v_1^2 = v_0^2 + 2*a*(s_2 - s_1)
+            #   - t_total = t_0 + t_1
+            # - Do some algebra...
+            #   - 0 = 2*a*(s_2 - s_0 - t_total*v_0) - v_0^2 + 2*v_0*v_1 - v_1^2
+            # - Apply quadratic formula to solve for v_1.
+            a = -1
+            b = 2 * v_0
+            c = 2 * acceleration * (displacement - duration * v_0) - v_0 * v_0
+    
     var discriminant := b * b - 4 * a * c
     if discriminant < 0:
         # There is no end velocity that can satisfy these parameters.
@@ -578,20 +714,34 @@ static func solve_for_end_velocity(displacement: float, v_0: float, acceleration
     var result_1 := (-b + discriminant_sqrt) / 2.0 / a
     var result_2 := (-b - discriminant_sqrt) / 2.0 / a
     
+    # Fix small round-off errors near max-speed values.
+    if Geometry.are_floats_equal_with_epsilon(result_1, max_speed_end_velocity, 0.01):
+        result_1 = max_speed_end_velocity
+    if Geometry.are_floats_equal_with_epsilon(result_2, max_speed_end_velocity, 0.01):
+        result_2 = max_speed_end_velocity
+    
     # From a basic equation of motion:
     #    v = v_0 + a*t
     var t_result_1 := (result_1 - v_0) / acceleration
     var t_result_2 := (result_2 - v_0) / acceleration
     
+    ###########################################
     # FIXME: --------------- REMOVE: DEBUGGING
-#    var disp_result_1_foo := v_0*t_result_1 + 0.5*acceleration*t_result_1*t_result_1
-#    var disp_result_1_bar := result_1*(duration-t_result_1)
-#    var disp_result_1_total := disp_result_1_foo + disp_result_1_bar
+    var disp_result_1_foo := v_0*t_result_1 + 0.5*acceleration*t_result_1*t_result_1
+    var disp_result_1_bar := result_1*(duration-t_result_1)
+    var disp_result_1_total := disp_result_1_foo + disp_result_1_bar
+    var disp_result_2_foo := v_0*t_result_2 + 0.5*acceleration*t_result_2*t_result_2
+    var disp_result_2_bar := result_2*(duration-t_result_2)
+    var disp_result_2_total := disp_result_2_foo + disp_result_2_bar
+    ###########################################
     
-    # The results are invalid if they correspond to imaginary negative durations.
-    var is_result_1_valid := t_result_1 >= 0 and t_result_1 <= duration
-    var is_result_2_valid := t_result_2 >= 0 and t_result_2 <= duration
-
+    # The results are invalid if they correspond to imaginary negative durations or if they exceed
+    # max speed.
+    var is_result_1_valid := (t_result_1 >= 0 and t_result_1 <= duration) and \
+            (abs(result_1) < speed_max)
+    var is_result_2_valid := (t_result_2 >= 0 and t_result_2 <= duration) and \
+            (abs(result_2) < speed_max)
+    
     if !is_result_1_valid and !is_result_2_valid:
         # There is no end velocity that can satisfy these parameters.
         return INF

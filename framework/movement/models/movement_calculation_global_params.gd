@@ -49,7 +49,7 @@ func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceSta
     self.can_backtrack_on_height = can_backtrack_on_height
     
     constraint_offset = movement_params.collider_half_width_height + \
-        Vector2(EDGE_MOVEMENT_ACTUAL_MARGIN, EDGE_MOVEMENT_ACTUAL_MARGIN)
+            Vector2(EDGE_MOVEMENT_ACTUAL_MARGIN, EDGE_MOVEMENT_ACTUAL_MARGIN)
     
     collided_surfaces = {}
     

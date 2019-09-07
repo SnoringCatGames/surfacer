@@ -8,6 +8,9 @@ var is_touching_right_wall := false
 var is_touching_wall := false
 var is_touching_a_surface := false
 
+var just_touched_a_surface := false
+var just_stopped_touching_a_surface := false
+
 var is_grabbing_floor := false
 var is_grabbing_ceiling := false
 var is_grabbing_left_wall := false
