@@ -1,31 +1,50 @@
 extends Node
 class_name Global
 
-const PLAYER_ACTION_CLASSES := [
-    preload("res://framework/player/action/action_handlers/air_dash_action.gd"),
-    preload("res://framework/player/action/action_handlers/air_default_action.gd"),
-    preload("res://framework/player/action/action_handlers/air_jump_action.gd"),
-    preload("res://framework/player/action/action_handlers/all_default_action.gd"),
-    preload("res://framework/player/action/action_handlers/cap_velocity_action.gd"),
-    preload("res://framework/player/action/action_handlers/floor_dash_action.gd"),
-    preload("res://framework/player/action/action_handlers/floor_default_action.gd"),
-    preload("res://framework/player/action/action_handlers/floor_fall_through_action.gd"),
-    preload("res://framework/player/action/action_handlers/floor_jump_action.gd"),
-    preload("res://framework/player/action/action_handlers/floor_walk_action.gd"),
-    preload("res://framework/player/action/action_handlers/wall_climb_action.gd"),
-    preload("res://framework/player/action/action_handlers/wall_dash_action.gd"),
-    preload("res://framework/player/action/action_handlers/wall_default_action.gd"),
-    preload("res://framework/player/action/action_handlers/wall_fall_action.gd"),
-    preload("res://framework/player/action/action_handlers/wall_jump_action.gd"),
-    preload("res://framework/player/action/action_handlers/wall_walk_action.gd"),
+const LEVEL_RESOURCE_PATHS := [
+    "res://levels/level_1.tscn",
+    "res://levels/level_2.tscn",
+    "res://levels/level_3.tscn",
+    "res://levels/level_4.tscn",
+    "res://levels/level_5.tscn",
 ]
+
+const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
+
+const IN_DEBUG_MODE := true
+const IN_TEST_MODE := false
+
+const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_rise.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
+
+const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
+#const PLAYER_RESOURCE_PATH := "res://framework/test/test_data/test_player.tscn"
+
+const DEBUG_STATE := {
+    in_debug_mode = IN_DEBUG_MODE,
+    limit_parsing_to_single_edge = {
+        player_name = "cat",
+        origin = {
+            surface_side = SurfaceSide.FLOOR,
+            surface_start_vertex = Vector2(128, 64),
+            surface_end_vertex = Vector2(192, 64),
+            near_far_close_position = "near",
+        },
+        destination = {
+            surface_side = SurfaceSide.FLOOR,
+            surface_start_vertex = Vector2(-128, -448),
+            surface_end_vertex = Vector2(0, -448),
+            near_far_close_position = "far",
+        },
+    },
+}
 
 const PLAYER_ACTIONS := {}
 
 # Dictionary<String, PlayerTypeConfiguration>
-var player_types = {}
+var player_types := {}
 
-var current_level: Level
+var current_level
 
 # Keeps track of the current total elapsed time of unpaused gameplay.
 var elapsed_play_time_sec: float setget ,_get_elapsed_play_time_sec
@@ -45,16 +64,18 @@ func pause() -> void:
 func unpause() -> void:
     get_tree().paused = false
 
-func register_player_params(player_params: Array) -> void:
+func register_player_actions(player_action_classes: Array) -> void:
+    # Instantiate the various PlayerActions.
+    for player_action_class in player_action_classes:
+        PLAYER_ACTIONS[player_action_class.NAME] = player_action_class.new()
+
+func register_player_params(player_param_classes: Array) -> void:
+    var params
     var type: PlayerTypeConfiguration
-    for params in player_params:
+    for param_class in player_param_classes:
+        params = param_class.new(self)
         type = params.get_player_type_configuration()
         self.player_types[type.name] = type
-
-func _init() -> void:
-    # Instantiate the various PlayerActions.
-    for player_action_class in PLAYER_ACTION_CLASSES:
-        PLAYER_ACTIONS[player_action_class.NAME] = player_action_class.new()
 
 func _ready() -> void:
     _elapsed_physics_play_time_sec = 0.0

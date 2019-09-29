@@ -116,14 +116,14 @@ func _physics_process(delta: float) -> void:
     
     # Uncomment to help with debugging.
     if surface_state.just_touched_a_surface:
-        print("HIT surface:    %8.3f:%29sP:%29sV" % [global.elapsed_play_time_sec, \
+        print("HIT     surface:%8.3f:%29sP:%29sV" % [global.elapsed_play_time_sec, \
                 surface_state.center_position, velocity])
     if surface_state.just_left_air:
         print("GRABBED surface:%8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
                 surface_state.center_position, velocity, \
                 Surface.to_string(surface_state.grabbed_surface)])
     elif surface_state.just_entered_air:
-        print("LEFT surface:   %8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
+        print("LEFT    surface:%8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
                 surface_state.center_position, velocity, \
                 Surface.to_string(surface_state.previous_grabbed_surface)])
     

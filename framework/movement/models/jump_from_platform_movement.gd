@@ -1,7 +1,7 @@
 extends Movement
 class_name JumpFromPlatformMovement
 
-const MovementCalcGlobalParams := preload("res://framework/movement/models/movement_calculation_global_params.gd")
+const MovementCalcOverallParams := preload("res://framework/movement/models/movement_calculation_overall_params.gd")
 
 # FIXME: SUB-MASTER LIST ***************
 # - Add support for specifying a required min/max end-x-velocity.
@@ -137,14 +137,14 @@ const MovementCalcGlobalParams := preload("res://framework/movement/models/movem
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# >>- Check that global_calc_params.collided_surfaces is handled correctly:
+# >>- Check that overall_calc_params.collided_surfaces is handled correctly:
 #   - QUESTION/PROBLEM: Regarding the current backtracking
 #     logic and disallowal of hitting previous surfaces:
 #     - What's to stop a new jump-height calculation from still running into the
 #       same old wall constraint as before, when we hit the wall before letting
 #       go of jump?
 #     - I'm pretty sure nothing is.
-#     **- SOLUTION: Move the global_calc_params.collided_surfaces assignment and
+#     **- SOLUTION: Move the overall_calc_params.collided_surfaces assignment and
 #       access to helper functions.
 #       - In the assignment function, check whether the jump button would still
 #         be pressed:
@@ -192,7 +192,7 @@ func _init(params: MovementParams).("jump_from_platform", params) -> void:
     self.can_traverse_to_air = true
     self.can_traverse_from_air = false
 
-func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
+func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DDirectSpaceState, \
         surface_parser: SurfaceParser, possible_surfaces: Array, a: Surface) -> Array:
     var jump_positions: Array
     var land_positions: Array
@@ -207,8 +207,8 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     var velocity_start := Vector2(0.0, params.jump_boost)
-    var global_calc_params := \
-            MovementCalcGlobalParams.new(params, space_state, surface_parser, velocity_start)
+    var overall_calc_params := \
+            MovementCalcOverallParams.new(params, space_state, surface_parser, velocity_start)
     
     for b in possible_surfaces:
         # This makes the assumption that traversing through any fall-through/walk-through surface
@@ -231,31 +231,69 @@ func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
 
         for jump_position in jump_positions:
             for land_position in land_positions:
-                # FIXME: E: DEBUGGING: Remove.
-                if a.side != SurfaceSide.FLOOR or b.side != SurfaceSide.FLOOR:
-                    # Ignore non-floor surfaces.
-                    continue
-                elif jump_position != jump_positions.front() or \
-                        land_position != land_positions.back():
-                    # Ignore non-near-ends.
-                    continue
-                elif a.vertices[0] != Vector2(128, 64):
-                    # Ignore anything but the one origin surface we are debugging.
-                    continue
-                elif b.vertices[0] != Vector2(-128, -448):
-                    # Ignore anything but the one destination surface we are debugging.
-                    continue
+                ###################################################################################
+                # Allow for debug mode to limit the scope of what's calculated.
+                if debug_state.in_debug_mode:
+                    var debug_origin: Dictionary = debug_state.limit_parsing_to_single_edge.origin
+                    var debug_destination: Dictionary = \
+                            debug_state.limit_parsing_to_single_edge.destination
+                    
+                    if a.side != debug_origin.surface_side or \
+                            b.side != debug_destination.surface_side or \
+                            a.vertices[0] != debug_origin.surface_start_vertex or \
+                            a.vertices[a.vertices.size() - 1] != \
+                                    debug_origin.surface_end_vertex or \
+                            b.vertices[0] != debug_destination.surface_start_vertex or \
+                            b.vertices[b.vertices.size() - 1] != \
+                                    debug_destination.surface_end_vertex:
+                        # Ignore anything except the origin and destination surface that we're
+                        # debugging.
+                        continue
+                    
+                    # Calculate the expected jumping position for debugging.
+                    var debug_jump_position: PositionAlongSurface
+                    match debug_origin.near_far_close_position:
+                        "near":
+                            debug_jump_position = jump_positions[0]
+                        "far":
+                            assert(jump_positions.size() > 1)
+                            debug_jump_position = jump_positions[1]
+                        "close":
+                            assert(jump_positions.size() > 2)
+                            debug_jump_position = jump_positions[2]
+                        _:
+                            Utils.error()
+                    
+                    # Calculate the expected landing position for debugging.
+                    var debug_land_position: PositionAlongSurface
+                    match debug_destination.near_far_close_position:
+                        "near":
+                            debug_land_position = land_positions[0]
+                        "far":
+                            assert(land_positions.size() > 1)
+                            debug_land_position = land_positions[1]
+                        "close":
+                            assert(land_positions.size() > 2)
+                            debug_land_position = land_positions[2]
+                        _:
+                            Utils.error()
+                    
+                    if jump_position != debug_jump_position or \
+                            land_position != debug_land_position:
+                        # Ignore anything except the jump and land positions that we're debugging.
+                        continue
+                ###################################################################################
                 
                 terminals = MovementConstraintUtils.create_terminal_constraints(a, \
                         jump_position.target_point, b, land_position.target_point, params, \
-                        global_calc_params.constraint_offset, velocity_start, true)
+                        overall_calc_params.constraint_offset, velocity_start, true)
                 if terminals.empty():
                     continue
                 
-                global_calc_params.origin_constraint = terminals[0]
-                global_calc_params.destination_constraint = terminals[1]
+                overall_calc_params.origin_constraint = terminals[0]
+                overall_calc_params.destination_constraint = terminals[1]
                 
-                instructions = _calculate_jump_instructions(global_calc_params)
+                instructions = _calculate_jump_instructions(overall_calc_params)
                 if instructions != null:
                     # Can reach land position from jump position.
                     edges.push_back(InterSurfaceEdge.new( \
@@ -273,19 +311,19 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
         surface_parser: SurfaceParser, position_start: PositionAlongSurface, \
         position_end: Vector2) -> MovementInstructions:
     var velocity_start := Vector2(0.0, params.jump_boost)
-    var global_calc_params := \
-            MovementCalcGlobalParams.new(params, space_state, surface_parser, velocity_start)
+    var overall_calc_params := \
+            MovementCalcOverallParams.new(params, space_state, surface_parser, velocity_start)
     
     var terminals := MovementConstraintUtils.create_terminal_constraints(position_start.surface, \
             position_start.target_point, null, position_end, params, \
-            global_calc_params.constraint_offset, velocity_start, true)
+            overall_calc_params.constraint_offset, velocity_start, true)
     if terminals.empty():
         null
     
-    global_calc_params.origin_constraint = terminals[0]
-    global_calc_params.destination_constraint = terminals[1]
+    overall_calc_params.origin_constraint = terminals[0]
+    overall_calc_params.destination_constraint = terminals[1]
     
-    return _calculate_jump_instructions(global_calc_params)
+    return _calculate_jump_instructions(overall_calc_params)
 
 # Calculates instructions that would move the player from the given start position to the given end
 # position.
@@ -293,20 +331,20 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
 # This considers interference from intermediate surfaces, and will only return instructions that
 # would produce valid movement without intermediate collisions.
 static func _calculate_jump_instructions( \
-        global_calc_params: MovementCalcGlobalParams) -> MovementInstructions:
-    global_calc_params.collided_surfaces.clear()
+        overall_calc_params: MovementCalcOverallParams) -> MovementInstructions:
+    overall_calc_params.collided_surfaces.clear()
     
-    var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height(global_calc_params)
+    var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height(overall_calc_params)
     
     if calc_results == null:
         return null
     
     var instructions: MovementInstructions = \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                    global_calc_params.origin_constraint.position, \
-                    global_calc_params.destination_constraint.position, calc_results)
+                    overall_calc_params.origin_constraint.position, \
+                    overall_calc_params.destination_constraint.position, calc_results)
     
     if Utils.IN_DEV_MODE:
-        MovementInstructionsUtils.test_instructions(instructions, global_calc_params, calc_results)
+        MovementInstructionsUtils.test_instructions(instructions, overall_calc_params, calc_results)
     
     return instructions

@@ -20,7 +20,7 @@ func set_surfaces(surface_parser: SurfaceParser) -> void:
     self.surfaces = surface_parser.get_subset_of_surfaces( \
             params.can_grab_walls, params.can_grab_ceilings, params.can_grab_floors)
 
-func get_all_edges_from_surface(space_state: Physics2DDirectSpaceState, \
+func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DDirectSpaceState, \
         surface_parser: SurfaceParser, possible_destination_surfaces: Array, \
         surface: Surface) -> Array:
     Utils.error("Abstract Movement.get_all_edges_from_surface is not implemented")

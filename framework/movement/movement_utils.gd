@@ -122,7 +122,7 @@ static func get_all_jump_positions_from_surface(movement_params: MovementParams,
         near_end = end
         far_end = start
     
-    # Record the near-end poist.
+    # Record the near-end point.
     var jump_position := create_position_from_target_point( \
             near_end, surface, movement_params.collider_half_width_height)
     var possible_jump_positions = [jump_position]

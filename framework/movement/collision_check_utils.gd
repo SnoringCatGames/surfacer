@@ -3,10 +3,10 @@ class_name CollisionCheckUtils
 # Checks whether a collision would occur with any surface during the given instructions. This
 # is calculated by stepping through each discrete physics frame, which should exactly emulate the
 # actual Player trajectory that would be used.
-static func check_instructions_for_collision(global_calc_params: MovementCalcGlobalParams, \
+static func check_instructions_for_collision(overall_calc_params: MovementCalcOverallParams, \
         instructions: MovementInstructions, vertical_step: MovementVertCalcStep, \
         horizontal_steps: Array) -> SurfaceCollision:
-    var movement_params := global_calc_params.movement_params
+    var movement_params := overall_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: MovementInstruction = instructions.instructions[0]
     var delta := Utils.PHYSICS_TIME_STEP
@@ -20,11 +20,11 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
     var is_pressing_right := false
     var is_pressing_jump := false
     var horizontal_acceleration_sign := 0
-    var position := global_calc_params.origin_constraint.position
+    var position := overall_calc_params.origin_constraint.position
     var velocity := Vector2.ZERO
     var has_started_instructions := false
-    var space_state := global_calc_params.space_state
-    var shape_query_params := global_calc_params.shape_query_params
+    var space_state := overall_calc_params.space_state
+    var shape_query_params := overall_calc_params.shape_query_params
     var displacement: Vector2
     var collision: SurfaceCollision
     
@@ -66,7 +66,7 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
             # - To debug why this is failing, try rendering only the failing path somehow.
 #            collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
 #                    shape_query_params, movement_params.collider_half_width_height, \
-#                    global_calc_params.surface_parser)
+#                    overall_calc_params.surface_parser)
             if collision != null:
                 instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
                 instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
@@ -152,7 +152,7 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
     # - To debug why this is failing, try rendering only the failing path somehow.
 #    collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
 #            shape_query_params, movement_params.collider_half_width_height, \
-#            global_calc_params.surface_parser)
+#            overall_calc_params.surface_parser)
     if collision != null:
         instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
         instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
@@ -173,9 +173,9 @@ static func check_instructions_for_collision(global_calc_params: MovementCalcGlo
 # executing a resulting instruction set, the physics frame boundaries will line up at different
 # times.
 static func check_discrete_horizontal_step_for_collision( \
-        global_calc_params: MovementCalcGlobalParams, local_calc_params: MovementCalcLocalParams, \
+        overall_calc_params: MovementCalcOverallParams, step_calc_params: MovementCalcStepParams, \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
-    var movement_params := global_calc_params.movement_params
+    var movement_params := overall_calc_params.movement_params
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
     # On average, an instruction set will start halfway through a physics frame, so let's use that
@@ -186,13 +186,13 @@ static func check_discrete_horizontal_step_for_collision( \
     var position := horizontal_step.position_step_start
     var velocity := horizontal_step.velocity_step_start
     var has_started_instructions := false
-    var jump_instruction_end_time := local_calc_params.vertical_step.time_instruction_end
+    var jump_instruction_end_time := step_calc_params.vertical_step.time_instruction_end
     var is_pressing_jump := jump_instruction_end_time > current_time
     var is_pressing_move_horizontal := current_time > horizontal_step.time_instruction_start and \
             current_time < horizontal_step.time_instruction_end
     var horizontal_acceleration_sign := 0
-    var space_state := global_calc_params.space_state
-    var shape_query_params := global_calc_params.shape_query_params
+    var space_state := overall_calc_params.space_state
+    var shape_query_params := overall_calc_params.shape_query_params
     var displacement: Vector2
     var collision: SurfaceCollision
     
@@ -208,7 +208,7 @@ static func check_discrete_horizontal_step_for_collision( \
             # Check for collision.
             collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
                     shape_query_params, movement_params.collider_half_width_height, \
-                    global_calc_params.surface_parser)
+                    overall_calc_params.surface_parser)
             if collision != null:
                 return collision
         else:
@@ -252,7 +252,7 @@ static func check_discrete_horizontal_step_for_collision( \
     shape_query_params.motion = displacement
     collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
             shape_query_params, movement_params.collider_half_width_height, \
-            global_calc_params.surface_parser)
+            overall_calc_params.surface_parser)
     if collision != null:
         return collision
     
@@ -263,23 +263,28 @@ static func check_discrete_horizontal_step_for_collision( \
 # motion. This does not necessarily accurately reflect the actual Player trajectory that would be
 # used.
 static func check_continuous_horizontal_step_for_collision( \
-        global_calc_params: MovementCalcGlobalParams, local_calc_params: MovementCalcLocalParams, \
+        overall_calc_params: MovementCalcOverallParams, step_calc_params: MovementCalcStepParams, \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
-    var movement_params := global_calc_params.movement_params
-    var vertical_step := local_calc_params.vertical_step
+    var movement_params := overall_calc_params.movement_params
+    var vertical_step := step_calc_params.vertical_step
     var collider_half_width_height := movement_params.collider_half_width_height
-    var surface_parser := global_calc_params.surface_parser
+    var surface_parser := overall_calc_params.surface_parser
     var delta := Utils.PHYSICS_TIME_STEP
     var previous_time := horizontal_step.time_step_start
     var current_time := previous_time + delta
     var step_end_time := horizontal_step.time_step_end
     var previous_position := horizontal_step.position_step_start
     var current_position := previous_position
-    var space_state := global_calc_params.space_state
-    var shape_query_params := global_calc_params.shape_query_params
+    var space_state := overall_calc_params.space_state
+    var shape_query_params := overall_calc_params.shape_query_params
     var horizontal_state: Array
     var vertical_state: Array
     var collision: SurfaceCollision
+    
+    # Record the position for edge annotation debugging.
+    var frame_positions := [current_position]
+    if step_calc_params.debug_state != null:
+        step_calc_params.debug_state.frame_positions = frame_positions
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
@@ -295,10 +300,9 @@ static func check_continuous_horizontal_step_for_collision( \
         
         assert(shape_query_params.motion != Vector2.ZERO)
         
-        # FIXME: LEFT OFF HERE: DEBUGGING: ---------------------------------------A:
-        # - Set a breakpoint here.
-        # >>- Step from here to debug why this movement doesn't return a valid result.
-        # - !! shape_query_params.transform is not taking into consideration the rotation of the shape.
+        # FIXME: LEFT OFF HERE: ---------------------------------------A: DEBUGGING:
+        # - [Probably done with this breakpoint actually...] Set a breakpoint here.
+        # - !! After that, fix the issue that shape_query_params.transform is not taking into consideration the rotation of the shape.
         #   - 
         if current_position.x > 40 and current_position.x < 61 and current_position.y < -350:
             print("yo")
@@ -307,12 +311,17 @@ static func check_continuous_horizontal_step_for_collision( \
         collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
                 shape_query_params, collider_half_width_height, surface_parser)
         if collision != null:
+            if step_calc_params.debug_state != null:
+                step_calc_params.debug_state.collision = collision
             return collision
         
         # Update state for the next frame.
         previous_position = current_position
         previous_time = current_time
         current_time += delta
+        
+        # Record the position for edge annotation debugging.
+        frame_positions.push_back(current_position)
     
     # Check the last frame that puts us up to end_time.
     current_time = step_end_time
@@ -329,6 +338,11 @@ static func check_continuous_horizontal_step_for_collision( \
         collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
                 shape_query_params, collider_half_width_height, surface_parser)
         if collision != null:
+            if step_calc_params.debug_state != null:
+                step_calc_params.debug_state.collision = collision
             return collision
+        
+        # Record the position for edge annotation debugging.
+        frame_positions.push_back(current_position)
     
     return null

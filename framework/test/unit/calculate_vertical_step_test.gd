@@ -29,9 +29,9 @@ func test_duration_to_reach_upward_displacement() -> void:
     var position_start: Vector2 = TEST_LEVEL_LONG_RISE.start.positions.near
     var position_end: Vector2 = TEST_LEVEL_LONG_RISE.end.positions.near
 
-    var local_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
+    var step_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
             movement_params, position_start, position_end)
-    var vertical_step := local_calc_params.vertical_step
+    var vertical_step := step_calc_params.vertical_step
     
     assert_vertical_step(vertical_step, {
         time_instruction_end = 0.7681523885,
@@ -45,9 +45,9 @@ func test_duration_to_reach_upward_displacement_less_than_jump_boost() -> void:
     var position_start: Vector2 = Vector2(0, 0)
     var position_end: Vector2 = Vector2(0, -32)
 
-    var local_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
+    var step_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
             movement_params, position_start, position_end)
-    var vertical_step := local_calc_params.vertical_step
+    var vertical_step := step_calc_params.vertical_step
     
     assert_vertical_step(vertical_step, {
         time_instruction_end = 0.1151850147,
@@ -61,9 +61,9 @@ func test_duration_to_reach_downward_displacement() -> void:
     var position_start: Vector2 = TEST_LEVEL_LONG_FALL.start.positions.near
     var position_end: Vector2 = TEST_LEVEL_LONG_FALL.end.positions.near
 
-    var local_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
+    var step_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
             movement_params, position_start, position_end)
-    var vertical_step := local_calc_params.vertical_step
+    var vertical_step := step_calc_params.vertical_step
 
     assert_vertical_step(vertical_step, {
         time_instruction_end = 0.00759730371,
@@ -77,9 +77,9 @@ func test_duration_to_reach_horizontal_displacement() -> void:
     var position_start: Vector2 = TEST_LEVEL_FAR_DISTANCE.start.positions.near
     var position_end: Vector2 = TEST_LEVEL_FAR_DISTANCE.end.positions.near
 
-    var local_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
+    var step_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
             movement_params, position_start, position_end)
-    var vertical_step := local_calc_params.vertical_step
+    var vertical_step := step_calc_params.vertical_step
 
     assert_vertical_step(vertical_step, {
         time_instruction_end = 0.9218347844,
@@ -93,28 +93,28 @@ func test_out_of_range_upward() -> void:
     var position_start: Vector2 = TEST_LEVEL_LONG_RISE.start.positions.near
     var position_end: Vector2 = TEST_LEVEL_LONG_RISE.end.positions.near + Vector2(0, -200)
 
-    var local_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
+    var step_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
             movement_params, position_start, position_end)
     
-    assert_null(local_calc_params)
+    assert_null(step_calc_params)
 
 func test_out_of_range_horizontally() -> void:
     var position_start: Vector2 = TEST_LEVEL_FAR_DISTANCE.start.positions.far
     var position_end: Vector2 = TEST_LEVEL_FAR_DISTANCE.end.positions.far + Vector2(200, -100)
 
-    var local_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
+    var step_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
             movement_params, position_start, position_end)
     
-    assert_null(local_calc_params)
+    assert_null(step_calc_params)
 
-func test_creates_local_calc_params() -> void:
+func test_creates_step_calc_params() -> void:
     var position_start := Vector2(0.0, 0.0)
     var position_end := Vector2(100.0, -100.0)
 
-    var local_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
+    var step_calc_params := JumpFromPlatformMovement._calculate_vertical_step( \
             movement_params, position_start, position_end)
 
-    assert_almost_eq(local_calc_params.position_start, position_start, \
+    assert_almost_eq(step_calc_params.position_start, position_start, \
             END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(local_calc_params.position_end, position_end, \
+    assert_almost_eq(step_calc_params.position_end, position_end, \
             END_POSITION_CLOSE_THRESHOLD)

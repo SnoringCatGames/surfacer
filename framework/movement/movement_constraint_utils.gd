@@ -284,18 +284,18 @@ static func calculate_fake_constraint_position(constraint: MovementConstraint, \
     var is_ceiling := constraint.surface.side == SurfaceSide.CEILING
     assert(is_floor or is_ceiling)
     
-    var actual_vs_test_margin_diff := MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN - \
-            MovementCalcGlobalParams.EDGE_MOVEMENT_TEST_MARGIN - 0.001
+    var actual_vs_test_margin_diff := MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN - \
+            MovementCalcOverallParams.EDGE_MOVEMENT_TEST_MARGIN - 0.001
     var player_half_height := \
-            constraint_offset.y - MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN
+            constraint_offset.y - MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN
     
     var position := constraint.position
     
     # Undo the normal margin, and align the player closer to the surface.
     position.x += actual_vs_test_margin_diff if constraint.should_stay_on_min_side else \
             -actual_vs_test_margin_diff
-    position.y += MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN if is_floor else \
-            -MovementCalcGlobalParams.EDGE_MOVEMENT_ACTUAL_MARGIN
+    position.y += MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN if is_floor else \
+            -MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN
     
     # Align the player so that they are straddling the edge of the surface.
     position.y += player_half_height if is_floor else -player_half_height
@@ -762,15 +762,15 @@ static func solve_for_end_velocity(displacement: float, v_0: float, acceleration
 
 static func update_neighbors_for_new_constraint(constraint: MovementConstraint, \
         previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
-        global_calc_params: MovementCalcGlobalParams, \
+        overall_calc_params: MovementCalcOverallParams, \
         vertical_step: MovementVertCalcStep) -> bool:
-    var origin := global_calc_params.origin_constraint
+    var origin := overall_calc_params.origin_constraint
     
     if previous_constraint.is_origin:
         # The next constraint is only used for updates to the origin. Each other constraints just
         # depends on their previous constraint.
         var is_valid := update_constraint(previous_constraint, null, constraint, origin, \
-                global_calc_params.movement_params, global_calc_params.constraint_offset, \
+                overall_calc_params.movement_params, overall_calc_params.constraint_offset, \
                 vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
                 vertical_step, null)
         if !is_valid:
@@ -779,7 +779,7 @@ static func update_neighbors_for_new_constraint(constraint: MovementConstraint, 
     # The next constraint is only used for updates to the origin. Each other constraints just
     # depends on their previous constraint.
     return update_constraint(next_constraint, constraint, null, origin, \
-            global_calc_params.movement_params, global_calc_params.constraint_offset, \
+            overall_calc_params.movement_params, overall_calc_params.constraint_offset, \
             vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, vertical_step, \
             null)
 

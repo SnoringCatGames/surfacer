@@ -3,7 +3,7 @@ extends TestBed
 # Expected values were calculated using a Google spreadsheet:
 # https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
 
-var local_calc_params: MovementCalcLocalParams
+var step_calc_params: MovementCalcStepParams
 
 func set_up(state := {}) -> void:
     movement_params = MovementParams.new()
@@ -15,9 +15,9 @@ func set_up(state := {}) -> void:
 
     var destination_surface := Surface.new([Vector2.INF], SurfaceSide.FLOOR, [INF])
 
-    global_calc_params = MovementCalcGlobalParams.new(movement_params, null, null)
-    global_calc_params.movement_params = movement_params
-    global_calc_params.destination_surface = destination_surface
+    overall_calc_params = MovementCalcOverallParams.new(movement_params, null, null)
+    overall_calc_params.movement_params = movement_params
+    overall_calc_params.destination_surface = destination_surface
 
     var upcoming_constraint := MovementConstraint.new(destination_surface, Vector2.INF, true, true)
 
@@ -40,7 +40,7 @@ func set_up(state := {}) -> void:
     vertical_step.velocity_instruction_end = Vector2(INF, state.velocity_jump_instruction_end_y)
     
     var position_start := Vector2.INF
-    local_calc_params = MovementCalcLocalParams.new(position_start, state.position_end, \
+    step_calc_params = MovementCalcStepParams.new(position_start, state.position_end, \
             previous_step, vertical_step, upcoming_constraint)
 
 func assert_horizontal_step(step: MovementCalcStep, state: Dictionary) -> void:
@@ -70,7 +70,7 @@ func test_with_no_previous_or_next_steps() -> void:
     })
 
     var step := JumpFromPlatformMovement.calculate_horizontal_step( \
-            local_calc_params, global_calc_params)
+            step_calc_params, overall_calc_params)
     
     assert_horizontal_step(step, {
         time_start = 0.0,

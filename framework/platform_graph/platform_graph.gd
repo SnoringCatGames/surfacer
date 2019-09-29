@@ -6,8 +6,8 @@ class_name PlatformGraph
 
 const AirToSurfaceEdge := preload("res://framework/platform_graph/edge/air_to_surface_edge.gd")
 const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_surface_edge.gd")
-const MovementCalcGlobalParams := preload("res://framework/movement/models/movement_calculation_global_params.gd")
-const MovementCalcLocalParams := preload("res://framework/movement/models/movement_calculation_local_params.gd")
+const MovementCalcOverallParams := preload("res://framework/movement/models/movement_calculation_overall_params.gd")
+const MovementCalcStepParams := preload("res://framework/movement/models/movement_calculation_step_params.gd")
 const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
@@ -148,7 +148,7 @@ var surfaces_to_nodes: Dictionary
 var nodes_to_edges: Dictionary
 
 func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
-        player_info: PlayerTypeConfiguration) -> void:
+        player_info: PlayerTypeConfiguration, debug_state: Dictionary) -> void:
     self.movement_params = player_info.movement_params
     self.surface_parser = surface_parser
     self.space_state = space_state
@@ -162,7 +162,7 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
     self.surfaces_to_nodes = {}
     self.nodes_to_edges = {}
 
-    _calculate_nodes_and_edges(surfaces, player_info)
+    _calculate_nodes_and_edges(surfaces, player_info, debug_state)
 
 # Uses A* search.
 func find_path(origin: PositionAlongSurface, \
@@ -298,7 +298,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     var possible_landing_surfaces := result_set.keys()
     possible_landing_surfaces.sort_custom(self, "_compare_surfaces_by_max_y")
 
-    var global_calc_params := MovementCalcGlobalParams.new( \
+    var overall_calc_params := MovementCalcOverallParams.new( \
             movement_params, space_state, surface_parser, velocity_start, false)
     
     var origin_vertices := [origin]
@@ -307,7 +307,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     var possible_end_positions: Array
     var terminals: Array
     var vertical_step: MovementVertCalcStep
-    var local_calc_params: MovementCalcLocalParams
+    var step_calc_params: MovementCalcStepParams
     var calc_results: MovementCalcResults
 
     # Find the first possible edge to a landing surface.
@@ -318,22 +318,22 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         for position_end in possible_end_positions:
             terminals = MovementConstraintUtils.create_terminal_constraints(null, origin, \
                     surface, position_end.target_point, movement_params, \
-                    global_calc_params.constraint_offset, velocity_start, false)
+                    overall_calc_params.constraint_offset, velocity_start, false)
             if terminals.empty():
                 continue
             
-            global_calc_params.origin_constraint = terminals[0]
-            global_calc_params.destination_constraint = terminals[1]
+            overall_calc_params.origin_constraint = terminals[0]
+            overall_calc_params.destination_constraint = terminals[1]
             
-            vertical_step = VerticalMovementUtils.calculate_vertical_step(global_calc_params)
+            vertical_step = VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
             if vertical_step == null:
                 continue
             
-            local_calc_params = MovementCalcLocalParams.new(global_calc_params.origin_constraint, \
-                    global_calc_params.destination_constraint, vertical_step)
+            step_calc_params = MovementCalcStepParams.new(overall_calc_params.origin_constraint, \
+                    overall_calc_params.destination_constraint, vertical_step)
             
             calc_results = MovementStepUtils.calculate_steps_from_constraint( \
-                    global_calc_params, local_calc_params)
+                    overall_calc_params, step_calc_params)
             if calc_results != null:
                 return AirToSurfaceEdge.new(origin, position_end, calc_results)
     
@@ -380,7 +380,8 @@ func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Array:
     return result_set.keys()
 
 # Calculates and stores the edges between surface nodes that this player type can traverse.
-func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfiguration) -> void:
+func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfiguration, \
+        debug_state: Dictionary) -> void:
     var possible_destination_surfaces: Array
     
     # Calculate all inter-surface edges.
@@ -388,15 +389,22 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
     for movement_type in player_info.movement_types:
         if movement_type.can_traverse_edge:
             for surface in surfaces:
+                ###################################################################################
+                # Allow for debug mode to limit the scope of what's calculated.
+                if debug_state.in_debug_mode and \
+                        player_info.name != debug_state.limit_parsing_to_single_edge.player_name:
+                    continue
+                
                 # FIXME: Comment out when writing tests
 #                pass
-                # FIXME: LEFT OFF HERE: DEBUGGING: Remove
-                if player_info.name == "cat":
-                    # Calculate the inter-surface edges.
-                    possible_destination_surfaces = get_surfaces_in_jump_and_fall_range(surface)
-                    surfaces_to_edges[surface] = movement_type.get_all_edges_from_surface( \
-                            space_state, surface_parser, possible_destination_surfaces, surface)
-
+                ###################################################################################
+                
+                # Calculate the inter-surface edges.
+                possible_destination_surfaces = get_surfaces_in_jump_and_fall_range(surface)
+                surfaces_to_edges[surface] = movement_type.get_all_edges_from_surface( \
+                        debug_state, space_state, surface_parser, \
+                        possible_destination_surfaces, surface)
+    
     # Dedup all edge-end positions (aka, nodes).
     var grid_cell_to_node := {}
     for surface in surfaces_to_edges:

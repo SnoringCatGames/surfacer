@@ -81,7 +81,7 @@ var level: Level
 var test_player: TestPlayer
 var surface_parser: SurfaceParser
 var space_state: Physics2DDirectSpaceState
-var global_calc_params: MovementCalcGlobalParams
+var overall_calc_params: MovementCalcOverallParams
 var start_surface: Surface
 var end_surface: Surface
 
@@ -116,7 +116,7 @@ func destroy() -> void:
     test_player = null
     surface_parser = null
     space_state = null
-    global_calc_params = null
+    overall_calc_params = null
     start_surface = null
     end_surface = null
 
@@ -134,7 +134,7 @@ func set_up_level(data: Dictionary) -> void:
     
     surface_parser = level.surface_parser
     space_state = level.get_world_2d().direct_space_state
-    global_calc_params = MovementCalcGlobalParams.new( \
+    overall_calc_params = MovementCalcOverallParams.new( \
             movement_params, space_state, surface_parser)
     
     _store_surfaces(data)
@@ -154,4 +154,4 @@ func _store_surfaces(data: Dictionary) -> void:
     assert(end_surface != null)
     
     jump_from_platform_movement.surfaces = [start_surface, end_surface]
-    global_calc_params.destination_surface = end_surface
+    overall_calc_params.destination_surface = end_surface

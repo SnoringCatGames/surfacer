@@ -6,16 +6,16 @@ const MovementCalcStep := preload("res://framework/movement/models/movement_calc
 const MIN_MAX_VELOCITY_X_MARGIN := MovementConstraintUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
 
 # Calculates a new step for the current horizontal part of the movement.
-static func calculate_horizontal_step(local_calc_params: MovementCalcLocalParams, \
-        global_calc_params: MovementCalcGlobalParams) -> MovementCalcStep:
-    var movement_params := global_calc_params.movement_params
-    var vertical_step := local_calc_params.vertical_step
+static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, \
+        overall_calc_params: MovementCalcOverallParams) -> MovementCalcStep:
+    var movement_params := overall_calc_params.movement_params
+    var vertical_step := step_calc_params.vertical_step
     
-    var start_constraint := local_calc_params.start_constraint
+    var start_constraint := step_calc_params.start_constraint
     var position_step_start := start_constraint.position
     var time_step_start := start_constraint.time_passing_through
     
-    var end_constraint := local_calc_params.end_constraint
+    var end_constraint := step_calc_params.end_constraint
     var position_end := end_constraint.position
     var time_step_end := end_constraint.time_passing_through
     var velocity_end_x := end_constraint.actual_velocity_x

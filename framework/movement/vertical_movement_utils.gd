@@ -6,14 +6,14 @@ const MovementVertCalcStep := preload("res://framework/movement/models/movement_
 # Calculates a new step for the vertical part of the movement and the corresponding total jump
 # duration.
 static func calculate_vertical_step( \
-        global_calc_params: MovementCalcGlobalParams) -> MovementVertCalcStep:
+        overall_calc_params: MovementCalcOverallParams) -> MovementVertCalcStep:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
-    var movement_params := global_calc_params.movement_params
-    var origin_constraint := global_calc_params.origin_constraint
-    var destination_constraint := global_calc_params.destination_constraint
-    var velocity_start := global_calc_params.velocity_start
-    var can_hold_jump_button := global_calc_params.can_backtrack_on_height
+    var movement_params := overall_calc_params.movement_params
+    var origin_constraint := overall_calc_params.origin_constraint
+    var destination_constraint := overall_calc_params.destination_constraint
+    var velocity_start := overall_calc_params.velocity_start
+    var can_hold_jump_button := overall_calc_params.can_backtrack_on_height
     
     var position_start := origin_constraint.position
     var position_end := destination_constraint.position

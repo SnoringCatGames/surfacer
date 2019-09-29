@@ -1,48 +1,44 @@
 extends Node
 class_name Main
 
-const CatParams := preload("res://players/cat_params.gd")
-const SquirrelParams := preload("res://players/squirrel_params.gd")
-const TestPlayerParams := preload("res://framework/test/test_data/test_player_params.gd")
-
-# Array<PlayerParam>
-var PLAYER_PARAMS: Array
-
-const LEVEL_RESOURCE_PATHS := [
-    "res://levels/level_1.tscn",
-    "res://levels/level_2.tscn",
-    "res://levels/level_3.tscn",
-    "res://levels/level_4.tscn",
-    "res://levels/level_5.tscn",
+const PLAYER_ACTION_CLASSES := [
+    preload("res://framework/player/action/action_handlers/air_dash_action.gd"),
+    preload("res://framework/player/action/action_handlers/air_default_action.gd"),
+    preload("res://framework/player/action/action_handlers/air_jump_action.gd"),
+    preload("res://framework/player/action/action_handlers/all_default_action.gd"),
+    preload("res://framework/player/action/action_handlers/cap_velocity_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_dash_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_default_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_fall_through_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_jump_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_walk_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_climb_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_dash_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_default_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_fall_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_jump_action.gd"),
+    preload("res://framework/player/action/action_handlers/wall_walk_action.gd"),
 ]
 
-const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
-
-const IN_TEST_MODE := false
-
-const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_rise.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
-
-var PLAYER_RESOURCE_PATH := CatParams.PLAYER_RESOURCE_PATH
-#var PLAYER_RESOURCE_PATH := TestPlayerParams.PLAYER_RESOURCE_PATH
+const PLAYER_PARAM_CLASSES := [
+    preload("res://players/cat_params.gd"),
+    preload("res://players/squirrel_params.gd"),
+    preload("res://framework/test/test_data/test_player_params.gd"),
+]
 
 var level: Level
 
 func _enter_tree() -> void:
     var global := $"/root/Global"
-
-    PLAYER_PARAMS = [
-        CatParams.new(global),
-        SquirrelParams.new(global),
-        TestPlayerParams.new(global),
-    ]
-    global.register_player_params(PLAYER_PARAMS)
     
-    var scene_path := TEST_RUNNER_SCENE_RESOURCE_PATH if IN_TEST_MODE else \
-            STARTING_LEVEL_RESOURCE_PATH
+    global.register_player_actions(PLAYER_ACTION_CLASSES)
+    global.register_player_params(PLAYER_PARAM_CLASSES)
+    
+    var scene_path := Global.TEST_RUNNER_SCENE_RESOURCE_PATH if Global.IN_TEST_MODE else \
+            Global.STARTING_LEVEL_RESOURCE_PATH
     level = Utils.add_scene(self, scene_path)
 
 func _ready() -> void:
-    var position := Vector2(160.0, 0.0) if STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 \
+    var position := Vector2(160.0, 0.0) if Global.STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 \
             else Vector2.ZERO
-    level.add_player(PLAYER_RESOURCE_PATH, false, position)
+    level.add_player(Global.PLAYER_RESOURCE_PATH, false, position)

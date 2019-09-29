@@ -11,11 +11,11 @@ func test_long_fall_near_positions() -> void:
     var start_position: Vector2 = data.start.positions.near
     var end_position: Vector2 = data.end.positions.near
     set_up(data)
-    global_calc_params.position_start = start_position
-    global_calc_params.position_end = end_position
+    overall_calc_params.position_start = start_position
+    overall_calc_params.position_end = end_position
     
     var results := jump_from_platform_movement._calculate_steps_with_new_jump_height( \
-            global_calc_params, global_calc_params.position_end, null)
+            overall_calc_params, overall_calc_params.position_end, null)
     
     assert_not_null(results)
     assert_false(results.backtracked_for_new_jump_height)
@@ -29,11 +29,11 @@ func test_long_fall_far_positions() -> void:
     var start_position: Vector2 = data.start.positions.far
     var end_position: Vector2 = data.end.positions.far
     set_up(data)
-    global_calc_params.position_start = start_position
-    global_calc_params.position_end = end_position
+    overall_calc_params.position_start = start_position
+    overall_calc_params.position_end = end_position
     
     var results := jump_from_platform_movement._calculate_steps_with_new_jump_height( \
-            global_calc_params, global_calc_params.position_end, null)
+            overall_calc_params, overall_calc_params.position_end, null)
     
     assert_not_null(results)
     assert_false(results.backtracked_for_new_jump_height)

@@ -1,7 +1,7 @@
 # Parameters that are used for calculating edge instructions.
 # FIXME: --A ********* doc
 extends Reference
-class_name MovementCalcGlobalParams
+class_name MovementCalcOverallParams
 
 const TILE_MAP_COLLISION_LAYER := 7
 # FIXME: Test these
@@ -39,6 +39,8 @@ var can_backtrack_on_height: bool
 # Dictionary<Surface, bool>
 var collided_surfaces: Dictionary
 
+var debug_state: MovementCalcOverallDebugState
+
 func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceState, \
             surface_parser: SurfaceParser, velocity_start: Vector2, \
             can_backtrack_on_height := true) -> void:
@@ -63,3 +65,6 @@ func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceSta
     shape_query_params.shape_rid = movement_params.collider_shape.get_rid()
     shape_query_params.transform = Transform2D.IDENTITY
     shape_query_params.set_shape(movement_params.collider_shape)
+    
+    if Global.IN_DEBUG_MODE:
+        debug_state = MovementCalcOverallDebugState.new(self)

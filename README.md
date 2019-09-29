@@ -14,11 +14,11 @@ TODO
 
 # Surfacer
 
-_A 2D-platformer pathfinding framework for Godot._
+_A 2D-platformer procedural pathfinding framework for Godot._
 
 _"Surfacer": Like a platformer, but with walking and climbing on all surfaces!_
 
-TODO: _For an demo app using this framework, checkout [Squirrel Away](https://github.com/levilindsey/squirrel-away)_
+TODO: _For a demo app using this framework, checkout [Squirrel Away](https://github.com/levilindsey/squirrel-away)_
 
 _TODO: In development. Not ready for review._
 

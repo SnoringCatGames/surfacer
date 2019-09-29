@@ -38,7 +38,8 @@ func _ready() -> void:
     var space_state := get_world_2d().direct_space_state
     var global := $"/root/Global"
     surface_parser = SurfaceParser.new(surface_tile_maps, global.player_types)
-    platform_graphs = _create_platform_graphs(surface_parser, space_state, global.player_types)
+    platform_graphs = _create_platform_graphs( \
+            surface_parser, space_state, global.player_types, global.DEBUG_STATE)
     
     click_to_navigate = ClickToNavigate.new()
     click_to_navigate.update_level(self)
@@ -49,11 +50,12 @@ func _ready() -> void:
     add_child(click_annotator)
 
 static func _create_platform_graphs(surface_parser: SurfaceParser, \
-        space_state: Physics2DDirectSpaceState, player_types: Dictionary) -> Dictionary:
+        space_state: Physics2DDirectSpaceState, player_types: Dictionary, \
+        debug_state: Dictionary) -> Dictionary:
     var graphs = {}
     for player_name in player_types:
-        graphs[player_name] = \
-                PlatformGraph.new(surface_parser, space_state, player_types[player_name])
+        graphs[player_name] = PlatformGraph.new( \
+                surface_parser, space_state, player_types[player_name], debug_state)
     return graphs
 
 func descendant_physics_process_completed(descendant: Node) -> void:
