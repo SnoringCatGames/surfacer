@@ -6,6 +6,10 @@ class_name MovementCalcStepDebugState
 var start_constraint: MovementConstraint setget ,_get_start
 var end_constraint: MovementConstraint setget ,_get_end
 
+var frame_positions: PoolVector2Array
+
+var collision: SurfaceCollision
+
 var _step_calc_params
 
 func _init(step_calc_params) -> void:

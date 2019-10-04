@@ -280,11 +280,10 @@ static func check_continuous_horizontal_step_for_collision( \
     var horizontal_state: Array
     var vertical_state: Array
     var collision: SurfaceCollision
+    var debug_state := step_calc_params.debug_state
     
     # Record the position for edge annotation debugging.
     var frame_positions := [current_position]
-    if step_calc_params.debug_state != null:
-        step_calc_params.debug_state.frame_positions = frame_positions
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
@@ -311,8 +310,9 @@ static func check_continuous_horizontal_step_for_collision( \
         collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
                 shape_query_params, collider_half_width_height, surface_parser)
         if collision != null:
-            if step_calc_params.debug_state != null:
-                step_calc_params.debug_state.collision = collision
+            if debug_state != null:
+                debug_state.collision = collision
+                debug_state.frame_positions = PoolVector2Array(frame_positions)
             return collision
         
         # Update state for the next frame.
@@ -338,11 +338,13 @@ static func check_continuous_horizontal_step_for_collision( \
         collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
                 shape_query_params, collider_half_width_height, surface_parser)
         if collision != null:
-            if step_calc_params.debug_state != null:
-                step_calc_params.debug_state.collision = collision
+            if debug_state != null:
+                debug_state.collision = collision
+                debug_state.frame_positions = PoolVector2Array(frame_positions)
             return collision
         
         # Record the position for edge annotation debugging.
         frame_positions.push_back(current_position)
+        debug_state.frame_positions = PoolVector2Array(frame_positions)
     
     return null

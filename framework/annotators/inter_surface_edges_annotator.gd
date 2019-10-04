@@ -1,6 +1,8 @@
 extends Node2D
 class_name InterSurfaceEdgesAnnotator
 
+const IntraEdgeCalculationAnnotator := preload("res://framework/annotators/intra_edge_calculation_annotator.gd")
+
 const TRAJECTORY_WIDTH := 1.0
 
 const CONSTRAINT_WIDTH := 2.0
@@ -8,9 +10,14 @@ const CONSTRAINT_RADIUS := 3.0 * CONSTRAINT_WIDTH
 const START_RADIUS := 1.5 * CONSTRAINT_WIDTH
 
 var graph: PlatformGraph
+var intra_edge_calc_annotator: IntraEdgeCalculationAnnotator
 
 func _init(graph: PlatformGraph) -> void:
     self.graph = graph
+    self.intra_edge_calc_annotator = IntraEdgeCalculationAnnotator.new(graph)
+
+func _enter_tree() -> void:
+    add_child(intra_edge_calc_annotator)
 
 func _draw() -> void:
     var hue: float

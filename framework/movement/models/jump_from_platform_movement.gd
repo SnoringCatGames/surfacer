@@ -198,7 +198,10 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
     var land_positions: Array
     var terminals: Array
     var instructions: MovementInstructions
+    var edge: InterSurfaceEdge
     var edges := []
+    var overall_calc_params: MovementCalcOverallParams
+    var edge_calc_debug_state: Array = debug_state["edge_calc_debug_state"] if debug_state.in_debug_mode else []
     
     # FIXME: B: REMOVE
     params.gravity_fast_fall *= \
@@ -207,8 +210,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     var velocity_start := Vector2(0.0, params.jump_boost)
-    var overall_calc_params := \
-            MovementCalcOverallParams.new(params, space_state, surface_parser, velocity_start)
+    var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(params)
     
     for b in possible_surfaces:
         # This makes the assumption that traversing through any fall-through/walk-through surface
@@ -286,18 +288,21 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 
                 terminals = MovementConstraintUtils.create_terminal_constraints(a, \
                         jump_position.target_point, b, land_position.target_point, params, \
-                        overall_calc_params.constraint_offset, velocity_start, true)
+                        constraint_offset, velocity_start, true)
                 if terminals.empty():
                     continue
                 
-                overall_calc_params.origin_constraint = terminals[0]
-                overall_calc_params.destination_constraint = terminals[1]
+                overall_calc_params = MovementCalcOverallParams.new(params, space_state, \
+                        surface_parser, velocity_start, terminals[0], terminals[1])
                 
                 instructions = _calculate_jump_instructions(overall_calc_params)
+                if debug_state.in_debug_mode:
+                    # Store both successful and failed edge calculation debug state.
+                    edge_calc_debug_state.push_back(overall_calc_params.debug_state)
                 if instructions != null:
                     # Can reach land position from jump position.
-                    edges.push_back(InterSurfaceEdge.new( \
-                            jump_position, land_position, instructions))
+                    edge = InterSurfaceEdge.new(jump_position, land_position, instructions)
+                    edges.push_back(edge)
     
     # FIXME: B: REMOVE
     params.gravity_fast_fall /= \
@@ -311,17 +316,16 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
         surface_parser: SurfaceParser, position_start: PositionAlongSurface, \
         position_end: Vector2) -> MovementInstructions:
     var velocity_start := Vector2(0.0, params.jump_boost)
-    var overall_calc_params := \
-            MovementCalcOverallParams.new(params, space_state, surface_parser, velocity_start)
+    var constraint_offset := MovementCalcOverallParams.calculate_constraint_offset(params)
     
     var terminals := MovementConstraintUtils.create_terminal_constraints(position_start.surface, \
-            position_start.target_point, null, position_end, params, \
-            overall_calc_params.constraint_offset, velocity_start, true)
+            position_start.target_point, null, position_end, params, constraint_offset, \
+            velocity_start, true)
     if terminals.empty():
         null
     
-    overall_calc_params.origin_constraint = terminals[0]
-    overall_calc_params.destination_constraint = terminals[1]
+    var overall_calc_params := MovementCalcOverallParams.new(params, space_state, surface_parser, \
+            velocity_start, terminals[0], terminals[1])
     
     return _calculate_jump_instructions(overall_calc_params)
 

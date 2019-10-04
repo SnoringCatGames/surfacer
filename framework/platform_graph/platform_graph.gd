@@ -147,11 +147,14 @@ var surfaces_to_nodes: Dictionary
 # Dictionary<PositionAlongSurface, Dictionary<Edge>>
 var nodes_to_edges: Dictionary
 
+var debug_state: Dictionary
+
 func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
         player_info: PlayerTypeConfiguration, debug_state: Dictionary) -> void:
     self.movement_params = player_info.movement_params
     self.surface_parser = surface_parser
     self.space_state = space_state
+    self.debug_state = debug_state
 
     # Store the subset of surfaces that this player type can interact with.
     self.surfaces = surface_parser.get_subset_of_surfaces( \
@@ -161,6 +164,11 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
 
     self.surfaces_to_nodes = {}
     self.nodes_to_edges = {}
+    
+    if debug_state.in_debug_mode and \
+            player_info.name == debug_state.limit_parsing_to_single_edge.player_name:
+        # Store debug info for the calculation of each edge.
+        debug_state["edge_calc_debug_state"] = []
 
     _calculate_nodes_and_edges(surfaces, player_info, debug_state)
 
@@ -298,8 +306,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     var possible_landing_surfaces := result_set.keys()
     possible_landing_surfaces.sort_custom(self, "_compare_surfaces_by_max_y")
 
-    var overall_calc_params := MovementCalcOverallParams.new( \
-            movement_params, space_state, surface_parser, velocity_start, false)
+    var constraint_offset := MovementCalcOverallParams.calculate_constraint_offset(movement_params)
     
     var origin_vertices := [origin]
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
@@ -309,6 +316,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     var vertical_step: MovementVertCalcStep
     var step_calc_params: MovementCalcStepParams
     var calc_results: MovementCalcResults
+    var overall_calc_params: MovementCalcOverallParams
 
     # Find the first possible edge to a landing surface.
     for surface in possible_landing_surfaces:
@@ -317,19 +325,20 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         
         for position_end in possible_end_positions:
             terminals = MovementConstraintUtils.create_terminal_constraints(null, origin, \
-                    surface, position_end.target_point, movement_params, \
-                    overall_calc_params.constraint_offset, velocity_start, false)
+                    surface, position_end.target_point, movement_params, constraint_offset, \
+                    velocity_start, false)
             if terminals.empty():
                 continue
             
-            overall_calc_params.origin_constraint = terminals[0]
-            overall_calc_params.destination_constraint = terminals[1]
+            overall_calc_params = MovementCalcOverallParams.new(movement_params, space_state, \
+                    surface_parser, velocity_start, terminals[0], terminals[1], false)
             
             vertical_step = VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
             if vertical_step == null:
                 continue
             
-            step_calc_params = MovementCalcStepParams.new(overall_calc_params.origin_constraint, \
+            step_calc_params = MovementCalcStepParams.new(overall_calc_params, \
+                    overall_calc_params.origin_constraint, \
                     overall_calc_params.destination_constraint, vertical_step)
             
             calc_results = MovementStepUtils.calculate_steps_from_constraint( \

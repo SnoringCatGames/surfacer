@@ -43,15 +43,17 @@ var debug_state: MovementCalcOverallDebugState
 
 func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceState, \
             surface_parser: SurfaceParser, velocity_start: Vector2, \
+            origin_constraint: MovementConstraint, destination_constraint: MovementConstraint, \
             can_backtrack_on_height := true) -> void:
     self.movement_params = movement_params
     self.space_state = space_state
     self.surface_parser = surface_parser
     self.velocity_start = velocity_start
+    self.origin_constraint = origin_constraint
+    self.destination_constraint = destination_constraint
     self.can_backtrack_on_height = can_backtrack_on_height
     
-    constraint_offset = movement_params.collider_half_width_height + \
-            Vector2(EDGE_MOVEMENT_ACTUAL_MARGIN, EDGE_MOVEMENT_ACTUAL_MARGIN)
+    constraint_offset = calculate_constraint_offset(movement_params)
     
     collided_surfaces = {}
     
@@ -68,3 +70,7 @@ func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceSta
     
     if Global.IN_DEBUG_MODE:
         debug_state = MovementCalcOverallDebugState.new(self)
+
+static func calculate_constraint_offset(movement_params: MovementParams) -> Vector2:
+    return movement_params.collider_half_width_height + \
+            Vector2(EDGE_MOVEMENT_ACTUAL_MARGIN, EDGE_MOVEMENT_ACTUAL_MARGIN)
