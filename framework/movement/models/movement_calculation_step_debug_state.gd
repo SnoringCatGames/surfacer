@@ -7,8 +7,11 @@ var start_constraint: MovementConstraint setget ,_get_start
 var end_constraint: MovementConstraint setget ,_get_end
 
 var frame_positions: PoolVector2Array
-
 var collision: SurfaceCollision
+
+var result_code := EdgeStepCalcResult.UNKNOWN
+var result_code_string: String setget ,_get_result_code_string
+var description: String setget ,_get_description
 
 var _step_calc_params
 
@@ -20,3 +23,9 @@ func _get_start() -> MovementConstraint:
 
 func _get_end() -> MovementConstraint:
     return _step_calc_params.end_constraint as MovementConstraint
+
+func _get_result_code_string() -> String:
+    return EdgeStepCalcResult.to_string(result_code)
+
+func _get_description() -> String:
+    return EdgeStepCalcResult.to_description_string(result_code)

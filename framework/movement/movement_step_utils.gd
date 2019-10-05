@@ -39,10 +39,11 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
     # - Debugging min step-end velocity.
     # - Get the up-left jump from floor to floor working on level long-rise.
     # - Set a breakpoint here.
-    print("yo")
+    print("yo: entered calculate_steps_from_constraint")
     
     if next_horizontal_step == null:
         # The destination is out of reach.
+        step_calc_params.debug_state.result_code = EdgeStepCalcResult.TARGET_OUT_OF_REACH
         return null
     
     var vertical_step := step_calc_params.vertical_step
@@ -73,6 +74,7 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
     
     if collision == null or collision.surface == overall_calc_params.destination_constraint.surface:
         # There is no intermediate surface interfering with this movement.
+        step_calc_params.debug_state.result_code = EdgeStepCalcResult.MOVEMENT_VALID
         return MovementCalcResults.new([next_horizontal_step], vertical_step, \
                 step_calc_params.start_constraint)
     
@@ -88,6 +90,8 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
             previous_constraint, overall_calc_params.origin_constraint, \
             collision.surface, overall_calc_params.constraint_offset)
     if constraints.empty():
+        # Neither end of the colliding surface is within reach.
+        step_calc_params.debug_state.result_code = EdgeStepCalcResult.NO_VALID_CONSTRAINT
         return null
     
     if step_calc_params.start_constraint.is_fake:
@@ -111,25 +115,37 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
             constraints.remove(1)
         
         if constraints.empty():
+            # None of the potential constraints to replace the fake are valid.
+            step_calc_params.debug_state.result_code = EdgeStepCalcResult.NO_VALID_TARGET_FROM_FAKE
             return null
     
     # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := calculate_steps_from_constraint_without_backtracking_on_height( \
             overall_calc_params, step_calc_params, constraints)
     if calc_results != null or !overall_calc_params.can_backtrack_on_height:
+        # Recursion was successful without backtracking for a new max jump height.
+        step_calc_params.debug_state.result_code = EdgeStepCalcResult.RECURSION_VALID
         return calc_results
     
     if overall_calc_params.collided_surfaces.has(collision.surface):
         # We've already tried backtracking for a collision with this surface, so this movement
         # won't work. Without this check, we'd recurse through a traversal branch that is identical
         # to one we've already considered, and we'd loop infinitely.
+        step_calc_params.debug_state.result_code = EdgeStepCalcResult.ALREADY_BACKTRACKED_FOR_SURFACE
         return null
     
     overall_calc_params.collided_surfaces[collision.surface] = true
     
     # Then, try to satisfy the constraints with backtracking to consider a new max jump height.
-    return calculate_steps_from_constraint_with_backtracking_on_height( \
+    calc_results = calculate_steps_from_constraint_with_backtracking_on_height( \
             overall_calc_params, step_calc_params, constraints)
+    if calc_results != null:
+        # Recursion was successful with backtracking for a new max jump height.
+        step_calc_params.debug_state.result_code = EdgeStepCalcResult.BACKTRACKING_VALID
+    else:
+        # Recursion was not successful, despite backtracking for a new max jump height.
+        step_calc_params.debug_state.result_code = EdgeStepCalcResult.BACKTRACKING_INVALID
+    return calc_results
 
 # Check whether either constraint can be satisfied with our current max jump height.
 static func calculate_steps_from_constraint_without_backtracking_on_height( \

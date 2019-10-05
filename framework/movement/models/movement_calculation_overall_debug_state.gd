@@ -11,7 +11,12 @@ class_name MovementCalcOverallDebugState
 # - Make this annotation also work for valid edges.
 # - Later, make this annotation usable at run time, by clicking on the start and end positions to check.
 # 
-# - Looping delay between annotator steps; will need to create a dynamic sub-annotator for each such edge calc;
+# - Add support for manually stepping through the calc step annotations, instead of it being on an automatic timer.
+# - Add support for rendering the movement steps in a tree view; the linear view is confusing.
+#   - Will need to change how the ste debug state is stored...
+#     - 
+#   - Will need to create a vertical panel for rendering lists of text lines.
+#     - 
 
 var origin_constraint: MovementConstraint setget ,_get_origin
 var destination_constraint: MovementConstraint setget ,_get_destination
