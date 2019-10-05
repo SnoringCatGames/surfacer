@@ -357,7 +357,8 @@ func _update_which_surface_is_grabbed() -> void:
         var next_grab_position_tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
                 surface_state.grab_position, surface_state.grabbed_tile_map, \
                 surface_state.is_touching_floor, surface_state.is_touching_ceiling, \
-                surface_state.is_touching_left_wall, surface_state.is_touching_right_wall, true)
+                surface_state.is_touching_left_wall, surface_state.is_touching_right_wall, true, \
+                surface_state.grab_position_tile_map_coord)
         surface_state.just_changed_tile_map_coord = \
                 surface_state.just_left_air or \
                 next_grab_position_tile_map_coord != surface_state.grab_position_tile_map_coord

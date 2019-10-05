@@ -47,6 +47,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     var ray_trace_target: Vector2
     
+    var position_when_colliding: Vector2
+    
     # FIXME: B: Update tests to provide bounding box; add new test for this "corner" case
     
     # FIXME: E:
@@ -125,6 +127,55 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         
         ray_trace_target = closest_intersection_point
         
+        var collision_ratios := space_state.cast_motion(shape_query_params)
+        
+        assert(collision_ratios.size() != 1)
+        
+        # An array of size 2 means that there was no pre-existing collision.
+        # An empty array means that we were already colliding even before any motion.
+        var there_was_a_preexisting_collision: bool = collision_ratios.size() == 0 or \
+                (collision_ratios[0] == 0 and collision_ratios[1] == 0)
+        
+        if there_was_a_preexisting_collision:
+            # - We can assume that this collision actually involves the margin colliding and not
+            #   the actual shape.
+            # - We can assume that the closest_intersection_point is a point along the outside of a
+            #   non-occluded surface, and that this surface is the closest in the direction of
+            #   travel.
+            
+            assert(!has_recursed)
+            
+            var original_margin := shape_query_params.margin
+            var original_motion := shape_query_params.motion
+            
+            # Remove margin, so we can determine which side the shape would actually collide
+            # against.
+            shape_query_params.margin = 0.0
+            # Increase the motion, since we can't be sure the shape would otherwise collide without
+            # the margin.
+            shape_query_params.motion = direction * original_margin * 4
+            
+            # When the Player's shape rests against another collidable, that can be interpreted as
+            # a collision, so we add a slight offset here.
+            # FIXME: LEFT OFF HERE: Is this needed?
+            shape_query_params.transform = \
+                    shape_query_params.transform.translated(-direction * 0.01)
+            
+            var result := check_frame_for_collision(space_state, shape_query_params, \
+                    collider_half_width_height, surface_parser, true)
+            
+            shape_query_params.margin = original_margin
+            shape_query_params.motion = original_motion
+            shape_query_params.transform = Transform2D(0.0, position_start)
+            
+            return result
+        
+        # A value of 1 means that no collision was detected.
+        assert(collision_ratios[0] < 1.0)
+        
+        position_when_colliding = \
+                position_start + shape_query_params.motion * collision_ratios[1]
+            
         
         
         
@@ -152,58 +203,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
             should_try_without_perpendicular_nudge_first = true
             
-            
         else:
             # Moving at an angle.
-            
-            var collision_ratios := space_state.cast_motion(shape_query_params)
-            
-            assert(collision_ratios.size() != 1)
-            
-            # An array of size 2 means that there was no pre-existing collision.
-            # An empty array means that we were already colliding even before any motion.
-            var there_was_a_preexisting_collision := collision_ratios.size() == 0
-            
-            if there_was_a_preexisting_collision:
-                # - We can assume that this collision actually involves the margin colliding and not
-                #   the actual shape.
-                # - We can assume that the closest_intersection_point is a point along the outside of a
-                #   non-occluded surface, and that this surface is the closest in the direction of
-                #   travel.
-                
-                assert(!has_recursed)
-                
-                var original_margin := shape_query_params.margin
-                var original_motion := shape_query_params.motion
-                
-                # Remove margin, so we can determine which side the shape would actually collide
-                # against.
-                shape_query_params.margin = 0.0
-                # Increase the motion, since we can't be sure the shape would otherwise collide without
-                # the margin.
-                shape_query_params.motion = direction * original_margin * 4
-                
-                # When the Player's shape rests against another collidable, that can be interpreted as
-                # a collision, so we add a slight offset here.
-                # FIXME: LEFT OFF HERE: Is this needed?
-                shape_query_params.transform = \
-                        shape_query_params.transform.translated(-direction * 0.01)
-                
-                var result := check_frame_for_collision(space_state, shape_query_params, \
-                        collider_half_width_height, surface_parser, true)
-                
-                shape_query_params.margin = original_margin
-                shape_query_params.motion = original_motion
-                shape_query_params.transform = Transform2D(0.0, position_start)
-                
-                return result
-            
-            
-            
-            
-            
-            # A value of 1 means that no collision was detected.
-            assert(collision_ratios[0] < 1.0)
             
             var position_just_before_collision: Vector2 = \
                     position_start + shape_query_params.motion * collision_ratios[0]
@@ -390,7 +391,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     var surface := surface_parser.get_surface_for_tile(tile_map, tile_map_index, side)
     
-    return SurfaceCollision.new(surface, intersection_point)
+    return SurfaceCollision.new(surface, intersection_point, position_when_colliding)
 
 
 

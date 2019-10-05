@@ -4,6 +4,7 @@ class_name IntraEdgeCalculationAnnotator
 const TRAJECTORY_WIDTH := 1.0
 const COLLISION_X_WIDTH_HEIGHT := Vector2(16.0, 16.0)
 const COLLISION_X_STROKE_WIDTH := 3.0
+const COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH := 1.0
 const CONSTRAINT_WIDTH := 2.0
 const CONSTRAINT_RADIUS := 3.0 * CONSTRAINT_WIDTH
 
@@ -22,6 +23,7 @@ func _draw() -> void:
     var step_attempts: Array
     var step_attempts_count: float
     var step_attempt: MovementCalcStepDebugState
+    var collision: SurfaceCollision
     var step_hue: float
     var step_color: Color
 
@@ -49,8 +51,16 @@ func _draw() -> void:
                 DrawUtils.draw_circle_outline(self, step_attempt.end_constraint.position, \
                         CONSTRAINT_RADIUS, step_color, CONSTRAINT_WIDTH, 4.0)
                 
+                collision = step_attempt.collision
+                
                 # Draw any collision.
-                if step_attempt.collision != null:
-                    DrawUtils.draw_x(self, step_attempt.collision.position, \
-                            COLLISION_X_WIDTH_HEIGHT.x, COLLISION_X_WIDTH_HEIGHT.y, \
-                            collision_color, COLLISION_X_STROKE_WIDTH)
+                if collision != null:
+                    # Draw an X at the actual point of collision.
+                    DrawUtils.draw_x(self, collision.position, COLLISION_X_WIDTH_HEIGHT.x, \
+                            COLLISION_X_WIDTH_HEIGHT.y, collision_color, COLLISION_X_STROKE_WIDTH)
+                    
+                    # Draw an outline of the player's collision boundary at the point of collision.
+                    DrawUtils.draw_shape_outline(self, collision.player_position, \
+                            edge_attempt.movement_params.collider_shape, \
+                            edge_attempt.movement_params.collider_rotation, collision_color, \
+                            COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH)

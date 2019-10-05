@@ -1,11 +1,11 @@
 extends Node
 class_name DrawUtils
 
-const SURFACE_DEPTH := 8.0
+const SURFACE_DEPTH := 16.0
 const SURFACE_DEPTH_DIVISIONS_COUNT := 8
 const SURFACE_ALPHA_END_RATIO := .2
 
-const DEPTH_DIVISION_SIZE := SURFACE_DEPTH / SURFACE_DEPTH_DIVISIONS_COUNT
+const SURFACE_DEPTH_DIVISION_SIZE := SURFACE_DEPTH / SURFACE_DEPTH_DIVISIONS_COUNT
 
 static func draw_dashed_line(canvas: CanvasItem, from: Vector2, to: Vector2, color: Color, \
         dash_length: float, dash_gap: float, dash_offset: float = 0.0, \
@@ -43,7 +43,7 @@ static func draw_dashed_polyline(canvas: CanvasItem, vertices: PoolVector2Array,
 
 static func draw_surface(canvas: CanvasItem, surface: Surface, color: Color) -> void:
     var vertices = surface.vertices
-    var surface_depth_division_offset = surface.normal * -DEPTH_DIVISION_SIZE
+    var surface_depth_division_offset = surface.normal * -SURFACE_DEPTH_DIVISION_SIZE
     var alpha_start = color.a
     var alpha_end = alpha_start * SURFACE_ALPHA_END_RATIO
     
@@ -58,7 +58,7 @@ static func draw_surface(canvas: CanvasItem, surface: Surface, color: Color) -> 
             polyline = Utils.translate_polyline(vertices, translation)
             progress = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
             color.a = alpha_start + progress * (alpha_end - alpha_start)
-            canvas.draw_polyline(polyline, color, DEPTH_DIVISION_SIZE)
+            canvas.draw_polyline(polyline, color, SURFACE_DEPTH_DIVISION_SIZE)
 #            Utils.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
     else:
         canvas.draw_circle(vertices[0], 6.0, color)

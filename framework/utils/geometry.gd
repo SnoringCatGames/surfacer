@@ -419,7 +419,8 @@ static func get_tile_map_index_from_grid_coord(position: Vector2, tile_map: Tile
 
 static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map: TileMap, \
         is_touching_floor: bool, is_touching_ceiling: bool, is_touching_left_wall: bool, \
-        is_touching_right_wall: bool, expects_a_valid_result: bool) -> Vector2:
+        is_touching_right_wall: bool, expects_a_valid_result: bool, \
+        fallback_coord := Vector2.INF) -> Vector2:
     var half_cell_size = tile_map.cell_size / 2.0
     var used_rect = tile_map.get_used_rect()
     var position_relative_to_tile_map = \
@@ -436,18 +437,30 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
     var tile_coord := Vector2.INF
     var error_message := ""
     
+    var top_left_cell_coord: Vector2
+    var left_cell_coord: Vector2
+    var top_cell_coord: Vector2
+    var is_there_a_tile_at_top_left: bool
+    var is_there_a_tile_at_top_right: bool
+    var is_there_a_tile_at_bottom_left: bool
+    var is_there_a_tile_at_bottom_right: bool
+    var is_there_a_tile_at_left: bool
+    var is_there_a_tile_at_right: bool
+    var is_there_a_tile_at_top: bool
+    var is_there_a_tile_at_bottom: bool
+    
     if is_between_cells_horizontally and is_between_cells_vertically:
-        var top_left_cell_coord = \
-                world_to_tile_map(Vector2(position_world_coord.x - half_cell_size.x, \
-                        position_world_coord.y - half_cell_size.y), tile_map)
+        top_left_cell_coord = world_to_tile_map( \
+                Vector2(position_world_coord.x - half_cell_size.x, \
+                position_world_coord.y - half_cell_size.y), tile_map)
         
-        var is_there_a_tile_at_top_left = \
+        is_there_a_tile_at_top_left = \
                 tile_map.get_cellv(top_left_cell_coord) >= 0
-        var is_there_a_tile_at_top_right = \
+        is_there_a_tile_at_top_right = \
                 tile_map.get_cell(top_left_cell_coord.x + 1, top_left_cell_coord.y) >= 0
-        var is_there_a_tile_at_bottom_left = \
+        is_there_a_tile_at_bottom_left = \
                 tile_map.get_cell(top_left_cell_coord.x, top_left_cell_coord.y + 1) >= 0
-        var is_there_a_tile_at_bottom_right = \
+        is_there_a_tile_at_bottom_right = \
                 tile_map.get_cell(top_left_cell_coord.x + 1, top_left_cell_coord.y + 1) >= 0
         
         if is_touching_floor:
@@ -494,12 +507,10 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
             error_message = "Invalid state: Problem calculating colliding cell"
         
     elif is_between_cells_horizontally:
-        var left_cell_coord = \
-                world_to_tile_map(Vector2(position_world_coord.x - half_cell_size.x, \
-                        position_world_coord.y), tile_map)
-        var is_there_a_tile_at_left = tile_map.get_cellv(left_cell_coord) >= 0
-        var is_there_a_tile_at_right = \
-                tile_map.get_cell(left_cell_coord.x + 1, left_cell_coord.y) >= 0
+        left_cell_coord = world_to_tile_map(Vector2(position_world_coord.x - half_cell_size.x, \
+                position_world_coord.y), tile_map)
+        is_there_a_tile_at_left = tile_map.get_cellv(left_cell_coord) >= 0
+        is_there_a_tile_at_right = tile_map.get_cell(left_cell_coord.x + 1, left_cell_coord.y) >= 0
         
         if is_touching_left_wall:
             if is_there_a_tile_at_left:
@@ -519,11 +530,10 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
             error_message = "Invalid state: Problem calculating colliding cell"
         
     elif is_between_cells_vertically:
-        var top_cell_coord = world_to_tile_map(Vector2(position_world_coord.x, \
+        top_cell_coord = world_to_tile_map(Vector2(position_world_coord.x, \
                 position_world_coord.y - half_cell_size.y), tile_map)
-        var is_there_a_tile_at_bottom = \
-                tile_map.get_cell(top_cell_coord.x, top_cell_coord.y + 1) >= 0
-        var is_there_a_tile_at_top = tile_map.get_cellv(top_cell_coord) >= 0
+        is_there_a_tile_at_bottom = tile_map.get_cell(top_cell_coord.x, top_cell_coord.y + 1) >= 0
+        is_there_a_tile_at_top = tile_map.get_cellv(top_cell_coord) >= 0
         
         if is_touching_floor:
             if is_there_a_tile_at_bottom:
@@ -547,8 +557,54 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
     
     if !error_message.empty():
         if expects_a_valid_result:
+            error_message = """%s; 
+                is_touching_floor=%s 
+                is_touching_ceiling=%s 
+                is_touching_left_wall=%s 
+                is_touching_right_wall=%s 
+                is_between_cells_horizontally=%s 
+                is_between_cells_vertically=%s 
+                top_left_cell_coord=%s 
+                left_cell_coord=%s 
+                top_cell_coord=%s 
+                is_there_a_tile_at_top_left=%s 
+                is_there_a_tile_at_top_right=%s 
+                is_there_a_tile_at_bottom_left=%s 
+                is_there_a_tile_at_bottom_right=%s 
+                is_there_a_tile_at_left=%s 
+                is_there_a_tile_at_right=%s 
+                is_there_a_tile_at_top=%s 
+                is_there_a_tile_at_bottom=%s 
+                fallback_coord=%s 
+                """ % [ \
+                    error_message, \
+                    is_touching_floor, \
+                    is_touching_ceiling, \
+                    is_touching_left_wall, \
+                    is_touching_right_wall, \
+                    is_between_cells_horizontally, \
+                    is_between_cells_vertically, \
+                    top_left_cell_coord, \
+                    left_cell_coord, \
+                    top_cell_coord, \
+                    is_there_a_tile_at_top_left, \
+                    is_there_a_tile_at_top_right, \
+                    is_there_a_tile_at_bottom_left, \
+                    is_there_a_tile_at_bottom_right, \
+                    is_there_a_tile_at_left, \
+                    is_there_a_tile_at_right, \
+                    is_there_a_tile_at_top, \
+                    is_there_a_tile_at_bottom, \
+                    fallback_coord, \
+                ]
+            
             Utils.error(error_message)
-        return Vector2.INF
+        
+        # TODO: There is an infrequent bug where we cannot properly calculate the tile coordinate
+        #       when the player is moving around a corner, between climbing and walking. We should
+        #       try to fix the underlying cause, but, in the meantime, we can use this fallback
+        #       value.
+        return fallback_coord
     else:
         # Ensure the cell we calculated actually contains content.
         assert(tile_map.get_cellv(tile_coord) >= 0)

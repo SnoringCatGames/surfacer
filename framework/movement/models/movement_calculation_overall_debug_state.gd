@@ -15,6 +15,7 @@ class_name MovementCalcOverallDebugState
 
 var origin_constraint: MovementConstraint setget ,_get_origin
 var destination_constraint: MovementConstraint setget ,_get_destination
+var movement_params: MovementParams setget ,_get_movement_params
 
 # Array<StepAttemptDebugState>
 var step_attempts := []
@@ -29,3 +30,6 @@ func _get_origin() -> MovementConstraint:
 
 func _get_destination() -> MovementConstraint:
     return _overall_calc_params.destination_constraint as MovementConstraint
+
+func _get_movement_params() -> MovementParams:
+    return _overall_calc_params.movement_params as MovementParams
