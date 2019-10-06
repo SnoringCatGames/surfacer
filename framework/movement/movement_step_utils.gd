@@ -17,9 +17,9 @@ static func calculate_steps_with_new_jump_height( \
         # The destination is out of reach.
         return null
     
-    var step_calc_params := MovementCalcStepParams.new(overall_calc_params, \
-            overall_calc_params.origin_constraint, overall_calc_params.destination_constraint, \
-            vertical_step)
+    var step_calc_params := MovementCalcStepParams.new(overall_calc_params.origin_constraint, \
+            overall_calc_params.destination_constraint, vertical_step, overall_calc_params, \
+            overall_calc_params)
     
     return calculate_steps_from_constraint(overall_calc_params, step_calc_params)
 
@@ -189,8 +189,8 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         
         ### RECURSE: Calculate movement from the constraint to the original destination.
         
-        step_calc_params_from_constraint = MovementCalcStepParams.new(overall_calc_params, \
-                constraint, next_constraint_copy, vertical_step)
+        step_calc_params_from_constraint = MovementCalcStepParams.new(constraint, \
+                next_constraint_copy, vertical_step, overall_calc_params, step_calc_params)
         if constraint.is_fake:
             # If the start constraint is fake, then we will need access to the latest real
             # constraint.
@@ -225,8 +225,8 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         
         ### RECURSE: Calculate movement to the constraint.
         
-        step_calc_params_to_constraint = MovementCalcStepParams.new(overall_calc_params, \
-                previous_constraint_copy, constraint, vertical_step)
+        step_calc_params_to_constraint = MovementCalcStepParams.new(previous_constraint_copy, \
+                constraint, vertical_step, overall_calc_params, step_calc_params)
         calc_results_to_constraint = calculate_steps_from_constraint(overall_calc_params, \
                 step_calc_params_to_constraint)
         
