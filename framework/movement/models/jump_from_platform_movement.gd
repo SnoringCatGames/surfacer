@@ -201,7 +201,6 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
     var edge: InterSurfaceEdge
     var edges := []
     var overall_calc_params: MovementCalcOverallParams
-    var edge_calc_debug_state: Array = debug_state["edge_calc_debug_state"] if debug_state.in_debug_mode else []
     
     # FIXME: B: REMOVE
     params.gravity_fast_fall *= \
@@ -296,9 +295,12 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                         surface_parser, velocity_start, terminals[0], terminals[1])
                 
                 instructions = _calculate_jump_instructions(overall_calc_params)
+                # FIXME: LEFT OFF HERE: --------------------------------------------------A
+                # - Update the edge debug-step-storing logic to only over store one total edge,
+                #   and use the edge-targeting config from before...
                 if debug_state.in_debug_mode:
                     # Store both successful and failed edge calculation debug state.
-                    edge_calc_debug_state.push_back(overall_calc_params.debug_state)
+                    debug_state["edge_calc_debug_state"] = overall_calc_params.debug_state
                 if instructions != null:
                     # Can reach land position from jump position.
                     edge = InterSurfaceEdge.new(jump_position, land_position, instructions)

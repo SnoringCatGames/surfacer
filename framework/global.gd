@@ -11,6 +11,8 @@ const LEVEL_RESOURCE_PATHS := [
 
 const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
 
+const DEBUG_PANEL_RESOURCE_PATH := "res://framework/menus/debug_panel.tscn"
+
 const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false
 
@@ -43,6 +45,8 @@ const PLAYER_ACTIONS := {}
 
 # Dictionary<String, PlayerTypeConfiguration>
 var player_types := {}
+
+var debug_panel: DebugPanel
 
 var current_level
 

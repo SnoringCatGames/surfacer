@@ -79,6 +79,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/utils/colors.gd"
 }, {
+"base": "Panel",
+"class": "DebugPanel",
+"language": "GDScript",
+"path": "res://framework/menus/debug_panel.gd"
+}, {
 "base": "Node",
 "class": "DrawUtils",
 "language": "GDScript",
@@ -183,6 +188,16 @@ _global_script_classes=[ {
 "class": "IntraEdgeCalculationAnnotator",
 "language": "GDScript",
 "path": "res://framework/annotators/intra_edge_calculation_annotator.gd"
+}, {
+"base": "Node2D",
+"class": "IntraEdgeCalculationTrajectoryAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/intra_edge_calculation_trajectory_annotator.gd"
+}, {
+"base": "Node2D",
+"class": "IntraEdgeCalculationTreeViewAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/intra_edge_calculation_tree_view_annotator.gd"
 }, {
 "base": "Edge",
 "class": "IntraSurfaceEdge",
@@ -509,6 +524,7 @@ _global_script_class_icons={
 "ClickToNavigate": "",
 "CollisionCheckUtils": "",
 "Colors": "",
+"DebugPanel": "",
 "DrawUtils": "",
 "Edge": "",
 "EdgeStepCalcResult": "",
@@ -530,6 +546,8 @@ _global_script_class_icons={
 "InterSurfaceEdge": "",
 "InterSurfaceEdgesAnnotator": "",
 "IntraEdgeCalculationAnnotator": "",
+"IntraEdgeCalculationTrajectoryAnnotator": "",
+"IntraEdgeCalculationTreeViewAnnotator": "",
 "IntraSurfaceEdge": "",
 "JumpFromPlatformMovement": "",
 "Level": "",

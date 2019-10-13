@@ -40,6 +40,8 @@ var movement_params: MovementParams setget ,_get_movement_params
 # Array<StepAttemptDebugState>
 var children_step_attempts := []
 
+var total_step_count := 0
+
 var _overall_calc_params
 
 func _init(overall_calc_params) -> void:

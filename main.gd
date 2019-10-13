@@ -33,6 +33,23 @@ func _enter_tree() -> void:
     
     global.register_player_actions(PLAYER_ACTION_CLASSES)
     global.register_player_params(PLAYER_PARAM_CLASSES)
+
+    # FIXME: LEFT OFF HERE: A: Use a ParallaxBackground
+    # - Add two placeholder layers for now; very simple/rough tree/hill art
+    var background_layer := CanvasLayer.new()
+    background_layer.layer = 10
+    add_child(background_layer)
+    
+    var hud_layer := CanvasLayer.new()
+    hud_layer.layer = 10
+    add_child(hud_layer)
+    
+    var menu_layer := CanvasLayer.new()
+    menu_layer.layer = 20
+    add_child(menu_layer)
+    
+    var debug_panel = Utils.add_scene(hud_layer, Global.DEBUG_PANEL_RESOURCE_PATH)
+    global.debug_panel = debug_panel
     
     var scene_path := Global.TEST_RUNNER_SCENE_RESOURCE_PATH if Global.IN_TEST_MODE else \
             Global.STARTING_LEVEL_RESOURCE_PATH

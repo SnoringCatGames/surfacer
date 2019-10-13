@@ -165,11 +165,6 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
     self.surfaces_to_nodes = {}
     self.nodes_to_edges = {}
     
-    if debug_state.in_debug_mode and \
-            player_info.name == debug_state.limit_parsing_to_single_edge.player_name:
-        # Store debug info for the calculation of each edge.
-        debug_state["edge_calc_debug_state"] = []
-
     _calculate_nodes_and_edges(surfaces, player_info, debug_state)
 
 # Uses A* search.

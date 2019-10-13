@@ -42,4 +42,3 @@ collision_layer = 6
 collision_mask = 0
 format = 1
 tile_data = PoolIntArray( 1376286, 5, 0, 1638427, 5, 0, 1638428, 5, 0 )
-

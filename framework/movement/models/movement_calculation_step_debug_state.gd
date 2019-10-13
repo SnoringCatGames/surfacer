@@ -15,14 +15,16 @@ var description: String setget ,_get_description
 
 # MovementCalcStepParams
 var _step_calc_params
+var index: int
+var overall_debug_state: MovementCalcOverallDebugState
 # Array<MovementCalcStepDebugState>
 var children_step_attempts := []
 
-func _init(step_calc_params, parent_step_or_overall_calc_params) -> void:
+func _init(step_calc_params, index: int, \
+        overall_debug_state: MovementCalcOverallDebugState) -> void:
     self._step_calc_params = step_calc_params
-    
-    # Children step-calc "nodes" register themselves on their parent.
-    parent_step_or_overall_calc_params.debug_state.children_step_attempts.push_back(self)
+    self.index = index
+    self.overall_debug_state = overall_debug_state
 
 func _get_start() -> MovementConstraint:
     return _step_calc_params.start_constraint as MovementConstraint

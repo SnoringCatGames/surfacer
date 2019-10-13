@@ -20,11 +20,14 @@ var debug_state: MovementCalcStepDebugState
 
 func _init(start_constraint: MovementConstraint, end_constraint: MovementConstraint, \
         vertical_step: MovementVertCalcStep, overall_calc_params: MovementCalcOverallParams, \
-        parent_step_calc_params) -> void:
+        parent_step_or_overall_calc_params) -> void:
     self.start_constraint = start_constraint
     self.end_constraint = end_constraint
     self.vertical_step = vertical_step
     
     if Global.IN_DEBUG_MODE:
-        debug_state = MovementCalcStepDebugState.new(self, parent_step_calc_params)
-        overall_calc_params.debug_state.children_step_attempts.push_back(debug_state)
+        var step_index := overall_calc_params.debug_state.total_step_count
+        debug_state = MovementCalcStepDebugState.new(self, step_index, overall_calc_params.debug_state)
+        parent_step_or_overall_calc_params.debug_state.children_step_attempts \
+                .push_back(debug_state)
+        overall_calc_params.debug_state.total_step_count += 1
