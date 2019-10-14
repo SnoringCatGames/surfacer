@@ -625,6 +625,11 @@ Geometry="*res://framework/utils/geometry.gd"
 DrawUtils="*res://framework/utils/draw_utils.gd"
 Global="*res://framework/global.gd"
 
+[display]
+
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
 [editor_plugins]
 
 enabled=PoolStringArray( "gut" )

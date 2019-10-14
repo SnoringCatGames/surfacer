@@ -62,7 +62,7 @@ func _process(delta: float) -> void:
     if is_new_edge_attempt:
         edge_attempt = next_edge_attempt
     
-    if edge_attempt == null:
+    if edge_attempt == null or edge_attempt.total_step_count == 0:
         # Don't try to draw if we don't currently have an edge to debug.
         return
     
@@ -107,7 +107,7 @@ func _get_step_by_index_recursively(step_attempt: MovementCalcStepDebugState, \
     return null
 
 func _draw() -> void:
-    if edge_attempt == null:
+    if edge_attempt == null or edge_attempt.total_step_count == 0:
         # Don't try to draw if we don't currently have an edge to debug.
         return
     
