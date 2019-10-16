@@ -1,9 +1,7 @@
 [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://players/cat_animator.gd" type="Script" id=1]
-
-[sub_resource type="StreamTexture" id=1]
-load_path = "res://.import/cat-parts.png-4f7c5e4b7b6db4eb2e369ff9bea64198.stex"
+[ext_resource path="res://assets/cat-parts.png" type="Texture" id=2]
 
 [sub_resource type="Animation" id=2]
 length = 2.4
@@ -6522,7 +6520,7 @@ __meta__ = {
 [node name="Hip" type="Sprite" parent="."]
 position = Vector2( -37, 23 )
 rotation = 1.5708
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -13, 0 )
 region_enabled = true
 region_rect = Rect2( 36, 8, 48, 28 )
@@ -6534,7 +6532,7 @@ position = Vector2( -25, 0 )
 position = Vector2( -20, -7 )
 rotation = -0.362789
 z_index = -1
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 4, 7 )
 region_enabled = true
 region_rect = Rect2( 7, 97, 18, 22 )
@@ -6546,7 +6544,7 @@ __meta__ = {
 [node name="LegLowerFR" type="Sprite" parent="Hip/Torso/LegUpperFR"]
 position = Vector2( 8, 14 )
 rotation = 1.06422
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -1, 6 )
 region_enabled = true
 region_rect = Rect2( 26, 103, 10, 16 )
@@ -6557,7 +6555,7 @@ __meta__ = {
 [node name="FootFR" type="Sprite" parent="Hip/Torso/LegUpperFR/LegLowerFR"]
 position = Vector2( -4, 12 )
 rotation = 0.0276382
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 1, 4 )
 region_enabled = true
 region_rect = Rect2( 38, 107, 6, 12 )
@@ -6568,7 +6566,7 @@ __meta__ = {
 [node name="ToesFR" type="Sprite" parent="Hip/Torso/LegUpperFR/LegLowerFR/FootFR"]
 position = Vector2( 2.00001, 8.00002 )
 rotation = -1.32292
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -3, 2 )
 region_enabled = true
 region_rect = Rect2( 46, 113, 10, 6 )
@@ -6593,14 +6591,14 @@ __meta__ = {
 
 [node name="TorsoSprite" type="Sprite" parent="Hip/Torso"]
 position = Vector2( -6, -1 )
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 region_enabled = true
 region_rect = Rect2( 0, 8, 36, 26 )
 
 [node name="Neck" type="Sprite" parent="Hip/Torso"]
 position = Vector2( -16, -3 )
 rotation = -0.617569
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -4, -9 )
 region_enabled = true
 region_rect = Rect2( 50, 37, 22, 30 )
@@ -6612,7 +6610,7 @@ __meta__ = {
 [node name="Head" type="Sprite" parent="Hip/Torso/Neck"]
 position = Vector2( -9, -19 )
 rotation = 0.562462
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -7, 3 )
 region_enabled = true
 region_rect = Rect2( 26, 39, 22, 18 )
@@ -6623,7 +6621,7 @@ __meta__ = {
 [node name="Ear" type="Sprite" parent="Hip/Torso/Neck/Head"]
 editor/display_folded = true
 position = Vector2( -9, -6 )
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 2, -2 )
 region_enabled = true
 region_rect = Rect2( 18, 42, 6, 8 )
@@ -6654,7 +6652,7 @@ __meta__ = {
 [node name="LegUpperFL" type="Sprite" parent="Hip/Torso"]
 position = Vector2( -20, -7 )
 rotation = -0.358859
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 4, 7 )
 region_enabled = true
 region_rect = Rect2( 7, 52, 18, 22 )
@@ -6666,7 +6664,7 @@ __meta__ = {
 [node name="LegLowerFL" type="Sprite" parent="Hip/Torso/LegUpperFL"]
 position = Vector2( 8, 14 )
 rotation = 1.06655
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -1, 6 )
 region_enabled = true
 region_rect = Rect2( 26, 58, 10, 16 )
@@ -6677,7 +6675,7 @@ __meta__ = {
 [node name="FootFL" type="Sprite" parent="Hip/Torso/LegUpperFL/LegLowerFL"]
 position = Vector2( -4, 12 )
 rotation = 0.000888083
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 1, 4 )
 region_enabled = true
 region_rect = Rect2( 38, 62, 6, 12 )
@@ -6688,7 +6686,7 @@ __meta__ = {
 [node name="ToesFL" type="Sprite" parent="Hip/Torso/LegUpperFL/LegLowerFL/FootFL"]
 position = Vector2( 2.00002, 8.00005 )
 rotation = -1.29093
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -3, 2 )
 region_enabled = true
 region_rect = Rect2( 46, 68, 10, 6 )
@@ -6715,7 +6713,7 @@ __meta__ = {
 position = Vector2( 4, -5 )
 rotation = -0.262054
 z_index = -1
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -1, 5 )
 region_enabled = true
 region_rect = Rect2( 7, 120, 18, 20 )
@@ -6727,7 +6725,7 @@ __meta__ = {
 [node name="LegLowerBR" type="Sprite" parent="Hip/LegUpperBR"]
 position = Vector2( -4.00001, 11 )
 rotation = -0.449522
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 5, 6 )
 region_enabled = true
 region_rect = Rect2( 26, 120, 18, 18 )
@@ -6739,7 +6737,7 @@ __meta__ = {
 position = Vector2( 11, 12 )
 rotation = 1.44316
 z_index = -1
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 0, 5 )
 region_enabled = true
 region_rect = Rect2( 45, 120, 8, 14 )
@@ -6751,7 +6749,7 @@ __meta__ = {
 position = Vector2( -2.67029e-005, 10 )
 rotation = -0.731583
 scale = Vector2( 0.999999, 0.999999 )
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -3, 2 )
 region_enabled = true
 region_rect = Rect2( 54, 120, 10, 6 )
@@ -6775,7 +6773,7 @@ __meta__ = {
 [node name="Tail1" type="Sprite" parent="Hip"]
 position = Vector2( 5, -9 )
 rotation = 0.00697921
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 7, 2 )
 region_enabled = true
 region_rect = Rect2( 2, 0, 18, 6 )
@@ -6787,7 +6785,7 @@ __meta__ = {
 [node name="Tail2" type="Sprite" parent="Hip/Tail1"]
 position = Vector2( 13, 2 )
 rotation = 0.207462
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 7, 0 )
 region_enabled = true
 region_rect = Rect2( 22, 0, 16, 6 )
@@ -6798,7 +6796,7 @@ __meta__ = {
 [node name="Tail3" type="Sprite" parent="Hip/Tail1/Tail2"]
 position = Vector2( 12, 0 )
 rotation = -0.0061407
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 7, 0 )
 region_enabled = true
 region_rect = Rect2( 39, 0, 16, 6 )
@@ -6809,7 +6807,7 @@ __meta__ = {
 [node name="Tail4" type="Sprite" parent="Hip/Tail1/Tail2/Tail3"]
 position = Vector2( 12, 0 )
 rotation = 0.228886
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 5, 0 )
 region_enabled = true
 region_rect = Rect2( 56, 0, 12, 6 )
@@ -6834,7 +6832,7 @@ __meta__ = {
 [node name="LegUpperBL" type="Sprite" parent="Hip"]
 position = Vector2( 4, -5 )
 rotation = -0.257101
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -1, 5 )
 region_enabled = true
 region_rect = Rect2( 7, 75, 18, 20 )
@@ -6846,7 +6844,7 @@ __meta__ = {
 [node name="LegLowerBL" type="Sprite" parent="Hip/LegUpperBL"]
 position = Vector2( -4, 11 )
 rotation = -0.455625
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 5, 6 )
 region_enabled = true
 region_rect = Rect2( 26, 75, 18, 18 )
@@ -6858,7 +6856,7 @@ __meta__ = {
 position = Vector2( 11, 12 )
 rotation = 1.44254
 z_index = -1
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( 0, 5 )
 region_enabled = true
 region_rect = Rect2( 45, 75, 8, 14 )
@@ -6870,7 +6868,7 @@ __meta__ = {
 position = Vector2( -3.8147e-006, 9.99993 )
 rotation = -0.731101
 scale = Vector2( 0.999999, 0.999999 )
-texture = SubResource( 1 )
+texture = ExtResource( 2 )
 offset = Vector2( -3, 2 )
 region_enabled = true
 region_rect = Rect2( 54, 75, 10, 6 )

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/near-trees-background.png-53ad137954fb752121bc070b0fbb3581.stex"
+path="res://.import/squirrel-parts.png-2057c4d90361891ef477b44fab726aa1.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://near-trees-background.png"
-dest_files=[ "res://.import/near-trees-background.png-53ad137954fb752121bc070b0fbb3581.stex" ]
+source_file="res://assets/squirrel-parts.png"
+dest_files=[ "res://.import/squirrel-parts.png-2057c4d90361891ef477b44fab726aa1.stex" ]
 
 [params]
 
@@ -19,8 +19,8 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
-flags/filter=false
+flags/repeat=0
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

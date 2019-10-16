@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/leaves-background.png-63cbf47c552a6a7c98905737c1fb43b4.stex"
+path="res://.import/near-trees-background.png-8d129692aec4a089d28eaf7ca33b055b.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://leaves-background.png"
-dest_files=[ "res://.import/leaves-background.png-63cbf47c552a6a7c98905737c1fb43b4.stex" ]
+source_file="res://assets/near-trees-background.png"
+dest_files=[ "res://.import/near-trees-background.png-8d129692aec4a089d28eaf7ca33b055b.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=1
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

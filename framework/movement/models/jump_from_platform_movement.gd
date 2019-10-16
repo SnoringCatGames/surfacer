@@ -131,11 +131,33 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #     later collision.
 #   - In this case, the recursive call that found the additional, earlier collision will need to
 #     also then calculate all steps from this collision to the end?
+# 
+# FIXME: B: 
+# - Make edge-calc annotations usable at run time, by clicking on the start and end positions to check.
+# 
+# - Add shorcuts for toggling debugging annotations
+#   - Add support for triggering the calc-step annotations based on a shortcut.
+#     - i
+#     - also, require clicking on the start and end positions in order to select which edge to debug
+#       - Use this _in addition to_ the current top-level configuration for specifying which edge to calculate?
+#     - also, then only actually calculate the edge debug state when using this click-to-specificy debug mode
+#   - also, add other shortcuts for toggling other annotations:
+#     - whether all surfaces are highlighted
+#     - whether the player's position+collision boundary are rendered
+#     - whether the player's current surface is rendered
+#     - whether all edges are rendered
+#     - whether grid boundaries+indices are rendered
+#   - create a collapsible dat.GUI-esque menu at the top-right that lists all the possible annotation configuration options
+#     - set up a nice API for creating these, setting values, listening for value changes, and defining keyboard shortcuts.
 
 
 
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
+# 
+# >>>- Debug the edge-calc annations
+#   - both check that the annotationss are helpful enough,
+#   - and that the underlying recursion is correct).
 # 
 # >>- Check that overall_calc_params.collided_surfaces is handled correctly:
 #   - QUESTION/PROBLEM: Regarding the current backtracking
@@ -296,7 +318,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 
                 instructions = _calculate_jump_instructions(overall_calc_params)
                 # FIXME: LEFT OFF HERE: --------------------------------------------------A
-                # - Update the edge debug-step-storing logic to only over store one total edge,
+                # >- Update the edge debug-step-storing logic to only over store one total edge,
                 #   and use the edge-targeting config from before...
                 if debug_state.in_debug_mode:
                     # Store both successful and failed edge calculation debug state.

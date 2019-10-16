@@ -616,7 +616,7 @@ _global_script_class_icons={
 
 config/name="Surfacer"
 run/main_scene="res://main.tscn"
-config/icon="res://icon.png"
+config/icon="res://assets/icon.png"
 
 [autoload]
 
@@ -685,4 +685,4 @@ left_click={
 
 [rendering]
 
-environment/default_environment="res://default_env.tres"
+environment/default_environment="res://assets/default_env.tres"
