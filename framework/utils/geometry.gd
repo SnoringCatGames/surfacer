@@ -403,8 +403,7 @@ static func world_to_tile_map(position: Vector2, tile_map: TileMap) -> Vector2:
 
 # Calculates the TileMap (grid-based) coordinates of the given position, relative to the origin of
 # the TileMap's bounding box.
-static func get_tile_map_index_from_world_coord(position: Vector2, tile_map: TileMap, \
-        side: String) -> int:
+static func get_tile_map_index_from_world_coord(position: Vector2, tile_map: TileMap) -> int:
     var position_grid_coord = world_to_tile_map(position, tile_map)
     return get_tile_map_index_from_grid_coord(position_grid_coord, tile_map)
 

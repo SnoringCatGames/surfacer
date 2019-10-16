@@ -47,7 +47,6 @@ func _draw_step_tree_item(step_attempt: MovementCalcStepDebugState, parent_tree_
     var tree_item := step_tree_view.create_item(parent_tree_item)
     var text := "%s: %s" % [next_index + 1, step_attempt.result_code_string]
     tree_item.set_text(0, text)
-    tree_item.connect("item_selected", self, "_on_step_tree_item_selected")
     tree_item_to_step_attempt[tree_item] = step_attempt
     
     next_index += 1

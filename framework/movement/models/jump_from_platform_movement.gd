@@ -318,7 +318,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 
                 instructions = _calculate_jump_instructions(overall_calc_params)
                 # FIXME: LEFT OFF HERE: --------------------------------------------------A
-                # >- Update the edge debug-step-storing logic to only over store one total edge,
+                # >- Update the edge debug-step-storing logic to only ever store one total edge,
                 #   and use the edge-targeting config from before...
                 if debug_state.in_debug_mode:
                     # Store both successful and failed edge calculation debug state.

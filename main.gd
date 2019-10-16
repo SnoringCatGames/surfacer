@@ -26,10 +26,6 @@ const PLAYER_PARAM_CLASSES := [
     preload("res://framework/test/test_data/test_player_params.gd"),
 ]
 
-const ASSET_PATHS_FOR_FORCE_INCLUDING_IN_EXPORTS = [
-    preload("res://assets/cat-parts.png"),
-]# **** # FIXME: LEFT OFF HERE: --------------------------------------------------A Try forcing loads for all asset files, so that I can guarantee that they are actually included when exporting...
-
 var level: Level
 
 func _enter_tree() -> void:
@@ -38,10 +34,6 @@ func _enter_tree() -> void:
     global.register_player_actions(PLAYER_ACTION_CLASSES)
     global.register_player_params(PLAYER_PARAM_CLASSES)
 
-    var background_layer := CanvasLayer.new()
-    background_layer.layer = 10
-    add_child(background_layer)
-    
     var hud_layer := CanvasLayer.new()
     hud_layer.layer = 10
     add_child(hud_layer)

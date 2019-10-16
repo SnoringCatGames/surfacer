@@ -40,16 +40,16 @@ static func to_description_string(result: int) -> String:
         TARGET_OUT_OF_REACH:
             return "The target is out of reach."
         NO_VALID_CONSTRAINT:
-            return "There is no valid edge constraint for movement around the colliding surface."
+            return "Hit an intermediate surface.\nThere is no valid edge constraint for movement around the colliding surface."
         NO_VALID_TARGET_FROM_FAKE:
-            return "There is no valid target constraint to replace the fake constraint."
+            return "Hit an intermediate surface.\nWe're considering a fake constraint.\nThere is no valid target constraint to replace the fake constraint."
         ALREADY_BACKTRACKED_FOR_SURFACE:
-            return "We have already backtracked to consider a new max jump height from colliding with this surface."
+            return "Hit an intermediate surface.\nWe have already backtracked to consider a new max jump height from colliding with this surface."
         RECURSION_VALID:
-            return "Valid movement was found when recursing."
+            return "Hit an intermediate surface.\nValid movement was found when recursing."
         BACKTRACKING_VALID:
-            return "Valid movement was found when backtracking."
+            return "Hit an intermediate surface.\nValid movement was found when backtracking."
         BACKTRACKING_INVALID:
-            return "No valid movement was found despite backtracking to consider a new max jump height."
+            return "Hit an intermediate surface.\nNo valid movement around was found despite backtracking to consider a new max jump height."
         UNKNOWN, _:
             return "Unexpected result"

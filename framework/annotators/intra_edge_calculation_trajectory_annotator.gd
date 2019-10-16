@@ -165,8 +165,9 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
             (edge_attempt.total_step_count - 1.0))
     var step_color := Color.from_hsv(step_hue, 0.6, 0.9, step_opactity)
     
-    # Draw the step trajectory.
-    draw_polyline(step_attempt.frame_positions, step_color, trajectory_stroke_width)
+    if step_attempt.frame_positions.size() > 1:
+        # Draw the step trajectory.
+        draw_polyline(step_attempt.frame_positions, step_color, trajectory_stroke_width)
     
     # Draw the step end points.
     DrawUtils.draw_circle_outline(self, step_attempt.start_constraint.position, \
@@ -194,7 +195,7 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     # Draw some text describing the current step.
     label.rect_position = step_attempt.start_constraint.position + LABEL_OFFSET
     label.add_color_override("font_color", step_color)
-    label.text = "Step %s/%s: [%s] %s" % [step_attempt.index + 1, edge_attempt.total_step_count, \
+    label.text = "Step %s/%s: %s:\n%s" % [step_attempt.index + 1, edge_attempt.total_step_count, \
             step_attempt.result_code_string, step_attempt.description]
 
 func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void:
