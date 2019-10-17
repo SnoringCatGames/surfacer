@@ -12,7 +12,7 @@ bg_color = Color( 0.188235, 0.188235, 0.188235, 0.952941 )
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[node name="Control" type="Panel"]
+[node name="DebugPanel" type="Panel"]
 anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -250.0
@@ -28,14 +28,14 @@ custom_constants/separation = 0
 
 [node name="Sections" type="VBoxContainer" parent="VBoxContainer"]
 margin_right = 200.0
-margin_bottom = 284.0
+margin_bottom = 280.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Panel" type="Panel" parent="VBoxContainer"]
-margin_top = 284.0
+margin_top = 280.0
 margin_right = 200.0
-margin_bottom = 304.0
+margin_bottom = 300.0
 rect_min_size = Vector2( 0, 20 )
 size_flags_horizontal = 3
 custom_styles/panel = SubResource( 2 )
@@ -43,5 +43,6 @@ custom_styles/panel = SubResource( 2 )
 [node name="Button" type="Button" parent="VBoxContainer/Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "Close"
+text = "Close debug menu"
 flat = true
+[connection signal="pressed" from="VBoxContainer/Panel/Button" to="." method="_toggle_open"]
