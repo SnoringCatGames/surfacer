@@ -14,12 +14,14 @@ func _draw() -> void:
 func _draw_tile_indices(only_render_used_indices := false) -> void:
     var half_cell_size: Vector2
     var positions: Array
+    var cell_top_left_corner: Vector2
     var cell_center: Vector2
+    var cell_position_text: String
     var tile_map_index: int
-    var color = TILE_INDICES_COLOR
+    var color := TILE_INDICES_COLOR
     
-    var label = Label.new()
-    var font = label.get_font("")
+    var label := Label.new()
+    var font := label.get_font("")
     
     for tile_map in graph.surface_parser._tile_map_index_to_surface_maps:
         half_cell_size = tile_map.cell_size * 0.5
@@ -40,7 +42,9 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
                             Vector2(x + tile_map_start_x, y + tile_map_start_y)
         
         for position in positions:
-            cell_center = tile_map.map_to_world(position) + half_cell_size
+            # Draw the grid index of the cell.
+            cell_top_left_corner = tile_map.map_to_world(position)
+            cell_center = cell_top_left_corner + half_cell_size
             tile_map_index = Geometry.get_tile_map_index_from_grid_coord(position, tile_map)
             draw_string(font, cell_center, str(tile_map_index), color)
             draw_circle(cell_center, 1.0, color)

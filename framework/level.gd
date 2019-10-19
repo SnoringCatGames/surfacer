@@ -5,6 +5,9 @@ const ClickAnnotator := preload("res://framework/annotators/click_annotator.gd")
 const PlayerAnnotator := preload("res://framework/annotators/player_annotator.gd")
 const PlatformGraph := preload("res://framework/platform_graph/platform_graph.gd")
 const PlatformGraphAnnotator := preload("res://framework/annotators/platform_graph_annotator.gd")
+const RulerAnnotator := preload("res://framework/annotators/ruler_annotator.gd")
+
+var global: Global
 
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
@@ -19,13 +22,37 @@ var platform_graphs: Dictionary
 var click_to_navigate: ClickToNavigate
 
 var platform_graph_annotator: PlatformGraphAnnotator
+var ruler_annotator: RulerAnnotator
 # Dictonary<Player, PlayerAnnotator>
 var player_annotators := {}
 var click_annotator: ClickAnnotator
 
 func _enter_tree() -> void:
-    var global := $"/root/Global"
+    self.global = $"/root/Global"
     global.current_level = self
+    
+    _add_overlays()
+
+func _add_overlays() -> void:
+    var ruler_layer := CanvasLayer.new()
+    ruler_layer.layer = 100
+    global.add_overlay_to_current_scene(ruler_layer)
+    
+    ruler_annotator = RulerAnnotator.new(global)
+    ruler_layer.add_child(ruler_annotator)
+    
+    var hud_layer := CanvasLayer.new()
+    hud_layer.layer = 200
+    global.add_overlay_to_current_scene(hud_layer)
+    # TODO: Add HUD content.
+    
+    var menu_layer := CanvasLayer.new()
+    menu_layer.layer = 300
+    global.add_overlay_to_current_scene(menu_layer)
+    # TODO: Add start and pause menus.
+    
+    var debug_panel = Utils.add_scene(hud_layer, Global.DEBUG_PANEL_RESOURCE_PATH)
+    global.debug_panel = debug_panel
 
 func _ready() -> void:
     var scene_tree := get_tree()
@@ -36,7 +63,6 @@ func _ready() -> void:
     
     # Set up the PlatformGraphs for this level.
     var space_state := get_world_2d().direct_space_state
-    var global := $"/root/Global"
     surface_parser = SurfaceParser.new(surface_tile_maps, global.player_types)
     platform_graphs = _create_platform_graphs( \
             surface_parser, space_state, global.player_types, global.DEBUG_STATE)
@@ -90,14 +116,10 @@ func _record_player_reference(is_human_player: bool) -> void:
         
         if is_human_player:
             human_player = player
-            player.init_human_controller_action_source()
+            player.init_human_player_state()
         else:
             computer_player = player
-            
-            player.init_navigator()
-            # FIXME: E: Remove after debugging CP movement.
-            player.init_human_controller_action_source()
-        
+            player.init_computer_player_state()
             click_to_navigate.set_player(computer_player)
             click_annotator.set_player(computer_player)
         

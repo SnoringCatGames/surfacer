@@ -96,15 +96,34 @@ func _ready() -> void:
     surface_state.horizontal_facing_sign = 1
     animator.face_right()
 
+func init_human_player_state() -> void:
+    # Only a single, human-controller player should have a camera.
+    _set_camera()
+    _init_human_controller_action_source()
+
+func init_computer_player_state() -> void:
+    _init_navigator()
+    # FIXME: E: Remove after debugging CP movement.
+    _set_camera()
+    # FIXME: E: Remove after debugging CP movement.
+    _init_human_controller_action_source()
+
 func set_platform_graph(graph: PlatformGraph) -> void:
     self.graph = graph
     self.surface_parser = graph.surface_parser
     self.possible_surfaces = graph.surfaces
 
-func init_human_controller_action_source() -> void:
+func _set_camera() -> void:
+    var camera := Camera2D.new()
+    add_child(camera)
+    camera.make_current()
+    # Register the current camera, so it's globally accessible.
+    global.current_camera = camera
+
+func _init_human_controller_action_source() -> void:
     action_sources.push_back(InputActionSource.new(self))
 
-func init_navigator() -> void:
+func _init_navigator() -> void:
     navigator = Navigator.new(self, graph)
     action_sources.push_back(navigator.instructions_action_source)
 

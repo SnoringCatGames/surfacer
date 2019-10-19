@@ -59,6 +59,10 @@ var _elapsed_latest_play_time_sec: float
 var _elapsed_physics_play_time_sec: float
 var _elapsed_render_play_time_sec: float
 
+var current_camera: Camera2D setget _set_current_camera, _get_current_camera
+
+var _current_camera: Camera2D
+
 func get_is_paused() -> bool:
     return get_tree().paused
 
@@ -96,3 +100,13 @@ func _physics_process(delta: float) -> void:
 
 func _get_elapsed_play_time_sec() -> float:
     return _elapsed_latest_play_time_sec
+
+func add_overlay_to_current_scene(node: Node) -> void:
+    get_tree().get_current_scene().add_child(node)
+
+func _set_current_camera(camera: Camera2D) -> void:
+    assert(camera.current)
+    _current_camera = camera
+
+func _get_current_camera() -> Camera2D:
+    return _current_camera

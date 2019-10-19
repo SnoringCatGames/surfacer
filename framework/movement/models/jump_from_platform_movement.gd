@@ -155,7 +155,7 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# - Fix tree-view to be more intuitive.
+# >>>>- Fix tree-view to be more intuitive.
 #   - Make two rows for each item: enter and exit info.
 #   - Make sure to somehow highlight/style both when one is selected to help indicate that they
 #     are connected.
@@ -163,8 +163,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - Render multiple lines.
 #   - Top line should be enter state.
 #   - Bottom line should be exit state.
-# 
-# - Add/change grid cell # annotation to instead print world-coordinate positions.
 # 
 # >>>- Debug the edge-calc annotions
 #   - both check that the annotationss are helpful enough,
