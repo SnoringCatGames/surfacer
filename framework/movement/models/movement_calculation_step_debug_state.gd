@@ -11,7 +11,7 @@ var collision: SurfaceCollision
 
 var result_code := EdgeStepCalcResult.UNKNOWN
 var result_code_string: String setget ,_get_result_code_string
-var description: String setget ,_get_description
+var description_list: Array setget ,_get_description_list
 
 # MovementCalcStepParams
 var _step_calc_params
@@ -35,5 +35,5 @@ func _get_end() -> MovementConstraint:
 func _get_result_code_string() -> String:
     return EdgeStepCalcResult.to_string(result_code)
 
-func _get_description() -> String:
-    return EdgeStepCalcResult.to_description_string(result_code)
+func _get_description_list() -> Array:
+    return EdgeStepCalcResult.to_description_list(result_code)

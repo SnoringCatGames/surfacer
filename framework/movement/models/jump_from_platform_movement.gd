@@ -155,15 +155,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# >>>>- Fix tree-view to be more intuitive.
-#   - Make two rows for each item: enter and exit info.
-#   - Make sure to somehow highlight/style both when one is selected to help indicate that they
-#     are connected.
-# - Do a similar thing to clarify trajectory annotation description:
-#   - Render multiple lines.
-#   - Top line should be enter state.
-#   - Bottom line should be exit state.
-# 
 # >>>- Debug the edge-calc annotions
 #   - both check that the annotationss are helpful enough,
 #   - and that the underlying recursion is correct).

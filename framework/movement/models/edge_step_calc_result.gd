@@ -33,23 +33,47 @@ static func to_string(result: int) -> String:
         UNKNOWN, _:
             return "UNKNOWN"
 
-static func to_description_string(result: int) -> String:
+static func to_description_list(result: int) -> Array:
     match result:
         MOVEMENT_VALID:
-            return "Movement is valid."
+            return [ \
+                "Movement is valid.", \
+            ]
         TARGET_OUT_OF_REACH:
-            return "The target is out of reach."
+            return [ \
+                "The target is out of reach.", \
+            ]
         NO_VALID_CONSTRAINT:
-            return "Hit an intermediate surface.\nThere is no valid edge constraint for movement around the colliding surface."
+            return [ \
+                "Hit an intermediate surface.",
+                "There is no valid edge constraint for movement around the colliding surface.", \
+            ]
         NO_VALID_TARGET_FROM_FAKE:
-            return "Hit an intermediate surface.\nWe're considering a fake constraint.\nThere is no valid target constraint to replace the fake constraint."
+            return [ \
+                "Hit an intermediate surface.",
+                "We are coming from a fake constraint, and there is no valid target constraint to replace the fake constraint.", \
+            ]
         ALREADY_BACKTRACKED_FOR_SURFACE:
-            return "Hit an intermediate surface.\nWe have already backtracked to consider a new max jump height from colliding with this surface."
+            return [ \
+                "Hit an intermediate surface.",
+                "We have already backtracked to consider a new max jump height from colliding with this surface.", \
+            ]
         RECURSION_VALID:
-            return "Hit an intermediate surface.\nValid movement was found when recursing."
+            return [ \
+                "Hit an intermediate surface.",
+                "Valid movement was found when recursing.", \
+            ]
         BACKTRACKING_VALID:
-            return "Hit an intermediate surface.\nValid movement was found when backtracking."
+            return [ \
+                "Hit an intermediate surface.",
+                "Valid movement was found when backtracking.", \
+            ]
         BACKTRACKING_INVALID:
-            return "Hit an intermediate surface.\nNo valid movement around was found despite backtracking to consider a new max jump height."
+            return [ \
+                "Hit an intermediate surface.",
+                "No valid movement around was found despite backtracking to consider a new max jump height.", \
+            ]
         UNKNOWN, _:
-            return "Unexpected result"
+            return [ \
+                "Unexpected result", \
+            ]

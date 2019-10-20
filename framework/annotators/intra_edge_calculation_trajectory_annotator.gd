@@ -195,8 +195,12 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     # Draw some text describing the current step.
     label.rect_position = step_attempt.start_constraint.position + LABEL_OFFSET
     label.add_color_override("font_color", step_color)
-    label.text = "Step %s/%s: %s:\n%s" % [step_attempt.index + 1, edge_attempt.total_step_count, \
-            step_attempt.result_code_string, step_attempt.description]
+    var line_1 := "Step %s/%s: %s" % [step_attempt.index + 1, edge_attempt.total_step_count, \
+            step_attempt.result_code_string]
+    var line_2: String = ":\n                %s" % step_attempt.description_list[0]
+    var line_3: String = ("\n                %s" % step_attempt.description_list[1]) if \
+            step_attempt.description_list.size() > 1 else ""
+    label.text = line_1 + line_2 + line_3
 
 func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void:
     is_auto_transitioning_with_timer = false

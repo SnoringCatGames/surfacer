@@ -65,7 +65,7 @@ func _ready() -> void:
     var space_state := get_world_2d().direct_space_state
     surface_parser = SurfaceParser.new(surface_tile_maps, global.player_types)
     platform_graphs = _create_platform_graphs( \
-            surface_parser, space_state, global.player_types, global.DEBUG_STATE)
+            surface_parser, space_state, global.player_types, Global.DEBUG_STATE)
     
     click_to_navigate = ClickToNavigate.new()
     click_to_navigate.update_level(self)

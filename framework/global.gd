@@ -41,6 +41,8 @@ const DEBUG_STATE := {
     },
 }
 
+const CAMERA_ZOOM := 1.5
+
 const PLAYER_ACTIONS := {}
 
 # Dictionary<String, PlayerTypeConfiguration>
