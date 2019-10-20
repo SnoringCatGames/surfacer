@@ -139,21 +139,21 @@ func _draw_steps_recursively( \
 func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool) -> void:
     var edge_attempt: MovementCalcOverallDebugState = step_attempt.overall_debug_state
     
-    var step_opactity: float
+    var step_opacity: float
     var trajectory_stroke_width: float
     var constraint_stroke_width: float
     var collision_color: Color
     var collision_x_stroke_width: float
     var collision_player_boundary_stroke_width: float
     if renders_faintly:
-        step_opactity = OPACITY_FAINT
+        step_opacity = OPACITY_FAINT
         trajectory_stroke_width = TRAJECTORY_STROKE_WIDTH_FAINT
         constraint_stroke_width = CONSTRAINT_STROKE_WIDTH_FAINT
         collision_color = collision_color_faint
         collision_x_stroke_width = COLLISION_X_STROKE_WIDTH_FAINT
         collision_player_boundary_stroke_width = COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_FAINT
     else:
-        step_opactity = OPACITY_STRONG
+        step_opacity = OPACITY_STRONG
         trajectory_stroke_width = TRAJECTORY_STROKE_WIDTH_STRONG
         constraint_stroke_width = CONSTRAINT_STROKE_WIDTH_STRONG
         collision_color = collision_color_strong
@@ -163,7 +163,7 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     # Hue transitions evenly from start to end.
     var step_hue := STEP_HUE_START + (STEP_HUE_END - STEP_HUE_START) * (step_attempt.index / \
             (edge_attempt.total_step_count - 1.0))
-    var step_color := Color.from_hsv(step_hue, 0.6, 0.9, step_opactity)
+    var step_color := Color.from_hsv(step_hue, 0.6, 0.9, step_opacity)
     
     if step_attempt.frame_positions.size() > 1:
         # Draw the step trajectory.
@@ -201,10 +201,12 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     label.add_color_override("font_color", step_color)
     var line_1 := "Step %s/%s: %s" % [step_attempt.index + 1, edge_attempt.total_step_count, \
             step_attempt.result_code_string]
-    var line_2: String = ":\n                %s" % step_attempt.description_list[0]
-    var line_3: String = ("\n                %s" % step_attempt.description_list[1]) if \
+    var line_2 := "\n                [Backtracking]" if step_attempt.is_backtracking else ""
+    var line_3 := "\n                [Fake start constraint]" if step_attempt.is_fake else ""
+    var line_4: String = "\n                %s" % step_attempt.description_list[0]
+    var line_5: String = ("\n                %s" % step_attempt.description_list[1]) if \
             step_attempt.description_list.size() > 1 else ""
-    label.text = line_1 + line_2 + line_3
+    label.text = line_1 + line_2 + line_3 + line_4 + line_5
 
 func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void:
     is_auto_transitioning_with_timer = false

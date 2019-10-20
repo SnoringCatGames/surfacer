@@ -9,9 +9,9 @@ var step_tree_view: Tree
 var step_tree_root: TreeItem
 
 # Dictionary<TreeItem, MovementCalcStepDebugState>
-const tree_item_to_step_attempt := {}
+var tree_item_to_step_attempt := {}
 # Dictionary<MovementCalcStepDebugState, Array<TreeItem>>
-const step_attempt_to_tree_items := {}
+var step_attempt_to_tree_items := {}
 
 var current_highlighted_tree_items: Array
 
@@ -90,8 +90,10 @@ func _on_step_tree_item_selected() -> void:
 
 func _get_tree_item_text(step_attempt: MovementCalcStepDebugState, description_index: int, \
         includes_highlight_marker: bool) -> String:
-    return "%s%s: %s" % [ \
+    return "%s%s: %s%s%s" % [ \
             "*" if includes_highlight_marker else "",
             step_attempt.index + 1, \
+            "[BT] " if step_attempt.is_backtracking and description_index == 0 else "", \
+            "[F] " if step_attempt.is_fake and description_index == 0 else "", \
             step_attempt.description_list[description_index], \
         ]

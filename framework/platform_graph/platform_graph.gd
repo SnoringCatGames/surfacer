@@ -334,7 +334,7 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
             
             step_calc_params = MovementCalcStepParams.new(overall_calc_params.origin_constraint, \
                     overall_calc_params.destination_constraint, vertical_step, \
-                    overall_calc_params, overall_calc_params)
+                    overall_calc_params, true, null)
             
             calc_results = MovementStepUtils.calculate_steps_from_constraint( \
                     overall_calc_params, step_calc_params)

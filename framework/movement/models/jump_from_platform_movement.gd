@@ -155,13 +155,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# - A couple more tweaks to the debug tree-view:
-#   - Make panel wider.
-#   - Need to still show the nesting/parent-child relationship of items from backtracking.
-#   - Preface all new backtracking items with BT.
-#   - Preface all fake items with F.
-#   - Replace simple enum with more sophisticated class?
-# 
 # >>>>- To fix current calc bug, need to implement previous-colliding-surface feature below.
 # 
 # - Is it worth/possible adding logic to force some movement from a fake constraint, rather than
@@ -169,8 +162,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # - Fix pixel-perfect scaling/aliasing when enlarging screen and doing camera zoom.
 #   - Only support whole-number multiples somehow?
-# 
-# - 
 # 
 # >>>- Debug the edge-calc annotions
 #   - both check that the annotationss are helpful enough,
@@ -379,7 +370,8 @@ static func _calculate_jump_instructions( \
         overall_calc_params: MovementCalcOverallParams) -> MovementInstructions:
     overall_calc_params.collided_surfaces.clear()
     
-    var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height(overall_calc_params)
+    var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
+            overall_calc_params, null)
     
     if calc_results == null:
         return null
