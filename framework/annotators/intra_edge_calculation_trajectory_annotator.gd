@@ -183,6 +183,10 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
         DrawUtils.draw_x(self, collision.position, COLLISION_X_WIDTH_HEIGHT.x, \
                 COLLISION_X_WIDTH_HEIGHT.y, collision_color, collision_x_stroke_width)
         
+        if !renders_faintly:
+            # Draw the surface that was collided with.
+            DrawUtils.draw_surface(self, collision.surface, collision_color)
+        
         # Draw an outline of the player's collision boundary at the point of collision.
         DrawUtils.draw_shape_outline(self, collision.player_position, \
                 edge_attempt.movement_params.collider_shape, \

@@ -1,11 +1,16 @@
 extends Panel
 class_name DebugPanel
 
-var POSITION_Y_OPEN := 0.0
-var POSITION_Y_CLOSED := -280.0
-var TOGGLE_DURATION := 0.2
-var TEXT_OPEN_PANEL := "Open debug menu"
-var TEXT_CLOSE_PANEL := "Close debug menu"
+const PANEL_WIDTH := 240.0
+const PANEL_HEIGHT := 320.0
+const OPEN_CLOSE_BUTTON_HEIGHT := 20.0
+const SECTIONS_HEIGHT := PANEL_HEIGHT - OPEN_CLOSE_BUTTON_HEIGHT
+
+const POSITION_Y_OPEN := 0.0
+const POSITION_Y_CLOSED := -SECTIONS_HEIGHT
+const TOGGLE_DURATION := 0.2
+const TEXT_OPEN_PANEL := "Open debug menu"
+const TEXT_CLOSE_PANEL := "Close debug menu"
 
 var is_open := true
 

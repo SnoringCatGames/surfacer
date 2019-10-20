@@ -155,6 +155,23 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
+# - A couple more tweaks to the debug tree-view:
+#   - Make panel wider.
+#   - Need to still show the nesting/parent-child relationship of items from backtracking.
+#   - Preface all new backtracking items with BT.
+#   - Preface all fake items with F.
+#   - Replace simple enum with more sophisticated class?
+# 
+# >>>>- To fix current calc bug, need to implement previous-colliding-surface feature below.
+# 
+# - Is it worth/possible adding logic to force some movement from a fake constraint, rather than
+#   giving up when it (inevitably) notices that the destination is out of reach?
+# 
+# - Fix pixel-perfect scaling/aliasing when enlarging screen and doing camera zoom.
+#   - Only support whole-number multiples somehow?
+# 
+# - 
+# 
 # >>>- Debug the edge-calc annotions
 #   - both check that the annotationss are helpful enough,
 #   - and that the underlying recursion is correct).

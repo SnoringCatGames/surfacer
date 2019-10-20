@@ -22,7 +22,7 @@ func _ready() -> void:
     global = $"/root/Global"
     
     step_tree_view = Tree.new()
-    step_tree_view.rect_min_size = Vector2(0.0, 280.0)
+    step_tree_view.rect_min_size = Vector2(0.0, DebugPanel.SECTIONS_HEIGHT)
     step_tree_view.hide_root = true
     step_tree_view.hide_folding = true
     step_tree_view.connect("item_selected", self, "_on_step_tree_item_selected")
@@ -57,7 +57,7 @@ func _draw_step_tree_item(step_attempt: MovementCalcStepDebugState, parent_tree_
     if step_attempt.description_list.size() > 1:
         # Draw a closing row for the given step-attempt.
         var tree_item_2 := step_tree_view.create_item(parent_tree_item)
-        text = _get_tree_item_text(step_attempt, 0, false)
+        text = _get_tree_item_text(step_attempt, 1, false)
         tree_item_2.set_text(0, text)
         tree_item_to_step_attempt[tree_item_2] = step_attempt
         step_attempt_to_tree_items[step_attempt].push_back(tree_item_2)

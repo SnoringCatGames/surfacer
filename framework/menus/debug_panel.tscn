@@ -15,9 +15,9 @@ corner_radius_bottom_left = 5
 [node name="DebugPanel" type="Panel"]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -250.0
-margin_right = -50.0
-margin_bottom = 300.0
+margin_left = -260.0
+margin_right = -20.0
+margin_bottom = 320.0
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
 
@@ -27,15 +27,15 @@ anchor_bottom = 1.0
 custom_constants/separation = 0
 
 [node name="Sections" type="VBoxContainer" parent="VBoxContainer"]
-margin_right = 200.0
-margin_bottom = 280.0
+margin_right = 240.0
+margin_bottom = 300.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Panel" type="Panel" parent="VBoxContainer"]
-margin_top = 280.0
-margin_right = 200.0
-margin_bottom = 300.0
+margin_top = 300.0
+margin_right = 240.0
+margin_bottom = 320.0
 rect_min_size = Vector2( 0, 20 )
 size_flags_horizontal = 3
 custom_styles/panel = SubResource( 2 )
