@@ -36,8 +36,8 @@ var destination_constraint: MovementConstraint
 var can_backtrack_on_height: bool
 
 # Any Surfaces that have previously been hit while calculating the current edge instructions.
-# Dictionary<Surface, bool>
-var collided_surfaces: Dictionary
+# Dictionary<String, bool>
+var _collided_surfaces: Dictionary
 
 var debug_state: MovementCalcOverallDebugState
 
@@ -55,7 +55,7 @@ func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceSta
     
     constraint_offset = calculate_constraint_offset(movement_params)
     
-    collided_surfaces = {}
+    _collided_surfaces = {}
     
     shape_query_params = Physics2DShapeQueryParameters.new()
     shape_query_params.collide_with_areas = false
@@ -70,6 +70,14 @@ func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceSta
     
     if Global.IN_DEBUG_MODE:
         debug_state = MovementCalcOverallDebugState.new(self)
+
+func is_backtracking_valid_for_surface(surface: Surface, time_jump_release: float) -> bool:
+    var key := str(surface) + str(time_jump_release)
+    return _collided_surfaces.has(key)
+
+func record_backtracked_surface(surface: Surface, time_jump_release: float) -> void:
+    var key := str(surface) + str(time_jump_release)
+    _collided_surfaces[key] = true
 
 static func calculate_constraint_offset(movement_params: MovementParams) -> Vector2:
     return movement_params.collider_half_width_height + \

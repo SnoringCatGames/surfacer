@@ -33,6 +33,8 @@ static func create_terminal_constraints(origin_surface: Surface, origin_position
     else:
         return []
 
+# Assuming movement would otherwise collide with the given surface, this calculates positions along
+# the edges of the surface that the movement could pass through in order to go around the surface.
 static func calculate_constraints_around_surface(movement_params: MovementParams, \
         vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
         origin_constraint: MovementConstraint, colliding_surface: Surface, \
@@ -97,6 +99,19 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
         result.push_back(constraint_b)
     return result
 
+# Calculates and records various state on the given constraint.
+# 
+# In particular, these constraint properties are updated:
+# - is_fake
+# - horizontal_movement_sign
+# - horizontal_movement_sign_from_displacement
+# - time_passing_through
+# - min_velocity_x
+# - max_velocity_x
+# 
+# These calculations take into account state from previous and upcoming neighbor constraints as
+# well as various other parameters.
+# 
 # Returns false if the constraint cannot satisfy the given parameters.
 static func update_constraint(constraint: MovementConstraint, \
         previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
@@ -167,6 +182,11 @@ static func update_constraint(constraint: MovementConstraint, \
             else:
                 # We are backtracking to consider a new jump height.
                 constraint_to_calculate_jump_release_time_for = additional_high_constraint
+                # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+                if Geometry.are_points_equal_with_epsilon( \
+                        constraint_to_calculate_jump_release_time_for.position, \
+                        Vector2(64, -480), 10):
+                    print("break")
             
             # TODO: I should probably refactor these two calls, so we're doing fewer redundant
             #       calculations here.
@@ -185,6 +205,7 @@ static func update_constraint(constraint: MovementConstraint, \
             
             if additional_high_constraint != null:
                 # We are backtracking to consider a new jump height.
+                # 
                 # The destination jump time should account for both:
                 # - the time needed to reach any previous jump-heights before this current round of
                 #   jump-height backtracking (vertical_step.time_instruction_end),
@@ -278,6 +299,11 @@ static func update_constraint(constraint: MovementConstraint, \
     
     return true
 
+# Fake constraints correspond to collisions with floor or ceiling surfaces. A fake constraint is
+# then positioned along the adjacent wall surface, such that movement through the constraint should
+# collide with the wall. Then, when our movement calculations detect that later collision, the fake
+# constraint can be thrown away, and the real constraint at the other end of the wall surface will
+# be used instead.
 static func calculate_fake_constraint_position(constraint: MovementConstraint, \
         constraint_offset: Vector2) -> Vector2:
     var is_floor := constraint.surface.side == SurfaceSide.FLOOR
@@ -304,11 +330,15 @@ static func calculate_fake_constraint_position(constraint: MovementConstraint, \
 
 # This only considers the time to move horizontally and the time to fall; this does not consider
 # the time to rise from the new constraint to the destination.
+# 
 # - We don't consider rise time, since that would require knowing more information around when the
-#   jump button is released and whether it could still be held.
+#   jump button is released and whether it could still be held. Also, this case is much less likely
+#   to impact the overall movement duration.
 # - For horizontal movement time, we don't need to know about vertical velocity or the jump button.
 # - For fall time, we can assume that vertical velocity will be zero when passing through this new
-#   constraint (since it should be the highest point we reach in the jump).
+#   constraint (since it should be the highest point we reach in the jump). If the movement would
+#   require vertical velocity to _not_ be zero through this new constraint, then that case should
+#   be covered by the horizontal time calculation.
 static func calculate_time_to_reach_destination_from_new_constraint( \
         movement_params: MovementParams, new_constraint: MovementConstraint, \
         destination: MovementConstraint) -> float:
@@ -322,7 +352,7 @@ static func calculate_time_to_reach_destination_from_new_constraint( \
     else:
         velocity_x_at_new_constraint = new_constraint.min_velocity_x
         acceleration = -movement_params.in_air_horizontal_acceleration
-    
+
     var time_to_reach_horizontal_displacement := \
             MovementUtils.calculate_min_time_to_reach_displacement(displacement.x, \
                     velocity_x_at_new_constraint, movement_params.max_horizontal_speed_default, \
@@ -330,11 +360,11 @@ static func calculate_time_to_reach_destination_from_new_constraint( \
 
     var time_to_reach_fall_displacement: float
     if displacement.y > 0:
-        time_to_reach_fall_displacement = Geometry.calculate_movement_duration( \
+        time_to_reach_fall_displacement = MovementUtils.calculate_movement_duration( \
                 displacement.y, 0.0, movement_params.gravity_fast_fall, true, 0.0, true)
     else:
         time_to_reach_fall_displacement = 0.0
-    
+
     return max(time_to_reach_horizontal_displacement, time_to_reach_fall_displacement)
 
 static func assign_horizontal_movement_sign(constraint: MovementConstraint, \

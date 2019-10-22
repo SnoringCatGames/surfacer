@@ -127,14 +127,16 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
         step_calc_params.debug_state.result_code = EdgeStepCalcResult.RECURSION_VALID
         return calc_results
     
-    if overall_calc_params.collided_surfaces.has(collision.surface):
+    if overall_calc_params.is_backtracking_valid_for_surface(collision.surface, \
+            vertical_step.time_instruction_end):
         # We've already tried backtracking for a collision with this surface, so this movement
         # won't work. Without this check, we'd recurse through a traversal branch that is identical
         # to one we've already considered, and we'd loop infinitely.
         step_calc_params.debug_state.result_code = EdgeStepCalcResult.ALREADY_BACKTRACKED_FOR_SURFACE
         return null
     
-    overall_calc_params.collided_surfaces[collision.surface] = true
+    overall_calc_params.record_backtracked_surface(collision.surface, \
+            vertical_step.time_instruction_end)
     
     # Then, try to satisfy the constraints with backtracking to consider a new max jump height.
     calc_results = calculate_steps_from_constraint_with_backtracking_on_height( \
@@ -270,7 +272,11 @@ static func calculate_steps_from_constraint_with_backtracking_on_height( \
         # this backtracking fails.
         destination_copy = MovementConstraintUtils.copy_constraint(destination_original)
         overall_calc_params.destination_constraint = destination_copy
-
+        
+        # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+        if step_calc_params.debug_state.index == 5:
+            print("break")
+        
         # Update the destination constraint to support a (possibly) increased jump height, which
         # would enable movement through this new intermediate constraint.
         is_constraint_valid = MovementConstraintUtils.update_constraint(destination_copy, \

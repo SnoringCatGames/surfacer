@@ -134,9 +134,9 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
             if distance_to_release_button_for_shorter_jump < 0:
                 # We need more motion than just the initial jump boost to reach the destination.
                 var time_to_release_jump_button: float = \
-                        Geometry.calculate_movement_duration( \
-                        distance_to_release_button_for_shorter_jump, velocity_start.y, \
-                        movement_params.gravity_slow_ascent, true, 0.0, false)
+                        MovementUtils.calculate_movement_duration( \
+                                distance_to_release_button_for_shorter_jump, velocity_start.y, \
+                                movement_params.gravity_slow_ascent, true, 0.0, false)
                 assert(time_to_release_jump_button != INF)
             
                 # From a basic equation of motion:
@@ -157,7 +157,7 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
                 # 
                 # In this case, we set up the vertical step to hit the end position while still
                 # travelling upward.
-                duration_to_reach_upward_displacement = Geometry.calculate_movement_duration( \
+                duration_to_reach_upward_displacement = MovementUtils.calculate_movement_duration( \
                         displacement.y, velocity_start.y, movement_params.gravity_fast_fall, \
                         true, 0.0, false)
         else:
@@ -167,7 +167,7 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
         # Calculate how long it will take for the jump to reach some lower destination.
         var duration_to_reach_downward_displacement: float
         if displacement.y > 0:
-            duration_to_reach_downward_displacement = Geometry.calculate_movement_duration( \
+            duration_to_reach_downward_displacement = MovementUtils.calculate_movement_duration( \
                     displacement.y, velocity_start.y, movement_params.gravity_fast_fall, true, \
                     0.0, true)
             assert(duration_to_reach_downward_displacement != INF)
@@ -207,14 +207,14 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
             # downward motion of the jump.
             
             var duration_to_reach_upward_displacement_with_only_fast_fall = \
-                    Geometry.calculate_movement_duration(displacement.y, velocity_start.y, \
+                    MovementUtils.calculate_movement_duration(displacement.y, velocity_start.y, \
                             movement_params.gravity_fast_fall, true, 0.0, false)
             
             if duration_to_reach_upward_displacement_with_only_fast_fall != INF and \
                     duration_to_reach_upward_displacement_with_only_fast_fall < \
                     duration_to_reach_horizontal_displacement:
                 duration_to_reach_upward_displacement_on_descent = \
-                        Geometry.calculate_movement_duration(displacement.y, velocity_start.y, \
+                        MovementUtils.calculate_movement_duration(displacement.y, velocity_start.y, \
                                 movement_params.gravity_fast_fall, false, 0.0, false)
                 assert(duration_to_reach_upward_displacement_on_descent != INF)
         
@@ -237,7 +237,7 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
     else:
         # If we can't currently hold the jump button, then there is no slow-ascent and variable
         # jump height to consider. So our movement duration is a lot simpler to calculate.
-        return Geometry.calculate_movement_duration(displacement.y, velocity_start.y, \
+        return MovementUtils.calculate_movement_duration(displacement.y, velocity_start.y, \
                 movement_params.gravity_fast_fall, false)
 
 # Given the total duration, calculate the time to release the jump button.
@@ -355,7 +355,7 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
     
     if is_position_before_instruction_end:
         var displacement := target_height - position_start_y
-        duration_of_slow_ascent = Geometry.calculate_movement_duration(displacement, \
+        duration_of_slow_ascent = MovementUtils.calculate_movement_duration(displacement, \
                 movement_params.jump_boost, movement_params.gravity_slow_ascent, true, \
                 min_end_time, false)
         if duration_of_slow_ascent == INF:
@@ -365,7 +365,7 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
         duration_of_slow_ascent = time_instruction_end
         min_end_time = max(min_end_time - duration_of_slow_ascent, 0.0)
         var displacement := target_height - position_instruction_end_y
-        duration_of_fast_fall = Geometry.calculate_movement_duration(displacement, \
+        duration_of_fast_fall = MovementUtils.calculate_movement_duration(displacement, \
                 velocity_instruction_end_y, movement_params.gravity_fast_fall, \
                 is_position_before_peak, min_end_time, false)
         if duration_of_fast_fall == INF:

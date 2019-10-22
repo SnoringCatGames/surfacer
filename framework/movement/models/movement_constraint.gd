@@ -6,8 +6,8 @@
 #   surface or any point not along a surface.
 # - For all other, intermediate points within a movement, a constraint represents the edge of a
 #   surface that the movement must pass through in order to not collide with the surface.
-# - Early on, each constraint is assigned a horizontal direction that the movement must travel
-#   along when passing through the constraint:
+# - Early on during movement calculation, each constraint is assigned a horizontal direction that
+#   the movement must travel along when passing through the constraint:
 #   - For constraints on left-wall surfaces: The direction of movement must be leftward.
 #   - For constraints on right-wall surfaces: The direction of movement must be rightward. 
 #   - For constraints on floor/ceiling surfaces, we instead look at whether the constraint is on
@@ -55,9 +55,10 @@ var is_origin := false
 # Whether this constraint is the destination for the overall movement.
 var is_destination := false
 
-# Fake constraints will be skipped by the final overall movement. They represent a point along an
-# edge of a floor or ceiling surface where the horizontal_movement_sign_from_surface differs from
-# the horizontal_movement_sign_from_displacement.
+# Fake constraints will be skipped by the final overall movement; they only exist as intermediate
+# state during movement calculation. They represent a point along an edge of a floor or ceiling
+# surface where the horizontal_movement_sign_from_surface differs from the
+# horizontal_movement_sign_from_displacement.
 # 
 # For example, the right-side of a ceiling surface when the jump movement is from the lower-right
 # of the edge; in this case, the goal is to skip the ceiling-edge constraint and moving directly to

@@ -171,6 +171,8 @@ modify to perform better for any given edge-case.
 
 ## Tests
 
+_NOTE: The unit tests are currently broken. They worked early on, but they were not updated with later refactors._ 
+
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
 
 For convenience, this is checked in the with rest of the Surfacer framework.

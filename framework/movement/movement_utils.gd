@@ -1,6 +1,70 @@
 # A collection of utility functions for calculating state related to movement.
 class_name MovementUtils
 
+# Calculates the duration to reach the destination with the given movement parameters.
+#
+# - Since we are dealing with a parabolic equation, there are likely two possible results.
+#   returns_lower_result indicates whether to return the lower, non-negative result.
+# - expects_only_one_positive_result indicates whether to report an error if there are two
+#   positive results.
+# - Returns INF if we cannot reach the destination with our movement parameters.
+static func calculate_movement_duration(displacement: float, v_0: float, a: float, \
+        returns_lower_result := true, min_duration := 0.0, \
+        expects_only_one_positive_result := false) -> float:
+    # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    
+    # Use only non-negative results.
+    assert(min_duration >= 0)
+    
+    if displacement == 0 and returns_lower_result:
+        # The start position is the destination.
+        return 0.0
+    elif a == 0:
+        # Handle the degenerate case with no acceleration.
+        if v_0 == 0:
+            # We can't reach the destination, since we're not moving anywhere.
+            return INF 
+        elif (displacement > 0) != (v_0 > 0):
+            # We can't reach the destination, since we're moving in the wrong direction.
+            return INF
+        else:
+            # s = s_0 + v_0*t
+            return displacement / v_0
+    
+    # From a basic equation of motion:
+    #     s = s_0 + v_0*t + 1/2*a*t^2.
+    # Solve for t using the quadratic formula.
+    var discriminant := v_0 * v_0 + 2 * a * displacement
+    if discriminant < 0:
+        # We can't reach the end position from our start position.
+        return INF
+    var discriminant_sqrt := sqrt(discriminant)
+    var t1 := (-v_0 + discriminant_sqrt) / a
+    var t2 := (-v_0 - discriminant_sqrt) / a
+    
+    # Optionally ensure that only one result is positive.
+    assert(!expects_only_one_positive_result or t1 < 0 or t2 < 0)
+    # Ensure that there are not two negative results.
+    assert(t1 >= 0 or t2 >= 0)
+    
+    min_duration = min_duration + Geometry.FLOAT_EPSILON
+    
+    if t1 < min_duration:
+        if t2 < min_duration:
+            return INF
+        else:
+            return t2
+    elif t2 < min_duration:
+        if t1 < min_duration:
+            return INF
+        else:
+            return t1
+    else:
+        if returns_lower_result:
+            return min(t1, t2)
+        else:
+            return max(t1, t2)
+
 # Calculates the duration to accelerate over in order to reach the destination at the given time,
 # given that velocity continues after acceleration stops and a new backward acceleration is
 # applied.
@@ -75,7 +139,7 @@ static func calculate_min_time_to_reach_displacement(displacement: float, v_0: f
     var velocity_limit := speed_max if a > 0 else -speed_max
     
     var duration_to_reach_position_with_no_velocity_cap: float = \
-            Geometry.calculate_movement_duration(displacement, v_0, a, true, 0.0, true)
+            calculate_movement_duration(displacement, v_0, a, true, 0.0, true)
     
     if duration_to_reach_position_with_no_velocity_cap == INF:
         # We can't ever reach the destination.

@@ -27,33 +27,19 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
 #    if position_step_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
 #        print("yo")
     
+    ### Calculate the velocity_start_x, the direction of acceleration, and whether we should
+    ### accelerate at the start of the step or at the end of the step.
+    
+    var possible_horizontal_acceleration_signs: Array
     var horizontal_acceleration_sign: int
     var acceleration: float
     var velocity_start_x: float
     var should_accelerate_at_start: bool
     
-    # Calculate the velocity_start_x, the direction of acceleration, and whether we should
-    # accelerate at the start of the step or at the end of the step.
     if end_constraint.horizontal_movement_sign != start_constraint.horizontal_movement_sign:
         # If the start and end velocities are in opposition horizontal directions, then there is
         # only one possible acceleration direction.
-        
-        horizontal_acceleration_sign = end_constraint.horizontal_movement_sign
-        acceleration = \
-                movement_params.in_air_horizontal_acceleration * horizontal_acceleration_sign
-            
-        # First, try accelerating at the start of the step, then at the end.
-        for try_accelerate_at_start in [true, false]:
-            velocity_start_x = calculate_min_speed_velocity_start_x( \
-                    start_constraint.horizontal_movement_sign, displacement.x, \
-                    start_constraint.min_velocity_x, start_constraint.max_velocity_x, \
-                    velocity_end_x, acceleration, step_duration, try_accelerate_at_start)
-            
-            if velocity_start_x != INF:
-                # We found a valid start velocity.
-                should_accelerate_at_start = try_accelerate_at_start
-                break
-        
+        possible_horizontal_acceleration_signs = [end_constraint.horizontal_movement_sign]
     else:
         # If the start and end velocities are in the same horizontal direction, then it's possible
         # for the acceleration to be in either direction.
@@ -68,32 +54,37 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
         # Determine acceleration direction.
         var velocity_x_change := velocity_end_x - min_speed_x_v_0
         if velocity_x_change > 0:
-            horizontal_acceleration_sign = 1
+            possible_horizontal_acceleration_signs = [1, -1]
         elif velocity_x_change < 0:
-            horizontal_acceleration_sign = -1
+            possible_horizontal_acceleration_signs = [-1, 1]
         else:
-            horizontal_acceleration_sign = 0
+            possible_horizontal_acceleration_signs = [0]
+    
+    # First, try with the acceleration in one direction, then try the other.
+    for sign_multiplier in possible_horizontal_acceleration_signs:
+        acceleration = movement_params.in_air_horizontal_acceleration * sign_multiplier
         
-        # First, try with the acceleration in one direction, then try the other.
-        for sign_multiplier in [horizontal_acceleration_sign, -horizontal_acceleration_sign]:
-            acceleration = movement_params.in_air_horizontal_acceleration * sign_multiplier
+        # First, try accelerating at the start of the step, then at the end.
+        for try_accelerate_at_start in [true, false]:
             
-            # First, try accelerating at the start of the step, then at the end.
-            for try_accelerate_at_start in [true, false]:
-                velocity_start_x = calculate_min_speed_velocity_start_x( \
-                        start_constraint.horizontal_movement_sign, displacement.x, \
-                        start_constraint.min_velocity_x, start_constraint.max_velocity_x, \
-                        velocity_end_x, acceleration, step_duration, try_accelerate_at_start)
-                
-                if velocity_start_x != INF:
-                    # We found a valid start velocity.
-                    should_accelerate_at_start = try_accelerate_at_start
-                    break
+            # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+            if step_calc_params.debug_state.index == 8 and sign_multiplier == -1 and !try_accelerate_at_start:
+                print("break")
+            
+            velocity_start_x = calculate_min_speed_velocity_start_x( \
+                    start_constraint.horizontal_movement_sign, displacement.x, \
+                    start_constraint.min_velocity_x, start_constraint.max_velocity_x, \
+                    velocity_end_x, acceleration, step_duration, try_accelerate_at_start)
             
             if velocity_start_x != INF:
-                # We found a valid start velocity with acceleration in this direction.
-                horizontal_acceleration_sign = sign_multiplier
+                # We found a valid start velocity.
+                should_accelerate_at_start = try_accelerate_at_start
                 break
+        
+        if velocity_start_x != INF:
+            # We found a valid start velocity with acceleration in this direction.
+            horizontal_acceleration_sign = sign_multiplier
+            break
     
     if velocity_start_x == INF:
         # There is no start velocity that can reach the target end position/velocity/time.
@@ -175,7 +166,8 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     return step
 
 # Calculate the start velocity with the min possible speed to reach the given end position,
-# velocity, and time. This min-speed start velocity corresponds to accelerating the most.
+# velocity, and time. This min-speed start velocity corresponds to the biggest change in
+# acceleration.
 static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start: int, \
         displacement: float, v_start_min: float, v_start_max: float, v_end: float, \
         acceleration: float, duration: float, should_accelerate_at_start: bool) -> float:
@@ -199,10 +191,10 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         # - There are two parts:
         #   - Part 1: Constant acceleration from v_0 to v_1.
         #   - Part 2: Coast at v_1 until we reach the destination.
-        #   - The shorter part 1 is, the sooner we reach v_1 and the further we travel during
-        #     part 2. This then means that we will need to have a lower v_0 and travel less far
+        #   - (The shorter part 1 is, the sooner we reach v_1 and the further we travel during
+        #     part 2. This then means that we will need to have a slower v_0 and travel less far
         #     during part 1, which is good, since we want to choose a v_0 with the
-        #     minimum-possible speed.
+        #     minimum-possible speed.)
         # - Start with basic equations of motion:
         #   - v_1 = v_0 + a*t_0
         #   - s_2 = s_1 + v_1*t_1
@@ -215,14 +207,23 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         b = -2 * v_end
         c = 2 * acceleration * (displacement - v_end * duration) + v_end * v_end
     else:
+        # FIXME: LEFT OFF HERE: -------------------------------------------------------A:
+        # - Double-check the reasoning behind this whole function....
+        #   - min-speed v_0 does _not_ correspond to the biggest change in acceleration.
+        #     - max-speed v_G in the opposite direction of v_1 would...
+        #   - So, what's the actual goal here? Minimize movement? Do the sub-parts of this function
+        #     work correctly toward that goal?
+        #     - It doesn't seem like they take into consideration the relative directions of v_0
+        #       and v_1.
+        
         # Try accelerating at the end of the step.
         # Derivation:
         # - There are two parts:
         #   - Part 1: Coast at v_0 until we need to start accelerating.
         #   - Part 2: Constant acceleration from v_0 to v_1; we reach the destination when we reach
         #     v_1.
-        #   - The longer part 1 is, the more we can accelerate during part 2, and the bigger v_1
-        #     can be.
+        #   - (The longer part 1 is, the more we can accelerate during part 2, and the bigger the
+        #     change to v_1 can be.)
         # - Start with basic equations of motion:
         #   - s_1 = s_0 + v_0*t_0
         #   - v_1 = v_0 + a*t_1

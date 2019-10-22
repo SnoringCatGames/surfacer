@@ -155,39 +155,34 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# >>>>- To fix current calc bug, need to implement previous-colliding-surface feature below.
-# 
-# - Is it worth/possible adding logic to force some movement from a fake constraint, rather than
-#   giving up when it (inevitably) notices that the destination is out of reach?
+# >>>>- It looks like the new-height calc when backtracking isn't giving us enough height for the
+#   top-right restraint.
+#   - It looks like the problem is that calculate_min_speed_velocity_start_x returns incorrectly
+#     produces a non-zero v_0.
+#     - It seems like with these params, this step should definitely work with v_0...
+# [OLD THOUGHTS BELOW]
+#   - Maybe it's close though? The calculated required starting x velocity is -37, when we need it
+#     to be zero.
+#     >- ACTUALLY, maybe this is _not_ close... LEFT OFF HERE
+#   >- Maybe we could try adding a bit more of a multiplier to the calculated needed jump height?
+#      (where at though? during calculations somewhere...)
+#   - [NOT THE PROBLEM] Or should I instead revisit the calculation for adding to the height according to the step
+#     from the new constraint to the destination?
 # 
 # - Fix pixel-perfect scaling/aliasing when enlarging screen and doing camera zoom.
 #   - Only support whole-number multiples somehow?
 # 
 # >>>- Debug the edge-calc annotions
-#   - both check that the annotationss are helpful enough,
+#   - both check that the annotations are helpful enough,
 #   - and that the underlying recursion is correct).
 # 
-# >>- Check that overall_calc_params.collided_surfaces is handled correctly:
-#   - QUESTION/PROBLEM: Regarding the current backtracking
-#     logic and disallowal of hitting previous surfaces:
-#     - What's to stop a new jump-height calculation from still running into the
-#       same old wall constraint as before, when we hit the wall before letting
-#       go of jump?
-#     - I'm pretty sure nothing is.
-#     **- SOLUTION: Move the overall_calc_params.collided_surfaces assignment and
-#       access to helper functions.
-#       - In the assignment function, check whether the jump button would still
-#         be pressed:
-#         - If so, then record the surface on list A: on this list any future
-#           encounter of the surface fails, regardless.
-#         - Else, list B: recording on this list uses a string value for the key,
-#           which is based on both the surface params and on the current
-#           jump-release time.
-#       - In the access function, the appropriate list is checked.
-#     - OR, would it be worth just refactoring collided_surfaces to instead only consider the
-#       surfaces that we've already used for backtracking?
-# 
 # - Finish testing support for skipping a constraint.
+# 
+# - Is it worth/possible adding logic to force some movement from a fake constraint, rather than
+#   giving up when it (inevitably) notices that the destination is out of reach?
+# - When backtracking, re-use all steps that finish before releasing the jump button.
+#   - ACTUALLY, this will depend on re-ordering step calculations from start to end, so I guess
+#     we'll have to wait on this optimization.
 # 
 # - Add a translation to the on-wall cat animations, so that they are all a bit lower; the cat's
 #   head should be about the same position as the corresponding horizontal pose that collided, and
@@ -368,8 +363,6 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
 # would produce valid movement without intermediate collisions.
 static func _calculate_jump_instructions( \
         overall_calc_params: MovementCalcOverallParams) -> MovementInstructions:
-    overall_calc_params.collided_surfaces.clear()
-    
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
             overall_calc_params, null)
     
