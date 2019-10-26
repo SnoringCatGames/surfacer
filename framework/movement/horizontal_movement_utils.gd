@@ -166,8 +166,7 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     return step
 
 # Calculate the start velocity with the min possible speed to reach the given end position,
-# velocity, and time. This min-speed start velocity corresponds to the biggest change in
-# acceleration.
+# velocity, and time.
 static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start: int, \
         displacement: float, v_start_min: float, v_start_max: float, v_end: float, \
         acceleration: float, duration: float, should_accelerate_at_start: bool) -> float:
@@ -177,14 +176,16 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         # seem unlikely.
         return v_start_min if horizontal_movement_sign_start > 0 else v_start_max
     
+    # Given the actual v_end for this step, there is no longer a range of possible start
+    # velocities; instead there is only one possible value. This is because acceleration is fixed
+    # and applied strictly at one end of the step. If acceleration could be applied at any mid-time
+    # in the step or if acceleration could be attenuated, then we would have a range of possible
+    # start velocities to choose from. However, we don't need that range of options.
+    
     var a: float
     var b: float
     var c: float
     
-    # - Accelerating at the start, and coasting at the end, yields a smaller starting velocity
-    #   (smaller directionally, not necessarily _slower_).
-    # - Accelerating at the end, and coasting at the start, yields a larger starting velocity
-    #   (larger directionally, not necessarily _faster_).
     if should_accelerate_at_start:
         # Try accelerating at the start of the step.
         # Derivation:
@@ -193,8 +194,7 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         #   - Part 2: Coast at v_1 until we reach the destination.
         #   - (The shorter part 1 is, the sooner we reach v_1 and the further we travel during
         #     part 2. This then means that we will need to have a slower v_0 and travel less far
-        #     during part 1, which is good, since we want to choose a v_0 with the
-        #     minimum-possible speed.)
+        #     during part 1.)
         # - Start with basic equations of motion:
         #   - v_1 = v_0 + a*t_0
         #   - s_2 = s_1 + v_1*t_1
@@ -207,15 +207,6 @@ static func calculate_min_speed_velocity_start_x(horizontal_movement_sign_start:
         b = -2 * v_end
         c = 2 * acceleration * (displacement - v_end * duration) + v_end * v_end
     else:
-        # FIXME: LEFT OFF HERE: -------------------------------------------------------A:
-        # - Double-check the reasoning behind this whole function....
-        #   - min-speed v_0 does _not_ correspond to the biggest change in acceleration.
-        #     - max-speed v_G in the opposite direction of v_1 would...
-        #   - So, what's the actual goal here? Minimize movement? Do the sub-parts of this function
-        #     work correctly toward that goal?
-        #     - It doesn't seem like they take into consideration the relative directions of v_0
-        #       and v_1.
-        
         # Try accelerating at the end of the step.
         # Derivation:
         # - There are two parts:

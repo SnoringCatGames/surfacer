@@ -119,19 +119,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   order, and then recalculate the actual x velocity for all following constraints in reverse
 #   order.
 # 
-# FIXME: -B: [After getting the rest of the traversal working pretty well] Refactor step-calc to
-#            be front-to-back again.
-# - The main problem comes from invalid edge-constraint positions (indicate a pre-existing
-#   collision when trying to start step navigation from there).
-# - So, instead of back-to-front, we can go front-to-back and find where the onset of collision
-#   would occur.
-# - We then _also_ need to add logic to ignore a constraint when the horizontal steps leading up
-#   to it would have found another collision.
-#   - This is because changing trajectory for the earlier collision is likely to invalidate the
-#     later collision.
-#   - In this case, the recursive call that found the additional, earlier collision will need to
-#     also then calculate all steps from this collision to the end?
-# 
 # FIXME: B: 
 # - Make edge-calc annotations usable at run time, by clicking on the start and end positions to check.
 # 
@@ -155,19 +142,23 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# >>>>- It looks like the new-height calc when backtracking isn't giving us enough height for the
-#   top-right restraint.
-#   - It looks like the problem is that calculate_min_speed_velocity_start_x returns incorrectly
-#     produces a non-zero v_0.
-#     - It seems like with these params, this step should definitely work with v_0...
-# [OLD THOUGHTS BELOW]
-#   - Maybe it's close though? The calculated required starting x velocity is -37, when we need it
-#     to be zero.
-#     >- ACTUALLY, maybe this is _not_ close... LEFT OFF HERE
-#   >- Maybe we could try adding a bit more of a multiplier to the calculated needed jump height?
-#      (where at though? during calculations somewhere...)
-#   - [NOT THE PROBLEM] Or should I instead revisit the calculation for adding to the height according to the step
-#     from the new constraint to the destination?
+# >>>>>- Refactor step-calc to be front-to-back again.
+# - The main problem comes from the fact that the velocity_x_actual calculation for one constraint
+#   forces the value for the next constraint to be calculated to be a specific value rather than
+#   any value in a range. This would be fine for the destination constraint, since we don't care
+#   about its speceific x-velocity, but the origin must be 0.
+# - Another problem comes from invalid edge-constraint positions (indicate a pre-existing
+#   collision when trying to start step navigation from there).
+# - So, instead of back-to-front, we can go front-to-back and find where the onset of collision
+#   would occur.
+# - We then _also_ need to add logic to ignore a constraint when the horizontal steps leading up
+#   to it would have found another collision.
+#   - This is because changing trajectory for the earlier collision is likely to invalidate the
+#     later collision.
+#   - In this case, the recursive call that found the additional, earlier collision will need to
+#     also then calculate all steps from this collision to the end?
+# 
+# 
 # 
 # - Fix pixel-perfect scaling/aliasing when enlarging screen and doing camera zoom.
 #   - Only support whole-number multiples somehow?

@@ -19,7 +19,7 @@ static func create_terminal_constraints(origin_surface: Surface, origin_position
             origin_surface, origin_position, origin_passing_vertically, false)
     var destination := MovementConstraint.new( \
             destination_surface, destination_position, destination_passing_vertically, false)
-
+    
     origin.is_origin = true
     destination.is_destination = true
     
@@ -124,17 +124,17 @@ static func update_constraint(constraint: MovementConstraint, \
     # FIXME: -------- REMOVE?
 #    # We should only calculate constraint state based off real neighbor constraints.
 #    assert(previous_constraint == null or !previous_constraint.is_fake)
-
+    
     # Previous constraint and vertical_step should be provided when updating intermediate
     # constraints.
     assert(previous_constraint != null or constraint.is_origin)
     assert(vertical_step != null or constraint.is_destination or constraint.is_origin)
-
+    
     # additional_high_constraint should only ever be provided for the destination, and then only
     # when we're doing backtracking for a new jump-height.
     assert(additional_high_constraint == null or constraint.is_destination)
     assert(vertical_step != null or additional_high_constraint == null)
-
+    
     assign_horizontal_movement_sign(constraint, previous_constraint, next_constraint)
     
     if constraint.horizontal_movement_sign != \
@@ -150,7 +150,7 @@ static func update_constraint(constraint: MovementConstraint, \
     var min_velocity_x: float
     var max_velocity_x: float
     var actual_velocity_x: float
-
+    
     # Calculate the time that the movement would pass through the constraint, as well as the min
     # and max x-velocity when passing through the constraint.
     if constraint.is_origin:
@@ -169,9 +169,9 @@ static func update_constraint(constraint: MovementConstraint, \
         if constraint.is_destination:
             # For the destination constraint, we need to calculate time_to_release_jump. All other
             # constraints can re-use this information from the vertical_step.
-
+            
             var time_to_release_jump: float
-
+            
             # We consider different parameters if we are starting a new movement calculation vs
             # backtracking to consider a new jump height.
             var constraint_to_calculate_jump_release_time_for: MovementConstraint
@@ -343,7 +343,7 @@ static func calculate_time_to_reach_destination_from_new_constraint( \
         movement_params: MovementParams, new_constraint: MovementConstraint, \
         destination: MovementConstraint) -> float:
     var displacement := destination.position - new_constraint.position
-
+    
     var velocity_x_at_new_constraint: float
     var acceleration: float
     if displacement.x > 0:
@@ -352,19 +352,19 @@ static func calculate_time_to_reach_destination_from_new_constraint( \
     else:
         velocity_x_at_new_constraint = new_constraint.min_velocity_x
         acceleration = -movement_params.in_air_horizontal_acceleration
-
+    
     var time_to_reach_horizontal_displacement := \
             MovementUtils.calculate_min_time_to_reach_displacement(displacement.x, \
                     velocity_x_at_new_constraint, movement_params.max_horizontal_speed_default, \
                     acceleration)
-
+    
     var time_to_reach_fall_displacement: float
     if displacement.y > 0:
         time_to_reach_fall_displacement = MovementUtils.calculate_movement_duration( \
                 displacement.y, 0.0, movement_params.gravity_fast_fall, true, 0.0, true)
     else:
         time_to_reach_fall_displacement = 0.0
-
+    
     return max(time_to_reach_horizontal_displacement, time_to_reach_fall_displacement)
 
 static func assign_horizontal_movement_sign(constraint: MovementConstraint, \
@@ -396,7 +396,7 @@ static func assign_horizontal_movement_sign(constraint: MovementConstraint, \
             # For straight vertical steps from the origin, we don't have much to go off of for
             # picking the horizontal movement direction, so just default to rightward for now.
             1))
-
+    
     var horizontal_movement_sign_from_surface: int
     if is_origin:
         horizontal_movement_sign_from_surface = \
@@ -413,22 +413,22 @@ static func assign_horizontal_movement_sign(constraint: MovementConstraint, \
                 -1 if surface.side == SurfaceSide.LEFT_WALL else \
                 (1 if surface.side == SurfaceSide.RIGHT_WALL else \
                 (-1 if constraint.should_stay_on_min_side else 1))
-
+    
     constraint.horizontal_movement_sign = horizontal_movement_sign_from_surface
     constraint.horizontal_movement_sign_from_displacement = horizontal_movement_sign_from_displacement
 
 # The given parameters represent the horizontal motion of a single step.
 # 
-# A Vector2 is returned:
-# - The x property represents the min velocity.
-# - The y property represents the max velocity.
+# An Array is returned:
+# - The first element represents the min velocity.
+# - The second element represents the max velocity.
 static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: float, \
         duration: float, v_0_min_from_prev_constraint: float, \
         v_0_max_from_prev_constraint: float, speed_max: float, a_magnitude: float, \
         horizontal_movement_sign: int) -> Array:
-    ### Calculate more tightly-bounded min/max start velocity values, according to both the
-    ### duration of the current step and the given min/max values from the previous constraint.
-
+    ### Calculate more tightly-bounded min/max velocity values, according to both the duration of
+    ### the current step and the given min/max values from the previous constraint.
+    
     # Accelerating in a positive direction over the entire step, corresponds to a lower bound on
     # the start velocity, and accelerating in a negative direction over the entire step,
     # corresponds to an upper bound on the start velocity.
@@ -449,6 +449,10 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
     var max_v_0_that_can_reach_min_velocity := -speed_max + a_magnitude * duration
     
     if min_v_0_that_can_reach_target > min_v_0_that_can_reach_max_velocity:
+        # Accelerating over the entire step from min_v_0_that_can_reach_target would cause velocity
+        # to exceed the max speed. So we need to instead consider a two-part movement profile when
+        # calculating min_v_0_that_can_reach_target: constant acceleration followed by constant
+        # velocity.
         var acceleration := a_magnitude
         var v_1 := speed_max
         min_v_0_that_can_reach_target = \
@@ -457,6 +461,10 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
             return []
     
     if max_v_0_that_can_reach_target < max_v_0_that_can_reach_min_velocity:
+        # Accelerating over the entire step from max_v_0_that_can_reach_target would cause velocity
+        # to exceed the max speed. So we need to instead consider a two-part movement profile when
+        # calculating max_v_0_that_can_reach_target: constant acceleration followed by constant
+        # velocity.
         var acceleration := -a_magnitude
         var v_1 := -speed_max
         max_v_0_that_can_reach_target = \
@@ -473,14 +481,15 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
         # Neither direction of acceleration will work with the given min/max start velocities from
         # the previous step.
         return []
-
+    
     ### Calculate min/max end velocities according to the min/max start velocities.
-
+    
     # We could need to either accelerate at the start or the end of the interval, and in a forward
     # or backward direction, in order to hit the min and max end velocity. So we consider all four
     # combinations, and only keep the best/valid results.
     # 
     # Some notes about these calculations:
+    # 
     # - Min and max start velocities correspond to max and min end velocities, respectively.
     # - If negative acceleration can be used during this interval, then we want to accelerate at
     #   the start of the interval to find the max end velocity and accelerate at the end of the
@@ -497,35 +506,35 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
     var acceleration: float
     var should_accelerate_at_start: bool
     var should_return_min_result: bool
-
+    
     v_0 = v_0_max
     acceleration = a_magnitude
     should_accelerate_at_start = true
     should_return_min_result = true
     var v_min_pos_acc_at_start := solve_for_end_velocity(displacement, v_0, acceleration, \
             duration, speed_max, should_accelerate_at_start, should_return_min_result)
-
+    
     v_0 = v_0_min
     acceleration = -a_magnitude
     should_accelerate_at_start = true
     should_return_min_result = false
     var v_max_neg_acc_at_start := solve_for_end_velocity(displacement, v_0, acceleration, \
             duration, speed_max, should_accelerate_at_start, should_return_min_result)
-
+    
     v_0 = v_0_min
     acceleration = a_magnitude
     should_accelerate_at_start = false
     should_return_min_result = false
     var v_max_pos_acc_at_end := solve_for_end_velocity(displacement, v_0, acceleration, \
             duration, speed_max, should_accelerate_at_start, should_return_min_result)
-
+    
     v_0 = v_0_max
     acceleration = -a_magnitude
     should_accelerate_at_start = false
     should_return_min_result = true
     var v_min_neg_acc_at_end := solve_for_end_velocity(displacement, v_0, acceleration, \
             duration, speed_max, should_accelerate_at_start, should_return_min_result)
-
+    
     # Use the more extreme of the possible min/max values we calculated for positive/negative
     # acceleration at the start/end.
     var v_max := \
@@ -538,7 +547,7 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
                     v_min_pos_acc_at_start != INF and v_min_neg_acc_at_end != INF else \
             (v_min_pos_acc_at_start if v_min_pos_acc_at_start != INF else \
             v_min_neg_acc_at_end)
-
+    
     # If we found valid v_0_min/v_0_max values, then there must be valid corresponding v_min/v_max
     # values.
     assert(v_max != INF)
@@ -550,12 +559,12 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
         v_min = 0.0
     if Geometry.are_floats_equal_with_epsilon(v_max, 0.0):
         v_max = 0.0
-
+    
     if (horizontal_movement_sign > 0 and v_max < 0) or \
         (horizontal_movement_sign < 0 and v_min > 0):
         # We cannot reach this constraint with the needed movement direction.
         return []
-
+    
     # Add a small offset to the min and max to help with round-off errors.
     if horizontal_movement_sign > 0:
         v_min += MIN_MAX_VELOCITY_X_OFFSET
@@ -563,7 +572,7 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
     else:
         v_min -= MIN_MAX_VELOCITY_X_OFFSET
         v_max += MIN_MAX_VELOCITY_X_OFFSET
-
+    
     # Limit velocity to the expected movement direction for this constraint.
     if horizontal_movement_sign > 0:
         v_min = max(v_min, 0.0)
@@ -586,8 +595,8 @@ static func calculate_min_and_max_x_velocity_at_end_of_interval(displacement: fl
 
 # Accelerating over the whole interval would result in an end velocity that exceeds the max speed.
 # So instead, we assume a 2-part movement profile with constant acceleration in the first part and
-# constant (max-speed) velocity in the second part. This 2-part movement should correspond to the
-# actual limit on v_0.
+# constant (max-speed) velocity in the second part. This 2-part movement should more accurately
+# represent the limit on v_0.
 static func calculate_min_v_0_with_v_1_limit(displacement: float, duration: float, v_1: float, \
         acceleration: float, should_return_min_result: bool) -> float:
     # Derivation:
