@@ -114,6 +114,15 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     print("_store_surfaces...")
     _store_surfaces(tile_map, floors, ceilings, left_walls, right_walls)
     print("_store_surfaces duration: %sms" % _stopwatch.stop())
+    
+    _stopwatch.start()
+    print("_assign_neighbor_surfaces...")
+    _assign_neighbor_surfaces(self.floors, self.ceilings, self.left_walls, self.right_walls)
+    _assert_neighbors(self.floors)
+    _assert_neighbors(self.ceilings)
+    _assert_neighbors(self.left_walls)
+    _assert_neighbors(self.right_walls)
+    print("_assign_neighbor_surfaces duration: %sms" % _stopwatch.stop())
 
 func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, \
         right_walls: Array) -> void:
@@ -551,6 +560,80 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
                 i -= 1
                 count -= 1
             i += 1
+
+static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls: Array, \
+        right_walls: Array) -> void:
+    var surface1_end: Vector2
+    var surface2_end: Vector2
+    var diff_x: float
+    var diff_y: float
+    
+    for floor_surface in floors:
+        surface1_end = floor_surface.vertices[0]
+        
+        for right_wall in right_walls:
+            surface2_end = right_wall.vertices[right_wall.vertices.size() - 1]
+            
+            diff_x = surface1_end.x - surface2_end.x
+            diff_y = surface1_end.y - surface2_end.y
+            
+            if diff_x < Geometry.FLOAT_EPSILON and \
+                    diff_x > -Geometry.FLOAT_EPSILON and \
+                    diff_y < Geometry.FLOAT_EPSILON and \
+                    diff_y > -Geometry.FLOAT_EPSILON:
+                floor_surface.counter_clockwise_neighbor = right_wall
+                right_wall.clockwise_neighbor = floor_surface
+        
+        surface1_end = floor_surface.vertices[floor_surface.vertices.size() - 1]
+        
+        for left_wall in left_walls:
+            surface2_end = left_wall.vertices[0]
+            
+            diff_x = surface1_end.x - surface2_end.x
+            diff_y = surface1_end.y - surface2_end.y
+            
+            if diff_x < Geometry.FLOAT_EPSILON and \
+                    diff_x > -Geometry.FLOAT_EPSILON and \
+                    diff_y < Geometry.FLOAT_EPSILON and \
+                    diff_y > -Geometry.FLOAT_EPSILON:
+                floor_surface.clockwise_neighbor = left_wall
+                left_wall.counter_clockwise_neighbor = floor_surface
+    
+    for ceiling in ceilings:
+        surface1_end = ceiling.vertices[0]
+        
+        for left_wall in left_walls:
+            surface2_end = left_wall.vertices[left_wall.vertices.size() - 1]
+            
+            diff_x = surface1_end.x - surface2_end.x
+            diff_y = surface1_end.y - surface2_end.y
+            
+            if diff_x < Geometry.FLOAT_EPSILON and \
+                    diff_x > -Geometry.FLOAT_EPSILON and \
+                    diff_y < Geometry.FLOAT_EPSILON and \
+                    diff_y > -Geometry.FLOAT_EPSILON:
+                ceiling.counter_clockwise_neighbor = left_wall
+                left_wall.clockwise_neighbor = ceiling
+        
+        surface1_end = ceiling.vertices[ceiling.vertices.size() - 1]
+        
+        for right_wall in right_walls:
+            surface2_end = right_wall.vertices[0]
+            
+            diff_x = surface1_end.x - surface2_end.x
+            diff_y = surface1_end.y - surface2_end.y
+            
+            if diff_x < Geometry.FLOAT_EPSILON and \
+                    diff_x > -Geometry.FLOAT_EPSILON and \
+                    diff_y < Geometry.FLOAT_EPSILON and \
+                    diff_y > -Geometry.FLOAT_EPSILON:
+                ceiling.clockwise_neighbor = right_wall
+                right_wall.counter_clockwise_neighbor = ceiling
+
+static func _assert_neighbors(surfaces: Array) -> void:
+    for surface in surfaces:
+        assert(surface.clockwise_neighbor != null)
+        assert(surface.counter_clockwise_neighbor != null)
 
 static func _populate_surface_objects(tmp_surfaces: Array, side: int) -> void:
     for tmp_surface in tmp_surfaces:

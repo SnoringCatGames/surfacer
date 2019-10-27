@@ -161,8 +161,9 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
         collision_player_boundary_stroke_width = COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_STRONG
     
     # Hue transitions evenly from start to end.
-    var step_hue := STEP_HUE_START + (STEP_HUE_END - STEP_HUE_START) * (step_attempt.index / \
-            (edge_attempt.total_step_count - 1.0))
+    var step_ratio := (step_attempt.index / (edge_attempt.total_step_count - 1.0)) if \
+            edge_attempt.total_step_count > 1 else 1.0
+    var step_hue := STEP_HUE_START + (STEP_HUE_END - STEP_HUE_START) * step_ratio
     var step_color := Color.from_hsv(step_hue, 0.6, 0.9, step_opacity)
     
     if step_attempt.frame_positions.size() > 1:
@@ -202,7 +203,7 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     var line_1 := "Step %s/%s: %s" % [step_attempt.index + 1, edge_attempt.total_step_count, \
             step_attempt.result_code_string]
     var line_2 := "\n                [Backtracking]" if step_attempt.is_backtracking else ""
-    var line_3 := "\n                [Fake start constraint]" if step_attempt.is_fake else ""
+    var line_3 := "\n                [Replaced fake constraint]" if step_attempt.replaced_a_fake else ""
     var line_4: String = "\n                %s" % step_attempt.description_list[0]
     var line_5: String = ("\n                %s" % step_attempt.description_list[1]) if \
             step_attempt.description_list.size() > 1 else ""

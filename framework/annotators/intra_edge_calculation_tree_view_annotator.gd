@@ -94,6 +94,6 @@ func _get_tree_item_text(step_attempt: MovementCalcStepDebugState, description_i
             "*" if includes_highlight_marker else "",
             step_attempt.index + 1, \
             "[BT] " if step_attempt.is_backtracking and description_index == 0 else "", \
-            "[F] " if step_attempt.is_fake and description_index == 0 else "", \
+            "[RF] " if step_attempt.replaced_a_fake and description_index == 0 else "", \
             step_attempt.description_list[description_index], \
         ]

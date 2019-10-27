@@ -1,13 +1,21 @@
 extends Reference
 class_name Surface
 
+# Vertices are always specified in clockwise order.
 var vertices: PoolVector2Array
+
 # SurfaceSide
 var side: int
+
 # Array<int>
 var tile_map_indices: Array
+
 var bounding_box: Rect2
+
 var normal: Vector2
+
+var clockwise_neighbor: Surface
+var counter_clockwise_neighbor: Surface
 
 func _init(vertices: Array, side: int, tile_map_indices: Array) -> void:
     self.vertices = PoolVector2Array(vertices)

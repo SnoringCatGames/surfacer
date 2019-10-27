@@ -81,6 +81,11 @@ This will only detect internal surface segments that are equivalent with another
     - Remove B from the surface collection.
 - Repeat the iteration until no merges were performed.
 
+#### Record adjacent neighbor surfaces
+
+- Every surface should have both adjacent clockwise and counter-clockwise neighbor surfaces.
+- Use a similar process as above for finding surfaces with matching end positions.
+
 ### Calculating edges
 
 TODO
@@ -183,26 +188,31 @@ For convenience, this is checked in the with rest of the Surfacer framework.
   - Any time we attempt backtracking for increased height, we just start the entire recursion over from the start, and return the complete result.
     - We no longer attempt to concatenate anything with recursive traversals with backtracking.
     - Instead, concatenation and recursion is only done in the non-backtracking part.
-- Horizontal steps are calculated in reverse order, so that we can ensure that previous steps end with a specific required x-velocity that is needed in order to reach the end position of the next step.
-- Describe the forward passes and backward pass:
+- The iteration...
   - Create the origin and destination constraints.
   - Create the vertical step (base some state off of origin and destination constraints).
-  - Forward (for each intermediate constraint, in chronological order):
-    - Calculate the time for passing through the constraint.
-    - Calculate the direction of movement through the constraint.
-    - Calculate the min and max possible x-velocity when the movement passes through this constraint (this is based off of the min and max values from the previous constraint, as well as the time and distance between constraints).
-  - Backward (for each intermediate constraint, in reverse-chronological order):
-    - Calculate the actual x-velocity for movement through the constraint (aka, the step-start x-velocity for the corresponding movement step).
-- The forward calculations are done when the intermediate constraint is created.
-- The backward calculations are done when the corresponding movement steps to/from the constraint are created.
+  - Try to calculate a movement trajectory from the start constraint to the end constraint.
+  - If the end constraint is out of reach, return null.
+  - If the movement constraint did not collide with any intermediate surfaces, return the valid movement.
+  - Else, if there was a collision:
+    - Calculate new intermediate constraints along either edge of the collided surface.
+    - For each of these new constraints:
+      - Calculate the time for passing through the constraint.
+      - Calculate the direction of movement through the constraint.
+      - Calculate the min and max possible x-velocity when the movement passes through this constraint (this is based off of the actual x-velocity from the previous constraint, as well as the time and distance between constraints).
+      - Calculate the actual x-velocity for movement through the constraint (aka, the step-start x-velocity for the corresponding movement step).
 - When backtracking on jump height:
-  - The destination constraint is first updated to support the new jump height.
+  - The destination constraint is first updated to support a new jump height that would allow for a previously-out-of-reach intermediate constraint to also be reached.
   - Then all steps are re-calculated from the start of the movement, while considering the new destination state.
-FIXME: Check whether I need to add this expensive update; if not, mention the limitiation in the README.
-- Unfortunately, it is possible that the creation of a new intermediate constraint could invalidate the actual_velocity_x for the following constraint(s). A fix for this would be to first recalculate the min/max x velocities for all following constraints in forward order, and then recalculate the actual x velocity for all following constraints in reverse order.
-- This still is not completely sufficient though, since changing the actual x velocity could change the trajectory and introduce/remove constraints.
-- Additionally, the later creation of preceding/following constraints from in-progress recursion could introduce/remove constraints.
-- HOWEVER, this might still work for most cases? Let's try it. If it works, let's just document well what types of things fail. We can't solve this efficienntly for all cases, so we have to pick reasonable heuristics at some point.
+- Updating min/max velocities in response to new intermediate constraints:
+  - The introduction of a new intermediate constraint can change the min/max x-velocity values for both its previous and following neighbor constraints.
+  - Because of this, we update neighbor constraints when adding a new constraint.
+  - However, there are a couple limitations of these updates:
+    - It is possible that the creation of a new intermediate constraint could also invalidate the actual x-velocity for the previous constraint(s).
+      - A fix for this would be to first recalculate the min/max x velocities for all previous constraints in backward order, and then recalculate the actual x velocity for all previous constraints in forward order.
+      - This still is not completely sufficient though, since changing the actual x-velocity could change the trajectory and introduce/remove constraints.
+    - Additionally, the creation of constraints from in-progress recursion could introduce/remove neighbor constraints.
+    - FIXME: Check whether I need to add any of the following expensive updates... HOWEVER, this might still work for most cases? Let's try it. If it works, let's just document well what types of things fail. We can't solve this efficiently for all cases, so we have to pick reasonable heuristics at some point.
 - Mention, in general, why accelerating at the start vs end of the interval changes things.
 - Describe skipping constraints:
   - Sometimes we should be able to skip a constraint and go straight from the earlier one to the later one.

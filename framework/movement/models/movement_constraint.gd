@@ -6,7 +6,7 @@
 #   surface or any point not along a surface.
 # - For all other, intermediate points within a movement, a constraint represents the edge of a
 #   surface that the movement must pass through in order to not collide with the surface.
-# - Early on during movement calculation, each constraint is assigned a horizontal direction that
+# - Early-on during movement calculation, each constraint is assigned a horizontal direction that
 #   the movement must travel along when passing through the constraint:
 #   - For constraints on left-wall surfaces: The direction of movement must be leftward.
 #   - For constraints on right-wall surfaces: The direction of movement must be rightward. 
@@ -42,11 +42,18 @@ var horizontal_movement_sign_from_displacement: int = INF
 var time_passing_through := INF
 
 # The minimum possible x velocity when passing through this constraint.
+# 
+# This is calculated early-on during movement calculation, and updated as new neighbor constraints
+# get added.
 var min_velocity_x := INF
 
 # The maximum possible x velocity when passing through this constraint.
+# 
+# This is calculated early-on during movement calculation, and updated as new neighbor constraints
+# get added.
 var max_velocity_x := INF
 
+# This is calculated later-onn during movement calculation.
 var actual_velocity_x := INF
 
 # Whether this constraint is the origin for the overall movement.
@@ -64,6 +71,12 @@ var is_destination := false
 # of the edge; in this case, the goal is to skip the ceiling-edge constraint and moving directly to
 # the top-of-the-right-side constraint.
 var is_fake := false
+
+# Whether this constraint can be reached with the current jump height.
+var is_valid := false
+
+# Whether this was the neighbor constraint that replaced a fake constraint.
+var replaced_a_fake := false
 
 func _init(surface: Surface, position: Vector2, passing_vertically: bool, \
         should_stay_on_min_side: bool) -> void:

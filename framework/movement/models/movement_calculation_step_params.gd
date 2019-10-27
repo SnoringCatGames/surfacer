@@ -9,10 +9,6 @@ var start_constraint: MovementConstraint
 # The end position of this local branch of movement.
 var end_constraint: MovementConstraint
 
-# If this local branch of movement starts on a fake constraint, then this is the position of the
-# previous constraint.
-var previous_constraint_if_start_is_fake: MovementConstraint
-
 # The single vertical step for this overall jump movement.
 var vertical_step: MovementVertCalcStep
 

@@ -142,47 +142,31 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
-# >>>>>- Refactor step-calc to be front-to-back again.
-# - The main problem comes from the fact that the velocity_x_actual calculation for one constraint
-#   forces the value for the next constraint to be calculated to be a specific value rather than
-#   any value in a range. This would be fine for the destination constraint, since we don't care
-#   about its speceific x-velocity, but the origin must be 0.
-# - Another problem comes from invalid edge-constraint positions (indicate a pre-existing
-#   collision when trying to start step navigation from there).
-# - So, instead of back-to-front, we can go front-to-back and find where the onset of collision
-#   would occur.
-# - We then _also_ need to add logic to ignore a constraint when the horizontal steps leading up
-#   to it would have found another collision.
-#   - This is because changing trajectory for the earlier collision is likely to invalidate the
-#     later collision.
+# >>>>> DO THIS NOW:
+# - Add some more tree-traversal debug annotations:
+#   - For BT steps, show the surface and/or the high-intermediate-constraint point that was used
+#     as the basis for backtracking.
+# - Debug the current problem: No constraints-that-replace-fakes are getting used...
+# - Update calculate_steps_from_constraint_without_backtracking_on_height to also update original
+#   prev/next constraints when recursion was valid.
+# - In _calculate_time_to_reach_destination_from_new_constraint, replace the hard-coded usage of 
+#   max-speed with a smarter x-velocity.
+# 
+# >>- Add logic to ignore a constraint when the horizontal steps leading up to it would have found
+#   another collision.
+#   - Because changing trajectory for the earlier collision is likely to invalidate the later
+#     collision.
 #   - In this case, the recursive call that found the additional, earlier collision will need to
 #     also then calculate all steps from this collision to the end?
-# 
-# 
 # 
 # - Fix pixel-perfect scaling/aliasing when enlarging screen and doing camera zoom.
 #   - Only support whole-number multiples somehow?
 # 
-# >>>- Debug the edge-calc annotions
-#   - both check that the annotations are helpful enough,
-#   - and that the underlying recursion is correct).
-# 
-# - Finish testing support for skipping a constraint.
-# 
-# - Is it worth/possible adding logic to force some movement from a fake constraint, rather than
-#   giving up when it (inevitably) notices that the destination is out of reach?
 # - When backtracking, re-use all steps that finish before releasing the jump button.
-#   - ACTUALLY, this will depend on re-ordering step calculations from start to end, so I guess
-#     we'll have to wait on this optimization.
 # 
 # - Add a translation to the on-wall cat animations, so that they are all a bit lower; the cat's
 #   head should be about the same position as the corresponding horizontal pose that collided, and
 #   the bottom should fall from there.
-# 
-# - Update surface-parsing logic to also detect adjacent surfaces and store them as a property on
-#   Surface.
-# - Then use this instead of all the complicated position-offset+collision-detection logic for
-#   skipping fake constraints.
 # 
 # - Add support for detecting invalid origin/destination positions (due to pre-existing collisions
 #   with nearby surfaces).

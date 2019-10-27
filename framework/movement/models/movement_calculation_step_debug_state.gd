@@ -13,7 +13,7 @@ var result_code := EdgeStepCalcResult.UNKNOWN
 var result_code_string: String setget ,_get_result_code_string
 var description_list: Array setget ,_get_description_list
 var is_backtracking: bool setget ,_get_is_backtracking
-var is_fake: bool setget ,_get_is_fake
+var replaced_a_fake: bool setget ,_get_replaced_a_fake
 
 # MovementCalcStepParams
 var _step_calc_params
@@ -45,5 +45,5 @@ func _get_description_list() -> Array:
 func _get_is_backtracking() -> bool:
     return is_first_step_for_new_jump_height and index != 0
 
-func _get_is_fake() -> bool:
-    return _step_calc_params.start_constraint.is_fake
+func _get_replaced_a_fake() -> bool:
+    return _step_calc_params.start_constraint.replaced_a_fake
