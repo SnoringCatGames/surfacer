@@ -364,10 +364,10 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
     else:
         duration_of_slow_ascent = time_instruction_end
         min_end_time = max(min_end_time - duration_of_slow_ascent, 0.0)
-        var displacement := target_height - position_instruction_end_y
-        duration_of_fast_fall = MovementUtils.calculate_movement_duration(displacement, \
-                velocity_instruction_end_y, movement_params.gravity_fast_fall, \
-                is_position_before_peak, min_end_time, false)
+        var displacement_of_fast_fall := target_height - position_instruction_end_y
+        duration_of_fast_fall = MovementUtils.calculate_movement_duration( \
+                displacement_of_fast_fall, velocity_instruction_end_y, \
+                movement_params.gravity_fast_fall, is_position_before_peak, min_end_time, false)
         if duration_of_fast_fall == INF:
             return INF
     

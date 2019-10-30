@@ -8,7 +8,7 @@ const MIN_MAX_VELOCITY_X_OFFSET := 0.01
 
 static func create_terminal_constraints(origin_surface: Surface, origin_position: Vector2, \
         destination_surface: Surface, destination_position: Vector2, \
-        movement_params: MovementParams, constraint_offset: Vector2, velocity_start: Vector2, \
+        movement_params: MovementParams, velocity_start: Vector2, \
         can_hold_jump_button: bool) -> Array:
     var origin_passing_vertically := \
             origin_surface.normal.x == 0 if origin_surface != null else true
@@ -174,6 +174,17 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
     var max_velocity_x: float
     var actual_velocity_x: float
     
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+    if Geometry.are_points_equal_with_epsilon( \
+            constraint.position, \
+            Vector2(-190, -349), 10):
+        print("break")
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+    if Geometry.are_points_equal_with_epsilon( \
+            constraint.position, \
+            Vector2(64, -480), 10):
+        print("break")
+    
     # Calculate the time that the movement would pass through the constraint, as well as the min
     # and max x-velocity when passing through the constraint.
     if constraint.is_origin:
@@ -210,6 +221,11 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
                 if Geometry.are_points_equal_with_epsilon( \
                         constraint_position_to_calculate_jump_release_time_for, \
                         Vector2(64, -480), 10):
+                    print("break")
+                # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+                if Geometry.are_points_equal_with_epsilon( \
+                        constraint_position_to_calculate_jump_release_time_for, \
+                        Vector2(-190, -349), 10):
                     print("break")
             
             # TODO: I should probably refactor these two calls, so we're doing fewer redundant
@@ -793,16 +809,13 @@ static func update_neighbors_for_new_constraint(constraint: MovementConstraint, 
         previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
         overall_calc_params: MovementCalcOverallParams, \
         vertical_step: MovementVertCalcStep) -> void:
+    # The next constraint is only used for updates to the origin. Each other constraint just
+    # depends on its previous constraint.
     if previous_constraint.is_origin:
-        # The next constraint is only used for updates to the origin. Each other constraint just
-        # depends on its previous constraint.
         update_constraint(previous_constraint, null, constraint, \
                 overall_calc_params.origin_constraint, overall_calc_params.movement_params, \
                 vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
                 vertical_step, Vector2.INF)
-    
-    # The next constraint is only used for updates to the origin. Each other constraint just
-    # depends on its previous constraint.
     update_constraint(next_constraint, constraint, null, overall_calc_params.origin_constraint, \
             overall_calc_params.movement_params, vertical_step.velocity_step_start, \
             vertical_step.can_hold_jump_button, vertical_step, Vector2.INF)
@@ -855,10 +868,15 @@ static func copy_constraint(original: MovementConstraint) -> MovementConstraint:
     var copy := MovementConstraint.new(original.surface, original.position, \
             original.passing_vertically, original.should_stay_on_min_side)
     copy.horizontal_movement_sign = original.horizontal_movement_sign
+    copy.horizontal_movement_sign_from_displacement = \
+            original.horizontal_movement_sign_from_displacement
     copy.time_passing_through = original.time_passing_through
     copy.min_velocity_x = original.min_velocity_x
     copy.max_velocity_x = original.max_velocity_x
     copy.actual_velocity_x = original.actual_velocity_x
     copy.is_origin = original.is_origin
     copy.is_destination = original.is_destination
+    copy.is_fake = original.is_fake
+    copy.is_valid = original.is_valid
+    copy.replaced_a_fake = original.replaced_a_fake
     return copy

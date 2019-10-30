@@ -11,7 +11,8 @@ const MovementCalcStepParams := preload("res://framework/movement/models/movemen
 # This can trigger recursive calls if horizontal movement cannot be satisfied without backtracking
 # to consider a new higher jump height.
 static func calculate_steps_with_new_jump_height(overall_calc_params: MovementCalcOverallParams, \
-        parent_step_calc_params: MovementCalcStepParams) -> MovementCalcResults:
+        parent_step_calc_params: MovementCalcStepParams, \
+        previous_out_of_reach_constraint: MovementConstraint) -> MovementCalcResults:
     var vertical_step := VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
     if vertical_step == null:
         # The destination is out of reach.
@@ -19,7 +20,7 @@ static func calculate_steps_with_new_jump_height(overall_calc_params: MovementCa
     
     var step_calc_params := MovementCalcStepParams.new(overall_calc_params.origin_constraint, \
             overall_calc_params.destination_constraint, vertical_step, overall_calc_params, \
-            true, parent_step_calc_params)
+            parent_step_calc_params, previous_out_of_reach_constraint)
     
     return calculate_steps_from_constraint(overall_calc_params, step_calc_params)
 
@@ -144,6 +145,22 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         # min/max/actual x-velocities and movement sign for all other constraints. And these
         # updates could then result in the addition/removal of other intermediate constraints.
         # But we have found that these two updates are enough for most cases.
+        # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
+        # - After this update (for top-right constraint), next constraint (destination) is not
+        #   valid.
+        # >- 1) Ah... Is that because min/max velocities are based off the wrong neighbor?
+        #   - First, try fixing this; then, try fixing the following issues if it's still broken.
+        #   >>- Probably need to refactor how min/max is calculated/assigned in
+        #     update_constraint...
+        # >- 3) Update _calculate_time_to_reach_destination_from_new_constraint to use smarter
+        #   min/max x-velocity? max_speed will probably generate too many false negatives for
+        #   steps.
+        # >- 2) :( Hmmm... Also, another, deeper problem: We _must_ update steps to use three
+        #   parts: constart v at start, constant a in mid, constrant v at end.
+        #   - This is because with given duration/displacement/v-start/side-for-acc, there is only
+        #     a single possible v-end, and this v-end is possibly not going to fit within the
+        #     needed min/max range.
+        #   - Figure out how likely this _actually_ is to be a problem.
         MovementConstraintUtils.update_neighbors_for_new_constraint(constraint, \
                 previous_constraint_copy, next_constraint_copy, overall_calc_params, \
                 vertical_step)
@@ -153,7 +170,7 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         ### RECURSE: Calculate movement to the constraint.
         
         step_calc_params_to_constraint = MovementCalcStepParams.new(previous_constraint_copy, \
-                constraint, vertical_step, overall_calc_params, false, step_calc_params)
+                constraint, vertical_step, overall_calc_params, step_calc_params, null)
         calc_results_to_constraint = calculate_steps_from_constraint(overall_calc_params, \
                 step_calc_params_to_constraint)
         
@@ -169,7 +186,7 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         ### RECURSE: Calculate movement from the constraint to the original destination.
         
         step_calc_params_from_constraint = MovementCalcStepParams.new(constraint, \
-                next_constraint_copy, vertical_step, overall_calc_params, false, step_calc_params)
+                next_constraint_copy, vertical_step, overall_calc_params, step_calc_params, null)
         calc_results_from_constraint = calculate_steps_from_constraint(overall_calc_params, \
                 step_calc_params_from_constraint)
         
@@ -226,7 +243,9 @@ static func calculate_steps_from_constraint_with_backtracking_on_height( \
             continue
 
         # Recurse: Backtrack and try a higher jump (to the constraint).
-        calc_results = calculate_steps_with_new_jump_height(overall_calc_params, step_calc_params)
+        calc_results = calculate_steps_with_new_jump_height( \
+                overall_calc_params, step_calc_params, constraint)
+        
         if calc_results != null:
             # The constraint is within reach, and we were able to find valid movement steps to the
             # destination.

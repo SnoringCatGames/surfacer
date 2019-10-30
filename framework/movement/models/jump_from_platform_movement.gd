@@ -143,10 +143,17 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
 # >>>>> DO THIS NOW:
-# - Add some more tree-traversal debug annotations:
-#   - For BT steps, show the surface and/or the high-intermediate-constraint point that was used
-#     as the basis for backtracking.
-# - Debug the current problem: No constraints-that-replace-fakes are getting used...
+# - Debug the current problem:
+#   - For some reason, calculate_time_for_passing_through_constraint won't consider the top-right
+#     constraint valid with the destination jump height....
+#   - Is it because of the _slight_ increased height from the constraint offset?
+#     - Yes. I confirmed that subtracting the offset puts the top-right constraint in reach.
+#   - Then why doesn't this succeed with increasing jump height during backtracking...
+#   - 
+# - Should we somehow ensure that jump height is always bumped up at least enough to cover the
+#   extra distance of constraint offsets? 
+#   - Since jumping up to a destination, around the other edge of the platform (which has the
+#     constraint offset), seems like a common use-case, this would probably be a useful optimization.
 # - Update calculate_steps_from_constraint_without_backtracking_on_height to also update original
 #   prev/next constraints when recursion was valid.
 # - In _calculate_time_to_reach_destination_from_new_constraint, replace the hard-coded usage of 
@@ -287,7 +294,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 
                 terminals = MovementConstraintUtils.create_terminal_constraints(a, \
                         jump_position.target_point, b, land_position.target_point, params, \
-                        constraint_offset, velocity_start, true)
+                        velocity_start, true)
                 if terminals.empty():
                     continue
                 
@@ -321,8 +328,7 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
     var constraint_offset := MovementCalcOverallParams.calculate_constraint_offset(params)
     
     var terminals := MovementConstraintUtils.create_terminal_constraints(position_start.surface, \
-            position_start.target_point, null, position_end, params, constraint_offset, \
-            velocity_start, true)
+            position_start.target_point, null, position_end, params, velocity_start, true)
     if terminals.empty():
         null
     
@@ -339,7 +345,7 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
 static func _calculate_jump_instructions( \
         overall_calc_params: MovementCalcOverallParams) -> MovementInstructions:
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
-            overall_calc_params, null)
+            overall_calc_params, null, null)
     
     if calc_results == null:
         return null

@@ -6,8 +6,10 @@ const STEP_TRANSITION_DELAY_SEC := 1.0
 const COLLISION_X_WIDTH_HEIGHT := Vector2(16.0, 16.0)
 const COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS := 3.0
 const CONSTRAINT_RADIUS := 6.0
+const PREVIOUS_OUT_OF_REACH_CONSTRAINT_RADIUS := 5.0
 
-const LABEL_SCALE := Vector2(2.0, 2.0)
+const STEP_LABEL_SCALE := Vector2(2.0, 2.0)
+const PREVIOUS_OUT_OF_REACH_CONSTRAINT_LABEL_SCALE := Vector2(1.4, 1.4)
 const LABEL_OFFSET := Vector2(15.0, -10.0)
 
 const TRAJECTORY_STROKE_WIDTH_FAINT := 1.0
@@ -34,7 +36,8 @@ var global # TODO: Add type back
 var graph: PlatformGraph
 var edge_attempt: MovementCalcOverallDebugState
 
-var label: Label
+var step_label: Label
+var previous_out_of_reach_constraint_label: Label
 
 var highlighted_step: MovementCalcStepDebugState
 var is_new_highlighted_step := false
@@ -50,9 +53,13 @@ func _ready() -> void:
     global = $"/root/Global"
     start_time = global.elapsed_play_time_sec
     
-    label = Label.new()
-    label.rect_scale = LABEL_SCALE
-    add_child(label)
+    step_label = Label.new()
+    step_label.rect_scale = STEP_LABEL_SCALE
+    
+    previous_out_of_reach_constraint_label = Label.new()
+    previous_out_of_reach_constraint_label.rect_scale = \
+            PREVIOUS_OUT_OF_REACH_CONSTRAINT_LABEL_SCALE
+    add_child(previous_out_of_reach_constraint_label)
 
 func _process(delta: float) -> void:
     # Check the current edge that's being debugged.
@@ -80,6 +87,7 @@ func _process(delta: float) -> void:
     
     if is_new_highlighted_step or is_new_edge_attempt:
         # It's time to highlight a new step, whether from the timer or from a user selection.
+        is_new_highlighted_step = false
         update()
 
 func _get_step_by_index(target_step_index: int) -> MovementCalcStepDebugState:
@@ -197,17 +205,37 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
         draw_circle(collision.player_position, COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS, \
                 collision_color)
     
+    # For new backtracking steps, draw and label the constraint that was used as the basis for a
+    # higher jump.
+    if step_attempt.is_backtracking and !renders_faintly:
+        add_child(step_label)
+        
+        # Draw the constraint position.
+        draw_circle(step_attempt.previous_out_of_reach_constraint.position, \
+                PREVIOUS_OUT_OF_REACH_CONSTRAINT_RADIUS, step_color)
+        
+        # Label the constraint.
+        previous_out_of_reach_constraint_label.rect_position = \
+                step_attempt.previous_out_of_reach_constraint.position + LABEL_OFFSET
+        previous_out_of_reach_constraint_label.add_color_override("font_color", step_color)
+        previous_out_of_reach_constraint_label.text = \
+                "The previously out-of-reach constraint that was the basis\n" + \
+                "for increasing the jump height for backtracking."
+    else:
+        previous_out_of_reach_constraint_label.text = ""
+    
     # Draw some text describing the current step.
-    label.rect_position = step_attempt.start_constraint.position + LABEL_OFFSET
-    label.add_color_override("font_color", step_color)
+    step_label.rect_position = step_attempt.start_constraint.position + LABEL_OFFSET
+    step_label.add_color_override("font_color", step_color)
     var line_1 := "Step %s/%s: %s" % [step_attempt.index + 1, edge_attempt.total_step_count, \
             step_attempt.result_code_string]
     var line_2 := "\n                [Backtracking]" if step_attempt.is_backtracking else ""
-    var line_3 := "\n                [Replaced fake constraint]" if step_attempt.replaced_a_fake else ""
+    var line_3 := "\n                [Replaced fake constraint]" if \
+            step_attempt.replaced_a_fake else ""
     var line_4: String = "\n                %s" % step_attempt.description_list[0]
     var line_5: String = ("\n                %s" % step_attempt.description_list[1]) if \
             step_attempt.description_list.size() > 1 else ""
-    label.text = line_1 + line_2 + line_3 + line_4 + line_5
+    step_label.text = line_1 + line_2 + line_3 + line_4 + line_5
 
 func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void:
     is_auto_transitioning_with_timer = false

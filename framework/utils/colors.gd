@@ -6,6 +6,7 @@ const LIGHTNESS_LIGHT := 80
 const LIGHTNESS_DARK := 40
 const LIGHTNESS_XDARK := 20
 
+const TRANSPARENT := Color8(0, 0, 0, 0)
 const WHITE := Color8(255, 255, 255)
 const BLACK := Color8(0, 0, 0)
 

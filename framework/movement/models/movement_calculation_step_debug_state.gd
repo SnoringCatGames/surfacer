@@ -18,17 +18,17 @@ var replaced_a_fake: bool setget ,_get_replaced_a_fake
 # MovementCalcStepParams
 var _step_calc_params
 var index: int
-var is_first_step_for_new_jump_height: bool
 var overall_debug_state: MovementCalcOverallDebugState
+var previous_out_of_reach_constraint: MovementConstraint
 # Array<MovementCalcStepDebugState>
 var children_step_attempts := []
 
-func _init(_step_calc_params, index: int, is_first_step_for_new_jump_height: bool, \
-        overall_debug_state: MovementCalcOverallDebugState) -> void:
+func _init(_step_calc_params, index: int, overall_debug_state: MovementCalcOverallDebugState, \
+        previous_out_of_reach_constraint: MovementConstraint) -> void:
     self._step_calc_params = _step_calc_params
     self.index = index
-    self.is_first_step_for_new_jump_height = is_first_step_for_new_jump_height
     self.overall_debug_state = overall_debug_state
+    self.previous_out_of_reach_constraint = previous_out_of_reach_constraint
 
 func _get_start() -> MovementConstraint:
     return _step_calc_params.start_constraint as MovementConstraint
@@ -43,7 +43,7 @@ func _get_description_list() -> Array:
     return EdgeStepCalcResult.to_description_list(result_code)
 
 func _get_is_backtracking() -> bool:
-    return is_first_step_for_new_jump_height and index != 0
+    return previous_out_of_reach_constraint != null
 
 func _get_replaced_a_fake() -> bool:
     return _step_calc_params.start_constraint.replaced_a_fake
