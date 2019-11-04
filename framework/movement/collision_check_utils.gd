@@ -224,9 +224,9 @@ static func check_discrete_horizontal_step_for_collision( \
         
         # Determine whether the horizontal movement button is still being pressed.
         is_pressing_move_horizontal = current_time > horizontal_step.time_instruction_start and \
-            current_time < horizontal_step.time_instruction_end
+                current_time < horizontal_step.time_instruction_end
         horizontal_acceleration_sign = \
-            horizontal_step.horizontal_acceleration_sign if is_pressing_move_horizontal else 0
+                horizontal_step.horizontal_acceleration_sign if is_pressing_move_horizontal else 0
         
         # FIXME: E: After implementing instruction execution, check whether it also does this, and
         #           whether this should be uncommented.

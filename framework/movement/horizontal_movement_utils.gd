@@ -8,6 +8,8 @@ const MIN_MAX_VELOCITY_X_MARGIN := MovementConstraintUtils.MIN_MAX_VELOCITY_X_OF
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, \
         overall_calc_params: MovementCalcOverallParams) -> MovementCalcStep:
+    # FIXME: ------------ Refactor to support accelerating in the middle of the step.
+    
     var movement_params := overall_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
     
@@ -170,12 +172,15 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
 static func _calculate_min_speed_velocity_end_x(horizontal_movement_sign_end: int, \
         displacement: float, v_end_min: float, v_end_max: float, v_start: float, \
         acceleration: float, duration: float, should_accelerate_at_start: bool) -> float:
+    # FIXME: ------------ Refactor to support accelerating in the middle of the step.
+    
     if displacement == 0:
         # If we don't need to move horizontally at all, then let's just use the start velocity with
         # the minimum possible speed. This could generate some false negatives, but such scenarios
         # seem unlikely.
         return v_end_min if horizontal_movement_sign_end > 0 else v_end_max
     
+    # FIXME: --------------- Remove this statement if we do end up supporting should_accelerate_in_mid.
     # Given the actual v_start for this step, there is no longer a range of possible end
     # velocities; instead there is only one possible value. This is because acceleration is fixed
     # and applied strictly at one end of the step. If acceleration could be applied at any mid-time

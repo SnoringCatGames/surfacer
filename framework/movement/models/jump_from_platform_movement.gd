@@ -142,14 +142,40 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
+# #########
 # >>>>> DO THIS NOW:
-# - Debug the current problem:
-#   - For some reason, calculate_time_for_passing_through_constraint won't consider the top-right
-#     constraint valid with the destination jump height....
-#   - Is it because of the _slight_ increased height from the constraint offset?
-#     - Yes. I confirmed that subtracting the offset puts the top-right constraint in reach.
-#   - Then why doesn't this succeed with increasing jump height during backtracking...
-#   - 
+# - (just finished flipping logic to calculate min/max x-velocity based on following constraint (with exception for destination))
+# - Try running things. Debug anything if possible. The only errors I should see should relate to the following.
+# - Fix calculate_horizontal_step and _calculate_min_speed_velocity_end_x to support accelerating
+#   in the middle of the step.
+# - Try running things. Debug anything if possible.
+# - Update _calculate_time_to_reach_destination_from_new_constraint to use smarter min/max
+#   x-velocity (somehow...).
+# - Try running things. Debug anything if possible.
+# #########
+# - More context:...
+# >>- Try to update min/max x-velocity calcs and allowing steps to have 3 parts (start and end in
+#   the middle) at the same time? Or is it just as easy to do separately?
+#   - Start with _calculate_min_and_max_x_velocity_at_start_of_interval.
+#   - More context...:
+#     - In recursion without backtracking, when updating neighbor constraints:
+#       - After this update (for top-right constraint), next constraint (destination) is not
+#         valid.
+#       >- 1) Ah... Is that because min/max velocities are based off the wrong neighbor?
+#         - First, try fixing this; then, try fixing the following issues if it's still broken.
+#         >>- Probably need to refactor how min/max is calculated/assigned in
+#           update_constraint...
+#       >- 3) Update _calculate_time_to_reach_destination_from_new_constraint to use smarter
+#         min/max x-velocity? max_speed will probably generate too many false negatives for
+#         steps.
+#       >- 2) :( Hmmm... Also, another, deeper problem: We _must_ update steps to use three
+#         parts: constart v at start, constant a in mid, constrant v at end.
+#         - This is because with given duration/displacement/v-start/side-for-acc, there is only
+#           a single possible v-end, and this v-end is possibly not going to fit within the
+#           needed min/max range.
+#         - Figure out how likely this _actually_ is to be a problem.
+# #########
+# 
 # - Should we somehow ensure that jump height is always bumped up at least enough to cover the
 #   extra distance of constraint offsets? 
 #   - Since jumping up to a destination, around the other edge of the platform (which has the

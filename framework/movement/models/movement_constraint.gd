@@ -28,6 +28,10 @@ var passing_vertically: bool
 
 var should_stay_on_min_side: bool
 
+var previous_constraint: MovementConstraint
+
+var next_constraint: MovementConstraint
+
 # The sign of the horizontal movement when passing through this constraint. This is primarily
 # calculated according to the surface-side and whether the constraint is on the min or max side of
 # the surface.
@@ -79,8 +83,11 @@ var is_valid := false
 var replaced_a_fake := false
 
 func _init(surface: Surface, position: Vector2, passing_vertically: bool, \
-        should_stay_on_min_side: bool) -> void:
+        should_stay_on_min_side: bool, previous_constraint: MovementConstraint, \
+        next_constraint: MovementConstraint) -> void:
     self.surface = surface
     self.position = position
     self.passing_vertically = passing_vertically
     self.should_stay_on_min_side = should_stay_on_min_side
+    self.previous_constraint = previous_constraint
+    self.next_constraint = next_constraint

@@ -94,9 +94,9 @@ The `Surfacer` framework uses a procedural approach to calculate trajectories an
 for movement between surfaces. The algorithms used rely heavily on the classic [one-dimensional
 equations of motion for constant acceleration](https://physics.info/motion-equations/).
 
-A machine-learning-based approach is almost certainly the right way to solve this general problem.
-However, since I was dumb enough to implement a procedural approach, one perk is that it's easy to
-modify to perform better for any given edge-case.
+A machine-learning-based approach would probably be a better way to solve this general problem.
+However, one perk of a procedural approach is that it's relatively easy to understand how it works
+and to modify it to perform better for any given edge-case.
 
 #### The high-level steps
 
@@ -110,6 +110,8 @@ modify to perform better for any given edge-case.
 
 - We treat horizontal and vertical motion as independent to each other. This greatly simplifies our
   calculations.
+  - We calculate vertical motion up-front, and use this to determine times for each step and
+    constraint of the motion. Knowing these times makes the horizontal min/max calculations easier.
 - We have a broad-phase check to eliminate possible surfaces that are obviously out of reach.
   - TODO: describe it
 - We record a set of all Surfaces that have been collided with during the overall edge-calculation traversal.
@@ -191,15 +193,16 @@ For convenience, this is checked in the with rest of the Surfacer framework.
 - The iteration...
   - Create the origin and destination constraints.
   - Create the vertical step (base some state off of origin and destination constraints).
+    - Calculating the vertical step up-front, enables us to determine the times for each constraint and step in the movement. This in turn, makes horizontal calculations (especially relating to min/max velocity) easier.
   - Try to calculate a movement trajectory from the start constraint to the end constraint.
   - If the end constraint is out of reach, return null.
   - If the movement constraint did not collide with any intermediate surfaces, return the valid movement.
   - Else, if there was a collision:
     - Calculate new intermediate constraints along either edge of the collided surface.
     - For each of these new constraints:
-      - Calculate the time for passing through the constraint.
-      - Calculate the direction of movement through the constraint.
-      - Calculate the min and max possible x-velocity when the movement passes through this constraint (this is based off of the actual x-velocity from the previous constraint, as well as the time and distance between constraints).
+      - Calculate the time for passing through the constraint (using vertical step state).
+      - Calculate the direction of movement through the constraint (according to the direction of travel from the previous constraint or according to the direction of the surface).
+      - Calculate the min and max possible x-velocity when the movement passes through this constraint (this is based off of the min and max x-velocity from the next constraint, as well as the time and distance from the current constraint to the next constraint).
       - Calculate the actual x-velocity for movement through the constraint (aka, the step-start x-velocity for the corresponding movement step).
 - When backtracking on jump height:
   - The destination constraint is first updated to support a new jump height that would allow for a previously-out-of-reach intermediate constraint to also be reached.
@@ -232,3 +235,28 @@ For convenience, this is checked in the with rest of the Surfacer framework.
       straight from the origin to the second constraint.
     - Problem 2: With the current plan-of-attack with this design, we would be forced
       to be going leftward when we pass through the first constraint.
+
+#### How horizontal instructions are calculated
+
+- Start by calculating origin and destination constraints.
+- Origin min, max, and actual x-velocity are all zero.
+- Destination min and max are assigned according to how acceleration can be applied during the step (e.g., at the start or at the end of the interval).
+- Then, during step calculation traversal, when a new constraint is created, its min and max x-velocity are assigned according to both the min and max x-velocity of the following constraint and the actual displacement and duration of the step from the new constraint to the next constraint.
+- Constraints are calculated with pre-order tree traversal.
+  - This poses a small problem:
+    - The calculation of a constraint depends on the accuracy of the min/max x-velocity of it's next constraint.
+    - However, the min/max x-velocity of the next constraint could need to be updated if it in turn has a new next constraint later on.
+    - Additionally, a new constraint could be created later on that would become the new next constraint instead of the old next constraint.
+    - To ameliorate this problem, everytime a new constraint is created, we update its immediate neighbor constraints.
+    - These updates do not solve all cases, since we may in turn need to update the min/max x-velocities and movement sign for all other constraints. And these updates could then result in the addition/removal of other intermediate constraints. But we have found that these two updates are enough for most cases.
+- Then, when a new step is calculated, the actual x-velocity of the end constraint is assigned to have the minimum-possible speed that is reachable from the min/max x-velocity of the start constraint.
+- Steps are calculated with in-order tree traversal (i.e., in the same order they'd be executed when moving from origin to destination).
+
+#### Fake constraints
+
+- When calcuting steps to navigate around a collision with a ceiling or floor surface, sometimes one of the two possible constraints is what we call "fake".
+- A fake constraint corresponds to the left side of the floor/ceiling surface when movement from the previous constraint is rightward (or to the right side when movement is leftward).
+- In this case, movement will need to go around both the floor/ceiling as well as its adjacent wall surface.
+- The final movement trajectory should not end-up moving through the fake constraint.
+- The actual constraint that the final movement should move through, is instead the "real" constraint that cooresponds to the far edge of this adjacent wall surface.
+- So, when we find a fake constraint, we immediately replace it with its adjacent real constraint.

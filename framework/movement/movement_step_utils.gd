@@ -76,8 +76,9 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
     # surface.
     var constraints := MovementConstraintUtils.calculate_constraints_around_surface( \
             overall_calc_params.movement_params, vertical_step, \
-            step_calc_params.start_constraint, overall_calc_params.origin_constraint, \
-            collision.surface, overall_calc_params.constraint_offset)
+            step_calc_params.start_constraint, step_calc_params.end_constraint, \
+            overall_calc_params.origin_constraint, collision.surface, \
+            overall_calc_params.constraint_offset)
     
     # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := calculate_steps_from_constraint_without_backtracking_on_height( \
@@ -141,26 +142,10 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         # FIXME: LEFT OFF HERE: A: Verify this statement.
         
         # Update the previous and next constraints, to account for this new intermediate
-        # constraint. These updates are not comprehensive, since we may in turn need to update the
+        # constraint. These updates do not solve all cases, since we may in turn need to update the
         # min/max/actual x-velocities and movement sign for all other constraints. And these
         # updates could then result in the addition/removal of other intermediate constraints.
         # But we have found that these two updates are enough for most cases.
-        # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
-        # - After this update (for top-right constraint), next constraint (destination) is not
-        #   valid.
-        # >- 1) Ah... Is that because min/max velocities are based off the wrong neighbor?
-        #   - First, try fixing this; then, try fixing the following issues if it's still broken.
-        #   >>- Probably need to refactor how min/max is calculated/assigned in
-        #     update_constraint...
-        # >- 3) Update _calculate_time_to_reach_destination_from_new_constraint to use smarter
-        #   min/max x-velocity? max_speed will probably generate too many false negatives for
-        #   steps.
-        # >- 2) :( Hmmm... Also, another, deeper problem: We _must_ update steps to use three
-        #   parts: constart v at start, constant a in mid, constrant v at end.
-        #   - This is because with given duration/displacement/v-start/side-for-acc, there is only
-        #     a single possible v-end, and this v-end is possibly not going to fit within the
-        #     needed min/max range.
-        #   - Figure out how likely this _actually_ is to be a problem.
         MovementConstraintUtils.update_neighbors_for_new_constraint(constraint, \
                 previous_constraint_copy, next_constraint_copy, overall_calc_params, \
                 vertical_step)
@@ -234,7 +219,6 @@ static func calculate_steps_from_constraint_with_backtracking_on_height( \
         # Update the destination constraint to support a (possibly) increased jump height, which
         # would enable movement through this new intermediate constraint.
         MovementConstraintUtils.update_constraint(destination_copy, \
-                overall_calc_params.origin_constraint, null, \
                 overall_calc_params.origin_constraint, overall_calc_params.movement_params, \
                 step_calc_params.vertical_step.velocity_step_start, true, \
                 step_calc_params.vertical_step, constraint.position)
