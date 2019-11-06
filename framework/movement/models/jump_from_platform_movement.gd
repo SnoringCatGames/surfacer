@@ -144,10 +144,7 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # #########
 # >>>>> DO THIS NOW:
-# - (just finished flipping logic to calculate min/max x-velocity based on following constraint (with exception for destination))
-# - Try running things. Debug anything if possible. The only errors I should see should relate to the following.
-# - Fix calculate_horizontal_step and _calculate_min_speed_velocity_end_x to support accelerating
-#   in the middle of the step.
+# - (just finished flipping logic to calculate min/max x-velocity based on following constraint (with exception for destination), and adding support for accelerating in middle of step)
 # - Try running things. Debug anything if possible.
 # - Update _calculate_time_to_reach_destination_from_new_constraint to use smarter min/max
 #   x-velocity (somehow...).

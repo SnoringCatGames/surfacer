@@ -8,8 +8,6 @@ const MIN_MAX_VELOCITY_X_MARGIN := MovementConstraintUtils.MIN_MAX_VELOCITY_X_OF
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, \
         overall_calc_params: MovementCalcOverallParams) -> MovementCalcStep:
-    # FIXME: ------------ Refactor to support accelerating in the middle of the step.
-    
     var movement_params := overall_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
     
@@ -29,102 +27,52 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
 #    if position_step_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
 #        print("yo")
     
-    ### Calculate the velocity_start_x, the direction of acceleration, and whether we should
-    ### accelerate at the start of the step or at the end of the step.
+    ### Calculate the end x-velocity, the direction of acceleration, acceleration start time, and
+    ### acceleration end time.
     
-    var possible_horizontal_acceleration_signs: Array
-    var horizontal_acceleration_sign: int
-    var acceleration: float
-    var velocity_end_x: float
-    var should_accelerate_at_start: bool
+    # There's no need to add an epsilon offset here, since the offset was added when calculating
+    # the min/max in the first place.
+    var velocity_end_x := 0.0 if \
+            end_constraint.min_velocity_x <= 0 and end_constraint.max_velocity_x >= 0 else \
+            end_constraint.min_velocity_x if \
+            abs(end_constraint.min_velocity_x) < abs(end_constraint.max_velocity_x) else \
+            end_constraint.max_velocity_x
     
-    if end_constraint.horizontal_movement_sign != start_constraint.horizontal_movement_sign:
-        # If the start and end velocities are in opposition horizontal directions, then there is
-        # only one possible acceleration direction.
-        possible_horizontal_acceleration_signs = [end_constraint.horizontal_movement_sign]
-    else:
-        # If the start and end velocities are in the same horizontal direction, then it's possible
-        # for the acceleration to be in either direction.
-        
-        # Since we generally want to try to minimize movement (and minimize the speed at the start
-        # of the step), we first attempt the acceleration direction that corresponds to that min
-        # speed.
-        var min_speed_x_v_end := end_constraint.min_velocity_x if \
-                end_constraint.horizontal_movement_sign > 0 else \
-                end_constraint.max_velocity_x
-        
-        # Determine acceleration direction.
-        var velocity_x_change := min_speed_x_v_end - velocity_start_x
-        if velocity_x_change > 0:
-            possible_horizontal_acceleration_signs = [1, -1]
-        elif velocity_x_change < 0:
-            possible_horizontal_acceleration_signs = [-1, 1]
-        else:
-            possible_horizontal_acceleration_signs = [0]
+    var horizontal_acceleration_sign := -1 if velocity_end_x - velocity_start_x < 0 else 1
+    var acceleration := \
+            movement_params.in_air_horizontal_acceleration * horizontal_acceleration_sign
     
-    # First, try with the acceleration in one direction, then try the other.
-    for sign_multiplier in possible_horizontal_acceleration_signs:
-        acceleration = movement_params.in_air_horizontal_acceleration * sign_multiplier
-        
-        # First, try accelerating at the start of the step, then at the end.
-        for try_accelerate_at_start in [true, false]:
-            
-            # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-            if step_calc_params.debug_state.index == 8 and sign_multiplier == -1 and !try_accelerate_at_start:
-                print("break")
-            
-            velocity_end_x = _calculate_min_speed_velocity_end_x( \
-                    end_constraint.horizontal_movement_sign, displacement.x, \
-                    end_constraint.min_velocity_x, end_constraint.max_velocity_x, \
-                    velocity_start_x, acceleration, step_duration, try_accelerate_at_start)
-            
-            if velocity_end_x != INF:
-                # We found a valid start velocity.
-                should_accelerate_at_start = try_accelerate_at_start
-                break
-        
-        if velocity_end_x != INF:
-            # We found a valid start velocity with acceleration in this direction.
-            horizontal_acceleration_sign = sign_multiplier
-            break
+    var acceleration_start_and_end_time := _calculate_acceleration_start_and_end_time( \
+            displacement.x, step_duration, velocity_start_x, velocity_end_x, acceleration)
+    var time_instruction_start: float = acceleration_start_and_end_time[0]
+    var time_instruction_end: float = acceleration_start_and_end_time[1]
     
-    if velocity_end_x == INF:
+    if acceleration_start_and_end_time.empty():
         # There is no start velocity that can reach the target end position/velocity/time.
+        # This should never happen, since we should have failed earlier during constraint
+        # calculations.
+        Utils.error()
         return null
     
     ### Calculate other state for step/instruction start/end.
     
+    var duration_during_initial_coast := time_instruction_start - time_step_start
+    var duration_during_horizontal_acceleration := time_instruction_end - time_instruction_start
+    
     # From a basic equation of motion:
-    #     v = v_0 + a*t
-    var duration_for_horizontal_acceleration := (velocity_end_x - velocity_start_x) / acceleration
-    assert(step_duration >= duration_for_horizontal_acceleration)
-    var duration_for_horizontal_coasting := step_duration - duration_for_horizontal_acceleration
+    #     s = s_0 + v_0*t
+    var displacement_x_during_initial_coast := \
+            velocity_start_x * duration_during_horizontal_acceleration
+    # From a basic equation of motion:
+    #     s = s_0 + v_0*t + 1/2*a*t^2
+    var displacement_x_during_acceleration := \
+            velocity_start_x * duration_during_horizontal_acceleration + \
+            0.5 * acceleration * duration_during_horizontal_acceleration * \
+            duration_during_horizontal_acceleration
     
-    var time_instruction_start: float
-    var time_instruction_end: float
-    var position_instruction_start_x: float
-    var position_instruction_end_x: float
-    
-    if should_accelerate_at_start:
-        time_instruction_start = time_step_start
-        time_instruction_end = time_step_start + duration_for_horizontal_acceleration
-        
-        position_instruction_start_x = position_step_start.x
-        # From a basic equation of motion:
-        #     s = s_0 + v_0*t + 1/2*a*t^2
-        position_instruction_end_x = position_step_start.x + \
-                velocity_start_x * duration_for_horizontal_acceleration + \
-                0.5 * acceleration * \
-                duration_for_horizontal_acceleration * duration_for_horizontal_acceleration
-    else:
-        time_instruction_start = time_step_end - duration_for_horizontal_acceleration
-        time_instruction_end = time_step_end
-        
-        # From a basic equation of motion:
-        #     s = s_0 + v_0*t
-        position_instruction_start_x = \
-                position_step_start.x + velocity_start_x * duration_for_horizontal_coasting
-        position_instruction_end_x = position_end.x
+    var position_instruction_start_x := position_step_start.x + displacement_x_during_initial_coast
+    var position_instruction_end_x := \
+            position_instruction_start_x + displacement_x_during_acceleration
     
     var step_start_state := \
             VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
@@ -141,7 +89,7 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     
     assert(Geometry.are_floats_equal_with_epsilon(step_end_state[0], position_end.y, 0.0001))
     assert(Geometry.are_floats_equal_with_epsilon(step_start_state[0], position_step_start.y, 0.0001))
-
+    
     ### Assign the step properties.
     
     var step := MovementCalcStep.new()
@@ -167,149 +115,45 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     
     return step
 
-# Calculate the end velocity with the min possible speed from the given displacement, start 
-# velocity, and time.
-static func _calculate_min_speed_velocity_end_x(horizontal_movement_sign_end: int, \
-        displacement: float, v_end_min: float, v_end_max: float, v_start: float, \
-        acceleration: float, duration: float, should_accelerate_at_start: bool) -> float:
-    # FIXME: ------------ Refactor to support accelerating in the middle of the step.
+# Calculate the times that accelaration starts and stops in order for movement to match the given parameters.
+# 
+# This assumes a three-part movement profile:
+# 1.  Constant velocity
+# 2.  Constant acceleration
+# 3.  Constant velocity
+static func _calculate_acceleration_start_and_end_time(displacement: float, duration: float, \
+        velocity_start: float, velocity_end: float, acceleration: float) -> Array:
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    var duration_during_acceleration := (velocity_end - velocity_start) / acceleration
     
-    if displacement == 0:
-        # If we don't need to move horizontally at all, then let's just use the start velocity with
-        # the minimum possible speed. This could generate some false negatives, but such scenarios
-        # seem unlikely.
-        return v_end_min if horizontal_movement_sign_end > 0 else v_end_max
+    # Derivation:
+    # - There are three parts:
+    #   - Part 1: Constant velocity at v_0 (from s_0 to s_1).
+    #   - Part 1: Constant acceleration from v_0 to v_1 (and from s_1 to s_2).
+    #   - Part 2: Constant velocity at v_1 (from s_2 to s_3).
+    # - Start with basic equations of motion:
+    #   - s_1 = s_0 + v_0*t_0
+    #   - v_1 = v_0 + a*t_1
+    #   - s_3 = s_2 + v_1*t_2
+    #   - v_1^2 = v_0^2 + 2*a*(s_2 - s_1)
+    #   - t_total = t_0 + t_1 + t_2
+    # - Do some algebra...
+    #   - t_0 = ((s_3 - s_0) + v_1*(t_1 - t_total) + (v_0^2 - v_1^2)/2/a) / (v_0 - v_1)
+    var duration_during_initial_coast := \
+            (displacement + velocity_end * (duration_during_acceleration - duration) + \
+            (velocity_start * velocity_start - velocity_end * velocity_end) / 2 / acceleration) / \
+            (velocity_start - velocity_end)
     
-    # FIXME: --------------- Remove this statement if we do end up supporting should_accelerate_in_mid.
-    # Given the actual v_start for this step, there is no longer a range of possible end
-    # velocities; instead there is only one possible value. This is because acceleration is fixed
-    # and applied strictly at one end of the step. If acceleration could be applied at any mid-time
-    # in the step or if acceleration could be attenuated, then we would have a range of possible
-    # start velocities to choose from. However, we don't need that range of options.
+    var time_acceleration_start := duration_during_initial_coast
+    var time_acceleration_end := time_acceleration_start + duration_during_acceleration
     
-    var a: float
-    var b: float
-    var c: float
-
-    if should_accelerate_at_start:
-        # Try accelerating at the start of the step.
-        # 
-        # Derivation:
-        # - There are two parts:
-        #   - Part 1: Constant acceleration from v_0 to v_1.
-        #   - Part 2: Coast at v_1 until we reach the destination.
-        #   - (The shorter part 1 is, the sooner we reach v_1 and the further we travel during
-        #     part 2. This then means that we will need to have a slower v_0 and travel less far
-        #     during part 1.)
-        # - Start with basic equations of motion:
-        #   - v_1 = v_0 + a*t_0
-        #   - s_2 = s_1 + v_1*t_1
-        #   - v_1^2 = v_0^2 + 2*a*(s_1 - s_0)
-        #   - t_total = t_0 + t_1
-        # - Do some algebra...
-        #   - 0 = 2*a*(s_2 - s_0) + v_0^2 - 2*(v_0 + a*t_total)*v_1 + v_1^2
-        # - Apply quadratic formula to solve for v_1.
-        a = 1
-        b = -2 * (v_start + acceleration * duration)
-        c = 2 * acceleration * displacement + v_start * v_start
-    else:
-        # Try accelerating at the end of the step.
-        # 
-        # Derivation:
-        # - There are two parts:
-        #   - Part 1: Coast at v_0 until we need to start accelerating.
-        #   - Part 2: Constant acceleration from v_0 to v_1; we reach the destination when we reach
-        #     v_1.
-        #   - (The longer part 1 is, the more we can accelerate during part 2, and the bigger the
-        #     change to v_1 can be.)
-        # - Start with basic equations of motion:
-        #   - s_1 = s_0 + v_0*t_0
-        #   - v_1 = v_0 + a*t_1
-        #   - v_1^2 = v_0^2 + 2*a*(s_2 - s_1)
-        #   - t_total = t_0 + t_1
-        # - Do some algebra...
-        #   - 0 = 2*a*(s_2 - s_0 - v_0*t_total) - v_0^2 + 2*v_0*v_1 - v_1^2
-        # - Apply quadratic formula to solve for v_1.
-        a = -1
-        b = 2 * v_start
-        c = 2 * acceleration * (displacement - v_start * duration) - v_start * v_start
-
-    var discriminant := b * b - 4 * a * c
-    if discriminant < 0:
-        # There is no end velocity that can satisfy these parameters.
-        return INF
-
-    var discriminant_sqrt := sqrt(discriminant)
-    var result_1 := (-b + discriminant_sqrt) / 2.0 / a
-    var result_2 := (-b - discriminant_sqrt) / 2.0 / a
+    if duration_during_acceleration < 0 or time_acceleration_end > duration:
+        # Something went wrong.
+        Utils.error()
+        return []
     
-    var min_speed_v_1_to_reach_target: float
-    if horizontal_movement_sign_end > 0:
-        # Choose the slowest result that is in the correct direction.
-        if result_1 < 0 and result_2 < 0:
-            # Movement must be in the expected direction, so neither result is a valid end
-            # velocity.
-            return INF
-        elif result_1 < 0:
-            min_speed_v_1_to_reach_target = result_2
-        elif result_2 < 0:
-            min_speed_v_1_to_reach_target = result_1
-        else:
-            min_speed_v_1_to_reach_target = min(result_1, result_2)
-        
-        # Correct for round-off error around the min and max boundaries.
-        if min_speed_v_1_to_reach_target < v_end_min and \
-                min_speed_v_1_to_reach_target > v_end_min - MIN_MAX_VELOCITY_X_MARGIN:
-            min_speed_v_1_to_reach_target = v_end_min
-        if min_speed_v_1_to_reach_target > v_end_max and \
-                min_speed_v_1_to_reach_target < v_end_max + MIN_MAX_VELOCITY_X_MARGIN:
-            min_speed_v_1_to_reach_target = v_end_max
-        
-        if min_speed_v_1_to_reach_target > v_end_max:
-            # We cannot end this step with a velocity in the required range.
-            return INF
-        elif min_speed_v_1_to_reach_target < v_end_min:
-            # The calculated end velocity is less than the min possible for this step.
-            # FIXME: Confirm that this case is actually always an error.
-            Utils.error()
-            return INF
-        else:
-            # The calculated velocity is somewhere within the acceptable min/max range.
-            return min_speed_v_1_to_reach_target
-    else: 
-        # horizontal_movement_sign_end < 0
-        
-        # Choose the slowest result that is in the correct direction.
-        if result_1 > 0 and result_2 > 0:
-            # Movement must be in the expected direction, so neither result is a valid end
-            # velocity.
-            return INF
-        elif result_1 > 0:
-            min_speed_v_1_to_reach_target = result_2
-        elif result_2 > 0:
-            min_speed_v_1_to_reach_target = result_1
-        else:
-            min_speed_v_1_to_reach_target = max(result_1, result_2)
-        
-        # Correct for round-off error around the min and max boundaries.
-        if min_speed_v_1_to_reach_target < v_end_min and \
-                min_speed_v_1_to_reach_target > v_end_min - MIN_MAX_VELOCITY_X_MARGIN:
-            min_speed_v_1_to_reach_target = v_end_min
-        if min_speed_v_1_to_reach_target > v_end_max and \
-                min_speed_v_1_to_reach_target < v_end_max + MIN_MAX_VELOCITY_X_MARGIN:
-            min_speed_v_1_to_reach_target = v_end_max
-        
-        if min_speed_v_1_to_reach_target < v_end_min:
-            # We cannot end this step with a velocity in the required range.
-            return INF
-        elif min_speed_v_1_to_reach_target > v_end_max:
-            # The calculated end velocity is greater than the max possible for this.
-            # FIXME: Confirm that this case is actually always an error.
-            Utils.error()
-            return INF
-        else:
-            # The calculated velocity is somewhere within the acceptable min/max range.
-            return min_speed_v_1_to_reach_target
+    return [time_acceleration_start, time_acceleration_end]
 
 # Calculates the horizontal component of position and velocity according to the given horizontal
 # movement state and the given time. These are then returned in a Vector2: x is position and y is
