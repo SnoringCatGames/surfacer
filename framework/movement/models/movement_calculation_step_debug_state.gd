@@ -46,4 +46,4 @@ func _get_is_backtracking() -> bool:
     return previous_out_of_reach_constraint != null
 
 func _get_replaced_a_fake() -> bool:
-    return _step_calc_params.start_constraint.replaced_a_fake
+    return _step_calc_params.end_constraint.replaced_a_fake

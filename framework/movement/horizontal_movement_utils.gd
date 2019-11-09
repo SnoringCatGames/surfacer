@@ -123,11 +123,17 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
 # 3.  Constant velocity
 static func _calculate_acceleration_start_and_end_time(displacement: float, duration: float, \
         velocity_start: float, velocity_end: float, acceleration: float) -> Array:
+    var velocity_change := velocity_start - velocity_end
+    
+    if velocity_change == 0:
+        # We don't need to accelerate at all.
+        return [0.0, 0.0]
+    
     # From a basic equation of motion:
     #     v = v_0 + a*t
     var duration_during_acceleration := (velocity_end - velocity_start) / acceleration
     
-    # Derivation:
+    ## Derivation:
     # - There are three parts:
     #   - Part 1: Constant velocity at v_0 (from s_0 to s_1).
     #   - Part 1: Constant acceleration from v_0 to v_1 (and from s_1 to s_2).
@@ -143,7 +149,7 @@ static func _calculate_acceleration_start_and_end_time(displacement: float, dura
     var duration_during_initial_coast := \
             (displacement + velocity_end * (duration_during_acceleration - duration) + \
             (velocity_start * velocity_start - velocity_end * velocity_end) / 2 / acceleration) / \
-            (velocity_start - velocity_end)
+            velocity_change
     
     var time_acceleration_start := duration_during_initial_coast
     var time_acceleration_end := time_acceleration_start + duration_during_acceleration

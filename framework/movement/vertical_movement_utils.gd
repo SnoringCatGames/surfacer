@@ -332,14 +332,12 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
                     #        supported upward velocity at this point, or whether it will be forcing
                     #        downward?
                     
+                    # We assume that we will always use upward velocity when passing over a
+                    # wall.
                     if target_height > position_instruction_end_y:
-                        # We assume that we will always use upward velocity when passing over a
-                        # wall.
                         # Jump reaches the position before releasing the jump button.
                         is_position_before_instruction_end = true
                     else:
-                        # We assume that we will always use downward velocity when passing under a
-                        # wall.
                         # Jump reaches the position after releasing the jump button.
                         is_position_before_instruction_end = false
                 else:

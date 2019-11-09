@@ -143,40 +143,29 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
 # #########
-# >>>>> DO THIS NOW:
-# - (just finished flipping logic to calculate min/max x-velocity based on following constraint (with exception for destination), and adding support for accelerating in middle of step)
-# - Try running things. Debug anything if possible.
-# - Update _calculate_time_to_reach_destination_from_new_constraint to use smarter min/max
-#   x-velocity (somehow...).
-# - Try running things. Debug anything if possible.
-# #########
-# - More context:...
-# >>- Try to update min/max x-velocity calcs and allowing steps to have 3 parts (start and end in
-#   the middle) at the same time? Or is it just as easy to do separately?
-#   - Start with _calculate_min_and_max_x_velocity_at_start_of_interval.
-#   - More context...:
-#     - In recursion without backtracking, when updating neighbor constraints:
-#       - After this update (for top-right constraint), next constraint (destination) is not
-#         valid.
-#       >- 1) Ah... Is that because min/max velocities are based off the wrong neighbor?
-#         - First, try fixing this; then, try fixing the following issues if it's still broken.
-#         >>- Probably need to refactor how min/max is calculated/assigned in
-#           update_constraint...
-#       >- 3) Update _calculate_time_to_reach_destination_from_new_constraint to use smarter
-#         min/max x-velocity? max_speed will probably generate too many false negatives for
-#         steps.
-#       >- 2) :( Hmmm... Also, another, deeper problem: We _must_ update steps to use three
-#         parts: constart v at start, constant a in mid, constrant v at end.
-#         - This is because with given duration/displacement/v-start/side-for-acc, there is only
-#           a single possible v-end, and this v-end is possibly not going to fit within the
-#           needed min/max range.
-#         - Figure out how likely this _actually_ is to be a problem.
-# #########
+# >>>>- We need to update the vertical step according to the updated destination time_passing_through from time_to_get_to_destination_from_constraint.
+# - There is a problem with my approach for using time_to_get_to_destination_from_constraint.
+#   time-to-get-to-intermediate-constraint-from-constraint could matter a lot too. But maybe this
+#   is infrequent enough that I don't care? At least document this limitation (in code and README).
 # 
-# - Should we somehow ensure that jump height is always bumped up at least enough to cover the
+# >>>- Add the logic to save the constraint copies when traversing successfully.
+# >>- Add logic to also first sort constraints by is_valid.
+# >>- Additional_high_constraint_position breakpoint is happening three times??
+#   - Should I move the fail-because-we've-been-here-before logic from looking at steps+surfaces+heights to here?
+# >>- Debugging tree view annotations:
+# - Not enough info into recursion without backtracking, which is the main case we care about? constraints are being marked as invalid, so the traversal stops early.
+# >> ALSO, can I render something in the annotations (or in the console output) like the constraint
+#   position or the surface end positions, in order to make it easier to quickly set a breakpoint
+#   to match the corresponding step?
+# > Debug, debug, debug...
+# 
+# 
+# 
+# >- Should we somehow ensure that jump height is always bumped up at least enough to cover the
 #   extra distance of constraint offsets? 
 #   - Since jumping up to a destination, around the other edge of the platform (which has the
 #     constraint offset), seems like a common use-case, this would probably be a useful optimization.
+#   - [This is important, since the first attempt at getting to the top-right constraint always fails, since it requires a _slightly_ higher jump, and we want it to instead succeed.]
 # - Update calculate_steps_from_constraint_without_backtracking_on_height to also update original
 #   prev/next constraints when recursion was valid.
 # - In _calculate_time_to_reach_destination_from_new_constraint, replace the hard-coded usage of 

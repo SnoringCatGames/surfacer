@@ -6,6 +6,9 @@ const MovementConstraint := preload("res://framework/movement/models/movement_co
 # FIXME: D: Tweak this.
 const MIN_MAX_VELOCITY_X_OFFSET := 0.01
 
+# FIXME: A: Replace the hard-coded usage of a max-speed ratio with a smarter x-velocity.
+const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULTIPLIER := 0.5
+
 static func create_terminal_constraints(origin_surface: Surface, origin_position: Vector2, \
         destination_surface: Surface, destination_position: Vector2, \
         movement_params: MovementParams, velocity_start: Vector2, \
@@ -40,7 +43,8 @@ static func create_terminal_constraints(origin_surface: Surface, origin_position
 static func calculate_constraints_around_surface(movement_params: MovementParams, \
         vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
         next_constraint: MovementConstraint, origin_constraint: MovementConstraint, \
-        colliding_surface: Surface, constraint_offset: Vector2) -> Array:
+        destination_constraint: MovementConstraint, colliding_surface: Surface, \
+        constraint_offset: Vector2) -> Array:
     var passing_vertically: bool
     var position_a: Vector2
     var position_b: Vector2
@@ -80,33 +84,71 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
             position_b = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
     
-    var constraint_a := MovementConstraint.new(colliding_surface, position_a, passing_vertically, \
-            true, previous_constraint, next_constraint)
-    var constraint_b := MovementConstraint.new(colliding_surface, position_b, passing_vertically, \
-            false, previous_constraint, next_constraint)
+    var constraint_a_original := MovementConstraint.new(colliding_surface, position_a, \
+            passing_vertically, true, previous_constraint, next_constraint)
+    var constraint_b_original := MovementConstraint.new(colliding_surface, position_b, \
+            passing_vertically, false, previous_constraint, next_constraint)
     
     # Calculate and record state for the constraints.
-    update_constraint(constraint_a, origin_constraint, movement_params, \
+    update_constraint(constraint_a_original, origin_constraint, movement_params, \
             vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, vertical_step, \
             Vector2.INF)
-    update_constraint(constraint_b, origin_constraint, movement_params, \
+    update_constraint(constraint_b_original, origin_constraint, movement_params, \
             vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, vertical_step, \
             Vector2.INF)
     
     # If either constraint is fake, then replace it with its real neighbor, and re-calculate state
     # for the neighbor.
-    if constraint_a.is_fake:
-        constraint_a = _calculate_replacement_for_fake_constraint(constraint_a, constraint_offset)
-        update_constraint(constraint_a, origin_constraint, movement_params, \
+    var constraint_a_final := constraint_a_original
+    var constraint_b_final := constraint_b_original
+    if constraint_a_original.is_fake:
+        constraint_a_final = _calculate_replacement_for_fake_constraint(constraint_a_original, \
+                constraint_offset)
+        update_constraint(constraint_a_final, origin_constraint, movement_params, \
                 vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
                 vertical_step, Vector2.INF)
-    if constraint_b.is_fake:
-        constraint_b = _calculate_replacement_for_fake_constraint(constraint_b, constraint_offset)
-        update_constraint(constraint_b, origin_constraint, movement_params, \
+    if constraint_b_original.is_fake:
+        constraint_b_final = _calculate_replacement_for_fake_constraint(constraint_b_original, \
+                constraint_offset)
+        update_constraint(constraint_b_final, origin_constraint, movement_params, \
                 vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
                 vertical_step, Vector2.INF)
     
-    return [constraint_a, constraint_b]
+    var result := []
+    
+    # Use some very basic heuristics to sort the constraints. We try to put the constraint that's
+    # most likely to be successful first.
+    if colliding_surface.side == SurfaceSide.FLOOR:
+        # When moving around a floor, prefer whichever constraint is closer to the destination.
+        # 
+        # TODO: Explain rationale.
+        if constraint_a_original.position.distance_squared_to(destination_constraint.position) < \
+                constraint_b_original.position.distance_squared_to( \
+                        destination_constraint.position):
+            result = [constraint_a_final, constraint_b_final]
+        else:
+            result = [constraint_b_final, constraint_a_final]
+    elif colliding_surface.side == SurfaceSide.CEILING:
+        # When moving around a ceiling, prefer whichever constraint is closer to the origin.
+        # 
+        # TODO: Explain rationale.
+        if constraint_a_original.position.distance_squared_to(origin_constraint.position) < \
+                constraint_b_original.position.distance_squared_to(origin_constraint.position):
+            result = [constraint_a_final, constraint_b_final]
+        else:
+            result = [constraint_b_final, constraint_a_final]
+    else:
+        # When moving around walls, prefer whichever constraint is higher.
+        # 
+        # The reasoning here is that the constraint around the bottom edge of a wall will usually
+        # require movement to use a lower jump height, which would then invalidate the rest of the
+        # movement to the destination.
+        if constraint_a_original.position.y > constraint_b_original.position.y:
+            result = [constraint_a_final, constraint_b_final]
+        else:
+            result = [constraint_b_final, constraint_a_final]
+    
+    return result
 
 # Calculates and records various state on the given constraint.
 # 
@@ -235,15 +277,29 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             # TODO: I should probably refactor these two calls, so we're doing fewer redundant
             #       calculations here.
             
-            var time_to_pass_through_constraint_ignoring_others := \
-                    VerticalMovementUtils.calculate_time_to_jump_to_constraint(movement_params, \
-                            origin_constraint.position, \
-                            constraint_position_to_calculate_jump_release_time_for, \
-                            velocity_start_origin, can_hold_jump_button_at_origin)
-            if time_to_pass_through_constraint_ignoring_others == INF:
-                # We can't reach this constraint.
-                return false
-            assert(time_to_pass_through_constraint_ignoring_others > 0.0)
+            # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+            if Geometry.are_points_equal_with_epsilon( \
+                    constraint.previous_constraint.position, \
+                    Vector2(64, -480), 10):
+                print("break")
+            
+            # If we already know the required time for reaching the destination, and we aren't
+            # performing a new backtracking step, then re-use the previously calculated time. The
+            # previous value encompasses more information that we may need to preserve, such as
+            # whether we already did some backtracking.
+            var time_to_pass_through_constraint_ignoring_others: float
+            if vertical_step != null and additional_high_constraint_position == Vector2.INF:
+                time_to_pass_through_constraint_ignoring_others = vertical_step.time_step_end
+            else:
+                time_to_pass_through_constraint_ignoring_others = \
+                        VerticalMovementUtils.calculate_time_to_jump_to_constraint(movement_params, \
+                                origin_constraint.position, \
+                                constraint_position_to_calculate_jump_release_time_for, \
+                                velocity_start_origin, can_hold_jump_button_at_origin)
+                if time_to_pass_through_constraint_ignoring_others == INF:
+                    # We can't reach this constraint.
+                    return false
+                assert(time_to_pass_through_constraint_ignoring_others > 0.0)
             
             if additional_high_constraint_position != Vector2.INF:
                 # We are backtracking to consider a new jump height.
@@ -281,6 +337,11 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             # Calculate the min and max velocity for movement through the constraint.
             var duration := time_passing_through - \
                     constraint.previous_constraint.time_passing_through
+            # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+            if Geometry.are_points_equal_with_epsilon( \
+                    constraint.previous_constraint.position, \
+                    Vector2(64, -480), 10):
+                print("break")
             var min_and_max_velocity_at_step_end := \
                     _calculate_min_and_max_x_velocity_at_end_of_interval(displacement.x, \
                             duration, constraint.previous_constraint.min_velocity_x, \
@@ -366,18 +427,17 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
 static func _calculate_time_to_reach_destination_from_new_constraint( \
         movement_params: MovementParams, new_constraint_position: Vector2, \
         destination: MovementConstraint) -> float:
-    # FIXME: LEFT OFF HERE: ----------------------------------------A:
-    # - Replace the hard-coded usage of max-speed with a smarter x-velocity.
-    
     var displacement := destination.position - new_constraint_position
     
     var velocity_x_at_new_constraint: float
     var acceleration: float
     if displacement.x > 0:
-        velocity_x_at_new_constraint = movement_params.max_horizontal_speed_default
+        velocity_x_at_new_constraint = movement_params.max_horizontal_speed_default * \
+                CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULTIPLIER
         acceleration = movement_params.in_air_horizontal_acceleration
     else:
-        velocity_x_at_new_constraint = -movement_params.max_horizontal_speed_default
+        velocity_x_at_new_constraint = -movement_params.max_horizontal_speed_default * \
+                CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULTIPLIER
         acceleration = -movement_params.in_air_horizontal_acceleration
     
     var time_to_reach_horizontal_displacement := \
@@ -881,6 +941,11 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
         max_v_0_that_can_reach_target = \
                 _calculate_v_0_with_v_1_limit(displacement, duration, v_1, acceleration, false)
         if max_v_0_that_can_reach_target == INF:
+            # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: # FIXME: -----------------
+            if true:
+                max_v_0_that_can_reach_target = \
+                        _calculate_v_0_with_v_1_limit(displacement, duration, v_1, acceleration, false)
+                print("break")
             # We cannot reach this constraint from the previous constraint.
             return []
     
@@ -1224,20 +1289,31 @@ static func _calculate_replacement_for_fake_constraint(fake_constraint: Movement
     replacement.replaced_a_fake = true
     return replacement
 
-static func copy_constraint(original: MovementConstraint) -> MovementConstraint:
-    var copy := MovementConstraint.new(original.surface, original.position, \
+static func clone_constraint(original: MovementConstraint) -> MovementConstraint:
+    var clone := MovementConstraint.new(original.surface, original.position, \
             original.passing_vertically, original.should_stay_on_min_side, \
             original.previous_constraint, original.next_constraint)
-    copy.horizontal_movement_sign = original.horizontal_movement_sign
-    copy.horizontal_movement_sign_from_displacement = \
-            original.horizontal_movement_sign_from_displacement
-    copy.time_passing_through = original.time_passing_through
-    copy.min_velocity_x = original.min_velocity_x
-    copy.max_velocity_x = original.max_velocity_x
-    copy.actual_velocity_x = original.actual_velocity_x
-    copy.is_origin = original.is_origin
-    copy.is_destination = original.is_destination
-    copy.is_fake = original.is_fake
-    copy.is_valid = original.is_valid
-    copy.replaced_a_fake = original.replaced_a_fake
-    return copy
+    copy_constraint(clone, original)
+    return clone
+
+static func copy_constraint(destination: MovementConstraint, \
+        source: MovementConstraint) -> MovementConstraint:
+    destination.surface = source.surface
+    destination.position = source.position
+    destination.passing_vertically = source.passing_vertically
+    destination.should_stay_on_min_side = source.should_stay_on_min_side
+    destination.previous_constraint = source.previous_constraint
+    destination.next_constraint = source.next_constraint
+    destination.horizontal_movement_sign = source.horizontal_movement_sign
+    destination.horizontal_movement_sign_from_displacement = \
+            source.horizontal_movement_sign_from_displacement
+    destination.time_passing_through = source.time_passing_through
+    destination.min_velocity_x = source.min_velocity_x
+    destination.max_velocity_x = source.max_velocity_x
+    destination.actual_velocity_x = source.actual_velocity_x
+    destination.is_origin = source.is_origin
+    destination.is_destination = source.is_destination
+    destination.is_fake = source.is_fake
+    destination.is_valid = source.is_valid
+    destination.replaced_a_fake = source.replaced_a_fake
+    return destination
