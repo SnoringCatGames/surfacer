@@ -114,41 +114,46 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
                 vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
                 vertical_step, Vector2.INF)
     
-    var result := []
-    
-    # Use some very basic heuristics to sort the constraints. We try to put the constraint that's
-    # most likely to be successful first.
-    if colliding_surface.side == SurfaceSide.FLOOR:
-        # When moving around a floor, prefer whichever constraint is closer to the destination.
-        # 
-        # TODO: Explain rationale.
-        if constraint_a_original.position.distance_squared_to(destination_constraint.position) < \
-                constraint_b_original.position.distance_squared_to( \
-                        destination_constraint.position):
-            result = [constraint_a_final, constraint_b_final]
-        else:
-            result = [constraint_b_final, constraint_a_final]
-    elif colliding_surface.side == SurfaceSide.CEILING:
-        # When moving around a ceiling, prefer whichever constraint is closer to the origin.
-        # 
-        # TODO: Explain rationale.
-        if constraint_a_original.position.distance_squared_to(origin_constraint.position) < \
-                constraint_b_original.position.distance_squared_to(origin_constraint.position):
-            result = [constraint_a_final, constraint_b_final]
-        else:
-            result = [constraint_b_final, constraint_a_final]
+    # Return the constraints in sorted order according to which is more likely to produce
+    # successful movement.
+    if _compare_constraints_by_more_likely_to_be_valid(constraint_a_original, constraint_b_original, \
+            constraint_a_final, constraint_b_final, destination_constraint):
+        return [constraint_a_final, constraint_b_final]
     else:
-        # When moving around walls, prefer whichever constraint is higher.
-        # 
-        # The reasoning here is that the constraint around the bottom edge of a wall will usually
-        # require movement to use a lower jump height, which would then invalidate the rest of the
-        # movement to the destination.
-        if constraint_a_original.position.y > constraint_b_original.position.y:
-            result = [constraint_a_final, constraint_b_final]
+        return [constraint_b_final, constraint_a_final]
+
+# Use some basic heuristics to sort the constraints. We try to attempt calculations for the 
+# constraint that's most likely to be successful first.
+static func _compare_constraints_by_more_likely_to_be_valid(a_original: MovementConstraint, \
+        b_original: MovementConstraint, a_final: MovementConstraint, \
+        b_final: MovementConstraint, destination: MovementConstraint) -> bool:
+    if a_final.is_valid != b_final.is_valid:
+        # Sort constraints according to whether they're valid.
+        return a_final.is_valid
+    else:
+        # Sort constraints according to position.
+        
+        var colliding_surface := a_original.surface
+        
+        if colliding_surface.side == SurfaceSide.FLOOR:
+            # When moving around a floor, prefer whichever constraint is closer to the destination.
+            # 
+            # TODO: Explain rationale.
+            return a_original.position.distance_squared_to(destination.position) <= \
+                    b_original.position.distance_squared_to(destination.position)
+        elif colliding_surface.side == SurfaceSide.CEILING:
+            # When moving around a ceiling, prefer whichever constraint is closer to the origin.
+            # 
+            # TODO: Explain rationale.
+            return a_original.position.distance_squared_to(destination.position) >= \
+                    b_original.position.distance_squared_to(destination.position)
         else:
-            result = [constraint_b_final, constraint_a_final]
-    
-    return result
+            # When moving around walls, prefer whichever constraint is higher.
+            # 
+            # The reasoning here is that the constraint around the bottom edge of a wall will usually
+            # require movement to use a lower jump height, which would then invalidate the rest of the
+            # movement to the destination.
+            return a_original.position.y >= b_original.position.y
 
 # Calculates and records various state on the given constraint.
 # 

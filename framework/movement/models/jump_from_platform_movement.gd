@@ -143,35 +143,32 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: -------------------------------------------------A
 # 
 # #########
-# >>>>- We need to update the vertical step according to the updated destination time_passing_through from time_to_get_to_destination_from_constraint.
-# - There is a problem with my approach for using time_to_get_to_destination_from_constraint.
-#   time-to-get-to-intermediate-constraint-from-constraint could matter a lot too. But maybe this
-#   is infrequent enough that I don't care? At least document this limitation (in code and README).
 # 
-# >>>- Add the logic to save the constraint copies when traversing successfully.
-# >>- Add logic to also first sort constraints by is_valid.
-# >>- Additional_high_constraint_position breakpoint is happening three times??
-#   - Should I move the fail-because-we've-been-here-before logic from looking at steps+surfaces+heights to here?
-# >>- Debugging tree view annotations:
-# - Not enough info into recursion without backtracking, which is the main case we care about? constraints are being marked as invalid, so the traversal stops early.
-# >> ALSO, can I render something in the annotations (or in the console output) like the constraint
+# - Debugging tree view annotations:
+#   - Make calculation steps dotted lines.
+#   - Add a solid line for the final valid result, if there is one.
+#   - Need to add some sort of additional rows to indicate invalid constraints that we quit early on with non-backtracking recursion.
+# 
+# - Can I render something in the annotations (or in the console output) like the constraint
 #   position or the surface end positions, in order to make it easier to quickly set a breakpoint
 #   to match the corresponding step?
-# > Debug, debug, debug...
 # 
+# - Debug, debug, debug...
 # 
+# - Additional_high_constraint_position breakpoint is happening three times??
+#   - Should I move the fail-because-we've-been-here-before logic from looking at steps+surfaces+heights to here?
 # 
-# >- Should we somehow ensure that jump height is always bumped up at least enough to cover the
+# - Should we somehow ensure that jump height is always bumped up at least enough to cover the
 #   extra distance of constraint offsets? 
 #   - Since jumping up to a destination, around the other edge of the platform (which has the
 #     constraint offset), seems like a common use-case, this would probably be a useful optimization.
 #   - [This is important, since the first attempt at getting to the top-right constraint always fails, since it requires a _slightly_ higher jump, and we want it to instead succeed.]
-# - Update calculate_steps_from_constraint_without_backtracking_on_height to also update original
-#   prev/next constraints when recursion was valid.
-# - In _calculate_time_to_reach_destination_from_new_constraint, replace the hard-coded usage of 
-#   max-speed with a smarter x-velocity.
 # 
-# >>- Add logic to ignore a constraint when the horizontal steps leading up to it would have found
+# - There is a problem with my approach for using time_to_get_to_destination_from_constraint.
+#   time-to-get-to-intermediate-constraint-from-constraint could matter a lot too. But maybe this
+#   is infrequent enough that I don't care? At least document this limitation (in code and README).
+# 
+# - Add logic to ignore a constraint when the horizontal steps leading up to it would have found
 #   another collision.
 #   - Because changing trajectory for the earlier collision is likely to invalidate the later
 #     collision.

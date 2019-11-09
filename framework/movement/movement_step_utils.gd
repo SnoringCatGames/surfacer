@@ -232,7 +232,6 @@ static func calculate_steps_from_constraint_with_backtracking_on_height( \
         
         # Update the destination constraint to support a (possibly) increased jump height, which
         # would enable movement through this new intermediate constraint.
-        # FIXME: ------------------: Set vertical step state according to destination time_passing_through.
         MovementConstraintUtils.update_constraint(destination_copy, \
                 overall_calc_params.origin_constraint, overall_calc_params.movement_params, \
                 step_calc_params.vertical_step.velocity_step_start, true, \
