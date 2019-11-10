@@ -108,8 +108,8 @@ static func draw_asterisk(canvas: CanvasItem, center: Vector2, width: float, hei
         color: Color, stroke_width: float) -> void:
     var plus_width := width
     var plus_height := height
-    var x_width := plus_width * 0.75
-    var x_height := plus_height * 0.75
+    var x_width := plus_width * 0.8
+    var x_height := plus_height * 0.8
     draw_x(canvas, center, x_width, x_height, color, stroke_width)
     draw_plus(canvas, center, plus_width, plus_height, color, stroke_width)
 

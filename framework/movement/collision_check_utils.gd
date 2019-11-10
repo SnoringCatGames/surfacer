@@ -15,7 +15,7 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     # average here.
     var previous_time: float = instructions.instructions[0].time - delta * 0.5
     var current_time := previous_time + delta
-    var duration := instructions.duration
+    var end_time := instructions.duration
     var is_pressing_left := false
     var is_pressing_right := false
     var is_pressing_jump := false
@@ -42,7 +42,7 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     var horizontal_instruction_start_positions := []
     
     # Iterate through each physics frame, checking each for a collision.
-    while current_time < duration:
+    while current_time < end_time:
         # Update position for this frame, according to the velocity from the previous frame.
         delta = Utils.PHYSICS_TIME_STEP
         displacement = velocity * delta
@@ -160,16 +160,16 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
         frame_continuous_positions.push_back(continuous_position)
     
     # Check the last frame that puts us up to end_time.
-    delta = duration - current_time
+    delta = end_time - current_time
     displacement = velocity * delta
     shape_query_params.transform = Transform2D(0.0, position)
     shape_query_params.motion = displacement
     continuous_horizontal_state = \
             HorizontalMovementUtils.calculate_horizontal_state_for_time(movement_params, \
-                    current_horizontal_step, duration)
+                    current_horizontal_step, end_time)
     continuous_vertical_state = \
             VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                    movement_params, vertical_step, duration)
+                    movement_params, vertical_step, end_time)
     continuous_position.x = continuous_horizontal_state[0]
     continuous_position.y = continuous_vertical_state[0]
     # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
@@ -318,6 +318,12 @@ static func check_continuous_horizontal_step_for_collision( \
     
     # Record the position for edge annotation debugging.
     var frame_positions := [current_position]
+    
+    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+    if Geometry.are_points_equal_with_epsilon( \
+            previous_position, \
+            Vector2(64, -480), 10):
+        print("break")
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:

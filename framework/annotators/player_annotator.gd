@@ -7,9 +7,6 @@ const PlayerSurfaceAnnotator := preload("res://framework/annotators/player_surfa
 const PositionAnnotator := preload("res://framework/annotators/position_annotator.gd")
 const TileAnnotator := preload("res://framework/annotators/tile_annotator.gd")
 
-var COLLIDER_COLOR := Colors.opacify(Colors.TEAL, Colors.ALPHA_XXFAINT)
-const COLLIDER_THICKNESS := 4.0
-
 var player: Player
 var previous_position: Vector2
 var navigator_annotator: NavigatorAnnotator
@@ -40,7 +37,6 @@ func _enter_tree() -> void:
 func check_for_update() -> void:
     if !Geometry.are_points_equal_with_epsilon(player.position, previous_position, 0.01):
         previous_position = player.position
-        update()
         
         player_recent_movement_annotator.check_for_update()
         player_surface_annotator.check_for_update()
@@ -49,7 +45,3 @@ func check_for_update() -> void:
     
     if navigator_annotator != null:
         navigator_annotator.check_for_update()
-
-func _draw() -> void:
-    DrawUtils.draw_shape_outline(self, player.position, player.movement_params.collider_shape, \
-            player.movement_params.collider_rotation, COLLIDER_COLOR, COLLIDER_THICKNESS)

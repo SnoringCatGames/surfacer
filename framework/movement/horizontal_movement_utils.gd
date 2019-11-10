@@ -44,8 +44,8 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     
     var acceleration_start_and_end_time := _calculate_acceleration_start_and_end_time( \
             displacement.x, step_duration, velocity_start_x, velocity_end_x, acceleration)
-    var time_instruction_start: float = acceleration_start_and_end_time[0]
-    var time_instruction_end: float = acceleration_start_and_end_time[1]
+    var time_instruction_start: float = time_step_start + acceleration_start_and_end_time[0]
+    var time_instruction_end: float = time_step_start + acceleration_start_and_end_time[1]
     
     if acceleration_start_and_end_time.empty():
         # There is no start velocity that can reach the target end position/velocity/time.
