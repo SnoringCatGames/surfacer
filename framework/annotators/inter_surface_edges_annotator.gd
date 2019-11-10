@@ -9,6 +9,13 @@ const CONSTRAINT_WIDTH := 2.0
 const CONSTRAINT_RADIUS := 3.0 * CONSTRAINT_WIDTH
 const START_RADIUS := 1.5 * CONSTRAINT_WIDTH
 
+const HORIZONTAL_INSTRUCTION_START_LENGTH := 9
+const HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH := 1
+const HORIZONTAL_INSTRUCTION_END_LENGTH := 9
+const HORIZONTAL_INSTRUCTION_END_STROKE_WIDTH := 1
+const VERTICAL_INSTRUCTION_END_LENGTH := 11
+const VERTICAL_INSTRUCTION_END_STROKE_WIDTH := 1
+
 var graph: PlatformGraph
 var intra_edge_calc_annotator: IntraEdgeCalculationAnnotator
 
@@ -24,7 +31,10 @@ func _draw() -> void:
     var discrete_trajectory_color: Color
     var continuous_trajectory_color: Color
     var constraint_color: Color
+    var instruction_start_stop_color: Color
     var edge: Edge
+    var position_start: Vector2
+    var position_end: Vector2
     
     # Iterate over all surfaces.
     for surface in graph.surfaces_to_nodes:
@@ -42,15 +52,44 @@ func _draw() -> void:
                 discrete_trajectory_color = Color.from_hsv(hue, 0.6, 0.9, 0.5)
                 continuous_trajectory_color = Color.from_hsv(hue, 0.6, 0.5, 0.5)
                 constraint_color = Color.from_hsv(hue, 0.6, 0.9, 0.3)
+                instruction_start_stop_color = Color.from_hsv(hue, 0.3, 0.9, 0.6)
                 
+                # Draw the trajectory (as calculated via continuous equations of motion).
                 draw_polyline(edge.instructions.frame_discrete_positions, \
                         discrete_trajectory_color, TRAJECTORY_WIDTH)
+                
+                # Draw the trajectory (as approximated via discrete time steps).
                 draw_polyline(edge.instructions.frame_continuous_positions, \
                         continuous_trajectory_color, TRAJECTORY_WIDTH)
                 
+                # Draw all constraints in this edge.
                 for constraint_position in edge.instructions.constraint_positions:
                     DrawUtils.draw_circle_outline(self, constraint_position, CONSTRAINT_RADIUS, \
                             constraint_color, CONSTRAINT_WIDTH, 4.0)
-                
                 DrawUtils.draw_circle_outline(self, edge.start.target_point, START_RADIUS, \
                         constraint_color, CONSTRAINT_WIDTH, 4.0)
+                
+                # Draw the positions where horizontal instructions start and end.
+                for i in range(0, edge.instructions.horizontal_instruction_start_positions.size()):
+                    position_start = edge.instructions.horizontal_instruction_start_positions[i]
+                    position_end = edge.instructions.horizontal_instruction_end_positions[i]
+                    # Draw a plus for the instruction start.
+                    DrawUtils.draw_plus(self, position_start, \
+                            HORIZONTAL_INSTRUCTION_START_LENGTH, \
+                            HORIZONTAL_INSTRUCTION_START_LENGTH, instruction_start_stop_color, \
+                            HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
+                    # Draw a minus for the instruction start.
+                    self.draw_line( \
+                            position_end + Vector2(-HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
+                            position_end + Vector2(HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
+                            instruction_start_stop_color, \
+                            HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
+                
+                # Draw the position where the vertical instruction ends (draw an asterisk).
+                position_end = edge.instructions.jump_instruction_end_position
+                DrawUtils.draw_x(self, position_start, \
+                        VERTICAL_INSTRUCTION_END_LENGTH, VERTICAL_INSTRUCTION_END_LENGTH, \
+                        instruction_start_stop_color, VERTICAL_INSTRUCTION_END_STROKE_WIDTH)
+                DrawUtils.draw_plus(self, position_start, \
+                        VERTICAL_INSTRUCTION_END_LENGTH, VERTICAL_INSTRUCTION_END_LENGTH, \
+                        instruction_start_stop_color, VERTICAL_INSTRUCTION_END_STROKE_WIDTH)

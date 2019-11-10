@@ -21,6 +21,9 @@ const COLLISION_X_STROKE_WIDTH_STRONG := 5.0
 const COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_FAINT := 1.0
 const COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_STRONG := 3.0
 
+const TRAJECTORY_DASH_LENGTH := 2.0
+const TRAJECTORY_DASH_GAP := 8.0
+
 const STEP_HUE_START := 0.11
 const STEP_HUE_END := 0.61
 const COLLISION_HUE := 0.0
@@ -176,7 +179,8 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     
     if step_attempt.frame_positions.size() > 1:
         # Draw the step trajectory.
-        draw_polyline(step_attempt.frame_positions, step_color, trajectory_stroke_width)
+        DrawUtils.draw_dashed_polyline(self, step_attempt.frame_positions, step_color, \
+                TRAJECTORY_DASH_LENGTH, TRAJECTORY_DASH_GAP, 0.0, trajectory_stroke_width)
     
     # Draw the step end points.
     DrawUtils.draw_circle_outline(self, step_attempt.start_constraint.position, \

@@ -34,9 +34,12 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     var continuous_vertical_state: Array
     var continuous_position: Vector2
     
-    # Record the position for edge annotation debugging.
+    # Record positions for edge annotation debugging.
     var frame_discrete_positions := []
     var frame_continuous_positions := [position]
+    var jump_instruction_end_position: Vector2
+    var horizontal_instruction_end_positions := []
+    var horizontal_instruction_start_positions := []
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < duration:
@@ -52,10 +55,10 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
             current_horizontal_step_index += 1
             current_horizontal_step = horizontal_steps[current_horizontal_step_index]
         continuous_horizontal_state = \
-                HorizontalMovementUtils.calculate_horizontal_end_state_for_time(movement_params, \
+                HorizontalMovementUtils.calculate_horizontal_state_for_time(movement_params, \
                         current_horizontal_step, current_time)
         continuous_vertical_state = \
-                VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+                VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
                         movement_params, vertical_step, current_time)
         continuous_position.x = continuous_horizontal_state[0]
         continuous_position.y = continuous_vertical_state[0]
@@ -69,7 +72,13 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
 #                    overall_calc_params.surface_parser)
             if collision != null:
                 instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
-                instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
+                instructions.frame_continuous_positions = \
+                        PoolVector2Array(frame_continuous_positions)
+                instructions.jump_instruction_end_position = jump_instruction_end_position
+                instructions.horizontal_instruction_start_positions = \
+                        PoolVector2Array(horizontal_instruction_start_positions)
+                instructions.horizontal_instruction_end_positions = \
+                        PoolVector2Array(horizontal_instruction_end_positions)
                 return collision
         else:
             # Don't check for collisions if we aren't moving anywhere.
@@ -100,12 +109,27 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
                     is_pressing_jump = next_instruction.is_pressed
                     if is_pressing_jump:
                         velocity.y = movement_params.jump_boost
+                    else:
+                        # Record the positions of instruction starts and ends.
+                        jump_instruction_end_position = continuous_position
                 "move_left":
                     is_pressing_left = next_instruction.is_pressed
                     horizontal_acceleration_sign = -1 if is_pressing_left else 0
+                    
+                    # Record the positions of instruction starts and ends.
+                    if is_pressing_left:
+                        horizontal_instruction_start_positions.push_back(continuous_position)
+                    else:
+                        horizontal_instruction_end_positions.push_back(continuous_position)
                 "move_right":
                     is_pressing_right = next_instruction.is_pressed
                     horizontal_acceleration_sign = 1 if is_pressing_right else 0
+                    
+                    # Record the positions of instruction starts and ends.
+                    if is_pressing_right:
+                        horizontal_instruction_start_positions.push_back(continuous_position)
+                    else:
+                        horizontal_instruction_end_positions.push_back(continuous_position)
                 _:
                     Utils.error()
             
@@ -141,10 +165,10 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     shape_query_params.transform = Transform2D(0.0, position)
     shape_query_params.motion = displacement
     continuous_horizontal_state = \
-            HorizontalMovementUtils.calculate_horizontal_end_state_for_time(movement_params, \
+            HorizontalMovementUtils.calculate_horizontal_state_for_time(movement_params, \
                     current_horizontal_step, duration)
     continuous_vertical_state = \
-            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+            VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
                     movement_params, vertical_step, duration)
     continuous_position.x = continuous_horizontal_state[0]
     continuous_position.y = continuous_vertical_state[0]
@@ -156,6 +180,11 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     if collision != null:
         instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
         instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
+        instructions.jump_instruction_end_position = jump_instruction_end_position
+        instructions.horizontal_instruction_start_positions = \
+                PoolVector2Array(horizontal_instruction_start_positions)
+        instructions.horizontal_instruction_end_positions = \
+                PoolVector2Array(horizontal_instruction_end_positions)
         return collision
     
     # Record the position for edge annotation debugging.
@@ -163,6 +192,11 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     frame_continuous_positions.push_back(continuous_position)
     instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
     instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
+    instructions.jump_instruction_end_position = jump_instruction_end_position
+    instructions.horizontal_instruction_start_positions = \
+            PoolVector2Array(horizontal_instruction_start_positions)
+    instructions.horizontal_instruction_end_positions = \
+            PoolVector2Array(horizontal_instruction_end_positions)
     
     return null
 
@@ -288,9 +322,9 @@ static func check_continuous_horizontal_step_for_collision( \
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
         # Update state for the current frame.
-        horizontal_state = HorizontalMovementUtils.calculate_horizontal_end_state_for_time( \
+        horizontal_state = HorizontalMovementUtils.calculate_horizontal_state_for_time( \
                 movement_params, horizontal_step, current_time)
-        vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+        vertical_state = VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
                 movement_params, vertical_step, current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
@@ -326,9 +360,9 @@ static func check_continuous_horizontal_step_for_collision( \
     # Check the last frame that puts us up to end_time.
     current_time = step_end_time
     if !Geometry.are_floats_equal_with_epsilon(previous_time, current_time):
-        horizontal_state = HorizontalMovementUtils.calculate_horizontal_end_state_for_time( \
+        horizontal_state = HorizontalMovementUtils.calculate_horizontal_state_for_time( \
                 movement_params, horizontal_step, current_time)
-        vertical_state = VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+        vertical_state = VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
                 movement_params, vertical_step, current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]

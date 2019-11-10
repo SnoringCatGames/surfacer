@@ -144,10 +144,8 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # #########
 # 
-# - Debugging tree view annotations:
-#   - Make calculation steps dotted lines.
-#   - Add a solid line for the final valid result, if there is one.
-#   - Need to add some sort of additional rows to indicate invalid constraints that we quit early on with non-backtracking recursion.
+# - Debugging tree view annotations: Need to add some sort of additional rows to indicate invalid
+#   constraints that we quit early on with non-backtracking recursion.
 # 
 # - Can I render something in the annotations (or in the console output) like the constraint
 #   position or the surface end positions, in order to make it easier to quickly set a breakpoint

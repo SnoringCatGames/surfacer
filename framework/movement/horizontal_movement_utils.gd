@@ -75,16 +75,16 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
             position_instruction_start_x + displacement_x_during_acceleration
     
     var step_start_state := \
-            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+            VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
                     movement_params, vertical_step, time_step_start)
     var instruction_start_state := \
-            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+            VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
                     movement_params, vertical_step, time_instruction_start)
     var instruction_end_state := \
-            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+            VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
                     movement_params, vertical_step, time_instruction_end)
     var step_end_state := \
-            VerticalMovementUtils.calculate_vertical_end_state_for_time_from_step( \
+            VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
                     movement_params, vertical_step, time_step_end)
     
     assert(Geometry.are_floats_equal_with_epsilon(step_end_state[0], position_end.y, 0.0001))
@@ -164,7 +164,7 @@ static func _calculate_acceleration_start_and_end_time(displacement: float, dura
 # Calculates the horizontal component of position and velocity according to the given horizontal
 # movement state and the given time. These are then returned in a Vector2: x is position and y is
 # velocity.
-static func calculate_horizontal_end_state_for_time(movement_params: MovementParams, \
+static func calculate_horizontal_state_for_time(movement_params: MovementParams, \
         horizontal_step: MovementCalcStep, time: float) -> Array:
     assert(time >= horizontal_step.time_step_start - Geometry.FLOAT_EPSILON)
     assert(time <= horizontal_step.time_step_end + Geometry.FLOAT_EPSILON)

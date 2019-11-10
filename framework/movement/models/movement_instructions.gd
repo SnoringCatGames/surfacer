@@ -3,21 +3,31 @@ class_name MovementInstructions
 
 # Array<MovementInstruction>
 var instructions: Array
+
 var duration: float
+
 var distance_squared: float
 
 # The positions of each frame of movement according to the discrete per-frame movement
 # calculations. This is used for annotation debugging.
 # Array<Vector2>
 var frame_discrete_positions: PoolVector2Array
+
 # The positions of each frame of movement according to the continuous movement calculations. This
 # is used for annotation debugging.
 # Array<Vector2>
 var frame_continuous_positions: PoolVector2Array
+
 # The end positions of each MovementCalcStep. These correspond to intermediate-surface constraints
 # and the destination position. This is used for annotation debugging.
 # Array<Vector2>
 var constraint_positions: PoolVector2Array
+
+var horizontal_instruction_start_positions: PoolVector2Array
+
+var horizontal_instruction_end_positions: PoolVector2Array
+
+var jump_instruction_end_position: Vector2
 
 # Instructions don't need to be pre-sorted.
 func _init(instructions: Array, duration: float, distance_squared: float, \

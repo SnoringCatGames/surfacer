@@ -70,9 +70,9 @@ static func calculate_vertical_step( \
     step.velocity_step_start = velocity_start
     step.velocity_instruction_start = velocity_start
     
-    var step_end_state := calculate_vertical_end_state_for_time_from_step( \
+    var step_end_state := calculate_vertical_state_for_time_from_step( \
             movement_params, step, time_step_end)
-    var peak_height_end_state := calculate_vertical_end_state_for_time_from_step( \
+    var peak_height_end_state := calculate_vertical_state_for_time_from_step( \
             movement_params, step, time_peak_height)
     
     assert(Geometry.are_floats_equal_with_epsilon(step_end_state[0], position_end.y, 0.001))
@@ -81,7 +81,7 @@ static func calculate_vertical_step( \
     step.velocity_step_end = Vector2(INF, step_end_state[1])
     
     if position_instruction_end == Vector2.INF:
-        var instruction_end_state := calculate_vertical_end_state_for_time_from_step( \
+        var instruction_end_state := calculate_vertical_state_for_time_from_step( \
                 movement_params, step, time_instruction_end)
         position_instruction_end = Vector2(INF, instruction_end_state[0])
         velocity_instruction_end = Vector2(INF, instruction_end_state[1])
@@ -371,9 +371,9 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
     
     return duration_of_fast_fall + duration_of_slow_ascent
 
-static func calculate_vertical_end_state_for_time_from_step(movement_params: MovementParams, \
+static func calculate_vertical_state_for_time_from_step(movement_params: MovementParams, \
         step: MovementVertCalcStep, time: float) -> Array:
-    return calculate_vertical_end_state_for_time(movement_params, time, \
+    return calculate_vertical_state_for_time(movement_params, time, \
         step.position_step_start.y, step.velocity_step_start.y, \
         step.time_instruction_end)
 
@@ -381,7 +381,7 @@ static func calculate_vertical_end_state_for_time_from_step(movement_params: Mov
 # movement state and the given time. These are then returned in a Vector2: x is position and y is
 # velocity.
 # FIXME: B: Fix unit tests to use the return value instead of output params.
-static func calculate_vertical_end_state_for_time(movement_params: MovementParams, time: float, \
+static func calculate_vertical_state_for_time(movement_params: MovementParams, time: float, \
         position_step_start_y: float, velocity_step_start_y: float, \
         time_jump_release: float) -> Array:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
