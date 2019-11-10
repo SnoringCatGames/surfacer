@@ -32,11 +32,19 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     
     # There's no need to add an epsilon offset here, since the offset was added when calculating
     # the min/max in the first place.
-    var velocity_end_x := 0.0 if \
-            end_constraint.min_velocity_x <= 0 and end_constraint.max_velocity_x >= 0 else \
-            end_constraint.min_velocity_x if \
-            abs(end_constraint.min_velocity_x) < abs(end_constraint.max_velocity_x) else \
-            end_constraint.max_velocity_x
+    var velocity_end_x: float
+    if movement_params.should_minimize_velocity_change_when_jumping:
+#    if false: # FIXME: REMOVE
+        velocity_end_x = 0.0 if \
+                end_constraint.min_velocity_x <= 0 and end_constraint.max_velocity_x >= 0 else \
+                end_constraint.min_velocity_x if \
+                abs(end_constraint.min_velocity_x) < abs(end_constraint.max_velocity_x) else \
+                end_constraint.max_velocity_x
+    else:
+        velocity_end_x = \
+                end_constraint.max_velocity_x if \
+                abs(end_constraint.min_velocity_x) < abs(end_constraint.max_velocity_x) else \
+                end_constraint.min_velocity_x
     
     var horizontal_acceleration_sign := -1 if velocity_end_x - velocity_start_x < 0 else 1
     var acceleration := \

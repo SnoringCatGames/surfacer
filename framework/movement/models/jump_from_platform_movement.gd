@@ -149,6 +149,8 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   assigned...
 #   - ACTUALLY, using the new recent-pos annotator, it seems that the problem might instead be from
 #     the horizontal movement at the end of the previous step??
+#   - hmm, using max-velocity-change makes things line up perfectly.
+#     - So, maybe the issue is only with how I select things in horizontal_movement_utils?
 # 
 # - Debugging tree view annotations: Need to add some sort of additional rows to indicate invalid
 #   constraints that we quit early on with non-backtracking recursion.

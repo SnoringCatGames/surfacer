@@ -25,6 +25,8 @@ var walk_acceleration: float
 var climb_up_speed: float
 var climb_down_speed: float
 
+var should_minimize_velocity_change_when_jumping: bool
+
 var max_horizontal_speed_default: float
 var current_max_horizontal_speed: float
 var min_horizontal_speed: float

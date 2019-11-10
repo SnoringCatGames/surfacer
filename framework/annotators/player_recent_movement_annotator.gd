@@ -23,7 +23,7 @@ var recent_positions: PoolVector2Array
 # We use this as a circular buffer.
 var recent_actions: PoolIntArray
 
-var current_position_index := 0
+var current_position_index := -1
 
 var total_position_count := 0
 
@@ -37,10 +37,6 @@ func _init(player: Player) -> void:
 func check_for_update() -> void:
     var most_recent_position := recent_positions[current_position_index]
     if !Geometry.are_points_equal_with_epsilon(player.position, most_recent_position, 0.01):
-        total_position_count += 1
-        current_position_index = (current_position_index + 1) % RECENT_POSITIONS_BUFFER_SIZE
-        recent_positions[current_position_index] = player.position
-        
         if player.actions.just_pressed_jump:
             recent_actions[current_position_index] = PlayerActionType.PRESSED_JUMP
         elif player.actions.just_pressed_left:
@@ -55,6 +51,10 @@ func check_for_update() -> void:
             recent_actions[current_position_index] = PlayerActionType.RELEASED_RIGHT
         else:
             recent_actions[current_position_index] = PlayerActionType.NONE
+        
+        total_position_count += 1
+        current_position_index = (current_position_index + 1) % RECENT_POSITIONS_BUFFER_SIZE
+        recent_positions[current_position_index] = player.position
         
         update()
 
@@ -98,7 +98,7 @@ func _draw() -> void:
 
 # Draw an indicator for the action that happened at this point.
 func _draw_action_indicator(action: int, position: Vector2, opacity: float) -> void:
-    var color := Color.from_hsv(MOVEMENT_HUE, 0.3, 0.99, opacity)
+    var color := Color.from_hsv(MOVEMENT_HUE, 0.1, 0.99, opacity)
     
     if action == PlayerActionType.PRESSED_JUMP or action == PlayerActionType.RELEASED_JUMP:
         # Draw a plus for the jump instruction start/end.

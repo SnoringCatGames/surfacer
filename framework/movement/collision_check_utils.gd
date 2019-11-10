@@ -341,7 +341,8 @@ static func check_continuous_horizontal_step_for_collision( \
         
         # FIXME: LEFT OFF HERE: ---------------------------------------A: DEBUGGING:
         # - [Probably done with this breakpoint actually...] Set a breakpoint here.
-        # - !! After that, fix the issue that shape_query_params.transform is not taking into consideration the rotation of the shape.
+        # - !! After that, fix the issue that shape_query_params.transform is not taking into
+        #   consideration the rotation of the shape.
         #   - 
         if current_position.x > 40 and current_position.x < 61 and current_position.y < -350:
             print("yo")
