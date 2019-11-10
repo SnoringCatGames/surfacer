@@ -370,6 +370,11 @@ _global_script_classes=[ {
 "path": "res://framework/player/player_params.gd"
 }, {
 "base": "Node2D",
+"class": "PlayerRecentMovementAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/player_recent_movement_annotator.gd"
+}, {
+"base": "Node2D",
 "class": "PlayerSurfaceAnnotator",
 "language": "GDScript",
 "path": "res://framework/annotators/player_surface_annotator.gd"
@@ -587,6 +592,7 @@ _global_script_class_icons={
 "PlayerAnimatorParams": "",
 "PlayerAnnotator": "",
 "PlayerParams": "",
+"PlayerRecentMovementAnnotator": "",
 "PlayerSurfaceAnnotator": "",
 "PlayerSurfaceState": "",
 "PlayerType": "",

@@ -144,6 +144,12 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # #########
 # 
+# - DEBUGGING: In check_instructions_for_collision, it seems like the second
+#   current_horizontal_step must have some invalid x coordinates. Check where those are getting
+#   assigned...
+#   - ACTUALLY, using the new recent-pos annotator, it seems that the problem might instead be from
+#     the horizontal movement at the end of the previous step??
+# 
 # - Debugging tree view annotations: Need to add some sort of additional rows to indicate invalid
 #   constraints that we quit early on with non-backtracking recursion.
 # 

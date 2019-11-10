@@ -1,8 +1,9 @@
 extends Node2D
 class_name PlayerAnnotator
 
-const PlayerSurfaceAnnotator := preload("res://framework/annotators/player_surface_annotator.gd")
 const NavigatorAnnotator := preload("res://framework/annotators/navigator_annotator.gd")
+const PlayerRecentMovementAnnotator := preload("res://framework/annotators/player_recent_movement_annotator.gd")
+const PlayerSurfaceAnnotator := preload("res://framework/annotators/player_surface_annotator.gd")
 const PositionAnnotator := preload("res://framework/annotators/position_annotator.gd")
 const TileAnnotator := preload("res://framework/annotators/tile_annotator.gd")
 
@@ -11,13 +12,15 @@ const COLLIDER_THICKNESS := 4.0
 
 var player: Player
 var previous_position: Vector2
+var navigator_annotator: NavigatorAnnotator
+var player_recent_movement_annotator: PlayerRecentMovementAnnotator
 var player_surface_annotator: PlayerSurfaceAnnotator
 var position_annotator: PositionAnnotator
 var tile_annotator: TileAnnotator
-var navigator_annotator: NavigatorAnnotator
 
 func _init(player: Player, renders_navigator := false) -> void:
     self.player = player
+    player_recent_movement_annotator = PlayerRecentMovementAnnotator.new(player)
     player_surface_annotator = PlayerSurfaceAnnotator.new(player)
     position_annotator = PositionAnnotator.new(player)
     tile_annotator = TileAnnotator.new(player)
@@ -27,6 +30,7 @@ func _init(player: Player, renders_navigator := false) -> void:
     z_index = 2
 
 func _enter_tree() -> void:
+    add_child(player_recent_movement_annotator)
     add_child(player_surface_annotator)
     add_child(position_annotator)
     add_child(tile_annotator)
@@ -34,10 +38,11 @@ func _enter_tree() -> void:
         add_child(navigator_annotator)
 
 func check_for_update() -> void:
-    if !Geometry.are_points_equal_with_epsilon(player.position, previous_position, 0.001):
+    if !Geometry.are_points_equal_with_epsilon(player.position, previous_position, 0.01):
         previous_position = player.position
         update()
         
+        player_recent_movement_annotator.check_for_update()
         player_surface_annotator.check_for_update()
         position_annotator.check_for_update()
         tile_annotator.check_for_update()
