@@ -395,18 +395,18 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             
             # Calculate the min and max velocity for movement through the constraint.
             var duration := constraint.next_constraint.time_passing_through - time_passing_through
-            var min_and_max_velocity_at_step_end := \
+            var min_and_max_velocity_at_step_start := \
                     _calculate_min_and_max_x_velocity_at_start_of_interval(displacement.x, duration, \
                             constraint.next_constraint.min_velocity_x, \
                             constraint.next_constraint.max_velocity_x, \
                             movement_params.max_horizontal_speed_default, \
                             movement_params.in_air_horizontal_acceleration, \
                             constraint.horizontal_movement_sign)
-            if min_and_max_velocity_at_step_end.empty():
+            if min_and_max_velocity_at_step_start.empty():
                 return false
             
-            min_velocity_x = min_and_max_velocity_at_step_end[0]
-            max_velocity_x = min_and_max_velocity_at_step_end[1]
+            min_velocity_x = min_and_max_velocity_at_step_start[0]
+            max_velocity_x = min_and_max_velocity_at_step_start[1]
         
         # actual_velocity_x is calculated when calculating the horizontal steps.
         actual_velocity_x = INF
@@ -415,6 +415,12 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
     constraint.min_velocity_x = min_velocity_x
     constraint.max_velocity_x = max_velocity_x
     constraint.actual_velocity_x = actual_velocity_x
+    
+    # Ensure that the min and max velocities match the expected horizontal movement direction.
+    if constraint.horizontal_movement_sign == 1:
+        assert(constraint.min_velocity_x >= 0 and constraint.max_velocity_x >= 0)
+    elif constraint.horizontal_movement_sign == -1:
+        assert(constraint.min_velocity_x <= 0 and constraint.max_velocity_x <= 0)
     
     return true
 

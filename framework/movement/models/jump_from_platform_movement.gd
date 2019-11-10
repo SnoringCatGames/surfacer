@@ -144,16 +144,15 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # #########
 # 
-# - DEBUGGING: In check_instructions_for_collision, it seems like the second
-#   current_horizontal_step must have some invalid x coordinates. Check where those are getting
-#   assigned...
-#   - ACTUALLY, using the new recent-pos annotator, it seems that the problem might instead be from
-#     the horizontal movement at the end of the previous step??
-#   - hmm, using max-velocity-change makes things line up perfectly.
-#     - So, maybe the issue is only with how I select things in horizontal_movement_utils?
+# - Add some sort of heuristic to choose when to go with smaller or larger velocity end during
+#   horizontal step calc.
+#   - The alternative, is to once again flip the order we calculate steps, so that we base all
+#     steps off of minimizing the x velocity at the destination.
+#     - :/ We might want to do that anyway though, to give us more flexibility later when we want
+#       to be able to specify a given non-zero target end velocity.
 # 
-# - Debugging tree view annotations: Need to add some sort of additional rows to indicate invalid
-#   constraints that we quit early on with non-backtracking recursion.
+# - Should I move some of the horizontal movement functions from constraint_utils to
+#   horizontal_movement_utils?
 # 
 # - Can I render something in the annotations (or in the console output) like the constraint
 #   position or the surface end positions, in order to make it easier to quickly set a breakpoint
@@ -200,8 +199,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #       surface, and check whether that position is still valid along the origin/destination
 #       surface.
 # 
-# - Try to fix dashed polylines.
-# 
 # - Render a legend:
 #   - x: point of collision
 #   - outline: player boundary at point of collision
@@ -217,6 +214,8 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - In general, a guiding heuristic in these calculations is to minimize movement. So, through
 #     each constraint (step-end), we try to minimize the horizontal speed of the movement at that
 #     point.
+# 
+# - Try to fix DrawUtils dashed polylines.
 # 
 
 
