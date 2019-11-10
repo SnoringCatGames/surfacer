@@ -33,7 +33,7 @@ var action_sources := []
 var _previous_actions_this_frame := {}
 # Array<PlayerActionHandler>
 var action_handlers: Array
-# PlayerActionType
+# PlayerActionSurfaceType
 var current_action_type: int
 
 var is_ascending_from_jump := false
@@ -184,25 +184,25 @@ func _process_actions() -> void:
     _previous_actions_this_frame.clear()
     
     if surface_state.is_grabbing_wall:
-        current_action_type = PlayerActionType.WALL
+        current_action_type = PlayerActionSurfaceType.WALL
     elif surface_state.is_grabbing_floor:
-        current_action_type = PlayerActionType.FLOOR
+        current_action_type = PlayerActionSurfaceType.FLOOR
     else:
-        current_action_type = PlayerActionType.AIR
+        current_action_type = PlayerActionSurfaceType.AIR
     
     for action_handler in action_handlers:
         if action_handler.type == current_action_type or \
-                action_handler.type == PlayerActionType.OTHER:
+                action_handler.type == PlayerActionSurfaceType.OTHER:
             _previous_actions_this_frame[action_handler.name] = action_handler.process(self)
 
 func _process_animation() -> void:
     match current_action_type:
-        PlayerActionType.FLOOR:
+        PlayerActionSurfaceType.FLOOR:
             if actions.pressed_left or actions.pressed_right:
                 animator.walk()
             else:
                 animator.rest()
-        PlayerActionType.WALL:
+        PlayerActionSurfaceType.WALL:
             if processed_action('WallClimbAction'):
                 if actions.pressed_up:
                     animator.climb_up()
@@ -212,7 +212,7 @@ func _process_animation() -> void:
                     Utils.error()
             else:
                 animator.rest_on_wall()
-        PlayerActionType.AIR:
+        PlayerActionSurfaceType.AIR:
             if velocity.y > 0:
                 animator.jump_descend()
             else:

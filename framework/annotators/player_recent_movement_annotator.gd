@@ -8,10 +8,20 @@ const MOVEMENT_OPACITY_NEWEST := 0.7
 const MOVEMENT_OPACITY_OLDEST := 0.01
 const MOVEMENT_STROKE_WIDTH := 1.5
 
+const HORIZONTAL_INSTRUCTION_START_LENGTH := 9
+const HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH := 1
+const HORIZONTAL_INSTRUCTION_END_LENGTH := 9
+const HORIZONTAL_INSTRUCTION_END_STROKE_WIDTH := 1
+const VERTICAL_INSTRUCTION_START_END_LENGTH := 11
+const VERTICAL_INSTRUCTION_START_END_STROKE_WIDTH := 1
+
 var player: Player
 
 # We use this as a circular buffer.
 var recent_positions: PoolVector2Array
+
+# We use this as a circular buffer.
+var recent_actions: PoolIntArray
 
 var current_position_index := 0
 
@@ -21,6 +31,8 @@ func _init(player: Player) -> void:
     self.player = player
     self.recent_positions = PoolVector2Array()
     self.recent_positions.resize(RECENT_POSITIONS_BUFFER_SIZE)
+    self.recent_actions = PoolIntArray()
+    self.recent_actions.resize(RECENT_POSITIONS_BUFFER_SIZE)
 
 func check_for_update() -> void:
     var most_recent_position := recent_positions[current_position_index]
@@ -28,6 +40,22 @@ func check_for_update() -> void:
         total_position_count += 1
         current_position_index = (current_position_index + 1) % RECENT_POSITIONS_BUFFER_SIZE
         recent_positions[current_position_index] = player.position
+        
+        if player.actions.just_pressed_jump:
+            recent_actions[current_position_index] = PlayerActionType.PRESSED_JUMP
+        elif player.actions.just_pressed_left:
+            recent_actions[current_position_index] = PlayerActionType.PRESSED_LEFT
+        elif player.actions.just_pressed_right:
+            recent_actions[current_position_index] = PlayerActionType.PRESSED_RIGHT
+        elif player.actions.just_released_jump:
+            recent_actions[current_position_index] = PlayerActionType.RELEASED_JUMP
+        elif player.actions.just_released_left:
+            recent_actions[current_position_index] = PlayerActionType.RELEASED_LEFT
+        elif player.actions.just_released_right:
+            recent_actions[current_position_index] = PlayerActionType.RELEASED_RIGHT
+        else:
+            recent_actions[current_position_index] = PlayerActionType.NONE
+        
         update()
 
 func _draw() -> void:
@@ -48,6 +76,7 @@ func _draw() -> void:
     var next_position: Vector2
     var opacity: float
     var color: Color
+    var action: int
     
     for i in range(1, position_count):
         # Older positions fade out.
@@ -61,4 +90,30 @@ func _draw() -> void:
         
         draw_line(previous_position, next_position, color, MOVEMENT_STROKE_WIDTH)
         
+        action = recent_actions[i]
+        if action != PlayerActionType.NONE:
+            _draw_action_indicator(action, next_position, opacity)
+        
         previous_position = next_position
+
+# Draw an indicator for the action that happened at this point.
+func _draw_action_indicator(action: int, position: Vector2, opacity: float) -> void:
+    var color := Color.from_hsv(MOVEMENT_HUE, 0.3, 0.99, opacity)
+    
+    if action == PlayerActionType.PRESSED_JUMP or action == PlayerActionType.RELEASED_JUMP:
+        # Draw a plus for the jump instruction start/end.
+        DrawUtils.draw_asterisk(self, position, \
+                VERTICAL_INSTRUCTION_START_END_LENGTH, VERTICAL_INSTRUCTION_START_END_LENGTH, \
+                color, VERTICAL_INSTRUCTION_START_END_STROKE_WIDTH)
+    elif action == PlayerActionType.PRESSED_LEFT or action == PlayerActionType.PRESSED_RIGHT:
+        # Draw a plus for the left/right instruction start.
+        DrawUtils.draw_plus(self, position, \
+                HORIZONTAL_INSTRUCTION_START_LENGTH, \
+                HORIZONTAL_INSTRUCTION_START_LENGTH, color, \
+                HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
+    elif action == PlayerActionType.RELEASED_LEFT or action == PlayerActionType.RELEASED_RIGHT:
+        # Draw a minus for the left/right instruction end.
+        self.draw_line(position + Vector2(-HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
+                position + Vector2(HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), color, \
+                HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
+    

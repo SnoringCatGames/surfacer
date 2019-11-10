@@ -1,8 +1,15 @@
 class_name PlayerActionType
 
 enum {
-    FLOOR,
-    WALL,
-    AIR,
-    OTHER,
+    NONE,
+    PRESSED_JUMP,
+    RELEASED_JUMP,
+    PRESSED_UP,
+    RELEASED_UP,
+    PRESSED_DOWN,
+    RELEASED_DOWN,
+    PRESSED_LEFT,
+    RELEASED_LEFT,
+    PRESSED_RIGHT,
+    RELEASED_RIGHT,
 }

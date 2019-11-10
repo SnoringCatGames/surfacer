@@ -2,7 +2,7 @@ extends PlayerActionHandler
 class_name WallFallAction
 
 const NAME := 'WallFallAction'
-const TYPE := PlayerActionType.WALL
+const TYPE := PlayerActionSurfaceType.WALL
 const PRIORITY := 130
 
 func _init().(NAME, TYPE, PRIORITY) -> void:

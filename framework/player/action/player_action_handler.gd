@@ -2,7 +2,7 @@ extends Reference
 class_name PlayerActionHandler
 
 var name: String
-# PlayerActionType
+# PlayerActionSurfaceType
 var type: int
 var priority: int
 

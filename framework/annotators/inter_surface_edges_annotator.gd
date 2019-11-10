@@ -52,7 +52,7 @@ func _draw() -> void:
                 discrete_trajectory_color = Color.from_hsv(hue, 0.6, 0.9, 0.5)
                 continuous_trajectory_color = Color.from_hsv(hue, 0.6, 0.5, 0.5)
                 constraint_color = Color.from_hsv(hue, 0.6, 0.9, 0.3)
-                instruction_start_stop_color = Color.from_hsv(hue, 0.3, 0.9, 0.6)
+                instruction_start_stop_color = Color.from_hsv(hue, 0.1, 0.99, 0.8)
                 
                 # Draw the trajectory (as calculated via continuous equations of motion).
                 draw_polyline(edge.instructions.frame_discrete_positions, \
@@ -73,12 +73,14 @@ func _draw() -> void:
                 for i in range(0, edge.instructions.horizontal_instruction_start_positions.size()):
                     position_start = edge.instructions.horizontal_instruction_start_positions[i]
                     position_end = edge.instructions.horizontal_instruction_end_positions[i]
+                    
                     # Draw a plus for the instruction start.
                     DrawUtils.draw_plus(self, position_start, \
                             HORIZONTAL_INSTRUCTION_START_LENGTH, \
                             HORIZONTAL_INSTRUCTION_START_LENGTH, instruction_start_stop_color, \
                             HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
-                    # Draw a minus for the instruction start.
+                            
+                    # Draw a minus for the instruction end.
                     self.draw_line( \
                             position_end + Vector2(-HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
                             position_end + Vector2(HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \

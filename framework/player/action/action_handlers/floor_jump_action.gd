@@ -2,7 +2,7 @@ extends PlayerActionHandler
 class_name FloorJumpAction
 
 const NAME := 'FloorJumpAction'
-const TYPE := PlayerActionType.FLOOR
+const TYPE := PlayerActionSurfaceType.FLOOR
 const PRIORITY := 240
 
 func _init().(NAME, TYPE, PRIORITY) -> void:

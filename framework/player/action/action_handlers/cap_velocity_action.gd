@@ -2,7 +2,7 @@ extends PlayerActionHandler
 class_name CapVelocityAction
 
 const NAME := 'CapVelocityAction'
-const TYPE := PlayerActionType.OTHER
+const TYPE := PlayerActionSurfaceType.OTHER
 const PRIORITY := 10010
 
 func _init().(NAME, TYPE, PRIORITY) -> void:
