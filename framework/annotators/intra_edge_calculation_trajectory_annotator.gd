@@ -6,7 +6,10 @@ const STEP_TRANSITION_DELAY_SEC := 1.0
 const COLLISION_X_WIDTH_HEIGHT := Vector2(16.0, 16.0)
 const COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS := 3.0
 const CONSTRAINT_RADIUS := 6.0
-const PREVIOUS_OUT_OF_REACH_CONSTRAINT_RADIUS := 5.0
+const VALID_CONSTRAINT_WIDTH := 16.0
+const INVALID_CONSTRAINT_WIDTH := 12.0
+const INVALID_CONSTRAINT_HEIGHT := 16.0
+const PREVIOUS_OUT_OF_REACH_CONSTRAINT_WIDTH_HEIGHT := 15.0
 
 const STEP_LABEL_SCALE := Vector2(2.0, 2.0)
 const PREVIOUS_OUT_OF_REACH_CONSTRAINT_LABEL_SCALE := Vector2(1.4, 1.4)
@@ -20,6 +23,8 @@ const COLLISION_X_STROKE_WIDTH_FAINT := 2.0
 const COLLISION_X_STROKE_WIDTH_STRONG := 5.0
 const COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_FAINT := 1.0
 const COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_STRONG := 3.0
+const VALID_CONSTRAINT_STROKE_WIDTH := 2.0
+const INVALID_CONSTRAINT_STROKE_WIDTH := 2.0
 
 const TRAJECTORY_DASH_LENGTH := 2.0
 const TRAJECTORY_DASH_GAP := 8.0
@@ -58,6 +63,7 @@ func _ready() -> void:
     
     step_label = Label.new()
     step_label.rect_scale = STEP_LABEL_SCALE
+    add_child(step_label)
     
     previous_out_of_reach_constraint_label = Label.new()
     previous_out_of_reach_constraint_label.rect_scale = \
@@ -208,15 +214,26 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
         # Draw a dot at the center of the player's collision boundary.
         draw_circle(collision.player_position, COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS, \
                 collision_color)
+        
+        if !renders_faintly:
+            # Draw the upcoming constraints, around the collision.
+            for upcoming_constraint in step_attempt.upcoming_constraints:
+                if upcoming_constraint.is_valid:
+                    DrawUtils.draw_checkmark(self, upcoming_constraint.position, \
+                            VALID_CONSTRAINT_WIDTH, step_color, VALID_CONSTRAINT_STROKE_WIDTH)
+                else:
+                    DrawUtils.draw_x(self, upcoming_constraint.position, \
+                            INVALID_CONSTRAINT_WIDTH, INVALID_CONSTRAINT_HEIGHT, step_color, \
+                            INVALID_CONSTRAINT_STROKE_WIDTH)
     
     # For new backtracking steps, draw and label the constraint that was used as the basis for a
     # higher jump.
     if step_attempt.is_backtracking and !renders_faintly:
-        add_child(step_label)
-        
         # Draw the constraint position.
-        draw_circle(step_attempt.previous_out_of_reach_constraint.position, \
-                PREVIOUS_OUT_OF_REACH_CONSTRAINT_RADIUS, step_color)
+        DrawUtils.draw_diamond_outline(self, \
+                step_attempt.previous_out_of_reach_constraint.position, \
+                PREVIOUS_OUT_OF_REACH_CONSTRAINT_WIDTH_HEIGHT, \
+                PREVIOUS_OUT_OF_REACH_CONSTRAINT_WIDTH_HEIGHT, step_color, 1.0)
         
         # Label the constraint.
         previous_out_of_reach_constraint_label.rect_position = \

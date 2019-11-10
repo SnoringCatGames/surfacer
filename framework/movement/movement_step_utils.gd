@@ -78,6 +78,7 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
             step_calc_params.start_constraint, step_calc_params.end_constraint, \
             overall_calc_params.origin_constraint, overall_calc_params.destination_constraint, \
             collision.surface, overall_calc_params.constraint_offset)
+    step_calc_params.debug_state.upcoming_constraints = constraints
     
     # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := calculate_steps_from_constraint_without_backtracking_on_height( \

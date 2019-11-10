@@ -4,22 +4,35 @@ extends Reference
 class_name MovementCalcStepDebugState
 
 var start_constraint: MovementConstraint setget ,_get_start
+
 var end_constraint: MovementConstraint setget ,_get_end
 
 var frame_positions: PoolVector2Array
+
 var collision: SurfaceCollision
 
 var result_code := EdgeStepCalcResult.UNKNOWN
+
 var result_code_string: String setget ,_get_result_code_string
+
 var description_list: Array setget ,_get_description_list
+
 var is_backtracking: bool setget ,_get_is_backtracking
+
 var replaced_a_fake: bool setget ,_get_replaced_a_fake
+
+# Array<MovementConstraint>
+var upcoming_constraints: Array
+
+var previous_out_of_reach_constraint: MovementConstraint
 
 # MovementCalcStepParams
 var _step_calc_params
+
 var index: int
+
 var overall_debug_state: MovementCalcOverallDebugState
-var previous_out_of_reach_constraint: MovementConstraint
+
 # Array<MovementCalcStepDebugState>
 var children_step_attempts := []
 

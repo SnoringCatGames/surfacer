@@ -87,9 +87,6 @@ func _draw() -> void:
                 
                 # Draw the position where the vertical instruction ends (draw an asterisk).
                 position_end = edge.instructions.jump_instruction_end_position
-                DrawUtils.draw_x(self, position_start, \
-                        VERTICAL_INSTRUCTION_END_LENGTH, VERTICAL_INSTRUCTION_END_LENGTH, \
-                        instruction_start_stop_color, VERTICAL_INSTRUCTION_END_STROKE_WIDTH)
-                DrawUtils.draw_plus(self, position_start, \
+                DrawUtils.draw_asterisk(self, position_start, \
                         VERTICAL_INSTRUCTION_END_LENGTH, VERTICAL_INSTRUCTION_END_LENGTH, \
                         instruction_start_stop_color, VERTICAL_INSTRUCTION_END_STROKE_WIDTH)

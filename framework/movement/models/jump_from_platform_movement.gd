@@ -198,6 +198,19 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #       surface, and check whether that position is still valid along the origin/destination
 #       surface.
 # 
+# - Try to fix dashed polylines.
+# 
+# - Render a legend:
+#   - x: point of collision
+#   - outline: player boundary at point of collision
+#   - open circles: start or end constraints
+#   - plus: left/right button start
+#   - minus: left/right button end
+#   - asterisk: jump button end
+#   - diamond: 
+#   - BT: 
+#   - RF: 
+# 
 # - Polish description of approach in the README.
 #   - In general, a guiding heuristic in these calculations is to minimize movement. So, through
 #     each constraint (step-end), we try to minimize the horizontal speed of the movement at that

@@ -104,6 +104,41 @@ static func draw_plus(canvas: CanvasItem, center: Vector2, width: float, height:
     canvas.draw_line(center + Vector2(0, -half_height), center + Vector2(0, half_height), color, \
             stroke_width)
 
+static func draw_asterisk(canvas: CanvasItem, center: Vector2, width: float, height: float, \
+        color: Color, stroke_width: float) -> void:
+    var plus_width := width
+    var plus_height := height
+    var x_width := plus_width * 0.75
+    var x_height := plus_height * 0.75
+    draw_x(canvas, center, x_width, x_height, color, stroke_width)
+    draw_plus(canvas, center, plus_width, plus_height, color, stroke_width)
+
+static func draw_checkmark(canvas: CanvasItem, position: Vector2, width: float, color: Color, \
+        stroke_width: float) -> void:
+    # We mostly treat the check mark as 90 degrees, divide the check mark into thirds horizontally,
+    # and then position it so that the bottom-most point of the checkmark is slightly below the
+    # target position. However, we then give the right-right corner a slight adjustment upward,
+    # which makes the checkmark slightly more accute than 90.
+    var top_left_point := position + Vector2(-width / 3, -width / 6)
+    var bottom_mid_point := position + Vector2(0, width / 6)
+    var top_right_point := position + Vector2(width * 2 / 3, -width / 2 * 1.33)
+    
+    canvas.draw_line(top_left_point, bottom_mid_point, color, stroke_width)
+    canvas.draw_line(bottom_mid_point, top_right_point, color, stroke_width)
+
+static func draw_diamond_outline(canvas: CanvasItem, center: Vector2, width: float, height: float, \
+        color: Color, stroke_width: float) -> void:
+    var half_width := width / 2.0
+    var half_height := height / 2.0
+    canvas.draw_line(center + Vector2(-half_width, 0), center + Vector2(0, -half_height), color, \
+            stroke_width)
+    canvas.draw_line(center + Vector2(0, -half_height), center + Vector2(half_width, 0), color, \
+            stroke_width)
+    canvas.draw_line(center + Vector2(half_width, 0), center + Vector2(0, half_height), color, \
+            stroke_width)
+    canvas.draw_line(center + Vector2(0, half_height), center + Vector2(-half_width, 0), color, \
+            stroke_width)
+
 static func draw_shape_outline(canvas: CanvasItem, position: Vector2, shape: Shape2D, \
         rotation: float, color: Color, thickness: float) -> void:
     var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2) < Geometry.FLOAT_EPSILON
