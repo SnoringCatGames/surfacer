@@ -144,6 +144,9 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # #########
 # 
+# - Try adding other edges now:
+#   - 
+# 
 # - Add some sort of heuristic to choose when to go with smaller or larger velocity end during
 #   horizontal step calc.
 #   - The alternative, is to once again flip the order we calculate steps, so that we base all
@@ -239,7 +242,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
     # FIXME: B: REMOVE
     params.gravity_fast_fall *= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    params.gravity_slow_ascent *= \
+    params.gravity_slow_rise *= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     var velocity_start := Vector2(0.0, params.jump_boost)
@@ -268,7 +271,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
             for land_position in land_positions:
                 ###################################################################################
                 # Allow for debug mode to limit the scope of what's calculated.
-                if debug_state.in_debug_mode:
+                if debug_state.in_debug_mode and debug_state.limit_parsing_to_single_edge != null:
                     var debug_origin: Dictionary = debug_state.limit_parsing_to_single_edge.origin
                     var debug_destination: Dictionary = \
                             debug_state.limit_parsing_to_single_edge.destination
@@ -343,7 +346,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
     # FIXME: B: REMOVE
     params.gravity_fast_fall /= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    params.gravity_slow_ascent /= \
+    params.gravity_slow_rise /= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     return edges

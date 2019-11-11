@@ -44,7 +44,7 @@ static func calculate_vertical_step( \
     # From a basic equation of motion:
     #     v = v_0 + a*t
     var velocity_at_jump_button_release := movement_params.jump_boost + \
-            movement_params.gravity_slow_ascent * time_instruction_end
+            movement_params.gravity_slow_rise * time_instruction_end
     # From a basic equation of motion:
     #     v = v_0 + a*t
     var duration_to_reach_peak_after_release := \
@@ -129,20 +129,20 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
             var distance_to_release_button_for_shorter_jump := \
                     (0.5 * velocity_start.y * velocity_start.y + \
                     movement_params.gravity_fast_fall * displacement.y) / \
-                    (movement_params.gravity_fast_fall - movement_params.gravity_slow_ascent)
+                    (movement_params.gravity_fast_fall - movement_params.gravity_slow_rise)
             
             if distance_to_release_button_for_shorter_jump < 0:
                 # We need more motion than just the initial jump boost to reach the destination.
                 var time_to_release_jump_button: float = \
                         MovementUtils.calculate_movement_duration( \
                                 distance_to_release_button_for_shorter_jump, velocity_start.y, \
-                                movement_params.gravity_slow_ascent, true, 0.0, false)
+                                movement_params.gravity_slow_rise, true, 0.0, false)
                 assert(time_to_release_jump_button != INF)
             
                 # From a basic equation of motion:
                 #     v = v_0 + a*t
                 var velocity_at_jump_button_release := velocity_start.y + \
-                        movement_params.gravity_slow_ascent * time_to_release_jump_button
+                        movement_params.gravity_slow_rise * time_to_release_jump_button
         
                 # From a basic equation of motion:
                 #     v = v_0 + a*t
@@ -199,6 +199,30 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
         assert(duration_to_reach_horizontal_displacement >= 0 and \
                 duration_to_reach_horizontal_displacement != INF)
         
+        # From a basic equation of motion:
+        #   v = v_0 + a*t
+        var duration_to_reach_peak_from_start_for_max_jump := \
+                (0.0 - velocity_start.y) / movement_params.gravity_slow_rise
+        var displacement_from_peak_to_target := \
+                position_end.y - (position_start.y - movement_params.max_upward_jump_distance)
+        # From a basic equation of motion:
+        #   - s = s_0 + v_0*t + 1/2*a*t^2
+        #   - v_0 = 0
+        #   - Algebra...
+        #   - t = sqrt(2 * (s - s_0) / a)
+        var duration_to_reach_target_from_peak_for_max_jump := sqrt(2 * \
+                displacement_from_peak_to_target / movement_params.gravity_fast_fall)
+        var duration_to_reach_target_with_max_jump_height := \
+                duration_to_reach_peak_from_start_for_max_jump + \
+                duration_to_reach_target_from_peak_for_max_jump
+        
+        # The total duration is too much if the horizontal displacement requires more air time than
+        # our highest jump affords.
+        if duration_to_reach_target_with_max_jump_height < \
+                duration_to_reach_horizontal_displacement:
+            # We can't reach the horizontal displacement.
+            return INF
+        
         var duration_to_reach_upward_displacement_on_descent := 0.0
         if duration_to_reach_downward_displacement == 0.0:
             # The total duration still isn't enough if we cannot reach the horizontal displacement
@@ -252,8 +276,8 @@ static func calculate_time_to_release_jump_button(movement_params: MovementParam
     # - Do some algebra...
     # - 0 = (1/2*(a_1 - a_0))*t_0^2 + (t_2*(a_0 - a_1))*t_0 + (s_0 - s_2 + v_0*t_2 + 1/2*a_1*t_2^2)
     # - Apply quadratic formula to solve for t_0.
-    var a := 0.5 * (movement_params.gravity_fast_fall - movement_params.gravity_slow_ascent)
-    var b := duration * (movement_params.gravity_slow_ascent - movement_params.gravity_fast_fall)
+    var a := 0.5 * (movement_params.gravity_fast_fall - movement_params.gravity_slow_rise)
+    var b := duration * (movement_params.gravity_slow_rise - movement_params.gravity_fast_fall)
     var c := -displacement_y + movement_params.jump_boost * duration + \
             0.5 * movement_params.gravity_fast_fall * duration * duration
     var discriminant := b * b - 4 * a * c
@@ -354,7 +378,7 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
     if is_position_before_instruction_end:
         var displacement := target_height - position_start_y
         duration_of_slow_ascent = MovementUtils.calculate_movement_duration(displacement, \
-                movement_params.jump_boost, movement_params.gravity_slow_ascent, true, \
+                movement_params.jump_boost, movement_params.gravity_slow_rise, true, \
                 min_end_time, false)
         if duration_of_slow_ascent == INF:
             return INF
@@ -389,9 +413,9 @@ static func calculate_vertical_state_for_time(movement_params: MovementParams, t
     
     # Basic equations of motion.
     var slow_ascent_end_position := position_step_start_y + velocity_step_start_y * slow_ascent_end_time + \
-            0.5 * movement_params.gravity_slow_ascent * slow_ascent_end_time * slow_ascent_end_time
+            0.5 * movement_params.gravity_slow_rise * slow_ascent_end_time * slow_ascent_end_time
     var slow_ascent_end_velocity := velocity_step_start_y + \
-            movement_params.gravity_slow_ascent * slow_ascent_end_time
+            movement_params.gravity_slow_rise * slow_ascent_end_time
     
     var position: float
     var velocity: float
@@ -414,7 +438,7 @@ static func calculate_vertical_state_for_time(movement_params: MovementParams, t
     return [position, velocity]
 
 # Returns a positive value.
-static func calculate_max_upward_displacement(movement_params: MovementParams) -> float:
+static func calculate_max_upward_distance(movement_params: MovementParams) -> float:
     # FIXME: F: Add support for double jumps, dash, etc.
     
     # From a basic equation of motion:
@@ -424,4 +448,4 @@ static func calculate_max_upward_displacement(movement_params: MovementParams) -
     # - Algebra...
     # - s = -v_0^2 / 2 / a
     return (movement_params.jump_boost * movement_params.jump_boost) / 2.0 / \
-            movement_params.gravity_slow_ascent
+            movement_params.gravity_slow_rise

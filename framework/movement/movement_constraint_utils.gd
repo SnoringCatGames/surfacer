@@ -287,6 +287,11 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
                     constraint.previous_constraint.position, \
                     Vector2(64, -480), 10):
                 print("break")
+            # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+            if Geometry.are_points_equal_with_epsilon( \
+                    constraint.position, \
+                    Vector2(2688, 226), 10):
+                print("break")
             
             # If we already know the required time for reaching the destination, and we aren't
             # performing a new backtracking step, then re-use the previously calculated time. The

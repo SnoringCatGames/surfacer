@@ -13,7 +13,7 @@ var collider_half_width_height: Vector2
 
 var gravity_fast_fall: float
 var slow_ascent_gravity_multiplier: float
-var gravity_slow_ascent: float
+var gravity_slow_rise: float
 var ascent_double_jump_gravity_multiplier: float
 
 var jump_boost: float

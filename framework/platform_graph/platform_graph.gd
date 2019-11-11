@@ -395,6 +395,7 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
                 ###################################################################################
                 # Allow for debug mode to limit the scope of what's calculated.
                 if debug_state.in_debug_mode and \
+                        debug_state.limit_parsing_to_single_edge != null and \
                         player_info.name != debug_state.limit_parsing_to_single_edge.player_name:
                     continue
                 

@@ -82,7 +82,7 @@ static func test_instructions(instructions: MovementInstructions, \
     # FIXME: B: REMOVE
     overall_calc_params.movement_params.gravity_fast_fall /= \
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    overall_calc_params.movement_params.gravity_slow_ascent /= \
+    overall_calc_params.movement_params.gravity_slow_rise /= \
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     var collision := CollisionCheckUtils.check_instructions_for_collision(overall_calc_params, \
@@ -99,7 +99,7 @@ static func test_instructions(instructions: MovementInstructions, \
     # FIXME: B: REMOVE
     overall_calc_params.movement_params.gravity_fast_fall *= \
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    overall_calc_params.movement_params.gravity_slow_ascent *= \
+    overall_calc_params.movement_params.gravity_slow_rise *= \
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     return true

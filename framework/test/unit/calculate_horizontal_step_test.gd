@@ -9,7 +9,7 @@ func set_up(state := {}) -> void:
     movement_params = MovementParams.new()
     movement_params.in_air_horizontal_acceleration = 1500.0
     movement_params.jump_boost = -1000.0
-    movement_params.gravity_slow_ascent = 900.0
+    movement_params.gravity_slow_rise = 900.0
     movement_params.gravity_fast_fall = 5000.0
     movement_params.collider_shape = RectangleShape2D.new()
 

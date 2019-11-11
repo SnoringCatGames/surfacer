@@ -224,10 +224,10 @@ static func calculate_max_horizontal_displacement( \
     # FIXME: A: Add horizontal acceleration
     
     # v = v_0 + a*t
-    var max_time_to_peak := -velocity_start_y / movement_params.gravity_slow_ascent
+    var max_time_to_peak := -velocity_start_y / movement_params.gravity_slow_rise
     # s = s_0 + v_0*t + 0.5*a*t*t
     var max_peak_height := velocity_start_y * max_time_to_peak + \
-            0.5 * movement_params.gravity_slow_ascent * max_time_to_peak * max_time_to_peak
+            0.5 * movement_params.gravity_slow_rise * max_time_to_peak * max_time_to_peak
     # v^2 = v_0^2 + 2*a*(s - s_0)
     var max_velocity_when_returning_to_starting_height := \
             sqrt(2 * movement_params.gravity_fast_fall * -max_peak_height)

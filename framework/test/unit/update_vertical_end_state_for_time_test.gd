@@ -15,7 +15,7 @@ func set_up(state := {}) -> void:
     
     movement_params = MovementParams.new()
     movement_params.gravity_fast_fall = 5000.0
-    movement_params.gravity_slow_ascent = 900.0
+    movement_params.gravity_slow_rise = 900.0
     
     vertical_step = MovementCalcStep.new()
     vertical_step.time_instruction_end = state.time_instruction_end
