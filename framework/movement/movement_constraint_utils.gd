@@ -564,16 +564,18 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(displacement:
     var max_v_1_that_can_be_reached := displacement / duration + 0.5 * a_magnitude * duration
     
     # From a basic equation of motion:
-    #    v = v_0 + a*t
-    var min_v_1_that_can_start_from_max_velocity := speed_max - a_magnitude * duration
-    var max_v_1_that_can_start_from_min_velocity := -speed_max + a_magnitude * duration
+    #   v = v_0 + a*t
+    var v_0_corresponding_to_min_v_1_that_can_be_reached := \
+            min_v_1_that_can_be_reached + a_magnitude * duration
+    var v_0_corresponding_to_max_v_1_that_can_be_reached := \
+            max_v_1_that_can_be_reached - a_magnitude * duration
     
-    var would_decelerating_over_entire_step_exceed_max_speed_at_start := \
-            min_v_1_that_can_be_reached > min_v_1_that_can_start_from_max_velocity
-    var would_accelerating_over_entire_step_exceed_max_speed_at_start := \
-            max_v_1_that_can_be_reached < max_v_1_that_can_start_from_min_velocity
+    var would_neg_acc_over_entire_step_exceed_max_speed_at_start := \
+            v_0_corresponding_to_min_v_1_that_can_be_reached > speed_max
+    var would_pos_acc_over_entire_step_exceed_max_speed_at_start := \
+            v_0_corresponding_to_max_v_1_that_can_be_reached < -speed_max
     
-    if would_decelerating_over_entire_step_exceed_max_speed_at_start:
+    if would_neg_acc_over_entire_step_exceed_max_speed_at_start:
         # Accelerating over the entire step to min_v_1_that_can_be_reached would require starting
         # with a velocity that exceeds max speed. So we need to instead consider a two-part
         # movement profile when calculating min_v_1_that_can_be_reached: constant velocity
@@ -587,7 +589,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(displacement:
             # We cannot reach this constraint from the previous constraint.
             return []
     
-    if would_accelerating_over_entire_step_exceed_max_speed_at_start:
+    if would_pos_acc_over_entire_step_exceed_max_speed_at_start:
         # Accelerating over the entire step to max_v_1_that_can_be_reached would require starting
         # with a velocity that exceeds max speed. So we need to instead consider a two-part
         # movement profile when calculating max_v_1_that_can_be_reached: constant velocity
@@ -647,49 +649,60 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(displacement:
     var acceleration: float
     var should_accelerate_at_start: bool
     var should_return_min_result: bool
+    var v_0_min: float
+    var v_0_max: float
     
-    v_1 = v_1_max
-    acceleration = a_magnitude
-    should_accelerate_at_start = true
-    should_return_min_result = true
-    var v_0_min_pos_acc_at_start := _solve_for_start_velocity(displacement, duration, \
-            acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+    if would_neg_acc_over_entire_step_exceed_max_speed_at_start:
+        v_1 = v_1_min
+        acceleration = -a_magnitude
+        should_accelerate_at_start = true
+        should_return_min_result = false
+        var v_0_max_neg_acc_at_start := _solve_for_start_velocity(displacement, duration, \
+                acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+        
+        v_1 = v_1_min
+        acceleration = a_magnitude
+        should_accelerate_at_start = false
+        should_return_min_result = false
+        var v_0_max_pos_acc_at_end := _solve_for_start_velocity(displacement, duration, \
+                acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+        
+        # Use the more extreme of the possible min/max values we calculated for positive/negative
+        # acceleration at the start/end.
+        v_0_max = \
+                max(v_0_max_neg_acc_at_start, v_0_max_pos_acc_at_end) if \
+                        v_0_max_neg_acc_at_start != INF and v_0_max_pos_acc_at_end != INF else \
+                (v_0_max_neg_acc_at_start if v_0_max_neg_acc_at_start != INF else \
+                v_0_max_pos_acc_at_end)
+    else:
+        v_0_max = v_0_corresponding_to_min_v_1_that_can_be_reached
     
-    v_1 = v_1_min
-    acceleration = -a_magnitude
-    should_accelerate_at_start = true
-    should_return_min_result = false
-    var v_0_max_neg_acc_at_start := _solve_for_start_velocity(displacement, duration, \
-            acceleration, v_1, should_accelerate_at_start, should_return_min_result)
-    
-    v_1 = v_1_min
-    acceleration = a_magnitude
-    should_accelerate_at_start = false
-    should_return_min_result = false
-    var v_0_max_pos_acc_at_end := _solve_for_start_velocity(displacement, duration, \
-            acceleration, v_1, should_accelerate_at_start, should_return_min_result)
-    
-    v_1 = v_1_max
-    acceleration = -a_magnitude
-    should_accelerate_at_start = false
-    should_return_min_result = true
-    var v_0_min_neg_acc_at_end := _solve_for_start_velocity(displacement, duration, \
-            acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+    if would_pos_acc_over_entire_step_exceed_max_speed_at_start:
+        v_1 = v_1_max
+        acceleration = a_magnitude
+        should_accelerate_at_start = true
+        should_return_min_result = true
+        var v_0_min_pos_acc_at_start := _solve_for_start_velocity(displacement, duration, \
+                acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+        
+        v_1 = v_1_max
+        acceleration = -a_magnitude
+        should_accelerate_at_start = false
+        should_return_min_result = true
+        var v_0_min_neg_acc_at_end := _solve_for_start_velocity(displacement, duration, \
+                acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+        
+        # Use the more extreme of the possible min/max values we calculated for positive/negative
+        # acceleration at the start/end.
+        v_0_min = \
+                min(v_0_min_pos_acc_at_start, v_0_min_neg_acc_at_end) if \
+                        v_0_min_pos_acc_at_start != INF and v_0_min_neg_acc_at_end != INF else \
+                (v_0_min_pos_acc_at_start if v_0_min_pos_acc_at_start != INF else \
+                v_0_min_neg_acc_at_end)
+    else:
+        v_0_min = v_0_corresponding_to_max_v_1_that_can_be_reached
     
     ### Sanitize the results (remove invalid results, cap values, correct for round-off errors).
-    
-    # Use the more extreme of the possible min/max values we calculated for positive/negative
-    # acceleration at the start/end.
-    var v_0_max := \
-            max(v_0_max_neg_acc_at_start, v_0_max_pos_acc_at_end) if \
-                    v_0_max_neg_acc_at_start != INF and v_0_max_pos_acc_at_end != INF else \
-            (v_0_max_neg_acc_at_start if v_0_max_neg_acc_at_start != INF else \
-            v_0_max_pos_acc_at_end)
-    var v_0_min := \
-            min(v_0_min_pos_acc_at_start, v_0_min_neg_acc_at_end) if \
-                    v_0_min_pos_acc_at_start != INF and v_0_min_neg_acc_at_end != INF else \
-            (v_0_min_pos_acc_at_start if v_0_min_pos_acc_at_start != INF else \
-            v_0_min_neg_acc_at_end)
     
     # If we found valid v_1_min/v_1_max values, then there must be valid corresponding
     # v_0_min/v_0_max values.
@@ -771,7 +784,7 @@ static func _calculate_v_1_with_v_0_limit(displacement: float, duration: float, 
     var is_result_2_valid := (t_result_2 >= 0 and t_result_2 <= duration)
     
     if !is_result_1_valid and !is_result_2_valid:
-        # There is no nd velocity that can satisfy these parameters.
+        # There is no end velocity that can satisfy these parameters.
         return INF
     elif !is_result_1_valid:
         return result_2
@@ -916,23 +929,24 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
     # Derivation:
     # - From basic equations of motion:
     #   s = s_0 + v_0*t + 1/2*a*t^2
-    #   v = v_0 + a*t
     # - Algebra...
-    #   v = (s - s_0) / t + 1/2*a*t
+    #   v_0 = (s - s_0) / t - 1/2*a*t
     var min_v_0_that_can_reach_target := displacement / duration - 0.5 * a_magnitude * duration
     var max_v_0_that_can_reach_target := displacement / duration + 0.5 * a_magnitude * duration
     
     # From a basic equation of motion:
-    #    v = v_0 + a*t
-    var min_v_0_that_can_reach_max_velocity := speed_max - a_magnitude * duration
-    var max_v_0_that_can_reach_min_velocity := -speed_max + a_magnitude * duration
+    #   v_1 = v_0 + a*t
+    var v_1_corresponding_to_min_v_0_that_can_reach_target := \
+            min_v_0_that_can_reach_target + a_magnitude * duration
+    var v_1_corresponding_to_max_v_0_that_can_reach_target := \
+            max_v_0_that_can_reach_target - a_magnitude * duration
     
-    var would_accelerating_over_entire_step_exceed_max_speed_at_end := \
-            min_v_0_that_can_reach_target > min_v_0_that_can_reach_max_velocity
-    var would_decelerating_over_entire_step_exceed_max_speed_at_end := \
-            max_v_0_that_can_reach_target < max_v_0_that_can_reach_min_velocity
+    var would_neg_acc_over_entire_step_exceed_max_speed_at_end := \
+            v_1_corresponding_to_max_v_0_that_can_reach_target < -speed_max
+    var would_pos_acc_over_entire_step_exceed_max_speed_at_end := \
+            v_1_corresponding_to_min_v_0_that_can_reach_target > speed_max
     
-    if would_accelerating_over_entire_step_exceed_max_speed_at_end:
+    if would_pos_acc_over_entire_step_exceed_max_speed_at_end:
         # Accelerating over the entire step to min_v_0_that_can_reach_target would require ending
         # with a velocity that exceeds max speed. So we need to instead consider a two-part
         # movement profile when calculating min_v_0_that_can_reach_target: constant acceleration
@@ -946,7 +960,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
             # We cannot reach this constraint from the previous constraint.
             return []
     
-    if would_decelerating_over_entire_step_exceed_max_speed_at_end:
+    if would_neg_acc_over_entire_step_exceed_max_speed_at_end:
         # Accelerating over the entire step to max_v_0_that_can_reach_target would require ending
         # with a velocity that exceeds max speed. So we need to instead consider a two-part
         # movement profile when calculating max_v_0_that_can_reach_target: constant acceleration
@@ -957,11 +971,6 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
         max_v_0_that_can_reach_target = \
                 _calculate_v_0_with_v_1_limit(displacement, duration, v_1, acceleration, false)
         if max_v_0_that_can_reach_target == INF:
-            # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: # FIXME: -----------------
-            if true:
-                max_v_0_that_can_reach_target = \
-                        _calculate_v_0_with_v_1_limit(displacement, duration, v_1, acceleration, false)
-                print("break")
             # We cannot reach this constraint from the previous constraint.
             return []
     
@@ -1011,49 +1020,60 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
     var acceleration: float
     var should_accelerate_at_start: bool
     var should_return_min_result: bool
+    var v_1_min: float
+    var v_1_max: float
     
-    v_0 = v_0_max
-    acceleration = a_magnitude
-    should_accelerate_at_start = true
-    should_return_min_result = true
-    var v_1_min_pos_acc_at_start := _solve_for_end_velocity(displacement, duration, \
-            acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+    if would_pos_acc_over_entire_step_exceed_max_speed_at_end:
+        v_0 = v_0_min
+        acceleration = -a_magnitude
+        should_accelerate_at_start = true
+        should_return_min_result = false
+        var v_1_max_neg_acc_at_start := _solve_for_end_velocity(displacement, duration, \
+                acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+        
+        v_0 = v_0_min
+        acceleration = a_magnitude
+        should_accelerate_at_start = false
+        should_return_min_result = false
+        var v_1_max_pos_acc_at_end := _solve_for_end_velocity(displacement, duration, \
+                acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+        
+        # Use the more extreme of the possible min/max values we calculated for positive/negative
+        # acceleration at the start/end.
+        v_1_max = \
+                max(v_1_max_neg_acc_at_start, v_1_max_pos_acc_at_end) if \
+                        v_1_max_neg_acc_at_start != INF and v_1_max_pos_acc_at_end != INF else \
+                (v_1_max_neg_acc_at_start if v_1_max_neg_acc_at_start != INF else \
+                v_1_max_pos_acc_at_end)
+    else:
+        v_1_max = v_1_corresponding_to_min_v_0_that_can_reach_target
     
-    v_0 = v_0_min
-    acceleration = -a_magnitude
-    should_accelerate_at_start = true
-    should_return_min_result = false
-    var v_1_max_neg_acc_at_start := _solve_for_end_velocity(displacement, duration, \
-            acceleration, v_0, should_accelerate_at_start, should_return_min_result)
-    
-    v_0 = v_0_min
-    acceleration = a_magnitude
-    should_accelerate_at_start = false
-    should_return_min_result = false
-    var v_1_max_pos_acc_at_end := _solve_for_end_velocity(displacement, duration, \
-            acceleration, v_0, should_accelerate_at_start, should_return_min_result)
-    
-    v_0 = v_0_max
-    acceleration = -a_magnitude
-    should_accelerate_at_start = false
-    should_return_min_result = true
-    var v_1_min_neg_acc_at_end := _solve_for_end_velocity(displacement, duration, \
-            acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+    if would_neg_acc_over_entire_step_exceed_max_speed_at_end:
+        v_0 = v_0_max
+        acceleration = a_magnitude
+        should_accelerate_at_start = true
+        should_return_min_result = true
+        var v_1_min_pos_acc_at_start := _solve_for_end_velocity(displacement, duration, \
+                acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+        
+        v_0 = v_0_max
+        acceleration = -a_magnitude
+        should_accelerate_at_start = false
+        should_return_min_result = true
+        var v_1_min_neg_acc_at_end := _solve_for_end_velocity(displacement, duration, \
+                acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+        
+        # Use the more extreme of the possible min/max values we calculated for positive/negative
+        # acceleration at the start/end.
+        v_1_min = \
+                min(v_1_min_pos_acc_at_start, v_1_min_neg_acc_at_end) if \
+                        v_1_min_pos_acc_at_start != INF and v_1_min_neg_acc_at_end != INF else \
+                (v_1_min_pos_acc_at_start if v_1_min_pos_acc_at_start != INF else \
+                v_1_min_neg_acc_at_end)
+    else:
+        v_1_min = v_1_corresponding_to_max_v_0_that_can_reach_target
     
     ### Sanitize the results (remove invalid results, cap values, correct for round-off errors).
-    
-    # Use the more extreme of the possible min/max values we calculated for positive/negative
-    # acceleration at the start/end.
-    var v_1_max := \
-            max(v_1_max_neg_acc_at_start, v_1_max_pos_acc_at_end) if \
-                    v_1_max_neg_acc_at_start != INF and v_1_max_pos_acc_at_end != INF else \
-            (v_1_max_neg_acc_at_start if v_1_max_neg_acc_at_start != INF else \
-            v_1_max_pos_acc_at_end)
-    var v_1_min := \
-            min(v_1_min_pos_acc_at_start, v_1_min_neg_acc_at_end) if \
-                    v_1_min_pos_acc_at_start != INF and v_1_min_neg_acc_at_end != INF else \
-            (v_1_min_pos_acc_at_start if v_1_min_pos_acc_at_start != INF else \
-            v_1_min_neg_acc_at_end)
     
     # If we found valid v_1_min/v_1_max values, then there must be valid corresponding
     # v_1_min/v_1_max values.
