@@ -14,8 +14,9 @@ var bounding_box: Rect2
 
 var normal: Vector2
 
-var clockwise_neighbor: Surface
-var counter_clockwise_neighbor: Surface
+var convex_clockwise_neighbor: Surface
+
+var convex_counter_clockwise_neighbor: Surface
 
 func _init(vertices: Array, side: int, tile_map_indices: Array) -> void:
     self.vertices = PoolVector2Array(vertices)

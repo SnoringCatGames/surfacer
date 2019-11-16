@@ -220,6 +220,17 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # - Try to fix DrawUtils dashed polylines.
 # 
+# - Think through and maybe fix the function in constraint utils for accounting for max-speed vs min/max for valid next step?
+# 
+# 
+
+
+# FIXME: LEFT OFF HERE: ---------------------------------------------------------A
+# FIXME: -----------------------------
+# >>- debug
+# - It seems like I'm going to have to work on performance soon.
+# 
+# 
 
 
 

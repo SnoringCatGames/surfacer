@@ -7,7 +7,8 @@ const VERTEX_SIDE_NUDGE_OFFSET := 0.001
 # collision would occur, this returns the surface; otherwise, this returns null.
 static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         shape_query_params: Physics2DShapeQueryParameters, collider_half_width_height: Vector2, \
-        surface_parser: SurfaceParser, has_recursed := false) -> SurfaceCollision:
+        collider_rotation: float, surface_parser: SurfaceParser, \
+        has_recursed := false) -> SurfaceCollision:
     # Check for collisions during this frame; these could be new or pre-existing.
     var intersection_points := space_state.collide_shape(shape_query_params, 32)
     assert(intersection_points.size() < 32)
@@ -60,6 +61,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     #     - Normal according to the direction of motion?
     #     - Position from closest_intersection_point
     #     - Collider from ...
+    
     
     
     
@@ -128,7 +130,6 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         ray_trace_target = closest_intersection_point
         
         var collision_ratios := space_state.cast_motion(shape_query_params)
-        
         assert(collision_ratios.size() != 1)
         
         # An array of size 2 means that there was no pre-existing collision.
@@ -157,16 +158,19 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             
             # When the Player's shape rests against another collidable, that can be interpreted as
             # a collision, so we add a slight offset here.
+            # 
+            # This updates the matrix translation in global space, rather than relative to the
+            # local coordinates of the matrix (which `translated` would do). This is important,
+            # since the matrix could have been rotated.
             # FIXME: LEFT OFF HERE: Is this needed?
-            shape_query_params.transform = \
-                    shape_query_params.transform.translated(-direction * 0.01)
+            shape_query_params.transform[2] += -direction * 0.01
             
             var result := check_frame_for_collision(space_state, shape_query_params, \
-                    collider_half_width_height, surface_parser, true)
+                    collider_half_width_height, collider_rotation, surface_parser, true)
             
             shape_query_params.margin = original_margin
             shape_query_params.motion = original_motion
-            shape_query_params.transform = Transform2D(0.0, position_start)
+            shape_query_params.transform = Transform2D(collider_rotation, position_start)
             
             return result
         

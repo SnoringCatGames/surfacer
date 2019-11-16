@@ -60,6 +60,10 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
         assert(Geometry.are_points_equal_with_epsilon(next_horizontal_step.position_step_end, \
                 overall_calc_params.destination_constraint.position, 0.0001))
     
+    # FIXME: DEBUGGING: REMOVE:
+    if step_calc_params.start_constraint.position == Vector2(106, 37.5):
+        print("break")
+    
     var collision := CollisionCheckUtils.check_continuous_horizontal_step_for_collision( \
             overall_calc_params, step_calc_params, next_horizontal_step)
     

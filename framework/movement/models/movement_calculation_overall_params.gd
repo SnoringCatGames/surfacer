@@ -65,7 +65,7 @@ func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceSta
     shape_query_params.margin = EDGE_MOVEMENT_TEST_MARGIN
     shape_query_params.motion = Vector2.ZERO
     shape_query_params.shape_rid = movement_params.collider_shape.get_rid()
-    shape_query_params.transform = Transform2D.IDENTITY
+    shape_query_params.transform = Transform2D(movement_params.collider_rotation, Vector2.ZERO)
     shape_query_params.set_shape(movement_params.collider_shape)
     
     if Global.IN_DEBUG_MODE:
