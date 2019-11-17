@@ -17,7 +17,7 @@ const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false
 
 const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_rise.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_5.tscn"
 
 const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 #const PLAYER_RESOURCE_PATH := "res://framework/test/test_data/test_player.tscn"

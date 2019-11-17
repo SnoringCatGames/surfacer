@@ -110,8 +110,8 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
             VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
                     movement_params, vertical_step, time_step_end)
     
-    assert(Geometry.are_floats_equal_with_epsilon(step_end_state[0], position_end.y, 0.0001))
-    assert(Geometry.are_floats_equal_with_epsilon(step_start_state[0], position_step_start.y, 0.0001))
+    assert(Geometry.are_floats_equal_with_epsilon(step_end_state[0], position_end.y, 0.001))
+    assert(Geometry.are_floats_equal_with_epsilon(step_start_state[0], position_step_start.y, 0.001))
     
     ### Assign the step properties.
     

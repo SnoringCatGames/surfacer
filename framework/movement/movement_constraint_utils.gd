@@ -46,6 +46,8 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
         destination_constraint: MovementConstraint, colliding_surface: Surface, \
         constraint_offset: Vector2) -> Array:
     var passing_vertically: bool
+    var should_stay_on_min_side_a: bool
+    var should_stay_on_min_side_b: bool
     var position_a: Vector2
     var position_b: Vector2
     
@@ -53,6 +55,8 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
     match colliding_surface.side:
         SurfaceSide.FLOOR:
             passing_vertically = true
+            should_stay_on_min_side_a = true
+            should_stay_on_min_side_b = false
             # Left end (counter-clockwise end).
             position_a = colliding_surface.vertices[0] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
@@ -61,14 +65,18 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
                     Vector2(constraint_offset.x, -constraint_offset.y)
         SurfaceSide.CEILING:
             passing_vertically = true
+            should_stay_on_min_side_a = false
+            should_stay_on_min_side_b = true
             # Right end (counter-clockwise end).
             position_a = colliding_surface.vertices[0] + \
-                    Vector2(-constraint_offset.x, constraint_offset.y)
+                    Vector2(constraint_offset.x, constraint_offset.y)
             # Left end (clockwise end).
             position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
-                    Vector2(constraint_offset.x, constraint_offset.y)
+                    Vector2(-constraint_offset.x, constraint_offset.y)
         SurfaceSide.LEFT_WALL:
             passing_vertically = false
+            should_stay_on_min_side_a = true
+            should_stay_on_min_side_b = false
             # Top end (counter-clockwise end).
             position_a = colliding_surface.vertices[0] + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
@@ -77,12 +85,14 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
                     Vector2(constraint_offset.x, constraint_offset.y)
         SurfaceSide.RIGHT_WALL:
             passing_vertically = false
+            should_stay_on_min_side_a = false
+            should_stay_on_min_side_b = true
             # Bottom end (counter-clockwise end).
             position_a = colliding_surface.vertices[0] + \
-                    Vector2(-constraint_offset.x, -constraint_offset.y)
+                    Vector2(-constraint_offset.x, constraint_offset.y)
             # Top end (clockwise end).
             position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
-                    Vector2(-constraint_offset.x, constraint_offset.y)
+                    Vector2(-constraint_offset.x, -constraint_offset.y)
     
     # We ignore constraints that would correspond to moving back the way we came.
     var should_skip_a := \
@@ -91,10 +101,10 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
             previous_constraint.surface == colliding_surface.convex_clockwise_neighbor
     
     # FIXME: DEBUGGING: REMOVE
-    if colliding_surface.normal.x == -1 and \
-            colliding_surface.bounding_box.position == Vector2(128, 64) and \
-            Geometry.are_points_equal_with_epsilon(position_a, Vector2(106, 37.5), 0.01):
-        print("break")
+#    if colliding_surface.normal.x == -1 and \
+#            colliding_surface.bounding_box.position == Vector2(128, 64) and \
+#            Geometry.are_points_equal_with_epsilon(position_a, Vector2(106, 37.5), 0.01):
+#        print("break")
     
     var constraint_a_original: MovementConstraint
     var constraint_a_final: MovementConstraint
@@ -103,7 +113,8 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
     
     if !should_skip_a:
         constraint_a_original = MovementConstraint.new(colliding_surface, position_a, \
-                passing_vertically, true, previous_constraint, next_constraint)
+                passing_vertically, should_stay_on_min_side_a, previous_constraint, \
+                next_constraint)
         # Calculate and record state for the constraint.
         update_constraint(constraint_a_original, origin_constraint, movement_params, \
                 vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
@@ -121,7 +132,8 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
     
     if !should_skip_b:
         constraint_b_original = MovementConstraint.new(colliding_surface, position_b, \
-                passing_vertically, false, previous_constraint, next_constraint)
+                passing_vertically, should_stay_on_min_side_b, previous_constraint, \
+                next_constraint)
         # Calculate and record state for the constraint.
         update_constraint(constraint_b_original, origin_constraint, movement_params, \
                 vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
@@ -218,9 +230,12 @@ static func update_constraint(constraint: MovementConstraint, \
     
     _assign_horizontal_movement_sign(constraint)
     
-    # Check for fake constraints.
-    if constraint.horizontal_movement_sign != \
-            constraint.horizontal_movement_sign_from_displacement:
+    var is_a_horizontal_surface := constraint.surface.normal.x == 0
+    var is_a_fake_constraint := constraint.horizontal_movement_sign != \
+            constraint.horizontal_movement_sign_from_displacement and \
+            is_a_horizontal_surface
+    
+    if is_a_fake_constraint:
         # This constraint should be skipped, and movement should proceed directly to the next one
         # (but we still need to keep this constraint around long enough to calculate what that
         # next constraint is).
@@ -255,15 +270,10 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
     var actual_velocity_x: float
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-    if Geometry.are_points_equal_with_epsilon( \
-            constraint.position, \
-            Vector2(-190, -349), 10):
-        print("break")
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-    if Geometry.are_points_equal_with_epsilon( \
-            constraint.position, \
-            Vector2(64, -480), 10):
-        print("break")
+#    if Geometry.are_points_equal_with_epsilon( \
+#            constraint.position, \
+#            Vector2(-190, -349), 10):
+#        print("break")
     
     # Calculate the time that the movement would pass through the constraint, as well as the min
     # and max x-velocity when passing through the constraint.
@@ -300,29 +310,24 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
                 constraint_position_to_calculate_jump_release_time_for = \
                         additional_high_constraint_position
                 # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-                if Geometry.are_points_equal_with_epsilon( \
-                        constraint_position_to_calculate_jump_release_time_for, \
-                        Vector2(64, -480), 10):
-                    print("break")
-                # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-                if Geometry.are_points_equal_with_epsilon( \
-                        constraint_position_to_calculate_jump_release_time_for, \
-                        Vector2(-190, -349), 10):
-                    print("break")
+#                if Geometry.are_points_equal_with_epsilon( \
+#                        constraint_position_to_calculate_jump_release_time_for, \
+#                        Vector2(64, -480), 10):
+#                    print("break")
             
             # TODO: I should probably refactor these two calls, so we're doing fewer redundant
             #       calculations here.
             
             # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-            if Geometry.are_points_equal_with_epsilon( \
-                    constraint.previous_constraint.position, \
-                    Vector2(64, -480), 10):
-                print("break")
+#            if Geometry.are_points_equal_with_epsilon( \
+#                    constraint.previous_constraint.position, \
+#                    Vector2(64, -480), 10):
+#                print("break")
             # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-            if Geometry.are_points_equal_with_epsilon( \
-                    constraint.position, \
-                    Vector2(2688, 226), 10):
-                print("break")
+#            if Geometry.are_points_equal_with_epsilon( \
+#                    constraint.position, \
+#                    Vector2(2688, 226), 10):
+#                print("break")
             
             # If we already know the required time for reaching the destination, and we aren't
             # performing a new backtracking step, then re-use the previously calculated time. The
@@ -332,11 +337,13 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             if vertical_step != null and additional_high_constraint_position == Vector2.INF:
                 time_to_pass_through_constraint_ignoring_others = vertical_step.time_step_end
             else:
+                var distance_from_origin_to_constraint := \
+                        constraint_position_to_calculate_jump_release_time_for - \
+                        origin_constraint.position
                 time_to_pass_through_constraint_ignoring_others = \
                         VerticalMovementUtils.calculate_time_to_jump_to_constraint(movement_params, \
-                                origin_constraint.position, \
-                                constraint_position_to_calculate_jump_release_time_for, \
-                                velocity_start_origin, can_hold_jump_button_at_origin)
+                                distance_from_origin_to_constraint, velocity_start_origin, \
+                                can_hold_jump_button_at_origin)
                 if time_to_pass_through_constraint_ignoring_others == INF:
                     # We can't reach this constraint.
                     return false
@@ -548,7 +555,7 @@ static func _assign_horizontal_movement_sign(constraint: MovementConstraint) -> 
             # For straight-vertical steps, if there was any horizontal movement through the
             # previous, then we're going to need to backtrack in the opposition direction to reach
             # the destination.
-            (neighbor_horizontal_movement_sign if neighbor_horizontal_movement_sign != INF else \
+            (-neighbor_horizontal_movement_sign if neighbor_horizontal_movement_sign != INF else \
             # For straight vertical steps from the origin, we don't have much to go off of for
             # picking the horizontal movement direction, so just default to rightward for now.
             1))

@@ -320,10 +320,10 @@ static func check_continuous_horizontal_step_for_collision( \
     var frame_positions := [current_position]
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-    if Geometry.are_points_equal_with_epsilon( \
-            previous_position, \
-            Vector2(64, -480), 10):
-        print("break")
+#    if Geometry.are_points_equal_with_epsilon( \
+#            previous_position, \
+#            Vector2(64, -480), 10):
+#        print("break")
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
@@ -340,23 +340,17 @@ static func check_continuous_horizontal_step_for_collision( \
         
         assert(shape_query_params.motion != Vector2.ZERO)
         
-        # FIXME: LEFT OFF HERE: ---------------------------------------A: DEBUGGING:
-        # - [Probably done with this breakpoint actually...] Set a breakpoint here.
-        # - !! After that, fix the issue that shape_query_params.transform is not taking into
-        #   consideration the rotation of the shape.
-        #   - 
-        if current_position.x > 40 and current_position.x < 61 and current_position.y < -350:
-            print("yo")
+        # FIXME: DEBUGGING: REMOVE:
+#        if Geometry.are_points_equal_with_epsilon( \
+#                current_position, Vector2(25.089, -468.167), 0.001):
+#            print("yo")
         
         # Check for collision.
         collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
                 shape_query_params, collider_half_width_height, \
                 movement_params.collider_rotation, surface_parser)
         if collision != null:
-            if debug_state != null:
-                debug_state.collision = collision
-                debug_state.frame_positions = PoolVector2Array(frame_positions)
-            return collision
+            break
         
         # Update state for the next frame.
         previous_position = current_position
@@ -368,7 +362,7 @@ static func check_continuous_horizontal_step_for_collision( \
     
     # Check the last frame that puts us up to end_time.
     current_time = step_end_time
-    if !Geometry.are_floats_equal_with_epsilon(previous_time, current_time):
+    if collision == null and !Geometry.are_floats_equal_with_epsilon(previous_time, current_time):
         horizontal_state = HorizontalMovementUtils.calculate_horizontal_state_for_time( \
                 movement_params, horizontal_step, current_time)
         vertical_state = VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
@@ -379,17 +373,18 @@ static func check_continuous_horizontal_step_for_collision( \
                 Transform2D(movement_params.collider_rotation, previous_position)
         shape_query_params.motion = current_position - previous_position
         assert(shape_query_params.motion != Vector2.ZERO)
+        
         collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
                 shape_query_params, collider_half_width_height, \
                 movement_params.collider_rotation, surface_parser)
-        if collision != null:
-            if debug_state != null:
-                debug_state.collision = collision
-                debug_state.frame_positions = PoolVector2Array(frame_positions)
-            return collision
         
-        # Record the position for edge annotation debugging.
-        frame_positions.push_back(current_position)
+        if collision == null:
+            # Record the position for edge annotation debugging.
+            frame_positions.push_back(current_position)
+            debug_state.frame_positions = PoolVector2Array(frame_positions)
+    
+    if debug_state != null:
+        debug_state.collision = collision
         debug_state.frame_positions = PoolVector2Array(frame_positions)
     
-    return null
+    return collision

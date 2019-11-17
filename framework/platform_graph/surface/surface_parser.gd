@@ -118,10 +118,6 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     _stopwatch.start()
     print("_assign_neighbor_surfaces...")
     _assign_neighbor_surfaces(self.floors, self.ceilings, self.left_walls, self.right_walls)
-    _assert_neighbors(self.floors)
-    _assert_neighbors(self.ceilings)
-    _assert_neighbors(self.left_walls)
-    _assert_neighbors(self.right_walls)
     print("_assign_neighbor_surfaces duration: %sms" % _stopwatch.stop())
 
 func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, \
@@ -182,11 +178,15 @@ static func _parse_tile_map_into_sides(tile_map: TileMap, \
     
     for position in used_cells:
         var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord(position, tile_map)
-        
-        # Transform tile shapes into world coordinates.
         var tile_set_index := tile_map.get_cellv(position)
         var shapes := tile_set.tile_get_shapes(tile_set_index)
+        if shapes.empty():
+            # This is a non-collidable tile (usually a background tile).
+            continue
         var info: Dictionary = shapes[0]
+        
+        # Transform tile shapes into world coordinates.
+        
         # ConvexPolygonShape2D
         var shape: Shape2D = info.shape
         var shape_transform: Transform2D = info.shape_transform
@@ -649,11 +649,6 @@ static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls
                 right_wall.convex_counter_clockwise_neighbor = ceiling
                 # We can assume that there will only be one matching convex neighbor.
                 break
-
-static func _assert_neighbors(surfaces: Array) -> void:
-    for surface in surfaces:
-        assert(surface.convex_clockwise_neighbor != null)
-        assert(surface.convex_counter_clockwise_neighbor != null)
 
 static func _populate_surface_objects(tmp_surfaces: Array, side: int) -> void:
     for tmp_surface in tmp_surfaces:

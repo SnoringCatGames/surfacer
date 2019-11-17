@@ -1,3 +1,6 @@
+_TODO: In development. Not ready for review._
+_Once this is done, the plan is to split it apart into two repos: one for the underlying framework, and one for the squirrel game that demonstrates the framework._
+
 ---------------------------------------------------------
 
 # Squirrel Away
@@ -5,8 +8,6 @@
 _A simple 2D-platformer with cats, squirrels, and nuts._
 
 _This is a demo for the [Surfacer](https://github.com/levilindsey/surfacer) pathfinding framework._
-
-_TODO: In development. Not ready for review._
 
 TODO
 
@@ -19,8 +20,6 @@ _A 2D-platformer procedural pathfinding framework for Godot._
 _"Surfacer": Like a platformer, but with walking and climbing on all surfaces!_
 
 TODO: _For a demo app using this framework, checkout [Squirrel Away](https://github.com/levilindsey/squirrel-away)_
-
-_TODO: In development. Not ready for review._
 
 TODO
 

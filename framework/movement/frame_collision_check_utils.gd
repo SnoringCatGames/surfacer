@@ -46,7 +46,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     var perpendicular_offset: Vector2
     var should_try_without_perpendicular_nudge_first: bool
     
-    var ray_trace_target: Vector2
+    var edge_aligned_ray_trace_target: Vector2
     
     var position_when_colliding: Vector2
     
@@ -65,41 +65,110 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     
     
+    # FIXME: DEBUGGING: REMOVE
+    var collision_ratios_tmp := space_state.cast_motion(shape_query_params)
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: Is this check actually needed? (Adding it in yields false-positive adjacent-lower-wall collisions from origin tiles)
-    # FIXME: LEFT OFF HERE: DEBUGGING: Add back in. Breaks on level 4 (with wall surfaces).
-    if true:
-#    if intersection_points.size() == 2:
-#        # `collide_shape` _seems_ to only return two points when we are clipping a corner on our
-#        # way past. And it _seems_ as though the two points in these cases are always the corners
-#        # of the tile and the Player at this frame time. If those two assumptions are correct, then
-#        # we can use the midpoint between these two positions as the target for ray-casting, and
-#        # that should get us the correct surface and normal.
-#
-#        ray_trace_target = \
-#                intersection_points[0].linear_interpolate(intersection_points[1], 0.5)
-#
-#        perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
-#        should_try_without_perpendicular_nudge_first = true
-#
-#
-#
-#
-#
-#    else:
+    
+    
+    
+    if intersection_points.size() == 2:
+        # In most cases, for rectangular boundaries, `collide_shape` returns four points. In these
+        # cases, two points correspond to the vertices of shape A that lie within shape B, and the
+        # other two points correspond to the points where A intersect the edge of B. The player's
+        # collision boundary could be either A or B.
+        # 
+        # When `collide_shape` returns two points, that means that only one vertex of shape A lies
+        # within shape B. In this case, one of the points corresponds to the vertex of A that lies
+        # within B, and the other point corresponds to the projection of that point onto the edge
+        # of B that A is intersecting.
+        # 
+        # NOTE: These comments are empirical--based on observed results rather than from analyzing
+        #       the logic of the collision engine.
+        
+        var position_at_end_of_motion := position_start + shape_query_params.motion
+        
+        var outer_corner_point: Vector2
+        var internal_point: Vector2
+        if intersection_points[0].distance_squared_to(position_at_end_of_motion) < \
+                intersection_points[1].distance_squared_to(position_at_end_of_motion):
+            outer_corner_point = intersection_points[0]
+            internal_point = intersection_points[1]
+        else:
+            outer_corner_point = intersection_points[1]
+            internal_point = intersection_points[0]
+        
+        var displacement_from_outer_to_internal_point := internal_point - outer_corner_point
+        
+        if Geometry.are_floats_equal_with_epsilon( \
+                displacement_from_outer_to_internal_point.x, 0.0, 0.001) or \
+                Geometry.are_floats_equal_with_epsilon( \
+                        displacement_from_outer_to_internal_point.y, 0.0, 0.001):
+            # One corner of one shape intersects with one edge of the other shape.
+            edge_aligned_ray_trace_target = outer_corner_point
+            should_try_without_perpendicular_nudge_first = true
+        else:
+            # The player is clipping a corner of the tile on their way past.
+            # 
+            # -   The two points in this case are the corner of the tile and the corner of the
+            #     Player collision boundary at this frame time.
+            # -   For the target position for ray-casting we can use the edge-aligned midpoint
+            #     between these two positions; that should get us the correct surface and normal.
+            
+            if direction.x == 0:
+                # Moving vertically.
+                edge_aligned_ray_trace_target = outer_corner_point + \
+                        Vector2(displacement_from_outer_to_internal_point.x / 2, 0)
+                should_try_without_perpendicular_nudge_first = true
+            elif direction.y == 0:
+                # Moving horizontally.
+                edge_aligned_ray_trace_target = outer_corner_point + \
+                        Vector2(0, displacement_from_outer_to_internal_point.y / 2)
+                should_try_without_perpendicular_nudge_first = true
+            else:
+                # Moving diagonally.
+                # TODO: We should be able to calculate directly here a point on the colliding edge, rather
+                #       than relying on a random nudge in one direction or the other.
+                edge_aligned_ray_trace_target = outer_corner_point
+                should_try_without_perpendicular_nudge_first = false
+        
+        perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
+        
+    else:
+        var collision_ratios := space_state.cast_motion(shape_query_params)
+        assert(collision_ratios.size() != 1)
+        
+        # An array of size 2 means that there was no pre-existing collision.
+        # An empty array means that we were already colliding even before any motion.
+        var there_was_a_preexisting_collision: bool = collision_ratios.size() == 0 or \
+                (collision_ratios[0] == 0 and collision_ratios[1] == 0)
+        
         # Choose whichever point comes first, along the direction of the motion. If two points are
         # equally close, then choose whichever point is closest to the starting position.
+        
+        # FIXME: DEBUGGING: REMOVE
+#        if Geometry.are_points_equal_with_epsilon(position_start, Vector2(25.089, -468.167), 0.001) and \
+#                Geometry.are_points_equal_with_epsilon(direction, Vector2(-0.827, -0.562), 0.001) and \
+#                collider_half_width_height == Vector2(57, 30):
+#            print("break")
         
         for i in intersection_points.size():
             current_intersection_point = intersection_points[i]
             
-            # Ignore any points that we aren't moving toward. Those indicate pre-existing collisions,
-            # which should only exist from the collision margin intersecting nearby surfaces at the
-            # start of the Player's movement.
-            if direction.x <= 0 and current_intersection_point.x >= x_max_start or \
-                    direction.x >= 0 and current_intersection_point.x <= x_min_start or \
-                    direction.y <= 0 and current_intersection_point.y >= y_max_start or \
-                    direction.y >= 0 and current_intersection_point.y <= y_min_start:
+            # Ignore points from pre-existing collisions.
+            # 
+            # Points that we aren't moving toward can indicate one of two things:
+            # 1.  Pre-existing collisions, which exist from the collision margin intersecting
+            #     nearby surfaces at the start of the Player's movement.
+            # 2.  Clipping a corner of a tile with the Player's collision boundary.
+            if there_was_a_preexisting_collision and \
+                    (direction.x <= 0 and Geometry.is_float_gte_with_epsilon( \
+                            current_intersection_point.x, x_max_start, 0.001) or \
+                    direction.x >= 0 and Geometry.is_float_lte_with_epsilon( \
+                            current_intersection_point.x, x_min_start, 0.001) or \
+                    direction.y <= 0 and Geometry.is_float_gte_with_epsilon( \
+                            current_intersection_point.y, y_max_start, 0.001) or \
+                    direction.y >= 0 and Geometry.is_float_lte_with_epsilon( \
+                            current_intersection_point.y, y_min_start, 0.001)):
                 continue
             
             current_projection_onto_motion = direction.dot(current_intersection_point)
@@ -127,15 +196,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             closest_intersection_point = closest_intersection_point if distance_a < distance_b else \
                     other_closest_intersection_point
         
-        ray_trace_target = closest_intersection_point
-        
-        var collision_ratios := space_state.cast_motion(shape_query_params)
-        assert(collision_ratios.size() != 1)
-        
-        # An array of size 2 means that there was no pre-existing collision.
-        # An empty array means that we were already colliding even before any motion.
-        var there_was_a_preexisting_collision: bool = collision_ratios.size() == 0 or \
-                (collision_ratios[0] == 0 and collision_ratios[1] == 0)
+        edge_aligned_ray_trace_target = closest_intersection_point
         
         if there_was_a_preexisting_collision:
             # - We can assume that this collision actually involves the margin colliding and not
@@ -331,8 +392,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     # calculated ray. This nudging can be important when the point of intersection is a vertex of
     # the collider.
     
-    var from := ray_trace_target - direction * 0.001
-    var to := ray_trace_target + direction * 1000000
+    var from := edge_aligned_ray_trace_target - direction * 0.001
+    var to := edge_aligned_ray_trace_target + direction * 1000000
     
     if should_try_without_perpendicular_nudge_first:
         collision = space_state.intersect_ray(from, to, shape_query_params.exclude, \
@@ -346,7 +407,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     if !should_try_without_perpendicular_nudge_first and collision.empty():
         collision = space_state.intersect_ray(from, to, shape_query_params.exclude, \
                 shape_query_params.collision_layer)
-        
+    
     if collision.empty():
         collision = space_state.intersect_ray(from - perpendicular_offset, \
                 to - perpendicular_offset, shape_query_params.exclude, \
@@ -355,8 +416,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     assert(!collision.empty())
     
     # FIXME: Add back in?
-#    assert(Geometry.are_points_equal_with_epsilon( \
-#            collision.position, ray_trace_target, perpendicular_offset.length + 0.0001))
+#    assert(Geometry.are_points_equal_with_epsilon(collision.position, \
+#            edge_aligned_ray_trace_target, perpendicular_offset.length + 0.0001))
     
     
     
@@ -384,6 +445,9 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     var tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
             intersection_point, tile_map, is_touching_floor, is_touching_ceiling, \
             is_touching_left_wall, is_touching_right_wall, false)
+    
+    # FIXME: LEFT OFF HERE: ---------------------------------------------------------------A
+    # - We just learned that corner clipping and pre-existing collisions can be confused above. Can they be confused here to? Just double check...
     
     # If get_collision_tile_map_coord returns an invalid result, then it's because the motion is
     # moving away from that tile and not into it. This happens when the starting position is within

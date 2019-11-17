@@ -104,9 +104,11 @@ static func calculate_vertical_step( \
 # trajectory. In that case, we need to consider the minimum time for the upward and downward
 # motion of the jump.
 static func calculate_time_to_jump_to_constraint(movement_params: MovementParams, \
-        position_start: Vector2, position_end: Vector2, velocity_start: Vector2, \
+        displacement: Vector2, velocity_start: Vector2, \
         can_hold_jump_button_at_start: bool) -> float:
-    var displacement: Vector2 = position_end - position_start
+    if displacement.y < -movement_params.max_upward_jump_distance:
+        # We cannot jump high enough for the displacement.
+        return INF
     
     if can_hold_jump_button_at_start:
         # If we can currently hold the jump button, then there is slow-ascent and
@@ -114,8 +116,8 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
         
         # Calculate how long it will take for the jump to reach some minimum peak height.
         # 
-        # This takes into consideration the fast-fall mechanics (i.e., that a slower gravity is applied
-        # until either the jump button is released or we hit the peak of the jump)
+        # This takes into consideration the fast-fall mechanics (i.e., that a slower gravity is
+        # applied until either the jump button is released or we hit the peak of the jump).
         var duration_to_reach_upward_displacement: float
         if displacement.y < 0:
             # Derivation:
@@ -130,6 +132,11 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
                     (0.5 * velocity_start.y * velocity_start.y + \
                     movement_params.gravity_fast_fall * displacement.y) / \
                     (movement_params.gravity_fast_fall - movement_params.gravity_slow_rise)
+            if distance_to_release_button_for_shorter_jump < displacement.y:
+                # We cannot jump high enough for the displacement. This should have been caught
+                # earlier.
+                Utils.error()
+                return INF
             
             if distance_to_release_button_for_shorter_jump < 0:
                 # We need more motion than just the initial jump boost to reach the destination.
@@ -203,8 +210,8 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
         #   v = v_0 + a*t
         var duration_to_reach_peak_from_start_for_max_jump := \
                 (0.0 - velocity_start.y) / movement_params.gravity_slow_rise
-        var displacement_from_peak_to_target := \
-                position_end.y - (position_start.y - movement_params.max_upward_jump_distance)
+        var displacement_from_peak_to_target := displacement.y + \
+                movement_params.max_upward_jump_distance
         # From a basic equation of motion:
         #   - s = s_0 + v_0*t + 1/2*a*t^2
         #   - v_0 = 0

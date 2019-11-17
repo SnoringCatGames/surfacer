@@ -69,16 +69,19 @@ func _draw() -> void:
                 DrawUtils.draw_circle_outline(self, edge.start.target_point, START_RADIUS, \
                         constraint_color, CONSTRAINT_WIDTH, 4.0)
                 
-                # Draw the positions where horizontal instructions start and end.
+                # Draw the positions where horizontal instructions start.
                 for i in range(0, edge.instructions.horizontal_instruction_start_positions.size()):
                     position_start = edge.instructions.horizontal_instruction_start_positions[i]
-                    position_end = edge.instructions.horizontal_instruction_end_positions[i]
                     
                     # Draw a plus for the instruction start.
                     DrawUtils.draw_plus(self, position_start, \
                             HORIZONTAL_INSTRUCTION_START_LENGTH, \
                             HORIZONTAL_INSTRUCTION_START_LENGTH, instruction_start_stop_color, \
                             HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
+                
+                # Draw the positions where horizontal instructions end.
+                for i in range(0, edge.instructions.horizontal_instruction_end_positions.size()):
+                    position_end = edge.instructions.horizontal_instruction_end_positions[i]
                             
                     # Draw a minus for the instruction end.
                     self.draw_line( \

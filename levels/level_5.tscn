@@ -3,7 +3,6 @@
 [ext_resource path="res://framework/level.gd" type="Script" id=1]
 [ext_resource path="res://assets/tileset.tres" type="TileSet" id=2]
 
-
 [node name="Level5" type="Node2D"]
 script = ExtResource( 1 )
 
@@ -13,4 +12,3 @@ script = ExtResource( 1 )
 tile_set = ExtResource( 2 )
 format = 1
 tile_data = PoolIntArray( -131071, 0, 0, 131071, 0, 0 )
-

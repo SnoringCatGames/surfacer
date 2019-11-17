@@ -36,12 +36,6 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
     var next_horizontal_step := HorizontalMovementUtils.calculate_horizontal_step( \
             step_calc_params, overall_calc_params)
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: -A:
-    # - Debugging min step-end velocity.
-    # - Get the up-left jump from floor to floor working on level long-rise.
-    # - Set a breakpoint here.
-    print("yo: entered calculate_steps_from_constraint")
-    
     if next_horizontal_step == null:
         # The destination is out of reach.
         step_calc_params.debug_state.result_code = EdgeStepCalcResult.TARGET_OUT_OF_REACH
@@ -61,8 +55,8 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
                 overall_calc_params.destination_constraint.position, 0.0001))
     
     # FIXME: DEBUGGING: REMOVE:
-    if step_calc_params.start_constraint.position == Vector2(106, 37.5):
-        print("break")
+#    if step_calc_params.start_constraint.position == Vector2(106, 37.5):
+#        print("break")
     
     var collision := CollisionCheckUtils.check_continuous_horizontal_step_for_collision( \
             overall_calc_params, step_calc_params, next_horizontal_step)
@@ -143,18 +137,19 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
                 MovementConstraintUtils.clone_constraint(previous_constraint_original)
         next_constraint_copy = MovementConstraintUtils.clone_constraint(next_constraint_original)
         
-        # FIXME: LEFT OFF HERE: A: Verify this statement.
+        # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
+#        if Geometry.are_points_equal_with_epsilon( \
+#                constraint.position, \
+#                Vector2(64, -480), 10):
+#            print("break")
+        
+        # FIXME: B: Verify this statement.
         
         # Update the previous and next constraints, to account for this new intermediate
         # constraint. These updates do not solve all cases, since we may in turn need to update the
         # min/max/actual x-velocities and movement sign for all other constraints. And these
         # updates could then result in the addition/removal of other intermediate constraints.
         # But we have found that these two updates are enough for most cases.
-        # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-        if Geometry.are_points_equal_with_epsilon( \
-                constraint.position, \
-                Vector2(64, -480), 10):
-            print("break")
         MovementConstraintUtils.update_neighbors_for_new_constraint(constraint, \
                 previous_constraint_copy, next_constraint_copy, overall_calc_params, \
                 vertical_step)
@@ -232,8 +227,8 @@ static func calculate_steps_from_constraint_with_backtracking_on_height( \
         overall_calc_params.destination_constraint = destination_copy
         
         # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-        if step_calc_params.debug_state.index == 5:
-            print("break")
+#        if step_calc_params.debug_state.index == 5:
+#            print("break")
         
         # Update the destination constraint to support a (possibly) increased jump height, which
         # would enable movement through this new intermediate constraint.
