@@ -227,7 +227,8 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-# >>- debug
+# >>- Debug all levels.
+# >- Fix usage of min horizontal speed through constraints.
 # - It seems like I'm going to have to work on performance soon.
 # 
 # >- Commit message:

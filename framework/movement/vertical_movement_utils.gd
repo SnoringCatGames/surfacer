@@ -93,11 +93,12 @@ static func calculate_vertical_step( \
 
 # Calculates the minimum possible time it would take to jump between the given positions.
 # 
-# The total duration of the jump is at least the greatest of three durations:
-# - The duration to reach the minimum peak height (i.e., how high upward we must jump to reach
-#   a higher destination).
-# - The duration to reach a lower destination.
-# - The duration to cover the horizontal displacement.
+# The total duration of the jump is at least the greatest of a few durations:
+# 
+# -   The duration to reach the minimum peak height (i.e., how high upward we must jump to reach
+#     a higher destination).
+# -   The duration to reach a lower destination.
+# -   The duration to cover the horizontal displacement.
 # 
 # However, that total duration still isn't enough if we cannot reach the horizontal
 # displacement before we've already past the destination vertically on the upward side of the
@@ -105,7 +106,7 @@ static func calculate_vertical_step( \
 # motion of the jump.
 static func calculate_time_to_jump_to_constraint(movement_params: MovementParams, \
         displacement: Vector2, velocity_start: Vector2, \
-        can_hold_jump_button_at_start: bool) -> float:
+        can_hold_jump_button_at_start: bool, must_reach_destination_on_descent := false) -> float:
     if displacement.y < -movement_params.max_upward_jump_distance:
         # We cannot jump high enough for the displacement.
         return INF
@@ -113,6 +114,8 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
     if can_hold_jump_button_at_start:
         # If we can currently hold the jump button, then there is slow-ascent and
         # variable-jump-height to consider.
+    
+        ### Calculate the time needed to move upward.
         
         # Calculate how long it will take for the jump to reach some minimum peak height.
         # 
@@ -166,7 +169,7 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
                 # travelling upward.
                 duration_to_reach_upward_displacement = MovementUtils.calculate_movement_duration( \
                         displacement.y, velocity_start.y, movement_params.gravity_fast_fall, \
-                        true, 0.0, false)
+                        !must_reach_destination_on_descent, 0.0, false)
         else:
             # We're jumping downward, so we don't need to reach any minimum peak height.
             duration_to_reach_upward_displacement = 0.0
@@ -175,7 +178,7 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
         var duration_to_reach_downward_displacement: float
         if displacement.y > 0:
             duration_to_reach_downward_displacement = MovementUtils.calculate_movement_duration( \
-                    displacement.y, velocity_start.y, movement_params.gravity_fast_fall, true, \
+                    displacement.y, velocity_start.y, movement_params.gravity_fast_fall, false, \
                     0.0, true)
             assert(duration_to_reach_downward_displacement != INF)
         else:
@@ -188,6 +191,8 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
             horizontal_acceleration_sign = 1
         else:
             horizontal_acceleration_sign = 0
+    
+        ### Calculate the time needed to move horizontally.
         
         var duration_to_reach_horizontal_displacement := \
                 MovementUtils.calculate_min_time_to_reach_displacement(displacement.x, \
@@ -230,6 +235,8 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
             # We can't reach the horizontal displacement.
             return INF
         
+        ### Calculate the time needed to move downward.
+        
         var duration_to_reach_upward_displacement_on_descent := 0.0
         if duration_to_reach_downward_displacement == 0.0:
             # The total duration still isn't enough if we cannot reach the horizontal displacement
@@ -248,6 +255,8 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
                         MovementUtils.calculate_movement_duration(displacement.y, velocity_start.y, \
                                 movement_params.gravity_fast_fall, false, 0.0, false)
                 assert(duration_to_reach_upward_displacement_on_descent != INF)
+        
+        ### Use the max of each aspect of jump movement.
         
         # How high we need to jump is determined by the total duration of the jump.
         # 

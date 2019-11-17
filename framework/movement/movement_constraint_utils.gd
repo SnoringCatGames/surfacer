@@ -329,6 +329,10 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
 #                    Vector2(2688, 226), 10):
 #                print("break")
             
+            var displacement_from_origin_to_constraint := \
+                    constraint_position_to_calculate_jump_release_time_for - \
+                    origin_constraint.position
+            
             # If we already know the required time for reaching the destination, and we aren't
             # performing a new backtracking step, then re-use the previously calculated time. The
             # previous value encompasses more information that we may need to preserve, such as
@@ -337,13 +341,11 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             if vertical_step != null and additional_high_constraint_position == Vector2.INF:
                 time_to_pass_through_constraint_ignoring_others = vertical_step.time_step_end
             else:
-                var distance_from_origin_to_constraint := \
-                        constraint_position_to_calculate_jump_release_time_for - \
-                        origin_constraint.position
                 time_to_pass_through_constraint_ignoring_others = \
                         VerticalMovementUtils.calculate_time_to_jump_to_constraint(movement_params, \
-                                distance_from_origin_to_constraint, velocity_start_origin, \
-                                can_hold_jump_button_at_origin)
+                                displacement_from_origin_to_constraint, velocity_start_origin, \
+                                can_hold_jump_button_at_origin, \
+                                additional_high_constraint_position != Vector2.INF)
                 if time_to_pass_through_constraint_ignoring_others == INF:
                     # We can't reach this constraint.
                     return false
@@ -352,12 +354,13 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             if additional_high_constraint_position != Vector2.INF:
                 # We are backtracking to consider a new jump height.
                 # 
-                # The destination jump time should account for both:
-                # - the time needed to reach any previous jump-heights before this current round of
-                #   jump-height backtracking (vertical_step.time_instruction_end),
-                # - the time needed to reach this new previously-out-of-reach constraint
-                #   (time_to_release_jump for the new constraint),
-                # - and the time needed to get to the destination from this new constraint.
+                # The destination jump time should account for all of the following:
+                # 
+                # -   The time needed to reach any previous jump-heights before this current round
+                #     of jump-height backtracking (vertical_step.time_instruction_end).
+                # -   The time needed to reach this new previously-out-of-reach constraint
+                #     (time_to_release_jump for the new constraint).
+                # -   The time needed to get to the destination from this new constraint.
                 
                 # TODO: There might be cases that this fails for? We might need to add more time.
                 #       Revisit this if we see problems.
@@ -368,9 +371,11 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
                 if time_to_get_to_destination_from_constraint == INF:
                     # We can't reach the destination from this constraint.
                     return false
+                
                 time_passing_through = max(vertical_step.time_step_end, \
                         time_to_pass_through_constraint_ignoring_others + \
                                 time_to_get_to_destination_from_constraint)
+                
             else:
                 time_passing_through = time_to_pass_through_constraint_ignoring_others
             
@@ -426,9 +431,9 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             
             # FIXME: DEBUGGING: REMOVE
 #            if Geometry.are_floats_equal_with_epsilon(min_velocity_x, -112.517, 0.01):
-            if Geometry.are_floats_equal_with_epsilon(duration_to_next, 0.372, 0.01) and \
-                    displacement_to_next.x == 62:
-                print("break")
+#            if Geometry.are_floats_equal_with_epsilon(duration_to_next, 0.372, 0.01) and \
+#                    displacement_to_next.x == 62:
+#                print("break")
             
             # We calculate min/max velocity limits for direct movement from the origin. These
             # limits are more permissive than if we were calculating them from the actual
