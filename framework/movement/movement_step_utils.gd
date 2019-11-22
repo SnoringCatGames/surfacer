@@ -240,7 +240,7 @@ static func calculate_steps_from_constraint_with_backtracking_on_height( \
             # The constraint is out of reach.
             continue
         
-        # Recurse: Backtrack and try a higher jump (to the constraint).
+        # Recurse: Backtrack and try a higher jump (to the same destination constraint as before).
         calc_results = calculate_steps_with_new_jump_height( \
                 overall_calc_params, step_calc_params, constraint)
         

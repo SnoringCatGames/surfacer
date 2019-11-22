@@ -356,6 +356,10 @@ static func is_polygon_clockwise(vertices: Array) -> bool:
         sum += (v2.x - v1.x) * (v2.y + v1.y)
     return sum < 0
 
+static func are_three_points_clockwise(a: Vector2, b: Vector2, c: Vector2) -> bool:
+    var result := (a.y - b.y) * (c.x - a.x) - (a.x - b.x) * (c.y - a.y)
+    return result > 0
+
 static func are_points_collinear(p1: Vector2, p2: Vector2, p3: Vector2) -> bool:
     return abs((p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y)) < FLOAT_EPSILON
 

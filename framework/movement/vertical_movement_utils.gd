@@ -30,6 +30,7 @@ static func calculate_vertical_step( \
         time_instruction_end = calculate_time_to_release_jump_button( \
                 movement_params, time_step_end, displacement.y)
         if time_instruction_end == INF:
+            # We can't reach the given displacement with the given duration.
             return null
         
         # Need to calculate these after the step is instantiated.
@@ -88,7 +89,7 @@ static func calculate_vertical_step( \
     
     step.position_instruction_end = position_instruction_end
     step.velocity_instruction_end = velocity_instruction_end
-
+    
     return step
 
 # Calculates the minimum possible time it would take to jump between the given positions.
@@ -315,6 +316,11 @@ static func calculate_time_to_release_jump_button(movement_params: MovementParam
     
     time_to_release_jump_button = max(time_to_release_jump_button, 0.0)
     assert(time_to_release_jump_button <= duration)
+    
+    if time_to_release_jump_button > movement_params.time_to_max_upward_jump_distance:
+        # FIXME: B: This if statement shouldn't be needed; the above discriminant should have
+        #           accounted for the peak jump height already.
+        return INF
     
     return time_to_release_jump_button
 

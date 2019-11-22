@@ -22,6 +22,9 @@ func _init(name: String, player_resource_path: String, global) -> void:
             _movement_params.collider_shape, _movement_params.collider_rotation)
     _movement_params.max_upward_jump_distance = \
             VerticalMovementUtils.calculate_max_upward_distance(_movement_params)
+    _movement_params.time_to_max_upward_jump_distance = \
+            MovementUtils.calculate_movement_duration(-_movement_params.max_upward_jump_distance, \
+                    _movement_params.jump_boost, _movement_params.gravity_slow_rise)
     _movement_params.max_horizontal_jump_distance = \
             HorizontalMovementUtils.calculate_max_horizontal_displacement( \
                     _movement_params, _movement_params.jump_boost)

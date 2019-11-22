@@ -8,11 +8,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - More notes in the backtracking method.
 # - Test support for specifying a required min/max end-x-velocity.
 # 
-# - Add support for pressing away from the destination in order to slow down enough to not overshoot it.
-#   - 
-# - Test support for pressing away from the destination in order to slow down enough to not overshoot it.
-# 
-# - Fix false-negative for long-rise floor-to-floor jumping up-and-left.
 # - LEFT OFF HERE: Resolve/debug all left-off commented-out places.
 # - LEFT OFF HERE: Check for other obvious false negative edges.
 # 
@@ -122,20 +117,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: B: 
 # - Make edge-calc annotations usable at run time, by clicking on the start and end positions to check.
 # 
-# - Add shorcuts for toggling debugging annotations
-#   - Add support for triggering the calc-step annotations based on a shortcut.
-#     - i
-#     - also, require clicking on the start and end positions in order to select which edge to debug
-#       - Use this _in addition to_ the current top-level configuration for specifying which edge to calculate?
-#     - also, then only actually calculate the edge debug state when using this click-to-specificy debug mode
-#   - also, add other shortcuts for toggling other annotations:
-#     - whether all surfaces are highlighted
-#     - whether the player's position+collision boundary are rendered
-#     - whether the player's current surface is rendered
-#     - whether all edges are rendered
-#     - whether grid boundaries+indices are rendered
-#   - create a collapsible dat.GUI-esque menu at the top-right that lists all the possible annotation configuration options
-#     - set up a nice API for creating these, setting values, listening for value changes, and defining keyboard shortcuts.
 
 
 
@@ -228,8 +209,30 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # >>- Debug all levels.
-# >- Fix usage of min horizontal speed through constraints.
+# >- Fix usage of min-speed horizontal velocity through constraints.
 # - It seems like I'm going to have to work on performance soon.
+# >>>>>>>- Debug all levels...
+#   - There seems to be a basic bug in calculate_time_to_release_jump_button (or how it's called).
+# 
+# - Add/fix logic to actually move along paths to click points.
+# 
+# - Add better annotation selection.
+#   - Add shorcuts for toggling debugging annotations
+#     - Add support for triggering the calc-step annotations based on a shortcut.
+#       - i
+#       - also, require clicking on the start and end positions in order to select which edge to debug
+#         - Use this _in addition to_ the current top-level configuration for specifying which edge to calculate?
+#       - also, then only actually calculate the edge debug state when using this click-to-specificy debug mode
+#     - also, add other shortcuts for toggling other annotations:
+#       - whether all surfaces are highlighted
+#       - whether the player's position+collision boundary are rendered
+#       - whether the player's current surface is rendered
+#       - whether all edges are rendered
+#       - whether grid boundaries+indices are rendered
+#     - create a collapsible dat.GUI-esque menu at the top-right that lists all the possible annotation configuration options
+#       - set up a nice API for creating these, setting values, listening for value changes, and defining keyboard shortcuts.
+# 
+# - Add support for specifying required end x-velocity (and y direction).
 # 
 # >- Commit message:
 # 

@@ -342,7 +342,7 @@ static func check_continuous_horizontal_step_for_collision( \
         
         # FIXME: DEBUGGING: REMOVE:
 #        if Geometry.are_points_equal_with_epsilon( \
-#                current_position, Vector2(25.089, -468.167), 0.001):
+#                current_position, Vector2(138, -79.972), 0.001):
 #            print("yo")
         
         # Check for collision.
