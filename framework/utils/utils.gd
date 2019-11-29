@@ -11,9 +11,10 @@ const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 const GROUP_NAME_SURFACES := "surfaces"
 
-static func error(message := "An error occurred"):
+static func error(message := "An error occurred", should_assert := true):
     print("ERROR: %s" % message)
-    assert(false)
+    if should_assert:
+        assert(false)
 
 # TODO: Replace this with any built-in feature whenever it exists
 #       (https://github.com/godotengine/godot/issues/4715).

@@ -88,7 +88,8 @@ static func test_instructions(instructions: MovementInstructions, \
     var collision := CollisionCheckUtils.check_instructions_for_collision(overall_calc_params, \
             instructions, calc_results.vertical_step, calc_results.horizontal_steps)
     assert(collision == null or \
-            collision.surface == overall_calc_params.destination_constraint.surface)
+            (collision.is_valid_collision_state and \
+            collision.surface == overall_calc_params.destination_constraint.surface))
     var final_frame_position := \
             instructions.frame_discrete_positions[instructions.frame_discrete_positions.size() - 1]
     # FIXME: B: Add back in after fixing the use of GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION.

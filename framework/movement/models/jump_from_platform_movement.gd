@@ -212,7 +212,10 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # >- Fix usage of min-speed horizontal velocity through constraints.
 # - It seems like I'm going to have to work on performance soon.
 # >>>>>>>- Debug all levels...
-#   - There seems to be a basic bug in calculate_time_to_release_jump_button (or how it's called).
+# 
+# - Instead-of/in-addition-to using find-moment-of-collision calculation, we could just look at
+#   ratio of width to height of spread of intersection points as well as motion in order to
+#   determine whether collision was with horizontal or vertical side first.
 # 
 # - Add/fix logic to actually move along paths to click points.
 # 
@@ -232,7 +235,31 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #     - create a collapsible dat.GUI-esque menu at the top-right that lists all the possible annotation configuration options
 #       - set up a nice API for creating these, setting values, listening for value changes, and defining keyboard shortcuts.
 # 
+# - Put together some illustrative screenshots with special one-off annotations to explain the graph parsing steps.
+#   - A couple surfaces
+#   - Show different tiles, to illustrate how surfaces get merged.
+#   - All surfaces (different colors)
+#   - A couple edges
+#   - All edges
+#   - 
+# 
 # - Add support for specifying required end x-velocity (and y direction).
+# 
+# - Add some extra improvements to check_frame_for_collision:
+#   - [maybe?] Rather than just using closest_intersection_point, sort all intersection_points, and
+#     try each of them in sequence when the first one fails	
+#   - [easy to add, might be nice for future] If that also fails, use a completely separate new
+#     cheap-and-dirty check-for-collision-in-frame method?	
+#     - Check if intersection_points is not-empty.
+#     - Sort them by closest in direction of motion (and ignoring behind points).
+#     - Iterate through points, trying to get tile index by a slight nudge offset from each
+#       intersection point in the direction of motion until one sticks.
+#     - Choose surface side just from dominant motion component.
+#   - Add a field on the collision class for the type of collision check used
+#   - Add another field (or another option for the above field) to indicate that none of the
+#     collision checks worked, and this collision is in an error state
+#   - Use this error state to abort collision/step/edge calculations (rather than the current
+#     approach of returning null, which is the same as with not detecting any collisions at all).
 # 
 # >- Commit message:
 # 

@@ -61,8 +61,12 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
     var collision := CollisionCheckUtils.check_continuous_horizontal_step_for_collision( \
             overall_calc_params, step_calc_params, next_horizontal_step)
     
+    if collision != null and !collision.is_valid_collision_state:
+        # An error occured during collision detection, so we abandon this step calculation.
+        return null
+    
     if collision == null or \
-            collision.surface == overall_calc_params.destination_constraint.surface:
+            (collision.surface == overall_calc_params.destination_constraint.surface):
         # There is no intermediate surface interfering with this movement.
         step_calc_params.debug_state.result_code = EdgeStepCalcResult.MOVEMENT_VALID
         return MovementCalcResults.new([next_horizontal_step], vertical_step)

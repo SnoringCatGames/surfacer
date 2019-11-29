@@ -316,6 +316,39 @@ static func check_continuous_horizontal_step_for_collision( \
     var collision: SurfaceCollision
     var debug_state := step_calc_params.debug_state
     
+    ###############################################################################################
+    # TODO: Remove eventually.
+    var collision_debug_state := {
+        step_start_position = step_calc_params.start_constraint.position,
+        step_start_surface_position = step_calc_params.start_constraint.surface.bounding_box.position,
+        step_start_surface_normal = step_calc_params.start_constraint.surface.normal,
+        
+        step_end_position = step_calc_params.end_constraint.position,
+        step_end_surface_position = step_calc_params.end_constraint.surface.bounding_box.position,
+        step_end_surface_normal = step_calc_params.end_constraint.surface.normal,
+        
+        step_start_time = previous_time,
+        step_end_time = step_end_time,
+        
+        collider_half_width_height = collider_half_width_height,
+        
+        frame_current_time = INF,
+        frame_motion = Vector2.INF,
+        frame_start_position = previous_position,
+        frame_end_position = Vector2.INF,
+        frame_previous_position = previous_position,
+        frame_start_min_coordinates = Vector2.INF,
+        frame_start_max_coordinates = Vector2.INF,
+        frame_end_min_coordinates = Vector2.INF,
+        frame_end_max_coordinates = Vector2.INF,
+        frame_previous_min_coordinates = Vector2.INF,
+        frame_previous_max_coordinates = Vector2.INF,
+        
+        intersection_points = [],
+        collision_ratios = [],
+    }
+    ###############################################################################################
+    
     # Record the position for edge annotation debugging.
     var frame_positions := [current_position]
     
@@ -341,14 +374,35 @@ static func check_continuous_horizontal_step_for_collision( \
         assert(shape_query_params.motion != Vector2.ZERO)
         
         # FIXME: DEBUGGING: REMOVE:
-#        if Geometry.are_points_equal_with_epsilon( \
-#                current_position, Vector2(138, -79.972), 0.001):
-#            print("yo")
+        # if Geometry.are_points_equal_with_epsilon( \
+        #         current_position, Vector2(686.626, -228.249), 0.001):
+        #     print("yo")
+        
+        ###########################################################################################
+        collision_debug_state.frame_current_time = current_time
+        collision_debug_state.frame_motion = shape_query_params.motion
+        collision_debug_state.frame_previous_position = collision_debug_state.frame_start_position
+        collision_debug_state.frame_start_position = shape_query_params.transform[2]
+        collision_debug_state.frame_end_position = \
+                collision_debug_state.frame_start_position + collision_debug_state.frame_motion
+        collision_debug_state.frame_previous_min_coordinates = \
+                collision_debug_state.frame_start_min_coordinates
+        collision_debug_state.frame_previous_max_coordinates = \
+                collision_debug_state.frame_start_max_coordinates
+        collision_debug_state.frame_start_min_coordinates = \
+                collision_debug_state.frame_start_position - collider_half_width_height
+        collision_debug_state.frame_start_max_coordinates = \
+                collision_debug_state.frame_start_position + collider_half_width_height
+        collision_debug_state.frame_end_min_coordinates = \
+                collision_debug_state.frame_end_position - collider_half_width_height
+        collision_debug_state.frame_end_max_coordinates = \
+                collision_debug_state.frame_end_position + collider_half_width_height
+        ###########################################################################################
         
         # Check for collision.
         collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
                 shape_query_params, collider_half_width_height, \
-                movement_params.collider_rotation, surface_parser)
+                movement_params.collider_rotation, surface_parser, false, collision_debug_state)
         if collision != null:
             break
         

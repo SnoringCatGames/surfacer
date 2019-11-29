@@ -94,11 +94,27 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
             position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
     
+    var should_skip_a := false
+    var should_skip_b := false
+    
     # We ignore constraints that would correspond to moving back the way we came.
-    var should_skip_a := \
-            previous_constraint.surface == colliding_surface.convex_counter_clockwise_neighbor
-    var should_skip_b := \
-            previous_constraint.surface == colliding_surface.convex_clockwise_neighbor
+    if previous_constraint.surface == colliding_surface.convex_counter_clockwise_neighbor:
+        should_skip_a = true
+    if previous_constraint.surface == colliding_surface.convex_clockwise_neighbor:
+        should_skip_b = true
+    
+    # We ignore constraints that are redundant with the connstraint we were already using with the
+    # previous step attempt.
+    # 
+    # These indicate a problem with our step logic somewhere though, so we log an error.
+    if position_a == next_constraint.position:
+        should_skip_a = true
+        Utils.error("Calculated a rendundant constraint (same position as the next constraint)", \
+                false)
+    if position_b == next_constraint.position:
+        should_skip_b = true
+        Utils.error("Calculated a rendundant constraint (same position as the next constraint)", \
+                false)
     
     # FIXME: DEBUGGING: REMOVE
 #    if colliding_surface.normal.x == -1 and \
@@ -424,6 +440,10 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             
             var duration_to_next := \
                     constraint.next_constraint.time_passing_through - time_passing_through
+            if duration_to_next <= 0:
+                # We can't reach the next constraint from this constraint.
+                return false
+            
             var displacement_to_next := displacement
             var duration_from_origin := \
                     time_passing_through - origin_constraint.time_passing_through

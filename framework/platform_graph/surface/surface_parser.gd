@@ -20,12 +20,22 @@ var non_floor_surfaces := []
 var non_wall_surfaces := []
 var all_walls := []
 
+var max_tile_map_cell_size: Vector2
+
 # This supports mapping a cell in a TileMap to its corresponding surface.
 # Dictionary<TileMap, Dictionary<String, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
 func _init(tile_maps: Array, player_types: Dictionary) -> void:
+    assert(!tile_maps.empty())
+    
     _stopwatch = Stopwatch.new()
+    
+    # Record the maximum cell size from all tile maps.
+    max_tile_map_cell_size = Vector2.ZERO
+    for tile_map in tile_maps:
+        if tile_map.cell_size.x + tile_map.cell_size.y > max_tile_map_cell_size.x + max_tile_map_cell_size.y:
+            max_tile_map_cell_size = tile_map.cell_size
     
     for tile_map in tile_maps:
         _parse_tile_map(tile_map)
@@ -39,6 +49,10 @@ func _init(tile_maps: Array, player_types: Dictionary) -> void:
 func get_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
+
+func has_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
+        side: int) -> Surface:
+    return _tile_map_index_to_surface_maps[tile_map][side].has(tile_map_index)
 
 func get_subset_of_surfaces( \
         include_walls: bool, include_ceilings: bool, include_floors: bool) -> Array:
