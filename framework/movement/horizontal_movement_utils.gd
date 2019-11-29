@@ -25,8 +25,8 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #    if Geometry.are_floats_equal_with_epsilon(step_duration, 0.395, 0.01) and displacement.x == -62:
-    if Geometry.are_floats_equal_with_epsilon(step_duration, 0.372, 0.01) and displacement.x == 62:
-        print("break")
+#    if Geometry.are_floats_equal_with_epsilon(step_duration, 0.372, 0.01) and displacement.x == 62:
+#        print("break")
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: -A
 #    if position_step_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
@@ -48,7 +48,7 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     # the min/max in the first place.
     var velocity_end_x: float
 #    if movement_params.should_minimize_velocity_change_when_jumping:
-    if false: # FIXME: ------------------------------------------- REMOVE
+    if true: # FIXME: ------------------------------------------- REMOVE
         velocity_end_x = 0.0 if min_velocity_end_x <= 0 and max_velocity_end_x >= 0 else \
                 min_velocity_end_x if abs(min_velocity_end_x) < abs(max_velocity_end_x) else \
                 max_velocity_end_x
@@ -88,10 +88,10 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
             duration_during_horizontal_acceleration
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-    if Geometry.are_points_equal_with_epsilon( \
-            position_step_start, \
-            Vector2(64, -480), 10):
-        print("break")
+#    if Geometry.are_points_equal_with_epsilon( \
+#            position_step_start, \
+#            Vector2(64, -480), 10):
+#        print("break")
     
     var position_instruction_start_x := position_step_start.x + displacement_x_during_initial_coast
     var position_instruction_end_x := \
@@ -137,8 +137,8 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     end_constraint.actual_velocity_x = velocity_end_x
     
     # FIXME: DEBUGGING: REMOVE:
-    if velocity_end_x == -400:
-        print("break")
+#    if velocity_end_x == -400:
+#        print("break")
     
     return step
 
@@ -259,10 +259,10 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
         max_velocity_end_for_valid_next_step: float, acceleration_magnitude: float) -> Array:
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #    if displacement == 62 and Geometry.are_floats_equal_with_epsilon(duration, 0.372, 0.01):
-    if displacement == -190 and Geometry.are_floats_equal_with_epsilon(duration, 0.395, 0.01):
+#    if displacement == -190 and Geometry.are_floats_equal_with_epsilon(duration, 0.395, 0.01):
 #        duration += 0.0001
 #        velocity_start += 10
-        print("break")
+#        print("break")
     
     var acceleration_sign_for_min := \
             1 if min_velocity_end_for_valid_next_step >= velocity_start else -1
@@ -307,15 +307,15 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
         return []
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-    if Geometry.are_floats_equal_with_epsilon(min_velocity_end, -112.517, 0.01) or \
-            Geometry.are_floats_equal_with_epsilon(max_velocity_end, -112.517, 0.01) or \
-            Geometry.are_floats_equal_with_epsilon(min_velocity_end_for_valid_next_step, -112.517, 0.01) or \
-            Geometry.are_floats_equal_with_epsilon(max_velocity_end_for_valid_next_step, -112.517, 0.01):
-        print("break")
+#    if Geometry.are_floats_equal_with_epsilon(min_velocity_end, -112.517, 0.01) or \
+#            Geometry.are_floats_equal_with_epsilon(max_velocity_end, -112.517, 0.01) or \
+#            Geometry.are_floats_equal_with_epsilon(min_velocity_end_for_valid_next_step, -112.517, 0.01) or \
+#            Geometry.are_floats_equal_with_epsilon(max_velocity_end_for_valid_next_step, -112.517, 0.01):
+#        print("break")
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-    if displacement == 62 and Geometry.are_floats_equal_with_epsilon(duration, 0.372, 0.01):
-        print("break")
+#    if displacement == 62 and Geometry.are_floats_equal_with_epsilon(duration, 0.372, 0.01):
+#        print("break")
     
     # Account for round-off error.
     if Geometry.are_floats_equal_with_epsilon( \

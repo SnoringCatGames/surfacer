@@ -155,13 +155,13 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
     self.surface_parser = surface_parser
     self.space_state = space_state
     self.debug_state = debug_state
-
+    
     # Store the subset of surfaces that this player type can interact with.
     self.surfaces = surface_parser.get_subset_of_surfaces( \
             movement_params.can_grab_walls, \
             movement_params.can_grab_ceilings, \
             movement_params.can_grab_floors)
-
+    
     self.surfaces_to_nodes = {}
     self.nodes_to_edges = {}
     
@@ -176,19 +176,19 @@ func find_path(origin: PositionAlongSurface, \
     
     var origin_surface := origin.surface
     var destination_surface := destination.surface
-
+    
     if origin_surface == destination_surface:
         # If the we are simply trying to get to a different position on the same surface, then we
         # don't need A*.
         var edges := [IntraSurfaceEdge.new(origin, destination)]
         return PlatformGraphPath.new(edges)
-
+    
     var frontier := PriorityQueue.new()
     var node_to_previous_node := {}
     node_to_previous_node[origin] = null
     var nodes_to_weights := {}
     nodes_to_weights[origin] = 0.0
-
+    
     var nodes_to_edges_for_current_node: Dictionary
     var next_edge: Edge
     var current_node: PositionAlongSurface
@@ -197,81 +197,85 @@ func find_path(origin: PositionAlongSurface, \
     var new_weight: float
     var heuristic_weight: float
     var priority: float
-
+    
     # Record temporary edges from the origin to each node on the origin's surface.
     for next_node in surfaces_to_nodes[origin_surface]:
         # Record the path to this node.
         node_to_previous_node[next_node] = origin
-
+        
         # Record this node's weight.
         new_weight = origin.target_point.distance_squared_to(next_node.target_point)
         nodes_to_weights[next_node] = new_weight
-
+        
         # Add this node to the frontier with a priority.
         priority = new_weight
         frontier.insert(priority, next_node)
-
+    
     # Determine the cheapest path.
     while !frontier.is_empty:
         current_node = frontier.remove_root()
         current_weight = nodes_to_weights[current_node]
-
+        
         if current_node == destination:
             break
-
+        
         if current_node.surface == destination_surface:
             # Record a temporary edge to the destination from this current_node.
-
+            
             next_node = destination
             new_weight = current_weight + \
                     current_node.target_point.distance_squared_to(destination.target_point)
-
+            
             if !nodes_to_weights.has(next_node) or new_weight < nodes_to_weights[next_node]:
                 # We found a new or cheaper path to this next node, so record it.
-
+                
                 # Record the path to this node.
                 node_to_previous_node[next_node] = current_node
-
+                
                 # Record this node's weight.
                 nodes_to_weights[next_node] = new_weight
-
+                
                 # Add this node to the frontier with a priority.
                 priority = new_weight
                 frontier.insert(priority, next_node)
-
+            
             continue
-
-        # Iterate through each current neighbor node, and add record their weights, paths, and
+        
+        if !nodes_to_edges.has(current_node):
+            # There are no edges from this node.
+            continue
+        
+        # Iterate through each current neighbor node, and record their weights, paths, and
         # priorities.
         nodes_to_edges_for_current_node = nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
             next_edge = nodes_to_edges_for_current_node[next_node]
             new_weight = current_weight + next_edge.weight
-
+            
             if !nodes_to_weights.has(next_node) or new_weight < nodes_to_weights[next_node]:
                 # We found a new or cheaper path to this next node, so record it.
-
+                
                 # Record the path to this node.
                 node_to_previous_node[next_node] = current_node
-
+                
                 # Record this node's weight.
                 nodes_to_weights[next_node] = new_weight
                 heuristic_weight = next_node.target_point.distance_squared_to(destination.target_point)
-
+                
                 # Add this node to the frontier with a priority.
                 priority = new_weight + heuristic_weight
                 frontier.insert(priority, next_node)
-
+    
     # Collect the edges for the cheapest path.
-
+    
     var edges := []
     current_node = destination
     var previous_node: PositionAlongSurface = node_to_previous_node.get(current_node)
-
+    
     if previous_node == null:
         # The destination cannot be reached form the origin.
         return null
-
+    
     while previous_node != null:
         if node_to_previous_node[previous_node] == null or edges.empty():
             # The first and last edge are temporary and extend from/to the origin/destination,
@@ -279,15 +283,15 @@ func find_path(origin: PositionAlongSurface, \
             next_edge = IntraSurfaceEdge.new(previous_node, current_node)
         else:
             next_edge = nodes_to_edges[previous_node][current_node]
-
+        
         assert(next_edge != null)
-
+        
         edges.push_front(next_edge)
         current_node = previous_node
         previous_node = node_to_previous_node.get(previous_node)
-
+    
     assert(!edges.empty())
-
+    
     return PlatformGraphPath.new(edges)
 
 # Finds a movement step that will result in landing on a surface, with an attempt to minimize the
@@ -300,19 +304,19 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     find_surfaces_in_fall_range(result_set, origin, velocity_start)
     var possible_landing_surfaces := result_set.keys()
     possible_landing_surfaces.sort_custom(self, "_compare_surfaces_by_max_y")
-
+    
     var constraint_offset := MovementCalcOverallParams.calculate_constraint_offset(movement_params)
     
     var origin_vertices := [origin]
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
-
+    
     var possible_end_positions: Array
     var terminals: Array
     var vertical_step: MovementVertCalcStep
     var step_calc_params: MovementCalcStepParams
     var calc_results: MovementCalcResults
     var overall_calc_params: MovementCalcOverallParams
-
+    
     # Find the first possible edge to a landing surface.
     for surface in possible_landing_surfaces:
         possible_end_positions = MovementUtils.get_all_jump_positions_from_surface( \
@@ -415,25 +419,25 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
         for edge in surfaces_to_edges[surface]:
             edge.start = _dedup_node(edge.start, grid_cell_to_node)
             edge.end = _dedup_node(edge.end, grid_cell_to_node)
-
+    
     # Record mappings from surfaces to nodes.
     var nodes_set := {}
     var cell_id: String
     for surface in surfaces_to_edges:
         nodes_set.clear()
-
+        
         # Get a deduped set of all nodes on this surface.
         for edge in surfaces_to_edges[surface]:
             cell_id = _node_to_cell_id(edge.start)
             nodes_set[cell_id] = edge.start
-
+        
         surfaces_to_nodes[surface] = nodes_set.values()
-
+    
     # Set up edge mappings.
     for surface in surfaces_to_nodes:
         for node in surfaces_to_nodes[surface]:
             nodes_to_edges[node] = {}
-
+    
     # Calculate and record all intra-surface edges.
     var intra_surface_edge: IntraSurfaceEdge
     for surface in surfaces_to_nodes:
@@ -442,13 +446,13 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
                 if node_a == node_b:
                     # Don't create intra-surface edges that start and end at the same node.
                     continue
-
+                
                 # Record uni-directional edges in both directions.
                 intra_surface_edge = IntraSurfaceEdge.new(node_a, node_b)
                 nodes_to_edges[node_a][node_b] = intra_surface_edge
                 intra_surface_edge = IntraSurfaceEdge.new(node_b, node_a)
                 nodes_to_edges[node_b][node_a] = intra_surface_edge
-
+    
     # Record inter-surface edges.
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
@@ -460,7 +464,7 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
 # - Otherwise, the new new instance is recorded and returned.
 static func _dedup_node(node: PositionAlongSurface, grid_cell_to_node: Dictionary) -> PositionAlongSurface:
     var cell_id := _node_to_cell_id(node)
-
+    
     if grid_cell_to_node.has(cell_id):
         # If we already have a node in this position, then replace the reference for this
         # edge to instead use this other node instance.
@@ -468,7 +472,7 @@ static func _dedup_node(node: PositionAlongSurface, grid_cell_to_node: Dictionar
     else:
         # If we don't yet have a node in this position, then record this node.
         grid_cell_to_node[cell_id] = node
-
+    
     return node
 
 # Get a string representation for the grid cell that the given node corresponds to.

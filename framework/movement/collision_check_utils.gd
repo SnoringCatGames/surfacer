@@ -380,23 +380,6 @@ static func check_continuous_horizontal_step_for_collision( \
         
         ###########################################################################################
         collision_debug_state.frame_current_time = current_time
-        collision_debug_state.frame_motion = shape_query_params.motion
-        collision_debug_state.frame_previous_position = collision_debug_state.frame_start_position
-        collision_debug_state.frame_start_position = shape_query_params.transform[2]
-        collision_debug_state.frame_end_position = \
-                collision_debug_state.frame_start_position + collision_debug_state.frame_motion
-        collision_debug_state.frame_previous_min_coordinates = \
-                collision_debug_state.frame_start_min_coordinates
-        collision_debug_state.frame_previous_max_coordinates = \
-                collision_debug_state.frame_start_max_coordinates
-        collision_debug_state.frame_start_min_coordinates = \
-                collision_debug_state.frame_start_position - collider_half_width_height
-        collision_debug_state.frame_start_max_coordinates = \
-                collision_debug_state.frame_start_position + collider_half_width_height
-        collision_debug_state.frame_end_min_coordinates = \
-                collision_debug_state.frame_end_position - collider_half_width_height
-        collision_debug_state.frame_end_max_coordinates = \
-                collision_debug_state.frame_end_position + collider_half_width_height
         ###########################################################################################
         
         # Check for collision.
@@ -430,7 +413,7 @@ static func check_continuous_horizontal_step_for_collision( \
         
         collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
                 shape_query_params, collider_half_width_height, \
-                movement_params.collider_rotation, surface_parser)
+                movement_params.collider_rotation, surface_parser, false, collision_debug_state)
         
         if collision == null:
             # Record the position for edge annotation debugging.

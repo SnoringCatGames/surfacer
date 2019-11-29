@@ -72,6 +72,23 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     
     ###############################################################################################
+    collision_debug_state.frame_motion = shape_query_params.motion
+    collision_debug_state.frame_previous_position = collision_debug_state.frame_start_position
+    collision_debug_state.frame_start_position = shape_query_params.transform[2]
+    collision_debug_state.frame_end_position = \
+            collision_debug_state.frame_start_position + collision_debug_state.frame_motion
+    collision_debug_state.frame_previous_min_coordinates = \
+            collision_debug_state.frame_start_min_coordinates
+    collision_debug_state.frame_previous_max_coordinates = \
+            collision_debug_state.frame_start_max_coordinates
+    collision_debug_state.frame_start_min_coordinates = \
+            collision_debug_state.frame_start_position - collider_half_width_height
+    collision_debug_state.frame_start_max_coordinates = \
+            collision_debug_state.frame_start_position + collider_half_width_height
+    collision_debug_state.frame_end_min_coordinates = \
+            collision_debug_state.frame_end_position - collider_half_width_height
+    collision_debug_state.frame_end_max_coordinates = \
+            collision_debug_state.frame_end_position + collider_half_width_height
     collision_debug_state.intersection_points = intersection_points
     collision_debug_state.collision_ratios = space_state.cast_motion(shape_query_params)
     ###############################################################################################
@@ -498,11 +515,29 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     if !surface_collision.is_valid_collision_state:
         var format_string_template := "An error occurred during collision detection." + \
                 "\n\tintersection_points: %s" + \
+                "\n\tcollision_ratios: %s" + \
                 "\n\tposition_start: %s" + \
                 "\n\tmotion: %s" + \
-                "\n\tcollider_half_width_height: %s"
-        var format_string_arguments := [String(intersection_points), String(position_start), \
-                String(shape_query_params.motion), String(collider_half_width_height)]
+                "\n\tcollider_half_width_height: %s" + \
+                "\n\tframe_start_min_coordinates: %s" + \
+                "\n\tframe_start_max_coordinates: %s" + \
+                "\n\tframe_end_min_coordinates: %s" + \
+                "\n\tframe_end_max_coordinates: %s" + \
+                "\n\tframe_previous_min_coordinates: %s" + \
+                "\n\tframe_previous_max_coordinates: %s"
+        var format_string_arguments := [ \
+                String(intersection_points), \
+                String(collision_debug_state.collision_ratios), \
+                String(position_start), \
+                String(shape_query_params.motion), \
+                String(collider_half_width_height), \
+                String(collision_debug_state.frame_start_min_coordinates), \
+                String(collision_debug_state.frame_start_max_coordinates), \
+                String(collision_debug_state.frame_end_min_coordinates), \
+                String(collision_debug_state.frame_end_max_coordinates), \
+                String(collision_debug_state.frame_previous_min_coordinates), \
+                String(collision_debug_state.frame_previous_max_coordinates), \
+            ]
         var message := format_string_template % format_string_arguments
         Utils.error(message, false)
     

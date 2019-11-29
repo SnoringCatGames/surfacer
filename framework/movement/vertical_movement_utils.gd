@@ -341,10 +341,6 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
     var is_position_before_instruction_end: bool
     var is_position_before_peak: bool
     
-    # Add a small epsilon to the min threshold to help with round-off error.
-    if min_end_time >= 0.0001:
-        min_end_time -= 0.0001
-    
     # We need to know whether the position corresponds to the rising or falling side of the jump
     # parabola, and whether the position corresponds to before or after the jump button is
     # released.

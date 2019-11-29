@@ -208,16 +208,7 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-# >>- Debug all levels.
-# >- Fix usage of min-speed horizontal velocity through constraints.
-# - It seems like I'm going to have to work on performance soon.
-# >>>>>>>- Debug all levels...
-# 
-# - Instead-of/in-addition-to using find-moment-of-collision calculation, we could just look at
-#   ratio of width to height of spread of intersection points as well as motion in order to
-#   determine whether collision was with horizontal or vertical side first.
-# 
-# - Add/fix logic to actually move along paths to click points.
+# - Implement movement through graph.
 # 
 # - Add better annotation selection.
 #   - Add shorcuts for toggling debugging annotations
@@ -244,6 +235,11 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - 
 # 
 # - Add support for specifying required end x-velocity (and y direction).
+# 
+# - Fix jump-quit-early-when-hitting-ceiling.
+# - Fix dash.
+# - Fix performance.
+# - Fix collision-detection errors from logs.
 # 
 # - Add some extra improvements to check_frame_for_collision:
 #   - [maybe?] Rather than just using closest_intersection_point, sort all intersection_points, and

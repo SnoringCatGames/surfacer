@@ -410,7 +410,7 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             time_passing_through = \
                     VerticalMovementUtils.calculate_time_for_passing_through_constraint( \
                             movement_params, constraint, \
-                            constraint.previous_constraint.time_passing_through, \
+                            constraint.previous_constraint.time_passing_through + 0.0001, \
                             vertical_step.position_step_start.y, \
                             vertical_step.time_instruction_end, \
                             vertical_step.position_instruction_end.y, \

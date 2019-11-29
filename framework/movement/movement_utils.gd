@@ -16,7 +16,7 @@ static func calculate_movement_duration(displacement: float, v_0: float, a: floa
     # Use only non-negative results.
     assert(min_duration >= 0)
     
-    if displacement == 0 and returns_lower_result:
+    if displacement == 0 and returns_lower_result and min_duration == 0.0:
         # The start position is the destination.
         return 0.0
     elif a == 0:
@@ -47,7 +47,7 @@ static func calculate_movement_duration(displacement: float, v_0: float, a: floa
     # Ensure that there are not two negative results.
     assert(t1 >= 0 or t2 >= 0)
     
-    min_duration = min_duration + Geometry.FLOAT_EPSILON
+    min_duration += Geometry.FLOAT_EPSILON
     
     if t1 < min_duration:
         if t2 < min_duration:
