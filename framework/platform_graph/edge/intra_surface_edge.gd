@@ -33,3 +33,12 @@ static func _calculate_instructions( \
     var instruction := MovementInstruction.new(input_key, 0.0, true)
     var distance_squared := start.target_point.distance_squared_to(end.target_point)
     return MovementInstructions.new([instruction], INF, distance_squared)
+
+func _get_class_name() -> String:
+    return "IntraSurfaceEdge"
+
+func _get_start_string() -> String:
+    return start.to_string()
+
+func _get_end_string() -> String:
+    return end.to_string()

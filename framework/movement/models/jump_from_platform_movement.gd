@@ -209,6 +209,9 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # - Implement movement through graph.
+#   - Fix Navigator movement.
+#   - Turn back on player-controlled ActionSource.
+#   - Fix ActionSource system so that player control and navigator work better together.
 # 
 # - Add better annotation selection.
 #   - Add shorcuts for toggling debugging annotations

@@ -102,11 +102,11 @@ func init_human_player_state() -> void:
     _init_human_controller_action_source()
 
 func init_computer_player_state() -> void:
+    # FIXME: E: Remove after debugging CP movement.
+#    _init_human_controller_action_source() # FIXME: ----------
     _init_navigator()
     # FIXME: E: Remove after debugging CP movement.
     _set_camera()
-    # FIXME: E: Remove after debugging CP movement.
-    _init_human_controller_action_source()
 
 func set_platform_graph(graph: PlatformGraph) -> void:
     self.graph = graph
@@ -136,16 +136,25 @@ func _physics_process(delta: float) -> void:
     
     # Uncomment to help with debugging.
     if surface_state.just_touched_a_surface:
-        print("HIT     surface:%8.3f:%29sP:%29sV" % [global.elapsed_play_time_sec, \
-                surface_state.center_position, velocity])
+        print("HIT     surface:%8.3f:%29sP:%29sV" % [ \
+                global.elapsed_play_time_sec, \
+                surface_state.center_position, \
+                velocity, \
+            ])
     if surface_state.just_left_air:
-        print("GRABBED surface:%8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
-                surface_state.center_position, velocity, \
-                Surface.to_string(surface_state.grabbed_surface)])
+        print("GRABBED surface:%8.3f:%29sP:%29sV: %s" % [ \
+                global.elapsed_play_time_sec, \
+                surface_state.center_position, \
+                velocity, \
+                surface_state.grabbed_surface.to_string(), \
+            ])
     elif surface_state.just_entered_air:
-        print("LEFT    surface:%8.3f:%29sP:%29sV: %s" % [global.elapsed_play_time_sec, \
-                surface_state.center_position, velocity, \
-                Surface.to_string(surface_state.previous_grabbed_surface)])
+        print("LEFT    surface:%8.3f:%29sP:%29sV: %s" % [ \
+                global.elapsed_play_time_sec, \
+                surface_state.center_position, \
+                velocity, \
+                surface_state.previous_grabbed_surface.to_string(), \
+            ])
     
     if navigator:
         navigator.update()

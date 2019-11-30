@@ -19,3 +19,11 @@ func _init(input_key: String, time: float, is_pressed: bool = false, \
     self.time = time
     self.is_pressed = is_pressed
     self.position = position
+
+func to_string() -> String:
+    return "MovementInstruction{ %s, %.2f, %s%s }" % [ \
+            input_key, \
+            time, \
+            is_pressed, \
+            ", %s" % position if position != Vector2.INF else ""
+        ]

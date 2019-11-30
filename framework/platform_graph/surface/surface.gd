@@ -25,9 +25,12 @@ func _init(vertices: Array, side: int, tile_map_indices: Array) -> void:
     bounding_box = Geometry.get_bounding_box_for_points(vertices)
     normal = _calculate_normal(side)
 
-static func to_string(surface: Surface) -> String:
-    var side_str = SurfaceSide.to_string(surface.side)
-    return "Surface:%s:%s" % [side_str, surface.vertices]
+func to_string() -> String:
+    return "Surface{ %s, [ %s, %s ] }" % [ \
+            SurfaceSide.to_string(side), \
+            vertices[0], \
+            vertices[vertices.size() - 1], \
+        ]
 
 static func _calculate_normal(side: int) -> Vector2:
     return \

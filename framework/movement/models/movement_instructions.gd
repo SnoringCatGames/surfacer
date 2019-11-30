@@ -91,3 +91,30 @@ func is_instruction_in_range( \
 
 static func instruction_comparator(a: MovementInstruction, b: MovementInstruction) -> bool:
     return a.time < b.time
+
+func to_string() -> String:
+    var instructions_str := ""
+    for instruction in instructions:
+        instructions_str += instruction.to_string()
+    return "MovementInstructions{ instructions: [ %s ] }" % instructions_str
+
+func to_string_with_newlines(indent_level := 0) -> String:
+    var indent_level_str := ""
+    for i in range(indent_level):
+        indent_level_str += "\t"
+    
+    var instructions_str := ""
+    for instruction in instructions:
+        instructions_str += "\n\t%s%s," % [ \
+                indent_level_str, \
+                instruction.to_string(), \
+            ]
+    
+    var format_string_template := "MovementInstructions{ instructions: [ " + \
+            "%s" + \
+            "\n%s] }"
+    var format_string_arguments := [ \
+            instructions_str, \
+            indent_level_str, \
+        ]
+    return format_string_template % format_string_arguments

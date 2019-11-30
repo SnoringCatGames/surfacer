@@ -3,7 +3,7 @@ class_name InstructionsActionSource
 
 const InstructionsPlayback := preload("res://framework/player/action/instructions_playback.gd")
 
-# Array<_InstructionsPlayback>
+# Array<InstructionsPlayback>
 var _all_playback := []
 
 func _init(player).(player) -> void:
@@ -11,7 +11,6 @@ func _init(player).(player) -> void:
 
 # Calculates actions for the current frame.
 func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
-    var next_instruction: MovementInstruction
     var is_pressed: bool
     var non_pressed_keys := []
     
@@ -27,12 +26,13 @@ func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
         
         # Remove from the active set all keys that are no longer pressed.
         for input_key in non_pressed_keys:
-            playback.update_for_key_press.erase(input_key)
+            playback.active_key_presses.erase(input_key)
         
         # Handle any new key presses.
-        while !playback.is_finished and playback.next_instruction.time <= time_sec:
-            update_for_key_press(actions, playback.next_instruction.input_key, \
-                    playback.next_instruction.is_pressed, time_sec)
+        while !playback.is_finished and playback.end_time_for_current_instruction <= time_sec:
+            if !playback.is_on_last_instruction:
+                update_for_key_press(actions, playback.next_instruction.input_key, \
+                        playback.next_instruction.is_pressed, time_sec)
             playback.increment()
     
     # Handle instructions that finish.

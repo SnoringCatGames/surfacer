@@ -33,3 +33,32 @@ func push_back(edge: Edge) -> void:
     
     self.edges.push_back(edge)
     self.destination = edge.end
+
+func to_string_with_newlines(indent_level := 0) -> String:
+    var indent_level_str := ""
+    for i in range(indent_level):
+        indent_level_str += "\t"
+    var edges_str := ""
+    for edge in edges:
+        edges_str += "\n\t\t%s%s, " % [ \
+                indent_level_str, \
+                edge.to_string_with_newlines(indent_level + 2), \
+            ]
+    var format_string_template := "PlatformGraphPath{ " + \
+            "\n\t%sorigin: %s," + \
+            "\n\t%sdestination: %s," + \
+            "\n\t%sedges: [" + \
+            "%s" + \
+            "\n\t%s]," + \
+            "\n%s}"
+    var format_string_arguments := [ \
+            indent_level_str, \
+            origin.to_string(), \
+            indent_level_str, \
+            destination.to_string(), \
+            indent_level_str, \
+            edges_str, \
+            indent_level_str, \
+            indent_level_str, \
+        ]
+    return format_string_template % format_string_arguments

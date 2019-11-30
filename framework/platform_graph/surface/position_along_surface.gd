@@ -67,3 +67,9 @@ static func _calculate_t(surface: Surface, target_point: Vector2) -> float:
         surface_range = surface.bounding_box.size.y
         point = target_point.y
     return (point - surface_start) / surface_range if surface_range > 0 else 0.0
+
+func to_string() -> String:
+    return "PositionAlongSurface{ %s, %s }" % [ \
+            target_point, \
+            surface.to_string(), \
+        ]

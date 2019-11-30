@@ -15,3 +15,12 @@ static func _calculate_instructions( \
         calc_results: MovementCalcResults) -> MovementInstructions:
     return MovementUtils.convert_calculation_steps_to_movement_instructions( \
             position_start, position_end.target_point, calc_results)
+
+func _get_class_name() -> String:
+    return "AirToSurfaceEdge"
+
+func _get_start_string() -> String:
+    return String(start)
+
+func _get_end_string() -> String:
+    return end.to_string()

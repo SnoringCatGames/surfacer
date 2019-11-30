@@ -15,3 +15,12 @@ func _init(start: PositionAlongSurface, end: Vector2) \
 static func _calculate_instructions( \
         start: PositionAlongSurface, end: Vector2) -> MovementInstructions:
     return null
+
+func _get_class_name() -> String:
+    return "SurfaceToAirEdge"
+
+func _get_start_string() -> String:
+    return start.to_string()
+
+func _get_end_string() -> String:
+    return String(end)

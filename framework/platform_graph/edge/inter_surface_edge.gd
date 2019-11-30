@@ -10,3 +10,12 @@ func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions).(instructions) -> void:
     self.start = start
     self.end = end
+
+func _get_class_name() -> String:
+    return "InterSurfaceEdge"
+
+func _get_start_string() -> String:
+    return start.to_string()
+
+func _get_end_string() -> String:
+    return end.to_string()

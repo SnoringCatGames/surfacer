@@ -47,11 +47,19 @@ func navigate_to_nearest_surface(target: Vector2) -> bool:
     
     if path == null:
         # Destination cannot be reached from origin.
-        print("Can not navigate to point: %s" % target)
+        print("Cannot navigate to point: %s" % target)
         return false
     else:
+        var format_string_template := "Starting navigation: {" + \
+            "\n\tdestination: %s," + \
+            "\n\tpath: %s," + \
+            "\n}"
+        var format_string_arguments := [ \
+                target, \
+                path.to_string_with_newlines(1), \
+            ]
         # Destination can be reached from origin.
-        print("Starting navigation: %s" % target)
+        print(format_string_template % format_string_arguments)
         current_path = path
         current_edge = current_path.edges[0]
         current_edge_index = 0

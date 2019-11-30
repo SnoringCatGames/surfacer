@@ -14,3 +14,12 @@ func _init(start: Vector2, end: Vector2) \
 
 static func _calculate_instructions(start: Vector2, end: Vector2) -> MovementInstructions:
     return null
+
+func _get_class_name() -> String:
+    return "AirToAirEdge"
+
+func _get_start_string() -> String:
+    return String(start)
+
+func _get_end_string() -> String:
+    return String(end)
