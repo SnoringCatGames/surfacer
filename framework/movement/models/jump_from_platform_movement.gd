@@ -201,7 +201,8 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # - Try to fix DrawUtils dashed polylines.
 # 
-# - Think through and maybe fix the function in constraint utils for accounting for max-speed vs min/max for valid next step?
+# - Think through and maybe fix the function in constraint utils for accounting for max-speed vs
+#   min/max for valid next step?
 # 
 # 
 
@@ -209,11 +210,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Turn back on player-controlled ActionSource.
-# - Fix ActionSource system so that player control and navigator work better together.
-# 
-# - Fix instructions/navigator to ensure that the sideways input is not released until after
-#   hitting, and _grabbing_, the wall (when jumping to a wall).
 # - Fix surface-closest-point-jump-off calculations (on long_rise level, we should be able to
 #   jump from long lower platform to other platform).
 #   - It might be that this is just broken due to the player being slightly under the platform when
@@ -221,6 +217,8 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - Regardless, we need to update surface-closest-point-jump-off calculations to include an
 #     offset for player half-width-height + margin.
 # - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
+# - Fix instructions/navigator to ensure that the sideways input is not released until after
+#   hitting, and _grabbing_, the wall (when jumping to a wall).
 # - Add support for specifying required end x-velocity (and y direction).
 #   - Use this for edges that end on walls.
 # 
@@ -247,7 +245,8 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - Add shorcuts for toggling debugging annotations
 #     - Add support for triggering the calc-step annotations based on a shortcut.
 #       - i
-#       - also, require clicking on the start and end positions in order to select which edge to debug
+#       - also, require clicking on the start and end positions in order to select which edge to
+#         debug
 #         - Use this _in addition to_ the current top-level configuration for specifying which edge
 #           to calculate?
 #       - also, then only actually calculate the edge debug state when using this
@@ -258,10 +257,13 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #       - whether the player's current surface is rendered
 #       - whether all edges are rendered
 #       - whether grid boundaries+indices are rendered
-#     - create a collapsible dat.GUI-esque menu at the top-right that lists all the possible annotation configuration options
-#       - set up a nice API for creating these, setting values, listening for value changes, and defining keyboard shortcuts.
+#     - create a collapsible dat.GUI-esque menu at the top-right that lists all the possible
+#       annotation configuration options
+#       - set up a nice API for creating these, setting values, listening for value changes, and
+#         defining keyboard shortcuts.
 # 
-# - Put together some illustrative screenshots with special one-off annotations to explain the graph parsing steps.
+# - Put together some illustrative screenshots with special one-off annotations to explain the
+#   graph parsing steps.
 #   - A couple surfaces
 #   - Show different tiles, to illustrate how surfaces get merged.
 #   - All surfaces (different colors)
@@ -270,8 +272,11 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - 
 # 
 # - Fix any remaining Navigator movement issues.
+#   - Cancel/interrupt navigator when the user presses a movement button.
+#   - Refactor intra-surface edges to determine the movement direction later, after landing on the
+#     surface, since we can land on the wrong side of the target and need to move in the reverse
+#     direction from what would have been originally calculated.
 # - Fix performance.
-#   - Only calculate edges between near-ends of surfaces?
 # - Fix collision-detection errors from logs.
 # 
 # - Add some extra improvements to check_frame_for_collision:
@@ -351,7 +356,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 params, a, b.vertices, b.bounding_box)
         land_positions = MovementUtils.get_all_jump_positions_from_surface( \
                 params, b, a.vertices, a.bounding_box)
-
+        
         for jump_position in jump_positions:
             for land_position in land_positions:
                 ###################################################################################
@@ -427,6 +432,13 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                     # Can reach land position from jump position.
                     edge = InterSurfaceEdge.new(jump_position, land_position, instructions)
                     edges.push_back(edge)
+                    # For efficiency, only compute one edge per surface pair.
+                    break
+            
+            if edge != null:
+                # For efficiency, only compute one edge per surface pair.
+                edge = null
+                break
     
     # FIXME: B: REMOVE
     params.gravity_fast_fall /= \

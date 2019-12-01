@@ -169,6 +169,15 @@ static func calculate_min_time_to_reach_displacement(displacement: float, v_0: f
         
         return duration_to_reach_velocity_limit + duration_with_max_velocity
 
+# Returns up to three points along the given surface for jumping-from or landing-to, considering
+# the given vertices of another nearby surface.
+# 
+# -   The three possible points are:
+#     -   The near end of the surface.
+#     -   The far end of the surface.
+#     -   The closest point along the surface.
+# -   Points are only included if they are distinct.
+# -   Points are returned in sorted order: closest, near, far.
 static func get_all_jump_positions_from_surface(movement_params: MovementParams, \
         surface: Surface, target_vertices: Array, target_bounding_box: Rect2) -> Array:
     var start: Vector2 = surface.vertices[0]
@@ -190,21 +199,23 @@ static func get_all_jump_positions_from_surface(movement_params: MovementParams,
     var jump_position := create_position_from_target_point( \
             near_end, surface, movement_params.collider_half_width_height)
     var possible_jump_positions = [jump_position]
-
+    
     # Only consider the far-end point if it is distinct.
     if surface.vertices.size() > 1:
         jump_position = create_position_from_target_point( \
                 far_end, surface, movement_params.collider_half_width_height)
         possible_jump_positions.push_back(jump_position)
         
-        # The actual clostest point along the surface could be somewhere in the middle.
+        # FIXME: --------------- Offset closest_point by movement_params.collider_half_width_height + MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN
+        
+        # The actual closest point along the surface could be somewhere in the middle.
         # Only consider the closest point if it is distinct.
         var closest_point: Vector2 = \
                 Geometry.get_closest_point_on_polyline_to_polyline(surface.vertices, target_vertices)
         if closest_point != near_end and closest_point != far_end:
             jump_position = create_position_from_target_point( \
                     closest_point, surface, movement_params.collider_half_width_height)
-            possible_jump_positions.push_back(jump_position)
+            possible_jump_positions.push_front(jump_position)
     
     return possible_jump_positions
 
