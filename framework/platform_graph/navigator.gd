@@ -15,6 +15,7 @@ var current_edge: Edge
 var current_edge_index := -1
 var current_edge_playback: InstructionsPlayback
 
+var is_expecting_to_enter_air := false
 var just_interrupted_navigation := false
 var just_reached_end_of_edge := false
 var just_reached_intra_surface_destination := false
@@ -70,8 +71,9 @@ func navigate_to_nearest_surface(target: Vector2) -> bool:
         current_edge_index = 0
         is_currently_navigating = true
         reached_destination = false
-        current_edge_playback = instructions_action_source.start_instructions( \
-                current_edge.instructions, global.elapsed_play_time_sec)
+        
+        _start_edge(current_edge)
+        
         return true
 
 func _set_reached_destination() -> void:
@@ -93,11 +95,24 @@ func reset() -> void:
     reached_destination = false
     current_edge_playback = null
     instructions_action_source.cancel_all_playback()
+    is_expecting_to_enter_air = false
     just_interrupted_navigation = false
     just_reached_end_of_edge = false
     just_reached_intra_surface_destination = false
     just_landed_on_expected_surface = false
     just_reached_in_air_destination = false
+
+func _start_edge(edge: Edge) -> void:
+    var format_string_template := "STARTING EDGE NAVIGATION: %8.3f; %s"
+    var format_string_arguments := [ \
+            global.elapsed_play_time_sec, \
+            edge.to_string_with_newlines(1), \
+        ]
+    print(format_string_template % format_string_arguments)
+    
+    current_edge_playback = instructions_action_source.start_instructions( \
+            edge.instructions, global.elapsed_play_time_sec)
+    is_expecting_to_enter_air = edge is InterSurfaceEdge or edge is SurfaceToAirEdge
 
 # Updates player-graph state in response to the given new PlayerSurfaceState.
 func update() -> void:
@@ -150,16 +165,7 @@ func update() -> void:
         else:
             current_edge_index += 1
             current_edge = current_path.edges[current_edge_index]
-            
-            var format_string_template := "STARTING EDGE NAVIGATION: %8.3f; %s"
-            var format_string_arguments := [ \
-                    global.elapsed_play_time_sec, \
-                    current_edge.to_string_with_newlines(1), \
-                ]
-            print(format_string_template % format_string_arguments)
-            
-            current_edge_playback = instructions_action_source.start_instructions( \
-                    current_edge.instructions, global.elapsed_play_time_sec)
+            _start_edge(current_edge)
 
 func _update_edge_navigation_state() -> void:
     var is_grabbed_surface_expected: bool = \
@@ -170,10 +176,13 @@ func _update_edge_navigation_state() -> void:
     var just_collided_unexpectedly: bool = surface_state.just_left_air and \
             !is_grabbed_surface_expected and player.surface_state.collision_count > 0
     var just_entered_air_unexpectedly := \
-            surface_state.just_entered_air and !just_reached_intra_surface_destination
+            surface_state.just_entered_air and !is_expecting_to_enter_air
     just_landed_on_expected_surface = surface_state.just_left_air and \
             surface_state.grabbed_surface == current_edge.end.surface
     just_interrupted_navigation = just_collided_unexpectedly or just_entered_air_unexpectedly
+    
+    if surface_state.just_entered_air:
+        is_expecting_to_enter_air = false
     
     if is_moving_along_intra_surface_edge:
         var target_point: Vector2 = current_edge.end.target_point

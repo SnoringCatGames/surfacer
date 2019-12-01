@@ -18,9 +18,6 @@ func update(actions: PlayerActionState, previous_actions: PlayerActionState, tim
     for playback in _all_playback:
         # Handle any new key presses up till the current time.
         var new_instructions: Array = playback.update(time_sec)
-        # FIXME: ------------- REMOVE?
-#        for instruction in new_instructions:
-#            update_for_key_press(actions, instruction.input_key, instruction.is_pressed, time_sec)
         
         non_pressed_keys.clear()
         
