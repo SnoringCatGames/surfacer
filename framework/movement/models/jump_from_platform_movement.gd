@@ -209,8 +209,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix Navigator movement.
-# 
 # - Turn back on player-controlled ActionSource.
 # - Fix ActionSource system so that player control and navigator work better together.
 # 
@@ -218,9 +216,32 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   hitting, and _grabbing_, the wall (when jumping to a wall).
 # - Fix surface-closest-point-jump-off calculations (on long_rise level, we should be able to
 #   jump from long lower platform to other platform).
+#   - It might be that this is just broken due to the player being slightly under the platform when
+#     jumping, so that the player can't move around the edge before hitting the ceiling.
+#   - Regardless, we need to update surface-closest-point-jump-off calculations to include an
+#     offset for player half-width-height + margin.
 # - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
 # - Add support for specifying required end x-velocity (and y direction).
 #   - Use this for edges that end on walls.
+# 
+# - Add a new annotator for collision calculations.
+#   - Should show all the details for the state of a collision calculation.
+#   - Should work for both valid collisions and error-state collisions.
+#   - Things to render:
+#     - Bounding box of frame start, end, and previous frame start.
+#     - Bounding box with and without margin (thin lines and dotted lines).
+#     - intersection_points
+#     - motion arrow
+#   - Should integrate into the edge calculation annotation selection?
+#     - Hopefully shouldn't be too noisy...
+#   - Probably need to support zooming-in the camera?
+#     - Maybe this could be toggleable via clicking a button in the tree view?
+#     - Would definitely want to animate the zoom.
+#     - Probably also need to change the camera translation.
+#       - Probably can just calculate the offset from the player to the collision, and use that to
+#         manually assign an offset to the camera.
+#       - Would also need to animate this translation.
+#   - 
 # 
 # - Add better annotation selection.
 #   - Add shorcuts for toggling debugging annotations
@@ -248,7 +269,9 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - All edges
 #   - 
 # 
+# - Fix any remaining Navigator movement issues.
 # - Fix performance.
+#   - Only calculate edges between near-ends of surfaces?
 # - Fix collision-detection errors from logs.
 # 
 # - Add some extra improvements to check_frame_for_collision:
