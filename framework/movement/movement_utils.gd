@@ -233,10 +233,10 @@ static func update_velocity_in_air( \
     
     return velocity
 
-static func cap_velocity(velocity: Vector2, movement_params: MovementParams) -> Vector2:
+static func cap_velocity(velocity: Vector2, movement_params: MovementParams, \
+        current_max_horizontal_speed: float) -> Vector2:
     # Cap horizontal speed at a max value.
-    velocity.x = clamp(velocity.x, -movement_params.current_max_horizontal_speed, \
-            movement_params.current_max_horizontal_speed)
+    velocity.x = clamp(velocity.x, -current_max_horizontal_speed, current_max_horizontal_speed)
     
     # Kill horizontal speed below a min value.
     if velocity.x > -movement_params.min_horizontal_speed and \

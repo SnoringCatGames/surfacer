@@ -208,29 +208,14 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-# - Handle horizontal velocity at start of jump:
-#   - Update navigator to kill horizontal velocity at start of jump (or at start of any edge?).
-#   - Add TODO and FIXME (in different places) to later somehow update edges to support variable
-#     velocity_start_x values.
-#     - Multiple possible approaches:
-#       - Dynamically calculate a more up-to-date edge trajectory based on the desired
-#         velocity_start_x for the current path.
-#       >>- Allow for up-front edge calculation to use any desired velocity_start_x between
-#           -max_horizontal_speed_default and max_horizontal_speed_default.
-#         - This is probably a decent approximation, since we can usually assume that the ramp-up
-#           distance to get from 0 to max-x-speed on the floor is small enough that we can ignore
-#           it.
-#         - We could probably actually do an even better job by limiting the range for
-#           velocity_start_x for floor-surface-end-jump-off-points to be between either
-#           -max_horizontal_speed_default and 0 or 0 and max_horizontal_speed_default.
-# 
-# - Fix dash.
 # 
 # - Fix Navigator movement.
 # 
 # - Turn back on player-controlled ActionSource.
 # - Fix ActionSource system so that player control and navigator work better together.
 # 
+# - Fix instructions/navigator to ensure that the sideways input is not released until after
+#   hitting, and _grabbing_, the wall (when jumping to a wall).
 # - Fix surface-closest-point-jump-off calculations (on long_rise level, we should be able to
 #   jump from long lower platform to other platform).
 # - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
@@ -281,6 +266,19 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #     collision checks worked, and this collision is in an error state
 #   - Use this error state to abort collision/step/edge calculations (rather than the current
 #     approach of returning null, which is the same as with not detecting any collisions at all).
+# 
+# 
+# 
+# - Update edge-calculations to support variable velocity_start_x values.
+#   - Allow for up-front edge calculation to use any desired velocity_start_x between
+#     -max_horizontal_speed_default and max_horizontal_speed_default.
+#   - This is probably a decent approximation, since we can usually assume that the ramp-up
+#     distance to get from 0 to max-x-speed on the floor is small enough that we can ignore it.
+#   - We could probably actually do an even better job by limiting the range for velocity_start_x
+#     for floor-surface-end-jump-off-points to be between either -max_horizontal_speed_default and
+#     0 or 0 and max_horizontal_speed_default.
+# 
+# 
 # 
 # >- Commit message:
 # 

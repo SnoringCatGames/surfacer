@@ -71,7 +71,6 @@ func _create_movement_params() -> MovementParams:
 #    movement_params.should_minimize_velocity_change_when_jumping = true
 #
 #    movement_params.max_horizontal_speed_default = 400.0
-#    movement_params.current_max_horizontal_speed = movement_params.max_horizontal_speed_default
 #    movement_params.min_horizontal_speed = 5.0
 #    movement_params.max_vertical_speed = 4000.0
 #    movement_params.min_vertical_speed = 0.0
@@ -117,7 +116,6 @@ func _create_movement_params() -> MovementParams:
     movement_params.should_minimize_velocity_change_when_jumping = true
     
     movement_params.max_horizontal_speed_default = 400.0
-    movement_params.current_max_horizontal_speed = movement_params.max_horizontal_speed_default
     movement_params.min_horizontal_speed = 5.0
     movement_params.max_vertical_speed = 4000.0
     movement_params.min_vertical_speed = 0.0

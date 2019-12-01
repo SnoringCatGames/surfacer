@@ -121,6 +121,11 @@ func update() -> void:
     
     _update_edge_navigation_state()
     
+    # FIXME: A: Remove this, and instead update edge-calculations to support variable
+    #           velocity_start_x values.
+    if is_expecting_to_enter_air:
+        player.velocity.x = 0.0
+    
     if just_interrupted_navigation:
         print("Edge movement interrupted:%8.3f" % global.elapsed_play_time_sec)
         # FIXME: Add back in at some point...

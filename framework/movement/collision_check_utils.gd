@@ -152,7 +152,8 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
         position += displacement
         velocity = MovementUtils.update_velocity_in_air(velocity, delta, is_pressing_jump, \
                 is_first_jump, horizontal_acceleration_sign, movement_params)
-        velocity = MovementUtils.cap_velocity(velocity, movement_params)
+        velocity = MovementUtils.cap_velocity(velocity, movement_params, \
+                movement_params.max_horizontal_speed_default)
         previous_time = current_time
         current_time += delta
         
@@ -275,7 +276,8 @@ static func check_discrete_horizontal_step_for_collision( \
         position += displacement
         velocity = MovementUtils.update_velocity_in_air(velocity, delta, is_pressing_jump, \
                 is_first_jump, horizontal_acceleration_sign, movement_params)
-        velocity = MovementUtils.cap_velocity(velocity, movement_params)
+        velocity = MovementUtils.cap_velocity(velocity, movement_params, \
+                movement_params.max_horizontal_speed_default)
         previous_time = current_time
         current_time += delta
     

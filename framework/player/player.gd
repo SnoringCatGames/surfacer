@@ -40,6 +40,7 @@ var current_action_type: int
 var is_ascending_from_jump := false
 var jump_count := 0
 
+var current_max_horizontal_speed: float
 var _can_dash := true
 var _dash_cooldown_timer: Timer
 var _dash_fade_tween: Tween
@@ -55,6 +56,8 @@ func _enter_tree() -> void:
     self.can_grab_ceilings = type_configuration.movement_params.can_grab_ceilings
     self.can_grab_floors = type_configuration.movement_params.can_grab_floors
     self.movement_params = type_configuration.movement_params
+    self.current_max_horizontal_speed = \
+            type_configuration.movement_params.max_horizontal_speed_default
     self.movement_types = type_configuration.movement_types
     self.action_handlers = type_configuration.action_handlers
 
@@ -473,9 +476,9 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     if !_can_dash:
         return
     
-    movement_params.current_max_horizontal_speed = movement_params.max_horizontal_speed_default * \
+    current_max_horizontal_speed = movement_params.max_horizontal_speed_default * \
             movement_params.dash_speed_multiplier
-    velocity.x = movement_params.current_max_horizontal_speed * horizontal_acceleration_sign
+    velocity.x = current_max_horizontal_speed * horizontal_acceleration_sign
     
     velocity.y += movement_params.dash_vertical_boost
     
@@ -483,7 +486,7 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     #warning-ignore:return_value_discarded
     _dash_fade_tween.reset_all()
     #warning-ignore:return_value_discarded
-    _dash_fade_tween.interpolate_property(self, "movement_params.current_max_horizontal_speed", \
+    _dash_fade_tween.interpolate_property(self, "current_max_horizontal_speed", \
             movement_params.max_horizontal_speed_default * movement_params.dash_speed_multiplier, \
             movement_params.max_horizontal_speed_default, movement_params.dash_fade_duration, \
             Tween.TRANS_LINEAR, Tween.EASE_IN, \
@@ -495,6 +498,8 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
         animator.face_right()
     else:
         animator.face_left()
+    
+    _can_dash = false
 
 func _dash_cooldown_finished() -> void:
     _can_dash = true
