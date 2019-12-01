@@ -3,6 +3,7 @@ class_name Navigator
 
 var player # TODO: Add type back
 var graph: PlatformGraph
+var global # TODO: Add type back
 var surface_state: PlayerSurfaceState
 var surface_parser: SurfaceParser
 var instructions_action_source: InstructionsActionSource
@@ -20,9 +21,10 @@ var just_reached_intra_surface_destination := false
 var just_landed_on_expected_surface := false
 var just_reached_in_air_destination := false
 
-func _init(player, graph: PlatformGraph) -> void:
+func _init(player, graph: PlatformGraph, global) -> void:
     self.player = player
     self.graph = graph
+    self.global = global
     self.surface_state = player.surface_state
     self.surface_parser = graph.surface_parser
     self.instructions_action_source = InstructionsActionSource.new(player)
@@ -50,23 +52,26 @@ func navigate_to_nearest_surface(target: Vector2) -> bool:
         print("Cannot navigate to point: %s" % target)
         return false
     else:
-        var format_string_template := "Starting navigation: {" + \
+        # Destination can be reached from origin.
+        
+        var format_string_template := "STARTING PATH NAVIGATION: %8.3f; {" + \
             "\n\tdestination: %s," + \
             "\n\tpath: %s," + \
             "\n}"
         var format_string_arguments := [ \
+                global.elapsed_play_time_sec, \
                 target, \
                 path.to_string_with_newlines(1), \
             ]
-        # Destination can be reached from origin.
         print(format_string_template % format_string_arguments)
+        
         current_path = path
         current_edge = current_path.edges[0]
         current_edge_index = 0
         is_currently_navigating = true
         reached_destination = false
-        current_edge_playback = \
-                instructions_action_source.start_instructions(current_edge.instructions)
+        current_edge_playback = instructions_action_source.start_instructions( \
+                current_edge.instructions, global.elapsed_play_time_sec)
         return true
 
 func _set_reached_destination() -> void:
@@ -102,7 +107,7 @@ func update() -> void:
     _update_edge_navigation_state()
     
     if just_interrupted_navigation:
-        print("Edge movement interrupted")
+        print("Edge movement interrupted:%8.3f" % global.elapsed_play_time_sec)
         # FIXME: Add back in at some point...
 #        navigate_to_nearest_surface(current_path.destination)
         reset()
@@ -120,7 +125,7 @@ func update() -> void:
             edge_type_label = \
                     "surface-to-air" if current_edge is SurfaceToAirEdge else "air-to-air"
         
-        print("Reached end of %s edge" % edge_type_label)
+        print("Reached end of edge:      %8.3f; %s" % [global.elapsed_play_time_sec, edge_type_label])
     else:
         # Continuing along an edge.
         if surface_state.is_grabbing_a_surface:
@@ -145,8 +150,16 @@ func update() -> void:
         else:
             current_edge_index += 1
             current_edge = current_path.edges[current_edge_index]
-            current_edge_playback = \
-                    instructions_action_source.start_instructions(current_edge.instructions)
+            
+            var format_string_template := "STARTING EDGE NAVIGATION: %8.3f; %s"
+            var format_string_arguments := [ \
+                    global.elapsed_play_time_sec, \
+                    current_edge.to_string_with_newlines(1), \
+                ]
+            print(format_string_template % format_string_arguments)
+            
+            current_edge_playback = instructions_action_source.start_instructions( \
+                    current_edge.instructions, global.elapsed_play_time_sec)
 
 func _update_edge_navigation_state() -> void:
     var is_grabbed_surface_expected: bool = \

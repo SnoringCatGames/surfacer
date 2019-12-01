@@ -17,6 +17,7 @@ var movement_params: MovementParams
 var movement_types: Array
 # Array<Surface>
 var possible_surfaces: Array
+var actions_from_previous_frame := PlayerActionState.new()
 var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var graph: PlatformGraph
@@ -125,7 +126,7 @@ func _init_human_controller_action_source() -> void:
     action_sources.push_back(InputActionSource.new(self))
 
 func _init_navigator() -> void:
-    navigator = Navigator.new(self, graph)
+    navigator = Navigator.new(self, graph, global)
     action_sources.push_back(navigator.instructions_action_source)
 
 func _physics_process(delta: float) -> void:
@@ -136,20 +137,20 @@ func _physics_process(delta: float) -> void:
     
     # Uncomment to help with debugging.
     if surface_state.just_touched_a_surface:
-        print("HIT     surface:%8.3f:%29sP:%29sV" % [ \
+        print("HIT     surface:%8.3f;%29sP;%29sV" % [ \
                 global.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
             ])
     if surface_state.just_left_air:
-        print("GRABBED surface:%8.3f:%29sP:%29sV: %s" % [ \
+        print("GRABBED surface:%8.3f;%29sP;%29sV; %s" % [ \
                 global.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
                 surface_state.grabbed_surface.to_string(), \
             ])
     elif surface_state.just_entered_air:
-        print("LEFT    surface:%8.3f:%29sP:%29sV: %s" % [ \
+        print("LEFT    surface:%8.3f;%29sP;%29sV; %s" % [ \
                 global.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
@@ -158,6 +159,7 @@ func _physics_process(delta: float) -> void:
     
     if navigator:
         navigator.update()
+    
     actions.delta = delta
 
     # Flip the horizontal direction of the animation according to which way the player is facing.
@@ -183,8 +185,16 @@ func _physics_process(delta: float) -> void:
     level.descendant_physics_process_completed(self)
 
 func _update_actions(delta: float) -> void:
+    # Record actions for the previous frame.
+    actions_from_previous_frame.copy(actions)
+    
+    # Clear actions for the current frame.
+    actions.clear()
+    
+    # Update actions for the current frame.
     for action_source in action_sources:
-        action_source.update(actions, global.elapsed_play_time_sec, delta)
+        action_source.update( \
+                actions, actions_from_previous_frame, global.elapsed_play_time_sec, delta)
     
     actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
 

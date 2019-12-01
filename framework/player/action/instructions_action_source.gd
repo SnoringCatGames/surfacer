@@ -6,34 +6,34 @@ const InstructionsPlayback := preload("res://framework/player/action/instruction
 # Array<InstructionsPlayback>
 var _all_playback := []
 
-func _init(player).(player) -> void:
+func _init(player).("CP", player) -> void:
     pass
 
 # Calculates actions for the current frame.
-func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
+func update(actions: PlayerActionState, previous_actions: PlayerActionState, time_sec: float, \
+        delta: float) -> void:
     var is_pressed: bool
     var non_pressed_keys := []
     
     for playback in _all_playback:
+        # Handle any new key presses up till the current time.
+        var new_instructions: Array = playback.update(time_sec)
+        # FIXME: ------------- REMOVE?
+#        for instruction in new_instructions:
+#            update_for_key_press(actions, instruction.input_key, instruction.is_pressed, time_sec)
+        
         non_pressed_keys.clear()
         
         # Handle all previously started keys that are still pressed.
         for input_key in playback.active_key_presses:
             is_pressed = playback.active_key_presses[input_key]
-            update_for_key_press(actions, input_key, is_pressed, time_sec)
+            update_for_key_press(actions, previous_actions, input_key, is_pressed, time_sec)
             if !is_pressed:
                 non_pressed_keys.push_back(input_key)
         
         # Remove from the active set all keys that are no longer pressed.
         for input_key in non_pressed_keys:
             playback.active_key_presses.erase(input_key)
-        
-        # Handle any new key presses.
-        while !playback.is_finished and playback.end_time_for_current_instruction <= time_sec:
-            if !playback.is_on_last_instruction:
-                update_for_key_press(actions, playback.next_instruction.input_key, \
-                        playback.next_instruction.is_pressed, time_sec)
-            playback.increment()
     
     # Handle instructions that finish.
     var i := 0
@@ -43,8 +43,10 @@ func update(actions: PlayerActionState, time_sec: float, delta: float) -> void:
             i -= 1
         i += 1
 
-func start_instructions(instructions: MovementInstructions) -> InstructionsPlayback:
+func start_instructions(instructions: MovementInstructions, \
+        time_sec: float) -> InstructionsPlayback:
     var playback := InstructionsPlayback.new(instructions)
+    playback.start(time_sec)
     _all_playback.push_back(playback)
     return playback
 
