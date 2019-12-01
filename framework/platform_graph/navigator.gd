@@ -28,7 +28,7 @@ func _init(player, graph: PlatformGraph, global) -> void:
     self.global = global
     self.surface_state = player.surface_state
     self.surface_parser = graph.surface_parser
-    self.instructions_action_source = InstructionsActionSource.new(player)
+    self.instructions_action_source = InstructionsActionSource.new(player, true)
 
 # Starts a new navigation to the given destination.
 func navigate_to_nearest_surface(target: Vector2) -> bool:

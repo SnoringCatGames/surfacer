@@ -3,10 +3,12 @@ class_name PlayerActionSource
 
 var source_type_prefix: String
 var player # TODO: Add type back in
+var is_additive: bool
 
-func _init(source_type_prefix: String, player) -> void:
+func _init(source_type_prefix: String, player, is_additive: bool) -> void:
     self.source_type_prefix = source_type_prefix
     self.player = player
+    self.is_additive = is_additive
 
 # Calculates actions for the current frame.
 func update(actions: PlayerActionState, previous_actions: PlayerActionState, time_sec: float, \
@@ -15,59 +17,67 @@ func update(actions: PlayerActionState, previous_actions: PlayerActionState, tim
 
 func update_for_key_press(actions: PlayerActionState, previous_actions: PlayerActionState, \
         input_key: String, is_pressed: bool, time_sec: float) -> void:
-    var was_pressed: bool
+    var was_pressed_in_previous_frame: bool
+    var was_already_pressed_in_current_frame: bool
+    var is_pressed_in_current_frame: bool
     var just_pressed: bool
     var just_released: bool
-    var print_label: String
     
     match input_key:
         "jump":
-            was_pressed = previous_actions.pressed_jump
-            just_pressed = !was_pressed and is_pressed
-            just_released = was_pressed and !is_pressed
-            actions.pressed_jump = is_pressed
+            was_pressed_in_previous_frame = previous_actions.pressed_jump
+            was_already_pressed_in_current_frame = actions.pressed_jump
+            is_pressed_in_current_frame = is_pressed or \
+                    (is_additive and was_already_pressed_in_current_frame)
+            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
+            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            
+            actions.pressed_jump = is_pressed_in_current_frame
             actions.just_pressed_jump = just_pressed
             actions.just_released_jump = just_released
-            print_label = "jump"
         "move_up":
-            was_pressed = previous_actions.pressed_up
-            just_pressed = !was_pressed and is_pressed
-            just_released = was_pressed and !is_pressed
-            actions.pressed_up = is_pressed
+            was_pressed_in_previous_frame = previous_actions.pressed_up
+            was_already_pressed_in_current_frame = actions.pressed_up
+            is_pressed_in_current_frame = is_pressed or \
+                    (is_additive and was_already_pressed_in_current_frame)
+            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
+            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            
+            actions.pressed_up = is_pressed_in_current_frame
             actions.just_pressed_up = just_pressed
             actions.just_released_up = just_released
-            print_label = "up"
         "move_down":
-            was_pressed = previous_actions.pressed_down
-            just_pressed = !was_pressed and is_pressed
-            just_released = was_pressed and !is_pressed
-            actions.pressed_down = is_pressed
+            was_pressed_in_previous_frame = previous_actions.pressed_down
+            was_already_pressed_in_current_frame = actions.pressed_down
+            is_pressed_in_current_frame = is_pressed or \
+                    (is_additive and was_already_pressed_in_current_frame)
+            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
+            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            
+            actions.pressed_down = is_pressed_in_current_frame
             actions.just_pressed_down = just_pressed
             actions.just_released_down = just_released
-            print_label = "down"
         "move_left":
-            was_pressed = previous_actions.pressed_left
-            just_pressed = !was_pressed and is_pressed
-            just_released = was_pressed and !is_pressed
-            actions.pressed_left = is_pressed
+            was_pressed_in_previous_frame = previous_actions.pressed_left
+            was_already_pressed_in_current_frame = actions.pressed_left
+            is_pressed_in_current_frame = is_pressed or \
+                    (is_additive and was_already_pressed_in_current_frame)
+            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
+            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            
+            actions.pressed_left = is_pressed_in_current_frame
             actions.just_pressed_left = just_pressed
             actions.just_released_left = just_released
-            print_label = "left"
         "move_right":
-            was_pressed = previous_actions.pressed_right
-            just_pressed = !was_pressed and is_pressed
-            just_released = was_pressed and !is_pressed
-            actions.pressed_right = is_pressed
+            was_pressed_in_previous_frame = previous_actions.pressed_right
+            was_already_pressed_in_current_frame = actions.pressed_right
+            is_pressed_in_current_frame = is_pressed or \
+                    (is_additive and was_already_pressed_in_current_frame)
+            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
+            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            
+            actions.pressed_right = is_pressed_in_current_frame
             actions.just_pressed_right = just_pressed
             actions.just_released_right = just_released
-            print_label = "right"
         _:
             Utils.error("Invalid input_key: %s" % input_key)
-    
-    # Uncomment to help with debugging.
-    if just_pressed:
-        print("%s START:%6s;%8.3f;%29sP;%29sV" % [source_type_prefix, print_label, time_sec, \
-                player.surface_state.center_position, player.velocity])
-    if just_released:
-        print("%s STOP: %6s;%8.3f;%29sP;%29sV" % [source_type_prefix, print_label, time_sec, \
-                player.surface_state.center_position, player.velocity])

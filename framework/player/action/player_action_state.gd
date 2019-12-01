@@ -74,3 +74,27 @@ func copy(other: PlayerActionState) -> void:
     self.just_released_right = other.just_released_right
     
     self.start_dash = other.start_dash
+
+func log_new_presses_and_releases(player, time_sec: float) -> void:
+    _log_new_press_or_release(player.player_name, "jump", just_pressed_jump, just_released_jump, \
+            time_sec, player.surface_state.center_position, player.velocity)
+    _log_new_press_or_release(player.player_name, "up", just_pressed_up, just_released_up, \
+            time_sec, player.surface_state.center_position, player.velocity)
+    _log_new_press_or_release(player.player_name, "down", just_pressed_down, just_released_down, \
+            time_sec, player.surface_state.center_position, player.velocity)
+    _log_new_press_or_release(player.player_name, "left", just_pressed_left, just_released_left, \
+            time_sec, player.surface_state.center_position, player.velocity)
+    _log_new_press_or_release(player.player_name, "right", just_pressed_right, \
+            just_released_right, time_sec, player.surface_state.center_position, player.velocity)
+    _log_new_press_or_release(player.player_name, "dash", start_dash, false, time_sec, \
+            player.surface_state.center_position, player.velocity)
+
+func _log_new_press_or_release(player_name: String, action_name: String, just_pressed: bool, \
+        just_released: bool, time_sec: float, player_position: Vector2, \
+        player_velocity: Vector2) -> void:
+    if just_pressed:
+        print("START:%8s;%6s;%8.3f;%29sP;%29sV" % [player_name, action_name, time_sec, \
+                player_position, player_velocity])
+    if just_released:
+        print("STOP: %8s;%6s;%8.3f;%29sP;%29sV" % [player_name, action_name, time_sec, \
+                player_position, player_velocity])

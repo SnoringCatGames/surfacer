@@ -6,7 +6,7 @@ const InstructionsPlayback := preload("res://framework/player/action/instruction
 # Array<InstructionsPlayback>
 var _all_playback := []
 
-func _init(player).("CP", player) -> void:
+func _init(player, is_additive: bool).("CP", player, is_additive) -> void:
     pass
 
 # Calculates actions for the current frame.

@@ -160,11 +160,6 @@ _global_script_classes=[ {
 "path": "res://framework/movement/horizontal_movement_utils.gd"
 }, {
 "base": "PlayerActionSource",
-"class": "InputActionSource",
-"language": "GDScript",
-"path": "res://framework/player/action/input_action_source.gd"
-}, {
-"base": "PlayerActionSource",
 "class": "InstructionsActionSource",
 "language": "GDScript",
 "path": "res://framework/player/action/instructions_action_source.gd"
@@ -484,6 +479,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/tile_annotator.gd"
 }, {
+"base": "PlayerActionSource",
+"class": "UserActionSource",
+"language": "GDScript",
+"path": "res://framework/player/action/user_action_source.gd"
+}, {
 "base": "Node",
 "class": "Utils",
 "language": "GDScript",
@@ -555,7 +555,6 @@ _global_script_class_icons={
 "Global": "",
 "GridIndicesAnnotator": "",
 "HorizontalMovementUtils": "",
-"InputActionSource": "",
 "InstructionsActionSource": "",
 "InstructionsPlayback": "",
 "InterSurfaceEdge": "",
@@ -620,6 +619,7 @@ _global_script_class_icons={
 "TestPlayer": "",
 "TestPlayerParams": "",
 "TileAnnotator": "",
+"UserActionSource": "",
 "Utils": "",
 "VerticalMovementUtils": "",
 "WallClimbAction": "",

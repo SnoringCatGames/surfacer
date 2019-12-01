@@ -2,7 +2,7 @@ extends KinematicBody2D
 class_name Player
 
 const Navigator := preload("res://framework/platform_graph/navigator.gd")
-const InputActionSource := preload("res://framework/player/action/input_action_source.gd")
+const UserActionSource := preload("res://framework/player/action/user_action_source.gd")
 const InstructionsActionSource := preload("res://framework/player/action/instructions_action_source.gd")
 const PlayerActionState := preload("res://framework/player/action/player_action_state.gd")
 const PlayerSurfaceState := preload("res://framework/player/player_surface_state.gd")
@@ -101,14 +101,14 @@ func _ready() -> void:
     animator.face_right()
 
 func init_human_player_state() -> void:
-    # Only a single, human-controlled player should have a camera.
+    # Only a single, user-controlled player should have a camera.
     _set_camera()
-    _init_human_controller_action_source()
+    _init_user_controller_action_source()
 
 func init_computer_player_state() -> void:
-    # FIXME: E: Remove after debugging CP movement.
-#    _init_human_controller_action_source() # FIXME: ----------
     _init_navigator()
+    # FIXME: E: Remove after debugging CP movement.
+    _init_user_controller_action_source()
     # FIXME: E: Remove after debugging CP movement.
     _set_camera()
 
@@ -125,8 +125,8 @@ func _set_camera() -> void:
     # Register the current camera, so it's globally accessible.
     global.current_camera = camera
 
-func _init_human_controller_action_source() -> void:
-    action_sources.push_back(InputActionSource.new(self))
+func _init_user_controller_action_source() -> void:
+    action_sources.push_back(UserActionSource.new(self, true))
 
 func _init_navigator() -> void:
     navigator = Navigator.new(self, graph, global)
@@ -200,6 +200,8 @@ func _update_actions(delta: float) -> void:
                 actions, actions_from_previous_frame, global.elapsed_play_time_sec, delta)
     
     actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
+    
+    actions.log_new_presses_and_releases(self, global.elapsed_play_time_sec)
 
 # Updates physics and player states in response to the current actions.
 func _process_actions() -> void:
