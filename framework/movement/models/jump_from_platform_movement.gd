@@ -216,6 +216,11 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #     jumping, so that the player can't move around the edge before hitting the ceiling.
 #   - Regardless, we need to update surface-closest-point-jump-off calculations to include an
 #     offset for player half-width-height + margin.
+# - Cancel/interrupt navigator when the user presses a movement button.
+# - Refactor intra-surface edges to determine the movement direction later, after landing on the
+#   surface, since we can land on the wrong side of the target and need to move in the reverse
+#   direction from what would have been originally calculated.
+# 
 # - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
 # - Fix instructions/navigator to ensure that the sideways input is not released until after
 #   hitting, and _grabbing_, the wall (when jumping to a wall).
@@ -239,7 +244,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #       - Probably can just calculate the offset from the player to the collision, and use that to
 #         manually assign an offset to the camera.
 #       - Would also need to animate this translation.
-#   - 
 # 
 # - Add better annotation selection.
 #   - Add shorcuts for toggling debugging annotations
@@ -272,10 +276,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - 
 # 
 # - Fix any remaining Navigator movement issues.
-#   - Cancel/interrupt navigator when the user presses a movement button.
-#   - Refactor intra-surface edges to determine the movement direction later, after landing on the
-#     surface, since we can land on the wrong side of the target and need to move in the reverse
-#     direction from what would have been originally calculated.
 # - Fix performance.
 # - Fix collision-detection errors from logs.
 # 
@@ -295,8 +295,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - Use this error state to abort collision/step/edge calculations (rather than the current
 #     approach of returning null, which is the same as with not detecting any collisions at all).
 # 
-# 
-# 
 # - Update edge-calculations to support variable velocity_start_x values.
 #   - Allow for up-front edge calculation to use any desired velocity_start_x between
 #     -max_horizontal_speed_default and max_horizontal_speed_default.
@@ -305,6 +303,8 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - We could probably actually do an even better job by limiting the range for velocity_start_x
 #     for floor-surface-end-jump-off-points to be between either -max_horizontal_speed_default and
 #     0 or 0 and max_horizontal_speed_default.
+# 
+# - Update README.
 # 
 # 
 # 

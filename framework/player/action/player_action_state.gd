@@ -93,8 +93,8 @@ func _log_new_press_or_release(player_name: String, action_name: String, just_pr
         just_released: bool, time_sec: float, player_position: Vector2, \
         player_velocity: Vector2) -> void:
     if just_pressed:
-        print("START:%8s;%6s;%8.3f;%29sP;%29sV" % [player_name, action_name, time_sec, \
+        print("START %5s:%8s;%8.3f;%29sP;%29sV" % [action_name, player_name, time_sec, \
                 player_position, player_velocity])
     if just_released:
-        print("STOP: %8s;%6s;%8.3f;%29sP;%29sV" % [player_name, action_name, time_sec, \
+        print("STOP  %5s:%8s;%8.3f;%29sP;%29sV" % [action_name, player_name, time_sec, \
                 player_position, player_velocity])
