@@ -208,18 +208,44 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-# - Implement movement through graph.
-#   - Fix Navigator movement.
-#   - Turn back on player-controlled ActionSource.
-#   - Fix ActionSource system so that player control and navigator work better together.
+# - Handle horizontal velocity at start of jump:
+#   - Update navigator to kill horizontal velocity at start of jump (or at start of any edge?).
+#   - Add TODO and FIXME (in different places) to later somehow update edges to support variable
+#     velocity_start_x values.
+#     - Multiple possible approaches:
+#       - Dynamically calculate a more up-to-date edge trajectory based on the desired
+#         velocity_start_x for the current path.
+#       >>- Allow for up-front edge calculation to use any desired velocity_start_x between
+#           -max_horizontal_speed_default and max_horizontal_speed_default.
+#         - This is probably a decent approximation, since we can usually assume that the ramp-up
+#           distance to get from 0 to max-x-speed on the floor is small enough that we can ignore
+#           it.
+#         - We could probably actually do an even better job by limiting the range for
+#           velocity_start_x for floor-surface-end-jump-off-points to be between either
+#           -max_horizontal_speed_default and 0 or 0 and max_horizontal_speed_default.
+# 
+# - Fix dash.
+# 
+# - Fix Navigator movement.
+# 
+# - Turn back on player-controlled ActionSource.
+# - Fix ActionSource system so that player control and navigator work better together.
+# 
+# - Fix surface-closest-point-jump-off calculations (on long_rise level, we should be able to
+#   jump from long lower platform to other platform).
+# - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
+# - Add support for specifying required end x-velocity (and y direction).
+#   - Use this for edges that end on walls.
 # 
 # - Add better annotation selection.
 #   - Add shorcuts for toggling debugging annotations
 #     - Add support for triggering the calc-step annotations based on a shortcut.
 #       - i
 #       - also, require clicking on the start and end positions in order to select which edge to debug
-#         - Use this _in addition to_ the current top-level configuration for specifying which edge to calculate?
-#       - also, then only actually calculate the edge debug state when using this click-to-specificy debug mode
+#         - Use this _in addition to_ the current top-level configuration for specifying which edge
+#           to calculate?
+#       - also, then only actually calculate the edge debug state when using this
+#         click-to-specificy debug mode
 #     - also, add other shortcuts for toggling other annotations:
 #       - whether all surfaces are highlighted
 #       - whether the player's position+collision boundary are rendered
@@ -237,10 +263,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - All edges
 #   - 
 # 
-# - Add support for specifying required end x-velocity (and y direction).
-# 
-# - Fix jump-quit-early-when-hitting-ceiling.
-# - Fix dash.
 # - Fix performance.
 # - Fix collision-detection errors from logs.
 # 

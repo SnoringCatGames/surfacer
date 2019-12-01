@@ -98,7 +98,7 @@ func _ready() -> void:
     animator.face_right()
 
 func init_human_player_state() -> void:
-    # Only a single, human-controller player should have a camera.
+    # Only a single, human-controlled player should have a camera.
     _set_camera()
     _init_human_controller_action_source()
 

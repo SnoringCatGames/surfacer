@@ -21,6 +21,6 @@ func process(player: Player) -> bool:
     # Hit ceiling.
     if player.surface_state.is_touching_ceiling:
         player.is_ascending_from_jump = false
-        player.velocity.y = -player.movement_params.min_speed_to_maintain_vertical_collision
+        player.velocity.y = player.movement_params.min_speed_to_maintain_vertical_collision
     
     return true
