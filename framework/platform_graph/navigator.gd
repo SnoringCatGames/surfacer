@@ -17,6 +17,9 @@ var current_edge_playback: InstructionsPlayback
 
 var is_expecting_to_enter_air := false
 var just_interrupted_navigation := false
+var just_collided_unexpectedly := false
+var just_entered_air_unexpectedly := false
+var just_interrupted_by_user_action := false
 var just_reached_end_of_edge := false
 var just_reached_intra_surface_destination := false
 var just_landed_on_expected_surface := false
@@ -97,6 +100,9 @@ func reset() -> void:
     instructions_action_source.cancel_all_playback()
     is_expecting_to_enter_air = false
     just_interrupted_navigation = false
+    just_collided_unexpectedly = false
+    just_entered_air_unexpectedly = false
+    just_interrupted_by_user_action = false
     just_reached_end_of_edge = false
     just_reached_intra_surface_destination = false
     just_landed_on_expected_surface = false
@@ -127,7 +133,16 @@ func update() -> void:
         player.velocity.x = 0.0
     
     if just_interrupted_navigation:
-        print("Edge movement interrupted:%8.3f" % global.elapsed_play_time_sec)
+        var interruption_type_label: String
+        if just_collided_unexpectedly:
+            interruption_type_label = "just_collided_unexpectedly"
+        elif just_entered_air_unexpectedly:
+            interruption_type_label = "just_entered_air_unexpectedly"
+        else: # just_interrupted_by_user_action
+            interruption_type_label = "just_interrupted_by_user_action"
+        
+        print("Edge movement interrupted:%8.3f; %s" % \
+                [global.elapsed_play_time_sec, interruption_type_label])
         # FIXME: Add back in at some point...
 #        navigate_to_nearest_surface(current_path.destination)
         reset()
@@ -178,13 +193,15 @@ func _update_edge_navigation_state() -> void:
     var is_moving_along_intra_surface_edge := \
             surface_state.is_grabbing_a_surface and is_grabbed_surface_expected
     # FIXME: E: Add support for walking into a wall and climbing up it.
-    var just_collided_unexpectedly: bool = surface_state.just_left_air and \
+    just_collided_unexpectedly = surface_state.just_left_air and \
             !is_grabbed_surface_expected and player.surface_state.collision_count > 0
-    var just_entered_air_unexpectedly := \
+    just_entered_air_unexpectedly = \
             surface_state.just_entered_air and !is_expecting_to_enter_air
     just_landed_on_expected_surface = surface_state.just_left_air and \
             surface_state.grabbed_surface == current_edge.end.surface
-    just_interrupted_navigation = just_collided_unexpectedly or just_entered_air_unexpectedly
+    just_interrupted_by_user_action = UserActionSource.get_is_some_user_action_pressed()
+    just_interrupted_navigation = just_collided_unexpectedly or just_entered_air_unexpectedly or \
+            just_interrupted_by_user_action
     
     if surface_state.just_entered_air:
         is_expecting_to_enter_air = false

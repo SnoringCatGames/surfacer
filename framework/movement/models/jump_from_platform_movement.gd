@@ -210,7 +210,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Cancel/interrupt navigator when the user presses a movement button.
 # - Refactor intra-surface edges to determine the movement direction later, after landing on the
 #   surface, since we can land on the wrong side of the target and need to move in the reverse
 #   direction from what would have been originally calculated.
