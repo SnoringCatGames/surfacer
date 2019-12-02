@@ -210,12 +210,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix surface-closest-point-jump-off calculations (on long_rise level, we should be able to
-#   jump from long lower platform to other platform).
-#   - It might be that this is just broken due to the player being slightly under the platform when
-#     jumping, so that the player can't move around the edge before hitting the ceiling.
-#   - Regardless, we need to update surface-closest-point-jump-off calculations to include an
-#     offset for player half-width-height + margin.
 # - Cancel/interrupt navigator when the user presses a movement button.
 # - Refactor intra-surface edges to determine the movement direction later, after landing on the
 #   surface, since we can land on the wrong side of the target and need to move in the reverse
@@ -266,18 +260,20 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #       - set up a nice API for creating these, setting values, listening for value changes, and
 #         defining keyboard shortcuts.
 # 
-# - Put together some illustrative screenshots with special one-off annotations to explain the
-#   graph parsing steps.
-#   - A couple surfaces
-#   - Show different tiles, to illustrate how surfaces get merged.
-#   - All surfaces (different colors)
-#   - A couple edges
-#   - All edges
-#   - 
-# 
+# - Finish remaining surface-closest-point-jump-off calculation cases.
+#   - Also, maybe still not quite far enough with the offset?
 # - Fix any remaining Navigator movement issues.
 # - Fix performance.
 # - Fix collision-detection errors from logs.
+# 
+# - Update navigation to do some additional on-the-fly edge calculations.
+#   - Only limit this to a few additional potential edges along the path.
+#   - The idea is that the edges tend to produce very unnatural composite trajectories (similary to
+#     using perpendicular Manhatten distance routes instead of more diagonal routes).
+#   - Basically, try jumping from earlier on any given surface.
+#     - It may be hard to know exactly where along a surface to try jumping from though...
+#     - Should probably just use some simple heuristic and just give up when they fail with
+#       false-positive rates.
 # 
 # - Add some extra improvements to check_frame_for_collision:
 #   - [maybe?] Rather than just using closest_intersection_point, sort all intersection_points, and
@@ -303,6 +299,15 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - We could probably actually do an even better job by limiting the range for velocity_start_x
 #     for floor-surface-end-jump-off-points to be between either -max_horizontal_speed_default and
 #     0 or 0 and max_horizontal_speed_default.
+# 
+# - Put together some illustrative screenshots with special one-off annotations to explain the
+#   graph parsing steps.
+#   - A couple surfaces
+#   - Show different tiles, to illustrate how surfaces get merged.
+#   - All surfaces (different colors)
+#   - A couple edges
+#   - All edges
+#   - 
 # 
 # - Update README.
 # 
@@ -353,9 +358,9 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
         # - This is still cheaper than considering all 9 jump/land pair instructions, right?
         
         jump_positions = MovementUtils.get_all_jump_positions_from_surface( \
-                params, a, b.vertices, b.bounding_box)
+                params, a, b.vertices, b.bounding_box, b.side)
         land_positions = MovementUtils.get_all_jump_positions_from_surface( \
-                params, b, a.vertices, a.bounding_box)
+                params, b, a.vertices, a.bounding_box, a.side)
         
         for jump_position in jump_positions:
             for land_position in land_positions:
@@ -368,12 +373,10 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                     
                     if a.side != debug_origin.surface_side or \
                             b.side != debug_destination.surface_side or \
-                            a.vertices[0] != debug_origin.surface_start_vertex or \
-                            a.vertices[a.vertices.size() - 1] != \
-                                    debug_origin.surface_end_vertex or \
-                            b.vertices[0] != debug_destination.surface_start_vertex or \
-                            b.vertices[b.vertices.size() - 1] != \
-                                    debug_destination.surface_end_vertex:
+                            a.first_point != debug_origin.surface_start_vertex or \
+                            a.last_point != debug_origin.surface_end_vertex or \
+                            b.first_point != debug_destination.surface_start_vertex or \
+                            b.last_point != debug_destination.surface_end_vertex:
                         # Ignore anything except the origin and destination surface that we're
                         # debugging.
                         continue

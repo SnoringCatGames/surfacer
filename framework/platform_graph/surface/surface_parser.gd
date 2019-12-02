@@ -584,12 +584,12 @@ static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls
     
     for floor_surface in floors:
         # Check the left edge of the floor.
-        surface1_end = floor_surface.vertices[0]
+        surface1_end = floor_surface.first_point
         
         # Check for a convex neighbor.
         for right_wall in right_walls:
             # Check the top edge of the right wall.
-            surface2_end = right_wall.vertices[right_wall.vertices.size() - 1]
+            surface2_end = right_wall.last_point
             
             diff_x = surface1_end.x - surface2_end.x
             diff_y = surface1_end.y - surface2_end.y
@@ -604,12 +604,12 @@ static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls
                 break
         
         # Check the right edge of the floor.
-        surface1_end = floor_surface.vertices[floor_surface.vertices.size() - 1]
+        surface1_end = floor_surface.last_point
         
         # Check for a convex neighbor.
         for left_wall in left_walls:
             # Check the top edge of the left wall.
-            surface2_end = left_wall.vertices[0]
+            surface2_end = left_wall.first_point
             
             diff_x = surface1_end.x - surface2_end.x
             diff_y = surface1_end.y - surface2_end.y
@@ -625,12 +625,12 @@ static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls
     
     for ceiling in ceilings:
         # Check the right edge of the ceiling.
-        surface1_end = ceiling.vertices[0]
+        surface1_end = ceiling.first_point
         
         # Check for a convex neighbor.
         for left_wall in left_walls:
             # Check the bottom edge of the left wall.
-            surface2_end = left_wall.vertices[left_wall.vertices.size() - 1]
+            surface2_end = left_wall.last_point
             
             diff_x = surface1_end.x - surface2_end.x
             diff_y = surface1_end.y - surface2_end.y
@@ -645,12 +645,12 @@ static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls
                 break
         
         # Check the left edge of the ceiling.
-        surface1_end = ceiling.vertices[ceiling.vertices.size() - 1]
+        surface1_end = ceiling.last_point
         
         # Check for a convex neighbor.
         for right_wall in right_walls:
             # Check the bottom edge of the right wall.
-            surface2_end = right_wall.vertices[0]
+            surface2_end = right_wall.first_point
             
             diff_x = surface1_end.x - surface2_end.x
             diff_y = surface1_end.y - surface2_end.y

@@ -159,21 +159,21 @@ static func get_intersection_of_segment_and_polyline(segment_a: Vector2, segment
 # intersect with the surface.
 static func project_point_onto_surface(point: Vector2, surface: Surface) -> Vector2:
     # Check whether the point lies outside the surface boundaries.
-    var start_vertex = surface.vertices[0]
-    var end_vertex = surface.vertices[surface.vertices.size() - 1]
+    var start_vertex = surface.first_point
+    var end_vertex = surface.last_point
     if surface.side == SurfaceSide.FLOOR and point.x <= start_vertex.x:
         return start_vertex
     elif surface.side == SurfaceSide.FLOOR and point.x >= end_vertex.x:
         return end_vertex
-    if surface.side == SurfaceSide.CEILING and point.x >= start_vertex.x:
+    elif surface.side == SurfaceSide.CEILING and point.x >= start_vertex.x:
         return start_vertex
     elif surface.side == SurfaceSide.CEILING and point.x <= end_vertex.x:
         return end_vertex
-    if surface.side == SurfaceSide.LEFT_WALL and point.y <= start_vertex.y:
+    elif surface.side == SurfaceSide.LEFT_WALL and point.y <= start_vertex.y:
         return start_vertex
     elif surface.side == SurfaceSide.LEFT_WALL and point.y >= end_vertex.y:
         return end_vertex
-    if surface.side == SurfaceSide.RIGHT_WALL and point.y >= start_vertex.y:
+    elif surface.side == SurfaceSide.RIGHT_WALL and point.y >= start_vertex.y:
         return start_vertex
     elif surface.side == SurfaceSide.RIGHT_WALL and point.y <= end_vertex.y:
         return end_vertex

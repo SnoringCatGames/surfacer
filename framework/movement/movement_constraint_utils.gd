@@ -58,40 +58,40 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
             should_stay_on_min_side_a = true
             should_stay_on_min_side_b = false
             # Left end (counter-clockwise end).
-            position_a = colliding_surface.vertices[0] + \
+            position_a = colliding_surface.first_point + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
             # Right end (clockwise end).
-            position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+            position_b = colliding_surface.last_point + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
         SurfaceSide.CEILING:
             passing_vertically = true
             should_stay_on_min_side_a = false
             should_stay_on_min_side_b = true
             # Right end (counter-clockwise end).
-            position_a = colliding_surface.vertices[0] + \
+            position_a = colliding_surface.first_point + \
                     Vector2(constraint_offset.x, constraint_offset.y)
             # Left end (clockwise end).
-            position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+            position_b = colliding_surface.last_point + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
         SurfaceSide.LEFT_WALL:
             passing_vertically = false
             should_stay_on_min_side_a = true
             should_stay_on_min_side_b = false
             # Top end (counter-clockwise end).
-            position_a = colliding_surface.vertices[0] + \
+            position_a = colliding_surface.first_point + \
                     Vector2(constraint_offset.x, -constraint_offset.y)
             # Bottom end (clockwise end).
-            position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+            position_b = colliding_surface.last_point + \
                     Vector2(constraint_offset.x, constraint_offset.y)
         SurfaceSide.RIGHT_WALL:
             passing_vertically = false
             should_stay_on_min_side_a = false
             should_stay_on_min_side_b = true
             # Bottom end (counter-clockwise end).
-            position_a = colliding_surface.vertices[0] + \
+            position_a = colliding_surface.first_point + \
                     Vector2(-constraint_offset.x, constraint_offset.y)
             # Top end (clockwise end).
-            position_b = colliding_surface.vertices[colliding_surface.vertices.size() - 1] + \
+            position_b = colliding_surface.last_point + \
                     Vector2(-constraint_offset.x, -constraint_offset.y)
     
     var should_skip_a := false
@@ -1422,13 +1422,12 @@ static func _calculate_replacement_for_fake_constraint(fake_constraint: Movement
             if fake_constraint.should_stay_on_min_side:
                 # Replacing top-left corner with bottom-left corner.
                 neighbor_surface = fake_constraint.surface.convex_counter_clockwise_neighbor
-                replacement_position = neighbor_surface.vertices[0] + \
+                replacement_position = neighbor_surface.first_point + \
                         Vector2(-constraint_offset.x, constraint_offset.y)
             else:
                 # Replacing top-right corner with bottom-right corner.
                 neighbor_surface = fake_constraint.surface.convex_clockwise_neighbor
-                replacement_position = \
-                        neighbor_surface.vertices[neighbor_surface.vertices.size() - 1] + \
+                replacement_position = neighbor_surface.last_point + \
                         Vector2(constraint_offset.x, constraint_offset.y)
         
         SurfaceSide.CEILING:
@@ -1437,13 +1436,12 @@ static func _calculate_replacement_for_fake_constraint(fake_constraint: Movement
             if fake_constraint.should_stay_on_min_side:
                 # Replacing bottom-left corner with top-left corner.
                 neighbor_surface = fake_constraint.surface.convex_clockwise_neighbor
-                replacement_position = \
-                        neighbor_surface.vertices[neighbor_surface.vertices.size() - 1] + \
+                replacement_position = neighbor_surface.last_point + \
                         Vector2(-constraint_offset.x, -constraint_offset.y)
             else:
                 # Replacing bottom-right corner with top-right corner.
                 neighbor_surface = fake_constraint.surface.convex_counter_clockwise_neighbor
-                replacement_position = neighbor_surface.vertices[0] + \
+                replacement_position = neighbor_surface.first_point + \
                         Vector2(constraint_offset.x, -constraint_offset.y)
         _:
             Utils.error()

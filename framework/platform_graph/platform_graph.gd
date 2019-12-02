@@ -320,7 +320,8 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
     # Find the first possible edge to a landing surface.
     for surface in possible_landing_surfaces:
         possible_end_positions = MovementUtils.get_all_jump_positions_from_surface( \
-                movement_params, destination.surface, origin_vertices, origin_bounding_box)
+                movement_params, destination.surface, origin_vertices, origin_bounding_box, \
+                SurfaceSide.CEILING)
         
         for position_end in possible_end_positions:
             terminals = MovementConstraintUtils.create_terminal_constraints(null, origin, \
@@ -376,10 +377,9 @@ func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Array:
     var result_set := {}
     
     # Get all surfaces that are within fall range from either end of the origin surface.
-    find_surfaces_in_fall_range(result_set, origin_surface.vertices[0], velocity_start)
-    var size := origin_surface.vertices.size()
-    if size > 1:
-        find_surfaces_in_fall_range(result_set, origin_surface.vertices[size - 1], velocity_start)
+    find_surfaces_in_fall_range(result_set, origin_surface.first_point, velocity_start)
+    if origin_surface.vertices.size() > 1:
+        find_surfaces_in_fall_range(result_set, origin_surface.last_point, velocity_start)
     
     _get_surfaces_in_jump_range(result_set, origin_surface, surfaces, \
             movement_params.max_horizontal_jump_distance, movement_params.max_upward_jump_distance)
@@ -503,8 +503,8 @@ static func _get_surfaces_intersecting_triangle(triangle_a: Vector2, triangle_b:
 static func _get_surfaces_intersecting_polygon( \
         result_set: Dictionary, polygon: Array, surfaces: Array) -> void:
     for surface in surfaces:
-        if Geometry.do_segment_and_polygon_intersect(surface.vertices[0], \
-                surface.vertices[surface.vertices.size() - 1], polygon):
+        if Geometry.do_segment_and_polygon_intersect( \
+                surface.first_point, surface.last_point, polygon):
             result_set[surface] = surface
 
 static func _compare_surfaces_by_max_y(a: Surface, b: Surface) -> bool:

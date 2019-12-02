@@ -22,3 +22,10 @@ static func to_string(side: int) -> String:
             return "RIGHT_WALL"
         _:
             return "???"
+
+static func get_normal(side: int) -> Vector2:
+    return \
+            Geometry.UP if side == FLOOR else (\
+            Geometry.DOWN if side == CEILING else (\
+            Geometry.RIGHT if side == LEFT_WALL else (\
+            Geometry.LEFT)))

@@ -18,12 +18,15 @@ var convex_clockwise_neighbor: Surface
 
 var convex_counter_clockwise_neighbor: Surface
 
+var first_point: Vector2 setget ,_get_first_point
+var last_point: Vector2 setget ,_get_last_point
+
 func _init(vertices: Array, side: int, tile_map_indices: Array) -> void:
     self.vertices = PoolVector2Array(vertices)
     self.side = side
     self.tile_map_indices = tile_map_indices
     bounding_box = Geometry.get_bounding_box_for_points(vertices)
-    normal = _calculate_normal(side)
+    normal = SurfaceSide.get_normal(side)
 
 func to_string() -> String:
     return "Surface{ %s, [ %s, %s ] }" % [ \
@@ -32,9 +35,8 @@ func to_string() -> String:
             vertices[vertices.size() - 1], \
         ]
 
-static func _calculate_normal(side: int) -> Vector2:
-    return \
-            Geometry.UP if side == SurfaceSide.FLOOR else (\
-            Geometry.DOWN if side == SurfaceSide.CEILING else (\
-            Geometry.RIGHT if side == SurfaceSide.LEFT_WALL else (\
-            Geometry.LEFT)))
+func _get_first_point() -> Vector2:
+    return vertices[0]
+
+func _get_last_point() -> Vector2:
+    return vertices[vertices.size() - 1]

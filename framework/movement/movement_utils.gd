@@ -179,42 +179,119 @@ static func calculate_min_time_to_reach_displacement(displacement: float, v_0: f
 # -   Points are only included if they are distinct.
 # -   Points are returned in sorted order: closest, near, far.
 static func get_all_jump_positions_from_surface(movement_params: MovementParams, \
-        surface: Surface, target_vertices: Array, target_bounding_box: Rect2) -> Array:
-    var start: Vector2 = surface.vertices[0]
-    var end: Vector2 = surface.vertices[surface.vertices.size() - 1]
+        source_surface: Surface, target_vertices: PoolVector2Array, target_bounding_box: Rect2, \
+        target_side: int) -> Array:
+    var source_first_point := source_surface.first_point
+    var source_last_point := source_surface.last_point
     
     # Use a bounding-box heuristic to determine which end of the surfaces are likely to be
     # nearer and farther.
     var near_end: Vector2
     var far_end: Vector2
-    if Geometry.distance_squared_from_point_to_rect(start, target_bounding_box) < \
-            Geometry.distance_squared_from_point_to_rect(end, target_bounding_box):
-        near_end = start
-        far_end = end
+    if Geometry.distance_squared_from_point_to_rect(source_first_point, target_bounding_box) < \
+            Geometry.distance_squared_from_point_to_rect(source_last_point, target_bounding_box):
+        near_end = source_first_point
+        far_end = source_last_point
     else:
-        near_end = end
-        far_end = start
+        near_end = source_last_point
+        far_end = source_first_point
     
     # Record the near-end point.
     var jump_position := create_position_from_target_point( \
-            near_end, surface, movement_params.collider_half_width_height)
+            near_end, source_surface, movement_params.collider_half_width_height)
     var possible_jump_positions = [jump_position]
     
     # Only consider the far-end point if it is distinct.
-    if surface.vertices.size() > 1:
+    if source_surface.vertices.size() > 1:
         jump_position = create_position_from_target_point( \
-                far_end, surface, movement_params.collider_half_width_height)
+                far_end, source_surface, movement_params.collider_half_width_height)
         possible_jump_positions.push_back(jump_position)
         
-        # FIXME: --------------- Offset closest_point by movement_params.collider_half_width_height + MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN
+        var source_surface_center := source_surface.bounding_box.position + \
+                (source_surface.bounding_box.end - source_surface.bounding_box.position)
+        var target_surface_center := target_bounding_box.position + \
+                (target_bounding_box.end - target_bounding_box.position)
+        var target_first_point := target_vertices[0]
+        var target_last_point := target_vertices[target_vertices.size() - 1]
         
-        # The actual closest point along the surface could be somewhere in the middle.
+        var horizontal_offset := movement_params.collider_half_width_height.x + \
+                MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN
+        
+        # Instead of choosing the exact closest point along the source surface to the target
+        # surface, we may want to  give the "closest" jump-off point an offset that should reduce
+        # overall movement.
+        # 
+        # As an example of when this offset is important, consider the case when we jump from floor
+        # surface A to floor surface B, which lies exactly above A. In this case, the jump movement
+        # must go around one edge of B or the other in order to land on the top-side of B. Ideally,
+        # the jump position from A would already be outside the edge of B, so that we don't need to
+        # first move horizontally outward and then back in. However, the exact "closest" point on A
+        # to B will not be outside the edge of B.
+        var closest_point_on_source: Vector2
+        if source_surface.side == SurfaceSide.FLOOR:
+            if source_surface_center.y < target_surface_center.y:
+                # Source surface is above target surface.
+                
+                # closest_point_on_source must be one of the ends of the source surface.
+                closest_point_on_source = source_last_point if \
+                        source_surface_center.x < target_surface_center.x else \
+                        source_first_point
+            else:
+                # Source surface is below target surface.
+                
+                if target_side == SurfaceSide.FLOOR:
+                    # Choose whichever target end point is closer to the source center, and
+                    # calculate a half-player-width offset from there.
+                    var should_try_to_move_around_left_side_of_target := \
+                            abs(target_first_point.x - source_surface_center.x) < \
+                            abs(target_last_point.x - source_surface_center.x)
+                    var closest_point_on_target: Vector2
+                    var goal_x_on_source: float
+                    if should_try_to_move_around_left_side_of_target:
+                        closest_point_on_target = target_first_point
+                        goal_x_on_source = closest_point_on_target.x - horizontal_offset
+                    else:
+                        closest_point_on_target = target_last_point
+                        goal_x_on_source = closest_point_on_target.x + horizontal_offset
+                    
+                    # Calculate the closest point on the source surface to our goal offset point.
+                    closest_point_on_source = Geometry.project_point_onto_surface( \
+                            Vector2(goal_x_on_source, INF), source_surface)
+                elif target_side == SurfaceSide.LEFT_WALL or target_side == SurfaceSide.RIGHT_WALL:
+                    # Find the point along the target surface that's closest to the source center,
+                    # and calculate a half-player-width offset from there.
+                    var closest_point_on_target: Vector2 = \
+                            Geometry.get_closest_point_on_polyline_to_polyline( \
+                                    target_vertices, source_surface.vertices)
+                    var goal_x_on_source := closest_point_on_target.x + \
+                            (horizontal_offset if target_side == SurfaceSide.LEFT_WALL else \
+                            -horizontal_offset)
+                    
+                    # Calculate the closest point on the source surface to our goal offset point.
+                    closest_point_on_source = Geometry.project_point_onto_surface( \
+                            Vector2(goal_x_on_source, INF), source_surface)
+                else: # target_side == SurfaceSide.CEILING
+                    # We can use any point along the target surface.
+                    closest_point_on_source = Geometry.get_closest_point_on_polyline_to_polyline( \
+                            source_surface.vertices, target_vertices)
+        elif source_surface.side == SurfaceSide.LEFT_WALL or source_surface.side == SurfaceSide.RIGHT_WALL:
+            # FIXME: --------------
+            pass
+        else: # source_surface.side == SurfaceSide.CEILING
+            # FIXME: --------------
+            pass
+        
+        # FIXME: --------------- REMOVE
+        if closest_point_on_source == Vector2.INF:
+            closest_point_on_source = Geometry.get_closest_point_on_polyline_to_polyline( \
+                    source_surface.vertices, target_vertices)
+        
+        
+        
         # Only consider the closest point if it is distinct.
-        var closest_point: Vector2 = \
-                Geometry.get_closest_point_on_polyline_to_polyline(surface.vertices, target_vertices)
-        if closest_point != near_end and closest_point != far_end:
+        if closest_point_on_source != near_end and closest_point_on_source != far_end:
             jump_position = create_position_from_target_point( \
-                    closest_point, surface, movement_params.collider_half_width_height)
+                    closest_point_on_source, source_surface, movement_params.collider_half_width_height)
             possible_jump_positions.push_front(jump_position)
     
     return possible_jump_positions
