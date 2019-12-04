@@ -67,7 +67,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "ClickToNavigate",
 "language": "GDScript",
-"path": "res://framework/click_to_navigate.gd"
+"path": "res://framework/player/click_to_navigate.gd"
 }, {
 "base": "Node2D",
 "class": "CollisionCalculationAnnotator",
@@ -98,6 +98,26 @@ _global_script_classes=[ {
 "class": "Edge",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/edge.gd"
+}, {
+"base": "Node2D",
+"class": "EdgeCalculationAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/edge_calculation_annotator.gd"
+}, {
+"base": "Node2D",
+"class": "EdgeCalculationSelectorAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/edge_calculation_selector_annotator.gd"
+}, {
+"base": "Node2D",
+"class": "EdgeCalculationTrajectoryAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/edge_calculation_trajectory_annotator.gd"
+}, {
+"base": "Node2D",
+"class": "EdgeCalculationTreeViewAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/edge_calculation_tree_view_annotator.gd"
 }, {
 "base": "Reference",
 "class": "EdgeStepCalcResult",
@@ -183,21 +203,6 @@ _global_script_classes=[ {
 "class": "InterSurfaceEdgesAnnotator",
 "language": "GDScript",
 "path": "res://framework/annotators/inter_surface_edges_annotator.gd"
-}, {
-"base": "Node2D",
-"class": "IntraEdgeCalculationAnnotator",
-"language": "GDScript",
-"path": "res://framework/annotators/intra_edge_calculation_annotator.gd"
-}, {
-"base": "Node2D",
-"class": "IntraEdgeCalculationTrajectoryAnnotator",
-"language": "GDScript",
-"path": "res://framework/annotators/intra_edge_calculation_trajectory_annotator.gd"
-}, {
-"base": "Node2D",
-"class": "IntraEdgeCalculationTreeViewAnnotator",
-"language": "GDScript",
-"path": "res://framework/annotators/intra_edge_calculation_tree_view_annotator.gd"
 }, {
 "base": "Edge",
 "class": "IntraSurfaceEdge",
@@ -553,6 +558,10 @@ _global_script_class_icons={
 "DebugPanel": "",
 "DrawUtils": "",
 "Edge": "",
+"EdgeCalculationAnnotator": "",
+"EdgeCalculationSelectorAnnotator": "",
+"EdgeCalculationTrajectoryAnnotator": "",
+"EdgeCalculationTreeViewAnnotator": "",
 "EdgeStepCalcResult": "",
 "FakePlayerAnimator": "",
 "FallFromAirMovement": "",
@@ -570,9 +579,6 @@ _global_script_class_icons={
 "InstructionsPlayback": "",
 "InterSurfaceEdge": "",
 "InterSurfaceEdgesAnnotator": "",
-"IntraEdgeCalculationAnnotator": "",
-"IntraEdgeCalculationTrajectoryAnnotator": "",
-"IntraEdgeCalculationTreeViewAnnotator": "",
 "IntraSurfaceEdge": "",
 "JumpFromPlatformMovement": "",
 "Level": "",
@@ -697,11 +703,6 @@ dash={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":39,"unicode":0,"echo":false,"script":null)
 , Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":90,"unicode":0,"echo":false,"script":null)
- ]
-}
-left_click={
-"deadzone": 0.5,
-"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"pressed":false,"doubleclick":false,"script":null)
  ]
 }
 

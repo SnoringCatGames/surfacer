@@ -1,11 +1,11 @@
 extends Node2D
-class_name IntraEdgeCalculationAnnotator
+class_name EdgeCalculationAnnotator
 
 const STEP_TRANSITION_DELAY_SEC := 1.0
 
 var collision_calculation_annotator: CollisionCalculationAnnotator
-var trajectory_annotator: IntraEdgeCalculationTrajectoryAnnotator
-var tree_view_annotator: IntraEdgeCalculationTreeViewAnnotator
+var trajectory_annotator: EdgeCalculationTrajectoryAnnotator
+var tree_view_annotator: EdgeCalculationTreeViewAnnotator
 
 var graph: PlatformGraph
 
@@ -23,8 +23,8 @@ var is_auto_transitioning_with_timer := true
 func _init(graph: PlatformGraph) -> void:
     self.graph = graph
     self.collision_calculation_annotator = CollisionCalculationAnnotator.new()
-    self.trajectory_annotator = IntraEdgeCalculationTrajectoryAnnotator.new()
-    self.tree_view_annotator = IntraEdgeCalculationTreeViewAnnotator.new()
+    self.trajectory_annotator = EdgeCalculationTrajectoryAnnotator.new()
+    self.tree_view_annotator = EdgeCalculationTreeViewAnnotator.new()
 
 func _enter_tree() -> void:
     add_child(collision_calculation_annotator)
@@ -87,8 +87,6 @@ func on_step_selected_from_tree_view(selected_step_attempt: MovementCalcStepDebu
     is_auto_transitioning_with_timer = false
     is_new_selected_step = true
     set_selected_step(selected_step_attempt)
-    collision_calculation_annotator.on_step_selected(selected_step_attempt)
-    trajectory_annotator.on_step_selected(selected_step_attempt)
 
 static func _get_step_by_index(edge_attempt: MovementCalcOverallDebugState, \
         target_step_index: int) -> MovementCalcStepDebugState:

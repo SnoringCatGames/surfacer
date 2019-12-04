@@ -68,11 +68,10 @@ func _ready() -> void:
             surface_parser, space_state, global.player_types, Global.DEBUG_STATE)
     
     click_to_navigate = ClickToNavigate.new()
-    click_to_navigate.update_level(self)
     add_child(click_to_navigate)
     
     # Set up some annotators that help with debugging.
-    click_annotator = ClickAnnotator.new(self)
+    click_annotator = ClickAnnotator.new()
     add_child(click_annotator)
 
 static func _create_platform_graphs(surface_parser: SurfaceParser, \

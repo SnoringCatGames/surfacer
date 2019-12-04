@@ -1,13 +1,12 @@
 extends Node
 class_name ClickToNavigate
 
-var level # TODO: Add type back in
+var global
 var player: Player
 var navigator: Navigator
 
-func update_level(level) -> void:
-    self.level = level
-    set_player(level.computer_player)
+func _ready() -> void:
+    self.global = $"/root/Global"
 
 func set_player(player: Player) -> void:
     if player != null:
@@ -17,10 +16,10 @@ func set_player(player: Player) -> void:
         self.player = null
         navigator = null
 
-func _process(delta: float) -> void:
+func _unhandled_input(event: InputEvent) -> void:
     if navigator == null:
         return
     
-    if Input.is_action_just_released("left_click"):
-        var position: Vector2 = level.get_global_mouse_position()
+    if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and !event.pressed:
+        var position: Vector2 = global.current_level.get_global_mouse_position()
         navigator.navigate_to_nearest_surface(position)

@@ -15,20 +15,17 @@ var end_time := -CLICK_DURATION_SEC
 var progress := 1.0
 var is_a_click_currently_rendered := false
 
-func _init(level) -> void:
-    self.level = level
-
 func _ready() -> void:
     self.global = $"/root/Global"
 
 func set_player(player: Player) -> void:
     self.player = player
 
-func _process(delta: float) -> void:
+func _unhandled_input(event: InputEvent) -> void:
     var current_time: float = global.elapsed_play_time_sec
     
-    if Input.is_action_just_released("left_click"):
-        click_position = level.get_global_mouse_position()
+    if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and !event.pressed:
+        click_position = global.current_level.get_global_mouse_position()
         
         if player != null:
             closest_surface_position = SurfaceParser.find_closest_position_on_a_surface( \
@@ -39,6 +36,9 @@ func _process(delta: float) -> void:
         start_time = current_time
         end_time = start_time + CLICK_DURATION_SEC
         is_a_click_currently_rendered = true
+
+func _process(delta: float) -> void:
+    var current_time: float = global.elapsed_play_time_sec
     
     if end_time > current_time or is_a_click_currently_rendered:
         progress = (current_time - start_time) / CLICK_DURATION_SEC

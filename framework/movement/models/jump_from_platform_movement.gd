@@ -210,28 +210,7 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Refactor where annotator step selection is done.
-#   - It should be done in the parent IntraEdgeCalculationAnnotator, instead of in
-#     IntraEdgeCalculationTrajectoryAnnotator.
-#   - It should handle the timer, the tree-view clicks, and the upcoming user clicks.
-# 
 # - Add a new annotator for collision calculations.
-#   - Should show all the details for the state of a collision calculation.
-#   - Should work for both valid collisions and error-state collisions.
-#   - Things to render:
-#     - Bounding box of frame start, end, and previous frame start.
-#     - Bounding box with and without margin (thin lines and dotted lines).
-#     - intersection_points
-#     - motion arrow
-#   - Should integrate into the edge calculation annotation selection?
-#     - Hopefully shouldn't be too noisy...
-#   - Probably need to support zooming-in the camera?
-#     - Maybe this could be toggleable via clicking a button in the tree view?
-#     - Would definitely want to animate the zoom.
-#     - Probably also need to change the camera translation.
-#       - Probably can just calculate the offset from the player to the collision, and use that to
-#         manually assign an offset to the camera.
-#       - Would also need to animate this translation.
 # 
 # - Add better annotation selection.
 #   - Add shorcuts for toggling debugging annotations
@@ -253,6 +232,17 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #       annotation configuration options
 #       - set up a nice API for creating these, setting values, listening for value changes, and
 #         defining keyboard shortcuts.
+#   - Use InputMap to programatically add keybindings.
+#     - This should enable our framework to setup all the shortcuts it cares about, without
+#       consumers needing to ever redeclare anything in their project settings.
+#     - This should also enable better API design for configuring keybindings and menu items from
+#       the same place.
+#     - https://godot-es-docs.readthedocs.io/en/latest/classes/class_inputmap.html#class-inputmap
+# 
+# - Fix NavigateToClick to ignore clicks in the tree-view panel.
+# - Fix NavigateToClick to ignore clicks that are too far from any surface.
+# 
+# - Get rid of unneeded preload calls.
 # 
 # - Refactor intra-surface edges to determine the movement direction later, after landing on the
 #   surface, since we can land on the wrong side of the target and need to move in the reverse

@@ -1,5 +1,5 @@
 extends Node2D
-class_name IntraEdgeCalculationTreeViewAnnotator
+class_name EdgeCalculationTreeViewAnnotator
 
 signal step_selected
 

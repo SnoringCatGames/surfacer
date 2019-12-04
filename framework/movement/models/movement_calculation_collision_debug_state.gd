@@ -33,6 +33,8 @@ var intersection_points := []
 # Array<float>
 var collision_ratios := []
 
+var collision: SurfaceCollision
+
 func _init(overall_calc_params = null, step_calc_params = null, horizontal_step = null) -> void:
     if overall_calc_params != null:
         self.collider_half_width_height = \

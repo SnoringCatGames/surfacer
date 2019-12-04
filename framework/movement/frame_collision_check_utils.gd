@@ -510,6 +510,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     var surface_collision := SurfaceCollision.new()
     surface_collision.player_position = position_when_colliding
+    collision_debug_state.collision = surface_collision
     
     _calculate_intersection_point_and_surface(space_state, shape_query_params, \
             surface_parser, edge_aligned_ray_trace_target, direction, \

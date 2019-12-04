@@ -1,5 +1,5 @@
 extends Node2D
-class_name IntraEdgeCalculationTrajectoryAnnotator
+class_name EdgeCalculationTrajectoryAnnotator
 
 const STEP_TRANSITION_DELAY_SEC := 1.0
 
@@ -189,6 +189,3 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     var line_5: String = ("\n                %s" % step_attempt.description_list[1]) if \
             step_attempt.description_list.size() > 1 else ""
     step_label.text = line_1 + line_2 + line_3 + line_4 + line_5
-
-func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void:
-    self.selected_step = selected_step_attempt
