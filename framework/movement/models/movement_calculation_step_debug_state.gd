@@ -11,6 +11,8 @@ var frame_positions: PoolVector2Array
 
 var collision: SurfaceCollision
 
+var collision_debug_state: MovementCalcCollisionDebugState # FIXME: -----------
+
 var result_code := EdgeStepCalcResult.UNKNOWN
 
 var result_code_string: String setget ,_get_result_code_string

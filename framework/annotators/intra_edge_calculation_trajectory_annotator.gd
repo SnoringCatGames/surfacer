@@ -39,28 +39,13 @@ const OPACITY_STRONG := 0.9
 var collision_color_faint := Color.from_hsv(COLLISION_HUE, 0.6, 0.9, OPACITY_FAINT)
 var collision_color_strong := Color.from_hsv(COLLISION_HUE, 0.6, 0.9, OPACITY_STRONG)
 
-var global # TODO: Add type back
-
-var graph: PlatformGraph
 var edge_attempt: MovementCalcOverallDebugState
+var selected_step: MovementCalcStepDebugState
 
 var step_label: Label
 var previous_out_of_reach_constraint_label: Label
 
-var highlighted_step: MovementCalcStepDebugState
-var is_new_highlighted_step := false
-
-var start_time: float
-var highlighted_step_transition_index: int = INF
-var is_auto_transitioning_with_timer := true
-
-func _init(graph: PlatformGraph) -> void:
-    self.graph = graph
-
 func _ready() -> void:
-    global = $"/root/Global"
-    start_time = global.elapsed_play_time_sec
-    
     step_label = Label.new()
     step_label.rect_scale = STEP_LABEL_SCALE
     add_child(step_label)
@@ -69,59 +54,6 @@ func _ready() -> void:
     previous_out_of_reach_constraint_label.rect_scale = \
             PREVIOUS_OUT_OF_REACH_CONSTRAINT_LABEL_SCALE
     add_child(previous_out_of_reach_constraint_label)
-
-func _process(delta: float) -> void:
-    # Check the current edge that's being debugged.
-    var next_edge_attempt: MovementCalcOverallDebugState = \
-            graph.debug_state["edge_calc_debug_state"]
-    var is_new_edge_attempt := next_edge_attempt != edge_attempt
-    if is_new_edge_attempt:
-        edge_attempt = next_edge_attempt
-    
-    if edge_attempt == null or edge_attempt.total_step_count == 0:
-        # Don't try to draw if we don't currently have an edge to debug.
-        return
-    
-    if is_auto_transitioning_with_timer:
-        # The highlighted step is auto-transitioning according to a set time interval.
-        var elapsed_time: float = global.elapsed_play_time_sec - start_time
-        var next_step_transition_index := \
-                floor(elapsed_time / STEP_TRANSITION_DELAY_SEC) as int % \
-                edge_attempt.total_step_count
-        if highlighted_step_transition_index != next_step_transition_index:
-            # We've reached the time to transition to the next highlighted step.
-            highlighted_step_transition_index = next_step_transition_index
-            highlighted_step = _get_step_by_index(highlighted_step_transition_index)
-            is_new_highlighted_step = true
-    
-    if is_new_highlighted_step or is_new_edge_attempt:
-        # It's time to highlight a new step, whether from the timer or from a user selection.
-        is_new_highlighted_step = false
-        update()
-
-func _get_step_by_index(target_step_index: int) -> MovementCalcStepDebugState:
-    var result: MovementCalcStepDebugState
-    for root_step_attempt in edge_attempt.children_step_attempts:
-        result = _get_step_by_index_recursively(root_step_attempt, target_step_index)
-        if result != null:
-            assert(result.index == target_step_index)
-            assert(result.overall_debug_state == edge_attempt)
-            return result
-    
-    return null
-
-func _get_step_by_index_recursively(step_attempt: MovementCalcStepDebugState, \
-        target_step_index: int) -> MovementCalcStepDebugState:
-    if step_attempt.index == target_step_index:
-        return step_attempt
-    
-    var result: MovementCalcStepDebugState
-    for child_step_attempt in step_attempt.children_step_attempts:
-        result = _get_step_by_index_recursively(child_step_attempt, target_step_index)
-        if result != null:
-            return result
-    
-    return null
 
 func _draw() -> void:
     if edge_attempt == null or edge_attempt.total_step_count == 0:
@@ -138,7 +70,7 @@ func _draw_edge_calculation_trajectories() -> void:
         next_step_index = _draw_steps_recursively(root_step, next_step_index)
     
     # Render with more opacity the current step.
-    _draw_step(highlighted_step, false)
+    _draw_step(selected_step, false)
 
 func _draw_steps_recursively( \
         step_attempt: MovementCalcStepDebugState, next_step_index: int) -> int:
@@ -259,6 +191,4 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     step_label.text = line_1 + line_2 + line_3 + line_4 + line_5
 
 func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void:
-    is_auto_transitioning_with_timer = false
-    is_new_highlighted_step = true
-    highlighted_step = selected_step_attempt
+    self.selected_step = selected_step_attempt

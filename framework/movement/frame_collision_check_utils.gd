@@ -1,5 +1,7 @@
 class_name FrameCollisionCheckUtils
 
+const MovementCalcCollisionDebugState = preload("res://framework/movement/models/movement_calculation_collision_debug_state.gd")
+
 # TODO: Adjust this.
 const VERTEX_SIDE_NUDGE_OFFSET := 0.001
 
@@ -8,7 +10,7 @@ const VERTEX_SIDE_NUDGE_OFFSET := 0.001
 static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         shape_query_params: Physics2DShapeQueryParameters, collider_half_width_height: Vector2, \
         collider_rotation: float, surface_parser: SurfaceParser, \
-        has_recursed := false, collision_debug_state := {}) -> SurfaceCollision:
+        has_recursed := false, collision_debug_state = null) -> SurfaceCollision:
     # TODO: collide_shape can sometimes produce intersection points with round-off error that exist
     #       outside the bounds of the tile. At least in one case, the round-off error was 0.003
     #       beyond the tile bounds in the direction of motion. 
@@ -72,6 +74,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     
     ###############################################################################################
+    collision_debug_state = collision_debug_state if collision_debug_state != null else \
+            MovementCalcCollisionDebugState.new()
     collision_debug_state.frame_motion = shape_query_params.motion
     collision_debug_state.frame_previous_position = collision_debug_state.frame_start_position
     collision_debug_state.frame_start_position = shape_query_params.transform[2]
@@ -547,7 +551,8 @@ static func _calculate_intersection_point_and_surface(space_state: Physics2DDire
         shape_query_params: Physics2DShapeQueryParameters, surface_parser: SurfaceParser, \
         edge_aligned_ray_trace_target: Vector2, direction: Vector2, perpendicular_offset: Vector2, \
         side: int, should_try_without_perpendicular_nudge_first: bool, \
-        surface_collision: SurfaceCollision, collision_debug_state := {}) -> void:
+        surface_collision: SurfaceCollision, \
+        collision_debug_state: MovementCalcCollisionDebugState) -> void:
     var tile_map_cell_size := surface_parser.max_tile_map_cell_size
     
     var intersection_point: Vector2

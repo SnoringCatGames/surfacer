@@ -1,5 +1,7 @@
 class_name CollisionCheckUtils
 
+const MovementCalcCollisionDebugState = preload("res://framework/movement/models/movement_calculation_collision_debug_state.gd")
+
 # Checks whether a collision would occur with any surface during the given instructions. This
 # is calculated by stepping through each discrete physics frame, which should exactly emulate the
 # actual Player trajectory that would be used.
@@ -320,35 +322,10 @@ static func check_continuous_horizontal_step_for_collision( \
     
     ###############################################################################################
     # TODO: Remove eventually.
-    var collision_debug_state := {
-        step_start_position = step_calc_params.start_constraint.position,
-        step_start_surface_position = step_calc_params.start_constraint.surface.bounding_box.position,
-        step_start_surface_normal = step_calc_params.start_constraint.surface.normal,
-        
-        step_end_position = step_calc_params.end_constraint.position,
-        step_end_surface_position = step_calc_params.end_constraint.surface.bounding_box.position,
-        step_end_surface_normal = step_calc_params.end_constraint.surface.normal,
-        
-        step_start_time = previous_time,
-        step_end_time = step_end_time,
-        
-        collider_half_width_height = collider_half_width_height,
-        
-        frame_current_time = INF,
-        frame_motion = Vector2.INF,
-        frame_start_position = previous_position,
-        frame_end_position = Vector2.INF,
-        frame_previous_position = previous_position,
-        frame_start_min_coordinates = Vector2.INF,
-        frame_start_max_coordinates = Vector2.INF,
-        frame_end_min_coordinates = Vector2.INF,
-        frame_end_max_coordinates = Vector2.INF,
-        frame_previous_min_coordinates = Vector2.INF,
-        frame_previous_max_coordinates = Vector2.INF,
-        
-        intersection_points = [],
-        collision_ratios = [],
-    }
+    var collision_debug_state: MovementCalcCollisionDebugState
+    if Global.IN_DEBUG_MODE:
+        collision_debug_state = MovementCalcCollisionDebugState.new( \
+                overall_calc_params, step_calc_params, horizontal_step)
     ###############################################################################################
     
     # Record the position for edge annotation debugging.
@@ -425,5 +402,6 @@ static func check_continuous_horizontal_step_for_collision( \
     if debug_state != null:
         debug_state.collision = collision
         debug_state.frame_positions = PoolVector2Array(frame_positions)
+        debug_state.collision_debug_state = collision_debug_state
     
     return collision

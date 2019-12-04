@@ -210,15 +210,10 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Refactor intra-surface edges to determine the movement direction later, after landing on the
-#   surface, since we can land on the wrong side of the target and need to move in the reverse
-#   direction from what would have been originally calculated.
-# 
-# - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
-# - Fix instructions/navigator to ensure that the sideways input is not released until after
-#   hitting, and _grabbing_, the wall (when jumping to a wall).
-# - Add support for specifying required end x-velocity (and y direction).
-#   - Use this for edges that end on walls.
+# - Refactor where annotator step selection is done.
+#   - It should be done in the parent IntraEdgeCalculationAnnotator, instead of in
+#     IntraEdgeCalculationTrajectoryAnnotator.
+#   - It should handle the timer, the tree-view clicks, and the upcoming user clicks.
 # 
 # - Add a new annotator for collision calculations.
 #   - Should show all the details for the state of a collision calculation.
@@ -258,6 +253,16 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #       annotation configuration options
 #       - set up a nice API for creating these, setting values, listening for value changes, and
 #         defining keyboard shortcuts.
+# 
+# - Refactor intra-surface edges to determine the movement direction later, after landing on the
+#   surface, since we can land on the wrong side of the target and need to move in the reverse
+#   direction from what would have been originally calculated.
+# 
+# - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
+# - Fix instructions/navigator to ensure that the sideways input is not released until after
+#   hitting, and _grabbing_, the wall (when jumping to a wall).
+# - Add support for specifying required end x-velocity (and y direction).
+#   - Use this for edges that end on walls.
 # 
 # - Finish remaining surface-closest-point-jump-off calculation cases.
 #   - Also, maybe still not quite far enough with the offset?

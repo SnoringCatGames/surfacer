@@ -24,22 +24,22 @@ const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 
 const DEBUG_STATE := {
     in_debug_mode = IN_DEBUG_MODE,
-    limit_parsing_to_single_edge = null
-#    {
-#        player_name = "cat",
-#        origin = {
-#            surface_side = SurfaceSide.FLOOR,
-#            surface_start_vertex = Vector2(128, 64),
-#            surface_end_vertex = Vector2(192, 64),
-#            near_far_close_position = "near",
-#        },
-#        destination = {
-#            surface_side = SurfaceSide.FLOOR,
-#            surface_start_vertex = Vector2(-128, -448),
-#            surface_end_vertex = Vector2(0, -448),
-#            near_far_close_position = "far",
-#        },
-#    },
+#    limit_parsing_to_single_edge = null
+    limit_parsing_to_single_edge = {
+        player_name = "cat",
+        origin = {
+            surface_side = SurfaceSide.FLOOR,
+            surface_start_vertex = Vector2(128, 64),
+            surface_end_vertex = Vector2(192, 64),
+            near_far_close_position = "near",
+        },
+        destination = {
+            surface_side = SurfaceSide.FLOOR,
+            surface_start_vertex = Vector2(-128, -448),
+            surface_end_vertex = Vector2(0, -448),
+            near_far_close_position = "far",
+        },
+    },
 }
 
 const CAMERA_ZOOM := 1.5
