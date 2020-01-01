@@ -7,7 +7,6 @@ const CLICK_DURATION_SEC := 0.2
 
 var global # TODO: Add type back
 var level # TODO: Add type back
-var player: Player
 var click_position: Vector2
 var closest_surface_position: PositionAlongSurface
 var start_time := -CLICK_DURATION_SEC
@@ -18,18 +17,15 @@ var is_a_click_currently_rendered := false
 func _ready() -> void:
     self.global = $"/root/Global"
 
-func set_player(player: Player) -> void:
-    self.player = player
-
 func _unhandled_input(event: InputEvent) -> void:
     var current_time: float = global.elapsed_play_time_sec
     
     if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and !event.pressed:
         click_position = global.current_level.get_global_mouse_position()
         
-        if player != null:
+        if global.current_player_for_clicks != null:
             closest_surface_position = SurfaceParser.find_closest_position_on_a_surface( \
-                    click_position, player)
+                    click_position, global.current_player_for_clicks)
         else:
             closest_surface_position = null
         

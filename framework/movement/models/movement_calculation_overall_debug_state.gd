@@ -7,7 +7,7 @@ var origin_constraint: MovementConstraint setget ,_get_origin
 var destination_constraint: MovementConstraint setget ,_get_destination
 var movement_params: MovementParams setget ,_get_movement_params
 
-# Array<StepAttemptDebugState>
+# Array<MovementCalcStepDebugState>
 var children_step_attempts := []
 
 var total_step_count := 0

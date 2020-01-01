@@ -3,6 +3,7 @@ class_name EdgeCalculationAnnotator
 
 const STEP_TRANSITION_DELAY_SEC := 1.0
 
+var calculation_selector_annotator: EdgeCalculationSelectorAnnotator
 var collision_calculation_annotator: CollisionCalculationAnnotator
 var trajectory_annotator: EdgeCalculationTrajectoryAnnotator
 var tree_view_annotator: EdgeCalculationTreeViewAnnotator
@@ -22,11 +23,13 @@ var is_auto_transitioning_with_timer := true
 
 func _init(graph: PlatformGraph) -> void:
     self.graph = graph
+    self.calculation_selector_annotator = EdgeCalculationSelectorAnnotator.new()
     self.collision_calculation_annotator = CollisionCalculationAnnotator.new()
     self.trajectory_annotator = EdgeCalculationTrajectoryAnnotator.new()
     self.tree_view_annotator = EdgeCalculationTreeViewAnnotator.new()
 
 func _enter_tree() -> void:
+    add_child(calculation_selector_annotator)
     add_child(collision_calculation_annotator)
     add_child(trajectory_annotator)
     add_child(tree_view_annotator)
@@ -39,28 +42,29 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     # Check the current edge that's being debugged.
-    var next_edge_attempt: MovementCalcOverallDebugState = \
-            graph.debug_state["edge_calc_debug_state"]
+    var next_edge_attempt := calculation_selector_annotator.edge_attempt
     var is_new_edge_attempt := next_edge_attempt != edge_attempt
     if is_new_edge_attempt:
         set_edge_attempt(next_edge_attempt)
     
-    if edge_attempt == null or edge_attempt.total_step_count == 0:
+    if edge_attempt == null:
         # Don't try to draw if we don't currently have an edge to debug.
         return
     
-    if is_auto_transitioning_with_timer:
-        # The selected step is auto-transitioning according to a set time interval.
-        var elapsed_time: float = global.elapsed_play_time_sec - start_time
-        var next_step_transition_index := \
-                floor(elapsed_time / STEP_TRANSITION_DELAY_SEC) as int % \
-                edge_attempt.total_step_count
-        if selected_step_transition_index != next_step_transition_index:
-            # We've reached the time to transition to the next selected step.
-            selected_step_transition_index = next_step_transition_index
-            set_selected_step( \
-                    _get_step_by_index(edge_attempt, selected_step_transition_index))
-            is_new_selected_step = true
+    # Don't try to auto-transition the selected step if there are no steps in the edge attempt.
+    if edge_attempt.total_step_count > 0:
+        if is_auto_transitioning_with_timer:
+            # The selected step is auto-transitioning according to a set time interval.
+            var elapsed_time: float = global.elapsed_play_time_sec - start_time
+            var next_step_transition_index := \
+                    floor(elapsed_time / STEP_TRANSITION_DELAY_SEC) as int % \
+                    edge_attempt.total_step_count
+            if selected_step_transition_index != next_step_transition_index:
+                # We've reached the time to transition to the next selected step.
+                selected_step_transition_index = next_step_transition_index
+                set_selected_step( \
+                        _get_step_by_index(edge_attempt, selected_step_transition_index))
+                is_new_selected_step = true
     
     if is_new_edge_attempt:
         tree_view_annotator.update()
@@ -69,7 +73,6 @@ func _process(delta: float) -> void:
         # It's time to select a new step, whether from the timer or from a user selection.
         is_new_selected_step = false
         
-        collision_calculation_annotator.update()
         trajectory_annotator.update()
 
 func set_edge_attempt(edge_attempt: MovementCalcOverallDebugState) -> void:

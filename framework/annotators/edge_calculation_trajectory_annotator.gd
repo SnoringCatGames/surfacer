@@ -29,6 +29,12 @@ const INVALID_CONSTRAINT_STROKE_WIDTH := 2.0
 const TRAJECTORY_DASH_LENGTH := 2.0
 const TRAJECTORY_DASH_GAP := 8.0
 
+const INVALID_EDGE_DASH_LENGTH := 6.0
+const INVALID_EDGE_DASH_GAP := 8.0
+const INVALID_EDGE_DASH_STROKE_WIDTH := 4.0
+const INVALID_EDGE_X_WIDTH := 20.0
+const INVALID_EDGE_X_HEIGHT := 28.0
+
 const STEP_HUE_START := 0.11
 const STEP_HUE_END := 0.61
 const COLLISION_HUE := 0.0
@@ -38,6 +44,9 @@ const OPACITY_STRONG := 0.9
 
 var collision_color_faint := Color.from_hsv(COLLISION_HUE, 0.6, 0.9, OPACITY_FAINT)
 var collision_color_strong := Color.from_hsv(COLLISION_HUE, 0.6, 0.9, OPACITY_STRONG)
+var INVALID_EDGE_COLOR := Color.from_hsv(COLLISION_HUE, 0.6, 0.9, OPACITY_STRONG)
+
+const INVALID_EDGE_TEXT := "Unable to reach destination from origin."
 
 var edge_attempt: MovementCalcOverallDebugState
 var selected_step: MovementCalcStepDebugState
@@ -56,7 +65,7 @@ func _ready() -> void:
     add_child(previous_out_of_reach_constraint_label)
 
 func _draw() -> void:
-    if edge_attempt == null or edge_attempt.total_step_count == 0:
+    if edge_attempt == null:
         # Don't try to draw if we don't currently have an edge to debug.
         return
     
@@ -65,12 +74,15 @@ func _draw() -> void:
 func _draw_edge_calculation_trajectories() -> void:
     var next_step_index := 0
     
-    # Render faintly all calculation steps for this edge.
-    for root_step in edge_attempt.children_step_attempts:
-        next_step_index = _draw_steps_recursively(root_step, next_step_index)
-    
-    # Render with more opacity the current step.
-    _draw_step(selected_step, false)
+    if !edge_attempt.children_step_attempts.empty():
+        # Render faintly all calculation steps for this edge.
+        for root_step in edge_attempt.children_step_attempts:
+            next_step_index = _draw_steps_recursively(root_step, next_step_index)
+        
+        # Render with more opacity the current step.
+        _draw_step(selected_step, false)
+    else:
+        _draw_invalid_edge()
 
 func _draw_steps_recursively( \
         step_attempt: MovementCalcStepDebugState, next_step_index: int) -> int:
@@ -189,3 +201,21 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     var line_5: String = ("\n                %s" % step_attempt.description_list[1]) if \
             step_attempt.description_list.size() > 1 else ""
     step_label.text = line_1 + line_2 + line_3 + line_4 + line_5
+
+func _draw_invalid_edge() -> void:
+    var edge_start: Vector2 = edge_attempt.origin_constraint.position
+    var edge_end: Vector2 = edge_attempt.destination_constraint.position
+    var edge_middle: Vector2 = edge_start.linear_interpolate(edge_end, 0.5)
+    
+    # Render a dotted straight line with a bigger x in the middle for edge_attempts that have no
+    # step children.
+    DrawUtils.draw_dashed_line(self, edge_start, edge_end, INVALID_EDGE_COLOR, \
+            INVALID_EDGE_DASH_LENGTH, INVALID_EDGE_DASH_GAP, 0.0, \
+            INVALID_EDGE_DASH_STROKE_WIDTH)
+    DrawUtils.draw_x(self, edge_middle, INVALID_EDGE_X_WIDTH, INVALID_EDGE_X_HEIGHT, \
+            INVALID_EDGE_COLOR, INVALID_EDGE_DASH_STROKE_WIDTH)
+    
+    # Draw some text describing the invalid edge.
+    step_label.rect_position = edge_start + LABEL_OFFSET
+    step_label.add_color_override("font_color", INVALID_EDGE_COLOR)
+    step_label.text = INVALID_EDGE_TEXT

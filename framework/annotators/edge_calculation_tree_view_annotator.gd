@@ -34,9 +34,14 @@ func _draw_step_tree_panel() -> void:
     step_tree_view.clear()
     step_tree_root = step_tree_view.create_item()
     
-    # Draw rows for each step-attempt.
-    for step_attempt in edge_attempt.children_step_attempts:
-        _draw_step_tree_item(step_attempt, step_tree_root)
+    if edge_attempt.total_step_count != 0:
+        # Draw rows for each step-attempt.
+        for step_attempt in edge_attempt.children_step_attempts:
+            _draw_step_tree_item(step_attempt, step_tree_root)
+    else:
+        # Draw a message for the invalid edge.
+        var tree_item := step_tree_view.create_item(step_tree_root)
+        tree_item.set_text(0, EdgeCalculationTrajectoryAnnotator.INVALID_EDGE_TEXT)
 
 func _draw_step_tree_item(step_attempt: MovementCalcStepDebugState, parent_tree_item: TreeItem) -> void:
     # Draw the row for the given step-attempt.

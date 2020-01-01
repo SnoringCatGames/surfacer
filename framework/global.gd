@@ -52,6 +52,7 @@ var player_types := {}
 var debug_panel: DebugPanel
 
 var current_level
+var current_player_for_clicks
 
 # Keeps track of the current total elapsed time of unpaused gameplay.
 var elapsed_play_time_sec: float setget ,_get_elapsed_play_time_sec

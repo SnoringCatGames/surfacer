@@ -41,6 +41,8 @@ var _collided_surfaces: Dictionary
 
 var debug_state: MovementCalcOverallDebugState
 
+var in_debug_mode: bool setget _set_in_debug_mode,_get_in_debug_mode
+
 func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceState, \
             surface_parser: SurfaceParser, velocity_start: Vector2, \
             origin_constraint: MovementConstraint, destination_constraint: MovementConstraint, \
@@ -67,9 +69,6 @@ func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceSta
     shape_query_params.shape_rid = movement_params.collider_shape.get_rid()
     shape_query_params.transform = Transform2D(movement_params.collider_rotation, Vector2.ZERO)
     shape_query_params.set_shape(movement_params.collider_shape)
-    
-    if Global.IN_DEBUG_MODE:
-        debug_state = MovementCalcOverallDebugState.new(self)
 
 func is_backtracking_valid_for_surface(surface: Surface, time_jump_release: float) -> bool:
     var key := str(surface) + str(time_jump_release)
@@ -78,6 +77,13 @@ func is_backtracking_valid_for_surface(surface: Surface, time_jump_release: floa
 func record_backtracked_surface(surface: Surface, time_jump_release: float) -> void:
     var key := str(surface) + str(time_jump_release)
     _collided_surfaces[key] = true
+
+func _set_in_debug_mode(value: bool) -> void:
+    assert(value)
+    debug_state = MovementCalcOverallDebugState.new(self)
+
+func _get_in_debug_mode() -> bool:
+    return debug_state != null
 
 static func calculate_constraint_offset(movement_params: MovementParams) -> Vector2:
     return movement_params.collider_half_width_height + \

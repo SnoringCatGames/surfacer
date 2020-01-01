@@ -210,34 +210,17 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add a new annotator for collision calculations.
+# - Add back support for rendering all calculated valid edges.
+#   - Will need to again update how step-attempt/debug-state is stored/accessed
+#     (used to use graph.debug_state["edge_calc_debug_state"]).
 # 
-# - Add better annotation selection.
-#   - Add shorcuts for toggling debugging annotations
-#     - Add support for triggering the calc-step annotations based on a shortcut.
-#       - i
-#       - also, require clicking on the start and end positions in order to select which edge to
-#         debug
-#         - Use this _in addition to_ the current top-level configuration for specifying which edge
-#           to calculate?
-#       - also, then only actually calculate the edge debug state when using this
-#         click-to-specificy debug mode
-#     - also, add other shortcuts for toggling other annotations:
-#       - whether all surfaces are highlighted
-#       - whether the player's position+collision boundary are rendered
-#       - whether the player's current surface is rendered
-#       - whether all edges are rendered
-#       - whether grid boundaries+indices are rendered
-#     - create a collapsible dat.GUI-esque menu at the top-right that lists all the possible
-#       annotation configuration options
-#       - set up a nice API for creating these, setting values, listening for value changes, and
-#         defining keyboard shortcuts.
-#   - Use InputMap to programatically add keybindings.
-#     - This should enable our framework to setup all the shortcuts it cares about, without
-#       consumers needing to ever redeclare anything in their project settings.
-#     - This should also enable better API design for configuring keybindings and menu items from
-#       the same place.
-#     - https://godot-es-docs.readthedocs.io/en/latest/classes/class_inputmap.html#class-inputmap
+# - Debug why the edge selector annotator fails.
+# 
+# - Add to the edge selector annotator:
+#   - Annotate all possible jump and land positions between these two surfaces (regardless of which
+#     was actually chosen).
+# 
+# - Add a new annotator for collision calculations.
 # 
 # - Fix NavigateToClick to ignore clicks in the tree-view panel.
 # - Fix NavigateToClick to ignore clicks that are too far from any surface.
@@ -254,6 +237,10 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # - Add support for specifying required end x-velocity (and y direction).
 #   - Use this for edges that end on walls.
 # 
+# - Add squirrel assets and animation.
+#   - Decide whether there's anything I want to change about the art style, aliasing, etc. with
+#     player animations in general.
+# 
 # - Finish remaining surface-closest-point-jump-off calculation cases.
 #   - Also, maybe still not quite far enough with the offset?
 # - Fix any remaining Navigator movement issues.
@@ -264,26 +251,19 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - Only limit this to a few additional potential edges along the path.
 #   - The idea is that the edges tend to produce very unnatural composite trajectories (similary to
 #     using perpendicular Manhatten distance routes instead of more diagonal routes).
-#   - Basically, try jumping from earlier on any given surface.
+#   >- Basically, try jumping from earlier on any given surface.
 #     - It may be hard to know exactly where along a surface to try jumping from though...
 #     - Should probably just use some simple heuristic and just give up when they fail with
 #       false-positive rates.
+#   >- Also, update velocity_start for these on-the-fly edges to be more intelligent.
 # 
-# - Add some extra improvements to check_frame_for_collision:
-#   - [maybe?] Rather than just using closest_intersection_point, sort all intersection_points, and
-#     try each of them in sequence when the first one fails	
-#   - [easy to add, might be nice for future] If that also fails, use a completely separate new
-#     cheap-and-dirty check-for-collision-in-frame method?	
-#     - Check if intersection_points is not-empty.
-#     - Sort them by closest in direction of motion (and ignoring behind points).
-#     - Iterate through points, trying to get tile index by a slight nudge offset from each
-#       intersection point in the direction of motion until one sticks.
-#     - Choose surface side just from dominant motion component.
-#   - Add a field on the collision class for the type of collision check used
-#   - Add another field (or another option for the above field) to indicate that none of the
-#     collision checks worked, and this collision is in an error state
-#   - Use this error state to abort collision/step/edge calculations (rather than the current
-#     approach of returning null, which is the same as with not detecting any collisions at all).
+# - Update navigator to force player velocity to match expected edge velocity_start.
+#   - Configurable.
+# - Add support for forcing state to match what is expected from the original edge calculations.
+#   - Configurable.
+#   - Apply this to both position and velocity.
+#   - Also, allow for this to use a weighted average of the expected state vs the actual state from normal run-time.
+#   - Also, add a warning message when the player is too far from what's expected.
 # 
 # - Update edge-calculations to support variable velocity_start_x values.
 #   - Allow for up-front edge calculation to use any desired velocity_start_x between
@@ -304,6 +284,62 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - 
 # 
 # - Update README.
+# 
+# - Loading screen
+#   - While downloading, and while parsing level graph
+#   - Hand-animated pixel art
+#   - Simple GIF file
+#   - Host/load/show separately from the rest of the JavaScript and assets
+#   - Squirrels digging-up/eating tulips
+# - Welcome screen
+#   - Hand-animated pixel art
+#   - Gratuitous whooshy sliding shine and a sparkle at the end
+#   - With squirrels running and climbing over the letters?
+# 
+# --- Expected cut-off for demo date ---
+# 
+# - Add some extra improvements to check_frame_for_collision:
+#   - [maybe?] Rather than just using closest_intersection_point, sort all intersection_points, and
+#     try each of them in sequence when the first one fails	
+#   - [easy to add, might be nice for future] If that also fails, use a completely separate new
+#     cheap-and-dirty check-for-collision-in-frame method?	
+#     - Check if intersection_points is not-empty.
+#     - Sort them by closest in direction of motion (and ignoring behind points).
+#     - Iterate through points, trying to get tile index by a slight nudge offset from each
+#       intersection point in the direction of motion until one sticks.
+#     - Choose surface side just from dominant motion component.
+#   - Add a field on the collision class for the type of collision check used
+#   - Add another field (or another option for the above field) to indicate that none of the
+#     collision checks worked, and this collision is in an error state
+#   - Use this error state to abort collision/step/edge calculations (rather than the current
+#     approach of returning null, which is the same as with not detecting any collisions at all).
+# 
+# - Add better annotation selection.
+#   - Add shorcuts for toggling debugging annotations
+#     - Add support for triggering the calc-step annotations based on a shortcut.
+#       - i
+#       - also, require clicking on the start and end positions in order to select which edge to
+#         debug
+#         - Use this _in addition to_ the current top-level configuration for specifying which edge
+#           to calculate?
+#       - also, then only actually calculate the edge debug state when using this click-to-specify
+#         debug mode
+#     - also, add other shortcuts for toggling other annotations:
+#       - whether all surfaces are highlighted
+#       - whether the player's position+collision boundary are rendered
+#       - whether the player's current surface is rendered
+#       - whether all edges are rendered
+#       - whether grid boundaries+indices are rendered
+#     - create a collapsible dat.GUI-esque menu at the top-right that lists all the possible
+#       annotation configuration options
+#       - set up a nice API for creating these, setting values, listening for value changes, and
+#         defining keyboard shortcuts.
+#   - Use InputMap to programatically add keybindings.
+#     - This should enable our framework to setup all the shortcuts it cares about, without
+#       consumers needing to ever redeclare anything in their project settings.
+#     - This should also enable better API design for configuring keybindings and menu items from
+#       the same place.
+#     - https://godot-es-docs.readthedocs.io/en/latest/classes/class_inputmap.html#class-inputmap
 # 
 # 
 # 
@@ -418,13 +454,13 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 overall_calc_params = MovementCalcOverallParams.new(params, space_state, \
                         surface_parser, velocity_start, terminals[0], terminals[1])
                 
-                instructions = _calculate_jump_instructions(overall_calc_params)
-                # FIXME: LEFT OFF HERE: --------------------------------------------------A
-                # >- Update the edge debug-step-storing logic to only ever store one total edge,
-                #   and use the edge-targeting config from before...
-                if debug_state.in_debug_mode:
-                    # Store both successful and failed edge calculation debug state.
-                    debug_state["edge_calc_debug_state"] = overall_calc_params.debug_state
+                ###################################################################################
+                # Record some extra debug state when we're limiting calculations to a single edge.
+                if debug_state.in_debug_mode and debug_state.limit_parsing_to_single_edge != null:
+                    overall_calc_params.in_debug_mode = true
+                ###################################################################################
+                
+                instructions = calculate_jump_instructions(overall_calc_params)
                 if instructions != null:
                     # Can reach land position from jump position.
                     edge = InterSurfaceEdge.new(jump_position, land_position, instructions)
@@ -459,14 +495,14 @@ func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
     var overall_calc_params := MovementCalcOverallParams.new(params, space_state, surface_parser, \
             velocity_start, terminals[0], terminals[1])
     
-    return _calculate_jump_instructions(overall_calc_params)
+    return calculate_jump_instructions(overall_calc_params)
 
 # Calculates instructions that would move the player from the given start position to the given end
 # position.
 # 
 # This considers interference from intermediate surfaces, and will only return instructions that
 # would produce valid movement without intermediate collisions.
-static func _calculate_jump_instructions( \
+static func calculate_jump_instructions( \
         overall_calc_params: MovementCalcOverallParams) -> MovementInstructions:
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
             overall_calc_params, null, null)

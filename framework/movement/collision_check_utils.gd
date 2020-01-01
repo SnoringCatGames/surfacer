@@ -321,9 +321,9 @@ static func check_continuous_horizontal_step_for_collision( \
     var debug_state := step_calc_params.debug_state
     
     ###############################################################################################
-    # TODO: Remove eventually.
+    # Record some extra collision state when debugging an edge calculation.
     var collision_debug_state: MovementCalcCollisionDebugState
-    if Global.IN_DEBUG_MODE:
+    if overall_calc_params.in_debug_mode:
         collision_debug_state = MovementCalcCollisionDebugState.new( \
                 overall_calc_params, step_calc_params, horizontal_step)
     ###############################################################################################

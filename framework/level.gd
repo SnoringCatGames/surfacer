@@ -119,8 +119,7 @@ func _record_player_reference(is_human_player: bool) -> void:
         else:
             computer_player = player
             player.init_computer_player_state()
-            click_to_navigate.set_player(computer_player)
-            click_annotator.set_player(computer_player)
+            global.current_player_for_clicks = computer_player
         
         # Set up an annotator to help with debugging.
         platform_graph_annotator = PlatformGraphAnnotator.new(graph)

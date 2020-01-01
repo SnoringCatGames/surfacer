@@ -28,6 +28,12 @@ const YELLOW := Color8(243, 255, 71)
 const YELLOW_D := Color8(190, 204, 0)
 #const YELLOW_XD := Color8(, , )
 
+# Hue: 31 (from 0 to 360)
+const ORANGE := Color8(255, 166, 71)
+#const ORANGE_L := Color8(, , )
+const ORANGE_D := Color8(204, 105, 0)
+#const ORANGE_XD := Color8(, , )
+
 # Alpha values (from 0 to 1).
 const ALPHA_SOLID := 1.0
 const ALPHA_SLIGHTLY_FAINT := 0.7

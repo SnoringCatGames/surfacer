@@ -12,7 +12,7 @@ const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULT
 static func create_terminal_constraints(origin_surface: Surface, origin_position: Vector2, \
         destination_surface: Surface, destination_position: Vector2, \
         movement_params: MovementParams, velocity_start: Vector2, \
-        can_hold_jump_button: bool) -> Array:
+        can_hold_jump_button: bool, returns_invalid_constraints := false) -> Array:
     var origin_passing_vertically := \
             origin_surface.normal.x == 0 if origin_surface != null else true
     var destination_passing_vertically := \
@@ -33,7 +33,7 @@ static func create_terminal_constraints(origin_surface: Surface, origin_position
     update_constraint(destination, origin, movement_params, velocity_start, can_hold_jump_button, \
             null, Vector2.INF)
     
-    if origin.is_valid and destination.is_valid:
+    if (origin.is_valid and destination.is_valid) or returns_invalid_constraints:
         return [origin, destination]
     else:
         return []
