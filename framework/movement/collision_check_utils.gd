@@ -358,7 +358,8 @@ static func check_continuous_horizontal_step_for_collision( \
         #     print("yo")
         
         ###########################################################################################
-        collision_debug_state.frame_current_time = current_time
+        if collision_debug_state != null:
+            collision_debug_state.frame_current_time = current_time
         ###########################################################################################
         
         # Check for collision.
@@ -397,7 +398,8 @@ static func check_continuous_horizontal_step_for_collision( \
         if collision == null:
             # Record the position for edge annotation debugging.
             frame_positions.push_back(current_position)
-            debug_state.frame_positions = PoolVector2Array(frame_positions)
+            if debug_state != null:
+                debug_state.frame_positions = PoolVector2Array(frame_positions)
     
     if debug_state != null:
         debug_state.collision = collision

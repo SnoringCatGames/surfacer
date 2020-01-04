@@ -210,9 +210,7 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add back support for rendering all calculated valid edges.
-#   - Will need to again update how step-attempt/debug-state is stored/accessed
-#     (used to use graph.debug_state["edge_calc_debug_state"]).
+# - Store successful trajectories on edges directly (skip debug object).
 # 
 # - Debug why the edge selector annotator fails.
 # 

@@ -74,27 +74,26 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     
     ###############################################################################################
-    collision_debug_state = collision_debug_state if collision_debug_state != null else \
-            MovementCalcCollisionDebugState.new()
-    collision_debug_state.frame_motion = shape_query_params.motion
-    collision_debug_state.frame_previous_position = collision_debug_state.frame_start_position
-    collision_debug_state.frame_start_position = shape_query_params.transform[2]
-    collision_debug_state.frame_end_position = \
-            collision_debug_state.frame_start_position + collision_debug_state.frame_motion
-    collision_debug_state.frame_previous_min_coordinates = \
-            collision_debug_state.frame_start_min_coordinates
-    collision_debug_state.frame_previous_max_coordinates = \
-            collision_debug_state.frame_start_max_coordinates
-    collision_debug_state.frame_start_min_coordinates = \
-            collision_debug_state.frame_start_position - collider_half_width_height
-    collision_debug_state.frame_start_max_coordinates = \
-            collision_debug_state.frame_start_position + collider_half_width_height
-    collision_debug_state.frame_end_min_coordinates = \
-            collision_debug_state.frame_end_position - collider_half_width_height
-    collision_debug_state.frame_end_max_coordinates = \
-            collision_debug_state.frame_end_position + collider_half_width_height
-    collision_debug_state.intersection_points = intersection_points
-    collision_debug_state.collision_ratios = space_state.cast_motion(shape_query_params)
+    if collision_debug_state != null:
+        collision_debug_state.frame_motion = shape_query_params.motion
+        collision_debug_state.frame_previous_position = collision_debug_state.frame_start_position
+        collision_debug_state.frame_start_position = shape_query_params.transform[2]
+        collision_debug_state.frame_end_position = \
+                collision_debug_state.frame_start_position + collision_debug_state.frame_motion
+        collision_debug_state.frame_previous_min_coordinates = \
+                collision_debug_state.frame_start_min_coordinates
+        collision_debug_state.frame_previous_max_coordinates = \
+                collision_debug_state.frame_start_max_coordinates
+        collision_debug_state.frame_start_min_coordinates = \
+                collision_debug_state.frame_start_position - collider_half_width_height
+        collision_debug_state.frame_start_max_coordinates = \
+                collision_debug_state.frame_start_position + collider_half_width_height
+        collision_debug_state.frame_end_min_coordinates = \
+                collision_debug_state.frame_end_position - collider_half_width_height
+        collision_debug_state.frame_end_max_coordinates = \
+                collision_debug_state.frame_end_position + collider_half_width_height
+        collision_debug_state.intersection_points = intersection_points
+        collision_debug_state.collision_ratios = space_state.cast_motion(shape_query_params)
     ###############################################################################################
     
     
@@ -510,7 +509,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     var surface_collision := SurfaceCollision.new()
     surface_collision.player_position = position_when_colliding
-    collision_debug_state.collision = surface_collision
+    if collision_debug_state != null:
+        collision_debug_state.collision = surface_collision
     
     _calculate_intersection_point_and_surface(space_state, shape_query_params, \
             surface_parser, edge_aligned_ray_trace_target, direction, \
@@ -532,16 +532,20 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                 "\n\tframe_previous_max_coordinates: %s"
         var format_string_arguments := [ \
                 String(intersection_points), \
-                String(collision_debug_state.collision_ratios), \
+                String(space_state.cast_motion(shape_query_params)), \
                 String(position_start), \
                 String(shape_query_params.motion), \
                 String(collider_half_width_height), \
-                String(collision_debug_state.frame_start_min_coordinates), \
-                String(collision_debug_state.frame_start_max_coordinates), \
-                String(collision_debug_state.frame_end_min_coordinates), \
-                String(collision_debug_state.frame_end_max_coordinates), \
-                String(collision_debug_state.frame_previous_min_coordinates), \
-                String(collision_debug_state.frame_previous_max_coordinates), \
+                String(shape_query_params.transform[2] - collider_half_width_height), \
+                String(shape_query_params.transform[2] + collider_half_width_height), \
+                String(shape_query_params.transform[2] + shape_query_params.motion - \
+                        collider_half_width_height), \
+                String(shape_query_params.transform[2] + shape_query_params.motion + \
+                        collider_half_width_height), \
+                String(collision_debug_state.frame_previous_min_coordinates) if \
+                        collision_debug_state != null else "?", \
+                String(collision_debug_state.frame_previous_max_coordinates) if \
+                        collision_debug_state != null else "?", \
             ]
         var message := format_string_template % format_string_arguments
         Utils.error(message, false)
