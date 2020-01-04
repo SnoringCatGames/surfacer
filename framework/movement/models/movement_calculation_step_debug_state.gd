@@ -7,8 +7,6 @@ var start_constraint: MovementConstraint setget ,_get_start
 
 var end_constraint: MovementConstraint setget ,_get_end
 
-var frame_positions: PoolVector2Array
-
 var collision: SurfaceCollision
 
 var collision_debug_state: MovementCalcCollisionDebugState # FIXME: -----------
@@ -30,6 +28,8 @@ var previous_out_of_reach_constraint: MovementConstraint
 
 # MovementCalcStepParams
 var _step_calc_params
+
+var step: MovementCalcStep
 
 var index: int
 

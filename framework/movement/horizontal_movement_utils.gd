@@ -134,6 +134,9 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     step.velocity_instruction_end = Vector2(velocity_end_x, instruction_end_state[1])
     step.velocity_step_end = Vector2(velocity_end_x, step_end_state[1])
     
+    if step_calc_params.debug_state != null:
+        step_calc_params.debug_state.step = step
+    
     end_constraint.actual_velocity_x = velocity_end_x
     
     # FIXME: DEBUGGING: REMOVE:

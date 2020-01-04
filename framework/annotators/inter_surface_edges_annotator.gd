@@ -54,12 +54,14 @@ func _draw() -> void:
                 constraint_color = Color.from_hsv(hue, 0.6, 0.9, 0.3)
                 instruction_start_stop_color = Color.from_hsv(hue, 0.1, 0.99, 0.8)
                 
-                # Draw the trajectory (as calculated via continuous equations of motion).
-                draw_polyline(edge.instructions.frame_discrete_positions, \
+                # Draw the trajectory (as approximated via discrete time steps during instruction 
+                # test calculations).
+                draw_polyline(edge.instructions.frame_discrete_positions_from_test, \
                         discrete_trajectory_color, TRAJECTORY_WIDTH)
                 
-                # Draw the trajectory (as approximated via discrete time steps).
-                draw_polyline(edge.instructions.frame_continuous_positions, \
+                # Draw the trajectory (as calculated via continuous equations of motion during step
+                # calculations).
+                draw_polyline(edge.instructions.frame_continous_positions_from_steps, \
                         continuous_trajectory_color, TRAJECTORY_WIDTH)
                 
                 # Draw all constraints in this edge.

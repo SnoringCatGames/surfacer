@@ -9,18 +9,15 @@ var duration: float
 var distance_squared: float
 
 # The positions of each frame of movement according to the discrete per-frame movement
-# calculations. This is used for annotation debugging.
-# Array<Vector2>
-var frame_discrete_positions: PoolVector2Array
+# calculations of the instruction test. This is used for annotation debugging.
+var frame_discrete_positions_from_test: PoolVector2Array
 
-# The positions of each frame of movement according to the continuous movement calculations. This
-# is used for annotation debugging.
-# Array<Vector2>
-var frame_continuous_positions: PoolVector2Array
+# The positions of each frame of movement according to the continous per-frame movement
+# calculations of the underlying horizontal step calculations.
+var frame_continous_positions_from_steps: PoolVector2Array
 
 # The end positions of each MovementCalcStep. These correspond to intermediate-surface constraints
 # and the destination position. This is used for annotation debugging.
-# Array<Vector2>
 var constraint_positions: PoolVector2Array
 
 var horizontal_instruction_start_positions: PoolVector2Array

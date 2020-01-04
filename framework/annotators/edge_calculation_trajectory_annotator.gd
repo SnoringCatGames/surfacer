@@ -127,10 +127,11 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     var step_hue := STEP_HUE_START + (STEP_HUE_END - STEP_HUE_START) * step_ratio
     var step_color := Color.from_hsv(step_hue, 0.6, 0.9, step_opacity)
     
-    if step_attempt.frame_positions.size() > 1:
+    if step_attempt.step.frame_positions.size() > 1:
         # Draw the step trajectory.
-        DrawUtils.draw_dashed_polyline(self, step_attempt.frame_positions, step_color, \
-                TRAJECTORY_DASH_LENGTH, TRAJECTORY_DASH_GAP, 0.0, trajectory_stroke_width)
+        DrawUtils.draw_dashed_polyline(self, PoolVector2Array(step_attempt.step.frame_positions), \
+                step_color, TRAJECTORY_DASH_LENGTH, TRAJECTORY_DASH_GAP, 0.0, \
+                trajectory_stroke_width)
     
     # Draw the step end points.
     DrawUtils.draw_circle_outline(self, step_attempt.start_constraint.position, \

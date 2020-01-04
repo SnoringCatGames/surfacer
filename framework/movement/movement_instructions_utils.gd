@@ -68,8 +68,27 @@ static func convert_calculation_steps_to_movement_instructions( \
         instructions.push_front(release)
         instructions.push_front(press)
     
-    return MovementInstructions.new(instructions, vertical_step.time_step_end, distance_squared, \
-            constraint_positions)
+    var frame_continous_positions_from_steps := _concatenate_step_frame_positions(steps)
+    
+    var result := MovementInstructions.new(instructions, vertical_step.time_step_end, \
+            distance_squared, constraint_positions)
+    result.frame_continous_positions_from_steps = frame_continous_positions_from_steps
+    
+    return result
+
+static func _concatenate_step_frame_positions(steps: Array) -> PoolVector2Array:
+    var combined_positions := []
+    
+    for step in steps:
+        Utils.concat(combined_positions, step.frame_positions)
+        # Since the start-position of the next step is always the same as the end-position of the
+        # previous step, we can de-dup them here.
+        combined_positions.remove(combined_positions.size() - 1)
+    
+    # Fix the fencepost problem.
+    combined_positions.push_back(steps.back().frame_positions.back())
+    
+    return PoolVector2Array(combined_positions)
 
 # Test that the given instructions were created correctly.
 static func test_instructions(instructions: MovementInstructions, \
@@ -90,8 +109,8 @@ static func test_instructions(instructions: MovementInstructions, \
     assert(collision == null or \
             (collision.is_valid_collision_state and \
             collision.surface == overall_calc_params.destination_constraint.surface))
-    var final_frame_position := \
-            instructions.frame_discrete_positions[instructions.frame_discrete_positions.size() - 1]
+    var final_frame_position := instructions.frame_discrete_positions_from_test[ \
+            instructions.frame_discrete_positions_from_test.size() - 1]
     # FIXME: B: Add back in after fixing the use of GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION.
 #    assert(final_frame_position.distance_squared_to( \
 #            overall_calc_params.destination_constraint.position) < \

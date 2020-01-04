@@ -47,3 +47,6 @@ var velocity_step_start: Vector2
 var velocity_instruction_start: Vector2
 var velocity_instruction_end: Vector2
 var velocity_step_end: Vector2
+
+# Array<Vector2>
+var frame_positions: Array

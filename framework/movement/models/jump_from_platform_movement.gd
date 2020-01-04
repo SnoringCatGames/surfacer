@@ -210,13 +210,15 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Store successful trajectories on edges directly (skip debug object).
+# --- 1/4: Saturday ---
 # 
 # - Debug why the edge selector annotator fails.
 # 
 # - Add to the edge selector annotator:
 #   - Annotate all possible jump and land positions between these two surfaces (regardless of which
 #     was actually chosen).
+# 
+# --- 1/5: Sunday ---
 # 
 # - Add a new annotator for collision calculations.
 # 
@@ -232,17 +234,40 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
 # - Fix instructions/navigator to ensure that the sideways input is not released until after
 #   hitting, and _grabbing_, the wall (when jumping to a wall).
+# 
+# --- 1/6: Monday ---
+# 
 # - Add support for specifying required end x-velocity (and y direction).
 #   - Use this for edges that end on walls.
+# 
+# --- 1/9: Thursday (travel day) ---
 # 
 # - Add squirrel assets and animation.
 #   - Decide whether there's anything I want to change about the art style, aliasing, etc. with
 #     player animations in general.
 # 
+# --- 1/11: Saturday ---
+# 
+# - Loading screen
+#   - While downloading, and while parsing level graph
+#   - Hand-animated pixel art
+#   - Simple GIF file
+#   - Host/load/show separately from the rest of the JavaScript and assets
+#   - Squirrels digging-up/eating tulips
+# 
+# - Welcome screen
+#   - Hand-animated pixel art
+#   - Gratuitous whooshy sliding shine and a sparkle at the end
+#   - With squirrels running and climbing over the letters?
+# 
+# --- 1/13: Monday (travel day) ---
+# 
 # - Finish remaining surface-closest-point-jump-off calculation cases.
 #   - Also, maybe still not quite far enough with the offset?
 # - Fix any remaining Navigator movement issues.
 # - Fix performance.
+#   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
+#     up passing them around as arguments to functions, to they get copied as values...
 # - Fix collision-detection errors from logs.
 # 
 # - Update navigation to do some additional on-the-fly edge calculations.
@@ -282,17 +307,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - 
 # 
 # - Update README.
-# 
-# - Loading screen
-#   - While downloading, and while parsing level graph
-#   - Hand-animated pixel art
-#   - Simple GIF file
-#   - Host/load/show separately from the rest of the JavaScript and assets
-#   - Squirrels digging-up/eating tulips
-# - Welcome screen
-#   - Hand-animated pixel art
-#   - Gratuitous whooshy sliding shine and a sparkle at the end
-#   - With squirrels running and climbing over the letters?
 # 
 # --- Expected cut-off for demo date ---
 # 

@@ -38,7 +38,7 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     
     # Record positions for edge annotation debugging.
     var frame_discrete_positions := []
-    var frame_continuous_positions := [position]
+#    var frame_continuous_positions := [position] # FIXME: REMOVE
     var jump_instruction_end_position: Vector2
     var horizontal_instruction_end_positions := []
     var horizontal_instruction_start_positions := []
@@ -74,8 +74,8 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
 #                    movement_params.collider_rotation, overall_calc_params.surface_parser)
             if collision != null:
                 instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
-                instructions.frame_continuous_positions = \
-                        PoolVector2Array(frame_continuous_positions)
+#                instructions.frame_continuous_positions = \ # FIXME: REMOVE
+#                        PoolVector2Array(frame_continuous_positions)
                 instructions.jump_instruction_end_position = jump_instruction_end_position
                 instructions.horizontal_instruction_start_positions = \
                         PoolVector2Array(horizontal_instruction_start_positions)
@@ -160,7 +160,7 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
         current_time += delta
         
         # Record the position for edge annotation debugging.
-        frame_continuous_positions.push_back(continuous_position)
+#        frame_continuous_positions.push_back(continuous_position) # FIXME: REMOVE
     
     # Check the last frame that puts us up to end_time.
     delta = end_time - current_time
@@ -181,8 +181,9 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
 #            shape_query_params, movement_params.collider_half_width_height, \
 #            movement_params.collider_rotation, overall_calc_params.surface_parser)
     if collision != null:
-        instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
-        instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
+        instructions.frame_discrete_positions_from_test = \
+                PoolVector2Array(frame_discrete_positions)
+#        instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions) # FIXME: REMOVE
         instructions.jump_instruction_end_position = jump_instruction_end_position
         instructions.horizontal_instruction_start_positions = \
                 PoolVector2Array(horizontal_instruction_start_positions)
@@ -192,9 +193,9 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     
     # Record the position for edge annotation debugging.
     frame_discrete_positions.push_back(position + displacement)
-    frame_continuous_positions.push_back(continuous_position)
-    instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
-    instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions)
+#    frame_continuous_positions.push_back(continuous_position) # FIXME: REMOVE
+    instructions.frame_discrete_positions_from_test = PoolVector2Array(frame_discrete_positions)
+#    instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions) # FIXME: REMOVE
     instructions.jump_instruction_end_position = jump_instruction_end_position
     instructions.horizontal_instruction_start_positions = \
             PoolVector2Array(horizontal_instruction_start_positions)
@@ -330,6 +331,7 @@ static func check_continuous_horizontal_step_for_collision( \
     
     # Record the position for edge annotation debugging.
     var frame_positions := [current_position]
+    horizontal_step.frame_positions = frame_positions
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #    if Geometry.are_points_equal_with_epsilon( \
@@ -398,12 +400,9 @@ static func check_continuous_horizontal_step_for_collision( \
         if collision == null:
             # Record the position for edge annotation debugging.
             frame_positions.push_back(current_position)
-            if debug_state != null:
-                debug_state.frame_positions = PoolVector2Array(frame_positions)
     
     if debug_state != null:
         debug_state.collision = collision
-        debug_state.frame_positions = PoolVector2Array(frame_positions)
         debug_state.collision_debug_state = collision_debug_state
     
     return collision
