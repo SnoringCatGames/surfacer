@@ -69,20 +69,20 @@ func _draw() -> void:
         # Don't try to draw if we don't currently have an edge to debug.
         return
     
-    _draw_edge_calculation_trajectories()
+    if edge_attempt.failed_before_creating_steps:
+        _draw_invalid_edge()
+    else:
+        _draw_edge_calculation_trajectories()
 
 func _draw_edge_calculation_trajectories() -> void:
     var next_step_index := 0
     
-    if !edge_attempt.children_step_attempts.empty():
-        # Render faintly all calculation steps for this edge.
-        for root_step in edge_attempt.children_step_attempts:
-            next_step_index = _draw_steps_recursively(root_step, next_step_index)
-        
-        # Render with more opacity the current step.
-        _draw_step(selected_step, false)
-    else:
-        _draw_invalid_edge()
+    # Render faintly all calculation steps for this edge.
+    for root_step in edge_attempt.children_step_attempts:
+        next_step_index = _draw_steps_recursively(root_step, next_step_index)
+    
+    # Render with more opacity the current step.
+    _draw_step(selected_step, false)
 
 func _draw_steps_recursively( \
         step_attempt: MovementCalcStepDebugState, next_step_index: int) -> int:

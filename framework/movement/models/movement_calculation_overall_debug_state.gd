@@ -12,6 +12,8 @@ var children_step_attempts := []
 
 var total_step_count := 0
 
+var failed_before_creating_steps: bool setget ,_get_failed_before_creating_steps
+
 var _overall_calc_params
 
 func _init(overall_calc_params) -> void:
@@ -25,3 +27,7 @@ func _get_destination() -> MovementConstraint:
 
 func _get_movement_params() -> MovementParams:
     return _overall_calc_params.movement_params as MovementParams
+
+func _get_failed_before_creating_steps() -> bool:
+    return children_step_attempts.empty() or \
+            children_step_attempts.front().step == null

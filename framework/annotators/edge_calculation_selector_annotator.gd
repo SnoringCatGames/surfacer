@@ -77,7 +77,7 @@ func _calculate_edge_attempt() -> void:
     var space_state := get_world_2d().direct_space_state
     var level = global.current_level
     var surface_parser: SurfaceParser = level.surface_parser
-    var velocity_start := Vector2.ZERO
+    var velocity_start := Vector2(0.0, movement_params.jump_boost)
     
     # Choose the jump and land positions according to which is closest to the click positions.
     var jump_positions := MovementUtils.get_all_jump_positions_from_surface( \

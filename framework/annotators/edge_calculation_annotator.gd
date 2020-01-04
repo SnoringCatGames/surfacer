@@ -45,7 +45,10 @@ func _process(delta: float) -> void:
     var next_edge_attempt := calculation_selector_annotator.edge_attempt
     var is_new_edge_attempt := next_edge_attempt != edge_attempt
     if is_new_edge_attempt:
-        set_edge_attempt(next_edge_attempt)
+        edge_attempt = next_edge_attempt
+        collision_calculation_annotator.edge_attempt = edge_attempt
+        trajectory_annotator.edge_attempt = edge_attempt
+        tree_view_annotator.edge_attempt = edge_attempt
     
     if edge_attempt == null:
         # Don't try to draw if we don't currently have an edge to debug.
@@ -74,12 +77,6 @@ func _process(delta: float) -> void:
         is_new_selected_step = false
         
         trajectory_annotator.update()
-
-func set_edge_attempt(edge_attempt: MovementCalcOverallDebugState) -> void:
-    self.edge_attempt = edge_attempt
-    collision_calculation_annotator.edge_attempt = edge_attempt
-    trajectory_annotator.edge_attempt = edge_attempt
-    tree_view_annotator.edge_attempt = edge_attempt
 
 func set_selected_step(selected_step: MovementCalcStepDebugState) -> void:
     self.selected_step = selected_step

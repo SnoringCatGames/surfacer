@@ -34,7 +34,7 @@ func _draw_step_tree_panel() -> void:
     step_tree_view.clear()
     step_tree_root = step_tree_view.create_item()
     
-    if edge_attempt.total_step_count != 0:
+    if !edge_attempt.failed_before_creating_steps:
         # Draw rows for each step-attempt.
         for step_attempt in edge_attempt.children_step_attempts:
             _draw_step_tree_item(step_attempt, step_tree_root)
@@ -42,6 +42,8 @@ func _draw_step_tree_panel() -> void:
         # Draw a message for the invalid edge.
         var tree_item := step_tree_view.create_item(step_tree_root)
         tree_item.set_text(0, EdgeCalculationTrajectoryAnnotator.INVALID_EDGE_TEXT)
+        tree_item_to_step_attempt[tree_item] = null
+        step_attempt_to_tree_items[null] = [tree_item]
 
 func _draw_step_tree_item(step_attempt: MovementCalcStepDebugState, parent_tree_item: TreeItem) -> void:
     # Draw the row for the given step-attempt.
@@ -67,8 +69,9 @@ func _on_step_tree_item_selected() -> void:
     var selected_tree_item := step_tree_view.get_selected()
     var selected_step_attempt: MovementCalcStepDebugState = \
             tree_item_to_step_attempt[selected_tree_item]
-    on_step_selected(selected_step_attempt)
-    emit_signal("step_selected", selected_step_attempt)
+    if selected_step_attempt != null:
+        on_step_selected(selected_step_attempt)
+        emit_signal("step_selected", selected_step_attempt)
 
 func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void:
     var tree_item: TreeItem
