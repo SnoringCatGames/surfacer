@@ -32,19 +32,19 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     var current_projection_onto_motion: float
     var closest_projection_onto_motion: float = INF
-    var current_intersection_point: Vector2
+    var current_intersection_point := Vector2.INF
     var closest_intersection_point := Vector2.INF
     var other_closest_intersection_point := Vector2.INF
     
     var side := SurfaceSide.NONE
     # For nudging the ray-tracing a little so that it hits the correct side of the collider vertex.
-    var perpendicular_offset: Vector2
+    var perpendicular_offset := Vector2.INF
     var should_try_without_perpendicular_nudge_first: bool
     
-    var edge_aligned_ray_trace_target: Vector2
+    var edge_aligned_ray_trace_target := Vector2.INF
     
-    var position_just_before_collision: Vector2
-    var position_when_colliding: Vector2
+    var position_just_before_collision := Vector2.INF
+    var position_when_colliding := Vector2.INF
     
     
     

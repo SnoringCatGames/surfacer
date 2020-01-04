@@ -28,6 +28,14 @@ static func create_terminal_constraints(origin_surface: Surface, origin_position
     destination.is_destination = true
     destination.previous_constraint = origin
     
+    # FIXME: LEFT OFF HERE: -------------------------------------A: Debug why the initial
+    #                       platform_graph parsing selector succeeds while the click annotator fails.
+    if origin_surface.bounding_box == Rect2(128, 64, 64, 0) and \
+            destination_surface.bounding_box == Rect2(0, -448, 0, 64) and \
+            origin_position == Vector2(128, 34) and \
+            destination_position == Vector2(57, -384):
+        print("break")
+    
     update_constraint(origin, origin, movement_params, velocity_start, can_hold_jump_button, \
             null, Vector2.INF)
     update_constraint(destination, origin, movement_params, velocity_start, can_hold_jump_button, \

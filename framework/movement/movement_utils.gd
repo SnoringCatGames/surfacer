@@ -208,9 +208,9 @@ static func get_all_jump_positions_from_surface(movement_params: MovementParams,
         possible_jump_positions.push_back(jump_position)
         
         var source_surface_center := source_surface.bounding_box.position + \
-                (source_surface.bounding_box.end - source_surface.bounding_box.position)
+                (source_surface.bounding_box.end - source_surface.bounding_box.position) / 2.0
         var target_surface_center := target_bounding_box.position + \
-                (target_bounding_box.end - target_bounding_box.position)
+                (target_bounding_box.end - target_bounding_box.position) / 2.0
         var target_first_point := target_vertices[0]
         var target_last_point := target_vertices[target_vertices.size() - 1]
         
@@ -218,7 +218,7 @@ static func get_all_jump_positions_from_surface(movement_params: MovementParams,
                 MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN
         
         # Instead of choosing the exact closest point along the source surface to the target
-        # surface, we may want to  give the "closest" jump-off point an offset that should reduce
+        # surface, we may want to give the "closest" jump-off point an offset that should reduce
         # overall movement.
         # 
         # As an example of when this offset is important, consider the case when we jump from floor
@@ -227,7 +227,7 @@ static func get_all_jump_positions_from_surface(movement_params: MovementParams,
         # the jump position from A would already be outside the edge of B, so that we don't need to
         # first move horizontally outward and then back in. However, the exact "closest" point on A
         # to B will not be outside the edge of B.
-        var closest_point_on_source: Vector2
+        var closest_point_on_source := Vector2.INF
         if source_surface.side == SurfaceSide.FLOOR:
             if source_surface_center.y < target_surface_center.y:
                 # Source surface is above target surface.
