@@ -73,7 +73,8 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
 #                    shape_query_params, movement_params.collider_half_width_height, \
 #                    movement_params.collider_rotation, overall_calc_params.surface_parser)
             if collision != null:
-                instructions.frame_discrete_positions = PoolVector2Array(frame_discrete_positions)
+                instructions.frame_discrete_positions_from_test = \
+                        PoolVector2Array(frame_discrete_positions)
 #                instructions.frame_continuous_positions = \ # FIXME: REMOVE
 #                        PoolVector2Array(frame_continuous_positions)
                 instructions.jump_instruction_end_position = jump_instruction_end_position

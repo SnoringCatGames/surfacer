@@ -26,14 +26,17 @@ func _ready() -> void:
     global.debug_panel.add_section(step_tree_view)
 
 func _draw() -> void:
+    # Clear any previous items.
+    step_tree_view.clear()
+    step_tree_root = step_tree_view.create_item()
+    tree_item_to_step_attempt.clear()
+    step_attempt_to_tree_items.clear()
+    current_highlighted_tree_items.clear()
+    
     if edge_attempt != null:
         _draw_step_tree_panel()
 
 func _draw_step_tree_panel() -> void:
-    # Clear any previous items.
-    step_tree_view.clear()
-    step_tree_root = step_tree_view.create_item()
-    
     if !edge_attempt.failed_before_creating_steps:
         # Draw rows for each step-attempt.
         for step_attempt in edge_attempt.children_step_attempts:
@@ -80,9 +83,6 @@ func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void
     
     # Unmark previously matching tree items.
     for i in range(current_highlighted_tree_items.size()):
-        # FIXME: DEBUGGING: REMOVE: ---------------------------
-        if !(current_highlighted_tree_items[i] is TreeItem):
-            pass
         tree_item = current_highlighted_tree_items[i]
         old_highlighted_step_attempt = tree_item_to_step_attempt[tree_item]
         text = _get_tree_item_text(old_highlighted_step_attempt, i, false)

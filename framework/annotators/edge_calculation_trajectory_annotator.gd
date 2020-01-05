@@ -65,6 +65,9 @@ func _ready() -> void:
     add_child(previous_out_of_reach_constraint_label)
 
 func _draw() -> void:
+    step_label.text = ""
+    previous_out_of_reach_constraint_label.text = ""
+    
     if edge_attempt == null:
         # Don't try to draw if we don't currently have an edge to debug.
         return
@@ -127,11 +130,15 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     var step_hue := STEP_HUE_START + (STEP_HUE_END - STEP_HUE_START) * step_ratio
     var step_color := Color.from_hsv(step_hue, 0.6, 0.9, step_opacity)
     
-    if step_attempt.step.frame_positions.size() > 1:
+    if step_attempt.step != null and step_attempt.step.frame_positions.size() > 1:
         # Draw the step trajectory.
         DrawUtils.draw_dashed_polyline(self, PoolVector2Array(step_attempt.step.frame_positions), \
                 step_color, TRAJECTORY_DASH_LENGTH, TRAJECTORY_DASH_GAP, 0.0, \
                 trajectory_stroke_width)
+    else:
+        # The calculation failed before a step object could be created.
+        _draw_invalid_trajectory(step_attempt.start_constraint.position, \
+                step_attempt.end_constraint.position)
     
     # Draw the step end points.
     DrawUtils.draw_circle_outline(self, step_attempt.start_constraint.position, \
@@ -143,11 +150,12 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     
     # Draw any collision.
     if collision != null:
-        # Draw an X at the actual point of collision.
-        DrawUtils.draw_x(self, collision.position, COLLISION_X_WIDTH_HEIGHT.x, \
-                COLLISION_X_WIDTH_HEIGHT.y, collision_color, collision_x_stroke_width)
+        if collision.position != Vector2.INF:
+            # Draw an X at the actual point of collision.
+            DrawUtils.draw_x(self, collision.position, COLLISION_X_WIDTH_HEIGHT.x, \
+                    COLLISION_X_WIDTH_HEIGHT.y, collision_color, collision_x_stroke_width)
         
-        if !renders_faintly:
+        if !renders_faintly and collision.surface != null:
             # Draw the surface that was collided with.
             DrawUtils.draw_surface(self, collision.surface, collision_color)
         
@@ -206,17 +214,22 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
 func _draw_invalid_edge() -> void:
     var edge_start: Vector2 = edge_attempt.origin_constraint.position
     var edge_end: Vector2 = edge_attempt.destination_constraint.position
-    var edge_middle: Vector2 = edge_start.linear_interpolate(edge_end, 0.5)
     
-    # Render a dotted straight line with a bigger x in the middle for edge_attempts that have no
-    # step children.
-    DrawUtils.draw_dashed_line(self, edge_start, edge_end, INVALID_EDGE_COLOR, \
-            INVALID_EDGE_DASH_LENGTH, INVALID_EDGE_DASH_GAP, 0.0, \
-            INVALID_EDGE_DASH_STROKE_WIDTH)
-    DrawUtils.draw_x(self, edge_middle, INVALID_EDGE_X_WIDTH, INVALID_EDGE_X_HEIGHT, \
-            INVALID_EDGE_COLOR, INVALID_EDGE_DASH_STROKE_WIDTH)
+    _draw_invalid_trajectory(edge_start, edge_end)
     
     # Draw some text describing the invalid edge.
     step_label.rect_position = edge_start + LABEL_OFFSET
     step_label.add_color_override("font_color", INVALID_EDGE_COLOR)
     step_label.text = INVALID_EDGE_TEXT
+
+func _draw_invalid_trajectory(start: Vector2, end: Vector2) -> void:
+    var middle: Vector2 = start.linear_interpolate(end, 0.5)
+    
+    # Render a dotted straight line with a bigger x in the middle for edge_attempts that have no
+    # step children.
+    DrawUtils.draw_dashed_line(self, start, end, INVALID_EDGE_COLOR, \
+            INVALID_EDGE_DASH_LENGTH, INVALID_EDGE_DASH_GAP, 0.0, \
+            INVALID_EDGE_DASH_STROKE_WIDTH)
+    DrawUtils.draw_x(self, middle, INVALID_EDGE_X_WIDTH, INVALID_EDGE_X_HEIGHT, \
+            INVALID_EDGE_COLOR, INVALID_EDGE_DASH_STROKE_WIDTH)
+    

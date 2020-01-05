@@ -210,14 +210,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# --- 1/4: Saturday ---
-# 
-# - Debug why the edge selector annotator fails.
-# 
-# - Add to the edge selector annotator:
-#   - Annotate all possible jump and land positions between these two surfaces (regardless of which
-#     was actually chosen).
-# 
 # --- 1/5: Sunday ---
 # 
 # - Add a new annotator for collision calculations.

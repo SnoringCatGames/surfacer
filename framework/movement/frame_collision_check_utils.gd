@@ -633,6 +633,8 @@ static func _calculate_intersection_point_and_surface(space_state: Physics2DDire
     # FIXME: Add back in?
 #    assert(Geometry.are_points_equal_with_epsilon(collision.position, \
 #            edge_aligned_ray_trace_target, perpendicular_offset.length + 0.0001))
+    # FIXME: Add back in?
+#    assert(surface != null)
     
     # Record return values.
     surface_collision.is_valid_collision_state = \

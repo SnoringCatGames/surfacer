@@ -7,10 +7,16 @@ const ORIGIN_SURFACE_SELECTION_DASH_LENGTH := 6.0
 const ORIGIN_SURFACE_SELECTION_DASH_GAP := 8.0
 const ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH := 4.0
 
+const POSSIBLE_JUMP_LAND_POSITION_RADIUS := 3.0
+var POSSIBLE_JUMP_LAND_POSITION_COLOR := ORIGIN_SURFACE_SELECTION_COLOR
+
 var global
 
 var edge_attempt: MovementCalcOverallDebugState
 var selected_step: MovementCalcStepDebugState
+
+# Array<PositionAlongSurface>
+var possible_jump_and_land_positions: Array
 
 var origin: PositionAlongSurface
 var destination: PositionAlongSurface
@@ -59,16 +65,12 @@ func _draw() -> void:
         # The user has selected both surfaces in a new edge to debug. The edge-calculation debug
         # state will now be rendered by another annotator, and this selector annotator is done
         # with this edge.
-        pass
+        _draw_possible_jump_and_land_positions()
     elif origin != null:
         # So far, the user has only selected the first surface in the edge pair.
         _draw_selected_origin()
 
 func _calculate_edge_attempt() -> void:
-    # FIXME: LEFT OFF HERE: -------------------------------------------------A
-    # - Also add the following:
-    #   - Annotate all possible jump and land positions between these two surfaces (regardless of which was actually chosen).
-    
     var debug_state: Dictionary = global.DEBUG_STATE
     var origin_surface := origin.surface
     var destination_surface := destination.surface
@@ -117,8 +119,17 @@ func _calculate_edge_attempt() -> void:
     
     # Record debug state for the jump calculation.
     edge_attempt = overall_calc_params.debug_state
+    
+    # Record the possible jump and land positions too.
+    Utils.concat(jump_positions, land_positions)
+    possible_jump_and_land_positions = jump_positions
 
 func _draw_selected_origin() -> void:
     DrawUtils.draw_dashed_polyline(self, origin.surface.vertices, \
             ORIGIN_SURFACE_SELECTION_COLOR, ORIGIN_SURFACE_SELECTION_DASH_LENGTH, \
             ORIGIN_SURFACE_SELECTION_DASH_GAP, 0.0, ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
+
+func _draw_possible_jump_and_land_positions() -> void:
+    for position in possible_jump_and_land_positions:
+        draw_circle(position.target_point, POSSIBLE_JUMP_LAND_POSITION_RADIUS, \
+                POSSIBLE_JUMP_LAND_POSITION_COLOR)

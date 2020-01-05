@@ -33,7 +33,8 @@ func _draw_path(canvas: CanvasItem, path: PlatformGraphPath) -> void:
         
         # Draw edge.
         if edge is InterSurfaceEdge:
-            draw_polyline(edge.instructions.frame_discrete_positions, EDGE_COLOR, TRAJECTORY_WIDTH)
+            draw_polyline(edge.instructions.frame_discrete_positions_from_test, EDGE_COLOR, \
+                    TRAJECTORY_WIDTH)
         elif edge is IntraSurfaceEdge:
             draw_line(edge.start.target_point, edge.end.target_point, EDGE_COLOR, TRAJECTORY_WIDTH)
         else:
