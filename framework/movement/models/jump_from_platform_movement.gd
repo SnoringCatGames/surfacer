@@ -210,7 +210,7 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# --- 1/5: Sunday ---
+# ---  ---
 # 
 # - Add a new annotator for collision calculations.
 # 
@@ -222,7 +222,7 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # - Fix instructions/navigator to ensure that the sideways input is not released until after
 #   hitting, and _grabbing_, the wall (when jumping to a wall).
 # 
-# --- 1/6: Monday ---
+# ---  ---
 # 
 # - Add support for specifying required end x-velocity (and y direction).
 #   - Use this for edges that end on walls.
@@ -231,13 +231,13 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   (origin does not correspond to a surface, or to an x-velocity in the expected direction)
 #   (currently breaks assertion at the end of _update_constraint_velocity_and_time).
 # 
-# --- 1/9: Thursday (travel day) ---
+# ---  ---
 # 
 # - Add squirrel assets and animation.
 #   - Decide whether there's anything I want to change about the art style, aliasing, etc. with
 #     player animations in general.
 # 
-# --- 1/11: Saturday ---
+# ---  ---
 # 
 # - Loading screen
 #   - While downloading, and while parsing level graph
@@ -251,7 +251,7 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - Gratuitous whooshy sliding shine and a sparkle at the end
 #   - With squirrels running and climbing over the letters?
 # 
-# --- 1/13: Monday (travel day) ---
+# ---  ---
 # 
 # - Finish remaining surface-closest-point-jump-off calculation cases.
 #   - Also, maybe still not quite far enough with the offset?
