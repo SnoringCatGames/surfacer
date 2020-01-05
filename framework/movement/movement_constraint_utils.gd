@@ -246,9 +246,10 @@ static func update_constraint(constraint: MovementConstraint, \
     
     _assign_horizontal_movement_sign(constraint)
     
-    var is_a_horizontal_surface := constraint.surface.normal.x == 0
-    var is_a_fake_constraint := constraint.horizontal_movement_sign != \
-            constraint.horizontal_movement_sign_from_displacement and \
+    var is_a_horizontal_surface := constraint.surface != null and constraint.surface.normal.x == 0
+    var is_a_fake_constraint := constraint.surface != null and \
+            constraint.horizontal_movement_sign != \
+                    constraint.horizontal_movement_sign_from_displacement and \
             is_a_horizontal_surface
     
     if is_a_fake_constraint:
@@ -435,7 +436,8 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
                 return false
             else:
                 # We should never hit a floor while still holding the jump button.
-                assert(!(constraint.surface.side == SurfaceSide.FLOOR and \
+                assert(!(constraint.surface != null and \
+                        constraint.surface.side == SurfaceSide.FLOOR and \
                         still_holding_jump_button))
             
             var duration_to_next := \

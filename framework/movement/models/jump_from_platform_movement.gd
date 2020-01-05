@@ -214,11 +214,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # - Add a new annotator for collision calculations.
 # 
-# - Fix NavigateToClick to ignore clicks in the tree-view panel.
-# - Fix NavigateToClick to ignore clicks that are too far from any surface.
-# 
-# - Get rid of unneeded preload calls.
-# 
 # - Refactor intra-surface edges to determine the movement direction later, after landing on the
 #   surface, since we can land on the wrong side of the target and need to move in the reverse
 #   direction from what would have been originally calculated.
@@ -231,6 +226,10 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # - Add support for specifying required end x-velocity (and y direction).
 #   - Use this for edges that end on walls.
+# 
+# - Fix some constraint calc logic for the case of starting a new navigation while in the air
+#   (origin does not correspond to a surface, or to an x-velocity in the expected direction)
+#   (currently breaks assertion at the end of _update_constraint_velocity_and_time).
 # 
 # --- 1/9: Thursday (travel day) ---
 # 
@@ -260,6 +259,9 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # - Fix performance.
 #   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
 #     up passing them around as arguments to functions, to they get copied as values...
+# - Debug why this edge calculation generates 35 steps...
+#   - test_level_long_rise
+#   - from top-most floor to bottom-most (wide) floor, on the right side
 # - Fix collision-detection errors from logs.
 # 
 # - Update navigation to do some additional on-the-fly edge calculations.

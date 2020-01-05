@@ -8,7 +8,7 @@ const CLICK_DURATION_SEC := 0.2
 var global # TODO: Add type back
 var level # TODO: Add type back
 var click_position: Vector2
-var closest_surface_position: PositionAlongSurface
+var nearby_surface_position: PositionAlongSurface
 var start_time := -CLICK_DURATION_SEC
 var end_time := -CLICK_DURATION_SEC
 var progress := 1.0
@@ -23,11 +23,15 @@ func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and !event.pressed:
         click_position = global.current_level.get_global_mouse_position()
         
+        nearby_surface_position = null
         if global.current_player_for_clicks != null:
-            closest_surface_position = SurfaceParser.find_closest_position_on_a_surface( \
+            var closest_surface_position := SurfaceParser.find_closest_position_on_a_surface( \
                     click_position, global.current_player_for_clicks)
-        else:
-            closest_surface_position = null
+            # Only use the closest surface if it is actually close enough.
+            if closest_surface_position.target_point.distance_squared_to(click_position) < \
+                    Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD * \
+                            Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD:
+                nearby_surface_position = closest_surface_position
         
         start_time = current_time
         end_time = start_time + CLICK_DURATION_SEC
@@ -50,5 +54,5 @@ func _draw() -> void:
     var radius := CLICK_END_RADIUS * progress
     
     draw_circle(click_position, radius, color)
-    if closest_surface_position != null:
-        DrawUtils.draw_surface(self, closest_surface_position.surface, color)
+    if nearby_surface_position != null:
+        DrawUtils.draw_surface(self, nearby_surface_position.surface, color)

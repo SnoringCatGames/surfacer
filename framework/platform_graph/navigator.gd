@@ -1,6 +1,8 @@
 extends Reference
 class_name Navigator
 
+const NEARBY_SURFACE_DISTANCE_THRESHOLD := 160.0
+
 var player # TODO: Add type back
 var graph: PlatformGraph
 var global # TODO: Add type back
@@ -34,10 +36,17 @@ func _init(player, graph: PlatformGraph, global) -> void:
     self.instructions_action_source = InstructionsActionSource.new(player, true)
 
 # Starts a new navigation to the given destination.
-func navigate_to_nearest_surface(target: Vector2) -> bool:
+func navigate_to_nearby_surface(target: Vector2, \
+        distance_threshold := NEARBY_SURFACE_DISTANCE_THRESHOLD) -> bool:
     reset()
     
     var destination := SurfaceParser.find_closest_position_on_a_surface(target, player)
+    
+    if destination.target_point.distance_squared_to(target) > \
+            distance_threshold * distance_threshold:
+        # Target is too far from any surface.
+        print("Target is too far from any surface")
+        return false
     
     var path: PlatformGraphPath
     if surface_state.is_grabbing_a_surface:
@@ -45,7 +54,8 @@ func navigate_to_nearest_surface(target: Vector2) -> bool:
         path = graph.find_path(origin, destination)
     else:
         var origin := surface_state.center_position
-        var air_to_surface_edge := graph.find_a_landing_trajectory(origin, player.velocity, destination)
+        var air_to_surface_edge := \
+                graph.find_a_landing_trajectory(origin, player.velocity, destination)
         if air_to_surface_edge != null:
             path = graph.find_path(air_to_surface_edge.end, destination)
             if path != null:
@@ -53,7 +63,7 @@ func navigate_to_nearest_surface(target: Vector2) -> bool:
     
     if path == null:
         # Destination cannot be reached from origin.
-        print("Cannot navigate to point: %s" % target)
+        print("Cannot navigate to target: %s" % target)
         return false
     else:
         # Destination can be reached from origin.
