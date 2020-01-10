@@ -125,6 +125,13 @@ func _start_edge(edge: Edge) -> void:
             edge.to_string_with_newlines(1), \
         ]
     print(format_string_template % format_string_arguments)
+
+    # FIXME: LEFT OFF HERE: ------------------------A:
+    # - Add and call a new edge.update_for_player_state(player) method.
+    # - Implementation:
+    #   - Use player position to determine whether to press left or right.
+    #     - And change instructions object accordingly.
+    #   - Set the player velocity to zero, if needed.
     
     current_edge_playback = instructions_action_source.start_instructions( \
             edge.instructions, global.elapsed_play_time_sec)

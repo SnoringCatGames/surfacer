@@ -30,8 +30,8 @@ func _init(graph: PlatformGraph) -> void:
 
 func _enter_tree() -> void:
     add_child(calculation_selector_annotator)
-    add_child(collision_calculation_annotator)
     add_child(trajectory_annotator)
+    add_child(collision_calculation_annotator)
     add_child(tree_view_annotator)
     
     tree_view_annotator.connect("step_selected", self, "on_step_selected_from_tree_view")
@@ -54,7 +54,7 @@ func _process(delta: float) -> void:
         if edge_attempt != null:
             set_selected_step(_get_step_by_index(edge_attempt, 0))
         else:
-            selected_step = null
+            set_selected_step(null)
     
     # Don't try to auto-transition the selected step if there are no steps in the edge attempt.
     if edge_attempt != null and edge_attempt.total_step_count > 0:

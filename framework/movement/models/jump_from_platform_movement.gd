@@ -205,14 +205,21 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   min/max for valid next step?
 # 
 # 
+# - Collision calculation annotator:
+#   - Would it be worth adding support to zoom and pan the camera to the current collision?
+#     - Maybe this could be toggleable via clicking a button in the tree view?
+#     - Would definitely want to animate the zoom.
+#     - Probably also need to change the camera translation.
+#       - Probably can just calculate the offset from the player to the collision, and use that to
+#         manually assign an offset to the camera.
+#       - Would also need to animate this translation.
+# 
 
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
 # ---  ---
-# 
-# - Add a new annotator for collision calculations.
 # 
 # - Refactor intra-surface edges to determine the movement direction later, after landing on the
 #   surface, since we can land on the wrong side of the target and need to move in the reverse

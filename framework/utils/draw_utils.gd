@@ -41,6 +41,27 @@ static func draw_dashed_polyline(canvas: CanvasItem, vertices: PoolVector2Array,
         draw_dashed_line(canvas, from, to, color, dash_length, dash_gap, dash_offset, width, \
                 antialiased)
 
+static func draw_dashed_rectangle(canvas: CanvasItem, center: Vector2, \
+        half_width_height: Vector2, is_rotated_90_degrees: bool, color: Color, \
+        dash_length: float, dash_gap: float, dash_offset: float = 0.0, stroke_width: float = 1.0, \
+        antialiased: bool = false) -> void:
+    var half_width := half_width_height.y if is_rotated_90_degrees else half_width_height.x
+    var half_height := half_width_height.x if is_rotated_90_degrees else half_width_height.y
+
+    var top_left := center + Vector2(-half_width, -half_height)
+    var top_right := center + Vector2(half_width, -half_height)
+    var bottom_right := center + Vector2(half_width, half_height)
+    var bottom_left := center + Vector2(-half_width, half_height)
+    
+    draw_dashed_line(canvas, top_left, top_right, color, dash_length, dash_gap, dash_offset, \
+            stroke_width, antialiased)
+    draw_dashed_line(canvas, top_right, bottom_right, color, dash_length, dash_gap, dash_offset, \
+            stroke_width, antialiased)
+    draw_dashed_line(canvas, bottom_right, bottom_left, color, dash_length, dash_gap, \
+            dash_offset, stroke_width, antialiased)
+    draw_dashed_line(canvas, bottom_left, top_left, color, dash_length, dash_gap, dash_offset, \
+            stroke_width, antialiased)
+
 static func draw_surface(canvas: CanvasItem, surface: Surface, color: Color) -> void:
     var vertices = surface.vertices
     var surface_depth_division_offset = surface.normal * -SURFACE_DEPTH_DIVISION_SIZE
@@ -125,6 +146,22 @@ static func draw_checkmark(canvas: CanvasItem, position: Vector2, width: float, 
     
     canvas.draw_line(top_left_point, bottom_mid_point, color, stroke_width)
     canvas.draw_line(bottom_mid_point, top_right_point, color, stroke_width)
+
+static func draw_arrow(canvas: CanvasItem, start: Vector2, end: Vector2, head_length: float, \
+        head_width: float, color: Color, stroke_width: float) -> void:
+    # Calculate points in the arrow head.
+    var start_to_end_angle := start.angle_to_point(end)
+    var head_diff_1 := Vector2(-head_length, -head_width * 0.5).rotated(start_to_end_angle)
+    var head_diff_2 := Vector2(-head_length, head_width * 0.5).rotated(start_to_end_angle)
+    var head_end_1 := end + head_diff_1
+    var head_end_2 := end + head_diff_2
+    
+    # Draw the arrow head.
+    canvas.draw_line(end, head_end_1, color, stroke_width)
+    canvas.draw_line(end, head_end_2, color, stroke_width)
+    
+    # Draw the arrow body.
+    canvas.draw_line(start, end, color, stroke_width)
 
 static func draw_diamond_outline(canvas: CanvasItem, center: Vector2, width: float, height: float, \
         color: Color, stroke_width: float) -> void:

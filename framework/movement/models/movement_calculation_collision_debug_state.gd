@@ -15,6 +15,7 @@ var step_start_time: float
 var step_end_time: float
 
 var collider_half_width_height: Vector2
+var margin: float
 
 var frame_current_time: float
 var frame_motion: Vector2
@@ -39,6 +40,7 @@ func _init(overall_calc_params = null, step_calc_params = null, horizontal_step 
     if overall_calc_params != null:
         self.collider_half_width_height = \
                 overall_calc_params.movement_params.collider_half_width_height
+        self.margin = overall_calc_params.shape_query_params.margin
     
     if step_calc_params != null:
         self.step_start_position = step_calc_params.start_constraint.position
@@ -56,3 +58,6 @@ func _init(overall_calc_params = null, step_calc_params = null, horizontal_step 
         
         self.frame_start_position = horizontal_step.position_step_start
         self.frame_previous_position = horizontal_step.position_step_start
+
+func get_position_at_collision_ratio_index(index: int) -> Vector2:
+    return frame_start_position + frame_motion * collision_ratios[index]

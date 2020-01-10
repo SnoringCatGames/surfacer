@@ -73,6 +73,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     
     
+    var collision_ratios := space_state.cast_motion(shape_query_params)
+    
     ###############################################################################################
     if collision_debug_state != null:
         collision_debug_state.frame_motion = shape_query_params.motion
@@ -93,7 +95,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
         collision_debug_state.frame_end_max_coordinates = \
                 collision_debug_state.frame_end_position + collider_half_width_height
         collision_debug_state.intersection_points = intersection_points
-        collision_debug_state.collision_ratios = space_state.cast_motion(shape_query_params)
+        collision_debug_state.collision_ratios = collision_ratios
     ###############################################################################################
     
     
@@ -242,7 +244,6 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                         VERTEX_SIDE_NUDGE_OFFSET * y_direction)
         
     else:
-        var collision_ratios := space_state.cast_motion(shape_query_params)
         assert(collision_ratios.size() != 1)
         
         # An array of size 2 means that there was no pre-existing collision.
