@@ -5,40 +5,50 @@
 extends Edge
 class_name IntraSurfaceEdge
 
-var start: PositionAlongSurface
-var end: PositionAlongSurface
+var start_position_along_surface: PositionAlongSurface
+var end_position_along_surface: PositionAlongSurface
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface) \
-        .(_calculate_instructions(start, end)) -> void:
-    self.start = start
-    self.end = end
+        .(_calculate_instructions(start.target_point, end)) -> void:
+    self.start_position_along_surface = start
+    self.end_position_along_surface = end
 
-static func _calculate_instructions( \
-        start: PositionAlongSurface, end: PositionAlongSurface) -> MovementInstructions:
+func _get_start() -> Vector2:
+    return start_position_along_surface.target_point
+
+func _get_end() -> Vector2:
+    return end_position_along_surface.target_point
+
+func update_for_player_state(player) -> void:
+    instructions = _calculate_instructions(player.position, \
+            end_position_along_surface)
+
+static func _calculate_instructions(start: Vector2, \
+        end: PositionAlongSurface) -> MovementInstructions:
     var is_wall_surface := \
             end.surface.side == SurfaceSide.LEFT_WALL || end.surface.side == SurfaceSide.RIGHT_WALL
     
     var input_key: String
     if is_wall_surface:
-        if start.target_point.y < end.target_point.y:
+        if start.y < end.target_point.y:
             input_key = "move_down"
         else:
             input_key = "move_up"
     else:
-        if start.target_point.x < end.target_point.x:
+        if start.x < end.target_point.x:
             input_key = "move_right"
         else:
             input_key = "move_left"
     
     var instruction := MovementInstruction.new(input_key, 0.0, true)
-    var distance_squared := start.target_point.distance_squared_to(end.target_point)
+    var distance_squared := start.distance_squared_to(end.target_point)
     return MovementInstructions.new([instruction], INF, distance_squared)
 
 func _get_class_name() -> String:
     return "IntraSurfaceEdge"
 
 func _get_start_string() -> String:
-    return start.to_string()
+    return start_position_along_surface.to_string()
 
 func _get_end_string() -> String:
-    return end.to_string()
+    return end_position_along_surface.to_string()

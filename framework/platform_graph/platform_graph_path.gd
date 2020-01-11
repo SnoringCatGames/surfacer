@@ -6,10 +6,8 @@ class_name PlatformGraphPath
 # Array<Edge>
 var edges: Array
 
-# PositionAlongSurface|Vector2
-var origin
-# PositionAlongSurface|Vector2
-var destination
+var origin: Vector2
+var destination: Vector2
 
 func _init(edges: Array) -> void:
     self.edges = edges
@@ -17,20 +15,12 @@ func _init(edges: Array) -> void:
     self.destination = edges.back().end
 
 func push_front(edge: Edge) -> void:
-    if edge.end is PositionAlongSurface:
-        assert(Geometry.are_points_equal_with_epsilon(edge.end.target_point, origin.target_point))
-    else:
-        assert(Geometry.are_points_equal_with_epsilon(edge.end, origin.target_point))
-    
+    assert(Geometry.are_points_equal_with_epsilon(edge.end, origin.target_point))
     self.edges.push_front(edge)
     self.origin = edge.start
 
 func push_back(edge: Edge) -> void:
-    if edge.start is PositionAlongSurface:
-        assert(Geometry.are_points_equal_with_epsilon(edge.start.target_point, destination.target_point))
-    else:
-        assert(Geometry.are_points_equal_with_epsilon(edge.start, destination.target_point))
-    
+    assert(Geometry.are_points_equal_with_epsilon(edge.start, destination.target_point))
     self.edges.push_back(edge)
     self.destination = edge.end
 
@@ -53,9 +43,9 @@ func to_string_with_newlines(indent_level := 0) -> String:
             "\n%s}"
     var format_string_arguments := [ \
             indent_level_str, \
-            origin.to_string(), \
+            String(origin), \
             indent_level_str, \
-            destination.to_string(), \
+            String(destination), \
             indent_level_str, \
             edges_str, \
             indent_level_str, \

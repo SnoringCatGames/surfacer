@@ -417,8 +417,10 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
     var grid_cell_to_node := {}
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
-            edge.start = _dedup_node(edge.start, grid_cell_to_node)
-            edge.end = _dedup_node(edge.end, grid_cell_to_node)
+            edge.start_position_along_surface = \
+                    _dedup_node(edge.start_position_along_surface, grid_cell_to_node)
+            edge.end_position_along_surface = \
+                    _dedup_node(edge.end_position_along_surface, grid_cell_to_node)
     
     # Record mappings from surfaces to nodes.
     var nodes_set := {}
@@ -428,8 +430,8 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
         
         # Get a deduped set of all nodes on this surface.
         for edge in surfaces_to_edges[surface]:
-            cell_id = _node_to_cell_id(edge.start)
-            nodes_set[cell_id] = edge.start
+            cell_id = _node_to_cell_id(edge.start_position_along_surface)
+            nodes_set[cell_id] = edge.start_position_along_surface
         
         surfaces_to_nodes[surface] = nodes_set.values()
     
@@ -456,7 +458,8 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
     # Record inter-surface edges.
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
-            nodes_to_edges[edge.start][edge.end] = edge
+            nodes_to_edges[edge.start_position_along_surface][edge.end_position_along_surface] = \
+                    edge
 
 # Checks whether a previous node with the same position has already been seen.
 #

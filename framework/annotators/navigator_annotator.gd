@@ -27,20 +27,24 @@ func check_for_update() -> void:
 func _draw_path(canvas: CanvasItem, path: PlatformGraphPath) -> void:
     for edge in path.edges:
         # Draw edge start position.
-        DrawUtils.draw_position_along_surface(canvas, edge.start, NODE_COLOR, \
-                NODE_COLOR, NODE_TARGET_POINT_RADIUS, NODE_T_LENGTH, \
-                NODE_T_WIDTH, true, true, false)
+        if edge.start_position_along_surface != null:
+            DrawUtils.draw_position_along_surface(canvas, edge.start_position_along_surface, \
+                    NODE_COLOR, NODE_COLOR, NODE_TARGET_POINT_RADIUS, NODE_T_LENGTH, \
+                    NODE_T_WIDTH, true, true, false)
+        else:
+            DrawUtils.draw_position_along_surface(canvas, edge.start, NODE_COLOR, \
+                    NODE_COLOR, NODE_TARGET_POINT_RADIUS, NODE_T_LENGTH, \
+                    NODE_T_WIDTH, true, true, false)
         
         # Draw edge.
         if edge is InterSurfaceEdge:
             draw_polyline(edge.instructions.frame_discrete_positions_from_test, EDGE_COLOR, \
                     TRAJECTORY_WIDTH)
         elif edge is IntraSurfaceEdge:
-            draw_line(edge.start.target_point, edge.end.target_point, EDGE_COLOR, TRAJECTORY_WIDTH)
+            draw_line(edge.start, edge.end, EDGE_COLOR, TRAJECTORY_WIDTH)
         else:
             Utils.error()
     
     # Draw final end position.
-    DrawUtils.draw_position_along_surface(canvas, path.destination, NODE_COLOR, \
-            NODE_COLOR, NODE_TARGET_POINT_RADIUS, NODE_T_LENGTH, \
-            NODE_T_WIDTH, true, true, false)
+    canvas.draw_circle(path.destination, NODE_TARGET_POINT_RADIUS, \
+            NODE_COLOR)

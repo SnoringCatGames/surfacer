@@ -3,19 +3,25 @@
 extends Edge
 class_name InterSurfaceEdge
 
-var start: PositionAlongSurface
-var end: PositionAlongSurface
+var start_position_along_surface: PositionAlongSurface
+var end_position_along_surface: PositionAlongSurface
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions).(instructions) -> void:
-    self.start = start
-    self.end = end
+    self.start_position_along_surface = start
+    self.end_position_along_surface = end
+
+func _get_start() -> Vector2:
+    return start_position_along_surface.target_point
+
+func _get_end() -> Vector2:
+    return end_position_along_surface.target_point
 
 func _get_class_name() -> String:
     return "InterSurfaceEdge"
 
 func _get_start_string() -> String:
-    return start.to_string()
+    return start_position_along_surface.to_string()
 
 func _get_end_string() -> String:
-    return end.to_string()
+    return end_position_along_surface.to_string()

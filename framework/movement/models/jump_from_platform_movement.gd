@@ -221,10 +221,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # ---  ---
 # 
-# - Refactor intra-surface edges to determine the movement direction later, after landing on the
-#   surface, since we can land on the wrong side of the target and need to move in the reverse
-#   direction from what would have been originally calculated.
-# 
 # - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
 # - Fix instructions/navigator to ensure that the sideways input is not released until after
 #   hitting, and _grabbing_, the wall (when jumping to a wall).
@@ -281,9 +277,10 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #       false-positive rates.
 #   >- Also, update velocity_start for these on-the-fly edges to be more intelligent.
 # 
-# - Update navigator to force player velocity to match expected edge velocity_start.
+# - Update navigator to force player state to match expected edge start state.
 #   - Configurable.
-# - Add support for forcing state to match what is expected from the original edge calculations.
+#   - Both position and velocity.
+# - Add support for forcing state during edge movement to match what is expected from the original edge calculations.
 #   - Configurable.
 #   - Apply this to both position and velocity.
 #   - Also, allow for this to use a weighted average of the expected state vs the actual state from normal run-time.

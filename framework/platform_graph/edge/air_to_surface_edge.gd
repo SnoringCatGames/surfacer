@@ -2,13 +2,19 @@
 extends Edge
 class_name AirToSurfaceEdge
 
-var start: Vector2
-var end: PositionAlongSurface
+var _start: Vector2
+var end_position_along_surface: PositionAlongSurface
 
 func _init(start: Vector2, end: PositionAlongSurface, calc_results: MovementCalcResults) \
         .(_calculate_instructions(start, end, calc_results)) -> void:
-    self.start = start
-    self.end = end
+    self._start = start
+    self.end_position_along_surface = end
+
+func _get_start() -> Vector2:
+    return _start
+
+func _get_end() -> Vector2:
+    return end_position_along_surface.target_point
 
 static func _calculate_instructions( \
         position_start: Vector2, position_end: PositionAlongSurface, \
@@ -20,7 +26,7 @@ func _get_class_name() -> String:
     return "AirToSurfaceEdge"
 
 func _get_start_string() -> String:
-    return String(start)
+    return String(_start)
 
 func _get_end_string() -> String:
-    return end.to_string()
+    return end_position_along_surface.to_string()

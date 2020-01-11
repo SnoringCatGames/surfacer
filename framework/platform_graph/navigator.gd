@@ -57,7 +57,7 @@ func navigate_to_nearby_surface(target: Vector2, \
         var air_to_surface_edge := \
                 graph.find_a_landing_trajectory(origin, player.velocity, destination)
         if air_to_surface_edge != null:
-            path = graph.find_path(air_to_surface_edge.end, destination)
+            path = graph.find_path(air_to_surface_edge.end_position_along_surface, destination)
             if path != null:
                 path.push_front(air_to_surface_edge)
     
@@ -126,12 +126,12 @@ func _start_edge(edge: Edge) -> void:
         ]
     print(format_string_template % format_string_arguments)
 
-    # FIXME: LEFT OFF HERE: ------------------------A:
-    # - Add and call a new edge.update_for_player_state(player) method.
-    # - Implementation:
-    #   - Use player position to determine whether to press left or right.
-    #     - And change instructions object accordingly.
-    #   - Set the player velocity to zero, if needed.
+    if global.NAVIGATOR_STATE.forces_player_position_to_match_edge_at_start:
+        player.position = edge.start
+    if global.NAVIGATOR_STATE.forces_player_velocity_to_match_edge_at_start:
+        player.velocity = Vector2.ZERO
+
+    edge.update_for_player_state(player)
     
     current_edge_playback = instructions_action_source.start_instructions( \
             edge.instructions, global.elapsed_play_time_sec)
@@ -206,7 +206,7 @@ func update() -> void:
 
 func _update_edge_navigation_state() -> void:
     var is_grabbed_surface_expected: bool = \
-            surface_state.grabbed_surface == current_edge.end.surface
+            surface_state.grabbed_surface == current_edge.end_position_along_surface.surface
     var is_moving_along_intra_surface_edge := \
             surface_state.is_grabbing_a_surface and is_grabbed_surface_expected
     # FIXME: E: Add support for walking into a wall and climbing up it.
@@ -215,7 +215,7 @@ func _update_edge_navigation_state() -> void:
     just_entered_air_unexpectedly = \
             surface_state.just_entered_air and !is_expecting_to_enter_air
     just_landed_on_expected_surface = surface_state.just_left_air and \
-            surface_state.grabbed_surface == current_edge.end.surface
+            surface_state.grabbed_surface == current_edge.end_position_along_surface.surface
     just_interrupted_by_user_action = UserActionSource.get_is_some_user_action_pressed()
     just_interrupted_navigation = just_collided_unexpectedly or just_entered_air_unexpectedly or \
             just_interrupted_by_user_action
@@ -224,7 +224,7 @@ func _update_edge_navigation_state() -> void:
         is_expecting_to_enter_air = false
     
     if is_moving_along_intra_surface_edge:
-        var target_point: Vector2 = current_edge.end.target_point
+        var target_point: Vector2 = current_edge.end
         var was_less_than_end: bool
         var is_less_than_end: bool
         if surface_state.is_grabbing_wall:

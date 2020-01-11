@@ -4,7 +4,7 @@ extends TestBed
 # https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
 
 var vertical_step: MovementVertCalcStep
-var target_position: Vector2
+var target_point: Vector2
 var upcoming_constraint: MovementConstraint
 var destination_surface: Surface
 
@@ -20,7 +20,7 @@ func set_up(state := {}) -> void:
     vertical_step.position_instruction_end = Vector2(INF, state.position_instruction_end_y)
     vertical_step.velocity_instruction_end = Vector2(INF, state.velocity_instruction_end_y)
     
-    target_position = Vector2(INF, state.target_position_y)
+    target_point = Vector2(INF, state.target_position_y)
     
     var surface := Surface.new([Vector2.INF], state.surface_side, [INF])
     
@@ -49,7 +49,7 @@ func test_floor_with_constraint() -> void:
     var expected := 0.67745966692414833
     
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
-            vertical_step, target_position, upcoming_constraint, destination_surface)
+            vertical_step, target_point, upcoming_constraint, destination_surface)
 
     assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
 
@@ -69,7 +69,7 @@ func test_floor_without_constraint() -> void:
     var expected := 0.67745966692414833
     
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
-            vertical_step, target_position, upcoming_constraint, destination_surface)
+            vertical_step, target_point, upcoming_constraint, destination_surface)
 
     assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
 
@@ -89,7 +89,7 @@ func test_ceiling_before_releasing_jump_button() -> void:
     var expected := 0.10495720687362033
     
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
-            vertical_step, target_position, upcoming_constraint, destination_surface)
+            vertical_step, target_point, upcoming_constraint, destination_surface)
 
     assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
 
@@ -110,7 +110,7 @@ func test_ceiling_after_releasing_jump_button() -> void:
 
     
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
-            vertical_step, target_position, upcoming_constraint, destination_surface)
+            vertical_step, target_point, upcoming_constraint, destination_surface)
 
     assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
 
@@ -130,7 +130,7 @@ func test_left_wall_with_should_stay_on_min_side_before_releasing() -> void:
     var expected := 0.10495720687362033
     
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
-            vertical_step, target_position, upcoming_constraint, destination_surface)
+            vertical_step, target_point, upcoming_constraint, destination_surface)
 
     assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
 
@@ -150,7 +150,7 @@ func test_left_wall_with_should_stay_on_min_side_after_releasing() -> void:
     var expected := 0.522540333075851664
     
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
-            vertical_step, target_position, upcoming_constraint, destination_surface)
+            vertical_step, target_point, upcoming_constraint, destination_surface)
 
     assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
 
@@ -170,7 +170,7 @@ func test_left_wall_without_should_stay_on_min_side() -> void:
     var expected := 0.67745966692414833
     
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
-            vertical_step, target_position, upcoming_constraint, destination_surface)
+            vertical_step, target_point, upcoming_constraint, destination_surface)
 
     assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
 
@@ -190,7 +190,7 @@ func test_left_wall_without_constraint() -> void:
     var expected := 0.67745966692414833
     
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
-            vertical_step, target_position, upcoming_constraint, destination_surface)
+            vertical_step, target_point, upcoming_constraint, destination_surface)
 
     assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
 
@@ -210,6 +210,6 @@ func test_right_wall_without_constraint() -> void:
     var expected := 0.67745966692414833
     
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
-            vertical_step, target_position, upcoming_constraint, destination_surface)
+            vertical_step, target_point, upcoming_constraint, destination_surface)
 
     assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)

@@ -2,12 +2,27 @@
 extends Reference
 class_name Edge
 
+var start: Vector2 setget ,_get_start
+var end: Vector2 setget ,_get_end
+
 var instructions: MovementInstructions
 
 var weight: float setget ,_get_weight
 
 func _init(instructions: MovementInstructions) -> void:
     self.instructions = instructions
+
+func update_for_player_state(player) -> void:
+    # Do nothing unless the sub-class implements this.
+    pass
+
+func _get_start() -> Vector2:
+    Utils.error("Abstract Edge._get_start is not implemented")
+    return Vector2.INF
+
+func _get_end() -> Vector2:
+    Utils.error("Abstract Edge._get_end is not implemented")
+    return Vector2.INF
 
 func _get_weight() -> float:
     return instructions.distance_squared

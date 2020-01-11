@@ -2,13 +2,19 @@
 extends Edge
 class_name AirToAirEdge
 
-var start: Vector2
-var end: Vector2
+var _start: Vector2
+var _end: Vector2
 
 func _init(start: Vector2, end: Vector2) \
         .(_calculate_instructions(start, end)) -> void:
-    self.start = start
-    self.end = end
+    self._start = start
+    self._end = end
+
+func _get_start() -> Vector2:
+    return _start
+
+func _get_end() -> Vector2:
+    return _end
 
 # TODO: Implement this
 
@@ -19,7 +25,7 @@ func _get_class_name() -> String:
     return "AirToAirEdge"
 
 func _get_start_string() -> String:
-    return String(start)
+    return String(_start)
 
 func _get_end_string() -> String:
-    return String(end)
+    return String(_end)
