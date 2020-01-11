@@ -125,12 +125,12 @@ func _start_edge(edge: Edge) -> void:
             edge.to_string_with_newlines(1), \
         ]
     print(format_string_template % format_string_arguments)
-
+    
     if global.NAVIGATOR_STATE.forces_player_position_to_match_edge_at_start:
         player.position = edge.start
     if global.NAVIGATOR_STATE.forces_player_velocity_to_match_edge_at_start:
         player.velocity = Vector2.ZERO
-
+    
     edge.update_for_player_state(player)
     
     current_edge_playback = instructions_action_source.start_instructions( \

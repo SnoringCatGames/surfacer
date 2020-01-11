@@ -242,20 +242,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # ---  ---
 # 
-# - Loading screen
-#   - While downloading, and while parsing level graph
-#   - Hand-animated pixel art
-#   - Simple GIF file
-#   - Host/load/show separately from the rest of the JavaScript and assets
-#   - Squirrels digging-up/eating tulips
-# 
-# - Welcome screen
-#   - Hand-animated pixel art
-#   - Gratuitous whooshy sliding shine and a sparkle at the end
-#   - With squirrels running and climbing over the letters?
-# 
-# ---  ---
-# 
 # - Finish remaining surface-closest-point-jump-off calculation cases.
 #   - Also, maybe still not quite far enough with the offset?
 # - Fix any remaining Navigator movement issues.
@@ -306,6 +292,24 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # - Update README.
 # 
+# ---  ---
+# 
+# - Loading screen
+#   - While downloading, and while parsing level graph
+#   - Hand-animated pixel art
+#   - Simple GIF file
+#   - Host/load/show separately from the rest of the JavaScript and assets
+#   - Squirrels digging-up/eating tulips
+# 
+# - Welcome screen
+#   - Hand-animated pixel art
+#   x- Gratuitous whooshy sliding shine and a sparkle at the end
+#   x- With squirrels running and climbing over the letters?
+#   >- Approach:
+#     - Start simple. Pick font. Render in Inkscape. Create a hand-pixel-drawn copy in Aseprite.
+#     - V1: Show "Squirrel Away" text. Animate squirrel running across, right to left, in front of letters.
+#     - V2: Have squirrel pause to the left of the S, with its tail overlapping the S. Give a couple tail twitches. Then have squirrel leave.
+#     
 # --- Expected cut-off for demo date ---
 # 
 # - Add some extra improvements to check_frame_for_collision:
