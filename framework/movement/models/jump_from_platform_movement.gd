@@ -221,9 +221,11 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # ---  ---
 # 
-# - Update edge calculations to use different velocity_start_x/y when jumping from a wall.
 # - Fix instructions/navigator to ensure that the sideways input is not released until after
 #   hitting, and _grabbing_, the wall (when jumping to a wall).
+# 
+# - Fix frame collision detection...
+#   - Seeing pre-existing collisions when jumping from walls.
 # 
 # ---  ---
 # 
@@ -233,12 +235,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # - Fix some constraint calc logic for the case of starting a new navigation while in the air
 #   (origin does not correspond to a surface, or to an x-velocity in the expected direction)
 #   (currently breaks assertion at the end of _update_constraint_velocity_and_time).
-# 
-# ---  ---
-# 
-# - Add squirrel assets and animation.
-#   - Decide whether there's anything I want to change about the art style, aliasing, etc. with
-#     player animations in general.
 # 
 # ---  ---
 # 
@@ -291,6 +287,21 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - 
 # 
 # - Update README.
+# 
+# ---  ---
+# 
+# - Add squirrel assets and animation.
+#   - Start by copying-over the Piskel squirrel animation art.
+#   - Create squirrel parts art in Aseprite.
+#   - Create squirrel animation key frames in Godot.
+#     - Idle, standing
+#     - Idle, climbing
+#     - Crawl-walk-sniff
+#     - Bounding walk
+#     - Climbing up
+#     - Climbing down (just run climbing-up in reverse? Probably want to bound down, facing down,
+#       as opposed to cat. Will make transition weird, but whatever?)
+#     - 
 # 
 # ---  ---
 # 
@@ -384,7 +395,6 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
     params.gravity_slow_rise *= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
-    var velocity_start := Vector2(0.0, params.jump_boost)
     var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(params)
     
     for b in possible_surfaces:
@@ -461,12 +471,12 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 
                 terminals = MovementConstraintUtils.create_terminal_constraints(a, \
                         jump_position.target_point, b, land_position.target_point, params, \
-                        velocity_start, true)
+                        true)
                 if terminals.empty():
                     continue
                 
                 overall_calc_params = MovementCalcOverallParams.new(params, space_state, \
-                        surface_parser, velocity_start, terminals[0], terminals[1])
+                        surface_parser, terminals[0], terminals[1])
                 
                 ###################################################################################
                 # Record some extra debug state when we're limiting calculations to a single edge.
@@ -498,16 +508,15 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
 func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
         surface_parser: SurfaceParser, position_start: PositionAlongSurface, \
         position_end: Vector2) -> MovementInstructions:
-    var velocity_start := Vector2(0.0, params.jump_boost)
     var constraint_offset := MovementCalcOverallParams.calculate_constraint_offset(params)
     
     var terminals := MovementConstraintUtils.create_terminal_constraints(position_start.surface, \
-            position_start.target_point, null, position_end, params, velocity_start, true)
+            position_start.target_point, null, position_end, params, true)
     if terminals.empty():
         null
     
     var overall_calc_params := MovementCalcOverallParams.new(params, space_state, surface_parser, \
-            velocity_start, terminals[0], terminals[1])
+            terminals[0], terminals[1])
     
     return calculate_jump_instructions(overall_calc_params)
 

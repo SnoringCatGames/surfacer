@@ -79,7 +79,6 @@ func _calculate_edge_attempt() -> void:
     var space_state := get_world_2d().direct_space_state
     var level = global.current_level
     var surface_parser: SurfaceParser = level.surface_parser
-    var velocity_start := Vector2(0.0, movement_params.jump_boost)
     
     # Choose the jump and land positions according to which is closest to the click positions.
     var jump_positions := MovementUtils.get_all_jump_positions_from_surface( \
@@ -106,11 +105,11 @@ func _calculate_edge_attempt() -> void:
     # Create the edge start and end constraints for the given jump and land positions.
     var terminals := MovementConstraintUtils.create_terminal_constraints(origin_surface, \
             jump_position.target_point, destination_surface, land_position.target_point, \
-            movement_params, velocity_start, true, true)
+            movement_params, true, Vector2.INF, true)
     
     # Create the jump-calculation parameter object.
     var overall_calc_params := MovementCalcOverallParams.new(movement_params, space_state, \
-            surface_parser, velocity_start, terminals[0], terminals[1], true)
+            surface_parser, terminals[0], terminals[1], Vector2.INF, true)
     overall_calc_params.in_debug_mode = true
     
     if terminals[0].is_valid and terminals[1].is_valid:

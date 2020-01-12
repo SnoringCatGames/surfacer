@@ -62,7 +62,7 @@ func _create_movement_params() -> MovementParams:
 #    movement_params.jump_boost = -1000.0
 #    movement_params.in_air_horizontal_acceleration = 3200.0
 #    movement_params.max_jump_chain = 2
-#    movement_params.wall_jump_horizontal_multiplier = 0.5
+#    movement_params.wall_jump_horizontal_boost = 400.0
 #
 #    movement_params.walk_acceleration = 350.0
 #    movement_params.climb_up_speed = -350.0
@@ -107,7 +107,7 @@ func _create_movement_params() -> MovementParams:
     movement_params.jump_boost = -1000.0
     movement_params.in_air_horizontal_acceleration = 1500.0
     movement_params.max_jump_chain = 2
-    movement_params.wall_jump_horizontal_multiplier = 0.5
+    movement_params.wall_jump_horizontal_boost = 400.0
     
     movement_params.walk_acceleration = 350.0
     movement_params.climb_up_speed = -350.0

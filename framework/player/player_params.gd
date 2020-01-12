@@ -25,9 +25,16 @@ func _init(name: String, player_resource_path: String, global) -> void:
     _movement_params.time_to_max_upward_jump_distance = \
             MovementUtils.calculate_movement_duration(-_movement_params.max_upward_jump_distance, \
                     _movement_params.jump_boost, _movement_params.gravity_slow_rise)
-    _movement_params.max_horizontal_jump_distance = \
+    _movement_params.floor_jump_max_horizontal_jump_distance = \
             HorizontalMovementUtils.calculate_max_horizontal_displacement( \
-                    _movement_params, _movement_params.jump_boost)
+                    0.0, _movement_params.jump_boost, \
+                    _movement_params.max_horizontal_speed_default, \
+                    _movement_params.gravity_slow_rise, _movement_params.gravity_fast_fall)
+    _movement_params.wall_jump_max_horizontal_jump_distance = \
+            HorizontalMovementUtils.calculate_max_horizontal_displacement( \
+                    _movement_params.wall_jump_horizontal_boost, _movement_params.jump_boost, \
+                    _movement_params.max_horizontal_speed_default, \
+                    _movement_params.gravity_slow_rise, _movement_params.gravity_fast_fall)
     _check_movement_params(_movement_params)
     _movement_types = _create_movement_types(_movement_params)
     
@@ -70,7 +77,9 @@ func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.jump_boost <= 0)
     assert(movement_params.in_air_horizontal_acceleration >= 0)
     assert(movement_params.max_jump_chain >= 0)
-    assert(movement_params.wall_jump_horizontal_multiplier >= 0)
+    assert(movement_params.wall_jump_horizontal_boost >= 0 and \
+            movement_params.wall_jump_horizontal_boost <= \
+            movement_params.max_horizontal_speed_default)
     assert(movement_params.walk_acceleration >= 0)
     assert(movement_params.climb_up_speed <= 0)
     assert(movement_params.climb_down_speed >= 0)

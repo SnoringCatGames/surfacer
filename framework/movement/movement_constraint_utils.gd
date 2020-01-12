@@ -11,8 +11,12 @@ const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULT
 
 static func create_terminal_constraints(origin_surface: Surface, origin_position: Vector2, \
         destination_surface: Surface, destination_position: Vector2, \
-        movement_params: MovementParams, velocity_start: Vector2, \
-        can_hold_jump_button: bool, returns_invalid_constraints := false) -> Array:
+        movement_params: MovementParams, can_hold_jump_button: bool, \
+        velocity_start := Vector2.INF, returns_invalid_constraints := false) -> Array:
+    assert(origin_surface != null or velocity_start != Vector2.INF)
+    if velocity_start == Vector2.INF:
+        velocity_start = movement_params.get_jump_initial_velocity(origin_surface.side)
+    
     var origin_passing_vertically := \
             origin_surface.normal.x == 0 if origin_surface != null else true
     var destination_passing_vertically := \
@@ -244,7 +248,7 @@ static func update_constraint(constraint: MovementConstraint, \
     assert(additional_high_constraint_position == Vector2.INF or constraint.is_destination)
     assert(vertical_step != null or additional_high_constraint_position == Vector2.INF)
     
-    _assign_horizontal_movement_sign(constraint)
+    _assign_horizontal_movement_sign(constraint, velocity_start_origin)
     
     var is_a_horizontal_surface := constraint.surface != null and constraint.surface.normal.x == 0
     var is_a_fake_constraint := constraint.surface != null and \
@@ -555,7 +559,8 @@ static func _calculate_time_to_reach_destination_from_new_constraint( \
     
     return max(time_to_reach_horizontal_displacement, time_to_reach_fall_displacement)
 
-static func _assign_horizontal_movement_sign(constraint: MovementConstraint) -> void:
+static func _assign_horizontal_movement_sign(constraint: MovementConstraint, \
+        velocity_start_origin: Vector2) -> void:
     var previous_constraint := constraint.previous_constraint
     var next_constraint := constraint.next_constraint
     var is_origin := constraint.is_origin
@@ -587,24 +592,24 @@ static func _assign_horizontal_movement_sign(constraint: MovementConstraint) -> 
             # picking the horizontal movement direction, so just default to rightward for now.
             1))
     
-    var horizontal_movement_sign_from_surface: int
+    var horizontal_movement_sign: int
     if is_origin:
-        horizontal_movement_sign_from_surface = \
-                1 if surface != null and surface.side == SurfaceSide.LEFT_WALL else \
-                (-1 if surface != null and surface.side == SurfaceSide.RIGHT_WALL else \
+        horizontal_movement_sign = \
+                1 if velocity_start_origin.x > 0 else \
+                (-1 if velocity_start_origin.x < 0 else \
                 horizontal_movement_sign_from_displacement)
     elif is_destination:
-        horizontal_movement_sign_from_surface = \
+        horizontal_movement_sign = \
                 -1 if surface != null and surface.side == SurfaceSide.LEFT_WALL else \
                 (1 if surface != null and surface.side == SurfaceSide.RIGHT_WALL else \
                 horizontal_movement_sign_from_displacement)
     else:
-        horizontal_movement_sign_from_surface = \
+        horizontal_movement_sign = \
                 -1 if surface.side == SurfaceSide.LEFT_WALL else \
                 (1 if surface.side == SurfaceSide.RIGHT_WALL else \
                 (-1 if constraint.should_stay_on_min_side else 1))
     
-    constraint.horizontal_movement_sign = horizontal_movement_sign_from_surface
+    constraint.horizontal_movement_sign = horizontal_movement_sign
     constraint.horizontal_movement_sign_from_displacement = \
             horizontal_movement_sign_from_displacement
 

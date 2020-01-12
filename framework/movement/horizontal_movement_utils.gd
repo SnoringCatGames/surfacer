@@ -236,26 +236,29 @@ static func calculate_horizontal_state_for_time(movement_params: MovementParams,
     return [position, velocity]
 
 static func calculate_max_horizontal_displacement( \
-        movement_params: MovementParams, velocity_start_y: float) -> float:
+        velocity_start_x: float, velocity_start_y: float, max_horizontal_speed_default: float, \
+        gravity_slow_rise: float, gravity_fast_fall: float) -> float:
+    # FIXME: D: Use velocity_start_x, and account for acceleration, in order to further limit the
+    #           displacement.
     # FIXME: F: Add support for double jumps, dash, etc.
     # FIXME: A: Add horizontal acceleration
     
     # v = v_0 + a*t
-    var max_time_to_peak := -velocity_start_y / movement_params.gravity_slow_rise
+    var max_time_to_peak := -velocity_start_y / gravity_slow_rise
     # s = s_0 + v_0*t + 0.5*a*t*t
     var max_peak_height := velocity_start_y * max_time_to_peak + \
-            0.5 * movement_params.gravity_slow_rise * max_time_to_peak * max_time_to_peak
+            0.5 * gravity_slow_rise * max_time_to_peak * max_time_to_peak
     # v^2 = v_0^2 + 2*a*(s - s_0)
     var max_velocity_when_returning_to_starting_height := \
-            sqrt(2 * movement_params.gravity_fast_fall * -max_peak_height)
+            sqrt(2 * gravity_fast_fall * -max_peak_height)
     # v = v_0 + a*t
     var max_time_for_descent_from_peak_to_starting_height := \
-            max_velocity_when_returning_to_starting_height / movement_params.gravity_fast_fall
+            max_velocity_when_returning_to_starting_height / gravity_fast_fall
     # Ascent time plus descent time.
     var max_time_to_starting_height := \
             max_time_to_peak + max_time_for_descent_from_peak_to_starting_height
     # s = s_0 + v * t
-    return max_time_to_starting_height * movement_params.max_horizontal_speed_default
+    return max_time_to_starting_height * max_horizontal_speed_default
 
 static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: float, \
         duration: float, velocity_start: float, min_velocity_end_for_valid_next_step: float, \

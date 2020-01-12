@@ -207,8 +207,8 @@ func update() -> void:
 func _update_edge_navigation_state() -> void:
     var is_grabbed_surface_expected: bool = \
             surface_state.grabbed_surface == current_edge.end_position_along_surface.surface
-    var is_moving_along_intra_surface_edge := \
-            surface_state.is_grabbing_a_surface and is_grabbed_surface_expected
+    var is_moving_along_intra_surface_edge := surface_state.is_grabbing_a_surface and \
+            is_grabbed_surface_expected and !surface_state.just_left_air
     # FIXME: E: Add support for walking into a wall and climbing up it.
     just_collided_unexpectedly = surface_state.just_left_air and \
             !is_grabbed_surface_expected and player.surface_state.collision_count > 0

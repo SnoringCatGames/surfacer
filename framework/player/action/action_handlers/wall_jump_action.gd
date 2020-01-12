@@ -19,8 +19,7 @@ func process(player: Player) -> bool:
         # Give a little boost to get the player away from the wall, so they can still be
         # pushing themselves into the wall when they start the jump.
         player.velocity.x = -player.surface_state.toward_wall_sign * \
-                player.movement_params.in_air_horizontal_acceleration * \
-                player.movement_params.wall_jump_horizontal_multiplier
+                player.movement_params.wall_jump_horizontal_boost
         
         return true
     else:

@@ -325,12 +325,12 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         
         for position_end in possible_end_positions:
             terminals = MovementConstraintUtils.create_terminal_constraints(null, origin, \
-                    surface, position_end.target_point, movement_params, velocity_start, false)
+                    surface, position_end.target_point, movement_params, false)
             if terminals.empty():
                 continue
             
             overall_calc_params = MovementCalcOverallParams.new(movement_params, space_state, \
-                    surface_parser, velocity_start, terminals[0], terminals[1], false)
+                    surface_parser, terminals[0], terminals[1], Vector2.INF, false)
             
             vertical_step = VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
             if vertical_step == null:
@@ -355,8 +355,10 @@ func find_surfaces_in_fall_range( \
     # This offset should account for the extra horizontal range before the player has reached
     # terminal velocity.
     var start_position_offset_x: float = \
-            HorizontalMovementUtils.calculate_max_horizontal_displacement(movement_params, \
-                    velocity_start.y)
+            HorizontalMovementUtils.calculate_max_horizontal_displacement( \
+                    velocity_start.x, velocity_start.y, \
+                    movement_params.max_horizontal_speed_default, \
+                    movement_params.gravity_slow_rise, movement_params.gravity_fast_fall)
     var start_position_offset := Vector2(start_position_offset_x, 0.0)
     var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
     var bottom_corner_offset_from_top_corner := Vector2(100000.0, 100000.0 * slope)
@@ -372,7 +374,7 @@ func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Array:
     # TODO: Update this to support falling from the center of fall-through surfaces (consider the
     #       whole surface, rather than just the ends).
     
-    var velocity_start := Vector2(0.0, movement_params.jump_boost)
+    var velocity_start := movement_params.get_jump_initial_velocity(origin_surface.side)
     
     var result_set := {}
     
@@ -381,8 +383,10 @@ func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Array:
     if origin_surface.vertices.size() > 1:
         find_surfaces_in_fall_range(result_set, origin_surface.last_point, velocity_start)
     
+    var max_horizontal_jump_distance := \
+            movement_params.get_max_horizontal_jump_distance(origin_surface.side)
     _get_surfaces_in_jump_range(result_set, origin_surface, surfaces, \
-            movement_params.max_horizontal_jump_distance, movement_params.max_upward_jump_distance)
+            max_horizontal_jump_distance, movement_params.max_upward_jump_distance)
     
     return result_set.keys()
 

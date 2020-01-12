@@ -20,7 +20,7 @@ var ascent_double_jump_gravity_multiplier: float
 var jump_boost: float
 var in_air_horizontal_acceleration: float
 var max_jump_chain: int
-var wall_jump_horizontal_multiplier: float
+var wall_jump_horizontal_boost: float
 
 var walk_acceleration: float
 var climb_up_speed: float
@@ -44,8 +44,31 @@ var dash_duration: float
 var dash_fade_duration: float
 var dash_cooldown: float
 
-var max_horizontal_jump_distance: float
+var floor_jump_max_horizontal_jump_distance: float
+var wall_jump_max_horizontal_jump_distance: float
 var max_upward_jump_distance: float
 var time_to_max_upward_jump_distance: float
 
 var friction_multiplier: float
+
+func get_max_horizontal_jump_distance(surface_side: int) -> float:
+    return wall_jump_max_horizontal_jump_distance if \
+            surface_side == SurfaceSide.LEFT_WALL or \
+            surface_side == SurfaceSide.RIGHT_WALL else \
+            floor_jump_max_horizontal_jump_distance
+
+func get_jump_initial_velocity(surface_side: int) -> Vector2:
+    # Initial velocity when jumping from a wall is slightly outward from the wall.
+    var velocity_start_x := INF
+    match surface_side:
+        SurfaceSide.LEFT_WALL:
+            velocity_start_x = wall_jump_horizontal_boost
+        SurfaceSide.RIGHT_WALL:
+            velocity_start_x = -wall_jump_horizontal_boost
+        SurfaceSide.FLOOR:
+            velocity_start_x = 0.0
+        SurfaceSide.CEILING:
+            velocity_start_x = 0.0
+        _:
+            Utils.error()
+    return Vector2(velocity_start_x, jump_boost)

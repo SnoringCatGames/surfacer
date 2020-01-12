@@ -44,9 +44,13 @@ var debug_state: MovementCalcOverallDebugState
 var in_debug_mode: bool setget _set_in_debug_mode,_get_in_debug_mode
 
 func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceState, \
-            surface_parser: SurfaceParser, velocity_start: Vector2, \
-            origin_constraint: MovementConstraint, destination_constraint: MovementConstraint, \
+            surface_parser: SurfaceParser, origin_constraint: MovementConstraint, \
+            destination_constraint: MovementConstraint, velocity_start := Vector2.INF, \
             can_backtrack_on_height := true) -> void:
+    assert(origin_constraint.surface != null or velocity_start != Vector2.INF)
+    if velocity_start == Vector2.INF:
+        velocity_start = movement_params.get_jump_initial_velocity(origin_constraint.surface.side)
+    
     self.movement_params = movement_params
     self.space_state = space_state
     self.surface_parser = surface_parser
