@@ -99,6 +99,8 @@ func _set_reached_destination() -> void:
     current_edge_index = -1
     current_edge_playback = null
     instructions_action_source.cancel_all_playback()
+    
+    print("Reached end of path:      %8.3f" % [global.elapsed_play_time_sec])
 
 func reset() -> void:
     current_path = null

@@ -70,6 +70,11 @@ func _draw_step_tree_item(step_attempt: MovementCalcStepDebugState, parent_tree_
 
 func _on_step_tree_item_selected() -> void:
     var selected_tree_item := step_tree_view.get_selected()
+    
+    if !tree_item_to_step_attempt.has(selected_tree_item):
+        Utils.error("Invalid tree-view item state")
+        return
+    
     var selected_step_attempt: MovementCalcStepDebugState = \
             tree_item_to_step_attempt[selected_tree_item]
     if selected_step_attempt != null:

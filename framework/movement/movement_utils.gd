@@ -274,7 +274,8 @@ static func get_all_jump_positions_from_surface(movement_params: MovementParams,
                     # We can use any point along the target surface.
                     closest_point_on_source = Geometry.get_closest_point_on_polyline_to_polyline( \
                             source_surface.vertices, target_vertices)
-        elif source_surface.side == SurfaceSide.LEFT_WALL or source_surface.side == SurfaceSide.RIGHT_WALL:
+        elif source_surface.side == SurfaceSide.LEFT_WALL or \
+                source_surface.side == SurfaceSide.RIGHT_WALL:
             # FIXME: --------------
             pass
         else: # source_surface.side == SurfaceSide.CEILING

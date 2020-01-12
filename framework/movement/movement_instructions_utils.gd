@@ -30,7 +30,8 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 # that is more useful when executing the movement.
 static func convert_calculation_steps_to_movement_instructions( \
         position_start: Vector2, position_end: Vector2, \
-        calc_results: MovementCalcResults, includes_jump := true) -> MovementInstructions:
+        calc_results: MovementCalcResults, includes_jump: bool, \
+        destination_side: int) -> MovementInstructions:
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
     
@@ -58,6 +59,19 @@ static func convert_calculation_steps_to_movement_instructions( \
         
         # Keep track of some info for edge annotation debugging.
         constraint_positions.push_back(step.position_step_end)
+    
+    if destination_side == SurfaceSide.LEFT_WALL or destination_side == SurfaceSide.RIGHT_WALL:
+        # When landing on a wall, make sure we are pressing into the wall when we land (otherwise,
+        # we won't grab on).
+        
+        var last_step: MovementCalcStep = steps[steps.size() - 1]
+        # FIXME: B: Consider delaying when we start pressing into the wall, in order to not affect
+        #           the horizontal speed too much.
+        var time_step_start := last_step.time_instruction_end + \
+                MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
+        input_key = "move_left" if destination_side == SurfaceSide.LEFT_WALL else "move_right"
+        press = MovementInstruction.new(input_key, time_step_start, true)
+        instructions.push_back(press)
     
     # Record the jump instruction.
     if includes_jump:
@@ -94,7 +108,6 @@ static func _concatenate_step_frame_positions(steps: Array) -> PoolVector2Array:
 static func test_instructions(instructions: MovementInstructions, \
         overall_calc_params: MovementCalcOverallParams, calc_results: MovementCalcResults) -> bool:
     assert(instructions.instructions.size() > 0)
-    assert(instructions.instructions.size() % 2 == 0)
     
     assert(instructions.instructions[0].time == 0.0)
     

@@ -221,16 +221,12 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # ---  ---
 # 
-# - Fix instructions/navigator to ensure that the sideways input is not released until after
-#   hitting, and _grabbing_, the wall (when jumping to a wall).
-# 
-# - Fix frame collision detection...
-#   - Seeing pre-existing collisions when jumping from walls.
-# 
-# ---  ---
+# - Make edge playback continue until actually reaching destination, rather than just ending at calculated time.
 # 
 # - Add support for specifying required end x-velocity (and y direction).
 #   - Use this for edges that end on walls.
+# 
+# - Fix issue where jumping around edge isn't going far enough. It's clippinng the corner.
 # 
 # - Fix some constraint calc logic for the case of starting a new navigation while in the air
 #   (origin does not correspond to a surface, or to an x-velocity in the expected direction)
@@ -240,18 +236,25 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # - Finish remaining surface-closest-point-jump-off calculation cases.
 #   - Also, maybe still not quite far enough with the offset?
+# 
 # - Fix any remaining Navigator movement issues.
 # - Fix performance.
 #   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
 #     up passing them around as arguments to functions, to they get copied as values...
+# 
 # - Debug why this edge calculation generates 35 steps...
 #   - test_level_long_rise
 #   - from top-most floor to bottom-most (wide) floor, on the right side
-# - Fix collision-detection errors from logs.
+# 
+# - Fix frame collision detection...
+#   - Seeing pre-existing collisions when jumping from walls.
+#   - Fix collision-detection errors from logs.
+# 
+# ---  ---
 # 
 # - Update navigation to do some additional on-the-fly edge calculations.
 #   - Only limit this to a few additional potential edges along the path.
-#   - The idea is that the edges tend to produce very unnatural composite trajectories (similary to
+#   - The idea is that the edges tend to produce very unnatural composite trajectories (similar to
 #     using perpendicular Manhatten distance routes instead of more diagonal routes).
 #   >- Basically, try jumping from earlier on any given surface.
 #     - It may be hard to know exactly where along a surface to try jumping from though...
@@ -276,6 +279,8 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #   - We could probably actually do an even better job by limiting the range for velocity_start_x
 #     for floor-surface-end-jump-off-points to be between either -max_horizontal_speed_default and
 #     0 or 0 and max_horizontal_speed_default.
+# 
+# ---  ---
 # 
 # - Put together some illustrative screenshots with special one-off annotations to explain the
 #   graph parsing steps.
@@ -536,7 +541,8 @@ static func calculate_jump_instructions( \
     var instructions: MovementInstructions = \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                     overall_calc_params.origin_constraint.position, \
-                    overall_calc_params.destination_constraint.position, calc_results)
+                    overall_calc_params.destination_constraint.position, calc_results, true, \
+                    overall_calc_params.destination_constraint.surface.side)
     
     if Utils.IN_DEV_MODE:
         MovementInstructionsUtils.test_instructions(instructions, overall_calc_params, calc_results)

@@ -155,11 +155,19 @@ func _physics_process(delta: float) -> void:
                 surface_state.previous_grabbed_surface.to_string(), \
             ])
     elif surface_state.just_touched_a_surface:
-        print("TOUCHED    :%8s;%8.3f;%29sP;%29sV" % [ \
+        var side_str: String
+        if surface_state.is_touching_floor:
+            side_str = "FLOOR"
+        elif surface_state.is_touching_ceiling:
+            side_str = "CEILING"
+        else:
+            side_str = "WALL"
+        print("TOUCHED    :%8s;%8.3f;%29sP;%29sV; %s" % [ \
                 player_name, \
                 global.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
+                side_str, \
             ])
     
     if navigator:
