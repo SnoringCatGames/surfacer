@@ -19,8 +19,8 @@ func _get_end() -> Vector2:
 static func _calculate_instructions( \
         position_start: Vector2, position_end: PositionAlongSurface, \
         calc_results: MovementCalcResults) -> MovementInstructions:
-    return MovementUtils.convert_calculation_steps_to_movement_instructions( \
-            position_start, position_end.target_point, calc_results, true, \
+    return MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+            position_start, position_end.target_point, calc_results, false, \
             position_end.surface.side)
 
 func _get_class_name() -> String:

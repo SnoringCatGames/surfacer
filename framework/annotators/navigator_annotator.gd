@@ -27,17 +27,13 @@ func check_for_update() -> void:
 func _draw_path(canvas: CanvasItem, path: PlatformGraphPath) -> void:
     for edge in path.edges:
         # Draw edge start position.
-        if edge.start_position_along_surface != null:
-            DrawUtils.draw_position_along_surface(canvas, edge.start_position_along_surface, \
-                    NODE_COLOR, NODE_COLOR, NODE_TARGET_POINT_RADIUS, NODE_T_LENGTH, \
-                    NODE_T_WIDTH, true, true, false)
-        else:
-            DrawUtils.draw_position_along_surface(canvas, edge.start, NODE_COLOR, \
-                    NODE_COLOR, NODE_TARGET_POINT_RADIUS, NODE_T_LENGTH, \
-                    NODE_T_WIDTH, true, true, false)
+        canvas.draw_circle(edge.start, NODE_TARGET_POINT_RADIUS, NODE_COLOR)
         
         # Draw edge.
-        if edge is InterSurfaceEdge:
+        if edge is InterSurfaceEdge or \
+                edge is AirToSurfaceEdge or \
+                edge is AirToAirEdge or \
+                edge is SurfaceToAirEdge:
             draw_polyline(edge.instructions.frame_discrete_positions_from_test, EDGE_COLOR, \
                     TRAJECTORY_WIDTH)
         elif edge is IntraSurfaceEdge:

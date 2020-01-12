@@ -221,14 +221,11 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # ---  ---
 # 
-# - Add support for specifying required end x-velocity (and y direction).
-#   - Use this for edges that end on walls.
-# 
-# - Fix issue where jumping around edge isn't going far enough. It's clippinng the corner.
-# 
 # - Fix some constraint calc logic for the case of starting a new navigation while in the air
 #   (origin does not correspond to a surface, or to an x-velocity in the expected direction)
 #   (currently breaks assertion at the end of _update_constraint_velocity_and_time).
+# 
+# - Fix issue where jumping around edge isn't going far enough. It's clipping the corner.
 # 
 # ---  ---
 # 

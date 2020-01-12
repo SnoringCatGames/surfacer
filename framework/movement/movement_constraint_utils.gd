@@ -32,6 +32,9 @@ static func create_terminal_constraints(origin_surface: Surface, origin_position
     destination.is_destination = true
     destination.previous_constraint = origin
     
+    # FIXME: B: Consider adding support for specifying required end x-velocity (and y direction)?
+    #           For hitting walls.
+    
     update_constraint(origin, origin, movement_params, velocity_start, can_hold_jump_button, \
             null, Vector2.INF)
     update_constraint(destination, origin, movement_params, velocity_start, can_hold_jump_button, \

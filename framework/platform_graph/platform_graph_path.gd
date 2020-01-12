@@ -15,12 +15,12 @@ func _init(edges: Array) -> void:
     self.destination = edges.back().end
 
 func push_front(edge: Edge) -> void:
-    assert(Geometry.are_points_equal_with_epsilon(edge.end, origin.target_point))
+    assert(Geometry.are_points_equal_with_epsilon(edge.end, origin))
     self.edges.push_front(edge)
     self.origin = edge.start
 
 func push_back(edge: Edge) -> void:
-    assert(Geometry.are_points_equal_with_epsilon(edge.start, destination.target_point))
+    assert(Geometry.are_points_equal_with_epsilon(edge.start, destination))
     self.edges.push_back(edge)
     self.destination = edge.end
 

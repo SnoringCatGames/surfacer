@@ -325,12 +325,12 @@ func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
         
         for position_end in possible_end_positions:
             terminals = MovementConstraintUtils.create_terminal_constraints(null, origin, \
-                    surface, position_end.target_point, movement_params, false)
+                    surface, position_end.target_point, movement_params, false, velocity_start)
             if terminals.empty():
                 continue
             
             overall_calc_params = MovementCalcOverallParams.new(movement_params, space_state, \
-                    surface_parser, terminals[0], terminals[1], Vector2.INF, false)
+                    surface_parser, terminals[0], terminals[1], velocity_start, false)
             
             vertical_step = VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
             if vertical_step == null:
