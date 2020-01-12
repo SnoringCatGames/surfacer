@@ -221,13 +221,7 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # ---  ---
 # 
-# - Fix some constraint calc logic for the case of starting a new navigation while in the air
-#   (origin does not correspond to a surface, or to an x-velocity in the expected direction)
-#   (currently breaks assertion at the end of _update_constraint_velocity_and_time).
-# 
 # - Fix issue where jumping around edge isn't going far enough. It's clipping the corner.
-# 
-# ---  ---
 # 
 # - Finish remaining surface-closest-point-jump-off calculation cases.
 #   - Also, maybe still not quite far enough with the offset?
