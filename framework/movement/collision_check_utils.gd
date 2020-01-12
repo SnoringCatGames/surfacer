@@ -17,7 +17,7 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     # average here.
     var previous_time: float = instructions.instructions[0].time - delta * 0.5
     var current_time := previous_time + delta
-    var end_time := instructions.duration
+    var end_time := vertical_step.time_step_end
     var is_pressing_left := false
     var is_pressing_right := false
     var is_pressing_jump := false

@@ -221,8 +221,6 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # ---  ---
 # 
-# - Make edge playback continue until actually reaching destination, rather than just ending at calculated time.
-# 
 # - Add support for specifying required end x-velocity (and y direction).
 #   - Use this for edges that end on walls.
 # 

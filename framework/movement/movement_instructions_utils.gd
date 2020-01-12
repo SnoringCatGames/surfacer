@@ -84,8 +84,8 @@ static func convert_calculation_steps_to_movement_instructions( \
     
     var frame_continous_positions_from_steps := _concatenate_step_frame_positions(steps)
     
-    var result := MovementInstructions.new(instructions, vertical_step.time_step_end, \
-            distance_squared, constraint_positions)
+    var result := MovementInstructions.new(instructions, INF, distance_squared, \
+            constraint_positions)
     result.frame_continous_positions_from_steps = frame_continous_positions_from_steps
     
     return result
