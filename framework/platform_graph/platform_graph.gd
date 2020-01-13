@@ -143,9 +143,9 @@ var space_state: Physics2DDirectSpaceState
 # Array<Surface>
 var surfaces: Array
 # Dictionary<Surface, Array<PositionAlongSurface>>
-var surfaces_to_nodes: Dictionary
-# Dictionary<PositionAlongSurface, Dictionary<Edge>>
-var nodes_to_edges: Dictionary
+var surfaces_to_outbound_nodes: Dictionary
+# Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface, Edge>>
+var nodes_to_nodes_to_edges: Dictionary
 
 var debug_state: Dictionary
 
@@ -162,10 +162,30 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
             movement_params.can_grab_ceilings, \
             movement_params.can_grab_floors)
     
-    self.surfaces_to_nodes = {}
-    self.nodes_to_edges = {}
+    self.surfaces_to_outbound_nodes = {}
+    self.nodes_to_nodes_to_edges = {}
     
     _calculate_nodes_and_edges(surfaces, player_info, debug_state)
+
+static func _record_frontier(current: PositionAlongSurface, next: PositionAlongSurface, \
+        destination: PositionAlongSurface, new_actual_weight: float, \
+        nodes_to_previous_nodes: Dictionary, nodes_to_weights: Dictionary, \
+        frontier: PriorityQueue) -> void:
+    if !nodes_to_weights.has(next) or new_actual_weight < nodes_to_weights[next]:
+        # We found a new or cheaper path to this next node, so record it.
+        
+        # Record the path to this node.
+        nodes_to_previous_nodes[next] = current
+        
+        # Record this node's weight.
+        nodes_to_weights[next] = new_actual_weight
+        
+        var heuristic_weight = \
+                next.target_point.distance_squared_to(destination.target_point)
+        
+        # Add this node to the frontier with a priority.
+        var priority = new_actual_weight + heuristic_weight
+        frontier.insert(priority, next)
 
 # Uses A* search.
 func find_path(origin: PositionAlongSurface, \
@@ -183,33 +203,19 @@ func find_path(origin: PositionAlongSurface, \
         var edges := [IntraSurfaceEdge.new(origin, destination)]
         return PlatformGraphPath.new(edges)
     
-    var frontier := PriorityQueue.new()
-    var node_to_previous_node := {}
-    node_to_previous_node[origin] = null
+    var nodes_to_previous_nodes := {}
+    nodes_to_previous_nodes[origin] = null
     var nodes_to_weights := {}
     nodes_to_weights[origin] = 0.0
+    var frontier := PriorityQueue.new()
+    frontier.insert(0.0, origin)
     
     var nodes_to_edges_for_current_node: Dictionary
     var next_edge: Edge
     var current_node: PositionAlongSurface
     var current_weight: float
     var next_node: PositionAlongSurface
-    var new_weight: float
-    var heuristic_weight: float
-    var priority: float
-    
-    # Record temporary edges from the origin to each node on the origin's surface.
-    for next_node in surfaces_to_nodes[origin_surface]:
-        # Record the path to this node.
-        node_to_previous_node[next_node] = origin
-        
-        # Record this node's weight.
-        new_weight = origin.target_point.distance_squared_to(next_node.target_point)
-        nodes_to_weights[next_node] = new_weight
-        
-        # Add this node to the frontier with a priority.
-        priority = new_weight
-        frontier.insert(priority, next_node)
+    var new_actual_weight: float
     
     # Determine the cheapest path.
     while !frontier.is_empty:
@@ -217,78 +223,73 @@ func find_path(origin: PositionAlongSurface, \
         current_weight = nodes_to_weights[current_node]
         
         if current_node == destination:
+            # We found the shortest path.
             break
         
+        ### Record intra-surface edges.
+        
+        # If reached the destination surface, record a temporary intra-surface edge to the
+        # destination from this current_node.
         if current_node.surface == destination_surface:
-            # Record a temporary edge to the destination from this current_node.
-            
             next_node = destination
-            new_weight = current_weight + \
-                    current_node.target_point.distance_squared_to(destination.target_point)
-            
-            if !nodes_to_weights.has(next_node) or new_weight < nodes_to_weights[next_node]:
-                # We found a new or cheaper path to this next node, so record it.
-                
-                # Record the path to this node.
-                node_to_previous_node[next_node] = current_node
-                
-                # Record this node's weight.
-                nodes_to_weights[next_node] = new_weight
-                
-                # Add this node to the frontier with a priority.
-                priority = new_weight
-                frontier.insert(priority, next_node)
-            
+            new_actual_weight = current_weight + \
+                    current_node.target_point.distance_squared_to(next_node.target_point)
+            _record_frontier(current_node, next_node, destination, new_actual_weight, \
+                    nodes_to_previous_nodes, nodes_to_weights, frontier)
+            # We don't need to consider any additional edges from this node, since they'd
+            # necessarily be less direct than this intra-surface edge that we just recorded.
             continue
         
-        if !nodes_to_edges.has(current_node):
-            # There are no edges from this node.
+        # Record temporary intra-surface edges from the current node to each other node on the same
+        # surface.
+        for next_node in surfaces_to_outbound_nodes[current_node.surface]:
+            new_actual_weight = current_weight + \
+                    current_node.target_point.distance_squared_to(next_node.target_point)
+            _record_frontier(current_node, next_node, destination, new_actual_weight, \
+                    nodes_to_previous_nodes, nodes_to_weights, frontier)
+        
+        ### Record inter-surface edges.
+        
+        if !nodes_to_nodes_to_edges.has(current_node):
+            # There are no inter-surface edges from this node.
             continue
         
-        # Iterate through each current neighbor node, and record their weights, paths, and
+        # Iterate through each inter-surface neighbor node, and record their weights, paths, and
         # priorities.
-        nodes_to_edges_for_current_node = nodes_to_edges[current_node]
+        nodes_to_edges_for_current_node = nodes_to_nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
             next_edge = nodes_to_edges_for_current_node[next_node]
-            new_weight = current_weight + next_edge.weight
-            
-            if !nodes_to_weights.has(next_node) or new_weight < nodes_to_weights[next_node]:
-                # We found a new or cheaper path to this next node, so record it.
-                
-                # Record the path to this node.
-                node_to_previous_node[next_node] = current_node
-                
-                # Record this node's weight.
-                nodes_to_weights[next_node] = new_weight
-                heuristic_weight = next_node.target_point.distance_squared_to(destination.target_point)
-                
-                # Add this node to the frontier with a priority.
-                priority = new_weight + heuristic_weight
-                frontier.insert(priority, next_node)
+            new_actual_weight = current_weight + next_edge.weight
+            _record_frontier(current_node, next_node, destination, new_actual_weight, \
+                    nodes_to_previous_nodes, nodes_to_weights, frontier)
     
     # Collect the edges for the cheapest path.
     
     var edges := []
     current_node = destination
-    var previous_node: PositionAlongSurface = node_to_previous_node.get(current_node)
+    var previous_node: PositionAlongSurface = nodes_to_previous_nodes.get(current_node)
     
     if previous_node == null:
         # The destination cannot be reached form the origin.
         return null
     
     while previous_node != null:
-        if node_to_previous_node[previous_node] == null or edges.empty():
+        if nodes_to_previous_nodes[previous_node] == null or edges.empty():
             # The first and last edge are temporary and extend from/to the origin/destination,
             # which are not aligned with normal node positions.
             next_edge = IntraSurfaceEdge.new(previous_node, current_node)
+        elif previous_node.surface == current_node.surface:
+            # The previous node is on the same surface as the current node, so we create an
+            # intra-surface edge.
+            next_edge = IntraSurfaceEdge.new(previous_node, current_node)
         else:
-            next_edge = nodes_to_edges[previous_node][current_node]
+            next_edge = nodes_to_nodes_to_edges[previous_node][current_node]
         
         assert(next_edge != null)
         
         edges.push_front(next_edge)
         current_node = previous_node
-        previous_node = node_to_previous_node.get(previous_node)
+        previous_node = nodes_to_previous_nodes.get(previous_node)
     
     assert(!edges.empty())
     
@@ -403,8 +404,8 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
                 ###################################################################################
                 # Allow for debug mode to limit the scope of what's calculated.
                 if debug_state.in_debug_mode and \
-                        debug_state.limit_parsing_to_single_edge != null and \
-                        player_info.name != debug_state.limit_parsing_to_single_edge.player_name:
+                        debug_state.has('limit_parsing') and \
+                        player_info.name != debug_state.limit_parsing.player_name:
                     continue
                 
                 # FIXME: Comment out when writing tests
@@ -437,32 +438,32 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
             cell_id = _node_to_cell_id(edge.start_position_along_surface)
             nodes_set[cell_id] = edge.start_position_along_surface
         
-        surfaces_to_nodes[surface] = nodes_set.values()
+        surfaces_to_outbound_nodes[surface] = nodes_set.values()
     
     # Set up edge mappings.
-    for surface in surfaces_to_nodes:
-        for node in surfaces_to_nodes[surface]:
-            nodes_to_edges[node] = {}
+    for surface in surfaces_to_outbound_nodes:
+        for node in surfaces_to_outbound_nodes[surface]:
+            nodes_to_nodes_to_edges[node] = {}
     
     # Calculate and record all intra-surface edges.
     var intra_surface_edge: IntraSurfaceEdge
-    for surface in surfaces_to_nodes:
-        for node_a in surfaces_to_nodes[surface]:
-            for node_b in surfaces_to_nodes[surface]:
+    for surface in surfaces_to_outbound_nodes:
+        for node_a in surfaces_to_outbound_nodes[surface]:
+            for node_b in surfaces_to_outbound_nodes[surface]:
                 if node_a == node_b:
                     # Don't create intra-surface edges that start and end at the same node.
                     continue
                 
                 # Record uni-directional edges in both directions.
                 intra_surface_edge = IntraSurfaceEdge.new(node_a, node_b)
-                nodes_to_edges[node_a][node_b] = intra_surface_edge
+                nodes_to_nodes_to_edges[node_a][node_b] = intra_surface_edge
                 intra_surface_edge = IntraSurfaceEdge.new(node_b, node_a)
-                nodes_to_edges[node_b][node_a] = intra_surface_edge
+                nodes_to_nodes_to_edges[node_b][node_a] = intra_surface_edge
     
     # Record inter-surface edges.
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
-            nodes_to_edges[edge.start_position_along_surface][edge.end_position_along_surface] = \
+            nodes_to_nodes_to_edges[edge.start_position_along_surface][edge.end_position_along_surface] = \
                     edge
 
 # Checks whether a previous node with the same position has already been seen.

@@ -221,10 +221,29 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # 
 # ---  ---
 # 
-# - Fix issue where jumping around edge isn't going far enough. It's clipping the corner.
+# - Test other levels.
 # 
 # - Finish remaining surface-closest-point-jump-off calculation cases.
 #   - Also, maybe still not quite far enough with the offset?
+# 
+# - Add support for fall-from-wall and climb-over-wall edges.
+#   - New Movement subclasses
+#     - FallFromWall
+#     - FallFromFloor
+#     - ClimbOverWallToFloor
+#     - ClimbOffFloorToWall
+#     - ClimbDownWallToFloor
+#     - ClimbUpWallFromFloor
+#   - Make sure that movement_types are ordered by priority when configuring.
+#   - Only consider not-yet-reachable surfaces (from other movement_types) when calculating edges
+#     for a movement_type.
+#   - Update Movement class setup:
+#     - Remove 
+            #var can_traverse_edge := false
+            #var can_traverse_to_air := false
+            #var can_traverse_from_air := false
+#     - Add get_can_traverse_from_surface(surface)
+#     - Move broad-phase filter to within implementations of get_all_edges_from_surface.
 # 
 # - Fix any remaining Navigator movement issues.
 # - Fix performance.
@@ -238,6 +257,9 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # - Fix frame collision detection...
 #   - Seeing pre-existing collisions when jumping from walls.
 #   - Fix collision-detection errors from logs.
+#   - Go through levels and verify that all expected edges work.
+# 
+# - Fix issue where jumping around edge sometimes isn't going far enough; it's clipping the corner.
 # 
 # ---  ---
 # 
@@ -414,10 +436,11 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
             for land_position in land_positions:
                 ###################################################################################
                 # Allow for debug mode to limit the scope of what's calculated.
-                if debug_state.in_debug_mode and debug_state.limit_parsing_to_single_edge != null:
-                    var debug_origin: Dictionary = debug_state.limit_parsing_to_single_edge.origin
+                if debug_state.in_debug_mode and debug_state.has('limit_parsing') and \
+                        debug_state.limit_parsing.has('edge'):
+                    var debug_origin: Dictionary = debug_state.limit_parsing.edge.origin
                     var debug_destination: Dictionary = \
-                            debug_state.limit_parsing_to_single_edge.destination
+                            debug_state.limit_parsing.edge.destination
                     
                     if a.side != debug_origin.surface_side or \
                             b.side != debug_destination.surface_side or \
@@ -474,7 +497,8 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 
                 ###################################################################################
                 # Record some extra debug state when we're limiting calculations to a single edge.
-                if debug_state.in_debug_mode and debug_state.limit_parsing_to_single_edge != null:
+                if debug_state.in_debug_mode and debug_state.has('limit_parsing') and \
+                        debug_state.limit_parsing.has('edge') != null:
                     overall_calc_params.in_debug_mode = true
                 ###################################################################################
                 

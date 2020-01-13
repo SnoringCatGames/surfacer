@@ -440,10 +440,10 @@ static func get_collision_tile_map_coord(position_world_coord: Vector2, tile_map
     var cell_width_mod = abs(fmod(position_relative_to_tile_map.x, tile_map.cell_size.x))
     var cell_height_mod = abs(fmod(position_relative_to_tile_map.y, tile_map.cell_size.y))
     
-    var is_between_cells_horizontally = cell_width_mod < 0.0001 or \
-            tile_map.cell_size.x - cell_width_mod < 0.0001
-    var is_between_cells_vertically = cell_height_mod < 0.0001 or \
-            tile_map.cell_size.y - cell_height_mod < 0.0001
+    var is_between_cells_horizontally = cell_width_mod < 0.001 or \
+            tile_map.cell_size.x - cell_width_mod < 0.001
+    var is_between_cells_vertically = cell_height_mod < 0.001 or \
+            tile_map.cell_size.y - cell_height_mod < 0.001
     
     var tile_coord := Vector2.INF
     var error_message := ""

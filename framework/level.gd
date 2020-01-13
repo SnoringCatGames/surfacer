@@ -79,6 +79,13 @@ static func _create_platform_graphs(surface_parser: SurfaceParser, \
         debug_state: Dictionary) -> Dictionary:
     var graphs = {}
     for player_name in player_types:
+        ###########################################################################################
+        # Allow for debug mode to limit the scope of what's calculated.
+        if debug_state.in_debug_mode and \
+                debug_state.has('limit_parsing') and \
+                player_name != debug_state.limit_parsing.player_name:
+            continue
+        ###########################################################################################
         graphs[player_name] = PlatformGraph.new( \
                 surface_parser, space_state, player_types[player_name], debug_state)
     return graphs

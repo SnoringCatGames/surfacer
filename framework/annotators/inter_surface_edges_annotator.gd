@@ -37,12 +37,12 @@ func _draw() -> void:
     var position_end: Vector2
     
     # Iterate over all surfaces.
-    for surface in graph.surfaces_to_nodes:
+    for surface in graph.surfaces_to_outbound_nodes:
         # Iterate over all nodes from this surface.
-        for node_start in graph.surfaces_to_nodes[surface]:
+        for node_start in graph.surfaces_to_outbound_nodes[surface]:
             # Iterate over all edges from this node.
-            for node_end in graph.nodes_to_edges[node_start]:
-                edge = graph.nodes_to_edges[node_start][node_end]
+            for node_end in graph.nodes_to_nodes_to_edges[node_start]:
+                edge = graph.nodes_to_nodes_to_edges[node_start][node_end]
                 
                 # Skip intra-surface edges. They aren't as interesting to render.
                 if edge is IntraSurfaceEdge:
