@@ -39,11 +39,6 @@ func _init(tile_maps: Array, player_types: Dictionary) -> void:
     
     for tile_map in tile_maps:
         _parse_tile_map(tile_map)
-    
-    # The various Movement instances need to know about the available Surfaces.
-    for player_name in player_types:
-        for movement_type in player_types[player_name].movement_types:
-            movement_type.set_surfaces(self)
 
 # Gets the surface corresponding to the given side of the given tile in the given TileMap.
 func get_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
@@ -577,23 +572,23 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
 
 static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls: Array, \
         right_walls: Array) -> void:
-    var surface1_end: Vector2
+    var surface1_end1: Vector2
+    var surface1_end2: Vector2
     var surface2_end: Vector2
     var diff_x: float
     var diff_y: float
     
     for floor_surface in floors:
-        # Check the left edge of the floor.
-        surface1_end = floor_surface.first_point
+        # The left edge of the floor.
+        surface1_end1 = floor_surface.first_point
+        # The right edge of the floor.
+        surface1_end2 = floor_surface.last_point
         
-        # Check for a convex neighbor.
         for right_wall in right_walls:
-            # Check the top edge of the right wall.
+            # Check for a convex neighbor at the top edge of the right wall.
             surface2_end = right_wall.last_point
-            
-            diff_x = surface1_end.x - surface2_end.x
-            diff_y = surface1_end.y - surface2_end.y
-            
+            diff_x = surface1_end1.x - surface2_end.x
+            diff_y = surface1_end1.y - surface2_end.y
             if diff_x < Geometry.FLOAT_EPSILON and \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
@@ -602,18 +597,25 @@ static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls
                 right_wall.convex_clockwise_neighbor = floor_surface
                 # We can assume that there will only be one matching convex neighbor.
                 break
+            
+            # Check for a concave neighbor at the bottom edge of the right wall.
+            surface2_end = right_wall.first_point
+            diff_x = surface1_end2.x - surface2_end.x
+            diff_y = surface1_end2.y - surface2_end.y
+            if diff_x < Geometry.FLOAT_EPSILON and \
+                    diff_x > -Geometry.FLOAT_EPSILON and \
+                    diff_y < Geometry.FLOAT_EPSILON and \
+                    diff_y > -Geometry.FLOAT_EPSILON:
+                floor_surface.concave_clockwise_neighbor = right_wall
+                right_wall.concave_counter_clockwise_neighbor = floor_surface
+                # We can assume that there will only be one matching concave neighbor.
+                break
         
-        # Check the right edge of the floor.
-        surface1_end = floor_surface.last_point
-        
-        # Check for a convex neighbor.
         for left_wall in left_walls:
-            # Check the top edge of the left wall.
+            # Check for a convex neighbor at the top edge of the left wall.
             surface2_end = left_wall.first_point
-            
-            diff_x = surface1_end.x - surface2_end.x
-            diff_y = surface1_end.y - surface2_end.y
-            
+            diff_x = surface1_end2.x - surface2_end.x
+            diff_y = surface1_end2.y - surface2_end.y
             if diff_x < Geometry.FLOAT_EPSILON and \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
@@ -622,19 +624,31 @@ static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls
                 left_wall.convex_counter_clockwise_neighbor = floor_surface
                 # We can assume that there will only be one matching convex neighbor.
                 break
+            
+            # Check for a concave neighbor at the bottom edge of the left wall.
+            surface2_end = left_wall.last_point
+            diff_x = surface1_end1.x - surface2_end.x
+            diff_y = surface1_end1.y - surface2_end.y
+            if diff_x < Geometry.FLOAT_EPSILON and \
+                    diff_x > -Geometry.FLOAT_EPSILON and \
+                    diff_y < Geometry.FLOAT_EPSILON and \
+                    diff_y > -Geometry.FLOAT_EPSILON:
+                floor_surface.concave_counter_clockwise_neighbor = left_wall
+                left_wall.concave_clockwise_neighbor = floor_surface
+                # We can assume that there will only be one matching concave neighbor.
+                break
     
     for ceiling in ceilings:
-        # Check the right edge of the ceiling.
-        surface1_end = ceiling.first_point
+        # The right edge of the ceiling.
+        surface1_end1 = ceiling.first_point
+        # The left edge of the ceiling.
+        surface1_end2 = ceiling.last_point
         
-        # Check for a convex neighbor.
         for left_wall in left_walls:
-            # Check the bottom edge of the left wall.
+            # Check for a convex neighbor at the bottom edge of the left wall.
             surface2_end = left_wall.last_point
-            
-            diff_x = surface1_end.x - surface2_end.x
-            diff_y = surface1_end.y - surface2_end.y
-            
+            diff_x = surface1_end1.x - surface2_end.x
+            diff_y = surface1_end1.y - surface2_end.y
             if diff_x < Geometry.FLOAT_EPSILON and \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
@@ -643,18 +657,25 @@ static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls
                 left_wall.convex_clockwise_neighbor = ceiling
                 # We can assume that there will only be one matching convex neighbor.
                 break
+            
+            # Check for a concave neighbor at the top edge of the left wall.
+            surface2_end = left_wall.first_point
+            diff_x = surface1_end2.x - surface2_end.x
+            diff_y = surface1_end2.y - surface2_end.y
+            if diff_x < Geometry.FLOAT_EPSILON and \
+                    diff_x > -Geometry.FLOAT_EPSILON and \
+                    diff_y < Geometry.FLOAT_EPSILON and \
+                    diff_y > -Geometry.FLOAT_EPSILON:
+                ceiling.concave_clockwise_neighbor = left_wall
+                left_wall.concave_counter_clockwise_neighbor = ceiling
+                # We can assume that there will only be one matching concave neighbor.
+                break
         
-        # Check the left edge of the ceiling.
-        surface1_end = ceiling.last_point
-        
-        # Check for a convex neighbor.
         for right_wall in right_walls:
-            # Check the bottom edge of the right wall.
+            # Check for a convex neighbor at the bottom edge of the right wall.
             surface2_end = right_wall.first_point
-            
-            diff_x = surface1_end.x - surface2_end.x
-            diff_y = surface1_end.y - surface2_end.y
-            
+            diff_x = surface1_end2.x - surface2_end.x
+            diff_y = surface1_end2.y - surface2_end.y
             if diff_x < Geometry.FLOAT_EPSILON and \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
@@ -662,6 +683,19 @@ static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls
                 ceiling.convex_clockwise_neighbor = right_wall
                 right_wall.convex_counter_clockwise_neighbor = ceiling
                 # We can assume that there will only be one matching convex neighbor.
+                break
+            
+            # Check for a concave neighbor at the top edge of the right wall.
+            surface2_end = right_wall.last_point
+            diff_x = surface1_end1.x - surface2_end.x
+            diff_y = surface1_end1.y - surface2_end.y
+            if diff_x < Geometry.FLOAT_EPSILON and \
+                    diff_x > -Geometry.FLOAT_EPSILON and \
+                    diff_y < Geometry.FLOAT_EPSILON and \
+                    diff_y > -Geometry.FLOAT_EPSILON:
+                ceiling.concave_counter_clockwise_neighbor = right_wall
+                right_wall.concave_clockwise_neighbor = ceiling
+                # We can assume that there will only be one matching concave neighbor.
                 break
 
 static func _populate_surface_objects(tmp_surfaces: Array, side: int) -> void:

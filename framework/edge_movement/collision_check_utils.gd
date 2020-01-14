@@ -1,6 +1,6 @@
 class_name CollisionCheckUtils
 
-const MovementCalcCollisionDebugState = preload("res://framework/movement/models/movement_calculation_collision_debug_state.gd")
+const MovementCalcCollisionDebugState = preload("res://framework/edge_movement/models/movement_calculation_collision_debug_state.gd")
 
 # Checks whether a collision would occur with any surface during the given instructions. This
 # is calculated by stepping through each discrete physics frame, which should exactly emulate the

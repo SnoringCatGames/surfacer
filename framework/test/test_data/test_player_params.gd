@@ -1,8 +1,6 @@
 extends PlayerParams
 class_name TestPlayerParams
 
-const JumpFromPlatformMovement := preload("res://framework/movement/models/jump_from_platform_movement.gd")
-const FallFromAirMovement := preload("res://framework/movement/models/fall_from_air_movement.gd")
 const TestPlayer := preload("res://framework/test/test_data/test_player.gd")
 
 const PLAYER_RESOURCE_PATH := "res://framework/test/test_data/test_player.tscn"
@@ -15,7 +13,7 @@ const COLLIDER_ROTATION := 0.0
 func _init(global: Global).(NAME, PLAYER_RESOURCE_PATH, global) -> void:
     pass
 
-func _create_action_handlers() -> Array:
+func _get_action_handlers() -> Array:
     return [
         global.PLAYER_ACTIONS[AirDashAction.NAME],
         global.PLAYER_ACTIONS[AirDefaultAction.NAME],
@@ -35,11 +33,14 @@ func _create_action_handlers() -> Array:
         global.PLAYER_ACTIONS[WallWalkAction.NAME],
     ]
 
-# Array<Movement>
-func _create_movement_types(movement_params: MovementParams) -> Array:
+func _get_movement_calculators() -> Array:
     return [
-        JumpFromPlatformMovement.new(movement_params),
-        FallFromAirMovement.new(movement_params),
+        global.EDGE_MOVEMENTS[ClimbOverWallToFloorMovement.NAME],
+        global.EDGE_MOVEMENTS[ClimbDownWallToFloorMovement.NAME],
+        global.EDGE_MOVEMENTS[FallFromWallMovement.NAME],
+        global.EDGE_MOVEMENTS[ClimbUpWallFromFloorMovement.NAME],
+        global.EDGE_MOVEMENTS[FallFromFloorMovement.NAME],
+        global.EDGE_MOVEMENTS[JumpFromPlatformMovement.NAME],
     ]
 
 func _create_movement_params() -> MovementParams:

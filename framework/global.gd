@@ -17,7 +17,11 @@ const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false
 
 const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_rise.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_long_fall.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/test_data/test_level_far_distance.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_3.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_5.tscn"
 
 const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 #const PLAYER_RESOURCE_PATH := "res://framework/test/test_data/test_player.tscn"
@@ -54,6 +58,8 @@ const CAMERA_ZOOM := 1.5
 
 const PLAYER_ACTIONS := {}
 
+const EDGE_MOVEMENTS := {}
+
 # Dictionary<String, PlayerTypeConfiguration>
 var player_types := {}
 
@@ -88,6 +94,11 @@ func register_player_actions(player_action_classes: Array) -> void:
     # Instantiate the various PlayerActions.
     for player_action_class in player_action_classes:
         PLAYER_ACTIONS[player_action_class.NAME] = player_action_class.new()
+
+func register_edge_movements(edge_movement_classes: Array) -> void:
+    # Instantiate the various EdgeMovements.
+    for edge_movement_class in edge_movement_classes:
+        EDGE_MOVEMENTS[edge_movement_class.NAME] = edge_movement_class.new()
 
 func register_player_params(player_param_classes: Array) -> void:
     var params

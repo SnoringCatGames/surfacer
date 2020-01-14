@@ -15,8 +15,9 @@ var bounding_box: Rect2
 var normal: Vector2
 
 var convex_clockwise_neighbor: Surface
-
 var convex_counter_clockwise_neighbor: Surface
+var concave_clockwise_neighbor: Surface
+var concave_counter_clockwise_neighbor: Surface
 
 var first_point: Vector2 setget ,_get_first_point
 var last_point: Vector2 setget ,_get_last_point

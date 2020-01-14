@@ -6,8 +6,8 @@ class_name PlatformGraph
 
 const AirToSurfaceEdge := preload("res://framework/platform_graph/edge/air_to_surface_edge.gd")
 const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_surface_edge.gd")
-const MovementCalcOverallParams := preload("res://framework/movement/models/movement_calculation_overall_params.gd")
-const MovementCalcStepParams := preload("res://framework/movement/models/movement_calculation_step_params.gd")
+const MovementCalcOverallParams := preload("res://framework/edge_movement/models/movement_calculation_overall_params.gd")
+const MovementCalcStepParams := preload("res://framework/edge_movement/models/movement_calculation_step_params.gd")
 const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
@@ -15,7 +15,6 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 # - Finish everything in JumpFromPlatformMovement (edge calculations, including movement constraints from interfering surfaces)
 # - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
 #
-# - Use FallFromAirMovement
 # - Use max_horizontal_jump_distance and max_upward_jump_distance
 # 
 # - Fix some aggregate return types to be Array instead of Vector2.
@@ -88,10 +87,6 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   or in the air is configuration that JumpFromPlatformMovement handles directly, rather than
 #   relying on a separate FallFromAir class?
 # - Add support for including walls in our navigation.
-# - Add support for other Movement sub-classes:
-#   - JumpFromWallMovement
-#   - FallFromPlatformMovement
-#   - FallFromWallMovement
 # - Add support for other jump aspects:
 #   - Fast fall
 #   - Variable jump height
@@ -127,8 +122,6 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 # 
 # - Update things to support falling from the center of fall-through surfaces (consider the whole
 #   surface, rather than just the ends).
-# 
-# - Split apart Movement into smaller classes (after finalizing movement system architecture).
 # 
 # - Refactor the movement/navigation system to support more custom behaviors (e.g., some classic
 #   video game movements, like walking to the edge and then turning around, circling the entire
@@ -166,26 +159,6 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
     self.nodes_to_nodes_to_edges = {}
     
     _calculate_nodes_and_edges(surfaces, player_info, debug_state)
-
-static func _record_frontier(current: PositionAlongSurface, next: PositionAlongSurface, \
-        destination: PositionAlongSurface, new_actual_weight: float, \
-        nodes_to_previous_nodes: Dictionary, nodes_to_weights: Dictionary, \
-        frontier: PriorityQueue) -> void:
-    if !nodes_to_weights.has(next) or new_actual_weight < nodes_to_weights[next]:
-        # We found a new or cheaper path to this next node, so record it.
-        
-        # Record the path to this node.
-        nodes_to_previous_nodes[next] = current
-        
-        # Record this node's weight.
-        nodes_to_weights[next] = new_actual_weight
-        
-        var heuristic_weight = \
-                next.target_point.distance_squared_to(destination.target_point)
-        
-        # Add this node to the frontier with a priority.
-        var priority = new_actual_weight + heuristic_weight
-        frontier.insert(priority, next)
 
 # Uses A* search.
 func find_path(origin: PositionAlongSurface, \
@@ -295,6 +268,27 @@ func find_path(origin: PositionAlongSurface, \
     
     return PlatformGraphPath.new(edges)
 
+# Helper function for find_path. This records new neighbor nodes for the given node.
+static func _record_frontier(current: PositionAlongSurface, next: PositionAlongSurface, \
+        destination: PositionAlongSurface, new_actual_weight: float, \
+        nodes_to_previous_nodes: Dictionary, nodes_to_weights: Dictionary, \
+        frontier: PriorityQueue) -> void:
+    if !nodes_to_weights.has(next) or new_actual_weight < nodes_to_weights[next]:
+        # We found a new or cheaper path to this next node, so record it.
+        
+        # Record the path to this node.
+        nodes_to_previous_nodes[next] = current
+        
+        # Record this node's weight.
+        nodes_to_weights[next] = new_actual_weight
+        
+        var heuristic_weight = \
+                next.target_point.distance_squared_to(destination.target_point)
+        
+        # Add this node to the frontier with a priority.
+        var priority = new_actual_weight + heuristic_weight
+        frontier.insert(priority, next)
+
 # Finds a movement step that will result in landing on a surface, with an attempt to minimize the
 # path the player would then have to travel between surfaces to reach the given target.
 #
@@ -394,28 +388,26 @@ func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Array:
 # Calculates and stores the edges between surface nodes that this player type can traverse.
 func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfiguration, \
         debug_state: Dictionary) -> void:
+    ###################################################################################
+    # Allow for debug mode to limit the scope of what's calculated.
+    if debug_state.in_debug_mode and \
+            debug_state.has('limit_parsing') and \
+            player_info.name != debug_state.limit_parsing.player_name:
+        return
+    ###################################################################################
+    
     var possible_destination_surfaces: Array
     
     # Calculate all inter-surface edges.
     var surfaces_to_edges := {}
-    for movement_type in player_info.movement_types:
-        if movement_type.can_traverse_edge:
-            for surface in surfaces:
-                ###################################################################################
-                # Allow for debug mode to limit the scope of what's calculated.
-                if debug_state.in_debug_mode and \
-                        debug_state.has('limit_parsing') and \
-                        player_info.name != debug_state.limit_parsing.player_name:
-                    continue
-                
-                # FIXME: Comment out when writing tests
-#                pass
-                ###################################################################################
-                
+    for surface in surfaces:
+        possible_destination_surfaces = get_surfaces_in_jump_and_fall_range(surface)
+        
+        for movement_calculator in player_info.movement_calculators:
+            if movement_calculator.get_can_traverse_from_surface(surface):
                 # Calculate the inter-surface edges.
-                possible_destination_surfaces = get_surfaces_in_jump_and_fall_range(surface)
-                surfaces_to_edges[surface] = movement_type.get_all_edges_from_surface( \
-                        debug_state, space_state, surface_parser, \
+                surfaces_to_edges[surface] = movement_calculator.get_all_edges_from_surface( \
+                        debug_state, space_state, movement_params, surface_parser, \
                         possible_destination_surfaces, surface)
     
     # Dedup all edge-end positions (aka, nodes).

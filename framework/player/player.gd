@@ -13,8 +13,8 @@ var can_grab_walls: bool
 var can_grab_ceilings: bool
 var can_grab_floors: bool
 var movement_params: MovementParams
-# Array<Movement>
-var movement_types: Array
+# Array<EdgeMovementCalculators>
+var movement_calculators: Array
 # Array<Surface>
 var possible_surfaces: Array
 var actions_from_previous_frame := PlayerActionState.new()
@@ -58,7 +58,7 @@ func _enter_tree() -> void:
     self.movement_params = type_configuration.movement_params
     self.current_max_horizontal_speed = \
             type_configuration.movement_params.max_horizontal_speed_default
-    self.movement_types = type_configuration.movement_types
+    self.movement_calculators = type_configuration.movement_calculators
     self.action_handlers = type_configuration.action_handlers
 
 func _ready() -> void:

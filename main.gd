@@ -20,6 +20,15 @@ const PLAYER_ACTION_CLASSES := [
     preload("res://framework/player/action/action_handlers/wall_walk_action.gd"),
 ]
 
+const EDGE_MOVEMENT_CLASSES := [
+    preload("res://framework/edge_movement/models/movement_calculators/climb_down_wall_to_floor_movement.gd"),
+    preload("res://framework/edge_movement/models/movement_calculators/climb_over_wall_to_floor_movement.gd"),
+    preload("res://framework/edge_movement/models/movement_calculators/climb_up_wall_from_floor_movement.gd"),
+    preload("res://framework/edge_movement/models/movement_calculators/fall_from_floor_movement.gd"),
+    preload("res://framework/edge_movement/models/movement_calculators/fall_from_wall_movement.gd"),
+    preload("res://framework/edge_movement/models/movement_calculators/jump_from_platform_movement.gd"),
+]
+
 const PLAYER_PARAM_CLASSES := [
     preload("res://players/cat_params.gd"),
     preload("res://players/squirrel_params.gd"),
@@ -32,6 +41,7 @@ func _enter_tree() -> void:
     var global := $"/root/Global"
     
     global.register_player_actions(PLAYER_ACTION_CLASSES)
+    global.register_edge_movements(EDGE_MOVEMENT_CLASSES)
     global.register_player_params(PLAYER_PARAM_CLASSES)
     
     var scene_path := Global.TEST_RUNNER_SCENE_RESOURCE_PATH if Global.IN_TEST_MODE else \

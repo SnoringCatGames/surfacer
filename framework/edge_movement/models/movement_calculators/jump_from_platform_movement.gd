@@ -1,7 +1,9 @@
-extends Movement
+extends EdgeMovementCalculator
 class_name JumpFromPlatformMovement
 
-const MovementCalcOverallParams := preload("res://framework/movement/models/movement_calculation_overall_params.gd")
+const MovementCalcOverallParams := preload("res://framework/edge_movement/models/movement_calculation_overall_params.gd")
+
+const NAME := 'JumpFromPlatformMovement'
 
 # FIXME: SUB-MASTER LIST ***************
 # - Add support for specifying a required min/max end-x-velocity.
@@ -219,31 +221,25 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# ---  ---
+# - Consider whether we need to create new Edge sub-classes for the new EdgeMovementCalculator
+#   sub-classes?
+#   - e.g., ClimbDownWallToFloor is a combination of two separate intra-surface edges?
+#   >>>>- BEFORE GOING ANY FURTHER, fully think-out how I want the Navigator to work with the
+#     Edge system and the new EdgeMovementCalculator sub-classes...
+#     - Right now, the Navigator has embedded business logic for calculating just_reached_intra_surface_destination.
+#     - I might need to take that out into something more scalable for each different EdgeMovementCalculator?
+# - Implement new EdgeMovementCalculator subclasses.
+#   - FallFromWall
+#   - FallFromFloor
+#   - ClimbOverWallToFloor
+#   - ClimbDownWallToFloor
+#   - ClimbUpWallFromFloor
+# - In PlatformGraph: Only consider not-yet-reachable surfaces (from other movement_calculators)
+#   when calculating edges for a movement_calculator.
+# - Move broad-phase filter from PlattformGraphto within implementations of
+#   get_all_edges_from_surface.
 # 
-# - Test other levels.
-# 
-# - Finish remaining surface-closest-point-jump-off calculation cases.
-#   - Also, maybe still not quite far enough with the offset?
-# 
-# - Add support for fall-from-wall and climb-over-wall edges.
-#   - New Movement subclasses
-#     - FallFromWall
-#     - FallFromFloor
-#     - ClimbOverWallToFloor
-#     - ClimbOffFloorToWall
-#     - ClimbDownWallToFloor
-#     - ClimbUpWallFromFloor
-#   - Make sure that movement_types are ordered by priority when configuring.
-#   - Only consider not-yet-reachable surfaces (from other movement_types) when calculating edges
-#     for a movement_type.
-#   - Update Movement class setup:
-#     - Remove 
-            #var can_traverse_edge := false
-            #var can_traverse_to_air := false
-            #var can_traverse_from_air := false
-#     - Add get_can_traverse_from_surface(surface)
-#     - Move broad-phase filter to within implementations of get_all_edges_from_surface.
+# - Test/debug PlatformGraph.find_a_landing_trajectory.
 # 
 # - Fix any remaining Navigator movement issues.
 # - Fix performance.
@@ -382,7 +378,10 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 #       the same place.
 #     - https://godot-es-docs.readthedocs.io/en/latest/classes/class_inputmap.html#class-inputmap
 # 
+# - Finish remaining surface-closest-point-jump-off calculation cases.
+#   - Also, maybe still not quite far enough with the offset?
 # 
+# - Implement fall-through/walk-through movement-type utils.
 # 
 # >- Commit message:
 # 
@@ -390,13 +389,15 @@ const MovementCalcOverallParams := preload("res://framework/movement/models/move
 
 
 
-func _init(params: MovementParams).("jump_from_platform", params) -> void:
-    self.can_traverse_edge = true
-    self.can_traverse_to_air = true
-    self.can_traverse_from_air = false
+func _init().(NAME) -> void:
+    pass
+
+func get_can_traverse_from_surface(surface: Surface) -> bool:
+    return surface != null
 
 func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DDirectSpaceState, \
-        surface_parser: SurfaceParser, possible_surfaces: Array, a: Surface) -> Array:
+        movement_params: MovementParams, surface_parser: SurfaceParser, possible_surfaces: Array, \
+        a: Surface) -> Array:
     var jump_positions: Array
     var land_positions: Array
     var terminals: Array
@@ -406,12 +407,12 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
     var overall_calc_params: MovementCalcOverallParams
     
     # FIXME: B: REMOVE
-    params.gravity_fast_fall *= \
+    movement_params.gravity_fast_fall *= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    params.gravity_slow_rise *= \
+    movement_params.gravity_slow_rise *= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
-    var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(params)
+    var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(movement_params)
     
     for b in possible_surfaces:
         # This makes the assumption that traversing through any fall-through/walk-through surface
@@ -428,9 +429,9 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
         # - This is still cheaper than considering all 9 jump/land pair instructions, right?
         
         jump_positions = MovementUtils.get_all_jump_positions_from_surface( \
-                params, a, b.vertices, b.bounding_box, b.side)
+                movement_params, a, b.vertices, b.bounding_box, b.side)
         land_positions = MovementUtils.get_all_jump_positions_from_surface( \
-                params, b, a.vertices, a.bounding_box, a.side)
+                movement_params, b, a.vertices, a.bounding_box, a.side)
         
         for jump_position in jump_positions:
             for land_position in land_positions:
@@ -487,12 +488,12 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 ###################################################################################
                 
                 terminals = MovementConstraintUtils.create_terminal_constraints(a, \
-                        jump_position.target_point, b, land_position.target_point, params, \
+                        jump_position.target_point, b, land_position.target_point, movement_params, \
                         true)
                 if terminals.empty():
                     continue
                 
-                overall_calc_params = MovementCalcOverallParams.new(params, space_state, \
+                overall_calc_params = MovementCalcOverallParams.new(movement_params, space_state, \
                         surface_parser, terminals[0], terminals[1])
                 
                 ###################################################################################
@@ -516,24 +517,24 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 break
     
     # FIXME: B: REMOVE
-    params.gravity_fast_fall /= \
+    movement_params.gravity_fast_fall /= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    params.gravity_slow_rise /= \
+    movement_params.gravity_slow_rise /= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     return edges
 
 func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
-        surface_parser: SurfaceParser, position_start: PositionAlongSurface, \
-        position_end: Vector2) -> MovementInstructions:
-    var constraint_offset := MovementCalcOverallParams.calculate_constraint_offset(params)
+        movement_params: MovementParams, surface_parser: SurfaceParser, \
+        position_start: PositionAlongSurface, position_end: Vector2) -> MovementInstructions:
+    var constraint_offset := MovementCalcOverallParams.calculate_constraint_offset(movement_params)
     
     var terminals := MovementConstraintUtils.create_terminal_constraints(position_start.surface, \
-            position_start.target_point, null, position_end, params, true)
+            position_start.target_point, null, position_end, movement_params, true)
     if terminals.empty():
         null
     
-    var overall_calc_params := MovementCalcOverallParams.new(params, space_state, surface_parser, \
+    var overall_calc_params := MovementCalcOverallParams.new(movement_params, space_state, surface_parser, \
             terminals[0], terminals[1])
     
     return calculate_jump_instructions(overall_calc_params)

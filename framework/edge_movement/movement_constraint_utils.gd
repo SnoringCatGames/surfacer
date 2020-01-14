@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to MovementConstraints.
 class_name MovementConstraintUtils
 
-const MovementConstraint := preload("res://framework/movement/models/movement_constraint.gd")
+const MovementConstraint := preload("res://framework/edge_movement/models/movement_constraint.gd")
 
 # FIXME: D: Tweak this.
 const MIN_MAX_VELOCITY_X_OFFSET := 0.01# FIXME: ------------------------
