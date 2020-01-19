@@ -221,8 +221,7 @@ const NAME := 'JumpFromPlatformMovement'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# _ Create the new Edge sub-classes after the infrastructure change is done.
-#   - Update the three other new move-along-surface edges to just be the same as intra-surface edge, but with always pressing two buttons; then we stop when we grab expected surface (or leave surface);
+# - Update trajectory-based Instructions to use weight from sum of distances between frames, rather than simply the distance between origin and destination.
 # 
 # ?- Create new Edge sub-classes for the new EdgeMovementCalculator sub-classes?
 #   - e.g., ClimbDownWallToFloor is a combination of two separate intra-surface edges?
@@ -256,8 +255,10 @@ const NAME := 'JumpFromPlatformMovement'
 #       - Render 90-degree connected line segments? Where are the end points?
 #   - Clean-up how Navigator handles edge-end detection logic, to be more scalable with new classes?
 # 
+# - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the non-jump edges
+# 
 # - In PlatformGraph: Only consider not-yet-reachable surfaces (from other movement_calculators)
-#   when calculating edges for a movement_calculator.
+#   when calculating edges for a movement_calculator?
 # - Move broad-phase filter from PlatformGraph to within implementations of
 #   get_all_edges_from_surface.
 # 
