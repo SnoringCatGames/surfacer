@@ -12,7 +12,7 @@ func _init(source_type_prefix: String, player, is_additive: bool) -> void:
 
 # Calculates actions for the current frame.
 func update(actions: PlayerActionState, previous_actions: PlayerActionState, time_sec: float, \
-        delta: float) -> void:
+        delta: float, navigation_state: PlayerNavigationState) -> void:
     Utils.error("Abstract PlayerActionSource.update is not implemented")
 
 func update_for_key_press(actions: PlayerActionState, previous_actions: PlayerActionState, \

@@ -20,6 +20,7 @@ var possible_surfaces: Array
 var actions_from_previous_frame := PlayerActionState.new()
 var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
+var navigation_state: PlayerNavigationState
 var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: Navigator
@@ -130,6 +131,7 @@ func _init_user_controller_action_source() -> void:
 
 func _init_navigator() -> void:
     navigator = Navigator.new(self, graph, global)
+    navigation_state = navigator.navigation_state
     action_sources.push_back(navigator.instructions_action_source)
 
 func _physics_process(delta: float) -> void:
@@ -206,8 +208,8 @@ func _update_actions(delta: float) -> void:
     
     # Update actions for the current frame.
     for action_source in action_sources:
-        action_source.update( \
-                actions, actions_from_previous_frame, global.elapsed_play_time_sec, delta)
+        action_source.update(actions, actions_from_previous_frame, global.elapsed_play_time_sec, \
+                delta, navigation_state)
     
     actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
     

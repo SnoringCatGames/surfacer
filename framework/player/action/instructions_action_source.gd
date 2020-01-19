@@ -11,13 +11,13 @@ func _init(player, is_additive: bool).("CP", player, is_additive) -> void:
 
 # Calculates actions for the current frame.
 func update(actions: PlayerActionState, previous_actions: PlayerActionState, time_sec: float, \
-        delta: float) -> void:
+        delta: float, navigation_state: PlayerNavigationState) -> void:
     var is_pressed: bool
     var non_pressed_keys := []
     
     for playback in _all_playback:
         # Handle any new key presses up till the current time.
-        var new_instructions: Array = playback.update(time_sec)
+        var new_instructions: Array = playback.update(time_sec, navigation_state)
         
         non_pressed_keys.clear()
         
@@ -40,9 +40,8 @@ func update(actions: PlayerActionState, previous_actions: PlayerActionState, tim
             i -= 1
         i += 1
 
-func start_instructions(instructions: MovementInstructions, \
-        time_sec: float) -> InstructionsPlayback:
-    var playback := InstructionsPlayback.new(instructions)
+func start_instructions(edge: Edge, time_sec: float) -> InstructionsPlayback:
+    var playback := InstructionsPlayback.new(edge)
     playback.start(time_sec)
     _all_playback.push_back(playback)
     return playback

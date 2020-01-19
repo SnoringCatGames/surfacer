@@ -14,7 +14,7 @@ func _init(player, is_additive: bool).("HP", player, is_additive) -> void:
 
 # Calculates actions for the current frame.
 func update(actions: PlayerActionState, previous_actions: PlayerActionState, time_sec: float, \
-        delta: float) -> void:
+        delta: float, navigation_state: PlayerNavigationState) -> void:
     var is_pressed: bool
     for input_key in INPUT_KEYS:
         is_pressed = Input.is_action_pressed(input_key)

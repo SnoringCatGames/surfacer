@@ -2,13 +2,22 @@
 extends Edge
 class_name AirToSurfaceEdge
 
+const NAME := "AirToSurfaceEdge"
+const IS_TIME_BASED := true
+
 var _start: Vector2
 var end_position_along_surface: PositionAlongSurface
 
 func _init(start: Vector2, end: PositionAlongSurface, calc_results: MovementCalcResults) \
-        .(_calculate_instructions(start, end, calc_results)) -> void:
+        .(NAME, IS_TIME_BASED, _calculate_instructions(start, end, calc_results)) -> void:
     self._start = start
     self.end_position_along_surface = end
+
+func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
+        surface_state: PlayerSurfaceState, playback) -> bool:
+    var just_landed_on_expected_surface: bool = surface_state.just_left_air and \
+            surface_state.grabbed_surface == self.end_surface
+    return just_landed_on_expected_surface
 
 func _get_start() -> Vector2:
     return _start
@@ -28,9 +37,6 @@ static func _calculate_instructions( \
     return MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
             position_start, position_end.target_point, calc_results, false, \
             position_end.surface.side)
-
-func _get_class_name() -> String:
-    return "AirToSurfaceEdge"
 
 func _get_start_string() -> String:
     return String(_start)

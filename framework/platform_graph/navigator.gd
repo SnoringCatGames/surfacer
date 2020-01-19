@@ -15,7 +15,7 @@ var reached_destination := false
 var current_path: PlatformGraphPath
 var current_edge: Edge
 var current_edge_index := -1
-var current_edge_playback: InstructionsPlayback
+var current_playback: InstructionsPlayback
 
 var navigation_state := PlayerNavigationState.new()
 
@@ -72,12 +72,10 @@ func navigate_to_nearby_surface(target: Vector2, \
         print(format_string_template % format_string_arguments)
         
         current_path = path
-        current_edge = current_path.edges[0]
-        current_edge_index = 0
         is_currently_navigating = true
         reached_destination = false
         
-        _start_edge()
+        _start_edge(0)
         
         return true
 
@@ -89,7 +87,7 @@ func _set_reached_destination() -> void:
     is_currently_navigating = false
     current_edge = null
     current_edge_index = -1
-    current_edge_playback = null
+    current_playback = null
     instructions_action_source.cancel_all_playback()
     
     print("Reached end of path:      %8.3f" % [global.elapsed_play_time_sec])
@@ -100,19 +98,14 @@ func reset() -> void:
     current_edge_index = -1
     is_currently_navigating = false
     reached_destination = false
-    current_edge_playback = null
+    current_playback = null
     instructions_action_source.cancel_all_playback()
-    navigation_state.is_expecting_to_enter_air = false
-    navigation_state.just_interrupted_navigation = false
-    navigation_state.just_left_air_unexpectedly = false
-    navigation_state.just_entered_air_unexpectedly = false
-    navigation_state.just_interrupted_by_user_action = false
-    navigation_state.just_reached_end_of_edge = false
-    navigation_state.just_reached_intra_surface_destination = false
-    navigation_state.just_landed_on_expected_surface = false
-    navigation_state.just_reached_in_air_destination = false
+    navigation_state.reset()
 
-func _start_edge() -> void:
+func _start_edge(index: int) -> void:
+    current_edge_index = index
+    current_edge = current_path.edges[index]
+    
     var format_string_template := "STARTING EDGE NAVIGATION: %8.3f; %s"
     var format_string_arguments := [ \
             global.elapsed_play_time_sec, \
@@ -125,10 +118,10 @@ func _start_edge() -> void:
     if global.NAVIGATOR_STATE.forces_player_velocity_to_match_edge_at_start:
         player.velocity = Vector2.ZERO
     
-    current_edge.update_for_player_state(player)
+    current_edge.update_for_surface_state(surface_state)
     
-    current_edge_playback = instructions_action_source.start_instructions( \
-            current_edge.instructions, global.elapsed_play_time_sec)
+    current_playback = instructions_action_source.start_instructions( \
+            current_edge, global.elapsed_play_time_sec)
     navigation_state.is_expecting_to_enter_air = \
             current_edge is InterSurfaceEdge or current_edge is SurfaceToAirEdge
 
@@ -137,8 +130,8 @@ func update() -> void:
     if !is_currently_navigating:
         return
     
-    current_edge.update_edge_navigation_state( \
-            navigation_state, surface_state, current_edge_playback)
+    current_edge.update_navigation_state( \
+            navigation_state, surface_state, current_playback)
     
     # FIXME: A: Remove this, and instead update edge-calculations to support variable
     #           velocity_start_x values.
@@ -160,20 +153,8 @@ func update() -> void:
 #        navigate_to_nearest_surface(current_path.destination)
         reset()
     elif navigation_state.just_reached_end_of_edge:
-        var edge_type_label: String
-        if navigation_state.just_reached_intra_surface_destination:
-            assert(current_edge is IntraSurfaceEdge)
-            edge_type_label = "intra-surface"
-        elif navigation_state.just_landed_on_expected_surface:
-            assert(current_edge is InterSurfaceEdge or current_edge is AirToSurfaceEdge)
-            edge_type_label = \
-                    "inter-surface" if current_edge is InterSurfaceEdge else "air-to-surface"
-        elif navigation_state.just_reached_in_air_destination:
-            assert(current_edge is SurfaceToAirEdge or current_edge is AirToAirEdge)
-            edge_type_label = \
-                    "surface-to-air" if current_edge is SurfaceToAirEdge else "air-to-air"
-        
-        print("Reached end of edge:      %8.3f; %s" % [global.elapsed_play_time_sec, edge_type_label])
+        print("Reached end of edge:      %8.3f; %s" % \
+                [global.elapsed_play_time_sec, current_edge.name])
     else:
         # Continuing along an edge.
         if surface_state.is_grabbing_a_surface:
@@ -189,13 +170,12 @@ func update() -> void:
         # assert()
         
         # Cancel the current intra-surface instructions (in case it didn't clear itself).
-        instructions_action_source.cancel_playback(current_edge_playback)
+        instructions_action_source.cancel_playback(current_playback)
         
         # Check for the next edge to navigate.
-        var was_last_edge := current_path.edges.size() == current_edge_index + 1
+        var next_edge_index := current_edge_index + 1
+        var was_last_edge := current_path.edges.size() == next_edge_index
         if was_last_edge:
             _set_reached_destination()
         else:
-            current_edge_index += 1
-            current_edge = current_path.edges[current_edge_index]
-            _start_edge()
+            _start_edge(next_edge_index)

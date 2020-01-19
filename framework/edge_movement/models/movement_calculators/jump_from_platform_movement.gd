@@ -221,12 +221,10 @@ const NAME := 'JumpFromPlatformMovement'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# _ Refactor Navigator to update edge/playback on each frame, and instead rely on them to signal
-#   edge-end/interrupt and instruction updates.
-#   - (other notes in Edge)
+# _ Create the new Edge sub-classes after the infrastructure change is done.
+#   - Update the three other new move-along-surface edges to just be the same as intra-surface edge, but with always pressing two buttons; then we stop when we grab expected surface (or leave surface);
 # 
-# - Consider whether we need to create new Edge sub-classes for the new EdgeMovementCalculator
-#   sub-classes?
+# ?- Create new Edge sub-classes for the new EdgeMovementCalculator sub-classes?
 #   - e.g., ClimbDownWallToFloor is a combination of two separate intra-surface edges?
 #   - Think-out how I want the Navigator to work with the Edge system and the new
 #     EdgeMovementCalculator sub-classes...
@@ -257,9 +255,10 @@ const NAME := 'JumpFromPlatformMovement'
 #     - Annotator:
 #       - Render 90-degree connected line segments? Where are the end points?
 #   - Clean-up how Navigator handles edge-end detection logic, to be more scalable with new classes?
+# 
 # - In PlatformGraph: Only consider not-yet-reachable surfaces (from other movement_calculators)
 #   when calculating edges for a movement_calculator.
-# - Move broad-phase filter from PlattformGraphto within implementations of
+# - Move broad-phase filter from PlatformGraph to within implementations of
 #   get_all_edges_from_surface.
 # 
 # - Test/debug PlatformGraph.find_a_landing_trajectory.
