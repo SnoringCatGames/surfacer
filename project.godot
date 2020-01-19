@@ -400,6 +400,11 @@ _global_script_classes=[ {
 "path": "res://framework/annotators/player_annotator.gd"
 }, {
 "base": "Reference",
+"class": "PlayerNavigationState",
+"language": "GDScript",
+"path": "res://framework/player/player_navigation_state.gd"
+}, {
+"base": "Reference",
 "class": "PlayerParams",
 "language": "GDScript",
 "path": "res://framework/player/player_params.gd"
@@ -638,6 +643,7 @@ _global_script_class_icons={
 "PlayerAnimator": "",
 "PlayerAnimatorParams": "",
 "PlayerAnnotator": "",
+"PlayerNavigationState": "",
 "PlayerParams": "",
 "PlayerRecentMovementAnnotator": "",
 "PlayerSurfaceAnnotator": "",

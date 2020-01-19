@@ -16,6 +16,12 @@ func _get_start() -> Vector2:
 func _get_end() -> Vector2:
     return end_position_along_surface.target_point
 
+func _get_start_surface() -> Surface:
+    return null
+
+func _get_end_surface() -> Surface:
+    return end_position_along_surface.surface
+
 static func _calculate_instructions( \
         position_start: Vector2, position_end: PositionAlongSurface, \
         calc_results: MovementCalcResults) -> MovementInstructions:

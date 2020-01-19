@@ -16,6 +16,12 @@ func _get_start() -> Vector2:
 func _get_end() -> Vector2:
     return _end
 
+func _get_start_surface() -> Surface:
+    return start_position_along_surface.surface
+
+func _get_end_surface() -> Surface:
+    return null
+
 # TODO: Implement this
 
 static func _calculate_instructions( \

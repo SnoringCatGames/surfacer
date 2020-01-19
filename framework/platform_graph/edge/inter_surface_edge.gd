@@ -17,6 +17,12 @@ func _get_start() -> Vector2:
 func _get_end() -> Vector2:
     return end_position_along_surface.target_point
 
+func _get_start_surface() -> Surface:
+    return start_position_along_surface.surface
+
+func _get_end_surface() -> Surface:
+    return end_position_along_surface.surface
+
 func _get_class_name() -> String:
     return "InterSurfaceEdge"
 

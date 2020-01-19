@@ -221,19 +221,42 @@ const NAME := 'JumpFromPlatformMovement'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# _ Refactor Navigator to update edge/playback on each frame, and instead rely on them to signal
+#   edge-end/interrupt and instruction updates.
+#   - (other notes in Edge)
+# 
 # - Consider whether we need to create new Edge sub-classes for the new EdgeMovementCalculator
 #   sub-classes?
 #   - e.g., ClimbDownWallToFloor is a combination of two separate intra-surface edges?
-#   >>>>- BEFORE GOING ANY FURTHER, fully think-out how I want the Navigator to work with the
-#     Edge system and the new EdgeMovementCalculator sub-classes...
+#   - Think-out how I want the Navigator to work with the Edge system and the new
+#     EdgeMovementCalculator sub-classes...
 #     - Right now, the Navigator has embedded business logic for calculating just_reached_intra_surface_destination.
 #     - I might need to take that out into something more scalable for each different EdgeMovementCalculator?
+#   >>>- For now, just hard-code logic into Navigator. Clean it up afterward.
 # - Implement new EdgeMovementCalculator subclasses.
 #   - FallFromWall
+#     - Instructions playback:
+#       - Can be very simple: a single frame with a single instruction. Guaranteed to work.
 #   - FallFromFloor
+#     - Instructions playback:
+#       - Walk until leaving floor surface (or "enter air").
 #   - ClimbOverWallToFloor
+#     - Instructions playback:
+#       - Climb up until leaving wall surface (or "enter air").
+#       - Then press sideways until hitting floor surface.
+#     - Annotator:
+#       - Render quarter circle with ends aligned coaxially with corner.
 #   - ClimbDownWallToFloor
+#     - Instructions playback:
+#       - Climb down until surface_state.is_touching_floor.
+#     - Annotator:
+#       - Render 90-degree connected line segments? Where are the end points?
 #   - ClimbUpWallFromFloor
+#     - Instructions playback:
+#       - Walk over until surface_state.is_touching_(left|right)wall.
+#     - Annotator:
+#       - Render 90-degree connected line segments? Where are the end points?
+#   - Clean-up how Navigator handles edge-end detection logic, to be more scalable with new classes?
 # - In PlatformGraph: Only consider not-yet-reachable surfaces (from other movement_calculators)
 #   when calculating edges for a movement_calculator.
 # - Move broad-phase filter from PlattformGraphto within implementations of
