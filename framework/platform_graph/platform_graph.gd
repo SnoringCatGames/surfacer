@@ -365,7 +365,7 @@ func find_surfaces_in_fall_range( \
     _get_surfaces_intersecting_polygon(result_set, \
             [top_left, top_right, bottom_right, bottom_left], surfaces)
 
-func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Array:
+func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Dictionary:
     # TODO: Update this to support falling from the center of fall-through surfaces (consider the
     #       whole surface, rather than just the ends).
     
@@ -383,7 +383,7 @@ func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Array:
     _get_surfaces_in_jump_range(result_set, origin_surface, surfaces, \
             max_horizontal_jump_distance, movement_params.max_upward_jump_distance)
     
-    return result_set.keys()
+    return result_set
 
 # Calculates and stores the edges between surface nodes that this player type can traverse.
 func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfiguration, \
@@ -396,19 +396,28 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
         return
     ###################################################################################
     
-    var possible_destination_surfaces: Array
+    var possible_destination_surfaces_set: Dictionary
     
     # Calculate all inter-surface edges.
+    # Dictionary<Surface, Array<Edge>>
     var surfaces_to_edges := {}
+    var edges: Array
     for surface in surfaces:
-        possible_destination_surfaces = get_surfaces_in_jump_and_fall_range(surface)
+        surfaces_to_edges[surface] = []
+        possible_destination_surfaces_set = get_surfaces_in_jump_and_fall_range(surface)
         
         for movement_calculator in player_info.movement_calculators:
             if movement_calculator.get_can_traverse_from_surface(surface):
                 # Calculate the inter-surface edges.
-                surfaces_to_edges[surface] = movement_calculator.get_all_edges_from_surface( \
+                edges = movement_calculator.get_all_edges_from_surface( \
                         debug_state, space_state, movement_params, surface_parser, \
-                        possible_destination_surfaces, surface)
+                        possible_destination_surfaces_set, surface)
+                
+                # Remove any used surfaces from consideration.
+                for edge in edges:
+                    possible_destination_surfaces_set.erase(edge.end_surface)
+                
+                Utils.concat(surfaces_to_edges[surface], edges)
     
     # Dedup all edge-end positions (aka, nodes).
     var grid_cell_to_node := {}

@@ -257,8 +257,6 @@ const NAME := 'JumpFromPlatformMovement'
 # 
 # - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the non-jump edges
 # 
-# - In PlatformGraph: Only consider not-yet-reachable surfaces (from other movement_calculators)
-#   when calculating edges for a movement_calculator?
 # - Move broad-phase filter from PlatformGraph to within implementations of
 #   get_all_edges_from_surface.
 # 
@@ -419,8 +417,8 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null
 
 func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DDirectSpaceState, \
-        movement_params: MovementParams, surface_parser: SurfaceParser, possible_surfaces: Array, \
-        a: Surface) -> Array:
+        movement_params: MovementParams, surface_parser: SurfaceParser, \
+        possible_surfaces_set: Dictionary, a: Surface) -> Array:
     var jump_positions: Array
     var land_positions: Array
     var terminals: Array
@@ -437,12 +435,13 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
     
     var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(movement_params)
     
-    for b in possible_surfaces:
+    for b in possible_surfaces_set.keys():
         # This makes the assumption that traversing through any fall-through/walk-through surface
         # would be better handled by some other Movement type, so we don't handle those
         # cases here.
         
         if a == b:
+            # We don't need to calculate edges for the degenerate case.
             continue
         
         # FIXME: D:

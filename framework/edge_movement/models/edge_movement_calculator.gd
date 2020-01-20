@@ -11,7 +11,7 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
     return false
 
 func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DDirectSpaceState, \
-        movement_params: MovementParams, surface_parser: SurfaceParser, possible_surfaces: Array, \
-        surface: Surface) -> Array:
+        movement_params: MovementParams, surface_parser: SurfaceParser, \
+        possible_surfaces_set: Dictionary, a: Surface) -> Array:
     Utils.error("abstract EdgeMovementCalculator.get_all_edges_from_surface is not implemented")
     return []
