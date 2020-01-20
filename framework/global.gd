@@ -65,6 +65,8 @@ var player_types := {}
 
 var debug_panel: DebugPanel
 
+var space_state: Physics2DDirectSpaceState
+
 var current_level
 var current_player_for_clicks
 

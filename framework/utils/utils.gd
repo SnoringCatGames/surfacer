@@ -35,6 +35,12 @@ static func concat(result: Array, other: Array) -> void:
     for i in range(other_size):
         result[old_result_size + i] = other[i]
 
+static func array_to_set(array: Array) -> Dictionary:
+    var set := {}
+    for element in array:
+        set[element] = element
+    return set
+
 static func translate_polyline(vertices: PoolVector2Array, translation: Vector2) \
         -> PoolVector2Array:
     var result := PoolVector2Array()

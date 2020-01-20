@@ -6,6 +6,8 @@ const NEARBY_SURFACE_DISTANCE_THRESHOLD := 160.0
 var player # TODO: Add type back
 var graph: PlatformGraph
 var global # TODO: Add type back
+var space_state: Physics2DDirectSpaceState
+var movement_params: MovementParams
 var surface_state: PlayerSurfaceState
 var surface_parser: SurfaceParser
 var instructions_action_source: InstructionsActionSource
@@ -23,6 +25,8 @@ func _init(player, graph: PlatformGraph, global) -> void:
     self.player = player
     self.graph = graph
     self.global = global
+    self.space_state = global.space_state
+    self.movement_params = player.movement_params
     self.surface_state = player.surface_state
     self.surface_parser = graph.surface_parser
     self.instructions_action_source = InstructionsActionSource.new(player, true)
@@ -47,7 +51,9 @@ func navigate_to_nearby_surface(target: Vector2, \
     else:
         var origin := surface_state.center_position
         var air_to_surface_edge := \
-                graph.find_a_landing_trajectory(origin, player.velocity, destination)
+                FallMovementUtils.find_a_landing_trajectory(space_state, movement_params, \
+                        surface_parser, graph.surfaces_set, origin, player.velocity, \
+                        destination)
         if air_to_surface_edge != null:
             path = graph.find_path(air_to_surface_edge.end_position_along_surface, destination)
             if path != null:

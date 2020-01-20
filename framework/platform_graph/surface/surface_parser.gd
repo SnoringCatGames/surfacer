@@ -728,21 +728,19 @@ class _TmpSurface extends Object:
 # Finds the closest PositionAlongSurface to the given target point.
 static func find_closest_position_on_a_surface(target: Vector2, player) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
-    var surface := get_closest_surface(target, player.possible_surfaces)
+    var surface := get_closest_surface(target, player.possible_surfaces_set)
     position.match_surface_target_and_collider(surface, target, player.collider_half_width_height)
     return position
 
 # Gets the closest surface to the given point.
-static func get_closest_surface(target: Vector2, surfaces: Array) -> Surface:
+static func get_closest_surface(target: Vector2, surfaces_set: Dictionary) -> Surface:
+    assert(!surfaces_set.empty())
+    
     var closest_surface: Surface
-    var closest_distance_squared: float
+    var closest_distance_squared: float = INF
     var current_distance_squared: float
     
-    closest_surface = surfaces[0]
-    closest_distance_squared = \
-            Geometry.get_distance_squared_from_point_to_polyline(target, closest_surface.vertices)
-    
-    for current_surface in surfaces:
+    for current_surface in surfaces_set:
         current_distance_squared = Geometry.distance_squared_from_point_to_rect(target, \
                 current_surface.bounding_box)
         if current_distance_squared < closest_distance_squared:

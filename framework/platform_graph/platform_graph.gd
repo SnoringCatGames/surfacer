@@ -127,14 +127,228 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   video game movements, like walking to the edge and then turning around, circling the entire
 #   circumference, bouncing forward, etc.).
 
+
+# FIXME: (old notes from jump_from_platform_movement) SUB-MASTER LIST ***************
+# - Add support for specifying a required min/max end-x-velocity.
+#   - More notes in the backtracking method.
+# - Test support for specifying a required min/max end-x-velocity.
+# 
+# - LEFT OFF HERE: Resolve/debug all left-off commented-out places.
+# - LEFT OFF HERE: Check for other obvious false negative edges.
+# 
+# - LEFT OFF HERE: Implement/test edge-traversal movement:
+#   - Test the logic for moving along a path.
+#   - Add support for sending the CPU to a click target (configured in the specific level).
+#   - Add support for picking random surfaces or points-in-space to move the CPU to; resetting
+#        to a new point after the CPU reaches the old point.
+#     - Implement this as an alternative to ClickToNavigate (actually, support both running at the
+#       same time).
+#     - It will need to listen for when the navigator has reached the destination though (make sure
+#       that signal is emitted).
+# - LEFT OFF HERE: Create a demo level to showcase lots of interesting edges.
+# - LEFT OFF HERE: Check for other obvious false negative edges.
+# - LEFT OFF HERE: Debug why discrete movement trajectories are incorrect.
+#   - Discrete trajectories are definitely peaking higher; should we cut the jump button sooner?
+#   - Not considering continous max vertical velocity might contribute to discrete vertical
+#     movement stopping short.
+# - LEFT OFF HERE: Debug/stress-test intermediate collision scenarios.
+#   - After fixing max vertical velocity, is there anything else I can boost?
+# - LEFT OFF HERE: Debug why check_instructions_for_collision fails with collisions (render better annotations?).
+# - LEFT OFF HERE: Add squirrel animation.
+# 
+# - Debugging:
+#   - Would it help to add some quick and easy annotation helpers for temp debugging that I can access on global (or wherever) and just tell to render dots/lines/circles?
+#   - Then I could use that to render all sorts of temp calculation stuff from this file.
+#   - Add an annotation for tracing the players recent center positions.
+#   - Try rendering a path for trajectory that's closer to the calculations for parabolic motion instead of the resulting instruction positions?
+#     - Might help to see the significance of the difference.
+#     - Might be able to do this with smaller step sizes?
+# 
+# - Problem: What if we hit a ceiling surface (still moving upwards)?
+#   - We'll set a constraint to either side.
+#   - Then we'll likely need to backtrack to use a bigger jump height.
+#   - On the backtracking traversal, we'll hit the same surface again.
+#     - Solution: We should always be allowed to hit ceiling surfaces again.
+#       - Which surfaces _aren't_ we allowed to hit again?
+#         - floor, left_wall, right_wall
+#       - Important: Double-check that if collision clips a static-collidable corner, that the
+#         correct surface is returned
+# - Problem: If we allow hitting a ceiling surface repeatedly, what happens if a jump ascent cannot
+#   get around it (cannot move horizontally far enough during the ascent)?
+#   - Solution: Afer calculating constraints for a surface collision, if it's a ceiling surface,
+#     check whether the time to move horizontally exceeds the time to move upward for either
+#     constraint. If so, abandon that traversal (remove the constraint from the array before
+#     calling the sub function).
+# - Optimization: We should never consider increased-height backtracking from hitting a ceiling
+#   surface.
+# 
+# - Create a pause menu and a level switcher.
+# - Create some sort of configuration for specifying a level as well as the set of annotations to use.
+#   - Actually use this from the menu's level switcher.
+#   - Or should the level itself specify which annotations to use?
+# - Adapt one of the levels to just render a human player and then the annotations for all edges
+#   that our algorithm thinks the human player can traverse.
+#   - Try to render all of the interesting edge pairs that I think I should test for.
+# 
+# - Step through and double-check each return value parameter individually through the recursion, and each input parameter.
+# 
+# - Optimize a bit for collisions with vertical surfaces:
+#   - For the top constraint, change the constraint position to instead use the far side of the
+#     adjacent top-side/floor surface.
+#   - This probably means I should store adjacent Surfaces when originally parsing the Surfaces.
+# - Step through all parts and re-check for correctness.
+# - Account for half-width/height offset needed to clear the edge of B (if possible).
+# - Also, account for the half-width/height offset needed to not fall onto A.
+# - Include a margin around constraints and land position.
+# - Allow for the player to bump into walls/ceiling if they could still reach the land point
+#   afterward (will need to update logic to not include margin when accounting for these hits).
+# - Update the instructions calculations to consider actual discrete timesteps rather than
+#   using continuous algorithms.
+# - Share per-frame state updates logic between the instruction calculations and actual Player
+#   movements.
+# - Problem: We need to make sure that we still have enough momementum left once we hit the target
+#   position to actually cause us to grab on to the target surface.
+#   - Solution: Add support for ensuring a minimum normal-direction speed at the end of the jump.
+#     - Faster is probably always better, since efficient/quick movements are better.
+# 
+# - Problem: All of the edge calculations will allow the slow-ascent gravity to also be used for
+#   the downward portion of the jump.
+#   - Either update Player controllers to also allow that,
+#   - or update all relevant edge calculation logic.
+# 
+# - Make some diagrams in InkScape with surfaces, trajectories, and constraints to demonstrate
+#   algorithm traversal
+#   - Label/color-code parts to demonstrate separate traversal steps
+# - Make the 144-cell diagram in InkScape and add to docs.
+# - Storing possibly 9 edges from A to B.
+# 
+# FIXME: C:
+# - Set the destination_constraint min_velocity_x and max_velocity_x at the start, in order to
+#   latch onto the target surface.
+#   - Also add support for specifying min/max y velocities for this?
+# 
+# FIXME: B:
+# - Should we more explicity re-use all horizontal steps from before the jump button was released?
+#   - It might simplify the logic for checking for previously collided surfaces, and make things
+#     more efficient.
+# 
+# FIXME: B: Check if we need to update following constraints when creating a new one:
+# - Unfortunately, it is possible that the creation of a new intermediate constraint could
+#   invalidate the actual_velocity_x for the following constraint(s). A fix for this would be
+#   to first recalculate the min/max x velocities for all following constraints in forward
+#   order, and then recalculate the actual x velocity for all following constraints in reverse
+#   order.
+# 
+# FIXME: B: 
+# - Make edge-calc annotations usable at run time, by clicking on the start and end positions to check.
+# 
+
+
+
+
+# FIXME: LEFT OFF HERE: -------------------------------------------------A
+# 
+# #########
+# 
+# - Try adding other edges now:
+#   - 
+# 
+# - Add some sort of heuristic to choose when to go with smaller or larger velocity end during
+#   horizontal step calc.
+#   - The alternative, is to once again flip the order we calculate steps, so that we base all
+#     steps off of minimizing the x velocity at the destination.
+#     - :/ We might want to do that anyway though, to give us more flexibility later when we want
+#       to be able to specify a given non-zero target end velocity.
+# 
+# - Should I move some of the horizontal movement functions from constraint_utils to
+#   horizontal_movement_utils?
+# 
+# - Can I render something in the annotations (or in the console output) like the constraint
+#   position or the surface end positions, in order to make it easier to quickly set a breakpoint
+#   to match the corresponding step?
+# 
+# - Debug, debug, debug...
+# 
+# - Additional_high_constraint_position breakpoint is happening three times??
+#   - Should I move the fail-because-we've-been-here-before logic from looking at steps+surfaces+heights to here?
+# 
+# - Should we somehow ensure that jump height is always bumped up at least enough to cover the
+#   extra distance of constraint offsets? 
+#   - Since jumping up to a destination, around the other edge of the platform (which has the
+#     constraint offset), seems like a common use-case, this would probably be a useful optimization.
+#   - [This is important, since the first attempt at getting to the top-right constraint always fails, since it requires a _slightly_ higher jump, and we want it to instead succeed.]
+# 
+# - There is a problem with my approach for using time_to_get_to_destination_from_constraint.
+#   time-to-get-to-intermediate-constraint-from-constraint could matter a lot too. But maybe this
+#   is infrequent enough that I don't care? At least document this limitation (in code and README).
+# 
+# - Add logic to ignore a constraint when the horizontal steps leading up to it would have found
+#   another collision.
+#   - Because changing trajectory for the earlier collision is likely to invalidate the later
+#     collision.
+#   - In this case, the recursive call that found the additional, earlier collision will need to
+#     also then calculate all steps from this collision to the end?
+# 
+# - Fix pixel-perfect scaling/aliasing when enlarging screen and doing camera zoom.
+#   - Only support whole-number multiples somehow?
+# 
+# - When backtracking, re-use all steps that finish before releasing the jump button.
+# 
+# - Add a translation to the on-wall cat animations, so that they are all a bit lower; the cat's
+#   head should be about the same position as the corresponding horizontal pose that collided, and
+#   the bottom should fall from there.
+# 
+# - Add support for detecting invalid origin/destination positions (due to pre-existing collisions
+#   with nearby surfaces).
+#   - Shouldn't matter for convex neighbor surfaces though.
+#   - And then add support for correcting the origin/destination position to avoid the collision.
+#     - When a pre-existing collision is detected, look at the surface side direction.
+#     - If parallel to the origin/destination surface, give up.
+#     - If perpendicular, then offset the position to where the player would rest against the
+#       surface, and check whether that position is still valid along the origin/destination
+#       surface.
+# 
+# - Render a legend:
+#   - x: point of collision
+#   - outline: player boundary at point of collision
+#   - open circles: start or end constraints
+#   - plus: left/right button start
+#   - minus: left/right button end
+#   - asterisk: jump button end
+#   - diamond: 
+#   - BT: 
+#   - RF: 
+# 
+# - Polish description of approach in the README.
+#   - In general, a guiding heuristic in these calculations is to minimize movement. So, through
+#     each constraint (step-end), we try to minimize the horizontal speed of the movement at that
+#     point.
+# 
+# - Try to fix DrawUtils dashed polylines.
+# 
+# - Think through and maybe fix the function in constraint utils for accounting for max-speed vs
+#   min/max for valid next step?
+# 
+# 
+# - Collision calculation annotator:
+#   - Would it be worth adding support to zoom and pan the camera to the current collision?
+#     - Maybe this could be toggleable via clicking a button in the tree view?
+#     - Would definitely want to animate the zoom.
+#     - Probably also need to change the camera translation.
+#       - Probably can just calculate the offset from the player to the collision, and use that to
+#         manually assign an offset to the camera.
+#       - Would also need to animate this translation.
+# 
+
+
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 
 var movement_params: MovementParams
 var surface_parser: SurfaceParser
 var space_state: Physics2DDirectSpaceState
-# Array<Surface>
-var surfaces: Array
+# Dictionary<Surface, Surface>
+var surfaces_set: Dictionary
 # Dictionary<Surface, Array<PositionAlongSurface>>
 var surfaces_to_outbound_nodes: Dictionary
 # Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface, Edge>>
@@ -150,15 +364,16 @@ func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState
     self.debug_state = debug_state
     
     # Store the subset of surfaces that this player type can interact with.
-    self.surfaces = surface_parser.get_subset_of_surfaces( \
+    var surfaces_array := surface_parser.get_subset_of_surfaces( \
             movement_params.can_grab_walls, \
             movement_params.can_grab_ceilings, \
             movement_params.can_grab_floors)
+    self.surfaces_set = Utils.array_to_set(surfaces_array)
     
     self.surfaces_to_outbound_nodes = {}
     self.nodes_to_nodes_to_edges = {}
     
-    _calculate_nodes_and_edges(surfaces, player_info, debug_state)
+    _calculate_nodes_and_edges(surfaces_set, player_info, debug_state)
 
 # Uses A* search.
 func find_path(origin: PositionAlongSurface, \
@@ -289,82 +504,6 @@ static func _record_frontier(current: PositionAlongSurface, next: PositionAlongS
         var priority = new_actual_weight + heuristic_weight
         frontier.insert(priority, next)
 
-# Finds a movement step that will result in landing on a surface, with an attempt to minimize the
-# path the player would then have to travel between surfaces to reach the given target.
-#
-# Returns null if no possible landing exists.
-func find_a_landing_trajectory(origin: Vector2, velocity_start: Vector2, \
-        destination: PositionAlongSurface) -> AirToSurfaceEdge:
-    var result_set := {}
-    find_surfaces_in_fall_range(result_set, origin, velocity_start)
-    var possible_landing_surfaces := result_set.keys()
-    possible_landing_surfaces.sort_custom(self, "_compare_surfaces_by_max_y")
-    
-    var constraint_offset := MovementCalcOverallParams.calculate_constraint_offset(movement_params)
-    
-    var origin_vertices := [origin]
-    var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
-    
-    var possible_end_positions: Array
-    var terminals: Array
-    var vertical_step: MovementVertCalcStep
-    var step_calc_params: MovementCalcStepParams
-    var calc_results: MovementCalcResults
-    var overall_calc_params: MovementCalcOverallParams
-    
-    # Find the first possible edge to a landing surface.
-    for surface in possible_landing_surfaces:
-        possible_end_positions = MovementUtils.get_all_jump_positions_from_surface( \
-                movement_params, destination.surface, origin_vertices, origin_bounding_box, \
-                SurfaceSide.CEILING)
-        
-        for position_end in possible_end_positions:
-            terminals = MovementConstraintUtils.create_terminal_constraints(null, origin, \
-                    surface, position_end.target_point, movement_params, false, velocity_start)
-            if terminals.empty():
-                continue
-            
-            overall_calc_params = MovementCalcOverallParams.new(movement_params, space_state, \
-                    surface_parser, terminals[0], terminals[1], velocity_start, false)
-            
-            vertical_step = VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
-            if vertical_step == null:
-                continue
-            
-            step_calc_params = MovementCalcStepParams.new(overall_calc_params.origin_constraint, \
-                    overall_calc_params.destination_constraint, vertical_step, \
-                    overall_calc_params, null, null)
-            
-            calc_results = MovementStepUtils.calculate_steps_from_constraint( \
-                    overall_calc_params, step_calc_params)
-            if calc_results != null:
-                return AirToSurfaceEdge.new(origin, position_end, calc_results)
-    
-    return null
-
-func find_surfaces_in_fall_range( \
-        result_set: Dictionary, origin: Vector2, velocity_start: Vector2) -> void:
-    # FIXME: E: Offset the start_position_offset to account for velocity_start.
-    # TODO: Refactor this to use a more accurate bounding polygon.
-    
-    # This offset should account for the extra horizontal range before the player has reached
-    # terminal velocity.
-    var start_position_offset_x: float = \
-            HorizontalMovementUtils.calculate_max_horizontal_displacement( \
-                    velocity_start.x, velocity_start.y, \
-                    movement_params.max_horizontal_speed_default, \
-                    movement_params.gravity_slow_rise, movement_params.gravity_fast_fall)
-    var start_position_offset := Vector2(start_position_offset_x, 0.0)
-    var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
-    var bottom_corner_offset_from_top_corner := Vector2(100000.0, 100000.0 * slope)
-    
-    var top_left := origin - start_position_offset
-    var top_right := origin + start_position_offset
-    var bottom_left := top_left + Vector2(-bottom_corner_offset_from_top_corner.x, bottom_corner_offset_from_top_corner.y)
-    var bottom_right := top_right + Vector2(bottom_corner_offset_from_top_corner.x, bottom_corner_offset_from_top_corner.y)
-    _get_surfaces_intersecting_polygon(result_set, \
-            [top_left, top_right, bottom_right, bottom_left], surfaces)
-
 func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Dictionary:
     # TODO: Update this to support falling from the center of fall-through surfaces (consider the
     #       whole surface, rather than just the ends).
@@ -374,19 +513,21 @@ func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Dictionary:
     var result_set := {}
     
     # Get all surfaces that are within fall range from either end of the origin surface.
-    find_surfaces_in_fall_range(result_set, origin_surface.first_point, velocity_start)
+    FallMovementUtils.find_surfaces_in_fall_range(movement_params, surfaces_set, \
+            result_set, origin_surface.first_point, velocity_start)
     if origin_surface.vertices.size() > 1:
-        find_surfaces_in_fall_range(result_set, origin_surface.last_point, velocity_start)
+        FallMovementUtils.find_surfaces_in_fall_range(movement_params, surfaces_set, \
+                result_set, origin_surface.last_point, velocity_start)
     
     var max_horizontal_jump_distance := \
             movement_params.get_max_horizontal_jump_distance(origin_surface.side)
-    _get_surfaces_in_jump_range(result_set, origin_surface, surfaces, \
+    _get_surfaces_in_jump_range(result_set, origin_surface, surfaces_set, \
             max_horizontal_jump_distance, movement_params.max_upward_jump_distance)
     
     return result_set
 
 # Calculates and stores the edges between surface nodes that this player type can traverse.
-func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfiguration, \
+func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTypeConfiguration, \
         debug_state: Dictionary) -> void:
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
@@ -402,7 +543,7 @@ func _calculate_nodes_and_edges(surfaces: Array, player_info: PlayerTypeConfigur
     # Dictionary<Surface, Array<Edge>>
     var surfaces_to_edges := {}
     var edges: Array
-    for surface in surfaces:
+    for surface in surfaces_set:
         surfaces_to_edges[surface] = []
         possible_destination_surfaces_set = get_surfaces_in_jump_and_fall_range(surface)
         
@@ -496,31 +637,8 @@ static func _node_to_cell_id(node: PositionAlongSurface) -> String:
             floor((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int, \
             floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int]
 
-# This is only an approximation, since it only considers the end points of the surface rather than
-# each segment of the surface polyline.
-static func _get_surfaces_intersecting_triangle(triangle_a: Vector2, triangle_b: Vector2,
-        triangle_c: Vector2, surfaces: Array) -> Array:
-    var result := []
-    for surface in surfaces:
-        if Geometry.do_segment_and_triangle_intersect(surface.vertices.front(), \
-                surface.vertices.back(), triangle_a, triangle_b, triangle_c):
-            result.push_back(surface)
-    return result
-
-# This is only an approximation, since it only considers the end points of the surface rather than
-# each segment of the surface polyline.
-static func _get_surfaces_intersecting_polygon( \
-        result_set: Dictionary, polygon: Array, surfaces: Array) -> void:
-    for surface in surfaces:
-        if Geometry.do_segment_and_polygon_intersect( \
-                surface.first_point, surface.last_point, polygon):
-            result_set[surface] = surface
-
-static func _compare_surfaces_by_max_y(a: Surface, b: Surface) -> bool:
-    return a.bounding_box.position.y < b.bounding_box.position.y
-
 static func _get_surfaces_in_jump_range(result_set: Dictionary, target_surface: Surface, \
-        other_surfaces: Array, max_horizontal_jump_distance: float, \
+        other_surfaces_set: Dictionary, max_horizontal_jump_distance: float, \
         max_upward_jump_distance: float) -> void:
     var expanded_target_bounding_box := target_surface.bounding_box.grow_individual( \
             max_horizontal_jump_distance, max_upward_jump_distance, max_horizontal_jump_distance, \
@@ -530,6 +648,6 @@ static func _get_surfaces_in_jump_range(result_set: Dictionary, target_surface: 
 #    if target_surface.bounding_box.position == Vector2(128, 64):
 #        print("yo")
     
-    for other_surface in other_surfaces:
+    for other_surface in other_surfaces_set:
         if expanded_target_bounding_box.intersects(other_surface.bounding_box):
             result_set[other_surface] = other_surface

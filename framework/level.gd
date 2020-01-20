@@ -56,13 +56,15 @@ func _add_overlays() -> void:
 
 func _ready() -> void:
     var scene_tree := get_tree()
+    var space_state := get_world_2d().direct_space_state
+    
+    global.space_state = space_state
     
     # Get references to the TileMaps that define the collision boundaries of this level.
     surface_tile_maps = scene_tree.get_nodes_in_group(Utils.GROUP_NAME_SURFACES)
     assert(surface_tile_maps.size() > 0)
     
     # Set up the PlatformGraphs for this level.
-    var space_state := get_world_2d().direct_space_state
     surface_parser = SurfaceParser.new(surface_tile_maps, global.player_types)
     platform_graphs = _create_platform_graphs( \
             surface_parser, space_state, global.player_types, Global.DEBUG_STATE)

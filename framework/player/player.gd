@@ -16,7 +16,7 @@ var movement_params: MovementParams
 # Array<EdgeMovementCalculators>
 var movement_calculators: Array
 # Array<Surface>
-var possible_surfaces: Array
+var possible_surfaces_set: Dictionary
 var actions_from_previous_frame := PlayerActionState.new()
 var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
@@ -116,7 +116,7 @@ func init_computer_player_state() -> void:
 func set_platform_graph(graph: PlatformGraph) -> void:
     self.graph = graph
     self.surface_parser = graph.surface_parser
-    self.possible_surfaces = graph.surfaces
+    self.possible_surfaces_set = graph.surfaces_set
 
 func _set_camera() -> void:
     var camera := Camera2D.new()
