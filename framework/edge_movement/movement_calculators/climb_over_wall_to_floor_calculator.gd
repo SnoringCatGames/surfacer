@@ -1,9 +1,9 @@
 extends EdgeMovementCalculator
-class_name ClimbOverWallToFloorMovement
+class_name ClimbOverWallToFloorCalculator
 
 const MovementCalcOverallParams := preload("res://framework/edge_movement/models/movement_calculation_overall_params.gd")
 
-const NAME := 'ClimbOverWallToFloorMovement'
+const NAME := 'ClimbOverWallToFloorCalculator'
 
 func _init().(NAME) -> void:
     pass

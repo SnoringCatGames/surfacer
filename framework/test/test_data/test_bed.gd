@@ -1,7 +1,7 @@
 extends "res://addons/gut/test.gd"
 class_name TestBed
 
-const JumpFromPlatformMovement := preload("res://framework/edge_movement/models/jump_from_platform_movement.gd")
+const JumpFromPlatformCalculator := preload("res://framework/edge_movement/models/jump_from_platform_calculator.gd")
 const TestPlayerParams := preload("res://framework/test/test_data/test_player_params.gd")
 
 var TEST_LEVEL_LONG_FALL := {
@@ -76,7 +76,7 @@ const END_POSITION_CLOSE_THRESHOLD := Vector2(0.001, 0.001)
 var sandbox: Node
 
 var movement_params: MovementParams
-var jump_from_platform_movement: JumpFromPlatformMovement
+var jump_from_platform_movement: JumpFromPlatformCalculator
 var level: Level
 var test_player: TestPlayer
 var surface_parser: SurfaceParser
@@ -128,7 +128,7 @@ func set_up_level(data: Dictionary) -> void:
     test_player = level.human_player
     movement_params = test_player.movement_params
     for movement_calculator in test_player.movement_calculators:
-        if movement_calculator is JumpFromPlatformMovement:
+        if movement_calculator is JumpFromPlatformCalculator:
             jump_from_platform_movement = movement_calculator
     assert(jump_from_platform_movement != null)
     

@@ -1,9 +1,9 @@
 extends EdgeMovementCalculator
-class_name FallFromWallMovement
+class_name FallFromFloorCalculator
 
 const MovementCalcOverallParams := preload("res://framework/edge_movement/models/movement_calculation_overall_params.gd")
 
-const NAME := 'FallFromWallMovement'
+const NAME := 'FallFromFloorCalculator'
 
 func _init().(NAME) -> void:
     pass
@@ -15,7 +15,4 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
         movement_params: MovementParams, surface_parser: SurfaceParser, \
         possible_surfaces_set: Dictionary, a: Surface) -> Array:
     # FIXME: LEFT OFF HERE: ----------------------------------------A
-#    var air_to_surface_edge := FallMovementUtils.find_a_landing_trajectory( \
-#            space_state, movement_params, surface_parser, possible_surfaces_set, origin, \
-#            player.velocity, destination)
     return []

@@ -114,7 +114,7 @@ func _calculate_edge_attempt() -> void:
     
     if terminals[0].is_valid and terminals[1].is_valid:
         # Calculate the actual jump steps, collision, trajectory, and input state.
-        var instructions := JumpFromPlatformMovement.calculate_jump_instructions(overall_calc_params)
+        var instructions := JumpFromPlatformCalculator.calculate_jump_instructions(overall_calc_params)
     
     # Record debug state for the jump calculation.
     edge_attempt = overall_calc_params.debug_state

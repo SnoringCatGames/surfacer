@@ -35,12 +35,12 @@ func _get_action_handlers() -> Array:
 
 func _get_movement_calculators() -> Array:
     return [
-        global.EDGE_MOVEMENTS[ClimbOverWallToFloorMovement.NAME],
-        global.EDGE_MOVEMENTS[FallFromWallMovement.NAME],
-        global.EDGE_MOVEMENTS[FallFromFloorMovement.NAME],
-        global.EDGE_MOVEMENTS[JumpFromPlatformMovement.NAME],
-        global.EDGE_MOVEMENTS[ClimbDownWallToFloorMovement.NAME],
-        global.EDGE_MOVEMENTS[WalkToAscendWallFromFloorMovement.NAME],
+        global.EDGE_MOVEMENTS[ClimbOverWallToFloorCalculator.NAME],
+        global.EDGE_MOVEMENTS[FallFromWallCalculator.NAME],
+        global.EDGE_MOVEMENTS[FallFromFloorCalculator.NAME],
+        global.EDGE_MOVEMENTS[JumpFromPlatformCalculator.NAME],
+        global.EDGE_MOVEMENTS[ClimbDownWallToFloorCalculator.NAME],
+        global.EDGE_MOVEMENTS[WalkToAscendWallFromFloorCalculator.NAME],
     ]
 
 func _create_movement_params() -> MovementParams:

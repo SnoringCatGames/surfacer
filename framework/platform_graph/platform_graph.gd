@@ -12,7 +12,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
 #
-# - Finish everything in JumpFromPlatformMovement (edge calculations, including movement constraints from interfering surfaces)
+# - Finish everything in JumpFromPlatformCalculator (edge calculations, including movement constraints from interfering surfaces)
 # - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
 #
 # - Use max_horizontal_jump_distance and max_upward_jump_distance
@@ -84,7 +84,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #         margin considers the other surfaces as already colliding beforehand.
 #
 # - Refactor Movement classes, so that whether the start and end posiition is on a platform
-#   or in the air is configuration that JumpFromPlatformMovement handles directly, rather than
+#   or in the air is configuration that JumpFromPlatformCalculator handles directly, rather than
 #   relying on a separate FallFromAir class?
 # - Add support for including walls in our navigation.
 # - Add support for other jump aspects:

@@ -1,12 +1,19 @@
 extends EdgeMovementCalculator
-class_name JumpFromPlatformMovement
+class_name JumpFromPlatformCalculator
 
 const MovementCalcOverallParams := preload("res://framework/edge_movement/models/movement_calculation_overall_params.gd")
 
-const NAME := 'JumpFromPlatformMovement'
+const NAME := 'JumpFromPlatformCalculator'
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
+# 
+# - Move broad-phase filter from PlatformGraph to within implementations of
+#   get_all_edges_from_surface.
+# 
+# - Test/debug FallMovementUtils.find_a_landing_trajectory.
+# 
+# - Implement FallFromWallCalculator.
 # 
 # ?- Create new Edge sub-classes for the new EdgeMovementCalculator sub-classes?
 #   - e.g., ClimbDownWallToFloor is a combination of two separate intra-surface edges?
@@ -42,11 +49,6 @@ const NAME := 'JumpFromPlatformMovement'
 # 
 # - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the non-jump edges
 # 
-# - Move broad-phase filter from PlatformGraph to within implementations of
-#   get_all_edges_from_surface.
-# 
-# - Test/debug FallMovementUtils.find_a_landing_trajectory.
-# 
 # - Fix any remaining Navigator movement issues.
 # - Fix performance.
 #   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
@@ -62,6 +64,37 @@ const NAME := 'JumpFromPlatformMovement'
 #   - Go through levels and verify that all expected edges work.
 # 
 # - Fix issue where jumping around edge sometimes isn't going far enough; it's clipping the corner.
+# 
+# ---  ---
+# 
+# - Start with debug menu closed. Open when rendering edge-calc annotator.
+# - Create a temporary toast message.
+#   - Shown at top-mid.
+#   - Disappears after clicking anywhere.
+#   - Explains controls and click-to-focus.
+#     - Squirrel Away!
+#     - _Click anywhere on window to give focus (Levi will fix that eventually...)._
+#     - Controls:
+#       - Use mouse to direct cat to move automatically.
+#       - Use keyboard to control cat manually (UDLR, X, Z)
+#       - Ctrl+click to debug how an edge was calculated (click on both ends where the edge should have gone).
+# - Add a top-level button to debug menu to hide all annotations.
+#   - (grid, clicks, player position, player recent movement, platform graph, ...)
+# 
+# - Prepare a different, more interesting level for demo (some walls connecting to floors too).
+# 
+# ---  ---
+# 
+# - Put together some illustrative screenshots with special one-off annotations to explain the
+#   graph parsing steps.
+#   - A couple surfaces
+#   - Show different tiles, to illustrate how surfaces get merged.
+#   - All surfaces (different colors)
+#   - A couple edges
+#   - All edges
+#   - 
+# 
+# - Update README.
 # 
 # ---  ---
 # 
@@ -92,19 +125,6 @@ const NAME := 'JumpFromPlatformMovement'
 #   - We could probably actually do an even better job by limiting the range for velocity_start_x
 #     for floor-surface-end-jump-off-points to be between either -max_horizontal_speed_default and
 #     0 or 0 and max_horizontal_speed_default.
-# 
-# ---  ---
-# 
-# - Put together some illustrative screenshots with special one-off annotations to explain the
-#   graph parsing steps.
-#   - A couple surfaces
-#   - Show different tiles, to illustrate how surfaces get merged.
-#   - All surfaces (different colors)
-#   - A couple edges
-#   - All edges
-#   - 
-# 
-# - Update README.
 # 
 # ---  ---
 # 
