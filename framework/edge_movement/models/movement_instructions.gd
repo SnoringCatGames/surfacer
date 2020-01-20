@@ -6,7 +6,7 @@ var instructions: Array
 
 var duration: float
 
-var distance_squared: float
+var distance: float
 
 # The positions of each frame of movement according to the discrete per-frame movement
 # calculations of the instruction test. This is used for annotation debugging.
@@ -27,11 +27,11 @@ var horizontal_instruction_end_positions: PoolVector2Array
 var jump_instruction_end_position: Vector2
 
 # Instructions don't need to be pre-sorted.
-func _init(instructions: Array, duration: float, distance_squared: float, \
+func _init(instructions: Array, duration: float, distance: float, \
         constraint_positions := []) -> void:
     self.instructions = instructions
     self.duration = duration
-    self.distance_squared = distance_squared
+    self.distance = distance
     self.constraint_positions = PoolVector2Array(constraint_positions)
     
     self.instructions.sort_custom(self, "instruction_comparator")

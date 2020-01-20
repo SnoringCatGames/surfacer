@@ -35,8 +35,6 @@ static func convert_calculation_steps_to_movement_instructions( \
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
     
-    var distance_squared := position_start.distance_squared_to(position_end)
-    
     var constraint_positions := []
     
     var instructions := []
@@ -83,12 +81,27 @@ static func convert_calculation_steps_to_movement_instructions( \
         instructions.push_front(press)
     
     var frame_continous_positions_from_steps := _concatenate_step_frame_positions(steps)
+    var distance_from_continuous_frame_positions := _sum_distance_between_frames( \
+            frame_continous_positions_from_steps)
+    # FIXME: Remove? Do a performance test to see if using this would be significantly faster.
+#    var distance_from_end_to_end := position_start.distance_to(position_end)
     
-    var result := MovementInstructions.new(instructions, INF, distance_squared, \
-            constraint_positions)
+    var result := MovementInstructions.new(instructions, INF, \
+            distance_from_continuous_frame_positions, constraint_positions)
     result.frame_continous_positions_from_steps = frame_continous_positions_from_steps
     
     return result
+
+static func _sum_distance_between_frames(frame_positions: PoolVector2Array) -> float:
+    assert(frame_positions.size() > 1)
+    var previous_position := frame_positions[0]
+    var next_position: Vector2
+    var sum := 0.0
+    for i in range(1, frame_positions.size()):
+        next_position = frame_positions[i]
+        sum += previous_position.distance_to(next_position)
+        previous_position = next_position
+    return sum
 
 static func _concatenate_step_frame_positions(steps: Array) -> PoolVector2Array:
     var combined_positions := []

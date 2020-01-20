@@ -28,10 +28,9 @@ static func _calculate_instructions(start: PositionAlongSurface, \
     
     var upward_instruction := MovementInstruction.new("move_up", 0.0, true)
     
-    var distance_squared := start.target_point.distance_squared_to(end.target_point)
+    var distance := start.target_point.distance_to(end.target_point)
     
-    return MovementInstructions.new([inward_instruction, upward_instruction], INF, \
-            distance_squared)
+    return MovementInstructions.new([inward_instruction, upward_instruction], INF, distance)
 
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:

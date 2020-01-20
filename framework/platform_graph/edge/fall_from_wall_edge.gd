@@ -25,8 +25,8 @@ static func _calculate_instructions(start: PositionAlongSurface, \
             "move_right" if start.surface.side == SurfaceSide.LEFT_WALL else "move_left"
     var inward_instruction := MovementInstruction.new(sideways_input_key, 0.0, true)
     var instruction := MovementInstruction.new(sideways_input_key, 0.0, true)
-    var distance_squared := start.target_point.distance_squared_to(end)
-    return MovementInstructions.new([instruction], INF, distance_squared)
+    var distance := start.target_point.distance_to(end)
+    return MovementInstructions.new([instruction], INF, distance)
 
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:

@@ -421,7 +421,7 @@ func find_path(origin: PositionAlongSurface, \
         if current_node.surface == destination_surface:
             next_node = destination
             new_actual_weight = current_weight + \
-                    current_node.target_point.distance_squared_to(next_node.target_point)
+                    current_node.target_point.distance_to(next_node.target_point)
             _record_frontier(current_node, next_node, destination, new_actual_weight, \
                     nodes_to_previous_nodes, nodes_to_weights, frontier)
             # We don't need to consider any additional edges from this node, since they'd
@@ -432,7 +432,7 @@ func find_path(origin: PositionAlongSurface, \
         # surface.
         for next_node in surfaces_to_outbound_nodes[current_node.surface]:
             new_actual_weight = current_weight + \
-                    current_node.target_point.distance_squared_to(next_node.target_point)
+                    current_node.target_point.distance_to(next_node.target_point)
             _record_frontier(current_node, next_node, destination, new_actual_weight, \
                     nodes_to_previous_nodes, nodes_to_weights, frontier)
         
@@ -497,8 +497,7 @@ static func _record_frontier(current: PositionAlongSurface, next: PositionAlongS
         # Record this node's weight.
         nodes_to_weights[next] = new_actual_weight
         
-        var heuristic_weight = \
-                next.target_point.distance_squared_to(destination.target_point)
+        var heuristic_weight = next.target_point.distance_to(destination.target_point)
         
         # Add this node to the frontier with a priority.
         var priority = new_actual_weight + heuristic_weight

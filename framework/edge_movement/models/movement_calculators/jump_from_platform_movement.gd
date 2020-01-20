@@ -8,8 +8,6 @@ const NAME := 'JumpFromPlatformMovement'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Update trajectory-based Instructions to use weight from sum of distances between frames, rather than simply the distance between origin and destination.
-# 
 # ?- Create new Edge sub-classes for the new EdgeMovementCalculator sub-classes?
 #   - e.g., ClimbDownWallToFloor is a combination of two separate intra-surface edges?
 #   - Think-out how I want the Navigator to work with the Edge system and the new

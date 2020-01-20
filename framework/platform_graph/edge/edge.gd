@@ -72,7 +72,7 @@ func _get_end_surface() -> Surface:
     return null
 
 func _get_weight() -> float:
-    return instructions.distance_squared
+    return instructions.distance
 
 func _get_start_string() -> String:
     Utils.error("Abstract Edge._get_start_string is not implemented")
