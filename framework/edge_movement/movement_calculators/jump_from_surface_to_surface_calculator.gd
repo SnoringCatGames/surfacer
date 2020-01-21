@@ -8,48 +8,17 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Implement FallFromWallCalculator.
+# - Debug why no valid Edges are found in FallFromWallCalculator.
 # 
-# - Figure out what to do for FallFromFloorEdge.
-#   - We need to on-the-fly detect when the player has left the floor and entered the air.
-#   - We need to at-that-point start running the instructions for the fall trajectory.
-#   - So FallFromFloorEdge might need to be replaced with two edges? WalkOffFloorEdge, and AirToSurfaceEdge?
-# 
-# ?- Create new Edge sub-classes for the new EdgeMovementCalculator sub-classes?
-#   - e.g., ClimbDownWallToFloor is a combination of two separate intra-surface edges?
-#   - Think-out how I want the Navigator to work with the Edge system and the new
-#     EdgeMovementCalculator sub-classes...
-#     - Right now, the Navigator has embedded business logic for calculating just_reached_intra_surface_destination.
-#     - I might need to take that out into something more scalable for each different EdgeMovementCalculator?
-#   >>>- For now, just hard-code logic into Navigator. Clean it up afterward.
-# - Implement new EdgeMovementCalculator subclasses.
+# - Implement annotators for new Edges.
 #   - FallFromWall
-#     - Instructions playback:
-#       - Can be very simple: a single frame with a single instruction. Guaranteed to work.
 #   - FallFromFloor
-#     - Instructions playback:
-#       - Walk until leaving floor surface (or "enter air").
 #   - ClimbOverWallToFloor
-#     - Instructions playback:
-#       - Climb up until leaving wall surface (or "enter air").
-#       - Then press sideways until hitting floor surface.
-#     - Annotator:
-#       - Render quarter circle with ends aligned coaxially with corner.
+#     - Render quarter circle with ends aligned coaxially with corner.
 #   - ClimbDownWallToFloor
-#     - Instructions playback:
-#       - Climb down until surface_state.is_touching_floor.
-#     - Annotator:
-#       - Render 90-degree connected line segments? Where are the end points?
+#     - Render 90-degree connected line segments? Where are the end points?
 #   - ClimbUpWallFromFloor
-#     - Instructions playback:
-#       - Walk over until surface_state.is_touching_(left|right)wall.
-#     - Annotator:
-#       - Render 90-degree connected line segments? Where are the end points?
-#   - Clean-up how Navigator handles edge-end detection logic, to be more scalable with new classes?
-# 
-# - Move get_instructions_to_air to somewhere else.
-# 
-# - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the non-jump edges
+#     - Render 90-degree connected line segments? Where are the end points?
 # 
 # - Fix any remaining Navigator movement issues.
 # - Fix performance.
@@ -71,7 +40,7 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # 
 # - Remove calls to MovementInstructionsUtils.test_instructions?
 # 
-# ---  ---
+# --- Expected cut-off for demo date ---
 # 
 # - Start with debug menu closed. Open when rendering edge-calc annotator.
 # 
@@ -109,6 +78,14 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # - Update README.
 # 
 # ---  ---
+# 
+# - Implement/debug the other EdgeMovementCalculators.
+#   - Figure out what to do for FallFromFloorEdge.
+#     - We need to on-the-fly detect when the player has left the floor and entered the air.
+#     - We need to at-that-point start running the instructions for the fall trajectory.
+#     - So FallFromFloorEdge might need to be replaced with two edges? WalkOffFloorEdge, and AirToSurfaceEdge?
+# - Move get_instructions_to_air to somewhere else.
+# - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the non-jump edges
 # 
 # - Update navigation to do some additional on-the-fly edge calculations.
 #   - Only limit this to a few additional potential edges along the path.
@@ -171,7 +148,7 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 #     - V1: Show "Squirrel Away" text. Animate squirrel running across, right to left, in front of letters.
 #     - V2: Have squirrel pause to the left of the S, with its tail overlapping the S. Give a couple tail twitches. Then have squirrel leave.
 #     
-# --- Expected cut-off for demo date ---
+# ---  ---
 # 
 # - Update some edge calculators to offset the expected near-side, far-side, close-side, top-side,
 #   bottom-side, etc. jump-off/land-on position calculations to account for neighbor surfaces that

@@ -60,9 +60,10 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                     continue
                 ###################################################################################
                 
+                # FIXME: LEFT OFF HERE: ------------------------A: Debug why fall edge isn't returned.
                 terminals = MovementConstraintUtils.create_terminal_constraints(origin_surface, \
-                        jump_position.target_point, destination_surface, land_position.target_point, \
-                        movement_params, false, velocity_start)
+                        jump_position.target_point, destination_surface, \
+                        land_position.target_point, movement_params, false, velocity_start)
                 if terminals.empty():
                     continue
                 

@@ -533,6 +533,14 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
                 surfaces_in_jump_range_set, surface)
         
         for movement_calculator in player_info.movement_calculators:
+            ###################################################################################
+            # Allow for debug mode to limit the scope of what's calculated.
+            if debug_state.in_debug_mode and \
+                    debug_state.has('limit_parsing') and \
+                    movement_calculator.name != debug_state.limit_parsing.movement_calculator:
+                continue
+            ###################################################################################
+            
             if movement_calculator.get_can_traverse_from_surface(surface):
                 previous_size = edges.size()
                 
