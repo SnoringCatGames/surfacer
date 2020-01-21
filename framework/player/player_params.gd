@@ -26,12 +26,12 @@ func _init(name: String, player_resource_path: String, global) -> void:
             MovementUtils.calculate_movement_duration(-_movement_params.max_upward_jump_distance, \
                     _movement_params.jump_boost, _movement_params.gravity_slow_rise)
     _movement_params.floor_jump_max_horizontal_jump_distance = \
-            HorizontalMovementUtils.calculate_max_horizontal_displacement( \
+            HorizontalMovementUtils.calculate_max_horizontal_displacement_before_returning_to_starting_height( \
                     0.0, _movement_params.jump_boost, \
                     _movement_params.max_horizontal_speed_default, \
                     _movement_params.gravity_slow_rise, _movement_params.gravity_fast_fall)
     _movement_params.wall_jump_max_horizontal_jump_distance = \
-            HorizontalMovementUtils.calculate_max_horizontal_displacement( \
+            HorizontalMovementUtils.calculate_max_horizontal_displacement_before_returning_to_starting_height( \
                     _movement_params.wall_jump_horizontal_boost, _movement_params.jump_boost, \
                     _movement_params.max_horizontal_speed_default, \
                     _movement_params.gravity_slow_rise, _movement_params.gravity_fast_fall)

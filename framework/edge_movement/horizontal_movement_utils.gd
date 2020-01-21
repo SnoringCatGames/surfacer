@@ -235,13 +235,15 @@ static func calculate_horizontal_state_for_time(movement_params: MovementParams,
     
     return [position, velocity]
 
-static func calculate_max_horizontal_displacement( \
+static func calculate_max_horizontal_displacement_before_returning_to_starting_height( \
         velocity_start_x: float, velocity_start_y: float, max_horizontal_speed_default: float, \
         gravity_slow_rise: float, gravity_fast_fall: float) -> float:
     # FIXME: D: Use velocity_start_x, and account for acceleration, in order to further limit the
     #           displacement.
     # FIXME: F: Add support for double jumps, dash, etc.
     # FIXME: A: Add horizontal acceleration
+    
+    assert(velocity_start_y < 0.0)
     
     # v = v_0 + a*t
     var max_time_to_peak := -velocity_start_y / gravity_slow_rise

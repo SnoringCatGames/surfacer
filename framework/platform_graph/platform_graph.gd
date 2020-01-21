@@ -503,28 +503,6 @@ static func _record_frontier(current: PositionAlongSurface, next: PositionAlongS
         var priority = new_actual_weight + heuristic_weight
         frontier.insert(priority, next)
 
-func get_surfaces_in_jump_and_fall_range(origin_surface: Surface) -> Dictionary:
-    # TODO: Update this to support falling from the center of fall-through surfaces (consider the
-    #       whole surface, rather than just the ends).
-    
-    var velocity_start := movement_params.get_jump_initial_velocity(origin_surface.side)
-    
-    var result_set := {}
-    
-    # Get all surfaces that are within fall range from either end of the origin surface.
-    FallMovementUtils.find_surfaces_in_fall_range(movement_params, surfaces_set, \
-            result_set, origin_surface.first_point, velocity_start)
-    if origin_surface.vertices.size() > 1:
-        FallMovementUtils.find_surfaces_in_fall_range(movement_params, surfaces_set, \
-                result_set, origin_surface.last_point, velocity_start)
-    
-    var max_horizontal_jump_distance := \
-            movement_params.get_max_horizontal_jump_distance(origin_surface.side)
-    _get_surfaces_in_jump_range(result_set, origin_surface, surfaces_set, \
-            max_horizontal_jump_distance, movement_params.max_upward_jump_distance)
-    
-    return result_set
-
 # Calculates and stores the edges between surface nodes that this player type can traverse.
 func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTypeConfiguration, \
         debug_state: Dictionary) -> void:
@@ -536,28 +514,38 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
         return
     ###################################################################################
     
-    var possible_destination_surfaces_set: Dictionary
+    var surfaces_in_fall_range_set := {}
+    var surfaces_in_jump_range_set := {}
     
     # Calculate all inter-surface edges.
     # Dictionary<Surface, Array<Edge>>
     var surfaces_to_edges := {}
     var edges: Array
+    var edge: Edge
+    var previous_size: int
     for surface in surfaces_set:
-        surfaces_to_edges[surface] = []
-        possible_destination_surfaces_set = get_surfaces_in_jump_and_fall_range(surface)
+        edges = []
+        surfaces_to_edges[surface] = edges
+        surfaces_in_fall_range_set.clear()
+        surfaces_in_jump_range_set.clear()
+        
+        _get_surfaces_in_jump_and_fall_range(surfaces_in_fall_range_set, \
+                surfaces_in_jump_range_set, surface)
         
         for movement_calculator in player_info.movement_calculators:
             if movement_calculator.get_can_traverse_from_surface(surface):
+                previous_size = edges.size()
+                
                 # Calculate the inter-surface edges.
-                edges = movement_calculator.get_all_edges_from_surface( \
+                movement_calculator.get_all_edges_from_surface( \
                         debug_state, space_state, movement_params, surface_parser, \
-                        possible_destination_surfaces_set, surface)
+                        edges, surfaces_in_fall_range_set, surfaces_in_jump_range_set, surface)
                 
                 # Remove any used surfaces from consideration.
-                for edge in edges:
-                    possible_destination_surfaces_set.erase(edge.end_surface)
-                
-                Utils.concat(surfaces_to_edges[surface], edges)
+                for i in range(previous_size, edges.size()):
+                    edge = edges[i]
+                    surfaces_in_fall_range_set.erase(edge.end_surface)
+                    surfaces_in_jump_range_set.erase(edge.end_surface)
     
     # Dedup all edge-end positions (aka, nodes).
     var grid_cell_to_node := {}
@@ -636,12 +624,26 @@ static func _node_to_cell_id(node: PositionAlongSurface) -> String:
             floor((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int, \
             floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int]
 
-static func _get_surfaces_in_jump_range(result_set: Dictionary, target_surface: Surface, \
-        other_surfaces_set: Dictionary, max_horizontal_jump_distance: float, \
-        max_upward_jump_distance: float) -> void:
+func _get_surfaces_in_jump_and_fall_range(surfaces_in_fall_range_result_set: Dictionary, \
+        surfaces_in_jump_range_result_set: Dictionary, origin_surface: Surface) -> void:
+    # TODO: Update this to support falling from the center of fall-through surfaces (consider the
+    #       whole surface, rather than just the ends).
+    
+    # Get all surfaces that are within fall range from either end of the origin surface.
+    FallMovementUtils.find_surfaces_in_fall_range_from_surface(movement_params, surfaces_set, \
+            surfaces_in_fall_range_result_set, surfaces_in_jump_range_result_set, origin_surface)
+    
+    _get_surfaces_in_jump_range(surfaces_in_jump_range_result_set, movement_params, \
+            origin_surface, surfaces_set)
+
+static func _get_surfaces_in_jump_range(result_set: Dictionary, movement_params: MovementParams, \
+        target_surface: Surface, other_surfaces_set: Dictionary) -> void:
+    var max_horizontal_jump_distance := \
+            movement_params.get_max_horizontal_jump_distance(target_surface.side)
+    
     var expanded_target_bounding_box := target_surface.bounding_box.grow_individual( \
-            max_horizontal_jump_distance, max_upward_jump_distance, max_horizontal_jump_distance, \
-            0.0)
+            max_horizontal_jump_distance, movement_params.max_upward_jump_distance, \
+            max_horizontal_jump_distance, 0.0)
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE
 #    if target_surface.bounding_box.position == Vector2(128, 64):

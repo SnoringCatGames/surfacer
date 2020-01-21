@@ -10,7 +10,7 @@ static func find_a_landing_trajectory(space_state: Physics2DDirectSpaceState, \
         possible_surfaces_set: Dictionary, origin: Vector2, velocity_start: Vector2, \
         destination: PositionAlongSurface) -> AirToSurfaceEdge:
     var result_set := {}
-    find_surfaces_in_fall_range( \
+    find_surfaces_in_fall_range_from_point( \
             movement_params, possible_surfaces_set, result_set, origin, velocity_start)
     var possible_landing_surfaces := result_set.keys()
     possible_landing_surfaces.sort_custom(SurfaceMaxYComparator, "sort")
@@ -57,31 +57,187 @@ static func find_a_landing_trajectory(space_state: Physics2DDirectSpaceState, \
     
     return null
 
-static func find_surfaces_in_fall_range(movement_params: MovementParams, \
+static func find_surfaces_in_fall_range_from_point(movement_params: MovementParams, \
         possible_surfaces_set: Dictionary, result_set: Dictionary, origin: Vector2, \
         velocity_start: Vector2) -> void:
     # FIXME: E: Offset the start_position_offset to account for velocity_start.
-    # TODO: Refactor this to use a more accurate bounding polygon.
+    
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    # NOTE: This makes the simplifying assumption that the player cannot still be pressing the jump
+    #       button, and we only need to consider fast-fall gravity.
+    var time_to_terminal_velocity_y := (movement_params.max_vertical_speed - velocity_start.y) / \
+            movement_params.gravity_fast_fall
     
     # This offset should account for the extra horizontal range before the player has reached
     # terminal velocity.
-    var start_position_offset_x: float = \
-            HorizontalMovementUtils.calculate_max_horizontal_displacement( \
-                    velocity_start.x, velocity_start.y, \
-                    movement_params.max_horizontal_speed_default, \
-                    movement_params.gravity_slow_rise, movement_params.gravity_fast_fall)
-    var start_position_offset := Vector2(start_position_offset_x, 0.0)
-    var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
-    var bottom_corner_offset_from_top_corner := Vector2(100000.0, 100000.0 * slope)
+    # From a basic equation of motion:
+    #     s = s_0 + v*t
+    var offset_x_for_acceleration_to_terminal_velocity := \
+            movement_params.max_horizontal_speed_default * time_to_terminal_velocity_y
     
-    var top_left := origin - start_position_offset
-    var top_right := origin + start_position_offset
-    var bottom_left := top_left + Vector2(-bottom_corner_offset_from_top_corner.x, \
-            bottom_corner_offset_from_top_corner.y)
-    var bottom_right := top_right + Vector2(bottom_corner_offset_from_top_corner.x, \
-            bottom_corner_offset_from_top_corner.y)
+    var offset_for_acceleration_to_terminal_velocity := \
+            Vector2(offset_x_for_acceleration_to_terminal_velocity, 0.0)
+    var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
+    var offset_x_from_top_corner_to_bottom_corner := 10000.0
+    var offset_y_from_top_corner_to_bottom_corner := 10000.0 * slope
+    
+    var top_left := origin - offset_for_acceleration_to_terminal_velocity
+    var top_right := origin + offset_for_acceleration_to_terminal_velocity
+    var bottom_left := top_left + Vector2(-offset_x_from_top_corner_to_bottom_corner, \
+            offset_y_from_top_corner_to_bottom_corner)
+    var bottom_right := top_right + Vector2(offset_x_from_top_corner_to_bottom_corner, \
+            offset_y_from_top_corner_to_bottom_corner)
+    
     _get_surfaces_intersecting_polygon(result_set, \
             [top_left, top_right, bottom_right, bottom_left], possible_surfaces_set)
+
+static func find_surfaces_in_fall_range_from_surface(movement_params: MovementParams, \
+        possible_surfaces_set: Dictionary, \
+        surfaces_in_fall_range_without_jump_distance_result_set: Dictionary, \
+        surfaces_in_fall_range_with_jump_distance_result_set: Dictionary, \
+        origin_surface: Surface) -> void:
+    # FIXME: E: Offset the start_position_offset to account for velocity_start.
+    # FIXME: E: There may be cases when it's worth considering both
+    #           offset_for_acceleration_to_terminal_velocity and offset_for_jump_distance together.
+    
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    #     v_0 = 0.0
+    # NOTE: This makes the simplifying assumption that the player cannot still be pressing the jump
+    #       button, and we only need to consider fast-fall gravity.
+    var time_to_terminal_velocity_y := \
+            movement_params.max_vertical_speed / movement_params.gravity_fast_fall
+    
+    # This offset should account for the extra horizontal range before the player has reached
+    # terminal velocity.
+    # From a basic equation of motion:
+    #     s = s_0 + v*t
+    var offset_x_for_acceleration_to_terminal_velocity := \
+            movement_params.max_horizontal_speed_default * time_to_terminal_velocity_y
+    
+    var offset_for_acceleration_to_terminal_velocity := \
+            Vector2(offset_x_for_acceleration_to_terminal_velocity, 0.0)
+    var slope := movement_params.max_vertical_speed / movement_params.max_horizontal_speed_default
+    var offset_x_from_top_corner_to_bottom_corner := 100000.0
+    var offset_y_from_top_corner_to_bottom_corner := 100000.0 * slope
+    
+    # FIXME: LEFT OFF HERE: ----------------------------------A
+    # - Decide whether to adapt this function or create another for the find_a_landing_trajectory
+    #   case, where we only start with a single point, rather than a surface.
+    
+    # Only expand the intersection polygon to consider the jump distance, if the
+    # corresponding result set is given.
+    var max_horizontal_jump_distance := \
+            movement_params.get_max_horizontal_jump_distance(origin_surface.side) if \
+            surfaces_in_fall_range_with_jump_distance_result_set != null else \
+            0.0
+    var offset_for_jump_distance := Vector2(max_horizontal_jump_distance, 0.0)
+    
+    var top_left: Vector2
+    var top_right: Vector2
+    var bottom_left: Vector2
+    var bottom_right: Vector2
+    
+    match origin_surface.side:
+        SurfaceSide.LEFT_WALL:
+            # Only expand calculate the jump-distance results, if the corresponding result set is
+            # given.
+            if surfaces_in_fall_range_with_jump_distance_result_set != null:
+                top_left = origin_surface.first_point - offset_for_jump_distance
+                top_right = origin_surface.first_point + offset_for_jump_distance
+                bottom_left = top_left + Vector2(-offset_x_from_top_corner_to_bottom_corner, \
+                        offset_y_from_top_corner_to_bottom_corner)
+                bottom_right = top_right + Vector2(offset_x_from_top_corner_to_bottom_corner, \
+                        offset_y_from_top_corner_to_bottom_corner)
+                _get_surfaces_intersecting_polygon( \
+                        surfaces_in_fall_range_with_jump_distance_result_set, \
+                        [top_left, top_right, bottom_right, bottom_left], possible_surfaces_set)
+                
+                # Limit the possible surfaces for the following without-jump-distance calculation
+                # to be a subset of the with-jump-distance result.
+                possible_surfaces_set = surfaces_in_fall_range_with_jump_distance_result_set
+            
+            # For falling from a left-side wall, we can only fall leftward from bottom point, and
+            # we can fall the furthest rightward from the top point. So we call the bottom point
+            # the "top-left" and we call the top point the "top-right".
+            top_left = origin_surface.last_point - \
+                    offset_for_acceleration_to_terminal_velocity
+            top_right = origin_surface.first_point + \
+                    offset_for_acceleration_to_terminal_velocity
+            bottom_left = top_left + Vector2(-offset_x_from_top_corner_to_bottom_corner, \
+                    offset_y_from_top_corner_to_bottom_corner)
+            bottom_right = top_right + Vector2(offset_x_from_top_corner_to_bottom_corner, \
+                    offset_y_from_top_corner_to_bottom_corner)
+            _get_surfaces_intersecting_polygon( \
+                    surfaces_in_fall_range_without_jump_distance_result_set, \
+                    [top_left, top_right, bottom_right, bottom_left], possible_surfaces_set)
+            
+        SurfaceSide.RIGHT_WALL:
+            # Only expand calculate the jump-distance results, if the corresponding result set is
+            # given.
+            if surfaces_in_fall_range_with_jump_distance_result_set != null:
+                top_left = origin_surface.last_point - offset_for_jump_distance
+                top_right = origin_surface.last_point + offset_for_jump_distance
+                bottom_left = top_left + Vector2(-offset_x_from_top_corner_to_bottom_corner, \
+                        offset_y_from_top_corner_to_bottom_corner)
+                bottom_right = top_right + Vector2(offset_x_from_top_corner_to_bottom_corner, \
+                        offset_y_from_top_corner_to_bottom_corner)
+                _get_surfaces_intersecting_polygon( \
+                        surfaces_in_fall_range_with_jump_distance_result_set, \
+                        [top_left, top_right, bottom_right, bottom_left], possible_surfaces_set)
+                
+                # Limit the possible surfaces for the following without-jump-distance calculation
+                # to be a subset of the with-jump-distance result.
+                possible_surfaces_set = surfaces_in_fall_range_with_jump_distance_result_set
+            
+            # For falling from a right-side wall, we can only fall rightward from bottom point, and
+            # we can fall the furthest leftward from the top point. So we call the top point
+            # the "top-left" and we call the bottom point the "top-right".
+            top_left = origin_surface.last_point - \
+                    offset_for_acceleration_to_terminal_velocity
+            top_right = origin_surface.first_point + \
+                    offset_for_acceleration_to_terminal_velocity
+            bottom_left = top_left + Vector2(-offset_x_from_top_corner_to_bottom_corner, \
+                    offset_y_from_top_corner_to_bottom_corner)
+            bottom_right = top_right + Vector2(offset_x_from_top_corner_to_bottom_corner, \
+                    offset_y_from_top_corner_to_bottom_corner)
+            _get_surfaces_intersecting_polygon( \
+                    surfaces_in_fall_range_without_jump_distance_result_set, \
+                    [top_left, top_right, bottom_right, bottom_left], possible_surfaces_set)
+            
+        SurfaceSide.FLOOR:
+            # Only expand calculate the jump-distance results, if the corresponding result set is
+            # given.
+            if surfaces_in_fall_range_with_jump_distance_result_set != null:
+                top_left = origin_surface.first_point - offset_for_jump_distance
+                top_right = origin_surface.last_point + offset_for_jump_distance
+                bottom_left = top_left + Vector2(-offset_x_from_top_corner_to_bottom_corner, \
+                        offset_y_from_top_corner_to_bottom_corner)
+                bottom_right = top_right + Vector2(offset_x_from_top_corner_to_bottom_corner, \
+                        offset_y_from_top_corner_to_bottom_corner)
+                _get_surfaces_intersecting_polygon( \
+                        surfaces_in_fall_range_with_jump_distance_result_set, \
+                        [top_left, top_right, bottom_right, bottom_left], possible_surfaces_set)
+                
+                # Limit the possible surfaces for the following without-jump-distance calculation
+                # to be a subset of the with-jump-distance result.
+                possible_surfaces_set = surfaces_in_fall_range_with_jump_distance_result_set
+            
+            top_left = origin_surface.first_point - \
+                    offset_for_acceleration_to_terminal_velocity
+            top_right = origin_surface.last_point + \
+                    offset_for_acceleration_to_terminal_velocity
+            bottom_left = top_left + Vector2(-offset_x_from_top_corner_to_bottom_corner, \
+                    offset_y_from_top_corner_to_bottom_corner)
+            bottom_right = top_right + Vector2(offset_x_from_top_corner_to_bottom_corner, \
+                    offset_y_from_top_corner_to_bottom_corner)
+            _get_surfaces_intersecting_polygon( \
+                    surfaces_in_fall_range_without_jump_distance_result_set, \
+                    [top_left, top_right, bottom_right, bottom_left], possible_surfaces_set)
+            
+        _:
+            Utils.error()
 
 # This is only an approximation, since it only considers the end points of the surface rather than
 # each segment of the surface polyline.

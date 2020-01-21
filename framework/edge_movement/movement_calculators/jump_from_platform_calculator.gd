@@ -8,10 +8,20 @@ const NAME := 'JumpFromPlatformCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Move broad-phase filter from PlatformGraph to within implementations of
-#   get_all_edges_from_surface.
+# - Refine broad-phase filter in PlatformGraph:
+#   - Split apart into three separate sets:
+#     - Within fall range (down, not over or up)
+#     - Within fall range + jump distance (over and down, not up)
+#     - Within jump range (up and over, not down)
+#   - Use the only the appropriate sets depending on the specific movement_calculator (pass all three to each though).
+#   - Update find_surfaces_in_fall_range to be more intelligent about how it defines the polygon.
 # 
 # - Test/debug FallMovementUtils.find_a_landing_trajectory.
+# 
+# - Update trajectory annotator to not print enum in label, and to just skip to the first line
+#   - And to remove one of the spaces from the other indented lines?
+#   - Don't render the before/at/previous collision frame boxes if we don't actually have a
+#     real/complete collision.
 # 
 # - Implement FallFromWallCalculator.
 # 
@@ -82,6 +92,8 @@ const NAME := 'JumpFromPlatformCalculator'
 #   - (grid, clicks, player position, player recent movement, platform graph, ...)
 # 
 # - Prepare a different, more interesting level for demo (some walls connecting to floors too).
+# 
+# - Make each background layer more faded. Only interactable foreground should pop so much.
 # 
 # ---  ---
 # 
@@ -222,14 +234,14 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null
 
 func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DDirectSpaceState, \
-        movement_params: MovementParams, surface_parser: SurfaceParser, \
-        possible_surfaces_set: Dictionary, a: Surface) -> Array:
+        movement_params: MovementParams, surface_parser: SurfaceParser, edges_result: Array, \
+        surfaces_in_fall_range_set: Dictionary, surfaces_in_jump_range_set: Dictionary, \
+        origin_surface: Surface) -> void:
     var jump_positions: Array
     var land_positions: Array
     var terminals: Array
     var instructions: MovementInstructions
     var edge: InterSurfaceEdge
-    var edges := []
     var overall_calc_params: MovementCalcOverallParams
     
     # FIXME: B: REMOVE
@@ -240,12 +252,12 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
     
     var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(movement_params)
     
-    for b in possible_surfaces_set.keys():
+    for destination_surface in surfaces_in_jump_range_set:
         # This makes the assumption that traversing through any fall-through/walk-through surface
         # would be better handled by some other Movement type, so we don't handle those
         # cases here.
         
-        if a == b:
+        if origin_surface == destination_surface:
             # We don't need to calculate edges for the degenerate case.
             continue
         
@@ -256,9 +268,11 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
         # - This is still cheaper than considering all 9 jump/land pair instructions, right?
         
         jump_positions = MovementUtils.get_all_jump_positions_from_surface( \
-                movement_params, a, b.vertices, b.bounding_box, b.side)
+                movement_params, origin_surface, destination_surface.vertices, \
+                destination_surface.bounding_box, destination_surface.side)
         land_positions = MovementUtils.get_all_jump_positions_from_surface( \
-                movement_params, b, a.vertices, a.bounding_box, a.side)
+                movement_params, destination_surface, origin_surface.vertices, \
+                origin_surface.bounding_box, origin_surface.side)
         
         for jump_position in jump_positions:
             for land_position in land_positions:
@@ -270,12 +284,13 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                     var debug_destination: Dictionary = \
                             debug_state.limit_parsing.edge.destination
                     
-                    if a.side != debug_origin.surface_side or \
-                            b.side != debug_destination.surface_side or \
-                            a.first_point != debug_origin.surface_start_vertex or \
-                            a.last_point != debug_origin.surface_end_vertex or \
-                            b.first_point != debug_destination.surface_start_vertex or \
-                            b.last_point != debug_destination.surface_end_vertex:
+                    if origin_surface.side != debug_origin.surface_side or \
+                            destination_surface.side != debug_destination.surface_side or \
+                            origin_surface.first_point != debug_origin.surface_start_vertex or \
+                            origin_surface.last_point != debug_origin.surface_end_vertex or \
+                            destination_surface.first_point != \
+                                    debug_destination.surface_start_vertex or \
+                            destination_surface.last_point != debug_destination.surface_end_vertex:
                         # Ignore anything except the origin and destination surface that we're
                         # debugging.
                         continue
@@ -314,9 +329,9 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                         continue
                 ###################################################################################
                 
-                terminals = MovementConstraintUtils.create_terminal_constraints(a, \
-                        jump_position.target_point, b, land_position.target_point, movement_params, \
-                        true)
+                terminals = MovementConstraintUtils.create_terminal_constraints(origin_surface, \
+                        jump_position.target_point, destination_surface, land_position.target_point, \
+                        movement_params, true)
                 if terminals.empty():
                     continue
                 
@@ -334,7 +349,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 if instructions != null:
                     # Can reach land position from jump position.
                     edge = InterSurfaceEdge.new(jump_position, land_position, instructions)
-                    edges.push_back(edge)
+                    edges_result.push_back(edge)
                     # For efficiency, only compute one edge per surface pair.
                     break
             
@@ -348,8 +363,6 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     movement_params.gravity_slow_rise /= \
             MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    
-    return edges
 
 func get_instructions_to_air(space_state: Physics2DDirectSpaceState, \
         movement_params: MovementParams, surface_parser: SurfaceParser, \
