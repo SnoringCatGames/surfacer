@@ -10,6 +10,11 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # 
 # - Implement FallFromWallCalculator.
 # 
+# - Figure out what to do for FallFromFloorEdge.
+#   - We need to on-the-fly detect when the player has left the floor and entered the air.
+#   - We need to at-that-point start running the instructions for the fall trajectory.
+#   - So FallFromFloorEdge might need to be replaced with two edges? WalkOffFloorEdge, and AirToSurfaceEdge?
+# 
 # ?- Create new Edge sub-classes for the new EdgeMovementCalculator sub-classes?
 #   - e.g., ClimbDownWallToFloor is a combination of two separate intra-surface edges?
 #   - Think-out how I want the Navigator to work with the Edge system and the new
@@ -167,6 +172,10 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 #     - V2: Have squirrel pause to the left of the S, with its tail overlapping the S. Give a couple tail twitches. Then have squirrel leave.
 #     
 # --- Expected cut-off for demo date ---
+# 
+# - Update some edge calculators to offset the expected near-side, far-side, close-side, top-side,
+#   bottom-side, etc. jump-off/land-on position calculations to account for neighbor surfaces that
+#   would get in the way.
 # 
 # - Add some extra improvements to check_frame_for_collision:
 #   - [maybe?] Rather than just using closest_intersection_point, sort all intersection_points, and

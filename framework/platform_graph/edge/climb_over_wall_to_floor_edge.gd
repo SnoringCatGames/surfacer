@@ -16,22 +16,6 @@ func _init(start: PositionAlongSurface, end: PositionAlongSurface) \
     self.start_position_along_surface = start
     self.end_position_along_surface = end
 
-static func _calculate_instructions(start: PositionAlongSurface, \
-        end: PositionAlongSurface) -> MovementInstructions:
-    assert(start.surface.side == SurfaceSide.LEFT_WALL || \
-            start.surface.side == SurfaceSide.RIGHT_WALL)
-    assert(end.surface.side == SurfaceSide.FLOOR)
-    
-    var sideways_input_key := \
-            "move_left" if start.surface.side == SurfaceSide.LEFT_WALL else "move_right"
-    var inward_instruction := MovementInstruction.new(sideways_input_key, 0.0, true)
-    
-    var upward_instruction := MovementInstruction.new("move_up", 0.0, true)
-    
-    var distance := start.target_point.distance_to(end.target_point)
-    
-    return MovementInstructions.new([inward_instruction, upward_instruction], INF, distance)
-
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:
     return surface_state.just_grabbed_floor
@@ -53,3 +37,19 @@ func _get_start_string() -> String:
 
 func _get_end_string() -> String:
     return end_position_along_surface.to_string()
+
+static func _calculate_instructions(start: PositionAlongSurface, \
+        end: PositionAlongSurface) -> MovementInstructions:
+    assert(start.surface.side == SurfaceSide.LEFT_WALL || \
+            start.surface.side == SurfaceSide.RIGHT_WALL)
+    assert(end.surface.side == SurfaceSide.FLOOR)
+    
+    var sideways_input_key := \
+            "move_left" if start.surface.side == SurfaceSide.LEFT_WALL else "move_right"
+    var inward_instruction := MovementInstruction.new(sideways_input_key, 0.0, true)
+    
+    var upward_instruction := MovementInstruction.new("move_up", 0.0, true)
+    
+    var distance := start.target_point.distance_to(end.target_point)
+    
+    return MovementInstructions.new([inward_instruction, upward_instruction], INF, distance)

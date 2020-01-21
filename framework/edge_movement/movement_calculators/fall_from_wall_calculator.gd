@@ -9,17 +9,13 @@ func _init().(NAME) -> void:
     pass
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
-    return surface != null # FIXME: ----------
+    return surface != null and (surface.side == SurfaceSide.LEFT_WALL or \
+            surface.side == SurfaceSide.RIGHT_WALL)
 
 func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DDirectSpaceState, \
         movement_params: MovementParams, surface_parser: SurfaceParser, edges_result: Array, \
         surfaces_in_fall_range_set: Dictionary, surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
-    # FIXME: LEFT OFF HERE: ----------------------------------------A
-#    var air_to_surface_edge := FallMovementUtils.find_a_landing_trajectory( \
-#            space_state, movement_params, surface_parser, possible_surfaces_set, origin, \
-#            player.velocity, destination)
-    
     var velocity_start := Vector2.ZERO
     
     var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(movement_params)
@@ -42,7 +38,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
     var land_positions: Array
     var terminals: Array
     var instructions: MovementInstructions
-    var edge: AirToSurfaceEdge
+    var edge: FallFromWallEdge
     var overall_calc_params: MovementCalcOverallParams
     
     for destination_surface in surfaces_in_fall_range_set:
@@ -95,8 +91,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 if calc_results == null:
                     continue
                 
-                edge = AirToSurfaceEdge.new(overall_calc_params.origin_constraint.position, \
-                        land_position, calc_results)
+                edge = FallFromWallEdge.new(jump_position, land_position, calc_results)
                 
                 # FIXME: ---------- Remove?
                 if Utils.IN_DEV_MODE:

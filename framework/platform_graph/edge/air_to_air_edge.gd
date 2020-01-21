@@ -29,13 +29,12 @@ func _get_start_surface() -> Surface:
 func _get_end_surface() -> Surface:
     return null
 
-# TODO: Implement this
-
-static func _calculate_instructions(start: Vector2, end: Vector2) -> MovementInstructions:
-    return null
-
 func _get_start_string() -> String:
     return String(_start)
 
 func _get_end_string() -> String:
     return String(_end)
+
+# TODO: Implement this
+static func _calculate_instructions(start: Vector2, end: Vector2) -> MovementInstructions:
+    return null

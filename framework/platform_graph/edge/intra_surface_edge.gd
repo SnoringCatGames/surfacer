@@ -20,27 +20,6 @@ func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
     instructions = _calculate_instructions(surface_state.center_position_along_surface, \
             end_position_along_surface)
 
-static func _calculate_instructions(start: PositionAlongSurface, \
-        end: PositionAlongSurface) -> MovementInstructions:
-    var is_wall_surface := \
-            end.surface.side == SurfaceSide.LEFT_WALL || end.surface.side == SurfaceSide.RIGHT_WALL
-    
-    var input_key: String
-    if is_wall_surface:
-        if start.target_point.y < end.target_point.y:
-            input_key = "move_down"
-        else:
-            input_key = "move_up"
-    else:
-        if start.target_point.x < end.target_point.x:
-            input_key = "move_right"
-        else:
-            input_key = "move_left"
-    
-    var instruction := MovementInstruction.new(input_key, 0.0, true)
-    var distance := start.target_point.distance_to(end.target_point)
-    return MovementInstructions.new([instruction], INF, distance)
-
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:
     # Check whether we were on the other side of the destination in the previous frame.
@@ -72,3 +51,24 @@ func _get_start_string() -> String:
 
 func _get_end_string() -> String:
     return end_position_along_surface.to_string()
+
+static func _calculate_instructions(start: PositionAlongSurface, \
+        end: PositionAlongSurface) -> MovementInstructions:
+    var is_wall_surface := \
+            end.surface.side == SurfaceSide.LEFT_WALL || end.surface.side == SurfaceSide.RIGHT_WALL
+    
+    var input_key: String
+    if is_wall_surface:
+        if start.target_point.y < end.target_point.y:
+            input_key = "move_down"
+        else:
+            input_key = "move_up"
+    else:
+        if start.target_point.x < end.target_point.x:
+            input_key = "move_right"
+        else:
+            input_key = "move_left"
+    
+    var instruction := MovementInstruction.new(input_key, 0.0, true)
+    var distance := start.target_point.distance_to(end.target_point)
+    return MovementInstructions.new([instruction], INF, distance)
