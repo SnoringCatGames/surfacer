@@ -114,7 +114,7 @@ func _calculate_edge_attempt() -> void:
     
     if terminals[0].is_valid and terminals[1].is_valid:
         # Calculate the actual jump steps, collision, trajectory, and input state.
-        var instructions := JumpFromPlatformCalculator.calculate_jump_instructions(overall_calc_params)
+        var edge := _calculate_jump_instructions(overall_calc_params, jump_position, land_position)
     
     # Record debug state for the jump calculation.
     edge_attempt = overall_calc_params.debug_state
@@ -132,3 +132,20 @@ func _draw_possible_jump_and_land_positions() -> void:
     for position in possible_jump_and_land_positions:
         draw_circle(position.target_point, POSSIBLE_JUMP_LAND_POSITION_RADIUS, \
                 POSSIBLE_JUMP_LAND_POSITION_COLOR)
+
+func _calculate_jump_instructions(overall_calc_params: MovementCalcOverallParams, \
+        jump_position: PositionAlongSurface, \
+        land_position: PositionAlongSurface) -> JumpFromSurfaceToSurfaceEdge:
+    var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
+            overall_calc_params, null, null)
+    if calc_results == null:
+        return null
+    
+    var edge := JumpFromSurfaceToSurfaceEdge.new(jump_position, land_position, calc_results)
+    
+    # FIXME: ---------- Remove?
+    if Utils.IN_DEV_MODE:
+        MovementInstructionsUtils.test_instructions( \
+                    edge.instructions, overall_calc_params, calc_results)
+    
+    return edge

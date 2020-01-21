@@ -26,7 +26,7 @@ const EDGE_MOVEMENT_CLASSES := [
     preload("res://framework/edge_movement/movement_calculators/walk_to_ascend_wall_from_floor_calculator.gd"),
     preload("res://framework/edge_movement/movement_calculators/fall_from_floor_calculator.gd"),
     preload("res://framework/edge_movement/movement_calculators/fall_from_wall_calculator.gd"),
-    preload("res://framework/edge_movement/movement_calculators/jump_from_platform_calculator.gd"),
+    preload("res://framework/edge_movement/movement_calculators/jump_from_surface_to_surface_calculator.gd"),
 ]
 
 const PLAYER_PARAM_CLASSES := [

@@ -129,7 +129,7 @@ func _start_edge(index: int) -> void:
     current_playback = instructions_action_source.start_instructions( \
             current_edge, global.elapsed_play_time_sec)
     navigation_state.is_expecting_to_enter_air = \
-            current_edge is InterSurfaceEdge or current_edge is SurfaceToAirEdge
+            current_edge is JumpFromSurfaceToSurfaceEdge or current_edge is SurfaceToAirEdge
 
 # Updates navigation state in response to the current surface state.
 func update() -> void:

@@ -420,6 +420,7 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
                             movement_params, constraint, \
                             constraint.previous_constraint.time_passing_through + 0.0001, \
                             vertical_step.position_step_start.y, \
+                            vertical_step.velocity_step_start.y, \
                             vertical_step.time_instruction_end, \
                             vertical_step.position_instruction_end.y, \
                             vertical_step.velocity_instruction_end.y)

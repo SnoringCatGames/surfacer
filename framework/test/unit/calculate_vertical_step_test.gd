@@ -29,7 +29,7 @@ func test_duration_to_reach_upward_displacement() -> void:
     var position_start: Vector2 = TEST_LEVEL_LONG_RISE.start.positions.near
     var position_end: Vector2 = TEST_LEVEL_LONG_RISE.end.positions.near
 
-    var step_calc_params := JumpFromPlatformCalculator._calculate_vertical_step( \
+    var step_calc_params := JumpFromSurfaceToSurfaceCalculator._calculate_vertical_step( \
             movement_params, position_start, position_end)
     var vertical_step := step_calc_params.vertical_step
     
@@ -45,7 +45,7 @@ func test_duration_to_reach_upward_displacement_less_than_jump_boost() -> void:
     var position_start: Vector2 = Vector2(0, 0)
     var position_end: Vector2 = Vector2(0, -32)
 
-    var step_calc_params := JumpFromPlatformCalculator._calculate_vertical_step( \
+    var step_calc_params := JumpFromSurfaceToSurfaceCalculator._calculate_vertical_step( \
             movement_params, position_start, position_end)
     var vertical_step := step_calc_params.vertical_step
     
@@ -61,7 +61,7 @@ func test_duration_to_reach_downward_displacement() -> void:
     var position_start: Vector2 = TEST_LEVEL_LONG_FALL.start.positions.near
     var position_end: Vector2 = TEST_LEVEL_LONG_FALL.end.positions.near
 
-    var step_calc_params := JumpFromPlatformCalculator._calculate_vertical_step( \
+    var step_calc_params := JumpFromSurfaceToSurfaceCalculator._calculate_vertical_step( \
             movement_params, position_start, position_end)
     var vertical_step := step_calc_params.vertical_step
 
@@ -77,7 +77,7 @@ func test_duration_to_reach_horizontal_displacement() -> void:
     var position_start: Vector2 = TEST_LEVEL_FAR_DISTANCE.start.positions.near
     var position_end: Vector2 = TEST_LEVEL_FAR_DISTANCE.end.positions.near
 
-    var step_calc_params := JumpFromPlatformCalculator._calculate_vertical_step( \
+    var step_calc_params := JumpFromSurfaceToSurfaceCalculator._calculate_vertical_step( \
             movement_params, position_start, position_end)
     var vertical_step := step_calc_params.vertical_step
 
@@ -93,7 +93,7 @@ func test_out_of_range_upward() -> void:
     var position_start: Vector2 = TEST_LEVEL_LONG_RISE.start.positions.near
     var position_end: Vector2 = TEST_LEVEL_LONG_RISE.end.positions.near + Vector2(0, -200)
 
-    var step_calc_params := JumpFromPlatformCalculator._calculate_vertical_step( \
+    var step_calc_params := JumpFromSurfaceToSurfaceCalculator._calculate_vertical_step( \
             movement_params, position_start, position_end)
     
     assert_null(step_calc_params)
@@ -102,7 +102,7 @@ func test_out_of_range_horizontally() -> void:
     var position_start: Vector2 = TEST_LEVEL_FAR_DISTANCE.start.positions.far
     var position_end: Vector2 = TEST_LEVEL_FAR_DISTANCE.end.positions.far + Vector2(200, -100)
 
-    var step_calc_params := JumpFromPlatformCalculator._calculate_vertical_step( \
+    var step_calc_params := JumpFromSurfaceToSurfaceCalculator._calculate_vertical_step( \
             movement_params, position_start, position_end)
     
     assert_null(step_calc_params)
@@ -111,7 +111,7 @@ func test_creates_step_calc_params() -> void:
     var position_start := Vector2(0.0, 0.0)
     var position_end := Vector2(100.0, -100.0)
 
-    var step_calc_params := JumpFromPlatformCalculator._calculate_vertical_step( \
+    var step_calc_params := JumpFromSurfaceToSurfaceCalculator._calculate_vertical_step( \
             movement_params, position_start, position_end)
 
     assert_almost_eq(step_calc_params.position_start, position_start, \

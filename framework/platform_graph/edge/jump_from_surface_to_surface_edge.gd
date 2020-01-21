@@ -1,16 +1,17 @@
 # Information for how to move through the air from a start (jump) position on one surface to an
 # end (landing) position on another surface.
 extends Edge
-class_name InterSurfaceEdge
+class_name JumpFromSurfaceToSurfaceEdge
 
-const NAME := "InterSurfaceEdge"
+const NAME := "JumpFromSurfaceToSurfaceEdge"
 const IS_TIME_BASED := true
 
 var start_position_along_surface: PositionAlongSurface
 var end_position_along_surface: PositionAlongSurface
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: MovementInstructions).(NAME, IS_TIME_BASED, instructions) -> void:
+        calc_results: MovementCalcResults).(NAME, IS_TIME_BASED, \
+                _calculate_instructions(start, end, calc_results)) -> void:
     self.start_position_along_surface = start
     self.end_position_along_surface = end
 
@@ -37,3 +38,10 @@ func _get_start_string() -> String:
 
 func _get_end_string() -> String:
     return end_position_along_surface.to_string()
+
+static func _calculate_instructions( \
+        position_start: PositionAlongSurface, position_end: PositionAlongSurface, \
+        calc_results: MovementCalcResults) -> MovementInstructions:
+    return MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+            position_start.target_point, position_end.target_point, calc_results, true, \
+            position_end.surface.side)

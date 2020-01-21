@@ -12,7 +12,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
 #
-# - Finish everything in JumpFromPlatformCalculator (edge calculations, including movement constraints from interfering surfaces)
+# - Finish everything in JumpFromSurfaceToSurfaceCalculator (edge calculations, including movement constraints from interfering surfaces)
 # - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
 #
 # - Use max_horizontal_jump_distance and max_upward_jump_distance
@@ -84,7 +84,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #         margin considers the other surfaces as already colliding beforehand.
 #
 # - Refactor Movement classes, so that whether the start and end posiition is on a platform
-#   or in the air is configuration that JumpFromPlatformCalculator handles directly, rather than
+#   or in the air is configuration that JumpFromSurfaceToSurfaceCalculator handles directly, rather than
 #   relying on a separate FallFromAir class?
 # - Add support for including walls in our navigation.
 # - Add support for other jump aspects:
@@ -536,10 +536,22 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
             if movement_calculator.get_can_traverse_from_surface(surface):
                 previous_size = edges.size()
                 
+                # FIXME: B: REMOVE
+                movement_params.gravity_fast_fall *= \
+                        MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                movement_params.gravity_slow_rise *= \
+                        MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                
                 # Calculate the inter-surface edges.
                 movement_calculator.get_all_edges_from_surface( \
                         debug_state, space_state, movement_params, surface_parser, \
                         edges, surfaces_in_fall_range_set, surfaces_in_jump_range_set, surface)
+                
+                # FIXME: B: REMOVE
+                movement_params.gravity_fast_fall /= \
+                        MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                movement_params.gravity_slow_rise /= \
+                        MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 
                 # Remove any used surfaces from consideration.
                 for i in range(previous_size, edges.size()):

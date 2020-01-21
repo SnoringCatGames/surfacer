@@ -28,7 +28,7 @@ static func calculate_vertical_step( \
     if can_hold_jump_button:
         var displacement: Vector2 = position_end - position_start
         time_instruction_end = calculate_time_to_release_jump_button( \
-                movement_params, time_step_end, displacement.y)
+                movement_params, time_step_end, displacement.y, velocity_start.y)
         if time_instruction_end == INF:
             # We can't reach the given displacement with the given duration.
             return null
@@ -44,7 +44,7 @@ static func calculate_vertical_step( \
     # Given the time to release the jump button, calculate the time to reach the peak.
     # From a basic equation of motion:
     #     v = v_0 + a*t
-    var velocity_at_jump_button_release := movement_params.jump_boost + \
+    var velocity_at_jump_button_release := velocity_start.y + \
             movement_params.gravity_slow_rise * time_instruction_end
     # From a basic equation of motion:
     #     v = v_0 + a*t
@@ -283,7 +283,7 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
 
 # Given the total duration, calculate the time to release the jump button.
 static func calculate_time_to_release_jump_button(movement_params: MovementParams, \
-        duration: float, displacement_y: float) -> float:
+        duration: float, displacement_y: float, velocity_start_y: float) -> float:
     # Derivation:
     # - Start with basic equations of motion
     # - s_1 = s_0 + v_0*t_0 + 1/2*a_0*t_0^2
@@ -295,7 +295,7 @@ static func calculate_time_to_release_jump_button(movement_params: MovementParam
     # - Apply quadratic formula to solve for t_0.
     var a := 0.5 * (movement_params.gravity_fast_fall - movement_params.gravity_slow_rise)
     var b := duration * (movement_params.gravity_slow_rise - movement_params.gravity_fast_fall)
-    var c := -displacement_y + movement_params.jump_boost * duration + \
+    var c := -displacement_y + velocity_start_y * duration + \
             0.5 * movement_params.gravity_fast_fall * duration * duration
     var discriminant := b * b - 4 * a * c
     if discriminant < 0:
@@ -324,12 +324,12 @@ static func calculate_time_to_release_jump_button(movement_params: MovementParam
     
     return time_to_release_jump_button
 
-# Calculates the time at which the movement would travel through the given position given the
+# Calculates the time at which the movement would travel through the given position with the
 # given vertical_step.
 # FIXME: B: Update unit tests to include min_end_time.
 static func calculate_time_for_passing_through_constraint(movement_params: MovementParams, \
         constraint: MovementConstraint, min_end_time: float, position_start_y: float, \
-        time_instruction_end: float, position_instruction_end_y: float, \
+        velocity_start_y: float, time_instruction_end: float, position_instruction_end_y: float, \
         velocity_instruction_end_y: float) -> float:
     var position := constraint.position
 
@@ -396,8 +396,7 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
     if is_position_before_instruction_end:
         var displacement := target_height - position_start_y
         duration_of_slow_ascent = MovementUtils.calculate_movement_duration(displacement, \
-                movement_params.jump_boost, movement_params.gravity_slow_rise, true, \
-                min_end_time, false)
+                velocity_start_y, movement_params.gravity_slow_rise, true, min_end_time, false)
         if duration_of_slow_ascent == INF:
             return INF
         duration_of_fast_fall = 0.0
@@ -416,8 +415,8 @@ static func calculate_time_for_passing_through_constraint(movement_params: Movem
 static func calculate_vertical_state_for_time_from_step(movement_params: MovementParams, \
         step: MovementVertCalcStep, time: float) -> Array:
     return calculate_vertical_state_for_time(movement_params, time, \
-        step.position_step_start.y, step.velocity_step_start.y, \
-        step.time_instruction_end)
+            step.position_step_start.y, step.velocity_step_start.y, \
+            step.time_instruction_end)
 
 # Calculates the vertical component of position and velocity according to the given vertical
 # movement state and the given time. These are then returned in a Vector2: x is position and y is

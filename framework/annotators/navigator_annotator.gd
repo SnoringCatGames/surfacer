@@ -30,7 +30,7 @@ func _draw_path(canvas: CanvasItem, path: PlatformGraphPath) -> void:
         canvas.draw_circle(edge.start, NODE_TARGET_POINT_RADIUS, NODE_COLOR)
         
         # Draw edge.
-        if edge is InterSurfaceEdge or \
+        if edge is JumpFromSurfaceToSurfaceEdge or \
                 edge is AirToSurfaceEdge or \
                 edge is AirToAirEdge or \
                 edge is SurfaceToAirEdge:

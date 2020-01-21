@@ -31,15 +31,15 @@ func _get_start_surface() -> Surface:
 func _get_end_surface() -> Surface:
     return end_position_along_surface.surface
 
+func _get_start_string() -> String:
+    return String(_start)
+
+func _get_end_string() -> String:
+    return end_position_along_surface.to_string()
+
 static func _calculate_instructions( \
         position_start: Vector2, position_end: PositionAlongSurface, \
         calc_results: MovementCalcResults) -> MovementInstructions:
     return MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
             position_start, position_end.target_point, calc_results, false, \
             position_end.surface.side)
-
-func _get_start_string() -> String:
-    return String(_start)
-
-func _get_end_string() -> String:
-    return end_position_along_surface.to_string()

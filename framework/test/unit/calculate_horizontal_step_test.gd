@@ -69,7 +69,7 @@ func test_with_no_previous_or_next_steps() -> void:
         velocity_jump_instruction_end_y = -55,
     })
 
-    var step := JumpFromPlatformCalculator.calculate_horizontal_step( \
+    var step := JumpFromSurfaceToSurfaceCalculator.calculate_horizontal_step( \
             step_calc_params, overall_calc_params)
     
     assert_horizontal_step(step, {

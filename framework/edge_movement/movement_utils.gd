@@ -199,7 +199,7 @@ static func get_all_jump_positions_from_surface(movement_params: MovementParams,
     # Record the near-end point.
     var jump_position := create_position_from_target_point( \
             near_end, source_surface, movement_params.collider_half_width_height)
-    var possible_jump_positions = [jump_position]
+    var possible_jump_positions := [jump_position]
     
     # Only consider the far-end point if it is distinct.
     if source_surface.vertices.size() > 1:
