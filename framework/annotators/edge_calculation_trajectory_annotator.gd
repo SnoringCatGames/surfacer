@@ -201,13 +201,12 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     # Draw some text describing the current step.
     step_label.rect_position = step_attempt.start_constraint.position + LABEL_OFFSET
     step_label.add_color_override("font_color", step_color)
-    var line_1 := "Step %s/%s: %s" % [step_attempt.index + 1, edge_attempt.total_step_count, \
-            step_attempt.result_code_string]
-    var line_2 := "\n                [Backtracking]" if step_attempt.is_backtracking else ""
-    var line_3 := "\n                [Replaced fake constraint]" if \
+    var line_1 := "Step %s/%s:" % [step_attempt.index + 1, edge_attempt.total_step_count]
+    var line_2 := "\n        [Backtracking]" if step_attempt.is_backtracking else ""
+    var line_3 := "\n        [Replaced fake constraint]" if \
             step_attempt.replaced_a_fake else ""
-    var line_4: String = "\n                %s" % step_attempt.description_list[0]
-    var line_5: String = ("\n                %s" % step_attempt.description_list[1]) if \
+    var line_4: String = "\n        %s" % step_attempt.description_list[0]
+    var line_5: String = ("\n        %s" % step_attempt.description_list[1]) if \
             step_attempt.description_list.size() > 1 else ""
     step_label.text = line_1 + line_2 + line_3 + line_4 + line_5
 

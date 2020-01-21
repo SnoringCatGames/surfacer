@@ -8,21 +8,6 @@ const NAME := 'JumpFromPlatformCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Refine broad-phase filter in PlatformGraph:
-#   - Split apart into three separate sets:
-#     - Within fall range (down, not over or up)
-#     - Within fall range + jump distance (over and down, not up)
-#     - Within jump range (up and over, not down)
-#   - Use the only the appropriate sets depending on the specific movement_calculator (pass all three to each though).
-#   - Update find_surfaces_in_fall_range to be more intelligent about how it defines the polygon.
-# 
-# - Test/debug FallMovementUtils.find_a_landing_trajectory.
-# 
-# - Update trajectory annotator to not print enum in label, and to just skip to the first line
-#   - And to remove one of the spaces from the other indented lines?
-#   - Don't render the before/at/previous collision frame boxes if we don't actually have a
-#     real/complete collision.
-# 
 # - Implement FallFromWallCalculator.
 # 
 # ?- Create new Edge sub-classes for the new EdgeMovementCalculator sub-classes?
@@ -75,9 +60,12 @@ const NAME := 'JumpFromPlatformCalculator'
 # 
 # - Fix issue where jumping around edge sometimes isn't going far enough; it's clipping the corner.
 # 
+# - Test/debug FallMovementUtils.find_a_landing_trajectory.
+# 
 # ---  ---
 # 
 # - Start with debug menu closed. Open when rendering edge-calc annotator.
+# 
 # - Create a temporary toast message.
 #   - Shown at top-mid.
 #   - Disappears after clicking anywhere.
@@ -88,8 +76,11 @@ const NAME := 'JumpFromPlatformCalculator'
 #       - Use mouse to direct cat to move automatically.
 #       - Use keyboard to control cat manually (UDLR, X, Z)
 #       - Ctrl+click to debug how an edge was calculated (click on both ends where the edge should have gone).
+# 
 # - Add a top-level button to debug menu to hide all annotations.
 #   - (grid, clicks, player position, player recent movement, platform graph, ...)
+# - Add sub-buttons for individual annotators.
+#   - Collision calculation annotator in particular.
 # 
 # - Prepare a different, more interesting level for demo (some walls connecting to floors too).
 # 
