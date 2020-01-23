@@ -2,12 +2,6 @@
 extends Reference
 class_name Edge
 
-var start: Vector2 setget ,_get_start
-var end: Vector2 setget ,_get_end
-
-var start_surface: Surface setget ,_get_start_surface
-var end_surface: Surface setget ,_get_end_surface
-
 var name: String
 
 # Whether the instructions for moving along this edge are updated according to traversal time (vs
@@ -16,11 +10,24 @@ var is_time_based: bool
 
 var instructions: MovementInstructions
 
+var start_position_along_surface: PositionAlongSurface
+var end_position_along_surface: PositionAlongSurface
+
 var weight: float setget ,_get_weight
 
-func _init(name: String, is_time_based: bool, instructions: MovementInstructions) -> void:
+var start: Vector2 setget ,_get_start
+var end: Vector2 setget ,_get_end
+
+var start_surface: Surface setget ,_get_start_surface
+var end_surface: Surface setget ,_get_end_surface
+
+func _init(name: String, is_time_based: bool, start_position_along_surface: PositionAlongSurface, \
+        end_position_along_surface: PositionAlongSurface, \
+        instructions: MovementInstructions) -> void:
     self.name = name
     self.is_time_based = is_time_based
+    self.start_position_along_surface = start_position_along_surface
+    self.end_position_along_surface = end_position_along_surface
     self.instructions = instructions
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
@@ -55,32 +62,23 @@ func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, 
     Utils.error("Abstract Edge._check_did_just_reach_destination is not implemented")
     return false
 
-func _get_start() -> Vector2:
-    Utils.error("Abstract Edge._get_start is not implemented")
-    return Vector2.INF
-
-func _get_end() -> Vector2:
-    Utils.error("Abstract Edge._get_end is not implemented")
-    return Vector2.INF
-
-func _get_start_surface() -> Surface:
-    Utils.error("Abstract Edge._get_start_surface is not implemented")
-    return null
-
-func _get_end_surface() -> Surface:
-    Utils.error("Abstract Edge._get_end_surface is not implemented")
-    return null
-
 func _get_weight() -> float:
     return instructions.distance
 
-func _get_start_string() -> String:
-    Utils.error("Abstract Edge._get_start_string is not implemented")
-    return ""
+func _get_start() -> Vector2:
+    return start_position_along_surface.target_point
+func _get_end() -> Vector2:
+    return end_position_along_surface.target_point
 
+func _get_start_surface() -> Surface:
+    return start_position_along_surface.surface
+func _get_end_surface() -> Surface:
+    return end_position_along_surface.surface
+
+func _get_start_string() -> String:
+    return start_position_along_surface.to_string()
 func _get_end_string() -> String:
-    Utils.error("Abstract Edge._get_end_string is not implemented")
-    return ""
+    return end_position_along_surface.to_string()
 
 func to_string() -> String:
     var format_string_template := "%s{ start: %s, end: %s, instructions: %s }"
@@ -114,3 +112,9 @@ func to_string_with_newlines(indent_level: int) -> String:
         ]
     
     return format_string_template % format_string_arguments
+
+# This creates a PositionAlongSurface object with the given target point and a null Surface.
+static func vector2_to_position_along_surface(target_point: Vector2) -> PositionAlongSurface:
+    var position_along_surface := PositionAlongSurface.new()
+    position_along_surface.target_point = target_point
+    return position_along_surface

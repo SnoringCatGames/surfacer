@@ -8,36 +8,14 @@ class_name FallFromFloorEdge
 const NAME := "FallFromFloorEdge"
 const IS_TIME_BASED := false
 
-var start_position_along_surface: PositionAlongSurface
-var end_position_along_surface: PositionAlongSurface
-
 func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        calc_results: MovementCalcResults).(NAME, IS_TIME_BASED, \
+        calc_results: MovementCalcResults).(NAME, IS_TIME_BASED, start, end, \
         _calculate_instructions(start, end, calc_results)) -> void:
-    self.start_position_along_surface = start
-    self.end_position_along_surface = end
+    pass
 
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:
     return surface_state.just_entered_air
-
-func _get_start() -> Vector2:
-    return start_position_along_surface.target_point
-
-func _get_end() -> Vector2:
-    return end_position_along_surface.target_point
-
-func _get_start_surface() -> Surface:
-    return start_position_along_surface.surface
-
-func _get_end_surface() -> Surface:
-    return end_position_along_surface.surface
-
-func _get_start_string() -> String:
-    return start_position_along_surface.to_string()
-
-func _get_end_string() -> String:
-    return end_position_along_surface.to_string()
 
 static func _calculate_instructions(start: PositionAlongSurface, \
         end: PositionAlongSurface, calc_results: MovementCalcResults) -> MovementInstructions:

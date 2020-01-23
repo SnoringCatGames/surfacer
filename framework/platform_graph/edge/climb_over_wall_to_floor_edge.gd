@@ -8,35 +8,13 @@ class_name ClimbOverWallToFloorEdge
 const NAME := "ClimbOverWallToFloorEdge"
 const IS_TIME_BASED := false
 
-var start_position_along_surface: PositionAlongSurface
-var end_position_along_surface: PositionAlongSurface
-
 func _init(start: PositionAlongSurface, end: PositionAlongSurface) \
-        .(NAME, IS_TIME_BASED, _calculate_instructions(start, end)) -> void:
-    self.start_position_along_surface = start
-    self.end_position_along_surface = end
+        .(NAME, IS_TIME_BASED, start, end, _calculate_instructions(start, end)) -> void:
+    pass
 
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:
     return surface_state.just_grabbed_floor
-
-func _get_start() -> Vector2:
-    return start_position_along_surface.target_point
-
-func _get_end() -> Vector2:
-    return end_position_along_surface.target_point
-
-func _get_start_surface() -> Surface:
-    return start_position_along_surface.surface
-
-func _get_end_surface() -> Surface:
-    return end_position_along_surface.surface
-
-func _get_start_string() -> String:
-    return start_position_along_surface.to_string()
-
-func _get_end_string() -> String:
-    return end_position_along_surface.to_string()
 
 static func _calculate_instructions(start: PositionAlongSurface, \
         end: PositionAlongSurface) -> MovementInstructions:
