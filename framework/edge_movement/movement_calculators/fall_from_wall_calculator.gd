@@ -12,10 +12,11 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null and (surface.side == SurfaceSide.LEFT_WALL or \
             surface.side == SurfaceSide.RIGHT_WALL)
 
-func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DDirectSpaceState, \
-        movement_params: MovementParams, surface_parser: SurfaceParser, edges_result: Array, \
+func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_result: Array, \
         surfaces_in_fall_range_set: Dictionary, surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
+    var debug_state := collision_params.debug_state
+    var movement_params := collision_params.movement_params
     var velocity_start := Vector2.ZERO
     
     var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(movement_params)
@@ -46,7 +47,7 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
             # We don't need to calculate edges for the degenerate case.
             continue
         
-        land_positions = MovementUtils.get_all_jump_positions_from_surface( \
+        land_positions = MovementUtils.get_all_jump_land_positions_from_surface( \
                 movement_params, destination_surface, origin_surface.vertices, \
                 origin_surface.bounding_box, origin_surface.side)
         
@@ -67,8 +68,8 @@ func get_all_edges_from_surface(debug_state: Dictionary, space_state: Physics2DD
                 if terminals.empty():
                     continue
                 
-                overall_calc_params = MovementCalcOverallParams.new(movement_params, space_state, \
-                        surface_parser, terminals[0], terminals[1], velocity_start, false)
+                overall_calc_params = MovementCalcOverallParams.new(collision_params, \
+                        terminals[0], terminals[1], velocity_start, false)
                 
                 ###################################################################################
                 # Record some extra debug state when we're limiting calculations to a single edge.

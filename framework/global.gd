@@ -30,21 +30,21 @@ const DEBUG_STATE := {
     in_debug_mode = IN_DEBUG_MODE,
     limit_parsing = {
         player_name = "cat",
-        movement_calculator = "FallFromWallCalculator",
-        edge = {
-            origin = {
-                surface_side = SurfaceSide.LEFT_WALL,
-                surface_start_vertex = Vector2(0, -448),
-                surface_end_vertex = Vector2(0, -384),
-                near_far_close_position = "near",
-            },
-            destination = {
-                surface_side = SurfaceSide.FLOOR,
-                surface_start_vertex = Vector2(128, 64),
-                surface_end_vertex = Vector2(192, 64),
-                near_far_close_position = "near",
-            },
-        },
+#        movement_calculator = "FallFromWallCalculator",
+#        edge = {
+#            origin = {
+#                surface_side = SurfaceSide.LEFT_WALL,
+#                surface_start_vertex = Vector2(0, -448),
+#                surface_end_vertex = Vector2(0, -384),
+#                near_far_close_position = "near",
+#            },
+#            destination = {
+#                surface_side = SurfaceSide.FLOOR,
+#                surface_start_vertex = Vector2(128, 64),
+#                surface_end_vertex = Vector2(192, 64),
+#                near_far_close_position = "near",
+#            },
+#        },
 #        edge = {
 #            origin = {
 #                surface_side = SurfaceSide.FLOOR,

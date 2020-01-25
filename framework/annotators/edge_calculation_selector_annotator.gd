@@ -79,9 +79,11 @@ func _calculate_edge_attempt() -> void:
     var space_state := get_world_2d().direct_space_state
     var level = global.current_level
     var surface_parser: SurfaceParser = level.surface_parser
+    var collision_params := CollisionCalcParams.new( \
+            debug_state, space_state, movement_params, surface_parser)
     
     # Choose the jump and land positions according to which is closest to the click positions.
-    var jump_positions := MovementUtils.get_all_jump_positions_from_surface( \
+    var jump_positions := MovementUtils.get_all_jump_land_positions_from_surface( \
             movement_params, origin_surface, destination_surface.vertices, \
             destination_surface.bounding_box, destination_surface.side)
     var jump_position: PositionAlongSurface = jump_positions[0]
@@ -91,7 +93,7 @@ func _calculate_edge_attempt() -> void:
             if other_jump_position.target_point.distance_squared_to(origin.target_point) < \
                     jump_position.target_point.distance_squared_to(origin.target_point):
                 jump_position = other_jump_position
-    var land_positions := MovementUtils.get_all_jump_positions_from_surface( \
+    var land_positions := MovementUtils.get_all_jump_land_positions_from_surface( \
             movement_params, destination_surface, origin_surface.vertices, \
             origin_surface.bounding_box, origin_surface.side)
     var land_position: PositionAlongSurface = land_positions[0]
@@ -102,19 +104,17 @@ func _calculate_edge_attempt() -> void:
                     land_position.target_point.distance_squared_to(origin.target_point):
                 land_position = other_land_position
     
-    # Create the edge start and end constraints for the given jump and land positions.
-    var terminals := MovementConstraintUtils.create_terminal_constraints(origin_surface, \
-            jump_position.target_point, destination_surface, land_position.target_point, \
-            movement_params, true, Vector2.INF, true)
-    
     # Create the jump-calculation parameter object.
-    var overall_calc_params := MovementCalcOverallParams.new(movement_params, space_state, \
-            surface_parser, terminals[0], terminals[1], Vector2.INF, true)
-    overall_calc_params.in_debug_mode = true
+    var overall_calc_params := \
+            JumpFromSurfaceToSurfaceCalculator.create_movement_calc_overall_params( \
+                    collision_params, origin_surface, jump_position.target_point, \
+                    destination_surface, land_position.target_point, true, Vector2.INF, true, true)
     
-    if terminals[0].is_valid and terminals[1].is_valid:
+    if overall_calc_params.origin_constraint.is_valid and \
+            overall_calc_params.destination_constraint.is_valid:
         # Calculate the actual jump steps, collision, trajectory, and input state.
-        var edge := _calculate_jump_instructions(overall_calc_params, jump_position, land_position)
+        JumpFromSurfaceToSurfaceCalculator.create_edge_from_overall_params(overall_calc_params, \
+                jump_position, land_position)
     
     # Record debug state for the jump calculation.
     edge_attempt = overall_calc_params.debug_state
@@ -132,20 +132,3 @@ func _draw_possible_jump_and_land_positions() -> void:
     for position in possible_jump_and_land_positions:
         draw_circle(position.target_point, POSSIBLE_JUMP_LAND_POSITION_RADIUS, \
                 POSSIBLE_JUMP_LAND_POSITION_COLOR)
-
-func _calculate_jump_instructions(overall_calc_params: MovementCalcOverallParams, \
-        jump_position: PositionAlongSurface, \
-        land_position: PositionAlongSurface) -> JumpFromSurfaceToSurfaceEdge:
-    var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
-            overall_calc_params, null, null)
-    if calc_results == null:
-        return null
-    
-    var edge := JumpFromSurfaceToSurfaceEdge.new(jump_position, land_position, calc_results)
-    
-    # FIXME: ---------- Remove?
-    if Utils.IN_DEV_MODE:
-        MovementInstructionsUtils.test_instructions( \
-                    edge.instructions, overall_calc_params, calc_results)
-    
-    return edge

@@ -80,6 +80,8 @@ static func _create_platform_graphs(surface_parser: SurfaceParser, \
         space_state: Physics2DDirectSpaceState, player_types: Dictionary, \
         debug_state: Dictionary) -> Dictionary:
     var graphs = {}
+    var player_info: PlayerTypeConfiguration
+    var collision_params: CollisionCalcParams
     for player_name in player_types:
         ###########################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
@@ -88,8 +90,10 @@ static func _create_platform_graphs(surface_parser: SurfaceParser, \
                 player_name != debug_state.limit_parsing.player_name:
             continue
         ###########################################################################################
-        graphs[player_name] = PlatformGraph.new( \
-                surface_parser, space_state, player_types[player_name], debug_state)
+        player_info = player_types[player_name]
+        collision_params = CollisionCalcParams.new(debug_state, space_state, \
+                player_info.movement_params, surface_parser)
+        graphs[player_name] = PlatformGraph.new(player_info, collision_params)
     return graphs
 
 func descendant_physics_process_completed(descendant: Node) -> void:

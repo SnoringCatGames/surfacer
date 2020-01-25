@@ -178,7 +178,7 @@ static func calculate_min_time_to_reach_displacement(displacement: float, v_0: f
 #     -   The closest point along the surface.
 # -   Points are only included if they are distinct.
 # -   Points are returned in sorted order: closest, near, far.
-static func get_all_jump_positions_from_surface(movement_params: MovementParams, \
+static func get_all_jump_land_positions_from_surface(movement_params: MovementParams, \
         source_surface: Surface, target_vertices: PoolVector2Array, target_bounding_box: Rect2, \
         target_side: int) -> Array:
     var source_first_point := source_surface.first_point

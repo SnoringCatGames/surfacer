@@ -344,6 +344,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 
+var collision_params: CollisionCalcParams
 var movement_params: MovementParams
 var surface_parser: SurfaceParser
 var space_state: Physics2DDirectSpaceState
@@ -356,12 +357,11 @@ var nodes_to_nodes_to_edges: Dictionary
 
 var debug_state: Dictionary
 
-func _init(surface_parser: SurfaceParser, space_state: Physics2DDirectSpaceState, \
-        player_info: PlayerTypeConfiguration, debug_state: Dictionary) -> void:
+func _init(player_info: PlayerTypeConfiguration, collision_params: CollisionCalcParams) -> void:
+    self.collision_params = collision_params
     self.movement_params = player_info.movement_params
-    self.surface_parser = surface_parser
-    self.space_state = space_state
-    self.debug_state = debug_state
+    self.surface_parser = collision_params.surface_parser
+    self.debug_state = collision_params.debug_state
     
     # Store the subset of surfaces that this player type can interact with.
     var surfaces_array := surface_parser.get_subset_of_surfaces( \
@@ -537,6 +537,7 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
             # Allow for debug mode to limit the scope of what's calculated.
             if debug_state.in_debug_mode and \
                     debug_state.has('limit_parsing') and \
+                    debug_state.limit_parsing.has('movement_calculator') and \
                     movement_calculator.name != debug_state.limit_parsing.movement_calculator:
                 continue
             ###################################################################################
@@ -551,8 +552,7 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
                         MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 
                 # Calculate the inter-surface edges.
-                movement_calculator.get_all_edges_from_surface( \
-                        debug_state, space_state, movement_params, surface_parser, \
+                movement_calculator.get_all_edges_from_surface(collision_params, \
                         edges, surfaces_in_fall_range_set, surfaces_in_jump_range_set, surface)
                 
                 # FIXME: B: REMOVE

@@ -1,5 +1,4 @@
 # Parameters that are used for calculating edge instructions.
-# FIXME: --A ********* doc
 extends Reference
 class_name MovementCalcOverallParams
 
@@ -43,21 +42,21 @@ var debug_state: MovementCalcOverallDebugState
 
 var in_debug_mode: bool setget _set_in_debug_mode,_get_in_debug_mode
 
-func _init(movement_params: MovementParams, space_state: Physics2DDirectSpaceState, \
-            surface_parser: SurfaceParser, origin_constraint: MovementConstraint, \
+func _init(collision_params: CollisionCalcParams, origin_constraint: MovementConstraint, \
             destination_constraint: MovementConstraint, velocity_start := Vector2.INF, \
             can_backtrack_on_height := true) -> void:
     assert(origin_constraint.surface != null or velocity_start != Vector2.INF)
     if velocity_start == Vector2.INF:
-        velocity_start = movement_params.get_jump_initial_velocity(origin_constraint.surface.side)
+        velocity_start = collision_params.movement_params.get_jump_initial_velocity( \
+                origin_constraint.surface.side)
     
-    self.movement_params = movement_params
-    self.space_state = space_state
-    self.surface_parser = surface_parser
-    self.velocity_start = velocity_start
+    self.movement_params = collision_params.movement_params
+    self.space_state = collision_params.space_state
+    self.surface_parser = collision_params.surface_parser
     self.origin_constraint = origin_constraint
     self.destination_constraint = destination_constraint
     self.can_backtrack_on_height = can_backtrack_on_height
+    self.velocity_start = velocity_start
     
     constraint_offset = calculate_constraint_offset(movement_params)
     
