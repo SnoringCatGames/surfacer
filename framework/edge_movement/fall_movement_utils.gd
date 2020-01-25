@@ -16,13 +16,11 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
     var possible_landing_surfaces := result_set.keys()
     possible_landing_surfaces.sort_custom(SurfaceMaxYComparator, "sort")
     
-    var constraint_offset := MovementCalcOverallParams.calculate_constraint_offset(movement_params)
-    
     var origin_vertices := [origin]
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
     var origin_side := SurfaceSide.CEILING
     
-    var possible_end_positions: Array
+    var possible_land_positions: Array
     var terminals: Array
     var vertical_step: MovementVertCalcStep
     var step_calc_params: MovementCalcStepParams
@@ -31,17 +29,13 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
     
     # Find the first possible edge to a landing surface.
     for surface in possible_landing_surfaces:
-        possible_end_positions = MovementUtils.get_all_jump_land_positions_from_surface( \
+        possible_land_positions = MovementUtils.get_all_jump_land_positions_from_surface( \
                 movement_params, surface, origin_vertices, origin_bounding_box, origin_side)
         
-        for position_end in possible_end_positions:
-            terminals = MovementConstraintUtils.create_terminal_constraints(null, origin, \
-                    surface, position_end.target_point, movement_params, false, velocity_start)
-            if terminals.empty():
-                continue
-            
-            overall_calc_params = MovementCalcOverallParams.new(collision_params, terminals[0], \
-                    terminals[1], velocity_start, false)
+        for land_position in possible_land_positions:
+            overall_calc_params = EdgeMovementCalculator.create_movement_calc_overall_params( \
+                    collision_params, null, origin, land_position.surface, \
+                    land_position.target_point, false, velocity_start, false, false)
             
             vertical_step = VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
             if vertical_step == null:
@@ -54,7 +48,7 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
             calc_results = MovementStepUtils.calculate_steps_from_constraint( \
                     overall_calc_params, step_calc_params)
             if calc_results != null:
-                return AirToSurfaceEdge.new(origin, position_end, calc_results)
+                return AirToSurfaceEdge.new(origin, land_position, calc_results)
     
     return null
 

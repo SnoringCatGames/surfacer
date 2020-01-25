@@ -19,8 +19,6 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
     var movement_params := collision_params.movement_params
     var velocity_start := Vector2.ZERO
     
-    var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(movement_params)
-    
     var origin_top_point: Vector2
     var origin_bottom_point: Vector2
     if origin_surface.side == SurfaceSide.LEFT_WALL:
@@ -62,14 +60,13 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
                 ###################################################################################
                 
                 # FIXME: LEFT OFF HERE: ------------------------A: Debug why fall edge isn't returned.
-                terminals = MovementConstraintUtils.create_terminal_constraints(origin_surface, \
-                        jump_position.target_point, destination_surface, \
-                        land_position.target_point, movement_params, false, velocity_start)
-                if terminals.empty():
-                    continue
                 
-                overall_calc_params = MovementCalcOverallParams.new(collision_params, \
-                        terminals[0], terminals[1], velocity_start, false)
+                overall_calc_params = EdgeMovementCalculator.create_movement_calc_overall_params( \
+                        collision_params, jump_position.surface, jump_position.target_point, \
+                        land_position.surface, land_position.target_point, false, velocity_start, \
+                        false, false)
+                if overall_calc_params == null:
+                    continue
                 
                 ###################################################################################
                 # Record some extra debug state when we're limiting calculations to a single edge.

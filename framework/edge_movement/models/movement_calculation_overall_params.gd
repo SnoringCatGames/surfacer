@@ -57,12 +57,10 @@ func _init(collision_params: CollisionCalcParams, origin_constraint: MovementCon
     self.destination_constraint = destination_constraint
     self.can_backtrack_on_height = can_backtrack_on_height
     self.velocity_start = velocity_start
+    self.constraint_offset = calculate_constraint_offset(movement_params)
+    self._collided_surfaces = {}
     
-    constraint_offset = calculate_constraint_offset(movement_params)
-    
-    _collided_surfaces = {}
-    
-    shape_query_params = Physics2DShapeQueryParameters.new()
+    var shape_query_params := Physics2DShapeQueryParameters.new()
     shape_query_params.collide_with_areas = false
     shape_query_params.collide_with_bodies = true
     shape_query_params.collision_layer = TILE_MAP_COLLISION_LAYER
@@ -72,6 +70,7 @@ func _init(collision_params: CollisionCalcParams, origin_constraint: MovementCon
     shape_query_params.shape_rid = movement_params.collider_shape.get_rid()
     shape_query_params.transform = Transform2D(movement_params.collider_rotation, Vector2.ZERO)
     shape_query_params.set_shape(movement_params.collider_shape)
+    self.shape_query_params = shape_query_params
 
 func is_backtracking_valid_for_surface(surface: Surface, time_jump_release: float) -> bool:
     var key := str(surface) + str(time_jump_release)
@@ -82,8 +81,7 @@ func record_backtracked_surface(surface: Surface, time_jump_release: float) -> v
     _collided_surfaces[key] = true
 
 func _set_in_debug_mode(value: bool) -> void:
-    assert(value)
-    debug_state = MovementCalcOverallDebugState.new(self)
+    debug_state = MovementCalcOverallDebugState.new(self) if value else null
 
 func _get_in_debug_mode() -> bool:
     return debug_state != null

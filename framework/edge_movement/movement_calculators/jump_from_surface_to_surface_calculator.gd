@@ -219,7 +219,6 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
         origin_surface: Surface) -> void:
     var movement_params := collision_params.movement_params
     var debug_state := collision_params.debug_state
-    var constraint_offset = MovementCalcOverallParams.calculate_constraint_offset(movement_params)
     var velocity_start := movement_params.get_jump_initial_velocity(origin_surface.side)
     
     var jump_positions: Array
@@ -276,9 +275,9 @@ func get_edge_to_air(collision_params: CollisionCalcParams, \
         position_start: PositionAlongSurface, position_end: Vector2) -> SurfaceToAirEdge:
     var velocity_start := collision_params.movement_params.get_jump_initial_velocity( \
             position_start.surface.side)
-    var overall_calc_params := create_movement_calc_overall_params(collision_params, \
-            position_start.surface, position_start.target_point, null, position_end, \
-            true, velocity_start, false, false)
+    var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
+            collision_params, position_start.surface, position_start.target_point, null, \
+            position_end, true, velocity_start, false, false)
     
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
             overall_calc_params, null, null)
@@ -305,36 +304,15 @@ static func calculate_edge(
         velocity_start: Vector2, \
         returns_invalid_constraints: bool, \
         in_debug_mode: bool) -> JumpFromSurfaceToSurfaceEdge:
-    var overall_calc_params := create_movement_calc_overall_params(collision_params, \
-            origin_position.surface, origin_position.target_point, destination_position.surface, \
-            destination_position.target_point, can_hold_jump_button, velocity_start, \
-            returns_invalid_constraints, in_debug_mode)
+    var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
+            collision_params, origin_position.surface, origin_position.target_point, \
+            destination_position.surface, destination_position.target_point, \
+            can_hold_jump_button, velocity_start, returns_invalid_constraints, in_debug_mode)
     if overall_calc_params == null:
         return null
     
     return create_edge_from_overall_params(overall_calc_params, origin_position, \
             destination_position)
-
-static func create_movement_calc_overall_params(
-        collision_params: CollisionCalcParams, \
-        origin_surface: Surface, origin_position: Vector2, \
-        destination_surface: Surface, destination_position: Vector2, \
-        can_hold_jump_button: bool, \
-        velocity_start: Vector2, \
-        returns_invalid_constraints: bool, \
-        in_debug_mode: bool) -> MovementCalcOverallParams:
-    var terminals := MovementConstraintUtils.create_terminal_constraints(origin_surface, \
-            origin_position, destination_surface, destination_position, \
-            collision_params.movement_params, can_hold_jump_button, velocity_start, \
-            returns_invalid_constraints)
-    if terminals.empty():
-        return null
-    
-    var overall_calc_params := MovementCalcOverallParams.new(collision_params, terminals[0], \
-            terminals[1], velocity_start, can_hold_jump_button)
-    overall_calc_params.in_debug_mode = in_debug_mode
-    
-    return overall_calc_params
 
 static func create_edge_from_overall_params( \
         overall_calc_params: MovementCalcOverallParams, origin_position: PositionAlongSurface, \

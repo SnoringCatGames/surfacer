@@ -16,6 +16,27 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
     Utils.error("abstract EdgeMovementCalculator.get_all_edges_from_surface is not implemented")
     pass
 
+static func create_movement_calc_overall_params(
+        collision_params: CollisionCalcParams, \
+        origin_surface: Surface, origin_position: Vector2, \
+        destination_surface: Surface, destination_position: Vector2, \
+        can_hold_jump_button: bool, \
+        velocity_start: Vector2, \
+        returns_invalid_constraints: bool, \
+        in_debug_mode: bool) -> MovementCalcOverallParams:
+    var terminals := MovementConstraintUtils.create_terminal_constraints(origin_surface, \
+            origin_position, destination_surface, destination_position, \
+            collision_params.movement_params, can_hold_jump_button, velocity_start, \
+            returns_invalid_constraints)
+    if terminals.empty():
+        return null
+    
+    var overall_calc_params := MovementCalcOverallParams.new(collision_params, terminals[0], \
+            terminals[1], velocity_start, can_hold_jump_button)
+    overall_calc_params.in_debug_mode = in_debug_mode
+    
+    return overall_calc_params
+
 static func should_skip_edge_calculation(debug_state: Dictionary, origin_surface: Surface, \
         destination_surface: Surface, jump_position: PositionAlongSurface, \
         land_position: PositionAlongSurface, jump_positions: Array, land_positions: Array) -> bool:
