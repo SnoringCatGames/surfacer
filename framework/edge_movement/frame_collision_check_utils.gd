@@ -168,17 +168,15 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     var position_when_colliding: Vector2 = \
             position_start + shape_query_params.motion * collision_ratios[1]
     
+    
+    
+    
+    
     var side := SurfaceSide.NONE
     # For nudging the ray-tracing a little so that it hits the correct side of the collider vertex.
     var perpendicular_offset := Vector2.INF
     var should_try_without_perpendicular_nudge_first: bool
     
-    
-    
-    
-    
-    
-                
     if direction.x == 0 or direction.y == 0:
         # Moving straight sideways or up-down.
         
@@ -253,7 +251,6 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                     perpendicular_offset
             should_try_without_perpendicular_nudge_first = false
             
-            
         elif !intersects_along_x or !intersects_along_y:
             # If only one dimension intersects just before collision, then we use that to determine
             # which side we're colliding with.
@@ -281,7 +278,6 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             
             should_try_without_perpendicular_nudge_first = false
             
-            
         else:
             # If both dimensions intersect just before collision, then we use the direction of
             # motion to determine which side we're colliding with.
@@ -298,6 +294,8 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             
             perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
             should_try_without_perpendicular_nudge_first = true    
+    
+    
     
     var surface_collision := SurfaceCollision.new()
     surface_collision.player_position = position_when_colliding # FIXME: ------- Not defined when only two intersection points.
@@ -462,7 +460,7 @@ static func _ray_trace_with_nudge(space_state: Physics2DDirectSpaceState, \
     # TODO: It might be worth adding a check before ray-tracing to check whether the starting point
     #       lies within a populated tile in the tilemap, and then trying the other perpendicular
     #       offset direction if so. However, this would require configuring a single global tile
-    #       map that we expect collisionss from, and plumbing that tile map through to here.
+    #       map that we expect collisions from, and plumbing that tile map through to here.
     
     var collision: Dictionary
     
