@@ -16,7 +16,7 @@ func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
 
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:
-    return surface_state.just_entered_air
+    return Edge.check_just_landed_on_expected_surface(surface_state, self.end_surface)
 
 static func _calculate_instructions(start: PositionAlongSurface, \
         end: PositionAlongSurface, calc_results: MovementCalcResults) -> MovementInstructions:

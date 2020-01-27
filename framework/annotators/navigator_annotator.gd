@@ -13,9 +13,9 @@ func _init(navigator: Navigator) -> void:
 
 func _draw() -> void:
     if previous_path != null:
-        _draw_path(self, previous_path, CURRENT_PATH_COLOR)
+        _draw_path(self, previous_path, PREVIOUS_PATH_COLOR)
     if current_path != null:
-        _draw_path(self, current_path, PREVIOUS_PATH_COLOR)
+        _draw_path(self, current_path, CURRENT_PATH_COLOR)
 
 func check_for_update() -> void:
     if navigator.current_path != current_path:

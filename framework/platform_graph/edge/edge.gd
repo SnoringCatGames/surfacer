@@ -123,3 +123,7 @@ static func vector2_to_position_along_surface(target_point: Vector2) -> Position
     var position_along_surface := PositionAlongSurface.new()
     position_along_surface.target_point = target_point
     return position_along_surface
+
+static func check_just_landed_on_expected_surface(surface_state: PlayerSurfaceState, \
+        end_surface: Surface) -> bool:
+    return surface_state.just_left_air and surface_state.grabbed_surface == end_surface
