@@ -9,6 +9,7 @@ const LIGHTNESS_XDARK := 20
 const TRANSPARENT := Color8(0, 0, 0, 0)
 const WHITE := Color8(255, 255, 255)
 const BLACK := Color8(0, 0, 0)
+const GREY := Color8(163, 163, 163)
 
 # Hue: 182 (from 0 to 360)
 const TEAL := Color8(71, 249, 255)

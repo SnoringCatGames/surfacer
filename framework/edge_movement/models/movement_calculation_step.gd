@@ -38,15 +38,15 @@ var time_instruction_start: float
 var time_instruction_end: float
 var time_step_end: float
 
-var position_step_start: Vector2
-var position_instruction_start: Vector2
-var position_instruction_end: Vector2
-var position_step_end: Vector2
+var position_step_start := Vector2.INF
+var position_instruction_start := Vector2.INF
+var position_instruction_end := Vector2.INF
+var position_step_end := Vector2.INF
 
-var velocity_step_start: Vector2
-var velocity_instruction_start: Vector2
-var velocity_instruction_end: Vector2
-var velocity_step_end: Vector2
+var velocity_step_start := Vector2.INF
+var velocity_instruction_start := Vector2.INF
+var velocity_instruction_end := Vector2.INF
+var velocity_step_end := Vector2.INF
 
 # Array<Vector2>
 var frame_positions: Array

@@ -12,7 +12,7 @@ var tile_map_indices: Array
 
 var bounding_box: Rect2
 
-var normal: Vector2
+var normal := Vector2.INF
 
 var convex_clockwise_neighbor: Surface
 var convex_counter_clockwise_neighbor: Surface

@@ -3,31 +3,31 @@
 extends Reference
 class_name MovementCalcCollisionDebugState
 
-var step_start_position: Vector2
-var step_start_surface_position: Vector2
-var step_start_surface_normal: Vector2
+var step_start_position := Vector2.INF
+var step_start_surface_position := Vector2.INF
+var step_start_surface_normal := Vector2.INF
 
-var step_end_position: Vector2
-var step_end_surface_position: Vector2
-var step_end_surface_normal: Vector2
+var step_end_position := Vector2.INF
+var step_end_surface_position := Vector2.INF
+var step_end_surface_normal := Vector2.INF
 
 var step_start_time: float
 var step_end_time: float
 
-var collider_half_width_height: Vector2
+var collider_half_width_height := Vector2.INF
 var margin: float
 
 var frame_current_time: float
-var frame_motion: Vector2
-var frame_start_position: Vector2
-var frame_end_position: Vector2
-var frame_previous_position: Vector2
-var frame_start_min_coordinates: Vector2
-var frame_start_max_coordinates: Vector2
-var frame_end_min_coordinates: Vector2
-var frame_end_max_coordinates: Vector2
-var frame_previous_min_coordinates: Vector2
-var frame_previous_max_coordinates: Vector2
+var frame_motion := Vector2.INF
+var frame_start_position := Vector2.INF
+var frame_end_position := Vector2.INF
+var frame_previous_position := Vector2.INF
+var frame_start_min_coordinates := Vector2.INF
+var frame_start_max_coordinates := Vector2.INF
+var frame_end_min_coordinates := Vector2.INF
+var frame_end_max_coordinates := Vector2.INF
+var frame_previous_min_coordinates := Vector2.INF
+var frame_previous_max_coordinates := Vector2.INF
 
 # Array<Vector2>
 var intersection_points := []

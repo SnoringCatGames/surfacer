@@ -4,9 +4,10 @@ class_name AirToSurfaceEdge
 
 const NAME := "AirToSurfaceEdge"
 const IS_TIME_BASED := true
+const ENTERS_AIR := false
 
 func _init(start: Vector2, end: PositionAlongSurface, calc_results: MovementCalcResults) \
-        .(NAME, IS_TIME_BASED, Edge.vector2_to_position_along_surface(start), end, \
+        .(NAME, IS_TIME_BASED, ENTERS_AIR, Edge.vector2_to_position_along_surface(start), end, \
         _calculate_instructions(start, end, calc_results)) -> void:
     pass
 

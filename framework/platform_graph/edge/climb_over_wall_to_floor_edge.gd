@@ -7,9 +7,11 @@ class_name ClimbOverWallToFloorEdge
 
 const NAME := "ClimbOverWallToFloorEdge"
 const IS_TIME_BASED := false
+const ENTERS_AIR := true
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface) \
-        .(NAME, IS_TIME_BASED, start, end, _calculate_instructions(start, end)) -> void:
+        .(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, \
+        _calculate_instructions(start, end)) -> void:
     pass
 
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \

@@ -19,10 +19,10 @@ var shape_query_params: Physics2DShapeQueryParameters
 
 # A margin to extend around the Player's Collider. This helps to compensate for the imprecision
 # of these calculations.
-var constraint_offset: Vector2
+var constraint_offset := Vector2.INF
 
 # The initial velocity for the current edge instructions.
-var velocity_start: Vector2
+var velocity_start := Vector2.INF
 
 # The origin for the current edge instructions.
 var origin_constraint: MovementConstraint

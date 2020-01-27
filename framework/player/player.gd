@@ -27,7 +27,7 @@ var navigator: Navigator
 var velocity := Vector2.ZERO
 var level # TODO: Add type back in?
 var collider: CollisionShape2D
-var collider_half_width_height: Vector2
+var collider_half_width_height := Vector2.INF
 var animator: PlayerAnimator
 # Array<PlayerActionSource>
 var action_sources := []

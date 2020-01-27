@@ -7,9 +7,11 @@ class_name IntraSurfaceEdge
 
 const NAME := "IntraSurfaceEdge"
 const IS_TIME_BASED := false
+const ENTERS_AIR := false
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface) \
-        .(NAME, IS_TIME_BASED, start, end, _calculate_instructions(start, end)) -> void:
+        .(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, \
+        _calculate_instructions(start, end)) -> void:
     pass
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:

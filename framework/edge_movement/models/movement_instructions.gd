@@ -24,7 +24,7 @@ var horizontal_instruction_start_positions: PoolVector2Array
 
 var horizontal_instruction_end_positions: PoolVector2Array
 
-var jump_instruction_end_position: Vector2
+var jump_instruction_end_position := Vector2.INF
 
 # Instructions don't need to be pre-sorted.
 func _init(instructions: Array, duration: float, distance: float, \

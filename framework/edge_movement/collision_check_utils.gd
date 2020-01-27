@@ -27,19 +27,19 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
     var has_started_instructions := false
     var space_state := overall_calc_params.space_state
     var shape_query_params := overall_calc_params.shape_query_params
-    var displacement: Vector2
+    var displacement := Vector2.INF
     var collision: SurfaceCollision
     
     var current_horizontal_step_index := 0
     var current_horizontal_step: MovementCalcStep = horizontal_steps[0]
     var continuous_horizontal_state: Array
     var continuous_vertical_state: Array
-    var continuous_position: Vector2
+    var continuous_position := Vector2.INF
     
     # Record positions for edge annotation debugging.
     var frame_discrete_positions := []
 #    var frame_continuous_positions := [position] # FIXME: REMOVE
-    var jump_instruction_end_position: Vector2
+    var jump_instruction_end_position := Vector2.INF
     var horizontal_instruction_end_positions := []
     var horizontal_instruction_start_positions := []
     
@@ -232,7 +232,7 @@ static func check_discrete_horizontal_step_for_collision( \
     var horizontal_acceleration_sign := 0
     var space_state := overall_calc_params.space_state
     var shape_query_params := overall_calc_params.shape_query_params
-    var displacement: Vector2
+    var displacement := Vector2.INF
     var collision: SurfaceCollision
     
     # Iterate through each physics frame, checking each for a collision.

@@ -5,9 +5,10 @@ class_name JumpFromSurfaceToSurfaceEdge
 
 const NAME := "JumpFromSurfaceToSurfaceEdge"
 const IS_TIME_BASED := true
+const ENTERS_AIR := true
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        calc_results: MovementCalcResults).(NAME, IS_TIME_BASED, start, end, \
+        calc_results: MovementCalcResults).(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, \
                 _calculate_instructions(start, end, calc_results)) -> void:
     pass
 

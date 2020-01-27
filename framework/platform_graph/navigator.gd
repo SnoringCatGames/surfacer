@@ -12,6 +12,7 @@ var instructions_action_source: InstructionsActionSource
 
 var is_currently_navigating := false
 var reached_destination := false
+var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
 var current_edge: Edge
 var current_edge_index := -1
@@ -38,7 +39,7 @@ func navigate_to_nearby_surface(target: Vector2, \
     if destination.target_point.distance_squared_to(target) > \
             distance_threshold * distance_threshold:
         # Target is too far from any surface.
-        print("Target is too far from any surface")
+        print("TARGET IS TOO FAR FROM ANY SURFACE")
         return false
     
     var path: PlatformGraphPath
@@ -56,7 +57,7 @@ func navigate_to_nearby_surface(target: Vector2, \
     
     if path == null:
         # Destination cannot be reached from origin.
-        print("Cannot navigate to target: %s" % target)
+        print("CANNOT NAVIGATE TO TARGET: %s" % target)
         return false
     else:
         # Destination can be reached from origin.
@@ -84,16 +85,15 @@ func _set_reached_destination() -> void:
     # FIXME: Assert that we are close enough to the destination position.
 #    assert()
     
+    reset()
     reached_destination = true
-    is_currently_navigating = false
-    current_edge = null
-    current_edge_index = -1
-    current_playback = null
-    instructions_action_source.cancel_all_playback()
     
-    print("Reached end of path:      %8.3f" % [global.elapsed_play_time_sec])
+    print("REACHED END OF PATH:      %8.3f" % [global.elapsed_play_time_sec])
 
 func reset() -> void:
+    if current_path != null:
+        previous_path = current_path
+    
     current_path = null
     current_edge = null
     current_edge_index = -1
@@ -123,8 +123,7 @@ func _start_edge(index: int) -> void:
     
     current_playback = instructions_action_source.start_instructions( \
             current_edge, global.elapsed_play_time_sec)
-    navigation_state.is_expecting_to_enter_air = \
-            current_edge is JumpFromSurfaceToSurfaceEdge or current_edge is SurfaceToAirEdge
+    navigation_state.is_expecting_to_enter_air = current_edge.enters_air
 
 # Updates navigation state in response to the current surface state.
 func update() -> void:
@@ -148,13 +147,13 @@ func update() -> void:
         else: # navigation_state.just_interrupted_by_user_action
             interruption_type_label = "navigation_state.just_interrupted_by_user_action"
         
-        print("Edge movement interrupted:%8.3f; %s" % \
+        print("EDGE MOVEMENT INTERRUPTED:%8.3f; %s" % \
                 [global.elapsed_play_time_sec, interruption_type_label])
         # FIXME: Add back in at some point...
 #        navigate_to_nearest_surface(current_path.destination)
         reset()
     elif navigation_state.just_reached_end_of_edge:
-        print("Reached end of edge:      %8.3f; %s" % \
+        print("REACHED END OF EDGE:      %8.3f; %s" % \
                 [global.elapsed_play_time_sec, current_edge.name])
     else:
         # Continuing along an edge.

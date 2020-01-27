@@ -22,7 +22,7 @@ var surface: Surface
 
 # This point represents the Player's position (i.e., the Player's center), NOT the corner of the
 # Surface.
-var position: Vector2
+var position := Vector2.INF
 
 var passing_vertically: bool
 

@@ -55,8 +55,8 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
     var passing_vertically: bool
     var should_stay_on_min_side_a: bool
     var should_stay_on_min_side_b: bool
-    var position_a: Vector2
-    var position_b: Vector2
+    var position_a := Vector2.INF
+    var position_b := Vector2.INF
     
     # Calculate the positions of each constraint.
     match colliding_surface.side:
@@ -1423,7 +1423,7 @@ static func update_neighbors_for_new_constraint(constraint: MovementConstraint, 
 static func _calculate_replacement_for_fake_constraint(fake_constraint: MovementConstraint, \
         constraint_offset: Vector2) -> MovementConstraint:
     var neighbor_surface: Surface
-    var replacement_position: Vector2
+    var replacement_position := Vector2.INF
     var should_stay_on_min_side: bool
     
     match fake_constraint.surface.side:

@@ -16,6 +16,19 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     #       beyond the tile bounds in the direction of motion. 
     
     # Check for collisions during this frame; these could be new or pre-existing.
+    # 
+    # In most cases, for rectangular boundaries, `collide_shape` returns four points. In these
+    # cases, two points correspond to the vertices of shape A that lie within shape B, and the
+    # other two points correspond to the points where A intersect the edge of B. The player's
+    # collision boundary could be either A or B.
+    # 
+    # When `collide_shape` returns two points, that seems to mean that only one vertex of shape A
+    # lies within shape B. In this case, one of the points corresponds to the vertex of A that lies
+    # within B, and the other point corresponds to the projection of that point onto an edge of B
+    # that A is intersecting.
+    # 
+    # Sometimes `collide_shape` can return more than 4 points. This seems to happen more often with
+    # more exotic collision shapes like capsules.
     var intersection_points := space_state.collide_shape(shape_query_params, 32)
     assert(intersection_points.size() < 32)
     if intersection_points.empty():
@@ -74,6 +87,11 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     
     var collision_ratios := space_state.cast_motion(shape_query_params)
+    assert(collision_ratios.size() != 1)
+    # An array of size 2 means that there was no pre-existing collision.
+    # An empty array means that we were already colliding even before any motion.
+    var there_was_a_preexisting_collision: bool = collision_ratios.size() == 0 or \
+            (collision_ratios[0] == 0 and collision_ratios[1] == 0)
     
     ###############################################################################################
     if collision_debug_state != null:
@@ -118,138 +136,137 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     
     
-    if intersection_points.size() == 2:
-        # In most cases, for rectangular boundaries, `collide_shape` returns four points. In these
-        # cases, two points correspond to the vertices of shape A that lie within shape B, and the
-        # other two points correspond to the points where A intersect the edge of B. The player's
-        # collision boundary could be either A or B.
-        # 
-        # When `collide_shape` returns two points, that means that only one vertex of shape A lies
-        # within shape B. In this case, one of the points corresponds to the vertex of A that lies
-        # within B, and the other point corresponds to the projection of that point onto the edge
-        # of B that A is intersecting.
-        # 
-        # NOTE: These comments are empirical--based on observed results rather than from analyzing
-        #       the logic of the collision engine.
-        
-        should_try_without_perpendicular_nudge_first = false
-        
-        var position_at_end_of_motion := position_start + shape_query_params.motion
-        
-        var outer_corner_point: Vector2
-        var internal_point: Vector2
-        if intersection_points[0].distance_squared_to(position_at_end_of_motion) < \
-                intersection_points[1].distance_squared_to(position_at_end_of_motion):
-            outer_corner_point = intersection_points[0]
-            internal_point = intersection_points[1]
-        else:
-            outer_corner_point = intersection_points[1]
-            internal_point = intersection_points[0]
-        
-        var displacement_from_outer_to_internal_point := internal_point - outer_corner_point
-        
-        var are_intersection_points_directly_vertical: bool = Geometry.are_floats_equal_with_epsilon( \
-                displacement_from_outer_to_internal_point.x, 0.0, 0.001)
-        
-        var are_intersection_points_directly_horizontal: bool = \
-                Geometry.are_floats_equal_with_epsilon( \
-                        displacement_from_outer_to_internal_point.y, 0.0, 0.001)
-        
-        if are_intersection_points_directly_vertical or \
-                are_intersection_points_directly_horizontal:
-            # One corner of one shape intersects with one edge of the other shape.
-            
-            # FIXME: D: This assumes that all tile shapes have axially-aligned edges.
-            
-#            var x_direction := 1 if direction.x > 0 else -1
-#            var y_direction := 1 if direction.y > 0 else -1
+#    if intersection_points.size() == 2:
+#        # In most cases, for rectangular boundaries, `collide_shape` returns four points. In these
+#        # cases, two points correspond to the vertices of shape A that lie within shape B, and the
+#        # other two points correspond to the points where A intersect the edge of B. The player's
+#        # collision boundary could be either A or B.
+#        # 
+#        # When `collide_shape` returns two points, that means that only one vertex of shape A lies
+#        # within shape B. In this case, one of the points corresponds to the vertex of A that lies
+#        # within B, and the other point corresponds to the projection of that point onto an edge
+#        # of B that A is intersecting.
+#        # 
+#        # NOTE: These comments are empirical and possibly wrong--based on observed results rather
+#        #       than from analyzing the logic of the collision engine.
 #
-#            if are_intersection_points_directly_vertical:
-#                perpendicular_offset = Vector2(VERTEX_SIDE_NUDGE_OFFSET * -x_direction, 0.0)
-#            else: # are_intersection_points_directly_horizontal
-#                perpendicular_offset = Vector2(0.0, VERTEX_SIDE_NUDGE_OFFSET * -y_direction)
-            
-            perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
-            edge_aligned_ray_trace_target = outer_corner_point
-            
-        else:
-            # The player is clipping a corner of the tile on their way past.
-            # 
-            # -   The two points in this case are the corner of the tile and the corner of the
-            #     Player collision boundary at this frame time.
-            # -   For the target position for ray-casting we can use the edge-aligned midpoint
-            #     between these two positions; that should get us the correct surface and normal.
-            
-            perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
-            edge_aligned_ray_trace_target = outer_corner_point
-            
-            # Determine which side of the outer-corner point the tile lies on.
-            var is_direction_and_internal_point_clockwise: bool = \
-                    Geometry.are_three_points_clockwise(position_start, \
-                            position_at_end_of_motion, \
-                            internal_point)
-            var is_direction_and_perp_offset_clockwise: bool = \
-                    Geometry.are_three_points_clockwise(position_start, \
-                            position_at_end_of_motion, \
-                            position_at_end_of_motion + perpendicular_offset)
-            # Make sure the direction of the perpendicular_offset cooresponds to the side of the
-            # direction vector that the tile shape lies on.
-            if is_direction_and_internal_point_clockwise != \
-                    is_direction_and_perp_offset_clockwise:
-                perpendicular_offset = -perpendicular_offset
-            
-            if !Geometry.are_floats_equal_with_epsilon(direction.x, 0.0, 0.01) and \
-                    !Geometry.are_floats_equal_with_epsilon(direction.y, 0.0, 0.01):
-                # Moving diagonally.
-                
-                # Calculate the the ray-trace target to have a slight axially-aligned offset from
-                # the corner of the tile shape.
-                var x_direction := 0
-                var y_direction := 0
-                if direction.x < 0 and direction.y < 0:
-                    # Movement direction is up-left.
-                    if perpendicular_offset.x < 0 and perpendicular_offset.y > 0:
-                        # Perpendicular offset is down-left.
-                        y_direction = 1
-                    elif perpendicular_offset.x > 0 and perpendicular_offset.y < 0:
-                        # Perpendicular offset is up-right.
-                        x_direction = 1
-                elif direction.x > 0 and direction.y < 0:
-                    # Movement direction is up-right.
-                    if perpendicular_offset.x < 0 and perpendicular_offset.y < 0:
-                        # Perpendicular offset is up-left.
-                        x_direction = -1
-                    elif perpendicular_offset.x > 0 and perpendicular_offset.y > 0:
-                        # Perpendicular offset is down-right.
-                        y_direction = 1
-                elif direction.x > 0 and direction.y > 0:
-                    # Movement direction is down-right.
-                    if perpendicular_offset.x > 0 and perpendicular_offset.y < 0:
-                        # Perpendicular offset is up-right.
-                        y_direction = -1
-                    elif perpendicular_offset.x < 0 and perpendicular_offset.y > 0:
-                        # Perpendicular offset is down-left.
-                        x_direction = -1
-                elif direction.x < 0 and direction.y > 0:
-                    # Movement direction is down-left.
-                    if perpendicular_offset.x > 0 and perpendicular_offset.y > 0:
-                        # Perpendicular offset is down-right.
-                        x_direction = 1
-                    elif perpendicular_offset.x < 0 and perpendicular_offset.y < 0:
-                        # Perpendicular offset is up-left.
-                        y_direction = -1
-                # Make sure we matched one of the expected direction+perpendicular-offset cases.
-                assert(x_direction != 0 or y_direction != 0)
-                perpendicular_offset = Vector2(VERTEX_SIDE_NUDGE_OFFSET * x_direction, \
-                        VERTEX_SIDE_NUDGE_OFFSET * y_direction)
+#        should_try_without_perpendicular_nudge_first = false
+#
+#        var position_at_end_of_motion := position_start + shape_query_params.motion
+#
+#        var outer_corner_point: Vector2
+#        var internal_point: Vector2
+#        if intersection_points[0].distance_squared_to(position_at_end_of_motion) < \
+#                intersection_points[1].distance_squared_to(position_at_end_of_motion):
+#            outer_corner_point = intersection_points[0]
+#            internal_point = intersection_points[1]
+#        else:
+#            outer_corner_point = intersection_points[1]
+#            internal_point = intersection_points[0]
+#
+#        var displacement_from_outer_to_internal_point := internal_point - outer_corner_point
+#
+#        var are_intersection_points_directly_vertical: bool = Geometry.are_floats_equal_with_epsilon( \
+#                displacement_from_outer_to_internal_point.x, 0.0, 0.001)
+#
+#        var are_intersection_points_directly_horizontal: bool = \
+#                Geometry.are_floats_equal_with_epsilon( \
+#                        displacement_from_outer_to_internal_point.y, 0.0, 0.001)
+#
+#        if are_intersection_points_directly_vertical or \
+#                are_intersection_points_directly_horizontal:
+#            # One corner of one shape intersects with one edge of the other shape.
+#
+#            # FIXME: D: This assumes that all tile shapes have axially-aligned edges.
+#
+##            var x_direction := 1 if direction.x > 0 else -1
+##            var y_direction := 1 if direction.y > 0 else -1
+##
+##            if are_intersection_points_directly_vertical:
+##                perpendicular_offset = Vector2(VERTEX_SIDE_NUDGE_OFFSET * -x_direction, 0.0)
+##            else: # are_intersection_points_directly_horizontal
+##                perpendicular_offset = Vector2(0.0, VERTEX_SIDE_NUDGE_OFFSET * -y_direction)
+#
+#            perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
+#            edge_aligned_ray_trace_target = outer_corner_point
+#
+#        else:
+#            # The player is clipping a corner of the tile on their way past.
+#            # 
+#            # -   The two points in this case are the corner of the tile and the corner of the
+#            #     Player collision boundary at this frame time.
+#            # -   For the target position for ray-casting we can use the edge-aligned midpoint
+#            #     between these two positions; that should get us the correct surface and normal.
+#
+#            perpendicular_offset = direction.tangent() * VERTEX_SIDE_NUDGE_OFFSET
+#            edge_aligned_ray_trace_target = outer_corner_point
+#
+#            # Determine which side of the outer-corner point the tile lies on.
+#            var is_direction_and_internal_point_clockwise: bool = \
+#                    Geometry.are_three_points_clockwise(position_start, \
+#                            position_at_end_of_motion, \
+#                            internal_point)
+#            var is_direction_and_perp_offset_clockwise: bool = \
+#                    Geometry.are_three_points_clockwise(position_start, \
+#                            position_at_end_of_motion, \
+#                            position_at_end_of_motion + perpendicular_offset)
+#            # Make sure the direction of the perpendicular_offset cooresponds to the side of the
+#            # direction vector that the tile shape lies on.
+#            if is_direction_and_internal_point_clockwise != \
+#                    is_direction_and_perp_offset_clockwise:
+#                perpendicular_offset = -perpendicular_offset
+#
+#            if !Geometry.are_floats_equal_with_epsilon(direction.x, 0.0, 0.01) and \
+#                    !Geometry.are_floats_equal_with_epsilon(direction.y, 0.0, 0.01):
+#                # Moving diagonally.
+#
+#                # Calculate the the ray-trace target to have a slight axially-aligned offset from
+#                # the corner of the tile shape.
+#                var x_direction := 0
+#                var y_direction := 0
+#                if direction.x < 0 and direction.y < 0:
+#                    # Movement direction is up-left.
+#                    if perpendicular_offset.x < 0 and perpendicular_offset.y > 0:
+#                        # Perpendicular offset is down-left.
+#                        y_direction = 1
+#                    elif perpendicular_offset.x > 0 and perpendicular_offset.y < 0:
+#                        # Perpendicular offset is up-right.
+#                        x_direction = 1
+#                elif direction.x > 0 and direction.y < 0:
+#                    # Movement direction is up-right.
+#                    if perpendicular_offset.x < 0 and perpendicular_offset.y < 0:
+#                        # Perpendicular offset is up-left.
+#                        x_direction = -1
+#                    elif perpendicular_offset.x > 0 and perpendicular_offset.y > 0:
+#                        # Perpendicular offset is down-right.
+#                        y_direction = 1
+#                elif direction.x > 0 and direction.y > 0:
+#                    # Movement direction is down-right.
+#                    if perpendicular_offset.x > 0 and perpendicular_offset.y < 0:
+#                        # Perpendicular offset is up-right.
+#                        y_direction = -1
+#                    elif perpendicular_offset.x < 0 and perpendicular_offset.y > 0:
+#                        # Perpendicular offset is down-left.
+#                        x_direction = -1
+#                elif direction.x < 0 and direction.y > 0:
+#                    # Movement direction is down-left.
+#                    if perpendicular_offset.x > 0 and perpendicular_offset.y > 0:
+#                        # Perpendicular offset is down-right.
+#                        x_direction = 1
+#                    elif perpendicular_offset.x < 0 and perpendicular_offset.y < 0:
+#                        # Perpendicular offset is up-left.
+#                        y_direction = -1
+#                # Make sure we matched one of the expected direction+perpendicular-offset cases.
+#                assert(x_direction != 0 or y_direction != 0)
+#                perpendicular_offset = Vector2(VERTEX_SIDE_NUDGE_OFFSET * x_direction, \
+#                        VERTEX_SIDE_NUDGE_OFFSET * y_direction)
+#
+#    else:
+    if true:
         
-    else:
-        assert(collision_ratios.size() != 1)
         
-        # An array of size 2 means that there was no pre-existing collision.
-        # An empty array means that we were already colliding even before any motion.
-        var there_was_a_preexisting_collision: bool = collision_ratios.size() == 0 or \
-                (collision_ratios[0] == 0 and collision_ratios[1] == 0)
+        
+        
         
         # FIXME: DEBUGGING: REMOVE
 #        if Geometry.are_points_equal_with_epsilon(position_start, Vector2(25.089, -468.167), 0.001) and \
@@ -509,7 +526,7 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
                 should_try_without_perpendicular_nudge_first = true    
     
     var surface_collision := SurfaceCollision.new()
-    surface_collision.player_position = position_when_colliding
+    surface_collision.player_position = position_when_colliding # FIXME: ------- Not defined when only two intersection points.
     if collision_debug_state != null:
         collision_debug_state.collision = surface_collision
     
@@ -561,7 +578,7 @@ static func _calculate_intersection_point_and_surface(space_state: Physics2DDire
         collision_debug_state: MovementCalcCollisionDebugState) -> void:
     var tile_map_cell_size := surface_parser.max_tile_map_cell_size
     
-    var intersection_point: Vector2
+    var intersection_point := Vector2.INF
     var surface: Surface
     
     var collision: Dictionary
@@ -570,7 +587,7 @@ static func _calculate_intersection_point_and_surface(space_state: Physics2DDire
     var is_touching_ceiling: bool
     var is_touching_left_wall: bool
     var is_touching_right_wall: bool
-    var tile_map_coord: Vector2
+    var tile_map_coord := Vector2.INF
     var tile_map_index: int
     
     # Round-off error can sometimes cause smaller offsets to fail, so we try again with larger

@@ -9,6 +9,9 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: -----------------------------
 # 
 # - Debug why no valid Edges are found in FallFromWallCalculator.
+# - Rewrite frame_collison_check_utils:
+#   - Remove the only-2-points separate case.
+#   - ... (review notes about other old plans to rewrite)
 # 
 # - Implement annotators for new Edges.
 #   - FallFromWall

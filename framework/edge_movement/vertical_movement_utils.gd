@@ -20,8 +20,8 @@ static func calculate_vertical_step( \
     var time_step_end := destination_constraint.time_passing_through
     
     var time_instruction_end: float
-    var position_instruction_end: Vector2
-    var velocity_instruction_end: Vector2
+    var position_instruction_end := Vector2.INF
+    var velocity_instruction_end := Vector2.INF
     
     # Calculate instruction-end and peak-height state. These depend on whether or not we can hold
     # the jump button to manipulate the jump height. 

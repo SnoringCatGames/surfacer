@@ -12,7 +12,7 @@ class_name MovementVertCalcStep
 var time_peak_height: float
 
 # The maximum height position for this step.
-var position_peak_height: Vector2
+var position_peak_height := Vector2.INF
 
 # Whether the jump button can be held in order to apply slow-ascent and variable-jump-height.
 var can_hold_jump_button: bool

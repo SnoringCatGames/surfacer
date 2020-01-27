@@ -129,10 +129,10 @@ static func find_surfaces_in_fall_range_from_surface(movement_params: MovementPa
             0.0
     var offset_for_jump_distance := Vector2(max_horizontal_jump_distance, 0.0)
     
-    var top_left: Vector2
-    var top_right: Vector2
-    var bottom_left: Vector2
-    var bottom_right: Vector2
+    var top_left := Vector2.INF
+    var top_right := Vector2.INF
+    var bottom_left := Vector2.INF
+    var bottom_right := Vector2.INF
     
     match origin_surface.side:
         SurfaceSide.LEFT_WALL:

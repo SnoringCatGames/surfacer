@@ -7,7 +7,7 @@ const CLICK_DURATION_SEC := 0.2
 
 var global # TODO: Add type back
 var level # TODO: Add type back
-var click_position: Vector2
+var click_position := Vector2.INF
 var nearby_surface_position: PositionAlongSurface
 var start_time := -CLICK_DURATION_SEC
 var end_time := -CLICK_DURATION_SEC

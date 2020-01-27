@@ -19,8 +19,8 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
     var movement_params := collision_params.movement_params
     var velocity_start := Vector2.ZERO
     
-    var origin_top_point: Vector2
-    var origin_bottom_point: Vector2
+    var origin_top_point := Vector2.INF
+    var origin_bottom_point := Vector2.INF
     if origin_surface.side == SurfaceSide.LEFT_WALL:
         origin_top_point = origin_surface.first_point
         origin_bottom_point = origin_surface.last_point
@@ -59,14 +59,15 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
                     continue
                 ###################################################################################
                 
-                # FIXME: LEFT OFF HERE: ------------------------A: Debug why fall edge isn't returned.
-                
                 overall_calc_params = EdgeMovementCalculator.create_movement_calc_overall_params( \
                         collision_params, jump_position.surface, jump_position.target_point, \
                         land_position.surface, land_position.target_point, false, velocity_start, \
                         false, false)
                 if overall_calc_params == null:
                     continue
+                
+                # FIXME: LEFT OFF HERE: ------------------------A: Debug why fall edge isn't returned.
+                overall_calc_params.in_debug_mode = true
                 
                 ###################################################################################
                 # Record some extra debug state when we're limiting calculations to a single edge.

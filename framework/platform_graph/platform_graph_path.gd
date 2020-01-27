@@ -6,8 +6,8 @@ class_name PlatformGraphPath
 # Array<Edge>
 var edges: Array
 
-var origin: Vector2
-var destination: Vector2
+var origin := Vector2.INF
+var destination := Vector2.INF
 
 func _init(edges: Array) -> void:
     self.edges = edges

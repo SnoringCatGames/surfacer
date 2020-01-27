@@ -8,6 +8,9 @@ var name: String
 # according to surface state).
 var is_time_based: bool
 
+# Whether the movement along this edge transitions from grabbing a surface to being airborne.
+var enters_air: bool
+
 var instructions: MovementInstructions
 
 var start_position_along_surface: PositionAlongSurface
@@ -21,11 +24,13 @@ var end: Vector2 setget ,_get_end
 var start_surface: Surface setget ,_get_start_surface
 var end_surface: Surface setget ,_get_end_surface
 
-func _init(name: String, is_time_based: bool, start_position_along_surface: PositionAlongSurface, \
+func _init(name: String, is_time_based: bool, enters_air: bool, \
+        start_position_along_surface: PositionAlongSurface, \
         end_position_along_surface: PositionAlongSurface, \
         instructions: MovementInstructions) -> void:
     self.name = name
     self.is_time_based = is_time_based
+    self.enters_air = enters_air
     self.start_position_along_surface = start_position_along_surface
     self.end_position_along_surface = end_position_along_surface
     self.instructions = instructions

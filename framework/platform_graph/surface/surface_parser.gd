@@ -255,8 +255,8 @@ static func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: 
     
     var i1: int
     var i2: int
-    var v1: Vector2
-    var v2: Vector2
+    var v1 := Vector2.INF
+    var v2 := Vector2.INF
     var pos_angle: float
     var is_wall_segment: bool
     
@@ -411,10 +411,10 @@ static func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array)
     var count_j: int
     var surface1: _TmpSurface
     var surface2: _TmpSurface
-    var surface1_front: Vector2
-    var surface1_back: Vector2
-    var surface2_front: Vector2
-    var surface2_back: Vector2
+    var surface1_front := Vector2.INF
+    var surface1_back := Vector2.INF
+    var surface2_front := Vector2.INF
+    var surface2_back := Vector2.INF
     var front_back_diff_x: float
     var front_back_diff_y: float
     var back_front_diff_x: float
@@ -480,10 +480,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
     var count: int
     var surface1: _TmpSurface
     var surface2: _TmpSurface
-    var surface1_front: Vector2
-    var surface1_back: Vector2
-    var surface2_front: Vector2
-    var surface2_back: Vector2
+    var surface1_front := Vector2.INF
+    var surface1_back := Vector2.INF
+    var surface2_front := Vector2.INF
+    var surface2_back := Vector2.INF
     var front_back_diff_x: float
     var front_back_diff_y: float
     var back_front_diff_x: float
@@ -572,9 +572,9 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
 
 static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls: Array, \
         right_walls: Array) -> void:
-    var surface1_end1: Vector2
-    var surface1_end2: Vector2
-    var surface2_end: Vector2
+    var surface1_end1 := Vector2.INF
+    var surface1_end2 := Vector2.INF
+    var surface2_end := Vector2.INF
     var diff_x: float
     var diff_y: float
     

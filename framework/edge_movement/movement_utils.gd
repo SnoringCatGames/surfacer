@@ -186,8 +186,8 @@ static func get_all_jump_land_positions_from_surface(movement_params: MovementPa
     
     # Use a bounding-box heuristic to determine which end of the surfaces are likely to be
     # nearer and farther.
-    var near_end: Vector2
-    var far_end: Vector2
+    var near_end := Vector2.INF
+    var far_end := Vector2.INF
     if Geometry.distance_squared_from_point_to_rect(source_first_point, target_bounding_box) < \
             Geometry.distance_squared_from_point_to_rect(source_last_point, target_bounding_box):
         near_end = source_first_point
@@ -245,7 +245,7 @@ static func get_all_jump_land_positions_from_surface(movement_params: MovementPa
                     var should_try_to_move_around_left_side_of_target := \
                             abs(target_first_point.x - source_surface_center.x) < \
                             abs(target_last_point.x - source_surface_center.x)
-                    var closest_point_on_target: Vector2
+                    var closest_point_on_target := Vector2.INF
                     var goal_x_on_source: float
                     if should_try_to_move_around_left_side_of_target:
                         closest_point_on_target = target_first_point

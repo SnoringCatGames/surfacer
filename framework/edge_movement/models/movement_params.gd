@@ -10,7 +10,7 @@ var can_grab_floors: bool
 var collider_shape: Shape2D
 # In radians.
 var collider_rotation: float
-var collider_half_width_height: Vector2
+var collider_half_width_height := Vector2.INF
 
 var gravity_fast_fall: float
 var slow_ascent_gravity_multiplier: float

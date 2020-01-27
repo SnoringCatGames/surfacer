@@ -35,18 +35,18 @@ var is_grabbing_walk_through_walls := false
 
 var which_wall: int = SurfaceSide.NONE
 
-var center_position: Vector2
-var previous_center_position: Vector2
+var center_position := Vector2.INF
+var previous_center_position := Vector2.INF
 var collision_count: int
-var grab_position: Vector2
-var grab_position_tile_map_coord: Vector2
+var grab_position := Vector2.INF
+var grab_position_tile_map_coord := Vector2.INF
 var grabbed_tile_map: TileMap
 var grabbed_tile_map_index: int
 var grabbed_surface: Surface
 var previous_grabbed_surface: Surface
 # SurfaceSide
 var grabbed_side: int
-var grabbed_surface_normal: Vector2
+var grabbed_surface_normal := Vector2.INF
 var center_position_along_surface := PositionAlongSurface.new()
 
 var just_changed_surface := false

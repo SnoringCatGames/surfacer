@@ -7,6 +7,19 @@ const SURFACE_ALPHA_END_RATIO := .2
 
 const SURFACE_DEPTH_DIVISION_SIZE := SURFACE_DEPTH / SURFACE_DEPTH_DIVISIONS_COUNT
 
+const EDGE_TRAJECTORY_WIDTH := 1.0
+
+const EDGE_CONSTRAINT_WIDTH := 2.0
+const EDGE_CONSTRAINT_RADIUS := 3.0 * EDGE_CONSTRAINT_WIDTH
+const EDGE_START_RADIUS := 1.5 * EDGE_CONSTRAINT_WIDTH
+
+const EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH := 9
+const EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH := 1
+const EDGE_HORIZONTAL_INSTRUCTION_END_LENGTH := 9
+const EDGE_HORIZONTAL_INSTRUCTION_END_STROKE_WIDTH := 1
+const EDGE_VERTICAL_INSTRUCTION_END_LENGTH := 11
+const EDGE_VERTICAL_INSTRUCTION_END_STROKE_WIDTH := 1
+
 static func draw_dashed_line(canvas: CanvasItem, from: Vector2, to: Vector2, color: Color, \
         dash_length: float, dash_gap: float, dash_offset: float = 0.0, \
         width: float = 1.0, antialiased: bool = false) -> void:
@@ -260,3 +273,88 @@ static func draw_capsule_outline(canvas: CanvasItem, center: Vector2, radius: fl
     vertices[vertex_count - 1] = vertices[0]
     
     canvas.draw_polyline(vertices, color, thickness)
+
+static func draw_edge(canvas: CanvasItem, edge: Edge, includes_constraints := false, \
+        includes_instruction_indicators := false, includes_discrete_positions := false, \
+        base_color := Color.white) -> void:
+    if base_color == Color.white:
+        var hue := randf()
+        base_color = Color.from_hsv(hue, 0.6, 0.5, 0.5)
+    
+    if edge is AirToAirEdge or \
+            edge is AirToSurfaceEdge or \
+            edge is FallFromFloorEdge or \
+            edge is FallFromWallEdge or \
+            edge is JumpFromSurfaceToSurfaceEdge or \
+            edge is SurfaceToAirEdge:
+        _draw_edge_from_instructions_positions(canvas, edge, includes_discrete_positions, \
+                includes_constraints, includes_instruction_indicators, base_color)
+    elif edge is ClimbDownWallToFloorEdge or \
+            edge is ClimbOverWallToFloorEdge or \
+            edge is IntraSurfaceEdge or \
+            edge is WalkToAscendWallFromFloorEdge:
+        _draw_edge_from_end_points(canvas, edge, includes_discrete_positions, \
+                includes_constraints, includes_instruction_indicators, base_color)
+    else:
+        Utils.error("Unexpected Edge subclass: %s" % edge)
+
+static func _draw_edge_from_end_points(canvas: CanvasItem, edge: Edge, \
+        includes_discrete_positions: bool, includes_constraints: bool, \
+        includes_instruction_indicators: bool, base_color: Color) -> void:
+    canvas.draw_line(edge.start, edge.end, base_color, EDGE_TRAJECTORY_WIDTH)
+
+static func _draw_edge_from_instructions_positions(canvas: CanvasItem, edge: Edge, \
+        includes_discrete_positions: bool, includes_constraints: bool, \
+        includes_instruction_indicators: bool, base_color: Color) -> void:
+    # Set up colors.
+    var continuous_trajectory_color := base_color
+    var discrete_trajectory_color := Color.from_hsv(base_color.h, 0.6, 0.9, 0.5)
+    var constraint_color := Color.from_hsv(base_color.h, 0.6, 0.9, 0.3)
+    var instruction_start_stop_color := Color.from_hsv(base_color.h, 0.1, 0.99, 0.8)
+    
+    if includes_discrete_positions:
+        # Draw the trajectory (as approximated via discrete time steps during instruction 
+        # test calculations).
+        canvas.draw_polyline(edge.instructions.frame_discrete_positions_from_test, \
+                discrete_trajectory_color, EDGE_TRAJECTORY_WIDTH)
+    # Draw the trajectory (as calculated via continuous equations of motion during step
+    # calculations).
+    canvas.draw_polyline(edge.instructions.frame_continous_positions_from_steps, \
+            continuous_trajectory_color, EDGE_TRAJECTORY_WIDTH)
+    
+    if includes_constraints:
+        # Draw all constraints in this edge.
+        for constraint_position in edge.instructions.constraint_positions:
+            draw_circle_outline(canvas, constraint_position, EDGE_CONSTRAINT_RADIUS, \
+                    constraint_color, EDGE_CONSTRAINT_WIDTH, 4.0)
+        draw_circle_outline(canvas, edge.start, EDGE_START_RADIUS, constraint_color, \
+                EDGE_CONSTRAINT_WIDTH, 4.0)
+    
+    if includes_instruction_indicators:
+        # Draw the positions where horizontal instructions start.
+        var position_start: Vector2
+        for i in range(0, edge.instructions.horizontal_instruction_start_positions.size()):
+            position_start = edge.instructions.horizontal_instruction_start_positions[i]
+            
+            # Draw a plus for the instruction start.
+            draw_plus(canvas, position_start, EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH, \
+                    EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH, instruction_start_stop_color, \
+                    EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
+        
+        # Draw the positions where horizontal instructions end.
+        var position_end: Vector2
+        for i in range(0, edge.instructions.horizontal_instruction_end_positions.size()):
+            position_end = edge.instructions.horizontal_instruction_end_positions[i]
+            
+            # Draw a minus for the instruction end.
+            canvas.draw_line( \
+                    position_end + Vector2(-EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
+                    position_end + Vector2(EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
+                    instruction_start_stop_color, EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
+        
+        # Draw the position where the vertical instruction ends (draw an asterisk).
+        position_end = edge.instructions.jump_instruction_end_position
+        if position_end != Vector2.INF:
+            draw_asterisk(canvas, position_end, EDGE_VERTICAL_INSTRUCTION_END_LENGTH, \
+                    EDGE_VERTICAL_INSTRUCTION_END_LENGTH, instruction_start_stop_color, \
+                    EDGE_VERTICAL_INSTRUCTION_END_STROKE_WIDTH)

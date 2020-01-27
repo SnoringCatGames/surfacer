@@ -7,7 +7,7 @@ var time: float
 # Optional
 var is_pressed: bool
 # Optional
-var position: Vector2
+var position := Vector2.INF
 
 func _init(input_key: String, time: float, is_pressed: bool = false, \
         position := Vector2.INF) -> void:
