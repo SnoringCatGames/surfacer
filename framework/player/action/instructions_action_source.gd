@@ -41,7 +41,7 @@ func update(actions: PlayerActionState, previous_actions: PlayerActionState, tim
         i += 1
 
 func start_instructions(edge: Edge, time_sec: float) -> InstructionsPlayback:
-    var playback := InstructionsPlayback.new(edge)
+    var playback := InstructionsPlayback.new(edge, is_additive)
     playback.start(time_sec)
     _all_playback.push_back(playback)
     return playback

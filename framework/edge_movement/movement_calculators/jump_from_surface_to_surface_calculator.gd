@@ -8,7 +8,6 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix any remaining Navigator movement issues.
 # - Fix performance.
 #   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
 #     up passing them around as arguments to functions, to they get copied as values...
