@@ -8,15 +8,6 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add support to zoom and pan the camera to the current collision
-#   - [OLD]
-#     - Maybe this could be toggleable via clicking a button in the tree view?
-#     - Would definitely want to animate the zoom.
-#       - Probably also need to change the camera translation.
-#       - Probably can just calculate the offset from the player to the collision, and use that to
-#         manually assign an offset to the camera.
-#       - Would also need to animate this translation.
-# 
 # >>- Fix how things work when should_minimize_velocity_change_when_jumping is true.
 #   - Slow down the timestep, so that I can better see how things are moving?
 #   - [no] Find and move all movement-offset constants to one central location?
