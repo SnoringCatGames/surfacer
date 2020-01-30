@@ -81,3 +81,19 @@ func update_for_key_press(actions: PlayerActionState, previous_actions: PlayerAc
             actions.just_released_right = just_released
         _:
             Utils.error("Invalid input_key: %s" % input_key)
+
+static func input_key_to_action_name(input_key: String) -> String:
+    match input_key:
+        "jump":
+            return "jump"
+        "move_up":
+            return "up"
+        "move_down":
+            return "down"
+        "move_left":
+            return "left"
+        "move_right":
+            return "right"
+        _:
+            Utils.error()
+            return ""

@@ -8,15 +8,19 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Things to check:
+#   - Not resetting x velocity to zero at start of edge?
+#   - Not executing any sideways movement with the new is-additive checks that trigger jumps
+#     when just_pressed?
+#   - Holding sideways in order to grab wall (is that causing too much sideways movement?
+#     Can I introduce another control that only grips?)
+# 
 # >>- Fix how things work when should_minimize_velocity_change_when_jumping is true.
-#   - Slow down the timestep, so that I can better see how things are moving?
 #   - [no] Find and move all movement-offset constants to one central location?
 #     - MovementInstructionsUtils
 #     - MovementConstraintUtils
 #     - FrameCollisionCheckUtils
 #     - MovementCalcOverallParams
-#   - Clear away other edges so I can see just the one(s) I'm debugging.
-#   >>>>- Implement dynamic zoom!!
 #   >>>- Compare where instructions are pressed/released vs when I expect them.
 #   - Step through movement along an edge?
 #   >>- Should this be when I implement the logic to force the player's position to match the

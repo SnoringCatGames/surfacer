@@ -170,7 +170,7 @@ func update() -> void:
         # assert()
         
         # Cancel the current intra-surface instructions (in case it didn't clear itself).
-        instructions_action_source.cancel_playback(current_playback)
+        instructions_action_source.cancel_playback(current_playback, global.elapsed_play_time_sec)
         
         # Check for the next edge to navigate.
         var next_edge_index := current_edge_index + 1
