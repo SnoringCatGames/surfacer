@@ -3,7 +3,7 @@ class_name FloorFallThroughAction
 
 const NAME := 'FloorFallThroughAction'
 const TYPE := PlayerActionSurfaceType.FLOOR
-const PRIORITY := 230
+const PRIORITY := 220
 
 func _init().(NAME, TYPE, PRIORITY) -> void:
     pass

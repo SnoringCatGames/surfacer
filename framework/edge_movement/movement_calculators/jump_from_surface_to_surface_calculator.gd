@@ -9,9 +9,6 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: -----------------------------
 # 
 # - Things to check:
-#   - Not resetting x velocity to zero at start of edge?
-#   - Not executing any sideways movement with the new is-additive checks that trigger jumps
-#     when just_pressed?
 #   - Holding sideways in order to grab wall (is that causing too much sideways movement?
 #     Can I introduce another control that only grips?)
 # 

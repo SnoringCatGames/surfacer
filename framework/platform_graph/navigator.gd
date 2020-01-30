@@ -118,6 +118,7 @@ func _start_edge(index: int) -> void:
         player.position = current_edge.start
     if global.NAVIGATOR_STATE.forces_player_velocity_to_match_edge_at_start:
         player.velocity = Vector2.ZERO
+        surface_state.horizontal_acceleration_sign = 0
     
     current_edge.update_for_surface_state(surface_state)
     

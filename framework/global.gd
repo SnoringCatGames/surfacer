@@ -30,15 +30,14 @@ const DEBUG_STATE := {
     in_debug_mode = IN_DEBUG_MODE,
     limit_parsing = {
         player_name = "cat",
-        # Level: long rise; fall-from-wall
-        edge = {
-            origin = {
-                surface_side = SurfaceSide.FLOOR,
-            },
-            destination = {
-                surface_side = SurfaceSide.LEFT_WALL,
-            },
-        },
+#        edge = {
+#            origin = {
+#                surface_side = SurfaceSide.FLOOR,
+#            },
+#            destination = {
+#                surface_side = SurfaceSide.LEFT_WALL,
+#            },
+#        },
 #        movement_calculator = "FallFromWallCalculator",
 #        # Level: long rise; fall-from-wall
 #        edge = {
