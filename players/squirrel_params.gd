@@ -10,7 +10,7 @@ const CAN_GRAB_CEILINGS := false
 const CAN_GRAB_FLOORS := true
 const COLLIDER_ROTATION := 0.0
 
-func _init(global: Global).(NAME, PLAYER_RESOURCE_PATH, global) -> void:
+func _init(global).(NAME, PLAYER_RESOURCE_PATH, global) -> void:
     pass
 
 func _get_action_handlers() -> Array:

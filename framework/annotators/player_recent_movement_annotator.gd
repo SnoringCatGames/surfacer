@@ -98,7 +98,7 @@ func _draw() -> void:
 
 # Draw an indicator for the action that happened at this point.
 func _draw_action_indicator(action: int, position: Vector2, opacity: float) -> void:
-    var color := Color.from_hsv(MOVEMENT_HUE, 0.1, 0.99, opacity)
+    var color := Color.from_hsv(MOVEMENT_HUE, 0.3, 0.9, opacity)
     
     if action == PlayerActionType.PRESSED_JUMP or action == PlayerActionType.RELEASED_JUMP:
         # Draw a plus for the jump instruction start/end.

@@ -71,5 +71,5 @@ static func _calculate_t(surface: Surface, target_point: Vector2) -> float:
 func to_string() -> String:
     return "PositionAlongSurface{ %s, %s }" % [ \
             target_point, \
-            surface.to_string(), \
+            surface.to_string() if surface != null else "NULL SURFACE", \
         ]

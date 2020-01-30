@@ -13,7 +13,7 @@ func _init(start: Vector2, end: PositionAlongSurface, calc_results: MovementCalc
 
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:
-    return Edge.check_expected_end_surface(surface_state, self.end_surface)
+    return Edge.check_just_landed_on_expected_surface(surface_state, self.end_surface)
 
 static func _calculate_instructions( \
         position_start: Vector2, position_end: PositionAlongSurface, \

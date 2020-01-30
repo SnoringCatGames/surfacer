@@ -7,7 +7,7 @@ const PlatformGraph := preload("res://framework/platform_graph/platform_graph.gd
 const PlatformGraphAnnotator := preload("res://framework/annotators/platform_graph_annotator.gd")
 const RulerAnnotator := preload("res://framework/annotators/ruler_annotator.gd")
 
-var global: Global
+var global
 
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
@@ -19,6 +19,7 @@ var all_players: Array
 var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
+var camera_controller: CameraController
 var click_to_navigate: ClickToNavigate
 
 var platform_graph_annotator: PlatformGraphAnnotator
@@ -68,6 +69,9 @@ func _ready() -> void:
     surface_parser = SurfaceParser.new(surface_tile_maps, global.player_types)
     platform_graphs = _create_platform_graphs( \
             surface_parser, space_state, global.player_types, Global.DEBUG_STATE)
+    
+    camera_controller = CameraController.new()
+    add_child(camera_controller)
     
     click_to_navigate = ClickToNavigate.new()
     add_child(click_to_navigate)

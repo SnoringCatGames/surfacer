@@ -18,7 +18,8 @@ func update(actions: PlayerActionState, previous_actions: PlayerActionState, tim
     var is_pressed: bool
     for input_key in INPUT_KEYS:
         is_pressed = Input.is_action_pressed(input_key)
-        update_for_key_press(actions, previous_actions, input_key, is_pressed, time_sec)
+        if !Input.is_key_pressed(KEY_CONTROL):
+            update_for_key_press(actions, previous_actions, input_key, is_pressed, time_sec)
 
 static func get_is_some_user_action_pressed() -> bool:
     for input_key in INPUT_KEYS:

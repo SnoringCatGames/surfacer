@@ -47,6 +47,7 @@ func _unhandled_input(event: InputEvent) -> void:
             origin = surface_position
             destination = null
             edge_attempt = null
+            possible_jump_and_land_positions.clear()
         else:
             destination = surface_position
             _calculate_edge_attempt()
@@ -71,9 +72,16 @@ func _draw() -> void:
         _draw_selected_origin()
 
 func _calculate_edge_attempt() -> void:
-    var debug_state: Dictionary = global.DEBUG_STATE
     var origin_surface := origin.surface
     var destination_surface := destination.surface
+    
+    if origin_surface == destination_surface:
+        # Don't try to calculate an edge that starts and ends on the same surface.
+        edge_attempt = null
+        possible_jump_and_land_positions.clear()
+        return
+    
+    var debug_state: Dictionary = global.DEBUG_STATE
     var player: Player = global.current_player_for_clicks
     var movement_params: MovementParams = player.movement_params
     var space_state := get_world_2d().direct_space_state

@@ -8,13 +8,13 @@ const LINE_WIDTH := 1.0
 var LINE_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_XXFAINT)
 var TEXT_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_XFAINT)
 
-var global: Global
+var global
 var viewport: Viewport
 
 var viewport_size: Vector2
 var screen_center := Vector2.ZERO
 
-func _init(global: Global) -> void:
+func _init(global) -> void:
     self.global = global
 
 func _enter_tree() -> void:
@@ -23,7 +23,7 @@ func _enter_tree() -> void:
     get_tree().get_root().connect("size_changed", self, "_on_viewport_size_changed")
 
 func _process(delta: float) -> void:
-    var next_screen_center := global.current_camera.get_camera_screen_center()
+    var next_screen_center: Vector2 = global.camera_controller.get_position()
     
     if next_screen_center != screen_center:
         # The camera position moved, so we need to update the ruler.
@@ -31,8 +31,9 @@ func _process(delta: float) -> void:
         update()
 
 func _draw() -> void:
-    var grid_spacing := GRID_SPACING / Global.CAMERA_ZOOM
-    var screen_start_position := screen_center / Global.CAMERA_ZOOM - viewport_size / 2.0
+    var grid_spacing: float = GRID_SPACING / global.camera_controller.zoom
+    var screen_start_position: Vector2 = \
+            screen_center / global.camera_controller.zoom - viewport_size / 2.0
     
     # Offset the start position to align with the grid cell boundaries.
     var ruler_start_position := Vector2( \
@@ -60,7 +61,7 @@ func _draw() -> void:
         end_position = Vector2(start_x, start_y + ruler_size.y)
         draw_line(start_position, end_position, LINE_COLOR, LINE_WIDTH)
         
-        text = str(round((screen_start_position.x + start_x) * Global.CAMERA_ZOOM))
+        text = str(round((screen_start_position.x + start_x) * global.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string(font, Vector2(start_position.x + 2, 14), text, TEXT_COLOR)
     
@@ -72,7 +73,7 @@ func _draw() -> void:
         end_position = Vector2(start_x + ruler_size.x, start_y)
         draw_line(start_position, end_position, LINE_COLOR, LINE_WIDTH)
         
-        text = str(round((screen_start_position.y + start_y) * Global.CAMERA_ZOOM))
+        text = str(round((screen_start_position.y + start_y) * global.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string(font, Vector2(2, start_position.y + 14), text, TEXT_COLOR)
     

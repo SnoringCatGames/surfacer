@@ -329,16 +329,6 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 # - Think through and maybe fix the function in constraint utils for accounting for max-speed vs
 #   min/max for valid next step?
 # 
-# 
-# - Collision calculation annotator:
-#   - Would it be worth adding support to zoom and pan the camera to the current collision?
-#     - Maybe this could be toggleable via clicking a button in the tree view?
-#     - Would definitely want to animate the zoom.
-#     - Probably also need to change the camera translation.
-#       - Probably can just calculate the offset from the player to the collision, and use that to
-#         manually assign an offset to the camera.
-#       - Would also need to animate this translation.
-# 
 
 
 const CLUSTER_CELL_SIZE := 0.5

@@ -309,8 +309,8 @@ static func _draw_edge_from_instructions_positions(canvas: CanvasItem, edge: Edg
     # Set up colors.
     var continuous_trajectory_color := base_color
     var discrete_trajectory_color := Color.from_hsv(base_color.h, 0.6, 0.9, 0.5)
-    var constraint_color := Color.from_hsv(base_color.h, 0.6, 0.9, 0.3)
-    var instruction_start_stop_color := Color.from_hsv(base_color.h, 0.1, 0.99, 0.8)
+    var constraint_color := Color.from_hsv(base_color.h, 0.6, 0.7, 0.3)
+    var instruction_start_stop_color := Color.from_hsv(base_color.h, 0.3, 0.9, 0.8)
     
     if includes_discrete_positions:
         # Draw the trajectory (as approximated via discrete time steps during instruction 

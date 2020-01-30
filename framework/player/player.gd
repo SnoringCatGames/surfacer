@@ -122,9 +122,9 @@ func _set_camera() -> void:
     var camera := Camera2D.new()
     add_child(camera)
     camera.make_current()
-    camera.zoom = Vector2(Global.CAMERA_ZOOM, Global.CAMERA_ZOOM)
     # Register the current camera, so it's globally accessible.
-    global.current_camera = camera
+    global.camera_controller.current_camera = camera
+    global.camera_controller.zoom = CameraController.DEFAULT_CAMERA_ZOOM
 
 func _init_user_controller_action_source() -> void:
     action_sources.push_back(UserActionSource.new(self, true))

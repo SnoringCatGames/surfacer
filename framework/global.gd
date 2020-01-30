@@ -30,6 +30,15 @@ const DEBUG_STATE := {
     in_debug_mode = IN_DEBUG_MODE,
     limit_parsing = {
         player_name = "cat",
+        # Level: long rise; fall-from-wall
+        edge = {
+            origin = {
+                surface_side = SurfaceSide.FLOOR,
+            },
+            destination = {
+                surface_side = SurfaceSide.LEFT_WALL,
+            },
+        },
 #        movement_calculator = "FallFromWallCalculator",
 #        # Level: long rise; fall-from-wall
 #        edge = {
@@ -71,8 +80,6 @@ const NAVIGATOR_STATE := {
     forces_player_velocity_to_match_edge_in_middle = true,
 }
 
-const CAMERA_ZOOM := 1.5
-
 const PLAYER_ACTIONS := {}
 
 const EDGE_MOVEMENTS := {}
@@ -86,6 +93,7 @@ var space_state: Physics2DDirectSpaceState
 
 var current_level
 var current_player_for_clicks
+var camera_controller: CameraController
 
 # Keeps track of the current total elapsed time of unpaused gameplay.
 var elapsed_play_time_sec: float setget ,_get_elapsed_play_time_sec
@@ -95,10 +103,6 @@ var elapsed_play_time_sec: float setget ,_get_elapsed_play_time_sec
 var _elapsed_latest_play_time_sec: float
 var _elapsed_physics_play_time_sec: float
 var _elapsed_render_play_time_sec: float
-
-var current_camera: Camera2D setget _set_current_camera, _get_current_camera
-
-var _current_camera: Camera2D
 
 func get_is_paused() -> bool:
     return get_tree().paused
@@ -145,10 +149,3 @@ func _get_elapsed_play_time_sec() -> float:
 
 func add_overlay_to_current_scene(node: Node) -> void:
     get_tree().get_current_scene().add_child(node)
-
-func _set_current_camera(camera: Camera2D) -> void:
-    assert(camera.current)
-    _current_camera = camera
-
-func _get_current_camera() -> Camera2D:
-    return _current_camera

@@ -8,9 +8,32 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix performance.
-#   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
-#     up passing them around as arguments to functions, to they get copied as values...
+# - Add support to zoom and pan the camera to the current collision
+#   - [OLD]
+#     - Maybe this could be toggleable via clicking a button in the tree view?
+#     - Would definitely want to animate the zoom.
+#       - Probably also need to change the camera translation.
+#       - Probably can just calculate the offset from the player to the collision, and use that to
+#         manually assign an offset to the camera.
+#       - Would also need to animate this translation.
+# 
+# >>- Fix how things work when should_minimize_velocity_change_when_jumping is true.
+#   - Slow down the timestep, so that I can better see how things are moving?
+#   - [no] Find and move all movement-offset constants to one central location?
+#     - MovementInstructionsUtils
+#     - MovementConstraintUtils
+#     - FrameCollisionCheckUtils
+#     - MovementCalcOverallParams
+#   - Clear away other edges so I can see just the one(s) I'm debugging.
+#   >>>>- Implement dynamic zoom!!
+#   >>>- Compare where instructions are pressed/released vs when I expect them.
+#   - Step through movement along an edge?
+#   >>- Should this be when I implement the logic to force the player's position to match the
+#     expected edge positions (with a weighted avg)?
+# 
+# - Debug edges.
+#   - Calculation: Check all edge-cases; look at all expected edge trajectories in each level.
+#   - Execution: Check that navigation actually follows paths and executes trajectories as expected.
 # 
 # - Debug why this edge calculation generates 35 steps...
 #   - test_level_long_rise
@@ -22,6 +45,10 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 #   - Go through levels and verify that all expected edges work.
 # 
 # - Fix issue where jumping around edge sometimes isn't going far enough; it's clipping the corner.
+# 
+# - Fix performance.
+#   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
+#     up passing them around as arguments to functions, to they get copied as values...
 # 
 # - Test/debug FallMovementUtils.find_a_landing_trajectory.
 # 

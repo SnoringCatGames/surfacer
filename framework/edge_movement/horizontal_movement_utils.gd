@@ -48,7 +48,8 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     # the min/max in the first place.
     var velocity_end_x: float
 #    if movement_params.should_minimize_velocity_change_when_jumping:
-    if false: # FIXME: ------------------------------------------- REMOVE
+#    if false: # FIXME: ------------------------------------------- REMOVE
+    if true: # FIXME: ------------------------------------------- REMOVE
         velocity_end_x = 0.0 if min_velocity_end_x <= 0 and max_velocity_end_x >= 0 else \
                 min_velocity_end_x if abs(min_velocity_end_x) < abs(max_velocity_end_x) else \
                 max_velocity_end_x
