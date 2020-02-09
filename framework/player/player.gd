@@ -310,8 +310,10 @@ func _update_surface_state() -> void:
     
     var facing_into_wall_and_pressing_up: bool = actions.pressed_up and \
             (surface_state.is_facing_wall or surface_state.is_pressing_into_wall)
-    surface_state.is_triggering_wall_grab = \
-            surface_state.is_pressing_into_wall or facing_into_wall_and_pressing_up
+    var facing_into_wall_and_pressing_grab: bool = actions.pressed_grab_wall and \
+            (surface_state.is_facing_wall or surface_state.is_pressing_into_wall)
+    surface_state.is_triggering_wall_grab = surface_state.is_pressing_into_wall or \
+            facing_into_wall_and_pressing_up or facing_into_wall_and_pressing_grab
     
     surface_state.is_triggering_fall_through = actions.pressed_down and actions.just_pressed_jump
     

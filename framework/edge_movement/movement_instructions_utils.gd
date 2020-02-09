@@ -63,11 +63,9 @@ static func convert_calculation_steps_to_movement_instructions( \
         # we won't grab on).
         
         var last_step: MovementCalcStep = steps[steps.size() - 1]
-        # FIXME: B: Consider delaying when we start pressing into the wall, in order to not affect
-        #           the horizontal speed too much.
         var time_step_start := last_step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
-        input_key = "move_left" if destination_side == SurfaceSide.LEFT_WALL else "move_right"
+        input_key = "grab_wall"
         press = MovementInstruction.new(input_key, time_step_start, true)
         instructions.push_back(press)
     

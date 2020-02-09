@@ -43,12 +43,16 @@ func check_for_update() -> void:
             recent_actions[current_position_index] = PlayerActionType.PRESSED_LEFT
         elif player.actions.just_pressed_right:
             recent_actions[current_position_index] = PlayerActionType.PRESSED_RIGHT
+        elif player.actions.just_pressed_grab_wall:
+            recent_actions[current_position_index] = PlayerActionType.PRESSED_GRAB_WALL
         elif player.actions.just_released_jump:
             recent_actions[current_position_index] = PlayerActionType.RELEASED_JUMP
         elif player.actions.just_released_left:
             recent_actions[current_position_index] = PlayerActionType.RELEASED_LEFT
         elif player.actions.just_released_right:
             recent_actions[current_position_index] = PlayerActionType.RELEASED_RIGHT
+        elif player.actions.just_released_grab_wall:
+            recent_actions[current_position_index] = PlayerActionType.RELEASED_GRAB_WALL
         else:
             recent_actions[current_position_index] = PlayerActionType.NONE
         
@@ -116,4 +120,8 @@ func _draw_action_indicator(action: int, position: Vector2, opacity: float) -> v
         self.draw_line(position + Vector2(-HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
                 position + Vector2(HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), color, \
                 HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
-    
+    elif action == PlayerActionType.PRESSED_GRAB_WALL or \
+            action == PlayerActionType.RELEASED_GRAB_WALL:
+        pass
+    else:
+        Utils.error()

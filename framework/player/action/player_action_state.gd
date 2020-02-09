@@ -23,6 +23,10 @@ var pressed_right := false
 var just_pressed_right := false
 var just_released_right := false
 
+var pressed_grab_wall := false
+var just_pressed_grab_wall := false
+var just_released_grab_wall := false
+
 var start_dash := false
 
 func clear() -> void:
@@ -47,6 +51,10 @@ func clear() -> void:
     self.pressed_right = false
     self.just_pressed_right = false
     self.just_released_right = false
+    
+    self.pressed_grab_wall = false
+    self.just_pressed_grab_wall = false
+    self.just_released_grab_wall = false
     
     self.start_dash = false
 
@@ -73,6 +81,10 @@ func copy(other: PlayerActionState) -> void:
     self.just_pressed_right = other.just_pressed_right
     self.just_released_right = other.just_released_right
     
+    self.pressed_grab_wall = other.pressed_grab_wall
+    self.just_pressed_grab_wall = other.just_pressed_grab_wall
+    self.just_released_grab_wall = other.just_released_grab_wall
+    
     self.start_dash = other.start_dash
 
 func log_new_presses_and_releases(player, time_sec: float) -> void:
@@ -86,6 +98,9 @@ func log_new_presses_and_releases(player, time_sec: float) -> void:
             time_sec, player.surface_state.center_position, player.velocity)
     _log_new_press_or_release(player.player_name, "right", just_pressed_right, \
             just_released_right, time_sec, player.surface_state.center_position, player.velocity)
+    _log_new_press_or_release(player.player_name, "grab", just_pressed_grab_wall, \
+            just_released_grab_wall, time_sec, player.surface_state.center_position, \
+            player.velocity)
     _log_new_press_or_release(player.player_name, "dash", start_dash, false, time_sec, \
             player.surface_state.center_position, player.velocity)
 

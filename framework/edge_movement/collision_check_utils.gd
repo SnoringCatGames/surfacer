@@ -133,6 +133,8 @@ static func check_instructions_for_collision(overall_calc_params: MovementCalcOv
                         horizontal_instruction_start_positions.push_back(continuous_position)
                     else:
                         horizontal_instruction_end_positions.push_back(continuous_position)
+                "grab_wall":
+                    pass
                 _:
                     Utils.error()
             

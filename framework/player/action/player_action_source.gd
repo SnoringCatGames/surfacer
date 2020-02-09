@@ -79,6 +79,17 @@ func update_for_key_press(actions: PlayerActionState, previous_actions: PlayerAc
             actions.pressed_right = is_pressed_in_current_frame
             actions.just_pressed_right = just_pressed
             actions.just_released_right = just_released
+        "grab_wall":
+            was_pressed_in_previous_frame = previous_actions.pressed_grab_wall
+            was_already_pressed_in_current_frame = actions.pressed_grab_wall
+            is_pressed_in_current_frame = is_pressed or \
+                    (is_additive and was_already_pressed_in_current_frame)
+            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
+            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            
+            actions.pressed_grab_wall = is_pressed_in_current_frame
+            actions.just_pressed_grab_wall = just_pressed
+            actions.just_released_grab_wall = just_released
         _:
             Utils.error("Invalid input_key: %s" % input_key)
 
@@ -94,6 +105,8 @@ static func input_key_to_action_name(input_key: String) -> String:
             return "left"
         "move_right":
             return "right"
+        "grab_wall":
+            return "grab"
         _:
             Utils.error()
             return ""

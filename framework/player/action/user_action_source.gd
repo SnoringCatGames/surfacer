@@ -7,6 +7,7 @@ const INPUT_KEYS := [
   "move_down",
   "move_left",
   "move_right",
+  "grab_wall",
 ]
 
 func _init(player, is_additive: bool).("HP", player, is_additive) -> void:

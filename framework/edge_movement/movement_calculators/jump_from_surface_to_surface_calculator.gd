@@ -8,9 +8,9 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Things to check:
-#   - Holding sideways in order to grab wall (is that causing too much sideways movement?
-#     Can I introduce another control that only grips?)
+# - Things to debug:
+#   - Jumping from floor of lower-small-block to far right-wall of upper-small-black.
+#   - Jumping from left-wall of upper-small-block to right-wall of upper-small-block.
 # 
 # >>- Fix how things work when should_minimize_velocity_change_when_jumping is true.
 #   - [no] Find and move all movement-offset constants to one central location?
