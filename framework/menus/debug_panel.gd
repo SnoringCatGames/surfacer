@@ -12,13 +12,17 @@ const TOGGLE_DURATION := 0.2
 const TEXT_OPEN_PANEL := "Open debug menu"
 const TEXT_CLOSE_PANEL := "Close debug menu"
 
-var is_open := true
+var is_open := false
 
 var _toggle_open_tween: Tween
 
 var _position_y: float setget _set_position_y, _get_position_y
 
 func _ready() -> void:
+    # Set initial open state.
+    self._position_y = POSITION_Y_OPEN if self.is_open else POSITION_Y_CLOSED
+    $VBoxContainer/Panel/Button.text = TEXT_CLOSE_PANEL if self.is_open else TEXT_OPEN_PANEL
+    
     _toggle_open_tween = Tween.new()
     add_child(_toggle_open_tween)
 
@@ -28,7 +32,7 @@ func add_section(section: Control) -> void:
 func _toggle_open() -> void:
     is_open = !is_open
     
-    var position_y_start: float = _position_y
+    var position_y_start: float = _get_position_y()
     var position_y_end: float
     var duration: float
     var text: String
