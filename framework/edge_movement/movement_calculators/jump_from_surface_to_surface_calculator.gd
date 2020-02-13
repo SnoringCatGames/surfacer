@@ -8,6 +8,8 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Set up default theme state...
+# 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to far right-wall of upper-small-black.
 #   - Jumping from left-wall of upper-small-block to right-wall of upper-small-block.
@@ -47,19 +49,6 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # - Remove calls to MovementInstructionsUtils.test_instructions?
 # 
 # --- Expected cut-off for demo date ---
-# 
-# - Start with debug menu closed. Open when rendering edge-calc annotator.
-# 
-# - Create a temporary toast message.
-#   - Shown at top-mid.
-#   - Disappears after clicking anywhere.
-#   - Explains controls and click-to-focus.
-#     - Squirrel Away!
-#     - _Click anywhere on window to give focus (Levi will fix that eventually...)._
-#     - Controls:
-#       - Use mouse to direct cat to move automatically.
-#       - Use keyboard to control cat manually (UDLR, X, Z)
-#       - Ctrl+click to debug how an edge was calculated (click on both ends where the edge should have gone).
 # 
 # - Add a top-level button to debug menu to hide all annotations.
 #   - (grid, clicks, player position, player recent movement, platform graph, ...)

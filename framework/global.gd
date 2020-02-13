@@ -11,7 +11,8 @@ const LEVEL_RESOURCE_PATHS := [
 
 const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
 
-const DEBUG_PANEL_RESOURCE_PATH := "res://framework/menus/debug_panel.tscn"
+const DEBUG_PANEL_RESOURCE_PATH := "res://framework/panels/debug_panel.tscn"
+const WELCOME_PANEL_RESOURCE_PATH := "res://framework/panels/welcome_panel.tscn"
 
 const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false
@@ -87,6 +88,7 @@ const EDGE_MOVEMENTS := {}
 var player_types := {}
 
 var debug_panel: DebugPanel
+var welcome_panel: WelcomePanel
 
 var space_state: Physics2DDirectSpaceState
 

@@ -22,6 +22,7 @@ var platform_graphs: Dictionary
 var camera_controller: CameraController
 var click_to_navigate: ClickToNavigate
 
+var hud_layer: CanvasLayer
 var platform_graph_annotator: PlatformGraphAnnotator
 var ruler_annotator: RulerAnnotator
 # Dictonary<Player, PlayerAnnotator>
@@ -42,7 +43,7 @@ func _add_overlays() -> void:
     ruler_annotator = RulerAnnotator.new(global)
     ruler_layer.add_child(ruler_annotator)
     
-    var hud_layer := CanvasLayer.new()
+    hud_layer = CanvasLayer.new()
     hud_layer.layer = 200
     global.add_overlay_to_current_scene(hud_layer)
     # TODO: Add HUD content.
@@ -54,6 +55,9 @@ func _add_overlays() -> void:
     
     var debug_panel = Utils.add_scene(hud_layer, Global.DEBUG_PANEL_RESOURCE_PATH)
     global.debug_panel = debug_panel
+    
+    var welcome_panel = Utils.add_scene(hud_layer, Global.WELCOME_PANEL_RESOURCE_PATH)
+    global.welcome_panel = welcome_panel
 
 func _ready() -> void:
     var scene_tree := get_tree()
@@ -79,6 +83,15 @@ func _ready() -> void:
     # Set up some annotators that help with debugging.
     click_annotator = ClickAnnotator.new()
     add_child(click_annotator)
+
+func _input(event: InputEvent) -> void:
+    var current_time: float = global.elapsed_play_time_sec
+    
+    # Close the welcome panel on any mouse or key click event.
+    if global.welcome_panel != null and (event is InputEventMouseButton or event is InputEventKey):
+        hud_layer.remove_child(global.welcome_panel)
+        global.welcome_panel.queue_free()
+        global.welcome_panel = null
 
 static func _create_platform_graphs(surface_parser: SurfaceParser, \
         space_state: Physics2DDirectSpaceState, player_types: Dictionary, \

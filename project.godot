@@ -117,7 +117,7 @@ _global_script_classes=[ {
 "base": "Panel",
 "class": "DebugPanel",
 "language": "GDScript",
-"path": "res://framework/menus/debug_panel.gd"
+"path": "res://framework/panels/debug_panel.gd"
 }, {
 "base": "Node",
 "class": "DrawUtils",
@@ -603,6 +603,11 @@ _global_script_classes=[ {
 "class": "WallWalkAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/wall_walk_action.gd"
+}, {
+"base": "Panel",
+"class": "WelcomePanel",
+"language": "GDScript",
+"path": "res://framework/panels/welcome_panel.gd"
 } ]
 _global_script_class_icons={
 "AirDashAction": "",
@@ -723,7 +728,8 @@ _global_script_class_icons={
 "WallDefaultAction": "",
 "WallFallAction": "",
 "WallJumpAction": "",
-"WallWalkAction": ""
+"WallWalkAction": "",
+"WelcomePanel": ""
 }
 
 [application]
