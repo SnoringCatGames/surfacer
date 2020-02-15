@@ -1,8 +1,8 @@
 extends Node2D
 class_name NavigatorAnnotator
 
-var CURRENT_PATH_COLOR = Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
-var PREVIOUS_PATH_COLOR = Colors.opacify(Colors.GREY, Colors.ALPHA_XXFAINT)
+var CURRENT_PATH_COLOR = Colors.opacify(Colors.PURPLE, Colors.ALPHA_FAINT)
+var PREVIOUS_PATH_COLOR = Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
 
 var navigator: Navigator
 var previous_path: PlatformGraphPath

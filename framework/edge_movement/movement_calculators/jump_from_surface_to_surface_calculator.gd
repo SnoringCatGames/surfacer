@@ -8,9 +8,30 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Set up default theme state...
+# - Problem: a* search will return edge pairs for a land immediately followed by a jump from the
+#   same position, when we should account for the land being off-by-a-bit and needing to insert an
+#   extra intra-surface edge.
+#   - Should make the fix generic to work for any edge that might end in a slightly off position
+#     - (Or that lands on a surface from the air)
+#     - Or maybe just for _any_ edge pair? Should this actually just be part of navigator and not
+#       represented in Path objects?
+# 
+# - Adjust how edges are weighted.
+#   - It seems like some single edges should be preferred over some edge pairs.
+#     - Maybe each additional edge adds a constant weight?
+#   - Should I give some sort of preference for jumping vs walking vs climbing?
+#     - Maybe this should be build into the MovementParams config, so that different characters
+#       can act differently.
+#   - Should I instead use time instead of distance for movement across an edge?
+#     - Maybe I should at least calculate and store this on edges/instructions.
+#   - Should I add a configurable method to the MovementParams API for defining arbitrary weight
+#     calculation for each character type?
+# 
+# - Implement other edge calculator types.
 # 
 # - Things to debug:
+#   - Jumping from floor of lower-small-block to floor of upper-small-black.
+#     - Collision detection isn't correctly detecting the collision with the right-side of the upper block.
 #   - Jumping from floor of lower-small-block to far right-wall of upper-small-black.
 #   - Jumping from left-wall of upper-small-block to right-wall of upper-small-block.
 # 
@@ -202,6 +223,9 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 #       lies within a populated tile in the tilemap, and then trying the other perpendicular
 #       offset direction if so. However, this would require configuring a single global tile
 #       map that we expect collisions from, and plumbing that tile map through to here.
+# 
+# - Look into themes, and what default/global theme state I should set up.
+# - Look into what sort of anti-aliasing and scaling to do with GUI vs level vs camera/window zoom...
 # 
 # >- Commit message:
 # 

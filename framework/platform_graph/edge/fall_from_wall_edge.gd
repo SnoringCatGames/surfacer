@@ -10,15 +10,11 @@ const IS_TIME_BASED := false
 const ENTERS_AIR := true
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        calc_results: MovementCalcResults).(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, \
-        _calculate_instructions(start, end, calc_results)) -> void:
+        calc_results: MovementCalcResults) \
+        .(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, calc_results) -> void:
     pass
 
-func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, playback) -> bool:
-    return Edge.check_just_landed_on_expected_surface(surface_state, self.end_surface)
-
-static func _calculate_instructions(start: PositionAlongSurface, \
+func _calculate_instructions(start: PositionAlongSurface, \
         end: PositionAlongSurface, calc_results: MovementCalcResults) -> MovementInstructions:
     assert(start.surface.side == SurfaceSide.LEFT_WALL || \
             start.surface.side == SurfaceSide.RIGHT_WALL)
@@ -37,3 +33,16 @@ static func _calculate_instructions(start: PositionAlongSurface, \
     instructions.instructions.push_front(outward_press)
     
     return instructions
+
+func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
+        instructions: MovementInstructions) -> float:
+    return Edge.sum_distance_between_frames(instructions.frame_continous_positions_from_steps)
+
+func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface, \
+        instructions: MovementInstructions, distance: float) -> float:
+    # FIXME: ----------
+    return INF
+
+func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
+        surface_state: PlayerSurfaceState, playback) -> bool:
+    return Edge.check_just_landed_on_expected_surface(surface_state, self.end_surface)
