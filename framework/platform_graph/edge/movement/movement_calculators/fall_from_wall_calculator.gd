@@ -1,7 +1,7 @@
 extends EdgeMovementCalculator
 class_name FallFromWallCalculator
 
-const MovementCalcOverallParams := preload("res://framework/edge_movement/models/movement_calculation_overall_params.gd")
+const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/movement/models/movement_calculation_overall_params.gd")
 
 const NAME := 'FallFromWallCalculator'
 

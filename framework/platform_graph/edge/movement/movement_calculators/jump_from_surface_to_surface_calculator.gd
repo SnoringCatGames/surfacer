@@ -1,7 +1,7 @@
 extends EdgeMovementCalculator
 class_name JumpFromSurfaceToSurfaceCalculator
 
-const MovementCalcOverallParams := preload("res://framework/edge_movement/models/movement_calculation_overall_params.gd")
+const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/movement/models/movement_calculation_overall_params.gd")
 
 const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 
@@ -30,6 +30,7 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 #     calculation for each character type?
 # 
 # - Implement other edge calculator types.
+#   - Debug each!
 # 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.

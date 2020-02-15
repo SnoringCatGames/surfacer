@@ -6,8 +6,8 @@ class_name PlatformGraph
 
 const AirToSurfaceEdge := preload("res://framework/platform_graph/edge/air_to_surface_edge.gd")
 const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/intra_surface_edge.gd")
-const MovementCalcOverallParams := preload("res://framework/edge_movement/models/movement_calculation_overall_params.gd")
-const MovementCalcStepParams := preload("res://framework/edge_movement/models/movement_calculation_step_params.gd")
+const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/movement/models/movement_calculation_overall_params.gd")
+const MovementCalcStepParams := preload("res://framework/platform_graph/edge/movement/models/movement_calculation_step_params.gd")
 const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:

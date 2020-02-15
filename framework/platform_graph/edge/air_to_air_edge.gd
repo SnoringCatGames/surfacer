@@ -18,8 +18,7 @@ func _calculate_instructions(start: PositionAlongSurface, \
 
 func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions) -> float:
-    # FIXME: ----------
-    return INF
+    return Edge.sum_distance_between_frames(instructions.frame_continous_positions_from_steps)
 
 func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions, distance: float) -> float:

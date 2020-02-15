@@ -1,7 +1,7 @@
 extends "res://addons/gut/test.gd"
 class_name TestBed
 
-const JumpFromSurfaceToSurfaceCalculator := preload("res://framework/edge_movement/movement_calculators/jump_from_surface_to_surface_calculator.gd")
+const JumpFromSurfaceToSurfaceCalculator := preload("res://framework/platform_graph/edge/movement/movement_calculators/jump_from_surface_to_surface_calculator.gd")
 const TestPlayerParams := preload("res://framework/test/test_data/test_player_params.gd")
 
 var TEST_LEVEL_LONG_FALL := {
