@@ -658,3 +658,6 @@ static func calculate_half_width_height(shape: Shape2D, rotation: float) -> Vect
         half_width_height.y = swap
         
     return half_width_height
+
+static func calculate_manhattan_distance(a: Vector2, b: Vector2) -> float:
+    return abs(b.x - a.x) + abs(b.y - a.y)

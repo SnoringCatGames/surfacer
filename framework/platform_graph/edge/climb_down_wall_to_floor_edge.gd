@@ -26,7 +26,7 @@ func _calculate_instructions(start: PositionAlongSurface, \
 
 func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions) -> float:
-    return start.target_point.distance_to(end.target_point)
+    return Geometry.calculate_manhattan_distance(start.target_point, end.target_point)
 
 func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions, distance: float) -> float:

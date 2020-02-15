@@ -124,4 +124,5 @@ func _draw_action_indicator(action: int, position: Vector2, opacity: float) -> v
             action == PlayerActionType.RELEASED_GRAB_WALL:
         pass
     else:
-        Utils.error()
+        Utils.error("Unknown PlayerActionType passed to _draw_action_indicator: %s" % \
+                PlayerActionType.to_string(action))

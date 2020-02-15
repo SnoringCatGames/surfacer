@@ -210,16 +210,29 @@ static func draw_shape_outline(canvas: CanvasItem, position: Vector2, shape: Sha
 
 static func draw_circle_outline(canvas: CanvasItem, center: Vector2, radius: float, color: Color, \
         border_width := 1.0, sector_arc_length := 4.0) -> void:
-    var sector_count := ceil(2.0 * PI * radius / sector_arc_length)
-    var delta_theta := 2.0 * PI / sector_count
-    var theta := 0.0
+    draw_arc(canvas, center, radius, 0.0, 2.0 * PI, color, border_width, sector_arc_length)
+
+static func draw_arc(canvas: CanvasItem, center: Vector2, radius: float, start_angle: float, \
+        end_angle: float, color: Color, border_width := 1.0, sector_arc_length := 4.0) -> void:
+    var angle_diff := end_angle - start_angle
+    var sector_count := floor(angle_diff * radius / sector_arc_length)
+    var delta_theta := angle_diff / sector_count
+    var theta := start_angle
+    var should_include_partial_sector_at_end: bool = \
+            !Geometry.are_floats_equal_with_epsilon(angle_diff / delta_theta, 0.0, 0.01)
+    var vertex_count := \
+            sector_count + 2 if should_include_partial_sector_at_end else sector_count + 1
     var vertices := PoolVector2Array()
-    vertices.resize(sector_count + 1)
+    vertices.resize(vertex_count)
     var vertex: Vector2
     
     for i in range(sector_count + 1):
         vertices[i] = Vector2(cos(theta), sin(theta)) * radius + center
         theta += delta_theta
+    
+    # Handle the fence-post problem.
+    if should_include_partial_sector_at_end:
+        vertices[vertex_count - 1] = Vector2(cos(end_angle), sin(end_angle)) * radius + center
     
     canvas.draw_polyline(vertices, color, border_width)
 
@@ -290,18 +303,23 @@ static func draw_edge(canvas: CanvasItem, edge: Edge, includes_constraints := fa
         _draw_edge_from_instructions_positions(canvas, edge, includes_discrete_positions, \
                 includes_constraints, includes_instruction_indicators, base_color)
     elif edge is ClimbDownWallToFloorEdge or \
-            edge is ClimbOverWallToFloorEdge or \
             edge is IntraSurfaceEdge or \
             edge is WalkToAscendWallFromFloorEdge:
-        _draw_edge_from_end_points(canvas, edge, includes_discrete_positions, \
-                includes_constraints, includes_instruction_indicators, base_color)
+        _draw_edge_from_end_points(canvas, edge, base_color)
+    elif edge is ClimbOverWallToFloorEdge:
+        _draw_climb_over_wall_to_floor_edge(canvas, edge, base_color)
     else:
         Utils.error("Unexpected Edge subclass: %s" % edge)
 
 static func _draw_edge_from_end_points(canvas: CanvasItem, edge: Edge, \
-        includes_discrete_positions: bool, includes_constraints: bool, \
-        includes_instruction_indicators: bool, base_color: Color) -> void:
+        base_color: Color) -> void:
     canvas.draw_line(edge.start, edge.end, base_color, EDGE_TRAJECTORY_WIDTH)
+
+static func _draw_climb_over_wall_to_floor_edge(canvas: CanvasItem, \
+        edge: ClimbOverWallToFloorEdge, base_color: Color) -> void:
+    var mid_point := Vector2(edge.start.x, edge.end.y)
+    canvas.draw_line(edge.start, mid_point, base_color, EDGE_TRAJECTORY_WIDTH)
+    canvas.draw_line(mid_point, edge.end, base_color, EDGE_TRAJECTORY_WIDTH)
 
 static func _draw_edge_from_instructions_positions(canvas: CanvasItem, edge: Edge, \
         includes_discrete_positions: bool, includes_constraints: bool, \
