@@ -21,6 +21,10 @@ var t: float
 # Used for debugging. May not always be set.
 var target_projection_onto_surface := Vector2.INF
 
+func _init(position_to_copy = null) -> void:
+    if position_to_copy != null:
+        copy(self, position_to_copy)
+
 func reset() -> void:
     self.surface = null
     self.target_point = Vector2.INF
@@ -52,6 +56,12 @@ func _calculate_target_point_for_center_of_collider(surface: Surface, \
     
     return point_on_surface + distance_to_center * surface.normal
 
+func to_string() -> String:
+    return "PositionAlongSurface{ %s, %s }" % [ \
+            target_point, \
+            surface.to_string() if surface != null else "NULL SURFACE", \
+        ]
+
 # Calculates how far the given target point is along the axially-aligned range between the given
 # surface's end points. Measured as a ratio between 0 and 1.
 static func _calculate_t(surface: Surface, target_point: Vector2) -> float:
@@ -68,8 +78,8 @@ static func _calculate_t(surface: Surface, target_point: Vector2) -> float:
         point = target_point.y
     return (point - surface_start) / surface_range if surface_range > 0 else 0.0
 
-func to_string() -> String:
-    return "PositionAlongSurface{ %s, %s }" % [ \
-            target_point, \
-            surface.to_string() if surface != null else "NULL SURFACE", \
-        ]
+static func copy(destination: PositionAlongSurface, source: PositionAlongSurface) -> void:
+    destination.surface = source.surface
+    destination.target_point = source.target_point
+    destination.t = source.t
+    destination.target_projection_onto_surface = source.target_projection_onto_surface

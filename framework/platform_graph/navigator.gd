@@ -44,7 +44,7 @@ func navigate_to_nearby_surface(target: Vector2, \
     
     var path: PlatformGraphPath
     if surface_state.is_grabbing_a_surface:
-        var origin := surface_state.center_position_along_surface
+        var origin := PositionAlongSurface.new(surface_state.center_position_along_surface)
         path = graph.find_path(origin, destination)
     else:
         var origin := surface_state.center_position

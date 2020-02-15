@@ -8,6 +8,8 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Intrasurface edge often seems to detect reached-end according to the wrong side when first landing.
+# 
 # - Problem: a* search will return edge pairs for a land immediately followed by a jump from the
 #   same position, when we should account for the land being off-by-a-bit and needing to insert an
 #   extra intra-surface edge.
