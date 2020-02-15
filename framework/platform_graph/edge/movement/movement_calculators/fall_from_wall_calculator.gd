@@ -66,9 +66,6 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
                 if overall_calc_params == null:
                     continue
                 
-                # FIXME: LEFT OFF HERE: ------------------------A: Debug why fall edge isn't returned.
-                overall_calc_params.in_debug_mode = true
-                
                 ###################################################################################
                 # Record some extra debug state when we're limiting calculations to a single edge.
                 if debug_state.in_debug_mode and debug_state.has('limit_parsing') and \

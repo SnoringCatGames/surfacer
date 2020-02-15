@@ -8,6 +8,19 @@ const NAME := 'JumpFromSurfaceToSurfaceCalculator'
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Implement fall_from_floor_calculator
+#   - Calculate fall-off position according to collider shape (capsule and circle will be at the
+#     left-most center point (unless capsule in vertical)).
+#   - Can calculate start x speed according to horizontal distance from floor to the actual
+#     fall-off position.
+#   - Can calculate walk part ends and fall part begins just according to horizontal displacement
+#     and acceleration.
+# 
+# - Implement the bits of debug-menu UI to toggle annotations.
+#   - Also support adjusting how many previous player positions to render.
+# 
+# - In the README, list the types of annotations and MovementParams.
+# 
 # - Intrasurface edge often seems to detect reached-end according to the wrong side when first landing.
 # 
 # - Problem: a* search will return edge pairs for a land immediately followed by a jump from the
