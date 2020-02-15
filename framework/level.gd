@@ -103,7 +103,7 @@ static func _create_platform_graphs(surface_parser: SurfaceParser, \
         ###########################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
         if debug_state.in_debug_mode and \
-                debug_state.has('limit_parsing') and \
+                debug_state.has("limit_parsing") and \
                 player_name != debug_state.limit_parsing.player_name:
             continue
         ###########################################################################################

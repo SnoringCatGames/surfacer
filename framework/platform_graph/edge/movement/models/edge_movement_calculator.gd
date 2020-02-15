@@ -40,22 +40,22 @@ static func create_movement_calc_overall_params(
 static func should_skip_edge_calculation(debug_state: Dictionary, origin_surface: Surface, \
         destination_surface: Surface, jump_position: PositionAlongSurface, \
         land_position: PositionAlongSurface, jump_positions: Array, land_positions: Array) -> bool:
-    if debug_state.in_debug_mode and debug_state.has('limit_parsing') and \
-            debug_state.limit_parsing.has('edge'):
+    if debug_state.in_debug_mode and debug_state.has("limit_parsing") and \
+            debug_state.limit_parsing.has("edge"):
         
-        if debug_state.limit_parsing.edge.has('origin'):
+        if debug_state.limit_parsing.edge.has("origin"):
             var debug_origin: Dictionary = debug_state.limit_parsing.edge.origin
             
-            if (debug_origin.has('surface_side') and \
+            if (debug_origin.has("surface_side") and \
                     debug_origin.surface_side != origin_surface.side) or \
-                    (debug_origin.has('surface_start_vertex') and \
+                    (debug_origin.has("surface_start_vertex") and \
                             debug_origin.surface_start_vertex != origin_surface.first_point) or \
-                    (debug_origin.has('surface_end_vertex') and \
+                    (debug_origin.has("surface_end_vertex") and \
                             debug_origin.surface_end_vertex != origin_surface.last_point):
                 # Ignore anything except the origin surface that we're debugging.
                 return true
             
-            if debug_origin.has('near_far_close_position'):
+            if debug_origin.has("near_far_close_position"):
                 var debug_jump_position: PositionAlongSurface
                 match debug_origin.near_far_close_position:
                     "near":
@@ -72,21 +72,21 @@ static func should_skip_edge_calculation(debug_state: Dictionary, origin_surface
                     # Ignore anything except the jump position that we're debugging.
                     return true
         
-        if debug_state.limit_parsing.edge.has('destination'):
+        if debug_state.limit_parsing.edge.has("destination"):
             var debug_destination: Dictionary = debug_state.limit_parsing.edge.destination
             
-            if (debug_destination.has('surface_side') and \
+            if (debug_destination.has("surface_side") and \
                     debug_destination.surface_side != destination_surface.side) or \
-                    (debug_destination.has('surface_start_vertex') and \
+                    (debug_destination.has("surface_start_vertex") and \
                             debug_destination.surface_start_vertex != \
                                     destination_surface.first_point) or \
-                    (debug_destination.has('surface_end_vertex') and \
+                    (debug_destination.has("surface_end_vertex") and \
                             debug_destination.surface_end_vertex != \
                                     destination_surface.last_point):
                 # Ignore anything except the destination surface that we're debugging.
                 return true
             
-            if debug_destination.has('near_far_close_position'):
+            if debug_destination.has("near_far_close_position"):
                 var debug_land_position: PositionAlongSurface
                 match debug_destination.near_far_close_position:
                     "near":

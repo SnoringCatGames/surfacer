@@ -3,7 +3,7 @@ class_name FallFromWallCalculator
 
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/movement/models/movement_calculation_overall_params.gd")
 
-const NAME := 'FallFromWallCalculator'
+const NAME := "FallFromWallCalculator"
 
 func _init().(NAME) -> void:
     pass
@@ -68,8 +68,8 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
                 
                 ###################################################################################
                 # Record some extra debug state when we're limiting calculations to a single edge.
-                if debug_state.in_debug_mode and debug_state.has('limit_parsing') and \
-                        debug_state.limit_parsing.has('edge') != null:
+                if debug_state.in_debug_mode and debug_state.has("limit_parsing") and \
+                        debug_state.limit_parsing.has("edge") != null:
                     overall_calc_params.in_debug_mode = true
                 ###################################################################################
                 

@@ -499,7 +499,7 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     if debug_state.in_debug_mode and \
-            debug_state.has('limit_parsing') and \
+            debug_state.has("limit_parsing") and \
             player_info.name != debug_state.limit_parsing.player_name:
         return
     ###################################################################################
@@ -526,8 +526,8 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
             ###################################################################################
             # Allow for debug mode to limit the scope of what's calculated.
             if debug_state.in_debug_mode and \
-                    debug_state.has('limit_parsing') and \
-                    debug_state.limit_parsing.has('movement_calculator') and \
+                    debug_state.has("limit_parsing") and \
+                    debug_state.limit_parsing.has("movement_calculator") and \
                     movement_calculator.name != debug_state.limit_parsing.movement_calculator:
                 continue
             ###################################################################################

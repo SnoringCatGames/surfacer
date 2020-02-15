@@ -3,7 +3,7 @@ class_name WalkToAscendWallFromFloorCalculator
 
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/movement/models/movement_calculation_overall_params.gd")
 
-const NAME := 'WalkToAscendWallFromFloorCalculator'
+const NAME := "WalkToAscendWallFromFloorCalculator"
 
 const END_POINT_OFFSET := ClimbDownWallToFloorCalculator.END_POINT_OFFSET
 

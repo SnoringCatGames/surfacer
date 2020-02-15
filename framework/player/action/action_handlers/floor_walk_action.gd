@@ -1,7 +1,7 @@
 extends PlayerActionHandler
 class_name FloorWalkAction
 
-const NAME := 'FloorWalkAction'
+const NAME := "FloorWalkAction"
 const TYPE := PlayerActionSurfaceType.FLOOR
 const PRIORITY := 240
 

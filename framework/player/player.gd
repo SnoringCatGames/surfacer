@@ -239,7 +239,7 @@ func _process_animation() -> void:
             else:
                 animator.rest()
         PlayerActionSurfaceType.WALL:
-            if processed_action('WallClimbAction'):
+            if processed_action("WallClimbAction"):
                 if actions.pressed_up:
                     animator.climb_up()
                 elif actions.pressed_down:

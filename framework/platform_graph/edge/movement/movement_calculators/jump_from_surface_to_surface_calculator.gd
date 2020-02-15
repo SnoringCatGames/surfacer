@@ -3,7 +3,7 @@ class_name JumpFromSurfaceToSurfaceCalculator
 
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/movement/models/movement_calculation_overall_params.gd")
 
-const NAME := 'JumpFromSurfaceToSurfaceCalculator'
+const NAME := "JumpFromSurfaceToSurfaceCalculator"
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
@@ -293,8 +293,8 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
                 
                 # Record some extra debug state when we're limiting calculations to a single edge.
                 var in_debug_mode: bool = debug_state.in_debug_mode and \
-                        debug_state.has('limit_parsing') and \
-                        debug_state.limit_parsing.has('edge') != null
+                        debug_state.has("limit_parsing") and \
+                        debug_state.limit_parsing.has("edge") != null
                 ###################################################################################
                 
                 edge = calculate_edge(collision_params, jump_position, land_position, true, \

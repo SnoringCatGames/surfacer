@@ -3,7 +3,7 @@ class_name ClimbOverWallToFloorCalculator
 
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/movement/models/movement_calculation_overall_params.gd")
 
-const NAME := 'ClimbOverWallToFloorCalculator'
+const NAME := "ClimbOverWallToFloorCalculator"
 
 func _init().(NAME) -> void:
     pass

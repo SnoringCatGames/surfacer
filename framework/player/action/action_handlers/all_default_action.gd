@@ -1,7 +1,7 @@
 extends PlayerActionHandler
 class_name AllDefaultAction
 
-const NAME := 'AllDefaultAction'
+const NAME := "AllDefaultAction"
 const TYPE := PlayerActionSurfaceType.OTHER
 const PRIORITY := 10
 

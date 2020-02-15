@@ -1,7 +1,7 @@
 extends PlayerActionHandler
 class_name AirDashAction
 
-const NAME := 'AirDashAction'
+const NAME := "AirDashAction"
 const TYPE := PlayerActionSurfaceType.AIR
 const PRIORITY := 330
 

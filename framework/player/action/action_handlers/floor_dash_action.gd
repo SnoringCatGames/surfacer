@@ -1,7 +1,7 @@
 extends PlayerActionHandler
 class_name FloorDashAction
 
-const NAME := 'FloorDashAction'
+const NAME := "FloorDashAction"
 const TYPE := PlayerActionSurfaceType.FLOOR
 const PRIORITY := 250
 
