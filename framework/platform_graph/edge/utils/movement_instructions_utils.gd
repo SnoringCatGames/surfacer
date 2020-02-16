@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to MovementInstructions.
 class_name MovementInstructionsUtils
 
-const MovementInstruction := preload("res://framework/platform_graph/edge/movement/models/movement_instruction.gd")
+const MovementInstruction := preload("res://framework/platform_graph/edge/calculation_models/movement_instruction.gd")
 
 # FIXME: B 
 # - Should I remove this and force a slightly higher offset to target jump position directly? What

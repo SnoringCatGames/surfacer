@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to horizontal movement.
 class_name HorizontalMovementUtils
 
-const MovementCalcStep := preload("res://framework/platform_graph/edge/movement/models/movement_calculation_step.gd")
+const MovementCalcStep := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_step.gd")
 
 const MIN_MAX_VELOCITY_X_MARGIN := MovementConstraintUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
 
