@@ -21,12 +21,12 @@ const PLAYER_ACTION_CLASSES := [
 ]
 
 const EDGE_MOVEMENT_CLASSES := [
-    preload("res://framework/platform_graph/edge/movement/movement_calculators/climb_down_wall_to_floor_calculator.gd"),
-    preload("res://framework/platform_graph/edge/movement/movement_calculators/climb_over_wall_to_floor_calculator.gd"),
-    preload("res://framework/platform_graph/edge/movement/movement_calculators/walk_to_ascend_wall_from_floor_calculator.gd"),
-    preload("res://framework/platform_graph/edge/movement/movement_calculators/fall_from_floor_calculator.gd"),
-    preload("res://framework/platform_graph/edge/movement/movement_calculators/fall_from_wall_calculator.gd"),
-    preload("res://framework/platform_graph/edge/movement/movement_calculators/jump_from_surface_to_surface_calculator.gd"),
+    preload("res://framework/platform_graph/edge/edge_calculators/climb_down_wall_to_floor_calculator.gd"),
+    preload("res://framework/platform_graph/edge/edge_calculators/climb_over_wall_to_floor_calculator.gd"),
+    preload("res://framework/platform_graph/edge/edge_calculators/walk_to_ascend_wall_from_floor_calculator.gd"),
+    preload("res://framework/platform_graph/edge/edge_calculators/fall_from_floor_calculator.gd"),
+    preload("res://framework/platform_graph/edge/edge_calculators/fall_from_wall_calculator.gd"),
+    preload("res://framework/platform_graph/edge/edge_calculators/jump_from_surface_to_surface_calculator.gd"),
 ]
 
 const PLAYER_PARAM_CLASSES := [
