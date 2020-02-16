@@ -279,7 +279,7 @@ static func calculate_time_to_jump_to_constraint(movement_params: MovementParams
         # If we can't currently hold the jump button, then there is no slow-ascent and variable
         # jump height to consider. So our movement duration is a lot simpler to calculate.
         return MovementUtils.calculate_movement_duration(displacement.y, velocity_start.y, \
-                movement_params.gravity_fast_fall, false)
+                movement_params.gravity_fast_fall, false, 0.0, false, true)
 
 # Given the total duration, calculate the time to release the jump button.
 static func calculate_time_to_release_jump_button(movement_params: MovementParams, \

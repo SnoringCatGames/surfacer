@@ -117,6 +117,11 @@ func _calculate_edge_attempt() -> void:
             collision_params, origin_surface, jump_position.target_point, destination_surface, \
             land_position.target_point, true, Vector2.INF, true, true)
     
+    if overall_calc_params == null:
+        edge_attempt = null
+        possible_jump_and_land_positions.clear()
+        return
+    
     if overall_calc_params.origin_constraint.is_valid and \
             overall_calc_params.destination_constraint.is_valid:
         # Calculate the actual jump steps, collision, trajectory, and input state.

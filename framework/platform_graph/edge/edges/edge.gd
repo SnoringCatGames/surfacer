@@ -156,7 +156,9 @@ static func check_just_landed_on_expected_surface(surface_state: PlayerSurfaceSt
     return surface_state.just_left_air and surface_state.grabbed_surface == end_surface
 
 static func sum_distance_between_frames(frame_positions: PoolVector2Array) -> float:
-    assert(frame_positions.size() > 1)
+    if frame_positions.size() < 2:
+        return 0.0
+    
     var previous_position := frame_positions[0]
     var next_position: Vector2
     var sum := 0.0

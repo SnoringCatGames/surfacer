@@ -319,6 +319,8 @@ func get_edge_to_air(collision_params: CollisionCalcParams, \
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
             collision_params, position_start.surface, position_start.target_point, null, \
             position_end, true, velocity_start, false, false)
+    if overall_calc_params == null:
+        return null
     
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
             overall_calc_params, null, null)

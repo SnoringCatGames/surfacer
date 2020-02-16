@@ -36,6 +36,8 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
             overall_calc_params = EdgeMovementCalculator.create_movement_calc_overall_params( \
                     collision_params, null, origin, land_position.surface, \
                     land_position.target_point, false, velocity_start, false, false)
+            if overall_calc_params == null:
+                continue
             
             vertical_step = VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
             if vertical_step == null:

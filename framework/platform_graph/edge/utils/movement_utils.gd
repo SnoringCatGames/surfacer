@@ -10,7 +10,7 @@ class_name MovementUtils
 # - Returns INF if we cannot reach the destination with our movement parameters.
 static func calculate_movement_duration(displacement: float, v_0: float, a: float, \
         returns_lower_result := true, min_duration := 0.0, \
-        expects_only_one_positive_result := false) -> float:
+        expects_only_one_positive_result := false, allows_no_positive_results := false) -> float:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     # Use only non-negative results.
@@ -44,8 +44,11 @@ static func calculate_movement_duration(displacement: float, v_0: float, a: floa
     
     # Optionally ensure that only one result is positive.
     assert(!expects_only_one_positive_result or t1 < 0 or t2 < 0)
-    # Ensure that there are not two negative results.
-    assert(t1 >= 0 or t2 >= 0)
+    
+    # Check for two negative results.
+    if t1 < 0 and t2 < 0:
+        assert(allows_no_positive_results)
+        return INF
     
     min_duration += Geometry.FLOAT_EPSILON
     
