@@ -8,8 +8,7 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Finish FallFromFloorCalculator; can probably delete all of the old logic that was copied from
-#   FallFromWallCalculator.
+# - Debug fall-from-floor.
 # 
 # - Remove/rename test_instructions and check_instructions_for_collision.
 #   - Then remove overall_calc_params from MovementCalcResults.
@@ -333,7 +332,10 @@ func get_edge_to_air(collision_params: CollisionCalcParams, \
     if calc_results == null:
         return null
     
-    var edge := SurfaceToAirEdge.new(position_start, position_end, calc_results)
+    var instructions := \
+            MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+            position_start.target_point, position_end, calc_results, true, SurfaceSide.NONE)
+    var edge := SurfaceToAirEdge.new(position_start, position_end, instructions)
     
     # FIXME: ---------- Remove?
     if Utils.IN_DEV_MODE:
@@ -370,8 +372,12 @@ static func create_edge_from_overall_params( \
     if calc_results == null:
         return null
     
+    var instructions := \
+            MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+                    origin_position.target_point, destination_position.target_point, \
+                    calc_results, true, destination_position.surface.side)
     var edge := JumpFromSurfaceToSurfaceEdge.new( \
-            origin_position, destination_position, calc_results)
+            origin_position, destination_position, instructions)
     
     # FIXME: ---------- Remove?
     if Utils.IN_DEV_MODE:

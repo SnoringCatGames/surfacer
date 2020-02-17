@@ -31,6 +31,7 @@ const DEBUG_STATE := {
     in_debug_mode = IN_DEBUG_MODE,
     limit_parsing = {
         player_name = "cat",
+#        
 #        edge = {
 #            origin = {
 #                surface_side = SurfaceSide.FLOOR,
@@ -39,7 +40,14 @@ const DEBUG_STATE := {
 #                surface_side = SurfaceSide.LEFT_WALL,
 #            },
 #        },
+#        
+#        movement_calculator = "ClimbOverWallToFloorCalculator",
 #        movement_calculator = "FallFromWallCalculator",
+        movement_calculator = "FallFromFloorCalculator",
+#        movement_calculator = "JumpFromSurfaceToSurfaceCalculator",
+#        movement_calculator = "ClimbDownWallToFloorCalculator",
+#        movement_calculator = "WalkToAscendWallFromFloorCalculator",
+#        
 #        # Level: long rise; fall-from-wall
 #        edge = {
 #            origin = {
@@ -55,6 +63,7 @@ const DEBUG_STATE := {
 #                position = Vector2(128, 64),
 #            },
 #        },
+#        
 #        # Level: long rise; jump-up-left
 #        edge = {
 #            origin = {

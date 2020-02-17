@@ -33,14 +33,13 @@ func _init(\
         enters_air: bool, \
         start_position_along_surface: PositionAlongSurface, \
         end_position_along_surface: PositionAlongSurface, \
-        calc_results: MovementCalcResults) -> void:
+        instructions: MovementInstructions) -> void:
     self.name = name
     self.is_time_based = is_time_based
     self.enters_air = enters_air
     self.start_position_along_surface = start_position_along_surface
     self.end_position_along_surface = end_position_along_surface
-    self.instructions = _calculate_instructions( \
-            start_position_along_surface, end_position_along_surface, calc_results)
+    self.instructions = instructions
     self.distance = _calculate_distance( \
             start_position_along_surface, end_position_along_surface, instructions)
     self.duration = _calculate_duration( \
@@ -72,11 +71,6 @@ func update_navigation_state(navigation_state: PlayerNavigationState, \
     
     navigation_state.just_reached_end_of_edge = _check_did_just_reach_destination( \
             navigation_state, surface_state, playback)
-
-func _calculate_instructions(start: PositionAlongSurface, \
-        end: PositionAlongSurface, calc_results: MovementCalcResults) -> MovementInstructions:
-    Utils.error("Abstract Edge._calculate_instructions is not implemented")
-    return null
 
 func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions) -> float:

@@ -26,6 +26,7 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
     var vertical_step: MovementVertCalcStep
     var step_calc_params: MovementCalcStepParams
     var calc_results: MovementCalcResults
+    var instructions: MovementInstructions
     var overall_calc_params: MovementCalcOverallParams
     
     # Find the first possible edge to a landing surface.
@@ -51,7 +52,11 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
             calc_results = MovementStepUtils.calculate_steps_from_constraint( \
                     overall_calc_params, step_calc_params)
             if calc_results != null:
-                return AirToSurfaceEdge.new(origin, land_position, calc_results)
+                instructions = MovementInstructionsUtils \
+                        .convert_calculation_steps_to_movement_instructions(origin, \
+                                land_position.target_point, calc_results, false, \
+                                land_position.surface.side)
+                return AirToSurfaceEdge.new(origin, land_position, instructions)
     
     return null
 

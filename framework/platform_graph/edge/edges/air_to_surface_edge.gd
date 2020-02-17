@@ -6,15 +6,10 @@ const NAME := "AirToSurfaceEdge"
 const IS_TIME_BASED := true
 const ENTERS_AIR := false
 
-func _init(start: Vector2, end: PositionAlongSurface, calc_results: MovementCalcResults) \
+func _init(start: Vector2, end: PositionAlongSurface, instructions: MovementInstructions) \
         .(NAME, IS_TIME_BASED, ENTERS_AIR, Edge.vector2_to_position_along_surface(start), end, \
-        calc_results) -> void:
+        instructions) -> void:
     pass
-
-func _calculate_instructions(start: PositionAlongSurface, \
-        end: PositionAlongSurface, calc_results: MovementCalcResults) -> MovementInstructions:
-    return MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-            start.target_point, end.target_point, calc_results, false, end.surface.side)
 
 func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions) -> float:

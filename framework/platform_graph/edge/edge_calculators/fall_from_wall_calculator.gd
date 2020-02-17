@@ -35,6 +35,8 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
     var jump_positions := [top_jump_position, bottom_jump_position]
     
     var landing_trajectories: Array
+    var land_position: PositionAlongSurface
+    var instructions: MovementInstructions
     var edge: FallFromWallEdge
     
     for jump_position in jump_positions:
@@ -42,11 +44,32 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
                 surfaces_in_fall_range_set, jump_position, velocity_start)
         
         for calc_results in landing_trajectories:
-            edge = FallFromWallEdge.new(jump_position, \
-                    calc_results.overall_calc_params.destination_position, calc_results)
+            land_position = calc_results.overall_calc_params.destination_position
+            instructions = _calculate_instructions(jump_position, land_position, calc_results)
+            edge = FallFromWallEdge.new(jump_position, land_position, instructions)
             edges_result.push_back(edge)
             
             # FIXME: ---------- Remove?
             if Utils.IN_DEV_MODE:
                 MovementInstructionsUtils.test_instructions( \
                         edge.instructions, calc_results.overall_calc_params, calc_results)
+
+static func _calculate_instructions(start: PositionAlongSurface, \
+        end: PositionAlongSurface, calc_results: MovementCalcResults) -> MovementInstructions:
+    assert(start.surface.side == SurfaceSide.LEFT_WALL || \
+            start.surface.side == SurfaceSide.RIGHT_WALL)
+    
+    # Calculate the fall-trajectory instructions.
+    var instructions := \
+            MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+                    start.target_point, end.target_point, calc_results, false, end.surface.side)
+    
+    # Calculate the wall-release instructions.
+    var sideways_input_key := \
+            "move_right" if start.surface.side == SurfaceSide.LEFT_WALL else "move_left"
+    var outward_press := MovementInstruction.new(sideways_input_key, 0.0, true)
+    var outward_release := MovementInstruction.new(sideways_input_key, 0.001, false)
+    instructions.instructions.push_front(outward_release)
+    instructions.instructions.push_front(outward_press)
+    
+    return instructions

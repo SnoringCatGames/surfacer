@@ -10,33 +10,13 @@ const IS_TIME_BASED := false
 const ENTERS_AIR := false
 
 func _init(start: PositionAlongSurface, end: PositionAlongSurface) \
-        .(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, null) -> void:
+        .(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, \
+        _calculate_instructions(start, end)) -> void:
     pass
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
     instructions = _calculate_instructions(surface_state.center_position_along_surface, \
-            end_position_along_surface, null)
-
-func _calculate_instructions(start: PositionAlongSurface, \
-        end: PositionAlongSurface, calc_results: MovementCalcResults) -> MovementInstructions:
-    var is_wall_surface := \
-            end.surface.side == SurfaceSide.LEFT_WALL || end.surface.side == SurfaceSide.RIGHT_WALL
-    
-    var input_key: String
-    if is_wall_surface:
-        if start.target_point.y < end.target_point.y:
-            input_key = "move_down"
-        else:
-            input_key = "move_up"
-    else:
-        if start.target_point.x < end.target_point.x:
-            input_key = "move_right"
-        else:
-            input_key = "move_left"
-    
-    var instruction := MovementInstruction.new(input_key, 0.0, true)
-    
-    return MovementInstructions.new([instruction], INF)
+            end_position_along_surface)
 
 func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions) -> float:
@@ -60,3 +40,24 @@ func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, 
         was_less_than_end = surface_state.previous_center_position.x < target_point.x
         is_less_than_end = surface_state.center_position.x < target_point.x
     return was_less_than_end != is_less_than_end
+
+static func _calculate_instructions(start: PositionAlongSurface, \
+        end: PositionAlongSurface) -> MovementInstructions:
+    var is_wall_surface := \
+            end.surface.side == SurfaceSide.LEFT_WALL || end.surface.side == SurfaceSide.RIGHT_WALL
+    
+    var input_key: String
+    if is_wall_surface:
+        if start.target_point.y < end.target_point.y:
+            input_key = "move_down"
+        else:
+            input_key = "move_up"
+    else:
+        if start.target_point.x < end.target_point.x:
+            input_key = "move_right"
+        else:
+            input_key = "move_left"
+    
+    var instruction := MovementInstruction.new(input_key, 0.0, true)
+    
+    return MovementInstructions.new([instruction], INF)

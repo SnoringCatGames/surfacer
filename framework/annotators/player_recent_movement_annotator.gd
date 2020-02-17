@@ -37,6 +37,7 @@ func _init(player: Player) -> void:
 func check_for_update() -> void:
     var most_recent_position := recent_positions[current_position_index]
     if !Geometry.are_points_equal_with_epsilon(player.position, most_recent_position, 0.01):
+        # Record the action as belonging to the previous frame.
         if player.actions.just_pressed_jump:
             recent_actions[current_position_index] = PlayerActionType.PRESSED_JUMP
         elif player.actions.just_pressed_left:
@@ -58,7 +59,11 @@ func check_for_update() -> void:
         
         total_position_count += 1
         current_position_index = (current_position_index + 1) % RECENT_POSITIONS_BUFFER_SIZE
+        
+        # Record the new position for the current frame.
         recent_positions[current_position_index] = player.position
+        # Record an empty place-holder action value for the current frame.
+        recent_actions[current_position_index] = PlayerActionType.NONE
         
         update()
 
