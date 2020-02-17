@@ -24,6 +24,9 @@ var constraint_offset := Vector2.INF
 # The initial velocity for the current edge instructions.
 var velocity_start := Vector2.INF
 
+var origin_position: PositionAlongSurface
+var destination_position: PositionAlongSurface
+
 # The origin for the current edge instructions.
 var origin_constraint: MovementConstraint
 
@@ -42,7 +45,8 @@ var debug_state: MovementCalcOverallDebugState
 
 var in_debug_mode: bool setget _set_in_debug_mode,_get_in_debug_mode
 
-func _init(collision_params: CollisionCalcParams, origin_constraint: MovementConstraint, \
+func _init(collision_params: CollisionCalcParams, origin_position: PositionAlongSurface, \
+            destination_position: PositionAlongSurface, origin_constraint: MovementConstraint, \
             destination_constraint: MovementConstraint, velocity_start := Vector2.INF, \
             can_backtrack_on_height := true) -> void:
     assert(origin_constraint.surface != null or velocity_start != Vector2.INF)
@@ -53,6 +57,8 @@ func _init(collision_params: CollisionCalcParams, origin_constraint: MovementCon
     self.movement_params = collision_params.movement_params
     self.space_state = collision_params.space_state
     self.surface_parser = collision_params.surface_parser
+    self.origin_position = origin_position
+    self.destination_position = destination_position
     self.origin_constraint = origin_constraint
     self.destination_constraint = destination_constraint
     self.can_backtrack_on_height = can_backtrack_on_height

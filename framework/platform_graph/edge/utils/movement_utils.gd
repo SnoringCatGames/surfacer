@@ -310,6 +310,11 @@ static func create_position_from_target_point(target_point: Vector2, surface: Su
     position.match_surface_target_and_collider(surface, target_point, collider_half_width_height)
     return position
 
+static func create_position_wrapper(target_point: Vector2) -> PositionAlongSurface:
+    var position := PositionAlongSurface.new()
+    position.target_point = target_point
+    return position
+
 static func update_velocity_in_air( \
         velocity: Vector2, delta: float, is_pressing_jump: bool, is_first_jump: bool, \
         horizontal_acceleration_sign: int, movement_params: MovementParams) -> Vector2:

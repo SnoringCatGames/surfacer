@@ -13,7 +13,12 @@ var vertical_step: MovementVertCalcStep
 # Whether we had to use backtracking to satisfy constraints around intermediate colliding surfaces.
 var backtracked_for_new_jump_height: bool
 
-func _init(horizontal_steps: Array, vertical_step: MovementVertCalcStep) -> void:
+# FIXME: REMOVE after refactoring test_instructions and check_instructions_for_collision.
+var overall_calc_params: MovementCalcOverallParams
+
+func _init(horizontal_steps: Array, vertical_step: MovementVertCalcStep, \
+        overall_calc_params: MovementCalcOverallParams) -> void:
     self.horizontal_steps = horizontal_steps
     self.vertical_step = vertical_step
     self.backtracked_for_new_jump_height = false
+    self.overall_calc_params = overall_calc_params

@@ -73,7 +73,7 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
         # There is no intermediate surface interfering with this movement.
         if debug_state != null:
             debug_state.result_code = EdgeStepCalcResult.MOVEMENT_VALID
-        return MovementCalcResults.new([next_horizontal_step], vertical_step)
+        return MovementCalcResults.new([next_horizontal_step], vertical_step, overall_calc_params)
     
     ### RECURSIVE CASES
     

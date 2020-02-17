@@ -8,13 +8,19 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Implement fall_from_floor_calculator
-#   - Calculate fall-off position according to collider shape (capsule and circle will be at the
-#     left-most center point (unless capsule in vertical)).
-#   - Can calculate start x speed according to horizontal distance from floor to the actual
-#     fall-off position.
-#   - Can calculate walk part ends and fall part begins just according to horizontal displacement
-#     and acceleration.
+# - Finish FallFromFloorCalculator; can probably delete all of the old logic that was copied from
+#   FallFromWallCalculator.
+# 
+# - Remove/rename test_instructions and check_instructions_for_collision.
+#   - Then remove overall_calc_params from MovementCalcResults.
+# 
+# - Decide whether to refactor find_a_landing_trajectory to re-use find_landing_trajectories, or
+#   to just re-name it.
+# 
+# - In FallFromWallCalculator, when iterating over the second jump-off point, skip any destination
+#   surface that we've already found an edge to.
+# 
+# - Use `goal` param in find_a_landing_trajectory.
 # 
 # - Implement the bits of debug-menu UI to toggle annotations.
 #   - Also support adjusting how many previous player positions to render.
@@ -287,8 +293,7 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
                 ###################################################################################
                 # Allow for debug mode to limit the scope of what's calculated.
                 if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
-                        origin_surface, destination_surface, jump_position, land_position, \
-                        jump_positions, land_positions):
+                        jump_position, land_position):
                     continue
                 
                 # Record some extra debug state when we're limiting calculations to a single edge.
@@ -316,9 +321,10 @@ func get_edge_to_air(collision_params: CollisionCalcParams, \
         position_start: PositionAlongSurface, position_end: Vector2) -> SurfaceToAirEdge:
     var velocity_start := collision_params.movement_params.get_jump_initial_velocity( \
             position_start.surface.side)
+    var position_end_wrapper := MovementUtils.create_position_wrapper(position_end)
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
-            collision_params, position_start.surface, position_start.target_point, null, \
-            position_end, true, velocity_start, false, false)
+            collision_params, position_start, position_end_wrapper, true, velocity_start, \
+            false, false)
     if overall_calc_params == null:
         return null
     
@@ -348,9 +354,8 @@ static func calculate_edge(
         returns_invalid_constraints: bool, \
         in_debug_mode: bool) -> JumpFromSurfaceToSurfaceEdge:
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
-            collision_params, origin_position.surface, origin_position.target_point, \
-            destination_position.surface, destination_position.target_point, \
-            can_hold_jump_button, velocity_start, returns_invalid_constraints, in_debug_mode)
+            collision_params, origin_position, destination_position, can_hold_jump_button, \
+            velocity_start, returns_invalid_constraints, in_debug_mode)
     if overall_calc_params == null:
         return null
     

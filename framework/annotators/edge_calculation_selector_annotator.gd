@@ -114,8 +114,7 @@ func _calculate_edge_attempt() -> void:
     
     # Create the jump-calculation parameter object.
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
-            collision_params, origin_surface, jump_position.target_point, destination_surface, \
-            land_position.target_point, true, Vector2.INF, true, true)
+            collision_params, jump_position, land_position, true, Vector2.INF, true, true)
     
     if overall_calc_params == null:
         edge_attempt = null

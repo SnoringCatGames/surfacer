@@ -9,23 +9,23 @@ const MIN_MAX_VELOCITY_X_OFFSET := 0.01# FIXME: ------------------------
 # FIXME: A: Replace the hard-coded usage of a max-speed ratio with a smarter x-velocity.
 const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULTIPLIER := 0.5
 
-static func create_terminal_constraints(origin_surface: Surface, origin_position: Vector2, \
-        destination_surface: Surface, destination_position: Vector2, \
-        movement_params: MovementParams, can_hold_jump_button: bool, \
-        velocity_start := Vector2.INF, returns_invalid_constraints := false) -> Array:
-    assert(origin_surface != null or velocity_start != Vector2.INF)
+static func create_terminal_constraints(origin_position: PositionAlongSurface, \
+        destination_position: PositionAlongSurface, movement_params: MovementParams, \
+        can_hold_jump_button: bool, velocity_start := Vector2.INF, \
+        returns_invalid_constraints := false) -> Array:
+    assert(origin_position.surface != null or velocity_start != Vector2.INF)
     if velocity_start == Vector2.INF:
-        velocity_start = movement_params.get_jump_initial_velocity(origin_surface.side)
+        velocity_start = movement_params.get_jump_initial_velocity(origin_position.surface.side)
     
-    var origin_passing_vertically := \
-            origin_surface.normal.x == 0 if origin_surface != null else true
-    var destination_passing_vertically := \
-            destination_surface.normal.x == 0 if destination_surface != null else true
+    var origin_passing_vertically := origin_position.surface.normal.x == 0 if \
+            origin_position.surface != null else true
+    var destination_passing_vertically := destination_position.surface.normal.x == 0 if \
+            destination_position.surface != null else true
     
-    var origin := MovementConstraint.new(origin_surface, origin_position, \
+    var origin := MovementConstraint.new(origin_position.surface, origin_position.target_point, \
             origin_passing_vertically, false, null, null)
-    var destination := MovementConstraint.new(destination_surface, destination_position, \
-            destination_passing_vertically, false, null, null)
+    var destination := MovementConstraint.new(destination_position.surface, \
+            destination_position.target_point, destination_passing_vertically, false, null, null)
     
     origin.is_origin = true
     origin.next_constraint = destination
