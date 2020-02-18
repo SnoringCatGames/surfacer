@@ -8,18 +8,28 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Debug fall-from-floor.
+# - Fix fall-from-floor.
+#   - Fix _draw_fall_from_floor_edge
+#     - Fix placement of instruction start/end annotators.
+#     - Fix initial elbow shape to reach fall-off point.
 # 
-# - Remove/rename test_instructions and check_instructions_for_collision.
+# - Debug why lighter-colored discrete trajectories are so wrong.
+# 
+# - Refactor/rename check_instructions_for_collision.
 #   - Then remove overall_calc_params from MovementCalcResults.
+# 
+# - Re-visit GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
 # 
 # - Decide whether to refactor find_a_landing_trajectory to re-use find_landing_trajectories, or
 #   to just re-name it.
 # 
+# - Use `goal` param in find_a_landing_trajectory.
+# 
 # - In FallFromWallCalculator, when iterating over the second jump-off point, skip any destination
 #   surface that we've already found an edge to.
 # 
-# - Use `goal` param in find_a_landing_trajectory.
+# - Fix the behavior that causes vertical movement along a wall to get sucked slightly toward the wall after passing the end of the wall (assuming the motion was actually touching the wall).
+ #   - This is probably caused by my logic that assigns some velocity toward the wall in order to maintain collision with the wall.
 # 
 # - Implement the bits of debug-menu UI to toggle annotations.
 #   - Also support adjusting how many previous player positions to render.
@@ -87,8 +97,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #     up passing them around as arguments to functions, to they get copied as values...
 # 
 # - Test/debug FallMovementUtils.find_a_landing_trajectory.
-# 
-# - Remove calls to MovementInstructionsUtils.test_instructions?
 # 
 # --- Expected cut-off for demo date ---
 # 
@@ -320,7 +328,7 @@ func get_edge_to_air(collision_params: CollisionCalcParams, \
         position_start: PositionAlongSurface, position_end: Vector2) -> SurfaceToAirEdge:
     var velocity_start := collision_params.movement_params.get_jump_initial_velocity( \
             position_start.surface.side)
-    var position_end_wrapper := MovementUtils.create_position_wrapper(position_end)
+    var position_end_wrapper := MovementUtils.create_position_without_surface(position_end)
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
             collision_params, position_start, position_end_wrapper, true, velocity_start, \
             false, false)
@@ -334,13 +342,8 @@ func get_edge_to_air(collision_params: CollisionCalcParams, \
     
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-            position_start.target_point, position_end, calc_results, true, SurfaceSide.NONE)
+                    calc_results, true, SurfaceSide.NONE)
     var edge := SurfaceToAirEdge.new(position_start, position_end, instructions)
-    
-    # FIXME: ---------- Remove?
-    if Utils.IN_DEV_MODE:
-        MovementInstructionsUtils.test_instructions( \
-                edge.instructions, overall_calc_params, calc_results)
     
     return edge
 
@@ -374,14 +377,8 @@ static func create_edge_from_overall_params( \
     
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                    origin_position.target_point, destination_position.target_point, \
                     calc_results, true, destination_position.surface.side)
     var edge := JumpFromSurfaceToSurfaceEdge.new( \
             origin_position, destination_position, instructions)
-    
-    # FIXME: ---------- Remove?
-    if Utils.IN_DEV_MODE:
-        MovementInstructionsUtils.test_instructions( \
-                edge.instructions, overall_calc_params, calc_results)
     
     return edge

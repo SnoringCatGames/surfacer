@@ -729,7 +729,8 @@ class _TmpSurface extends Object:
 static func find_closest_position_on_a_surface(target: Vector2, player) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
     var surface := get_closest_surface(target, player.possible_surfaces_set)
-    position.match_surface_target_and_collider(surface, target, player.collider_half_width_height)
+    position.match_surface_target_and_collider( \
+            surface, target, player.collider_half_width_height, true, true)
     return position
 
 # Gets the closest surface to the given point.

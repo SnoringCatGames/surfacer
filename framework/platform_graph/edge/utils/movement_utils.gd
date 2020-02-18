@@ -200,13 +200,13 @@ static func get_all_jump_land_positions_from_surface(movement_params: MovementPa
         far_end = source_first_point
     
     # Record the near-end point.
-    var jump_position := create_position_from_target_point( \
+    var jump_position := create_position_offset_from_target_point( \
             near_end, source_surface, movement_params.collider_half_width_height)
     var possible_jump_positions := [jump_position]
     
     # Only consider the far-end point if it is distinct.
     if source_surface.vertices.size() > 1:
-        jump_position = create_position_from_target_point( \
+        jump_position = create_position_offset_from_target_point( \
                 far_end, source_surface, movement_params.collider_half_width_height)
         possible_jump_positions.push_back(jump_position)
         
@@ -298,19 +298,31 @@ static func get_all_jump_land_positions_from_surface(movement_params: MovementPa
         
         # Only consider the closest point if it is distinct.
         if closest_point_on_source != near_end and closest_point_on_source != far_end:
-            jump_position = create_position_from_target_point( \
-                    closest_point_on_source, source_surface, movement_params.collider_half_width_height)
+            jump_position = create_position_offset_from_target_point( \
+                    closest_point_on_source, source_surface, \
+                    movement_params.collider_half_width_height)
             possible_jump_positions.push_front(jump_position)
     
     return possible_jump_positions
 
-static func create_position_from_target_point(target_point: Vector2, surface: Surface, \
-        collider_half_width_height: Vector2) -> PositionAlongSurface:
+static func create_position_offset_from_target_point(target_point: Vector2, surface: Surface, \
+        collider_half_width_height: Vector2, \
+        clips_to_surface_bounds := false) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
-    position.match_surface_target_and_collider(surface, target_point, collider_half_width_height)
+    position.match_surface_target_and_collider(surface, target_point, collider_half_width_height, \
+            true, clips_to_surface_bounds)
     return position
 
-static func create_position_wrapper(target_point: Vector2) -> PositionAlongSurface:
+static func create_position_from_target_point(target_point: Vector2, surface: Surface, \
+        collider_half_width_height: Vector2, offsets_target_by_half_width_height := false, \
+        clips_to_surface_bounds := false) -> PositionAlongSurface:
+    assert(surface != null)
+    var position := PositionAlongSurface.new()
+    position.match_surface_target_and_collider(surface, target_point, collider_half_width_height, \
+            offsets_target_by_half_width_height, clips_to_surface_bounds)
+    return position
+
+static func create_position_without_surface(target_point: Vector2) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
     position.target_point = target_point
     return position

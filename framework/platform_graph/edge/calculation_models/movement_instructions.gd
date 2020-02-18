@@ -12,7 +12,7 @@ var frame_discrete_positions_from_test: PoolVector2Array
 
 # The positions of each frame of movement according to the continous per-frame movement
 # calculations of the underlying horizontal step calculations.
-var frame_continous_positions_from_steps: PoolVector2Array
+var frame_continuous_positions_from_steps: PoolVector2Array
 
 # The end positions of each MovementCalcStep. These correspond to intermediate-surface constraints
 # and the destination position. This is used for annotation debugging.

@@ -9,14 +9,16 @@ const NAME := "FallFromFloorEdge"
 const IS_TIME_BASED := false
 const ENTERS_AIR := true
 
+var falls_on_left_side: bool
+
 func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: MovementInstructions) \
+        instructions: MovementInstructions, falls_on_left_side: bool) \
         .(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, instructions) -> void:
-    pass
+    self.falls_on_left_side = falls_on_left_side
 
 func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions) -> float:
-    return Edge.sum_distance_between_frames(instructions.frame_continous_positions_from_steps)
+    return Edge.sum_distance_between_frames(instructions.frame_continuous_positions_from_steps)
 
 func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions, distance: float) -> float:

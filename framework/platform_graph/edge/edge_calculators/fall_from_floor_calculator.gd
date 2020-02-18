@@ -33,15 +33,15 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
     var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
     var velocity_x_start := 0.0
+    var edge_point := \
+            origin_surface.first_point if falls_on_left_side else origin_surface.last_point
     
     var position_start := PositionAlongSurface.new()
-    position_start.match_surface_target_and_collider(origin_surface, \
-            origin_surface.first_point if falls_on_left_side else origin_surface.last_point, \
-            movement_params.collider_half_width_height)
+    position_start.match_surface_target_and_collider(origin_surface, edge_point, \
+            movement_params.collider_half_width_height, true, false)
     
-    var position_fall_off := _calculate_player_center_at_fall_off_point( \
-            origin_surface.first_point, falls_on_left_side, movement_params.collider_shape, \
-            movement_params.collider_rotation)
+    var position_fall_off := _calculate_player_center_at_fall_off_point(edge_point, \
+            falls_on_left_side, movement_params.collider_shape, movement_params.collider_rotation)
     
     var displacement_from_start_to_fall_off := position_fall_off - position_start.target_point
     
@@ -114,13 +114,9 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
         position_end = calc_results.overall_calc_params.destination_position
         instructions = _calculate_instructions(position_start, position_end, calc_results, \
                 time_fall_off, falls_on_left_side)
-        edge = FallFromFloorEdge.new(position_start, position_end, instructions)
+        edge = FallFromFloorEdge.new( \
+                position_start, position_end, instructions, falls_on_left_side)
         edges_result.push_back(edge)
-        
-#        # FIXME: ---------- Remove?
-#        if Utils.IN_DEV_MODE:
-#            MovementInstructionsUtils.test_instructions( \
-#                    edge.instructions, calc_results.overall_calc_params, calc_results)
 
 static func _calculate_player_center_at_fall_off_point(edge_point: Vector2, \
         falls_on_left_side: bool, collider_shape: Shape2D, collider_rotation: float) -> Vector2:
@@ -138,11 +134,12 @@ static func _calculate_player_center_at_fall_off_point(edge_point: Vector2, \
         
     elif collider_shape is CapsuleShape2D:
         if is_rotated_90_degrees:
-            right_side_fall_off_displacement_x = collider_shape.radius + collider_shape.height
+            right_side_fall_off_displacement_x = \
+                    collider_shape.radius + collider_shape.height * 0.5
             fall_off_displacement_y = 0.0
         else:
             right_side_fall_off_displacement_x = collider_shape.radius
-            fall_off_displacement_y = -collider_shape.height
+            fall_off_displacement_y = -collider_shape.height * 0.5
         
     elif collider_shape is RectangleShape2D:
         if is_rotated_90_degrees:
@@ -189,13 +186,13 @@ static func _calculate_instructions(start: PositionAlongSurface, \
     # Calculate the fall-trajectory instructions.
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                    start.target_point, end.target_point, calc_results, false, end.surface.side)
+                    calc_results, false, end.surface.side)
     
     # Calculate the walk-off instructions.
     var sideways_input_key := "move_left" if falls_on_left_side else "move_right"
     var outward_press := MovementInstruction.new(sideways_input_key, 0.0, true)
     var outward_release := \
-            MovementInstruction.new(sideways_input_key, time_fall_off - 0.001, false)
+            MovementInstruction.new(sideways_input_key, time_fall_off - 0.0001, false)
     instructions.instructions.push_front(outward_release)
     instructions.instructions.push_front(outward_press)
     

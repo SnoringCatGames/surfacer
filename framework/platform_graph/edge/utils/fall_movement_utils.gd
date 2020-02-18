@@ -16,7 +16,7 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
     var possible_landing_surfaces := result_set.keys()
     possible_landing_surfaces.sort_custom(SurfaceMaxYComparator, "sort")
     
-    var origin_wrapper := MovementUtils.create_position_wrapper(origin)
+    var origin_wrapper := MovementUtils.create_position_without_surface(origin)
     var origin_vertices := [origin]
     var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
     var origin_side := SurfaceSide.CEILING
@@ -53,8 +53,7 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
                     overall_calc_params, step_calc_params)
             if calc_results != null:
                 instructions = MovementInstructionsUtils \
-                        .convert_calculation_steps_to_movement_instructions(origin, \
-                                land_position.target_point, calc_results, false, \
+                        .convert_calculation_steps_to_movement_instructions(calc_results, false, \
                                 land_position.surface.side)
                 return AirToSurfaceEdge.new(origin, land_position, instructions)
     

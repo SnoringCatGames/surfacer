@@ -28,9 +28,9 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
         origin_top_point = origin_surface.last_point
         origin_bottom_point = origin_surface.first_point
     
-    var top_jump_position := MovementUtils.create_position_from_target_point( \
+    var top_jump_position := MovementUtils.create_position_offset_from_target_point( \
             origin_top_point, origin_surface, movement_params.collider_half_width_height)
-    var bottom_jump_position := MovementUtils.create_position_from_target_point( \
+    var bottom_jump_position := MovementUtils.create_position_offset_from_target_point( \
             origin_bottom_point, origin_surface, movement_params.collider_half_width_height)
     var jump_positions := [top_jump_position, bottom_jump_position]
     
@@ -48,11 +48,6 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
             instructions = _calculate_instructions(jump_position, land_position, calc_results)
             edge = FallFromWallEdge.new(jump_position, land_position, instructions)
             edges_result.push_back(edge)
-            
-            # FIXME: ---------- Remove?
-            if Utils.IN_DEV_MODE:
-                MovementInstructionsUtils.test_instructions( \
-                        edge.instructions, calc_results.overall_calc_params, calc_results)
 
 static func _calculate_instructions(start: PositionAlongSurface, \
         end: PositionAlongSurface, calc_results: MovementCalcResults) -> MovementInstructions:
@@ -62,7 +57,7 @@ static func _calculate_instructions(start: PositionAlongSurface, \
     # Calculate the fall-trajectory instructions.
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                    start.target_point, end.target_point, calc_results, false, end.surface.side)
+                    calc_results, false, end.surface.side)
     
     # Calculate the wall-release instructions.
     var sideways_input_key := \

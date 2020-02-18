@@ -253,6 +253,9 @@ For convenience, this is checked in the with rest of the Surfacer framework.
     - These updates do not solve all cases, since we may in turn need to update the min/max x-velocities and movement sign for all other constraints. And these updates could then result in the addition/removal of other intermediate constraints. But we have found that these two updates are enough for most cases.
 - Then, when a new step is calculated, the actual x-velocity of the end constraint is assigned to have the minimum-possible speed that is reachable from the min/max x-velocity of the start constraint.
 - Steps are calculated with in-order tree traversal (i.e., in the same order they'd be executed when moving from origin to destination).
+- For efficiency, when parsing the platform graph, we only calculate one edge for any given node pair.
+  - We try to sort attempted movement types and attempted surface ends according to which will produce cheaper paths. Hopefully, this results in the better edge option being used when there are multiple possible edges between a given surface pair.
+- When viewing edge calculation trajectories, each edge is shown with two trajectories: the darker trajectory represents positions as calculated from continuous equations of motion, and the lighter trajectory represents positions as calculated from simulating movement over distrete time steps.
 
 #### Fake constraints
 

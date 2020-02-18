@@ -296,7 +296,6 @@ static func draw_edge(canvas: CanvasItem, edge: Edge, includes_constraints := fa
     
     if edge is AirToAirEdge or \
             edge is AirToSurfaceEdge or \
-            edge is FallFromFloorEdge or \
             edge is FallFromWallEdge or \
             edge is JumpFromSurfaceToSurfaceEdge or \
             edge is SurfaceToAirEdge:
@@ -308,6 +307,9 @@ static func draw_edge(canvas: CanvasItem, edge: Edge, includes_constraints := fa
         _draw_edge_from_end_points(canvas, edge, base_color)
     elif edge is ClimbOverWallToFloorEdge:
         _draw_climb_over_wall_to_floor_edge(canvas, edge, base_color)
+    elif edge is FallFromFloorEdge:
+        _draw_fall_from_floor_edge(canvas, edge, includes_constraints, \
+                includes_instruction_indicators, includes_discrete_positions, base_color)
     else:
         Utils.error("Unexpected Edge subclass: %s" % edge)
 
@@ -320,6 +322,23 @@ static func _draw_climb_over_wall_to_floor_edge(canvas: CanvasItem, \
     var mid_point := Vector2(edge.start.x, edge.end.y)
     canvas.draw_line(edge.start, mid_point, base_color, EDGE_TRAJECTORY_WIDTH)
     canvas.draw_line(mid_point, edge.end, base_color, EDGE_TRAJECTORY_WIDTH)
+
+static func _draw_fall_from_floor_edge(canvas: CanvasItem, edge: FallFromFloorEdge, \
+        includes_constraints: bool, includes_instruction_indicators: bool, \
+        includes_discrete_positions: bool, base_color: Color) -> void:
+    # Render FallFromFloorEdges with a slight offset, so that they don't overlap with
+    # ClimbOverWallToFloorEdges.
+    var offset := Vector2(-1.0 if edge.falls_on_left_side else 1.0, -1.0)
+    var start_position := edge.start
+    var fall_off_position := edge.instructions.frame_continuous_positions_from_steps[0]
+    var mid_point := Vector2(fall_off_position.x, start_position.y)
+    canvas.draw_line( \
+            start_position + offset, mid_point + offset, base_color, EDGE_TRAJECTORY_WIDTH)
+    canvas.draw_line( \
+            mid_point + offset, fall_off_position + offset, base_color, EDGE_TRAJECTORY_WIDTH)
+    
+    _draw_edge_from_instructions_positions(canvas, edge, false, \
+            includes_instruction_indicators, includes_discrete_positions, base_color)
 
 static func _draw_edge_from_instructions_positions(canvas: CanvasItem, edge: Edge, \
         includes_discrete_positions: bool, includes_constraints: bool, \
@@ -337,7 +356,7 @@ static func _draw_edge_from_instructions_positions(canvas: CanvasItem, edge: Edg
                 discrete_trajectory_color, EDGE_TRAJECTORY_WIDTH)
     # Draw the trajectory (as calculated via continuous equations of motion during step
     # calculations).
-    canvas.draw_polyline(edge.instructions.frame_continous_positions_from_steps, \
+    canvas.draw_polyline(edge.instructions.frame_continuous_positions_from_steps, \
             continuous_trajectory_color, EDGE_TRAJECTORY_WIDTH)
     
     if includes_constraints:

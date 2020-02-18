@@ -28,10 +28,8 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.
-static func convert_calculation_steps_to_movement_instructions( \
-        position_start: Vector2, position_end: Vector2, \
-        calc_results: MovementCalcResults, includes_jump: bool, \
-        destination_side: int) -> MovementInstructions:
+static func convert_calculation_steps_to_movement_instructions(calc_results: MovementCalcResults, \
+        includes_jump: bool, destination_side: int) -> MovementInstructions:
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
     
@@ -78,14 +76,33 @@ static func convert_calculation_steps_to_movement_instructions( \
         instructions.push_front(release)
         instructions.push_front(press)
     
-    var frame_continous_positions_from_steps := _concatenate_step_frame_positions(steps)
-    # FIXME: Remove? Do a performance test to see if using this would be significantly faster.
-#    var distance_from_end_to_end := position_start.distance_to(position_end)
+    var frame_continuous_positions_from_steps := _concatenate_step_frame_positions(steps)
     
-    var result := MovementInstructions.new(instructions, INF, constraint_positions)
-    result.frame_continous_positions_from_steps = frame_continous_positions_from_steps
+    var instructions_wrapper := MovementInstructions.new(instructions, INF, constraint_positions)
+    instructions_wrapper.frame_continuous_positions_from_steps = \
+            frame_continuous_positions_from_steps
     
-    return result
+    # FIXME: B: REMOVE
+    calc_results.overall_calc_params.movement_params.gravity_fast_fall /= \
+            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    calc_results.overall_calc_params.movement_params.gravity_slow_rise /= \
+            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    
+    # FIXME: -------- Rename? Refactor?
+    var collision := CollisionCheckUtils.check_instructions_for_collision( \
+            calc_results.overall_calc_params, instructions_wrapper, calc_results.vertical_step, \
+            calc_results.horizontal_steps)
+    assert(collision == null or \
+            (collision.is_valid_collision_state and \
+            collision.surface == calc_results.overall_calc_params.destination_constraint.surface))
+
+    # FIXME: B: REMOVE
+    calc_results.overall_calc_params.movement_params.gravity_fast_fall *= \
+            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    calc_results.overall_calc_params.movement_params.gravity_slow_rise *= \
+            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    
+    return instructions_wrapper
 
 static func _concatenate_step_frame_positions(steps: Array) -> PoolVector2Array:
     var combined_positions := []
@@ -100,36 +117,3 @@ static func _concatenate_step_frame_positions(steps: Array) -> PoolVector2Array:
     combined_positions.push_back(steps.back().frame_positions.back())
     
     return PoolVector2Array(combined_positions)
-
-# Test that the given instructions were created correctly.
-static func test_instructions(instructions: MovementInstructions, \
-        overall_calc_params: MovementCalcOverallParams, calc_results: MovementCalcResults) -> bool:
-    assert(instructions.instructions.size() > 0)
-    
-    assert(instructions.instructions[0].time == 0.0)
-    
-    # FIXME: B: REMOVE
-    overall_calc_params.movement_params.gravity_fast_fall /= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    overall_calc_params.movement_params.gravity_slow_rise /= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    
-    var collision := CollisionCheckUtils.check_instructions_for_collision(overall_calc_params, \
-            instructions, calc_results.vertical_step, calc_results.horizontal_steps)
-    assert(collision == null or \
-            (collision.is_valid_collision_state and \
-            collision.surface == overall_calc_params.destination_constraint.surface))
-    var final_frame_position := instructions.frame_discrete_positions_from_test[ \
-            instructions.frame_discrete_positions_from_test.size() - 1]
-    # FIXME: B: Add back in after fixing the use of GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION.
-#    assert(final_frame_position.distance_squared_to( \
-#            overall_calc_params.destination_constraint.position) < \
-#            VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD)
-
-    # FIXME: B: REMOVE
-    overall_calc_params.movement_params.gravity_fast_fall *= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    overall_calc_params.movement_params.gravity_slow_rise *= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    
-    return true
