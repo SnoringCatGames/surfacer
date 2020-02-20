@@ -8,13 +8,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix fall-from-floor.
-#   - Fix _draw_fall_from_floor_edge
-#     - Fix placement of instruction start/end annotators.
-#     - Fix initial elbow shape to reach fall-off point.
-# 
-# - Debug why lighter-colored discrete trajectories are so wrong.
-# 
 # - Refactor/rename check_instructions_for_collision.
 #   - Then remove overall_calc_params from MovementCalcResults.
 # 
