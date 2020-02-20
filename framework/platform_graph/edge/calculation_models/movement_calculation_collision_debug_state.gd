@@ -44,13 +44,21 @@ func _init(overall_calc_params = null, step_calc_params = null, horizontal_step 
     
     if step_calc_params != null:
         self.step_start_position = step_calc_params.start_constraint.position
-        self.step_start_surface_position = \
-                step_calc_params.start_constraint.surface.bounding_box.position
-        self.step_start_surface_normal = step_calc_params.start_constraint.surface.normal
+        if step_calc_params.start_constraint.surface != null:
+            self.step_start_surface_position = \
+                    step_calc_params.start_constraint.surface.bounding_box.position
+            self.step_start_surface_normal = step_calc_params.start_constraint.surface.normal
+        else:
+            self.step_start_surface_position = Vector2.INF
+            self.step_start_surface_normal = Vector2.INF
         
         self.step_end_position = step_calc_params.end_constraint.position
-        self.step_end_surface_position = step_calc_params.end_constraint.surface.bounding_box.position
-        self.step_end_surface_normal = step_calc_params.end_constraint.surface.normal
+        if step_calc_params.end_constraint.surface != null:
+            self.step_end_surface_position = step_calc_params.end_constraint.surface.bounding_box.position
+            self.step_end_surface_normal = step_calc_params.end_constraint.surface.normal
+        else:
+            self.step_end_surface_position = Vector2.INF
+            self.step_end_surface_normal = Vector2.INF
     
     if horizontal_step != null:
         self.step_start_time = horizontal_step.time_step_start

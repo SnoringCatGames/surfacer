@@ -8,24 +8,19 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Refactor/rename check_instructions_for_collision.
-#   - Then remove overall_calc_params from MovementCalcResults.
-# 
-# - Re-visit GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-# 
-# - Decide whether to refactor find_a_landing_trajectory to re-use find_landing_trajectories, or
-#   to just re-name it.
-# 
 # - Use `goal` param in find_a_landing_trajectory.
 # 
 # - In FallFromWallCalculator, when iterating over the second jump-off point, skip any destination
 #   surface that we've already found an edge to.
 # 
 # - Fix the behavior that causes vertical movement along a wall to get sucked slightly toward the wall after passing the end of the wall (assuming the motion was actually touching the wall).
- #   - This is probably caused by my logic that assigns some velocity toward the wall in order to maintain collision with the wall.
+#   - This is probably caused by my logic that assigns some velocity toward the wall in order to maintain collision with the wall.
+# 
+# - Fix the trajectory debugging annotator.
 # 
 # - Implement the bits of debug-menu UI to toggle annotations.
 #   - Also support adjusting how many previous player positions to render.
+#   - Also list controls in the debug menu.
 # 
 # - In the README, list the types of annotations and MovementParams.
 # 
@@ -84,6 +79,8 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - Go through levels and verify that all expected edges work.
 # 
 # - Fix issue where jumping around edge sometimes isn't going far enough; it's clipping the corner.
+# 
+# - Re-visit GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
 # 
 # - Fix performance.
 #   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end

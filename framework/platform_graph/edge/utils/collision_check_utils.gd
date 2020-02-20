@@ -5,9 +5,9 @@ const MovementCalcCollisionDebugState = preload("res://framework/platform_graph/
 # Checks whether a collision would occur with any surface during the given instructions. This
 # is calculated by stepping through each discrete physics frame, which should exactly emulate the
 # actual Player trajectory that would be used.
-static func check_instructions_for_collision(overall_calc_params: MovementCalcOverallParams, \
-        instructions: MovementInstructions, vertical_step: MovementVertCalcStep, \
-        horizontal_steps: Array) -> SurfaceCollision:
+static func check_instructions_discrete_frame_state( \
+        overall_calc_params: MovementCalcOverallParams, instructions: MovementInstructions, \
+        vertical_step: MovementVertCalcStep, horizontal_steps: Array) -> SurfaceCollision:
     var movement_params := overall_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: MovementInstruction = instructions.instructions[0]

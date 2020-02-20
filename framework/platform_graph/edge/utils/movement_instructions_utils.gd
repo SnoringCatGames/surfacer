@@ -89,7 +89,7 @@ static func convert_calculation_steps_to_movement_instructions(calc_results: Mov
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     # FIXME: -------- Rename? Refactor?
-    var collision := CollisionCheckUtils.check_instructions_for_collision( \
+    var collision := CollisionCheckUtils.check_instructions_discrete_frame_state( \
             calc_results.overall_calc_params, instructions_wrapper, calc_results.vertical_step, \
             calc_results.horizontal_steps)
     assert(collision == null or \

@@ -8,68 +8,44 @@ class_name FallMovementUtils
 static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
         possible_surfaces_set: Dictionary, origin: Vector2, velocity_start: Vector2, \
         goal: PositionAlongSurface) -> AirToSurfaceEdge:
-    var movement_params := collision_params.movement_params
-    
+    # Find all possible surfaces in landing range.
     var result_set := {}
-    find_surfaces_in_fall_range_from_point( \
-            movement_params, possible_surfaces_set, result_set, origin, velocity_start)
+    find_surfaces_in_fall_range_from_point(collision_params.movement_params, \
+            possible_surfaces_set, result_set, origin, velocity_start)
     var possible_landing_surfaces := result_set.keys()
     possible_landing_surfaces.sort_custom(SurfaceMaxYComparator, "sort")
     
-    var origin_wrapper := MovementUtils.create_position_without_surface(origin)
-    var origin_vertices := [origin]
-    var origin_bounding_box := Rect2(origin.x, origin.y, 0.0, 0.0)
-    var origin_side := SurfaceSide.CEILING
+    # Find the closest landing trajectory.
+    var origin_position := MovementUtils.create_position_without_surface(origin)
+    var landing_trajectories := find_landing_trajectories(collision_params, \
+            possible_surfaces_set, origin_position, velocity_start, possible_landing_surfaces, \
+            true)
+    if landing_trajectories.empty():
+        return null
     
-    var possible_land_positions: Array
-    var terminals: Array
-    var vertical_step: MovementVertCalcStep
-    var step_calc_params: MovementCalcStepParams
-    var calc_results: MovementCalcResults
-    var instructions: MovementInstructions
-    var overall_calc_params: MovementCalcOverallParams
+    # Calculate instructions for the given landing trajectory.
+    var calc_results: MovementCalcResults = landing_trajectories[0]
+    var land_position := calc_results.overall_calc_params.destination_position
+    var instructions := MovementInstructionsUtils \
+            .convert_calculation_steps_to_movement_instructions(calc_results, false, \
+                    land_position.surface.side)
     
-    # Find the first possible edge to a landing surface.
-    for surface in possible_landing_surfaces:
-        possible_land_positions = MovementUtils.get_all_jump_land_positions_from_surface( \
-                movement_params, surface, origin_vertices, origin_bounding_box, origin_side)
-        
-        for land_position in possible_land_positions:
-            overall_calc_params = EdgeMovementCalculator.create_movement_calc_overall_params( \
-                    collision_params, origin_wrapper, land_position, false, velocity_start, \
-                    false, false)
-            if overall_calc_params == null:
-                continue
-            
-            vertical_step = VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
-            if vertical_step == null:
-                continue
-            
-            step_calc_params = MovementCalcStepParams.new(overall_calc_params.origin_constraint, \
-                    overall_calc_params.destination_constraint, vertical_step, \
-                    overall_calc_params, null, null)
-            
-            calc_results = MovementStepUtils.calculate_steps_from_constraint( \
-                    overall_calc_params, step_calc_params)
-            if calc_results != null:
-                instructions = MovementInstructionsUtils \
-                        .convert_calculation_steps_to_movement_instructions(calc_results, false, \
-                                land_position.surface.side)
-                return AirToSurfaceEdge.new(origin, land_position, instructions)
-    
-    return null
+    return AirToSurfaceEdge.new(origin, land_position, instructions)
 
 # Finds all possible landing trajectories from the given start state.
 static func find_landing_trajectories(collision_params: CollisionCalcParams, \
         possible_surfaces_set: Dictionary, origin_position: PositionAlongSurface, \
-        velocity_start: Vector2) -> Array:
+        velocity_start: Vector2, possible_landing_surfaces := [], \
+        only_returns_first_result := false) -> Array:
     var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
     
-    var possible_landing_surfaces_result_set := {}
-    find_surfaces_in_fall_range_from_point(movement_params, possible_surfaces_set, \
-            possible_landing_surfaces_result_set, origin_position.target_point, velocity_start)
-    var possible_landing_surfaces := possible_landing_surfaces_result_set.keys()
+    if possible_landing_surfaces.empty():
+        # Calculate which surfaces are within landing reach.
+        var possible_landing_surfaces_result_set := {}
+        find_surfaces_in_fall_range_from_point(movement_params, possible_surfaces_set, \
+                possible_landing_surfaces_result_set, origin_position.target_point, velocity_start)
+        possible_landing_surfaces = possible_landing_surfaces_result_set.keys()
     
     var origin_vertices: Array
     var origin_bounding_box: Rect2
@@ -136,6 +112,9 @@ static func find_landing_trajectories(collision_params: CollisionCalcParams, \
                     overall_calc_params, step_calc_params)
             if calc_results != null:
                 all_results.push_back(calc_results)
+                
+                if only_returns_first_result:
+                    return all_results
     
     return all_results
 
