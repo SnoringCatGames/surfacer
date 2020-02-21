@@ -39,6 +39,9 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
     var instructions: MovementInstructions
     var edge: FallFromWallEdge
     
+    # TODO: When iterating over the second jump-off point, skip any destination surface that we've
+    #       already found an edge to.
+    
     for jump_position in jump_positions:
         landing_trajectories = FallMovementUtils.find_landing_trajectories(collision_params, \
                 surfaces_in_fall_range_set, jump_position, velocity_start)

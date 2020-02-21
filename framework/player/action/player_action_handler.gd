@@ -1,6 +1,9 @@
 extends Reference
 class_name PlayerActionHandler
 
+const MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION := 15.0
+const MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION := 60.0
+
 var name: String
 # PlayerActionSurfaceType
 var type: int

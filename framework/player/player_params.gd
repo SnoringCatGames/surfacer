@@ -89,8 +89,6 @@ func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.max_vertical_speed >= abs(movement_params.jump_boost))
     assert(movement_params.min_vertical_speed >= 0)
     assert(movement_params.fall_through_floor_velocity_boost >= 0)
-    assert(movement_params.min_speed_to_maintain_vertical_collision >= 0)
-    assert(movement_params.min_speed_to_maintain_horizontal_collision >= 0)
     assert(movement_params.dash_speed_multiplier >= 0)
     assert(movement_params.dash_duration >= movement_params.dash_fade_duration)
     assert(movement_params.dash_fade_duration >= 0)

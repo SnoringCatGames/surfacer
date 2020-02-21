@@ -77,9 +77,6 @@ func _create_movement_params() -> MovementParams:
     
     movement_params.fall_through_floor_velocity_boost = 100.0
     
-    movement_params.min_speed_to_maintain_vertical_collision = 15.0
-    movement_params.min_speed_to_maintain_horizontal_collision = 60.0
-    
     movement_params.dash_speed_multiplier = 4.0
     movement_params.dash_vertical_boost = -400.0
     movement_params.dash_duration = 0.3

@@ -5,6 +5,7 @@ class_name FallMovementUtils
 # path the player would then have to travel between surfaces to reach the given target.
 #
 # Returns null if no possible landing exists.
+# TODO: Use goal param.
 static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
         possible_surfaces_set: Dictionary, origin: Vector2, velocity_start: Vector2, \
         goal: PositionAlongSurface) -> AirToSurfaceEdge:

@@ -35,9 +35,6 @@ var min_vertical_speed: float
 
 var fall_through_floor_velocity_boost: float
 
-var min_speed_to_maintain_vertical_collision: float
-var min_speed_to_maintain_horizontal_collision: float
-
 var dash_speed_multiplier: float
 var dash_vertical_boost: float
 var dash_duration: float
