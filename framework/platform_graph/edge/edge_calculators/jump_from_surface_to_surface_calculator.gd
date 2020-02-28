@@ -8,14 +8,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix the trajectory debugging annotator.
-# 
-# - Implement the bits of debug-menu UI to toggle annotations.
-#   - Also support adjusting how many previous player positions to render.
-#   - Also list controls in the debug menu.
-# 
-# - In the README, list the types of annotations and MovementParams.
-# 
 # - Intrasurface edge often seems to detect reached-end according to the wrong side when first landing.
 # 
 # - Problem: a* search will return edge pairs for a land immediately followed by a jump from the
@@ -36,9 +28,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #     - Maybe I should at least calculate and store this on edges/instructions.
 #   - Should I add a configurable method to the MovementParams API for defining arbitrary weight
 #     calculation for each character type?
-# 
-# - Implement other edge calculator types.
-#   - Debug each!
 # 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.
@@ -78,20 +67,29 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
 #     up passing them around as arguments to functions, to they get copied as values...
 # 
-# - Test/debug FallMovementUtils.find_a_landing_trajectory.
+# - Debug each EdgeMovementCalculators.
+#   - Figure out what to do for FallFromFloorEdge.
+#     - We need to on-the-fly detect when the player has left the floor and entered the air.
+#     - We need to at-that-point start running the instructions for the fall trajectory.
+#     - So FallFromFloorEdge might need to be replaced with two edges? WalkOffFloorEdge, and AirToSurfaceEdge?
+# - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the non-jump edges
+# 
+# - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from an air position).
 # 
 # --- Expected cut-off for demo date ---
 # 
-# - Add a top-level button to debug menu to hide all annotations.
-#   - (grid, clicks, player position, player recent movement, platform graph, ...)
-# - Add sub-buttons for individual annotators.
-#   - Collision calculation annotator in particular.
+# - Implement the bits of debug-menu UI to toggle annotations.
+#   - Also support adjusting how many previous player positions to render.
+#   - Also list controls in the debug menu.
+#   - Collision calculation annotator bits.
+#   - Add a top-level button to debug menu to hide all annotations.
+#     - (grid, clicks, player position, player recent movement, platform graph, ...)
+# 
+# - In the README, list the types of annotations and MovementParams.
 # 
 # - Prepare a different, more interesting level for demo (some walls connecting to floors too).
 # 
 # - Make each background layer more faded. Only interactable foreground should pop so much.
-# 
-# ---  ---
 # 
 # - Put together some illustrative screenshots with special one-off annotations to explain the
 #   graph parsing steps.
@@ -105,14 +103,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # - Update README.
 # 
 # ---  ---
-# 
-# - Implement/debug the other EdgeMovementCalculators.
-#   - Figure out what to do for FallFromFloorEdge.
-#     - We need to on-the-fly detect when the player has left the floor and entered the air.
-#     - We need to at-that-point start running the instructions for the fall trajectory.
-#     - So FallFromFloorEdge might need to be replaced with two edges? WalkOffFloorEdge, and AirToSurfaceEdge?
-# - Move get_instructions_to_air to somewhere else.
-# - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the non-jump edges
 # 
 # - Update navigation to do some additional on-the-fly edge calculations.
 #   - Only limit this to a few additional potential edges along the path.

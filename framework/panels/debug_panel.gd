@@ -29,6 +29,10 @@ func _ready() -> void:
 func add_section(section: Control) -> void:
     $VBoxContainer/Sections.add_child(section)
 
+func set_is_open(is_open: bool) -> void:
+    if self.is_open != is_open:
+        _toggle_open()
+
 func _toggle_open() -> void:
     is_open = !is_open
     

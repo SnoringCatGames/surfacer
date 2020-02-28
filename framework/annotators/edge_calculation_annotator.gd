@@ -72,6 +72,7 @@ func _process(delta: float) -> void:
                 is_new_selected_step = true
     
     if is_new_edge_attempt:
+        global.debug_panel.set_is_open(true)
         tree_view_annotator.update()
     
     if is_new_selected_step or is_new_edge_attempt:
