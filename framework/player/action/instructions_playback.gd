@@ -1,6 +1,8 @@
 extends Reference
 class_name InstructionsPlayback
 
+const EXTRA_DELAY_TO_ALLOW_COLLISION_WITH_SURFACE := 0.25
+
 var edge: Edge
 var is_additive: bool
 var next_index: int
@@ -34,7 +36,7 @@ func update(time_sec: float, navigation_state: PlayerNavigationState) -> Array:
     active_key_presses = _next_active_key_presses.duplicate()
     
     var new_instructions := []
-    while !is_finished and _get_end_time_for_current_instruction() <= time_sec:
+    while !is_finished and _get_start_time_for_next_instruction() <= time_sec:
         if !is_on_last_instruction:
             new_instructions.push_back(next_instruction)
         increment()
@@ -63,7 +65,18 @@ func increment() -> void:
             edge.instructions.instructions.size() > next_index else null
     is_on_last_instruction = next_instruction == null
 
-func _get_end_time_for_current_instruction() -> float:
+func _get_start_time_for_next_instruction() -> float:
     assert(!is_finished)
-    return start_time + \
-            (edge.instructions.duration if is_on_last_instruction else next_instruction.time)
+    
+    var duration_until_next_instruction: float
+    if is_on_last_instruction:
+        duration_until_next_instruction = edge.instructions.duration
+        if edge.should_end_by_colliding_with_surface:
+            # With slight movement error it's possible for the edge duration to elapse before
+            # actually landing on the destination surface. So this should allow for a little extra
+            # time at the end in order to end by landing on the surface.
+            duration_until_next_instruction += EXTRA_DELAY_TO_ALLOW_COLLISION_WITH_SURFACE
+    else:
+        duration_until_next_instruction = next_instruction.time
+    
+    return start_time + duration_until_next_instruction

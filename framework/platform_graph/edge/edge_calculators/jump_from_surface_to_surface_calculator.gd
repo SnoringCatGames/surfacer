@@ -8,10 +8,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# >>>- Check usage/correctness of duration, and tweak weights.
-# >>- Check how distance/duration and just simply path-finding node-comparison works with end-node of wall climb to floor.
-# >- Debug jump from lower-big floor to lower-small floor and grab isn't held long enough to actually grab wall.
-# 
 # - Adjust how edges are weighted.
 #   - It seems like some single edges should be preferred over some edge pairs.
 #     - Maybe each additional edge adds a constant weight?

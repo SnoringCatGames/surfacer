@@ -15,7 +15,9 @@ var enters_air: bool
 
 var instructions: MovementInstructions
 
+# In pixels.
 var distance: float
+# In seconds.
 var duration: float
 
 var start_position_along_surface: PositionAlongSurface
@@ -26,6 +28,8 @@ var end: Vector2 setget ,_get_end
 
 var start_surface: Surface setget ,_get_start_surface
 var end_surface: Surface setget ,_get_end_surface
+
+var should_end_by_colliding_with_surface: bool setget ,_get_should_end_by_colliding_with_surface
 
 func _init(\
         name: String, \
@@ -125,6 +129,10 @@ func _get_start_string() -> String:
     return start_position_along_surface.to_string()
 func _get_end_string() -> String:
     return end_position_along_surface.to_string()
+
+func _get_should_end_by_colliding_with_surface() -> bool:
+    return end_position_along_surface.surface != start_position_along_surface.surface and \
+            end_position_along_surface.surface != null
 
 func to_string() -> String:
     var format_string_template := "%s{ start: %s, end: %s, instructions: %s }"

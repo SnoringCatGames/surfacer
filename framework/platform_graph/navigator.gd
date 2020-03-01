@@ -62,7 +62,7 @@ func navigate_to_nearby_surface(target: Vector2, \
     else:
         # Destination can be reached from origin.
         
-        var format_string_template := "STARTING PATH NAV:   %8.3f; {" + \
+        var format_string_template := "STARTING PATH NAV:   %8.3ft; {" + \
             "\n\tdestination: %s," + \
             "\n\tpath: %s," + \
             "\n}"
@@ -88,7 +88,7 @@ func _set_reached_destination() -> void:
     reset()
     reached_destination = true
     
-    print("REACHED END OF PATH: %8.3f" % [global.elapsed_play_time_sec])
+    print("REACHED END OF PATH: %8.3ft" % [global.elapsed_play_time_sec])
 
 func reset() -> void:
     if current_path != null:
@@ -107,7 +107,7 @@ func _start_edge(index: int) -> void:
     current_edge_index = index
     current_edge = current_path.edges[index]
     
-    var format_string_template := "STARTING EDGE NAV:   %8.3f; %s"
+    var format_string_template := "STARTING EDGE NAV:   %8.3ft; %s"
     var format_string_arguments := [ \
             global.elapsed_play_time_sec, \
             current_edge.to_string_with_newlines(0), \
@@ -148,13 +148,13 @@ func update() -> void:
         else: # navigation_state.just_interrupted_by_user_action
             interruption_type_label = "navigation_state.just_interrupted_by_user_action"
         
-        print("EDGE MVT INTERRUPTED:%8.3f; %s" % \
+        print("EDGE MVT INTERRUPTED:%8.3ft; %s" % \
                 [global.elapsed_play_time_sec, interruption_type_label])
         # FIXME: Add back in at some point...
 #        navigate_to_nearest_surface(current_path.destination)
         reset()
     elif navigation_state.just_reached_end_of_edge:
-        print("REACHED END OF EDGE: %8.3f; %s" % \
+        print("REACHED END OF EDGE: %8.3ft; %s" % \
                 [global.elapsed_play_time_sec, current_edge.name])
     else:
         # Continuing along an edge.

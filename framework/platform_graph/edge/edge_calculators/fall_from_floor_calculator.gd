@@ -180,7 +180,6 @@ static func _increment_calc_results_start_times(calc_results: MovementCalcResult
 static func _calculate_instructions(start: PositionAlongSurface, \
         end: PositionAlongSurface, calc_results: MovementCalcResults, time_fall_off: float, \
         falls_on_left_side: bool) -> MovementInstructions:
-    # FIXME: REMOVE: Only update actual instructions?
     _increment_calc_results_start_times(calc_results, time_fall_off)
     
     # Calculate the fall-trajectory instructions.

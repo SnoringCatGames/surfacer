@@ -141,7 +141,7 @@ func _physics_process(delta: float) -> void:
     _update_surface_state()
     
     if surface_state.just_left_air:
-        print("GRABBED    :%8s;%8.3f;%29sP;%29sV; %s" % [ \
+        print("GRABBED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \
                 global.elapsed_play_time_sec, \
                 surface_state.center_position, \
@@ -149,7 +149,7 @@ func _physics_process(delta: float) -> void:
                 surface_state.grabbed_surface.to_string(), \
             ])
     elif surface_state.just_entered_air:
-        print("LAUNCHED   :%8s;%8.3f;%29sP;%29sV; %s" % [ \
+        print("LAUNCHED   :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \
                 global.elapsed_play_time_sec, \
                 surface_state.center_position, \
@@ -164,7 +164,7 @@ func _physics_process(delta: float) -> void:
             side_str = "CEILING"
         else:
             side_str = "WALL"
-        print("TOUCHED    :%8s;%8.3f;%29sP;%29sV; %s" % [ \
+        print("TOUCHED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \
                 global.elapsed_play_time_sec, \
                 surface_state.center_position, \
