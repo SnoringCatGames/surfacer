@@ -8,21 +8,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Adjust how edges are weighted.
-#   - It seems like some single edges should be preferred over some edge pairs.
-#     - Maybe each additional edge adds a constant weight?
-#   - Should I give some sort of preference for jumping vs walking vs climbing?
-#     - Maybe this should be built into the MovementParams config, so that different characters
-#       can act differently.
-#   - Should I use time instead of distance for movement across an edge?
-#     - Maybe I should at least calculate and store this on edges/instructions.
-# 
-#    movement_params.uses_duration_instead_of_distance_for_edge_weight = false
-#    movement_params.additional_edge_weight_offset = 32.0
-#    movement_params.walking_edge_weight_multiplier = 1.2
-#    movement_params.climbing_edge_weight_multiplier = 1.5
-#    movement_params.air_edge_weight_multiplier = 1.0
-# 
 # - Intrasurface edge often seems to detect reached-end according to the wrong side when first landing.
 # 
 # - Problem: a* search will return edge pairs for a land immediately followed by a jump from the
