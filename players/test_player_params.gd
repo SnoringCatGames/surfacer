@@ -1,9 +1,9 @@
 extends PlayerParams
 class_name TestPlayerParams
 
-const TestPlayer := preload("res://framework/test/test_data/test_player.gd")
+const TestPlayer := preload("res://players/test_player.gd")
 
-const PLAYER_RESOURCE_PATH := "res://framework/test/test_data/test_player.tscn"
+const PLAYER_RESOURCE_PATH := "res://players/test_player.tscn"
 const NAME := "test"
 const CAN_GRAB_WALLS := true
 const CAN_GRAB_CEILINGS := false

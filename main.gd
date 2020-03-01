@@ -32,7 +32,7 @@ const EDGE_MOVEMENT_CLASSES := [
 const PLAYER_PARAM_CLASSES := [
     preload("res://players/cat_params.gd"),
     preload("res://players/squirrel_params.gd"),
-    preload("res://framework/test/test_data/test_player_params.gd"),
+    preload("res://players/test_player_params.gd"),
 ]
 
 var level: Level
