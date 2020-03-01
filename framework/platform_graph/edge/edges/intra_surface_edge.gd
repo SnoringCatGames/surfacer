@@ -9,9 +9,10 @@ const NAME := "IntraSurfaceEdge"
 const IS_TIME_BASED := false
 const ENTERS_AIR := false
 
-func _init(start: PositionAlongSurface, end: PositionAlongSurface) \
-        .(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, \
-        _calculate_instructions(start, end)) -> void:
+func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
+        movement_params: MovementParams) \
+        .(NAME, IS_TIME_BASED, SurfaceType.get_type_from_side(start.surface.side), ENTERS_AIR, \
+        start, end, movement_params, _calculate_instructions(start, end)) -> void:
     pass
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
@@ -23,9 +24,18 @@ func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface,
     return start.target_point.distance_to(end.target_point)
 
 func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: MovementInstructions, distance: float) -> float:
-    # FIXME: ----------
-    return INF
+        instructions: MovementInstructions, movement_params: MovementParams, \
+        distance: float) -> float:
+    match surface_type:
+        SurfaceType.FLOOR:
+            return MovementUtils.calculate_time_to_walk(distance, 0.0, movement_params)
+        SurfaceType.WALL:
+            var is_climbing_upward := end.target_point.y < start.target_point.y
+            return MovementUtils.calculate_time_to_climb( \
+                    distance, is_climbing_upward, movement_params)
+        _:
+            Utils.error()
+            return INF
 
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:

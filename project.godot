@@ -405,11 +405,6 @@ _global_script_classes=[ {
 "path": "res://framework/player/action/player_action_state.gd"
 }, {
 "base": "Reference",
-"class": "PlayerActionSurfaceType",
-"language": "GDScript",
-"path": "res://framework/player/action/player_action_surface_type.gd"
-}, {
-"base": "Reference",
 "class": "PlayerActionType",
 "language": "GDScript",
 "path": "res://framework/player/action/player_action_type.gd"
@@ -523,6 +518,11 @@ _global_script_classes=[ {
 "class": "SurfaceToAirEdge",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/edges/surface_to_air_edge.gd"
+}, {
+"base": "Reference",
+"class": "SurfaceType",
+"language": "GDScript",
+"path": "res://framework/platform_graph/surface/surface_type.gd"
 }, {
 "base": "Node2D",
 "class": "SurfacesAnnotator",
@@ -689,7 +689,6 @@ _global_script_class_icons={
 "PlayerActionHandler": "",
 "PlayerActionSource": "",
 "PlayerActionState": "",
-"PlayerActionSurfaceType": "",
 "PlayerActionType": "",
 "PlayerAnimator": "",
 "PlayerAnimatorParams": "",
@@ -713,6 +712,7 @@ _global_script_class_icons={
 "SurfaceParser": "",
 "SurfaceSide": "",
 "SurfaceToAirEdge": "",
+"SurfaceType": "",
 "SurfacesAnnotator": "",
 "TestBed": "",
 "TestPlayer": "",

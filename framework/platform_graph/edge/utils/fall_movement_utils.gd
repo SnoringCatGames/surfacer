@@ -31,7 +31,8 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
             .convert_calculation_steps_to_movement_instructions(calc_results, false, \
                     land_position.surface.side)
     
-    return AirToSurfaceEdge.new(origin, land_position, instructions)
+    return AirToSurfaceEdge.new( \
+            origin, land_position, collision_params.movement_params, instructions)
 
 # Finds all possible landing trajectories from the given start state.
 static func find_landing_trajectories(collision_params: CollisionCalcParams, \

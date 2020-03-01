@@ -78,7 +78,10 @@ static func convert_calculation_steps_to_movement_instructions(calc_results: Mov
     
     var frame_continuous_positions_from_steps := _concatenate_step_frame_positions(steps)
     
-    var instructions_wrapper := MovementInstructions.new(instructions, INF, constraint_positions)
+    var duration := vertical_step.time_step_end - vertical_step.time_step_start
+    
+    var instructions_wrapper := \
+            MovementInstructions.new(instructions, duration, constraint_positions)
     instructions_wrapper.frame_continuous_positions_from_steps = \
             frame_continuous_positions_from_steps
     

@@ -8,10 +8,12 @@ class_name ClimbDownWallToFloorEdge
 
 const NAME := "ClimbDownWallToFloorEdge"
 const IS_TIME_BASED := false
+const SURFACE_TYPE := SurfaceType.WALL
 const ENTERS_AIR := false
 
-func _init(start: PositionAlongSurface, end: PositionAlongSurface) \
-        .(NAME, IS_TIME_BASED, ENTERS_AIR, start, end, \
+func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
+        movement_params: MovementParams) \
+        .(NAME, IS_TIME_BASED, SURFACE_TYPE, ENTERS_AIR, start, end, movement_params, \
         _calculate_instructions(start, end)) -> void:
     pass
 
@@ -20,9 +22,9 @@ func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface,
     return Geometry.calculate_manhattan_distance(start.target_point, end.target_point)
 
 func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: MovementInstructions, distance: float) -> float:
-    # FIXME: ----------
-    return INF
+        instructions: MovementInstructions, movement_params: MovementParams, \
+        distance: float) -> float:
+    return MovementUtils.calculate_time_to_climb(distance, false, movement_params)
 
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:

@@ -8,6 +8,25 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# >>>- Check usage/correctness of duration, and tweak weights.
+# >>- Check how distance/duration and just simply path-finding node-comparison works with end-node of wall climb to floor.
+# >- Debug jump from lower-big floor to lower-small floor and grab isn't held long enough to actually grab wall.
+# 
+# - Adjust how edges are weighted.
+#   - It seems like some single edges should be preferred over some edge pairs.
+#     - Maybe each additional edge adds a constant weight?
+#   - Should I give some sort of preference for jumping vs walking vs climbing?
+#     - Maybe this should be built into the MovementParams config, so that different characters
+#       can act differently.
+#   - Should I use time instead of distance for movement across an edge?
+#     - Maybe I should at least calculate and store this on edges/instructions.
+# 
+#    movement_params.uses_duration_instead_of_distance_for_edge_weight = false
+#    movement_params.additional_edge_weight_offset = 32.0
+#    movement_params.walking_edge_weight_multiplier = 1.2
+#    movement_params.climbing_edge_weight_multiplier = 1.5
+#    movement_params.air_edge_weight_multiplier = 1.0
+# 
 # - Intrasurface edge often seems to detect reached-end according to the wrong side when first landing.
 # 
 # - Problem: a* search will return edge pairs for a land immediately followed by a jump from the
@@ -17,17 +36,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #     - (Or that lands on a surface from the air)
 #     - Or maybe just for _any_ edge pair? Should this actually just be part of navigator and not
 #       represented in Path objects?
-# 
-# - Adjust how edges are weighted.
-#   - It seems like some single edges should be preferred over some edge pairs.
-#     - Maybe each additional edge adds a constant weight?
-#   - Should I give some sort of preference for jumping vs walking vs climbing?
-#     - Maybe this should be build into the MovementParams config, so that different characters
-#       can act differently.
-#   - Should I instead use time instead of distance for movement across an edge?
-#     - Maybe I should at least calculate and store this on edges/instructions.
-#   - Should I add a configurable method to the MovementParams API for defining arbitrary weight
-#     calculation for each character type?
 # 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.
@@ -232,6 +240,9 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   wall after passing the end of the wall (assuming the motion was actually touching the wall).
 #   - This is not caused by my logic; it's a property of the underlying Godot collision engine.
 # 
+# - Add a configurable method to the MovementParams API for defining arbitrary weight calculation
+#   for each character type (it could do things like strongly prefer certain edge types). 
+# 
 # >- Commit message:
 # 
 
@@ -319,7 +330,8 @@ func get_edge_to_air(collision_params: CollisionCalcParams, \
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                     calc_results, true, SurfaceSide.NONE)
-    var edge := SurfaceToAirEdge.new(position_start, position_end, instructions)
+    var edge := SurfaceToAirEdge.new( \
+            position_start, position_end, collision_params.movement_params, instructions)
     
     return edge
 
@@ -354,7 +366,7 @@ static func create_edge_from_overall_params( \
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                     calc_results, true, destination_position.surface.side)
-    var edge := JumpFromSurfaceToSurfaceEdge.new( \
-            origin_position, destination_position, instructions)
+    var edge := JumpFromSurfaceToSurfaceEdge.new(origin_position, destination_position, \
+            overall_calc_params.movement_params, instructions)
     
     return edge

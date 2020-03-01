@@ -2,7 +2,7 @@ extends PlayerActionHandler
 class_name FloorDefaultAction
 
 const NAME := "FloorDefaultAction"
-const TYPE := PlayerActionSurfaceType.FLOOR
+const TYPE := SurfaceType.FLOOR
 const PRIORITY := 210
 
 func _init().(NAME, TYPE, PRIORITY) -> void:

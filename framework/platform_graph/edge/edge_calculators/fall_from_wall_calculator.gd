@@ -49,7 +49,8 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
         for calc_results in landing_trajectories:
             land_position = calc_results.overall_calc_params.destination_position
             instructions = _calculate_instructions(jump_position, land_position, calc_results)
-            edge = FallFromWallEdge.new(jump_position, land_position, instructions)
+            edge = FallFromWallEdge.new( \
+                    jump_position, land_position, movement_params, instructions)
             edges_result.push_back(edge)
 
 static func _calculate_instructions(start: PositionAlongSurface, \

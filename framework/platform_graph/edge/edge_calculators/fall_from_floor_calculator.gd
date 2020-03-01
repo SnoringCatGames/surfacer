@@ -115,7 +115,7 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
         instructions = _calculate_instructions(position_start, position_end, calc_results, \
                 time_fall_off, falls_on_left_side)
         edge = FallFromFloorEdge.new( \
-                position_start, position_end, instructions, falls_on_left_side)
+                position_start, position_end, movement_params, instructions, falls_on_left_side)
         edges_result.push_back(edge)
 
 static func _calculate_player_center_at_fall_off_point(edge_point: Vector2, \
@@ -195,5 +195,7 @@ static func _calculate_instructions(start: PositionAlongSurface, \
             MovementInstruction.new(sideways_input_key, time_fall_off - 0.0001, false)
     instructions.instructions.push_front(outward_release)
     instructions.instructions.push_front(outward_press)
+    
+    instructions.duration += time_fall_off
     
     return instructions

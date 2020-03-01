@@ -85,4 +85,10 @@ func _create_movement_params() -> MovementParams:
     
     movement_params.friction_multiplier = 0.01
     
+    movement_params.uses_duration_instead_of_distance_for_edge_weight = false
+    movement_params.additional_edge_weight_offset = 32.0
+    movement_params.walking_edge_weight_multiplier = 1.2
+    movement_params.climbing_edge_weight_multiplier = 1.5
+    movement_params.air_edge_weight_multiplier = 1.0
+    
     return movement_params

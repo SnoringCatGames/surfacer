@@ -2,7 +2,7 @@ extends PlayerActionHandler
 class_name FloorFallThroughAction
 
 const NAME := "FloorFallThroughAction"
-const TYPE := PlayerActionSurfaceType.FLOOR
+const TYPE := SurfaceType.FLOOR
 const PRIORITY := 220
 
 func _init().(NAME, TYPE, PRIORITY) -> void:

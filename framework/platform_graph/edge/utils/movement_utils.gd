@@ -366,3 +366,18 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams, \
         velocity.y = 0
     
     return velocity
+
+static func calculate_time_to_climb(distance: float, is_climbing_upward: bool, \
+        movement_params: MovementParams) -> float:
+    var speed := movement_params.climb_up_speed if is_climbing_upward else \
+            movement_params.climb_down_speed
+    # From a basic equation of motion:
+    #     s = s_0 + v*t
+    # Algebra...
+    #     t = (s - s_0) / v
+    return distance / speed
+
+static func calculate_time_to_walk(distance: float, v_0: float, \
+        movement_params: MovementParams) -> float:
+    return calculate_min_time_to_reach_displacement(distance, v_0, \
+            movement_params.max_horizontal_speed_default, movement_params.walk_acceleration)

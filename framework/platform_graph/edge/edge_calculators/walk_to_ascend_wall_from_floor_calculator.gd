@@ -37,7 +37,8 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
         var end_position := MovementUtils.create_position_offset_from_target_point( \
                 wall_bottom_point, upper_neighbor_wall, movement_params.collider_half_width_height)
         
-        var edge := WalkToAscendWallFromFloorEdge.new(start_position, end_position)
+        var edge := WalkToAscendWallFromFloorEdge.new( \
+                start_position, end_position, movement_params)
         edges_result.push_back(edge)
     
     if origin_surface.concave_clockwise_neighbor != null:
@@ -52,5 +53,6 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
         var end_position := MovementUtils.create_position_offset_from_target_point( \
                 wall_bottom_point, upper_neighbor_wall, movement_params.collider_half_width_height)
         
-        var edge := WalkToAscendWallFromFloorEdge.new(start_position, end_position)
+        var edge := WalkToAscendWallFromFloorEdge.new( \
+                start_position, end_position, movement_params)
         edges_result.push_back(edge)

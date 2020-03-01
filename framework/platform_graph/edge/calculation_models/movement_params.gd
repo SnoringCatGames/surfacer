@@ -48,6 +48,12 @@ var time_to_max_upward_jump_distance: float
 
 var friction_multiplier: float
 
+var uses_duration_instead_of_distance_for_edge_weight := false
+var additional_edge_weight_offset := 0.0
+var walking_edge_weight_multiplier := 1.0
+var climbing_edge_weight_multiplier := 1.0
+var air_edge_weight_multiplier := 1.0
+
 func get_max_horizontal_jump_distance(surface_side: int) -> float:
     return wall_jump_max_horizontal_jump_distance if \
             surface_side == SurfaceSide.LEFT_WALL or \

@@ -8,6 +8,8 @@ var name: String
 # according to surface state).
 var is_time_based: bool
 
+var surface_type: int
+
 # Whether the movement along this edge transitions from grabbing a surface to being airborne.
 var enters_air: bool
 
@@ -19,8 +21,6 @@ var duration: float
 var start_position_along_surface: PositionAlongSurface
 var end_position_along_surface: PositionAlongSurface
 
-var weight: float setget ,_get_weight
-
 var start: Vector2 setget ,_get_start
 var end: Vector2 setget ,_get_end
 
@@ -30,20 +30,23 @@ var end_surface: Surface setget ,_get_end_surface
 func _init(\
         name: String, \
         is_time_based: bool, \
+        surface_type: int, \
         enters_air: bool, \
         start_position_along_surface: PositionAlongSurface, \
         end_position_along_surface: PositionAlongSurface, \
+        movement_params: MovementParams, \
         instructions: MovementInstructions) -> void:
     self.name = name
     self.is_time_based = is_time_based
+    self.surface_type = surface_type
     self.enters_air = enters_air
     self.start_position_along_surface = start_position_along_surface
     self.end_position_along_surface = end_position_along_surface
     self.instructions = instructions
     self.distance = _calculate_distance( \
             start_position_along_surface, end_position_along_surface, instructions)
-    self.duration = _calculate_duration( \
-            start_position_along_surface, end_position_along_surface, instructions, distance)
+    self.duration = _calculate_duration(start_position_along_surface, end_position_along_surface, \
+            instructions, movement_params, distance)
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
     # Do nothing unless the sub-class implements this.
@@ -78,7 +81,8 @@ func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface,
     return INF
 
 func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: MovementInstructions, distance: float) -> float:
+        instructions: MovementInstructions, movement_params: MovementParams, \
+        distance: float) -> float:
     Utils.error("Abstract Edge._calculate_duration is not implemented")
     return INF
 
@@ -87,9 +91,25 @@ func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, 
     Utils.error("Abstract Edge._check_did_just_reach_destination is not implemented")
     return false
 
-func _get_weight() -> float:
-    # FIXME: LEFT OFF HERE: --------------------------A Incorporate smarter, configurable weights.
-    return distance
+func get_weight(movement_params: MovementParams) -> float:
+    # Use either the distance or the duration as the weight for the edge.
+    var weight := duration if \
+            movement_params.uses_duration_instead_of_distance_for_edge_weight else \
+            distance
+    
+    # Apply a multiplier to the weight according to the type of edge.
+    match surface_type:
+        SurfaceType.FLOOR:
+            weight *= movement_params.walking_edge_weight_multiplier
+        SurfaceType.WALL:
+            weight *= movement_params.climbing_edge_weight_multiplier
+        SurfaceType.AIR:
+            weight *= movement_params.air_edge_weight_multiplier
+    
+    # Give a constant extra weight for each additional edge in a path.
+    weight += movement_params.additional_edge_weight_offset
+    
+    return weight
 
 func _get_start() -> Vector2:
     return start_position_along_surface.target_point
