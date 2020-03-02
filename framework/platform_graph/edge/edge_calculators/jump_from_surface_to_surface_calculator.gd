@@ -18,6 +18,15 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #     - Or maybe just for _any_ edge pair? Should this actually just be part of navigator and not
 #       represented in Path objects?
 # 
+# - Add a couple additional things to configure in MovementParams:
+#   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
+#   - Whether to backtrack to consider higher jumps.
+#   - Whether to return only the first valid edge between a pair of surfaces, or to return all valid edges.
+#   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
+#     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
+#   - How much radius to use for collision calculations.
+#   - 
+# 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.
 #     - Collision detection isn't correctly detecting the collision with the right-side of the upper block.
@@ -161,7 +170,7 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   would get in the way.
 # 
 # - Add better annotation selection.
-#   - Add shorcuts for toggling debugging annotations
+#   - Add shortcuts for toggling debugging annotations
 #     - Add support for triggering the calc-step annotations based on a shortcut.
 #       - i
 #       - also, require clicking on the start and end positions in order to select which edge to
@@ -176,6 +185,10 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #       - whether the player's current surface is rendered
 #       - whether all edges are rendered
 #       - whether grid boundaries+indices are rendered
+#       - whether the ruler is rendered
+#       - whether the actual level tilemap is rendered
+#       - whether the background is rendered
+#       - whether the actual players are rendered
 #     - create a collapsible dat.GUI-esque menu at the top-right that lists all the possible
 #       annotation configuration options
 #       - set up a nice API for creating these, setting values, listening for value changes, and

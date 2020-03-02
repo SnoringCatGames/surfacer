@@ -415,6 +415,7 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             
         else:
             # This is an intermediate constraint (not the origin or destination).
+            
             time_passing_through = \
                     VerticalMovementUtils.calculate_time_for_passing_through_constraint( \
                             movement_params, constraint, \

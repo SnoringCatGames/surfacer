@@ -329,6 +329,12 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 # - Think through and maybe fix the function in constraint utils for accounting for max-speed vs
 #   min/max for valid next step?
 # 
+# - After having a finished demo for v1.0, abandon HTML exports for v2.0.
+#   - Unless HTML will get support for GDNative (https://github.com/godotengine/godot/issues/12243).
+#   - Port most of the graph and collision logic to GDNative.
+#   - Add an R-Tree for representing the surfaces and nodes.
+#   - Use a TCP-based networking API for more efficient networking.
+# 
 
 
 const CLUSTER_CELL_SIZE := 0.5

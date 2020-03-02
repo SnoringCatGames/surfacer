@@ -1,5 +1,5 @@
 extends Node2D
-class_name JumpFromSurfaceToSurfaceEdgesAnnotator
+class_name InterSurfaceEdgesAnnotator
 
 const EdgeCalculationAnnotator := preload("res://framework/annotators/edge_calculation_annotator.gd")
 
