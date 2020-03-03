@@ -17,6 +17,23 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - How much radius to use for collision calculations.
 #   - Whether to calculate dynamic departure edges (dynamic start velocity and positions).
 # 
+# - Analytics!
+#   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
+#     - number of attempted steps,
+#     - types of steps,
+#     - number of collisions,
+#     - number of backtracking attempts,
+#   - Then put together some interesting aggregations, such as:
+#     - time spent calculating each edge,
+#     - Avg time spent calculating each different type of edge,
+#     - how many collisions on avg for jump/fall,
+#     - ...
+#   - Try to use these analytics to inform decisions around which calculations are worth it.
+#   - Maybe add a new configuration for max number of collisions/intermediate-constraints to allow
+#     in an edge calculation before giving up (or, recursion depth (with and without backtracking))?
+# 
+# - Make screenshots and diagrams for README.
+# 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.
 #     - Collision detection isn't correctly detecting the collision with the right-side of the upper block.
