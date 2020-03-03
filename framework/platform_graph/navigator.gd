@@ -62,6 +62,27 @@ func navigate_to_nearby_surface(target: Vector2, \
     else:
         # Destination can be reached from origin.
         
+        # Insert extra intra-surface between any edges that land and then immediately jump from the
+        # same position, since the land position could be off due to movement error at runtime.
+        var i := 0
+        var count := path.edges.size()
+        var edge: Edge
+        while i < count:
+            edge = path.edges[i]
+            # Check whether this edge lands on a surface from the air.
+            if edge.surface_type == SurfaceType.AIR and edge.end_surface != null:
+                # Since the surface lands on the surface from the air, there could be enough
+                # movement error that we should move along the surface to the intended land position
+                # before executing the next originally calculated edge (but don't worry about
+                # IntraSurfaceEdges, since they'll end up moving to the correct spot anyway).
+                if i + 1 < count and !(path.edges[i + 1] is IntraSurfaceEdge):
+                    path.edges.insert(i + 1, IntraSurfaceEdge.new( \
+                            edge.end_position_along_surface, edge.end_position_along_surface, \
+                            player.movement_params))
+                    i += 1
+                    count += 1
+            i += 1
+        
         var format_string_template := "STARTING PATH NAV:   %8.3ft; {" + \
             "\n\tdestination: %s," + \
             "\n\tpath: %s," + \
@@ -121,10 +142,14 @@ func _start_edge(index: int) -> void:
         surface_state.horizontal_acceleration_sign = 0
     
     current_edge.update_for_surface_state(surface_state)
+    navigation_state.is_expecting_to_enter_air = current_edge.enters_air
     
     current_playback = instructions_action_source.start_instructions( \
             current_edge, global.elapsed_play_time_sec)
-    navigation_state.is_expecting_to_enter_air = current_edge.enters_air
+    
+    # Some instructions could be immediately skipped, depending on runtime state, so this gives us
+    # a change to move straight to the next edge.
+    update()
 
 # Updates navigation state in response to the current surface state.
 func update() -> void:

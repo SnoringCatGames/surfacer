@@ -8,14 +8,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Problem: a* search will return edge pairs for a land immediately followed by a jump from the
-#   same position, when we should account for the land being off-by-a-bit and needing to insert an
-#   extra intra-surface edge.
-#   - Should make the fix generic to work for any edge that might end in a slightly off position
-#     - (Or that lands on a surface from the air)
-#     - Or maybe just for _any_ edge pair? Should this actually just be part of navigator and not
-#       represented in Path objects?
-# 
 # - Add a couple additional things to configure in MovementParams:
 #   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
 #   - Whether to backtrack to consider higher jumps.

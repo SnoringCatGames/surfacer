@@ -9,6 +9,8 @@ const NAME := "IntraSurfaceEdge"
 const IS_TIME_BASED := false
 const ENTERS_AIR := false
 
+const REACHED_DESTINATION_DISTANCE_SQUARED_THRESHOLD := 2.0
+
 func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
         movement_params: MovementParams) \
         .(NAME, IS_TIME_BASED, SurfaceType.get_type_from_side(start.surface.side), ENTERS_AIR, \
@@ -43,13 +45,17 @@ func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, 
     var target_point: Vector2 = self.end
     var was_less_than_end: bool
     var is_less_than_end: bool
+    var diff: float
     if surface_state.is_grabbing_wall:
         was_less_than_end = surface_state.previous_center_position.y < target_point.y
         is_less_than_end = surface_state.center_position.y < target_point.y
+        diff = target_point.y - surface_state.center_position.y
     else:
         was_less_than_end = surface_state.previous_center_position.x < target_point.x
         is_less_than_end = surface_state.center_position.x < target_point.x
-    return was_less_than_end != is_less_than_end
+        diff = target_point.x - surface_state.center_position.x
+    return was_less_than_end != is_less_than_end or abs(diff) < \
+            REACHED_DESTINATION_DISTANCE_SQUARED_THRESHOLD
 
 static func _calculate_instructions(start: PositionAlongSurface, \
         end: PositionAlongSurface) -> MovementInstructions:
