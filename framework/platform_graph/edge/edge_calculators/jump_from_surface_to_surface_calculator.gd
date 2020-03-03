@@ -8,8 +8,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Intrasurface edge often seems to detect reached-end according to the wrong side when first landing.
-# 
 # - Problem: a* search will return edge pairs for a land immediately followed by a jump from the
 #   same position, when we should account for the land being off-by-a-bit and needing to insert an
 #   extra intra-surface edge.
@@ -25,7 +23,7 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
 #     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
 #   - How much radius to use for collision calculations.
-#   - 
+#   - Whether to calculate dynamic departure edges (dynamic start velocity and positions).
 # 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.

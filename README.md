@@ -2,9 +2,9 @@
 
 _A procedural pathfinding 2D-platformer framework for Godot._
 
-_"Surfacer": Like a platformer, but with walking and climbing on all surfaces!_
+_"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 
-TODO: Once v1.0 of this framework is done, split this apart into two repos: one for the underlying framework, and one for the demo game.
+TODO: Once v1.0 of this framework is done, split this apart into two repos: one for the underlying framework, and one for the demo game ("Squirrel Away").
 
 TODO: Link to demo app.
 
@@ -239,10 +239,10 @@ TODO: screenshot of example scenario
 
 #### Collision calculation madness
 
-tl;dr: Godot's collision-detection engine is very broken. We try to make it work for our
+**tl;dr**: Godot's collision-detection engine is very broken. We try to make it work for our
 pathfinding, but there are still many false negatives and rough edges.
 
-Here's a direct quote from Godot's underlying collision-calculation logic:
+Here's a direct quote from a comment in Godot's underlying collision-calculation logic:
 
 > give me back regular physics engine logic
 > this is madness
@@ -255,6 +255,20 @@ Here's a direct quote from Godot's underlying collision-calculation logic:
 
 Some known limitations and rough edges include:
 -   TODO
+
+### Navigator: Using the platform graph to move from A to B
+
+Once the platform graph has been parsed, finding and moving along a path through the graph is relatively straight-forward. The sequence of events looks like the following:
+
+-   Given a target point to navigate towards and the player's current position.
+-   Find the closest point along the closest surface to the target point.
+-   Use A* search to find a path through the graph from the origin to the destination.
+    -   We can use distance or duration as the edge weights.
+-   Execute playback of the instruction set for each edge of the path, in sequence.
+
+#### Edge instructions playback
+
+When we create the edges, we represent the movement trajectories according to the sequence of instructions that would produce the trajectory. Each instruction is simply represented by an ID for the relevant input key, whether the key is being pressed or released, and the time. The player movement system can then handle these input key events in the same way as actual human-triggered input key events.
 
 ## Annotators
 

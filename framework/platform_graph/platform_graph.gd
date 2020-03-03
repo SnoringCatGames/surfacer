@@ -335,6 +335,17 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   - Add an R-Tree for representing the surfaces and nodes.
 #   - Use a TCP-based networking API for more efficient networking.
 # 
+# - Interesting idea for being able to traverse bumpy floors and walls (assuming small tile size relative to player size).
+#   - During graph surface parsing stage, look at neighbor surfaces.
+#   - If there is a sequence of short edges that form a zig-zag, or a brief small bump, we can ignore the small surface deviations and lump the whole thing into the same surface type as the predominant neighbor surface.
+#     - If there is a floor on both sides, then call the bump a floor.
+#     - If there is a wall on both sides, then call the bump a wall.
+#     - If there is a floor on one side and a wall on the other, then call the bump a floor.
+#     - PROBLEM: How to handle falling down a wall and wanting to land on the small bump ledge?
+#       - Maybe only translate the bump ceiling component into a wall component, and leave the floor component as a floor component?
+#       - Maybe have the tolerable floor merge bump size be different (and less permissive) than the ceiling size.
+#   - Make the tolerable bump deviation size configurable (not necessarily tied to the size of a single tile).
+# 
 
 
 const CLUSTER_CELL_SIZE := 0.5
