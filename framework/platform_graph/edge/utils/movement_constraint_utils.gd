@@ -9,9 +9,14 @@ const MIN_MAX_VELOCITY_X_OFFSET := 0.01# FIXME: ------------------------
 # FIXME: A: Replace the hard-coded usage of a max-speed ratio with a smarter x-velocity.
 const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULTIPLIER := 0.5
 
-static func create_terminal_constraints(origin_position: PositionAlongSurface, \
-        destination_position: PositionAlongSurface, movement_params: MovementParams, \
-        can_hold_jump_button: bool, velocity_start := Vector2.INF, \
+static func create_terminal_constraints( \
+        origin_position: PositionAlongSurface, \
+        destination_position: PositionAlongSurface, \
+        movement_params: MovementParams, \
+        can_hold_jump_button: bool, \
+        velocity_start := Vector2.INF, \
+        velocity_end_min_x := INF, \
+        velocity_end_max_x := INF, \
         returns_invalid_constraints := false) -> Array:
     assert(origin_position.surface != null or velocity_start != Vector2.INF)
     if velocity_start == Vector2.INF:
@@ -31,6 +36,10 @@ static func create_terminal_constraints(origin_position: PositionAlongSurface, \
     origin.next_constraint = destination
     destination.is_destination = true
     destination.previous_constraint = origin
+    
+    if velocity_end_min_x != INF or velocity_end_max_x != INF:
+        destination.min_velocity_x = velocity_end_min_x
+        destination.max_velocity_x = velocity_end_max_x
     
     # FIXME: B: Consider adding support for specifying required end x-velocity (and y direction)?
     #           For hitting walls.
@@ -410,8 +419,13 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             # Specifically, when the horizontal movement sign of the destination changes, due to a
             # new intermediate constraint, either the min or max would be incorrectly capped at 0
             # when we're calculating the min/max for the new constraint.
-            min_velocity_x = -movement_params.max_horizontal_speed_default
-            max_velocity_x = movement_params.max_horizontal_speed_default
+            # 
+            # If this was already assigned a min/max (because we need the edge's movement to end in
+            # a certain direction), use that; otherwise, use max possible speed values.
+            min_velocity_x = constraint.min_velocity_x if constraint.min_velocity_x != INF else \
+                    -movement_params.max_horizontal_speed_default
+            max_velocity_x = constraint.max_velocity_x if constraint.max_velocity_x != INF else \
+                    movement_params.max_horizontal_speed_default
             
         else:
             # This is an intermediate constraint (not the origin or destination).

@@ -1,6 +1,8 @@
 extends Reference
 class_name EdgeMovementCalculator
 
+const MIN_LAND_ON_WALL_SPEED := 50.0
+
 var name: String
 
 func _init(name: String) -> void:
@@ -23,10 +25,21 @@ static func create_movement_calc_overall_params(
         can_hold_jump_button: bool, \
         velocity_start: Vector2, \
         returns_invalid_constraints: bool, \
-        in_debug_mode: bool) -> MovementCalcOverallParams:
+        in_debug_mode: bool, \
+        velocity_end_min_x := INF, \
+        velocity_end_max_x := INF) -> MovementCalcOverallParams:
+    # When landing on a wall, ensure that we end with velocity moving into the wall.
+    if destination_position.surface != null:
+        if destination_position.surface.side == SurfaceSide.LEFT_WALL:
+            velocity_end_min_x = -collision_params.movement_params.max_horizontal_speed_default
+            velocity_end_max_x = -MIN_LAND_ON_WALL_SPEED
+        if destination_position.surface.side == SurfaceSide.RIGHT_WALL:
+            velocity_end_min_x = MIN_LAND_ON_WALL_SPEED
+            velocity_end_max_x = collision_params.movement_params.max_horizontal_speed_default
+    
     var terminals := MovementConstraintUtils.create_terminal_constraints(origin_position, \
             destination_position, collision_params.movement_params, can_hold_jump_button, \
-            velocity_start, returns_invalid_constraints)
+            velocity_start, velocity_end_min_x, velocity_end_max_x, returns_invalid_constraints)
     if terminals.empty():
         return null
     

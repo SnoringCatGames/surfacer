@@ -234,7 +234,7 @@ TODO: screenshot of example scenario
 
 #### Example jump-movement cases that aren't currently covered
 
--   A single horizontal step that needs multiple different sideways-movement instructions:
+-   A single horizontal step that needs multiple different sideways-movement instructions (i.e., accelerating to both one side and then the other in the same jump):
     -   For example, backward acceleration in order to not overshoot the end position as well as forward acceleration to then have enough step-end x velocity in order to reach the following constraint for the next step.
 
 #### Collision calculation madness

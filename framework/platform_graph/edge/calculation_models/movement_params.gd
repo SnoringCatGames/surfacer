@@ -27,6 +27,8 @@ var climb_up_speed: float
 var climb_down_speed: float
 
 var should_minimize_velocity_change_when_jumping: bool
+var forces_player_position_to_match_edge_at_start := true
+var forces_player_velocity_to_match_edge_at_start := true
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

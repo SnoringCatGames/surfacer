@@ -8,6 +8,64 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# >>>>- Consider adding support for duplicatively calculating all edges, but with max-speed start
+#   velocity.
+#   - Only for floors and ceilings.
+#   - Direction based off side of surface.
+#   - But also check first to see that there would be available run-up length along the surface.
+#   - We'd then need to also modify PlatformGraph path finding to consider whether we'd have
+#     available run-up distance to use the max-speed version of the edge.
+#     - Make path-finding prefer max-speed versions.
+#   - Make the calculation of these duplicate edges conditional on another movement_param config
+#     field.
+#
+# - Update navigation to do some additional on-the-fly edge calculations.
+#   - Only limit this to a few additional potential edges along the path.
+#   - The idea is that the edges tend to produce very unnatural composite trajectories (similar to
+#     using perpendicular Manhatten distance routes instead of more diagonal routes).
+#   >- Basically, try jumping from earlier on any given surface.
+#     - It may be hard to know exactly where along a surface to try jumping from though...
+#     - Should probably just use some simple heuristic and just give up when they fail with
+#       false-positive rates.
+#   >- Also, update velocity_start for these on-the-fly edges to be more intelligent.
+#   >>>- An attempt to think through the steps:
+#     - In Navigator, get Path from PlatformGraph, as normal.
+#     - For each edge:
+#       - If we're looking at an IntraSurfaceEdge: A.
+#       - Look at the next edge: B.
+#       - Consider whether to use a different velocity-start:
+#         - If movement_params indicates that we did parse the graph with duplicate velocity start values:
+#           - Then, continue using whatever velocity-start value was assigned to B.
+#           - Else, maybe use max-speed velocity start instead of 0.
+#       - Look at the start of B: if it's very close, we don't need to try calculating a new
+#         jump-off point.
+#       - Binary search to try to find a sooner jump-off point in order to get to the end surface.
+#         - But limit this search to be at a ramp-up distance in order to hit max-speed
+#           velocity-start, if needed.
+#       >>>- Land positions...
+#         - 
+#        
+# 
+# - Update edge-calculations to support variable velocity_start_x values?
+#     - Allow for up-front edge calculation to use any desired velocity_start_x between
+#       -max_horizontal_speed_default and max_horizontal_speed_default.
+#     - This is probably a decent approximation, since we can usually assume that the ramp-up
+#       distance to get from 0 to max-x-speed on the floor is small enough that we can ignore it.
+#     - We could probably actually do an even better job by limiting the range for velocity_start_x
+#       for floor-surface-end-jump-off-points to be between either -max_horizontal_speed_default and
+#       0 or 0 and max_horizontal_speed_default.
+#   - [UPDATE] Probably not going to be possible from within constraint calculations. They need to
+#     be given a single known velocity_start. However, we could try just running the calculations
+#     with different discrete velocity_start values.
+# 
+# - Add support for forcing state during edge movement to match what is expected from the original edge calculations.
+#   - Configurable.
+#   - Apply this to both position and velocity.
+#   - Also, allow for this to use a weighted average of the expected state vs the actual state from normal run-time.
+#   - Also, add a warning message when the player is too far from what's expected.
+# 
+# ---  ---
+# 
 # - Add a couple additional things to configure in MovementParams:
 #   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
 #   - Whether to backtrack to consider higher jumps.
@@ -90,7 +148,7 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - Add a top-level button to debug menu to hide all annotations.
 #     - (grid, clicks, player position, player recent movement, platform graph, ...)
 # 
-# - In the README, list the types of annotations and MovementParams.
+# - In the README, list the types of MovementParams.
 # 
 # - Prepare a different, more interesting level for demo (some walls connecting to floors too).
 # 
@@ -104,38 +162,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - A couple edges
 #   - All edges
 #   - 
-# 
-# - Update README.
-# 
-# ---  ---
-# 
-# - Update navigation to do some additional on-the-fly edge calculations.
-#   - Only limit this to a few additional potential edges along the path.
-#   - The idea is that the edges tend to produce very unnatural composite trajectories (similar to
-#     using perpendicular Manhatten distance routes instead of more diagonal routes).
-#   >- Basically, try jumping from earlier on any given surface.
-#     - It may be hard to know exactly where along a surface to try jumping from though...
-#     - Should probably just use some simple heuristic and just give up when they fail with
-#       false-positive rates.
-#   >- Also, update velocity_start for these on-the-fly edges to be more intelligent.
-# 
-# - Update navigator to force player state to match expected edge start state.
-#   - Configurable.
-#   - Both position and velocity.
-# - Add support for forcing state during edge movement to match what is expected from the original edge calculations.
-#   - Configurable.
-#   - Apply this to both position and velocity.
-#   - Also, allow for this to use a weighted average of the expected state vs the actual state from normal run-time.
-#   - Also, add a warning message when the player is too far from what's expected.
-# 
-# - Update edge-calculations to support variable velocity_start_x values.
-#   - Allow for up-front edge calculation to use any desired velocity_start_x between
-#     -max_horizontal_speed_default and max_horizontal_speed_default.
-#   - This is probably a decent approximation, since we can usually assume that the ramp-up
-#     distance to get from 0 to max-x-speed on the floor is small enough that we can ignore it.
-#   - We could probably actually do an even better job by limiting the range for velocity_start_x
-#     for floor-surface-end-jump-off-points to be between either -max_horizontal_speed_default and
-#     0 or 0 and max_horizontal_speed_default.
 # 
 # ---  ---
 # 

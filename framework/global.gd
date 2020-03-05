@@ -82,13 +82,6 @@ const DEBUG_STATE := {
     },
 }
 
-const NAVIGATOR_STATE := {
-    forces_player_position_to_match_edge_at_start = true,
-    forces_player_velocity_to_match_edge_at_start = true,
-    forces_player_position_to_match_edge_in_middle = true,
-    forces_player_velocity_to_match_edge_in_middle = true,
-}
-
 const PLAYER_ACTIONS := {}
 
 const EDGE_MOVEMENTS := {}

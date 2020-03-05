@@ -135,9 +135,9 @@ func _start_edge(index: int) -> void:
         ]
     print(format_string_template % format_string_arguments)
     
-    if global.NAVIGATOR_STATE.forces_player_position_to_match_edge_at_start:
+    if player.movement_params.forces_player_position_to_match_edge_at_start:
         player.position = current_edge.start
-    if global.NAVIGATOR_STATE.forces_player_velocity_to_match_edge_at_start:
+    if player.movement_params.forces_player_velocity_to_match_edge_at_start:
         player.velocity = Vector2.ZERO
         surface_state.horizontal_acceleration_sign = 0
     

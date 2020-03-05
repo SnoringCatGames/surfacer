@@ -111,7 +111,9 @@ func _create_movement_params() -> MovementParams:
     movement_params.climb_up_speed = -350.0
     movement_params.climb_down_speed = 150.0
     
-    movement_params.should_minimize_velocity_change_when_jumping = true
+    movement_params.should_minimize_velocity_change_when_jumping = false
+    movement_params.forces_player_position_to_match_edge_at_start = true
+    movement_params.forces_player_velocity_to_match_edge_at_start = true
     
     movement_params.max_horizontal_speed_default = 400.0
     movement_params.min_horizontal_speed = 5.0
