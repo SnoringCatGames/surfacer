@@ -29,6 +29,8 @@ var climb_down_speed: float
 var should_minimize_velocity_change_when_jumping: bool
 var forces_player_position_to_match_edge_at_start := true
 var forces_player_velocity_to_match_edge_at_start := true
+var calculates_edges_from_surface_ends_with_velocity_start_x_zero := false
+var calculates_edges_with_velocity_start_x_max_speed := true
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float
@@ -47,6 +49,7 @@ var floor_jump_max_horizontal_jump_distance: float
 var wall_jump_max_horizontal_jump_distance: float
 var max_upward_jump_distance: float
 var time_to_max_upward_jump_distance: float
+var distance_to_max_horizontal_speed: float
 
 var friction_multiplier: float
 
@@ -61,19 +64,3 @@ func get_max_horizontal_jump_distance(surface_side: int) -> float:
             surface_side == SurfaceSide.LEFT_WALL or \
             surface_side == SurfaceSide.RIGHT_WALL else \
             floor_jump_max_horizontal_jump_distance
-
-func get_jump_initial_velocity(surface_side: int) -> Vector2:
-    # Initial velocity when jumping from a wall is slightly outward from the wall.
-    var velocity_start_x := INF
-    match surface_side:
-        SurfaceSide.LEFT_WALL:
-            velocity_start_x = wall_jump_horizontal_boost
-        SurfaceSide.RIGHT_WALL:
-            velocity_start_x = -wall_jump_horizontal_boost
-        SurfaceSide.FLOOR:
-            velocity_start_x = 0.0
-        SurfaceSide.CEILING:
-            velocity_start_x = 0.0
-        _:
-            Utils.error()
-    return Vector2(velocity_start_x, jump_boost)

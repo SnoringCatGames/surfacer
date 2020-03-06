@@ -25,6 +25,12 @@ func _init(name: String, player_resource_path: String, global) -> void:
     _movement_params.time_to_max_upward_jump_distance = \
             MovementUtils.calculate_movement_duration(-_movement_params.max_upward_jump_distance, \
                     _movement_params.jump_boost, _movement_params.gravity_slow_rise)
+    # From a basic equation of motion: v^2 = v_0^2 + 2*a*(s - s_0)
+    # Algebra: (s - s_0) = (v^2 - v_0^2) / 2 / a
+    _movement_params.distance_to_max_horizontal_speed = \
+            _movement_params.max_horizontal_speed_default * \
+            _movement_params.max_horizontal_speed_default / \
+            2.0 / _movement_params.walk_acceleration
     _movement_params.floor_jump_max_horizontal_jump_distance = \
             HorizontalMovementUtils.calculate_max_horizontal_displacement_before_returning_to_starting_height( \
                     0.0, _movement_params.jump_boost, \
@@ -94,6 +100,8 @@ func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.dash_fade_duration >= 0)
     assert(movement_params.dash_cooldown >= 0)
     assert(movement_params.dash_vertical_boost <= 0)
+    assert(movement_params.calculates_edges_from_surface_ends_with_velocity_start_x_zero or \
+            movement_params.calculates_edges_with_velocity_start_x_max_speed)
 
 static func _compare_action_handlers(a: PlayerActionHandler, b: PlayerActionHandler) -> bool:
     return a.priority < b.priority

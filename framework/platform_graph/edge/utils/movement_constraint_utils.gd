@@ -14,14 +14,10 @@ static func create_terminal_constraints( \
         destination_position: PositionAlongSurface, \
         movement_params: MovementParams, \
         can_hold_jump_button: bool, \
-        velocity_start := Vector2.INF, \
+        velocity_start: Vector2, \
         velocity_end_min_x := INF, \
         velocity_end_max_x := INF, \
         returns_invalid_constraints := false) -> Array:
-    assert(origin_position.surface != null or velocity_start != Vector2.INF)
-    if velocity_start == Vector2.INF:
-        velocity_start = movement_params.get_jump_initial_velocity(origin_position.surface.side)
-    
     var origin_passing_vertically := origin_position.surface.normal.x == 0 if \
             origin_position.surface != null else true
     var destination_passing_vertically := destination_position.surface.normal.x == 0 if \

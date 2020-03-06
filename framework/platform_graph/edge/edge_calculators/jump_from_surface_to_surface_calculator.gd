@@ -18,6 +18,13 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #     - Make path-finding prefer max-speed versions.
 #   - Make the calculation of these duplicate edges conditional on another movement_param config
 #     field.
+#     - And actually, when this flag is false, only calculate the versions with velocity-start as
+#       max-speed.
+#       - The velocity-start zero versions should be much less frequently used, and can be
+#         calculated on-the-fly anyway.
+#   - movement_params.calculates_edges_with_velocity_start_zero
+#   - movement_params.calculates_edges_with_velocity_start_max_speed
+#   - movement_params.distance_to_max_horizontal_speed
 #
 # - Update navigation to do some additional on-the-fly edge calculations.
 #   - Only limit this to a few additional potential edges along the path.
@@ -36,7 +43,7 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #       - Consider whether to use a different velocity-start:
 #         - If movement_params indicates that we did parse the graph with duplicate velocity start values:
 #           - Then, continue using whatever velocity-start value was assigned to B.
-#           - Else, maybe use max-speed velocity start instead of 0.
+#           - Else, maybe use 0 velocity-start instead of max-speed.
 #       - Look at the start of B: if it's very close, we don't need to try calculating a new
 #         jump-off point.
 #       - Binary search to try to find a sooner jump-off point in order to get to the end surface.
@@ -287,10 +294,10 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
         origin_surface: Surface) -> void:
     var movement_params := collision_params.movement_params
     var debug_state := collision_params.debug_state
-    var velocity_start := movement_params.get_jump_initial_velocity(origin_surface.side)
     
     var jump_positions: Array
     var land_positions: Array
+    var velocity_starts: Array
     var edge: JumpFromSurfaceToSurfaceEdge
     
     for destination_surface in surfaces_in_jump_range_set:
@@ -323,12 +330,18 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
                         debug_state.limit_parsing.has("edge") != null
                 ###################################################################################
                 
-                edge = calculate_edge(collision_params, jump_position, land_position, true, \
-                        velocity_start, false, in_debug_mode)
+                velocity_starts = get_jump_velocity_starts( \
+                        movement_params, origin_surface, jump_position)
+                
+                for velocity_start in velocity_starts:
+                    edge = calculate_edge(collision_params, jump_position, land_position, true, \
+                            velocity_start, false, in_debug_mode)
+                    
+                    if edge != null:
+                        # Can reach land position from jump position.
+                        edges_result.push_back(edge)
                 
                 if edge != null:
-                    # Can reach land position from jump position.
-                    edges_result.push_back(edge)
                     # For efficiency, only compute one edge per surface pair.
                     break
             
@@ -340,8 +353,8 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
 # FIXME: LEFT OFF HERE: Move this somewhere else.
 func get_edge_to_air(collision_params: CollisionCalcParams, \
         position_start: PositionAlongSurface, position_end: Vector2) -> SurfaceToAirEdge:
-    var velocity_start := collision_params.movement_params.get_jump_initial_velocity( \
-            position_start.surface.side)
+    var velocity_start: Vector2 = get_jump_velocity_starts( \
+            collision_params.movement_params, position_start.surface, position_start)[0]
     var position_end_wrapper := MovementUtils.create_position_without_surface(position_end)
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
             collision_params, position_start, position_end_wrapper, true, velocity_start, \
@@ -397,3 +410,51 @@ static func create_edge_from_overall_params( \
             overall_calc_params.movement_params, instructions)
     
     return edge
+
+static func get_jump_velocity_starts(movement_params: MovementParams, origin_surface: Surface, \
+        jump_position: PositionAlongSurface) -> Array:
+    var velocity_starts := []
+    var velocity_start_x := INF
+    
+    match origin_surface.side:
+        SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+            # Initial velocity when jumping from a wall is slightly outward from the wall.
+            velocity_start_x = movement_params.wall_jump_horizontal_boost if \
+                    origin_surface.side == SurfaceSide.LEFT_WALL else \
+                    -movement_params.wall_jump_horizontal_boost
+            velocity_starts.push_back(Vector2(velocity_start_x, movement_params.jump_boost))
+            
+        SurfaceSide.FLOOR, SurfaceSide.CEILING:
+            var can_reach_max_speed := origin_surface.bounding_box.size.x > \
+                    movement_params.distance_to_max_horizontal_speed
+            var is_first_point: bool = Geometry.are_points_equal_with_epsilon( \
+                    jump_position.target_point, origin_surface.first_point)
+            var is_last_point: bool = Geometry.are_points_equal_with_epsilon( \
+                    jump_position.target_point, origin_surface.last_point)
+            var is_mid_point: bool = !is_first_point and !is_last_point
+            
+            # Determine whether to calculate jumping with max horizontal speed.
+            if movement_params.calculates_edges_with_velocity_start_x_max_speed and \
+                    can_reach_max_speed:
+                if is_first_point:
+                    velocity_starts.push_back(
+                            Vector2(-movement_params.max_horizontal_speed_default if \
+                                    origin_surface.side == SurfaceSide.FLOOR else \
+                                    movement_params.max_horizontal_speed_default, \
+                                    movement_params.jump_boost))
+                elif is_last_point:
+                    velocity_starts.push_back(
+                            Vector2(movement_params.max_horizontal_speed_default if \
+                            origin_surface.side == SurfaceSide.FLOOR else \
+                            -movement_params.max_horizontal_speed_default, \
+                            movement_params.jump_boost))
+            
+            # Determine whether to calculate jumping with zero horizontal speed.
+            if movement_params.calculates_edges_from_surface_ends_with_velocity_start_x_zero or \
+                    is_mid_point:
+                velocity_starts.push_back(Vector2(0.0, movement_params.jump_boost))
+            
+        _:
+            Utils.error()
+    
+    return velocity_starts

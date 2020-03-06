@@ -49,11 +49,6 @@ func _init(collision_params: CollisionCalcParams, origin_position: PositionAlong
             destination_position: PositionAlongSurface, origin_constraint: MovementConstraint, \
             destination_constraint: MovementConstraint, velocity_start := Vector2.INF, \
             can_backtrack_on_height := true) -> void:
-    assert(origin_constraint.surface != null or velocity_start != Vector2.INF)
-    if velocity_start == Vector2.INF:
-        velocity_start = collision_params.movement_params.get_jump_initial_velocity( \
-                origin_constraint.surface.side)
-    
     self.movement_params = collision_params.movement_params
     self.space_state = collision_params.space_state
     self.surface_parser = collision_params.surface_parser
