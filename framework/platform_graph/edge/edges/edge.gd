@@ -23,6 +23,9 @@ var duration: float
 var start_position_along_surface: PositionAlongSurface
 var end_position_along_surface: PositionAlongSurface
 
+var velocity_start: Vector2
+var velocity_end: Vector2
+
 var start: Vector2 setget ,_get_start
 var end: Vector2 setget ,_get_end
 
@@ -31,13 +34,15 @@ var end_surface: Surface setget ,_get_end_surface
 
 var should_end_by_colliding_with_surface: bool setget ,_get_should_end_by_colliding_with_surface
 
-func _init(\
+func _init( \
         name: String, \
         is_time_based: bool, \
         surface_type: int, \
         enters_air: bool, \
         start_position_along_surface: PositionAlongSurface, \
         end_position_along_surface: PositionAlongSurface, \
+        velocity_start: Vector2, \
+        velocity_end: Vector2, \
         movement_params: MovementParams, \
         instructions: MovementInstructions) -> void:
     self.name = name
@@ -46,6 +51,8 @@ func _init(\
     self.enters_air = enters_air
     self.start_position_along_surface = start_position_along_surface
     self.end_position_along_surface = end_position_along_surface
+    self.velocity_start = velocity_start
+    self.velocity_end = velocity_end
     self.instructions = instructions
     self.distance = _calculate_distance( \
             start_position_along_surface, end_position_along_surface, instructions)
@@ -135,11 +142,17 @@ func _get_should_end_by_colliding_with_surface() -> bool:
             end_position_along_surface.surface != null
 
 func to_string() -> String:
-    var format_string_template := "%s{ start: %s, end: %s, instructions: %s }"
+    var format_string_template := \
+            "%s{ start: %s, end: %s, velocity_start: %s, velocity_end: %s, " + \
+            "distance: %s, duration: %s, instructions: %s }"
     var format_string_arguments := [ \
             name, \
             _get_start_string(), \
             _get_end_string(), \
+            str(velocity_start), \
+            str(velocity_end), \
+            distance, \
+            duration, \
             instructions.to_string(), \
         ]
     return format_string_template % format_string_arguments
@@ -152,6 +165,10 @@ func to_string_with_newlines(indent_level: int) -> String:
     var format_string_template := "%s{" + \
             "\n\t%sstart: %s," + \
             "\n\t%send: %s," + \
+            "\n\t%svelocity_start: %s," + \
+            "\n\t%svelocity_end: %s," + \
+            "\n\t%sdistance: %s," + \
+            "\n\t%sduration: %s," + \
             "\n\t%sinstructions: %s," + \
         "\n%s}"
     var format_string_arguments := [ \
@@ -160,6 +177,14 @@ func to_string_with_newlines(indent_level: int) -> String:
             _get_start_string(), \
             indent_level_str, \
             _get_end_string(), \
+            indent_level_str, \
+            str(velocity_start), \
+            indent_level_str, \
+            str(velocity_end), \
+            indent_level_str, \
+            distance, \
+            indent_level_str, \
+            duration, \
             indent_level_str, \
             instructions.to_string_with_newlines(indent_level + 1), \
             indent_level_str, \

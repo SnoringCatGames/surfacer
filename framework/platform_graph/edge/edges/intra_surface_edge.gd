@@ -11,10 +11,21 @@ const ENTERS_AIR := false
 
 const REACHED_DESTINATION_DISTANCE_SQUARED_THRESHOLD := 2.0
 
-func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
+func _init( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        velocity_start: Vector2, \
         movement_params: MovementParams) \
-        .(NAME, IS_TIME_BASED, SurfaceType.get_type_from_side(start.surface.side), ENTERS_AIR, \
-        start, end, movement_params, _calculate_instructions(start, end)) -> void:
+        .(NAME, \
+        IS_TIME_BASED, \
+        SurfaceType.get_type_from_side(start.surface.side), \
+        ENTERS_AIR, \
+        start, \
+        end, \
+        velocity_start, \
+        _calculate_velocity_end(start, end, velocity_start, movement_params), \
+        movement_params, \
+        _calculate_instructions(start, end)) -> void:
     pass
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
@@ -77,3 +88,22 @@ static func _calculate_instructions(start: PositionAlongSurface, \
     var instruction := MovementInstruction.new(input_key, 0.0, true)
     
     return MovementInstructions.new([instruction], INF)
+
+static func _calculate_velocity_end(start: PositionAlongSurface, end: PositionAlongSurface, \
+        velocity_start: Vector2, movement_params: MovementParams) -> Vector2:
+    var displacement := end.target_point - start.target_point
+    
+    if start.surface.side == SurfaceSide.FLOOR or start.surface.side == SurfaceSide.CEILING:
+        # We need to calculate the end velocity, taking into account whether we will have had
+        # enough distance to reach max horizontal speed.
+        var acceleration := movement_params.walk_acceleration if displacement.x > 0.0 else \
+                -movement_params.walk_acceleration
+        var velocity_end_x: float = MovementUtils.calculate_velocity_end_for_displacement( \
+                displacement.x, velocity_start.x, acceleration, \
+                movement_params.max_horizontal_speed_default)
+        return Vector2(velocity_end_x, 0.0)
+    else:
+        # We use a constant speed (no acceleration) when climbing.
+        var velocity_end_y := movement_params.climb_up_speed if displacement.y < 0.0 else \
+                movement_params.climb_down_speed
+        return Vector2(0.0, velocity_end_y)

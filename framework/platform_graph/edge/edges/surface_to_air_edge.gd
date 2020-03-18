@@ -7,10 +7,23 @@ const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
 
-func _init(start: PositionAlongSurface, end: Vector2, movement_params: MovementParams, \
+func _init( \
+        start: PositionAlongSurface, \
+        end: Vector2, \
+        velocity_start: Vector2, \
+        velocity_end: Vector2, \
+        movement_params: MovementParams, \
         instructions: MovementInstructions) \
-        .(NAME, IS_TIME_BASED, SURFACE_TYPE, ENTERS_AIR, start, \
-        Edge.vector2_to_position_along_surface(end), movement_params, instructions) -> void:
+        .(NAME, \
+        IS_TIME_BASED, \
+        SURFACE_TYPE, \
+        ENTERS_AIR, \
+        start, \
+        Edge.vector2_to_position_along_surface(end), \
+        velocity_start, \
+        velocity_end, \
+        movement_params, \
+        instructions) -> void:
     pass
 
 func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \

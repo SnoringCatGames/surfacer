@@ -144,6 +144,7 @@ func _process(delta: float) -> void:
     _elapsed_latest_play_time_sec = _elapsed_render_play_time_sec
 
 func _physics_process(delta: float) -> void:
+    assert(Geometry.are_floats_equal_with_epsilon(delta, Utils.PHYSICS_TIME_STEP))
     _elapsed_physics_play_time_sec += delta
     _elapsed_latest_play_time_sec = _elapsed_physics_play_time_sec
 

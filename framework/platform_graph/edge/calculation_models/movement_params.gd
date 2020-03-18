@@ -27,10 +27,33 @@ var climb_up_speed: float
 var climb_down_speed: float
 
 var should_minimize_velocity_change_when_jumping: bool
+# - In the general case, we can't know at build time what direction along a surface the player will
+#   be moving from when they need to start a jump.
+# - Unfortunately, using start velocity x values of zero for all jumps edges tends to produce very
+#   unnatural composite trajectories (similar to using perpendicular Manhatten distance routes
+#   instead of more diagonal routes).
+# - So, we can assume that, for surface-end jump-off positions, we'll be approaching the jump-off
+#   point from the center of the edge.
+# - And for most edges we should have enough run-up distance in order to hit max horizontal speed
+#   before reaching the jump-off point--since horizontal acceleration is relatively quick.
+# - Also, we only ever consider velocity-start values of zero or max horizontal speed; since the
+#   horizontal acceleration is quick, most jumps at run time shouldn't need some medium-speed, and
+#   even if they did, we force the initial velocity of the jump to match expected velocity, so the
+#   jump trajectory should proceed as expected, and any sudden change in velocity at the jump start
+#   should be acceptably small.
+var calculates_edges_with_velocity_start_x_max_speed := true
+var calculates_edges_from_surface_ends_with_velocity_start_x_zero := false
+# At runtime, after finding a path through build-time-calculated edges, try to optimize the
+# jump-off points of the edges to better account for the direction that the player will be
+# approaching the edge from. This produces more efficient and natural movement. The
+# build-time-calculated edge state would only use surface end-points or closest points. We also
+# take this opportunity to update start velocities to exactly match what is allowed from the
+# ramp-up distance along the edge, rather than either the fixed zero or max-speed value used for
+# the build-time-calculated edge state.
+var optimizes_edge_jump_offs_at_run_time := true
 var forces_player_position_to_match_edge_at_start := true
 var forces_player_velocity_to_match_edge_at_start := true
-var calculates_edges_from_surface_ends_with_velocity_start_x_zero := false
-var calculates_edges_with_velocity_start_x_max_speed := true
+var min_intra_surface_distance_to_optimize_jump_for := 16.0
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

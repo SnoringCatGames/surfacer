@@ -37,6 +37,7 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
     var landing_trajectories: Array
     var land_position: PositionAlongSurface
     var instructions: MovementInstructions
+    var velocity_end: Vector2
     var edge: FallFromWallEdge
     
     # TODO: When iterating over the second jump-off point, skip any destination surface that we've
@@ -49,8 +50,13 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
         for calc_results in landing_trajectories:
             land_position = calc_results.overall_calc_params.destination_position
             instructions = _calculate_instructions(jump_position, land_position, calc_results)
+            velocity_end = calc_results.horizontal_steps.back().velocity_step_end
             edge = FallFromWallEdge.new( \
-                    jump_position, land_position, movement_params, instructions)
+                    jump_position, \
+                    land_position, \
+                    velocity_end, \
+                    movement_params, \
+                    instructions)
             edges_result.push_back(edge)
 
 static func _calculate_instructions(start: PositionAlongSurface, \

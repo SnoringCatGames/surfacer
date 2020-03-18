@@ -10,9 +10,21 @@ const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
 
-func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        movement_params: MovementParams, instructions: MovementInstructions) \
-        .(NAME, IS_TIME_BASED, SURFACE_TYPE, ENTERS_AIR, start, end, movement_params, \
+func _init( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        velocity_end: Vector2, \
+        movement_params: MovementParams, \
+        instructions: MovementInstructions) \
+        .(NAME, \
+        IS_TIME_BASED, \
+        SURFACE_TYPE, \
+        ENTERS_AIR, \
+        start, \
+        end, \
+        Vector2.ZERO, \
+        velocity_end, \
+        movement_params, \
         instructions) -> void:
     pass
 

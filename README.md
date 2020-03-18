@@ -149,9 +149,24 @@ TODO: diagrams:
         -   We could instead save _all_ valid edges that we find (up to nine edges for each directed pair of surfaces), but calculating extra edges is very expensive, and we can usually assume that an edge between closer points will be better to use anyway.
     -   We only consider the closest point if it is distint from near and far ends (and for degenerate surfaces of only one vertex, we skip the far end).
 
-FIXME: LEFT OFF HERE: ----------------- Maybe move some of the lower-down stuff into this laundry list?
-
 TODO: Include a screenshot of a collision that clips the corner of the wall when trying to jump to the above floor--a very common scenario.
+
+#### Calculating the start velocity for a jump
+
+-   In the general case, we can't know at build-time what direction along a surface the player will
+    be moving from when they need to start a jump.
+-   Unfortunately, using start velocity x values of zero for all jumps edges tends to produce very
+    unnatural composite trajectories (similar to using perpendicular Manhatten distance routes
+    instead of more diagonal routes).
+-   So, we can assume that for surface-end jump-off positions, we'll be approaching the jump-off
+    point from the center of the edge.
+-   And for most edges we should have enough run-up distance in order to hit max horizontal speed
+    before reaching the jump-off point--since horizontal acceleration is relatively quick.
+-   Also, we only ever consider velocity-start values of zero or max horizontal speed. Since the
+    horizontal acceleration is quick, most jumps at run time shouldn't need some medium-speed. And
+    even if they did, we force the initial velocity of the jump to match expected velocity, so the
+    jump trajectory should proceed as expected, and any sudden change in velocity at the jump start
+    should be acceptably small.
 
 #### Calculating the total jump duration (and the vertical step for the edge)
 
@@ -266,9 +281,17 @@ Once the platform graph has been parsed, finding and moving along a path through
     -   We can use distance or duration as the edge weights.
 -   Execute playback of the instruction set for each edge of the path, in sequence.
 
+#### Dynamic edge optimization according to runtime approach
+
+At runtime, after finding a path through build-time-calculated edges, we try to optimize the jump-off points of the edges to better account for the direction that the player will be approaching the edge from. This produces more efficient and natural movement. The build-time-calculated edge state would only use surface end-points or closest points. We also take this opportunity to update start velocities to exactly match what is allowed from the ramp-up distance along the edge, rather than either the fixed zero or max-speed value used for the build-time-calculated edge state.
+
 #### Edge instructions playback
 
 When we create the edges, we represent the movement trajectories according to the sequence of instructions that would produce the trajectory. Each instruction is simply represented by an ID for the relevant input key, whether the key is being pressed or released, and the time. The player movement system can then handle these input key events in the same way as actual human-triggered input key events.
+
+#### Correcting for runtime vs buildtime trajectory discrepancies
+
+FIXME: ----------------
 
 ## Annotators
 

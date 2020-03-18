@@ -122,55 +122,113 @@ static func calculate_time_to_release_acceleration(time_start: float, time_step_
             return max(t1, t2)
 
 # Calculates the minimum required time to reach the displacement, considering a maximum velocity.
-static func calculate_min_time_to_reach_displacement(displacement: float, v_0: float, \
-        speed_max: float, a: float) -> float:
+static func calculate_time_for_displacement(displacement: float, velocity_start: float, \
+        acceleration: float, max_speed: float) -> float:
     if displacement == 0.0:
         # The start position is the destination.
         return 0.0
-    elif a == 0:
+    elif acceleration == 0.0:
         # Handle the degenerate case with no acceleration.
-        if v_0 == 0:
+        if velocity_start == 0.0:
             # We can't reach the destination, since we're not moving anywhere.
             return INF 
-        elif (displacement > 0) != (v_0 > 0):
+        elif (displacement > 0.0) != (velocity_start > 0.0):
             # We can't reach the destination, since we're moving in the wrong direction.
             return INF
         else:
             # s = s_0 + v_0*t
-            return displacement / v_0
+            return displacement / velocity_start
     
-    var velocity_limit := speed_max if a > 0 else -speed_max
-    
-    var duration_to_reach_position_with_no_velocity_cap: float = \
-            calculate_movement_duration(displacement, v_0, a, true, 0.0, true)
-    
-    if duration_to_reach_position_with_no_velocity_cap == INF:
-        # We can't ever reach the destination.
-        return INF
+    var velocity_at_max_speed := max_speed if displacement > 0.0 else -max_speed
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
-    var duration_to_reach_velocity_limit := (velocity_limit - v_0) / a
-    assert(duration_to_reach_velocity_limit >= 0)
+    # Algebra...
+    #     t = (v - v_0) / a
+    var time_to_reach_max_speed := \
+            (velocity_at_max_speed - velocity_start) / acceleration
+    if time_to_reach_max_speed < 0.0:
+        # We're accelerating in the wrong direction.
+        return INF
     
-    if duration_to_reach_velocity_limit >= duration_to_reach_position_with_no_velocity_cap:
-        # We won't have hit the max velocity before reaching the destination.
-        return duration_to_reach_position_with_no_velocity_cap
+    # From a basic equation of motion:
+    #     s = s_0 + v_0*t + 1/2*a*t^2
+    # Algebra...
+    #     (s - s_0) = v_0*t + 1/2*a*t^2
+    var displacement_to_reach_max_speed := \
+            velocity_start * time_to_reach_max_speed + \
+            0.5 * acceleration * time_to_reach_max_speed * \
+            time_to_reach_max_speed
+    
+    if displacement_to_reach_max_speed > displacement and displacement > 0.0 or \
+            displacement_to_reach_max_speed < displacement and displacement < 0.0:
+        # We do not reach max speed before we reach the displacement.
+        return calculate_movement_duration( \
+                displacement, velocity_start, acceleration, true, 0.0, true)
     else:
-        # We will have hit the max velocity before reaching the destination.
+        # We reach max speed before we reach the displacement.
         
-        # From a basic equation of motion:
-        #     s = s_0 + v_0*t + 1/2*a*t^2
-        var position_when_reaching_max_velocity := v_0 * duration_to_reach_velocity_limit + \
-                0.5 * a * duration_to_reach_velocity_limit * duration_to_reach_velocity_limit
-        
+        var remaining_displacement_at_max_speed := displacement - displacement_to_reach_max_speed
         # From a basic equation of motion:
         #     s = s_0 + v*t
-        var duration_with_max_velocity := \
-                (displacement - position_when_reaching_max_velocity) / velocity_limit
-        assert(duration_with_max_velocity > 0)
+        # Algebra...
+        #     t = (s - s_0) / v
+        var remaining_time_at_max_speed := \
+                remaining_displacement_at_max_speed / velocity_at_max_speed
         
-        return duration_to_reach_velocity_limit + duration_with_max_velocity
+        return time_to_reach_max_speed + remaining_time_at_max_speed
+
+static func calculate_velocity_end_for_displacement(displacement: float, velocity_start: float, \
+        acceleration: float, max_speed: float) -> float:
+    if displacement == 0.0:
+        # The start position is the destination.
+        return velocity_start
+    elif acceleration == 0.0:
+        # Handle the degenerate case with no acceleration.
+        if velocity_start == 0.0:
+            # We can't reach the destination, since we're not moving anywhere.
+            return INF 
+        elif (displacement > 0.0) != (velocity_start > 0.0):
+            # We can't reach the destination, since we're moving in the wrong direction.
+            return INF
+        else:
+            # s = s_0 + v_0*t
+            return displacement / velocity_start
+    
+    var velocity_at_max_speed := max_speed if displacement > 0.0 else -max_speed
+    
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    # Algebra...
+    #     t = (v - v_0) / a
+    var time_to_reach_max_speed := \
+            (velocity_at_max_speed - velocity_start) / acceleration
+    if time_to_reach_max_speed < 0.0:
+        # We're accelerating in the wrong direction.
+        return INF
+    
+    # From a basic equation of motion:
+    #     s = s_0 + v_0*t + 1/2*a*t^2
+    # Algebra...
+    #     (s - s_0) = v_0*t + 1/2*a*t^2
+    var displacement_to_reach_max_speed := \
+            velocity_start * time_to_reach_max_speed + \
+            0.5 * acceleration * time_to_reach_max_speed * \
+            time_to_reach_max_speed
+    
+    if displacement_to_reach_max_speed > displacement and displacement > 0.0 or \
+            displacement_to_reach_max_speed < displacement and displacement < 0.0:
+        # We do not reach max speed before we reach the displacement.
+        
+        var time_for_displacement := calculate_movement_duration( \
+                displacement, velocity_start, acceleration, true, 0.0, true)
+        
+        # From a basic equation of motion:
+        #     v = v_0 + a*t
+        return velocity_start + acceleration * time_for_displacement
+    else:
+        # We reach max speed before we reach the displacement.
+        return velocity_at_max_speed
 
 # Returns up to three points along the given surface for jumping-from or landing-to, considering
 # the given vertices of another nearby surface.
@@ -379,5 +437,5 @@ static func calculate_time_to_climb(distance: float, is_climbing_upward: bool, \
 
 static func calculate_time_to_walk(distance: float, v_0: float, \
         movement_params: MovementParams) -> float:
-    return calculate_min_time_to_reach_displacement(distance, v_0, \
-            movement_params.max_horizontal_speed_default, movement_params.walk_acceleration)
+    return calculate_time_for_displacement(distance, v_0, \
+            movement_params.walk_acceleration, movement_params.max_horizontal_speed_default)

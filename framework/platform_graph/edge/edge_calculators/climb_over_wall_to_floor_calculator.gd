@@ -43,5 +43,8 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
     var end_position := MovementUtils.create_position_offset_from_target_point( \
             floor_edge_point, upper_neighbor_floor, movement_params.collider_half_width_height)
     
-    var edge := ClimbOverWallToFloorEdge.new(start_position, end_position, movement_params)
+    var edge := ClimbOverWallToFloorEdge.new( \
+            start_position, \
+            end_position, \
+            movement_params)
     edges_result.push_back(edge)

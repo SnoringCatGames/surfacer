@@ -395,7 +395,11 @@ func find_path(origin: PositionAlongSurface, \
     if origin_surface == destination_surface:
         # If the we are simply trying to get to a different position on the same surface, then we
         # don't need A*.
-        var edges := [IntraSurfaceEdge.new(origin, destination, movement_params)]
+        var edges := [IntraSurfaceEdge.new( \
+                origin, \
+                destination, \
+                Vector2.ZERO, \
+                movement_params)]
         return PlatformGraphPath.new(edges)
     
     var nodes_to_previous_nodes := {}
@@ -472,11 +476,19 @@ func find_path(origin: PositionAlongSurface, \
         if nodes_to_previous_nodes[previous_node] == null or edges.empty():
             # The first and last edge are temporary and extend from/to the origin/destination,
             # which are not aligned with normal node positions.
-            next_edge = IntraSurfaceEdge.new(previous_node, current_node, movement_params)
+            next_edge = IntraSurfaceEdge.new( \
+                    previous_node, \
+                    current_node, \
+                    Vector2.ZERO, \
+                    movement_params)
         elif previous_node.surface == current_node.surface:
             # The previous node is on the same surface as the current node, so we create an
             # intra-surface edge.
-            next_edge = IntraSurfaceEdge.new(previous_node, current_node, movement_params)
+            next_edge = IntraSurfaceEdge.new( \
+                    previous_node, \
+                    current_node, \
+                    Vector2.ZERO, \
+                    movement_params)
         else:
             next_edge = nodes_to_nodes_to_edges[previous_node][current_node]
         
@@ -602,6 +614,7 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
             nodes_to_nodes_to_edges[node] = {}
     
     # Calculate and record all intra-surface edges.
+    # FIXME: ----------------------- Is this actually needed? It looks like the find_path function will dynamically create intra-surface edges?
     var intra_surface_edge: IntraSurfaceEdge
     for surface in surfaces_to_outbound_nodes:
         for node_a in surfaces_to_outbound_nodes[surface]:
@@ -611,9 +624,17 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
                     continue
                 
                 # Record uni-directional edges in both directions.
-                intra_surface_edge = IntraSurfaceEdge.new(node_a, node_b, movement_params)
+                intra_surface_edge = IntraSurfaceEdge.new( \
+                        node_a, \
+                        node_b, \
+                        Vector2.ZERO, \
+                        movement_params)
                 nodes_to_nodes_to_edges[node_a][node_b] = intra_surface_edge
-                intra_surface_edge = IntraSurfaceEdge.new(node_b, node_a, movement_params)
+                intra_surface_edge = IntraSurfaceEdge.new( \
+                        node_b, \
+                        node_a, \
+                        Vector2.ZERO, \
+                        movement_params)
                 nodes_to_nodes_to_edges[node_b][node_a] = intra_surface_edge
     
     # Record inter-surface edges.

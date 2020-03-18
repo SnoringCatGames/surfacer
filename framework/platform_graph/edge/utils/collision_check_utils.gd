@@ -13,9 +13,7 @@ static func check_instructions_discrete_frame_state( \
     var next_instruction: MovementInstruction = instructions.instructions[0]
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
-    # On average, an instruction set will start halfway through a physics frame, so let's use that
-    # average here.
-    var previous_time: float = instructions.instructions[0].time - delta * 0.5
+    var previous_time: float = instructions.instructions[0].time
     var current_time := previous_time + delta
     var end_time := vertical_step.time_step_end
     var is_pressing_left := false

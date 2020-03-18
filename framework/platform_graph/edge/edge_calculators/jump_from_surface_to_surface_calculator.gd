@@ -8,50 +8,11 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# >>>>- Consider adding support for duplicatively calculating all edges, but with max-speed start
-#   velocity.
-#   - Only for floors and ceilings.
-#   - Direction based off side of surface.
-#   - But also check first to see that there would be available run-up length along the surface.
-#   - We'd then need to also modify PlatformGraph path finding to consider whether we'd have
-#     available run-up distance to use the max-speed version of the edge.
-#     - Make path-finding prefer max-speed versions.
-#   - Make the calculation of these duplicate edges conditional on another movement_param config
-#     field.
-#     - And actually, when this flag is false, only calculate the versions with velocity-start as
-#       max-speed.
-#       - The velocity-start zero versions should be much less frequently used, and can be
-#         calculated on-the-fly anyway.
-#   - movement_params.calculates_edges_with_velocity_start_zero
-#   - movement_params.calculates_edges_with_velocity_start_max_speed
-#   - movement_params.distance_to_max_horizontal_speed
-#
-# - Update navigation to do some additional on-the-fly edge calculations.
-#   - Only limit this to a few additional potential edges along the path.
-#   - The idea is that the edges tend to produce very unnatural composite trajectories (similar to
-#     using perpendicular Manhatten distance routes instead of more diagonal routes).
-#   >- Basically, try jumping from earlier on any given surface.
-#     - It may be hard to know exactly where along a surface to try jumping from though...
-#     - Should probably just use some simple heuristic and just give up when they fail with
-#       false-positive rates.
-#   >- Also, update velocity_start for these on-the-fly edges to be more intelligent.
-#   >>>- An attempt to think through the steps:
-#     - In Navigator, get Path from PlatformGraph, as normal.
-#     - For each edge:
-#       - If we're looking at an IntraSurfaceEdge: A.
-#       - Look at the next edge: B.
-#       - Consider whether to use a different velocity-start:
-#         - If movement_params indicates that we did parse the graph with duplicate velocity start values:
-#           - Then, continue using whatever velocity-start value was assigned to B.
-#           - Else, maybe use 0 velocity-start instead of max-speed.
-#       - Look at the start of B: if it's very close, we don't need to try calculating a new
-#         jump-off point.
-#       - Binary search to try to find a sooner jump-off point in order to get to the end surface.
-#         - But limit this search to be at a ramp-up distance in order to hit max-speed
-#           velocity-start, if needed.
-#       >>>- Land positions...
-#         - 
-#        
+# >- Finish Navigator._optimize_edges_for_approach
+# 
+# - Update the on-the-fly edge calculations to be defined on the actual edge-calculator classes.
+# 
+# - Update the on-the-fly edge calculations to get stored back onto the PlatformGraph.
 # 
 # - Update edge-calculations to support variable velocity_start_x values?
 #     - Allow for up-front edge calculation to use any desired velocity_start_x between
@@ -370,8 +331,11 @@ func get_edge_to_air(collision_params: CollisionCalcParams, \
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                     calc_results, true, SurfaceSide.NONE)
-    var edge := SurfaceToAirEdge.new( \
-            position_start, position_end, collision_params.movement_params, instructions)
+    
+    var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
+    
+    var edge := SurfaceToAirEdge.new(position_start, position_end, velocity_start, velocity_end, \
+            collision_params.movement_params, instructions)
     
     return edge
 
@@ -406,8 +370,16 @@ static func create_edge_from_overall_params( \
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                     calc_results, true, destination_position.surface.side)
-    var edge := JumpFromSurfaceToSurfaceEdge.new(origin_position, destination_position, \
-            overall_calc_params.movement_params, instructions)
+    
+    var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
+    
+    var edge := JumpFromSurfaceToSurfaceEdge.new( \
+            origin_position, \
+            destination_position, \
+            overall_calc_params.velocity_start, \
+            velocity_end, \
+            overall_calc_params.movement_params, \
+            instructions)
     
     return edge
 

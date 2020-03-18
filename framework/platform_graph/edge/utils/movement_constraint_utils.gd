@@ -561,9 +561,9 @@ static func _calculate_time_to_reach_destination_from_new_constraint( \
         acceleration = -movement_params.in_air_horizontal_acceleration
     
     var time_to_reach_horizontal_displacement := \
-            MovementUtils.calculate_min_time_to_reach_displacement(displacement.x, \
-                    velocity_x_at_new_constraint, movement_params.max_horizontal_speed_default, \
-                    acceleration)
+            MovementUtils.calculate_time_for_displacement(displacement.x, \
+                    velocity_x_at_new_constraint, acceleration, \
+                    movement_params.max_horizontal_speed_default)
     
     var time_to_reach_fall_displacement: float
     if displacement.y > 0:

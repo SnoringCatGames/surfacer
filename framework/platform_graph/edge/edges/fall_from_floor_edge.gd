@@ -1,7 +1,10 @@
 # Information for how to walk to and off the edge of a floor.
 # 
-# The instructions for this edge consist of a single sideways key press, with no corresponding
-# release.
+# - The instructions for this edge consist of a single sideways key press, with no corresponding
+#   release.
+# - The start point for this edge corresponds to the surface-edge end point.
+# - This edge consists of a small portion for walking from the start point to the fall-off point,
+#   and then another portion for falling from the fall-off point to the landing point.
 extends Edge
 class_name FallFromFloorEdge
 
@@ -12,10 +15,23 @@ const ENTERS_AIR := true
 
 var falls_on_left_side: bool
 
-func _init(start: PositionAlongSurface, end: PositionAlongSurface, \
-        movement_params: MovementParams, instructions: MovementInstructions, \
+func _init( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        velocity_start: Vector2, \
+        velocity_end: Vector2, \
+        movement_params: MovementParams, \
+        instructions: MovementInstructions, \
         falls_on_left_side: bool) \
-        .(NAME, IS_TIME_BASED, SURFACE_TYPE, ENTERS_AIR, start, end, movement_params, \
+        .(NAME, \
+        IS_TIME_BASED, \
+        SURFACE_TYPE, \
+        ENTERS_AIR, \
+        start, \
+        end, \
+        velocity_start, \
+        velocity_end, \
+        movement_params, \
         instructions) -> void:
     self.falls_on_left_side = falls_on_left_side
 

@@ -48,59 +48,18 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
     var acceleration := movement_params.walk_acceleration if \
             displacement_from_start_to_fall_off.x > 0 else \
             -movement_params.walk_acceleration
-    var velocity_x_at_max_speed := movement_params.max_horizontal_speed_default if \
-            displacement_from_start_to_fall_off.x > 0 else \
-            -movement_params.max_horizontal_speed_default
     
-    # From a basic equation of motion:
-    #     v = v_0 + a*t
-    # Algebra...
-    #     t = (v - v_0) / a
-    var time_to_reach_max_horizontal_speed := \
-            (velocity_x_at_max_speed - velocity_x_start) / acceleration
+    var velocity_x_fall_off: float = MovementUtils.calculate_velocity_end_for_displacement( \
+            displacement_from_start_to_fall_off.x, velocity_x_start, acceleration, \
+            movement_params.max_horizontal_speed_default)
     
-    # From a basic equation of motion:
-    #     s = s_0 + v_0*t + 1/2*a*t^2
-    # Algebra...
-    #     (s - s_0) = v_0*t + 1/2*a*t^2
-    var displacement_x_to_reach_max_horizontal_speed := \
-            velocity_x_start * time_to_reach_max_horizontal_speed + \
-            0.5 * acceleration * time_to_reach_max_horizontal_speed * \
-            time_to_reach_max_horizontal_speed
-    
-    var velocity_x_fall_off: float
-    var time_fall_off: float
-    if abs(displacement_x_to_reach_max_horizontal_speed) > \
-            abs(displacement_from_start_to_fall_off.x):
-        # We do not hit max speed before we hit the fall-off point.
-        
-        # From a basic equation of motion:
-        #     v^2 = v_0^2 + 2*a*(s - s_0)
-        # Algebra...
-        #     v = sqrt(v_0^2 + 2*a*(s - s_0))
-        velocity_x_fall_off = sqrt(velocity_x_start * velocity_x_start + \
-                2 * acceleration * displacement_from_start_to_fall_off.x)
-        # From a basic equation of motion:
-        #     v = v_0 + a*t
-        # Algebra...
-        #     t = (v - v_0) / a
-        time_fall_off = (velocity_x_fall_off - velocity_x_start) / acceleration
-    else:
-        # We hit max speed before we hit the fall-off point.
-        
-        var remaining_displacement_at_max_speed := displacement_from_start_to_fall_off.x - \
-                displacement_x_to_reach_max_horizontal_speed
-        # From a basic equation of motion:
-        #     s = s_0 + v*t
-        # Algebra...
-        #     t = (s - s_0) / v
-        var remaining_time_at_max_speed := \
-                remaining_displacement_at_max_speed / velocity_x_at_max_speed
-        time_fall_off = time_to_reach_max_horizontal_speed + remaining_time_at_max_speed
-        velocity_x_fall_off = velocity_x_at_max_speed
+    var time_fall_off: float = MovementUtils.calculate_time_for_displacement( \
+            displacement_from_start_to_fall_off.x, velocity_x_start, acceleration, \
+            movement_params.max_horizontal_speed_default)
     
     var position_fall_off_wrapper := MovementUtils.create_position_from_target_point( \
             position_fall_off, origin_surface, movement_params.collider_half_width_height)
+    
     var velocity_start := Vector2(velocity_x_fall_off, 0.0)
     
     var landing_trajectories := FallMovementUtils.find_landing_trajectories(collision_params, \
@@ -108,14 +67,22 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
     
     var position_end: PositionAlongSurface
     var instructions: MovementInstructions
+    var velocity_end: Vector2
     var edge: FallFromFloorEdge
     
     for calc_results in landing_trajectories:
         position_end = calc_results.overall_calc_params.destination_position
         instructions = _calculate_instructions(position_start, position_end, calc_results, \
                 time_fall_off, falls_on_left_side)
+        velocity_end = calc_results.horizontal_steps.back().velocity_step_end
         edge = FallFromFloorEdge.new( \
-                position_start, position_end, movement_params, instructions, falls_on_left_side)
+                position_start, \
+                position_end, \
+                velocity_start, \
+                velocity_end, \
+                movement_params, \
+                instructions, \
+                falls_on_left_side)
         edges_result.push_back(edge)
 
 static func _calculate_player_center_at_fall_off_point(edge_point: Vector2, \
