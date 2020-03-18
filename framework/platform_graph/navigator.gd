@@ -233,7 +233,7 @@ static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, 
                 
                 if is_moving_from_intra_surface_to_jump:
                     JumpFromSurfaceToSurfaceCalculator.optimize_edge_for_approach(collision_params, \
-                            path, i, previous_velocity_end_x, current_edge, next_edge, in_debug_mode)
+                            path, i + 1, previous_velocity_end_x, current_edge, next_edge, in_debug_mode)
                 elif is_moving_from_intra_surface_to_fall_off_wall:
                     # Falling from a wall.
                     
@@ -242,8 +242,7 @@ static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, 
                     #   original fall-off-point.
                     pass
             
-            previous_velocity_end_x = current_edge.velocity_end.x if \
-                    current_edge is JumpFromSurfaceToSurfaceEdge else INF
+            previous_velocity_end_x = current_edge.velocity_end.x
 
 # Inserts extra intra-surface between any edges that land and then immediately jump from the same
 # position, since the land position could be off due to movement error at runtime.
