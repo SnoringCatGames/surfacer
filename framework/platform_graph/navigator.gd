@@ -62,6 +62,7 @@ func navigate_to_nearby_surface(target: Vector2, \
     else:
         # Destination can be reached from origin.
         
+        _interleave_intra_surface_edges(collision_params, path)
         _optimize_edges_for_approach(collision_params, path, player.velocity)
         
         var format_string_template := "STARTING PATH NAV:   %8.3ft; {" + \
@@ -182,13 +183,10 @@ func update() -> void:
         else:
             _start_edge(next_edge_index)
 
-# This does two improvements to the path returned from PlatformGraph:
-# - Inserts extra intra-surface between any edges that land and then immediately jump from the same
-#   position, since the land position could be off due to movement error at runtime.
-# - Tries to update each jump edge to jump from the earliest point possible along the surface
-#   rather than from the safe end/closest point that was used at build-time when calculating
-#   possible edges.
-#   - This also updates start velocity when updating start position.
+# Tries to update each jump edge to jump from the earliest point possible along the surface
+# rather than from the safe end/closest point that was used at build-time when calculating
+# possible edges.
+# - This also updates start velocity when updating start position.
 static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, \
         path: PlatformGraphPath, velocity_start: Vector2) -> void:
     var movement_params := collision_params.movement_params
@@ -199,8 +197,6 @@ static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, 
             collision_params.debug_state.has("limit_parsing") and \
             collision_params.debug_state.limit_parsing.has("edge") != null
     ###############################################################################################
-    
-    _interleave_intra_surface_edges(collision_params, path)
     
     if movement_params.optimizes_edge_jump_offs_at_run_time:
         # At runtime, after finding a path through build-time-calculated edges, try to optimize the
@@ -213,18 +209,10 @@ static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, 
         
         var current_edge: Edge
         var next_edge: Edge
-        var optimized_edge: Edge
         var is_moving_from_intra_surface_to_jump: bool
+        var is_moving_from_intra_surface_to_fall_off_wall: bool
         var is_edge_long_enough_to_be_worth_optimizing: bool
-        var is_horizontal_surface: bool
-        var current_edge_displacement_x: float
-        var is_already_exceeding_max_speed_toward_displacement: bool
-        var distance_to_max_horizontal_speed: float
         var previous_velocity_end_x := velocity_start.x
-        var jump_position: PositionAlongSurface
-        # TODO: Refactor this to use a true binary search. Right now it is similar, but we never
-        #       move backward once we find a working jump.
-        var jump_ratios := [0.0, 0.5, 0.75, 0.875]
         
         # FIXME: ------- Double-check the following for correctness.
         
@@ -232,84 +220,27 @@ static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, 
             current_edge = path.edges[i]
             next_edge = path.edges[i + 1]
             
-            is_moving_from_intra_surface_to_jump = \
-                    current_edge is IntraSurfaceEdge and \
-                    next_edge is JumpFromSurfaceToSurfaceEdge
             is_edge_long_enough_to_be_worth_optimizing = current_edge.distance >= \
                     movement_params.min_intra_surface_distance_to_optimize_jump_for
-            is_horizontal_surface = \
-                    current_edge.start_surface.side == SurfaceSide.FLOOR or \
-                    current_edge.start_surface.side == SurfaceSide.CEILING
             
-            if is_moving_from_intra_surface_to_jump and is_edge_long_enough_to_be_worth_optimizing:
-                if is_horizontal_surface:
-                    # Jumping from a floor or ceiling.
+            if is_edge_long_enough_to_be_worth_optimizing:
+                is_moving_from_intra_surface_to_jump = \
+                        current_edge is IntraSurfaceEdge and \
+                        next_edge is JumpFromSurfaceToSurfaceEdge
+                is_moving_from_intra_surface_to_fall_off_wall = \
+                        current_edge is IntraSurfaceEdge and \
+                        next_edge is FallFromWallEdge
+                
+                if is_moving_from_intra_surface_to_jump:
+                    JumpFromSurfaceToSurfaceCalculator.optimize_edge_for_approach(collision_params, \
+                            path, i, previous_velocity_end_x, current_edge, next_edge, in_debug_mode)
+                elif is_moving_from_intra_surface_to_fall_off_wall:
+                    # Falling from a wall.
                     
-                    current_edge_displacement_x = current_edge.end.x - current_edge.start.x
-                    is_already_exceeding_max_speed_toward_displacement = \
-                            (current_edge_displacement_x >= 0.0 and previous_velocity_end_x > \
-                                    movement_params.max_horizontal_speed_default) or \
-                            (current_edge_displacement_x <= 0.0 and previous_velocity_end_x < \
-                                    -movement_params.max_horizontal_speed_default)
-                    
-                    # Calculate precise distance to max-speed, given the start velocity from the
-                    # end of the previous step.
-                    if is_already_exceeding_max_speed_toward_displacement:
-                        distance_to_max_horizontal_speed = 0.0
-                    else:
-                        # From a basic equation of motion:
-                        #     v^2 = v_0^2 + 2*a*(s - s_0)
-                        # Algebra:
-                        #     (s - s_0) = (v^2 - v_0^2)/2/a
-                        distance_to_max_horizontal_speed = abs(\
-                                (movement_params.max_horizontal_speed_default * \
-                                movement_params.max_horizontal_speed_default - \
-                                previous_velocity_end_x * previous_velocity_end_x) / 2.0 / \
-                                movement_params.walk_acceleration)
-                    
-                    for j in range(jump_ratios.size()):
-                        if jump_ratios[j] == 0.0:
-                            jump_position = current_edge.start_position_along_surface
-                        else:
-                            jump_position = MovementUtils.create_position_offset_from_target_point( \
-                                    Vector2(current_edge.start.x + current_edge_displacement_x * jump_ratios[j], 0.0), \
-                                    current_edge.start_surface, \
-                                    movement_params.collider_half_width_height)
-                        
-                        # FIXME: LEFT OFF HERE: ---------------A:
-                        # - Make this also work when speed is less than max.
-                        # - Will need to calculate intermediate velocities (use MovementUtils.calculate_velocity_end_for_displacement).
-                        #   - MovementUtils.calculate_velocity_end_for_displacement(displacement, velocity_start, acceleration, max_speed)
-                        if current_edge.distance > distance_to_max_horizontal_speed:
-                            velocity_start.x = movement_params.max_horizontal_speed_default if \
-                                    current_edge_displacement_x > 0.0 else \
-                                    -movement_params.max_horizontal_speed_default
-                            velocity_start.y = movement_params.jump_boost
-                            
-                            # We have enough space to get up to max speed.
-                            optimized_edge = JumpFromSurfaceToSurfaceCalculator.calculate_edge( \
-                                    collision_params, jump_position, \
-                                    next_edge.end_position_along_surface, true, velocity_start, \
-                                    false, in_debug_mode)
-                            if optimized_edge != null:
-                                next_edge = optimized_edge
-                                current_edge = IntraSurfaceEdge.new( \
-                                        current_edge.start_position_along_surface, \
-                                        jump_position, \
-                                        Vector2(previous_velocity_end_x, 0.0), \
-                                        movement_params)
-                                path.edges[i] = current_edge
-                                path.edges[i + 1] = next_edge
-                                break
-                else:
-                    # Jumping from a wall.
-                    
-                    # FIXME: LEFT OFF HERE: ------------------A:
+                    # FIXME: LEFT OFF HERE: -------------------A:
+                    # - If next edge is fall-off-wall, try to fall off now, then binary search toward
+                    #   original fall-off-point.
                     pass
-            
-            # FIXME: LEFT OFF HERE: -------------------A:
-            # - If next edge is fall-off-wall, try to fall off now, then binary search toward
-            #   original fall-off-point.
             
             previous_velocity_end_x = current_edge.velocity_end.x if \
                     current_edge is JumpFromSurfaceToSurfaceEdge else INF

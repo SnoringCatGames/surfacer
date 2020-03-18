@@ -10,8 +10,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # 
 # >- Finish Navigator._optimize_edges_for_approach
 # 
-# - Update the on-the-fly edge calculations to be defined on the actual edge-calculator classes.
-# 
 # - Update the on-the-fly edge calculations to get stored back onto the PlatformGraph.
 # 
 # - Update edge-calculations to support variable velocity_start_x values?
@@ -430,3 +428,74 @@ static func get_jump_velocity_starts(movement_params: MovementParams, origin_sur
             Utils.error()
     
     return velocity_starts
+
+static func optimize_edge_for_approach(collision_params: CollisionCalcParams, \
+        path: PlatformGraphPath, edge_index: int, previous_velocity_end_x: float, \
+        previous_edge: IntraSurfaceEdge, edge: JumpFromSurfaceToSurfaceEdge, \
+        in_debug_mode: bool) -> void:
+    # TODO: Refactor this to use a true binary search. Right now it is similar, but we never
+    #       move backward once we find a working jump.
+    var jump_ratios := [0.0, 0.5, 0.75, 0.875]
+    
+    var movement_params := collision_params.movement_params
+    
+    var previous_edge_displacement := previous_edge.end - previous_edge.start
+    
+    var is_horizontal_surface := \
+            previous_edge.start_surface != null and \
+            (previous_edge.start_surface.side == SurfaceSide.FLOOR or \
+            previous_edge.start_surface.side == SurfaceSide.CEILING)
+    
+    if is_horizontal_surface:
+        # Jumping from a floor or ceiling.
+        
+        var is_already_exceeding_max_speed_toward_displacement := \
+                (previous_edge_displacement.x >= 0.0 and previous_velocity_end_x > \
+                        movement_params.max_horizontal_speed_default) or \
+                (previous_edge_displacement.x <= 0.0 and previous_velocity_end_x < \
+                        -movement_params.max_horizontal_speed_default)
+        
+        var acceleration_x := movement_params.walk_acceleration if \
+                previous_edge_displacement.x >= 0.0 else \
+                -movement_params.walk_acceleration
+        
+        var jump_position: PositionAlongSurface
+        var optimized_edge: JumpFromSurfaceToSurfaceEdge
+        
+        for j in range(jump_ratios.size()):
+            if jump_ratios[j] == 0.0:
+                jump_position = previous_edge.start_position_along_surface
+            else:
+                jump_position = MovementUtils.create_position_offset_from_target_point( \
+                        Vector2(previous_edge.start.x + previous_edge_displacement.x * jump_ratios[j], 0.0), \
+                        previous_edge.start_surface, \
+                        movement_params.collider_half_width_height)
+            
+            # Calculate the start velocity to use according to the available ramp-up
+            # distance and max speed.
+            var velocity_start_x: float = MovementUtils.calculate_velocity_end_for_displacement( \
+                    jump_position.target_point.x - previous_edge.start.x, \
+                    previous_velocity_end_x, acceleration_x, \
+                    movement_params.max_horizontal_speed_default)
+            var velocity_start_y := movement_params.jump_boost
+            var velocity_start = Vector2(velocity_start_x, velocity_start_y)
+            
+            optimized_edge = calculate_edge(collision_params, jump_position, \
+                    edge.end_position_along_surface, true, velocity_start, \
+                    false, in_debug_mode)
+            
+            if optimized_edge != null:
+                previous_edge = IntraSurfaceEdge.new( \
+                        previous_edge.start_position_along_surface, \
+                        jump_position, \
+                        Vector2(previous_velocity_end_x, 0.0), \
+                        movement_params)
+                path.edges[edge_index] = previous_edge
+                path.edges[edge_index + 1] = optimized_edge
+                return
+        
+    else:
+        # Jumping from a wall.
+        
+        # FIXME: LEFT OFF HERE: ------------------A:
+        pass
