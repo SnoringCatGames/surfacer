@@ -8,22 +8,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# >- Finish Navigator._optimize_edges_for_approach
-# 
-# - Update the on-the-fly edge calculations to get stored back onto the PlatformGraph.
-# 
-# - Update edge-calculations to support variable velocity_start_x values?
-#     - Allow for up-front edge calculation to use any desired velocity_start_x between
-#       -max_horizontal_speed_default and max_horizontal_speed_default.
-#     - This is probably a decent approximation, since we can usually assume that the ramp-up
-#       distance to get from 0 to max-x-speed on the floor is small enough that we can ignore it.
-#     - We could probably actually do an even better job by limiting the range for velocity_start_x
-#       for floor-surface-end-jump-off-points to be between either -max_horizontal_speed_default and
-#       0 or 0 and max_horizontal_speed_default.
-#   - [UPDATE] Probably not going to be possible from within constraint calculations. They need to
-#     be given a single known velocity_start. However, we could try just running the calculations
-#     with different discrete velocity_start values.
-# 
 # - Add support for forcing state during edge movement to match what is expected from the original edge calculations.
 #   - Configurable.
 #   - Apply this to both position and velocity.
@@ -468,7 +452,8 @@ static func optimize_edge_for_approach(collision_params: CollisionCalcParams, \
                 jump_position = previous_edge.start_position_along_surface
             else:
                 jump_position = MovementUtils.create_position_offset_from_target_point( \
-                        Vector2(previous_edge.start.x + previous_edge_displacement.x * jump_ratios[i], 0.0), \
+                        Vector2(previous_edge.start.x + \
+                                previous_edge_displacement.x * jump_ratios[i], 0.0), \
                         previous_edge.start_surface, \
                         movement_params.collider_half_width_height)
             
@@ -509,11 +494,13 @@ static func optimize_edge_for_approach(collision_params: CollisionCalcParams, \
                 jump_position = previous_edge.start_position_along_surface
             else:
                 jump_position = MovementUtils.create_position_offset_from_target_point( \
-                        Vector2(0.0, previous_edge.start.y + previous_edge_displacement.y * jump_ratios[i]), \
+                        Vector2(0.0, previous_edge.start.y + \
+                                previous_edge_displacement.y * jump_ratios[i]), \
                         previous_edge.start_surface, \
                         movement_params.collider_half_width_height)
             
-            velocity_start = get_jump_velocity_starts(movement_params, jump_position.surface, jump_position)[0]
+            velocity_start = get_jump_velocity_starts( \
+                    movement_params, jump_position.surface, jump_position)[0]
             
             optimized_edge = calculate_edge(collision_params, jump_position, \
                     edge.end_position_along_surface, true, velocity_start, \

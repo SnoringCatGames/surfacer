@@ -214,8 +214,6 @@ static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, 
         var is_edge_long_enough_to_be_worth_optimizing: bool
         var previous_velocity_end_x := velocity_start.x
         
-        # FIXME: ------- Double-check the following for correctness.
-        
         for i in range(path.edges.size() - 1):
             current_edge = path.edges[i]
             next_edge = path.edges[i + 1]
@@ -232,15 +230,12 @@ static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, 
                         next_edge is FallFromWallEdge
                 
                 if is_moving_from_intra_surface_to_jump:
-                    JumpFromSurfaceToSurfaceCalculator.optimize_edge_for_approach(collision_params, \
-                            path, i + 1, previous_velocity_end_x, current_edge, next_edge, in_debug_mode)
+                    JumpFromSurfaceToSurfaceCalculator.optimize_edge_for_approach( \
+                            collision_params, path, i + 1, previous_velocity_end_x, current_edge, \
+                            next_edge, in_debug_mode)
                 elif is_moving_from_intra_surface_to_fall_off_wall:
-                    # Falling from a wall.
-                    
-                    # FIXME: LEFT OFF HERE: -------------------A:
-                    # - If next edge is fall-off-wall, try to fall off now, then binary search toward
-                    #   original fall-off-point.
-                    pass
+                    FallFromWallCalculator.optimize_edge_for_approach(collision_params, path, \
+                            i + 1, previous_velocity_end_x, current_edge, next_edge, in_debug_mode)
             
             previous_velocity_end_x = current_edge.velocity_end.x
 

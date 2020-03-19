@@ -18,7 +18,7 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
     
     # Find the closest landing trajectory.
     var origin_position := MovementUtils.create_position_without_surface(origin)
-    var landing_trajectories := find_landing_trajectories(collision_params, \
+    var landing_trajectories := find_landing_trajectories_to_any_surface(collision_params, \
             possible_surfaces_set, origin_position, velocity_start, possible_landing_surfaces, \
             true)
     if landing_trajectories.empty():
@@ -42,11 +42,10 @@ static func find_a_landing_trajectory(collision_params: CollisionCalcParams, \
             instructions)
 
 # Finds all possible landing trajectories from the given start state.
-static func find_landing_trajectories(collision_params: CollisionCalcParams, \
+static func find_landing_trajectories_to_any_surface(collision_params: CollisionCalcParams, \
         possible_surfaces_set: Dictionary, origin_position: PositionAlongSurface, \
         velocity_start: Vector2, possible_landing_surfaces := [], \
         only_returns_first_result := false) -> Array:
-    var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
     
     if possible_landing_surfaces.empty():
@@ -71,11 +70,7 @@ static func find_landing_trajectories(collision_params: CollisionCalcParams, \
         origin_side = SurfaceSide.CEILING
     
     var possible_land_positions: Array
-    var terminals: Array
-    var vertical_step: MovementVertCalcStep
-    var step_calc_params: MovementCalcStepParams
     var calc_results: MovementCalcResults
-    var overall_calc_params: MovementCalcOverallParams
     var all_results := []
     
     # Find the first possible edge to a landing surface.
@@ -89,36 +84,9 @@ static func find_landing_trajectories(collision_params: CollisionCalcParams, \
                 origin_side)
         
         for land_position in possible_land_positions:
-            ###################################################################################
-            # Allow for debug mode to limit the scope of what's calculated.
-            if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
-                    origin_position, land_position):
-                continue
-            ###################################################################################
-                
-            overall_calc_params = EdgeMovementCalculator.create_movement_calc_overall_params( \
-                    collision_params, origin_position, land_position, false, velocity_start, \
-                    false, false)
-            if overall_calc_params == null:
-                continue
+            calc_results = find_landing_trajectory_between_positions(origin_position, \
+                    land_position, velocity_start, collision_params)
             
-            ###################################################################################
-            # Record some extra debug state when we're limiting calculations to a single edge.
-            if debug_state.in_debug_mode and debug_state.has("limit_parsing") and \
-                    debug_state.limit_parsing.has("edge") != null:
-                overall_calc_params.in_debug_mode = true
-            ###################################################################################
-            
-            vertical_step = VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
-            if vertical_step == null:
-                continue
-            
-            step_calc_params = MovementCalcStepParams.new(overall_calc_params.origin_constraint, \
-                    overall_calc_params.destination_constraint, vertical_step, \
-                    overall_calc_params, null, null)
-            
-            calc_results = MovementStepUtils.calculate_steps_from_constraint( \
-                    overall_calc_params, step_calc_params)
             if calc_results != null:
                 all_results.push_back(calc_results)
                 
@@ -126,6 +94,42 @@ static func find_landing_trajectories(collision_params: CollisionCalcParams, \
                     return all_results
     
     return all_results
+
+static func find_landing_trajectory_between_positions(origin_position: PositionAlongSurface, \
+        land_position: PositionAlongSurface, velocity_start: Vector2, \
+        collision_params: CollisionCalcParams) -> MovementCalcResults:
+    var debug_state := collision_params.debug_state
+    
+    ###################################################################################
+    # Allow for debug mode to limit the scope of what's calculated.
+    if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
+            origin_position, land_position):
+        return null
+    ###################################################################################
+        
+    var overall_calc_params: MovementCalcOverallParams = \
+            EdgeMovementCalculator.create_movement_calc_overall_params(collision_params, \
+            origin_position, land_position, false, velocity_start, false, false)
+    if overall_calc_params == null:
+        return null
+    
+    ###################################################################################
+    # Record some extra debug state when we're limiting calculations to a single edge.
+    if debug_state.in_debug_mode and debug_state.has("limit_parsing") and \
+            debug_state.limit_parsing.has("edge") != null:
+        overall_calc_params.in_debug_mode = true
+    ###################################################################################
+    
+    var vertical_step: MovementVertCalcStep = \
+            VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
+    if vertical_step == null:
+        return null
+    
+    var step_calc_params: MovementCalcStepParams = MovementCalcStepParams.new( \
+            overall_calc_params.origin_constraint, overall_calc_params.destination_constraint, \
+            vertical_step, overall_calc_params, null, null)
+    
+    return MovementStepUtils.calculate_steps_from_constraint(overall_calc_params, step_calc_params)
 
 static func find_surfaces_in_fall_range_from_point(movement_params: MovementParams, \
         possible_surfaces_set: Dictionary, result_set: Dictionary, origin: Vector2, \

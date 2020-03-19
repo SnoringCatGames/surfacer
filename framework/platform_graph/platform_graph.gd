@@ -346,6 +346,8 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #       - Maybe have the tolerable floor merge bump size be different (and less permissive) than the ceiling size.
 #   - Make the tolerable bump deviation size configurable (not necessarily tied to the size of a single tile).
 # 
+# - Update on-the-fly edge optimizations to get stored back onto the PlatformGraph?
+# 
 
 
 const CLUSTER_CELL_SIZE := 0.5

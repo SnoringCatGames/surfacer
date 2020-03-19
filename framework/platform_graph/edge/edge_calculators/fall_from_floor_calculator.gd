@@ -62,8 +62,9 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
     
     var velocity_start := Vector2(velocity_x_fall_off, 0.0)
     
-    var landing_trajectories := FallMovementUtils.find_landing_trajectories(collision_params, \
-            surfaces_in_fall_range_set, position_fall_off_wrapper, velocity_start)
+    var landing_trajectories := FallMovementUtils.find_landing_trajectories_to_any_surface( \
+            collision_params, surfaces_in_fall_range_set, position_fall_off_wrapper, \
+            velocity_start)
     
     var position_end: PositionAlongSurface
     var instructions: MovementInstructions
