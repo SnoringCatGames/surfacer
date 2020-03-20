@@ -53,6 +53,10 @@ var calculates_edges_from_surface_ends_with_velocity_start_x_zero := false
 var optimizes_edge_jump_offs_at_run_time := true
 var forces_player_position_to_match_edge_at_start := true
 var forces_player_velocity_to_match_edge_at_start := true
+# If true, then player velocity will be forced to match the expected calculated edge-movement
+# velocity during each frame. Without this, there is typically some deviation at run-time from the
+# expected calculated edge trajectories.
+var updates_player_velocity_to_match_edge_trajectory := false
 var min_intra_surface_distance_to_optimize_jump_for := 16.0
 
 var max_horizontal_speed_default: float

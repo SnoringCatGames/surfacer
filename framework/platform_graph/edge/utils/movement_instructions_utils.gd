@@ -77,6 +77,7 @@ static func convert_calculation_steps_to_movement_instructions(calc_results: Mov
         instructions.push_front(press)
     
     var frame_continuous_positions_from_steps := _concatenate_step_frame_positions(steps)
+    var frame_continuous_velocities_from_steps := _concatenate_step_frame_velocities(steps)
     
     var duration := vertical_step.time_step_end - vertical_step.time_step_start
     
@@ -84,6 +85,8 @@ static func convert_calculation_steps_to_movement_instructions(calc_results: Mov
             MovementInstructions.new(instructions, duration, constraint_positions)
     instructions_wrapper.frame_continuous_positions_from_steps = \
             frame_continuous_positions_from_steps
+    instructions_wrapper.frame_continuous_velocities_from_steps = \
+            frame_continuous_velocities_from_steps
     
     # FIXME: B: REMOVE
     calc_results.overall_calc_params.movement_params.gravity_fast_fall /= \
@@ -120,3 +123,17 @@ static func _concatenate_step_frame_positions(steps: Array) -> PoolVector2Array:
     combined_positions.push_back(steps.back().frame_positions.back())
     
     return PoolVector2Array(combined_positions)
+
+static func _concatenate_step_frame_velocities(steps: Array) -> PoolVector2Array:
+    var combined_velocities := []
+    
+    for step in steps:
+        Utils.concat(combined_velocities, step.frame_velocities)
+        # Since the start-position of the next step is always the same as the end-position of the
+        # previous step, we can de-dup them here.
+        combined_velocities.remove(combined_velocities.size() - 1)
+    
+    # Fix the fencepost problem.
+    combined_velocities.push_back(steps.back().frame_velocities.back())
+    
+    return PoolVector2Array(combined_velocities)

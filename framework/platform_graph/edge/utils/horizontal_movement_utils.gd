@@ -196,8 +196,8 @@ static func _calculate_acceleration_start_and_end_time(displacement: float, dura
     return [time_acceleration_start, time_acceleration_end]
 
 # Calculates the horizontal component of position and velocity according to the given horizontal
-# movement state and the given time. These are then returned in a Vector2: x is position and y is
-# velocity.
+# movement state and the given time. These are then returned in an Array: [0] is position and [1]
+# is velocity.
 static func calculate_horizontal_state_for_time(movement_params: MovementParams, \
         horizontal_step: MovementCalcStep, time: float) -> Array:
     assert(time >= horizontal_step.time_step_start - Geometry.FLOAT_EPSILON)

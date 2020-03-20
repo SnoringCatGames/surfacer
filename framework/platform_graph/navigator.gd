@@ -207,37 +207,37 @@ static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, 
         # from the ramp-up distance along the edge, rather than either the fixed zero or max-speed
         # value used for the build-time-calculated edge state.
         
+        var previous_edge: Edge
         var current_edge: Edge
-        var next_edge: Edge
         var is_moving_from_intra_surface_to_jump: bool
         var is_moving_from_intra_surface_to_fall_off_wall: bool
         var is_edge_long_enough_to_be_worth_optimizing: bool
         var previous_velocity_end_x := velocity_start.x
         
-        for i in range(path.edges.size() - 1):
+        for i in range(1, path.edges.size()):
+            previous_edge = path.edges[i - 1]
             current_edge = path.edges[i]
-            next_edge = path.edges[i + 1]
             
-            is_edge_long_enough_to_be_worth_optimizing = current_edge.distance >= \
+            is_edge_long_enough_to_be_worth_optimizing = previous_edge.distance >= \
                     movement_params.min_intra_surface_distance_to_optimize_jump_for
             
             if is_edge_long_enough_to_be_worth_optimizing:
                 is_moving_from_intra_surface_to_jump = \
-                        current_edge is IntraSurfaceEdge and \
-                        next_edge is JumpFromSurfaceToSurfaceEdge
+                        previous_edge is IntraSurfaceEdge and \
+                        current_edge is JumpFromSurfaceToSurfaceEdge
                 is_moving_from_intra_surface_to_fall_off_wall = \
-                        current_edge is IntraSurfaceEdge and \
-                        next_edge is FallFromWallEdge
+                        previous_edge is IntraSurfaceEdge and \
+                        current_edge is FallFromWallEdge
                 
                 if is_moving_from_intra_surface_to_jump:
                     JumpFromSurfaceToSurfaceCalculator.optimize_edge_for_approach( \
-                            collision_params, path, i + 1, previous_velocity_end_x, current_edge, \
-                            next_edge, in_debug_mode)
+                            collision_params, path, i, previous_velocity_end_x, previous_edge, \
+                            current_edge, in_debug_mode)
                 elif is_moving_from_intra_surface_to_fall_off_wall:
                     FallFromWallCalculator.optimize_edge_for_approach(collision_params, path, \
-                            i + 1, previous_velocity_end_x, current_edge, next_edge, in_debug_mode)
+                            i, previous_velocity_end_x, previous_edge, current_edge, in_debug_mode)
             
-            previous_velocity_end_x = current_edge.velocity_end.x
+            previous_velocity_end_x = previous_edge.velocity_end.x
 
 # Inserts extra intra-surface between any edges that land and then immediately jump from the same
 # position, since the land position could be off due to movement error at runtime.

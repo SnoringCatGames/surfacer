@@ -3,7 +3,7 @@ class_name CapVelocityAction
 
 const NAME := "CapVelocityAction"
 const TYPE := SurfaceType.OTHER
-const PRIORITY := 10010
+const PRIORITY := 10020
 
 func _init().(NAME, TYPE, PRIORITY) -> void:
     pass

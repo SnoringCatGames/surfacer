@@ -315,6 +315,7 @@ static func check_continuous_horizontal_step_for_collision( \
     var step_end_time := horizontal_step.time_step_end
     var previous_position := horizontal_step.position_step_start
     var current_position := previous_position
+    var current_velocity := horizontal_step.velocity_step_start
     var space_state := overall_calc_params.space_state
     var shape_query_params := overall_calc_params.shape_query_params
     var horizontal_state: Array
@@ -330,9 +331,11 @@ static func check_continuous_horizontal_step_for_collision( \
                 overall_calc_params, step_calc_params, horizontal_step)
     ###############################################################################################
     
-    # Record the position for edge annotation debugging.
+    # Record the positions and velocities for edge annotation debugging.
     var frame_positions := [current_position]
     horizontal_step.frame_positions = frame_positions
+    var frame_velocities := [current_velocity]
+    horizontal_step.frame_velocities = frame_velocities
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #    if Geometry.are_points_equal_with_epsilon( \
@@ -349,6 +352,8 @@ static func check_continuous_horizontal_step_for_collision( \
                 movement_params, vertical_step, current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
+        current_velocity.x = horizontal_state[1]
+        current_velocity.y = vertical_state[1]
         shape_query_params.transform = \
                 Transform2D(movement_params.collider_rotation, previous_position)
         shape_query_params.motion = current_position - previous_position
@@ -377,8 +382,9 @@ static func check_continuous_horizontal_step_for_collision( \
         previous_time = current_time
         current_time += delta
         
-        # Record the position for edge annotation debugging.
+        # Record the positions and velocities for edge annotation debugging.
         frame_positions.push_back(current_position)
+        frame_velocities.push_back(current_velocity)
     
     # Check the last frame that puts us up to end_time.
     current_time = step_end_time
@@ -389,6 +395,8 @@ static func check_continuous_horizontal_step_for_collision( \
                 movement_params, vertical_step, current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
+        current_velocity.x = horizontal_state[1]
+        current_velocity.y = vertical_state[1]
         shape_query_params.transform = \
                 Transform2D(movement_params.collider_rotation, previous_position)
         shape_query_params.motion = current_position - previous_position
@@ -399,8 +407,9 @@ static func check_continuous_horizontal_step_for_collision( \
                 movement_params.collider_rotation, surface_parser, false, collision_debug_state)
         
         if collision == null:
-            # Record the position for edge annotation debugging.
+            # Record the positions and velocities for edge annotation debugging.
             frame_positions.push_back(current_position)
+            frame_velocities.push_back(current_velocity)
     
     if debug_state != null:
         debug_state.collision = collision

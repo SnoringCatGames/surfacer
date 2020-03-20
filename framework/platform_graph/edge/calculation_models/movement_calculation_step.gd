@@ -50,3 +50,5 @@ var velocity_step_end := Vector2.INF
 
 # Array<Vector2>
 var frame_positions: Array
+# Array<Vector2>
+var frame_velocities: Array

@@ -418,8 +418,8 @@ static func calculate_vertical_state_for_time_from_step(movement_params: Movemen
             step.time_instruction_end)
 
 # Calculates the vertical component of position and velocity according to the given vertical
-# movement state and the given time. These are then returned in a Vector2: x is position and y is
-# velocity.
+# movement state and the given time. These are then returned in an Array: [0] is position and [1]
+# is velocity.
 # FIXME: B: Fix unit tests to use the return value instead of output params.
 static func calculate_vertical_state_for_time(movement_params: MovementParams, time: float, \
         position_step_start_y: float, velocity_step_start_y: float, \
