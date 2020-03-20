@@ -25,7 +25,7 @@ func _get_action_handlers() -> Array:
         global.PLAYER_ACTIONS[FloorFallThroughAction.NAME],
         global.PLAYER_ACTIONS[FloorJumpAction.NAME],
         global.PLAYER_ACTIONS[FloorWalkAction.NAME],
-        global.PLAYER_ACTIONS[MatchExpectedEdgeTrajectoryAction.NAME],
+#        global.PLAYER_ACTIONS[MatchExpectedEdgeTrajectoryAction.NAME],
         global.PLAYER_ACTIONS[WallClimbAction.NAME],
         global.PLAYER_ACTIONS[WallDashAction.NAME],
         global.PLAYER_ACTIONS[WallDefaultAction.NAME],

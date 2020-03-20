@@ -13,6 +13,10 @@ var surface_type: int
 # Whether the movement along this edge transitions from grabbing a surface to being airborne.
 var enters_air: bool
 
+# Whether this edge was created by the navigator for a specific path at run-time, rather than ahead
+# of time when initially parsing the platform graph.
+var is_bespoke_for_path := false
+
 var instructions: MovementInstructions
 
 # In pixels.
@@ -144,7 +148,7 @@ func _get_should_end_by_colliding_with_surface() -> bool:
 func to_string() -> String:
     var format_string_template := \
             "%s{ start: %s, end: %s, velocity_start: %s, velocity_end: %s, " + \
-            "distance: %s, duration: %s, instructions: %s }"
+            "distance: %s, duration: %s, is_bespoke_for_path: %s, instructions: %s }"
     var format_string_arguments := [ \
             name, \
             _get_start_string(), \
@@ -153,6 +157,7 @@ func to_string() -> String:
             str(velocity_end), \
             distance, \
             duration, \
+            is_bespoke_for_path, \
             instructions.to_string(), \
         ]
     return format_string_template % format_string_arguments
@@ -169,6 +174,7 @@ func to_string_with_newlines(indent_level: int) -> String:
             "\n\t%svelocity_end: %s," + \
             "\n\t%sdistance: %s," + \
             "\n\t%sduration: %s," + \
+            "\n\t%sis_bespoke_for_path: %s," + \
             "\n\t%sinstructions: %s," + \
         "\n%s}"
     var format_string_arguments := [ \
@@ -185,6 +191,8 @@ func to_string_with_newlines(indent_level: int) -> String:
             distance, \
             indent_level_str, \
             duration, \
+            indent_level_str, \
+            is_bespoke_for_path, \
             indent_level_str, \
             instructions.to_string_with_newlines(indent_level + 1), \
             indent_level_str, \

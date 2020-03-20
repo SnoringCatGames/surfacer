@@ -357,10 +357,16 @@ var collision_params: CollisionCalcParams
 var movement_params: MovementParams
 var surface_parser: SurfaceParser
 var space_state: Physics2DDirectSpaceState
+
 # Dictionary<Surface, Surface>
 var surfaces_set: Dictionary
+
 # Dictionary<Surface, Array<PositionAlongSurface>>
 var surfaces_to_outbound_nodes: Dictionary
+
+# Intra-surface edges are not calculated and stored ahead of time; they're only calculated at run
+# time when navigating a specific path.
+# 
 # Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface, Edge>>
 var nodes_to_nodes_to_edges: Dictionary
 
@@ -429,7 +435,7 @@ func find_path(origin: PositionAlongSurface, \
         
         ### Record intra-surface edges.
         
-        # If reached the destination surface, record a temporary intra-surface edge to the
+        # If we reached the destination surface, record a temporary intra-surface edge to the
         # destination from this current_node.
         if current_node.surface == destination_surface:
             next_node = destination
@@ -525,6 +531,9 @@ static func _record_frontier(current: PositionAlongSurface, next: PositionAlongS
         frontier.insert(priority, next)
 
 # Calculates and stores the edges between surface nodes that this player type can traverse.
+# 
+# Intra-surface edges are not calculated and stored ahead of time; they're only calculated at run
+# time when navigating a specific path.
 func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTypeConfiguration, \
         debug_state: Dictionary) -> void:
     ###################################################################################
@@ -614,30 +623,6 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
     for surface in surfaces_to_outbound_nodes:
         for node in surfaces_to_outbound_nodes[surface]:
             nodes_to_nodes_to_edges[node] = {}
-    
-    # Calculate and record all intra-surface edges.
-    # FIXME: ----------------------- Is this actually needed? It looks like the find_path function will dynamically create intra-surface edges?
-    var intra_surface_edge: IntraSurfaceEdge
-    for surface in surfaces_to_outbound_nodes:
-        for node_a in surfaces_to_outbound_nodes[surface]:
-            for node_b in surfaces_to_outbound_nodes[surface]:
-                if node_a == node_b:
-                    # Don't create intra-surface edges that start and end at the same node.
-                    continue
-                
-                # Record uni-directional edges in both directions.
-                intra_surface_edge = IntraSurfaceEdge.new( \
-                        node_a, \
-                        node_b, \
-                        Vector2.ZERO, \
-                        movement_params)
-                nodes_to_nodes_to_edges[node_a][node_b] = intra_surface_edge
-                intra_surface_edge = IntraSurfaceEdge.new( \
-                        node_b, \
-                        node_a, \
-                        Vector2.ZERO, \
-                        movement_params)
-                nodes_to_nodes_to_edges[node_b][node_a] = intra_surface_edge
     
     # Record inter-surface edges.
     for surface in surfaces_to_edges:

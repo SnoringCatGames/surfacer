@@ -26,7 +26,9 @@ func _init( \
         _calculate_velocity_end(start, end, velocity_start, movement_params), \
         movement_params, \
         _calculate_instructions(start, end)) -> void:
-    pass
+    # Intra-surface edges are never calculated and stored ahead of time; they're only calculated at
+    # run time when navigating a specific path.
+    self.is_bespoke_for_path = true
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
     instructions = _calculate_instructions(surface_state.center_position_along_surface, \

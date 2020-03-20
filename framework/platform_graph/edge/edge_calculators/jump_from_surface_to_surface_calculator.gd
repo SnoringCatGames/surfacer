@@ -9,7 +9,7 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: -----------------------------
 # 
 # >>- Debugging updates_player_velocity_to_match_edge_trajectory:
-#   - It seems to result in run-time trajectory exactly matching the lighter curve (), while annotator shows purple path over the darker curve.
+#   - It seems to result in run-time trajectory exactly matching the lighter/discrete curve (), while annotator shows purple path over the darker/continuous curve.
 #   - There seems to sometimes be a discrepency between the purple/teal navigator/run-time movement and the dark/light curves from platform graph... Ohhh, I guess this is due to us actually using a different jump-off point now, after optimizing things.
 #     - Should I somehow annotate something to indicate optimized edge state?
 # 
@@ -486,6 +486,8 @@ static func optimize_edge_for_approach(collision_params: CollisionCalcParams, \
                     false, in_debug_mode)
             
             if optimized_edge != null:
+                optimized_edge.is_bespoke_for_path = true
+                
                 previous_edge = IntraSurfaceEdge.new( \
                         previous_edge.start_position_along_surface, \
                         jump_position, \
@@ -522,6 +524,8 @@ static func optimize_edge_for_approach(collision_params: CollisionCalcParams, \
                     false, in_debug_mode)
             
             if optimized_edge != null:
+                optimized_edge.is_bespoke_for_path = true
+                
                 previous_edge = IntraSurfaceEdge.new( \
                         previous_edge.start_position_along_surface, \
                         jump_position, \

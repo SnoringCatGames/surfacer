@@ -115,6 +115,8 @@ static func optimize_edge_for_approach(collision_params: CollisionCalcParams, \
         optimized_edge = _create_edge_from_calc_results(calc_results, fall_off_position)
         
         if optimized_edge != null:
+            optimized_edge.is_bespoke_for_path = true
+            
             previous_edge = IntraSurfaceEdge.new( \
                     previous_edge.start_position_along_surface, \
                     fall_off_position, \

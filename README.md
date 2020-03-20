@@ -291,7 +291,9 @@ When we create the edges, we represent the movement trajectories according to th
 
 #### Correcting for runtime vs buildtime trajectory discrepancies
 
-FIXME: ----------------
+When executing edge instructions, the resulting run-time trajectory is usually slightly off from the expected trajectory that was pre-calculated when creating the edge. This variance is usually pretty minor, but, just in case, a given player can be configured to use the exact pre-calculated edge trajectory rather than the run-time version.
+
+Theoretically, this discrepancy shouldn't exist, and we should be able to eliminate it at some point.
 
 ## Annotators
 
