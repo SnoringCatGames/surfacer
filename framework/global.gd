@@ -43,7 +43,7 @@ const DEBUG_STATE := {
 #        
 #        movement_calculator = "ClimbOverWallToFloorCalculator",
 #        movement_calculator = "FallFromWallCalculator",
-#        movement_calculator = "FallFromFloorCalculator",
+        movement_calculator = "FallFromFloorCalculator",
 #        movement_calculator = "JumpFromSurfaceToSurfaceCalculator",
 #        movement_calculator = "ClimbDownWallToFloorCalculator",
 #        movement_calculator = "WalkToAscendWallFromFloorCalculator",
@@ -79,6 +79,15 @@ const DEBUG_STATE := {
 #                position = Vector2(-128, -448),
 #            },
 #        },
+#        
+#        # Level: long rise; fall-right-from-lower-right-floor
+        edge = {
+            origin = {
+                surface_side = SurfaceSide.FLOOR,
+                surface_start_vertex = Vector2(128, 64),
+                position = Vector2(192, 64),
+            },
+        },
     },
 }
 

@@ -1,6 +1,8 @@
 # A collection of utility functions for calculating state related to movement.
 class_name MovementUtils
 
+const EXTRA_JUMP_LAND_POSITION_MARGIN := 2.0
+
 # Calculates the duration to reach the destination with the given movement parameters.
 #
 # - Since we are dealing with a parabolic equation, there are likely two possible results.
@@ -276,7 +278,8 @@ static func get_all_jump_land_positions_from_surface(movement_params: MovementPa
         var target_last_point := target_vertices[target_vertices.size() - 1]
         
         var horizontal_offset := movement_params.collider_half_width_height.x + \
-                MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN
+                MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN + \
+                EXTRA_JUMP_LAND_POSITION_MARGIN
         
         # Instead of choosing the exact closest point along the source surface to the target
         # surface, we may want to give the "closest" jump-off point an offset that should reduce

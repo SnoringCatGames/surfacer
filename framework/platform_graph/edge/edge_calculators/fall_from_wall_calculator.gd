@@ -41,6 +41,13 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
     #       already found an edge to.
     
     for jump_position in jump_positions:
+        ###################################################################################
+        # Allow for debug mode to limit the scope of what's calculated.
+        if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
+                jump_position, null):
+            continue
+        ###################################################################################
+        
         landing_trajectories = FallMovementUtils.find_landing_trajectories_to_any_surface( \
                 collision_params, surfaces_in_fall_range_set, jump_position, velocity_start)
         

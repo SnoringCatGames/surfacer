@@ -14,6 +14,7 @@ const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
 
 var falls_on_left_side: bool
+var fall_off_position: PositionAlongSurface
 
 func _init( \
         start: PositionAlongSurface, \
@@ -22,7 +23,8 @@ func _init( \
         velocity_end: Vector2, \
         movement_params: MovementParams, \
         instructions: MovementInstructions, \
-        falls_on_left_side: bool) \
+        falls_on_left_side: bool,
+        fall_off_position: PositionAlongSurface) \
         .(NAME, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
@@ -34,6 +36,7 @@ func _init( \
         movement_params, \
         instructions) -> void:
     self.falls_on_left_side = falls_on_left_side
+    self.fall_off_position = fall_off_position
 
 func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
         instructions: MovementInstructions) -> float:
@@ -47,3 +50,29 @@ func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface,
 func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, playback) -> bool:
     return Edge.check_just_landed_on_expected_surface(surface_state, self.end_surface)
+
+# When walking off the end of a surface, Godot's underlying collision engine can trigger multiple
+# extraneous launch/land events if the player's collision boundary is not square. So this function
+# override adds logic to ignore any of these extra collisions with the starting surface.
+func update_navigation_state(navigation_state: PlayerNavigationState, \
+        surface_state: PlayerSurfaceState, playback) -> void:
+    .update_navigation_state(navigation_state, surface_state, playback)
+    
+    var is_still_colliding_with_start_surface := \
+            surface_state.grabbed_surface == self.start_surface
+    if is_still_colliding_with_start_surface:
+        navigation_state.is_expecting_to_enter_air = true
+    
+    var is_grabbed_surface_expected: bool = \
+            surface_state.grabbed_surface == self.end_surface or \
+            is_still_colliding_with_start_surface
+    navigation_state.just_left_air_unexpectedly = surface_state.just_left_air and \
+            !is_grabbed_surface_expected and surface_state.collision_count > 0
+    
+    navigation_state.just_interrupted_navigation = \
+            navigation_state.just_left_air_unexpectedly or \
+            navigation_state.just_entered_air_unexpectedly or \
+            navigation_state.just_interrupted_by_user_action
+    
+    navigation_state.just_reached_end_of_edge = _check_did_just_reach_destination( \
+            navigation_state, surface_state, playback)

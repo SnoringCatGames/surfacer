@@ -5,6 +5,8 @@ const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/
 
 const NAME := "FallFromFloorCalculator"
 
+const EXTRA_FALL_OFF_POSITION_MARGIN := 2.0
+
 func _init().(NAME) -> void:
     pass
 
@@ -62,6 +64,13 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
     
     var velocity_start := Vector2(velocity_x_fall_off, 0.0)
     
+    ###################################################################################
+    # Allow for debug mode to limit the scope of what's calculated.
+    if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
+            position_start, null):
+        return
+    ###################################################################################
+    
     var landing_trajectories := FallMovementUtils.find_landing_trajectories_to_any_surface( \
             collision_params, surfaces_in_fall_range_set, position_fall_off_wrapper, \
             velocity_start)
@@ -83,7 +92,8 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
                 velocity_end, \
                 movement_params, \
                 instructions, \
-                falls_on_left_side)
+                falls_on_left_side, \
+                position_fall_off_wrapper)
         edges_result.push_back(edge)
 
 static func _calculate_player_center_at_fall_off_point(edge_point: Vector2, \
@@ -122,6 +132,8 @@ static func _calculate_player_center_at_fall_off_point(edge_point: Vector2, \
                 "_calculate_player_center_at_fall_off_point: %s. " + \
                 "The supported shapes are: CircleShape2D, CapsuleShape2D, RectangleShape2D." % \
                 collider_shape)
+    
+    right_side_fall_off_displacement_x += EXTRA_FALL_OFF_POSITION_MARGIN
     
     return edge_point + \
             Vector2(-right_side_fall_off_displacement_x if falls_on_left_side else \

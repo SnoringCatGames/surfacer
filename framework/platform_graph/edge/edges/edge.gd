@@ -80,7 +80,8 @@ func update_navigation_state(navigation_state: PlayerNavigationState, \
     navigation_state.just_interrupted_by_user_action = \
             UserActionSource.get_is_some_user_action_pressed()
     
-    navigation_state.just_interrupted_navigation = navigation_state.just_left_air_unexpectedly or \
+    navigation_state.just_interrupted_navigation = \
+            navigation_state.just_left_air_unexpectedly or \
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_user_action
     

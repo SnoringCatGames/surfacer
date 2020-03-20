@@ -8,15 +8,10 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# >>- Debugging updates_player_velocity_to_match_edge_trajectory:
-#   - It seems to result in run-time trajectory exactly matching the lighter/discrete curve (), while annotator shows purple path over the darker/continuous curve.
-#   - There seems to sometimes be a discrepency between the purple/teal navigator/run-time movement and the dark/light curves from platform graph... Ohhh, I guess this is due to us actually using a different jump-off point now, after optimizing things.
-#     - Should I somehow annotate something to indicate optimized edge state?
+# - MatchExpectedEdgeTrajectoryAction seems to be causing some jitteriness/fall-off-delay for FallFromFloorEdge.
 # 
 # - FallFromFloorEdges don't seem to account for horizontal velocity at the fall-off point (they assume zero, which isn't true at run-time?).
 #   - Observed when not using updates_player_velocity_to_match_edge_trajectory.
-# - FallFromFloorEdges seem to not include enough outward margin, and then cause collisions with the floor we just left?
-#   - Observed when using updates_player_velocity_to_match_edge_trajectory.
 # 
 # - Cleanup how PlayerParams are set up and configured.
 #   - Should be simpler and more self-consistent. Fewer methods. More single list of static field assignments.

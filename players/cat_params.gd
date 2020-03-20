@@ -25,7 +25,7 @@ func _get_action_handlers() -> Array:
         global.PLAYER_ACTIONS[FloorFallThroughAction.NAME],
         global.PLAYER_ACTIONS[FloorJumpAction.NAME],
         global.PLAYER_ACTIONS[FloorWalkAction.NAME],
-#        global.PLAYER_ACTIONS[MatchExpectedEdgeTrajectoryAction.NAME],
+        global.PLAYER_ACTIONS[MatchExpectedEdgeTrajectoryAction.NAME],
         global.PLAYER_ACTIONS[WallClimbAction.NAME],
         global.PLAYER_ACTIONS[WallDashAction.NAME],
         global.PLAYER_ACTIONS[WallDefaultAction.NAME],
@@ -39,7 +39,7 @@ func _get_movement_calculators() -> Array:
         global.EDGE_MOVEMENTS[ClimbOverWallToFloorCalculator.NAME],
         global.EDGE_MOVEMENTS[FallFromWallCalculator.NAME],
         global.EDGE_MOVEMENTS[FallFromFloorCalculator.NAME],
-        global.EDGE_MOVEMENTS[JumpFromSurfaceToSurfaceCalculator.NAME],
+#        global.EDGE_MOVEMENTS[JumpFromSurfaceToSurfaceCalculator.NAME],
         global.EDGE_MOVEMENTS[ClimbDownWallToFloorCalculator.NAME],
         global.EDGE_MOVEMENTS[WalkToAscendWallFromFloorCalculator.NAME],
     ]
