@@ -139,8 +139,9 @@ static func check_instructions_discrete_frame_state( \
             next_instruction = instructions.instructions[current_instruction_index + 1] if \
                     current_instruction_index + 1 < instructions.instructions.size() else null
         
-        # FIXME: E: After implementing instruction execution, check whether it also does this, and
-        #           whether this should be uncommented.
+        # FIXME: ------------------------------:
+        # - After implementing instruction execution, check whether it also does this, and whether
+        #   this should be uncommented.
 #        if !has_started_instructions:
 #            has_started_instructions = true
 #            # When we start executing the instruction set, the current elapsed time of the

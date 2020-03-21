@@ -34,7 +34,6 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
         falls_on_left_side: bool) -> void:
     var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
-    var velocity_x_start := 0.0
     var edge_point := \
             origin_surface.first_point if falls_on_left_side else origin_surface.last_point
     
@@ -47,9 +46,14 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
     
     var displacement_from_start_to_fall_off := position_fall_off - position_start.target_point
     
-    var acceleration := movement_params.walk_acceleration if \
-            displacement_from_start_to_fall_off.x > 0 else \
-            -movement_params.walk_acceleration
+    var acceleration := -movement_params.walk_acceleration if falls_on_left_side else \
+            movement_params.walk_acceleration
+    
+    var velocity_starts := JumpFromSurfaceToSurfaceCalculator.get_jump_velocity_starts( \
+            movement_params, origin_surface, position_start)
+    # For efficiency, only consider one start velocity.
+    # FIXME: -------------A: Fix this. Should be able to consider both start-velocities, but still only keep one edge for each surface pair.
+    var velocity_x_start: float = velocity_starts[0].x
     
     var velocity_x_fall_off: float = MovementUtils.calculate_velocity_end_for_displacement( \
             displacement_from_start_to_fall_off.x, velocity_x_start, acceleration, \
@@ -82,8 +86,8 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
     
     for calc_results in landing_trajectories:
         position_end = calc_results.overall_calc_params.destination_position
-        instructions = _calculate_instructions(position_start, position_end, calc_results, \
-                time_fall_off, falls_on_left_side)
+        instructions = _calculate_instructions(position_start, position_end, velocity_x_start, \
+                time_fall_off, calc_results, movement_params, falls_on_left_side)
         velocity_end = calc_results.horizontal_steps.back().velocity_step_end
         edge = FallFromFloorEdge.new( \
                 position_start, \
@@ -158,8 +162,15 @@ static func _increment_calc_results_start_times(calc_results: MovementCalcResult
         horizontal_step.time_step_end += time_fall_off
 
 static func _calculate_instructions(start: PositionAlongSurface, \
-        end: PositionAlongSurface, calc_results: MovementCalcResults, time_fall_off: float, \
+        end: PositionAlongSurface, velocity_x_start: float, time_fall_off: float, \
+        calc_results: MovementCalcResults, movement_params: MovementParams, \
         falls_on_left_side: bool) -> MovementInstructions:
+    var frame_count_before_fall_off := ceil(time_fall_off / Utils.PHYSICS_TIME_STEP)
+    
+    # Round the fall-off time up, so that we actually consider it to start aligned with the first
+    # frame in which it is actually clear of the surface edge.
+    time_fall_off = frame_count_before_fall_off * Utils.PHYSICS_TIME_STEP + Geometry.FLOAT_EPSILON
+    
     _increment_calc_results_start_times(calc_results, time_fall_off)
     
     # Calculate the fall-trajectory instructions.
@@ -176,5 +187,49 @@ static func _calculate_instructions(start: PositionAlongSurface, \
     instructions.instructions.push_front(outward_press)
     
     instructions.duration += time_fall_off
+    
+    instructions.constraint_positions.insert(0, start.target_point)
+    
+    # Insert frame state for the walk-to-fall-off portion of the movement.
+    
+    var walking_and_falling_frame_discrete_positions_from_test = PoolVector2Array()
+    walking_and_falling_frame_discrete_positions_from_test.resize(frame_count_before_fall_off)
+    var walking_and_falling_frame_continuous_positions_from_steps = PoolVector2Array()
+    walking_and_falling_frame_continuous_positions_from_steps.resize(frame_count_before_fall_off)
+    var walking_and_falling_frame_continuous_velocities_from_steps = PoolVector2Array()
+    walking_and_falling_frame_continuous_velocities_from_steps.resize(frame_count_before_fall_off)
+    
+    walking_and_falling_frame_discrete_positions_from_test.append_array( \
+            instructions.frame_discrete_positions_from_test)
+    walking_and_falling_frame_continuous_positions_from_steps.append_array( \
+            instructions.frame_continuous_positions_from_steps)
+    walking_and_falling_frame_continuous_velocities_from_steps.append_array( \
+            instructions.frame_continuous_velocities_from_steps)
+    
+    instructions.frame_discrete_positions_from_test = \
+            walking_and_falling_frame_discrete_positions_from_test
+    instructions.frame_continuous_positions_from_steps = \
+            walking_and_falling_frame_continuous_positions_from_steps
+    instructions.frame_continuous_velocities_from_steps = \
+            walking_and_falling_frame_continuous_velocities_from_steps
+    
+    var acceleration_x := -movement_params.walk_acceleration if falls_on_left_side else \
+            movement_params.walk_acceleration
+    var acceleration := Vector2(acceleration_x, 0.0)
+    
+    var current_frame_position := start.target_point
+    var current_frame_velocity := Vector2(velocity_x_start, \
+            PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
+    
+    for frame_index in range(frame_count_before_fall_off):
+        instructions.frame_discrete_positions_from_test[frame_index] = current_frame_position
+        instructions.frame_continuous_positions_from_steps[frame_index] = current_frame_position
+        instructions.frame_continuous_velocities_from_steps[frame_index] = current_frame_velocity
+        
+        current_frame_position += current_frame_velocity * Utils.PHYSICS_TIME_STEP
+        current_frame_velocity += acceleration * Utils.PHYSICS_TIME_STEP
+        clamp(current_frame_velocity.x, \
+                -movement_params.max_horizontal_speed_default, \
+                movement_params.max_horizontal_speed_default)
     
     return instructions

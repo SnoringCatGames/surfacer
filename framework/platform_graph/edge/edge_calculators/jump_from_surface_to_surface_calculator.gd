@@ -8,10 +8,25 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - MatchExpectedEdgeTrajectoryAction seems to be causing some jitteriness/fall-off-delay for FallFromFloorEdge.
+# - Return additional mid-point jump/land positions from get_all_jump_land_positions_from_surface:
+#   - Not just directly vertically below/above, but also at an offset that takes into account
+#     displacement due to max horizontal velocity.
+# 
+# - Check whether the efall-from-floor movement looks more natural now, and can use the max-speed
+#   start velocity.
+# 
+# - Add support to FallFromFloorCalculator to consider both start-velocities, but still only keep
+#   one edge for each surface pair.
+# 
+# - Consider adding support for only using updates_player_velocity_to_match_edge_trajectory after
+#   a given time delay (to possibly replace the logic we just added in FallFromFloorCalculator).
+# 
+# - Check FIXMEs in CollisionCheckUtils. We should check on their accuracy now.
 # 
 # - FallFromFloorEdges don't seem to account for horizontal velocity at the fall-off point (they assume zero, which isn't true at run-time?).
 #   - Observed when not using updates_player_velocity_to_match_edge_trajectory.
+# 
+# - MatchExpectedEdgeTrajectoryAction seems to be causing some jitteriness/fall-off-delay for FallFromFloorEdge.
 # 
 # - Cleanup how PlayerParams are set up and configured.
 #   - Should be simpler and more self-consistent. Fewer methods. More single list of static field assignments.
@@ -294,6 +309,9 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
                     if edge != null:
                         # Can reach land position from jump position.
                         edges_result.push_back(edge)
+                        
+                        # For efficiency, only compute one edge per surface pair.
+                        break
                 
                 if edge != null:
                     # For efficiency, only compute one edge per surface pair.
@@ -379,19 +397,18 @@ static func create_edge_from_overall_params( \
 static func get_jump_velocity_starts(movement_params: MovementParams, origin_surface: Surface, \
         jump_position: PositionAlongSurface) -> Array:
     var velocity_starts := []
-    var velocity_start_x := INF
     
     match origin_surface.side:
         SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
             # Initial velocity when jumping from a wall is slightly outward from the wall.
-            velocity_start_x = movement_params.wall_jump_horizontal_boost if \
+            var velocity_start_x := movement_params.wall_jump_horizontal_boost if \
                     origin_surface.side == SurfaceSide.LEFT_WALL else \
                     -movement_params.wall_jump_horizontal_boost
             velocity_starts.push_back(Vector2(velocity_start_x, movement_params.jump_boost))
             
         SurfaceSide.FLOOR, SurfaceSide.CEILING:
-            var can_reach_max_speed := origin_surface.bounding_box.size.x > \
-                    movement_params.distance_to_max_horizontal_speed
+            var can_reach_half_max_speed := origin_surface.bounding_box.size.x > \
+                    movement_params.distance_to_max_horizontal_speed / 2.0
             var is_first_point: bool = Geometry.are_points_equal_with_epsilon( \
                     jump_position.target_point, origin_surface.first_point)
             var is_last_point: bool = Geometry.are_points_equal_with_epsilon( \
@@ -400,7 +417,7 @@ static func get_jump_velocity_starts(movement_params: MovementParams, origin_sur
             
             # Determine whether to calculate jumping with max horizontal speed.
             if movement_params.calculates_edges_with_velocity_start_x_max_speed and \
-                    can_reach_max_speed:
+                    can_reach_half_max_speed and !is_mid_point:
                 if is_first_point:
                     velocity_starts.push_back(
                             Vector2(-movement_params.max_horizontal_speed_default if \
