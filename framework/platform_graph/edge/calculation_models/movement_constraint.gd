@@ -82,8 +82,12 @@ var is_valid := false
 # Whether this was the neighbor constraint that replaced a fake constraint.
 var replaced_a_fake := false
 
-func _init(surface: Surface, position: Vector2, passing_vertically: bool, \
-        should_stay_on_min_side: bool, previous_constraint: MovementConstraint, \
+func _init( \
+        surface: Surface, \
+        position: Vector2, \
+        passing_vertically: bool, \
+        should_stay_on_min_side: bool, \
+        previous_constraint: MovementConstraint, \
         next_constraint: MovementConstraint) -> void:
     self.surface = surface
     self.position = position

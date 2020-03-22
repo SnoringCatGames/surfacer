@@ -5,7 +5,10 @@ const NAME := "MatchExpectedEdgeTrajectoryAction"
 const TYPE := SurfaceType.OTHER
 const PRIORITY := 10010
 
-func _init().(NAME, TYPE, PRIORITY) -> void:
+func _init().( \
+        NAME, \
+        TYPE, \
+        PRIORITY) -> void:
     pass
 
 func process(player: Player) -> bool:

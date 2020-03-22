@@ -20,13 +20,19 @@ var current_playback: InstructionsPlayback
 
 var navigation_state := PlayerNavigationState.new()
 
-func _init(player, graph: PlatformGraph, global) -> void:
+func _init( \
+        player, \
+        graph: PlatformGraph, \
+        global) -> void:
     self.player = player
     self.graph = graph
     self.global = global
     self.surface_state = player.surface_state
     self.collision_params = CollisionCalcParams.new( \
-            Global.DEBUG_STATE, global.space_state, player.movement_params, graph.surface_parser)
+            Global.DEBUG_STATE, \
+            global.space_state, \
+            player.movement_params, \
+            graph.surface_parser)
     self.instructions_action_source = InstructionsActionSource.new(player, true)
 
 # Starts a new navigation to the given destination.
@@ -49,7 +55,11 @@ func navigate_to_nearby_surface(target: Vector2, \
     else:
         var origin := surface_state.center_position
         var air_to_surface_edge := FallMovementUtils.find_a_landing_trajectory( \
-                collision_params, graph.surfaces_set, origin, player.velocity, destination)
+                collision_params, \
+                graph.surfaces_set, \
+                origin, \
+                player.velocity, \
+                destination)
         if air_to_surface_edge != null:
             path = graph.find_path(air_to_surface_edge.end_position_along_surface, destination)
             if path != null:
@@ -62,8 +72,13 @@ func navigate_to_nearby_surface(target: Vector2, \
     else:
         # Destination can be reached from origin.
         
-        _interleave_intra_surface_edges(collision_params, path)
-        _optimize_edges_for_approach(collision_params, path, player.velocity)
+        _interleave_intra_surface_edges( \
+                collision_params, \
+                path)
+        _optimize_edges_for_approach( \
+                collision_params, \
+                path, \
+                player.velocity)
         
         var format_string_template := "STARTING PATH NAV:   %8.3ft; {" + \
             "\n\tdestination: %s," + \
@@ -127,7 +142,8 @@ func _start_edge(index: int) -> void:
     navigation_state.is_expecting_to_enter_air = current_edge.enters_air
     
     current_playback = instructions_action_source.start_instructions( \
-            current_edge, global.elapsed_play_time_sec)
+            current_edge, \
+            global.elapsed_play_time_sec)
     
     # Some instructions could be immediately skipped, depending on runtime state, so this gives us
     # a change to move straight to the next edge.
@@ -139,7 +155,9 @@ func update() -> void:
         return
     
     current_edge.update_navigation_state( \
-            navigation_state, surface_state, current_playback)
+            navigation_state, \
+            surface_state, \
+            current_playback)
     
     if navigation_state.just_interrupted_navigation:
         var interruption_type_label: String
@@ -173,7 +191,9 @@ func update() -> void:
         # assert()
         
         # Cancel the current intra-surface instructions (in case it didn't clear itself).
-        instructions_action_source.cancel_playback(current_playback, global.elapsed_play_time_sec)
+        instructions_action_source.cancel_playback( \
+                current_playback, \
+                global.elapsed_play_time_sec)
         
         # Check for the next edge to navigate.
         var next_edge_index := current_edge_index + 1
@@ -187,8 +207,10 @@ func update() -> void:
 # rather than from the safe end/closest point that was used at build-time when calculating
 # possible edges.
 # - This also updates start velocity when updating start position.
-static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, \
-        path: PlatformGraphPath, velocity_start: Vector2) -> void:
+static func _optimize_edges_for_approach( \
+        collision_params: CollisionCalcParams, \
+        path: PlatformGraphPath, \
+        velocity_start: Vector2) -> void:
     var movement_params := collision_params.movement_params
     
     ###############################################################################################
@@ -231,17 +253,29 @@ static func _optimize_edges_for_approach(collision_params: CollisionCalcParams, 
                 
                 if is_moving_from_intra_surface_to_jump:
                     JumpFromSurfaceToSurfaceCalculator.optimize_edge_for_approach( \
-                            collision_params, path, i, previous_velocity_end_x, previous_edge, \
-                            current_edge, in_debug_mode)
+                            collision_params, \
+                            path, \
+                            i, \
+                            previous_velocity_end_x, \
+                            previous_edge, \
+                            current_edge, \
+                            in_debug_mode)
                 elif is_moving_from_intra_surface_to_fall_off_wall:
-                    FallFromWallCalculator.optimize_edge_for_approach(collision_params, path, \
-                            i, previous_velocity_end_x, previous_edge, current_edge, in_debug_mode)
+                    FallFromWallCalculator.optimize_edge_for_approach( \
+                            collision_params, \
+                            path, \
+                            i, \
+                            previous_velocity_end_x, \
+                            previous_edge, \
+                            current_edge, \
+                            in_debug_mode)
             
             previous_velocity_end_x = previous_edge.velocity_end.x
 
 # Inserts extra intra-surface between any edges that land and then immediately jump from the same
 # position, since the land position could be off due to movement error at runtime.
-static func _interleave_intra_surface_edges(collision_params: CollisionCalcParams, \
+static func _interleave_intra_surface_edges( \
+        collision_params: CollisionCalcParams, \
         path: PlatformGraphPath) -> void:
     # Insert extra intra-surface between any edges that land and then immediately jump from the
     # same position, since the land position could be off due to movement error at runtime.

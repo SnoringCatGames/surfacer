@@ -5,7 +5,10 @@ const NAME := "AllDefaultAction"
 const TYPE := SurfaceType.OTHER
 const PRIORITY := 10
 
-func _init().(NAME, TYPE, PRIORITY) -> void:
+func _init().( \
+        NAME, \
+        TYPE, \
+        PRIORITY) -> void:
     pass
 
 func process(player: Player) -> bool:

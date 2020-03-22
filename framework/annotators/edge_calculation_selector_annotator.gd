@@ -41,7 +41,8 @@ func _unhandled_input(event: InputEvent) -> void:
         
         var click_position: Vector2 = global.current_level.get_global_mouse_position()
         var surface_position := SurfaceParser.find_closest_position_on_a_surface( \
-                click_position, global.current_player_for_clicks)
+                click_position, \
+                global.current_player_for_clicks)
         
         if origin == null:
             origin = surface_position
@@ -92,8 +93,11 @@ func _calculate_edge_attempt() -> void:
     
     # Choose the jump and land positions according to which is closest to the click positions.
     var jump_positions := MovementUtils.get_all_jump_land_positions_for_surface( \
-            movement_params, origin_surface, destination_surface.vertices, \
-            destination_surface.bounding_box, destination_surface.side, \
+            movement_params, \
+            origin_surface, \
+            destination_surface.vertices, \
+            destination_surface.bounding_box, \
+            destination_surface.side, \
             movement_params.jump_boost, true)
     var jump_position: PositionAlongSurface = jump_positions[0]
     if jump_positions.size() > 1:
@@ -103,8 +107,13 @@ func _calculate_edge_attempt() -> void:
                     jump_position.target_point.distance_squared_to(origin.target_point):
                 jump_position = other_jump_position
     var land_positions := MovementUtils.get_all_jump_land_positions_for_surface( \
-            movement_params, destination_surface, origin_surface.vertices, \
-            origin_surface.bounding_box, origin_surface.side, movement_params.jump_boost, false)
+            movement_params, \
+            destination_surface, \
+            origin_surface.vertices, \
+            origin_surface.bounding_box, \
+            origin_surface.side, \
+            movement_params.jump_boost, \
+            false)
     var land_position: PositionAlongSurface = land_positions[0]
     if land_positions.size() > 1:
         for i in range(1, land_positions.size()):
@@ -115,9 +124,17 @@ func _calculate_edge_attempt() -> void:
     
     # Create the jump-calculation parameter object.
     var velocity_start: Vector2 = JumpFromSurfaceToSurfaceCalculator.get_jump_velocity_starts( \
-            movement_params, origin_surface, jump_position)[0]
+            movement_params, \
+            origin_surface, \
+            jump_position)[0]
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
-            collision_params, jump_position, land_position, true, velocity_start, true, true)
+            collision_params, \
+            jump_position, \
+            land_position, \
+            true, \
+            velocity_start, \
+            true, \
+            true)
     
     if overall_calc_params == null:
         edge_attempt = null
@@ -127,8 +144,10 @@ func _calculate_edge_attempt() -> void:
     if overall_calc_params.origin_constraint.is_valid and \
             overall_calc_params.destination_constraint.is_valid:
         # Calculate the actual jump steps, collision, trajectory, and input state.
-        JumpFromSurfaceToSurfaceCalculator.create_edge_from_overall_params(overall_calc_params, \
-                jump_position, land_position)
+        JumpFromSurfaceToSurfaceCalculator.create_edge_from_overall_params( \
+                overall_calc_params, \
+                jump_position, \
+                land_position)
     
     # Record debug state for the jump calculation.
     edge_attempt = overall_calc_params.debug_state
@@ -138,11 +157,18 @@ func _calculate_edge_attempt() -> void:
     possible_jump_and_land_positions = jump_positions
 
 func _draw_selected_origin() -> void:
-    DrawUtils.draw_dashed_polyline(self, origin.surface.vertices, \
-            ORIGIN_SURFACE_SELECTION_COLOR, ORIGIN_SURFACE_SELECTION_DASH_LENGTH, \
-            ORIGIN_SURFACE_SELECTION_DASH_GAP, 0.0, ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
+    DrawUtils.draw_dashed_polyline( \
+            self, \
+            origin.surface.vertices, \
+            ORIGIN_SURFACE_SELECTION_COLOR, \
+            ORIGIN_SURFACE_SELECTION_DASH_LENGTH, \
+            ORIGIN_SURFACE_SELECTION_DASH_GAP, \
+            0.0, \
+            ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
 
 func _draw_possible_jump_and_land_positions() -> void:
     for position in possible_jump_and_land_positions:
-        draw_circle(position.target_point, POSSIBLE_JUMP_LAND_POSITION_RADIUS, \
+        draw_circle( \
+                position.target_point, \
+                POSSIBLE_JUMP_LAND_POSITION_RADIUS, \
                 POSSIBLE_JUMP_LAND_POSITION_COLOR)

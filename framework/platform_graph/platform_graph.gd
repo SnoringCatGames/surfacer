@@ -372,7 +372,9 @@ var nodes_to_nodes_to_edges: Dictionary
 
 var debug_state: Dictionary
 
-func _init(player_info: PlayerTypeConfiguration, collision_params: CollisionCalcParams) -> void:
+func _init( \
+        player_info: PlayerTypeConfiguration, \
+        collision_params: CollisionCalcParams) -> void:
     self.collision_params = collision_params
     self.movement_params = player_info.movement_params
     self.surface_parser = collision_params.surface_parser
@@ -388,10 +390,14 @@ func _init(player_info: PlayerTypeConfiguration, collision_params: CollisionCalc
     self.surfaces_to_outbound_nodes = {}
     self.nodes_to_nodes_to_edges = {}
     
-    _calculate_nodes_and_edges(surfaces_set, player_info, debug_state)
+    _calculate_nodes_and_edges( \
+            surfaces_set, \
+            player_info, \
+            debug_state)
 
 # Uses A* search.
-func find_path(origin: PositionAlongSurface, \
+func find_path( \
+        origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:
     # TODO: Add an early-cutoff mechanism for paths that deviate too far from straight-line.
     #       Otherwise, this will check every connecected surface before knowing that a destination
@@ -441,8 +447,14 @@ func find_path(origin: PositionAlongSurface, \
             next_node = destination
             new_actual_weight = current_weight + \
                     current_node.target_point.distance_to(next_node.target_point)
-            _record_frontier(current_node, next_node, destination, new_actual_weight, \
-                    nodes_to_previous_nodes, nodes_to_weights, frontier)
+            _record_frontier( \
+                    current_node, \
+                    next_node, \
+                    destination, \
+                    new_actual_weight, \
+                    nodes_to_previous_nodes, \
+                    nodes_to_weights, \
+                    frontier)
             # We don't need to consider any additional edges from this node, since they'd
             # necessarily be less direct than this intra-surface edge that we just recorded.
             continue
@@ -452,8 +464,14 @@ func find_path(origin: PositionAlongSurface, \
         for next_node in surfaces_to_outbound_nodes[current_node.surface]:
             new_actual_weight = current_weight + \
                     current_node.target_point.distance_to(next_node.target_point)
-            _record_frontier(current_node, next_node, destination, new_actual_weight, \
-                    nodes_to_previous_nodes, nodes_to_weights, frontier)
+            _record_frontier( \
+                    current_node, \
+                    next_node, \
+                    destination, \
+                    new_actual_weight, \
+                    nodes_to_previous_nodes, \
+                    nodes_to_weights, \
+                    frontier)
         
         ### Record inter-surface edges.
         
@@ -467,8 +485,14 @@ func find_path(origin: PositionAlongSurface, \
         for next_node in nodes_to_edges_for_current_node:
             next_edge = nodes_to_edges_for_current_node[next_node]
             new_actual_weight = current_weight + next_edge.get_weight(movement_params)
-            _record_frontier(current_node, next_node, destination, new_actual_weight, \
-                    nodes_to_previous_nodes, nodes_to_weights, frontier)
+            _record_frontier( \
+                    current_node, \
+                    next_node, \
+                    destination, \
+                    new_actual_weight, \
+                    nodes_to_previous_nodes, \
+                    nodes_to_weights, \
+                    frontier)
     
     # Collect the edges for the cheapest path.
     
@@ -511,9 +535,13 @@ func find_path(origin: PositionAlongSurface, \
     return PlatformGraphPath.new(edges)
 
 # Helper function for find_path. This records new neighbor nodes for the given node.
-static func _record_frontier(current: PositionAlongSurface, next: PositionAlongSurface, \
-        destination: PositionAlongSurface, new_actual_weight: float, \
-        nodes_to_previous_nodes: Dictionary, nodes_to_weights: Dictionary, \
+static func _record_frontier( \
+        current: PositionAlongSurface, \
+        next: PositionAlongSurface, \
+        destination: PositionAlongSurface, \
+        new_actual_weight: float, \
+        nodes_to_previous_nodes: Dictionary, \
+        nodes_to_weights: Dictionary, \
         frontier: PriorityQueue) -> void:
     if !nodes_to_weights.has(next) or new_actual_weight < nodes_to_weights[next]:
         # We found a new or cheaper path to this next node, so record it.
@@ -534,7 +562,9 @@ static func _record_frontier(current: PositionAlongSurface, next: PositionAlongS
 # 
 # Intra-surface edges are not calculated and stored ahead of time; they're only calculated at run
 # time when navigating a specific path.
-func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTypeConfiguration, \
+func _calculate_nodes_and_edges( \
+        surfaces_set: Dictionary, \
+        player_info: PlayerTypeConfiguration, \
         debug_state: Dictionary) -> void:
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
@@ -559,8 +589,10 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
         surfaces_in_fall_range_set.clear()
         surfaces_in_jump_range_set.clear()
         
-        _get_surfaces_in_jump_and_fall_range(surfaces_in_fall_range_set, \
-                surfaces_in_jump_range_set, surface)
+        _get_surfaces_in_jump_and_fall_range( \
+                surfaces_in_fall_range_set, \
+                surfaces_in_jump_range_set, \
+                surface)
         
         for movement_calculator in player_info.movement_calculators:
             ###################################################################################
@@ -582,8 +614,12 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
                         MovementInstructionsUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 
                 # Calculate the inter-surface edges.
-                movement_calculator.get_all_edges_from_surface(collision_params, \
-                        edges, surfaces_in_fall_range_set, surfaces_in_jump_range_set, surface)
+                movement_calculator.get_all_edges_from_surface( \
+                        collision_params, \
+                        edges, \
+                        surfaces_in_fall_range_set, \
+                        surfaces_in_jump_range_set, \
+                        surface)
                 
                 # FIXME: B: REMOVE
                 movement_params.gravity_fast_fall /= \
@@ -601,10 +637,12 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
     var grid_cell_to_node := {}
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
-            edge.start_position_along_surface = \
-                    _dedup_node(edge.start_position_along_surface, grid_cell_to_node)
-            edge.end_position_along_surface = \
-                    _dedup_node(edge.end_position_along_surface, grid_cell_to_node)
+            edge.start_position_along_surface = _dedup_node( \
+                    edge.start_position_along_surface, \
+                    grid_cell_to_node)
+            edge.end_position_along_surface = _dedup_node( \
+                    edge.end_position_along_surface, \
+                    grid_cell_to_node)
     
     # Record mappings from surfaces to nodes.
     var nodes_set := {}
@@ -634,7 +672,9 @@ func _calculate_nodes_and_edges(surfaces_set: Dictionary, player_info: PlayerTyp
 #
 # - If there is a match, then the previous instance is returned.
 # - Otherwise, the new new instance is recorded and returned.
-static func _dedup_node(node: PositionAlongSurface, grid_cell_to_node: Dictionary) -> PositionAlongSurface:
+static func _dedup_node( \
+        node: PositionAlongSurface, \
+        grid_cell_to_node: Dictionary) -> PositionAlongSurface:
     var cell_id := _node_to_cell_id(node)
     
     if grid_cell_to_node.has(cell_id):
@@ -659,26 +699,40 @@ static func _node_to_cell_id(node: PositionAlongSurface) -> String:
             floor((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int, \
             floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int]
 
-func _get_surfaces_in_jump_and_fall_range(surfaces_in_fall_range_result_set: Dictionary, \
-        surfaces_in_jump_range_result_set: Dictionary, origin_surface: Surface) -> void:
+func _get_surfaces_in_jump_and_fall_range( \
+        surfaces_in_fall_range_result_set: Dictionary, \
+        surfaces_in_jump_range_result_set: Dictionary, \
+        origin_surface: Surface) -> void:
     # TODO: Update this to support falling from the center of fall-through surfaces (consider the
     #       whole surface, rather than just the ends).
     
     # Get all surfaces that are within fall range from either end of the origin surface.
-    FallMovementUtils.find_surfaces_in_fall_range_from_surface(movement_params, surfaces_set, \
-            surfaces_in_fall_range_result_set, surfaces_in_jump_range_result_set, origin_surface)
+    FallMovementUtils.find_surfaces_in_fall_range_from_surface( \
+            movement_params, \
+            surfaces_set, \
+            surfaces_in_fall_range_result_set, \
+            surfaces_in_jump_range_result_set, \
+            origin_surface)
     
-    _get_surfaces_in_jump_range(surfaces_in_jump_range_result_set, movement_params, \
-            origin_surface, surfaces_set)
+    _get_surfaces_in_jump_range( \
+            surfaces_in_jump_range_result_set, \
+            movement_params, \
+            origin_surface, \
+            surfaces_set)
 
-static func _get_surfaces_in_jump_range(result_set: Dictionary, movement_params: MovementParams, \
-        target_surface: Surface, other_surfaces_set: Dictionary) -> void:
+static func _get_surfaces_in_jump_range( \
+        result_set: Dictionary, \
+        movement_params: MovementParams, \
+        target_surface: Surface, \
+        other_surfaces_set: Dictionary) -> void:
     var max_horizontal_jump_distance := \
             movement_params.get_max_horizontal_jump_distance(target_surface.side)
     
     var expanded_target_bounding_box := target_surface.bounding_box.grow_individual( \
-            max_horizontal_jump_distance, movement_params.max_upward_jump_distance, \
-            max_horizontal_jump_distance, 0.0)
+            max_horizontal_jump_distance, \
+            movement_params.max_upward_jump_distance, \
+            max_horizontal_jump_distance, \
+            0.0)
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE
 #    if target_surface.bounding_box.position == Vector2(128, 64):

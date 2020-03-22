@@ -11,7 +11,10 @@ var _player_type_configuration: PlayerTypeConfiguration
 # TODO: Add type back in.
 var global
 
-func _init(name: String, player_resource_path: String, global) -> void:
+func _init( \
+        name: String, \
+        player_resource_path: String, \
+        global) -> void:
     self.player_resource_path = player_resource_path
     self.global = global
     
@@ -19,12 +22,15 @@ func _init(name: String, player_resource_path: String, global) -> void:
     _movement_params.gravity_slow_rise = \
             _movement_params.gravity_fast_fall * _movement_params.slow_ascent_gravity_multiplier
     _movement_params.collider_half_width_height = Geometry.calculate_half_width_height( \
-            _movement_params.collider_shape, _movement_params.collider_rotation)
+            _movement_params.collider_shape, \
+            _movement_params.collider_rotation)
     _movement_params.max_upward_jump_distance = \
             VerticalMovementUtils.calculate_max_upward_distance(_movement_params)
     _movement_params.time_to_max_upward_jump_distance = \
-            MovementUtils.calculate_movement_duration(-_movement_params.max_upward_jump_distance, \
-                    _movement_params.jump_boost, _movement_params.gravity_slow_rise)
+            MovementUtils.calculate_movement_duration( \
+                    -_movement_params.max_upward_jump_distance, \
+                    _movement_params.jump_boost, \
+                    _movement_params.gravity_slow_rise)
     # From a basic equation of motion:
     #     v^2 = v_0^2 + 2*a*(s - s_0)
     #     v_0 = 0
@@ -40,14 +46,18 @@ func _init(name: String, player_resource_path: String, global) -> void:
             2.0 / _movement_params.walk_acceleration
     _movement_params.floor_jump_max_horizontal_jump_distance = \
             HorizontalMovementUtils.calculate_max_horizontal_displacement_before_returning_to_starting_height( \
-                    0.0, _movement_params.jump_boost, \
+                    0.0, \
+                    _movement_params.jump_boost, \
                     _movement_params.max_horizontal_speed_default, \
-                    _movement_params.gravity_slow_rise, _movement_params.gravity_fast_fall)
+                    _movement_params.gravity_slow_rise, \
+                    _movement_params.gravity_fast_fall)
     _movement_params.wall_jump_max_horizontal_jump_distance = \
             HorizontalMovementUtils.calculate_max_horizontal_displacement_before_returning_to_starting_height( \
-                    _movement_params.wall_jump_horizontal_boost, _movement_params.jump_boost, \
+                    _movement_params.wall_jump_horizontal_boost, \
+                    _movement_params.jump_boost, \
                     _movement_params.max_horizontal_speed_default, \
-                    _movement_params.gravity_slow_rise, _movement_params.gravity_fast_fall)
+                    _movement_params.gravity_slow_rise, \
+                    _movement_params.gravity_fast_fall)
     _check_movement_params(_movement_params)
     _movement_calculators = _get_movement_calculators()
     
@@ -55,13 +65,19 @@ func _init(name: String, player_resource_path: String, global) -> void:
     _action_handlers.sort_custom(self, "_compare_action_handlers")
     
     _player_type_configuration = _create_player_type_configuration( \
-            name, _movement_params, _movement_calculators, _action_handlers)
+            name, \
+            _movement_params, \
+            _movement_calculators, \
+            _action_handlers)
 
 func get_player_type_configuration() -> PlayerTypeConfiguration:
     return _player_type_configuration
 
-func _create_player_type_configuration(name: String, movement_params: MovementParams, \
-        movement_calculators: Array, action_handlers: Array) -> PlayerTypeConfiguration:
+func _create_player_type_configuration( \
+        name: String, \
+        movement_params: MovementParams, \
+        movement_calculators: Array, \
+        action_handlers: Array) -> PlayerTypeConfiguration:
     var type_configuration = PlayerTypeConfiguration.new()
     type_configuration.name = name
     type_configuration.movement_params = movement_params
@@ -110,5 +126,7 @@ func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.calculates_edges_from_surface_ends_with_velocity_start_x_zero or \
             movement_params.calculates_edges_with_velocity_start_x_max_speed)
 
-static func _compare_action_handlers(a: PlayerActionHandler, b: PlayerActionHandler) -> bool:
+static func _compare_action_handlers( \
+        a: PlayerActionHandler, \
+        b: PlayerActionHandler) -> bool:
     return a.priority < b.priority

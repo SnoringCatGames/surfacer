@@ -14,8 +14,11 @@ var vertical_step: MovementVertCalcStep
 
 var debug_state: MovementCalcStepDebugState
 
-func _init(start_constraint: MovementConstraint, end_constraint: MovementConstraint, \
-        vertical_step: MovementVertCalcStep, overall_calc_params: MovementCalcOverallParams, \
+func _init( \
+        start_constraint: MovementConstraint, \
+        end_constraint: MovementConstraint, \
+        vertical_step: MovementVertCalcStep, \
+        overall_calc_params: MovementCalcOverallParams, \
         parent_step_calc_params: MovementCalcStepParams, \
         previous_out_of_reach_constraint: MovementConstraint) -> void:
     self.start_constraint = start_constraint

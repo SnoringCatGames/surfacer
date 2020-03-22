@@ -58,7 +58,9 @@ var items := [null]
 var maintain_min: bool
 var last_power_of_two := 0
 
-func _init(items := [], set_maintain_min := true) -> void:
+func _init( \
+        items := [], \
+        set_maintain_min := true) -> void:
     # Determines whether the smallest or largest value is maintained at the top.
     maintain_min = set_maintain_min
     
@@ -103,13 +105,27 @@ func get_root_priority():
 
 func get_item_priority(index: int):
     if index + 1 > current_size or index < 0:
-        print(str(OS.get_ticks_msec()) + ": PRIORITY QUEUE (" + str(get_instance_id()) + "): get_item_priority(index) out of bounds! index = " + str(index) + ", current_size = " + str(current_size))
+        print( \
+                str(OS.get_ticks_msec()) + \
+                ": PRIORITY QUEUE (" + \
+                str(get_instance_id()) + \
+                "): get_item_priority(index) out of bounds! index = " + \
+                str(index) + \
+                ", current_size = " + \
+                str(current_size))
         return false
     return items[index + 1][0]
 
 func get_item_value(index: int):
     if index + 1 > current_size or index < 0:
-        print(str(OS.get_ticks_msec()) + ": PRIORITY QUEUE (" + str(get_instance_id()) + "): get_item_priority(index) out of bounds! index = " + str(index) + ", current_size = " + str(current_size))
+        print( \
+                str(OS.get_ticks_msec()) + \
+                ": PRIORITY QUEUE (" + \
+                str(get_instance_id()) + \
+                "): get_item_priority(index) out of bounds! index = " + \
+                str(index) + \
+                ", current_size = " + \
+                str(current_size))
         return false
     return items[index + 1][1]
 
@@ -127,7 +143,13 @@ func get_size() -> int:
 func insert(priority, value) -> bool:
     # Check validity of input.
     if typeof(priority) != TYPE_INT and typeof(priority) != TYPE_REAL:
-        print(str(OS.get_ticks_msec()) + ": PRIORITY QUEUE (" + str(get_instance_id()) + "): Priority of incorrect type (" + str(typeof(priority)) + ") (should be float or int)! Aborting insert()")
+        print( \
+                str(OS.get_ticks_msec()) + \
+                ": PRIORITY QUEUE (" + \
+                str(get_instance_id()) + \
+                "): Priority of incorrect type (" + \
+                str(typeof(priority)) + \
+                ") (should be float or int)! Aborting insert()")
         return false
     
     # Check for space left in array. If filled, open up a new layer.
@@ -152,7 +174,12 @@ func insert(priority, value) -> bool:
 # - Percolate down while heap-order not satisfied.
 func remove_root(return_array := false):
     if is_empty:
-        print(str(OS.get_ticks_msec()) + ": PRIORITY QUEUE (" + str(get_instance_id()) + "): Can't delete root in empty heap! is_empty = true, current_size = " + str(current_size))
+        print( \
+                str(OS.get_ticks_msec()) + \
+                ": PRIORITY QUEUE (" + \
+                str(get_instance_id()) + \
+                "): Can't delete root in empty heap! is_empty = true, current_size = " + \
+                str(current_size))
         return null
     
     var rootItem = items[1] if return_array else items[1][1]
@@ -179,7 +206,14 @@ func remove_root(return_array := false):
 # - Priority must be higher than the one at root.
 func remove(index: int):
     if index + 1 > current_size or index < 0:
-        print(str(OS.get_ticks_msec()) + ": PRIORITY QUEUE (" + str(get_instance_id()) + "): remove(index) out of bounds! index = " + str(index) + ", current_size = " + str(current_size))
+        print( \
+                str(OS.get_ticks_msec()) + \
+                ": PRIORITY QUEUE (" + \
+                str(get_instance_id()) + \
+                "): remove(index) out of bounds! index = " + \
+                str(index) + \
+                ", current_size = " + \
+                str(current_size))
         return null
     
     var priority
@@ -196,7 +230,9 @@ func remove(index: int):
 # Put items of both queues into a new list.
 # 
 # Create new queue with those items and return that queue.
-func merge_with(priority_queue: PriorityQueue, set_maintain_min = true) -> PriorityQueue:
+func merge_with( \
+        priority_queue: PriorityQueue, \
+        set_maintain_min = true) -> PriorityQueue:
     var list: = []
     var own_queue: = _get_queue()
     var other_queue: = priority_queue._get_queue()
@@ -300,12 +336,24 @@ func _percolate_up(hole) -> void:
 func _change_priority(index: int, new_priority) -> bool:
     if index < 0 or index + 1 > current_size:
         # Invalid index for array. Abort.
-        print(str(OS.get_ticks_msec()) + ": PRIORITY QUEUE (" + str(get_instance_id()) + "): Can't access array at index '" + str(index) + "', out of bounds!")
+        print( \
+                str(OS.get_ticks_msec()) + \
+                ": PRIORITY QUEUE (" + \
+                str(get_instance_id()) + \
+                "): Can't access array at index '" + \
+                str(index) + \
+                "', out of bounds!")
         return false
     
     if typeof(new_priority) != TYPE_INT and typeof(new_priority) != TYPE_REAL:
         # Invalid priority parameter. Abort.
-        print(str(OS.get_ticks_msec()) + ": PRIORITY QUEUE (" + str(get_instance_id()) + "): Can't assign priority '" + str(new_priority) + "', NaN!")
+        print( \
+                str(OS.get_ticks_msec()) + \
+                ": PRIORITY QUEUE (" + \
+                str(get_instance_id()) + \
+                "): Can't assign priority '" + \
+                str(new_priority) + \
+                "', NaN!")
         return false
             
     var node = items[index + 1]

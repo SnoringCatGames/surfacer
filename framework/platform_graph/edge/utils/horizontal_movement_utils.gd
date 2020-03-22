@@ -6,7 +6,8 @@ const MovementCalcStep := preload("res://framework/platform_graph/edge/calculati
 const MIN_MAX_VELOCITY_X_MARGIN := MovementConstraintUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
 
 # Calculates a new step for the current horizontal part of the movement.
-static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, \
+static func calculate_horizontal_step( \
+        step_calc_params: MovementCalcStepParams, \
         overall_calc_params: MovementCalcOverallParams) -> MovementCalcStep:
     var movement_params := overall_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
@@ -36,8 +37,12 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     ### acceleration end time.
     
     var min_and_max_velocity_at_step_end := _calculate_min_and_max_x_velocity_at_end_of_interval( \
-            displacement.x, step_duration, velocity_start_x, end_constraint.min_velocity_x, \
-            end_constraint.max_velocity_x, movement_params.in_air_horizontal_acceleration)
+            displacement.x, \
+            step_duration, \
+            velocity_start_x, \
+            end_constraint.min_velocity_x, \
+            end_constraint.max_velocity_x, \
+            movement_params.in_air_horizontal_acceleration)
     if min_and_max_velocity_at_step_end.empty():
         # This constraint cannot be reached.
         return null
@@ -62,7 +67,11 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
             movement_params.in_air_horizontal_acceleration * horizontal_acceleration_sign
     
     var acceleration_start_and_end_time := _calculate_acceleration_start_and_end_time( \
-            displacement.x, step_duration, velocity_start_x, velocity_end_x, acceleration)
+            displacement.x, \
+            step_duration, \
+            velocity_start_x, \
+            velocity_end_x, \
+            acceleration)
     if acceleration_start_and_end_time.empty():
         # There is no start velocity that can reach the target end position/velocity/time.
         # This should never happen, since we should have failed earlier during constraint
@@ -100,19 +109,33 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
     
     var step_start_state := \
             VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                    movement_params, vertical_step, time_step_start)
+                    movement_params, \
+                    vertical_step, \
+                    time_step_start)
     var instruction_start_state := \
             VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                    movement_params, vertical_step, time_instruction_start)
+                    movement_params, \
+                    vertical_step, \
+                    time_instruction_start)
     var instruction_end_state := \
             VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                    movement_params, vertical_step, time_instruction_end)
+                    movement_params, \
+                    vertical_step, \
+                    time_instruction_end)
     var step_end_state := \
             VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                    movement_params, vertical_step, time_step_end)
+                    movement_params, \
+                    vertical_step, \
+                    time_step_end)
     
-    assert(Geometry.are_floats_equal_with_epsilon(step_end_state[0], position_end.y, 0.001))
-    assert(Geometry.are_floats_equal_with_epsilon(step_start_state[0], position_step_start.y, 0.001))
+    assert(Geometry.are_floats_equal_with_epsilon( \
+            step_end_state[0], \
+            position_end.y, \
+            0.001))
+    assert(Geometry.are_floats_equal_with_epsilon( \
+            step_start_state[0], \
+            position_step_start.y, \
+            0.001))
     
     ### Assign the step properties.
     
@@ -152,8 +175,12 @@ static func calculate_horizontal_step(step_calc_params: MovementCalcStepParams, 
 # 1.  Constant velocity
 # 2.  Constant acceleration
 # 3.  Constant velocity
-static func _calculate_acceleration_start_and_end_time(displacement: float, duration: float, \
-        velocity_start: float, velocity_end: float, acceleration: float) -> Array:
+static func _calculate_acceleration_start_and_end_time( \
+        displacement: float, \
+        duration: float, \
+        velocity_start: float, \
+        velocity_end: float, \
+        acceleration: float) -> Array:
     var velocity_change := velocity_start - velocity_end
     
     if velocity_change == 0:
@@ -198,8 +225,10 @@ static func _calculate_acceleration_start_and_end_time(displacement: float, dura
 # Calculates the horizontal component of position and velocity according to the given horizontal
 # movement state and the given time. These are then returned in an Array: [0] is position and [1]
 # is velocity.
-static func calculate_horizontal_state_for_time(movement_params: MovementParams, \
-        horizontal_step: MovementCalcStep, time: float) -> Array:
+static func calculate_horizontal_state_for_time( \
+        movement_params: MovementParams, \
+        horizontal_step: MovementCalcStep, \
+        time: float) -> Array:
     assert(time >= horizontal_step.time_step_start - Geometry.FLOAT_EPSILON)
     assert(time <= horizontal_step.time_step_end + Geometry.FLOAT_EPSILON)
     
@@ -237,8 +266,11 @@ static func calculate_horizontal_state_for_time(movement_params: MovementParams,
     return [position, velocity]
 
 static func calculate_max_horizontal_displacement_before_returning_to_starting_height( \
-        velocity_start_x: float, velocity_start_y: float, max_horizontal_speed_default: float, \
-        gravity_slow_rise: float, gravity_fast_fall: float) -> float:
+        velocity_start_x: float, \
+        velocity_start_y: float, \
+        max_horizontal_speed_default: float, \
+        gravity_slow_rise: float, \
+        gravity_fast_fall: float) -> float:
     # FIXME: D: Use velocity_start_x, and account for acceleration, in order to further limit the
     #           displacement.
     # FIXME: F: Add support for double jumps, dash, etc.
@@ -263,9 +295,13 @@ static func calculate_max_horizontal_displacement_before_returning_to_starting_h
     # s = s_0 + v * t
     return max_time_to_starting_height * max_horizontal_speed_default
 
-static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: float, \
-        duration: float, velocity_start: float, min_velocity_end_for_valid_next_step: float, \
-        max_velocity_end_for_valid_next_step: float, acceleration_magnitude: float) -> Array:
+static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
+        displacement: float, \
+        duration: float, \
+        velocity_start: float, \
+        min_velocity_end_for_valid_next_step: float, \
+        max_velocity_end_for_valid_next_step: float, \
+        acceleration_magnitude: float) -> Array:
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #    if displacement == 62 and Geometry.are_floats_equal_with_epsilon(duration, 0.372, 0.01):
 #    if displacement == -190 and Geometry.are_floats_equal_with_epsilon(duration, 0.395, 0.01):
@@ -282,13 +318,21 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
     #     end velocity.
     var should_accelerate_at_start_for_min := acceleration_sign_for_min == 1
     
-    var min_velocity_end := MovementConstraintUtils._solve_for_end_velocity(displacement, \
-            duration, acceleration_for_min, velocity_start, \
-            should_accelerate_at_start_for_min, true)
+    var min_velocity_end := MovementConstraintUtils._solve_for_end_velocity( \
+            displacement, \
+            duration, \
+            acceleration_for_min, \
+            velocity_start, \
+            should_accelerate_at_start_for_min, \
+            true)
     if min_velocity_end == INF:
-        min_velocity_end = MovementConstraintUtils._solve_for_end_velocity(displacement, \
-                duration, -acceleration_for_min, velocity_start, \
-                !should_accelerate_at_start_for_min, true)
+        min_velocity_end = MovementConstraintUtils._solve_for_end_velocity( \
+                displacement, \
+                duration, \
+                -acceleration_for_min, \
+                velocity_start, \
+                !should_accelerate_at_start_for_min, \
+                true)
     if min_velocity_end == INF or min_velocity_end > max_velocity_end_for_valid_next_step:
         # Movement cannot reach across this interval.
         return []
@@ -302,13 +346,21 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
     #     end velocity.
     var should_accelerate_at_start_for_max := acceleration_sign_for_max == -1
     
-    var max_velocity_end := MovementConstraintUtils._solve_for_end_velocity(displacement, \
-            duration, acceleration_for_max, velocity_start, \
-            should_accelerate_at_start_for_max, false)
+    var max_velocity_end := MovementConstraintUtils._solve_for_end_velocity( \
+            displacement, \
+            duration, \
+            acceleration_for_max, \
+            velocity_start, \
+            should_accelerate_at_start_for_max, \
+            false)
     if max_velocity_end == INF:
-        max_velocity_end = MovementConstraintUtils._solve_for_end_velocity(displacement, \
-                duration, -acceleration_for_max, velocity_start, \
-                !should_accelerate_at_start_for_max, false)
+        max_velocity_end = MovementConstraintUtils._solve_for_end_velocity( \
+                displacement, \
+                duration, \
+                -acceleration_for_max, \
+                velocity_start, \
+                !should_accelerate_at_start_for_max, \
+                false)
     # If we found valid min velocity, then we should be able to find valid max velocity.
     assert(max_velocity_end != INF)
     if max_velocity_end < min_velocity_end_for_valid_next_step:
@@ -328,10 +380,14 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
     
     # Account for round-off error.
     if Geometry.are_floats_equal_with_epsilon( \
-            min_velocity_end, max_velocity_end_for_valid_next_step, 0.001):
+            min_velocity_end, \
+            max_velocity_end_for_valid_next_step, \
+            0.001):
         min_velocity_end = max_velocity_end_for_valid_next_step
     if Geometry.are_floats_equal_with_epsilon( \
-            max_velocity_end, min_velocity_end_for_valid_next_step, 0.001):
+            max_velocity_end, \
+            min_velocity_end_for_valid_next_step, \
+            0.001):
         max_velocity_end = min_velocity_end_for_valid_next_step
     
     # FIXME: Remove?

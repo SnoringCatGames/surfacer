@@ -16,8 +16,11 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
             (surface.concave_counter_clockwise_neighbor == null or \
             surface.concave_clockwise_neighbor == null)
 
-func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_result: Array, \
-        surfaces_in_fall_range_set: Dictionary, surfaces_in_jump_range_set: Dictionary, \
+func get_all_edges_from_surface( \
+        collision_params: CollisionCalcParams, \
+        edges_result: Array, \
+        surfaces_in_fall_range_set: Dictionary, \
+        surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
     if origin_surface.concave_counter_clockwise_neighbor == null:
         # Calculating the fall-off state for the left edge of the floor.
@@ -142,8 +145,11 @@ static func _get_all_edges_from_one_side( \
             
             landing_surfaces_to_skip[position_end.surface] = true
 
-static func _calculate_player_center_at_fall_off_point(edge_point: Vector2, \
-        falls_on_left_side: bool, collider_shape: Shape2D, collider_rotation: float) -> Vector2:
+static func _calculate_player_center_at_fall_off_point( \
+        edge_point: Vector2, \
+        falls_on_left_side: bool, \
+        collider_shape: Shape2D, \
+        collider_rotation: float) -> Vector2:
     var is_rotated_90_degrees = \
             abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < Geometry.FLOAT_EPSILON
     # Ensure that collision boundaries are only ever axially aligned.
@@ -186,7 +192,8 @@ static func _calculate_player_center_at_fall_off_point(edge_point: Vector2, \
                     right_side_fall_off_displacement_x, \
                     fall_off_displacement_y)
 
-static func _increment_calc_results_start_times(calc_results: MovementCalcResults, \
+static func _increment_calc_results_start_times( \
+        calc_results: MovementCalcResults, \
         time_fall_off: float) -> void:
     calc_results.vertical_step.time_peak_height += time_fall_off
     calc_results.vertical_step.time_step_start += time_fall_off
@@ -203,9 +210,13 @@ static func _increment_calc_results_start_times(calc_results: MovementCalcResult
         horizontal_step.time_instruction_end += time_fall_off
         horizontal_step.time_step_end += time_fall_off
 
-static func _calculate_instructions(start: PositionAlongSurface, \
-        end: PositionAlongSurface, velocity_x_start: float, time_fall_off: float, \
-        calc_results: MovementCalcResults, movement_params: MovementParams, \
+static func _calculate_instructions( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        velocity_x_start: float, \
+        time_fall_off: float, \
+        calc_results: MovementCalcResults, \
+        movement_params: MovementParams, \
         falls_on_left_side: bool) -> MovementInstructions:
     var frame_count_before_fall_off := ceil(time_fall_off / Utils.PHYSICS_TIME_STEP)
     

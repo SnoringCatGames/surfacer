@@ -6,8 +6,10 @@ const MovementCalcCollisionDebugState = preload("res://framework/platform_graph/
 # is calculated by stepping through each discrete physics frame, which should exactly emulate the
 # actual Player trajectory that would be used.
 static func check_instructions_discrete_frame_state( \
-        overall_calc_params: MovementCalcOverallParams, instructions: MovementInstructions, \
-        vertical_step: MovementVertCalcStep, horizontal_steps: Array) -> SurfaceCollision:
+        overall_calc_params: MovementCalcOverallParams, \
+        instructions: MovementInstructions, \
+        vertical_step: MovementVertCalcStep, \
+        horizontal_steps: Array) -> SurfaceCollision:
     var movement_params := overall_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: MovementInstruction = instructions.instructions[0]
@@ -55,11 +57,15 @@ static func check_instructions_discrete_frame_state( \
             current_horizontal_step_index += 1
             current_horizontal_step = horizontal_steps[current_horizontal_step_index]
         continuous_horizontal_state = \
-                HorizontalMovementUtils.calculate_horizontal_state_for_time(movement_params, \
-                        current_horizontal_step, current_time)
+                HorizontalMovementUtils.calculate_horizontal_state_for_time( \
+                        movement_params, \
+                        current_horizontal_step, \
+                        current_time)
         continuous_vertical_state = \
                 VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                        movement_params, vertical_step, current_time)
+                        movement_params, \
+                        vertical_step, \
+                        current_time)
         continuous_position.x = continuous_horizontal_state[0]
         continuous_position.y = continuous_vertical_state[0]
         
@@ -154,9 +160,16 @@ static func check_instructions_discrete_frame_state( \
         
         # Update state for the next frame.
         position += displacement
-        velocity = MovementUtils.update_velocity_in_air(velocity, delta, is_pressing_jump, \
-                is_first_jump, horizontal_acceleration_sign, movement_params)
-        velocity = MovementUtils.cap_velocity(velocity, movement_params, \
+        velocity = MovementUtils.update_velocity_in_air( \
+                velocity, \
+                delta, \
+                is_pressing_jump, \
+                is_first_jump, \
+                horizontal_acceleration_sign, \
+                movement_params)
+        velocity = MovementUtils.cap_velocity( \
+                velocity, \
+                movement_params, \
                 movement_params.max_horizontal_speed_default)
         previous_time = current_time
         current_time += delta
@@ -170,11 +183,15 @@ static func check_instructions_discrete_frame_state( \
     shape_query_params.transform = Transform2D(movement_params.collider_rotation, position)
     shape_query_params.motion = displacement
     continuous_horizontal_state = \
-            HorizontalMovementUtils.calculate_horizontal_state_for_time(movement_params, \
-                    current_horizontal_step, end_time)
+            HorizontalMovementUtils.calculate_horizontal_state_for_time( \
+                    movement_params, \
+                    current_horizontal_step, \
+                    end_time)
     continuous_vertical_state = \
             VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                    movement_params, vertical_step, end_time)
+                    movement_params, \
+                    vertical_step, \
+                    end_time)
     continuous_position.x = continuous_horizontal_state[0]
     continuous_position.y = continuous_vertical_state[0]
     # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
@@ -213,7 +230,8 @@ static func check_instructions_discrete_frame_state( \
 # executing a resulting instruction set, the physics frame boundaries will line up at different
 # times.
 static func check_discrete_horizontal_step_for_collision( \
-        overall_calc_params: MovementCalcOverallParams, step_calc_params: MovementCalcStepParams, \
+        overall_calc_params: MovementCalcOverallParams, \
+        step_calc_params: MovementCalcStepParams, \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
     var movement_params := overall_calc_params.movement_params
     var delta := Utils.PHYSICS_TIME_STEP
@@ -246,9 +264,12 @@ static func check_discrete_horizontal_step_for_collision( \
         
         if displacement != Vector2.ZERO:
             # Check for collision.
-            collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
-                    shape_query_params, movement_params.collider_half_width_height, \
-                    movement_params.collider_rotation, overall_calc_params.surface_parser)
+            collision = FrameCollisionCheckUtils.check_frame_for_collision( \
+                    space_state, \
+                    shape_query_params, \
+                    movement_params.collider_half_width_height, \
+                    movement_params.collider_rotation, \
+                    overall_calc_params.surface_parser)
             if collision != null:
                 return collision
         else:
@@ -279,9 +300,16 @@ static func check_discrete_horizontal_step_for_collision( \
         
         # Update state for the next frame.
         position += displacement
-        velocity = MovementUtils.update_velocity_in_air(velocity, delta, is_pressing_jump, \
-                is_first_jump, horizontal_acceleration_sign, movement_params)
-        velocity = MovementUtils.cap_velocity(velocity, movement_params, \
+        velocity = MovementUtils.update_velocity_in_air( \
+                velocity, \
+                delta, \
+                is_pressing_jump, \
+                is_first_jump, \
+                horizontal_acceleration_sign, \
+                movement_params)
+        velocity = MovementUtils.cap_velocity( \
+                velocity, \
+                movement_params, \
                 movement_params.max_horizontal_speed_default)
         previous_time = current_time
         current_time += delta
@@ -291,9 +319,12 @@ static func check_discrete_horizontal_step_for_collision( \
     displacement = velocity * delta
     shape_query_params.transform = Transform2D(movement_params.collider_rotation, position)
     shape_query_params.motion = displacement
-    collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
-            shape_query_params, movement_params.collider_half_width_height, \
-            movement_params.collider_rotation, overall_calc_params.surface_parser)
+    collision = FrameCollisionCheckUtils.check_frame_for_collision( \
+            space_state, \
+            shape_query_params, \
+            movement_params.collider_half_width_height, \
+            movement_params.collider_rotation, \
+            overall_calc_params.surface_parser)
     if collision != null:
         return collision
     
@@ -304,7 +335,8 @@ static func check_discrete_horizontal_step_for_collision( \
 # motion. This does not necessarily accurately reflect the actual Player trajectory that would be
 # used.
 static func check_continuous_horizontal_step_for_collision( \
-        overall_calc_params: MovementCalcOverallParams, step_calc_params: MovementCalcStepParams, \
+        overall_calc_params: MovementCalcOverallParams, \
+        step_calc_params: MovementCalcStepParams, \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
     var movement_params := overall_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
@@ -348,9 +380,13 @@ static func check_continuous_horizontal_step_for_collision( \
     while current_time < step_end_time:
         # Update state for the current frame.
         horizontal_state = HorizontalMovementUtils.calculate_horizontal_state_for_time( \
-                movement_params, horizontal_step, current_time)
+                movement_params, \
+                horizontal_step, \
+                current_time)
         vertical_state = VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                movement_params, vertical_step, current_time)
+                movement_params, \
+                vertical_step, \
+                current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
         current_velocity.x = horizontal_state[1]
@@ -372,9 +408,14 @@ static func check_continuous_horizontal_step_for_collision( \
         ###########################################################################################
         
         # Check for collision.
-        collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
-                shape_query_params, collider_half_width_height, \
-                movement_params.collider_rotation, surface_parser, false, collision_debug_state)
+        collision = FrameCollisionCheckUtils.check_frame_for_collision( \
+                space_state, \
+                shape_query_params, \
+                collider_half_width_height, \
+                movement_params.collider_rotation, \
+                surface_parser, \
+                false, \
+                collision_debug_state)
         if collision != null:
             break
         
@@ -391,9 +432,13 @@ static func check_continuous_horizontal_step_for_collision( \
     current_time = step_end_time
     if collision == null and !Geometry.are_floats_equal_with_epsilon(previous_time, current_time):
         horizontal_state = HorizontalMovementUtils.calculate_horizontal_state_for_time( \
-                movement_params, horizontal_step, current_time)
+                movement_params, \
+                horizontal_step, \
+                current_time)
         vertical_state = VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                movement_params, vertical_step, current_time)
+                movement_params, \
+                vertical_step, \
+                current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
         current_velocity.x = horizontal_state[1]
@@ -403,9 +448,14 @@ static func check_continuous_horizontal_step_for_collision( \
         shape_query_params.motion = current_position - previous_position
         assert(shape_query_params.motion != Vector2.ZERO)
         
-        collision = FrameCollisionCheckUtils.check_frame_for_collision(space_state, \
-                shape_query_params, collider_half_width_height, \
-                movement_params.collider_rotation, surface_parser, false, collision_debug_state)
+        collision = FrameCollisionCheckUtils.check_frame_for_collision( \
+                space_state, \
+                shape_query_params, \
+                collider_half_width_height, \
+                movement_params.collider_rotation, \
+                surface_parser, \
+                false, \
+                collision_debug_state)
         
         if collision == null:
             # Record the positions and velocities for edge annotation debugging.

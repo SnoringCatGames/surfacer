@@ -9,7 +9,10 @@ var name: String
 var type: int
 var priority: int
 
-func _init(name: String, type: int, priority: int) -> void:
+func _init( \
+        name: String, \
+        type: int, \
+        priority: int) -> void:
     self.name = name
     self.type = type
     self.priority = priority

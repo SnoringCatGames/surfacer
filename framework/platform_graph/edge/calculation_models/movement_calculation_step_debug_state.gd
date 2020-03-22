@@ -38,7 +38,10 @@ var overall_debug_state: MovementCalcOverallDebugState
 # Array<MovementCalcStepDebugState>
 var children_step_attempts := []
 
-func _init(_step_calc_params, index: int, overall_debug_state: MovementCalcOverallDebugState, \
+func _init( \
+        _step_calc_params, \
+        index: int, \
+        overall_debug_state: MovementCalcOverallDebugState, \
         previous_out_of_reach_constraint: MovementConstraint) -> void:
     self._step_calc_params = _step_calc_params
     self.index = index

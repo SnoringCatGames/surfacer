@@ -11,9 +11,14 @@ const MAX_VELOCITY_HORIZONTAL_OFFSET_SUBTRACT_PLAYER_WIDTH_RATIO := 0.6
 # - expects_only_one_positive_result indicates whether to report an error if there are two
 #   positive results.
 # - Returns INF if we cannot reach the destination with our movement parameters.
-static func calculate_movement_duration(displacement: float, v_0: float, a: float, \
-        returns_lower_result := true, min_duration := 0.0, \
-        expects_only_one_positive_result := false, allows_no_positive_results := false) -> float:
+static func calculate_movement_duration( \
+        displacement: float, \
+        v_0: float, \
+        a: float, \
+        returns_lower_result := true, \
+        min_duration := 0.0, \
+        expects_only_one_positive_result := false, \
+        allows_no_positive_results := false) -> float:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     # Use only non-negative results.
@@ -77,10 +82,16 @@ static func calculate_movement_duration(displacement: float, v_0: float, a: floa
 # 
 # Note: This could depend on a speed that exceeds the max-allowed speed.
 # FIXME: F: Remove if no-one is still using this.
-static func calculate_time_to_release_acceleration(time_start: float, time_step_end: float, \
-        position_start: float, position_end: float, velocity_start: float, \
-        acceleration_start: float, post_release_backward_acceleration: float, \
-        returns_lower_result := true, expects_only_one_positive_result := false) -> float:
+static func calculate_time_to_release_acceleration( \
+        time_start: float, \
+        time_step_end: float, \
+        position_start: float, \
+        position_end: float, \
+        velocity_start: float, \
+        acceleration_start: float, \
+        post_release_backward_acceleration: float, \
+        returns_lower_result := true, \
+        expects_only_one_positive_result := false) -> float:
     var duration := time_step_end - time_start
     
     # Derivation:
@@ -125,8 +136,11 @@ static func calculate_time_to_release_acceleration(time_start: float, time_step_
             return max(t1, t2)
 
 # Calculates the minimum required time to reach the displacement, considering a maximum velocity.
-static func calculate_time_for_displacement(displacement: float, velocity_start: float, \
-        acceleration: float, max_speed: float) -> float:
+static func calculate_time_for_displacement( \
+        displacement: float, \
+        velocity_start: float, \
+        acceleration: float, \
+        max_speed: float) -> float:
     if displacement == 0.0:
         # The start position is the destination.
         return 0.0
@@ -167,7 +181,12 @@ static func calculate_time_for_displacement(displacement: float, velocity_start:
             displacement_to_reach_max_speed < displacement and displacement < 0.0:
         # We do not reach max speed before we reach the displacement.
         return calculate_movement_duration( \
-                displacement, velocity_start, acceleration, true, 0.0, true)
+                displacement, \
+                velocity_start, \
+                acceleration, \
+                true, \
+                0.0, \
+                true)
     else:
         # We reach max speed before we reach the displacement.
         
@@ -181,8 +200,11 @@ static func calculate_time_for_displacement(displacement: float, velocity_start:
         
         return time_to_reach_max_speed + remaining_time_at_max_speed
 
-static func calculate_velocity_end_for_displacement(displacement: float, velocity_start: float, \
-        acceleration: float, max_speed: float) -> float:
+static func calculate_velocity_end_for_displacement( \
+        displacement: float, \
+        velocity_start: float, \
+        acceleration: float, \
+        max_speed: float) -> float:
     if displacement == 0.0:
         # The start position is the destination.
         return velocity_start
@@ -224,7 +246,12 @@ static func calculate_velocity_end_for_displacement(displacement: float, velocit
         # We do not reach max speed before we reach the displacement.
         
         var time_for_displacement := calculate_movement_duration( \
-                displacement, velocity_start, acceleration, true, 0.0, true)
+                displacement, \
+                velocity_start, \
+                acceleration, \
+                true, \
+                0.0, \
+                true)
         
         # From a basic equation of motion:
         #     v = v_0 + a*t
@@ -244,9 +271,13 @@ static func calculate_velocity_end_for_displacement(displacement: float, velocit
 #         horizontal travel distance between the two surfaces.
 # -   Points are only included if they are distinct.
 # -   Points are returned in sorted order: closest, near, far.
-static func get_all_jump_land_positions_for_surface(movement_params: MovementParams, \
-        surface: Surface, other_surface_vertices: PoolVector2Array, \
-        other_surface_bounding_box: Rect2, other_surface_side: int, velocity_start_y: float, \
+static func get_all_jump_land_positions_for_surface( \
+        movement_params: MovementParams, \
+        surface: Surface, \
+        other_surface_vertices: PoolVector2Array, \
+        other_surface_bounding_box: Rect2, \
+        other_surface_side: int, \
+        velocity_start_y: float, \
         is_jump_off_surface: bool) -> Array:
     var surface_first_point := surface.first_point
     var surface_last_point := surface.last_point
@@ -256,9 +287,11 @@ static func get_all_jump_land_positions_for_surface(movement_params: MovementPar
     var near_end := Vector2.INF
     var far_end := Vector2.INF
     if Geometry.distance_squared_from_point_to_rect( \
-            surface_first_point, other_surface_bounding_box) < \
+            surface_first_point, \
+            other_surface_bounding_box) < \
             Geometry.distance_squared_from_point_to_rect( \
-                    surface_last_point, other_surface_bounding_box):
+                    surface_last_point, \
+                    other_surface_bounding_box):
         near_end = surface_first_point
         far_end = surface_last_point
     else:
@@ -267,13 +300,17 @@ static func get_all_jump_land_positions_for_surface(movement_params: MovementPar
     
     # Record the near-end point.
     var jump_position := create_position_offset_from_target_point( \
-            near_end, surface, movement_params.collider_half_width_height)
+            near_end, \
+            surface, \
+            movement_params.collider_half_width_height)
     var possible_jump_positions := [jump_position]
     
     # Only consider the far-end point if it is distinct.
     if surface.vertices.size() > 1:
         jump_position = create_position_offset_from_target_point( \
-                far_end, surface, movement_params.collider_half_width_height)
+                far_end, \
+                surface, \
+                movement_params.collider_half_width_height)
         possible_jump_positions.push_back(jump_position)
         
         var surface_center := surface.bounding_box.position + \
@@ -333,30 +370,34 @@ static func get_all_jump_land_positions_for_surface(movement_params: MovementPar
                         goal_x_on_surface = closest_point_on_other_surface.x + \
                                 player_width_horizontal_offset
                     closest_point_on_surface = Geometry.project_point_onto_surface( \
-                            Vector2(goal_x_on_surface, INF), surface)
+                            Vector2(goal_x_on_surface, INF), \
+                            surface)
                     
                 elif other_surface_side == SurfaceSide.LEFT_WALL or \
                         other_surface_side == SurfaceSide.RIGHT_WALL:
                     should_try_to_move_around_left_side_of_target = \
-                            other_surface_side == SurfaceSide.LEFT_WALL
+                            other_surface_side == SurfaceSide.RIGHT_WALL
                     # Find the point along the other surface that's closest to the source surface,
                     # and calculate a half-player-width offset from there.
                     closest_point_on_other_surface = \
                             Geometry.get_closest_point_on_polyline_to_polyline( \
-                                    other_surface_vertices, surface.vertices)
+                                    other_surface_vertices, \
+                                    surface.vertices)
                     goal_x_on_surface = closest_point_on_other_surface.x + \
                             (player_width_horizontal_offset if \
                             other_surface_side == SurfaceSide.LEFT_WALL else \
                             -player_width_horizontal_offset)
                     # Calculate the "closest" point on the source surface to our goal offset point.
                     closest_point_on_surface = Geometry.project_point_onto_surface( \
-                            Vector2(goal_x_on_surface, INF), surface)
+                            Vector2(goal_x_on_surface, INF), \
+                            surface)
                     
                 else: # other_surface_side == SurfaceSide.CEILING
                     # We can use any point along the other surface.
                     closest_point_on_surface = \
                             Geometry.get_closest_point_on_polyline_to_polyline( \
-                                    surface.vertices, other_surface_vertices)
+                                    surface.vertices, \
+                                    other_surface_vertices)
                 
                 if other_surface_side != SurfaceSide.CEILING:
                     # Calculate the point along the source surface that would correspond to the
@@ -389,7 +430,8 @@ static func get_all_jump_land_positions_for_surface(movement_params: MovementPar
                             should_try_to_move_around_left_side_of_target else \
                             max_velocity_horizontal_offset
                     mid_point_matching_horizontal_movement = Geometry.project_point_onto_surface( \
-                            Vector2(goal_x_on_surface, INF), surface)
+                            Vector2(goal_x_on_surface, INF), \
+                            surface)
             
         elif surface.side == SurfaceSide.LEFT_WALL or \
                 surface.side == SurfaceSide.RIGHT_WALL:
@@ -397,14 +439,16 @@ static func get_all_jump_land_positions_for_surface(movement_params: MovementPar
             # FIXME: -------------- REMOVE
             closest_point_on_surface = \
                     Geometry.get_closest_point_on_polyline_to_polyline( \
-                            surface.vertices, other_surface_vertices)
+                            surface.vertices, \
+                            other_surface_vertices)
             
         else: # surface.side == SurfaceSide.CEILING
             # FIXME: -------------- LEFT OFF HERE
             # FIXME: -------------- REMOVE
             closest_point_on_surface = \
                     Geometry.get_closest_point_on_polyline_to_polyline( \
-                            surface.vertices, other_surface_vertices)
+                            surface.vertices, \
+                            other_surface_vertices)
         
         # Only consider the horizontal-movement point if it is distinct.
         if movement_params.considers_mid_point_matching_horizontal_movement_for_jump_land_position and \
@@ -413,7 +457,8 @@ static func get_all_jump_land_positions_for_surface(movement_params: MovementPar
                 mid_point_matching_horizontal_movement != far_end and \
                 mid_point_matching_horizontal_movement != closest_point_on_surface:
             jump_position = create_position_offset_from_target_point( \
-                    mid_point_matching_horizontal_movement, surface, \
+                    mid_point_matching_horizontal_movement, \
+                    surface, \
                     movement_params.collider_half_width_height)
             possible_jump_positions.push_front(jump_position)
         
@@ -423,27 +468,41 @@ static func get_all_jump_land_positions_for_surface(movement_params: MovementPar
                 closest_point_on_surface != near_end and \
                 closest_point_on_surface != far_end:
             jump_position = create_position_offset_from_target_point( \
-                    closest_point_on_surface, surface, \
+                    closest_point_on_surface, \
+                    surface, \
                     movement_params.collider_half_width_height)
             possible_jump_positions.push_front(jump_position)
     
     return possible_jump_positions
 
-static func create_position_offset_from_target_point(target_point: Vector2, surface: Surface, \
+static func create_position_offset_from_target_point( \
+        target_point: Vector2, \
+        surface: Surface, \
         collider_half_width_height: Vector2, \
         clips_to_surface_bounds := false) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
-    position.match_surface_target_and_collider(surface, target_point, collider_half_width_height, \
-            true, clips_to_surface_bounds)
+    position.match_surface_target_and_collider( \
+            surface, \
+            target_point, \
+            collider_half_width_height, \
+            true, \
+            clips_to_surface_bounds)
     return position
 
-static func create_position_from_target_point(target_point: Vector2, surface: Surface, \
-        collider_half_width_height: Vector2, offsets_target_by_half_width_height := false, \
+static func create_position_from_target_point( \
+        target_point: Vector2, \
+        surface: Surface, \
+        collider_half_width_height: Vector2, \
+        offsets_target_by_half_width_height := false, \
         clips_to_surface_bounds := false) -> PositionAlongSurface:
     assert(surface != null)
     var position := PositionAlongSurface.new()
-    position.match_surface_target_and_collider(surface, target_point, collider_half_width_height, \
-            offsets_target_by_half_width_height, clips_to_surface_bounds)
+    position.match_surface_target_and_collider( \
+            surface, \
+            target_point, \
+            collider_half_width_height, \
+            offsets_target_by_half_width_height, \
+            clips_to_surface_bounds)
     return position
 
 static func create_position_without_surface(target_point: Vector2) -> PositionAlongSurface:
@@ -452,8 +511,12 @@ static func create_position_without_surface(target_point: Vector2) -> PositionAl
     return position
 
 static func update_velocity_in_air( \
-        velocity: Vector2, delta: float, is_pressing_jump: bool, is_first_jump: bool, \
-        horizontal_acceleration_sign: int, movement_params: MovementParams) -> Vector2:
+        velocity: Vector2, \
+        delta: float, \
+        is_pressing_jump: bool, \
+        is_first_jump: bool, \
+        horizontal_acceleration_sign: int, \
+        movement_params: MovementParams) -> Vector2:
     var is_ascending_from_jump := velocity.y < 0 and is_pressing_jump
     
     # Make gravity stronger when falling. This creates a more satisfying jump.
@@ -470,7 +533,9 @@ static func update_velocity_in_air( \
     
     return velocity
 
-static func cap_velocity(velocity: Vector2, movement_params: MovementParams, \
+static func cap_velocity( \
+        velocity: Vector2, \
+        movement_params: MovementParams, \
         current_max_horizontal_speed: float) -> Vector2:
     # Cap horizontal speed at a max value.
     velocity.x = clamp(velocity.x, -current_max_horizontal_speed, current_max_horizontal_speed)
@@ -491,7 +556,9 @@ static func cap_velocity(velocity: Vector2, movement_params: MovementParams, \
     
     return velocity
 
-static func calculate_time_to_climb(distance: float, is_climbing_upward: bool, \
+static func calculate_time_to_climb( \
+        distance: float, \
+        is_climbing_upward: bool, \
         movement_params: MovementParams) -> float:
     var speed := movement_params.climb_up_speed if is_climbing_upward else \
             movement_params.climb_down_speed
@@ -501,7 +568,12 @@ static func calculate_time_to_climb(distance: float, is_climbing_upward: bool, \
     #     t = (s - s_0) / v
     return distance / speed
 
-static func calculate_time_to_walk(distance: float, v_0: float, \
+static func calculate_time_to_walk( \
+        distance: float, \
+        v_0: float, \
         movement_params: MovementParams) -> float:
-    return calculate_time_for_displacement(distance, v_0, \
-            movement_params.walk_acceleration, movement_params.max_horizontal_speed_default)
+    return calculate_time_for_displacement( \
+            distance, \
+            v_0, \
+            movement_params.walk_acceleration, \
+            movement_params.max_horizontal_speed_default)

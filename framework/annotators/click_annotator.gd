@@ -26,7 +26,8 @@ func _unhandled_input(event: InputEvent) -> void:
         nearby_surface_position = null
         if global.current_player_for_clicks != null:
             var closest_surface_position := SurfaceParser.find_closest_position_on_a_surface( \
-                    click_position, global.current_player_for_clicks)
+                    click_position, \
+                    global.current_player_for_clicks)
             # Only use the closest surface if it is actually close enough.
             if closest_surface_position.target_point.distance_squared_to(click_position) < \
                     Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD * \
@@ -50,9 +51,19 @@ func _draw() -> void:
         return
     
     var alpha := CLICK_COLOR.a * (1 - progress)
-    var color := Color(CLICK_COLOR.r, CLICK_COLOR.g, CLICK_COLOR.b, alpha)
+    var color := Color( \
+            CLICK_COLOR.r, \
+            CLICK_COLOR.g, \
+            CLICK_COLOR.b, \
+            alpha)
     var radius := CLICK_END_RADIUS * progress
     
-    draw_circle(click_position, radius, color)
+    draw_circle( \
+            click_position, \
+            radius, \
+            color)
     if nearby_surface_position != null:
-        DrawUtils.draw_surface(self, nearby_surface_position.surface, color)
+        DrawUtils.draw_surface( \
+                self, \
+                nearby_surface_position.surface, \
+                color)

@@ -46,7 +46,14 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
             cell_top_left_corner = tile_map.map_to_world(position)
             cell_center = cell_top_left_corner + half_cell_size
             tile_map_index = Geometry.get_tile_map_index_from_grid_coord(position, tile_map)
-            draw_string(font, cell_center, str(tile_map_index), color)
-            draw_circle(cell_center, 1.0, color)
+            draw_string( \
+                    font, \
+                    cell_center, \
+                    str(tile_map_index), \
+                    color)
+            draw_circle( \
+                    cell_center, \
+                    1.0, \
+                    color)
     
     label.free()

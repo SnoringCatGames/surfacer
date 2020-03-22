@@ -45,10 +45,14 @@ var debug_state: MovementCalcOverallDebugState
 
 var in_debug_mode: bool setget _set_in_debug_mode,_get_in_debug_mode
 
-func _init(collision_params: CollisionCalcParams, origin_position: PositionAlongSurface, \
-            destination_position: PositionAlongSurface, origin_constraint: MovementConstraint, \
-            destination_constraint: MovementConstraint, velocity_start := Vector2.INF, \
-            can_backtrack_on_height := true) -> void:
+func _init( \
+        collision_params: CollisionCalcParams, \
+        origin_position: PositionAlongSurface, \
+        destination_position: PositionAlongSurface, \
+        origin_constraint: MovementConstraint, \
+        destination_constraint: MovementConstraint, \
+        velocity_start := Vector2.INF, \
+        can_backtrack_on_height := true) -> void:
     self.movement_params = collision_params.movement_params
     self.space_state = collision_params.space_state
     self.surface_parser = collision_params.surface_parser

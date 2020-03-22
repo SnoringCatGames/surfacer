@@ -23,10 +23,20 @@ static func create_terminal_constraints( \
     var destination_passing_vertically := destination_position.surface.normal.x == 0 if \
             destination_position.surface != null else true
     
-    var origin := MovementConstraint.new(origin_position.surface, origin_position.target_point, \
-            origin_passing_vertically, false, null, null)
-    var destination := MovementConstraint.new(destination_position.surface, \
-            destination_position.target_point, destination_passing_vertically, false, null, null)
+    var origin := MovementConstraint.new( \
+            origin_position.surface, \
+            origin_position.target_point, \
+            origin_passing_vertically, \
+            false, \
+            null, \
+            null)
+    var destination := MovementConstraint.new( \
+            destination_position.surface, \
+            destination_position.target_point, \
+            destination_passing_vertically, \
+            false, \
+            null, \
+            null)
     
     origin.is_origin = true
     origin.next_constraint = destination
@@ -40,10 +50,22 @@ static func create_terminal_constraints( \
     # FIXME: B: Consider adding support for specifying required end x-velocity (and y direction)?
     #           For hitting walls.
     
-    update_constraint(origin, origin, movement_params, velocity_start, can_hold_jump_button, \
-            null, Vector2.INF)
-    update_constraint(destination, origin, movement_params, velocity_start, can_hold_jump_button, \
-            null, Vector2.INF)
+    update_constraint( \
+            origin, \
+            origin, \
+            movement_params, \
+            velocity_start, \
+            can_hold_jump_button, \
+            null, \
+            Vector2.INF)
+    update_constraint( \
+            destination, \
+            origin, \
+            movement_params, \
+            velocity_start, \
+            can_hold_jump_button, \
+            null, \
+            Vector2.INF)
     
     if (origin.is_valid and destination.is_valid) or returns_invalid_constraints:
         return [origin, destination]
@@ -52,10 +74,14 @@ static func create_terminal_constraints( \
 
 # Assuming movement would otherwise collide with the given surface, this calculates positions along
 # the edges of the surface that the movement could pass through in order to go around the surface.
-static func calculate_constraints_around_surface(movement_params: MovementParams, \
-        vertical_step: MovementVertCalcStep, previous_constraint: MovementConstraint, \
-        next_constraint: MovementConstraint, origin_constraint: MovementConstraint, \
-        destination_constraint: MovementConstraint, colliding_surface: Surface, \
+static func calculate_constraints_around_surface( \
+        movement_params: MovementParams, \
+        vertical_step: MovementVertCalcStep, \
+        previous_constraint: MovementConstraint, \
+        next_constraint: MovementConstraint, \
+        origin_constraint: MovementConstraint, \
+        destination_constraint: MovementConstraint, \
+        colliding_surface: Surface, \
         constraint_offset: Vector2) -> Array:
     var passing_vertically: bool
     var should_stay_on_min_side_a: bool
@@ -144,44 +170,74 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
                 passing_vertically, should_stay_on_min_side_a, previous_constraint, \
                 next_constraint)
         # Calculate and record state for the constraint.
-        update_constraint(constraint_a_original, origin_constraint, movement_params, \
-                vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
-                vertical_step, Vector2.INF)
+        update_constraint( \
+                constraint_a_original, \
+                origin_constraint, \
+                movement_params, \
+                vertical_step.velocity_step_start, \
+                vertical_step.can_hold_jump_button, \
+                vertical_step, \
+                Vector2.INF)
         # If the constraint is fake, then replace it with its real neighbor, and re-calculate state
         # for the neighbor.
         if constraint_a_original.is_fake:
             constraint_a_final = _calculate_replacement_for_fake_constraint( \
-                    constraint_a_original, constraint_offset)
-            update_constraint(constraint_a_final, origin_constraint, movement_params, \
-                    vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
-                    vertical_step, Vector2.INF)
+                    constraint_a_original, \
+                    constraint_offset)
+            update_constraint( \
+                    constraint_a_final, \
+                    origin_constraint, \
+                    movement_params, \
+                    vertical_step.velocity_step_start, \
+                    vertical_step.can_hold_jump_button, \
+                    vertical_step, \
+                    Vector2.INF)
         else:
             constraint_a_final = constraint_a_original
     
     if !should_skip_b:
-        constraint_b_original = MovementConstraint.new(colliding_surface, position_b, \
-                passing_vertically, should_stay_on_min_side_b, previous_constraint, \
+        constraint_b_original = MovementConstraint.new( \
+                colliding_surface, \
+                position_b, \
+                passing_vertically, \
+                should_stay_on_min_side_b, \
+                previous_constraint, \
                 next_constraint)
         # Calculate and record state for the constraint.
-        update_constraint(constraint_b_original, origin_constraint, movement_params, \
-                vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
-                vertical_step, Vector2.INF)
+        update_constraint( \
+                constraint_b_original, \
+                origin_constraint, \
+                movement_params, \
+                vertical_step.velocity_step_start, \
+                vertical_step.can_hold_jump_button, \
+                vertical_step, \
+                Vector2.INF)
         # If the constraint is fake, then replace it with its real neighbor, and re-calculate state
         # for the neighbor.
         if constraint_b_original.is_fake:
             constraint_b_final = _calculate_replacement_for_fake_constraint( \
-                    constraint_b_original, constraint_offset)
-            update_constraint(constraint_b_final, origin_constraint, movement_params, \
-                    vertical_step.velocity_step_start, vertical_step.can_hold_jump_button, \
-                    vertical_step, Vector2.INF)
+                    constraint_b_original, \
+                    constraint_offset)
+            update_constraint( \
+                    constraint_b_final, \
+                    origin_constraint, \
+                    movement_params, \
+                    vertical_step.velocity_step_start, \
+                    vertical_step.can_hold_jump_button, \
+                    vertical_step, \
+                    Vector2.INF)
         else:
             constraint_b_final = constraint_b_original
     
     if !should_skip_a and !should_skip_b:
         # Return the constraints in sorted order according to which is more likely to produce
         # successful movement.
-        if _compare_constraints_by_more_likely_to_be_valid(constraint_a_original, constraint_b_original, \
-                constraint_a_final, constraint_b_final, destination_constraint):
+        if _compare_constraints_by_more_likely_to_be_valid( \
+                constraint_a_original, \
+                constraint_b_original, \
+                constraint_a_final, \
+                constraint_b_final, \
+                destination_constraint):
             return [constraint_a_final, constraint_b_final]
         else:
             return [constraint_b_final, constraint_a_final]
@@ -195,9 +251,12 @@ static func calculate_constraints_around_surface(movement_params: MovementParams
 
 # Use some basic heuristics to sort the constraints. We try to attempt calculations for the 
 # constraint that's most likely to be successful first.
-static func _compare_constraints_by_more_likely_to_be_valid(a_original: MovementConstraint, \
-        b_original: MovementConstraint, a_final: MovementConstraint, \
-        b_final: MovementConstraint, destination: MovementConstraint) -> bool:
+static func _compare_constraints_by_more_likely_to_be_valid( \
+        a_original: MovementConstraint, \
+        b_original: MovementConstraint, \
+        a_final: MovementConstraint, \
+        b_final: MovementConstraint, \
+        destination: MovementConstraint) -> bool:
     if a_final.is_valid != b_final.is_valid:
         # Sort constraints according to whether they're valid.
         return a_final.is_valid
@@ -241,10 +300,14 @@ static func _compare_constraints_by_more_likely_to_be_valid(a_original: Movement
 # well as various other parameters.
 # 
 # Returns false if the constraint cannot satisfy the given parameters.
-static func update_constraint(constraint: MovementConstraint, \
-        origin_constraint: MovementConstraint, movement_params: MovementParams, \
-        velocity_start_origin: Vector2, can_hold_jump_button_at_origin: bool, \
-        vertical_step: MovementVertCalcStep, additional_high_constraint_position: Vector2) -> void:
+static func update_constraint( \
+        constraint: MovementConstraint, \
+        origin_constraint: MovementConstraint, \
+        movement_params: MovementParams, \
+        velocity_start_origin: Vector2, \
+        can_hold_jump_button_at_origin: bool, \
+        vertical_step: MovementVertCalcStep, \
+        additional_high_constraint_position: Vector2) -> void:
     # Previous constraint, next constraint,  and vertical_step should be provided when updating
     # intermediate constraints.
     assert(constraint.previous_constraint != null or constraint.is_origin)
@@ -272,9 +335,14 @@ static func update_constraint(constraint: MovementConstraint, \
         constraint.horizontal_movement_sign = constraint.horizontal_movement_sign_from_displacement
         constraint.is_valid = false
     else:
-        constraint.is_valid = _update_constraint_velocity_and_time(constraint, origin_constraint, \
-                movement_params, velocity_start_origin, can_hold_jump_button_at_origin, \
-                vertical_step, additional_high_constraint_position)
+        constraint.is_valid = _update_constraint_velocity_and_time( \
+                constraint, \
+                origin_constraint, \
+                movement_params, \
+                velocity_start_origin, \
+                can_hold_jump_button_at_origin, \
+                vertical_step, \
+                additional_high_constraint_position)
 
 # Calculates and records various state on the given constraint.
 # 
@@ -287,10 +355,14 @@ static func update_constraint(constraint: MovementConstraint, \
 # parameters.
 # 
 # Returns false if the constraint cannot satisfy the given parameters.
-static func _update_constraint_velocity_and_time(constraint: MovementConstraint, \
-        origin_constraint: MovementConstraint, movement_params: MovementParams, \
-        velocity_start_origin: Vector2, can_hold_jump_button_at_origin: bool, \
-        vertical_step: MovementVertCalcStep, additional_high_constraint_position: Vector2) -> bool:
+static func _update_constraint_velocity_and_time( \
+        constraint: MovementConstraint, \
+        origin_constraint: MovementConstraint, \
+        movement_params: MovementParams, \
+        velocity_start_origin: Vector2, \
+        can_hold_jump_button_at_origin: bool, \
+        vertical_step: MovementVertCalcStep, \
+        additional_high_constraint_position: Vector2) -> bool:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var time_passing_through: float
@@ -371,8 +443,10 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
                 time_to_pass_through_constraint_ignoring_others = vertical_step.time_step_end
             else:
                 time_to_pass_through_constraint_ignoring_others = \
-                        VerticalMovementUtils.calculate_time_to_jump_to_constraint(movement_params, \
-                                displacement_from_origin_to_constraint, velocity_start_origin, \
+                        VerticalMovementUtils.calculate_time_to_jump_to_constraint( \
+                                movement_params, \
+                                displacement_from_origin_to_constraint, \
+                                velocity_start_origin, \
                                 can_hold_jump_button_at_origin, \
                                 additional_high_constraint_position != Vector2.INF)
                 if time_to_pass_through_constraint_ignoring_others == INF:
@@ -395,8 +469,10 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
                 #       Revisit this if we see problems.
                 
                 var time_to_get_to_destination_from_constraint := \
-                        _calculate_time_to_reach_destination_from_new_constraint(movement_params, \
-                                additional_high_constraint_position, constraint)
+                        _calculate_time_to_reach_destination_from_new_constraint( \
+                                movement_params, \
+                                additional_high_constraint_position, \
+                                constraint)
                 if time_to_get_to_destination_from_constraint == INF:
                     # We can't reach the destination from this constraint.
                     return false
@@ -428,7 +504,8 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             
             time_passing_through = \
                     VerticalMovementUtils.calculate_time_for_passing_through_constraint( \
-                            movement_params, constraint, \
+                            movement_params, \
+                            constraint, \
                             constraint.previous_constraint.time_passing_through + 0.0001, \
                             vertical_step.position_step_start.y, \
                             vertical_step.velocity_step_start.y, \
@@ -485,7 +562,8 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             #       reached, since any previous intermediate constraints could invalidate things.
             var min_and_max_velocity_from_origin := \
                     _calculate_min_and_max_x_velocity_at_end_of_interval( \
-                            displacement_from_origin.x, duration_from_origin, \
+                            displacement_from_origin.x, \
+                            duration_from_origin, \
                             origin_constraint.min_velocity_x, \
                             origin_constraint.max_velocity_x, \
                             movement_params.max_horizontal_speed_default, \
@@ -500,7 +578,8 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
             # Calculate the min and max velocity for movement through the constraint.
             var min_and_max_velocity_for_next_step := \
                     _calculate_min_and_max_x_velocity_at_start_of_interval( \
-                            displacement_to_next.x, duration_to_next, \
+                            displacement_to_next.x, \
+                            duration_to_next, \
                             constraint.next_constraint.min_velocity_x, \
                             constraint.next_constraint.max_velocity_x, \
                             movement_params.max_horizontal_speed_default, \
@@ -545,7 +624,8 @@ static func _update_constraint_velocity_and_time(constraint: MovementConstraint,
 #   require vertical velocity to _not_ be zero through this new constraint, then that case should
 #   be covered by the horizontal time calculation.
 static func _calculate_time_to_reach_destination_from_new_constraint( \
-        movement_params: MovementParams, new_constraint_position: Vector2, \
+        movement_params: MovementParams, \
+        new_constraint_position: Vector2, \
         destination: MovementConstraint) -> float:
     var displacement := destination.position - new_constraint_position
     
@@ -561,20 +641,28 @@ static func _calculate_time_to_reach_destination_from_new_constraint( \
         acceleration = -movement_params.in_air_horizontal_acceleration
     
     var time_to_reach_horizontal_displacement := \
-            MovementUtils.calculate_time_for_displacement(displacement.x, \
-                    velocity_x_at_new_constraint, acceleration, \
+            MovementUtils.calculate_time_for_displacement( \
+                    displacement.x, \
+                    velocity_x_at_new_constraint, \
+                    acceleration, \
                     movement_params.max_horizontal_speed_default)
     
     var time_to_reach_fall_displacement: float
     if displacement.y > 0:
         time_to_reach_fall_displacement = MovementUtils.calculate_movement_duration( \
-                displacement.y, 0.0, movement_params.gravity_fast_fall, true, 0.0, true)
+                displacement.y, \
+                0.0, \
+                movement_params.gravity_fast_fall, \
+                true, \
+                0.0, \
+                true)
     else:
         time_to_reach_fall_displacement = 0.0
     
     return max(time_to_reach_horizontal_displacement, time_to_reach_fall_displacement)
 
-static func _assign_horizontal_movement_sign(constraint: MovementConstraint, \
+static func _assign_horizontal_movement_sign( \
+        constraint: MovementConstraint, \
         velocity_start_origin: Vector2) -> void:
     var previous_constraint := constraint.previous_constraint
     var next_constraint := constraint.next_constraint
@@ -641,9 +729,13 @@ static func _assign_horizontal_movement_sign(constraint: MovementConstraint, \
 # 
 # - The first element represents the min velocity.
 # - The second element represents the max velocity.
-static func _calculate_min_and_max_x_velocity_at_start_of_interval(displacement: float, \
-        duration: float, v_1_min_for_next_constraint: float, \
-        v_1_max_for_next_constraint: float, speed_max: float, a_magnitude: float, \
+static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
+        displacement: float, \
+        duration: float, \
+        v_1_min_for_next_constraint: float, \
+        v_1_max_for_next_constraint: float, \
+        speed_max: float, \
+        a_magnitude: float, \
         start_horizontal_movement_sign: int) -> Array:
     ### Calculate more tightly-bounded min/max end velocity values, according to both the duration
     ### of the current step and the given min/max values from the next constraint.
@@ -695,7 +787,12 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(displacement:
         var acceleration := -a_magnitude
         var v_0 := speed_max
         min_v_1_from_partial_acc_and_no_max_speed_at_v_1 = \
-                _calculate_v_1_with_v_0_limit(displacement, duration, v_0, acceleration, true)
+                _calculate_v_1_with_v_0_limit( \
+                        displacement, \
+                        duration, \
+                        v_0, \
+                        acceleration, \
+                        true)
         if min_v_1_from_partial_acc_and_no_max_speed_at_v_1 == INF:
             # We cannot reach this constraint from the previous constraint.
             return []
@@ -712,7 +809,12 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(displacement:
         var acceleration := a_magnitude
         var v_0 := -speed_max
         max_v_1_from_partial_acc_and_no_max_speed_at_v_1 = \
-                _calculate_v_1_with_v_0_limit(displacement, duration, v_0, acceleration, false)
+                _calculate_v_1_with_v_0_limit( \
+                        displacement, \
+                        duration, \
+                        v_0, \
+                        acceleration, \
+                        false)
         if max_v_1_from_partial_acc_and_no_max_speed_at_v_1 == INF:
             # We cannot reach this constraint from the previous constraint.
             return []
@@ -779,15 +881,25 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(displacement:
         acceleration = -a_magnitude
         should_accelerate_at_start = true
         should_return_min_result = false
-        var v_0_max_neg_acc_at_start := _solve_for_start_velocity(displacement, duration, \
-                acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+        var v_0_max_neg_acc_at_start := _solve_for_start_velocity( \
+                displacement, \
+                duration, \
+                acceleration, \
+                v_1, \
+                should_accelerate_at_start, \
+                should_return_min_result)
         
         v_1 = v_1_min
         acceleration = a_magnitude
         should_accelerate_at_start = false
         should_return_min_result = false
-        var v_0_max_pos_acc_at_end := _solve_for_start_velocity(displacement, duration, \
-                acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+        var v_0_max_pos_acc_at_end := _solve_for_start_velocity( \
+                displacement, \
+                duration, \
+                acceleration, \
+                v_1, \
+                should_accelerate_at_start, \
+                should_return_min_result)
         
         # Use the more extreme of the possible min/max values we calculated for positive/negative
         # acceleration at the start/end.
@@ -809,15 +921,25 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(displacement:
         acceleration = a_magnitude
         should_accelerate_at_start = true
         should_return_min_result = true
-        var v_0_min_pos_acc_at_start := _solve_for_start_velocity(displacement, duration, \
-                acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+        var v_0_min_pos_acc_at_start := _solve_for_start_velocity( \
+                displacement, \
+                duration, \
+                acceleration, \
+                v_1, \
+                should_accelerate_at_start, \
+                should_return_min_result)
         
         v_1 = v_1_max
         acceleration = -a_magnitude
         should_accelerate_at_start = false
         should_return_min_result = true
-        var v_0_min_neg_acc_at_end := _solve_for_start_velocity(displacement, duration, \
-                acceleration, v_1, should_accelerate_at_start, should_return_min_result)
+        var v_0_min_neg_acc_at_end := _solve_for_start_velocity( \
+                displacement, \
+                duration, \
+                acceleration, \
+                v_1, \
+                should_accelerate_at_start, \
+                should_return_min_result)
         
         # Use the more extreme of the possible min/max values we calculated for positive/negative
         # acceleration at the start/end.
@@ -876,8 +998,12 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(displacement:
 # So instead, we assume a 2-part movement profile with constant velocity in the first part and
 # constant acceleration in the second part. This 2-part movement should more accurately represent
 # the limit on v_1.
-static func _calculate_v_1_with_v_0_limit(displacement: float, duration: float, v_0: float, \
-        acceleration: float, should_return_min_result: bool) -> float:
+static func _calculate_v_1_with_v_0_limit( \
+        displacement: float, \
+        duration: float, \
+        v_0: float, \
+        acceleration: float, \
+        should_return_min_result: bool) -> float:
     # Derivation:
     # - From basic equations of motion:
     #   - s_1 = s_0 + v_0*t_0
@@ -923,8 +1049,13 @@ static func _calculate_v_1_with_v_0_limit(displacement: float, duration: float, 
     else:
         return max(result_1, result_2)
 
-static func _solve_for_start_velocity(displacement: float, duration: float, acceleration: float, \
-        v_1: float, should_accelerate_at_start: bool, should_return_min_result: bool) -> float:
+static func _solve_for_start_velocity( \
+        displacement: float, \
+        duration: float, \
+        acceleration: float, \
+        v_1: float, \
+        should_accelerate_at_start: bool, \
+        should_return_min_result: bool) -> float:
     var acceleration_sign := 1 if acceleration >= 0 else -1
     
     var a: float
@@ -1036,9 +1167,13 @@ static func _solve_for_start_velocity(displacement: float, duration: float, acce
 # 
 # - The first element represents the min velocity.
 # - The second element represents the max velocity.
-static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: float, \
-        duration: float, v_1_min_for_previous_constraint: float, \
-        v_1_max_for_previous_constraint: float, speed_max: float, a_magnitude: float, \
+static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
+        displacement: float, \
+        duration: float, \
+        v_1_min_for_previous_constraint: float, \
+        v_1_max_for_previous_constraint: float, \
+        speed_max: float, \
+        a_magnitude: float, \
         end_horizontal_movement_sign: int) -> Array:
     ### Calculate more tightly-bounded min/max start velocity values, according to both the duration
     ### of the current step and the given min/max values from the previous constraint.
@@ -1089,7 +1224,12 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
         var acceleration := a_magnitude
         var v_1 := speed_max
         min_v_0_from_partial_acc_and_no_max_speed_at_v_0 = \
-                _calculate_v_0_with_v_1_limit(displacement, duration, v_1, acceleration, true)
+                _calculate_v_0_with_v_1_limit( \
+                        displacement, \
+                        duration, \
+                        v_1, \
+                        acceleration, \
+                        true)
         if min_v_0_from_partial_acc_and_no_max_speed_at_v_0 == INF:
             # We cannot reach this constraint from the previous constraint.
             return []
@@ -1106,7 +1246,12 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
         var acceleration := -a_magnitude
         var v_1 := -speed_max
         max_v_0_from_partial_acc_and_no_max_speed_at_v_0 = \
-                _calculate_v_0_with_v_1_limit(displacement, duration, v_1, acceleration, false)
+                _calculate_v_0_with_v_1_limit( \
+                        displacement, \
+                        duration, \
+                        v_1, \
+                        acceleration, \
+                        false)
         if max_v_0_from_partial_acc_and_no_max_speed_at_v_0 == INF:
             # We cannot reach this constraint from the previous constraint.
             return []
@@ -1173,15 +1318,25 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
         acceleration = -a_magnitude
         should_accelerate_at_start = true
         should_return_min_result = false
-        var v_1_max_neg_acc_at_start := _solve_for_end_velocity(displacement, duration, \
-                acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+        var v_1_max_neg_acc_at_start := _solve_for_end_velocity( \
+                displacement, \
+                duration, \
+                acceleration, \
+                v_0, \
+                should_accelerate_at_start, \
+                should_return_min_result)
         
         v_0 = v_0_min
         acceleration = a_magnitude
         should_accelerate_at_start = false
         should_return_min_result = false
-        var v_1_max_pos_acc_at_end := _solve_for_end_velocity(displacement, duration, \
-                acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+        var v_1_max_pos_acc_at_end := _solve_for_end_velocity( \
+                displacement, \
+                duration, \
+                acceleration, \
+                v_0, \
+                should_accelerate_at_start, \
+                should_return_min_result)
         
         # Use the more extreme of the possible min/max values we calculated for positive/negative
         # acceleration at the start/end.
@@ -1203,15 +1358,25 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
         acceleration = a_magnitude
         should_accelerate_at_start = true
         should_return_min_result = true
-        var v_1_min_pos_acc_at_start := _solve_for_end_velocity(displacement, duration, \
-                acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+        var v_1_min_pos_acc_at_start := _solve_for_end_velocity( \
+                displacement, \
+                duration, \
+                acceleration, \
+                v_0, \
+                should_accelerate_at_start, \
+                should_return_min_result)
         
         v_0 = v_0_max
         acceleration = -a_magnitude
         should_accelerate_at_start = false
         should_return_min_result = true
-        var v_1_min_neg_acc_at_end := _solve_for_end_velocity(displacement, duration, \
-                acceleration, v_0, should_accelerate_at_start, should_return_min_result)
+        var v_1_min_neg_acc_at_end := _solve_for_end_velocity( \
+                displacement, \
+                duration, \
+                acceleration, \
+                v_0, \
+                should_accelerate_at_start, \
+                should_return_min_result)
         
         # Use the more extreme of the possible min/max values we calculated for positive/negative
         # acceleration at the start/end.
@@ -1270,8 +1435,12 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(displacement: f
 # So instead, we assume a 2-part movement profile with constant acceleration in the first part and
 # constant velocity in the second part. This 2-part movement should more accurately represent
 # the limit on v_0.
-static func _calculate_v_0_with_v_1_limit(displacement: float, duration: float, v_1: float, \
-        acceleration: float, should_return_min_result: bool) -> float:
+static func _calculate_v_0_with_v_1_limit( \
+        displacement: float, \
+        duration: float, \
+        v_1: float, \
+        acceleration: float, \
+        should_return_min_result: bool) -> float:
     # Derivation:
     # - From basic equations of motion:
     #   - v_1 = v_0 + a*t_0
@@ -1317,8 +1486,13 @@ static func _calculate_v_0_with_v_1_limit(displacement: float, duration: float, 
     else:
         return max(result_1, result_2)
 
-static func _solve_for_end_velocity(displacement: float, duration: float, acceleration: float, \
-        v_0: float, should_accelerate_at_start: bool, should_return_min_result: bool) -> float:
+static func _solve_for_end_velocity( \
+        displacement: float, \
+        duration: float, \
+        acceleration: float, \
+        v_0: float, \
+        should_accelerate_at_start: bool, \
+        should_return_min_result: bool) -> float:
     var acceleration_sign := 1 if acceleration >= 0 else -1
     
     var a: float
@@ -1417,21 +1591,34 @@ static func _solve_for_end_velocity(displacement: float, duration: float, accele
     else:
         return max(result_1, result_2)
 
-static func update_neighbors_for_new_constraint(constraint: MovementConstraint, \
-        previous_constraint: MovementConstraint, next_constraint: MovementConstraint, \
+static func update_neighbors_for_new_constraint( \
+        constraint: MovementConstraint, \
+        previous_constraint: MovementConstraint, \
+        next_constraint: MovementConstraint, \
         overall_calc_params: MovementCalcOverallParams, \
         vertical_step: MovementVertCalcStep) -> void:
     previous_constraint.next_constraint = constraint
     next_constraint.previous_constraint = constraint
     
-    update_constraint(previous_constraint, overall_calc_params.origin_constraint, \
-            overall_calc_params.movement_params, vertical_step.velocity_step_start, \
-            vertical_step.can_hold_jump_button, vertical_step, Vector2.INF)
-    update_constraint(next_constraint, overall_calc_params.origin_constraint, \
-            overall_calc_params.movement_params, vertical_step.velocity_step_start, \
-            vertical_step.can_hold_jump_button, vertical_step, Vector2.INF)
+    update_constraint( \
+            previous_constraint, \
+            overall_calc_params.origin_constraint, \
+            overall_calc_params.movement_params, \
+            vertical_step.velocity_step_start, \
+            vertical_step.can_hold_jump_button, \
+            vertical_step, \
+            Vector2.INF)
+    update_constraint( \
+            next_constraint, \
+            overall_calc_params.origin_constraint, \
+            overall_calc_params.movement_params, \
+            vertical_step.velocity_step_start, \
+            vertical_step.can_hold_jump_button, \
+            vertical_step, \
+            Vector2.INF)
 
-static func _calculate_replacement_for_fake_constraint(fake_constraint: MovementConstraint, \
+static func _calculate_replacement_for_fake_constraint( \
+        fake_constraint: MovementConstraint, \
         constraint_offset: Vector2) -> MovementConstraint:
     var neighbor_surface: Surface
     var replacement_position := Vector2.INF
@@ -1468,8 +1655,12 @@ static func _calculate_replacement_for_fake_constraint(fake_constraint: Movement
         _:
             Utils.error()
     
-    var replacement := MovementConstraint.new(neighbor_surface, replacement_position, false, \
-            should_stay_on_min_side, fake_constraint.previous_constraint, \
+    var replacement := MovementConstraint.new( \
+            neighbor_surface, \
+            replacement_position, \
+            false, \
+            should_stay_on_min_side, \
+            fake_constraint.previous_constraint, \
             fake_constraint.next_constraint)
     replacement.replaced_a_fake = true
     return replacement
@@ -1481,7 +1672,8 @@ static func clone_constraint(original: MovementConstraint) -> MovementConstraint
     copy_constraint(clone, original)
     return clone
 
-static func copy_constraint(destination: MovementConstraint, \
+static func copy_constraint( \
+        destination: MovementConstraint, \
         source: MovementConstraint) -> MovementConstraint:
     destination.surface = source.surface
     destination.position = source.position

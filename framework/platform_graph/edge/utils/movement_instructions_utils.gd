@@ -28,8 +28,10 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.
-static func convert_calculation_steps_to_movement_instructions(calc_results: MovementCalcResults, \
-        includes_jump: bool, destination_side: int) -> MovementInstructions:
+static func convert_calculation_steps_to_movement_instructions( \
+        calc_results: MovementCalcResults, \
+        includes_jump: bool, \
+        destination_side: int) -> MovementInstructions:
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
     
@@ -47,9 +49,14 @@ static func convert_calculation_steps_to_movement_instructions(calc_results: Mov
     for i in range(steps.size()):
         step = steps[i]
         input_key = "move_left" if step.horizontal_acceleration_sign < 0 else "move_right"
-        press = MovementInstruction.new(input_key, step.time_instruction_start, true)
-        release = MovementInstruction.new(input_key, \
-                step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON, false)
+        press = MovementInstruction.new( \
+                input_key, \
+                step.time_instruction_start, \
+                true)
+        release = MovementInstruction.new( \
+                input_key, \
+                step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON, \
+                false)
         instructions[i * 2] = press
         instructions[i * 2 + 1] = release
         
@@ -64,15 +71,23 @@ static func convert_calculation_steps_to_movement_instructions(calc_results: Mov
         var time_step_start := last_step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
         input_key = "grab_wall"
-        press = MovementInstruction.new(input_key, time_step_start, true)
+        press = MovementInstruction.new( \
+                input_key, \
+                time_step_start, \
+                true)
         instructions.push_back(press)
     
     # Record the jump instruction.
     if includes_jump:
         input_key = "jump"
-        press = MovementInstruction.new(input_key, vertical_step.time_instruction_start, true)
-        release = MovementInstruction.new(input_key, \
-                vertical_step.time_instruction_end + JUMP_DURATION_INCREASE_EPSILON, false)
+        press = MovementInstruction.new( \
+                input_key, \
+                vertical_step.time_instruction_start, \
+                true)
+        release = MovementInstruction.new( \
+                input_key, \
+                vertical_step.time_instruction_end + JUMP_DURATION_INCREASE_EPSILON, \
+                false)
         instructions.push_front(release)
         instructions.push_front(press)
     
@@ -96,7 +111,9 @@ static func convert_calculation_steps_to_movement_instructions(calc_results: Mov
     
     # FIXME: -------- Rename? Refactor?
     var collision := CollisionCheckUtils.check_instructions_discrete_frame_state( \
-            calc_results.overall_calc_params, instructions_wrapper, calc_results.vertical_step, \
+            calc_results.overall_calc_params, \
+            instructions_wrapper, \
+            calc_results.vertical_step, \
             calc_results.horizontal_steps)
     assert(collision == null or \
             (collision.is_valid_collision_state and \

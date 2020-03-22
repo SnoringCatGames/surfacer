@@ -10,17 +10,32 @@ const INPUT_KEYS := [
   "grab_wall",
 ]
 
-func _init(player, is_additive: bool).("HP", player, is_additive) -> void:
+func _init( \
+        player, \
+        is_additive: bool) \
+        .( \
+        "HP", \
+        player, \
+        is_additive) -> void:
     pass
 
 # Calculates actions for the current frame.
-func update(actions: PlayerActionState, previous_actions: PlayerActionState, time_sec: float, \
-        delta: float, navigation_state: PlayerNavigationState) -> void:
+func update( \
+        actions: PlayerActionState, \
+        previous_actions: PlayerActionState, \
+        time_sec: float, \
+        delta: float, \
+        navigation_state: PlayerNavigationState) -> void:
     var is_pressed: bool
     for input_key in INPUT_KEYS:
         is_pressed = Input.is_action_pressed(input_key)
         if !Input.is_key_pressed(KEY_CONTROL):
-            update_for_key_press(actions, previous_actions, input_key, is_pressed, time_sec)
+            update_for_key_press( \
+                actions, \
+                previous_actions, \
+                input_key, \
+                is_pressed, \
+                time_sec)
 
 static func get_is_some_user_action_pressed() -> bool:
     for input_key in INPUT_KEYS:

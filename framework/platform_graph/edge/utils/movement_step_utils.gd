@@ -10,7 +10,8 @@ const MovementCalcStepParams := preload("res://framework/platform_graph/edge/cal
 # 
 # This can trigger recursive calls if horizontal movement cannot be satisfied without backtracking
 # to consider a new higher jump height.
-static func calculate_steps_with_new_jump_height(overall_calc_params: MovementCalcOverallParams, \
+static func calculate_steps_with_new_jump_height( \
+        overall_calc_params: MovementCalcOverallParams, \
         parent_step_calc_params: MovementCalcStepParams, \
         previous_out_of_reach_constraint: MovementConstraint) -> MovementCalcResults:
     var vertical_step := VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
@@ -18,9 +19,13 @@ static func calculate_steps_with_new_jump_height(overall_calc_params: MovementCa
         # The destination is out of reach.
         return null
     
-    var step_calc_params := MovementCalcStepParams.new(overall_calc_params.origin_constraint, \
-            overall_calc_params.destination_constraint, vertical_step, overall_calc_params, \
-            parent_step_calc_params, previous_out_of_reach_constraint)
+    var step_calc_params := MovementCalcStepParams.new( \
+            overall_calc_params.origin_constraint, \
+            overall_calc_params.destination_constraint, \
+            vertical_step, \
+            overall_calc_params, \
+            parent_step_calc_params, \
+            previous_out_of_reach_constraint)
     
     return calculate_steps_from_constraint(overall_calc_params, step_calc_params)
 
@@ -29,7 +34,8 @@ static func calculate_steps_with_new_jump_height(overall_calc_params: MovementCa
 # Normally, this function deals with horizontal movement steps. However, if we find that a
 # constraint cannot be satisfied with just horizontal movement, we may backtrack and try a new
 # recursive traversal using a higher jump height.
-static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOverallParams, \
+static func calculate_steps_from_constraint( \
+        overall_calc_params: MovementCalcOverallParams, \
         step_calc_params: MovementCalcStepParams) -> MovementCalcResults:
     ### BASE CASES
     
@@ -50,19 +56,26 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
     # things correctly.
     if step_calc_params.end_constraint.is_destination:
         assert(Geometry.are_floats_equal_with_epsilon( \
-                next_horizontal_step.time_step_end, vertical_step.time_step_end, 0.0001))
+                next_horizontal_step.time_step_end, \
+                vertical_step.time_step_end, \
+                0.0001))
         assert(Geometry.are_floats_equal_with_epsilon( \
-                next_horizontal_step.position_step_end.y, vertical_step.position_step_end.y, \
+                next_horizontal_step.position_step_end.y, \
+                vertical_step.position_step_end.y, \
                 0.001))
-        assert(Geometry.are_points_equal_with_epsilon(next_horizontal_step.position_step_end, \
-                overall_calc_params.destination_constraint.position, 0.0001))
+        assert(Geometry.are_points_equal_with_epsilon( \
+                next_horizontal_step.position_step_end, \
+                overall_calc_params.destination_constraint.position, \
+                0.0001))
     
     # FIXME: DEBUGGING: REMOVE:
 #    if step_calc_params.start_constraint.position == Vector2(106, 37.5):
 #        print("break")
     
     var collision := CollisionCheckUtils.check_continuous_horizontal_step_for_collision( \
-            overall_calc_params, step_calc_params, next_horizontal_step)
+            overall_calc_params, \
+            step_calc_params, \
+            next_horizontal_step)
     
     if collision != null and !collision.is_valid_collision_state:
         # An error occured during collision detection, so we abandon this step calculation.
@@ -80,23 +93,30 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
     # Calculate possible constraints to divert the movement around either side of the colliding
     # surface.
     var constraints := MovementConstraintUtils.calculate_constraints_around_surface( \
-            overall_calc_params.movement_params, vertical_step, \
-            step_calc_params.start_constraint, step_calc_params.end_constraint, \
-            overall_calc_params.origin_constraint, overall_calc_params.destination_constraint, \
-            collision.surface, overall_calc_params.constraint_offset)
+            overall_calc_params.movement_params, \
+            vertical_step, \
+            step_calc_params.start_constraint, \
+            step_calc_params.end_constraint, \
+            overall_calc_params.origin_constraint, \
+            overall_calc_params.destination_constraint, \
+            collision.surface, \
+            overall_calc_params.constraint_offset)
     if debug_state != null:
         debug_state.upcoming_constraints = constraints
     
     # First, try to satisfy the constraints without backtracking to consider a new max jump height.
     var calc_results := calculate_steps_from_constraint_without_backtracking_on_height( \
-            overall_calc_params, step_calc_params, constraints)
+            overall_calc_params, \
+            step_calc_params, \
+            constraints)
     if calc_results != null or !overall_calc_params.can_backtrack_on_height:
         # Recursion was successful without backtracking for a new max jump height.
         if debug_state != null:
             debug_state.result_code = EdgeStepCalcResult.RECURSION_VALID
         return calc_results
     
-    if overall_calc_params.is_backtracking_valid_for_surface(collision.surface, \
+    if overall_calc_params.is_backtracking_valid_for_surface( \
+            collision.surface, \
             vertical_step.time_instruction_end):
         # We've already tried backtracking for a collision with this surface, so this movement
         # won't work. Without this check, we'd recurse through a traversal branch that is identical
@@ -105,12 +125,15 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
             debug_state.result_code = EdgeStepCalcResult.ALREADY_BACKTRACKED_FOR_SURFACE
         return null
     
-    overall_calc_params.record_backtracked_surface(collision.surface, \
+    overall_calc_params.record_backtracked_surface( \
+            collision.surface, \
             vertical_step.time_instruction_end)
     
     # Then, try to satisfy the constraints with backtracking to consider a new max jump height.
     calc_results = calculate_steps_from_constraint_with_backtracking_on_height( \
-            overall_calc_params, step_calc_params, constraints)
+            overall_calc_params, \
+            step_calc_params, \
+            constraints)
     if calc_results != null:
         # Recursion was successful with backtracking for a new max jump height.
         if debug_state != null:
@@ -124,7 +147,8 @@ static func calculate_steps_from_constraint(overall_calc_params: MovementCalcOve
 # Check whether either constraint can be satisfied with our current max jump height.
 static func calculate_steps_from_constraint_without_backtracking_on_height( \
         overall_calc_params: MovementCalcOverallParams, \
-        step_calc_params: MovementCalcStepParams, constraints: Array) -> MovementCalcResults:
+        step_calc_params: MovementCalcStepParams, \
+        constraints: Array) -> MovementCalcResults:
     var vertical_step := step_calc_params.vertical_step
     var previous_constraint_original := step_calc_params.start_constraint
     var next_constraint_original := step_calc_params.end_constraint
@@ -163,16 +187,24 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         # min/max/actual x-velocities and movement sign for all other constraints. And these
         # updates could then result in the addition/removal of other intermediate constraints.
         # But we have found that these two updates are enough for most cases.
-        MovementConstraintUtils.update_neighbors_for_new_constraint(constraint, \
-                previous_constraint_copy, next_constraint_copy, overall_calc_params, \
+        MovementConstraintUtils.update_neighbors_for_new_constraint( \
+                constraint, \
+                previous_constraint_copy, \
+                next_constraint_copy, \
+                overall_calc_params, \
                 vertical_step)
         if !previous_constraint_copy.is_valid or !next_constraint_copy.is_valid:
             continue
         
         ### RECURSE: Calculate movement to the constraint.
         
-        step_calc_params_to_constraint = MovementCalcStepParams.new(previous_constraint_copy, \
-                constraint, vertical_step, overall_calc_params, step_calc_params, null)
+        step_calc_params_to_constraint = MovementCalcStepParams.new( \
+                previous_constraint_copy, \
+                constraint, \
+                vertical_step, \
+                overall_calc_params, \
+                step_calc_params, \
+                null)
         calc_results_to_constraint = calculate_steps_from_constraint(overall_calc_params, \
                 step_calc_params_to_constraint)
         
@@ -188,9 +220,15 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
         
         ### RECURSE: Calculate movement from the constraint to the original destination.
         
-        step_calc_params_from_constraint = MovementCalcStepParams.new(constraint, \
-                next_constraint_copy, vertical_step, overall_calc_params, step_calc_params, null)
-        calc_results_from_constraint = calculate_steps_from_constraint(overall_calc_params, \
+        step_calc_params_from_constraint = MovementCalcStepParams.new( \
+                constraint, \
+                next_constraint_copy, \
+                vertical_step, \
+                overall_calc_params, \
+                step_calc_params, \
+                null)
+        calc_results_from_constraint = calculate_steps_from_constraint( \
+                overall_calc_params, \
                 step_calc_params_from_constraint)
         
         if calc_results_from_constraint == null:
@@ -212,16 +250,20 @@ static func calculate_steps_from_constraint_without_backtracking_on_height( \
     
     if result != null:
         # Update the original constraints to match the state for this successful navigation.
-        MovementConstraintUtils.copy_constraint(previous_constraint_original, \
+        MovementConstraintUtils.copy_constraint( \
+                previous_constraint_original, \
                 previous_constraint_copy)
-        MovementConstraintUtils.copy_constraint(next_constraint_original, next_constraint_copy)
+        MovementConstraintUtils.copy_constraint( \
+                next_constraint_original, \
+                next_constraint_copy)
     return result
 
 # Check whether either constraint can be satisfied if we backtrack to re-calculate the initial
 # vertical step with a higher max jump height.
 static func calculate_steps_from_constraint_with_backtracking_on_height( \
         overall_calc_params: MovementCalcOverallParams, \
-        step_calc_params: MovementCalcStepParams, constraints: Array) -> MovementCalcResults:
+        step_calc_params: MovementCalcStepParams, \
+        constraints: Array) -> MovementCalcResults:
     var destination_original := overall_calc_params.destination_constraint
     var destination_copy: MovementConstraint
     var calc_results: MovementCalcResults
@@ -245,17 +287,23 @@ static func calculate_steps_from_constraint_with_backtracking_on_height( \
         
         # Update the destination constraint to support a (possibly) increased jump height, which
         # would enable movement through this new intermediate constraint.
-        MovementConstraintUtils.update_constraint(destination_copy, \
-                overall_calc_params.origin_constraint, overall_calc_params.movement_params, \
-                step_calc_params.vertical_step.velocity_step_start, true, \
-                step_calc_params.vertical_step, constraint.position)
+        MovementConstraintUtils.update_constraint( \
+                destination_copy, \
+                overall_calc_params.origin_constraint, \
+                overall_calc_params.movement_params, \
+                step_calc_params.vertical_step.velocity_step_start, \
+                true, \
+                step_calc_params.vertical_step, \
+                constraint.position)
         if !destination_copy.is_valid:
             # The constraint is out of reach.
             continue
         
         # Recurse: Backtrack and try a higher jump (to the same destination constraint as before).
         calc_results = calculate_steps_with_new_jump_height( \
-                overall_calc_params, step_calc_params, constraint)
+                overall_calc_params, \
+                step_calc_params, \
+                constraint)
         
         if calc_results != null:
             # The constraint is within reach, and we were able to find valid movement steps to the

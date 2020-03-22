@@ -15,8 +15,11 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
             (surface.side == SurfaceSide.RIGHT_WALL and \
                     surface.convex_clockwise_neighbor != null))
 
-func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_result: Array, \
-        surfaces_in_fall_range_set: Dictionary, surfaces_in_jump_range_set: Dictionary, \
+func get_all_edges_from_surface( \
+        collision_params: CollisionCalcParams, \
+        edges_result: Array, \
+        surfaces_in_fall_range_set: Dictionary, \
+        surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
     var movement_params := collision_params.movement_params
     
@@ -39,9 +42,13 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
         return
     
     var start_position := MovementUtils.create_position_offset_from_target_point( \
-            wall_top_point, origin_surface, movement_params.collider_half_width_height)
+            wall_top_point, \
+            origin_surface, \
+            movement_params.collider_half_width_height)
     var end_position := MovementUtils.create_position_offset_from_target_point( \
-            floor_edge_point, upper_neighbor_floor, movement_params.collider_half_width_height)
+            floor_edge_point, \
+            upper_neighbor_floor, \
+            movement_params.collider_half_width_height)
     
     var edge := ClimbOverWallToFloorEdge.new( \
             start_position, \

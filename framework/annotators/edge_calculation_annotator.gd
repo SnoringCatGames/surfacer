@@ -34,7 +34,10 @@ func _enter_tree() -> void:
     add_child(collision_calculation_annotator)
     add_child(tree_view_annotator)
     
-    tree_view_annotator.connect("step_selected", self, "on_step_selected_from_tree_view")
+    tree_view_annotator.connect( \
+            "step_selected", \
+            self, \
+            "on_step_selected_from_tree_view")
 
 func _ready() -> void:
     global = $"/root/Global"
@@ -68,7 +71,9 @@ func _process(delta: float) -> void:
                 # We've reached the time to transition to the next selected step.
                 selected_step_transition_index = next_step_transition_index
                 set_selected_step( \
-                        _get_step_by_index(edge_attempt, selected_step_transition_index))
+                        _get_step_by_index( \
+                                edge_attempt, \
+                                selected_step_transition_index))
                 is_new_selected_step = true
     
     if is_new_edge_attempt:
@@ -92,11 +97,14 @@ func on_step_selected_from_tree_view(selected_step_attempt: MovementCalcStepDebu
     is_new_selected_step = true
     set_selected_step(selected_step_attempt)
 
-static func _get_step_by_index(edge_attempt: MovementCalcOverallDebugState, \
+static func _get_step_by_index( \
+        edge_attempt: MovementCalcOverallDebugState, \
         target_step_index: int) -> MovementCalcStepDebugState:
     var result: MovementCalcStepDebugState
     for root_step_attempt in edge_attempt.children_step_attempts:
-        result = _get_step_by_index_recursively(root_step_attempt, target_step_index)
+        result = _get_step_by_index_recursively( \
+                root_step_attempt, \
+                target_step_index)
         if result != null:
             assert(result.index == target_step_index)
             assert(result.overall_debug_state == edge_attempt)
@@ -104,14 +112,17 @@ static func _get_step_by_index(edge_attempt: MovementCalcOverallDebugState, \
     
     return null
 
-static func _get_step_by_index_recursively(step_attempt: MovementCalcStepDebugState, \
+static func _get_step_by_index_recursively( \
+        step_attempt: MovementCalcStepDebugState, \
         target_step_index: int) -> MovementCalcStepDebugState:
     if step_attempt.index == target_step_index:
         return step_attempt
     
     var result: MovementCalcStepDebugState
     for child_step_attempt in step_attempt.children_step_attempts:
-        result = _get_step_by_index_recursively(child_step_attempt, target_step_index)
+        result = _get_step_by_index_recursively( \
+                child_step_attempt, \
+                target_step_index)
         if result != null:
             return result
     

@@ -42,9 +42,21 @@ const COLLISION_HUE := 0.0
 const OPACITY_FAINT := 0.2
 const OPACITY_STRONG := 0.9
 
-var collision_color_faint := Color.from_hsv(COLLISION_HUE, 0.6, 0.9, OPACITY_FAINT)
-var collision_color_strong := Color.from_hsv(COLLISION_HUE, 0.6, 0.9, OPACITY_STRONG)
-var INVALID_EDGE_COLOR := Color.from_hsv(COLLISION_HUE, 0.6, 0.9, OPACITY_STRONG)
+var collision_color_faint := Color.from_hsv( \
+        COLLISION_HUE, \
+        0.6, \
+        0.9, \
+        OPACITY_FAINT)
+var collision_color_strong := Color.from_hsv( \
+        COLLISION_HUE, \
+        0.6, \
+        0.9, \
+        OPACITY_STRONG)
+var INVALID_EDGE_COLOR := Color.from_hsv( \
+        COLLISION_HUE, \
+        0.6, \
+        0.9, \
+        OPACITY_STRONG)
 
 const INVALID_EDGE_TEXT := "Unable to reach destination from origin."
 
@@ -88,7 +100,8 @@ func _draw_edge_calculation_trajectories() -> void:
     _draw_step(selected_step, false)
 
 func _draw_steps_recursively( \
-        step_attempt: MovementCalcStepDebugState, next_step_index: int) -> int:
+        step_attempt: MovementCalcStepDebugState, \
+        next_step_index: int) -> int:
     assert(step_attempt.index == next_step_index)
     assert(step_attempt.overall_debug_state == edge_attempt)
     _draw_step(step_attempt, true)
@@ -100,7 +113,9 @@ func _draw_steps_recursively( \
     
     return next_step_index
 
-func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool) -> void:
+func _draw_step( \
+        step_attempt: MovementCalcStepDebugState, \
+        renders_faintly: bool) -> void:
     var edge_attempt: MovementCalcOverallDebugState = step_attempt.overall_debug_state
     
     var step_opacity: float
@@ -128,23 +143,43 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     var step_ratio := (step_attempt.index / (edge_attempt.total_step_count - 1.0)) if \
             edge_attempt.total_step_count > 1 else 1.0
     var step_hue := STEP_HUE_START + (STEP_HUE_END - STEP_HUE_START) * step_ratio
-    var step_color := Color.from_hsv(step_hue, 0.6, 0.9, step_opacity)
+    var step_color := Color.from_hsv( \
+            step_hue, \
+            0.6, \
+            0.9, \
+            step_opacity)
     
     if step_attempt.step != null and step_attempt.step.frame_positions.size() > 1:
         # Draw the step trajectory.
-        DrawUtils.draw_dashed_polyline(self, PoolVector2Array(step_attempt.step.frame_positions), \
-                step_color, TRAJECTORY_DASH_LENGTH, TRAJECTORY_DASH_GAP, 0.0, \
+        DrawUtils.draw_dashed_polyline( \
+                self, \
+                PoolVector2Array(step_attempt.step.frame_positions), \
+                step_color, \
+                TRAJECTORY_DASH_LENGTH, \
+                TRAJECTORY_DASH_GAP, \
+                0.0, \
                 trajectory_stroke_width)
     else:
         # The calculation failed before a step object could be created.
-        _draw_invalid_trajectory(step_attempt.start_constraint.position, \
+        _draw_invalid_trajectory( \
+                step_attempt.start_constraint.position, \
                 step_attempt.end_constraint.position)
     
     # Draw the step end points.
-    DrawUtils.draw_circle_outline(self, step_attempt.start_constraint.position, \
-            CONSTRAINT_RADIUS, step_color, constraint_stroke_width, 4.0)
-    DrawUtils.draw_circle_outline(self, step_attempt.end_constraint.position, \
-            CONSTRAINT_RADIUS, step_color, constraint_stroke_width, 4.0)
+    DrawUtils.draw_circle_outline( \
+            self, \
+            step_attempt.start_constraint.position, \
+            CONSTRAINT_RADIUS, \
+            step_color, \
+            constraint_stroke_width, \
+            4.0)
+    DrawUtils.draw_circle_outline( \
+            self, \
+            step_attempt.end_constraint.position, \
+            CONSTRAINT_RADIUS, \
+            step_color, \
+            constraint_stroke_width, \
+            4.0)
     
     var collision := step_attempt.collision
     
@@ -152,41 +187,65 @@ func _draw_step(step_attempt: MovementCalcStepDebugState, renders_faintly: bool)
     if collision != null:
         if collision.position != Vector2.INF:
             # Draw an X at the actual point of collision.
-            DrawUtils.draw_x(self, collision.position, COLLISION_X_WIDTH_HEIGHT.x, \
-                    COLLISION_X_WIDTH_HEIGHT.y, collision_color, collision_x_stroke_width)
+            DrawUtils.draw_x( \
+                    self, \
+                    collision.position, \
+                    COLLISION_X_WIDTH_HEIGHT.x, \
+                    COLLISION_X_WIDTH_HEIGHT.y, \
+                    collision_color, \
+                    collision_x_stroke_width)
         
         if !renders_faintly and collision.surface != null:
             # Draw the surface that was collided with.
-            DrawUtils.draw_surface(self, collision.surface, collision_color)
+            DrawUtils.draw_surface( \
+                    self, \
+                    collision.surface, \
+                    collision_color)
         
         # Draw an outline of the player's collision boundary at the point of collision.
-        DrawUtils.draw_shape_outline(self, collision.player_position, \
+        DrawUtils.draw_shape_outline( \
+                self, \
+                collision.player_position, \
                 edge_attempt.movement_params.collider_shape, \
-                edge_attempt.movement_params.collider_rotation, collision_color, \
+                edge_attempt.movement_params.collider_rotation, \
+                collision_color, \
                 collision_player_boundary_stroke_width)
         # Draw a dot at the center of the player's collision boundary.
-        draw_circle(collision.player_position, COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS, \
+        draw_circle( \
+                collision.player_position, \
+                COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS, \
                 collision_color)
         
         if !renders_faintly:
             # Draw the upcoming constraints, around the collision.
             for upcoming_constraint in step_attempt.upcoming_constraints:
                 if upcoming_constraint.is_valid:
-                    DrawUtils.draw_checkmark(self, upcoming_constraint.position, \
-                            VALID_CONSTRAINT_WIDTH, step_color, VALID_CONSTRAINT_STROKE_WIDTH)
+                    DrawUtils.draw_checkmark( \
+                            self, \
+                            upcoming_constraint.position, \
+                            VALID_CONSTRAINT_WIDTH, \
+                            step_color, \
+                            VALID_CONSTRAINT_STROKE_WIDTH)
                 else:
-                    DrawUtils.draw_x(self, upcoming_constraint.position, \
-                            INVALID_CONSTRAINT_WIDTH, INVALID_CONSTRAINT_HEIGHT, step_color, \
+                    DrawUtils.draw_x( \
+                            self, \
+                            upcoming_constraint.position, \
+                            INVALID_CONSTRAINT_WIDTH, \
+                            INVALID_CONSTRAINT_HEIGHT, \
+                            step_color, \
                             INVALID_CONSTRAINT_STROKE_WIDTH)
     
     # For new backtracking steps, draw and label the constraint that was used as the basis for a
     # higher jump.
     if step_attempt.is_backtracking and !renders_faintly:
         # Draw the constraint position.
-        DrawUtils.draw_diamond_outline(self, \
+        DrawUtils.draw_diamond_outline( \
+                self, \
                 step_attempt.previous_out_of_reach_constraint.position, \
                 PREVIOUS_OUT_OF_REACH_CONSTRAINT_WIDTH_HEIGHT, \
-                PREVIOUS_OUT_OF_REACH_CONSTRAINT_WIDTH_HEIGHT, step_color, 1.0)
+                PREVIOUS_OUT_OF_REACH_CONSTRAINT_WIDTH_HEIGHT, \
+                step_color, \
+                1.0)
         
         # Label the constraint.
         previous_out_of_reach_constraint_label.rect_position = \
@@ -221,7 +280,9 @@ func _draw_invalid_edge() -> void:
     step_label.add_color_override("font_color", INVALID_EDGE_COLOR)
     step_label.text = INVALID_EDGE_TEXT
 
-func _draw_invalid_trajectory(start: Vector2, end: Vector2) -> void:
+func _draw_invalid_trajectory( \
+        start: Vector2, \
+        end: Vector2) -> void:
     var middle: Vector2 = start.linear_interpolate(end, 0.5)
     
     # Render a dotted straight line with a bigger x in the middle for edge_attempts that have no

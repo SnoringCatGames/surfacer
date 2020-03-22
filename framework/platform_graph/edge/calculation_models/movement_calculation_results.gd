@@ -15,7 +15,9 @@ var backtracked_for_new_jump_height: bool
 
 var overall_calc_params: MovementCalcOverallParams
 
-func _init(horizontal_steps: Array, vertical_step: MovementVertCalcStep, \
+func _init( \
+        horizontal_steps: Array, \
+        vertical_step: MovementVertCalcStep, \
         overall_calc_params: MovementCalcOverallParams) -> void:
     self.horizontal_steps = horizontal_steps
     self.vertical_step = vertical_step

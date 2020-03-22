@@ -36,7 +36,10 @@ func _init(player: Player) -> void:
 
 func check_for_update() -> void:
     var most_recent_position := recent_positions[current_position_index]
-    if !Geometry.are_points_equal_with_epsilon(player.position, most_recent_position, 0.01):
+    if !Geometry.are_points_equal_with_epsilon( \
+            player.position, \
+            most_recent_position, \
+            0.01):
         # Record the action as belonging to the previous frame.
         if player.actions.just_pressed_jump:
             recent_actions[current_position_index] = PlayerActionType.PRESSED_JUMP
@@ -91,39 +94,66 @@ func _draw() -> void:
         # Older positions fade out.
         opacity = i / (position_count as float) * \
                 (MOVEMENT_OPACITY_NEWEST - MOVEMENT_OPACITY_OLDEST) + MOVEMENT_OPACITY_OLDEST
-        color = Color.from_hsv(MOVEMENT_HUE, 0.7, 0.7, opacity)
+        color = Color.from_hsv( \
+                MOVEMENT_HUE, \
+                0.7, \
+                0.7, \
+                opacity)
         
         # Calculate our current index in the circular buffer.
         i = (start_index + i) % RECENT_POSITIONS_BUFFER_SIZE
         next_position = recent_positions[i]
         
-        draw_line(previous_position, next_position, color, MOVEMENT_STROKE_WIDTH)
+        draw_line( \
+                previous_position, \
+                next_position, \
+                color, \
+                MOVEMENT_STROKE_WIDTH)
         
         action = recent_actions[i]
         if action != PlayerActionType.NONE:
-            _draw_action_indicator(action, next_position, opacity)
+            _draw_action_indicator( \
+                    action, \
+                    next_position, \
+                    opacity)
         
         previous_position = next_position
 
 # Draw an indicator for the action that happened at this point.
-func _draw_action_indicator(action: int, position: Vector2, opacity: float) -> void:
-    var color := Color.from_hsv(MOVEMENT_HUE, 0.3, 0.9, opacity)
+func _draw_action_indicator( \
+        action: int, \
+        position: Vector2, \
+        opacity: float) -> void:
+    var color := Color.from_hsv( \
+            MOVEMENT_HUE, \
+            0.3, \
+            0.9, \
+            opacity)
     
     if action == PlayerActionType.PRESSED_JUMP or action == PlayerActionType.RELEASED_JUMP:
         # Draw a plus for the jump instruction start/end.
-        DrawUtils.draw_asterisk(self, position, \
-                VERTICAL_INSTRUCTION_START_END_LENGTH, VERTICAL_INSTRUCTION_START_END_LENGTH, \
-                color, VERTICAL_INSTRUCTION_START_END_STROKE_WIDTH)
+        DrawUtils.draw_asterisk( \
+                self, \
+                position, \
+                VERTICAL_INSTRUCTION_START_END_LENGTH, \
+                VERTICAL_INSTRUCTION_START_END_LENGTH, \
+                color, \
+                VERTICAL_INSTRUCTION_START_END_STROKE_WIDTH)
     elif action == PlayerActionType.PRESSED_LEFT or action == PlayerActionType.PRESSED_RIGHT:
         # Draw a plus for the left/right instruction start.
-        DrawUtils.draw_plus(self, position, \
+        DrawUtils.draw_plus( \
+                self, \
+                position, \
                 HORIZONTAL_INSTRUCTION_START_LENGTH, \
-                HORIZONTAL_INSTRUCTION_START_LENGTH, color, \
+                HORIZONTAL_INSTRUCTION_START_LENGTH, 
+                color, \
                 HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
     elif action == PlayerActionType.RELEASED_LEFT or action == PlayerActionType.RELEASED_RIGHT:
         # Draw a minus for the left/right instruction end.
-        self.draw_line(position + Vector2(-HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
-                position + Vector2(HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), color, \
+        self.draw_line( \
+                position + Vector2(-HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
+                position + Vector2(HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
+                color, \
                 HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
     elif action == PlayerActionType.PRESSED_GRAB_WALL or \
             action == PlayerActionType.RELEASED_GRAB_WALL:

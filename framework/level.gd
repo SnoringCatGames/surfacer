@@ -73,7 +73,10 @@ func _ready() -> void:
     # Set up the PlatformGraphs for this level.
     surface_parser = SurfaceParser.new(surface_tile_maps, global.player_types)
     platform_graphs = _create_platform_graphs( \
-            surface_parser, space_state, global.player_types, Global.DEBUG_STATE)
+            surface_parser, \
+            space_state, \
+            global.player_types, \
+            Global.DEBUG_STATE)
     
     camera_controller = CameraController.new()
     add_child(camera_controller)
@@ -97,8 +100,10 @@ func _input(event: InputEvent) -> void:
         global.welcome_panel.queue_free()
         global.welcome_panel = null
 
-static func _create_platform_graphs(surface_parser: SurfaceParser, \
-        space_state: Physics2DDirectSpaceState, player_types: Dictionary, \
+static func _create_platform_graphs( \
+        surface_parser: SurfaceParser, \
+        space_state: Physics2DDirectSpaceState, \
+        player_types: Dictionary, \
         debug_state: Dictionary) -> Dictionary:
     var graphs = {}
     var player_info: PlayerTypeConfiguration
@@ -121,7 +126,10 @@ func descendant_physics_process_completed(descendant: Node) -> void:
     if descendant is Player:
         player_annotators[descendant].check_for_update()
 
-func add_player(resource_path: String, is_human_player: bool, position: Vector2) -> Player:
+func add_player( \
+        resource_path: String, \
+        is_human_player: bool, \
+        position: Vector2) -> Player:
     var player: Player = Utils.add_scene(self, resource_path)
     
     player.position = position

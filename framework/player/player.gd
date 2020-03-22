@@ -94,7 +94,10 @@ func _ready() -> void:
     _dash_cooldown_timer = Timer.new()
     _dash_cooldown_timer.one_shot = true
     #warning-ignore:return_value_discarded
-    _dash_cooldown_timer.connect("timeout", self, "_dash_cooldown_finished")
+    _dash_cooldown_timer.connect( \
+            "timeout", \
+            self, \
+            "_dash_cooldown_finished")
     add_child(_dash_cooldown_timer)
     
     # Start facing the right.
@@ -208,8 +211,12 @@ func _update_actions(delta: float) -> void:
     
     # Update actions for the current frame.
     for action_source in action_sources:
-        action_source.update(actions, actions_from_previous_frame, global.elapsed_play_time_sec, \
-                delta, navigation_state)
+        action_source.update( \
+                actions, \
+                actions_from_previous_frame, \
+                global.elapsed_play_time_sec, \
+                delta, \
+                navigation_state)
     
     actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
     
@@ -413,9 +420,13 @@ func _update_which_surface_is_grabbed() -> void:
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
         var next_grab_position_tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
-                surface_state.grab_position, surface_state.grabbed_tile_map, \
-                surface_state.is_touching_floor, surface_state.is_touching_ceiling, \
-                surface_state.is_touching_left_wall, surface_state.is_touching_right_wall, true, \
+                surface_state.grab_position, \
+                surface_state.grabbed_tile_map, \
+                surface_state.is_touching_floor, \
+                surface_state.is_touching_ceiling, \
+                surface_state.is_touching_left_wall, \
+                surface_state.is_touching_right_wall, \
+                true, \
                 surface_state.grab_position_tile_map_coord)
         surface_state.just_changed_tile_map_coord = \
                 surface_state.just_left_air or \
@@ -424,7 +435,8 @@ func _update_which_surface_is_grabbed() -> void:
         
         if surface_state.just_changed_tile_map_coord or surface_state.just_changed_tile_map:
             surface_state.grabbed_tile_map_index = Geometry.get_tile_map_index_from_grid_coord( \
-                    surface_state.grab_position_tile_map_coord, surface_state.grabbed_tile_map)
+                    surface_state.grab_position_tile_map_coord, \
+                    surface_state.grabbed_tile_map)
         
         var next_grabbed_surface := calculate_grabbed_surface()
         surface_state.just_changed_surface = \
@@ -435,7 +447,8 @@ func _update_which_surface_is_grabbed() -> void:
         surface_state.grabbed_surface = next_grabbed_surface
         
         surface_state.center_position_along_surface.match_current_grab( \
-                surface_state.grabbed_surface, surface_state.center_position)
+                surface_state.grabbed_surface, \
+                surface_state.center_position)
     
     else:
         if surface_state.just_entered_air:
@@ -459,11 +472,14 @@ func _update_collision_mask() -> void:
 
 # Finds the Surface the corresponds to the current PlayerSurfaceState.
 func calculate_grabbed_surface() -> Surface:
-    return surface_parser.get_surface_for_tile(surface_state.grabbed_tile_map, \
-            surface_state.grabbed_tile_map_index, surface_state.grabbed_side)
+    return surface_parser.get_surface_for_tile( \
+            surface_state.grabbed_tile_map, \
+            surface_state.grabbed_tile_map_index, \
+            surface_state.grabbed_side)
 
 static func _get_attached_surface_collision( \
-        body: KinematicBody2D, surface_state: PlayerSurfaceState) -> KinematicCollision2D:
+        body: KinematicBody2D, \
+        surface_state: PlayerSurfaceState) -> KinematicCollision2D:
     var closest_normal_diff: float = PI
     var closest_collision: KinematicCollision2D
     var current_normal_diff: float
@@ -502,10 +518,14 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     #warning-ignore:return_value_discarded
     _dash_fade_tween.reset_all()
     #warning-ignore:return_value_discarded
-    _dash_fade_tween.interpolate_property(self, "current_max_horizontal_speed", \
+    _dash_fade_tween.interpolate_property( \
+            self, \
+            "current_max_horizontal_speed", \
             movement_params.max_horizontal_speed_default * movement_params.dash_speed_multiplier, \
-            movement_params.max_horizontal_speed_default, movement_params.dash_fade_duration, \
-            Tween.TRANS_LINEAR, Tween.EASE_IN, \
+            movement_params.max_horizontal_speed_default, \
+            movement_params.dash_fade_duration, \
+            Tween.TRANS_LINEAR, \
+            Tween.EASE_IN, \
             movement_params.dash_duration - movement_params.dash_fade_duration)
     #warning-ignore:return_value_discarded
     _dash_fade_tween.start()

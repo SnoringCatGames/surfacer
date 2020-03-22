@@ -7,10 +7,14 @@ const VERTEX_SIDE_NUDGE_OFFSET := 0.001
 
 # Determines whether the given motion of the given shape would collide with a surface. If a
 # collision would occur, this returns the surface; otherwise, this returns null.
-static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
-        shape_query_params: Physics2DShapeQueryParameters, collider_half_width_height: Vector2, \
-        collider_rotation: float, surface_parser: SurfaceParser, \
-        has_recursed := false, collision_debug_state = null) -> SurfaceCollision:
+static func check_frame_for_collision( \
+        space_state: Physics2DDirectSpaceState, \
+        shape_query_params: Physics2DShapeQueryParameters, \
+        collider_half_width_height: Vector2, \
+        collider_rotation: float, \
+        surface_parser: SurfaceParser, \
+        has_recursed := false, \
+        collision_debug_state = null) -> SurfaceCollision:
     # TODO: collide_shape can sometimes produce intersection points with round-off error that exist
     #       outside the bounds of the tile. At least in one case, the round-off error was 0.003
     #       beyond the tile bounds in the direction of motion. 
@@ -50,13 +54,20 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     ###############################################################################################
     if collision_debug_state != null:
-        _record_collision_debug_state(collision_debug_state, shape_query_params, \
-                collider_half_width_height, intersection_points, collision_ratios)
+        _record_collision_debug_state( \
+                collision_debug_state, \
+                shape_query_params, \
+                collider_half_width_height, \
+                intersection_points, \
+                collision_ratios)
     ###############################################################################################
     
     if !_check_whether_any_intersection_point_lies_within_bounding_box_of_frame( \
-            intersection_points, position_start, position_end, \
-            collider_half_width_height, shape_query_params.margin):
+            intersection_points, \
+            position_start, \
+            position_end, \
+            collider_half_width_height, \
+            shape_query_params.margin):
         Utils.error("space_state.collide_shape returned invalid collision points", false)
         # There is no actual collision this frame.
         return null
@@ -83,8 +94,11 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     
     
-    var edge_aligned_ray_trace_target := _find_closest_intersection_point(intersection_points, \
-            position_start, direction, collider_half_width_height, \
+    var edge_aligned_ray_trace_target := _find_closest_intersection_point( \
+            intersection_points, \
+            position_start, \
+            direction, \
+            collider_half_width_height, \
             there_was_a_preexisting_collision)
     if edge_aligned_ray_trace_target == Vector2.INF:
         # We are moving away from all of the intersection points, so we can assume that there are
@@ -124,8 +138,13 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
             # FIXME: LEFT OFF HERE: Is this needed?
             shape_query_params.transform[2] += direction * 0.01
             
-            var result := check_frame_for_collision(space_state, shape_query_params, \
-                    collider_half_width_height, collider_rotation, surface_parser, true, \
+            var result := check_frame_for_collision( \
+                    space_state, \
+                    shape_query_params, \
+                    collider_half_width_height, \
+                    collider_rotation, \
+                    surface_parser, \
+                    true, \
                     collision_debug_state)
             
             shape_query_params.margin = original_margin
@@ -302,10 +321,17 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     if collision_debug_state != null:
         collision_debug_state.collision = surface_collision
     
-    _calculate_intersection_point_and_surface(space_state, shape_query_params, \
-            surface_parser, edge_aligned_ray_trace_target, direction, \
-            perpendicular_offset, side, should_try_without_perpendicular_nudge_first, \
-            surface_collision, collision_debug_state)
+    _calculate_intersection_point_and_surface( \
+            space_state, \
+            shape_query_params, \
+            surface_parser, \
+            edge_aligned_ray_trace_target, \
+            direction, \
+            perpendicular_offset, \
+            side, \
+            should_try_without_perpendicular_nudge_first, \
+            surface_collision, \
+            collision_debug_state)
     
     if !surface_collision.is_valid_collision_state:
         var format_string_template := "An error occurred during collision detection." + \
@@ -342,10 +368,15 @@ static func check_frame_for_collision(space_state: Physics2DDirectSpaceState, \
     
     return surface_collision
 
-static func _calculate_intersection_point_and_surface(space_state: Physics2DDirectSpaceState, \
-        shape_query_params: Physics2DShapeQueryParameters, surface_parser: SurfaceParser, \
-        edge_aligned_ray_trace_target: Vector2, direction: Vector2, perpendicular_offset: Vector2, \
-        side: int, should_try_without_perpendicular_nudge_first: bool, \
+static func _calculate_intersection_point_and_surface( \
+        space_state: Physics2DDirectSpaceState, \
+        shape_query_params: Physics2DShapeQueryParameters, \
+        surface_parser: SurfaceParser, \
+        edge_aligned_ray_trace_target: Vector2, \
+        direction: Vector2, \
+        perpendicular_offset: Vector2, \
+        side: int, \
+        should_try_without_perpendicular_nudge_first: bool, \
         surface_collision: SurfaceCollision, \
         collision_debug_state: MovementCalcCollisionDebugState) -> void:
     var tile_map_cell_size := surface_parser.max_tile_map_cell_size
@@ -372,9 +403,15 @@ static func _calculate_intersection_point_and_surface(space_state: Physics2DDire
         # point, but in the opposite direction.
         for direction_multiplier in [1, -1]:
             # Ray-trace to find the point of intersection and the collision normal.
-            collision = _ray_trace_with_nudge(space_state, shape_query_params, \
-                    tile_map_cell_size, edge_aligned_ray_trace_target, direction, \
-                    perpendicular_offset, offset_multiplier, direction_multiplier, \
+            collision = _ray_trace_with_nudge( \
+                    space_state, \
+                    shape_query_params, \
+                    tile_map_cell_size, \
+                    edge_aligned_ray_trace_target, \
+                    direction, \
+                    perpendicular_offset, \
+                    offset_multiplier, \
+                    direction_multiplier, \
                     should_try_without_perpendicular_nudge_first)
             if collision.empty():
                 continue
@@ -412,8 +449,14 @@ static func _calculate_intersection_point_and_surface(space_state: Physics2DDire
             
             tile_map_index = Geometry.get_tile_map_index_from_grid_coord(tile_map_coord, tile_map)
             
-            if surface_parser.has_surface_for_tile(tile_map, tile_map_index, side):
-                surface = surface_parser.get_surface_for_tile(tile_map, tile_map_index, side)
+            if surface_parser.has_surface_for_tile( \
+                    tile_map, \
+                    tile_map_index, \
+                    side):
+                surface = surface_parser.get_surface_for_tile( \
+                        tile_map, \
+                        tile_map_index, \
+                        side)
                 break
         
         if surface != null:
@@ -438,10 +481,15 @@ static func _calculate_intersection_point_and_surface(space_state: Physics2DDire
 # This attempts ray tracing with and without a slight nudge to either side of the original
 # calculated ray. This nudging can be important when the point of intersection is a vertex of the
 # collider.
-static func _ray_trace_with_nudge(space_state: Physics2DDirectSpaceState, \
-        shape_query_params: Physics2DShapeQueryParameters, tile_map_cell_size: Vector2, \
-        target: Vector2, direction: Vector2, perpendicular_offset: Vector2, \
-        offset_multiplier: float, direction_multiplier: int, \
+static func _ray_trace_with_nudge( \
+        space_state: Physics2DDirectSpaceState, \
+        shape_query_params: Physics2DShapeQueryParameters, \
+        tile_map_cell_size: Vector2, \
+        target: Vector2, \
+        direction: Vector2, \
+        perpendicular_offset: Vector2, \
+        offset_multiplier: float, \
+        direction_multiplier: int, \
         should_try_without_perpendicular_nudge_first: bool) -> Dictionary:
     var from_offset := direction * -0.001
     # This reduction in vector length can cause x or y components to be lost due to round off, but
@@ -465,34 +513,47 @@ static func _ray_trace_with_nudge(space_state: Physics2DDirectSpaceState, \
     var collision: Dictionary
     
     if should_try_without_perpendicular_nudge_first:
-        collision = space_state.intersect_ray(from, to, shape_query_params.exclude, \
+        collision = space_state.intersect_ray( \
+                from, \
+                to, \
+                shape_query_params.exclude, \
                 shape_query_params.collision_layer)
         if !collision.empty():
             return collision
     
-    collision = space_state.intersect_ray(from + offset, \
-            to + offset, shape_query_params.exclude, \
+    collision = space_state.intersect_ray( \
+            from + offset, \
+            to + offset, \
+            shape_query_params.exclude, \
             shape_query_params.collision_layer)
     if !collision.empty():
         return collision
     
     if !should_try_without_perpendicular_nudge_first:
-        collision = space_state.intersect_ray(from, to, shape_query_params.exclude, \
+        collision = space_state.intersect_ray( \
+                from, \
+                to, \
+                shape_query_params.exclude, \
                 shape_query_params.collision_layer)
         if !collision.empty():
             return collision
     
-    collision = space_state.intersect_ray(from - offset, \
-            to - offset, shape_query_params.exclude, \
+    collision = space_state.intersect_ray( \
+            from - offset, \
+            to - offset, \
+            shape_query_params.exclude, \
             shape_query_params.collision_layer)
     if !collision.empty():
         return collision
     
     return {}
 
-static func _record_collision_debug_state(collision_debug_state: MovementCalcCollisionDebugState, \
-        shape_query_params: Physics2DShapeQueryParameters, collider_half_width_height: Vector2, \
-        intersection_points: Array, collision_ratios: Array) -> void:
+static func _record_collision_debug_state( \
+        collision_debug_state: MovementCalcCollisionDebugState, \
+        shape_query_params: Physics2DShapeQueryParameters, \
+        collider_half_width_height: Vector2, \
+        intersection_points: Array, \
+        collision_ratios: Array) -> void:
     collision_debug_state.frame_motion = shape_query_params.motion
     collision_debug_state.frame_previous_position = collision_debug_state.frame_start_position
     collision_debug_state.frame_start_position = shape_query_params.transform[2]
@@ -515,8 +576,11 @@ static func _record_collision_debug_state(collision_debug_state: MovementCalcCol
     
 # Choosees whichever point comes first, along the direction of the motion. If two points are
 # equally close, then this chooses whichever point is closest to the starting position.
-static func _find_closest_intersection_point(intersection_points: Array, position_start: Vector2, \
-        direction: Vector2, collider_half_width_height: Vector2, \
+static func _find_closest_intersection_point( \
+        intersection_points: Array, \
+        position_start: Vector2, \
+        direction: Vector2, \
+        collider_half_width_height: Vector2, \
         there_was_a_preexisting_collision: bool) -> Vector2:
     var x_min_start := position_start.x - collider_half_width_height.x
     var x_max_start := position_start.x + collider_half_width_height.x
@@ -582,8 +646,11 @@ static func _find_closest_intersection_point(intersection_points: Array, positio
 # is failing here.
 # FIXME: Remove?
 static func _check_whether_any_intersection_point_lies_within_bounding_box_of_frame( \
-        intersection_points: Array, position_start: Vector2, position_end: Vector2, \
-        collider_half_width_height: Vector2, collision_margin: float) -> bool:
+        intersection_points: Array, \
+        position_start: Vector2, \
+        position_end: Vector2, \
+        collider_half_width_height: Vector2, \
+        collision_margin: float) -> bool:
     var min_x_of_frame := min(position_start.x, position_end.x)
     var max_x_of_frame := max(position_start.x, position_end.x)
     var min_y_of_frame := min(position_start.y, position_end.y)

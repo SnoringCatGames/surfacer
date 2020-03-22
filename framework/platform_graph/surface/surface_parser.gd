@@ -26,7 +26,9 @@ var max_tile_map_cell_size: Vector2
 # Dictionary<TileMap, Dictionary<String, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
-func _init(tile_maps: Array, player_types: Dictionary) -> void:
+func _init( \
+        tile_maps: Array, \
+        player_types: Dictionary) -> void:
     assert(!tile_maps.empty())
     
     _stopwatch = Stopwatch.new()
@@ -41,16 +43,22 @@ func _init(tile_maps: Array, player_types: Dictionary) -> void:
         _parse_tile_map(tile_map)
 
 # Gets the surface corresponding to the given side of the given tile in the given TileMap.
-func get_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
+func get_surface_for_tile( \
+        tile_map: TileMap, \
+        tile_map_index: int, \
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
 
-func has_surface_for_tile(tile_map: TileMap, tile_map_index: int, \
+func has_surface_for_tile( \
+        tile_map: TileMap, \
+        tile_map_index: int, \
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side].has(tile_map_index)
 
 func get_subset_of_surfaces( \
-        include_walls: bool, include_ceilings: bool, include_floors: bool) -> Array:
+        include_walls: bool, \
+        include_ceilings: bool, \
+        include_floors: bool) -> Array:
     if include_walls:
         if include_ceilings:
             if include_floors:
@@ -94,7 +102,12 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     
     _stopwatch.start()
     print("_parse_tile_map_into_sides...")
-    _parse_tile_map_into_sides(tile_map, floors, ceilings, left_walls, right_walls)
+    _parse_tile_map_into_sides( \
+            tile_map, \
+            floors, \
+            ceilings, \
+            left_walls, \
+            right_walls)
     print("_parse_tile_map_into_sides duration: %sms" % _stopwatch.stop())
     
     _stopwatch.start()
@@ -179,8 +192,12 @@ func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_wal
     }
 
 # Parses the tiles of given TileMap into their constituent top-sides, left-sides, and right-sides.
-static func _parse_tile_map_into_sides(tile_map: TileMap, \
-        floors: Array, ceilings: Array, left_walls: Array, right_walls: Array) -> void:
+static func _parse_tile_map_into_sides( \
+        tile_map: TileMap, \
+        floors: Array, \
+        ceilings: Array, \
+        left_walls: Array, \
+        right_walls: Array) -> void:
     var tile_set := tile_map.tile_set
     var cell_size := tile_map.cell_size
     var used_cells := tile_map.get_used_cells()
@@ -209,14 +226,24 @@ static func _parse_tile_map_into_sides(tile_map: TileMap, \
         
         # Calculate and store the polylines from this shape that correspond to the shape's
         # top-side, right-side, and left-side.
-        _parse_polygon_into_sides(tile_vertices_world_coords, floors, ceilings, left_walls, \
-                right_walls, tile_map_index)
+        _parse_polygon_into_sides( \
+                tile_vertices_world_coords, \
+                floors, \
+                ceilings, \
+                left_walls, \
+                right_walls, \
+                tile_map_index)
 
 # Parses the given polygon into separate polylines corresponding to the top-side, left-side, and
 # right-side of the shape. Each of these polylines will be stored with their vertices in clockwise
 # order.
-static func _parse_polygon_into_sides(vertices: Array, floors: Array, ceilings: Array, \
-        left_walls: Array, right_walls: Array, tile_map_index: int) -> void:
+static func _parse_polygon_into_sides( \
+        vertices: Array, \
+        floors: Array, \
+        ceilings: Array, \
+        left_walls: Array, \
+        right_walls: Array, \
+        tile_map_index: int) -> void:
     var vertex_count := vertices.size()
     var is_clockwise: bool = Geometry.is_polygon_clockwise(vertices)
     
@@ -570,7 +597,10 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
                 count -= 1
             i += 1
 
-static func _assign_neighbor_surfaces(floors: Array, ceilings: Array, left_walls: Array, \
+static func _assign_neighbor_surfaces( \
+        floors: Array, \
+        ceilings: Array, \
+        left_walls: Array, \
         right_walls: Array) -> void:
     var surface1_end1 := Vector2.INF
     var surface1_end2 := Vector2.INF
@@ -742,11 +772,13 @@ static func get_closest_surface(target: Vector2, surfaces_set: Dictionary) -> Su
     var current_distance_squared: float
     
     for current_surface in surfaces_set:
-        current_distance_squared = Geometry.distance_squared_from_point_to_rect(target, \
+        current_distance_squared = Geometry.distance_squared_from_point_to_rect( \
+                target, \
                 current_surface.bounding_box)
         if current_distance_squared < closest_distance_squared:
             current_distance_squared = Geometry.get_distance_squared_from_point_to_polyline( \
-                    target, current_surface.vertices)
+                    target, \
+                    current_surface.vertices)
             if current_distance_squared < closest_distance_squared:
                 closest_distance_squared = current_distance_squared
                 closest_surface = current_surface

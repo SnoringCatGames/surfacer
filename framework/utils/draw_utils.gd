@@ -20,9 +20,16 @@ const EDGE_HORIZONTAL_INSTRUCTION_END_STROKE_WIDTH := 1
 const EDGE_VERTICAL_INSTRUCTION_END_LENGTH := 11
 const EDGE_VERTICAL_INSTRUCTION_END_STROKE_WIDTH := 1
 
-static func draw_dashed_line(canvas: CanvasItem, from: Vector2, to: Vector2, color: Color, \
-        dash_length: float, dash_gap: float, dash_offset: float = 0.0, \
-        width: float = 1.0, antialiased: bool = false) -> void:
+static func draw_dashed_line( \
+        canvas: CanvasItem, \
+        from: Vector2, \
+        to: Vector2, \
+        color: Color, \
+        dash_length: float, \
+        dash_gap: float, \
+        dash_offset: float = 0.0, \
+        width: float = 1.0, \
+        antialiased: bool = false) -> void:
     var segment_length := from.distance_to(to)
     var direction_normalized: Vector2 = (to - from).normalized()
     
@@ -38,25 +45,51 @@ static func draw_dashed_line(canvas: CanvasItem, from: Vector2, to: Vector2, col
         current_from = from + direction_normalized * current_length
         current_to = from + direction_normalized * (current_length + current_dash_length)
         
-        canvas.draw_line(current_from, current_to, color, width, antialiased)
+        canvas.draw_line( \
+                current_from, \
+                current_to, \
+                color, \
+                width, \
+                antialiased)
         
         current_length += dash_length + dash_gap
 
 # TODO: Update this to honor gaps across vertices.
-static func draw_dashed_polyline(canvas: CanvasItem, vertices: PoolVector2Array, color: Color, \
-        dash_length: float, dash_gap: float, dash_offset: float = 0.0, \
-        width: float = 1.0, antialiased: bool = false) -> void:
+static func draw_dashed_polyline( \
+        canvas: CanvasItem, \
+        vertices: PoolVector2Array, \
+        color: Color, \
+        dash_length: float, \
+        dash_gap: float, \
+        dash_offset: float = 0.0, \
+        width: float = 1.0, \
+        antialiased: bool = false) -> void:
     var from: Vector2
     var to: Vector2
     for i in range(vertices.size() - 1):
         from = vertices[i]
         to = vertices[i + 1]
-        draw_dashed_line(canvas, from, to, color, dash_length, dash_gap, dash_offset, width, \
+        draw_dashed_line( \
+                canvas, \
+                from, \
+                to, \
+                color, \
+                dash_length, \
+                dash_gap, \
+                dash_offset, \
+                width, \
                 antialiased)
 
-static func draw_dashed_rectangle(canvas: CanvasItem, center: Vector2, \
-        half_width_height: Vector2, is_rotated_90_degrees: bool, color: Color, \
-        dash_length: float, dash_gap: float, dash_offset: float = 0.0, stroke_width: float = 1.0, \
+static func draw_dashed_rectangle( \
+        canvas: CanvasItem, \
+        center: Vector2, \
+        half_width_height: Vector2, \
+        is_rotated_90_degrees: bool, \
+        color: Color, \
+        dash_length: float, \
+        dash_gap: float, \
+        dash_offset: float = 0.0, \
+        stroke_width: float = 1.0, \
         antialiased: bool = false) -> void:
     var half_width := half_width_height.y if is_rotated_90_degrees else half_width_height.x
     var half_height := half_width_height.x if is_rotated_90_degrees else half_width_height.y
@@ -66,16 +99,51 @@ static func draw_dashed_rectangle(canvas: CanvasItem, center: Vector2, \
     var bottom_right := center + Vector2(half_width, half_height)
     var bottom_left := center + Vector2(-half_width, half_height)
     
-    draw_dashed_line(canvas, top_left, top_right, color, dash_length, dash_gap, dash_offset, \
-            stroke_width, antialiased)
-    draw_dashed_line(canvas, top_right, bottom_right, color, dash_length, dash_gap, dash_offset, \
-            stroke_width, antialiased)
-    draw_dashed_line(canvas, bottom_right, bottom_left, color, dash_length, dash_gap, \
-            dash_offset, stroke_width, antialiased)
-    draw_dashed_line(canvas, bottom_left, top_left, color, dash_length, dash_gap, dash_offset, \
-            stroke_width, antialiased)
+    draw_dashed_line( \
+            canvas, \
+            top_left, \
+            top_right, \
+            color, \
+            dash_length, \
+            dash_gap, \
+            dash_offset, \
+            stroke_width, \
+            antialiased)
+    draw_dashed_line( \
+            canvas, \
+            top_right, \
+            bottom_right, \
+            color, \
+            dash_length, \
+            dash_gap, \
+            dash_offset, \
+            stroke_width, \
+            antialiased)
+    draw_dashed_line( \
+            canvas, \
+            bottom_right, \
+            bottom_left, \
+            color, \
+            dash_length, \
+            dash_gap, \
+            dash_offset, \
+            stroke_width, \
+            antialiased)
+    draw_dashed_line( \
+            canvas, \
+            bottom_left, \
+            top_left, \
+            color, \
+            dash_length, \
+            dash_gap, \
+            dash_offset, \
+            stroke_width, \
+            antialiased)
 
-static func draw_surface(canvas: CanvasItem, surface: Surface, color: Color) -> void:
+static func draw_surface( \
+        canvas: CanvasItem, \
+        surface: Surface, \
+        color: Color) -> void:
     var vertices = surface.vertices
     var surface_depth_division_offset = surface.normal * -SURFACE_DEPTH_DIVISION_SIZE
     var alpha_start = color.a
@@ -92,62 +160,129 @@ static func draw_surface(canvas: CanvasItem, surface: Surface, color: Color) -> 
             polyline = Utils.translate_polyline(vertices, translation)
             progress = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
             color.a = alpha_start + progress * (alpha_end - alpha_start)
-            canvas.draw_polyline(polyline, color, SURFACE_DEPTH_DIVISION_SIZE)
+            canvas.draw_polyline( \
+                    polyline, \
+                    color, \
+                    SURFACE_DEPTH_DIVISION_SIZE)
 #            Utils.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
     else:
-        canvas.draw_circle(vertices[0], 6.0, color)
+        canvas.draw_circle( \
+                vertices[0], \
+                6.0, \
+                color)
 
-static func draw_position_along_surface(canvas: CanvasItem, position: PositionAlongSurface, \
-        target_point_color: Color, t_color: Color, target_point_radius := 4.0, t_length := 16.0, \
-        t_width := 4.0, t_value_drawn := true, target_point_drawn := false, \
+static func draw_position_along_surface( \
+        canvas: CanvasItem, \
+        position: PositionAlongSurface, \
+        target_point_color: Color, \
+        t_color: Color, \
+        target_point_radius := 4.0, \
+        t_length := 16.0, \
+        t_width := 4.0, \
+        t_value_drawn := true, \
+        target_point_drawn := false, \
         surface_drawn := false) -> void:
     # Optionally, annotate the t value.
     if t_value_drawn:
         if position.target_projection_onto_surface == Vector2.INF:
             position.target_projection_onto_surface = \
-                    Geometry.project_point_onto_surface(position.target_point, position.surface)
+                    Geometry.project_point_onto_surface( \
+                            position.target_point, \
+                            position.surface)
         var normal = position.surface.normal
         var start = position.target_projection_onto_surface + normal * t_length / 2
         var end = position.target_projection_onto_surface - normal * t_length / 2
-        canvas.draw_line(start, end, t_color, t_width)
+        canvas.draw_line( \
+                start, \
+                end, \
+                t_color, \
+                t_width)
     
     # Optionally, annotate the target point.
     if target_point_drawn:
-        canvas.draw_circle(position.target_point, target_point_radius, \
+        canvas.draw_circle( \
+                position.target_point, \
+                target_point_radius, \
                 target_point_color)
     
     # Optionally, annotate the surface.
     if surface_drawn:
-        draw_surface(canvas, position.surface, target_point_color)
+        draw_surface( \
+                canvas, \
+                position.surface, \
+                target_point_color)
 
-static func draw_x(canvas: CanvasItem, center: Vector2, width: float, height: float, color: Color, \
+static func draw_x( \
+        canvas: CanvasItem, \
+        center: Vector2, \
+        width: float, \
+        height: float, \
+        color: Color, \
         stroke_width: float) -> void:
     var half_width := width / 2.0
     var half_height := height / 2.0
-    canvas.draw_line(center + Vector2(-half_width, -half_height), \
-            center + Vector2(half_width, half_height), color, stroke_width)
-    canvas.draw_line(center + Vector2(half_width, -half_height), \
-            center + Vector2(-half_width, half_height), color, stroke_width)
+    canvas.draw_line( \
+            center + Vector2(-half_width, -half_height), \
+            center + Vector2(half_width, half_height), \
+            color, \
+            stroke_width)
+    canvas.draw_line( \
+            center + Vector2(half_width, -half_height), \
+            center + Vector2(-half_width, half_height), \
+            color, \
+            stroke_width)
 
-static func draw_plus(canvas: CanvasItem, center: Vector2, width: float, height: float, \
-        color: Color, stroke_width: float) -> void:
+static func draw_plus( \
+        canvas: CanvasItem, \
+        center: Vector2, \
+        width: float, \
+        height: float, \
+        color: Color, \
+        stroke_width: float) -> void:
     var half_width := width / 2.0
     var half_height := height / 2.0
-    canvas.draw_line(center + Vector2(-half_width, 0), center + Vector2(half_width, 0), color, \
+    canvas.draw_line( \
+            center + Vector2(-half_width, 0), \
+            center + Vector2(half_width, 0), \
+            color, \
             stroke_width)
-    canvas.draw_line(center + Vector2(0, -half_height), center + Vector2(0, half_height), color, \
+    canvas.draw_line( \
+            center + Vector2(0, -half_height), \
+            center + Vector2(0, half_height), \
+            color, \
             stroke_width)
 
-static func draw_asterisk(canvas: CanvasItem, center: Vector2, width: float, height: float, \
-        color: Color, stroke_width: float) -> void:
+static func draw_asterisk( \
+        canvas: CanvasItem, \
+        center: Vector2, \
+        width: float, \
+        height: float, \
+        color: Color, \
+        stroke_width: float) -> void:
     var plus_width := width
     var plus_height := height
     var x_width := plus_width * 0.8
     var x_height := plus_height * 0.8
-    draw_x(canvas, center, x_width, x_height, color, stroke_width)
-    draw_plus(canvas, center, plus_width, plus_height, color, stroke_width)
+    draw_x( \
+            canvas, \
+            center, \
+            x_width, \
+            x_height, \
+            color, \
+            stroke_width)
+    draw_plus( \
+            canvas, \
+            center, \
+            plus_width, \
+            plus_height, \
+            color, \
+            stroke_width)
 
-static func draw_checkmark(canvas: CanvasItem, position: Vector2, width: float, color: Color, \
+static func draw_checkmark( \
+        canvas: CanvasItem, \
+        position: Vector2, \
+        width: float, \
+        color: Color, \
         stroke_width: float) -> void:
     # We mostly treat the check mark as 90 degrees, divide the check mark into thirds horizontally,
     # and then position it so that the bottom-most point of the checkmark is slightly below the
@@ -157,11 +292,25 @@ static func draw_checkmark(canvas: CanvasItem, position: Vector2, width: float, 
     var bottom_mid_point := position + Vector2(0, width / 6)
     var top_right_point := position + Vector2(width * 2 / 3, -width / 2 * 1.33)
     
-    canvas.draw_line(top_left_point, bottom_mid_point, color, stroke_width)
-    canvas.draw_line(bottom_mid_point, top_right_point, color, stroke_width)
+    canvas.draw_line( \
+            top_left_point, \
+            bottom_mid_point, \
+            color, \
+            stroke_width)
+    canvas.draw_line( \
+            bottom_mid_point, \
+            top_right_point, \
+            color, \
+            stroke_width)
 
-static func draw_arrow(canvas: CanvasItem, start: Vector2, end: Vector2, head_length: float, \
-        head_width: float, color: Color, stroke_width: float) -> void:
+static func draw_arrow( \
+        canvas: CanvasItem, \
+        start: Vector2, \
+        end: Vector2, \
+        head_length: float, \
+        head_width: float, \
+        color: Color, \
+        stroke_width: float) -> void:
     # Calculate points in the arrow head.
     var start_to_end_angle := start.angle_to_point(end)
     var head_diff_1 := Vector2(-head_length, -head_width * 0.5).rotated(start_to_end_angle)
@@ -170,56 +319,129 @@ static func draw_arrow(canvas: CanvasItem, start: Vector2, end: Vector2, head_le
     var head_end_2 := end + head_diff_2
     
     # Draw the arrow head.
-    canvas.draw_line(end, head_end_1, color, stroke_width)
-    canvas.draw_line(end, head_end_2, color, stroke_width)
+    canvas.draw_line( \
+            end, \
+            head_end_1, \
+            color, \
+            stroke_width)
+    canvas.draw_line( \
+            end, \
+            head_end_2, \
+            color, \
+            stroke_width)\
     
     # Draw the arrow body.
-    canvas.draw_line(start, end, color, stroke_width)
+    canvas.draw_line( \
+            start, \
+            end, \
+            color, \
+            stroke_width)
 
-static func draw_diamond_outline(canvas: CanvasItem, center: Vector2, width: float, height: float, \
-        color: Color, stroke_width: float) -> void:
+static func draw_diamond_outline( \
+        canvas: CanvasItem, \
+        center: Vector2, \
+        width: float, \
+        height: float, \
+        color: Color, \
+        stroke_width: float) -> void:
     var half_width := width / 2.0
     var half_height := height / 2.0
-    canvas.draw_line(center + Vector2(-half_width, 0), center + Vector2(0, -half_height), color, \
+    canvas.draw_line( \
+            center + Vector2(-half_width, 0), \
+            center + Vector2(0, -half_height), \
+            color, \
             stroke_width)
-    canvas.draw_line(center + Vector2(0, -half_height), center + Vector2(half_width, 0), color, \
+    canvas.draw_line(\
+            center + Vector2(0, -half_height), \
+            center + Vector2(half_width, 0), \
+            color, \
             stroke_width)
-    canvas.draw_line(center + Vector2(half_width, 0), center + Vector2(0, half_height), color, \
+    canvas.draw_line( \
+            center + Vector2(half_width, 0), \
+            center + Vector2(0, half_height), \
+            color, \
             stroke_width)
-    canvas.draw_line(center + Vector2(0, half_height), center + Vector2(-half_width, 0), color, \
+    canvas.draw_line( \
+            center + Vector2(0, half_height), \
+            center + Vector2(-half_width, 0), \
+            color, \
             stroke_width)
 
-static func draw_shape_outline(canvas: CanvasItem, position: Vector2, shape: Shape2D, \
-        rotation: float, color: Color, thickness: float) -> void:
+static func draw_shape_outline( \
+        canvas: CanvasItem, \
+        position: Vector2, \
+        shape: Shape2D, \
+        rotation: float, \
+        color: Color, \
+        thickness: float) -> void:
     var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2) < Geometry.FLOAT_EPSILON
     
     # Ensure that collision boundaries are only ever axially aligned.
     assert(is_rotated_90_degrees or abs(rotation) < Geometry.FLOAT_EPSILON)
     
     if shape is CircleShape2D:
-        draw_circle_outline(canvas, position, shape.radius, color, thickness)
+        draw_circle_outline( \
+                canvas, \
+                position, \
+                shape.radius, \
+                color, \
+                thickness)
     elif shape is CapsuleShape2D:
-        draw_capsule_outline(canvas, position, shape.radius, shape.height, is_rotated_90_degrees, \
-                color, thickness)
+        draw_capsule_outline( \
+                canvas, \
+                position, \
+                shape.radius, \
+                shape.height, \
+                is_rotated_90_degrees, \
+                color, \
+                thickness)
     elif shape is RectangleShape2D:
         draw_rectangle_outline( \
-                canvas, position, shape.extents, is_rotated_90_degrees, color, thickness)
+                canvas, \
+                position, \
+                shape.extents, \
+                is_rotated_90_degrees, \
+                color, \
+                thickness)
     else:
         Utils.error("Invalid Shape2D provided for draw_shape: %s. The supported shapes are: " + \
                 "CircleShape2D, CapsuleShape2D, RectangleShape2D." % shape)
 
-static func draw_circle_outline(canvas: CanvasItem, center: Vector2, radius: float, color: Color, \
-        border_width := 1.0, sector_arc_length := 4.0) -> void:
-    draw_arc(canvas, center, radius, 0.0, 2.0 * PI, color, border_width, sector_arc_length)
+static func draw_circle_outline( \
+        canvas: CanvasItem, \
+        center: Vector2, \
+        radius: float, \
+        color: Color, \
+        border_width := 1.0, \
+        sector_arc_length := 4.0) -> void:
+    draw_arc( \
+            canvas, \
+            center, \
+            radius, \
+            0.0, \
+            2.0 * PI, \
+            color, \
+            border_width, \
+            sector_arc_length)
 
-static func draw_arc(canvas: CanvasItem, center: Vector2, radius: float, start_angle: float, \
-        end_angle: float, color: Color, border_width := 1.0, sector_arc_length := 4.0) -> void:
+static func draw_arc( \
+        canvas: CanvasItem, \
+        center: Vector2, \
+        radius: float, \
+        start_angle: float, \
+        end_angle: float, \
+        color: Color, \
+        border_width := 1.0, \
+        sector_arc_length := 4.0) -> void:
     var angle_diff := end_angle - start_angle
     var sector_count := floor(angle_diff * radius / sector_arc_length)
     var delta_theta := angle_diff / sector_count
     var theta := start_angle
     var should_include_partial_sector_at_end: bool = \
-            !Geometry.are_floats_equal_with_epsilon(angle_diff / delta_theta, 0.0, 0.01)
+            !Geometry.are_floats_equal_with_epsilon( \
+                    angle_diff / delta_theta, \
+                    0.0, \
+                    0.01)
     var vertex_count := \
             sector_count + 2 if should_include_partial_sector_at_end else sector_count + 1
     var vertices := PoolVector2Array()
@@ -234,10 +456,17 @@ static func draw_arc(canvas: CanvasItem, center: Vector2, radius: float, start_a
     if should_include_partial_sector_at_end:
         vertices[vertex_count - 1] = Vector2(cos(end_angle), sin(end_angle)) * radius + center
     
-    canvas.draw_polyline(vertices, color, border_width)
+    canvas.draw_polyline( \
+            vertices, \
+            color, \
+            border_width)
 
-static func draw_rectangle_outline(canvas: CanvasItem, center: Vector2, \
-        half_width_height: Vector2, is_rotated_90_degrees: bool, color: Color, \
+static func draw_rectangle_outline( \
+        canvas: CanvasItem, \
+        center: Vector2, \
+        half_width_height: Vector2, \
+        is_rotated_90_degrees: bool, \
+        color: Color, \
         thickness := 1.0) -> void:
     var x_offset: float = half_width_height.y if is_rotated_90_degrees else half_width_height.x
     var y_offset: float = half_width_height.x if is_rotated_90_degrees else half_width_height.y
@@ -256,10 +485,19 @@ static func draw_rectangle_outline(canvas: CanvasItem, center: Vector2, \
     polyline[0] += Vector2(-0.5, 0.5)
     polyline[4] += Vector2(0.75, 0.0)
     
-    canvas.draw_polyline(polyline, color, thickness)
+    canvas.draw_polyline( \
+            polyline, \
+            color, \
+            thickness)
 
-static func draw_capsule_outline(canvas: CanvasItem, center: Vector2, radius: float, \
-        height: float, is_rotated_90_degrees: bool, color: Color, thickness := 1.0, \
+static func draw_capsule_outline( \
+        canvas: CanvasItem, \
+        center: Vector2, \
+        radius: float, \
+        height: float, \
+        is_rotated_90_degrees: bool, \
+        color: Color, \
+        thickness := 1.0, \
         sector_arc_length := 4.0) -> void:
     var sector_count := ceil((PI * radius / sector_arc_length) / 2.0) * 2.0
     var delta_theta := PI / sector_count
@@ -285,10 +523,17 @@ static func draw_capsule_outline(canvas: CanvasItem, center: Vector2, radius: fl
     
     vertices[vertex_count - 1] = vertices[0]
     
-    canvas.draw_polyline(vertices, color, thickness)
+    canvas.draw_polyline( \
+            vertices, \
+            color, \
+            thickness)
 
-static func draw_edge(canvas: CanvasItem, edge: Edge, includes_constraints := false, \
-        includes_instruction_indicators := false, includes_discrete_positions := false, \
+static func draw_edge( \
+        canvas: CanvasItem, \
+        edge: Edge, \
+        includes_constraints := false, \
+        includes_instruction_indicators := false, \
+        includes_discrete_positions := false, \
         base_color := Color.white) -> void:
     if base_color == Color.white:
         var hue := randf()
@@ -299,33 +544,69 @@ static func draw_edge(canvas: CanvasItem, edge: Edge, includes_constraints := fa
             edge is FallFromWallEdge or \
             edge is JumpFromSurfaceToSurfaceEdge or \
             edge is SurfaceToAirEdge:
-        _draw_edge_from_instructions_positions(canvas, edge, includes_discrete_positions, \
-                includes_constraints, includes_instruction_indicators, base_color)
+        _draw_edge_from_instructions_positions( \
+                canvas, \
+                edge, \
+                includes_discrete_positions, \
+                includes_constraints, \
+                includes_instruction_indicators, \
+                base_color)
     elif edge is ClimbDownWallToFloorEdge or \
             edge is IntraSurfaceEdge or \
             edge is WalkToAscendWallFromFloorEdge:
-        _draw_edge_from_end_points(canvas, edge, base_color)
+        _draw_edge_from_end_points( \
+                canvas, \
+                edge, \
+                base_color)
     elif edge is ClimbOverWallToFloorEdge:
-        _draw_climb_over_wall_to_floor_edge(canvas, edge, base_color)
+        _draw_climb_over_wall_to_floor_edge( \
+                canvas, \
+                edge, \
+                base_color)
     elif edge is FallFromFloorEdge:
-        _draw_fall_from_floor_edge(canvas, edge, includes_constraints, \
-                includes_instruction_indicators, includes_discrete_positions, base_color)
+        _draw_fall_from_floor_edge( \
+                canvas, \
+                edge, \
+                includes_constraints, \
+                includes_instruction_indicators, \
+                includes_discrete_positions, \
+                base_color)
     else:
         Utils.error("Unexpected Edge subclass: %s" % edge)
 
-static func _draw_edge_from_end_points(canvas: CanvasItem, edge: Edge, \
+static func _draw_edge_from_end_points( \
+        canvas: CanvasItem, \
+        edge: Edge, \
         base_color: Color) -> void:
-    canvas.draw_line(edge.start, edge.end, base_color, EDGE_TRAJECTORY_WIDTH)
+    canvas.draw_line( \
+            edge.start, \
+            edge.end, \
+            base_color, \
+            EDGE_TRAJECTORY_WIDTH)
 
-static func _draw_climb_over_wall_to_floor_edge(canvas: CanvasItem, \
-        edge: ClimbOverWallToFloorEdge, base_color: Color) -> void:
+static func _draw_climb_over_wall_to_floor_edge( \
+        canvas: CanvasItem, \
+        edge: ClimbOverWallToFloorEdge, \
+        base_color: Color) -> void:
     var mid_point := Vector2(edge.start.x, edge.end.y)
-    canvas.draw_line(edge.start, mid_point, base_color, EDGE_TRAJECTORY_WIDTH)
-    canvas.draw_line(mid_point, edge.end, base_color, EDGE_TRAJECTORY_WIDTH)
+    canvas.draw_line( \
+            edge.start, \
+            mid_point, \
+            base_color, \
+            EDGE_TRAJECTORY_WIDTH)
+    canvas.draw_line( \
+            mid_point, \
+            edge.end, \
+            base_color, \
+            EDGE_TRAJECTORY_WIDTH)
 
-static func _draw_fall_from_floor_edge(canvas: CanvasItem, edge: FallFromFloorEdge, \
-        includes_constraints: bool, includes_instruction_indicators: bool, \
-        includes_discrete_positions: bool, base_color: Color) -> void:
+static func _draw_fall_from_floor_edge( \
+        canvas: CanvasItem, \
+        edge: FallFromFloorEdge, \
+        includes_constraints: bool, \
+        includes_instruction_indicators: bool, \
+        includes_discrete_positions: bool, \
+        base_color: Color) -> void:
     # Render FallFromFloorEdges with a slight offset, so that they don't overlap with
     # ClimbOverWallToFloorEdges.
     var offset := Vector2(-1.0 if edge.falls_on_left_side else 1.0, -1.0)
@@ -333,39 +614,80 @@ static func _draw_fall_from_floor_edge(canvas: CanvasItem, edge: FallFromFloorEd
     var fall_off_position := edge.instructions.frame_continuous_positions_from_steps[0]
     var mid_point := Vector2(fall_off_position.x, start_position.y)
     canvas.draw_line( \
-            start_position + offset, mid_point + offset, base_color, EDGE_TRAJECTORY_WIDTH)
+            start_position + offset, \
+            mid_point + offset, \
+            base_color, \
+            EDGE_TRAJECTORY_WIDTH)
     canvas.draw_line( \
-            mid_point + offset, fall_off_position + offset, base_color, EDGE_TRAJECTORY_WIDTH)
+            mid_point + offset, \
+            fall_off_position + offset, \
+            base_color, \
+            EDGE_TRAJECTORY_WIDTH)
     
-    _draw_edge_from_instructions_positions(canvas, edge, false, \
-            includes_instruction_indicators, includes_discrete_positions, base_color)
+    _draw_edge_from_instructions_positions( \
+            canvas, \
+            edge, \
+            false, \
+            includes_instruction_indicators, \
+            includes_discrete_positions, \
+            base_color)
 
-static func _draw_edge_from_instructions_positions(canvas: CanvasItem, edge: Edge, \
-        includes_discrete_positions: bool, includes_constraints: bool, \
-        includes_instruction_indicators: bool, base_color: Color) -> void:
+static func _draw_edge_from_instructions_positions( \
+        canvas: CanvasItem, \
+        edge: Edge, \
+        includes_discrete_positions: bool, \
+        includes_constraints: bool, \
+        includes_instruction_indicators: bool, \
+        base_color: Color) -> void:
     # Set up colors.
     var continuous_trajectory_color := base_color
-    var discrete_trajectory_color := Color.from_hsv(base_color.h, 0.6, 0.9, 0.5)
-    var constraint_color := Color.from_hsv(base_color.h, 0.6, 0.7, 0.3)
-    var instruction_start_stop_color := Color.from_hsv(base_color.h, 0.3, 0.9, 0.8)
+    var discrete_trajectory_color := Color.from_hsv( \
+            base_color.h, \
+            0.6, \
+            0.9, \
+            0.5)
+    var constraint_color := Color.from_hsv( \
+            base_color.h, \
+            0.6, \
+            0.7, \
+            0.3)
+    var instruction_start_stop_color := Color.from_hsv( \
+            base_color.h, \
+            0.3, \
+            0.9, \
+            0.8)
     
     if includes_discrete_positions:
         # Draw the trajectory (as approximated via discrete time steps during instruction 
         # test calculations).
-        canvas.draw_polyline(edge.instructions.frame_discrete_positions_from_test, \
-                discrete_trajectory_color, EDGE_TRAJECTORY_WIDTH)
+        canvas.draw_polyline( \
+                edge.instructions.frame_discrete_positions_from_test, \
+                discrete_trajectory_color, \
+                EDGE_TRAJECTORY_WIDTH)
     # Draw the trajectory (as calculated via continuous equations of motion during step
     # calculations).
-    canvas.draw_polyline(edge.instructions.frame_continuous_positions_from_steps, \
-            continuous_trajectory_color, EDGE_TRAJECTORY_WIDTH)
+    canvas.draw_polyline( \
+            edge.instructions.frame_continuous_positions_from_steps, \
+            continuous_trajectory_color, \
+            EDGE_TRAJECTORY_WIDTH)
     
     if includes_constraints:
         # Draw all constraints in this edge.
         for constraint_position in edge.instructions.constraint_positions:
-            draw_circle_outline(canvas, constraint_position, EDGE_CONSTRAINT_RADIUS, \
-                    constraint_color, EDGE_CONSTRAINT_WIDTH, 4.0)
-        draw_circle_outline(canvas, edge.start, EDGE_START_RADIUS, constraint_color, \
-                EDGE_CONSTRAINT_WIDTH, 4.0)
+            draw_circle_outline( \
+                    canvas, \
+                    constraint_position, \
+                    EDGE_CONSTRAINT_RADIUS, \
+                    constraint_color, \
+                    EDGE_CONSTRAINT_WIDTH, \
+                    4.0)
+        draw_circle_outline( \
+                canvas, \
+                edge.start, \
+                EDGE_START_RADIUS, \
+                constraint_color, \
+                EDGE_CONSTRAINT_WIDTH, \
+                4.0)
     
     if includes_instruction_indicators:
         # Draw the positions where horizontal instructions start.
@@ -374,8 +696,12 @@ static func _draw_edge_from_instructions_positions(canvas: CanvasItem, edge: Edg
             position_start = edge.instructions.horizontal_instruction_start_positions[i]
             
             # Draw a plus for the instruction start.
-            draw_plus(canvas, position_start, EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH, \
-                    EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH, instruction_start_stop_color, \
+            draw_plus( \
+                    canvas, \
+                    position_start, \
+                    EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH, \
+                    EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH, \
+                    instruction_start_stop_color, \
                     EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
         
         # Draw the positions where horizontal instructions end.
@@ -387,11 +713,16 @@ static func _draw_edge_from_instructions_positions(canvas: CanvasItem, edge: Edg
             canvas.draw_line( \
                     position_end + Vector2(-EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
                     position_end + Vector2(EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
-                    instruction_start_stop_color, EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
+                    instruction_start_stop_color, \
+                    EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
         
         # Draw the position where the vertical instruction ends (draw an asterisk).
         position_end = edge.instructions.jump_instruction_end_position
         if position_end != Vector2.INF:
-            draw_asterisk(canvas, position_end, EDGE_VERTICAL_INSTRUCTION_END_LENGTH, \
-                    EDGE_VERTICAL_INSTRUCTION_END_LENGTH, instruction_start_stop_color, \
+            draw_asterisk( \
+                    canvas, \
+                    position_end, \
+                    EDGE_VERTICAL_INSTRUCTION_END_LENGTH, \
+                    EDGE_VERTICAL_INSTRUCTION_END_LENGTH, \
+                    instruction_start_stop_color, \
                     EDGE_VERTICAL_INSTRUCTION_END_STROKE_WIDTH)

@@ -12,8 +12,11 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
     Utils.error("abstract EdgeMovementCalculator.get_can_traverse_from_surface is not implemented")
     return false
 
-func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_result: Array, \
-        surfaces_in_fall_range_set: Dictionary, surfaces_in_jump_range_set: Dictionary, \
+func get_all_edges_from_surface( \
+        collision_params: CollisionCalcParams, \
+        edges_result: Array, \
+        surfaces_in_fall_range_set: Dictionary, \
+        surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
     Utils.error("abstract EdgeMovementCalculator.get_all_edges_from_surface is not implemented")
     pass
@@ -37,20 +40,34 @@ static func create_movement_calc_overall_params(
             velocity_end_min_x = MIN_LAND_ON_WALL_SPEED
             velocity_end_max_x = collision_params.movement_params.max_horizontal_speed_default
     
-    var terminals := MovementConstraintUtils.create_terminal_constraints(origin_position, \
-            destination_position, collision_params.movement_params, can_hold_jump_button, \
-            velocity_start, velocity_end_min_x, velocity_end_max_x, returns_invalid_constraints)
+    var terminals := MovementConstraintUtils.create_terminal_constraints( \
+            origin_position, \
+            destination_position, \
+            collision_params.movement_params, \
+            can_hold_jump_button, \
+            velocity_start, \
+            velocity_end_min_x, \
+            velocity_end_max_x, \
+            returns_invalid_constraints)
     if terminals.empty():
         return null
     
-    var overall_calc_params := MovementCalcOverallParams.new(collision_params, origin_position, \
-            destination_position, terminals[0], terminals[1], velocity_start, can_hold_jump_button)
+    var overall_calc_params := MovementCalcOverallParams.new( \
+            collision_params, \
+            origin_position, \
+            destination_position, \
+            terminals[0], \
+            terminals[1], \
+            velocity_start, \
+            can_hold_jump_button)
     overall_calc_params.in_debug_mode = in_debug_mode
     
     return overall_calc_params
 
-static func should_skip_edge_calculation(debug_state: Dictionary, \
-        jump_position: PositionAlongSurface, land_position: PositionAlongSurface) -> bool:
+static func should_skip_edge_calculation( \
+        debug_state: Dictionary, \
+        jump_position: PositionAlongSurface, \
+        land_position: PositionAlongSurface) -> bool:
     if debug_state.in_debug_mode and debug_state.has("limit_parsing") and \
             debug_state.limit_parsing.has("edge"):
         

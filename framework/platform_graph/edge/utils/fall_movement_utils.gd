@@ -43,7 +43,9 @@ static func find_a_landing_trajectory( \
     var calc_results: MovementCalcResults = landing_trajectories[0]
     var land_position := calc_results.overall_calc_params.destination_position
     var instructions := MovementInstructionsUtils \
-            .convert_calculation_steps_to_movement_instructions(calc_results, false, \
+            .convert_calculation_steps_to_movement_instructions( \
+                    calc_results, \
+                    false, \
                     land_position.surface.side)
     
     var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
@@ -398,8 +400,12 @@ static func _get_surfaces_intersecting_triangle( \
         surfaces: Array) -> Array:
     var result := []
     for surface in surfaces:
-        if Geometry.do_segment_and_triangle_intersect(surface.vertices.front(), \
-                surface.vertices.back(), triangle_a, triangle_b, triangle_c):
+        if Geometry.do_segment_and_triangle_intersect( \
+                surface.vertices.front(), \
+                surface.vertices.back(), \
+                triangle_a, \
+                triangle_b, \
+                triangle_c):
             result.push_back(surface)
     return result
 
@@ -416,7 +422,9 @@ static func _get_surfaces_intersecting_polygon( \
             continue
         
         if Geometry.do_segment_and_polygon_intersect( \
-                surface.first_point, surface.last_point, polygon):
+                surface.first_point, \
+                surface.last_point, \
+                polygon):
             result_set[surface] = surface
 
 class SurfaceMaxYComparator:

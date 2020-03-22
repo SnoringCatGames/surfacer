@@ -20,7 +20,10 @@ func _init(global) -> void:
 func _enter_tree() -> void:
     viewport = get_viewport()
     viewport_size = viewport.get_visible_rect().size
-    get_tree().get_root().connect("size_changed", self, "_on_viewport_size_changed")
+    get_tree().get_root().connect( \
+            "size_changed", \
+            self, \
+            "_on_viewport_size_changed")
 
 func _process(delta: float) -> void:
     var next_screen_center: Vector2 = global.camera_controller.get_position()
@@ -59,11 +62,19 @@ func _draw() -> void:
         start_x = ruler_start_position.x + grid_spacing * i
         start_position = Vector2(start_x, start_y)
         end_position = Vector2(start_x, start_y + ruler_size.y)
-        draw_line(start_position, end_position, LINE_COLOR, LINE_WIDTH)
+        draw_line( \
+                start_position, \
+                end_position, \
+                LINE_COLOR, \
+                LINE_WIDTH)
         
         text = str(round((screen_start_position.x + start_x) * global.camera_controller.zoom))
         text = "0" if text == "-0" else text
-        draw_string(font, Vector2(start_position.x + 2, 14), text, TEXT_COLOR)
+        draw_string( \
+                font, \
+                Vector2(start_position.x + 2, 14), \
+                text, \
+                TEXT_COLOR)
     
     # Draw the horizontal lines.
     start_x = ruler_start_position.x
@@ -71,11 +82,19 @@ func _draw() -> void:
         start_y = ruler_start_position.y + grid_spacing * i
         start_position = Vector2(start_x, start_y)
         end_position = Vector2(start_x + ruler_size.x, start_y)
-        draw_line(start_position, end_position, LINE_COLOR, LINE_WIDTH)
+        draw_line( \
+                start_position, \
+                end_position, \
+                LINE_COLOR, \
+                LINE_WIDTH)
         
         text = str(round((screen_start_position.y + start_y) * global.camera_controller.zoom))
         text = "0" if text == "-0" else text
-        draw_string(font, Vector2(2, start_position.y + 14), text, TEXT_COLOR)
+        draw_string( \
+                font, \
+                Vector2(2, start_position.y + 14), \
+                text, \
+                TEXT_COLOR)
     
     label.free()
 

@@ -5,7 +5,10 @@ const NAME := "FloorFallThroughAction"
 const TYPE := SurfaceType.FLOOR
 const PRIORITY := 220
 
-func _init().(NAME, TYPE, PRIORITY) -> void:
+func _init().( \
+        NAME, \
+        TYPE, \
+        PRIORITY) -> void:
     pass
 
 func process(player: Player) -> bool:

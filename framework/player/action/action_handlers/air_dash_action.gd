@@ -5,7 +5,10 @@ const NAME := "AirDashAction"
 const TYPE := SurfaceType.AIR
 const PRIORITY := 330
 
-func _init().(NAME, TYPE, PRIORITY) -> void:
+func _init().( \
+        NAME, \
+        TYPE, \
+        PRIORITY) -> void:
     pass
 
 func process(player: Player) -> bool:

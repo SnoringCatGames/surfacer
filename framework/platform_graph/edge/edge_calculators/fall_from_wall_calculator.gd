@@ -82,8 +82,10 @@ static func _create_edge_from_calc_results(calc_results: MovementCalcResults, \
             calc_results.overall_calc_params.movement_params, \
             instructions)
 
-static func _calculate_instructions(start: PositionAlongSurface, \
-        end: PositionAlongSurface, calc_results: MovementCalcResults) -> MovementInstructions:
+static func _calculate_instructions( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        calc_results: MovementCalcResults) -> MovementInstructions:
     assert(start.surface.side == SurfaceSide.LEFT_WALL || \
             start.surface.side == SurfaceSide.RIGHT_WALL)
     

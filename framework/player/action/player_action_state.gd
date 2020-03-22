@@ -87,29 +87,87 @@ func copy(other: PlayerActionState) -> void:
     
     self.start_dash = other.start_dash
 
-func log_new_presses_and_releases(player, time_sec: float) -> void:
-    _log_new_press_or_release(player.player_name, "jump", just_pressed_jump, just_released_jump, \
-            time_sec, player.surface_state.center_position, player.velocity)
-    _log_new_press_or_release(player.player_name, "up", just_pressed_up, just_released_up, \
-            time_sec, player.surface_state.center_position, player.velocity)
-    _log_new_press_or_release(player.player_name, "down", just_pressed_down, just_released_down, \
-            time_sec, player.surface_state.center_position, player.velocity)
-    _log_new_press_or_release(player.player_name, "left", just_pressed_left, just_released_left, \
-            time_sec, player.surface_state.center_position, player.velocity)
-    _log_new_press_or_release(player.player_name, "right", just_pressed_right, \
-            just_released_right, time_sec, player.surface_state.center_position, player.velocity)
-    _log_new_press_or_release(player.player_name, "grab", just_pressed_grab_wall, \
-            just_released_grab_wall, time_sec, player.surface_state.center_position, \
+func log_new_presses_and_releases( \
+        player, \
+        time_sec: float) -> void:
+    _log_new_press_or_release( \
+            player.player_name, \
+            "jump", \
+            just_pressed_jump, \
+            just_released_jump, \
+            time_sec, \
+            player.surface_state.center_position, \
             player.velocity)
-    _log_new_press_or_release(player.player_name, "dash", start_dash, false, time_sec, \
-            player.surface_state.center_position, player.velocity)
+    _log_new_press_or_release( \
+            player.player_name, \
+            "up", \
+            just_pressed_up, \
+            just_released_up, \
+            time_sec, \
+            player.surface_state.center_position, \
+            player.velocity)
+    _log_new_press_or_release( \
+            player.player_name, \
+            "down", \
+            just_pressed_down, \
+            just_released_down, \
+            time_sec, \
+            player.surface_state.center_position, \
+            player.velocity)
+    _log_new_press_or_release( \
+            player.player_name, \
+            "left", \
+            just_pressed_left, \
+            just_released_left, \
+            time_sec, \
+            player.surface_state.center_position, \
+            player.velocity)
+    _log_new_press_or_release( \
+            player.player_name, \
+            "right", \
+            just_pressed_right, \
+            just_released_right, \
+            time_sec, \
+            player.surface_state.center_position, \
+            player.velocity)
+    _log_new_press_or_release( \
+            player.player_name, \
+            "grab", \
+            just_pressed_grab_wall, \
+            just_released_grab_wall, \
+            time_sec, \
+            player.surface_state.center_position, \
+            player.velocity)
+    _log_new_press_or_release( \
+            player.player_name, \
+            "dash", \
+            start_dash, \
+            false, \
+            time_sec, \
+            player.surface_state.center_position, \
+            player.velocity)
 
-func _log_new_press_or_release(player_name: String, action_name: String, just_pressed: bool, \
-        just_released: bool, time_sec: float, player_position: Vector2, \
+func _log_new_press_or_release( \
+        player_name: String, \
+        action_name: String, \
+        just_pressed: bool, \
+        just_released: bool, \
+        time_sec: float, \
+        player_position: Vector2, \
         player_velocity: Vector2) -> void:
     if just_pressed:
-        print("START %5s:%8s;%8.3ft;%29sp;%29sv" % [action_name, player_name, time_sec, \
-                player_position, player_velocity])
+        print("START %5s:%8s;%8.3ft;%29sp;%29sv" % [ \
+                action_name, \
+                player_name, \
+                time_sec, \
+                player_position, \
+                player_velocity \
+                ])
     if just_released:
-        print("STOP  %5s:%8s;%8.3ft;%29sp;%29sv" % [action_name, player_name, time_sec, \
-                player_position, player_velocity])
+        print("STOP  %5s:%8s;%8.3ft;%29sp;%29sv" % [ \
+                action_name, \
+                player_name, \
+                time_sec, \
+                player_position, \
+                player_velocity \
+                ])

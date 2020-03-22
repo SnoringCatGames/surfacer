@@ -35,4 +35,9 @@ func _draw() -> void:
                 if edge is IntraSurfaceEdge:
                     continue
                 
-                DrawUtils.draw_edge(self, edge, true, true, true)
+                DrawUtils.draw_edge( \
+                        self, \
+                        edge, \
+                        true, \
+                        true, \
+                        true)

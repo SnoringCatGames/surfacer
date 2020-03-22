@@ -22,7 +22,10 @@ var concave_counter_clockwise_neighbor: Surface
 var first_point: Vector2 setget ,_get_first_point
 var last_point: Vector2 setget ,_get_last_point
 
-func _init(vertices: Array, side: int, tile_map_indices: Array) -> void:
+func _init( \
+        vertices: Array, \
+        side: int, \
+        tile_map_indices: Array) -> void:
     self.vertices = PoolVector2Array(vertices)
     self.side = side
     self.tile_map_indices = tile_map_indices

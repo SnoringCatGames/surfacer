@@ -13,9 +13,9 @@ func _init(navigator: Navigator) -> void:
 
 func _draw() -> void:
     if previous_path != null:
-        _draw_path(self, previous_path, PREVIOUS_PATH_COLOR)
+        _draw_path(previous_path, PREVIOUS_PATH_COLOR)
     if current_path != null:
-        _draw_path(self, current_path, CURRENT_PATH_COLOR)
+        _draw_path(current_path, CURRENT_PATH_COLOR)
 
 func check_for_update() -> void:
     if navigator.current_path != current_path:
@@ -25,6 +25,12 @@ func check_for_update() -> void:
         previous_path = navigator.previous_path
         update()
 
-func _draw_path(canvas: CanvasItem, path: PlatformGraphPath, color: Color) -> void:
+func _draw_path(path: PlatformGraphPath, color: Color) -> void:
     for edge in path.edges:
-        DrawUtils.draw_edge(self, edge, true, false, false, color)
+        DrawUtils.draw_edge( \
+                self, \
+                edge, \
+                true, \
+                false, \
+                false, \
+                color)

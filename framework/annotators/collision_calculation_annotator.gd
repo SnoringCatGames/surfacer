@@ -6,14 +6,46 @@ const HUE_END := 0.61
 const HUE_PREVIOUS := 0.91
 const HUE_COLLISION := 0.0
 
-var COLOR_FRAME_START := Color.from_hsv(HUE_START, 0.7, 0.9, 0.5)
-var COLOR_FRAME_END := Color.from_hsv(HUE_END, 0.7, 0.9, 0.5)
-var COLOR_FRAME_PREVIOUS := Color.from_hsv(HUE_PREVIOUS, 0.7, 0.9, 0.2)
-var COLOR_MOTION_ARROW := Color.from_hsv(lerp(HUE_START, HUE_END, 0.5), 0.7, 0.9, 0.5)
-var COLOR_INTERSECTION_POINT := Color.from_hsv(0.8, 0.8, 0.9, 0.7)# FIXME: ------------
-#var COLOR_INTERSECTION_POINT := Color.from_hsv(HUE_COLLISION, 0.8, 0.9, 0.7)
-var COLOR_JUST_BEFORE_COLLISION := Color.from_hsv(HUE_COLLISION, 0.5, 0.6, 0.2)
-var COLOR_AT_COLLISION := Color.from_hsv(HUE_COLLISION, 0.7, 0.9, 0.5)
+var COLOR_FRAME_START := Color.from_hsv( \
+        HUE_START, \
+        0.7, \
+        0.9, \
+        0.5)
+var COLOR_FRAME_END := Color.from_hsv( \
+        HUE_END, \
+        0.7, \
+        0.9, \
+        0.5)
+var COLOR_FRAME_PREVIOUS := Color.from_hsv( \
+        HUE_PREVIOUS, \
+        0.7, \
+        0.9, \
+        0.2)
+var COLOR_MOTION_ARROW := Color.from_hsv( \
+        lerp(HUE_START, HUE_END, 0.5), \
+        0.7, \
+        0.9, \
+        0.5)
+var COLOR_INTERSECTION_POINT := Color.from_hsv( \
+        0.8, \
+        0.8, \
+        0.9, \
+        0.7)# FIXME: ------------
+#var COLOR_INTERSECTION_POINT := Color.from_hsv( \
+#        HUE_COLLISION, \
+#        0.8, \
+#        0.9, \
+#        0.7)
+var COLOR_JUST_BEFORE_COLLISION := Color.from_hsv( \
+        HUE_COLLISION, \
+        0.5, \
+        0.6, \
+        0.2)
+var COLOR_AT_COLLISION := Color.from_hsv( \
+        HUE_COLLISION, \
+        0.7, \
+        0.9, \
+        0.5)
 
 const STROKE_WIDTH_BOUNDING_BOX := 1.0
 const STROKE_WIDTH_MARGIN := 1.0
@@ -37,20 +69,33 @@ func _draw() -> void:
     var collision_debug_state := selected_step.collision_debug_state
     
     # Draw the bounding boxes at frame start, end, and previous.
-    _draw_bounding_box_and_margin(collision_debug_state.frame_start_position, COLOR_FRAME_START)
-    _draw_bounding_box_and_margin(collision_debug_state.frame_end_position, COLOR_FRAME_END)
-    _draw_bounding_box_and_margin(collision_debug_state.frame_previous_position, \
+    _draw_bounding_box_and_margin( \
+            collision_debug_state.frame_start_position, \
+            COLOR_FRAME_START)
+    _draw_bounding_box_and_margin( \
+            collision_debug_state.frame_end_position, \
+            COLOR_FRAME_END)
+    _draw_bounding_box_and_margin( \
+            collision_debug_state.frame_previous_position, \
             COLOR_FRAME_PREVIOUS)
 
     # FIXME: REMOVE
 #    # Draw an arrow showing the motion from frame start to frame end.
-#    DrawUtils.draw_arrow(self, collision_debug_state.frame_start_position, \
-#            collision_debug_state.frame_end_position, MOTION_ARROW_HEAD_LENGTH, \
-#            MOTION_ARROW_HEAD_WIDTH, COLOR_MOTION_ARROW, STROKE_WIDTH_MOTION_ARROW)
+#    DrawUtils.draw_arrow( \
+#            self, \
+#            collision_debug_state.frame_start_position, \
+#            collision_debug_state.frame_end_position, \
+#            MOTION_ARROW_HEAD_LENGTH, \
+#            MOTION_ARROW_HEAD_WIDTH, \
+#            COLOR_MOTION_ARROW, \
+#            STROKE_WIDTH_MOTION_ARROW)
     
     # Draw the intersection points that were calculated by Godot's collision engine.
     for intersection_point in collision_debug_state.intersection_points:
-        draw_circle(intersection_point, RADIUS_INTERSECTION_POINT, COLOR_INTERSECTION_POINT)
+        draw_circle( \
+                intersection_point, \
+                RADIUS_INTERSECTION_POINT, \
+                COLOR_INTERSECTION_POINT)
     
     # Check whether there was a pre-existing collision.
     if collision_debug_state.collision_ratios.size() > 0:
@@ -62,12 +107,26 @@ func _draw() -> void:
                 collision_debug_state.get_position_at_collision_ratio_index(1), \
                 COLOR_JUST_BEFORE_COLLISION)
 
-func _draw_bounding_box_and_margin(center: Vector2, color: Color) -> void:
+func _draw_bounding_box_and_margin( \
+        center: Vector2, \
+        color: Color) -> void:
     var collision_debug_state := selected_step.collision_debug_state
-    DrawUtils.draw_rectangle_outline(self, center, 
-            collision_debug_state.collider_half_width_height, false, color, \
+    DrawUtils.draw_rectangle_outline( \
+            self, \
+            center, 
+            collision_debug_state.collider_half_width_height, \
+            false, \
+            color, \
             STROKE_WIDTH_BOUNDING_BOX)
-    DrawUtils.draw_dashed_rectangle(self, center, \
+    DrawUtils.draw_dashed_rectangle( \
+            self, \
+            center, \
             collision_debug_state.collider_half_width_height + \
                     Vector2(collision_debug_state.margin, collision_debug_state.margin), \
-            false, color, DASH_LENGTH_MARGIN, DASH_GAP_MARGIN, 0.0, STROKE_WIDTH_MARGIN, false)
+            false, \
+            color, \
+            DASH_LENGTH_MARGIN, \
+            DASH_GAP_MARGIN, \
+            0.0, \
+            STROKE_WIDTH_MARGIN, \
+            false)

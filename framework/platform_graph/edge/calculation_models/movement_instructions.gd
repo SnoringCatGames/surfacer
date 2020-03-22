@@ -29,7 +29,10 @@ var horizontal_instruction_end_positions: PoolVector2Array
 var jump_instruction_end_position := Vector2.INF
 
 # Instructions don't need to be pre-sorted.
-func _init(instructions: Array, duration: float, constraint_positions := []) -> void:
+func _init( \
+        instructions: Array, \
+        duration: float, \
+        constraint_positions := []) -> void:
     self.instructions = instructions
     self.duration = duration
     self.constraint_positions = PoolVector2Array(constraint_positions)
@@ -56,7 +59,9 @@ func remove(instruction: MovementInstruction) -> bool:
 # This will mutate the time field on the given MovementInstruction.
 # TODO: Remove?
 func is_instruction_in_range( \
-        instruction: MovementInstruction, min_time: float, max_time: float) -> bool:
+        instruction: MovementInstruction, \
+        min_time: float, \
+        max_time: float) -> bool:
     var instruction_count := instructions.size()
     var possible_match: MovementInstruction
     instruction.time = min_time

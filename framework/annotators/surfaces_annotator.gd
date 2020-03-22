@@ -15,5 +15,12 @@ func _draw() -> void:
 func _draw_surfaces(surfaces: Array) -> void:
     var color: Color
     for surface in surfaces:
-        color = Color.from_hsv(randf(), 0.9, 0.9, 0.2)
-        DrawUtils.draw_surface(self, surface, color)
+        color = Color.from_hsv( \
+                randf(), \
+                0.9, \
+                0.9, \
+                0.2)
+        DrawUtils.draw_surface( \
+                self, \
+                surface, \
+                color)

@@ -90,7 +90,10 @@ func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void
     for i in range(current_highlighted_tree_items.size()):
         tree_item = current_highlighted_tree_items[i]
         old_highlighted_step_attempt = tree_item_to_step_attempt[tree_item]
-        text = _get_tree_item_text(old_highlighted_step_attempt, i, false)
+        text = _get_tree_item_text( \
+                old_highlighted_step_attempt, \
+                i, \
+                false)
         tree_item.set_text(0, text)
     
     current_highlighted_tree_items = step_attempt_to_tree_items[selected_step_attempt]
@@ -98,10 +101,15 @@ func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void
     # Mark all matching tree items.
     for i in range(current_highlighted_tree_items.size()):
         tree_item = current_highlighted_tree_items[i]
-        text = _get_tree_item_text(selected_step_attempt, i, true)
+        text = _get_tree_item_text( \
+                selected_step_attempt, \
+                i, \
+                true)
         tree_item.set_text(0, text)
 
-func _get_tree_item_text(step_attempt: MovementCalcStepDebugState, description_index: int, \
+func _get_tree_item_text( \
+        step_attempt: MovementCalcStepDebugState, \
+        description_index: int, \
         includes_highlight_marker: bool) -> String:
     return "%s%s: %s%s%s" % [ \
             "*" if includes_highlight_marker else "",

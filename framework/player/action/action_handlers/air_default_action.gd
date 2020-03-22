@@ -5,7 +5,10 @@ const NAME := "AirDefaultAction"
 const TYPE := SurfaceType.AIR
 const PRIORITY := 310
 
-func _init().(NAME, TYPE, PRIORITY) -> void:
+func _init().( \
+        NAME, \
+        TYPE, \
+        PRIORITY) -> void:
     pass
 
 func process(player: Player) -> bool:
@@ -14,9 +17,13 @@ func process(player: Player) -> bool:
     
     var is_first_jump: bool = player.jump_count == 1
     
-    player.velocity = MovementUtils.update_velocity_in_air(player.velocity, \
-            player.actions.delta, player.actions.pressed_jump, is_first_jump, \
-            player.surface_state.horizontal_acceleration_sign, player.movement_params)
+    player.velocity = MovementUtils.update_velocity_in_air( \
+            player.velocity, \
+            player.actions.delta, \
+            player.actions.pressed_jump, \
+            is_first_jump, \
+            player.surface_state.horizontal_acceleration_sign, \
+            player.movement_params)
     
     # Hit ceiling.
     if player.surface_state.is_touching_ceiling:

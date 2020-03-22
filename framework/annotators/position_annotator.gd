@@ -29,26 +29,46 @@ func _draw() -> void:
         _draw_position_along_surface()
 
 func _draw_player_position() -> void:
-    draw_circle(player.surface_state.center_position, PLAYER_POSITION_RADIUS, \
+    draw_circle( \
+            player.surface_state.center_position, \
+            PLAYER_POSITION_RADIUS, \
             PLAYER_POSITION_COLOR)
 
 func _draw_grab_position() -> void:
     var from := player.surface_state.grab_position
     var to := from - player.surface_state.grabbed_surface_normal * GRAB_POSITION_LINE_LENGTH
-    draw_line(from, to, GRAB_POSITION_COLOR, GRAB_POSITION_LINE_WIDTH)
+    draw_line( \
+            from, \
+            to, \
+            GRAB_POSITION_COLOR, \
+            GRAB_POSITION_LINE_WIDTH)
 
 func _draw_position_along_surface() -> void:
-    DrawUtils.draw_position_along_surface(self, \
+    DrawUtils.draw_position_along_surface( \
+            self, \
             player.surface_state.center_position_along_surface, \
-            POSITION_ALONG_SURFACE_COLOR, POSITION_ALONG_SURFACE_COLOR, \
-            POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS, POSITION_ALONG_SURFACE_T_LENGTH, \
-            POSITION_ALONG_SURFACE_T_WIDTH, true, false, false)
+            POSITION_ALONG_SURFACE_COLOR, \
+            POSITION_ALONG_SURFACE_COLOR, \
+            POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS, \
+            POSITION_ALONG_SURFACE_T_LENGTH, \
+            POSITION_ALONG_SURFACE_T_WIDTH, \
+            true, \
+            false, \
+            false)
 
 func _draw_collider_outline() -> void:
-    DrawUtils.draw_shape_outline(self, player.position, player.movement_params.collider_shape, \
-            player.movement_params.collider_rotation, COLLIDER_COLOR, COLLIDER_THICKNESS)
+    DrawUtils.draw_shape_outline( \
+            self, \
+            player.position, \
+            player.movement_params.collider_shape, \
+            player.movement_params.collider_rotation, \
+            COLLIDER_COLOR, \
+            COLLIDER_THICKNESS)
 
 func check_for_update() -> void:
-    if !Geometry.are_points_equal_with_epsilon(player.position, previous_position, 0.001):
+    if !Geometry.are_points_equal_with_epsilon( \
+            player.position, \
+            previous_position, \
+            0.001):
         previous_position = player.position
         update()

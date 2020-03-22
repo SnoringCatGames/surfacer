@@ -5,18 +5,29 @@ var source_type_prefix: String
 var player # TODO: Add type back in
 var is_additive: bool
 
-func _init(source_type_prefix: String, player, is_additive: bool) -> void:
+func _init( \
+        source_type_prefix: String, \
+        player, \
+        is_additive: bool) -> void:
     self.source_type_prefix = source_type_prefix
     self.player = player
     self.is_additive = is_additive
 
 # Calculates actions for the current frame.
-func update(actions: PlayerActionState, previous_actions: PlayerActionState, time_sec: float, \
-        delta: float, navigation_state: PlayerNavigationState) -> void:
+func update( \
+        actions: PlayerActionState, \
+        previous_actions: PlayerActionState, \
+        time_sec: float, \
+        delta: float, \
+        navigation_state: PlayerNavigationState) -> void:
     Utils.error("Abstract PlayerActionSource.update is not implemented")
 
-func update_for_key_press(actions: PlayerActionState, previous_actions: PlayerActionState, \
-        input_key: String, is_pressed: bool, time_sec: float) -> void:
+func update_for_key_press( \
+        actions: PlayerActionState, \
+        previous_actions: PlayerActionState, \
+        input_key: String, \
+        is_pressed: bool, \
+        time_sec: float) -> void:
     var was_pressed_in_previous_frame: bool
     var was_already_pressed_in_current_frame: bool
     var is_pressed_in_current_frame: bool
