@@ -28,6 +28,7 @@ var ruler_annotator: RulerAnnotator
 # Dictonary<Player, PlayerAnnotator>
 var player_annotators := {}
 var click_annotator: ClickAnnotator
+var extra_annotator: ExtraAnnotator
 
 func _enter_tree() -> void:
     self.global = $"/root/Global"
@@ -83,6 +84,9 @@ func _ready() -> void:
     # Set up some annotators that help with debugging.
     click_annotator = ClickAnnotator.new()
     add_child(click_annotator)
+    
+    extra_annotator = ExtraAnnotator.new(global)
+    add_child(extra_annotator)
 
 func _input(event: InputEvent) -> void:
     var current_time: float = global.elapsed_play_time_sec

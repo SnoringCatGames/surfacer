@@ -22,51 +22,41 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
     if origin_surface.concave_counter_clockwise_neighbor == null:
         # Calculating the fall-off state for the left edge of the floor.
         _get_all_edges_from_one_side( \
-                collision_params, edges_result, surfaces_in_fall_range_set, origin_surface, true)
+                collision_params, \
+                edges_result, \
+                surfaces_in_fall_range_set, \
+                origin_surface, \
+                true)
     
     if origin_surface.concave_clockwise_neighbor == null:
         # Calculating the fall-off state for the right edge of the floor.
         _get_all_edges_from_one_side( \
-                collision_params, edges_result, surfaces_in_fall_range_set, origin_surface, false)
+                collision_params, \
+                edges_result, \
+                surfaces_in_fall_range_set, \
+                origin_surface, \
+                false)
 
-static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, \
-        edges_result: Array, surfaces_in_fall_range_set: Dictionary, origin_surface: Surface, \
+static func _get_all_edges_from_one_side( \
+        collision_params: CollisionCalcParams, \
+        edges_result: Array, \
+        surfaces_in_fall_range_set: Dictionary, \
+        origin_surface: Surface, \
         falls_on_left_side: bool) -> void:
     var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
+    var landing_surfaces_to_skip := {}
+    
     var edge_point := \
             origin_surface.first_point if falls_on_left_side else origin_surface.last_point
     
     var position_start := PositionAlongSurface.new()
-    position_start.match_surface_target_and_collider(origin_surface, edge_point, \
-            movement_params.collider_half_width_height, true, false)
-    
-    var position_fall_off := _calculate_player_center_at_fall_off_point(edge_point, \
-            falls_on_left_side, movement_params.collider_shape, movement_params.collider_rotation)
-    
-    var displacement_from_start_to_fall_off := position_fall_off - position_start.target_point
-    
-    var acceleration := -movement_params.walk_acceleration if falls_on_left_side else \
-            movement_params.walk_acceleration
-    
-    var velocity_starts := JumpFromSurfaceToSurfaceCalculator.get_jump_velocity_starts( \
-            movement_params, origin_surface, position_start)
-    # For efficiency, only consider one start velocity.
-    # FIXME: -------------A: Fix this. Should be able to consider both start-velocities, but still only keep one edge for each surface pair.
-    var velocity_x_start: float = velocity_starts[0].x
-    
-    var velocity_x_fall_off: float = MovementUtils.calculate_velocity_end_for_displacement( \
-            displacement_from_start_to_fall_off.x, velocity_x_start, acceleration, \
-            movement_params.max_horizontal_speed_default)
-    
-    var time_fall_off: float = MovementUtils.calculate_time_for_displacement( \
-            displacement_from_start_to_fall_off.x, velocity_x_start, acceleration, \
-            movement_params.max_horizontal_speed_default)
-    
-    var position_fall_off_wrapper := MovementUtils.create_position_from_target_point( \
-            position_fall_off, origin_surface, movement_params.collider_half_width_height)
-    
-    var velocity_start := Vector2(velocity_x_fall_off, 0.0)
+    position_start.match_surface_target_and_collider( \
+            origin_surface, \
+            edge_point, \
+            movement_params.collider_half_width_height, \
+            true, \
+            false)
     
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
@@ -75,30 +65,82 @@ static func _get_all_edges_from_one_side(collision_params: CollisionCalcParams, 
         return
     ###################################################################################
     
-    var landing_trajectories := FallMovementUtils.find_landing_trajectories_to_any_surface( \
-            collision_params, surfaces_in_fall_range_set, position_fall_off_wrapper, \
-            velocity_start)
+    var position_fall_off := _calculate_player_center_at_fall_off_point( \
+    edge_point, \
+            falls_on_left_side, \
+            movement_params.collider_shape, \
+            movement_params.collider_rotation)
     
+    var position_fall_off_wrapper := MovementUtils.create_position_from_target_point( \
+            position_fall_off, origin_surface, movement_params.collider_half_width_height)
+    
+    var displacement_from_start_to_fall_off := position_fall_off - position_start.target_point
+    
+    var acceleration := -movement_params.walk_acceleration if falls_on_left_side else \
+            movement_params.walk_acceleration
+    
+    var surface_end_velocity_starts := \
+            JumpFromSurfaceToSurfaceCalculator.get_jump_velocity_starts( \
+                    movement_params, origin_surface, position_start)
+    
+    var velocity_x_start: float
+    var velocity_x_fall_off: float
+    var time_fall_off: float
+    var fall_off_point_velocity_start: Vector2
+    var landing_trajectories: Array
     var position_end: PositionAlongSurface
     var instructions: MovementInstructions
     var velocity_end: Vector2
     var edge: FallFromFloorEdge
-    
-    for calc_results in landing_trajectories:
-        position_end = calc_results.overall_calc_params.destination_position
-        instructions = _calculate_instructions(position_start, position_end, velocity_x_start, \
-                time_fall_off, calc_results, movement_params, falls_on_left_side)
-        velocity_end = calc_results.horizontal_steps.back().velocity_step_end
-        edge = FallFromFloorEdge.new( \
-                position_start, \
-                position_end, \
-                velocity_start, \
-                velocity_end, \
-                movement_params, \
-                instructions, \
-                falls_on_left_side, \
-                position_fall_off_wrapper)
-        edges_result.push_back(edge)
+        
+    for surface_end_velocity_start in surface_end_velocity_starts:
+        velocity_x_start = surface_end_velocity_start.x
+        
+        velocity_x_fall_off = MovementUtils.calculate_velocity_end_for_displacement( \
+                displacement_from_start_to_fall_off.x, \
+                velocity_x_start, \
+                acceleration, \
+                movement_params.max_horizontal_speed_default)
+        
+        time_fall_off = MovementUtils.calculate_time_for_displacement( \
+                displacement_from_start_to_fall_off.x, \
+                velocity_x_start, \
+                acceleration, \
+                movement_params.max_horizontal_speed_default)
+        
+        fall_off_point_velocity_start = Vector2(velocity_x_fall_off, 0.0)
+        
+        landing_trajectories = FallMovementUtils.find_landing_trajectories_to_any_surface( \
+                collision_params, \
+                surfaces_in_fall_range_set, \
+                position_fall_off_wrapper, \
+                fall_off_point_velocity_start, \
+                landing_surfaces_to_skip)
+        
+        for calc_results in landing_trajectories:
+            position_end = calc_results.overall_calc_params.destination_position
+            instructions = _calculate_instructions( \
+                    position_start, \
+                    position_end, \
+                    velocity_x_start, \
+                    time_fall_off, \
+                    calc_results, \
+                    movement_params, \
+                    falls_on_left_side)
+            velocity_end = calc_results.horizontal_steps.back().velocity_step_end
+            
+            edge = FallFromFloorEdge.new( \
+                    position_start, \
+                    position_end, \
+                    fall_off_point_velocity_start, \
+                    velocity_end, \
+                    movement_params, \
+                    instructions, \
+                    falls_on_left_side, \
+                    position_fall_off_wrapper)
+            edges_result.push_back(edge)
+            
+            landing_surfaces_to_skip[position_end.surface] = true
 
 static func _calculate_player_center_at_fall_off_point(edge_point: Vector2, \
         falls_on_left_side: bool, collider_shape: Shape2D, collider_rotation: float) -> Vector2:

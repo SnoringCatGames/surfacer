@@ -91,9 +91,10 @@ func _calculate_edge_attempt() -> void:
             debug_state, space_state, movement_params, surface_parser)
     
     # Choose the jump and land positions according to which is closest to the click positions.
-    var jump_positions := MovementUtils.get_all_jump_land_positions_from_surface( \
+    var jump_positions := MovementUtils.get_all_jump_land_positions_for_surface( \
             movement_params, origin_surface, destination_surface.vertices, \
-            destination_surface.bounding_box, destination_surface.side)
+            destination_surface.bounding_box, destination_surface.side, \
+            movement_params.jump_boost, true)
     var jump_position: PositionAlongSurface = jump_positions[0]
     if jump_positions.size() > 1:
         for i in range(1, jump_positions.size()):
@@ -101,9 +102,9 @@ func _calculate_edge_attempt() -> void:
             if other_jump_position.target_point.distance_squared_to(origin.target_point) < \
                     jump_position.target_point.distance_squared_to(origin.target_point):
                 jump_position = other_jump_position
-    var land_positions := MovementUtils.get_all_jump_land_positions_from_surface( \
+    var land_positions := MovementUtils.get_all_jump_land_positions_for_surface( \
             movement_params, destination_surface, origin_surface.vertices, \
-            origin_surface.bounding_box, origin_surface.side)
+            origin_surface.bounding_box, origin_surface.side, movement_params.jump_boost, false)
     var land_position: PositionAlongSurface = land_positions[0]
     if land_positions.size() > 1:
         for i in range(1, land_positions.size()):

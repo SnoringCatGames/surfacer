@@ -144,9 +144,9 @@ TODO: diagrams:
     -   We calculate the necessary jump duration--and from that the vertical component of motion--up-front, and use this to determine times for each potential step and constraint of the motion. Knowing these times up-front makes the horizontal min/max calculations easier.
 -   We have a broad-phase check to quickly eliminate possible surfaces that are obviously out of reach.
     -   This primarily looks at the horizontal and vertical distance from the origin to the destination.
--   For each pair of surfaces, we consider three potential points as our jump-off and land positions along each surface: the near end, the far end, and the closest point along the surface.
+-   For each pair of surfaces, we consider four potential points as our jump-off and land positions along each surface: the near end, the far end, the closest point along the surface, and the point along the surface that would correspond to max horizontal speed during the duration of the edge.
     -   We check for valid edge movement instructions along each potential jump/land position pair between the two surfaces, and we save _only the first_ valid edge that we find.
-        -   We could instead save _all_ valid edges that we find (up to nine edges for each directed pair of surfaces), but calculating extra edges is very expensive, and we can usually assume that an edge between closer points will be better to use anyway.
+        -   We could instead save _all_ valid edges that we find (up to sixteen edges for each directed pair of surfaces), but calculating extra edges is very expensive, and we can usually assume that an edge between closer points will be better to use anyway.
     -   We only consider the closest point if it is distint from near and far ends (and for degenerate surfaces of only one vertex, we skip the far end).
 
 TODO: Include a screenshot of a collision that clips the corner of the wall when trying to jump to the above floor--a very common scenario.

@@ -58,6 +58,8 @@ var forces_player_velocity_to_match_edge_at_start := true
 # expected calculated edge trajectories.
 var updates_player_velocity_to_match_edge_trajectory := false
 var min_intra_surface_distance_to_optimize_jump_for := 16.0
+var considers_closest_mid_point_for_jump_land_position := true
+var considers_mid_point_matching_horizontal_movement_for_jump_land_position := true
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float
@@ -77,6 +79,7 @@ var wall_jump_max_horizontal_jump_distance: float
 var max_upward_jump_distance: float
 var time_to_max_upward_jump_distance: float
 var distance_to_max_horizontal_speed: float
+var distance_to_half_max_horizontal_speed: float
 
 var friction_multiplier: float
 

@@ -8,25 +8,9 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Return additional mid-point jump/land positions from get_all_jump_land_positions_from_surface:
-#   - Not just directly vertically below/above, but also at an offset that takes into account
-#     displacement due to max horizontal velocity.
-# 
-# - Check whether the efall-from-floor movement looks more natural now, and can use the max-speed
-#   start velocity.
-# 
-# - Add support to FallFromFloorCalculator to consider both start-velocities, but still only keep
-#   one edge for each surface pair.
-# 
-# - Consider adding support for only using updates_player_velocity_to_match_edge_trajectory after
-#   a given time delay (to possibly replace the logic we just added in FallFromFloorCalculator).
+# - Finish source-surface-is-a-wall cases in get_all_jump_land_positions_for_surface:
 # 
 # - Check FIXMEs in CollisionCheckUtils. We should check on their accuracy now.
-# 
-# - FallFromFloorEdges don't seem to account for horizontal velocity at the fall-off point (they assume zero, which isn't true at run-time?).
-#   - Observed when not using updates_player_velocity_to_match_edge_trajectory.
-# 
-# - MatchExpectedEdgeTrajectoryAction seems to be causing some jitteriness/fall-off-delay for FallFromFloorEdge.
 # 
 # - Cleanup how PlayerParams are set up and configured.
 #   - Should be simpler and more self-consistent. Fewer methods. More single list of static field assignments.
@@ -45,6 +29,9 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
 #   - Whether to backtrack to consider higher jumps.
 #   - Whether to return only the first valid edge between a pair of surfaces, or to return all valid edges.
+#     - Rather, break this down:
+#       - All jump/land pairs (get_all_jump_land_positions_for_surface)
+#       - All start velocities
 #   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
 #     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
 #   - How much radius to use for collision calculations.
@@ -65,7 +52,10 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - Maybe add a new configuration for max number of collisions/intermediate-constraints to allow
 #     in an edge calculation before giving up (or, recursion depth (with and without backtracking))?
 # 
+# - Check whether the dynamic edge optimizations are too expensive.
+# 
 # - Make screenshots and diagrams for README.
+#   - Use global.DEBUG_STATE.extra_annotations
 # 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.
@@ -277,12 +267,14 @@ func get_all_edges_from_surface(collision_params: CollisionCalcParams, edges_res
             # We don't need to calculate edges for the degenerate case.
             continue
         
-        jump_positions = MovementUtils.get_all_jump_land_positions_from_surface( \
+        jump_positions = MovementUtils.get_all_jump_land_positions_for_surface( \
                 movement_params, origin_surface, destination_surface.vertices, \
-                destination_surface.bounding_box, destination_surface.side)
-        land_positions = MovementUtils.get_all_jump_land_positions_from_surface( \
+                destination_surface.bounding_box, destination_surface.side, \
+                movement_params.jump_boost, true)
+        land_positions = MovementUtils.get_all_jump_land_positions_for_surface( \
                 movement_params, destination_surface, origin_surface.vertices, \
-                origin_surface.bounding_box, origin_surface.side)
+                origin_surface.bounding_box, origin_surface.side, movement_params.jump_boost, \
+                false)
         
         for jump_position in jump_positions:
             for land_position in land_positions:
@@ -408,11 +400,11 @@ static func get_jump_velocity_starts(movement_params: MovementParams, origin_sur
             
         SurfaceSide.FLOOR, SurfaceSide.CEILING:
             var can_reach_half_max_speed := origin_surface.bounding_box.size.x > \
-                    movement_params.distance_to_max_horizontal_speed / 2.0
+                    movement_params.distance_to_half_max_horizontal_speed
             var is_first_point: bool = Geometry.are_points_equal_with_epsilon( \
-                    jump_position.target_point, origin_surface.first_point)
+                    jump_position.target_projection_onto_surface, origin_surface.first_point)
             var is_last_point: bool = Geometry.are_points_equal_with_epsilon( \
-                    jump_position.target_point, origin_surface.last_point)
+                    jump_position.target_projection_onto_surface, origin_surface.last_point)
             var is_mid_point: bool = !is_first_point and !is_last_point
             
             # Determine whether to calculate jumping with max horizontal speed.

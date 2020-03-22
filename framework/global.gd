@@ -80,15 +80,16 @@ const DEBUG_STATE := {
 #            },
 #        },
 #        
-#        # Level: long rise; fall-right-from-lower-right-floor
-        edge = {
-            origin = {
-                surface_side = SurfaceSide.FLOOR,
-                surface_start_vertex = Vector2(128, 64),
-                position = Vector2(192, 64),
-            },
-        },
+#        # Level: long rise; fall-from-floor-lower-right
+#        edge = {
+#            origin = {
+#                surface_side = SurfaceSide.FLOOR,
+#                surface_start_vertex = Vector2(128, 64),
+#                position = Vector2(192, 64),
+#            },
+#        },
     },
+    extra_annotations = {},
 }
 
 const PLAYER_ACTIONS := {}

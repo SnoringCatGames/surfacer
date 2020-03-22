@@ -57,7 +57,7 @@ static func should_skip_edge_calculation(debug_state: Dictionary, \
         if debug_state.limit_parsing.edge.has("origin"):
             if jump_position == null:
                 # Ignore this if we expect to know the jump position, but don't.
-                return true
+                return false
             
             var debug_origin: Dictionary = debug_state.limit_parsing.edge.origin
             
@@ -80,7 +80,7 @@ static func should_skip_edge_calculation(debug_state: Dictionary, \
         if debug_state.limit_parsing.edge.has("destination"):
             if land_position == null:
                 # Ignore this if we expect to know the land position, but don't.
-                return true
+                return false
             
             var debug_destination: Dictionary = debug_state.limit_parsing.edge.destination
             
