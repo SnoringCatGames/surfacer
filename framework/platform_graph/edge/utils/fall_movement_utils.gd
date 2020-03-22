@@ -110,7 +110,7 @@ static func find_landing_trajectories_to_any_surface( \
             # Skip any blacklisted surfaces.
             continue
         
-        possible_land_positions = MovementUtils.get_all_jump_land_positions_for_surface( \
+        possible_land_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
                 movement_params, \
                 destination_surface, \
                 origin_vertices, \

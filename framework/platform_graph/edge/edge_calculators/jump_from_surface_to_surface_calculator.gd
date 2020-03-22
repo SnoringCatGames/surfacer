@@ -270,7 +270,7 @@ func get_all_edges_from_surface( \
             # We don't need to calculate edges for the degenerate case.
             continue
         
-        jump_positions = MovementUtils.get_all_jump_land_positions_for_surface( \
+        jump_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
                 movement_params, \
                 origin_surface, \
                 destination_surface.vertices, \
@@ -278,7 +278,7 @@ func get_all_edges_from_surface( \
                 destination_surface.side, \
                 movement_params.jump_boost, \
                 true)
-        land_positions = MovementUtils.get_all_jump_land_positions_for_surface( \
+        land_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
                 movement_params, \
                 destination_surface, \
                 origin_surface.vertices, \

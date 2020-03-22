@@ -120,8 +120,11 @@ func _create_movement_params() -> MovementParams:
     movement_params.calculates_edges_from_surface_ends_with_velocity_start_x_zero = false
     movement_params.optimizes_edge_jump_offs_at_run_time = true
     movement_params.forces_player_position_to_match_edge_at_start = true
+#    movement_params.forces_player_position_to_match_edge_at_start = false
     movement_params.forces_player_velocity_to_match_edge_at_start = true
-    movement_params.updates_player_velocity_to_match_edge_trajectory = true
+#    movement_params.forces_player_velocity_to_match_edge_at_start = false
+#    movement_params.updates_player_velocity_to_match_edge_trajectory = true
+    movement_params.updates_player_velocity_to_match_edge_trajectory = false
     movement_params.considers_closest_mid_point_for_jump_land_position = true
     movement_params.considers_mid_point_matching_horizontal_movement_for_jump_land_position = true
     
