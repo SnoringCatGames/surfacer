@@ -18,8 +18,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - Any other available cleanup of how params/type-configs/etc. get instantiated and registered?
 #   - Any better structures for how/where to define app-specific logic vs framework logic?
 # 
-# - Refactor frame_continuous_positions_from_steps (and discrete, etc.) to be on Edge instead of Instructions.
-# 
 # - Add some sort of warning message when the player's run-time velocity is too far from what's
 #   expected?
 # 
@@ -368,6 +366,9 @@ func get_edge_to_air( \
                     calc_results, \
                     true, \
                     SurfaceSide.NONE)
+    var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+            calc_results, \
+            instructions)
     
     var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
     
@@ -377,7 +378,8 @@ func get_edge_to_air( \
             velocity_start, \
             velocity_end, \
             collision_params.movement_params, \
-            instructions)
+            instructions, \
+            trajectory)
     
     return edge
 
@@ -424,6 +426,9 @@ static func create_edge_from_overall_params( \
                     calc_results, \
                     true, \
                     destination_position.surface.side)
+    var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+            calc_results, \
+            instructions)
     
     var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
     
@@ -433,7 +438,8 @@ static func create_edge_from_overall_params( \
             overall_calc_params.velocity_start, \
             velocity_end, \
             overall_calc_params.movement_params, \
-            instructions)
+            instructions, \
+            trajectory)
     
     return edge
 

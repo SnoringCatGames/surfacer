@@ -25,7 +25,7 @@ func process(player: Player) -> bool:
         var playback_elapsed_time: float = \
                 player.global.elapsed_play_time_sec - player.navigator.current_playback.start_time        
         var trajectory_velocities := \
-                current_edge.instructions.frame_continuous_velocities_from_steps
+                current_edge.trajectory.frame_continuous_velocities_from_steps
         var velocity_index := floor(playback_elapsed_time / Utils.PHYSICS_TIME_STEP)
         var is_movement_beyond_expected_trajectory := \
                 velocity_index >= trajectory_velocities.size()

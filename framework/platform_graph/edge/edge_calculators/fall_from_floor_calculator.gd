@@ -93,6 +93,7 @@ static func _get_all_edges_from_one_side( \
     var landing_trajectories: Array
     var position_end: PositionAlongSurface
     var instructions: MovementInstructions
+    var trajectory: MovementTrajectory
     var velocity_end: Vector2
     var edge: FallFromFloorEdge
         
@@ -122,14 +123,27 @@ static func _get_all_edges_from_one_side( \
         
         for calc_results in landing_trajectories:
             position_end = calc_results.overall_calc_params.destination_position
-            instructions = _calculate_instructions( \
+            
+            instructions = \
+                    MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+                            calc_results, \
+                            false, \
+                            position_end.surface.side)
+            
+            trajectory = MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+                    calc_results, \
+                    instructions)
+            
+            _prepend_walk_to_fall_off_portion( \
                     position_start, \
                     position_end, \
                     velocity_x_start, \
                     time_fall_off, \
-                    calc_results, \
+                    instructions, \
+                    trajectory, \
                     movement_params, \
                     falls_on_left_side)
+            
             velocity_end = calc_results.horizontal_steps.back().velocity_step_end
             
             edge = FallFromFloorEdge.new( \
@@ -139,6 +153,7 @@ static func _get_all_edges_from_one_side( \
                     velocity_end, \
                     movement_params, \
                     instructions, \
+                    trajectory, \
                     falls_on_left_side, \
                     position_fall_off_wrapper)
             edges_result.push_back(edge)
@@ -192,46 +207,30 @@ static func _calculate_player_center_at_fall_off_point( \
                     right_side_fall_off_displacement_x, \
                     fall_off_displacement_y)
 
-static func _increment_calc_results_start_times( \
-        calc_results: MovementCalcResults, \
-        time_fall_off: float) -> void:
-    calc_results.vertical_step.time_peak_height += time_fall_off
-    calc_results.vertical_step.time_step_start += time_fall_off
-    calc_results.vertical_step.time_instruction_start += time_fall_off
-    calc_results.vertical_step.time_instruction_end += time_fall_off
-    calc_results.vertical_step.time_step_end += time_fall_off
-    
-    calc_results.overall_calc_params.origin_constraint.time_passing_through += time_fall_off
-    calc_results.overall_calc_params.destination_constraint.time_passing_through += time_fall_off
-    
-    for horizontal_step in calc_results.horizontal_steps:
-        horizontal_step.time_step_start += time_fall_off
-        horizontal_step.time_instruction_start += time_fall_off
-        horizontal_step.time_instruction_end += time_fall_off
-        horizontal_step.time_step_end += time_fall_off
-
-static func _calculate_instructions( \
+static func _prepend_walk_to_fall_off_portion( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         velocity_x_start: float, \
         time_fall_off: float, \
-        calc_results: MovementCalcResults, \
+        instructions: MovementInstructions, \
+        trajectory: MovementTrajectory, \
         movement_params: MovementParams, \
-        falls_on_left_side: bool) -> MovementInstructions:
+        falls_on_left_side: bool) -> void:
     var frame_count_before_fall_off := ceil(time_fall_off / Utils.PHYSICS_TIME_STEP)
     
     # Round the fall-off time up, so that we actually consider it to start aligned with the first
     # frame in which it is actually clear of the surface edge.
     time_fall_off = frame_count_before_fall_off * Utils.PHYSICS_TIME_STEP + Geometry.FLOAT_EPSILON
     
-    _increment_calc_results_start_times(calc_results, time_fall_off)
+    # Increment instruction times.
     
-    # Calculate the fall-trajectory instructions.
-    var instructions := \
-            MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                    calc_results, false, end.surface.side)
+    for instruction in instructions.instructions:
+        instruction.time += time_fall_off
     
-    # Calculate the walk-off instructions.
+    instructions.duration += time_fall_off
+    
+    # Insert the walk-to-fall-off instructions.
+    
     var sideways_input_key := "move_left" if falls_on_left_side else "move_right"
     var outward_press := MovementInstruction.new(sideways_input_key, 0.0, true)
     var outward_release := \
@@ -239,11 +238,7 @@ static func _calculate_instructions( \
     instructions.instructions.push_front(outward_release)
     instructions.instructions.push_front(outward_press)
     
-    instructions.duration += time_fall_off
-    
-    instructions.constraint_positions.insert(0, start.target_point)
-    
-    # Insert frame state for the walk-to-fall-off portion of the movement.
+    # Insert frame state for the walk-to-fall-off portion of the trajectory.
     
     var walking_and_falling_frame_discrete_positions_from_test = PoolVector2Array()
     walking_and_falling_frame_discrete_positions_from_test.resize(frame_count_before_fall_off)
@@ -253,17 +248,17 @@ static func _calculate_instructions( \
     walking_and_falling_frame_continuous_velocities_from_steps.resize(frame_count_before_fall_off)
     
     walking_and_falling_frame_discrete_positions_from_test.append_array( \
-            instructions.frame_discrete_positions_from_test)
+            trajectory.frame_discrete_positions_from_test)
     walking_and_falling_frame_continuous_positions_from_steps.append_array( \
-            instructions.frame_continuous_positions_from_steps)
+            trajectory.frame_continuous_positions_from_steps)
     walking_and_falling_frame_continuous_velocities_from_steps.append_array( \
-            instructions.frame_continuous_velocities_from_steps)
+            trajectory.frame_continuous_velocities_from_steps)
     
-    instructions.frame_discrete_positions_from_test = \
+    trajectory.frame_discrete_positions_from_test = \
             walking_and_falling_frame_discrete_positions_from_test
-    instructions.frame_continuous_positions_from_steps = \
+    trajectory.frame_continuous_positions_from_steps = \
             walking_and_falling_frame_continuous_positions_from_steps
-    instructions.frame_continuous_velocities_from_steps = \
+    trajectory.frame_continuous_velocities_from_steps = \
             walking_and_falling_frame_continuous_velocities_from_steps
     
     var acceleration_x := -movement_params.walk_acceleration if falls_on_left_side else \
@@ -275,14 +270,12 @@ static func _calculate_instructions( \
             PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
     
     for frame_index in range(frame_count_before_fall_off):
-        instructions.frame_discrete_positions_from_test[frame_index] = current_frame_position
-        instructions.frame_continuous_positions_from_steps[frame_index] = current_frame_position
-        instructions.frame_continuous_velocities_from_steps[frame_index] = current_frame_velocity
+        trajectory.frame_discrete_positions_from_test[frame_index] = current_frame_position
+        trajectory.frame_continuous_positions_from_steps[frame_index] = current_frame_position
+        trajectory.frame_continuous_velocities_from_steps[frame_index] = current_frame_velocity
         
         current_frame_position += current_frame_velocity * Utils.PHYSICS_TIME_STEP
         current_frame_velocity += acceleration * Utils.PHYSICS_TIME_STEP
         clamp(current_frame_velocity.x, \
                 -movement_params.max_horizontal_speed_default, \
                 movement_params.max_horizontal_speed_default)
-    
-    return instructions

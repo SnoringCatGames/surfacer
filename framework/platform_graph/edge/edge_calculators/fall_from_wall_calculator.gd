@@ -70,17 +70,25 @@ func get_all_edges_from_surface( \
 static func _create_edge_from_calc_results(calc_results: MovementCalcResults, \
         jump_position: PositionAlongSurface) -> FallFromWallEdge:
     var land_position := calc_results.overall_calc_params.destination_position
+    
     var instructions := _calculate_instructions( \
             jump_position, \
             land_position, \
             calc_results)
+    
+    var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+            calc_results, \
+            instructions)
+    
     var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
+    
     return FallFromWallEdge.new( \
             jump_position, \
             land_position, \
             velocity_end, \
             calc_results.overall_calc_params.movement_params, \
-            instructions)
+            instructions, \
+            trajectory)
 
 static func _calculate_instructions( \
         start: PositionAlongSurface, \

@@ -19,6 +19,8 @@ var is_bespoke_for_path := false
 
 var instructions: MovementInstructions
 
+var trajectory: MovementTrajectory
+
 # In pixels.
 var distance: float
 # In seconds.
@@ -48,7 +50,8 @@ func _init( \
         velocity_start: Vector2, \
         velocity_end: Vector2, \
         movement_params: MovementParams, \
-        instructions: MovementInstructions) -> void:
+        instructions: MovementInstructions, \
+        trajectory: MovementTrajectory) -> void:
     self.name = name
     self.is_time_based = is_time_based
     self.surface_type = surface_type
@@ -58,17 +61,26 @@ func _init( \
     self.velocity_start = velocity_start
     self.velocity_end = velocity_end
     self.instructions = instructions
+    self.trajectory = trajectory
     self.distance = _calculate_distance( \
-            start_position_along_surface, end_position_along_surface, instructions)
-    self.duration = _calculate_duration(start_position_along_surface, end_position_along_surface, \
-            instructions, movement_params, distance)
+            start_position_along_surface, \
+            end_position_along_surface, \
+            trajectory)
+    self.duration = _calculate_duration( \
+            start_position_along_surface, \
+            end_position_along_surface, \
+            instructions, \
+            movement_params, \
+            distance)
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
     # Do nothing unless the sub-class implements this.
     pass
 
-func update_navigation_state(navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, playback) -> void:
+func update_navigation_state( \
+        navigation_state: PlayerNavigationState, \
+        surface_state: PlayerSurfaceState, \
+        playback) -> void:
     var is_grabbed_surface_expected: bool = \
             surface_state.grabbed_surface == self.end_surface
     navigation_state.just_left_air_unexpectedly = surface_state.just_left_air and \
@@ -89,21 +101,30 @@ func update_navigation_state(navigation_state: PlayerNavigationState, \
         navigation_state.is_expecting_to_enter_air = false
     
     navigation_state.just_reached_end_of_edge = _check_did_just_reach_destination( \
-            navigation_state, surface_state, playback)
+            navigation_state, \
+            surface_state, \
+            playback)
 
-func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: MovementInstructions) -> float:
+func _calculate_distance( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        trajectory: MovementTrajectory) -> float:
     Utils.error("Abstract Edge._calculate_distance is not implemented")
     return INF
 
-func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: MovementInstructions, movement_params: MovementParams, \
+func _calculate_duration( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        instructions: MovementInstructions, \
+        movement_params: MovementParams, \
         distance: float) -> float:
     Utils.error("Abstract Edge._calculate_duration is not implemented")
     return INF
 
-func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, playback) -> bool:
+func _check_did_just_reach_destination( \
+        navigation_state: PlayerNavigationState, \
+        surface_state: PlayerSurfaceState, \
+        playback) -> bool:
     Utils.error("Abstract Edge._check_did_just_reach_destination is not implemented")
     return false
 
@@ -207,19 +228,7 @@ static func vector2_to_position_along_surface(target_point: Vector2) -> Position
     position_along_surface.target_point = target_point
     return position_along_surface
 
-static func check_just_landed_on_expected_surface(surface_state: PlayerSurfaceState, \
+static func check_just_landed_on_expected_surface( \
+        surface_state: PlayerSurfaceState, \
         end_surface: Surface) -> bool:
     return surface_state.just_left_air and surface_state.grabbed_surface == end_surface
-
-static func sum_distance_between_frames(frame_positions: PoolVector2Array) -> float:
-    if frame_positions.size() < 2:
-        return 0.0
-    
-    var previous_position := frame_positions[0]
-    var next_position: Vector2
-    var sum := 0.0
-    for i in range(1, frame_positions.size()):
-        next_position = frame_positions[i]
-        sum += previous_position.distance_to(next_position)
-        previous_position = next_position
-    return sum

@@ -6,36 +6,12 @@ var instructions: Array
 
 var duration: float
 
-# The positions of each frame of movement according to the discrete per-frame movement
-# calculations of the instruction test. This is used for annotation debugging.
-var frame_discrete_positions_from_test: PoolVector2Array
-
-# The positions of each frame of movement according to the continous per-frame movement
-# calculations of the underlying horizontal step calculations.
-var frame_continuous_positions_from_steps: PoolVector2Array
-
-# The velocities of each frame of movement according to the continous per-frame movement
-# calculations of the underlying horizontal step calculations.
-var frame_continuous_velocities_from_steps: PoolVector2Array
-
-# The end positions of each MovementCalcStep. These correspond to intermediate-surface constraints
-# and the destination position. This is used for annotation debugging.
-var constraint_positions: PoolVector2Array
-
-var horizontal_instruction_start_positions: PoolVector2Array
-
-var horizontal_instruction_end_positions: PoolVector2Array
-
-var jump_instruction_end_position := Vector2.INF
-
 # Instructions don't need to be pre-sorted.
 func _init( \
         instructions: Array, \
-        duration: float, \
-        constraint_positions := []) -> void:
+        duration: float) -> void:
     self.instructions = instructions
     self.duration = duration
-    self.constraint_positions = PoolVector2Array(constraint_positions)
     
     self.instructions.sort_custom(self, "instruction_comparator")
 

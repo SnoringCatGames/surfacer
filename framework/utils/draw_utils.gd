@@ -611,7 +611,7 @@ static func _draw_fall_from_floor_edge( \
     # ClimbOverWallToFloorEdges.
     var offset := Vector2(-1.0 if edge.falls_on_left_side else 1.0, -1.0)
     var start_position := edge.start
-    var fall_off_position := edge.instructions.frame_continuous_positions_from_steps[0]
+    var fall_off_position := edge.trajectory.frame_continuous_positions_from_steps[0]
     var mid_point := Vector2(fall_off_position.x, start_position.y)
     canvas.draw_line( \
             start_position + offset, \
@@ -661,19 +661,19 @@ static func _draw_edge_from_instructions_positions( \
         # Draw the trajectory (as approximated via discrete time steps during instruction 
         # test calculations).
         canvas.draw_polyline( \
-                edge.instructions.frame_discrete_positions_from_test, \
+                edge.trajectory.frame_discrete_positions_from_test, \
                 discrete_trajectory_color, \
                 EDGE_TRAJECTORY_WIDTH)
     # Draw the trajectory (as calculated via continuous equations of motion during step
     # calculations).
     canvas.draw_polyline( \
-            edge.instructions.frame_continuous_positions_from_steps, \
+            edge.trajectory.frame_continuous_positions_from_steps, \
             continuous_trajectory_color, \
             EDGE_TRAJECTORY_WIDTH)
     
     if includes_constraints:
         # Draw all constraints in this edge.
-        for constraint_position in edge.instructions.constraint_positions:
+        for constraint_position in edge.trajectory.constraint_positions:
             draw_circle_outline( \
                     canvas, \
                     constraint_position, \
@@ -692,8 +692,8 @@ static func _draw_edge_from_instructions_positions( \
     if includes_instruction_indicators:
         # Draw the positions where horizontal instructions start.
         var position_start: Vector2
-        for i in range(0, edge.instructions.horizontal_instruction_start_positions.size()):
-            position_start = edge.instructions.horizontal_instruction_start_positions[i]
+        for i in range(0, edge.trajectory.horizontal_instruction_start_positions.size()):
+            position_start = edge.trajectory.horizontal_instruction_start_positions[i]
             
             # Draw a plus for the instruction start.
             draw_plus( \
@@ -706,8 +706,8 @@ static func _draw_edge_from_instructions_positions( \
         
         # Draw the positions where horizontal instructions end.
         var position_end: Vector2
-        for i in range(0, edge.instructions.horizontal_instruction_end_positions.size()):
-            position_end = edge.instructions.horizontal_instruction_end_positions[i]
+        for i in range(0, edge.trajectory.horizontal_instruction_end_positions.size()):
+            position_end = edge.trajectory.horizontal_instruction_end_positions[i]
             
             # Draw a minus for the instruction end.
             canvas.draw_line( \
@@ -717,7 +717,7 @@ static func _draw_edge_from_instructions_positions( \
                     EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
         
         # Draw the position where the vertical instruction ends (draw an asterisk).
-        position_end = edge.instructions.jump_instruction_end_position
+        position_end = edge.trajectory.jump_instruction_end_position
         if position_end != Vector2.INF:
             draw_asterisk( \
                     canvas, \

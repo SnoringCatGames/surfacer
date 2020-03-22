@@ -47,6 +47,9 @@ static func find_a_landing_trajectory( \
                     calc_results, \
                     false, \
                     land_position.surface.side)
+    var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+            calc_results, \
+            instructions)
     
     var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
     
@@ -56,7 +59,8 @@ static func find_a_landing_trajectory( \
             velocity_start, \
             velocity_end, \
             collision_params.movement_params, \
-            instructions)
+            instructions, \
+            trajectory)
 
 # Finds all possible landing trajectories from the given start state.
 static func find_landing_trajectories_to_any_surface( \

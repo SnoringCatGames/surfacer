@@ -360,6 +360,16 @@ _global_script_classes=[ {
 "path": "res://framework/platform_graph/edge/utils/movement_step_utils.gd"
 }, {
 "base": "Reference",
+"class": "MovementTrajectory",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/calculation_models/movement_trajectory.gd"
+}, {
+"base": "Reference",
+"class": "MovementTrajectoryUtils",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/utils/movement_trajectory_utils.gd"
+}, {
+"base": "Reference",
 "class": "MovementUtils",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/utils/movement_utils.gd"
@@ -685,6 +695,8 @@ _global_script_class_icons={
 "MovementInstructionsUtils": "",
 "MovementParams": "",
 "MovementStepUtils": "",
+"MovementTrajectory": "",
+"MovementTrajectoryUtils": "",
 "MovementUtils": "",
 "MovementVertCalcStep": "",
 "Navigator": "",

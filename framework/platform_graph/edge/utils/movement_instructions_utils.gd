@@ -14,18 +14,6 @@ const MovementInstruction := preload("res://framework/platform_graph/edge/calcul
 const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
 const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
 
-var JUMP_RELEASE_INSTRUCTION = MovementInstruction.new("jump", -1, false)
-
-const VALID_END_POSITION_DISTANCE_SQUARED_THRESHOLD := 64.0
-
-# FIXME: B: use this to record slow/fast gravities on the movement_params when initializing and
-#        update all usages to use the right one (rather than mutating the movement_params in the
-#        middle of edge calculations below).
-# FIXME: B: Update step calculation to increase durations by a slight amount (after calculating
-#        them all), in order to not have the rendered/discrete trajectory stop short?
-# FIXME: B: Update tests to use the new acceleration values.
-const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
-
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.
 static func convert_calculation_steps_to_movement_instructions( \
@@ -34,8 +22,6 @@ static func convert_calculation_steps_to_movement_instructions( \
         destination_side: int) -> MovementInstructions:
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
-    
-    var constraint_positions := []
     
     var instructions := []
     instructions.resize(steps.size() * 2)
@@ -59,23 +45,6 @@ static func convert_calculation_steps_to_movement_instructions( \
                 false)
         instructions[i * 2] = press
         instructions[i * 2 + 1] = release
-        
-        # Keep track of some info for edge annotation debugging.
-        constraint_positions.push_back(step.position_step_end)
-    
-    if destination_side == SurfaceSide.LEFT_WALL or destination_side == SurfaceSide.RIGHT_WALL:
-        # When landing on a wall, make sure we are pressing into the wall when we land (otherwise,
-        # we won't grab on).
-        
-        var last_step: MovementCalcStep = steps[steps.size() - 1]
-        var time_step_start := last_step.time_instruction_end + \
-                MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
-        input_key = "grab_wall"
-        press = MovementInstruction.new( \
-                input_key, \
-                time_step_start, \
-                true)
-        instructions.push_back(press)
     
     # Record the jump instruction.
     if includes_jump:
@@ -91,66 +60,20 @@ static func convert_calculation_steps_to_movement_instructions( \
         instructions.push_front(release)
         instructions.push_front(press)
     
-    var frame_continuous_positions_from_steps := _concatenate_step_frame_positions(steps)
-    var frame_continuous_velocities_from_steps := _concatenate_step_frame_velocities(steps)
+    if destination_side == SurfaceSide.LEFT_WALL or destination_side == SurfaceSide.RIGHT_WALL:
+        # When landing on a wall, make sure we are pressing into the wall when we land (otherwise,
+        # we won't grab on).
+        
+        var last_step: MovementCalcStep = steps[steps.size() - 1]
+        var time_step_start := last_step.time_instruction_end + \
+                MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
+        input_key = "grab_wall"
+        press = MovementInstruction.new( \
+                input_key, \
+                time_step_start, \
+                true)
+        instructions.push_back(press)
     
     var duration := vertical_step.time_step_end - vertical_step.time_step_start
     
-    var instructions_wrapper := \
-            MovementInstructions.new(instructions, duration, constraint_positions)
-    instructions_wrapper.frame_continuous_positions_from_steps = \
-            frame_continuous_positions_from_steps
-    instructions_wrapper.frame_continuous_velocities_from_steps = \
-            frame_continuous_velocities_from_steps
-    
-    # FIXME: B: REMOVE
-    calc_results.overall_calc_params.movement_params.gravity_fast_fall /= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    calc_results.overall_calc_params.movement_params.gravity_slow_rise /= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    
-    # FIXME: -------- Rename? Refactor?
-    var collision := CollisionCheckUtils.check_instructions_discrete_frame_state( \
-            calc_results.overall_calc_params, \
-            instructions_wrapper, \
-            calc_results.vertical_step, \
-            calc_results.horizontal_steps)
-    assert(collision == null or \
-            (collision.is_valid_collision_state and \
-            collision.surface == calc_results.overall_calc_params.destination_constraint.surface))
-
-    # FIXME: B: REMOVE
-    calc_results.overall_calc_params.movement_params.gravity_fast_fall *= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    calc_results.overall_calc_params.movement_params.gravity_slow_rise *= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    
-    return instructions_wrapper
-
-static func _concatenate_step_frame_positions(steps: Array) -> PoolVector2Array:
-    var combined_positions := []
-    
-    for step in steps:
-        Utils.concat(combined_positions, step.frame_positions)
-        # Since the start-position of the next step is always the same as the end-position of the
-        # previous step, we can de-dup them here.
-        combined_positions.remove(combined_positions.size() - 1)
-    
-    # Fix the fencepost problem.
-    combined_positions.push_back(steps.back().frame_positions.back())
-    
-    return PoolVector2Array(combined_positions)
-
-static func _concatenate_step_frame_velocities(steps: Array) -> PoolVector2Array:
-    var combined_velocities := []
-    
-    for step in steps:
-        Utils.concat(combined_velocities, step.frame_velocities)
-        # Since the start-position of the next step is always the same as the end-position of the
-        # previous step, we can de-dup them here.
-        combined_velocities.remove(combined_velocities.size() - 1)
-    
-    # Fix the fencepost problem.
-    combined_velocities.push_back(steps.back().frame_velocities.back())
-    
-    return PoolVector2Array(combined_velocities)
+    return MovementInstructions.new(instructions, duration)

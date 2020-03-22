@@ -2,14 +2,17 @@ class_name CollisionCheckUtils
 
 const MovementCalcCollisionDebugState = preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_collision_debug_state.gd")
 
-# Checks whether a collision would occur with any surface during the given instructions. This
-# is calculated by stepping through each discrete physics frame, which should exactly emulate the
-# actual Player trajectory that would be used.
+# Checks whether a collision would occur with any surface during the given instructions.
+# 
+# -   This is calculated by stepping through each discrete physics frame, which should exactly
+#     emulate the actual Player trajectory that would be used.
+# -   This also records some trajectory state.
 static func check_instructions_discrete_frame_state( \
         overall_calc_params: MovementCalcOverallParams, \
         instructions: MovementInstructions, \
         vertical_step: MovementVertCalcStep, \
-        horizontal_steps: Array) -> SurfaceCollision:
+        horizontal_steps: Array, \
+        trajectory: MovementTrajectory) -> SurfaceCollision:
     var movement_params := overall_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: MovementInstruction = instructions.instructions[0]
@@ -77,14 +80,14 @@ static func check_instructions_discrete_frame_state( \
 #                    shape_query_params, movement_params.collider_half_width_height, \
 #                    movement_params.collider_rotation, overall_calc_params.surface_parser)
             if collision != null:
-                instructions.frame_discrete_positions_from_test = \
+                trajectory.frame_discrete_positions_from_test = \
                         PoolVector2Array(frame_discrete_positions)
-#                instructions.frame_continuous_positions = \ # FIXME: REMOVE
+#                trajectory.frame_continuous_positions = \ # FIXME: REMOVE
 #                        PoolVector2Array(frame_continuous_positions)
-                instructions.jump_instruction_end_position = jump_instruction_end_position
-                instructions.horizontal_instruction_start_positions = \
+                trajectory.jump_instruction_end_position = jump_instruction_end_position
+                trajectory.horizontal_instruction_start_positions = \
                         PoolVector2Array(horizontal_instruction_start_positions)
-                instructions.horizontal_instruction_end_positions = \
+                trajectory.horizontal_instruction_end_positions = \
                         PoolVector2Array(horizontal_instruction_end_positions)
                 return collision
         else:
@@ -200,25 +203,25 @@ static func check_instructions_discrete_frame_state( \
 #            shape_query_params, movement_params.collider_half_width_height, \
 #            movement_params.collider_rotation, overall_calc_params.surface_parser)
     if collision != null:
-        instructions.frame_discrete_positions_from_test = \
+        trajectory.frame_discrete_positions_from_test = \
                 PoolVector2Array(frame_discrete_positions)
-#        instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions) # FIXME: REMOVE
-        instructions.jump_instruction_end_position = jump_instruction_end_position
-        instructions.horizontal_instruction_start_positions = \
+#        trajectory.frame_continuous_positions = PoolVector2Array(frame_continuous_positions) # FIXME: REMOVE
+        trajectory.jump_instruction_end_position = jump_instruction_end_position
+        trajectory.horizontal_instruction_start_positions = \
                 PoolVector2Array(horizontal_instruction_start_positions)
-        instructions.horizontal_instruction_end_positions = \
+        trajectory.horizontal_instruction_end_positions = \
                 PoolVector2Array(horizontal_instruction_end_positions)
         return collision
     
     # Record the position for edge annotation debugging.
     frame_discrete_positions.push_back(position + displacement)
 #    frame_continuous_positions.push_back(continuous_position) # FIXME: REMOVE
-    instructions.frame_discrete_positions_from_test = PoolVector2Array(frame_discrete_positions)
-#    instructions.frame_continuous_positions = PoolVector2Array(frame_continuous_positions) # FIXME: REMOVE
-    instructions.jump_instruction_end_position = jump_instruction_end_position
-    instructions.horizontal_instruction_start_positions = \
+    trajectory.frame_discrete_positions_from_test = PoolVector2Array(frame_discrete_positions)
+#    trajectory.frame_continuous_positions = PoolVector2Array(frame_continuous_positions) # FIXME: REMOVE
+    trajectory.jump_instruction_end_position = jump_instruction_end_position
+    trajectory.horizontal_instruction_start_positions = \
             PoolVector2Array(horizontal_instruction_start_positions)
-    instructions.horizontal_instruction_end_positions = \
+    trajectory.horizontal_instruction_end_positions = \
             PoolVector2Array(horizontal_instruction_end_positions)
     
     return null

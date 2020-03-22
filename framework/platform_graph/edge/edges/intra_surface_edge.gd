@@ -23,37 +23,55 @@ func _init( \
         start, \
         end, \
         velocity_start, \
-        _calculate_velocity_end(start, end, velocity_start, movement_params), \
+        _calculate_velocity_end( \
+                start, \
+                end, \
+                velocity_start, \
+                movement_params), \
         movement_params, \
-        _calculate_instructions(start, end)) -> void:
+        _calculate_instructions(start, end), \
+        null) -> void:
     # Intra-surface edges are never calculated and stored ahead of time; they're only calculated at
     # run time when navigating a specific path.
     self.is_bespoke_for_path = true
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
-    instructions = _calculate_instructions(surface_state.center_position_along_surface, \
+    instructions = _calculate_instructions( \
+            surface_state.center_position_along_surface, \
             end_position_along_surface)
 
-func _calculate_distance(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: MovementInstructions) -> float:
+func _calculate_distance( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        trajectory: MovementTrajectory) -> float:
     return start.target_point.distance_to(end.target_point)
 
-func _calculate_duration(start: PositionAlongSurface, end: PositionAlongSurface, \
-        instructions: MovementInstructions, movement_params: MovementParams, \
+func _calculate_duration( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        instructions: MovementInstructions, \
+        movement_params: MovementParams, \
         distance: float) -> float:
     match surface_type:
         SurfaceType.FLOOR:
-            return MovementUtils.calculate_time_to_walk(distance, 0.0, movement_params)
+            return MovementUtils.calculate_time_to_walk( \
+                    distance, \
+                    0.0, \
+                    movement_params)
         SurfaceType.WALL:
             var is_climbing_upward := end.target_point.y < start.target_point.y
             return MovementUtils.calculate_time_to_climb( \
-                    distance, is_climbing_upward, movement_params)
+                    distance, \
+                    is_climbing_upward, \
+                    movement_params)
         _:
             Utils.error()
             return INF
 
-func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, playback) -> bool:
+func _check_did_just_reach_destination( \
+        navigation_state: PlayerNavigationState, \
+        surface_state: PlayerSurfaceState, \
+        playback) -> bool:
     # Check whether we were on the other side of the destination in the previous frame.
     var target_point: Vector2 = self.end
     var was_less_than_end: bool
@@ -70,7 +88,8 @@ func _check_did_just_reach_destination(navigation_state: PlayerNavigationState, 
     return was_less_than_end != is_less_than_end or abs(diff) < \
             REACHED_DESTINATION_DISTANCE_SQUARED_THRESHOLD
 
-static func _calculate_instructions(start: PositionAlongSurface, \
+static func _calculate_instructions( \
+        start: PositionAlongSurface, \
         end: PositionAlongSurface) -> MovementInstructions:
     var is_wall_surface := \
             end.surface.side == SurfaceSide.LEFT_WALL || end.surface.side == SurfaceSide.RIGHT_WALL
@@ -87,12 +106,20 @@ static func _calculate_instructions(start: PositionAlongSurface, \
         else:
             input_key = "move_left"
     
-    var instruction := MovementInstruction.new(input_key, 0.0, true)
+    var instruction := MovementInstruction.new( \
+            input_key, \
+            0.0, \
+            true)
     
-    return MovementInstructions.new([instruction], INF)
+    return MovementInstructions.new( \
+            [instruction], \
+            INF)
 
-static func _calculate_velocity_end(start: PositionAlongSurface, end: PositionAlongSurface, \
-        velocity_start: Vector2, movement_params: MovementParams) -> Vector2:
+static func _calculate_velocity_end( \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        velocity_start: Vector2, \
+        movement_params: MovementParams) -> Vector2:
     var displacement := end.target_point - start.target_point
     
     if start.surface.side == SurfaceSide.FLOOR or start.surface.side == SurfaceSide.CEILING:
@@ -101,7 +128,9 @@ static func _calculate_velocity_end(start: PositionAlongSurface, end: PositionAl
         var acceleration := movement_params.walk_acceleration if displacement.x > 0.0 else \
                 -movement_params.walk_acceleration
         var velocity_end_x: float = MovementUtils.calculate_velocity_end_for_displacement( \
-                displacement.x, velocity_start.x, acceleration, \
+                displacement.x, \
+                velocity_start.x, \
+                acceleration, \
                 movement_params.max_horizontal_speed_default)
         return Vector2(velocity_end_x, 0.0)
     else:
