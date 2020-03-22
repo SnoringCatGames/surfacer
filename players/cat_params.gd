@@ -42,7 +42,7 @@ func _get_movement_calculators() -> Array:
         global.EDGE_MOVEMENTS[ClimbOverWallToFloorCalculator.NAME],
         global.EDGE_MOVEMENTS[FallFromWallCalculator.NAME],
         global.EDGE_MOVEMENTS[FallFromFloorCalculator.NAME],
-#        global.EDGE_MOVEMENTS[JumpFromSurfaceToSurfaceCalculator.NAME],
+        global.EDGE_MOVEMENTS[JumpFromSurfaceToSurfaceCalculator.NAME],
         global.EDGE_MOVEMENTS[ClimbDownWallToFloorCalculator.NAME],
         global.EDGE_MOVEMENTS[WalkToAscendWallFromFloorCalculator.NAME],
     ]

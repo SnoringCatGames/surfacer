@@ -112,7 +112,7 @@ static func optimize_edge_for_approach( \
         edge_index: int, \
         previous_velocity_end_x: float, \
         previous_edge: IntraSurfaceEdge, \
-        edge: JumpFromSurfaceToSurfaceEdge, \
+        edge: FallFromWallEdge, \
         in_debug_mode: bool) -> void:
     # TODO: Refactor this to use a true binary search. Right now it is similar, but we never
     #       move backward once we find a working jump.
