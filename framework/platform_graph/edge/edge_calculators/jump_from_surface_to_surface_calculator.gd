@@ -18,7 +18,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
 #     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
 #   - How much radius to use for collision calculations.
-#   - Whether to calculate dynamic departure edges (dynamic start velocity and positions).
 # 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
