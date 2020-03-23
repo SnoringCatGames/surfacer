@@ -29,7 +29,7 @@ func _init( \
     self.global = global
     self.surface_state = player.surface_state
     self.collision_params = CollisionCalcParams.new( \
-            Global.DEBUG_STATE, \
+            global.DEBUG_STATE, \
             global.space_state, \
             player.movement_params, \
             graph.surface_parser)
