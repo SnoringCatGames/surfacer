@@ -119,7 +119,7 @@
       visibility: visible;
     }
   </style>
-
+$GODOT_HEAD_INCLUDE
 </head>
 <body>
   <canvas id="canvas">
@@ -149,15 +149,15 @@
   </div>
 
   <script type="text/javascript"
-          src="surfacer.js"></script>
+          src="$GODOT_BASENAME.js"></script>
   <script type="text/javascript">//<![CDATA[
     var engine = new Engine;
     var setStatusMode;
     var setStatusNotice;
 
     (function() {
-      const EXECUTABLE_NAME = 'surfacer';
-      const MAIN_PACK = 'surfacer.pck';
+      const EXECUTABLE_NAME = '$GODOT_BASENAME';
+      const MAIN_PACK = '$GODOT_BASENAME.pck';
       const INDETERMINATE_STATUS_STEP_MS = 100;
 
       var canvas = document.getElementById('canvas');
@@ -283,4 +283,3 @@
   //]]></script>
 </body>
 </html>
-

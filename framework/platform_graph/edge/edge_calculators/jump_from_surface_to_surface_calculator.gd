@@ -35,6 +35,8 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - Maybe add a new configuration for max number of collisions/intermediate-constraints to allow
 #     in an edge calculation before giving up (or, recursion depth (with and without backtracking))?
 # 
+# --- Debug ---
+# 
 # - Check whether the dynamic edge optimizations are too expensive.
 # 
 # - Things to debug:
@@ -75,11 +77,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
 #     up passing them around as arguments to functions, to they get copied as values...
 # 
-# - Debug each EdgeMovementCalculators.
-#   - Figure out what to do for FallFromFloorEdge.
-#     - We need to on-the-fly detect when the player has left the floor and entered the air.
-#     - We need to at-that-point start running the instructions for the fall trajectory.
-#     - So FallFromFloorEdge might need to be replaced with two edges? WalkOffFloorEdge, and AirToSurfaceEdge?
 # - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the non-jump edges
 # 
 # - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from an air position).
