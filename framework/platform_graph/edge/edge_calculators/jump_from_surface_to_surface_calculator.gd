@@ -8,8 +8,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Finish source-surface-is-a-wall cases in get_all_jump_land_positions_for_surface.
-# 
 # - Check FIXMEs in CollisionCheckUtils. We should check on their accuracy now.
 # 
 # - Cleanup how PlayerParams are set up and configured.

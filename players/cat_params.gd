@@ -126,7 +126,7 @@ func _create_movement_params() -> MovementParams:
 #    movement_params.updates_player_velocity_to_match_edge_trajectory = true
     movement_params.updates_player_velocity_to_match_edge_trajectory = false
     movement_params.considers_closest_mid_point_for_jump_land_position = true
-    movement_params.considers_mid_point_matching_horizontal_movement_for_jump_land_position = true
+    movement_params.considers_mid_point_matching_edge_movement_for_jump_land_position = true
     
     movement_params.max_horizontal_speed_default = 400.0
     movement_params.min_horizontal_speed = 5.0

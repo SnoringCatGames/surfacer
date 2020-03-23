@@ -59,7 +59,7 @@ var forces_player_velocity_to_match_edge_at_start := false
 var updates_player_velocity_to_match_edge_trajectory := false
 var min_intra_surface_distance_to_optimize_jump_for := 16.0
 var considers_closest_mid_point_for_jump_land_position := true
-var considers_mid_point_matching_horizontal_movement_for_jump_land_position := true
+var considers_mid_point_matching_edge_movement_for_jump_land_position := true
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

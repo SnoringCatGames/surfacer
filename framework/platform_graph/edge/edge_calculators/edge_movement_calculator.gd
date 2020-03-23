@@ -198,130 +198,271 @@ static func get_all_jump_land_positions_for_surface( \
         # first move horizontally outward and then back in. However, the exact "closest" point on A
         # to B will not be outside the edge of B.
         var closest_point_on_surface := Vector2.INF
-        var mid_point_matching_horizontal_movement := Vector2.INF
-        if surface.side == SurfaceSide.FLOOR:
-            if surface_center.y < other_surface_center.y:
-                # Source surface is above other surface.
-                
-                # closest_point_on_source must be one of the ends of the source surface.
-                closest_point_on_surface = surface_last_point if \
-                        surface_center.x < other_surface_center.x else \
-                        surface_first_point
-                
-                mid_point_matching_horizontal_movement = Vector2.INF
-            else:
-                # Source surface is below other surface.
-                
-                var closest_point_on_other_surface := Vector2.INF
-                var goal_x_on_surface: float = INF
-                var should_try_to_move_around_left_side_of_target: bool
-                
-                if other_surface_side == SurfaceSide.FLOOR:
-                    # Choose whichever other-surface end point is closer to the source center, and
-                    # calculate a half-player-width offset from there.
-                    should_try_to_move_around_left_side_of_target = \
-                            abs(other_surface_first_point.x - surface_center.x) < \
-                            abs(other_surface_last_point.x - surface_center.x)
+        var mid_point_matching_edge_movement := Vector2.INF
+        match surface.side:
+            SurfaceSide.FLOOR:
+                if surface_center.y < other_surface_center.y:
+                    # Source surface is above other surface.
                     
-                    # Calculate the "closest" point on the source surface to our goal offset point.
-                    if should_try_to_move_around_left_side_of_target:
-                        closest_point_on_other_surface = other_surface_first_point
-                        goal_x_on_surface = closest_point_on_other_surface.x - \
-                                player_width_horizontal_offset
-                    else:
-                        closest_point_on_other_surface = other_surface_last_point
-                        goal_x_on_surface = closest_point_on_other_surface.x + \
-                                player_width_horizontal_offset
-                    closest_point_on_surface = Geometry.project_point_onto_surface( \
-                            Vector2(goal_x_on_surface, INF), \
-                            surface)
+                    # closest_point_on_source must be one of the ends of the source surface.
+                    closest_point_on_surface = surface_last_point if \
+                            surface_center.x < other_surface_center.x else \
+                            surface_first_point
                     
-                elif other_surface_side == SurfaceSide.LEFT_WALL or \
-                        other_surface_side == SurfaceSide.RIGHT_WALL:
-                    should_try_to_move_around_left_side_of_target = \
-                            other_surface_side == SurfaceSide.RIGHT_WALL
-                    # Find the point along the other surface that's closest to the source surface,
-                    # and calculate a half-player-width offset from there.
-                    closest_point_on_other_surface = \
-                            Geometry.get_closest_point_on_polyline_to_polyline( \
-                                    other_surface_vertices, \
-                                    surface.vertices)
-                    goal_x_on_surface = closest_point_on_other_surface.x + \
-                            (player_width_horizontal_offset if \
-                            other_surface_side == SurfaceSide.LEFT_WALL else \
-                            -player_width_horizontal_offset)
-                    # Calculate the "closest" point on the source surface to our goal offset point.
-                    closest_point_on_surface = Geometry.project_point_onto_surface( \
-                            Vector2(goal_x_on_surface, INF), \
-                            surface)
+                    mid_point_matching_edge_movement = Vector2.INF
+                else:
+                    # Source surface is below other surface.
                     
-                else: # other_surface_side == SurfaceSide.CEILING
-                    # We can use any point along the other surface.
-                    closest_point_on_surface = \
-                            Geometry.get_closest_point_on_polyline_to_polyline( \
-                                    surface.vertices, \
-                                    other_surface_vertices)
+                    var closest_point_on_other_surface := Vector2.INF
+                    var goal_x_on_surface: float = INF
+                    var should_try_to_move_around_left_side_of_target: bool
+                    
+                    match other_surface_side:
+                        SurfaceSide.FLOOR:
+                            # Choose whichever other-surface end point is closer to the source center, and
+                            # calculate a half-player-width offset from there.
+                            should_try_to_move_around_left_side_of_target = \
+                                    abs(other_surface_first_point.x - surface_center.x) < \
+                                    abs(other_surface_last_point.x - surface_center.x)
+                            
+                            # Calculate the "closest" point on the source surface to our goal offset point.
+                            if should_try_to_move_around_left_side_of_target:
+                                closest_point_on_other_surface = other_surface_first_point
+                                goal_x_on_surface = closest_point_on_other_surface.x - \
+                                        player_width_horizontal_offset
+                            else:
+                                closest_point_on_other_surface = other_surface_last_point
+                                goal_x_on_surface = closest_point_on_other_surface.x + \
+                                        player_width_horizontal_offset
+                            closest_point_on_surface = Geometry.project_point_onto_surface( \
+                                    Vector2(goal_x_on_surface, INF), \
+                                    surface)
+                            
+                        SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+                            should_try_to_move_around_left_side_of_target = \
+                                    other_surface_side == SurfaceSide.RIGHT_WALL
+                            # Find the point along the other surface that's closest to the source surface,
+                            # and calculate a half-player-width offset from there.
+                            closest_point_on_other_surface = \
+                                    Geometry.get_closest_point_on_polyline_to_polyline( \
+                                            other_surface_vertices, \
+                                            surface.vertices)
+                            goal_x_on_surface = closest_point_on_other_surface.x + \
+                                    (player_width_horizontal_offset if \
+                                    other_surface_side == SurfaceSide.LEFT_WALL else \
+                                    -player_width_horizontal_offset)
+                            # Calculate the "closest" point on the source surface to our goal offset point.
+                            closest_point_on_surface = Geometry.project_point_onto_surface( \
+                                    Vector2(goal_x_on_surface, INF), \
+                                    surface)
+                            
+                        SurfaceSide.CEILING:
+                            # We can use any point along the other surface.
+                            closest_point_on_surface = \
+                                    Geometry.get_closest_point_on_polyline_to_polyline( \
+                                            surface.vertices, \
+                                            other_surface_vertices)
+                            mid_point_matching_edge_movement = Vector2.INF
+                        
+                        _:
+                            Utils.error()
+                    
+                    if other_surface_side != SurfaceSide.CEILING:
+                        # Calculate the point along the source surface that would correspond to the
+                        # closest land position on the other surface, while maintaining a max-speed
+                        # horizontal velocity for the duration of the movement.
+                        # 
+                        # This makes a few simplifying assumptions:
+                        # - Assumes only fast-fall gravity for the edge.
+                        # - Assumes the edge starts with the max horizontal speed.
+                        # - Assumes that the center of the surface is at the same height as the
+                        #   resulting point along the surface that we are calculating.
+                        
+                        var displacement_y := closest_point_on_other_surface.y - surface_center.y
+                        var fall_time_with_max_gravity := \
+                                MovementUtils.calculate_time_for_displacement( \
+                                        displacement_y if is_jump_off_surface else -displacement_y, \
+                                        velocity_start_y, \
+                                        movement_params.gravity_fast_fall, \
+                                        movement_params.max_vertical_speed)
+                        # (s - s_0) = v*t
+                        var max_velocity_horizontal_offset := \
+                                movement_params.max_horizontal_speed_default * \
+                                fall_time_with_max_gravity
+                        # This max velocity range could overshoot what's actually reachable, so we
+                        # subtract a portion of the player's width to more likely end up with a usable
+                        # position.
+                        max_velocity_horizontal_offset -= \
+                                player_width_horizontal_offset * \
+                                MAX_VELOCITY_HORIZONTAL_OFFSET_SUBTRACT_PLAYER_WIDTH_RATIO
+                        goal_x_on_surface += -max_velocity_horizontal_offset if \
+                                should_try_to_move_around_left_side_of_target else \
+                                max_velocity_horizontal_offset
+                        mid_point_matching_edge_movement = Geometry.project_point_onto_surface( \
+                                Vector2(goal_x_on_surface, INF), \
+                                surface)
                 
-                if other_surface_side != SurfaceSide.CEILING:
-                    # Calculate the point along the source surface that would correspond to the
-                    # closest land position on the other surface, while maintaining a max-speed
-                    # horizontal velocity for the duration of the movement.
+            SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+                var gravity_for_inter_edge_distance_calc: float = INF
+                
+                match other_surface_side:
+                    SurfaceSide.FLOOR:
+                        if surface.side == SurfaceSide.LEFT_WALL and \
+                                other_surface_bounding_box.end.x <= surface_center.x:
+                            # The other surface is behind the source surface, so we assume we'll
+                            # need to go around the top side of this source surface wall.
+                            closest_point_on_surface = surface_first_point
+                            mid_point_matching_edge_movement = Vector2.INF
+                            gravity_for_inter_edge_distance_calc = INF
+                            
+                        elif surface.side == SurfaceSide.RIGHT_WALL and \
+                                other_surface_bounding_box.position.x >= surface_center.x:
+                            # The other surface is behind the source surface, so we assume we'll
+                            # need to go around the top side of this source surface wall.
+                            closest_point_on_surface = surface_last_point
+                            mid_point_matching_edge_movement = Vector2.INF
+                            gravity_for_inter_edge_distance_calc = INF
+                            
+                        else:
+                            # The other surface, at least partially, is in front of the source
+                            # surface wall.
+                            
+                            closest_point_on_surface = \
+                                    Geometry.get_closest_point_on_polyline_to_polyline( \
+                                            surface.vertices, \
+                                            other_surface_vertices)
+                            gravity_for_inter_edge_distance_calc = \
+                                    movement_params.gravity_fast_fall
+                        
+                    SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+                        if (surface.side == SurfaceSide.LEFT_WALL and \
+                                other_surface_side == SurfaceSide.RIGHT_WALL and \
+                                surface_center.x < other_surface_center.x) or \
+                                (surface.side == SurfaceSide.RIGHT_WALL and \
+                                    other_surface_side == SurfaceSide.LEFT_WALL and \
+                                    surface_center.x > other_surface_center.x):
+                            # The surfaces are facing each other.
+                            closest_point_on_surface = \
+                                    Geometry.get_closest_point_on_polyline_to_polyline( \
+                                            surface.vertices, \
+                                            other_surface_vertices)
+                        else:
+                            # The surfaces aren't facing each other, so we assume we'll need to
+                            # go around the top of at least one of them.
+                            
+                            var surface_top: float
+                            if surface.side != other_surface_side:
+                                # We need to go around the tops of both surfaces.
+                                surface_top = min(surface.bounding_box.position.y, \
+                                        other_surface_bounding_box.position.y)
+                                
+                            elif (surface.side == SurfaceSide.LEFT_WALL and \
+                                    surface_center.x < other_surface_center.x) or \
+                                    (surface.side == SurfaceSide.RIGHT_WALL and \
+                                    surface_center.x > other_surface_center.x):
+                                # We need to go around the top of the other surface.
+                                surface_top = other_surface_bounding_box.position.y
+                                
+                            else:
+                                # We need to go around the top of the source surface.
+                                surface_top = surface.bounding_box.position.y
+                            
+                            closest_point_on_surface = Geometry.project_point_onto_surface( \
+                                    Vector2(INF, surface_top), \
+                                    surface)
+                        
+                        gravity_for_inter_edge_distance_calc = movement_params.gravity_fast_fall
+                        
+                    SurfaceSide.CEILING:
+                        if surface.side == SurfaceSide.LEFT_WALL and \
+                                other_surface_bounding_box.end.x <= surface_center.x:
+                            # The other surface is behind the source surface, so we assume we'll
+                            # need to go around the top side of this source surface wall.
+                            closest_point_on_surface = surface_first_point
+                            mid_point_matching_edge_movement = Vector2.INF
+                            gravity_for_inter_edge_distance_calc = INF
+                            
+                        elif surface.side == SurfaceSide.RIGHT_WALL and \
+                                other_surface_bounding_box.end.x >= surface_center.x:
+                            # The other surface is behind the source surface, so we assume we'll
+                            # need to go around the top side of this source surface wall.
+                            closest_point_on_surface = surface_last_point
+                            mid_point_matching_edge_movement = Vector2.INF
+                            gravity_for_inter_edge_distance_calc = INF
+                            
+                        else:
+                            # The other surface, at least partially, is in front of the source
+                            # surface wall.
+                            
+                            closest_point_on_surface = \
+                                    Geometry.get_closest_point_on_polyline_to_polyline( \
+                                            surface.vertices, \
+                                            other_surface_vertices)
+                            gravity_for_inter_edge_distance_calc = movement_params.gravity_slow_rise
+                        
+                    _:
+                        Utils.error()
+                
+                if gravity_for_inter_edge_distance_calc != INF:
+                    # Calculate the point along the source surface that would correspond to
+                    # falling/jumping to the closest land position on the other surface.
                     # 
                     # This makes a few simplifying assumptions:
                     # - Assumes only fast-fall gravity for the edge.
-                    # - Assumes the edge starts with the max horizontal speed.
-                    # - Assumes that the center of the surface is at the same height as the
-                    #   resulting point along the surface that we are calculating.
+                    # - Assumes the edge starts with zero horizontal speed.
+                    # - Assumes that the center of the source surface is at about the same
+                    #   x-coordinate as the rest of the surface.
                     
-                    var displacement_y := closest_point_on_other_surface.y - surface_center.y
-                    var fall_time_with_max_gravity := \
+                    var closest_point_on_other_surface: Vector2 = \
+                            Geometry.get_closest_point_on_polyline_to_polyline( \
+                                    other_surface_vertices, \
+                                    surface.vertices)
+                    var horizontal_distance := \
+                            closest_point_on_other_surface.x - surface_center.x
+                    var acceleration := \
+                            movement_params.in_air_horizontal_acceleration if \
+                            horizontal_distance >= 0.0 else \
+                            -movement_params.in_air_horizontal_acceleration
+                    var time_to_travel_horizontal_distance := \
                             MovementUtils.calculate_time_for_displacement( \
-                                    displacement_y if is_jump_off_surface else -displacement_y, \
-                                    velocity_start_y, \
-                                    movement_params.gravity_fast_fall, \
-                                    movement_params.max_vertical_speed)
-                    # (s - s_0) = v*t
-                    var max_velocity_horizontal_offset := \
-                            movement_params.max_horizontal_speed_default * \
-                            fall_time_with_max_gravity
-                    # This max velocity range could overshoot what's actually reachable, so we
-                    # subtract a portion of the player's width to more likely end up with a usable
-                    # position.
-                    max_velocity_horizontal_offset -= \
-                            player_width_horizontal_offset * \
-                            MAX_VELOCITY_HORIZONTAL_OFFSET_SUBTRACT_PLAYER_WIDTH_RATIO
-                    goal_x_on_surface += -max_velocity_horizontal_offset if \
-                            should_try_to_move_around_left_side_of_target else \
-                            max_velocity_horizontal_offset
-                    mid_point_matching_horizontal_movement = Geometry.project_point_onto_surface( \
-                            Vector2(goal_x_on_surface, INF), \
-                            surface)
-            
-        elif surface.side == SurfaceSide.LEFT_WALL or \
-                surface.side == SurfaceSide.RIGHT_WALL:
-            # FIXME: -------------- LEFT OFF HERE
-            # FIXME: -------------- REMOVE
-            closest_point_on_surface = \
-                    Geometry.get_closest_point_on_polyline_to_polyline( \
-                            surface.vertices, \
-                            other_surface_vertices)
-            
-        else: # surface.side == SurfaceSide.CEILING
-            # FIXME: -------------- LEFT OFF HERE
-            # FIXME: -------------- REMOVE
-            closest_point_on_surface = \
-                    Geometry.get_closest_point_on_polyline_to_polyline( \
-                            surface.vertices, \
-                            other_surface_vertices)
+                                    horizontal_distance, \
+                                    0.0, \
+                                    acceleration, \
+                                    movement_params.max_horizontal_speed_default)
+                    # From a basic equation of motion:
+                    #     s = s_0 + v_0*t + 1/2*a*t^2
+                    # Algebra...:
+                    #     (s - s_0) = v_0*t + 1/2*a*t^2
+                    var vertical_distance := \
+                            velocity_start_y * time_to_travel_horizontal_distance + \
+                            0.5 * gravity_for_inter_edge_distance_calc * \
+                            time_to_travel_horizontal_distance * \
+                            time_to_travel_horizontal_distance
+                    
+                    mid_point_matching_edge_movement = \
+                            Geometry.project_point_onto_surface( \
+                                    Vector2(INF, closest_point_on_other_surface.y - \
+                                            vertical_distance), \
+                                    surface)
+                
+            SurfaceSide.CEILING:
+                # TODO: Implement this case.
+                closest_point_on_surface = \
+                        Geometry.get_closest_point_on_polyline_to_polyline( \
+                                surface.vertices, \
+                                other_surface_vertices)
+                
+            _:
+                Utils.error()
         
         # Only consider the horizontal-movement point if it is distinct.
-        if movement_params.considers_mid_point_matching_horizontal_movement_for_jump_land_position and \
-                mid_point_matching_horizontal_movement != Vector2.INF and \
-                mid_point_matching_horizontal_movement != near_end and \
-                mid_point_matching_horizontal_movement != far_end and \
-                mid_point_matching_horizontal_movement != closest_point_on_surface:
+        if movement_params.considers_mid_point_matching_edge_movement_for_jump_land_position and \
+                mid_point_matching_edge_movement != Vector2.INF and \
+                mid_point_matching_edge_movement != near_end and \
+                mid_point_matching_edge_movement != far_end and \
+                mid_point_matching_edge_movement != closest_point_on_surface:
             jump_position = MovementUtils.create_position_offset_from_target_point( \
-                    mid_point_matching_horizontal_movement, \
+                    mid_point_matching_edge_movement, \
                     surface, \
                     movement_params.collider_half_width_height)
             possible_jump_positions.push_front(jump_position)
