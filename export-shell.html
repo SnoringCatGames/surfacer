@@ -247,7 +247,7 @@ $GODOT_HEAD_INCLUDE
           initializing = false;
           // Fixes a bug with the default Godot export behavior, which doesn't give focus to the
           // game.
-          canvas.focus();
+          setTimeout(canvas.focus());
         }, displayFailureNotice);
       }
     })();
