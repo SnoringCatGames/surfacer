@@ -1,18 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      lang="" 
-      xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no" />
-  <link id="-gd-engine-icon" 
-        rel="icon"
-        type="image/png"
-        href="favicon.png" />
-  
-  <title>Surfacer</title>
-
+  <meta name="viewport" content="width=device-width, user-scalable=no" />
+  <title></title>
   <style type="text/css">
     body {
       touch-action: none;
@@ -127,13 +118,8 @@ $GODOT_HEAD_INCLUDE
     Please try updating or use a different browser.
   </canvas>
   <div id="status">
-    <div id="status-progress"
-         style="display: none;" 
-         oncontextmenu="event.preventDefault();"
-         ><div id ="status-progress-inner"></div></div>
-    <div id="status-indeterminate"
-         style="display: none;"
-         oncontextmenu="event.preventDefault();">
+    <div id="status-progress" style="display: none;" oncontextmenu="event.preventDefault();"><div id ="status-progress-inner"></div></div>
+    <div id="status-indeterminate" style="display: none;" oncontextmenu="event.preventDefault();">
       <div></div>
       <div></div>
       <div></div>
@@ -143,13 +129,10 @@ $GODOT_HEAD_INCLUDE
       <div></div>
       <div></div>
     </div>
-    <div id="status-notice"
-         class="godot"
-         style="display: none;"></div>
+    <div id="status-notice" class="godot" style="display: none;"></div>
   </div>
 
-  <script type="text/javascript"
-          src="$GODOT_BASENAME.js"></script>
+  <script type="text/javascript" src="$GODOT_BASENAME.js"></script>
   <script type="text/javascript">//<![CDATA[
     var engine = new Engine;
     var setStatusMode;
@@ -176,27 +159,21 @@ $GODOT_HEAD_INCLUDE
       requestAnimationFrame(animate);
 
       function adjustCanvasDimensions() {
-        var scale = window.devicePixelRatio || 1;
-        var width = window.innerWidth;
-        var height = window.innerHeight;
-        canvas.width = width * scale;
-        canvas.height = height * scale;
-        canvas.style.width = width + "px";
-        canvas.style.height = height + "px";
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
       }
       animationCallbacks.push(adjustCanvasDimensions);
       adjustCanvasDimensions();
 
       setStatusMode = function setStatusMode(mode) {
-
         if (statusMode === mode || !initializing)
           return;
         [statusProgress, statusIndeterminate, statusNotice].forEach(elem => {
           elem.style.display = 'none';
         });
-        animationCallbacks = animationCallbacks.filter(function(value) {
-          return (value != animateStatusIndeterminate);
-        });
+        if (animateStatusIndeterminate in animationCallbacks) {
+          animationCallbacks.erase(animateStatusIndeterminate);
+        }
         switch (mode) {
           case 'progress':
             statusProgress.style.display = 'block';
@@ -217,7 +194,6 @@ $GODOT_HEAD_INCLUDE
       }
 
       function animateStatusIndeterminate(ms) {
-
         var i = Math.floor(ms / INDETERMINATE_STATUS_STEP_MS % 8);
         if (statusIndeterminate.children[i].style.borderTopColor == '') {
           Array.prototype.slice.call(statusIndeterminate.children).forEach(child => {
@@ -228,7 +204,6 @@ $GODOT_HEAD_INCLUDE
       }
 
       setStatusNotice = function setStatusNotice(text) {
-
         while (statusNotice.lastChild) {
           statusNotice.removeChild(statusNotice.lastChild);
         }
@@ -240,7 +215,6 @@ $GODOT_HEAD_INCLUDE
       };
 
       engine.setProgressFunc((current, total) => {
-
         if (total > 0) {
           statusProgressInner.style.width = current/total * 100 + '%';
           setStatusMode('progress');
@@ -264,7 +238,7 @@ $GODOT_HEAD_INCLUDE
       }
 
       function setFocus() {
-        canvas.focus()
+        canvas.focus();
       }
 
       if (!Engine.isWebGLAvailable()) {
@@ -275,7 +249,7 @@ $GODOT_HEAD_INCLUDE
         engine.startGame(MAIN_PACK).then(() => {
           setStatusMode('hidden');
           initializing = false;
-          setFocus();
+          setFocus()
         }, displayFailureNotice);
       }
     })();
