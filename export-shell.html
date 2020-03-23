@@ -237,10 +237,6 @@ $GODOT_HEAD_INCLUDE
         initializing = false;
       }
 
-      function setFocus() {
-        canvas.focus();
-      }
-
       if (!Engine.isWebGLAvailable()) {
         displayFailureNotice('WebGL not available');
       } else {
@@ -249,7 +245,9 @@ $GODOT_HEAD_INCLUDE
         engine.startGame(MAIN_PACK).then(() => {
           setStatusMode('hidden');
           initializing = false;
-          setFocus()
+          // Fixes a bug with the default Godot export behavior, which doesn't give focus to the
+          // game.
+          canvas.focus();
         }, displayFailureNotice);
       }
     })();
