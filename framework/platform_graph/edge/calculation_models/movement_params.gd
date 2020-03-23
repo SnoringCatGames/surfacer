@@ -3,6 +3,13 @@ class_name MovementParams
 
 # TODO: Add defaults for some of these
 
+var name: String
+
+# Array<String>
+var movement_calculator_names: Array
+# Array<String>
+var action_handler_names: Array
+
 var can_grab_walls: bool
 var can_grab_ceilings: bool
 var can_grab_floors: bool
@@ -26,7 +33,7 @@ var walk_acceleration: float
 var climb_up_speed: float
 var climb_down_speed: float
 
-var should_minimize_velocity_change_when_jumping: bool
+var minimizes_velocity_change_when_jumping := true
 # - In the general case, we can't know at build time what direction along a surface the player will
 #   be moving from when they need to start a jump.
 # - Unfortunately, using start velocity x values of zero for all jumps edges tends to produce very

@@ -52,9 +52,7 @@ static func calculate_horizontal_step( \
     # There's no need to add an epsilon offset here, since the offset was added when calculating
     # the min/max in the first place.
     var velocity_end_x: float
-#    if movement_params.should_minimize_velocity_change_when_jumping:
-#    if false: # FIXME: ------------------------------------------- REMOVE
-    if true: # FIXME: ------------------------------------------- REMOVE
+    if movement_params.minimizes_velocity_change_when_jumping:
         velocity_end_x = 0.0 if min_velocity_end_x <= 0 and max_velocity_end_x >= 0 else \
                 min_velocity_end_x if abs(min_velocity_end_x) < abs(max_velocity_end_x) else \
                 max_velocity_end_x

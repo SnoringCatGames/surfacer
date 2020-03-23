@@ -373,10 +373,10 @@ var nodes_to_nodes_to_edges: Dictionary
 var debug_state: Dictionary
 
 func _init( \
-        player_info: PlayerTypeConfiguration, \
+        player_params: PlayerParams, \
         collision_params: CollisionCalcParams) -> void:
     self.collision_params = collision_params
-    self.movement_params = player_info.movement_params
+    self.movement_params = player_params.movement_params
     self.surface_parser = collision_params.surface_parser
     self.debug_state = collision_params.debug_state
     
@@ -392,7 +392,7 @@ func _init( \
     
     _calculate_nodes_and_edges( \
             surfaces_set, \
-            player_info, \
+            player_params, \
             debug_state)
 
 # Uses A* search.
@@ -564,13 +564,13 @@ static func _record_frontier( \
 # time when navigating a specific path.
 func _calculate_nodes_and_edges( \
         surfaces_set: Dictionary, \
-        player_info: PlayerTypeConfiguration, \
+        player_params: PlayerParams, \
         debug_state: Dictionary) -> void:
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     if debug_state.in_debug_mode and \
             debug_state.has("limit_parsing") and \
-            player_info.name != debug_state.limit_parsing.player_name:
+            player_params.name != debug_state.limit_parsing.player_name:
         return
     ###################################################################################
     
@@ -594,7 +594,7 @@ func _calculate_nodes_and_edges( \
                 surfaces_in_jump_range_set, \
                 surface)
         
-        for movement_calculator in player_info.movement_calculators:
+        for movement_calculator in player_params.movement_calculators:
             ###################################################################################
             # Allow for debug mode to limit the scope of what's calculated.
             if debug_state.in_debug_mode and \

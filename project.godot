@@ -54,7 +54,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://players/cat_animator.gd"
 }, {
-"base": "PlayerParams",
+"base": "MovementParams",
 "class": "CatParams",
 "language": "GDScript",
 "path": "res://players/cat_params.gd"
@@ -454,6 +454,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/player/player_params.gd"
 }, {
+"base": "Reference",
+"class": "PlayerParamsUtils",
+"language": "GDScript",
+"path": "res://framework/player/player_params_utils.gd"
+}, {
 "base": "Node2D",
 "class": "PlayerRecentMovementAnnotator",
 "language": "GDScript",
@@ -475,11 +480,6 @@ _global_script_classes=[ {
 "path": "res://framework/player/player_type.gd"
 }, {
 "base": "Reference",
-"class": "PlayerTypeConfiguration",
-"language": "GDScript",
-"path": "res://framework/player/player_type_configuration.gd"
-}, {
-"base": "Reference",
 "class": "PositionAlongSurface",
 "language": "GDScript",
 "path": "res://framework/platform_graph/surface/position_along_surface.gd"
@@ -499,7 +499,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/ruler_annotator.gd"
 }, {
-"base": "PlayerParams",
+"base": "MovementParams",
 "class": "SquirrelParams",
 "language": "GDScript",
 "path": "res://players/squirrel_params.gd"
@@ -554,7 +554,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://players/test_player.gd"
 }, {
-"base": "PlayerParams",
+"base": "MovementParams",
 "class": "TestPlayerParams",
 "language": "GDScript",
 "path": "res://players/test_player_params.gd"
@@ -714,11 +714,11 @@ _global_script_class_icons={
 "PlayerAnnotator": "",
 "PlayerNavigationState": "",
 "PlayerParams": "",
+"PlayerParamsUtils": "",
 "PlayerRecentMovementAnnotator": "",
 "PlayerSurfaceAnnotator": "",
 "PlayerSurfaceState": "",
 "PlayerType": "",
-"PlayerTypeConfiguration": "",
 "PositionAlongSurface": "",
 "PositionAnnotator": "",
 "PriorityQueue": "",

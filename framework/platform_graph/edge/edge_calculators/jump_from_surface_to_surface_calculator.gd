@@ -8,19 +8,6 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Check FIXMEs in CollisionCheckUtils. We should check on their accuracy now.
-# 
-# - Cleanup how PlayerParams are set up and configured.
-#   - Should be simpler and more self-consistent. Fewer methods. More single list of static field assignments.
-#     - Only conditionally include MatchExpectedEdgeTrajectoryAction based off of movement_params.updates_player_velocity_to_match_edge_trajectory.
-#   - Any other available cleanup of how params/type-configs/etc. get instantiated and registered?
-#   - Any better structures for how/where to define app-specific logic vs framework logic?
-# 
-# - Add some sort of warning message when the player's run-time velocity is too far from what's
-#   expected?
-# 
-# ---  ---
-# 
 # - Add a couple additional things to configure in MovementParams:
 #   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
 #   - Whether to backtrack to consider higher jumps.
@@ -50,16 +37,13 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # 
 # - Check whether the dynamic edge optimizations are too expensive.
 # 
-# - Make screenshots and diagrams for README.
-#   - Use global.DEBUG_STATE.extra_annotations
-# 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.
 #     - Collision detection isn't correctly detecting the collision with the right-side of the upper block.
 #   - Jumping from floor of lower-small-block to far right-wall of upper-small-black.
 #   - Jumping from left-wall of upper-small-block to right-wall of upper-small-block.
 # 
-# >>- Fix how things work when should_minimize_velocity_change_when_jumping is true.
+# >>- Fix how things work when minimizes_velocity_change_when_jumping is true.
 #   - [no] Find and move all movement-offset constants to one central location?
 #     - MovementInstructionsUtils
 #     - MovementConstraintUtils
@@ -108,6 +92,9 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - Collision calculation annotator bits.
 #   - Add a top-level button to debug menu to hide all annotations.
 #     - (grid, clicks, player position, player recent movement, platform graph, ...)
+# 
+# - Make screenshots and diagrams for README.
+#   - Use global.DEBUG_STATE.extra_annotations
 # 
 # - In the README, list the types of MovementParams.
 # 
@@ -231,7 +218,10 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # - Add a configurable method to the MovementParams API for defining arbitrary weight calculation
 #   for each character type (it could do things like strongly prefer certain edge types). 
 # 
-# >- Commit message:
+# - Check FIXMEs in CollisionCheckUtils. We should check on their accuracy now.
+# 
+# - Add some sort of warning message when the player's run-time velocity is too far from what's
+#   expected?
 # 
 
 

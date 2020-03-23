@@ -96,8 +96,8 @@ const PLAYER_ACTIONS := {}
 
 const EDGE_MOVEMENTS := {}
 
-# Dictionary<String, PlayerTypeConfiguration>
-var player_types := {}
+# Dictionary<String, PlayerParams>
+var player_params := {}
 
 var debug_panel: DebugPanel
 var welcome_panel: WelcomePanel
@@ -137,12 +137,12 @@ func register_edge_movements(edge_movement_classes: Array) -> void:
         EDGE_MOVEMENTS[edge_movement_class.NAME] = edge_movement_class.new()
 
 func register_player_params(player_param_classes: Array) -> void:
-    var params
-    var type: PlayerTypeConfiguration
+    var movement_params: MovementParams
+    var player_params: PlayerParams
     for param_class in player_param_classes:
-        params = param_class.new(self)
-        type = params.get_player_type_configuration()
-        self.player_types[type.name] = type
+        movement_params = param_class.new()
+        player_params = PlayerParamsUtils.create_player_params(movement_params, self)
+        self.player_params[player_params.name] = player_params
 
 func _ready() -> void:
     _elapsed_physics_play_time_sec = 0.0

@@ -26,9 +26,7 @@ var max_tile_map_cell_size: Vector2
 # Dictionary<TileMap, Dictionary<String, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
-func _init( \
-        tile_maps: Array, \
-        player_types: Dictionary) -> void:
+func _init(tile_maps: Array) -> void:
     assert(!tile_maps.empty())
     
     _stopwatch = Stopwatch.new()

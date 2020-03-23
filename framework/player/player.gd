@@ -51,16 +51,16 @@ func _init(player_name: String) -> void:
 
 func _enter_tree() -> void:
     self.global = $"/root/Global"
-    var type_configuration: PlayerTypeConfiguration = global.player_types[player_name]
+    var player_params: PlayerParams = global.player_params[player_name]
     self.level = global.current_level
-    self.can_grab_walls = type_configuration.movement_params.can_grab_walls
-    self.can_grab_ceilings = type_configuration.movement_params.can_grab_ceilings
-    self.can_grab_floors = type_configuration.movement_params.can_grab_floors
-    self.movement_params = type_configuration.movement_params
+    self.can_grab_walls = player_params.movement_params.can_grab_walls
+    self.can_grab_ceilings = player_params.movement_params.can_grab_ceilings
+    self.can_grab_floors = player_params.movement_params.can_grab_floors
+    self.movement_params = player_params.movement_params
     self.current_max_horizontal_speed = \
-            type_configuration.movement_params.max_horizontal_speed_default
-    self.movement_calculators = type_configuration.movement_calculators
-    self.action_handlers = type_configuration.action_handlers
+            player_params.movement_params.max_horizontal_speed_default
+    self.movement_calculators = player_params.movement_calculators
+    self.action_handlers = player_params.action_handlers
 
 func _ready() -> void:
     # TODO: Somehow consolidate how collider shapes are defined?

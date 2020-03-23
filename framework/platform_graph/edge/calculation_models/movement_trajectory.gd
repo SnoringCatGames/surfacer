@@ -3,10 +3,16 @@ class_name MovementTrajectory
 
 # The positions of each frame of movement according to the discrete per-frame movement
 # calculations of the instruction test. This is used for annotation debugging.
+# 
+# - This is rendered by the annotator as the _lighter_ path.
+# - This more accurately reflects actual run-time movement.
 var frame_discrete_positions_from_test: PoolVector2Array
 
 # The positions of each frame of movement according to the continous per-frame movement
 # calculations of the underlying horizontal step calculations.
+# 
+# - This is rendered by the annotator as the _darker_ path.
+# - This less accurately reflects actual run-time movement.
 var frame_continuous_positions_from_steps: PoolVector2Array
 
 # The velocities of each frame of movement according to the continous per-frame movement

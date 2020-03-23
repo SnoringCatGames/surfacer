@@ -71,11 +71,11 @@ func _ready() -> void:
     assert(surface_tile_maps.size() > 0)
     
     # Set up the PlatformGraphs for this level.
-    surface_parser = SurfaceParser.new(surface_tile_maps, global.player_types)
+    surface_parser = SurfaceParser.new(surface_tile_maps)
     platform_graphs = _create_platform_graphs( \
             surface_parser, \
             space_state, \
-            global.player_types, \
+            global.player_params, \
             Global.DEBUG_STATE)
     
     camera_controller = CameraController.new()
@@ -103,12 +103,12 @@ func _input(event: InputEvent) -> void:
 static func _create_platform_graphs( \
         surface_parser: SurfaceParser, \
         space_state: Physics2DDirectSpaceState, \
-        player_types: Dictionary, \
+        all_player_params: Dictionary, \
         debug_state: Dictionary) -> Dictionary:
     var graphs = {}
-    var player_info: PlayerTypeConfiguration
+    var player_params: PlayerParams
     var collision_params: CollisionCalcParams
-    for player_name in player_types:
+    for player_name in all_player_params:
         ###########################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
         if debug_state.in_debug_mode and \
@@ -116,10 +116,10 @@ static func _create_platform_graphs( \
                 player_name != debug_state.limit_parsing.player_name:
             continue
         ###########################################################################################
-        player_info = player_types[player_name]
+        player_params = all_player_params[player_name]
         collision_params = CollisionCalcParams.new(debug_state, space_state, \
-                player_info.movement_params, surface_parser)
-        graphs[player_name] = PlatformGraph.new(player_info, collision_params)
+                player_params.movement_params, surface_parser)
+        graphs[player_name] = PlatformGraph.new(player_params, collision_params)
     return graphs
 
 func descendant_physics_process_completed(descendant: Node) -> void:
