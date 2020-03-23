@@ -8,6 +8,12 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Consider even more cases to return from get_all_jump_land_positions_for_surface:
+#   - Rather than just considering which side of center, consider which side of bounding-box ends?
+#     - Example, we should have edges leading off both sides of the starting floor to the wide under floor?
+#       - But then, single-edge-short-circuiting would probably prevent the other side from being used anyway...
+#       - Alternatively, could there be some trickery with run-time edge optimizations that would make this work?
+# 
 # - Add a couple additional things to configure in MovementParams:
 #   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
 #   - Whether to backtrack to consider higher jumps.

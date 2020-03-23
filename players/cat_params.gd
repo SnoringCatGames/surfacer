@@ -87,10 +87,10 @@ func _init() -> void:
     ]
     
     movement_calculator_names = [
-        ClimbOverWallToFloorCalculator.NAME,
-        FallFromWallCalculator.NAME,
-        FallFromFloorCalculator.NAME,
+#        ClimbOverWallToFloorCalculator.NAME,
+#        FallFromWallCalculator.NAME,
+#        FallFromFloorCalculator.NAME,
         JumpFromSurfaceToSurfaceCalculator.NAME,
-        ClimbDownWallToFloorCalculator.NAME,
+#        ClimbDownWallToFloorCalculator.NAME,
         WalkToAscendWallFromFloorCalculator.NAME,
     ]
