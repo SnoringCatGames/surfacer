@@ -50,8 +50,20 @@ func get_all_edges_from_surface( \
             upper_neighbor_floor, \
             movement_params.collider_half_width_height)
     
-    var edge := ClimbOverWallToFloorEdge.new( \
+    var edge := calculate_edge( \
+            collision_params, \
             start_position, \
-            end_position, \
-            movement_params)
+            end_position)
     edges_result.push_back(edge)
+
+func calculate_edge( \
+        collision_params: CollisionCalcParams, \
+        position_start: PositionAlongSurface, \
+        position_end: PositionAlongSurface, \
+        velocity_start := Vector2.INF, \
+        in_debug_mode := false) -> Edge:
+    return ClimbOverWallToFloorEdge.new( \
+            self, \
+            position_start, \
+            position_end, \
+            collision_params.movement_params)

@@ -21,6 +21,35 @@ func get_all_edges_from_surface( \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
     Utils.error("abstract EdgeMovementCalculator.get_all_edges_from_surface is not implemented")
+
+func calculate_edge( \
+        collision_params: CollisionCalcParams, \
+        position_start: PositionAlongSurface, \
+        position_end: PositionAlongSurface, \
+        velocity_start := Vector2.INF, \
+        in_debug_mode := false) -> Edge:
+    Utils.error("abstract EdgeMovementCalculator.calculate_edge is not implemented")
+    return null
+
+func optimize_edge_jump_position_for_path( \
+        collision_params: CollisionCalcParams, \
+        path: PlatformGraphPath, \
+        edge_index: int, \
+        previous_velocity_end_x: float, \
+        previous_edge: IntraSurfaceEdge, \
+        edge: Edge, \
+        in_debug_mode: bool) -> void:
+    # Do nothing by default. Sub-classes implement this as needed.
+    pass
+
+func optimize_edge_land_position_for_path( \
+        collision_params: CollisionCalcParams, \
+        path: PlatformGraphPath, \
+        edge_index: int, \
+        edge: Edge, \
+        next_edge: IntraSurfaceEdge, \
+        in_debug_mode: bool) -> void:
+    # Do nothing by default. Sub-classes implement this as needed.
     pass
 
 static func create_movement_calc_overall_params(
@@ -479,3 +508,100 @@ static func get_all_jump_land_positions_for_surface( \
             possible_jump_positions.push_front(jump_position)
     
     return possible_jump_positions
+
+static func optimize_edge_land_position_for_path_helper( \
+        collision_params: CollisionCalcParams, \
+        path: PlatformGraphPath, \
+        edge_index: int, \
+        edge: Edge, \
+        next_edge: IntraSurfaceEdge, \
+        in_debug_mode: bool, \
+        edge_movement_calculator: EdgeMovementCalculator) -> void:
+    # TODO: Refactor this to use a true binary search. Right now it is similar, but we never
+    #       move backward once we find a working land.
+    var land_ratios := [1.0, 0.5, 0.25, 0.125]
+    
+    var movement_params := collision_params.movement_params
+    
+    var next_edge_displacement := next_edge.end - next_edge.start
+    
+    var is_horizontal_surface := \
+            next_edge.start_surface != null and \
+            (next_edge.start_surface.side == SurfaceSide.FLOOR or \
+            next_edge.start_surface.side == SurfaceSide.CEILING)
+    
+    if is_horizontal_surface:
+        # Landing on a floor or ceiling.
+        
+        var land_position: PositionAlongSurface
+        var calc_results: MovementCalcResults
+        var optimized_edge: Edge
+        
+        for i in range(land_ratios.size()):
+            if land_ratios[i] == 1.0:
+                land_position = next_edge.end_position_along_surface
+            else:
+                land_position = MovementUtils.create_position_offset_from_target_point( \
+                        Vector2(next_edge.start.x + \
+                                next_edge_displacement.x * land_ratios[i], 0.0), \
+                        next_edge.start_surface, \
+                        movement_params.collider_half_width_height)
+            
+            optimized_edge = edge_movement_calculator.calculate_edge( \
+                    collision_params, \
+                    edge.start_position_along_surface, \
+                    land_position, \
+                    edge.velocity_start, \
+                    in_debug_mode)
+            
+            if optimized_edge != null:
+                optimized_edge.is_bespoke_for_path = true
+                
+                next_edge = IntraSurfaceEdge.new( \
+                        land_position, \
+                        next_edge.end_position_along_surface, \
+                        optimized_edge.velocity_end, \
+                        movement_params)
+                
+                path.edges[edge_index] = optimized_edge
+                path.edges[edge_index + 1] = next_edge
+                
+                return
+        
+    else:
+        # Landing on a wall.
+        
+        var land_position: PositionAlongSurface
+        var calc_results: MovementCalcResults
+        var optimized_edge: Edge
+        
+        for i in range(land_ratios.size()):
+            if land_ratios[i] == 1.0:
+                land_position = next_edge.end_position_along_surface
+            else:
+                land_position = MovementUtils.create_position_offset_from_target_point( \
+                        Vector2(0.0, next_edge.start.y + \
+                                next_edge_displacement.y * land_ratios[i]), \
+                        next_edge.start_surface, \
+                        movement_params.collider_half_width_height)
+            
+            optimized_edge = edge_movement_calculator.calculate_edge( \
+                    collision_params, \
+                    edge.start_position_along_surface, \
+                    land_position, \
+                    edge.velocity_start, \
+                    in_debug_mode)
+            
+            if optimized_edge != null:
+                optimized_edge.is_bespoke_for_path = true
+                
+                next_edge = IntraSurfaceEdge.new( \
+                        land_position, \
+                        next_edge.end_position_along_surface, \
+                        Vector2.ZERO, \
+                        movement_params)
+                
+                path.edges[edge_index] = optimized_edge
+                path.edges[edge_index + 1] = edge
+                
+                return

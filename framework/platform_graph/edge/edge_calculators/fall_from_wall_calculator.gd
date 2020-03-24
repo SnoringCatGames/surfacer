@@ -64,11 +64,102 @@ func get_all_edges_from_surface( \
             landing_surfaces_to_skip[ \
                     calc_results.overall_calc_params.destination_position.surface] = true
             
-            edge = _create_edge_from_calc_results(calc_results, jump_position)
+            edge = _create_edge_from_calc_results(calc_results)
             edges_result.push_back(edge)
 
-static func _create_edge_from_calc_results(calc_results: MovementCalcResults, \
-        jump_position: PositionAlongSurface) -> FallFromWallEdge:
+func calculate_edge( \
+        collision_params: CollisionCalcParams, \
+        position_start: PositionAlongSurface, \
+        position_end: PositionAlongSurface, \
+        velocity_start := Vector2.INF, \
+        in_debug_mode := false) -> Edge:
+    var calc_results: MovementCalcResults = \
+            FallMovementUtils.find_landing_trajectory_between_positions( \
+                    position_start, \
+                    position_end, \
+                    velocity_start, \
+                    collision_params)
+    if calc_results != null:
+        return _create_edge_from_calc_results(calc_results)
+    else:
+        return null
+
+func optimize_edge_jump_position_for_path( \
+        collision_params: CollisionCalcParams, \
+        path: PlatformGraphPath, \
+        edge_index: int, \
+        previous_velocity_end_x: float, \
+        previous_edge: IntraSurfaceEdge, \
+        edge: Edge, \
+        in_debug_mode: bool) -> void:
+    assert(edge is FallFromWallEdge)
+    
+    # TODO: Refactor this to use a true binary search. Right now it is similar, but we never
+    #       move backward once we find a working jump.
+    var fall_off_ratios := [0.0, 0.5, 0.75, 0.875]
+    
+    var movement_params := collision_params.movement_params
+    
+    var previous_edge_displacement := previous_edge.end - previous_edge.start
+    
+    var fall_off_position: PositionAlongSurface
+    var velocity_start: Vector2
+    var calc_results: MovementCalcResults
+    var optimized_edge: FallFromWallEdge
+    
+    for i in range(fall_off_ratios.size()):
+        if fall_off_ratios[i] == 0.0:
+            fall_off_position = previous_edge.start_position_along_surface
+        else:
+            fall_off_position = MovementUtils.create_position_offset_from_target_point( \
+                    Vector2(0.0, previous_edge.start.y + \
+                            previous_edge_displacement.y * fall_off_ratios[i]), \
+                    previous_edge.start_surface, \
+                    movement_params.collider_half_width_height)
+        
+        velocity_start = Vector2.ZERO
+        
+        optimized_edge = calculate_edge( \
+                collision_params, \
+                fall_off_position, \
+                edge.end_position_along_surface, \
+                velocity_start, \
+                in_debug_mode)
+        
+        if optimized_edge != null:
+            optimized_edge.is_bespoke_for_path = true
+            
+            previous_edge = IntraSurfaceEdge.new( \
+                    previous_edge.start_position_along_surface, \
+                    fall_off_position, \
+                    Vector2.ZERO, \
+                    movement_params)
+            
+            path.edges[edge_index - 1] = previous_edge
+            path.edges[edge_index] = optimized_edge
+            
+            return
+
+func optimize_edge_land_position_for_path( \
+        collision_params: CollisionCalcParams, \
+        path: PlatformGraphPath, \
+        edge_index: int, \
+        edge: Edge, \
+        next_edge: IntraSurfaceEdge, \
+        in_debug_mode: bool) -> void:
+    assert(edge is FallFromWallEdge)
+    
+    EdgeMovementCalculator.optimize_edge_land_position_for_path_helper( \
+            collision_params, \
+            path, \
+            edge_index, \
+            edge, \
+            next_edge, \
+            in_debug_mode, \
+            self)
+
+func _create_edge_from_calc_results(calc_results: MovementCalcResults) -> FallFromWallEdge:
+    var jump_position := calc_results.overall_calc_params.origin_position
     var land_position := calc_results.overall_calc_params.destination_position
     
     var instructions := _calculate_instructions( \
@@ -83,6 +174,7 @@ static func _create_edge_from_calc_results(calc_results: MovementCalcResults, \
     var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
     
     return FallFromWallEdge.new( \
+            self, \
             jump_position, \
             land_position, \
             velocity_end, \
@@ -113,58 +205,3 @@ static func _calculate_instructions( \
     instructions.instructions.push_front(outward_press)
     
     return instructions
-
-static func optimize_edge_for_approach( \
-        collision_params: CollisionCalcParams, \
-        path: PlatformGraphPath, \
-        edge_index: int, \
-        previous_velocity_end_x: float, \
-        previous_edge: IntraSurfaceEdge, \
-        edge: FallFromWallEdge, \
-        in_debug_mode: bool) -> void:
-    # TODO: Refactor this to use a true binary search. Right now it is similar, but we never
-    #       move backward once we find a working jump.
-    var fall_off_ratios := [0.0, 0.5, 0.75, 0.875]
-    
-    var movement_params := collision_params.movement_params
-    
-    var previous_edge_displacement := previous_edge.end - previous_edge.start
-    
-    var fall_off_position: PositionAlongSurface
-    var velocity_start: Vector2
-    var calc_results: MovementCalcResults
-    var optimized_edge: FallFromWallEdge
-    
-    for i in range(fall_off_ratios.size()):
-        if fall_off_ratios[i] == 0.0:
-            fall_off_position = previous_edge.start_position_along_surface
-        else:
-            fall_off_position = MovementUtils.create_position_offset_from_target_point( \
-                    Vector2(0.0, previous_edge.start.y + \
-                            previous_edge_displacement.y * fall_off_ratios[i]), \
-                    previous_edge.start_surface, \
-                    movement_params.collider_half_width_height)
-        
-        velocity_start = Vector2.ZERO
-        
-        calc_results = FallMovementUtils.find_landing_trajectory_between_positions( \
-                fall_off_position, \
-                edge.end_position_along_surface, \
-                velocity_start, \
-                collision_params)
-        
-        optimized_edge = _create_edge_from_calc_results(calc_results, fall_off_position)
-        
-        if optimized_edge != null:
-            optimized_edge.is_bespoke_for_path = true
-            
-            previous_edge = IntraSurfaceEdge.new( \
-                    previous_edge.start_position_along_surface, \
-                    fall_off_position, \
-                    Vector2.ZERO, \
-                    movement_params)
-            
-            path.edges[edge_index] = previous_edge
-            path.edges[edge_index + 1] = optimized_edge
-            
-            return

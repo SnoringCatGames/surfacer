@@ -11,6 +11,7 @@ const SURFACE_TYPE := SurfaceType.WALL
 const ENTERS_AIR := true
 
 func _init( \
+        calculator, \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         movement_params: MovementParams) \
@@ -18,6 +19,7 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        calculator, \
         start, \
         end, \
         Vector2.ZERO, \

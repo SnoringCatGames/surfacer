@@ -57,7 +57,8 @@ var calculates_edges_from_surface_ends_with_velocity_start_x_zero := false
 # take this opportunity to update start velocities to exactly match what is allowed from the
 # ramp-up distance along the edge, rather than either the fixed zero or max-speed value used for
 # the build-time-calculated edge state.
-var optimizes_edge_jump_offs_at_run_time := false
+var optimizes_edge_jump_positions_at_run_time := false
+var optimizes_edge_land_positions_at_run_time := false
 var forces_player_position_to_match_edge_at_start := false
 var forces_player_velocity_to_match_edge_at_start := false
 # If true, then player velocity will be forced to match the expected calculated edge-movement

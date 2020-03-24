@@ -1,67 +1,6 @@
 # A collection of utility functions for calculating state related to fall movement.
 class_name FallMovementUtils
 
-# Finds a movement step that will result in landing on a surface, with an attempt to minimize the
-# path the player would then have to travel between surfaces to reach the given target.
-#
-# Returns null if no possible landing exists.
-# TODO: Use goal param.
-static func find_a_landing_trajectory( \
-        collision_params: CollisionCalcParams, \
-        possible_surfaces_set: Dictionary, \
-        origin: Vector2, \
-        velocity_start: Vector2, \
-        goal: PositionAlongSurface) -> AirToSurfaceEdge:
-    var landing_surfaces_to_skip := {}
-    
-    # Find all possible surfaces in landing range.
-    var result_set := {}
-    find_surfaces_in_fall_range_from_point( \
-            collision_params.movement_params, \
-            possible_surfaces_set, \
-            result_set, \
-            origin, \
-            velocity_start, \
-            landing_surfaces_to_skip)
-    var possible_landing_surfaces := result_set.keys()
-    possible_landing_surfaces.sort_custom(SurfaceMaxYComparator, "sort")
-    
-    # Find the closest landing trajectory.
-    var origin_position := MovementUtils.create_position_without_surface(origin)
-    var landing_trajectories := find_landing_trajectories_to_any_surface( \
-            collision_params, \
-            possible_surfaces_set, \
-            origin_position, \
-            velocity_start, \
-            landing_surfaces_to_skip, \
-            possible_landing_surfaces, \
-            true)
-    if landing_trajectories.empty():
-        return null
-    
-    # Calculate instructions for the given landing trajectory.
-    var calc_results: MovementCalcResults = landing_trajectories[0]
-    var land_position := calc_results.overall_calc_params.destination_position
-    var instructions := MovementInstructionsUtils \
-            .convert_calculation_steps_to_movement_instructions( \
-                    calc_results, \
-                    false, \
-                    land_position.surface.side)
-    var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
-            calc_results, \
-            instructions)
-    
-    var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
-    
-    return AirToSurfaceEdge.new( \
-            origin, \
-            land_position, \
-            velocity_start, \
-            velocity_end, \
-            collision_params.movement_params, \
-            instructions, \
-            trajectory)
-
 # Finds all possible landing trajectories from the given start state.
 static func find_landing_trajectories_to_any_surface( \
         collision_params: CollisionCalcParams, \
@@ -430,7 +369,3 @@ static func _get_surfaces_intersecting_polygon( \
                 surface.last_point, \
                 polygon):
             result_set[surface] = surface
-
-class SurfaceMaxYComparator:
-    static func sort(a: Surface, b: Surface) -> bool:
-        return a.bounding_box.position.y < b.bounding_box.position.y

@@ -13,6 +13,8 @@ var surface_type: int
 # Whether the movement along this edge transitions from grabbing a surface to being airborne.
 var enters_air: bool
 
+var calculator
+
 # Whether this edge was created by the navigator for a specific path at run-time, rather than ahead
 # of time when initially parsing the platform graph.
 var is_bespoke_for_path := false
@@ -45,6 +47,7 @@ func _init( \
         is_time_based: bool, \
         surface_type: int, \
         enters_air: bool, \
+        calculator, \
         start_position_along_surface: PositionAlongSurface, \
         end_position_along_surface: PositionAlongSurface, \
         velocity_start: Vector2, \
@@ -56,6 +59,7 @@ func _init( \
     self.is_time_based = is_time_based
     self.surface_type = surface_type
     self.enters_air = enters_air
+    self.calculator = calculator
     self.start_position_along_surface = start_position_along_surface
     self.end_position_along_surface = end_position_along_surface
     self.velocity_start = velocity_start

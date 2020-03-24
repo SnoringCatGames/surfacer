@@ -36,7 +36,10 @@ func _init() -> void:
 #    minimizes_velocity_change_when_jumping = true
     calculates_edges_with_velocity_start_x_max_speed = true
     calculates_edges_from_surface_ends_with_velocity_start_x_zero = false
-    optimizes_edge_jump_offs_at_run_time = true
+#    optimizes_edge_jump_positions_at_run_time = false
+    optimizes_edge_jump_positions_at_run_time = true
+#    optimizes_edge_land_positions_at_run_time = false
+    optimizes_edge_land_positions_at_run_time = true
     forces_player_position_to_match_edge_at_start = true
 #    forces_player_position_to_match_edge_at_start = false
     forces_player_velocity_to_match_edge_at_start = true
@@ -87,10 +90,10 @@ func _init() -> void:
     ]
     
     movement_calculator_names = [
-#        ClimbOverWallToFloorCalculator.NAME,
-#        FallFromWallCalculator.NAME,
-#        FallFromFloorCalculator.NAME,
+        ClimbOverWallToFloorCalculator.NAME,
+        FallFromWallCalculator.NAME,
+        FallFromFloorCalculator.NAME,
         JumpFromSurfaceToSurfaceCalculator.NAME,
-#        ClimbDownWallToFloorCalculator.NAME,
+        ClimbDownWallToFloorCalculator.NAME,
         WalkToAscendWallFromFloorCalculator.NAME,
     ]

@@ -17,6 +17,7 @@ var falls_on_left_side: bool
 var fall_off_position: PositionAlongSurface
 
 func _init( \
+        calculator, \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         velocity_start: Vector2, \
@@ -30,6 +31,7 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        calculator, \
         start, \
         end, \
         velocity_start, \

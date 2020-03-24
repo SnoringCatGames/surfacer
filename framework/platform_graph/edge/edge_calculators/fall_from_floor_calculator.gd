@@ -29,7 +29,8 @@ func get_all_edges_from_surface( \
                 edges_result, \
                 surfaces_in_fall_range_set, \
                 origin_surface, \
-                true)
+                true, \
+                null)
     
     if origin_surface.concave_clockwise_neighbor == null:
         # Calculating the fall-off state for the right edge of the floor.
@@ -38,14 +39,58 @@ func get_all_edges_from_surface( \
                 edges_result, \
                 surfaces_in_fall_range_set, \
                 origin_surface, \
-                false)
+                false, \
+                null)
 
-static func _get_all_edges_from_one_side( \
+func calculate_edge( \
+        collision_params: CollisionCalcParams, \
+        position_start: PositionAlongSurface, \
+        position_end: PositionAlongSurface, \
+        velocity_start := Vector2.INF, \
+        in_debug_mode := false) -> Edge:
+    var edges_result := []
+    var surfaces_in_fall_range_set := {}
+    var origin_surface := position_start.surface
+    var falls_on_left_side := position_start.target_point == origin_surface.first_point
+    
+    _get_all_edges_from_one_side( \
+            collision_params, \
+            edges_result, \
+            surfaces_in_fall_range_set, \
+            origin_surface, \
+            falls_on_left_side, \
+            position_end)
+    
+    if edges_result.size() > 0:
+        return edges_result[0]
+    else:
+        return null
+
+func optimize_edge_land_position_for_path( \
+        collision_params: CollisionCalcParams, \
+        path: PlatformGraphPath, \
+        edge_index: int, \
+        edge: Edge, \
+        next_edge: IntraSurfaceEdge, \
+        in_debug_mode: bool) -> void:
+    assert(edge is FallFromFloorEdge)
+    
+    EdgeMovementCalculator.optimize_edge_land_position_for_path_helper( \
+            collision_params, \
+            path, \
+            edge_index, \
+            edge, \
+            next_edge, \
+            in_debug_mode, \
+            self)
+
+func _get_all_edges_from_one_side( \
         collision_params: CollisionCalcParams, \
         edges_result: Array, \
         surfaces_in_fall_range_set: Dictionary, \
         origin_surface: Surface, \
-        falls_on_left_side: bool) -> void:
+        falls_on_left_side: bool, \
+        exclusive_land_position: PositionAlongSurface) -> void:
     var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
     var landing_surfaces_to_skip := {}
@@ -114,12 +159,24 @@ static func _get_all_edges_from_one_side( \
         
         fall_off_point_velocity_start = Vector2(velocity_x_fall_off, 0.0)
         
-        landing_trajectories = FallMovementUtils.find_landing_trajectories_to_any_surface( \
-                collision_params, \
-                surfaces_in_fall_range_set, \
-                position_fall_off_wrapper, \
-                fall_off_point_velocity_start, \
-                landing_surfaces_to_skip)
+        if exclusive_land_position != null:
+            var calc_results: MovementCalcResults = \
+                    FallMovementUtils.find_landing_trajectory_between_positions( \
+                            position_fall_off_wrapper, \
+                            exclusive_land_position, \
+                            fall_off_point_velocity_start, \
+                            collision_params)
+            if calc_results != null:
+                landing_trajectories = [calc_results]
+            else:
+                landing_trajectories = []
+        else:
+            landing_trajectories = FallMovementUtils.find_landing_trajectories_to_any_surface( \
+                    collision_params, \
+                    surfaces_in_fall_range_set, \
+                    position_fall_off_wrapper, \
+                    fall_off_point_velocity_start, \
+                    landing_surfaces_to_skip)
         
         for calc_results in landing_trajectories:
             position_end = calc_results.overall_calc_params.destination_position
@@ -147,6 +204,7 @@ static func _get_all_edges_from_one_side( \
             velocity_end = calc_results.horizontal_steps.back().velocity_step_end
             
             edge = FallFromFloorEdge.new( \
+                    self, \
                     position_start, \
                     position_end, \
                     fall_off_point_velocity_start, \

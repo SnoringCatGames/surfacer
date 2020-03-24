@@ -8,8 +8,9 @@ const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
 
 func _init( \
+        calculator, \
         start: PositionAlongSurface, \
-        end: Vector2, \
+        end: PositionAlongSurface, \
         velocity_start: Vector2, \
         velocity_end: Vector2, \
         movement_params: MovementParams, \
@@ -19,8 +20,9 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        calculator, \
         start, \
-        Edge.vector2_to_position_along_surface(end), \
+        end, \
         velocity_start, \
         velocity_end, \
         movement_params, \

@@ -20,6 +20,7 @@ func _init( \
         IS_TIME_BASED, \
         SurfaceType.get_type_from_side(start.surface.side), \
         ENTERS_AIR, \
+        null, \
         start, \
         end, \
         velocity_start, \

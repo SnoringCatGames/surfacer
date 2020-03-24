@@ -9,6 +9,7 @@ const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
 
 func _init( \
+        calculator, \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         velocity_start: Vector2, \
@@ -20,6 +21,7 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        calculator, \
         start, \
         end, \
         velocity_start, \

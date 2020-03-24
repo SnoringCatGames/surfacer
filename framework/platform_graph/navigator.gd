@@ -9,6 +9,7 @@ var global # TODO: Add type back
 var surface_state: PlayerSurfaceState
 var collision_params: CollisionCalcParams
 var instructions_action_source: InstructionsActionSource
+var air_to_surface_calculator: AirToSurfaceCalculator
 
 var is_currently_navigating := false
 var reached_destination := false
@@ -34,6 +35,7 @@ func _init( \
             player.movement_params, \
             graph.surface_parser)
     self.instructions_action_source = InstructionsActionSource.new(player, true)
+    self.air_to_surface_calculator = AirToSurfaceCalculator.new()
 
 # Starts a new navigation to the given destination.
 func navigate_to_nearby_surface(target: Vector2, \
@@ -53,13 +55,14 @@ func navigate_to_nearby_surface(target: Vector2, \
         var origin := PositionAlongSurface.new(surface_state.center_position_along_surface)
         path = graph.find_path(origin, destination)
     else:
-        var origin := surface_state.center_position
-        var air_to_surface_edge := FallMovementUtils.find_a_landing_trajectory( \
+        var origin := MovementUtils.create_position_without_surface(surface_state.center_position)
+        var air_to_surface_edge := air_to_surface_calculator.find_a_landing_trajectory( \
                 collision_params, \
                 graph.surfaces_set, \
                 origin, \
                 player.velocity, \
-                destination)
+                destination, \
+                null)
         if air_to_surface_edge != null:
             path = graph.find_path(air_to_surface_edge.end_position_along_surface, destination)
             if path != null:
@@ -220,57 +223,67 @@ static func _optimize_edges_for_approach( \
             collision_params.debug_state.limit_parsing.has("edge") != null
     ###############################################################################################
     
-    if movement_params.optimizes_edge_jump_offs_at_run_time:
-        # At runtime, after finding a path through build-time-calculated edges, try to optimize the
-        # jump-off points of the edges to better account for the direction that the player will be
-        # approaching the edge from. This produces more efficient and natural movement. The
-        # build-time-calculated edge state would only use surface end-points or closest points. We
-        # also take this opportunity to update start velocities to exactly match what is allowed
-        # from the ramp-up distance along the edge, rather than either the fixed zero or max-speed
-        # value used for the build-time-calculated edge state.
+    # At runtime, after finding a path through build-time-calculated edges, try to optimize the
+    # jump-off or land points of the edges to better account for the direction that the player will
+    # be approaching the edge from. This produces more efficient and natural movement. The
+    # build-time-calculated edge state would only use surface end-points or closest points. We also
+    # take this opportunity to update start velocities to exactly match what is allowed from the
+    # ramp-up distance along the edge, rather than either the fixed zero or max-speed value used
+    # for the build-time-calculated edge state.
+    
+    if movement_params.optimizes_edge_jump_positions_at_run_time:
+        # Optimize jump positions.
         
         var previous_edge: Edge
         var current_edge: Edge
-        var is_moving_from_intra_surface_to_jump: bool
-        var is_moving_from_intra_surface_to_fall_off_wall: bool
-        var is_edge_long_enough_to_be_worth_optimizing: bool
+        var is_previous_edge_long_enough_to_be_worth_optimizing_jump_position: bool
         var previous_velocity_end_x := velocity_start.x
         
         for i in range(1, path.edges.size()):
             previous_edge = path.edges[i - 1]
             current_edge = path.edges[i]
             
-            is_edge_long_enough_to_be_worth_optimizing = previous_edge.distance >= \
+            is_previous_edge_long_enough_to_be_worth_optimizing_jump_position = \
+                    previous_edge.distance >= \
                     movement_params.min_intra_surface_distance_to_optimize_jump_for
             
-            if is_edge_long_enough_to_be_worth_optimizing:
-                is_moving_from_intra_surface_to_jump = \
-                        previous_edge is IntraSurfaceEdge and \
-                        current_edge is JumpFromSurfaceToSurfaceEdge
-                is_moving_from_intra_surface_to_fall_off_wall = \
-                        previous_edge is IntraSurfaceEdge and \
-                        current_edge is FallFromWallEdge
-                
-                if is_moving_from_intra_surface_to_jump:
-                    JumpFromSurfaceToSurfaceCalculator.optimize_edge_for_approach( \
-                            collision_params, \
-                            path, \
-                            i, \
-                            previous_velocity_end_x, \
-                            previous_edge, \
-                            current_edge, \
-                            in_debug_mode)
-                elif is_moving_from_intra_surface_to_fall_off_wall:
-                    FallFromWallCalculator.optimize_edge_for_approach( \
-                            collision_params, \
-                            path, \
-                            i, \
-                            previous_velocity_end_x, \
-                            previous_edge, \
-                            current_edge, \
-                            in_debug_mode)
+            if is_previous_edge_long_enough_to_be_worth_optimizing_jump_position and \
+                    previous_edge is IntraSurfaceEdge:
+                current_edge.calculator.optimize_edge_jump_position_for_path( \
+                        collision_params, \
+                        path, \
+                        i, \
+                        previous_velocity_end_x, \
+                        previous_edge, \
+                        current_edge, \
+                        in_debug_mode)
             
             previous_velocity_end_x = previous_edge.velocity_end.x
+    
+    if movement_params.optimizes_edge_land_positions_at_run_time:
+        # Optimize land positions.
+        
+        var previous_edge: Edge
+        var current_edge: Edge
+        var is_current_edge_long_enough_to_be_worth_optimizing_land_position: bool
+        
+        for i in range(1, path.edges.size()):
+            previous_edge = path.edges[i - 1]
+            current_edge = path.edges[i]
+            
+            is_current_edge_long_enough_to_be_worth_optimizing_land_position = \
+                    current_edge.distance >= \
+                    movement_params.min_intra_surface_distance_to_optimize_jump_for
+            
+            if is_current_edge_long_enough_to_be_worth_optimizing_land_position and \
+                    current_edge is IntraSurfaceEdge:
+                previous_edge.calculator.optimize_edge_land_position_for_path( \
+                        collision_params, \
+                        path, \
+                        i - 1, \
+                        previous_edge, \
+                        current_edge, \
+                        in_debug_mode)
 
 # Inserts extra intra-surface between any edges that land and then immediately jump from the same
 # position, since the land position could be off due to movement error at runtime.

@@ -10,6 +10,8 @@ const ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH := 4.0
 const POSSIBLE_JUMP_LAND_POSITION_RADIUS := 3.0
 var POSSIBLE_JUMP_LAND_POSITION_COLOR := ORIGIN_SURFACE_SELECTION_COLOR
 
+var jump_from_surface_to_surface_calculator: JumpFromSurfaceToSurfaceCalculator
+
 var global
 
 var edge_attempt: MovementCalcOverallDebugState
@@ -23,6 +25,9 @@ var destination: PositionAlongSurface
 
 var previous_origin: PositionAlongSurface
 var previous_destination: PositionAlongSurface
+
+func _init() -> void:
+    self.jump_from_surface_to_surface_calculator = JumpFromSurfaceToSurfaceCalculator.new()
 
 func _ready() -> void:
     self.global = $"/root/Global"
@@ -144,7 +149,7 @@ func _calculate_edge_attempt() -> void:
     if overall_calc_params.origin_constraint.is_valid and \
             overall_calc_params.destination_constraint.is_valid:
         # Calculate the actual jump steps, collision, trajectory, and input state.
-        JumpFromSurfaceToSurfaceCalculator.create_edge_from_overall_params( \
+        jump_from_surface_to_surface_calculator.create_edge_from_overall_params( \
                 overall_calc_params, \
                 jump_position, \
                 land_position)

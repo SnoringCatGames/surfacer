@@ -29,6 +29,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/edges/air_to_air_edge.gd"
 }, {
+"base": "EdgeMovementCalculator",
+"class": "AirToSurfaceCalculator",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/edge_calculators/air_to_surface_calculator.gd"
+}, {
 "base": "Edge",
 "class": "AirToSurfaceEdge",
 "language": "GDScript",
@@ -629,6 +634,7 @@ _global_script_class_icons={
 "AirDefaultAction": "",
 "AirJumpAction": "",
 "AirToAirEdge": "",
+"AirToSurfaceCalculator": "",
 "AirToSurfaceEdge": "",
 "AllDefaultAction": "",
 "CameraController": "",
