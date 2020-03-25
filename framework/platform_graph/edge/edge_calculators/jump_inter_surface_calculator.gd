@@ -8,21 +8,29 @@ const NAME := "JumpInterSurfaceCalculator"
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Debug all the new jump/land optimization logic.
+# >>>- Start over with jump/land position pair calculations.
+#   - Given only three params: movement_params, and two surfaces (refactor callsites to provide a temp dummy surface for the one, when needed).
+#   - Create a new data structure for the return values:
+#     - class_name PossibleJumpPositionLandPositionAndStartVelocity
+#     - Return an array of them, sorted by best-to-use.
+#   - Then I can be more intelligent with exactly which jump points pair better with which land points.
+#   - From the callsites, I'll then need to be more intelligent about when to abandon other jump/land pair attempts after finding an earlier one.
+#     - Base this purely off of distance to any previous successful edge result.
+#     - Look at both the distance between jump points and land points to all previous results.
+#     - Make configurable this minimum acceptable distance between additional edges between the same surface pair.
 # 
 # - Consider even more cases to return from get_all_jump_land_positions_for_surface:
 #   - Rather than just considering which side of center, consider which side of bounding-box ends?
 #     - Example, we should have edges leading off both sides of the starting floor to the wide under floor?
-#       - But then, single-edge-short-circuiting would probably prevent the other side from being used anyway...
-#       - Alternatively, could there be some trickery with run-time edge optimizations that would make this work?
 # 
 # - Add a couple additional things to configure in MovementParams:
 #   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
 #   - Whether to backtrack to consider higher jumps.
 #   - Whether to return only the first valid edge between a pair of surfaces, or to return all valid edges.
 #     - Rather, break this down:
-#       - All jump/land pairs (get_all_jump_land_positions_for_surface)
-#       - All start velocities
+#       - All jump/land pairs (get_all_jump_land_positions_for_surface): calculate_edges_for_all_jump_land_points
+#         - Add comment: If true this will execute edge calculation for every possible jump/land position pair. If false, this will quit early as soon as a single edge is found for a given pair of surfaces. Note: <the other new distance param> overrides this slightly; if it's true, then we will try to calculate valid edges for other jump/land points in a given surface pair as long as either the jump or land point is far enough away from the jump/land point of any previous edge between this surface pair.
+#       - All start velocities: calculate_edges_for_all_start_velocities
 #   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
 #     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
 #   - How much radius to use for collision calculations.
@@ -42,6 +50,8 @@ const NAME := "JumpInterSurfaceCalculator"
 #   - Start with a big list of all cases to test.
 #   - Then plan what sort of helpers and testbed infrastructure we'll need.
 #   - Then decide what makes sense to preserve from the earlier, brittle, implementation-specific tests.
+# 
+# - Debug all the new jump/land optimization logic.
 # 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
@@ -276,7 +286,7 @@ func get_all_inter_surface_edges_from_surface( \
             # We don't need to calculate edges for the degenerate case.
             continue
         
-        jump_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
+            jump_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
                 movement_params, \
                 origin_surface, \
                 destination_surface.vertices, \
@@ -284,7 +294,7 @@ func get_all_inter_surface_edges_from_surface( \
                 destination_surface.side, \
                 movement_params.jump_boost, \
                 true)
-        land_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
+                land_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
                 movement_params, \
                 destination_surface, \
                 origin_surface.vertices, \
