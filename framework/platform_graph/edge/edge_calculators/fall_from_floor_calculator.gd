@@ -16,7 +16,7 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
             (surface.concave_counter_clockwise_neighbor == null or \
             surface.concave_clockwise_neighbor == null)
 
-func get_all_edges_from_surface( \
+func get_all_inter_surface_edges_from_surface( \
         collision_params: CollisionCalcParams, \
         edges_result: Array, \
         surfaces_in_fall_range_set: Dictionary, \
@@ -114,22 +114,24 @@ func _get_all_edges_from_one_side( \
     ###################################################################################
     
     var position_fall_off := _calculate_player_center_at_fall_off_point( \
-    edge_point, \
+            edge_point, \
             falls_on_left_side, \
             movement_params.collider_shape, \
             movement_params.collider_rotation)
     
     var position_fall_off_wrapper := MovementUtils.create_position_from_target_point( \
-            position_fall_off, origin_surface, movement_params.collider_half_width_height)
+            position_fall_off, \
+            origin_surface, \
+            movement_params.collider_half_width_height)
     
     var displacement_from_start_to_fall_off := position_fall_off - position_start.target_point
     
     var acceleration := -movement_params.walk_acceleration if falls_on_left_side else \
             movement_params.walk_acceleration
     
-    var surface_end_velocity_starts := \
-            JumpFromSurfaceToSurfaceCalculator.get_jump_velocity_starts( \
-                    movement_params, origin_surface, position_start)
+    var surface_end_velocity_starts := JumpInterSurfaceCalculator.get_jump_velocity_starts( \
+            movement_params, \
+            position_start)
     
     var velocity_x_start: float
     var velocity_x_fall_off: float

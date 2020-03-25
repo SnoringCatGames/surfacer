@@ -17,7 +17,7 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
             (surface.side == SurfaceSide.RIGHT_WALL and \
                     surface.concave_counter_clockwise_neighbor != null))
 
-func get_all_edges_from_surface( \
+func get_all_inter_surface_edges_from_surface( \
         collision_params: CollisionCalcParams, \
         edges_result: Array, \
         surfaces_in_fall_range_set: Dictionary, \

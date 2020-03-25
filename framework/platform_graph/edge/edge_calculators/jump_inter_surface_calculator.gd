@@ -1,14 +1,12 @@
 extends EdgeMovementCalculator
-class_name JumpFromSurfaceToSurfaceCalculator
+class_name JumpInterSurfaceCalculator
 
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
 
-const NAME := "JumpFromSurfaceToSurfaceCalculator"
+const NAME := "JumpInterSurfaceCalculator"
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-# 
-# - Pull-out SurfaceToAirEdge instantiation into its own separate calculator file.
 # 
 # - Debug all the new jump/land optimization logic.
 # 
@@ -28,6 +26,22 @@ const NAME := "JumpFromSurfaceToSurfaceCalculator"
 #   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
 #     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
 #   - How much radius to use for collision calculations.
+# 
+# - Tests!
+#   - Add Gut and tests back (find and revert the CL that removed them).
+#   - Add a bunch of very simple test levels, with just two latforms each, and the two in various alignments from each other.
+#   - Test simple high-level things like:
+#     - One edge from here to here
+#     - Edge was long enough
+#     - Had right number of constraints
+#     - Had at least the right height
+#     - PlatformGraph chose a path of the correct edges
+#     - Jump/land position calculations return the right positions
+#     - Which other helper/utility functions to unit test in isolation...
+#   - Test run-time edge optimizations.
+#   - Start with a big list of all cases to test.
+#   - Then plan what sort of helpers and testbed infrastructure we'll need.
+#   - Then decide what makes sense to preserve from the earlier, brittle, implementation-specific tests.
 # 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
@@ -239,7 +253,7 @@ func _init().(NAME) -> void:
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null
 
-func get_all_edges_from_surface( \
+func get_all_inter_surface_edges_from_surface( \
         collision_params: CollisionCalcParams, \
         edges_result: Array, \
         surfaces_in_fall_range_set: Dictionary, \
@@ -251,7 +265,7 @@ func get_all_edges_from_surface( \
     var jump_positions: Array
     var land_positions: Array
     var velocity_starts: Array
-    var edge: JumpFromSurfaceToSurfaceEdge
+    var edge: JumpInterSurfaceEdge
     
     for destination_surface in surfaces_in_jump_range_set:
         # This makes the assumption that traversing through any fall-through/walk-through surface
@@ -295,11 +309,9 @@ func get_all_edges_from_surface( \
                         debug_state.limit_parsing.has("edge") != null
                 ###################################################################################
                 
-                velocity_starts = get_jump_velocity_starts( \
+                velocity_starts = get_velocity_starts( \
                         movement_params, \
-                        origin_surface, \
                         jump_position)
-                
                 
                 for velocity_start in velocity_starts:
                     edge = calculate_edge( \
@@ -355,134 +367,17 @@ func optimize_edge_jump_position_for_path( \
         previous_edge: IntraSurfaceEdge, \
         edge: Edge, \
         in_debug_mode: bool) -> void:
-    assert(edge is JumpFromSurfaceToSurfaceEdge or edge is SurfaceToAirEdge)
+    assert(edge is JumpInterSurfaceEdge)
     
-    # TODO: Refactor this to use a true binary search. Right now it is similar, but we never
-    #       move backward once we find a working jump.
-    var jump_ratios := [0.0, 0.5, 0.75, 0.875]
-    
-    var movement_params := collision_params.movement_params
-    
-    var previous_edge_displacement := previous_edge.end - previous_edge.start
-    
-    var is_horizontal_surface := \
-            previous_edge.start_surface != null and \
-            (previous_edge.start_surface.side == SurfaceSide.FLOOR or \
-            previous_edge.start_surface.side == SurfaceSide.CEILING)
-    
-    if is_horizontal_surface:
-        # Jumping from a floor or ceiling.
-        
-        var is_already_exceeding_max_speed_toward_displacement := \
-                (previous_edge_displacement.x >= 0.0 and previous_velocity_end_x > \
-                        movement_params.max_horizontal_speed_default) or \
-                (previous_edge_displacement.x <= 0.0 and previous_velocity_end_x < \
-                        -movement_params.max_horizontal_speed_default)
-        
-        var acceleration_x := movement_params.walk_acceleration if \
-                previous_edge_displacement.x >= 0.0 else \
-                -movement_params.walk_acceleration
-        
-        var jump_position: PositionAlongSurface
-        var optimized_edge: Edge
-        
-        for i in range(jump_ratios.size()):
-            if jump_ratios[i] == 0.0:
-                jump_position = previous_edge.start_position_along_surface
-            else:
-                jump_position = MovementUtils.create_position_offset_from_target_point( \
-                        Vector2(previous_edge.start.x + \
-                                previous_edge_displacement.x * jump_ratios[i], 0.0), \
-                        previous_edge.start_surface, \
-                        movement_params.collider_half_width_height)
-            
-            # Calculate the start velocity to use according to the available ramp-up
-            # distance and max speed.
-            var velocity_start_x: float = MovementUtils.calculate_velocity_end_for_displacement( \
-                    jump_position.target_point.x - previous_edge.start.x, \
-                    previous_velocity_end_x, \
-                    acceleration_x, \
-                    movement_params.max_horizontal_speed_default)
-            var velocity_start_y := movement_params.jump_boost
-            var velocity_start = Vector2(velocity_start_x, velocity_start_y)
-            
-            if edge is JumpFromSurfaceToSurfaceEdge:
-                optimized_edge = calculate_edge( \
-                        collision_params, \
-                        jump_position, \
-                        edge.end_position_along_surface, \
-                        velocity_start, \
-                        in_debug_mode)
-            else: # edge is SurfaceToAirEdge
-                optimized_edge = get_edge_to_air_helper( \
-                        collision_params, \
-                        jump_position, \
-                        edge.end_position_along_surface, \
-                        velocity_start)
-            
-            if optimized_edge != null:
-                optimized_edge.is_bespoke_for_path = true
-                
-                previous_edge = IntraSurfaceEdge.new( \
-                        previous_edge.start_position_along_surface, \
-                        jump_position, \
-                        Vector2(previous_velocity_end_x, 0.0), \
-                        movement_params)
-                
-                path.edges[edge_index - 1] = previous_edge
-                path.edges[edge_index] = optimized_edge
-                
-                return
-        
-    else:
-        # Jumping from a wall.
-        
-        var jump_position: PositionAlongSurface
-        var velocity_start: Vector2
-        var optimized_edge: Edge
-        
-        for i in range(jump_ratios.size()):
-            if jump_ratios[i] == 0.0:
-                jump_position = previous_edge.start_position_along_surface
-            else:
-                jump_position = MovementUtils.create_position_offset_from_target_point( \
-                        Vector2(0.0, previous_edge.start.y + \
-                                previous_edge_displacement.y * jump_ratios[i]), \
-                        previous_edge.start_surface, \
-                        movement_params.collider_half_width_height)
-            
-            velocity_start = get_jump_velocity_starts( \
-                    movement_params, \
-                    jump_position.surface, \
-                    jump_position)[0]
-            
-            if edge is JumpFromSurfaceToSurfaceEdge:
-                optimized_edge = calculate_edge( \
-                        collision_params, \
-                        jump_position, \
-                        edge.end_position_along_surface, \
-                        velocity_start, \
-                        in_debug_mode)
-            else: # edge is SurfaceToAirEdge
-                optimized_edge = get_edge_to_air_helper( \
-                        collision_params, \
-                        jump_position, \
-                        edge.end_position_along_surface, \
-                        velocity_start)
-            
-            if optimized_edge != null:
-                optimized_edge.is_bespoke_for_path = true
-                
-                previous_edge = IntraSurfaceEdge.new( \
-                        previous_edge.start_position_along_surface, \
-                        jump_position, \
-                        Vector2.ZERO, \
-                        movement_params)
-                
-                path.edges[edge_index - 1] = previous_edge
-                path.edges[edge_index] = optimized_edge
-                
-                return
+    EdgeMovementCalculator.optimize_edge_jump_position_for_path_helper( \
+            collision_params, \
+            path, \
+            edge_index, \
+            previous_velocity_end_x, \
+            previous_edge, \
+            edge, \
+            in_debug_mode, \
+            self)
 
 func optimize_edge_land_position_for_path( \
         collision_params: CollisionCalcParams, \
@@ -491,7 +386,7 @@ func optimize_edge_land_position_for_path( \
         edge: Edge, \
         next_edge: IntraSurfaceEdge, \
         in_debug_mode: bool) -> void:
-    assert(edge is JumpFromSurfaceToSurfaceEdge)
+    assert(edge is JumpInterSurfaceEdge)
     
     EdgeMovementCalculator.optimize_edge_land_position_for_path_helper( \
             collision_params, \
@@ -502,72 +397,10 @@ func optimize_edge_land_position_for_path( \
             in_debug_mode, \
             self)
 
-# FIXME: LEFT OFF HERE: Move this into its own separate calculator file.
-func get_edge_to_air( \
-        collision_params: CollisionCalcParams, \
-        position_start: PositionAlongSurface, \
-        position_end: Vector2) -> SurfaceToAirEdge:
-    var velocity_start: Vector2 = get_jump_velocity_starts( \
-            collision_params.movement_params, \
-            position_start.surface, \
-            position_start)[0]
-    var position_end_wrapper := MovementUtils.create_position_without_surface(position_end)
-    return get_edge_to_air_helper( \
-            collision_params, \
-            position_start, \
-            position_end_wrapper, \
-            velocity_start)
-
-func get_edge_to_air_helper( \
-        collision_params: CollisionCalcParams, \
-        position_start: PositionAlongSurface, \
-        position_end: PositionAlongSurface, \
-        velocity_start: Vector2) -> SurfaceToAirEdge:
-    var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
-            collision_params, \
-            position_start, \
-            position_end, \
-            true, \
-            velocity_start, \
-            false, \
-            false)
-    if overall_calc_params == null:
-        return null
-    
-    var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
-            overall_calc_params, \
-            null, \
-            null)
-    if calc_results == null:
-        return null
-    
-    var instructions := \
-            MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                    calc_results, \
-                    true, \
-                    SurfaceSide.NONE)
-    var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
-            calc_results, \
-            instructions)
-    
-    var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
-    
-    var edge := SurfaceToAirEdge.new( \
-            self, \
-            position_start, \
-            position_end, \
-            velocity_start, \
-            velocity_end, \
-            collision_params.movement_params, \
-            instructions, \
-            trajectory)
-    
-    return edge
-
 func create_edge_from_overall_params( \
         overall_calc_params: MovementCalcOverallParams, \
         origin_position: PositionAlongSurface, \
-        destination_position: PositionAlongSurface) -> JumpFromSurfaceToSurfaceEdge:
+        destination_position: PositionAlongSurface) -> JumpInterSurfaceEdge:
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
             overall_calc_params, \
             null, \
@@ -586,7 +419,7 @@ func create_edge_from_overall_params( \
     
     var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
     
-    var edge := JumpFromSurfaceToSurfaceEdge.new( \
+    var edge := JumpInterSurfaceEdge.new( \
             self, \
             origin_position, \
             destination_position, \
@@ -598,10 +431,17 @@ func create_edge_from_overall_params( \
     
     return edge
 
+func get_velocity_starts( \
+        movement_params: MovementParams, \
+        jump_position: PositionAlongSurface) -> Array:
+    return get_jump_velocity_starts( \
+            movement_params, \
+            jump_position)
+
 static func get_jump_velocity_starts( \
         movement_params: MovementParams, \
-        origin_surface: Surface, \
         jump_position: PositionAlongSurface) -> Array:
+    var origin_surface := jump_position.surface
     var velocity_starts := []
     
     match origin_surface.side:

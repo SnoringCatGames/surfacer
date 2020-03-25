@@ -72,7 +72,7 @@ func _init() -> void:
         ClimbOverWallToFloorCalculator.NAME,
         FallFromWallCalculator.NAME,
         FallFromFloorCalculator.NAME,
-        JumpFromSurfaceToSurfaceCalculator.NAME,
+        JumpInterSurfaceCalculator.NAME,
         ClimbDownWallToFloorCalculator.NAME,
         WalkToAscendWallFromFloorCalculator.NAME,
     ]

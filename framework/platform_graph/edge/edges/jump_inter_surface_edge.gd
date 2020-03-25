@@ -1,9 +1,9 @@
 # Information for how to move through the air from a start (jump) position on one surface to an
 # end (landing) position on another surface.
 extends Edge
-class_name JumpFromSurfaceToSurfaceEdge
+class_name JumpInterSurfaceEdge
 
-const NAME := "JumpFromSurfaceToSurfaceEdge"
+const NAME := "JumpInterSurfaceEdge"
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true

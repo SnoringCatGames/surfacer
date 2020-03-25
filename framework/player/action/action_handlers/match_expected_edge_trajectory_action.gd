@@ -20,7 +20,7 @@ func process(player: Player) -> bool:
             current_edge is AirToSurfaceEdge or \
             current_edge is FallFromFloorEdge or \
             current_edge is FallFromWallEdge or \
-            current_edge is JumpFromSurfaceToSurfaceEdge or \
+            current_edge is JumpInterSurfaceEdge or \
             current_edge is SurfaceToAirEdge:
         var playback_elapsed_time: float = \
                 player.global.elapsed_play_time_sec - player.navigator.current_playback.start_time        

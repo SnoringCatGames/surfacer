@@ -11,13 +11,14 @@ func _init().(NAME) -> void:
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface == null
 
-func get_all_edges_from_surface( \
+func get_all_inter_surface_edges_from_surface( \
         collision_params: CollisionCalcParams, \
         edges_result: Array, \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
-    Utils.error("AirToSurfaceCalculator.get_all_edges_from_surface should not be called")
+    Utils.error( \
+            "AirToSurfaceCalculator.get_all_inter_surface_edges_from_surface should not be called")
 
 func calculate_edge( \
         collision_params: CollisionCalcParams, \

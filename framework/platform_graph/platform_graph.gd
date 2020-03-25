@@ -12,7 +12,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
 #
-# - Finish everything in JumpFromSurfaceToSurfaceCalculator (edge calculations, including movement constraints from interfering surfaces)
+# - Finish everything in JumpInterSurfaceCalculator (edge calculations, including movement constraints from interfering surfaces)
 # - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
 #
 # - Use max_horizontal_jump_distance and max_upward_jump_distance
@@ -58,7 +58,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #     - A level that could be either simple or complicated.
 #     - We should be able to configure from the test the specific starting and ending surface and
 #       position to check.
-#       - This should then cause the PlatformGraph parsing and get_all_edges_from_surface parsing
+#       - This should then cause the PlatformGraph parsing and get_all_inter_surface_edges_from_surface parsing
 #         to skip all other surfaces and jump/land positions.
 #     - We should use the above configuration to target specific interesting edge use-cases.
 #       - Skipping constraints
@@ -84,7 +84,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #         margin considers the other surfaces as already colliding beforehand.
 #
 # - Refactor Movement classes, so that whether the start and end posiition is on a platform
-#   or in the air is configuration that JumpFromSurfaceToSurfaceCalculator handles directly, rather than
+#   or in the air is configuration that JumpInterSurfaceCalculator handles directly, rather than
 #   relying on a separate FallFromAir class?
 # - Add support for including walls in our navigation.
 # - Add support for other jump aspects:
@@ -614,7 +614,7 @@ func _calculate_nodes_and_edges( \
                         MovementTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 
                 # Calculate the inter-surface edges.
-                movement_calculator.get_all_edges_from_surface( \
+                movement_calculator.get_all_inter_surface_edges_from_surface( \
                         collision_params, \
                         edges, \
                         surfaces_in_fall_range_set, \
