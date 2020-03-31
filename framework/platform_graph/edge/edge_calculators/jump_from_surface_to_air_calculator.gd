@@ -1,9 +1,9 @@
 extends EdgeMovementCalculator
-class_name SurfaceToAirCalculator
+class_name JumpFromSurfaceToAirCalculator
 
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
 
-const NAME := "SurfaceToAirCalculator"
+const NAME := "JumpFromSurfaceToAirCalculator"
 const IS_A_JUMP_CALCULATOR := true
 
 func _init().( \
@@ -20,8 +20,8 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
-    Utils.error( \
-            "SurfaceToAirCalculator.get_all_inter_surface_edges_from_surface should not be called")
+    Utils.error("JumpFromSurfaceToAirCalculator.get_all_inter_surface_edges_from_surface " + \
+            "should not be called")
 
 func calculate_edge( \
         collision_params: CollisionCalcParams, \
@@ -66,7 +66,7 @@ func calculate_edge( \
     
     var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
     
-    var edge := SurfaceToAirEdge.new( \
+    var edge := JumpFromSurfaceToAirEdge.new( \
             self, \
             position_start, \
             position_end, \
@@ -86,7 +86,7 @@ func optimize_edge_jump_position_for_path( \
         previous_edge: IntraSurfaceEdge, \
         edge: Edge, \
         in_debug_mode: bool) -> void:
-    assert(edge is SurfaceToAirEdge)
+    assert(edge is JumpFromSurfaceToAirEdge)
     
     EdgeMovementCalculator.optimize_edge_jump_position_for_path_helper( \
             collision_params, \

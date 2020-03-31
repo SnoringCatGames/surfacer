@@ -543,7 +543,7 @@ static func draw_edge( \
             edge is AirToSurfaceEdge or \
             edge is FallFromWallEdge or \
             edge is JumpInterSurfaceEdge or \
-            edge is SurfaceToAirEdge:
+            edge is JumpFromSurfaceToAirEdge:
         _draw_edge_from_instructions_positions( \
                 canvas, \
                 edge, \

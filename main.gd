@@ -28,7 +28,7 @@ const EDGE_MOVEMENT_CLASSES := [
     preload("res://framework/platform_graph/edge/edge_calculators/fall_from_floor_calculator.gd"),
     preload("res://framework/platform_graph/edge/edge_calculators/fall_from_wall_calculator.gd"),
     preload("res://framework/platform_graph/edge/edge_calculators/jump_inter_surface_calculator.gd"),
-    preload("res://framework/platform_graph/edge/edge_calculators/surface_to_air_calculator.gd"),
+    preload("res://framework/platform_graph/edge/edge_calculators/jump_from_surface_to_air_calculator.gd"),
     preload("res://framework/platform_graph/edge/edge_calculators/walk_to_ascend_wall_from_floor_calculator.gd"),
 ]
 

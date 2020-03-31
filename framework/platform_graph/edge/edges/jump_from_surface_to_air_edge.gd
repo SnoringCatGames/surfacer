@@ -1,8 +1,8 @@
 # Information for how to move from a surface to a position in the air.
 extends Edge
-class_name SurfaceToAirEdge
+class_name JumpFromSurfaceToAirEdge
 
-const NAME := "SurfaceToAirEdge"
+const NAME := "JumpFromSurfaceToAirEdge"
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true

@@ -9,7 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Rename SurfaceToAir(Edge|Calculator) to JumpSurfaceToAir*.
 # - Implement logic to handle null jump/land surfaces in
 #   calculate_jump_land_positions_for_surface_pair (which will happen for the
 #   fall-from-air/jump-to-air use cases).
