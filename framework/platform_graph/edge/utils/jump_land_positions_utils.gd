@@ -14,7 +14,6 @@ const EDGE_MOVEMENT_HORIZONTAL_DISTANCE_SUBTRACT_PLAYER_WIDTH_RATIO := 0.6
 #     - This closest position, but with a slight offset to account for the width of the player.
 #     - This closest position, but with an additional offset to account for horizontal movement
 #       with minimum jump time and maximum horizontal velocity.
-#   - TODO: Add this case: 
 #     - The closest interior position along the surface to the closest interior position along the
 #       other surface.
 # - Points are only included if they are distinct.
@@ -154,13 +153,23 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     
                     var is_jump_surface_lower := \
                             jump_surface_center.y > land_surface_center.y
+                    var is_jump_surface_more_to_the_left := \
+                            jump_surface_center.x < land_surface_center.x
                     
                     var left_end_displacement_x := \
                             land_surface_left_bound - jump_surface_left_bound
                     var right_end_displacement_x := \
                             land_surface_right_bound - jump_surface_right_bound
                     
-                    for is_considering_left_end in [true, false]:
+                    # We want to first consider the end that will more likely give us better edge
+                    # results.
+                    var traversal_order_for_considering_left_end := \
+                            [true, false] if \
+                            is_jump_surface_lower and is_jump_surface_more_to_the_left or \
+                            !is_jump_surface_lower and !is_jump_surface_more_to_the_left else \
+                            [false, true]
+                    
+                    for is_considering_left_end in traversal_order_for_considering_left_end:
                         # - We assume start-velocity will be directed either from left-end to
                         #   left-end or from right-end to right-end, without passing across the
                         #   other end of the jump surface.
@@ -574,7 +583,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
             pass
             
         SurfaceSide.CEILING:
-            # FIXME: ------------
+            # TODO: Handle jump-from-ceiling use-cases.
             pass
             
         _:
