@@ -4,33 +4,32 @@ class_name JumpInterSurfaceCalculator
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
 
 const NAME := "JumpInterSurfaceCalculator"
+const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# >>>- Start over with jump/land position pair calculations.
-#   - Given only three params: movement_params, and two surfaces (refactor callsites to provide a temp dummy surface for the one, when needed).
-#   - Create a new data structure for the return values:
-#     - class_name PossibleJumpPositionLandPositionAndStartVelocity
-#     - Return an array of them, sorted by best-to-use.
-#   - Then I can be more intelligent with exactly which jump points pair better with which land points.
-#   - From the callsites, I'll then need to be more intelligent about when to abandon other jump/land pair attempts after finding an earlier one.
-#     - Base this purely off of distance to any previous successful edge result.
-#     - Look at both the distance between jump points and land points to all previous results.
-#     - Make configurable this minimum acceptable distance between additional edges between the same surface pair.
-# 
-# - Consider even more cases to return from get_all_jump_land_positions_for_surface:
-#   - Rather than just considering which side of center, consider which side of bounding-box ends?
-#     - Example, we should have edges leading off both sides of the starting floor to the wide under floor?
+# - Rename SurfaceToAir(Edge|Calculator) to JumpSurfaceToAir*.
+# - Implement logic to handle null jump/land surfaces in
+#   calculate_jump_land_positions_for_surface_pair (which will happen for the
+#   fall-from-air/jump-to-air use cases).
+# - Implement movement_param flag to conditionally not consider the old four-dumb-end-point
+#   calculation at the end of calculate_jump_land_positions_for_surface_pair.
+# - Debug performance with how many jump/land pairs get returned, and how costly the new extra
+#   previous-jump/land-position-distance checks are.
+# - Implement remaining cases in calculate_jump_land_positions_for_surface_pair:
+#   - Handle remaining floor jump-surface cases.
+#   - Handle wall jump-surface cases.
+#   - Handle ceiling jump-surface cases.
+#   - Handle forced_jump_position, forced_land_position, forced_velocity_start.
 # 
 # - Add a couple additional things to configure in MovementParams:
 #   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
 #   - Whether to backtrack to consider higher jumps.
 #   - Whether to return only the first valid edge between a pair of surfaces, or to return all valid edges.
 #     - Rather, break this down:
-#       - All jump/land pairs (get_all_jump_land_positions_for_surface): calculate_edges_for_all_jump_land_points
+#       - All jump/land pairs (get_all_jump_land_positions_for_surface): calculates_edges_for_all_jump_land_points
 #         - Add comment: If true this will execute edge calculation for every possible jump/land position pair. If false, this will quit early as soon as a single edge is found for a given pair of surfaces. Note: <the other new distance param> overrides this slightly; if it's true, then we will try to calculate valid edges for other jump/land points in a given surface pair as long as either the jump or land point is far enough away from the jump/land point of any previous edge between this surface pair.
-#       - All start velocities: calculate_edges_for_all_start_velocities
 #   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
 #     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
 #   - How much radius to use for collision calculations.
@@ -257,7 +256,9 @@ const NAME := "JumpInterSurfaceCalculator"
 
 
 
-func _init().(NAME) -> void:
+func _init().( \
+        NAME, \
+        IS_A_JUMP_CALCULATOR) -> void:
     pass
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
@@ -272,9 +273,10 @@ func get_all_inter_surface_edges_from_surface( \
     var movement_params := collision_params.movement_params
     var debug_state := collision_params.debug_state
     
+    var jump_land_position_results_for_destination_surface := []
+    var jump_land_positions_to_consider: Array
     var jump_positions: Array
     var land_positions: Array
-    var velocity_starts: Array
     var edge: JumpInterSurfaceEdge
     
     for destination_surface in surfaces_in_jump_range_set:
@@ -286,66 +288,52 @@ func get_all_inter_surface_edges_from_surface( \
             # We don't need to calculate edges for the degenerate case.
             continue
         
-            jump_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
-                movement_params, \
-                origin_surface, \
-                destination_surface.vertices, \
-                destination_surface.bounding_box, \
-                destination_surface.side, \
-                movement_params.jump_boost, \
-                true)
-                land_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
-                movement_params, \
-                destination_surface, \
-                origin_surface.vertices, \
-                origin_surface.bounding_box, \
-                origin_surface.side, \
-                movement_params.jump_boost, \
-                false)
+        jump_land_position_results_for_destination_surface.clear()
         
-        for jump_position in jump_positions:
-            for land_position in land_positions:
-                ###################################################################################
-                # Allow for debug mode to limit the scope of what's calculated.
-                if EdgeMovementCalculator.should_skip_edge_calculation( \
-                        debug_state, \
-                        jump_position, \
-                        land_position):
-                    continue
-                
-                # Record some extra debug state when we're limiting calculations to a single edge.
-                var in_debug_mode: bool = debug_state.in_debug_mode and \
-                        debug_state.has("limit_parsing") and \
-                        debug_state.limit_parsing.has("edge") != null
-                ###################################################################################
-                
-                velocity_starts = get_velocity_starts( \
+        jump_land_positions_to_consider = \
+                JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                         movement_params, \
-                        jump_position)
-                
-                for velocity_start in velocity_starts:
-                    edge = calculate_edge( \
-                            collision_params, \
-                            jump_position, \
-                            land_position, \
-                            velocity_start, \
-                            in_debug_mode)
-                    
-                    if edge != null:
-                        # Can reach land position from jump position.
-                        edges_result.push_back(edge)
-                        
-                        # For efficiency, only compute one edge per surface pair.
-                        break
-                
-                if edge != null:
-                    # For efficiency, only compute one edge per surface pair.
-                    break
+                        origin_surface, \
+                        destination_surface, \
+                        true, \
+                        self.is_a_jump_calculator)
+        
+        for jump_land_positions in jump_land_positions_to_consider:
+            #######################################################################################
+            # Allow for debug mode to limit the scope of what's calculated.
+            if EdgeMovementCalculator.should_skip_edge_calculation( \
+                    debug_state, \
+                    jump_land_positions.jump_position, \
+                    jump_land_positions.land_position):
+                continue
+            
+            # Record some extra debug state when we're limiting calculations to a single edge.
+            var in_debug_mode: bool = debug_state.in_debug_mode and \
+                    debug_state.has("limit_parsing") and \
+                    debug_state.limit_parsing.has("edge") != null
+            #######################################################################################
+            
+            if !jump_land_positions.is_far_enough_from_other_jump_land_positions( \
+                    movement_params, \
+                    jump_land_position_results_for_destination_surface, \
+                    true, \
+                    true):
+                # We've already found a valid edge with a land position that's close enough to this
+                # land position.
+                continue
+            
+            edge = calculate_edge( \
+                    collision_params, \
+                    jump_land_positions.jump_position, \
+                    jump_land_positions.land_position, \
+                    jump_land_positions.velocity_start, \
+                    in_debug_mode)
             
             if edge != null:
-                # For efficiency, only compute one edge per surface pair.
+                # Can reach land position from jump position.
+                edges_result.push_back(edge)
                 edge = null
-                break
+                jump_land_position_results_for_destination_surface.push_back(jump_land_positions)
 
 func calculate_edge( \
         collision_params: CollisionCalcParams, \
@@ -364,10 +352,7 @@ func calculate_edge( \
     if overall_calc_params == null:
         return null
     
-    return create_edge_from_overall_params( \
-            overall_calc_params, \
-            position_start, \
-            position_end)
+    return create_edge_from_overall_params(overall_calc_params)
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \
@@ -408,9 +393,7 @@ func optimize_edge_land_position_for_path( \
             self)
 
 func create_edge_from_overall_params( \
-        overall_calc_params: MovementCalcOverallParams, \
-        origin_position: PositionAlongSurface, \
-        destination_position: PositionAlongSurface) -> JumpInterSurfaceEdge:
+        overall_calc_params: MovementCalcOverallParams) -> JumpInterSurfaceEdge:
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
             overall_calc_params, \
             null, \
@@ -422,7 +405,7 @@ func create_edge_from_overall_params( \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                     calc_results, \
                     true, \
-                    destination_position.surface.side)
+                    overall_calc_params.destination_position.surface.side)
     var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
             calc_results, \
             instructions)
@@ -431,8 +414,8 @@ func create_edge_from_overall_params( \
     
     var edge := JumpInterSurfaceEdge.new( \
             self, \
-            origin_position, \
-            destination_position, \
+            overall_calc_params.origin_position, \
+            overall_calc_params.destination_position, \
             overall_calc_params.velocity_start, \
             velocity_end, \
             overall_calc_params.movement_params, \
@@ -440,59 +423,3 @@ func create_edge_from_overall_params( \
             trajectory)
     
     return edge
-
-func get_velocity_starts( \
-        movement_params: MovementParams, \
-        jump_position: PositionAlongSurface) -> Array:
-    return get_jump_velocity_starts( \
-            movement_params, \
-            jump_position)
-
-static func get_jump_velocity_starts( \
-        movement_params: MovementParams, \
-        jump_position: PositionAlongSurface) -> Array:
-    var origin_surface := jump_position.surface
-    var velocity_starts := []
-    
-    match origin_surface.side:
-        SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
-            # Initial velocity when jumping from a wall is slightly outward from the wall.
-            var velocity_start_x := movement_params.wall_jump_horizontal_boost if \
-                    origin_surface.side == SurfaceSide.LEFT_WALL else \
-                    -movement_params.wall_jump_horizontal_boost
-            velocity_starts.push_back(Vector2(velocity_start_x, movement_params.jump_boost))
-            
-        SurfaceSide.FLOOR, SurfaceSide.CEILING:
-            var can_reach_half_max_speed := origin_surface.bounding_box.size.x > \
-                    movement_params.distance_to_half_max_horizontal_speed
-            var is_first_point: bool = Geometry.are_points_equal_with_epsilon( \
-                    jump_position.target_projection_onto_surface, origin_surface.first_point)
-            var is_last_point: bool = Geometry.are_points_equal_with_epsilon( \
-                    jump_position.target_projection_onto_surface, origin_surface.last_point)
-            var is_mid_point: bool = !is_first_point and !is_last_point
-            
-            # Determine whether to calculate jumping with max horizontal speed.
-            if movement_params.calculates_edges_with_velocity_start_x_max_speed and \
-                    can_reach_half_max_speed and !is_mid_point:
-                if is_first_point:
-                    velocity_starts.push_back(
-                            Vector2(-movement_params.max_horizontal_speed_default if \
-                                    origin_surface.side == SurfaceSide.FLOOR else \
-                                    movement_params.max_horizontal_speed_default, \
-                                    movement_params.jump_boost))
-                elif is_last_point:
-                    velocity_starts.push_back(
-                            Vector2(movement_params.max_horizontal_speed_default if \
-                            origin_surface.side == SurfaceSide.FLOOR else \
-                            -movement_params.max_horizontal_speed_default, \
-                            movement_params.jump_boost))
-            
-            # Determine whether to calculate jumping with zero horizontal speed.
-            if movement_params.calculates_edges_from_surface_ends_with_velocity_start_x_zero or \
-                    is_mid_point:
-                velocity_starts.push_back(Vector2(0.0, movement_params.jump_boost))
-            
-        _:
-            Utils.error()
-    
-    return velocity_starts

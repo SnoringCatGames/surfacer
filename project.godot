@@ -279,6 +279,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/edges/jump_inter_surface_edge.gd"
 }, {
+"base": "Reference",
+"class": "JumpLandPositions",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/calculation_models/jump_land_positions.gd"
+}, {
+"base": "Reference",
+"class": "JumpLandPositionsUtils",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/utils/jump_land_positions_utils.gd"
+}, {
 "base": "Node2D",
 "class": "Level",
 "language": "GDScript",
@@ -689,6 +699,8 @@ _global_script_class_icons={
 "IntraSurfaceEdge": "",
 "JumpInterSurfaceCalculator": "",
 "JumpInterSurfaceEdge": "",
+"JumpLandPositions": "",
+"JumpLandPositionsUtils": "",
 "Level": "",
 "Main": "",
 "MatchExpectedEdgeTrajectoryAction": "",

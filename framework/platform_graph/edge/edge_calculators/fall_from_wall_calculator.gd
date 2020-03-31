@@ -4,8 +4,11 @@ class_name FallFromWallCalculator
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
 
 const NAME := "FallFromWallCalculator"
+const IS_A_JUMP_CALCULATOR := false
 
-func _init().(NAME) -> void:
+func _init().( \
+        NAME, \
+        IS_A_JUMP_CALCULATOR) -> void:
     pass
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
@@ -22,6 +25,8 @@ func get_all_inter_surface_edges_from_surface( \
     var movement_params := collision_params.movement_params
     var velocity_start := Vector2.ZERO
     
+    # TODO: Update this to allow other mid-point jump-positions, which may be closer and more
+    #       efficient than just the surface-end points.
     var origin_top_point := Vector2.INF
     var origin_bottom_point := Vector2.INF
     if origin_surface.side == SurfaceSide.LEFT_WALL:
@@ -30,7 +35,6 @@ func get_all_inter_surface_edges_from_surface( \
     else:
         origin_top_point = origin_surface.last_point
         origin_bottom_point = origin_surface.first_point
-    
     var top_jump_position := MovementUtils.create_position_offset_from_target_point( \
             origin_top_point, \
             origin_surface, \
@@ -41,7 +45,6 @@ func get_all_inter_surface_edges_from_surface( \
             movement_params.collider_half_width_height)
     var jump_positions := [top_jump_position, bottom_jump_position]
     
-    var landing_surfaces_to_skip := {}
     var landing_trajectories: Array
     var edge: FallFromWallEdge
     
@@ -57,13 +60,9 @@ func get_all_inter_surface_edges_from_surface( \
                 collision_params, \
                 surfaces_in_fall_range_set, \
                 jump_position, \
-                velocity_start, \
-                landing_surfaces_to_skip)
+                velocity_start)
         
-        for calc_results in landing_trajectories:
-            landing_surfaces_to_skip[ \
-                    calc_results.overall_calc_params.destination_position.surface] = true
-            
+        for calc_results in landing_trajectories:#
             edge = _create_edge_from_calc_results(calc_results)
             edges_result.push_back(edge)
 

@@ -17,8 +17,8 @@ var global
 var edge_attempt: MovementCalcOverallDebugState
 var selected_step: MovementCalcStepDebugState
 
-# Array<PositionAlongSurface>
-var possible_jump_and_land_positions: Array
+# Dictionary<Vector2>
+var possible_jump_and_land_positions: Dictionary
 
 var origin: PositionAlongSurface
 var destination: PositionAlongSurface
@@ -81,10 +81,11 @@ func _calculate_edge_attempt() -> void:
     var origin_surface := origin.surface
     var destination_surface := destination.surface
     
+    possible_jump_and_land_positions.clear()
+    
     if origin_surface == destination_surface:
         # Don't try to calculate an edge that starts and ends on the same surface.
         edge_attempt = null
-        possible_jump_and_land_positions.clear()
         return
     
     var debug_state: Dictionary = global.DEBUG_STATE
@@ -97,68 +98,58 @@ func _calculate_edge_attempt() -> void:
             debug_state, space_state, movement_params, surface_parser)
     
     # Choose the jump and land positions according to which is closest to the click positions.
-    var jump_positions := EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
-            movement_params, \
-            origin_surface, \
-            destination_surface.vertices, \
-            destination_surface.bounding_box, \
-            destination_surface.side, \
-            movement_params.jump_boost, true)
-    var jump_position: PositionAlongSurface = jump_positions[0]
-    if jump_positions.size() > 1:
-        for i in range(1, jump_positions.size()):
-            var other_jump_position: PositionAlongSurface = jump_positions[i]
-            if other_jump_position.target_point.distance_squared_to(origin.target_point) < \
-                    jump_position.target_point.distance_squared_to(origin.target_point):
-                jump_position = other_jump_position
-    var land_positions := EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
-            movement_params, \
-            destination_surface, \
-            origin_surface.vertices, \
-            origin_surface.bounding_box, \
-            origin_surface.side, \
-            movement_params.jump_boost, \
-            false)
-    var land_position: PositionAlongSurface = land_positions[0]
-    if land_positions.size() > 1:
-        for i in range(1, land_positions.size()):
-            var other_land_position: PositionAlongSurface = land_positions[i]
-            if other_land_position.target_point.distance_squared_to(origin.target_point) < \
-                    land_position.target_point.distance_squared_to(origin.target_point):
-                land_position = other_land_position
+    var jump_land_positions_to_consider: Array = \
+            JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
+                    movement_params, \
+                    origin_surface, \
+                    destination_surface, \
+                    true, \
+                    jump_inter_surface_calculator.is_a_jump_calculator)
+    var jump_land_positions: JumpLandPositions = jump_land_positions_to_consider[0]
+    var other_jump_land_positions: JumpLandPositions
+    if jump_land_positions_to_consider.size() > 1:
+        for i in range(1, jump_land_positions_to_consider.size()):
+            other_jump_land_positions = jump_land_positions_to_consider[i]
+            if other_jump_land_positions.jump_position.target_point.distance_squared_to( \
+                            origin.target_point) < \
+                    jump_land_positions.jump_position.target_point.distance_squared_to( \
+                            origin.target_point):
+                jump_land_positions = other_jump_land_positions
+    for other_jump_land_positions in jump_land_positions_to_consider:
+        if other_jump_land_positions.jump_position.target_point == \
+                        jump_land_positions.jump_position.target_point and \
+                other_jump_land_positions.land_position.target_point.distance_squared_to( \
+                        destination.target_point) < \
+                jump_land_positions.land_position.target_point.distance_squared_to( \
+                        destination.target_point):
+            jump_land_positions = other_jump_land_positions
     
     # Create the jump-calculation parameter object.
-    var velocity_start: Vector2 = JumpInterSurfaceCalculator.get_jump_velocity_starts( \
-            movement_params, \
-            jump_position)[0]
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
             collision_params, \
-            jump_position, \
-            land_position, \
+            jump_land_positions.jump_position, \
+            jump_land_positions.land_position, \
             true, \
-            velocity_start, \
+            jump_land_positions.velocity_start, \
             true, \
             true)
     
     if overall_calc_params == null:
         edge_attempt = null
-        possible_jump_and_land_positions.clear()
         return
     
     if overall_calc_params.origin_constraint.is_valid and \
             overall_calc_params.destination_constraint.is_valid:
         # Calculate the actual jump steps, collision, trajectory, and input state.
-        jump_inter_surface_calculator.create_edge_from_overall_params( \
-                overall_calc_params, \
-                jump_position, \
-                land_position)
+        jump_inter_surface_calculator.create_edge_from_overall_params(overall_calc_params)
     
     # Record debug state for the jump calculation.
     edge_attempt = overall_calc_params.debug_state
     
     # Record the possible jump and land positions too.
-    Utils.concat(jump_positions, land_positions)
-    possible_jump_and_land_positions = jump_positions
+    for jump_land_positions in jump_land_positions_to_consider:
+        possible_jump_and_land_positions[jump_land_positions.jump_position.target_point] = true
+        possible_jump_and_land_positions[jump_land_positions.land_position.target_point] = true
 
 func _draw_selected_origin() -> void:
     DrawUtils.draw_dashed_polyline( \
@@ -173,6 +164,6 @@ func _draw_selected_origin() -> void:
 func _draw_possible_jump_and_land_positions() -> void:
     for position in possible_jump_and_land_positions:
         draw_circle( \
-                position.target_point, \
+                position, \
                 POSSIBLE_JUMP_LAND_POSITION_RADIUS, \
                 POSSIBLE_JUMP_LAND_POSITION_COLOR)

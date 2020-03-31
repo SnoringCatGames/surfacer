@@ -4,10 +4,13 @@ class_name FallFromFloorCalculator
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
 
 const NAME := "FallFromFloorCalculator"
+const IS_A_JUMP_CALCULATOR := false
 
 const EXTRA_FALL_OFF_POSITION_MARGIN := 2.0
 
-func _init().(NAME) -> void:
+func _init().( \
+        NAME, \
+        IS_A_JUMP_CALCULATOR) -> void:
     pass
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
@@ -93,7 +96,6 @@ func _get_all_edges_from_one_side( \
         exclusive_land_position: PositionAlongSurface) -> void:
     var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
-    var landing_surfaces_to_skip := {}
     
     var edge_point := \
             origin_surface.first_point if falls_on_left_side else origin_surface.last_point
@@ -129,96 +131,90 @@ func _get_all_edges_from_one_side( \
     var acceleration := -movement_params.walk_acceleration if falls_on_left_side else \
             movement_params.walk_acceleration
     
-    var surface_end_velocity_starts := JumpInterSurfaceCalculator.get_jump_velocity_starts( \
+    var surface_end_velocity_start: Vector2 = JumpLandPositionsUtils.get_velocity_start( \
             movement_params, \
-            position_start)
+            origin_surface, \
+            is_a_jump_calculator, \
+            falls_on_left_side)
     
-    var velocity_x_start: float
-    var velocity_x_fall_off: float
-    var time_fall_off: float
-    var fall_off_point_velocity_start: Vector2
+    var velocity_x_start := surface_end_velocity_start.x
+    
+    var velocity_x_fall_off: float = MovementUtils.calculate_velocity_end_for_displacement( \
+            displacement_from_start_to_fall_off.x, \
+            velocity_x_start, \
+            acceleration, \
+            movement_params.max_horizontal_speed_default)
+    
+    var time_fall_off: float = MovementUtils.calculate_duration_for_displacement( \
+            displacement_from_start_to_fall_off.x, \
+            velocity_x_start, \
+            acceleration, \
+            movement_params.max_horizontal_speed_default)
+    
+    var fall_off_point_velocity_start := Vector2(velocity_x_fall_off, 0.0)
+    
     var landing_trajectories: Array
+    if exclusive_land_position != null:
+        var calc_results: MovementCalcResults = \
+                FallMovementUtils.find_landing_trajectory_between_positions( \
+                        position_fall_off_wrapper, \
+                        exclusive_land_position, \
+                        fall_off_point_velocity_start, \
+                        collision_params)
+        if calc_results != null:
+            landing_trajectories = [calc_results]
+        else:
+            landing_trajectories = []
+    else:
+        landing_trajectories = FallMovementUtils.find_landing_trajectories_to_any_surface( \
+                collision_params, \
+                surfaces_in_fall_range_set, \
+                position_fall_off_wrapper, \
+                fall_off_point_velocity_start)
+    
     var position_end: PositionAlongSurface
     var instructions: MovementInstructions
     var trajectory: MovementTrajectory
     var velocity_end: Vector2
     var edge: FallFromFloorEdge
+    
+    for calc_results in landing_trajectories:
+        position_end = calc_results.overall_calc_params.destination_position
         
-    for surface_end_velocity_start in surface_end_velocity_starts:
-        velocity_x_start = surface_end_velocity_start.x
+        instructions = \
+                MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+                        calc_results, \
+                        false, \
+                        position_end.surface.side)
         
-        velocity_x_fall_off = MovementUtils.calculate_velocity_end_for_displacement( \
-                displacement_from_start_to_fall_off.x, \
+        trajectory = MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+                calc_results, \
+                instructions)
+        
+        _prepend_walk_to_fall_off_portion( \
+                position_start, \
+                position_end, \
                 velocity_x_start, \
-                acceleration, \
-                movement_params.max_horizontal_speed_default)
+                time_fall_off, \
+                instructions, \
+                trajectory, \
+                movement_params, \
+                falls_on_left_side)
         
-        time_fall_off = MovementUtils.calculate_time_for_displacement( \
-                displacement_from_start_to_fall_off.x, \
-                velocity_x_start, \
-                acceleration, \
-                movement_params.max_horizontal_speed_default)
+        velocity_end = calc_results.horizontal_steps.back().velocity_step_end
         
-        fall_off_point_velocity_start = Vector2(velocity_x_fall_off, 0.0)
-        
-        if exclusive_land_position != null:
-            var calc_results: MovementCalcResults = \
-                    FallMovementUtils.find_landing_trajectory_between_positions( \
-                            position_fall_off_wrapper, \
-                            exclusive_land_position, \
-                            fall_off_point_velocity_start, \
-                            collision_params)
-            if calc_results != null:
-                landing_trajectories = [calc_results]
-            else:
-                landing_trajectories = []
-        else:
-            landing_trajectories = FallMovementUtils.find_landing_trajectories_to_any_surface( \
-                    collision_params, \
-                    surfaces_in_fall_range_set, \
-                    position_fall_off_wrapper, \
-                    fall_off_point_velocity_start, \
-                    landing_surfaces_to_skip)
-        
-        for calc_results in landing_trajectories:
-            position_end = calc_results.overall_calc_params.destination_position
-            
-            instructions = \
-                    MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                            calc_results, \
-                            false, \
-                            position_end.surface.side)
-            
-            trajectory = MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
-                    calc_results, \
-                    instructions)
-            
-            _prepend_walk_to_fall_off_portion( \
-                    position_start, \
-                    position_end, \
-                    velocity_x_start, \
-                    time_fall_off, \
-                    instructions, \
-                    trajectory, \
-                    movement_params, \
-                    falls_on_left_side)
-            
-            velocity_end = calc_results.horizontal_steps.back().velocity_step_end
-            
-            edge = FallFromFloorEdge.new( \
-                    self, \
-                    position_start, \
-                    position_end, \
-                    fall_off_point_velocity_start, \
-                    velocity_end, \
-                    movement_params, \
-                    instructions, \
-                    trajectory, \
-                    falls_on_left_side, \
-                    position_fall_off_wrapper)
-            edges_result.push_back(edge)
-            
-            landing_surfaces_to_skip[position_end.surface] = true
+        edge = FallFromFloorEdge.new( \
+                self, \
+                position_start, \
+                position_end, \
+                fall_off_point_velocity_start, \
+                velocity_end, \
+                movement_params, \
+                instructions, \
+                trajectory, \
+                falls_on_left_side, \
+                position_fall_off_wrapper)
+        edges_result.push_back(edge)
 
 static func _calculate_player_center_at_fall_off_point( \
         edge_point: Vector2, \

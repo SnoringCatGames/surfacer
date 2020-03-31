@@ -4,10 +4,13 @@ class_name WalkToAscendWallFromFloorCalculator
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
 
 const NAME := "WalkToAscendWallFromFloorCalculator"
+const IS_A_JUMP_CALCULATOR := false
 
 const END_POINT_OFFSET := ClimbDownWallToFloorCalculator.END_POINT_OFFSET
 
-func _init().(NAME) -> void:
+func _init().( \
+        NAME, \
+        IS_A_JUMP_CALCULATOR) -> void:
     pass
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:

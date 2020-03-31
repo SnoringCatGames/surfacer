@@ -34,8 +34,6 @@ func _init() -> void:
     
     minimizes_velocity_change_when_jumping = false
 #    minimizes_velocity_change_when_jumping = true
-    calculates_edges_with_velocity_start_x_max_speed = true
-    calculates_edges_from_surface_ends_with_velocity_start_x_zero = false
 #    optimizes_edge_jump_positions_at_run_time = false
     optimizes_edge_jump_positions_at_run_time = true
 #    optimizes_edge_land_positions_at_run_time = false
@@ -48,6 +46,7 @@ func _init() -> void:
     updates_player_velocity_to_match_edge_trajectory = false
     considers_closest_mid_point_for_jump_land_position = true
     considers_mid_point_matching_edge_movement_for_jump_land_position = true
+    distance_squared_threshold_for_considering_additional_jump_land_points = 128.0 * 128.0
     
     max_horizontal_speed_default = 400.0
     min_horizontal_speed = 5.0

@@ -4,8 +4,11 @@ class_name SurfaceToAirCalculator
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
 
 const NAME := "SurfaceToAirCalculator"
+const IS_A_JUMP_CALCULATOR := true
 
-func _init().(NAME) -> void:
+func _init().( \
+        NAME, \
+        IS_A_JUMP_CALCULATOR) -> void:
     pass
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
@@ -27,9 +30,12 @@ func calculate_edge( \
         velocity_start := Vector2.INF, \
         in_debug_mode := false) -> Edge:
     if velocity_start == Vector2.INF:
-        velocity_start = get_velocity_starts( \
+        var is_moving_leftward := position_end.target_point.x - position_start.target_point.x < 0.0
+        velocity_start = EdgeMovementCalculator.get_velocity_start( \
                 collision_params.movement_params, \
-                position_start)[0]
+                position_start.surface, \
+                is_a_jump_calculator, \
+                is_moving_leftward)
     
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
             collision_params, \
@@ -91,10 +97,3 @@ func optimize_edge_jump_position_for_path( \
             edge, \
             in_debug_mode, \
             self)
-
-func get_velocity_starts( \
-        movement_params: MovementParams, \
-        jump_position: PositionAlongSurface) -> Array:
-    return JumpInterSurfaceCalculator.get_jump_velocity_starts( \
-            movement_params, \
-            jump_position)

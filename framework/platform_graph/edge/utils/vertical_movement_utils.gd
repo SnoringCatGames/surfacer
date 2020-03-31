@@ -223,7 +223,7 @@ static func calculate_time_to_jump_to_constraint( \
         ### Calculate the time needed to move horizontally.
         
         var duration_to_reach_horizontal_displacement := \
-                MovementUtils.calculate_time_for_displacement( \
+                MovementUtils.calculate_duration_for_displacement( \
                         displacement.x, \
                         velocity_start.x, \
                         movement_params.in_air_horizontal_acceleration * \
@@ -234,14 +234,13 @@ static func calculate_time_to_jump_to_constraint( \
             # direction.
             horizontal_acceleration_sign = -horizontal_acceleration_sign
             duration_to_reach_horizontal_displacement = \
-                    MovementUtils.calculate_time_for_displacement( \
+                    MovementUtils.calculate_duration_for_displacement( \
                             displacement.x, \
                             velocity_start.x, \
                             movement_params.in_air_horizontal_acceleration * \
                             horizontal_acceleration_sign, \
                             movement_params.max_horizontal_speed_default)
-        assert(duration_to_reach_horizontal_displacement >= 0 and \
-                duration_to_reach_horizontal_displacement != INF)
+        assert(duration_to_reach_horizontal_displacement != INF)
         
         # From a basic equation of motion:
         #   v = v_0 + a*t

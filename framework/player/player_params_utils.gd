@@ -118,8 +118,6 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.dash_fade_duration >= 0)
     assert(movement_params.dash_cooldown >= 0)
     assert(movement_params.dash_vertical_boost <= 0)
-    assert(movement_params.calculates_edges_from_surface_ends_with_velocity_start_x_zero or \
-            movement_params.calculates_edges_with_velocity_start_x_max_speed)
 
 class ActionHandlersComparator:
     static func sort( \

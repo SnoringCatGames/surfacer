@@ -144,18 +144,34 @@ TODO: diagrams:
     -   We calculate the necessary jump duration--and from that the vertical component of motion--up-front, and use this to determine times for each potential step and constraint of the motion. Knowing these times up-front makes the horizontal min/max calculations easier.
 -   We have a broad-phase check to quickly eliminate possible surfaces that are obviously out of reach.
     -   This primarily looks at the horizontal and vertical distance from the origin to the destination.
--   For each pair of surfaces, we consider four potential points as our jump-off and land positions along each surface: the near end, the far end, the closest point along the surface, and the point along the surface that would correspond to max horizontal speed during the duration of the edge.
-    -   We check for valid edge movement instructions along each potential jump/land position pair between the two surfaces, and we save _only the first_ valid edge that we find.
-        -   We could instead save _all_ valid edges that we find (up to sixteen edges for each directed pair of surfaces), but calculating extra edges is very expensive, and we can usually assume that an edge between closer points will be better to use anyway.
-    -   We only consider the closest point if it is distint from near and far ends (and for degenerate surfaces of only one vertex, we skip the far end).
 
 TODO: Include a screenshot of a collision that clips the corner of the wall when trying to jump to the above floor--a very common scenario.
+
+#### Calculating "good" jump and land positions
+
+Deciding which jump and land positions to base an edge calculation off of is non-trivial. We could just try calculating edges for a bunch of different jump/land positions for a given pair of surfaces. But edge calculations aren't cheap, and executing too many of them impacts performance. So it's important that we carefully choose "good" jump/land positions that have a relatively high likelihood of producing a valid and efficient edge.
+
+-   Some interesting jump/land positions for a surface include the following:
+    -   Either end of the surface.
+    -   The closest position along the surface to either end of the other surface.
+        -   This closest position, but with a slight offset to account for the width of the player.
+        -   This closest position, but with an additional offset to account for horizontal movement with minimum jump time and maximum horizontal velocity.
+    -   The closest interior position along the surface to the closest interior position along the other surface.
+-   We try to minimize the number of jump/land positions returned, since having more of these greatly increases the overall time to parse the platform graph.
+-   We usually consider surface-interior points before surface-end points (which usually puts shortest distances first).
+-   We also decide start velocity when we decide the jump/land positions.
+    -   We only ever consider start velocities with zero or max speed.
+-   Additionally, we often quit early as soon as we've calculated the first valid edge for a given pair of surfaces.
+    -   In order to decide whether to skip an edge calculation for a given jump/land position pair, we look at how far away it is from any other jump/land position pair that we already found a valid edge for, on the same surface, for the same surface pair. If it's too close, we skip it.
+    -   This is another important performance optimization.
+
+TODO: Include SVG diagrams illustrating the different conditions to consider with all the different surface-pair alignment possibilities.
 
 #### Calculating the start velocity for a jump
 
 -   In the general case, we can't know at build-time what direction along a surface the player will
     be moving from when they need to start a jump.
--   Unfortunately, using start velocity x values of zero for all jumps edges tends to produce very
+-   Unfortunately, using start velocity x values of zero for all jump edges tends to produce very
     unnatural composite trajectories (similar to using perpendicular Manhatten distance routes
     instead of more diagonal routes).
 -   So, we can assume that for surface-end jump-off positions, we'll be approaching the jump-off

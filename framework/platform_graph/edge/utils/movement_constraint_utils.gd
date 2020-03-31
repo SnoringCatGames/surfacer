@@ -641,7 +641,7 @@ static func _calculate_time_to_reach_destination_from_new_constraint( \
         acceleration = -movement_params.in_air_horizontal_acceleration
     
     var time_to_reach_horizontal_displacement := \
-            MovementUtils.calculate_time_for_displacement( \
+            MovementUtils.calculate_duration_for_displacement( \
                     displacement.x, \
                     velocity_x_at_new_constraint, \
                     acceleration, \

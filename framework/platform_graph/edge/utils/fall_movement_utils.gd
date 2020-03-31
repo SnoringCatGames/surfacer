@@ -4,26 +4,24 @@ class_name FallMovementUtils
 # Finds all possible landing trajectories from the given start state.
 static func find_landing_trajectories_to_any_surface( \
         collision_params: CollisionCalcParams, \
-        possible_surfaces_set: Dictionary, \
+        all_possible_surfaces_set: Dictionary, \
         origin_position: PositionAlongSurface, \
         velocity_start: Vector2, \
-        landing_surfaces_to_skip := {}, \
-        possible_landing_surfaces := [], \
+        possible_landing_surfaces_from_point := [], \
         only_returns_first_result := false) -> Array:
     var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
     
-    if possible_landing_surfaces.empty():
+    if possible_landing_surfaces_from_point.empty():
         # Calculate which surfaces are within landing reach.
         var possible_landing_surfaces_result_set := {}
         find_surfaces_in_fall_range_from_point( \
                 movement_params, \
-                possible_surfaces_set, \
+                all_possible_surfaces_set, \
                 possible_landing_surfaces_result_set, \
                 origin_position.target_point, \
-                velocity_start, \
-                landing_surfaces_to_skip)
-        possible_landing_surfaces = possible_landing_surfaces_result_set.keys()
+                velocity_start)
+        possible_landing_surfaces_from_point = possible_landing_surfaces_result_set.keys()
     
     var origin_vertices: Array
     var origin_bounding_box: Rect2
@@ -39,45 +37,57 @@ static func find_landing_trajectories_to_any_surface( \
                 origin_position.target_point.y, 0.0, 0.0)
         origin_side = SurfaceSide.CEILING
     
-    var possible_land_positions: Array
+    var jump_land_positions_to_consider: Array
     var calc_results: MovementCalcResults
+    var jump_land_position_results_for_destination_surface := []
     var all_results := []
     
     # Find the first possible edge to a landing surface.
-    for destination_surface in possible_landing_surfaces:
+    for destination_surface in possible_landing_surfaces_from_point:
         if origin_position.surface == destination_surface:
             # We don't need to calculate edges for the degenerate case.
             continue
         
-        if landing_surfaces_to_skip.has(destination_surface):
-            # Skip any blacklisted surfaces.
-            continue
+        jump_land_position_results_for_destination_surface.clear()
         
-        possible_land_positions = EdgeMovementCalculator.get_all_jump_land_positions_for_surface( \
-                movement_params, \
-                destination_surface, \
-                origin_vertices, \
-                origin_bounding_box, \
-                origin_side, \
-                velocity_start.y, \
-                false)
+        jump_land_positions_to_consider = \
+                JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
+                        movement_params, \
+                        origin_position.surface, \
+                        destination_surface, \
+                        false, \
+                        false, \
+                        origin_position, \
+                        null, \
+                        velocity_start)
         
-        for land_position in possible_land_positions:
+        for jump_land_positions in jump_land_positions_to_consider:
             ###################################################################################
             # Allow for debug mode to limit the scope of what's calculated.
             if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
-                    origin_position, land_position):
+                    jump_land_positions.jump_position, jump_land_positions.land_position):
                 continue
             ###################################################################################
             
+            if !jump_land_positions.is_far_enough_from_other_jump_land_positions( \
+                    movement_params, \
+                    jump_land_position_results_for_destination_surface, \
+                    false, \
+                    true):
+                # We've already found a valid edge with a land position that's close enough to this
+                # land position.
+                continue
+            
             calc_results = find_landing_trajectory_between_positions( \
-                    origin_position, \
-                    land_position, \
+                    jump_land_positions.jump_position, \
+                    jump_land_positions.land_position, \
                     velocity_start, \
                     collision_params)
             
             if calc_results != null:
                 all_results.push_back(calc_results)
+                calc_results = null
+                jump_land_position_results_for_destination_surface.push_back(jump_land_positions)
                 
                 if only_returns_first_result:
                     return all_results
@@ -134,11 +144,10 @@ static func find_landing_trajectory_between_positions( \
 
 static func find_surfaces_in_fall_range_from_point( \
         movement_params: MovementParams, \
-        possible_surfaces_set: Dictionary, \
+        all_possible_surfaces_set: Dictionary, \
         result_set: Dictionary, \
         origin: Vector2, \
-        velocity_start: Vector2, \
-        landing_surfaces_to_skip: Dictionary) -> void:
+        velocity_start: Vector2) -> void:
     # FIXME: E: Offset the start_position_offset to account for velocity_start.
     
     # From a basic equation of motion:
@@ -171,12 +180,11 @@ static func find_surfaces_in_fall_range_from_point( \
     _get_surfaces_intersecting_polygon( \
             result_set, \
             [top_left, top_right, bottom_right, bottom_left], \
-            possible_surfaces_set, \
-            landing_surfaces_to_skip)
+            all_possible_surfaces_set)
 
 static func find_surfaces_in_fall_range_from_surface( \
         movement_params: MovementParams, \
-        possible_surfaces_set: Dictionary, \
+        all_possible_surfaces_set: Dictionary, \
         surfaces_in_fall_range_without_jump_distance_result_set: Dictionary, \
         surfaces_in_fall_range_with_jump_distance_result_set: Dictionary, \
         origin_surface: Surface) -> void:
@@ -236,12 +244,11 @@ static func find_surfaces_in_fall_range_from_surface( \
                 _get_surfaces_intersecting_polygon( \
                         surfaces_in_fall_range_with_jump_distance_result_set, \
                         [top_left, top_right, bottom_right, bottom_left], \
-                        possible_surfaces_set, \
-                        {})
+                        all_possible_surfaces_set)
                 
                 # Limit the possible surfaces for the following without-jump-distance calculation
                 # to be a subset of the with-jump-distance result.
-                possible_surfaces_set = surfaces_in_fall_range_with_jump_distance_result_set
+                all_possible_surfaces_set = surfaces_in_fall_range_with_jump_distance_result_set
             
             # For falling from a left-side wall, we can only fall leftward from bottom point, and
             # we can fall the furthest rightward from the top point. So we call the bottom point
@@ -257,8 +264,7 @@ static func find_surfaces_in_fall_range_from_surface( \
             _get_surfaces_intersecting_polygon( \
                     surfaces_in_fall_range_without_jump_distance_result_set, \
                     [top_left, top_right, bottom_right, bottom_left], \
-                    possible_surfaces_set, \
-                    {})
+                    all_possible_surfaces_set)
             
         SurfaceSide.RIGHT_WALL:
             # Only expand calculate the jump-distance results, if the corresponding result set is
@@ -273,12 +279,11 @@ static func find_surfaces_in_fall_range_from_surface( \
                 _get_surfaces_intersecting_polygon( \
                         surfaces_in_fall_range_with_jump_distance_result_set, \
                         [top_left, top_right, bottom_right, bottom_left], \
-                        possible_surfaces_set, \
-                        {})
+                        all_possible_surfaces_set)
                 
                 # Limit the possible surfaces for the following without-jump-distance calculation
                 # to be a subset of the with-jump-distance result.
-                possible_surfaces_set = surfaces_in_fall_range_with_jump_distance_result_set
+                all_possible_surfaces_set = surfaces_in_fall_range_with_jump_distance_result_set
             
             # For falling from a right-side wall, we can only fall rightward from bottom point, and
             # we can fall the furthest leftward from the top point. So we call the top point
@@ -294,8 +299,7 @@ static func find_surfaces_in_fall_range_from_surface( \
             _get_surfaces_intersecting_polygon( \
                     surfaces_in_fall_range_without_jump_distance_result_set, \
                     [top_left, top_right, bottom_right, bottom_left], \
-                    possible_surfaces_set, \
-                    {})
+                    all_possible_surfaces_set)
             
         SurfaceSide.FLOOR:
             # Only expand calculate the jump-distance results, if the corresponding result set is
@@ -310,12 +314,11 @@ static func find_surfaces_in_fall_range_from_surface( \
                 _get_surfaces_intersecting_polygon( \
                         surfaces_in_fall_range_with_jump_distance_result_set, \
                         [top_left, top_right, bottom_right, bottom_left], \
-                        possible_surfaces_set, \
-                        {})
+                        all_possible_surfaces_set)
                 
                 # Limit the possible surfaces for the following without-jump-distance calculation
                 # to be a subset of the with-jump-distance result.
-                possible_surfaces_set = surfaces_in_fall_range_with_jump_distance_result_set
+                all_possible_surfaces_set = surfaces_in_fall_range_with_jump_distance_result_set
             
             top_left = origin_surface.first_point - \
                     offset_for_acceleration_to_terminal_velocity
@@ -328,8 +331,7 @@ static func find_surfaces_in_fall_range_from_surface( \
             _get_surfaces_intersecting_polygon( \
                     surfaces_in_fall_range_without_jump_distance_result_set, \
                     [top_left, top_right, bottom_right, bottom_left], \
-                    possible_surfaces_set, \
-                    {})
+                    all_possible_surfaces_set)
             
         _:
             Utils.error()
@@ -357,13 +359,8 @@ static func _get_surfaces_intersecting_triangle( \
 static func _get_surfaces_intersecting_polygon( \
         result_set: Dictionary, \
         polygon: Array, \
-        surfaces_set: Dictionary, \
-        surfaces_to_skip: Dictionary) -> void:
+        surfaces_set: Dictionary) -> void:
     for surface in surfaces_set:
-        if surfaces_to_skip.has(surface):
-            # Ignore blacklisted surfaces.
-            continue
-        
         if Geometry.do_segment_and_polygon_intersect( \
                 surface.first_point, \
                 surface.last_point, \

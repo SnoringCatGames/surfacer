@@ -1,0 +1,34 @@
+# Potential jump position, land position, and start velocity for an edge calculation.
+extends Reference
+class_name JumpLandPositions
+
+var jump_position: PositionAlongSurface
+var land_position: PositionAlongSurface
+var velocity_start: Vector2
+
+func _init( \
+        jump_position: PositionAlongSurface, \
+        land_position: PositionAlongSurface, \
+        velocity_start: Vector2) -> void:
+    self.jump_position = jump_position
+    self.land_position = land_position
+    self.velocity_start = velocity_start
+
+func is_far_enough_from_other_jump_land_positions( \
+        movement_params: MovementParams, \
+        other_jump_land_positions: Array, \
+        checking_distance_for_jump_positions: bool, \
+        checking_distance_for_land_positions: bool) -> bool:
+    if checking_distance_for_jump_positions:
+        for other in other_jump_land_positions:
+            if self.jump_position.target_point.distance_squared_to( \
+                    other.jump_position.target_point) < \
+                    movement_params.distance_squared_threshold_for_considering_additional_jump_land_points:
+                return false
+    if checking_distance_for_land_positions:
+        for other in other_jump_land_positions:
+            if self.land_position.target_point.distance_squared_to( \
+                    other.land_position.target_point) < \
+                    movement_params.distance_squared_threshold_for_considering_additional_jump_land_points:
+                return false
+    return true

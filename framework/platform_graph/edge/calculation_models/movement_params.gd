@@ -34,22 +34,6 @@ var climb_up_speed: float
 var climb_down_speed: float
 
 var minimizes_velocity_change_when_jumping := true
-# - In the general case, we can't know at build time what direction along a surface the player will
-#   be moving from when they need to start a jump.
-# - Unfortunately, using start velocity x values of zero for all jumps edges tends to produce very
-#   unnatural composite trajectories (similar to using perpendicular Manhatten distance routes
-#   instead of more diagonal routes).
-# - So, we can assume that, for surface-end jump-off positions, we'll be approaching the jump-off
-#   point from the center of the edge.
-# - And for most edges we should have enough run-up distance in order to hit max horizontal speed
-#   before reaching the jump-off point--since horizontal acceleration is relatively quick.
-# - Also, we only ever consider velocity-start values of zero or max horizontal speed; since the
-#   horizontal acceleration is quick, most jumps at run time shouldn't need some medium-speed, and
-#   even if they did, we force the initial velocity of the jump to match expected velocity, so the
-#   jump trajectory should proceed as expected, and any sudden change in velocity at the jump start
-#   should be acceptably small.
-var calculates_edges_with_velocity_start_x_max_speed := true
-var calculates_edges_from_surface_ends_with_velocity_start_x_zero := false
 # At runtime, after finding a path through build-time-calculated edges, try to optimize the
 # jump-off points of the edges to better account for the direction that the player will be
 # approaching the edge from. This produces more efficient and natural movement. The
@@ -68,6 +52,13 @@ var updates_player_velocity_to_match_edge_trajectory := false
 var min_intra_surface_distance_to_optimize_jump_for := 16.0
 var considers_closest_mid_point_for_jump_land_position := true
 var considers_mid_point_matching_edge_movement_for_jump_land_position := true
+# When calculating possible edges between a given pair of surfaces, we usually need to quit early 
+# (for performance) as soon as we've found enough edges, rather than calculate all possible edges.
+# In order to decide whether to skip edge calculation for a given jump/land point, we look at how
+# far away it is from any other jump/land point that we already found a valid edge for, on the
+# same surface, for the same surface pair. We use this distance to determine threshold how far away
+# is enough.
+var distance_squared_threshold_for_considering_additional_jump_land_points := 128.0 * 128.0
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

@@ -4,8 +4,11 @@ class_name AirToSurfaceCalculator
 const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
 
 const NAME := "AirToSurfaceCalculator"
+const IS_A_JUMP_CALCULATOR := false
 
-func _init().(NAME) -> void:
+func _init().( \
+        NAME, \
+        IS_A_JUMP_CALCULATOR) -> void:
     pass
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
@@ -58,7 +61,7 @@ func optimize_edge_land_position_for_path( \
 # Returns null if no possible landing exists.
 func find_a_landing_trajectory( \
         collision_params: CollisionCalcParams, \
-        possible_surfaces_set: Dictionary, \
+        all_possible_surfaces_set: Dictionary, \
         origin: PositionAlongSurface, \
         velocity_start: Vector2, \
         goal: PositionAlongSurface, \
@@ -74,28 +77,24 @@ func find_a_landing_trajectory( \
                 velocity_start, \
                 collision_params)
     else:
-        var landing_surfaces_to_skip := {}
-        
         # Find all possible surfaces in landing range.
         var result_set := {}
         FallMovementUtils.find_surfaces_in_fall_range_from_point( \
                 collision_params.movement_params, \
-                possible_surfaces_set, \
+                all_possible_surfaces_set, \
                 result_set, \
                 origin.target_point, \
-                velocity_start, \
-                landing_surfaces_to_skip)
-        var possible_landing_surfaces := result_set.keys()
-        possible_landing_surfaces.sort_custom(SurfaceMaxYComparator, "sort")
+                velocity_start)
+        var possible_landing_surfaces_from_point := result_set.keys()
+        possible_landing_surfaces_from_point.sort_custom(SurfaceMaxYComparator, "sort")
         
         # Find the closest landing trajectory.
         var landing_trajectories := FallMovementUtils.find_landing_trajectories_to_any_surface( \
                 collision_params, \
-                possible_surfaces_set, \
+                all_possible_surfaces_set, \
                 origin, \
                 velocity_start, \
-                landing_surfaces_to_skip, \
-                possible_landing_surfaces, \
+                possible_landing_surfaces_from_point, \
                 true)
         if landing_trajectories.empty():
             return null
