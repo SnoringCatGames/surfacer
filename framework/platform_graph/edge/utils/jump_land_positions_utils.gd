@@ -896,47 +896,37 @@ static func calculate_jump_land_positions_for_surface_pair( \
     
     
     
-    
-    
-
-    
-    #
-    # Record jump/land position combinations for the surface-end points.
-    #
-    
-    # Collect the surface-end points to use.
-    var jump_surface_end_positions := []
-    jump_surface_end_positions.push_back(jump_surface_near_end_wrapper)
-    if jump_surface_far_end_wrapper != jump_surface_near_end_wrapper:
-        jump_surface_end_positions.push_back(jump_surface_far_end_wrapper)
-    var land_surface_end_positions := []
-    land_surface_end_positions.push_back(land_surface_near_end_wrapper)
-    if land_surface_far_end_wrapper != land_surface_near_end_wrapper:
-        land_surface_end_positions.push_back(land_surface_far_end_wrapper)
-    
-    # FIXME: -------------------- Revisit this.
-    # - If the other, more intelligent offset/closest, points below fail, do we really care to
-    #   bother with these four dumb end points? In which cases will these be valuable? Maybe add
-    #   another movement_params flag to toggle checking these, and default it to off for now?
-    
-    # Instantiate the jump/land pairs.
-    for jump_surface_end_position in jump_surface_end_positions:
-        for land_surface_end_position in land_surface_end_positions:
-            # FIXME: --------------------------- FIX this to account for player-half-width-offset (like above).
-            var does_velocity_start_moving_leftward: bool = \
-                    land_surface_end_position.target_point.x - \
-                    jump_surface_end_position.target_point.x < 0.0
-            var velocity_start_zero := get_velocity_start( \
-                    movement_params, \
-                    jump_surface, \
-                    is_a_jump_calculator, \
-                    does_velocity_start_moving_leftward, \
-                    false)
-            var jump_land_positions := JumpLandPositions.new( \
-                    jump_surface_end_position, \
-                    land_surface_end_position, \
-                    velocity_start_zero)
-            all_jump_land_positions.push_back(jump_land_positions)    
+    if movement_params.always_includes_jump_land_end_point_combinations:
+        # Record jump/land position combinations for the surface-end points.
+        
+        # Collect the surface-end points to use.
+        var jump_surface_end_positions := []
+        jump_surface_end_positions.push_back(jump_surface_near_end_wrapper)
+        if jump_surface_far_end_wrapper != jump_surface_near_end_wrapper:
+            jump_surface_end_positions.push_back(jump_surface_far_end_wrapper)
+        var land_surface_end_positions := []
+        land_surface_end_positions.push_back(land_surface_near_end_wrapper)
+        if land_surface_far_end_wrapper != land_surface_near_end_wrapper:
+            land_surface_end_positions.push_back(land_surface_far_end_wrapper)
+        
+        # Instantiate the jump/land pairs.
+        for jump_surface_end_position in jump_surface_end_positions:
+            for land_surface_end_position in land_surface_end_positions:
+                var does_velocity_start_moving_leftward: bool = \
+                        land_surface_end_position.target_point.x - \
+                        jump_surface_end_position.target_point.x < 0.0
+                var prefer_zero_horizontal_speed := true
+                var velocity_start_zero := get_velocity_start( \
+                        movement_params, \
+                        jump_surface, \
+                        is_a_jump_calculator, \
+                        does_velocity_start_moving_leftward, \
+                        prefer_zero_horizontal_speed)
+                var jump_land_positions := JumpLandPositions.new( \
+                        jump_surface_end_position, \
+                        land_surface_end_position, \
+                        velocity_start_zero)
+                all_jump_land_positions.push_back(jump_land_positions)    
     
     return all_jump_land_positions
 

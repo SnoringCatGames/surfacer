@@ -91,7 +91,7 @@ static func _calculate_dependent_movement_params(movement_params: MovementParams
                     movement_params.gravity_fast_fall)
     
     assert(movement_params.action_handler_names.find(MatchExpectedEdgeTrajectoryAction.NAME) < 0)
-    if movement_params.updates_player_velocity_to_match_edge_trajectory:
+    if movement_params.syncs_player_velocity_to_edge_trajectory:
         movement_params.action_handler_names.push_back(MatchExpectedEdgeTrajectoryAction.NAME)
 
 static func _check_movement_params(movement_params: MovementParams) -> void:

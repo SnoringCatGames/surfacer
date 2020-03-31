@@ -48,10 +48,8 @@ var forces_player_velocity_to_match_edge_at_start := false
 # If true, then player velocity will be forced to match the expected calculated edge-movement
 # velocity during each frame. Without this, there is typically some deviation at run-time from the
 # expected calculated edge trajectories.
-var updates_player_velocity_to_match_edge_trajectory := false
+var syncs_player_velocity_to_edge_trajectory := false
 var min_intra_surface_distance_to_optimize_jump_for := 16.0
-var considers_closest_mid_point_for_jump_land_position := true
-var considers_mid_point_matching_edge_movement_for_jump_land_position := true
 # When calculating possible edges between a given pair of surfaces, we usually need to quit early 
 # (for performance) as soon as we've found enough edges, rather than calculate all possible edges.
 # In order to decide whether to skip edge calculation for a given jump/land point, we look at how
@@ -59,6 +57,7 @@ var considers_mid_point_matching_edge_movement_for_jump_land_position := true
 # same surface, for the same surface pair. We use this distance to determine threshold how far away
 # is enough.
 var distance_squared_threshold_for_considering_additional_jump_land_points := 128.0 * 128.0
+var always_includes_jump_land_end_point_combinations := false
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

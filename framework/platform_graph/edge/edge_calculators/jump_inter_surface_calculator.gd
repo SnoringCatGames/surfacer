@@ -9,13 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Implement logic to handle null jump/land surfaces in
-#   calculate_jump_land_positions_for_surface_pair (which will happen for the
-#   fall-from-air/jump-to-air use cases).
-# - Implement movement_param flag to conditionally not consider the old four-dumb-end-point
-#   calculation at the end of calculate_jump_land_positions_for_surface_pair.
-# - Debug performance with how many jump/land pairs get returned, and how costly the new extra
-#   previous-jump/land-position-distance checks are.
 # - Implement remaining cases in calculate_jump_land_positions_for_surface_pair:
 #   - Handle remaining floor jump-surface cases.
 #     - Don't forget to add this use-case of just the absolute closest point when jumping to a
@@ -23,6 +16,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Handle wall jump-surface cases.
 #     - Don't forget to add this use-case of just the absolute closest points when between walls
 #       that face each other
+# - Debug performance with how many jump/land pairs get returned, and how costly the new extra
+#   previous-jump/land-position-distance checks are.
 # 
 # - Add a couple additional things to configure in MovementParams:
 #   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).

@@ -157,21 +157,23 @@ static func check_frame_for_collision( \
             # intersection_points should be nearly equal in either the x or y coordinate, and
             # edge_aligned_ray_trace_target should be the correct point to use.
             
-            var are_intersection_points_close_horizontally: bool = \
-                    Geometry.are_floats_equal_with_epsilon( \
-                            intersection_points[0].x, intersection_points[1].x, 1.0) and \
-                    Geometry.are_floats_equal_with_epsilon( \
-                            intersection_points[0].x, intersection_points[2].x, 1.0) and \
-                    Geometry.are_floats_equal_with_epsilon( \
-                            intersection_points[0].x, intersection_points[3].x, 1.0)
-            var are_intersection_points_close_vertically: bool = \
-                    Geometry.are_floats_equal_with_epsilon( \
-                            intersection_points[0].y, intersection_points[1].y, 1.0) and \
-                    Geometry.are_floats_equal_with_epsilon( \
-                            intersection_points[0].y, intersection_points[2].y, 1.0) and \
-                    Geometry.are_floats_equal_with_epsilon( \
-                            intersection_points[0].y, intersection_points[3].y, 1.0)
-            # FIXME: Remove? This seems to be usually true, but not always.
+            # FIXME: Remove?
+            # - This seems to be usually true, but not always.
+            # - Also, intersection_points sometimes has fewer than four elements (two, specifically).
+#            var are_intersection_points_close_horizontally: bool = \
+#                    Geometry.are_floats_equal_with_epsilon( \
+#                            intersection_points[0].x, intersection_points[1].x, 1.0) and \
+#                    Geometry.are_floats_equal_with_epsilon( \
+#                            intersection_points[0].x, intersection_points[2].x, 1.0) and \
+#                    Geometry.are_floats_equal_with_epsilon( \
+#                            intersection_points[0].x, intersection_points[3].x, 1.0)
+#            var are_intersection_points_close_vertically: bool = \
+#                    Geometry.are_floats_equal_with_epsilon( \
+#                            intersection_points[0].y, intersection_points[1].y, 1.0) and \
+#                    Geometry.are_floats_equal_with_epsilon( \
+#                            intersection_points[0].y, intersection_points[2].y, 1.0) and \
+#                    Geometry.are_floats_equal_with_epsilon( \
+#                            intersection_points[0].y, intersection_points[3].y, 1.0)
 #                assert(are_intersection_points_close_horizontally or \
 #                        are_intersection_points_close_vertically)
             

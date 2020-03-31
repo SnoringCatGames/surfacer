@@ -42,11 +42,11 @@ func _init() -> void:
 #    forces_player_position_to_match_edge_at_start = false
     forces_player_velocity_to_match_edge_at_start = true
 #    forces_player_velocity_to_match_edge_at_start = false
-#    updates_player_velocity_to_match_edge_trajectory = true
-    updates_player_velocity_to_match_edge_trajectory = false
-    considers_closest_mid_point_for_jump_land_position = true
-    considers_mid_point_matching_edge_movement_for_jump_land_position = true
+#    syncs_player_velocity_to_edge_trajectory = true
+    syncs_player_velocity_to_edge_trajectory = false
     distance_squared_threshold_for_considering_additional_jump_land_points = 128.0 * 128.0
+    always_includes_jump_land_end_point_combinations = false
+#    always_includes_jump_land_end_point_combinations = true
     
     max_horizontal_speed_default = 400.0
     min_horizontal_speed = 5.0
