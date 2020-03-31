@@ -9,6 +9,8 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Be smart about the order we consider [left-side, right-side] ends in
+#   calculate_jump_land_positions_for_surface_pair, so that the better result is included first.
 # - Implement logic to handle null jump/land surfaces in
 #   calculate_jump_land_positions_for_surface_pair (which will happen for the
 #   fall-from-air/jump-to-air use cases).
@@ -294,7 +296,6 @@ func get_all_inter_surface_edges_from_surface( \
                         movement_params, \
                         origin_surface, \
                         destination_surface, \
-                        true, \
                         self.is_a_jump_calculator)
         
         for jump_land_positions in jump_land_positions_to_consider:

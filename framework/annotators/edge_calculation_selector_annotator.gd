@@ -103,7 +103,6 @@ func _calculate_edge_attempt() -> void:
                     movement_params, \
                     origin_surface, \
                     destination_surface, \
-                    true, \
                     jump_inter_surface_calculator.is_a_jump_calculator)
     var jump_land_positions: JumpLandPositions = jump_land_positions_to_consider[0]
     var other_jump_land_positions: JumpLandPositions

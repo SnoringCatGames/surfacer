@@ -51,14 +51,10 @@ static func find_landing_trajectories_to_any_surface( \
         jump_land_position_results_for_destination_surface.clear()
         
         jump_land_positions_to_consider = \
-                JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
+                JumpLandPositionsUtils.calculate_land_positions_on_surface( \
                         movement_params, \
-                        origin_position.surface, \
                         destination_surface, \
-                        false, \
-                        false, \
                         origin_position, \
-                        null, \
                         velocity_start)
         
         for jump_land_positions in jump_land_positions_to_consider:
