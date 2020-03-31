@@ -314,16 +314,19 @@ Theoretically, this discrepancy shouldn't exist, and we should be able to elimin
 ## Annotators
 
 We include a large collection of annotators that are useful for visually debugging calculation of the platform graph. Some of the more note-worthy annotators include:
--   `CollisionCalculationAnnotator`: 
--   `EdgeCalculationAnnotator`: 
--   `EdgeCalculationTreeViewAnnotator`: 
--   `InterSurfaceEdgesAnnotator`: 
+-   `CollisionCalculationAnnotator`:
+-   `EdgeCalculationAnnotator`:
+-   `EdgeCalculationTreeViewAnnotator`:
+-   `InterSurfaceEdgesAnnotator`:
+    -   Each trajectory is shown with a smaller circle on one end and a larger circle on the other:
+        -   The smaller circle indicates the origin.
+        -   The larger circle indicates the destination.
     -   When viewing edge calculation trajectories, each edge is shown with two trajectories:
         -   The darker trajectory represents positions as calculated from _continuous equations of motion_.
         -   The lighter trajectory represents positions as calculated from _simulating movement over distrete time steps_.
--   `NavigatorAnnotator`: 
--   `PlayerAnnotator`: 
--   `PlayerRecentMovementAnnotator`: 
--   `RulerAnnotator`: 
--   `SurfacesAnnotator`: 
+-   `NavigatorAnnotator`:
+-   `PlayerAnnotator`:
+-   `PlayerRecentMovementAnnotator`:
+-   `RulerAnnotator`:
+-   `SurfacesAnnotator`:
 TODO: Include a brief description of each annotator.

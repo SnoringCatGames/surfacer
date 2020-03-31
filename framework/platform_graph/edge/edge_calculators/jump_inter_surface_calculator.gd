@@ -10,7 +10,7 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - Implement remaining cases in calculate_jump_land_positions_for_surface_pair:
-#   - Handle remaining floor jump-surface cases.
+#   >- Handle remaining floor jump-surface cases.
 #     - Don't forget to add this use-case of just the absolute closest point when jumping to a
 #       ceiling
 #   - Handle wall jump-surface cases.
@@ -31,6 +31,11 @@ const IS_A_JUMP_CALCULATOR := true
 #   - How much radius to use for collision calculations.
 # 
 # - Tests!
+#   - While I add tests, also debug all the various systems and edge cases.
+#     - calculate_jump_land_positions_for_surface_pair:
+#       - Jump and land on each different surface-side combination and each different top-bottom-left-right-middle arrangement combination.
+#       - Right numbers and combinations of jump-land pair results.
+#     - Jump/land optimization logic.
 #   - Add Gut and tests back (find and revert the CL that removed them).
 #   - Add a bunch of very simple test levels, with just two latforms each, and the two in various alignments from each other.
 #   - Test simple high-level things like:

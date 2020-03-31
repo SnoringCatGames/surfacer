@@ -44,7 +44,8 @@ func _init() -> void:
 #    forces_player_velocity_to_match_edge_at_start = false
 #    syncs_player_velocity_to_edge_trajectory = true
     syncs_player_velocity_to_edge_trajectory = false
-    distance_squared_threshold_for_considering_additional_jump_land_points = 128.0 * 128.0
+#    distance_squared_threshold_for_considering_additional_jump_land_points = 128.0 * 128.0
+    distance_squared_threshold_for_considering_additional_jump_land_points = 32.0 * 32.0
     always_includes_jump_land_end_point_combinations = false
 #    always_includes_jump_land_end_point_combinations = true
     

@@ -566,14 +566,18 @@ static func calculate_jump_land_positions_for_surface_pair( \
                 SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
                     # Jump from a floor, land on a wall.
                     
+                    # FIXME: LEFT OFF HERE: ------------------------------------A
+                    # - Start by again looking for patterns in the arrangnement SVG, for clues on
+                    #   how to break the use-cases apart.
+                    #   - Probably need to create another set of diagrams after noticing whatever pattern...
+                    # - 
                     pass
-                    # FIXME: ------------
                     
                 SurfaceSide.CEILING:
                     # Jump from a floor, land on a ceiling.
                     
-                    pass
                     # FIXME: ------------
+                    pass
                     
                 _:
                     Utils.error()
@@ -592,16 +596,10 @@ static func calculate_jump_land_positions_for_surface_pair( \
         
     
     
-#    # FIXME: ----------- Fix this. It should depend on the edge_movement_calculator.
-#    var velocity_start_y := movement_params.jump_boost
-#    # FIXME: -----------
-#    var is_jump_off_surface := true
-#
-#    var surface_center := jump_surface.bounding_box.position + \
-#            (jump_surface.bounding_box.end - jump_surface.bounding_box.position) / 2.0
-#    var land_surface_center := land_surface.bounding_box.position + \
-#            (land_surface.bounding_box.end - land_surface.bounding_box.position) / 2.0
-#
+    
+    
+    
+    
 #    # Instead of choosing the exact closest point along the jump surface to the land
 #    # surface, we may want to give the "closest" jump-off point an offset (corresponding to the
 #    # player's width) that should reduce overall movement.
