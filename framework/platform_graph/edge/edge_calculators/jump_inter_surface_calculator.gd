@@ -16,6 +16,21 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Handle wall jump-surface cases.
 #     - Don't forget to add this use-case of just the absolute closest points when between walls
 #       that face each other
+# - Update README and SVG diagrams, now that I have a better understanding and method to approach it.
+#   - Orient the explanation around a few very important parameters:
+#     - Jump-basis
+#       - Not necessarily the actual resulting jump-position that will be used, but a starting
+#         point for basing the calculations off of. This is usually important when determining how
+#         much horizontal or vertical offset will be needed, to account for the edge movement
+#         between the two surfaces.
+#     - Land-basis
+#     - Horizontal or vertical offset
+#       - For two potential reasons:
+#         - To account for the edge movement between the two surfaces (e.g., the fall distance that happens while moving horizontally to reach the destination).
+#         - To account for the width of the player (e.g., if we jump from a lower floor to a higher floor, if we start the jump exactly beneath the upper-floor end-point, we'll need to first move horizontally one way, to go around the surface-end, then the other way to then land on the surface. That extra horizontal movement can be avoided with this offset).
+#   - Then mention that it's important to sketch-out each arrangement, in order to see the patterns of how the parameters depend on the arrangments.
+#   - Describe the main arrangement aspects that tend to influence the parameters:
+#     - Which surface has the left/right/top/bottom end sticking out further.
 # - Debug performance with how many jump/land pairs get returned, and how costly the new extra
 #   previous-jump/land-position-distance checks are.
 # 
