@@ -9,6 +9,9 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Rename "constraint" to "waypoint" throughout.
+# - Rename all occurences of /slow.?ascent/ with slow rise.
+# 
 # - Implement remaining cases in calculate_jump_land_positions_for_surface_pair:
 #   >- Handle remaining floor jump-surface cases.
 #     - Don't forget to add this use-case of just the absolute closest point when jumping to a
@@ -16,6 +19,16 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Handle wall jump-surface cases.
 #     - Don't forget to add this use-case of just the absolute closest points when between walls
 #       that face each other
+# - Add an additional param to JumpLandPositions: includes-extra-jump-duration-offset
+#   - Add this for various surface arrangements that are likely to need a little extra boost to
+#     circumnavigate surface ends:
+#     - floor-to-floor, when the land floor is significantly higher
+#     - back-to-back walls
+#     - walls that face the same way
+#     - floor to opposite-facing wall
+#   - Maybe also add some very-small other value to use for all other cases?
+#   - _Definitely_ add a note to the performance logging section to check whether this actually
+#     cuts down on backtracking for additional jump height.
 # - Update README and SVG diagrams, now that I have a better understanding and method to approach it.
 #   - Orient the explanation around a few very important parameters:
 #     - Jump-basis
@@ -31,6 +44,7 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Then mention that it's important to sketch-out each arrangement, in order to see the patterns of how the parameters depend on the arrangments.
 #   - Describe the main arrangement aspects that tend to influence the parameters:
 #     - Which surface has the left/right/top/bottom end sticking out further.
+# - Also add links to diagrams from the relevant cases in the source code.
 # - Debug performance with how many jump/land pairs get returned, and how costly the new extra
 #   previous-jump/land-position-distance checks are.
 # 
@@ -44,6 +58,9 @@ const IS_A_JUMP_CALCULATOR := true
 #   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
 #     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
 #   - How much radius to use for collision calculations.
+# 
+# - Check on current behavior of MovementInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
+#   MovementInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
 # 
 # - Tests!
 #   - While I add tests, also debug all the various systems and edge cases.

@@ -526,6 +526,53 @@ static func calculate_vertical_state_for_time( \
     
     return [position, velocity]
 
+# Calculates the vertical displacement with the given duration if using slow-rise gravity as long
+# as possible.
+static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gravity( \
+        movement_params: MovementParams, \
+        duration: float, \
+        velocity_y_start: float) -> float:
+    # From a basic equation of motion:
+    #     v = v_0 + a*t
+    #     v = 0.0
+    # Algebra...:
+    #     t = -v_0 / a
+    var duration_to_slow_rise_peak := \
+            -velocity_y_start / movement_params.slow_ascent_gravity_multiplier
+    
+    if duration_to_slow_rise_peak >= duration:
+        # We hit the end-time before reaching the peak, so we don't need to consider any
+        # displacement with fast-fall gravity.
+        
+        # From a basic equation of motion:
+        #     s = s_0 + v_0*t + 1/2*a*t^2
+        # Algebra...:
+        #     (s - s_0) = v_0*t + 1/2*a*t^2
+        return velocity_y_start * duration + \
+                0.5 * movement_params.slow_ascent_gravity_multiplier * duration * duration
+    else:
+        # We hit the end-time after reaching the peak, so we need to consider both the displacement
+        # with slow-rise gravity and the displacement with fast-fall gravity.
+        
+        # From a basic equation of motion:
+        #     s = s_0 + v_0*t + 1/2*a*t^2
+        # Algebra...:
+        #     (s - s_0) = v_0*t + 1/2*a*t^2
+        var rise_displacement := velocity_y_start * duration_to_slow_rise_peak + \
+                0.5 * movement_params.slow_ascent_gravity_multiplier * \
+                duration_to_slow_rise_peak * duration_to_slow_rise_peak
+        
+        var fall_duration := duration - duration_to_slow_rise_peak
+        # From a basic equation of motion:
+        #     s = s_0 + v_0*t + 1/2*a*t^2
+        #     v_0 = 0
+        # Algebra...:
+        #     (s - s_0) = 1/2*a*t^2
+        var fall_displacement := \
+                0.5 * movement_params.gravity_fast_fall * fall_duration * fall_duration
+        
+        return rise_displacement + fall_displacement
+
 # Returns a positive value.
 static func calculate_max_upward_distance(movement_params: MovementParams) -> float:
     # FIXME: F: Add support for double jumps, dash, etc.
