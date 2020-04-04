@@ -285,11 +285,11 @@ static func calculate_max_horizontal_displacement_before_returning_to_starting_h
     var max_velocity_when_returning_to_starting_height := \
             sqrt(2 * gravity_fast_fall * -max_peak_height)
     # v = v_0 + a*t
-    var max_time_for_descent_from_peak_to_starting_height := \
+    var max_time_for_fall_from_peak_to_starting_height := \
             max_velocity_when_returning_to_starting_height / gravity_fast_fall
-    # Ascent time plus descent time.
+    # Rise time plus fall time.
     var max_time_to_starting_height := \
-            max_time_to_peak + max_time_for_descent_from_peak_to_starting_height
+            max_time_to_peak + max_time_for_fall_from_peak_to_starting_height
     # s = s_0 + v * t
     return max_time_to_starting_height * max_horizontal_speed_default
 

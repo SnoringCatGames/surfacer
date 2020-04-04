@@ -173,8 +173,8 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #         - floor, left_wall, right_wall
 #       - Important: Double-check that if collision clips a static-collidable corner, that the
 #         correct surface is returned
-# - Problem: If we allow hitting a ceiling surface repeatedly, what happens if a jump ascent cannot
-#   get around it (cannot move horizontally far enough during the ascent)?
+# - Problem: If we allow hitting a ceiling surface repeatedly, what happens if a jump rise cannot
+#   get around it (cannot move horizontally far enough during the rise)?
 #   - Solution: Afer calculating waypoints for a surface collision, if it's a ceiling surface,
 #     check whether the time to move horizontally exceeds the time to move upward for either
 #     waypoint. If so, abandon that traversal (remove the waypoint from the array before
@@ -211,7 +211,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   - Solution: Add support for ensuring a minimum normal-direction speed at the end of the jump.
 #     - Faster is probably always better, since efficient/quick movements are better.
 # 
-# - Problem: All of the edge calculations will allow the slow-ascent gravity to also be used for
+# - Problem: All of the edge calculations will allow the slow-rise gravity to also be used for
 #   the downward portion of the jump.
 #   - Either update Player controllers to also allow that,
 #   - or update all relevant edge calculation logic.

@@ -9,8 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Rename all occurences of /slow.?ascent/ with slow rise.
-# 
 # - Implement remaining cases in calculate_jump_land_positions_for_surface_pair:
 #   >- Handle remaining floor jump-surface cases.
 #     - Don't forget to add this use-case of just the absolute closest point when jumping to a

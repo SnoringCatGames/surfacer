@@ -51,7 +51,7 @@ static func _get_movement_calculators( \
 
 static func _calculate_dependent_movement_params(movement_params: MovementParams) -> void:
     movement_params.gravity_slow_rise = \
-            movement_params.gravity_fast_fall * movement_params.slow_ascent_gravity_multiplier
+            movement_params.gravity_fast_fall * movement_params.slow_rise_gravity_multiplier
     movement_params.collider_half_width_height = Geometry.calculate_half_width_height( \
             movement_params.collider_shape, \
             movement_params.collider_rotation)
@@ -96,8 +96,8 @@ static func _calculate_dependent_movement_params(movement_params: MovementParams
 
 static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.gravity_fast_fall >= 0)
-    assert(movement_params.slow_ascent_gravity_multiplier >= 0)
-    assert(movement_params.ascent_double_jump_gravity_multiplier >= 0)
+    assert(movement_params.slow_rise_gravity_multiplier >= 0)
+    assert(movement_params.rise_double_jump_gravity_multiplier >= 0)
     assert(movement_params.jump_boost <= 0)
     assert(movement_params.in_air_horizontal_acceleration >= 0)
     assert(movement_params.max_jump_chain >= 0)

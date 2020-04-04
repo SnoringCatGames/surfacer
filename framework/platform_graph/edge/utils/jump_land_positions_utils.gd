@@ -896,7 +896,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         # Jumping from a higher floor to a lower ceiling.
                         
                         # Return no valid points, since we must move down, past the floor, and
-                        # cannot then move back upward after starting the descent.
+                        # cannot then move back upward after starting the fall.
                         pass
                     
                 _:
@@ -1172,7 +1172,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     # Jump from a ceiling, land on a ceiling.
                     
                     # Return no valid points, since we must move down, away from the first ceiling,
-                    # and cannot then move back upward after starting the descent.
+                    # and cannot then move back upward after starting the fall.
                     pass
                     
                 _:
@@ -1501,7 +1501,7 @@ static func _calculate_horizontal_movement_offset( \
         displacement_land_basis_point: Vector2, \
         velocity_start: Vector2, \
         is_a_jump_calculator: bool, \
-        must_reach_destination_on_descent: bool) -> float:
+        must_reach_destination_on_fall: bool) -> float:
     var displacement: Vector2 = \
             displacement_land_basis_point - displacement_jump_basis_point
     
@@ -1511,7 +1511,7 @@ static func _calculate_horizontal_movement_offset( \
                     displacement, \
                     velocity_start, \
                     is_a_jump_calculator, \
-                    must_reach_destination_on_descent)
+                    must_reach_destination_on_fall)
     if duration == INF:
         # We cannot reach the land position from the start position.
         return INF

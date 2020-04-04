@@ -20,9 +20,9 @@ var collider_rotation: float
 var collider_half_width_height := Vector2.INF
 
 var gravity_fast_fall: float
-var slow_ascent_gravity_multiplier: float
+var slow_rise_gravity_multiplier: float
 var gravity_slow_rise: float
-var ascent_double_jump_gravity_multiplier: float
+var rise_double_jump_gravity_multiplier: float
 
 var jump_boost: float
 var in_air_horizontal_acceleration: float

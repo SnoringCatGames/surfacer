@@ -17,10 +17,10 @@ func _init() -> void:
     collider_rotation = PI / 2.0
     
     gravity_fast_fall = Geometry.GRAVITY
-    slow_ascent_gravity_multiplier = 0.18
-#    slow_ascent_gravity_multiplier = 0.38
-    ascent_double_jump_gravity_multiplier = 0.08
-#    ascent_double_jump_gravity_multiplier = 0.68
+    slow_rise_gravity_multiplier = 0.18
+#    slow_rise_gravity_multiplier = 0.38
+    rise_double_jump_gravity_multiplier = 0.08
+#    rise_double_jump_gravity_multiplier = 0.68
     
     jump_boost = -1000.0
     in_air_horizontal_acceleration = 1500.0

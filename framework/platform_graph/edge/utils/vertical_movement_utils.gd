@@ -122,13 +122,13 @@ static func calculate_time_to_jump_to_waypoint( \
         displacement: Vector2, \
         velocity_start: Vector2, \
         can_hold_jump_button_at_start: bool, \
-        must_reach_destination_on_descent := false) -> float:
+        must_reach_destination_on_fall := false) -> float:
     if displacement.y < -movement_params.max_upward_jump_distance:
         # We cannot jump high enough for the displacement.
         return INF
     
     if can_hold_jump_button_at_start:
-        # If we can currently hold the jump button, then there is slow-ascent and
+        # If we can currently hold the jump button, then there is slow-rise and
         # variable-jump-height to consider.
     
         ### Calculate the time needed to move upward.
@@ -191,7 +191,7 @@ static func calculate_time_to_jump_to_waypoint( \
                         displacement.y, \
                         velocity_start.y, \
                         movement_params.gravity_fast_fall, \
-                        !must_reach_destination_on_descent, \
+                        !must_reach_destination_on_fall, \
                         0.0, \
                         false)
         else:
@@ -268,7 +268,7 @@ static func calculate_time_to_jump_to_waypoint( \
         
         ### Calculate the time needed to move downward.
         
-        var duration_to_reach_upward_displacement_on_descent := 0.0
+        var duration_to_reach_upward_displacement_on_fall := 0.0
         if duration_to_reach_downward_displacement == 0.0:
             # The total duration still isn't enough if we cannot reach the horizontal displacement
             # before we've already past the destination vertically on the upward side of the
@@ -287,7 +287,7 @@ static func calculate_time_to_jump_to_waypoint( \
             if duration_to_reach_upward_displacement_with_only_fast_fall != INF and \
                     duration_to_reach_upward_displacement_with_only_fast_fall < \
                     duration_to_reach_horizontal_displacement:
-                duration_to_reach_upward_displacement_on_descent = \
+                duration_to_reach_upward_displacement_on_fall = \
                         MovementUtils.calculate_movement_duration( \
                                 displacement.y, \
                                 velocity_start.y, \
@@ -295,7 +295,7 @@ static func calculate_time_to_jump_to_waypoint( \
                                 false, \
                                 0.0, \
                                 false)
-                assert(duration_to_reach_upward_displacement_on_descent != INF)
+                assert(duration_to_reach_upward_displacement_on_fall != INF)
         
         ### Use the max of each aspect of jump movement.
         
@@ -314,9 +314,9 @@ static func calculate_time_to_jump_to_waypoint( \
         return max(max(max(duration_to_reach_upward_displacement, \
                 duration_to_reach_downward_displacement), \
                 duration_to_reach_horizontal_displacement), \
-                duration_to_reach_upward_displacement_on_descent)
+                duration_to_reach_upward_displacement_on_fall)
     else:
-        # If we can't currently hold the jump button, then there is no slow-ascent and variable
+        # If we can't currently hold the jump button, then there is no slow-rise and variable
         # jump height to consider. So our movement duration is a lot simpler to calculate.
         return MovementUtils.calculate_movement_duration( \
                 displacement.y, \
@@ -389,7 +389,7 @@ static func calculate_time_for_passing_through_waypoint( \
 
     var target_height := position.y
     
-    var duration_of_slow_ascent: float
+    var duration_of_slow_rise: float
     var duration_of_fast_fall: float
     
     var is_position_before_instruction_end: bool
@@ -449,19 +449,19 @@ static func calculate_time_for_passing_through_waypoint( \
     
     if is_position_before_instruction_end:
         var displacement := target_height - position_start_y
-        duration_of_slow_ascent = MovementUtils.calculate_movement_duration( \
+        duration_of_slow_rise = MovementUtils.calculate_movement_duration( \
                 displacement, \
                 velocity_start_y, \
                 movement_params.gravity_slow_rise, \
                 true, \
                 min_end_time, \
                 false)
-        if duration_of_slow_ascent == INF:
+        if duration_of_slow_rise == INF:
             return INF
         duration_of_fast_fall = 0.0
     else:
-        duration_of_slow_ascent = time_instruction_end
-        min_end_time = max(min_end_time - duration_of_slow_ascent, 0.0)
+        duration_of_slow_rise = time_instruction_end
+        min_end_time = max(min_end_time - duration_of_slow_rise, 0.0)
         var displacement_of_fast_fall := target_height - position_instruction_end_y
         duration_of_fast_fall = MovementUtils.calculate_movement_duration( \
                 displacement_of_fast_fall, \
@@ -473,7 +473,7 @@ static func calculate_time_for_passing_through_waypoint( \
         if duration_of_fast_fall == INF:
             return INF
     
-    return duration_of_fast_fall + duration_of_slow_ascent
+    return duration_of_fast_fall + duration_of_slow_rise
 
 static func calculate_vertical_state_for_time_from_step( \
         movement_params: MovementParams, \
@@ -497,31 +497,31 @@ static func calculate_vertical_state_for_time( \
         velocity_step_start_y: float, \
         time_jump_release: float) -> Array:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
-    var slow_ascent_end_time := min(time, time_jump_release)
+    var slow_rise_end_time := min(time, time_jump_release)
     
     # Basic equations of motion.
-    var slow_ascent_end_position := \
-            position_step_start_y + velocity_step_start_y * slow_ascent_end_time + \
-            0.5 * movement_params.gravity_slow_rise * slow_ascent_end_time * slow_ascent_end_time
-    var slow_ascent_end_velocity := velocity_step_start_y + \
-            movement_params.gravity_slow_rise * slow_ascent_end_time
+    var slow_rise_end_position := \
+            position_step_start_y + velocity_step_start_y * slow_rise_end_time + \
+            0.5 * movement_params.gravity_slow_rise * slow_rise_end_time * slow_rise_end_time
+    var slow_rise_end_velocity := velocity_step_start_y + \
+            movement_params.gravity_slow_rise * slow_rise_end_time
     
     var position: float
     var velocity: float
     if time_jump_release >= time:
-        # We only need to consider the slow-ascent parabolic section.
-        position = slow_ascent_end_position
-        velocity = slow_ascent_end_velocity
+        # We only need to consider the slow-rise parabolic section.
+        position = slow_rise_end_position
+        velocity = slow_rise_end_velocity
     else:
-        # We need to consider both the slow-ascent and fast-fall parabolic sections.
+        # We need to consider both the slow-rise and fast-fall parabolic sections.
         
-        var fast_fall_duration := time - slow_ascent_end_time
+        var fast_fall_duration := time - slow_rise_end_time
         
         # Basic equations of motion.
-        position = slow_ascent_end_position + \
-                slow_ascent_end_velocity * fast_fall_duration + \
+        position = slow_rise_end_position + \
+                slow_rise_end_velocity * fast_fall_duration + \
                 0.5 * movement_params.gravity_fast_fall * fast_fall_duration * fast_fall_duration
-        velocity = slow_ascent_end_velocity + \
+        velocity = slow_rise_end_velocity + \
                 movement_params.gravity_fast_fall * fast_fall_duration
     
     return [position, velocity]
@@ -538,7 +538,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
     # Algebra...:
     #     t = -v_0 / a
     var duration_to_slow_rise_peak := \
-            -velocity_y_start / movement_params.slow_ascent_gravity_multiplier
+            -velocity_y_start / movement_params.slow_rise_gravity_multiplier
     
     if duration_to_slow_rise_peak >= duration:
         # We hit the end-time before reaching the peak, so we don't need to consider any
@@ -549,7 +549,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
         # Algebra...:
         #     (s - s_0) = v_0*t + 1/2*a*t^2
         return velocity_y_start * duration + \
-                0.5 * movement_params.slow_ascent_gravity_multiplier * duration * duration
+                0.5 * movement_params.slow_rise_gravity_multiplier * duration * duration
     else:
         # We hit the end-time after reaching the peak, so we need to consider both the displacement
         # with slow-rise gravity and the displacement with fast-fall gravity.
@@ -559,7 +559,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
         # Algebra...:
         #     (s - s_0) = v_0*t + 1/2*a*t^2
         var rise_displacement := velocity_y_start * duration_to_slow_rise_peak + \
-                0.5 * movement_params.slow_ascent_gravity_multiplier * \
+                0.5 * movement_params.slow_rise_gravity_multiplier * \
                 duration_to_slow_rise_peak * duration_to_slow_rise_peak
         
         var fall_duration := duration - duration_to_slow_rise_peak
