@@ -921,7 +921,7 @@ tracks/75/keys = {
 }
 
 [sub_resource type="Animation" id=3]
-resource_name = "JumpAscend"
+resource_name = "JumpRise"
 length = 0.4
 loop = true
 tracks/0/type = "value"
@@ -1838,7 +1838,7 @@ tracks/75/keys = {
 }
 
 [sub_resource type="Animation" id=4]
-resource_name = "JumpDescend"
+resource_name = "JumpFall"
 length = 0.4
 loop = true
 tracks/0/type = "value"
@@ -6893,8 +6893,8 @@ __meta__ = {
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Climb = SubResource( 2 )
-anims/JumpAscend = SubResource( 3 )
-anims/JumpDescend = SubResource( 4 )
+anims/JumpRise = SubResource( 3 )
+anims/JumpFall = SubResource( 4 )
 anims/Rest = SubResource( 5 )
 anims/RestOnWall = SubResource( 6 )
 anims/Stand = SubResource( 7 )
