@@ -13,7 +13,7 @@ func _init().( \
 
 func process(player: Player) -> bool:
     player.jump_count = 0
-    player.is_ascending_from_jump = false
+    player.is_rising_from_jump = false
     player.velocity.y = 0.0
 
     return true

@@ -38,7 +38,7 @@ var action_handlers: Array
 # SurfaceType
 var current_action_type: int
 
-var is_ascending_from_jump := false
+var is_rising_from_jump := false
 var jump_count := 0
 
 var current_max_horizontal_speed: float
@@ -257,9 +257,9 @@ func _process_animation() -> void:
                 animator.rest_on_wall()
         SurfaceType.AIR:
             if velocity.y > 0:
-                animator.jump_descend()
+                animator.jump_fall()
             else:
-                animator.jump_ascend()
+                animator.jump_rise()
         _:
             Utils.error()
 

@@ -39,15 +39,15 @@ func rest_on_wall() -> void:
             animator_params.rest_on_wall_name, \
             animator_params.rest_on_wall_playback_rate)
 
-func jump_ascend() -> void:
+func jump_rise() -> void:
     _play_animation( \
-            animator_params.jump_ascend_name, \
-            animator_params.jump_ascend_playback_rate)
+            animator_params.jump_rise_name, \
+            animator_params.jump_rise_playback_rate)
 
-func jump_descend() -> void:
+func jump_fall() -> void:
     _play_animation( \
-            animator_params.jump_descend_name, \
-            animator_params.jump_descend_playback_rate)
+            animator_params.jump_fall_name, \
+            animator_params.jump_fall_playback_rate)
 
 func walk() -> void:
     _play_animation( \

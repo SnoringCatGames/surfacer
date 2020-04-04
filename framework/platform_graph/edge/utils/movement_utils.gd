@@ -360,11 +360,11 @@ static func update_velocity_in_air( \
         is_first_jump: bool, \
         horizontal_acceleration_sign: int, \
         movement_params: MovementParams) -> Vector2:
-    var is_ascending_from_jump := velocity.y < 0 and is_pressing_jump
+    var is_rising_from_jump := velocity.y < 0 and is_pressing_jump
     
     # Make gravity stronger when falling. This creates a more satisfying jump.
     # Similarly, make gravity stronger for double jumps.
-    var gravity_multiplier := 1.0 if !is_ascending_from_jump else \
+    var gravity_multiplier := 1.0 if !is_rising_from_jump else \
             (movement_params.slow_rise_gravity_multiplier if is_first_jump \
                     else movement_params.rise_double_jump_gravity_multiplier)
     
