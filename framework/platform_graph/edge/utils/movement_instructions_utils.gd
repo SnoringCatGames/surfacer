@@ -5,9 +5,9 @@ const MovementInstruction := preload("res://framework/platform_graph/edge/calcul
 
 # FIXME: B 
 # - Should I remove this and force a slightly higher offset to target jump position directly? What
-#   about passing through constraints? Would the increased time to get to the position for a
-#   wall-top constraint result in too much downward velocity into the ceiling?
-# - Or what about the constraint offset margins? Shouldn't those actually address any needed
+#   about passing through waypoints? Would the increased time to get to the position for a
+#   wall-top waypoint result in too much downward velocity into the ceiling?
+# - Or what about the waypoint offset margins? Shouldn't those actually address any needed
 #   jump-height epsilon? Is this needlessly redundant with that mechanism?
 # - Though I may need to always at least have _some_ small value here...
 # FIXME: D Tweak this.

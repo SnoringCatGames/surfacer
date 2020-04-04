@@ -10,14 +10,14 @@ static func calculate_vertical_step( \
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var movement_params := overall_calc_params.movement_params
-    var origin_constraint := overall_calc_params.origin_constraint
-    var destination_constraint := overall_calc_params.destination_constraint
+    var origin_waypoint := overall_calc_params.origin_waypoint
+    var destination_waypoint := overall_calc_params.destination_waypoint
     var velocity_start := overall_calc_params.velocity_start
     var can_hold_jump_button := overall_calc_params.can_backtrack_on_height
     
-    var position_start := origin_constraint.position
-    var position_end := destination_constraint.position
-    var time_step_end := destination_constraint.time_passing_through
+    var position_start := origin_waypoint.position
+    var position_end := destination_waypoint.position
+    var time_step_end := destination_waypoint.time_passing_through
     
     var time_instruction_end: float
     var position_instruction_end := Vector2.INF
@@ -58,7 +58,7 @@ static func calculate_vertical_step( \
     
     var step := MovementVertCalcStep.new()
     
-    step.horizontal_acceleration_sign = destination_constraint.horizontal_movement_sign
+    step.horizontal_acceleration_sign = destination_waypoint.horizontal_movement_sign
     step.can_hold_jump_button = can_hold_jump_button
     
     step.time_step_start = 0.0
@@ -117,7 +117,7 @@ static func calculate_vertical_step( \
 # displacement before we've already past the destination vertically on the upward side of the
 # trajectory. In that case, we need to consider the minimum time for the upward and downward
 # motion of the jump.
-static func calculate_time_to_jump_to_constraint( \
+static func calculate_time_to_jump_to_waypoint( \
         movement_params: MovementParams, \
         displacement: Vector2, \
         velocity_start: Vector2, \
@@ -376,16 +376,16 @@ static func calculate_time_to_release_jump_button( \
 # Calculates the time at which the movement would travel through the given position with the
 # given vertical_step.
 # FIXME: B: Update unit tests to include min_end_time.
-static func calculate_time_for_passing_through_constraint( \
+static func calculate_time_for_passing_through_waypoint( \
         movement_params: MovementParams, \
-        constraint: MovementConstraint, \
+        waypoint: Waypoint, \
         min_end_time: float, \
         position_start_y: float, \
         velocity_start_y: float, \
         time_instruction_end: float, \
         position_instruction_end_y: float, \
         velocity_instruction_end_y: float) -> float:
-    var position := constraint.position
+    var position := waypoint.position
 
     var target_height := position.y
     
@@ -398,7 +398,7 @@ static func calculate_time_for_passing_through_constraint( \
     # We need to know whether the position corresponds to the rising or falling side of the jump
     # parabola, and whether the position corresponds to before or after the jump button is
     # released.
-    match constraint.surface.side:
+    match waypoint.surface.side:
         SurfaceSide.FLOOR:
             # Jump reaches the position after releasing the jump button (and after the peak).
             is_position_before_instruction_end = false
@@ -418,9 +418,9 @@ static func calculate_time_for_passing_through_constraint( \
                 # peak).
                 is_position_before_instruction_end = false
         _: # A wall.
-            if !constraint.is_destination:
-                # We are considering an intermediate constraint.
-                if constraint.should_stay_on_min_side:
+            if !waypoint.is_destination:
+                # We are considering an intermediate waypoint.
+                if waypoint.should_stay_on_min_side:
                     # Passing over the top of the wall (jump reaches the position before the peak).
                     is_position_before_peak = true
                     

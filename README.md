@@ -133,7 +133,7 @@ TODO: diagrams:
 -   Calculate the horizontal step that would reach the destination displacement over the given duration.
 -   Check for any unexpected collisions along the trajectory represented by the vertical and horizontal steps.
     -   If there is an intermediate surface that the player would collide with, we need to try adjusting the jump trajectory to go around either side of the colliding surface.
-        -   We call these points that movement must go through in order to avoid collisions, "constraints".
+        -   We call these points that movement must go through in order to avoid collisions, "waypoints".
         -   Recursively check whether the jump is valid to and from either side of the colliding surface.
         -   If we can't reach the destination when moving around the colliding surface, then try backtracking and consider whether a higher jump height from the start would get us there.
     -   If there is no intermediate collision, then we can calculate the ultimate edge movement instructions for playback based on the vertical and horizontal steps we've calculated.
@@ -141,7 +141,7 @@ TODO: diagrams:
 #### Some important aspects
 
 -   We treat horizontal and vertical motion as independent to each other. This greatly simplifies our calculations.
-    -   We calculate the necessary jump duration--and from that the vertical component of motion--up-front, and use this to determine times for each potential step and constraint of the motion. Knowing these times up-front makes the horizontal min/max calculations easier.
+    -   We calculate the necessary jump duration--and from that the vertical component of motion--up-front, and use this to determine times for each potential step and waypoint of the motion. Knowing these times up-front makes the horizontal min/max calculations easier.
 -   We have a broad-phase check to quickly eliminate possible surfaces that are obviously out of reach.
     -   This primarily looks at the horizontal and vertical distance from the origin to the destination.
 
@@ -201,72 +201,72 @@ TODO: Include SVG diagrams illustrating the different conditions to consider wit
 
 -   If we decide whether a surface could be within reach, we then check for possible collisions between the origin and destination.
     -   To do this, we simulate frame-by-frame motion using the same physics timestep and the same movement-update function calls that would be used when running the game normally. We then check for any collisions between each frame.
--   If we detect a collision, then we define two possible "constraints"--one for each end of the collided surface.
+-   If we detect a collision, then we define two possible "waypoints"--one for each end of the collided surface.
     -   In order to make it around this intermediate surface, we know the player must pass around one of the ends of this surface.
-    -   These constraints we calculate represent the minimum required deviation from the player's original path.
--   We then recursively check whether the player could move to and from each of the constraints.
+    -   These waypoints we calculate represent the minimum required deviation from the player's original path.
+-   We then recursively check whether the player could move to and from each of the waypoints.
     -   We keep the original vertical step and overall duration the same.
-    -   We can use that to calculate the time and vertical state that must be used for the constraint.
+    -   We can use that to calculate the time and vertical state that must be used for the waypoint.
     -   Then we only really consider whether the horizontal movement could be valid within the the given time limit.
--   If so, we concatenate and return the horizontal steps required to reach the constraint from the original starting position and the horizontal steps required to reach the original destination from the constraint.
+-   If so, we concatenate and return the horizontal steps required to reach the waypoint from the original starting position and the horizontal steps required to reach the original destination from the waypoint.
 
 #### Backtracking to consider a higher max jump height
 
--   Sometimes, a constraint may be out of reach, when we're calculating horizontal steps, given the current step's starting position and velocity.
--   However, maybe the constraint could be within reach, if we had originally jumped a little higher.
--   To account for this, we backtrack to the start of the overall movement traversal and consider whether a higher jump could reach the constraint.
-    -   The destination constraint is first updated to support a new jump height that would allow for a previously-out-of-reach intermediate constraint to also be reached.
+-   Sometimes, a waypoint may be out of reach, when we're calculating horizontal steps, given the current step's starting position and velocity.
+-   However, maybe the waypoint could be within reach, if we had originally jumped a little higher.
+-   To account for this, we backtrack to the start of the overall movement traversal and consider whether a higher jump could reach the waypoint.
+    -   The destination waypoint is first updated to support a new jump height that would allow for a previously-out-of-reach intermediate waypoint to also be reached.
     -   Then all steps are re-calculated from the start of the movement, while considering the new destination state.
 -   If it could, we return that result instead.
 
-#### Constraint calculations
+#### Waypoint calculations
 
--   We calculate constraints before steps.
+-   We calculate waypoints before steps.
     -   We calculate a lot of state to store on them, and then depend on this state during step calculation.
     -   Some of this state includes:
-        -   The time for passing through the constraint (corresponding to the overall jump height and edge duration).
-        -   The horizontal direction of movement through the constraint (according to the direction of travel from the previous constraint or according to the direction of the surface).
-        -   The min and max possible x-velocity when the movement passes through this constraint.
-            -   With a higher speed through a constraint, we could reach further for the next constraint, or we could be stuck overshooting the next constraint. So it's useful to calculate the range of possible horizontal velocities through a constraint.
-        -   The actual x-velocity for movement through the constraint is calculated later when calculating the cooresponding movement step.
-            -   We typically try to use an x-velocity that will minimize speed through the constraint, while still satisfying the horizontal step displacement and the constraint's min/max limitations.
--   Here's the sequence of events for constraint calculations:
-    -   Start by calculating origin and destination constraints.
-        -   For the origin constraint, min, max, and actual x-velocity are all zero.
-        -   For the destination constraint, min and max are assigned according to how acceleration can be applied during the step (e.g., at the start or at the end of the interval).
-    -   Then, during step calculation traversal, when a new intermediate constraint is created, its min and max x-velocity are assigned according to both the min and max x-velocity of the following constraint and the actual displacement and duration of the step from the new constraint to the next constraint.
-    -   Intermediate constraints are calculated with pre-order tree traversal.
+        -   The time for passing through the waypoint (corresponding to the overall jump height and edge duration).
+        -   The horizontal direction of movement through the waypoint (according to the direction of travel from the previous waypoint or according to the direction of the surface).
+        -   The min and max possible x-velocity when the movement passes through this waypoint.
+            -   With a higher speed through a waypoint, we could reach further for the next waypoint, or we could be stuck overshooting the next waypoint. So it's useful to calculate the range of possible horizontal velocities through a waypoint.
+        -   The actual x-velocity for movement through the waypoint is calculated later when calculating the cooresponding movement step.
+            -   We typically try to use an x-velocity that will minimize speed through the waypoint, while still satisfying the horizontal step displacement and the waypoint's min/max limitations.
+-   Here's the sequence of events for waypoint calculations:
+    -   Start by calculating origin and destination waypoints.
+        -   For the origin waypoint, min, max, and actual x-velocity are all zero.
+        -   For the destination waypoint, min and max are assigned according to how acceleration can be applied during the step (e.g., at the start or at the end of the interval).
+    -   Then, during step calculation traversal, when a new intermediate waypoint is created, its min and max x-velocity are assigned according to both the min and max x-velocity of the following waypoint and the actual displacement and duration of the step from the new waypoint to the next waypoint.
+    -   Intermediate waypoints are calculated with pre-order tree traversal.
       -   This poses a small problem:
-        -   The calculation of a constraint depends on the accuracy of the min/max x-velocity of it's next constraint.
-        -   However, the min/max x-velocity of the next constraint could need to be updated if it in turn has a new next constraint later on.
-        -   Additionally, a new constraint could be created later on that would become the new next constraint instead of the old next constraint.
-        -   To ameliorate this problem, everytime a new constraint is created, we update its immediate neighbor constraints.
-        -   These updates do not solve all cases, since we may in turn need to update the min/max x-velocities and movement sign for all other constraints. And these updates could then result in the addition/removal of other intermediate constraints. But we have found that these two updates are enough for most cases. If we detect that a neigbor constraint would be invalidated during an update, we abandon the edge calculation, which could result in a false-negative result.
+        -   The calculation of a waypoint depends on the accuracy of the min/max x-velocity of it's next waypoint.
+        -   However, the min/max x-velocity of the next waypoint could need to be updated if it in turn has a new next waypoint later on.
+        -   Additionally, a new waypoint could be created later on that would become the new next waypoint instead of the old next waypoint.
+        -   To ameliorate this problem, everytime a new waypoint is created, we update its immediate neighbor waypoints.
+        -   These updates do not solve all cases, since we may in turn need to update the min/max x-velocities and movement sign for all other waypoints. And these updates could then result in the addition/removal of other intermediate waypoints. But we have found that these two updates are enough for most cases. If we detect that a neigbor waypoint would be invalidated during an update, we abandon the edge calculation, which could result in a false-negative result.
     -   Steps are calculated with in-order tree traversal (i.e., in the same order they'd be executed when moving from origin to destination).
 
-#### Fake constraints
+#### Fake waypoints
 
--   When calcuting steps to navigate around a collision with a ceiling or floor surface, sometimes one of the two possible constraints is what we call "fake".
--   A fake constraint corresponds to the left side of the floor/ceiling surface when movement from the previous constraint is rightward (or to the right side when movement is leftward).
+-   When calcuting steps to navigate around a collision with a ceiling or floor surface, sometimes one of the two possible waypoints is what we call "fake".
+-   A fake waypoint corresponds to the left side of the floor/ceiling surface when movement from the previous waypoint is rightward (or to the right side when movement is leftward).
 -   In this case, movement will need to go around both the floor/ceiling as well as its adjacent wall surface.
--   The final movement trajectory should not end-up moving through the fake constraint.
--   The actual constraint that the final movement should move through, is instead the "real" constraint that cooresponds to the far edge of this adjacent wall surface.
--   So, when we find a fake constraint, we immediately replace it with its adjacent real constraint.
+-   The final movement trajectory should not end-up moving through the fake waypoint.
+-   The actual waypoint that the final movement should move through, is instead the "real" waypoint that cooresponds to the far edge of this adjacent wall surface.
+-   So, when we find a fake waypoint, we immediately replace it with its adjacent real waypoint.
 -   Example scenario:
-  -   Origin is constraint #0, Destination is constraint #3
+  -   Origin is waypoint #0, Destination is waypoint #3
   -   Assume we are jumping from a low-left platform to a high-right platform, and there is an intermediate block in the way.
-  -   Our first step attempt hits the underside of the block, so we try constraints on either side.
-  -   After trying the left-hand constraint (#1), we then hit the left side of the block. So we then try a top-side constraint (#2).
+  -   Our first step attempt hits the underside of the block, so we try waypoints on either side.
+  -   After trying the left-hand waypoint (#1), we then hit the left side of the block. So we then try a top-side waypoint (#2).
       -   (Bottom-side fails the surface-already-encountered check).
-  -   After going through this new left-side (right-wall), top-side constraint (#2), we can successfully reach the destination.
-  -   With the resulting scenario, we shouldn't actually move through both of the intermediate constraints (#1 and #2). We should should instead skip the first intermediate constraint (#1) and go straight from the origin to the second intermediate constraint (#2).
+  -   After going through this new left-side (right-wall), top-side waypoint (#2), we can successfully reach the destination.
+  -   With the resulting scenario, we shouldn't actually move through both of the intermediate waypoints (#1 and #2). We should should instead skip the first intermediate waypoint (#1) and go straight from the origin to the second intermediate waypoint (#2).
 
 TODO: screenshot of example scenario
 
 #### Example jump-movement cases that aren't currently covered
 
 -   A single horizontal step that needs multiple different sideways-movement instructions (i.e., accelerating to both one side and then the other in the same jump):
-    -   For example, backward acceleration in order to not overshoot the end position as well as forward acceleration to then have enough step-end x velocity in order to reach the following constraint for the next step.
+    -   For example, backward acceleration in order to not overshoot the end position as well as forward acceleration to then have enough step-end x velocity in order to reach the following waypoint for the next step.
 
 #### Collision calculation madness
 

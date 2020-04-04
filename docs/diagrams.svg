@@ -162,7 +162,7 @@
          x="-1368.9302"
          y="15.640208"
          style="stroke-width:0.66382116"
-         id="tspan4607">on the remaining displacement after a constraint.</tspan><tspan
+         id="tspan4607">on the remaining displacement after a waypoint.</tspan><tspan
          sodipodi:role="line"
          x="-1368.9302"
          y="48.831268"
@@ -177,7 +177,7 @@
          x="-1368.9302"
          y="115.21339"
          style="stroke-width:0.66382116"
-         id="tspan4654">-   Attempt 2: Step 2 (after constraint) falls short </tspan><tspan
+         id="tspan4654">-   Attempt 2: Step 2 (after waypoint) falls short </tspan><tspan
          sodipodi:role="line"
          x="-1368.9302"
          y="148.40445"
@@ -236,6 +236,6 @@
          id="tspan4613-3"
          x="-687.81348"
          y="-253.69093"
-         style="stroke-width:0.66054738">Constraint</tspan></text>
+         style="stroke-width:0.66054738">Waypoint</tspan></text>
   </g>
 </svg>

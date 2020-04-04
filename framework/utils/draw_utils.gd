@@ -9,9 +9,9 @@ const SURFACE_DEPTH_DIVISION_SIZE := SURFACE_DEPTH / SURFACE_DEPTH_DIVISIONS_COU
 
 const EDGE_TRAJECTORY_WIDTH := 1.0
 
-const EDGE_CONSTRAINT_WIDTH := 1.0
-const EDGE_CONSTRAINT_RADIUS := 6.0 * EDGE_CONSTRAINT_WIDTH
-const EDGE_START_RADIUS := 3.0 * EDGE_CONSTRAINT_WIDTH
+const EDGE_WAYPOINT_WIDTH := 1.0
+const EDGE_WAYPOINT_RADIUS := 6.0 * EDGE_WAYPOINT_WIDTH
+const EDGE_START_RADIUS := 3.0 * EDGE_WAYPOINT_WIDTH
 
 const EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH := 9
 const EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH := 1
@@ -531,7 +531,7 @@ static func draw_capsule_outline( \
 static func draw_edge( \
         canvas: CanvasItem, \
         edge: Edge, \
-        includes_constraints := false, \
+        includes_waypoints := false, \
         includes_instruction_indicators := false, \
         includes_discrete_positions := false, \
         base_color := Color.white) -> void:
@@ -548,7 +548,7 @@ static func draw_edge( \
                 canvas, \
                 edge, \
                 includes_discrete_positions, \
-                includes_constraints, \
+                includes_waypoints, \
                 includes_instruction_indicators, \
                 base_color)
     elif edge is ClimbDownWallToFloorEdge or \
@@ -567,7 +567,7 @@ static func draw_edge( \
         _draw_fall_from_floor_edge( \
                 canvas, \
                 edge, \
-                includes_constraints, \
+                includes_waypoints, \
                 includes_instruction_indicators, \
                 includes_discrete_positions, \
                 base_color)
@@ -603,7 +603,7 @@ static func _draw_climb_over_wall_to_floor_edge( \
 static func _draw_fall_from_floor_edge( \
         canvas: CanvasItem, \
         edge: FallFromFloorEdge, \
-        includes_constraints: bool, \
+        includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
         includes_discrete_positions: bool, \
         base_color: Color) -> void:
@@ -636,7 +636,7 @@ static func _draw_edge_from_instructions_positions( \
         canvas: CanvasItem, \
         edge: Edge, \
         includes_discrete_positions: bool, \
-        includes_constraints: bool, \
+        includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
         base_color: Color) -> void:
     # Set up colors.
@@ -646,7 +646,7 @@ static func _draw_edge_from_instructions_positions( \
             0.6, \
             0.9, \
             0.5)
-    var constraint_color := Color.from_hsv( \
+    var waypoint_color := Color.from_hsv( \
             base_color.h, \
             0.6, \
             0.7, \
@@ -671,22 +671,22 @@ static func _draw_edge_from_instructions_positions( \
             continuous_trajectory_color, \
             EDGE_TRAJECTORY_WIDTH)
     
-    if includes_constraints:
-        # Draw all constraints in this edge.
-        for constraint_position in edge.trajectory.constraint_positions:
+    if includes_waypoints:
+        # Draw all waypoints in this edge.
+        for waypoint_position in edge.trajectory.waypoint_positions:
             draw_circle_outline( \
                     canvas, \
-                    constraint_position, \
-                    EDGE_CONSTRAINT_RADIUS, \
-                    constraint_color, \
-                    EDGE_CONSTRAINT_WIDTH, \
+                    waypoint_position, \
+                    EDGE_WAYPOINT_RADIUS, \
+                    waypoint_color, \
+                    EDGE_WAYPOINT_WIDTH, \
                     4.0)
         draw_circle_outline( \
                 canvas, \
                 edge.start, \
                 EDGE_START_RADIUS, \
-                constraint_color, \
-                EDGE_CONSTRAINT_WIDTH, \
+                waypoint_color, \
+                EDGE_WAYPOINT_WIDTH, \
                 4.0)
     
     if includes_instruction_indicators:

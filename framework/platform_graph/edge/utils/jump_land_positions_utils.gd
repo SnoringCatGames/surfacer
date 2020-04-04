@@ -1506,7 +1506,7 @@ static func _calculate_horizontal_movement_offset( \
             displacement_land_basis_point - displacement_jump_basis_point
     
     var duration: float = \
-            VerticalMovementUtils.calculate_time_to_jump_to_constraint( \
+            VerticalMovementUtils.calculate_time_to_jump_to_waypoint( \
                     movement_params, \
                     displacement, \
                     velocity_start, \

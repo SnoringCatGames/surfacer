@@ -19,10 +19,10 @@ static func calculate_trajectory_from_calculation_steps( \
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
     
-    # Record the trajectory constraint positions.
-    var constraint_positions := []
+    # Record the trajectory waypoint positions.
+    var waypoint_positions := []
     for step in steps:
-        constraint_positions.push_back(step.position_step_end)
+        waypoint_positions.push_back(step.position_step_end)
     
     var frame_continuous_positions_from_steps := _concatenate_step_frame_positions(steps)
     var frame_continuous_velocities_from_steps := _concatenate_step_frame_velocities(steps)
@@ -33,7 +33,7 @@ static func calculate_trajectory_from_calculation_steps( \
     var trajectory := MovementTrajectory.new( \
             frame_continuous_positions_from_steps, \
             frame_continuous_velocities_from_steps, \
-            constraint_positions, \
+            waypoint_positions, \
             distance_from_continuous_frames)
     
     # FIXME: B: REMOVE
@@ -51,7 +51,7 @@ static func calculate_trajectory_from_calculation_steps( \
             trajectory)
     assert(collision == null or \
             (collision.is_valid_collision_state and \
-            collision.surface == overall_calc_params.destination_constraint.surface))
+            collision.surface == overall_calc_params.destination_waypoint.surface))
 
     # FIXME: B: REMOVE
     overall_calc_params.movement_params.gravity_fast_fall *= \

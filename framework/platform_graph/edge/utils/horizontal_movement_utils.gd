@@ -3,7 +3,7 @@ class_name HorizontalMovementUtils
 
 const MovementCalcStep := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_step.gd")
 
-const MIN_MAX_VELOCITY_X_MARGIN := MovementConstraintUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
+const MIN_MAX_VELOCITY_X_MARGIN := WaypointUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
 
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step( \
@@ -12,14 +12,14 @@ static func calculate_horizontal_step( \
     var movement_params := overall_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
     
-    var start_constraint := step_calc_params.start_constraint
-    var position_step_start := start_constraint.position
-    var time_step_start := start_constraint.time_passing_through
+    var start_waypoint := step_calc_params.start_waypoint
+    var position_step_start := start_waypoint.position
+    var time_step_start := start_waypoint.time_passing_through
     
-    var end_constraint := step_calc_params.end_constraint
-    var position_end := end_constraint.position
-    var time_step_end := end_constraint.time_passing_through
-    var velocity_start_x := start_constraint.actual_velocity_x
+    var end_waypoint := step_calc_params.end_waypoint
+    var position_end := end_waypoint.position
+    var time_step_end := end_waypoint.time_passing_through
+    var velocity_start_x := start_waypoint.actual_velocity_x
     
     var step_duration := time_step_end - time_step_start
     var displacement := position_end - position_step_start
@@ -40,11 +40,11 @@ static func calculate_horizontal_step( \
             displacement.x, \
             step_duration, \
             velocity_start_x, \
-            end_constraint.min_velocity_x, \
-            end_constraint.max_velocity_x, \
+            end_waypoint.min_velocity_x, \
+            end_waypoint.max_velocity_x, \
             movement_params.in_air_horizontal_acceleration)
     if min_and_max_velocity_at_step_end.empty():
-        # This constraint cannot be reached.
+        # This waypoint cannot be reached.
         return null
     var min_velocity_end_x: float = min_and_max_velocity_at_step_end[0]
     var max_velocity_end_x: float = min_and_max_velocity_at_step_end[1]
@@ -72,7 +72,7 @@ static func calculate_horizontal_step( \
             acceleration)
     if acceleration_start_and_end_time.empty():
         # There is no start velocity that can reach the target end position/velocity/time.
-        # This should never happen, since we should have failed earlier during constraint
+        # This should never happen, since we should have failed earlier during waypoint
         # calculations.
         Utils.error()
         return null
@@ -159,7 +159,7 @@ static func calculate_horizontal_step( \
     if step_calc_params.debug_state != null:
         step_calc_params.debug_state.step = step
     
-    end_constraint.actual_velocity_x = velocity_end_x
+    end_waypoint.actual_velocity_x = velocity_end_x
     
     # FIXME: DEBUGGING: REMOVE:
 #    if velocity_end_x == -400:
@@ -316,7 +316,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     #     end velocity.
     var should_accelerate_at_start_for_min := acceleration_sign_for_min == 1
     
-    var min_velocity_end := MovementConstraintUtils._solve_for_end_velocity( \
+    var min_velocity_end := WaypointUtils._solve_for_end_velocity( \
             displacement, \
             duration, \
             acceleration_for_min, \
@@ -324,7 +324,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
             should_accelerate_at_start_for_min, \
             true)
     if min_velocity_end == INF:
-        min_velocity_end = MovementConstraintUtils._solve_for_end_velocity( \
+        min_velocity_end = WaypointUtils._solve_for_end_velocity( \
                 displacement, \
                 duration, \
                 -acceleration_for_min, \
@@ -344,7 +344,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     #     end velocity.
     var should_accelerate_at_start_for_max := acceleration_sign_for_max == -1
     
-    var max_velocity_end := MovementConstraintUtils._solve_for_end_velocity( \
+    var max_velocity_end := WaypointUtils._solve_for_end_velocity( \
             displacement, \
             duration, \
             acceleration_for_max, \
@@ -352,7 +352,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
             should_accelerate_at_start_for_max, \
             false)
     if max_velocity_end == INF:
-        max_velocity_end = MovementConstraintUtils._solve_for_end_velocity( \
+        max_velocity_end = WaypointUtils._solve_for_end_velocity( \
                 displacement, \
                 duration, \
                 -acceleration_for_max, \

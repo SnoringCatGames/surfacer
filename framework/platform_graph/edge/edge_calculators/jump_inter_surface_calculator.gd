@@ -9,7 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Rename "constraint" to "waypoint" throughout.
 # - Rename all occurences of /slow.?ascent/ with slow rise.
 # 
 # - Implement remaining cases in calculate_jump_land_positions_for_surface_pair:
@@ -73,7 +72,7 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Test simple high-level things like:
 #     - One edge from here to here
 #     - Edge was long enough
-#     - Had right number of constraints
+#     - Had right number of waypoints
 #     - Had at least the right height
 #     - PlatformGraph chose a path of the correct edges
 #     - Jump/land position calculations return the right positions
@@ -97,7 +96,7 @@ const IS_A_JUMP_CALCULATOR := true
 #     - how many collisions on avg for jump/fall,
 #     - ...
 #   - Try to use these analytics to inform decisions around which calculations are worth it.
-#   - Maybe add a new configuration for max number of collisions/intermediate-constraints to allow
+#   - Maybe add a new configuration for max number of collisions/intermediate-waypoints to allow
 #     in an edge calculation before giving up (or, recursion depth (with and without backtracking))?
 # 
 # --- Debug ---
@@ -113,7 +112,7 @@ const IS_A_JUMP_CALCULATOR := true
 # >>- Fix how things work when minimizes_velocity_change_when_jumping is true.
 #   - [no] Find and move all movement-offset constants to one central location?
 #     - MovementInstructionsUtils
-#     - MovementConstraintUtils
+#     - WaypointUtils
 #     - FrameCollisionCheckUtils
 #     - MovementCalcOverallParams
 #   >>>- Compare where instructions are pressed/released vs when I expect them.

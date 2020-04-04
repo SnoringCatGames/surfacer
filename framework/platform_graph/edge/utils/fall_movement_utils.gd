@@ -129,14 +129,14 @@ static func find_landing_trajectory_between_positions( \
         return null
     
     var step_calc_params: MovementCalcStepParams = MovementCalcStepParams.new( \
-            overall_calc_params.origin_constraint, \
-            overall_calc_params.destination_constraint, \
+            overall_calc_params.origin_waypoint, \
+            overall_calc_params.destination_waypoint, \
             vertical_step, \
             overall_calc_params, \
             null, \
             null)
     
-    return MovementStepUtils.calculate_steps_from_constraint(overall_calc_params, step_calc_params)
+    return MovementStepUtils.calculate_steps_from_waypoint(overall_calc_params, step_calc_params)
 
 static func find_surfaces_in_fall_range_from_point( \
         movement_params: MovementParams, \

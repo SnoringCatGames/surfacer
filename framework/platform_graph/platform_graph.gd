@@ -12,7 +12,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 
 # FIXME: LEFT OFF HERE: Master list:
 #
-# - Finish everything in JumpInterSurfaceCalculator (edge calculations, including movement constraints from interfering surfaces)
+# - Finish everything in JumpInterSurfaceCalculator (edge calculations, including movement waypoints from interfering surfaces)
 # - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
 #
 # - Use max_horizontal_jump_distance and max_upward_jump_distance
@@ -61,7 +61,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #       - This should then cause the PlatformGraph parsing and get_all_inter_surface_edges_from_surface parsing
 #         to skip all other surfaces and jump/land positions.
 #     - We should use the above configuration to target specific interesting edge use-cases.
-#       - Skipping constraints
+#       - Skipping waypoints
 #       - Left/right/ceiling/floor intermediate surfaces
 #         - And then passing on min/max side of those surfaces
 #       - Zigzagging between a couple consecutive intermediate surfaces
@@ -165,7 +165,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #     - Might be able to do this with smaller step sizes?
 # 
 # - Problem: What if we hit a ceiling surface (still moving upwards)?
-#   - We'll set a constraint to either side.
+#   - We'll set a waypoint to either side.
 #   - Then we'll likely need to backtrack to use a bigger jump height.
 #   - On the backtracking traversal, we'll hit the same surface again.
 #     - Solution: We should always be allowed to hit ceiling surfaces again.
@@ -175,9 +175,9 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #         correct surface is returned
 # - Problem: If we allow hitting a ceiling surface repeatedly, what happens if a jump ascent cannot
 #   get around it (cannot move horizontally far enough during the ascent)?
-#   - Solution: Afer calculating constraints for a surface collision, if it's a ceiling surface,
+#   - Solution: Afer calculating waypoints for a surface collision, if it's a ceiling surface,
 #     check whether the time to move horizontally exceeds the time to move upward for either
-#     constraint. If so, abandon that traversal (remove the constraint from the array before
+#     waypoint. If so, abandon that traversal (remove the waypoint from the array before
 #     calling the sub function).
 # - Optimization: We should never consider increased-height backtracking from hitting a ceiling
 #   surface.
@@ -193,13 +193,13 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 # - Step through and double-check each return value parameter individually through the recursion, and each input parameter.
 # 
 # - Optimize a bit for collisions with vertical surfaces:
-#   - For the top constraint, change the constraint position to instead use the far side of the
+#   - For the top waypoint, change the waypoint position to instead use the far side of the
 #     adjacent top-side/floor surface.
 #   - This probably means I should store adjacent Surfaces when originally parsing the Surfaces.
 # - Step through all parts and re-check for correctness.
 # - Account for half-width/height offset needed to clear the edge of B (if possible).
 # - Also, account for the half-width/height offset needed to not fall onto A.
-# - Include a margin around constraints and land position.
+# - Include a margin around waypoints and land position.
 # - Allow for the player to bump into walls/ceiling if they could still reach the land point
 #   afterward (will need to update logic to not include margin when accounting for these hits).
 # - Update the instructions calculations to consider actual discrete timesteps rather than
@@ -216,14 +216,14 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   - Either update Player controllers to also allow that,
 #   - or update all relevant edge calculation logic.
 # 
-# - Make some diagrams in InkScape with surfaces, trajectories, and constraints to demonstrate
+# - Make some diagrams in InkScape with surfaces, trajectories, and waypoints to demonstrate
 #   algorithm traversal
 #   - Label/color-code parts to demonstrate separate traversal steps
 # - Make the 144-cell diagram in InkScape and add to docs.
 # - Storing possibly 9 edges from A to B.
 # 
 # FIXME: C:
-# - Set the destination_constraint min_velocity_x and max_velocity_x at the start, in order to
+# - Set the destination_waypoint min_velocity_x and max_velocity_x at the start, in order to
 #   latch onto the target surface.
 #   - Also add support for specifying min/max y velocities for this?
 # 
@@ -232,11 +232,11 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   - It might simplify the logic for checking for previously collided surfaces, and make things
 #     more efficient.
 # 
-# FIXME: B: Check if we need to update following constraints when creating a new one:
-# - Unfortunately, it is possible that the creation of a new intermediate constraint could
-#   invalidate the actual_velocity_x for the following constraint(s). A fix for this would be
-#   to first recalculate the min/max x velocities for all following constraints in forward
-#   order, and then recalculate the actual x velocity for all following constraints in reverse
+# FIXME: B: Check if we need to update following waypoints when creating a new one:
+# - Unfortunately, it is possible that the creation of a new intermediate waypoint could
+#   invalidate the actual_velocity_x for the following waypoint(s). A fix for this would be
+#   to first recalculate the min/max x velocities for all following waypoints in forward
+#   order, and then recalculate the actual x velocity for all following waypoints in reverse
 #   order.
 # 
 # FIXME: B: 
@@ -260,29 +260,29 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #     - :/ We might want to do that anyway though, to give us more flexibility later when we want
 #       to be able to specify a given non-zero target end velocity.
 # 
-# - Should I move some of the horizontal movement functions from constraint_utils to
+# - Should I move some of the horizontal movement functions from waypoint_utils to
 #   horizontal_movement_utils?
 # 
-# - Can I render something in the annotations (or in the console output) like the constraint
+# - Can I render something in the annotations (or in the console output) like the waypoint
 #   position or the surface end positions, in order to make it easier to quickly set a breakpoint
 #   to match the corresponding step?
 # 
 # - Debug, debug, debug...
 # 
-# - Additional_high_constraint_position breakpoint is happening three times??
+# - Additional_high_waypoint_position breakpoint is happening three times??
 #   - Should I move the fail-because-we've-been-here-before logic from looking at steps+surfaces+heights to here?
 # 
 # - Should we somehow ensure that jump height is always bumped up at least enough to cover the
-#   extra distance of constraint offsets? 
+#   extra distance of waypoint offsets? 
 #   - Since jumping up to a destination, around the other edge of the platform (which has the
-#     constraint offset), seems like a common use-case, this would probably be a useful optimization.
-#   - [This is important, since the first attempt at getting to the top-right constraint always fails, since it requires a _slightly_ higher jump, and we want it to instead succeed.]
+#     waypoint offset), seems like a common use-case, this would probably be a useful optimization.
+#   - [This is important, since the first attempt at getting to the top-right waypoint always fails, since it requires a _slightly_ higher jump, and we want it to instead succeed.]
 # 
-# - There is a problem with my approach for using time_to_get_to_destination_from_constraint.
-#   time-to-get-to-intermediate-constraint-from-constraint could matter a lot too. But maybe this
+# - There is a problem with my approach for using time_to_get_to_destination_from_waypoint.
+#   time-to-get-to-intermediate-waypoint-from-waypoint could matter a lot too. But maybe this
 #   is infrequent enough that I don't care? At least document this limitation (in code and README).
 # 
-# - Add logic to ignore a constraint when the horizontal steps leading up to it would have found
+# - Add logic to ignore a waypoint when the horizontal steps leading up to it would have found
 #   another collision.
 #   - Because changing trajectory for the earlier collision is likely to invalidate the later
 #     collision.
@@ -311,7 +311,7 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 # - Render a legend:
 #   - x: point of collision
 #   - outline: player boundary at point of collision
-#   - open circles: start or end constraints
+#   - open circles: start or end waypoints
 #   - plus: left/right button start
 #   - minus: left/right button end
 #   - asterisk: jump button end
@@ -321,12 +321,12 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 # 
 # - Polish description of approach in the README.
 #   - In general, a guiding heuristic in these calculations is to minimize movement. So, through
-#     each constraint (step-end), we try to minimize the horizontal speed of the movement at that
+#     each waypoint (step-end), we try to minimize the horizontal speed of the movement at that
 #     point.
 # 
 # - Try to fix DrawUtils dashed polylines.
 # 
-# - Think through and maybe fix the function in constraint utils for accounting for max-speed vs
+# - Think through and maybe fix the function in waypoint utils for accounting for max-speed vs
 #   min/max for valid next step?
 # 
 # - After having a finished demo for v1.0, abandon HTML exports for v2.0.

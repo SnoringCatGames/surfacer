@@ -13,28 +13,28 @@ const MovementCalcStepParams := preload("res://framework/platform_graph/edge/cal
 static func calculate_steps_with_new_jump_height( \
         overall_calc_params: MovementCalcOverallParams, \
         parent_step_calc_params: MovementCalcStepParams, \
-        previous_out_of_reach_constraint: MovementConstraint) -> MovementCalcResults:
+        previous_out_of_reach_waypoint: Waypoint) -> MovementCalcResults:
     var vertical_step := VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
     if vertical_step == null:
         # The destination is out of reach.
         return null
     
     var step_calc_params := MovementCalcStepParams.new( \
-            overall_calc_params.origin_constraint, \
-            overall_calc_params.destination_constraint, \
+            overall_calc_params.origin_waypoint, \
+            overall_calc_params.destination_waypoint, \
             vertical_step, \
             overall_calc_params, \
             parent_step_calc_params, \
-            previous_out_of_reach_constraint)
+            previous_out_of_reach_waypoint)
     
-    return calculate_steps_from_constraint(overall_calc_params, step_calc_params)
+    return calculate_steps_from_waypoint(overall_calc_params, step_calc_params)
 
 # Recursively calculates a list of movement steps to reach the given destination.
 # 
 # Normally, this function deals with horizontal movement steps. However, if we find that a
-# constraint cannot be satisfied with just horizontal movement, we may backtrack and try a new
+# waypoint cannot be satisfied with just horizontal movement, we may backtrack and try a new
 # recursive traversal using a higher jump height.
-static func calculate_steps_from_constraint( \
+static func calculate_steps_from_waypoint( \
         overall_calc_params: MovementCalcOverallParams, \
         step_calc_params: MovementCalcStepParams) -> MovementCalcResults:
     ### BASE CASES
@@ -54,7 +54,7 @@ static func calculate_steps_from_constraint( \
     
     # If this is the last horizontal step, then let's check whether whether we calculated
     # things correctly.
-    if step_calc_params.end_constraint.is_destination:
+    if step_calc_params.end_waypoint.is_destination:
         assert(Geometry.are_floats_equal_with_epsilon( \
                 next_horizontal_step.time_step_end, \
                 vertical_step.time_step_end, \
@@ -65,11 +65,11 @@ static func calculate_steps_from_constraint( \
                 0.001))
         assert(Geometry.are_points_equal_with_epsilon( \
                 next_horizontal_step.position_step_end, \
-                overall_calc_params.destination_constraint.position, \
+                overall_calc_params.destination_waypoint.position, \
                 0.0001))
     
     # FIXME: DEBUGGING: REMOVE:
-#    if step_calc_params.start_constraint.position == Vector2(106, 37.5):
+#    if step_calc_params.start_waypoint.position == Vector2(106, 37.5):
 #        print("break")
     
     var collision := CollisionCheckUtils.check_continuous_horizontal_step_for_collision( \
@@ -82,7 +82,7 @@ static func calculate_steps_from_constraint( \
         return null
     
     if collision == null or \
-            (collision.surface == overall_calc_params.destination_constraint.surface):
+            (collision.surface == overall_calc_params.destination_waypoint.surface):
         # There is no intermediate surface interfering with this movement.
         if debug_state != null:
             debug_state.result_code = EdgeStepCalcResult.MOVEMENT_VALID
@@ -90,25 +90,25 @@ static func calculate_steps_from_constraint( \
     
     ### RECURSIVE CASES
     
-    # Calculate possible constraints to divert the movement around either side of the colliding
+    # Calculate possible waypoints to divert the movement around either side of the colliding
     # surface.
-    var constraints := MovementConstraintUtils.calculate_constraints_around_surface( \
+    var waypoints := WaypointUtils.calculate_waypoints_around_surface( \
             overall_calc_params.movement_params, \
             vertical_step, \
-            step_calc_params.start_constraint, \
-            step_calc_params.end_constraint, \
-            overall_calc_params.origin_constraint, \
-            overall_calc_params.destination_constraint, \
+            step_calc_params.start_waypoint, \
+            step_calc_params.end_waypoint, \
+            overall_calc_params.origin_waypoint, \
+            overall_calc_params.destination_waypoint, \
             collision.surface, \
-            overall_calc_params.constraint_offset)
+            overall_calc_params.waypoint_offset)
     if debug_state != null:
-        debug_state.upcoming_constraints = constraints
+        debug_state.upcoming_waypoints = waypoints
     
-    # First, try to satisfy the constraints without backtracking to consider a new max jump height.
-    var calc_results := calculate_steps_from_constraint_without_backtracking_on_height( \
+    # First, try to satisfy the waypoints without backtracking to consider a new max jump height.
+    var calc_results := calculate_steps_from_waypoint_without_backtracking_on_height( \
             overall_calc_params, \
             step_calc_params, \
-            constraints)
+            waypoints)
     if calc_results != null or !overall_calc_params.can_backtrack_on_height:
         # Recursion was successful without backtracking for a new max jump height.
         if debug_state != null:
@@ -129,11 +129,11 @@ static func calculate_steps_from_constraint( \
             collision.surface, \
             vertical_step.time_instruction_end)
     
-    # Then, try to satisfy the constraints with backtracking to consider a new max jump height.
-    calc_results = calculate_steps_from_constraint_with_backtracking_on_height( \
+    # Then, try to satisfy the waypoints with backtracking to consider a new max jump height.
+    calc_results = calculate_steps_from_waypoint_with_backtracking_on_height( \
             overall_calc_params, \
             step_calc_params, \
-            constraints)
+            waypoints)
     if calc_results != null:
         # Recursion was successful with backtracking for a new max jump height.
         if debug_state != null:
@@ -144,177 +144,177 @@ static func calculate_steps_from_constraint( \
             debug_state.result_code = EdgeStepCalcResult.BACKTRACKING_INVALID
     return calc_results
 
-# Check whether either constraint can be satisfied with our current max jump height.
-static func calculate_steps_from_constraint_without_backtracking_on_height( \
+# Check whether either waypoint can be satisfied with our current max jump height.
+static func calculate_steps_from_waypoint_without_backtracking_on_height( \
         overall_calc_params: MovementCalcOverallParams, \
         step_calc_params: MovementCalcStepParams, \
-        constraints: Array) -> MovementCalcResults:
+        waypoints: Array) -> MovementCalcResults:
     var vertical_step := step_calc_params.vertical_step
-    var previous_constraint_original := step_calc_params.start_constraint
-    var next_constraint_original := step_calc_params.end_constraint
+    var previous_waypoint_original := step_calc_params.start_waypoint
+    var next_waypoint_original := step_calc_params.end_waypoint
     
-    var previous_constraint_copy: MovementConstraint
-    var next_constraint_copy: MovementConstraint
-    var step_calc_params_to_constraint: MovementCalcStepParams
-    var step_calc_params_from_constraint: MovementCalcStepParams
-    var calc_results_to_constraint: MovementCalcResults
-    var calc_results_from_constraint: MovementCalcResults
+    var previous_waypoint_copy: Waypoint
+    var next_waypoint_copy: Waypoint
+    var step_calc_params_to_waypoint: MovementCalcStepParams
+    var step_calc_params_from_waypoint: MovementCalcStepParams
+    var calc_results_to_waypoint: MovementCalcResults
+    var calc_results_from_waypoint: MovementCalcResults
     
     var result: MovementCalcResults
     
-    for constraint in constraints:
-        if !constraint.is_valid:
-            # This constraint is out of reach.
+    for waypoint in waypoints:
+        if !waypoint.is_valid:
+            # This waypoint is out of reach.
             continue
         
-        # Make copies of the previous and next constraints. We don't want to update the originals,
+        # Make copies of the previous and next waypoints. We don't want to update the originals,
         # unless we know the recursion was successful,
         # in case this recursion fails.
-        previous_constraint_copy = \
-                MovementConstraintUtils.clone_constraint(previous_constraint_original)
-        next_constraint_copy = MovementConstraintUtils.clone_constraint(next_constraint_original)
+        previous_waypoint_copy = \
+                WaypointUtils.clone_waypoint(previous_waypoint_original)
+        next_waypoint_copy = WaypointUtils.clone_waypoint(next_waypoint_original)
         
         # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #        if Geometry.are_points_equal_with_epsilon( \
-#                constraint.position, \
+#                waypoint.position, \
 #                Vector2(64, -480), 10):
 #            print("break")
         
         # FIXME: B: Verify this statement.
         
-        # Update the previous and next constraints, to account for this new intermediate
-        # constraint. These updates do not solve all cases, since we may in turn need to update the
-        # min/max/actual x-velocities and movement sign for all other constraints. And these
-        # updates could then result in the addition/removal of other intermediate constraints.
+        # Update the previous and next waypoints, to account for this new intermediate
+        # waypoint. These updates do not solve all cases, since we may in turn need to update the
+        # min/max/actual x-velocities and movement sign for all other waypoints. And these
+        # updates could then result in the addition/removal of other intermediate waypoints.
         # But we have found that these two updates are enough for most cases.
-        MovementConstraintUtils.update_neighbors_for_new_constraint( \
-                constraint, \
-                previous_constraint_copy, \
-                next_constraint_copy, \
+        WaypointUtils.update_neighbors_for_new_waypoint( \
+                waypoint, \
+                previous_waypoint_copy, \
+                next_waypoint_copy, \
                 overall_calc_params, \
                 vertical_step)
-        if !previous_constraint_copy.is_valid or !next_constraint_copy.is_valid:
+        if !previous_waypoint_copy.is_valid or !next_waypoint_copy.is_valid:
             continue
         
-        ### RECURSE: Calculate movement to the constraint.
+        ### RECURSE: Calculate movement to the waypoint.
         
-        step_calc_params_to_constraint = MovementCalcStepParams.new( \
-                previous_constraint_copy, \
-                constraint, \
+        step_calc_params_to_waypoint = MovementCalcStepParams.new( \
+                previous_waypoint_copy, \
+                waypoint, \
                 vertical_step, \
                 overall_calc_params, \
                 step_calc_params, \
                 null)
-        calc_results_to_constraint = calculate_steps_from_constraint(overall_calc_params, \
-                step_calc_params_to_constraint)
+        calc_results_to_waypoint = calculate_steps_from_waypoint(overall_calc_params, \
+                step_calc_params_to_waypoint)
         
-        if calc_results_to_constraint == null:
-            # This constraint is out of reach with the current jump height.
+        if calc_results_to_waypoint == null:
+            # This waypoint is out of reach with the current jump height.
             continue
         
-        if calc_results_to_constraint.backtracked_for_new_jump_height:
+        if calc_results_to_waypoint.backtracked_for_new_jump_height:
             # When backtracking occurs, the result includes all steps from origin to destination,
             # so we can just return that result here.
-            result = calc_results_to_constraint
+            result = calc_results_to_waypoint
             break
         
-        ### RECURSE: Calculate movement from the constraint to the original destination.
+        ### RECURSE: Calculate movement from the waypoint to the original destination.
         
-        step_calc_params_from_constraint = MovementCalcStepParams.new( \
-                constraint, \
-                next_constraint_copy, \
+        step_calc_params_from_waypoint = MovementCalcStepParams.new( \
+                waypoint, \
+                next_waypoint_copy, \
                 vertical_step, \
                 overall_calc_params, \
                 step_calc_params, \
                 null)
-        calc_results_from_constraint = calculate_steps_from_constraint( \
+        calc_results_from_waypoint = calculate_steps_from_waypoint( \
                 overall_calc_params, \
-                step_calc_params_from_constraint)
+                step_calc_params_from_waypoint)
         
-        if calc_results_from_constraint == null:
-            # This constraint is out of reach with the current jump height.
+        if calc_results_from_waypoint == null:
+            # This waypoint is out of reach with the current jump height.
             continue
         
-        if calc_results_from_constraint.backtracked_for_new_jump_height:
+        if calc_results_from_waypoint.backtracked_for_new_jump_height:
             # When backtracking occurs, the result includes all steps from origin to destination,
             # so we can just return that result here.
-            result = calc_results_from_constraint
+            result = calc_results_from_waypoint
             break
         
-        # We found movement that satisfies the constraint (without backtracking for a new jump
+        # We found movement that satisfies the waypoint (without backtracking for a new jump
         # height).
-        Utils.concat(calc_results_to_constraint.horizontal_steps, \
-                calc_results_from_constraint.horizontal_steps)
-        result = calc_results_to_constraint
+        Utils.concat(calc_results_to_waypoint.horizontal_steps, \
+                calc_results_from_waypoint.horizontal_steps)
+        result = calc_results_to_waypoint
         break
     
     if result != null:
-        # Update the original constraints to match the state for this successful navigation.
-        MovementConstraintUtils.copy_constraint( \
-                previous_constraint_original, \
-                previous_constraint_copy)
-        MovementConstraintUtils.copy_constraint( \
-                next_constraint_original, \
-                next_constraint_copy)
+        # Update the original waypoints to match the state for this successful navigation.
+        WaypointUtils.copy_waypoint( \
+                previous_waypoint_original, \
+                previous_waypoint_copy)
+        WaypointUtils.copy_waypoint( \
+                next_waypoint_original, \
+                next_waypoint_copy)
     return result
 
-# Check whether either constraint can be satisfied if we backtrack to re-calculate the initial
+# Check whether either waypoint can be satisfied if we backtrack to re-calculate the initial
 # vertical step with a higher max jump height.
-static func calculate_steps_from_constraint_with_backtracking_on_height( \
+static func calculate_steps_from_waypoint_with_backtracking_on_height( \
         overall_calc_params: MovementCalcOverallParams, \
         step_calc_params: MovementCalcStepParams, \
-        constraints: Array) -> MovementCalcResults:
-    var destination_original := overall_calc_params.destination_constraint
-    var destination_copy: MovementConstraint
+        waypoints: Array) -> MovementCalcResults:
+    var destination_original := overall_calc_params.destination_waypoint
+    var destination_copy: Waypoint
     var calc_results: MovementCalcResults
     
     var result: MovementCalcResults
     
-    for constraint in constraints:
-        if constraint.is_valid:
-            # This constraint was already in reach, so we don't need to try increasing jump height
+    for waypoint in waypoints:
+        if waypoint.is_valid:
+            # This waypoint was already in reach, so we don't need to try increasing jump height
             # for it.
             continue
         
-        # Make a copy of the destination constraint. We don't want to update the original, unless
+        # Make a copy of the destination waypoint. We don't want to update the original, unless
         # we know the backtracking succeeded.
-        destination_copy = MovementConstraintUtils.clone_constraint(destination_original)
-        overall_calc_params.destination_constraint = destination_copy
+        destination_copy = WaypointUtils.clone_waypoint(destination_original)
+        overall_calc_params.destination_waypoint = destination_copy
         
         # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #        if step_calc_params.debug_state != null and step_calc_params.debug_state.index == 5:
 #            print("break")
         
-        # Update the destination constraint to support a (possibly) increased jump height, which
-        # would enable movement through this new intermediate constraint.
-        MovementConstraintUtils.update_constraint( \
+        # Update the destination waypoint to support a (possibly) increased jump height, which
+        # would enable movement through this new intermediate waypoint.
+        WaypointUtils.update_waypoint( \
                 destination_copy, \
-                overall_calc_params.origin_constraint, \
+                overall_calc_params.origin_waypoint, \
                 overall_calc_params.movement_params, \
                 step_calc_params.vertical_step.velocity_step_start, \
                 true, \
                 step_calc_params.vertical_step, \
-                constraint.position)
+                waypoint.position)
         if !destination_copy.is_valid:
-            # The constraint is out of reach.
+            # The waypoint is out of reach.
             continue
         
-        # Recurse: Backtrack and try a higher jump (to the same destination constraint as before).
+        # Recurse: Backtrack and try a higher jump (to the same destination waypoint as before).
         calc_results = calculate_steps_with_new_jump_height( \
                 overall_calc_params, \
                 step_calc_params, \
-                constraint)
+                waypoint)
         
         if calc_results != null:
-            # The constraint is within reach, and we were able to find valid movement steps to the
+            # The waypoint is within reach, and we were able to find valid movement steps to the
             # destination.
             calc_results.backtracked_for_new_jump_height = true
             result = calc_results
             break
     
     if result != null:
-        # Update the original destination constraint to match the state for this successful
+        # Update the original destination waypoint to match the state for this successful
         # navigation.
-        MovementConstraintUtils.copy_constraint(destination_original, destination_copy)
-    overall_calc_params.destination_constraint = destination_original
+        WaypointUtils.copy_waypoint(destination_original, destination_copy)
+    overall_calc_params.destination_waypoint = destination_original
     return result

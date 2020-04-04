@@ -62,7 +62,7 @@ static func create_movement_calc_overall_params(
         destination_position: PositionAlongSurface, \
         can_hold_jump_button: bool, \
         velocity_start: Vector2, \
-        returns_invalid_constraints: bool, \
+        returns_invalid_waypoints: bool, \
         in_debug_mode: bool, \
         velocity_end_min_x := INF, \
         velocity_end_max_x := INF) -> MovementCalcOverallParams:
@@ -75,7 +75,7 @@ static func create_movement_calc_overall_params(
             velocity_end_min_x = MIN_LAND_ON_WALL_SPEED
             velocity_end_max_x = collision_params.movement_params.max_horizontal_speed_default
     
-    var terminals := MovementConstraintUtils.create_terminal_constraints( \
+    var terminals := WaypointUtils.create_terminal_waypoints( \
             origin_position, \
             destination_position, \
             collision_params.movement_params, \
@@ -83,7 +83,7 @@ static func create_movement_calc_overall_params(
             velocity_start, \
             velocity_end_min_x, \
             velocity_end_max_x, \
-            returns_invalid_constraints)
+            returns_invalid_waypoints)
     if terminals.empty():
         return null
     

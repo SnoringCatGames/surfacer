@@ -17,7 +17,7 @@ func _draw() -> void:
     var hue: float
     var discrete_trajectory_color: Color
     var continuous_trajectory_color: Color
-    var constraint_color: Color
+    var waypoint_color: Color
     var instruction_start_stop_color: Color
     var edge: Edge
     var position_start: Vector2

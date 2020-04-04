@@ -10,7 +10,7 @@ var horizontal_steps: Array
 # The single vertical step for this overall jump movement.
 var vertical_step: MovementVertCalcStep
 
-# Whether we had to use backtracking to satisfy constraints around intermediate colliding surfaces.
+# Whether we had to use backtracking to satisfy waypoints around intermediate colliding surfaces.
 var backtracked_for_new_jump_height: bool
 
 var overall_calc_params: MovementCalcOverallParams

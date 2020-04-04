@@ -5,26 +5,26 @@ const STEP_TRANSITION_DELAY_SEC := 1.0
 
 const COLLISION_X_WIDTH_HEIGHT := Vector2(16.0, 16.0)
 const COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS := 3.0
-const CONSTRAINT_RADIUS := 6.0
-const VALID_CONSTRAINT_WIDTH := 16.0
-const INVALID_CONSTRAINT_WIDTH := 12.0
-const INVALID_CONSTRAINT_HEIGHT := 16.0
-const PREVIOUS_OUT_OF_REACH_CONSTRAINT_WIDTH_HEIGHT := 15.0
+const WAYPOINT_RADIUS := 6.0
+const VALID_WAYPOINT_WIDTH := 16.0
+const INVALID_WAYPOINT_WIDTH := 12.0
+const INVALID_WAYPOINT_HEIGHT := 16.0
+const PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT := 15.0
 
 const STEP_LABEL_SCALE := Vector2(2.0, 2.0)
-const PREVIOUS_OUT_OF_REACH_CONSTRAINT_LABEL_SCALE := Vector2(1.4, 1.4)
+const PREVIOUS_OUT_OF_REACH_WAYPOINT_LABEL_SCALE := Vector2(1.4, 1.4)
 const LABEL_OFFSET := Vector2(15.0, -10.0)
 
 const TRAJECTORY_STROKE_WIDTH_FAINT := 1.0
 const TRAJECTORY_STROKE_WIDTH_STRONG := 3.0
-const CONSTRAINT_STROKE_WIDTH_FAINT := CONSTRAINT_RADIUS / 3.0
-const CONSTRAINT_STROKE_WIDTH_STRONG := CONSTRAINT_STROKE_WIDTH_FAINT * 2.0
+const WAYPOINT_STROKE_WIDTH_FAINT := WAYPOINT_RADIUS / 3.0
+const WAYPOINT_STROKE_WIDTH_STRONG := WAYPOINT_STROKE_WIDTH_FAINT * 2.0
 const COLLISION_X_STROKE_WIDTH_FAINT := 2.0
 const COLLISION_X_STROKE_WIDTH_STRONG := 5.0
 const COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_FAINT := 1.0
 const COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_STRONG := 3.0
-const VALID_CONSTRAINT_STROKE_WIDTH := 2.0
-const INVALID_CONSTRAINT_STROKE_WIDTH := 2.0
+const VALID_WAYPOINT_STROKE_WIDTH := 2.0
+const INVALID_WAYPOINT_STROKE_WIDTH := 2.0
 
 const TRAJECTORY_DASH_LENGTH := 2.0
 const TRAJECTORY_DASH_GAP := 8.0
@@ -64,21 +64,21 @@ var edge_attempt: MovementCalcOverallDebugState
 var selected_step: MovementCalcStepDebugState
 
 var step_label: Label
-var previous_out_of_reach_constraint_label: Label
+var previous_out_of_reach_waypoint_label: Label
 
 func _ready() -> void:
     step_label = Label.new()
     step_label.rect_scale = STEP_LABEL_SCALE
     add_child(step_label)
     
-    previous_out_of_reach_constraint_label = Label.new()
-    previous_out_of_reach_constraint_label.rect_scale = \
-            PREVIOUS_OUT_OF_REACH_CONSTRAINT_LABEL_SCALE
-    add_child(previous_out_of_reach_constraint_label)
+    previous_out_of_reach_waypoint_label = Label.new()
+    previous_out_of_reach_waypoint_label.rect_scale = \
+            PREVIOUS_OUT_OF_REACH_WAYPOINT_LABEL_SCALE
+    add_child(previous_out_of_reach_waypoint_label)
 
 func _draw() -> void:
     step_label.text = ""
-    previous_out_of_reach_constraint_label.text = ""
+    previous_out_of_reach_waypoint_label.text = ""
     
     if edge_attempt == null:
         # Don't try to draw if we don't currently have an edge to debug.
@@ -120,21 +120,21 @@ func _draw_step( \
     
     var step_opacity: float
     var trajectory_stroke_width: float
-    var constraint_stroke_width: float
+    var waypoint_stroke_width: float
     var collision_color: Color
     var collision_x_stroke_width: float
     var collision_player_boundary_stroke_width: float
     if renders_faintly:
         step_opacity = OPACITY_FAINT
         trajectory_stroke_width = TRAJECTORY_STROKE_WIDTH_FAINT
-        constraint_stroke_width = CONSTRAINT_STROKE_WIDTH_FAINT
+        waypoint_stroke_width = WAYPOINT_STROKE_WIDTH_FAINT
         collision_color = collision_color_faint
         collision_x_stroke_width = COLLISION_X_STROKE_WIDTH_FAINT
         collision_player_boundary_stroke_width = COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_FAINT
     else:
         step_opacity = OPACITY_STRONG
         trajectory_stroke_width = TRAJECTORY_STROKE_WIDTH_STRONG
-        constraint_stroke_width = CONSTRAINT_STROKE_WIDTH_STRONG
+        waypoint_stroke_width = WAYPOINT_STROKE_WIDTH_STRONG
         collision_color = collision_color_strong
         collision_x_stroke_width = COLLISION_X_STROKE_WIDTH_STRONG
         collision_player_boundary_stroke_width = COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_STRONG
@@ -162,23 +162,23 @@ func _draw_step( \
     else:
         # The calculation failed before a step object could be created.
         _draw_invalid_trajectory( \
-                step_attempt.start_constraint.position, \
-                step_attempt.end_constraint.position)
+                step_attempt.start_waypoint.position, \
+                step_attempt.end_waypoint.position)
     
     # Draw the step end points.
     DrawUtils.draw_circle_outline( \
             self, \
-            step_attempt.start_constraint.position, \
-            CONSTRAINT_RADIUS, \
+            step_attempt.start_waypoint.position, \
+            WAYPOINT_RADIUS, \
             step_color, \
-            constraint_stroke_width, \
+            waypoint_stroke_width, \
             4.0)
     DrawUtils.draw_circle_outline( \
             self, \
-            step_attempt.end_constraint.position, \
-            CONSTRAINT_RADIUS, \
+            step_attempt.end_waypoint.position, \
+            WAYPOINT_RADIUS, \
             step_color, \
-            constraint_stroke_width, \
+            waypoint_stroke_width, \
             4.0)
     
     var collision := step_attempt.collision
@@ -217,52 +217,52 @@ func _draw_step( \
                 collision_color)
         
         if !renders_faintly:
-            # Draw the upcoming constraints, around the collision.
-            for upcoming_constraint in step_attempt.upcoming_constraints:
-                if upcoming_constraint.is_valid:
+            # Draw the upcoming waypoints, around the collision.
+            for upcoming_waypoint in step_attempt.upcoming_waypoints:
+                if upcoming_waypoint.is_valid:
                     DrawUtils.draw_checkmark( \
                             self, \
-                            upcoming_constraint.position, \
-                            VALID_CONSTRAINT_WIDTH, \
+                            upcoming_waypoint.position, \
+                            VALID_WAYPOINT_WIDTH, \
                             step_color, \
-                            VALID_CONSTRAINT_STROKE_WIDTH)
+                            VALID_WAYPOINT_STROKE_WIDTH)
                 else:
                     DrawUtils.draw_x( \
                             self, \
-                            upcoming_constraint.position, \
-                            INVALID_CONSTRAINT_WIDTH, \
-                            INVALID_CONSTRAINT_HEIGHT, \
+                            upcoming_waypoint.position, \
+                            INVALID_WAYPOINT_WIDTH, \
+                            INVALID_WAYPOINT_HEIGHT, \
                             step_color, \
-                            INVALID_CONSTRAINT_STROKE_WIDTH)
+                            INVALID_WAYPOINT_STROKE_WIDTH)
     
-    # For new backtracking steps, draw and label the constraint that was used as the basis for a
+    # For new backtracking steps, draw and label the waypoint that was used as the basis for a
     # higher jump.
     if step_attempt.is_backtracking and !renders_faintly:
-        # Draw the constraint position.
+        # Draw the waypoint position.
         DrawUtils.draw_diamond_outline( \
                 self, \
-                step_attempt.previous_out_of_reach_constraint.position, \
-                PREVIOUS_OUT_OF_REACH_CONSTRAINT_WIDTH_HEIGHT, \
-                PREVIOUS_OUT_OF_REACH_CONSTRAINT_WIDTH_HEIGHT, \
+                step_attempt.previous_out_of_reach_waypoint.position, \
+                PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT, \
+                PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT, \
                 step_color, \
                 1.0)
         
-        # Label the constraint.
-        previous_out_of_reach_constraint_label.rect_position = \
-                step_attempt.previous_out_of_reach_constraint.position + LABEL_OFFSET
-        previous_out_of_reach_constraint_label.add_color_override("font_color", step_color)
-        previous_out_of_reach_constraint_label.text = \
-                "The previously out-of-reach constraint that was the basis\n" + \
+        # Label the waypoint.
+        previous_out_of_reach_waypoint_label.rect_position = \
+                step_attempt.previous_out_of_reach_waypoint.position + LABEL_OFFSET
+        previous_out_of_reach_waypoint_label.add_color_override("font_color", step_color)
+        previous_out_of_reach_waypoint_label.text = \
+                "The previously out-of-reach waypoint that was the basis\n" + \
                 "for increasing the jump height for backtracking."
     else:
-        previous_out_of_reach_constraint_label.text = ""
+        previous_out_of_reach_waypoint_label.text = ""
     
     # Draw some text describing the current step.
-    step_label.rect_position = step_attempt.start_constraint.position + LABEL_OFFSET
+    step_label.rect_position = step_attempt.start_waypoint.position + LABEL_OFFSET
     step_label.add_color_override("font_color", step_color)
     var line_1 := "Step %s/%s:" % [step_attempt.index + 1, edge_attempt.total_step_count]
     var line_2 := "\n        [Backtracking]" if step_attempt.is_backtracking else ""
-    var line_3 := "\n        [Replaced fake constraint]" if \
+    var line_3 := "\n        [Replaced fake waypoint]" if \
             step_attempt.replaced_a_fake else ""
     var line_4: String = "\n        %s" % step_attempt.description_list[0]
     var line_5: String = ("\n        %s" % step_attempt.description_list[1]) if \
@@ -270,8 +270,8 @@ func _draw_step( \
     step_label.text = line_1 + line_2 + line_3 + line_4 + line_5
 
 func _draw_invalid_edge() -> void:
-    var edge_start: Vector2 = edge_attempt.origin_constraint.position
-    var edge_end: Vector2 = edge_attempt.destination_constraint.position
+    var edge_start: Vector2 = edge_attempt.origin_waypoint.position
+    var edge_end: Vector2 = edge_attempt.destination_waypoint.position
     
     _draw_invalid_trajectory(edge_start, edge_end)
     

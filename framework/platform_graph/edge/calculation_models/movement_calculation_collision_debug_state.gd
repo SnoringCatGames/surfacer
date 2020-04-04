@@ -46,19 +46,19 @@ func _init( \
         self.margin = overall_calc_params.shape_query_params.margin
     
     if step_calc_params != null:
-        self.step_start_position = step_calc_params.start_constraint.position
-        if step_calc_params.start_constraint.surface != null:
+        self.step_start_position = step_calc_params.start_waypoint.position
+        if step_calc_params.start_waypoint.surface != null:
             self.step_start_surface_position = \
-                    step_calc_params.start_constraint.surface.bounding_box.position
-            self.step_start_surface_normal = step_calc_params.start_constraint.surface.normal
+                    step_calc_params.start_waypoint.surface.bounding_box.position
+            self.step_start_surface_normal = step_calc_params.start_waypoint.surface.normal
         else:
             self.step_start_surface_position = Vector2.INF
             self.step_start_surface_normal = Vector2.INF
         
-        self.step_end_position = step_calc_params.end_constraint.position
-        if step_calc_params.end_constraint.surface != null:
-            self.step_end_surface_position = step_calc_params.end_constraint.surface.bounding_box.position
-            self.step_end_surface_normal = step_calc_params.end_constraint.surface.normal
+        self.step_end_position = step_calc_params.end_waypoint.position
+        if step_calc_params.end_waypoint.surface != null:
+            self.step_end_surface_position = step_calc_params.end_waypoint.surface.bounding_box.position
+            self.step_end_surface_normal = step_calc_params.end_waypoint.surface.normal
         else:
             self.step_end_surface_position = Vector2.INF
             self.step_end_surface_normal = Vector2.INF

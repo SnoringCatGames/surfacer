@@ -19,7 +19,7 @@ var shape_query_params: Physics2DShapeQueryParameters
 
 # A margin to extend around the Player's Collider. This helps to compensate for the imprecision
 # of these calculations.
-var constraint_offset := Vector2.INF
+var waypoint_offset := Vector2.INF
 
 # The initial velocity for the current edge instructions.
 var velocity_start := Vector2.INF
@@ -28,10 +28,10 @@ var origin_position: PositionAlongSurface
 var destination_position: PositionAlongSurface
 
 # The origin for the current edge instructions.
-var origin_constraint: MovementConstraint
+var origin_waypoint: Waypoint
 
 # The destination for the current edge instructions.
-var destination_constraint: MovementConstraint
+var destination_waypoint: Waypoint
 
 # Whether the calculations for the current edge are allowed to attempt backtracking to consider a
 # higher jump.
@@ -49,8 +49,8 @@ func _init( \
         collision_params: CollisionCalcParams, \
         origin_position: PositionAlongSurface, \
         destination_position: PositionAlongSurface, \
-        origin_constraint: MovementConstraint, \
-        destination_constraint: MovementConstraint, \
+        origin_waypoint: Waypoint, \
+        destination_waypoint: Waypoint, \
         velocity_start := Vector2.INF, \
         can_backtrack_on_height := true) -> void:
     self.movement_params = collision_params.movement_params
@@ -58,11 +58,11 @@ func _init( \
     self.surface_parser = collision_params.surface_parser
     self.origin_position = origin_position
     self.destination_position = destination_position
-    self.origin_constraint = origin_constraint
-    self.destination_constraint = destination_constraint
+    self.origin_waypoint = origin_waypoint
+    self.destination_waypoint = destination_waypoint
     self.can_backtrack_on_height = can_backtrack_on_height
     self.velocity_start = velocity_start
-    self.constraint_offset = calculate_constraint_offset(movement_params)
+    self.waypoint_offset = calculate_waypoint_offset(movement_params)
     self._collided_surfaces = {}
     
     var shape_query_params := Physics2DShapeQueryParameters.new()
@@ -91,6 +91,6 @@ func _set_in_debug_mode(value: bool) -> void:
 func _get_in_debug_mode() -> bool:
     return debug_state != null
 
-static func calculate_constraint_offset(movement_params: MovementParams) -> Vector2:
+static func calculate_waypoint_offset(movement_params: MovementParams) -> Vector2:
     return movement_params.collider_half_width_height + \
             Vector2(EDGE_MOVEMENT_ACTUAL_MARGIN, EDGE_MOVEMENT_ACTUAL_MARGIN)

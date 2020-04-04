@@ -25,7 +25,7 @@ static func check_instructions_discrete_frame_state( \
     var is_pressing_right := false
     var is_pressing_jump := false
     var horizontal_acceleration_sign := 0
-    var position := overall_calc_params.origin_constraint.position
+    var position := overall_calc_params.origin_waypoint.position
     var velocity := overall_calc_params.velocity_start
     var has_started_instructions := false
     var space_state := overall_calc_params.space_state

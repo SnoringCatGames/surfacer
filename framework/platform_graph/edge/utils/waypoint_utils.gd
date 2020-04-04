@@ -1,15 +1,15 @@
-# A collection of utility functions for calculating state related to MovementConstraints.
-class_name MovementConstraintUtils
+# A collection of utility functions for calculating state related to Waypoints.
+class_name WaypointUtils
 
-const MovementConstraint := preload("res://framework/platform_graph/edge/calculation_models/movement_constraint.gd")
+const Waypoint := preload("res://framework/platform_graph/edge/calculation_models/waypoint.gd")
 
 # FIXME: D: Tweak this.
 const MIN_MAX_VELOCITY_X_OFFSET := 0.01# FIXME: ------------------------
 
 # FIXME: A: Replace the hard-coded usage of a max-speed ratio with a smarter x-velocity.
-const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULTIPLIER := 0.5
+const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER := 0.5
 
-static func create_terminal_constraints( \
+static func create_terminal_waypoints( \
         origin_position: PositionAlongSurface, \
         destination_position: PositionAlongSurface, \
         movement_params: MovementParams, \
@@ -17,20 +17,20 @@ static func create_terminal_constraints( \
         velocity_start: Vector2, \
         velocity_end_min_x := INF, \
         velocity_end_max_x := INF, \
-        returns_invalid_constraints := false) -> Array:
+        returns_invalid_waypoints := false) -> Array:
     var origin_passing_vertically := origin_position.surface.normal.x == 0 if \
             origin_position.surface != null else true
     var destination_passing_vertically := destination_position.surface.normal.x == 0 if \
             destination_position.surface != null else true
     
-    var origin := MovementConstraint.new( \
+    var origin := Waypoint.new( \
             origin_position.surface, \
             origin_position.target_point, \
             origin_passing_vertically, \
             false, \
             null, \
             null)
-    var destination := MovementConstraint.new( \
+    var destination := Waypoint.new( \
             destination_position.surface, \
             destination_position.target_point, \
             destination_passing_vertically, \
@@ -39,9 +39,9 @@ static func create_terminal_constraints( \
             null)
     
     origin.is_origin = true
-    origin.next_constraint = destination
+    origin.next_waypoint = destination
     destination.is_destination = true
-    destination.previous_constraint = origin
+    destination.previous_waypoint = origin
     
     if velocity_end_min_x != INF or velocity_end_max_x != INF:
         destination.min_velocity_x = velocity_end_min_x
@@ -50,7 +50,7 @@ static func create_terminal_constraints( \
     # FIXME: B: Consider adding support for specifying required end x-velocity (and y direction)?
     #           For hitting walls.
     
-    update_constraint( \
+    update_waypoint( \
             origin, \
             origin, \
             movement_params, \
@@ -58,7 +58,7 @@ static func create_terminal_constraints( \
             can_hold_jump_button, \
             null, \
             Vector2.INF)
-    update_constraint( \
+    update_waypoint( \
             destination, \
             origin, \
             movement_params, \
@@ -67,29 +67,29 @@ static func create_terminal_constraints( \
             null, \
             Vector2.INF)
     
-    if (origin.is_valid and destination.is_valid) or returns_invalid_constraints:
+    if (origin.is_valid and destination.is_valid) or returns_invalid_waypoints:
         return [origin, destination]
     else:
         return []
 
 # Assuming movement would otherwise collide with the given surface, this calculates positions along
 # the edges of the surface that the movement could pass through in order to go around the surface.
-static func calculate_constraints_around_surface( \
+static func calculate_waypoints_around_surface( \
         movement_params: MovementParams, \
         vertical_step: MovementVertCalcStep, \
-        previous_constraint: MovementConstraint, \
-        next_constraint: MovementConstraint, \
-        origin_constraint: MovementConstraint, \
-        destination_constraint: MovementConstraint, \
+        previous_waypoint: Waypoint, \
+        next_waypoint: Waypoint, \
+        origin_waypoint: Waypoint, \
+        destination_waypoint: Waypoint, \
         colliding_surface: Surface, \
-        constraint_offset: Vector2) -> Array:
+        waypoint_offset: Vector2) -> Array:
     var passing_vertically: bool
     var should_stay_on_min_side_a: bool
     var should_stay_on_min_side_b: bool
     var position_a := Vector2.INF
     var position_b := Vector2.INF
     
-    # Calculate the positions of each constraint.
+    # Calculate the positions of each waypoint.
     match colliding_surface.side:
         SurfaceSide.FLOOR:
             passing_vertically = true
@@ -97,61 +97,61 @@ static func calculate_constraints_around_surface( \
             should_stay_on_min_side_b = false
             # Left end (counter-clockwise end).
             position_a = colliding_surface.first_point + \
-                    Vector2(-constraint_offset.x, -constraint_offset.y)
+                    Vector2(-waypoint_offset.x, -waypoint_offset.y)
             # Right end (clockwise end).
             position_b = colliding_surface.last_point + \
-                    Vector2(constraint_offset.x, -constraint_offset.y)
+                    Vector2(waypoint_offset.x, -waypoint_offset.y)
         SurfaceSide.CEILING:
             passing_vertically = true
             should_stay_on_min_side_a = false
             should_stay_on_min_side_b = true
             # Right end (counter-clockwise end).
             position_a = colliding_surface.first_point + \
-                    Vector2(constraint_offset.x, constraint_offset.y)
+                    Vector2(waypoint_offset.x, waypoint_offset.y)
             # Left end (clockwise end).
             position_b = colliding_surface.last_point + \
-                    Vector2(-constraint_offset.x, constraint_offset.y)
+                    Vector2(-waypoint_offset.x, waypoint_offset.y)
         SurfaceSide.LEFT_WALL:
             passing_vertically = false
             should_stay_on_min_side_a = true
             should_stay_on_min_side_b = false
             # Top end (counter-clockwise end).
             position_a = colliding_surface.first_point + \
-                    Vector2(constraint_offset.x, -constraint_offset.y)
+                    Vector2(waypoint_offset.x, -waypoint_offset.y)
             # Bottom end (clockwise end).
             position_b = colliding_surface.last_point + \
-                    Vector2(constraint_offset.x, constraint_offset.y)
+                    Vector2(waypoint_offset.x, waypoint_offset.y)
         SurfaceSide.RIGHT_WALL:
             passing_vertically = false
             should_stay_on_min_side_a = false
             should_stay_on_min_side_b = true
             # Bottom end (counter-clockwise end).
             position_a = colliding_surface.first_point + \
-                    Vector2(-constraint_offset.x, constraint_offset.y)
+                    Vector2(-waypoint_offset.x, waypoint_offset.y)
             # Top end (clockwise end).
             position_b = colliding_surface.last_point + \
-                    Vector2(-constraint_offset.x, -constraint_offset.y)
+                    Vector2(-waypoint_offset.x, -waypoint_offset.y)
     
     var should_skip_a := false
     var should_skip_b := false
     
-    # We ignore constraints that would correspond to moving back the way we came.
-    if previous_constraint.surface == colliding_surface.convex_counter_clockwise_neighbor:
+    # We ignore waypoints that would correspond to moving back the way we came.
+    if previous_waypoint.surface == colliding_surface.convex_counter_clockwise_neighbor:
         should_skip_a = true
-    if previous_constraint.surface == colliding_surface.convex_clockwise_neighbor:
+    if previous_waypoint.surface == colliding_surface.convex_clockwise_neighbor:
         should_skip_b = true
     
-    # We ignore constraints that are redundant with the connstraint we were already using with the
+    # We ignore waypoints that are redundant with the connstraint we were already using with the
     # previous step attempt.
     # 
     # These indicate a problem with our step logic somewhere though, so we log an error.
-    if position_a == next_constraint.position:
+    if position_a == next_waypoint.position:
         should_skip_a = true
-        Utils.error("Calculated a rendundant constraint (same position as the next constraint)", \
+        Utils.error("Calculated a rendundant waypoint (same position as the next waypoint)", \
                 false)
-    if position_b == next_constraint.position:
+    if position_b == next_waypoint.position:
         should_skip_b = true
-        Utils.error("Calculated a rendundant constraint (same position as the next constraint)", \
+        Utils.error("Calculated a rendundant waypoint (same position as the next waypoint)", \
                 false)
     
     # FIXME: DEBUGGING: REMOVE
@@ -160,134 +160,134 @@ static func calculate_constraints_around_surface( \
 #            Geometry.are_points_equal_with_epsilon(position_a, Vector2(106, 37.5), 0.01):
 #        print("break")
     
-    var constraint_a_original: MovementConstraint
-    var constraint_a_final: MovementConstraint
-    var constraint_b_original: MovementConstraint
-    var constraint_b_final: MovementConstraint
+    var waypoint_a_original: Waypoint
+    var waypoint_a_final: Waypoint
+    var waypoint_b_original: Waypoint
+    var waypoint_b_final: Waypoint
     
     if !should_skip_a:
-        constraint_a_original = MovementConstraint.new(colliding_surface, position_a, \
-                passing_vertically, should_stay_on_min_side_a, previous_constraint, \
-                next_constraint)
-        # Calculate and record state for the constraint.
-        update_constraint( \
-                constraint_a_original, \
-                origin_constraint, \
+        waypoint_a_original = Waypoint.new(colliding_surface, position_a, \
+                passing_vertically, should_stay_on_min_side_a, previous_waypoint, \
+                next_waypoint)
+        # Calculate and record state for the waypoint.
+        update_waypoint( \
+                waypoint_a_original, \
+                origin_waypoint, \
                 movement_params, \
                 vertical_step.velocity_step_start, \
                 vertical_step.can_hold_jump_button, \
                 vertical_step, \
                 Vector2.INF)
-        # If the constraint is fake, then replace it with its real neighbor, and re-calculate state
+        # If the waypoint is fake, then replace it with its real neighbor, and re-calculate state
         # for the neighbor.
-        if constraint_a_original.is_fake:
-            constraint_a_final = _calculate_replacement_for_fake_constraint( \
-                    constraint_a_original, \
-                    constraint_offset)
-            update_constraint( \
-                    constraint_a_final, \
-                    origin_constraint, \
+        if waypoint_a_original.is_fake:
+            waypoint_a_final = _calculate_replacement_for_fake_waypoint( \
+                    waypoint_a_original, \
+                    waypoint_offset)
+            update_waypoint( \
+                    waypoint_a_final, \
+                    origin_waypoint, \
                     movement_params, \
                     vertical_step.velocity_step_start, \
                     vertical_step.can_hold_jump_button, \
                     vertical_step, \
                     Vector2.INF)
         else:
-            constraint_a_final = constraint_a_original
+            waypoint_a_final = waypoint_a_original
     
     if !should_skip_b:
-        constraint_b_original = MovementConstraint.new( \
+        waypoint_b_original = Waypoint.new( \
                 colliding_surface, \
                 position_b, \
                 passing_vertically, \
                 should_stay_on_min_side_b, \
-                previous_constraint, \
-                next_constraint)
-        # Calculate and record state for the constraint.
-        update_constraint( \
-                constraint_b_original, \
-                origin_constraint, \
+                previous_waypoint, \
+                next_waypoint)
+        # Calculate and record state for the waypoint.
+        update_waypoint( \
+                waypoint_b_original, \
+                origin_waypoint, \
                 movement_params, \
                 vertical_step.velocity_step_start, \
                 vertical_step.can_hold_jump_button, \
                 vertical_step, \
                 Vector2.INF)
-        # If the constraint is fake, then replace it with its real neighbor, and re-calculate state
+        # If the waypoint is fake, then replace it with its real neighbor, and re-calculate state
         # for the neighbor.
-        if constraint_b_original.is_fake:
-            constraint_b_final = _calculate_replacement_for_fake_constraint( \
-                    constraint_b_original, \
-                    constraint_offset)
-            update_constraint( \
-                    constraint_b_final, \
-                    origin_constraint, \
+        if waypoint_b_original.is_fake:
+            waypoint_b_final = _calculate_replacement_for_fake_waypoint( \
+                    waypoint_b_original, \
+                    waypoint_offset)
+            update_waypoint( \
+                    waypoint_b_final, \
+                    origin_waypoint, \
                     movement_params, \
                     vertical_step.velocity_step_start, \
                     vertical_step.can_hold_jump_button, \
                     vertical_step, \
                     Vector2.INF)
         else:
-            constraint_b_final = constraint_b_original
+            waypoint_b_final = waypoint_b_original
     
     if !should_skip_a and !should_skip_b:
-        # Return the constraints in sorted order according to which is more likely to produce
+        # Return the waypoints in sorted order according to which is more likely to produce
         # successful movement.
-        if _compare_constraints_by_more_likely_to_be_valid( \
-                constraint_a_original, \
-                constraint_b_original, \
-                constraint_a_final, \
-                constraint_b_final, \
-                destination_constraint):
-            return [constraint_a_final, constraint_b_final]
+        if _compare_waypoints_by_more_likely_to_be_valid( \
+                waypoint_a_original, \
+                waypoint_b_original, \
+                waypoint_a_final, \
+                waypoint_b_final, \
+                destination_waypoint):
+            return [waypoint_a_final, waypoint_b_final]
         else:
-            return [constraint_b_final, constraint_a_final]
+            return [waypoint_b_final, waypoint_a_final]
     elif !should_skip_a:
-        return [constraint_a_final]
+        return [waypoint_a_final]
     elif !should_skip_b:
-        return [constraint_b_final]
+        return [waypoint_b_final]
     else:
         Utils.error()
         return []
 
-# Use some basic heuristics to sort the constraints. We try to attempt calculations for the 
-# constraint that's most likely to be successful first.
-static func _compare_constraints_by_more_likely_to_be_valid( \
-        a_original: MovementConstraint, \
-        b_original: MovementConstraint, \
-        a_final: MovementConstraint, \
-        b_final: MovementConstraint, \
-        destination: MovementConstraint) -> bool:
+# Use some basic heuristics to sort the waypoints. We try to attempt calculations for the 
+# waypoint that's most likely to be successful first.
+static func _compare_waypoints_by_more_likely_to_be_valid( \
+        a_original: Waypoint, \
+        b_original: Waypoint, \
+        a_final: Waypoint, \
+        b_final: Waypoint, \
+        destination: Waypoint) -> bool:
     if a_final.is_valid != b_final.is_valid:
-        # Sort constraints according to whether they're valid.
+        # Sort waypoints according to whether they're valid.
         return a_final.is_valid
     else:
-        # Sort constraints according to position.
+        # Sort waypoints according to position.
         
         var colliding_surface := a_original.surface
         
         if colliding_surface.side == SurfaceSide.FLOOR:
-            # When moving around a floor, prefer whichever constraint is closer to the destination.
+            # When moving around a floor, prefer whichever waypoint is closer to the destination.
             # 
             # TODO: Explain rationale.
             return a_original.position.distance_squared_to(destination.position) <= \
                     b_original.position.distance_squared_to(destination.position)
         elif colliding_surface.side == SurfaceSide.CEILING:
-            # When moving around a ceiling, prefer whichever constraint is closer to the origin.
+            # When moving around a ceiling, prefer whichever waypoint is closer to the origin.
             # 
             # TODO: Explain rationale.
             return a_original.position.distance_squared_to(destination.position) >= \
                     b_original.position.distance_squared_to(destination.position)
         else:
-            # When moving around walls, prefer whichever constraint is higher.
+            # When moving around walls, prefer whichever waypoint is higher.
             # 
-            # The reasoning here is that the constraint around the bottom edge of a wall will usually
+            # The reasoning here is that the waypoint around the bottom edge of a wall will usually
             # require movement to use a lower jump height, which would then invalidate the rest of the
             # movement to the destination.
             return a_original.position.y >= b_original.position.y
 
-# Calculates and records various state on the given constraint.
+# Calculates and records various state on the given waypoint.
 # 
-# In particular, these constraint properties are updated:
+# In particular, these waypoint properties are updated:
 # - is_fake
 # - is_valid
 # - horizontal_movement_sign
@@ -296,73 +296,73 @@ static func _compare_constraints_by_more_likely_to_be_valid( \
 # - min_velocity_x
 # - max_velocity_x
 # 
-# These calculations take into account state from previous and upcoming neighbor constraints as
+# These calculations take into account state from previous and upcoming neighbor waypoints as
 # well as various other parameters.
 # 
-# Returns false if the constraint cannot satisfy the given parameters.
-static func update_constraint( \
-        constraint: MovementConstraint, \
-        origin_constraint: MovementConstraint, \
+# Returns false if the waypoint cannot satisfy the given parameters.
+static func update_waypoint( \
+        waypoint: Waypoint, \
+        origin_waypoint: Waypoint, \
         movement_params: MovementParams, \
         velocity_start_origin: Vector2, \
         can_hold_jump_button_at_origin: bool, \
         vertical_step: MovementVertCalcStep, \
-        additional_high_constraint_position: Vector2) -> void:
-    # Previous constraint, next constraint,  and vertical_step should be provided when updating
-    # intermediate constraints.
-    assert(constraint.previous_constraint != null or constraint.is_origin)
-    assert(constraint.next_constraint != null or constraint.is_destination)
-    assert(vertical_step != null or constraint.is_destination or constraint.is_origin)
+        additional_high_waypoint_position: Vector2) -> void:
+    # Previous waypoint, next waypoint,  and vertical_step should be provided when updating
+    # intermediate waypoints.
+    assert(waypoint.previous_waypoint != null or waypoint.is_origin)
+    assert(waypoint.next_waypoint != null or waypoint.is_destination)
+    assert(vertical_step != null or waypoint.is_destination or waypoint.is_origin)
     
-    # additional_high_constraint_position should only ever be provided for the destination, and
+    # additional_high_waypoint_position should only ever be provided for the destination, and
     # then only when we're doing backtracking for a new jump-height.
-    assert(additional_high_constraint_position == Vector2.INF or constraint.is_destination)
-    assert(vertical_step != null or additional_high_constraint_position == Vector2.INF)
+    assert(additional_high_waypoint_position == Vector2.INF or waypoint.is_destination)
+    assert(vertical_step != null or additional_high_waypoint_position == Vector2.INF)
     
-    _assign_horizontal_movement_sign(constraint, velocity_start_origin)
+    _assign_horizontal_movement_sign(waypoint, velocity_start_origin)
     
-    var is_a_horizontal_surface := constraint.surface != null and constraint.surface.normal.x == 0
-    var is_a_fake_constraint := constraint.surface != null and \
-            constraint.horizontal_movement_sign != \
-                    constraint.horizontal_movement_sign_from_displacement and \
+    var is_a_horizontal_surface := waypoint.surface != null and waypoint.surface.normal.x == 0
+    var is_a_fake_waypoint := waypoint.surface != null and \
+            waypoint.horizontal_movement_sign != \
+                    waypoint.horizontal_movement_sign_from_displacement and \
             is_a_horizontal_surface
     
-    if is_a_fake_constraint:
-        # This constraint should be skipped, and movement should proceed directly to the next one
-        # (but we still need to keep this constraint around long enough to calculate what that
-        # next constraint is).
-        constraint.is_fake = true
-        constraint.horizontal_movement_sign = constraint.horizontal_movement_sign_from_displacement
-        constraint.is_valid = false
+    if is_a_fake_waypoint:
+        # This waypoint should be skipped, and movement should proceed directly to the next one
+        # (but we still need to keep this waypoint around long enough to calculate what that
+        # next waypoint is).
+        waypoint.is_fake = true
+        waypoint.horizontal_movement_sign = waypoint.horizontal_movement_sign_from_displacement
+        waypoint.is_valid = false
     else:
-        constraint.is_valid = _update_constraint_velocity_and_time( \
-                constraint, \
-                origin_constraint, \
+        waypoint.is_valid = _update_waypoint_velocity_and_time( \
+                waypoint, \
+                origin_waypoint, \
                 movement_params, \
                 velocity_start_origin, \
                 can_hold_jump_button_at_origin, \
                 vertical_step, \
-                additional_high_constraint_position)
+                additional_high_waypoint_position)
 
-# Calculates and records various state on the given constraint.
+# Calculates and records various state on the given waypoint.
 # 
-# In particular, these constraint properties are updated:
+# In particular, these waypoint properties are updated:
 # - time_passing_through
 # - min_velocity_x
 # - max_velocity_x
 # 
-# These calculations take into account state from neighbor constraints as well as various other
+# These calculations take into account state from neighbor waypoints as well as various other
 # parameters.
 # 
-# Returns false if the constraint cannot satisfy the given parameters.
-static func _update_constraint_velocity_and_time( \
-        constraint: MovementConstraint, \
-        origin_constraint: MovementConstraint, \
+# Returns false if the waypoint cannot satisfy the given parameters.
+static func _update_waypoint_velocity_and_time( \
+        waypoint: Waypoint, \
+        origin_waypoint: Waypoint, \
         movement_params: MovementParams, \
         velocity_start_origin: Vector2, \
         can_hold_jump_button_at_origin: bool, \
         vertical_step: MovementVertCalcStep, \
-        additional_high_constraint_position: Vector2) -> bool:
+        additional_high_waypoint_position: Vector2) -> bool:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var time_passing_through: float
@@ -372,47 +372,47 @@ static func _update_constraint_velocity_and_time( \
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #    if Geometry.are_points_equal_with_epsilon( \
-#            constraint.position, \
+#            waypoint.position, \
 #            Vector2(-190, -349), 10):
 #        print("break")
     
-    # Calculate the time that the movement would pass through the constraint, as well as the min
-    # and max x-velocity when passing through the constraint.
-    if constraint.is_origin:
+    # Calculate the time that the movement would pass through the waypoint, as well as the min
+    # and max x-velocity when passing through the waypoint.
+    if waypoint.is_origin:
         time_passing_through = 0.0
         min_velocity_x = velocity_start_origin.x
         max_velocity_x = velocity_start_origin.x
         actual_velocity_x = velocity_start_origin.x
     else:
-        var displacement := constraint.next_constraint.position - constraint.position if \
-                constraint.next_constraint != null else \
-                constraint.position - constraint.previous_constraint.position
+        var displacement := waypoint.next_waypoint.position - waypoint.position if \
+                waypoint.next_waypoint != null else \
+                waypoint.position - waypoint.previous_waypoint.position
         
         # Check whether the vertical displacement is possible.
         if displacement.y < -movement_params.max_upward_jump_distance:
-            # We can't reach the next constraint from this constraint.
+            # We can't reach the next waypoint from this waypoint.
             return false
         
-        if constraint.is_destination:
-            # For the destination constraint, we need to calculate time_to_release_jump. All other
-            # constraints can re-use this information from the vertical_step.
+        if waypoint.is_destination:
+            # For the destination waypoint, we need to calculate time_to_release_jump. All other
+            # waypoints can re-use this information from the vertical_step.
             
             var time_to_release_jump: float
             
             # We consider different parameters if we are starting a new movement calculation vs
             # backtracking to consider a new jump height.
-            var constraint_position_to_calculate_jump_release_time_for: Vector2
-            if additional_high_constraint_position == Vector2.INF:
+            var waypoint_position_to_calculate_jump_release_time_for: Vector2
+            if additional_high_waypoint_position == Vector2.INF:
                 # We are starting a new movement calculation (not backtracking to consider a new
                 # jump height).
-                constraint_position_to_calculate_jump_release_time_for = constraint.position
+                waypoint_position_to_calculate_jump_release_time_for = waypoint.position
             else:
                 # We are backtracking to consider a new jump height.
-                constraint_position_to_calculate_jump_release_time_for = \
-                        additional_high_constraint_position
+                waypoint_position_to_calculate_jump_release_time_for = \
+                        additional_high_waypoint_position
                 # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #                if Geometry.are_points_equal_with_epsilon( \
-#                        constraint_position_to_calculate_jump_release_time_for, \
+#                        waypoint_position_to_calculate_jump_release_time_for, \
 #                        Vector2(64, -480), 10):
 #                    print("break")
             
@@ -421,131 +421,131 @@ static func _update_constraint_velocity_and_time( \
             
             # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #            if Geometry.are_points_equal_with_epsilon( \
-#                    constraint.previous_constraint.position, \
+#                    waypoint.previous_waypoint.position, \
 #                    Vector2(64, -480), 10):
 #                print("break")
             # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #            if Geometry.are_points_equal_with_epsilon( \
-#                    constraint.position, \
+#                    waypoint.position, \
 #                    Vector2(2688, 226), 10):
 #                print("break")
             
-            var displacement_from_origin_to_constraint := \
-                    constraint_position_to_calculate_jump_release_time_for - \
-                    origin_constraint.position
+            var displacement_from_origin_to_waypoint := \
+                    waypoint_position_to_calculate_jump_release_time_for - \
+                    origin_waypoint.position
             
             # If we already know the required time for reaching the destination, and we aren't
             # performing a new backtracking step, then re-use the previously calculated time. The
             # previous value encompasses more information that we may need to preserve, such as
             # whether we already did some backtracking.
-            var time_to_pass_through_constraint_ignoring_others: float
-            if vertical_step != null and additional_high_constraint_position == Vector2.INF:
-                time_to_pass_through_constraint_ignoring_others = vertical_step.time_step_end
+            var time_to_pass_through_waypoint_ignoring_others: float
+            if vertical_step != null and additional_high_waypoint_position == Vector2.INF:
+                time_to_pass_through_waypoint_ignoring_others = vertical_step.time_step_end
             else:
-                time_to_pass_through_constraint_ignoring_others = \
-                        VerticalMovementUtils.calculate_time_to_jump_to_constraint( \
+                time_to_pass_through_waypoint_ignoring_others = \
+                        VerticalMovementUtils.calculate_time_to_jump_to_waypoint( \
                                 movement_params, \
-                                displacement_from_origin_to_constraint, \
+                                displacement_from_origin_to_waypoint, \
                                 velocity_start_origin, \
                                 can_hold_jump_button_at_origin, \
-                                additional_high_constraint_position != Vector2.INF)
-                if time_to_pass_through_constraint_ignoring_others == INF:
-                    # We can't reach this constraint.
+                                additional_high_waypoint_position != Vector2.INF)
+                if time_to_pass_through_waypoint_ignoring_others == INF:
+                    # We can't reach this waypoint.
                     return false
-                assert(time_to_pass_through_constraint_ignoring_others > 0.0)
+                assert(time_to_pass_through_waypoint_ignoring_others > 0.0)
             
-            if additional_high_constraint_position != Vector2.INF:
+            if additional_high_waypoint_position != Vector2.INF:
                 # We are backtracking to consider a new jump height.
                 # 
                 # The destination jump time should account for all of the following:
                 # 
                 # -   The time needed to reach any previous jump-heights before this current round
                 #     of jump-height backtracking (vertical_step.time_instruction_end).
-                # -   The time needed to reach this new previously-out-of-reach constraint
-                #     (time_to_release_jump for the new constraint).
-                # -   The time needed to get to the destination from this new constraint.
+                # -   The time needed to reach this new previously-out-of-reach waypoint
+                #     (time_to_release_jump for the new waypoint).
+                # -   The time needed to get to the destination from this new waypoint.
                 
                 # TODO: There might be cases that this fails for? We might need to add more time.
                 #       Revisit this if we see problems.
                 
-                var time_to_get_to_destination_from_constraint := \
-                        _calculate_time_to_reach_destination_from_new_constraint( \
+                var time_to_get_to_destination_from_waypoint := \
+                        _calculate_time_to_reach_destination_from_new_waypoint( \
                                 movement_params, \
-                                additional_high_constraint_position, \
-                                constraint)
-                if time_to_get_to_destination_from_constraint == INF:
-                    # We can't reach the destination from this constraint.
+                                additional_high_waypoint_position, \
+                                waypoint)
+                if time_to_get_to_destination_from_waypoint == INF:
+                    # We can't reach the destination from this waypoint.
                     return false
                 
                 time_passing_through = max(vertical_step.time_step_end, \
-                        time_to_pass_through_constraint_ignoring_others + \
-                                time_to_get_to_destination_from_constraint)
+                        time_to_pass_through_waypoint_ignoring_others + \
+                                time_to_get_to_destination_from_waypoint)
                 
             else:
-                time_passing_through = time_to_pass_through_constraint_ignoring_others
+                time_passing_through = time_to_pass_through_waypoint_ignoring_others
             
             # We can't be more restrictive with the destination velocity limits, because otherwise,
-            # origin vs intermediate constraints give us all sorts of invalid values, which they
+            # origin vs intermediate waypoints give us all sorts of invalid values, which they
             # in-turn base their values off of.
             # 
             # Specifically, when the horizontal movement sign of the destination changes, due to a
-            # new intermediate constraint, either the min or max would be incorrectly capped at 0
-            # when we're calculating the min/max for the new constraint.
+            # new intermediate waypoint, either the min or max would be incorrectly capped at 0
+            # when we're calculating the min/max for the new waypoint.
             # 
             # If this was already assigned a min/max (because we need the edge's movement to end in
             # a certain direction), use that; otherwise, use max possible speed values.
-            min_velocity_x = constraint.min_velocity_x if constraint.min_velocity_x != INF else \
+            min_velocity_x = waypoint.min_velocity_x if waypoint.min_velocity_x != INF else \
                     -movement_params.max_horizontal_speed_default
-            max_velocity_x = constraint.max_velocity_x if constraint.max_velocity_x != INF else \
+            max_velocity_x = waypoint.max_velocity_x if waypoint.max_velocity_x != INF else \
                     movement_params.max_horizontal_speed_default
             
         else:
-            # This is an intermediate constraint (not the origin or destination).
+            # This is an intermediate waypoint (not the origin or destination).
             
             time_passing_through = \
-                    VerticalMovementUtils.calculate_time_for_passing_through_constraint( \
+                    VerticalMovementUtils.calculate_time_for_passing_through_waypoint( \
                             movement_params, \
-                            constraint, \
-                            constraint.previous_constraint.time_passing_through + 0.0001, \
+                            waypoint, \
+                            waypoint.previous_waypoint.time_passing_through + 0.0001, \
                             vertical_step.position_step_start.y, \
                             vertical_step.velocity_step_start.y, \
                             vertical_step.time_instruction_end, \
                             vertical_step.position_instruction_end.y, \
                             vertical_step.velocity_instruction_end.y)
             if time_passing_through == INF:
-                # We can't reach this constraint from the previous constraint.
+                # We can't reach this waypoint from the previous waypoint.
                 return false
             
             var still_holding_jump_button := \
                     time_passing_through < vertical_step.time_instruction_end
             
-            # We can quit early for a few types of constraints.
-            if !constraint.passing_vertically and constraint.should_stay_on_min_side and \
+            # We can quit early for a few types of waypoints.
+            if !waypoint.passing_vertically and waypoint.should_stay_on_min_side and \
                     !still_holding_jump_button:
                 # Quit early if we are trying to go above a wall, but we already released the jump
                 # button.
                 return false
-            elif !constraint.passing_vertically and !constraint.should_stay_on_min_side and \
+            elif !waypoint.passing_vertically and !waypoint.should_stay_on_min_side and \
                     still_holding_jump_button:
                 # Quit early if we are trying to go below a wall, but we are still holding the jump
                 # button.
                 return false
             else:
                 # We should never hit a floor while still holding the jump button.
-                assert(!(constraint.surface != null and \
-                        constraint.surface.side == SurfaceSide.FLOOR and \
+                assert(!(waypoint.surface != null and \
+                        waypoint.surface.side == SurfaceSide.FLOOR and \
                         still_holding_jump_button))
             
             var duration_to_next := \
-                    constraint.next_constraint.time_passing_through - time_passing_through
+                    waypoint.next_waypoint.time_passing_through - time_passing_through
             if duration_to_next <= 0:
-                # We can't reach the next constraint from this constraint.
+                # We can't reach the next waypoint from this waypoint.
                 return false
             
             var displacement_to_next := displacement
             var duration_from_origin := \
-                    time_passing_through - origin_constraint.time_passing_through
-            var displacement_from_origin := constraint.position - origin_constraint.position
+                    time_passing_through - origin_waypoint.time_passing_through
+            var displacement_from_origin := waypoint.position - origin_waypoint.position
             
             # FIXME: DEBUGGING: REMOVE
 #            if Geometry.are_floats_equal_with_epsilon(min_velocity_x, -112.517, 0.01):
@@ -555,38 +555,38 @@ static func _update_constraint_velocity_and_time( \
             
             # We calculate min/max velocity limits for direct movement from the origin. These
             # limits are more permissive than if we were calculating them from the actual
-            # immediately previous constraint, but these can give an early indicator for whether
-            # this constraint is invalid.
+            # immediately previous waypoint, but these can give an early indicator for whether
+            # this waypoint is invalid.
             # 
-            # NOTE: This check will still not guarantee that movement up to this constraint can be
-            #       reached, since any previous intermediate constraints could invalidate things.
+            # NOTE: This check will still not guarantee that movement up to this waypoint can be
+            #       reached, since any previous intermediate waypoints could invalidate things.
             var min_and_max_velocity_from_origin := \
                     _calculate_min_and_max_x_velocity_at_end_of_interval( \
                             displacement_from_origin.x, \
                             duration_from_origin, \
-                            origin_constraint.min_velocity_x, \
-                            origin_constraint.max_velocity_x, \
+                            origin_waypoint.min_velocity_x, \
+                            origin_waypoint.max_velocity_x, \
                             movement_params.max_horizontal_speed_default, \
                             movement_params.in_air_horizontal_acceleration, \
-                            constraint.horizontal_movement_sign)
+                            waypoint.horizontal_movement_sign)
             if min_and_max_velocity_from_origin.empty():
-                # We can't reach this constraint from the previous constraint.
+                # We can't reach this waypoint from the previous waypoint.
                 return false
             var min_velocity_x_from_origin: float = min_and_max_velocity_from_origin[0]
             var max_velocity_x_from_origin: float = min_and_max_velocity_from_origin[1]
             
-            # Calculate the min and max velocity for movement through the constraint.
+            # Calculate the min and max velocity for movement through the waypoint.
             var min_and_max_velocity_for_next_step := \
                     _calculate_min_and_max_x_velocity_at_start_of_interval( \
                             displacement_to_next.x, \
                             duration_to_next, \
-                            constraint.next_constraint.min_velocity_x, \
-                            constraint.next_constraint.max_velocity_x, \
+                            waypoint.next_waypoint.min_velocity_x, \
+                            waypoint.next_waypoint.max_velocity_x, \
                             movement_params.max_horizontal_speed_default, \
                             movement_params.in_air_horizontal_acceleration, \
-                            constraint.horizontal_movement_sign)
+                            waypoint.horizontal_movement_sign)
             if min_and_max_velocity_for_next_step.empty():
-                # We can't reach the next constraint from this constraint.
+                # We can't reach the next waypoint from this waypoint.
                 return false
             var min_velocity_x_for_next_step: float = min_and_max_velocity_for_next_step[0]
             var max_velocity_x_for_next_step: float = min_and_max_velocity_for_next_step[1]
@@ -597,53 +597,53 @@ static func _update_constraint_velocity_and_time( \
         # actual_velocity_x is calculated when calculating the horizontal steps.
         actual_velocity_x = INF
     
-    constraint.time_passing_through = time_passing_through
-    constraint.min_velocity_x = min_velocity_x
-    constraint.max_velocity_x = max_velocity_x
-    constraint.actual_velocity_x = actual_velocity_x
+    waypoint.time_passing_through = time_passing_through
+    waypoint.min_velocity_x = min_velocity_x
+    waypoint.max_velocity_x = max_velocity_x
+    waypoint.actual_velocity_x = actual_velocity_x
     
     # FIXME: ---------------------- Debugging... Maybe remove the is_destination conditional?
-    if !constraint.is_destination:
+    if !waypoint.is_destination:
         # Ensure that the min and max velocities match the expected horizontal movement direction.
-        if constraint.horizontal_movement_sign == 1:
-            assert(constraint.min_velocity_x >= 0 and constraint.max_velocity_x >= 0)
-        elif constraint.horizontal_movement_sign == -1:
-            assert(constraint.min_velocity_x <= 0 and constraint.max_velocity_x <= 0)
+        if waypoint.horizontal_movement_sign == 1:
+            assert(waypoint.min_velocity_x >= 0 and waypoint.max_velocity_x >= 0)
+        elif waypoint.horizontal_movement_sign == -1:
+            assert(waypoint.min_velocity_x <= 0 and waypoint.max_velocity_x <= 0)
     
     return true
 
 # This only considers the time to move horizontally and the time to fall; this does not consider
-# the time to rise from the new constraint to the destination.
+# the time to rise from the new waypoint to the destination.
 # 
 # - We don't consider rise time, since that would require knowing more information around when the
 #   jump button is released and whether it could still be held. Also, this case is much less likely
 #   to impact the overall movement duration.
 # - For horizontal movement time, we don't need to know about vertical velocity or the jump button.
 # - For fall time, we can assume that vertical velocity will be zero when passing through this new
-#   constraint (since it should be the highest point we reach in the jump). If the movement would
-#   require vertical velocity to _not_ be zero through this new constraint, then that case should
+#   waypoint (since it should be the highest point we reach in the jump). If the movement would
+#   require vertical velocity to _not_ be zero through this new waypoint, then that case should
 #   be covered by the horizontal time calculation.
-static func _calculate_time_to_reach_destination_from_new_constraint( \
+static func _calculate_time_to_reach_destination_from_new_waypoint( \
         movement_params: MovementParams, \
-        new_constraint_position: Vector2, \
-        destination: MovementConstraint) -> float:
-    var displacement := destination.position - new_constraint_position
+        new_waypoint_position: Vector2, \
+        destination: Waypoint) -> float:
+    var displacement := destination.position - new_waypoint_position
     
-    var velocity_x_at_new_constraint: float
+    var velocity_x_at_new_waypoint: float
     var acceleration: float
     if displacement.x > 0:
-        velocity_x_at_new_constraint = movement_params.max_horizontal_speed_default * \
-                CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULTIPLIER
+        velocity_x_at_new_waypoint = movement_params.max_horizontal_speed_default * \
+                CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER
         acceleration = movement_params.in_air_horizontal_acceleration
     else:
-        velocity_x_at_new_constraint = -movement_params.max_horizontal_speed_default * \
-                CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_CONSTRAINT_V_X_MAX_SPEED_MULTIPLIER
+        velocity_x_at_new_waypoint = -movement_params.max_horizontal_speed_default * \
+                CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER
         acceleration = -movement_params.in_air_horizontal_acceleration
     
     var time_to_reach_horizontal_displacement := \
             MovementUtils.calculate_duration_for_displacement( \
                     displacement.x, \
-                    velocity_x_at_new_constraint, \
+                    velocity_x_at_new_waypoint, \
                     acceleration, \
                     movement_params.max_horizontal_speed_default)
     
@@ -662,22 +662,22 @@ static func _calculate_time_to_reach_destination_from_new_constraint( \
     return max(time_to_reach_horizontal_displacement, time_to_reach_fall_displacement)
 
 static func _assign_horizontal_movement_sign( \
-        constraint: MovementConstraint, \
+        waypoint: Waypoint, \
         velocity_start_origin: Vector2) -> void:
-    var previous_constraint := constraint.previous_constraint
-    var next_constraint := constraint.next_constraint
-    var is_origin := constraint.is_origin
-    var is_destination := constraint.is_destination
-    var surface := constraint.surface
+    var previous_waypoint := waypoint.previous_waypoint
+    var next_waypoint := waypoint.next_waypoint
+    var is_origin := waypoint.is_origin
+    var is_destination := waypoint.is_destination
+    var surface := waypoint.surface
     
     assert(surface != null or is_origin or is_destination)
-    assert(previous_constraint != null or is_origin)
-    assert(next_constraint != null or is_destination)
+    assert(previous_waypoint != null or is_origin)
+    assert(next_waypoint != null or is_destination)
     
-    var displacement := constraint.position - previous_constraint.position if \
-            previous_constraint != null else next_constraint.position - constraint.position
-    var neighbor_horizontal_movement_sign := previous_constraint.horizontal_movement_sign if \
-            previous_constraint != null else next_constraint.horizontal_movement_sign
+    var displacement := waypoint.position - previous_waypoint.position if \
+            previous_waypoint != null else next_waypoint.position - waypoint.position
+    var neighbor_horizontal_movement_sign := previous_waypoint.horizontal_movement_sign if \
+            previous_waypoint != null else next_waypoint.horizontal_movement_sign
     
     var displacement_sign := \
             0 if Geometry.are_floats_equal_with_epsilon(displacement.x, 0.0, 0.1) else \
@@ -710,10 +710,10 @@ static func _assign_horizontal_movement_sign( \
         horizontal_movement_sign = \
                 -1 if surface.side == SurfaceSide.LEFT_WALL else \
                 (1 if surface.side == SurfaceSide.RIGHT_WALL else \
-                (-1 if constraint.should_stay_on_min_side else 1))
+                (-1 if waypoint.should_stay_on_min_side else 1))
     
-    constraint.horizontal_movement_sign = horizontal_movement_sign
-    constraint.horizontal_movement_sign_from_displacement = \
+    waypoint.horizontal_movement_sign = horizontal_movement_sign
+    waypoint.horizontal_movement_sign_from_displacement = \
             horizontal_movement_sign_from_displacement
 
 # This calculates the range of possible x velocities at the start of a movement step.
@@ -732,13 +732,13 @@ static func _assign_horizontal_movement_sign( \
 static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         displacement: float, \
         duration: float, \
-        v_1_min_for_next_constraint: float, \
-        v_1_max_for_next_constraint: float, \
+        v_1_min_for_next_waypoint: float, \
+        v_1_max_for_next_waypoint: float, \
         speed_max: float, \
         a_magnitude: float, \
         start_horizontal_movement_sign: int) -> Array:
     ### Calculate more tightly-bounded min/max end velocity values, according to both the duration
-    ### of the current step and the given min/max values from the next constraint.
+    ### of the current step and the given min/max values from the next waypoint.
     
     # The strategy here, is to first try min/max v_1 values that correspond to accelerating over
     # the entire interval. If they do not result in movement that exceeds max speed, then we know
@@ -794,7 +794,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
                         acceleration, \
                         true)
         if min_v_1_from_partial_acc_and_no_max_speed_at_v_1 == INF:
-            # We cannot reach this constraint from the previous constraint.
+            # We cannot reach this waypoint from the previous waypoint.
             return []
     else:
         min_v_1_from_partial_acc_and_no_max_speed_at_v_1 = \
@@ -816,7 +816,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
                         acceleration, \
                         false)
         if max_v_1_from_partial_acc_and_no_max_speed_at_v_1 == INF:
-            # We cannot reach this constraint from the previous constraint.
+            # We cannot reach this waypoint from the previous waypoint.
             return []
     else:
         max_v_1_from_partial_acc_and_no_max_speed_at_v_1 = \
@@ -825,22 +825,22 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
     # The min and max possible v_1 are dependent on both the duration of the current step and the
     # min and max possible start velocity from the next step, respectively.
     # 
-    # The min/max from the next constraint will not exceed max speed, so it doesn't matter if
+    # The min/max from the next waypoint will not exceed max speed, so it doesn't matter if
     # min_/max_v_1_from_partial_acc_and_no_max_speed exceed max speed.
     var v_1_min := max(min_v_1_from_partial_acc_and_no_max_speed_at_v_1, \
-            v_1_min_for_next_constraint)
+            v_1_min_for_next_waypoint)
     var v_1_max := min(max_v_1_from_partial_acc_and_no_max_speed_at_v_1, \
-            v_1_max_for_next_constraint)
+            v_1_max_for_next_waypoint)
     
     if v_1_min > v_1_max:
         # Neither direction of acceleration will work with the given min/max velocities from the
-        # next constraint.
+        # next waypoint.
         return []
     
     ### Calculate min/max start velocities according to the min/max end velocities.
     
     # At this point, there are a few different parameters we can adjust in order to define the
-    # movement from the previous constraint to the next (and to define the start velocity). These
+    # movement from the previous waypoint to the next (and to define the start velocity). These
     # parameters include:
     # 
     # - The end velocity.
@@ -976,10 +976,10 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
     
     if (start_horizontal_movement_sign > 0 and v_0_max < 0) or \
         (start_horizontal_movement_sign < 0 and v_0_min > 0):
-        # We cannot reach the next constraint with the needed movement direction.
+        # We cannot reach the next waypoint with the needed movement direction.
         return []
     
-    # Limit velocity to the expected movement direction for this constraint.
+    # Limit velocity to the expected movement direction for this waypoint.
     if start_horizontal_movement_sign > 0:
         v_0_min = max(v_0_min, 0.0)
     else:
@@ -987,7 +987,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
     
     # Limit max speeds.
     if v_0_min > speed_max or v_0_max < -speed_max:
-        # We cannot reach the next constraint from the previous constraint.
+        # We cannot reach the next waypoint from the previous waypoint.
         return []
     v_0_max = min(v_0_max, speed_max)
     v_0_min = max(v_0_min, -speed_max)
@@ -1170,13 +1170,13 @@ static func _solve_for_start_velocity( \
 static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         displacement: float, \
         duration: float, \
-        v_1_min_for_previous_constraint: float, \
-        v_1_max_for_previous_constraint: float, \
+        v_1_min_for_previous_waypoint: float, \
+        v_1_max_for_previous_waypoint: float, \
         speed_max: float, \
         a_magnitude: float, \
         end_horizontal_movement_sign: int) -> Array:
     ### Calculate more tightly-bounded min/max start velocity values, according to both the duration
-    ### of the current step and the given min/max values from the previous constraint.
+    ### of the current step and the given min/max values from the previous waypoint.
     
     # The strategy here, is to first try min/max v_0 values that correspond to accelerating over
     # the entire interval. If they do not result in movement that exceeds max speed, then we know
@@ -1231,7 +1231,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
                         acceleration, \
                         true)
         if min_v_0_from_partial_acc_and_no_max_speed_at_v_0 == INF:
-            # We cannot reach this constraint from the previous constraint.
+            # We cannot reach this waypoint from the previous waypoint.
             return []
     else:
         min_v_0_from_partial_acc_and_no_max_speed_at_v_0 = \
@@ -1253,7 +1253,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
                         acceleration, \
                         false)
         if max_v_0_from_partial_acc_and_no_max_speed_at_v_0 == INF:
-            # We cannot reach this constraint from the previous constraint.
+            # We cannot reach this waypoint from the previous waypoint.
             return []
     else:
         max_v_0_from_partial_acc_and_no_max_speed_at_v_0 = \
@@ -1262,22 +1262,22 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     # The min and max possible v_0 are dependent on both the duration of the current step and the
     # min and max possible end velocity from the previous step, respectively.
     # 
-    # The min/max from the previous constraint will not exceed max speed, so it doesn't matter if
+    # The min/max from the previous waypoint will not exceed max speed, so it doesn't matter if
     # min_/max_v_0_from_partial_acc_and_no_max_speed exceed max speed.
     var v_0_min := max(min_v_0_from_partial_acc_and_no_max_speed_at_v_0, \
-            v_1_min_for_previous_constraint)
+            v_1_min_for_previous_waypoint)
     var v_0_max := min(max_v_0_from_partial_acc_and_no_max_speed_at_v_0, \
-            v_1_max_for_previous_constraint)
+            v_1_max_for_previous_waypoint)
     
     if v_0_min > v_0_max:
         # Neither direction of acceleration will work with the given min/max velocities from the
-        # previous constraint.
+        # previous waypoint.
         return []
     
     ### Calculate min/max end velocities according to the min/max start velocities.
     
     # At this point, there are a few different parameters we can adjust in order to define the
-    # movement from the previous constraint to the next (and to define the start velocity). These
+    # movement from the previous waypoint to the next (and to define the start velocity). These
     # parameters include:
     # 
     # - The start velocity.
@@ -1413,10 +1413,10 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     
     if (end_horizontal_movement_sign > 0 and v_1_max < 0) or \
         (end_horizontal_movement_sign < 0 and v_1_min > 0):
-        # We cannot reach this constraint with the needed movement direction.
+        # We cannot reach this waypoint with the needed movement direction.
         return []
     
-    # Limit velocity to the expected movement direction for this constraint.
+    # Limit velocity to the expected movement direction for this waypoint.
     if end_horizontal_movement_sign > 0:
         v_1_min = max(v_1_min, 0.0)
     else:
@@ -1424,7 +1424,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     
     # Limit max speeds.
     if v_1_min > speed_max or v_1_max < -speed_max:
-        # We cannot reach this constraint from the previous constraint.
+        # We cannot reach this waypoint from the previous waypoint.
         return []
     v_1_max = min(v_1_max, speed_max)
     v_1_min = max(v_1_min, -speed_max)
@@ -1591,96 +1591,96 @@ static func _solve_for_end_velocity( \
     else:
         return max(result_1, result_2)
 
-static func update_neighbors_for_new_constraint( \
-        constraint: MovementConstraint, \
-        previous_constraint: MovementConstraint, \
-        next_constraint: MovementConstraint, \
+static func update_neighbors_for_new_waypoint( \
+        waypoint: Waypoint, \
+        previous_waypoint: Waypoint, \
+        next_waypoint: Waypoint, \
         overall_calc_params: MovementCalcOverallParams, \
         vertical_step: MovementVertCalcStep) -> void:
-    previous_constraint.next_constraint = constraint
-    next_constraint.previous_constraint = constraint
+    previous_waypoint.next_waypoint = waypoint
+    next_waypoint.previous_waypoint = waypoint
     
-    update_constraint( \
-            previous_constraint, \
-            overall_calc_params.origin_constraint, \
+    update_waypoint( \
+            previous_waypoint, \
+            overall_calc_params.origin_waypoint, \
             overall_calc_params.movement_params, \
             vertical_step.velocity_step_start, \
             vertical_step.can_hold_jump_button, \
             vertical_step, \
             Vector2.INF)
-    update_constraint( \
-            next_constraint, \
-            overall_calc_params.origin_constraint, \
+    update_waypoint( \
+            next_waypoint, \
+            overall_calc_params.origin_waypoint, \
             overall_calc_params.movement_params, \
             vertical_step.velocity_step_start, \
             vertical_step.can_hold_jump_button, \
             vertical_step, \
             Vector2.INF)
 
-static func _calculate_replacement_for_fake_constraint( \
-        fake_constraint: MovementConstraint, \
-        constraint_offset: Vector2) -> MovementConstraint:
+static func _calculate_replacement_for_fake_waypoint( \
+        fake_waypoint: Waypoint, \
+        waypoint_offset: Vector2) -> Waypoint:
     var neighbor_surface: Surface
     var replacement_position := Vector2.INF
     var should_stay_on_min_side: bool
     
-    match fake_constraint.surface.side:
+    match fake_waypoint.surface.side:
         SurfaceSide.FLOOR:
             should_stay_on_min_side = false
             
-            if fake_constraint.should_stay_on_min_side:
+            if fake_waypoint.should_stay_on_min_side:
                 # Replacing top-left corner with bottom-left corner.
-                neighbor_surface = fake_constraint.surface.convex_counter_clockwise_neighbor
+                neighbor_surface = fake_waypoint.surface.convex_counter_clockwise_neighbor
                 replacement_position = neighbor_surface.first_point + \
-                        Vector2(-constraint_offset.x, constraint_offset.y)
+                        Vector2(-waypoint_offset.x, waypoint_offset.y)
             else:
                 # Replacing top-right corner with bottom-right corner.
-                neighbor_surface = fake_constraint.surface.convex_clockwise_neighbor
+                neighbor_surface = fake_waypoint.surface.convex_clockwise_neighbor
                 replacement_position = neighbor_surface.last_point + \
-                        Vector2(constraint_offset.x, constraint_offset.y)
+                        Vector2(waypoint_offset.x, waypoint_offset.y)
         
         SurfaceSide.CEILING:
             should_stay_on_min_side = true
             
-            if fake_constraint.should_stay_on_min_side:
+            if fake_waypoint.should_stay_on_min_side:
                 # Replacing bottom-left corner with top-left corner.
-                neighbor_surface = fake_constraint.surface.convex_clockwise_neighbor
+                neighbor_surface = fake_waypoint.surface.convex_clockwise_neighbor
                 replacement_position = neighbor_surface.last_point + \
-                        Vector2(-constraint_offset.x, -constraint_offset.y)
+                        Vector2(-waypoint_offset.x, -waypoint_offset.y)
             else:
                 # Replacing bottom-right corner with top-right corner.
-                neighbor_surface = fake_constraint.surface.convex_counter_clockwise_neighbor
+                neighbor_surface = fake_waypoint.surface.convex_counter_clockwise_neighbor
                 replacement_position = neighbor_surface.first_point + \
-                        Vector2(constraint_offset.x, -constraint_offset.y)
+                        Vector2(waypoint_offset.x, -waypoint_offset.y)
         _:
             Utils.error()
     
-    var replacement := MovementConstraint.new( \
+    var replacement := Waypoint.new( \
             neighbor_surface, \
             replacement_position, \
             false, \
             should_stay_on_min_side, \
-            fake_constraint.previous_constraint, \
-            fake_constraint.next_constraint)
+            fake_waypoint.previous_waypoint, \
+            fake_waypoint.next_waypoint)
     replacement.replaced_a_fake = true
     return replacement
 
-static func clone_constraint(original: MovementConstraint) -> MovementConstraint:
-    var clone := MovementConstraint.new(original.surface, original.position, \
+static func clone_waypoint(original: Waypoint) -> Waypoint:
+    var clone := Waypoint.new(original.surface, original.position, \
             original.passing_vertically, original.should_stay_on_min_side, \
-            original.previous_constraint, original.next_constraint)
-    copy_constraint(clone, original)
+            original.previous_waypoint, original.next_waypoint)
+    copy_waypoint(clone, original)
     return clone
 
-static func copy_constraint( \
-        destination: MovementConstraint, \
-        source: MovementConstraint) -> MovementConstraint:
+static func copy_waypoint( \
+        destination: Waypoint, \
+        source: Waypoint) -> Waypoint:
     destination.surface = source.surface
     destination.position = source.position
     destination.passing_vertically = source.passing_vertically
     destination.should_stay_on_min_side = source.should_stay_on_min_side
-    destination.previous_constraint = source.previous_constraint
-    destination.next_constraint = source.next_constraint
+    destination.previous_waypoint = source.previous_waypoint
+    destination.next_waypoint = source.next_waypoint
     destination.horizontal_movement_sign = source.horizontal_movement_sign
     destination.horizontal_movement_sign_from_displacement = \
             source.horizontal_movement_sign_from_displacement

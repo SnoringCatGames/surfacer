@@ -137,8 +137,8 @@ func _calculate_edge_attempt() -> void:
         edge_attempt = null
         return
     
-    if overall_calc_params.origin_constraint.is_valid and \
-            overall_calc_params.destination_constraint.is_valid:
+    if overall_calc_params.origin_waypoint.is_valid and \
+            overall_calc_params.destination_waypoint.is_valid:
         # Calculate the actual jump steps, collision, trajectory, and input state.
         jump_inter_surface_calculator.create_edge_from_overall_params(overall_calc_params)
     
