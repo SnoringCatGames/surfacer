@@ -16,8 +16,8 @@ func _init().( \
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null and \
             surface.side == SurfaceSide.FLOOR and \
-            (surface.concave_counter_clockwise_neighbor == null or \
-            surface.concave_clockwise_neighbor == null)
+            (surface.counter_clockwise_concave_neighbor == null or \
+            surface.clockwise_concave_neighbor == null)
 
 func get_all_inter_surface_edges_from_surface( \
         collision_params: CollisionCalcParams, \
@@ -25,7 +25,7 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
-    if origin_surface.concave_counter_clockwise_neighbor == null:
+    if origin_surface.counter_clockwise_concave_neighbor == null:
         # Calculating the fall-off state for the left edge of the floor.
         _get_all_edges_from_one_side( \
                 collision_params, \
@@ -35,7 +35,7 @@ func get_all_inter_surface_edges_from_surface( \
                 true, \
                 null)
     
-    if origin_surface.concave_clockwise_neighbor == null:
+    if origin_surface.clockwise_concave_neighbor == null:
         # Calculating the fall-off state for the right edge of the floor.
         _get_all_edges_from_one_side( \
                 collision_params, \

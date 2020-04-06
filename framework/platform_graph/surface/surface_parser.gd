@@ -139,6 +139,23 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     print("_assign_neighbor_surfaces...")
     _assign_neighbor_surfaces(self.floors, self.ceilings, self.left_walls, self.right_walls)
     print("_assign_neighbor_surfaces duration: %sms" % _stopwatch.stop())
+    
+    _stopwatch.start()
+    print("_calculate_shape_bounding_boxes_for_surfaces...")
+    # Since this calculation will loop around transitive neigbors, and since every surface should
+    # be connected transitively to a floor, it should also end up recording the bounding box for
+    # all other surface sides too.
+    _calculate_shape_bounding_boxes_for_surfaces(self.floors)
+    print("_calculate_shape_bounding_boxes_for_surfaces duration: %sms" % _stopwatch.stop())
+    
+    _stopwatch.start()
+    print("_assert_surfaces_fully_calculated...")
+    _assert_surfaces_fully_calculated(self.floors)
+    _assert_surfaces_fully_calculated(self.ceilings)
+    _assert_surfaces_fully_calculated(self.left_walls)
+    _assert_surfaces_fully_calculated(self.right_walls)
+    print("_assert_surfaces_fully_calculated duration: %sms" % _stopwatch.stop())
+    
 
 func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, \
         right_walls: Array) -> void:
@@ -621,8 +638,8 @@ static func _assign_neighbor_surfaces( \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
                     diff_y > -Geometry.FLOAT_EPSILON:
-                floor_surface.convex_counter_clockwise_neighbor = right_wall
-                right_wall.convex_clockwise_neighbor = floor_surface
+                floor_surface.counter_clockwise_convex_neighbor = right_wall
+                right_wall.clockwise_convex_neighbor = floor_surface
                 # We can assume that there will only be one matching convex neighbor.
                 break
             
@@ -634,8 +651,8 @@ static func _assign_neighbor_surfaces( \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
                     diff_y > -Geometry.FLOAT_EPSILON:
-                floor_surface.concave_clockwise_neighbor = right_wall
-                right_wall.concave_counter_clockwise_neighbor = floor_surface
+                floor_surface.clockwise_concave_neighbor = right_wall
+                right_wall.counter_clockwise_concave_neighbor = floor_surface
                 # We can assume that there will only be one matching concave neighbor.
                 break
         
@@ -648,8 +665,8 @@ static func _assign_neighbor_surfaces( \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
                     diff_y > -Geometry.FLOAT_EPSILON:
-                floor_surface.convex_clockwise_neighbor = left_wall
-                left_wall.convex_counter_clockwise_neighbor = floor_surface
+                floor_surface.clockwise_convex_neighbor = left_wall
+                left_wall.counter_clockwise_convex_neighbor = floor_surface
                 # We can assume that there will only be one matching convex neighbor.
                 break
             
@@ -661,8 +678,8 @@ static func _assign_neighbor_surfaces( \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
                     diff_y > -Geometry.FLOAT_EPSILON:
-                floor_surface.concave_counter_clockwise_neighbor = left_wall
-                left_wall.concave_clockwise_neighbor = floor_surface
+                floor_surface.counter_clockwise_concave_neighbor = left_wall
+                left_wall.clockwise_concave_neighbor = floor_surface
                 # We can assume that there will only be one matching concave neighbor.
                 break
     
@@ -681,8 +698,8 @@ static func _assign_neighbor_surfaces( \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
                     diff_y > -Geometry.FLOAT_EPSILON:
-                ceiling.convex_counter_clockwise_neighbor = left_wall
-                left_wall.convex_clockwise_neighbor = ceiling
+                ceiling.counter_clockwise_convex_neighbor = left_wall
+                left_wall.clockwise_convex_neighbor = ceiling
                 # We can assume that there will only be one matching convex neighbor.
                 break
             
@@ -694,8 +711,8 @@ static func _assign_neighbor_surfaces( \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
                     diff_y > -Geometry.FLOAT_EPSILON:
-                ceiling.concave_clockwise_neighbor = left_wall
-                left_wall.concave_counter_clockwise_neighbor = ceiling
+                ceiling.clockwise_concave_neighbor = left_wall
+                left_wall.counter_clockwise_concave_neighbor = ceiling
                 # We can assume that there will only be one matching concave neighbor.
                 break
         
@@ -708,8 +725,8 @@ static func _assign_neighbor_surfaces( \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
                     diff_y > -Geometry.FLOAT_EPSILON:
-                ceiling.convex_clockwise_neighbor = right_wall
-                right_wall.convex_counter_clockwise_neighbor = ceiling
+                ceiling.clockwise_convex_neighbor = right_wall
+                right_wall.counter_clockwise_convex_neighbor = ceiling
                 # We can assume that there will only be one matching convex neighbor.
                 break
             
@@ -721,10 +738,52 @@ static func _assign_neighbor_surfaces( \
                     diff_x > -Geometry.FLOAT_EPSILON and \
                     diff_y < Geometry.FLOAT_EPSILON and \
                     diff_y > -Geometry.FLOAT_EPSILON:
-                ceiling.concave_counter_clockwise_neighbor = right_wall
-                right_wall.concave_clockwise_neighbor = ceiling
+                ceiling.counter_clockwise_concave_neighbor = right_wall
+                right_wall.clockwise_concave_neighbor = ceiling
                 # We can assume that there will only be one matching concave neighbor.
                 break
+
+static func _calculate_shape_bounding_boxes_for_surfaces(surfaces: Array) -> void:
+    var connected_region_bounding_box: Rect2
+    var connected_surface: Surface
+    
+    for surface in surfaces:
+        # Calculate the combined bounding box for the overall collection of transitively connected
+        # surfaces.
+        connected_region_bounding_box = surface.bounding_box
+        connected_surface = \
+                surface.clockwise_concave_neighbor if \
+                surface.clockwise_concave_neighbor != null else \
+                surface.clockwise_convex_neighbor
+        while connected_surface != surface:
+            connected_region_bounding_box = \
+                    connected_region_bounding_box.merge(connected_surface.bounding_box)
+            connected_surface = \
+                    connected_surface.clockwise_concave_neighbor if \
+                    connected_surface.clockwise_concave_neighbor != null else \
+                    connected_surface.clockwise_convex_neighbor
+        
+        # Record the combined bounding box on each surface.
+        surface.connected_region_bounding_box = connected_region_bounding_box
+        connected_surface = \
+                surface.clockwise_concave_neighbor if \
+                surface.clockwise_concave_neighbor != null else \
+                surface.clockwise_convex_neighbor
+        while connected_surface != surface:
+            connected_surface.connected_region_bounding_box = connected_region_bounding_box
+            connected_surface = \
+                    connected_surface.clockwise_concave_neighbor if \
+                    connected_surface.clockwise_concave_neighbor != null else \
+                    connected_surface.clockwise_convex_neighbor
+
+static func _assert_surfaces_fully_calculated(surfaces: Array) -> void:
+    for surface in surfaces:
+        assert(surface.clockwise_concave_neighbor != null or \
+                surface.clockwise_convex_neighbor != null)
+        assert(surface.counter_clockwise_concave_neighbor != null or \
+                surface.counter_clockwise_convex_neighbor != null)
+        assert(surface.connected_region_bounding_box.position != Vector2.INF and \
+                surface.connected_region_bounding_box.size != Vector2.INF)
 
 static func _populate_surface_objects(tmp_surfaces: Array, side: int) -> void:
     for tmp_surface in tmp_surfaces:

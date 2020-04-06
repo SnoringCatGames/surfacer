@@ -136,9 +136,9 @@ static func calculate_waypoints_around_surface( \
     var should_skip_b := false
     
     # We ignore waypoints that would correspond to moving back the way we came.
-    if previous_waypoint.surface == colliding_surface.convex_counter_clockwise_neighbor:
+    if previous_waypoint.surface == colliding_surface.counter_clockwise_convex_neighbor:
         should_skip_a = true
-    if previous_waypoint.surface == colliding_surface.convex_clockwise_neighbor:
+    if previous_waypoint.surface == colliding_surface.clockwise_convex_neighbor:
         should_skip_b = true
     
     # We ignore waypoints that are redundant with the connstraint we were already using with the
@@ -1630,12 +1630,12 @@ static func _calculate_replacement_for_fake_waypoint( \
             
             if fake_waypoint.should_stay_on_min_side:
                 # Replacing top-left corner with bottom-left corner.
-                neighbor_surface = fake_waypoint.surface.convex_counter_clockwise_neighbor
+                neighbor_surface = fake_waypoint.surface.counter_clockwise_convex_neighbor
                 replacement_position = neighbor_surface.first_point + \
                         Vector2(-waypoint_offset.x, waypoint_offset.y)
             else:
                 # Replacing top-right corner with bottom-right corner.
-                neighbor_surface = fake_waypoint.surface.convex_clockwise_neighbor
+                neighbor_surface = fake_waypoint.surface.clockwise_convex_neighbor
                 replacement_position = neighbor_surface.last_point + \
                         Vector2(waypoint_offset.x, waypoint_offset.y)
         
@@ -1644,12 +1644,12 @@ static func _calculate_replacement_for_fake_waypoint( \
             
             if fake_waypoint.should_stay_on_min_side:
                 # Replacing bottom-left corner with top-left corner.
-                neighbor_surface = fake_waypoint.surface.convex_clockwise_neighbor
+                neighbor_surface = fake_waypoint.surface.clockwise_convex_neighbor
                 replacement_position = neighbor_surface.last_point + \
                         Vector2(-waypoint_offset.x, -waypoint_offset.y)
             else:
                 # Replacing bottom-right corner with top-right corner.
-                neighbor_surface = fake_waypoint.surface.convex_counter_clockwise_neighbor
+                neighbor_surface = fake_waypoint.surface.counter_clockwise_convex_neighbor
                 replacement_position = neighbor_surface.first_point + \
                         Vector2(waypoint_offset.x, -waypoint_offset.y)
         _:

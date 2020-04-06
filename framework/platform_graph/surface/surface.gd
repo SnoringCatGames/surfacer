@@ -11,13 +11,15 @@ var side: int
 var tile_map_indices: Array
 
 var bounding_box: Rect2
+# The combined bounding box for the overall collection of transitively connected surfaces.
+var connected_region_bounding_box := Rect2(Vector2.INF, Vector2.INF)
 
 var normal := Vector2.INF
 
-var convex_clockwise_neighbor: Surface
-var convex_counter_clockwise_neighbor: Surface
-var concave_clockwise_neighbor: Surface
-var concave_counter_clockwise_neighbor: Surface
+var clockwise_convex_neighbor: Surface
+var counter_clockwise_convex_neighbor: Surface
+var clockwise_concave_neighbor: Surface
+var counter_clockwise_concave_neighbor: Surface
 
 var first_point: Vector2 setget ,_get_first_point
 var last_point: Vector2 setget ,_get_last_point

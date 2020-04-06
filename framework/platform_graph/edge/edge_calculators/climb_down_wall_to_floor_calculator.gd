@@ -16,9 +16,9 @@ func _init().( \
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null and \
             ((surface.side == SurfaceSide.LEFT_WALL and \
-                    surface.concave_clockwise_neighbor != null) or \
+                    surface.clockwise_concave_neighbor != null) or \
             (surface.side == SurfaceSide.RIGHT_WALL and \
-                    surface.concave_counter_clockwise_neighbor != null))
+                    surface.counter_clockwise_concave_neighbor != null))
 
 func get_all_inter_surface_edges_from_surface( \
         collision_params: CollisionCalcParams, \
@@ -37,12 +37,12 @@ func get_all_inter_surface_edges_from_surface( \
     var floor_edge_point: Vector2
     
     if origin_surface.side == SurfaceSide.LEFT_WALL:
-        lower_neighbor_floor = origin_surface.concave_clockwise_neighbor
+        lower_neighbor_floor = origin_surface.clockwise_concave_neighbor
         wall_bottom_point = origin_surface.last_point - end_point_vertical_offset
         floor_edge_point = lower_neighbor_floor.first_point + end_point_horizontal_offset
         
     elif origin_surface.side == SurfaceSide.RIGHT_WALL:
-        lower_neighbor_floor = origin_surface.concave_counter_clockwise_neighbor
+        lower_neighbor_floor = origin_surface.counter_clockwise_concave_neighbor
         wall_bottom_point = origin_surface.first_point - end_point_vertical_offset
         floor_edge_point = lower_neighbor_floor.last_point - end_point_horizontal_offset
     
