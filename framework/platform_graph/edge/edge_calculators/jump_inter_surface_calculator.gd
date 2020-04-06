@@ -9,6 +9,15 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Update Surfaces to store references to PositionAlongSurface for both ends.
+#   - Calculate up-front in SurfaceParser.
+#   - Go through places that create new instances of PositionAlongSurface, and update the relevant
+#     ones to use these new references.
+#   - Add the overall shape area bounding-box in now too.
+# - Add a new input to change left/right facing direction of player without changing velocity.
+#   - Use this in calculated jump/fall instructions to keep the player facing the correct way.
+#   - This will fix two problems: aesthetic, facing into the wall in order to grip it.
+# 
 # - Implement remaining cases in calculate_jump_land_positions_for_surface_pair:
 #   >- Handle remaining floor jump-surface cases.
 #     - Don't forget to add this use-case of just the absolute closest point when jumping to a
@@ -26,6 +35,18 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Maybe also add some very-small other value to use for all other cases?
 #   - _Definitely_ add a note to the performance logging section to check whether this actually
 #     cuts down on backtracking for additional jump height.
+# - Go through calculate_jump_land_positions_for_surface_pair cases, and account for convex/concave
+#   neighbors when calculating jump/land basis/position, in order to more accurately set up
+#   positions that can actually go around things.
+#   - Actually, update Surface and SurfaceParser to calculate the overall bounding box of the
+#     entire _area_ formed by all connected surfaces.
+#     - Just traverse in CW direction, check for existence of concave neighbor first, if not then
+#       convex, and then iterate through to that next neighbor, growing the bounding box as we go.
+#     - Keep track of the starting surface to know when we've ended.
+#     - After coming back to the start, we know the overall bounding box; then iterate back over
+#       all of them, storing the bounding box on each.
+#     - If we ever end up with no neigbor, abandon, and don't store area for any of the connected
+#       surfaces.
 # - Update README and SVG diagrams, now that I have a better understanding and method to approach it.
 #   - Orient the explanation around a few very important parameters:
 #     - Jump-basis
@@ -305,8 +326,6 @@ func get_all_inter_surface_edges_from_surface( \
     
     var jump_land_position_results_for_destination_surface := []
     var jump_land_positions_to_consider: Array
-    var jump_positions: Array
-    var land_positions: Array
     var edge: JumpInterSurfaceEdge
     
     for destination_surface in surfaces_in_jump_range_set:
