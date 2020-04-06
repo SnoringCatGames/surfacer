@@ -13,13 +13,6 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Use this in calculated jump/fall instructions to keep the player facing the correct way.
 #   - This will fix two problems: aesthetic, facing into the wall in order to grip it.
 # 
-# - Implement remaining cases in calculate_jump_land_positions_for_surface_pair:
-#   >- Handle remaining floor jump-surface cases.
-#     - Don't forget to add this use-case of just the absolute closest point when jumping to a
-#       ceiling
-#   - Handle wall jump-surface cases.
-#     - Don't forget to add this use-case of just the absolute closest points when between walls
-#       that face each other
 # - Add an additional param to JumpLandPositions: includes-extra-jump-duration-offset
 #   - Add this for various surface arrangements that are likely to need a little extra boost to
 #     circumnavigate surface ends:
@@ -30,9 +23,11 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Maybe also add some very-small other value to use for all other cases?
 #   - _Definitely_ add a note to the performance logging section to check whether this actually
 #     cuts down on backtracking for additional jump height.
+# 
 # - Go through calculate_jump_land_positions_for_surface_pair cases, and account for
 #   connected_region_bounding_box when calculating jump/land basis/position, in order to more
 #   accurately set up positions that can actually go around things.
+# 
 # - Update README and SVG diagrams, now that I have a better understanding and method to approach it.
 #   - Orient the explanation around a few very important parameters:
 #     - Jump-basis
@@ -48,7 +43,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Then mention that it's important to sketch-out each arrangement, in order to see the patterns of how the parameters depend on the arrangments.
 #   - Describe the main arrangement aspects that tend to influence the parameters:
 #     - Which surface has the left/right/top/bottom end sticking out further.
-# - Also add links to diagrams from the relevant cases in the source code.
+#   - Also add links to diagrams from the relevant cases in the source code.
+# 
 # - Debug performance with how many jump/land pairs get returned, and how costly the new extra
 #   previous-jump/land-position-distance checks are.
 # 

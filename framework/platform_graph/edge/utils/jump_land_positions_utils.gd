@@ -648,10 +648,6 @@ static func calculate_jump_land_positions_for_surface_pair( \
                 SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
                     # Jump from a floor, land on a wall.
                     
-                    # FIXME: LEFT OFF HERE: -------------------------------------A
-                    # - Go through and add additional results for v_0.x=0.0.
-                    #   - Use offset of player half-width.
-                    
                     var is_landing_on_left_wall := land_surface.side == SurfaceSide.LEFT_WALL
                     var can_jump_in_front_of_wall := \
                             is_landing_on_left_wall and \
