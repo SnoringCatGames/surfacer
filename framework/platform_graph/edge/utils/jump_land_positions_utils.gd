@@ -26,6 +26,9 @@ const VERTICAL_OFFSET_TO_SUPPORT_EXTRA_MOVEMENT_AROUND_WALL_PLAYER_HEIGHT_RATIO 
 #   - This usually puts shortest distance first.
 # - Start velocity is determined from the given EdgeMovementCalculator.
 # - Start horizontal velocity from a floor could be either zero or max-speed.
+# 
+# For illustrations of the various jump/land position combinations for each surface arrangement,
+# see: https://github.com/levilindsey/surfacer/tree/master/docs
 static func calculate_jump_land_positions_for_surface_pair( \
         movement_params: MovementParams, \
         jump_surface: Surface, \
@@ -276,6 +279,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
             match land_surface.side:
                 SurfaceSide.FLOOR:
                     # Jump from a floor, land on a floor.
+                    # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-floor-to-floor.png
                     
                     var left_end_displacement_x := \
                             land_surface_left_bound - jump_surface_left_bound
@@ -651,6 +655,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     
                 SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
                     # Jump from a floor, land on a wall.
+                    # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-floor-to-wall.png
                     
                     var is_landing_on_left_wall := land_surface.side == SurfaceSide.LEFT_WALL
                     var can_jump_in_front_of_wall := \
@@ -1153,6 +1158,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     
                 SurfaceSide.CEILING:
                     # Jump from a floor, land on a ceiling.
+                    # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-floor-to-ceiling.png
                     
                     if is_jump_surface_lower:
                         var do_surfaces_overlap_horizontally := \
@@ -1354,6 +1360,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
             match land_surface.side:
                 SurfaceSide.FLOOR:
                     # Jump from a wall, land on a floor.
+                    # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-wall-to-floor.png
                     
                     var is_wall_fully_higher_than_floor := \
                             jump_surface_bottom_bound < land_surface_center.y
@@ -1589,6 +1596,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     
                 SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
                     # Jump from a wall, land on a wall.
+                    # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-wall-to-same-wall.png
+                    # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-wall-to-opposite-wall.png
                     
                     var top_end_displacement_y := \
                             land_surface_top_bound - jump_surface_top_bound
@@ -1605,6 +1614,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     
                     if jump_surface.side == land_surface.side:
                         # Jump between walls of the same side.
+                        # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-wall-to-same-wall.png
                         # 
                         # This means that we must go around one end of one of the walls.
                         # - Which wall depends on which wall is in front.
@@ -1786,6 +1796,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         
                     elif are_walls_facing_each_other:
                         # Jump between two walls that are facing each other.
+                        # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-wall-to-opposite-wall.png
                         
                         var jump_basis: Vector2
                         var land_basis: Vector2
@@ -1881,6 +1892,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         
                     else:
                         # Jump between two walls that are facing away from each other.
+                        # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-wall-to-opposite-wall.png
                         
                         # Consider one pair for the top ends.
                         var jump_position := jump_surface_top_end_wrapper

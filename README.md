@@ -151,12 +151,17 @@ TODO: Include a screenshot of a collision that clips the corner of the wall when
 
 Deciding which jump and land positions to base an edge calculation off of is non-trivial. We could just try calculating edges for a bunch of different jump/land positions for a given pair of surfaces. But edge calculations aren't cheap, and executing too many of them impacts performance. So it's important that we carefully choose "good" jump/land positions that have a relatively high likelihood of producing a valid and efficient edge.
 
+Additionally, when jumping from a floor, we need to determine what initial horizontal velocity to use for the edge calculation. This horizontal start velocity can then influence the jump/land positions.
+
 -   Some interesting jump/land positions for a surface include the following:
     -   Either end of the surface.
     -   The closest position along the surface to either end of the other surface.
         -   This closest position, but with a slight offset to account for the width of the player.
-        -   This closest position, but with an additional offset to account for horizontal movement with minimum jump time and maximum horizontal velocity.
+        -   This closest position, but with an additional offset to account for horizontal or vertical displacement with minimum jump time and maximum horizontal velocity.
+            -   This offset becomes important when considering jumps that start with max-speed horizontal velocity, which could otherwise overshoot the land position if we didn't account for the offset.
     -   The closest interior position along the surface to the closest interior position along the other surface.
+    -   The position along a horizontal surface that is behind the overall connected region that the vertical land surface is a part of.
+        -   This position is important if we need to consider movement around behind a wall that then lands on the top of the wall.
 -   We try to minimize the number of jump/land positions returned, since having more of these greatly increases the overall time to parse the platform graph.
 -   We usually consider surface-interior points before surface-end points (which usually puts shortest distances first).
 -   We also decide start velocity when we decide the jump/land positions.
@@ -165,7 +170,21 @@ Deciding which jump and land positions to base an edge calculation off of is non
     -   In order to decide whether to skip an edge calculation for a given jump/land position pair, we look at how far away it is from any other jump/land position pair that we already found a valid edge for, on the same surface, for the same surface pair. If it's too close, we skip it.
     -   This is another important performance optimization.
 
-TODO: Include SVG diagrams illustrating the different conditions to consider with all the different surface-pair alignment possibilities.
+Unfortunately, most jump/land position calculations are highly dependent on the types and spatial arrangement of the two surfaces. There are many possible combinations, and the most of these combinations must be considered individually. The following diagrams illustrate the many different jump/land combinations.
+
+![A legend for the illustrations of jump-land-position combinations](./docs/jump-land-positions-legend.png)
+
+![Illustrations of floor-to-floor jump-land-position combinations](./docs/jump-land-positions-floor-to-floor.png)
+
+![Illustrations of floor-to-wall jump-land-position combinations](./docs/jump-land-positions-floor-to-wall.png)
+
+![Illustrations of wall-to-floor jump-land-position combinations](./docs/jump-land-positions-wall-to-floor.png)
+
+![Illustrations of wall-to-opposite-facing-wall jump-land-position combinations](./docs/jump-land-positions-wall-to-opposite-wall.png)
+
+![Illustrations of wall-to-same-facing-wall jump-land-position combinations](./docs/jump-land-positions-wall-to-same-wall.png)
+
+![Illustrations of floor-to-ceiling jump-land-position combinations](./docs/jump-land-positions-floor-to-ceiling.png)
 
 #### Calculating the start velocity for a jump
 
