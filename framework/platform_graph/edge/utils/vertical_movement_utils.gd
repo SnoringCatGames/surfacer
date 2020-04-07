@@ -86,7 +86,7 @@ static func calculate_vertical_step( \
     assert(Geometry.are_floats_equal_with_epsilon( \
             step_end_state[0], \
             position_end.y, \
-            0.001))
+            0.2))
     
     step.position_peak_height = Vector2(INF, peak_height_end_state[0])
     step.velocity_step_end = Vector2(INF, step_end_state[1])
@@ -489,7 +489,6 @@ static func calculate_vertical_state_for_time_from_step( \
 # Calculates the vertical component of position and velocity according to the given vertical
 # movement state and the given time. These are then returned in an Array: [0] is position and [1]
 # is velocity.
-# FIXME: B: Fix unit tests to use the return value instead of output params.
 static func calculate_vertical_state_for_time( \
         movement_params: MovementParams, \
         time: float, \
@@ -537,8 +536,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
     #     v = 0.0
     # Algebra...:
     #     t = -v_0 / a
-    var duration_to_slow_rise_peak := \
-            -velocity_y_start / movement_params.slow_rise_gravity_multiplier
+    var duration_to_slow_rise_peak := -velocity_y_start / movement_params.gravity_slow_rise
     
     if duration_to_slow_rise_peak >= duration:
         # We hit the end-time before reaching the peak, so we don't need to consider any
@@ -549,7 +547,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
         # Algebra...:
         #     (s - s_0) = v_0*t + 1/2*a*t^2
         return velocity_y_start * duration + \
-                0.5 * movement_params.slow_rise_gravity_multiplier * duration * duration
+                0.5 * movement_params.gravity_slow_rise * duration * duration
     else:
         # We hit the end-time after reaching the peak, so we need to consider both the displacement
         # with slow-rise gravity and the displacement with fast-fall gravity.
@@ -559,7 +557,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
         # Algebra...:
         #     (s - s_0) = v_0*t + 1/2*a*t^2
         var rise_displacement := velocity_y_start * duration_to_slow_rise_peak + \
-                0.5 * movement_params.slow_rise_gravity_multiplier * \
+                0.5 * movement_params.gravity_slow_rise * \
                 duration_to_slow_rise_peak * duration_to_slow_rise_peak
         
         var fall_duration := duration - duration_to_slow_rise_peak

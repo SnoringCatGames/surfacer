@@ -9,16 +9,8 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add an additional param to JumpLandPositions: includes-extra-jump-duration-offset
-#   - Add this for various surface arrangements that are likely to need a little extra boost to
-#     circumnavigate surface ends:
-#     - floor-to-floor, when the land floor is significantly higher
-#     - back-to-back walls
-#     - walls that face the same way
-#     - floor to opposite-facing wall
-#   - Maybe also add some very-small other value to use for all other cases?
-#   - _Definitely_ add a note to the performance logging section to check whether this actually
-#     cuts down on backtracking for additional jump height.
+# - Rename JumpLandPositions to EdgeCalcStartParams
+# - Rename movement_... models, to edge_...
 # 
 # - Go through calculate_jump_land_positions_for_surface_pair cases, and account for
 #   connected_region_bounding_box when calculating jump/land basis/position, in order to more
@@ -81,6 +73,16 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Debug all the new jump/land optimization logic.
 # 
+# - Add an additional param to JumpLandPositions: needs_extra_jump_duration
+#   - Started, but stopped partway through, with adding this usage in
+#     _update_waypoint_velocity_and_time.
+#   - Add this for various surface arrangements that are likely to need a little extra boost to
+#     circumnavigate surface ends:
+#     - floor-to-floor, when the land floor is significantly higher
+#     - back-to-back walls
+#     - walls that face the same way
+#     - floor to opposite-facing wall
+# 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
 #     - number of attempted steps,
@@ -95,6 +97,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Try to use these analytics to inform decisions around which calculations are worth it.
 #   - Maybe add a new configuration for max number of collisions/intermediate-waypoints to allow
 #     in an edge calculation before giving up (or, recursion depth (with and without backtracking))?
+#   - Tweak movement_params.exceptional_jump_instruction_duration_increase, and ensure
+#     that it is actually cutting down on the number of times we have to backtrack.
 # 
 # --- Debug ---
 # 
@@ -353,6 +357,7 @@ func get_all_inter_surface_edges_from_surface( \
                     jump_land_positions.jump_position, \
                     jump_land_positions.land_position, \
                     jump_land_positions.velocity_start, \
+                    jump_land_positions.needs_extra_jump_duration, \
                     in_debug_mode)
             
             if edge != null:
@@ -366,6 +371,7 @@ func calculate_edge( \
         position_start: PositionAlongSurface, \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
+        needs_extra_jump_duration := false, \
         in_debug_mode := false) -> Edge:
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
             collision_params, \
@@ -373,6 +379,7 @@ func calculate_edge( \
             position_end, \
             true, \
             velocity_start, \
+            needs_extra_jump_duration, \
             false, \
             in_debug_mode)
     if overall_calc_params == null:
@@ -444,6 +451,7 @@ func create_edge_from_overall_params( \
             overall_calc_params.destination_position, \
             overall_calc_params.velocity_start, \
             velocity_end, \
+            overall_calc_params.needs_extra_jump_duration, \
             overall_calc_params.movement_params, \
             instructions, \
             trajectory)

@@ -112,6 +112,7 @@ static func find_landing_trajectory_between_positions( \
                     false, \
                     velocity_start, \
                     false, \
+                    false, \
                     false)
     if overall_calc_params == null:
         return null

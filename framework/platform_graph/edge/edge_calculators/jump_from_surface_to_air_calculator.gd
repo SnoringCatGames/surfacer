@@ -28,6 +28,7 @@ func calculate_edge( \
         position_start: PositionAlongSurface, \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
+        needs_extra_jump_duration := false, \
         in_debug_mode := false) -> Edge:
     if velocity_start == Vector2.INF:
         var is_moving_leftward := position_end.target_point.x - position_start.target_point.x < 0.0
@@ -43,6 +44,7 @@ func calculate_edge( \
             position_end, \
             true, \
             velocity_start, \
+            needs_extra_jump_duration, \
             false, \
             false)
     if overall_calc_params == null:
@@ -72,6 +74,7 @@ func calculate_edge( \
             position_end, \
             velocity_start, \
             velocity_end, \
+            needs_extra_jump_duration, \
             collision_params.movement_params, \
             instructions, \
             trajectory)

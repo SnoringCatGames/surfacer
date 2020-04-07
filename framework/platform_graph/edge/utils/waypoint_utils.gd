@@ -15,9 +15,10 @@ static func create_terminal_waypoints( \
         movement_params: MovementParams, \
         can_hold_jump_button: bool, \
         velocity_start: Vector2, \
-        velocity_end_min_x := INF, \
-        velocity_end_max_x := INF, \
-        returns_invalid_waypoints := false) -> Array:
+        velocity_end_min_x: float, \
+        velocity_end_max_x: float, \
+        needs_extra_jump_duration: bool, \
+        returns_invalid_waypoints: bool) -> Array:
     var origin_passing_vertically := origin_position.surface.normal.x == 0 if \
             origin_position.surface != null else true
     var destination_passing_vertically := destination_position.surface.normal.x == 0 if \
@@ -42,6 +43,7 @@ static func create_terminal_waypoints( \
     origin.next_waypoint = destination
     destination.is_destination = true
     destination.previous_waypoint = origin
+    destination.needs_extra_jump_duration = needs_extra_jump_duration
     
     if velocity_end_min_x != INF or velocity_end_max_x != INF:
         destination.min_velocity_x = velocity_end_min_x
@@ -394,11 +396,6 @@ static func _update_waypoint_velocity_and_time( \
             return false
         
         if waypoint.is_destination:
-            # For the destination waypoint, we need to calculate time_to_release_jump. All other
-            # waypoints can re-use this information from the vertical_step.
-            
-            var time_to_release_jump: float
-            
             # We consider different parameters if we are starting a new movement calculation vs
             # backtracking to consider a new jump height.
             var waypoint_position_to_calculate_jump_release_time_for: Vector2
@@ -461,8 +458,7 @@ static func _update_waypoint_velocity_and_time( \
                 # 
                 # -   The time needed to reach any previous jump-heights before this current round
                 #     of jump-height backtracking (vertical_step.time_instruction_end).
-                # -   The time needed to reach this new previously-out-of-reach waypoint
-                #     (time_to_release_jump for the new waypoint).
+                # -   The time needed to reach this new previously-out-of-reach waypoint.
                 # -   The time needed to get to the destination from this new waypoint.
                 
                 # TODO: There might be cases that this fails for? We might need to add more time.
@@ -483,6 +479,74 @@ static func _update_waypoint_velocity_and_time( \
                 
             else:
                 time_passing_through = time_to_pass_through_waypoint_ignoring_others
+                
+                # FIXME: LEFT OFF HERE: ----------------------------------------A:
+                # - Trying to add support for waypoint.needs_extra_jump_duration.
+                
+#                if can_hold_jump_button_at_origin:
+#                    # Add a slight constant increase to jump instruction durations, to help get
+#                    # over and around surface ends (but don't continue the instruction uselessly
+#                    # beyond jump height).
+#                    var time_to_release_jump_button := \
+#                            VerticalMovementUtils.calculate_time_to_release_jump_button( \
+#                                    movement_params, \
+#                                    time_passing_through, \
+#                                    displacement_from_origin_to_waypoint.y, \
+#                                    velocity_start_origin.y)
+#                    # From a basic equation of motion:
+#                    #     v = v_0 + a*t
+#                    #     v = 0
+#                    # Algebra...:
+#                    #     t = -v_0/a
+#                    var time_to_max_height_with_slow_rise_gravity := \
+#                            -velocity_start_origin.y / movement_params.gravity_slow_rise
+#                    var jump_duration_increase := \
+#                            movement_params.exceptional_jump_instruction_duration_increase if \
+#                            waypoint.needs_extra_jump_duration else \
+#                            movement_params.normal_jump_instruction_duration_increase
+#                    # FIXME: -------------- Uncomment (since this is the whole point), after
+#                    # getting the rest of this to work (the rest should be a no-op, but seems to
+#                    # break stuff).
+##                    time_to_release_jump_button = min( \
+##                            time_to_release_jump_button + jump_duration_increase, \
+##                            time_to_max_height_with_slow_rise_gravity)
+#                    # FIXME: -------------- Is this needed?
+#                    time_to_release_jump_button -= 0.001
+#                    var vertical_state_at_jump_button_release := \
+#                            VerticalMovementUtils.calculate_vertical_state_for_time( \
+#                                    movement_params, \
+#                                    time_to_release_jump_button, \
+#                                    origin_waypoint.position.y, \
+#                                    velocity_start_origin.y, \
+#                                    time_to_release_jump_button)
+#                    var position_y_at_jump_button_release: float = \
+#                            vertical_state_at_jump_button_release[0]
+#                    var velocity_y_at_jump_button_release: float = \
+#                            vertical_state_at_jump_button_release[1]
+#                    # From a basic equation of motion:
+#                    #     v^2 = v_0^2 + 2*a*(s - s_0)
+#                    #     v = v_0 + a*t
+#                    # Algebra...:
+#                    #     t = (sqrt(v_0^2 + 2*a*(s - s_0)) - v_0) / a
+#                    # FIXME: -------------- Re-insert these back into one expression.
+#                    var foo := velocity_y_at_jump_button_release * \
+#                            velocity_y_at_jump_button_release
+#                    var disp := waypoint.position.y - \
+#                            position_y_at_jump_button_release
+#                    var bar := 2 * movement_params.gravity_fast_fall * disp
+#                    var baz := sqrt(foo + bar)
+#                    var time_to_destination_after_jump_button_release := \
+#                            (baz - \
+#                            velocity_y_at_jump_button_release) / \
+#                            movement_params.gravity_fast_fall
+#                    time_passing_through = \
+#                            time_to_release_jump_button + \
+#                            time_to_destination_after_jump_button_release
+#                    # FIXME: --------------  Is this needed?
+#                    time_passing_through += 0.002
+#                    # FIXME: -------------- Remove.
+#                    if is_nan((time_passing_through - time_passing_through) / 2.0):
+#                        print("break")
             
             # We can't be more restrictive with the destination velocity limits, because otherwise,
             # origin vs intermediate waypoints give us all sorts of invalid values, which they

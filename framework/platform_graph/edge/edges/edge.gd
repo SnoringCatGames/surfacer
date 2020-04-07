@@ -28,6 +28,9 @@ var distance: float
 # In seconds.
 var duration: float
 
+# Whether this edge was calculated using extra jump duration from the start.
+var includes_extra_jump_duration: bool
+
 var start_position_along_surface: PositionAlongSurface
 var end_position_along_surface: PositionAlongSurface
 
@@ -52,6 +55,7 @@ func _init( \
         end_position_along_surface: PositionAlongSurface, \
         velocity_start: Vector2, \
         velocity_end: Vector2, \
+        includes_extra_jump_duration: bool, \
         movement_params: MovementParams, \
         instructions: MovementInstructions, \
         trajectory: MovementTrajectory) -> void:
@@ -64,6 +68,7 @@ func _init( \
     self.end_position_along_surface = end_position_along_surface
     self.velocity_start = velocity_start
     self.velocity_end = velocity_end
+    self.includes_extra_jump_duration = includes_extra_jump_duration
     self.instructions = instructions
     self.trajectory = trajectory
     self.distance = _calculate_distance( \

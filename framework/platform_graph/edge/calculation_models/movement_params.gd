@@ -58,6 +58,13 @@ var min_intra_surface_distance_to_optimize_jump_for := 16.0
 # is enough.
 var distance_squared_threshold_for_considering_additional_jump_land_points := 128.0 * 128.0
 var always_includes_jump_land_end_point_combinations := false
+# This is a constant increase to all jump durations. This could make it more likely for edge
+# calculations to succeed earlier, or it could just make the player seem more floaty.
+var normal_jump_instruction_duration_increase := 0.08
+# This is a constant increase to all jump durations. Some edge calculations are identified early
+# on as likely needing some additional jump height in order to navigate around intermediate
+# surfaces. This duration increase is used for those exceptional edge calculations.
+var exceptional_jump_instruction_duration_increase := 0.2
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

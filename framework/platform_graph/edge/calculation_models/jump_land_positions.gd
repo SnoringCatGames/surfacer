@@ -6,13 +6,20 @@ var jump_position: PositionAlongSurface
 var land_position: PositionAlongSurface
 var velocity_start: Vector2
 
+# When this is true, the corresponding edge-calculation will be given a higher jump to start with.
+# This is used in cases when it's more likely than the edge calculation would eventually need to
+# backtrack to consider a higher jump heigh anyway, so this should improve run time.
+var needs_extra_jump_duration: bool
+
 func _init( \
         jump_position: PositionAlongSurface, \
         land_position: PositionAlongSurface, \
-        velocity_start: Vector2) -> void:
+        velocity_start: Vector2, \
+        needs_extra_jump_duration := false) -> void:
     self.jump_position = jump_position
     self.land_position = land_position
     self.velocity_start = velocity_start
+    self.needs_extra_jump_duration = needs_extra_jump_duration
 
 func is_far_enough_from_other_jump_land_positions( \
         movement_params: MovementParams, \

@@ -129,11 +129,11 @@ static func calculate_horizontal_step( \
     assert(Geometry.are_floats_equal_with_epsilon( \
             step_end_state[0], \
             position_end.y, \
-            0.001))
+            0.2))
     assert(Geometry.are_floats_equal_with_epsilon( \
             step_start_state[0], \
             position_step_start.y, \
-            0.001))
+            0.2))
     
     ### Assign the step properties.
     

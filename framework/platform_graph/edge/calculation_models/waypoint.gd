@@ -60,6 +60,10 @@ var max_velocity_x := INF
 # This is calculated later-onn during movement calculation.
 var actual_velocity_x := INF
 
+# Whether the jump is likely to need some extra height in order to make it around intermediate
+# surface ends before reaching this destination.
+var needs_extra_jump_duration := false
+
 # Whether this waypoint is the origin for the overall movement.
 var is_origin := false
 

@@ -13,6 +13,7 @@ func _init( \
         end: PositionAlongSurface, \
         velocity_start: Vector2, \
         velocity_end: Vector2, \
+        includes_extra_jump_duration: bool, \
         movement_params: MovementParams, \
         instructions: MovementInstructions, \
         trajectory: MovementTrajectory) \
@@ -25,6 +26,7 @@ func _init( \
         end, \
         velocity_start, \
         velocity_end, \
+        includes_extra_jump_duration, \
         movement_params, \
         instructions, \
         trajectory) -> void:

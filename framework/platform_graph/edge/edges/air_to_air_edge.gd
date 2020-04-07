@@ -25,6 +25,7 @@ func _init( \
         Edge.vector2_to_position_along_surface(end), \
         velocity_start, \
         velocity_end, \
+        false, \
         movement_params, \
         instructions, \
         trajectory) -> void:

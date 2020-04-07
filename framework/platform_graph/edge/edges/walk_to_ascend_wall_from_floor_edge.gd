@@ -25,6 +25,7 @@ func _init( \
         end, \
         velocity_start, \
         Vector2.ZERO, \
+        false, \
         movement_params, \
         _calculate_instructions(start, end), \
         null) -> void:

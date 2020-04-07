@@ -31,6 +31,7 @@ func calculate_edge( \
         position_start: PositionAlongSurface, \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
+        needs_extra_jump_duration := false, \
         in_debug_mode := false) -> Edge:
     Utils.error("abstract EdgeMovementCalculator.calculate_edge is not implemented")
     return null
@@ -62,6 +63,7 @@ static func create_movement_calc_overall_params(
         destination_position: PositionAlongSurface, \
         can_hold_jump_button: bool, \
         velocity_start: Vector2, \
+        needs_extra_jump_duration: bool, \
         returns_invalid_waypoints: bool, \
         in_debug_mode: bool, \
         velocity_end_min_x := INF, \
@@ -83,6 +85,7 @@ static func create_movement_calc_overall_params(
             velocity_start, \
             velocity_end_min_x, \
             velocity_end_max_x, \
+            needs_extra_jump_duration, \
             returns_invalid_waypoints)
     if terminals.empty():
         return null
@@ -94,6 +97,7 @@ static func create_movement_calc_overall_params(
             terminals[0], \
             terminals[1], \
             velocity_start, \
+            needs_extra_jump_duration, \
             can_hold_jump_button)
     overall_calc_params.in_debug_mode = in_debug_mode
     
@@ -219,6 +223,7 @@ static func optimize_edge_jump_position_for_path_helper( \
                     jump_position, \
                     edge.end_position_along_surface, \
                     velocity_start, \
+                    edge.includes_extra_jump_duration, \
                     in_debug_mode)
             
             if optimized_edge != null:
@@ -262,6 +267,7 @@ static func optimize_edge_jump_position_for_path_helper( \
                     jump_position, \
                     edge.end_position_along_surface, \
                     velocity_start, \
+                    edge.includes_extra_jump_duration, \
                     in_debug_mode)
             
             if optimized_edge != null:
@@ -321,6 +327,7 @@ static func optimize_edge_land_position_for_path_helper( \
                     edge.start_position_along_surface, \
                     land_position, \
                     edge.velocity_start, \
+                    edge.includes_extra_jump_duration, \
                     in_debug_mode)
             
             if optimized_edge != null:
@@ -359,6 +366,7 @@ static func optimize_edge_land_position_for_path_helper( \
                     edge.start_position_along_surface, \
                     land_position, \
                     edge.velocity_start, \
+                    edge.includes_extra_jump_duration, \
                     in_debug_mode)
             
             if optimized_edge != null:

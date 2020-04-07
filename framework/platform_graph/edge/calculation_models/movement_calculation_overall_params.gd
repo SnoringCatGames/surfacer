@@ -24,6 +24,10 @@ var waypoint_offset := Vector2.INF
 # The initial velocity for the current edge instructions.
 var velocity_start := Vector2.INF
 
+# Whether the jump is likely to need some extra height in order to make it around intermediate
+# surface ends before reaching the destination.
+var needs_extra_jump_duration: bool
+
 var origin_position: PositionAlongSurface
 var destination_position: PositionAlongSurface
 
@@ -51,8 +55,9 @@ func _init( \
         destination_position: PositionAlongSurface, \
         origin_waypoint: Waypoint, \
         destination_waypoint: Waypoint, \
-        velocity_start := Vector2.INF, \
-        can_backtrack_on_height := true) -> void:
+        velocity_start: Vector2, \
+        needs_extra_jump_duration: bool, \
+        can_backtrack_on_height: bool) -> void:
     self.movement_params = collision_params.movement_params
     self.space_state = collision_params.space_state
     self.surface_parser = collision_params.surface_parser
@@ -62,6 +67,7 @@ func _init( \
     self.destination_waypoint = destination_waypoint
     self.can_backtrack_on_height = can_backtrack_on_height
     self.velocity_start = velocity_start
+    self.needs_extra_jump_duration = needs_extra_jump_duration
     self.waypoint_offset = calculate_waypoint_offset(movement_params)
     self._collided_surfaces = {}
     

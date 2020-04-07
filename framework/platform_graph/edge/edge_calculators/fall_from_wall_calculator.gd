@@ -71,6 +71,7 @@ func calculate_edge( \
         position_start: PositionAlongSurface, \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
+        needs_extra_jump_duration := false, \
         in_debug_mode := false) -> Edge:
     var calc_results: MovementCalcResults = \
             FallMovementUtils.find_landing_trajectory_between_positions( \
