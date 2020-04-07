@@ -61,13 +61,25 @@ static func convert_calculation_steps_to_movement_instructions( \
         instructions.push_front(press)
     
     if destination_side == SurfaceSide.LEFT_WALL or destination_side == SurfaceSide.RIGHT_WALL:
-        # When landing on a wall, make sure we are pressing into the wall when we land (otherwise,
-        # we won't grab on).
+        # When landing on a wall, we need to press input that ensures we grab on to the wall, but
+        # we also need to not do so in a way that changes the trajectory we've carefully
+        # calculated.
         
         var last_step: MovementCalcStep = steps[steps.size() - 1]
         var time_step_start := last_step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
+        
         input_key = "grab_wall"
+        press = MovementInstruction.new( \
+                input_key, \
+                time_step_start, \
+                true)
+        instructions.push_back(press)
+        
+        input_key = \
+                "face_left" if \
+                destination_side == SurfaceSide.LEFT_WALL else \
+                "face_right"
         press = MovementInstruction.new( \
                 input_key, \
                 time_step_start, \

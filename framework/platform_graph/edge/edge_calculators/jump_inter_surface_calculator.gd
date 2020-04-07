@@ -9,10 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add a new input to change left/right facing direction of player without changing velocity.
-#   - Use this in calculated jump/fall instructions to keep the player facing the correct way.
-#   - This will fix two problems: aesthetic, facing into the wall in order to grip it.
-# 
 # - Add an additional param to JumpLandPositions: includes-extra-jump-duration-offset
 #   - Add this for various surface arrangements that are likely to need a little extra boost to
 #     circumnavigate surface ends:

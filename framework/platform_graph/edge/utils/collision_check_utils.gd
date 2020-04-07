@@ -142,6 +142,10 @@ static func check_instructions_discrete_frame_state( \
                         horizontal_instruction_end_positions.push_back(continuous_position)
                 "grab_wall":
                     pass
+                "face_left":
+                    pass
+                "face_right":
+                    pass
                 _:
                     Utils.error()
             

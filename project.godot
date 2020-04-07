@@ -850,6 +850,14 @@ grab_wall={
 "deadzone": 0.5,
 "events": [  ]
 }
+face_left={
+"deadzone": 0.5,
+"events": [  ]
+}
+face_right={
+"deadzone": 0.5,
+"events": [  ]
+}
 
 [layer_names]
 

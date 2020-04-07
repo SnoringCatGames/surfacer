@@ -49,6 +49,10 @@ func check_for_update() -> void:
             recent_actions[current_position_index] = PlayerActionType.PRESSED_RIGHT
         elif player.actions.just_pressed_grab_wall:
             recent_actions[current_position_index] = PlayerActionType.PRESSED_GRAB_WALL
+        elif player.actions.just_pressed_face_left:
+            recent_actions[current_position_index] = PlayerActionType.PRESSED_FACE_LEFT
+        elif player.actions.just_pressed_face_right:
+            recent_actions[current_position_index] = PlayerActionType.PRESSED_FACE_RIGHT
         elif player.actions.just_released_jump:
             recent_actions[current_position_index] = PlayerActionType.RELEASED_JUMP
         elif player.actions.just_released_left:
@@ -57,6 +61,10 @@ func check_for_update() -> void:
             recent_actions[current_position_index] = PlayerActionType.RELEASED_RIGHT
         elif player.actions.just_released_grab_wall:
             recent_actions[current_position_index] = PlayerActionType.RELEASED_GRAB_WALL
+        elif player.actions.just_released_face_left:
+            recent_actions[current_position_index] = PlayerActionType.RELEASED_FACE_LEFT
+        elif player.actions.just_released_face_right:
+            recent_actions[current_position_index] = PlayerActionType.RELEASED_FACE_RIGHT
         else:
             recent_actions[current_position_index] = PlayerActionType.NONE
         
@@ -156,7 +164,11 @@ func _draw_action_indicator( \
                 color, \
                 HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
     elif action == PlayerActionType.PRESSED_GRAB_WALL or \
-            action == PlayerActionType.RELEASED_GRAB_WALL:
+            action == PlayerActionType.RELEASED_GRAB_WALL or \
+            action == PlayerActionType.PRESSED_FACE_LEFT or \
+            action == PlayerActionType.RELEASED_FACE_LEFT or \
+            action == PlayerActionType.PRESSED_FACE_RIGHT or \
+            action == PlayerActionType.RELEASED_FACE_RIGHT:
         pass
     else:
         Utils.error("Unknown PlayerActionType passed to _draw_action_indicator: %s" % \

@@ -8,6 +8,8 @@ const INPUT_KEYS := [
   "move_left",
   "move_right",
   "grab_wall",
+  "face_left",
+  "face_right",
 ]
 
 func _init( \

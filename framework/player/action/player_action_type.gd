@@ -14,6 +14,10 @@ enum {
     RELEASED_RIGHT,
     PRESSED_GRAB_WALL,
     RELEASED_GRAB_WALL,
+    PRESSED_FACE_LEFT,
+    RELEASED_FACE_LEFT,
+    PRESSED_FACE_RIGHT,
+    RELEASED_FACE_RIGHT,
 }
 
 static func to_string(type: int) -> String:
@@ -44,6 +48,14 @@ static func to_string(type: int) -> String:
             return "PRESSED_GRAB_WALL"
         RELEASED_GRAB_WALL:
             return "RELEASED_GRAB_WALL"
+        PRESSED_FACE_LEFT:
+            return "PRESSED_FACE_LEFT"
+        RELEASED_FACE_LEFT:
+            return "RELEASED_FACE_LEFT"
+        PRESSED_FACE_RIGHT:
+            return "PRESSED_FACE_RIGHT"
+        RELEASED_FACE_RIGHT:
+            return "RELEASED_FACE_RIGHT"
         _:
             Utils.error()
             return "UNKNOWN"

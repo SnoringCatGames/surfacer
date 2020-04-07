@@ -27,6 +27,14 @@ var pressed_grab_wall := false
 var just_pressed_grab_wall := false
 var just_released_grab_wall := false
 
+var pressed_face_left := false
+var just_pressed_face_left := false
+var just_released_face_left := false
+
+var pressed_face_right := false
+var just_pressed_face_right := false
+var just_released_face_right := false
+
 var start_dash := false
 
 func clear() -> void:
@@ -56,6 +64,14 @@ func clear() -> void:
     self.just_pressed_grab_wall = false
     self.just_released_grab_wall = false
     
+    self.pressed_face_left = false
+    self.just_pressed_face_left = false
+    self.just_released_face_left = false
+    
+    self.pressed_face_right = false
+    self.just_pressed_face_right = false
+    self.just_released_face_right = false
+    
     self.start_dash = false
 
 func copy(other: PlayerActionState) -> void:
@@ -84,6 +100,14 @@ func copy(other: PlayerActionState) -> void:
     self.pressed_grab_wall = other.pressed_grab_wall
     self.just_pressed_grab_wall = other.just_pressed_grab_wall
     self.just_released_grab_wall = other.just_released_grab_wall
+    
+    self.pressed_face_left = other.pressed_face_left
+    self.just_pressed_face_left = other.just_pressed_face_left
+    self.just_released_face_left = other.just_released_face_left
+    
+    self.pressed_face_right = other.pressed_face_right
+    self.just_pressed_face_right = other.just_pressed_face_right
+    self.just_released_face_right = other.just_released_face_right
     
     self.start_dash = other.start_dash
 
@@ -140,6 +164,22 @@ func log_new_presses_and_releases( \
             player.velocity)
     _log_new_press_or_release( \
             player.player_name, \
+            "facel", \
+            just_pressed_face_left, \
+            just_released_face_left, \
+            time_sec, \
+            player.surface_state.center_position, \
+            player.velocity)
+    _log_new_press_or_release( \
+            player.player_name, \
+            "facer", \
+            just_pressed_face_right, \
+            just_released_face_right, \
+            time_sec, \
+            player.surface_state.center_position, \
+            player.velocity)
+    _log_new_press_or_release( \
+            player.player_name, \
             "dash", \
             start_dash, \
             false, \
@@ -147,7 +187,7 @@ func log_new_presses_and_releases( \
             player.surface_state.center_position, \
             player.velocity)
 
-func _log_new_press_or_release( \
+static func _log_new_press_or_release( \
         player_name: String, \
         action_name: String, \
         just_pressed: bool, \
