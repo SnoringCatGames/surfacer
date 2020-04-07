@@ -42,8 +42,12 @@ static func calculate_jump_land_positions_for_surface_pair( \
     
     var jump_connected_region_left_bound := jump_surface.connected_region_bounding_box.position.x
     var jump_connected_region_right_bound := jump_surface.connected_region_bounding_box.end.x
+    var jump_connected_region_top_bound := jump_surface.connected_region_bounding_box.position.y
+    var jump_connected_region_bottom_bound := jump_surface.connected_region_bounding_box.end.y
     var land_connected_region_left_bound := land_surface.connected_region_bounding_box.position.x
     var land_connected_region_right_bound := land_surface.connected_region_bounding_box.end.x
+    var land_connected_region_top_bound := land_surface.connected_region_bounding_box.position.y
+    var land_connected_region_bottom_bound := land_surface.connected_region_bounding_box.end.y
     
     var jump_surface_center := jump_surface.bounding_box.position + \
             (jump_surface.bounding_box.end - jump_surface.bounding_box.position) / 2.0
@@ -966,13 +970,13 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             all_jump_land_positions.push_back(jump_land_positions)
                         
                     else:
-                        # We must jump around the backside of the wall before landing on the
-                        # frontside of the wall.
+                        # We must jump around the backside of the wall (and of the entire connected
+                        # region) before landing on the frontside of the wall.
                         # 
                         # - We consider up to two jump/land pairs:
                         #   - The primary pair corresponds to movement from the floor around the
                         #     top of the wall.
-                        #   - The secondary pair cooresponds to movement that would go between
+                        #   - The secondary pair co+responds to movement that would go between
                         #     surfaces:
                         #     - Either around the underside of the wal if the wall is higher,
                         #     - Or around the backside end of the floor around the top of the wall
@@ -987,17 +991,9 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                 is_a_jump_calculator, \
                                 does_velocity_start_moving_leftward, \
                                 prefer_velocity_start_zero_horizontal_speed)
-                        var goal_x := \
-                                land_surface_left_bound - player_width_horizontal_offset if \
-                                is_landing_on_left_wall else \
-                                land_surface_right_bound + player_width_horizontal_offset
-                        jump_basis = Geometry.project_point_onto_surface( \
-                                Vector2(goal_x, INF), \
-                                jump_surface)
                         var goal_y := \
                                 land_surface_top_bound + \
                                 vertical_offset_to_support_extra_movement_around_wall
-                        land_basis = land_surface_top_end_wrapper.target_point
                         land_position = _create_surface_interior_position( \
                                 goal_y, \
                                 land_surface, \
@@ -1007,7 +1003,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         
                         if is_wall_below_floor:
                             # Since the wall is below the floor, we don't need to account for any
-                            # offset due for horizontal movement if we're jumping downward past the
+                            # offset due for horizontal movement as we're jumping downward past the
                             # edge of the floor.
                             jump_position = \
                                     jump_surface_right_end_wrapper if \
@@ -1023,7 +1019,23 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             # Since the top of the wall is higher than the floor, we need to
                             # account for any horizontal displacement that would occur (when using
                             # max horizontal speed) while jumping upward to move around the top of
-                            # the wall.
+                            # the wall (and around the entire connected region, as well).
+                            var goal_x := \
+                                    land_connected_region_left_bound if \
+                                    is_landing_on_left_wall else \
+                                    land_connected_region_right_bound
+                            land_basis = Vector2( \
+                                    goal_x, \
+                                    land_connected_region_top_bound)
+                            goal_x = \
+                                    land_connected_region_left_bound - \
+                                    player_width_horizontal_offset if \
+                                    is_landing_on_left_wall else \
+                                    land_connected_region_right_bound + \
+                                    player_width_horizontal_offset
+                            jump_basis = Geometry.project_point_onto_surface( \
+                                    Vector2(land_connected_region_left_bound, INF), \
+                                    jump_surface)
                             var horizontal_movement_distance := \
                                     _calculate_horizontal_movement_distance( \
                                             movement_params, \
@@ -1985,15 +1997,6 @@ static func calculate_jump_land_positions_for_surface_pair( \
                 all_jump_land_positions.push_back(jump_land_positions)    
     
     return all_jump_land_positions
-
-static func calculate_jump_positions_on_surface( \
-        movement_params: MovementParams, \
-        jump_surface: Surface, \
-        land_position: PositionAlongSurface, \
-        is_a_jump_calculator: bool) -> Array:
-    # TODO: Implement this.
-    Utils.error("JumpLandPositionsUtils.calculate_jump_positions_for_surface not yet implemented")
-    return []
 
 static func calculate_land_positions_on_surface( \
         movement_params: MovementParams, \

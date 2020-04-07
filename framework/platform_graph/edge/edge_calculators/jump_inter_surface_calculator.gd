@@ -9,12 +9,15 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Rename JumpLandPositions to EdgeCalcStartParams
-# - Rename movement_... models, to edge_...
-# 
-# - Go through calculate_jump_land_positions_for_surface_pair cases, and account for
-#   connected_region_bounding_box when calculating jump/land basis/position, in order to more
-#   accurately set up positions that can actually go around things.
+# - Add uses of needs_extra_jump_duration to JumpLandPositions.
+#   - Started, but stopped partway through, with adding this usage in
+#     _update_waypoint_velocity_and_time.
+#   - Add this for various surface arrangements that are likely to need a little extra boost to
+#     circumnavigate surface ends:
+#     - floor-to-floor, when the land floor is significantly higher
+#     - back-to-back walls
+#     - walls that face the same way
+#     - floor to opposite-facing wall
 # 
 # - Update README and SVG diagrams, now that I have a better understanding and method to approach it.
 #   - Orient the explanation around a few very important parameters:
