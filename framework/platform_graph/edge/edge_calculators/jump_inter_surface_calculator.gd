@@ -8,20 +8,7 @@ const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-# 
-# - Add uses of needs_extra_jump_duration to JumpLandPositions.
-#   - Started, but stopped partway through, with adding this usage in
-#     _update_waypoint_velocity_and_time.
-#   - Add this for various surface arrangements that are likely to need a little extra boost to
-#     circumnavigate surface ends:
-#     - floor-to-floor, when the land floor is significantly higher
-#     - back-to-back walls
-#     - walls that face the same way
-#     - floor to opposite-facing wall
-# 
-# - Debug performance with how many jump/land pairs get returned, and how costly the new extra
-#   previous-jump/land-position-distance checks are.
-# 
+# #
 # - Add a couple additional things to configure in MovementParams:
 #   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
 #   - Whether to backtrack to consider higher jumps.
@@ -32,9 +19,6 @@ const IS_A_JUMP_CALCULATOR := true
 #   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
 #     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
 #   - How much radius to use for collision calculations.
-# 
-# - Check on current behavior of MovementInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
-#   MovementInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
 # 
 # - Tests!
 #   - While I add tests, also debug all the various systems and edge cases.
@@ -57,18 +41,6 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Then plan what sort of helpers and testbed infrastructure we'll need.
 #   - Then decide what makes sense to preserve from the earlier, brittle, implementation-specific tests.
 # 
-# - Debug all the new jump/land optimization logic.
-# 
-# - Add an additional param to JumpLandPositions: needs_extra_jump_duration
-#   - Started, but stopped partway through, with adding this usage in
-#     _update_waypoint_velocity_and_time.
-#   - Add this for various surface arrangements that are likely to need a little extra boost to
-#     circumnavigate surface ends:
-#     - floor-to-floor, when the land floor is significantly higher
-#     - back-to-back walls
-#     - walls that face the same way
-#     - floor to opposite-facing wall
-# 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
 #     - number of attempted steps,
@@ -85,6 +57,18 @@ const IS_A_JUMP_CALCULATOR := true
 #     in an edge calculation before giving up (or, recursion depth (with and without backtracking))?
 #   - Tweak movement_params.exceptional_jump_instruction_duration_increase, and ensure
 #     that it is actually cutting down on the number of times we have to backtrack.
+# 
+# - Debug performance with how many jump/land pairs get returned, and how costly the new extra
+#   previous-jump/land-position-distance checks are.
+# 
+# - Debug all the new jump/land optimization logic.
+# 
+# - Finish logic to consume Waypoint.needs_extra_jump_duration.
+#   - Started, but stopped partway through, with adding this usage in
+#     _update_waypoint_velocity_and_time.
+# 
+# - Check on current behavior of MovementInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
+#   MovementInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
 # 
 # --- Debug ---
 # 

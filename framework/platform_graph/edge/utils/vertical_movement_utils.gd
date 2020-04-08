@@ -571,15 +571,32 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
         
         return rise_displacement + fall_displacement
 
+# Calculates the maximum possible jump height--that is, the jump height using slow-rise gravity
+# until hitting the peak.
+# 
 # Returns a positive value.
 static func calculate_max_upward_distance(movement_params: MovementParams) -> float:
     # FIXME: F: Add support for double jumps, dash, etc.
     
     # From a basic equation of motion:
-    # - v^2 = v_0^2 + 2*a*(s - s_0)
-    # - s_0 = 0
-    # - v = 0
-    # - Algebra...
-    # - s = -v_0^2 / 2 / a
+    #     v^2 = v_0^2 + 2*a*(s - s_0)
+    #     s_0 = 0
+    #     v = 0
+    # Algebra...:
+    #     s = -v_0^2 / 2 / a
     return (movement_params.jump_boost * movement_params.jump_boost) / 2.0 / \
             movement_params.gravity_slow_rise
+
+# Calculates the minimum possible jump height--that is, the jump height using fast-fall gravity
+# from the very start.
+# 
+# Returns a positive value.
+static func calculate_min_upward_distance(movement_params: MovementParams) -> float:
+    # From a basic equation of motion:
+    #     v^2 = v_0^2 + 2*a*(s - s_0)
+    #     s_0 = 0
+    #     v = 0
+    # Algebra...:
+    #     s = -v_0^2 / 2 / a
+    return (movement_params.jump_boost * movement_params.jump_boost) / 2.0 / \
+            movement_params.gravity_fast_fall

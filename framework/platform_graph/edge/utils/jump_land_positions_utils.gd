@@ -294,6 +294,10 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             !is_jump_surface_lower and !is_jump_surface_more_to_the_left else \
                             [false, true]
                     
+                    var needs_extra_jump_duration := \
+                            land_surface_center.y - jump_surface_center.x < \
+                            -movement_params.min_upward_jump_distance
+                    
                     for is_considering_left_end in traversal_order_for_considering_left_end:
                         # - We assume start-velocity will be directed either from left-end to
                         #   left-end or from right-end to right-end, without passing across the
@@ -360,7 +364,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             var jump_land_positions := JumpLandPositions.new( \
                                         jump_position, \
                                         land_position, \
-                                        velocity_start)
+                                        velocity_start, \
+                                        needs_extra_jump_duration)
                             all_jump_land_positions.push_back(jump_land_positions)
                             
                         else:
@@ -500,7 +505,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             var min_movement_jump_land_positions := JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
-                                    velocity_start_zero)
+                                    velocity_start_zero, \
+                                    needs_extra_jump_duration)
                             all_jump_land_positions.push_back(min_movement_jump_land_positions)
                             
                             if horizontal_movement_distance != INF:
@@ -564,6 +570,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                                 land_position, \
                                                 velocity_start_max_speed, \
                                                 interior_point_min_horizontal_distance_from_end, \
+                                                needs_extra_jump_duration, \
                                                 all_jump_land_positions, \
                                                 false, \
                                                 min_movement_jump_land_positions)
@@ -648,6 +655,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                         land_position, \
                                         velocity_start_max_speed, \
                                         interior_point_min_horizontal_distance_from_end, \
+                                        needs_extra_jump_duration, \
                                         all_jump_land_positions, \
                                         false, \
                                         min_movement_jump_land_positions, \
@@ -981,7 +989,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         # - We consider up to two jump/land pairs:
                         #   - The primary pair corresponds to movement from the floor around the
                         #     top of the wall.
-                        #   - The secondary pair co+responds to movement that would go between
+                        #   - The secondary pair corresponds to movement that would go between
                         #     surfaces:
                         #     - Either around the underside of the wal if the wall is higher,
                         #     - Or around the backside end of the floor around the top of the wall
@@ -996,6 +1004,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                 is_a_jump_calculator, \
                                 does_velocity_start_moving_leftward, \
                                 prefer_velocity_start_zero_horizontal_speed)
+                        var needs_extra_jump_duration := true
                         var goal_y := \
                                 land_surface_top_bound + \
                                 vertical_offset_to_support_extra_movement_around_wall
@@ -1017,7 +1026,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
-                                    velocity_start)
+                                    velocity_start, \
+                                    needs_extra_jump_duration)
                             all_jump_land_positions.push_back(jump_land_positions)
                             
                         else:
@@ -1062,7 +1072,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
-                                    velocity_start)
+                                    velocity_start, \
+                                    needs_extra_jump_duration)
                             all_jump_land_positions.push_back(jump_land_positions)
                             
                             # Also consider a version of this jump/land pair with zero horizontal
@@ -1090,7 +1101,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
-                                    velocity_start)
+                                    velocity_start, \
+                                    needs_extra_jump_duration)
                             all_jump_land_positions.push_back(jump_land_positions)
                         
                         if land_surface_top_bound > \
@@ -1110,6 +1122,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                     is_a_jump_calculator, \
                                     does_velocity_start_moving_leftward, \
                                     prefer_velocity_start_zero_horizontal_speed)
+                            needs_extra_jump_duration = false
                             jump_position = \
                                     jump_surface_left_end_wrapper if \
                                     is_landing_on_left_wall else \
@@ -1120,7 +1133,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
-                                    velocity_start)
+                                    velocity_start, \
+                                    needs_extra_jump_duration)
                             all_jump_land_positions.push_back(jump_land_positions)
                             
                         elif land_surface_bottom_bound < \
@@ -1137,6 +1151,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                     is_a_jump_calculator, \
                                     does_velocity_start_moving_leftward, \
                                     prefer_velocity_start_zero_horizontal_speed)
+                            needs_extra_jump_duration = false
                             jump_position = \
                                     jump_surface_right_end_wrapper if \
                                     is_landing_on_left_wall else \
@@ -1153,7 +1168,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
-                                    velocity_start)
+                                    velocity_start, \
+                                    needs_extra_jump_duration)
                             all_jump_land_positions.push_back(jump_land_positions)
                     
                 SurfaceSide.CEILING:
@@ -1705,6 +1721,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             
                         else:
                             # Jump surface is behind.
+                            var needs_extra_jump_duration := true
                             goal_y = \
                                     land_surface_top_bound + \
                                     vertical_offset_to_support_extra_movement_around_wall
@@ -1742,7 +1759,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                         JumpLandPositions.new( \
                                                 jump_position, \
                                                 land_position, \
-                                                velocity_start)
+                                                velocity_start, \
+                                                needs_extra_jump_duration)
                                 all_jump_land_positions.push_back(jump_land_positions)
                             
                             if bottom_end_displacement_y < 0.0:
@@ -1750,6 +1768,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                 # of the land surface. It might be possible for movement to go
                                 # around the underside of the land surface, so we consider that
                                 # extra jump/land pair here.
+                                needs_extra_jump_duration = false
                                 land_position = land_surface_bottom_end_wrapper
                                 basis_point = Geometry.project_point_onto_surface( \
                                         land_surface_bottom_end_wrapper.target_point, \
@@ -1791,7 +1810,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                                 JumpLandPositions.new( \
                                                         jump_position, \
                                                         land_position, \
-                                                        velocity_start)
+                                                        velocity_start, \
+                                                        needs_extra_jump_duration)
                                         all_jump_land_positions.push_back(jump_land_positions)
                         
                     elif are_walls_facing_each_other:
@@ -1895,6 +1915,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-wall-to-opposite-wall.png
                         
                         # Consider one pair for the top ends.
+                        var needs_extra_jump_duration := true
                         var jump_position := jump_surface_top_end_wrapper
                         var land_position := _create_surface_interior_position( \
                                 land_surface_top_end_wrapper.target_point.y + \
@@ -1906,13 +1927,15 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         var top_ends_jump_land_positions := JumpLandPositions.new( \
                                 jump_position, \
                                 land_position, \
-                                velocity_start)
+                                velocity_start, \
+                                needs_extra_jump_duration)
                         all_jump_land_positions.push_back(top_ends_jump_land_positions)
                         
                         if !do_surfaces_overlap_vertically:
                             # When the surfaces don't overlap vertically, it might be possible
                             # for movement to go horizontally between the two surfaces, so we
                             # consider that extra jump/land pair here.
+                            needs_extra_jump_duration = false
                             if is_jump_surface_lower:
                                 jump_position = jump_surface_top_end_wrapper
                                 land_position = land_surface_bottom_end_wrapper
@@ -1929,7 +1952,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                     JumpLandPositions.new( \
                                             jump_position, \
                                             land_position, \
-                                            velocity_start)
+                                            velocity_start, \
+                                            needs_extra_jump_duration)
                             all_jump_land_positions.push_back(between_surfaces_jump_land_positions)
                     
                 SurfaceSide.CEILING:
@@ -2221,6 +2245,7 @@ static func _record_if_distinct( \
         current_land_position: PositionAlongSurface, \
         velocity_start: Vector2, \
         distance_threshold: float, \
+        needs_extra_jump_duration: bool, \
         results: Array, \
         inserts_at_front: bool, \
         previous_jump_land_positions_1: JumpLandPositions, \
@@ -2472,6 +2497,7 @@ static func _calculate_jump_land_points_for_walls_facing_each_other( \
             land_position, \
             velocity_start, \
             interior_point_min_vertical_distance_from_end, \
+            false, \
             all_jump_land_positions, \
             inserts_at_front, \
             other_jump_land_positions_1, \

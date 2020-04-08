@@ -55,6 +55,10 @@ static func _calculate_dependent_movement_params(movement_params: MovementParams
     movement_params.collider_half_width_height = Geometry.calculate_half_width_height( \
             movement_params.collider_shape, \
             movement_params.collider_rotation)
+    movement_params.min_upward_jump_distance = \
+            VerticalMovementUtils.calculate_min_upward_distance(movement_params)
+    movement_params.max_upward_jump_distance = \
+            VerticalMovementUtils.calculate_max_upward_distance(movement_params)
     movement_params.max_upward_jump_distance = \
             VerticalMovementUtils.calculate_max_upward_distance(movement_params)
     movement_params.time_to_max_upward_jump_distance = \

@@ -81,6 +81,7 @@ var dash_cooldown: float
 
 var floor_jump_max_horizontal_jump_distance: float
 var wall_jump_max_horizontal_jump_distance: float
+var min_upward_jump_distance: float
 var max_upward_jump_distance: float
 var time_to_max_upward_jump_distance: float
 var distance_to_max_horizontal_speed: float
