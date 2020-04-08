@@ -258,7 +258,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
     
     var player_width_horizontal_offset := \
             movement_params.collider_half_width_height.x + \
-            MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN + \
+            movement_params.collision_margin_for_waypoint_positions + \
             EXTRA_JUMP_LAND_POSITION_MARGIN
     var interior_point_min_horizontal_distance_from_end := \
             movement_params.collider_half_width_height.x * \
@@ -1995,7 +1995,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
         _:
             Utils.error("Unknown jump surface side")
     
-    if movement_params.always_includes_jump_land_end_point_combinations:
+    if movement_params.always_includes_jump_land_positions_at_surface_ends:
         # Record jump/land position combinations for the surface-end points.
         # 
         # The surface-end points aren't usually as efficient, or as likely to produce valid edges,
@@ -2340,7 +2340,7 @@ static func _calculate_horizontal_movement_distance( \
     
     var player_width_horizontal_offset := \
             movement_params.collider_half_width_height.x + \
-            MovementCalcOverallParams.EDGE_MOVEMENT_ACTUAL_MARGIN + \
+            movement_params.collision_margin_for_waypoint_positions + \
             EXTRA_JUMP_LAND_POSITION_MARGIN
     
     # This max movement range could slightly overshoot what's actually

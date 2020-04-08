@@ -90,6 +90,11 @@ static func calculate_steps_from_waypoint( \
     
     ### RECURSIVE CASES
     
+    if !overall_calc_params.movement_params \
+            .recurses_when_colliding_during_horizontal_step_calculations:
+        # This player is configured to abandon any step recursion for intermediate collisions.
+        return null
+    
     # Calculate possible waypoints to divert the movement around either side of the colliding
     # surface.
     var waypoints := WaypointUtils.calculate_waypoints_around_surface( \
@@ -128,6 +133,11 @@ static func calculate_steps_from_waypoint( \
     overall_calc_params.record_backtracked_surface( \
             collision.surface, \
             vertical_step.time_instruction_end)
+    
+    if !overall_calc_params.movement_params \
+            .backtracks_to_consider_higher_jumps_during_horizontal_step_calculations:
+        # This player is configured to abandon any backtracking for higher jumps.
+        return null
     
     # Then, try to satisfy the waypoints with backtracking to consider a new max jump height.
     calc_results = calculate_steps_from_waypoint_with_backtracking_on_height( \

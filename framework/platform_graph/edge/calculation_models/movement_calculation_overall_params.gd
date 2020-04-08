@@ -3,9 +3,6 @@ extends Reference
 class_name MovementCalcOverallParams
 
 const TILE_MAP_COLLISION_LAYER := 7
-# FIXME: Test these
-const EDGE_MOVEMENT_TEST_MARGIN := 4.0#2.0
-const EDGE_MOVEMENT_ACTUAL_MARGIN := 5.0#2.5
 
 var movement_params: MovementParams
 
@@ -68,7 +65,10 @@ func _init( \
     self.can_backtrack_on_height = can_backtrack_on_height
     self.velocity_start = velocity_start
     self.needs_extra_jump_duration = needs_extra_jump_duration
-    self.waypoint_offset = calculate_waypoint_offset(movement_params)
+    self.waypoint_offset = \
+            movement_params.collider_half_width_height + \
+            Vector2(movement_params.collision_margin_for_waypoint_positions, \
+                    movement_params.collision_margin_for_waypoint_positions)
     self._collided_surfaces = {}
     
     var shape_query_params := Physics2DShapeQueryParameters.new()
@@ -76,7 +76,7 @@ func _init( \
     shape_query_params.collide_with_bodies = true
     shape_query_params.collision_layer = TILE_MAP_COLLISION_LAYER
     shape_query_params.exclude = []
-    shape_query_params.margin = EDGE_MOVEMENT_TEST_MARGIN
+    shape_query_params.margin = movement_params.collision_margin_for_edge_movement_calculations
     shape_query_params.motion = Vector2.ZERO
     shape_query_params.shape_rid = movement_params.collider_shape.get_rid()
     shape_query_params.transform = Transform2D(movement_params.collider_rotation, Vector2.ZERO)
@@ -96,7 +96,3 @@ func _set_in_debug_mode(value: bool) -> void:
 
 func _get_in_debug_mode() -> bool:
     return debug_state != null
-
-static func calculate_waypoint_offset(movement_params: MovementParams) -> Vector2:
-    return movement_params.collider_half_width_height + \
-            Vector2(EDGE_MOVEMENT_ACTUAL_MARGIN, EDGE_MOVEMENT_ACTUAL_MARGIN)

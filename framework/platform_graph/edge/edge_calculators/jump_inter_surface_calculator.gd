@@ -8,9 +8,8 @@ const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-# #
-# - Add a couple additional things to configure in MovementParams:
-#   - Whether or not to ever check for intermediate collisions (and therefore whether to ever recurse during calculations).
+#   
+#   - Whether or not to ever recurse during horizontal step calculations after finding collisions.
 #   - Whether to backtrack to consider higher jumps.
 #   - Whether to return only the first valid edge between a pair of surfaces, or to return all valid edges.
 #     - Rather, break this down:

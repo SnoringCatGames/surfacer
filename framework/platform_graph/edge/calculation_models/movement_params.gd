@@ -33,6 +33,8 @@ var walk_acceleration: float
 var climb_up_speed: float
 var climb_down_speed: float
 
+# If this is true, then horizontal movement will be applied earlier in a jump rather than later.
+# That is, jump trajecotries will be more up, sideways, then down, and less parabolic and diagonal.
 var minimizes_velocity_change_when_jumping := true
 # At runtime, after finding a path through build-time-calculated edges, try to optimize the
 # jump-off points of the edges to better account for the direction that the player will be
@@ -57,7 +59,18 @@ var min_intra_surface_distance_to_optimize_jump_for := 16.0
 # same surface, for the same surface pair. We use this distance to determine threshold how far away
 # is enough.
 var distance_squared_threshold_for_considering_additional_jump_land_points := 128.0 * 128.0
-var always_includes_jump_land_end_point_combinations := false
+# If true, then edge calculations for a given surface pair will stop early as soon as the first
+# valid edge for the pair is found. This overrides
+# distance_squared_threshold_for_considering_additional_jump_land_points.
+var stops_after_finding_first_valid_edge_for_a_surface_pair := false
+# If true, then valid edges will be calculated for every good jump/land position between a given
+# surface pair. This will take more time to compute. This overrides
+# distance_squared_threshold_for_considering_additional_jump_land_points.
+var calculates_all_valid_edges_for_a_surface_pair := false
+# If this is true, then extra jump/land position combinations will be considered for every surface
+# pair for all combinations of surface ends between the two surfaces. This should always be
+# redundant with the more intelligent and efficient jump/land positions combinations.
+var always_includes_jump_land_positions_at_surface_ends := false
 # This is a constant increase to all jump durations. This could make it more likely for edge
 # calculations to succeed earlier, or it could just make the player seem more floaty.
 var normal_jump_instruction_duration_increase := 0.08
@@ -65,6 +78,19 @@ var normal_jump_instruction_duration_increase := 0.08
 # on as likely needing some additional jump height in order to navigate around intermediate
 # surfaces. This duration increase is used for those exceptional edge calculations.
 var exceptional_jump_instruction_duration_increase := 0.2
+# If false, then edge calculations will not try to move around intermediate surfaces, which will
+# produce many false negatives.
+var recurses_when_colliding_during_horizontal_step_calculations := true
+# If false, then edge calculations will not try to consider higher jump height in order to move
+# around intermediate surfaces, which will produce many false negatives.
+var backtracks_to_consider_higher_jumps_during_horizontal_step_calculations := true
+# FIXME: Check and adjust these.
+# The amount of extra margin to include around the player collision boundary when performing
+# collision detection for a given edge calculation.
+var collision_margin_for_edge_movement_calculations := 4.0#2.0
+# The amount of extra margin to include for waypoint offsets, so that the player doesn't collide
+# unexpectedly with the surface.
+var collision_margin_for_waypoint_positions := 5.0#2.5
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

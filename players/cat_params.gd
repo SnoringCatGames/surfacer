@@ -46,8 +46,16 @@ func _init() -> void:
     syncs_player_velocity_to_edge_trajectory = false
 #    distance_squared_threshold_for_considering_additional_jump_land_points = 128.0 * 128.0
     distance_squared_threshold_for_considering_additional_jump_land_points = 32.0 * 32.0
-    always_includes_jump_land_end_point_combinations = false
-#    always_includes_jump_land_end_point_combinations = true
+    stops_after_finding_first_valid_edge_for_a_surface_pair = false
+    calculates_all_valid_edges_for_a_surface_pair = false
+    always_includes_jump_land_positions_at_surface_ends = false
+#    always_includes_jump_land_positions_at_surface_ends = true
+    normal_jump_instruction_duration_increase = 0.08
+    exceptional_jump_instruction_duration_increase = 0.2
+    recurses_when_colliding_during_horizontal_step_calculations = true
+    backtracks_to_consider_higher_jumps_during_horizontal_step_calculations = true
+    collision_margin_for_edge_movement_calculations = 4.0
+    collision_margin_for_waypoint_positions = 5.0
     
     max_horizontal_speed_default = 400.0
     min_horizontal_speed = 5.0
