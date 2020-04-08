@@ -349,3 +349,9 @@ We include a large collection of annotators that are useful for visually debuggi
 -   `RulerAnnotator`:
 -   `SurfacesAnnotator`:
 TODO: Include a brief description of each annotator.
+
+## Tests
+
+Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
+
+For convenience, this is checked in the with rest of the Surfacer framework.

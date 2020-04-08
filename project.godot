@@ -559,15 +559,20 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/surfaces_annotator.gd"
 }, {
+"base": "Node",
+"class": "TestBed",
+"language": "GDScript",
+"path": "res://framework/test_old/test_data/test_bed.gd"
+}, {
 "base": "Player",
 "class": "TestPlayer",
 "language": "GDScript",
-"path": "res://players/test_player.gd"
+"path": "res://framework/test/data/test_player.gd"
 }, {
 "base": "MovementParams",
 "class": "TestPlayerParams",
 "language": "GDScript",
-"path": "res://players/test_player_params.gd"
+"path": "res://framework/test/data/test_player_params.gd"
 }, {
 "base": "Node2D",
 "class": "TileAnnotator",
@@ -755,6 +760,7 @@ _global_script_class_icons={
 "SurfaceSide": "",
 "SurfaceType": "",
 "SurfacesAnnotator": "",
+"TestBed": "",
 "TestPlayer": "",
 "TestPlayerParams": "",
 "TileAnnotator": "",
@@ -794,7 +800,7 @@ window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PoolStringArray(  )
+enabled=PoolStringArray( "gut" )
 
 [input]
 

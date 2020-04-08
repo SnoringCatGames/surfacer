@@ -8,16 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-#   
-#   - Whether or not to ever recurse during horizontal step calculations after finding collisions.
-#   - Whether to backtrack to consider higher jumps.
-#   - Whether to return only the first valid edge between a pair of surfaces, or to return all valid edges.
-#     - Rather, break this down:
-#       - All jump/land pairs (get_all_jump_land_positions_for_surface): calculates_edges_for_all_jump_land_points
-#         - Add comment: If true this will execute edge calculation for every possible jump/land position pair. If false, this will quit early as soon as a single edge is found for a given pair of surfaces. Note: <the other new distance param> overrides this slightly; if it's true, then we will try to calculate valid edges for other jump/land points in a given surface pair as long as either the jump or land point is far enough away from the jump/land point of any previous edge between this surface pair.
-#   - How much extra jump boost to include beyond whatever is calculated as being needed for the jump.
-#     - (This should be separate from any potential hardcoded boost that we include to help make run-time playback be closer to the calculated trajectories).
-#   - How much radius to use for collision calculations.
 # 
 # - Tests!
 #   - While I add tests, also debug all the various systems and edge cases.

@@ -17,15 +17,15 @@ const WELCOME_PANEL_RESOURCE_PATH := "res://framework/panels/welcome_panel.tscn"
 const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false
 
-const STARTING_LEVEL_RESOURCE_PATH := "res://levels/test_level_long_rise.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/test_level_long_fall.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/test_level_far_distance.tscn"
+const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_rise.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_fall.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_far_distance.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_3.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_5.tscn"
 
 const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
-#const PLAYER_RESOURCE_PATH := "res://players/test_player.tscn"
+#const PLAYER_RESOURCE_PATH := "res://players/data/test_player.tscn"
 
 const DEBUG_STATE := {
     in_debug_mode = IN_DEBUG_MODE,
