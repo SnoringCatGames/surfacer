@@ -1,4 +1,4 @@
-extends TestBed
+extends IntegrationTestBed
 
 # FIXME: Test:
 # - out of reach

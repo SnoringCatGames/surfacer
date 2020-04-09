@@ -9,13 +9,13 @@ const LEVEL_RESOURCE_PATHS := [
     "res://levels/level_5.tscn",
 ]
 
-const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/tests.tscn"
+const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/test_runner.tscn"
 
 const DEBUG_PANEL_RESOURCE_PATH := "res://framework/panels/debug_panel.tscn"
 const WELCOME_PANEL_RESOURCE_PATH := "res://framework/panels/welcome_panel.tscn"
 
 const IN_DEBUG_MODE := true
-const IN_TEST_MODE := false
+const IN_TEST_MODE := true
 
 const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_rise.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_fall.tscn"
@@ -137,11 +137,9 @@ func register_edge_movements(edge_movement_classes: Array) -> void:
         EDGE_MOVEMENTS[edge_movement_class.NAME] = edge_movement_class.new()
 
 func register_player_params(player_param_classes: Array) -> void:
-    var movement_params: MovementParams
     var player_params: PlayerParams
     for param_class in player_param_classes:
-        movement_params = param_class.new()
-        player_params = PlayerParamsUtils.create_player_params(movement_params, self)
+        player_params = PlayerParamsUtils.create_player_params(param_class, self)
         self.player_params[player_params.name] = player_params
 
 func _ready() -> void:

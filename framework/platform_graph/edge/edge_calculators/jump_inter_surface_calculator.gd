@@ -10,25 +10,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - Tests!
-#   - While I add tests, also debug all the various systems and edge cases.
-#     - calculate_jump_land_positions_for_surface_pair:
-#       - Jump and land on each different surface-side combination and each different top-bottom-left-right-middle arrangement combination.
-#       - Right numbers and combinations of jump-land pair results.
-#     - Jump/land optimization logic.
-#   - Add Gut and tests back (find and revert the CL that removed them).
-#   - Add a bunch of very simple test levels, with just two latforms each, and the two in various alignments from each other.
-#   - Test simple high-level things like:
-#     - One edge from here to here
-#     - Edge was long enough
-#     - Had right number of waypoints
-#     - Had at least the right height
-#     - PlatformGraph chose a path of the correct edges
-#     - Jump/land position calculations return the right positions
-#     - Which other helper/utility functions to unit test in isolation...
-#   - Test run-time edge optimizations.
-#   - Start with a big list of all cases to test.
-#   - Then plan what sort of helpers and testbed infrastructure we'll need.
-#   - Then decide what makes sense to preserve from the earlier, brittle, implementation-specific tests.
 # 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:

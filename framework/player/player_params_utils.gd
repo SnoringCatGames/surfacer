@@ -1,8 +1,10 @@
 class_name PlayerParamsUtils
 
 static func create_player_params( \
-        movement_params: MovementParams, \
+        param_class, \
         global) -> PlayerParams:
+    var movement_params: MovementParams = param_class.new()
+    
     _calculate_dependent_movement_params(movement_params)
     _check_movement_params(movement_params)
     

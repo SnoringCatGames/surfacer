@@ -47,11 +47,17 @@ func _enter_tree() -> void:
     global.register_edge_movements(EDGE_MOVEMENT_CLASSES)
     global.register_player_params(PLAYER_PARAM_CLASSES)
     
-    var scene_path := Global.TEST_RUNNER_SCENE_RESOURCE_PATH if Global.IN_TEST_MODE else \
-            Global.STARTING_LEVEL_RESOURCE_PATH
-    level = Utils.add_scene(self, scene_path)
+    if Global.IN_TEST_MODE:
+        var scene_path := Global.TEST_RUNNER_SCENE_RESOURCE_PATH
+        var test_scene = Utils.add_scene(self, scene_path)
+    else:
+        var scene_path := Global.STARTING_LEVEL_RESOURCE_PATH
+        level = Utils.add_scene(self, scene_path)
 
 func _ready() -> void:
-    var position := Vector2(160.0, 0.0) if Global.STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 \
-            else Vector2.ZERO
-    level.add_player(Global.PLAYER_RESOURCE_PATH, false, position)
+    if !Global.IN_TEST_MODE:
+        var position := \
+                Vector2(160.0, 0.0) if \
+                Global.STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 else \
+                Vector2.ZERO
+        level.add_player(Global.PLAYER_RESOURCE_PATH, false, position)

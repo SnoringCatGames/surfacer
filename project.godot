@@ -259,6 +259,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/player/action/instructions_playback.gd"
 }, {
+"base": "Node",
+"class": "IntegrationTestBed",
+"language": "GDScript",
+"path": "res://framework/test/data/integration_test_bed.gd"
+}, {
 "base": "Node2D",
 "class": "InterSurfaceEdgesAnnotator",
 "language": "GDScript",
@@ -298,6 +303,11 @@ _global_script_classes=[ {
 "class": "JumpLandPositionsUtils",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/utils/jump_land_positions_utils.gd"
+}, {
+"base": "UnitTestBed",
+"class": "JumpLandPositionsUtilsTestBed",
+"language": "GDScript",
+"path": "res://framework/test/tests/jump_land_positions_utils/jump_land_positions_utils_test_bed.gd"
 }, {
 "base": "Node2D",
 "class": "Level",
@@ -559,11 +569,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/surfaces_annotator.gd"
 }, {
-"base": "Node",
-"class": "TestBed",
-"language": "GDScript",
-"path": "res://framework/test_old/test_data/test_bed.gd"
-}, {
 "base": "Player",
 "class": "TestPlayer",
 "language": "GDScript",
@@ -578,6 +583,11 @@ _global_script_classes=[ {
 "class": "TileAnnotator",
 "language": "GDScript",
 "path": "res://framework/annotators/tile_annotator.gd"
+}, {
+"base": "Node",
+"class": "UnitTestBed",
+"language": "GDScript",
+"path": "res://framework/test/data/unit_test_bed.gd"
 }, {
 "base": "PlayerActionSource",
 "class": "UserActionSource",
@@ -700,6 +710,7 @@ _global_script_class_icons={
 "HorizontalMovementUtils": "",
 "InstructionsActionSource": "",
 "InstructionsPlayback": "",
+"IntegrationTestBed": "",
 "InterSurfaceEdgesAnnotator": "",
 "IntraSurfaceEdge": "",
 "JumpFromSurfaceToAirCalculator": "",
@@ -708,6 +719,7 @@ _global_script_class_icons={
 "JumpInterSurfaceEdge": "",
 "JumpLandPositions": "",
 "JumpLandPositionsUtils": "",
+"JumpLandPositionsUtilsTestBed": "",
 "Level": "",
 "Main": "",
 "MatchExpectedEdgeTrajectoryAction": "",
@@ -760,10 +772,10 @@ _global_script_class_icons={
 "SurfaceSide": "",
 "SurfaceType": "",
 "SurfacesAnnotator": "",
-"TestBed": "",
 "TestPlayer": "",
 "TestPlayerParams": "",
 "TileAnnotator": "",
+"UnitTestBed": "",
 "UserActionSource": "",
 "Utils": "",
 "VerticalMovementUtils": "",

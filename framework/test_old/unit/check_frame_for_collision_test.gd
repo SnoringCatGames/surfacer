@@ -1,4 +1,4 @@
-extends TestBed
+extends IntegrationTestBed
 
 var half_player_width_height := 10.0
 var tile_width := 64.0
