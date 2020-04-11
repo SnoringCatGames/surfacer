@@ -15,7 +15,8 @@ const DEBUG_PANEL_RESOURCE_PATH := "res://framework/panels/debug_panel.tscn"
 const WELCOME_PANEL_RESOURCE_PATH := "res://framework/panels/welcome_panel.tscn"
 
 const IN_DEBUG_MODE := true
-const IN_TEST_MODE := true
+#const IN_TEST_MODE := true
+const IN_TEST_MODE := false
 
 const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_rise.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_fall.tscn"

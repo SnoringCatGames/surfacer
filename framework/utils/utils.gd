@@ -10,14 +10,19 @@ const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 const GROUP_NAME_SURFACES := "surfaces"
 
-static func error(message := "An error occurred", should_assert := true):
+static func error( \
+        message := "An error occurred", \
+        should_assert := true):
     print("ERROR: %s" % message)
     if should_assert:
         assert(false)
 
 # TODO: Replace this with any built-in feature whenever it exists
 #       (https://github.com/godotengine/godot/issues/4715).
-static func subarray(array: Array, start: int, length: int) -> Array:
+static func subarray( \
+        array: Array, \
+        start: int, \
+        length: int) -> Array:
     var result = range(length)
     for i in result:
         result[i] = array[start + i]
@@ -25,7 +30,9 @@ static func subarray(array: Array, start: int, length: int) -> Array:
 
 # TODO: Replace this with any built-in feature whenever it exists
 #       (https://github.com/godotengine/godot/issues/4715).
-static func concat(result: Array, other: Array) -> void:
+static func concat( \
+        result: Array, \
+        other: Array) -> void:
     var old_result_size = result.size()
     var other_size = other.size()
     
@@ -40,7 +47,9 @@ static func array_to_set(array: Array) -> Dictionary:
         set[element] = element
     return set
 
-static func translate_polyline(vertices: PoolVector2Array, translation: Vector2) \
+static func translate_polyline( \
+        vertices: PoolVector2Array, \
+        translation: Vector2) \
         -> PoolVector2Array:
     var result := PoolVector2Array()
     result.resize(vertices.size())
@@ -48,7 +57,9 @@ static func translate_polyline(vertices: PoolVector2Array, translation: Vector2)
         result[i] = vertices[i] + translation
     return result
 
-static func get_children_by_type(parent: Node, type) -> Array:
+static func get_children_by_type( \
+        parent: Node, \
+        type) -> Array:
     var result = []
     for child in parent.get_children():
         if child is type:
@@ -80,7 +91,9 @@ static func _get_floor_collision(body: KinematicBody2D) -> KinematicCollision2D:
                 return collision
     return null
 
-static func add_scene(parent: Node, resource_path: String) -> Node:
+static func add_scene( \
+        parent: Node, \
+        resource_path: String) -> Node:
     var scene := load(resource_path)
     var node: Node = scene.instance()
     parent.add_child(node)

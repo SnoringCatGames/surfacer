@@ -48,3 +48,11 @@ func is_far_enough_from_other_jump_land_positions( \
                 return false
     
     return true
+
+func to_string() -> String:
+    return "JumpLandPositions{ jump: %s, land: %s, v_0: %s, extra_duration: %s }" % [ \
+        jump_position.to_string(), \
+        land_position.to_string(), \
+        velocity_start, \
+        needs_extra_jump_duration, \
+    ]

@@ -30,19 +30,23 @@ func test_non_overlapping_at_same_level() -> void:
     
     assert_eq( \
             all_jump_land_positions.size(), \
-            4, \
+            2, \
             "should consider three pairs")
+    
+    print(">>>>>>>>>>>>>>>>>>>>>>")
+    print(all_jump_land_positions[0].to_string())
+    print(all_jump_land_positions[1].to_string())
     
     assert_eq( \
             all_jump_land_positions[0].velocity_start.x, \
             0.0, \
             "first pair should use min start velocity")
     assert_almost_eq( \
-            all_jump_land_positions[0].jump_surface.target_point.x, \
+            all_jump_land_positions[0].jump_position.target_point.x, \
             -64.0, \
             "first pair should use jump surface near end")
     assert_almost_eq( \
-            all_jump_land_positions[0].land_surface.target_point.x, \
+            all_jump_land_positions[0].land_position.target_point.x, \
             64.0, \
             "first pair should use land surface near end")
     

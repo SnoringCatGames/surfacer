@@ -9,6 +9,14 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Finish rewriting floor-to-floor jump/land position logic.
+# - Create a new flag to assign on JumpLandPositions: less_likely_to_be_valid.
+#   - Assign that in the new floor-to-floor logic.
+#   - Assign that in other pre-exsiting jump/land position logic.
+#   - Add a new movement_params flag to indicate whether these pairs should be ignored.
+#   - Use that flag in movmeent calculators.
+# - Finish calculate_land_positions_on_surface.
+# 
 # - Tests!
 # 
 # - Analytics!
@@ -86,7 +94,11 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from an air position).
 # 
-# --- Expected cut-off for demo date ---
+# --- EASIER BITS ---
+# 
+# - Update level images:
+#   - Make background layers more faded
+#   - Make foreground images more wood-like
 # 
 # - Implement the bits of debug-menu UI to toggle annotations.
 #   - Also support adjusting how many previous player positions to render.
@@ -95,23 +107,25 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Add a top-level button to debug menu to hide all annotations.
 #     - (grid, clicks, player position, player recent movement, platform graph, ...)
 # 
-# - Make screenshots and diagrams for README.
-#   - Use global.DEBUG_STATE.extra_annotations
+# - Think up ways to make the debug annotations more dynamic/intelligent/useful...
+#   - Make jump/land positions (along with start v, and which pairs connect) more discoverable when
+#     ctrl+clicking.
+#   - Dynamically show next edge debug state while navigating a path?
 # 
 # - In the README, list the types of MovementParams.
 # 
 # - Prepare a different, more interesting level for demo (some walls connecting to floors too).
 # 
-# - Make each background layer more faded. Only interactable foreground should pop so much.
-# 
 # - Put together some illustrative screenshots with special one-off annotations to explain the
-#   graph parsing steps.
-#   - A couple surfaces
-#   - Show different tiles, to illustrate how surfaces get merged.
-#   - All surfaces (different colors)
-#   - A couple edges
-#   - All edges
-#   - 
+#   graph parsing steps in the README.
+#   - Use global.DEBUG_STATE.extra_annotations
+#   - Screenshots:
+#     - A couple surfaces
+#     - Show different tiles, to illustrate how surfaces get merged.
+#     - All surfaces (different colors)
+#     - A couple edges
+#     - All edges
+#     - 
 # 
 # ---  ---
 # 
