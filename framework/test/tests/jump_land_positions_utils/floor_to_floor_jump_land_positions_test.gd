@@ -153,11 +153,10 @@ func test_non_overlapping_with_lower_left_jump_surface() -> void:
             all_jump_land_positions[0].jump_position.target_point.x, \
             -192.0, \
             "first pair should include horizontal displacement on the lower surface")
-    assert_almost_ne( \
+    assert_eq( \
             all_jump_land_positions[0].land_position.target_point.x, \
             64.0, \
-            0.1, \
-            "first pair should include horizontal displacement on the upper surface")
+            "first pair should not include horizontal displacement on the upper surface")
     
     assert_eq( \
             all_jump_land_positions[1].velocity_start.x, \
@@ -285,11 +284,10 @@ func test_non_overlapping_with_lower_right_jump_surface() -> void:
             all_jump_land_positions[0].jump_position.target_point.x, \
             192.0, \
             "first pair should include horizontal displacement on the lower surface")
-    assert_almost_ne( \
+    assert_eq( \
             all_jump_land_positions[0].land_position.target_point.x, \
             -64.0, \
-            0.1, \
-            "first pair should include horizontal displacement on the upper surface")
+            "first pair should not include horizontal displacement on the upper surface")
     
     assert_eq( \
             all_jump_land_positions[1].velocity_start.x, \
@@ -394,9 +392,6 @@ func test_non_overlapping_with_lower_jump_surface_farther_on_both_sides() -> voi
             all_jump_land_positions.size(), \
             4, \
             "should consider four pairs")
-    
-    var half_width_min_offset := movement_params.collider_half_width_height.x + 0.01
-    var half_width_max_offset := movement_params.collider_half_width_height.x * 2.0
     
     assert_eq( \
             all_jump_land_positions[0].velocity_start.x, \
