@@ -91,6 +91,11 @@ var collision_margin_for_edge_movement_calculations := 4.0#2.0
 # The amount of extra margin to include for waypoint offsets, so that the player doesn't collide
 # unexpectedly with the surface.
 var collision_margin_for_waypoint_positions := 5.0#2.5
+# Some jump/land posititions are less likely to produce valid movement, simply because of how the
+# surfaces are arranged. Usually there is another more likely pair for the given surfaces. However,
+# sometimes such pairs can be valid, and sometimes they can even be the only valid pair for the
+# given surfaces.
+var skips_jump_land_positions_that_are_less_likely_to_be_valid := false
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

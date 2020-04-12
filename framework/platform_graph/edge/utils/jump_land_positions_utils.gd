@@ -319,407 +319,420 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             land_surface_center.y - jump_surface_center.y < \
                             -movement_params.min_upward_jump_distance
                     
-                    if is_enough_left_side_distance_to_not_backtrack_horizontally:
-                        # Consider direct horizontal movement. Consider both v-zero and v-max.
-                        
-                        var does_velocity_start_moving_leftward := \
-                                jump_surface_left_bound > land_surface_left_bound
-                        var velocity_start_zero := get_velocity_start( \
-                                movement_params, \
-                                jump_surface, \
-                                is_a_jump_calculator, \
-                                does_velocity_start_moving_leftward, \
-                                true)
-                        var velocity_start_max_speed := get_velocity_start( \
-                                movement_params, \
-                                jump_surface, \
-                                is_a_jump_calculator, \
-                                does_velocity_start_moving_leftward, \
-                                false)
-                        
-                        if is_jump_surface_lower:
-                            # Consider max-speed horizontal start velocity, with the corresponding
-                            # horizontal displacement from movement.
-                            var jump_basis: Vector2 = Geometry.project_point_onto_surface( \
-                                    land_surface_left_end_wrapper.target_point, \
-                                    jump_surface)
-                            var land_basis := land_surface_left_end_wrapper.target_point
-                            var must_reach_destination_on_fall := true
-                            var horizontal_movement_distance := \
-                                    _calculate_horizontal_movement_distance( \
-                                            movement_params, \
-                                            jump_basis, \
-                                            land_basis, \
-                                            velocity_start_max_speed, \
-                                            is_a_jump_calculator, \
-                                            must_reach_destination_on_fall)
-                            var jump_position: PositionAlongSurface
-                            var land_position: PositionAlongSurface
-                            if land_surface_left_bound - jump_surface_left_bound > \
-                                    horizontal_movement_distance:
-                                # We can apply all of the horizontal movement displacement onto the
-                                # jump position.
-                                var jump_x := \
-                                        land_surface_left_bound - horizontal_movement_distance
-                                jump_position = _create_surface_interior_position( \
-                                        jump_x, \
+                    var is_considering_left_side_first := \
+                            is_enough_left_side_distance_to_not_backtrack_horizontally or \
+                            !is_enough_right_side_distance_to_not_backtrack_horizontally
+                    var is_considering_left_side_order := \
+                            [true, false] if \
+                            is_considering_left_side_first else \
+                            [false, true]
+                    
+                    for is_considering_left_side in is_considering_left_side_order:
+                        if is_considering_left_side:
+                            if is_enough_left_side_distance_to_not_backtrack_horizontally:
+                                # Consider direct horizontal movement. Consider both v-zero and v-max.
+                                
+                                var does_velocity_start_moving_leftward := \
+                                        jump_surface_left_bound > land_surface_left_bound
+                                var velocity_start_zero := get_velocity_start( \
+                                        movement_params, \
                                         jump_surface, \
-                                        movement_params.collider_half_width_height, \
-                                        jump_surface_left_end_wrapper, \
-                                        jump_surface_right_end_wrapper)
-                                land_position = land_surface_left_end_wrapper
-                            elif (land_surface_left_bound - jump_surface_left_bound) + \
-                                    (land_surface_right_bound - land_surface_left_bound) > \
-                                    horizontal_movement_distance:
-                                # We can apply some of the horizontal movement displacement onto
-                                # the jump position, and the rest onto the land position.
-                                jump_position = jump_surface_left_end_wrapper
-                                var land_x := \
-                                        land_surface_left_bound + \
-                                        horizontal_movement_distance - \
-                                        (land_surface_left_bound - jump_surface_left_bound)
-                                land_position = _create_surface_interior_position( \
-                                        land_x, \
-                                        land_surface, \
-                                        movement_params.collider_half_width_height, \
-                                        land_surface_left_end_wrapper, \
-                                        land_surface_right_end_wrapper)
-                            else:
-                                # There isn't enough room on either surface to account for the
-                                # entire horizontal movement displacement, so we'll just use the
-                                # far ends.
-                                jump_position = jump_surface_left_end_wrapper
-                                land_position = land_surface_right_end_wrapper
-                            var max_movement_jump_land_positions := JumpLandPositions.new( \
-                                    jump_position, \
-                                    land_position, \
-                                    velocity_start_max_speed, \
-                                    needs_extra_jump_duration)
-                            all_jump_land_positions.push_back(max_movement_jump_land_positions)
-                            
-                            # Consider zero horizontal start velocity, with only player-half-width
-                            # horizontal displacement.
-                            var jump_x := \
-                                    land_surface_left_bound - player_half_width_horizontal_offset
-                            jump_position = _create_surface_interior_position( \
-                                    jump_x, \
-                                    jump_surface, \
-                                    movement_params.collider_half_width_height, \
-                                    jump_surface_left_end_wrapper, \
-                                    jump_surface_right_end_wrapper)
-                            land_position = land_surface_left_end_wrapper
-                            var min_movement_jump_land_positions := _record_if_distinct( \
-                                    jump_position, \
-                                    land_position, \
-                                    velocity_start_zero, \
-                                    interior_point_min_horizontal_distance_from_end, \
-                                    needs_extra_jump_duration, \
-                                    all_jump_land_positions, \
-                                    false, \
-                                    max_movement_jump_land_positions)
-                            
-                        else: # Land surface is lower.
-                            # Consider max-speed horizontal start velocity, with the corresponding
-                            # horizontal displacement from movement.
-                            var jump_basis := jump_surface_left_end_wrapper.target_point
-                            var land_basis: Vector2 = Geometry.project_point_onto_surface( \
-                                    jump_surface_left_end_wrapper.target_point, \
-                                    land_surface)
-                            var must_reach_destination_on_fall := true
-                            var horizontal_movement_distance := \
-                                    _calculate_horizontal_movement_distance( \
-                                            movement_params, \
-                                            jump_basis, \
-                                            land_basis, \
-                                            velocity_start_max_speed, \
-                                            is_a_jump_calculator, \
-                                            must_reach_destination_on_fall)
-                            var jump_position: PositionAlongSurface
-                            var land_position: PositionAlongSurface
-                            if jump_surface_left_bound - land_surface_left_bound > \
-                                    horizontal_movement_distance:
-                                # We can apply all of the horizontal movement displacement onto the
-                                # land position.
-                                jump_position = jump_surface_left_end_wrapper
-                                var land_x := \
-                                        jump_surface_left_bound - horizontal_movement_distance
-                                land_position = _create_surface_interior_position( \
-                                        land_x, \
-                                        land_surface, \
-                                        movement_params.collider_half_width_height, \
-                                        land_surface_left_end_wrapper, \
-                                        land_surface_right_end_wrapper)
-                            elif (jump_surface_left_bound - land_surface_left_bound) + \
-                                    (jump_surface_right_bound - jump_surface_left_bound) > \
-                                    horizontal_movement_distance:
-                                # We can apply some of the horizontal movement displacement onto
-                                # the land position, and the rest onto the jump position.
-                                var jump_x := \
-                                        jump_surface_left_bound + \
-                                        horizontal_movement_distance - \
-                                        (jump_surface_left_bound - land_surface_left_bound)
-                                jump_position = _create_surface_interior_position( \
-                                        jump_x, \
+                                        is_a_jump_calculator, \
+                                        does_velocity_start_moving_leftward, \
+                                        true)
+                                var velocity_start_max_speed := get_velocity_start( \
+                                        movement_params, \
                                         jump_surface, \
-                                        movement_params.collider_half_width_height, \
-                                        jump_surface_left_end_wrapper, \
-                                        jump_surface_right_end_wrapper)
-                                land_position = land_surface_left_end_wrapper
-                            else:
-                                # There isn't enough room on either surface to account for the
-                                # entire horizontal movement displacement, so we'll just use the
-                                # far ends.
-                                jump_position = jump_surface_right_end_wrapper
-                                land_position = land_surface_left_end_wrapper
-                            var max_movement_jump_land_positions := JumpLandPositions.new( \
-                                    jump_position, \
-                                    land_position, \
-                                    velocity_start_max_speed, \
-                                    needs_extra_jump_duration)
-                            all_jump_land_positions.push_back(max_movement_jump_land_positions)
-                            
-                            # Consider zero horizontal start velocity, with only player-half-width
-                            # horizontal displacement.
-                            jump_position = jump_surface_left_end_wrapper
-                            var land_x := \
-                                    jump_surface_left_bound - player_half_width_horizontal_offset
-                            land_position = _create_surface_interior_position( \
-                                    land_x, \
-                                    land_surface, \
-                                    movement_params.collider_half_width_height, \
-                                    land_surface_left_end_wrapper, \
-                                    land_surface_right_end_wrapper)
-                            var min_movement_jump_land_positions := _record_if_distinct( \
-                                    jump_position, \
-                                    land_position, \
-                                    velocity_start_zero, \
-                                    interior_point_min_horizontal_distance_from_end, \
-                                    needs_extra_jump_duration, \
-                                    all_jump_land_positions, \
-                                    false, \
-                                    max_movement_jump_land_positions)
-                        
-                    elif are_surfaces_far_enough_to_move_between_vertically:
-                        # Consider backtracking horizontal movement in order to move around
-                        # underneath the upper surface (the far end of the upper surface and the
-                        # near end of the lower surface).
-                        var does_velocity_start_moving_leftward := true
-                        var velocity_start_max_speed := get_velocity_start( \
-                                movement_params, \
-                                jump_surface, \
-                                is_a_jump_calculator, \
-                                does_velocity_start_moving_leftward, \
-                                false)
-                        var jump_position := land_surface_left_end_wrapper
-                        var land_position := jump_surface_left_end_wrapper
-                        # FIXME ------------------- less_likely_to_be_valid
-                        var move_around_under_jump_land_positions := JumpLandPositions.new( \
-                                jump_position, \
-                                land_position, \
-                                velocity_start_max_speed, \
-                                needs_extra_jump_duration)
-                        all_jump_land_positions.push_back(move_around_under_jump_land_positions)
-                        
-                    if is_enough_right_side_distance_to_not_backtrack_horizontally:
-                        # Consider direct horizontal movement. Consider both v-zero and v-max.
-                        
-                        var does_velocity_start_moving_leftward := \
-                                jump_surface_right_bound > land_surface_right_bound
-                        var velocity_start_zero := get_velocity_start( \
-                                movement_params, \
-                                jump_surface, \
-                                is_a_jump_calculator, \
-                                does_velocity_start_moving_leftward, \
-                                true)
-                        var velocity_start_max_speed := get_velocity_start( \
-                                movement_params, \
-                                jump_surface, \
-                                is_a_jump_calculator, \
-                                does_velocity_start_moving_leftward, \
-                                false)
-                        
-                        if is_jump_surface_lower:
-                            # Consider max-speed horizontal start velocity, with the corresponding
-                            # horizontal displacement from movement.
-                            var jump_basis: Vector2 = Geometry.project_point_onto_surface( \
-                                    land_surface_right_end_wrapper.target_point, \
-                                    jump_surface)
-                            var land_basis := land_surface_right_end_wrapper.target_point
-                            var must_reach_destination_on_fall := true
-                            var horizontal_movement_distance := \
-                                    _calculate_horizontal_movement_distance( \
-                                            movement_params, \
-                                            jump_basis, \
-                                            land_basis, \
+                                        is_a_jump_calculator, \
+                                        does_velocity_start_moving_leftward, \
+                                        false)
+                                
+                                if is_jump_surface_lower:
+                                    # Consider max-speed horizontal start velocity, with the corresponding
+                                    # horizontal displacement from movement.
+                                    var jump_basis: Vector2 = Geometry.project_point_onto_surface( \
+                                            land_surface_left_end_wrapper.target_point, \
+                                            jump_surface)
+                                    var land_basis := land_surface_left_end_wrapper.target_point
+                                    var must_reach_destination_on_fall := true
+                                    var horizontal_movement_distance := \
+                                            _calculate_horizontal_movement_distance( \
+                                                    movement_params, \
+                                                    jump_basis, \
+                                                    land_basis, \
+                                                    velocity_start_max_speed, \
+                                                    is_a_jump_calculator, \
+                                                    must_reach_destination_on_fall)
+                                    var jump_position: PositionAlongSurface
+                                    var land_position: PositionAlongSurface
+                                    if land_surface_left_bound - jump_surface_left_bound > \
+                                            horizontal_movement_distance:
+                                        # We can apply all of the horizontal movement displacement onto the
+                                        # jump position.
+                                        var jump_x := \
+                                                land_surface_left_bound - horizontal_movement_distance
+                                        jump_position = _create_surface_interior_position( \
+                                                jump_x, \
+                                                jump_surface, \
+                                                movement_params.collider_half_width_height, \
+                                                jump_surface_left_end_wrapper, \
+                                                jump_surface_right_end_wrapper)
+                                        land_position = land_surface_left_end_wrapper
+                                    elif (land_surface_left_bound - jump_surface_left_bound) + \
+                                            (land_surface_right_bound - land_surface_left_bound) > \
+                                            horizontal_movement_distance:
+                                        # We can apply some of the horizontal movement displacement onto
+                                        # the jump position, and the rest onto the land position.
+                                        jump_position = jump_surface_left_end_wrapper
+                                        var land_x := \
+                                                land_surface_left_bound + \
+                                                horizontal_movement_distance - \
+                                                (land_surface_left_bound - jump_surface_left_bound)
+                                        land_position = _create_surface_interior_position( \
+                                                land_x, \
+                                                land_surface, \
+                                                movement_params.collider_half_width_height, \
+                                                land_surface_left_end_wrapper, \
+                                                land_surface_right_end_wrapper)
+                                    else:
+                                        # There isn't enough room on either surface to account for the
+                                        # entire horizontal movement displacement, so we'll just use the
+                                        # far ends.
+                                        jump_position = jump_surface_left_end_wrapper
+                                        land_position = land_surface_right_end_wrapper
+                                    var max_movement_jump_land_positions := JumpLandPositions.new( \
+                                            jump_position, \
+                                            land_position, \
                                             velocity_start_max_speed, \
-                                            is_a_jump_calculator, \
-                                            must_reach_destination_on_fall)
-                            var jump_position: PositionAlongSurface
-                            var land_position: PositionAlongSurface
-                            if jump_surface_right_bound - land_surface_right_bound > \
-                                    horizontal_movement_distance:
-                                # We can apply all of the horizontal movement displacement onto the
-                                # jump position.
-                                var jump_x := \
-                                        land_surface_right_bound + horizontal_movement_distance
-                                jump_position = _create_surface_interior_position( \
-                                        jump_x, \
-                                        jump_surface, \
-                                        movement_params.collider_half_width_height, \
-                                        jump_surface_left_end_wrapper, \
-                                        jump_surface_right_end_wrapper)
-                                land_position = land_surface_right_end_wrapper
-                            elif (jump_surface_right_bound - land_surface_right_bound) + \
-                                    (land_surface_right_bound - land_surface_left_bound) > \
-                                    horizontal_movement_distance:
-                                # We can apply some of the horizontal movement displacement onto
-                                # the jump position, and the rest onto the land position.
-                                jump_position = jump_surface_right_end_wrapper
-                                var land_x := \
-                                        land_surface_right_bound - \
-                                        horizontal_movement_distance + \
-                                        (jump_surface_right_bound - land_surface_right_bound)
-                                land_position = _create_surface_interior_position( \
-                                        land_x, \
-                                        land_surface, \
-                                        movement_params.collider_half_width_height, \
-                                        land_surface_left_end_wrapper, \
-                                        land_surface_right_end_wrapper)
-                            else:
-                                # There isn't enough room on either surface to account for the
-                                # entire horizontal movement displacement, so we'll just use the
-                                # far ends.
-                                jump_position = jump_surface_right_end_wrapper
-                                land_position = land_surface_left_end_wrapper
-                            var max_movement_jump_land_positions := JumpLandPositions.new( \
-                                    jump_position, \
-                                    land_position, \
-                                    velocity_start_max_speed, \
-                                    needs_extra_jump_duration)
-                            all_jump_land_positions.push_back(max_movement_jump_land_positions)
-                            
-                            # Consider zero horizontal start velocity, with only player-half-width
-                            # horizontal displacement.
-                            var jump_x := \
-                                    land_surface_right_bound + player_half_width_horizontal_offset
-                            jump_position = _create_surface_interior_position( \
-                                    jump_x, \
-                                    jump_surface, \
-                                    movement_params.collider_half_width_height, \
-                                    jump_surface_left_end_wrapper, \
-                                    jump_surface_right_end_wrapper)
-                            land_position = land_surface_right_end_wrapper
-                            var min_movement_jump_land_positions := _record_if_distinct( \
-                                    jump_position, \
-                                    land_position, \
-                                    velocity_start_zero, \
-                                    interior_point_min_horizontal_distance_from_end, \
-                                    needs_extra_jump_duration, \
-                                    all_jump_land_positions, \
-                                    false, \
-                                    max_movement_jump_land_positions)
-                            
-                        else: # Land surface is lower.
-                            # Consider max-speed horizontal start velocity, with the corresponding
-                            # horizontal displacement from movement.
-                            var jump_basis := jump_surface_right_end_wrapper.target_point
-                            var land_basis: Vector2 = Geometry.project_point_onto_surface( \
-                                    jump_surface_right_end_wrapper.target_point, \
-                                    land_surface)
-                            var must_reach_destination_on_fall := true
-                            var horizontal_movement_distance := \
-                                    _calculate_horizontal_movement_distance( \
-                                            movement_params, \
-                                            jump_basis, \
-                                            land_basis, \
+                                            needs_extra_jump_duration)
+                                    all_jump_land_positions.push_back(max_movement_jump_land_positions)
+                                    
+                                    # Consider zero horizontal start velocity, with only player-half-width
+                                    # horizontal displacement.
+                                    var jump_x := \
+                                            land_surface_left_bound - player_half_width_horizontal_offset
+                                    jump_position = _create_surface_interior_position( \
+                                            jump_x, \
+                                            jump_surface, \
+                                            movement_params.collider_half_width_height, \
+                                            jump_surface_left_end_wrapper, \
+                                            jump_surface_right_end_wrapper)
+                                    land_position = land_surface_left_end_wrapper
+                                    var min_movement_jump_land_positions := _record_if_distinct( \
+                                            jump_position, \
+                                            land_position, \
+                                            velocity_start_zero, \
+                                            interior_point_min_horizontal_distance_from_end, \
+                                            needs_extra_jump_duration, \
+                                            all_jump_land_positions, \
+                                            false, \
+                                            max_movement_jump_land_positions)
+                                    
+                                else: # Land surface is lower.
+                                    # Consider max-speed horizontal start velocity, with the corresponding
+                                    # horizontal displacement from movement.
+                                    var jump_basis := jump_surface_left_end_wrapper.target_point
+                                    var land_basis: Vector2 = Geometry.project_point_onto_surface( \
+                                            jump_surface_left_end_wrapper.target_point, \
+                                            land_surface)
+                                    var must_reach_destination_on_fall := true
+                                    var horizontal_movement_distance := \
+                                            _calculate_horizontal_movement_distance( \
+                                                    movement_params, \
+                                                    jump_basis, \
+                                                    land_basis, \
+                                                    velocity_start_max_speed, \
+                                                    is_a_jump_calculator, \
+                                                    must_reach_destination_on_fall)
+                                    var jump_position: PositionAlongSurface
+                                    var land_position: PositionAlongSurface
+                                    if jump_surface_left_bound - land_surface_left_bound > \
+                                            horizontal_movement_distance:
+                                        # We can apply all of the horizontal movement displacement onto the
+                                        # land position.
+                                        jump_position = jump_surface_left_end_wrapper
+                                        var land_x := \
+                                                jump_surface_left_bound - horizontal_movement_distance
+                                        land_position = _create_surface_interior_position( \
+                                                land_x, \
+                                                land_surface, \
+                                                movement_params.collider_half_width_height, \
+                                                land_surface_left_end_wrapper, \
+                                                land_surface_right_end_wrapper)
+                                    elif (jump_surface_left_bound - land_surface_left_bound) + \
+                                            (jump_surface_right_bound - jump_surface_left_bound) > \
+                                            horizontal_movement_distance:
+                                        # We can apply some of the horizontal movement displacement onto
+                                        # the land position, and the rest onto the jump position.
+                                        var jump_x := \
+                                                jump_surface_left_bound + \
+                                                horizontal_movement_distance - \
+                                                (jump_surface_left_bound - land_surface_left_bound)
+                                        jump_position = _create_surface_interior_position( \
+                                                jump_x, \
+                                                jump_surface, \
+                                                movement_params.collider_half_width_height, \
+                                                jump_surface_left_end_wrapper, \
+                                                jump_surface_right_end_wrapper)
+                                        land_position = land_surface_left_end_wrapper
+                                    else:
+                                        # There isn't enough room on either surface to account for the
+                                        # entire horizontal movement displacement, so we'll just use the
+                                        # far ends.
+                                        jump_position = jump_surface_right_end_wrapper
+                                        land_position = land_surface_left_end_wrapper
+                                    var max_movement_jump_land_positions := JumpLandPositions.new( \
+                                            jump_position, \
+                                            land_position, \
                                             velocity_start_max_speed, \
-                                            is_a_jump_calculator, \
-                                            must_reach_destination_on_fall)
-                            var jump_position: PositionAlongSurface
-                            var land_position: PositionAlongSurface
-                            if land_surface_right_bound - jump_surface_right_bound > \
-                                    horizontal_movement_distance:
-                                # We can apply all of the horizontal movement displacement onto the
-                                # land position.
-                                jump_position = jump_surface_right_end_wrapper
-                                var land_x := \
-                                        jump_surface_right_bound + horizontal_movement_distance
-                                land_position = _create_surface_interior_position( \
-                                        land_x, \
-                                        land_surface, \
-                                        movement_params.collider_half_width_height, \
-                                        land_surface_left_end_wrapper, \
-                                        land_surface_right_end_wrapper)
-                            elif (land_surface_right_bound - jump_surface_right_bound) + \
-                                    (jump_surface_right_bound - jump_surface_left_bound) > \
-                                    horizontal_movement_distance:
-                                # We can apply some of the horizontal movement displacement onto
-                                # the land position, and the rest onto the jump position.
-                                var jump_x := \
-                                        jump_surface_right_bound - \
-                                        horizontal_movement_distance + \
-                                        (land_surface_right_bound - jump_surface_right_bound)
-                                jump_position = _create_surface_interior_position( \
-                                        jump_x, \
+                                            needs_extra_jump_duration)
+                                    all_jump_land_positions.push_back(max_movement_jump_land_positions)
+                                    
+                                    # Consider zero horizontal start velocity, with only player-half-width
+                                    # horizontal displacement.
+                                    jump_position = jump_surface_left_end_wrapper
+                                    var land_x := \
+                                            jump_surface_left_bound - player_half_width_horizontal_offset
+                                    land_position = _create_surface_interior_position( \
+                                            land_x, \
+                                            land_surface, \
+                                            movement_params.collider_half_width_height, \
+                                            land_surface_left_end_wrapper, \
+                                            land_surface_right_end_wrapper)
+                                    var min_movement_jump_land_positions := _record_if_distinct( \
+                                            jump_position, \
+                                            land_position, \
+                                            velocity_start_zero, \
+                                            interior_point_min_horizontal_distance_from_end, \
+                                            needs_extra_jump_duration, \
+                                            all_jump_land_positions, \
+                                            false, \
+                                            max_movement_jump_land_positions)
+                                
+                            elif are_surfaces_far_enough_to_move_between_vertically:
+                                # Consider backtracking horizontal movement in order to move around
+                                # underneath the upper surface (the far end of the upper surface and the
+                                # near end of the lower surface).
+                                var does_velocity_start_moving_leftward := true
+                                var velocity_start_max_speed := get_velocity_start( \
+                                        movement_params, \
                                         jump_surface, \
-                                        movement_params.collider_half_width_height, \
-                                        jump_surface_left_end_wrapper, \
-                                        jump_surface_right_end_wrapper)
-                                land_position = land_surface_right_end_wrapper
-                            else:
-                                # There isn't enough room on either surface to account for the
-                                # entire horizontal movement displacement, so we'll just use the
-                                # far ends.
-                                jump_position = jump_surface_left_end_wrapper
-                                land_position = land_surface_right_end_wrapper
-                            var max_movement_jump_land_positions := JumpLandPositions.new( \
-                                    jump_position, \
-                                    land_position, \
-                                    velocity_start_max_speed, \
-                                    needs_extra_jump_duration)
-                            all_jump_land_positions.push_back(max_movement_jump_land_positions)
+                                        is_a_jump_calculator, \
+                                        does_velocity_start_moving_leftward, \
+                                        false)
+                                var jump_position := jump_surface_left_end_wrapper
+                                var land_position := land_surface_left_end_wrapper
+                                var less_likely_to_be_valid := true
+                                var move_around_under_jump_land_positions := JumpLandPositions.new( \
+                                        jump_position, \
+                                        land_position, \
+                                        velocity_start_max_speed, \
+                                        needs_extra_jump_duration, \
+                                        less_likely_to_be_valid)
+                                all_jump_land_positions.push_back(move_around_under_jump_land_positions)
                             
-                            # Consider zero horizontal start velocity, with only player-half-width
-                            # horizontal displacement.
-                            jump_position = jump_surface_right_end_wrapper
-                            var land_x := \
-                                    jump_surface_right_bound + player_half_width_horizontal_offset
-                            land_position = _create_surface_interior_position( \
-                                    land_x, \
-                                    land_surface, \
-                                    movement_params.collider_half_width_height, \
-                                    land_surface_left_end_wrapper, \
-                                    land_surface_right_end_wrapper)
-                            var min_movement_jump_land_positions := _record_if_distinct( \
-                                    jump_position, \
-                                    land_position, \
-                                    velocity_start_zero, \
-                                    interior_point_min_horizontal_distance_from_end, \
-                                    needs_extra_jump_duration, \
-                                    all_jump_land_positions, \
-                                    false, \
-                                    max_movement_jump_land_positions)
-                        
-                    elif are_surfaces_far_enough_to_move_between_vertically:
-                        # Consider backtracking horizontal movement in order to move around
-                        # underneath the upper surface (the far end of the upper surface and the
-                        # near end of the lower surface).
-                        var does_velocity_start_moving_leftward := false
-                        var velocity_start_max_speed := get_velocity_start( \
-                                movement_params, \
-                                jump_surface, \
-                                is_a_jump_calculator, \
-                                does_velocity_start_moving_leftward, \
-                                false)
-                        var jump_position := land_surface_right_end_wrapper
-                        var land_position := jump_surface_right_end_wrapper
-                        # FIXME ------------------- less_likely_to_be_valid
-                        var move_around_under_jump_land_positions := JumpLandPositions.new( \
-                                jump_position, \
-                                land_position, \
-                                velocity_start_max_speed, \
-                                needs_extra_jump_duration)
-                        all_jump_land_positions.push_back(move_around_under_jump_land_positions)
+                        else: # Is considering right side.
+                            if is_enough_right_side_distance_to_not_backtrack_horizontally:
+                                # Consider direct horizontal movement. Consider both v-zero and v-max.
+                                
+                                var does_velocity_start_moving_leftward := \
+                                        jump_surface_right_bound > land_surface_right_bound
+                                var velocity_start_zero := get_velocity_start( \
+                                        movement_params, \
+                                        jump_surface, \
+                                        is_a_jump_calculator, \
+                                        does_velocity_start_moving_leftward, \
+                                        true)
+                                var velocity_start_max_speed := get_velocity_start( \
+                                        movement_params, \
+                                        jump_surface, \
+                                        is_a_jump_calculator, \
+                                        does_velocity_start_moving_leftward, \
+                                        false)
+                                
+                                if is_jump_surface_lower:
+                                    # Consider max-speed horizontal start velocity, with the corresponding
+                                    # horizontal displacement from movement.
+                                    var jump_basis: Vector2 = Geometry.project_point_onto_surface( \
+                                            land_surface_right_end_wrapper.target_point, \
+                                            jump_surface)
+                                    var land_basis := land_surface_right_end_wrapper.target_point
+                                    var must_reach_destination_on_fall := true
+                                    var horizontal_movement_distance := \
+                                            _calculate_horizontal_movement_distance( \
+                                                    movement_params, \
+                                                    jump_basis, \
+                                                    land_basis, \
+                                                    velocity_start_max_speed, \
+                                                    is_a_jump_calculator, \
+                                                    must_reach_destination_on_fall)
+                                    var jump_position: PositionAlongSurface
+                                    var land_position: PositionAlongSurface
+                                    if jump_surface_right_bound - land_surface_right_bound > \
+                                            horizontal_movement_distance:
+                                        # We can apply all of the horizontal movement displacement onto the
+                                        # jump position.
+                                        var jump_x := \
+                                                land_surface_right_bound + horizontal_movement_distance
+                                        jump_position = _create_surface_interior_position( \
+                                                jump_x, \
+                                                jump_surface, \
+                                                movement_params.collider_half_width_height, \
+                                                jump_surface_left_end_wrapper, \
+                                                jump_surface_right_end_wrapper)
+                                        land_position = land_surface_right_end_wrapper
+                                    elif (jump_surface_right_bound - land_surface_right_bound) + \
+                                            (land_surface_right_bound - land_surface_left_bound) > \
+                                            horizontal_movement_distance:
+                                        # We can apply some of the horizontal movement displacement onto
+                                        # the jump position, and the rest onto the land position.
+                                        jump_position = jump_surface_right_end_wrapper
+                                        var land_x := \
+                                                land_surface_right_bound - \
+                                                horizontal_movement_distance + \
+                                                (jump_surface_right_bound - land_surface_right_bound)
+                                        land_position = _create_surface_interior_position( \
+                                                land_x, \
+                                                land_surface, \
+                                                movement_params.collider_half_width_height, \
+                                                land_surface_left_end_wrapper, \
+                                                land_surface_right_end_wrapper)
+                                    else:
+                                        # There isn't enough room on either surface to account for the
+                                        # entire horizontal movement displacement, so we'll just use the
+                                        # far ends.
+                                        jump_position = jump_surface_right_end_wrapper
+                                        land_position = land_surface_left_end_wrapper
+                                    var max_movement_jump_land_positions := JumpLandPositions.new( \
+                                            jump_position, \
+                                            land_position, \
+                                            velocity_start_max_speed, \
+                                            needs_extra_jump_duration)
+                                    all_jump_land_positions.push_back(max_movement_jump_land_positions)
+                                    
+                                    # Consider zero horizontal start velocity, with only player-half-width
+                                    # horizontal displacement.
+                                    var jump_x := \
+                                            land_surface_right_bound + player_half_width_horizontal_offset
+                                    jump_position = _create_surface_interior_position( \
+                                            jump_x, \
+                                            jump_surface, \
+                                            movement_params.collider_half_width_height, \
+                                            jump_surface_left_end_wrapper, \
+                                            jump_surface_right_end_wrapper)
+                                    land_position = land_surface_right_end_wrapper
+                                    var min_movement_jump_land_positions := _record_if_distinct( \
+                                            jump_position, \
+                                            land_position, \
+                                            velocity_start_zero, \
+                                            interior_point_min_horizontal_distance_from_end, \
+                                            needs_extra_jump_duration, \
+                                            all_jump_land_positions, \
+                                            false, \
+                                            max_movement_jump_land_positions)
+                                    
+                                else: # Land surface is lower.
+                                    # Consider max-speed horizontal start velocity, with the corresponding
+                                    # horizontal displacement from movement.
+                                    var jump_basis := jump_surface_right_end_wrapper.target_point
+                                    var land_basis: Vector2 = Geometry.project_point_onto_surface( \
+                                            jump_surface_right_end_wrapper.target_point, \
+                                            land_surface)
+                                    var must_reach_destination_on_fall := true
+                                    var horizontal_movement_distance := \
+                                            _calculate_horizontal_movement_distance( \
+                                                    movement_params, \
+                                                    jump_basis, \
+                                                    land_basis, \
+                                                    velocity_start_max_speed, \
+                                                    is_a_jump_calculator, \
+                                                    must_reach_destination_on_fall)
+                                    var jump_position: PositionAlongSurface
+                                    var land_position: PositionAlongSurface
+                                    if land_surface_right_bound - jump_surface_right_bound > \
+                                            horizontal_movement_distance:
+                                        # We can apply all of the horizontal movement displacement onto the
+                                        # land position.
+                                        jump_position = jump_surface_right_end_wrapper
+                                        var land_x := \
+                                                jump_surface_right_bound + horizontal_movement_distance
+                                        land_position = _create_surface_interior_position( \
+                                                land_x, \
+                                                land_surface, \
+                                                movement_params.collider_half_width_height, \
+                                                land_surface_left_end_wrapper, \
+                                                land_surface_right_end_wrapper)
+                                    elif (land_surface_right_bound - jump_surface_right_bound) + \
+                                            (jump_surface_right_bound - jump_surface_left_bound) > \
+                                            horizontal_movement_distance:
+                                        # We can apply some of the horizontal movement displacement onto
+                                        # the land position, and the rest onto the jump position.
+                                        var jump_x := \
+                                                jump_surface_right_bound - \
+                                                horizontal_movement_distance + \
+                                                (land_surface_right_bound - jump_surface_right_bound)
+                                        jump_position = _create_surface_interior_position( \
+                                                jump_x, \
+                                                jump_surface, \
+                                                movement_params.collider_half_width_height, \
+                                                jump_surface_left_end_wrapper, \
+                                                jump_surface_right_end_wrapper)
+                                        land_position = land_surface_right_end_wrapper
+                                    else:
+                                        # There isn't enough room on either surface to account for the
+                                        # entire horizontal movement displacement, so we'll just use the
+                                        # far ends.
+                                        jump_position = jump_surface_left_end_wrapper
+                                        land_position = land_surface_right_end_wrapper
+                                    var max_movement_jump_land_positions := JumpLandPositions.new( \
+                                            jump_position, \
+                                            land_position, \
+                                            velocity_start_max_speed, \
+                                            needs_extra_jump_duration)
+                                    all_jump_land_positions.push_back(max_movement_jump_land_positions)
+                                    
+                                    # Consider zero horizontal start velocity, with only player-half-width
+                                    # horizontal displacement.
+                                    jump_position = jump_surface_right_end_wrapper
+                                    var land_x := \
+                                            jump_surface_right_bound + player_half_width_horizontal_offset
+                                    land_position = _create_surface_interior_position( \
+                                            land_x, \
+                                            land_surface, \
+                                            movement_params.collider_half_width_height, \
+                                            land_surface_left_end_wrapper, \
+                                            land_surface_right_end_wrapper)
+                                    var min_movement_jump_land_positions := _record_if_distinct( \
+                                            jump_position, \
+                                            land_position, \
+                                            velocity_start_zero, \
+                                            interior_point_min_horizontal_distance_from_end, \
+                                            needs_extra_jump_duration, \
+                                            all_jump_land_positions, \
+                                            false, \
+                                            max_movement_jump_land_positions)
+                                
+                            elif are_surfaces_far_enough_to_move_between_vertically:
+                                # Consider backtracking horizontal movement in order to move around
+                                # underneath the upper surface (the far end of the upper surface and the
+                                # near end of the lower surface).
+                                var does_velocity_start_moving_leftward := false
+                                var velocity_start_max_speed := get_velocity_start( \
+                                        movement_params, \
+                                        jump_surface, \
+                                        is_a_jump_calculator, \
+                                        does_velocity_start_moving_leftward, \
+                                        false)
+                                var jump_position := jump_surface_right_end_wrapper
+                                var land_position := land_surface_right_end_wrapper
+                                var less_likely_to_be_valid := true
+                                var move_around_under_jump_land_positions := JumpLandPositions.new( \
+                                        jump_position, \
+                                        land_position, \
+                                        velocity_start_max_speed, \
+                                        needs_extra_jump_duration, \
+                                        less_likely_to_be_valid)
+                                all_jump_land_positions.push_back(move_around_under_jump_land_positions)
                     
                 SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
                     # Jump from a floor, land on a wall.
@@ -851,10 +864,14 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                         land_surface_bottom_end_wrapper, \
                                         fail_if_outside_of_bounds)
                                 if land_position != null:
+                                    var needs_extra_jump_duration := false
+                                    var less_likely_to_be_valid := true
                                     jump_land_positions = JumpLandPositions.new( \
                                             jump_position, \
                                             land_position, \
-                                            velocity_start)
+                                            velocity_start, \
+                                            needs_extra_jump_duration, \
+                                            less_likely_to_be_valid)
                                     all_jump_land_positions.push_back(jump_land_positions)
                             
                         elif land_surface_top_bound < jump_surface_center.y:
@@ -972,10 +989,13 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                     jump_surface_left_end_wrapper, \
                                     jump_surface_right_end_wrapper)
                             land_position = land_surface_top_end_wrapper
+                            var less_likely_to_be_valid := true
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
-                                    velocity_start)
+                                    velocity_start, \
+                                    less_likely_to_be_valid, \
+                                    less_likely_to_be_valid)
                             all_jump_land_positions.push_back(jump_land_positions)
                             
                         else:
@@ -1036,10 +1056,13 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                     is_landing_on_left_wall else \
                                     jump_surface_right_end_wrapper
                             land_position = land_surface_top_end_wrapper
+                            var less_likely_to_be_valid := true
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
-                                    velocity_start)
+                                    velocity_start, \
+                                    less_likely_to_be_valid, \
+                                    less_likely_to_be_valid)
                             all_jump_land_positions.push_back(jump_land_positions)
                         
                     else:
@@ -1051,7 +1074,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         #     top of the wall.
                         #   - The secondary pair corresponds to movement that would go between
                         #     surfaces:
-                        #     - Either around the underside of the wal if the wall is higher,
+                        #     - Either around the underside of the wall if the wall is higher,
                         #     - Or around the backside end of the floor around the top of the wall
                         #       if the wall is lower.
                         
@@ -1083,11 +1106,13 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                     jump_surface_right_end_wrapper if \
                                     is_landing_on_left_wall else \
                                     jump_surface_left_end_wrapper
+                            var less_likely_to_be_valid := false
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
                                     velocity_start, \
-                                    needs_extra_jump_duration)
+                                    needs_extra_jump_duration, \
+                                    less_likely_to_be_valid)
                             all_jump_land_positions.push_back(jump_land_positions)
                             
                         else:
@@ -1129,11 +1154,13 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                     movement_params.collider_half_width_height, \
                                     jump_surface_left_end_wrapper, \
                                     jump_surface_right_end_wrapper)
+                            var less_likely_to_be_valid := true
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
                                     velocity_start, \
-                                    needs_extra_jump_duration)
+                                    needs_extra_jump_duration, \
+                                    less_likely_to_be_valid)
                             all_jump_land_positions.push_back(jump_land_positions)
                             
                             # Also consider a version of this jump/land pair with zero horizontal
@@ -1158,11 +1185,13 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                     movement_params.collider_half_width_height, \
                                     jump_surface_left_end_wrapper, \
                                     jump_surface_right_end_wrapper)
+                            less_likely_to_be_valid = true
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
                                     velocity_start, \
-                                    needs_extra_jump_duration)
+                                    needs_extra_jump_duration, \
+                                    less_likely_to_be_valid)
                             all_jump_land_positions.push_back(jump_land_positions)
                         
                         if land_surface_top_bound > \
@@ -1190,11 +1219,13 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             # Land position should be the same slightly-below-top-end point as used
                             # in the primary jump/land pair above.
                             land_position = land_position
+                            var less_likely_to_be_valid := true
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
                                     velocity_start, \
-                                    needs_extra_jump_duration)
+                                    needs_extra_jump_duration, \
+                                    less_likely_to_be_valid)
                             all_jump_land_positions.push_back(jump_land_positions)
                             
                         elif land_surface_bottom_bound < \
@@ -1225,11 +1256,13 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                     movement_params.collider_half_width_height, \
                                     land_surface_top_end_wrapper, \
                                     land_surface_bottom_end_wrapper)
+                            var less_likely_to_be_valid := true
                             jump_land_positions = JumpLandPositions.new( \
                                     jump_position, \
                                     land_position, \
                                     velocity_start, \
-                                    needs_extra_jump_duration)
+                                    needs_extra_jump_duration, \
+                                    less_likely_to_be_valid)
                             all_jump_land_positions.push_back(jump_land_positions)
                     
                 SurfaceSide.CEILING:

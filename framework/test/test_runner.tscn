@@ -10,6 +10,8 @@ script = ExtResource( 1 )
 __meta__ = {
 "_editor_icon": ExtResource( 2 )
 }
+_select_script = "floor_to_floor_jump_land_positions_test"
+_tests_like = "test_non_overlapping_with_lower_jump_surface_farther_on_both_sides"
 _run_on_load = true
 _yield_between_tests = false
 _file_prefix = ""

@@ -11,15 +11,25 @@ var velocity_start: Vector2
 # backtrack to consider a higher jump heigh anyway, so this should improve run time.
 var needs_extra_jump_duration: bool
 
+# When this is true, it usually means that there is a more direct (i.e., less horizontal distance
+# covered, or with fewer horizontal direction changes) jump/land pair for the same surface pair.
+# Edge calculations are more likely to fail when this is true.
+# 
+# An important reason to still consider these pairs, is if there is actually an intermediate
+# surface blocking the way of the more direct alternative, so this might be the only option.
+var less_likely_to_be_valid: bool
+
 func _init( \
         jump_position: PositionAlongSurface, \
         land_position: PositionAlongSurface, \
         velocity_start: Vector2, \
-        needs_extra_jump_duration := false) -> void:
+        needs_extra_jump_duration := false, \
+        less_likely_to_be_valid := false) -> void:
     self.jump_position = jump_position
     self.land_position = land_position
     self.velocity_start = velocity_start
     self.needs_extra_jump_duration = needs_extra_jump_duration
+    self.less_likely_to_be_valid = less_likely_to_be_valid
 
 func is_far_enough_from_other_jump_land_positions( \
         movement_params: MovementParams, \

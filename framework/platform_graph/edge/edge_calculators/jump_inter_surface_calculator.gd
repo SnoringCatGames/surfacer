@@ -9,12 +9,9 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Finish rewriting floor-to-floor jump/land position logic.
 # - Create a new flag to assign on JumpLandPositions: less_likely_to_be_valid.
-#   - Assign that in the new floor-to-floor logic.
-#   - Assign that in other pre-exsiting jump/land position logic.
-#   - Add a new movement_params flag to indicate whether these pairs should be ignored.
-#   - Use that flag in movmeent calculators.
+#   - movement_params.skips_jump_land_positions_that_are_less_likely_to_be_valid
+#   - Use that flag in movement calculators
 # - Finish calculate_land_positions_on_surface.
 # 
 # - Tests!
