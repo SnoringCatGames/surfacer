@@ -144,3 +144,11 @@ func create_surface(params: Dictionary) -> Surface:
     surface.connected_region_bounding_box = connected_region_bounding_box
     
     return surface
+
+static func translate_surface( \
+        surface: Surface, \
+        translation: Vector2) -> void:
+    for i in range(surface.vertices.size()):
+        surface.vertices[i] += translation
+    surface.bounding_box.position += translation
+    surface.connected_region_bounding_box.position += translation

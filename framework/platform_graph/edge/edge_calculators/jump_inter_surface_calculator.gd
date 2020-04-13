@@ -12,7 +12,6 @@ const IS_A_JUMP_CALCULATOR := true
 # - Create a new flag to assign on JumpLandPositions: less_likely_to_be_valid.
 #   - movement_params.skips_jump_land_positions_that_are_less_likely_to_be_valid
 #   - Use that flag in movement calculators
-# - Finish calculate_land_positions_on_surface.
 # 
 # - Tests!
 # 
@@ -93,6 +92,9 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # --- EASIER BITS ---
 # 
+# - Figure out how to fix scaling/aliasing in Godot when adjusting to different screen sizes and
+#   camera zoom.
+# 
 # - Update level images:
 #   - Make background layers more faded
 #   - Make foreground images more wood-like
@@ -107,7 +109,12 @@ const IS_A_JUMP_CALCULATOR := true
 # - Think up ways to make the debug annotations more dynamic/intelligent/useful...
 #   - Make jump/land positions (along with start v, and which pairs connect) more discoverable when
 #     ctrl+clicking.
-#   - Dynamically show next edge debug state while navigating a path?
+#   - A mode to dynamically show next edge debug state while navigating a path?
+#     - Maybe the goal here should be to make all the the complexity of the
+#       graph/waypoints/alternative-or-failed-branches somehow visible or understandable to others
+#       with a quick viewing.
+#   - Have a mode that hides all the other background, foreground, and player images, so that we
+#     can just show the annotations.
 # 
 # - In the README, list the types of MovementParams.
 # 
