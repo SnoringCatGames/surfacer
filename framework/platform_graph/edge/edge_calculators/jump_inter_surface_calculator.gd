@@ -9,11 +9,7 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Create a new flag to assign on JumpLandPositions: less_likely_to_be_valid.
-#   - movement_params.skips_jump_land_positions_that_are_less_likely_to_be_valid
-#   - Use that flag in movement calculators
-# 
-# - Tests!
+# - Debug!
 # 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
@@ -300,6 +296,10 @@ func get_all_inter_surface_edges_from_surface( \
                     debug_state.has("limit_parsing") and \
                     debug_state.limit_parsing.has("edge") != null
             #######################################################################################
+            
+            if jump_land_positions.less_likely_to_be_valid and \
+                    movement_params.skips_jump_land_positions_that_are_less_likely_to_be_valid:
+                continue
             
             if !jump_land_positions.is_far_enough_from_other_jump_land_positions( \
                     movement_params, \

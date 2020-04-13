@@ -65,6 +65,10 @@ static func find_landing_trajectories_to_any_surface( \
                 continue
             ###################################################################################
             
+            if jump_land_positions.less_likely_to_be_valid and \
+                    movement_params.skips_jump_land_positions_that_are_less_likely_to_be_valid:
+                continue
+            
             if !jump_land_positions.is_far_enough_from_other_jump_land_positions( \
                     movement_params, \
                     jump_land_position_results_for_destination_surface, \
