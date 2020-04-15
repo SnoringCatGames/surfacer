@@ -44,7 +44,7 @@ const DEBUG_STATE := {
 #        movement_calculator = "ClimbOverWallToFloorCalculator",
 #        movement_calculator = "FallFromWallCalculator",
 #        movement_calculator = "FallFromFloorCalculator",
-        movement_calculator = "JumpInterSurfaceCalculator",
+#        movement_calculator = "JumpInterSurfaceCalculator",
 #        movement_calculator = "ClimbDownWallToFloorCalculator",
 #        movement_calculator = "WalkToAscendWallFromFloorCalculator",
 #        
