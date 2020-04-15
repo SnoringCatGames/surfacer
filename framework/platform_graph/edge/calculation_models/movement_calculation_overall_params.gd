@@ -83,16 +83,23 @@ func _init( \
     shape_query_params.set_shape(movement_params.collider_shape)
     self.shape_query_params = shape_query_params
 
-func is_backtracking_valid_for_surface(surface: Surface, time_jump_release: float) -> bool:
-    var key := str(surface) + str(time_jump_release)
+func have_backtracked_for_surface( \
+        surface: Surface, \
+        time_jump_release: float) -> bool:
+    var key := surface.to_string() + str(time_jump_release)
     return _collided_surfaces.has(key)
 
-func record_backtracked_surface(surface: Surface, time_jump_release: float) -> void:
-    var key := str(surface) + str(time_jump_release)
+func record_backtracked_surface( \
+        surface: Surface, \
+        time_jump_release: float) -> void:
+    var key := surface.to_string() + str(time_jump_release)
     _collided_surfaces[key] = true
 
 func _set_in_debug_mode(value: bool) -> void:
-    debug_state = MovementCalcOverallDebugState.new(self) if value else null
+    debug_state = \
+            MovementCalcOverallDebugState.new(self) if \
+            value else \
+            null
 
 func _get_in_debug_mode() -> bool:
     return debug_state != null

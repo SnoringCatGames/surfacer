@@ -168,8 +168,12 @@ static func calculate_waypoints_around_surface( \
     var waypoint_b_final: Waypoint
     
     if !should_skip_a:
-        waypoint_a_original = Waypoint.new(colliding_surface, position_a, \
-                passing_vertically, should_stay_on_min_side_a, previous_waypoint, \
+        waypoint_a_original = Waypoint.new( \
+                colliding_surface, \
+                position_a, \
+                passing_vertically, \
+                should_stay_on_min_side_a, \
+                previous_waypoint, \
                 next_waypoint)
         # Calculate and record state for the waypoint.
         update_waypoint( \
@@ -377,6 +381,13 @@ static func _update_waypoint_velocity_and_time( \
 #            waypoint.position, \
 #            Vector2(-190, -349), 10):
 #        print("break")
+    # FIXME: DEBUGGING: REMOVE: --------------------
+    if vertical_step != null and \
+            Geometry.are_floats_equal_with_epsilon( \
+                    vertical_step.time_step_end, 0.491, 0.1) and \
+            waypoint.position == Vector2(66, 29):
+        # FIXME: LEFT OFF HERE: ------------------!! We're hitting this a second time, in a deeper backtracking recursive traversal. Why??
+        print("break")
     
     # Calculate the time that the movement would pass through the waypoint, as well as the min
     # and max x-velocity when passing through the waypoint.
@@ -1730,9 +1741,13 @@ static func _calculate_replacement_for_fake_waypoint( \
     return replacement
 
 static func clone_waypoint(original: Waypoint) -> Waypoint:
-    var clone := Waypoint.new(original.surface, original.position, \
-            original.passing_vertically, original.should_stay_on_min_side, \
-            original.previous_waypoint, original.next_waypoint)
+    var clone := Waypoint.new( \
+            original.surface, \
+            original.position, \
+            original.passing_vertically, \
+            original.should_stay_on_min_side, \
+            original.previous_waypoint, \
+            original.next_waypoint)
     copy_waypoint(clone, original)
     return clone
 

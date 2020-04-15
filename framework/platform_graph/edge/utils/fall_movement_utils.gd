@@ -44,6 +44,15 @@ static func find_landing_trajectories_to_any_surface( \
     
     # Find the first possible edge to a landing surface.
     for destination_surface in possible_landing_surfaces_from_point:
+        ###########################################################################################
+        # Allow for debug mode to limit the scope of what's calculated.
+        if EdgeMovementCalculator.should_skip_edge_calculation( \
+                debug_state, \
+                origin_position, \
+                destination_surface):
+            continue
+        ###########################################################################################
+        
         if origin_position.surface == destination_surface:
             # We don't need to calculate edges for the degenerate case.
             continue
@@ -58,12 +67,14 @@ static func find_landing_trajectories_to_any_surface( \
                         velocity_start)
         
         for jump_land_positions in jump_land_positions_to_consider:
-            ###################################################################################
+            #######################################################################################
             # Allow for debug mode to limit the scope of what's calculated.
-            if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
-                    jump_land_positions.jump_position, jump_land_positions.land_position):
+            if EdgeMovementCalculator.should_skip_edge_calculation( \
+                    debug_state, \
+                    jump_land_positions.jump_position, \
+                    jump_land_positions.land_position):
                 continue
-            ###################################################################################
+            #######################################################################################
             
             if jump_land_positions.less_likely_to_be_valid and \
                     movement_params.skips_jump_land_positions_that_are_less_likely_to_be_valid:
@@ -141,7 +152,9 @@ static func find_landing_trajectory_between_positions( \
             null, \
             null)
     
-    return MovementStepUtils.calculate_steps_from_waypoint(overall_calc_params, step_calc_params)
+    return MovementStepUtils.calculate_steps_between_waypoints( \
+                overall_calc_params, \
+                step_calc_params)
 
 static func find_surfaces_in_fall_range_from_point( \
         movement_params: MovementParams, \

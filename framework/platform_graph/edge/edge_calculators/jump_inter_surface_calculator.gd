@@ -8,8 +8,35 @@ const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
+#
+# - Two current problems:
+#   - Need to fix how/when previous/next waypoint references are assigned when recursing w/w-o
+#     backtracking.
+#     - Are they assigned when waypoints are first created?
+#     - Some references must be incorrect?
+#   - Need to fix the actual problem that's causing the same surface/jump-time combo to happen when
+#     backtracking.
 # 
 # - Debug!
+#   >- Current focus:
+#     - jump-up-from-long-bottom-floor-to-close-short-floor:
+#       - Jump/land positions are good.
+#       - Is velocity_start not working somehow within the edge calculations?
+# 
+# - Add another flag for whether to run a final collision test over the combined steps after
+#   calculating the result.
+#   - This should be useful when adding the other flag to skip the recursive part of trying new
+#     heights, since we'll want to ensure that such calculations don't produce false positives.
+# - It should probably be an assert for never seeing same surface collision with same jump height.
+#   - Maybe make an analytics tracking concept for things that should assert, but happen a lot in
+#     practice with the current state of things;
+# 
+# - Two new features: when backing for height, ride all previous contains, but rest their times and maybe velocities; make sure to sort possible way point pays better, closet side of calling should always come first;
+# - Timeline plan:
+#   - v1 done end of June.
+#   - Plan to pause then, and plan actual next career plans.
+#   - Decide whether I should continue expanding squirrels, take time off work, take (art) classes,
+#     sabbatical, job hunt, what...
 # 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
@@ -268,6 +295,15 @@ func get_all_inter_surface_edges_from_surface( \
         # This makes the assumption that traversing through any fall-through/walk-through surface
         # would be better handled by some other Movement type, so we don't handle those
         # cases here.
+        
+        ###########################################################################################
+        # Allow for debug mode to limit the scope of what's calculated.
+        if EdgeMovementCalculator.should_skip_edge_calculation( \
+                debug_state, \
+                origin_surface, \
+                destination_surface):
+            continue
+        ###########################################################################################
         
         if origin_surface == destination_surface:
             # We don't need to calculate edges for the degenerate case.

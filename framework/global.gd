@@ -15,8 +15,7 @@ const DEBUG_PANEL_RESOURCE_PATH := "res://framework/panels/debug_panel.tscn"
 const WELCOME_PANEL_RESOURCE_PATH := "res://framework/panels/welcome_panel.tscn"
 
 const IN_DEBUG_MODE := true
-const IN_TEST_MODE := true
-#const IN_TEST_MODE := false
+const IN_TEST_MODE := false
 
 const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_rise.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_fall.tscn"
@@ -38,7 +37,7 @@ const DEBUG_STATE := {
 #                surface_side = SurfaceSide.FLOOR,
 #            },
 #            destination = {
-#                surface_side = SurfaceSide.LEFT_WALL,
+#                surface_side = SurfaceSide.FLOOR,
 #            },
 #        },
 #        
@@ -89,6 +88,20 @@ const DEBUG_STATE := {
 #                position = Vector2(192, 64),
 #            },
 #        },
+#        
+#        # Level: jump-up-right from long base floor to close short floor
+        edge = {
+            origin = {
+                surface_side = SurfaceSide.FLOOR,
+                surface_start_vertex = Vector2(-960, 256),
+                surface_end_vertex = Vector2(2688, 256),
+            },
+            destination = {
+                surface_side = SurfaceSide.FLOOR,
+                surface_start_vertex = Vector2(128, 64),
+                surface_end_vertex = Vector2(192, 64),
+            },
+        },
     },
     extra_annotations = {},
 }
