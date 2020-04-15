@@ -398,6 +398,6 @@ static func optimize_edge_land_position_for_path_helper( \
                         movement_params)
                 
                 path.edges[edge_index] = optimized_edge
-                path.edges[edge_index + 1] = edge
+                path.edges[edge_index + 1] = next_edge
                 
                 return

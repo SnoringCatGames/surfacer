@@ -11,7 +11,10 @@ const IS_A_JUMP_CALCULATOR := true
 #
 # - Debug!
 #   >- Current focus:
-#     - What causes the position to jump back after landing on at the end of some edges?
+#     - IntraSurfaceEdge seems to quit early when we land on the wrong side.
+#     - Missing (fall-short of) wall when jumping from lowest floor to low block.
+#     - Path weight seems to be preferring pair of jump from floor to wall then wall to floor
+#       rather than just floor to floor.
 # 
 # - Two new features:
 #   - When "backtracking" for height, re-use all previous waypoints, but reset their times and
@@ -28,12 +31,6 @@ const IS_A_JUMP_CALCULATOR := true
 #     - Should actually abandon far-side of ceilings?
 #     - Can test this by reducing v-max-start horizontal offset for movement and testing jump from
 #       lowest floor to other low floor.
-# 
-# - Timeline plan:
-#   - v1 done end of June.
-#   - Plan to pause then, and plan actual next career plans.
-#   - Decide whether I should continue expanding squirrels, take time off work, take (art) classes,
-#     sabbatical, job hunt, what...
 # 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
