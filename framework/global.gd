@@ -90,18 +90,18 @@ const DEBUG_STATE := {
 #        },
 #        
 #        # Level: jump-up-right from long base floor to close short floor
-        edge = {
-            origin = {
-                surface_side = SurfaceSide.FLOOR,
-                surface_start_vertex = Vector2(-960, 256),
-                surface_end_vertex = Vector2(2688, 256),
-            },
-            destination = {
-                surface_side = SurfaceSide.FLOOR,
-                surface_start_vertex = Vector2(128, 64),
-                surface_end_vertex = Vector2(192, 64),
-            },
-        },
+#        edge = {
+#            origin = {
+#                surface_side = SurfaceSide.FLOOR,
+#                surface_start_vertex = Vector2(-960, 256),
+#                surface_end_vertex = Vector2(2688, 256),
+#            },
+#            destination = {
+#                surface_side = SurfaceSide.FLOOR,
+#                surface_start_vertex = Vector2(128, 64),
+#                surface_end_vertex = Vector2(192, 64),
+#            },
+#        },
     },
     extra_annotations = {},
 }

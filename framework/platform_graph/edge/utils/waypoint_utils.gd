@@ -381,13 +381,6 @@ static func _update_waypoint_velocity_and_time( \
 #            waypoint.position, \
 #            Vector2(-190, -349), 10):
 #        print("break")
-    # FIXME: DEBUGGING: REMOVE: --------------------
-    if vertical_step != null and \
-            Geometry.are_floats_equal_with_epsilon( \
-                    vertical_step.time_step_end, 0.491, 0.1) and \
-            waypoint.position == Vector2(66, 29):
-        # FIXME: LEFT OFF HERE: ------------------!! We're hitting this a second time, in a deeper backtracking recursive traversal. Why??
-        print("break")
     
     # Calculate the time that the movement would pass through the waypoint, as well as the min
     # and max x-velocity when passing through the waypoint.

@@ -9,29 +9,26 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 #
-# - Two current problems:
-#   - Need to fix how/when previous/next waypoint references are assigned when recursing w/w-o
-#     backtracking.
-#     - Are they assigned when waypoints are first created?
-#     - Some references must be incorrect?
-#   - Need to fix the actual problem that's causing the same surface/jump-time combo to happen when
-#     backtracking.
-# 
 # - Debug!
 #   >- Current focus:
-#     - jump-up-from-long-bottom-floor-to-close-short-floor:
-#       - Jump/land positions are good.
-#       - Is velocity_start not working somehow within the edge calculations?
+#     - What causes the position to jump back after landing on at the end of some edges?
 # 
-# - Add another flag for whether to run a final collision test over the combined steps after
-#   calculating the result.
-#   - This should be useful when adding the other flag to skip the recursive part of trying new
-#     heights, since we'll want to ensure that such calculations don't produce false positives.
-# - It should probably be an assert for never seeing same surface collision with same jump height.
-#   - Maybe make an analytics tracking concept for things that should assert, but happen a lot in
-#     practice with the current state of things;
+# - Two new features:
+#   - When "backtracking" for height, re-use all previous waypoints, but reset their times and
+#     maybe velocities.
+#     - This should actually mean that we no longer "backtrack"/recurse specially.
+#     - Conditionally use this approach behind a movement_params flag. This should improve
+#       efficiency and decrease accuracy.
+#     - Then also add another flag for whether to run a final collision test over the combined
+#       steps after calculating the result.
+#       - This should be useful, since we'll want to ensure that such calculations don't produce
+#         false positives.
+#   - Make sure to sort possible waypoint pairs better, closest side of ceiling or floor should
+#     always come first.
+#     - Should actually abandon far-side of ceilings?
+#     - Can test this by reducing v-max-start horizontal offset for movement and testing jump from
+#       lowest floor to other low floor.
 # 
-# - Two new features: when backing for height, ride all previous contains, but rest their times and maybe velocities; make sure to sort possible way point pays better, closet side of calling should always come first;
 # - Timeline plan:
 #   - v1 done end of June.
 #   - Plan to pause then, and plan actual next career plans.
