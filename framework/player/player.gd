@@ -181,10 +181,10 @@ func _physics_process(delta: float) -> void:
     actions.delta = delta
 
     # Flip the horizontal direction of the animation according to which way the player is facing.
-    if actions.pressed_left:
-        animator.face_left()
-    if actions.pressed_right:
+    if surface_state.horizontal_facing_sign == 1:
         animator.face_right()
+    elif surface_state.horizontal_facing_sign == -1:
+        animator.face_left()
     
     _process_actions()
     _process_animation()
@@ -269,11 +269,18 @@ func processed_action(name: String) -> bool:
 # Updates some basic surface-related state for player's actions and environment of the current frame.
 func _update_surface_state() -> void:
     # Flip the horizontal direction of the animation according to which way the player is facing.
-    if actions.pressed_right:
+    if actions.pressed_face_right:
         surface_state.horizontal_facing_sign = 1
-        surface_state.horizontal_acceleration_sign = 1
+    elif actions.pressed_face_left:
+        surface_state.horizontal_facing_sign = -1
+    elif actions.pressed_right:
+        surface_state.horizontal_facing_sign = 1
     elif actions.pressed_left:
         surface_state.horizontal_facing_sign = -1
+    
+    if actions.pressed_right:
+        surface_state.horizontal_acceleration_sign = 1
+    elif actions.pressed_left:
         surface_state.horizontal_acceleration_sign = -1
     else:
         surface_state.horizontal_acceleration_sign = 0

@@ -11,7 +11,6 @@ const IS_A_JUMP_CALCULATOR := true
 #
 # - Debug!
 #   >- Current focus:
-#     - IntraSurfaceEdge seems to quit early when we land on the wrong side.
 #     - Missing (fall-short of) wall when jumping from lowest floor to low block.
 #     - Path weight seems to be preferring pair of jump from floor to wall then wall to floor
 #       rather than just floor to floor.

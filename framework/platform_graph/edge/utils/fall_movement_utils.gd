@@ -153,8 +153,8 @@ static func find_landing_trajectory_between_positions( \
             null)
     
     return MovementStepUtils.calculate_steps_between_waypoints( \
-                overall_calc_params, \
-                step_calc_params)
+            overall_calc_params, \
+            step_calc_params)
 
 static func find_surfaces_in_fall_range_from_point( \
         movement_params: MovementParams, \

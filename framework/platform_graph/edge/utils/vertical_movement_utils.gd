@@ -455,7 +455,8 @@ static func calculate_time_for_passing_through_waypoint( \
                 movement_params.gravity_slow_rise, \
                 true, \
                 min_end_time, \
-                false)
+                false, \
+                true)
         if duration_of_slow_rise == INF:
             return INF
         duration_of_fast_fall = 0.0
@@ -469,7 +470,8 @@ static func calculate_time_for_passing_through_waypoint( \
                 movement_params.gravity_fast_fall, \
                 is_position_before_peak, \
                 min_end_time, \
-                false)
+                false, \
+                true)
         if duration_of_fast_fall == INF:
             return INF
     
