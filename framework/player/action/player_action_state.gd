@@ -164,7 +164,7 @@ func log_new_presses_and_releases( \
             player.velocity)
     _log_new_press_or_release( \
             player.player_name, \
-            "facel", \
+            "faceL", \
             just_pressed_face_left, \
             just_released_face_left, \
             time_sec, \
@@ -172,7 +172,7 @@ func log_new_presses_and_releases( \
             player.velocity)
     _log_new_press_or_release( \
             player.player_name, \
-            "facer", \
+            "faceR", \
             just_pressed_face_right, \
             just_released_face_right, \
             time_sec, \

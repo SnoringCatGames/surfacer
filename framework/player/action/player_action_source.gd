@@ -141,9 +141,9 @@ static func input_key_to_action_name(input_key: String) -> String:
         "grab_wall":
             return "grab"
         "face_left":
-            return "facel"
+            return "faceL"
         "face_right":
-            return "facer"
+            return "faceR"
         _:
             Utils.error()
             return ""

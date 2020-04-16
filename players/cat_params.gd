@@ -74,7 +74,7 @@ func _init() -> void:
     friction_multiplier = 0.01
     
     uses_duration_instead_of_distance_for_edge_weight = true
-    additional_edge_weight_offset = 32.0
+    additional_edge_weight_offset = 128.0
     walking_edge_weight_multiplier = 1.2
     climbing_edge_weight_multiplier = 1.5
     air_edge_weight_multiplier = 1.0

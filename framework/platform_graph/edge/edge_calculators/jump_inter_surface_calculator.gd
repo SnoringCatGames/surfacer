@@ -11,9 +11,19 @@ const IS_A_JUMP_CALCULATOR := true
 #
 # - Debug!
 #   >- Current focus:
+#     - Repro:
+#       - Set additional_edge_weight_offset to 64.
+#       - From ~704x on low-long floor, click to navigate to short-low floor.
+#       - Should see the jump land near the top of the wall, and then the intra-surface edge end immediately, and then the climb-over-wall edge is sad about just having left the air.
 #     - Missing (fall-short of) wall when jumping from lowest floor to low block.
+#       >- force an upward offset for the land position when it's too close to the low end?
+#       >- force a higher inward velocity?
+#       - reduce the waypoint margin from the surface?
 #     - Path weight seems to be preferring pair of jump from floor to wall then wall to floor
 #       rather than just floor to floor.
+#     - Paths don't account for the extra bit of movement that occurs as the player decelerates
+#       after releasing the walk button. Calculate what that is, and use it to offset the end point
+#       for the last intra-surface edge in a path.
 # 
 # - Two new features:
 #   - When "backtracking" for height, re-use all previous waypoints, but reset their times and

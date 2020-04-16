@@ -373,6 +373,15 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   - While adding tests, also debug.
 #   - Plan what sort of helpers and testbed infrastructure we'll need.
 #   - Adapt/discard the earlier, brittle, implementation-specific tests.
+# 
+# - Add support for friction to the navigation/movement logic.
+#   - Will mostly need to update duration calculations for a few edges:
+#     - IntraSurfaceEdge
+#     - FallFromFloorEdge
+#     - WalkToAscendWallFromFloorEdge
+#     - Probably should add friction support to climbing on walls:
+#       - ClimbDownWallToFloorEdge
+#       - ClimbOverWallToFloorEdge
 
 
 const CLUSTER_CELL_SIZE := 0.5
@@ -441,6 +450,7 @@ func find_path( \
                 movement_params)]
         return PlatformGraphPath.new(edges)
     
+    var explored_surfaces := {}
     var nodes_to_previous_nodes := {}
     nodes_to_previous_nodes[origin] = null
     var nodes_to_weights := {}
@@ -484,19 +494,25 @@ func find_path( \
             # necessarily be less direct than this intra-surface edge that we just recorded.
             continue
         
-        # Record temporary intra-surface edges from the current node to each other node on the same
-        # surface.
-        for next_node in surfaces_to_outbound_nodes[current_node.surface]:
-            new_actual_weight = current_weight + \
-                    current_node.target_point.distance_to(next_node.target_point)
-            _record_frontier( \
-                    current_node, \
-                    next_node, \
-                    destination, \
-                    new_actual_weight, \
-                    nodes_to_previous_nodes, \
-                    nodes_to_weights, \
-                    frontier)
+        # Only consider the out-bound nodes of the current surface if we haven't already considered
+        # them (otherwise, we can end up with multiple adjacent intra-surface edges in the same
+        # path).
+        if !explored_surfaces.has(current_node.surface):
+            explored_surfaces[current_node.surface] = true
+            
+            # Record temporary intra-surface edges from the current node to each other node on the
+            # same surface.
+            for next_node in surfaces_to_outbound_nodes[current_node.surface]:
+                new_actual_weight = current_weight + \
+                        current_node.target_point.distance_to(next_node.target_point)
+                _record_frontier( \
+                        current_node, \
+                        next_node, \
+                        destination, \
+                        new_actual_weight, \
+                        nodes_to_previous_nodes, \
+                        nodes_to_weights, \
+                        frontier)
         
         ### Record inter-surface edges.
         
@@ -531,6 +547,8 @@ func find_path( \
     
     while previous_node != null:
         if nodes_to_previous_nodes[previous_node] == null or edges.empty():
+            # A terminal intra-surface edge.
+            # 
             # The first and last edge are temporary and extend from/to the origin/destination,
             # which are not aligned with normal node positions.
             next_edge = IntraSurfaceEdge.new( \
@@ -539,6 +557,8 @@ func find_path( \
                     Vector2.ZERO, \
                     movement_params)
         elif previous_node.surface == current_node.surface:
+            # An intermediate intra-surface edge.
+            # 
             # The previous node is on the same surface as the current node, so we create an
             # intra-surface edge.
             next_edge = IntraSurfaceEdge.new( \

@@ -75,3 +75,37 @@ static func _calculate_instructions( \
     return MovementInstructions.new( \
             [inward_instruction, upward_instruction], \
             INF)
+
+# This edge needs to override this function, since Godot's collision engine generates many
+# false-positive departures and collisions when rounding the corner between surfaces. So we need to
+# be more permissible here for what we consider to be expected when leaving and entering the air.
+func update_navigation_state( \
+        navigation_state: PlayerNavigationState, \
+        surface_state: PlayerSurfaceState, \
+        playback, \
+        just_started_new_edge: bool) -> void:
+    .update_navigation_state( \
+            navigation_state, \
+            surface_state, \
+            playback, \
+            just_started_new_edge)
+    
+    var is_grabbed_surface_expected: bool = \
+            surface_state.grabbed_surface == self.start_surface or \
+            surface_state.grabbed_surface == self.end_surface
+    navigation_state.just_left_air_unexpectedly = \
+            surface_state.just_left_air and \
+            !is_grabbed_surface_expected and \
+            surface_state.collision_count > 0
+    
+    navigation_state.just_entered_air_unexpectedly = false
+    
+    navigation_state.just_interrupted_navigation = \
+            navigation_state.just_left_air_unexpectedly or \
+            navigation_state.just_entered_air_unexpectedly or \
+            navigation_state.just_interrupted_by_user_action
+    
+    navigation_state.just_reached_end_of_edge = _check_did_just_reach_destination( \
+            navigation_state, \
+            surface_state, \
+            playback)

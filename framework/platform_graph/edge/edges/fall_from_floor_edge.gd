@@ -68,11 +68,14 @@ func _check_did_just_reach_destination( \
 # override adds logic to ignore any of these extra collisions with the starting surface.
 func update_navigation_state( \
         navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, playback) -> void:
+        surface_state: PlayerSurfaceState, \
+        playback, \
+        just_started_new_edge: bool) -> void:
     .update_navigation_state( \
             navigation_state, \
             surface_state, \
-            playback)
+            playback, \
+            just_started_new_edge)
     
     var is_still_colliding_with_start_surface := \
             surface_state.grabbed_surface == self.start_surface
@@ -82,8 +85,10 @@ func update_navigation_state( \
     var is_grabbed_surface_expected: bool = \
             surface_state.grabbed_surface == self.end_surface or \
             is_still_colliding_with_start_surface
-    navigation_state.just_left_air_unexpectedly = surface_state.just_left_air and \
-            !is_grabbed_surface_expected and surface_state.collision_count > 0
+    navigation_state.just_left_air_unexpectedly = \
+            surface_state.just_left_air and \
+            !is_grabbed_surface_expected and \
+            surface_state.collision_count > 0
     
     navigation_state.just_interrupted_navigation = \
             navigation_state.just_left_air_unexpectedly or \

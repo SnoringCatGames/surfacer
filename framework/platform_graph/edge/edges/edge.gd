@@ -89,14 +89,22 @@ func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
 func update_navigation_state( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
-        playback) -> void:
+        playback, \
+        just_started_new_edge: bool) -> void:
+    var still_grabbing_start_surface_at_start := \
+            just_started_new_edge and \
+            surface_state.grabbed_surface == self.start_surface
     var is_grabbed_surface_expected: bool = \
             surface_state.grabbed_surface == self.end_surface
-    navigation_state.just_left_air_unexpectedly = surface_state.just_left_air and \
-            !is_grabbed_surface_expected and surface_state.collision_count > 0
+    navigation_state.just_left_air_unexpectedly = \
+            surface_state.just_left_air and \
+            !is_grabbed_surface_expected and \
+            surface_state.collision_count > 0 and \
+            !still_grabbing_start_surface_at_start
     
     navigation_state.just_entered_air_unexpectedly = \
-            surface_state.just_entered_air and !navigation_state.is_expecting_to_enter_air
+            surface_state.just_entered_air and \
+            !navigation_state.is_expecting_to_enter_air
     
     navigation_state.just_interrupted_by_user_action = \
             UserActionSource.get_is_some_user_action_pressed()

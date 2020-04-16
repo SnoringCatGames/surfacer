@@ -150,17 +150,18 @@ func _start_edge(index: int) -> void:
     
     # Some instructions could be immediately skipped, depending on runtime state, so this gives us
     # a change to move straight to the next edge.
-    update()
+    update(true)
 
 # Updates navigation state in response to the current surface state.
-func update() -> void:
+func update(just_started_new_edge = false) -> void:
     if !is_currently_navigating:
         return
     
     current_edge.update_navigation_state( \
             navigation_state, \
             surface_state, \
-            current_playback)
+            current_playback, \
+            just_started_new_edge)
     
     if navigation_state.just_interrupted_navigation:
         var interruption_type_label: String
@@ -243,6 +244,9 @@ static func _optimize_edges_for_approach( \
             previous_edge = path.edges[i - 1]
             current_edge = path.edges[i]
             
+            # We shouldn't have two intra-surface edges in a row.
+            assert(previous_edge != IntraSurfaceEdge or current_edge != IntraSurfaceEdge)
+            
             is_previous_edge_long_enough_to_be_worth_optimizing_jump_position = \
                     previous_edge.distance >= \
                     movement_params.min_intra_surface_distance_to_optimize_jump_for
@@ -270,6 +274,9 @@ static func _optimize_edges_for_approach( \
         for i in range(1, path.edges.size()):
             previous_edge = path.edges[i - 1]
             current_edge = path.edges[i]
+            
+            # We shouldn't have two intra-surface edges in a row.
+            assert(previous_edge != IntraSurfaceEdge or current_edge != IntraSurfaceEdge)
             
             is_current_edge_long_enough_to_be_worth_optimizing_land_position = \
                     current_edge.distance >= \
