@@ -65,6 +65,7 @@ func calculate_edge( \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
+        needs_extra_wall_land_horizontal_speed := false, \
         in_debug_mode := false) -> Edge:
     return ClimbOverWallToFloorEdge.new( \
             self, \

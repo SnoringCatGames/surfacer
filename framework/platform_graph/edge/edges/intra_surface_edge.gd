@@ -30,6 +30,7 @@ func _init( \
                 velocity_start, \
                 movement_params), \
         false, \
+        false, \
         movement_params, \
         _calculate_instructions(start, end), \
         null) -> void:

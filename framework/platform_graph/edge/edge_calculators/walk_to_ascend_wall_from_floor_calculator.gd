@@ -53,6 +53,7 @@ func get_all_inter_surface_edges_from_surface( \
                 end_position, \
                 Vector2.ZERO, \
                 false, \
+                false, \
                 false)
         edges_result.push_back(edge)
     
@@ -78,6 +79,7 @@ func get_all_inter_surface_edges_from_surface( \
                 end_position, \
                 Vector2.ZERO, \
                 false, \
+                false, \
                 false)
         edges_result.push_back(edge)
 
@@ -87,6 +89,7 @@ func calculate_edge( \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
+        needs_extra_wall_land_horizontal_speed := false, \
         in_debug_mode := false) -> Edge:
     return WalkToAscendWallFromFloorEdge.new( \
             self, \

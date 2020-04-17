@@ -5,6 +5,11 @@ class_name EdgeMovementCalculator
 # trajectory when landing on a wall surface.
 const MIN_LAND_ON_WALL_SPEED := 50.0
 
+# The minimum land-on-wall horizontal speed is multiplied by this value when the player is likely
+# to need more speed in order to land on the wall. In particular, this is used for positions at the
+# bottom of walls, where the player might otherwise fall short.
+const MIN_LAND_ON_WALL_EXTRA_SPEED_RATIO := 2.0
+
 var name: String
 var is_a_jump_calculator: bool
 
@@ -32,6 +37,7 @@ func calculate_edge( \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
+        needs_extra_wall_land_horizontal_speed := false, \
         in_debug_mode := false) -> Edge:
     Utils.error("abstract EdgeMovementCalculator.calculate_edge is not implemented")
     return null
@@ -64,11 +70,12 @@ static func create_movement_calc_overall_params(
         can_hold_jump_button: bool, \
         velocity_start: Vector2, \
         needs_extra_jump_duration: bool, \
+        needs_extra_wall_land_horizontal_speed: bool, \
         returns_invalid_waypoints: bool, \
-        in_debug_mode: bool, \
-        velocity_end_min_x := INF, \
-        velocity_end_max_x := INF) -> MovementCalcOverallParams:
+        in_debug_mode: bool) -> MovementCalcOverallParams:
     # When landing on a wall, ensure that we end with velocity moving into the wall.
+    var velocity_end_min_x := INF
+    var velocity_end_max_x := INF
     if destination_position.surface != null:
         if destination_position.surface.side == SurfaceSide.LEFT_WALL:
             velocity_end_min_x = -collision_params.movement_params.max_horizontal_speed_default
@@ -76,6 +83,8 @@ static func create_movement_calc_overall_params(
         if destination_position.surface.side == SurfaceSide.RIGHT_WALL:
             velocity_end_min_x = MIN_LAND_ON_WALL_SPEED
             velocity_end_max_x = collision_params.movement_params.max_horizontal_speed_default
+        if needs_extra_wall_land_horizontal_speed:
+            velocity_end_min_x *= MIN_LAND_ON_WALL_EXTRA_SPEED_RATIO
     
     var terminals := WaypointUtils.create_terminal_waypoints( \
             origin_position, \
@@ -98,6 +107,7 @@ static func create_movement_calc_overall_params(
             terminals[1], \
             velocity_start, \
             needs_extra_jump_duration, \
+            needs_extra_wall_land_horizontal_speed, \
             can_hold_jump_button)
     overall_calc_params.in_debug_mode = in_debug_mode
     
@@ -243,6 +253,7 @@ static func optimize_edge_jump_position_for_path_helper( \
                     edge.end_position_along_surface, \
                     velocity_start, \
                     edge.includes_extra_jump_duration, \
+                    edge.includes_extra_wall_land_horizontal_speed, \
                     in_debug_mode)
             
             if optimized_edge != null:
@@ -287,6 +298,7 @@ static func optimize_edge_jump_position_for_path_helper( \
                     edge.end_position_along_surface, \
                     velocity_start, \
                     edge.includes_extra_jump_duration, \
+                    edge.includes_extra_wall_land_horizontal_speed, \
                     in_debug_mode)
             
             if optimized_edge != null:
@@ -347,6 +359,7 @@ static func optimize_edge_land_position_for_path_helper( \
                     land_position, \
                     edge.velocity_start, \
                     edge.includes_extra_jump_duration, \
+                    false, \
                     in_debug_mode)
             
             if optimized_edge != null:
@@ -367,6 +380,7 @@ static func optimize_edge_land_position_for_path_helper( \
         # Landing on a wall.
         
         var land_position: PositionAlongSurface
+        var needs_extra_wall_land_horizontal_speed: bool
         var calc_results: MovementCalcResults
         var optimized_edge: Edge
         
@@ -380,12 +394,18 @@ static func optimize_edge_land_position_for_path_helper( \
                         next_edge.start_surface, \
                         movement_params.collider_half_width_height)
             
+            if JumpLandPositionsUtils.is_land_position_close_to_wall_bottom(land_position):
+                # If we're too close to the wall bottom, than this and future possible optimized
+                # land positions aren't valid.
+                return
+            
             optimized_edge = edge_movement_calculator.calculate_edge( \
                     collision_params, \
                     edge.start_position_along_surface, \
                     land_position, \
                     edge.velocity_start, \
                     edge.includes_extra_jump_duration, \
+                    false, \
                     in_debug_mode)
             
             if optimized_edge != null:

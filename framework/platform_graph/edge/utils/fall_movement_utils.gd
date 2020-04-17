@@ -90,10 +90,11 @@ static func find_landing_trajectories_to_any_surface( \
                 continue
             
             calc_results = find_landing_trajectory_between_positions( \
+                    collision_params, \
                     jump_land_positions.jump_position, \
                     jump_land_positions.land_position, \
                     velocity_start, \
-                    collision_params)
+                    jump_land_positions.needs_extra_wall_land_horizontal_speed)
             
             if calc_results != null:
                 all_results.push_back(calc_results)
@@ -106,10 +107,11 @@ static func find_landing_trajectories_to_any_surface( \
     return all_results
 
 static func find_landing_trajectory_between_positions( \
+        collision_params: CollisionCalcParams, \
         origin_position: PositionAlongSurface, \
         land_position: PositionAlongSurface, \
         velocity_start: Vector2, \
-        collision_params: CollisionCalcParams) -> MovementCalcResults:
+        needs_extra_wall_land_horizontal_speed: bool) -> MovementCalcResults:
     var debug_state := collision_params.debug_state
     
     ###################################################################################
@@ -127,6 +129,7 @@ static func find_landing_trajectory_between_positions( \
                     false, \
                     velocity_start, \
                     false, \
+                    needs_extra_wall_land_horizontal_speed, \
                     false, \
                     false)
     if overall_calc_params == null:

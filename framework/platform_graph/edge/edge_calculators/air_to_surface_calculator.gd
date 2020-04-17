@@ -29,6 +29,7 @@ func calculate_edge( \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
+        needs_extra_wall_land_horizontal_speed := false, \
         in_debug_mode := false) -> Edge:
     return find_a_landing_trajectory( \
             collision_params, \
@@ -36,7 +37,8 @@ func calculate_edge( \
             position_start, \
             velocity_start, \
             position_end, \
-            position_end)
+            position_end, \
+            needs_extra_wall_land_horizontal_speed)
 
 func optimize_edge_land_position_for_path( \
         collision_params: CollisionCalcParams, \
@@ -66,17 +68,21 @@ func find_a_landing_trajectory( \
         origin: PositionAlongSurface, \
         velocity_start: Vector2, \
         goal: PositionAlongSurface, \
-        exclusive_land_position: PositionAlongSurface) -> AirToSurfaceEdge:
+        exclusive_land_position: PositionAlongSurface, \
+        needs_extra_wall_land_horizontal_speed := false) -> AirToSurfaceEdge:
     # TODO: Use goal param.
+    
+    assert(!needs_extra_wall_land_horizontal_speed or exclusive_land_position != null)
     
     var calc_results: MovementCalcResults
     
     if exclusive_land_position != null:
         calc_results = FallMovementUtils.find_landing_trajectory_between_positions( \
+                collision_params, \
                 origin, \
                 exclusive_land_position, \
                 velocity_start, \
-                collision_params)
+                needs_extra_wall_land_horizontal_speed)
     else:
         # Find all possible surfaces in landing range.
         var result_set := {}
@@ -120,6 +126,7 @@ func find_a_landing_trajectory( \
             land_position, \
             velocity_start, \
             velocity_end, \
+            calc_results.overall_calc_params.needs_extra_wall_land_horizontal_speed, \
             collision_params.movement_params, \
             instructions, \
             trajectory)

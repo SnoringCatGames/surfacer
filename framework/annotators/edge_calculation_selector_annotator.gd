@@ -131,6 +131,7 @@ func _calculate_edge_attempt() -> void:
             true, \
             jump_land_positions.velocity_start, \
             jump_land_positions.needs_extra_jump_duration, \
+            jump_land_positions.needs_extra_wall_land_horizontal_speed, \
             true, \
             true)
     

@@ -25,6 +25,10 @@ var velocity_start := Vector2.INF
 # surface ends before reaching the destination.
 var needs_extra_jump_duration: bool
 
+# Whether the jump is likely to need some extra end horizontal velocity in order to ensure we hit
+# the land position at the bottom of a wall, rather than falling short.
+var needs_extra_wall_land_horizontal_speed: bool
+
 var origin_position: PositionAlongSurface
 var destination_position: PositionAlongSurface
 
@@ -54,6 +58,7 @@ func _init( \
         destination_waypoint: Waypoint, \
         velocity_start: Vector2, \
         needs_extra_jump_duration: bool, \
+        needs_extra_wall_land_horizontal_speed: bool, \
         can_backtrack_on_height: bool) -> void:
     self.movement_params = collision_params.movement_params
     self.space_state = collision_params.space_state
@@ -65,6 +70,7 @@ func _init( \
     self.can_backtrack_on_height = can_backtrack_on_height
     self.velocity_start = velocity_start
     self.needs_extra_jump_duration = needs_extra_jump_duration
+    self.needs_extra_wall_land_horizontal_speed = needs_extra_wall_land_horizontal_speed
     self.waypoint_offset = \
             movement_params.collider_half_width_height + \
             Vector2(movement_params.collision_margin_for_waypoint_positions, \

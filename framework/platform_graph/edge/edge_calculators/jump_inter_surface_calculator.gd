@@ -11,10 +11,10 @@ const IS_A_JUMP_CALCULATOR := true
 #
 # - Debug!
 #   >- Current focus:
-#     - Missing (fall-short of) wall when jumping from lowest floor to low block.
-#       >- force an upward offset for the land position when it's too close to the low end?
-#       >- force a higher inward velocity?
-#       - reduce the waypoint margin from the surface?
+#     - It seems like some part of the step calculations isn't considering max-speed correctly.
+#       - Repro: Jump from long floor to low-block wall: The player falls short.
+#       - After fixing that, are we still missing (fall-short of) wall when jumping from lowest
+#         floor to low block?
 #     - Paths don't account for the extra bit of movement that occurs as the player decelerates
 #       after releasing the walk button. Calculate what that is, and use it to offset the end point
 #       for the last intra-surface edge in a path.
@@ -30,6 +30,10 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Take this opportunity to also start adding the toggle support for annotations.
 # 
 # - Analytics!
+#   - Figure out how/where to store this.
+#     - Don't just keep all step debug state--too much.
+#     - In particular, don't keep any PositionAlongSurface references--would break deduping in
+#       PlatformGraph.
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
 #     - number of attempted steps,
 #     - types of steps,
@@ -353,6 +357,7 @@ func get_all_inter_surface_edges_from_surface( \
                     jump_land_positions.land_position, \
                     jump_land_positions.velocity_start, \
                     jump_land_positions.needs_extra_jump_duration, \
+                    jump_land_positions.needs_extra_wall_land_horizontal_speed, \
                     in_debug_mode)
             
             if edge != null:
@@ -367,6 +372,7 @@ func calculate_edge( \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
+        needs_extra_wall_land_horizontal_speed := false, \
         in_debug_mode := false) -> Edge:
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
             collision_params, \
@@ -375,6 +381,7 @@ func calculate_edge( \
             true, \
             velocity_start, \
             needs_extra_jump_duration, \
+            needs_extra_wall_land_horizontal_speed, \
             false, \
             in_debug_mode)
     if overall_calc_params == null:
@@ -447,6 +454,7 @@ func create_edge_from_overall_params( \
             overall_calc_params.velocity_start, \
             velocity_end, \
             overall_calc_params.needs_extra_jump_duration, \
+            overall_calc_params.needs_extra_wall_land_horizontal_speed, \
             overall_calc_params.movement_params, \
             instructions, \
             trajectory)

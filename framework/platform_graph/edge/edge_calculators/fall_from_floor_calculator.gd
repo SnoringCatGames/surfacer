@@ -51,6 +51,7 @@ func calculate_edge( \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
+        needs_extra_wall_land_horizontal_speed := false, \
         in_debug_mode := false) -> Edge:
     var edges_result := []
     var surfaces_in_fall_range_set := {}
@@ -63,7 +64,8 @@ func calculate_edge( \
             surfaces_in_fall_range_set, \
             origin_surface, \
             falls_on_left_side, \
-            position_end)
+            position_end, \
+            needs_extra_wall_land_horizontal_speed)
     
     if edges_result.size() > 0:
         return edges_result[0]
@@ -94,7 +96,10 @@ func _get_all_edges_from_one_side( \
         surfaces_in_fall_range_set: Dictionary, \
         origin_surface: Surface, \
         falls_on_left_side: bool, \
-        exclusive_land_position: PositionAlongSurface) -> void:
+        exclusive_land_position: PositionAlongSurface, \
+        needs_extra_wall_land_horizontal_speed := false) -> void:
+    assert(!needs_extra_wall_land_horizontal_speed or exclusive_land_position != null)
+    
     var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
     
@@ -158,10 +163,11 @@ func _get_all_edges_from_one_side( \
     if exclusive_land_position != null:
         var calc_results: MovementCalcResults = \
                 FallMovementUtils.find_landing_trajectory_between_positions( \
+                        collision_params, \
                         position_fall_off_wrapper, \
                         exclusive_land_position, \
                         fall_off_point_velocity_start, \
-                        collision_params)
+                        needs_extra_wall_land_horizontal_speed)
         if calc_results != null:
             landing_trajectories = [calc_results]
         else:
@@ -210,6 +216,7 @@ func _get_all_edges_from_one_side( \
                 position_end, \
                 fall_off_point_velocity_start, \
                 velocity_end, \
+                calc_results.overall_calc_params.needs_extra_wall_land_horizontal_speed, \
                 movement_params, \
                 instructions, \
                 trajectory, \

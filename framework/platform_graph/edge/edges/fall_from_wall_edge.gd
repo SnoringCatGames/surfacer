@@ -15,6 +15,7 @@ func _init( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         velocity_end: Vector2, \
+        includes_extra_wall_land_horizontal_speed: bool, \
         movement_params: MovementParams, \
         instructions: MovementInstructions, \
         trajectory: MovementTrajectory) \
@@ -28,6 +29,7 @@ func _init( \
         Vector2.ZERO, \
         velocity_end, \
         false, \
+        includes_extra_wall_land_horizontal_speed, \
         movement_params, \
         instructions, \
         trajectory) -> void:

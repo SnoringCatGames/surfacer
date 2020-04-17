@@ -72,13 +72,15 @@ func calculate_edge( \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
+        needs_extra_wall_land_horizontal_speed := false, \
         in_debug_mode := false) -> Edge:
     var calc_results: MovementCalcResults = \
             FallMovementUtils.find_landing_trajectory_between_positions( \
+                    collision_params, \
                     position_start, \
                     position_end, \
                     velocity_start, \
-                    collision_params)
+                    needs_extra_wall_land_horizontal_speed)
     if calc_results != null:
         return _create_edge_from_calc_results(calc_results)
     else:
@@ -148,6 +150,7 @@ func _create_edge_from_calc_results(calc_results: MovementCalcResults) -> FallFr
             jump_position, \
             land_position, \
             velocity_end, \
+            calc_results.overall_calc_params.needs_extra_wall_land_horizontal_speed, \
             calc_results.overall_calc_params.movement_params, \
             instructions, \
             trajectory)

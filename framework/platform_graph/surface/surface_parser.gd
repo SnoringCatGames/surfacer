@@ -34,7 +34,8 @@ func _init(tile_maps: Array) -> void:
     # Record the maximum cell size from all tile maps.
     max_tile_map_cell_size = Vector2.ZERO
     for tile_map in tile_maps:
-        if tile_map.cell_size.x + tile_map.cell_size.y > max_tile_map_cell_size.x + max_tile_map_cell_size.y:
+        if tile_map.cell_size.x + tile_map.cell_size.y > \
+                max_tile_map_cell_size.x + max_tile_map_cell_size.y:
             max_tile_map_cell_size = tile_map.cell_size
     
     for tile_map in tile_maps:
@@ -110,8 +111,12 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     
     _stopwatch.start()
     print("_remove_internal_surfaces...")
-    _remove_internal_surfaces(floors, ceilings)
-    _remove_internal_surfaces(left_walls, right_walls)
+    _remove_internal_surfaces( \
+            floors, \
+            ceilings)
+    _remove_internal_surfaces( \
+            left_walls, \
+            right_walls)
     print("_remove_internal_surfaces duration: %sms" % _stopwatch.stop())
     
     _stopwatch.start()
@@ -132,12 +137,21 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     
     _stopwatch.start()
     print("_store_surfaces...")
-    _store_surfaces(tile_map, floors, ceilings, left_walls, right_walls)
+    _store_surfaces( \
+            tile_map, \
+            floors, \
+            ceilings, \
+            left_walls, \
+            right_walls)
     print("_store_surfaces duration: %sms" % _stopwatch.stop())
     
     _stopwatch.start()
     print("_assign_neighbor_surfaces...")
-    _assign_neighbor_surfaces(self.floors, self.ceilings, self.left_walls, self.right_walls)
+    _assign_neighbor_surfaces( \
+            self.floors, \
+            self.ceilings, \
+            self.left_walls, \
+            self.right_walls)
     print("_assign_neighbor_surfaces duration: %sms" % _stopwatch.stop())
     
     _stopwatch.start()
@@ -157,37 +171,85 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     print("_assert_surfaces_fully_calculated duration: %sms" % _stopwatch.stop())
     
 
-func _store_surfaces(tile_map: TileMap, floors: Array, ceilings: Array, left_walls: Array, \
+func _store_surfaces( \
+        tile_map: TileMap, \
+        floors: Array, \
+        ceilings: Array, \
+        left_walls: Array, \
         right_walls: Array) -> void:
-    _populate_surface_objects(floors, SurfaceSide.FLOOR)
-    _populate_surface_objects(ceilings, SurfaceSide.CEILING)
-    _populate_surface_objects(left_walls, SurfaceSide.LEFT_WALL)
-    _populate_surface_objects(right_walls, SurfaceSide.RIGHT_WALL)
+    _populate_surface_objects( \
+            floors, \
+            SurfaceSide.FLOOR)
+    _populate_surface_objects( \
+            ceilings, \
+            SurfaceSide.CEILING)
+    _populate_surface_objects( \
+            left_walls, \
+            SurfaceSide.LEFT_WALL)
+    _populate_surface_objects( \
+            right_walls, \
+            SurfaceSide.RIGHT_WALL)
     
-    _copy_surfaces_to_main_collection(floors, self.floors)
-    _copy_surfaces_to_main_collection(ceilings, self.ceilings)
-    _copy_surfaces_to_main_collection(left_walls, self.left_walls)
-    _copy_surfaces_to_main_collection(right_walls, self.right_walls)
+    _copy_surfaces_to_main_collection( \
+            floors, \
+            self.floors)
+    _copy_surfaces_to_main_collection( \
+            ceilings, \
+            self.ceilings)
+    _copy_surfaces_to_main_collection( \
+            left_walls, \
+            self.left_walls)
+    _copy_surfaces_to_main_collection( \
+            right_walls, \
+            self.right_walls)
     
     all_surfaces = []
-    Utils.concat(all_surfaces, self.floors)
-    Utils.concat(all_surfaces, self.right_walls)
-    Utils.concat(all_surfaces, self.left_walls)
-    Utils.concat(all_surfaces, self.ceilings)
+    Utils.concat( \
+            all_surfaces, \
+            self.floors)
+    Utils.concat( \
+            all_surfaces, \
+            self.right_walls)
+    Utils.concat( \
+            all_surfaces, \
+            self.left_walls)
+    Utils.concat( \
+            all_surfaces, \
+            self.ceilings)
     non_ceiling_surfaces = []
-    Utils.concat(non_ceiling_surfaces, self.floors)
-    Utils.concat(non_ceiling_surfaces, self.right_walls)
-    Utils.concat(non_ceiling_surfaces, self.left_walls)
+    Utils.concat( \
+            non_ceiling_surfaces, \
+            self.floors)
+    Utils.concat( \
+            non_ceiling_surfaces, \
+            self.right_walls)
+    Utils.concat( \
+            non_ceiling_surfaces, \
+            self.left_walls)
     non_floor_surfaces = []
-    Utils.concat(non_floor_surfaces, self.right_walls)
-    Utils.concat(non_floor_surfaces, self.left_walls)
-    Utils.concat(non_floor_surfaces, self.ceilings)
+    Utils.concat( \
+            non_floor_surfaces, \
+            self.right_walls)
+    Utils.concat( \
+            non_floor_surfaces, \
+            self.left_walls)
+    Utils.concat( \
+            non_floor_surfaces, \
+            self.ceilings)
     non_wall_surfaces = []
-    Utils.concat(non_wall_surfaces, self.floors)
-    Utils.concat(non_wall_surfaces, self.ceilings)
+    Utils.concat( \
+            non_wall_surfaces, \
+            self.floors)
+    Utils.concat( \
+            non_wall_surfaces, \
+            self.ceilings)
     all_walls = []
-    Utils.concat(all_walls, self.right_walls)
-    Utils.concat(all_walls, self.left_walls)
+    Utils.concat( \
+            all_walls, \
+            self.right_walls)
+    Utils.concat( \
+            all_walls, \
+            self.left_walls)
     
     var floor_mapping = _create_tile_map_mapping_from_surfaces(floors)
     var ceiling_mapping = _create_tile_map_mapping_from_surfaces(ceilings)
@@ -218,7 +280,9 @@ static func _parse_tile_map_into_sides( \
     var used_cells := tile_map.get_used_cells()
     
     for position in used_cells:
-        var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord(position, tile_map)
+        var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord( \
+                position, \
+                tile_map)
         var tile_set_index := tile_map.get_cellv(position)
         var shapes := tile_set.tile_get_shapes(tile_set_index)
         if shapes.empty():
@@ -236,7 +300,8 @@ static func _parse_tile_map_into_sides( \
         tile_vertices_world_coords.resize(vertex_count)
         for i in range(vertex_count):
             var vertex: Vector2 = shape.points[i]
-            var vertex_world_coords: Vector2 = shape_transform.xform(vertex) + position * cell_size
+            var vertex_world_coords: Vector2 = \
+                    shape_transform.xform(vertex) + position * cell_size
             tile_vertices_world_coords[i] = vertex_world_coords
         
         # Calculate and store the polylines from this shape that correspond to the shape's
@@ -446,7 +511,9 @@ static func _parse_polygon_into_sides( \
 # removed.
 # 
 # Any surface polyline that consists of more than one segment is ignored.
-static func _remove_internal_surfaces(surfaces: Array, opposite_surfaces: Array) -> void:
+static func _remove_internal_surfaces( \
+        surfaces: Array, \
+        opposite_surfaces: Array) -> void:
     var i: int
     var j: int
     var count_i: int
@@ -563,8 +630,12 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                     # Merge the two surfaces, replacing the first surface and removing the second
                     # surface.
                     surface2.vertices_array.pop_back()
-                    Utils.concat(surface2.vertices_array, surface1.vertices_array)
-                    Utils.concat(surface2.tile_map_indices, surface1.tile_map_indices)
+                    Utils.concat( \
+                            surface2.vertices_array, \
+                            surface1.vertices_array)
+                    Utils.concat( \
+                            surface2.tile_map_indices, \
+                            surface1.tile_map_indices)
                     surfaces.remove(j)
                     surface1.free()
                     surfaces[i] = surface2
@@ -584,8 +655,12 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                     # Merge the two surfaces, replacing the first surface and removing the second
                     # surface.
                     surface1.vertices_array.pop_back()
-                    Utils.concat(surface1.vertices_array, surface2.vertices_array)
-                    Utils.concat(surface1.tile_map_indices, surface2.tile_map_indices)
+                    Utils.concat( \
+                            surface1.vertices_array, \
+                            surface2.vertices_array)
+                    Utils.concat( \
+                            surface1.tile_map_indices, \
+                            surface2.tile_map_indices)
                     surfaces.remove(j)
                     surface2.free()
                     
@@ -606,7 +681,10 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
         i = 0
         count = vertices.size()
         while i + 2 < count:
-            if Geometry.are_points_collinear(vertices[i], vertices[i + 1], vertices[i + 2]):
+            if Geometry.are_points_collinear( \
+                    vertices[i], \
+                    vertices[i + 1], \
+                    vertices[i + 2]):
                 vertices.remove(i + 1)
                 i -= 1
                 count -= 1
@@ -785,12 +863,18 @@ static func _assert_surfaces_fully_calculated(surfaces: Array) -> void:
         assert(surface.connected_region_bounding_box.position != Vector2.INF and \
                 surface.connected_region_bounding_box.size != Vector2.INF)
 
-static func _populate_surface_objects(tmp_surfaces: Array, side: int) -> void:
+static func _populate_surface_objects( \
+        tmp_surfaces: Array, \
+        side: int) -> void:
     for tmp_surface in tmp_surfaces:
-        tmp_surface.surface = \
-                Surface.new(tmp_surface.vertices_array, side, tmp_surface.tile_map_indices)
+        tmp_surface.surface = Surface.new( \
+                tmp_surface.vertices_array, \
+                side, \
+                tmp_surface.tile_map_indices)
 
-static func _copy_surfaces_to_main_collection(tmp_surfaces: Array, main_collection: Array) -> void:
+static func _copy_surfaces_to_main_collection( \
+        tmp_surfaces: Array, \
+        main_collection: Array) -> void:
     for tmp_surface in tmp_surfaces:
         main_collection.push_back(tmp_surface.surface)
 
@@ -813,15 +897,25 @@ class _TmpSurface extends Object:
     var surface: Surface
 
 # Finds the closest PositionAlongSurface to the given target point.
-static func find_closest_position_on_a_surface(target: Vector2, player) -> PositionAlongSurface:
+static func find_closest_position_on_a_surface( \
+        target: Vector2, \
+        player) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
-    var surface := get_closest_surface(target, player.possible_surfaces_set)
+    var surface := get_closest_surface( \
+            target, \
+            player.possible_surfaces_set)
     position.match_surface_target_and_collider( \
-            surface, target, player.collider_half_width_height, true, true)
+            surface, \
+            target, \
+            player.collider_half_width_height, \
+            true, \
+            true)
     return position
 
 # Gets the closest surface to the given point.
-static func get_closest_surface(target: Vector2, surfaces_set: Dictionary) -> Surface:
+static func get_closest_surface( \
+        target: Vector2, \
+        surfaces_set: Dictionary) -> Surface:
     assert(!surfaces_set.empty())
     
     var closest_surface: Surface

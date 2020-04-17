@@ -26,6 +26,7 @@ func _init( \
         velocity_start, \
         velocity_end, \
         false, \
+        false, \
         movement_params, \
         instructions, \
         trajectory) -> void:

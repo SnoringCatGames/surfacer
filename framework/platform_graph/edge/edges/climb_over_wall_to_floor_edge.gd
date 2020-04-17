@@ -25,6 +25,7 @@ func _init( \
         Vector2.ZERO, \
         Vector2.ZERO, \
         false, \
+        false, \
         movement_params, \
         _calculate_instructions(start, end), \
         null) -> void:
