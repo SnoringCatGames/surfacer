@@ -11,35 +11,23 @@ const IS_A_JUMP_CALCULATOR := true
 #
 # - Debug!
 #   >- Current focus:
-#     - Repro:
-#       - Set additional_edge_weight_offset to 64.
-#       - From ~704x on low-long floor, click to navigate to short-low floor.
-#       - Should see the jump land near the top of the wall, and then the intra-surface edge end immediately, and then the climb-over-wall edge is sad about just having left the air.
 #     - Missing (fall-short of) wall when jumping from lowest floor to low block.
 #       >- force an upward offset for the land position when it's too close to the low end?
 #       >- force a higher inward velocity?
 #       - reduce the waypoint margin from the surface?
-#     - Path weight seems to be preferring pair of jump from floor to wall then wall to floor
-#       rather than just floor to floor.
 #     - Paths don't account for the extra bit of movement that occurs as the player decelerates
 #       after releasing the walk button. Calculate what that is, and use it to offset the end point
 #       for the last intra-surface edge in a path.
 # 
-# - Two new features:
-#   - When "backtracking" for height, re-use all previous waypoints, but reset their times and
-#     maybe velocities.
-#     - This should actually mean that we no longer "backtrack"/recurse specially.
-#     - Conditionally use this approach behind a movement_params flag. This should improve
-#       efficiency and decrease accuracy.
-#     - Then also add another flag for whether to run a final collision test over the combined
-#       steps after calculating the result.
-#       - This should be useful, since we'll want to ensure that such calculations don't produce
-#         false positives.
-#   - Make sure to sort possible waypoint pairs better, closest side of ceiling or floor should
-#     always come first.
-#     - Should actually abandon far-side of ceilings?
-#     - Can test this by reducing v-max-start horizontal offset for movement and testing jump from
-#       lowest floor to other low floor.
+# - Make sure to sort possible waypoint pairs better, closest side of ceiling or floor should
+#   always come first.
+#   - Should actually abandon far-side of ceilings?
+#   - Can test this by reducing v-max-start horizontal offset for movement and testing jump from
+#     lowest floor to other low floor.
+# 
+# - Will need to add an additional section in the debug menu for displaying analytics info.
+#   - Can probably also integrate some info into the tree for debugged trajectories.
+#   - Take this opportunity to also start adding the toggle support for annotations.
 # 
 # - Analytics!
 #   - Log a bit of metadata and duration info on every calculated edge attempt, such as:
@@ -57,6 +45,16 @@ const IS_A_JUMP_CALCULATOR := true
 #     in an edge calculation before giving up (or, recursion depth (with and without backtracking))?
 #   - Tweak movement_params.exceptional_jump_instruction_duration_increase, and ensure
 #     that it is actually cutting down on the number of times we have to backtrack.
+# 
+# - When "backtracking" for height, re-use all previous waypoints, but reset their times and
+#   maybe velocities.
+#   - This should actually mean that we no longer "backtrack"/recurse specially.
+#   - Conditionally use this approach behind a movement_params flag. This should improve
+#     efficiency and decrease accuracy.
+#   - Then also add another flag for whether to run a final collision test over the combined
+#     steps after calculating the result.
+#     - This should be useful, since we'll want to ensure that such calculations don't produce
+#       false positives.
 # 
 # - Debug performance with how many jump/land pairs get returned, and how costly the new extra
 #   previous-jump/land-position-distance checks are.

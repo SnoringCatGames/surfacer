@@ -9,7 +9,7 @@ const LEVEL_RESOURCE_PATHS := [
     "res://levels/level_5.tscn",
 ]
 
-const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://framework/test/test_runner.tscn"
+const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://test/test_runner.tscn"
 
 const DEBUG_PANEL_RESOURCE_PATH := "res://framework/panels/debug_panel.tscn"
 const WELCOME_PANEL_RESOURCE_PATH := "res://framework/panels/welcome_panel.tscn"
@@ -17,9 +17,9 @@ const WELCOME_PANEL_RESOURCE_PATH := "res://framework/panels/welcome_panel.tscn"
 const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false
 
-const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_rise.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_long_fall.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://framework/test/data/test_level_far_distance.tscn"
+const STARTING_LEVEL_RESOURCE_PATH := "res://test/data/test_level_long_rise.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://test/data/test_level_long_fall.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := "res://test/data/test_level_far_distance.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_3.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_5.tscn"

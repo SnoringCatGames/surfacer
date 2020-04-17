@@ -16,5 +16,5 @@ _yield_between_tests = false
 _file_prefix = ""
 _file_extension = "_test.gd"
 _include_subdirectories = true
-_directory1 = "res://framework/test/tests"
+_directory1 = "res://test/tests"
 _double_strategy = 1

@@ -262,7 +262,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "IntegrationTestBed",
 "language": "GDScript",
-"path": "res://framework/test/data/integration_test_bed.gd"
+"path": "res://test/data/integration_test_bed.gd"
 }, {
 "base": "Node2D",
 "class": "InterSurfaceEdgesAnnotator",
@@ -307,7 +307,7 @@ _global_script_classes=[ {
 "base": "UnitTestBed",
 "class": "JumpLandPositionsUtilsTestBed",
 "language": "GDScript",
-"path": "res://framework/test/tests/jump_land_positions_utils/jump_land_positions_utils_test_bed.gd"
+"path": "res://test/tests/jump_land_positions_utils/jump_land_positions_utils_test_bed.gd"
 }, {
 "base": "Node2D",
 "class": "Level",
@@ -572,12 +572,12 @@ _global_script_classes=[ {
 "base": "Player",
 "class": "TestPlayer",
 "language": "GDScript",
-"path": "res://framework/test/data/test_player.gd"
+"path": "res://test/data/test_player.gd"
 }, {
 "base": "MovementParams",
 "class": "TestPlayerParams",
 "language": "GDScript",
-"path": "res://framework/test/data/test_player_params.gd"
+"path": "res://test/data/test_player_params.gd"
 }, {
 "base": "Node2D",
 "class": "TileAnnotator",
@@ -587,7 +587,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "UnitTestBed",
 "language": "GDScript",
-"path": "res://framework/test/data/unit_test_bed.gd"
+"path": "res://test/data/unit_test_bed.gd"
 }, {
 "base": "PlayerActionSource",
 "class": "UserActionSource",
