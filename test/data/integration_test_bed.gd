@@ -4,7 +4,11 @@ class_name IntegrationTestBed
 var TEST_LEVEL_LONG_FALL := {
     scene_resource_path = "res://framework/test/data/test_level_long_fall.tscn",
     start = {
-        surface = Surface.new([Vector2(128, 64), Vector2(192, 64)], SurfaceSide.FLOOR, [0]),
+        surface = Surface.new( \
+                [Vector2(128, 64), Vector2(192, 64)], \
+                SurfaceSide.FLOOR, \
+                null, \
+                [0]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
             near = Vector2(192, 54),
@@ -12,7 +16,11 @@ var TEST_LEVEL_LONG_FALL := {
         }
     },
     end = {
-        surface = Surface.new([Vector2(256, 832), Vector2(320, 832)], SurfaceSide.FLOOR, [38]),
+        surface = Surface.new( \
+                [Vector2(256, 832), Vector2(320, 832)], \
+                SurfaceSide.FLOOR, \
+                null, \
+                [38]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
             near = Vector2(256, 822),
@@ -24,7 +32,11 @@ var TEST_LEVEL_LONG_FALL := {
 var TEST_LEVEL_LONG_RISE := {
     scene_resource_path = "res://framework/test/data/test_level_long_rise.tscn",
     start = {
-        surface = Surface.new([Vector2(128, 64), Vector2(192, 64)], SurfaceSide.FLOOR, [44]),
+        surface = Surface.new( \
+                [Vector2(128, 64), Vector2(192, 64)], \
+                SurfaceSide.FLOOR, \
+                null, \
+                [44]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
             near = Vector2(128, 54),
@@ -32,7 +44,11 @@ var TEST_LEVEL_LONG_RISE := {
         }
     },
     end = {
-        surface = Surface.new([Vector2(-128, -448), Vector2(-64, -448)], SurfaceSide.FLOOR, [0]),
+        surface = Surface.new( \
+                [Vector2(-128, -448), Vector2(-64, -448)], \
+                SurfaceSide.FLOOR, \
+                null, \
+                [0]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
             near = Vector2(-64, -458),
@@ -44,7 +60,11 @@ var TEST_LEVEL_LONG_RISE := {
 var TEST_LEVEL_FAR_DISTANCE := {
     scene_resource_path = "res://framework/test/data/test_level_far_distance.tscn",
     start = {
-        surface = Surface.new([Vector2(128, 64), Vector2(192, 64)], SurfaceSide.FLOOR, [0]),
+        surface = Surface.new( \
+                [Vector2(128, 64), Vector2(192, 64)], \
+                SurfaceSide.FLOOR, \
+                null, \
+                [0]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
             near = Vector2(192, 54),
@@ -52,7 +72,11 @@ var TEST_LEVEL_FAR_DISTANCE := {
         }
     },
     end = {
-        surface = Surface.new([Vector2(704, 64), Vector2(768, 64)], SurfaceSide.FLOOR, [9]),
+        surface = Surface.new( \
+                [Vector2(704, 64), Vector2(768, 64)], \
+                SurfaceSide.FLOOR, \
+                null, \
+                [9]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
             near = Vector2(704, 54),

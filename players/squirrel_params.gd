@@ -42,7 +42,7 @@ func _init() -> void:
     dash_fade_duration = 0.1
     dash_cooldown = 1.0
     
-    friction_multiplier = 0.01
+    friction_coefficient = 0.01
     
     uses_duration_instead_of_distance_for_edge_weight = false
     additional_edge_weight_offset = 32.0
@@ -61,6 +61,7 @@ func _init() -> void:
         FloorFallThroughAction.NAME,
         FloorJumpAction.NAME,
         FloorWalkAction.NAME,
+        FloorFrictionAction.NAME,
         WallClimbAction.NAME,
         WallDashAction.NAME,
         WallDefaultAction.NAME,

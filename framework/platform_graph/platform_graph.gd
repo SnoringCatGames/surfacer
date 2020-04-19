@@ -330,21 +330,28 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   min/max for valid next step?
 # 
 # - After having a finished demo for v1.0, abandon HTML exports for v2.0.
-#   - Unless HTML will get support for GDNative (https://github.com/godotengine/godot/issues/12243).
+#   - Unless HTML will get support for GDNative
+#     (https://github.com/godotengine/godot/issues/12243).
 #   - Port most of the graph and collision logic to GDNative.
 #   - Add an R-Tree for representing the surfaces and nodes.
 #   - Use a TCP-based networking API for more efficient networking.
 # 
-# - Interesting idea for being able to traverse bumpy floors and walls (assuming small tile size relative to player size).
+# - Interesting idea for being able to traverse bumpy floors and walls (assuming small tile size
+#   relative to player size).
 #   - During graph surface parsing stage, look at neighbor surfaces.
-#   - If there is a sequence of short edges that form a zig-zag, or a brief small bump, we can ignore the small surface deviations and lump the whole thing into the same surface type as the predominant neighbor surface.
+#   - If there is a sequence of short edges that form a zig-zag, or a brief small bump, we can
+#     ignore the small surface deviations and lump the whole thing into the same surface type as
+#     the predominant neighbor surface.
 #     - If there is a floor on both sides, then call the bump a floor.
 #     - If there is a wall on both sides, then call the bump a wall.
 #     - If there is a floor on one side and a wall on the other, then call the bump a floor.
 #     - PROBLEM: How to handle falling down a wall and wanting to land on the small bump ledge?
-#       - Maybe only translate the bump ceiling component into a wall component, and leave the floor component as a floor component?
-#       - Maybe have the tolerable floor merge bump size be different (and less permissive) than the ceiling size.
-#   - Make the tolerable bump deviation size configurable (not necessarily tied to the size of a single tile).
+#       - Maybe only translate the bump ceiling component into a wall component, and leave the
+#         floor component as a floor component?
+#       - Maybe have the tolerable floor merge bump size be different (and less permissive) than
+#         the ceiling size.
+#   - Make the tolerable bump deviation size configurable (not necessarily tied to the size of a
+#     single tile).
 # 
 # - Update on-the-fly edge optimizations to get stored back onto the PlatformGraph?
 # 
@@ -362,7 +369,8 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #     - Things under player/action
 #     - Things under player/action/action_handlers
 #     - Everything under utils/
-#   - Don't be brittle, with specific numbers; test simple high-level/relative things; skip other logic that's not worth it:
+#   - Don't be brittle, with specific numbers; test simple high-level/relative things; skip other
+#     logic that's not worth it:
 #     - One edge from here to here
 #     - Edge was long enough
 #     - Had right number of waypoints
@@ -382,6 +390,20 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #     - Probably should add friction support to climbing on walls:
 #       - ClimbDownWallToFloorEdge
 #       - ClimbOverWallToFloorEdge
+# 
+# - Add suport for variable friction across a surface.
+#   - It seems like different frictions will need to come from different TileMaps? Or, actually, I
+#     could probably get the tile ID from a cell index and map that to my own custom friction
+#     concept.
+#   - Regardless, I don't have a way of distinguishing parts of a surface in the current setup.
+#   - Two options:
+#     - Use two separate Surface objects that are colinear, and prevent them from being
+#       concatenated together into one.
+#       - Might get weird with some assumptions from my graph logic?
+#     - Use one Surface object, and keep track of an internal representation of regions with
+#       different friction values.
+#       - It would then be easy enough to query the region for a given PositionAlongSurface.
+
 
 
 const CLUSTER_CELL_SIZE := 0.5
@@ -525,7 +547,7 @@ func find_path( \
         nodes_to_edges_for_current_node = nodes_to_nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
             next_edge = nodes_to_edges_for_current_node[next_node]
-            new_actual_weight = current_weight + next_edge.get_weight(movement_params)
+            new_actual_weight = current_weight + next_edge.get_weight()
             _record_frontier( \
                     current_node, \
                     next_node, \

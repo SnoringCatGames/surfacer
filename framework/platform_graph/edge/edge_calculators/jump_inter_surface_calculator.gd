@@ -8,26 +8,31 @@ const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-#
-# - Debug!
-#   >- Current focus:
-#     - It seems like some part of the step calculations isn't considering max-speed correctly.
-#       - Repro: Jump from long floor to low-block wall: The player falls short.
-#       - After fixing that, are we still missing (fall-short of) wall when jumping from lowest
-#         floor to low block?
-#     - Paths don't account for the extra bit of movement that occurs as the player decelerates
-#       after releasing the walk button. Calculate what that is, and use it to offset the end point
-#       for the last intra-surface edge in a path.
 # 
 # - Make sure to sort possible waypoint pairs better, closest side of ceiling or floor should
 #   always come first.
 #   - Should actually abandon far-side of ceilings?
 #   - Can test this by reducing v-max-start horizontal offset for movement and testing jump from
 #     lowest floor to other low floor.
+#
+# - Debug!
+#   - It seems like some part of the step calculations isn't considering max-speed correctly.
+#     - Repro: Jump from long floor to low-block wall: The player falls short.
+#     - After fixing that, are we still missing (fall-short of) wall when jumping from lowest
+#       floor to low block?
 # 
 # - Will need to add an additional section in the debug menu for displaying analytics info.
 #   - Can probably also integrate some info into the tree for debugged trajectories.
 #   - Take this opportunity to also start adding the toggle support for annotations.
+# 
+# - Add some simple loading screen improvements:
+#   - Add a message underneath the initial splash screen:
+#     - "Waiting on Godot"
+#     - Include the Godot logo.
+#   - Create a second, custom version of the splash screen:
+#     - "Calculating platform graph"
+#     - As a Godot scene.
+#     - Show it after downloading, during my PlatformGraph parsing.
 # 
 # - Analytics!
 #   - Figure out how/where to store this.

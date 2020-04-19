@@ -245,7 +245,7 @@ static func _optimize_edges_for_approach( \
             current_edge = path.edges[i]
             
             # We shouldn't have two intra-surface edges in a row.
-            assert(previous_edge != IntraSurfaceEdge or current_edge != IntraSurfaceEdge)
+            assert(!(previous_edge is IntraSurfaceEdge) or !(current_edge is IntraSurfaceEdge))
             
             is_previous_edge_long_enough_to_be_worth_optimizing_jump_position = \
                     previous_edge.distance >= \
@@ -276,7 +276,7 @@ static func _optimize_edges_for_approach( \
             current_edge = path.edges[i]
             
             # We shouldn't have two intra-surface edges in a row.
-            assert(previous_edge != IntraSurfaceEdge or current_edge != IntraSurfaceEdge)
+            assert(!(previous_edge is IntraSurfaceEdge) or !(current_edge is IntraSurfaceEdge))
             
             is_current_edge_long_enough_to_be_worth_optimizing_land_position = \
                     current_edge.distance >= \

@@ -3,7 +3,7 @@ class_name FloorDashAction
 
 const NAME := "FloorDashAction"
 const TYPE := SurfaceType.FLOOR
-const PRIORITY := 250
+const PRIORITY := 260
 
 func _init().( \
         NAME, \

@@ -7,6 +7,8 @@ var vertices: PoolVector2Array
 # SurfaceSide
 var side: int
 
+var tile_map: TileMap
+
 # Array<int>
 var tile_map_indices: Array
 
@@ -27,9 +29,11 @@ var last_point: Vector2 setget ,_get_last_point
 func _init( \
         vertices: Array, \
         side: int, \
+        tile_map: TileMap, \
         tile_map_indices: Array) -> void:
     self.vertices = PoolVector2Array(vertices)
     self.side = side
+    self.tile_map = tile_map
     self.tile_map_indices = tile_map_indices
     bounding_box = Geometry.get_bounding_box_for_points(vertices)
     normal = SurfaceSide.get_normal(side)

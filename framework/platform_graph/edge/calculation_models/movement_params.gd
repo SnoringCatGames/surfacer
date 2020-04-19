@@ -117,8 +117,9 @@ var max_upward_jump_distance: float
 var time_to_max_upward_jump_distance: float
 var distance_to_max_horizontal_speed: float
 var distance_to_half_max_horizontal_speed: float
+var stopping_distance_on_default_floor_from_max_speed: float
 
-var friction_multiplier: float
+var friction_coefficient: float
 
 var uses_duration_instead_of_distance_for_edge_weight := false
 var additional_edge_weight_offset := 0.0

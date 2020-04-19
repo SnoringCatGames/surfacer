@@ -42,7 +42,6 @@ func _calculate_duration( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         instructions: MovementInstructions, \
-        movement_params: MovementParams, \
         distance: float) -> float:
     return MovementUtils.calculate_time_to_walk( \
             distance, \

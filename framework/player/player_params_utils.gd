@@ -95,6 +95,12 @@ static func _calculate_dependent_movement_params(movement_params: MovementParams
                     movement_params.max_horizontal_speed_default, \
                     movement_params.gravity_slow_rise, \
                     movement_params.gravity_fast_fall)
+    movement_params.stopping_distance_on_default_floor_from_max_speed = \
+            MovementUtils.calculate_distance_to_stop_from_friction( \
+                    movement_params, \
+                    movement_params.max_horizontal_speed_default, \
+                    movement_params.gravity_fast_fall, \
+                    movement_params.friction_coefficient)
     
     assert(movement_params.action_handler_names.find(MatchExpectedEdgeTrajectoryAction.NAME) < 0)
     if movement_params.syncs_player_velocity_to_edge_trajectory:

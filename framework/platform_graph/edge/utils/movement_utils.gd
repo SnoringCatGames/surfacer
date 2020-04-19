@@ -420,3 +420,24 @@ static func calculate_time_to_walk( \
             v_0, \
             movement_params.walk_acceleration, \
             movement_params.max_horizontal_speed_default)
+
+static func calculate_distance_to_stop_from_friction( \
+        movement_params: MovementParams, \
+        velocity_x_start: float, \
+        gravity: float, \
+        friction_coefficient: float) -> float:
+    # TODO: This stopping-distance formula doesn't work for us (generates results that are way too
+    #       big). But we should adapt some sort of continuous analytic formula instead of this
+    #       discrete loop-based approach.
+    
+#    # Stopping distance formula:
+#    #     distance = speed_start^2 / 2 / friction_coefficient / gravity
+#    return speed_start * speed_start / 2.0 / friction_coefficient / gravity
+    
+    var friction_deceleration_per_frame := friction_coefficient * gravity
+    var distance := 0.0
+    var speed := abs(velocity_x_start)
+    while speed > movement_params.min_horizontal_speed:
+        distance += speed * Utils.PHYSICS_TIME_STEP
+        speed -= friction_deceleration_per_frame
+    return distance

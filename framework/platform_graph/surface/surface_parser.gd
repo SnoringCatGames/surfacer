@@ -312,6 +312,7 @@ static func _parse_tile_map_into_sides( \
                 ceilings, \
                 left_walls, \
                 right_walls, \
+                tile_map, \
                 tile_map_index)
 
 # Parses the given polygon into separate polylines corresponding to the top-side, left-side, and
@@ -323,6 +324,7 @@ static func _parse_polygon_into_sides( \
         ceilings: Array, \
         left_walls: Array, \
         right_walls: Array, \
+        tile_map: TileMap, \
         tile_map_index: int) -> void:
     var vertex_count := vertices.size()
     var is_clockwise: bool = Geometry.is_polygon_clockwise(vertices)
@@ -488,15 +490,19 @@ static func _parse_polygon_into_sides( \
     # Store the surfaces.
     var floor_surface = _TmpSurface.new()
     floor_surface.vertices_array = top_side_vertices
+    floor_surface.tile_map = tile_map
     floor_surface.tile_map_indices = [tile_map_index]
     var ceiling_surface = _TmpSurface.new()
     ceiling_surface.vertices_array = bottom_side_vertices
+    ceiling_surface.tile_map = tile_map
     ceiling_surface.tile_map_indices = [tile_map_index]
     var left_side_surface = _TmpSurface.new()
     left_side_surface.vertices_array = right_side_vertices
+    left_side_surface.tile_map = tile_map
     left_side_surface.tile_map_indices = [tile_map_index]
     var right_side_surface = _TmpSurface.new()
     right_side_surface.vertices_array = left_side_vertices
+    right_side_surface.tile_map = tile_map
     right_side_surface.tile_map_indices = [tile_map_index]
     
     floors.push_back(floor_surface)
@@ -870,6 +876,7 @@ static func _populate_surface_objects( \
         tmp_surface.surface = Surface.new( \
                 tmp_surface.vertices_array, \
                 side, \
+                tmp_surface.tile_map, \
                 tmp_surface.tile_map_indices)
 
 static func _copy_surfaces_to_main_collection( \
@@ -892,6 +899,7 @@ static func _free_objects(objects: Array) -> void:
 class _TmpSurface extends Object:
     # Array<Vector2>
     var vertices_array: Array
+    var tile_map: TileMap
     # Array<int>
     var tile_map_indices: Array
     var surface: Surface

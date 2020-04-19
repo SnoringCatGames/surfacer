@@ -135,11 +135,13 @@ func create_surface(params: Dictionary) -> Surface:
             Utils.error()
     
     var vertices := [first_end, last_end]
+    var tile_map: TileMap = null
     var tile_map_indices := []
     
     var surface := Surface.new( \
             vertices, \
             side, \
+            tile_map, \
             tile_map_indices)
     surface.connected_region_bounding_box = connected_region_bounding_box
     

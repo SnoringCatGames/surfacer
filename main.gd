@@ -10,6 +10,7 @@ const PLAYER_ACTION_CLASSES := [
     preload("res://framework/player/action/action_handlers/floor_dash_action.gd"),
     preload("res://framework/player/action/action_handlers/floor_default_action.gd"),
     preload("res://framework/player/action/action_handlers/floor_fall_through_action.gd"),
+    preload("res://framework/player/action/action_handlers/floor_friction_action.gd"),
     preload("res://framework/player/action/action_handlers/floor_jump_action.gd"),
     preload("res://framework/player/action/action_handlers/floor_walk_action.gd"),
     preload("res://framework/player/action/action_handlers/match_expected_edge_trajectory_action.gd"),

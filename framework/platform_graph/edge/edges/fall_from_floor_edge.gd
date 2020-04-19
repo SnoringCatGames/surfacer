@@ -55,7 +55,6 @@ func _calculate_duration( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         instructions: MovementInstructions, \
-        movement_params: MovementParams, \
         distance: float) -> float:
     return instructions.duration
 

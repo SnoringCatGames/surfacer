@@ -347,6 +347,8 @@ func _update_surface_state() -> void:
     surface_state.is_grabbing_walk_through_walls = \
             surface_state.is_grabbing_wall or actions.pressed_up
     
+    surface_state.velocity = velocity
+    
     _update_which_side_is_grabbed()
     _update_which_surface_is_grabbed()
 

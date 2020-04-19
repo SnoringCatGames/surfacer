@@ -53,7 +53,6 @@ func _calculate_duration( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         instructions: MovementInstructions, \
-        movement_params: MovementParams, \
         distance: float) -> float:
     match surface_type:
         SurfaceType.FLOOR:
@@ -86,8 +85,16 @@ func _check_did_just_reach_destination( \
         diff = target_point.y - surface_state.center_position.y
     else:
         was_less_than_end = surface_state.previous_center_position.x < target_point.x
-        is_less_than_end = surface_state.center_position.x < target_point.x
-        diff = target_point.x - surface_state.center_position.x
+        var stopping_distance := _calculate_stopping_distance( \
+                movement_params, \
+                self, \
+                surface_state.velocity)
+        var position_instruction_end := \
+                target_point.x - stopping_distance if \
+                was_less_than_end else \
+                target_point.x + stopping_distance
+        is_less_than_end = surface_state.center_position.x < position_instruction_end
+        diff = position_instruction_end - surface_state.center_position.x
     return was_less_than_end != is_less_than_end or abs(diff) < \
             REACHED_DESTINATION_DISTANCE_SQUARED_THRESHOLD
 
@@ -141,3 +148,23 @@ static func _calculate_velocity_end( \
         var velocity_end_y := movement_params.climb_up_speed if displacement.y < 0.0 else \
                 movement_params.climb_down_speed
         return Vector2(0.0, velocity_end_y)
+
+# Calculate the distance from the end position at which the move button should be released, so that
+# the player comes to rest at the desired end position after decelerating due to friction.
+static func _calculate_stopping_distance( \
+        movement_params: MovementParams, \
+        edge: IntraSurfaceEdge, \
+        velocity: Vector2) -> float:
+    if edge.end_surface.side == SurfaceSide.FLOOR:
+        # TODO: Replace the underlying computation with a closed-form expression, and update this
+        #       to re-calculate the distance at run time.
+#        var friction_coefficient: float = \
+#                movement_params.friction_coefficient * \
+#                edge.end_surface.tile_map.collision_friction
+#        return MovementUtils.calculate_distance_to_stop_from_friction( \
+#                velocity.x, \
+#                movement_params.gravity_fast_fall, \
+#                friction_coefficient)
+        return movement_params.stopping_distance_on_default_floor_from_max_speed
+    else:
+        return 0.0

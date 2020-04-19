@@ -76,7 +76,7 @@ static func get_which_wall_collided(body: KinematicBody2D) -> int:
                 return SurfaceSide.RIGHT_WALL
     return SurfaceSide.NONE
 
-static func get_floor_friction_coefficient(body: KinematicBody2D) -> float:
+static func get_floor_friction_multiplier(body: KinematicBody2D) -> float:
     var collision := _get_floor_collision(body)
     # Collision friction is a property of the TileMap node.
     if collision != null and collision.collider.collision_friction != null:

@@ -215,6 +215,11 @@ _global_script_classes=[ {
 "path": "res://framework/player/action/action_handlers/floor_fall_through_action.gd"
 }, {
 "base": "PlayerActionHandler",
+"class": "FloorFrictionAction",
+"language": "GDScript",
+"path": "res://framework/player/action/action_handlers/floor_friction_action.gd"
+}, {
+"base": "PlayerActionHandler",
 "class": "FloorJumpAction",
 "language": "GDScript",
 "path": "res://framework/player/action/action_handlers/floor_jump_action.gd"
@@ -701,6 +706,7 @@ _global_script_class_icons={
 "FloorDashAction": "",
 "FloorDefaultAction": "",
 "FloorFallThroughAction": "",
+"FloorFrictionAction": "",
 "FloorJumpAction": "",
 "FloorWalkAction": "",
 "FrameCollisionCheckUtils": "",

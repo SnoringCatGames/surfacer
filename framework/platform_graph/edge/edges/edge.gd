@@ -15,6 +15,8 @@ var enters_air: bool
 
 var calculator
 
+var movement_params: MovementParams
+
 # Whether this edge was created by the navigator for a specific path at run-time, rather than ahead
 # of time when initially parsing the platform graph.
 var is_bespoke_for_path := false
@@ -68,6 +70,7 @@ func _init( \
     self.surface_type = surface_type
     self.enters_air = enters_air
     self.calculator = calculator
+    self.movement_params = movement_params
     self.start_position_along_surface = start_position_along_surface
     self.end_position_along_surface = end_position_along_surface
     self.velocity_start = velocity_start
@@ -84,7 +87,6 @@ func _init( \
             start_position_along_surface, \
             end_position_along_surface, \
             instructions, \
-            movement_params, \
             distance)
 
 func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
@@ -138,7 +140,6 @@ func _calculate_duration( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         instructions: MovementInstructions, \
-        movement_params: MovementParams, \
         distance: float) -> float:
     Utils.error("Abstract Edge._calculate_duration is not implemented")
     return INF
@@ -150,7 +151,7 @@ func _check_did_just_reach_destination( \
     Utils.error("Abstract Edge._check_did_just_reach_destination is not implemented")
     return false
 
-func get_weight(movement_params: MovementParams) -> float:
+func get_weight() -> float:
     # Use either the distance or the duration as the weight for the edge.
     var weight := duration if \
             movement_params.uses_duration_instead_of_distance_for_edge_weight else \
