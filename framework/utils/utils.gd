@@ -1,5 +1,4 @@
 extends Node
-class_name Utils
 
 # In seconds.
 const PHYSICS_TIME_STEP := 1 / 60.0

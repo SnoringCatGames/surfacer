@@ -1,5 +1,4 @@
 extends Node
-class_name Global
 
 const LEVEL_RESOURCE_PATHS := [
     "res://levels/level_1.tscn",

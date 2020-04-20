@@ -124,11 +124,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/panels/debug_panel.gd"
 }, {
-"base": "Node",
-"class": "DrawUtils",
-"language": "GDScript",
-"path": "res://framework/utils/draw_utils.gd"
-}, {
 "base": "Reference",
 "class": "Edge",
 "language": "GDScript",
@@ -233,16 +228,6 @@ _global_script_classes=[ {
 "class": "FrameCollisionCheckUtils",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/utils/frame_collision_check_utils.gd"
-}, {
-"base": "Node",
-"class": "Geometry",
-"language": "GDScript",
-"path": "res://framework/utils/geometry.gd"
-}, {
-"base": "Node",
-"class": "Global",
-"language": "GDScript",
-"path": "res://framework/global.gd"
 }, {
 "base": "Node2D",
 "class": "GridIndicesAnnotator",
@@ -599,11 +584,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/player/action/user_action_source.gd"
 }, {
-"base": "Node",
-"class": "Utils",
-"language": "GDScript",
-"path": "res://framework/utils/utils.gd"
-}, {
 "base": "Reference",
 "class": "VerticalMovementUtils",
 "language": "GDScript",
@@ -688,7 +668,6 @@ _global_script_class_icons={
 "CollisionCheckUtils": "",
 "Colors": "",
 "DebugPanel": "",
-"DrawUtils": "",
 "Edge": "",
 "EdgeCalculationAnnotator": "",
 "EdgeCalculationSelectorAnnotator": "",
@@ -710,8 +689,6 @@ _global_script_class_icons={
 "FloorJumpAction": "",
 "FloorWalkAction": "",
 "FrameCollisionCheckUtils": "",
-"Geometry": "",
-"Global": "",
 "GridIndicesAnnotator": "",
 "HorizontalMovementUtils": "",
 "InstructionsActionSource": "",
@@ -783,7 +760,6 @@ _global_script_class_icons={
 "TileAnnotator": "",
 "UnitTestBed": "",
 "UserActionSource": "",
-"Utils": "",
 "VerticalMovementUtils": "",
 "WalkToAscendWallFromFloorCalculator": "",
 "WalkToAscendWallFromFloorEdge": "",

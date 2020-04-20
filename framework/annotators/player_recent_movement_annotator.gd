@@ -172,4 +172,4 @@ func _draw_action_indicator( \
         pass
     else:
         Utils.error("Unknown PlayerActionType passed to _draw_action_indicator: %s" % \
-                PlayerActionType.to_string(action))
+                PlayerActionType.get_type_string(action))

@@ -20,7 +20,7 @@ enum {
     RELEASED_FACE_RIGHT,
 }
 
-static func to_string(type: int) -> String:
+static func get_type_string(type: int) -> String:
     match type:
         NONE:
             return "NONE"

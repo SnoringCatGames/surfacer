@@ -1,5 +1,4 @@
 extends Node
-class_name Geometry
 
 const UP := Vector2.UP
 const DOWN := Vector2.DOWN

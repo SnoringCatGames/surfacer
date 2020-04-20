@@ -15,11 +15,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Can test this by reducing v-max-start horizontal offset for movement and testing jump from
 #     lowest floor to other low floor.
 #
-# - Debug!
-#   - It seems like some part of the step calculations isn't considering max-speed correctly.
-#     - Repro: Jump from long floor to low-block wall: The player falls short.
-#     - After fixing that, are we still missing (fall-short of) wall when jumping from lowest
-#       floor to low block?
+# - There are some cases when jumping from long-low floor to low-block wall that the trajectory falls short (not enough horizontal velocity?).
+#   - Why? Fix this.
 # 
 # - Will need to add an additional section in the debug menu for displaying analytics info.
 #   - Can probably also integrate some info into the tree for debugged trajectories.

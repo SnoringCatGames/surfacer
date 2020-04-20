@@ -10,7 +10,7 @@ enum {
     UNKNOWN,
 }
 
-static func to_string(result: int) -> String:
+static func get_result_string(result: int) -> String:
     match result:
         MOVEMENT_VALID:
             return "MOVEMENT_VALID"

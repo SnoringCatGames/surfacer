@@ -40,7 +40,7 @@ func _init( \
 
 func to_string() -> String:
     return "Surface{ %s, [ %s, %s ] }" % [ \
-            SurfaceSide.to_string(side), \
+            SurfaceSide.get_side_string(side), \
             vertices[0], \
             vertices[vertices.size() - 1], \
         ]

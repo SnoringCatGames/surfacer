@@ -77,14 +77,16 @@ static func create_movement_calc_overall_params(
     var velocity_end_min_x := INF
     var velocity_end_max_x := INF
     if destination_position.surface != null:
+        var min_land_on_wall_speed := \
+                MIN_LAND_ON_WALL_SPEED * MIN_LAND_ON_WALL_EXTRA_SPEED_RATIO if \
+                needs_extra_wall_land_horizontal_speed else \
+                MIN_LAND_ON_WALL_SPEED
         if destination_position.surface.side == SurfaceSide.LEFT_WALL:
             velocity_end_min_x = -collision_params.movement_params.max_horizontal_speed_default
-            velocity_end_max_x = -MIN_LAND_ON_WALL_SPEED
+            velocity_end_max_x = -min_land_on_wall_speed
         if destination_position.surface.side == SurfaceSide.RIGHT_WALL:
-            velocity_end_min_x = MIN_LAND_ON_WALL_SPEED
+            velocity_end_min_x = min_land_on_wall_speed
             velocity_end_max_x = collision_params.movement_params.max_horizontal_speed_default
-        if needs_extra_wall_land_horizontal_speed:
-            velocity_end_min_x *= MIN_LAND_ON_WALL_EXTRA_SPEED_RATIO
     
     var terminals := WaypointUtils.create_terminal_waypoints( \
             origin_position, \

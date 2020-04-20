@@ -143,6 +143,9 @@ func _physics_process(delta: float) -> void:
     _update_actions(delta)
     _update_surface_state()
     
+    if !surface_state.is_touching_a_surface:
+        print(velocity)
+    
     if surface_state.just_left_air:
         print("GRABBED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \

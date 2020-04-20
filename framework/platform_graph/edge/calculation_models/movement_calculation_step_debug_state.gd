@@ -55,7 +55,7 @@ func _get_end() -> Waypoint:
     return _step_calc_params.end_waypoint as Waypoint
 
 func _get_result_code_string() -> String:
-    return EdgeStepCalcResult.to_string(result_code)
+    return EdgeStepCalcResult.get_result_string(result_code)
 
 func _get_description_list() -> Array:
     return EdgeStepCalcResult.to_description_list(result_code)

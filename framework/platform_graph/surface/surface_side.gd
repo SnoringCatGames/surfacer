@@ -8,7 +8,7 @@ enum {
     RIGHT_WALL,
 }
 
-static func to_string(side: int) -> String:
+static func get_side_string(side: int) -> String:
     match side:
         NONE:
             return "NONE"
