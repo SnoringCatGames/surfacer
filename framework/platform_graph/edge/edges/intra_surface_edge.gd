@@ -11,6 +11,8 @@ const ENTERS_AIR := false
 
 const REACHED_DESTINATION_DISTANCE_SQUARED_THRESHOLD := 2.0
 
+var stopping_distance := INF
+
 func _init( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
@@ -42,6 +44,13 @@ func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
     instructions = _calculate_instructions( \
             surface_state.center_position_along_surface, \
             end_position_along_surface)
+    
+    var distance_to_end := end_position_along_surface.target_point - surface_state.center_position
+    stopping_distance = _calculate_stopping_distance( \
+            movement_params, \
+            self, \
+            surface_state.velocity, \
+            distance_to_end)
 
 func _calculate_distance( \
         start: PositionAlongSurface, \
@@ -85,10 +94,6 @@ func _check_did_just_reach_destination( \
         diff = target_point.y - surface_state.center_position.y
     else:
         was_less_than_end = surface_state.previous_center_position.x < target_point.x
-        var stopping_distance := _calculate_stopping_distance( \
-                movement_params, \
-                self, \
-                surface_state.velocity)
         var position_instruction_end := \
                 target_point.x - stopping_distance if \
                 was_less_than_end else \
@@ -154,17 +159,22 @@ static func _calculate_velocity_end( \
 static func _calculate_stopping_distance( \
         movement_params: MovementParams, \
         edge: IntraSurfaceEdge, \
-        velocity: Vector2) -> float:
+        velocity_start: Vector2, \
+        displacement_to_end: Vector2) -> float:
     if edge.end_surface.side == SurfaceSide.FLOOR:
-        # TODO: Replace the underlying computation with a closed-form expression, and update this
-        #       to re-calculate the distance at run time.
-#        var friction_coefficient: float = \
-#                movement_params.friction_coefficient * \
-#                edge.end_surface.tile_map.collision_friction
-#        return MovementUtils.calculate_distance_to_stop_from_friction( \
-#                velocity.x, \
-#                movement_params.gravity_fast_fall, \
-#                friction_coefficient)
-        return movement_params.stopping_distance_on_default_floor_from_max_speed
+        var friction_coefficient: float = \
+                movement_params.friction_coefficient * \
+                edge.end_surface.tile_map.collision_friction
+        var stopping_distance := \
+                MovementUtils.calculate_distance_to_stop_from_friction_with_non_max_speed( \
+                        movement_params, \
+                        velocity_start.x, \
+                        displacement_to_end.x, \
+                        movement_params.gravity_fast_fall, \
+                        friction_coefficient)
+        return stopping_distance if \
+                abs(displacement_to_end.x) - stopping_distance > \
+                REACHED_DESTINATION_DISTANCE_SQUARED_THRESHOLD else \
+                abs(displacement_to_end.x) - REACHED_DESTINATION_DISTANCE_SQUARED_THRESHOLD - 2.0
     else:
         return 0.0

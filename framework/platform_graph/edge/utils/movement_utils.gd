@@ -421,7 +421,7 @@ static func calculate_time_to_walk( \
             movement_params.walk_acceleration, \
             movement_params.max_horizontal_speed_default)
 
-static func calculate_distance_to_stop_from_friction( \
+static func calculate_distance_to_stop_from_friction_and_max_speed( \
         movement_params: MovementParams, \
         velocity_x_start: float, \
         gravity: float, \
@@ -441,3 +441,56 @@ static func calculate_distance_to_stop_from_friction( \
         distance += speed * Utils.PHYSICS_TIME_STEP
         speed -= friction_deceleration_per_frame
     return distance
+
+static func calculate_distance_to_stop_from_friction_with_non_max_speed( \
+        movement_params: MovementParams, \
+        velocity_x_start: float, \
+        displacement_x_from_end: float, \
+        gravity: float, \
+        friction_coefficient: float) -> float:
+    var distance_from_end := abs(displacement_x_from_end)
+    
+    # From a basic equation of motion:
+    #     v^2 = v_0^2 + 2*a*(s - s_0)
+    # Algebra...:
+    #     (s - s_0) = (v^2 - v_0^2) / 2 / a
+    var distance_to_max_horizontal_speed := \
+            (movement_params.max_horizontal_speed_default * \
+            movement_params.max_horizontal_speed_default - \
+            velocity_x_start * velocity_x_start) / \
+            2.0 / movement_params.walk_acceleration
+    
+    if distance_from_end > \
+            distance_to_max_horizontal_speed + \
+            movement_params.stopping_distance_on_default_floor_from_max_speed:
+        # There is enough distance to both get to max speed and then slow to a stop from max speed.
+        return movement_params.stopping_distance_on_default_floor_from_max_speed
+        
+    else:
+        # We need to calculate stopping distance from a speed that's less than the max.
+        
+        var speed_start := abs(velocity_x_start)
+        var friction_deceleration := -friction_coefficient * gravity
+        
+        # TODO: This math isn't generating the correct results. Debug it and use it to replace the
+        #       hand-wavy approximation we're now using instead.
+        
+#        # There are two parts of the motion:
+#        # 1.  Constant acceleration from walking.
+#        # 2.  Constant deceleration from friction.
+#        # We can use this to calculate the distance of either part.
+#        # 
+#        # From basic equations of motion:
+#        #     v_1^2 = v_0^2 + 2*a_0*(s_1 - s_0)
+#        #     v_2^2 = v_1^2 + 2*a_1*(s_2 - s_1)
+#        #     s_0 = 0
+#        # Algebra...:
+#        #     s_1 = ((v_2^2 - v_0^2)/2 - s_2*a_1) / (a_0 - a_1)
+#        #     stopping_distance = s_2 - s_1
+#        var distance_to_instruction_end := \
+#                ((movement_params.min_horizontal_speed * movement_params.min_horizontal_speed - \
+#                speed_start * speed_start) / 2.0 - distance_from_end * friction_deceleration) / \
+#                (movement_params.walk_acceleration - friction_deceleration)
+#        return distance_from_end - distance_to_instruction_end
+        
+        return movement_params.stopping_distance_on_default_floor_from_max_speed
