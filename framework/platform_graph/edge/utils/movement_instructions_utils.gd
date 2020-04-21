@@ -12,7 +12,7 @@ const MovementInstruction := preload("res://framework/platform_graph/edge/calcul
 # - Though I may need to always at least have _some_ small value here...
 # FIXME: D Tweak this.
 const JUMP_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
-const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 0.5
+const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 2.5
 
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.

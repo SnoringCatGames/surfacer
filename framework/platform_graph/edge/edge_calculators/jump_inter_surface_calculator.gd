@@ -8,17 +8,7 @@ const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-# 
-# - Make sure to sort possible waypoint pairs better, closest side of ceiling or floor should
-#   always come first.
-#   - Should actually abandon far-side of ceilings?
-#   - Can test this by reducing v-max-start horizontal offset for movement and testing jump from
-#     lowest floor to other low floor.
 #
-# - There are some cases when jumping from long-low floor to low-block wall that the trajectory falls short (not enough horizontal velocity?).
-#   - Why? Fix this.
-#   >- Add a small boost to horizontal instruction durations?
-# 
 # - Add a flag that forces all path end points to put the player center past the end of the edge (so that a player with a non-axially-aligned collision boundary won't slide off).
 # 
 # - Will need to add an additional section in the debug menu for displaying analytics info.

@@ -243,6 +243,7 @@ static func calculate_waypoints_around_surface( \
                 waypoint_b_original, \
                 waypoint_a_final, \
                 waypoint_b_final, \
+                origin_waypoint, \
                 destination_waypoint):
             return [waypoint_a_final, waypoint_b_final]
         else:
@@ -262,6 +263,7 @@ static func _compare_waypoints_by_more_likely_to_be_valid( \
         b_original: Waypoint, \
         a_final: Waypoint, \
         b_final: Waypoint, \
+        origin: Waypoint, \
         destination: Waypoint) -> bool:
     if a_final.is_valid != b_final.is_valid:
         # Sort waypoints according to whether they're valid.
@@ -274,22 +276,25 @@ static func _compare_waypoints_by_more_likely_to_be_valid( \
         if colliding_surface.side == SurfaceSide.FLOOR:
             # When moving around a floor, prefer whichever waypoint is closer to the destination.
             # 
-            # TODO: Explain rationale.
+            # Movement is more likely to be indirect and needless zig-zag around the surface when
+            # we consider the side further from the destination.
             return a_original.position.distance_squared_to(destination.position) <= \
                     b_original.position.distance_squared_to(destination.position)
         elif colliding_surface.side == SurfaceSide.CEILING:
             # When moving around a ceiling, prefer whichever waypoint is closer to the origin.
             # 
-            # TODO: Explain rationale.
-            return a_original.position.distance_squared_to(destination.position) >= \
-                    b_original.position.distance_squared_to(destination.position)
+            # Movement is more likely to be direct and successful if we go over the region, rather
+            # than under and around, which is what we attempt when we consider the far end of a
+            # ceiling surface.
+            return a_original.position.distance_squared_to(origin.position) <= \
+                    b_original.position.distance_squared_to(origin.position)
         else:
             # When moving around walls, prefer whichever waypoint is higher.
             # 
             # The reasoning here is that the waypoint around the bottom edge of a wall will usually
             # require movement to use a lower jump height, which would then invalidate the rest of the
             # movement to the destination.
-            return a_original.position.y >= b_original.position.y
+            return a_original.position.y <= b_original.position.y
 
 # Calculates and records various state on the given waypoint.
 # 
