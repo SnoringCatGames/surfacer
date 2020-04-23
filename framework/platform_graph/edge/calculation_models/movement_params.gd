@@ -96,6 +96,7 @@ var collision_margin_for_waypoint_positions := 5.0#2.5
 # sometimes such pairs can be valid, and sometimes they can even be the only valid pair for the
 # given surfaces.
 var skips_jump_land_positions_that_are_less_likely_to_be_valid := false
+var prevents_path_end_points_from_protruding_past_surface_ends := true
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

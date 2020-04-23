@@ -96,7 +96,7 @@ static func _calculate_dependent_movement_params(movement_params: MovementParams
                     movement_params.gravity_slow_rise, \
                     movement_params.gravity_fast_fall)
     movement_params.stopping_distance_on_default_floor_from_max_speed = \
-            MovementUtils.calculate_distance_to_stop_from_friction_and_max_speed( \
+            MovementUtils.calculate_distance_to_stop_from_friction( \
                     movement_params, \
                     movement_params.max_horizontal_speed_default, \
                     movement_params.gravity_fast_fall, \

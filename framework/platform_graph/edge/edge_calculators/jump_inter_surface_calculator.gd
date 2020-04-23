@@ -8,12 +8,8 @@ const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
-#
-# - Add a flag that forces all path end points to put the player center past the end of the edge (so that a player with a non-axially-aligned collision boundary won't slide off).
 # 
-# - Will need to add an additional section in the debug menu for displaying analytics info.
-#   - Can probably also integrate some info into the tree for debugged trajectories.
-#   - Take this opportunity to also start adding the toggle support for annotations.
+# - Fix a bug where jump falls way short; from right-end of short-low floor to bottom-end of short-high-right-side wall.
 # 
 # - Add some simple loading screen improvements:
 #   - Add a message underneath the initial splash screen:
@@ -23,6 +19,10 @@ const IS_A_JUMP_CALCULATOR := true
 #     - "Calculating platform graph"
 #     - As a Godot scene.
 #     - Show it after downloading, during my PlatformGraph parsing.
+# 
+# - Will need to add an additional section in the debug menu for displaying analytics info.
+#   - Can probably also integrate some info into the tree for debugged trajectories.
+#   - Take this opportunity to also start adding the toggle support for annotations.
 # 
 # - Analytics!
 #   - Figure out how/where to store this.

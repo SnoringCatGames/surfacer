@@ -57,6 +57,7 @@ func _init() -> void:
     collision_margin_for_edge_movement_calculations = 4.0
     collision_margin_for_waypoint_positions = 5.0
     skips_jump_land_positions_that_are_less_likely_to_be_valid = false
+    prevents_path_end_points_from_protruding_past_surface_ends = true
     
     max_horizontal_speed_default = 400.0
     min_horizontal_speed = 5.0

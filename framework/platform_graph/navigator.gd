@@ -203,9 +203,125 @@ func update(just_started_new_edge = false) -> void:
         var next_edge_index := current_edge_index + 1
         var was_last_edge := current_path.edges.size() == next_edge_index
         if was_last_edge:
-            _set_reached_destination()
+            var backtracking_edge := _possibly_backtrack_to_not_protrude_past_surface_end( \
+                    collision_params.movement_params, \
+                    current_edge, \
+                    player.position, \
+                    player.velocity)
+            if backtracking_edge == null:
+                _set_reached_destination()
+            else:
+                current_path.edges.push_back(backtracking_edge)
+                _start_edge(next_edge_index)
         else:
             _start_edge(next_edge_index)
+
+static func _possibly_backtrack_to_not_protrude_past_surface_end(
+        movement_params: MovementParams, \
+        current_edge: Edge, \
+        current_position: Vector2, \
+        current_velocity: Vector2) -> IntraSurfaceEdge:
+    if movement_params.prevents_path_end_points_from_protruding_past_surface_ends and \
+            !current_edge.is_backtracking_to_not_protrude_past_surface_end:
+        var surface := current_edge.end_surface
+        
+        var position_after_coming_to_a_stop: Vector2
+        if surface.side == SurfaceSide.FLOOR:
+            var stopping_distance := MovementUtils.calculate_distance_to_stop_from_friction( \
+                    movement_params, \
+                    abs(current_velocity.x), \
+                    movement_params.gravity_fast_fall, \
+                    movement_params.friction_coefficient)
+            var stopping_displacement := \
+                    stopping_distance if \
+                    current_velocity.x > 0.0 else \
+                    -stopping_distance
+            position_after_coming_to_a_stop = Vector2( \
+                    current_position.x + stopping_displacement, \
+                    current_position.y)
+        else:
+            # TODO: Add support for acceleration and friction along wall and ceiling surfaces.
+            position_after_coming_to_a_stop = current_position
+        
+        var would_protrude_past_surface_end_after_coming_to_a_stop := false
+        var end_target_point := Vector2.INF
+        
+        match surface.side:
+            SurfaceSide.FLOOR:
+                if position_after_coming_to_a_stop.x < surface.first_point.x:
+                    would_protrude_past_surface_end_after_coming_to_a_stop = true
+                    end_target_point = \
+                            surface.first_point if \
+                            current_velocity.x >= 0.0 else \
+                            current_position
+                elif position_after_coming_to_a_stop.x > surface.last_point.x:
+                    would_protrude_past_surface_end_after_coming_to_a_stop = true
+                    end_target_point = \
+                            surface.last_point if \
+                            current_velocity.x <= 0.0 else \
+                            current_position
+            SurfaceSide.LEFT_WALL:
+                if position_after_coming_to_a_stop.y < surface.first_point.y:
+                    would_protrude_past_surface_end_after_coming_to_a_stop = true
+                    end_target_point = \
+                            surface.first_point if \
+                            current_velocity.y >= 0.0 else \
+                            current_position
+                elif position_after_coming_to_a_stop.y > surface.last_point.y:
+                    would_protrude_past_surface_end_after_coming_to_a_stop = true
+                    end_target_point = \
+                            surface.last_point if \
+                            current_velocity.y <= 0.0 else \
+                            current_position
+            SurfaceSide.RIGHT_WALL:
+                if position_after_coming_to_a_stop.y > surface.first_point.y:
+                    would_protrude_past_surface_end_after_coming_to_a_stop = true
+                    end_target_point = \
+                            surface.first_point if \
+                            current_velocity.y <= 0.0 else \
+                            current_position
+                elif position_after_coming_to_a_stop.y < surface.last_point.y:
+                    would_protrude_past_surface_end_after_coming_to_a_stop = true
+                    end_target_point = \
+                            surface.last_point if \
+                            current_velocity.y >= 0.0 else \
+                            current_position
+            SurfaceSide.CEILING:
+                if position_after_coming_to_a_stop.x > surface.first_point.x:
+                    would_protrude_past_surface_end_after_coming_to_a_stop = true
+                    end_target_point = \
+                            surface.first_point if \
+                            current_velocity.x <= 0.0 else \
+                            current_position
+                elif position_after_coming_to_a_stop.x < surface.last_point.x:
+                    would_protrude_past_surface_end_after_coming_to_a_stop = true
+                    end_target_point = \
+                            surface.last_point if \
+                            current_velocity.x >= 0.0 else \
+                            current_position
+            _:
+                Utils.error("Invalid SurfaceSide")
+        
+        if would_protrude_past_surface_end_after_coming_to_a_stop:
+            var start_position := MovementUtils.create_position_offset_from_target_point( \
+                    current_position, \
+                    surface, \
+                    movement_params.collider_half_width_height, \
+                    true)
+            var end_position := MovementUtils.create_position_offset_from_target_point( \
+                    end_target_point, \
+                    surface, \
+                    movement_params.collider_half_width_height, \
+                    true)
+            var backtracking_edge := IntraSurfaceEdge.new( \
+                    start_position, \
+                    end_position, \
+                    current_velocity, \
+                    movement_params)
+            backtracking_edge.is_backtracking_to_not_protrude_past_surface_end = true
+            return backtracking_edge
+    
+    return null
 
 # Tries to update each jump edge to jump from the earliest point possible along the surface
 # rather than from the safe end/closest point that was used at build-time when calculating
@@ -291,6 +407,51 @@ static func _optimize_edges_for_approach( \
                         previous_edge, \
                         current_edge, \
                         in_debug_mode)
+    
+    if movement_params.prevents_path_end_points_from_protruding_past_surface_ends:
+        var last_edge: Edge = path.edges.back()
+        if last_edge is IntraSurfaceEdge:
+            var surface := last_edge.end_surface
+            var end_position := last_edge.end_position_along_surface
+            match surface.side:
+                SurfaceSide.FLOOR:
+                    if end_position.target_point.x < surface.first_point.x:
+                        last_edge.update_terminal( \
+                                false, \
+                                surface.first_point)
+                    elif end_position.target_point.x > surface.last_point.x:
+                        last_edge.update_terminal( \
+                                false, \
+                                surface.last_point)
+                SurfaceSide.LEFT_WALL:
+                    if end_position.target_point.y < surface.first_point.y:
+                        last_edge.update_terminal( \
+                                false, \
+                                surface.first_point)
+                    elif end_position.target_point.y > surface.last_point.y:
+                        last_edge.update_terminal( \
+                                false, \
+                                surface.last_point)
+                SurfaceSide.RIGHT_WALL:
+                    if end_position.target_point.y > surface.first_point.y:
+                        last_edge.update_terminal( \
+                                false, \
+                                surface.first_point)
+                    elif end_position.target_point.y < surface.last_point.y:
+                        last_edge.update_terminal( \
+                                false, \
+                                surface.last_point)
+                SurfaceSide.CEILING:
+                    if end_position.target_point.x > surface.first_point.x:
+                        last_edge.update_terminal( \
+                                false, \
+                                surface.first_point)
+                    elif end_position.target_point.x < surface.last_point.x:
+                        last_edge.update_terminal( \
+                                false, \
+                                surface.last_point)
+                _:
+                    Utils.error("Invalid SurfaceSide")
 
 # Inserts extra intra-surface between any edges that land and then immediately jump from the same
 # position, since the land position could be off due to movement error at runtime.

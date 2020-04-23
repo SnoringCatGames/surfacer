@@ -421,7 +421,7 @@ static func calculate_time_to_walk( \
             movement_params.walk_acceleration, \
             movement_params.max_horizontal_speed_default)
 
-static func calculate_distance_to_stop_from_friction_and_max_speed( \
+static func calculate_distance_to_stop_from_friction( \
         movement_params: MovementParams, \
         velocity_x_start: float, \
         gravity: float, \
@@ -442,7 +442,7 @@ static func calculate_distance_to_stop_from_friction_and_max_speed( \
         speed -= friction_deceleration_per_frame
     return distance
 
-static func calculate_distance_to_stop_from_friction_with_non_max_speed( \
+static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed( \
         movement_params: MovementParams, \
         velocity_x_start: float, \
         displacement_x_from_end: float, \
