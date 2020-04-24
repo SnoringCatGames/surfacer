@@ -28,6 +28,7 @@ var jump_boost: float
 var in_air_horizontal_acceleration: float
 var max_jump_chain: int
 var wall_jump_horizontal_boost: float
+var wall_fall_horizontal_boost := 20.0
 
 var walk_acceleration: float
 var climb_up_speed: float

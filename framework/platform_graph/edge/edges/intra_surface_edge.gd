@@ -9,7 +9,7 @@ const NAME := "IntraSurfaceEdge"
 const IS_TIME_BASED := false
 const ENTERS_AIR := false
 
-const REACHED_DESTINATION_DISTANCE_THRESHOLD := 2.0
+const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
 
 var stopping_distance := INF
 var is_backtracking_to_not_protrude_past_surface_end := false
@@ -39,7 +39,7 @@ func _init( \
         null) -> void:
     # Intra-surface edges are never calculated and stored ahead of time; they're only calculated at
     # run time when navigating a specific path.
-    self.is_bespoke_for_path = true
+    self.is_optimized_for_path = true
 
 func update_terminal( \
         is_start: bool, \

@@ -27,6 +27,7 @@ func _init() -> void:
 #    in_air_horizontal_acceleration = 3200.0
     max_jump_chain = 2
     wall_jump_horizontal_boost = 400.0
+    wall_fall_horizontal_boost = 20.0
     
     walk_acceleration = 350.0
     climb_up_speed = -350.0

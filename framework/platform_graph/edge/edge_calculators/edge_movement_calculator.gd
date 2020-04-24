@@ -259,7 +259,7 @@ static func optimize_edge_jump_position_for_path_helper( \
                     in_debug_mode)
             
             if optimized_edge != null:
-                optimized_edge.is_bespoke_for_path = true
+                optimized_edge.is_optimized_for_path = true
                 
                 previous_edge = IntraSurfaceEdge.new( \
                         previous_edge.start_position_along_surface, \
@@ -304,7 +304,7 @@ static func optimize_edge_jump_position_for_path_helper( \
                     in_debug_mode)
             
             if optimized_edge != null:
-                optimized_edge.is_bespoke_for_path = true
+                optimized_edge.is_optimized_for_path = true
                 
                 previous_edge = IntraSurfaceEdge.new( \
                         previous_edge.start_position_along_surface, \
@@ -365,7 +365,7 @@ static func optimize_edge_land_position_for_path_helper( \
                     in_debug_mode)
             
             if optimized_edge != null:
-                optimized_edge.is_bespoke_for_path = true
+                optimized_edge.is_optimized_for_path = true
                 
                 next_edge = IntraSurfaceEdge.new( \
                         land_position, \
@@ -411,7 +411,7 @@ static func optimize_edge_land_position_for_path_helper( \
                     in_debug_mode)
             
             if optimized_edge != null:
-                optimized_edge.is_bespoke_for_path = true
+                optimized_edge.is_optimized_for_path = true
                 
                 next_edge = IntraSurfaceEdge.new( \
                         land_position, \

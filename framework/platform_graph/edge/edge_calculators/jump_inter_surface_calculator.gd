@@ -1,15 +1,23 @@
 extends EdgeMovementCalculator
 class_name JumpInterSurfaceCalculator
 
-const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
-
 const NAME := "JumpInterSurfaceCalculator"
 const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix a bug where jump falls way short; from right-end of short-low floor to bottom-end of short-high-right-side wall.
+# - Problem:
+#   - Click to fall from middle of right-side wall on top block to low-short floor.
+#   - The move_right input is really short, and followed immediately by a move_left.
+#     - Why the move_left so soon?
+#     - Why is move_right not honoring MovementInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON?
+# 
+# - [or skip? (should be fixed when turning on v sync)] Fix a bug where jump falls way short; from
+#   right-end of short-low floor to bottom-end of short-high-right-side wall.
+# 
+# - Instead of offsetting surface-end points dynamically in Navigator (to prevent protrusion past
+#   surface end), should we do it up front to all edge surface ends in PlatformGraph?
 # 
 # - Add some simple loading screen improvements:
 #   - Add a message underneath the initial splash screen:
@@ -184,8 +192,10 @@ const IS_A_JUMP_CALCULATOR := true
 #   x- With squirrels running and climbing over the letters?
 #   >- Approach:
 #     - Start simple. Pick font. Render in Inkscape. Create a hand-pixel-drawn copy in Aseprite.
-#     - V1: Show "Squirrel Away" text. Animate squirrel running across, right to left, in front of letters.
-#     - V2: Have squirrel pause to the left of the S, with its tail overlapping the S. Give a couple tail twitches. Then have squirrel leave.
+#     - V1: Show "Squirrel Away" text. Animate squirrel running across, right to left, in front of
+#           letters.
+#     - V2: Have squirrel pause to the left of the S, with its tail overlapping the S. Give a
+#           couple tail twitches. Then have squirrel leave.
 #     
 # ---  ---
 # 
@@ -232,8 +242,8 @@ const IS_A_JUMP_CALCULATOR := true
 # - Cleanup frame_collison_check_utils:
 #   - Clean-up/break-apart/simplify current logic.
 #   - Maybe add some old ideas for extra improvements to check_frame_for_collision:
-#     - [maybe?] Rather than just using closest_intersection_point, sort all intersection_points, and
-#       try each of them in sequence when the first one fails	
+#     - [maybe?] Rather than just using closest_intersection_point, sort all intersection_points,
+#       and try each of them in sequence when the first one fails	
 #     - [easy to add, might be nice for future] If that also fails, use a completely separate new
 #       cheap-and-dirty check-for-collision-in-frame method?	
 #       - Check if intersection_points is not-empty.

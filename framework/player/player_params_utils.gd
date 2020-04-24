@@ -116,6 +116,9 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.wall_jump_horizontal_boost >= 0 and \
             movement_params.wall_jump_horizontal_boost <= \
             movement_params.max_horizontal_speed_default)
+    assert(movement_params.wall_fall_horizontal_boost >= 0 and \
+            movement_params.wall_fall_horizontal_boost <= \
+            movement_params.max_horizontal_speed_default)
     assert(movement_params.walk_acceleration >= 0)
     assert(movement_params.climb_up_speed <= 0)
     assert(movement_params.climb_down_speed >= 0)

@@ -1,8 +1,6 @@
 extends EdgeMovementCalculator
 class_name FallFromWallCalculator
 
-const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
-
 const NAME := "FallFromWallCalculator"
 const IS_A_JUMP_CALCULATOR := false
 
@@ -23,7 +21,9 @@ func get_all_inter_surface_edges_from_surface( \
         origin_surface: Surface) -> void:
     var debug_state := collision_params.debug_state
     var movement_params := collision_params.movement_params
-    var velocity_start := Vector2.ZERO
+    var velocity_start := Vector2( \
+            movement_params.wall_fall_horizontal_boost * origin_surface.normal.x, \
+            0.0)
     
     # TODO: Update this to allow other mid-point jump-positions, which may be closer and more
     #       efficient than just the surface-end points.
@@ -171,9 +171,17 @@ static func _calculate_instructions( \
     
     # Calculate the wall-release instructions.
     var sideways_input_key := \
-            "move_right" if start.surface.side == SurfaceSide.LEFT_WALL else "move_left"
-    var outward_press := MovementInstruction.new(sideways_input_key, 0.0, true)
-    var outward_release := MovementInstruction.new(sideways_input_key, 0.001, false)
+            "move_right" if \
+            start.surface.side == SurfaceSide.LEFT_WALL else \
+            "move_left"
+    var outward_press := MovementInstruction.new( \
+            sideways_input_key, \
+            0.0, \
+            true)
+    var outward_release := MovementInstruction.new( \
+            sideways_input_key, \
+            0.001, \
+            false)
     instructions.instructions.push_front(outward_release)
     instructions.instructions.push_front(outward_press)
     

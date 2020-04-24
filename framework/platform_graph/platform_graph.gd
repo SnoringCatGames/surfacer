@@ -4,15 +4,10 @@
 extends Reference
 class_name PlatformGraph
 
-const AirToSurfaceEdge := preload("res://framework/platform_graph/edge/edges/air_to_surface_edge.gd")
-const IntraSurfaceEdge := preload("res://framework/platform_graph/edge/edges/intra_surface_edge.gd")
-const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
-const MovementCalcStepParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_step_params.gd")
-const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
-
 # FIXME: LEFT OFF HERE: Master list:
 #
-# - Finish everything in JumpInterSurfaceCalculator (edge calculations, including movement waypoints from interfering surfaces)
+# - Finish everything in JumpInterSurfaceCalculator (edge calculations, including movement
+#   waypoints from interfering surfaces)
 # - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
 #
 # - Use max_horizontal_jump_distance and max_upward_jump_distance
@@ -58,8 +53,9 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #     - A level that could be either simple or complicated.
 #     - We should be able to configure from the test the specific starting and ending surface and
 #       position to check.
-#       - This should then cause the PlatformGraph parsing and get_all_inter_surface_edges_from_surface parsing
-#         to skip all other surfaces and jump/land positions.
+#       - This should then cause the PlatformGraph parsing and
+#         get_all_inter_surface_edges_from_surface parsing to skip all other surfaces and jump/land
+#         positions.
 #     - We should use the above configuration to target specific interesting edge use-cases.
 #       - Skipping waypoints
 #       - Left/right/ceiling/floor intermediate surfaces
@@ -93,15 +89,18 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   - Double jump
 #   - Horizontal acceleration?
 #
-# - Update the pre-configured Input Map in Project Settings to use more semantic keys instead of just up/down/etc.
+# - Update the pre-configured Input Map in Project Settings to use more semantic keys instead of
+#   just up/down/etc.
 # - Document in a separate markdown file exactly which Input Map keys this framework depends on.
 #
-# - Make get_surfaces_in_jump_and_fall_range more efficient? (force run it everyframe to ensure no lag)
+# - Make get_surfaces_in_jump_and_fall_range more efficient? (force run it everyframe to ensure no
+#   lag)
 #   - Scrap previous function; just use bounding box intersection (since I'm going to need to use
 #     better logic for determining movement patterns anyway...)
 #   - Actually, maybe don't worry too much, because this is actually only run at the start.
 #
-# - Add logic to Player when calculating touched edges to check that the collider is a stationary TileMap object
+# - Add logic to Player when calculating touched edges to check that the collider is a stationary
+#   TileMap object
 #
 # - Figure out how to configure input names/mappings (or just add docs specifying that the
 #   consumer must use these input names?)
@@ -153,14 +152,17 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #     movement stopping short.
 # - LEFT OFF HERE: Debug/stress-test intermediate collision scenarios.
 #   - After fixing max vertical velocity, is there anything else I can boost?
-# - LEFT OFF HERE: Debug why check_instructions_for_collision fails with collisions (render better annotations?).
+# - LEFT OFF HERE: Debug why check_instructions_for_collision fails with collisions (render better
+#   annotations?).
 # - LEFT OFF HERE: Add squirrel animation.
 # 
 # - Debugging:
-#   - Would it help to add some quick and easy annotation helpers for temp debugging that I can access on global (or wherever) and just tell to render dots/lines/circles?
+#   - Would it help to add some quick and easy annotation helpers for temp debugging that I can
+#     access on global (or wherever) and just tell to render dots/lines/circles?
 #   - Then I could use that to render all sorts of temp calculation stuff from this file.
 #   - Add an annotation for tracing the players recent center positions.
-#   - Try rendering a path for trajectory that's closer to the calculations for parabolic motion instead of the resulting instruction positions?
+#   - Try rendering a path for trajectory that's closer to the calculations for parabolic motion
+#     instead of the resulting instruction positions?
 #     - Might help to see the significance of the difference.
 #     - Might be able to do this with smaller step sizes?
 # 
@@ -190,7 +192,8 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   that our algorithm thinks the human player can traverse.
 #   - Try to render all of the interesting edge pairs that I think I should test for.
 # 
-# - Step through and double-check each return value parameter individually through the recursion, and each input parameter.
+# - Step through and double-check each return value parameter individually through the recursion,
+#   and each input parameter.
 # 
 # - Optimize a bit for collisions with vertical surfaces:
 #   - For the top waypoint, change the waypoint position to instead use the far side of the
@@ -240,7 +243,8 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 #   order.
 # 
 # FIXME: B: 
-# - Make edge-calc annotations usable at run time, by clicking on the start and end positions to check.
+# - Make edge-calc annotations usable at run time, by clicking on the start and end positions to
+#   check.
 # 
 
 
@@ -270,13 +274,15 @@ const PriorityQueue := preload("res://framework/utils/priority_queue.gd")
 # - Debug, debug, debug...
 # 
 # - Additional_high_waypoint_position breakpoint is happening three times??
-#   - Should I move the fail-because-we've-been-here-before logic from looking at steps+surfaces+heights to here?
+#   - Should I move the fail-because-we've-been-here-before logic from looking at
+#     steps+surfaces+heights to here?
 # 
 # - Should we somehow ensure that jump height is always bumped up at least enough to cover the
 #   extra distance of waypoint offsets? 
 #   - Since jumping up to a destination, around the other edge of the platform (which has the
 #     waypoint offset), seems like a common use-case, this would probably be a useful optimization.
-#   - [This is important, since the first attempt at getting to the top-right waypoint always fails, since it requires a _slightly_ higher jump, and we want it to instead succeed.]
+#   - [This is important, since the first attempt at getting to the top-right waypoint always
+#     fails, since it requires a _slightly_ higher jump, and we want it to instead succeed.]
 # 
 # - There is a problem with my approach for using time_to_get_to_destination_from_waypoint.
 #   time-to-get-to-intermediate-waypoint-from-waypoint could matter a lot too. But maybe this

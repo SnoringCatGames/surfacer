@@ -1,8 +1,6 @@
 extends EdgeMovementCalculator
 class_name JumpFromSurfaceToAirCalculator
 
-const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
-
 const NAME := "JumpFromSurfaceToAirCalculator"
 const IS_A_JUMP_CALCULATOR := true
 

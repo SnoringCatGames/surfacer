@@ -69,7 +69,7 @@ func cancel_playback( \
     # Log the release of any pressed keys.
     for active_key_press in playback.active_key_presses:
         if playback.active_key_presses[active_key_press]:
-            print("STOP  %5s:%8s;%8.3fs;%29sp;%29sv" % [ \
+            print("STOP  %5s:%8s;%8.3ft;%29sp;%29sv" % [ \
                     PlayerActionSource.input_key_to_action_name(active_key_press), \
                     player.player_name, \
                     time_sec, \

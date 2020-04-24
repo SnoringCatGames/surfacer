@@ -28,20 +28,31 @@ static func convert_calculation_steps_to_movement_instructions( \
     
     var step: MovementCalcStep
     var input_key: String
+    var time_instruction_end: float
     var press: MovementInstruction
     var release: MovementInstruction
 
     # Record the various sideways movement instructions.
     for i in range(steps.size()):
         step = steps[i]
-        input_key = "move_left" if step.horizontal_acceleration_sign < 0 else "move_right"
+        input_key = \
+                "move_left" if \
+                step.horizontal_acceleration_sign < 0 else \
+                "move_right"
+        time_instruction_end = \
+                step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON
+        if i + 1 < steps.size():
+            # Ensure that the boosted end time doesn't exceed the following start time.
+            time_instruction_end = min( \
+                    time_instruction_end, \
+                    steps[i + 1].time_instruction_start - 0.0001)
         press = MovementInstruction.new( \
                 input_key, \
                 step.time_instruction_start, \
                 true)
         release = MovementInstruction.new( \
                 input_key, \
-                step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON, \
+                time_instruction_end, \
                 false)
         instructions[i * 2] = press
         instructions[i * 2 + 1] = release

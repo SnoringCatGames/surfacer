@@ -1,8 +1,6 @@
 extends EdgeMovementCalculator
 class_name WalkToAscendWallFromFloorCalculator
 
-const MovementCalcOverallParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_overall_params.gd")
-
 const NAME := "WalkToAscendWallFromFloorCalculator"
 const IS_A_JUMP_CALCULATOR := false
 
