@@ -920,12 +920,21 @@ static func find_closest_position_on_a_surface( \
             true)
     return position
 
+const CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET := 0.02
+const CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01
+
 # Gets the closest surface to the given point.
 static func get_closest_surface( \
         target: Vector2, \
         surfaces_set: Dictionary) -> Surface:
     assert(!surfaces_set.empty())
     
+    var closest_point: Vector2
+    var is_closest_to_first_point: bool
+    var is_closest_to_last_point: bool
+    var first_point_diff: Vector2
+    var last_point_diff: Vector2
+    var is_more_than_45_deg_from_normal_from_corner: bool
     var closest_surface: Surface
     var closest_distance_squared: float = INF
     var current_distance_squared: float
@@ -935,11 +944,70 @@ static func get_closest_surface( \
                 target, \
                 current_surface.bounding_box)
         if current_distance_squared < closest_distance_squared:
-            current_distance_squared = Geometry.get_distance_squared_from_point_to_polyline( \
+            closest_point = Geometry.get_closest_point_on_polyline_to_point( \
                     target, \
                     current_surface.vertices)
+            current_distance_squared = target.distance_squared_to(closest_point)
             if current_distance_squared < closest_distance_squared:
-                closest_distance_squared = current_distance_squared
-                closest_surface = current_surface
+                is_closest_to_first_point = Geometry.are_points_equal_with_epsilon( \
+                        closest_point, \
+                        current_surface.first_point, \
+                        0.01)
+                is_closest_to_last_point = Geometry.are_points_equal_with_epsilon( \
+                        closest_point, \
+                        current_surface.last_point, \
+                        0.01)
+                if is_closest_to_first_point or is_closest_to_last_point:
+                    first_point_diff = target - current_surface.first_point
+                    last_point_diff = target - current_surface.last_point
+                    
+                    match current_surface.side:
+                        SurfaceSide.FLOOR:
+                            if is_closest_to_first_point:
+                                is_more_than_45_deg_from_normal_from_corner = \
+                                        first_point_diff.x < 0.0 and \
+                                        -first_point_diff.x > -first_point_diff.y
+                            else:
+                                is_more_than_45_deg_from_normal_from_corner = \
+                                        last_point_diff.x > 0.0 and \
+                                        last_point_diff.x > -last_point_diff.y
+                        SurfaceSide.LEFT_WALL:
+                            if is_closest_to_first_point:
+                                is_more_than_45_deg_from_normal_from_corner = \
+                                        first_point_diff.y < 0.0 and \
+                                        first_point_diff.x < -first_point_diff.y
+                            else:
+                                is_more_than_45_deg_from_normal_from_corner = \
+                                        last_point_diff.y > 0.0 and \
+                                        last_point_diff.x < last_point_diff.y
+                        SurfaceSide.RIGHT_WALL:
+                            if is_closest_to_first_point:
+                                is_more_than_45_deg_from_normal_from_corner = \
+                                        first_point_diff.y > 0.0 and \
+                                        -first_point_diff.x < first_point_diff.y
+                            else:
+                                is_more_than_45_deg_from_normal_from_corner = \
+                                        last_point_diff.y < 0.0 and \
+                                        -last_point_diff.x < -last_point_diff.y
+                        SurfaceSide.CEILING:
+                            if is_closest_to_first_point:
+                                is_more_than_45_deg_from_normal_from_corner = \
+                                        first_point_diff.x > 0.0 and \
+                                        first_point_diff.x > first_point_diff.y
+                            else:
+                                is_more_than_45_deg_from_normal_from_corner = \
+                                        last_point_diff.x < 0.0 and \
+                                        -last_point_diff.x > last_point_diff.y
+                        _:
+                            Utils.error("Invalid SurfaceSide")
+                    
+                    current_distance_squared += \
+                            CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET if \
+                            is_more_than_45_deg_from_normal_from_corner else \
+                            CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET
+                    
+                if current_distance_squared < closest_distance_squared:
+                    closest_distance_squared = current_distance_squared
+                    closest_surface = current_surface
     
     return closest_surface
