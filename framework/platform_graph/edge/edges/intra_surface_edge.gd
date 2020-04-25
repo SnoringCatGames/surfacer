@@ -210,6 +210,9 @@ static func _calculate_stopping_distance( \
         edge: IntraSurfaceEdge, \
         velocity_start: Vector2, \
         displacement_to_end: Vector2) -> float:
+    if movement_params.forces_player_position_to_match_path_at_end:
+        return 0.0
+    
     if edge.end_surface.side == SurfaceSide.FLOOR:
         var friction_coefficient: float = \
                 movement_params.friction_coefficient * \
@@ -225,6 +228,17 @@ static func _calculate_stopping_distance( \
                 abs(displacement_to_end.x) - stopping_distance > \
                         REACHED_DESTINATION_DISTANCE_THRESHOLD else \
                 max(abs(displacement_to_end.x) - REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0, 0.0)
+        
     else:
         # TODO: Add support for acceleration and friction alongs walls and ceilings.
+        
+        if edge.end_surface.side == SurfaceSide.LEFT_WALL or \
+                edge.end_surface.side == SurfaceSide.RIGHT_WALL:
+            var climb_speed := \
+                    abs(movement_params.climb_up_speed) if \
+                    displacement_to_end.y < 0 else \
+                    abs(movement_params.climb_down_speed)
+            return climb_speed * Utils.PHYSICS_TIME_STEP + 0.01
+        
         return 0.0
+        

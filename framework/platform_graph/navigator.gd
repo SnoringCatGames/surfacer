@@ -3,12 +3,13 @@ class_name Navigator
 
 const NEARBY_SURFACE_DISTANCE_THRESHOLD := 160.0
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
-const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 5.0
+const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
 
 var player # TODO: Add type back
 var graph: PlatformGraph
 var global # TODO: Add type back
 var surface_state: PlayerSurfaceState
+var movement_params: MovementParams
 var collision_params: CollisionCalcParams
 var instructions_action_source: InstructionsActionSource
 var air_to_surface_calculator: AirToSurfaceCalculator
@@ -20,6 +21,7 @@ var current_path: PlatformGraphPath
 var current_edge: Edge
 var current_edge_index := -1
 var current_playback: InstructionsPlayback
+var actions_might_be_dirty := false
 
 var navigation_state := PlayerNavigationState.new()
 
@@ -31,16 +33,18 @@ func _init( \
     self.graph = graph
     self.global = global
     self.surface_state = player.surface_state
+    self.movement_params = player.movement_params
     self.collision_params = CollisionCalcParams.new( \
             global.DEBUG_STATE, \
             global.space_state, \
-            player.movement_params, \
+            movement_params, \
             graph.surface_parser)
     self.instructions_action_source = InstructionsActionSource.new(player, true)
     self.air_to_surface_calculator = AirToSurfaceCalculator.new()
 
 # Starts a new navigation to the given destination.
-func navigate_to_nearby_surface(target: Vector2, \
+func navigate_to_nearby_surface( \
+        target: Vector2, \
         distance_threshold := NEARBY_SURFACE_DISTANCE_THRESHOLD) -> bool:
     reset()
     
@@ -108,6 +112,18 @@ func _set_reached_destination() -> void:
     # FIXME: Assert that we are close enough to the destination position.
 #    assert()
     
+    if movement_params.forces_player_position_to_match_path_at_end:
+        player.position = current_edge.end
+    if movement_params.forces_player_velocity_to_zero_at_path_end and \
+            current_edge.end_surface != null:
+        match current_edge.end_surface.side:
+            SurfaceSide.FLOOR, SurfaceSide.CEILING:
+                player.velocity.x = 0.0
+            SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+                player.velocity.y = 0.0
+            _:
+                Utils.error("Invalid SurfaceSide")
+    
     reset()
     reached_destination = true
     
@@ -124,6 +140,7 @@ func reset() -> void:
     reached_destination = false
     current_playback = null
     instructions_action_source.cancel_all_playback()
+    actions_might_be_dirty = true
     navigation_state.reset()
 
 func _start_edge(index: int) -> void:
@@ -137,9 +154,9 @@ func _start_edge(index: int) -> void:
         ]
     print(format_string_template % format_string_arguments)
     
-    if player.movement_params.forces_player_position_to_match_edge_at_start:
+    if movement_params.forces_player_position_to_match_edge_at_start:
         player.position = current_edge.start
-    if player.movement_params.forces_player_velocity_to_match_edge_at_start:
+    if movement_params.forces_player_velocity_to_match_edge_at_start:
         player.velocity = current_edge.velocity_start
         surface_state.horizontal_acceleration_sign = 0
     
@@ -156,6 +173,8 @@ func _start_edge(index: int) -> void:
 
 # Updates navigation state in response to the current surface state.
 func update(just_started_new_edge = false) -> void:
+    actions_might_be_dirty = just_started_new_edge
+    
     if !is_currently_navigating:
         return
     
@@ -206,7 +225,7 @@ func update(just_started_new_edge = false) -> void:
         var was_last_edge := current_path.edges.size() == next_edge_index
         if was_last_edge:
             var backtracking_edge := _possibly_backtrack_to_not_protrude_past_surface_end( \
-                    collision_params.movement_params, \
+                    movement_params, \
                     current_edge, \
                     player.position, \
                     player.velocity)
@@ -230,7 +249,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
         current_edge: Edge, \
         current_position: Vector2, \
         current_velocity: Vector2) -> IntraSurfaceEdge:
-    if movement_params.prevents_path_end_points_from_protruding_past_surface_ends and \
+    if movement_params.prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets and \
             !current_edge.is_backtracking_to_not_protrude_past_surface_end:
         var surface := current_edge.end_surface
         
@@ -436,7 +455,7 @@ static func _optimize_edges_for_approach( \
                         current_edge, \
                         in_debug_mode)
     
-    if movement_params.prevents_path_end_points_from_protruding_past_surface_ends:
+    if movement_params.prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets:
         var last_edge: Edge = path.edges.back()
         if last_edge is IntraSurfaceEdge:
             var surface := last_edge.end_surface

@@ -48,6 +48,8 @@ var optimizes_edge_jump_positions_at_run_time := false
 var optimizes_edge_land_positions_at_run_time := false
 var forces_player_position_to_match_edge_at_start := false
 var forces_player_velocity_to_match_edge_at_start := false
+var forces_player_position_to_match_path_at_end := false
+var forces_player_velocity_to_zero_at_path_end := false
 # If true, then player velocity will be forced to match the expected calculated edge-movement
 # velocity during each frame. Without this, there is typically some deviation at run-time from the
 # expected calculated edge trajectories.
@@ -97,7 +99,11 @@ var collision_margin_for_waypoint_positions := 5.0#2.5
 # sometimes such pairs can be valid, and sometimes they can even be the only valid pair for the
 # given surfaces.
 var skips_jump_land_positions_that_are_less_likely_to_be_valid := false
-var prevents_path_end_points_from_protruding_past_surface_ends := true
+# If true, then the navigator will include extra offsets so that paths don't end too close to
+# surface ends, and will dynamically insert extra backtracking edges if the player ends up past a
+# surface end at the end of a path. This should be unnecessary if
+# forces_player_position_to_match_path_at_end is true.
+var prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets := false
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

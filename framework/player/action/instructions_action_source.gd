@@ -34,12 +34,13 @@ func update( \
         # Handle all previously started keys that are still pressed.
         for input_key in playback.active_key_presses:
             is_pressed = playback.active_key_presses[input_key]
-            update_for_key_press( \
+            PlayerActionSource.update_for_key_press( \
                     actions, \
                     previous_actions, \
                     input_key, \
                     is_pressed, \
-                    time_sec)
+                    time_sec, \
+                    is_additive)
             if !is_pressed:
                 non_pressed_keys.push_back(input_key)
         
@@ -66,17 +67,6 @@ func start_instructions( \
 func cancel_playback( \
         playback: InstructionsPlayback, \
         time_sec: float) -> bool:
-    # Log the release of any pressed keys.
-    for active_key_press in playback.active_key_presses:
-        if playback.active_key_presses[active_key_press]:
-            print("STOP  %5s:%8s;%8.3ft;%29sp;%29sv" % [ \
-                    PlayerActionSource.input_key_to_action_name(active_key_press), \
-                    player.player_name, \
-                    time_sec, \
-                    player.position, \
-                    player.velocity \
-                    ])
-    
     # Remove the playback.
     var index := _all_playback.find(playback)
     if index < 0:

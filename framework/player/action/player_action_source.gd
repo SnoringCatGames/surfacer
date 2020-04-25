@@ -22,12 +22,13 @@ func update( \
         navigation_state: PlayerNavigationState) -> void:
     Utils.error("Abstract PlayerActionSource.update is not implemented")
 
-func update_for_key_press( \
+static func update_for_key_press( \
         actions: PlayerActionState, \
         previous_actions: PlayerActionState, \
         input_key: String, \
         is_pressed: bool, \
-        time_sec: float) -> void:
+        time_sec: float, \
+        is_additive: bool) -> void:
     var was_pressed_in_previous_frame: bool
     var was_already_pressed_in_current_frame: bool
     var is_pressed_in_current_frame: bool

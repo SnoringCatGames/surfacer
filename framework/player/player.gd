@@ -144,7 +144,7 @@ func _physics_process(delta: float) -> void:
     _update_surface_state()
     
     if !surface_state.is_touching_a_surface:
-        print(velocity)
+        print("[remove] v=%s" % velocity)
     
     if surface_state.just_left_air:
         print("GRABBED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
@@ -180,9 +180,16 @@ func _physics_process(delta: float) -> void:
     
     if navigator:
         navigator.update()
+        
+        # TODO: There's probably a more efficient way to do this.
+        if navigator.actions_might_be_dirty:
+            actions.copy(actions_from_previous_frame)
+            _update_actions(delta)
+            _update_surface_state()
     
     actions.delta = delta
-
+    actions.log_new_presses_and_releases(self, global.elapsed_play_time_sec)
+    
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if surface_state.horizontal_facing_sign == 1:
         animator.face_right()
@@ -222,8 +229,6 @@ func _update_actions(delta: float) -> void:
                 navigation_state)
     
     actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
-    
-    actions.log_new_presses_and_releases(self, global.elapsed_play_time_sec)
 
 # Updates physics and player states in response to the current actions.
 func _process_actions() -> void:

@@ -17,6 +17,14 @@ func process(player: Player) -> bool:
     
     var is_first_jump: bool = player.jump_count == 1
     
+    # If we just fell off the bottom of a wall, cancel any velocity toward that wall.
+    if player.surface_state.just_entered_air and \
+            ((player.surface_state.previous_grabbed_surface.side == SurfaceSide.LEFT_WALL and \
+                    player.velocity.x < 0.0) or \
+            (player.surface_state.previous_grabbed_surface.side == SurfaceSide.RIGHT_WALL and \
+                    player.velocity.x > 0.0)):
+        player.velocity.x = 0.0
+    
     player.velocity = MovementUtils.update_velocity_in_air( \
             player.velocity, \
             player.actions.delta, \

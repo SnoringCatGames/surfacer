@@ -135,6 +135,8 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.dash_vertical_boost <= 0)
     assert(!movement_params.stops_after_finding_first_valid_edge_for_a_surface_pair or \
             !movement_params.calculates_all_valid_edges_for_a_surface_pair)
+    assert(!movement_params.forces_player_position_to_match_path_at_end or \
+            !movement_params.prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets)
 
 class ActionHandlersComparator:
     static func sort( \
