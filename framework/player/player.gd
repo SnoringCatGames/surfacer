@@ -1,12 +1,6 @@
 extends KinematicBody2D
 class_name Player
 
-const Navigator := preload("res://framework/platform_graph/navigator.gd")
-const UserActionSource := preload("res://framework/player/action/user_action_source.gd")
-const InstructionsActionSource := preload("res://framework/player/action/instructions_action_source.gd")
-const PlayerActionState := preload("res://framework/player/action/player_action_state.gd")
-const PlayerSurfaceState := preload("res://framework/player/player_surface_state.gd")
-
 var global # TODO: Add type back
 var player_name: String
 var can_grab_walls: bool

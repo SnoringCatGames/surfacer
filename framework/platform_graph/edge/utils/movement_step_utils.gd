@@ -1,8 +1,6 @@
 # A collection of utility functions for calculating state related to MovementCalcSteps.
 class_name MovementStepUtils
 
-const MovementCalcStepParams := preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_step_params.gd")
-
 # Calculates movement steps to reach the given destination.
 # 
 # This first calculates the one vertical step of the overall movement, using the minimum possible

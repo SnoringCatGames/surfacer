@@ -1,7 +1,5 @@
 class_name FrameCollisionCheckUtils
 
-const MovementCalcCollisionDebugState = preload("res://framework/platform_graph/edge/calculation_models/movement_calculation_collision_debug_state.gd")
-
 # TODO: Adjust this.
 const VERTEX_SIDE_NUDGE_OFFSET := 0.001
 

@@ -1,10 +1,6 @@
 extends Node2D
 class_name PlatformGraphAnnotator
 
-const InterSurfaceEdgesAnnotator := preload("res://framework/annotators/inter_surface_edges_annotator.gd")
-const SurfacesAnnotator := preload("res://framework/annotators/surfaces_annotator.gd")
-const GridIndicesAnnotator := preload("res://framework/annotators/grid_indices_annotator.gd")
-
 var graph: PlatformGraph
 var inter_surface_edges_annotator: InterSurfaceEdgesAnnotator
 var surfaces_annotator: SurfacesAnnotator

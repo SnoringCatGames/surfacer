@@ -1,8 +1,6 @@
 # A collection of utility functions for calculating state related to Waypoints.
 class_name WaypointUtils
 
-const Waypoint := preload("res://framework/platform_graph/edge/calculation_models/waypoint.gd")
-
 # FIXME: D: Tweak this.
 const MIN_MAX_VELOCITY_X_OFFSET := 0.01# FIXME: ------------------------
 

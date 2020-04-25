@@ -1,8 +1,6 @@
 # A collection of utility functions for calculating state related to MovementTrajectory.
 class_name MovementTrajectoryUtils
 
-const MovementTrajectory := preload("res://framework/platform_graph/edge/calculation_models/movement_trajectory.gd")
-
 # FIXME: B: use this to record slow/fast gravities on the movement_params when initializing and
 #        update all usages to use the right one (rather than mutating the movement_params in the
 #        middle of edge calculations below).

@@ -1,8 +1,6 @@
 extends Node2D
 class_name InterSurfaceEdgesAnnotator
 
-const EdgeCalculationAnnotator := preload("res://framework/annotators/edge_calculation_annotator.gd")
-
 var graph: PlatformGraph
 var intra_edge_calc_annotator: EdgeCalculationAnnotator
 
