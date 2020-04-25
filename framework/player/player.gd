@@ -15,8 +15,10 @@ var actions_from_previous_frame := PlayerActionState.new()
 var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var navigation_state: PlayerNavigationState
-var new_click_position := Vector2.INF
-var last_click_position := Vector2.INF
+var pointer_handler: PlayerPointerHandler
+var new_selection_position := Vector2.INF
+var last_selection_position := Vector2.INF
+var current_drag_position := Vector2.INF
 var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: Navigator
@@ -57,6 +59,8 @@ func _enter_tree() -> void:
             player_params.movement_params.max_horizontal_speed_default
     self.movement_calculators = player_params.movement_calculators
     self.action_handlers = player_params.action_handlers
+    self.pointer_handler = PlayerPointerHandler.new(self)
+    add_child(pointer_handler)
 
 func _ready() -> void:
     # TODO: Somehow consolidate how collider shapes are defined?
@@ -138,7 +142,7 @@ func _physics_process(delta: float) -> void:
     
     _update_actions(delta)
     _update_surface_state()
-    _handle_clicks()
+    _handle_pointer_selections()
     
     if !surface_state.is_touching_a_surface:
         print("[remove] v=%s" % velocity)
@@ -209,21 +213,12 @@ func _physics_process(delta: float) -> void:
     
     level.descendant_physics_process_completed(self)
 
-func _unhandled_input(event: InputEvent) -> void:
-    if global.current_player_for_clicks != self:
-        return
-    
-    if event is InputEventMouseButton and \
-            event.button_index == BUTTON_LEFT and \
-            !event.pressed and \
-            !event.control:
-        new_click_position = global.current_level.get_global_mouse_position()
-
-func _handle_clicks() -> void:
-    if new_click_position != Vector2.INF:
-        last_click_position = new_click_position
-        navigator.navigate_to_nearby_surface(last_click_position)
-        new_click_position = Vector2.INF
+func _handle_pointer_selections() -> void:
+    if new_selection_position != Vector2.INF:
+        last_selection_position = new_selection_position
+        navigator.navigate_to_nearby_surface(last_selection_position)
+        new_selection_position = Vector2.INF
+        current_drag_position = Vector2.INF
 
 func _update_actions(delta: float) -> void:
     # Record actions for the previous frame.

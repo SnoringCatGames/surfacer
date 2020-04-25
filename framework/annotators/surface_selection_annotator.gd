@@ -6,8 +6,9 @@ const SELECT_DURATION_SEC := ClickAnnotator.CLICK_DURATION_SEC
 
 var global # TODO: Add type back
 var player: Player
+var preselect_surface_position: PositionAlongSurface = null
 var selected_surface_position: PositionAlongSurface = null
-var last_animated_click_position := Vector2.INF
+var last_animated_selection_position := Vector2.INF
 var select_animation_start_time := -SELECT_DURATION_SEC
 var select_animation_end_time := -SELECT_DURATION_SEC
 var progress := 1.0
@@ -22,11 +23,11 @@ func _ready() -> void:
 func _process(delta: float) -> void:
     var current_time: float = global.elapsed_play_time_sec
     
-    if player.last_click_position != last_animated_click_position and \
-            player.last_click_position == player.navigator.current_target:
+    if player.last_selection_position != last_animated_selection_position and \
+            player.last_selection_position == player.navigator.current_target:
         selected_surface_position = \
                 player.navigator.current_path.edges.back().end_position_along_surface
-        last_animated_click_position = player.last_click_position
+        last_animated_selection_position = player.last_selection_position
         select_animation_start_time = current_time
         select_animation_end_time = select_animation_start_time + SELECT_DURATION_SEC
         is_a_select_currently_rendered = true

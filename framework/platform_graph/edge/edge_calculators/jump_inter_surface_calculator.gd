@@ -7,8 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Remove preloads.
-# 
 # - Create a better click effect for position-along-surface selection with ClickToNavigate:
 #   - Show an enlarged, highlighted phantom version of the surface.
 #   - Show faintly the neighbors.

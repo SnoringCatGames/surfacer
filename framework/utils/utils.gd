@@ -97,3 +97,8 @@ static func add_scene( \
     var node: Node = scene.instance()
     parent.add_child(node)
     return node
+
+static func get_global_touch_position( \
+        input_event: InputEventScreenTouch, \
+        canvas_item: CanvasItem) -> Vector2:
+    return canvas_item.get_canvas_transform().xform_inv(input_event.position)
