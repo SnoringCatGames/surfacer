@@ -7,6 +7,16 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Remove preloads.
+# 
+# - Create a better click effect for position-along-surface selection with ClickToNavigate:
+#   - Show an enlarged, highlighted phantom version of the surface.
+#   - Show faintly the neighbors.
+#   - Show this on mouse/touch down.
+#   - Actually do the selection on mouse/touch up.
+#   - This should make it much easier to select the correct thing on mobile, with fat fingers.
+#   - Also, maybe pause the camera pan while doing this?
+# 
 # - [or skip? (should be fixed when turning on v sync)] Fix a bug where jump falls way short; from
 #   right-end of short-low floor to bottom-end of short-high-right-side wall.
 # 
@@ -21,14 +31,6 @@ const IS_A_JUMP_CALCULATOR := true
 #     - "Calculating platform graph"
 #     - As a Godot scene.
 #     - Show it after downloading, during my PlatformGraph parsing.
-# 
-# - Create a better click effect for position-along-surface selection with ClickToNavigate:
-#   - Show an enlarged, highlighted phantom version of the surface.
-#   - Show faintly the neighbors.
-#   - Show this on mouse/touch down.
-#   - Actually do the selection on mouse/touch up.
-#   - This should make it much easier to select the correct thing on mobile, with fat fingers.
-#   - Also, maybe pause the camera pan while doing this?
 # 
 # - Will need to add an additional section in the debug menu for displaying analytics info.
 #   - Can probably also integrate some info into the tree for debugged trajectories.

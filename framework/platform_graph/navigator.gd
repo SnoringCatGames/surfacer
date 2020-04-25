@@ -17,6 +17,7 @@ var air_to_surface_calculator: AirToSurfaceCalculator
 var is_currently_navigating := false
 var reached_destination := false
 var previous_path: PlatformGraphPath
+var current_target := Vector2.INF
 var current_path: PlatformGraphPath
 var current_edge: Edge
 var current_edge_index := -1
@@ -100,6 +101,7 @@ func navigate_to_nearby_surface( \
             ]
         print(format_string_template % format_string_arguments)
         
+        current_target = target
         current_path = path
         is_currently_navigating = true
         reached_destination = false
@@ -133,6 +135,7 @@ func reset() -> void:
     if current_path != null:
         previous_path = current_path
     
+    current_target = Vector2.INF
     current_path = null
     current_edge = null
     current_edge_index = -1

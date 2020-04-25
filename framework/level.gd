@@ -1,12 +1,6 @@
 extends Node2D
 class_name Level
 
-const ClickAnnotator := preload("res://framework/annotators/click_annotator.gd")
-const PlayerAnnotator := preload("res://framework/annotators/player_annotator.gd")
-const PlatformGraph := preload("res://framework/platform_graph/platform_graph.gd")
-const PlatformGraphAnnotator := preload("res://framework/annotators/platform_graph_annotator.gd")
-const RulerAnnotator := preload("res://framework/annotators/ruler_annotator.gd")
-
 var global
 
 # The TileMaps that define the collision boundaries of this level.
@@ -20,7 +14,6 @@ var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
 var camera_controller: CameraController
-var click_to_navigate: ClickToNavigate
 
 var hud_layer: CanvasLayer
 var platform_graph_annotator: PlatformGraphAnnotator
@@ -80,9 +73,6 @@ func _ready() -> void:
     
     camera_controller = CameraController.new()
     add_child(camera_controller)
-    
-    click_to_navigate = ClickToNavigate.new()
-    add_child(click_to_navigate)
     
     # Set up some annotators that help with debugging.
     click_annotator = ClickAnnotator.new()

@@ -1,12 +1,6 @@
 extends Node2D
 class_name PlayerAnnotator
 
-const NavigatorAnnotator := preload("res://framework/annotators/navigator_annotator.gd")
-const PlayerRecentMovementAnnotator := preload("res://framework/annotators/player_recent_movement_annotator.gd")
-const PlayerSurfaceAnnotator := preload("res://framework/annotators/player_surface_annotator.gd")
-const PositionAnnotator := preload("res://framework/annotators/position_annotator.gd")
-const TileAnnotator := preload("res://framework/annotators/tile_annotator.gd")
-
 var player: Player
 var previous_position: Vector2
 var navigator_annotator: NavigatorAnnotator
@@ -14,6 +8,7 @@ var player_recent_movement_annotator: PlayerRecentMovementAnnotator
 var player_surface_annotator: PlayerSurfaceAnnotator
 var position_annotator: PositionAnnotator
 var tile_annotator: TileAnnotator
+var surface_selection_annotator: SurfaceSelectionAnnotator
 
 func _init( \
         player: Player, \
@@ -23,6 +18,7 @@ func _init( \
     player_surface_annotator = PlayerSurfaceAnnotator.new(player)
     position_annotator = PositionAnnotator.new(player)
     tile_annotator = TileAnnotator.new(player)
+    surface_selection_annotator = SurfaceSelectionAnnotator.new(player)
     if renders_navigator:
         navigator_annotator = NavigatorAnnotator.new(player.navigator)
     z_index = 2
@@ -32,6 +28,7 @@ func _enter_tree() -> void:
     add_child(player_surface_annotator)
     add_child(position_annotator)
     add_child(tile_annotator)
+    add_child(surface_selection_annotator)
     if navigator_annotator != null:
         add_child(navigator_annotator)
 

@@ -21,6 +21,8 @@ var actions_from_previous_frame := PlayerActionState.new()
 var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var navigation_state: PlayerNavigationState
+var new_click_position := Vector2.INF
+var last_click_position := Vector2.INF
 var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: Navigator
@@ -142,6 +144,7 @@ func _physics_process(delta: float) -> void:
     
     _update_actions(delta)
     _update_surface_state()
+    _handle_clicks()
     
     if !surface_state.is_touching_a_surface:
         print("[remove] v=%s" % velocity)
@@ -211,6 +214,22 @@ func _physics_process(delta: float) -> void:
     surface_state.collision_count = get_slide_count()
     
     level.descendant_physics_process_completed(self)
+
+func _unhandled_input(event: InputEvent) -> void:
+    if global.current_player_for_clicks != self:
+        return
+    
+    if event is InputEventMouseButton and \
+            event.button_index == BUTTON_LEFT and \
+            !event.pressed and \
+            !event.control:
+        new_click_position = global.current_level.get_global_mouse_position()
+
+func _handle_clicks() -> void:
+    if new_click_position != Vector2.INF:
+        last_click_position = new_click_position
+        navigator.navigate_to_nearby_surface(last_click_position)
+        new_click_position = Vector2.INF
 
 func _update_actions(delta: float) -> void:
     # Record actions for the previous frame.

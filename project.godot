@@ -74,11 +74,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/click_annotator.gd"
 }, {
-"base": "Node",
-"class": "ClickToNavigate",
-"language": "GDScript",
-"path": "res://framework/player/click_to_navigate.gd"
-}, {
 "base": "EdgeMovementCalculator",
 "class": "ClimbDownWallToFloorCalculator",
 "language": "GDScript",
@@ -544,6 +539,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/surface/surface_parser.gd"
 }, {
+"base": "Node2D",
+"class": "SurfaceSelectionAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/surface_selection_annotator.gd"
+}, {
 "base": "Reference",
 "class": "SurfaceSide",
 "language": "GDScript",
@@ -658,7 +658,6 @@ _global_script_class_icons={
 "CatParams": "",
 "CatPlayer": "",
 "ClickAnnotator": "",
-"ClickToNavigate": "",
 "ClimbDownWallToFloorCalculator": "",
 "ClimbDownWallToFloorEdge": "",
 "ClimbOverWallToFloorCalculator": "",
@@ -752,6 +751,7 @@ _global_script_class_icons={
 "Surface": "",
 "SurfaceCollision": "",
 "SurfaceParser": "",
+"SurfaceSelectionAnnotator": "",
 "SurfaceSide": "",
 "SurfaceType": "",
 "SurfacesAnnotator": "",
