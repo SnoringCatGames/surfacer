@@ -545,6 +545,11 @@ _global_script_classes=[ {
 "path": "res://framework/platform_graph/surface/surface_parser.gd"
 }, {
 "base": "Node2D",
+"class": "SurfacePreselectionAnnotator",
+"language": "GDScript",
+"path": "res://framework/annotators/surface_preselection_annotator.gd"
+}, {
+"base": "Node2D",
 "class": "SurfaceSelectionAnnotator",
 "language": "GDScript",
 "path": "res://framework/annotators/surface_selection_annotator.gd"
@@ -757,6 +762,7 @@ _global_script_class_icons={
 "Surface": "",
 "SurfaceCollision": "",
 "SurfaceParser": "",
+"SurfacePreselectionAnnotator": "",
 "SurfaceSelectionAnnotator": "",
 "SurfaceSide": "",
 "SurfaceType": "",

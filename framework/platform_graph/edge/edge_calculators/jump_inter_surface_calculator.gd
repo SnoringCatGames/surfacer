@@ -7,6 +7,8 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Draw a spike for the actual position along the surface (rather than just the surface) for pointer selections.
+# 
 # - Create a better click effect for position-along-surface selection with ClickToNavigate:
 #   - Show an enlarged, highlighted phantom version of the surface.
 #   - Show faintly the neighbors.
@@ -14,6 +16,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Actually do the selection on mouse/touch up.
 #   - This should make it much easier to select the correct thing on mobile, with fat fingers.
 #   - Also, maybe pause the camera pan while doing this?
+# 
+# - Debouce preselection position calculations.
 # 
 # - [or skip? (should be fixed when turning on v sync)] Fix a bug where jump falls way short; from
 #   right-end of short-low floor to bottom-end of short-high-right-side wall.

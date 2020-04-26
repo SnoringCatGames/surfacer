@@ -16,8 +16,8 @@ var air_to_surface_calculator: AirToSurfaceCalculator
 
 var is_currently_navigating := false
 var reached_destination := false
+var current_destination: PositionAlongSurface
 var previous_path: PlatformGraphPath
-var current_target := Vector2.INF
 var current_path: PlatformGraphPath
 var current_edge: Edge
 var current_edge_index := -1
@@ -44,23 +44,15 @@ func _init( \
     self.air_to_surface_calculator = AirToSurfaceCalculator.new()
 
 # Starts a new navigation to the given destination.
-func navigate_to_nearby_surface( \
-        target: Vector2, \
-        distance_threshold := NEARBY_SURFACE_DISTANCE_THRESHOLD) -> bool:
+func navigate_to_position(destination: PositionAlongSurface) -> bool:
     reset()
-    
-    var destination := SurfaceParser.find_closest_position_on_a_surface(target, player)
-    
-    if destination.target_point.distance_squared_to(target) > \
-            distance_threshold * distance_threshold:
-        # Target is too far from any surface.
-        print("TARGET IS TOO FAR FROM ANY SURFACE")
-        return false
     
     var path: PlatformGraphPath
     if surface_state.is_grabbing_a_surface:
         var origin := PositionAlongSurface.new(surface_state.center_position_along_surface)
-        path = graph.find_path(origin, destination)
+        path = graph.find_path( \
+                origin, \
+                destination)
     else:
         var origin := MovementUtils.create_position_without_surface(surface_state.center_position)
         var air_to_surface_edge := air_to_surface_calculator.find_a_landing_trajectory( \
@@ -71,13 +63,15 @@ func navigate_to_nearby_surface( \
                 destination, \
                 null)
         if air_to_surface_edge != null:
-            path = graph.find_path(air_to_surface_edge.end_position_along_surface, destination)
+            path = graph.find_path( \
+                    air_to_surface_edge.end_position_along_surface, \
+                    destination)
             if path != null:
                 path.push_front(air_to_surface_edge)
     
     if path == null:
         # Destination cannot be reached from origin.
-        print("CANNOT NAVIGATE TO TARGET: %s" % target)
+        print("CANNOT NAVIGATE TO TARGET: %s" % destination.to_string())
         return false
     else:
         # Destination can be reached from origin.
@@ -96,12 +90,12 @@ func navigate_to_nearby_surface( \
             "\n}"
         var format_string_arguments := [ \
                 global.elapsed_play_time_sec, \
-                target, \
+                destination.to_string(), \
                 path.to_string_with_newlines(1), \
             ]
         print(format_string_template % format_string_arguments)
         
-        current_target = target
+        current_destination = destination
         current_path = path
         is_currently_navigating = true
         reached_destination = false
@@ -135,7 +129,7 @@ func reset() -> void:
     if current_path != null:
         previous_path = current_path
     
-    current_target = Vector2.INF
+    current_destination = null
     current_path = null
     current_edge = null
     current_edge_index = -1

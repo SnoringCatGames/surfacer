@@ -16,9 +16,12 @@ var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var navigation_state: PlayerNavigationState
 var pointer_handler: PlayerPointerHandler
-var new_selection_position := Vector2.INF
-var last_selection_position := Vector2.INF
-var current_drag_position := Vector2.INF
+var new_selection_target := Vector2.INF
+var new_selection_position: PositionAlongSurface
+var last_selection_target := Vector2.INF
+var last_selection_position: PositionAlongSurface
+var preselection_target := Vector2.INF
+var preselection_position: PositionAlongSurface
 var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: Navigator
@@ -214,11 +217,18 @@ func _physics_process(delta: float) -> void:
     level.descendant_physics_process_completed(self)
 
 func _handle_pointer_selections() -> void:
-    if new_selection_position != Vector2.INF:
-        last_selection_position = new_selection_position
-        navigator.navigate_to_nearby_surface(last_selection_position)
-        new_selection_position = Vector2.INF
-        current_drag_position = Vector2.INF
+    if new_selection_target != Vector2.INF:
+        if new_selection_position != null:
+            last_selection_target = new_selection_target
+            last_selection_position = new_selection_position
+            navigator.navigate_to_position(last_selection_position)
+        else:
+            print("TARGET IS TOO FAR FROM ANY SURFACE")
+        
+        new_selection_target = Vector2.INF
+        new_selection_position = null
+        preselection_target = Vector2.INF
+        preselection_position = null
 
 func _update_actions(delta: float) -> void:
     # Record actions for the previous frame.

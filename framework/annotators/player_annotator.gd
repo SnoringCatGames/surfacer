@@ -9,6 +9,7 @@ var player_surface_annotator: PlayerSurfaceAnnotator
 var position_annotator: PositionAnnotator
 var tile_annotator: TileAnnotator
 var surface_selection_annotator: SurfaceSelectionAnnotator
+var surface_preselection_annotator: SurfacePreselectionAnnotator
 
 func _init( \
         player: Player, \
@@ -19,6 +20,7 @@ func _init( \
     position_annotator = PositionAnnotator.new(player)
     tile_annotator = TileAnnotator.new(player)
     surface_selection_annotator = SurfaceSelectionAnnotator.new(player)
+    surface_preselection_annotator = SurfacePreselectionAnnotator.new(player)
     if renders_navigator:
         navigator_annotator = NavigatorAnnotator.new(player.navigator)
     z_index = 2
@@ -29,6 +31,7 @@ func _enter_tree() -> void:
     add_child(position_annotator)
     add_child(tile_annotator)
     add_child(surface_selection_annotator)
+    add_child(surface_preselection_annotator)
     if navigator_annotator != null:
         add_child(navigator_annotator)
 
