@@ -57,10 +57,8 @@ static func calculate_jump_land_positions_for_surface_pair( \
     var land_connected_region_top_bound := land_surface.connected_region_bounding_box.position.y
     var land_connected_region_bottom_bound := land_surface.connected_region_bounding_box.end.y
     
-    var jump_surface_center := jump_surface.bounding_box.position + \
-            (jump_surface.bounding_box.end - jump_surface.bounding_box.position) / 2.0
-    var land_surface_center := land_surface.bounding_box.position + \
-            (land_surface.bounding_box.end - land_surface.bounding_box.position) / 2.0
+    var jump_surface_center := jump_surface.center
+    var land_surface_center := land_surface.center
     
     var jump_surface_has_only_one_point := jump_surface.vertices.size() == 1
     var land_surface_has_only_one_point := land_surface.vertices.size() == 1
@@ -2219,8 +2217,7 @@ static func calculate_land_positions_on_surface( \
     var land_surface_right_bound := land_surface.bounding_box.end.x
     var land_surface_top_bound := land_surface.bounding_box.position.y
     var land_surface_bottom_bound := land_surface.bounding_box.end.y
-    var land_surface_center := land_surface.bounding_box.position + \
-            (land_surface.bounding_box.end - land_surface.bounding_box.position) / 2.0
+    var land_surface_center := land_surface.center
     
     var origin_target_point := origin_position.target_point
     

@@ -9,13 +9,7 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Draw a spike for the actual position along the surface (rather than just the surface) for pointer selections.
 # 
-# - Create a better click effect for position-along-surface selection with ClickToNavigate:
-#   - Show an enlarged, highlighted phantom version of the surface.
-#   - Show faintly the neighbors.
-#   - Show this on mouse/touch down.
-#   - Actually do the selection on mouse/touch up.
-#   - This should make it much easier to select the correct thing on mobile, with fat fingers.
-#   - Also, maybe pause the camera pan while doing this?
+# - Also, maybe pause the camera pan while rendering a preselection?
 # 
 # - Debouce preselection position calculations.
 # 

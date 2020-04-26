@@ -4,8 +4,6 @@ const SURFACE_DEPTH := 16.0
 const SURFACE_DEPTH_DIVISIONS_COUNT := 8
 const SURFACE_ALPHA_END_RATIO := .2
 
-const SURFACE_DEPTH_DIVISION_SIZE := SURFACE_DEPTH / SURFACE_DEPTH_DIVISIONS_COUNT
-
 const EDGE_TRAJECTORY_WIDTH := 1.0
 
 const EDGE_WAYPOINT_WIDTH := 1.0
@@ -142,11 +140,14 @@ static func draw_dashed_rectangle( \
 static func draw_surface( \
         canvas: CanvasItem, \
         surface: Surface, \
-        color: Color) -> void:
-    var vertices = surface.vertices
-    var surface_depth_division_offset = surface.normal * -SURFACE_DEPTH_DIVISION_SIZE
-    var alpha_start = color.a
-    var alpha_end = alpha_start * SURFACE_ALPHA_END_RATIO
+        color: Color, \
+        depth := SURFACE_DEPTH) -> void:
+    var surface_depth_division_size := depth / SURFACE_DEPTH_DIVISIONS_COUNT
+    
+    var vertices := surface.vertices
+    var surface_depth_division_offset := surface.normal * -surface_depth_division_size
+    var alpha_start := color.a
+    var alpha_end := alpha_start * SURFACE_ALPHA_END_RATIO
     
     var polyline: PoolVector2Array
     var translation: Vector2
@@ -162,7 +163,7 @@ static func draw_surface( \
             canvas.draw_polyline( \
                     polyline, \
                     color, \
-                    SURFACE_DEPTH_DIVISION_SIZE)
+                    surface_depth_division_size)
 #            Utils.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
     else:
         canvas.draw_circle( \
@@ -188,9 +189,9 @@ static func draw_position_along_surface( \
                     Geometry.project_point_onto_surface( \
                             position.target_point, \
                             position.surface)
-        var normal = position.surface.normal
-        var start = position.target_projection_onto_surface + normal * t_length / 2
-        var end = position.target_projection_onto_surface - normal * t_length / 2
+        var normal := position.surface.normal
+        var start := position.target_projection_onto_surface + normal * t_length / 2
+        var end := position.target_projection_onto_surface - normal * t_length / 2
         canvas.draw_line( \
                 start, \
                 end, \

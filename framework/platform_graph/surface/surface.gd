@@ -26,6 +26,8 @@ var counter_clockwise_concave_neighbor: Surface
 var first_point: Vector2 setget ,_get_first_point
 var last_point: Vector2 setget ,_get_last_point
 
+var center: Vector2 setget ,_get_center
+
 func _init( \
         vertices: Array, \
         side: int, \
@@ -35,8 +37,8 @@ func _init( \
     self.side = side
     self.tile_map = tile_map
     self.tile_map_indices = tile_map_indices
-    bounding_box = Geometry.get_bounding_box_for_points(vertices)
-    normal = SurfaceSide.get_normal(side)
+    self.bounding_box = Geometry.get_bounding_box_for_points(vertices)
+    self.normal = SurfaceSide.get_normal(side)
 
 func to_string() -> String:
     return "Surface{ %s, [ %s, %s ] }" % [ \
@@ -50,3 +52,6 @@ func _get_first_point() -> Vector2:
 
 func _get_last_point() -> Vector2:
     return vertices[vertices.size() - 1]
+
+func _get_center() -> Vector2:
+    return bounding_box.position + (bounding_box.end - bounding_box.position) / 2.0
