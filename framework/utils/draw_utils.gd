@@ -433,6 +433,24 @@ static func draw_arc( \
         color: Color, \
         border_width := 1.0, \
         sector_arc_length := 4.0) -> void:
+    var points := compute_arc_points( \
+            center, \
+            radius, \
+            start_angle, \
+            end_angle, \
+            sector_arc_length)
+    
+    canvas.draw_polyline( \
+            points, \
+            color, \
+            border_width)
+
+static func compute_arc_points(
+        center: Vector2, \
+        radius: float, \
+        start_angle: float, \
+        end_angle: float, \
+        sector_arc_length := 4.0) -> PoolVector2Array:
     var angle_diff := end_angle - start_angle
     var sector_count := floor(angle_diff * radius / sector_arc_length)
     var delta_theta := angle_diff / sector_count
@@ -444,22 +462,19 @@ static func draw_arc( \
                     0.01)
     var vertex_count := \
             sector_count + 2 if should_include_partial_sector_at_end else sector_count + 1
-    var vertices := PoolVector2Array()
-    vertices.resize(vertex_count)
+    var points := PoolVector2Array()
+    points.resize(vertex_count)
     var vertex: Vector2
     
     for i in range(sector_count + 1):
-        vertices[i] = Vector2(cos(theta), sin(theta)) * radius + center
+        points[i] = Vector2(cos(theta), sin(theta)) * radius + center
         theta += delta_theta
     
     # Handle the fence-post problem.
     if should_include_partial_sector_at_end:
-        vertices[vertex_count - 1] = Vector2(cos(end_angle), sin(end_angle)) * radius + center
+        points[vertex_count - 1] = Vector2(cos(end_angle), sin(end_angle)) * radius + center
     
-    canvas.draw_polyline( \
-            vertices, \
-            color, \
-            border_width)
+    return points
 
 static func draw_rectangle_outline( \
         canvas: CanvasItem, \
@@ -527,6 +542,67 @@ static func draw_capsule_outline( \
             vertices, \
             color, \
             thickness)
+
+# This applies Thales's theorem to find the points of tangency between the line segments from the
+# triangular portion and the circle (https://en.wikipedia.org/wiki/Thales%27s_theorem).
+static func draw_ice_cream_cone( \
+        canvas: CanvasItem, \
+        cone_end_point: Vector2, \
+        circle_center: Vector2, \
+        circle_radius: float, \
+        color: Color, \
+        is_filled: bool, \
+        border_width := 1.0, \
+        sector_arc_length := 4.0) -> void:
+    var distance_from_cone_end_point_to_circle_center := \
+            cone_end_point.distance_to(circle_center)
+    
+    # Handle the degenerate case of when the cone-end-point lies within the circle.
+    if distance_from_cone_end_point_to_circle_center <= circle_radius:
+        if is_filled:
+            canvas.draw_circle( \
+                circle_center, \
+                circle_radius, \
+                color)
+        else:
+            draw_circle_outline( \
+                    canvas, \
+                    circle_center, \
+                    circle_radius, \
+                    color, \
+                    border_width, \
+                    sector_arc_length)
+        return
+    
+    var angle_from_circle_center_to_point_of_tangency := \
+            acos(circle_radius / distance_from_cone_end_point_to_circle_center)
+    var angle_from_circle_center_to_cone_end_point := \
+            cone_end_point.angle_to_point(circle_center)
+    
+    var start_angle := angle_from_circle_center_to_cone_end_point + \
+            angle_from_circle_center_to_point_of_tangency
+    var end_angle := angle_from_circle_center_to_cone_end_point + \
+            2.0 * PI - \
+            angle_from_circle_center_to_point_of_tangency
+    
+    var points := compute_arc_points(
+            circle_center, \
+            circle_radius, \
+            start_angle, \
+            end_angle, \
+            sector_arc_length)
+    points.push_back(cone_end_point)
+    points.push_back(points[0])
+    
+    if is_filled:
+        canvas.draw_colored_polygon( \
+                points, \
+                color)
+    else:
+        canvas.draw_polyline( \
+                points, \
+                color, \
+                border_width)
 
 static func draw_edge( \
         canvas: CanvasItem, \

@@ -1,13 +1,18 @@
 extends Node2D
 class_name SurfacePreselectionAnnotator
 
-var PRESELECTION_COLOR: Color = Colors.opacify(Colors.PURPLE, Colors.ALPHA_SOLID)
+var PRESELECTION_SURFACE_COLOR: Color = \
+        Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
+var PRESELECTION_POSITION_INDICATOR_COLOR: Color = \
+        Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
 const PRESELECTION_MIN_OPACITY := 0.5
 const PRESELECTION_MAX_OPACITY := 1.0
 const PRESELECTION_DURATION_SEC := 0.6
 const PRESELECTION_SURFACE_DEPTH := DrawUtils.SURFACE_DEPTH * 4.0
 const PRESELECTION_SURFACE_OUTWARD_OFFSET := 64.0
 const PRESELECTION_SURFACE_LENGTH_PADDING := 64.0
+const PRESELECTION_POSITION_INDICATOR_LENGTH := 128.0
+const PRESELECTION_POSITION_INDICATOR_RADIUS := 32.0
 
 var global # TODO: Add type back
 var player: Player
@@ -69,21 +74,39 @@ func _draw() -> void:
         # When we don't render anything in this draw call, it clears the draw buffer.
         return
     
-    
-    var alpha := PRESELECTION_COLOR.a * \
-            ((1 - animation_progress) * \
+    var alpha_multiplier := ((1 - animation_progress) * \
             (PRESELECTION_MAX_OPACITY - PRESELECTION_MIN_OPACITY) + PRESELECTION_MIN_OPACITY)
-    var color := Color( \
-            PRESELECTION_COLOR.r, \
-            PRESELECTION_COLOR.g, \
-            PRESELECTION_COLOR.b, \
-            alpha)
     
+    var surface_alpha := PRESELECTION_SURFACE_COLOR.a * alpha_multiplier
+    var surface_color := Color( \
+            PRESELECTION_SURFACE_COLOR.r, \
+            PRESELECTION_SURFACE_COLOR.g, \
+            PRESELECTION_SURFACE_COLOR.b, \
+            surface_alpha)
     DrawUtils.draw_surface( \
             self, \
             phantom_surface, \
-            color, \
+            surface_color, \
             PRESELECTION_SURFACE_DEPTH)
+    
+    var position_indicator_alpha := PRESELECTION_POSITION_INDICATOR_COLOR.a * alpha_multiplier
+    var position_indicator_color := Color( \
+            PRESELECTION_POSITION_INDICATOR_COLOR.r, \
+            PRESELECTION_POSITION_INDICATOR_COLOR.g, \
+            PRESELECTION_POSITION_INDICATOR_COLOR.b, \
+            position_indicator_alpha)
+    var cone_end_point := phantom_position_along_surface.target_projection_onto_surface
+    var circle_center := cone_end_point + phantom_surface.normal * \
+            (PRESELECTION_POSITION_INDICATOR_LENGTH - PRESELECTION_POSITION_INDICATOR_RADIUS)
+    DrawUtils.draw_ice_cream_cone( \
+            self, \
+            cone_end_point, \
+            circle_center, \
+            PRESELECTION_POSITION_INDICATOR_RADIUS, \
+            position_indicator_color, \
+            true, \
+            INF, \
+            4.0)
 
 func _update_phantom_surface() -> void:
     # Copy the vertices from the target surface.
@@ -91,7 +114,6 @@ func _update_phantom_surface() -> void:
     phantom_surface.vertices = preselection_position_to_draw.surface.vertices
     phantom_surface.side = preselection_position_to_draw.surface.side
     phantom_surface.normal = preselection_position_to_draw.surface.normal
-    phantom_surface.bounding_box = preselection_position_to_draw.surface.bounding_box
     
     # Enlarge and offset the phantom surface, so that it stands out more.
     
@@ -115,6 +137,8 @@ func _update_phantom_surface() -> void:
     
     for i in range(phantom_surface.vertices.size()):
         phantom_surface.vertices[i] = transform.xform(phantom_surface.vertices[i])
+    
+    phantom_surface.bounding_box = Geometry.get_bounding_box_for_points(phantom_surface.vertices)
 
 func _update_phantom_position_along_surface() -> void:
     phantom_position_along_surface.match_surface_target_and_collider( \

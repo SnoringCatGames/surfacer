@@ -7,13 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Draw a spike for the actual position along the surface (rather than just the surface) for pointer selections.
-#   - Maybe update the preexisting DrawUtils.draw_position_along_surface function?
-#   - But definitly change how the position is rendered (don't just draw a simple rectangle).
-#   - Instead, draw an ice-cream-cone shape.
-#     - But figure out the math to make the curve of the circle continuous with the line of the triangle.
-#       - I've done that before somewhere...
-# 
 # - Also, maybe pause the camera pan while rendering a preselection?
 # 
 # - Debouce preselection position calculations.
