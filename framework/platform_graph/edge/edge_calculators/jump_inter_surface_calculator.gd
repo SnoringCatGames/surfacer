@@ -7,7 +7,7 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Debouce preselection position calculations.
+# - Create another annotator to indicate the current navigation destination more boldly.
 # 
 # - [or skip? (should be fixed when turning on v sync)] Fix a bug where jump falls way short; from
 #   right-end of short-low floor to bottom-end of short-high-right-side wall.
