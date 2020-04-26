@@ -3,7 +3,9 @@ class_name SurfaceSelectionAnnotator
 
 var VALID_SELECTION_COLOR: Color = Colors.opacify(Colors.WHITE, Colors.ALPHA_SOLID)
 var INVALID_SELECTION_COLOR: Color = Colors.opacify(Colors.RED, Colors.ALPHA_SOLID)
-const SELECT_DURATION_SEC := ClickAnnotator.CLICK_DURATION_SEC
+const SELECT_DURATION_SEC := max( \
+        ClickAnnotator.CLICK_INNER_DURATION_SEC, \
+        ClickAnnotator.CLICK_OUTER_DURATION_SEC)
 
 var global # TODO: Add type back
 var player: Player

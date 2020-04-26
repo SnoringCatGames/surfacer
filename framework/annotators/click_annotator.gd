@@ -1,15 +1,20 @@
 extends Node2D
 class_name ClickAnnotator
 
-const CLICK_END_RADIUS := 58.0
-var CLICK_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_SOLID)
-const CLICK_DURATION_SEC := 0.2
+const CLICK_INNER_END_RADIUS := 58.0
+const CLICK_OUTER_END_RADIUS := 100.0
+var CLICK_INNER_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_SLIGHTLY_FAINT)
+var CLICK_OUTER_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_SLIGHTLY_FAINT)
+const CLICK_INNER_DURATION_SEC := 0.27
+const CLICK_OUTER_DURATION_SEC := 0.23
 
 var global # TODO: Add type back
 var click_position := Vector2.INF
-var start_time := -CLICK_DURATION_SEC
-var end_time := -CLICK_DURATION_SEC
-var progress := 1.0
+var start_time := -CLICK_INNER_DURATION_SEC
+var inner_end_time := -CLICK_INNER_DURATION_SEC
+var outer_end_time := -CLICK_OUTER_DURATION_SEC
+var inner_progress := 1.0
+var outer_progress := 1.0
 var is_a_click_currently_rendered := false
 
 func _ready() -> void:
@@ -23,30 +28,52 @@ func _unhandled_input(event: InputEvent) -> void:
             !event.pressed:
         click_position = global.current_level.get_global_mouse_position()
         start_time = current_time
-        end_time = start_time + CLICK_DURATION_SEC
+        inner_end_time = start_time + CLICK_INNER_DURATION_SEC
+        outer_end_time = start_time + CLICK_OUTER_DURATION_SEC
         is_a_click_currently_rendered = true
 
 func _process(delta: float) -> void:
     var current_time: float = global.elapsed_play_time_sec
     
-    if end_time > current_time or is_a_click_currently_rendered:
-        progress = (current_time - start_time) / CLICK_DURATION_SEC
+    inner_progress = (current_time - start_time) / CLICK_INNER_DURATION_SEC
+    outer_progress = (current_time - start_time) / CLICK_OUTER_DURATION_SEC
+    
+    if is_a_click_currently_rendered:
         update()
 
 func _draw() -> void:
-    if progress >= 1:
+    var is_inner_animation_complete := inner_progress >= 1.0
+    var is_outer_animation_complete := outer_progress >= 1.0
+    
+    if is_inner_animation_complete and \
+            is_outer_animation_complete:
         is_a_click_currently_rendered = false
         return
     
-    var alpha := CLICK_COLOR.a * (1 - progress)
-    var color := Color( \
-            CLICK_COLOR.r, \
-            CLICK_COLOR.g, \
-            CLICK_COLOR.b, \
-            alpha)
-    var radius := CLICK_END_RADIUS * progress
+    if !is_inner_animation_complete:
+        var alpha := CLICK_INNER_COLOR.a * (1 - inner_progress)
+        var color := Color( \
+                CLICK_INNER_COLOR.r, \
+                CLICK_INNER_COLOR.g, \
+                CLICK_INNER_COLOR.b, \
+                alpha)
+        var radius := CLICK_INNER_END_RADIUS * inner_progress
+        
+        draw_circle( \
+                click_position, \
+                radius, \
+                color)
     
-    draw_circle( \
-            click_position, \
-            radius, \
-            color)
+    if !is_outer_animation_complete:
+        var alpha := CLICK_OUTER_COLOR.a * (1 - outer_progress)
+        var color := Color( \
+                CLICK_OUTER_COLOR.r, \
+                CLICK_OUTER_COLOR.g, \
+                CLICK_OUTER_COLOR.b, \
+                alpha)
+        var radius := CLICK_OUTER_END_RADIUS * outer_progress
+        
+        draw_circle( \
+                click_position, \
+                radius, \
+                color)
