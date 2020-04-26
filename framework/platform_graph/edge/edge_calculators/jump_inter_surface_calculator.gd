@@ -7,8 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Also, maybe pause the camera pan while rendering a preselection?
-# 
 # - Debouce preselection position calculations.
 # 
 # - [or skip? (should be fixed when turning on v sync)] Fix a bug where jump falls way short; from
