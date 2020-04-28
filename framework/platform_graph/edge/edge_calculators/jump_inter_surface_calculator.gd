@@ -7,11 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Create another annotator to indicate the current navigation destination more boldly.
-# 
-# - [or skip? (should be fixed when turning on v sync)] Fix a bug where jump falls way short; from
-#   right-end of short-low floor to bottom-end of short-high-right-side wall.
-# 
 # - Instead of offsetting surface-end points dynamically in Navigator (to prevent protrusion past
 #   surface end), should we do it up front to all edge surface ends in PlatformGraph?
 # 
@@ -195,10 +190,6 @@ const IS_A_JUMP_CALCULATOR := true
 #     
 # ---  ---
 # 
-# - Update some edge calculators to offset the expected near-side, far-side, close-side, top-side,
-#   bottom-side, etc. jump-off/land-on position calculations to account for neighbor surfaces that
-#   would get in the way.
-# 
 # - Add better annotation selection.
 #   - Add shortcuts for toggling debugging annotations
 #     - Add support for triggering the calc-step annotations based on a shortcut.
@@ -271,6 +262,24 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Add some sort of warning message when the player's run-time velocity is too far from what's
 #   expected?
+# 
+# - Switch to built-in Godot gradients for surface annotations.
+# 
+# - Create another annotator to indicate the current navigation destination more boldly.
+#   - After selecting the destination, animate the surface and position indicator annotations
+#     downward (and inward) onto the surface, and then have the position indicator stay there
+#     until navigation is done (pulsing indicator with opacity and size (use sin wave) and pulsing
+#     overlapping two/three repeating outward-growing surface ellipses).
+#   - Use some sort of pulsing/growing elliptical gradient from the position indicator along the
+#     nearby surface face.
+#     - Will have to be a custom radial gradient:
+#       - https://github.com/Maujoe/godot-custom-gradient-texture/blob/master/assets/maujoe.custom_gradient_texture/custom_gradient_texture.gd
+#     - Will probably want to create a texture out of this radial gradient, set the texture to not
+#       repeat, render the texture offset within a transparent rectangle, then just animate the UV
+#       coordinates.
+# 
+# - [or skip? (should be fixed when turning on v sync)] Fix a bug where jump falls way short; from
+#   right-end of short-low floor to bottom-end of short-high-right-side wall.
 # 
 
 
