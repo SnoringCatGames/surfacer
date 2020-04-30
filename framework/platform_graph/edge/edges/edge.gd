@@ -89,7 +89,9 @@ func _init( \
             instructions, \
             distance)
 
-func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
+func update_for_surface_state( \
+        surface_state: PlayerSurfaceState, \
+        is_final_edge: bool) -> void:
     # Do nothing unless the sub-class implements this.
     pass
 

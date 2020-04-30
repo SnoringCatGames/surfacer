@@ -71,18 +71,23 @@ func update_terminal( \
             instructions, \
             distance)
 
-func update_for_surface_state(surface_state: PlayerSurfaceState) -> void:
+func update_for_surface_state( \
+        surface_state: PlayerSurfaceState, \
+        is_final_edge: bool) -> void:
     instructions = _calculate_instructions( \
             surface_state.center_position_along_surface, \
             end_position_along_surface)
     
-    var displacement_to_end := \
-            end_position_along_surface.target_point - surface_state.center_position
-    stopping_distance = _calculate_stopping_distance( \
-            movement_params, \
-            self, \
-            surface_state.velocity, \
-            displacement_to_end)
+    if is_final_edge:
+        var displacement_to_end := \
+                end_position_along_surface.target_point - surface_state.center_position
+        stopping_distance = _calculate_stopping_distance( \
+                movement_params, \
+                self, \
+                surface_state.velocity, \
+                displacement_to_end)
+    else:
+        stopping_distance = 0.0
 
 func _calculate_distance( \
         start: PositionAlongSurface, \

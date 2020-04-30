@@ -157,7 +157,9 @@ func _start_edge(index: int) -> void:
         player.velocity = current_edge.velocity_start
         surface_state.horizontal_acceleration_sign = 0
     
-    current_edge.update_for_surface_state(surface_state)
+    current_edge.update_for_surface_state( \
+            surface_state, \
+            current_edge == current_path.edges.back())
     navigation_state.is_expecting_to_enter_air = current_edge.enters_air
     
     current_playback = instructions_action_source.start_instructions( \

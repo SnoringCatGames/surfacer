@@ -7,7 +7,10 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Instead of offsetting surface-end points dynamically in Navigator (to prevent protrusion past
+# - COMMIT MESSAGE:
+#     In IntraSurfaceEdge, set stopping distance to 0 for all non-final edges.
+# 
+# x-[no] Instead of offsetting surface-end points dynamically in Navigator (to prevent protrusion past
 #   surface end), should we do it up front to all edge surface ends in PlatformGraph?
 # 
 # - Add some simple loading screen improvements:
@@ -43,6 +46,14 @@ const IS_A_JUMP_CALCULATOR := true
 #     in an edge calculation before giving up (or, recursion depth (with and without backtracking))?
 #   - Tweak movement_params.exceptional_jump_instruction_duration_increase, and ensure
 #     that it is actually cutting down on the number of times we have to backtrack.
+# 
+# - Re-implement/use DEBUG_MODE flag:
+#   - Switch some MovementParam values when it's on:
+#     - syncs_player_velocity_to_edge_trajectory
+#     - ACTUALLY, maybe just implement another version of CatPlayer that only has MovementParams as different, then it's easy to toggle.
+#       - Would need to make it easy to re-use same animator logic though...
+#   - Switch which annotations are used.
+#   - Switch which level is used?
 # 
 # - When "backtracking" for height, re-use all previous waypoints, but reset their times and
 #   maybe velocities.
