@@ -7,12 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - COMMIT MESSAGE:
-#     In IntraSurfaceEdge, set stopping distance to 0 for all non-final edges.
-# 
-# x-[no] Instead of offsetting surface-end points dynamically in Navigator (to prevent protrusion past
-#   surface end), should we do it up front to all edge surface ends in PlatformGraph?
-# 
 # - Add some simple loading screen improvements:
 #   - Add a message underneath the initial splash screen:
 #     - "Waiting on Godot"
@@ -21,6 +15,13 @@ const IS_A_JUMP_CALCULATOR := true
 #     - "Calculating platform graph"
 #     - As a Godot scene.
 #     - Show it after downloading, during my PlatformGraph parsing.
+# 
+# - Create a credits panel (overlay).
+#   - Be able to open it through debug panel.
+#   - Include:
+#     - An X button to close.
+#     - Mention myself, my images, my sounds, my music, my framework, my game logic.
+# - Create a collapsible third-party licenses panel.
 # 
 # - Will need to add an additional section in the debug menu for displaying analytics info.
 #   - Can probably also integrate some info into the tree for debugged trajectories.

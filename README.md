@@ -355,3 +355,9 @@ TODO: Include a brief description of each annotator.
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
 
 For convenience, this is checked in the with rest of the Surfacer framework.
+
+### Licenses
+
+The Surfacer framework is published under the [MIT license](LICENSE).
+
+The Surface framework depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./docs/third-party-licenses.txt).
