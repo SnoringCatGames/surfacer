@@ -16,6 +16,9 @@ const IS_A_JUMP_CALCULATOR := true
 #     - As a Godot scene.
 #     - Show it after downloading, during my PlatformGraph parsing.
 # 
+# - Fix the mouse vs touch position inconsistency.
+#   - ClickAnnotator seems fine, while SurfaceSelectionAnnotator doesn't?
+# 
 # - Create a credits panel (overlay).
 #   - Be able to open it through debug panel.
 #   - Include:
