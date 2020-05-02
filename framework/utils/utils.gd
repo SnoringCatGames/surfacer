@@ -102,5 +102,5 @@ static func add_scene( \
 
 static func get_global_touch_position( \
         input_event: InputEventScreenTouch, \
-        current_level: Level) -> Vector2:
+        current_level) -> Vector2:
     return current_level.get_canvas_transform().xform_inv(input_event.position)
