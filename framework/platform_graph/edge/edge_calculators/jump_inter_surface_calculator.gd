@@ -9,10 +9,10 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Add scroll wheel for zoom.
 #
-# - Move background out of main.tscn and into level.
-# 
 # - Fix the mouse vs touch position inconsistency.
 #   - ClickAnnotator seems fine, while SurfaceSelectionAnnotator doesn't?
+# 
+# - Move background out of main.tscn and into level.
 # 
 # - Create a credits panel (overlay).
 #   - Be able to open it through debug panel.

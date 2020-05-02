@@ -97,7 +97,7 @@
 			position: relative;
 			
 			/* --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- */
-			left: -60px;
+			left: -40px;
 		}
 
 		#status-indeterminate > div {
@@ -307,15 +307,15 @@
 			engine.setStderrFunc(printStderr);
 			
 			// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
-			console.log('Main script loaded')
+			console.info('Main script loaded')
 			setStatusNotice('Loading scripts...');
 			window.onLevelReady = function onLevelReady() {
-				console.log('Level ready');
+				console.info('Level ready');
 				setStatusMode('hidden');
 				initializing = false;
 			};
 			window.onLoadingScreenReady = function onLoadingScreenReady() {
-				console.log('Godot bootstrapped');
+				console.info('Godot bootstrapped');
 				setStatusNotice('Calculating platform graph...');
 			};
 		})();
