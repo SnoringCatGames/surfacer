@@ -137,8 +137,8 @@ $GODOT_HEAD_INCLUDE
 	</canvas>
 	<div id='status'>
 		<!-- NOTE: THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. -->
-		<div id='status-title' style='display: none;'>
-			<img src="logo.gif"
+		<div id="status-title" style="display: none;">
+			<img src="logo.png"
 				 alt="Squirrel Away" />
 		</div>
 		<!-- NOTE: THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. -->
@@ -205,6 +205,7 @@ $GODOT_HEAD_INCLUDE
 				[statusTitle, statusIndeterminate, statusNotice].forEach(elem => {
 					elem.style.display = 'block';
 				});
+				canvas.style.visibility = 'hidden';
 				// animationCallbacks = animationCallbacks.filter(function(value) {
 				// 	return (value != animateStatusIndeterminate);
 				// });
@@ -218,6 +219,7 @@ $GODOT_HEAD_INCLUDE
 						[statusTitle, statusIndeterminate, statusNotice].forEach(elem => {
 							elem.style.display = 'none';
 						});
+						canvas.style.visibility = 'visible';
 						break;
 					default:
 						throw new Error('Invalid status mode');
@@ -295,7 +297,7 @@ $GODOT_HEAD_INCLUDE
 			}
 			engine.setStdoutFunc(printStdout);
 			function printStderr(text) {
-				console.warn("Error: " + text);
+				console.warn('Error: ' + text);
 			}
 			engine.setStderrFunc(printStderr);
 			
