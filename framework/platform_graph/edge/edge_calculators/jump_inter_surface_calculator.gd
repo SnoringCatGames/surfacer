@@ -7,9 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix the mouse vs touch position inconsistency.
-#   - ClickAnnotator seems fine, while SurfaceSelectionAnnotator doesn't?
-# 
 # - Move background out of main.tscn and into level.
 # 
 # - Create a credits panel (overlay).

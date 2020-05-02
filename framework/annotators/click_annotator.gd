@@ -23,10 +23,21 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
     var current_time: float = global.elapsed_play_time_sec
     
+    var position := Vector2.INF
+    
     if event is InputEventMouseButton and \
             event.button_index == BUTTON_LEFT and \
             !event.pressed:
-        click_position = global.current_level.get_global_mouse_position()
+        position = global.current_level.get_global_mouse_position()
+        
+    elif event is InputEventScreenTouch and \
+            !event.pressed:
+        position = Utils.get_global_touch_position( \
+                event, \
+                global)
+    
+    if position != Vector2.INF:
+        click_position = position
         start_time = current_time
         inner_end_time = start_time + CLICK_INNER_DURATION_SEC
         outer_end_time = start_time + CLICK_OUTER_DURATION_SEC
