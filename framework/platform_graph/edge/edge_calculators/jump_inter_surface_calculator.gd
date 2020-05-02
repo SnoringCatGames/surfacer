@@ -7,8 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Move background out of main.tscn and into level.
-# 
 # - Create a credits panel (overlay).
 #   - Be able to open it through debug panel.
 #   - Include:
