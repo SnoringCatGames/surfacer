@@ -7,8 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add scroll wheel for zoom.
-#
 # - Fix the mouse vs touch position inconsistency.
 #   - ClickAnnotator seems fine, while SurfaceSelectionAnnotator doesn't?
 # 

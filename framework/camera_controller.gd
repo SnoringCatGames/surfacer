@@ -18,8 +18,7 @@ func _ready() -> void:
     global.camera_controller = self
 
 func _process(delta: float) -> void:
-    if Input.is_key_pressed(KEY_CONTROL) and \
-            _current_camera != null:
+    if _current_camera != null:
         # Handle zooming.
         if Input.is_action_pressed("zoom_in"):
             _current_camera.zoom -= _current_camera.zoom * ZOOM_STEP_RATIO
@@ -35,6 +34,15 @@ func _process(delta: float) -> void:
             _current_camera.offset.x -= PAN_STEP
         elif Input.is_action_pressed("move_right"):
             _current_camera.offset.x += PAN_STEP
+
+func _unhandled_input(event: InputEvent) -> void:
+    # Mouse wheel events are never considered pressed by Godot--rather they are only ever
+    # considered to have just happened.
+    if event is InputEventMouseButton:
+        if event.button_index == BUTTON_WHEEL_UP:
+            _current_camera.zoom -= _current_camera.zoom * ZOOM_STEP_RATIO
+        if event.button_index == BUTTON_WHEEL_DOWN:
+            _current_camera.zoom += _current_camera.zoom * ZOOM_STEP_RATIO
 
 func _set_current_camera(camera: Camera2D) -> void:
     assert(camera.current)
