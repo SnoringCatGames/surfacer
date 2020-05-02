@@ -86,8 +86,8 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
 
 [node name="Sprite" type="Sprite" parent="HBoxContainer/VBoxContainer/ProgressIndicator"]
-position = Vector2( 390.97, 149.065 )
-scale = Vector2( 4, 4 )
+position = Vector2( 390.007, 157.966 )
+scale = Vector2( 2.67461, 2.67461 )
 texture = ExtResource( 2 )
 vframes = 4
 hframes = 2
