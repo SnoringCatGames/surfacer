@@ -55,6 +55,14 @@
 			flex-direction: column;
 		}
 
+		/* --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- */
+		#status-title {
+			margin-bottom: 100px;
+		}
+		#status-title > img {
+			height: 200px;
+		}
+
 		#status-progress {
 			width: 366px;
 			height: 7px;
@@ -129,6 +137,11 @@ $GODOT_HEAD_INCLUDE
 	</canvas>
 	<div id='status'>
 		<!-- NOTE: THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. -->
+		<div id='status-title' style='display: none;'>
+			<img src="logo.gif"
+				 alt="Squirrel Away" />
+		</div>
+		<!-- NOTE: THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. -->
 		<!-- <div id='status-progress' style='display: none;' oncontextmenu='event.preventDefault();'><div id ='status-progress-inner'></div></div> -->
 		<div id='status-indeterminate' style='display: none;' oncontextmenu='event.preventDefault();'>
 			<!-- NOTE: THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. -->
@@ -155,6 +168,7 @@ $GODOT_HEAD_INCLUDE
 
 			var canvas = document.getElementById('canvas');
 			// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
+			var statusTitle = document.getElementById('status-title');
 			// var statusProgress = document.getElementById('status-progress');
 			// var statusProgressInner = document.getElementById('status-progress-inner');
 			var statusIndeterminate = document.getElementById('status-indeterminate');
@@ -188,7 +202,7 @@ $GODOT_HEAD_INCLUDE
 				if (statusMode === mode || !initializing)
 					return;
 				// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
-				[statusIndeterminate, statusNotice].forEach(elem => {
+				[statusTitle, statusIndeterminate, statusNotice].forEach(elem => {
 					elem.style.display = 'block';
 				});
 				// animationCallbacks = animationCallbacks.filter(function(value) {
@@ -201,7 +215,7 @@ $GODOT_HEAD_INCLUDE
 					case 'indeterminate':
 						break;
 					case 'hidden':
-						[statusIndeterminate, statusNotice].forEach(elem => {
+						[statusTitle, statusIndeterminate, statusNotice].forEach(elem => {
 							elem.style.display = 'none';
 						});
 						break;
