@@ -92,9 +92,11 @@ static func _get_floor_collision(body: KinematicBody2D) -> KinematicCollision2D:
 
 static func add_scene( \
         parent: Node, \
-        resource_path: String) -> Node:
+        resource_path: String, \
+        is_visible := true) -> Node:
     var scene := load(resource_path)
     var node: Node = scene.instance()
+    node.visible = is_visible
     parent.add_child(node)
     return node
 

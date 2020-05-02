@@ -47,6 +47,7 @@ const ALPHA_SLIGHTLY_FAINT := 0.7
 const ALPHA_FAINT := 0.5
 const ALPHA_XFAINT := 0.3
 const ALPHA_XXFAINT := 0.1
+const ALPHA_XXXFAINT := 0.03
 
 static func opacify(base_color: Color, opacity: float) -> Color:
     base_color.a = opacity

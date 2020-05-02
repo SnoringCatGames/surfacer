@@ -399,6 +399,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/navigator_annotator.gd"
 }, {
+"base": "Node2D",
+"class": "Overlays",
+"language": "GDScript",
+"path": "res://framework/overlays.gd"
+}, {
 "base": "Reference",
 "class": "PlatformGraph",
 "language": "GDScript",
@@ -733,6 +738,7 @@ _global_script_class_icons={
 "MovementVertCalcStep": "",
 "Navigator": "",
 "NavigatorAnnotator": "",
+"Overlays": "",
 "PlatformGraph": "",
 "PlatformGraphAnnotator": "",
 "PlatformGraphPath": "",

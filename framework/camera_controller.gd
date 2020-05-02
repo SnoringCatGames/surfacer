@@ -18,7 +18,8 @@ func _ready() -> void:
     global.camera_controller = self
 
 func _process(delta: float) -> void:
-    if Input.is_key_pressed(KEY_CONTROL):
+    if Input.is_key_pressed(KEY_CONTROL) and \
+            _current_camera != null:
         # Handle zooming.
         if Input.is_action_pressed("zoom_in"):
             _current_camera.zoom -= _current_camera.zoom * ZOOM_STEP_RATIO
@@ -43,17 +44,25 @@ func _get_current_camera() -> Camera2D:
     return _current_camera
 
 func _set_offset(offset: Vector2) -> void:
+    assert(_current_camera != null)
     _current_camera.offset = offset
 
 func _get_offset() -> Vector2:
+    if _current_camera == null:
+        return Vector2.ZERO
     return _current_camera.offset
 
 func get_position() -> Vector2:
+    if _current_camera == null:
+        return Vector2.ZERO
     return _current_camera.get_camera_screen_center()
 
 func _set_zoom(zoom: float) -> void:
+    assert(_current_camera != null)
     _current_camera.zoom = Vector2(zoom, zoom)
 
 func _get_zoom() -> float:
+    if _current_camera == null:
+        return 1.0
     assert(_current_camera.zoom.x == _current_camera.zoom.y)
     return _current_camera.zoom.x

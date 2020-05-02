@@ -1,14 +1,24 @@
 extends Node2D
 class_name NavigatorAnnotator
 
-var CURRENT_PATH_COLOR := Colors.opacify(Colors.PURPLE, Colors.ALPHA_FAINT)
-var PREVIOUS_PATH_COLOR := Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
-var DESTINATION_INDICATOR_COLOR := Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
-var ORIGIN_INDICATOR_COLOR := DESTINATION_INDICATOR_COLOR
+var CURRENT_PATH_COLOR := \
+        Colors.opacify(Colors.PURPLE, Colors.ALPHA_FAINT)
+var PREVIOUS_PATH_COLOR := \
+        Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
+var DESTINATION_INDICATOR_FILL_COLOR := \
+        Colors.opacify(Colors.PURPLE, Colors.ALPHA_XXFAINT)
+var DESTINATION_INDICATOR_STROKE_COLOR := \
+        Colors.opacify(Colors.PURPLE, Colors.ALPHA_SLIGHTLY_FAINT)
+var ORIGIN_INDICATOR_FILL_COLOR := \
+        DESTINATION_INDICATOR_FILL_COLOR
+var ORIGIN_INDICATOR_STROKE_COLOR := \
+        DESTINATION_INDICATOR_STROKE_COLOR
 
-const ORIGIN_RADIUS := 16.0
+const ORIGIN_INDICATOR_RADIUS := 16.0
 const DESTINATIAN_INDICATOR_LENGTH := 64.0
 const DESTINATION_INDICATOR_RADIUS := 16.0
+
+const INDICATOR_STROKE_WIDTH := 1.0
 
 var navigator: Navigator
 var previous_path: PlatformGraphPath
@@ -27,10 +37,20 @@ func _draw() -> void:
                 current_path, \
                 CURRENT_PATH_COLOR)
         
+        # Draw the origin indicator.
         self.draw_circle( \
                 navigator.current_path.origin, \
-                ORIGIN_RADIUS, \
-                ORIGIN_INDICATOR_COLOR)
+                ORIGIN_INDICATOR_RADIUS, \
+                ORIGIN_INDICATOR_FILL_COLOR)
+        DrawUtils.draw_circle_outline( \
+                self, \
+                navigator.current_path.origin, \
+                ORIGIN_INDICATOR_RADIUS, \
+                ORIGIN_INDICATOR_STROKE_COLOR, \
+                INDICATOR_STROKE_WIDTH, \
+                4.0)
+        
+        # Draw the destination indicator.
         var cone_end_point := navigator.current_destination.target_projection_onto_surface
         var circle_center := cone_end_point + navigator.current_destination.surface.normal * \
                 (DESTINATIAN_INDICATOR_LENGTH - DESTINATION_INDICATOR_RADIUS)
@@ -39,9 +59,18 @@ func _draw() -> void:
                 cone_end_point, \
                 circle_center, \
                 DESTINATION_INDICATOR_RADIUS, \
-                DESTINATION_INDICATOR_COLOR, \
+                DESTINATION_INDICATOR_FILL_COLOR, \
                 true, \
                 INF, \
+                4.0)
+        DrawUtils.draw_ice_cream_cone( \
+                self, \
+                cone_end_point, \
+                circle_center, \
+                DESTINATION_INDICATOR_RADIUS, \
+                DESTINATION_INDICATOR_STROKE_COLOR, \
+                false, \
+                INDICATOR_STROKE_WIDTH, \
                 4.0)
 
 func check_for_update() -> void:

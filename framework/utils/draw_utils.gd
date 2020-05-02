@@ -9,6 +9,8 @@ const EDGE_TRAJECTORY_WIDTH := 1.0
 const EDGE_WAYPOINT_WIDTH := 1.0
 const EDGE_WAYPOINT_RADIUS := 6.0 * EDGE_WAYPOINT_WIDTH
 const EDGE_START_RADIUS := 3.0 * EDGE_WAYPOINT_WIDTH
+const EDGE_END_RADIUS := EDGE_WAYPOINT_RADIUS
+const EDGE_END_CONE_LENGTH := EDGE_WAYPOINT_RADIUS * 3.0
 
 const EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH := 9
 const EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH := 1
@@ -748,8 +750,10 @@ static func _draw_edge_from_instructions_positions( \
             EDGE_TRAJECTORY_WIDTH)
     
     if includes_waypoints:
-        # Draw all waypoints in this edge.
-        for waypoint_position in edge.trajectory.waypoint_positions:
+        # Draw the intermediate waypoints.
+        var waypoint_position: Vector2
+        for i in range(edge.trajectory.waypoint_positions.size() - 1):
+            waypoint_position = edge.trajectory.waypoint_positions[i]
             draw_circle_outline( \
                     canvas, \
                     waypoint_position, \
@@ -757,13 +761,29 @@ static func _draw_edge_from_instructions_positions( \
                     waypoint_color, \
                     EDGE_WAYPOINT_WIDTH, \
                     4.0)
+        
+        # Draw the destination waypoint.
+        var circle_center := edge.end_position_along_surface.target_point
+        var cone_end_point := circle_center - \
+                edge.end_surface.normal * (EDGE_END_CONE_LENGTH - EDGE_END_RADIUS)
+        draw_ice_cream_cone( \
+                canvas, \
+                cone_end_point, \
+                circle_center, \
+                EDGE_WAYPOINT_RADIUS, \
+                waypoint_color, \
+                false, \
+                EDGE_WAYPOINT_WIDTH, \
+                4.0)
+        
+        # Draw the origin waypoint.
         draw_circle_outline( \
                 canvas, \
                 edge.start, \
                 EDGE_START_RADIUS, \
                 waypoint_color, \
                 EDGE_WAYPOINT_WIDTH, \
-                4.0)
+                3.0)
     
     if includes_instruction_indicators:
         # Draw the positions where horizontal instructions start.

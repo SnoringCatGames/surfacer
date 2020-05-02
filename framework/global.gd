@@ -117,6 +117,7 @@ var welcome_panel: WelcomePanel
 
 var space_state: Physics2DDirectSpaceState
 
+var overlays: Overlays
 var current_level
 var current_player_for_clicks
 var camera_controller: CameraController

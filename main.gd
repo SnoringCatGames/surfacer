@@ -1,6 +1,8 @@
 extends Node
 class_name Main
 
+const LOADING_SCREEN_PATH := "res://loading_screen.tscn"
+
 const PLAYER_ACTION_CLASSES := [
     preload("res://framework/player/action/action_handlers/air_dash_action.gd"),
     preload("res://framework/player/action/action_handlers/air_default_action.gd"),
@@ -39,10 +41,14 @@ const PLAYER_PARAM_CLASSES := [
     preload("res://test/data/test_player_params.gd"),
 ]
 
+var global: Global
+var loading_screen: Node
+var camera_controller: CameraController
+var overlays: Overlays
 var level: Level
 
 func _enter_tree() -> void:
-    var global := $"/root/Global"
+    global = $"/root/Global"
     
     global.register_player_actions(PLAYER_ACTION_CLASSES)
     global.register_edge_movements(EDGE_MOVEMENT_CLASSES)
@@ -50,15 +56,44 @@ func _enter_tree() -> void:
     
     if Global.IN_TEST_MODE:
         var scene_path := Global.TEST_RUNNER_SCENE_RESOURCE_PATH
-        var test_scene = Utils.add_scene(self, scene_path)
+        var test_scene = Utils.add_scene( \
+                self, \
+                scene_path)
     else:
-        var scene_path := Global.STARTING_LEVEL_RESOURCE_PATH
-        level = Utils.add_scene(self, scene_path)
+        camera_controller = CameraController.new()
+        add_child(camera_controller)
+        overlays = Overlays.new()
+        add_child(overlays)
+        loading_screen = Utils.add_scene( \
+                overlays.screen_layer, \
+                LOADING_SCREEN_PATH)
 
-func _ready() -> void:
-    if !Global.IN_TEST_MODE:
+func _process(delta: float) -> void:
+    # FIXME: Figure out a better way of loading/parsing the level without blocking the main thread?
+    
+    if !Global.IN_TEST_MODE and \
+            level == null and \
+            global._get_elapsed_play_time_sec() > 0.5:
+        var scene_path := Global.STARTING_LEVEL_RESOURCE_PATH
+        level = Utils.add_scene( \
+                self, \
+                scene_path, \
+                false)
+        
+    if loading_screen != null and \
+            global._get_elapsed_play_time_sec() > 2.0:
+        level.visible = true
+        overlays.screen_layer.remove_child(loading_screen)
+        loading_screen.queue_free()
+        loading_screen = null
+        
+        # Add the player after removing the loading screen, since the camera will track the player,
+        # which makes the loading screen look offset.
         var position := \
                 Vector2(160.0, 0.0) if \
                 Global.STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 else \
                 Vector2.ZERO
-        level.add_player(Global.PLAYER_RESOURCE_PATH, false, position)
+        level.add_player( \
+                Global.PLAYER_RESOURCE_PATH, \
+                false, \
+                position)
