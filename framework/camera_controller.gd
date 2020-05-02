@@ -21,18 +21,24 @@ func _process(delta: float) -> void:
     if _current_camera != null:
         # Handle zooming.
         if Input.is_action_pressed("zoom_in"):
+            print("ZOOM_IN")
             _current_camera.zoom -= _current_camera.zoom * ZOOM_STEP_RATIO
         elif Input.is_action_pressed("zoom_out"):
+            print("ZOOM_OUT")
             _current_camera.zoom += _current_camera.zoom * ZOOM_STEP_RATIO
     
         # Handle Panning.
-        if Input.is_action_pressed("move_up"):
+        if Input.is_action_pressed("pan_up"):
+            print("PAN_UP")
             _current_camera.offset.y -= PAN_STEP
-        elif Input.is_action_pressed("move_down"):
+        elif Input.is_action_pressed("pan_down"):
+            print("PAN_DOWN")
             _current_camera.offset.y += PAN_STEP
-        elif Input.is_action_pressed("move_left"):
+        elif Input.is_action_pressed("pan_left"):
+            print("PAN_LEFT")
             _current_camera.offset.x -= PAN_STEP
-        elif Input.is_action_pressed("move_right"):
+        elif Input.is_action_pressed("pan_right"):
+            print("PAN_RIGHT")
             _current_camera.offset.x += PAN_STEP
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -40,8 +46,10 @@ func _unhandled_input(event: InputEvent) -> void:
     # considered to have just happened.
     if event is InputEventMouseButton:
         if event.button_index == BUTTON_WHEEL_UP:
+            print("ZOOM_IN")
             _current_camera.zoom -= _current_camera.zoom * ZOOM_STEP_RATIO
         if event.button_index == BUTTON_WHEEL_DOWN:
+            print("ZOOM_OUT")
             _current_camera.zoom += _current_camera.zoom * ZOOM_STEP_RATIO
 
 func _set_current_camera(camera: Camera2D) -> void:

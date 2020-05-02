@@ -81,6 +81,8 @@ func find_a_landing_trajectory( \
                 exclusive_land_position, \
                 velocity_start, \
                 needs_extra_wall_land_horizontal_speed)
+        if calc_results == null:
+            return null
     else:
         # Find all possible surfaces in landing range.
         var result_set := {}

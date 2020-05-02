@@ -23,14 +23,14 @@ func _unhandled_input(event: InputEvent) -> void:
             !event.pressed and \
             !event.control:
         pointer_up_position = global.current_level.get_global_mouse_position()
-    
+
     # Mouse-down: Position pre-selection.
     if event is InputEventMouseButton and \
             event.button_index == BUTTON_LEFT and \
             event.pressed and \
             !event.control:
         pointer_drag_position = global.current_level.get_global_mouse_position()
-    
+
     # Mouse-move: Position pre-selection.
     if event is InputEventMouseMotion and \
             player.preselection_target != Vector2.INF:
@@ -39,22 +39,28 @@ func _unhandled_input(event: InputEvent) -> void:
     # Touch-up: Position selection.
     if event is InputEventScreenTouch and \
             !event.pressed:
-        pointer_up_position = Utils.get_global_touch_position( \
-                event, \
-                global.current_level)
+        # FIXME: Doesn't work.
+#        pointer_up_position = Utils.get_global_touch_position( \
+#                event, \
+#                self)
+        pointer_drag_position = global.current_level.get_global_mouse_position()
     
     # Touch-down: Position pre-selection.
     if event is InputEventScreenTouch and \
             event.pressed:
-        pointer_drag_position = Utils.get_global_touch_position( \
-                event, \
-                global.current_level)
+        # FIXME: Doesn't work.
+#        pointer_drag_position = Utils.get_global_touch_position( \
+#                event, \
+#                self)
+        pointer_drag_position = global.current_level.get_global_mouse_position()
     
     # Touch-move: Position pre-selection.
     if event is InputEventScreenDrag:
-        pointer_drag_position = Utils.get_global_touch_position( \
-                event, \
-                global.current_level)
+        # FIXME: Doesn't work.
+#        pointer_drag_position = Utils.get_global_touch_position( \
+#                event, \
+#                self)
+        pointer_drag_position = global.current_level.get_global_mouse_position()
     
     if pointer_up_position != Vector2.INF:
         player.new_selection_target = pointer_up_position

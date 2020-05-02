@@ -100,7 +100,9 @@ static func add_scene( \
     parent.add_child(node)
     return node
 
-static func get_global_touch_position( \
-        input_event: InputEventScreenTouch, \
-        current_level) -> Vector2:
-    return current_level.get_canvas_transform().xform_inv(input_event.position)
+# FIXME: Doesn't work. Probably need to offset for camera position?
+#        (https://github.com/godotengine/godot/issues/30215#issuecomment-512046558)
+#static func get_global_touch_position( \
+#        input_event: InputEvent, \
+#        current_level) -> Vector2:
+#    return current_level.get_canvas_transform().xform_inv(input_event.position)
