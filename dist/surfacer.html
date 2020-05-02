@@ -120,7 +120,8 @@
 		Please try updating or use a different browser.
 	</canvas>
 	<div id='status'>
-		<div id='status-progress' style='display: none;' oncontextmenu='event.preventDefault();'><div id ='status-progress-inner'></div></div>
+		<!-- NOTE: THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. -->
+		<!-- <div id='status-progress' style='display: none;' oncontextmenu='event.preventDefault();'><div id ='status-progress-inner'></div></div> -->
 		<div id='status-indeterminate' style='display: none;' oncontextmenu='event.preventDefault();'>
 			<!-- NOTE: THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. -->
 			<!-- This GIF is a custom replacement for the default Godot progress spinner. -->
@@ -144,14 +145,16 @@
 			const INDETERMINATE_STATUS_STEP_MS = 100;
 
 			var canvas = document.getElementById('canvas');
-			var statusProgress = document.getElementById('status-progress');
-			var statusProgressInner = document.getElementById('status-progress-inner');
+			// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
+			// var statusProgress = document.getElementById('status-progress');
+			// var statusProgressInner = document.getElementById('status-progress-inner');
 			var statusIndeterminate = document.getElementById('status-indeterminate');
 			var statusNotice = document.getElementById('status-notice');
 
 			var initializing = true;
 			var statusMode = 'hidden';
 
+			// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
 			var animationCallbacks = [];
 			function animate(time) {
 				animationCallbacks.forEach(callback => callback(time));
@@ -175,24 +178,23 @@
 
 				if (statusMode === mode || !initializing)
 					return;
-				[statusProgress, statusIndeterminate, statusNotice].forEach(elem => {
-					elem.style.display = 'none';
+				// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
+				[statusIndeterminate, statusNotice].forEach(elem => {
+					elem.style.display = 'block';
 				});
-				animationCallbacks = animationCallbacks.filter(function(value) {
-					return (value != animateStatusIndeterminate);
-				});
+				// animationCallbacks = animationCallbacks.filter(function(value) {
+				// 	return (value != animateStatusIndeterminate);
+				// });
+				// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
 				switch (mode) {
 					case 'progress':
-						statusProgress.style.display = 'block';
-						break;
-					case 'indeterminate':
-						statusIndeterminate.style.display = 'block';
-						animationCallbacks.push(animateStatusIndeterminate);
-						break;
 					case 'notice':
-						statusNotice.style.display = 'block';
+					case 'indeterminate':
 						break;
 					case 'hidden':
+						[statusIndeterminate, statusNotice].forEach(elem => {
+							elem.style.display = 'none';
+						});
 						break;
 					default:
 						throw new Error('Invalid status mode');
@@ -227,18 +229,20 @@
 
 			engine.setProgressFunc((current, total) => {
 
-				if (total > 0) {
-					statusProgressInner.style.width = current/total * 100 + '%';
-					setStatusMode('progress');
-					if (current === total) {
-						// wait for progress bar animation
-						setTimeout(() => {
-							setStatusMode('indeterminate');
-						}, 500);
-					}
-				} else {
-					setStatusMode('indeterminate');
-				}
+				// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
+				// if (total > 0) {
+				// 	statusProgressInner.style.width = current/total * 100 + '%';
+				// 	setStatusMode('progress');
+				// 	if (current === total) {
+				// 		// wait for progress bar animation
+				// 		setTimeout(() => {
+				// 			setStatusMode('indeterminate');
+				// 		}, 500);
+				// 	}
+				// } else {
+				// 	setStatusMode('indeterminate');
+				// }
+				setStatusMode('indeterminate');
 			});
 
 			function displayFailureNotice(err) {
@@ -255,10 +259,34 @@
 				setStatusMode('indeterminate');
 				engine.setCanvas(canvas);
 				engine.startGame(EXECUTABLE_NAME, MAIN_PACK).then(() => {
-					setStatusMode('hidden');
-					initializing = false;
+					// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
+					setStatusNotice('Waiting on Godot...');
+					setStatusMode('indeterminate');
+					// initializing = false;
 				}, displayFailureNotice);
 			}
+			
+			// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
+			function printStdout(text) {
+				console.log(text);
+			}
+			engine.setStdoutFunc(printStdout);
+			function printStderr(text) {
+				console.warn("Error: " + text);
+			}
+			engine.setStderrFunc(printStderr);
+			
+			// --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- //
+			console.log('Main script loaded')
+			setStatusNotice('Loading scripts...');
+			window.onLevelReady = function onLevelReady() {
+				console.log('Level ready');
+			};
+			window.onLoadingScreenReady = function onLoadingScreenReady() {
+				console.log('Godot bootstrapped');
+				setStatusMode('hidden');
+				initializing = false;
+			};
 		})();
 	//]]></script>
 

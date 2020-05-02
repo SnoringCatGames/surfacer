@@ -62,11 +62,16 @@ func _enter_tree() -> void:
     else:
         camera_controller = CameraController.new()
         add_child(camera_controller)
+        
         overlays = Overlays.new()
         add_child(overlays)
+        
         loading_screen = Utils.add_scene( \
                 overlays.screen_layer, \
                 LOADING_SCREEN_PATH)
+        
+        if JavaScript != null:
+            JavaScript.eval("window.onLoadingScreenReady()")
 
 func _process(delta: float) -> void:
     # FIXME: Figure out a better way of loading/parsing the level without blocking the main thread?
@@ -99,3 +104,6 @@ func _process(delta: float) -> void:
                 Global.PLAYER_RESOURCE_PATH, \
                 false, \
                 position)
+        
+        if JavaScript != null:
+            JavaScript.eval("window.onLevelReady()")
