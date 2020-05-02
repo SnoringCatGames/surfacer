@@ -50,6 +50,9 @@
 			align-items: center;
 			/* don't consume click events - make children visible explicitly */
 			visibility: hidden;
+
+			/* --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- */
+			flex-direction: column;
 		}
 
 		#status-progress {
@@ -110,6 +113,10 @@
 			visibility: visible;
 			padding: 4px 6px;
 			visibility: visible;
+			
+			/* --- THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. --- */
+			font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+    		color: #e0e0e0;
 		}
 	</style>
 $GODOT_HEAD_INCLUDE
@@ -128,7 +135,8 @@ $GODOT_HEAD_INCLUDE
 			<img src="squirrel-running.gif"
 				 alt="An animated squirrel running in place." />
 		</div>
-		<div id='status-notice' class='godot' style='display: none;'></div>
+		<!-- NOTE: THIS WAS CHANGED FROM THE DEFAULT GODOT TEMPLATE. -->
+		<div id='status-notice' style='display: none;'></div>
 	</div>
 
 	<script type='text/javascript' src='surfacer.js'></script>
