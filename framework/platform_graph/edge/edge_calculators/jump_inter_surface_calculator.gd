@@ -7,15 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add some simple loading screen improvements:
-#   - Add a message underneath the initial splash screen:
-#     - "Waiting on Godot"
-#     - Include the Godot logo.
-#   - Create a second, custom version of the splash screen:
-#     - "Calculating platform graph"
-#     - As a Godot scene.
-#     - Show it after downloading, during my PlatformGraph parsing.
-# 
 # - Add scroll wheel for zoom.
 #
 # - Move background out of main.tscn and into level.
@@ -28,6 +19,7 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Include:
 #     - An X button to close.
 #     - Mention myself, my images, my sounds, my music, my framework, my game logic.
+#     - The Godot logo.
 # - Create a collapsible third-party licenses panel.
 # 
 # - Will need to add an additional section in the debug menu for displaying analytics info.

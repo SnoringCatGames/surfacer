@@ -290,11 +290,12 @@
 			setStatusNotice('Loading scripts...');
 			window.onLevelReady = function onLevelReady() {
 				console.log('Level ready');
+				setStatusMode('hidden');
+				initializing = false;
 			};
 			window.onLoadingScreenReady = function onLoadingScreenReady() {
 				console.log('Godot bootstrapped');
-				setStatusMode('hidden');
-				initializing = false;
+				setStatusNotice('Calculating platform graph...');
 			};
 		})();
 	//]]></script>

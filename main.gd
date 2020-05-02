@@ -46,6 +46,7 @@ var loading_screen: Node
 var camera_controller: CameraController
 var overlays: Overlays
 var level: Level
+var is_level_ready := false
 
 func _enter_tree() -> void:
     global = $"/root/Global"
@@ -66,12 +67,15 @@ func _enter_tree() -> void:
         overlays = Overlays.new()
         add_child(overlays)
         
-        loading_screen = Utils.add_scene( \
-                overlays.screen_layer, \
-                LOADING_SCREEN_PATH)
-        
-        if JavaScript != null:
+        if OS.get_name() == "HTML5":
+            # For HTML, don't use the Godot loading screen, and instead use an HTML screen, which
+            # will be more consistent with the other screens shown before.
             JavaScript.eval("window.onLoadingScreenReady()")
+        else:
+            # For non-HTML platforms, show a loading screen in Godot.
+            loading_screen = Utils.add_scene( \
+                    overlays.screen_layer, \
+                    LOADING_SCREEN_PATH)
 
 func _process(delta: float) -> void:
     # FIXME: Figure out a better way of loading/parsing the level without blocking the main thread?
@@ -80,19 +84,21 @@ func _process(delta: float) -> void:
             level == null and \
             global._get_elapsed_play_time_sec() > 0.5:
         # Start loading the level and calculating the platform graphs.
-        var scene_path := Global.STARTING_LEVEL_RESOURCE_PATH
         level = Utils.add_scene( \
                 self, \
-                scene_path, \
+                Global.STARTING_LEVEL_RESOURCE_PATH, \
                 false)
-        
-    if loading_screen != null and \
+    
+    if !is_level_ready and \
             global._get_elapsed_play_time_sec() > 2.0:
-        # Hide the loading screen and show the level.
+        is_level_ready = true
         level.visible = true
-        overlays.screen_layer.remove_child(loading_screen)
-        loading_screen.queue_free()
-        loading_screen = null
+        
+        # Hide the loading screen.
+        if loading_screen != null:
+            overlays.screen_layer.remove_child(loading_screen)
+            loading_screen.queue_free()
+            loading_screen = null
         
         # Add the player after removing the loading screen, since the camera will track the player,
         # which makes the loading screen look offset.
@@ -105,5 +111,5 @@ func _process(delta: float) -> void:
                 false, \
                 position)
         
-        if JavaScript != null:
+        if OS.get_name() == "HTML5":
             JavaScript.eval("window.onLevelReady()")
