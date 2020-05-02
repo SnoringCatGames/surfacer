@@ -41,20 +41,20 @@ func _unhandled_input(event: InputEvent) -> void:
             !event.pressed:
         pointer_up_position = Utils.get_global_touch_position( \
                 event, \
-                self)
+                global.current_level)
     
     # Touch-down: Position pre-selection.
     if event is InputEventScreenTouch and \
             event.pressed:
         pointer_drag_position = Utils.get_global_touch_position( \
                 event, \
-                self)
+                global.current_level)
     
     # Touch-move: Position pre-selection.
     if event is InputEventScreenDrag:
         pointer_drag_position = Utils.get_global_touch_position( \
                 event, \
-                self)
+                global.current_level)
     
     if pointer_up_position != Vector2.INF:
         player.new_selection_target = pointer_up_position
