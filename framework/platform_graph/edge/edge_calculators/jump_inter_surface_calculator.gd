@@ -16,8 +16,6 @@ const IS_A_JUMP_CALCULATOR := true
 #     - As a Godot scene.
 #     - Show it after downloading, during my PlatformGraph parsing.
 # 
-# - Make cursor smaller.
-# 
 # - Add scroll wheel for zoom.
 #
 # - Move background out of main.tscn and into level.

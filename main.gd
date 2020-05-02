@@ -74,6 +74,7 @@ func _process(delta: float) -> void:
     if !Global.IN_TEST_MODE and \
             level == null and \
             global._get_elapsed_play_time_sec() > 0.5:
+        # Start loading the level and calculating the platform graphs.
         var scene_path := Global.STARTING_LEVEL_RESOURCE_PATH
         level = Utils.add_scene( \
                 self, \
@@ -82,6 +83,7 @@ func _process(delta: float) -> void:
         
     if loading_screen != null and \
             global._get_elapsed_play_time_sec() > 2.0:
+        # Hide the loading screen and show the level.
         level.visible = true
         overlays.screen_layer.remove_child(loading_screen)
         loading_screen.queue_free()
