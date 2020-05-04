@@ -1,9 +1,10 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://framework/panels/debug_panel.gd" type="Script" id=1]
+[ext_resource path="res://framework/panels/credits_panel.tscn" type="PackedScene" id=2]
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.101961, 0.101961, 0.101961, 0.784314 )
+bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
@@ -17,32 +18,75 @@ anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -260.0
 margin_right = -20.0
-margin_bottom = 320.0
+margin_bottom = 348.0
+rect_min_size = Vector2( 240, 348 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_right = 1.52588e-05
 custom_constants/separation = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Sections" type="VBoxContainer" parent="VBoxContainer"]
 margin_right = 240.0
 margin_bottom = 300.0
-size_flags_horizontal = 3
+rect_min_size = Vector2( 0, 300 )
 size_flags_vertical = 3
 
-[node name="Panel" type="Panel" parent="VBoxContainer"]
+[node name="Spacer1" type="Control" parent="VBoxContainer"]
 margin_top = 300.0
 margin_right = 240.0
-margin_bottom = 320.0
+margin_bottom = 304.0
+rect_min_size = Vector2( 0, 4 )
+
+[node name="Panel1" type="Panel" parent="VBoxContainer"]
+margin_top = 304.0
+margin_right = 240.0
+margin_bottom = 324.0
 rect_min_size = Vector2( 0, 20 )
-size_flags_horizontal = 3
+
+[node name="CreditsButton" type="Button" parent="VBoxContainer/Panel1"]
+margin_left = 4.0
+margin_right = 236.0
+margin_bottom = 20.0
+text = "Credits"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer2" type="Control" parent="VBoxContainer"]
+margin_top = 324.0
+margin_right = 240.0
+margin_bottom = 328.0
+rect_min_size = Vector2( 0, 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel2" type="Panel" parent="VBoxContainer"]
+margin_top = 328.0
+margin_right = 240.0
+margin_bottom = 348.0
+rect_min_size = Vector2( 0, 20 )
 custom_styles/panel = SubResource( 2 )
 
-[node name="Button" type="Button" parent="VBoxContainer/Panel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="CloseButton" type="Button" parent="VBoxContainer/Panel2"]
+margin_right = 240.0
+margin_bottom = 20.0
 text = "Close debug menu"
 flat = true
-[connection signal="pressed" from="VBoxContainer/Panel/Button" to="." method="_toggle_open"]
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CreditsPanel" parent="." instance=ExtResource( 2 )]
+[connection signal="pressed" from="VBoxContainer/Panel1/CreditsButton" to="." method="_on_credits_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Panel2/CloseButton" to="." method="_toggle_open"]

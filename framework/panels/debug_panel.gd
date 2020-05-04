@@ -2,12 +2,21 @@ extends Panel
 class_name DebugPanel
 
 const PANEL_WIDTH := 240.0
-const PANEL_HEIGHT := 320.0
+const PANEL_HEIGHT := 348.0
 const OPEN_CLOSE_BUTTON_HEIGHT := 20.0
-const SECTIONS_HEIGHT := PANEL_HEIGHT - OPEN_CLOSE_BUTTON_HEIGHT
+const CREDITS_BUTTON_HEIGHT := 20.0
+const PADDING_TOTAL_HEIGHT := 8.0
+const SECTIONS_HEIGHT := \
+        PANEL_HEIGHT - \
+        OPEN_CLOSE_BUTTON_HEIGHT - \
+        CREDITS_BUTTON_HEIGHT - \
+        PADDING_TOTAL_HEIGHT
+const CONTENT_HEIGHT := \
+        PANEL_HEIGHT - \
+        OPEN_CLOSE_BUTTON_HEIGHT
 
 const POSITION_Y_OPEN := 0.0
-const POSITION_Y_CLOSED := -SECTIONS_HEIGHT
+const POSITION_Y_CLOSED := -CONTENT_HEIGHT
 const TOGGLE_DURATION := 0.2
 const TEXT_OPEN_PANEL := "Open debug menu"
 const TEXT_CLOSE_PANEL := "Close debug menu"
@@ -20,11 +29,20 @@ var _position_y: float setget _set_position_y, _get_position_y
 
 func _ready() -> void:
     # Set initial open state.
-    self._position_y = POSITION_Y_OPEN if self.is_open else POSITION_Y_CLOSED
-    $VBoxContainer/Panel/Button.text = TEXT_CLOSE_PANEL if self.is_open else TEXT_OPEN_PANEL
+    self._position_y = \
+            POSITION_Y_OPEN if \
+            self.is_open else \
+            POSITION_Y_CLOSED
+    $VBoxContainer/Panel2/CloseButton.text = \
+            TEXT_CLOSE_PANEL if \
+            self.is_open else \
+            TEXT_OPEN_PANEL
     
     _toggle_open_tween = Tween.new()
     add_child(_toggle_open_tween)
+
+func _on_credits_button_pressed():
+    $CreditsPanel.popup()
 
 func add_section(section: Control) -> void:
     $VBoxContainer/Sections.add_child(section)
@@ -52,11 +70,18 @@ func _toggle_open() -> void:
     
     # Start the sliding animation.
     _toggle_open_tween.reset_all()
-    _toggle_open_tween.interpolate_property(self, "_position_y", \
-            position_y_start, position_y_end, duration, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.0)
+    _toggle_open_tween.interpolate_property( \
+            self, \
+            "_position_y", \
+            position_y_start, \
+            position_y_end, \
+            duration, \
+            Tween.TRANS_LINEAR, \
+            Tween.EASE_IN, \
+            0.0)
     _toggle_open_tween.start()
     
-    $VBoxContainer/Panel/Button.text = text
+    $VBoxContainer/Panel2/CloseButton.text = text
 
 func _set_position_y(value: float) -> void:
     rect_position.y = value

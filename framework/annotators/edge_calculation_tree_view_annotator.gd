@@ -18,10 +18,15 @@ var edge_attempt: MovementCalcOverallDebugState
 
 func _ready() -> void:
     step_tree_view = Tree.new()
-    step_tree_view.rect_min_size = Vector2(0.0, DebugPanel.SECTIONS_HEIGHT)
+    step_tree_view.rect_min_size = Vector2( \
+            0.0, \
+            DebugPanel.SECTIONS_HEIGHT)
     step_tree_view.hide_root = true
     step_tree_view.hide_folding = true
-    step_tree_view.connect("item_selected", self, "_on_step_tree_item_selected")
+    step_tree_view.connect( \
+            "item_selected", \
+            self, \
+            "_on_step_tree_item_selected")
     var global = $"/root/Global"
     global.debug_panel.add_section(step_tree_view)
 
@@ -40,31 +45,49 @@ func _draw_step_tree_panel() -> void:
     if !edge_attempt.failed_before_creating_steps:
         # Draw rows for each step-attempt.
         for step_attempt in edge_attempt.children_step_attempts:
-            _draw_step_tree_item(step_attempt, step_tree_root)
+            _draw_step_tree_item( \
+                    step_attempt, \
+                    step_tree_root)
     else:
         # Draw a message for the invalid edge.
         var tree_item := step_tree_view.create_item(step_tree_root)
-        tree_item.set_text(0, EdgeCalculationTrajectoryAnnotator.INVALID_EDGE_TEXT)
+        tree_item.set_text( \
+                0, \
+                EdgeCalculationTrajectoryAnnotator.INVALID_EDGE_TEXT)
         tree_item_to_step_attempt[tree_item] = null
         step_attempt_to_tree_items[null] = [tree_item]
 
-func _draw_step_tree_item(step_attempt: MovementCalcStepDebugState, parent_tree_item: TreeItem) -> void:
+func _draw_step_tree_item( \
+        step_attempt: MovementCalcStepDebugState, \
+        parent_tree_item: TreeItem) -> void:
     # Draw the row for the given step-attempt.
     var tree_item := step_tree_view.create_item(parent_tree_item)
-    var text := _get_tree_item_text(step_attempt, 0, false)
-    tree_item.set_text(0, text)
+    var text := _get_tree_item_text( \
+            step_attempt, \
+            0, \
+            false)
+    tree_item.set_text( \
+            0, \
+            text)
     tree_item_to_step_attempt[tree_item] = step_attempt
     step_attempt_to_tree_items[step_attempt] = [tree_item]
     
     # Recursively draw rows for each child step-attempt.
     for child_step_attempt in step_attempt.children_step_attempts:
-        _draw_step_tree_item(child_step_attempt, tree_item)
+        _draw_step_tree_item( \
+                child_step_attempt, \
+                tree_item)
     
     if step_attempt.description_list.size() > 1:
         # Draw a closing row for the given step-attempt.
         var tree_item_2 := step_tree_view.create_item(parent_tree_item)
-        text = _get_tree_item_text(step_attempt, 1, false)
-        tree_item_2.set_text(0, text)
+        text = _get_tree_item_text( \
+                step_attempt, \
+                1, \
+                false)
+        tree_item_2.set_text( \
+                0, \
+                text)
         tree_item_to_step_attempt[tree_item_2] = step_attempt
         step_attempt_to_tree_items[step_attempt].push_back(tree_item_2)
 
@@ -79,7 +102,9 @@ func _on_step_tree_item_selected() -> void:
             tree_item_to_step_attempt[selected_tree_item]
     if selected_step_attempt != null:
         on_step_selected(selected_step_attempt)
-        emit_signal("step_selected", selected_step_attempt)
+        emit_signal( \
+                "step_selected", \
+                selected_step_attempt)
 
 func on_step_selected(selected_step_attempt: MovementCalcStepDebugState) -> void:
     var tree_item: TreeItem
@@ -112,9 +137,15 @@ func _get_tree_item_text( \
         description_index: int, \
         includes_highlight_marker: bool) -> String:
     return "%s%s: %s%s%s" % [ \
-            "*" if includes_highlight_marker else "",
+            "*" if \
+                    includes_highlight_marker else \
+                    "",
             step_attempt.index + 1, \
-            "[BT] " if step_attempt.is_backtracking and description_index == 0 else "", \
-            "[RF] " if step_attempt.replaced_a_fake and description_index == 0 else "", \
+            "[BT] " if \
+                    step_attempt.is_backtracking and description_index == 0 \
+                    else "", \
+            "[RF] " if \
+                    step_attempt.replaced_a_fake and description_index == 0 else \
+                    "", \
             step_attempt.description_list[description_index], \
         ]
