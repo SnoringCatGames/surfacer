@@ -7,14 +7,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Refactor debug panel to be icon-based.
-#   - Just show a little hammer or wrench or tool icon with no background.
-# 
-# - Update panel styling.
-#   - Flat.
-#   - Square corners.
-#   - 
-# 
 # - Will need to add an additional section in the debug menu for displaying analytics info.
 #   - Can probably also integrate some info into the tree for debugged trajectories.
 #   - Take this opportunity to also start adding the toggle support for annotations.
@@ -156,6 +148,11 @@ const IS_A_JUMP_CALCULATOR := true
 #     - A couple edges
 #     - All edges
 #     - 
+# 
+# - Update panel styling.
+#   - Flat.
+#   - Square corners.
+#   - Probably should do this with Godot theming...
 # 
 # ---  ---
 # 

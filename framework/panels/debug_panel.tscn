@@ -1,15 +1,16 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://framework/panels/debug_panel.gd" type="Script" id=1]
 [ext_resource path="res://framework/panels/credits_panel.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/gear-active.png" type="Texture" id=3]
+[ext_resource path="res://assets/gear-hover.png" type="Texture" id=4]
+[ext_resource path="res://assets/gear-normal.png" type="Texture" id=5]
+[ext_resource path="res://assets/x-normal.png" type="Texture" id=6]
+[ext_resource path="res://assets/x-hover.png" type="Texture" id=7]
+[ext_resource path="res://assets/x-active.png" type="Texture" id=8]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0.188235, 0.188235, 0.188235, 0.952941 )
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
@@ -18,8 +19,8 @@ anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -260.0
 margin_right = -20.0
-margin_bottom = 348.0
-rect_min_size = Vector2( 240, 348 )
+margin_bottom = 328.0
+rect_min_size = Vector2( 240, 328 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
 __meta__ = {
@@ -29,7 +30,6 @@ __meta__ = {
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = 1.52588e-05
 custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -47,20 +47,72 @@ margin_right = 240.0
 margin_bottom = 304.0
 rect_min_size = Vector2( 0, 4 )
 
-[node name="Panel1" type="Panel" parent="VBoxContainer"]
+[node name="Panel1" type="Control" parent="VBoxContainer"]
 margin_top = 304.0
 margin_right = 240.0
 margin_bottom = 324.0
 rect_min_size = Vector2( 0, 20 )
 
-[node name="CreditsButton" type="Button" parent="VBoxContainer/Panel1"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Panel1"]
+margin_right = 240.0
+margin_bottom = 80.0
+rect_min_size = Vector2( 240, 20 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control3" type="Control" parent="VBoxContainer/Panel1/HBoxContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 0
+size_flags_stretch_ratio = 0.05
+
+[node name="CreditsButton" type="Button" parent="VBoxContainer/Panel1/HBoxContainer"]
 margin_left = 4.0
-margin_right = 236.0
+margin_right = 203.0
 margin_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+size_flags_stretch_ratio = 10.0
 text = "Credits"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Control" type="Control" parent="VBoxContainer/Panel1/HBoxContainer"]
+margin_left = 207.0
+margin_right = 208.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+size_flags_stretch_ratio = 0.1
+
+[node name="Control2" type="Control" parent="VBoxContainer/Panel1/HBoxContainer"]
+margin_left = 212.0
+margin_right = 231.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name=" XButton" type="TextureButton" parent="VBoxContainer/Panel1/HBoxContainer/Control2"]
+margin_left = 2.1936
+margin_top = -1.54059
+margin_right = 82.1936
+margin_bottom = 78.4594
+rect_scale = Vector2( 0.3, 0.3 )
+texture_normal = ExtResource( 6 )
+texture_pressed = ExtResource( 8 )
+texture_hover = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control4" type="Control" parent="VBoxContainer/Panel1/HBoxContainer"]
+margin_left = 235.0
+margin_right = 240.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+size_flags_stretch_ratio = 0.05
 
 [node name="Spacer2" type="Control" parent="VBoxContainer"]
 margin_top = 324.0
@@ -74,19 +126,23 @@ __meta__ = {
 [node name="Panel2" type="Panel" parent="VBoxContainer"]
 margin_top = 328.0
 margin_right = 240.0
-margin_bottom = 348.0
-rect_min_size = Vector2( 0, 20 )
-custom_styles/panel = SubResource( 2 )
+margin_bottom = 328.0
 
-[node name="CloseButton" type="Button" parent="VBoxContainer/Panel2"]
-margin_right = 240.0
-margin_bottom = 20.0
-text = "Close debug menu"
-flat = true
+[node name="GearButton" type="TextureButton" parent="VBoxContainer/Panel2"]
+margin_left = 199.447
+margin_top = 2.91589
+margin_right = 279.447
+margin_bottom = 82.9159
+rect_scale = Vector2( 0.5, 0.5 )
+texture_normal = ExtResource( 5 )
+texture_pressed = ExtResource( 3 )
+texture_hover = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="CreditsPanel" parent="." instance=ExtResource( 2 )]
-[connection signal="pressed" from="VBoxContainer/Panel1/CreditsButton" to="." method="_on_credits_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Panel2/CloseButton" to="." method="_toggle_open"]
+visible = false
+[connection signal="pressed" from="VBoxContainer/Panel1/HBoxContainer/CreditsButton" to="." method="_on_credits_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Panel1/HBoxContainer/Control2/ XButton" to="." method="_toggle_open"]
+[connection signal="pressed" from="VBoxContainer/Panel2/GearButton" to="." method="_toggle_open"]

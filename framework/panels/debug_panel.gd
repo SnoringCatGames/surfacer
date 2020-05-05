@@ -2,24 +2,17 @@ extends Panel
 class_name DebugPanel
 
 const PANEL_WIDTH := 240.0
-const PANEL_HEIGHT := 348.0
-const OPEN_CLOSE_BUTTON_HEIGHT := 20.0
+const PANEL_HEIGHT := 328.0
 const CREDITS_BUTTON_HEIGHT := 20.0
 const PADDING_TOTAL_HEIGHT := 8.0
 const SECTIONS_HEIGHT := \
         PANEL_HEIGHT - \
-        OPEN_CLOSE_BUTTON_HEIGHT - \
         CREDITS_BUTTON_HEIGHT - \
         PADDING_TOTAL_HEIGHT
-const CONTENT_HEIGHT := \
-        PANEL_HEIGHT - \
-        OPEN_CLOSE_BUTTON_HEIGHT
 
 const POSITION_Y_OPEN := 0.0
-const POSITION_Y_CLOSED := -CONTENT_HEIGHT
+const POSITION_Y_CLOSED := -PANEL_HEIGHT
 const TOGGLE_DURATION := 0.2
-const TEXT_OPEN_PANEL := "Open debug menu"
-const TEXT_CLOSE_PANEL := "Close debug menu"
 
 var is_open := false
 
@@ -33,10 +26,7 @@ func _ready() -> void:
             POSITION_Y_OPEN if \
             self.is_open else \
             POSITION_Y_CLOSED
-    $VBoxContainer/Panel2/CloseButton.text = \
-            TEXT_CLOSE_PANEL if \
-            self.is_open else \
-            TEXT_OPEN_PANEL
+    $VBoxContainer/Panel2/GearButton.visible = !is_open
     
     _toggle_open_tween = Tween.new()
     add_child(_toggle_open_tween)
@@ -62,11 +52,9 @@ func _toggle_open() -> void:
     if is_open:
         position_y_end = POSITION_Y_OPEN
         duration = TOGGLE_DURATION
-        text = TEXT_CLOSE_PANEL
     else:
         position_y_end = POSITION_Y_CLOSED
         duration = TOGGLE_DURATION
-        text = TEXT_OPEN_PANEL
     
     # Start the sliding animation.
     _toggle_open_tween.reset_all()
@@ -81,7 +69,7 @@ func _toggle_open() -> void:
             0.0)
     _toggle_open_tween.start()
     
-    $VBoxContainer/Panel2/CloseButton.text = text
+    $VBoxContainer/Panel2/GearButton.visible = !is_open
 
 func _set_position_y(value: float) -> void:
     rect_position.y = value
