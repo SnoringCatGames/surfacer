@@ -117,12 +117,12 @@ _global_script_classes=[ {
 "base": "WindowDialog",
 "class": "CreditsPanel",
 "language": "GDScript",
-"path": "res://framework/panels/credits_panel.gd"
+"path": "res://framework/controls/panels/credits_panel.gd"
 }, {
 "base": "Panel",
 "class": "DebugPanel",
 "language": "GDScript",
-"path": "res://framework/panels/debug_panel.gd"
+"path": "res://framework/controls/panels/debug_panel.gd"
 }, {
 "base": "Reference",
 "class": "Edge",
@@ -144,11 +144,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/edge_calculation_trajectory_annotator.gd"
 }, {
-"base": "Node2D",
-"class": "EdgeCalculationTreeViewAnnotator",
-"language": "GDScript",
-"path": "res://framework/annotators/edge_calculation_tree_view_annotator.gd"
-}, {
 "base": "Reference",
 "class": "EdgeMovementCalculator",
 "language": "GDScript",
@@ -158,6 +153,11 @@ _global_script_classes=[ {
 "class": "EdgeStepCalcResult",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/edge_step_calc_result.gd"
+}, {
+"base": "Node2D",
+"class": "EdgeTreeView",
+"language": "GDScript",
+"path": "res://framework/controls/edge_tree_view.gd"
 }, {
 "base": "Node2D",
 "class": "ExtraAnnotator",
@@ -424,6 +424,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/platform_graph_path.gd"
 }, {
+"base": "Node2D",
+"class": "PlatformGraphTreeView",
+"language": "GDScript",
+"path": "res://framework/controls/platform_graph_tree_view.gd"
+}, {
 "base": "KinematicBody2D",
 "class": "Player",
 "language": "GDScript",
@@ -662,7 +667,7 @@ _global_script_classes=[ {
 "base": "Panel",
 "class": "WelcomePanel",
 "language": "GDScript",
-"path": "res://framework/panels/welcome_panel.gd"
+"path": "res://framework/controls/panels/welcome_panel.gd"
 } ]
 _global_script_class_icons={
 "AirDashAction": "",
@@ -692,9 +697,9 @@ _global_script_class_icons={
 "EdgeCalculationAnnotator": "",
 "EdgeCalculationSelectorAnnotator": "",
 "EdgeCalculationTrajectoryAnnotator": "",
-"EdgeCalculationTreeViewAnnotator": "",
 "EdgeMovementCalculator": "",
 "EdgeStepCalcResult": "",
+"EdgeTreeView": "",
 "ExtraAnnotator": "",
 "FakePlayerAnimator": "",
 "FallFromFloorCalculator": "",
@@ -748,6 +753,7 @@ _global_script_class_icons={
 "PlatformGraph": "",
 "PlatformGraphAnnotator": "",
 "PlatformGraphPath": "",
+"PlatformGraphTreeView": "",
 "Player": "",
 "PlayerActionHandler": "",
 "PlayerActionSource": "",

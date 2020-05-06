@@ -1,7 +1,8 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://framework/panels/welcome_panel.gd" type="Script" id=1]
+[ext_resource path="res://framework/controls/panels/welcome_panel.gd" type="Script" id=1]
 [ext_resource path="res://assets/Open_Sans/OpenSans-Italic.ttf" type="DynamicFontData" id=2]
+
 
 [sub_resource type="DynamicFont" id=1]
 font_data = ExtResource( 2 )

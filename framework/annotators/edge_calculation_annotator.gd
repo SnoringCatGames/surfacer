@@ -6,7 +6,7 @@ const STEP_TRANSITION_DELAY_SEC := 1.0
 var calculation_selector_annotator: EdgeCalculationSelectorAnnotator
 var collision_calculation_annotator: CollisionCalculationAnnotator
 var trajectory_annotator: EdgeCalculationTrajectoryAnnotator
-var tree_view_annotator: EdgeCalculationTreeViewAnnotator
+var tree_view: EdgeTreeView
 
 var graph: PlatformGraph
 
@@ -26,15 +26,15 @@ func _init(graph: PlatformGraph) -> void:
     self.calculation_selector_annotator = EdgeCalculationSelectorAnnotator.new()
     self.collision_calculation_annotator = CollisionCalculationAnnotator.new()
     self.trajectory_annotator = EdgeCalculationTrajectoryAnnotator.new()
-    self.tree_view_annotator = EdgeCalculationTreeViewAnnotator.new()
+    self.tree_view = EdgeTreeView.new()
 
 func _enter_tree() -> void:
     add_child(calculation_selector_annotator)
     add_child(trajectory_annotator)
     add_child(collision_calculation_annotator)
-    add_child(tree_view_annotator)
+    add_child(tree_view)
     
-    tree_view_annotator.connect( \
+    tree_view.connect( \
             "step_selected", \
             self, \
             "on_step_selected_from_tree_view")
@@ -52,7 +52,7 @@ func _process(delta: float) -> void:
         
         collision_calculation_annotator.edge_attempt = edge_attempt
         trajectory_annotator.edge_attempt = edge_attempt
-        tree_view_annotator.edge_attempt = edge_attempt
+        tree_view.edge_attempt = edge_attempt
         
         if edge_attempt != null:
             set_selected_step(_get_step_by_index(edge_attempt, 0))
@@ -78,7 +78,7 @@ func _process(delta: float) -> void:
     
     if is_new_edge_attempt:
         global.debug_panel.set_is_open(true)
-        tree_view_annotator.update()
+        tree_view.update()
     
     if is_new_selected_step or is_new_edge_attempt:
         # It's time to select a new step, whether from the timer or from a user selection.

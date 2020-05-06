@@ -7,6 +7,11 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - What type of GUI?
+#   - Use menu-item controls? Use some sort of list control? Use the tree again?
+#   - Plan specifically what structure of info I want to display first.
+#     - Presumably I do want expand/drill-down capability.
+# 
 # - Will need to add an additional section in the debug menu for displaying analytics info.
 #   - Can probably also integrate some info into the tree for debugged trajectories.
 #   - Take this opportunity to also start adding the toggle support for annotations.
@@ -21,6 +26,50 @@ const IS_A_JUMP_CALCULATOR := true
 #     - types of steps,
 #     - number of collisions,
 #     - number of backtracking attempts,
+#   - Support multiple modes of displaying these analytics:
+#     - Global
+#     - For a single surface
+#     - For a single edge
+#     - For a single edge-step attempt?
+#       - Should this be listed/nested under the edge mode somehow?
+#         - FIXME
+#     - Create some way(s) to drill into the non-global lists.
+#       - Ctrl+click to select on level?
+#         - How to distinguish surface and edge?
+#           - FIXME
+#         - How to distinguish exactly which edge?
+#           - Can probably add a radio button somewhere that indicates at least which _type_ of
+#             edge to consider when drilling into an edge.
+#           - FIXME
+#       - Could also display a list of all relevant drill-downs from the current list's context:
+#         - From global mode:
+#           - List all surfaces.
+#         - From surface mode:
+#           - List all valid edges.
+#           - List all edge attempts?
+#             - FIXME
+#           - List all neighbors
+#         - From edge mode:
+#           - List all step attempts?
+#             - FIXME
+#     - Dynamically populate (and tear-down) content within this giant tree.
+#     - Also, dynamically calculate edge attempts, in order to capture deeper debugging info, when
+#       expanding their tree items.
+#     - When selecting something by clicking on the level, open the cooresponding path in the tree,
+#       rather than displaying something new and out of context with the global tree.
+#   - Global data structure draft:
+#     - Cat platform graph
+#       - XX: Edges
+#         - Ju
+#       - XX: Surfaces
+#         - XX: Floors
+#         - XX: Left walls (right-side of block)
+#         - XX: Right walls (left-side of block)
+#         - XX: Ceilings
+#   - Single-surface data structure draft:
+#     - 
+#   - Single-edge data structure draft:
+#     - 
 #   - Then put together some interesting aggregations, such as:
 #     - time spent calculating each edge,
 #     - Avg time spent calculating each different type of edge,
