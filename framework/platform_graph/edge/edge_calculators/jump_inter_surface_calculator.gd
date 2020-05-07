@@ -16,6 +16,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Can probably also integrate some info into the tree for debugged trajectories.
 #   - Take this opportunity to also start adding the toggle support for annotations.
 # 
+# - Refactor/rename EdgeCalculationAnnotator to be PlatformGraphInspector.
+# 
 # - Analytics!
 #   - Figure out how/where to store this.
 #     - Don't just keep all step debug state--too much.

@@ -6,7 +6,7 @@ const STEP_TRANSITION_DELAY_SEC := 1.0
 var calculation_selector_annotator: EdgeCalculationSelectorAnnotator
 var collision_calculation_annotator: CollisionCalculationAnnotator
 var trajectory_annotator: EdgeCalculationTrajectoryAnnotator
-var tree_view: EdgeTreeView
+var tree_view: PlatformGraphTreeView
 
 var graph: PlatformGraph
 
@@ -26,7 +26,7 @@ func _init(graph: PlatformGraph) -> void:
     self.calculation_selector_annotator = EdgeCalculationSelectorAnnotator.new()
     self.collision_calculation_annotator = CollisionCalculationAnnotator.new()
     self.trajectory_annotator = EdgeCalculationTrajectoryAnnotator.new()
-    self.tree_view = EdgeTreeView.new()
+    self.tree_view = PlatformGraphTreeView.new([graph])
 
 func _enter_tree() -> void:
     add_child(calculation_selector_annotator)
