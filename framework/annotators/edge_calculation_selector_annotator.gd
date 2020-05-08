@@ -88,14 +88,17 @@ func _calculate_edge_attempt() -> void:
         edge_attempt = null
         return
     
-    var debug_state: Dictionary = global.DEBUG_STATE
+    var debug_params: Dictionary = global.DEBUG_PARAMS
     var player: Player = global.current_player_for_clicks
     var movement_params: MovementParams = player.movement_params
     var space_state := get_world_2d().direct_space_state
     var level = global.current_level
     var surface_parser: SurfaceParser = level.surface_parser
     var collision_params := CollisionCalcParams.new( \
-            debug_state, space_state, movement_params, surface_parser)
+            debug_params, \
+            space_state, \
+            movement_params, \
+            surface_parser)
     
     # Choose the jump and land positions according to which is closest to the click positions.
     var jump_land_positions_to_consider: Array = \
@@ -145,7 +148,7 @@ func _calculate_edge_attempt() -> void:
         jump_inter_surface_calculator.create_edge_from_overall_params(overall_calc_params)
     
     # Record debug state for the jump calculation.
-    edge_attempt = overall_calc_params.debug_state
+    edge_attempt = overall_calc_params.edge_attempt_debug_results
     
     # Record the possible jump and land positions too.
     for jump_land_positions in jump_land_positions_to_consider:

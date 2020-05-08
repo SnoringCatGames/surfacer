@@ -37,15 +37,15 @@ static func calculate_steps_between_waypoints( \
         step_calc_params: MovementCalcStepParams) -> MovementCalcResults:
     ### BASE CASES
     
-    var debug_state := step_calc_params.debug_state
+    var step_attempt_debug_results := step_calc_params.step_attempt_debug_results
     
     var next_horizontal_step := HorizontalMovementUtils.calculate_horizontal_step( \
             step_calc_params, overall_calc_params)
     
     if next_horizontal_step == null:
         # The destination is out of reach.
-        if debug_state != null:
-            debug_state.result_code = EdgeStepCalcResult.TARGET_OUT_OF_REACH
+        if step_attempt_debug_results != null:
+            step_attempt_debug_results.result_code = EdgeStepCalcResult.TARGET_OUT_OF_REACH
         return null
     
     var vertical_step := step_calc_params.vertical_step
@@ -82,8 +82,8 @@ static func calculate_steps_between_waypoints( \
     if collision == null or \
             (collision.surface == overall_calc_params.destination_waypoint.surface):
         # There is no intermediate surface interfering with this movement.
-        if debug_state != null:
-            debug_state.result_code = EdgeStepCalcResult.MOVEMENT_VALID
+        if step_attempt_debug_results != null:
+            step_attempt_debug_results.result_code = EdgeStepCalcResult.MOVEMENT_VALID
         return MovementCalcResults.new([next_horizontal_step], vertical_step, overall_calc_params)
     
     ### RECURSIVE CASES
@@ -104,8 +104,8 @@ static func calculate_steps_between_waypoints( \
             overall_calc_params.destination_waypoint, \
             collision.surface, \
             overall_calc_params.waypoint_offset)
-    if debug_state != null:
-        debug_state.upcoming_waypoints = waypoints
+    if step_attempt_debug_results != null:
+        step_attempt_debug_results.upcoming_waypoints = waypoints
     
     # First, try to satisfy the waypoints without backtracking to consider a new max jump height.
     var calc_results := calculate_steps_between_waypoints_without_backtracking_on_height( \
@@ -114,8 +114,8 @@ static func calculate_steps_between_waypoints( \
             waypoints)
     if calc_results != null or !overall_calc_params.can_backtrack_on_height:
         # Recursion was successful without backtracking for a new max jump height.
-        if debug_state != null:
-            debug_state.result_code = EdgeStepCalcResult.RECURSION_VALID
+        if step_attempt_debug_results != null:
+            step_attempt_debug_results.result_code = EdgeStepCalcResult.RECURSION_VALID
         return calc_results
     
     if overall_calc_params.have_backtracked_for_surface( \
@@ -124,8 +124,8 @@ static func calculate_steps_between_waypoints( \
         # We've already tried backtracking for a collision with this surface, so this movement
         # won't work. Without this check, we'd recurse through a traversal branch that is identical
         # to one we've already considered, and we'd loop infinitely.
-        if debug_state != null:
-            debug_state.result_code = EdgeStepCalcResult.ALREADY_BACKTRACKED_FOR_SURFACE
+        if step_attempt_debug_results != null:
+            step_attempt_debug_results.result_code = EdgeStepCalcResult.ALREADY_BACKTRACKED_FOR_SURFACE
         return null
     
     overall_calc_params.record_backtracked_surface( \
@@ -144,12 +144,12 @@ static func calculate_steps_between_waypoints( \
             waypoints)
     if calc_results != null:
         # Recursion was successful with backtracking for a new max jump height.
-        if debug_state != null:
-            debug_state.result_code = EdgeStepCalcResult.BACKTRACKING_VALID
+        if step_attempt_debug_results != null:
+            step_attempt_debug_results.result_code = EdgeStepCalcResult.BACKTRACKING_VALID
     else:
         # Recursion was not successful, despite backtracking for a new max jump height.
-        if debug_state != null:
-            debug_state.result_code = EdgeStepCalcResult.BACKTRACKING_INVALID
+        if step_attempt_debug_results != null:
+            step_attempt_debug_results.result_code = EdgeStepCalcResult.BACKTRACKING_INVALID
     return calc_results
 
 # Check whether either waypoint can be satisfied with our current max jump height.
@@ -296,7 +296,8 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         overall_calc_params.destination_waypoint = destination_copy
         
         # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#        if step_calc_params.debug_state != null and step_calc_params.debug_state.index == 5:
+#        if step_calc_params.step_attempt_debug_results != null and \
+#                step_calc_params.step_attempt_debug_results.index == 5:
 #            print("break")
         
         # Update the destination waypoint to support a (possibly) increased jump height, which

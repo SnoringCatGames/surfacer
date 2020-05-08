@@ -432,7 +432,7 @@ var surfaces_to_outbound_nodes: Dictionary
 # Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface, Edge>>
 var nodes_to_nodes_to_edges: Dictionary
 
-var debug_state: Dictionary
+var debug_params: Dictionary
 
 func _init( \
         player_params: PlayerParams, \
@@ -440,7 +440,7 @@ func _init( \
     self.collision_params = collision_params
     self.movement_params = player_params.movement_params
     self.surface_parser = collision_params.surface_parser
-    self.debug_state = collision_params.debug_state
+    self.debug_params = collision_params.debug_params
     
     # Store the subset of surfaces that this player type can interact with.
     var surfaces_array := surface_parser.get_subset_of_surfaces( \
@@ -455,7 +455,7 @@ func _init( \
     _calculate_nodes_and_edges( \
             surfaces_set, \
             player_params, \
-            debug_state)
+            debug_params)
 
 # Uses A* search.
 func find_path( \
@@ -638,12 +638,12 @@ static func _record_frontier( \
 func _calculate_nodes_and_edges( \
         surfaces_set: Dictionary, \
         player_params: PlayerParams, \
-        debug_state: Dictionary) -> void:
+        debug_params: Dictionary) -> void:
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    if debug_state.in_debug_mode and \
-            debug_state.has("limit_parsing") and \
-            player_params.name != debug_state.limit_parsing.player_name:
+    if debug_params.in_debug_mode and \
+            debug_params.has("limit_parsing") and \
+            player_params.name != debug_params.limit_parsing.player_name:
         return
     ###################################################################################
     
@@ -670,10 +670,10 @@ func _calculate_nodes_and_edges( \
         for movement_calculator in player_params.movement_calculators:
             ###################################################################################
             # Allow for debug mode to limit the scope of what's calculated.
-            if debug_state.in_debug_mode and \
-                    debug_state.has("limit_parsing") and \
-                    debug_state.limit_parsing.has("movement_calculator") and \
-                    movement_calculator.name != debug_state.limit_parsing.movement_calculator:
+            if debug_params.in_debug_mode and \
+                    debug_params.has("limit_parsing") and \
+                    debug_params.limit_parsing.has("movement_calculator") and \
+                    movement_calculator.name != debug_params.limit_parsing.movement_calculator:
                 continue
             ###################################################################################
             

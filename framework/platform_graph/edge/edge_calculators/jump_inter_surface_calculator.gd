@@ -7,6 +7,29 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Commit message:
+#   Rename debug_state variables to be more descriptive.
+# 
+# >- Refactor MovementCalcResults to be re-used for failed calculations as well.
+#    - Remove edge_attempt_debug_results/step_attempt_debug_results from
+#      MovementCalcOverallParams/MovementCalcStepParams.
+#    - Create MovementCalcResults very early in the process, and plumb it through as input.
+#    - Decide what state to persist, and what state to re-calculate when expanding the inspector.
+#      - Re-calculate most everything for failed edges, with one small exception:
+#        - If we did get deep enough that we thought the jump/land pair might be valid, but we
+#          failed at or after trying to calculate MovementCalcOverallParams, then record a string
+#          or enum describing why failure happened. We can think of that as passing the broad-phase
+#          check but failing the narrow-phase check.
+#        - Then it should be simple enough in the inspector to:
+#          - Re-calculate jump/land position pairs.
+#          - Then determine whether any of the pairs would have failed the broad-phase check, and
+#            where.
+#          - Then display a list of all jump/land position pairs for a pair of surfaces, and why
+#            each failed (or succeeded).
+#          - Allow the narrow-phase fail cases to be expandable, and re-run narrow-phase
+#            calculation when expanding them.
+#    - Stop using in_debug_mode?
+# 
 # - What type of GUI?
 #   - Use menu-item controls? Use some sort of list control? Use the tree again?
 #   - Plan specifically what structure of info I want to display first.
@@ -86,7 +109,8 @@ const IS_A_JUMP_CALCULATOR := true
 # - Re-implement/use DEBUG_MODE flag:
 #   - Switch some MovementParam values when it's on:
 #     - syncs_player_velocity_to_edge_trajectory
-#     - ACTUALLY, maybe just implement another version of CatPlayer that only has MovementParams as different, then it's easy to toggle.
+#     - ACTUALLY, maybe just implement another version of CatPlayer that only has MovementParams as
+#       different, then it's easy to toggle.
 #       - Would need to make it easy to re-use same animator logic though...
 #   - Switch which annotations are used.
 #   - Switch which level is used?
@@ -119,7 +143,8 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.
-#     - Collision detection isn't correctly detecting the collision with the right-side of the upper block.
+#     - Collision detection isn't correctly detecting the collision with the right-side of the
+#       upper block.
 #   - Jumping from floor of lower-small-block to far right-wall of upper-small-black.
 #   - Jumping from left-wall of upper-small-block to right-wall of upper-small-block.
 # 
@@ -155,7 +180,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Should I almost never be actually storing things in Pool arrays? It seems like I mostly end
 #     up passing them around as arguments to functions, to they get copied as values...
 # 
-# - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the non-jump edges
+# - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in order to test the
+#   non-jump edges
 # 
 # - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from an air position).
 # 
@@ -191,7 +217,7 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Put together some illustrative screenshots with special one-off annotations to explain the
 #   graph parsing steps in the README.
-#   - Use global.DEBUG_STATE.extra_annotations
+#   - Use global.DEBUG_PARAMS.extra_annotations
 #   - Screenshots:
 #     - A couple surfaces
 #     - Show different tiles, to illustrate how surfaces get merged.
@@ -325,7 +351,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Use some sort of pulsing/growing elliptical gradient from the position indicator along the
 #     nearby surface face.
 #     - Will have to be a custom radial gradient:
-#       - https://github.com/Maujoe/godot-custom-gradient-texture/blob/master/assets/maujoe.custom_gradient_texture/custom_gradient_texture.gd
+#       - https://github.com/Maujoe/godot-custom-gradient-texture/blob/master/assets/
+#                            maujoe.custom_gradient_texture/custom_gradient_texture.gd
 #     - Will probably want to create a texture out of this radial gradient, set the texture to not
 #       repeat, render the texture offset within a transparent rectangle, then just animate the UV
 #       coordinates.
@@ -352,7 +379,7 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
     var movement_params := collision_params.movement_params
-    var debug_state := collision_params.debug_state
+    var debug_params := collision_params.debug_params
     
     var jump_land_position_results_for_destination_surface := []
     var jump_land_positions_to_consider: Array
@@ -366,7 +393,7 @@ func get_all_inter_surface_edges_from_surface( \
         ###########################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
         if EdgeMovementCalculator.should_skip_edge_calculation( \
-                debug_state, \
+                debug_params, \
                 origin_surface, \
                 destination_surface):
             continue
@@ -389,15 +416,15 @@ func get_all_inter_surface_edges_from_surface( \
             #######################################################################################
             # Allow for debug mode to limit the scope of what's calculated.
             if EdgeMovementCalculator.should_skip_edge_calculation( \
-                    debug_state, \
+                    debug_params, \
                     jump_land_positions.jump_position, \
                     jump_land_positions.land_position):
                 continue
             
             # Record some extra debug state when we're limiting calculations to a single edge.
-            var in_debug_mode: bool = debug_state.in_debug_mode and \
-                    debug_state.has("limit_parsing") and \
-                    debug_state.limit_parsing.has("edge") != null
+            var in_debug_mode: bool = debug_params.in_debug_mode and \
+                    debug_params.has("limit_parsing") and \
+                    debug_params.limit_parsing.has("edge") != null
             #######################################################################################
             
             if jump_land_positions.less_likely_to_be_valid and \

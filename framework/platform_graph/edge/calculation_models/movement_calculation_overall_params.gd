@@ -46,7 +46,7 @@ var can_backtrack_on_height: bool
 # Dictionary<String, bool>
 var _collided_surfaces: Dictionary
 
-var debug_state: MovementCalcOverallDebugState
+var edge_attempt_debug_results: MovementCalcOverallDebugState
 
 var in_debug_mode: bool setget _set_in_debug_mode,_get_in_debug_mode
 
@@ -102,10 +102,10 @@ func record_backtracked_surface( \
     _collided_surfaces[key] = true
 
 func _set_in_debug_mode(value: bool) -> void:
-    debug_state = \
+    edge_attempt_debug_results = \
             MovementCalcOverallDebugState.new(self) if \
             value else \
             null
 
 func _get_in_debug_mode() -> bool:
-    return debug_state != null
+    return edge_attempt_debug_results != null

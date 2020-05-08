@@ -12,7 +12,7 @@ var end_waypoint: Waypoint
 # The single vertical step for this overall jump movement.
 var vertical_step: MovementVertCalcStep
 
-var debug_state: MovementCalcStepDebugState
+var step_attempt_debug_results: MovementCalcStepDebugState
 
 func _init( \
         start_waypoint: Waypoint, \
@@ -26,10 +26,16 @@ func _init( \
     self.vertical_step = vertical_step
     
     if overall_calc_params.in_debug_mode:
-        var step_index := overall_calc_params.debug_state.total_step_count
-        debug_state = MovementCalcStepDebugState.new(self, step_index, \
-                overall_calc_params.debug_state, previous_out_of_reach_waypoint)
-        var parent = parent_step_calc_params if parent_step_calc_params != null else \
-                overall_calc_params
-        parent.debug_state.children_step_attempts.push_back(debug_state)
-        overall_calc_params.debug_state.total_step_count += 1
+        var step_index := overall_calc_params.edge_attempt_debug_results.total_step_count
+        step_attempt_debug_results = MovementCalcStepDebugState.new( \
+                self, \
+                step_index, \
+                overall_calc_params.edge_attempt_debug_results, \
+                previous_out_of_reach_waypoint)
+        if parent_step_calc_params != null:
+            parent_step_calc_params.step_attempt_debug_results.children_step_attempts.push_back( \
+                    step_attempt_debug_results)
+        else:
+            overall_calc_params.edge_attempt_debug_results.children_step_attempts.push_back( \
+                    step_attempt_debug_results)
+        overall_calc_params.edge_attempt_debug_results.total_step_count += 1

@@ -26,7 +26,7 @@ const STARTING_LEVEL_RESOURCE_PATH := "res://test/data/test_level_long_rise.tscn
 const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 #const PLAYER_RESOURCE_PATH := "res://players/data/test_player.tscn"
 
-const DEBUG_STATE := {
+const DEBUG_PARAMS := {
     in_debug_mode = IN_DEBUG_MODE,
     limit_parsing = {
         player_name = "cat",

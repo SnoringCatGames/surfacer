@@ -359,7 +359,7 @@ static func check_continuous_horizontal_step_for_collision( \
     var horizontal_state: Array
     var vertical_state: Array
     var collision: SurfaceCollision
-    var debug_state := step_calc_params.debug_state
+    var step_attempt_debug_results := step_calc_params.step_attempt_debug_results
     
     ###############################################################################################
     # Record some extra collision state when debugging an edge calculation.
@@ -467,8 +467,8 @@ static func check_continuous_horizontal_step_for_collision( \
             frame_positions.push_back(current_position)
             frame_velocities.push_back(current_velocity)
     
-    if debug_state != null:
-        debug_state.collision = collision
-        debug_state.collision_debug_state = collision_debug_state
+    if step_attempt_debug_results != null:
+        step_attempt_debug_results.collision = collision
+        step_attempt_debug_results.collision_debug_state = collision_debug_state
     
     return collision

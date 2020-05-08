@@ -145,8 +145,10 @@ static func calculate_horizontal_step( \
     step.time_step_end = time_step_end
     
     step.position_step_start = position_step_start
-    step.position_instruction_start = Vector2(position_instruction_start_x, instruction_start_state[0])
-    step.position_instruction_end = Vector2(position_instruction_end_x, instruction_end_state[0])
+    step.position_instruction_start = \
+            Vector2(position_instruction_start_x, instruction_start_state[0])
+    step.position_instruction_end = \
+            Vector2(position_instruction_end_x, instruction_end_state[0])
     step.position_step_end = position_end
     
     step.velocity_step_start = Vector2(velocity_start_x, step_start_state[1])
@@ -154,8 +156,8 @@ static func calculate_horizontal_step( \
     step.velocity_instruction_end = Vector2(velocity_end_x, instruction_end_state[1])
     step.velocity_step_end = Vector2(velocity_end_x, step_end_state[1])
     
-    if step_calc_params.debug_state != null:
-        step_calc_params.debug_state.step = step
+    if step_calc_params.step_attempt_debug_results != null:
+        step_calc_params.step_attempt_debug_results.step = step
     
     end_waypoint.actual_velocity_x = velocity_end_x
     

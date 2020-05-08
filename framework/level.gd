@@ -34,28 +34,33 @@ func _ready() -> void:
             surface_parser, \
             space_state, \
             global.player_params, \
-            Global.DEBUG_STATE)
+            Global.DEBUG_PARAMS)
 
 static func _create_platform_graphs( \
         surface_parser: SurfaceParser, \
         space_state: Physics2DDirectSpaceState, \
         all_player_params: Dictionary, \
-        debug_state: Dictionary) -> Dictionary:
+        debug_params: Dictionary) -> Dictionary:
     var graphs = {}
     var player_params: PlayerParams
     var collision_params: CollisionCalcParams
     for player_name in all_player_params:
         ###########################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
-        if debug_state.in_debug_mode and \
-                debug_state.has("limit_parsing") and \
-                player_name != debug_state.limit_parsing.player_name:
+        if debug_params.in_debug_mode and \
+                debug_params.has("limit_parsing") and \
+                player_name != debug_params.limit_parsing.player_name:
             continue
         ###########################################################################################
         player_params = all_player_params[player_name]
-        collision_params = CollisionCalcParams.new(debug_state, space_state, \
-                player_params.movement_params, surface_parser)
-        graphs[player_name] = PlatformGraph.new(player_params, collision_params)
+        collision_params = CollisionCalcParams.new( \
+                debug_params, \
+                space_state, \
+                player_params.movement_params, \
+                surface_parser)
+        graphs[player_name] = PlatformGraph.new( \
+                player_params, \
+                collision_params)
     return graphs
 
 func descendant_physics_process_completed(descendant: Node) -> void:
@@ -66,11 +71,15 @@ func add_player( \
         resource_path: String, \
         is_human_player: bool, \
         position: Vector2) -> Player:
-    var player: Player = Utils.add_scene(self, resource_path)
+    var player: Player = Utils.add_scene( \
+            self, \
+            resource_path)
     
     player.position = position
     
-    var group := Utils.GROUP_NAME_HUMAN_PLAYERS if is_human_player else \
+    var group := \
+            Utils.GROUP_NAME_HUMAN_PLAYERS if \
+            is_human_player else \
             Utils.GROUP_NAME_COMPUTER_PLAYERS
     player.add_to_group(group)
     
@@ -81,11 +90,16 @@ func add_player( \
 func _record_player_reference(is_human_player: bool) -> void:
     var scene_tree := get_tree()
     
-    var group := Utils.GROUP_NAME_HUMAN_PLAYERS if is_human_player else \
+    var group := \
+            Utils.GROUP_NAME_HUMAN_PLAYERS if \
+            is_human_player else \
             Utils.GROUP_NAME_COMPUTER_PLAYERS
     var players := scene_tree.get_nodes_in_group(group)
     
-    var player: Player = players[0] if players.size() > 0 else null
+    var player: Player = \
+            players[0] if \
+            players.size() > 0 else \
+            null
     
     if player != null:
         var graph: PlatformGraph = platform_graphs[player.player_name]
@@ -101,5 +115,7 @@ func _record_player_reference(is_human_player: bool) -> void:
         
         # Set up some annotators to help with debugging.
         global.overlays.create_graph_annotator(graph)
-        global.overlays.create_player_annotator(player, is_human_player)
+        global.overlays.create_player_annotator( \
+                player, \
+                is_human_player)
         

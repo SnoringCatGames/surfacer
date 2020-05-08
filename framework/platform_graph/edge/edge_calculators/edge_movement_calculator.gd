@@ -116,11 +116,11 @@ static func create_movement_calc_overall_params(
     return overall_calc_params
 
 static func should_skip_edge_calculation( \
-        debug_state: Dictionary, \
+        debug_params: Dictionary, \
         jump_position_or_surface, \
         land_position_or_surface) -> bool:
-    if debug_state.in_debug_mode and debug_state.has("limit_parsing") and \
-            debug_state.limit_parsing.has("edge"):
+    if debug_params.in_debug_mode and debug_params.has("limit_parsing") and \
+            debug_params.limit_parsing.has("edge"):
         var jump_surface: Surface = \
                 jump_position_or_surface.surface if \
                 jump_position_or_surface is PositionAlongSurface else \
@@ -138,12 +138,12 @@ static func should_skip_edge_calculation( \
                 land_position_or_surface is PositionAlongSurface else \
                 Vector2.INF
         
-        if debug_state.limit_parsing.edge.has("origin"):
+        if debug_params.limit_parsing.edge.has("origin"):
             if jump_surface == null:
                 # Ignore this if we expect to know the jump position, but don't.
                 return false
             
-            var debug_origin: Dictionary = debug_state.limit_parsing.edge.origin
+            var debug_origin: Dictionary = debug_params.limit_parsing.edge.origin
             
             if (debug_origin.has("surface_side") and \
                     debug_origin.surface_side != jump_surface.side) or \
@@ -163,12 +163,12 @@ static func should_skip_edge_calculation( \
                     # Ignore anything except the jump position that we're debugging.
                     return true
         
-        if debug_state.limit_parsing.edge.has("destination"):
+        if debug_params.limit_parsing.edge.has("destination"):
             if land_surface == null:
                 # Ignore this if we expect to know the land position, but don't.
                 return false
             
-            var debug_destination: Dictionary = debug_state.limit_parsing.edge.destination
+            var debug_destination: Dictionary = debug_params.limit_parsing.edge.destination
             
             if (debug_destination.has("surface_side") and \
                     debug_destination.surface_side != land_surface.side) or \

@@ -36,7 +36,7 @@ func _init( \
     self.surface_state = player.surface_state
     self.movement_params = player.movement_params
     self.collision_params = CollisionCalcParams.new( \
-            global.DEBUG_STATE, \
+            global.DEBUG_PARAMS, \
             global.space_state, \
             movement_params, \
             graph.surface_parser)
@@ -370,9 +370,9 @@ static func _optimize_edges_for_approach( \
     
     ###############################################################################################
     # Record some extra debug state when we're limiting calculations to a single edge.
-    var in_debug_mode: bool = collision_params.debug_state.in_debug_mode and \
-            collision_params.debug_state.has("limit_parsing") and \
-            collision_params.debug_state.limit_parsing.has("edge") != null
+    var in_debug_mode: bool = collision_params.debug_params.in_debug_mode and \
+            collision_params.debug_params.has("limit_parsing") and \
+            collision_params.debug_params.limit_parsing.has("edge") != null
     ###############################################################################################
     
     # At runtime, after finding a path through build-time-calculated edges, try to optimize the

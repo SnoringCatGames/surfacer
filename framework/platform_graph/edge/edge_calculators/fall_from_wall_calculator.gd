@@ -19,7 +19,7 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
-    var debug_state := collision_params.debug_state
+    var debug_params := collision_params.debug_params
     var movement_params := collision_params.movement_params
     var velocity_start := Vector2( \
             movement_params.wall_fall_horizontal_boost * origin_surface.normal.x, \
@@ -51,8 +51,10 @@ func get_all_inter_surface_edges_from_surface( \
     for jump_position in jump_positions:
         ###################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
-        if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
-                jump_position, null):
+        if EdgeMovementCalculator.should_skip_edge_calculation( \
+                debug_params, \
+                jump_position, \
+                null):
             continue
         ###################################################################################
         

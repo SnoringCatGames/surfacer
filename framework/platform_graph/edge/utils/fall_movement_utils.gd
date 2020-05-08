@@ -9,7 +9,7 @@ static func find_landing_trajectories_to_any_surface( \
         velocity_start: Vector2, \
         possible_landing_surfaces_from_point := [], \
         only_returns_first_result := false) -> Array:
-    var debug_state := collision_params.debug_state
+    var debug_params := collision_params.debug_params
     var movement_params := collision_params.movement_params
     
     if possible_landing_surfaces_from_point.empty():
@@ -33,8 +33,11 @@ static func find_landing_trajectories_to_any_surface( \
         origin_side = origin_position.surface.side
     else:
         origin_vertices = [origin_position.target_point]
-        origin_bounding_box = Rect2(origin_position.target_point.x, \
-                origin_position.target_point.y, 0.0, 0.0)
+        origin_bounding_box = Rect2( \
+                origin_position.target_point.x, \
+                origin_position.target_point.y, \
+                0.0, \
+                0.0)
         origin_side = SurfaceSide.CEILING
     
     var jump_land_positions_to_consider: Array
@@ -47,7 +50,7 @@ static func find_landing_trajectories_to_any_surface( \
         ###########################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
         if EdgeMovementCalculator.should_skip_edge_calculation( \
-                debug_state, \
+                debug_params, \
                 origin_position, \
                 destination_surface):
             continue
@@ -70,7 +73,7 @@ static func find_landing_trajectories_to_any_surface( \
             #######################################################################################
             # Allow for debug mode to limit the scope of what's calculated.
             if EdgeMovementCalculator.should_skip_edge_calculation( \
-                    debug_state, \
+                    debug_params, \
                     jump_land_positions.jump_position, \
                     jump_land_positions.land_position):
                 continue
@@ -112,12 +115,14 @@ static func find_landing_trajectory_between_positions( \
         land_position: PositionAlongSurface, \
         velocity_start: Vector2, \
         needs_extra_wall_land_horizontal_speed: bool) -> MovementCalcResults:
-    var debug_state := collision_params.debug_state
+    var debug_params := collision_params.debug_params
     
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
-            origin_position, land_position):
+    if EdgeMovementCalculator.should_skip_edge_calculation( \
+            debug_params, \
+            origin_position, \
+            land_position):
         return null
     ###################################################################################
         
@@ -137,8 +142,9 @@ static func find_landing_trajectory_between_positions( \
     
     ###################################################################################
     # Record some extra debug state when we're limiting calculations to a single edge.
-    if debug_state.in_debug_mode and debug_state.has("limit_parsing") and \
-            debug_state.limit_parsing.has("edge") != null:
+    if debug_params.in_debug_mode and \
+            debug_params.has("limit_parsing") and \
+            debug_params.limit_parsing.has("edge") != null:
         overall_calc_params.in_debug_mode = true
     ###################################################################################
     

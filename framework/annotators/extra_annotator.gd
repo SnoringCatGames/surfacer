@@ -5,9 +5,9 @@ var extra_annotations: Dictionary
 var old_hash: int = INF
 
 func _init(global) -> void:
-    if global.DEBUG_STATE.extra_annotations == null:
-        global.DEBUG_STATE.extra_annotations = {}
-    self.extra_annotations = global.DEBUG_STATE.extra_annotations
+    if global.DEBUG_PARAMS.extra_annotations == null:
+        global.DEBUG_PARAMS.extra_annotations = {}
+    self.extra_annotations = global.DEBUG_PARAMS.extra_annotations
 
 func _process(delta: float) -> void:
     var new_hash := extra_annotations.hash()

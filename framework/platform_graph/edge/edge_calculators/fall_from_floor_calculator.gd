@@ -98,11 +98,13 @@ func _get_all_edges_from_one_side( \
         needs_extra_wall_land_horizontal_speed := false) -> void:
     assert(!needs_extra_wall_land_horizontal_speed or exclusive_land_position != null)
     
-    var debug_state := collision_params.debug_state
+    var debug_params := collision_params.debug_params
     var movement_params := collision_params.movement_params
     
     var edge_point := \
-            origin_surface.first_point if falls_on_left_side else origin_surface.last_point
+            origin_surface.first_point if \
+            falls_on_left_side else \
+            origin_surface.last_point
     
     var position_start := PositionAlongSurface.new()
     position_start.match_surface_target_and_collider( \
@@ -114,8 +116,10 @@ func _get_all_edges_from_one_side( \
     
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    if EdgeMovementCalculator.should_skip_edge_calculation(debug_state, \
-            position_start, null):
+    if EdgeMovementCalculator.should_skip_edge_calculation( \
+            debug_params, \
+            position_start, \
+            null):
         return
     ###################################################################################
     
@@ -132,7 +136,9 @@ func _get_all_edges_from_one_side( \
     
     var displacement_from_start_to_fall_off := position_fall_off - position_start.target_point
     
-    var acceleration := -movement_params.walk_acceleration if falls_on_left_side else \
+    var acceleration := \
+            -movement_params.walk_acceleration if \
+            falls_on_left_side else \
             movement_params.walk_acceleration
     
     var surface_end_velocity_start: Vector2 = JumpLandPositionsUtils.get_velocity_start( \
