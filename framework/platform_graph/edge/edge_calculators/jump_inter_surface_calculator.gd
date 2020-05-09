@@ -8,7 +8,7 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - Commit message:
-#   Rename debug_state variables to be more descriptive.
+#   
 # 
 # >- Refactor MovementCalcResults to be re-used for failed calculations as well.
 #    - Remove edge_attempt_debug_results/step_attempt_debug_results from
@@ -40,6 +40,10 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Take this opportunity to also start adding the toggle support for annotations.
 # 
 # - Refactor/rename EdgeCalculationAnnotator to be PlatformGraphInspector.
+# 
+# - Fix width issues in inspector.
+#   - Should be able to see everything in row.
+#   - Shouldn't need to make panel wider or use horizontal scrolling.
 # 
 # - Analytics!
 #   - Figure out how/where to store this.

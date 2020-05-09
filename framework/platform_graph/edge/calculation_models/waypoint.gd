@@ -99,3 +99,11 @@ func _init( \
     self.should_stay_on_min_side = should_stay_on_min_side
     self.previous_waypoint = previous_waypoint
     self.next_waypoint = next_waypoint
+
+func to_string() -> String:
+    return "Waypoint{ %s, passing_vertically: %s, should_stay_on_min_side: %s, surface: %s }" % [ \
+        str(position), \
+        passing_vertically, \
+        should_stay_on_min_side, \
+        surface.to_string(), \
+    ]

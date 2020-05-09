@@ -5,7 +5,7 @@
 extends Edge
 class_name WalkToAscendWallFromFloorEdge
 
-const NAME := "WalkToAscendWallFromFloorEdge"
+const TYPE := EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.FLOOR
 const ENTERS_AIR := false
@@ -16,7 +16,7 @@ func _init( \
         end: PositionAlongSurface, \
         velocity_start: Vector2, \
         movement_params: MovementParams) \
-        .(NAME, \
+        .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \

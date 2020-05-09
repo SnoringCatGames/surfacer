@@ -65,3 +65,9 @@ func _get_is_backtracking() -> bool:
 
 func _get_replaced_a_fake() -> bool:
     return _step_calc_params.end_waypoint.replaced_a_fake
+
+func to_string() -> String:
+    return "MovementCalcStepDebugState{ start: %s, end: %s }" % [ \
+        start_waypoint, \
+        end_waypoint, \
+    ]

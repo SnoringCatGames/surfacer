@@ -21,6 +21,7 @@ static func get_side_string(side: int) -> String:
         RIGHT_WALL:
             return "RIGHT_WALL"
         _:
+            Utils.error("Invalid SurfaceSide: %s" % side)
             return "???"
 
 static func get_normal(side: int) -> Vector2:
@@ -29,3 +30,13 @@ static func get_normal(side: int) -> Vector2:
             Geometry.DOWN if side == CEILING else (\
             Geometry.RIGHT if side == LEFT_WALL else (\
             Geometry.LEFT)))
+
+const KEYS = [
+    "NONE",
+    "FLOOR",
+    "CEILING",
+    "LEFT_WALL",
+    "RIGHT_WALL",
+]
+static func keys() -> Array:
+    return KEYS

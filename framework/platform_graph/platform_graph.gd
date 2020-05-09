@@ -432,6 +432,9 @@ var surfaces_to_outbound_nodes: Dictionary
 # Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface, Edge>>
 var nodes_to_nodes_to_edges: Dictionary
 
+# Dictionary<String, int>
+var counts := {}
+
 var debug_params: Dictionary
 
 func _init( \
@@ -456,6 +459,8 @@ func _init( \
             surfaces_set, \
             player_params, \
             debug_params)
+    
+    _update_counts()
 
 # Uses A* search.
 func find_path( \
@@ -738,7 +743,9 @@ func _calculate_nodes_and_edges( \
     # Record inter-surface edges.
     for surface in surfaces_to_edges:
         for edge in surfaces_to_edges[surface]:
-            nodes_to_nodes_to_edges[edge.start_position_along_surface][edge.end_position_along_surface] = \
+            nodes_to_nodes_to_edges \
+                    [edge.start_position_along_surface] \
+                    [edge.end_position_along_surface] = \
                     edge
 
 # Checks whether a previous node with the same position has already been seen.
@@ -814,3 +821,38 @@ static func _get_surfaces_in_jump_range( \
     for other_surface in other_surfaces_set:
         if expanded_target_bounding_box.intersects(other_surface.bounding_box):
             result_set[other_surface] = other_surface
+
+func _update_counts() -> void:
+    counts.clear()
+    
+    counts.total_surfaces = 0
+    counts.total_edges = 0
+    
+    # Initialize surface and edge type counts.
+    for side in SurfaceSide.keys():
+        counts[side] = 0
+    for type in EdgeType.keys():
+        counts[type] = 0
+    
+    var surface_side_string: String
+    var edge: Edge
+    
+    for surface in surfaces_set:
+        # Increment the surface counts.
+        surface_side_string = SurfaceSide.get_side_string(surface.side)
+        counts[surface_side_string] += 1
+        counts.total_surfaces += 1
+        
+        for origin_node in surfaces_to_outbound_nodes[surface]:
+            for destination_node in nodes_to_nodes_to_edges[origin_node]:
+                # Increment the edge counts.
+                edge = nodes_to_nodes_to_edges[origin_node][destination_node]
+                counts[edge.name] += 1
+                counts.total_edges += 1
+
+func to_string() -> String:
+    return "PlatformGraph{ player: %s, surfaces: %s, edges: %s }" % [ \
+            movement_params.name, \
+            counts.total_surfaces, \
+            counts.total_edges, \
+            ]

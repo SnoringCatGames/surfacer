@@ -2,7 +2,7 @@
 extends Edge
 class_name JumpFromSurfaceToAirEdge
 
-const NAME := "JumpFromSurfaceToAirEdge"
+const TYPE := EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
@@ -17,7 +17,7 @@ func _init( \
         movement_params: MovementParams, \
         instructions: MovementInstructions, \
         trajectory: MovementTrajectory) \
-        .(NAME, \
+        .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \

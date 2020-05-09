@@ -5,7 +5,7 @@
 extends Edge
 class_name FallFromWallEdge
 
-const NAME := "FallFromWallEdge"
+const TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
@@ -19,7 +19,7 @@ func _init( \
         movement_params: MovementParams, \
         instructions: MovementInstructions, \
         trajectory: MovementTrajectory) \
-        .(NAME, \
+        .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \

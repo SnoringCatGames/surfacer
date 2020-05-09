@@ -5,7 +5,7 @@
 extends Edge
 class_name IntraSurfaceEdge
 
-const NAME := "IntraSurfaceEdge"
+const TYPE := EdgeType.INTRA_SURFACE_EDGE
 const IS_TIME_BASED := false
 const ENTERS_AIR := false
 
@@ -19,7 +19,7 @@ func _init( \
         end: PositionAlongSurface, \
         velocity_start: Vector2, \
         movement_params: MovementParams) \
-        .(NAME, \
+        .(TYPE, \
         IS_TIME_BASED, \
         SurfaceType.get_type_from_side(start.surface.side), \
         ENTERS_AIR, \

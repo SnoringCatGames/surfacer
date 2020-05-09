@@ -6,7 +6,7 @@
 extends Edge
 class_name ClimbDownWallToFloorEdge
 
-const NAME := "ClimbDownWallToFloorEdge"
+const TYPE := EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.WALL
 const ENTERS_AIR := false
@@ -16,7 +16,7 @@ func _init( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         movement_params: MovementParams) \
-        .(NAME, \
+        .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \

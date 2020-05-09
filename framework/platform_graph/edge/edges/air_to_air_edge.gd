@@ -2,7 +2,7 @@
 extends Edge
 class_name AirToAirEdge
 
-const NAME := "AirToAirEdge"
+const TYPE := EdgeType.AIR_TO_AIR_EDGE
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := false
@@ -16,7 +16,7 @@ func _init( \
         movement_params: MovementParams, \
         instructions: MovementInstructions, \
         trajectory: MovementTrajectory) \
-        .(NAME, \
+        .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \

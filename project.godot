@@ -154,6 +154,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/edge_step_calc_result.gd"
 }, {
+"base": "Reference",
+"class": "EdgeType",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/edges/edge_type.gd"
+}, {
 "base": "Node2D",
 "class": "ExtraAnnotator",
 "language": "GDScript",
@@ -694,6 +699,7 @@ _global_script_class_icons={
 "EdgeCalculationTrajectoryAnnotator": "",
 "EdgeMovementCalculator": "",
 "EdgeStepCalcResult": "",
+"EdgeType": "",
 "ExtraAnnotator": "",
 "FakePlayerAnimator": "",
 "FallFromFloorCalculator": "",

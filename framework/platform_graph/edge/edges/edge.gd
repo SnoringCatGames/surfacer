@@ -2,7 +2,8 @@
 extends Reference
 class_name Edge
 
-var name: String
+# EdgeType
+var type: int
 
 # Whether the instructions for moving along this edge are updated according to traversal time (vs
 # according to surface state).
@@ -48,10 +49,12 @@ var end: Vector2 setget ,_get_end
 var start_surface: Surface setget ,_get_start_surface
 var end_surface: Surface setget ,_get_end_surface
 
+var name: String setget ,_get_name
+
 var should_end_by_colliding_with_surface: bool setget ,_get_should_end_by_colliding_with_surface
 
 func _init( \
-        name: String, \
+        type: int, \
         is_time_based: bool, \
         surface_type: int, \
         enters_air: bool, \
@@ -65,7 +68,7 @@ func _init( \
         movement_params: MovementParams, \
         instructions: MovementInstructions, \
         trajectory: MovementTrajectory) -> void:
-    self.name = name
+    self.type = type
     self.is_time_based = is_time_based
     self.surface_type = surface_type
     self.enters_air = enters_air
@@ -188,6 +191,9 @@ func _get_start_string() -> String:
 func _get_end_string() -> String:
     return end_position_along_surface.to_string()
 
+func _get_name() -> String:
+    return EdgeType.get_type_string(type)
+
 func _get_should_end_by_colliding_with_surface() -> bool:
     return end_position_along_surface.surface != start_position_along_surface.surface and \
             end_position_along_surface.surface != null
@@ -197,7 +203,7 @@ func to_string() -> String:
             "%s{ start: %s, end: %s, velocity_start: %s, velocity_end: %s, " + \
             "distance: %s, duration: %s, is_optimized_for_path: %s, instructions: %s }"
     var format_string_arguments := [ \
-            name, \
+            _get_name(), \
             _get_start_string(), \
             _get_end_string(), \
             str(velocity_start), \
@@ -225,7 +231,7 @@ func to_string_with_newlines(indent_level: int) -> String:
             "\n\t%sinstructions: %s," + \
         "\n%s}"
     var format_string_arguments := [ \
-            name, \
+            _get_name(), \
             indent_level_str, \
             _get_start_string(), \
             indent_level_str, \
