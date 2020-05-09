@@ -6,7 +6,7 @@ const STEP_TRANSITION_DELAY_SEC := 1.0
 var calculation_selector_annotator: EdgeCalculationSelectorAnnotator
 var collision_calculation_annotator: CollisionCalculationAnnotator
 var trajectory_annotator: EdgeCalculationTrajectoryAnnotator
-var tree_view: PlatformGraphTreeView
+var inspector: PlatformGraphInspector
 
 var graph: PlatformGraph
 
@@ -26,18 +26,18 @@ func _init(graph: PlatformGraph) -> void:
     self.calculation_selector_annotator = EdgeCalculationSelectorAnnotator.new()
     self.collision_calculation_annotator = CollisionCalculationAnnotator.new()
     self.trajectory_annotator = EdgeCalculationTrajectoryAnnotator.new()
-    self.tree_view = PlatformGraphTreeView.new([graph])
+    self.inspector = PlatformGraphInspector.new([graph])
 
 func _enter_tree() -> void:
     add_child(calculation_selector_annotator)
     add_child(trajectory_annotator)
     add_child(collision_calculation_annotator)
-    add_child(tree_view)
+    add_child(inspector)
     
-    tree_view.connect( \
+    inspector.connect( \
             "step_selected", \
             self, \
-            "on_step_selected_from_tree_view")
+            "on_step_selected_from_inspector")
 
 func _ready() -> void:
     global = $"/root/Global"
@@ -52,7 +52,7 @@ func _process(delta: float) -> void:
         
         collision_calculation_annotator.edge_attempt = edge_attempt
         trajectory_annotator.edge_attempt = edge_attempt
-        tree_view.edge_attempt = edge_attempt
+        inspector.edge_attempt = edge_attempt
         
         if edge_attempt != null:
             set_selected_step(_get_step_by_index(edge_attempt, 0))
@@ -78,7 +78,7 @@ func _process(delta: float) -> void:
     
     if is_new_edge_attempt:
         global.debug_panel.set_is_open(true)
-        tree_view.update()
+        inspector.update()
     
     if is_new_selected_step or is_new_edge_attempt:
         # It's time to select a new step, whether from the timer or from a user selection.
@@ -92,7 +92,7 @@ func set_selected_step(selected_step: MovementCalcStepDebugState) -> void:
     collision_calculation_annotator.selected_step = selected_step
     trajectory_annotator.selected_step = selected_step
 
-func on_step_selected_from_tree_view(selected_step_attempt: MovementCalcStepDebugState) -> void:
+func on_step_selected_from_inspector(selected_step_attempt: MovementCalcStepDebugState) -> void:
     is_auto_transitioning_with_timer = false
     is_new_selected_step = true
     set_selected_step(selected_step_attempt)

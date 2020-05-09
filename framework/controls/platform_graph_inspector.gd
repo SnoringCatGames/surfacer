@@ -1,5 +1,5 @@
 extends Node2D
-class_name PlatformGraphTreeView
+class_name PlatformGraphInspector
 
 # FIXME: LEFT OFF HERE: --------------------------------------
 # - Figure out how to expand/collapse certain items by default.
