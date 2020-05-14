@@ -2,13 +2,58 @@ extends EdgeMovementCalculator
 class_name JumpInterSurfaceCalculator
 
 const NAME := "JumpInterSurfaceCalculator"
+const EDGE_TYPE := EdgeType.JUMP_INTER_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := true
 
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Commit message:
-#   
+# - Fix WelcomePanel width.
+# 
+# - Add support for dynamically instantiating and destroying state for expanded items.
+#   - Enumerate exactly which items are dynamic.
+#     - JumpLandPositions (and render and store as metadata) for surfaces>side>surface>destination>edge_type.
+#     - 
+# 
+# - Add support for rendering annotations for the selected inspector item.
+#   - Do I need to add back references to the corresponding params objects in the
+#     result-metadata objects?
+# 
+# - Move failed edge subtrees to exist as siblings to valid under the destination surface and edge
+#   type subtrees.
+# 
+# - Add TODOs to use easing curves with all annotation animations.
+# 
+#  - Update PlatformGraphInspector.
+#    - Handle left-over FIXMEs.
+#  - Create FailedEdgeAttempt results from other edge calculators.
+# 
+# - Refactor PlatformGraphInspector:
+#   - Pull-out TreeItem text creation into helpers.
+#   - Pull-out text constants into constant variables.
+#   - Make things somehow more generalizable, parameterized on metadata type.
+# 
+# - Rename:
+#   - movement_calculation_overall_params -> edge_calc_params
+#   - movement_calculation_step_params -> edge_step_calc_params
+#   - movement_calculation_results -> edge_calc_result
+#   - movement_calculation_step -> edge_calc_step
+#   - movement_instruction -> edge_instruction
+#   - movement_instructions -> edge_instructions
+#   - movement_trajectory -> edge_trajectory
+#   - movement_vertical_calculation_step -> edge_vertical_calc_step
+#   - edge_movement_calculator -> edge_calculator
+#   - movement_instructions_utils -> edge_instructions_utils
+#   - movement_step_utils -> edge_step_utils
+#   - movement_trajectory_utils -> edge_trajectory_utils
+#   - DebugPanel -> UtilityPanel
+# 
+# - Don't automatically expand an item when it is selected.
+# 
+# - Dynamically populate children items and calculate their detailed debugging/annotation
+#   information when expanding a parent item.
+# - Dynamically destroy children items and their detailed debugging/annotaiton information when
+#   collapsing a parent item.
 # 
 # >- Refactor MovementCalcResults to be re-used for failed calculations as well.
 #    - Remove edge_attempt_debug_results/step_attempt_debug_results from
@@ -30,20 +75,41 @@ const IS_A_JUMP_CALCULATOR := true
 #            calculation when expanding them.
 #    - Stop using in_debug_mode?
 # 
-# - What type of GUI?
-#   - Use menu-item controls? Use some sort of list control? Use the tree again?
-#   - Plan specifically what structure of info I want to display first.
-#     - Presumably I do want expand/drill-down capability.
+# - Refactor EdgeCalculationAnnotator to not be as tightly coupled to PlatformGraphInspector.
 # 
-# - Will need to add an additional section in the debug menu for displaying analytics info.
-#   - Can probably also integrate some info into the tree for debugged trajectories.
-#   - Take this opportunity to also start adding the toggle support for annotations.
+# - Ensure all selection events are connected correctly.
 # 
-# - Refactor/rename EdgeCalculationAnnotator to be PlatformGraphInspector.
+# - Add support for configuring in the menu which edge-type calculator to use with the
+#   inspector-selector.
+# - And to configure which player to use.
+# 
+# - Add logic to render dots for the other possible jump/land positions when clicking to select an
+#   edge to inspect.
+# 
+#  - Search for and rename the following:
+#    - attempt
 # 
 # - Fix width issues in inspector.
 #   - Should be able to see everything in row.
 #   - Shouldn't need to make panel wider or use horizontal scrolling.
+# 
+# - Disable the player handling u/d/l/r keys when focus is in the debug panel.
+# 
+# - Render a legend to describe the current annotations.
+#   - Make this dynamically update to describe the currently rendered annotations.
+#     - This should update as annotations are toggled in the debug panel.
+#     - This should update as items are selected in the PlatformGraphInspector.
+#   - Place this as an independent dialog.
+#   - Make this dismissable.
+#   - Add a button to the debug panel to re-show this if it is dismissed.
+# 
+# - Start adding the toggle support for annotations.
+# 
+# - Phone:
+#   - Touch doesn't dismiss panel.
+#   - Touch doesn't activate gear icon.
+# 
+# --------
 # 
 # - Analytics!
 #   - Figure out how/where to store this.
@@ -84,14 +150,42 @@ const IS_A_JUMP_CALCULATOR := true
 #     - Dynamically populate (and tear-down) content within this giant tree.
 #     - Also, dynamically calculate edge attempts, in order to capture deeper debugging info, when
 #       expanding their tree items.
-#     - When selecting something by clicking on the level, open the cooresponding path in the tree,
+#     - When selecting something by clicking on the level, open the corresponding path in the tree,
 #       rather than displaying something new and out of context with the global tree.
 #   - Global data structure draft:
 #     - Cat platform graph
 #       - XX: Edges
-#         - Ju
+#         - JUMP_INTER_SURFACE_EDGEs
+#           - JUMP_INTER_SURFACE_EDGE{ ... }
+#             - <FIXME: Step attempts>
+#           ...
+#         ...
 #       - XX: Surfaces
 #         - XX: Floors
+#           - FLOOR [(x, y) (x, y)]
+#             - XX: Edges from this surface
+#               - _Destination surfaces_
+#               - FLOOR [(x, y) (x, y)]
+#                 - JUMP_INTER_SURFACE_EDGE{ ... }
+#                   - <FIXME: Step attempts>
+#                 ...
+#               ...
+#             - Failed edge calculations
+#               - _Destination surfaces that passed broad-phase checks_
+#               - FLOOR [(x, y) (x, y)]
+#                 <A row for each edge type that has a narrow-phase result>
+#                 - JUMP_INTER_SURFACE_EDGEs
+#                   <Create a nested class to store as the metadata for this row;
+#                    origin and destination surfaces and edge type;
+#                    when this is selected, annotate all possible jump/land position pairs between
+#                        the two surfaces, with dotted lines connected them;
+#                    also color-code these pairs/lines to reflect whether they were valid, failed
+#                        broad phase, or failed narrow phase>
+#                   - <A row for each jump/land position pair that has a narrow-phase result>
+#                     - <FIXME: Step attempts>
+#                 ...
+#               ...
+#           ...
 #         - XX: Left walls (right-side of block)
 #         - XX: Right walls (left-side of block)
 #         - XX: Ceilings
@@ -370,6 +464,7 @@ const IS_A_JUMP_CALCULATOR := true
 
 func _init().( \
         NAME, \
+        EDGE_TYPE, \
         IS_A_JUMP_CALCULATOR) -> void:
     pass
 
@@ -377,8 +472,9 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null
 
 func get_all_inter_surface_edges_from_surface( \
-        collision_params: CollisionCalcParams, \
         edges_result: Array, \
+        failed_edge_attempts_result: Array, \
+        collision_params: CollisionCalcParams, \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
@@ -387,6 +483,8 @@ func get_all_inter_surface_edges_from_surface( \
     
     var jump_land_position_results_for_destination_surface := []
     var jump_land_positions_to_consider: Array
+    var edge_result_metadata: EdgeCalcResultMetadata
+    var failed_attempt: FailedEdgeAttempt
     var edge: JumpInterSurfaceEdge
     
     for destination_surface in surfaces_in_jump_range_set:
@@ -425,10 +523,15 @@ func get_all_inter_surface_edges_from_surface( \
                     jump_land_positions.land_position):
                 continue
             
-            # Record some extra debug state when we're limiting calculations to a single edge.
-            var in_debug_mode: bool = debug_params.in_debug_mode and \
+            # Record some extra debug state when we're limiting calculations to a single edge
+            # (which must be this edge).
+            var record_calc_details: bool = \
                     debug_params.has("limit_parsing") and \
-                    debug_params.limit_parsing.has("edge") != null
+                    debug_params.limit_parsing.has("edge") and \
+                    debug_params.limit_parsing.edge.has("origin") and \
+                    debug_params.limit_parsing.edge.origin.has("position") and \
+                    debug_params.limit_parsing.edge.has("destination") and \
+                    debug_params.limit_parsing.edge.destination.has("position")
             #######################################################################################
             
             if jump_land_positions.less_likely_to_be_valid and \
@@ -444,43 +547,63 @@ func get_all_inter_surface_edges_from_surface( \
                 # land position.
                 continue
             
+            edge_result_metadata = EdgeCalcResultMetadata.new(record_calc_details)
+            
             edge = calculate_edge( \
+                    edge_result_metadata, \
                     collision_params, \
                     jump_land_positions.jump_position, \
                     jump_land_positions.land_position, \
                     jump_land_positions.velocity_start, \
                     jump_land_positions.needs_extra_jump_duration, \
-                    jump_land_positions.needs_extra_wall_land_horizontal_speed, \
-                    in_debug_mode)
+                    jump_land_positions.needs_extra_wall_land_horizontal_speed)
             
             if edge != null:
                 # Can reach land position from jump position.
                 edges_result.push_back(edge)
                 edge = null
                 jump_land_position_results_for_destination_surface.push_back(jump_land_positions)
+            else:
+                failed_attempt = FailedEdgeAttempt.new( \
+                        origin_surface, \
+                        destination_surface, \
+                        jump_land_positions.jump_position.target_point, \
+                        jump_land_positions.land_position.target_point, \
+                        jump_land_positions.velocity_start, \
+                        edge_type, \
+                        edge_result_metadata.edge_calc_result_type, \
+                        edge_result_metadata.waypoint_validity)
+                failed_edge_attempts_result.push_back(failed_attempt)
 
 func calculate_edge( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         collision_params: CollisionCalcParams, \
         position_start: PositionAlongSurface, \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
-        needs_extra_wall_land_horizontal_speed := false, \
-        in_debug_mode := false) -> Edge:
+        needs_extra_wall_land_horizontal_speed := false) -> Edge:
+    edge_result_metadata = \
+            edge_result_metadata if \
+            edge_result_metadata != null else \
+            EdgeCalcResultMetadata.new(false)
+    
     var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
+            edge_result_metadata, \
             collision_params, \
             position_start, \
             position_end, \
             true, \
             velocity_start, \
             needs_extra_jump_duration, \
-            needs_extra_wall_land_horizontal_speed, \
-            false, \
-            in_debug_mode)
+            needs_extra_wall_land_horizontal_speed)
     if overall_calc_params == null:
+        # Cannot reach destination from origin.
         return null
     
-    return create_edge_from_overall_params(overall_calc_params)
+    return create_edge_from_overall_params( \
+            edge_result_metadata, \
+            overall_calc_params)
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \
@@ -488,8 +611,7 @@ func optimize_edge_jump_position_for_path( \
         edge_index: int, \
         previous_velocity_end_x: float, \
         previous_edge: IntraSurfaceEdge, \
-        edge: Edge, \
-        in_debug_mode: bool) -> void:
+        edge: Edge) -> void:
     assert(edge is JumpInterSurfaceEdge)
     
     EdgeMovementCalculator.optimize_edge_jump_position_for_path_helper( \
@@ -499,7 +621,6 @@ func optimize_edge_jump_position_for_path( \
             previous_velocity_end_x, \
             previous_edge, \
             edge, \
-            in_debug_mode, \
             self)
 
 func optimize_edge_land_position_for_path( \
@@ -507,8 +628,7 @@ func optimize_edge_land_position_for_path( \
         path: PlatformGraphPath, \
         edge_index: int, \
         edge: Edge, \
-        next_edge: IntraSurfaceEdge, \
-        in_debug_mode: bool) -> void:
+        next_edge: IntraSurfaceEdge) -> void:
     assert(edge is JumpInterSurfaceEdge)
     
     EdgeMovementCalculator.optimize_edge_land_position_for_path_helper( \
@@ -517,16 +637,18 @@ func optimize_edge_land_position_for_path( \
             edge_index, \
             edge, \
             next_edge, \
-            in_debug_mode, \
             self)
 
 func create_edge_from_overall_params( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         overall_calc_params: MovementCalcOverallParams) -> JumpInterSurfaceEdge:
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
+            edge_result_metadata, \
             overall_calc_params, \
             null, \
             null)
     if calc_results == null:
+        # Unable to calculate a valid edge.
         return null
     
     var instructions := \

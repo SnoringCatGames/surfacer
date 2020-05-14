@@ -11,6 +11,7 @@ enum {
     JUMP_FROM_SURFACE_TO_AIR_EDGE,
     JUMP_INTER_SURFACE_EDGE,
     WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
+    UNKNOWN,
 }
 
 static func get_type_string(type: int) -> String:
@@ -35,6 +36,8 @@ static func get_type_string(type: int) -> String:
             return "JUMP_INTER_SURFACE_EDGE"
         WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE:
             return "WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE"
+        UNKNOWN:
+            return "UNKNOWN"
         _:
             Utils.error("Invalid EdgeType: %s" % type)
             return "???"
@@ -50,6 +53,23 @@ const KEYS = [
     "JUMP_FROM_SURFACE_TO_AIR_EDGE",
     "JUMP_INTER_SURFACE_EDGE",
     "WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE",
+    "UNKNOWN",
 ]
 static func keys() -> Array:
     return KEYS
+
+const VALUES = [
+    AIR_TO_AIR_EDGE,
+    AIR_TO_SURFACE_EDGE,
+    CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
+    CLIMB_OVER_WALL_TO_FLOOR_EDGE,
+    FALL_FROM_FLOOR_EDGE,
+    FALL_FROM_WALL_EDGE,
+    INTRA_SURFACE_EDGE,
+    JUMP_FROM_SURFACE_TO_AIR_EDGE,
+    JUMP_INTER_SURFACE_EDGE,
+    WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
+    UNKNOWN,
+]
+static func values() -> Array:
+    return VALUES

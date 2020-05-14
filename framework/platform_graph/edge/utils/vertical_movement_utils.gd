@@ -4,6 +4,7 @@ class_name VerticalMovementUtils
 # Calculates a new step for the vertical part of the movement and the corresponding total jump
 # duration.
 static func calculate_vertical_step( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         overall_calc_params: MovementCalcOverallParams) -> MovementVertCalcStep:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
@@ -22,7 +23,7 @@ static func calculate_vertical_step( \
     var velocity_instruction_end := Vector2.INF
     
     # Calculate instruction-end and peak-height state. These depend on whether or not we can hold
-    # the jump button to manipulate the jump height. 
+    # the jump button to manipulate the jump height.
     if can_hold_jump_button:
         var displacement: Vector2 = position_end - position_start
         time_instruction_end = calculate_time_to_release_jump_button( \
@@ -32,6 +33,8 @@ static func calculate_vertical_step( \
                 velocity_start.y)
         if time_instruction_end == INF:
             # We can't reach the given displacement with the given duration.
+            edge_result_metadata.edge_calc_result_type = \
+                    EdgeCalcResultType.OUT_OF_REACH_WHEN_CALCULATING_VERTICAL_STEP
             return null
         
         # Need to calculate these after the step is instantiated.

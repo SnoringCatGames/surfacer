@@ -1,7 +1,7 @@
-# State that captures internal calculation information for a single collision in order to help
+# Metadata that captures internal calculation information for a single collision in order to help
 # with debugging.
 extends Reference
-class_name MovementCalcCollisionDebugState
+class_name CollisionCalcResultMetadata
 
 var step_start_position := Vector2.INF
 var step_start_surface_position := Vector2.INF
@@ -57,7 +57,8 @@ func _init( \
         
         self.step_end_position = step_calc_params.end_waypoint.position
         if step_calc_params.end_waypoint.surface != null:
-            self.step_end_surface_position = step_calc_params.end_waypoint.surface.bounding_box.position
+            self.step_end_surface_position = \
+                    step_calc_params.end_waypoint.surface.bounding_box.position
             self.step_end_surface_normal = step_calc_params.end_waypoint.surface.normal
         else:
             self.step_end_surface_position = Vector2.INF

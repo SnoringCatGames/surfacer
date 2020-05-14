@@ -1,6 +1,9 @@
 # A collection of utility functions for calculating state related to fall movement.
 class_name FallMovementUtils
 
+# TODO: Integrate find_landing_trajectories_to_any_surface with failed_edge_attempts_result and
+#       find_landing_trajectory_between_positions.
+
 # Finds all possible landing trajectories from the given start state.
 static func find_landing_trajectories_to_any_surface( \
         collision_params: CollisionCalcParams, \
@@ -124,44 +127,56 @@ static func find_landing_trajectory_between_positions( \
             origin_position, \
             land_position):
         return null
+    
+    # Record some extra debug state when we're limiting calculations to a single edge (which must
+    # be this edge).
+    var record_calc_details: bool = \
+            debug_params.has("limit_parsing") and \
+            debug_params.limit_parsing.has("edge") and \
+            debug_params.limit_parsing.edge.has("origin") and \
+            debug_params.limit_parsing.edge.origin.has("position") and \
+            debug_params.limit_parsing.edge.has("destination") and \
+            debug_params.limit_parsing.edge.destination.has("position")
     ###################################################################################
+        
+    var edge_result_metadata := EdgeCalcResultMetadata.new(record_calc_details)
         
     var overall_calc_params: MovementCalcOverallParams = \
             EdgeMovementCalculator.create_movement_calc_overall_params( \
+                    edge_result_metadata, \
                     collision_params, \
                     origin_position, \
                     land_position, \
                     false, \
                     velocity_start, \
                     false, \
-                    needs_extra_wall_land_horizontal_speed, \
-                    false, \
-                    false)
+                    needs_extra_wall_land_horizontal_speed)
     if overall_calc_params == null:
+        # Cannot reach destination from origin.
         return null
     
-    ###################################################################################
-    # Record some extra debug state when we're limiting calculations to a single edge.
-    if debug_params.in_debug_mode and \
-            debug_params.has("limit_parsing") and \
-            debug_params.limit_parsing.has("edge") != null:
-        overall_calc_params.in_debug_mode = true
-    ###################################################################################
-    
-    var vertical_step: MovementVertCalcStep = \
-            VerticalMovementUtils.calculate_vertical_step(overall_calc_params)
+    var vertical_step: MovementVertCalcStep = VerticalMovementUtils.calculate_vertical_step( \
+            edge_result_metadata, \
+            overall_calc_params)
     if vertical_step == null:
+        # Cannot reach destination from origin.
         return null
     
     var step_calc_params: MovementCalcStepParams = MovementCalcStepParams.new( \
             overall_calc_params.origin_waypoint, \
             overall_calc_params.destination_waypoint, \
-            vertical_step, \
-            overall_calc_params, \
-            null, \
-            null)
+            vertical_step)
+    
+    var step_result_metadata: EdgeStepCalcResultMetadata
+    if edge_result_metadata.record_calc_details:
+        step_result_metadata = EdgeStepCalcResultMetadata.new( \
+                edge_result_metadata, \
+                null, \
+                null)
     
     return MovementStepUtils.calculate_steps_between_waypoints( \
+            edge_result_metadata, \
+            step_result_metadata, \
             overall_calc_params, \
             step_calc_params)
 

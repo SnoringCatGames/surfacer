@@ -340,6 +340,7 @@ static func check_discrete_horizontal_step_for_collision( \
 # motion. This does not necessarily accurately reflect the actual Player trajectory that would be
 # used.
 static func check_continuous_horizontal_step_for_collision( \
+        step_result_metadata: EdgeStepCalcResultMetadata, \
         overall_calc_params: MovementCalcOverallParams, \
         step_calc_params: MovementCalcStepParams, \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
@@ -359,14 +360,16 @@ static func check_continuous_horizontal_step_for_collision( \
     var horizontal_state: Array
     var vertical_state: Array
     var collision: SurfaceCollision
-    var step_attempt_debug_results := step_calc_params.step_attempt_debug_results
     
     ###############################################################################################
     # Record some extra collision state when debugging an edge calculation.
-    var collision_debug_state: MovementCalcCollisionDebugState
-    if overall_calc_params.in_debug_mode:
-        collision_debug_state = MovementCalcCollisionDebugState.new( \
-                overall_calc_params, step_calc_params, horizontal_step)
+    var collision_result_metadata: CollisionCalcResultMetadata
+    if step_result_metadata != null:
+        collision_result_metadata = CollisionCalcResultMetadata.new( \
+                overall_calc_params, \
+                step_calc_params, \
+                horizontal_step)
+        step_result_metadata.collision_result_metadata = collision_result_metadata
     ###############################################################################################
     
     # Record the positions and velocities for edge annotation debugging.
@@ -408,8 +411,8 @@ static func check_continuous_horizontal_step_for_collision( \
         #     print("yo")
         
         ###########################################################################################
-        if collision_debug_state != null:
-            collision_debug_state.frame_current_time = current_time
+        if collision_result_metadata != null:
+            collision_result_metadata.frame_current_time = current_time
         ###########################################################################################
         
         # Check for collision.
@@ -420,7 +423,7 @@ static func check_continuous_horizontal_step_for_collision( \
                 movement_params.collider_rotation, \
                 surface_parser, \
                 false, \
-                collision_debug_state)
+                collision_result_metadata)
         if collision != null:
             break
         
@@ -460,15 +463,11 @@ static func check_continuous_horizontal_step_for_collision( \
                 movement_params.collider_rotation, \
                 surface_parser, \
                 false, \
-                collision_debug_state)
+                collision_result_metadata)
         
         if collision == null:
             # Record the positions and velocities for edge annotation debugging.
             frame_positions.push_back(current_position)
             frame_velocities.push_back(current_velocity)
-    
-    if step_attempt_debug_results != null:
-        step_attempt_debug_results.collision = collision
-        step_attempt_debug_results.collision_debug_state = collision_debug_state
     
     return collision

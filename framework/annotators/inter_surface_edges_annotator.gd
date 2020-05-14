@@ -2,14 +2,9 @@ extends Node2D
 class_name InterSurfaceEdgesAnnotator
 
 var graph: PlatformGraph
-var intra_edge_calc_annotator: EdgeCalculationAnnotator
 
 func _init(graph: PlatformGraph) -> void:
     self.graph = graph
-    self.intra_edge_calc_annotator = EdgeCalculationAnnotator.new(graph)
-
-func _enter_tree() -> void:
-    add_child(intra_edge_calc_annotator)
 
 func _draw() -> void:
     var hue: float

@@ -9,7 +9,7 @@ const CONTROLS_LEGEND = [
   ["Zoom out", "ctrl + -"], \
   ["Pan", "ctrl + arrow key"], \
   ["Auto nav", "click"], \
-  ["Debug auto nav", "ctrl + click (x2)"], \
+  ["Debug graph", "ctrl + click (x2)"], \
 ]
 
 func _ready() -> void:

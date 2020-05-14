@@ -2,10 +2,12 @@ extends EdgeMovementCalculator
 class_name ClimbOverWallToFloorCalculator
 
 const NAME := "ClimbOverWallToFloorCalculator"
+const EDGE_TYPE := EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE
 const IS_A_JUMP_CALCULATOR := false
 
 func _init().( \
         NAME, \
+        EDGE_TYPE, \
         IS_A_JUMP_CALCULATOR) -> void:
     pass
 
@@ -17,8 +19,9 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
                     surface.clockwise_convex_neighbor != null))
 
 func get_all_inter_surface_edges_from_surface( \
-        collision_params: CollisionCalcParams, \
         edges_result: Array, \
+        failed_edge_attempts_result: Array, \
+        collision_params: CollisionCalcParams, \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
@@ -52,19 +55,20 @@ func get_all_inter_surface_edges_from_surface( \
             movement_params.collider_half_width_height)
     
     var edge := calculate_edge( \
+            null, \
             collision_params, \
             start_position, \
             end_position)
     edges_result.push_back(edge)
 
 func calculate_edge( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         collision_params: CollisionCalcParams, \
         position_start: PositionAlongSurface, \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
-        needs_extra_wall_land_horizontal_speed := false, \
-        in_debug_mode := false) -> Edge:
+        needs_extra_wall_land_horizontal_speed := false) -> Edge:
     return ClimbOverWallToFloorEdge.new( \
             self, \
             position_start, \

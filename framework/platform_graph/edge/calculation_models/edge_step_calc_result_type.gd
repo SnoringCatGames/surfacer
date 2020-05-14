@@ -1,4 +1,4 @@
-class_name EdgeStepCalcResult
+class_name EdgeStepCalcResultType
 
 enum {
     MOVEMENT_VALID,
@@ -7,6 +7,9 @@ enum {
     RECURSION_VALID,
     BACKTRACKING_VALID,
     BACKTRACKING_INVALID,
+    INVALID_COLLISON_STATE,
+    CONFIGURED_TO_SKIP_RECURSION,
+    CONFIGURED_TO_SKIP_BACKTRACKING,
     UNKNOWN,
 }
 
@@ -24,7 +27,16 @@ static func get_result_string(result: int) -> String:
             return "BACKTRACKING_VALID"
         BACKTRACKING_INVALID:
             return "NO_RESULTS_FROM_BACKTRACKING"
-        UNKNOWN, _:
+        INVALID_COLLISON_STATE:
+            return "INVALID_COLLISON_STATE"
+        CONFIGURED_TO_SKIP_RECURSION:
+            return "CONFIGURED_TO_SKIP_RECURSION"
+        CONFIGURED_TO_SKIP_BACKTRACKING:
+            return "CONFIGURED_TO_SKIP_BACKTRACKING"
+        UNKNOWN:
+            return "UNKNOWN"
+        _:
+            Utils.error("Invalid EdgeStepCalcResultType: %s" % result)
             return "UNKNOWN"
 
 static func to_description_list(result: int) -> Array:
@@ -59,7 +71,25 @@ static func to_description_list(result: int) -> Array:
                 "No valid movement around was found despite backtracking" + \
                 "\n                to consider a new max jump height.", \
             ]
-        UNKNOWN, _:
+        INVALID_COLLISON_STATE:
+            return [ \
+                "Invalid collision state.", \
+            ]
+        CONFIGURED_TO_SKIP_RECURSION:
+            return [ \
+                "Configured to skip recursion.", \
+            ]
+        CONFIGURED_TO_SKIP_BACKTRACKING:
+            return [ \
+                "Configured to skip backtracking to consider a new " + \
+                "\n                max jump height.", \
+            ]
+        UNKNOWN:
+            return [ \
+                "Unexpected result", \
+            ]
+        _:
+            Utils.error("Invalid EdgeStepCalcResultType: %s" % result)
             return [ \
                 "Unexpected result", \
             ]

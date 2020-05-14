@@ -368,13 +368,6 @@ static func _optimize_edges_for_approach( \
         velocity_start: Vector2) -> void:
     var movement_params := collision_params.movement_params
     
-    ###############################################################################################
-    # Record some extra debug state when we're limiting calculations to a single edge.
-    var in_debug_mode: bool = collision_params.debug_params.in_debug_mode and \
-            collision_params.debug_params.has("limit_parsing") and \
-            collision_params.debug_params.limit_parsing.has("edge") != null
-    ###############################################################################################
-    
     # At runtime, after finding a path through build-time-calculated edges, try to optimize the
     # jump-off or land points of the edges to better account for the direction that the player will
     # be approaching the edge from. This produces more efficient and natural movement. The
@@ -410,8 +403,7 @@ static func _optimize_edges_for_approach( \
                         i, \
                         previous_velocity_end_x, \
                         previous_edge, \
-                        current_edge, \
-                        in_debug_mode)
+                        current_edge)
             
             previous_velocity_end_x = previous_edge.velocity_end.x
         
@@ -451,8 +443,7 @@ static func _optimize_edges_for_approach( \
                         path, \
                         i - 1, \
                         previous_edge, \
-                        current_edge, \
-                        in_debug_mode)
+                        current_edge)
     
     if movement_params.prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets:
         var last_edge: Edge = path.edges.back()

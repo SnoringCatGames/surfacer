@@ -80,11 +80,13 @@ var is_destination := false
 # the top-of-the-right-side waypoint.
 var is_fake := false
 
-# Whether this waypoint can be reached with the current jump height.
-var is_valid := false
-
 # Whether this was the neighbor waypoint that replaced a fake waypoint.
 var replaced_a_fake := false
+
+var validity := WaypointValidity.UNKNOWN
+
+# Whether this waypoint can be reached with the current jump height.
+var is_valid: bool setget ,_get_is_valid
 
 func _init( \
         surface: Surface, \
@@ -107,3 +109,6 @@ func to_string() -> String:
         should_stay_on_min_side, \
         surface.to_string(), \
     ]
+
+func _get_is_valid() -> bool:
+    return validity == WaypointValidity.WAYPOINT_VALID

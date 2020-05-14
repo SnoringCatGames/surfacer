@@ -12,7 +12,7 @@ static func check_frame_for_collision( \
         collider_rotation: float, \
         surface_parser: SurfaceParser, \
         has_recursed := false, \
-        collision_debug_state = null) -> SurfaceCollision:
+        collision_result_metadata = null) -> SurfaceCollision:
     # TODO: collide_shape can sometimes produce intersection points with round-off error that exist
     #       outside the bounds of the tile. At least in one case, the round-off error was 0.003
     #       beyond the tile bounds in the direction of motion. 
@@ -51,9 +51,9 @@ static func check_frame_for_collision( \
             (collision_ratios[0] == 0 and collision_ratios[1] == 0)
     
     ###############################################################################################
-    if collision_debug_state != null:
-        _record_collision_debug_state( \
-                collision_debug_state, \
+    if collision_result_metadata != null:
+        _record_collision_result_metadata( \
+                collision_result_metadata, \
                 shape_query_params, \
                 collider_half_width_height, \
                 intersection_points, \
@@ -143,7 +143,7 @@ static func check_frame_for_collision( \
                     collider_rotation, \
                     surface_parser, \
                     true, \
-                    collision_debug_state)
+                    collision_result_metadata)
             
             shape_query_params.margin = original_margin
             shape_query_params.motion = original_motion
@@ -318,8 +318,8 @@ static func check_frame_for_collision( \
     
     var surface_collision := SurfaceCollision.new()
     surface_collision.player_position = position_when_colliding # FIXME: ------- Not defined when only two intersection points.
-    if collision_debug_state != null:
-        collision_debug_state.collision = surface_collision
+    if collision_result_metadata != null:
+        collision_result_metadata.collision = surface_collision
     
     _calculate_intersection_point_and_surface( \
             space_state, \
@@ -331,7 +331,7 @@ static func check_frame_for_collision( \
             side, \
             should_try_without_perpendicular_nudge_first, \
             surface_collision, \
-            collision_debug_state)
+            collision_result_metadata)
     
     if !surface_collision.is_valid_collision_state:
         var format_string_template := "An error occurred during collision detection." + \
@@ -358,10 +358,10 @@ static func check_frame_for_collision( \
                         collider_half_width_height), \
                 String(shape_query_params.transform[2] + shape_query_params.motion + \
                         collider_half_width_height), \
-                String(collision_debug_state.frame_previous_min_coordinates) if \
-                        collision_debug_state != null else "?", \
-                String(collision_debug_state.frame_previous_max_coordinates) if \
-                        collision_debug_state != null else "?", \
+                String(collision_result_metadata.frame_previous_min_coordinates) if \
+                        collision_result_metadata != null else "?", \
+                String(collision_result_metadata.frame_previous_max_coordinates) if \
+                        collision_result_metadata != null else "?", \
             ]
         var message := format_string_template % format_string_arguments
         Utils.error(message, false)
@@ -378,7 +378,7 @@ static func _calculate_intersection_point_and_surface( \
         side: int, \
         should_try_without_perpendicular_nudge_first: bool, \
         surface_collision: SurfaceCollision, \
-        collision_debug_state: MovementCalcCollisionDebugState) -> void:
+        collision_result_metadata: CollisionCalcResultMetadata) -> void:
     var tile_map_cell_size := surface_parser.max_tile_map_cell_size
     
     var intersection_point := Vector2.INF
@@ -548,31 +548,32 @@ static func _ray_trace_with_nudge( \
     
     return {}
 
-static func _record_collision_debug_state( \
-        collision_debug_state: MovementCalcCollisionDebugState, \
+static func _record_collision_result_metadata( \
+        collision_result_metadata: CollisionCalcResultMetadata, \
         shape_query_params: Physics2DShapeQueryParameters, \
         collider_half_width_height: Vector2, \
         intersection_points: Array, \
         collision_ratios: Array) -> void:
-    collision_debug_state.frame_motion = shape_query_params.motion
-    collision_debug_state.frame_previous_position = collision_debug_state.frame_start_position
-    collision_debug_state.frame_start_position = shape_query_params.transform[2]
-    collision_debug_state.frame_end_position = \
-            collision_debug_state.frame_start_position + collision_debug_state.frame_motion
-    collision_debug_state.frame_previous_min_coordinates = \
-            collision_debug_state.frame_start_min_coordinates
-    collision_debug_state.frame_previous_max_coordinates = \
-            collision_debug_state.frame_start_max_coordinates
-    collision_debug_state.frame_start_min_coordinates = \
-            collision_debug_state.frame_start_position - collider_half_width_height
-    collision_debug_state.frame_start_max_coordinates = \
-            collision_debug_state.frame_start_position + collider_half_width_height
-    collision_debug_state.frame_end_min_coordinates = \
-            collision_debug_state.frame_end_position - collider_half_width_height
-    collision_debug_state.frame_end_max_coordinates = \
-            collision_debug_state.frame_end_position + collider_half_width_height
-    collision_debug_state.intersection_points = intersection_points
-    collision_debug_state.collision_ratios = collision_ratios
+    collision_result_metadata.frame_motion = shape_query_params.motion
+    collision_result_metadata.frame_previous_position = \
+            collision_result_metadata.frame_start_position
+    collision_result_metadata.frame_start_position = shape_query_params.transform[2]
+    collision_result_metadata.frame_end_position = \
+            collision_result_metadata.frame_start_position + collision_result_metadata.frame_motion
+    collision_result_metadata.frame_previous_min_coordinates = \
+            collision_result_metadata.frame_start_min_coordinates
+    collision_result_metadata.frame_previous_max_coordinates = \
+            collision_result_metadata.frame_start_max_coordinates
+    collision_result_metadata.frame_start_min_coordinates = \
+            collision_result_metadata.frame_start_position - collider_half_width_height
+    collision_result_metadata.frame_start_max_coordinates = \
+            collision_result_metadata.frame_start_position + collider_half_width_height
+    collision_result_metadata.frame_end_min_coordinates = \
+            collision_result_metadata.frame_end_position - collider_half_width_height
+    collision_result_metadata.frame_end_max_coordinates = \
+            collision_result_metadata.frame_end_position + collider_half_width_height
+    collision_result_metadata.intersection_points = intersection_points
+    collision_result_metadata.collision_ratios = collision_ratios
     
 # Choosees whichever point comes first, along the direction of the motion. If two points are
 # equally close, then this chooses whichever point is closest to the starting position.

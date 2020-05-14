@@ -432,6 +432,9 @@ var surfaces_to_outbound_nodes: Dictionary
 # Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface, Edge>>
 var nodes_to_nodes_to_edges: Dictionary
 
+# Dictionary<Surface, Array<FailedEdgeAttempt>>
+var surfaces_to_failed_edge_attempts: Dictionary
+
 # Dictionary<String, int>
 var counts := {}
 
@@ -454,6 +457,7 @@ func _init( \
     
     self.surfaces_to_outbound_nodes = {}
     self.nodes_to_nodes_to_edges = {}
+    self.surfaces_to_failed_edge_attempts = {}
     
     _calculate_nodes_and_edges( \
             surfaces_set, \
@@ -646,8 +650,7 @@ func _calculate_nodes_and_edges( \
         debug_params: Dictionary) -> void:
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    if debug_params.in_debug_mode and \
-            debug_params.has("limit_parsing") and \
+    if debug_params.has("limit_parsing") and \
             player_params.name != debug_params.limit_parsing.player_name:
         return
     ###################################################################################
@@ -655,15 +658,21 @@ func _calculate_nodes_and_edges( \
     var surfaces_in_fall_range_set := {}
     var surfaces_in_jump_range_set := {}
     
-    # Calculate all inter-surface edges.
     # Dictionary<Surface, Array<Edge>>
     var surfaces_to_edges := {}
+    # Array<Edge>
     var edges: Array
+    # Array<FailedEdgeAttempt>
+    var failed_edge_attempts: Array
     var edge: Edge
     var previous_size: int
+    
+    # Calculate all inter-surface edges.
     for surface in surfaces_set:
         edges = []
         surfaces_to_edges[surface] = edges
+        failed_edge_attempts = []
+        surfaces_to_failed_edge_attempts[surface] = failed_edge_attempts
         surfaces_in_fall_range_set.clear()
         surfaces_in_jump_range_set.clear()
         
@@ -675,8 +684,7 @@ func _calculate_nodes_and_edges( \
         for movement_calculator in player_params.movement_calculators:
             ###################################################################################
             # Allow for debug mode to limit the scope of what's calculated.
-            if debug_params.in_debug_mode and \
-                    debug_params.has("limit_parsing") and \
+            if debug_params.has("limit_parsing") and \
                     debug_params.limit_parsing.has("movement_calculator") and \
                     movement_calculator.name != debug_params.limit_parsing.movement_calculator:
                 continue
@@ -693,8 +701,9 @@ func _calculate_nodes_and_edges( \
                 
                 # Calculate the inter-surface edges.
                 movement_calculator.get_all_inter_surface_edges_from_surface( \
-                        collision_params, \
                         edges, \
+                        failed_edge_attempts, \
+                        collision_params, \
                         surfaces_in_fall_range_set, \
                         surfaces_in_jump_range_set, \
                         surface)
@@ -830,8 +839,12 @@ func _update_counts() -> void:
     
     # Initialize surface and edge type counts.
     for side in SurfaceSide.keys():
+        if side == "NONE":
+            continue
         counts[side] = 0
     for type in EdgeType.keys():
+        if type == "UNKNOWN":
+            continue
         counts[type] = 0
     
     var surface_side_string: String

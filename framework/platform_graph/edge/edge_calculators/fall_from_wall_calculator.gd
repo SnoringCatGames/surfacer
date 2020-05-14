@@ -2,10 +2,12 @@ extends EdgeMovementCalculator
 class_name FallFromWallCalculator
 
 const NAME := "FallFromWallCalculator"
+const EDGE_TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_A_JUMP_CALCULATOR := false
 
 func _init().( \
         NAME, \
+        EDGE_TYPE, \
         IS_A_JUMP_CALCULATOR) -> void:
     pass
 
@@ -14,8 +16,9 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
             surface.side == SurfaceSide.RIGHT_WALL)
 
 func get_all_inter_surface_edges_from_surface( \
-        collision_params: CollisionCalcParams, \
         edges_result: Array, \
+        failed_edge_attempts_result: Array, \
+        collision_params: CollisionCalcParams, \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
@@ -64,18 +67,18 @@ func get_all_inter_surface_edges_from_surface( \
                 jump_position, \
                 velocity_start)
         
-        for calc_results in landing_trajectories:#
+        for calc_results in landing_trajectories:
             edge = _create_edge_from_calc_results(calc_results)
             edges_result.push_back(edge)
 
 func calculate_edge( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         collision_params: CollisionCalcParams, \
         position_start: PositionAlongSurface, \
         position_end: PositionAlongSurface, \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
-        needs_extra_wall_land_horizontal_speed := false, \
-        in_debug_mode := false) -> Edge:
+        needs_extra_wall_land_horizontal_speed := false) -> Edge:
     var calc_results: MovementCalcResults = \
             FallMovementUtils.find_landing_trajectory_between_positions( \
                     collision_params, \
@@ -94,8 +97,7 @@ func optimize_edge_jump_position_for_path( \
         edge_index: int, \
         previous_velocity_end_x: float, \
         previous_edge: IntraSurfaceEdge, \
-        edge: Edge, \
-        in_debug_mode: bool) -> void:
+        edge: Edge) -> void:
     assert(edge is FallFromWallEdge)
     
     var is_wall_surface := \
@@ -111,7 +113,6 @@ func optimize_edge_jump_position_for_path( \
             previous_velocity_end_x, \
             previous_edge, \
             edge, \
-            in_debug_mode, \
             self)
 
 func optimize_edge_land_position_for_path( \
@@ -119,8 +120,7 @@ func optimize_edge_land_position_for_path( \
         path: PlatformGraphPath, \
         edge_index: int, \
         edge: Edge, \
-        next_edge: IntraSurfaceEdge, \
-        in_debug_mode: bool) -> void:
+        next_edge: IntraSurfaceEdge) -> void:
     assert(edge is FallFromWallEdge)
     
     EdgeMovementCalculator.optimize_edge_land_position_for_path_helper( \
@@ -129,7 +129,6 @@ func optimize_edge_land_position_for_path( \
             edge_index, \
             edge, \
             next_edge, \
-            in_debug_mode, \
             self)
 
 func _create_edge_from_calc_results(calc_results: MovementCalcResults) -> FallFromWallEdge:

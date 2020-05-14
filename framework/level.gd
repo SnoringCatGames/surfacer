@@ -3,6 +3,8 @@ class_name Level
 
 var global
 
+var platform_graph_inspector: PlatformGraphInspector
+
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
 var surface_tile_maps: Array
@@ -35,6 +37,9 @@ func _ready() -> void:
             space_state, \
             global.player_params, \
             Global.DEBUG_PARAMS)
+    
+    platform_graph_inspector = PlatformGraphInspector.new(platform_graphs.values())
+    add_child(platform_graph_inspector)
 
 static func _create_platform_graphs( \
         surface_parser: SurfaceParser, \
@@ -47,8 +52,7 @@ static func _create_platform_graphs( \
     for player_name in all_player_params:
         ###########################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
-        if debug_params.in_debug_mode and \
-                debug_params.has("limit_parsing") and \
+        if debug_params.has("limit_parsing") and \
                 player_name != debug_params.limit_parsing.player_name:
             continue
         ###########################################################################################

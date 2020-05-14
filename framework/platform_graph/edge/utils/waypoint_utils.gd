@@ -8,6 +8,7 @@ const MIN_MAX_VELOCITY_X_OFFSET := 0.01# FIXME: ------------------------
 const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER := 0.5
 
 static func create_terminal_waypoints( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         origin_position: PositionAlongSurface, \
         destination_position: PositionAlongSurface, \
         movement_params: MovementParams, \
@@ -15,12 +16,15 @@ static func create_terminal_waypoints( \
         velocity_start: Vector2, \
         velocity_end_min_x: float, \
         velocity_end_max_x: float, \
-        needs_extra_jump_duration: bool, \
-        returns_invalid_waypoints: bool) -> Array:
-    var origin_passing_vertically := origin_position.surface.normal.x == 0 if \
-            origin_position.surface != null else true
-    var destination_passing_vertically := destination_position.surface.normal.x == 0 if \
-            destination_position.surface != null else true
+        needs_extra_jump_duration: bool) -> Array:
+    var origin_passing_vertically := \
+            origin_position.surface.normal.x == 0 if \
+            origin_position.surface != null \
+            else true
+    var destination_passing_vertically := \
+            destination_position.surface.normal.x == 0 if \
+            destination_position.surface != null \
+            else true
     
     var origin := Waypoint.new( \
             origin_position.surface, \
@@ -67,9 +71,14 @@ static func create_terminal_waypoints( \
             null, \
             Vector2.INF)
     
-    if (origin.is_valid and destination.is_valid) or returns_invalid_waypoints:
+    if origin.is_valid and destination.is_valid:
         return [origin, destination]
     else:
+        edge_result_metadata.edge_calc_result_type = EdgeCalcResultType.WAYPOINT_INVALID
+        edge_result_metadata.waypoint_validity = \
+                destination.validity if \
+                !destination.is_valid else \
+                origin.validity
         return []
 
 # Assuming movement would otherwise collide with the given surface, this calculates positions along
@@ -342,9 +351,9 @@ static func update_waypoint( \
         # next waypoint is).
         waypoint.is_fake = true
         waypoint.horizontal_movement_sign = waypoint.horizontal_movement_sign_from_displacement
-        waypoint.is_valid = false
+        waypoint.validity = WaypointValidity.FAKE
     else:
-        waypoint.is_valid = _update_waypoint_velocity_and_time( \
+        waypoint.validity = _update_waypoint_velocity_and_time( \
                 waypoint, \
                 origin_waypoint, \
                 movement_params, \
@@ -363,7 +372,7 @@ static func update_waypoint( \
 # These calculations take into account state from neighbor waypoints as well as various other
 # parameters.
 # 
-# Returns false if the waypoint cannot satisfy the given parameters.
+# Returns WaypointValidity.
 static func _update_waypoint_velocity_and_time( \
         waypoint: Waypoint, \
         origin_waypoint: Waypoint, \
@@ -371,7 +380,7 @@ static func _update_waypoint_velocity_and_time( \
         velocity_start_origin: Vector2, \
         can_hold_jump_button_at_origin: bool, \
         vertical_step: MovementVertCalcStep, \
-        additional_high_waypoint_position: Vector2) -> bool:
+        additional_high_waypoint_position: Vector2) -> int:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var time_passing_through: float
@@ -393,14 +402,15 @@ static func _update_waypoint_velocity_and_time( \
         max_velocity_x = velocity_start_origin.x
         actual_velocity_x = velocity_start_origin.x
     else:
-        var displacement := waypoint.next_waypoint.position - waypoint.position if \
+        var displacement := \
+                waypoint.next_waypoint.position - waypoint.position if \
                 waypoint.next_waypoint != null else \
                 waypoint.position - waypoint.previous_waypoint.position
         
         # Check whether the vertical displacement is possible.
         if displacement.y < -movement_params.max_upward_jump_distance:
             # We can't reach the next waypoint from this waypoint.
-            return false
+            return WaypointValidity.TOO_HIGH
         
         if waypoint.is_destination:
             # We consider different parameters if we are starting a new movement calculation vs
@@ -455,7 +465,7 @@ static func _update_waypoint_velocity_and_time( \
                                 additional_high_waypoint_position != Vector2.INF)
                 if time_to_pass_through_waypoint_ignoring_others == INF:
                     # We can't reach this waypoint.
-                    return false
+                    return WaypointValidity.OUT_OF_REACH_FROM_ORIGIN
                 assert(time_to_pass_through_waypoint_ignoring_others > 0.0)
             
             if additional_high_waypoint_position != Vector2.INF:
@@ -478,7 +488,7 @@ static func _update_waypoint_velocity_and_time( \
                                 waypoint)
                 if time_to_get_to_destination_from_waypoint == INF:
                     # We can't reach the destination from this waypoint.
-                    return false
+                    return WaypointValidity.OUT_OF_REACH_FROM_ADDITIONAL_HIGH_WAYPOINT
                 
                 time_passing_through = max(vertical_step.time_step_end, \
                         time_to_pass_through_waypoint_ignoring_others + \
@@ -565,9 +575,13 @@ static func _update_waypoint_velocity_and_time( \
             # 
             # If this was already assigned a min/max (because we need the edge's movement to end in
             # a certain direction), use that; otherwise, use max possible speed values.
-            min_velocity_x = waypoint.min_velocity_x if waypoint.min_velocity_x != INF else \
+            min_velocity_x = \
+                    waypoint.min_velocity_x if \
+                    waypoint.min_velocity_x != INF else \
                     -movement_params.max_horizontal_speed_default
-            max_velocity_x = waypoint.max_velocity_x if waypoint.max_velocity_x != INF else \
+            max_velocity_x = \
+                    waypoint.max_velocity_x if \
+                    waypoint.max_velocity_x != INF else \
                     movement_params.max_horizontal_speed_default
             
         else:
@@ -585,22 +599,24 @@ static func _update_waypoint_velocity_and_time( \
                             vertical_step.velocity_instruction_end.y)
             if time_passing_through == INF:
                 # We can't reach this waypoint from the previous waypoint.
-                return false
+                return WaypointValidity.THIS_WAYPOINT_OUT_OF_REACH_FROM_PREVIOUS_WAYPOINT
             
             var still_holding_jump_button := \
                     time_passing_through < vertical_step.time_instruction_end
             
             # We can quit early for a few types of waypoints.
-            if !waypoint.passing_vertically and waypoint.should_stay_on_min_side and \
+            if !waypoint.passing_vertically and \
+                    waypoint.should_stay_on_min_side and \
                     !still_holding_jump_button:
                 # Quit early if we are trying to go above a wall, but we already released the jump
                 # button.
-                return false
-            elif !waypoint.passing_vertically and !waypoint.should_stay_on_min_side and \
+                return WaypointValidity.TRYING_TO_PASS_OVER_WALL_AFTER_RELEASING_JUMP
+            elif !waypoint.passing_vertically and \
+                    !waypoint.should_stay_on_min_side and \
                     still_holding_jump_button:
                 # Quit early if we are trying to go below a wall, but we are still holding the jump
                 # button.
-                return false
+                return WaypointValidity.TRYING_TO_PASS_UNDER_WALL_WHILE_HOLDING_JUMP
             else:
                 # We should never hit a floor while still holding the jump button.
                 assert(!(waypoint.surface != null and \
@@ -611,7 +627,7 @@ static func _update_waypoint_velocity_and_time( \
                     waypoint.next_waypoint.time_passing_through - time_passing_through
             if duration_to_next <= 0:
                 # We can't reach the next waypoint from this waypoint.
-                return false
+                return WaypointValidity.NEXT_WAYPOINT_OUT_OF_REACH_FROM_THIS_WAYPOINT
             
             var displacement_to_next := displacement
             var duration_from_origin := \
@@ -642,7 +658,7 @@ static func _update_waypoint_velocity_and_time( \
                             waypoint.horizontal_movement_sign)
             if min_and_max_velocity_from_origin.empty():
                 # We can't reach this waypoint from the previous waypoint.
-                return false
+                return WaypointValidity.NO_VALID_VELOCITY_FROM_ORIGIN
             var min_velocity_x_from_origin: float = min_and_max_velocity_from_origin[0]
             var max_velocity_x_from_origin: float = min_and_max_velocity_from_origin[1]
             
@@ -658,7 +674,7 @@ static func _update_waypoint_velocity_and_time( \
                             waypoint.horizontal_movement_sign)
             if min_and_max_velocity_for_next_step.empty():
                 # We can't reach the next waypoint from this waypoint.
-                return false
+                return WaypointValidity.NO_VALID_VELOCITY_FOR_NEXT_STEP
             var min_velocity_x_for_next_step: float = min_and_max_velocity_for_next_step[0]
             var max_velocity_x_for_next_step: float = min_and_max_velocity_for_next_step[1]
             
@@ -681,7 +697,7 @@ static func _update_waypoint_velocity_and_time( \
         elif waypoint.horizontal_movement_sign == -1:
             assert(waypoint.min_velocity_x <= 0 and waypoint.max_velocity_x <= 0)
     
-    return true
+    return WaypointValidity.WAYPOINT_VALID
 
 # This only considers the time to move horizontally and the time to fall; this does not consider
 # the time to rise from the new waypoint to the destination.
@@ -1749,7 +1765,7 @@ static func clone_waypoint(original: Waypoint) -> Waypoint:
 
 static func copy_waypoint( \
         destination: Waypoint, \
-        source: Waypoint) -> Waypoint:
+        source: Waypoint) -> void:
     destination.surface = source.surface
     destination.position = source.position
     destination.passing_vertically = source.passing_vertically
@@ -1763,9 +1779,9 @@ static func copy_waypoint( \
     destination.min_velocity_x = source.min_velocity_x
     destination.max_velocity_x = source.max_velocity_x
     destination.actual_velocity_x = source.actual_velocity_x
+    destination.needs_extra_jump_duration = source.needs_extra_jump_duration
     destination.is_origin = source.is_origin
     destination.is_destination = source.is_destination
     destination.is_fake = source.is_fake
-    destination.is_valid = source.is_valid
     destination.replaced_a_fake = source.replaced_a_fake
-    return destination
+    destination.validity = source.validity
