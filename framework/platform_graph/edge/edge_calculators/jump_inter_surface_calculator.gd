@@ -8,19 +8,29 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix WelcomePanel width.
+# - InspectorItemMetadata:
+#   - Add placeholder child items.
+#   - Add new methods to PlatformGraphInspector:
+#     - _on_tree_item_expansion_toggled
+#     - find_or_create_canonical_surface_item
+#     - find_or_create_canonical_edge_or_edge_attempt_item
+#   - Refactor other PlatformGraphInspector logic to use these classes.
+#   - For now, ignore/disable auto-step-switching timer.
+#   - For now, auto-expand valid-edge/failed-edge item when selecting from level clicks.
 # 
 # - Add support for dynamically instantiating and destroying state for expanded items.
 #   - Enumerate exactly which items are dynamic.
 #     - JumpLandPositions (and render and store as metadata) for surfaces>side>surface>destination>edge_type.
 #     - 
 # 
+# - Implement edge-step tree items text, selection, and creation.
+# 
 # - Add support for rendering annotations for the selected inspector item.
+#   - draw_annotations
 #   - Do I need to add back references to the corresponding params objects in the
 #     result-metadata objects?
 # 
-# - Move failed edge subtrees to exist as siblings to valid under the destination surface and edge
-#   type subtrees.
+# - Add custom backgrounds for description TreeItems (set_custom_bg_color)
 # 
 # - Add TODOs to use easing curves with all annotation animations.
 # 
@@ -109,6 +119,37 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Touch doesn't dismiss panel.
 #   - Touch doesn't activate gear icon.
 # 
+# INSPECTOR STRUCTURE: (copy over to a comment in the inspector file)
+# - Platform graph [player_name]
+#   - Edges [#]
+#     - JUMP_INTER_SURFACE_EDGEs [#]
+#       - [(x,y), (x,y)]
+#         - <FIXME: Add step example items>
+#       - ...
+#     - ...
+#   - Surfaces [#]
+#     - Floors [#]
+#       - [(x,y), (x,y)]
+#         - _# valid outbound edges_
+#         - _Destination surfaces:_
+#         - FLOOR [(x,y), (x,y)]
+#           - JUMP_INTER_SURFACE_EDGEs [#]
+#             - [(x,y), (x,y)]
+#               - <FIXME: Add step example items>
+#             - ...
+#             - Failed edge calculations
+#               - REASON_FOR_FAILING [(x,y), (x,y)]
+#                 - <FIXME: Add step example items>
+#               - ...
+#         - ...
+#       - ...
+#     - ...
+#   - Global counts
+#     - # total surfaces
+#     - # total edges
+#     - # JUMP_INTER_SURFACE_EDGEs
+#     - ...
+# 
 # --------
 # 
 # - Analytics!
@@ -152,43 +193,6 @@ const IS_A_JUMP_CALCULATOR := true
 #       expanding their tree items.
 #     - When selecting something by clicking on the level, open the corresponding path in the tree,
 #       rather than displaying something new and out of context with the global tree.
-#   - Global data structure draft:
-#     - Cat platform graph
-#       - XX: Edges
-#         - JUMP_INTER_SURFACE_EDGEs
-#           - JUMP_INTER_SURFACE_EDGE{ ... }
-#             - <FIXME: Step attempts>
-#           ...
-#         ...
-#       - XX: Surfaces
-#         - XX: Floors
-#           - FLOOR [(x, y) (x, y)]
-#             - XX: Edges from this surface
-#               - _Destination surfaces_
-#               - FLOOR [(x, y) (x, y)]
-#                 - JUMP_INTER_SURFACE_EDGE{ ... }
-#                   - <FIXME: Step attempts>
-#                 ...
-#               ...
-#             - Failed edge calculations
-#               - _Destination surfaces that passed broad-phase checks_
-#               - FLOOR [(x, y) (x, y)]
-#                 <A row for each edge type that has a narrow-phase result>
-#                 - JUMP_INTER_SURFACE_EDGEs
-#                   <Create a nested class to store as the metadata for this row;
-#                    origin and destination surfaces and edge type;
-#                    when this is selected, annotate all possible jump/land position pairs between
-#                        the two surfaces, with dotted lines connected them;
-#                    also color-code these pairs/lines to reflect whether they were valid, failed
-#                        broad phase, or failed narrow phase>
-#                   - <A row for each jump/land position pair that has a narrow-phase result>
-#                     - <FIXME: Step attempts>
-#                 ...
-#               ...
-#           ...
-#         - XX: Left walls (right-side of block)
-#         - XX: Right walls (left-side of block)
-#         - XX: Ceilings
 #   - Single-surface data structure draft:
 #     - 
 #   - Single-edge data structure draft:
