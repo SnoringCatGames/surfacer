@@ -3,7 +3,6 @@ class_name SurfacesOfSideGroupItemController
 
 const IS_LEAF := false
 
-var graph: PlatformGraph
 var side := SurfaceSide.NONE
 # Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<Edge>>>>
 var surfaces_to_surfaces_to_edge_types_to_valid_edges := {}
@@ -14,7 +13,7 @@ var surface_count := 0
 func _init( \
         type: int, \
         starts_collapsed: bool, \
-        tree_item: TreeItem, \
+        parent_item: TreeItem, \
         tree: Tree, \
         graph: PlatformGraph, \
         side: int, \
@@ -24,9 +23,9 @@ func _init( \
         type, \
         IS_LEAF, \
         starts_collapsed, \
-        tree_item, \
-        tree) -> void:
-    self.graph = graph
+        parent_item, \
+        tree, \
+        graph) -> void:
     self.side = side
     self.surfaces_to_surfaces_to_edge_types_to_valid_edges = \
             surfaces_to_surfaces_to_edge_types_to_valid_edges
@@ -82,6 +81,7 @@ func _create_children_inner() -> void:
             OriginSurfaceItemController.new( \
                     tree_item, \
                     tree, \
+                    graph, \
                     surface, \
                     surfaces_to_edge_types_to_valid_edges, \
                     surfaces_to_edge_types_to_failed_edges)

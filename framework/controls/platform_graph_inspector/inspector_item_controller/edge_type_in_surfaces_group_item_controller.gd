@@ -12,28 +12,34 @@ var edge_type := EdgeType.UNKNOWN
 var valid_edges: Array
 # Array<FailedEdgeAttempt>
 var failed_edges: Array
+# Array<JumpLandPositions>
+var jump_land_positions: Array
 
 var failed_edges_controller: FailedEdgesGroupItemController
 
 func _init( \
-        tree_item: TreeItem, \
+        parent_item: TreeItem, \
         tree: Tree, \
+        graph: PlatformGraph, \
         origin_surface: Surface, \
         destination_surface: Surface, \
         edge_type: int, \
         valid_edges: Array, \
-        failed_edges: Array) \
+        failed_edges: Array, \
+        jump_land_positions: Array) \
         .( \
         TYPE, \
         IS_LEAF, \
         STARTS_COLLAPSED, \
-        tree_item, \
-        tree) -> void:
+        parent_item, \
+        tree, \
+        graph) -> void:
     self.origin_surface = origin_surface
     self.destination_surface = destination_surface
     self.edge_type = edge_type
     self.valid_edges = valid_edges
     self.failed_edges = failed_edges
+    self.jump_land_positions = jump_land_positions
     _post_init()
 
 func to_string() -> String:
@@ -81,11 +87,13 @@ func _create_children_inner() -> void:
         ValidEdgeItemController.new( \
                 tree_item, \
                 tree, \
+                graph, \
                 edge)
     
     failed_edges_controller = FailedEdgesGroupItemController.new( \
             tree_item, \
             tree, \
+            graph, \
             origin_surface, \
             destination_surface, \
             edge_type, \
@@ -96,4 +104,5 @@ func _destroy_children_inner() -> void:
 
 func _draw_annotations() -> void:
     # FIXME: -----------------
+    # - Draw jump_land_positions.
     pass

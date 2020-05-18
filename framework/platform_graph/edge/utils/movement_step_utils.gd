@@ -30,6 +30,7 @@ static func calculate_steps_with_new_jump_height( \
         step_result_metadata = EdgeStepCalcResultMetadata.new( \
                 edge_result_metadata, \
                 parent_step_result_metadata, \
+                step_calc_params, \
                 previous_out_of_reach_waypoint)
     
     var calc_results := calculate_steps_between_waypoints( \
@@ -263,6 +264,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
             child_step_result_metadata = EdgeStepCalcResultMetadata.new( \
                     edge_result_metadata, \
                     step_result_metadata, \
+                    step_calc_params_to_waypoint, \
                     null)
         calc_results_to_waypoint = calculate_steps_between_waypoints( \
                 edge_result_metadata, \
@@ -290,6 +292,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
             child_step_result_metadata = EdgeStepCalcResultMetadata.new( \
                     edge_result_metadata, \
                     step_result_metadata, \
+                    step_calc_params_from_waypoint, \
                     null)
         calc_results_from_waypoint = calculate_steps_between_waypoints( \
                 edge_result_metadata, \

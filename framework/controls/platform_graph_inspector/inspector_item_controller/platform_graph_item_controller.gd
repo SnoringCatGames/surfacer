@@ -6,8 +6,6 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := false
 const PREFIX := "Platform graph"
 
-var graph: PlatformGraph
-
 # Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<Edge>>>>
 var surfaces_to_surfaces_to_edge_types_to_valid_edges := {}
 # Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<FailedEdgeAttempt>>>>
@@ -26,8 +24,8 @@ func _init( \
         IS_LEAF, \
         STARTS_COLLAPSED, \
         parent_item, \
-        tree) -> void:
-    self.graph = graph
+        tree, \
+        graph) -> void:
     _populate_surfaces_to_surfaces_to_edge_types_to_edges_mappings()
     _post_init()
 

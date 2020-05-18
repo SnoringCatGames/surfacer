@@ -13,8 +13,9 @@ var edge_type := EdgeType.UNKNOWN
 var failed_edges: Array
 
 func _init( \
-        tree_item: TreeItem, \
+        parent_item: TreeItem, \
         tree: Tree, \
+        graph: PlatformGraph, \
         origin_surface: Surface, \
         destination_surface: Surface, \
         edge_type: int, \
@@ -23,8 +24,9 @@ func _init( \
         TYPE, \
         IS_LEAF, \
         STARTS_COLLAPSED, \
-        tree_item, \
-        tree) -> void:
+        parent_item, \
+        tree, \
+        graph) -> void:
     self.origin_surface = origin_surface
     self.destination_surface = destination_surface
     self.edge_type = edge_type
@@ -76,6 +78,7 @@ func _create_children_inner() -> void:
         FailedEdgeItemController.new( \
                 tree_item, \
                 tree, \
+                graph, \
                 failed_edge_attempt)
 
 func _destroy_children_inner() -> void:

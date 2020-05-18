@@ -22,5 +22,4 @@ func _init(record_calc_details: bool) -> void:
     self.record_calc_details = record_calc_details
 
 func _get_failed_before_creating_steps() -> bool:
-    return children_step_attempts.empty() or \
-            children_step_attempts.front().step == null
+    return children_step_attempts.empty()

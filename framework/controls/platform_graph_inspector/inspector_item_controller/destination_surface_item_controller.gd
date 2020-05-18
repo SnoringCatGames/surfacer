@@ -11,10 +11,15 @@ var destination_surface: Surface
 var edge_types_to_valid_edges: Dictionary
 # Dictionary<EdgeType, Array<FailedEdgeAttempt>>
 var edge_types_to_failed_edges: Dictionary
+# Array<JumpLandPositions>
+var jump_type_jump_land_positions: Array
+# Array<JumpLandPositions>
+var fall_type_jump_land_positions: Array
 
 func _init( \
-        tree_item: TreeItem, \
+        parent_item: TreeItem, \
         tree: Tree, \
+        graph: PlatformGraph, \
         origin_surface: Surface, \
         destination_surface: Surface, \
         edge_types_to_valid_edges: Dictionary, \
@@ -23,12 +28,25 @@ func _init( \
         TYPE, \
         IS_LEAF, \
         STARTS_COLLAPSED, \
-        tree_item, \
-        tree) -> void:
+        parent_item, \
+        tree, \
+        graph) -> void:
     self.origin_surface = origin_surface
     self.destination_surface = destination_surface
     self.edge_types_to_valid_edges = edge_types_to_valid_edges
     self.edge_types_to_failed_edges = edge_types_to_failed_edges
+    self.jump_type_jump_land_positions = \
+            JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
+                    graph.movement_params, \
+                    origin_surface, \
+                    destination_surface, \
+                    true)
+    self.fall_type_jump_land_positions = \
+            JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
+                    graph.movement_params, \
+                    origin_surface, \
+                    destination_surface, \
+                    false)
     _post_init()
 
 func to_string() -> String:
@@ -72,6 +90,8 @@ func find_and_expand_controller( \
 func _create_children_inner() -> void:
     var valid_edges: Array
     var failed_edges: Array
+    var is_a_jump_calculator: bool
+    var jump_land_positions: Array
     
     for edge_type in EdgeType.values():
         if InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge_type) >= 0:
@@ -88,14 +108,21 @@ func _create_children_inner() -> void:
         
         if !valid_edges.empty() or \
                 !failed_edges.empty():
+            is_a_jump_calculator = InspectorItemController.JUMP_CALCULATORS.find(edge_type) >= 0
+            jump_land_positions = \
+                    jump_type_jump_land_positions if \
+                    is_a_jump_calculator else \
+                    fall_type_jump_land_positions
             EdgeTypeInSurfacesGroupItemController.new( \
                     tree_item, \
                     tree, \
+                    graph, \
                     origin_surface, \
                     destination_surface, \
                     edge_type, \
                     valid_edges, \
-                    failed_edges)
+                    failed_edges, \
+                    jump_land_positions)
 
 func _destroy_children_inner() -> void:
     # Do nothing.

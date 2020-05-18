@@ -5,12 +5,11 @@ const TYPE := InspectorItemType.EDGE_TYPE_IN_EDGES_GROUP
 const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
-var graph: PlatformGraph
 var edge_type := EdgeType.UNKNOWN
 var valid_edge_count := 0
 
 func _init( \
-        tree_item: TreeItem, \
+        parent_item: TreeItem, \
         tree: Tree, \
         graph: PlatformGraph, \
         edge_type: int) \
@@ -18,9 +17,9 @@ func _init( \
         TYPE, \
         IS_LEAF, \
         STARTS_COLLAPSED, \
-        tree_item, \
-        tree) -> void:
-    self.graph = graph
+        parent_item, \
+        tree, \
+        graph) -> void:
     self.edge_type = edge_type
     self.valid_edge_count = graph.counts[EdgeType.get_type_string(edge_type)]
     _post_init()
@@ -66,6 +65,7 @@ func _create_children_inner() -> void:
                 ValidEdgeItemController.new( \
                         tree_item, \
                         tree, \
+                        graph, \
                         edge)
 
 func _destroy_children_inner() -> void:

@@ -172,6 +172,7 @@ static func find_landing_trajectory_between_positions( \
         step_result_metadata = EdgeStepCalcResultMetadata.new( \
                 edge_result_metadata, \
                 null, \
+                step_calc_params, \
                 null)
     
     return MovementStepUtils.calculate_steps_between_waypoints( \

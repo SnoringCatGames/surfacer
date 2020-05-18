@@ -9,6 +9,11 @@ const EDGE_TYPES_TO_SKIP := [ \
     EdgeType.UNKNOWN, \
 ]
 
+const JUMP_CALCULATORS := [ \
+    EdgeType.JUMP_INTER_SURFACE_EDGE, \
+    EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE, \
+]
+
 var type: int = InspectorItemType.UNKNOWN
 var is_leaf: bool
 var starts_collapsed: bool
@@ -16,6 +21,7 @@ var parent_item: TreeItem
 var tree_item: TreeItem
 var placeholder_item: TreeItem
 var tree: Tree
+var graph: PlatformGraph
 var are_children_ready: bool
 
 func _init( \
@@ -23,12 +29,14 @@ func _init( \
         is_leaf: bool, \
         starts_collapsed: bool, \
         parent_item: TreeItem, \
-        tree: Tree) -> void:
+        tree: Tree, \
+        graph: PlatformGraph) -> void:
     self.type = type
     self.is_leaf = is_leaf
     self.starts_collapsed = starts_collapsed
     self.parent_item = parent_item
     self.tree = tree
+    self.graph = graph
     
     self.tree_item = tree.create_item(parent_item)
     self.tree_item.set_metadata( \

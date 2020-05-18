@@ -17,7 +17,8 @@ enum { \
     DESCRIPTION, \
     VALID_EDGE, \
     FAILED_EDGE, \
-    EDGE_STEP, \
+    EDGE_CALC_RESULT_METADATA, \
+    EDGE_STEP_CALC_RESULT_METADATA, \
     UNKNOWN, \
 }
 
@@ -55,8 +56,10 @@ static func get_type_string(type: int) -> String:
             return "VALID_EDGE"
         FAILED_EDGE:
             return "FAILED_EDGE"
-        EDGE_STEP:
-            return "EDGE_STEP"
+        EDGE_CALC_RESULT_METADATA:
+            return "EDGE_CALC_RESULT_METADATA"
+        EDGE_STEP_CALC_RESULT_METADATA:
+            return "EDGE_STEP_CALC_RESULT_METADATA"
         UNKNOWN:
             return "UNKNOWN"
         _:

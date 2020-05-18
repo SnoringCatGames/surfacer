@@ -8,10 +8,66 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Can we assign null to Dictionary types?
+# >>>- ElementAnnotator:
+#   - Render/hook-up ElementAnnotator somewhere.
+#   - Expose ElementAnnotator on Global.
+#   - Register and deregister items to draw on ElementAnnotator from  InspectorItemControllers.
+# 
+# - Think of how to represent the state to draw for description items:
+#   - Maybe I should create a general purpose configurable draw params object?
+#     - AnnotationElementType { SURFACE, EDGE, STEP, START_INDICATOR, END_INDICATOR, ... }
+#   - Would probably want to create separate metadata classes for each AnnotationType, so that we get type safety?
+#     - Should probably do the same thing for the InspectorSearchType metadata.
+#   - Would need to go through and list all possible things I want to draw for each item.
+    # - Platform graph [player_name]
+    #   <all surfaces, all valid edges>
+    #   - Edges [#]
+    #     <all valid edges>
+    #     - JUMP_INTER_SURFACE_EDGEs [#]
+    #       <>
+    #       - [(x,y), (x,y)]
+    #         <>
+    #         - <FIXME: Add step example items>
+    #       - ...
+    #     - ...
+    #   - Surfaces [#]
+    #     <all surfaces>
+    #     - Floors [#]
+    #       <all floors>
+    #       - [(x,y), (x,y)]
+    #         <this single surface>
+    #         - _# valid outbound edges_
+    #           <all valid outbound edges>
+    #         - _Destination surfaces:_
+    #           <all destination surfaces>
+    #         - FLOOR [(x,y), (x,y)]
+    #           <origin surface, destination surface>
+    #           - JUMP_INTER_SURFACE_EDGEs [#]
+    #             <origin surface, destination surface, jump/land positions (dotted red lines connecting pairs)>
+    #             - [(x,y), (x,y)]
+    #               <the valid edge (discrete and continuous trajectories, waypoints, start and end position indicators, instruction input indicators)>
+    #               - <FIXME: Add step example items>
+    #             - ...
+    #             - Failed edge calculations
+    #               <>
+    #               - [(x,y), (x,y)]
+    #                 <>
+    #                 - <FIXME: Add step example items>
+    #               - ...
+    #         - ...
+    #       - ...
+    #     - ...
+    #   - Global counts
+    #     <all surfaces, all valid edges>
+    #     - # total surfaces
+    #       <all surfaces>
+    #     - # total edges
+    #       <all valid edges>
+    #     - # JUMP_INTER_SURFACE_EDGEs
+    #       <all JUMP_INTER_SURFACE_EDGEs>
+    #     - ...
 # 
 # - InspectorItemMetadata:
-#   - Add placeholder child items.
 #   - Add new methods to PlatformGraphInspector:
 #     - _on_tree_item_expansion_toggled
 #     - find_or_create_canonical_surface_item
@@ -20,17 +76,14 @@ const IS_A_JUMP_CALCULATOR := true
 #   - For now, ignore/disable auto-step-switching timer.
 #   - For now, auto-expand valid-edge/failed-edge item when selecting from level clicks.
 # 
-# - Add support for dynamically instantiating and destroying state for expanded items.
-#   - Enumerate exactly which items are dynamic.
-#     - JumpLandPositions (and render and store as metadata) for surfaces>side>surface>destination>edge_type.
-#     - 
-# 
 # - Implement edge-step tree items text, selection, and creation.
 # 
 # - Add support for rendering annotations for the selected inspector item.
 #   - draw_annotations
 #   - Do I need to add back references to the corresponding params objects in the
 #     result-metadata objects?
+# 
+# - Add some additional description items under valid and failed edges with more metadata for debugging.
 # 
 # - Add custom backgrounds for description TreeItems (set_custom_bg_color)
 # 
@@ -59,6 +112,9 @@ const IS_A_JUMP_CALCULATOR := true
 #   - movement_step_utils -> edge_step_utils
 #   - movement_trajectory_utils -> edge_trajectory_utils
 #   - DebugPanel -> UtilityPanel
+# 
+# - Refactor pre-existing annotator classes to use the new AnnotationElementType system.
+#   - At least remove ExtraAnnotator and replace it with the new general-purpose annotator.
 # 
 # - Don't automatically expand an item when it is selected.
 # 
@@ -121,7 +177,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Touch doesn't dismiss panel.
 #   - Touch doesn't activate gear icon.
 # 
-# INSPECTOR STRUCTURE: (copy over to a comment in the inspector file)
+# FIXME: double-check with final structure, then copy over to a comment in the inspector file
+# INSPECTOR STRUCTURE:
 # - Platform graph [player_name]
 #   - Edges [#]
 #     - JUMP_INTER_SURFACE_EDGEs [#]
@@ -578,7 +635,10 @@ func get_all_inter_surface_edges_from_surface( \
                         jump_land_positions.velocity_start, \
                         edge_type, \
                         edge_result_metadata.edge_calc_result_type, \
-                        edge_result_metadata.waypoint_validity)
+                        edge_result_metadata.waypoint_validity, \
+                        jump_land_positions.needs_extra_jump_duration, \
+                        jump_land_positions.needs_extra_wall_land_horizontal_speed, \
+                        self)
                 failed_edge_attempts_result.push_back(failed_attempt)
 
 func calculate_edge( \

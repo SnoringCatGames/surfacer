@@ -6,7 +6,7 @@ const STARTS_COLLAPSED := true
 const SIDE := SurfaceSide.CEILING
 
 func _init( \
-        tree_item: TreeItem, \
+        parent_item: TreeItem, \
         tree: Tree, \
         graph: PlatformGraph, \
         surfaces_to_surfaces_to_edge_types_to_valid_edges: Dictionary, \
@@ -14,7 +14,7 @@ func _init( \
         .( \
         TYPE, \
         STARTS_COLLAPSED, \
-        tree_item, \
+        parent_item, \
         tree, \
         graph, \
         SIDE, \

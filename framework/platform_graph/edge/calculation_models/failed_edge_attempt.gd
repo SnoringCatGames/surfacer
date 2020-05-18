@@ -21,6 +21,11 @@ var edge_calc_result_type := EdgeCalcResultType.UNKNOWN
 # WaypointValidity
 var waypoint_validity := WaypointValidity.UNKNOWN
 
+var needs_extra_jump_duration: bool
+var needs_extra_wall_land_horizontal_speed: bool
+
+var calculator
+
 func _init(
         origin_surface: Surface, \
         destination_surface: Surface, \
@@ -29,7 +34,10 @@ func _init(
         velocity_start: Vector2, \
         edge_type: int, \
         edge_calc_result_type: int, \
-        waypoint_validity: int) -> void:
+        waypoint_validity: int, \
+        needs_extra_jump_duration: bool, \
+        needs_extra_wall_land_horizontal_speed: bool, \
+        calculator) -> void:
     self.origin_surface = origin_surface
     self.destination_surface = destination_surface
     self.start = start
@@ -38,6 +46,9 @@ func _init(
     self.edge_type = edge_type
     self.edge_calc_result_type = edge_calc_result_type
     self.waypoint_validity = waypoint_validity
+    self.needs_extra_jump_duration = needs_extra_jump_duration
+    self.needs_extra_wall_land_horizontal_speed = needs_extra_wall_land_horizontal_speed
+    self.calculator = calculator
 
 func to_string() -> String:
     return "FailedEdgeAttempt{ " + \

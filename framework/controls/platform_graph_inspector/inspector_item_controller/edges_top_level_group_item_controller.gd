@@ -6,8 +6,6 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := true
 const PREFIX := "Edges"
 
-var graph: PlatformGraph
-
 func _init( \
         parent_item: TreeItem, \
         tree: Tree, \
@@ -17,8 +15,8 @@ func _init( \
         IS_LEAF, \
         STARTS_COLLAPSED, \
         parent_item, \
-        tree) -> void:
-    self.graph = graph
+        tree, \
+        graph) -> void:
     _post_init()
 
 func get_text() -> String:

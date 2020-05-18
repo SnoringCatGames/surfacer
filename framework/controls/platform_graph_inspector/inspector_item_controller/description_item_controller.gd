@@ -8,15 +8,17 @@ const STARTS_COLLAPSED := true
 var text: String
 
 func _init( \
-        tree_item: TreeItem, \
+        parent_item: TreeItem, \
         tree: Tree, \
+        graph: PlatformGraph, \
         text: String) \
         .( \
         TYPE, \
         IS_LEAF, \
         STARTS_COLLAPSED, \
-        tree_item, \
-        tree) -> void:
+        parent_item, \
+        tree, \
+        graph) -> void:
     self.text = text
     _post_init()
 

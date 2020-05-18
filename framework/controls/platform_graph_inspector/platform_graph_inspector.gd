@@ -7,11 +7,6 @@ signal edge_selected
 signal failed_edge_attempt_selected
 signal edge_step_selected
 
-const JUMP_CALCULATORS := [ \
-    EdgeType.JUMP_INTER_SURFACE_EDGE, \
-    EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE, \
-]
-
 var global
 
 var inspector_selector: PlatformGraphInspectorSelector
@@ -24,9 +19,6 @@ var graph_item_controllers := {}
 
 var tree: Tree
 var tree_root: TreeItem
-
-# Array<TreeItem>
-var current_selected_step_items := []
 
 func _init(graphs: Array) -> void:
     self.graphs = graphs
@@ -180,7 +172,7 @@ func _find_canonical_edge_or_edge_attempt_item_controller( \
         graph: PlatformGraph, \
         throws_on_not_found := false) -> InspectorItemController:
     # Determine which start/end positions to check.
-    var is_a_jump_calculator := JUMP_CALCULATORS.find(edge_type) >= 0
+    var is_a_jump_calculator := InspectorItemController.JUMP_CALCULATORS.find(edge_type) >= 0
     var all_jump_land_positions := \
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     graph.movement_params, \
@@ -211,7 +203,7 @@ func _find_canonical_edge_or_edge_attempt_item_controller( \
             return controller
     
     if throws_on_not_found:
-        Utils.error("Canonical TreeItem not found for Edge step: " + \
+        Utils.error("Canonical TreeItem not found for Edge calculation: " + \
                 "start=%s, " + \
                 "end=%s, " + \
                 "end_type=%s," + \

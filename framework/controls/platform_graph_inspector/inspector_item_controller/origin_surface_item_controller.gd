@@ -19,8 +19,9 @@ var valid_edges_count_item_controller: DescriptionItemController
 var destination_surfaces_description_item_controller: DescriptionItemController
 
 func _init( \
-        tree_item: TreeItem, \
+        parent_item: TreeItem, \
         tree: Tree, \
+        graph: PlatformGraph, \
         origin_surface: Surface, \
         destination_surfaces_to_edge_types_to_valid_edges: Dictionary, \
         destination_surfaces_to_edge_types_to_failed_edges: Dictionary) \
@@ -28,8 +29,9 @@ func _init( \
         TYPE, \
         IS_LEAF, \
         STARTS_COLLAPSED, \
-        tree_item, \
-        tree) -> void:
+        parent_item, \
+        tree, \
+        graph) -> void:
     self.origin_surface = origin_surface
     self.destination_surfaces_to_edge_types_to_valid_edges = \
             destination_surfaces_to_edge_types_to_valid_edges
@@ -115,10 +117,12 @@ func _create_children_inner() -> void:
     valid_edges_count_item_controller = DescriptionItemController.new( \
             tree_item, \
             tree, \
+            graph, \
             "_%s valid outbound edges_" % valid_edge_count)
     destination_surfaces_description_item_controller = DescriptionItemController.new( \
             tree_item, \
             tree, \
+            graph, \
             "_Destination surfaces:_")
     
     var edge_types_to_valid_edges: Dictionary
@@ -135,6 +139,7 @@ func _create_children_inner() -> void:
         DestinationSurfaceItemController.new( \
                 tree_item, \
                 tree, \
+                graph, \
                 origin_surface, \
                 destination_surface, \
                 edge_types_to_valid_edges, \

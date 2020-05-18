@@ -6,8 +6,6 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := false
 const PREFIX := "Global counts"
 
-var graph: PlatformGraph
-
 func _init( \
         parent_item: TreeItem, \
         tree: Tree, \
@@ -17,8 +15,8 @@ func _init( \
         IS_LEAF, \
         STARTS_COLLAPSED, \
         parent_item, \
-        tree) -> void:
-    self.graph = graph
+        tree, \
+        graph) -> void:
     _post_init()
 
 func get_text() -> String:
@@ -28,10 +26,12 @@ func _create_children_inner() -> void:
     DescriptionItemController.new( \
             tree_item, \
             tree, \
+            graph, \
             "%s total surfaces" % graph.counts.total_surfaces)
     DescriptionItemController.new( \
             tree_item, \
             tree, \
+            graph, \
             "%s total edges" % graph.counts.total_edges)
     
     var type_name: String
@@ -48,6 +48,7 @@ func _create_children_inner() -> void:
         DescriptionItemController.new( \
                 tree_item, \
                 tree, \
+                graph, \
                 text)
 
 func _destroy_children_inner() -> void:

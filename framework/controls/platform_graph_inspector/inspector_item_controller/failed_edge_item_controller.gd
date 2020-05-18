@@ -6,17 +6,22 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
 var failed_edge_attempt: FailedEdgeAttempt
+var edge_result_metadata: EdgeCalcResultMetadata
+
+var edge_calc_result_metadata_controller: EdgeCalcResultMetadataItemController
 
 func _init( \
-        tree_item: TreeItem, \
+        parent_item: TreeItem, \
         tree: Tree, \
+        graph: PlatformGraph, \
         failed_edge_attempt: FailedEdgeAttempt) \
         .( \
         TYPE, \
         IS_LEAF, \
         STARTS_COLLAPSED, \
-        tree_item, \
-        tree) -> void:
+        parent_item, \
+        tree, \
+        graph) -> void:
     self.failed_edge_attempt = failed_edge_attempt
     _post_init()
 
@@ -58,12 +63,37 @@ func find_and_expand_controller( \
     return null
 
 func _create_children_inner() -> void:
-    # FIXME: ----------------------------
-    pass
+    if edge_result_metadata == null:
+        _calculate_edge_calc_result_metadata()
+    
+    edge_calc_result_metadata_controller = EdgeCalcResultMetadataItemController.new( \
+            tree_item, \
+            tree, \
+            graph, \
+            failed_edge_attempt, \
+            edge_result_metadata)
+
+func _calculate_edge_calc_result_metadata() -> void:
+    edge_result_metadata = EdgeCalcResultMetadata.new(true)
+    var start_position_along_surface := MovementUtils.create_position_offset_from_target_point( \
+            failed_edge_attempt.start, \
+            failed_edge_attempt.origin_surface, \
+            graph.movement_params.collider_half_width_height)
+    var end_position_along_surface := MovementUtils.create_position_offset_from_target_point( \
+            failed_edge_attempt.end, \
+            failed_edge_attempt.destination_surface, \
+            graph.movement_params.collider_half_width_height)
+    failed_edge_attempt.calculator.calculate_edge( \
+            edge_result_metadata, \
+            graph.collision_params, \
+            start_position_along_surface, \
+            end_position_along_surface, \
+            failed_edge_attempt.velocity_start, \
+            failed_edge_attempt.needs_extra_jump_duration, \
+            failed_edge_attempt.needs_extra_wall_land_horizontal_speed)
 
 func _destroy_children_inner() -> void:
-    # Do nothing.
-    pass
+    edge_calc_result_metadata_controller = null
 
 func _draw_annotations() -> void:
     # FIXME: -----------------

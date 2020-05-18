@@ -60,6 +60,7 @@ var INVALID_EDGE_COLOR := Color.from_hsv( \
         0.9, \
         OPACITY_STRONG)
 
+# FIXME: --------------- Remove?
 const INVALID_EDGE_TEXT := "Unable to reach destination from origin."
 
 #var edge_attempt: MovementCalcOverallDebugState
