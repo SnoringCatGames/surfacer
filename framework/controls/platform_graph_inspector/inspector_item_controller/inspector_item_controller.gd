@@ -10,47 +10,64 @@ const EDGE_TYPES_TO_SKIP := [ \
 ]
 
 var type: int = InspectorItemType.UNKNOWN
+var is_leaf: bool
+var starts_collapsed: bool
 var parent_item: TreeItem
 var tree_item: TreeItem
+var placeholder_item: TreeItem
 var tree: Tree
-var are_children_ready := false
+var are_children_ready: bool
 
 func _init( \
         type: int, \
+        is_leaf: bool, \
         starts_collapsed: bool, \
         parent_item: TreeItem, \
         tree: Tree) -> void:
     self.type = type
+    self.is_leaf = is_leaf
+    self.starts_collapsed = starts_collapsed
     self.parent_item = parent_item
     self.tree = tree
     
     self.tree_item = tree.create_item(parent_item)
-    tree_item.set_metadata( \
+    self.tree_item.set_metadata( \
             0, \
             self)
-    tree_item.collapsed = starts_collapsed
+    self.tree_item.collapsed = starts_collapsed
+    
+    self.are_children_ready = false
+
+func _post_init() -> void:
+    _update_text()
+    
+    if get_has_children():
+        _create_placeholder_item()
+        if !starts_collapsed:
+            self.call_deferred("_create_children_if_needed")
 
 func destroy() -> void:
+    if tree_item == null:
+        # Already destroyed.
+        return
+    _destroy_children_if_needed()
+    if get_has_children():
+        _destroy_placeholder_item()
     tree_item.set_metadata( \
             0, \
             null)
     parent_item.remove_child(tree_item)
     tree_item = null
     parent_item = null
-    _destroy_children()
-    are_children_ready = false
 
 func on_item_selected() -> void:
     _draw_annotations()
 
 func on_item_expanded() -> void:
-    if !are_children_ready:
-        _create_children()
-    are_children_ready = true
+    _create_children_if_needed()
 
 func on_item_collapsed() -> void:
-    _destroy_children()
-    are_children_ready = false
+    _destroy_children_if_needed()
 
 func expand() -> void:
     tree_item.collapsed = false
@@ -76,16 +93,50 @@ func get_text() -> String:
 func to_string() -> String:
     return "%s {}" % InspectorItemType.get_type_string(type)
 
-func _create_children() -> void:
-    Utils.error("Abstract InspectorItemController._create_children is not implemented")
+func get_has_children() -> bool:
+    return !is_leaf
 
-func _destroy_children() -> void:
-    Utils.error("Abstract InspectorItemController._destroy_children is not implemented")
+func _create_children_if_needed() -> void:
+    if !are_children_ready:
+        _create_children_inner()
+        if get_has_children():
+            _destroy_placeholder_item()
+    are_children_ready = true
 
-func _draw_annotations() -> void:
-    Utils.error("Abstract InspectorItemController._draw_annotations is not implemented")
+func _destroy_children_if_needed() -> void:
+    if are_children_ready:
+        var child := tree_item.get_children()
+        while child != null:
+            child.get_metadata(0).destroy()
+            child = child.get_next()
+        
+        _destroy_children_inner()
+        
+        if get_has_children():
+            _create_placeholder_item()
+    
+    are_children_ready = false
+
+func _create_placeholder_item() -> void:
+    placeholder_item = tree.create_item(tree_item)
+
+func _destroy_placeholder_item() -> void:
+    if placeholder_item == null:
+        # Already destroyed.
+        return
+    tree_item.remove_child(placeholder_item)
+    placeholder_item = null
 
 func _update_text() -> void:
     tree_item.set_text( \
             0, \
             get_text())
+
+func _create_children_inner() -> void:
+    Utils.error("Abstract InspectorItemController._create_children_inner is not implemented")
+
+func _destroy_children_inner() -> void:
+    Utils.error("Abstract InspectorItemController._destroy_children_inner is not implemented")
+
+func _draw_annotations() -> void:
+    Utils.error("Abstract InspectorItemController._draw_annotations is not implemented")

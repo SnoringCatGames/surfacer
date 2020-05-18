@@ -2,7 +2,9 @@ extends InspectorItemController
 class_name FailedEdgesGroupItemController
 
 const TYPE := InspectorItemType.FAILED_EDGES_GROUP
+const IS_LEAF := false
 const STARTS_COLLAPSED := true
+const PREFIX := "Failed edge calculations"
 
 var origin_surface: Surface
 var destination_surface: Surface
@@ -19,6 +21,7 @@ func _init( \
         failed_edges: Array) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         tree_item, \
         tree) -> void:
@@ -26,20 +29,22 @@ func _init( \
     self.destination_surface = destination_surface
     self.edge_type = edge_type
     self.failed_edges = failed_edges
-    _update_text()
+    _post_init()
 
 func to_string() -> String:
-    return "%s { edge_type=%s, failed_edge_count=%s }" % [ \
+    return "%s { failed_edge_count=%s }" % [ \
         InspectorItemType.get_type_string(type), \
-        EdgeType.get_type_string(edge_type), \
         failed_edges.size(), \
     ]
 
 func get_text() -> String:
-    return "%ss [%s]" % [ \
-        EdgeType.get_type_string(edge_type), \
+    return "%s [%s]" % [ \
+        PREFIX, \
         failed_edges.size(), \
     ]
+
+func get_has_children() -> bool:
+    return failed_edges.size() > 0
 
 func find_and_expand_controller( \
         search_type: int, \
@@ -47,35 +52,35 @@ func find_and_expand_controller( \
     assert(search_type == InspectorSearchType.EDGE)
     
     var were_children_ready_before := are_children_ready
-    if !are_children_ready:
-        _create_children()
-        are_children_ready = true
+    if !were_children_ready_before:
+        _create_children_if_needed()
     
     var result: InspectorItemController
-    for child in tree_item.get_children():
+    var child := tree_item.get_children()
+    while child != null:
         result = child.get_metadata(0).find_and_expand_controller( \
                 search_type, \
                 metadata)
         if result != null:
             expand()
             return result
+        child = child.get_next()
     
     if !were_children_ready_before:
-        _destroy_children()
-        are_children_ready = false
+        _destroy_children_if_needed()
     
     return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     for failed_edge_attempt in failed_edges:
         FailedEdgeItemController.new( \
                 tree_item, \
                 tree, \
                 failed_edge_attempt)
 
-func _destroy_children() -> void:
-    for child in tree_item.get_children():
-        child.get_metadata(0).destroy()
+func _destroy_children_inner() -> void:
+    # Do nothing.
+    pass
 
 func _draw_annotations() -> void:
     # FIXME: -----------------

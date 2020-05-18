@@ -2,6 +2,7 @@ extends InspectorItemController
 class_name EdgeTypeInSurfacesGroupItemController
 
 const TYPE := InspectorItemType.EDGE_TYPE_IN_SURFACES_GROUP
+const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
 var origin_surface: Surface
@@ -24,6 +25,7 @@ func _init( \
         failed_edges: Array) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         tree_item, \
         tree) -> void:
@@ -32,7 +34,7 @@ func _init( \
     self.edge_type = edge_type
     self.valid_edges = valid_edges
     self.failed_edges = failed_edges
-    _update_text()
+    _post_init()
 
 func to_string() -> String:
     return "%s { edge_type=%s, valid_edge_count=%s }" % [ \
@@ -47,6 +49,9 @@ func get_text() -> String:
         valid_edges.size(), \
     ]
 
+func get_has_children() -> bool:
+    return valid_edges.size() > 0 or failed_edges.size() > 0
+
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> InspectorItemController:
@@ -58,18 +63,20 @@ func find_and_expand_controller( \
     expand()
     
     var result: InspectorItemController
-    for child in tree_item.get_children():
+    var child := tree_item.get_children()
+    while child != null:
         result = child.get_metadata(0).find_and_expand_controller( \
                 search_type, \
                 metadata)
         if result != null:
             return result
+        child = child.get_next()
     
     select()
     
     return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     for edge in valid_edges:
         ValidEdgeItemController.new( \
                 tree_item, \
@@ -84,9 +91,7 @@ func _create_children() -> void:
             edge_type, \
             failed_edges)
 
-func _destroy_children() -> void:
-    for child in tree_item.get_children():
-        child.get_metadata(0).destroy()
+func _destroy_children_inner() -> void:
     failed_edges_controller = null
 
 func _draw_annotations() -> void:

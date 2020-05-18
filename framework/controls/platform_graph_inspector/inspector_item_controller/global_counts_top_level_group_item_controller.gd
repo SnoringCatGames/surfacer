@@ -2,6 +2,7 @@ extends InspectorItemController
 class_name GlobalCountsTopLevelGroupItemController
 
 const TYPE := InspectorItemType.GLOBAL_COUNTS_TOP_LEVEL_GROUP
+const IS_LEAF := false
 const STARTS_COLLAPSED := false
 const PREFIX := "Global counts"
 
@@ -13,16 +14,17 @@ func _init( \
         graph: PlatformGraph) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         parent_item, \
         tree) -> void:
     self.graph = graph
-    _update_text()
+    _post_init()
 
 func get_text() -> String:
     return PREFIX
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     DescriptionItemController.new( \
             tree_item, \
             tree, \
@@ -48,9 +50,9 @@ func _create_children() -> void:
                 tree, \
                 text)
 
-func _destroy_children() -> void:
-    for child in tree_item.get_children():
-        child.get_metadata(0).destroy()
+func _destroy_children_inner() -> void:
+    # Do nothing.
+    pass
 
 func _draw_annotations() -> void:
     # Do nothing.

@@ -2,6 +2,7 @@ extends InspectorItemController
 class_name EdgeTypeInEdgesGroupItemController
 
 const TYPE := InspectorItemType.EDGE_TYPE_IN_EDGES_GROUP
+const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
 var graph: PlatformGraph
@@ -15,13 +16,14 @@ func _init( \
         edge_type: int) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         tree_item, \
         tree) -> void:
     self.graph = graph
     self.edge_type = edge_type
     self.valid_edge_count = graph.counts[EdgeType.get_type_string(edge_type)]
-    _update_text()
+    _post_init()
 
 func to_string() -> String:
     return "%s { edge_type=%s, valid_edge_count=%s }" % [ \
@@ -36,19 +38,24 @@ func get_text() -> String:
         valid_edge_count, \
     ]
 
+func get_has_children() -> bool:
+    return valid_edge_count > 0
+
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> InspectorItemController:
     var result: InspectorItemController
-    for child in tree_item.get_children():
+    var child := tree_item.get_children()
+    while child != null:
         result = child.get_metadata(0).find_and_expand_controller( \
                 search_type, \
                 metadata)
         if result != null:
             return result
+        child = child.get_next()
     return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     var edge: Edge
     for origin_surface in graph.surfaces_set:
         for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
@@ -61,9 +68,9 @@ func _create_children() -> void:
                         tree, \
                         edge)
 
-func _destroy_children() -> void:
-    for child in tree_item.get_children():
-        child.get_metadata(0).destroy()
+func _destroy_children_inner() -> void:
+    # Do nothing.
+    pass
 
 func _draw_annotations() -> void:
     # FIXME: -----------------

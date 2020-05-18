@@ -53,12 +53,7 @@ func _ready() -> void:
             self, \
             "_on_tree_item_expansion_toggled")
     global.debug_panel.add_section(tree)
-
-func _draw() -> void:
-    # FIXME: Only clear parts that actually need to be cleared.
     
-    # Clear any previous items.
-    tree.clear()
     tree_root = tree.create_item()
     
     for graph in graphs:
@@ -71,14 +66,15 @@ func _on_tree_item_selected() -> void:
     var item := tree.get_selected()
     var controller = item.get_metadata(0)
     
-    _log_item_selected(item)
-    
-    # Ensure this node (and each of its ancestors) is expanded.
-    while item != tree_root:
-        item.collapsed = false
-        item = item.get_parent()
-    
     # FIXME: --------------------------------
+    
+#    _log_item_selected(item)
+#
+#    # Ensure this node (and each of its ancestors) is expanded.
+#    while item != tree_root:
+#        item.collapsed = false
+#        item = item.get_parent()
+#
 #    _clear_selected_step_items()
 #
 #    if controller == null:
@@ -138,11 +134,12 @@ static func _log_item_selected(item: TreeItem) -> void:
 #    print("PlatformGraphInspector item selected: %s" % print_message)
 
 func _on_tree_item_expansion_toggled(item: TreeItem) -> void:
-    # FIXME: --------------
+    var controller: InspectorItemController = item.get_metadata(0)
+    assert(controller != null)
     if item.collapsed:
-        pass
+        controller.call_deferred("on_item_collapsed")
     else:
-        pass
+        controller.call_deferred("on_item_expanded")
 
 func select_edge_or_edge_attempt( \
         start_position: PositionAlongSurface, \

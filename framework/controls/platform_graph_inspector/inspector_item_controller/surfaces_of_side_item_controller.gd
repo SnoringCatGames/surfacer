@@ -1,6 +1,8 @@
 extends InspectorItemController
 class_name SurfacesOfSideGroupItemController
 
+const IS_LEAF := false
+
 var graph: PlatformGraph
 var side := SurfaceSide.NONE
 # Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<Edge>>>>
@@ -20,6 +22,7 @@ func _init( \
         surfaces_to_surfaces_to_edge_types_to_failed_edges: Dictionary) \
         .( \
         type, \
+        IS_LEAF, \
         starts_collapsed, \
         tree_item, \
         tree) -> void:
@@ -30,7 +33,7 @@ func _init( \
     self.surfaces_to_surfaces_to_edge_types_to_failed_edges = \
             surfaces_to_surfaces_to_edge_types_to_failed_edges
     self.surface_count = graph.counts[SurfaceSide.get_side_string(side)]
-    _update_text()
+    _post_init()
 
 func to_string() -> String:
     return "%s { surface_count=%s }" % [ \
@@ -44,34 +47,48 @@ func get_text() -> String:
         surface_count, \
     ]
 
+func get_has_children() -> bool:
+    return surface_count > 0
+
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> InspectorItemController:
     expand()
     
     var result: InspectorItemController
-    for child in tree_item.get_children():
+    var child := tree_item.get_children()
+    while child != null:
         result = child.get_metadata(0).find_and_expand_controller( \
                 search_type, \
                 metadata)
         if result != null:
             return result
+        child = child.get_next()
     return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
+    var surfaces_to_edge_types_to_valid_edges: Dictionary
+    var surfaces_to_edge_types_to_failed_edges: Dictionary
     for surface in graph.surfaces_set:
         if surface.side == side:
+            surfaces_to_edge_types_to_valid_edges = \
+                    surfaces_to_surfaces_to_edge_types_to_valid_edges[surface] if \
+                    surfaces_to_surfaces_to_edge_types_to_valid_edges.has(surface) else \
+                    {}
+            surfaces_to_edge_types_to_failed_edges = \
+                    surfaces_to_surfaces_to_edge_types_to_failed_edges[surface] if \
+                    surfaces_to_surfaces_to_edge_types_to_failed_edges.has(surface) else \
+                    {}
             OriginSurfaceItemController.new( \
                     tree_item, \
                     tree, \
                     surface, \
-                    surfaces_to_surfaces_to_edge_types_to_valid_edges[surface], \
-                    surfaces_to_surfaces_to_edge_types_to_failed_edges[surface])
+                    surfaces_to_edge_types_to_valid_edges, \
+                    surfaces_to_edge_types_to_failed_edges)
 
-func _destroy_children() -> void:
-    for child in tree_item.get_children():
-        child.get_metadata(0).destroy()
-    surface_count = 0
+func _destroy_children_inner() -> void:
+    # Do nothing.
+    pass
 
 func _draw_annotations() -> void:
     # FIXME: -----------------

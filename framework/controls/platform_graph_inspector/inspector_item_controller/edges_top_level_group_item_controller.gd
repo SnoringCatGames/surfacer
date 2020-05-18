@@ -2,6 +2,7 @@ extends InspectorItemController
 class_name EdgesTopLevelGroupItemController
 
 const TYPE := InspectorItemType.EDGES_TOP_LEVEL_GROUP
+const IS_LEAF := false
 const STARTS_COLLAPSED := true
 const PREFIX := "Edges"
 
@@ -13,11 +14,12 @@ func _init( \
         graph: PlatformGraph) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         parent_item, \
         tree) -> void:
     self.graph = graph
-    _update_text()
+    _post_init()
 
 func get_text() -> String:
     return "%s [%s]" % [ \
@@ -37,7 +39,7 @@ func find_and_expand_controller( \
     Utils.error("find_and_expand_controller should not be called for EDGES_TOP_LEVEL_GROUP.")
     return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     for edge_type in EdgeType.values():
         if InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge_type) >= 0:
             continue
@@ -47,9 +49,9 @@ func _create_children() -> void:
                 graph, \
                 edge_type)
 
-func _destroy_children() -> void:
-    for child in tree_item.get_children():
-        child.get_metadata(0).destroy()
+func _destroy_children_inner() -> void:
+    # Do nothing.
+    pass
 
 func _draw_annotations() -> void:
     # FIXME: -----------------

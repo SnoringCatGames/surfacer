@@ -2,7 +2,8 @@ extends InspectorItemController
 class_name SurfacesTopLevelGroupItemController
 
 const TYPE := InspectorItemType.SURFACES_TOP_LEVEL_GROUP
-const STARTS_COLLAPSED := true
+const IS_LEAF := false
+const STARTS_COLLAPSED := false
 const PREFIX := "Surfaces"
 
 var graph: PlatformGraph
@@ -24,6 +25,7 @@ func _init( \
         surfaces_to_surfaces_to_edge_types_to_failed_edges: Dictionary) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         parent_item, \
         tree) -> void:
@@ -32,7 +34,7 @@ func _init( \
             surfaces_to_surfaces_to_edge_types_to_valid_edges
     self.surfaces_to_surfaces_to_edge_types_to_failed_edges = \
             surfaces_to_surfaces_to_edge_types_to_failed_edges
-    _update_text()
+    _post_init()
 
 func get_text() -> String:
     return "%s [%s]" % [ \
@@ -76,7 +78,7 @@ func find_and_expand_controller( \
             Utils.error("Invalid SurfaceSide: %s" % SurfaceSide.get_side_string(side))
             return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     floors_item_controller = FloorsItemController.new( \
             tree_item, \
             tree, \
@@ -102,7 +104,7 @@ func _create_children() -> void:
             surfaces_to_surfaces_to_edge_types_to_valid_edges, \
             surfaces_to_surfaces_to_edge_types_to_failed_edges)
 
-func _destroy_children() -> void:
+func _destroy_children_inner() -> void:
     floors_item_controller.destroy()
     floors_item_controller = null
     left_walls_item_controller.destroy()

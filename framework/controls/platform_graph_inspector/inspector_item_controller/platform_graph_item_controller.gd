@@ -2,7 +2,8 @@ extends InspectorItemController
 class_name PlatformGraphItemController
 
 const TYPE := InspectorItemType.PLATFORM_GRAPH
-const STARTS_COLLAPSED := true
+const IS_LEAF := false
+const STARTS_COLLAPSED := false
 const PREFIX := "Platform graph"
 
 var graph: PlatformGraph
@@ -22,12 +23,13 @@ func _init( \
         graph: PlatformGraph) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         parent_item, \
         tree) -> void:
     self.graph = graph
     _populate_surfaces_to_surfaces_to_edge_types_to_edges_mappings()
-    _update_text()
+    _post_init()
 
 func get_text() -> String:
     return "%s [%s]" % [ \
@@ -79,7 +81,7 @@ func find_and_expand_controller( \
     
     return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     edges_item_controller = EdgesTopLevelGroupItemController.new( \
             tree_item, \
             tree, \
@@ -165,15 +167,13 @@ func _populate_surfaces_to_surfaces_to_edge_types_to_edges_mappings() -> void:
             
             edges.push_back(failed_edge_attempt)
 
-func _destroy_children() -> void:
+func _destroy_children_inner() -> void:
     edges_item_controller.destroy()
     edges_item_controller = null
     surfaces_item_controller.destroy()
     surfaces_item_controller = null
     global_counts_item_controller.destroy()
     global_counts_item_controller = null
-    surfaces_to_surfaces_to_edge_types_to_valid_edges.clear()
-    surfaces_to_surfaces_to_edge_types_to_failed_edges.clear()
 
 func _draw_annotations() -> void:
     # FIXME: -----------------

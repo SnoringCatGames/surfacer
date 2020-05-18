@@ -8,6 +8,8 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Can we assign null to Dictionary types?
+# 
 # - InspectorItemMetadata:
 #   - Add placeholder child items.
 #   - Add new methods to PlatformGraphInspector:

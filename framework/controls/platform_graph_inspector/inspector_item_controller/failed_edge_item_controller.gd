@@ -2,6 +2,7 @@ extends InspectorItemController
 class_name FailedEdgeItemController
 
 const TYPE := InspectorItemType.FAILED_EDGE
+const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
 var failed_edge_attempt: FailedEdgeAttempt
@@ -12,11 +13,12 @@ func _init( \
         failed_edge_attempt: FailedEdgeAttempt) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         tree_item, \
         tree) -> void:
     self.failed_edge_attempt = failed_edge_attempt
-    _update_text()
+    _post_init()
 
 func to_string() -> String:
     return "%s { %s [%s, %s] }" % [ \
@@ -55,13 +57,13 @@ func find_and_expand_controller( \
         return self
     return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     # FIXME: ----------------------------
     pass
 
-func _destroy_children() -> void:
-    for child in tree_item.get_children():
-        child.get_metadata(0).destroy()
+func _destroy_children_inner() -> void:
+    # Do nothing.
+    pass
 
 func _draw_annotations() -> void:
     # FIXME: -----------------

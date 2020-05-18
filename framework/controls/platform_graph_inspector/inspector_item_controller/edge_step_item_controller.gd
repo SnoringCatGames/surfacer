@@ -2,6 +2,7 @@ extends InspectorItemController
 class_name EdgeStepItemController
 
 const TYPE := InspectorItemType.EDGE_STEP
+const IS_LEAF := true
 const STARTS_COLLAPSED := true
 
 var step_result_metadata: EdgeStepCalcResultMetadata
@@ -12,11 +13,12 @@ func _init( \
         step_result_metadata: EdgeStepCalcResultMetadata) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         tree_item, \
         tree) -> void:
     self.step_result_metadata = step_result_metadata
-    _update_text()
+    _post_init()
 
 func to_string() -> String:
     return "%s { %s [%s, %s] }" % [ \
@@ -38,13 +40,17 @@ func get_text() -> String:
         str(failed_edge_attempt.end), \
     ]
 
-func _create_children() -> void:
+func get_has_children() -> bool:
+    # FIXME: ----------------------------
+    return true
+
+func _create_children_inner() -> void:
     # FIXME: ----------------------------
     pass
 
-func _destroy_children() -> void:
-    for child in tree_item.get_children():
-        child.get_metadata(0).destroy()
+func _destroy_children_inner() -> void:
+    # FIXME: ---------------------------
+    pass
 
 func _draw_annotations() -> void:
     # FIXME: -----------------

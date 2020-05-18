@@ -2,6 +2,7 @@ extends InspectorItemController
 class_name OriginSurfaceItemController
 
 const TYPE := InspectorItemType.ORIGIN_SURFACE
+const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
 var origin_surface: Surface
@@ -25,6 +26,7 @@ func _init( \
         destination_surfaces_to_edge_types_to_failed_edges: Dictionary) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         tree_item, \
         tree) -> void:
@@ -34,7 +36,7 @@ func _init( \
     self.destination_surfaces_to_edge_types_to_failed_edges = \
             destination_surfaces_to_edge_types_to_failed_edges
     _calculate_metadata()
-    _update_text()
+    _post_init()
 
 func _calculate_metadata() -> void:
     # Count the valid and failed edges from this surface.
@@ -76,6 +78,10 @@ func get_text() -> String:
         str(origin_surface.last_point), \
     ]
 
+func get_has_children() -> bool:
+    return destination_surfaces_to_edge_types_to_valid_edges.size() > 0 or \
+            destination_surfaces_to_edge_types_to_failed_edges.size() > 0
+
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> InspectorItemController:
@@ -92,18 +98,20 @@ func find_and_expand_controller( \
         expand()
         
         var result: InspectorItemController
-        for child in tree_item.get_children():
+        var child := tree_item.get_children()
+        while child != null:
             result = child.get_metadata(0).find_and_expand_controller( \
                     search_type, \
                     metadata)
             if result != null:
                 return result
+            child = child.get_next()
         
         select()
         
         return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     valid_edges_count_item_controller = DescriptionItemController.new( \
             tree_item, \
             tree, \
@@ -119,11 +127,11 @@ func _create_children() -> void:
         edge_types_to_valid_edges = \
                 destination_surfaces_to_edge_types_to_valid_edges[destination_surface] if \
                 destination_surfaces_to_edge_types_to_valid_edges.has(destination_surface) else \
-                null
+                {}
         edge_types_to_failed_edges = \
                 destination_surfaces_to_edge_types_to_failed_edges[destination_surface] if \
                 destination_surfaces_to_edge_types_to_failed_edges.has(destination_surface) else \
-                null
+                {}
         DestinationSurfaceItemController.new( \
                 tree_item, \
                 tree, \
@@ -132,14 +140,9 @@ func _create_children() -> void:
                 edge_types_to_valid_edges, \
                 edge_types_to_failed_edges)
 
-func _destroy_children() -> void:
-    for child in tree_item.get_children():
-        child.get_metadata(0).destroy()
+func _destroy_children_inner() -> void:
     valid_edges_count_item_controller = null
     destination_surfaces_description_item_controller = null
-    attempted_destination_surfaces.clear()
-    valid_edge_count = 0
-    failed_edge_count = 0
 
 func _draw_annotations() -> void:
     # FIXME: -----------------

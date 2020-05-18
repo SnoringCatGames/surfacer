@@ -2,6 +2,7 @@ extends InspectorItemController
 class_name DescriptionItemController
 
 const TYPE := InspectorItemType.DESCRIPTION
+const IS_LEAF := true
 const STARTS_COLLAPSED := true
 
 var text: String
@@ -12,11 +13,12 @@ func _init( \
         text: String) \
         .( \
         TYPE, \
+        IS_LEAF, \
         STARTS_COLLAPSED, \
         tree_item, \
         tree) -> void:
     self.text = text
-    _update_text()
+    _post_init()
 
 func to_string() -> String:
     return "%s { text=%s }" % [ \
@@ -32,11 +34,11 @@ func find_and_expand_controller( \
         metadata: Dictionary) -> InspectorItemController:
     return null
 
-func _create_children() -> void:
+func _create_children_inner() -> void:
     # Do nothing.
     pass
 
-func _destroy_children() -> void:
+func _destroy_children_inner() -> void:
     # Do nothing.
     pass
 
