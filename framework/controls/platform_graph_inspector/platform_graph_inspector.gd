@@ -9,7 +9,12 @@ signal edge_step_selected
 
 var global
 
+var element_annotator: ElementAnnotator
+
 var inspector_selector: PlatformGraphInspectorSelector
+
+# Array<AnnotationElement>
+var current_annotation_elements := []
 
 # Array<PlatformGraph>
 var graphs: Array
@@ -29,6 +34,7 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
     global = $"/root/Global"
+    element_annotator = global.element_annotator
     
     tree = Tree.new()
     tree.rect_min_size = Vector2( \
@@ -57,6 +63,15 @@ func _ready() -> void:
 func _on_tree_item_selected() -> void:
     var item := tree.get_selected()
     var controller = item.get_metadata(0)
+    
+    for element in current_annotation_elements:
+        element_annotator.erase(element)
+    
+    current_annotation_elements = controller.get_annotation_elements()
+    for element in current_annotation_elements:
+        element_annotator.add(element)
+    
+    controller.call_deferred("on_item_selected")
     
     # FIXME: --------------------------------
     

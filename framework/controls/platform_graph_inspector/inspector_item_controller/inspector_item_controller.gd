@@ -69,7 +69,8 @@ func destroy() -> void:
     parent_item = null
 
 func on_item_selected() -> void:
-    _draw_annotations()
+    # Do nothing.
+    pass
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
@@ -146,5 +147,6 @@ func _create_children_inner() -> void:
 func _destroy_children_inner() -> void:
     Utils.error("Abstract InspectorItemController._destroy_children_inner is not implemented")
 
-func _draw_annotations() -> void:
-    Utils.error("Abstract InspectorItemController._draw_annotations is not implemented")
+func get_annotation_elements() -> Array:
+    Utils.error("Abstract InspectorItemController.get_annotation_elements is not implemented")
+    return []

@@ -69,7 +69,7 @@ static func _create_platform_graphs( \
 
 func descendant_physics_process_completed(descendant: Node) -> void:
     if descendant is Player:
-        global.overlays.player_annotators[descendant].check_for_update()
+        global.canvas_layers.player_annotators[descendant].check_for_update()
 
 func add_player( \
         resource_path: String, \
@@ -118,8 +118,8 @@ func _record_player_reference(is_human_player: bool) -> void:
             global.current_player_for_clicks = computer_player
         
         # Set up some annotators to help with debugging.
-        global.overlays.create_graph_annotator(graph)
-        global.overlays.create_player_annotator( \
+        global.canvas_layers.create_graph_annotator(graph)
+        global.canvas_layers.create_player_annotator( \
                 player, \
                 is_human_player)
         

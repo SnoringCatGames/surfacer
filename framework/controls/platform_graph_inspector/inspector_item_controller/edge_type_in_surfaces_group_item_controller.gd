@@ -102,7 +102,7 @@ func _create_children_inner() -> void:
 func _destroy_children_inner() -> void:
     failed_edges_controller = null
 
-func _draw_annotations() -> void:
+func get_annotation_elements() -> Array:
     # FIXME: -----------------
     # - Draw jump_land_positions.
-    pass
+    return []

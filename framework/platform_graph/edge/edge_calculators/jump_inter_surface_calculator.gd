@@ -11,12 +11,15 @@ const IS_A_JUMP_CALCULATOR := true
 # >>>- ElementAnnotator:
 #   - Render/hook-up ElementAnnotator somewhere.
 #   - Expose ElementAnnotator on Global.
-#   - Register and deregister items to draw on ElementAnnotator from  InspectorItemControllers.
+#   - Register and deregister items to draw on ElementAnnotator from InspectorItemControllers.
+# 
+# - Add types back to variables in Global.
 # 
 # - Think of how to represent the state to draw for description items:
 #   - Maybe I should create a general purpose configurable draw params object?
 #     - AnnotationElementType { SURFACE, EDGE, STEP, START_INDICATOR, END_INDICATOR, ... }
-#   - Would probably want to create separate metadata classes for each AnnotationType, so that we get type safety?
+#   - Would probably want to create separate metadata classes for each AnnotationType, so that we
+#     get type safety?
 #     - Should probably do the same thing for the InspectorSearchType metadata.
 #   - Would need to go through and list all possible things I want to draw for each item.
     # - Platform graph [player_name]
@@ -43,9 +46,11 @@ const IS_A_JUMP_CALCULATOR := true
     #         - FLOOR [(x,y), (x,y)]
     #           <origin surface, destination surface>
     #           - JUMP_INTER_SURFACE_EDGEs [#]
-    #             <origin surface, destination surface, jump/land positions (dotted red lines connecting pairs)>
+    #             <origin surface, destination surface, jump/land positions (dotted red lines
+    #              connecting pairs)>
     #             - [(x,y), (x,y)]
-    #               <the valid edge (discrete and continuous trajectories, waypoints, start and end position indicators, instruction input indicators)>
+    #               <the valid edge (discrete and continuous trajectories, waypoints, 
+    #                start and end position indicators, instruction input indicators)>
     #               - <FIXME: Add step example items>
     #             - ...
     #             - Failed edge calculations
@@ -115,6 +120,7 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Refactor pre-existing annotator classes to use the new AnnotationElementType system.
 #   - At least remove ExtraAnnotator and replace it with the new general-purpose annotator.
+#   - And probably just remove some obsolete annotators.
 # 
 # - Don't automatically expand an item when it is selected.
 # 

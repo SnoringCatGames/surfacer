@@ -44,7 +44,7 @@ const PLAYER_PARAM_CLASSES := [
 var global: Global
 var loading_screen: Node
 var camera_controller: CameraController
-var overlays: Overlays
+var canvas_layers: CanvasLayers
 var level: Level
 var is_level_ready := false
 
@@ -64,8 +64,8 @@ func _enter_tree() -> void:
         camera_controller = CameraController.new()
         add_child(camera_controller)
         
-        overlays = Overlays.new()
-        add_child(overlays)
+        canvas_layers = CanvasLayers.new()
+        add_child(canvas_layers)
         
         if OS.get_name() == "HTML5":
             # For HTML, don't use the Godot loading screen, and instead use an HTML screen, which
@@ -74,7 +74,7 @@ func _enter_tree() -> void:
         else:
             # For non-HTML platforms, show a loading screen in Godot.
             loading_screen = Utils.add_scene( \
-                    overlays.screen_layer, \
+                    canvas_layers.screen_layer, \
                     LOADING_SCREEN_PATH)
 
 func _process(delta: float) -> void:
@@ -96,7 +96,7 @@ func _process(delta: float) -> void:
         
         # Hide the loading screen.
         if loading_screen != null:
-            overlays.screen_layer.remove_child(loading_screen)
+            canvas_layers.screen_layer.remove_child(loading_screen)
             loading_screen.queue_free()
             loading_screen = null
         

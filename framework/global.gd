@@ -119,10 +119,12 @@ var welcome_panel: WelcomePanel
 
 var space_state: Physics2DDirectSpaceState
 
-var overlays: Overlays
+var canvas_layers: CanvasLayers
 var current_level
 var current_player_for_clicks
 var camera_controller: CameraController
+
+var element_annotator: ElementAnnotator
 
 # Keeps track of the current total elapsed time of unpaused gameplay.
 var elapsed_play_time_sec: float setget ,_get_elapsed_play_time_sec

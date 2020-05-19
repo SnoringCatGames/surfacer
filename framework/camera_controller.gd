@@ -9,7 +9,6 @@ const PAN_STEP := 8.0
 var global
 var _current_camera: Camera2D
 
-var current_camera: Camera2D setget _set_current_camera, _get_current_camera
 var offset: Vector2 setget _set_offset, _get_offset
 var zoom: float setget _set_zoom, _get_zoom
 
@@ -52,11 +51,11 @@ func _unhandled_input(event: InputEvent) -> void:
             print("ZOOM_OUT")
             _current_camera.zoom += _current_camera.zoom * ZOOM_STEP_RATIO
 
-func _set_current_camera(camera: Camera2D) -> void:
-    assert(camera.current)
+func set_current_camera(camera: Camera2D) -> void:
+    camera.make_current()
     _current_camera = camera
 
-func _get_current_camera() -> Camera2D:
+func get_current_camera() -> Camera2D:
     return _current_camera
 
 func _set_offset(offset: Vector2) -> void:

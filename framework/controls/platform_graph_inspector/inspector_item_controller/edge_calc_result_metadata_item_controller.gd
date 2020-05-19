@@ -61,6 +61,6 @@ func _destroy_children_inner() -> void:
     # Do nothing.
     pass
 
-func _draw_annotations() -> void:
+func get_annotation_elements() -> Array:
     # FIXME: -----------------
-    pass
+    return []

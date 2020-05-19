@@ -1,5 +1,5 @@
 extends Node2D
-class_name Overlays
+class_name CanvasLayers
 
 var global
 
@@ -14,17 +14,23 @@ var platform_graph_annotator: PlatformGraphAnnotator
 # Dictonary<Player, PlayerAnnotator>
 var player_annotators := {}
 var click_annotator: ClickAnnotator
-var extra_annotator: ExtraAnnotator
+var element_annotator: ElementAnnotator
 
 func _enter_tree() -> void:
     self.global = $"/root/Global"
-    self.global.overlays = self
+    self.global.canvas_layers = self
     
     _create_screen_layer()
     _create_menu_layer()
     _create_hud_layer()
     _create_ruler_layer()
     _create_annotation_layer()
+
+func _process(delta: float) -> void:
+    # Transform the annotation layer to follow the camera.
+    var camera: Camera2D = global.camera_controller.get_current_camera()
+    if camera != null:
+        annotation_layer.transform = get_canvas_transform()
 
 func _create_screen_layer() -> void:
     screen_layer = CanvasLayer.new()
@@ -64,12 +70,12 @@ func _create_annotation_layer() -> void:
     annotation_layer.layer = 100
     global.add_overlay_to_current_scene(annotation_layer)
     
-    # Set up some annotators that help with debugging.
     click_annotator = ClickAnnotator.new()
-    add_child(click_annotator)
+    annotation_layer.add_child(click_annotator)
     
-    extra_annotator = ExtraAnnotator.new(global)
-    add_child(extra_annotator)
+    element_annotator = ElementAnnotator.new()
+    annotation_layer.add_child(element_annotator)
+    global.element_annotator = element_annotator
 
 func _input(event: InputEvent) -> void:
     var current_time: float = global.elapsed_play_time_sec
@@ -83,11 +89,11 @@ func _input(event: InputEvent) -> void:
 
 func create_graph_annotator(graph: PlatformGraph) -> void:
     platform_graph_annotator = PlatformGraphAnnotator.new(graph)
-    add_child(platform_graph_annotator)
+    annotation_layer.add_child(platform_graph_annotator)
 
 func create_player_annotator( \
         player: Player, \
         is_human_player: bool) -> void:
     var player_annotator := PlayerAnnotator.new(player, !is_human_player)
-    add_child(player_annotator)
+    annotation_layer.add_child(player_annotator)
     player_annotators[player] = player_annotator

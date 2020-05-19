@@ -173,6 +173,6 @@ func _destroy_children_inner() -> void:
     global_counts_item_controller.destroy()
     global_counts_item_controller = null
 
-func _draw_annotations() -> void:
+func get_annotation_elements() -> Array:
     # FIXME: -----------------
-    pass
+    return []

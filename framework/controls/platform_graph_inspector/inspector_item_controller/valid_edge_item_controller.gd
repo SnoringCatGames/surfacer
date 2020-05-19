@@ -81,6 +81,6 @@ func _calculate_edge_calc_result_metadata() -> void:
 func _destroy_children_inner() -> void:
     edge_calc_result_metadata_controller = null
 
-func _draw_annotations() -> void:
+func get_annotation_elements() -> Array:
     # FIXME: -----------------
-    pass
+    return []

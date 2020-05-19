@@ -127,9 +127,8 @@ func set_platform_graph(graph: PlatformGraph) -> void:
 func _set_camera() -> void:
     var camera := Camera2D.new()
     add_child(camera)
-    camera.make_current()
     # Register the current camera, so it's globally accessible.
-    global.camera_controller.current_camera = camera
+    global.camera_controller.set_current_camera(camera)
     global.camera_controller.zoom = CameraController.DEFAULT_CAMERA_ZOOM
 
 func _init_user_controller_action_source() -> void:

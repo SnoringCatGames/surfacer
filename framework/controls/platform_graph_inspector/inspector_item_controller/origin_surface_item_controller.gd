@@ -149,9 +149,9 @@ func _destroy_children_inner() -> void:
     valid_edges_count_item_controller = null
     destination_surfaces_description_item_controller = null
 
-func _draw_annotations() -> void:
+func get_annotation_elements() -> Array:
     # FIXME: -----------------
-    pass
+    return []
 
 class SurfaceHorizontalPositionComparator:
     static func sort( \
