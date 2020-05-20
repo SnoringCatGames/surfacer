@@ -40,6 +40,8 @@ func _ready() -> void:
     
     platform_graph_inspector = PlatformGraphInspector.new(platform_graphs.values())
     add_child(platform_graph_inspector)
+    
+    global.is_level_ready = true
 
 static func _create_platform_graphs( \
         surface_parser: SurfaceParser, \

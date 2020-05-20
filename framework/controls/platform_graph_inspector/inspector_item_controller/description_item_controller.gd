@@ -1,7 +1,7 @@
 extends InspectorItemController
 class_name DescriptionItemController
 
-var BACKGROUND_COLOR := Color.from_hsv(0.1, 0.1, 0.3, 1.0)
+var BACKGROUND_COLOR := Color.from_hsv(0.28, 0.05, 0.2, 1.0)
 
 const TYPE := InspectorItemType.DESCRIPTION
 const IS_LEAF := true

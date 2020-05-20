@@ -125,6 +125,8 @@ var current_level
 var current_player_for_clicks
 var camera_controller: CameraController
 
+var is_level_ready := false
+
 var element_annotator: ElementAnnotator
 
 # Keeps track of the current total elapsed time of unpaused gameplay.

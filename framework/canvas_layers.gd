@@ -82,7 +82,8 @@ func _input(event: InputEvent) -> void:
     
     # Close the welcome panel on any mouse or key click event.
     if global.welcome_panel != null and \
-            (event is InputEventMouseButton or event is InputEventKey):
+            (event is InputEventMouseButton or event is InputEventKey) and \
+            global.is_level_ready:
         hud_layer.remove_child(global.welcome_panel)
         global.welcome_panel.queue_free()
         global.welcome_panel = null

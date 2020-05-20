@@ -10,8 +10,6 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Ensure all edge DrawUtil functions support rendering the start/end indicators.
 # 
-# - Add custom backgrounds for description TreeItems (set_custom_bg_color)
-# 
 # - Deselect and destroy tree when panel closes.
 # 
 # - Pick non-random colors for single-annotation items.
@@ -114,6 +112,9 @@ const IS_A_JUMP_CALCULATOR := true
 # - Fix width issues in inspector.
 #   - Should be able to see everything in row.
 #   - Shouldn't need to make panel wider or use horizontal scrolling.
+# 
+# - Add a way to re-display the controls list.
+# - Fix the padding in the controls list.
 # 
 # - Disable the player handling u/d/l/r keys when focus is in the debug panel.
 # 

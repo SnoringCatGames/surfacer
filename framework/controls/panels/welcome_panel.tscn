@@ -1,7 +1,11 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://framework/controls/panels/welcome_panel.gd" type="Script" id=1]
 [ext_resource path="res://assets/Open_Sans/OpenSans-Italic.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://surfacer_theme.tres" type="Theme" id=3]
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.168627, 0.168627, 0.168627, 1 )
 
 [sub_resource type="DynamicFont" id=1]
 font_data = ExtResource( 2 )
@@ -12,8 +16,13 @@ anchor_bottom = 1.0
 margin_left = 400.0
 margin_top = 50.0
 margin_right = -384.0
-margin_bottom = -506.0
+margin_bottom = -505.0
+theme = ExtResource( 3 )
+custom_styles/panel = SubResource( 2 )
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Header" type="Label" parent="."]
 margin_right = 240.0
@@ -22,6 +31,9 @@ rect_min_size = Vector2( 0, 22 )
 text = "Squirrel Away!"
 align = 1
 valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Subheader" type="Label" parent="."]
 margin_top = 26.0

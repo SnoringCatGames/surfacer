@@ -1,6 +1,9 @@
 extends Reference
 class_name Colors
 
+const PANEL_BACKGROUND := Color8(16, 18, 15)
+const HEADER_BACKGROUND := Color8(43, 43, 43)
+
 # Lightness values (from 0 to 100).
 const LIGHTNESS_NORMAL := 64
 const LIGHTNESS_LIGHT := 80
