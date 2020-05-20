@@ -14,7 +14,7 @@ const POSITION_Y_OPEN := 0.0
 const POSITION_Y_CLOSED := -PANEL_HEIGHT
 const TOGGLE_DURATION := 0.2
 
-var is_open := false
+var is_open: bool = Global.UTILITY_PANEL_STARTS_OPEN
 
 var _toggle_open_tween: Tween
 

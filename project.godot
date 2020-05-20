@@ -49,6 +49,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/annotation_element/annotation_element.gd"
 }, {
+"base": "Node",
+"class": "AnnotationElementDefaults_",
+"language": "GDScript",
+"path": "res://framework/annotators/annotation_element/annotation_element_defaults.gd"
+}, {
 "base": "Reference",
 "class": "AnnotationElementType",
 "language": "GDScript",
@@ -264,6 +269,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/failed_edge_attempt.gd"
 }, {
+"base": "AnnotationElement",
+"class": "FailedEdgeAttemptAnnotationElement",
+"language": "GDScript",
+"path": "res://framework/annotators/annotation_element/failed_edge_attempt_annotation_element.gd"
+}, {
 "base": "InspectorItemController",
 "class": "FailedEdgeItemController",
 "language": "GDScript",
@@ -360,6 +370,11 @@ _global_script_classes=[ {
 "path": "res://framework/platform_graph/edge/utils/horizontal_movement_utils.gd"
 }, {
 "base": "ColorParams",
+"class": "HsvColorParams",
+"language": "GDScript",
+"path": "res://framework/annotators/color_params/hsv_color_params.gd"
+}, {
+"base": "ColorParams",
 "class": "HsvRangeColorParams",
 "language": "GDScript",
 "path": "res://framework/annotators/color_params/hsv_range_color_params.gd"
@@ -428,6 +443,11 @@ _global_script_classes=[ {
 "class": "JumpLandPositions",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/jump_land_positions.gd"
+}, {
+"base": "AnnotationElement",
+"class": "JumpLandPositionsAnnotationElement",
+"language": "GDScript",
+"path": "res://framework/annotators/annotation_element/jump_land_positions_annotation_element.gd"
 }, {
 "base": "Reference",
 "class": "JumpLandPositionsUtils",
@@ -853,6 +873,7 @@ _global_script_class_icons={
 "AirToSurfaceEdge": "",
 "AllDefaultAction": "",
 "AnnotationElement": "",
+"AnnotationElementDefaults_": "",
 "AnnotationElementType": "",
 "CameraController": "",
 "CanvasLayers": "",
@@ -896,6 +917,7 @@ _global_script_class_icons={
 "EdgesTopLevelGroupItemController": "",
 "ElementAnnotator": "",
 "FailedEdgeAttempt": "",
+"FailedEdgeAttemptAnnotationElement": "",
 "FailedEdgeItemController": "",
 "FailedEdgesGroupItemController": "",
 "FakePlayerAnimator": "",
@@ -915,6 +937,7 @@ _global_script_class_icons={
 "GlobalCountsTopLevelGroupItemController": "",
 "GridIndicesAnnotator": "",
 "HorizontalMovementUtils": "",
+"HsvColorParams": "",
 "HsvRangeColorParams": "",
 "InspectorItemController": "",
 "InspectorItemType": "",
@@ -929,6 +952,7 @@ _global_script_class_icons={
 "JumpInterSurfaceCalculator": "",
 "JumpInterSurfaceEdge": "",
 "JumpLandPositions": "",
+"JumpLandPositionsAnnotationElement": "",
 "JumpLandPositionsUtils": "",
 "JumpLandPositionsUtilsTestBed": "",
 "LeftWallsItemController": "",
@@ -1026,6 +1050,7 @@ Utils="*res://framework/utils/utils.gd"
 Geometry="*res://framework/utils/geometry.gd"
 DrawUtils="*res://framework/utils/draw_utils.gd"
 Global="*res://framework/global.gd"
+AnnotationElementDefaults="*res://framework/annotators/annotation_element/annotation_element_defaults.gd"
 
 [display]
 

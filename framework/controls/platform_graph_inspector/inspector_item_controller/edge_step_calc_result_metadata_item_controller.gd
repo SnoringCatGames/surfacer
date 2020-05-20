@@ -70,7 +70,8 @@ func _create_children_inner() -> void:
                 tree_item, \
                 tree, \
                 graph, \
-                _get_text_for_description_index(1))
+                _get_text_for_description_index(1), \
+                funcref(self, "get_annotation_elements"))
 
 func _destroy_children_inner() -> void:
     # Do nothing.

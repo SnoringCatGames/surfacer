@@ -1,3 +1,4 @@
+extends Reference
 class_name Colors
 
 # Lightness values (from 0 to 100).

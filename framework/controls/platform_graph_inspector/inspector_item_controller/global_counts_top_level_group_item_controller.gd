@@ -27,12 +27,14 @@ func _create_children_inner() -> void:
             tree_item, \
             tree, \
             graph, \
-            "%s total surfaces" % graph.counts.total_surfaces)
+            "%s total surfaces" % graph.counts.total_surfaces, \
+            funcref(self, "_get_annotation_elements_for_surfaces_description_item"))
     DescriptionItemController.new( \
             tree_item, \
             tree, \
             graph, \
-            "%s total edges" % graph.counts.total_edges)
+            "%s total edges" % graph.counts.total_edges, \
+            funcref(self, "_get_annotation_elements_for_edges_description_item"))
     
     var type_name: String
     var text: String
@@ -49,12 +51,28 @@ func _create_children_inner() -> void:
                 tree_item, \
                 tree, \
                 graph, \
-                text)
+                text, \
+                funcref(self, "_get_annotation_elements_for_edge_type_description_item"), \
+                edge_type)
 
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
 
 func get_annotation_elements() -> Array:
-    # Do nothing.
-    return []
+    var result := SurfacesTopLevelGroupItemController.get_annotation_elements_from_graph(graph)
+    Utils.concat( \
+            result, \
+            EdgesTopLevelGroupItemController.get_annotation_elements_from_graph(graph))
+    return result
+
+func _get_annotation_elements_for_surfaces_description_item() -> Array:
+    return SurfacesTopLevelGroupItemController.get_annotation_elements_from_graph(graph)
+
+func _get_annotation_elements_for_edges_description_item() -> Array:
+    return EdgesTopLevelGroupItemController.get_annotation_elements_from_graph(graph)
+
+func _get_annotation_elements_for_edge_type_description_item(edge_type: int) -> Array:
+    return EdgeTypeInEdgesGroupItemController.get_annotation_elements_from_graph_and_type( \
+            graph, 
+            edge_type)

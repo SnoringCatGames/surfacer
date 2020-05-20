@@ -118,12 +118,14 @@ func _create_children_inner() -> void:
             tree_item, \
             tree, \
             graph, \
-            "_%s valid outbound edges_" % valid_edge_count)
+            "_%s valid outbound edges_" % valid_edge_count, \
+            funcref(self, "_get_annotation_elements_for_valid_edges_count_description_item"))
     destination_surfaces_description_item_controller = DescriptionItemController.new( \
             tree_item, \
             tree, \
             graph, \
-            "_Destination surfaces:_")
+            "_Destination surfaces:_", \
+            funcref(self, "_get_annotation_elements_for_destination_surfaces_description_item"))
     
     var edge_types_to_valid_edges: Dictionary
     var edge_types_to_failed_edges: Dictionary
@@ -150,8 +152,38 @@ func _destroy_children_inner() -> void:
     destination_surfaces_description_item_controller = null
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    var element := SurfaceAnnotationElement.new( \
+            origin_surface, \
+            AnnotationElementDefaults.ORIGIN_SURFACE_COLOR_PARAMS, \
+            AnnotationElementDefaults.SURFACE_DEPTH)
+    return [element]
+
+func _get_annotation_elements_for_valid_edges_count_description_item() -> Array:
+    var elements := get_annotation_elements()
+    var element: EdgeAnnotationElement
+    var edge: Edge
+    for destination_surface in destination_surfaces_to_edge_types_to_valid_edges:
+        for edge_type in destination_surfaces_to_edge_types_to_valid_edges[destination_surface]:
+            for edge in destination_surfaces_to_edge_types_to_valid_edges[destination_surface][edge_type]:
+                element = EdgeAnnotationElement.new( \
+                        edge, \
+                        true, \
+                        false, \
+                        false, \
+                        AnnotationElementDefaults.EDGE_COLOR_PARAMS)
+                elements.push_back(element)
+    return elements
+
+func _get_annotation_elements_for_destination_surfaces_description_item() -> Array:
+    var elements := get_annotation_elements()
+    var element: SurfaceAnnotationElement
+    for destination_surface in attempted_destination_surfaces:
+        element = SurfaceAnnotationElement.new( \
+                destination_surface, \
+                AnnotationElementDefaults.DESTINATION_SURFACE_COLOR_PARAMS, \
+                AnnotationElementDefaults.SURFACE_DEPTH)
+        elements.push_back(element)
+    return elements
 
 class SurfaceHorizontalPositionComparator:
     static func sort( \

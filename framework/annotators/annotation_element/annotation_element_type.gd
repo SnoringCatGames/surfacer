@@ -3,6 +3,8 @@ class_name AnnotationElementType
 enum { \
     SURFACE, \
     EDGE, \
+    FAILED_EDGE_ATTEMPT, \
+    JUMP_LAND_POSITIONS, \
     EDGE_STEP, \
     UNKNOWN, \
 }
@@ -13,6 +15,10 @@ static func get_type_string(type: int) -> String:
             return "SURFACE"
         EDGE:
             return "EDGE"
+        FAILED_EDGE_ATTEMPT:
+            return "FAILED_EDGE_ATTEMPT"
+        JUMP_LAND_POSITIONS:
+            return "JUMP_LAND_POSITIONS"
         EDGE_STEP:
             return "EDGE_STEP"
         UNKNOWN:

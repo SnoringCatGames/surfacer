@@ -13,7 +13,7 @@ var valid_edges: Array
 # Array<FailedEdgeAttempt>
 var failed_edges: Array
 # Array<JumpLandPositions>
-var jump_land_positions: Array
+var all_jump_land_positions: Array
 
 var failed_edges_controller: FailedEdgesGroupItemController
 
@@ -26,7 +26,7 @@ func _init( \
         edge_type: int, \
         valid_edges: Array, \
         failed_edges: Array, \
-        jump_land_positions: Array) \
+        all_jump_land_positions: Array) \
         .( \
         TYPE, \
         IS_LEAF, \
@@ -39,7 +39,7 @@ func _init( \
     self.edge_type = edge_type
     self.valid_edges = valid_edges
     self.failed_edges = failed_edges
-    self.jump_land_positions = jump_land_positions
+    self.all_jump_land_positions = all_jump_land_positions
     _post_init()
 
 func to_string() -> String:
@@ -103,6 +103,29 @@ func _destroy_children_inner() -> void:
     failed_edges_controller = null
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    # - Draw jump_land_positions.
-    return []
+    var elements := []
+    var element: AnnotationElement
+    
+    element = SurfaceAnnotationElement.new( \
+            origin_surface, \
+            AnnotationElementDefaults.ORIGIN_SURFACE_COLOR_PARAMS, \
+            AnnotationElementDefaults.SURFACE_DEPTH)
+    elements.push_back(element)
+    
+    element = SurfaceAnnotationElement.new( \
+            destination_surface, \
+            AnnotationElementDefaults.DESTINATION_SURFACE_COLOR_PARAMS, \
+            AnnotationElementDefaults.SURFACE_DEPTH)
+    elements.push_back(element)
+    
+    for jump_land_positions in all_jump_land_positions:
+        element = JumpLandPositionsAnnotationElement.new( \
+                jump_land_positions, \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_COLOR_PARAMS, \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_RADIUS, \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH, \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP, \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH)
+        elements.push_back(element)
+    
+    return elements

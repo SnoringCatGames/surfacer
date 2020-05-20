@@ -1,4 +1,5 @@
 # A collection of utility functions for calculating state related to horizontal movement.
+extends Reference
 class_name HorizontalMovementUtils
 
 const MIN_MAX_VELOCITY_X_MARGIN := WaypointUtils.MIN_MAX_VELOCITY_X_OFFSET * 10

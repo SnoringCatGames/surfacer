@@ -86,5 +86,16 @@ func _destroy_children_inner() -> void:
     pass
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    var elements := []
+    var element: FailedEdgeAttemptAnnotationElement
+    for failed_edge_attempt in failed_edges:
+        element = FailedEdgeAttemptAnnotationElement.new( \
+                failed_edge_attempt, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_RADIUS, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH, \
+                false)
+        elements.push_back(element)
+    return elements

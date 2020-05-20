@@ -1,4 +1,5 @@
 # A collection of utility functions for calculating state related to jump/land positions.
+extends Reference
 class_name JumpLandPositionsUtils
 
 const EXTRA_JUMP_LAND_POSITION_MARGIN := 2.0

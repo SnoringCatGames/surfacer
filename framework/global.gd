@@ -15,6 +15,7 @@ const WELCOME_PANEL_RESOURCE_PATH := "res://framework/controls/panels/welcome_pa
 
 const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false
+const UTILITY_PANEL_STARTS_OPEN := true
 
 const STARTING_LEVEL_RESOURCE_PATH := "res://test/data/test_level_long_rise.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := "res://test/data/test_level_long_fall.tscn"

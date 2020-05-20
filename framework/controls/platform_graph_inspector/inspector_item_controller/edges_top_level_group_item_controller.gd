@@ -52,5 +52,21 @@ func _destroy_children_inner() -> void:
     pass
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    return get_annotation_elements_from_graph(graph)
+
+static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
+    var elements := []
+    var element: EdgeAnnotationElement
+    var edge: Edge
+    for origin_surface in graph.surfaces_set:
+        for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
+            for destination_node in graph.nodes_to_nodes_to_edges[origin_node]:
+                edge = graph.nodes_to_nodes_to_edges[origin_node][destination_node]
+                element = EdgeAnnotationElement.new( \
+                        edge, \
+                        true, \
+                        false, \
+                        false, \
+                        AnnotationElementDefaults.EDGE_COLOR_PARAMS)
+                elements.push_back(element)
+    return elements

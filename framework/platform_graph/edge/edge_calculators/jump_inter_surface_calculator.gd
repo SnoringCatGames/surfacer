@@ -8,69 +8,20 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# >>>- ElementAnnotator:
-#   - Render/hook-up ElementAnnotator somewhere.
-#   - Expose ElementAnnotator on Global.
-#   - Register and deregister items to draw on ElementAnnotator from InspectorItemControllers.
+# - Ensure all edge DrawUtil functions support rendering the start/end indicators.
 # 
-# - Add types back to variables in Global.
+# - Add custom backgrounds for description TreeItems (set_custom_bg_color)
 # 
-# - Think of how to represent the state to draw for description items:
-#   - Maybe I should create a general purpose configurable draw params object?
-#     - AnnotationElementType { SURFACE, EDGE, STEP, START_INDICATOR, END_INDICATOR, ... }
-#   - Would probably want to create separate metadata classes for each AnnotationType, so that we
-#     get type safety?
-#     - Should probably do the same thing for the InspectorSearchType metadata.
-#   - Would need to go through and list all possible things I want to draw for each item.
-    # - Platform graph [player_name]
-    #   <all surfaces, all valid edges>
-    #   - Edges [#]
-    #     <all valid edges>
-    #     - JUMP_INTER_SURFACE_EDGEs [#]
-    #       <>
-    #       - [(x,y), (x,y)]
-    #         <>
-    #         - <FIXME: Add step example items>
-    #       - ...
-    #     - ...
-    #   - Surfaces [#]
-    #     <all surfaces>
-    #     - Floors [#]
-    #       <all floors>
-    #       - [(x,y), (x,y)]
-    #         <this single surface>
-    #         - _# valid outbound edges_
-    #           <all valid outbound edges>
-    #         - _Destination surfaces:_
-    #           <all destination surfaces>
-    #         - FLOOR [(x,y), (x,y)]
-    #           <origin surface, destination surface>
-    #           - JUMP_INTER_SURFACE_EDGEs [#]
-    #             <origin surface, destination surface, jump/land positions (dotted red lines
-    #              connecting pairs)>
-    #             - [(x,y), (x,y)]
-    #               <the valid edge (discrete and continuous trajectories, waypoints, 
-    #                start and end position indicators, instruction input indicators)>
-    #               - <FIXME: Add step example items>
-    #             - ...
-    #             - Failed edge calculations
-    #               <>
-    #               - [(x,y), (x,y)]
-    #                 <>
-    #                 - <FIXME: Add step example items>
-    #               - ...
-    #         - ...
-    #       - ...
-    #     - ...
-    #   - Global counts
-    #     <all surfaces, all valid edges>
-    #     - # total surfaces
-    #       <all surfaces>
-    #     - # total edges
-    #       <all valid edges>
-    #     - # JUMP_INTER_SURFACE_EDGEs
-    #       <all JUMP_INTER_SURFACE_EDGEs>
-    #     - ...
+# - Deselect and destroy tree when panel closes.
+# 
+# - Pick non-random colors for single-annotation items.
+# - Choose something other than red to indicate destination/end, since red is used for fail.
+# - Step through and consider whether I want to show any other annotations for each item.
+# - Step through and consider whether I want to show any other analytic description children for each item.
+# - Spend some time thinking through the actual timings of the various parts of calculations
+#   (horizontal more than vertical, when possible).
+# 
+# - Create separate metadata classes for InspectorSearchType metadata.
 # 
 # - InspectorItemMetadata:
 #   - Add new methods to PlatformGraphInspector:
@@ -87,21 +38,18 @@ const IS_A_JUMP_CALCULATOR := true
 #   - draw_annotations
 #   - Do I need to add back references to the corresponding params objects in the
 #     result-metadata objects?
+#   - And also maybe update DrawUtils and where constants are stored.
+#   - And maybe update Colors?
 # 
 # - Add some additional description items under valid and failed edges with more metadata for debugging.
 # 
-# - Add custom backgrounds for description TreeItems (set_custom_bg_color)
+# - Auto expand DebugPanel, and auto select the top-level edges item in the PlatformGraphInspector.
+# 
+# - Add types back to variables in Global.
 # 
 # - Add TODOs to use easing curves with all annotation animations.
 # 
-#  - Update PlatformGraphInspector.
-#    - Handle left-over FIXMEs.
 #  - Create FailedEdgeAttempt results from other edge calculators.
-# 
-# - Refactor PlatformGraphInspector:
-#   - Pull-out TreeItem text creation into helpers.
-#   - Pull-out text constants into constant variables.
-#   - Make things somehow more generalizable, parameterized on metadata type.
 # 
 # - Rename:
 #   - movement_calculation_overall_params -> edge_calc_params

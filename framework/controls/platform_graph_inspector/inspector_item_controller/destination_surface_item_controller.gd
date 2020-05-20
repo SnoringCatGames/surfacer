@@ -129,5 +129,12 @@ func _destroy_children_inner() -> void:
     pass
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    var origin_element := SurfaceAnnotationElement.new( \
+            origin_surface, \
+            AnnotationElementDefaults.ORIGIN_SURFACE_COLOR_PARAMS, \
+            AnnotationElementDefaults.SURFACE_DEPTH)
+    var destination_element := SurfaceAnnotationElement.new( \
+            destination_surface, \
+            AnnotationElementDefaults.DESTINATION_SURFACE_COLOR_PARAMS, \
+            AnnotationElementDefaults.SURFACE_DEPTH)
+    return [origin_element, destination_element]

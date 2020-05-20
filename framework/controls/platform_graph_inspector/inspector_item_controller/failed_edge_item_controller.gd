@@ -96,5 +96,12 @@ func _destroy_children_inner() -> void:
     edge_calc_result_metadata_controller = null
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    var element := FailedEdgeAttemptAnnotationElement.new( \
+            failed_edge_attempt, \
+            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS, \
+            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_RADIUS, \
+            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH, \
+            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP, \
+            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH, \
+            false)
+    return [element]

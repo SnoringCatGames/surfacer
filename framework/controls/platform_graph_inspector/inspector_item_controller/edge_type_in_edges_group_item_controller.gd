@@ -60,18 +60,39 @@ func _create_children_inner() -> void:
         for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
             for destination_node in graph.nodes_to_nodes_to_edges[origin_node]:
                 edge = graph.nodes_to_nodes_to_edges[origin_node][destination_node]
-                if InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge.type) >= 0:
-                    continue
-                ValidEdgeItemController.new( \
-                        tree_item, \
-                        tree, \
-                        graph, \
-                        edge)
+                if edge.type == edge_type and \
+                        InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge.type) < 0:
+                    ValidEdgeItemController.new( \
+                            tree_item, \
+                            tree, \
+                            graph, \
+                            edge)
 
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    return get_annotation_elements_from_graph_and_type( \
+            graph, \
+            edge_type)
+
+static func get_annotation_elements_from_graph_and_type( \
+        graph: PlatformGraph, \
+        edge_type: int) -> Array:
+    var elements := []
+    var element: EdgeAnnotationElement
+    var edge: Edge
+    for origin_surface in graph.surfaces_set:
+        for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
+            for destination_node in graph.nodes_to_nodes_to_edges[origin_node]:
+                edge = graph.nodes_to_nodes_to_edges[origin_node][destination_node]
+                if edge.type == edge_type:
+                    element = EdgeAnnotationElement.new( \
+                            edge, \
+                            true, \
+                            false, \
+                            false, \
+                            AnnotationElementDefaults.EDGE_COLOR_PARAMS)
+                    elements.push_back(element)
+    return elements

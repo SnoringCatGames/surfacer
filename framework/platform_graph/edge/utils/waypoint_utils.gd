@@ -1,4 +1,5 @@
 # A collection of utility functions for calculating state related to Waypoints.
+extends Reference
 class_name WaypointUtils
 
 # FIXME: D: Tweak this.

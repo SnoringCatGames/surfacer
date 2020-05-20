@@ -25,17 +25,24 @@ var graph_item_controllers := {}
 var tree: Tree
 var tree_root: TreeItem
 
+var _is_ready := false
+
 func _init(graphs: Array) -> void:
     self.graphs = graphs
 
 func _enter_tree() -> void:
     inspector_selector = PlatformGraphInspectorSelector.new(self)
     add_child(inspector_selector)
+    _populate_tree()
 
 func _ready() -> void:
     global = $"/root/Global"
     element_annotator = global.element_annotator
-    
+    global.debug_panel.add_section(tree)
+    _is_ready = true
+    call_deferred("_select_initial_item")
+
+func _populate_tree() -> void:
     tree = Tree.new()
     tree.rect_min_size = Vector2( \
             0.0, \
@@ -50,7 +57,6 @@ func _ready() -> void:
             "item_collapsed", \
             self, \
             "_on_tree_item_expansion_toggled")
-    global.debug_panel.add_section(tree)
     
     tree_root = tree.create_item()
     
@@ -59,6 +65,18 @@ func _ready() -> void:
                 tree_root, \
                 tree, \
                 graph)
+
+func _select_initial_item() -> void:
+    var player_to_debug: String = \
+            global.DEBUG_PARAMS.limit_parsing.player_name if \
+            global.DEBUG_PARAMS.has("limit_parsing") and \
+                    global.DEBUG_PARAMS.limit_parsing.has("player_name") else \
+            null
+    if player_to_debug != null:
+        graph_item_controllers[player_to_debug] \
+                .find_and_expand_controller( \
+                        InspectorSearchType.EDGES_TOP_LEVEL_GROUP, \
+                        {})
 
 func _on_tree_item_selected() -> void:
     var item := tree.get_selected()

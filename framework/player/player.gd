@@ -146,9 +146,6 @@ func _physics_process(delta: float) -> void:
     _update_surface_state()
     _handle_pointer_selections()
     
-    if !surface_state.is_touching_a_surface:
-        print("[remove] v=%s" % velocity)
-    
     if surface_state.just_left_air:
         print("GRABBED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \

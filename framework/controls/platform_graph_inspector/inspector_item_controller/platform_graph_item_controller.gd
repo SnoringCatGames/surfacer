@@ -47,7 +47,7 @@ func find_and_expand_controller( \
     expand()
     
     # FIXME: --------------------------------
-    match metadata.search_type:
+    match search_type:
         InspectorSearchType.EDGE:
             assert(metadata.has("origin_surface") and \
                     metadata.has("destination_surface") and \
@@ -72,10 +72,13 @@ func find_and_expand_controller( \
                         metadata)
             else:
                 Utils.error("Invalid Surface: %s" % metadata.surface.to_string())
-            
+          
+        InspectorSearchType.EDGES_TOP_LEVEL_GROUP:
+            edges_item_controller.select()
+        
         _:
             Utils.error("Invalid InspectorSearchType: %s" % \
-                    InspectorSearchType.get_type_string(metadata.search_type))
+                    InspectorSearchType.get_type_string(search_type))
     
     return null
 
@@ -174,5 +177,11 @@ func _destroy_children_inner() -> void:
     global_counts_item_controller = null
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    return get_annotation_elements_from_graph(graph)
+
+static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
+    var result := SurfacesTopLevelGroupItemController.get_annotation_elements_from_graph(graph)
+    Utils.concat( \
+            result, \
+            EdgesTopLevelGroupItemController.get_annotation_elements_from_graph(graph))
+    return result

@@ -1,4 +1,5 @@
 # A collection of utility functions for calculating state related to MovementTrajectory.
+extends Reference
 class_name MovementTrajectoryUtils
 
 # FIXME: B: use this to record slow/fast gravities on the movement_params when initializing and

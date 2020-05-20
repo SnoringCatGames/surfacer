@@ -82,5 +82,10 @@ func _destroy_children_inner() -> void:
     edge_calc_result_metadata_controller = null
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    var element := EdgeAnnotationElement.new( \
+            edge, \
+            true, \
+            true, \
+            true, \
+            AnnotationElementDefaults.EDGE_COLOR_PARAMS)
+    return [element]

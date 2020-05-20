@@ -1,4 +1,5 @@
 # A collection of utility functions for calculating state related to MovementCalcSteps.
+extends Reference
 class_name MovementStepUtils
 
 # Calculates movement steps to reach the given destination.

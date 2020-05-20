@@ -91,5 +91,13 @@ func _destroy_children_inner() -> void:
     pass
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    var elements := []
+    var element: SurfaceAnnotationElement
+    for surface in graph.surfaces_set:
+        if surface.side == side:
+            element = SurfaceAnnotationElement.new( \
+                    surface, \
+                    AnnotationElementDefaults.SURFACE_COLOR_PARAMS, \
+                    AnnotationElementDefaults.SURFACE_DEPTH)
+            elements.push_back(element)
+    return elements

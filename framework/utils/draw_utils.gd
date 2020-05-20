@@ -723,17 +723,17 @@ static func _draw_edge_from_instructions_positions( \
             base_color.h, \
             0.6, \
             0.9, \
-            0.5)
+            base_color.a * 0.7)
     var waypoint_color := Color.from_hsv( \
             base_color.h, \
             0.6, \
             0.7, \
-            0.3)
+            base_color.a)
     var instruction_start_stop_color := Color.from_hsv( \
             base_color.h, \
             0.3, \
             0.9, \
-            0.8)
+            base_color.a)
     
     if includes_discrete_positions:
         # Draw the trajectory (as approximated via discrete time steps during instruction 

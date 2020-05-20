@@ -1,13 +1,6 @@
 extends InspectorItemController
 class_name SurfacesTopLevelGroupItemController
 
-const HUE_MIN := 0.0
-const HUE_MAX := 1.0
-const SATURATION := 0.9
-const VALUE := 0.9
-const ALPHA := 0.6
-const DEPTH := 16.0
-
 const TYPE := InspectorItemType.SURFACES_TOP_LEVEL_GROUP
 const IS_LEAF := false
 const STARTS_COLLAPSED := false
@@ -121,18 +114,15 @@ func _destroy_children_inner() -> void:
     ceilings_item_controller = null
 
 func get_annotation_elements() -> Array:
-    var color_params := ColorParamsFactory.create_hsv_color_params_with_constant_sva( \
-            HUE_MIN, \
-            HUE_MAX, \
-            SATURATION, \
-            VALUE, \
-            ALPHA)
+    return get_annotation_elements_from_graph(graph)
+
+static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var elements := []
     var element: SurfaceAnnotationElement
     for surface in graph.surfaces_set:
         element = SurfaceAnnotationElement.new( \
                 surface, \
-                color_params, \
-                DEPTH)
+                AnnotationElementDefaults.SURFACE_COLOR_PARAMS, \
+                AnnotationElementDefaults.SURFACE_DEPTH)
         elements.push_back(element)
     return elements

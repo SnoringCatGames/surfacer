@@ -1,3 +1,4 @@
+extends Reference
 class_name CollisionCheckUtils
 
 # Checks whether a collision would occur with any surface during the given instructions.

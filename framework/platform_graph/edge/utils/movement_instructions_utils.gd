@@ -1,4 +1,5 @@
 # A collection of utility functions for calculating state related to MovementInstructions.
+extends Reference
 class_name MovementInstructionsUtils
 
 # FIXME: B 

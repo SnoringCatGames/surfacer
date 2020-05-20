@@ -1,34 +1,37 @@
 extends AnnotationElement
 class_name EdgeAnnotationElement
 
-const DEFAULT_BASE_COLOR := Color.white
-
 const TYPE := AnnotationElementType.EDGE
 
 var edge: Edge
 var includes_waypoints: bool
 var includes_instruction_indicators: bool
 var includes_discrete_positions: bool
-var base_color: Color
+var color_params: ColorParams
 
 func _init( \
         edge: Edge, \
-        includes_waypoints := false, \
-        includes_instruction_indicators := false, \
-        includes_discrete_positions := false, \
-        base_color := DEFAULT_BASE_COLOR) \
+        includes_waypoints := \
+                AnnotationElementDefaults_.INCLUDES_WAYPOINTS, \
+        includes_instruction_indicators := \
+                AnnotationElementDefaults_.INCLUDES_INSTRUCTION_INDICATORS, \
+        includes_discrete_positions := \
+                AnnotationElementDefaults_.INCLUDES_DISCRETE_POSITIONS, \
+        color_params := \
+                AnnotationElementDefaults_.EDGE_COLOR_PARAMS) \
         .(TYPE) -> void:
     self.edge = edge
     self.includes_waypoints = includes_waypoints
     self.includes_instruction_indicators = includes_instruction_indicators
     self.includes_discrete_positions = includes_discrete_positions
-    self.base_color = base_color
+    self.color_params = color_params
 
 func draw(canvas: CanvasItem) -> void:
+    var color := color_params.get_color()
     DrawUtils.draw_edge( \
             canvas, \
             edge, \
             includes_waypoints, \
             includes_instruction_indicators, \
             includes_discrete_positions, \
-            base_color)
+            color)
