@@ -15,9 +15,12 @@ func add(element: AnnotationElement) -> void:
     _elements_set[element] = element
 
 func clear() -> void:
+    for element in _elements_set:
+        element.clear()
     _elements_set.clear()
 
 func erase(element: AnnotationElement) -> bool:
+    element.clear()
     return _elements_set.erase(element)
 
 func has(element: AnnotationElement) -> bool:

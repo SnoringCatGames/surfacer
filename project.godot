@@ -129,11 +129,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/collision_calc_result_metadata.gd"
 }, {
-"base": "Node2D",
-"class": "CollisionCalculationAnnotator",
-"language": "GDScript",
-"path": "res://framework/annotators/collision_calculation_annotator.gd"
-}, {
 "base": "Reference",
 "class": "CollisionCheckUtils",
 "language": "GDScript",
@@ -203,11 +198,6 @@ _global_script_classes=[ {
 "class": "EdgeCalcResultType",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/edge_calc_result_type.gd"
-}, {
-"base": "Node2D",
-"class": "EdgeCalculationTrajectoryAnnotator",
-"language": "GDScript",
-"path": "res://framework/annotators/edge_calculation_trajectory_annotator.gd"
 }, {
 "base": "Reference",
 "class": "EdgeMovementCalculator",
@@ -889,7 +879,6 @@ _global_script_class_icons={
 "ClimbOverWallToFloorEdge": "",
 "CollisionCalcParams": "",
 "CollisionCalcResultMetadata": "",
-"CollisionCalculationAnnotator": "",
 "CollisionCheckUtils": "",
 "ColorParams": "",
 "ColorParamsFactory": "",
@@ -904,7 +893,6 @@ _global_script_class_icons={
 "EdgeCalcResultMetadata": "",
 "EdgeCalcResultMetadataItemController": "",
 "EdgeCalcResultType": "",
-"EdgeCalculationTrajectoryAnnotator": "",
 "EdgeMovementCalculator": "",
 "EdgeStepAnnotationElement": "",
 "EdgeStepCalcResultMetadata": "",

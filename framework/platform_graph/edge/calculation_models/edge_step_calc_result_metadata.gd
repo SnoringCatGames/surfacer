@@ -40,21 +40,6 @@ func _init( \
         edge_result_metadata.children_step_attempts.push_back(self)
     edge_result_metadata.total_step_count += 1
 
-#    # Record this on its parent.
-#    self.call_deferred( \
-#            "_add_self_to_parent_children_list", \
-#            edge_result_metadata, \
-#            parent_step_result_metadata)
-#    edge_result_metadata.total_step_count += 1
-#
-#func _add_self_to_parent_children_list( \
-#        edge_result_metadata: EdgeCalcResultMetadata, \
-#        parent_step_result_metadata: EdgeStepCalcResultMetadata) -> void:
-#    if parent_step_result_metadata != null:
-#        parent_step_result_metadata.children_step_attempts.push_back(self)
-#    else:
-#        edge_result_metadata.children_step_attempts.push_back(self)
-
 func get_start() -> Waypoint:
     return step_calc_params.start_waypoint as Waypoint
 

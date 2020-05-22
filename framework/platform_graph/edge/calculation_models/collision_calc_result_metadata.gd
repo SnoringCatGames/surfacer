@@ -14,6 +14,8 @@ var step_end_surface_normal := Vector2.INF
 var step_start_time: float
 var step_end_time: float
 
+var collider_shape: Shape2D
+var collider_rotation: float
 var collider_half_width_height := Vector2.INF
 var margin: float
 
@@ -41,6 +43,8 @@ func _init( \
         step_calc_params = null, \
         horizontal_step = null) -> void:
     if overall_calc_params != null:
+        self.collider_shape = overall_calc_params.movement_params.collider_shape
+        self.collider_rotation = overall_calc_params.movement_params.collider_rotation
         self.collider_half_width_height = \
                 overall_calc_params.movement_params.collider_half_width_height
         self.margin = overall_calc_params.shape_query_params.margin

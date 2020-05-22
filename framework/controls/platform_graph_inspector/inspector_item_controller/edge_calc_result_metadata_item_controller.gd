@@ -62,5 +62,22 @@ func _destroy_children_inner() -> void:
     pass
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    var elements := []
+    var element: AnnotationElement
+    if !edge_result_metadata.failed_before_creating_steps:
+        for step_result_metadata in edge_result_metadata.children_step_attempts:
+            element = EdgeStepAnnotationElement.new( \
+                    step_result_metadata, \
+                    true)
+            elements.push_back(element)
+    else:
+        element = FailedEdgeAttemptAnnotationElement.new( \
+                edge_or_edge_attempt, \
+                AnnotationElementDefaults.INVALID_EDGE_COLOR_PARAMS, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_RADIUS, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH, \
+                false)
+        elements.push_back(element)
+    return elements

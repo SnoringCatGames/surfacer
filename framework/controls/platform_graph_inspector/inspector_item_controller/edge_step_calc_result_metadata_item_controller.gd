@@ -78,5 +78,7 @@ func _destroy_children_inner() -> void:
     pass
 
 func get_annotation_elements() -> Array:
-    # FIXME: -----------------
-    return []
+    var element := EdgeStepAnnotationElement.new( \
+            step_result_metadata, \
+            false)
+    return [element]

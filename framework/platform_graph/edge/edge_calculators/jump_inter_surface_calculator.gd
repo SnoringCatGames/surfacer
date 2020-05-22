@@ -8,6 +8,15 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ---------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - PlatformGraphInspectorSelectionAnnotator
+#   - Add support for selecting surface or edge via clicking on level.
+#   - Add auto-transition timer.
+#     - Simply enable this when the EdgeCalcResultMetadataItemController is selected.
+# - Add configurable legend.
+# 
+# - Add support for navigating in the inspector directly to the debug edge specified in
+#   global.DEBUG_STATE.
+# 
 # - Ensure all edge DrawUtil functions support rendering the start/end indicators.
 # 
 # - Deselect and destroy tree when panel closes.
