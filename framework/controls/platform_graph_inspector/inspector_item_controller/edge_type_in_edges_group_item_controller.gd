@@ -42,17 +42,9 @@ func get_has_children() -> bool:
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
-    var result: InspectorItemController
-    var child := tree_item.get_children()
-    while child != null:
-        result = child.get_metadata(0).find_and_expand_controller( \
-                search_type, \
-                metadata)
-        if result != null:
-            return result
-        child = child.get_next()
-    return null
+        metadata: Dictionary) -> bool:
+    Utils.error("find_and_expand_controller should not be called for EDGE_TYPE_IN_EDGES_GROUP.")
+    return false
 
 func _create_children_inner() -> void:
     var edge: Edge

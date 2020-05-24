@@ -40,9 +40,10 @@ static func calculate_steps_with_new_jump_height( \
             overall_calc_params, \
             step_calc_params)
     
-    if calc_results == null:
-        edge_result_metadata.edge_calc_result_type = \
-                EdgeCalcResultType.FAILED_WHEN_CALCULATING_HORIZONTAL_STEPS
+    edge_result_metadata.edge_calc_result_type = \
+            EdgeCalcResultType.FAILED_WHEN_CALCULATING_HORIZONTAL_STEPS if \
+            calc_results == null else \
+            EdgeCalcResultType.EDGE_VALID
     
     return calc_results
 

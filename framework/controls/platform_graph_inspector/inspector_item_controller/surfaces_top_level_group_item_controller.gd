@@ -49,33 +49,40 @@ func to_string() -> String:
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
+        metadata: Dictionary) -> bool:
     expand()
-    
+    call_deferred( \
+            "find_and_expand_controller_recursive", \
+            search_type, \
+            metadata)
+    return true
+
+func find_and_expand_controller_recursive( \
+        search_type: int, \
+        metadata: Dictionary) -> void:
     var side: int = \
             metadata.surface.side if \
             search_type == InspectorSearchType.SURFACE else \
             metadata.origin_surface.side
     match side:
         SurfaceSide.FLOOR:
-            return floors_item_controller.find_and_expand_controller( \
+            floors_item_controller.find_and_expand_controller( \
                     search_type, \
                     metadata)
         SurfaceSide.LEFT_WALL:
-            return left_walls_item_controller.find_and_expand_controller( \
+            left_walls_item_controller.find_and_expand_controller( \
                     search_type, \
                     metadata)
         SurfaceSide.RIGHT_WALL:
-            return right_walls_item_controller.find_and_expand_controller( \
+            right_walls_item_controller.find_and_expand_controller( \
                     search_type, \
                     metadata)
         SurfaceSide.CEILING:
-            return ceilings_item_controller.find_and_expand_controller( \
+            ceilings_item_controller.find_and_expand_controller( \
                     search_type, \
                     metadata)
         _:
             Utils.error("Invalid SurfaceSide: %s" % SurfaceSide.get_side_string(side))
-            return null
 
 func _create_children_inner() -> void:
     floors_item_controller = FloorsItemController.new( \

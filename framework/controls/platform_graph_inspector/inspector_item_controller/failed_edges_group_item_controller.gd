@@ -50,28 +50,32 @@ func get_has_children() -> bool:
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
+        metadata: Dictionary) -> bool:
     assert(search_type == InspectorSearchType.EDGE)
-    
-    var were_children_ready_before := are_children_ready
-    if !were_children_ready_before:
+    metadata.were_children_ready_before = are_children_ready
+    if !metadata.were_children_ready_before:
         _create_children_if_needed()
-    
-    var result: InspectorItemController
+    call_deferred( \
+            "find_and_expand_controller_recursive", \
+            search_type, \
+            metadata)
+    return true
+
+func find_and_expand_controller_recursive( \
+        search_type: int, \
+        metadata: Dictionary) -> void:
+    var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
-        result = child.get_metadata(0).find_and_expand_controller( \
+        is_subtree_found = child.get_metadata(0).find_and_expand_controller( \
                 search_type, \
                 metadata)
-        if result != null:
+        if is_subtree_found:
             expand()
-            return result
+            return
         child = child.get_next()
-    
-    if !were_children_ready_before:
+    if !metadata.were_children_ready_before:
         _destroy_children_if_needed()
-    
-    return null
 
 func _create_children_inner() -> void:
     for failed_edge_attempt in failed_edges:

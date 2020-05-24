@@ -56,6 +56,7 @@ func navigate_to_position(destination: PositionAlongSurface) -> bool:
     else:
         var origin := MovementUtils.create_position_without_surface(surface_state.center_position)
         var air_to_surface_edge := air_to_surface_calculator.find_a_landing_trajectory( \
+                null, \
                 collision_params, \
                 graph.surfaces_set, \
                 origin, \

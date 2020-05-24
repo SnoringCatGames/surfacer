@@ -166,44 +166,41 @@ func _on_tree_item_expansion_toggled(item: TreeItem) -> void:
     else:
         controller.call_deferred("on_item_expanded")
 
-func select_edge_or_edge_attempt( \
+func select_edge_or_surface( \
         start_position: PositionAlongSurface, \
         end_position: PositionAlongSurface, \
         edge_type: int, \
         graph: PlatformGraph) -> void:
-    var controller := _find_canonical_edge_or_edge_attempt_item_controller( \
-            start_position.surface, \
-            end_position.surface, \
-            start_position.target_point, \
-            end_position.target_point, \
-            edge_type, \
-            graph)
-    
-    # FIXME: ----------------------- Scroll to the correct spot.
+    if start_position.surface == end_position.surface:
+        _select_canonical_surface_item_controller( \
+                start_position.surface, \
+                graph)
+    else:
+        _select_canonical_edge_or_edge_attempt_item_controller( \
+                start_position.surface, \
+                end_position.surface, \
+                start_position.target_point, \
+                end_position.target_point, \
+                edge_type, \
+                graph)
 
-func _find_canonical_surface_item_controller( \
+func _select_canonical_surface_item_controller( \
         surface: Surface, \
-        graph: PlatformGraph) -> InspectorItemController:
+        graph: PlatformGraph) -> void:
     if graph_item_controllers.has(graph.movement_params.name):
-        var controller: InspectorItemController = \
-                graph_item_controllers[graph.movement_params.name] \
-                        .find_and_expand_controller( \
-                                InspectorSearchType.SURFACE, \
-                                {surface = surface})
-        if controller != null:
-            return controller
-    
-    Utils.error("Canonical TreeItem not found for Surface: %s" % surface.to_string())
-    return null
+        graph_item_controllers[graph.movement_params.name] \
+                .find_and_expand_controller( \
+                        InspectorSearchType.SURFACE, \
+                        {surface = surface})
 
-func _find_canonical_edge_or_edge_attempt_item_controller( \
+func _select_canonical_edge_or_edge_attempt_item_controller( \
         start_surface: Surface, \
         end_surface: Surface, \
         target_start: Vector2, \
         target_end: Vector2, \
         edge_type: int, \
         graph: PlatformGraph, \
-        throws_on_not_found := false) -> InspectorItemController:
+        throws_on_not_found := false) -> void:
     # Determine which start/end positions to check.
     var is_a_jump_calculator := InspectorItemController.JUMP_CALCULATORS.find(edge_type) >= 0
     var all_jump_land_positions := \
@@ -212,12 +209,15 @@ func _find_canonical_edge_or_edge_attempt_item_controller( \
                     start_surface, \
                     end_surface, \
                     is_a_jump_calculator)
-    var closest_jump_land_positions := _find_closest_jump_land_positions( \
-            target_start, \
-            target_end, \
-            all_jump_land_positions)
-    var start := closest_jump_land_positions.jump_position.target_point
-    var end := closest_jump_land_positions.land_position.target_point
+    var start := Vector2.INF
+    var end := Vector2.INF
+    if !all_jump_land_positions.empty():
+        var closest_jump_land_positions := _find_closest_jump_land_positions( \
+                target_start, \
+                target_end, \
+                all_jump_land_positions)
+        start = closest_jump_land_positions.jump_position.target_point
+        end = closest_jump_land_positions.land_position.target_point
     
     if graph_item_controllers.has(graph.movement_params.name):
         var metadata := { \
@@ -227,27 +227,10 @@ func _find_canonical_edge_or_edge_attempt_item_controller( \
             end = end, \
             edge_type = edge_type, \
         }
-        var controller: InspectorItemController = \
-                graph_item_controllers[graph.movement_params.name] \
-                        .find_and_expand_controller( \
-                                InspectorSearchType.EDGE, \
-                                metadata)
-        if controller != null:
-            return controller
-    
-    if throws_on_not_found:
-        Utils.error("Canonical TreeItem not found for Edge calculation: " + \
-                "start=%s, " + \
-                "end=%s, " + \
-                "end_type=%s," + \
-                "player_name=%s" % [ \
-                str(start), \
-                str(end), \
-                EdgeType.get_type_string(edge_type), \
-                graph.movement_params.name, \
-                ])
-    
-    return null
+        graph_item_controllers[graph.movement_params.name] \
+                .find_and_expand_controller( \
+                        InspectorSearchType.EDGE, \
+                        metadata)
 
 static func _find_closest_jump_land_positions( \
         target_jump_position: Vector2, \
@@ -259,8 +242,8 @@ static func _find_closest_jump_land_positions( \
     
     for jump_land_positions in all_jump_land_positions:
         current_distance_sum = \
-                target_jump_position.distance_to(jump_land_positions.jump_position) + \
-                target_land_position.distance_to(jump_land_positions.land_position)
+                target_jump_position.distance_to(jump_land_positions.jump_position.target_point) + \
+                target_land_position.distance_to(jump_land_positions.land_position.target_point)
         if current_distance_sum < closest_distance_sum:
             closest_jump_land_positions = jump_land_positions
             closest_distance_sum = current_distance_sum

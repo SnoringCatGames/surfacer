@@ -33,6 +33,7 @@ func calculate_edge( \
         needs_extra_jump_duration := false, \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
     return find_a_landing_trajectory( \
+            edge_result_metadata, \
             collision_params, \
             {}, \
             position_start, \
@@ -62,6 +63,7 @@ func optimize_edge_land_position_for_path( \
 #
 # Returns null if no possible landing exists.
 func find_a_landing_trajectory( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         collision_params: CollisionCalcParams, \
         all_possible_surfaces_set: Dictionary, \
         origin: PositionAlongSurface, \
@@ -77,6 +79,7 @@ func find_a_landing_trajectory( \
     
     if exclusive_land_position != null:
         calc_results = FallMovementUtils.find_landing_trajectory_between_positions( \
+                edge_result_metadata, \
                 collision_params, \
                 origin, \
                 exclusive_land_position, \

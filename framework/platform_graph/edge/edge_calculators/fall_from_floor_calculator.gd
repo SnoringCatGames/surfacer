@@ -168,6 +168,7 @@ func _get_all_edges_from_one_side( \
     if exclusive_land_position != null:
         var calc_results: MovementCalcResults = \
                 FallMovementUtils.find_landing_trajectory_between_positions( \
+                        null, \
                         collision_params, \
                         position_fall_off_wrapper, \
                         exclusive_land_position, \

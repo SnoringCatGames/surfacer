@@ -65,27 +65,31 @@ func get_text() -> String:
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
+        metadata: Dictionary) -> bool:
     assert(search_type == InspectorSearchType.EDGE)
-    
-    if metadata.destination_surface != destination_surface:
-        return null
-    
-    expand()
-    
-    var result: InspectorItemController
-    var child := tree_item.get_children()
-    while child != null:
-        result = child.get_metadata(0).find_and_expand_controller( \
+    if metadata.destination_surface == destination_surface:
+        expand()
+        call_deferred( \
+                "find_and_expand_controller_recursive", \
                 search_type, \
                 metadata)
-        if result != null:
-            return result
+        return true
+    else:
+        return false
+
+func find_and_expand_controller_recursive( \
+        search_type: int, \
+        metadata: Dictionary) -> void:
+    var is_subtree_found: bool
+    var child := tree_item.get_children()
+    while child != null:
+        is_subtree_found = child.get_metadata(0).find_and_expand_controller( \
+                search_type, \
+                metadata)
+        if is_subtree_found:
+            return
         child = child.get_next()
-    
     select()
-    
-    return null
 
 func _create_children_inner() -> void:
     var valid_edges: Array

@@ -385,7 +385,6 @@ static func optimize_edge_land_position_for_path_helper( \
         # Landing on a wall.
         
         var land_position: PositionAlongSurface
-        var needs_extra_wall_land_horizontal_speed: bool
         var calc_results: MovementCalcResults
         var optimized_edge: Edge
         
@@ -411,7 +410,7 @@ static func optimize_edge_land_position_for_path_helper( \
                     land_position, \
                     edge.velocity_start, \
                     edge.includes_extra_jump_duration, \
-                    false)
+                    edge.includes_extra_wall_land_horizontal_speed)
             
             if optimized_edge != null:
                 optimized_edge.is_optimized_for_path = true

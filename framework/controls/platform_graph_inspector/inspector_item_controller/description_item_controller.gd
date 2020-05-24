@@ -44,8 +44,8 @@ func get_text() -> String:
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
-    return null
+        metadata: Dictionary) -> bool:
+    return false
 
 func _create_children_inner() -> void:
     # Do nothing.

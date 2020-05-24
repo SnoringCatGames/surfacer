@@ -22,6 +22,12 @@ func _init( \
 func get_text() -> String:
     return PREFIX
 
+func find_and_expand_controller( \
+        search_type: int, \
+        metadata: Dictionary) -> bool:
+    Utils.error("find_and_expand_controller should not be called for GLOBAL_COUNTS_TOP_LEVEL_GROUP.")
+    return false
+
 func _create_children_inner() -> void:
     DescriptionItemController.new( \
             tree_item, \

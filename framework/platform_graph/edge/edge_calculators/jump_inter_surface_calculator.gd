@@ -9,22 +9,40 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - PlatformGraphInspectorSelectionAnnotator
-#   - Add support for selecting surface or edge via clicking on level.
 #   - Add auto-transition timer.
 #     - Simply enable this when the EdgeCalcResultMetadataItemController is selected.
-# - Add configurable legend.
+# 
+# - Render a legend to describe the current annotations.
+#   - Make this dynamically update to describe the currently rendered annotations.
+#     - This should update as annotations are toggled in the debug panel.
+#     - This should update as items are selected in the PlatformGraphInspector.
+#   - Place this as an independent dialog.
+#   - Make this dismissable.
+#   - Add a button to the debug panel to re-show this if it is dismissed.
+# 
+# - Add an additional label near the legend, to describe attempted selection.
+#   - "No possible jump/land positions for that selection."
+#   - "No jump/land positions passed broad-phase checks of edge calculation for that selection."
+#   - "A valid edge matches that selection."
+#   - "A failed edge calculation matches that selection."
+# 
+# - Change the instruction input indicator icons:
+#   - Jump-end should be up arrow with slash.
+#   - Sideways-end should be sideways arrow with slash.
+#   - Sideways-start should be sideways arrow.
 # 
 # - Add support for navigating in the inspector directly to the debug edge specified in
 #   global.DEBUG_STATE.
 # 
 # - Ensure all edge DrawUtil functions support rendering the start/end indicators.
 # 
-# - Deselect and destroy tree when panel closes.
+# - Deselect and destroy the tree when panel closes.
 # 
 # - Pick non-random colors for single-annotation items.
 # - Choose something other than red to indicate destination/end, since red is used for fail.
 # - Step through and consider whether I want to show any other annotations for each item.
-# - Step through and consider whether I want to show any other analytic description children for each item.
+# - Step through and consider whether I want to show any other analytic description children for
+#   each item.
 # - Spend some time thinking through the actual timings of the various parts of calculations
 #   (horizontal more than vertical, when possible).
 # 
@@ -48,7 +66,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - And also maybe update DrawUtils and where constants are stored.
 #   - And maybe update Colors?
 # 
-# - Add some additional description items under valid and failed edges with more metadata for debugging.
+# - Add some additional description items under valid and failed edges with more metadata for
+#   debugging.
 # 
 # - Auto expand DebugPanel, and auto select the top-level edges item in the PlatformGraphInspector.
 # 
@@ -126,14 +145,6 @@ const IS_A_JUMP_CALCULATOR := true
 # - Fix the padding in the controls list.
 # 
 # - Disable the player handling u/d/l/r keys when focus is in the debug panel.
-# 
-# - Render a legend to describe the current annotations.
-#   - Make this dynamically update to describe the currently rendered annotations.
-#     - This should update as annotations are toggled in the debug panel.
-#     - This should update as items are selected in the PlatformGraphInspector.
-#   - Place this as an independent dialog.
-#   - Make this dismissable.
-#   - Add a button to the debug panel to re-show this if it is dismissed.
 # 
 # - Start adding the toggle support for annotations.
 # 

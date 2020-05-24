@@ -22,6 +22,7 @@ func _init( \
         parent_item, \
         tree, \
         graph) -> void:
+    assert(edge != null)
     self.edge = edge
     _post_init()
 
@@ -41,7 +42,7 @@ func get_text() -> String:
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
+        metadata: Dictionary) -> bool:
     assert(search_type == InspectorSearchType.EDGE)
     if Geometry.are_points_equal_with_epsilon( \
                     edge.start, \
@@ -53,13 +54,13 @@ func find_and_expand_controller( \
                     0.01):
         expand()
         select()
-        return self
-    return null
+        return true
+    else:
+        return false
 
 func _create_children_inner() -> void:
     if edge_result_metadata == null:
         _calculate_edge_calc_result_metadata()
-    
     edge_calc_result_metadata_controller = EdgeCalcResultMetadataItemController.new( \
             tree_item, \
             tree, \
@@ -77,6 +78,7 @@ func _calculate_edge_calc_result_metadata() -> void:
             edge.velocity_start, \
             edge.includes_extra_jump_duration, \
             edge.includes_extra_wall_land_horizontal_speed)
+    assert(!edge_result_metadata.failed_before_creating_steps)
 
 func _destroy_children_inner() -> void:
     edge_calc_result_metadata_controller = null

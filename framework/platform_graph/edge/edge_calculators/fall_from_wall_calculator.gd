@@ -81,6 +81,7 @@ func calculate_edge( \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
     var calc_results: MovementCalcResults = \
             FallMovementUtils.find_landing_trajectory_between_positions( \
+                    edge_result_metadata, \
                     collision_params, \
                     position_start, \
                     position_end, \

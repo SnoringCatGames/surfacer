@@ -26,6 +26,7 @@ func _init( \
         includes_surfaces := \
                 AnnotationElementDefaults_.FAILED_EDGE_ATTEMPT_INCLUDES_SURFACES) \
         .(TYPE) -> void:
+    assert(failed_edge_attempt != null)
     self.failed_edge_attempt = failed_edge_attempt
     self.color_params = color_params
     self.radius = radius

@@ -51,19 +51,28 @@ func get_has_children() -> bool:
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
+        metadata: Dictionary) -> bool:
     expand()
-    
-    var result: InspectorItemController
+    call_deferred( \
+            "find_and_expand_controller_recursive", \
+            search_type, \
+            metadata)
+    return true
+
+func find_and_expand_controller_recursive( \
+        search_type: int, \
+        metadata: Dictionary) -> void:
+    var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
-        result = child.get_metadata(0).find_and_expand_controller( \
+        is_subtree_found = child.get_metadata(0).find_and_expand_controller( \
                 search_type, \
                 metadata)
-        if result != null:
-            return result
+        if is_subtree_found:
+            return
         child = child.get_next()
-    return null
+    select()
+    Utils.error("No matching Surface found: %s" % metadata)
 
 func _create_children_inner() -> void:
     var surfaces_to_edge_types_to_valid_edges: Dictionary

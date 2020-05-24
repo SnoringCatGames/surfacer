@@ -22,6 +22,7 @@ func _init( \
         parent_item, \
         tree, \
         graph) -> void:
+    assert(failed_edge_attempt != null)
     self.failed_edge_attempt = failed_edge_attempt
     _post_init()
 
@@ -47,7 +48,7 @@ func get_text() -> String:
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
+        metadata: Dictionary) -> bool:
     assert(search_type == InspectorSearchType.EDGE)
     if Geometry.are_points_equal_with_epsilon( \
                     failed_edge_attempt.start, \
@@ -59,8 +60,9 @@ func find_and_expand_controller( \
                     0.01):
         expand()
         select()
-        return self
-    return null
+        return true
+    else:
+        return false
 
 func _create_children_inner() -> void:
     if edge_result_metadata == null:

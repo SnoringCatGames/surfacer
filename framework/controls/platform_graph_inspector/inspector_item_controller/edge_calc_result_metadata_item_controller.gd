@@ -21,6 +21,8 @@ func _init( \
         parent_item, \
         tree, \
         graph) -> void:
+    assert(edge_or_edge_attempt != null)
+    assert(edge_result_metadata != null)
     self.edge_or_edge_attempt = edge_or_edge_attempt
     self.edge_result_metadata = edge_result_metadata
     _post_init()
@@ -43,6 +45,12 @@ func get_text() -> String:
                 edge_result_metadata.waypoint_validity), \
         edge_result_metadata.total_step_count, \
     ]
+
+func find_and_expand_controller( \
+        search_type: int, \
+        metadata: Dictionary) -> bool:
+    Utils.error("find_and_expand_controller should not be called for EDGE_CALC_RESULT_METADATA.")
+    return false
 
 func get_has_children() -> bool:
     return !edge_result_metadata.failed_before_creating_steps

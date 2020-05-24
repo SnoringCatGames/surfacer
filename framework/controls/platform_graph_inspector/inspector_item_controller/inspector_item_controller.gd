@@ -79,21 +79,34 @@ func on_item_collapsed() -> void:
     _destroy_children_if_needed()
 
 func expand() -> void:
+    var was_collapsed := tree_item.collapsed
     tree_item.collapsed = false
-    on_item_expanded()
+    if was_collapsed:
+        on_item_expanded()
 
 func collapse() -> void:
+    var was_collapsed := tree_item.collapsed
     tree_item.collapsed = true
-    on_item_collapsed()
+    if !was_collapsed:
+        on_item_collapsed()
 
 func select() -> void:
     tree_item.select(0)
+    # Scroll to the correct spot.
+    tree.ensure_cursor_is_visible()
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
+        metadata: Dictionary) -> bool:
     Utils.error("Abstract InspectorItemController.find_and_expand_controller is not implemented")
-    return null
+    return false
+
+func find_and_expand_controller_recursive( \
+        search_type: int, \
+        metadata: Dictionary) -> void:
+    Utils.error( \
+            "Abstract InspectorItemController.find_and_expand_controller_recursive is not " + \
+            "implemented")
 
 func get_text() -> String:
     Utils.error("Abstract InspectorItemController.get_text is not implemented")

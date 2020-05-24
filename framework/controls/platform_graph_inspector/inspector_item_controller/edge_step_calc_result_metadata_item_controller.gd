@@ -52,6 +52,12 @@ func _get_text_for_description_index(description_index: int) -> String:
             step_result_metadata.get_description_list()[description_index], \
         ]
 
+func find_and_expand_controller( \
+        search_type: int, \
+        metadata: Dictionary) -> bool:
+    Utils.error("find_and_expand_controller should not be called for EDGE_STEP_CALC_RESULT_METADATA.")
+    return false
+
 func get_has_children() -> bool:
     return !step_result_metadata.children_step_attempts.empty()
 

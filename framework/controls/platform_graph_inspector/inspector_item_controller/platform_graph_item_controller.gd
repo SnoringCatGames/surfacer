@@ -43,10 +43,17 @@ func to_string() -> String:
 
 func find_and_expand_controller( \
         search_type: int, \
-        metadata: Dictionary) -> InspectorItemController:
+        metadata: Dictionary) -> bool:
     expand()
-    
-    # FIXME: --------------------------------
+    call_deferred( \
+            "find_and_expand_controller_recursive", \
+            search_type, \
+            metadata)
+    return true
+
+func find_and_expand_controller_recursive( \
+        search_type: int, \
+        metadata: Dictionary) -> void:
     match search_type:
         InspectorSearchType.EDGE:
             assert(metadata.has("origin_surface") and \
@@ -54,20 +61,14 @@ func find_and_expand_controller( \
                     metadata.has("start") and \
                     metadata.has("end") and \
                     metadata.has("edge_type"))
-#            if surfaces_to_surfaces_to_edge_types_to_valid_edges.has("origin_surface") and \
-#                    surfaces_to_surfaces_to_edge_types_to_valid_edges.origin_surface.has("destination_surface") and \
-#                    surfaces_to_surfaces_to_edge_types_to_valid_edges.origin_surface.destination_surface.has("edge_type") and \
-#                    surfaces_to_surfaces_to_edge_types_to_valid_edges.origin_surface.destination_surface.edge_type.find():
-            return surfaces_item_controller.find_and_expand_controller( \
+            surfaces_item_controller.find_and_expand_controller( \
                     search_type, \
                     metadata)
-#            else:
-#                Utils.error("Invalid Surface: %s" % metadata.surface.to_string())
             
         InspectorSearchType.SURFACE:
             assert(metadata.has("surface"))
             if graph.surfaces_set.has(metadata.surface):
-                return surfaces_item_controller.find_and_expand_controller( \
+                surfaces_item_controller.find_and_expand_controller( \
                         search_type, \
                         metadata)
             else:
@@ -79,8 +80,6 @@ func find_and_expand_controller( \
         _:
             Utils.error("Invalid InspectorSearchType: %s" % \
                     InspectorSearchType.get_type_string(search_type))
-    
-    return null
 
 func _create_children_inner() -> void:
     edges_item_controller = EdgesTopLevelGroupItemController.new( \

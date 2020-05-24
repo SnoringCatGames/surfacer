@@ -42,7 +42,7 @@ func _unhandled_input(event: InputEvent) -> void:
         else:
             # FIXME: Add support for configuring edge type and graph from radio buttons in the
             #        inspector.
-            inspector.select_edge_or_edge_attempt( \
+            inspector.select_edge_or_surface( \
                     first_target, \
                     surface_position, \
                     EdgeType.JUMP_INTER_SURFACE_EDGE, \
