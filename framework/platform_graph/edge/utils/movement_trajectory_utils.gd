@@ -23,8 +23,10 @@ static func calculate_trajectory_from_calculation_steps( \
     for step in steps:
         waypoint_positions.push_back(step.position_step_end)
     
-    var frame_continuous_positions_from_steps := _concatenate_step_frame_positions(steps)
-    var frame_continuous_velocities_from_steps := _concatenate_step_frame_velocities(steps)
+    var frame_continuous_positions_from_steps := \
+            _concatenate_step_frame_positions(steps)
+    var frame_continuous_velocities_from_steps := \
+            _concatenate_step_frame_velocities(steps)
     
     var distance_from_continuous_frames = \
             _sum_distance_between_frames(frame_continuous_positions_from_steps)

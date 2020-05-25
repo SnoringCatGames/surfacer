@@ -37,13 +37,13 @@ static func check_instructions_discrete_frame_state( \
     var continuous_horizontal_state: Array
     var continuous_vertical_state: Array
     var continuous_position := Vector2.INF
+    var instruction_with_position: MovementInstruction
     
     # Record positions for edge annotation debugging.
     var frame_discrete_positions := []
 #    var frame_continuous_positions := [position] # FIXME: REMOVE
-    var jump_instruction_end_position := Vector2.INF
-    var horizontal_instruction_end_positions := []
-    var horizontal_instruction_start_positions := []
+    trajectory.jump_instruction_end = null
+    trajectory.horizontal_instructions = []
     
     # Iterate through each physics frame, checking each for a collision.
     while current_time < end_time:
@@ -83,11 +83,6 @@ static func check_instructions_discrete_frame_state( \
                         PoolVector2Array(frame_discrete_positions)
 #                trajectory.frame_continuous_positions = \ # FIXME: REMOVE
 #                        PoolVector2Array(frame_continuous_positions)
-                trajectory.jump_instruction_end_position = jump_instruction_end_position
-                trajectory.horizontal_instruction_start_positions = \
-                        PoolVector2Array(horizontal_instruction_start_positions)
-                trajectory.horizontal_instruction_end_positions = \
-                        PoolVector2Array(horizontal_instruction_end_positions)
                 return collision
         else:
             # Don't check for collisions if we aren't moving anywhere.
@@ -103,7 +98,8 @@ static func check_instructions_discrete_frame_state( \
         # - We can now check whether inputs have changed.
         # - We can now calculate the velocity for the current frame.
         
-        while next_instruction != null and next_instruction.time < current_time:
+        while next_instruction != null and \
+                next_instruction.time < current_time:
             current_instruction_index += 1
             
             # FIXME: --A:
@@ -113,6 +109,12 @@ static func check_instructions_discrete_frame_state( \
             # - Does it reflect actual playback?
             # - Should initial jump_boost happen sooner?
             
+            instruction_with_position = MovementInstruction.new( \
+                    next_instruction.input_key, \
+                    next_instruction.time, \
+                    next_instruction.is_pressed, \
+                    continuous_position)
+            
             match next_instruction.input_key:
                 "jump":
                     is_pressing_jump = next_instruction.is_pressed
@@ -120,25 +122,24 @@ static func check_instructions_discrete_frame_state( \
                         velocity.y = movement_params.jump_boost
                     else:
                         # Record the positions of instruction starts and ends.
-                        jump_instruction_end_position = continuous_position
+                        trajectory.jump_instruction_end = \
+                                instruction_with_position
                 "move_left":
-                    is_pressing_left = next_instruction.is_pressed
-                    horizontal_acceleration_sign = -1 if is_pressing_left else 0
-                    
+                    horizontal_acceleration_sign = \
+                            -1 if \
+                            next_instruction.is_pressed else \
+                            0
                     # Record the positions of instruction starts and ends.
-                    if is_pressing_left:
-                        horizontal_instruction_start_positions.push_back(continuous_position)
-                    else:
-                        horizontal_instruction_end_positions.push_back(continuous_position)
+                    trajectory.horizontal_instructions.push_back( \
+                            instruction_with_position)
                 "move_right":
-                    is_pressing_right = next_instruction.is_pressed
-                    horizontal_acceleration_sign = 1 if is_pressing_right else 0
-                    
+                    horizontal_acceleration_sign = \
+                            1 if \
+                            next_instruction.is_pressed else \
+                            0
                     # Record the positions of instruction starts and ends.
-                    if is_pressing_right:
-                        horizontal_instruction_start_positions.push_back(continuous_position)
-                    else:
-                        horizontal_instruction_end_positions.push_back(continuous_position)
+                    trajectory.horizontal_instructions.push_back( \
+                            instruction_with_position)
                 "grab_wall":
                     pass
                 "face_left":
@@ -148,8 +149,10 @@ static func check_instructions_discrete_frame_state( \
                 _:
                     Utils.error()
             
-            next_instruction = instructions.instructions[current_instruction_index + 1] if \
-                    current_instruction_index + 1 < instructions.instructions.size() else null
+            next_instruction = \
+                    instructions.instructions[current_instruction_index + 1] if \
+                    current_instruction_index + 1 < instructions.instructions.size() else \
+                    null
         
         # FIXME: ------------------------------:
         # - After implementing instruction execution, check whether it also does this, and whether
@@ -186,7 +189,9 @@ static func check_instructions_discrete_frame_state( \
     # Check the last frame that puts us up to end_time.
     delta = end_time - current_time
     displacement = velocity * delta
-    shape_query_params.transform = Transform2D(movement_params.collider_rotation, position)
+    shape_query_params.transform = Transform2D( \
+            movement_params.collider_rotation, \
+            position)
     shape_query_params.motion = displacement
     continuous_horizontal_state = \
             HorizontalMovementUtils.calculate_horizontal_state_for_time( \
@@ -209,23 +214,14 @@ static func check_instructions_discrete_frame_state( \
         trajectory.frame_discrete_positions_from_test = \
                 PoolVector2Array(frame_discrete_positions)
 #        trajectory.frame_continuous_positions = PoolVector2Array(frame_continuous_positions) # FIXME: REMOVE
-        trajectory.jump_instruction_end_position = jump_instruction_end_position
-        trajectory.horizontal_instruction_start_positions = \
-                PoolVector2Array(horizontal_instruction_start_positions)
-        trajectory.horizontal_instruction_end_positions = \
-                PoolVector2Array(horizontal_instruction_end_positions)
         return collision
     
     # Record the position for edge annotation debugging.
     frame_discrete_positions.push_back(position + displacement)
 #    frame_continuous_positions.push_back(continuous_position) # FIXME: REMOVE
-    trajectory.frame_discrete_positions_from_test = PoolVector2Array(frame_discrete_positions)
+    trajectory.frame_discrete_positions_from_test = \
+            PoolVector2Array(frame_discrete_positions)
 #    trajectory.frame_continuous_positions = PoolVector2Array(frame_continuous_positions) # FIXME: REMOVE
-    trajectory.jump_instruction_end_position = jump_instruction_end_position
-    trajectory.horizontal_instruction_start_positions = \
-            PoolVector2Array(horizontal_instruction_start_positions)
-    trajectory.horizontal_instruction_end_positions = \
-            PoolVector2Array(horizontal_instruction_end_positions)
     
     return null
 

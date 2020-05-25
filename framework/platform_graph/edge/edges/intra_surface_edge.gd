@@ -130,7 +130,8 @@ func _check_did_just_reach_destination( \
     var is_moving_away_from_destination: bool
     
     if surface_state.is_grabbing_wall:
-        var is_moving_upward: bool = instructions.instructions[0].input_key == "move_up"
+        var is_moving_upward: bool = \
+                instructions.instructions[0].input_key == "move_up"
         var position_y_instruction_end := \
                 end.y + stopping_distance if \
                 is_moving_upward else \
@@ -141,7 +142,8 @@ func _check_did_just_reach_destination( \
         is_moving_away_from_destination = (diff > 0) == is_moving_upward
         
     else:
-        var is_moving_leftward: bool = instructions.instructions[0].input_key == "move_left"
+        var is_moving_leftward: bool = \
+                instructions.instructions[0].input_key == "move_left"
         var position_x_instruction_end := \
                 end.x + stopping_distance if \
                 is_moving_leftward else \

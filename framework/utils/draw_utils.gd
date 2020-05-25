@@ -12,12 +12,14 @@ const EDGE_START_RADIUS := 3.0 * EDGE_WAYPOINT_WIDTH
 const EDGE_END_RADIUS := EDGE_WAYPOINT_RADIUS
 const EDGE_END_CONE_LENGTH := EDGE_WAYPOINT_RADIUS * 3.0
 
-const EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH := 9
-const EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH := 1
-const EDGE_HORIZONTAL_INSTRUCTION_END_LENGTH := 9
-const EDGE_HORIZONTAL_INSTRUCTION_END_STROKE_WIDTH := 1
-const EDGE_VERTICAL_INSTRUCTION_END_LENGTH := 11
-const EDGE_VERTICAL_INSTRUCTION_END_STROKE_WIDTH := 1
+const EDGE_INSTRUCTION_INDICATOR_LENGTH := 24
+
+const INSTRUCTION_INDICATOR_HEAD_LENGTH_RATIO := 0.35
+const INSTRUCTION_INDICATOR_HEAD_WIDTH_RATIO := 0.3
+const INSTRUCTION_INDICATOR_STRIKE_THROUGH_LENGTH_RATIO := 0.8
+const INSTRUCTION_INDICATOR_STROKE_WIDTH := 1.0
+
+const STRIKE_THROUGH_ANGLE := -PI / 3.0
 
 static func draw_dashed_line( \
         canvas: CanvasItem, \
@@ -38,11 +40,14 @@ static func draw_dashed_line( \
     var current_to: Vector2
     
     while current_length < segment_length:
-        current_dash_length = dash_length if current_length + dash_length <= segment_length \
-                else segment_length - current_length
+        current_dash_length = \
+                dash_length if \
+                current_length + dash_length <= segment_length else \
+                segment_length - current_length
         
         current_from = from + direction_normalized * current_length
-        current_to = from + direction_normalized * (current_length + current_dash_length)
+        current_to = from + direction_normalized * \
+                (current_length + current_dash_length)
         
         canvas.draw_line( \
                 current_from, \
@@ -90,8 +95,14 @@ static func draw_dashed_rectangle( \
         dash_offset: float = 0.0, \
         stroke_width: float = 1.0, \
         antialiased: bool = false) -> void:
-    var half_width := half_width_height.y if is_rotated_90_degrees else half_width_height.x
-    var half_height := half_width_height.x if is_rotated_90_degrees else half_width_height.y
+    var half_width := \
+            half_width_height.y if \
+            is_rotated_90_degrees else \
+            half_width_height.x
+    var half_height := \
+            half_width_height.x if \
+            is_rotated_90_degrees else \
+            half_width_height.y
 
     var top_left := center + Vector2(-half_width, -half_height)
     var top_right := center + Vector2(half_width, -half_height)
@@ -147,7 +158,8 @@ static func draw_surface( \
     var surface_depth_division_size := depth / SURFACE_DEPTH_DIVISIONS_COUNT
     
     var vertices := surface.vertices
-    var surface_depth_division_offset := surface.normal * -surface_depth_division_size
+    var surface_depth_division_offset := \
+            surface.normal * -surface_depth_division_size
     var alpha_start := color.a
     var alpha_end := alpha_start * SURFACE_ALPHA_END_RATIO
     
@@ -166,7 +178,6 @@ static func draw_surface( \
                     polyline, \
                     color, \
                     surface_depth_division_size)
-#            Utils.draw_dashed_polyline(self, polyline, color, 4.0, 3.0, 0.0, 2.0, false)
     else:
         canvas.draw_circle( \
                 vertices[0], \
@@ -192,8 +203,10 @@ static func draw_position_along_surface( \
                             position.target_point, \
                             position.surface)
         var normal := position.surface.normal
-        var start := position.target_projection_onto_surface + normal * t_length / 2
-        var end := position.target_projection_onto_surface - normal * t_length / 2
+        var start := position.target_projection_onto_surface + \
+                normal * t_length / 2.0
+        var end := position.target_projection_onto_surface - \
+                normal * t_length / 2.0
         canvas.draw_line( \
                 start, \
                 end, \
@@ -286,13 +299,15 @@ static func draw_checkmark( \
         width: float, \
         color: Color, \
         stroke_width: float) -> void:
-    # We mostly treat the check mark as 90 degrees, divide the check mark into thirds horizontally,
-    # and then position it so that the bottom-most point of the checkmark is slightly below the
-    # target position. However, we then give the right-right corner a slight adjustment upward,
-    # which makes the checkmark slightly more accute than 90.
-    var top_left_point := position + Vector2(-width / 3, -width / 6)
-    var bottom_mid_point := position + Vector2(0, width / 6)
-    var top_right_point := position + Vector2(width * 2 / 3, -width / 2 * 1.33)
+    # We mostly treat the check mark as 90 degrees, divide the check mark into
+    # thirds horizontally, and then position it so that the bottom-most point
+    # of the checkmark is slightly below the target position. However, we then
+    # give the right-right corner a slight adjustment upward, which makes the
+    # checkmark slightly more accute than 90.
+    var top_left_point := position + Vector2(-width / 3.0, -width / 6.0)
+    var bottom_mid_point := position + Vector2(0, width / 6.0)
+    var top_right_point := \
+            position + Vector2(width * 2.0 / 3.0, -width / 2.0 * 1.33)
     
     canvas.draw_line( \
             top_left_point, \
@@ -305,6 +320,44 @@ static func draw_checkmark( \
             color, \
             stroke_width)
 
+static func draw_instruction_indicator( \
+        canvas: CanvasItem, \
+        input_key: String, \
+        is_pressed: bool, \
+        position: Vector2, \
+        length: float, \
+        color: Color) -> void:
+    var half_length := length / 2.0
+    var end_offset_from_mid: Vector2
+    match input_key:
+        "jump":
+            end_offset_from_mid = Vector2(0.0, -half_length)
+        "move_left":
+            end_offset_from_mid = Vector2(-half_length, 0.0)
+        "move_right":
+            end_offset_from_mid = Vector2(half_length, 0.0)
+        _:
+            Utils.error("Invalid input_key: %s" % input_key)
+    
+    var start := position - end_offset_from_mid
+    var end := position + end_offset_from_mid
+    var head_length := length * INSTRUCTION_INDICATOR_HEAD_LENGTH_RATIO
+    var head_width := length * INSTRUCTION_INDICATOR_HEAD_WIDTH_RATIO
+    var strike_through_length := \
+            INF if \
+            is_pressed else \
+            length * INSTRUCTION_INDICATOR_STRIKE_THROUGH_LENGTH_RATIO
+    
+    draw_strike_through_arrow( \
+            canvas, \
+            start, \
+            end, \
+            head_length, \
+            head_width, \
+            strike_through_length, \
+            color, \
+            INSTRUCTION_INDICATOR_STROKE_WIDTH)
+
 static func draw_arrow( \
         canvas: CanvasItem, \
         start: Vector2, \
@@ -313,10 +366,31 @@ static func draw_arrow( \
         head_width: float, \
         color: Color, \
         stroke_width: float) -> void:
+    draw_strike_through_arrow( \
+            canvas, \
+            start, \
+            end, \
+            head_length, \
+            head_width, \
+            INF, \
+            color, \
+            stroke_width)
+
+static func draw_strike_through_arrow( \
+        canvas: CanvasItem, \
+        start: Vector2, \
+        end: Vector2, \
+        head_length: float, \
+        head_width: float, \
+        strike_through_length: float, \
+        color: Color, \
+        stroke_width: float) -> void:
     # Calculate points in the arrow head.
     var start_to_end_angle := start.angle_to_point(end)
-    var head_diff_1 := Vector2(-head_length, -head_width * 0.5).rotated(start_to_end_angle)
-    var head_diff_2 := Vector2(-head_length, head_width * 0.5).rotated(start_to_end_angle)
+    var head_diff_1 := Vector2(head_length, -head_width * 0.5) \
+            .rotated(start_to_end_angle)
+    var head_diff_2 := Vector2(head_length, head_width * 0.5) \
+            .rotated(start_to_end_angle)
     var head_end_1 := end + head_diff_1
     var head_end_2 := end + head_diff_2
     
@@ -330,7 +404,7 @@ static func draw_arrow( \
             end, \
             head_end_2, \
             color, \
-            stroke_width)\
+            stroke_width)
     
     # Draw the arrow body.
     canvas.draw_line( \
@@ -338,6 +412,26 @@ static func draw_arrow( \
             end, \
             color, \
             stroke_width)
+    
+    # Draw the strike through.
+    if strike_through_length != INF:
+        var strike_through_angle := start_to_end_angle + STRIKE_THROUGH_ANGLE
+        var strike_through_middle := start.linear_interpolate( \
+                end, \
+                0.5)
+        var strike_through_half_length := strike_through_length / 2.0
+        var strike_through_offset := Vector2( \
+                cos(strike_through_angle) * strike_through_half_length, \
+                sin(strike_through_angle) * strike_through_half_length)
+        var strike_through_start := \
+                strike_through_middle - strike_through_offset
+        var strike_through_end := \
+                strike_through_middle + strike_through_offset
+        canvas.draw_line( \
+                strike_through_start, \
+                strike_through_end, \
+                color, \
+                stroke_width)
 
 static func draw_diamond_outline( \
         canvas: CanvasItem, \
@@ -376,7 +470,8 @@ static func draw_shape_outline( \
         rotation: float, \
         color: Color, \
         thickness: float) -> void:
-    var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2) < Geometry.FLOAT_EPSILON
+    var is_rotated_90_degrees = \
+            abs(fmod(rotation + PI * 2, PI) - PI / 2) < Geometry.FLOAT_EPSILON
     
     # Ensure that collision boundaries are only ever axially aligned.
     assert(is_rotated_90_degrees or abs(rotation) < Geometry.FLOAT_EPSILON)
@@ -406,8 +501,10 @@ static func draw_shape_outline( \
                 color, \
                 thickness)
     else:
-        Utils.error("Invalid Shape2D provided for draw_shape: %s. The supported shapes are: " + \
-                "CircleShape2D, CapsuleShape2D, RectangleShape2D." % shape)
+        Utils.error( \
+                "Invalid Shape2D provided for draw_shape: %s. The " + \
+                "supported shapes are: CircleShape2D, CapsuleShape2D, " + \
+                "RectangleShape2D." % shape)
 
 static func draw_circle_outline( \
         canvas: CanvasItem, \
@@ -463,7 +560,9 @@ static func compute_arc_points(
                     0.0, \
                     0.01)
     var vertex_count := \
-            sector_count + 2 if should_include_partial_sector_at_end else sector_count + 1
+            sector_count + 2 if \
+            should_include_partial_sector_at_end else \
+            sector_count + 1
     var points := PoolVector2Array()
     points.resize(vertex_count)
     var vertex: Vector2
@@ -474,7 +573,8 @@ static func compute_arc_points(
     
     # Handle the fence-post problem.
     if should_include_partial_sector_at_end:
-        points[vertex_count - 1] = Vector2(cos(end_angle), sin(end_angle)) * radius + center
+        points[vertex_count - 1] = \
+                Vector2(cos(end_angle), sin(end_angle)) * radius + center
     
     return points
 
@@ -485,8 +585,14 @@ static func draw_rectangle_outline( \
         is_rotated_90_degrees: bool, \
         color: Color, \
         thickness := 1.0) -> void:
-    var x_offset: float = half_width_height.y if is_rotated_90_degrees else half_width_height.x
-    var y_offset: float = half_width_height.x if is_rotated_90_degrees else half_width_height.y
+    var x_offset: float = \
+            half_width_height.y if \
+            is_rotated_90_degrees else \
+            half_width_height.x
+    var y_offset: float = \
+            half_width_height.x if \
+            is_rotated_90_degrees else \
+            half_width_height.y
     
     var polyline := PoolVector2Array()
     polyline.resize(5)
@@ -497,8 +603,9 @@ static func draw_rectangle_outline( \
     polyline[3] = center + Vector2(-x_offset, y_offset)
     polyline[4] = polyline[0]
     
-    # For some reason, the first and last line segments seem to have off-by-one errors that would
-    # cause the segments to not be exactly horizontal and vertical, so these offsets fix that.
+    # For some reason, the first and last line segments seem to have off-by-one
+    # errors that would cause the segments to not be exactly horizontal and
+    # vertical, so these offsets fix that.
     polyline[0] += Vector2(-0.5, 0.5)
     polyline[4] += Vector2(0.75, 0.0)
     
@@ -518,9 +625,14 @@ static func draw_capsule_outline( \
         sector_arc_length := 4.0) -> void:
     var sector_count := ceil((PI * radius / sector_arc_length) / 2.0) * 2.0
     var delta_theta := PI / sector_count
-    var theta := PI / 2.0 if is_rotated_90_degrees else 0.0
+    var theta := \
+            PI / 2.0 if \
+            is_rotated_90_degrees else \
+            0.0
     var capsule_end_offset := \
-            Vector2(height / 2.0, 0.0) if is_rotated_90_degrees else Vector2(0.0, height / 2.0)
+            Vector2(height / 2.0, 0.0) if \
+            is_rotated_90_degrees else \
+            Vector2(0.0, height / 2.0)
     var end_center := center - capsule_end_offset
     var vertices := PoolVector2Array()
     var vertex_count := (sector_count + 1) * 2 + 1
@@ -545,8 +657,9 @@ static func draw_capsule_outline( \
             color, \
             thickness)
 
-# This applies Thales's theorem to find the points of tangency between the line segments from the
-# triangular portion and the circle (https://en.wikipedia.org/wiki/Thales%27s_theorem).
+# This applies Thales's theorem to find the points of tangency between the line
+# segments from the triangular portion and the circle
+# (https://en.wikipedia.org/wiki/Thales%27s_theorem).
 static func draw_ice_cream_cone( \
         canvas: CanvasItem, \
         cone_end_point: Vector2, \
@@ -559,7 +672,8 @@ static func draw_ice_cream_cone( \
     var distance_from_cone_end_point_to_circle_center := \
             cone_end_point.distance_to(circle_center)
     
-    # Handle the degenerate case of when the cone-end-point lies within the circle.
+    # Handle the degenerate case of when the cone-end-point lies within the
+    # circle.
     if distance_from_cone_end_point_to_circle_center <= circle_radius:
         if is_filled:
             canvas.draw_circle( \
@@ -685,11 +799,12 @@ static func _draw_fall_from_floor_edge( \
         includes_instruction_indicators: bool, \
         includes_discrete_positions: bool, \
         base_color: Color) -> void:
-    # Render FallFromFloorEdges with a slight offset, so that they don't overlap with
-    # ClimbOverWallToFloorEdges.
+    # Render FallFromFloorEdges with a slight offset, so that they don't
+    # overlap with ClimbOverWallToFloorEdges.
     var offset := Vector2(-1.0 if edge.falls_on_left_side else 1.0, -1.0)
     var start_position := edge.start
-    var fall_off_position := edge.trajectory.frame_continuous_positions_from_steps[0]
+    var fall_off_position := \
+            edge.trajectory.frame_continuous_positions_from_steps[0]
     var mid_point := Vector2(fall_off_position.x, start_position.y)
     canvas.draw_line( \
             start_position + offset, \
@@ -736,14 +851,14 @@ static func _draw_edge_from_instructions_positions( \
             base_color.a)
     
     if includes_discrete_positions:
-        # Draw the trajectory (as approximated via discrete time steps during instruction 
-        # test calculations).
+        # Draw the trajectory (as approximated via discrete time steps during
+        # instruction test calculations).
         canvas.draw_polyline( \
                 edge.trajectory.frame_discrete_positions_from_test, \
                 discrete_trajectory_color, \
                 EDGE_TRAJECTORY_WIDTH)
-    # Draw the trajectory (as calculated via continuous equations of motion during step
-    # calculations).
+    # Draw the trajectory (as calculated via continuous equations of motion
+    # during step calculations).
     canvas.draw_polyline( \
             edge.trajectory.frame_continuous_positions_from_steps, \
             continuous_trajectory_color, \
@@ -764,8 +879,8 @@ static func _draw_edge_from_instructions_positions( \
         
         # Draw the destination waypoint.
         var circle_center := edge.end_position_along_surface.target_point
-        var cone_end_point := circle_center - \
-                edge.end_surface.normal * (EDGE_END_CONE_LENGTH - EDGE_END_RADIUS)
+        var cone_end_point := circle_center - edge.end_surface.normal * \
+                (EDGE_END_CONE_LENGTH - EDGE_END_RADIUS)
         draw_ice_cream_cone( \
                 canvas, \
                 cone_end_point, \
@@ -786,39 +901,22 @@ static func _draw_edge_from_instructions_positions( \
                 3.0)
     
     if includes_instruction_indicators:
-        # Draw the positions where horizontal instructions start.
-        var position_start: Vector2
-        for i in range(0, edge.trajectory.horizontal_instruction_start_positions.size()):
-            position_start = edge.trajectory.horizontal_instruction_start_positions[i]
-            
-            # Draw a plus for the instruction start.
-            draw_plus( \
+        # Draw the horizontal instruction positions.
+        for instruction in edge.trajectory.horizontal_instructions:
+            draw_instruction_indicator( \
                     canvas, \
-                    position_start, \
-                    EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH, \
-                    EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH, \
-                    instruction_start_stop_color, \
-                    EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
+                    instruction.input_key, \
+                    instruction.is_pressed, \
+                    instruction.position, \
+                    EDGE_INSTRUCTION_INDICATOR_LENGTH, \
+                    instruction_start_stop_color)
         
-        # Draw the positions where horizontal instructions end.
-        var position_end: Vector2
-        for i in range(0, edge.trajectory.horizontal_instruction_end_positions.size()):
-            position_end = edge.trajectory.horizontal_instruction_end_positions[i]
-            
-            # Draw a minus for the instruction end.
-            canvas.draw_line( \
-                    position_end + Vector2(-EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
-                    position_end + Vector2(EDGE_HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
-                    instruction_start_stop_color, \
-                    EDGE_HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
-        
-        # Draw the position where the vertical instruction ends (draw an asterisk).
-        position_end = edge.trajectory.jump_instruction_end_position
-        if position_end != Vector2.INF:
-            draw_asterisk( \
+        # Draw the vertical instruction end position.
+        if edge.trajectory.jump_instruction_end != null:
+            draw_instruction_indicator( \
                     canvas, \
-                    position_end, \
-                    EDGE_VERTICAL_INSTRUCTION_END_LENGTH, \
-                    EDGE_VERTICAL_INSTRUCTION_END_LENGTH, \
-                    instruction_start_stop_color, \
-                    EDGE_VERTICAL_INSTRUCTION_END_STROKE_WIDTH)
+                    "jump", \
+                    false, \
+                    edge.trajectory.jump_instruction_end.position, \
+                    EDGE_INSTRUCTION_INDICATOR_LENGTH, \
+                    instruction_start_stop_color)

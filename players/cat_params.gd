@@ -59,7 +59,7 @@ func _init() -> void:
     backtracks_to_consider_higher_jumps_during_horizontal_step_calculations = true
     collision_margin_for_edge_movement_calculations = 4.0
     collision_margin_for_waypoint_positions = 5.0
-    skips_jump_land_positions_that_are_less_likely_to_be_valid = false
+    skips_less_likely_jump_land_positions = false
     prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets = true
     
     max_horizontal_speed_default = 400.0

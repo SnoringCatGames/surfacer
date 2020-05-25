@@ -42,7 +42,7 @@ func _init( \
     self.needs_extra_wall_land_horizontal_speed = needs_extra_wall_land_horizontal_speed
     self.less_likely_to_be_valid = less_likely_to_be_valid
 
-func is_far_enough_from_other_jump_land_positions( \
+func is_far_enough_from_others( \
         movement_params: MovementParams, \
         other_jump_land_positions: Array, \
         checking_distance_for_jump_positions: bool, \

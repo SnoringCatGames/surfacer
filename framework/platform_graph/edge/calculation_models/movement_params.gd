@@ -98,7 +98,7 @@ var collision_margin_for_waypoint_positions := 5.0#2.5
 # surfaces are arranged. Usually there is another more likely pair for the given surfaces. However,
 # sometimes such pairs can be valid, and sometimes they can even be the only valid pair for the
 # given surfaces.
-var skips_jump_land_positions_that_are_less_likely_to_be_valid := false
+var skips_less_likely_jump_land_positions := false
 # If true, then the navigator will include extra offsets so that paths don't end too close to
 # surface ends, and will dynamically insert extra backtracking edges if the player ends up past a
 # surface end at the end of a path. This should be unnecessary if

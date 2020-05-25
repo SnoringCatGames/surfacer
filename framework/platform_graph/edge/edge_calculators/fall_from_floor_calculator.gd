@@ -301,10 +301,18 @@ static func _prepend_walk_to_fall_off_portion( \
     
     # Insert the walk-to-fall-off instructions.
     
-    var sideways_input_key := "move_left" if falls_on_left_side else "move_right"
-    var outward_press := MovementInstruction.new(sideways_input_key, 0.0, true)
-    var outward_release := \
-            MovementInstruction.new(sideways_input_key, time_fall_off - 0.0001, false)
+    var sideways_input_key := \
+            "move_left" if \
+            falls_on_left_side else \
+            "move_right"
+    var outward_press := MovementInstruction.new( \
+            sideways_input_key, \
+            0.0, \
+            true)
+    var outward_release := MovementInstruction.new( \
+            sideways_input_key, \
+            time_fall_off - 0.0001, \
+            false)
     instructions.instructions.push_front(outward_release)
     instructions.instructions.push_front(outward_press)
     

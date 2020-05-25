@@ -565,11 +565,6 @@ _global_script_classes=[ {
 "path": "res://framework/controls/platform_graph_inspector/platform_graph_inspector.gd"
 }, {
 "base": "Node2D",
-"class": "PlatformGraphInspectorSelectionAnnotator",
-"language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/platform_graph_inspector_selection_annotator.gd"
-}, {
-"base": "Node2D",
 "class": "PlatformGraphInspectorSelector",
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/platform_graph_inspector_selector.gd"
@@ -966,7 +961,6 @@ _global_script_class_icons={
 "PlatformGraph": "",
 "PlatformGraphAnnotator": "",
 "PlatformGraphInspector": "",
-"PlatformGraphInspectorSelectionAnnotator": "",
 "PlatformGraphInspectorSelector": "",
 "PlatformGraphItemController": "",
 "PlatformGraphPath": "",
