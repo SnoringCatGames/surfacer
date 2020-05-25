@@ -11,7 +11,6 @@ const IS_A_JUMP_CALCULATOR := true
 # - Rename:
 #   - movement_instructions_utils -> edge_instructions_utils
 #   - movement_step_utils -> edge_step_utils
-#   - movement_trajectory_utils -> edge_trajectory_utils
 # 
 # - Render a legend to describe the current annotations.
 #   - Make this dynamically update to describe the currently rendered
@@ -747,7 +746,7 @@ func create_edge_from_edge_calc_params( \
                     calc_result, \
                     true, \
                     edge_calc_params.destination_position.surface.side)
-    var trajectory := MovementTrajectoryUtils \
+    var trajectory := EdgeTrajectoryUtils \
             .calculate_trajectory_from_calculation_steps( \
                     calc_result, \
                     instructions)

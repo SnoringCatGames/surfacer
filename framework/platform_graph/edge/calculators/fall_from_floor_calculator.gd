@@ -200,7 +200,7 @@ func _get_all_edges_from_one_side( \
                         false, \
                         position_end.surface.side)
         
-        trajectory = MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+        trajectory = EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
                 calc_result, \
                 instructions)
         

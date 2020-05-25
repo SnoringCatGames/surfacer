@@ -141,7 +141,7 @@ func _create_edge_from_calc_results(calc_result: EdgeCalcResult) -> FallFromWall
             land_position, \
             calc_result)
     
-    var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+    var trajectory := EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
             calc_result, \
             instructions)
     

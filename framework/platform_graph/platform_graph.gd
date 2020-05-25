@@ -695,9 +695,9 @@ func _calculate_nodes_and_edges( \
                 
                 # FIXME: B: REMOVE
                 movement_params.gravity_fast_fall *= \
-                        MovementTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                        EdgeTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 movement_params.gravity_slow_rise *= \
-                        MovementTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                        EdgeTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 
                 # Calculate the inter-surface edges.
                 movement_calculator.get_all_inter_surface_edges_from_surface( \
@@ -710,9 +710,9 @@ func _calculate_nodes_and_edges( \
                 
                 # FIXME: B: REMOVE
                 movement_params.gravity_fast_fall /= \
-                        MovementTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                        EdgeTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 movement_params.gravity_slow_rise /= \
-                        MovementTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                        EdgeTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 
                 # Remove any used surfaces from consideration.
                 for i in range(previous_size, edges.size()):

@@ -71,7 +71,7 @@ func calculate_edge( \
                     calc_result, \
                     true, \
                     SurfaceSide.NONE)
-    var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+    var trajectory := EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
             calc_result, \
             instructions)
     

@@ -1,6 +1,6 @@
 # A collection of utility functions for calculating state related to EdgeTrajectory.
 extends Reference
-class_name MovementTrajectoryUtils
+class_name EdgeTrajectoryUtils
 
 # FIXME: B: use this to record slow/fast gravities on the movement_params when initializing and
 #        update all usages to use the right one (rather than mutating the movement_params in the
