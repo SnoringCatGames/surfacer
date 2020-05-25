@@ -183,7 +183,7 @@ static func find_landing_trajectory_between_positions( \
                 step_calc_params, \
                 null)
     
-    var calc_result := MovementStepUtils.calculate_steps_between_waypoints( \
+    var calc_result := EdgeStepUtils.calculate_steps_between_waypoints( \
             edge_result_metadata, \
             step_result_metadata, \
             edge_calc_params, \

@@ -8,9 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Rename:
-#   - movement_step_utils -> edge_step_utils
-# 
 # - Render a legend to describe the current annotations.
 #   - Make this dynamically update to describe the currently rendered
 #     annotations.
@@ -731,7 +728,7 @@ func create_edge_from_edge_calc_params( \
         edge_calc_params: EdgeCalcParams) -> \
         JumpInterSurfaceEdge:
     var calc_result := \
-            MovementStepUtils.calculate_steps_with_new_jump_height( \
+            EdgeStepUtils.calculate_steps_with_new_jump_height( \
                     edge_result_metadata, \
                     edge_calc_params, \
                     null, \

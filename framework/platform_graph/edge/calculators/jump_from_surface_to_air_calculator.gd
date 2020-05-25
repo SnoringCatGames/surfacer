@@ -58,7 +58,7 @@ func calculate_edge( \
         # Cannot reach destination from origin.
         return null
     
-    var calc_result := MovementStepUtils.calculate_steps_with_new_jump_height( \
+    var calc_result := EdgeStepUtils.calculate_steps_with_new_jump_height( \
             edge_result_metadata, \
             edge_calc_params, \
             null, \
