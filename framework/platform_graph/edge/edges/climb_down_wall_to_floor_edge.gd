@@ -61,7 +61,7 @@ static func _calculate_instructions( \
             start.surface.side == SurfaceSide.RIGHT_WALL)
     assert(end.surface.side == SurfaceSide.FLOOR)
     
-    var instruction := MovementInstruction.new( \
+    var instruction := EdgeInstruction.new( \
             "move_down", \
             0.0, \
             true)

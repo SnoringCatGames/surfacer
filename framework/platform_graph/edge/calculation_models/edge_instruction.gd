@@ -1,6 +1,6 @@
 # An input event to trigger (or untrigger) at a specific time.
 extends Reference
-class_name MovementInstruction
+class_name EdgeInstruction
 
 var input_key: String
 var time: float
@@ -24,7 +24,7 @@ func _init( \
     self.position = position
 
 func to_string() -> String:
-    return "MovementInstruction{ %s, %.2f, %s%s }" % [ \
+    return "EdgeInstruction{ %s, %.2f, %s%s }" % [ \
             input_key, \
             time, \
             is_pressed, \

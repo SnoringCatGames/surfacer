@@ -27,7 +27,7 @@ var waypoint_positions: Array
 
 var horizontal_instructions: Array
 
-var jump_instruction_end: MovementInstruction
+var jump_instruction_end: EdgeInstruction
 
 var distance_from_continuous_frames: float
 

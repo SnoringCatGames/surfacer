@@ -1,7 +1,7 @@
 extends Reference
 class_name MovementInstructions
 
-# Array<MovementInstruction>
+# Array<EdgeInstruction>
 var instructions: Array
 
 var duration: float
@@ -17,14 +17,14 @@ func _init( \
 
 # Inserts the given instruction in sorted order.
 # TODO: Remove?
-func insert(instruction: MovementInstruction) -> int:
+func insert(instruction: EdgeInstruction) -> int:
     var index := instructions.bsearch_custom(instruction, self, "instruction_comparator")
     instructions.insert(index, instruction)
     return index
 
 # Removes the given instruction if it exists.
 # TODO: Remove?
-func remove(instruction: MovementInstruction) -> bool:
+func remove(instruction: EdgeInstruction) -> bool:
     var index := instructions.bsearch_custom(instruction, self, "instruction_comparator")
     if instructions[index] == instruction:
         instructions.remove(index)
@@ -32,14 +32,14 @@ func remove(instruction: MovementInstruction) -> bool:
     else:
         return false
 
-# This will mutate the time field on the given MovementInstruction.
+# This will mutate the time field on the given EdgeInstruction.
 # TODO: Remove?
 func is_instruction_in_range( \
-        instruction: MovementInstruction, \
+        instruction: EdgeInstruction, \
         min_time: float, \
         max_time: float) -> bool:
     var instruction_count := instructions.size()
-    var possible_match: MovementInstruction
+    var possible_match: EdgeInstruction
     instruction.time = min_time
     var index := instructions.bsearch_custom(instruction, self, "instruction_comparator")
     
@@ -67,7 +67,7 @@ func is_instruction_in_range( \
     
     return false
 
-static func instruction_comparator(a: MovementInstruction, b: MovementInstruction) -> bool:
+static func instruction_comparator(a: EdgeInstruction, b: EdgeInstruction) -> bool:
     return a.time < b.time
 
 func to_string() -> String:

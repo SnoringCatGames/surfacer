@@ -176,11 +176,11 @@ static func _calculate_instructions( \
             "move_right" if \
             start.surface.side == SurfaceSide.LEFT_WALL else \
             "move_left"
-    var outward_press := MovementInstruction.new( \
+    var outward_press := EdgeInstruction.new( \
             sideways_input_key, \
             0.0, \
             true)
-    var outward_release := MovementInstruction.new( \
+    var outward_release := EdgeInstruction.new( \
             sideways_input_key, \
             0.001, \
             false)

@@ -28,8 +28,8 @@ static func convert_calculation_steps_to_movement_instructions( \
     var step: EdgeStep
     var input_key: String
     var time_instruction_end: float
-    var press: MovementInstruction
-    var release: MovementInstruction
+    var press: EdgeInstruction
+    var release: EdgeInstruction
 
     # Record the various sideways movement instructions.
     for i in range(steps.size()):
@@ -45,11 +45,11 @@ static func convert_calculation_steps_to_movement_instructions( \
             time_instruction_end = min( \
                     time_instruction_end, \
                     steps[i + 1].time_instruction_start - 0.0001)
-        press = MovementInstruction.new( \
+        press = EdgeInstruction.new( \
                 input_key, \
                 step.time_instruction_start, \
                 true)
-        release = MovementInstruction.new( \
+        release = EdgeInstruction.new( \
                 input_key, \
                 time_instruction_end, \
                 false)
@@ -59,11 +59,11 @@ static func convert_calculation_steps_to_movement_instructions( \
     # Record the jump instruction.
     if includes_jump:
         input_key = "jump"
-        press = MovementInstruction.new( \
+        press = EdgeInstruction.new( \
                 input_key, \
                 vertical_step.time_instruction_start, \
                 true)
-        release = MovementInstruction.new( \
+        release = EdgeInstruction.new( \
                 input_key, \
                 vertical_step.time_instruction_end + JUMP_DURATION_INCREASE_EPSILON, \
                 false)
@@ -80,7 +80,7 @@ static func convert_calculation_steps_to_movement_instructions( \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
         
         input_key = "grab_wall"
-        press = MovementInstruction.new( \
+        press = EdgeInstruction.new( \
                 input_key, \
                 time_step_start, \
                 true)
@@ -90,7 +90,7 @@ static func convert_calculation_steps_to_movement_instructions( \
                 "face_left" if \
                 destination_side == SurfaceSide.LEFT_WALL else \
                 "face_right"
-        press = MovementInstruction.new( \
+        press = EdgeInstruction.new( \
                 input_key, \
                 time_step_start, \
                 true)

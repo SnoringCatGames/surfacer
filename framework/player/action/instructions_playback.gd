@@ -6,7 +6,7 @@ const EXTRA_DELAY_TO_ALLOW_COLLISION_WITH_SURFACE := 0.25
 var edge: Edge
 var is_additive: bool
 var next_index: int
-var next_instruction: MovementInstruction
+var next_instruction: EdgeInstruction
 var start_time: float
 var is_finished: bool
 var is_on_last_instruction: bool

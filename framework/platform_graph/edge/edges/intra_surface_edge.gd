@@ -176,7 +176,7 @@ static func _calculate_instructions( \
         else:
             input_key = "move_left"
     
-    var instruction := MovementInstruction.new( \
+    var instruction := EdgeInstruction.new( \
             input_key, \
             0.0, \
             true)

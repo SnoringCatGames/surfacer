@@ -305,11 +305,11 @@ static func _prepend_walk_to_fall_off_portion( \
             "move_left" if \
             falls_on_left_side else \
             "move_right"
-    var outward_press := MovementInstruction.new( \
+    var outward_press := EdgeInstruction.new( \
             sideways_input_key, \
             0.0, \
             true)
-    var outward_release := MovementInstruction.new( \
+    var outward_release := EdgeInstruction.new( \
             sideways_input_key, \
             time_fall_off - 0.0001, \
             false)

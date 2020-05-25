@@ -14,7 +14,7 @@ static func check_instructions_discrete_frame_state( \
         trajectory: MovementTrajectory) -> SurfaceCollision:
     var movement_params := edge_calc_params.movement_params
     var current_instruction_index := -1
-    var next_instruction: MovementInstruction = instructions.instructions[0]
+    var next_instruction: EdgeInstruction = instructions.instructions[0]
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
     var previous_time: float = instructions.instructions[0].time
@@ -37,7 +37,7 @@ static func check_instructions_discrete_frame_state( \
     var continuous_horizontal_state: Array
     var continuous_vertical_state: Array
     var continuous_position := Vector2.INF
-    var instruction_with_position: MovementInstruction
+    var instruction_with_position: EdgeInstruction
     
     # Record positions for edge annotation debugging.
     var frame_discrete_positions := []
@@ -109,7 +109,7 @@ static func check_instructions_discrete_frame_state( \
             # - Does it reflect actual playback?
             # - Should initial jump_boost happen sooner?
             
-            instruction_with_position = MovementInstruction.new( \
+            instruction_with_position = EdgeInstruction.new( \
                     next_instruction.input_key, \
                     next_instruction.time, \
                     next_instruction.is_pressed, \

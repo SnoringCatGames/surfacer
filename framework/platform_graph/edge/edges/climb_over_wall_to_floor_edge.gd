@@ -62,12 +62,12 @@ static func _calculate_instructions( \
     
     var sideways_input_key := \
             "move_left" if start.surface.side == SurfaceSide.LEFT_WALL else "move_right"
-    var inward_instruction := MovementInstruction.new( \
+    var inward_instruction := EdgeInstruction.new( \
             sideways_input_key, \
             0.0, \
             true)
     
-    var upward_instruction := MovementInstruction.new( \
+    var upward_instruction := EdgeInstruction.new( \
             "move_up", \
             0.0, \
             true)
