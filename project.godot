@@ -32,7 +32,7 @@ _global_script_classes=[ {
 "base": "EdgeMovementCalculator",
 "class": "AirToSurfaceCalculator",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge/edge_calculators/air_to_surface_calculator.gd"
+"path": "res://framework/platform_graph/edge/calculators/air_to_surface_calculator.gd"
 }, {
 "base": "Edge",
 "class": "AirToSurfaceEdge",
@@ -102,7 +102,7 @@ _global_script_classes=[ {
 "base": "EdgeMovementCalculator",
 "class": "ClimbDownWallToFloorCalculator",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge/edge_calculators/climb_down_wall_to_floor_calculator.gd"
+"path": "res://framework/platform_graph/edge/calculators/climb_down_wall_to_floor_calculator.gd"
 }, {
 "base": "Edge",
 "class": "ClimbDownWallToFloorEdge",
@@ -112,7 +112,7 @@ _global_script_classes=[ {
 "base": "EdgeMovementCalculator",
 "class": "ClimbOverWallToFloorCalculator",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge/edge_calculators/climb_over_wall_to_floor_calculator.gd"
+"path": "res://framework/platform_graph/edge/calculators/climb_over_wall_to_floor_calculator.gd"
 }, {
 "base": "Edge",
 "class": "ClimbOverWallToFloorEdge",
@@ -217,7 +217,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "EdgeMovementCalculator",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge/edge_calculators/edge_movement_calculator.gd"
+"path": "res://framework/platform_graph/edge/calculators/edge_movement_calculator.gd"
 }, {
 "base": "Reference",
 "class": "EdgeStep",
@@ -312,7 +312,7 @@ _global_script_classes=[ {
 "base": "EdgeMovementCalculator",
 "class": "FallFromFloorCalculator",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge/edge_calculators/fall_from_floor_calculator.gd"
+"path": "res://framework/platform_graph/edge/calculators/fall_from_floor_calculator.gd"
 }, {
 "base": "Edge",
 "class": "FallFromFloorEdge",
@@ -322,7 +322,7 @@ _global_script_classes=[ {
 "base": "EdgeMovementCalculator",
 "class": "FallFromWallCalculator",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge/edge_calculators/fall_from_wall_calculator.gd"
+"path": "res://framework/platform_graph/edge/calculators/fall_from_wall_calculator.gd"
 }, {
 "base": "Edge",
 "class": "FallFromWallEdge",
@@ -442,7 +442,7 @@ _global_script_classes=[ {
 "base": "EdgeMovementCalculator",
 "class": "JumpFromSurfaceToAirCalculator",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge/edge_calculators/jump_from_surface_to_air_calculator.gd"
+"path": "res://framework/platform_graph/edge/calculators/jump_from_surface_to_air_calculator.gd"
 }, {
 "base": "Edge",
 "class": "JumpFromSurfaceToAirEdge",
@@ -452,7 +452,7 @@ _global_script_classes=[ {
 "base": "EdgeMovementCalculator",
 "class": "JumpInterSurfaceCalculator",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge/edge_calculators/jump_inter_surface_calculator.gd"
+"path": "res://framework/platform_graph/edge/calculators/jump_inter_surface_calculator.gd"
 }, {
 "base": "Edge",
 "class": "JumpInterSurfaceEdge",
@@ -797,7 +797,7 @@ _global_script_classes=[ {
 "base": "EdgeMovementCalculator",
 "class": "WalkToAscendWallFromFloorCalculator",
 "language": "GDScript",
-"path": "res://framework/platform_graph/edge/edge_calculators/walk_to_ascend_wall_from_floor_calculator.gd"
+"path": "res://framework/platform_graph/edge/calculators/walk_to_ascend_wall_from_floor_calculator.gd"
 }, {
 "base": "Edge",
 "class": "WalkToAscendWallFromFloorEdge",
