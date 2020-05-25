@@ -9,7 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - Rename:
-#   - movement_instructions_utils -> edge_instructions_utils
 #   - movement_step_utils -> edge_step_utils
 # 
 # - Render a legend to describe the current annotations.
@@ -282,8 +281,8 @@ const IS_A_JUMP_CALCULATOR := true
 #     _update_waypoint_velocity_and_time.
 # 
 # - Check on current behavior of
-#   MovementInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
-#   MovementInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
+#   EdgeInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
+#   EdgeInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
 # 
 # --- Debug ---
 # 
@@ -300,7 +299,7 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # >>- Fix how things work when minimizes_velocity_change_when_jumping is true.
 #   - [no] Find and move all movement-offset constants to one central location?
-#     - MovementInstructionsUtils
+#     - EdgeInstructionsUtils
 #     - WaypointUtils
 #     - FrameCollisionCheckUtils
 #     - EdgeCalcParams
@@ -741,7 +740,7 @@ func create_edge_from_edge_calc_params( \
         # Unable to calculate a valid edge.
         return null
     
-    var instructions := MovementInstructionsUtils \
+    var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
                     calc_result, \
                     true, \

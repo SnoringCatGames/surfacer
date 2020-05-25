@@ -113,7 +113,7 @@ func find_a_landing_trajectory( \
     
     # Calculate instructions for the given landing trajectory.
     var land_position := calc_result.edge_calc_params.destination_position
-    var instructions := MovementInstructionsUtils \
+    var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
                     calc_result, \
                     false, \

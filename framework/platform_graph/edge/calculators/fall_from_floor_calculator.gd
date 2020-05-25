@@ -195,7 +195,7 @@ func _get_all_edges_from_one_side( \
         position_end = calc_result.edge_calc_params.destination_position
         
         instructions = \
-                MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+                EdgeInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                         calc_result, \
                         false, \
                         position_end.surface.side)

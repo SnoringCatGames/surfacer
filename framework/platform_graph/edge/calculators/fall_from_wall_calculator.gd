@@ -166,7 +166,7 @@ static func _calculate_instructions( \
     
     # Calculate the fall-trajectory instructions.
     var instructions := \
-            MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+            EdgeInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                     calc_result, \
                     false, \
                     end.surface.side)

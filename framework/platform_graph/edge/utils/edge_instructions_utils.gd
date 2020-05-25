@@ -1,6 +1,6 @@
 # A collection of utility functions for calculating state related to EdgeInstructions.
 extends Reference
-class_name MovementInstructionsUtils
+class_name EdgeInstructionsUtils
 
 # FIXME: B 
 # - Should I remove this and force a slightly higher offset to target jump position directly? What

@@ -67,7 +67,7 @@ func calculate_edge( \
         return null
     
     var instructions := \
-            MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+            EdgeInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
                     calc_result, \
                     true, \
                     SurfaceSide.NONE)
