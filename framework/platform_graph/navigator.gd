@@ -5,9 +5,9 @@ const NEARBY_SURFACE_DISTANCE_THRESHOLD := 160.0
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
 
-var player # TODO: Add type back
+var player
 var graph: PlatformGraph
-var global # TODO: Add type back
+var global
 var surface_state: PlayerSurfaceState
 var movement_params: MovementParams
 var collision_params: CollisionCalcParams

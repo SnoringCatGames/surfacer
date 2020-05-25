@@ -129,8 +129,8 @@ var welcome_panel: WelcomePanel
 var space_state: Physics2DDirectSpaceState
 
 var canvas_layers: CanvasLayers
-var current_level
-var current_player_for_clicks
+var current_level: Level
+var current_player_for_clicks: Player
 var camera_controller: CameraController
 
 var is_level_ready := false

@@ -7,7 +7,7 @@ const SELECT_DURATION_SEC := max( \
         ClickAnnotator.CLICK_INNER_DURATION_SEC, \
         ClickAnnotator.CLICK_OUTER_DURATION_SEC)
 
-var global # TODO: Add type back
+var global
 var player: Player
 var selection_position_to_animate: PositionAlongSurface = null
 var selection_color: Color

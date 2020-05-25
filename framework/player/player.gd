@@ -1,7 +1,7 @@
 extends KinematicBody2D
 class_name Player
 
-var global # TODO: Add type back
+var global
 var player_name: String
 var can_grab_walls: bool
 var can_grab_ceilings: bool
@@ -26,7 +26,7 @@ var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: Navigator
 var velocity := Vector2.ZERO
-var level # TODO: Add type back in?
+var level
 var collider: CollisionShape2D
 var collider_half_width_height := Vector2.INF
 var animator: PlayerAnimator

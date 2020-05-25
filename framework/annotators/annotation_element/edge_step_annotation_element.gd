@@ -61,7 +61,7 @@ func _calculate_color(renders_faintly: bool) -> Color:
             (step_result_metadata.index / (total_step_count - 1.0)) if \
             total_step_count > 1 else \
             1.0
-    var step_hue := \
+    var step_hue: float = \
             AnnotationElementDefaults.STEP_HUE_START + \
             (AnnotationElementDefaults.STEP_HUE_END - \
                     AnnotationElementDefaults.STEP_HUE_START) * \

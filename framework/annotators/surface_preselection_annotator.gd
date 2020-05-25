@@ -14,7 +14,7 @@ const PRESELECTION_SURFACE_LENGTH_PADDING := 64.0
 const PRESELECTION_POSITION_INDICATOR_LENGTH := 128.0
 const PRESELECTION_POSITION_INDICATOR_RADIUS := 32.0
 
-var global # TODO: Add type back
+var global
 var player: Player
 var preselection_position_to_draw: PositionAlongSurface = null
 var animation_start_time := -PRESELECTION_DURATION_SEC

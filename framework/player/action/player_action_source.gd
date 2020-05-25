@@ -2,7 +2,7 @@ extends Reference
 class_name PlayerActionSource
 
 var source_type_prefix: String
-var player # TODO: Add type back in
+var player
 var is_additive: bool
 
 func _init( \

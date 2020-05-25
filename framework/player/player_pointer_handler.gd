@@ -1,7 +1,7 @@
 extends Node2D
 class_name PlayerPointerHandler
 
-var global # TODO: Add type back
+var global
 var player
 
 func _init(player) -> void:

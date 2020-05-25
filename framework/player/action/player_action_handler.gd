@@ -17,7 +17,6 @@ func _init( \
     self.type = type
     self.priority = priority
 
-# TODO: Add type back in.
 func process(player) -> bool:
     Utils.error("abstract PlayerActionHandler.process is not implemented")
     return false

@@ -76,11 +76,9 @@ const IS_A_JUMP_CALCULATOR := true
 # - Auto expand UtilityPanel, and auto select the top-level edges item in the
 #   PlatformGraphInspector.
 # 
-# - Add types back to variables in Global.
-# 
 # - Add TODOs to use easing curves with all annotation animations.
 # 
-#  - Create FailedEdgeAttempt results from other edge calculators.
+# - Create FailedEdgeAttempt results from other edge calculators.
 # 
 # - Refactor pre-existing annotator classes to use the new
 #   AnnotationElementType system.

@@ -8,7 +8,7 @@ var CLICK_OUTER_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_SLIGHTLY_FAIN
 const CLICK_INNER_DURATION_SEC := 0.27
 const CLICK_OUTER_DURATION_SEC := 0.23
 
-var global # TODO: Add type back
+var global
 var click_position := Vector2.INF
 var start_time := -CLICK_INNER_DURATION_SEC
 var inner_end_time := -CLICK_INNER_DURATION_SEC
