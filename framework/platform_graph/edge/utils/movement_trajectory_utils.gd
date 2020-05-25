@@ -1,4 +1,4 @@
-# A collection of utility functions for calculating state related to MovementTrajectory.
+# A collection of utility functions for calculating state related to EdgeTrajectory.
 extends Reference
 class_name MovementTrajectoryUtils
 
@@ -13,7 +13,7 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 # Calculates trajectory state for the movement represented by the given calculation results.
 static func calculate_trajectory_from_calculation_steps( \
         calc_result: EdgeCalcResult, \
-        instructions: EdgeInstructions) -> MovementTrajectory:
+        instructions: EdgeInstructions) -> EdgeTrajectory:
     var edge_calc_params := calc_result.edge_calc_params
     var steps := calc_result.horizontal_steps
     var vertical_step := calc_result.vertical_step
@@ -31,7 +31,7 @@ static func calculate_trajectory_from_calculation_steps( \
     var distance_from_continuous_frames = \
             _sum_distance_between_frames(frame_continuous_positions_from_steps)
     
-    var trajectory := MovementTrajectory.new( \
+    var trajectory := EdgeTrajectory.new( \
             frame_continuous_positions_from_steps, \
             frame_continuous_velocities_from_steps, \
             waypoint_positions, \

@@ -92,7 +92,7 @@ func update_for_surface_state( \
 func _calculate_distance( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        trajectory: MovementTrajectory) -> float:
+        trajectory: EdgeTrajectory) -> float:
     return start.target_point.distance_to(end.target_point)
 
 func _calculate_duration( \

@@ -255,6 +255,11 @@ _global_script_classes=[ {
 "path": "res://framework/platform_graph/edge/calculation_models/edge_step_calc_result_type.gd"
 }, {
 "base": "Reference",
+"class": "EdgeTrajectory",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/calculation_models/edge_trajectory.gd"
+}, {
+"base": "Reference",
 "class": "EdgeType",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/edges/edge_type.gd"
@@ -508,11 +513,6 @@ _global_script_classes=[ {
 "class": "MovementStepUtils",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/utils/movement_step_utils.gd"
-}, {
-"base": "Reference",
-"class": "MovementTrajectory",
-"language": "GDScript",
-"path": "res://framework/platform_graph/edge/calculation_models/movement_trajectory.gd"
 }, {
 "base": "Reference",
 "class": "MovementTrajectoryUtils",
@@ -904,6 +904,7 @@ _global_script_class_icons={
 "EdgeStepCalcResultMetadataItemController": "",
 "EdgeStepCalcResultMetadataItemControllerFactory": "",
 "EdgeStepCalcResultType": "",
+"EdgeTrajectory": "",
 "EdgeType": "",
 "EdgeTypeInEdgesGroupItemController": "",
 "EdgeTypeInSurfacesGroupItemController": "",
@@ -955,7 +956,6 @@ _global_script_class_icons={
 "MovementInstructionsUtils": "",
 "MovementParams": "",
 "MovementStepUtils": "",
-"MovementTrajectory": "",
 "MovementTrajectoryUtils": "",
 "MovementUtils": "",
 "MovementVertCalcStep": "",

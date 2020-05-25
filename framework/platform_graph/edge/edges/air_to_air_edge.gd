@@ -15,7 +15,7 @@ func _init( \
         velocity_end: Vector2, \
         movement_params: MovementParams, \
         instructions: EdgeInstructions, \
-        trajectory: MovementTrajectory) \
+        trajectory: EdgeTrajectory) \
         .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
@@ -35,7 +35,7 @@ func _init( \
 func _calculate_distance( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        trajectory: MovementTrajectory) -> float:
+        trajectory: EdgeTrajectory) -> float:
     return trajectory.distance_from_continuous_frames
 
 func _calculate_duration( \

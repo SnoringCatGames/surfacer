@@ -11,7 +11,7 @@ static func check_instructions_discrete_frame_state( \
         instructions: EdgeInstructions, \
         vertical_step: MovementVertCalcStep, \
         horizontal_steps: Array, \
-        trajectory: MovementTrajectory) -> SurfaceCollision:
+        trajectory: EdgeTrajectory) -> SurfaceCollision:
     var movement_params := edge_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: EdgeInstruction = instructions.instructions[0]

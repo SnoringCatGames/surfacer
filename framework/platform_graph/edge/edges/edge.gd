@@ -24,7 +24,7 @@ var is_optimized_for_path := false
 
 var instructions: EdgeInstructions
 
-var trajectory: MovementTrajectory
+var trajectory: EdgeTrajectory
 
 # In pixels.
 var distance: float
@@ -67,7 +67,7 @@ func _init( \
         includes_extra_wall_land_horizontal_speed: bool, \
         movement_params: MovementParams, \
         instructions: EdgeInstructions, \
-        trajectory: MovementTrajectory) -> void:
+        trajectory: EdgeTrajectory) -> void:
     self.type = type
     self.is_time_based = is_time_based
     self.surface_type = surface_type
@@ -137,7 +137,7 @@ func update_navigation_state( \
 func _calculate_distance( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        trajectory: MovementTrajectory) -> float:
+        trajectory: EdgeTrajectory) -> float:
     Utils.error("Abstract Edge._calculate_distance is not implemented")
     return INF
 

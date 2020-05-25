@@ -187,7 +187,7 @@ func _get_all_edges_from_one_side( \
     
     var position_end: PositionAlongSurface
     var instructions: EdgeInstructions
-    var trajectory: MovementTrajectory
+    var trajectory: EdgeTrajectory
     var velocity_end: Vector2
     var edge: FallFromFloorEdge
     
@@ -283,7 +283,7 @@ static func _prepend_walk_to_fall_off_portion( \
         velocity_x_start: float, \
         time_fall_off: float, \
         instructions: EdgeInstructions, \
-        trajectory: MovementTrajectory, \
+        trajectory: EdgeTrajectory, \
         movement_params: MovementParams, \
         falls_on_left_side: bool) -> void:
     var frame_count_before_fall_off := ceil(time_fall_off / Utils.PHYSICS_TIME_STEP)

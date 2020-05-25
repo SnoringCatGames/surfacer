@@ -1,5 +1,5 @@
 extends Reference
-class_name MovementTrajectory
+class_name EdgeTrajectory
 
 # The positions of each frame of movement according to the discrete per-frame
 # movement calculations of the instruction test. This is used for annotation
