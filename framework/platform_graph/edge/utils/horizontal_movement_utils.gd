@@ -7,7 +7,7 @@ const MIN_MAX_VELOCITY_X_MARGIN := WaypointUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step( \
         step_calc_params: EdgeStepCalcParams, \
-        edge_calc_params: EdgeCalcParams) -> MovementCalcStep:
+        edge_calc_params: EdgeCalcParams) -> EdgeStep:
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
     
@@ -136,7 +136,7 @@ static func calculate_horizontal_step( \
     
     ### Assign the step properties.
     
-    var step := MovementCalcStep.new()
+    var step := EdgeStep.new()
     
     step.horizontal_acceleration_sign = horizontal_acceleration_sign
     
@@ -223,7 +223,7 @@ static func _calculate_acceleration_start_and_end_time( \
 # is velocity.
 static func calculate_horizontal_state_for_time( \
         movement_params: MovementParams, \
-        horizontal_step: MovementCalcStep, \
+        horizontal_step: EdgeStep, \
         time: float) -> Array:
     assert(time >= horizontal_step.time_step_start - Geometry.FLOAT_EPSILON)
     assert(time <= horizontal_step.time_step_end + Geometry.FLOAT_EPSILON)

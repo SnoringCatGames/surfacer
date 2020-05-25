@@ -20,7 +20,7 @@ var frame_continuous_positions_from_steps: PoolVector2Array
 # movement calculations of the underlying horizontal step calculations.
 var frame_continuous_velocities_from_steps: PoolVector2Array
 
-# The end positions of each MovementCalcStep. These correspond to
+# The end positions of each EdgeStep. These correspond to
 # intermediate-surface waypoints and the destination position. This is used for
 # annotation debugging.
 var waypoint_positions: Array

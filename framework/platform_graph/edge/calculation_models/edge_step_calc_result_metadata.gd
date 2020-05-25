@@ -19,7 +19,7 @@ var upcoming_waypoints: Array
 
 var previous_out_of_reach_waypoint: Waypoint
 
-var step: MovementCalcStep
+var step: EdgeStep
 
 var collision_result_metadata: CollisionCalcResultMetadata
 

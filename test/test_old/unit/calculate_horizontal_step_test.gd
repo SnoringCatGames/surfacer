@@ -21,16 +21,16 @@ func set_up(state := {}) -> void:
 
     var upcoming_constraint := MovementConstraint.new(destination_surface, Vector2.INF, true, true)
 
-    var previous_step: MovementCalcStep
+    var previous_step: EdgeStep
     if state.includes_previous_step:
-        previous_step = MovementCalcStep.new()
+        previous_step = EdgeStep.new()
         previous_step.time_step_end = state.time_start
         previous_step.position_step_end = state.position_start
         previous_step.velocity_step_end = state.velocity_start
     else:
         previous_step = null
     
-    var vertical_step := MovementCalcStep.new()
+    var vertical_step := EdgeStep.new()
     vertical_step.time_start = state.time_start
     vertical_step.position_start = state.position_start
     vertical_step.velocity_start = state.velocity_start
@@ -43,7 +43,7 @@ func set_up(state := {}) -> void:
     step_calc_params = EdgeStepCalcParams.new(position_start, state.position_end, \
             previous_step, vertical_step, upcoming_constraint)
 
-func assert_horizontal_step(step: MovementCalcStep, state: Dictionary) -> void:
+func assert_horizontal_step(step: EdgeStep, state: Dictionary) -> void:
     assert_almost_eq(step.time_start, state.time_start, Geometry.FLOAT_EPSILON)
     assert_almost_eq(step.time_instruction_end, state.time_instruction_end, Geometry.FLOAT_EPSILON)
     assert_almost_eq(step.time_step_end, state.time_step_end, Geometry.FLOAT_EPSILON)

@@ -25,7 +25,7 @@ static func convert_calculation_steps_to_movement_instructions( \
     var instructions := []
     instructions.resize(steps.size() * 2)
     
-    var step: MovementCalcStep
+    var step: EdgeStep
     var input_key: String
     var time_instruction_end: float
     var press: MovementInstruction
@@ -75,7 +75,7 @@ static func convert_calculation_steps_to_movement_instructions( \
         # we also need to not do so in a way that changes the trajectory we've carefully
         # calculated.
         
-        var last_step: MovementCalcStep = steps[steps.size() - 1]
+        var last_step: EdgeStep = steps[steps.size() - 1]
         var time_step_start := last_step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
         

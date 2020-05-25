@@ -4,7 +4,7 @@ extends Reference
 class_name EdgeCalcResult
 
 # All of the horizontal steps for this local branch of movement.
-# Array<MovementCalcStep>
+# Array<EdgeStep>
 var horizontal_steps: Array
 
 # The single vertical step for this overall jump movement.

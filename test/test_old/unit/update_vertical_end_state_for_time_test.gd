@@ -3,11 +3,11 @@ extends IntegrationTestBed
 # Expected values were calculated using a Google spreadsheet:
 # https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
 
-var output_step: MovementCalcStep
+var output_step: EdgeStep
 var vertical_step: MovementVertCalcStep
 
 func set_up(state := {}) -> void:
-    output_step = MovementCalcStep.new()
+    output_step = EdgeStep.new()
     output_step.position_step_end = Vector2.INF
     output_step.velocity_step_end = Vector2.INF
     output_step.position_instruction_end = Vector2.INF
@@ -17,7 +17,7 @@ func set_up(state := {}) -> void:
     movement_params.gravity_fast_fall = 5000.0
     movement_params.gravity_slow_rise = 900.0
     
-    vertical_step = MovementCalcStep.new()
+    vertical_step = EdgeStep.new()
     vertical_step.time_instruction_end = state.time_instruction_end
     vertical_step.position_start = Vector2(INF, state.position_start_y)
     vertical_step.velocity_start = Vector2(INF, state.velocity_start_y)

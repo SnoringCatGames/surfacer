@@ -209,6 +209,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/edge_calculators/edge_movement_calculator.gd"
 }, {
+"base": "Reference",
+"class": "EdgeStep",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/calculation_models/edge_step.gd"
+}, {
 "base": "AnnotationElement",
 "class": "EdgeStepAnnotationElement",
 "language": "GDScript",
@@ -480,11 +485,6 @@ _global_script_classes=[ {
 "path": "res://framework/player/action/action_handlers/match_expected_edge_trajectory_action.gd"
 }, {
 "base": "Reference",
-"class": "MovementCalcStep",
-"language": "GDScript",
-"path": "res://framework/platform_graph/edge/calculation_models/movement_calculation_step.gd"
-}, {
-"base": "Reference",
 "class": "MovementInstruction",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/movement_instruction.gd"
@@ -524,7 +524,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/utils/movement_utils.gd"
 }, {
-"base": "MovementCalcStep",
+"base": "EdgeStep",
 "class": "MovementVertCalcStep",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/movement_vertical_calculation_step.gd"
@@ -895,6 +895,7 @@ _global_script_class_icons={
 "EdgeCalcResultMetadataItemController": "",
 "EdgeCalcResultType": "",
 "EdgeMovementCalculator": "",
+"EdgeStep": "",
 "EdgeStepAnnotationElement": "",
 "EdgeStepCalcParams": "",
 "EdgeStepCalcResultMetadata": "",
@@ -949,7 +950,6 @@ _global_script_class_icons={
 "Level": "",
 "Main": "",
 "MatchExpectedEdgeTrajectoryAction": "",
-"MovementCalcStep": "",
 "MovementInstruction": "",
 "MovementInstructions": "",
 "MovementInstructionsUtils": "",

@@ -9,7 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - Rename:
-#   - movement_calculation_step -> edge_calc_step
 #   - movement_instruction -> edge_instruction
 #   - movement_instructions -> edge_instructions
 #   - movement_trajectory -> edge_trajectory

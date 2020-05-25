@@ -33,7 +33,7 @@ static func check_instructions_discrete_frame_state( \
     var collision: SurfaceCollision
     
     var current_horizontal_step_index := 0
-    var current_horizontal_step: MovementCalcStep = horizontal_steps[0]
+    var current_horizontal_step: EdgeStep = horizontal_steps[0]
     var continuous_horizontal_state: Array
     var continuous_vertical_state: Array
     var continuous_position := Vector2.INF
@@ -234,7 +234,7 @@ static func check_instructions_discrete_frame_state( \
 static func check_discrete_horizontal_step_for_collision( \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
-        horizontal_step: MovementCalcStep) -> SurfaceCollision:
+        horizontal_step: EdgeStep) -> SurfaceCollision:
     var movement_params := edge_calc_params.movement_params
     var delta := Utils.PHYSICS_TIME_STEP
     var is_first_jump := true
@@ -340,7 +340,7 @@ static func check_continuous_horizontal_step_for_collision( \
         step_result_metadata: EdgeStepCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
-        horizontal_step: MovementCalcStep) -> SurfaceCollision:
+        horizontal_step: EdgeStep) -> SurfaceCollision:
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
     var collider_half_width_height := movement_params.collider_half_width_height
