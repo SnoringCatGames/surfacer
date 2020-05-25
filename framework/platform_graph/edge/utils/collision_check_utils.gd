@@ -233,7 +233,7 @@ static func check_instructions_discrete_frame_state( \
 # times.
 static func check_discrete_horizontal_step_for_collision( \
         edge_calc_params: EdgeCalcParams, \
-        step_calc_params: MovementCalcStepParams, \
+        step_calc_params: EdgeStepCalcParams, \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
     var movement_params := edge_calc_params.movement_params
     var delta := Utils.PHYSICS_TIME_STEP
@@ -339,7 +339,7 @@ static func check_discrete_horizontal_step_for_collision( \
 static func check_continuous_horizontal_step_for_collision( \
         step_result_metadata: EdgeStepCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
-        step_calc_params: MovementCalcStepParams, \
+        step_calc_params: EdgeStepCalcParams, \
         horizontal_step: MovementCalcStep) -> SurfaceCollision:
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step

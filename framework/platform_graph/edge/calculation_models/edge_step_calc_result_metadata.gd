@@ -10,7 +10,7 @@ var index: int
 # Array<EdgeStepCalcResultMetadata>
 var children_step_attempts := []
 
-var step_calc_params: MovementCalcStepParams
+var step_calc_params: EdgeStepCalcParams
 
 var edge_step_calc_result_type := EdgeStepCalcResultType.UNKNOWN
 
@@ -26,7 +26,7 @@ var collision_result_metadata: CollisionCalcResultMetadata
 func _init( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         parent_step_result_metadata: EdgeStepCalcResultMetadata, \
-        step_calc_params: MovementCalcStepParams, \
+        step_calc_params: EdgeStepCalcParams, \
         previous_out_of_reach_waypoint: Waypoint) -> void:
     self.edge_result_metadata = edge_result_metadata
     self.step_calc_params = step_calc_params

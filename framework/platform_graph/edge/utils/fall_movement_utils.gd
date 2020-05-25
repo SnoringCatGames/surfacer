@@ -170,7 +170,7 @@ static func find_landing_trajectory_between_positions( \
         # Cannot reach destination from origin.
         return null
     
-    var step_calc_params: MovementCalcStepParams = MovementCalcStepParams.new( \
+    var step_calc_params: EdgeStepCalcParams = EdgeStepCalcParams.new( \
             edge_calc_params.origin_waypoint, \
             edge_calc_params.destination_waypoint, \
             vertical_step)

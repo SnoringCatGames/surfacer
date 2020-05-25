@@ -6,7 +6,7 @@ const MIN_MAX_VELOCITY_X_MARGIN := WaypointUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
 
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step( \
-        step_calc_params: MovementCalcStepParams, \
+        step_calc_params: EdgeStepCalcParams, \
         edge_calc_params: EdgeCalcParams) -> MovementCalcStep:
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step

@@ -1,7 +1,7 @@
 # Parameters that are used for calculating edge instructions.
 # FIXME: --A ********* doc
 extends Reference
-class_name MovementCalcStepParams
+class_name EdgeStepCalcParams
 
 # The start position of this local branch of movement.
 var start_waypoint: Waypoint

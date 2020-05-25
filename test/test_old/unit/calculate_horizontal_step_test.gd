@@ -3,7 +3,7 @@ extends IntegrationTestBed
 # Expected values were calculated using a Google spreadsheet:
 # https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
 
-var step_calc_params: MovementCalcStepParams
+var step_calc_params: EdgeStepCalcParams
 
 func set_up(state := {}) -> void:
     movement_params = MovementParams.new()
@@ -40,7 +40,7 @@ func set_up(state := {}) -> void:
     vertical_step.velocity_instruction_end = Vector2(INF, state.velocity_jump_instruction_end_y)
     
     var position_start := Vector2.INF
-    step_calc_params = MovementCalcStepParams.new(position_start, state.position_end, \
+    step_calc_params = EdgeStepCalcParams.new(position_start, state.position_end, \
             previous_step, vertical_step, upcoming_constraint)
 
 func assert_horizontal_step(step: MovementCalcStep, state: Dictionary) -> void:

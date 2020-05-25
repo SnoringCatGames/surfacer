@@ -210,6 +210,11 @@ _global_script_classes=[ {
 "path": "res://framework/annotators/annotation_element/edge_step_annotation_element.gd"
 }, {
 "base": "Reference",
+"class": "EdgeStepCalcParams",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/calculation_models/edge_step_calc_params.gd"
+}, {
+"base": "Reference",
 "class": "EdgeStepCalcResultMetadata",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/edge_step_calc_result_metadata.gd"
@@ -478,11 +483,6 @@ _global_script_classes=[ {
 "class": "MovementCalcStep",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/calculation_models/movement_calculation_step.gd"
-}, {
-"base": "Reference",
-"class": "MovementCalcStepParams",
-"language": "GDScript",
-"path": "res://framework/platform_graph/edge/calculation_models/movement_calculation_step_params.gd"
 }, {
 "base": "Reference",
 "class": "MovementInstruction",
@@ -895,6 +895,7 @@ _global_script_class_icons={
 "EdgeCalcResultType": "",
 "EdgeMovementCalculator": "",
 "EdgeStepAnnotationElement": "",
+"EdgeStepCalcParams": "",
 "EdgeStepCalcResultMetadata": "",
 "EdgeStepCalcResultMetadataItemController": "",
 "EdgeStepCalcResultMetadataItemControllerFactory": "",
@@ -949,7 +950,6 @@ _global_script_class_icons={
 "MatchExpectedEdgeTrajectoryAction": "",
 "MovementCalcResults": "",
 "MovementCalcStep": "",
-"MovementCalcStepParams": "",
 "MovementInstruction": "",
 "MovementInstructions": "",
 "MovementInstructionsUtils": "",

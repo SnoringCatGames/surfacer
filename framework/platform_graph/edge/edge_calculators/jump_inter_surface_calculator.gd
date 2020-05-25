@@ -9,7 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - Rename:
-#   - movement_calculation_step_params -> edge_step_calc_params
 #   - movement_calculation_results -> edge_calc_result
 #   - movement_calculation_step -> edge_calc_step
 #   - movement_instruction -> edge_instruction
@@ -111,7 +110,7 @@ const IS_A_JUMP_CALCULATOR := true
 # >- Refactor MovementCalcResults to be re-used for failed calculations as
 #    well.
 #    - Remove edge_attempt_debug_results/step_attempt_debug_results from
-#      EdgeCalcParams/MovementCalcStepParams.
+#      EdgeCalcParams/EdgeStepCalcParams.
 #    - Create MovementCalcResults very early in the process, and plumb it
 #      through as input.
 #    - Decide what state to persist, and what state to re-calculate when

@@ -21,7 +21,7 @@ static func calculate_steps_with_new_jump_height( \
         # The destination is out of reach.
         return null
     
-    var step_calc_params := MovementCalcStepParams.new( \
+    var step_calc_params := EdgeStepCalcParams.new( \
             edge_calc_params.origin_waypoint, \
             edge_calc_params.destination_waypoint, \
             vertical_step)
@@ -56,7 +56,7 @@ static func calculate_steps_between_waypoints( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         step_result_metadata: EdgeStepCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
-        step_calc_params: MovementCalcStepParams) -> MovementCalcResults:
+        step_calc_params: EdgeStepCalcParams) -> MovementCalcResults:
     ### BASE CASES
     
     var next_horizontal_step := HorizontalMovementUtils.calculate_horizontal_step( \
@@ -206,7 +206,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         step_result_metadata: EdgeStepCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
-        step_calc_params: MovementCalcStepParams, \
+        step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> MovementCalcResults:
     var vertical_step := step_calc_params.vertical_step
     var previous_waypoint_original := step_calc_params.start_waypoint
@@ -214,8 +214,8 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
     
     var previous_waypoint_copy: Waypoint
     var next_waypoint_copy: Waypoint
-    var step_calc_params_to_waypoint: MovementCalcStepParams
-    var step_calc_params_from_waypoint: MovementCalcStepParams
+    var step_calc_params_to_waypoint: EdgeStepCalcParams
+    var step_calc_params_from_waypoint: EdgeStepCalcParams
     var child_step_result_metadata: EdgeStepCalcResultMetadata
     var calc_results_to_waypoint: MovementCalcResults
     var calc_results_from_waypoint: MovementCalcResults
@@ -258,7 +258,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         
         ### RECURSE: Calculate movement to the waypoint.
         
-        step_calc_params_to_waypoint = MovementCalcStepParams.new( \
+        step_calc_params_to_waypoint = EdgeStepCalcParams.new( \
                 previous_waypoint_copy, \
                 waypoint, \
                 vertical_step)
@@ -286,7 +286,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         
         ### RECURSE: Calculate movement from the waypoint to the original destination.
         
-        step_calc_params_from_waypoint = MovementCalcStepParams.new( \
+        step_calc_params_from_waypoint = EdgeStepCalcParams.new( \
                 waypoint, \
                 next_waypoint_copy, \
                 vertical_step)
@@ -335,7 +335,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
 static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
-        step_calc_params: MovementCalcStepParams, \
+        step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> MovementCalcResults:
     var origin_original := edge_calc_params.origin_waypoint
     var destination_original := edge_calc_params.destination_waypoint
