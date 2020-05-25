@@ -82,11 +82,13 @@ static func get_floor_friction_multiplier(body: KinematicBody2D) -> float:
         return collision.collider.collision_friction
     return 0.0
 
-static func _get_floor_collision(body: KinematicBody2D) -> KinematicCollision2D:
+static func _get_floor_collision( \
+        body: KinematicBody2D) -> KinematicCollision2D:
     if body.is_on_floor():
         for i in range(body.get_slide_count()):
             var collision := body.get_slide_collision(i)
-            if abs(collision.normal.angle_to(Geometry.UP)) <= Geometry.FLOOR_MAX_ANGLE:
+            if abs(collision.normal.angle_to(Geometry.UP)) <= \
+                    Geometry.FLOOR_MAX_ANGLE:
                 return collision
     return null
 

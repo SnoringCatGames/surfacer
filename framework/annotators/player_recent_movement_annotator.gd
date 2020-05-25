@@ -42,34 +42,48 @@ func check_for_update() -> void:
             0.01):
         # Record the action as belonging to the previous frame.
         if player.actions.just_pressed_jump:
-            recent_actions[current_position_index] = PlayerActionType.PRESSED_JUMP
+            recent_actions[current_position_index] = \
+                    PlayerActionType.PRESSED_JUMP
         elif player.actions.just_pressed_left:
-            recent_actions[current_position_index] = PlayerActionType.PRESSED_LEFT
+            recent_actions[current_position_index] = \
+                    PlayerActionType.PRESSED_LEFT
         elif player.actions.just_pressed_right:
-            recent_actions[current_position_index] = PlayerActionType.PRESSED_RIGHT
+            recent_actions[current_position_index] = \
+                    PlayerActionType.PRESSED_RIGHT
         elif player.actions.just_pressed_grab_wall:
-            recent_actions[current_position_index] = PlayerActionType.PRESSED_GRAB_WALL
+            recent_actions[current_position_index] = \
+                    PlayerActionType.PRESSED_GRAB_WALL
         elif player.actions.just_pressed_face_left:
-            recent_actions[current_position_index] = PlayerActionType.PRESSED_FACE_LEFT
+            recent_actions[current_position_index] = \
+                    PlayerActionType.PRESSED_FACE_LEFT
         elif player.actions.just_pressed_face_right:
-            recent_actions[current_position_index] = PlayerActionType.PRESSED_FACE_RIGHT
+            recent_actions[current_position_index] = \
+                    PlayerActionType.PRESSED_FACE_RIGHT
         elif player.actions.just_released_jump:
-            recent_actions[current_position_index] = PlayerActionType.RELEASED_JUMP
+            recent_actions[current_position_index] = \
+                    PlayerActionType.RELEASED_JUMP
         elif player.actions.just_released_left:
-            recent_actions[current_position_index] = PlayerActionType.RELEASED_LEFT
+            recent_actions[current_position_index] = \
+                    PlayerActionType.RELEASED_LEFT
         elif player.actions.just_released_right:
-            recent_actions[current_position_index] = PlayerActionType.RELEASED_RIGHT
+            recent_actions[current_position_index] = \
+                    PlayerActionType.RELEASED_RIGHT
         elif player.actions.just_released_grab_wall:
-            recent_actions[current_position_index] = PlayerActionType.RELEASED_GRAB_WALL
+            recent_actions[current_position_index] = \
+                    PlayerActionType.RELEASED_GRAB_WALL
         elif player.actions.just_released_face_left:
-            recent_actions[current_position_index] = PlayerActionType.RELEASED_FACE_LEFT
+            recent_actions[current_position_index] = \
+                    PlayerActionType.RELEASED_FACE_LEFT
         elif player.actions.just_released_face_right:
-            recent_actions[current_position_index] = PlayerActionType.RELEASED_FACE_RIGHT
+            recent_actions[current_position_index] = \
+                    PlayerActionType.RELEASED_FACE_RIGHT
         else:
-            recent_actions[current_position_index] = PlayerActionType.NONE
+            recent_actions[current_position_index] = \
+                    PlayerActionType.NONE
         
         total_position_count += 1
-        current_position_index = (current_position_index + 1) % RECENT_POSITIONS_BUFFER_SIZE
+        current_position_index = \
+                (current_position_index + 1) % RECENT_POSITIONS_BUFFER_SIZE
         
         # Record the new position for the current frame.
         recent_positions[current_position_index] = player.position
@@ -83,13 +97,15 @@ func _draw() -> void:
         # Don't try to draw the starting position by itself.
         return
     
-    # Until we've actually been in enough positions, we won't actually render points for the whole
-    # buffer.
-    var position_count := min(RECENT_POSITIONS_BUFFER_SIZE, total_position_count) as int
+    # Until we've actually been in enough positions, we won't actually render
+    # points for the whole buffer.
+    var position_count := \
+            min(RECENT_POSITIONS_BUFFER_SIZE, total_position_count) as int
     
     # Calculate the oldest index that we'll render. We start drawing here.
     var start_index := \
-            (current_position_index + 1 - position_count + RECENT_POSITIONS_BUFFER_SIZE) % \
+            (current_position_index + 1 - position_count + \
+                    RECENT_POSITIONS_BUFFER_SIZE) % \
             RECENT_POSITIONS_BUFFER_SIZE
     
     var previous_position := recent_positions[start_index]
@@ -101,7 +117,8 @@ func _draw() -> void:
     for i in range(1, position_count):
         # Older positions fade out.
         opacity = i / (position_count as float) * \
-                (MOVEMENT_OPACITY_NEWEST - MOVEMENT_OPACITY_OLDEST) + MOVEMENT_OPACITY_OLDEST
+                (MOVEMENT_OPACITY_NEWEST - MOVEMENT_OPACITY_OLDEST) + \
+                MOVEMENT_OPACITY_OLDEST
         color = Color.from_hsv( \
                 MOVEMENT_HUE, \
                 0.7, \
@@ -138,38 +155,45 @@ func _draw_action_indicator( \
             0.9, \
             opacity)
     
-    if action == PlayerActionType.PRESSED_JUMP or action == PlayerActionType.RELEASED_JUMP:
-        # Draw a plus for the jump instruction start/end.
-        DrawUtils.draw_asterisk( \
+    var input_key := ""
+    var is_pressed: bool
+    match action:
+        PlayerActionType.PRESSED_JUMP:
+            input_key = "jump"
+            is_pressed = true
+        PlayerActionType.RELEASED_JUMP:
+            input_key = "jump"
+            is_pressed = false
+        PlayerActionType.PRESSED_LEFT:
+            input_key = "move_left"
+            is_pressed = true
+        PlayerActionType.RELEASED_LEFT:
+            input_key = "move_left"
+            is_pressed = false
+        PlayerActionType.PRESSED_RIGHT:
+            input_key = "move_right"
+            is_pressed = true
+        PlayerActionType.RELEASED_RIGHT:
+            input_key = "move_right"
+            is_pressed = false
+        PlayerActionType.PRESSED_GRAB_WALL, \
+        PlayerActionType.RELEASED_GRAB_WALL, \
+        PlayerActionType.PRESSED_FACE_LEFT, \
+        PlayerActionType.RELEASED_FACE_LEFT, \
+        PlayerActionType.PRESSED_FACE_RIGHT, \
+        PlayerActionType.RELEASED_FACE_RIGHT:
+            pass
+        _:
+            Utils.error( \
+                    "Unknown PlayerActionType passed to " + \
+                    "_draw_action_indicator: %s" % \
+                    PlayerActionType.get_type_string(action))
+    
+    if input_key != "":
+        DrawUtils.draw_instruction_indicator( \
                 self, \
+                input_key, \
+                is_pressed, \
                 position, \
-                VERTICAL_INSTRUCTION_START_END_LENGTH, \
-                VERTICAL_INSTRUCTION_START_END_LENGTH, \
-                color, \
-                VERTICAL_INSTRUCTION_START_END_STROKE_WIDTH)
-    elif action == PlayerActionType.PRESSED_LEFT or action == PlayerActionType.PRESSED_RIGHT:
-        # Draw a plus for the left/right instruction start.
-        DrawUtils.draw_plus( \
-                self, \
-                position, \
-                HORIZONTAL_INSTRUCTION_START_LENGTH, \
-                HORIZONTAL_INSTRUCTION_START_LENGTH, 
-                color, \
-                HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
-    elif action == PlayerActionType.RELEASED_LEFT or action == PlayerActionType.RELEASED_RIGHT:
-        # Draw a minus for the left/right instruction end.
-        self.draw_line( \
-                position + Vector2(-HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
-                position + Vector2(HORIZONTAL_INSTRUCTION_START_LENGTH / 2, 0), \
-                color, \
-                HORIZONTAL_INSTRUCTION_START_STROKE_WIDTH)
-    elif action == PlayerActionType.PRESSED_GRAB_WALL or \
-            action == PlayerActionType.RELEASED_GRAB_WALL or \
-            action == PlayerActionType.PRESSED_FACE_LEFT or \
-            action == PlayerActionType.RELEASED_FACE_LEFT or \
-            action == PlayerActionType.PRESSED_FACE_RIGHT or \
-            action == PlayerActionType.RELEASED_FACE_RIGHT:
-        pass
-    else:
-        Utils.error("Unknown PlayerActionType passed to _draw_action_indicator: %s" % \
-                PlayerActionType.get_type_string(action))
+                DrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH, \
+                color)

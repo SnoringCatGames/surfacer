@@ -23,10 +23,13 @@ static func get_distance_squared_from_point_to_segment( \
 static func get_distance_squared_from_point_to_polyline( \
         point: Vector2, \
         polyline: PoolVector2Array) -> float:
-    var closest_point := get_closest_point_on_polyline_to_point(point, polyline)
+    var closest_point := get_closest_point_on_polyline_to_point( \
+            point, \
+            polyline)
     return point.distance_squared_to(closest_point)
 
-# Calculates the minimum squared distance between two NON-INTERSECTING line segments.
+# Calculates the minimum squared distance between two NON-INTERSECTING line
+# segments.
 static func get_distance_squared_between_non_intersecting_segments( \
         segment_1_a: Vector2, \
         segment_1_b: Vector2, \
@@ -49,13 +52,19 @@ static func get_distance_squared_between_non_intersecting_segments( \
             segment_1_a, \
             segment_1_b)
     
-    var distance_squared_from_2_to_1_a = closest_on_2_to_1_a.distance_squared_to(segment_1_a)
-    var distance_squared_from_2_to_1_b = closest_on_2_to_1_b.distance_squared_to(segment_1_b)
-    var distance_squared_from_1_to_2_a = closest_on_1_to_2_a.distance_squared_to(segment_2_a)
-    var distance_squared_from_1_to_2_b = closest_on_1_to_2_b.distance_squared_to(segment_2_b)
+    var distance_squared_from_2_to_1_a = \
+            closest_on_2_to_1_a.distance_squared_to(segment_1_a)
+    var distance_squared_from_2_to_1_b = \
+            closest_on_2_to_1_b.distance_squared_to(segment_1_b)
+    var distance_squared_from_1_to_2_a = \
+            closest_on_1_to_2_a.distance_squared_to(segment_2_a)
+    var distance_squared_from_1_to_2_b = \
+            closest_on_1_to_2_b.distance_squared_to(segment_2_b)
     
-    return min(min(distance_squared_from_2_to_1_a, distance_squared_from_2_to_1_b), \
-            min(distance_squared_from_1_to_2_a, distance_squared_from_1_to_2_b))
+    return min(min(distance_squared_from_2_to_1_a, \
+                    distance_squared_from_2_to_1_b), \
+            min(distance_squared_from_1_to_2_a, \
+                    distance_squared_from_1_to_2_b))
 
 # Calculates the closest position on a line segment to a point.
 static func get_closest_point_on_segment_to_point( \
@@ -68,7 +77,8 @@ static func get_closest_point_on_segment_to_point( \
     var vv: float = v.dot(v)
     
     if uv <= 0.0:
-        # The projection of the point lies before the first point in the segment.
+        # The projection of the point lies before the first point in the
+        # segment.
         return segment_a
     elif vv <= uv:
         # The projection of the point lies after the last point in the segment.
@@ -124,8 +134,8 @@ static func get_closest_point_on_polyline_to_polyline( \
     
     return closest_point
 
-# Calculates the point of intersection between two line segments. If the segments don't intersect,
-# this returns a Vector2 with values of INFINITY.
+# Calculates the point of intersection between two line segments. If the
+# segments don't intersect, this returns a Vector2 with values of INFINITY.
 static func get_intersection_of_segments( \
         segment_1_a: Vector2, \
         segment_1_b: Vector2, \
@@ -143,10 +153,12 @@ static func get_intersection_of_segments( \
         var t1_numerator := (segment_1_a - segment_2_a).dot(s)
         if 0 <= t0_numerator and t0_numerator <= r.dot(r) or \
                 0 <= t1_numerator and t1_numerator <= s.dot(s):
-            # The segments overlap. Return one of the segment endpoints that lies within the
-            # overlap region.
-            if (segment_1_a.x >= segment_2_a.x and segment_1_a.x <= segment_2_b.x) or \
-                    (segment_1_a.x <= segment_2_a.x and segment_1_a.x >= segment_2_b.x):
+            # The segments overlap. Return one of the segment endpoints that
+            # lies within the overlap region.
+            if (segment_1_a.x >= segment_2_a.x and \
+                    segment_1_a.x <= segment_2_b.x) or \
+                    (segment_1_a.x <= segment_2_a.x and \
+                    segment_1_a.x >= segment_2_b.x):
                 return segment_1_a
             else:
                 return segment_1_b
@@ -167,8 +179,8 @@ static func get_intersection_of_segments( \
             # The segments don't touch.
             return Vector2.INF
 
-# Calculates the point of intersection between a line segment and a polyline. If the two don't
-# intersect, this returns a Vector2 with values of INFINITY.
+# Calculates the point of intersection between a line segment and a polyline.
+# If the two don't intersect, this returns a Vector2 with values of INFINITY.
 static func get_intersection_of_segment_and_polyline( \
         segment_a: Vector2, \
         segment_b: Vector2, \
@@ -191,8 +203,8 @@ static func get_intersection_of_segment_and_polyline( \
                 return intersection
     return Vector2.INF
 
-# Calculates where the alially-aligned surface-side-normal that goes through the given point would
-# intersect with the surface.
+# Calculates where the alially-aligned surface-side-normal that goes through
+# the given point would intersect with the surface.
 static func project_point_onto_surface( \
         point: Vector2, \
         surface: Surface) -> Vector2:
@@ -218,20 +230,23 @@ static func project_point_onto_surface( \
     else:
         # Target lies within the surface boundaries.
         
-        # Calculate a segment that represents the alially-aligned surface-side-normal.
+        # Calculate a segment that represents the alially-aligned
+        # surface-side-normal.
         var segment_a: Vector2
         var segment_b: Vector2
-        if surface.side == SurfaceSide.FLOOR or surface.side == SurfaceSide.CEILING:
+        if surface.side == SurfaceSide.FLOOR or \
+                surface.side == SurfaceSide.CEILING:
             segment_a = Vector2(point.x, surface.bounding_box.position.y)
             segment_b = Vector2(point.x, surface.bounding_box.end.y)
-        else: # surface.side == SurfaceSide.LEFT_WALL or surface.side == SurfaceSide.RIGHT_WALL
+        else:
             segment_a = Vector2(surface.bounding_box.position.x, point.y)
             segment_b = Vector2(surface.bounding_box.end.x, point.y)
         
-        var intersection: Vector2 = Geometry.get_intersection_of_segment_and_polyline( \
-                segment_a, \
-                segment_b, \
-                surface.vertices)
+        var intersection: Vector2 = \
+                Geometry.get_intersection_of_segment_and_polyline( \
+                        segment_a, \
+                        segment_b, \
+                        surface.vertices)
         assert(intersection != Vector2.INF)
         return intersection
 
@@ -253,9 +268,12 @@ static func is_point_in_triangle( \
     var dot_ab_ap: float = ab.dot(ap)
     
     # The barycentric coordinates.
-    var inverse_denominator := 1 / (dot_ac_ac * dot_ab_ab - dot_ac_ab * dot_ac_ab)
-    var u := (dot_ab_ab * dot_ac_ap - dot_ac_ab * dot_ab_ap) * inverse_denominator
-    var v := (dot_ac_ac * dot_ab_ap - dot_ac_ab * dot_ac_ap) * inverse_denominator
+    var inverse_denominator := \
+            1 / (dot_ac_ac * dot_ab_ab - dot_ac_ab * dot_ac_ab)
+    var u := (dot_ab_ab * dot_ac_ap - dot_ac_ab * dot_ab_ap) * \
+            inverse_denominator
+    var v := (dot_ac_ac * dot_ab_ap - dot_ac_ab * dot_ac_ap) * \
+            inverse_denominator
     
     return u >= 0 and v >= 0 and u + v < 1
 
@@ -287,11 +305,12 @@ static func do_segment_and_triangle_intersect( \
                     triangle_b, \
                     triangle_c)
 
-# Assumes that the polygon's closing segment is implied; i.e., polygon.last != polygon.first.
-# Assumes that polygon.size() > 1.
-# Assumes that segment_a != segment_b.
+# - Assumes that the polygon's closing segment is implied;
+#   i.e., polygon.last != polygon.first.
+# - Assumes that polygon.size() > 1.
+# - Assumes that segment_a != segment_b.
 # 
-# -------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Based on the "parametric line-clipping" approach described by Dan Sunday at
 # http://geomalgorithms.com/a13-_intersect-4.html.
 # 
@@ -301,7 +320,7 @@ static func do_segment_and_triangle_intersect( \
 # SoftSurfer makes no warranty for this code, and cannot be held
 # liable for any real or imagined damage resulting from its use.
 # Users of this code must verify correctness for their application.
-# -------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 static func do_segment_and_polygon_intersect( \
         segment_a: Vector2, \
         segment_b: Vector2, \
@@ -321,7 +340,8 @@ static func do_segment_and_polygon_intersect( \
         polygon_segment = polygon[i + 1] - polygon[i]
         p_to_a = segment_a - polygon[i]
         n = polygon_segment.x * p_to_a.y - polygon_segment.y * p_to_a.x
-        d = polygon_segment.y * segment_diff.x - polygon_segment.x * segment_diff.y
+        d = polygon_segment.y * segment_diff.x - \
+                polygon_segment.x * segment_diff.y
         
         if abs(d) < Geometry.FLOAT_EPSILON:
             if n < 0:
@@ -344,7 +364,8 @@ static func do_segment_and_polygon_intersect( \
     polygon_segment = polygon[0] - polygon[count - 1]
     p_to_a = segment_a - polygon[count - 1]
     n = polygon_segment.x * p_to_a.y - polygon_segment.y * p_to_a.x
-    d = polygon_segment.y * segment_diff.x - polygon_segment.x * segment_diff.y
+    d = polygon_segment.y * segment_diff.x - \
+            polygon_segment.x * segment_diff.y
     
     if abs(d) < Geometry.FLOAT_EPSILON:
         if n < 0:
@@ -432,8 +453,8 @@ static func is_float_lte_with_epsilon( \
     var diff = b - a
     return a <= b or (-epsilon < diff and diff < epsilon)
 
-# Determine whether the points of the polygon are defined in a clockwise direction. This uses the
-# shoelace formula.
+# Determine whether the points of the polygon are defined in a clockwise
+# direction. This uses the shoelace formula.
 static func is_polygon_clockwise(vertices: Array) -> bool:
     var vertex_count := vertices.size()
     var sum := 0.0
@@ -457,7 +478,8 @@ static func are_points_collinear( \
         p1: Vector2, \
         p2: Vector2, \
         p3: Vector2) -> bool:
-    return abs((p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y)) < FLOAT_EPSILON
+    return abs((p2.x - p1.x) * (p3.y - p1.y) - \
+            (p3.x - p1.x) * (p2.y - p1.y)) < FLOAT_EPSILON
 
 static func do_point_and_segment_intersect( \
         point: Vector2, \
@@ -509,26 +531,28 @@ static func distance_squared_from_point_to_rect( \
         else:
             return 0.0
 
-# The build-in TileMap.world_to_map generates incorrect results around cell boundaries, so we use a
-# custom utility.
+# The build-in TileMap.world_to_map generates incorrect results around cell
+# boundaries, so we use a custom utility.
 static func world_to_tile_map( \
         position: Vector2, \
         tile_map: TileMap) -> Vector2:
     var cell_size_world_coord := tile_map.cell_size
     var position_map_coord := position / cell_size_world_coord
-    position_map_coord = Vector2(floor(position_map_coord.x), floor(position_map_coord.y))
+    position_map_coord = Vector2( \
+            floor(position_map_coord.x), \
+            floor(position_map_coord.y))
     return position_map_coord
 
-# Calculates the TileMap (grid-based) coordinates of the given position, relative to the origin of
-# the TileMap's bounding box.
+# Calculates the TileMap (grid-based) coordinates of the given position,
+# relative to the origin of the TileMap's bounding box.
 static func get_tile_map_index_from_world_coord( \
         position: Vector2, \
         tile_map: TileMap) -> int:
     var position_grid_coord = world_to_tile_map(position, tile_map)
     return get_tile_map_index_from_grid_coord(position_grid_coord, tile_map)
 
-# Calculates the TileMap (grid-based) coordinates of the given position, relative to the origin of
-# the TileMap's bounding box.
+# Calculates the TileMap (grid-based) coordinates of the given position,
+# relative to the origin of the TileMap's bounding box.
 static func get_tile_map_index_from_grid_coord( \
         position: Vector2, \
         tile_map: TileMap) -> int:
@@ -541,16 +565,23 @@ static func get_tile_map_index_from_grid_coord( \
 static func get_collision_tile_map_coord( \
         position_world_coord: Vector2, \
         tile_map: TileMap, \
-        is_touching_floor: bool, is_touching_ceiling: bool, is_touching_left_wall: bool, \
-        is_touching_right_wall: bool, expects_a_valid_result: bool, \
+        is_touching_floor: bool, \
+        is_touching_ceiling: bool, \
+        is_touching_left_wall: bool, \
+        is_touching_right_wall: bool, \
+        expects_a_valid_result: bool, \
         fallback_coord := Vector2.INF) -> Vector2:
     var half_cell_size = tile_map.cell_size / 2.0
     var used_rect = tile_map.get_used_rect()
     var position_relative_to_tile_map = \
             position_world_coord - used_rect.position * tile_map.cell_size
     
-    var cell_width_mod = abs(fmod(position_relative_to_tile_map.x, tile_map.cell_size.x))
-    var cell_height_mod = abs(fmod(position_relative_to_tile_map.y, tile_map.cell_size.y))
+    var cell_width_mod = abs(fmod( \
+            position_relative_to_tile_map.x, \
+            tile_map.cell_size.x))
+    var cell_height_mod = abs(fmod( \
+            position_relative_to_tile_map.y, \
+            tile_map.cell_size.y))
     
     var is_between_cells_horizontally = cell_width_mod < 0.001 or \
             tile_map.cell_size.x - cell_width_mod < 0.001
@@ -578,55 +609,86 @@ static func get_collision_tile_map_coord( \
                         position_world_coord.y - half_cell_size.y), \
                 tile_map)
         
-        is_there_a_tile_at_top_left = \
-                tile_map.get_cellv(top_left_cell_coord) >= 0
-        is_there_a_tile_at_top_right = \
-                tile_map.get_cell(top_left_cell_coord.x + 1, top_left_cell_coord.y) >= 0
-        is_there_a_tile_at_bottom_left = \
-                tile_map.get_cell(top_left_cell_coord.x, top_left_cell_coord.y + 1) >= 0
-        is_there_a_tile_at_bottom_right = \
-                tile_map.get_cell(top_left_cell_coord.x + 1, top_left_cell_coord.y + 1) >= 0
+        is_there_a_tile_at_top_left = tile_map.get_cellv( \
+                top_left_cell_coord) >= 0
+        is_there_a_tile_at_top_right = tile_map.get_cell( \
+                top_left_cell_coord.x + 1, \
+                top_left_cell_coord.y) >= 0
+        is_there_a_tile_at_bottom_left = tile_map.get_cell( \
+                top_left_cell_coord.x, \
+                top_left_cell_coord.y + 1) >= 0
+        is_there_a_tile_at_bottom_right = tile_map.get_cell( \
+                top_left_cell_coord.x + 1, \
+                top_left_cell_coord.y + 1) >= 0
         
         if is_touching_floor:
             if is_touching_left_wall:
                 assert(is_there_a_tile_at_bottom_left)
-                tile_coord = Vector2(top_left_cell_coord.x, top_left_cell_coord.y + 1)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x, top_left_cell_coord.y + 1)
             if is_touching_right_wall:
                 assert(is_there_a_tile_at_bottom_right)
-                tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y + 1)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x + 1, top_left_cell_coord.y + 1)
             elif is_there_a_tile_at_bottom_left:
-                tile_coord = Vector2(top_left_cell_coord.x, top_left_cell_coord.y + 1)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x, top_left_cell_coord.y + 1)
             elif is_there_a_tile_at_bottom_right:
-                tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y + 1)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x + 1, top_left_cell_coord.y + 1)
             else:
-                error_message = "Invalid state: Problem calculating colliding cell on floor"
+                error_message = \
+                        "Invalid state: Problem calculating colliding " + \
+                        "cell on floor"
         elif is_touching_ceiling:
             if is_touching_left_wall:
                 assert(is_there_a_tile_at_top_left)
-                tile_coord = Vector2(top_left_cell_coord.x, top_left_cell_coord.y)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x, \
+                        top_left_cell_coord.y)
             if is_touching_right_wall:
                 assert(is_there_a_tile_at_top_right)
-                tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x + 1, \
+                        top_left_cell_coord.y)
             elif is_there_a_tile_at_top_left:
-                tile_coord = Vector2(top_left_cell_coord.x, top_left_cell_coord.y)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x, \
+                        top_left_cell_coord.y)
             elif is_there_a_tile_at_top_right:
-                tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x + 1, \
+                        top_left_cell_coord.y)
             else:
-                error_message = "Invalid state: Problem calculating colliding cell on ceiling"
+                error_message = \
+                        "Invalid state: Problem calculating colliding " + \
+                        "cell on ceiling"
         elif is_touching_left_wall:
             if is_there_a_tile_at_top_left:
-                tile_coord = Vector2(top_left_cell_coord.x, top_left_cell_coord.y)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x, \
+                        top_left_cell_coord.y)
             elif is_there_a_tile_at_bottom_left:
-                tile_coord = Vector2(top_left_cell_coord.x, top_left_cell_coord.y + 1)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x, \
+                        top_left_cell_coord.y + 1)
             else:
-                error_message = "Invalid state: Problem calculating colliding cell on left wall"
+                error_message = \
+                        "Invalid state: Problem calculating colliding " + \
+                        "cell on left wall"
         elif is_touching_right_wall:
             if is_there_a_tile_at_top_right:
-                tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x + 1, \
+                        top_left_cell_coord.y)
             elif is_there_a_tile_at_bottom_right:
-                tile_coord = Vector2(top_left_cell_coord.x + 1, top_left_cell_coord.y + 1)
+                tile_coord = Vector2( \
+                        top_left_cell_coord.x + 1, \
+                        top_left_cell_coord.y + 1)
             else:
-                error_message = "Invalid state: Problem calculating colliding cell on right wall"
+                error_message = \
+                        "Invalid state: Problem calculating colliding " + \
+                        "cell on right wall"
         else:
             error_message = "Invalid state: Problem calculating colliding cell"
         
@@ -636,18 +698,24 @@ static func get_collision_tile_map_coord( \
                         position_world_coord.y), \
                 tile_map)
         is_there_a_tile_at_left = tile_map.get_cellv(left_cell_coord) >= 0
-        is_there_a_tile_at_right = tile_map.get_cell(left_cell_coord.x + 1, left_cell_coord.y) >= 0
+        is_there_a_tile_at_right = tile_map.get_cell( \
+                left_cell_coord.x + 1, \
+                left_cell_coord.y) >= 0
         
         if is_touching_left_wall:
             if is_there_a_tile_at_left:
                 tile_coord = Vector2(left_cell_coord.x, left_cell_coord.y)
             else:
-                error_message = "Invalid state: Problem calculating colliding cell on left wall"
+                error_message = \
+                        "Invalid state: Problem calculating colliding " + \
+                        "cell on left wall"
         elif is_touching_right_wall:
             if is_there_a_tile_at_right:
                 tile_coord = Vector2(left_cell_coord.x + 1, left_cell_coord.y)
             else:
-                error_message = "Invalid state: Problem calculating colliding cell on right wall"
+                error_message = \
+                        "Invalid state: Problem calculating colliding " + \
+                        "cell on right wall"
         elif is_there_a_tile_at_left:
             tile_coord = Vector2(left_cell_coord.x, left_cell_coord.y)
         elif is_there_a_tile_at_right:
@@ -660,19 +728,25 @@ static func get_collision_tile_map_coord( \
                 Vector2(position_world_coord.x, \
                         position_world_coord.y - half_cell_size.y), \
                 tile_map)
-        is_there_a_tile_at_bottom = tile_map.get_cell(top_cell_coord.x, top_cell_coord.y + 1) >= 0
+        is_there_a_tile_at_bottom = tile_map.get_cell( \
+                top_cell_coord.x, \
+                top_cell_coord.y + 1) >= 0
         is_there_a_tile_at_top = tile_map.get_cellv(top_cell_coord) >= 0
         
         if is_touching_floor:
             if is_there_a_tile_at_bottom:
                 tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y + 1)
             else:
-                error_message = "Invalid state: Problem calculating colliding cell on floor"
+                error_message = \
+                        "Invalid state: Problem calculating colliding " + \
+                        "cell on floor"
         elif is_touching_ceiling:
             if is_there_a_tile_at_top:
                 tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y)
             else:
-                error_message = "Invalid state: Problem calculating colliding cell on ceiling"
+                error_message = \
+                        "Invalid state: Problem calculating colliding " + \
+                        "cell on ceiling"
         elif is_there_a_tile_at_bottom:
             tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y + 1)
         elif is_there_a_tile_at_top:
@@ -728,10 +802,11 @@ static func get_collision_tile_map_coord( \
             
             Utils.error(error_message)
         
-        # TODO: There is an infrequent bug where we cannot properly calculate the tile coordinate
-        #       when the player is moving around a corner, between climbing and walking. We should
-        #       try to fix the underlying cause, but, in the meantime, we can use this fallback
-        #       value.
+        # TODO: There is an infrequent bug where we cannot properly calculate
+        #       the tile coordinate when the player is moving around a corner,
+        #       between climbing and walking. We should try to fix the
+        #       underlying cause, but, in the meantime, we can use this
+        #       fallback value.
         return fallback_coord
     else:
         # Ensure the cell we calculated actually contains content.
@@ -743,36 +818,48 @@ static func do_shapes_match( \
         a: Shape2D, \
         b: Shape2D) -> bool:
     if a is CircleShape2D:
-        return b is CircleShape2D and a.radius == b.radius
+        return b is CircleShape2D and \
+                a.radius == b.radius
     elif a is CapsuleShape2D:
-        return b is CapsuleShape2D and a.radius == b.radius and a.height == b.height
+        return b is CapsuleShape2D and \
+                a.radius == b.radius and \
+                a.height == b.height
     elif a is RectangleShape2D:
-        return b is RectangleShape2D and a.extents == b.extents
+        return b is RectangleShape2D and \
+                a.extents == b.extents
     else:
-        Utils.error("Invalid Shape2D provided for do_shapes_match: %s. The supported shapes " + \
-                "are: CircleShape2D, CapsuleShape2D, RectangleShape2D." % a)
+        Utils.error( \
+                "Invalid Shape2D provided for do_shapes_match: %s. The " + \
+                "supported shapes are: CircleShape2D, CapsuleShape2D, " + \
+                "RectangleShape2D." % a)
         return false
 
 # The given rotation must be either 0 or PI.
 static func calculate_half_width_height( \
         shape: Shape2D, \
         rotation: float) -> Vector2:
-    var is_rotated_90_degrees = \
-            abs(fmod(rotation + PI * 2, PI) - PI / 2.0) < Geometry.FLOAT_EPSILON
+    var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2.0) < \
+            Geometry.FLOAT_EPSILON
     
     # Ensure that collision boundaries are only ever axially aligned.
     assert(is_rotated_90_degrees or abs(rotation) < Geometry.FLOAT_EPSILON)
     
     var half_width_height: Vector2
     if shape is CircleShape2D:
-        half_width_height = Vector2(shape.radius, shape.radius)
+        half_width_height = Vector2( \
+                shape.radius, \
+                shape.radius)
     elif shape is CapsuleShape2D:
-        half_width_height = Vector2(shape.radius, shape.radius + shape.height / 2.0)
+        half_width_height = Vector2( \
+                shape.radius, \
+                shape.radius + shape.height / 2.0)
     elif shape is RectangleShape2D:
         half_width_height = shape.extents
     else:
-        Utils.error("Invalid Shape2D provided to calculate_half_width_height: %s. The " + \
-                "supported shapes are: CircleShape2D, CapsuleShape2D, RectangleShape2D." % shape)
+        Utils.error( \
+                "Invalid Shape2D provided to calculate_half_width_height: " + \
+                "%s. The upported shapes are: CircleShape2D, " + \
+                "CapsuleShape2D, RectangleShape2D." % shape)
     
     if is_rotated_90_degrees:
         var swap := half_width_height.x
