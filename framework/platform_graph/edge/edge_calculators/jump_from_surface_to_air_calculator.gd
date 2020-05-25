@@ -58,24 +58,24 @@ func calculate_edge( \
         # Cannot reach destination from origin.
         return null
     
-    var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
+    var calc_result := MovementStepUtils.calculate_steps_with_new_jump_height( \
             edge_result_metadata, \
             edge_calc_params, \
             null, \
             null)
-    if calc_results == null:
+    if calc_result == null:
         return null
     
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                    calc_results, \
+                    calc_result, \
                     true, \
                     SurfaceSide.NONE)
     var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
-            calc_results, \
+            calc_result, \
             instructions)
     
-    var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
+    var velocity_end: Vector2 = calc_result.horizontal_steps.back().velocity_step_end
     
     var edge := JumpFromSurfaceToAirEdge.new( \
             self, \

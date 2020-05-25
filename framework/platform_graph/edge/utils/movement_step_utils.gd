@@ -13,7 +13,7 @@ static func calculate_steps_with_new_jump_height( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
         parent_step_result_metadata = null, \
-        previous_out_of_reach_waypoint = null) -> MovementCalcResults:
+        previous_out_of_reach_waypoint = null) -> EdgeCalcResult:
     var vertical_step := VerticalMovementUtils.calculate_vertical_step( \
             edge_result_metadata, \
             edge_calc_params)
@@ -34,7 +34,7 @@ static func calculate_steps_with_new_jump_height( \
                 step_calc_params, \
                 previous_out_of_reach_waypoint)
     
-    var calc_results := calculate_steps_between_waypoints( \
+    var calc_result := calculate_steps_between_waypoints( \
             edge_result_metadata, \
             step_result_metadata, \
             edge_calc_params, \
@@ -42,10 +42,10 @@ static func calculate_steps_with_new_jump_height( \
     
     edge_result_metadata.edge_calc_result_type = \
             EdgeCalcResultType.FAILED_WHEN_CALCULATING_HORIZONTAL_STEPS if \
-            calc_results == null else \
+            calc_result == null else \
             EdgeCalcResultType.EDGE_VALID
     
-    return calc_results
+    return calc_result
 
 # Recursively calculates a list of movement steps to reach the given destination.
 # 
@@ -56,7 +56,7 @@ static func calculate_steps_between_waypoints( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         step_result_metadata: EdgeStepCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
-        step_calc_params: EdgeStepCalcParams) -> MovementCalcResults:
+        step_calc_params: EdgeStepCalcParams) -> EdgeCalcResult:
     ### BASE CASES
     
     var next_horizontal_step := HorizontalMovementUtils.calculate_horizontal_step( \
@@ -115,7 +115,7 @@ static func calculate_steps_between_waypoints( \
         if step_result_metadata != null:
             step_result_metadata.edge_step_calc_result_type = \
                     EdgeStepCalcResultType.MOVEMENT_VALID
-        return MovementCalcResults.new( \
+        return EdgeCalcResult.new( \
                 [next_horizontal_step], \
                 vertical_step, \
                 edge_calc_params)
@@ -145,18 +145,18 @@ static func calculate_steps_between_waypoints( \
         step_result_metadata.upcoming_waypoints = waypoints
     
     # First, try to satisfy the waypoints without backtracking to consider a new max jump height.
-    var calc_results := calculate_steps_between_waypoints_without_backtracking_on_height( \
+    var calc_result := calculate_steps_between_waypoints_without_backtracking_on_height( \
             edge_result_metadata, \
             step_result_metadata, \
             edge_calc_params, \
             step_calc_params, \
             waypoints)
-    if calc_results != null or !edge_calc_params.can_backtrack_on_height:
+    if calc_result != null or !edge_calc_params.can_backtrack_on_height:
         # Recursion was successful without backtracking for a new max jump height.
         if step_result_metadata != null:
             step_result_metadata.edge_step_calc_result_type = \
                     EdgeStepCalcResultType.RECURSION_VALID
-        return calc_results
+        return calc_result
     
     if edge_calc_params.have_backtracked_for_surface( \
             collision.surface, \
@@ -182,13 +182,13 @@ static func calculate_steps_between_waypoints( \
         return null
     
     # Then, try to satisfy the waypoints with backtracking to consider a new max jump height.
-    calc_results = calculate_steps_between_waypoints_with_backtracking_on_height( \
+    calc_result = calculate_steps_between_waypoints_with_backtracking_on_height( \
             edge_result_metadata, \
             edge_calc_params, \
             step_calc_params, \
             waypoints)
     
-    if calc_results != null:
+    if calc_result != null:
         # Recursion was successful with backtracking for a new max jump height.
         if step_result_metadata != null:
             step_result_metadata.edge_step_calc_result_type = \
@@ -199,7 +199,7 @@ static func calculate_steps_between_waypoints( \
             step_result_metadata.edge_step_calc_result_type = \
                     EdgeStepCalcResultType.BACKTRACKING_INVALID
     
-    return calc_results
+    return calc_result
 
 # Check whether either waypoint can be satisfied with our current max jump height.
 static func calculate_steps_between_waypoints_without_backtracking_on_height( \
@@ -207,7 +207,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         step_result_metadata: EdgeStepCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
-        waypoints: Array) -> MovementCalcResults:
+        waypoints: Array) -> EdgeCalcResult:
     var vertical_step := step_calc_params.vertical_step
     var previous_waypoint_original := step_calc_params.start_waypoint
     var next_waypoint_original := step_calc_params.end_waypoint
@@ -217,10 +217,10 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
     var step_calc_params_to_waypoint: EdgeStepCalcParams
     var step_calc_params_from_waypoint: EdgeStepCalcParams
     var child_step_result_metadata: EdgeStepCalcResultMetadata
-    var calc_results_to_waypoint: MovementCalcResults
-    var calc_results_from_waypoint: MovementCalcResults
+    var calc_results_to_waypoint: EdgeCalcResult
+    var calc_results_from_waypoint: EdgeCalcResult
     
-    var result: MovementCalcResults
+    var result: EdgeCalcResult
     
     for waypoint in waypoints:
         if !waypoint.is_valid:
@@ -336,14 +336,14 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
-        waypoints: Array) -> MovementCalcResults:
+        waypoints: Array) -> EdgeCalcResult:
     var origin_original := edge_calc_params.origin_waypoint
     var destination_original := edge_calc_params.destination_waypoint
     var origin_copy: Waypoint
     var destination_copy: Waypoint
-    var calc_results: MovementCalcResults
+    var calc_result: EdgeCalcResult
     
-    var result: MovementCalcResults
+    var result: EdgeCalcResult
     
     for waypoint in waypoints:
         if waypoint.is_valid:
@@ -380,17 +380,17 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
             continue
         
         # Recurse: Backtrack and try a higher jump (to the same destination waypoint as before).
-        calc_results = calculate_steps_with_new_jump_height( \
+        calc_result = calculate_steps_with_new_jump_height( \
                 edge_result_metadata, \
                 edge_calc_params, \
                 step_calc_params, \
                 waypoint)
         
-        if calc_results != null:
+        if calc_result != null:
             # The waypoint is within reach, and we were able to find valid movement steps to the
             # destination.
-            calc_results.backtracked_for_new_jump_height = true
-            result = calc_results
+            calc_result.backtracked_for_new_jump_height = true
+            result = calc_result
             break
     
     if result != null:

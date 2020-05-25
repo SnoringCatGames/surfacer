@@ -12,11 +12,11 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 
 # Calculates trajectory state for the movement represented by the given calculation results.
 static func calculate_trajectory_from_calculation_steps( \
-        calc_results: MovementCalcResults, \
+        calc_result: EdgeCalcResult, \
         instructions: MovementInstructions) -> MovementTrajectory:
-    var edge_calc_params := calc_results.edge_calc_params
-    var steps := calc_results.horizontal_steps
-    var vertical_step := calc_results.vertical_step
+    var edge_calc_params := calc_result.edge_calc_params
+    var steps := calc_result.horizontal_steps
+    var vertical_step := calc_result.vertical_step
     
     # Record the trajectory waypoint positions.
     var waypoint_positions := []

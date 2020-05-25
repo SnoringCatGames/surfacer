@@ -9,7 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - Rename:
-#   - movement_calculation_results -> edge_calc_result
 #   - movement_calculation_step -> edge_calc_step
 #   - movement_instruction -> edge_instruction
 #   - movement_instructions -> edge_instructions
@@ -107,11 +106,11 @@ const IS_A_JUMP_CALCULATOR := true
 # - Dynamically destroy children items and their detailed debugging/annotaiton
 #   information when collapsing a parent item.
 # 
-# >- Refactor MovementCalcResults to be re-used for failed calculations as
+# >- Refactor EdgeCalcResult to be re-used for failed calculations as
 #    well.
 #    - Remove edge_attempt_debug_results/step_attempt_debug_results from
 #      EdgeCalcParams/EdgeStepCalcParams.
-#    - Create MovementCalcResults very early in the process, and plumb it
+#    - Create EdgeCalcResult very early in the process, and plumb it
 #      through as input.
 #    - Decide what state to persist, and what state to re-calculate when
 #      expanding the inspector.
@@ -739,28 +738,28 @@ func create_edge_from_edge_calc_params( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams) -> \
         JumpInterSurfaceEdge:
-    var calc_results := \
+    var calc_result := \
             MovementStepUtils.calculate_steps_with_new_jump_height( \
                     edge_result_metadata, \
                     edge_calc_params, \
                     null, \
                     null)
-    if calc_results == null:
+    if calc_result == null:
         # Unable to calculate a valid edge.
         return null
     
     var instructions := MovementInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
-                    calc_results, \
+                    calc_result, \
                     true, \
                     edge_calc_params.destination_position.surface.side)
     var trajectory := MovementTrajectoryUtils \
             .calculate_trajectory_from_calculation_steps( \
-                    calc_results, \
+                    calc_result, \
                     instructions)
     
     var velocity_end: Vector2 = \
-            calc_results.horizontal_steps.back().velocity_step_end
+            calc_result.horizontal_steps.back().velocity_step_end
     
     var edge := JumpInterSurfaceEdge.new( \
             self, \

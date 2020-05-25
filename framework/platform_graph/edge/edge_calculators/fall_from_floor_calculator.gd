@@ -166,7 +166,7 @@ func _get_all_edges_from_one_side( \
     
     var landing_trajectories: Array
     if exclusive_land_position != null:
-        var calc_results: MovementCalcResults = \
+        var calc_result: EdgeCalcResult = \
                 FallMovementUtils.find_landing_trajectory_between_positions( \
                         null, \
                         collision_params, \
@@ -174,8 +174,8 @@ func _get_all_edges_from_one_side( \
                         exclusive_land_position, \
                         fall_off_point_velocity_start, \
                         needs_extra_wall_land_horizontal_speed)
-        if calc_results != null:
-            landing_trajectories = [calc_results]
+        if calc_result != null:
+            landing_trajectories = [calc_result]
         else:
             landing_trajectories = []
     else:
@@ -191,17 +191,17 @@ func _get_all_edges_from_one_side( \
     var velocity_end: Vector2
     var edge: FallFromFloorEdge
     
-    for calc_results in landing_trajectories:
-        position_end = calc_results.edge_calc_params.destination_position
+    for calc_result in landing_trajectories:
+        position_end = calc_result.edge_calc_params.destination_position
         
         instructions = \
                 MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                        calc_results, \
+                        calc_result, \
                         false, \
                         position_end.surface.side)
         
         trajectory = MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
-                calc_results, \
+                calc_result, \
                 instructions)
         
         _prepend_walk_to_fall_off_portion( \
@@ -214,7 +214,7 @@ func _get_all_edges_from_one_side( \
                 movement_params, \
                 falls_on_left_side)
         
-        velocity_end = calc_results.horizontal_steps.back().velocity_step_end
+        velocity_end = calc_result.horizontal_steps.back().velocity_step_end
         
         edge = FallFromFloorEdge.new( \
                 self, \
@@ -222,7 +222,7 @@ func _get_all_edges_from_one_side( \
                 position_end, \
                 fall_off_point_velocity_start, \
                 velocity_end, \
-                calc_results.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
+                calc_result.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
                 movement_params, \
                 instructions, \
                 trajectory, \

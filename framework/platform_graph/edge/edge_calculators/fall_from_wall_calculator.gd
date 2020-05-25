@@ -67,8 +67,8 @@ func get_all_inter_surface_edges_from_surface( \
                 jump_position, \
                 velocity_start)
         
-        for calc_results in landing_trajectories:
-            edge = _create_edge_from_calc_results(calc_results)
+        for calc_result in landing_trajectories:
+            edge = _create_edge_from_calc_results(calc_result)
             edges_result.push_back(edge)
 
 func calculate_edge( \
@@ -79,7 +79,7 @@ func calculate_edge( \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
-    var calc_results: MovementCalcResults = \
+    var calc_result: EdgeCalcResult = \
             FallMovementUtils.find_landing_trajectory_between_positions( \
                     edge_result_metadata, \
                     collision_params, \
@@ -87,8 +87,8 @@ func calculate_edge( \
                     position_end, \
                     velocity_start, \
                     needs_extra_wall_land_horizontal_speed)
-    if calc_results != null:
-        return _create_edge_from_calc_results(calc_results)
+    if calc_result != null:
+        return _create_edge_from_calc_results(calc_result)
     else:
         return null
 
@@ -132,42 +132,42 @@ func optimize_edge_land_position_for_path( \
             next_edge, \
             self)
 
-func _create_edge_from_calc_results(calc_results: MovementCalcResults) -> FallFromWallEdge:
-    var jump_position := calc_results.edge_calc_params.origin_position
-    var land_position := calc_results.edge_calc_params.destination_position
+func _create_edge_from_calc_results(calc_result: EdgeCalcResult) -> FallFromWallEdge:
+    var jump_position := calc_result.edge_calc_params.origin_position
+    var land_position := calc_result.edge_calc_params.destination_position
     
     var instructions := _calculate_instructions( \
             jump_position, \
             land_position, \
-            calc_results)
+            calc_result)
     
     var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
-            calc_results, \
+            calc_result, \
             instructions)
     
-    var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
+    var velocity_end: Vector2 = calc_result.horizontal_steps.back().velocity_step_end
     
     return FallFromWallEdge.new( \
             self, \
             jump_position, \
             land_position, \
             velocity_end, \
-            calc_results.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
-            calc_results.edge_calc_params.movement_params, \
+            calc_result.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
+            calc_result.edge_calc_params.movement_params, \
             instructions, \
             trajectory)
 
 static func _calculate_instructions( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        calc_results: MovementCalcResults) -> MovementInstructions:
+        calc_result: EdgeCalcResult) -> MovementInstructions:
     assert(start.surface.side == SurfaceSide.LEFT_WALL || \
             start.surface.side == SurfaceSide.RIGHT_WALL)
     
     # Calculate the fall-trajectory instructions.
     var instructions := \
             MovementInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
-                    calc_results, \
+                    calc_result, \
                     false, \
                     end.surface.side)
     

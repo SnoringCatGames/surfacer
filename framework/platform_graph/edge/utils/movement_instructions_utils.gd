@@ -16,11 +16,11 @@ const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 2.5
 # Translates movement data from a form that is more useful when calculating the movement to a form
 # that is more useful when executing the movement.
 static func convert_calculation_steps_to_movement_instructions( \
-        calc_results: MovementCalcResults, \
+        calc_result: EdgeCalcResult, \
         includes_jump: bool, \
         destination_side: int) -> MovementInstructions:
-    var steps := calc_results.horizontal_steps
-    var vertical_step := calc_results.vertical_step
+    var steps := calc_result.horizontal_steps
+    var vertical_step := calc_result.vertical_step
     
     var instructions := []
     instructions.resize(steps.size() * 2)

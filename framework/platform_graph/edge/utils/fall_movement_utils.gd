@@ -45,7 +45,7 @@ static func find_landing_trajectories_to_any_surface( \
         origin_side = SurfaceSide.CEILING
     
     var jump_land_positions_to_consider: Array
-    var calc_results: MovementCalcResults
+    var calc_result: EdgeCalcResult
     var jump_land_position_results_for_destination_surface := []
     var all_results := []
     
@@ -96,7 +96,7 @@ static func find_landing_trajectories_to_any_surface( \
                 # land position.
                 continue
             
-            calc_results = find_landing_trajectory_between_positions( \
+            calc_result = find_landing_trajectory_between_positions( \
                     null, \
                     collision_params, \
                     jump_land_positions.jump_position, \
@@ -104,9 +104,9 @@ static func find_landing_trajectories_to_any_surface( \
                     velocity_start, \
                     jump_land_positions.needs_extra_wall_land_horizontal_speed)
             
-            if calc_results != null:
-                all_results.push_back(calc_results)
-                calc_results = null
+            if calc_result != null:
+                all_results.push_back(calc_result)
+                calc_result = null
                 jump_land_position_results_for_destination_surface.push_back(jump_land_positions)
                 
                 if only_returns_first_result:
@@ -120,7 +120,7 @@ static func find_landing_trajectory_between_positions( \
         origin_position: PositionAlongSurface, \
         land_position: PositionAlongSurface, \
         velocity_start: Vector2, \
-        needs_extra_wall_land_horizontal_speed: bool) -> MovementCalcResults:
+        needs_extra_wall_land_horizontal_speed: bool) -> EdgeCalcResult:
     var debug_params := collision_params.debug_params
     
     ###################################################################################
@@ -183,7 +183,7 @@ static func find_landing_trajectory_between_positions( \
                 step_calc_params, \
                 null)
     
-    var calc_results := MovementStepUtils.calculate_steps_between_waypoints( \
+    var calc_result := MovementStepUtils.calculate_steps_between_waypoints( \
             edge_result_metadata, \
             step_result_metadata, \
             edge_calc_params, \
@@ -191,10 +191,10 @@ static func find_landing_trajectory_between_positions( \
     
     edge_result_metadata.edge_calc_result_type = \
             EdgeCalcResultType.FAILED_WHEN_CALCULATING_HORIZONTAL_STEPS if \
-            calc_results == null else \
+            calc_result == null else \
             EdgeCalcResultType.EDGE_VALID
     
-    return calc_results
+    return calc_result
 
 static func find_surfaces_in_fall_range_from_point( \
         movement_params: MovementParams, \

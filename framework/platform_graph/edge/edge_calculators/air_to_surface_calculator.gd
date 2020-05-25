@@ -75,17 +75,17 @@ func find_a_landing_trajectory( \
     
     assert(!needs_extra_wall_land_horizontal_speed or exclusive_land_position != null)
     
-    var calc_results: MovementCalcResults
+    var calc_result: EdgeCalcResult
     
     if exclusive_land_position != null:
-        calc_results = FallMovementUtils.find_landing_trajectory_between_positions( \
+        calc_result = FallMovementUtils.find_landing_trajectory_between_positions( \
                 edge_result_metadata, \
                 collision_params, \
                 origin, \
                 exclusive_land_position, \
                 velocity_start, \
                 needs_extra_wall_land_horizontal_speed)
-        if calc_results == null:
+        if calc_result == null:
             return null
     else:
         # Find all possible surfaces in landing range.
@@ -109,20 +109,20 @@ func find_a_landing_trajectory( \
                 true)
         if landing_trajectories.empty():
             return null
-        calc_results = landing_trajectories[0]
+        calc_result = landing_trajectories[0]
     
     # Calculate instructions for the given landing trajectory.
-    var land_position := calc_results.edge_calc_params.destination_position
+    var land_position := calc_result.edge_calc_params.destination_position
     var instructions := MovementInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
-                    calc_results, \
+                    calc_result, \
                     false, \
                     land_position.surface.side)
     var trajectory := MovementTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
-            calc_results, \
+            calc_result, \
             instructions)
     
-    var velocity_end: Vector2 = calc_results.horizontal_steps.back().velocity_step_end
+    var velocity_end: Vector2 = calc_result.horizontal_steps.back().velocity_step_end
     
     return AirToSurfaceEdge.new( \
             self, \
@@ -130,7 +130,7 @@ func find_a_landing_trajectory( \
             land_position, \
             velocity_start, \
             velocity_end, \
-            calc_results.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
+            calc_result.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
             collision_params.movement_params, \
             instructions, \
             trajectory)

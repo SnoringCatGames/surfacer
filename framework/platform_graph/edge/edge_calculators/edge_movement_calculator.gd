@@ -345,7 +345,7 @@ static func optimize_edge_land_position_for_path_helper( \
         # Landing on a floor or ceiling.
         
         var land_position: PositionAlongSurface
-        var calc_results: MovementCalcResults
+        var calc_result: EdgeCalcResult
         var optimized_edge: Edge
         
         for i in range(land_ratios.size()):
@@ -385,7 +385,7 @@ static func optimize_edge_land_position_for_path_helper( \
         # Landing on a wall.
         
         var land_position: PositionAlongSurface
-        var calc_results: MovementCalcResults
+        var calc_result: EdgeCalcResult
         var optimized_edge: Edge
         
         for i in range(land_ratios.size()):

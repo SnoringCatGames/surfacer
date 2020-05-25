@@ -1,7 +1,7 @@
 # Parameters that are used for calculating edge instructions.
 # FIXME: --A ********* doc
 extends Reference
-class_name MovementCalcResults
+class_name EdgeCalcResult
 
 # All of the horizontal steps for this local branch of movement.
 # Array<MovementCalcStep>
