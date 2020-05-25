@@ -86,7 +86,7 @@ static func create_terminal_waypoints( \
 # the edges of the surface that the movement could pass through in order to go around the surface.
 static func calculate_waypoints_around_surface( \
         movement_params: MovementParams, \
-        vertical_step: MovementVertCalcStep, \
+        vertical_step: VerticalEdgeStep, \
         previous_waypoint: Waypoint, \
         next_waypoint: Waypoint, \
         origin_waypoint: Waypoint, \
@@ -325,7 +325,7 @@ static func update_waypoint( \
         movement_params: MovementParams, \
         velocity_start_origin: Vector2, \
         can_hold_jump_button_at_origin: bool, \
-        vertical_step: MovementVertCalcStep, \
+        vertical_step: VerticalEdgeStep, \
         additional_high_waypoint_position: Vector2) -> void:
     # Previous waypoint, next waypoint,  and vertical_step should be provided when updating
     # intermediate waypoints.
@@ -380,7 +380,7 @@ static func _update_waypoint_velocity_and_time( \
         movement_params: MovementParams, \
         velocity_start_origin: Vector2, \
         can_hold_jump_button_at_origin: bool, \
-        vertical_step: MovementVertCalcStep, \
+        vertical_step: VerticalEdgeStep, \
         additional_high_waypoint_position: Vector2) -> int:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
@@ -1684,7 +1684,7 @@ static func update_neighbors_for_new_waypoint( \
         previous_waypoint: Waypoint, \
         next_waypoint: Waypoint, \
         edge_calc_params: EdgeCalcParams, \
-        vertical_step: MovementVertCalcStep) -> void:
+        vertical_step: VerticalEdgeStep) -> void:
     previous_waypoint.next_waypoint = waypoint
     next_waypoint.previous_waypoint = waypoint
     

@@ -3,7 +3,7 @@ extends IntegrationTestBed
 # Expected values were calculated using a Google spreadsheet:
 # https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
 
-var vertical_step: MovementVertCalcStep
+var vertical_step: VerticalEdgeStep
 var target_point: Vector2
 var upcoming_constraint: MovementConstraint
 var destination_surface: Surface

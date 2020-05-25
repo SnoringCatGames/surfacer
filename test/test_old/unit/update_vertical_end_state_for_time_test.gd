@@ -4,7 +4,7 @@ extends IntegrationTestBed
 # https://docs.google.com/spreadsheets/d/1qERIm_R-GjgmPqFgHa8GhI71gWRkXkX3Sy6FgSJNqrA/edit
 
 var output_step: EdgeStep
-var vertical_step: MovementVertCalcStep
+var vertical_step: VerticalEdgeStep
 
 func set_up(state := {}) -> void:
     output_step = EdgeStep.new()

@@ -163,7 +163,7 @@ static func find_landing_trajectory_between_positions( \
         # Cannot reach destination from origin.
         return null
     
-    var vertical_step: MovementVertCalcStep = VerticalMovementUtils.calculate_vertical_step( \
+    var vertical_step: VerticalEdgeStep = VerticalMovementUtils.calculate_vertical_step( \
             edge_result_metadata, \
             edge_calc_params)
     if vertical_step == null:

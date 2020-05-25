@@ -6,7 +6,7 @@ class_name VerticalMovementUtils
 # duration.
 static func calculate_vertical_step( \
         edge_result_metadata: EdgeCalcResultMetadata, \
-        edge_calc_params: EdgeCalcParams) -> MovementVertCalcStep:
+        edge_calc_params: EdgeCalcParams) -> VerticalEdgeStep:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
     var movement_params := edge_calc_params.movement_params
@@ -58,7 +58,7 @@ static func calculate_vertical_step( \
     var time_peak_height := time_instruction_end + duration_to_reach_peak_after_release
     time_peak_height = max(time_peak_height, 0.0)
     
-    var step := MovementVertCalcStep.new()
+    var step := VerticalEdgeStep.new()
     
     step.horizontal_acceleration_sign = destination_waypoint.horizontal_movement_sign
     step.can_hold_jump_button = can_hold_jump_button
@@ -481,7 +481,7 @@ static func calculate_time_for_passing_through_waypoint( \
 
 static func calculate_vertical_state_for_time_from_step( \
         movement_params: MovementParams, \
-        step: MovementVertCalcStep, \
+        step: VerticalEdgeStep, \
         time: float) -> Array:
     return calculate_vertical_state_for_time( \
             movement_params, \

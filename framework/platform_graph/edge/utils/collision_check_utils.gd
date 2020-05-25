@@ -9,7 +9,7 @@ class_name CollisionCheckUtils
 static func check_instructions_discrete_frame_state( \
         edge_calc_params: EdgeCalcParams, \
         instructions: EdgeInstructions, \
-        vertical_step: MovementVertCalcStep, \
+        vertical_step: VerticalEdgeStep, \
         horizontal_steps: Array, \
         trajectory: EdgeTrajectory) -> SurfaceCollision:
     var movement_params := edge_calc_params.movement_params

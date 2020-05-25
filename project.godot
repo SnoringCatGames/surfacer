@@ -524,11 +524,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/utils/movement_utils.gd"
 }, {
-"base": "EdgeStep",
-"class": "MovementVertCalcStep",
-"language": "GDScript",
-"path": "res://framework/platform_graph/edge/calculation_models/movement_vertical_calculation_step.gd"
-}, {
 "base": "Reference",
 "class": "Navigator",
 "language": "GDScript",
@@ -789,6 +784,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/valid_edge_item_controller.gd"
 }, {
+"base": "EdgeStep",
+"class": "VerticalEdgeStep",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/calculation_models/vertical_edge_step.gd"
+}, {
 "base": "Reference",
 "class": "VerticalMovementUtils",
 "language": "GDScript",
@@ -958,7 +958,6 @@ _global_script_class_icons={
 "MovementStepUtils": "",
 "MovementTrajectoryUtils": "",
 "MovementUtils": "",
-"MovementVertCalcStep": "",
 "Navigator": "",
 "NavigatorAnnotator": "",
 "OriginSurfaceItemController": "",
@@ -1011,6 +1010,7 @@ _global_script_class_icons={
 "UserActionSource": "",
 "UtilityPanel": "",
 "ValidEdgeItemController": "",
+"VerticalEdgeStep": "",
 "VerticalMovementUtils": "",
 "WalkToAscendWallFromFloorCalculator": "",
 "WalkToAscendWallFromFloorEdge": "",
