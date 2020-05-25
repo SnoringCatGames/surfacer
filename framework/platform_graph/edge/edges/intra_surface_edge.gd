@@ -98,7 +98,7 @@ func _calculate_distance( \
 func _calculate_duration( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         distance: float) -> float:
     match surface_type:
         SurfaceType.FLOOR:
@@ -162,7 +162,7 @@ func _check_did_just_reach_destination( \
 
 static func _calculate_instructions( \
         start: PositionAlongSurface, \
-        end: PositionAlongSurface) -> MovementInstructions:
+        end: PositionAlongSurface) -> EdgeInstructions:
     var input_key: String
     var is_wall_surface := end.surface.normal.y == 0.0
     if is_wall_surface:
@@ -181,7 +181,7 @@ static func _calculate_instructions( \
             0.0, \
             true)
     
-    return MovementInstructions.new( \
+    return EdgeInstructions.new( \
             [instruction], \
             INF)
 

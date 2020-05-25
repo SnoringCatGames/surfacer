@@ -41,7 +41,7 @@ func _calculate_distance( \
 func _calculate_duration( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         distance: float) -> float:
     return MovementUtils.calculate_time_to_walk( \
             distance, \
@@ -56,7 +56,7 @@ func _check_did_just_reach_destination( \
 
 static func _calculate_instructions( \
         start: PositionAlongSurface, \
-        end: PositionAlongSurface) -> MovementInstructions:
+        end: PositionAlongSurface) -> EdgeInstructions:
     assert(end.surface.side == SurfaceSide.LEFT_WALL || \
             end.surface.side == SurfaceSide.RIGHT_WALL)
     assert(start.surface.side == SurfaceSide.FLOOR)
@@ -75,6 +75,6 @@ static func _calculate_instructions( \
             0.0, \
             true)
     
-    return MovementInstructions.new( \
+    return EdgeInstructions.new( \
             [inward_instruction, upward_instruction], \
             INF)

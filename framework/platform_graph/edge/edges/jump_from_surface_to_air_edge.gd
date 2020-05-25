@@ -15,7 +15,7 @@ func _init( \
         velocity_end: Vector2, \
         includes_extra_jump_duration: bool, \
         movement_params: MovementParams, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         trajectory: MovementTrajectory) \
         .(TYPE, \
         IS_TIME_BASED, \
@@ -42,7 +42,7 @@ func _calculate_distance( \
 func _calculate_duration( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         distance: float) -> float:
     return instructions.duration
 

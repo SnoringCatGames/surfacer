@@ -186,7 +186,7 @@ func _get_all_edges_from_one_side( \
                 fall_off_point_velocity_start)
     
     var position_end: PositionAlongSurface
-    var instructions: MovementInstructions
+    var instructions: EdgeInstructions
     var trajectory: MovementTrajectory
     var velocity_end: Vector2
     var edge: FallFromFloorEdge
@@ -282,7 +282,7 @@ static func _prepend_walk_to_fall_off_portion( \
         end: PositionAlongSurface, \
         velocity_x_start: float, \
         time_fall_off: float, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         trajectory: MovementTrajectory, \
         movement_params: MovementParams, \
         falls_on_left_side: bool) -> void:

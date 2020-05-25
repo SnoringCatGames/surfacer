@@ -24,7 +24,7 @@ func _init( \
         velocity_end: Vector2, \
         includes_extra_wall_land_horizontal_speed: bool, \
         movement_params: MovementParams, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         trajectory: MovementTrajectory, \
         falls_on_left_side: bool,
         fall_off_position: PositionAlongSurface) \
@@ -54,7 +54,7 @@ func _calculate_distance( \
 func _calculate_duration( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         distance: float) -> float:
     return instructions.duration
 

@@ -8,7 +8,7 @@ class_name CollisionCheckUtils
 # -   This also records some trajectory state.
 static func check_instructions_discrete_frame_state( \
         edge_calc_params: EdgeCalcParams, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         vertical_step: MovementVertCalcStep, \
         horizontal_steps: Array, \
         trajectory: MovementTrajectory) -> SurfaceCollision:

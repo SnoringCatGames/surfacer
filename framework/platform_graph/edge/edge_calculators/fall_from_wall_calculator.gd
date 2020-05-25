@@ -160,7 +160,7 @@ func _create_edge_from_calc_results(calc_result: EdgeCalcResult) -> FallFromWall
 static func _calculate_instructions( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        calc_result: EdgeCalcResult) -> MovementInstructions:
+        calc_result: EdgeCalcResult) -> EdgeInstructions:
     assert(start.surface.side == SurfaceSide.LEFT_WALL || \
             start.surface.side == SurfaceSide.RIGHT_WALL)
     

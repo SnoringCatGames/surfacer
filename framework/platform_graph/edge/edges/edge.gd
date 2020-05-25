@@ -22,7 +22,7 @@ var movement_params: MovementParams
 # of time when initially parsing the platform graph.
 var is_optimized_for_path := false
 
-var instructions: MovementInstructions
+var instructions: EdgeInstructions
 
 var trajectory: MovementTrajectory
 
@@ -66,7 +66,7 @@ func _init( \
         includes_extra_jump_duration: bool, \
         includes_extra_wall_land_horizontal_speed: bool, \
         movement_params: MovementParams, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         trajectory: MovementTrajectory) -> void:
     self.type = type
     self.is_time_based = is_time_based
@@ -144,7 +144,7 @@ func _calculate_distance( \
 func _calculate_duration( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
-        instructions: MovementInstructions, \
+        instructions: EdgeInstructions, \
         distance: float) -> float:
     Utils.error("Abstract Edge._calculate_duration is not implemented")
     return INF

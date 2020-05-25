@@ -1,4 +1,4 @@
-# A collection of utility functions for calculating state related to MovementInstructions.
+# A collection of utility functions for calculating state related to EdgeInstructions.
 extends Reference
 class_name MovementInstructionsUtils
 
@@ -18,7 +18,7 @@ const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Utils.PHYSICS_TIME_STEP * 2.5
 static func convert_calculation_steps_to_movement_instructions( \
         calc_result: EdgeCalcResult, \
         includes_jump: bool, \
-        destination_side: int) -> MovementInstructions:
+        destination_side: int) -> EdgeInstructions:
     var steps := calc_result.horizontal_steps
     var vertical_step := calc_result.vertical_step
     
@@ -98,4 +98,4 @@ static func convert_calculation_steps_to_movement_instructions( \
     
     var duration := vertical_step.time_step_end - vertical_step.time_step_start
     
-    return MovementInstructions.new(instructions, duration)
+    return EdgeInstructions.new(instructions, duration)
