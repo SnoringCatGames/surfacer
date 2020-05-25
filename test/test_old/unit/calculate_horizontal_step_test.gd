@@ -15,9 +15,9 @@ func set_up(state := {}) -> void:
 
     var destination_surface := Surface.new([Vector2.INF], SurfaceSide.FLOOR, [INF])
 
-    overall_calc_params = MovementCalcOverallParams.new(movement_params, null, null)
-    overall_calc_params.movement_params = movement_params
-    overall_calc_params.destination_surface = destination_surface
+    edge_calc_params = EdgeCalcParams.new(movement_params, null, null)
+    edge_calc_params.movement_params = movement_params
+    edge_calc_params.destination_surface = destination_surface
 
     var upcoming_constraint := MovementConstraint.new(destination_surface, Vector2.INF, true, true)
 
@@ -70,7 +70,7 @@ func test_with_no_previous_or_next_steps() -> void:
     })
 
     var step := JumpFromSurfaceToSurfaceCalculator.calculate_horizontal_step( \
-            step_calc_params, overall_calc_params)
+            step_calc_params, edge_calc_params)
     
     assert_horizontal_step(step, {
         time_start = 0.0,

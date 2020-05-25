@@ -133,8 +133,8 @@ func optimize_edge_land_position_for_path( \
             self)
 
 func _create_edge_from_calc_results(calc_results: MovementCalcResults) -> FallFromWallEdge:
-    var jump_position := calc_results.overall_calc_params.origin_position
-    var land_position := calc_results.overall_calc_params.destination_position
+    var jump_position := calc_results.edge_calc_params.origin_position
+    var land_position := calc_results.edge_calc_params.destination_position
     
     var instructions := _calculate_instructions( \
             jump_position, \
@@ -152,8 +152,8 @@ func _create_edge_from_calc_results(calc_results: MovementCalcResults) -> FallFr
             jump_position, \
             land_position, \
             velocity_end, \
-            calc_results.overall_calc_params.needs_extra_wall_land_horizontal_speed, \
-            calc_results.overall_calc_params.movement_params, \
+            calc_results.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
+            calc_results.edge_calc_params.movement_params, \
             instructions, \
             trajectory)
 

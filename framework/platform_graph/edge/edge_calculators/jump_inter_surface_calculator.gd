@@ -8,6 +8,19 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Rename:
+#   - movement_calculation_step_params -> edge_step_calc_params
+#   - movement_calculation_results -> edge_calc_result
+#   - movement_calculation_step -> edge_calc_step
+#   - movement_instruction -> edge_instruction
+#   - movement_instructions -> edge_instructions
+#   - movement_trajectory -> edge_trajectory
+#   - movement_vertical_calculation_step -> edge_vertical_calc_step
+#   - edge_movement_calculator -> edge_calculator
+#   - movement_instructions_utils -> edge_instructions_utils
+#   - movement_step_utils -> edge_step_utils
+#   - movement_trajectory_utils -> edge_trajectory_utils
+# 
 # - Render a legend to describe the current annotations.
 #   - Make this dynamically update to describe the currently rendered
 #     annotations.
@@ -82,20 +95,6 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 #  - Create FailedEdgeAttempt results from other edge calculators.
 # 
-# - Rename:
-#   - movement_calculation_overall_params -> edge_calc_params
-#   - movement_calculation_step_params -> edge_step_calc_params
-#   - movement_calculation_results -> edge_calc_result
-#   - movement_calculation_step -> edge_calc_step
-#   - movement_instruction -> edge_instruction
-#   - movement_instructions -> edge_instructions
-#   - movement_trajectory -> edge_trajectory
-#   - movement_vertical_calculation_step -> edge_vertical_calc_step
-#   - edge_movement_calculator -> edge_calculator
-#   - movement_instructions_utils -> edge_instructions_utils
-#   - movement_step_utils -> edge_step_utils
-#   - movement_trajectory_utils -> edge_trajectory_utils
-# 
 # - Refactor pre-existing annotator classes to use the new
 #   AnnotationElementType system.
 #   - At least remove ExtraAnnotator and replace it with the new
@@ -112,7 +111,7 @@ const IS_A_JUMP_CALCULATOR := true
 # >- Refactor MovementCalcResults to be re-used for failed calculations as
 #    well.
 #    - Remove edge_attempt_debug_results/step_attempt_debug_results from
-#      MovementCalcOverallParams/MovementCalcStepParams.
+#      EdgeCalcParams/MovementCalcStepParams.
 #    - Create MovementCalcResults very early in the process, and plumb it
 #      through as input.
 #    - Decide what state to persist, and what state to re-calculate when
@@ -121,7 +120,7 @@ const IS_A_JUMP_CALCULATOR := true
 #        exception:
 #        - If we did get deep enough that we thought the jump/land pair might
 #          be valid, but we failed at or after trying to calculate
-#          MovementCalcOverallParams, then record a string or enum describing
+#          EdgeCalcParams, then record a string or enum describing
 #          why failure happened. We can think of that as passing the
 #          broad-phase check but failing the narrow-phase check.
 #        - Then it should be simple enough in the inspector to:
@@ -313,7 +312,7 @@ const IS_A_JUMP_CALCULATOR := true
 #     - MovementInstructionsUtils
 #     - WaypointUtils
 #     - FrameCollisionCheckUtils
-#     - MovementCalcOverallParams
+#     - EdgeCalcParams
 #   >>>- Compare where instructions are pressed/released vs when I expect them.
 #   - Step through movement along an edge?
 #   >>- Should this be when I implement the logic to force the player's
@@ -685,8 +684,8 @@ func calculate_edge( \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(false)
     
-    var overall_calc_params := \
-            EdgeMovementCalculator.create_movement_calc_overall_params( \
+    var edge_calc_params := \
+            EdgeMovementCalculator.create_edge_calc_params( \
                     edge_result_metadata, \
                     collision_params, \
                     position_start, \
@@ -695,13 +694,13 @@ func calculate_edge( \
                     velocity_start, \
                     needs_extra_jump_duration, \
                     needs_extra_wall_land_horizontal_speed)
-    if overall_calc_params == null:
+    if edge_calc_params == null:
         # Cannot reach destination from origin.
         return null
     
-    return create_edge_from_overall_params( \
+    return create_edge_from_edge_calc_params( \
             edge_result_metadata, \
-            overall_calc_params)
+            edge_calc_params)
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \
@@ -737,14 +736,14 @@ func optimize_edge_land_position_for_path( \
             next_edge, \
             self)
 
-func create_edge_from_overall_params( \
+func create_edge_from_edge_calc_params( \
         edge_result_metadata: EdgeCalcResultMetadata, \
-        overall_calc_params: MovementCalcOverallParams) -> \
+        edge_calc_params: EdgeCalcParams) -> \
         JumpInterSurfaceEdge:
     var calc_results := \
             MovementStepUtils.calculate_steps_with_new_jump_height( \
                     edge_result_metadata, \
-                    overall_calc_params, \
+                    edge_calc_params, \
                     null, \
                     null)
     if calc_results == null:
@@ -755,7 +754,7 @@ func create_edge_from_overall_params( \
             .convert_calculation_steps_to_movement_instructions( \
                     calc_results, \
                     true, \
-                    overall_calc_params.destination_position.surface.side)
+                    edge_calc_params.destination_position.surface.side)
     var trajectory := MovementTrajectoryUtils \
             .calculate_trajectory_from_calculation_steps( \
                     calc_results, \
@@ -766,13 +765,13 @@ func create_edge_from_overall_params( \
     
     var edge := JumpInterSurfaceEdge.new( \
             self, \
-            overall_calc_params.origin_position, \
-            overall_calc_params.destination_position, \
-            overall_calc_params.velocity_start, \
+            edge_calc_params.origin_position, \
+            edge_calc_params.destination_position, \
+            edge_calc_params.velocity_start, \
             velocity_end, \
-            overall_calc_params.needs_extra_jump_duration, \
-            overall_calc_params.needs_extra_wall_land_horizontal_speed, \
-            overall_calc_params.movement_params, \
+            edge_calc_params.needs_extra_jump_duration, \
+            edge_calc_params.needs_extra_wall_land_horizontal_speed, \
+            edge_calc_params.movement_params, \
             instructions, \
             trajectory)
     

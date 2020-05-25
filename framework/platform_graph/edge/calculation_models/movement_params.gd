@@ -90,7 +90,7 @@ var backtracks_to_consider_higher_jumps_during_horizontal_step_calculations := t
 # FIXME: Check and adjust these.
 # The amount of extra margin to include around the player collision boundary when performing
 # collision detection for a given edge calculation.
-var collision_margin_for_edge_movement_calculations := 4.0#2.0
+var collision_margin_for_edge_edge_calculations := 4.0#2.0
 # The amount of extra margin to include for waypoint offsets, so that the player doesn't collide
 # unexpectedly with the surface.
 var collision_margin_for_waypoint_positions := 5.0#2.5

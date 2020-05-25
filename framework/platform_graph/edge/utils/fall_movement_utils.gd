@@ -149,8 +149,8 @@ static func find_landing_trajectory_between_positions( \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(record_calc_details)
         
-    var overall_calc_params: MovementCalcOverallParams = \
-            EdgeMovementCalculator.create_movement_calc_overall_params( \
+    var edge_calc_params: EdgeCalcParams = \
+            EdgeMovementCalculator.create_edge_calc_params( \
                     edge_result_metadata, \
                     collision_params, \
                     origin_position, \
@@ -159,20 +159,20 @@ static func find_landing_trajectory_between_positions( \
                     velocity_start, \
                     false, \
                     needs_extra_wall_land_horizontal_speed)
-    if overall_calc_params == null:
+    if edge_calc_params == null:
         # Cannot reach destination from origin.
         return null
     
     var vertical_step: MovementVertCalcStep = VerticalMovementUtils.calculate_vertical_step( \
             edge_result_metadata, \
-            overall_calc_params)
+            edge_calc_params)
     if vertical_step == null:
         # Cannot reach destination from origin.
         return null
     
     var step_calc_params: MovementCalcStepParams = MovementCalcStepParams.new( \
-            overall_calc_params.origin_waypoint, \
-            overall_calc_params.destination_waypoint, \
+            edge_calc_params.origin_waypoint, \
+            edge_calc_params.destination_waypoint, \
             vertical_step)
     
     var step_result_metadata: EdgeStepCalcResultMetadata
@@ -186,7 +186,7 @@ static func find_landing_trajectory_between_positions( \
     var calc_results := MovementStepUtils.calculate_steps_between_waypoints( \
             edge_result_metadata, \
             step_result_metadata, \
-            overall_calc_params, \
+            edge_calc_params, \
             step_calc_params)
     
     edge_result_metadata.edge_calc_result_type = \

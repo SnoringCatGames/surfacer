@@ -1683,23 +1683,23 @@ static func update_neighbors_for_new_waypoint( \
         waypoint: Waypoint, \
         previous_waypoint: Waypoint, \
         next_waypoint: Waypoint, \
-        overall_calc_params: MovementCalcOverallParams, \
+        edge_calc_params: EdgeCalcParams, \
         vertical_step: MovementVertCalcStep) -> void:
     previous_waypoint.next_waypoint = waypoint
     next_waypoint.previous_waypoint = waypoint
     
     update_waypoint( \
             previous_waypoint, \
-            overall_calc_params.origin_waypoint, \
-            overall_calc_params.movement_params, \
+            edge_calc_params.origin_waypoint, \
+            edge_calc_params.movement_params, \
             vertical_step.velocity_step_start, \
             vertical_step.can_hold_jump_button, \
             vertical_step, \
             Vector2.INF)
     update_waypoint( \
             next_waypoint, \
-            overall_calc_params.origin_waypoint, \
-            overall_calc_params.movement_params, \
+            edge_calc_params.origin_waypoint, \
+            edge_calc_params.movement_params, \
             vertical_step.velocity_step_start, \
             vertical_step.can_hold_jump_button, \
             vertical_step, \

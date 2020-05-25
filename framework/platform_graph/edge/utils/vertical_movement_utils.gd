@@ -6,14 +6,14 @@ class_name VerticalMovementUtils
 # duration.
 static func calculate_vertical_step( \
         edge_result_metadata: EdgeCalcResultMetadata, \
-        overall_calc_params: MovementCalcOverallParams) -> MovementVertCalcStep:
+        edge_calc_params: EdgeCalcParams) -> MovementVertCalcStep:
     # FIXME: B: Account for max y velocity when calculating any parabolic motion.
     
-    var movement_params := overall_calc_params.movement_params
-    var origin_waypoint := overall_calc_params.origin_waypoint
-    var destination_waypoint := overall_calc_params.destination_waypoint
-    var velocity_start := overall_calc_params.velocity_start
-    var can_hold_jump_button := overall_calc_params.can_backtrack_on_height
+    var movement_params := edge_calc_params.movement_params
+    var origin_waypoint := edge_calc_params.origin_waypoint
+    var destination_waypoint := edge_calc_params.destination_waypoint
+    var velocity_start := edge_calc_params.velocity_start
+    var can_hold_jump_button := edge_calc_params.can_backtrack_on_height
     
     var position_start := origin_waypoint.position
     var position_end := destination_waypoint.position

@@ -39,15 +39,15 @@ var collision_ratios := []
 var collision: SurfaceCollision
 
 func _init( \
-        overall_calc_params = null, \
+        edge_calc_params = null, \
         step_calc_params = null, \
         horizontal_step = null) -> void:
-    if overall_calc_params != null:
-        self.collider_shape = overall_calc_params.movement_params.collider_shape
-        self.collider_rotation = overall_calc_params.movement_params.collider_rotation
+    if edge_calc_params != null:
+        self.collider_shape = edge_calc_params.movement_params.collider_shape
+        self.collider_rotation = edge_calc_params.movement_params.collider_rotation
         self.collider_half_width_height = \
-                overall_calc_params.movement_params.collider_half_width_height
-        self.margin = overall_calc_params.shape_query_params.margin
+                edge_calc_params.movement_params.collider_half_width_height
+        self.margin = edge_calc_params.shape_query_params.margin
     
     if step_calc_params != null:
         self.step_start_position = step_calc_params.start_waypoint.position

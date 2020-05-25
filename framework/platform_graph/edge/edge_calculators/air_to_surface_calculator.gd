@@ -112,7 +112,7 @@ func find_a_landing_trajectory( \
         calc_results = landing_trajectories[0]
     
     # Calculate instructions for the given landing trajectory.
-    var land_position := calc_results.overall_calc_params.destination_position
+    var land_position := calc_results.edge_calc_params.destination_position
     var instructions := MovementInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
                     calc_results, \
@@ -130,7 +130,7 @@ func find_a_landing_trajectory( \
             land_position, \
             velocity_start, \
             velocity_end, \
-            calc_results.overall_calc_params.needs_extra_wall_land_horizontal_speed, \
+            calc_results.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
             collision_params.movement_params, \
             instructions, \
             trajectory)

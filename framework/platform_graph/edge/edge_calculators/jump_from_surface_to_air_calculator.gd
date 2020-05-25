@@ -45,7 +45,7 @@ func calculate_edge( \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(false)
     
-    var overall_calc_params := EdgeMovementCalculator.create_movement_calc_overall_params( \
+    var edge_calc_params := EdgeMovementCalculator.create_edge_calc_params( \
             edge_result_metadata, \
             collision_params, \
             position_start, \
@@ -54,13 +54,13 @@ func calculate_edge( \
             velocity_start, \
             needs_extra_jump_duration, \
             needs_extra_wall_land_horizontal_speed)
-    if overall_calc_params == null:
+    if edge_calc_params == null:
         # Cannot reach destination from origin.
         return null
     
     var calc_results := MovementStepUtils.calculate_steps_with_new_jump_height( \
             edge_result_metadata, \
-            overall_calc_params, \
+            edge_calc_params, \
             null, \
             null)
     if calc_results == null:

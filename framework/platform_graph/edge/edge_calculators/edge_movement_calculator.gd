@@ -69,7 +69,7 @@ func optimize_edge_land_position_for_path( \
     # Do nothing by default. Sub-classes implement this as needed.
     pass
 
-static func create_movement_calc_overall_params(
+static func create_edge_calc_params(
         edge_result_metadata: EdgeCalcResultMetadata, \
         collision_params: CollisionCalcParams, \
         origin_position: PositionAlongSurface, \
@@ -77,7 +77,7 @@ static func create_movement_calc_overall_params(
         can_hold_jump_button: bool, \
         velocity_start: Vector2, \
         needs_extra_jump_duration: bool, \
-        needs_extra_wall_land_horizontal_speed: bool) -> MovementCalcOverallParams:
+        needs_extra_wall_land_horizontal_speed: bool) -> EdgeCalcParams:
     # When landing on a wall, ensure that we end with velocity moving into the wall.
     var velocity_end_min_x := INF
     var velocity_end_max_x := INF
@@ -107,7 +107,7 @@ static func create_movement_calc_overall_params(
         # Cannot reach destination from origin (edge_result_metadata already updated).
         return null
     
-    var overall_calc_params := MovementCalcOverallParams.new( \
+    var edge_calc_params := EdgeCalcParams.new( \
             collision_params, \
             origin_position, \
             destination_position, \
@@ -118,7 +118,7 @@ static func create_movement_calc_overall_params(
             needs_extra_wall_land_horizontal_speed, \
             can_hold_jump_button)
     
-    return overall_calc_params
+    return edge_calc_params
 
 static func should_skip_edge_calculation( \
         debug_params: Dictionary, \

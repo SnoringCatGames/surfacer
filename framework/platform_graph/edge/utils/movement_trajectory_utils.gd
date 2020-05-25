@@ -14,7 +14,7 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 static func calculate_trajectory_from_calculation_steps( \
         calc_results: MovementCalcResults, \
         instructions: MovementInstructions) -> MovementTrajectory:
-    var overall_calc_params := calc_results.overall_calc_params
+    var edge_calc_params := calc_results.edge_calc_params
     var steps := calc_results.horizontal_steps
     var vertical_step := calc_results.vertical_step
     
@@ -38,26 +38,26 @@ static func calculate_trajectory_from_calculation_steps( \
             distance_from_continuous_frames)
     
     # FIXME: B: REMOVE
-    overall_calc_params.movement_params.gravity_fast_fall /= \
+    edge_calc_params.movement_params.gravity_fast_fall /= \
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    overall_calc_params.movement_params.gravity_slow_rise /= \
+    edge_calc_params.movement_params.gravity_slow_rise /= \
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     # FIXME: -------- Rename? Refactor?
     var collision := CollisionCheckUtils.check_instructions_discrete_frame_state( \
-            overall_calc_params, \
+            edge_calc_params, \
             instructions, \
             vertical_step, \
             steps, \
             trajectory)
     assert(collision == null or \
             (collision.is_valid_collision_state and \
-            collision.surface == overall_calc_params.destination_waypoint.surface))
+            collision.surface == edge_calc_params.destination_waypoint.surface))
 
     # FIXME: B: REMOVE
-    overall_calc_params.movement_params.gravity_fast_fall *= \
+    edge_calc_params.movement_params.gravity_fast_fall *= \
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    overall_calc_params.movement_params.gravity_slow_rise *= \
+    edge_calc_params.movement_params.gravity_slow_rise *= \
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     return trajectory

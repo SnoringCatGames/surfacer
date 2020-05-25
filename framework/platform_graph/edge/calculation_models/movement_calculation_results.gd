@@ -13,13 +13,13 @@ var vertical_step: MovementVertCalcStep
 # Whether we had to use backtracking to satisfy waypoints around intermediate colliding surfaces.
 var backtracked_for_new_jump_height: bool
 
-var overall_calc_params: MovementCalcOverallParams
+var edge_calc_params: EdgeCalcParams
 
 func _init( \
         horizontal_steps: Array, \
         vertical_step: MovementVertCalcStep, \
-        overall_calc_params: MovementCalcOverallParams) -> void:
+        edge_calc_params: EdgeCalcParams) -> void:
     self.horizontal_steps = horizontal_steps
     self.vertical_step = vertical_step
     self.backtracked_for_new_jump_height = false
-    self.overall_calc_params = overall_calc_params
+    self.edge_calc_params = edge_calc_params

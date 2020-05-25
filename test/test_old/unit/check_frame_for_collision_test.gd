@@ -25,7 +25,7 @@ var shape_query_params: Physics2DShapeQueryParameters
 
 func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
     .set_up(data)
-    shape_query_params = overall_calc_params.shape_query_params
+    shape_query_params = edge_calc_params.shape_query_params
 
 func set_frame_space_state(start_position: Vector2, displacement: Vector2) -> void:
     shape_query_params.transform = Transform2D(0.0, start_position)

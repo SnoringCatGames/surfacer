@@ -1,6 +1,6 @@
 # Parameters that are used for calculating edge instructions.
 extends Reference
-class_name MovementCalcOverallParams
+class_name EdgeCalcParams
 
 const TILE_MAP_COLLISION_LAYER := 7
 
@@ -78,10 +78,13 @@ func _init( \
     shape_query_params.collide_with_bodies = true
     shape_query_params.collision_layer = TILE_MAP_COLLISION_LAYER
     shape_query_params.exclude = []
-    shape_query_params.margin = movement_params.collision_margin_for_edge_movement_calculations
+    shape_query_params.margin = \
+            movement_params.collision_margin_for_edge_edge_calculations
     shape_query_params.motion = Vector2.ZERO
     shape_query_params.shape_rid = movement_params.collider_shape.get_rid()
-    shape_query_params.transform = Transform2D(movement_params.collider_rotation, Vector2.ZERO)
+    shape_query_params.transform = Transform2D( \
+            movement_params.collider_rotation, \
+            Vector2.ZERO)
     shape_query_params.set_shape(movement_params.collider_shape)
     self.shape_query_params = shape_query_params
 
