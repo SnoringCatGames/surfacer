@@ -1,4 +1,4 @@
-extends EdgeMovementCalculator
+extends EdgeCalculator
 class_name FallFromWallCalculator
 
 const NAME := "FallFromWallCalculator"
@@ -54,7 +54,7 @@ func get_all_inter_surface_edges_from_surface( \
     for jump_position in jump_positions:
         ###################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
-        if EdgeMovementCalculator.should_skip_edge_calculation( \
+        if EdgeCalculator.should_skip_edge_calculation( \
                 debug_params, \
                 jump_position, \
                 null):
@@ -107,7 +107,7 @@ func optimize_edge_jump_position_for_path( \
             previous_edge.start_surface.side == SurfaceSide.RIGHT_WALL)
     assert(is_wall_surface)
     
-    EdgeMovementCalculator.optimize_edge_jump_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_jump_position_for_path_helper( \
             collision_params, \
             path, \
             edge_index, \
@@ -124,7 +124,7 @@ func optimize_edge_land_position_for_path( \
         next_edge: IntraSurfaceEdge) -> void:
     assert(edge is FallFromWallEdge)
     
-    EdgeMovementCalculator.optimize_edge_land_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_land_position_for_path_helper( \
             collision_params, \
             path, \
             edge_index, \

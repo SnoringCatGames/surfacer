@@ -1,4 +1,4 @@
-extends EdgeMovementCalculator
+extends EdgeCalculator
 class_name JumpInterSurfaceCalculator
 
 const NAME := "JumpInterSurfaceCalculator"
@@ -9,7 +9,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - Rename:
-#   - edge_movement_calculator -> edge_calculator
 #   - movement_instructions_utils -> edge_instructions_utils
 #   - movement_step_utils -> edge_step_utils
 #   - movement_trajectory_utils -> edge_trajectory_utils
@@ -336,7 +335,7 @@ const IS_A_JUMP_CALCULATOR := true
 #     like I mostly end up passing them around as arguments to functions, to
 #     they get copied as values...
 # 
-# - Adjust cat_params to only allow subsets of EdgeMovementCalculators, in
+# - Adjust cat_params to only allow subsets of EdgeCalculators, in
 #   order to test the non-jump edges
 # 
 # - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from
@@ -577,7 +576,7 @@ func get_all_inter_surface_edges_from_surface( \
         
         #######################################################################
         # Allow for debug mode to limit the scope of what's calculated.
-        if EdgeMovementCalculator.should_skip_edge_calculation( \
+        if EdgeCalculator.should_skip_edge_calculation( \
                 debug_params, \
                 origin_surface, \
                 destination_surface):
@@ -600,7 +599,7 @@ func get_all_inter_surface_edges_from_surface( \
         for jump_land_positions in jump_land_positions_to_consider:
             ###################################################################
             # Allow for debug mode to limit the scope of what's calculated.
-            if EdgeMovementCalculator.should_skip_edge_calculation( \
+            if EdgeCalculator.should_skip_edge_calculation( \
                     debug_params, \
                     jump_land_positions.jump_position, \
                     jump_land_positions.land_position):
@@ -678,7 +677,7 @@ func calculate_edge( \
             EdgeCalcResultMetadata.new(false)
     
     var edge_calc_params := \
-            EdgeMovementCalculator.create_edge_calc_params( \
+            EdgeCalculator.create_edge_calc_params( \
                     edge_result_metadata, \
                     collision_params, \
                     position_start, \
@@ -704,7 +703,7 @@ func optimize_edge_jump_position_for_path( \
         edge: Edge) -> void:
     assert(edge is JumpInterSurfaceEdge)
     
-    EdgeMovementCalculator.optimize_edge_jump_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_jump_position_for_path_helper( \
             collision_params, \
             path, \
             edge_index, \
@@ -721,7 +720,7 @@ func optimize_edge_land_position_for_path( \
         next_edge: IntraSurfaceEdge) -> void:
     assert(edge is JumpInterSurfaceEdge)
     
-    EdgeMovementCalculator.optimize_edge_land_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_land_position_for_path_helper( \
             collision_params, \
             path, \
             edge_index, \

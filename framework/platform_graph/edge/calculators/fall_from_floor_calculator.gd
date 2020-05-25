@@ -1,4 +1,4 @@
-extends EdgeMovementCalculator
+extends EdgeCalculator
 class_name FallFromFloorCalculator
 
 const NAME := "FallFromFloorCalculator"
@@ -81,7 +81,7 @@ func optimize_edge_land_position_for_path( \
         next_edge: IntraSurfaceEdge) -> void:
     assert(edge is FallFromFloorEdge)
     
-    EdgeMovementCalculator.optimize_edge_land_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_land_position_for_path_helper( \
             collision_params, \
             path, \
             edge_index, \
@@ -117,7 +117,7 @@ func _get_all_edges_from_one_side( \
     
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    if EdgeMovementCalculator.should_skip_edge_calculation( \
+    if EdgeCalculator.should_skip_edge_calculation( \
             debug_params, \
             position_start, \
             null):

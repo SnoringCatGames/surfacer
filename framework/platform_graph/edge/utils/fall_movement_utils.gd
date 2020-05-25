@@ -53,7 +53,7 @@ static func find_landing_trajectories_to_any_surface( \
     for destination_surface in possible_landing_surfaces_from_point:
         ###########################################################################################
         # Allow for debug mode to limit the scope of what's calculated.
-        if EdgeMovementCalculator.should_skip_edge_calculation( \
+        if EdgeCalculator.should_skip_edge_calculation( \
                 debug_params, \
                 origin_position, \
                 destination_surface):
@@ -76,7 +76,7 @@ static func find_landing_trajectories_to_any_surface( \
         for jump_land_positions in jump_land_positions_to_consider:
             #######################################################################################
             # Allow for debug mode to limit the scope of what's calculated.
-            if EdgeMovementCalculator.should_skip_edge_calculation( \
+            if EdgeCalculator.should_skip_edge_calculation( \
                     debug_params, \
                     jump_land_positions.jump_position, \
                     jump_land_positions.land_position):
@@ -125,7 +125,7 @@ static func find_landing_trajectory_between_positions( \
     
     ###################################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    if EdgeMovementCalculator.should_skip_edge_calculation( \
+    if EdgeCalculator.should_skip_edge_calculation( \
             debug_params, \
             origin_position, \
             land_position):
@@ -150,7 +150,7 @@ static func find_landing_trajectory_between_positions( \
             EdgeCalcResultMetadata.new(record_calc_details)
         
     var edge_calc_params: EdgeCalcParams = \
-            EdgeMovementCalculator.create_edge_calc_params( \
+            EdgeCalculator.create_edge_calc_params( \
                     edge_result_metadata, \
                     collision_params, \
                     origin_position, \

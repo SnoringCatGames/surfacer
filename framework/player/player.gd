@@ -7,7 +7,7 @@ var can_grab_walls: bool
 var can_grab_ceilings: bool
 var can_grab_floors: bool
 var movement_params: MovementParams
-# Array<EdgeMovementCalculators>
+# Array<EdgeCalculator>
 var movement_calculators: Array
 # Array<Surface>
 var possible_surfaces_set: Dictionary

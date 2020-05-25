@@ -1,4 +1,4 @@
-extends EdgeMovementCalculator
+extends EdgeCalculator
 class_name JumpFromSurfaceToAirCalculator
 
 const NAME := "JumpFromSurfaceToAirCalculator"
@@ -34,7 +34,7 @@ func calculate_edge( \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
     if velocity_start == Vector2.INF:
         var is_moving_leftward := position_end.target_point.x - position_start.target_point.x < 0.0
-        velocity_start = EdgeMovementCalculator.get_velocity_start( \
+        velocity_start = EdgeCalculator.get_velocity_start( \
                 collision_params.movement_params, \
                 position_start.surface, \
                 is_a_jump_calculator, \
@@ -45,7 +45,7 @@ func calculate_edge( \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(false)
     
-    var edge_calc_params := EdgeMovementCalculator.create_edge_calc_params( \
+    var edge_calc_params := EdgeCalculator.create_edge_calc_params( \
             edge_result_metadata, \
             collision_params, \
             position_start, \
@@ -99,7 +99,7 @@ func optimize_edge_jump_position_for_path( \
         edge: Edge) -> void:
     assert(edge is JumpFromSurfaceToAirEdge)
     
-    EdgeMovementCalculator.optimize_edge_jump_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_jump_position_for_path_helper( \
             collision_params, \
             path, \
             edge_index, \

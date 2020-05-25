@@ -1,4 +1,4 @@
-extends EdgeMovementCalculator
+extends EdgeCalculator
 class_name ClimbDownWallToFloorCalculator
 
 const NAME := "ClimbDownWallToFloorCalculator"

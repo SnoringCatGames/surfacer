@@ -30,7 +30,7 @@ const MIN_LAND_DISTANCE_FROM_WALL_BOTTOM := 12.0
 #   movement.
 #   - Surface-interior points are usually included before surface-end points.
 #   - This usually puts shortest distance first.
-# - Start velocity is determined from the given EdgeMovementCalculator.
+# - Start velocity is determined from the given EdgeCalculator.
 # - Start horizontal velocity from a floor could be either zero or max-speed.
 # 
 # For illustrations of the various jump/land position combinations for each surface arrangement,

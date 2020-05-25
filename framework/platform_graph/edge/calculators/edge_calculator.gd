@@ -1,5 +1,5 @@
 extends Reference
-class_name EdgeMovementCalculator
+class_name EdgeCalculator
 
 # This is the minimum speed that we require edge calculations to have at the end of their jump
 # trajectory when landing on a wall surface.
@@ -26,7 +26,7 @@ func _init( \
     self.is_a_jump_calculator = is_a_jump_calculator
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
-    Utils.error("abstract EdgeMovementCalculator.get_can_traverse_from_surface is not implemented")
+    Utils.error("abstract EdgeCalculator.get_can_traverse_from_surface is not implemented")
     return false
 
 func get_all_inter_surface_edges_from_surface( \
@@ -36,7 +36,7 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
-    Utils.error("abstract EdgeMovementCalculator.get_all_inter_surface_edges_from_surface is " + \
+    Utils.error("abstract EdgeCalculator.get_all_inter_surface_edges_from_surface is " + \
             "not implemented")
 
 func calculate_edge( \
@@ -47,7 +47,7 @@ func calculate_edge( \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
-    Utils.error("abstract EdgeMovementCalculator.calculate_edge is not implemented")
+    Utils.error("abstract EdgeCalculator.calculate_edge is not implemented")
     return null
 
 func optimize_edge_jump_position_for_path( \
@@ -203,7 +203,7 @@ static func optimize_edge_jump_position_for_path_helper( \
         previous_velocity_end_x: float, \
         previous_edge: IntraSurfaceEdge, \
         edge: Edge, \
-        edge_movement_calculator: EdgeMovementCalculator) -> void:
+        edge_movement_calculator: EdgeCalculator) -> void:
     # TODO: Refactor this to use a true binary search. Right now it is similar, but we never
     #       move backward once we find a working jump.
     var jump_ratios := [0.0, 0.5, 0.75, 0.875]
@@ -327,7 +327,7 @@ static func optimize_edge_land_position_for_path_helper( \
         edge_index: int, \
         edge: Edge, \
         next_edge: IntraSurfaceEdge, \
-        edge_movement_calculator: EdgeMovementCalculator) -> void:
+        edge_movement_calculator: EdgeCalculator) -> void:
     # TODO: Refactor this to use a true binary search. Right now it is similar, but we never
     #       move backward once we find a working land.
     var land_ratios := [1.0, 0.5, 0.25, 0.125]

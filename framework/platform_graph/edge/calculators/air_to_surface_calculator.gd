@@ -1,4 +1,4 @@
-extends EdgeMovementCalculator
+extends EdgeCalculator
 class_name AirToSurfaceCalculator
 
 const NAME := "AirToSurfaceCalculator"
@@ -50,7 +50,7 @@ func optimize_edge_land_position_for_path( \
         next_edge: IntraSurfaceEdge) -> void:
     assert(edge is AirToSurfaceEdge)
     
-    EdgeMovementCalculator.optimize_edge_land_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_land_position_for_path_helper( \
             collision_params, \
             path, \
             edge_index, \

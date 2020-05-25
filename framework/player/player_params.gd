@@ -5,7 +5,7 @@ var name: String
 # PlayerType
 var type: int
 var movement_params: MovementParams
-# Array<EdgeMovementCalculators>
+# Array<EdgeCalculator>
 var movement_calculators: Array
 # Array<PlayerActionHandler>
 var action_handlers: Array
