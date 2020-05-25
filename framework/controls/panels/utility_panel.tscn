@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=2]
 
-[ext_resource path="res://framework/controls/panels/debug_panel.gd" type="Script" id=1]
+[ext_resource path="res://framework/controls/panels/utility_panel.gd" type="Script" id=1]
 [ext_resource path="res://framework/controls/panels/credits_panel.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/gear-active.png" type="Texture" id=3]
 [ext_resource path="res://assets/gear-hover.png" type="Texture" id=4]
@@ -9,6 +9,7 @@
 [ext_resource path="res://assets/x-hover.png" type="Texture" id=7]
 [ext_resource path="res://assets/x-active.png" type="Texture" id=8]
 [ext_resource path="res://surfacer_theme.tres" type="Theme" id=9]
+
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )

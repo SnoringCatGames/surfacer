@@ -159,11 +159,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/panels/credits_panel.gd"
 }, {
-"base": "Panel",
-"class": "DebugPanel",
-"language": "GDScript",
-"path": "res://framework/controls/panels/debug_panel.gd"
-}, {
 "base": "InspectorItemController",
 "class": "DescriptionItemController",
 "language": "GDScript",
@@ -684,6 +679,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/ruler_annotator.gd"
 }, {
+"base": "VBoxContainer",
+"class": "SelectionDescription",
+"language": "GDScript",
+"path": "res://framework/controls/selection_description.gd"
+}, {
 "base": "MovementParams",
 "class": "SquirrelParams",
 "language": "GDScript",
@@ -778,6 +778,11 @@ _global_script_classes=[ {
 "class": "UserActionSource",
 "language": "GDScript",
 "path": "res://framework/player/action/user_action_source.gd"
+}, {
+"base": "Panel",
+"class": "UtilityPanel",
+"language": "GDScript",
+"path": "res://framework/controls/panels/utility_panel.gd"
 }, {
 "base": "InspectorItemController",
 "class": "ValidEdgeItemController",
@@ -880,7 +885,6 @@ _global_script_class_icons={
 "ColorParamsType": "",
 "Colors": "",
 "CreditsPanel": "",
-"DebugPanel": "",
 "DescriptionItemController": "",
 "DestinationSurfaceItemController": "",
 "Edge": "",
@@ -985,6 +989,7 @@ _global_script_class_icons={
 "PriorityQueue": "",
 "RightWallsItemController": "",
 "RulerAnnotator": "",
+"SelectionDescription": "",
 "SquirrelParams": "",
 "SquirrelPlayer": "",
 "Stopwatch": "",
@@ -1004,6 +1009,7 @@ _global_script_class_icons={
 "TileAnnotator": "",
 "UnitTestBed": "",
 "UserActionSource": "",
+"UtilityPanel": "",
 "ValidEdgeItemController": "",
 "VerticalMovementUtils": "",
 "WalkToAscendWallFromFloorCalculator": "",

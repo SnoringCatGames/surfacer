@@ -1,5 +1,5 @@
 extends Panel
-class_name DebugPanel
+class_name UtilityPanel
 
 const PANEL_WIDTH := 240.0
 const PANEL_HEIGHT := 328.0

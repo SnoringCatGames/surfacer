@@ -51,10 +51,14 @@ func _create_hud_layer() -> void:
     
     # TODO: Add HUD content.
     
-    var debug_panel = Utils.add_scene(hud_layer, Global.DEBUG_PANEL_RESOURCE_PATH)
-    global.debug_panel = debug_panel
+    var utility_panel = Utils.add_scene( \
+            hud_layer, \
+            Global.UTILITY_PANEL_RESOURCE_PATH)
+    global.utility_panel = utility_panel
     
-    var welcome_panel = Utils.add_scene(hud_layer, Global.WELCOME_PANEL_RESOURCE_PATH)
+    var welcome_panel = Utils.add_scene( \
+            hud_layer, \
+            Global.WELCOME_PANEL_RESOURCE_PATH)
     global.welcome_panel = welcome_panel
 
 func _create_ruler_layer() -> void:

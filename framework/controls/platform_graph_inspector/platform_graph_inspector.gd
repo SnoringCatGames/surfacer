@@ -38,7 +38,7 @@ func _enter_tree() -> void:
 func _ready() -> void:
     global = $"/root/Global"
     element_annotator = global.element_annotator
-    global.debug_panel.add_section(tree)
+    global.utility_panel.add_section(tree)
     _is_ready = true
     call_deferred("_select_initial_item")
 
@@ -46,7 +46,7 @@ func _populate_tree() -> void:
     tree = Tree.new()
     tree.rect_min_size = Vector2( \
             0.0, \
-            DebugPanel.SECTIONS_HEIGHT)
+            UtilityPanel.SECTIONS_HEIGHT)
     tree.hide_root = true
     tree.hide_folding = false
     tree.connect( \

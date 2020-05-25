@@ -1,5 +1,24 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://surfacer_theme.tres" type="Theme" id=1]
 
 [node name="Legend" type="VBoxContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_top = 0.519775
+margin_bottom = 0.519775
+theme = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_right = 1024.0
+margin_bottom = 20.0
+text = "Legend"
+
+[node name="ItemList" type="ItemList" parent="."]
+margin_top = 24.0
+margin_right = 1024.0
+margin_bottom = 33.0
+auto_height = true

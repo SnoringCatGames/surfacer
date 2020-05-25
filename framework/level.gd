@@ -26,8 +26,10 @@ func _ready() -> void:
     
     global.space_state = space_state
     
-    # Get references to the TileMaps that define the collision boundaries of this level.
-    surface_tile_maps = scene_tree.get_nodes_in_group(Utils.GROUP_NAME_SURFACES)
+    # Get references to the TileMaps that define the collision boundaries of
+    # this level.
+    surface_tile_maps = \
+            scene_tree.get_nodes_in_group(Utils.GROUP_NAME_SURFACES)
     assert(surface_tile_maps.size() > 0)
     
     # Set up the PlatformGraphs for this level.
@@ -38,7 +40,8 @@ func _ready() -> void:
             global.player_params, \
             Global.DEBUG_PARAMS)
     
-    platform_graph_inspector = PlatformGraphInspector.new(platform_graphs.values())
+    platform_graph_inspector = \
+            PlatformGraphInspector.new(platform_graphs.values())
     add_child(platform_graph_inspector)
     
     global.is_level_ready = true
@@ -52,12 +55,12 @@ static func _create_platform_graphs( \
     var player_params: PlayerParams
     var collision_params: CollisionCalcParams
     for player_name in all_player_params:
-        ###########################################################################################
+        #######################################################################
         # Allow for debug mode to limit the scope of what's calculated.
         if debug_params.has("limit_parsing") and \
                 player_name != debug_params.limit_parsing.player_name:
             continue
-        ###########################################################################################
+        #######################################################################
         player_params = all_player_params[player_name]
         collision_params = CollisionCalcParams.new( \
                 debug_params, \

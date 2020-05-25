@@ -11,11 +11,11 @@ const IS_A_JUMP_CALCULATOR := true
 # - Render a legend to describe the current annotations.
 #   - Make this dynamically update to describe the currently rendered
 #     annotations.
-#     - This should update as annotations are toggled in the debug panel.
+#     - This should update as annotations are toggled in the utility panel.
 #     - This should update as items are selected in the PlatformGraphInspector.
 #   - Place this as an independent dialog.
 #   - Make this dismissable.
-#   - Add a button to the debug panel to re-show this if it is dismissed.
+#   - Add a button to the utility panel to re-show this if it is dismissed.
 # 
 # - Add an additional label near the legend, to describe attempted selection.
 #   - "No possible jump/land positions for that selection."
@@ -73,7 +73,7 @@ const IS_A_JUMP_CALCULATOR := true
 # - Add some additional description items under valid and failed edges with
 #   more metadata for debugging.
 # 
-# - Auto expand DebugPanel, and auto select the top-level edges item in the
+# - Auto expand UtilityPanel, and auto select the top-level edges item in the
 #   PlatformGraphInspector.
 # 
 # - Add types back to variables in Global.
@@ -95,7 +95,6 @@ const IS_A_JUMP_CALCULATOR := true
 #   - movement_instructions_utils -> edge_instructions_utils
 #   - movement_step_utils -> edge_step_utils
 #   - movement_trajectory_utils -> edge_trajectory_utils
-#   - DebugPanel -> UtilityPanel
 # 
 # - Refactor pre-existing annotator classes to use the new
 #   AnnotationElementType system.
@@ -157,7 +156,8 @@ const IS_A_JUMP_CALCULATOR := true
 # - Add a way to re-display the controls list.
 # - Fix the padding in the controls list.
 # 
-# - Disable the player handling u/d/l/r keys when focus is in the debug panel.
+# - Disable the player handling u/d/l/r keys when focus is in the utility
+#   panel.
 # 
 # - Start adding the toggle support for annotations.
 # 
@@ -359,11 +359,11 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Make background layers more faded
 #   - Make foreground images more wood-like
 # 
-# - Implement the bits of debug-menu UI to toggle annotations.
+# - Implement the bits of utility-menu UI to toggle annotations.
 #   - Also support adjusting how many previous player positions to render.
-#   - Also list controls in the debug menu.
+#   - Also list controls in the utility menu.
 #   - Collision calculation annotator bits.
-#   - Add a top-level button to debug menu to hide all annotations.
+#   - Add a top-level button to utility menu to hide all annotations.
 #     - (grid, clicks, player position, player recent movement, platform graph,
 #       ...)
 # 

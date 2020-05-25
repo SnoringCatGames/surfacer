@@ -10,19 +10,27 @@ const LEVEL_RESOURCE_PATHS := [
 
 const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://test/test_runner.tscn"
 
-const DEBUG_PANEL_RESOURCE_PATH := "res://framework/controls/panels/debug_panel.tscn"
-const WELCOME_PANEL_RESOURCE_PATH := "res://framework/controls/panels/welcome_panel.tscn"
+const UTILITY_PANEL_RESOURCE_PATH := \
+        "res://framework/controls/panels/utility_panel.tscn"
+const WELCOME_PANEL_RESOURCE_PATH := \
+        "res://framework/controls/panels/welcome_panel.tscn"
 
 const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false
 const UTILITY_PANEL_STARTS_OPEN := true
 
-const STARTING_LEVEL_RESOURCE_PATH := "res://test/data/test_level_long_rise.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://test/data/test_level_long_fall.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://test/data/test_level_far_distance.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_3.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_4.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := "res://levels/level_5.tscn"
+const STARTING_LEVEL_RESOURCE_PATH := \
+        "res://test/data/test_level_long_rise.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := \
+#        "res://test/data/test_level_long_fall.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := \
+#        "res://test/data/test_level_far_distance.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := \
+#        "res://levels/level_3.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := \
+#        "res://levels/level_4.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := \
+#        "res://levels/level_5.tscn"
 
 const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 #const PLAYER_RESOURCE_PATH := "res://players/data/test_player.tscn"
@@ -115,7 +123,7 @@ const EDGE_MOVEMENTS := {}
 # Dictionary<String, PlayerParams>
 var player_params := {}
 
-var debug_panel: DebugPanel
+var utility_panel: UtilityPanel
 var welcome_panel: WelcomePanel
 
 var space_state: Physics2DDirectSpaceState
@@ -132,8 +140,9 @@ var element_annotator: ElementAnnotator
 # Keeps track of the current total elapsed time of unpaused gameplay.
 var elapsed_play_time_sec: float setget ,_get_elapsed_play_time_sec
 
-# TODO: Verify that all render-frame _process calls in the scene tree happen without interleaving
-#       with any _physics_process calls from other nodes in the scene tree.
+# TODO: Verify that all render-frame _process calls in the scene tree happen
+#       without interleaving with any _physics_process calls from other nodes
+#       in the scene tree.
 var _elapsed_latest_play_time_sec: float
 var _elapsed_physics_play_time_sec: float
 var _elapsed_render_play_time_sec: float
@@ -160,7 +169,9 @@ func register_edge_movements(edge_movement_classes: Array) -> void:
 func register_player_params(player_param_classes: Array) -> void:
     var player_params: PlayerParams
     for param_class in player_param_classes:
-        player_params = PlayerParamsUtils.create_player_params(param_class, self)
+        player_params = PlayerParamsUtils.create_player_params( \
+                param_class, \
+                self)
         self.player_params[player_params.name] = player_params
 
 func _ready() -> void:
@@ -173,7 +184,9 @@ func _process(delta: float) -> void:
     _elapsed_latest_play_time_sec = _elapsed_render_play_time_sec
 
 func _physics_process(delta: float) -> void:
-    assert(Geometry.are_floats_equal_with_epsilon(delta, Utils.PHYSICS_TIME_STEP))
+    assert(Geometry.are_floats_equal_with_epsilon( \
+            delta, \
+            Utils.PHYSICS_TIME_STEP))
     _elapsed_physics_play_time_sec += delta
     _elapsed_latest_play_time_sec = _elapsed_physics_play_time_sec
 

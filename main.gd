@@ -68,8 +68,9 @@ func _enter_tree() -> void:
         add_child(canvas_layers)
         
         if OS.get_name() == "HTML5":
-            # For HTML, don't use the Godot loading screen, and instead use an HTML screen, which
-            # will be more consistent with the other screens shown before.
+            # For HTML, don't use the Godot loading screen, and instead use an
+            # HTML screen, which will be more consistent with the other screens
+            # shown before.
             JavaScript.eval("window.onLoadingScreenReady()")
         else:
             # For non-HTML platforms, show a loading screen in Godot.
@@ -78,7 +79,8 @@ func _enter_tree() -> void:
                     LOADING_SCREEN_PATH)
 
 func _process(delta: float) -> void:
-    # FIXME: Figure out a better way of loading/parsing the level without blocking the main thread?
+    # FIXME: Figure out a better way of loading/parsing the level without
+    #        blocking the main thread?
     
     if !Global.IN_TEST_MODE and \
             level == null and \
@@ -100,8 +102,8 @@ func _process(delta: float) -> void:
             loading_screen.queue_free()
             loading_screen = null
         
-        # Add the player after removing the loading screen, since the camera will track the player,
-        # which makes the loading screen look offset.
+        # Add the player after removing the loading screen, since the camera
+        # will track the player, which makes the loading screen look offset.
         var position := \
                 Vector2(160.0, 0.0) if \
                 Global.STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 else \
