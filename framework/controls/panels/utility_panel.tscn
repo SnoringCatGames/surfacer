@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://framework/controls/panels/utility_panel.gd" type="Script" id=1]
 [ext_resource path="res://framework/controls/panels/credits_panel.tscn" type="PackedScene" id=2]
@@ -8,8 +8,11 @@
 [ext_resource path="res://assets/x-normal.png" type="Texture" id=6]
 [ext_resource path="res://assets/x-hover.png" type="Texture" id=7]
 [ext_resource path="res://assets/x-active.png" type="Texture" id=8]
-[ext_resource path="res://surfacer_theme.tres" type="Theme" id=9]
-
+[ext_resource path="res://main_theme.tres" type="Theme" id=9]
+[ext_resource path="res://framework/controls/selection_description.tscn" type="PackedScene" id=10]
+[ext_resource path="res://framework/controls/legend.tscn" type="PackedScene" id=11]
+[ext_resource path="res://header_theme.tres" type="Theme" id=12]
+[ext_resource path="res://framework/controls/platform_graph_inspector/platform_graph_inspector.tscn" type="PackedScene" id=13]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
@@ -44,19 +47,61 @@ margin_bottom = 300.0
 rect_min_size = Vector2( 0, 300 )
 size_flags_vertical = 3
 
-[node name="Spacer1" type="Control" parent="VBoxContainer"]
+[node name="SelectionDescription" parent="VBoxContainer/Sections" instance=ExtResource( 10 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 240.0
+margin_bottom = 20.0
+
+[node name="LegendHeader" type="Label" parent="VBoxContainer/Sections"]
+margin_top = 24.0
+margin_right = 240.0
+margin_bottom = 44.0
+theme = ExtResource( 12 )
+text = "Legend"
+align = 1
+
+[node name="Legend" parent="VBoxContainer/Sections" instance=ExtResource( 11 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 48.0
+margin_right = 240.0
+margin_bottom = 48.0
+
+[node name="InspectorContainer" type="VBoxContainer" parent="VBoxContainer/Sections"]
+margin_top = 52.0
+margin_right = 240.0
+margin_bottom = 300.0
+size_flags_vertical = 3
+
+[node name="InspectorHeader" type="Label" parent="VBoxContainer/Sections/InspectorContainer"]
+margin_right = 240.0
+margin_bottom = 20.0
+theme = ExtResource( 12 )
+text = "Platform graph inspector"
+align = 1
+
+[node name="PlatformGraphInspector" parent="VBoxContainer/Sections/InspectorContainer" instance=ExtResource( 13 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 24.0
+margin_right = 240.0
+margin_bottom = 248.0
+size_flags_vertical = 3
+
+[node name="FooterPaddingTop" type="Control" parent="VBoxContainer"]
 margin_top = 300.0
 margin_right = 240.0
 margin_bottom = 304.0
 rect_min_size = Vector2( 0, 4 )
 
-[node name="Panel1" type="Control" parent="VBoxContainer"]
+[node name="Footer" type="Control" parent="VBoxContainer"]
 margin_top = 304.0
 margin_right = 240.0
 margin_bottom = 324.0
 rect_min_size = Vector2( 0, 20 )
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Panel1"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Footer"]
 margin_right = 240.0
 margin_bottom = 80.0
 rect_min_size = Vector2( 240, 20 )
@@ -64,15 +109,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Control3" type="Control" parent="VBoxContainer/Panel1/HBoxContainer"]
+[node name="Control3" type="Control" parent="VBoxContainer/Footer/HBoxContainer"]
 size_flags_horizontal = 3
 size_flags_vertical = 0
 size_flags_stretch_ratio = 0.05
 
-[node name="CreditsButton" type="Button" parent="VBoxContainer/Panel1/HBoxContainer"]
+[node name="CreditsButton" type="Button" parent="VBoxContainer/Footer/HBoxContainer"]
 margin_left = 4.0
 margin_right = 203.0
-margin_bottom = 29.0
+margin_bottom = 20.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 size_flags_stretch_ratio = 10.0
@@ -81,14 +126,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Control" type="Control" parent="VBoxContainer/Panel1/HBoxContainer"]
+[node name="Control" type="Control" parent="VBoxContainer/Footer/HBoxContainer"]
 margin_left = 207.0
 margin_right = 208.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 size_flags_stretch_ratio = 0.1
 
-[node name="Control2" type="Control" parent="VBoxContainer/Panel1/HBoxContainer"]
+[node name="Control2" type="Control" parent="VBoxContainer/Footer/HBoxContainer"]
 margin_left = 212.0
 margin_right = 231.0
 size_flags_horizontal = 3
@@ -97,7 +142,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name=" XButton" type="TextureButton" parent="VBoxContainer/Panel1/HBoxContainer/Control2"]
+[node name=" XButton" type="TextureButton" parent="VBoxContainer/Footer/HBoxContainer/Control2"]
 margin_left = 2.1936
 margin_top = -1.54059
 margin_right = 82.1936
@@ -110,14 +155,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Control4" type="Control" parent="VBoxContainer/Panel1/HBoxContainer"]
+[node name="Control4" type="Control" parent="VBoxContainer/Footer/HBoxContainer"]
 margin_left = 235.0
 margin_right = 240.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 size_flags_stretch_ratio = 0.05
 
-[node name="Spacer2" type="Control" parent="VBoxContainer"]
+[node name="FooterPaddingBottom" type="Control" parent="VBoxContainer"]
 margin_top = 324.0
 margin_right = 240.0
 margin_bottom = 328.0
@@ -126,12 +171,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Panel2" type="Panel" parent="VBoxContainer"]
+[node name="GearContainer" type="Panel" parent="VBoxContainer"]
 margin_top = 328.0
 margin_right = 240.0
 margin_bottom = 328.0
 
-[node name="GearButton" type="TextureButton" parent="VBoxContainer/Panel2"]
+[node name="GearButton" type="TextureButton" parent="VBoxContainer/GearContainer"]
 margin_left = 199.447
 margin_top = 2.91589
 margin_right = 279.447
@@ -145,6 +190,6 @@ __meta__ = {
 }
 
 [node name="CreditsPanel" parent="." instance=ExtResource( 2 )]
-[connection signal="pressed" from="VBoxContainer/Panel1/HBoxContainer/CreditsButton" to="." method="_on_credits_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Panel1/HBoxContainer/Control2/ XButton" to="." method="_toggle_open"]
-[connection signal="pressed" from="VBoxContainer/Panel2/GearButton" to="." method="_toggle_open"]
+[connection signal="pressed" from="VBoxContainer/Footer/HBoxContainer/CreditsButton" to="." method="_on_credits_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Footer/HBoxContainer/Control2/ XButton" to="." method="_toggle_open"]
+[connection signal="pressed" from="VBoxContainer/GearContainer/GearButton" to="." method="_toggle_open"]

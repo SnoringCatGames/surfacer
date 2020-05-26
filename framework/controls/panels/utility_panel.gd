@@ -2,13 +2,15 @@ extends Panel
 class_name UtilityPanel
 
 const PANEL_WIDTH := 240.0
-const PANEL_HEIGHT := 328.0
-const CREDITS_BUTTON_HEIGHT := 20.0
-const PADDING_TOTAL_HEIGHT := 8.0
+const PANEL_HEIGHT := 400.0
+const PANEL_MARGIN_RIGHT := 20.0
+
+const FOOTER_HEIGHT := 20.0
+const FOOTER_PADDING_TOTAL_HEIGHT := 8.0
 const SECTIONS_HEIGHT := \
         PANEL_HEIGHT - \
-        CREDITS_BUTTON_HEIGHT - \
-        PADDING_TOTAL_HEIGHT
+        FOOTER_HEIGHT - \
+        FOOTER_PADDING_TOTAL_HEIGHT
 
 const POSITION_Y_OPEN := 0.0
 const POSITION_Y_CLOSED := -PANEL_HEIGHT
@@ -21,21 +23,43 @@ var _toggle_open_tween: Tween
 var _position_y: float setget _set_position_y, _get_position_y
 
 func _ready() -> void:
+    _initialize_dimensions()
+    
     # Set initial open state.
     self._position_y = \
             POSITION_Y_OPEN if \
             self.is_open else \
             POSITION_Y_CLOSED
-    $VBoxContainer/Panel2/GearButton.visible = !is_open
+    $VBoxContainer/GearContainer/GearButton.visible = !is_open
     
     _toggle_open_tween = Tween.new()
     add_child(_toggle_open_tween)
+    
+    var global = $"/root/Global"
+    global.platform_graph_inspector = \
+            $VBoxContainer/Sections/InspectorContainer/PlatformGraphInspector
+
+func _initialize_dimensions() -> void:
+    self.anchor_left = 1.0
+    self.anchor_top = 0.0
+    self.anchor_right = 1.0
+    self.anchor_bottom = 0.0
+    self.rect_size.x = PANEL_WIDTH
+    self.rect_size.y = PANEL_HEIGHT
+    self.rect_min_size.x = PANEL_WIDTH
+    self.rect_min_size.y = PANEL_HEIGHT
+    self.margin_left = -PANEL_MARGIN_RIGHT - PANEL_WIDTH
+    self.margin_right = -PANEL_MARGIN_RIGHT
+    self.margin_bottom = PANEL_HEIGHT
+    
+    $VBoxContainer/Sections.rect_size.y = SECTIONS_HEIGHT
+    $VBoxContainer/Sections.rect_min_size.y = SECTIONS_HEIGHT
+    
+    $VBoxContainer/Footer.rect_size.y = FOOTER_HEIGHT
+    $VBoxContainer/Footer.rect_min_size.y = FOOTER_HEIGHT
 
 func _on_credits_button_pressed():
     $CreditsPanel.popup()
-
-func add_section(section: Control) -> void:
-    $VBoxContainer/Sections.add_child(section)
 
 func set_is_open(is_open: bool) -> void:
     if self.is_open != is_open:
@@ -69,7 +93,7 @@ func _toggle_open() -> void:
             0.0)
     _toggle_open_tween.start()
     
-    $VBoxContainer/Panel2/GearButton.visible = !is_open
+    $VBoxContainer/GearContainer/GearButton.visible = !is_open
 
 func _set_position_y(value: float) -> void:
     rect_position.y = value

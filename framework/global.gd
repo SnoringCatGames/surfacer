@@ -123,19 +123,18 @@ const EDGE_MOVEMENTS := {}
 # Dictionary<String, PlayerParams>
 var player_params := {}
 
-var utility_panel: UtilityPanel
-var welcome_panel: WelcomePanel
-
 var space_state: Physics2DDirectSpaceState
 
 var canvas_layers: CanvasLayers
 var current_level: Level
 var current_player_for_clicks: Player
 var camera_controller: CameraController
+var element_annotator: ElementAnnotator
+var platform_graph_inspector: PlatformGraphInspector
+var utility_panel: UtilityPanel
+var welcome_panel: WelcomePanel
 
 var is_level_ready := false
-
-var element_annotator: ElementAnnotator
 
 # Keeps track of the current total elapsed time of unpaused gameplay.
 var elapsed_play_time_sec: float setget ,_get_elapsed_play_time_sec

@@ -3,8 +3,6 @@ class_name Level
 
 var global
 
-var platform_graph_inspector: PlatformGraphInspector
-
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
 var surface_tile_maps: Array
@@ -39,10 +37,7 @@ func _ready() -> void:
             space_state, \
             global.player_params, \
             Global.DEBUG_PARAMS)
-    
-    platform_graph_inspector = \
-            PlatformGraphInspector.new(platform_graphs.values())
-    add_child(platform_graph_inspector)
+    global.platform_graph_inspector.set_graphs(platform_graphs.values())
     
     global.is_level_ready = true
 

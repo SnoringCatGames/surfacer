@@ -69,14 +69,15 @@ func destroy() -> void:
     parent_item = null
 
 func on_item_selected() -> void:
-    # Do nothing.
-    pass
+    print("Inspector item selected: %s" % to_string())
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
+    print("Inspector item expanded: %s" % to_string())
 
 func on_item_collapsed() -> void:
     _destroy_children_if_needed()
+    print("Inspector item collapsed: %s" % to_string())
 
 func expand() -> void:
     var was_collapsed := tree_item.collapsed
