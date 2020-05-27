@@ -1,4 +1,4 @@
-extends VBoxContainer
+extends GridContainer
 class_name Legend
 
 # Dictionary<LegendItem, bool>

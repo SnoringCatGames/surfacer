@@ -514,7 +514,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/left_walls_item_controller.gd"
 }, {
-"base": "VBoxContainer",
+"base": "GridContainer",
 "class": "Legend",
 "language": "GDScript",
 "path": "res://framework/controls/legend/legend.gd"

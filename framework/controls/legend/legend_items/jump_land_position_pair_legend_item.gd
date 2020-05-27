@@ -2,7 +2,7 @@ extends LegendItem
 class_name JumpLandPositionPairLegendItem
 
 const TYPE := LegendItemType.JUMP_LAND_POSITION_PAIR
-const TEXT := "Possible jump/land\npositions"
+const TEXT := "Jump/land\npositions"
 
 func _init().( \
         TYPE, \

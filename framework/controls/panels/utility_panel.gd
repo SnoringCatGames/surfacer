@@ -2,7 +2,7 @@ extends Panel
 class_name UtilityPanel
 
 const PANEL_WIDTH := 240.0
-const PANEL_HEIGHT := 400.0
+const PANEL_HEIGHT := 500.0
 const PANEL_MARGIN_RIGHT := 20.0
 
 const FOOTER_HEIGHT := 20.0

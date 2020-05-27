@@ -37,7 +37,7 @@ func to_string() -> String:
 
 func get_text() -> String:
     return "%s [%s]" % [ \
-        EdgeCalcResultType.get_result_string( \
+        EdgeCalcResultType.get_type_string( \
                 edge_result_metadata.edge_calc_result_type) if \
         edge_result_metadata.edge_calc_result_type != \
                 EdgeCalcResultType.WAYPOINT_INVALID else \

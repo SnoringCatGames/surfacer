@@ -8,13 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Create a few standard fonts under assets.
-#   - Reference them throughout instead of creating whatever other custom
-#     one-off font changes I've done before.
-#     - Global-search for "font" in VSCode.
-#     - Also search for "scale".
-#   - Use a smaller font within the legend item label.
-# 
 # - Update Legend to render LegendItems across two columns.
 # 
 # - Render a legend to describe the current annotations.

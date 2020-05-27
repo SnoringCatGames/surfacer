@@ -59,7 +59,7 @@ func to_string() -> String:
                 "end: %s " + \
             "}" % \
             [ \
-                EdgeCalcResultType.get_result_string(edge_calc_result_type), \
+                EdgeCalcResultType.get_type_string(edge_calc_result_type), \
                 EdgeType.get_type_string(edge_type), \
                 WaypointValidity.get_validity_string(waypoint_validity), \
                 str(start), \

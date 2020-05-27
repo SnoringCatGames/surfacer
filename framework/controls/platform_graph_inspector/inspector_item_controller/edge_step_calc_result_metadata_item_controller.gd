@@ -32,7 +32,8 @@ func _init( \
 func to_string() -> String:
     return "%s { edge_step_calc_result_type=%s }" % [ \
         InspectorItemType.get_type_string(type), \
-        EdgeStepCalcResultType.get_type_string(step_result_metadata.edge_step_calc_result_type), \
+        EdgeStepCalcResultType.get_type_string( \
+                step_result_metadata.edge_step_calc_result_type), \
     ]
 
 func get_text() -> String:
@@ -55,14 +56,17 @@ func _get_text_for_description_index(description_index: int) -> String:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    Utils.error("find_and_expand_controller should not be called for EDGE_STEP_CALC_RESULT_METADATA.")
+    Utils.error( \
+            "find_and_expand_controller should not be called for " + \
+            "EDGE_STEP_CALC_RESULT_METADATA.")
     return false
 
 func get_has_children() -> bool:
     return !step_result_metadata.children_step_attempts.empty()
 
 func _create_children_inner() -> void:
-    for child_step_result_metadata in step_result_metadata.children_step_attempts:
+    for child_step_result_metadata in \
+            step_result_metadata.children_step_attempts:
         step_item_factory.create( \
                 tree_item, \
                 tree, \
