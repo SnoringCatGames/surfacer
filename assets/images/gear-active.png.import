@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/logo.png-e2220799298e3631eb0e245316e0501a.stex"
+path="res://.import/gear-active.png-ce3adfc0f59be9f0152fd9850380c3cc.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/logo.png"
-dest_files=[ "res://.import/logo.png-e2220799298e3631eb0e245316e0501a.stex" ]
+source_file="res://assets/images/gear-active.png"
+dest_files=[ "res://.import/gear-active.png-ce3adfc0f59be9f0152fd9850380c3cc.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

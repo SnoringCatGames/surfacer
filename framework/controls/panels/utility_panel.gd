@@ -38,6 +38,10 @@ func _ready() -> void:
     var global = $"/root/Global"
     global.platform_graph_inspector = \
             $VBoxContainer/Sections/InspectorContainer/PlatformGraphInspector
+    global.legend = \
+            $VBoxContainer/Sections/Legend
+    global.selection_description = \
+            $VBoxContainer/Sections/SelectionDescription
 
 func _initialize_dimensions() -> void:
     self.anchor_left = 1.0

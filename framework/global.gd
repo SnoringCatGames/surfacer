@@ -131,6 +131,8 @@ var current_player_for_clicks: Player
 var camera_controller: CameraController
 var element_annotator: ElementAnnotator
 var platform_graph_inspector: PlatformGraphInspector
+var legend: Legend
+var selection_description: SelectionDescription
 var utility_panel: UtilityPanel
 var welcome_panel: WelcomePanel
 

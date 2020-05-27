@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/leaves-background.png-9146485adf076af7224e98b7c474e1ad.stex"
+path="res://.import/squirrel-running-spritesheet.png-14409e7e0fb432ba559907ba649bd68e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/leaves-background.png"
-dest_files=[ "res://.import/leaves-background.png-9146485adf076af7224e98b7c474e1ad.stex" ]
+source_file="res://assets/images/squirrel-running-spritesheet.png"
+dest_files=[ "res://.import/squirrel-running-spritesheet.png-14409e7e0fb432ba559907ba649bd68e.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false

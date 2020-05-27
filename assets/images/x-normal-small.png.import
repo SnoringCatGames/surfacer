@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/squirrel-running-spritesheet.png-8d5a3b4f05199032a03c4850c47f9a95.stex"
+path="res://.import/x-normal-small.png-09ebe4d7de6cf3b556d15625d086d964.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/squirrel-running-spritesheet.png"
-dest_files=[ "res://.import/squirrel-running-spritesheet.png-8d5a3b4f05199032a03c4850c47f9a95.stex" ]
+source_file="res://assets/images/x-normal-small.png"
+dest_files=[ "res://.import/x-normal-small.png-09ebe4d7de6cf3b556d15625d086d964.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

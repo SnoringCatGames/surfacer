@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/near-trees-background.png-8d129692aec4a089d28eaf7ca33b055b.stex"
+path="res://.import/godot-logo-small.png-622c5e23a31c7735554139b1cabea3d6.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/near-trees-background.png"
-dest_files=[ "res://.import/near-trees-background.png-8d129692aec4a089d28eaf7ca33b055b.stex" ]
+source_file="res://assets/images/godot-logo-small.png"
+dest_files=[ "res://.import/godot-logo-small.png-622c5e23a31c7735554139b1cabea3d6.stex" ]
 
 [params]
 
@@ -19,8 +19,8 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
-flags/filter=false
+flags/repeat=0
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

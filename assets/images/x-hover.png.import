@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/far-trees-background.png-ef0390fe80f275f5353ac88bd6fe2817.stex"
+path="res://.import/x-hover.png-e2867b84c4d0c5f8ab07712ffe4fe463.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/far-trees-background.png"
-dest_files=[ "res://.import/far-trees-background.png-ef0390fe80f275f5353ac88bd6fe2817.stex" ]
+source_file="res://assets/images/x-hover.png"
+dest_files=[ "res://.import/x-hover.png-e2867b84c4d0c5f8ab07712ffe4fe463.stex" ]
 
 [params]
 
@@ -19,8 +19,8 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
-flags/filter=false
+flags/repeat=0
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

@@ -1,8 +1,10 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://framework/controls/panels/welcome_panel.gd" type="Script" id=1]
-[ext_resource path="res://assets/Open_Sans/OpenSans-Italic.ttf" type="DynamicFontData" id=2]
-[ext_resource path="res://main_theme.tres" type="Theme" id=3]
+[ext_resource path="res://assets/fonts/Open_Sans/OpenSans-Italic.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://assets/main_theme.tres" type="Theme" id=3]
+
+
 
 
 [sub_resource type="StyleBoxFlat" id=2]

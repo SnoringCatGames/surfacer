@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/x-active.png-3ba9e4883b20d537bc55a33e7d0cb05c.stex"
+path="res://.import/squirrel-parts.png-12d6fa831f9b9757e00e9a80e5118a32.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/x-active.png"
-dest_files=[ "res://.import/x-active.png-3ba9e4883b20d537bc55a33e7d0cb05c.stex" ]
+source_file="res://assets/images/squirrel-parts.png"
+dest_files=[ "res://.import/squirrel-parts.png-12d6fa831f9b9757e00e9a80e5118a32.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

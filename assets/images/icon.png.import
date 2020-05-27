@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/godot-logo-small.png-c2792d24f20ea4dd92617e84034bb13c.stex"
+path="res://.import/icon.png-e2b956fc1cad352d3b1bbca4fcd64fa9.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/godot-logo-small.png"
-dest_files=[ "res://.import/godot-logo-small.png-c2792d24f20ea4dd92617e84034bb13c.stex" ]
+source_file="res://assets/images/icon.png"
+dest_files=[ "res://.import/icon.png-e2b956fc1cad352d3b1bbca4fcd64fa9.stex" ]
 
 [params]
 

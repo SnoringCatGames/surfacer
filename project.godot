@@ -169,6 +169,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/destination_surface_item_controller.gd"
 }, {
+"base": "SurfaceLegendItem",
+"class": "DestinationSurfaceLegendItem",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_items/destination_surface_legend_item.gd"
+}, {
 "base": "Reference",
 "class": "Edge",
 "language": "GDScript",
@@ -313,6 +318,11 @@ _global_script_classes=[ {
 "class": "FailedEdgeItemController",
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/failed_edge_item_controller.gd"
+}, {
+"base": "LegendItem",
+"class": "FailedEdgeLegendItem",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_items/failed_edge_legend_item.gd"
 }, {
 "base": "InspectorItemController",
 "class": "FailedEdgesGroupItemController",
@@ -474,6 +484,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/edges/jump_inter_surface_edge.gd"
 }, {
+"base": "LegendItem",
+"class": "JumpLandPositionPairLegendItem",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_items/jump_land_position_pair_legend_item.gd"
+}, {
 "base": "Reference",
 "class": "JumpLandPositions",
 "language": "GDScript",
@@ -498,6 +513,21 @@ _global_script_classes=[ {
 "class": "LeftWallsItemController",
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/left_walls_item_controller.gd"
+}, {
+"base": "VBoxContainer",
+"class": "Legend",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend.gd"
+}, {
+"base": "Control",
+"class": "LegendItem",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_items/legend_item.gd"
+}, {
+"base": "Reference",
+"class": "LegendItemType",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_item_type.gd"
 }, {
 "base": "Node2D",
 "class": "Level",
@@ -538,6 +568,11 @@ _global_script_classes=[ {
 "class": "OriginSurfaceItemController",
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/origin_surface_item_controller.gd"
+}, {
+"base": "SurfaceLegendItem",
+"class": "OriginSurfaceLegendItem",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_items/origin_surface_legend_item.gd"
 }, {
 "base": "Reference",
 "class": "PlatformGraph",
@@ -708,6 +743,11 @@ _global_script_classes=[ {
 "class": "SurfaceCollision",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/models/surface_collision.gd"
+}, {
+"base": "LegendItem",
+"class": "SurfaceLegendItem",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_items/surface_legend_item.gd"
 }, {
 "base": "Reference",
 "class": "SurfaceParser",
@@ -887,6 +927,7 @@ _global_script_class_icons={
 "CreditsPanel": "",
 "DescriptionItemController": "",
 "DestinationSurfaceItemController": "",
+"DestinationSurfaceLegendItem": "",
 "Edge": "",
 "EdgeAnnotationElement": "",
 "EdgeCalcParams": "",
@@ -916,6 +957,7 @@ _global_script_class_icons={
 "FailedEdgeAttempt": "",
 "FailedEdgeAttemptAnnotationElement": "",
 "FailedEdgeItemController": "",
+"FailedEdgeLegendItem": "",
 "FailedEdgesGroupItemController": "",
 "FakePlayerAnimator": "",
 "FallFromFloorCalculator": "",
@@ -948,11 +990,15 @@ _global_script_class_icons={
 "JumpFromSurfaceToAirEdge": "",
 "JumpInterSurfaceCalculator": "",
 "JumpInterSurfaceEdge": "",
+"JumpLandPositionPairLegendItem": "",
 "JumpLandPositions": "",
 "JumpLandPositionsAnnotationElement": "",
 "JumpLandPositionsUtils": "",
 "JumpLandPositionsUtilsTestBed": "",
 "LeftWallsItemController": "",
+"Legend": "",
+"LegendItem": "",
+"LegendItemType": "",
 "Level": "",
 "Main": "",
 "MatchExpectedEdgeTrajectoryAction": "",
@@ -961,6 +1007,7 @@ _global_script_class_icons={
 "Navigator": "",
 "NavigatorAnnotator": "",
 "OriginSurfaceItemController": "",
+"OriginSurfaceLegendItem": "",
 "PlatformGraph": "",
 "PlatformGraphAnnotator": "",
 "PlatformGraphInspector": "",
@@ -995,6 +1042,7 @@ _global_script_class_icons={
 "Surface": "",
 "SurfaceAnnotationElement": "",
 "SurfaceCollision": "",
+"SurfaceLegendItem": "",
 "SurfaceParser": "",
 "SurfacePreselectionAnnotator": "",
 "SurfaceSelectionAnnotator": "",
@@ -1030,7 +1078,7 @@ _global_script_class_icons={
 
 config/name="Surfacer"
 run/main_scene="res://main.tscn"
-config/icon="res://assets/icon.png"
+config/icon="res://assets/images/icon.png"
 
 [autoload]
 
@@ -1042,7 +1090,7 @@ AnnotationElementDefaults="*res://framework/annotators/annotation_element/annota
 
 [display]
 
-mouse_cursor/custom_image="res://assets/paw-cursor.png"
+mouse_cursor/custom_image="res://assets/images/paw-cursor.png"
 mouse_cursor/custom_image_hotspot=Vector2( 5, 4 )
 mouse_cursor/tooltip_position_offset=Vector2( 0, 0 )
 window/stretch/mode="2d"

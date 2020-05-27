@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/paw-cursor.png-26180dd08ca1e215471a15adb1a55669.stex"
+path="res://.import/far-trees-background.png-a713941df1ebae0519f84cc1cfc0e1f5.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/paw-cursor.png"
-dest_files=[ "res://.import/paw-cursor.png-26180dd08ca1e215471a15adb1a55669.stex" ]
+source_file="res://assets/images/far-trees-background.png"
+dest_files=[ "res://.import/far-trees-background.png-a713941df1ebae0519f84cc1cfc0e1f5.stex" ]
 
 [params]
 
@@ -19,8 +19,8 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
-flags/filter=true
+flags/repeat=1
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

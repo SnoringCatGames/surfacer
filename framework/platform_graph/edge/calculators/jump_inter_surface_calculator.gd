@@ -8,6 +8,15 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# - Create a few standard fonts under assets.
+#   - Reference them throughout instead of creating whatever other custom
+#     one-off font changes I've done before.
+#     - Global-search for "font" in VSCode.
+#     - Also search for "scale".
+#   - Use a smaller font within the legend item label.
+# 
+# - Update Legend to render LegendItems across two columns.
+# 
 # - Render a legend to describe the current annotations.
 #   - Make this dynamically update to describe the currently rendered
 #     annotations.
@@ -23,6 +32,10 @@ const IS_A_JUMP_CALCULATOR := true
 #     that selection."
 #   - "A valid edge matches that selection."
 #   - "A failed edge calculation matches that selection."
+# 
+# - Update JumpLandPosition annotations (only in inspector controller and
+#   legend item, I think) to render circle and icecream cone to indicate start
+#   and end differently.
 # 
 # - Ensure all edge DrawUtil functions support rendering the start/end
 #   indicators.

@@ -75,6 +75,9 @@ func _on_tree_item_selected() -> void:
     for element in current_annotation_elements:
         element_annotator.add(element)
     
+    # FIXME: ---------------
+    global.selection_description.set_text("")
+    
     controller.call_deferred("on_item_selected")
 
 func _on_tree_item_expansion_toggled(item: TreeItem) -> void:

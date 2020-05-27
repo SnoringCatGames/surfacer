@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/gear-active.png-3e51cd94a48ed9a59297c9c83cb81ff4.stex"
+path="res://.import/near-trees-background.png-6711c88bb38bfb5380c54f4ea569fee4.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/gear-active.png"
-dest_files=[ "res://.import/gear-active.png-3e51cd94a48ed9a59297c9c83cb81ff4.stex" ]
+source_file="res://assets/images/near-trees-background.png"
+dest_files=[ "res://.import/near-trees-background.png-6711c88bb38bfb5380c54f4ea569fee4.stex" ]
 
 [params]
 
@@ -19,8 +19,8 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
-flags/filter=true
+flags/repeat=1
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

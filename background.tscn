@@ -1,9 +1,10 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/leaves-background.png" type="Texture" id=2]
-[ext_resource path="res://assets/far-trees-background.png" type="Texture" id=3]
-[ext_resource path="res://assets/near-trees-background.png" type="Texture" id=4]
-[ext_resource path="res://assets/near-bushes-background.png" type="Texture" id=5]
+[ext_resource path="res://assets/images/leaves-background.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/far-trees-background.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/near-trees-background.png" type="Texture" id=4]
+[ext_resource path="res://assets/images/near-bushes-background.png" type="Texture" id=5]
+
 
 [node name="Background" type="ParallaxBackground"]
 scroll_base_scale = Vector2( 1, 0 )
