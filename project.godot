@@ -47,17 +47,17 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "AnnotationElement",
 "language": "GDScript",
-"path": "res://framework/annotators/annotation_element/annotation_element.gd"
+"path": "res://framework/annotators/annotation_elements/annotation_element.gd"
 }, {
 "base": "Node",
 "class": "AnnotationElementDefaults_",
 "language": "GDScript",
-"path": "res://framework/annotators/annotation_element/annotation_element_defaults.gd"
+"path": "res://framework/annotators/annotation_elements/annotation_element_defaults.gd"
 }, {
 "base": "Reference",
 "class": "AnnotationElementType",
 "language": "GDScript",
-"path": "res://framework/annotators/annotation_element/annotation_element_type.gd"
+"path": "res://framework/annotators/annotation_elements/annotation_element_type.gd"
 }, {
 "base": "Node2D",
 "class": "CameraController",
@@ -92,7 +92,7 @@ _global_script_classes=[ {
 "base": "SurfacesOfSideGroupItemController",
 "class": "CeilingsItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/ceilings_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/ceilings_item_controller.gd"
 }, {
 "base": "Node2D",
 "class": "ClickAnnotator",
@@ -162,7 +162,7 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "DescriptionItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/description_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/description_item_controller.gd"
 }, {
 "base": "LegendItem",
 "class": "DestinationLegendItem",
@@ -172,7 +172,7 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "DestinationSurfaceItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/destination_surface_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/destination_surface_item_controller.gd"
 }, {
 "base": "SurfaceLegendItem",
 "class": "DestinationSurfaceLegendItem",
@@ -187,7 +187,7 @@ _global_script_classes=[ {
 "base": "AnnotationElement",
 "class": "EdgeAnnotationElement",
 "language": "GDScript",
-"path": "res://framework/annotators/annotation_element/edge_annotation_element.gd"
+"path": "res://framework/annotators/annotation_elements/edge_annotation_element.gd"
 }, {
 "base": "Reference",
 "class": "EdgeCalcParams",
@@ -207,7 +207,7 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "EdgeCalcResultMetadataItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/edge_calc_result_metadata_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/edge_calc_result_metadata_item_controller.gd"
 }, {
 "base": "Reference",
 "class": "EdgeCalcResultType",
@@ -242,7 +242,7 @@ _global_script_classes=[ {
 "base": "AnnotationElement",
 "class": "EdgeStepAnnotationElement",
 "language": "GDScript",
-"path": "res://framework/annotators/annotation_element/edge_step_annotation_element.gd"
+"path": "res://framework/annotators/annotation_elements/edge_step_annotation_element.gd"
 }, {
 "base": "Reference",
 "class": "EdgeStepCalcParams",
@@ -257,12 +257,12 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "EdgeStepCalcResultMetadataItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/edge_step_calc_result_metadata_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/edge_step_calc_result_metadata_item_controller.gd"
 }, {
 "base": "Reference",
 "class": "EdgeStepCalcResultMetadataItemControllerFactory",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/edge_step_calc_result_metadata_item_controller_factory.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/edge_step_calc_result_metadata_item_controller_factory.gd"
 }, {
 "base": "Reference",
 "class": "EdgeStepCalcResultType",
@@ -292,17 +292,17 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "EdgeTypeInEdgesGroupItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/edge_type_in_edges_group_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/edge_type_in_edges_group_item_controller.gd"
 }, {
 "base": "InspectorItemController",
 "class": "EdgeTypeInSurfacesGroupItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/edge_type_in_surfaces_group_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/edge_type_in_surfaces_group_item_controller.gd"
 }, {
 "base": "InspectorItemController",
 "class": "EdgesTopLevelGroupItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/edges_top_level_group_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/edges_top_level_group_item_controller.gd"
 }, {
 "base": "Node2D",
 "class": "ElementAnnotator",
@@ -317,17 +317,17 @@ _global_script_classes=[ {
 "base": "AnnotationElement",
 "class": "FailedEdgeAttemptAnnotationElement",
 "language": "GDScript",
-"path": "res://framework/annotators/annotation_element/failed_edge_attempt_annotation_element.gd"
+"path": "res://framework/annotators/annotation_elements/failed_edge_attempt_annotation_element.gd"
 }, {
 "base": "InspectorItemController",
 "class": "FailedEdgeItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/failed_edge_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/failed_edge_item_controller.gd"
 }, {
 "base": "InspectorItemController",
 "class": "FailedEdgesGroupItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/failed_edges_group_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/failed_edges_group_item_controller.gd"
 }, {
 "base": "PlayerAnimator",
 "class": "FakePlayerAnimator",
@@ -392,7 +392,7 @@ _global_script_classes=[ {
 "base": "SurfacesOfSideGroupItemController",
 "class": "FloorsItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/floors_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/floors_item_controller.gd"
 }, {
 "base": "Reference",
 "class": "FrameCollisionCheckUtils",
@@ -402,7 +402,7 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "GlobalCountsTopLevelGroupItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/global_counts_top_level_group_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/global_counts_top_level_group_item_controller.gd"
 }, {
 "base": "Node2D",
 "class": "GridIndicesAnnotator",
@@ -432,12 +432,12 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "InspectorItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/inspector_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/inspector_item_controller.gd"
 }, {
 "base": "Reference",
 "class": "InspectorItemType",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_type.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/inspector_item_type.gd"
 }, {
 "base": "Reference",
 "class": "InspectorSearchType",
@@ -507,7 +507,7 @@ _global_script_classes=[ {
 "base": "AnnotationElement",
 "class": "JumpLandPositionsAnnotationElement",
 "language": "GDScript",
-"path": "res://framework/annotators/annotation_element/jump_land_positions_annotation_element.gd"
+"path": "res://framework/annotators/annotation_elements/jump_land_positions_annotation_element.gd"
 }, {
 "base": "Reference",
 "class": "JumpLandPositionsUtils",
@@ -522,7 +522,7 @@ _global_script_classes=[ {
 "base": "SurfacesOfSideGroupItemController",
 "class": "LeftWallsItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/left_walls_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/left_walls_item_controller.gd"
 }, {
 "base": "GridContainer",
 "class": "Legend",
@@ -537,7 +537,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "LegendItemType",
 "language": "GDScript",
-"path": "res://framework/controls/legend/legend_item_type.gd"
+"path": "res://framework/controls/legend/legend_items/legend_item_type.gd"
 }, {
 "base": "Node2D",
 "class": "Level",
@@ -582,7 +582,7 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "OriginSurfaceItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/origin_surface_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/origin_surface_item_controller.gd"
 }, {
 "base": "SurfaceLegendItem",
 "class": "OriginSurfaceLegendItem",
@@ -612,7 +612,7 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "PlatformGraphItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/platform_graph_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/platform_graph_item_controller.gd"
 }, {
 "base": "Reference",
 "class": "PlatformGraphPath",
@@ -717,7 +717,7 @@ _global_script_classes=[ {
 "base": "SurfacesOfSideGroupItemController",
 "class": "RightWallsItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/right_walls_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/right_walls_item_controller.gd"
 }, {
 "base": "Node2D",
 "class": "RulerAnnotator",
@@ -752,7 +752,7 @@ _global_script_classes=[ {
 "base": "AnnotationElement",
 "class": "SurfaceAnnotationElement",
 "language": "GDScript",
-"path": "res://framework/annotators/annotation_element/surface_annotation_element.gd"
+"path": "res://framework/annotators/annotation_elements/surface_annotation_element.gd"
 }, {
 "base": "Reference",
 "class": "SurfaceCollision",
@@ -797,12 +797,12 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "SurfacesOfSideGroupItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/surfaces_of_side_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/surfaces_of_side_item_controller.gd"
 }, {
 "base": "InspectorItemController",
 "class": "SurfacesTopLevelGroupItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/surfaces_top_level_group_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/surfaces_top_level_group_item_controller.gd"
 }, {
 "base": "Player",
 "class": "TestPlayer",
@@ -837,7 +837,7 @@ _global_script_classes=[ {
 "base": "InspectorItemController",
 "class": "ValidEdgeItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controller/valid_edge_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/valid_edge_item_controller.gd"
 }, {
 "base": "LegendItem",
 "class": "ValidEdgeTrajectoryLegendItem",
@@ -1110,7 +1110,7 @@ Utils="*res://framework/utils/utils.gd"
 Geometry="*res://framework/utils/geometry.gd"
 DrawUtils="*res://framework/utils/draw_utils.gd"
 Global="*res://framework/global.gd"
-AnnotationElementDefaults="*res://framework/annotators/annotation_element/annotation_element_defaults.gd"
+AnnotationElementDefaults="*res://framework/annotators/annotation_elements/annotation_element_defaults.gd"
 
 [display]
 
