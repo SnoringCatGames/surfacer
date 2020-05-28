@@ -12,7 +12,8 @@ var color_params: ColorParams
 func _init( \
         type := DEFAULT_TYPE, \
         text := DEFAULT_TEXT, \
-        color_params := DEFAULT_COLOR_PARAMS).( \
+        color_params := DEFAULT_COLOR_PARAMS) \
+        .( \
         type, \
         text) -> void:
     self.color_params = color_params

@@ -65,3 +65,13 @@ func draw(canvas: CanvasItem) -> void:
                 canvas, \
                 failed_edge_attempt.end_surface, \
                 color_params)
+
+func _create_legend_items() -> Array:
+    var hypothetical_edge_item := HypotheticalEdgeTrajectoryLegendItem.new()
+    var origin_item := OriginLegendItem.new()
+    var destination_item := DestinationLegendItem.new()
+    return [ \
+        hypothetical_edge_item, \
+        origin_item, \
+        destination_item, \
+    ]

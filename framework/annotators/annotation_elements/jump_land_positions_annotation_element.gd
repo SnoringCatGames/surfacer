@@ -51,3 +51,13 @@ func draw(canvas: CanvasItem) -> void:
             end, \
             radius, \
             color)
+
+func _create_legend_items() -> Array:
+    var hypothetical_edge_item := HypotheticalEdgeTrajectoryLegendItem.new()
+    var origin_item := OriginLegendItem.new()
+    var destination_item := DestinationLegendItem.new()
+    return [ \
+        hypothetical_edge_item, \
+        origin_item, \
+        destination_item, \
+    ]

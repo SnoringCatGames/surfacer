@@ -35,3 +35,17 @@ func draw(canvas: CanvasItem) -> void:
             includes_instruction_indicators, \
             includes_discrete_positions, \
             color)
+
+func _create_legend_items() -> Array:
+    var items := []
+    
+    var trajectory_item := ValidEdgeTrajectoryLegendItem.new()
+    items.push_back(trajectory_item)
+    
+    if includes_waypoints:
+        var origin_item := OriginLegendItem.new()
+        items.push_back(origin_item)
+        var destination_item := DestinationLegendItem.new()
+        items.push_back(destination_item)
+    
+    return items

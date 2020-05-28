@@ -34,3 +34,7 @@ static func draw_from_surface( \
             surface, \
             color, \
             depth)
+
+func _create_legend_items() -> Array:
+    var surface_item := SurfaceLegendItem.new()
+    return [surface_item]

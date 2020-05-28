@@ -8,10 +8,7 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Make the legend dynamically update to describe the currently rendered
-#   annotations.
-#   - This should update as annotations are toggled in the utility panel.
-#   - This should update as items are selected in the PlatformGraphInspector.
+# - Show a message in the legend when there are no elements being drawn.
 # 
 # - Other things to include in legend:
 #   - Continuous vs discrete trajectories
@@ -362,6 +359,7 @@ const IS_A_JUMP_CALCULATOR := true
 #     - (grid, clicks, player position, player recent movement, platform graph,
 #       ...)
 #   - Toggle whether the legend (and current selection description) is shown.
+#   - Also, update the legend as annotations are toggled.
 # 
 # - Think up ways to make the debug annotations more
 #   dynamic/intelligent/useful...

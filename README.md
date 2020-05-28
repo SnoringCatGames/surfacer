@@ -34,7 +34,7 @@ There are two key reasons why good path-finding AI isn't really used in platform
 1.  It's hard to implement right; there is a lot of math involved, and there are a lot of different edge cases to account for.
 2.  Dumb AI is usually plenty effective on its own to create compelling gameplay. The user often doesn't really notice or care how simple the behavior is.
 
-But there are use-cases for which we really benefit from an AI that can accurately immitate the same movement mechanics of the player. One example is if we want to have a flexible game mode in which a computer player can swap in for a human player depending on how many humans are present.
+But there are use-cases for which we really benefit from an AI that can accurately immitate the same movement mechanics of the player. One example is if we want to be able to control the player by tapping on locations that they should move through the level toward. Another example is if we want to have a flexible game mode in which a computer player can swap in for a human player depending on how many humans are present.
 
 ## Platformer AI
 
@@ -356,7 +356,7 @@ Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and runn
 
 For convenience, this is checked in the with rest of the Surfacer framework.
 
-### Licenses
+## Licenses
 
 The Surfacer framework is published under the [MIT license](LICENSE).
 

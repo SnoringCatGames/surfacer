@@ -329,3 +329,7 @@ func _attach_labels(canvas: CanvasItem) -> void:
             old_parent.remove_child(previous_out_of_reach_waypoint_label)
         canvas.add_child(step_label)
         canvas.add_child(previous_out_of_reach_waypoint_label)
+
+func _create_legend_items() -> Array:
+    # FIXME: -----------------------
+    return []

@@ -1,35 +1,23 @@
 extends GridContainer
 class_name Legend
 
-# Dictionary<LegendItem, bool>
+# Dictionary<int, LegendItem>
 var _items := {}
 
-# FIXME: REMOVE -------------
-func _ready() -> void:
-    add(SurfaceLegendItem.new())
-    add(OriginSurfaceLegendItem.new())
-    add(DestinationSurfaceLegendItem.new())
-    add(HypotheticalEdgeTrajectoryLegendItem.new())
-    add(ValidEdgeTrajectoryLegendItem.new())
-    add(OriginLegendItem.new())
-    add(DestinationLegendItem.new())
-    add(InstructionStartLegendItem.new())
-    add(InstructionEndLegendItem.new())
-
 func add(item: LegendItem) -> void:
-    _items[item] = true
+    _items[item.type] = item
     add_child(item)
 
 func erase(item: LegendItem) -> bool:
-    var erased := _items.erase(item)
+    var erased := _items.erase(item.type)
     if erased:
         remove_child(item)
     return erased
 
 func has(item: LegendItem) -> bool:
-    return _items.has(item)
+    return _items.has(item.type)
 
 func clear() -> void:
-    for item in _items:
-        remove_child(item)
+    for type in _items:
+        remove_child(_items[type])
     _items.clear()
