@@ -11,14 +11,22 @@ const SURFACE_SATURATION := 0.9
 const SURFACE_VALUE := 0.9
 const SURFACE_ALPHA := 0.6
 
+const DEFAULT_SURFACE_HUE := 0.19
 const ORIGIN_SURFACE_HUE := 0.61
 const DESTINATION_SURFACE_HUE := 0.97
 
 const SURFACE_DEPTH := 16.0
 
-var SURFACE_COLOR_PARAMS := ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
-        SURFACE_HUE_MIN, \
-        SURFACE_HUE_MAX, \
+var SURFACE_COLOR_PARAMS := \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+                SURFACE_HUE_MIN, \
+                SURFACE_HUE_MAX, \
+                SURFACE_SATURATION, \
+                SURFACE_VALUE, \
+                SURFACE_ALPHA)
+
+var DEFAULT_SURFACE_COLOR_PARAMS := HsvColorParams.new( \
+        DEFAULT_SURFACE_HUE, \
         SURFACE_SATURATION, \
         SURFACE_VALUE, \
         SURFACE_ALPHA)
@@ -47,12 +55,13 @@ const INCLUDES_WAYPOINTS := true
 const INCLUDES_INSTRUCTION_INDICATORS := true
 const INCLUDES_DISCRETE_POSITIONS := true
 
-var EDGE_COLOR_PARAMS := ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
-        EDGE_HUE_MIN, \
-        EDGE_HUE_MAX, \
-        EDGE_SATURATION, \
-        EDGE_VALUE, \
-        EDGE_ALPHA)
+var EDGE_COLOR_PARAMS := \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+                EDGE_HUE_MIN, \
+                EDGE_HUE_MAX, \
+                EDGE_SATURATION, \
+                EDGE_VALUE, \
+                EDGE_ALPHA)
 
 ### FailedEdgeAttempt
 

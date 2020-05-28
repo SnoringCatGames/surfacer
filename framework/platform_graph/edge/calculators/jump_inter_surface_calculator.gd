@@ -8,16 +8,21 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Update Legend to render LegendItems across two columns.
+# - Make the legend dynamically update to describe the currently rendered
+#   annotations.
+#   - This should update as annotations are toggled in the utility panel.
+#   - This should update as items are selected in the PlatformGraphInspector.
 # 
-# - Render a legend to describe the current annotations.
-#   - Make this dynamically update to describe the currently rendered
-#     annotations.
-#     - This should update as annotations are toggled in the utility panel.
-#     - This should update as items are selected in the PlatformGraphInspector.
-#   - Place this as an independent dialog.
-#   - Make this dismissable.
-#   - Add a button to the utility panel to re-show this if it is dismissed.
+# - Other things to include in legend:
+#   - Continuous vs discrete trajectories
+#   - Mid waypoints
+#   - Navigator path (current and previous)
+#   - Recent movement
+#   - Fake waypoint?
+#   - Invalid waypoint?
+#   - Collision boundary at moment of collision
+#   - Collision debugging: previous frame, current frame, next frame boundaries
+#   - Is there an X rendered on failed edge attempts?
 # 
 # - Add an additional label near the legend, to describe attempted selection.
 #   - "No possible jump/land positions for that selection."
@@ -356,6 +361,7 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Add a top-level button to utility menu to hide all annotations.
 #     - (grid, clicks, player position, player recent movement, platform graph,
 #       ...)
+#   - Toggle whether the legend (and current selection description) is shown.
 # 
 # - Think up ways to make the debug annotations more
 #   dynamic/intelligent/useful...

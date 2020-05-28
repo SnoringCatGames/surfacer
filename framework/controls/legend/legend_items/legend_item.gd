@@ -43,7 +43,7 @@ func _draw() -> void:
             SHAPE_REGION_CENTER, \
             Vector2(SHAPE_REGION_WIDTH, SHAPE_REGION_HEIGHT))
 
-func _draw_shape( \
+func _draw_shape(
         center: Vector2, \
         size: Vector2) -> void:
-    Utils.error("Abstract LegendItem.draw_shape is not implemented")
+    Utils.error("Abstract LegendItem._draw_shape is not implemented")

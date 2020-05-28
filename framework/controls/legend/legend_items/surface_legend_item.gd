@@ -3,20 +3,21 @@ class_name SurfaceLegendItem
 
 const DEFAULT_TYPE := LegendItemType.SURFACE
 const DEFAULT_TEXT := "Surface"
-var DEFAULT_COLOR := Colors.opacify(Colors.YELLOW, Colors.ALPHA_FAINT)
+var DEFAULT_COLOR_PARAMS: ColorParams = \
+        AnnotationElementDefaults.DEFAULT_SURFACE_COLOR_PARAMS
 const SURFACE_DEPTH := 8.1
 
-var color: Color
+var color_params: ColorParams
 
 func _init( \
         type := DEFAULT_TYPE, \
         text := DEFAULT_TEXT, \
-        color := DEFAULT_COLOR).( \
+        color_params := DEFAULT_COLOR_PARAMS).( \
         type, \
         text) -> void:
-    self.color = color
+    self.color_params = color_params
 
-func _draw_shape( \
+func _draw_shape(
         center: Vector2, \
         size: Vector2) -> void:
     var vertices := [ \
@@ -31,5 +32,5 @@ func _draw_shape( \
     DrawUtils.draw_surface( \
             self, \
             surface, \
-            color, \
+            color_params.get_color(), \
             SURFACE_DEPTH)

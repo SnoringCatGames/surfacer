@@ -9,8 +9,12 @@ func _ready() -> void:
     add(SurfaceLegendItem.new())
     add(OriginSurfaceLegendItem.new())
     add(DestinationSurfaceLegendItem.new())
-    add(JumpLandPositionPairLegendItem.new())
-    add(FailedEdgeLegendItem.new())
+    add(HypotheticalEdgeTrajectoryLegendItem.new())
+    add(ValidEdgeTrajectoryLegendItem.new())
+    add(OriginLegendItem.new())
+    add(DestinationLegendItem.new())
+    add(InstructionStartLegendItem.new())
+    add(InstructionEndLegendItem.new())
 
 func add(item: LegendItem) -> void:
     _items[item] = true

@@ -6,11 +6,11 @@ const SURFACE_ALPHA_END_RATIO := .2
 
 const EDGE_TRAJECTORY_WIDTH := 1.0
 
-const EDGE_WAYPOINT_WIDTH := 1.0
-const EDGE_WAYPOINT_RADIUS := 6.0 * EDGE_WAYPOINT_WIDTH
-const EDGE_START_RADIUS := 3.0 * EDGE_WAYPOINT_WIDTH
+const EDGE_WAYPOINT_STROKE_WIDTH := 1.0
+const EDGE_WAYPOINT_RADIUS := 6.0 * EDGE_WAYPOINT_STROKE_WIDTH
+const EDGE_START_RADIUS := 3.0 * EDGE_WAYPOINT_STROKE_WIDTH
 const EDGE_END_RADIUS := EDGE_WAYPOINT_RADIUS
-const EDGE_END_CONE_LENGTH := EDGE_WAYPOINT_RADIUS * 3.0
+const EDGE_END_CONE_LENGTH := EDGE_WAYPOINT_RADIUS * 2.0
 
 const EDGE_INSTRUCTION_INDICATOR_LENGTH := 24
 
@@ -874,21 +874,21 @@ static func _draw_edge_from_instructions_positions( \
                     waypoint_position, \
                     EDGE_WAYPOINT_RADIUS, \
                     waypoint_color, \
-                    EDGE_WAYPOINT_WIDTH, \
+                    EDGE_WAYPOINT_STROKE_WIDTH, \
                     4.0)
         
         # Draw the destination waypoint.
         var circle_center := edge.end_position_along_surface.target_point
         var cone_end_point := circle_center - edge.end_surface.normal * \
-                (EDGE_END_CONE_LENGTH - EDGE_END_RADIUS)
+                EDGE_END_CONE_LENGTH
         draw_ice_cream_cone( \
                 canvas, \
                 cone_end_point, \
                 circle_center, \
-                EDGE_WAYPOINT_RADIUS, \
+                EDGE_END_RADIUS, \
                 waypoint_color, \
                 false, \
-                EDGE_WAYPOINT_WIDTH, \
+                EDGE_WAYPOINT_STROKE_WIDTH, \
                 4.0)
         
         # Draw the origin waypoint.
@@ -897,7 +897,7 @@ static func _draw_edge_from_instructions_positions( \
                 edge.start, \
                 EDGE_START_RADIUS, \
                 waypoint_color, \
-                EDGE_WAYPOINT_WIDTH, \
+                EDGE_WAYPOINT_STROKE_WIDTH, \
                 3.0)
     
     if includes_instruction_indicators:

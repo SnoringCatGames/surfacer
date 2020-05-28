@@ -35,14 +35,14 @@ func _init( \
     self.destination_surface = destination_surface
     self.edge_types_to_valid_edges = edge_types_to_valid_edges
     self.edge_types_to_failed_edges = edge_types_to_failed_edges
-    self.jump_type_jump_land_positions = \
-            JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
+    self.jump_type_jump_land_positions = JumpLandPositionsUtils \
+            .calculate_jump_land_positions_for_surface_pair( \
                     graph.movement_params, \
                     origin_surface, \
                     destination_surface, \
                     true)
-    self.fall_type_jump_land_positions = \
-            JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
+    self.fall_type_jump_land_positions = JumpLandPositionsUtils \
+            .calculate_jump_land_positions_for_surface_pair( \
                     graph.movement_params, \
                     origin_surface, \
                     destination_surface, \
@@ -112,7 +112,9 @@ func _create_children_inner() -> void:
         
         if !valid_edges.empty() or \
                 !failed_edges.empty():
-            is_a_jump_calculator = InspectorItemController.JUMP_CALCULATORS.find(edge_type) >= 0
+            is_a_jump_calculator = \
+                    InspectorItemController.JUMP_CALCULATORS.find( \
+                            edge_type) >= 0
             jump_land_positions = \
                     jump_type_jump_land_positions if \
                     is_a_jump_calculator else \

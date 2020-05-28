@@ -349,7 +349,8 @@ static func create_position_from_target_point( \
             clips_to_surface_bounds)
     return position
 
-static func create_position_without_surface(target_point: Vector2) -> PositionAlongSurface:
+static func create_position_without_surface( \
+        target_point: Vector2) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
     position.target_point = target_point
     return position
