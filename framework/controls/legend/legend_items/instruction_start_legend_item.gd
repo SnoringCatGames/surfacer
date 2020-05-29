@@ -20,4 +20,4 @@ func _draw_shape(
             true, \
             center, \
             DrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH * SCALE, \
-            AnnotationElementDefaults.EDGE_COLOR_PARAMS.get_color())
+            AnnotationElementDefaults.INSTRUCTION_COLOR_PARAMS.get_color())

@@ -1,9 +1,6 @@
 extends LegendItem
 class_name ValidEdgeTrajectoryLegendItem
 
-const TYPE := LegendItemType.VALID_EDGE_TRAJECTORY
-const TEXT := "Valid edge\ntrajectory"
-
 const NORMALIZED_FAKE_POSITIONS := [
     Vector2(0.0, 1.0), \
     Vector2(0.125, 0.5625), \
@@ -17,10 +14,16 @@ const NORMALIZED_FAKE_POSITIONS := [
 ]
 const SCALE := 0.8
 
-func _init().( \
-        TYPE, \
-        TEXT) -> void:
-    pass
+var color_params: ColorParams
+
+func _init( \
+        type: int, \
+        text: String, \
+        color_params: ColorParams) \
+        .( \
+        type, \
+        text) -> void:
+    self.color_params = color_params
 
 func _draw_shape(
         center: Vector2, \
@@ -32,5 +35,5 @@ func _draw_shape(
         positions[i] = NORMALIZED_FAKE_POSITIONS[i] * size * SCALE + offset
     draw_polyline( \
             PoolVector2Array(positions), \
-            AnnotationElementDefaults.EDGE_COLOR_PARAMS.get_color(), \
+            color_params.get_color(), \
             DrawUtils.EDGE_TRAJECTORY_WIDTH)

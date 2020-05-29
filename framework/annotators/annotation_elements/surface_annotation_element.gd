@@ -9,8 +9,8 @@ var depth: float
 
 func _init( \
         surface: Surface, \
-        color_params := AnnotationElementDefaults_.SURFACE_COLOR_PARAMS, \
-        depth := AnnotationElementDefaults_.SURFACE_DEPTH) \
+        color_params := AnnotationElementDefaults.SURFACE_COLOR_PARAMS, \
+        depth := AnnotationElementDefaults.SURFACE_DEPTH) \
         .(TYPE) -> void:
     self.surface = surface
     self.color_params = color_params
@@ -27,7 +27,7 @@ static func draw_from_surface( \
         canvas: CanvasItem, \
         surface: Surface, \
         color_params: ColorParams, \
-        depth := AnnotationElementDefaults_.SURFACE_DEPTH) -> void:
+        depth := AnnotationElementDefaults.SURFACE_DEPTH) -> void:
     var color := color_params.get_color()
     DrawUtils.draw_surface( \
             canvas, \

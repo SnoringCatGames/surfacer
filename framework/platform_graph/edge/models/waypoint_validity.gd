@@ -15,7 +15,7 @@ enum {
     UNKNOWN,
 }
 
-static func get_validity_string(validity: int) -> String:
+static func get_type_string(validity: int) -> String:
     match validity:
         WAYPOINT_VALID:
             return "WAYPOINT_VALID"

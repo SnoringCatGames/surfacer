@@ -28,10 +28,16 @@ func _init( \
     _post_init()
 
 func to_string() -> String:
-    return "%s { edge_calc_result_type=%s, waypoint_validity=%s, step_count=%s }" % [ \
+    return ("%s { " + \
+            "edge_calc_result_type=%s, " + \
+            "waypoint_validity=%s, " + \
+            "step_count=%s " + \
+            "}") % [ \
         InspectorItemType.get_type_string(type), \
-        EdgeCalcResultType.get_type_string(edge_result_metadata.edge_calc_result_type), \
-        WaypointValidity.get_type_string(edge_result_metadata.waypoint_validity), \
+        EdgeCalcResultType.get_type_string( \
+                edge_result_metadata.edge_calc_result_type), \
+        WaypointValidity.get_type_string( \
+                edge_result_metadata.waypoint_validity), \
         edge_result_metadata.total_step_count, \
     ]
 
@@ -41,7 +47,7 @@ func get_text() -> String:
                 edge_result_metadata.edge_calc_result_type) if \
         edge_result_metadata.edge_calc_result_type != \
                 EdgeCalcResultType.WAYPOINT_INVALID else \
-        WaypointValidity.get_validity_string( \
+        WaypointValidity.get_type_string( \
                 edge_result_metadata.waypoint_validity), \
         edge_result_metadata.total_step_count, \
     ]
@@ -49,7 +55,9 @@ func get_text() -> String:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    Utils.error("find_and_expand_controller should not be called for EDGE_CALC_RESULT_METADATA.")
+    Utils.error( \
+            "find_and_expand_controller should not be called for " + \
+            "EDGE_CALC_RESULT_METADATA.")
     return false
 
 func get_has_children() -> bool:
@@ -73,7 +81,8 @@ func get_annotation_elements() -> Array:
     var elements := []
     var element: AnnotationElement
     if !edge_result_metadata.failed_before_creating_steps:
-        for step_result_metadata in edge_result_metadata.children_step_attempts:
+        for step_result_metadata in \
+                edge_result_metadata.children_step_attempts:
             element = EdgeStepAnnotationElement.new( \
                     step_result_metadata, \
                     true)
@@ -81,11 +90,13 @@ func get_annotation_elements() -> Array:
     else:
         element = FailedEdgeAttemptAnnotationElement.new( \
                 edge_or_edge_attempt, \
+                AnnotationElementDefaults \
+                        .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS, \
                 AnnotationElementDefaults.INVALID_EDGE_COLOR_PARAMS, \
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_RADIUS, \
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH, \
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP, \
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH, \
+                AnnotationElementDefaults \
+                        .FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH, \
                 false)
         elements.push_back(element)
     return elements

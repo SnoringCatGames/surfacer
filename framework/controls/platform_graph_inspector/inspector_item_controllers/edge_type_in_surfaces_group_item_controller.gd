@@ -127,7 +127,6 @@ func get_annotation_elements() -> Array:
         element = JumpLandPositionsAnnotationElement.new( \
                 jump_land_positions, \
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_COLOR_PARAMS, \
-                AnnotationElementDefaults.JUMP_LAND_POSITIONS_RADIUS, \
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH, \
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP, \
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH)

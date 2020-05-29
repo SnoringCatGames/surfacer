@@ -40,7 +40,7 @@ func get_text() -> String:
                 failed_edge_attempt.edge_calc_result_type) if \
         failed_edge_attempt.edge_calc_result_type != \
                 EdgeCalcResultType.WAYPOINT_INVALID else \
-        WaypointValidity.get_validity_string( \
+        WaypointValidity.get_type_string( \
                 failed_edge_attempt.waypoint_validity), \
         str(failed_edge_attempt.start), \
         str(failed_edge_attempt.end), \
@@ -100,8 +100,8 @@ func _destroy_children_inner() -> void:
 func get_annotation_elements() -> Array:
     var element := FailedEdgeAttemptAnnotationElement.new( \
             failed_edge_attempt, \
+            AnnotationElementDefaults.EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS, \
             AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS, \
-            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_RADIUS, \
             AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH, \
             AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP, \
             AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH, \

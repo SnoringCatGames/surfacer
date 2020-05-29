@@ -49,11 +49,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/annotation_elements/annotation_element.gd"
 }, {
-"base": "Node",
-"class": "AnnotationElementDefaults_",
-"language": "GDScript",
-"path": "res://framework/annotators/annotation_elements/annotation_element_defaults.gd"
-}, {
 "base": "Reference",
 "class": "AnnotationElementType",
 "language": "GDScript",
@@ -154,6 +149,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/utils/colors.gd"
 }, {
+"base": "ValidEdgeTrajectoryLegendItem",
+"class": "ContinuousEdgeTrajectoryLegendItem",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_items/continuous_edge_trajectory_legend_item.gd"
+}, {
 "base": "WindowDialog",
 "class": "CreditsPanel",
 "language": "GDScript",
@@ -178,6 +178,11 @@ _global_script_classes=[ {
 "class": "DestinationSurfaceLegendItem",
 "language": "GDScript",
 "path": "res://framework/controls/legend/legend_items/destination_surface_legend_item.gd"
+}, {
+"base": "ValidEdgeTrajectoryLegendItem",
+"class": "DiscreteEdgeTrajectoryLegendItem",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_items/discrete_edge_trajectory_legend_item.gd"
 }, {
 "base": "Reference",
 "class": "Edge",
@@ -323,6 +328,11 @@ _global_script_classes=[ {
 "class": "FailedEdgeItemController",
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/failed_edge_item_controller.gd"
+}, {
+"base": "LegendItem",
+"class": "FailedEdgeTrajectoryLegendItem",
+"language": "GDScript",
+"path": "res://framework/controls/legend/legend_items/failed_edge_trajectory_legend_item.gd"
 }, {
 "base": "InspectorItemController",
 "class": "FailedEdgesGroupItemController",
@@ -923,7 +933,6 @@ _global_script_class_icons={
 "AirToSurfaceEdge": "",
 "AllDefaultAction": "",
 "AnnotationElement": "",
-"AnnotationElementDefaults_": "",
 "AnnotationElementType": "",
 "CameraController": "",
 "CanvasLayers": "",
@@ -944,11 +953,13 @@ _global_script_class_icons={
 "ColorParamsFactory": "",
 "ColorParamsType": "",
 "Colors": "",
+"ContinuousEdgeTrajectoryLegendItem": "",
 "CreditsPanel": "",
 "DescriptionItemController": "",
 "DestinationLegendItem": "",
 "DestinationSurfaceItemController": "",
 "DestinationSurfaceLegendItem": "",
+"DiscreteEdgeTrajectoryLegendItem": "",
 "Edge": "",
 "EdgeAnnotationElement": "",
 "EdgeCalcParams": "",
@@ -978,6 +989,7 @@ _global_script_class_icons={
 "FailedEdgeAttempt": "",
 "FailedEdgeAttemptAnnotationElement": "",
 "FailedEdgeItemController": "",
+"FailedEdgeTrajectoryLegendItem": "",
 "FailedEdgesGroupItemController": "",
 "FakePlayerAnimator": "",
 "FallFromFloorCalculator": "",

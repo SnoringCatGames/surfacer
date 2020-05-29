@@ -88,6 +88,5 @@ func get_annotation_elements() -> Array:
             edge, \
             true, \
             true, \
-            true, \
-            AnnotationElementDefaults.EDGE_COLOR_PARAMS)
+            true)
     return [element]

@@ -65,17 +65,19 @@ func _process(delta: float) -> void:
         update()
     
     if preselection_position_to_draw != null:
-        animation_progress = \
-                fmod((current_time - animation_start_time) / PRESELECTION_DURATION_SEC, 1.0)
+        animation_progress = fmod((current_time - animation_start_time) / \
+                PRESELECTION_DURATION_SEC, 1.0)
         update()
 
 func _draw() -> void:
     if preselection_position_to_draw == null:
-        # When we don't render anything in this draw call, it clears the draw buffer.
+        # When we don't render anything in this draw call, it clears the draw
+        # buffer.
         return
     
     var alpha_multiplier := ((1 - animation_progress) * \
-            (PRESELECTION_MAX_OPACITY - PRESELECTION_MIN_OPACITY) + PRESELECTION_MIN_OPACITY)
+            (PRESELECTION_MAX_OPACITY - PRESELECTION_MIN_OPACITY) + \
+            PRESELECTION_MIN_OPACITY)
     
     var surface_alpha := PRESELECTION_SURFACE_COLOR.a * alpha_multiplier
     var surface_color := Color( \
@@ -89,21 +91,25 @@ func _draw() -> void:
             surface_color, \
             PRESELECTION_SURFACE_DEPTH)
     
-    var position_indicator_alpha := PRESELECTION_POSITION_INDICATOR_COLOR.a * alpha_multiplier
+    var position_indicator_alpha := \
+            PRESELECTION_POSITION_INDICATOR_COLOR.a * alpha_multiplier
     var position_indicator_color := Color( \
             PRESELECTION_POSITION_INDICATOR_COLOR.r, \
             PRESELECTION_POSITION_INDICATOR_COLOR.g, \
             PRESELECTION_POSITION_INDICATOR_COLOR.b, \
             position_indicator_alpha)
-    var cone_end_point := phantom_position_along_surface.target_projection_onto_surface
-    var circle_center := cone_end_point + phantom_surface.normal * \
-            (PRESELECTION_POSITION_INDICATOR_LENGTH - PRESELECTION_POSITION_INDICATOR_RADIUS)
-    DrawUtils.draw_ice_cream_cone( \
+    var cone_end_point := \
+            phantom_position_along_surface.target_projection_onto_surface
+    var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
+            PRESELECTION_POSITION_INDICATOR_RADIUS
+    DrawUtils.draw_destination_marker( \
             self, \
             cone_end_point, \
-            circle_center, \
-            PRESELECTION_POSITION_INDICATOR_RADIUS, \
+            false, \
+            phantom_surface.side, \
             position_indicator_color, \
+            cone_length, \
+            PRESELECTION_POSITION_INDICATOR_RADIUS, \
             true, \
             INF, \
             4.0)
@@ -123,11 +129,12 @@ func _update_phantom_surface() -> void:
             preselection_position_to_draw.surface.bounding_box.size.x if \
             preselection_position_to_draw.surface.normal.x == 0.0 else \
             preselection_position_to_draw.surface.bounding_box.size.y
-    var scale_factor := (length + PRESELECTION_SURFACE_LENGTH_PADDING * 2.0) / length
+    var scale_factor := \
+            (length + PRESELECTION_SURFACE_LENGTH_PADDING * 2.0) / length
     var scale := Vector2(scale_factor, scale_factor)
     
-    var translation := \
-            preselection_position_to_draw.surface.normal * PRESELECTION_SURFACE_OUTWARD_OFFSET
+    var translation := preselection_position_to_draw.surface.normal * \
+            PRESELECTION_SURFACE_OUTWARD_OFFSET
     
     var transform := Transform2D()
     transform = transform.translated(-surface_center)
@@ -136,9 +143,11 @@ func _update_phantom_surface() -> void:
     transform = transform.translated(surface_center / scale_factor)
     
     for i in range(phantom_surface.vertices.size()):
-        phantom_surface.vertices[i] = transform.xform(phantom_surface.vertices[i])
+        phantom_surface.vertices[i] = \
+                transform.xform(phantom_surface.vertices[i])
     
-    phantom_surface.bounding_box = Geometry.get_bounding_box_for_points(phantom_surface.vertices)
+    phantom_surface.bounding_box = Geometry.get_bounding_box_for_points( \
+            phantom_surface.vertices)
 
 func _update_phantom_position_along_surface() -> void:
     phantom_position_along_surface.match_surface_target_and_collider( \

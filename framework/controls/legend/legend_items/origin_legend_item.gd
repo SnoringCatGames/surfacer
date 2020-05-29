@@ -5,6 +5,7 @@ const TYPE := LegendItemType.ORIGIN
 const TEXT := "Origin"
 
 const SCALE := 0.8
+const SECTOR_ARC_LENGTH := 2.2
 
 func _init().( \
         TYPE, \
@@ -14,12 +15,13 @@ func _init().( \
 func _draw_shape(
         center: Vector2, \
         size: Vector2) -> void:
-    # FIXME: -----------------------
-    pass
-    DrawUtils.draw_circle_outline( \
+    var color: Color = \
+            AnnotationElementDefaults.WAYPOINT_COLOR_PARAMS.get_color()
+    var radius := DrawUtils.EDGE_START_RADIUS * SCALE
+    DrawUtils.draw_origin_marker( \
             self, \
             center, \
-            DrawUtils.EDGE_START_RADIUS * SCALE, \
-            AnnotationElementDefaults.EDGE_COLOR_PARAMS.get_color(), \
+            color, \
+            radius, \
             DrawUtils.EDGE_WAYPOINT_STROKE_WIDTH, \
-            3.0)
+            SECTOR_ARC_LENGTH)

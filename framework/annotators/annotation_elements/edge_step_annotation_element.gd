@@ -308,7 +308,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             canvas, \
             start, \
             end, \
-            AnnotationElementDefaults.INVALID_EDGE_COLOR, \
+            AnnotationElementDefaults.INVALID_EDGE_COLOR_PARAMS.get_color(), \
             AnnotationElementDefaults.INVALID_EDGE_DASH_LENGTH, \
             AnnotationElementDefaults.INVALID_EDGE_DASH_GAP, \
             0.0, \
@@ -318,7 +318,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             middle, \
             AnnotationElementDefaults.INVALID_EDGE_X_WIDTH, \
             AnnotationElementDefaults.INVALID_EDGE_X_HEIGHT, \
-            AnnotationElementDefaults.INVALID_EDGE_COLOR, \
+            AnnotationElementDefaults.INVALID_EDGE_COLOR_PARAMS.get_color(), \
             AnnotationElementDefaults.INVALID_EDGE_DASH_STROKE_WIDTH)
 
 func _attach_labels(canvas: CanvasItem) -> void:

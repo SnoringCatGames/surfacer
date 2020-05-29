@@ -84,7 +84,6 @@ static func get_annotation_elements_from_graph_and_type( \
                             edge, \
                             true, \
                             false, \
-                            false, \
-                            AnnotationElementDefaults.EDGE_COLOR_PARAMS)
+                            false)
                     elements.push_back(element)
     return elements

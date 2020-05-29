@@ -19,9 +19,9 @@ func _draw_shape(
             self, \
             start, \
             end, \
-            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS \
+            AnnotationElementDefaults.JUMP_LAND_POSITIONS_COLOR_PARAMS \
                     .get_color(), \
-            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH, \
-            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP, \
+            AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH, \
+            AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP, \
             0.0, \
-            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH)
+            AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH)

@@ -8,10 +8,7 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Show a message in the legend when there are no elements being drawn.
-# 
 # - Other things to include in legend:
-#   - Continuous vs discrete trajectories
 #   - Mid waypoints
 #   - Navigator path (current and previous)
 #   - Recent movement
@@ -19,7 +16,8 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Invalid waypoint?
 #   - Collision boundary at moment of collision
 #   - Collision debugging: previous frame, current frame, next frame boundaries
-#   - Is there an X rendered on failed edge attempts?
+# 
+# - Show a message in the legend when there are no elements being drawn.
 # 
 # - Add an additional label near the legend, to describe attempted selection.
 #   - "No possible jump/land positions for that selection."
@@ -93,6 +91,11 @@ const IS_A_JUMP_CALCULATOR := true
 #   - At least remove ExtraAnnotator and replace it with the new
 #     general-purpose annotator.
 #   - And probably just remove some obsolete annotators.
+# 
+# - Refactor old color and const systems to use the new
+#   AnnotationElementDefaults system.
+#   - Colors class.
+#   - Look for const values scattered throughout.
 # 
 # - Don't automatically expand an item when it is selected.
 # 

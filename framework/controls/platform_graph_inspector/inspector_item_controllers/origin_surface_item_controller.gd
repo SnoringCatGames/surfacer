@@ -176,8 +176,7 @@ func _get_annotation_elements_for_valid_edges_count_description_item() -> Array:
                         edge, \
                         true, \
                         false, \
-                        false, \
-                        AnnotationElementDefaults.EDGE_COLOR_PARAMS)
+                        false)
                 elements.push_back(element)
     return elements
 

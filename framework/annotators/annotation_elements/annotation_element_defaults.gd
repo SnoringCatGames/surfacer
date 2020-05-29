@@ -1,14 +1,11 @@
 extends Node
-# This is given the underscore suffix as a workaround for Godot's unfortunate limitation of not
-# allowing the class_name to match the singleton name.
-class_name AnnotationElementDefaults_
 
 ### Surface
 
 const SURFACE_HUE_MIN := 0.0
 const SURFACE_HUE_MAX := 1.0
 const SURFACE_SATURATION := 0.9
-const SURFACE_VALUE := 0.9
+const SURFACE_VALUE := 0.8
 const SURFACE_ALPHA := 0.6
 
 const DEFAULT_SURFACE_HUE := 0.19
@@ -24,19 +21,16 @@ var SURFACE_COLOR_PARAMS := \
                 SURFACE_SATURATION, \
                 SURFACE_VALUE, \
                 SURFACE_ALPHA)
-
 var DEFAULT_SURFACE_COLOR_PARAMS := HsvColorParams.new( \
         DEFAULT_SURFACE_HUE, \
         SURFACE_SATURATION, \
         SURFACE_VALUE, \
         SURFACE_ALPHA)
-
 var ORIGIN_SURFACE_COLOR_PARAMS := HsvColorParams.new( \
         ORIGIN_SURFACE_HUE, \
         SURFACE_SATURATION, \
         SURFACE_VALUE, \
         SURFACE_ALPHA)
-
 var DESTINATION_SURFACE_COLOR_PARAMS := HsvColorParams.new( \
         DESTINATION_SURFACE_HUE, \
         SURFACE_SATURATION, \
@@ -47,32 +41,107 @@ var DESTINATION_SURFACE_COLOR_PARAMS := HsvColorParams.new( \
 
 const EDGE_HUE_MIN := 0.0
 const EDGE_HUE_MAX := 1.0
-const EDGE_SATURATION := 0.9
-const EDGE_VALUE := 0.9
-const EDGE_ALPHA := 0.9
+
+const EDGE_DISCRETE_TRAJECTORY_SATURATION := 0.8
+const EDGE_DISCRETE_TRAJECTORY_VALUE := 0.9
+const EDGE_DISCRETE_TRAJECTORY_ALPHA := 0.8
+
+const EDGE_CONTINUOUS_TRAJECTORY_SATURATION := 0.6
+const EDGE_CONTINUOUS_TRAJECTORY_VALUE := 0.6
+const EDGE_CONTINUOUS_TRAJECTORY_ALPHA := 0.7
 
 const INCLUDES_WAYPOINTS := true
 const INCLUDES_INSTRUCTION_INDICATORS := true
-const INCLUDES_DISCRETE_POSITIONS := true
+const INCLUDES_CONTINUOUS_POSITIONS := true
 
-var EDGE_COLOR_PARAMS := \
+# - Lighter, more opaque.
+# - More accurate to what is actually executed.
+# - Less accurate to what is originally calculated.
+var EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS := \
         ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
                 EDGE_HUE_MIN, \
                 EDGE_HUE_MAX, \
-                EDGE_SATURATION, \
-                EDGE_VALUE, \
-                EDGE_ALPHA)
+                EDGE_DISCRETE_TRAJECTORY_SATURATION, \
+                EDGE_DISCRETE_TRAJECTORY_VALUE, \
+                EDGE_DISCRETE_TRAJECTORY_ALPHA)
+# - Darker, more transparent.
+# - More accurate to what is originally calculated.
+# - Less accurate to what is actually executed.
+var EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS := \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+                EDGE_HUE_MIN, \
+                EDGE_HUE_MAX, \
+                EDGE_CONTINUOUS_TRAJECTORY_SATURATION, \
+                EDGE_CONTINUOUS_TRAJECTORY_VALUE, \
+                EDGE_CONTINUOUS_TRAJECTORY_ALPHA)
+
+var DEFAULT_EDGE_DISCRETE_TRAJECTORY_HUE := 0.32
+var DEFAULT_EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS := \
+        HsvColorParams.new( \
+                DEFAULT_EDGE_DISCRETE_TRAJECTORY_HUE, \
+                EDGE_DISCRETE_TRAJECTORY_SATURATION, \
+                EDGE_DISCRETE_TRAJECTORY_VALUE, \
+                EDGE_DISCRETE_TRAJECTORY_ALPHA)
+
+var DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE := \
+        DEFAULT_EDGE_DISCRETE_TRAJECTORY_HUE
+var DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS := \
+        HsvColorParams.new( \
+                DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE, \
+                EDGE_CONTINUOUS_TRAJECTORY_SATURATION, \
+                EDGE_CONTINUOUS_TRAJECTORY_VALUE, \
+                EDGE_CONTINUOUS_TRAJECTORY_ALPHA)
+
+### Waypoint
+
+const WAYPOINT_HUE_MIN := 0.0
+const WAYPOINT_HUE_MAX := 1.0
+const WAYPOINT_SATURATION := 0.6
+const WAYPOINT_VALUE := 0.7
+const WAYPOINT_ALPHA := 0.7
+
+var WAYPOINT_COLOR_PARAMS := \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+                WAYPOINT_HUE_MIN, \
+                WAYPOINT_HUE_MAX, \
+                WAYPOINT_SATURATION, \
+                WAYPOINT_VALUE, \
+                WAYPOINT_ALPHA)
+
+### Instruction
+
+const INSTRUCTION_HUE_MIN := 0.0
+const INSTRUCTION_HUE_MAX := 1.0
+const INSTRUCTION_SATURATION := 0.3
+const INSTRUCTION_VALUE := 0.9
+const INSTRUCTION_ALPHA := 0.7
+
+var INSTRUCTION_COLOR_PARAMS := \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+                INSTRUCTION_HUE_MIN, \
+                INSTRUCTION_HUE_MAX, \
+                INSTRUCTION_SATURATION, \
+                INSTRUCTION_VALUE, \
+                INSTRUCTION_ALPHA)
 
 ### FailedEdgeAttempt
 
-const FAILED_EDGE_ATTEMPT_RADIUS := 6.0
-const FAILED_EDGE_ATTEMPT_DASH_LENGTH := 4.0
-const FAILED_EDGE_ATTEMPT_DASH_GAP := 4.0
-const FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH := 1.0
+const FAILED_EDGE_ATTEMPT_SATURATION := 0.6
+const FAILED_EDGE_ATTEMPT_VALUE := 0.9
+const FAILED_EDGE_ATTEMPT_OPACITY := 0.8
+var FAILED_EDGE_ATTEMPT_COLOR_PARAMS := HsvColorParams.new( \
+        COLLISION_HUE, \
+        FAILED_EDGE_ATTEMPT_SATURATION, \
+        FAILED_EDGE_ATTEMPT_VALUE, \
+        FAILED_EDGE_ATTEMPT_OPACITY)
+
+const FAILED_EDGE_ATTEMPT_DASH_LENGTH := 6.0
+const FAILED_EDGE_ATTEMPT_DASH_GAP := 8.0
+const FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH := 2.0
+const FAILED_EDGE_ATTEMPT_X_WIDTH := 20.0
+const FAILED_EDGE_ATTEMPT_X_HEIGHT := 28.0
 
 const FAILED_EDGE_ATTEMPT_INCLUDES_SURFACES := false
-
-var FAILED_EDGE_ATTEMPT_COLOR_PARAMS := EDGE_COLOR_PARAMS
 
 ### EdgeStepCalcResultMetadata
 
@@ -88,17 +157,16 @@ const STEP_TRAJECTORY_STROKE_WIDTH_STRONG := 3.0
 const STEP_TRAJECTORY_DASH_LENGTH := 2.0
 const STEP_TRAJECTORY_DASH_GAP := 8.0
 
-const INVALID_EDGE_DASH_LENGTH := 6.0
-const INVALID_EDGE_DASH_GAP := 8.0
-const INVALID_EDGE_DASH_STROKE_WIDTH := 4.0
-const INVALID_EDGE_X_WIDTH := 20.0
-const INVALID_EDGE_X_HEIGHT := 28.0
+const INVALID_EDGE_DASH_LENGTH := FAILED_EDGE_ATTEMPT_DASH_LENGTH
+const INVALID_EDGE_DASH_GAP := FAILED_EDGE_ATTEMPT_DASH_GAP
+const INVALID_EDGE_DASH_STROKE_WIDTH := FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH
+const INVALID_EDGE_X_WIDTH := FAILED_EDGE_ATTEMPT_X_WIDTH
+const INVALID_EDGE_X_HEIGHT := FAILED_EDGE_ATTEMPT_X_HEIGHT
 var INVALID_EDGE_COLOR_PARAMS := HsvColorParams.new( \
         COLLISION_HUE, \
         STEP_SATURATION, \
         STEP_VALUE, \
         STEP_OPACITY_STRONG)
-var INVALID_EDGE_COLOR := INVALID_EDGE_COLOR_PARAMS.get_color()
 
 const WAYPOINT_RADIUS := 6.0
 const WAYPOINT_STROKE_WIDTH_FAINT := WAYPOINT_RADIUS / 3.0
@@ -190,3 +258,28 @@ var JUMP_LAND_POSITIONS_COLOR_PARAMS := \
                 JUMP_LAND_POSITIONS_SATURATION, \
                 JUMP_LAND_POSITIONS_VALUE, \
                 JUMP_LAND_POSITIONS_ALPHA)
+
+### Navigator
+
+var NAVIGATOR_CURRENT_PATH_COLOR := Colors.opacify( \
+        Colors.PURPLE, \
+        Colors.ALPHA_FAINT)
+var NAVIGATOR_PREVIOUS_PATH_COLOR := Colors.opacify( \
+        Colors.PURPLE, \
+        Colors.ALPHA_XFAINT)
+var NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Colors.opacify( \
+        Colors.PURPLE, \
+        Colors.ALPHA_XXFAINT)
+var NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Colors.opacify( \
+        Colors.PURPLE, \
+        Colors.ALPHA_SLIGHTLY_FAINT)
+var NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
+        NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
+var NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR := \
+        NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
+
+const NAVIGATOR_ORIGIN_INDICATOR_RADIUS := 16.0
+const NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH := 64.0
+const NAVIGATOR_DESTINATION_INDICATOR_RADIUS := 16.0
+
+const NAVIGATOR_INDICATOR_STROKE_WIDTH := 1.0

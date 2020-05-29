@@ -657,6 +657,53 @@ static func draw_capsule_outline( \
             color, \
             thickness)
 
+static func draw_origin_marker( \
+        canvas: CanvasItem, \
+        target: Vector2, \
+        color: Color, \
+        radius := EDGE_START_RADIUS, \
+        border_width := 1.0, \
+        sector_arc_length := 3.0) -> void:
+    draw_circle_outline( \
+            canvas, \
+            target, \
+            radius, \
+            color, \
+            border_width, \
+            sector_arc_length)
+
+static func draw_destination_marker( \
+        canvas: CanvasItem, \
+        target: Vector2, \
+        is_target_at_circle_center: bool, \
+        surface_side: int, \
+        color: Color, \
+        cone_length := EDGE_END_CONE_LENGTH, \
+        circle_radius := EDGE_END_RADIUS, \
+        is_filled := false, \
+        border_width := EDGE_WAYPOINT_STROKE_WIDTH, \
+        sector_arc_length := 4.0) -> void:
+    var normal := SurfaceSide.get_normal(surface_side)
+    
+    var cone_end_point: Vector2
+    var circle_center: Vector2
+    if is_target_at_circle_center:
+        cone_end_point = target - normal * cone_length
+        circle_center = target
+    else:
+        cone_end_point = target
+        circle_center = target + normal * cone_length
+    
+    draw_ice_cream_cone( \
+            canvas, \
+            cone_end_point, \
+            circle_center, \
+            circle_radius, \
+            color, \
+            is_filled, \
+            border_width, \
+            sector_arc_length)
+
 # This applies Thales's theorem to find the points of tangency between the line
 # segments from the triangular portion and the circle
 # (https://en.wikipedia.org/wiki/Thales%27s_theorem).
@@ -725,11 +772,11 @@ static func draw_edge( \
         edge: Edge, \
         includes_waypoints := false, \
         includes_instruction_indicators := false, \
-        includes_discrete_positions := false, \
+        includes_continuous_positions := false, \
         base_color := Color.white) -> void:
     if base_color == Color.white:
-        var hue := randf()
-        base_color = Color.from_hsv(hue, 0.6, 0.5, 0.5)
+        base_color = AnnotationElementDefaults \
+                .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS.get_color()
     
     if edge is AirToAirEdge or \
             edge is AirToSurfaceEdge or \
@@ -739,7 +786,7 @@ static func draw_edge( \
         _draw_edge_from_instructions_positions( \
                 canvas, \
                 edge, \
-                includes_discrete_positions, \
+                includes_continuous_positions, \
                 includes_waypoints, \
                 includes_instruction_indicators, \
                 base_color)
@@ -761,7 +808,7 @@ static func draw_edge( \
                 edge, \
                 includes_waypoints, \
                 includes_instruction_indicators, \
-                includes_discrete_positions, \
+                includes_continuous_positions, \
                 base_color)
     else:
         Utils.error("Unexpected Edge subclass: %s" % edge)
@@ -797,11 +844,15 @@ static func _draw_fall_from_floor_edge( \
         edge: FallFromFloorEdge, \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
-        includes_discrete_positions: bool, \
+        includes_continuous_positions: bool, \
         base_color: Color) -> void:
     # Render FallFromFloorEdges with a slight offset, so that they don't
     # overlap with ClimbOverWallToFloorEdges.
-    var offset := Vector2(-1.0 if edge.falls_on_left_side else 1.0, -1.0)
+    var offset := Vector2( \
+            -1.0 if \
+            edge.falls_on_left_side else \
+            1.0, \
+            -1.0)
     var start_position := edge.start
     var fall_off_position := \
             edge.trajectory.frame_continuous_positions_from_steps[0]
@@ -822,46 +873,41 @@ static func _draw_fall_from_floor_edge( \
             edge, \
             false, \
             includes_instruction_indicators, \
-            includes_discrete_positions, \
+            includes_continuous_positions, \
             base_color)
 
 static func _draw_edge_from_instructions_positions( \
         canvas: CanvasItem, \
         edge: Edge, \
-        includes_discrete_positions: bool, \
+        includes_continuous_positions: bool, \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
-        base_color: Color) -> void:
+        discrete_trajectory_color: Color) -> void:
     # Set up colors.
-    var continuous_trajectory_color := base_color
-    var discrete_trajectory_color := Color.from_hsv( \
-            base_color.h, \
-            0.6, \
-            0.9, \
-            base_color.a * 0.7)
-    var waypoint_color := Color.from_hsv( \
-            base_color.h, \
-            0.6, \
-            0.7, \
-            base_color.a)
-    var instruction_start_stop_color := Color.from_hsv( \
-            base_color.h, \
-            0.3, \
-            0.9, \
-            base_color.a)
+    var continuous_trajectory_color: Color = AnnotationElementDefaults \
+            .EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS.get_color()
+    continuous_trajectory_color.h = discrete_trajectory_color.h
+    var waypoint_color: Color = AnnotationElementDefaults \
+            .WAYPOINT_COLOR_PARAMS.get_color()
+    waypoint_color.h = discrete_trajectory_color.h
+    waypoint_color.a = discrete_trajectory_color.a
+    var instruction_color: Color = AnnotationElementDefaults \
+            .INSTRUCTION_COLOR_PARAMS.get_color()
+    instruction_color.h = discrete_trajectory_color.h
+    instruction_color.a = discrete_trajectory_color.a
     
-    if includes_discrete_positions:
-        # Draw the trajectory (as approximated via discrete time steps during
-        # instruction test calculations).
+    if includes_continuous_positions:
+        # Draw the trajectory (as calculated via continuous equations of motion
+        # during step calculations).
         canvas.draw_polyline( \
-                edge.trajectory.frame_discrete_positions_from_test, \
-                discrete_trajectory_color, \
+                edge.trajectory.frame_continuous_positions_from_steps, \
+                continuous_trajectory_color, \
                 EDGE_TRAJECTORY_WIDTH)
-    # Draw the trajectory (as calculated via continuous equations of motion
-    # during step calculations).
+    # Draw the trajectory (as approximated via discrete time steps during
+    # instruction test calculations).
     canvas.draw_polyline( \
-            edge.trajectory.frame_continuous_positions_from_steps, \
-            continuous_trajectory_color, \
+            edge.trajectory.frame_discrete_positions_from_test, \
+            discrete_trajectory_color, \
             EDGE_TRAJECTORY_WIDTH)
     
     if includes_waypoints:
@@ -877,28 +923,17 @@ static func _draw_edge_from_instructions_positions( \
                     EDGE_WAYPOINT_STROKE_WIDTH, \
                     4.0)
         
-        # Draw the destination waypoint.
-        var circle_center := edge.end_position_along_surface.target_point
-        var cone_end_point := circle_center - edge.end_surface.normal * \
-                EDGE_END_CONE_LENGTH
-        draw_ice_cream_cone( \
+        draw_destination_marker( \
                 canvas, \
-                cone_end_point, \
-                circle_center, \
-                EDGE_END_RADIUS, \
-                waypoint_color, \
-                false, \
-                EDGE_WAYPOINT_STROKE_WIDTH, \
-                4.0)
+                edge.end, \
+                true, \
+                edge.end_position_along_surface.surface.side, \
+                waypoint_color)
         
-        # Draw the origin waypoint.
-        draw_circle_outline( \
+        draw_origin_marker( \
                 canvas, \
                 edge.start, \
-                EDGE_START_RADIUS, \
-                waypoint_color, \
-                EDGE_WAYPOINT_STROKE_WIDTH, \
-                3.0)
+                waypoint_color)
     
     if includes_instruction_indicators:
         # Draw the horizontal instruction positions.
@@ -909,7 +944,7 @@ static func _draw_edge_from_instructions_positions( \
                     instruction.is_pressed, \
                     instruction.position, \
                     EDGE_INSTRUCTION_INDICATOR_LENGTH, \
-                    instruction_start_stop_color)
+                    instruction_color)
         
         # Draw the vertical instruction end position.
         if edge.trajectory.jump_instruction_end != null:
@@ -919,4 +954,4 @@ static func _draw_edge_from_instructions_positions( \
                     false, \
                     edge.trajectory.jump_instruction_end.position, \
                     EDGE_INSTRUCTION_INDICATOR_LENGTH, \
-                    instruction_start_stop_color)
+                    instruction_color)

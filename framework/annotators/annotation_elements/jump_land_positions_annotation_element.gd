@@ -13,15 +13,13 @@ var dash_stroke_width: float
 func _init( \
         jump_land_positions: JumpLandPositions, \
         color_params := \
-                AnnotationElementDefaults_.JUMP_LAND_POSITIONS_COLOR_PARAMS, \
-        radius := \
-                AnnotationElementDefaults_.JUMP_LAND_POSITIONS_RADIUS, \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_COLOR_PARAMS, \
         dash_length := \
-                AnnotationElementDefaults_.JUMP_LAND_POSITIONS_DASH_LENGTH, \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH, \
         dash_gap := \
-                AnnotationElementDefaults_.JUMP_LAND_POSITIONS_DASH_GAP, \
-        dash_stroke_width := \
-                AnnotationElementDefaults_.JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH) \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP, \
+        dash_stroke_width := AnnotationElementDefaults \
+                .JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH) \
         .(TYPE) -> void:
     self.jump_land_positions = jump_land_positions
     self.color_params = color_params
@@ -43,13 +41,15 @@ func draw(canvas: CanvasItem) -> void:
             dash_gap, \
             0.0, \
             dash_stroke_width)
-    canvas.draw_circle( \
+    DrawUtils.draw_origin_marker( \
+            canvas, \
             start, \
-            radius, \
             color)
-    canvas.draw_circle( \
+    DrawUtils.draw_destination_marker( \
+            canvas, \
             end, \
-            radius, \
+            true, \
+            jump_land_positions.land_position.surface.side, \
             color)
 
 func _create_legend_items() -> Array:

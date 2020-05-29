@@ -5,7 +5,7 @@ const main_font_small: Font = preload("res://assets/main_font_xs.tres")
 
 const HEIGHT := 32.0
 const MARGIN_VERTICAL := 1.0
-const MARGIN_HORIZONTAL := 8.0
+const MARGIN_HORIZONTAL := 4.0
 
 const SHAPE_REGION_HEIGHT := HEIGHT - MARGIN_VERTICAL * 2.0
 const SHAPE_REGION_WIDTH := SHAPE_REGION_HEIGHT
