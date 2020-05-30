@@ -8,7 +8,8 @@ const PREFIX := "Surfaces"
 
 # Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<Edge>>>>
 var surfaces_to_surfaces_to_edge_types_to_valid_edges := {}
-# Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<FailedEdgeAttempt>>>>
+# Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, \
+#     Array<FailedEdgeAttempt>>>>
 var surfaces_to_surfaces_to_edge_types_to_failed_edges := {}
 
 var floors_item_controller: FloorsItemController
@@ -39,6 +40,14 @@ func get_text() -> String:
     return "%s [%s]" % [ \
         PREFIX, \
         graph.counts.total_surfaces, \
+    ]
+
+func get_description() -> String:
+    return ("A surface is a distinct floor, wall, or ceiling segment " + \
+            "within the level. There are %s total surfaces in this " + \
+            "platform graph for the %s player.") % [ \
+        graph.counts.total_surfaces, \
+        graph.movement_params.name, \
     ]
 
 func to_string() -> String:
@@ -82,7 +91,8 @@ func find_and_expand_controller_recursive( \
                     search_type, \
                     metadata)
         _:
-            Utils.error("Invalid SurfaceSide: %s" % SurfaceSide.get_side_string(side))
+            Utils.error("Invalid SurfaceSide: %s" % \
+                    SurfaceSide.get_side_string(side))
 
 func _create_children_inner() -> void:
     floors_item_controller = FloorsItemController.new( \
@@ -127,9 +137,6 @@ static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var elements := []
     var element: SurfaceAnnotationElement
     for surface in graph.surfaces_set:
-        element = SurfaceAnnotationElement.new( \
-                surface, \
-                AnnotationElementDefaults.SURFACE_COLOR_PARAMS, \
-                AnnotationElementDefaults.SURFACE_DEPTH)
+        element = SurfaceAnnotationElement.new(surface)
         elements.push_back(element)
     return elements

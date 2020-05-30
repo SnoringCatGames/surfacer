@@ -40,6 +40,12 @@ func get_text() -> String:
         str(edge.end), \
     ]
 
+func get_description() -> String:
+    return ("This %s consists of %s horizontal instructions.") % [ \
+        EdgeType.get_type_string(edge.type), \
+        edge.trajectory.horizontal_instructions.size(), \
+    ]
+
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:

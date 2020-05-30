@@ -25,6 +25,14 @@ func get_text() -> String:
         graph.counts.total_edges, \
     ]
 
+func get_description() -> String:
+    return ("An edge represents movement between two surface positions. " + \
+            "There are %s total edges in this platform graph for the %s " + \
+            "player.") % [ \
+                graph.counts.total_edges, \
+                graph.movement_params.name, \
+            ]
+
 func to_string() -> String:
     return "%s { count=%s }" % [ \
         InspectorItemType.get_type_string(type), \
@@ -34,7 +42,9 @@ func to_string() -> String:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    Utils.error("find_and_expand_controller should not be called for EDGES_TOP_LEVEL_GROUP.")
+    Utils.error( \
+            "find_and_expand_controller should not be called for " + \
+            "EDGES_TOP_LEVEL_GROUP.")
     return false
 
 func _create_children_inner() -> void:
@@ -61,7 +71,8 @@ static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     for origin_surface in graph.surfaces_set:
         for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
             for destination_node in graph.nodes_to_nodes_to_edges[origin_node]:
-                edge = graph.nodes_to_nodes_to_edges[origin_node][destination_node]
+                edge = graph.nodes_to_nodes_to_edges \
+                        [origin_node][destination_node]
                 element = EdgeAnnotationElement.new( \
                         edge, \
                         true, \

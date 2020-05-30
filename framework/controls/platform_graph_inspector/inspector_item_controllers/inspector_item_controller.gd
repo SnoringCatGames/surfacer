@@ -99,18 +99,26 @@ func select() -> void:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    Utils.error("Abstract InspectorItemController.find_and_expand_controller is not implemented")
+    Utils.error( \
+            "Abstract InspectorItemController" + \
+            ".find_and_expand_controller is not implemented")
     return false
 
 func find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
     Utils.error( \
-            "Abstract InspectorItemController.find_and_expand_controller_recursive is not " + \
-            "implemented")
+            "Abstract InspectorItemController" + \
+            ".find_and_expand_controller_recursive is not implemented")
 
 func get_text() -> String:
     Utils.error("Abstract InspectorItemController.get_text is not implemented")
+    return ""
+
+func get_description() -> String:
+    Utils.error( \
+            "Abstract InspectorItemController.get_description is not " + \
+            "implemented")
     return ""
 
 func to_string() -> String:

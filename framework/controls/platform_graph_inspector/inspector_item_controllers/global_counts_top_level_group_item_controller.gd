@@ -22,28 +22,41 @@ func _init( \
 func get_text() -> String:
     return PREFIX
 
+func get_description() -> String:
+    return ("Some stats on the overall platform graph for the %s " + \
+            "player.") % [ \
+        graph.movement_params.name, \
+    ]
+
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    Utils.error("find_and_expand_controller should not be called for GLOBAL_COUNTS_TOP_LEVEL_GROUP.")
+    Utils.error( \
+            "find_and_expand_controller should not be called for " + \
+            "GLOBAL_COUNTS_TOP_LEVEL_GROUP.")
     return false
 
 func _create_children_inner() -> void:
+    var text: String = "%s total surfaces" % graph.counts.total_surfaces
     DescriptionItemController.new( \
             tree_item, \
             tree, \
             graph, \
-            "%s total surfaces" % graph.counts.total_surfaces, \
-            funcref(self, "_get_annotation_elements_for_surfaces_description_item"))
+            text, \
+            text, \
+            funcref(self, \
+                    "_get_annotation_elements_for_surfaces_description_item"))
+    text = "%s total edges" % graph.counts.total_edges
     DescriptionItemController.new( \
             tree_item, \
             tree, \
             graph, \
-            "%s total edges" % graph.counts.total_edges, \
-            funcref(self, "_get_annotation_elements_for_edges_description_item"))
+            text, \
+            text, \
+            funcref(self, \
+                    "_get_annotation_elements_for_edges_description_item"))
     
     var type_name: String
-    var text: String
     for edge_type in EdgeType.values():
         if InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge_type) >= 0:
             continue
@@ -57,6 +70,7 @@ func _create_children_inner() -> void:
                 tree_item, \
                 tree, \
                 graph, \
+                text, \
                 text, \
                 funcref(self, "_get_annotation_elements_for_edge_type_description_item"), \
                 edge_type)

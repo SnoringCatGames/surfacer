@@ -37,6 +37,9 @@ func get_text() -> String:
         valid_edge_count, \
     ]
 
+func get_description() -> String:
+    return EdgeType.get_description_string(edge_type)
+
 func get_has_children() -> bool:
     return valid_edge_count > 0
 

@@ -8,27 +8,16 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Other things to include in legend:
-#   - Mid waypoints
-#   - Navigator path (current and previous)
-#   - Recent movement
-#   - Fake waypoint?
-#   - Invalid waypoint?
-#   - Collision boundary at moment of collision
-#   - Collision debugging: previous frame, current frame, next frame boundaries
-# 
-# - Show a message in the legend when there are no elements being drawn.
-# 
-# - Add an additional label near the legend, to describe attempted selection.
+# - Add a default "selection description" message when nothing is selected:
+#   - 
+# - Support overriding the description to give more info on the attempted
+#   level-click selection.
+#   - 
 #   - "No possible jump/land positions for that selection."
 #   - "No jump/land positions passed broad-phase checks of edge calculation for
 #     that selection."
 #   - "A valid edge matches that selection."
 #   - "A failed edge calculation matches that selection."
-# 
-# - Update JumpLandPosition annotations (only in inspector controller and
-#   legend item, I think) to render circle and icecream cone to indicate start
-#   and end differently.
 # 
 # - Ensure all edge DrawUtil functions support rendering the start/end
 #   indicators.
@@ -374,6 +363,16 @@ const IS_A_JUMP_CALCULATOR := true
 #       understandable to others with a quick viewing.
 #   - Have a mode that hides all the other background, foreground, and player
 #     images, so that we can just show the annotations.
+# 
+# - Include other items in the legend:
+#   - Step items:
+#     - Fake waypoint?
+#     - Invalid waypoint?
+#     - Collision boundary at moment of collision
+#     - Collision debugging: previous frame, current frame, next frame boundaries
+#     - Mid waypoints?
+#   - Navigator path (current and previous)
+#   - Recent movement
 # 
 # - In the README, list the types of MovementParams.
 # 

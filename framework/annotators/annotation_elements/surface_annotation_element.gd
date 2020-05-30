@@ -1,20 +1,28 @@
 extends AnnotationElement
 class_name SurfaceAnnotationElement
 
-const TYPE := AnnotationElementType.SURFACE
+const DEFAULT_TYPE := AnnotationElementType.SURFACE
 
 var surface: Surface
-var color_params: ColorParams
 var depth: float
+var color_params: ColorParams
+var is_origin: bool
+var is_destination: bool
 
 func _init( \
         surface: Surface, \
-        color_params := AnnotationElementDefaults.SURFACE_COLOR_PARAMS, \
-        depth := AnnotationElementDefaults.SURFACE_DEPTH) \
-        .(TYPE) -> void:
+        depth := AnnotationElementDefaults.SURFACE_DEPTH, \
+        color_params: ColorParams = \
+                AnnotationElementDefaults.SURFACE_COLOR_PARAMS, \
+        is_origin := false, \
+        is_destination := false, \
+        type := DEFAULT_TYPE) \
+        .(type) -> void:
     self.surface = surface
-    self.color_params = color_params
     self.depth = depth
+    self.color_params = color_params
+    self.is_origin = is_origin
+    self.is_destination = is_destination
 
 func draw(canvas: CanvasItem) -> void:
     draw_from_surface( \

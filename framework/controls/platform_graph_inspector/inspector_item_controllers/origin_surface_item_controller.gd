@@ -80,6 +80,12 @@ func get_text() -> String:
         str(origin_surface.last_point), \
     ]
 
+func get_description() -> String:
+    return ("There are %s valid outbound edges from this %s surface.") % [ \
+        valid_edge_count, \
+        SurfaceSide.get_side_string(origin_surface.side), \
+    ]
+
 func get_has_children() -> bool:
     return destination_surfaces_to_edge_types_to_valid_edges.size() > 0 or \
             destination_surfaces_to_edge_types_to_failed_edges.size() > 0
@@ -126,12 +132,14 @@ func _create_children_inner() -> void:
             tree, \
             graph, \
             "_%s valid outbound edges_" % valid_edge_count, \
+            get_description(), \
             funcref(self, "_get_annotation_elements_for_valid_edges_count_description_item"))
     destination_surfaces_description_item_controller = DescriptionItemController.new( \
             tree_item, \
             tree, \
             graph, \
             "_Destination surfaces:_", \
+            get_description(), \
             funcref(self, "_get_annotation_elements_for_destination_surfaces_description_item"))
     
     var edge_types_to_valid_edges: Dictionary
@@ -159,10 +167,7 @@ func _destroy_children_inner() -> void:
     destination_surfaces_description_item_controller = null
 
 func get_annotation_elements() -> Array:
-    var element := SurfaceAnnotationElement.new( \
-            origin_surface, \
-            AnnotationElementDefaults.ORIGIN_SURFACE_COLOR_PARAMS, \
-            AnnotationElementDefaults.SURFACE_DEPTH)
+    var element := OriginSurfaceAnnotationElement.new(origin_surface)
     return [element]
 
 func _get_annotation_elements_for_valid_edges_count_description_item() -> Array:
@@ -184,10 +189,7 @@ func _get_annotation_elements_for_destination_surfaces_description_item() -> Arr
     var elements := get_annotation_elements()
     var element: SurfaceAnnotationElement
     for destination_surface in attempted_destination_surfaces:
-        element = SurfaceAnnotationElement.new( \
-                destination_surface, \
-                AnnotationElementDefaults.DESTINATION_SURFACE_COLOR_PARAMS, \
-                AnnotationElementDefaults.SURFACE_DEPTH)
+        element = DestinationSurfaceAnnotationElement.new(destination_surface)
         elements.push_back(element)
     return elements
 

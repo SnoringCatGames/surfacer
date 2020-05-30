@@ -8,6 +8,7 @@ const IS_LEAF := true
 const STARTS_COLLAPSED := true
 
 var text: String
+var description_text: String
 var get_annotation_elements_funcref: FuncRef
 var get_annotation_elements_arg
 
@@ -16,6 +17,7 @@ func _init( \
         tree: Tree, \
         graph: PlatformGraph, \
         text: String, \
+        description_text: String, \
         get_annotation_elements_funcref: FuncRef, \
         get_annotation_elements_arg = null) \
         .( \
@@ -26,6 +28,7 @@ func _init( \
         tree, \
         graph) -> void:
     self.text = text
+    self.description_text = description_text
     self.get_annotation_elements_funcref = get_annotation_elements_funcref
     self.get_annotation_elements_arg = get_annotation_elements_arg
     self.tree_item.set_custom_bg_color( \
@@ -41,6 +44,9 @@ func to_string() -> String:
 
 func get_text() -> String:
     return text
+
+func get_description() -> String:
+    return description_text
 
 func find_and_expand_controller( \
         search_type: int, \

@@ -104,9 +104,6 @@ func get_annotation_elements() -> Array:
     var element: SurfaceAnnotationElement
     for surface in graph.surfaces_set:
         if surface.side == side:
-            element = SurfaceAnnotationElement.new( \
-                    surface, \
-                    AnnotationElementDefaults.SURFACE_COLOR_PARAMS, \
-                    AnnotationElementDefaults.SURFACE_DEPTH)
+            element = SurfaceAnnotationElement.new(surface)
             elements.push_back(element)
     return elements

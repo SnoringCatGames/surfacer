@@ -52,6 +52,10 @@ func get_text() -> String:
         edge_result_metadata.total_step_count, \
     ]
 
+func get_description() -> String:
+    # FIXME: -------------
+    return ""
+
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:

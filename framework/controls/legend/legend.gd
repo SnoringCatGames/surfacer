@@ -1,17 +1,28 @@
-extends GridContainer
+extends VBoxContainer
 class_name Legend
 
 # Dictionary<int, LegendItem>
 var _items := {}
 
+var grid: GridContainer
+var label: Label
+
+func _ready() -> void:
+    grid = $GridContainer
+    label = $Label
+    label.visible = true
+
 func add(item: LegendItem) -> void:
     _items[item.type] = item
-    add_child(item)
+    grid.add_child(item)
+    label.visible = false
 
 func erase(item: LegendItem) -> bool:
     var erased := _items.erase(item.type)
     if erased:
-        remove_child(item)
+        grid.remove_child(item)
+    if _items.empty():
+        label.visible = true
     return erased
 
 func has(item: LegendItem) -> bool:
@@ -19,5 +30,6 @@ func has(item: LegendItem) -> bool:
 
 func clear() -> void:
     for type in _items:
-        remove_child(_items[type])
+        grid.remove_child(_items[type])
     _items.clear()
+    label.visible = true

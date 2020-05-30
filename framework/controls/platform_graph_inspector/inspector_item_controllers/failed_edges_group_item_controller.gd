@@ -45,6 +45,10 @@ func get_text() -> String:
         failed_edges.size(), \
     ]
 
+func get_description() -> String:
+    return "These failed edge calculations passed broad-phase checks " + \
+            "before failing narrow-phase checks."
+
 func get_has_children() -> bool:
     return failed_edges.size() > 0
 

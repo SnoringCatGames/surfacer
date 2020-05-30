@@ -7,6 +7,8 @@ var element_annotator: ElementAnnotator
 
 var inspector_selector: PlatformGraphInspectorSelector
 
+var selection_description: SelectionDescription
+
 # Array<AnnotationElement>
 var current_annotation_elements := []
 
@@ -25,6 +27,7 @@ func set_graphs(graphs: Array) -> void:
     self.graphs = graphs
     global = $"/root/Global"
     inspector_selector = PlatformGraphInspectorSelector.new(self)
+    selection_description = global.selection_description
     global.canvas_layers.annotation_layer.add_child(inspector_selector)
     _populate_tree()
     element_annotator = global.element_annotator
@@ -75,8 +78,7 @@ func _on_tree_item_selected() -> void:
     for element in current_annotation_elements:
         element_annotator.add(element)
     
-    # FIXME: ---------------
-    global.selection_description.set_text("")
+    global.selection_description.set_text(controller.get_description())
     
     controller.call_deferred("on_item_selected")
 

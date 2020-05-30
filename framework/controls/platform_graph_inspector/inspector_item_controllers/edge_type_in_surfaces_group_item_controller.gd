@@ -55,6 +55,9 @@ func get_text() -> String:
         valid_edges.size(), \
     ]
 
+func get_description() -> String:
+    return EdgeType.get_description_string(edge_type)
+
 func get_has_children() -> bool:
     return valid_edges.size() > 0 or failed_edges.size() > 0
 
@@ -111,16 +114,10 @@ func get_annotation_elements() -> Array:
     var elements := []
     var element: AnnotationElement
     
-    element = SurfaceAnnotationElement.new( \
-            origin_surface, \
-            AnnotationElementDefaults.ORIGIN_SURFACE_COLOR_PARAMS, \
-            AnnotationElementDefaults.SURFACE_DEPTH)
+    element = OriginSurfaceAnnotationElement.new(origin_surface)
     elements.push_back(element)
     
-    element = SurfaceAnnotationElement.new( \
-            destination_surface, \
-            AnnotationElementDefaults.DESTINATION_SURFACE_COLOR_PARAMS, \
-            AnnotationElementDefaults.SURFACE_DEPTH)
+    element = DestinationSurfaceAnnotationElement.new(destination_surface)
     elements.push_back(element)
     
     for jump_land_positions in all_jump_land_positions:

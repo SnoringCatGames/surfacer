@@ -39,6 +39,10 @@ func to_string() -> String:
 func get_text() -> String:
     return _get_text_for_description_index(0)
 
+func get_description() -> String:
+    # FIXME: -------------
+    return ""
+
 func _get_text_for_description_index(description_index: int) -> String:
     return "%s: %s%s%s" % [ \
             step_result_metadata.index + 1, \
@@ -80,6 +84,8 @@ func _create_children_inner() -> void:
                 tree_item, \
                 tree, \
                 graph, \
+                _get_text_for_description_index(1), \
+                # FIXME: ------------------ Use a better description.
                 _get_text_for_description_index(1), \
                 funcref(self, "get_annotation_elements"))
 

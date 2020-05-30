@@ -169,6 +169,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/legend/legend_items/destination_legend_item.gd"
 }, {
+"base": "SurfaceAnnotationElement",
+"class": "DestinationSurfaceAnnotationElement",
+"language": "GDScript",
+"path": "res://framework/annotators/annotation_elements/destination_surface_annotation_element.gd"
+}, {
 "base": "InspectorItemController",
 "class": "DestinationSurfaceItemController",
 "language": "GDScript",
@@ -534,7 +539,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/left_walls_item_controller.gd"
 }, {
-"base": "GridContainer",
+"base": "VBoxContainer",
 "class": "Legend",
 "language": "GDScript",
 "path": "res://framework/controls/legend/legend.gd"
@@ -588,6 +593,11 @@ _global_script_classes=[ {
 "class": "OriginLegendItem",
 "language": "GDScript",
 "path": "res://framework/controls/legend/legend_items/origin_legend_item.gd"
+}, {
+"base": "SurfaceAnnotationElement",
+"class": "OriginSurfaceAnnotationElement",
+"language": "GDScript",
+"path": "res://framework/annotators/annotation_elements/origin_surface_annotation_element.gd"
 }, {
 "base": "InspectorItemController",
 "class": "OriginSurfaceItemController",
@@ -734,7 +744,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/ruler_annotator.gd"
 }, {
-"base": "VBoxContainer",
+"base": "MarginContainer",
 "class": "SelectionDescription",
 "language": "GDScript",
 "path": "res://framework/controls/selection_description.gd"
@@ -957,6 +967,7 @@ _global_script_class_icons={
 "CreditsPanel": "",
 "DescriptionItemController": "",
 "DestinationLegendItem": "",
+"DestinationSurfaceAnnotationElement": "",
 "DestinationSurfaceItemController": "",
 "DestinationSurfaceLegendItem": "",
 "DiscreteEdgeTrajectoryLegendItem": "",
@@ -1041,6 +1052,7 @@ _global_script_class_icons={
 "Navigator": "",
 "NavigatorAnnotator": "",
 "OriginLegendItem": "",
+"OriginSurfaceAnnotationElement": "",
 "OriginSurfaceItemController": "",
 "OriginSurfaceLegendItem": "",
 "PlatformGraph": "",

@@ -11,6 +11,8 @@ var destination_surface: Surface
 var edge_types_to_valid_edges: Dictionary
 # Dictionary<EdgeType, Array<FailedEdgeAttempt>>
 var edge_types_to_failed_edges: Dictionary
+var valid_edge_count: int
+var failed_edge_count: int
 # Array<JumpLandPositions>
 var jump_type_jump_land_positions: Array
 # Array<JumpLandPositions>
@@ -35,6 +37,8 @@ func _init( \
     self.destination_surface = destination_surface
     self.edge_types_to_valid_edges = edge_types_to_valid_edges
     self.edge_types_to_failed_edges = edge_types_to_failed_edges
+    self.valid_edge_count = _count_edges(edge_types_to_valid_edges)
+    self.failed_edge_count = _count_edges(edge_types_to_failed_edges)
     self.jump_type_jump_land_positions = JumpLandPositionsUtils \
             .calculate_jump_land_positions_for_surface_pair( \
                     graph.movement_params, \
@@ -61,6 +65,13 @@ func get_text() -> String:
         SurfaceSide.get_side_string(destination_surface.side), \
         str(destination_surface.first_point), \
         str(destination_surface.last_point), \
+    ]
+
+func get_description() -> String:
+    return ("There are %s valid edges from this %s to this %s.") % [ \
+        valid_edge_count, \
+        SurfaceSide.get_side_string(origin_surface.side), \
+        SurfaceSide.get_side_string(destination_surface.side), \
     ]
 
 func find_and_expand_controller( \
@@ -135,12 +146,13 @@ func _destroy_children_inner() -> void:
     pass
 
 func get_annotation_elements() -> Array:
-    var origin_element := SurfaceAnnotationElement.new( \
-            origin_surface, \
-            AnnotationElementDefaults.ORIGIN_SURFACE_COLOR_PARAMS, \
-            AnnotationElementDefaults.SURFACE_DEPTH)
-    var destination_element := SurfaceAnnotationElement.new( \
-            destination_surface, \
-            AnnotationElementDefaults.DESTINATION_SURFACE_COLOR_PARAMS, \
-            AnnotationElementDefaults.SURFACE_DEPTH)
+    var origin_element := OriginSurfaceAnnotationElement.new(origin_surface)
+    var destination_element := DestinationSurfaceAnnotationElement.new( \
+            destination_surface)
     return [origin_element, destination_element]
+
+static func _count_edges(edge_types_to_edges: Dictionary) -> int:
+    var count := 0
+    for edge_type in edge_types_to_edges:
+        count += edge_types_to_edges[edge_type].size()
+    return count

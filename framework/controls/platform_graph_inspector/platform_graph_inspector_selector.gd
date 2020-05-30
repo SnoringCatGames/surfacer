@@ -1,7 +1,9 @@
 extends Node2D
 class_name PlatformGraphInspectorSelector
 
-var ORIGIN_SURFACE_SELECTION_COLOR := Colors.opacify(Colors.ORANGE, Colors.ALPHA_FAINT)
+var ORIGIN_SURFACE_SELECTION_COLOR := Colors.opacify( \
+        Colors.ORANGE, \
+        Colors.ALPHA_FAINT)
 
 const ORIGIN_SURFACE_SELECTION_DASH_LENGTH := 6.0
 const ORIGIN_SURFACE_SELECTION_DASH_GAP := 8.0

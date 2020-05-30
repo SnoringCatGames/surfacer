@@ -46,6 +46,10 @@ func get_text() -> String:
         str(failed_edge_attempt.end), \
     ]
 
+func get_description() -> String:
+    # FIXME: -------------
+    return ""
+
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
