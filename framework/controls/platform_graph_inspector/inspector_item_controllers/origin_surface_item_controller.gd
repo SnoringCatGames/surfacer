@@ -103,15 +103,14 @@ func find_and_expand_controller( \
     else:
         if metadata.origin_surface == origin_surface:
             expand()
-            call_deferred( \
-                    "find_and_expand_controller_recursive", \
+            _trigger_find_and_expand_controller_recursive( \
                     search_type, \
                     metadata)
             return true
         else:
             return false
 
-func find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
     assert(search_type == InspectorSearchType.EDGE)
@@ -167,8 +166,26 @@ func _destroy_children_inner() -> void:
     destination_surfaces_description_item_controller = null
 
 func get_annotation_elements() -> Array:
-    var element := OriginSurfaceAnnotationElement.new(origin_surface)
-    return [element]
+    var elements := []
+    
+    var origin_element := OriginSurfaceAnnotationElement.new(origin_surface)
+    elements.push_back(origin_element)
+    
+    var edge_element: EdgeAnnotationElement
+    for destination_surface in \
+            destination_surfaces_to_edge_types_to_valid_edges:
+        for edge_type in destination_surfaces_to_edge_types_to_valid_edges \
+                [destination_surface]:
+            for edge in destination_surfaces_to_edge_types_to_valid_edges \
+                    [destination_surface][edge_type]:
+                edge_element = EdgeAnnotationElement.new( \
+                        edge, \
+                        true, \
+                        false, \
+                        false)
+                elements.push_back(edge_element)
+    
+    return elements
 
 func _get_annotation_elements_for_valid_edges_count_description_item() -> Array:
     var elements := get_annotation_elements()

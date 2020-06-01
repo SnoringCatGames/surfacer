@@ -59,13 +59,12 @@ func find_and_expand_controller( \
     metadata.were_children_ready_before = are_children_ready
     if !metadata.were_children_ready_before:
         _create_children_if_needed()
-    call_deferred( \
-            "find_and_expand_controller_recursive", \
+    _trigger_find_and_expand_controller_recursive( \
             search_type, \
             metadata)
     return true
 
-func find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
     var is_subtree_found: bool

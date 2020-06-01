@@ -69,15 +69,18 @@ func destroy() -> void:
     parent_item = null
 
 func on_item_selected() -> void:
-    print("Inspector item selected: %s" % to_string())
+    if !tree.get_is_find_and_expand_in_progress():
+        print("Inspector item selected: %s" % to_string())
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
-    print("Inspector item expanded: %s" % to_string())
+    if !tree.get_is_find_and_expand_in_progress():
+        print("Inspector item expanded: %s" % to_string())
 
 func on_item_collapsed() -> void:
     _destroy_children_if_needed()
-    print("Inspector item collapsed: %s" % to_string())
+    if !tree.get_is_find_and_expand_in_progress():
+        print("Inspector item collapsed: %s" % to_string())
 
 func expand() -> void:
     var was_collapsed := tree_item.collapsed
@@ -104,12 +107,29 @@ func find_and_expand_controller( \
             ".find_and_expand_controller is not implemented")
     return false
 
-func find_and_expand_controller_recursive( \
+func _trigger_find_and_expand_controller_recursive( \
+        search_type: int, \
+        metadata: Dictionary) -> void:
+    tree._increment_find_and_expand_controller_recursive_count()
+    call_deferred( \
+            "_find_and_expand_controller_recursive_wrapper", \
+            search_type, \
+            metadata)
+
+func _find_and_expand_controller_recursive_wrapper( \
+        search_type: int, \
+        metadata: Dictionary) -> void:
+    _find_and_expand_controller_recursive( \
+            search_type, \
+            metadata)
+    tree.call_deferred("_decrement_find_and_expand_controller_recursive_count")
+
+func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
     Utils.error( \
             "Abstract InspectorItemController" + \
-            ".find_and_expand_controller_recursive is not implemented")
+            "._find_and_expand_controller_recursive is not implemented")
 
 func get_text() -> String:
     Utils.error("Abstract InspectorItemController.get_text is not implemented")

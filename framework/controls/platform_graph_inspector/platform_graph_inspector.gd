@@ -22,6 +22,8 @@ var tree_root: TreeItem
 
 var _is_ready := false
 
+var _find_and_expand_controller_recursive_count := 0
+
 func set_graphs(graphs: Array) -> void:
     _is_ready = false
     self.graphs = graphs
@@ -62,14 +64,14 @@ func _select_initial_item() -> void:
                     global.DEBUG_PARAMS.limit_parsing.has("player_name") else \
             null
     if player_to_debug != null:
-        graph_item_controllers[player_to_debug] \
-                .find_and_expand_controller( \
-                        InspectorSearchType.EDGES_TOP_LEVEL_GROUP, \
-                        {})
+        _trigger_find_and_expand_controller( \
+                player_to_debug, \
+                InspectorSearchType.EDGES_TOP_LEVEL_GROUP, \
+                {})
 
 func _on_tree_item_selected() -> void:
     var item := get_selected()
-    var controller = item.get_metadata(0)
+    var controller: InspectorItemController = item.get_metadata(0)
     
     for element in current_annotation_elements:
         element_annotator.erase(element)
@@ -78,7 +80,8 @@ func _on_tree_item_selected() -> void:
     for element in current_annotation_elements:
         element_annotator.add(element)
     
-    global.selection_description.set_text(controller.get_description())
+    if !get_is_find_and_expand_in_progress():
+        selection_description.set_text(controller.get_description())
     
     controller.call_deferred("on_item_selected")
 
@@ -112,10 +115,10 @@ func _select_canonical_surface_item_controller( \
         surface: Surface, \
         graph: PlatformGraph) -> void:
     if graph_item_controllers.has(graph.movement_params.name):
-        graph_item_controllers[graph.movement_params.name] \
-                .find_and_expand_controller( \
-                        InspectorSearchType.SURFACE, \
-                        {surface = surface})
+        _trigger_find_and_expand_controller( \
+                graph.movement_params.name, \
+                InspectorSearchType.SURFACE, \
+                {surface = surface})
 
 func _select_canonical_edge_or_edge_attempt_item_controller( \
         start_surface: Surface, \
@@ -143,6 +146,19 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
                 all_jump_land_positions)
         start = closest_jump_land_positions.jump_position.target_point
         end = closest_jump_land_positions.land_position.target_point
+        
+        # Show a descriptive message if the selection clicks were too far from
+        # any jump-land positions.
+        if start.distance_squared_to(target_start) > \
+                        PlatformGraphInspectorSelector\
+                                .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD or \
+                end.distance_squared_to(target_end) > \
+                        PlatformGraphInspectorSelector \
+                                .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD:
+            _clear_selection()
+            selection_description.set_text( \
+                    SelectionDescription.NO_MATCHING_JUMP_LAND_POSITIONS)
+            return
     
     if graph_item_controllers.has(graph.movement_params.name):
         var metadata := { \
@@ -152,10 +168,93 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
             end = end, \
             edge_type = edge_type, \
         }
-        graph_item_controllers[graph.movement_params.name] \
-                .find_and_expand_controller( \
-                        InspectorSearchType.EDGE, \
-                        metadata)
+        _trigger_find_and_expand_controller( \
+                graph.movement_params.name, \
+                InspectorSearchType.EDGE, \
+                metadata)
+
+func _trigger_find_and_expand_controller( \
+        player_name: String, \
+        search_type: int, \
+        metadata: Dictionary) -> void:
+    _increment_find_and_expand_controller_recursive_count()
+    graph_item_controllers[player_name].find_and_expand_controller( \
+            search_type, \
+            metadata)
+    _decrement_find_and_expand_controller_recursive_count()
+    _poll_is_find_and_expand_in_progress( \
+            player_name, \
+            search_type, \
+            metadata)
+
+func _on_find_and_expand_complete( \
+        player_name: String, \
+        search_type: int, \
+        metadata: Dictionary) -> void:
+    print("Inspector search complete: player_name=%s, search_type=%s" % [ \
+        player_name, \
+        search_type, \
+    ])
+    
+    var item := get_selected()
+    var controller: InspectorItemController = item.get_metadata(0)
+    
+    var selection_failure_message := ""
+    match search_type:
+        InspectorSearchType.EDGE:
+            if controller.type != InspectorItemType.VALID_EDGE and \
+                    controller.type != InspectorItemType.FAILED_EDGE:
+                selection_failure_message = \
+                        SelectionDescription.NO_POSITIONS_PASSING_BROAD_PHASE
+        InspectorSearchType.SURFACE:
+            assert(controller.type == InspectorItemType.ORIGIN_SURFACE)
+        InspectorSearchType.EDGES_TOP_LEVEL_GROUP:
+            assert(controller.type == InspectorItemType.EDGES_TOP_LEVEL_GROUP)
+        _:
+            Utils.error("Invalid InspectorSearchType: %s" % \
+                    InspectorSearchType.get_type_string(search_type))
+    
+    if selection_failure_message != "":
+        _clear_selection()
+        selection_description.set_text(selection_failure_message)
+    else:
+        selection_description.set_text(controller.get_description())
+
+func get_is_find_and_expand_in_progress() -> bool:
+    return _find_and_expand_controller_recursive_count > 0
+
+func _increment_find_and_expand_controller_recursive_count() -> void:
+    _find_and_expand_controller_recursive_count += 1
+
+func _decrement_find_and_expand_controller_recursive_count() -> void:
+    _find_and_expand_controller_recursive_count -= 1
+
+func _poll_is_find_and_expand_in_progress( \
+        player_name: String, \
+        search_type: int, \
+        metadata: Dictionary) -> void:
+    if get_is_find_and_expand_in_progress():
+        call_deferred( \
+                "_poll_is_find_and_expand_in_progress", \
+                player_name, \
+                search_type, \
+                metadata)
+    else:
+        _on_find_and_expand_complete( \
+                player_name, \
+                search_type, \
+                metadata)
+
+func _clear_selection() -> void:
+    # Deselect the current TreeItem selection.
+    var item := get_selected()
+    if item != null:
+        item.deselect(0)
+    
+    # Remove the current annotations.
+    for element in current_annotation_elements:
+        element_annotator.erase(element)
+    current_annotation_elements = []
 
 static func _find_closest_jump_land_positions( \
         target_jump_position: Vector2, \

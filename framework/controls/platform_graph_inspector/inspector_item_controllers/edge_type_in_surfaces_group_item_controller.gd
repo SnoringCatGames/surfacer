@@ -67,15 +67,14 @@ func find_and_expand_controller( \
     assert(search_type == InspectorSearchType.EDGE)
     if metadata.edge_type == edge_type:
         expand()
-        call_deferred( \
-                "find_and_expand_controller_recursive", \
+        _trigger_find_and_expand_controller_recursive( \
                 search_type, \
                 metadata)
         return true
     else:
         return false
 
-func find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
     assert(search_type == InspectorSearchType.EDGE)

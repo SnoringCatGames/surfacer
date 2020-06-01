@@ -51,13 +51,12 @@ func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
     expand()
-    call_deferred( \
-            "find_and_expand_controller_recursive", \
+    _trigger_find_and_expand_controller_recursive( \
             search_type, \
             metadata)
     return true
 
-func find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
     match search_type:

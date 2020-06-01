@@ -8,17 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add a default "selection description" message when nothing is selected:
-#   - 
-# - Support overriding the description to give more info on the attempted
-#   level-click selection.
-#   - 
-#   - "No possible jump/land positions for that selection."
-#   - "No jump/land positions passed broad-phase checks of edge calculation for
-#     that selection."
-#   - "A valid edge matches that selection."
-#   - "A failed edge calculation matches that selection."
-# 
 # - Ensure all edge DrawUtil functions support rendering the start/end
 #   indicators.
 # 

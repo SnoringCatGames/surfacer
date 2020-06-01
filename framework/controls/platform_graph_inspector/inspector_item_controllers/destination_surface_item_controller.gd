@@ -80,15 +80,14 @@ func find_and_expand_controller( \
     assert(search_type == InspectorSearchType.EDGE)
     if metadata.destination_surface == destination_surface:
         expand()
-        call_deferred( \
-                "find_and_expand_controller_recursive", \
+        _trigger_find_and_expand_controller_recursive( \
                 search_type, \
                 metadata)
         return true
     else:
         return false
 
-func find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
     var is_subtree_found: bool
@@ -146,10 +145,25 @@ func _destroy_children_inner() -> void:
     pass
 
 func get_annotation_elements() -> Array:
+    var elements := []
+    
     var origin_element := OriginSurfaceAnnotationElement.new(origin_surface)
+    elements.push_back(origin_element)
     var destination_element := DestinationSurfaceAnnotationElement.new( \
             destination_surface)
-    return [origin_element, destination_element]
+    elements.push_back(destination_element)
+    
+    var edge_element: EdgeAnnotationElement
+    for edge_type in edge_types_to_valid_edges:
+        for edge in edge_types_to_valid_edges[edge_type]:
+            edge_element = EdgeAnnotationElement.new( \
+                    edge, \
+                    true, \
+                    false, \
+                    false)
+            elements.push_back(edge_element)
+    
+    return elements
 
 static func _count_edges(edge_types_to_edges: Dictionary) -> int:
     var count := 0
