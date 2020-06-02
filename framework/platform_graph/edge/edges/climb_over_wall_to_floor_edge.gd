@@ -1,7 +1,8 @@
-# Information for how to climb up and over a wall to stand on the adjacent floor.
+# Information for how to climb up and over a wall to stand on the adjacent
+# floor.
 # 
-# The instructions for this edge consist of two consecutive directional-key presses (into the wall,
-# and upward), with no corresponding release.
+# The instructions for this edge consist of two consecutive directional-key
+# presses (into the wall, and upward), with no corresponding release.
 extends Edge
 class_name ClimbOverWallToFloorEdge
 
@@ -35,7 +36,9 @@ func _calculate_distance( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         trajectory: EdgeTrajectory) -> float:
-    return Geometry.calculate_manhattan_distance(start.target_point, end.target_point)
+    return Geometry.calculate_manhattan_distance( \
+            start.target_point, \
+            end.target_point)
 
 func _calculate_duration( \
         start: PositionAlongSurface, \
@@ -61,7 +64,9 @@ static func _calculate_instructions( \
     assert(end.surface.side == SurfaceSide.FLOOR)
     
     var sideways_input_key := \
-            "move_left" if start.surface.side == SurfaceSide.LEFT_WALL else "move_right"
+            "move_left" if \
+            start.surface.side == SurfaceSide.LEFT_WALL else \
+            "move_right"
     var inward_instruction := EdgeInstruction.new( \
             sideways_input_key, \
             0.0, \
@@ -76,9 +81,10 @@ static func _calculate_instructions( \
             [inward_instruction, upward_instruction], \
             INF)
 
-# This edge needs to override this function, since Godot's collision engine generates many
-# false-positive departures and collisions when rounding the corner between surfaces. So we need to
-# be more permissible here for what we consider to be expected when leaving and entering the air.
+# This edge needs to override this function, since Godot's collision engine
+# generates many false-positive departures and collisions when rounding the
+# corner between surfaces. So we need to be more permissible here for what we
+# consider to be expected when leaving and entering the air.
 func update_navigation_state( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
@@ -105,7 +111,8 @@ func update_navigation_state( \
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_user_action
     
-    navigation_state.just_reached_end_of_edge = _check_did_just_reach_destination( \
-            navigation_state, \
-            surface_state, \
-            playback)
+    navigation_state.just_reached_end_of_edge = \
+            _check_did_just_reach_destination( \
+                    navigation_state, \
+                    surface_state, \
+                    playback)

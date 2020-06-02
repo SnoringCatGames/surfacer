@@ -8,9 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Ensure all edge DrawUtil functions support rendering the start/end
-#   indicators.
-# 
 # - Fix various edge-cases for debugging edges in inspector top-level edges
 #   list:
 #   - Other edge types show failed_before_creating_steps or UNKNOWN for

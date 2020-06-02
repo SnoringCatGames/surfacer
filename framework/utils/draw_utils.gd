@@ -796,11 +796,15 @@ static func draw_edge( \
         _draw_edge_from_end_points( \
                 canvas, \
                 edge, \
+                includes_waypoints, \
+                includes_instruction_indicators, \
                 base_color)
     elif edge is ClimbOverWallToFloorEdge:
         _draw_climb_over_wall_to_floor_edge( \
                 canvas, \
                 edge, \
+                includes_waypoints, \
+                includes_instruction_indicators, \
                 base_color)
     elif edge is FallFromFloorEdge:
         _draw_fall_from_floor_edge( \
@@ -816,16 +820,45 @@ static func draw_edge( \
 static func _draw_edge_from_end_points( \
         canvas: CanvasItem, \
         edge: Edge, \
+        includes_waypoints: bool, \
+        includes_instruction_indicators: bool, \
         base_color: Color) -> void:
     canvas.draw_line( \
             edge.start, \
             edge.end, \
             base_color, \
             EDGE_TRAJECTORY_WIDTH)
+    
+    if includes_waypoints:
+        var waypoint_color: Color = AnnotationElementDefaults \
+                .WAYPOINT_COLOR_PARAMS.get_color()
+        waypoint_color.h = base_color.h
+        waypoint_color.a = base_color.a
+        
+        draw_destination_marker( \
+                canvas, \
+                edge.end, \
+                true, \
+                edge.end_position_along_surface.surface.side, \
+                waypoint_color)
+        draw_origin_marker( \
+                canvas, \
+                edge.start, \
+                waypoint_color)
+    
+    if includes_instruction_indicators:
+        var instruction_color: Color = AnnotationElementDefaults \
+                .INSTRUCTION_COLOR_PARAMS.get_color()
+        instruction_color.h = base_color.h
+        instruction_color.a = base_color.a
+        
+        # TODO: Draw instruction indicators.
 
 static func _draw_climb_over_wall_to_floor_edge( \
         canvas: CanvasItem, \
         edge: ClimbOverWallToFloorEdge, \
+        includes_waypoints: bool, \
+        includes_instruction_indicators: bool, \
         base_color: Color) -> void:
     var mid_point := Vector2(edge.start.x, edge.end.y)
     canvas.draw_line( \
@@ -838,6 +871,31 @@ static func _draw_climb_over_wall_to_floor_edge( \
             edge.end, \
             base_color, \
             EDGE_TRAJECTORY_WIDTH)
+    
+    if includes_waypoints:
+        var waypoint_color: Color = AnnotationElementDefaults \
+                .WAYPOINT_COLOR_PARAMS.get_color()
+        waypoint_color.h = base_color.h
+        waypoint_color.a = base_color.a
+        
+        draw_destination_marker( \
+                canvas, \
+                edge.end, \
+                true, \
+                edge.end_position_along_surface.surface.side, \
+                waypoint_color)
+        draw_origin_marker( \
+                canvas, \
+                edge.start, \
+                waypoint_color)
+    
+    if includes_instruction_indicators:
+        var instruction_color: Color = AnnotationElementDefaults \
+                .INSTRUCTION_COLOR_PARAMS.get_color()
+        instruction_color.h = base_color.h
+        instruction_color.a = base_color.a
+        
+        # TODO: Draw instruction indicators.
 
 static func _draw_fall_from_floor_edge( \
         canvas: CanvasItem, \
@@ -874,7 +932,8 @@ static func _draw_fall_from_floor_edge( \
             false, \
             includes_instruction_indicators, \
             includes_continuous_positions, \
-            base_color)
+            base_color, \
+            edge.start)
 
 static func _draw_edge_from_instructions_positions( \
         canvas: CanvasItem, \
@@ -882,7 +941,8 @@ static func _draw_edge_from_instructions_positions( \
         includes_continuous_positions: bool, \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
-        discrete_trajectory_color: Color) -> void:
+        discrete_trajectory_color: Color, \
+        origin_position_override := Vector2.INF) -> void:
     # Set up colors.
     var continuous_trajectory_color: Color = AnnotationElementDefaults \
             .EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS.get_color()
@@ -930,9 +990,13 @@ static func _draw_edge_from_instructions_positions( \
                 edge.end_position_along_surface.surface.side, \
                 waypoint_color)
         
+        var origin_position := \
+                origin_position_override if \
+                origin_position_override != Vector2.INF else \
+                edge.start
         draw_origin_marker( \
                 canvas, \
-                edge.start, \
+                origin_position, \
                 waypoint_color)
     
     if includes_instruction_indicators:

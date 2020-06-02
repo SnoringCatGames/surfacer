@@ -1,10 +1,11 @@
 # Information for how to walk to and off the edge of a floor.
 # 
-# - The instructions for this edge consist of a single sideways key press, with no corresponding
-#   release.
+# - The instructions for this edge consist of a single sideways key press, with
+#   no corresponding release.
 # - The start point for this edge corresponds to the surface-edge end point.
-# - This edge consists of a small portion for walking from the start point to the fall-off point,
-#   and then another portion for falling from the fall-off point to the landing point.
+# - This edge consists of a small portion for walking from the start point to
+#   the fall-off point, and then another portion for falling from the fall-off
+#   point to the landing point.
 extends Edge
 class_name FallFromFloorEdge
 
@@ -62,11 +63,14 @@ func _check_did_just_reach_destination( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback) -> bool:
-    return Edge.check_just_landed_on_expected_surface(surface_state, self.end_surface)
+    return Edge.check_just_landed_on_expected_surface( \
+            surface_state, \
+            self.end_surface)
 
-# When walking off the end of a surface, Godot's underlying collision engine can trigger multiple
-# extraneous launch/land events if the player's collision boundary is not square. So this function
-# override adds logic to ignore any of these extra collisions with the starting surface.
+# When walking off the end of a surface, Godot's underlying collision engine
+# can trigger multiple extraneous launch/land events if the player's collision
+# boundary is not square. So this function override adds logic to ignore any of
+# these extra collisions with the starting surface.
 func update_navigation_state( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
@@ -96,7 +100,8 @@ func update_navigation_state( \
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_user_action
     
-    navigation_state.just_reached_end_of_edge = _check_did_just_reach_destination( \
-            navigation_state, \
-            surface_state, \
-            playback)
+    navigation_state.just_reached_end_of_edge = \
+            _check_did_just_reach_destination( \
+                    navigation_state, \
+                    surface_state, \
+                    playback)
