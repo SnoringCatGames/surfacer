@@ -21,8 +21,8 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
-    Utils.error("JumpFromSurfaceToAirCalculator.get_all_inter_surface_edges_from_surface " + \
-            "should not be called")
+    Utils.error("JumpFromSurfaceToAirCalculator" + \
+            ".get_all_inter_surface_edges_from_surface should not be called")
 
 func calculate_edge( \
         edge_result_metadata: EdgeCalcResultMetadata, \
@@ -33,7 +33,8 @@ func calculate_edge( \
         needs_extra_jump_duration := false, \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
     if velocity_start == Vector2.INF:
-        var is_moving_leftward := position_end.target_point.x - position_start.target_point.x < 0.0
+        var is_moving_leftward := position_end.target_point.x - \
+                position_start.target_point.x < 0.0
         velocity_start = EdgeCalculator.get_velocity_start( \
                 collision_params.movement_params, \
                 position_start.surface, \
@@ -66,16 +67,18 @@ func calculate_edge( \
     if calc_result == null:
         return null
     
-    var instructions := \
-            EdgeInstructionsUtils.convert_calculation_steps_to_movement_instructions( \
+    var instructions := EdgeInstructionsUtils \
+            .convert_calculation_steps_to_movement_instructions( \
                     calc_result, \
                     true, \
                     SurfaceSide.NONE)
-    var trajectory := EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
-            calc_result, \
-            instructions)
+    var trajectory := \
+            EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+                    calc_result, \
+                    instructions)
     
-    var velocity_end: Vector2 = calc_result.horizontal_steps.back().velocity_step_end
+    var velocity_end: Vector2 = \
+            calc_result.horizontal_steps.back().velocity_step_end
     
     var edge := JumpFromSurfaceToAirEdge.new( \
             self, \

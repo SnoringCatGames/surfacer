@@ -1,7 +1,8 @@
-# Information for how to walk across a floor to grab on to an adjacent upward wall.
+# Information for how to walk across a floor to grab on to an adjacent upward
+# wall.
 # 
-# The instructions for this edge consist of two consecutive directional-key presses (toward the
-# wall, and upward), with no corresponding release.
+# The instructions for this edge consist of two consecutive directional-key
+# presses (toward the wall, and upward), with no corresponding release.
 extends Edge
 class_name WalkToAscendWallFromFloorEdge
 
@@ -9,6 +10,7 @@ const TYPE := EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.FLOOR
 const ENTERS_AIR := false
+const INCLUDES_AIR_TRAJECTORY := false
 
 func _init( \
         calculator, \
@@ -20,6 +22,7 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        INCLUDES_AIR_TRAJECTORY, \
         calculator, \
         start, \
         end, \
@@ -36,7 +39,9 @@ func _calculate_distance( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         trajectory: EdgeTrajectory) -> float:
-    return Geometry.calculate_manhattan_distance(start.target_point, end.target_point)
+    return Geometry.calculate_manhattan_distance( \
+            start.target_point, \
+            end.target_point)
 
 func _calculate_duration( \
         start: PositionAlongSurface, \
@@ -52,7 +57,8 @@ func _check_did_just_reach_destination( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback) -> bool:
-    return surface_state.just_grabbed_left_wall or surface_state.just_grabbed_right_wall
+    return surface_state.just_grabbed_left_wall or \
+            surface_state.just_grabbed_right_wall
 
 static func _calculate_instructions( \
         start: PositionAlongSurface, \

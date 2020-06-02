@@ -5,21 +5,25 @@ class_name Edge
 # EdgeType
 var type: int
 
-# Whether the instructions for moving along this edge are updated according to traversal time (vs
-# according to surface state).
+# Whether the instructions for moving along this edge are updated according to
+# traversal time (vs according to surface state).
 var is_time_based: bool
 
 var surface_type: int
 
-# Whether the movement along this edge transitions from grabbing a surface to being airborne.
+# Whether the movement along this edge transitions from grabbing a surface to
+# being airborne.
 var enters_air: bool
+
+var includes_air_trajectory: bool
 
 var calculator
 
 var movement_params: MovementParams
 
-# Whether this edge was created by the navigator for a specific path at run-time, rather than ahead
-# of time when initially parsing the platform graph.
+# Whether this edge was created by the navigator for a specific path at
+# run-time, rather than ahead of time when initially parsing the platform
+# graph.
 var is_optimized_for_path := false
 
 var instructions: EdgeInstructions
@@ -51,13 +55,15 @@ var end_surface: Surface setget ,_get_end_surface
 
 var name: String setget ,_get_name
 
-var should_end_by_colliding_with_surface: bool setget ,_get_should_end_by_colliding_with_surface
+var should_end_by_colliding_with_surface: bool setget \
+        ,_get_should_end_by_colliding_with_surface
 
 func _init( \
         type: int, \
         is_time_based: bool, \
         surface_type: int, \
         enters_air: bool, \
+        includes_air_trajectory: bool, \
         calculator, \
         start_position_along_surface: PositionAlongSurface, \
         end_position_along_surface: PositionAlongSurface, \
@@ -72,6 +78,7 @@ func _init( \
     self.is_time_based = is_time_based
     self.surface_type = surface_type
     self.enters_air = enters_air
+    self.includes_air_trajectory = includes_air_trajectory
     self.calculator = calculator
     self.movement_params = movement_params
     self.start_position_along_surface = start_position_along_surface
@@ -79,7 +86,8 @@ func _init( \
     self.velocity_start = velocity_start
     self.velocity_end = velocity_end
     self.includes_extra_jump_duration = includes_extra_jump_duration
-    self.includes_extra_wall_land_horizontal_speed = includes_extra_wall_land_horizontal_speed
+    self.includes_extra_wall_land_horizontal_speed = \
+            includes_extra_wall_land_horizontal_speed
     self.instructions = instructions
     self.trajectory = trajectory
     self.distance = _calculate_distance( \
@@ -129,10 +137,11 @@ func update_navigation_state( \
     if surface_state.just_entered_air:
         navigation_state.is_expecting_to_enter_air = false
     
-    navigation_state.just_reached_end_of_edge = _check_did_just_reach_destination( \
-            navigation_state, \
-            surface_state, \
-            playback)
+    navigation_state.just_reached_end_of_edge = \
+            _check_did_just_reach_destination( \
+                    navigation_state, \
+                    surface_state, \
+                    playback)
 
 func _calculate_distance( \
         start: PositionAlongSurface, \
@@ -153,13 +162,16 @@ func _check_did_just_reach_destination( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback) -> bool:
-    Utils.error("Abstract Edge._check_did_just_reach_destination is not implemented")
+    Utils.error( \
+            "Abstract Edge._check_did_just_reach_destination is not " + \
+            "implemented")
     return false
 
 func get_weight() -> float:
     # Use either the distance or the duration as the weight for the edge.
     var weight := duration if \
-            movement_params.uses_duration_instead_of_distance_for_edge_weight else \
+            movement_params \
+                    .uses_duration_instead_of_distance_for_edge_weight else \
             distance
     
     # Apply a multiplier to the weight according to the type of edge.
@@ -195,13 +207,22 @@ func _get_name() -> String:
     return EdgeType.get_type_string(type)
 
 func _get_should_end_by_colliding_with_surface() -> bool:
-    return end_position_along_surface.surface != start_position_along_surface.surface and \
+    return end_position_along_surface.surface != \
+            start_position_along_surface.surface and \
             end_position_along_surface.surface != null
 
 func to_string() -> String:
     var format_string_template := \
-            "%s{ start: %s, end: %s, velocity_start: %s, velocity_end: %s, " + \
-            "distance: %s, duration: %s, is_optimized_for_path: %s, instructions: %s }"
+            "%s{ " + \
+            "start: %s, " + \
+            "end: %s, " + \
+            "velocity_start: %s, " + \
+            "velocity_end: %s, " + \
+            "distance: %s, " + \
+            "duration: %s, " + \
+            "is_optimized_for_path: %s, " + \
+            "instructions: %s " + \
+            "}"
     var format_string_arguments := [ \
             _get_name(), \
             _get_start_string(), \
@@ -253,8 +274,10 @@ func to_string_with_newlines(indent_level: int) -> String:
     
     return format_string_template % format_string_arguments
 
-# This creates a PositionAlongSurface object with the given target point and a null Surface.
-static func vector2_to_position_along_surface(target_point: Vector2) -> PositionAlongSurface:
+# This creates a PositionAlongSurface object with the given target point and a
+# null Surface.
+static func vector2_to_position_along_surface(target_point: Vector2) -> \
+        PositionAlongSurface:
     var position_along_surface := PositionAlongSurface.new()
     position_along_surface.target_point = target_point
     return position_along_surface
@@ -262,4 +285,5 @@ static func vector2_to_position_along_surface(target_point: Vector2) -> Position
 static func check_just_landed_on_expected_surface( \
         surface_state: PlayerSurfaceState, \
         end_surface: Surface) -> bool:
-    return surface_state.just_left_air and surface_state.grabbed_surface == end_surface
+    return surface_state.just_left_air and \
+            surface_state.grabbed_surface == end_surface

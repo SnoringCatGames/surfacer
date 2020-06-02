@@ -93,6 +93,12 @@ func _on_tree_item_expansion_toggled(item: TreeItem) -> void:
     else:
         controller.call_deferred("on_item_expanded")
 
+func _unhandled_input(event: InputEvent) -> void:
+    # Godot seems to have a bug where many clicks in the tree are
+    # false-negatives. This at least prevents them from being consumed as
+    # clicks within the level.
+    get_tree().set_input_as_handled()
+
 func select_edge_or_surface( \
         start_position: PositionAlongSurface, \
         end_position: PositionAlongSurface, \

@@ -1,7 +1,7 @@
 # Information for how to let go of a wall in order to fall.
 # 
-# The instructions for this edge consist of a single sideways key press, with no corresponding
-# release.
+# The instructions for this edge consist of a single sideways key press, with
+# no corresponding release.
 extends Edge
 class_name FallFromWallEdge
 
@@ -9,6 +9,7 @@ const TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
+const INCLUDES_AIR_TRAJECTORY := true
 
 func _init( \
         calculator, \
@@ -23,10 +24,13 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        INCLUDES_AIR_TRAJECTORY, \
         calculator, \
         start, \
         end, \
-        Vector2.ZERO, \
+        Vector2(movement_params.wall_fall_horizontal_boost * \
+                        start.surface.normal.x, \
+                0.0), \
         velocity_end, \
         false, \
         includes_extra_wall_land_horizontal_speed, \
@@ -52,4 +56,6 @@ func _check_did_just_reach_destination( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback) -> bool:
-    return Edge.check_just_landed_on_expected_surface(surface_state, self.end_surface)
+    return Edge.check_just_landed_on_expected_surface( \
+            surface_state, \
+            self.end_surface)

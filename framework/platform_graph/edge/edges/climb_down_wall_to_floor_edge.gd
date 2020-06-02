@@ -10,6 +10,7 @@ const TYPE := EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.WALL
 const ENTERS_AIR := false
+const INCLUDES_AIR_TRAJECTORY := false
 
 func _init( \
         calculator, \
@@ -20,6 +21,7 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        INCLUDES_AIR_TRAJECTORY, \
         calculator, \
         start, \
         end, \
@@ -36,7 +38,9 @@ func _calculate_distance( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         trajectory: EdgeTrajectory) -> float:
-    return Geometry.calculate_manhattan_distance(start.target_point, end.target_point)
+    return Geometry.calculate_manhattan_distance( \
+            start.target_point, \
+            end.target_point)
 
 func _calculate_duration( \
         start: PositionAlongSurface, \

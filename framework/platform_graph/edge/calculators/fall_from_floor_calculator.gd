@@ -29,6 +29,7 @@ func get_all_inter_surface_edges_from_surface( \
     if origin_surface.counter_clockwise_concave_neighbor == null:
         # Calculating the fall-off state for the left edge of the floor.
         _get_all_edges_from_one_side( \
+                null, \
                 collision_params, \
                 edges_result, \
                 surfaces_in_fall_range_set, \
@@ -39,6 +40,7 @@ func get_all_inter_surface_edges_from_surface( \
     if origin_surface.clockwise_concave_neighbor == null:
         # Calculating the fall-off state for the right edge of the floor.
         _get_all_edges_from_one_side( \
+                null, \
                 collision_params, \
                 edges_result, \
                 surfaces_in_fall_range_set, \
@@ -58,9 +60,11 @@ func calculate_edge( \
     var surfaces_in_fall_range_set := {}
     var origin_surface := position_start.surface
     var falls_on_left_side := \
-            position_start.target_point == origin_surface.first_point
+            position_start.target_projection_onto_surface == \
+            origin_surface.first_point
     
     _get_all_edges_from_one_side( \
+            edge_result_metadata, \
             collision_params, \
             edges_result, \
             surfaces_in_fall_range_set, \
@@ -91,6 +95,7 @@ func optimize_edge_land_position_for_path( \
             self)
 
 func _get_all_edges_from_one_side( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         collision_params: CollisionCalcParams, \
         edges_result: Array, \
         surfaces_in_fall_range_set: Dictionary, \
@@ -175,15 +180,19 @@ func _get_all_edges_from_one_side( \
     if exclusive_land_position != null:
         var calc_result: EdgeCalcResult = \
                 FallMovementUtils.find_landing_trajectory_between_positions( \
-                        null, \
+                        edge_result_metadata, \
                         collision_params, \
                         position_fall_off_wrapper, \
                         exclusive_land_position, \
                         fall_off_point_velocity_start, \
                         needs_extra_wall_land_horizontal_speed)
         if calc_result != null:
+            assert(edge_result_metadata.edge_calc_result_type == \
+                    EdgeCalcResultType.EDGE_VALID)
             landing_trajectories = [calc_result]
         else:
+            assert(edge_result_metadata.edge_calc_result_type != \
+                    EdgeCalcResultType.EDGE_VALID)
             landing_trajectories = []
     else:
         landing_trajectories = FallMovementUtils \
@@ -231,7 +240,8 @@ func _get_all_edges_from_one_side( \
                 position_end, \
                 fall_off_point_velocity_start, \
                 velocity_end, \
-                calc_result.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
+                calc_result.edge_calc_params \
+                        .needs_extra_wall_land_horizontal_speed, \
                 movement_params, \
                 instructions, \
                 trajectory, \
@@ -302,8 +312,9 @@ static func _prepend_walk_to_fall_off_portion( \
     var frame_count_before_fall_off := \
             ceil(time_fall_off / Utils.PHYSICS_TIME_STEP)
     
-    # Round the fall-off time up, so that we actually consider it to start aligned with the first
-    # frame in which it is actually clear of the surface edge.
+    # Round the fall-off time up, so that we actually consider it to start
+    # aligned with the first frame in which it is actually clear of the surface
+    # edge.
     time_fall_off = frame_count_before_fall_off * Utils.PHYSICS_TIME_STEP + \
             Geometry.FLOAT_EPSILON
     

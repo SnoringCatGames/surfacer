@@ -10,6 +10,7 @@ const TYPE := EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.WALL
 const ENTERS_AIR := true
+const INCLUDES_AIR_TRAJECTORY := false
 
 func _init( \
         calculator, \
@@ -20,6 +21,7 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        INCLUDES_AIR_TRAJECTORY, \
         calculator, \
         start, \
         end, \

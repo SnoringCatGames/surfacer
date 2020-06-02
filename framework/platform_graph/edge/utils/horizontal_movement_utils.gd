@@ -29,7 +29,14 @@ static func calculate_horizontal_step( \
 #        print("break")
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: -A
-#    if position_step_start == Vector2(-2, -483) and position_end == Vector2(-128, -478):
+#    if Geometry.are_points_equal_with_epsilon( \
+#                    start_waypoint.position, \
+#                    Vector2(57, -448), \
+#                    1.0) and \
+#            Geometry.are_points_equal_with_epsilon( \
+#                    end_waypoint.position, \
+#                    Vector2(214.731, 226), \
+#                    1.0):
 #        print("yo")
     
     ### Calculate the end x-velocity, the direction of acceleration, acceleration start time, and

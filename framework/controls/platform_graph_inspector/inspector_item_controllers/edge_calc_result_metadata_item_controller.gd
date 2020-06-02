@@ -91,7 +91,7 @@ func get_annotation_elements() -> Array:
                     step_result_metadata, \
                     true)
             elements.push_back(element)
-    else:
+    elif edge_or_edge_attempt is FailedEdgeAttempt:
         element = FailedEdgeAttemptAnnotationElement.new( \
                 edge_or_edge_attempt, \
                 AnnotationElementDefaults \
@@ -103,4 +103,7 @@ func get_annotation_elements() -> Array:
                         .FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH, \
                 false)
         elements.push_back(element)
+    else:
+        assert(edge_or_edge_attempt is Edge and \
+                !edge_or_edge_attempt.includes_air_trajectory)
     return elements

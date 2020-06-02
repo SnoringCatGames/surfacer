@@ -1,13 +1,15 @@
-# Information for how to move along a surface from a start position to an end position.
+# Information for how to move along a surface from a start position to an end
+# position.
 # 
-# The instructions for an intra-surface edge consist of a single directional-key press step, with
-# no corresponding release.
+# The instructions for an intra-surface edge consist of a single
+# directional-key press step, with no corresponding release.
 extends Edge
 class_name IntraSurfaceEdge
 
 const TYPE := EdgeType.INTRA_SURFACE_EDGE
 const IS_TIME_BASED := false
 const ENTERS_AIR := false
+const INCLUDES_AIR_TRAJECTORY := false
 
 const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
 
@@ -23,6 +25,7 @@ func _init( \
         IS_TIME_BASED, \
         SurfaceType.get_type_from_side(start.surface.side), \
         ENTERS_AIR, \
+        INCLUDES_AIR_TRAJECTORY, \
         null, \
         start, \
         end, \
@@ -37,25 +40,27 @@ func _init( \
         movement_params, \
         _calculate_instructions(start, end), \
         null) -> void:
-    # Intra-surface edges are never calculated and stored ahead of time; they're only calculated at
-    # run time when navigating a specific path.
+    # Intra-surface edges are never calculated and stored ahead of time;
+    # they're only calculated at run time when navigating a specific path.
     self.is_optimized_for_path = true
 
 func update_terminal( \
         is_start: bool, \
         target_point: Vector2) -> void:
     if is_start:
-        start_position_along_surface = MovementUtils.create_position_offset_from_target_point( \
-                target_point, \
-                start_position_along_surface.surface, \
-                movement_params.collider_half_width_height, \
-                true)
+        start_position_along_surface = \
+                MovementUtils.create_position_offset_from_target_point( \
+                        target_point, \
+                        start_position_along_surface.surface, \
+                        movement_params.collider_half_width_height, \
+                        true)
     else:
-        end_position_along_surface = MovementUtils.create_position_offset_from_target_point( \
-                target_point, \
-                end_position_along_surface.surface, \
-                movement_params.collider_half_width_height, \
-                true)
+        end_position_along_surface = \
+                MovementUtils.create_position_offset_from_target_point( \
+                        target_point, \
+                        end_position_along_surface.surface, \
+                        movement_params.collider_half_width_height, \
+                        true)
     velocity_end = _calculate_velocity_end( \
             start_position_along_surface, \
             end_position_along_surface, \
@@ -80,7 +85,8 @@ func update_for_surface_state( \
     
     if is_final_edge:
         var displacement_to_end := \
-                end_position_along_surface.target_point - surface_state.center_position
+                end_position_along_surface.target_point - \
+                surface_state.center_position
         stopping_distance = _calculate_stopping_distance( \
                 movement_params, \
                 self, \
@@ -120,7 +126,8 @@ func _check_did_just_reach_destination( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback) -> bool:
-    # Check whether we were on the other side of the destination in the previous frame.
+    # Check whether we were on the other side of the destination in the
+    # previous frame.
     
     var end := end_position_along_surface.target_point
     
@@ -136,8 +143,10 @@ func _check_did_just_reach_destination( \
                 end.y + stopping_distance if \
                 is_moving_upward else \
                 end.y - stopping_distance
-        was_less_than_end = surface_state.previous_center_position.y < position_y_instruction_end
-        is_less_than_end = surface_state.center_position.y < position_y_instruction_end
+        was_less_than_end = surface_state.previous_center_position.y < \
+                position_y_instruction_end
+        is_less_than_end = surface_state.center_position.y < \
+                position_y_instruction_end
         diff = position_y_instruction_end - surface_state.center_position.y
         is_moving_away_from_destination = (diff > 0) == is_moving_upward
         
@@ -148,13 +157,16 @@ func _check_did_just_reach_destination( \
                 end.x + stopping_distance if \
                 is_moving_leftward else \
                 end.x - stopping_distance
-        was_less_than_end = surface_state.previous_center_position.x < position_x_instruction_end
-        is_less_than_end = surface_state.center_position.x < position_x_instruction_end
+        was_less_than_end = surface_state.previous_center_position.x < \
+                position_x_instruction_end
+        is_less_than_end = surface_state.center_position.x < \
+                position_x_instruction_end
         diff = position_x_instruction_end - surface_state.center_position.x
         is_moving_away_from_destination = (diff > 0) == is_moving_leftward
     
     var moved_across_destination := was_less_than_end != is_less_than_end
-    var is_close_to_destination := abs(diff) < REACHED_DESTINATION_DISTANCE_THRESHOLD
+    var is_close_to_destination := \
+            abs(diff) < REACHED_DESTINATION_DISTANCE_THRESHOLD
     
     return moved_across_destination or \
             is_close_to_destination or \
@@ -192,26 +204,33 @@ static func _calculate_velocity_end( \
         movement_params: MovementParams) -> Vector2:
     var displacement := end.target_point - start.target_point
     
-    if start.surface.side == SurfaceSide.FLOOR or start.surface.side == SurfaceSide.CEILING:
-        # We need to calculate the end velocity, taking into account whether we will have had
-        # enough distance to reach max horizontal speed.
-        var acceleration := movement_params.walk_acceleration if displacement.x > 0.0 else \
+    if start.surface.side == SurfaceSide.FLOOR or \
+            start.surface.side == SurfaceSide.CEILING:
+        # We need to calculate the end velocity, taking into account whether we
+        # will have had enough distance to reach max horizontal speed.
+        var acceleration := \
+                movement_params.walk_acceleration if \
+                displacement.x > 0.0 else \
                 -movement_params.walk_acceleration
-        var velocity_end_x: float = MovementUtils.calculate_velocity_end_for_displacement( \
-                displacement.x, \
-                velocity_start.x, \
-                acceleration, \
-                movement_params.max_horizontal_speed_default)
+        var velocity_end_x: float = \
+                MovementUtils.calculate_velocity_end_for_displacement( \
+                        displacement.x, \
+                        velocity_start.x, \
+                        acceleration, \
+                        movement_params.max_horizontal_speed_default)
         return Vector2(velocity_end_x, 0.0)
     else:
         # We use a constant speed (no acceleration) when climbing.
-        var velocity_end_y := movement_params.climb_up_speed if displacement.y < 0.0 else \
+        var velocity_end_y := \
+                movement_params.climb_up_speed if \
+                displacement.y < 0.0 else \
                 movement_params.climb_down_speed
         return Vector2(0.0, velocity_end_y)
 
-# Calculate the distance from the end position at which the move button should be released, so that
-# the player comes to rest at the desired end position after decelerating due to friction (and with
-# accelerating, or coasting at max-speed, until starting deceleration).
+# Calculate the distance from the end position at which the move button should
+# be released, so that the player comes to rest at the desired end position
+# after decelerating due to friction (and with accelerating, or coasting at
+# max-speed, until starting deceleration).
 static func _calculate_stopping_distance( \
         movement_params: MovementParams, \
         edge: IntraSurfaceEdge, \
@@ -224,8 +243,8 @@ static func _calculate_stopping_distance( \
         var friction_coefficient: float = \
                 movement_params.friction_coefficient * \
                 edge.end_surface.tile_map.collision_friction
-        var stopping_distance := \
-                MovementUtils.calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed( \
+        var stopping_distance := MovementUtils \
+                .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed( \
                         movement_params, \
                         velocity_start.x, \
                         displacement_to_end.x, \
@@ -234,7 +253,8 @@ static func _calculate_stopping_distance( \
         return stopping_distance if \
                 abs(displacement_to_end.x) - stopping_distance > \
                         REACHED_DESTINATION_DISTANCE_THRESHOLD else \
-                max(abs(displacement_to_end.x) - REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0, 0.0)
+                max(abs(displacement_to_end.x) - \
+                        REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0, 0.0)
         
     else:
         # TODO: Add support for acceleration and friction alongs walls and ceilings.

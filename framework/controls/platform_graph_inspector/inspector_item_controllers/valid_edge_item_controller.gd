@@ -43,7 +43,9 @@ func get_text() -> String:
 func get_description() -> String:
     return ("This %s consists of %s horizontal instructions.") % [ \
         EdgeType.get_type_string(edge.type), \
-        edge.trajectory.horizontal_instructions.size(), \
+        edge.trajectory.horizontal_instructions.size() if \
+        edge.trajectory != null else \
+        1, \
     ]
 
 func find_and_expand_controller( \
@@ -76,7 +78,7 @@ func _create_children_inner() -> void:
 
 func _calculate_edge_calc_result_metadata() -> void:
     edge_result_metadata = EdgeCalcResultMetadata.new(true)
-    edge.calculator.calculate_edge( \
+    var debug_edge: Edge = edge.calculator.calculate_edge( \
             edge_result_metadata, \
             graph.collision_params, \
             edge.start_position_along_surface, \
@@ -84,7 +86,9 @@ func _calculate_edge_calc_result_metadata() -> void:
             edge.velocity_start, \
             edge.includes_extra_jump_duration, \
             edge.includes_extra_wall_land_horizontal_speed)
-    assert(!edge_result_metadata.failed_before_creating_steps)
+    assert(debug_edge != null)
+    assert(!edge.includes_air_trajectory or \
+            !edge_result_metadata.failed_before_creating_steps)
 
 func _destroy_children_inner() -> void:
     edge_calc_result_metadata_controller = null

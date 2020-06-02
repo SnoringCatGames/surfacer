@@ -8,13 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix various edge-cases for debugging edges in inspector top-level edges
-#   list:
-#   - Other edge types show failed_before_creating_steps or UNKNOWN for
-#     edge_result_metadata type.
-#   - Some valid fall edges from top platform show error state of out of reach?
-#   - Step through inspector and check other cases.
-# 
 # - Add support for navigating in the inspector directly to the debug edge
 #   specified in global.DEBUG_STATE.
 # 
@@ -679,6 +672,8 @@ func calculate_edge( \
                     needs_extra_wall_land_horizontal_speed)
     if edge_calc_params == null:
         # Cannot reach destination from origin.
+        assert(edge_result_metadata.edge_calc_result_type != \
+                EdgeCalcResultType.EDGE_VALID)
         return null
     
     return create_edge_from_edge_calc_params( \
@@ -731,7 +726,12 @@ func create_edge_from_edge_calc_params( \
                     null)
     if calc_result == null:
         # Unable to calculate a valid edge.
+        assert(edge_result_metadata.edge_calc_result_type != \
+                EdgeCalcResultType.EDGE_VALID)
         return null
+    
+    assert(edge_result_metadata.edge_calc_result_type == \
+            EdgeCalcResultType.EDGE_VALID)
     
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \

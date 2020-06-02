@@ -6,6 +6,7 @@ const TYPE := EdgeType.AIR_TO_AIR_EDGE
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := false
+const INCLUDES_AIR_TRAJECTORY := true
 
 func _init( \
         calculator, \
@@ -20,6 +21,7 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        INCLUDES_AIR_TRAJECTORY, \
         calculator, \
         Edge.vector2_to_position_along_surface(start), \
         Edge.vector2_to_position_along_surface(end), \

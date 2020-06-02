@@ -1,5 +1,5 @@
-# Information for how to move through the air from a start (jump) position on one surface to an
-# end (landing) position on another surface.
+# Information for how to move through the air from a start (jump) position on
+# one surface to an end (landing) position on another surface.
 extends Edge
 class_name JumpInterSurfaceEdge
 
@@ -7,6 +7,7 @@ const TYPE := EdgeType.JUMP_INTER_SURFACE_EDGE
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
+const INCLUDES_AIR_TRAJECTORY := true
 
 func _init( \
         calculator, \
@@ -23,6 +24,7 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        INCLUDES_AIR_TRAJECTORY, \
         calculator, \
         start, \
         end, \
@@ -52,4 +54,6 @@ func _check_did_just_reach_destination( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback) -> bool:
-    return Edge.check_just_landed_on_expected_surface(surface_state, self.end_surface)
+    return Edge.check_just_landed_on_expected_surface( \
+            surface_state, \
+            self.end_surface)

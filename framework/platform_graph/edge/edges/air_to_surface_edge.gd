@@ -6,6 +6,7 @@ const TYPE := EdgeType.AIR_TO_SURFACE_EDGE
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := false
+const INCLUDES_AIR_TRAJECTORY := true
 
 func _init( \
         calculator, \
@@ -21,6 +22,7 @@ func _init( \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
         ENTERS_AIR, \
+        INCLUDES_AIR_TRAJECTORY, \
         calculator, \
         start, \
         end, \
@@ -50,4 +52,6 @@ func _check_did_just_reach_destination( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback) -> bool:
-    return Edge.check_just_landed_on_expected_surface(surface_state, self.end_surface)
+    return Edge.check_just_landed_on_expected_surface( \
+            surface_state, \
+            self.end_surface)
