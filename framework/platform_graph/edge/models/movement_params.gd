@@ -6,7 +6,7 @@ class_name MovementParams
 var name: String
 
 # Array<String>
-var movement_calculator_names: Array
+var edge_calculator_names: Array
 # Array<String>
 var action_handler_names: Array
 

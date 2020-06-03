@@ -51,12 +51,12 @@ const DEBUG_PARAMS := \
 #            },
 #        },
 #        
-#        movement_calculator = "ClimbOverWallToFloorCalculator",
-#        movement_calculator = "FallFromWallCalculator",
-#        movement_calculator = "FallFromFloorCalculator",
-#        movement_calculator = "JumpInterSurfaceCalculator",
-#        movement_calculator = "ClimbDownWallToFloorCalculator",
-#        movement_calculator = "WalkToAscendWallFromFloorCalculator",
+#        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
+#        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
+#        edge_type = EdgeType.FALL_FROM_FLOOR_EDGE,
+#        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
+#        edge_type = EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
+#        edge_type = EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
 #        
 #        # Level: long rise; fall-from-wall
 #        edge = {

@@ -8,9 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add support for navigating in the inspector directly to the debug edge
-#   specified in global.DEBUG_STATE.
-# 
 # - Pick non-random colors for single-annotation items.
 # - Choose something other than red to indicate destination/end, since red is
 #   used for fail.
@@ -20,8 +17,6 @@ const IS_A_JUMP_CALCULATOR := true
 #   description children for each item.
 # - Spend some time thinking through the actual timings of the various parts of
 #   calculations (horizontal more than vertical, when possible).
-# 
-# - Create separate metadata classes for InspectorSearchType metadata.
 # 
 # - InspectorItemMetadata:
 #   - Add new methods to PlatformGraphInspector:

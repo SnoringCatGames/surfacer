@@ -1,16 +1,17 @@
-# A PlatfromGraph is specific to a given player type. This is important since different players
-# have different jump parameters and can reach different surfaces, so the edges in the graph will
-# be different for each player.
+# A PlatfromGraph is specific to a given player type. This is important since
+# different players have different jump parameters and can reach different
+# surfaces, so the edges in the graph will be different for each player.
 extends Reference
 class_name PlatformGraph
 
 # FIXME: LEFT OFF HERE: Master list:
 #
-# - Finish everything in JumpInterSurfaceCalculator (edge calculations, including movement
-#   waypoints from interfering surfaces)
-# - Finish/polish fallable surfaces calculations (and remove old obsolete functions)
+# - Finish everything in JumpInterSurfaceCalculator (edge calculations,
+#   including movement waypoints from interfering surfaces).
+# - Finish/polish fallable surfaces calculations (and remove old obsolete
+#   functions).
 #
-# - Use max_horizontal_jump_distance and max_upward_jump_distance
+# - Use max_horizontal_jump_distance and max_upward_jump_distance.
 # 
 # - Fix some aggregate return types to be Array instead of Vector2.
 #
@@ -20,43 +21,48 @@ class_name PlatformGraph
 #   - Current "input" (UP, LEFT, etc.)?
 #   - The entirety of the current instruction-set being run?
 #
-# - Add logic to consider a minimum movement distance, since jumping from floors or walls gives a
-#   set minimum displacement.
+# - Add logic to consider a minimum movement distance, since jumping from
+#   floors or walls gives a set minimum displacement.
 #
-# - Add logic to test execution of TestPlayer movement over _every_ edge in a complex, hand-made
-#   test level.
-#   - Make sure that the player hits the correct destination surface without hitting any other
-#     surface on-route.
-#   - Also test that the player lands on the destination within a threshold of the expected
-#     position.
-#   - Will need to figure out how to emulate/manipulate time deltas for the test environment...
+# - Add logic to test execution of TestPlayer movement over _every_ edge in a
+#   complex, hand-made test level.
+#   - Make sure that the player hits the correct destination surface without
+#     hitting any other surface on-route.
+#   - Also test that the player lands on the destination within a threshold of
+#     the expected position.
+#   - Will need to figure out how to emulate/manipulate time deltas for the
+#     test environment...
 #
-# - Add logic to automatically self-correct to the expected position/movement/state sometimes...
+# - Add logic to automatically self-correct to the expected
+#   position/movement/state sometimes...
 #   - When? Each frame? Only when we're further away than our tolerance allows?
 #
-# - Add support for actually considering the discrete physics time steps rather than assuming
-#   continuous integration?
+# - Add support for actually considering the discrete physics time steps rather
+#   than assuming continuous integration?
 #   - OR, add support for fudging it?
-#     - I could calculate and emulate all of this as previously planned to be realistic and use
-#       the same rules as a HumanPlayer; BUT, then actually adjust the movement to matchup with
-#       the expected pre-calculated result (so, actually, not really run the instructions set at
-#       all?)
-#     - It's probably at least worth adding an optional mode that does this and comparing the
-#       performance.
-#     - Or would something like a GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION (~0.9985?)
-#       param fix things enough?
+#     - I could calculate and emulate all of this as previously planned to be
+#       realistic and use the same rules as a HumanPlayer; BUT, then actually
+#       adjust the movement to matchup with the expected pre-calculated result
+#       (so, actually, not really run the instructions set at all?)
+#     - It's probably at least worth adding an optional mode that does this and
+#       comparing the performance.
+#     - Or would something like a
+#       GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION (~0.9985?) param
+#       fix things enough?
 #
 # - Add integration tests:
 #   - These should be much easier to write and maintain than the unit tests.
 #   - These should start with:
-#     - One player type (other types shouldn't be instantiated or considered by any logic at all)
+#     - One player type (other types shouldn't be instantiated or considered by
+#       any logic at all)
 #     - A level that could be either simple or complicated.
-#     - We should be able to configure from the test the specific starting and ending surface and
-#       position to check.
+#     - We should be able to configure from the test the specific starting and
+#       ending surface and position to check.
 #       - This should then cause the PlatformGraph parsing and
-#         get_all_inter_surface_edges_from_surface parsing to skip all other surfaces and jump/land
-#         positions.
-#     - We should use the above configuration to target specific interesting edge use-cases.
+#         get_all_inter_surface_edges_from_surface parsing to skip all other
+#         surfaces and jump/land positions.
+#     - We should use the above configuration to target specific interesting
+#       edge use-cases.
 #       - Skipping waypoints
 #       - Left/right/ceiling/floor intermediate surfaces
 #         - And then passing on min/max side of those surfaces
@@ -66,22 +72,25 @@ class_name PlatformGraph
 #       - Jumping down around top of block to side
 #       - Jumping when a non-minimum step-end x velocity is needed
 #       - Needing vertical backtracking
-#       - Needing to press side-movement input in opposite direction of movement in order to slow
-#         velocity along the step.
+#       - Needing to press side-movement input in opposite direction of
+#         movement in order to slow velocity along the step.
 #       - Falling a long vertical distance, to test the fallable surfaces logic
-#       - Jumping a long horizontal distance, to test the reachable surfaces logic
+#       - Jumping a long horizontal distance, to test the reachable surfaces
+#         logic
 #       - Surface-to-surface
 #       - Surface-to-air
 #       - Air-to-surface
 #       - wall to wall
 #       - floor to wall
 #       - wall to floor
-#       - Starting on convex and concave corners between adjacent surfaces, so that the collision
-#         margin considers the other surfaces as already colliding beforehand.
+#       - Starting on convex and concave corners between adjacent surfaces, so
+#         that the collision margin considers the other surfaces as already
+#         colliding beforehand.
 #
-# - Refactor Movement classes, so that whether the start and end posiition is on a platform
-#   or in the air is configuration that JumpInterSurfaceCalculator handles directly, rather than
-#   relying on a separate FallFromAir class?
+# - Refactor Movement classes, so that whether the start and end posiition is
+#   on a platform or in the air is configuration that
+#   JumpInterSurfaceCalculator handles directly, rather than relying on a
+#   separate FallFromAir class?
 # - Add support for including walls in our navigation.
 # - Add support for other jump aspects:
 #   - Fast fall
@@ -89,45 +98,49 @@ class_name PlatformGraph
 #   - Double jump
 #   - Horizontal acceleration?
 #
-# - Update the pre-configured Input Map in Project Settings to use more semantic keys instead of
-#   just up/down/etc.
-# - Document in a separate markdown file exactly which Input Map keys this framework depends on.
+# - Update the pre-configured Input Map in Project Settings to use more
+#   semantic keys instead of just up/down/etc.
+# - Document in a separate markdown file exactly which Input Map keys this
+#   framework depends on.
 #
-# - Make get_surfaces_in_jump_and_fall_range more efficient? (force run it everyframe to ensure no
-#   lag)
-#   - Scrap previous function; just use bounding box intersection (since I'm going to need to use
-#     better logic for determining movement patterns anyway...)
-#   - Actually, maybe don't worry too much, because this is actually only run at the start.
+# - Make get_surfaces_in_jump_and_fall_range more efficient? (force run it
+#   every frame to ensure no lag)
+#   - Scrap previous function; just use bounding box intersection (since I'm
+#     going to need to use better logic for determining movement patterns
+#     anyway...)
+#   - Actually, maybe don't worry too much, because this is actually only run
+#     at the start.
 #
-# - Add logic to Player when calculating touched edges to check that the collider is a stationary
-#   TileMap object
+# - Add logic to Player when calculating touched edges to check that the
+#   collider is a stationary TileMap object.
 #
-# - Figure out how to configure input names/mappings (or just add docs specifying that the
-#   consumer must use these input names?)
+# - Figure out how to configure input names/mappings (or just add docs
+#   specifying that the consumer must use these input names?).
 # - Start adding networking support.
 # - Finish adding tests.
 #
-# - Add an early-cutoff mechanism to A* for paths that deviate too far from straight-line.
-#   Otherwise, it will check every connecected surface before knowing that a destination cannot be
-#   reached.
+# - Add an early-cutoff mechanism to A* for paths that deviate too far from
+#   straight-line. Otherwise, it will check every connecected surface before
+#   knowing that a destination cannot be reached.
 #   - Or look at number of surfaces visited instead of straight-line deviation?
 #   - Cons:
 #     - Can miss valid paths if they deviate too far.
-# - OR, use djikstra's algorithm, and always store every path to/from every other surface?
+# - OR, use djikstra's algorithm, and always store every path to/from every
+#   other surface?
 #   - Cons:
 #     - Takes more space (maybe ok?).
 #     - Too expensive if the map ever changes dynamically.
 #       - Unless I have a way of localizing changes.
 # 
-# - Update things to support falling from the center of fall-through surfaces (consider the whole
-#   surface, rather than just the ends).
+# - Update things to support falling from the center of fall-through surfaces
+#   (consider the whole surface, rather than just the ends).
 # 
-# - Refactor the movement/navigation system to support more custom behaviors (e.g., some classic
-#   video game movements, like walking to the edge and then turning around, circling the entire
-#   circumference, bouncing forward, etc.).
+# - Refactor the movement/navigation system to support more custom behaviors
+#   (e.g., some classic video game movements, like walking to the edge and then
+#   turning around, circling the entire circumference, bouncing forward, etc.).
 
 
-# FIXME: (old notes from jump_from_platform_movement) SUB-MASTER LIST ***************
+# FIXME: (old notes from jump_from_platform_movement) SUB-MASTER LIST *********
 # - Add support for specifying a required min/max end-x-velocity.
 #   - More notes in the backtracking method.
 # - Test support for specifying a required min/max end-x-velocity.
@@ -137,32 +150,36 @@ class_name PlatformGraph
 # 
 # - LEFT OFF HERE: Implement/test edge-traversal movement:
 #   - Test the logic for moving along a path.
-#   - Add support for sending the CPU to a click target (configured in the specific level).
-#   - Add support for picking random surfaces or points-in-space to move the CPU to; resetting
-#        to a new point after the CPU reaches the old point.
-#     - Implement this as an alternative to ClickToNavigate (actually, support both running at the
-#       same time).
-#     - It will need to listen for when the navigator has reached the destination though (make sure
-#       that signal is emitted).
+#   - Add support for sending the CPU to a click target (configured in the
+#     specific level).
+#   - Add support for picking random surfaces or points-in-space to move the
+#     CPU to; resetting to a new point after the CPU reaches the old point.
+#     - Implement this as an alternative to ClickToNavigate (actually, support
+#       both running at the same time).
+#     - It will need to listen for when the navigator has reached the
+#       destination though (make sure that signal is emitted).
 # - LEFT OFF HERE: Create a demo level to showcase lots of interesting edges.
 # - LEFT OFF HERE: Check for other obvious false negative edges.
 # - LEFT OFF HERE: Debug why discrete movement trajectories are incorrect.
-#   - Discrete trajectories are definitely peaking higher; should we cut the jump button sooner?
-#   - Not considering continous max vertical velocity might contribute to discrete vertical
-#     movement stopping short.
+#   - Discrete trajectories are definitely peaking higher; should we cut the
+#     jump button sooner?
+#   - Not considering continous max vertical velocity might contribute to
+#     discrete vertical movement stopping short.
 # - LEFT OFF HERE: Debug/stress-test intermediate collision scenarios.
 #   - After fixing max vertical velocity, is there anything else I can boost?
-# - LEFT OFF HERE: Debug why check_instructions_for_collision fails with collisions (render better
-#   annotations?).
+# - LEFT OFF HERE: Debug why check_instructions_for_collision fails with
+#   collisions (render better annotations?).
 # - LEFT OFF HERE: Add squirrel animation.
 # 
 # - Debugging:
-#   - Would it help to add some quick and easy annotation helpers for temp debugging that I can
-#     access on global (or wherever) and just tell to render dots/lines/circles?
-#   - Then I could use that to render all sorts of temp calculation stuff from this file.
+#   - Would it help to add some quick and easy annotation helpers for temp
+#     debugging that I can access on global (or wherever) and just tell to
+#     render dots/lines/circles?
+#   - Then I could use that to render all sorts of temp calculation stuff from
+#     this file.
 #   - Add an annotation for tracing the players recent center positions.
-#   - Try rendering a path for trajectory that's closer to the calculations for parabolic motion
-#     instead of the resulting instruction positions?
+#   - Try rendering a path for trajectory that's closer to the calculations for
+#     parabolic motion instead of the resulting instruction positions?
 #     - Might help to see the significance of the difference.
 #     - Might be able to do this with smaller step sizes?
 # 
@@ -173,78 +190,91 @@ class_name PlatformGraph
 #     - Solution: We should always be allowed to hit ceiling surfaces again.
 #       - Which surfaces _aren't_ we allowed to hit again?
 #         - floor, left_wall, right_wall
-#       - Important: Double-check that if collision clips a static-collidable corner, that the
-#         correct surface is returned
-# - Problem: If we allow hitting a ceiling surface repeatedly, what happens if a jump rise cannot
-#   get around it (cannot move horizontally far enough during the rise)?
-#   - Solution: Afer calculating waypoints for a surface collision, if it's a ceiling surface,
-#     check whether the time to move horizontally exceeds the time to move upward for either
-#     waypoint. If so, abandon that traversal (remove the waypoint from the array before
-#     calling the sub function).
-# - Optimization: We should never consider increased-height backtracking from hitting a ceiling
-#   surface.
+#       - Important: Double-check that if collision clips a static-collidable
+#         corner, that the correct surface is returned
+# - Problem: If we allow hitting a ceiling surface repeatedly, what happens if
+#   a jump rise cannot get around it (cannot move horizontally far enough
+#   during the rise)?
+#   - Solution: Afer calculating waypoints for a surface collision, if it's a
+#     ceiling surface, check whether the time to move horizontally exceeds the
+#     time to move upward for either waypoint. If so, abandon that traversal
+#     (remove the waypoint from the array before calling the sub function).
+# - Optimization: We should never consider increased-height backtracking from
+#   hitting a ceiling surface.
 # 
 # - Create a pause menu and a level switcher.
-# - Create some sort of configuration for specifying a level as well as the set of annotations to use.
+# - Create some sort of configuration for specifying a level as well as the set
+#   of annotations to use.
 #   - Actually use this from the menu's level switcher.
 #   - Or should the level itself specify which annotations to use?
-# - Adapt one of the levels to just render a human player and then the annotations for all edges
-#   that our algorithm thinks the human player can traverse.
-#   - Try to render all of the interesting edge pairs that I think I should test for.
+# - Adapt one of the levels to just render a human player and then the
+#   annotations for all edges that our algorithm thinks the human player can
+#   traverse.
+#   - Try to render all of the interesting edge pairs that I think I should
+#     test for.
 # 
-# - Step through and double-check each return value parameter individually through the recursion,
-#   and each input parameter.
+# - Step through and double-check each return value parameter individually
+#   through the recursion, and each input parameter.
 # 
 # - Optimize a bit for collisions with vertical surfaces:
-#   - For the top waypoint, change the waypoint position to instead use the far side of the
-#     adjacent top-side/floor surface.
-#   - This probably means I should store adjacent Surfaces when originally parsing the Surfaces.
+#   - For the top waypoint, change the waypoint position to instead use the far
+#     side of the adjacent top-side/floor surface.
+#   - This probably means I should store adjacent Surfaces when originally
+#     parsing the Surfaces.
 # - Step through all parts and re-check for correctness.
-# - Account for half-width/height offset needed to clear the edge of B (if possible).
+# - Account for half-width/height offset needed to clear the edge of B (if
+#   possible).
 # - Also, account for the half-width/height offset needed to not fall onto A.
 # - Include a margin around waypoints and land position.
-# - Allow for the player to bump into walls/ceiling if they could still reach the land point
-#   afterward (will need to update logic to not include margin when accounting for these hits).
-# - Update the instructions calculations to consider actual discrete timesteps rather than
-#   using continuous algorithms.
-# - Share per-frame state updates logic between the instruction calculations and actual Player
-#   movements.
-# - Problem: We need to make sure that we still have enough momementum left once we hit the target
-#   position to actually cause us to grab on to the target surface.
-#   - Solution: Add support for ensuring a minimum normal-direction speed at the end of the jump.
-#     - Faster is probably always better, since efficient/quick movements are better.
+# - Allow for the player to bump into walls/ceiling if they could still reach
+#   the land point afterward (will need to update logic to not include margin
+#   when accounting for these hits).
+# - Update the instructions calculations to consider actual discrete timesteps
+#   rather than using continuous algorithms.
+# - Share per-frame state updates logic between the instruction calculations
+#   and actual Player movements.
+# - Problem: We need to make sure that we still have enough momementum left
+#   once we hit the target position to actually cause us to grab on to the
+#   target surface.
+#   - Solution: Add support for ensuring a minimum normal-direction speed at
+#     the end of the jump.
+#     - Faster is probably always better, since efficient/quick movements are
+#       better.
 # 
-# - Problem: All of the edge calculations will allow the slow-rise gravity to also be used for
-#   the downward portion of the jump.
+# - Problem: All of the edge calculations will allow the slow-rise gravity to
+#   also be used for the downward portion of the jump.
 #   - Either update Player controllers to also allow that,
 #   - or update all relevant edge calculation logic.
 # 
-# - Make some diagrams in InkScape with surfaces, trajectories, and waypoints to demonstrate
-#   algorithm traversal
+# - Make some diagrams in InkScape with surfaces, trajectories, and waypoints
+#   to demonstrate algorithm traversal
 #   - Label/color-code parts to demonstrate separate traversal steps
 # - Make the 144-cell diagram in InkScape and add to docs.
 # - Storing possibly 9 edges from A to B.
 # 
 # FIXME: C:
-# - Set the destination_waypoint min_velocity_x and max_velocity_x at the start, in order to
-#   latch onto the target surface.
+# - Set the destination_waypoint min_velocity_x and max_velocity_x at the
+#   start, in order to latch onto the target surface.
 #   - Also add support for specifying min/max y velocities for this?
 # 
 # FIXME: B:
-# - Should we more explicity re-use all horizontal steps from before the jump button was released?
-#   - It might simplify the logic for checking for previously collided surfaces, and make things
-#     more efficient.
+# - Should we more explicity re-use all horizontal steps from before the jump
+#   button was released?
+#   - It might simplify the logic for checking for previously collided
+#     surfaces, and make things more efficient.
 # 
-# FIXME: B: Check if we need to update following waypoints when creating a new one:
-# - Unfortunately, it is possible that the creation of a new intermediate waypoint could
-#   invalidate the actual_velocity_x for the following waypoint(s). A fix for this would be
-#   to first recalculate the min/max x velocities for all following waypoints in forward
-#   order, and then recalculate the actual x velocity for all following waypoints in reverse
+# FIXME: B: Check if we need to update following waypoints when creating a new
+#   one:
+# - Unfortunately, it is possible that the creation of a new intermediate
+#   waypoint could invalidate the actual_velocity_x for the following
+#   waypoint(s). A fix for this would be to first recalculate the min/max x
+#   velocities for all following waypoints in forward order, and then
+#   recalculate the actual x velocity for all following waypoints in reverse
 #   order.
 # 
 # FIXME: B: 
-# - Make edge-calc annotations usable at run time, by clicking on the start and end positions to
-#   check.
+# - Make edge-calc annotations usable at run time, by clicking on the start and
+#   end positions to check.
 # 
 
 
@@ -426,8 +456,8 @@ var surfaces_set: Dictionary
 # Dictionary<Surface, Array<PositionAlongSurface>>
 var surfaces_to_outbound_nodes: Dictionary
 
-# Intra-surface edges are not calculated and stored ahead of time; they're only calculated at run
-# time when navigating a specific path.
+# Intra-surface edges are not calculated and stored ahead of time; they're only
+# calculated at run time when navigating a specific path.
 # 
 # Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface, Edge>>
 var nodes_to_nodes_to_edges: Dictionary
@@ -470,16 +500,16 @@ func _init( \
 func find_path( \
         origin: PositionAlongSurface, \
         destination: PositionAlongSurface) -> PlatformGraphPath:
-    # TODO: Add an early-cutoff mechanism for paths that deviate too far from straight-line.
-    #       Otherwise, this will check every connecected surface before knowing that a destination
-    #       cannot be reached.
+    # TODO: Add an early-cutoff mechanism for paths that deviate too far from
+    #       straight-line. Otherwise, this will check every connecected surface
+    #       before knowing that a destination cannot be reached.
     
     var origin_surface := origin.surface
     var destination_surface := destination.surface
     
     if origin_surface == destination_surface:
-        # If the we are simply trying to get to a different position on the same surface, then we
-        # don't need A*.
+        # If the we are simply trying to get to a different position on the
+        # same surface, then we don't need A*.
         var edges := [IntraSurfaceEdge.new( \
                 origin, \
                 destination, \
@@ -513,12 +543,13 @@ func find_path( \
         
         ### Record intra-surface edges.
         
-        # If we reached the destination surface, record a temporary intra-surface edge to the
-        # destination from this current_node.
+        # If we reached the destination surface, record a temporary
+        # intra-surface edge to the destination from this current_node.
         if current_node.surface == destination_surface:
             next_node = destination
             new_actual_weight = current_weight + \
-                    current_node.target_point.distance_to(next_node.target_point)
+                    current_node.target_point.distance_to( \
+                            next_node.target_point)
             _record_frontier( \
                     current_node, \
                     next_node, \
@@ -527,21 +558,23 @@ func find_path( \
                     nodes_to_previous_nodes, \
                     nodes_to_weights, \
                     frontier)
-            # We don't need to consider any additional edges from this node, since they'd
-            # necessarily be less direct than this intra-surface edge that we just recorded.
+            # We don't need to consider any additional edges from this node,
+            # since they'd necessarily be less direct than this intra-surface
+            # edge that we just recorded.
             continue
         
-        # Only consider the out-bound nodes of the current surface if we haven't already considered
-        # them (otherwise, we can end up with multiple adjacent intra-surface edges in the same
-        # path).
+        # Only consider the out-bound nodes of the current surface if we
+        # haven't already considered them (otherwise, we can end up with
+        # multiple adjacent intra-surface edges in the same path).
         if !explored_surfaces.has(current_node.surface):
             explored_surfaces[current_node.surface] = true
             
-            # Record temporary intra-surface edges from the current node to each other node on the
-            # same surface.
+            # Record temporary intra-surface edges from the current node to
+            # each other node on the same surface.
             for next_node in surfaces_to_outbound_nodes[current_node.surface]:
                 new_actual_weight = current_weight + \
-                        current_node.target_point.distance_to(next_node.target_point)
+                        current_node.target_point.distance_to( \
+                                next_node.target_point)
                 _record_frontier( \
                         current_node, \
                         next_node, \
@@ -557,8 +590,8 @@ func find_path( \
             # There are no inter-surface edges from this node.
             continue
         
-        # Iterate through each inter-surface neighbor node, and record their weights, paths, and
-        # priorities.
+        # Iterate through each inter-surface neighbor node, and record their
+        # weights, paths, and priorities.
         nodes_to_edges_for_current_node = nodes_to_nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
             next_edge = nodes_to_edges_for_current_node[next_node]
@@ -576,7 +609,8 @@ func find_path( \
     
     var edges := []
     current_node = destination
-    var previous_node: PositionAlongSurface = nodes_to_previous_nodes.get(current_node)
+    var previous_node: PositionAlongSurface = \
+            nodes_to_previous_nodes.get(current_node)
     
     if previous_node == null:
         # The destination cannot be reached form the origin.
@@ -586,8 +620,9 @@ func find_path( \
         if nodes_to_previous_nodes[previous_node] == null or edges.empty():
             # A terminal intra-surface edge.
             # 
-            # The first and last edge are temporary and extend from/to the origin/destination,
-            # which are not aligned with normal node positions.
+            # The first and last edge are temporary and extend from/to the
+            # origin/destination, which are not aligned with normal node
+            # positions.
             next_edge = IntraSurfaceEdge.new( \
                     previous_node, \
                     current_node, \
@@ -596,8 +631,8 @@ func find_path( \
         elif previous_node.surface == current_node.surface:
             # An intermediate intra-surface edge.
             # 
-            # The previous node is on the same surface as the current node, so we create an
-            # intra-surface edge.
+            # The previous node is on the same surface as the current node, so
+            # we create an intra-surface edge.
             next_edge = IntraSurfaceEdge.new( \
                     previous_node, \
                     current_node, \
@@ -616,7 +651,8 @@ func find_path( \
     
     return PlatformGraphPath.new(edges)
 
-# Helper function for find_path. This records new neighbor nodes for the given node.
+# Helper function for find_path. This records new neighbor nodes for the given
+# node.
 static func _record_frontier( \
         current: PositionAlongSurface, \
         next: PositionAlongSurface, \
@@ -625,7 +661,8 @@ static func _record_frontier( \
         nodes_to_previous_nodes: Dictionary, \
         nodes_to_weights: Dictionary, \
         frontier: PriorityQueue) -> void:
-    if !nodes_to_weights.has(next) or new_actual_weight < nodes_to_weights[next]:
+    if !nodes_to_weights.has(next) or \
+            new_actual_weight < nodes_to_weights[next]:
         # We found a new or cheaper path to this next node, so record it.
         
         # Record the path to this node.
@@ -634,26 +671,28 @@ static func _record_frontier( \
         # Record this node's weight.
         nodes_to_weights[next] = new_actual_weight
         
-        var heuristic_weight = next.target_point.distance_to(destination.target_point)
+        var heuristic_weight = \
+                next.target_point.distance_to(destination.target_point)
         
         # Add this node to the frontier with a priority.
         var priority = new_actual_weight + heuristic_weight
         frontier.insert(priority, next)
 
-# Calculates and stores the edges between surface nodes that this player type can traverse.
+# Calculates and stores the edges between surface nodes that this player type
+# can traverse.
 # 
-# Intra-surface edges are not calculated and stored ahead of time; they're only calculated at run
-# time when navigating a specific path.
+# Intra-surface edges are not calculated and stored ahead of time; they're only
+# calculated at run time when navigating a specific path.
 func _calculate_nodes_and_edges( \
         surfaces_set: Dictionary, \
         player_params: PlayerParams, \
         debug_params: Dictionary) -> void:
-    ###################################################################################
+    ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     if debug_params.has("limit_parsing") and \
             player_params.name != debug_params.limit_parsing.player_name:
         return
-    ###################################################################################
+    ###########################################################################
     
     var surfaces_in_fall_range_set := {}
     var surfaces_in_jump_range_set := {}
@@ -681,26 +720,27 @@ func _calculate_nodes_and_edges( \
                 surfaces_in_jump_range_set, \
                 surface)
         
-        for movement_calculator in player_params.movement_calculators:
-            ###################################################################################
+        for edge_calculator in player_params.edge_calculators:
+            ###################################################################
             # Allow for debug mode to limit the scope of what's calculated.
             if debug_params.has("limit_parsing") and \
-                    debug_params.limit_parsing.has("movement_calculator") and \
-                    movement_calculator.name != debug_params.limit_parsing.movement_calculator:
+                    debug_params.limit_parsing.has("edge_calculator") and \
+                    edge_calculator.edge_type != \
+                            debug_params.limit_parsing.edge_type:
                 continue
-            ###################################################################################
+            ###################################################################
             
-            if movement_calculator.get_can_traverse_from_surface(surface):
+            if edge_calculator.get_can_traverse_from_surface(surface):
                 previous_size = edges.size()
                 
                 # FIXME: B: REMOVE
-                movement_params.gravity_fast_fall *= \
-                        EdgeTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-                movement_params.gravity_slow_rise *= \
-                        EdgeTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                movement_params.gravity_fast_fall *= EdgeTrajectoryUtils \
+                        .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                movement_params.gravity_slow_rise *= EdgeTrajectoryUtils \
+                        .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 
                 # Calculate the inter-surface edges.
-                movement_calculator.get_all_inter_surface_edges_from_surface( \
+                edge_calculator.get_all_inter_surface_edges_from_surface( \
                         edges, \
                         failed_edge_attempts, \
                         collision_params, \
@@ -709,10 +749,10 @@ func _calculate_nodes_and_edges( \
                         surface)
                 
                 # FIXME: B: REMOVE
-                movement_params.gravity_fast_fall /= \
-                        EdgeTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-                movement_params.gravity_slow_rise /= \
-                        EdgeTrajectoryUtils.GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                movement_params.gravity_fast_fall /= EdgeTrajectoryUtils \
+                        .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+                movement_params.gravity_slow_rise /= EdgeTrajectoryUtils \
+                        .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 
                 # Remove any used surfaces from consideration.
                 for i in range(previous_size, edges.size()):
@@ -767,8 +807,8 @@ static func _dedup_node( \
     var cell_id := _node_to_cell_id(node)
     
     if grid_cell_to_node.has(cell_id):
-        # If we already have a node in this position, then replace the reference for this
-        # edge to instead use this other node instance.
+        # If we already have a node in this position, then replace the
+        # reference for this edge to instead use this other node instance.
         node = grid_cell_to_node[cell_id]
     else:
         # If we don't yet have a node in this position, then record this node.
@@ -776,26 +816,30 @@ static func _dedup_node( \
     
     return node
 
-# Get a string representation for the grid cell that the given node corresponds to.
+# Get a string representation for the grid cell that the given node corresponds
+# to.
 #
-# - Before considering each position, subtract x and y by CLUSTER_CELL_HALF_SIZE, since positions
-#   are likely to be aligned with cell boundaries, which would make cell assignment less
-#   predictable.
-# - False negatives for node deduplication should be unlikely, but it should also be ok when it
-#   does happen. It'll just result in a little more storage.
+# - Before considering each position, subtract x and y by
+#   CLUSTER_CELL_HALF_SIZE, since positions are likely to be aligned with cell
+#   boundaries, which would make cell assignment less predictable.
+# - False negatives for node deduplication should be unlikely, but it should
+#   also be ok when it does happen. It'll just result in a little more storage.
 static func _node_to_cell_id(node: PositionAlongSurface) -> String:
     return "%s,%s,%s" % [node.surface.side, \
-            floor((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int, \
-            floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / CLUSTER_CELL_SIZE) as int]
+            floor((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / \
+                    CLUSTER_CELL_SIZE) as int, \
+            floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / \
+                    CLUSTER_CELL_SIZE) as int]
 
 func _get_surfaces_in_jump_and_fall_range( \
         surfaces_in_fall_range_result_set: Dictionary, \
         surfaces_in_jump_range_result_set: Dictionary, \
         origin_surface: Surface) -> void:
-    # TODO: Update this to support falling from the center of fall-through surfaces (consider the
-    #       whole surface, rather than just the ends).
+    # TODO: Update this to support falling from the center of fall-through
+    #       surfaces (consider the whole surface, rather than just the ends).
     
-    # Get all surfaces that are within fall range from either end of the origin surface.
+    # Get all surfaces that are within fall range from either end of the origin
+    # surface.
     FallMovementUtils.find_surfaces_in_fall_range_from_surface( \
             movement_params, \
             surfaces_set, \
@@ -815,13 +859,15 @@ static func _get_surfaces_in_jump_range( \
         target_surface: Surface, \
         other_surfaces_set: Dictionary) -> void:
     var max_horizontal_jump_distance := \
-            movement_params.get_max_horizontal_jump_distance(target_surface.side)
+            movement_params.get_max_horizontal_jump_distance( \
+                    target_surface.side)
     
-    var expanded_target_bounding_box := target_surface.bounding_box.grow_individual( \
-            max_horizontal_jump_distance, \
-            movement_params.max_upward_jump_distance, \
-            max_horizontal_jump_distance, \
-            0.0)
+    var expanded_target_bounding_box := \
+            target_surface.bounding_box.grow_individual( \
+                    max_horizontal_jump_distance, \
+                    movement_params.max_upward_jump_distance, \
+                    max_horizontal_jump_distance, \
+                    0.0)
     
     # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE
 #    if target_surface.bounding_box.position == Vector2(128, 64):

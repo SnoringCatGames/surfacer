@@ -59,6 +59,8 @@ func find_and_expand_controller( \
 func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
+    # TODO: Create separate metadata classes for InspectorSearchType metadata,
+    #       rather than relying on these asserts here.
     match search_type:
         InspectorSearchType.EDGE:
             assert(metadata.has("origin_surface") and \

@@ -163,19 +163,19 @@ func set_up_level(data: Dictionary) -> void:
     surface_parser = level.surface_parser
     space_state = level.get_world_2d().direct_space_state
     
-    for movement_calculator in player.movement_calculators:
-        if movement_calculator is ClimbDownWallToFloorCalculator:
-            climb_down_wall_to_floor_calculator = movement_calculator
-        elif movement_calculator is ClimbOverWallToFloorCalculator:
-            climb_over_wall_to_floor_calculator = movement_calculator
-        elif movement_calculator is FallFromFloorCalculator:
-            fall_from_floor_calculator = movement_calculator
-        elif movement_calculator is FallFromWallCalculator:
-            fall_from_wall_calculator = movement_calculator
-        elif movement_calculator is JumpInterSurfaceCalculator:
-            jump_inter_surface_calculator = movement_calculator
-        elif movement_calculator is WalkToAscendWallFromFloorCalculator:
-            walk_to_ascend_wall_from_floor_calculator = movement_calculator
+    for edge_calculator in player.edge_calculators:
+        if edge_calculator is ClimbDownWallToFloorCalculator:
+            climb_down_wall_to_floor_calculator = edge_calculator
+        elif edge_calculator is ClimbOverWallToFloorCalculator:
+            climb_over_wall_to_floor_calculator = edge_calculator
+        elif edge_calculator is FallFromFloorCalculator:
+            fall_from_floor_calculator = edge_calculator
+        elif edge_calculator is FallFromWallCalculator:
+            fall_from_wall_calculator = edge_calculator
+        elif edge_calculator is JumpInterSurfaceCalculator:
+            jump_inter_surface_calculator = edge_calculator
+        elif edge_calculator is WalkToAscendWallFromFloorCalculator:
+            walk_to_ascend_wall_from_floor_calculator = edge_calculator
         else:
             Utils.error()
     assert(climb_down_wall_to_floor_calculator != null)

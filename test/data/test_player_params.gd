@@ -69,7 +69,7 @@ func _init() -> void:
         WallWalkAction.NAME,
     ]
     
-    movement_calculator_names = [
+    edge_calculator_names = [
         ClimbOverWallToFloorCalculator.NAME,
         FallFromWallCalculator.NAME,
         FallFromFloorCalculator.NAME,

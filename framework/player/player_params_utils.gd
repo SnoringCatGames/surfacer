@@ -8,13 +8,13 @@ static func create_player_params( \
     _calculate_dependent_movement_params(movement_params)
     _check_movement_params(movement_params)
     
-    var movement_calculators := _get_movement_calculators(movement_params, global)
+    var edge_calculators := _get_edge_calculators(movement_params, global)
     var action_handlers := _get_action_handlers(movement_params, global)
 
     return PlayerParams.new( \
             movement_params.name, \
             movement_params, \
-            movement_calculators, \
+            edge_calculators, \
             action_handlers)
 
 # Array<PlayerActionHandler>
@@ -36,20 +36,20 @@ static func _get_action_handlers( \
     return action_handlers
 
 # Array<Movement>
-static func _get_movement_calculators( \
+static func _get_edge_calculators( \
         movement_params: MovementParams, \
         global) -> Array:
-    var names := movement_params.movement_calculator_names
+    var names := movement_params.edge_calculator_names
     
-    var movement_calculators := []
-    movement_calculators.resize(names.size())
+    var edge_calculators := []
+    edge_calculators.resize(names.size())
     
     var name: String
     for i in range(names.size()):
         name = names[i]
-        movement_calculators[i] = global.EDGE_MOVEMENTS[name]
+        edge_calculators[i] = global.EDGE_MOVEMENTS[name]
     
-    return movement_calculators
+    return edge_calculators
 
 static func _calculate_dependent_movement_params(movement_params: MovementParams) -> void:
     movement_params.gravity_slow_rise = \

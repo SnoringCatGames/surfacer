@@ -65,16 +65,109 @@ func set_graphs(graphs: Array) -> void:
         populate()
 
 func _select_initial_item() -> void:
-    var player_to_debug: String = \
-            global.DEBUG_PARAMS.limit_parsing.player_name if \
-            global.DEBUG_PARAMS.has("limit_parsing") and \
-                    global.DEBUG_PARAMS.limit_parsing.has("player_name") else \
-            null
-    if player_to_debug != null:
-        _trigger_find_and_expand_controller( \
-                player_to_debug, \
-                InspectorSearchType.EDGES_TOP_LEVEL_GROUP, \
-                {})
+    if !global.DEBUG_PARAMS.has("limit_parsing") or \
+            !global.DEBUG_PARAMS.limit_parsing.has("player_name"):
+        # Don't select anything if we don't know the player to target.
+        return
+    
+    var limit_parsing: Dictionary = global.DEBUG_PARAMS.limit_parsing
+    var player_name: String = limit_parsing.player_name
+    
+    if limit_parsing.has("edge") and \
+            limit_parsing.edge.has("origin"):
+        var graph: PlatformGraph = graph_item_controllers[player_name].graph
+        var debug_edge: Dictionary = limit_parsing.edge
+        var debug_origin: Dictionary = debug_edge.origin
+        
+        var origin_start_vertex: Vector2 = \
+                debug_origin.surface_start_vertex if \
+                debug_origin.has("surface_start_vertex") else \
+                Vector2.INF
+        var origin_end_vertex: Vector2 = \
+                debug_origin.surface_end_vertex if \
+                debug_origin.has("surface_end_vertex") else \
+                Vector2.INF
+        var origin_surface := _find_matching_surface( \
+                origin_start_vertex, \
+                origin_end_vertex, \
+                graph)
+        
+        if origin_surface != null:
+            var destination_surface: Surface
+            var debug_destination: Dictionary
+            if debug_edge.has("destination"):
+                debug_destination = debug_edge.destination
+                var destination_start_vertex: Vector2 = \
+                        debug_destination.surface_start_vertex if \
+                        debug_destination.has("surface_start_vertex") else \
+                        Vector2.INF
+                var destination_end_vertex: Vector2 = \
+                        debug_destination.surface_end_vertex if \
+                        debug_destination.has("surface_end_vertex") else \
+                        Vector2.INF
+                destination_surface = _find_matching_surface( \
+                        destination_start_vertex, \
+                        destination_end_vertex, \
+                        graph)
+                
+                # TODO: Add support for searching for:
+                #       - InspectorItemType.DESTINATION_SURFACE
+                #       - InspectorItemType.EDGE_TYPE_IN_SURFACES_GROUP
+                
+                # Search for the matching edge item.
+                if debug_origin.has("position") and \
+                        debug_destination.has("position") and \
+                        limit_parsing.has("edge_type"):
+                    _select_canonical_edge_or_edge_attempt_item_controller( \
+                            origin_surface, \
+                            destination_surface, \
+                            debug_origin.position, \
+                            debug_destination.position, \
+                            limit_parsing.edge_type, \
+                            graph)
+                    return
+            
+            # Search for the matching origin surface item.
+            _select_canonical_surface_item_controller( \
+                    origin_surface, \
+                    graph)
+            return
+    
+    # TODO: Add support for search for:
+    #       - InspectorItemType.FLOORS
+    #       - InspectorItemType.LEFT_WALLS
+    #       - InspectorItemType.RIGHT_WALLS
+    #       - InspectorItemType.CEILINGS
+    
+    # By default, just select the top-level edges group.
+    _trigger_find_and_expand_controller( \
+            player_name, \
+            InspectorSearchType.EDGES_TOP_LEVEL_GROUP, \
+            {})
+
+func _find_matching_surface( \
+        start_vertex: Vector2, \
+        end_vertex: Vector2, \
+        graph: PlatformGraph) -> Surface:
+    if start_vertex != Vector2.INF or \
+            end_vertex != Vector2.INF:
+        var does_start_vertex_match: bool
+        var does_end_vertex_match: bool
+        var surface: Surface
+        for surface in graph.surfaces_set:
+            does_start_vertex_match = start_vertex == Vector2.INF or \
+                    Geometry.are_points_equal_with_epsilon( \
+                            surface.first_point, \
+                            start_vertex, \
+                            0.1)
+            does_end_vertex_match = end_vertex == Vector2.INF or \
+                    Geometry.are_points_equal_with_epsilon( \
+                            surface.last_point, \
+                            end_vertex, \
+                            0.1)
+            if does_start_vertex_match and does_end_vertex_match:
+                return surface
+    return null
 
 func _on_tree_item_selected() -> void:
     var item := get_selected()

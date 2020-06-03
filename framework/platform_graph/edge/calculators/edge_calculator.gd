@@ -221,7 +221,7 @@ static func optimize_edge_jump_position_for_path_helper( \
         previous_velocity_end_x: float, \
         previous_edge: IntraSurfaceEdge, \
         edge: Edge, \
-        edge_movement_calculator: EdgeCalculator) -> void:
+        edge_calculator: EdgeCalculator) -> void:
     # TODO: Refactor this to use a true binary search. Right now it is similar,
     #       but we never move backward once we find a working jump.
     var jump_ratios := [0.0, 0.5, 0.75, 0.875]
@@ -278,7 +278,7 @@ static func optimize_edge_jump_position_for_path_helper( \
             var velocity_start_y := movement_params.jump_boost
             var velocity_start = Vector2(velocity_start_x, velocity_start_y)
             
-            optimized_edge = edge_movement_calculator.calculate_edge( \
+            optimized_edge = edge_calculator.calculate_edge( \
                     null, \
                     collision_params, \
                     jump_position, \
@@ -324,9 +324,9 @@ static func optimize_edge_jump_position_for_path_helper( \
             velocity_start = JumpLandPositionsUtils.get_velocity_start( \
                     movement_params, \
                     jump_position.surface, \
-                    edge_movement_calculator.is_a_jump_calculator)
+                    edge_calculator.is_a_jump_calculator)
             
-            optimized_edge = edge_movement_calculator.calculate_edge( \
+            optimized_edge = edge_calculator.calculate_edge( \
                     null, \
                     collision_params, \
                     jump_position, \
@@ -355,7 +355,7 @@ static func optimize_edge_land_position_for_path_helper( \
         edge_index: int, \
         edge: Edge, \
         next_edge: IntraSurfaceEdge, \
-        edge_movement_calculator: EdgeCalculator) -> void:
+        edge_calculator: EdgeCalculator) -> void:
     # TODO: Refactor this to use a true binary search. Right now it is similar,
     #       but we never move backward once we find a working land.
     var land_ratios := [1.0, 0.5, 0.25, 0.125]
@@ -389,7 +389,7 @@ static func optimize_edge_land_position_for_path_helper( \
                                 next_edge.start_surface, \
                                 movement_params.collider_half_width_height)
             
-            optimized_edge = edge_movement_calculator.calculate_edge( \
+            optimized_edge = edge_calculator.calculate_edge( \
                     null, \
                     collision_params, \
                     edge.start_position_along_surface, \
@@ -437,7 +437,7 @@ static func optimize_edge_land_position_for_path_helper( \
                 # possible optimized land positions aren't valid.
                 return
             
-            optimized_edge = edge_movement_calculator.calculate_edge( \
+            optimized_edge = edge_calculator.calculate_edge( \
                     null, \
                     collision_params, \
                     edge.start_position_along_surface, \

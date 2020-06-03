@@ -8,7 +8,7 @@ var can_grab_ceilings: bool
 var can_grab_floors: bool
 var movement_params: MovementParams
 # Array<EdgeCalculator>
-var movement_calculators: Array
+var edge_calculators: Array
 # Array<Surface>
 var possible_surfaces_set: Dictionary
 var actions_from_previous_frame := PlayerActionState.new()
@@ -60,7 +60,7 @@ func _enter_tree() -> void:
     self.movement_params = player_params.movement_params
     self.current_max_horizontal_speed = \
             player_params.movement_params.max_horizontal_speed_default
-    self.movement_calculators = player_params.movement_calculators
+    self.edge_calculators = player_params.edge_calculators
     self.action_handlers = player_params.action_handlers
     self.pointer_handler = PlayerPointerHandler.new(self)
     add_child(pointer_handler)
