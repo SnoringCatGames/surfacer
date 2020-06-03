@@ -11,8 +11,6 @@ const IS_A_JUMP_CALCULATOR := true
 # - Add support for navigating in the inspector directly to the debug edge
 #   specified in global.DEBUG_STATE.
 # 
-# - Deselect and destroy the tree when panel closes.
-# 
 # - Pick non-random colors for single-annotation items.
 # - Choose something other than red to indicate destination/end, since red is
 #   used for fail.

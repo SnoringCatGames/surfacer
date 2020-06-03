@@ -3,11 +3,7 @@ class_name PlatformGraphInspector
 
 var global
 
-var element_annotator: ElementAnnotator
-
 var inspector_selector: PlatformGraphInspectorSelector
-
-var selection_description: SelectionDescription
 
 # Array<AnnotationElement>
 var current_annotation_elements := []
@@ -18,25 +14,13 @@ var graphs: Array
 # Dictionary<String, PlatformGraphItemController>
 var graph_item_controllers := {}
 
-var tree_root: TreeItem
+var root: TreeItem
 
-var _is_ready := false
+var _should_be_populated := false
 
 var _find_and_expand_controller_recursive_count := 0
 
-func set_graphs(graphs: Array) -> void:
-    _is_ready = false
-    self.graphs = graphs
-    global = $"/root/Global"
-    inspector_selector = PlatformGraphInspectorSelector.new(self)
-    selection_description = global.selection_description
-    global.canvas_layers.annotation_layer.add_child(inspector_selector)
-    _populate_tree()
-    element_annotator = global.element_annotator
-    _is_ready = true
-    call_deferred("_select_initial_item")
-
-func _populate_tree() -> void:
+func _init() -> void:
     hide_root = true
     hide_folding = false
     connect( \
@@ -48,14 +32,37 @@ func _populate_tree() -> void:
             self, \
             "_on_tree_item_expansion_toggled")
     
-    tree_root = create_item()
+    root = create_item()
+
+func _ready() -> void:
+    global = $"/root/Global"
+    inspector_selector = PlatformGraphInspectorSelector.new(self)
+    global.canvas_layers.annotation_layer.add_child(inspector_selector)
+
+func populate() -> void:
+    _should_be_populated = true
     
     for graph in graphs:
         graph_item_controllers[graph.movement_params.name] = \
                 PlatformGraphItemController.new( \
-                        tree_root, \
+                        root, \
                         self, \
                         graph)
+    
+    if !graphs.empty():
+        call_deferred("_select_initial_item")
+
+func clear() -> void:
+    _clear_selection()
+    _should_be_populated = false
+    .clear()
+
+func set_graphs(graphs: Array) -> void:
+    self.graphs = graphs
+    if _should_be_populated:
+        if !self.graphs.empty():
+            clear()
+        populate()
 
 func _select_initial_item() -> void:
     var player_to_debug: String = \
@@ -73,15 +80,13 @@ func _on_tree_item_selected() -> void:
     var item := get_selected()
     var controller: InspectorItemController = item.get_metadata(0)
     
-    for element in current_annotation_elements:
-        element_annotator.erase(element)
+    global.element_annotator.erase_all(current_annotation_elements)
     
     current_annotation_elements = controller.get_annotation_elements()
-    for element in current_annotation_elements:
-        element_annotator.add(element)
+    global.element_annotator.add_all(current_annotation_elements)
     
     if !get_is_find_and_expand_in_progress():
-        selection_description.set_text(controller.get_description())
+        global.selection_description.set_text(controller.get_description())
     
     controller.call_deferred("on_item_selected")
 
@@ -162,7 +167,7 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
                         PlatformGraphInspectorSelector \
                                 .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD:
             _clear_selection()
-            selection_description.set_text( \
+            global.selection_description.set_text( \
                     SelectionDescription.NO_MATCHING_JUMP_LAND_POSITIONS)
             return
     
@@ -222,9 +227,9 @@ func _on_find_and_expand_complete( \
     
     if selection_failure_message != "":
         _clear_selection()
-        selection_description.set_text(selection_failure_message)
+        global.selection_description.set_text(selection_failure_message)
     else:
-        selection_description.set_text(controller.get_description())
+        global.selection_description.set_text(controller.get_description())
 
 func get_is_find_and_expand_in_progress() -> bool:
     return _find_and_expand_controller_recursive_count > 0
@@ -258,8 +263,7 @@ func _clear_selection() -> void:
         item.deselect(0)
     
     # Remove the current annotations.
-    for element in current_annotation_elements:
-        element_annotator.erase(element)
+    global.element_annotator.erase_all(current_annotation_elements)
     current_annotation_elements = []
 
 static func _find_closest_jump_land_positions( \

@@ -16,7 +16,9 @@ const POSITION_Y_OPEN := 0.0
 const POSITION_Y_CLOSED := -PANEL_HEIGHT
 const TOGGLE_DURATION := 0.2
 
-var is_open: bool = Global.UTILITY_PANEL_STARTS_OPEN
+var global
+
+var is_open := false
 
 var _toggle_open_tween: Tween
 
@@ -35,13 +37,16 @@ func _ready() -> void:
     _toggle_open_tween = Tween.new()
     add_child(_toggle_open_tween)
     
-    var global = $"/root/Global"
+    global = $"/root/Global"
     global.platform_graph_inspector = \
             $VBoxContainer/Sections/InspectorContainer/PlatformGraphInspector
     global.legend = \
             $VBoxContainer/Sections/Legend
     global.selection_description = \
             $VBoxContainer/Sections/SelectionDescription
+    
+    if Global.UTILITY_PANEL_STARTS_OPEN:
+        set_is_open(true)
 
 func _initialize_dimensions() -> void:
     self.anchor_left = 1.0
@@ -98,6 +103,11 @@ func _toggle_open() -> void:
     _toggle_open_tween.start()
     
     $VBoxContainer/GearContainer/GearButton.visible = !is_open
+    
+    if is_open:
+        global.platform_graph_inspector.populate()
+    else:
+        global.platform_graph_inspector.clear()
 
 func _set_position_y(value: float) -> void:
     rect_position.y = value
