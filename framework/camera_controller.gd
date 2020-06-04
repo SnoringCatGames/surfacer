@@ -6,37 +6,35 @@ const DEFAULT_CAMERA_ZOOM := 1.5
 const ZOOM_STEP_RATIO := Vector2(0.05, 0.05)
 const PAN_STEP := 32.0
 
-var global
 var _current_camera: Camera2D
 
 var offset: Vector2 setget _set_offset, _get_offset
 var zoom: float setget _set_zoom, _get_zoom
 
 func _ready() -> void:
-    self.global = $"/root/Global"
-    global.camera_controller = self
+    Global.camera_controller = self
 
 func _process(delta: float) -> void:
     if _current_camera != null:
         # Handle zooming.
-        if Input.is_action_pressed("zoom_in"):
+        if InputWrapper.is_action_pressed("zoom_in"):
             print("ZOOM_IN")
             _current_camera.zoom -= _current_camera.zoom * ZOOM_STEP_RATIO
-        elif Input.is_action_pressed("zoom_out"):
+        elif InputWrapper.is_action_pressed("zoom_out"):
             print("ZOOM_OUT")
             _current_camera.zoom += _current_camera.zoom * ZOOM_STEP_RATIO
     
         # Handle Panning.
-        if Input.is_action_pressed("pan_up"):
+        if InputWrapper.is_action_pressed("pan_up"):
             print("PAN_UP")
             _current_camera.offset.y -= PAN_STEP
-        elif Input.is_action_pressed("pan_down"):
+        elif InputWrapper.is_action_pressed("pan_down"):
             print("PAN_DOWN")
             _current_camera.offset.y += PAN_STEP
-        elif Input.is_action_pressed("pan_left"):
+        elif InputWrapper.is_action_pressed("pan_left"):
             print("PAN_LEFT")
             _current_camera.offset.x -= PAN_STEP
-        elif Input.is_action_pressed("pan_right"):
+        elif InputWrapper.is_action_pressed("pan_right"):
             print("PAN_RIGHT")
             _current_camera.offset.x += PAN_STEP
 

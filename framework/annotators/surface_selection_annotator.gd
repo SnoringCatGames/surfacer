@@ -7,7 +7,6 @@ const SELECT_DURATION_SEC := max( \
         ClickAnnotator.CLICK_INNER_DURATION_SEC, \
         ClickAnnotator.CLICK_OUTER_DURATION_SEC)
 
-var global
 var player: Player
 var selection_position_to_animate: PositionAlongSurface = null
 var selection_color: Color
@@ -21,11 +20,8 @@ var is_a_selection_currently_rendered := false
 func _init(player: Player) -> void:
     self.player = player
 
-func _ready() -> void:
-    self.global = $"/root/Global"
-
 func _process(delta: float) -> void:
-    var current_time: float = global.elapsed_play_time_sec
+    var current_time: float = Global.elapsed_play_time_sec
     
     # Has there been a new surface selection?
     if player.last_selection_position != selection_position_to_animate:

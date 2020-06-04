@@ -1,7 +1,44 @@
 extends Tree
 class_name PlatformGraphInspector
 
-var global
+# INSPECTOR STRUCTURE:
+# - Platform graph [player_name]
+#   - Edges [#]
+#     - JUMP_INTER_SURFACE_EDGEs [#]
+#       - [(x,y), (x,y)]
+#         - EDGE_VALID [1]
+#           - 1: Movement is valid.
+#       - ...
+#     - ...
+#   - Surfaces [#]
+#     - FLOORs [#]
+#       - [(x,y), (x,y)]
+#         - _# valid outbound edges_
+#         - _Destination surfaces:_
+#         - FLOOR [(x,y), (x,y)]
+#           - JUMP_INTER_SURFACE_EDGEs [#]
+#             - [(x,y), (x,y)]
+#               - EDGE_VALID [1]
+#                 - 1: Movement is valid.
+#             - ...
+#             - Failed edge calculations [#]
+#               - REASON_FOR_FAILING [(x,y), (x,y)]
+#                 - REASON_FOR_FAILING [#]
+#                   - 1: Step result info
+#                     - 2: Step result info
+#                     - ...
+#                   - ...
+#                 - ...
+#               - ...
+#           - ...
+#         - ...
+#       - ...
+#     - ...
+#   - Global counts
+#     - # total surfaces
+#     - # total edges
+#     - # JUMP_INTER_SURFACE_EDGEs
+#     - ...
 
 var inspector_selector: PlatformGraphInspectorSelector
 
@@ -20,6 +57,10 @@ var _should_be_populated := false
 
 var _find_and_expand_controller_recursive_count := 0
 
+var has_focus := false
+
+var _focused_control: Control
+
 func _init() -> void:
     hide_root = true
     hide_folding = false
@@ -35,9 +76,37 @@ func _init() -> void:
     root = create_item()
 
 func _ready() -> void:
-    global = $"/root/Global"
     inspector_selector = PlatformGraphInspectorSelector.new(self)
-    global.canvas_layers.annotation_layer.add_child(inspector_selector)
+    Global.canvas_layers.annotation_layer.add_child(inspector_selector)
+
+func _process(delta: float) -> void:
+    var next_focused_control := get_focus_owner()
+    if _focused_control != next_focused_control:
+        _focused_control = next_focused_control
+        
+        if _focused_control != null:
+            if _focused_control == self:
+                has_focus = true
+                return
+            
+            var parent := _focused_control.get_parent_control()
+            while parent != null:
+                if parent == self:
+                    has_focus = true
+                    return
+                parent = parent.get_parent_control()
+        
+        has_focus = false
+
+func _gui_input(event: InputEvent) -> void:
+    # Godot seems to have a bug where many clicks in the tree are
+    # false-negatives. This at least prevents them from being consumed as
+    # clicks within the level.
+    accept_event()
+
+func release_focus() -> void:
+    grab_focus()
+    .release_focus()
 
 func populate() -> void:
     _should_be_populated = true
@@ -53,6 +122,7 @@ func populate() -> void:
         call_deferred("_select_initial_item")
 
 func clear() -> void:
+    release_focus()
     _clear_selection()
     _should_be_populated = false
     .clear()
@@ -65,12 +135,12 @@ func set_graphs(graphs: Array) -> void:
         populate()
 
 func _select_initial_item() -> void:
-    if !global.DEBUG_PARAMS.has("limit_parsing") or \
-            !global.DEBUG_PARAMS.limit_parsing.has("player_name"):
+    if !Global.DEBUG_PARAMS.has("limit_parsing") or \
+            !Global.DEBUG_PARAMS.limit_parsing.has("player_name"):
         # Don't select anything if we don't know the player to target.
         return
     
-    var limit_parsing: Dictionary = global.DEBUG_PARAMS.limit_parsing
+    var limit_parsing: Dictionary = Global.DEBUG_PARAMS.limit_parsing
     var player_name: String = limit_parsing.player_name
     
     if limit_parsing.has("edge") and \
@@ -173,13 +243,13 @@ func _on_tree_item_selected() -> void:
     var item := get_selected()
     var controller: InspectorItemController = item.get_metadata(0)
     
-    global.element_annotator.erase_all(current_annotation_elements)
+    Global.element_annotator.erase_all(current_annotation_elements)
     
     current_annotation_elements = controller.get_annotation_elements()
-    global.element_annotator.add_all(current_annotation_elements)
+    Global.element_annotator.add_all(current_annotation_elements)
     
     if !get_is_find_and_expand_in_progress():
-        global.selection_description.set_text(controller.get_description())
+        Global.selection_description.set_text(controller.get_description())
     
     controller.call_deferred("on_item_selected")
 
@@ -190,12 +260,6 @@ func _on_tree_item_expansion_toggled(item: TreeItem) -> void:
         controller.call_deferred("on_item_collapsed")
     else:
         controller.call_deferred("on_item_expanded")
-
-func _unhandled_input(event: InputEvent) -> void:
-    # Godot seems to have a bug where many clicks in the tree are
-    # false-negatives. This at least prevents them from being consumed as
-    # clicks within the level.
-    get_tree().set_input_as_handled()
 
 func select_edge_or_surface( \
         start_position: PositionAlongSurface, \
@@ -260,7 +324,7 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
                         PlatformGraphInspectorSelector \
                                 .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD:
             _clear_selection()
-            global.selection_description.set_text( \
+            Global.selection_description.set_text( \
                     SelectionDescription.NO_MATCHING_JUMP_LAND_POSITIONS)
             return
     
@@ -320,9 +384,9 @@ func _on_find_and_expand_complete( \
     
     if selection_failure_message != "":
         _clear_selection()
-        global.selection_description.set_text(selection_failure_message)
+        Global.selection_description.set_text(selection_failure_message)
     else:
-        global.selection_description.set_text(controller.get_description())
+        Global.selection_description.set_text(controller.get_description())
 
 func get_is_find_and_expand_in_progress() -> bool:
     return _find_and_expand_controller_recursive_count > 0
@@ -356,7 +420,7 @@ func _clear_selection() -> void:
         item.deselect(0)
     
     # Remove the current annotations.
-    global.element_annotator.erase_all(current_annotation_elements)
+    Global.element_annotator.erase_all(current_annotation_elements)
     current_annotation_elements = []
 
 static func _find_closest_jump_land_positions( \

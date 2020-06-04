@@ -41,7 +41,6 @@ const PLAYER_PARAM_CLASSES := [
     preload("res://test/data/test_player_params.gd"),
 ]
 
-var global: Global
 var loading_screen: Node
 var camera_controller: CameraController
 var canvas_layers: CanvasLayers
@@ -49,11 +48,9 @@ var level: Level
 var is_level_ready := false
 
 func _enter_tree() -> void:
-    global = $"/root/Global"
-    
-    global.register_player_actions(PLAYER_ACTION_CLASSES)
-    global.register_edge_movements(EDGE_MOVEMENT_CLASSES)
-    global.register_player_params(PLAYER_PARAM_CLASSES)
+    Global.register_player_actions(PLAYER_ACTION_CLASSES)
+    Global.register_edge_movements(EDGE_MOVEMENT_CLASSES)
+    Global.register_player_params(PLAYER_PARAM_CLASSES)
     
     if Global.IN_TEST_MODE:
         var scene_path := Global.TEST_RUNNER_SCENE_RESOURCE_PATH
@@ -84,7 +81,7 @@ func _process(delta: float) -> void:
     
     if !Global.IN_TEST_MODE and \
             level == null and \
-            global._get_elapsed_play_time_sec() > 0.5:
+            Global._get_elapsed_play_time_sec() > 0.5:
         # Start loading the level and calculating the platform graphs.
         level = Utils.add_scene( \
                 self, \
@@ -92,7 +89,7 @@ func _process(delta: float) -> void:
                 false)
     
     if !is_level_ready and \
-            global._get_elapsed_play_time_sec() > 2.0:
+            Global._get_elapsed_play_time_sec() > 2.0:
         is_level_ready = true
         level.visible = true
         

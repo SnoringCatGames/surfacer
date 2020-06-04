@@ -1,7 +1,6 @@
 extends KinematicBody2D
 class_name Player
 
-var global
 var player_name: String
 var can_grab_walls: bool
 var can_grab_ceilings: bool
@@ -51,9 +50,8 @@ func _init(player_name: String) -> void:
     self.player_name = player_name
 
 func _enter_tree() -> void:
-    self.global = $"/root/Global"
-    var player_params: PlayerParams = global.player_params[player_name]
-    self.level = global.current_level
+    var player_params: PlayerParams = Global.player_params[player_name]
+    self.level = Global.current_level
     self.can_grab_walls = player_params.movement_params.can_grab_walls
     self.can_grab_ceilings = player_params.movement_params.can_grab_ceilings
     self.can_grab_floors = player_params.movement_params.can_grab_floors
@@ -128,14 +126,14 @@ func _set_camera() -> void:
     var camera := Camera2D.new()
     add_child(camera)
     # Register the current camera, so it's globally accessible.
-    global.camera_controller.set_current_camera(camera)
-    global.camera_controller.zoom = CameraController.DEFAULT_CAMERA_ZOOM
+    Global.camera_controller.set_current_camera(camera)
+    Global.camera_controller.zoom = CameraController.DEFAULT_CAMERA_ZOOM
 
 func _init_user_controller_action_source() -> void:
     action_sources.push_back(UserActionSource.new(self, true))
 
 func _init_navigator() -> void:
-    navigator = Navigator.new(self, graph, global)
+    navigator = Navigator.new(self, graph)
     navigation_state = navigator.navigation_state
     action_sources.push_back(navigator.instructions_action_source)
 
@@ -149,7 +147,7 @@ func _physics_process(delta: float) -> void:
     if surface_state.just_left_air:
         print("GRABBED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \
-                global.elapsed_play_time_sec, \
+                Global.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
                 surface_state.grabbed_surface.to_string(), \
@@ -157,7 +155,7 @@ func _physics_process(delta: float) -> void:
     elif surface_state.just_entered_air:
         print("LAUNCHED   :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \
-                global.elapsed_play_time_sec, \
+                Global.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
                 surface_state.previous_grabbed_surface.to_string(), \
@@ -172,7 +170,7 @@ func _physics_process(delta: float) -> void:
             side_str = "WALL"
         print("TOUCHED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \
-                global.elapsed_play_time_sec, \
+                Global.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
                 side_str, \
@@ -188,7 +186,7 @@ func _physics_process(delta: float) -> void:
             _update_surface_state()
     
     actions.delta = delta
-    actions.log_new_presses_and_releases(self, global.elapsed_play_time_sec)
+    actions.log_new_presses_and_releases(self, Global.elapsed_play_time_sec)
     
     # Flip the horizontal direction of the animation according to which way the player is facing.
     if surface_state.horizontal_facing_sign == 1:
@@ -238,11 +236,11 @@ func _update_actions(delta: float) -> void:
         action_source.update( \
                 actions, \
                 actions_from_previous_frame, \
-                global.elapsed_play_time_sec, \
+                Global.elapsed_play_time_sec, \
                 delta, \
                 navigation_state)
     
-    actions.start_dash = _can_dash and Input.is_action_just_pressed("dash")
+    actions.start_dash = _can_dash and InputWrapper.is_action_just_pressed("dash")
 
 # Updates physics and player states in response to the current actions.
 func _process_actions() -> void:

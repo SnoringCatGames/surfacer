@@ -170,9 +170,7 @@ func register_edge_movements(edge_movement_classes: Array) -> void:
 func register_player_params(player_param_classes: Array) -> void:
     var player_params: PlayerParams
     for param_class in player_param_classes:
-        player_params = PlayerParamsUtils.create_player_params( \
-                param_class, \
-                self)
+        player_params = PlayerParamsUtils.create_player_params(param_class)
         self.player_params[player_params.name] = player_params
 
 func _ready() -> void:

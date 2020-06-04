@@ -14,16 +14,12 @@ const ORIGIN_POSITION_RADIUS := 5.0
 const CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD := 10000
 
 var inspector
-var global
 
 var first_target: PositionAlongSurface
 var previous_first_target: PositionAlongSurface
 
 func _init(inspector) -> void:
     self.inspector = inspector
-
-func _ready() -> void:
-    self.global = $"/root/Global"
 
 func _process(delta: float) -> void:
     if first_target != previous_first_target:
@@ -36,21 +32,23 @@ func _unhandled_input(event: InputEvent) -> void:
             !event.pressed and event.control:
         # The user is ctrl+clicking.
         
-        var click_position: Vector2 = global.current_level.get_global_mouse_position()
-        var surface_position := SurfaceParser.find_closest_position_on_a_surface( \
-                click_position, \
-                global.current_player_for_clicks)
+        var click_position: Vector2 = \
+                Global.current_level.get_global_mouse_position()
+        var surface_position := \
+                SurfaceParser.find_closest_position_on_a_surface( \
+                        click_position, \
+                        Global.current_player_for_clicks)
         
         if first_target == null:
             first_target = surface_position
         else:
-            # FIXME: Add support for configuring edge type and graph from radio buttons in the
-            #        inspector.
+            # FIXME: Add support for configuring edge type and graph from radio
+            #        buttons in the inspector.
             inspector.select_edge_or_surface( \
                     first_target, \
                     surface_position, \
                     EdgeType.JUMP_INTER_SURFACE_EDGE, \
-                    global.current_player_for_clicks.graph)
+                    Global.current_player_for_clicks.graph)
             first_target = null
         
     elif event is InputEventKey and \

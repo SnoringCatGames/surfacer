@@ -1,8 +1,6 @@
 extends Node2D
 class_name Level
 
-var global
-
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
 var surface_tile_maps: Array
@@ -15,14 +13,13 @@ var surface_parser: SurfaceParser
 var platform_graphs: Dictionary
 
 func _enter_tree() -> void:
-    self.global = $"/root/Global"
-    global.current_level = self
+    Global.current_level = self
 
 func _ready() -> void:
     var scene_tree := get_tree()
     var space_state := get_world_2d().direct_space_state
     
-    global.space_state = space_state
+    Global.space_state = space_state
     
     # Get references to the TileMaps that define the collision boundaries of
     # this level.
@@ -35,11 +32,17 @@ func _ready() -> void:
     platform_graphs = _create_platform_graphs( \
             surface_parser, \
             space_state, \
-            global.player_params, \
+            Global.player_params, \
             Global.DEBUG_PARAMS)
-    global.platform_graph_inspector.set_graphs(platform_graphs.values())
+    Global.platform_graph_inspector.set_graphs(platform_graphs.values())
     
-    global.is_level_ready = true
+    Global.is_level_ready = true
+
+func _unhandled_input(event: InputEvent) -> void:
+    if event is InputEventMouseButton:
+        # This ensures that pressing arrow keys won't change selections in the
+        # inspector.
+        Global.platform_graph_inspector.release_focus()
 
 static func _create_platform_graphs( \
         surface_parser: SurfaceParser, \
@@ -69,7 +72,7 @@ static func _create_platform_graphs( \
 
 func descendant_physics_process_completed(descendant: Node) -> void:
     if descendant is Player:
-        global.canvas_layers.player_annotators[descendant].check_for_update()
+        Global.canvas_layers.player_annotators[descendant].check_for_update()
 
 func add_player( \
         resource_path: String, \
@@ -115,11 +118,11 @@ func _record_player_reference(is_human_player: bool) -> void:
         else:
             computer_player = player
             player.init_computer_player_state()
-            global.current_player_for_clicks = computer_player
+            Global.current_player_for_clicks = computer_player
         
         # Set up some annotators to help with debugging.
-        global.canvas_layers.create_graph_annotator(graph)
-        global.canvas_layers.create_player_annotator( \
+        Global.canvas_layers.create_graph_annotator(graph)
+        Global.canvas_layers.create_player_annotator( \
                 player, \
                 is_human_player)
         

@@ -1135,6 +1135,7 @@ Geometry="*res://framework/utils/geometry.gd"
 DrawUtils="*res://framework/utils/draw_utils.gd"
 Global="*res://framework/global.gd"
 AnnotationElementDefaults="*res://framework/annotators/annotation_elements/annotation_element_defaults.gd"
+InputWrapper="*res://framework/input_wrapper.gd"
 
 [display]
 

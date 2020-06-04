@@ -6,13 +6,11 @@
 [ext_resource path="res://framework/controls/panels/third_party_licenses_panel.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/main_theme.tres" type="Theme" id=5]
 
-
-
-
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 1, 1, 1, 0.835294 )
 
 [node name="CreditsPanel" type="WindowDialog"]
+visible = true
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -79,44 +77,41 @@ __meta__ = {
 [node name="Control4" type="Control" parent="HBoxContainer/VBoxContainer"]
 margin_top = 62.0
 margin_right = 233.0
-margin_bottom = 67.0
+margin_bottom = 78.0
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.2
+size_flags_stretch_ratio = 0.6
 
-[node name="LinkButton2" type="LinkButton" parent="HBoxContainer/VBoxContainer"]
-margin_top = 71.0
+[node name="Control6" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_top = 82.0
 margin_right = 233.0
-margin_bottom = 125.0
+margin_bottom = 136.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/LinkButton2"]
-margin_top = 18.0
-margin_right = 233.0
-margin_bottom = 42.0
-size_flags_vertical = 1
+[node name="Label" type="LinkButton" parent="HBoxContainer/VBoxContainer/Control6"]
+margin_left = 27.1006
+margin_top = 6.20584
+margin_right = 208.101
+margin_bottom = 32.2058
 text = "Created by Levi Lindsey."
-align = 1
+underline = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LinkButton" type="LinkButton" parent="HBoxContainer/VBoxContainer/LinkButton2"]
-margin_left = 68.1648
-margin_top = 37.3561
-margin_right = 165.165
-margin_bottom = 65.3561
-size_flags_horizontal = 0
+[node name="URL" type="LinkButton" parent="HBoxContainer/VBoxContainer/Control6"]
+margin_left = 59.8734
+margin_top = 27.3824
+margin_right = 172.873
+margin_bottom = 53.3824
 text = "https://levi.dev"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Control5" type="Control" parent="HBoxContainer/VBoxContainer"]
-margin_top = 129.0
+margin_top = 140.0
 margin_right = 233.0
 margin_bottom = 156.0
 size_flags_vertical = 3
+size_flags_stretch_ratio = 0.6
 
 [node name="Control2" type="LinkButton" parent="HBoxContainer/VBoxContainer"]
 margin_top = 160.0
@@ -209,6 +204,8 @@ margin_bottom = 300.0
 size_flags_horizontal = 3
 
 [node name="ThirdPartyLicensesPanel" parent="." instance=ExtResource( 4 )]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/LinkButton2" to="." method="_on_levi_link_pressed"]
+visible = false
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Control6/Label" to="." method="_on_levi_link_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Control6/URL" to="." method="_on_levi_link_pressed"]
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/Control2" to="." method="_on_godot_link_pressed"]
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/Control3/Button" to="." method="_on_third_party_licenses_button_pressed"]

@@ -14,7 +14,6 @@ const PRESELECTION_SURFACE_LENGTH_PADDING := 64.0
 const PRESELECTION_POSITION_INDICATOR_LENGTH := 128.0
 const PRESELECTION_POSITION_INDICATOR_RADIUS := 32.0
 
-var global
 var player: Player
 var preselection_position_to_draw: PositionAlongSurface = null
 var animation_start_time := -PRESELECTION_DURATION_SEC
@@ -29,11 +28,8 @@ var phantom_position_along_surface := PositionAlongSurface.new()
 func _init(player: Player) -> void:
     self.player = player
 
-func _ready() -> void:
-    self.global = $"/root/Global"
-
 func _process(delta: float) -> void:
-    var current_time: float = global.elapsed_play_time_sec
+    var current_time: float = Global.elapsed_play_time_sec
     
     var did_preselection_position_change = \
             preselection_position_to_draw != player.preselection_position

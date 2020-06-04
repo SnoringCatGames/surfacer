@@ -102,7 +102,5 @@ static func add_scene( \
     parent.add_child(node)
     return node
 
-static func get_global_touch_position( \
-        input_event: InputEvent, \
-        global) -> Vector2:    
-    return global.current_level.make_input_local(input_event).position
+static func get_global_touch_position(input_event: InputEvent) -> Vector2:    
+    return Global.current_level.make_input_local(input_event).position

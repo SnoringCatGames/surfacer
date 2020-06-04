@@ -8,44 +8,13 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Pick non-random colors for single-annotation items.
-# - Choose something other than red to indicate destination/end, since red is
-#   used for fail.
-# - Step through and consider whether I want to show any other annotations for
-#   each item.
-# - Step through and consider whether I want to show any other analytic
-#   description children for each item.
-# - Spend some time thinking through the actual timings of the various parts of
-#   calculations (horizontal more than vertical, when possible).
-# 
-# - InspectorItemMetadata:
-#   - Add new methods to PlatformGraphInspector:
-#     - _on_tree_item_expansion_toggled
-#     - find_or_create_canonical_surface_item
-#     - find_or_create_canonical_edge_or_edge_attempt_item
-#   - Refactor other PlatformGraphInspector logic to use these classes.
-#   - For now, ignore/disable auto-step-switching timer.
-#   - For now, auto-expand valid-edge/failed-edge item when selecting from
-#     level clicks.
-# 
-# - Implement edge-step tree items text, selection, and creation.
-# 
-# - Add support for rendering annotations for the selected inspector item.
-#   - draw_annotations
-#   - Do I need to add back references to the corresponding params objects in
-#     the result-metadata objects?
-#   - And also maybe update DrawUtils and where constants are stored.
-#   - And maybe update Colors?
-# 
-# - Add some additional description items under valid and failed edges with
-#   more metadata for debugging.
-# 
-# - Auto expand UtilityPanel, and auto select the top-level edges item in the
-#   PlatformGraphInspector.
-# 
-# - Add TODOs to use easing curves with all annotation animations.
-# 
 # - Create FailedEdgeAttempt results from other edge calculators.
+# 
+# - Phone:
+#   - Touch doesn't dismiss panel.
+#   - Touch doesn't activate gear icon.
+# 
+# - Pick non-random colors for single-annotation items.
 # 
 # - Refactor pre-existing annotator classes to use the new
 #   AnnotationElementType system.
@@ -58,105 +27,19 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Colors class.
 #   - Look for const values scattered throughout.
 # 
-# - Don't automatically expand an item when it is selected.
-# 
-# - Dynamically populate children items and calculate their detailed
-#   debugging/annotation information when expanding a parent item.
-# - Dynamically destroy children items and their detailed debugging/annotaiton
-#   information when collapsing a parent item.
-# 
-# >- Refactor EdgeCalcResult to be re-used for failed calculations as
-#    well.
-#    - Remove edge_attempt_debug_results/step_attempt_debug_results from
-#      EdgeCalcParams/EdgeStepCalcParams.
-#    - Create EdgeCalcResult very early in the process, and plumb it
-#      through as input.
-#    - Decide what state to persist, and what state to re-calculate when
-#      expanding the inspector.
-#      - Re-calculate most everything for failed edges, with one small
-#        exception:
-#        - If we did get deep enough that we thought the jump/land pair might
-#          be valid, but we failed at or after trying to calculate
-#          EdgeCalcParams, then record a string or enum describing
-#          why failure happened. We can think of that as passing the
-#          broad-phase check but failing the narrow-phase check.
-#        - Then it should be simple enough in the inspector to:
-#          - Re-calculate jump/land position pairs.
-#          - Then determine whether any of the pairs would have failed the
-#            broad-phase check, and where.
-#          - Then display a list of all jump/land position pairs for a pair of
-#            surfaces, and why each failed (or succeeded).
-#          - Allow the narrow-phase fail cases to be expandable, and re-run
-#            narrow-phase calculation when expanding them.
-#    - Stop using in_debug_mode?
-# 
-# - Refactor EdgeCalculationAnnotator to not be as tightly coupled to
-#   PlatformGraphInspector.
-# 
-# - Ensure all selection events are connected correctly.
-# 
-# - Add support for configuring in the menu which edge-type calculator to use
-#   with the inspector-selector.
-# - And to configure which player to use.
-# 
 # - Add logic to render dots for the other possible jump/land positions when
 #   clicking to select an edge to inspect.
 # 
-#  - Search for and rename the following:
-#    - attempt
-# 
-# - Fix width issues in inspector.
-#   - Should be able to see everything in row.
-#   - Shouldn't need to make panel wider or use horizontal scrolling.
-# 
-# - Add a way to re-display the controls list.
 # - Fix the padding in the controls list.
-# 
-# - Disable the player handling u/d/l/r keys when focus is in the utility
-#   panel.
-# 
-# - Start adding the toggle support for annotations.
-# 
-# - Phone:
-#   - Touch doesn't dismiss panel.
-#   - Touch doesn't activate gear icon.
-# 
-# FIXME: double-check with final structure, then copy over to a comment in the
-#        inspector file
-# INSPECTOR STRUCTURE:
-# - Platform graph [player_name]
-#   - Edges [#]
-#     - JUMP_INTER_SURFACE_EDGEs [#]
-#       - [(x,y), (x,y)]
-#         - <FIXME: Add step example items>
-#       - ...
-#     - ...
-#   - Surfaces [#]
-#     - Floors [#]
-#       - [(x,y), (x,y)]
-#         - _# valid outbound edges_
-#         - _Destination surfaces:_
-#         - FLOOR [(x,y), (x,y)]
-#           - JUMP_INTER_SURFACE_EDGEs [#]
-#             - [(x,y), (x,y)]
-#               - <FIXME: Add step example items>
-#             - ...
-#             - Failed edge calculations
-#               - REASON_FOR_FAILING [(x,y), (x,y)]
-#                 - <FIXME: Add step example items>
-#               - ...
-#         - ...
-#       - ...
-#     - ...
-#   - Global counts
-#     - # total surfaces
-#     - # total edges
-#     - # JUMP_INTER_SURFACE_EDGEs
-#     - ...
 # 
 # --------
 # 
 # - Analytics!
+#   - Step through and consider whether I want to show any other analytic
+#     description children for each item.
+#   - Spend some time thinking through the actual timings of the various parts of
+#     calculations (horizontal more than vertical, when possible).
+#   - Use the Godot Debugger profiler tools.
 #   - Figure out how/where to store this.
 #     - Don't just keep all step debug state--too much.
 #     - In particular, don't keep any PositionAlongSurface references--would
@@ -315,17 +198,7 @@ const IS_A_JUMP_CALCULATOR := true
 #   - Make background layers more faded
 #   - Make foreground images more wood-like
 # 
-# - Implement the bits of utility-menu UI to toggle annotations.
-#   - Also support adjusting how many previous player positions to render.
-#   - Also list controls in the utility menu.
-#   - Collision calculation annotator bits.
-#   - Add a top-level button to utility menu to hide all annotations.
-#     - (grid, clicks, player position, player recent movement, platform graph,
-#       ...)
-#   - Toggle whether the legend (and current selection description) is shown.
-#   - Also, update the legend as annotations are toggled.
-# 
-# - Think up ways to make the debug annotations more
+# - Think up ways to make some debug annotations more
 #   dynamic/intelligent/useful...
 #   - Make jump/land positions (along with start v, and which pairs connect)
 #     more discoverable when ctrl+clicking.
@@ -335,16 +208,6 @@ const IS_A_JUMP_CALCULATOR := true
 #       understandable to others with a quick viewing.
 #   - Have a mode that hides all the other background, foreground, and player
 #     images, so that we can just show the annotations.
-# 
-# - Include other items in the legend:
-#   - Step items:
-#     - Fake waypoint?
-#     - Invalid waypoint?
-#     - Collision boundary at moment of collision
-#     - Collision debugging: previous frame, current frame, next frame boundaries
-#     - Mid waypoints?
-#   - Navigator path (current and previous)
-#   - Recent movement
 # 
 # - In the README, list the types of MovementParams.
 # 
@@ -406,7 +269,30 @@ const IS_A_JUMP_CALCULATOR := true
 #     
 # ---  ---
 # 
-# - Add better annotation selection.
+# - Improve annotation configuration.
+#   - Implement the bits of utility-menu UI to toggle annotations.
+#     - Add support for configuring in the menu which edge-type calculator to
+#       use with the inspector-selector.
+#     - And to configure which player to use.
+#     - Add a way to re-display the controls list.
+#     - Also support adjusting how many previous player positions to render.
+#     - Also list controls in the utility menu.
+#     - Collision calculation annotator bits.
+#     - Add a top-level button to utility menu to hide all annotations.
+#       - (grid, clicks, player position, player recent movement, platform
+#         graph, ...)
+#     - Toggle whether the legend (and current selection description) is shown.
+#     - Also, update the legend as annotations are toggled.
+#   - Include other items in the legend:
+#     - Step items:
+#       - Fake waypoint?
+#       - Invalid waypoint?
+#       - Collision boundary at moment of collision
+#       - Collision debugging: previous frame, current frame, next frame
+#         boundaries
+#       - Mid waypoints?
+#     - Navigator path (current and previous)
+#     - Recent movement
 #   - Add shortcuts for toggling debugging annotations
 #     - Add support for triggering the calc-step annotations based on a
 #       shortcut.
@@ -517,6 +403,8 @@ const IS_A_JUMP_CALCULATOR := true
 # - [or skip? (should be fixed when turning on v sync)] Fix a bug where jump
 #   falls way short; from right-end of short-low floor to bottom-end of
 #   short-high-right-side wall.
+# 
+# - Add TODOs to use easing curves with all annotation animations.
 # 
 
 

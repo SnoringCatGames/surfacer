@@ -15,11 +15,11 @@ func after_each() -> void:
     destroy()
 
 func set_up(data = null) -> void:
-    var global = $"/root/Global"
     movement_params = \
             data.movement_params if \
             data != null and data.has('movement_params') else \
-            PlayerParamsUtils.create_player_params(TestPlayerParams, global).movement_params
+            PlayerParamsUtils.create_player_params( \
+                    TestPlayerParams).movement_params
 
 func destroy() -> void:
     # FIXME: This shouldn't be possible. Why does Gut trigger this sometimes?
