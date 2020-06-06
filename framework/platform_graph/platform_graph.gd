@@ -446,6 +446,7 @@ const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
 
 var collision_params: CollisionCalcParams
+var player_params: PlayerParams
 var movement_params: MovementParams
 var surface_parser: SurfaceParser
 var space_state: Physics2DDirectSpaceState
@@ -474,6 +475,7 @@ func _init( \
         player_params: PlayerParams, \
         collision_params: CollisionCalcParams) -> void:
     self.collision_params = collision_params
+    self.player_params = player_params
     self.movement_params = player_params.movement_params
     self.surface_parser = collision_params.surface_parser
     self.debug_params = collision_params.debug_params

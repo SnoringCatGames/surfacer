@@ -13,10 +13,6 @@ var edge_types_to_valid_edges: Dictionary
 var edge_types_to_failed_edges: Dictionary
 var valid_edge_count: int
 var failed_edge_count: int
-# Array<JumpLandPositions>
-var jump_type_jump_land_positions: Array
-# Array<JumpLandPositions>
-var fall_type_jump_land_positions: Array
 
 func _init( \
         parent_item: TreeItem, \
@@ -39,18 +35,6 @@ func _init( \
     self.edge_types_to_failed_edges = edge_types_to_failed_edges
     self.valid_edge_count = _count_edges(edge_types_to_valid_edges)
     self.failed_edge_count = _count_edges(edge_types_to_failed_edges)
-    self.jump_type_jump_land_positions = JumpLandPositionsUtils \
-            .calculate_jump_land_positions_for_surface_pair( \
-                    graph.movement_params, \
-                    origin_surface, \
-                    destination_surface, \
-                    true)
-    self.fall_type_jump_land_positions = JumpLandPositionsUtils \
-            .calculate_jump_land_positions_for_surface_pair( \
-                    graph.movement_params, \
-                    origin_surface, \
-                    destination_surface, \
-                    false)
     _post_init()
 
 func to_string() -> String:
@@ -104,7 +88,7 @@ func _find_and_expand_controller_recursive( \
 func _create_children_inner() -> void:
     var valid_edges: Array
     var failed_edges: Array
-    var is_a_jump_calculator: bool
+    var calculator: EdgeCalculator
     var jump_land_positions: Array
     
     for edge_type in EdgeType.values():
@@ -122,13 +106,11 @@ func _create_children_inner() -> void:
         
         if !valid_edges.empty() or \
                 !failed_edges.empty():
-            is_a_jump_calculator = \
-                    InspectorItemController.JUMP_CALCULATORS.find( \
-                            edge_type) >= 0
-            jump_land_positions = \
-                    jump_type_jump_land_positions if \
-                    is_a_jump_calculator else \
-                    fall_type_jump_land_positions
+            calculator = graph.player_params.get_edge_calculator(edge_type)
+            jump_land_positions = calculator.calculate_jump_land_positions( \
+                    graph.movement_params, \
+                    origin_surface, \
+                    destination_surface)
             EdgeTypeInSurfacesGroupItemController.new( \
                     tree_item, \
                     tree, \

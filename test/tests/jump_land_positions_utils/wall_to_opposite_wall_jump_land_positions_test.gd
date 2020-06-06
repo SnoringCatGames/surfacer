@@ -18,8 +18,7 @@ func test_walls_face_each_other() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -62,8 +61,7 @@ func test_walls_face_away_with_no_vertical_overlap() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \

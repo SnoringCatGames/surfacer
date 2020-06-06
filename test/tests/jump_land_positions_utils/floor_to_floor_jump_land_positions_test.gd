@@ -18,8 +18,7 @@ func test_non_overlapping_at_same_level() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -71,8 +70,7 @@ func test_non_overlapping_with_upper_left_jump_surface() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -137,8 +135,7 @@ func test_non_overlapping_with_lower_left_jump_surface() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -202,8 +199,7 @@ func test_non_overlapping_with_upper_right_jump_surface() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -268,8 +264,7 @@ func test_non_overlapping_with_lower_right_jump_surface() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -333,8 +328,7 @@ func test_non_overlapping_with_higher_jump_surface_farther_on_both_sides() -> vo
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -385,8 +379,7 @@ func test_non_overlapping_with_lower_jump_surface_farther_on_both_sides() -> voi
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \

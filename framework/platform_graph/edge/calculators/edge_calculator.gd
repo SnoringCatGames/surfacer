@@ -28,7 +28,7 @@ func _init( \
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     Utils.error( \
-            "abstract EdgeCalculator.get_can_traverse_from_surface is not " + \
+            "Abstract EdgeCalculator.get_can_traverse_from_surface is not " + \
             "implemented")
     return false
 
@@ -40,7 +40,7 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
     Utils.error( \
-            "abstract EdgeCalculator" + \
+            "Abstract EdgeCalculator" + \
             ".get_all_inter_surface_edges_from_surface is not implemented")
 
 func calculate_edge( \
@@ -51,8 +51,19 @@ func calculate_edge( \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
-    Utils.error("abstract EdgeCalculator.calculate_edge is not implemented")
+    Utils.error("Abstract EdgeCalculator.calculate_edge is not implemented")
     return null
+
+func calculate_jump_land_positions( \
+        movement_params: MovementParams, \
+        origin_surface_or_position, \
+        destination_surface: Surface, \
+        velocity_start := Vector2.INF) -> Array:
+    Utils.error( \
+            "Abstract EdgeCalculator." + \
+            "calculate_jump_land_positions_for_surface_pair is not " + \
+            "implemented")
+    return []
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \
@@ -128,6 +139,48 @@ static func create_edge_calc_params(
             can_hold_jump_button)
     
     return edge_calc_params
+
+# Does some cheap checks to see if we should more expensive edge calculations
+# for the given jump/land pair.
+static func broad_phase_check( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
+        collision_params: CollisionCalcParams, \
+        jump_land_positions: JumpLandPositions, \
+        other_valid_jump_land_position_results: Array, \
+        allows_close_jump_positions: bool) -> bool:
+    ###########################################################################
+    # Allow for debug mode to limit the scope of what's calculated.
+    if should_skip_edge_calculation( \
+            collision_params.debug_params, \
+            jump_land_positions.jump_position, \
+            jump_land_positions.land_position):
+        if edge_result_metadata != null:
+            edge_result_metadata.edge_calc_result_type = \
+                    EdgeCalcResultType.SKIPPED_FOR_DEBUGGING
+        return false
+    ###########################################################################
+    
+    if jump_land_positions.less_likely_to_be_valid and \
+            collision_params \
+                    .movement_params.skips_less_likely_jump_land_positions:
+        if edge_result_metadata != null:
+            edge_result_metadata.edge_calc_result_type = \
+                    EdgeCalcResultType.LESS_LIKELY_TO_BE_VALID
+        return false
+    
+    if !jump_land_positions.is_far_enough_from_others( \
+            collision_params.movement_params, \
+            other_valid_jump_land_position_results, \
+            !allows_close_jump_positions, \
+            true):
+        # We've already found a valid edge with a land position that's
+        # close enough to this land position.
+        if edge_result_metadata != null:
+            edge_result_metadata.edge_calc_result_type = \
+                    EdgeCalcResultType.CLOSE_TO_PREVIOUS_EDGE
+        return false
+    
+    return true
 
 static func should_skip_edge_calculation( \
         debug_params: Dictionary, \

@@ -78,6 +78,105 @@ func calculate_edge( \
     else:
         return null
 
+func calculate_jump_land_positions( \
+        movement_params: MovementParams, \
+        origin_surface_or_position, \
+        destination_surface: Surface, \
+        velocity_start := Vector2.INF) -> Array:
+    if origin_surface_or_position is PositionAlongSurface:
+        velocity_start = \
+                velocity_start if \
+                velocity_start != Vector2.INF else \
+                Vector2.ZERO
+        return JumpLandPositionsUtils.calculate_land_positions_on_surface( \
+                movement_params, \
+                destination_surface, \
+                origin_surface_or_position, \
+                velocity_start)
+    else:
+        var origin_surface: Surface = origin_surface_or_position
+        var start_positions_and_velocities := []
+        if origin_surface.counter_clockwise_concave_neighbor == null:
+            start_positions_and_velocities.push_back( \
+                    _get_start_position_and_velocity( \
+                            movement_params, \
+                            origin_surface, \
+                            true))
+        if origin_surface.clockwise_concave_neighbor == null:
+            start_positions_and_velocities.push_back( \
+                    _get_start_position_and_velocity( \
+                            movement_params, \
+                            origin_surface, \
+                            false))
+        
+        var all_jump_land_positions := []
+        for start_position_and_velocity in start_positions_and_velocities:
+            Utils.concat( \
+                    all_jump_land_positions, \
+                    calculate_jump_land_positions( \
+                            movement_params, \
+                            start_position_and_velocity[0], \
+                            destination_surface, \
+                            start_position_and_velocity[1]))
+        return all_jump_land_positions
+
+static func _get_start_position_and_velocity( \
+        movement_params: MovementParams, \
+        origin_surface: Surface, \
+        falls_on_left_side: bool) -> Array:
+    var edge_point := \
+            origin_surface.first_point if \
+            falls_on_left_side else \
+            origin_surface.last_point
+    
+    var position_start := PositionAlongSurface.new()
+    position_start.match_surface_target_and_collider( \
+            origin_surface, \
+            edge_point, \
+            movement_params.collider_half_width_height, \
+            true, \
+            false)
+    
+    var position_fall_off := _calculate_player_center_at_fall_off_point( \
+            edge_point, \
+            falls_on_left_side, \
+            movement_params.collider_shape, \
+            movement_params.collider_rotation)
+    
+    var position_fall_off_wrapper := \
+            MovementUtils.create_position_from_target_point( \
+                    position_fall_off, \
+                    origin_surface, \
+                    movement_params.collider_half_width_height)
+    
+    var displacement_from_start_to_fall_off := \
+            position_fall_off - position_start.target_point
+    
+    var acceleration := \
+            -movement_params.walk_acceleration if \
+            falls_on_left_side else \
+            movement_params.walk_acceleration
+    
+    var surface_end_velocity_start: Vector2 = \
+            JumpLandPositionsUtils.get_velocity_start( \
+                    movement_params, \
+                    origin_surface, \
+                    false, \
+                    falls_on_left_side)
+    
+    var velocity_x_start := surface_end_velocity_start.x
+    
+    var velocity_x_fall_off: float = \
+            MovementUtils.calculate_velocity_end_for_displacement( \
+                    displacement_from_start_to_fall_off.x, \
+                    velocity_x_start, \
+                    acceleration, \
+                    movement_params.max_horizontal_speed_default)
+    
+    var fall_off_point_velocity_start := Vector2(velocity_x_fall_off, 0.0)
+    
+    return [position_fall_off_wrapper, fall_off_point_velocity_start]
+
 func optimize_edge_land_position_for_path( \
         collision_params: CollisionCalcParams, \
         path: PlatformGraphPath, \
@@ -155,7 +254,7 @@ func _get_all_edges_from_one_side( \
             JumpLandPositionsUtils.get_velocity_start( \
                     movement_params, \
                     origin_surface, \
-                    is_a_jump_calculator, \
+                    false, \
                     falls_on_left_side)
     
     var velocity_x_start := surface_end_velocity_start.x

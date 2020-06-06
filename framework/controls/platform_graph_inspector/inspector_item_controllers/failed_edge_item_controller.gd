@@ -27,15 +27,27 @@ func _init( \
     _post_init()
 
 func to_string() -> String:
-    return "%s { %s [%s, %s] }" % [ \
+    return "%s { %s; [%s] %s; [%s, %s] }" % [ \
         InspectorItemType.get_type_string(type), \
         EdgeType.get_type_string(failed_edge_attempt.edge_type), \
+        "BP" if \
+        failed_edge_attempt.is_broad_phase_failure else \
+        "NP", \
+        EdgeCalcResultType.get_type_string( \
+                failed_edge_attempt.edge_calc_result_type) if \
+        failed_edge_attempt.edge_calc_result_type != \
+                EdgeCalcResultType.WAYPOINT_INVALID else \
+        WaypointValidity.get_type_string( \
+                failed_edge_attempt.waypoint_validity), \
         str(failed_edge_attempt.start), \
         str(failed_edge_attempt.end), \
     ]
 
 func get_text() -> String:
-    return "%s [%s, %s]" % [ \
+    return "[%s] %s [%s, %s]" % [ \
+        "BP" if \
+        failed_edge_attempt.is_broad_phase_failure else \
+        "NP", \
         EdgeCalcResultType.get_type_string( \
                 failed_edge_attempt.edge_calc_result_type) if \
         failed_edge_attempt.edge_calc_result_type != \
@@ -48,6 +60,7 @@ func get_text() -> String:
 
 func get_description() -> String:
     # FIXME: -------------
+    # - Also describe difference between narrow and broad phase failure.
     return ""
 
 func find_and_expand_controller( \
@@ -68,27 +81,33 @@ func find_and_expand_controller( \
     else:
         return false
 
+func get_has_children() -> bool:
+    return !failed_edge_attempt.is_broad_phase_failure
+
 func _create_children_inner() -> void:
     if edge_result_metadata == null:
         _calculate_edge_calc_result_metadata()
     
-    edge_calc_result_metadata_controller = EdgeCalcResultMetadataItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
-            failed_edge_attempt, \
-            edge_result_metadata)
+    edge_calc_result_metadata_controller = \
+            EdgeCalcResultMetadataItemController.new( \
+                    tree_item, \
+                    tree, \
+                    graph, \
+                    failed_edge_attempt, \
+                    edge_result_metadata)
 
 func _calculate_edge_calc_result_metadata() -> void:
     edge_result_metadata = EdgeCalcResultMetadata.new(true)
-    var start_position_along_surface := MovementUtils.create_position_offset_from_target_point( \
-            failed_edge_attempt.start, \
-            failed_edge_attempt.origin_surface, \
-            graph.movement_params.collider_half_width_height)
-    var end_position_along_surface := MovementUtils.create_position_offset_from_target_point( \
-            failed_edge_attempt.end, \
-            failed_edge_attempt.destination_surface, \
-            graph.movement_params.collider_half_width_height)
+    var start_position_along_surface := \
+            MovementUtils.create_position_offset_from_target_point( \
+                    failed_edge_attempt.start, \
+                    failed_edge_attempt.origin_surface, \
+                    graph.movement_params.collider_half_width_height)
+    var end_position_along_surface := \
+            MovementUtils.create_position_offset_from_target_point( \
+                    failed_edge_attempt.end, \
+                    failed_edge_attempt.destination_surface, \
+                    graph.movement_params.collider_half_width_height)
     failed_edge_attempt.calculator.calculate_edge( \
             edge_result_metadata, \
             graph.collision_params, \

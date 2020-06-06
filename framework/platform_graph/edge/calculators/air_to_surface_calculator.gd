@@ -22,7 +22,8 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
     Utils.error( \
-            "AirToSurfaceCalculator.get_all_inter_surface_edges_from_surface should not be called")
+            "AirToSurfaceCalculator." + \
+            "get_all_inter_surface_edges_from_surface should not be called")
 
 func calculate_edge( \
         edge_result_metadata: EdgeCalcResultMetadata, \
@@ -41,6 +42,18 @@ func calculate_edge( \
             position_end, \
             position_end, \
             needs_extra_wall_land_horizontal_speed)
+
+func calculate_jump_land_positions( \
+        movement_params: MovementParams, \
+        origin_surface_or_position, \
+        destination_surface: Surface, \
+        velocity_start := Vector2.INF) -> Array:
+    assert(origin_surface_or_position is PositionAlongSurface)
+    return JumpLandPositionsUtils.calculate_land_positions_on_surface( \
+            movement_params, \
+            destination_surface, \
+            origin_surface_or_position, \
+            velocity_start)
 
 func optimize_edge_land_position_for_path( \
         collision_params: CollisionCalcParams, \
@@ -100,13 +113,14 @@ func find_a_landing_trajectory( \
         possible_landing_surfaces_from_point.sort_custom(SurfaceMaxYComparator, "sort")
         
         # Find the closest landing trajectory.
-        var landing_trajectories := FallMovementUtils.find_landing_trajectories_to_any_surface( \
-                collision_params, \
-                all_possible_surfaces_set, \
-                origin, \
-                velocity_start, \
-                possible_landing_surfaces_from_point, \
-                true)
+        var landing_trajectories := \
+                FallMovementUtils.find_landing_trajectories_to_any_surface( \
+                        collision_params, \
+                        all_possible_surfaces_set, \
+                        origin, \
+                        velocity_start, \
+                        possible_landing_surfaces_from_point, \
+                        true)
         if landing_trajectories.empty():
             return null
         calc_result = landing_trajectories[0]

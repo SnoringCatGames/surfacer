@@ -18,8 +18,7 @@ func test_jump_in_front_of_wall_non_overlapping_wall_is_higher() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -59,8 +58,7 @@ func test_jump_in_front_of_wall_non_overlapping_wall_is_lower() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -114,8 +112,7 @@ func test_jump_in_front_of_wall_overlapping_wall_is_higher() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -184,8 +181,7 @@ func test_jump_in_front_of_wall_overlapping_wall_is_lower() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -237,8 +233,7 @@ func test_jump_behind_wall_wall_is_lower() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -291,8 +286,7 @@ func test_jump_behind_wall_wall_is_higher() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \

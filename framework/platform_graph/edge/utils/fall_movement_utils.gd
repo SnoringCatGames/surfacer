@@ -77,26 +77,12 @@ static func find_landing_trajectories_to_any_surface( \
                         velocity_start)
         
         for jump_land_positions in jump_land_positions_to_consider:
-            ###################################################################
-            # Allow for debug mode to limit the scope of what's calculated.
-            if EdgeCalculator.should_skip_edge_calculation( \
-                    debug_params, \
-                    jump_land_positions.jump_position, \
-                    jump_land_positions.land_position):
-                continue
-            ###################################################################
-            
-            if jump_land_positions.less_likely_to_be_valid and \
-                    movement_params.skips_less_likely_jump_land_positions:
-                continue
-            
-            if !jump_land_positions.is_far_enough_from_others( \
-                    movement_params, \
+            if !EdgeCalculator.broad_phase_check( \
+                    null, \
+                    collision_params, \
+                    jump_land_positions, \
                     jump_land_position_results_for_destination_surface, \
-                    false, \
                     true):
-                # We've already found a valid edge with a land position that's
-                # close enough to this land position.
                 continue
             
             calc_result = find_landing_trajectory_between_positions( \

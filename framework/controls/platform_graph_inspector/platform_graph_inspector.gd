@@ -297,14 +297,11 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
         graph: PlatformGraph, \
         throws_on_not_found := false) -> void:
     # Determine which start/end positions to check.
-    var is_a_jump_calculator := \
-            InspectorItemController.JUMP_CALCULATORS.find(edge_type) >= 0
     var all_jump_land_positions := JumpLandPositionsUtils \
             .calculate_jump_land_positions_for_surface_pair( \
                     graph.movement_params, \
                     start_surface, \
-                    end_surface, \
-                    is_a_jump_calculator)
+                    end_surface)
     var start := Vector2.INF
     var end := Vector2.INF
     if !all_jump_land_positions.empty():

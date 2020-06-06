@@ -24,32 +24,12 @@ func get_all_inter_surface_edges_from_surface( \
         origin_surface: Surface) -> void:
     var debug_params := collision_params.debug_params
     var movement_params := collision_params.movement_params
-    var velocity_start := Vector2( \
-            movement_params.wall_fall_horizontal_boost * \
-                    origin_surface.normal.x, \
-            0.0)
-    
-    # TODO: Update this to allow other mid-point jump-positions, which may be
-    #       closer and more efficient than just the surface-end points.
-    var origin_top_point := Vector2.INF
-    var origin_bottom_point := Vector2.INF
-    if origin_surface.side == SurfaceSide.LEFT_WALL:
-        origin_top_point = origin_surface.first_point
-        origin_bottom_point = origin_surface.last_point
-    else:
-        origin_top_point = origin_surface.last_point
-        origin_bottom_point = origin_surface.first_point
-    var top_jump_position := \
-            MovementUtils.create_position_offset_from_target_point( \
-                    origin_top_point, \
-                    origin_surface, \
-                    movement_params.collider_half_width_height)
-    var bottom_jump_position := \
-            MovementUtils.create_position_offset_from_target_point( \
-                    origin_bottom_point, \
-                    origin_surface, \
-                    movement_params.collider_half_width_height)
-    var jump_positions := [top_jump_position, bottom_jump_position]
+    var velocity_start := _get_start_velocity( \
+            movement_params, \
+            origin_surface)
+    var jump_positions := _get_jump_positions( \
+            movement_params, \
+            origin_surface)
     
     var landing_trajectories: Array
     var edge: FallFromWallEdge
@@ -95,6 +75,38 @@ func calculate_edge( \
         return _create_edge_from_calc_results(calc_result)
     else:
         return null
+
+func calculate_jump_land_positions( \
+        movement_params: MovementParams, \
+        origin_surface_or_position, \
+        destination_surface: Surface, \
+        velocity_start := Vector2.INF) -> Array:
+    if origin_surface_or_position is PositionAlongSurface:
+        velocity_start = \
+                velocity_start if \
+                velocity_start != Vector2.INF else \
+                _get_start_velocity( \
+                        movement_params, \
+                        origin_surface_or_position.surface)
+        return JumpLandPositionsUtils.calculate_land_positions_on_surface( \
+                movement_params, \
+                destination_surface, \
+                origin_surface_or_position, \
+                velocity_start)
+    else:
+        var jump_positions := _get_jump_positions( \
+                movement_params, \
+                origin_surface_or_position)
+        var all_jump_land_positions := []
+        for jump_position in jump_positions:
+            Utils.concat( \
+                    all_jump_land_positions, \
+                    calculate_jump_land_positions( \
+                            movement_params, \
+                            jump_position, \
+                            destination_surface, \
+                            velocity_start))
+        return all_jump_land_positions
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \
@@ -164,6 +176,39 @@ func _create_edge_from_calc_results( \
             calc_result.edge_calc_params.movement_params, \
             instructions, \
             trajectory)
+
+static func _get_start_velocity( \
+        movement_params: MovementParams, \
+        origin_surface: Surface) -> Vector2:
+    return Vector2( \
+            movement_params.wall_fall_horizontal_boost * \
+                    origin_surface.normal.x, \
+            0.0)
+
+static func _get_jump_positions( \
+        movement_params: MovementParams, \
+        origin_surface: Surface) -> Array:
+    # TODO: Update this to allow other mid-point jump-positions, which may be
+    #       closer and more efficient than just the surface-end points.
+    var origin_top_point := Vector2.INF
+    var origin_bottom_point := Vector2.INF
+    if origin_surface.side == SurfaceSide.LEFT_WALL:
+        origin_top_point = origin_surface.first_point
+        origin_bottom_point = origin_surface.last_point
+    else:
+        origin_top_point = origin_surface.last_point
+        origin_bottom_point = origin_surface.first_point
+    var top_jump_position := \
+            MovementUtils.create_position_offset_from_target_point( \
+                    origin_top_point, \
+                    origin_surface, \
+                    movement_params.collider_half_width_height)
+    var bottom_jump_position := \
+            MovementUtils.create_position_offset_from_target_point( \
+                    origin_bottom_point, \
+                    origin_surface, \
+                    movement_params.collider_half_width_height)
+    return [top_jump_position, bottom_jump_position]
 
 static func _calculate_instructions( \
         start: PositionAlongSurface, \

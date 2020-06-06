@@ -18,8 +18,7 @@ func test_jump_surface_in_front_and_higher() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -68,8 +67,7 @@ func test_jump_surface_behind_and_lower() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \

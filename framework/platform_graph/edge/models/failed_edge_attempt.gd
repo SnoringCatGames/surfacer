@@ -24,31 +24,31 @@ var waypoint_validity := WaypointValidity.UNKNOWN
 var needs_extra_jump_duration: bool
 var needs_extra_wall_land_horizontal_speed: bool
 
+var is_broad_phase_failure: bool
+
 var calculator
 
-func _init(
-        origin_surface: Surface, \
-        destination_surface: Surface, \
-        start: Vector2, \
-        end: Vector2, \
-        velocity_start: Vector2, \
+func _init( \
+        jump_land_positions: JumpLandPositions, \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         edge_type: int, \
-        edge_calc_result_type: int, \
-        waypoint_validity: int, \
-        needs_extra_jump_duration: bool, \
-        needs_extra_wall_land_horizontal_speed: bool, \
         calculator) -> void:
-    self.origin_surface = origin_surface
-    self.destination_surface = destination_surface
-    self.start = start
-    self.end = end
-    self.velocity_start = velocity_start
+    self.origin_surface = jump_land_positions.jump_position.surface
+    self.destination_surface = jump_land_positions.land_position.surface
+    self.start = jump_land_positions.jump_position.target_point
+    self.end = jump_land_positions.land_position.target_point
+    self.velocity_start = jump_land_positions.velocity_start
     self.edge_type = edge_type
-    self.edge_calc_result_type = edge_calc_result_type
-    self.waypoint_validity = waypoint_validity
-    self.needs_extra_jump_duration = needs_extra_jump_duration
-    self.needs_extra_wall_land_horizontal_speed = needs_extra_wall_land_horizontal_speed
+    self.edge_calc_result_type = edge_result_metadata.edge_calc_result_type
+    self.waypoint_validity = edge_result_metadata.waypoint_validity
+    self.needs_extra_jump_duration = \
+            jump_land_positions.needs_extra_jump_duration
+    self.needs_extra_wall_land_horizontal_speed = \
+            jump_land_positions.needs_extra_wall_land_horizontal_speed
     self.calculator = calculator
+    self.is_broad_phase_failure = \
+            EdgeCalcResultType.get_is_broad_phase_failure( \
+                    edge_calc_result_type)
 
 func to_string() -> String:
     return "FailedEdgeAttempt{ " + \

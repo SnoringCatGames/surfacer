@@ -38,7 +38,7 @@ func calculate_edge( \
         velocity_start = EdgeCalculator.get_velocity_start( \
                 collision_params.movement_params, \
                 position_start.surface, \
-                is_a_jump_calculator, \
+                true, \
                 is_moving_leftward)
     
     edge_result_metadata = \
@@ -92,6 +92,18 @@ func calculate_edge( \
             trajectory)
     
     return edge
+
+func calculate_jump_land_positions( \
+        movement_params: MovementParams, \
+        origin_surface_or_position, \
+        destination_surface: Surface, \
+        velocity_start := Vector2.INF) -> Array:
+    assert(origin_surface_or_position is Surface)
+    # TODO: Implement.
+    Utils.error( \
+            "JumpFromSurfaceToAirCalculator." + \
+            "calculate_jump_land_positions not implemented yet.")
+    return []
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \

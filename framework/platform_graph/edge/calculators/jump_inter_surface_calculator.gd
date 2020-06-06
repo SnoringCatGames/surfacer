@@ -32,6 +32,8 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Fix the padding in the controls list.
 # 
+# - Search for FIXMEs in recent directories.
+# 
 # --------
 # 
 # - Analytics!
@@ -425,7 +427,6 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
-    var movement_params := collision_params.movement_params
     var debug_params := collision_params.debug_params
     
     var jump_land_position_results_for_destination_surface := []
@@ -456,20 +457,20 @@ func get_all_inter_surface_edges_from_surface( \
         
         jump_land_positions_to_consider = JumpLandPositionsUtils \
                 .calculate_jump_land_positions_for_surface_pair( \
-                        movement_params, \
+                        collision_params.movement_params, \
                         origin_surface, \
-                        destination_surface, \
-                        self.is_a_jump_calculator)
+                        destination_surface)
         
         for jump_land_positions in jump_land_positions_to_consider:
-            ###################################################################
-            # Allow for debug mode to limit the scope of what's calculated.
-            if EdgeCalculator.should_skip_edge_calculation( \
-                    debug_params, \
-                    jump_land_positions.jump_position, \
-                    jump_land_positions.land_position):
+            if !EdgeCalculator.broad_phase_check( \
+                    null, \
+                    collision_params, \
+                    jump_land_positions, \
+                    jump_land_position_results_for_destination_surface, \
+                    false):
                 continue
             
+            ###################################################################
             # Record some extra debug state when we're limiting calculations to
             # a single edge (which must be this edge).
             var record_calc_details: bool = \
@@ -481,19 +482,6 @@ func get_all_inter_surface_edges_from_surface( \
                     debug_params.limit_parsing.edge.has("destination") and \
                     debug_params.limit_parsing.edge.destination.has("position")
             ###################################################################
-            
-            if jump_land_positions.less_likely_to_be_valid and \
-                    movement_params.skips_less_likely_jump_land_positions:
-                continue
-            
-            if !jump_land_positions.is_far_enough_from_others( \
-                    movement_params, \
-                    jump_land_position_results_for_destination_surface, \
-                    true, \
-                    true):
-                # We've already found a valid edge with a land position that's
-                # close enough to this land position.
-                continue
             
             edge_result_metadata = \
                     EdgeCalcResultMetadata.new(record_calc_details)
@@ -515,16 +503,9 @@ func get_all_inter_surface_edges_from_surface( \
                         jump_land_positions)
             else:
                 failed_attempt = FailedEdgeAttempt.new( \
-                        origin_surface, \
-                        destination_surface, \
-                        jump_land_positions.jump_position.target_point, \
-                        jump_land_positions.land_position.target_point, \
-                        jump_land_positions.velocity_start, \
+                        jump_land_positions, \
+                        edge_result_metadata, \
                         edge_type, \
-                        edge_result_metadata.edge_calc_result_type, \
-                        edge_result_metadata.waypoint_validity, \
-                        jump_land_positions.needs_extra_jump_duration, \
-                        jump_land_positions.needs_extra_wall_land_horizontal_speed, \
                         self)
                 failed_edge_attempts_result.push_back(failed_attempt)
 
@@ -560,6 +541,18 @@ func calculate_edge( \
     return create_edge_from_edge_calc_params( \
             edge_result_metadata, \
             edge_calc_params)
+
+func calculate_jump_land_positions( \
+        movement_params: MovementParams, \
+        origin_surface_or_position, \
+        destination_surface: Surface, \
+        velocity_start := Vector2.INF) -> Array:
+    assert(origin_surface_or_position is Surface)
+    return JumpLandPositionsUtils \
+            .calculate_jump_land_positions_for_surface_pair( \
+                    movement_params, \
+                    origin_surface_or_position, \
+                    destination_surface)
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \

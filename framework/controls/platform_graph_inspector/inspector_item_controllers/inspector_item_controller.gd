@@ -9,11 +9,6 @@ const EDGE_TYPES_TO_SKIP := [ \
     EdgeType.UNKNOWN, \
 ]
 
-const JUMP_CALCULATORS := [ \
-    EdgeType.JUMP_INTER_SURFACE_EDGE, \
-    EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE, \
-]
-
 var type: int = InspectorItemType.UNKNOWN
 var is_leaf: bool
 var starts_collapsed: bool

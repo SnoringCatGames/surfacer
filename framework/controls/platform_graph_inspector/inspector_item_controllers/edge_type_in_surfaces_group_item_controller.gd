@@ -104,7 +104,9 @@ func _create_children_inner() -> void:
             origin_surface, \
             destination_surface, \
             edge_type, \
-            failed_edges)
+            failed_edges, \
+            valid_edges, \
+            all_jump_land_positions)
 
 func _destroy_children_inner() -> void:
     failed_edges_controller = null
@@ -125,7 +127,8 @@ func get_annotation_elements() -> Array:
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_COLOR_PARAMS, \
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH, \
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP, \
-                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH)
+                AnnotationElementDefaults \
+                        .JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH)
         elements.push_back(element)
     
     return elements

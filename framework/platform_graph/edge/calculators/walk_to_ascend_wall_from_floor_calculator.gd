@@ -26,7 +26,39 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary, \
         origin_surface: Surface) -> void:
-    var movement_params := collision_params.movement_params
+    var all_jump_land_positions := []
+    if origin_surface.counter_clockwise_concave_neighbor != null:
+        Utils.concat( \
+                all_jump_land_positions, \
+                calculate_jump_land_positions( \
+                        collision_params.movement_params, \
+                        origin_surface, \
+                        origin_surface.counter_clockwise_concave_neighbor))
+    if origin_surface.clockwise_concave_neighbor != null:
+        Utils.concat( \
+                all_jump_land_positions, \
+                calculate_jump_land_positions( \
+                        collision_params.movement_params, \
+                        origin_surface, \
+                        origin_surface.clockwise_concave_neighbor))
+    
+    for jump_land_positions in all_jump_land_positions:
+        var edge := calculate_edge( \
+                null, \
+                collision_params, \
+                jump_land_positions.jump_position, \
+                jump_land_positions.land_position, \
+                jump_land_positions.velocity_start)
+        edges_result.push_back(edge)
+
+func calculate_jump_land_positions( \
+        movement_params: MovementParams, \
+        origin_surface_or_position, \
+        destination_surface: Surface, \
+        velocity_start := Vector2.INF) -> Array:
+    assert(origin_surface_or_position is Surface)
+    var origin_surface: Surface = origin_surface_or_position
+    
     var end_point_horizontal_offset := Vector2( \
             movement_params.collider_half_width_height.x + END_POINT_OFFSET, \
             0.0)
@@ -34,11 +66,11 @@ func get_all_inter_surface_edges_from_surface( \
             0.0, \
             movement_params.collider_half_width_height.y + END_POINT_OFFSET)
     
-    if origin_surface.counter_clockwise_concave_neighbor != null:
+    if destination_surface == \
+            origin_surface.counter_clockwise_concave_neighbor:
         # We're dealing with a left wall.
         
-        var upper_neighbor_wall := \
-                origin_surface.counter_clockwise_concave_neighbor
+        var upper_neighbor_wall := destination_surface
         var wall_bottom_point := \
                 upper_neighbor_wall.last_point - end_point_vertical_offset
         var floor_edge_point := \
@@ -55,20 +87,19 @@ func get_all_inter_surface_edges_from_surface( \
                         upper_neighbor_wall, \
                         movement_params.collider_half_width_height)
         
-        var edge := calculate_edge( \
-                null, \
-                collision_params, \
+        var jump_land_positions := JumpLandPositions.new( \
                 start_position, \
                 end_position, \
                 Vector2.ZERO, \
                 false, \
+                false, \
                 false)
-        edges_result.push_back(edge)
+        return [jump_land_positions]
     
-    if origin_surface.clockwise_concave_neighbor != null:
+    elif destination_surface == origin_surface.clockwise_concave_neighbor:
         # We're dealing with a right wall.
         
-        var upper_neighbor_wall := origin_surface.clockwise_concave_neighbor
+        var upper_neighbor_wall := destination_surface
         var wall_bottom_point := \
                 upper_neighbor_wall.first_point - end_point_vertical_offset
         var floor_edge_point := \
@@ -85,15 +116,16 @@ func get_all_inter_surface_edges_from_surface( \
                         upper_neighbor_wall, \
                         movement_params.collider_half_width_height)
         
-        var edge := calculate_edge( \
-                null, \
-                collision_params, \
+        var jump_land_positions := JumpLandPositions.new( \
                 start_position, \
                 end_position, \
                 Vector2.ZERO, \
                 false, \
+                false, \
                 false)
-        edges_result.push_back(edge)
+        return [jump_land_positions]
+    
+    return []
 
 func calculate_edge( \
         edge_result_metadata: EdgeCalcResultMetadata, \

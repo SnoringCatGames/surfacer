@@ -18,8 +18,7 @@ func test_wall_is_higher_can_jump_in_front_and_behind() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -65,8 +64,7 @@ func test_wall_is_lower_with_no_overlap() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -101,8 +99,7 @@ func test_wall_is_lower_with_overlap() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -137,8 +134,7 @@ func test_floor_is_in_front_of_wall_with_vertical_overlap() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface)
     
     assert_eq( \
             all_jump_land_positions.size(), \
@@ -174,8 +170,7 @@ func test_floor_is_in_behind_wall_with_vertical_overlap() -> void:
             JumpLandPositionsUtils.calculate_jump_land_positions_for_surface_pair( \
                     movement_params, \
                     jump_surface, \
-                    land_surface, \
-                    is_a_jump_calculator)
+                    land_surface
     
     assert_eq( \
             all_jump_land_positions.size(), \
