@@ -1,4 +1,5 @@
-# FIXME: ----------- doc
+# This class records some state for failed edge calculations, including why
+# the calculation failed.
 extends Reference
 class_name FailedEdgeAttempt
 

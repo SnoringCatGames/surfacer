@@ -8,12 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Fix the padding in the controls list.
-# 
-# - Search for FIXMEs in recent directories.
-# 
-# --------
-# 
 # - Analytics!
 #   - Step through and consider whether I want to show any other analytic
 #     description children for each item.

@@ -5,6 +5,13 @@ const TYPE := InspectorItemType.FAILED_EDGE
 const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
+const BROAD_PHASE_DESCRIPTION := \
+    "These calculations failed during the \"broad phase\", which means " + \
+    "that expensive edge trajectories hadn't yet been calculated."
+const NARROW_PHASE_DESCRIPTION := \
+    "These calculations failed during the \"narrow phase\", which means " + \
+    "during expensive edge trajectory calculations."
+
 var failed_edge_attempt: FailedEdgeAttempt
 var edge_result_metadata: EdgeCalcResultMetadata
 
@@ -59,9 +66,11 @@ func get_text() -> String:
     ]
 
 func get_description() -> String:
-    # FIXME: -------------
-    # - Also describe difference between narrow and broad phase failure.
-    return ""
+    return "This jump/land pair was calculated as possibly corresponding " + \
+                "to a valid edge, but later calculations failed. %s" % \
+                BROAD_PHASE_DESCRIPTION if \
+                failed_edge_attempt.is_broad_phase_failure else \
+                NARROW_PHASE_DESCRIPTION
 
 func find_and_expand_controller( \
         search_type: int, \
