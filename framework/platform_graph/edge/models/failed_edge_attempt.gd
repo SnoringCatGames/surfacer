@@ -31,7 +31,6 @@ var calculator
 func _init( \
         jump_land_positions: JumpLandPositions, \
         edge_result_metadata: EdgeCalcResultMetadata, \
-        edge_type: int, \
         calculator) -> void:
     self.origin_surface = jump_land_positions.jump_position.surface
     self.destination_surface = jump_land_positions.land_position.surface
@@ -45,6 +44,7 @@ func _init( \
             jump_land_positions.needs_extra_jump_duration
     self.needs_extra_wall_land_horizontal_speed = \
             jump_land_positions.needs_extra_wall_land_horizontal_speed
+    self.edge_type = calculator.edge_type
     self.calculator = calculator
     self.is_broad_phase_failure = \
             EdgeCalcResultType.get_is_broad_phase_failure( \

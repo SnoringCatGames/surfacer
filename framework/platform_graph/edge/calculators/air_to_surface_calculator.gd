@@ -113,12 +113,15 @@ func find_a_landing_trajectory( \
         possible_landing_surfaces_from_point.sort_custom(SurfaceMaxYComparator, "sort")
         
         # Find the closest landing trajectory.
+        var failed_edge_attempts_result := []
         var landing_trajectories := \
                 FallMovementUtils.find_landing_trajectories_to_any_surface( \
+                        failed_edge_attempts_result, \
                         collision_params, \
                         all_possible_surfaces_set, \
                         origin, \
                         velocity_start, \
+                        self, \
                         possible_landing_surfaces_from_point, \
                         true)
         if landing_trajectories.empty():

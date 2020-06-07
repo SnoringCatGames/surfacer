@@ -8,8 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Create FailedEdgeAttempt results from other edge calculators.
-# 
 # - Phone:
 #   - Touch doesn't dismiss panel.
 #   - Touch doesn't activate gear icon.
@@ -505,7 +503,6 @@ func get_all_inter_surface_edges_from_surface( \
                 failed_attempt = FailedEdgeAttempt.new( \
                         jump_land_positions, \
                         edge_result_metadata, \
-                        edge_type, \
                         self)
                 failed_edge_attempts_result.push_back(failed_attempt)
 

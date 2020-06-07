@@ -46,10 +46,12 @@ func get_all_inter_surface_edges_from_surface( \
         
         landing_trajectories = \
                 FallMovementUtils.find_landing_trajectories_to_any_surface( \
+                        failed_edge_attempts_result, \
                         collision_params, \
                         surfaces_in_fall_range_set, \
                         jump_position, \
-                        velocity_start)
+                        velocity_start, \
+                        self)
         
         for calc_result in landing_trajectories:
             edge = _create_edge_from_calc_results(calc_result)

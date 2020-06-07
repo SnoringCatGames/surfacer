@@ -9,10 +9,12 @@ class_name FallMovementUtils
 
 # Finds all possible landing trajectories from the given start state.
 static func find_landing_trajectories_to_any_surface( \
+        failed_edge_attempts_result: Array, \
         collision_params: CollisionCalcParams, \
         all_possible_surfaces_set: Dictionary, \
         origin_position: PositionAlongSurface, \
         velocity_start: Vector2, \
+        calculator, \
         possible_landing_surfaces_from_point := [], \
         only_returns_first_result := false) -> Array:
     var debug_params := collision_params.debug_params
@@ -48,7 +50,9 @@ static func find_landing_trajectories_to_any_surface( \
         origin_side = SurfaceSide.CEILING
     
     var jump_land_positions_to_consider: Array
+    var edge_result_metadata: EdgeCalcResultMetadata
     var calc_result: EdgeCalcResult
+    var failed_attempt: FailedEdgeAttempt
     var jump_land_position_results_for_destination_surface := []
     var all_results := []
     
@@ -85,8 +89,24 @@ static func find_landing_trajectories_to_any_surface( \
                     true):
                 continue
             
+            ###################################################################
+            # Record some extra debug state when we're limiting calculations to
+            # a single edge (which must be this edge).
+            var record_calc_details: bool = \
+                    debug_params.has("limit_parsing") and \
+                    debug_params.limit_parsing.has("edge") and \
+                    debug_params.limit_parsing.edge.has("origin") and \
+                    debug_params.limit_parsing.edge.origin.has( \
+                            "position") and \
+                    debug_params.limit_parsing.edge.has("destination") and \
+                    debug_params.limit_parsing.edge.destination.has("position")
+            ###################################################################
+            
+            edge_result_metadata = \
+                    EdgeCalcResultMetadata.new(record_calc_details)
+            
             calc_result = find_landing_trajectory_between_positions( \
-                    null, \
+                    edge_result_metadata, \
                     collision_params, \
                     jump_land_positions.jump_position, \
                     jump_land_positions.land_position, \
@@ -101,6 +121,12 @@ static func find_landing_trajectories_to_any_surface( \
                 
                 if only_returns_first_result:
                     return all_results
+            else:
+                failed_attempt = FailedEdgeAttempt.new( \
+                        jump_land_positions, \
+                        edge_result_metadata, \
+                        calculator)
+                failed_edge_attempts_result.push_back(failed_attempt)
     
     return all_results
 

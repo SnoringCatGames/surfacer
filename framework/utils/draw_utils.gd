@@ -786,9 +786,9 @@ static func draw_edge( \
         _draw_edge_from_instructions_positions( \
                 canvas, \
                 edge, \
-                includes_continuous_positions, \
                 includes_waypoints, \
                 includes_instruction_indicators, \
+                includes_continuous_positions, \
                 base_color)
     elif edge is ClimbDownWallToFloorEdge or \
             edge is IntraSurfaceEdge or \
@@ -929,7 +929,7 @@ static func _draw_fall_from_floor_edge( \
     _draw_edge_from_instructions_positions( \
             canvas, \
             edge, \
-            false, \
+            includes_waypoints, \
             includes_instruction_indicators, \
             includes_continuous_positions, \
             base_color, \
@@ -938,9 +938,9 @@ static func _draw_fall_from_floor_edge( \
 static func _draw_edge_from_instructions_positions( \
         canvas: CanvasItem, \
         edge: Edge, \
-        includes_continuous_positions: bool, \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
+        includes_continuous_positions: bool, \
         discrete_trajectory_color: Color, \
         origin_position_override := Vector2.INF) -> void:
     # Set up colors.

@@ -83,7 +83,6 @@ func _calculate_failed_broad_phase_edge_attempts() -> Array:
             failed_broad_phase_edge_attempt = FailedEdgeAttempt.new( \
                     jump_land_positions, \
                     edge_result_metadata, \
-                    edge_type, \
                     calculator)
             failed_broad_phase_edge_attempts.push_back( \
                     failed_broad_phase_edge_attempt)
