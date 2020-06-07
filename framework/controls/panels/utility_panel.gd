@@ -42,7 +42,8 @@ func _ready() -> void:
     Global.selection_description = \
             $VBoxContainer/Sections/SelectionDescription
     
-    if Global.UTILITY_PANEL_STARTS_OPEN:
+    if Global.UTILITY_PANEL_STARTS_OPEN and \
+            !OS.has_touchscreen_ui_hint():
         set_is_open(true)
 
 func _initialize_dimensions() -> void:

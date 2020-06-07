@@ -8,7 +8,7 @@ const SURFACE_SATURATION := 0.9
 const SURFACE_VALUE := 0.8
 const SURFACE_ALPHA := 0.6
 
-const DEFAULT_SURFACE_HUE := 0.39
+const DEFAULT_SURFACE_HUE := 0.23
 const ORIGIN_SURFACE_HUE := 0.11
 const DESTINATION_SURFACE_HUE := 0.61
 
@@ -75,7 +75,7 @@ var EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS := \
                 EDGE_CONTINUOUS_TRAJECTORY_VALUE, \
                 EDGE_CONTINUOUS_TRAJECTORY_ALPHA)
 
-var DEFAULT_EDGE_DISCRETE_TRAJECTORY_HUE := 0.32
+var DEFAULT_EDGE_DISCRETE_TRAJECTORY_HUE := DEFAULT_SURFACE_HUE
 var DEFAULT_EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS := \
         HsvColorParams.new( \
                 DEFAULT_EDGE_DISCRETE_TRAJECTORY_HUE, \
@@ -108,6 +108,14 @@ var WAYPOINT_COLOR_PARAMS := \
                 WAYPOINT_VALUE, \
                 WAYPOINT_ALPHA)
 
+var DEFAULT_WAYPOINT_HUE := DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE
+var DEFAULT_WAYPOINT_COLOR_PARAMS := \
+        HsvColorParams.new( \
+                DEFAULT_WAYPOINT_HUE, \
+                WAYPOINT_SATURATION, \
+                WAYPOINT_VALUE, \
+                WAYPOINT_ALPHA)
+
 ### Instruction
 
 const INSTRUCTION_HUE_MIN := 0.0
@@ -120,6 +128,14 @@ var INSTRUCTION_COLOR_PARAMS := \
         ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
                 INSTRUCTION_HUE_MIN, \
                 INSTRUCTION_HUE_MAX, \
+                INSTRUCTION_SATURATION, \
+                INSTRUCTION_VALUE, \
+                INSTRUCTION_ALPHA)
+
+var DEFAULT_INSTRUCTION_HUE := DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE
+var DEFAULT_INSTRUCTION_COLOR_PARAMS := \
+        HsvColorParams.new( \
+                DEFAULT_INSTRUCTION_HUE, \
                 INSTRUCTION_SATURATION, \
                 INSTRUCTION_VALUE, \
                 INSTRUCTION_ALPHA)
@@ -255,6 +271,14 @@ var JUMP_LAND_POSITIONS_COLOR_PARAMS := \
         ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
                 JUMP_LAND_POSITIONS_HUE_MIN, \
                 JUMP_LAND_POSITIONS_HUE_MAX, \
+                JUMP_LAND_POSITIONS_SATURATION, \
+                JUMP_LAND_POSITIONS_VALUE, \
+                JUMP_LAND_POSITIONS_ALPHA)
+
+var DEFAULT_JUMP_LAND_POSITIONS_HUE := DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE
+var DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS := \
+        HsvColorParams.new( \
+                DEFAULT_JUMP_LAND_POSITIONS_HUE, \
                 JUMP_LAND_POSITIONS_SATURATION, \
                 JUMP_LAND_POSITIONS_VALUE, \
                 JUMP_LAND_POSITIONS_ALPHA)

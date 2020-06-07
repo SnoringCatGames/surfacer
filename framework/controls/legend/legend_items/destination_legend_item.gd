@@ -21,13 +21,15 @@ func _draw_shape(
     var cone_end_point := Vector2( \
             center.x, \
             center.y + length / 2.0)
+    var color: Color = \
+            AnnotationElementDefaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
     
     DrawUtils.draw_destination_marker( \
             self, \
             cone_end_point, \
             false, \
             SurfaceSide.FLOOR, \
-            AnnotationElementDefaults.WAYPOINT_COLOR_PARAMS.get_color(), \
+            color, \
             cone_length, \
             radius, \
             false, \

@@ -8,26 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Phone:
-#   - Touch doesn't dismiss panel.
-#   - Touch doesn't activate gear icon.
-# 
-# - Pick non-random colors for single-annotation items.
-# 
-# - Refactor pre-existing annotator classes to use the new
-#   AnnotationElementType system.
-#   - At least remove ExtraAnnotator and replace it with the new
-#     general-purpose annotator.
-#   - And probably just remove some obsolete annotators.
-# 
-# - Refactor old color and const systems to use the new
-#   AnnotationElementDefaults system.
-#   - Colors class.
-#   - Look for const values scattered throughout.
-# 
-# - Add logic to render dots for the other possible jump/land positions when
-#   clicking to select an edge to inspect.
-# 
 # - Fix the padding in the controls list.
 # 
 # - Search for FIXMEs in recent directories.
@@ -383,6 +363,17 @@ const IS_A_JUMP_CALCULATOR := true
 #   far from what's expected?
 # 
 # - Switch to built-in Godot gradients for surface annotations.
+# 
+# - Refactor pre-existing annotator classes to use the new
+#   AnnotationElementType system.
+#   - At least remove ExtraAnnotator and replace it with the new
+#     general-purpose annotator.
+#   - And probably just remove some obsolete annotators.
+# 
+# - Refactor old color and const systems to use the new
+#   AnnotationElementDefaults system.
+#   - Colors class.
+#   - Look for const values scattered throughout.
 # 
 # - Create another annotator to indicate the current navigation destination
 #   more boldly.

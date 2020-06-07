@@ -16,7 +16,7 @@ func _draw_shape(
         center: Vector2, \
         size: Vector2) -> void:
     var color: Color = \
-            AnnotationElementDefaults.WAYPOINT_COLOR_PARAMS.get_color()
+            AnnotationElementDefaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
     var radius := DrawUtils.EDGE_START_RADIUS * SCALE
     DrawUtils.draw_origin_marker( \
             self, \

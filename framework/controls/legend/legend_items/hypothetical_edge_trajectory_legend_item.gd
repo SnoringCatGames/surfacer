@@ -15,12 +15,13 @@ func _draw_shape(
     var offset_from_center := size * 0.35
     var start := center - offset_from_center
     var end := center + offset_from_center
+    var color: Color = AnnotationElementDefaults \
+            .DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS.get_color()
     DrawUtils.draw_dashed_line( \
             self, \
             start, \
             end, \
-            AnnotationElementDefaults.JUMP_LAND_POSITIONS_COLOR_PARAMS \
-                    .get_color(), \
+            color, \
             AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH, \
             AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP, \
             0.0, \
