@@ -39,7 +39,8 @@ func _ready() -> void:
     Global.is_level_ready = true
 
 func _unhandled_input(event: InputEvent) -> void:
-    if event is InputEventMouseButton:
+    if event is InputEventMouseButton or \
+            event is InputEventScreenTouch:
         # This ensures that pressing arrow keys won't change selections in the
         # inspector.
         Global.platform_graph_inspector.release_focus()
