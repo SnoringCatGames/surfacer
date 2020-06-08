@@ -6,6 +6,7 @@ const LEVEL_RESOURCE_PATHS := [
     "res://levels/level_3.tscn",
     "res://levels/level_4.tscn",
     "res://levels/level_5.tscn",
+    "res://levels/level_6.tscn",
 ]
 
 const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://test/test_runner.tscn"
@@ -19,8 +20,8 @@ const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false
 const UTILITY_PANEL_STARTS_OPEN := true
 
-const STARTING_LEVEL_RESOURCE_PATH := \
-        "res://test/data/test_level_long_rise.tscn"
+#const STARTING_LEVEL_RESOURCE_PATH := \
+#        "res://test/data/test_level_long_rise.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := \
 #        "res://test/data/test_level_long_fall.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := \
@@ -31,6 +32,8 @@ const STARTING_LEVEL_RESOURCE_PATH := \
 #        "res://levels/level_4.tscn"
 #const STARTING_LEVEL_RESOURCE_PATH := \
 #        "res://levels/level_5.tscn"
+const STARTING_LEVEL_RESOURCE_PATH := \
+        "res://levels/level_6.tscn"
 
 const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 #const PLAYER_RESOURCE_PATH := "res://players/data/test_player.tscn"

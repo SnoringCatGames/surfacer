@@ -65,6 +65,10 @@ func calculate_edge( \
     var falls_on_left_side := \
             position_start.target_projection_onto_surface == \
             origin_surface.first_point
+    edge_result_metadata = \
+            edge_result_metadata if \
+            edge_result_metadata != null else \
+            EdgeCalcResultMetadata.new(false)
     
     _get_all_edges_from_one_side( \
             edges_result, \

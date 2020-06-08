@@ -9,10 +9,21 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: -----------------------------
 # 
 # - Analytics!
+#   - Put together some interesting aggregations, such as:
+#     - Time spent calculating individual edges, edges of type, all edges.
+#       - And time spent calculating different parts of an edge:
+#         - Jump/land position, broad phase, narrow phase.
+#     - How many collisions on avg for jump/fall.
+#     - How many steps calculated for an edge (avg, mean, min, max).
+#     - Step recursion depth (with and without backtracking) (avg, mean, min,
+#       max).
+#     - 
+#     
+#     - ...
 #   - Step through and consider whether I want to show any other analytic
 #     description children for each item.
-#   - Spend some time thinking through the actual timings of the various parts of
-#     calculations (horizontal more than vertical, when possible).
+#   - Spend some time thinking through the actual timings of the various parts
+#     of calculations (horizontal more than vertical, when possible).
 #   - Use the Godot Debugger profiler tools.
 #   - Figure out how/where to store this.
 #     - Don't just keep all step debug state--too much.
@@ -31,27 +42,6 @@ const IS_A_JUMP_CALCULATOR := true
 #     - For a single edge-step attempt?
 #       - Should this be listed/nested under the edge mode somehow?
 #         - FIXME
-#     - Create some way(s) to drill into the non-global lists.
-#       - Ctrl+click to select on level?
-#         - How to distinguish surface and edge?
-#           - FIXME
-#         - How to distinguish exactly which edge?
-#           - Can probably add a radio button somewhere that indicates at least
-#             which _type_ of edge to consider when drilling into an edge.
-#           - FIXME
-#       - Could also display a list of all relevant drill-downs from the
-#         current list's context:
-#         - From global mode:
-#           - List all surfaces.
-#         - From surface mode:
-#           - List all valid edges.
-#           - List all edge attempts?
-#             - FIXME
-#           - List all neighbors
-#         - From edge mode:
-#           - List all step attempts?
-#             - FIXME
-#     - Dynamically populate (and tear-down) content within this giant tree.
 #     - Also, dynamically calculate edge attempts, in order to capture deeper
 #       debugging info, when expanding their tree items.
 #     - When selecting something by clicking on the level, open the
@@ -61,11 +51,6 @@ const IS_A_JUMP_CALCULATOR := true
 #     - 
 #   - Single-edge data structure draft:
 #     - 
-#   - Then put together some interesting aggregations, such as:
-#     - time spent calculating each edge,
-#     - Avg time spent calculating each different type of edge,
-#     - how many collisions on avg for jump/fall,
-#     - ...
 #   - Try to use these analytics to inform decisions around which calculations
 #     are worth it.
 #   - Maybe add a new configuration for max number of

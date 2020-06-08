@@ -2,7 +2,6 @@
 
 [ext_resource path="res://assets/images/spritesheet.png" type="Texture" id=1]
 
-
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( -32, -32, 32, -32, 32, 32, -32, 32 )
 

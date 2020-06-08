@@ -33,6 +33,10 @@ func calculate_edge( \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
+    edge_result_metadata = \
+            edge_result_metadata if \
+            edge_result_metadata != null else \
+            EdgeCalcResultMetadata.new(false)
     return find_a_landing_trajectory( \
             edge_result_metadata, \
             collision_params, \

@@ -65,6 +65,10 @@ func calculate_edge( \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
+    edge_result_metadata = \
+            edge_result_metadata if \
+            edge_result_metadata != null else \
+            EdgeCalcResultMetadata.new(false)
     var calc_result: EdgeCalcResult = \
             FallMovementUtils.find_landing_trajectory_between_positions( \
                     edge_result_metadata, \
