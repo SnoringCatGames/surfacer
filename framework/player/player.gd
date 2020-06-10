@@ -71,11 +71,15 @@ func _ready() -> void:
     var owner_id: int = shape_owners[0]
     assert(shape_owner_get_shape_count(owner_id) == 1)
     var collider_shape := shape_owner_get_shape(owner_id, 0)
-    assert(Geometry.do_shapes_match(collider_shape, movement_params.collider_shape))
+    assert(Geometry.do_shapes_match( \
+            collider_shape, \
+            movement_params.collider_shape))
     var transform := shape_owner_get_transform(owner_id)
-    assert(abs(transform.get_rotation() - movement_params.collider_rotation) < Geometry.FLOAT_EPSILON)
+    assert(abs(transform.get_rotation() - \
+            movement_params.collider_rotation) < Geometry.FLOAT_EPSILON)
     
-    # Ensure we use the actual Shape2D reference that is used by Godot's collision system.
+    # Ensure we use the actual Shape2D reference that is used by Godot's
+    # collision system.
     movement_params.collider_shape = collider_shape
     
 #    shape_owner_clear_shapes(owner_id)
@@ -83,9 +87,14 @@ func _ready() -> void:
     
     collider_half_width_height = movement_params.collider_half_width_height
 
-    var animators: Array = Utils.get_children_by_type(self, PlayerAnimator)
+    var animators: Array = Utils.get_children_by_type( \
+            self, \
+            PlayerAnimator)
     assert(animators.size() <= 1)
-    animator = animators[0] if !animators.empty() else FakePlayerAnimator.new()
+    animator = \
+            animators[0] if \
+            !animators.empty() else \
+            FakePlayerAnimator.new()
 
     # Set up a Tween for the fade-out at the end of a dash.
     _dash_fade_tween = Tween.new()
@@ -138,7 +147,9 @@ func _init_navigator() -> void:
     action_sources.push_back(navigator.instructions_action_source)
 
 func _physics_process(delta: float) -> void:
-    assert(Geometry.are_floats_equal_with_epsilon(delta, Utils.PHYSICS_TIME_STEP))
+    assert(Geometry.are_floats_equal_with_epsilon( \
+            delta, \
+            Utils.PHYSICS_TIME_STEP))
     
     _update_actions(delta)
     _update_surface_state()
@@ -188,7 +199,8 @@ func _physics_process(delta: float) -> void:
     actions.delta = delta
     actions.log_new_presses_and_releases(self, Global.elapsed_play_time_sec)
     
-    # Flip the horizontal direction of the animation according to which way the player is facing.
+    # Flip the horizontal direction of the animation according to which way the
+    # player is facing.
     if surface_state.horizontal_facing_sign == 1:
         animator.face_right()
     elif surface_state.horizontal_facing_sign == -1:
@@ -198,11 +210,16 @@ func _physics_process(delta: float) -> void:
     _process_animation()
     _update_collision_mask()
     
-    # We don't need to multiply velocity by delta because MoveAndSlide already takes delta time
-    # into account.
-    # TODO: Use the remaining pre-collision movement that move_and_slide returns. This might be
-    # needed in order to move along slopes?
-    move_and_slide(velocity, Geometry.UP, false, 4, Geometry.FLOOR_MAX_ANGLE)
+    # We don't need to multiply velocity by delta because MoveAndSlide already
+    # takes delta time into account.
+    # TODO: Use the remaining pre-collision movement that move_and_slide
+    #       returns. This might be needed in order to move along slopes?
+    move_and_slide( \
+            velocity, \
+            Geometry.UP, \
+            false, \
+            4, \
+            Geometry.FLOOR_MAX_ANGLE)
     
     surface_state.previous_center_position = surface_state.center_position
     surface_state.center_position = self.position
@@ -240,7 +257,8 @@ func _update_actions(delta: float) -> void:
                 delta, \
                 navigation_state)
     
-    actions.start_dash = _can_dash and InputWrapper.is_action_just_pressed("dash")
+    actions.start_dash = _can_dash and \
+            InputWrapper.is_action_just_pressed("dash")
 
 # Updates physics and player states in response to the current actions.
 func _process_actions() -> void:
@@ -256,7 +274,8 @@ func _process_actions() -> void:
     for action_handler in action_handlers:
         if action_handler.type == current_action_type or \
                 action_handler.type == SurfaceType.OTHER:
-            _previous_actions_this_frame[action_handler.name] = action_handler.process(self)
+            _previous_actions_this_frame[action_handler.name] = \
+                    action_handler.process(self)
 
 func _process_animation() -> void:
     match current_action_type:
@@ -286,9 +305,11 @@ func _process_animation() -> void:
 func processed_action(name: String) -> bool:
     return _previous_actions_this_frame.get(name) == true
     
-# Updates some basic surface-related state for player's actions and environment of the current frame.
+# Updates some basic surface-related state for player's actions and environment
+# of the current frame.
 func _update_surface_state() -> void:
-    # Flip the horizontal direction of the animation according to which way the player is facing.
+    # Flip the horizontal direction of the animation according to which way the
+    # player is facing.
     if actions.pressed_face_right:
         surface_state.horizontal_facing_sign = 1
     elif actions.pressed_face_left:
@@ -305,16 +326,20 @@ func _update_surface_state() -> void:
     else:
         surface_state.horizontal_acceleration_sign = 0
     
-    # Note: These might give false negatives when colliding with a corner. AFAICT, Godot will
-    # simply pick one of the corner's adjacent segments to base the collision normal off of, so the
-    # other segment will be ignored (and the other segment could correspond to floor or ceiling).
+    # Note: These might give false negatives when colliding with a corner.
+    #       AFAICT, Godot will simply pick one of the corner's adjacent
+    #       segments to base the collision normal off of, so the other segment
+    #       will be ignored (and the other segment could correspond to floor or
+    #       ceiling).
     surface_state.is_touching_floor = is_on_floor()
     surface_state.is_touching_ceiling = is_on_ceiling()
     surface_state.is_touching_wall = is_on_wall()
     
     surface_state.which_wall = Utils.get_which_wall_collided(self)
-    surface_state.is_touching_left_wall = surface_state.which_wall == SurfaceSide.LEFT_WALL
-    surface_state.is_touching_right_wall = surface_state.which_wall == SurfaceSide.RIGHT_WALL
+    surface_state.is_touching_left_wall = \
+            surface_state.which_wall == SurfaceSide.LEFT_WALL
+    surface_state.is_touching_right_wall = \
+            surface_state.which_wall == SurfaceSide.RIGHT_WALL
     
     var next_is_touching_a_surface := \
             surface_state.is_touching_floor or \
@@ -327,8 +352,10 @@ func _update_surface_state() -> void:
     surface_state.is_touching_a_surface = next_is_touching_a_surface
     
     # Calculate the sign of a colliding wall's direction.
-    surface_state.toward_wall_sign = (0 if !surface_state.is_touching_wall else \
-            (1 if surface_state.which_wall == SurfaceSide.RIGHT_WALL else -1))
+    surface_state.toward_wall_sign = \
+            (0 if !surface_state.is_touching_wall else \
+            (1 if surface_state.which_wall == SurfaceSide.RIGHT_WALL else \
+            -1))
     
     surface_state.is_facing_wall = \
         (surface_state.which_wall == SurfaceSide.RIGHT_WALL and \
@@ -336,30 +363,44 @@ func _update_surface_state() -> void:
         (surface_state.which_wall == SurfaceSide.LEFT_WALL and \
                 surface_state.horizontal_facing_sign < 0)
     surface_state.is_pressing_into_wall = \
-        (surface_state.which_wall == SurfaceSide.RIGHT_WALL and actions.pressed_right) or \
-        (surface_state.which_wall == SurfaceSide.LEFT_WALL and actions.pressed_left)
+        (surface_state.which_wall == SurfaceSide.RIGHT_WALL and \
+                actions.pressed_right) or \
+        (surface_state.which_wall == SurfaceSide.LEFT_WALL and \
+                actions.pressed_left)
     surface_state.is_pressing_away_from_wall = \
-        (surface_state.which_wall == SurfaceSide.RIGHT_WALL and actions.pressed_left) or \
-        (surface_state.which_wall == SurfaceSide.LEFT_WALL and actions.pressed_right)
+        (surface_state.which_wall == SurfaceSide.RIGHT_WALL and \
+                actions.pressed_left) or \
+        (surface_state.which_wall == SurfaceSide.LEFT_WALL and \
+                actions.pressed_right)
     
-    var facing_into_wall_and_pressing_up: bool = actions.pressed_up and \
-            (surface_state.is_facing_wall or surface_state.is_pressing_into_wall)
-    var facing_into_wall_and_pressing_grab: bool = actions.pressed_grab_wall and \
-            (surface_state.is_facing_wall or surface_state.is_pressing_into_wall)
-    surface_state.is_triggering_wall_grab = surface_state.is_pressing_into_wall or \
-            facing_into_wall_and_pressing_up or facing_into_wall_and_pressing_grab
+    var facing_into_wall_and_pressing_up: bool = \
+            actions.pressed_up and \
+            (surface_state.is_facing_wall or \
+                    surface_state.is_pressing_into_wall)
+    var facing_into_wall_and_pressing_grab: bool = \
+            actions.pressed_grab_wall and \
+            (surface_state.is_facing_wall or \
+                    surface_state.is_pressing_into_wall)
+    surface_state.is_triggering_wall_grab = \
+            surface_state.is_pressing_into_wall or \
+            facing_into_wall_and_pressing_up or \
+            facing_into_wall_and_pressing_grab
     
-    surface_state.is_triggering_fall_through = actions.pressed_down and actions.just_pressed_jump
+    surface_state.is_triggering_fall_through = \
+            actions.pressed_down and actions.just_pressed_jump
     
     # Whether we are grabbing a wall.
-    surface_state.is_grabbing_wall = surface_state.is_touching_wall and \
-            (surface_state.is_grabbing_wall or surface_state.is_triggering_wall_grab)
+    surface_state.is_grabbing_wall = \
+            surface_state.is_touching_wall and \
+            (surface_state.is_grabbing_wall or \
+                    surface_state.is_triggering_wall_grab)
     
     # Whether we should fall through fall-through floors.
     if surface_state.is_grabbing_wall:
         surface_state.is_falling_through_floors = actions.pressed_down
     elif surface_state.is_touching_floor:
-        surface_state.is_falling_through_floors = surface_state.is_triggering_fall_through
+        surface_state.is_falling_through_floors = \
+                surface_state.is_triggering_fall_through
     else:
         surface_state.is_falling_through_floors = actions.pressed_down
     
@@ -391,13 +432,17 @@ func _update_which_side_is_grabbed() -> void:
             next_is_grabbing_left_wall or next_is_grabbing_right_wall
     
     surface_state.just_grabbed_floor = \
-            next_is_grabbing_floor and !surface_state.is_grabbing_floor
+            next_is_grabbing_floor and \
+            !surface_state.is_grabbing_floor
     surface_state.just_grabbed_ceiling = \
-            next_is_grabbing_ceiling and !surface_state.is_grabbing_ceiling
+            next_is_grabbing_ceiling and \
+            !surface_state.is_grabbing_ceiling
     surface_state.just_grabbed_left_wall = \
-            next_is_grabbing_left_wall and !surface_state.is_grabbing_left_wall
+            next_is_grabbing_left_wall and \
+            !surface_state.is_grabbing_left_wall
     surface_state.just_grabbed_right_wall = \
-            next_is_grabbing_right_wall and !surface_state.is_grabbing_right_wall
+            next_is_grabbing_right_wall and \
+            !surface_state.is_grabbing_right_wall
     surface_state.just_grabbed_a_surface = \
             surface_state.just_grabbed_floor or \
             surface_state.just_grabbed_ceiling or \
@@ -405,9 +450,11 @@ func _update_which_side_is_grabbed() -> void:
             surface_state.just_grabbed_right_wall
     
     surface_state.just_entered_air = \
-            !next_is_grabbing_a_surface and surface_state.is_grabbing_a_surface
+            !next_is_grabbing_a_surface and \
+            surface_state.is_grabbing_a_surface
     surface_state.just_left_air = \
-            next_is_grabbing_a_surface and !surface_state.is_grabbing_a_surface
+            next_is_grabbing_a_surface and \
+            !surface_state.is_grabbing_a_surface
     
     surface_state.is_grabbing_floor = next_is_grabbing_floor
     surface_state.is_grabbing_ceiling = next_is_grabbing_ceiling
@@ -416,10 +463,14 @@ func _update_which_side_is_grabbed() -> void:
     surface_state.is_grabbing_a_surface = next_is_grabbing_a_surface
     
     surface_state.grabbed_side = \
-            SurfaceSide.FLOOR if surface_state.is_grabbing_floor else \
-            (SurfaceSide.CEILING if surface_state.is_grabbing_ceiling else \
-            (SurfaceSide.LEFT_WALL if surface_state.is_grabbing_left_wall else \
-            (SurfaceSide.RIGHT_WALL if surface_state.is_grabbing_right_wall else \
+            SurfaceSide.FLOOR if \
+                    surface_state.is_grabbing_floor else \
+            (SurfaceSide.CEILING if \
+                    surface_state.is_grabbing_ceiling else \
+            (SurfaceSide.LEFT_WALL if \
+                    surface_state.is_grabbing_left_wall else \
+            (SurfaceSide.RIGHT_WALL if \
+                    surface_state.is_grabbing_right_wall else \
             SurfaceSide.NONE)))
     match surface_state.grabbed_side:
         SurfaceSide.FLOOR:
@@ -432,7 +483,9 @@ func _update_which_side_is_grabbed() -> void:
             surface_state.grabbed_surface_normal = Geometry.LEFT
 
 func _update_which_surface_is_grabbed() -> void:
-    var collision := _get_attached_surface_collision(self, surface_state)
+    var collision := _get_attached_surface_collision( \
+            self, \
+            surface_state)
     assert((collision != null) == surface_state.is_grabbing_a_surface)
     
     if surface_state.is_grabbing_a_surface:
@@ -448,31 +501,37 @@ func _update_which_surface_is_grabbed() -> void:
                 next_grabbed_tile_map != surface_state.grabbed_tile_map
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
-        var next_grab_position_tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
-                surface_state.grab_position, \
-                surface_state.grabbed_tile_map, \
-                surface_state.is_touching_floor, \
-                surface_state.is_touching_ceiling, \
-                surface_state.is_touching_left_wall, \
-                surface_state.is_touching_right_wall, \
-                true, \
-                surface_state.grab_position_tile_map_coord)
+        var next_grab_position_tile_map_coord: Vector2 = \
+                Geometry.get_collision_tile_map_coord( \
+                        surface_state.grab_position, \
+                        surface_state.grabbed_tile_map, \
+                        surface_state.is_touching_floor, \
+                        surface_state.is_touching_ceiling, \
+                        surface_state.is_touching_left_wall, \
+                        surface_state.is_touching_right_wall, \
+                        true, \
+                        surface_state.grab_position_tile_map_coord)
         surface_state.just_changed_tile_map_coord = \
                 surface_state.just_left_air or \
-                next_grab_position_tile_map_coord != surface_state.grab_position_tile_map_coord
-        surface_state.grab_position_tile_map_coord = next_grab_position_tile_map_coord
+                next_grab_position_tile_map_coord != \
+                        surface_state.grab_position_tile_map_coord
+        surface_state.grab_position_tile_map_coord = \
+                next_grab_position_tile_map_coord
         
-        if surface_state.just_changed_tile_map_coord or surface_state.just_changed_tile_map:
-            surface_state.grabbed_tile_map_index = Geometry.get_tile_map_index_from_grid_coord( \
-                    surface_state.grab_position_tile_map_coord, \
-                    surface_state.grabbed_tile_map)
+        if surface_state.just_changed_tile_map_coord or \
+                surface_state.just_changed_tile_map:
+            surface_state.grabbed_tile_map_index = \
+                    Geometry.get_tile_map_index_from_grid_coord( \
+                            surface_state.grab_position_tile_map_coord, \
+                            surface_state.grabbed_tile_map)
         
         var next_grabbed_surface := calculate_grabbed_surface()
         surface_state.just_changed_surface = \
                 surface_state.just_left_air or \
                 next_grabbed_surface != surface_state.grabbed_surface
         if surface_state.just_changed_surface:
-            surface_state.previous_grabbed_surface = surface_state.grabbed_surface
+            surface_state.previous_grabbed_surface = \
+            surface_state.grabbed_surface
         surface_state.grabbed_surface = next_grabbed_surface
         
         surface_state.center_position_along_surface.match_current_grab( \
@@ -485,7 +544,8 @@ func _update_which_surface_is_grabbed() -> void:
             surface_state.just_changed_tile_map = true
             surface_state.just_changed_tile_map_coord = true
             surface_state.just_changed_surface = true
-            surface_state.previous_grabbed_surface = surface_state.grabbed_surface
+            surface_state.previous_grabbed_surface = \
+            surface_state.grabbed_surface
         
         surface_state.grab_position = Vector2.INF
         surface_state.grabbed_tile_map = null
@@ -493,8 +553,8 @@ func _update_which_surface_is_grabbed() -> void:
         surface_state.grabbed_surface = null
         surface_state.center_position_along_surface.reset()
 
-# Update whether or not we should currently consider collisions with fall-through floors and
-# walk-through walls.
+# Update whether or not we should currently consider collisions with
+# fall-through floors and walk-through walls.
 func _update_collision_mask() -> void:
     set_collision_mask_bit(1, !surface_state.is_falling_through_floors)
     set_collision_mask_bit(2, surface_state.is_grabbing_walk_through_walls)
@@ -517,13 +577,17 @@ static func _get_attached_surface_collision( \
         current_collision = body.get_slide_collision(i)
         
         if surface_state.is_grabbing_floor:
-            current_normal_diff = abs(current_collision.normal.angle_to(Geometry.UP))
+            current_normal_diff = \
+                    abs(current_collision.normal.angle_to(Geometry.UP))
         elif surface_state.is_grabbing_ceiling:
-            current_normal_diff = abs(current_collision.normal.angle_to(Geometry.DOWN))
+            current_normal_diff = \
+                    abs(current_collision.normal.angle_to(Geometry.DOWN))
         elif surface_state.is_grabbing_left_wall:
-            current_normal_diff = abs(current_collision.normal.angle_to(Geometry.RIGHT))
+            current_normal_diff = \
+                    abs(current_collision.normal.angle_to(Geometry.RIGHT))
         elif surface_state.is_grabbing_right_wall:
-            current_normal_diff = abs(current_collision.normal.angle_to(Geometry.LEFT))
+            current_normal_diff = \
+                    abs(current_collision.normal.angle_to(Geometry.LEFT))
         else:
             continue
         
@@ -537,7 +601,8 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     if !_can_dash:
         return
     
-    current_max_horizontal_speed = movement_params.max_horizontal_speed_default * \
+    current_max_horizontal_speed = \
+            movement_params.max_horizontal_speed_default * \
             movement_params.dash_speed_multiplier
     velocity.x = current_max_horizontal_speed * horizontal_acceleration_sign
     
@@ -550,7 +615,8 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     _dash_fade_tween.interpolate_property( \
             self, \
             "current_max_horizontal_speed", \
-            movement_params.max_horizontal_speed_default * movement_params.dash_speed_multiplier, \
+            movement_params.max_horizontal_speed_default * \
+                    movement_params.dash_speed_multiplier, \
             movement_params.max_horizontal_speed_default, \
             movement_params.dash_fade_duration, \
             Tween.TRANS_LINEAR, \

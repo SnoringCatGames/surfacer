@@ -42,6 +42,7 @@ const DEBUG_PARAMS := \
         {} if \
         !IN_DEBUG_MODE else \
         {
+    is_inspector_enabled = true,
     limit_parsing = {
         player_name = "cat",
 #        

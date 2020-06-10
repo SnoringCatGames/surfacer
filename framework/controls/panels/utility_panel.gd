@@ -43,8 +43,19 @@ func _ready() -> void:
             $VBoxContainer/Sections/SelectionDescription
     
     if Global.UTILITY_PANEL_STARTS_OPEN and \
+            Global.DEBUG_PARAMS.is_inspector_enabled and \
             !OS.has_touchscreen_ui_hint():
         set_is_open(true)
+    
+    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+        $VBoxContainer/Sections.remove_child( \
+                $VBoxContainer/Sections/SelectionDescription)
+        $VBoxContainer/Sections.remove_child( \
+                $VBoxContainer/Sections/LegendHeader)
+        $VBoxContainer/Sections.remove_child( \
+                $VBoxContainer/Sections/Legend)
+        $VBoxContainer/Sections.remove_child( \
+                $VBoxContainer/Sections/InspectorContainer)
 
 func _initialize_dimensions() -> void:
     self.anchor_left = 1.0

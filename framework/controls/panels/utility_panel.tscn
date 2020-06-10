@@ -52,13 +52,12 @@ custom_constants/separation = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 240.0
-margin_bottom = 23.0
-custom_constants/separation = 0
+margin_bottom = 20.0
 
 [node name="LegendHeader" type="Label" parent="VBoxContainer/Sections"]
-margin_top = 23.0
+margin_top = 20.0
 margin_right = 240.0
-margin_bottom = 46.0
+margin_bottom = 43.0
 theme = ExtResource( 12 )
 text = "Legend"
 align = 1
@@ -66,12 +65,12 @@ align = 1
 [node name="Legend" parent="VBoxContainer/Sections" instance=ExtResource( 11 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 46.0
+margin_top = 43.0
 margin_right = 240.0
-margin_bottom = 46.0
+margin_bottom = 63.0
 
 [node name="InspectorContainer" type="VBoxContainer" parent="VBoxContainer/Sections"]
-margin_top = 46.0
+margin_top = 63.0
 margin_right = 240.0
 margin_bottom = 300.0
 size_flags_vertical = 3
@@ -89,7 +88,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 23.0
 margin_right = 240.0
-margin_bottom = 254.0
+margin_bottom = 237.0
 size_flags_vertical = 3
 
 [node name="FooterPaddingTop" type="Control" parent="VBoxContainer"]
@@ -193,6 +192,7 @@ __meta__ = {
 }
 
 [node name="CreditsPanel" parent="." instance=ExtResource( 2 )]
+visible = false
 [connection signal="pressed" from="VBoxContainer/Footer/HBoxContainer/CreditsButton" to="." method="_on_credits_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/Footer/HBoxContainer/Control2/ XButton" to="." method="_toggle_open"]
 [connection signal="pressed" from="VBoxContainer/GearContainer/GearButton" to="." method="_toggle_open"]

@@ -8,7 +8,7 @@ var ruler_layer: CanvasLayer
 var annotation_layer: CanvasLayer
 
 var ruler_annotator: RulerAnnotator
-var platform_graph_annotator: PlatformGraphAnnotator
+var grid_indices_annotator: GridIndicesAnnotator
 # Dictonary<Player, PlayerAnnotator>
 var player_annotators := {}
 var click_annotator: ClickAnnotator
@@ -91,9 +91,9 @@ func _input(event: InputEvent) -> void:
         Global.welcome_panel.queue_free()
         Global.welcome_panel = null
 
-func create_graph_annotator(graph: PlatformGraph) -> void:
-    platform_graph_annotator = PlatformGraphAnnotator.new(graph)
-    annotation_layer.add_child(platform_graph_annotator)
+func create_grid_indices_annotator(graph: PlatformGraph) -> void:
+    grid_indices_annotator = GridIndicesAnnotator.new(graph)
+    annotation_layer.add_child(grid_indices_annotator)
 
 func create_player_annotator( \
         player: Player, \

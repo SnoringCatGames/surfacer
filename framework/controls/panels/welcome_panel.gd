@@ -14,6 +14,10 @@ const CONTROLS_LEGEND = [
 
 func _ready() -> void:
     for mapping in CONTROLS_LEGEND:
+        if !Global.DEBUG_PARAMS.is_inspector_enabled and \
+                mapping[0] == "Inspect graph":
+            continue
+        
         $VBoxContainer/MarginContainer/Controls.add_item( \
                 mapping[0] + "   ", \
                 null, \

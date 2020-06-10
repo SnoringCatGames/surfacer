@@ -122,7 +122,7 @@ func _record_player_reference(is_human_player: bool) -> void:
             Global.current_player_for_clicks = computer_player
         
         # Set up some annotators to help with debugging.
-        Global.canvas_layers.create_graph_annotator(graph)
+#        Global.canvas_layers.create_grid_indices_annotator(graph)
         Global.canvas_layers.create_player_annotator( \
                 player, \
                 is_human_player)

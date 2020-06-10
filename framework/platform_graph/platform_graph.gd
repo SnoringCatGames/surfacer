@@ -797,6 +797,11 @@ func _calculate_nodes_and_edges( \
                         [edge.start_position_along_surface] \
                         [edge.end_position_along_surface] = \
                         edge
+    
+    if !debug_params.is_inspector_enabled:
+        # Free-up this memory if we don't need to display the graph state in
+        # the inspector.
+        surfaces_to_inter_surface_edges_results.clear()
 
 # Checks whether a previous node with the same position has already been seen.
 #

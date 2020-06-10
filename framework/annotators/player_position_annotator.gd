@@ -1,5 +1,5 @@
 extends Node2D
-class_name PositionAnnotator
+class_name PlayerPositionAnnotator
 
 var PLAYER_POSITION_COLOR := Colors.opacify(Colors.TEAL, Colors.ALPHA_XFAINT)
 var GRAB_POSITION_COLOR := Colors.opacify(Colors.TEAL_D, Colors.ALPHA_XFAINT)

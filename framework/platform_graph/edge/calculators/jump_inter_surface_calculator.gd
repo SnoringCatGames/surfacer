@@ -8,22 +8,12 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Refactor EdgeCalculators:
-#   - Add a DEBUG_PARAMS flag: is_inspector_enabled.
-#     - When disabled:
-#       - Delete the new big mapping structure after parsing it out to the
-#         nodes-based structure.
-#       - Don't calculate EdgeCalcResultMetadata values.
-#       - Remove inspector from utility menu.
-#       - Remove "ctrl+click" entry from welcome panel.
-#     - Also maybe disable automatically for touch-screen devices?
-# 
-# - Undo recent work to make BP failure stuff calculatable on the fly.
-#   - Remove calculate_jump_land_positions.
-#   - Remove logic from edge failure.
+# - COMMIT MESSAGE:
+#   Add support for toggling whether the inspector is included in DEBUG_PARAMS.
 # 
 # - Current position not always rendering:
 #   - Specifically, yellow box and blue surface.
+#     - Only a problem when auto navigating.
 # 
 # - Analytics!
 #   - Put together some interesting aggregations, such as:

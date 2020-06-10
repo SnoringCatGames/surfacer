@@ -76,10 +76,16 @@ func _init() -> void:
     root = create_item()
 
 func _ready() -> void:
+    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+        return
+    
     inspector_selector = PlatformGraphInspectorSelector.new(self)
     Global.canvas_layers.annotation_layer.add_child(inspector_selector)
 
 func _process(delta: float) -> void:
+    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+        return
+    
     var next_focused_control := get_focus_owner()
     if _focused_control != next_focused_control:
         _focused_control = next_focused_control
@@ -109,6 +115,9 @@ func release_focus() -> void:
     .release_focus()
 
 func populate() -> void:
+    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+        return
+    
     _should_be_populated = true
     
     for graph in graphs:
@@ -122,12 +131,18 @@ func populate() -> void:
         call_deferred("_select_initial_item")
 
 func clear() -> void:
+    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+        return
+    
     release_focus()
     _clear_selection()
     _should_be_populated = false
     .clear()
 
 func set_graphs(graphs: Array) -> void:
+    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+        return
+    
     self.graphs = graphs
     if _should_be_populated:
         if !self.graphs.empty():
