@@ -715,7 +715,7 @@ func _calculate_nodes_and_edges( \
             ###################################################################
             # Allow for debug mode to limit the scope of what's calculated.
             if debug_params.has("limit_parsing") and \
-                    debug_params.limit_parsing.has("edge_calculator") and \
+                    debug_params.limit_parsing.has("edge_type") and \
                     edge_calculator.edge_type != \
                             debug_params.limit_parsing.edge_type:
                 continue

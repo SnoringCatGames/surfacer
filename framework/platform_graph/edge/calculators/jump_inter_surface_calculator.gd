@@ -8,8 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# >>>- Fix DEBUG_PARAMS: Filtering by edge_type isn't working.
-# 
 # - Refactor EdgeCalculators:
 #   - Add a DEBUG_PARAMS flag: is_inspector_enabled.
 #     - When disabled:
