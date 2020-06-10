@@ -9,8 +9,7 @@ func _init( \
         parent_item: TreeItem, \
         tree: Tree, \
         graph: PlatformGraph, \
-        surfaces_to_surfaces_to_edge_types_to_valid_edges: Dictionary, \
-        surfaces_to_surfaces_to_edge_types_to_failed_edges: Dictionary) \
+        surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
         .( \
         TYPE, \
         STARTS_COLLAPSED, \
@@ -18,8 +17,7 @@ func _init( \
         tree, \
         graph, \
         SIDE, \
-        surfaces_to_surfaces_to_edge_types_to_valid_edges, \
-        surfaces_to_surfaces_to_edge_types_to_failed_edges) -> void:
+        surfaces_to_surfaces_to_edge_types_to_edges_results) -> void:
     pass
 
 func get_description() -> String:

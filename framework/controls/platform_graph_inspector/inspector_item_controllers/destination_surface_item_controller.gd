@@ -7,10 +7,8 @@ const STARTS_COLLAPSED := true
 
 var origin_surface: Surface
 var destination_surface: Surface
-# Dictionary<EdgeType, Array<Edge>>
-var edge_types_to_valid_edges: Dictionary
-# Dictionary<EdgeType, Array<FailedEdgeAttempt>>
-var edge_types_to_failed_edges: Dictionary
+# Dictionary<EdgeType, Array<InterSurfaceEdgesResult>>
+var edge_types_to_edges_results: Dictionary
 var valid_edge_count: int
 var failed_edge_count: int
 
@@ -20,8 +18,7 @@ func _init( \
         graph: PlatformGraph, \
         origin_surface: Surface, \
         destination_surface: Surface, \
-        edge_types_to_valid_edges: Dictionary, \
-        edge_types_to_failed_edges: Dictionary) \
+        edge_types_to_edges_results: Dictionary) \
         .( \
         TYPE, \
         IS_LEAF, \
@@ -31,10 +28,8 @@ func _init( \
         graph) -> void:
     self.origin_surface = origin_surface
     self.destination_surface = destination_surface
-    self.edge_types_to_valid_edges = edge_types_to_valid_edges
-    self.edge_types_to_failed_edges = edge_types_to_failed_edges
-    self.valid_edge_count = _count_edges(edge_types_to_valid_edges)
-    self.failed_edge_count = _count_edges(edge_types_to_failed_edges)
+    self.edge_types_to_edges_results = edge_types_to_edges_results
+    _count_edges()
     _post_init()
 
 func to_string() -> String:
@@ -86,41 +81,23 @@ func _find_and_expand_controller_recursive( \
     select()
 
 func _create_children_inner() -> void:
-    var valid_edges: Array
-    var failed_edges: Array
     var calculator: EdgeCalculator
-    var jump_land_positions: Array
     
     for edge_type in EdgeType.values():
         if InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge_type) >= 0:
             continue
         
-        valid_edges = \
-                edge_types_to_valid_edges[edge_type] if \
-                edge_types_to_valid_edges.has(edge_type) else \
-                []
-        failed_edges = \
-                edge_types_to_failed_edges[edge_type] if \
-                edge_types_to_failed_edges.has(edge_type) else \
-                []
-        
-        if !valid_edges.empty() or \
-                !failed_edges.empty():
-            calculator = graph.player_params.get_edge_calculator(edge_type)
-            jump_land_positions = calculator.calculate_jump_land_positions( \
-                    graph.movement_params, \
-                    origin_surface, \
-                    destination_surface)
-            EdgeTypeInSurfacesGroupItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
-                    origin_surface, \
-                    destination_surface, \
-                    edge_type, \
-                    valid_edges, \
-                    failed_edges, \
-                    jump_land_positions)
+        if edge_types_to_edges_results.has(edge_type):
+            for edges_result in edge_types_to_edges_results[edge_type]:
+                calculator = graph.player_params.get_edge_calculator(edge_type)
+                EdgeTypeInSurfacesGroupItemController.new( \
+                        tree_item, \
+                        tree, \
+                        graph, \
+                        origin_surface, \
+                        destination_surface, \
+                        edge_type, \
+                        edges_result)
 
 func _destroy_children_inner() -> void:
     # Do nothing.
@@ -136,19 +113,22 @@ func get_annotation_elements() -> Array:
     elements.push_back(destination_element)
     
     var edge_element: EdgeAnnotationElement
-    for edge_type in edge_types_to_valid_edges:
-        for edge in edge_types_to_valid_edges[edge_type]:
-            edge_element = EdgeAnnotationElement.new( \
-                    edge, \
-                    true, \
-                    false, \
-                    false)
-            elements.push_back(edge_element)
+    for edge_type in edge_types_to_edges_results:
+        for edges_result in edge_types_to_edges_results[edge_type]:
+            for valid_edge in edges_result.valid_edges:
+                edge_element = EdgeAnnotationElement.new( \
+                        valid_edge, \
+                        true, \
+                        false, \
+                        false)
+                elements.push_back(edge_element)
     
     return elements
 
-static func _count_edges(edge_types_to_edges: Dictionary) -> int:
-    var count := 0
-    for edge_type in edge_types_to_edges:
-        count += edge_types_to_edges[edge_type].size()
-    return count
+func _count_edges() -> void:
+    valid_edge_count = 0
+    failed_edge_count = 0
+    for edge_type in edge_types_to_edges_results:
+        for edges_result in edge_types_to_edges_results[edge_type]:
+            valid_edge_count += edges_result.valid_edges.size()
+            failed_edge_count += edges_result.failed_edge_attempts.size()

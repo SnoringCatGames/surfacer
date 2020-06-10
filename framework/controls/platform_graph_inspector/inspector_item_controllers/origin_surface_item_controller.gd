@@ -6,10 +6,8 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
 var origin_surface: Surface
-# Dictionary<Surface, Dictionary<EdgeType, Array<Edge>>>
-var destination_surfaces_to_edge_types_to_valid_edges := {}
-# Dictionary<Surface, Dictionary<EdgeType, Array<FailedEdgeAttempt>>>
-var destination_surfaces_to_edge_types_to_failed_edges := {}
+# Dictionary<Surface, Dictionary<EdgeType, Array<InterSurfaceEdgesResult>>>
+var destination_surfaces_to_edge_types_to_edges_results := {}
 # Array<Surface>
 var attempted_destination_surfaces := []
 var valid_edge_count := 0
@@ -23,8 +21,7 @@ func _init( \
         tree: Tree, \
         graph: PlatformGraph, \
         origin_surface: Surface, \
-        destination_surfaces_to_edge_types_to_valid_edges: Dictionary, \
-        destination_surfaces_to_edge_types_to_failed_edges: Dictionary) \
+        destination_surfaces_to_edge_types_to_edges_results: Dictionary) \
         .( \
         TYPE, \
         IS_LEAF, \
@@ -33,36 +30,31 @@ func _init( \
         tree, \
         graph) -> void:
     self.origin_surface = origin_surface
-    self.destination_surfaces_to_edge_types_to_valid_edges = \
-            destination_surfaces_to_edge_types_to_valid_edges
-    self.destination_surfaces_to_edge_types_to_failed_edges = \
-            destination_surfaces_to_edge_types_to_failed_edges
+    self.destination_surfaces_to_edge_types_to_edges_results = \
+            destination_surfaces_to_edge_types_to_edges_results
     _calculate_metadata()
     _post_init()
 
 func _calculate_metadata() -> void:
     # Count the valid and failed edges from this surface.
-    var edge_types_to_edges: Dictionary
+    var edge_types_to_edges_results: Dictionary
     valid_edge_count = 0
-    for destination_surface in destination_surfaces_to_edge_types_to_valid_edges:
-        edge_types_to_edges = \
-                destination_surfaces_to_edge_types_to_valid_edges[destination_surface]
-        for edge_type in edge_types_to_edges:
-            valid_edge_count += edge_types_to_edges[edge_type].size()
     failed_edge_count = 0
-    for destination_surface in destination_surfaces_to_edge_types_to_failed_edges:
-        edge_types_to_edges = \
-                destination_surfaces_to_edge_types_to_failed_edges[destination_surface]
-        for edge_type in edge_types_to_edges:
-            failed_edge_count += edge_types_to_edges[edge_type].size()
+    for destination_surface in \
+            destination_surfaces_to_edge_types_to_edges_results:
+        edge_types_to_edges_results = \
+                destination_surfaces_to_edge_types_to_edges_results \
+                        [destination_surface]
+        for edge_type in edge_types_to_edges_results:
+            for edges_result in edge_types_to_edges_results[edge_type]:
+                valid_edge_count += edges_result.valid_edges.size()
+                failed_edge_count += edges_result.failed_edge_attempts.size()
     
     # Populate a sorted list of all attempted destination edges.
     attempted_destination_surfaces.clear()
-    for destination_surface in destination_surfaces_to_edge_types_to_failed_edges:
+    for destination_surface in \
+            destination_surfaces_to_edge_types_to_edges_results:
         attempted_destination_surfaces.push_back(destination_surface)
-    for destination_surface in destination_surfaces_to_edge_types_to_valid_edges:
-        if !destination_surfaces_to_edge_types_to_failed_edges.has(destination_surface):
-            attempted_destination_surfaces.push_back(destination_surface)
     attempted_destination_surfaces.sort_custom( \
             SurfaceHorizontalPositionComparator, \
             "sort")
@@ -87,8 +79,7 @@ func get_description() -> String:
     ]
 
 func get_has_children() -> bool:
-    return destination_surfaces_to_edge_types_to_valid_edges.size() > 0 or \
-            destination_surfaces_to_edge_types_to_failed_edges.size() > 0
+    return destination_surfaces_to_edge_types_to_edges_results.size() > 0
 
 func find_and_expand_controller( \
         search_type: int, \
@@ -132,25 +123,25 @@ func _create_children_inner() -> void:
             graph, \
             "_%s valid outbound edges_" % valid_edge_count, \
             get_description(), \
-            funcref(self, "_get_annotation_elements_for_valid_edges_count_description_item"))
-    destination_surfaces_description_item_controller = DescriptionItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
-            "_Destination surfaces:_", \
-            get_description(), \
-            funcref(self, "_get_annotation_elements_for_destination_surfaces_description_item"))
+            funcref(self, \
+                    "_get_annotation_elements_for_valid_edges_count_description_item"))
+    destination_surfaces_description_item_controller = \
+            DescriptionItemController.new( \
+                    tree_item, \
+                    tree, \
+                    graph, \
+                    "_Destination surfaces:_", \
+                    get_description(), \
+                    funcref(self, \
+                            "_get_annotation_elements_for_destination_surfaces_description_item"))
     
-    var edge_types_to_valid_edges: Dictionary
-    var edge_types_to_failed_edges: Dictionary
+    var edge_types_to_edges_results: Dictionary
     for destination_surface in attempted_destination_surfaces:
-        edge_types_to_valid_edges = \
-                destination_surfaces_to_edge_types_to_valid_edges[destination_surface] if \
-                destination_surfaces_to_edge_types_to_valid_edges.has(destination_surface) else \
-                {}
-        edge_types_to_failed_edges = \
-                destination_surfaces_to_edge_types_to_failed_edges[destination_surface] if \
-                destination_surfaces_to_edge_types_to_failed_edges.has(destination_surface) else \
+        edge_types_to_edges_results = \
+                destination_surfaces_to_edge_types_to_edges_results \
+                        [destination_surface] if \
+                destination_surfaces_to_edge_types_to_edges_results.has( \
+                        destination_surface) else \
                 {}
         DestinationSurfaceItemController.new( \
                 tree_item, \
@@ -158,51 +149,46 @@ func _create_children_inner() -> void:
                 graph, \
                 origin_surface, \
                 destination_surface, \
-                edge_types_to_valid_edges, \
-                edge_types_to_failed_edges)
+                edge_types_to_edges_results)
 
 func _destroy_children_inner() -> void:
     valid_edges_count_item_controller = null
     destination_surfaces_description_item_controller = null
 
 func get_annotation_elements() -> Array:
-    var elements := []
+    var elements := _get_valid_edges_annotation_elements()
     
     var origin_element := OriginSurfaceAnnotationElement.new(origin_surface)
     elements.push_back(origin_element)
     
-    var edge_element: EdgeAnnotationElement
-    for destination_surface in \
-            destination_surfaces_to_edge_types_to_valid_edges:
-        for edge_type in destination_surfaces_to_edge_types_to_valid_edges \
-                [destination_surface]:
-            for edge in destination_surfaces_to_edge_types_to_valid_edges \
-                    [destination_surface][edge_type]:
-                edge_element = EdgeAnnotationElement.new( \
-                        edge, \
-                        true, \
-                        false, \
-                        false)
-                elements.push_back(edge_element)
-    
     return elements
 
-func _get_annotation_elements_for_valid_edges_count_description_item() -> Array:
-    var elements := get_annotation_elements()
+func _get_annotation_elements_for_valid_edges_count_description_item() -> \
+        Array:
+    return _get_valid_edges_annotation_elements()
+
+func _get_valid_edges_annotation_elements() -> Array:
+    var elements := []
     var element: EdgeAnnotationElement
     var edge: Edge
-    for destination_surface in destination_surfaces_to_edge_types_to_valid_edges:
-        for edge_type in destination_surfaces_to_edge_types_to_valid_edges[destination_surface]:
-            for edge in destination_surfaces_to_edge_types_to_valid_edges[destination_surface][edge_type]:
-                element = EdgeAnnotationElement.new( \
-                        edge, \
-                        true, \
-                        false, \
-                        false)
-                elements.push_back(element)
+    for destination_surface in \
+            destination_surfaces_to_edge_types_to_edges_results:
+        for edge_type in destination_surfaces_to_edge_types_to_edges_results \
+                [destination_surface]:
+            for edges_result in \
+                    destination_surfaces_to_edge_types_to_edges_results \
+                            [destination_surface][edge_type]:
+                for valid_edge in edges_result.valid_edges:
+                    element = EdgeAnnotationElement.new( \
+                            valid_edge, \
+                            true, \
+                            false, \
+                            false)
+                    elements.push_back(element)
     return elements
 
-func _get_annotation_elements_for_destination_surfaces_description_item() -> Array:
+func _get_annotation_elements_for_destination_surfaces_description_item() -> \
+        Array:
     var elements := get_annotation_elements()
     var element: SurfaceAnnotationElement
     for destination_surface in attempted_destination_surfaces:

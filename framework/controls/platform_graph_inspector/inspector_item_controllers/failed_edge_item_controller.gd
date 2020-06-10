@@ -122,9 +122,11 @@ func _calculate_edge_calc_result_metadata() -> void:
             graph.collision_params, \
             start_position_along_surface, \
             end_position_along_surface, \
-            failed_edge_attempt.velocity_start, \
-            failed_edge_attempt.needs_extra_jump_duration, \
-            failed_edge_attempt.needs_extra_wall_land_horizontal_speed)
+            failed_edge_attempt.jump_land_positions.velocity_start, \
+            failed_edge_attempt.jump_land_positions \
+                    .needs_extra_jump_duration, \
+            failed_edge_attempt.jump_land_positions \
+                    .needs_extra_wall_land_horizontal_speed)
 
 func _destroy_children_inner() -> void:
     edge_calc_result_metadata_controller = null

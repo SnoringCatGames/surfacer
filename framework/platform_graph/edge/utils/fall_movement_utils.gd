@@ -9,14 +9,14 @@ class_name FallMovementUtils
 
 # Finds all possible landing trajectories from the given start state.
 static func find_landing_trajectories_to_any_surface( \
-        failed_edge_attempts_result: Array, \
+        inter_surface_edges_results: Array, \
         collision_params: CollisionCalcParams, \
         all_possible_surfaces_set: Dictionary, \
         origin_position: PositionAlongSurface, \
         velocity_start: Vector2, \
         calculator, \
         possible_landing_surfaces_from_point := [], \
-        only_returns_first_result := false) -> Array:
+        only_returns_first_result := false) -> void:
     var debug_params := collision_params.debug_params
     var movement_params := collision_params.movement_params
     
@@ -50,11 +50,11 @@ static func find_landing_trajectories_to_any_surface( \
         origin_side = SurfaceSide.CEILING
     
     var jump_land_positions_to_consider: Array
+    var inter_surface_edges_result: InterSurfaceEdgesResult
     var edge_result_metadata: EdgeCalcResultMetadata
     var calc_result: EdgeCalcResult
     var failed_attempt: FailedEdgeAttempt
     var jump_land_position_results_for_destination_surface := []
-    var all_results := []
     
     # Find the first possible edge to a landing surface.
     for destination_surface in possible_landing_surfaces_from_point:
@@ -80,15 +80,14 @@ static func find_landing_trajectories_to_any_surface( \
                         origin_position, \
                         velocity_start)
         
+        inter_surface_edges_result = InterSurfaceEdgesResult.new( \
+                origin_position.surface, \
+                destination_surface, \
+                calculator.edge_type, \
+                jump_land_positions_to_consider)
+        inter_surface_edges_results.push_back(inter_surface_edges_result)
+        
         for jump_land_positions in jump_land_positions_to_consider:
-            if !EdgeCalculator.broad_phase_check( \
-                    null, \
-                    collision_params, \
-                    jump_land_positions, \
-                    jump_land_position_results_for_destination_surface, \
-                    true):
-                continue
-            
             ###################################################################
             # Record some extra debug state when we're limiting calculations to
             # a single edge (which must be this edge).
@@ -105,6 +104,20 @@ static func find_landing_trajectories_to_any_surface( \
             edge_result_metadata = \
                     EdgeCalcResultMetadata.new(record_calc_details)
             
+            if !EdgeCalculator.broad_phase_check( \
+                    null, \
+                    collision_params, \
+                    jump_land_positions, \
+                    jump_land_position_results_for_destination_surface, \
+                    true):
+                failed_attempt = FailedEdgeAttempt.new( \
+                        jump_land_positions, \
+                        edge_result_metadata, \
+                        calculator)
+                inter_surface_edges_result.failed_edge_attempts.push_back( \
+                        failed_attempt)
+                continue
+            
             calc_result = find_landing_trajectory_between_positions( \
                     edge_result_metadata, \
                     collision_params, \
@@ -114,21 +127,21 @@ static func find_landing_trajectories_to_any_surface( \
                     jump_land_positions.needs_extra_wall_land_horizontal_speed)
             
             if calc_result != null:
-                all_results.push_back(calc_result)
+                inter_surface_edges_result.edge_calc_results.push_back( \
+                        calc_result)
                 calc_result = null
                 jump_land_position_results_for_destination_surface.push_back( \
                         jump_land_positions)
                 
                 if only_returns_first_result:
-                    return all_results
+                    return
             else:
                 failed_attempt = FailedEdgeAttempt.new( \
                         jump_land_positions, \
                         edge_result_metadata, \
                         calculator)
-                failed_edge_attempts_result.push_back(failed_attempt)
-    
-    return all_results
+                inter_surface_edges_result.failed_edge_attempts.push_back( \
+                        failed_attempt)
 
 static func find_landing_trajectory_between_positions( \
         edge_result_metadata: EdgeCalcResultMetadata, \

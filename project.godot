@@ -489,6 +489,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/inter_surface_edges_annotator.gd"
 }, {
+"base": "Reference",
+"class": "InterSurfaceEdgesResult",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/models/inter_surface_edges_result.gd"
+}, {
 "base": "Edge",
 "class": "IntraSurfaceEdge",
 "language": "GDScript",
@@ -1031,6 +1036,7 @@ _global_script_class_icons={
 "InstructionsPlayback": "",
 "IntegrationTestBed": "",
 "InterSurfaceEdgesAnnotator": "",
+"InterSurfaceEdgesResult": "",
 "IntraSurfaceEdge": "",
 "JumpFromSurfaceToAirCalculator": "",
 "JumpFromSurfaceToAirEdge": "",

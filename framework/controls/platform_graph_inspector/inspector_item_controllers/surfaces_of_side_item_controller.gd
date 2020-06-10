@@ -4,10 +4,9 @@ class_name SurfacesOfSideGroupItemController
 const IS_LEAF := false
 
 var side := SurfaceSide.NONE
-# Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<Edge>>>>
-var surfaces_to_surfaces_to_edge_types_to_valid_edges := {}
-# Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<FailedEdgeAttempt>>>>
-var surfaces_to_surfaces_to_edge_types_to_failed_edges := {}
+# Dictionary<Surface, Dictionary<Surface, Dictionary<int,
+#         Array<InterSurfaceEdgesResult>>>>
+var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 var surface_count := 0 
 
 func _init( \
@@ -17,8 +16,7 @@ func _init( \
         tree: Tree, \
         graph: PlatformGraph, \
         side: int, \
-        surfaces_to_surfaces_to_edge_types_to_valid_edges: Dictionary, \
-        surfaces_to_surfaces_to_edge_types_to_failed_edges: Dictionary) \
+        surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
         .( \
         type, \
         IS_LEAF, \
@@ -27,10 +25,8 @@ func _init( \
         tree, \
         graph) -> void:
     self.side = side
-    self.surfaces_to_surfaces_to_edge_types_to_valid_edges = \
-            surfaces_to_surfaces_to_edge_types_to_valid_edges
-    self.surfaces_to_surfaces_to_edge_types_to_failed_edges = \
-            surfaces_to_surfaces_to_edge_types_to_failed_edges
+    self.surfaces_to_surfaces_to_edge_types_to_edges_results = \
+            surfaces_to_surfaces_to_edge_types_to_edges_results
     self.surface_count = graph.counts[SurfaceSide.get_side_string(side)]
     _post_init()
 
@@ -74,25 +70,21 @@ func _find_and_expand_controller_recursive( \
     Utils.error("No matching Surface found: %s" % metadata)
 
 func _create_children_inner() -> void:
-    var surfaces_to_edge_types_to_valid_edges: Dictionary
-    var surfaces_to_edge_types_to_failed_edges: Dictionary
+    var surfaces_to_edge_types_to_edges_results: Dictionary
     for surface in graph.surfaces_set:
         if surface.side == side:
-            surfaces_to_edge_types_to_valid_edges = \
-                    surfaces_to_surfaces_to_edge_types_to_valid_edges[surface] if \
-                    surfaces_to_surfaces_to_edge_types_to_valid_edges.has(surface) else \
-                    {}
-            surfaces_to_edge_types_to_failed_edges = \
-                    surfaces_to_surfaces_to_edge_types_to_failed_edges[surface] if \
-                    surfaces_to_surfaces_to_edge_types_to_failed_edges.has(surface) else \
+            surfaces_to_edge_types_to_edges_results = \
+                    surfaces_to_surfaces_to_edge_types_to_edges_results \
+                            [surface] if \
+                    surfaces_to_surfaces_to_edge_types_to_edges_results.has( \
+                            surface) else \
                     {}
             OriginSurfaceItemController.new( \
                     tree_item, \
                     tree, \
                     graph, \
                     surface, \
-                    surfaces_to_edge_types_to_valid_edges, \
-                    surfaces_to_edge_types_to_failed_edges)
+                    surfaces_to_edge_types_to_edges_results)
 
 func _destroy_children_inner() -> void:
     # Do nothing.

@@ -452,24 +452,24 @@ var surface_parser: SurfaceParser
 var space_state: Physics2DDirectSpaceState
 
 # Dictionary<Surface, Surface>
-var surfaces_set: Dictionary
+var surfaces_set := {}
 
 # Dictionary<Surface, Array<PositionAlongSurface>>
-var surfaces_to_outbound_nodes: Dictionary
+var surfaces_to_outbound_nodes := {}
 
 # Intra-surface edges are not calculated and stored ahead of time; they're only
 # calculated at run time when navigating a specific path.
 # 
 # Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface, Edge>>
-var nodes_to_nodes_to_edges: Dictionary
+var nodes_to_nodes_to_edges := {}
 
-# Dictionary<Surface, Array<FailedEdgeAttempt>>
-var surfaces_to_failed_edge_attempts: Dictionary
+# Dictionary<Surface, Array<InterSurfaceEdgeResult>>
+var surfaces_to_inter_surface_edges_results := {}
 
 # Dictionary<String, int>
 var counts := {}
 
-var debug_params: Dictionary
+var debug_params := {}
 
 func _init( \
         player_params: PlayerParams, \
@@ -486,10 +486,6 @@ func _init( \
             movement_params.can_grab_ceilings, \
             movement_params.can_grab_floors)
     self.surfaces_set = Utils.array_to_set(surfaces_array)
-    
-    self.surfaces_to_outbound_nodes = {}
-    self.nodes_to_nodes_to_edges = {}
-    self.surfaces_to_failed_edge_attempts = {}
     
     _calculate_nodes_and_edges( \
             surfaces_set, \
@@ -699,28 +695,21 @@ func _calculate_nodes_and_edges( \
     var surfaces_in_fall_range_set := {}
     var surfaces_in_jump_range_set := {}
     
-    # Dictionary<Surface, Array<Edge>>
-    var surfaces_to_edges := {}
-    # Array<Edge>
-    var edges: Array
-    # Array<FailedEdgeAttempt>
-    var failed_edge_attempts: Array
-    var edge: Edge
-    var previous_size: int
+    # Array<InterSurfaceEdgeResult>
+    var inter_surface_edges_results: Array
     
     # Calculate all inter-surface edges.
-    for surface in surfaces_set:
-        edges = []
-        surfaces_to_edges[surface] = edges
-        failed_edge_attempts = []
-        surfaces_to_failed_edge_attempts[surface] = failed_edge_attempts
+    for origin_surface in surfaces_set:
+        inter_surface_edges_results = []
+        surfaces_to_inter_surface_edges_results[origin_surface] = \
+                inter_surface_edges_results
         surfaces_in_fall_range_set.clear()
         surfaces_in_jump_range_set.clear()
         
         _get_surfaces_in_jump_and_fall_range( \
                 surfaces_in_fall_range_set, \
                 surfaces_in_jump_range_set, \
-                surface)
+                origin_surface)
         
         for edge_calculator in player_params.edge_calculators:
             ###################################################################
@@ -732,9 +721,7 @@ func _calculate_nodes_and_edges( \
                 continue
             ###################################################################
             
-            if edge_calculator.get_can_traverse_from_surface(surface):
-                previous_size = edges.size()
-                
+            if edge_calculator.get_can_traverse_from_surface(origin_surface):
                 # FIXME: B: REMOVE
                 movement_params.gravity_fast_fall *= EdgeTrajectoryUtils \
                         .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
@@ -743,46 +730,56 @@ func _calculate_nodes_and_edges( \
                 
                 # Calculate the inter-surface edges.
                 edge_calculator.get_all_inter_surface_edges_from_surface( \
-                        edges, \
-                        failed_edge_attempts, \
+                        inter_surface_edges_results, \
                         collision_params, \
+                        origin_surface, \
                         surfaces_in_fall_range_set, \
-                        surfaces_in_jump_range_set, \
-                        surface)
+                        surfaces_in_jump_range_set)
                 
                 # FIXME: B: REMOVE
                 movement_params.gravity_fast_fall /= EdgeTrajectoryUtils \
                         .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
                 movement_params.gravity_slow_rise /= EdgeTrajectoryUtils \
                         .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-                
-                # Remove any used surfaces from consideration.
-                for i in range(previous_size, edges.size()):
-                    edge = edges[i]
-                    surfaces_in_fall_range_set.erase(edge.end_surface)
-                    surfaces_in_jump_range_set.erase(edge.end_surface)
     
     # Dedup all edge-end positions (aka, nodes).
     var grid_cell_to_node := {}
-    for surface in surfaces_to_edges:
-        for edge in surfaces_to_edges[surface]:
-            edge.start_position_along_surface = _dedup_node( \
-                    edge.start_position_along_surface, \
-                    grid_cell_to_node)
-            edge.end_position_along_surface = _dedup_node( \
-                    edge.end_position_along_surface, \
-                    grid_cell_to_node)
+    for surface in surfaces_to_inter_surface_edges_results:
+        for inter_surface_edges_result in \
+                surfaces_to_inter_surface_edges_results[surface]:
+            for jump_land_positions in \
+                    inter_surface_edges_result.all_jump_land_positions:
+                jump_land_positions.jump_position = _dedup_node( \
+                        jump_land_positions.jump_position, \
+                        grid_cell_to_node)
+                jump_land_positions.land_position = _dedup_node( \
+                        jump_land_positions.land_position, \
+                        grid_cell_to_node)
+            
+            for edge in inter_surface_edges_result.valid_edges:
+                edge.start_position_along_surface = _dedup_node( \
+                        edge.start_position_along_surface, \
+                        grid_cell_to_node)
+                edge.end_position_along_surface = _dedup_node( \
+                        edge.end_position_along_surface, \
+                        grid_cell_to_node)
+            
+            # InterSurfaceEdgesResult.failed_edge_attempts only indirectly
+            # references PositionAlongSurface objects through the
+            # JumpLandPositions object, which has already been deduped.
     
     # Record mappings from surfaces to nodes.
     var nodes_set := {}
     var cell_id: String
-    for surface in surfaces_to_edges:
+    for surface in surfaces_to_inter_surface_edges_results:
         nodes_set.clear()
         
         # Get a deduped set of all nodes on this surface.
-        for edge in surfaces_to_edges[surface]:
-            cell_id = _node_to_cell_id(edge.start_position_along_surface)
-            nodes_set[cell_id] = edge.start_position_along_surface
+        for inter_surface_edges_results in \
+                surfaces_to_inter_surface_edges_results[surface]:
+            for edge in inter_surface_edges_results.valid_edges:
+                cell_id = _node_to_cell_id(edge.start_position_along_surface)
+                nodes_set[cell_id] = edge.start_position_along_surface
         
         surfaces_to_outbound_nodes[surface] = nodes_set.values()
     
@@ -792,12 +789,14 @@ func _calculate_nodes_and_edges( \
             nodes_to_nodes_to_edges[node] = {}
     
     # Record inter-surface edges.
-    for surface in surfaces_to_edges:
-        for edge in surfaces_to_edges[surface]:
-            nodes_to_nodes_to_edges \
-                    [edge.start_position_along_surface] \
-                    [edge.end_position_along_surface] = \
-                    edge
+    for surface in surfaces_to_inter_surface_edges_results:
+        for inter_surface_edges_results in \
+                surfaces_to_inter_surface_edges_results[surface]:
+            for edge in inter_surface_edges_results.valid_edges:
+                nodes_to_nodes_to_edges \
+                        [edge.start_position_along_surface] \
+                        [edge.end_position_along_surface] = \
+                        edge
 
 # Checks whether a previous node with the same position has already been seen.
 #

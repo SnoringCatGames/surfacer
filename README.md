@@ -1,6 +1,6 @@
 # Surfacer
 
-_A procedural pathfinding 2D-platformer framework for Godot._
+_A procedural pathfinding 2D-platformer framework for [Godot](https://godotengine.org/)._
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 
@@ -40,7 +40,7 @@ But there are use-cases for which we really benefit from an AI that can accurate
 
 ### The platform graph: Pre-parsing the world
 
-Surfacer depends on the level being represented as a [`TileMap`](https://docs.godotengine.org/en/3.2/classes/class_tilemap.html#class-tilemap).
+Surfacer depends on the level being represented as a [`TileMap`](https://docs.godotengine.org/en/stable/classes/class_tilemap.html#class-tilemap).
 
 In order for our AI to traverse our world, we first need to parse the world into a platform graph. We do this up-front, when the level is loaded, so that we can efficiently search the graph at run time. Dynamic updates to the graph can be performed at runtime, but these could be expensive if not done with care.
 
@@ -352,9 +352,11 @@ TODO: Include a brief description of each annotator.
 
 ## Tests
 
+_NOTE: Sadly, the tests are not set up to automatically run on presubmit, so some of the tests are severely out-of-date and broken._
+
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
 
-For convenience, this is checked in the with rest of the Surfacer framework.
+For convenience, the Gut tool is checked in the with rest of the Surfacer framework.
 
 ## Licenses
 

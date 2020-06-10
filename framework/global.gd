@@ -57,7 +57,7 @@ const DEBUG_PARAMS := \
 #        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
 #        edge_type = EdgeType.FALL_FROM_FLOOR_EDGE,
-#        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
+        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
 #        edge_type = EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
 #        

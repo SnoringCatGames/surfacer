@@ -6,11 +6,9 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := false
 const PREFIX := "Surfaces"
 
-# Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<Edge>>>>
-var surfaces_to_surfaces_to_edge_types_to_valid_edges := {}
-# Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, \
-#     Array<FailedEdgeAttempt>>>>
-var surfaces_to_surfaces_to_edge_types_to_failed_edges := {}
+# Dictionary<Surface, Dictionary<Surface, Dictionary<int,
+#         Array<InterSurfaceEdgesResult>>>>
+var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 
 var floors_item_controller: FloorsItemController
 var left_walls_item_controller: LeftWallsItemController
@@ -21,8 +19,7 @@ func _init( \
         parent_item: TreeItem, \
         tree: Tree, \
         graph: PlatformGraph, \
-        surfaces_to_surfaces_to_edge_types_to_valid_edges: Dictionary, \
-        surfaces_to_surfaces_to_edge_types_to_failed_edges: Dictionary) \
+        surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
         .( \
         TYPE, \
         IS_LEAF, \
@@ -30,10 +27,8 @@ func _init( \
         parent_item, \
         tree, \
         graph) -> void:
-    self.surfaces_to_surfaces_to_edge_types_to_valid_edges = \
-            surfaces_to_surfaces_to_edge_types_to_valid_edges
-    self.surfaces_to_surfaces_to_edge_types_to_failed_edges = \
-            surfaces_to_surfaces_to_edge_types_to_failed_edges
+    self.surfaces_to_surfaces_to_edge_types_to_edges_results = \
+            surfaces_to_surfaces_to_edge_types_to_edges_results
     _post_init()
 
 func get_text() -> String:
@@ -98,26 +93,22 @@ func _create_children_inner() -> void:
             tree_item, \
             tree, \
             graph, \
-            surfaces_to_surfaces_to_edge_types_to_valid_edges, \
-            surfaces_to_surfaces_to_edge_types_to_failed_edges)
+            surfaces_to_surfaces_to_edge_types_to_edges_results)
     left_walls_item_controller = LeftWallsItemController.new( \
             tree_item, \
             tree, \
             graph, \
-            surfaces_to_surfaces_to_edge_types_to_valid_edges, \
-            surfaces_to_surfaces_to_edge_types_to_failed_edges)
+            surfaces_to_surfaces_to_edge_types_to_edges_results)
     right_walls_item_controller = RightWallsItemController.new( \
             tree_item, \
             tree, \
             graph, \
-            surfaces_to_surfaces_to_edge_types_to_valid_edges, \
-            surfaces_to_surfaces_to_edge_types_to_failed_edges)
+            surfaces_to_surfaces_to_edge_types_to_edges_results)
     ceilings_item_controller = CeilingsItemController.new( \
             tree_item, \
             tree, \
             graph, \
-            surfaces_to_surfaces_to_edge_types_to_valid_edges, \
-            surfaces_to_surfaces_to_edge_types_to_failed_edges)
+            surfaces_to_surfaces_to_edge_types_to_edges_results)
 
 func _destroy_children_inner() -> void:
     floors_item_controller.destroy()

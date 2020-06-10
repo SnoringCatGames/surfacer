@@ -8,11 +8,46 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# >>>- Fix DEBUG_PARAMS: Filtering by edge_type isn't working.
+# 
+# - Refactor EdgeCalculators:
+#   - Add a DEBUG_PARAMS flag: is_inspector_enabled.
+#     - When disabled:
+#       - Delete the new big mapping structure after parsing it out to the
+#         nodes-based structure.
+#       - Don't calculate EdgeCalcResultMetadata values.
+#       - Remove inspector from utility menu.
+#       - Remove "ctrl+click" entry from welcome panel.
+#     - Also maybe disable automatically for touch-screen devices?
+# 
+# - Undo recent work to make BP failure stuff calculatable on the fly.
+#   - Remove calculate_jump_land_positions.
+#   - Remove logic from edge failure.
+# 
+# - Current position not always rendering:
+#   - Specifically, yellow box and blue surface.
+# 
 # - Analytics!
 #   - Put together some interesting aggregations, such as:
+#     - Time for different stages of surface parsing.
+#     - Time for different stages of calculating surfaces in jump and fall
+#       range.
 #     - Time spent calculating individual edges, edges of type, all edges.
 #       - And time spent calculating different parts of an edge:
 #         - Jump/land position, broad phase, narrow phase.
+#         - Waypoints
+#         - Horizontal steps
+#         - Vertical steps
+#         - Collisions
+#         - Distance, duration, and weight
+#           - Avg, mean, min, max
+#           - All edges, edges of type
+#         - Number of jump/land positions:
+#           - Avg, mean, min, max
+#           - All edges, edges of type
+#           - Number of less likely to be valid
+#           - Number needing extra jump duration
+#         - Number of edges for each EdgeCalcResultType.
 #     - How many collisions on avg for jump/fall.
 #     - How many steps calculated for an edge (avg, mean, min, max).
 #     - Step recursion depth (with and without backtracking) (avg, mean, min,
@@ -24,7 +59,6 @@ const IS_A_JUMP_CALCULATOR := true
 #     description children for each item.
 #   - Spend some time thinking through the actual timings of the various parts
 #     of calculations (horizontal more than vertical, when possible).
-#   - Use the Godot Debugger profiler tools.
 #   - Figure out how/where to store this.
 #     - Don't just keep all step debug state--too much.
 #     - In particular, don't keep any PositionAlongSurface references--would
@@ -51,14 +85,15 @@ const IS_A_JUMP_CALCULATOR := true
 #     - 
 #   - Single-edge data structure draft:
 #     - 
+#   - Use the Godot Debugger profiler tools.
 #   - Try to use these analytics to inform decisions around which calculations
 #     are worth it.
-#   - Maybe add a new configuration for max number of
-#     collisions/intermediate-waypoints to allow in an edge calculation before
-#     giving up (or, recursion depth (with and without backtracking))?
-#   - Tweak movement_params.exceptional_jump_instruction_duration_increase, and
-#     ensure that it is actually cutting down on the number of times we have to
-#     backtrack.
+#     - Maybe add a new configuration for max number of
+#       collisions/intermediate-waypoints to allow in an edge calculation before
+#       giving up (or, recursion depth (with and without backtracking))?
+#     - Tweak movement_params.exceptional_jump_instruction_duration_increase, and
+#       ensure that it is actually cutting down on the number of times we have to
+#       backtrack.
 # 
 # - Re-implement/use DEBUG_MODE flag:
 #   - Switch some MovementParam values when it's on:
@@ -389,16 +424,16 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null
 
 func get_all_inter_surface_edges_from_surface( \
-        edges_result: Array, \
-        failed_edge_attempts_result: Array, \
+        inter_surface_edges_results: Array, \
         collision_params: CollisionCalcParams, \
+        origin_surface: Surface, \
         surfaces_in_fall_range_set: Dictionary, \
-        surfaces_in_jump_range_set: Dictionary, \
-        origin_surface: Surface) -> void:
+        surfaces_in_jump_range_set: Dictionary) -> void:
     var debug_params := collision_params.debug_params
     
     var jump_land_position_results_for_destination_surface := []
     var jump_land_positions_to_consider: Array
+    var inter_surface_edges_result: InterSurfaceEdgesResult
     var edge_result_metadata: EdgeCalcResultMetadata
     var failed_attempt: FailedEdgeAttempt
     var edge: JumpInterSurfaceEdge
@@ -429,15 +464,14 @@ func get_all_inter_surface_edges_from_surface( \
                         origin_surface, \
                         destination_surface)
         
+        inter_surface_edges_result = InterSurfaceEdgesResult.new( \
+                origin_surface, \
+                destination_surface, \
+                edge_type, \
+                jump_land_positions_to_consider)
+        inter_surface_edges_results.push_back(inter_surface_edges_result)
+        
         for jump_land_positions in jump_land_positions_to_consider:
-            if !EdgeCalculator.broad_phase_check( \
-                    null, \
-                    collision_params, \
-                    jump_land_positions, \
-                    jump_land_position_results_for_destination_surface, \
-                    false):
-                continue
-            
             ###################################################################
             # Record some extra debug state when we're limiting calculations to
             # a single edge (which must be this edge).
@@ -454,6 +488,20 @@ func get_all_inter_surface_edges_from_surface( \
             edge_result_metadata = \
                     EdgeCalcResultMetadata.new(record_calc_details)
             
+            if !EdgeCalculator.broad_phase_check( \
+                    edge_result_metadata, \
+                    collision_params, \
+                    jump_land_positions, \
+                    jump_land_position_results_for_destination_surface, \
+                    false):
+                failed_attempt = FailedEdgeAttempt.new( \
+                        jump_land_positions, \
+                        edge_result_metadata, \
+                        self)
+                inter_surface_edges_result.failed_edge_attempts.push_back( \
+                        failed_attempt)
+                continue
+            
             edge = calculate_edge( \
                     edge_result_metadata, \
                     collision_params, \
@@ -465,7 +513,7 @@ func get_all_inter_surface_edges_from_surface( \
             
             if edge != null:
                 # Can reach land position from jump position.
-                edges_result.push_back(edge)
+                inter_surface_edges_result.valid_edges.push_back(edge)
                 edge = null
                 jump_land_position_results_for_destination_surface.push_back( \
                         jump_land_positions)
@@ -474,7 +522,8 @@ func get_all_inter_surface_edges_from_surface( \
                         jump_land_positions, \
                         edge_result_metadata, \
                         self)
-                failed_edge_attempts_result.push_back(failed_attempt)
+                inter_surface_edges_result.failed_edge_attempts.push_back( \
+                        failed_attempt)
 
 func calculate_edge( \
         edge_result_metadata: EdgeCalcResultMetadata, \
@@ -508,18 +557,6 @@ func calculate_edge( \
     return create_edge_from_edge_calc_params( \
             edge_result_metadata, \
             edge_calc_params)
-
-func calculate_jump_land_positions( \
-        movement_params: MovementParams, \
-        origin_surface_or_position, \
-        destination_surface: Surface, \
-        velocity_start := Vector2.INF) -> Array:
-    assert(origin_surface_or_position is Surface)
-    return JumpLandPositionsUtils \
-            .calculate_jump_land_positions_for_surface_pair( \
-                    movement_params, \
-                    origin_surface_or_position, \
-                    destination_surface)
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \

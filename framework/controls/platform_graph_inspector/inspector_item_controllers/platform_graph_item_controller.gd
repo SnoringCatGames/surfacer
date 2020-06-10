@@ -6,10 +6,9 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := false
 const PREFIX := "Platform graph"
 
-# Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<Edge>>>>
-var surfaces_to_surfaces_to_edge_types_to_valid_edges := {}
-# Dictionary<Surface, Dictionary<Surface, Dictionary<EdgeType, Array<FailedEdgeAttempt>>>>
-var surfaces_to_surfaces_to_edge_types_to_failed_edges := {}
+# Dictionary<Surface, Dictionary<Surface, Dictionary<int,
+#         Array<InterSurfaceEdgesResult>>>>
+var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 
 var edges_item_controller: EdgesTopLevelGroupItemController
 var surfaces_item_controller: SurfacesTopLevelGroupItemController
@@ -26,7 +25,7 @@ func _init( \
         parent_item, \
         tree, \
         graph) -> void:
-    _populate_surfaces_to_surfaces_to_edge_types_to_edges_mappings()
+    _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings()
     _post_init()
 
 func get_text() -> String:
@@ -79,7 +78,8 @@ func _find_and_expand_controller_recursive( \
                         search_type, \
                         metadata)
             else:
-                Utils.error("Invalid Surface: %s" % metadata.surface.to_string())
+                Utils.error("Invalid Surface: %s" % \
+                        metadata.surface.to_string())
           
         InspectorSearchType.EDGES_TOP_LEVEL_GROUP:
             edges_item_controller.select()
@@ -97,82 +97,58 @@ func _create_children_inner() -> void:
             tree_item, \
             tree, \
             graph, \
-            surfaces_to_surfaces_to_edge_types_to_valid_edges, \
-            surfaces_to_surfaces_to_edge_types_to_failed_edges)
-    global_counts_item_controller = GlobalCountsTopLevelGroupItemController.new( \
-            tree_item, \
-            tree, \
-            graph)
+            surfaces_to_surfaces_to_edge_types_to_edges_results)
+    global_counts_item_controller = \
+            GlobalCountsTopLevelGroupItemController.new( \
+                    tree_item, \
+                    tree, \
+                    graph)
 
-func _populate_surfaces_to_surfaces_to_edge_types_to_edges_mappings() -> void:
+# Parse the inter-surface edge-calculation results into a structure that's
+# easier to use from the inspector.
+func _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings() -> \
+        void:
+    var destination_surfaces_to_edge_types_to_edges_results: Dictionary
+    var edge_types_to_edges_results: Dictionary
+    var edges_results: Array
     var destination_surface: Surface
-    var edge: Edge
-    var destination_surfaces_to_edge_types_to_edges: Dictionary
-    var edge_types_to_edges: Dictionary
-    var edges: Array
-    
-    surfaces_to_surfaces_to_edge_types_to_valid_edges.clear()
-    surfaces_to_surfaces_to_edge_types_to_failed_edges.clear()
-    
-    # Populate a mapping of valid edges.
-    for origin_surface in graph.surfaces_to_outbound_nodes:
-        for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
-            for destination_node in graph.nodes_to_nodes_to_edges[origin_node]:
-                destination_surface = destination_node.surface
-                edge = graph.nodes_to_nodes_to_edges[origin_node][destination_node]
-                
-                if !surfaces_to_surfaces_to_edge_types_to_valid_edges.has(origin_surface):
-                    destination_surfaces_to_edge_types_to_edges = {}
-                    surfaces_to_surfaces_to_edge_types_to_valid_edges[origin_surface] = \
-                            destination_surfaces_to_edge_types_to_edges
-                else:
-                    destination_surfaces_to_edge_types_to_edges = \
-                            surfaces_to_surfaces_to_edge_types_to_valid_edges[origin_surface]
-                
-                if !destination_surfaces_to_edge_types_to_edges.has(destination_surface):
-                    edge_types_to_edges = {}
-                    destination_surfaces_to_edge_types_to_edges[destination_surface] = \
-                            edge_types_to_edges
-                else:
-                    edge_types_to_edges = \
-                            destination_surfaces_to_edge_types_to_edges[destination_surface]
-                
-                if !edge_types_to_edges.has(edge.type):
-                    edges = []
-                    edge_types_to_edges[edge.type] = edges
-                else:
-                    edges = edge_types_to_edges[edge.type]
-                
-                edges.push_back(edge)
-    
-    # Populate a mapping of failed edge attempts.
-    for origin_surface in graph.surfaces_set:
-        for failed_edge_attempt in graph.surfaces_to_failed_edge_attempts[origin_surface]:
-            destination_surface = failed_edge_attempt.destination_surface
+    var edge_type: int
+    for origin_surface in graph.surfaces_to_inter_surface_edges_results:
+        if !surfaces_to_surfaces_to_edge_types_to_edges_results.has( \
+                origin_surface):
+            destination_surfaces_to_edge_types_to_edges_results = {}
+            surfaces_to_surfaces_to_edge_types_to_edges_results \
+                    [origin_surface] = \
+                    destination_surfaces_to_edge_types_to_edges_results
+        else:
+            destination_surfaces_to_edge_types_to_edges_results = \
+                    surfaces_to_surfaces_to_edge_types_to_edges_results \
+                            [origin_surface]
+        
+        for inter_surface_edges_results in \
+                graph.surfaces_to_inter_surface_edges_results[origin_surface]:
+            destination_surface = \
+                    inter_surface_edges_results.destination_surface
+            edge_type = inter_surface_edges_results.edge_type
             
-            if !surfaces_to_surfaces_to_edge_types_to_failed_edges.has(origin_surface):
-                destination_surfaces_to_edge_types_to_edges = {}
-                surfaces_to_surfaces_to_edge_types_to_failed_edges[origin_surface] = \
-                        destination_surfaces_to_edge_types_to_edges
+            if !destination_surfaces_to_edge_types_to_edges_results.has( \
+                    destination_surface):
+                edge_types_to_edges_results = {}
+                destination_surfaces_to_edge_types_to_edges_results \
+                        [destination_surface] = \
+                        edge_types_to_edges_results
             else:
-                destination_surfaces_to_edge_types_to_edges = \
-                        surfaces_to_surfaces_to_edge_types_to_failed_edges[origin_surface]
+                edge_types_to_edges_results = \
+                        destination_surfaces_to_edge_types_to_edges_results \
+                                [destination_surface]
             
-            if !destination_surfaces_to_edge_types_to_edges.has(destination_surface):
-                edge_types_to_edges = {}
-                destination_surfaces_to_edge_types_to_edges[destination_surface] = \
-                        edge_types_to_edges
+            if !edge_types_to_edges_results.has(edge_type):
+                edges_results = []
+                edge_types_to_edges_results[edge_type] = edges_results
             else:
-                edge_types_to_edges = \
-                        destination_surfaces_to_edge_types_to_edges[destination_surface]
+                edges_results = edge_types_to_edges_results[edge_type]
             
-            if !edge_types_to_edges.has(failed_edge_attempt.edge_type):
-                edges = []
-                edge_types_to_edges[failed_edge_attempt.edge_type] = edges
-            else:
-                edges = edge_types_to_edges[failed_edge_attempt.edge_type]
-            
-            edges.push_back(failed_edge_attempt)
+            edges_results.push_back(inter_surface_edges_results)
 
 func _destroy_children_inner() -> void:
     edges_item_controller.destroy()
@@ -186,8 +162,10 @@ func get_annotation_elements() -> Array:
     return get_annotation_elements_from_graph(graph)
 
 static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
-    var result := SurfacesTopLevelGroupItemController.get_annotation_elements_from_graph(graph)
+    var result := SurfacesTopLevelGroupItemController \
+            .get_annotation_elements_from_graph(graph)
     Utils.concat( \
             result, \
-            EdgesTopLevelGroupItemController.get_annotation_elements_from_graph(graph))
+            EdgesTopLevelGroupItemController \
+                    .get_annotation_elements_from_graph(graph))
     return result

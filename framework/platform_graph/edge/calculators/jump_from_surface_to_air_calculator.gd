@@ -15,12 +15,11 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null
 
 func get_all_inter_surface_edges_from_surface( \
-        edges_result: Array, \
-        failed_edge_attempts_result: Array, \
+        inter_surface_edges_results: Array, \
         collision_params: CollisionCalcParams, \
+        origin_surface: Surface, \
         surfaces_in_fall_range_set: Dictionary, \
-        surfaces_in_jump_range_set: Dictionary, \
-        origin_surface: Surface) -> void:
+        surfaces_in_jump_range_set: Dictionary) -> void:
     Utils.error("JumpFromSurfaceToAirCalculator" + \
             ".get_all_inter_surface_edges_from_surface should not be called")
 
@@ -92,18 +91,6 @@ func calculate_edge( \
             trajectory)
     
     return edge
-
-func calculate_jump_land_positions( \
-        movement_params: MovementParams, \
-        origin_surface_or_position, \
-        destination_surface: Surface, \
-        velocity_start := Vector2.INF) -> Array:
-    assert(origin_surface_or_position is Surface)
-    # TODO: Implement.
-    Utils.error( \
-            "JumpFromSurfaceToAirCalculator." + \
-            "calculate_jump_land_positions not implemented yet.")
-    return []
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \

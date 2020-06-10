@@ -15,12 +15,11 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface == null
 
 func get_all_inter_surface_edges_from_surface( \
-        edges_result: Array, \
-        failed_edge_attempts_result: Array, \
+        inter_surface_edges_results: Array, \
         collision_params: CollisionCalcParams, \
+        origin_surface: Surface, \
         surfaces_in_fall_range_set: Dictionary, \
-        surfaces_in_jump_range_set: Dictionary, \
-        origin_surface: Surface) -> void:
+        surfaces_in_jump_range_set: Dictionary) -> void:
     Utils.error( \
             "AirToSurfaceCalculator." + \
             "get_all_inter_surface_edges_from_surface should not be called")
@@ -47,18 +46,6 @@ func calculate_edge( \
             position_end, \
             needs_extra_wall_land_horizontal_speed)
 
-func calculate_jump_land_positions( \
-        movement_params: MovementParams, \
-        origin_surface_or_position, \
-        destination_surface: Surface, \
-        velocity_start := Vector2.INF) -> Array:
-    assert(origin_surface_or_position is PositionAlongSurface)
-    return JumpLandPositionsUtils.calculate_land_positions_on_surface( \
-            movement_params, \
-            destination_surface, \
-            origin_surface_or_position, \
-            velocity_start)
-
 func optimize_edge_land_position_for_path( \
         collision_params: CollisionCalcParams, \
         path: PlatformGraphPath, \
@@ -75,8 +62,9 @@ func optimize_edge_land_position_for_path( \
             next_edge, \
             self)
 
-# Finds a movement step that will result in landing on a surface, with an attempt to minimize the
-# path the player would then have to travel between surfaces to reach the given target.
+# Finds a movement step that will result in landing on a surface, with an
+# attempt to minimize the path the player would then have to travel between
+# surfaces to reach the given target.
 #
 # Returns null if no possible landing exists.
 func find_a_landing_trajectory( \
@@ -90,18 +78,20 @@ func find_a_landing_trajectory( \
         needs_extra_wall_land_horizontal_speed := false) -> AirToSurfaceEdge:
     # TODO: Use goal param.
     
-    assert(!needs_extra_wall_land_horizontal_speed or exclusive_land_position != null)
+    assert(!needs_extra_wall_land_horizontal_speed or \
+            exclusive_land_position != null)
     
     var calc_result: EdgeCalcResult
     
     if exclusive_land_position != null:
-        calc_result = FallMovementUtils.find_landing_trajectory_between_positions( \
-                edge_result_metadata, \
-                collision_params, \
-                origin, \
-                exclusive_land_position, \
-                velocity_start, \
-                needs_extra_wall_land_horizontal_speed)
+        calc_result = \
+                FallMovementUtils.find_landing_trajectory_between_positions( \
+                        edge_result_metadata, \
+                        collision_params, \
+                        origin, \
+                        exclusive_land_position, \
+                        velocity_start, \
+                        needs_extra_wall_land_horizontal_speed)
         if calc_result == null:
             return null
     else:
@@ -114,23 +104,25 @@ func find_a_landing_trajectory( \
                 origin.target_point, \
                 velocity_start)
         var possible_landing_surfaces_from_point := result_set.keys()
-        possible_landing_surfaces_from_point.sort_custom(SurfaceMaxYComparator, "sort")
+        possible_landing_surfaces_from_point.sort_custom( \
+                SurfaceMaxYComparator, \
+                "sort")
         
         # Find the closest landing trajectory.
-        var failed_edge_attempts_result := []
-        var landing_trajectories := \
-                FallMovementUtils.find_landing_trajectories_to_any_surface( \
-                        failed_edge_attempts_result, \
-                        collision_params, \
-                        all_possible_surfaces_set, \
-                        origin, \
-                        velocity_start, \
-                        self, \
-                        possible_landing_surfaces_from_point, \
-                        true)
-        if landing_trajectories.empty():
+        var inter_surface_edges_results := []
+        FallMovementUtils.find_landing_trajectories_to_any_surface( \
+                inter_surface_edges_results, \
+                collision_params, \
+                all_possible_surfaces_set, \
+                origin, \
+                velocity_start, \
+                self, \
+                possible_landing_surfaces_from_point, \
+                true)
+        if inter_surface_edges_results.empty() or \
+                inter_surface_edges_results[0].edge_calc_results.empty():
             return null
-        calc_result = landing_trajectories[0]
+        calc_result = inter_surface_edges_results[0].edge_calc_results[0]
     
     # Calculate instructions for the given landing trajectory.
     var land_position := calc_result.edge_calc_params.destination_position
@@ -139,11 +131,13 @@ func find_a_landing_trajectory( \
                     calc_result, \
                     false, \
                     land_position.surface.side)
-    var trajectory := EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
-            calc_result, \
-            instructions)
+    var trajectory := \
+            EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+                    calc_result, \
+                    instructions)
     
-    var velocity_end: Vector2 = calc_result.horizontal_steps.back().velocity_step_end
+    var velocity_end: Vector2 = \
+            calc_result.horizontal_steps.back().velocity_step_end
     
     return AirToSurfaceEdge.new( \
             self, \
@@ -151,7 +145,8 @@ func find_a_landing_trajectory( \
             land_position, \
             velocity_start, \
             velocity_end, \
-            calc_result.edge_calc_params.needs_extra_wall_land_horizontal_speed, \
+            calc_result.edge_calc_params \
+                    .needs_extra_wall_land_horizontal_speed, \
             collision_params.movement_params, \
             instructions, \
             trajectory)
