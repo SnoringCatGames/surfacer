@@ -45,6 +45,16 @@ _global_script_classes=[ {
 "path": "res://framework/player/action/action_handlers/all_default_action.gd"
 }, {
 "base": "Reference",
+"class": "AnalyticsMetric",
+"language": "GDScript",
+"path": "res://framework/utils/analytics_metric.gd"
+}, {
+"base": "InspectorItemController",
+"class": "AnalyticsTopLevelGroupItemController",
+"language": "GDScript",
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/analytics_top_level_group_item_controller.gd"
+}, {
+"base": "Reference",
 "class": "AnnotationElement",
 "language": "GDScript",
 "path": "res://framework/annotators/annotation_elements/annotation_element.gd"
@@ -932,6 +942,8 @@ _global_script_class_icons={
 "AirToSurfaceCalculator": "",
 "AirToSurfaceEdge": "",
 "AllDefaultAction": "",
+"AnalyticsMetric": "",
+"AnalyticsTopLevelGroupItemController": "",
 "AnnotationElement": "",
 "AnnotationElementType": "",
 "CameraController": "",
@@ -1122,6 +1134,7 @@ Utils="*res://framework/utils/utils.gd"
 Geometry="*res://framework/utils/geometry.gd"
 DrawUtils="*res://framework/utils/draw_utils.gd"
 Global="*res://framework/global.gd"
+Analytics="*res://framework/utils/analytics.gd"
 AnnotationElementDefaults="*res://framework/annotators/annotation_elements/annotation_element_defaults.gd"
 InputWrapper="*res://framework/input_wrapper.gd"
 

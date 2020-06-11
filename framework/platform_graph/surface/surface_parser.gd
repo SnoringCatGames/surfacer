@@ -3,8 +3,6 @@ class_name SurfaceParser
 
 # TODO: Map the TileMap into an RTree or QuadTree.
 
-var _stopwatch: Stopwatch
-
 # Collections of surfaces.
 # Array<Surface>
 var floors := []
@@ -26,8 +24,6 @@ var _tile_map_index_to_surface_maps := {}
 
 func _init(tile_maps: Array) -> void:
     assert(!tile_maps.empty())
-    
-    _stopwatch = Stopwatch.new()
     
     # Record the maximum cell size from all tile maps.
     max_tile_map_cell_size = Vector2.ZERO
@@ -99,80 +95,76 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     var left_walls := []
     var right_walls := []
     
-    _stopwatch.start()
-    print("_parse_tile_map_into_sides...")
+    Analytics.stopwatch.start()
     _parse_tile_map_into_sides( \
             tile_map, \
             floors, \
             ceilings, \
             left_walls, \
             right_walls)
-    print("_parse_tile_map_into_sides duration: %sms" % _stopwatch.stop())
+    Analytics.stop_and_record( \
+            AnalyticsMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
     
-    _stopwatch.start()
-    print("_remove_internal_surfaces...")
+    Analytics.stopwatch.start()
     _remove_internal_surfaces( \
             floors, \
             ceilings)
     _remove_internal_surfaces( \
             left_walls, \
             right_walls)
-    print("_remove_internal_surfaces duration: %sms" % _stopwatch.stop())
+    Analytics.stop_and_record( \
+            AnalyticsMetric.REMOVE_INTERNAL_SURFACES_DURATION)
     
-    _stopwatch.start()
-    print("_merge_continuous_surfaces...")
+    Analytics.stopwatch.start()
     _merge_continuous_surfaces(floors)
     _merge_continuous_surfaces(ceilings)
     _merge_continuous_surfaces(left_walls)
     _merge_continuous_surfaces(right_walls)
-    print("_merge_continuous_surfaces duration: %sms" % _stopwatch.stop())
+    Analytics.stop_and_record( \
+            AnalyticsMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
     
-    _stopwatch.start()
-    print("_remove_internal_collinear_vertices...")
+    Analytics.stopwatch.start()
     _remove_internal_collinear_vertices(floors)
     _remove_internal_collinear_vertices(ceilings)
     _remove_internal_collinear_vertices(left_walls)
     _remove_internal_collinear_vertices(right_walls)
-    print("_remove_internal_collinear_vertices duration: %sms" % \
-            _stopwatch.stop())
+    Analytics.stop_and_record( \
+            AnalyticsMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
     
-    _stopwatch.start()
-    print("_store_surfaces...")
+    Analytics.stopwatch.start()
     _store_surfaces( \
             tile_map, \
             floors, \
             ceilings, \
             left_walls, \
             right_walls)
-    print("_store_surfaces duration: %sms" % _stopwatch.stop())
+    Analytics.stop_and_record(AnalyticsMetric.STORE_SURFACES_DURATION)
     
-    _stopwatch.start()
-    print("_assign_neighbor_surfaces...")
+    Analytics.stopwatch.start()
     _assign_neighbor_surfaces( \
             self.floors, \
             self.ceilings, \
             self.left_walls, \
             self.right_walls)
-    print("_assign_neighbor_surfaces duration: %sms" % _stopwatch.stop())
+    Analytics.stop_and_record( \
+            AnalyticsMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
     
-    _stopwatch.start()
-    print("_calculate_shape_bounding_boxes_for_surfaces...")
+    Analytics.stopwatch.start()
     # Since this calculation will loop around transitive neigbors, and since
     # every surface should be connected transitively to a floor, it should also
     # end up recording the bounding box for all other surface sides too.
     _calculate_shape_bounding_boxes_for_surfaces(self.floors)
-    print("_calculate_shape_bounding_boxes_for_surfaces duration: %sms" % \
-            _stopwatch.stop())
+    Analytics.stop_and_record( \
+            AnalyticsMetric \
+                    .CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION)
     
-    _stopwatch.start()
-    print("_assert_surfaces_fully_calculated...")
+    Analytics.stopwatch.start()
     _assert_surfaces_fully_calculated(self.floors)
     _assert_surfaces_fully_calculated(self.ceilings)
     _assert_surfaces_fully_calculated(self.left_walls)
     _assert_surfaces_fully_calculated(self.right_walls)
-    print("_assert_surfaces_fully_calculated duration: %sms" % \
-            _stopwatch.stop())
-    
+    Analytics.stop_and_record( \
+            AnalyticsMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
 
 func _store_surfaces( \
         tile_map: TileMap, \

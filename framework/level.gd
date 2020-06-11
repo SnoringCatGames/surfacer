@@ -71,10 +71,6 @@ static func _create_platform_graphs( \
                 collision_params)
     return graphs
 
-func descendant_physics_process_completed(descendant: Node) -> void:
-    if descendant is Player:
-        Global.canvas_layers.player_annotators[descendant].check_for_update()
-
 func add_player( \
         resource_path: String, \
         is_human_player: bool, \

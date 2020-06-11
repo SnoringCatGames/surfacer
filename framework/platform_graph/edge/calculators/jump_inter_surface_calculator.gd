@@ -8,16 +8,11 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - COMMIT MESSAGE:
-#   Add support for toggling whether the inspector is included in DEBUG_PARAMS.
-# 
-# - Current position not always rendering:
-#   - Specifically, yellow box and blue surface.
-#     - Only a problem when auto navigating.
+# - Implement analytics tree item controller.
+# - Probably move global counts item to be a child of analytics item?
 # 
 # - Analytics!
 #   - Put together some interesting aggregations, such as:
-#     - Time for different stages of surface parsing.
 #     - Time for different stages of calculating surfaces in jump and fall
 #       range.
 #     - Time spent calculating individual edges, edges of type, all edges.

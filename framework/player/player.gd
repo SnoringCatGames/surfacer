@@ -194,7 +194,7 @@ func _physics_process(delta: float) -> void:
         if navigator.actions_might_be_dirty:
             actions.copy(actions_from_previous_frame)
             _update_actions(delta)
-            _update_surface_state()
+            _update_surface_state(true)
     
     actions.delta = delta
     actions.log_new_presses_and_releases(self, Global.elapsed_play_time_sec)
@@ -224,8 +224,6 @@ func _physics_process(delta: float) -> void:
     surface_state.previous_center_position = surface_state.center_position
     surface_state.center_position = self.position
     surface_state.collision_count = get_slide_count()
-    
-    level.descendant_physics_process_completed(self)
 
 func _handle_pointer_selections() -> void:
     if new_selection_target != Vector2.INF:
@@ -307,7 +305,7 @@ func processed_action(name: String) -> bool:
     
 # Updates some basic surface-related state for player's actions and environment
 # of the current frame.
-func _update_surface_state() -> void:
+func _update_surface_state(preserves_just_changed_state := false) -> void:
     # Flip the horizontal direction of the animation according to which way the
     # player is facing.
     if actions.pressed_face_right:
@@ -346,9 +344,15 @@ func _update_surface_state() -> void:
             surface_state.is_touching_ceiling or \
             surface_state.is_touching_wall
     surface_state.just_touched_a_surface = \
-            next_is_touching_a_surface and !surface_state.is_touching_a_surface
+            (preserves_just_changed_state and \
+                    surface_state.just_touched_a_surface) or \
+            (next_is_touching_a_surface and \
+                    !surface_state.is_touching_a_surface)
     surface_state.just_stopped_touching_a_surface = \
-            !next_is_touching_a_surface and surface_state.is_touching_a_surface
+            (preserves_just_changed_state and \
+                    surface_state.just_stopped_touching_a_surface) or \
+            (!next_is_touching_a_surface and \
+                    surface_state.is_touching_a_surface)
     surface_state.is_touching_a_surface = next_is_touching_a_surface
     
     # Calculate the sign of a colliding wall's direction.
@@ -410,10 +414,11 @@ func _update_surface_state() -> void:
     
     surface_state.velocity = velocity
     
-    _update_which_side_is_grabbed()
-    _update_which_surface_is_grabbed()
+    _update_which_side_is_grabbed(preserves_just_changed_state)
+    _update_which_surface_is_grabbed(preserves_just_changed_state)
 
-func _update_which_side_is_grabbed() -> void:
+func _update_which_side_is_grabbed( \
+        preserves_just_changed_state := false) -> void:
     var next_is_grabbing_floor := false
     var next_is_grabbing_ceiling := false
     var next_is_grabbing_left_wall := false
@@ -432,17 +437,25 @@ func _update_which_side_is_grabbed() -> void:
             next_is_grabbing_left_wall or next_is_grabbing_right_wall
     
     surface_state.just_grabbed_floor = \
-            next_is_grabbing_floor and \
-            !surface_state.is_grabbing_floor
+            (preserves_just_changed_state and \
+                    surface_state.just_grabbed_floor) or \
+            (next_is_grabbing_floor and \
+                    !surface_state.is_grabbing_floor)
     surface_state.just_grabbed_ceiling = \
-            next_is_grabbing_ceiling and \
-            !surface_state.is_grabbing_ceiling
+            (preserves_just_changed_state and \
+                    surface_state.just_grabbed_ceiling) or \
+            (next_is_grabbing_ceiling and \
+                    !surface_state.is_grabbing_ceiling)
     surface_state.just_grabbed_left_wall = \
-            next_is_grabbing_left_wall and \
-            !surface_state.is_grabbing_left_wall
+            (preserves_just_changed_state and \
+                    surface_state.just_grabbed_left_wall) or \
+            (next_is_grabbing_left_wall and \
+                    !surface_state.is_grabbing_left_wall)
     surface_state.just_grabbed_right_wall = \
-            next_is_grabbing_right_wall and \
-            !surface_state.is_grabbing_right_wall
+            (preserves_just_changed_state and \
+                    surface_state.just_grabbed_right_wall) or \
+            (next_is_grabbing_right_wall and \
+                    !surface_state.is_grabbing_right_wall)
     surface_state.just_grabbed_a_surface = \
             surface_state.just_grabbed_floor or \
             surface_state.just_grabbed_ceiling or \
@@ -450,11 +463,15 @@ func _update_which_side_is_grabbed() -> void:
             surface_state.just_grabbed_right_wall
     
     surface_state.just_entered_air = \
-            !next_is_grabbing_a_surface and \
-            surface_state.is_grabbing_a_surface
+            (preserves_just_changed_state and \
+                    surface_state.just_entered_air) or \
+            (!next_is_grabbing_a_surface and \
+                    surface_state.is_grabbing_a_surface)
     surface_state.just_left_air = \
-            next_is_grabbing_a_surface and \
-            !surface_state.is_grabbing_a_surface
+            (preserves_just_changed_state and \
+                    surface_state.just_left_air) or \
+            (next_is_grabbing_a_surface and \
+                    !surface_state.is_grabbing_a_surface)
     
     surface_state.is_grabbing_floor = next_is_grabbing_floor
     surface_state.is_grabbing_ceiling = next_is_grabbing_ceiling
@@ -482,7 +499,8 @@ func _update_which_side_is_grabbed() -> void:
         SurfaceSide.RIGHT_WALL:
             surface_state.grabbed_surface_normal = Geometry.LEFT
 
-func _update_which_surface_is_grabbed() -> void:
+func _update_which_surface_is_grabbed( \
+        preserves_just_changed_state := false) -> void:
     var collision := _get_attached_surface_collision( \
             self, \
             surface_state)
@@ -491,14 +509,19 @@ func _update_which_surface_is_grabbed() -> void:
     if surface_state.is_grabbing_a_surface:
         var next_grab_position := collision.position
         surface_state.just_changed_grab_position = \
-                surface_state.just_left_air or \
-                next_grab_position != surface_state.grab_position
+                (preserves_just_changed_state and \
+                        surface_state.just_changed_grab_position) or \
+                (surface_state.just_left_air or \
+                        next_grab_position != surface_state.grab_position)
         surface_state.grab_position = next_grab_position
         
         var next_grabbed_tile_map := collision.collider
         surface_state.just_changed_tile_map = \
-                surface_state.just_left_air or \
-                next_grabbed_tile_map != surface_state.grabbed_tile_map
+                (preserves_just_changed_state and \
+                        surface_state.just_changed_tile_map) or \
+                (surface_state.just_left_air or \
+                        next_grabbed_tile_map != \
+                                surface_state.grabbed_tile_map)
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
         var next_grab_position_tile_map_coord: Vector2 = \
@@ -512,9 +535,11 @@ func _update_which_surface_is_grabbed() -> void:
                         true, \
                         surface_state.grab_position_tile_map_coord)
         surface_state.just_changed_tile_map_coord = \
-                surface_state.just_left_air or \
-                next_grab_position_tile_map_coord != \
-                        surface_state.grab_position_tile_map_coord
+                (preserves_just_changed_state and \
+                        surface_state.just_changed_tile_map_coord) or \
+                (surface_state.just_left_air or \
+                        next_grab_position_tile_map_coord != \
+                                surface_state.grab_position_tile_map_coord)
         surface_state.grab_position_tile_map_coord = \
                 next_grab_position_tile_map_coord
         
@@ -527,11 +552,15 @@ func _update_which_surface_is_grabbed() -> void:
         
         var next_grabbed_surface := calculate_grabbed_surface()
         surface_state.just_changed_surface = \
-                surface_state.just_left_air or \
-                next_grabbed_surface != surface_state.grabbed_surface
+                (preserves_just_changed_state and \
+                        surface_state.just_changed_surface) or \
+                (surface_state.just_left_air or \
+                        next_grabbed_surface != surface_state.grabbed_surface)
         if surface_state.just_changed_surface:
             surface_state.previous_grabbed_surface = \
-            surface_state.grabbed_surface
+                    surface_state.previous_grabbed_surface if \
+                    preserves_just_changed_state else \
+                    surface_state.grabbed_surface
         surface_state.grabbed_surface = next_grabbed_surface
         
         surface_state.center_position_along_surface.match_current_grab( \
@@ -545,7 +574,9 @@ func _update_which_surface_is_grabbed() -> void:
             surface_state.just_changed_tile_map_coord = true
             surface_state.just_changed_surface = true
             surface_state.previous_grabbed_surface = \
-            surface_state.grabbed_surface
+                    surface_state.previous_grabbed_surface if \
+                    preserves_just_changed_state else \
+                    surface_state.grabbed_surface
         
         surface_state.grab_position = Vector2.INF
         surface_state.grabbed_tile_map = null

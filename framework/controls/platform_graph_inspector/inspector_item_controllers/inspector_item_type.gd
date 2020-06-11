@@ -4,6 +4,7 @@ enum { \
     PLATFORM_GRAPH, \
     EDGES_TOP_LEVEL_GROUP, \
     SURFACES_TOP_LEVEL_GROUP, \
+    ANALYTICS_TOP_LEVEL_GROUP, \
     GLOBAL_COUNTS_TOP_LEVEL_GROUP, \
     EDGE_TYPE_IN_EDGES_GROUP, \
     FLOORS, \
@@ -30,6 +31,8 @@ static func get_type_string(type: int) -> String:
             return "EDGES_TOP_LEVEL_GROUP"
         SURFACES_TOP_LEVEL_GROUP:
             return "SURFACES_TOP_LEVEL_GROUP"
+        ANALYTICS_TOP_LEVEL_GROUP:
+            return "ANALYTICS_TOP_LEVEL_GROUP"
         GLOBAL_COUNTS_TOP_LEVEL_GROUP:
             return "GLOBAL_COUNTS_TOP_LEVEL_GROUP"
         EDGE_TYPE_IN_EDGES_GROUP:

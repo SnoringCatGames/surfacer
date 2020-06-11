@@ -12,6 +12,7 @@ var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 
 var edges_item_controller: EdgesTopLevelGroupItemController
 var surfaces_item_controller: SurfacesTopLevelGroupItemController
+var analytics_item_controller: AnalyticsTopLevelGroupItemController
 var global_counts_item_controller: GlobalCountsTopLevelGroupItemController
 
 func _init( \
@@ -98,6 +99,11 @@ func _create_children_inner() -> void:
             tree, \
             graph, \
             surfaces_to_surfaces_to_edge_types_to_edges_results)
+    analytics_item_controller = \
+            AnalyticsTopLevelGroupItemController.new( \
+                    tree_item, \
+                    tree, \
+                    graph)
     global_counts_item_controller = \
             GlobalCountsTopLevelGroupItemController.new( \
                     tree_item, \
@@ -155,6 +161,8 @@ func _destroy_children_inner() -> void:
     edges_item_controller = null
     surfaces_item_controller.destroy()
     surfaces_item_controller = null
+    analytics_item_controller.destroy()
+    analytics_item_controller = null
     global_counts_item_controller.destroy()
     global_counts_item_controller = null
 
