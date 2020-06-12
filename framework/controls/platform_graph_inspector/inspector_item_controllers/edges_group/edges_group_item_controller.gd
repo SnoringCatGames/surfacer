@@ -1,7 +1,7 @@
 extends InspectorItemController
-class_name EdgesTopLevelGroupItemController
+class_name EdgesGroupItemController
 
-const TYPE := InspectorItemType.EDGES_TOP_LEVEL_GROUP
+const TYPE := InspectorItemType.EDGES_GROUP
 const IS_LEAF := false
 const STARTS_COLLAPSED := true
 const PREFIX := "Edges"
@@ -44,7 +44,7 @@ func find_and_expand_controller( \
         metadata: Dictionary) -> bool:
     Utils.error( \
             "find_and_expand_controller should not be called for " + \
-            "EDGES_TOP_LEVEL_GROUP.")
+            "EDGES_GROUP.")
     return false
 
 func _create_children_inner() -> void:

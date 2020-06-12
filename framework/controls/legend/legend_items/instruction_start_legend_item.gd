@@ -11,7 +11,7 @@ func _init().( \
         TEXT) -> void:
     pass
 
-func _draw_shape(
+func _draw_shape( \
         center: Vector2, \
         size: Vector2) -> void:
     DrawUtils.draw_instruction_indicator( \

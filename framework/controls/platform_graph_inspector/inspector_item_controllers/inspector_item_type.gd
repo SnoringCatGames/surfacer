@@ -2,10 +2,12 @@ class_name InspectorItemType
 
 enum { \
     PLATFORM_GRAPH, \
-    EDGES_TOP_LEVEL_GROUP, \
-    SURFACES_TOP_LEVEL_GROUP, \
-    ANALYTICS_TOP_LEVEL_GROUP, \
-    GLOBAL_COUNTS_TOP_LEVEL_GROUP, \
+    EDGES_GROUP, \
+    SURFACES_GROUP, \
+    PROFILER_GROUP, \
+    GLOBAL_COUNTS_GROUP, \
+    SURFACE_PARSER_GROUP, \
+    PROFILER_METRIC, \
     EDGE_TYPE_IN_EDGES_GROUP, \
     FLOORS, \
     LEFT_WALLS, \
@@ -27,14 +29,18 @@ static func get_type_string(type: int) -> String:
     match type:
         PLATFORM_GRAPH:
             return "PLATFORM_GRAPH"
-        EDGES_TOP_LEVEL_GROUP:
-            return "EDGES_TOP_LEVEL_GROUP"
-        SURFACES_TOP_LEVEL_GROUP:
-            return "SURFACES_TOP_LEVEL_GROUP"
-        ANALYTICS_TOP_LEVEL_GROUP:
-            return "ANALYTICS_TOP_LEVEL_GROUP"
-        GLOBAL_COUNTS_TOP_LEVEL_GROUP:
-            return "GLOBAL_COUNTS_TOP_LEVEL_GROUP"
+        EDGES_GROUP:
+            return "EDGES_GROUP"
+        SURFACES_GROUP:
+            return "SURFACES_GROUP"
+        PROFILER_GROUP:
+            return "PROFILER_GROUP"
+        GLOBAL_COUNTS_GROUP:
+            return "GLOBAL_COUNTS_GROUP"
+        SURFACE_PARSER_GROUP:
+            return "SURFACE_PARSER_GROUP"
+        PROFILER_METRIC:
+            return "PROFILER_METRIC"
         EDGE_TYPE_IN_EDGES_GROUP:
             return "EDGE_TYPE_IN_EDGES_GROUP"
         FLOORS:

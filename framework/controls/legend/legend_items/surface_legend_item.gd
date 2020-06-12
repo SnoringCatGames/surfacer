@@ -18,7 +18,7 @@ func _init( \
         text) -> void:
     self.color_params = color_params
 
-func _draw_shape(
+func _draw_shape( \
         center: Vector2, \
         size: Vector2) -> void:
     var vertices := [ \

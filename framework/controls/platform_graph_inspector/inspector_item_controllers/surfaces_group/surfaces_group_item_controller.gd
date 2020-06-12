@@ -1,7 +1,7 @@
 extends InspectorItemController
-class_name SurfacesTopLevelGroupItemController
+class_name SurfacesGroupItemController
 
-const TYPE := InspectorItemType.SURFACES_TOP_LEVEL_GROUP
+const TYPE := InspectorItemType.SURFACES_GROUP
 const IS_LEAF := false
 const STARTS_COLLAPSED := false
 const PREFIX := "Surfaces"

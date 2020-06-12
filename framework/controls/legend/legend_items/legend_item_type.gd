@@ -1,18 +1,19 @@
 class_name LegendItemType
 
-enum { \
-    SURFACE, \
-    ORIGIN_SURFACE, \
-    DESTINATION_SURFACE, \
-    HYPOTHETICAL_EDGE_TRAJECTORY, \
-    FAILED_EDGE_TRAJECTORY, \
-    DISCRETE_EDGE_TRAJECTORY, \
-    CONTINUOUS_EDGE_TRAJECTORY, \
-    ORIGIN, \
-    DESTINATION, \
-    INSTRUCTION_START, \
-    INSTRUCTION_END, \
-    UNKNOWN, \
+enum {
+    SURFACE,
+    ORIGIN_SURFACE,
+    DESTINATION_SURFACE,
+    HYPOTHETICAL_EDGE_TRAJECTORY,
+    FAILED_EDGE_TRAJECTORY,
+    DISCRETE_EDGE_TRAJECTORY,
+    CONTINUOUS_EDGE_TRAJECTORY,
+    ORIGIN,
+    DESTINATION,
+    INSTRUCTION_START,
+    INSTRUCTION_END,
+    POLYLINE,
+    UNKNOWN,
 }
 
 static func get_type_string(type: int) -> String:
@@ -39,6 +40,8 @@ static func get_type_string(type: int) -> String:
             return "INSTRUCTION_START"
         INSTRUCTION_END:
             return "INSTRUCTION_END"
+        POLYLINE:
+            return "POLYLINE"
         UNKNOWN:
             return "UNKNOWN"
         _:

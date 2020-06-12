@@ -325,6 +325,8 @@ static func do_segment_and_polygon_intersect( \
         segment_a: Vector2, \
         segment_b: Vector2, \
         polygon: Array) -> bool:
+    assert(polygon[0] == polygon[polygon.size() - 1])
+    
     var count = polygon.size()
     var segment_diff := segment_b - segment_a
     var polygon_segment: Vector2
@@ -359,30 +361,6 @@ static func do_segment_and_polygon_intersect( \
                 t_leaving = t
                 if t_leaving < t_entering:
                     return false
-    
-    # Handle the last segment (from polygon last to polygon first).
-    polygon_segment = polygon[0] - polygon[count - 1]
-    p_to_a = segment_a - polygon[count - 1]
-    n = polygon_segment.x * p_to_a.y - polygon_segment.y * p_to_a.x
-    d = polygon_segment.y * segment_diff.x - \
-            polygon_segment.x * segment_diff.y
-    
-    if abs(d) < Geometry.FLOAT_EPSILON:
-        if n < 0:
-            return false
-        else:
-            return true
-    t = n / d
-    if d < 0:
-        if t > t_entering:
-            t_entering = t
-            if t_entering > t_leaving:
-                return false
-    else:
-        if t < t_leaving:
-            t_leaving = t
-            if t_leaving < t_entering:
-                return false
     
     # Possible point of intersection 1: segment_a + t_entering * segment_diff
     # Possible point of intersection 2: segment_a + t_leaving * segment_diff

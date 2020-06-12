@@ -3,7 +3,7 @@ class_name InspectorSearchType
 enum { \
     SURFACE, \
     EDGE, \
-    EDGES_TOP_LEVEL_GROUP, \
+    EDGES_GROUP, \
     UNKNOWN, \
 }
 
@@ -13,8 +13,8 @@ static func get_type_string(type: int) -> String:
             return "SURFACE"
         EDGE:
             return "EDGE"
-        EDGES_TOP_LEVEL_GROUP:
-            return "EDGES_TOP_LEVEL_GROUP"
+        EDGES_GROUP:
+            return "EDGES_GROUP"
         UNKNOWN:
             return "UNKNOWN"
         _:

@@ -95,76 +95,70 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     var left_walls := []
     var right_walls := []
     
-    Analytics.stopwatch.start()
+    Profiler.start(ProfilerMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
     _parse_tile_map_into_sides( \
             tile_map, \
             floors, \
             ceilings, \
             left_walls, \
             right_walls)
-    Analytics.stop_and_record( \
-            AnalyticsMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
+    Profiler.stop(ProfilerMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
     
-    Analytics.stopwatch.start()
+    Profiler.start(ProfilerMetric.REMOVE_INTERNAL_SURFACES_DURATION)
     _remove_internal_surfaces( \
             floors, \
             ceilings)
     _remove_internal_surfaces( \
             left_walls, \
             right_walls)
-    Analytics.stop_and_record( \
-            AnalyticsMetric.REMOVE_INTERNAL_SURFACES_DURATION)
+    Profiler.stop(ProfilerMetric.REMOVE_INTERNAL_SURFACES_DURATION)
     
-    Analytics.stopwatch.start()
+    Profiler.start(ProfilerMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
     _merge_continuous_surfaces(floors)
     _merge_continuous_surfaces(ceilings)
     _merge_continuous_surfaces(left_walls)
     _merge_continuous_surfaces(right_walls)
-    Analytics.stop_and_record( \
-            AnalyticsMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
+    Profiler.stop(ProfilerMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
     
-    Analytics.stopwatch.start()
+    Profiler.start(ProfilerMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
     _remove_internal_collinear_vertices(floors)
     _remove_internal_collinear_vertices(ceilings)
     _remove_internal_collinear_vertices(left_walls)
     _remove_internal_collinear_vertices(right_walls)
-    Analytics.stop_and_record( \
-            AnalyticsMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
+    Profiler.stop(ProfilerMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
     
-    Analytics.stopwatch.start()
+    Profiler.start(ProfilerMetric.STORE_SURFACES_DURATION)
     _store_surfaces( \
             tile_map, \
             floors, \
             ceilings, \
             left_walls, \
             right_walls)
-    Analytics.stop_and_record(AnalyticsMetric.STORE_SURFACES_DURATION)
+    Profiler.stop(ProfilerMetric.STORE_SURFACES_DURATION)
     
-    Analytics.stopwatch.start()
+    Profiler.start(ProfilerMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
     _assign_neighbor_surfaces( \
             self.floors, \
             self.ceilings, \
             self.left_walls, \
             self.right_walls)
-    Analytics.stop_and_record( \
-            AnalyticsMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
+    Profiler.stop(ProfilerMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
     
-    Analytics.stopwatch.start()
+    Profiler.start(ProfilerMetric \
+            .CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION)
     # Since this calculation will loop around transitive neigbors, and since
     # every surface should be connected transitively to a floor, it should also
     # end up recording the bounding box for all other surface sides too.
     _calculate_shape_bounding_boxes_for_surfaces(self.floors)
-    Analytics.stop_and_record( \
-            AnalyticsMetric \
-                    .CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION)
+    Profiler.stop(ProfilerMetric \
+            .CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION)
     
-    Analytics.stopwatch.start()
+    Profiler.start(ProfilerMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
     _assert_surfaces_fully_calculated(self.floors)
     _assert_surfaces_fully_calculated(self.ceilings)
     _assert_surfaces_fully_calculated(self.left_walls)
     _assert_surfaces_fully_calculated(self.right_walls)
-    Analytics.stop_and_record( \
-            AnalyticsMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
+    Profiler.stop(ProfilerMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
 
 func _store_surfaces( \
         tile_map: TileMap, \

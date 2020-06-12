@@ -227,7 +227,7 @@ func _select_initial_item() -> void:
     # By default, just select the top-level edges group.
     _trigger_find_and_expand_controller( \
             player_name, \
-            InspectorSearchType.EDGES_TOP_LEVEL_GROUP, \
+            InspectorSearchType.EDGES_GROUP, \
             {})
 
 func _find_matching_surface( \
@@ -388,8 +388,8 @@ func _on_find_and_expand_complete( \
                         SelectionDescription.NO_POSITIONS_PASSING_BROAD_PHASE
         InspectorSearchType.SURFACE:
             assert(controller.type == InspectorItemType.ORIGIN_SURFACE)
-        InspectorSearchType.EDGES_TOP_LEVEL_GROUP:
-            assert(controller.type == InspectorItemType.EDGES_TOP_LEVEL_GROUP)
+        InspectorSearchType.EDGES_GROUP:
+            assert(controller.type == InspectorItemType.EDGES_GROUP)
         _:
             Utils.error("Invalid InspectorSearchType: %s" % \
                     InspectorSearchType.get_type_string(search_type))

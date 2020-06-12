@@ -10,10 +10,9 @@ const PREFIX := "Platform graph"
 #         Array<InterSurfaceEdgesResult>>>>
 var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 
-var edges_item_controller: EdgesTopLevelGroupItemController
-var surfaces_item_controller: SurfacesTopLevelGroupItemController
-var analytics_item_controller: AnalyticsTopLevelGroupItemController
-var global_counts_item_controller: GlobalCountsTopLevelGroupItemController
+var edges_item_controller: EdgesGroupItemController
+var surfaces_item_controller: SurfacesGroupItemController
+var profiler_item_controller: ProfilerGroupItemController
 
 func _init( \
         parent_item: TreeItem, \
@@ -82,7 +81,7 @@ func _find_and_expand_controller_recursive( \
                 Utils.error("Invalid Surface: %s" % \
                         metadata.surface.to_string())
           
-        InspectorSearchType.EDGES_TOP_LEVEL_GROUP:
+        InspectorSearchType.EDGES_GROUP:
             edges_item_controller.select()
         
         _:
@@ -90,22 +89,17 @@ func _find_and_expand_controller_recursive( \
                     InspectorSearchType.get_type_string(search_type))
 
 func _create_children_inner() -> void:
-    edges_item_controller = EdgesTopLevelGroupItemController.new( \
+    edges_item_controller = EdgesGroupItemController.new( \
             tree_item, \
             tree, \
             graph)
-    surfaces_item_controller = SurfacesTopLevelGroupItemController.new( \
+    surfaces_item_controller = SurfacesGroupItemController.new( \
             tree_item, \
             tree, \
             graph, \
             surfaces_to_surfaces_to_edge_types_to_edges_results)
-    analytics_item_controller = \
-            AnalyticsTopLevelGroupItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph)
-    global_counts_item_controller = \
-            GlobalCountsTopLevelGroupItemController.new( \
+    profiler_item_controller = \
+            ProfilerGroupItemController.new( \
                     tree_item, \
                     tree, \
                     graph)
@@ -161,19 +155,17 @@ func _destroy_children_inner() -> void:
     edges_item_controller = null
     surfaces_item_controller.destroy()
     surfaces_item_controller = null
-    analytics_item_controller.destroy()
-    analytics_item_controller = null
-    global_counts_item_controller.destroy()
-    global_counts_item_controller = null
+    profiler_item_controller.destroy()
+    profiler_item_controller = null
 
 func get_annotation_elements() -> Array:
     return get_annotation_elements_from_graph(graph)
 
 static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
-    var result := SurfacesTopLevelGroupItemController \
+    var result := SurfacesGroupItemController \
             .get_annotation_elements_from_graph(graph)
     Utils.concat( \
             result, \
-            EdgesTopLevelGroupItemController \
+            EdgesGroupItemController \
                     .get_annotation_elements_from_graph(graph))
     return result

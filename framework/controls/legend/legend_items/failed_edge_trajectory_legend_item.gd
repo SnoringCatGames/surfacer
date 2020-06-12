@@ -15,7 +15,7 @@ func _init().( \
         TEXT) -> void:
     pass
 
-func _draw_shape(
+func _draw_shape( \
         center: Vector2, \
         size: Vector2) -> void:
     var offset_from_center := size * 0.35 - Vector2(0.0, 6.0)

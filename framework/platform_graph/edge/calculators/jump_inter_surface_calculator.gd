@@ -8,13 +8,22 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Implement analytics tree item controller.
-# - Probably move global counts item to be a child of analytics item?
+# >>- Debug the jump/fall range annotaitons:
+#    - Fix legend items.
+#    - Fix upward jump range.
+#    - Test that correct surfaces are included.
 # 
-# - Analytics!
+# - Add additional description items under origin items that show all surfaces
+#   in fall range and jump range.
+#   - Dynamically re-calculate these from within the controller class.
+#   - Also render a dotted line to show the polygon we're using to represent
+#     the range.
+# 
+# - When showing preselection surface, also show a big highlighted navigation
+#   path.
+# 
+# - Profiler!
 #   - Put together some interesting aggregations, such as:
-#     - Time for different stages of calculating surfaces in jump and fall
-#       range.
 #     - Time spent calculating individual edges, edges of type, all edges.
 #       - And time spent calculating different parts of an edge:
 #         - Jump/land position, broad phase, narrow phase.

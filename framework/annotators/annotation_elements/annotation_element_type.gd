@@ -1,14 +1,15 @@
 class_name AnnotationElementType
 
-enum { \
-    SURFACE, \
-    ORIGIN_SURFACE, \
-    DESTINATION_SURFACE, \
-    EDGE, \
-    FAILED_EDGE_ATTEMPT, \
-    JUMP_LAND_POSITIONS, \
-    EDGE_STEP, \
-    UNKNOWN, \
+enum {
+    SURFACE,
+    ORIGIN_SURFACE,
+    DESTINATION_SURFACE,
+    EDGE,
+    FAILED_EDGE_ATTEMPT,
+    JUMP_LAND_POSITIONS,
+    EDGE_STEP,
+    POLYLINE,
+    UNKNOWN,
 }
 
 static func get_type_string(type: int) -> String:
@@ -27,6 +28,8 @@ static func get_type_string(type: int) -> String:
             return "JUMP_LAND_POSITIONS"
         EDGE_STEP:
             return "EDGE_STEP"
+        POLYLINE:
+            return "POLYLINE"
         UNKNOWN:
             return "UNKNOWN"
         _:

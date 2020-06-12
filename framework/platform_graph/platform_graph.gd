@@ -706,7 +706,7 @@ func _calculate_nodes_and_edges( \
         surfaces_in_fall_range_set.clear()
         surfaces_in_jump_range_set.clear()
         
-        _get_surfaces_in_jump_and_fall_range( \
+        get_surfaces_in_jump_and_fall_range( \
                 surfaces_in_fall_range_set, \
                 surfaces_in_jump_range_set, \
                 origin_surface)
@@ -837,7 +837,7 @@ static func _node_to_cell_id(node: PositionAlongSurface) -> String:
             floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / \
                     CLUSTER_CELL_SIZE) as int]
 
-func _get_surfaces_in_jump_and_fall_range( \
+func get_surfaces_in_jump_and_fall_range( \
         surfaces_in_fall_range_result_set: Dictionary, \
         surfaces_in_jump_range_result_set: Dictionary, \
         origin_surface: Surface) -> void:
@@ -846,18 +846,22 @@ func _get_surfaces_in_jump_and_fall_range( \
     
     # Get all surfaces that are within fall range from either end of the origin
     # surface.
+    Profiler.start(ProfilerMetric.FIND_SURFACES_IN_FALL_RANGE_FROM_SURFACE)
     FallMovementUtils.find_surfaces_in_fall_range_from_surface( \
             movement_params, \
             surfaces_set, \
             surfaces_in_fall_range_result_set, \
             surfaces_in_jump_range_result_set, \
             origin_surface)
+    Profiler.stop(ProfilerMetric.FIND_SURFACES_IN_FALL_RANGE_FROM_SURFACE)
     
+    Profiler.start(ProfilerMetric.GET_SURFACES_IN_JUMP_RANGE)
     _get_surfaces_in_jump_range( \
             surfaces_in_jump_range_result_set, \
             movement_params, \
             origin_surface, \
             surfaces_set)
+    Profiler.stop(ProfilerMetric.GET_SURFACES_IN_JUMP_RANGE)
 
 static func _get_surfaces_in_jump_range( \
         result_set: Dictionary, \

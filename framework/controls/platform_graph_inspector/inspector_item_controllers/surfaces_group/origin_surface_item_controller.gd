@@ -13,7 +13,19 @@ var attempted_destination_surfaces := []
 var valid_edge_count := 0
 var failed_edge_count := 0
 
+# Array<Vector2>
+var fall_range_polygon_without_jump_distance: Array
+# Array<Vector2>
+var fall_range_polygon_with_jump_distance: Array
+
+# Array<Surface>
+var surfaces_in_fall_range: Array
+# Array<Surface>
+var surfaces_in_jump_range: Array
+
 var valid_edges_count_item_controller: DescriptionItemController
+var fall_range_description_item_controller: DescriptionItemController
+var jump_range_description_item_controller: DescriptionItemController
 var destination_surfaces_description_item_controller: DescriptionItemController
 
 func _init( \
@@ -58,6 +70,26 @@ func _calculate_metadata() -> void:
     attempted_destination_surfaces.sort_custom( \
             SurfaceHorizontalPositionComparator, \
             "sort")
+    
+    fall_range_polygon_without_jump_distance = \
+            FallMovementUtils.calculate_fall_range_polygon_from_surface( \
+                    graph.movement_params, \
+                    origin_surface, \
+                    false)
+    fall_range_polygon_with_jump_distance = \
+            FallMovementUtils.calculate_fall_range_polygon_from_surface( \
+                    graph.movement_params, \
+                    origin_surface, \
+                    true)
+    
+    var surfaces_in_fall_range_result_set := {}
+    var surfaces_in_jump_range_result_set := {}
+    graph.get_surfaces_in_jump_and_fall_range( \
+            surfaces_in_fall_range_result_set, \
+            surfaces_in_jump_range_result_set, \
+            origin_surface)
+    surfaces_in_fall_range = surfaces_in_fall_range_result_set.keys()
+    surfaces_in_jump_range = surfaces_in_jump_range_result_set.keys()
 
 func to_string() -> String:
     return "%s{ [%s, %s] }" % [ \
@@ -125,13 +157,36 @@ func _create_children_inner() -> void:
             get_description(), \
             funcref(self, \
                     "_get_annotation_elements_for_valid_edges_count_description_item"))
+    fall_range_description_item_controller = \
+            DescriptionItemController.new( \
+                    tree_item, \
+                    tree, \
+                    graph, \
+                    "_%s surfaces in fall range_" % \
+                            surfaces_in_fall_range.size(), \
+                    "There are %s surfaces in fall range." % \
+                            surfaces_in_fall_range.size(), \
+                    funcref(self, \
+                            "_get_annotation_elements_for_fall_range_description_item"))
+    jump_range_description_item_controller = \
+            DescriptionItemController.new( \
+                    tree_item, \
+                    tree, \
+                    graph, \
+                    "_%s surfaces in jump range_" % \
+                            surfaces_in_jump_range.size(), \
+                    "There are %s surfaces in jump range." % \
+                            surfaces_in_jump_range.size(), \
+                    funcref(self, \
+                            "_get_annotation_elements_for_jump_range_description_item"))
     destination_surfaces_description_item_controller = \
             DescriptionItemController.new( \
                     tree_item, \
                     tree, \
                     graph, \
-                    "_Destination surfaces:_", \
-                    get_description(), \
+                    "_Destinations considered:_", \
+                    "The following surfaces have valid jump/land position " + \
+                            "pairs.", \
                     funcref(self, \
                             "_get_annotation_elements_for_destination_surfaces_description_item"))
     
@@ -153,10 +208,18 @@ func _create_children_inner() -> void:
 
 func _destroy_children_inner() -> void:
     valid_edges_count_item_controller = null
+    fall_range_description_item_controller = null
+    jump_range_description_item_controller = null
     destination_surfaces_description_item_controller = null
 
 func get_annotation_elements() -> Array:
-    var elements := _get_valid_edges_annotation_elements()
+    var elements := _get_jump_fall_range_annotation_elements( \
+            true, \
+            true)
+    
+    var valid_edges_annotation_elements := \
+            _get_valid_edges_annotation_elements()
+    Utils.concat(elements, valid_edges_annotation_elements)
     
     var origin_element := OriginSurfaceAnnotationElement.new(origin_surface)
     elements.push_back(origin_element)
@@ -166,6 +229,72 @@ func get_annotation_elements() -> Array:
 func _get_annotation_elements_for_valid_edges_count_description_item() -> \
         Array:
     return _get_valid_edges_annotation_elements()
+
+func _get_annotation_elements_for_destination_surfaces_description_item() -> \
+        Array:
+    var elements := get_annotation_elements()
+    var element: SurfaceAnnotationElement
+    for destination_surface in attempted_destination_surfaces:
+        element = DestinationSurfaceAnnotationElement.new(destination_surface)
+        elements.push_back(element)
+    return elements
+
+func _get_annotation_elements_for_fall_range_description_item() -> Array:
+    var elements := _get_jump_fall_range_annotation_elements( \
+            true, \
+            false)
+    var element: SurfaceAnnotationElement
+    for destination_surface in surfaces_in_fall_range:
+        element = DestinationSurfaceAnnotationElement.new(destination_surface)
+        elements.push_back(element)
+    return elements
+
+func _get_annotation_elements_for_jump_range_description_item() -> Array:
+    var elements := _get_jump_fall_range_annotation_elements( \
+            false, \
+            true)
+    var element: SurfaceAnnotationElement
+    for destination_surface in surfaces_in_jump_range:
+        element = DestinationSurfaceAnnotationElement.new(destination_surface)
+        elements.push_back(element)
+    return elements
+
+func _get_jump_fall_range_annotation_elements( \
+        includes_fall_range: bool, \
+        includes_jump_range: bool) -> Array:
+    var elements := []
+    
+    if includes_fall_range:
+        var fall_range_without_jump_distance_element := \
+                PolylineAnnotationElement.new( \
+                        fall_range_polygon_without_jump_distance, \
+                        "Fall range without jump distance", \
+                        AnnotationElementDefaults \
+                                .FALL_RANGE_POLYGON_COLOR_PARAMS, \
+                        false, \
+                        false, \
+                        AnnotationElementDefaults \
+                                .DEFAULT_POLYLINE_DASH_LENGTH, \
+                        AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP, \
+                        2.0)
+        elements.push_back(fall_range_without_jump_distance_element)
+    
+    if includes_jump_range:
+        var fall_range_with_jump_distance_element := \
+                PolylineAnnotationElement.new( \
+                        fall_range_polygon_with_jump_distance, \
+                        "Fall range with jump distance", \
+                        AnnotationElementDefaults \
+                                .FALL_RANGE_POLYGON_COLOR_PARAMS, \
+                        false, \
+                        true, \
+                        AnnotationElementDefaults \
+                                .DEFAULT_POLYLINE_DASH_LENGTH, \
+                        AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP, \
+                        2.0)
+        elements.push_back(fall_range_with_jump_distance_element)
+    
+    return elements
 
 func _get_valid_edges_annotation_elements() -> Array:
     var elements := []
@@ -185,15 +314,6 @@ func _get_valid_edges_annotation_elements() -> Array:
                             false, \
                             false)
                     elements.push_back(element)
-    return elements
-
-func _get_annotation_elements_for_destination_surfaces_description_item() -> \
-        Array:
-    var elements := get_annotation_elements()
-    var element: SurfaceAnnotationElement
-    for destination_surface in attempted_destination_surfaces:
-        element = DestinationSurfaceAnnotationElement.new(destination_surface)
-        elements.push_back(element)
     return elements
 
 class SurfaceHorizontalPositionComparator:

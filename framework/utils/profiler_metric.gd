@@ -1,4 +1,4 @@
-class_name AnalyticsMetric
+class_name ProfilerMetric
 
 enum {
     # SurfaceParser metrics.
@@ -10,6 +10,9 @@ enum {
     ASSIGN_NEIGHBOR_SURFACES_DURATION,
     CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION,
     ASSERT_SURFACES_FULLY_CALCULATED_DURATION,
+    
+    FIND_SURFACES_IN_FALL_RANGE_FROM_SURFACE,
+    GET_SURFACES_IN_JUMP_RANGE,
     
     UNKNOWN,
 }
@@ -23,9 +26,25 @@ const VALUES = [
     ASSIGN_NEIGHBOR_SURFACES_DURATION,
     CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION,
     ASSERT_SURFACES_FULLY_CALCULATED_DURATION,
+    
+    FIND_SURFACES_IN_FALL_RANGE_FROM_SURFACE,
+    GET_SURFACES_IN_JUMP_RANGE,
 ]
 static func values() -> Array:
     return VALUES
+
+const SURFACE_PARSER_VALUES = [
+    PARSE_TILE_MAP_INTO_SIDES_DURATION,
+    REMOVE_INTERNAL_SURFACES_DURATION,
+    MERGE_CONTINUOUS_SURFACES_DURATION,
+    REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION,
+    STORE_SURFACES_DURATION,
+    ASSIGN_NEIGHBOR_SURFACES_DURATION,
+    CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION,
+    ASSERT_SURFACES_FULLY_CALCULATED_DURATION,
+]
+static func surface_parser_values() -> Array:
+    return SURFACE_PARSER_VALUES
 
 static func get_type_string(result_type: int) -> String:
     match result_type:
@@ -46,9 +65,14 @@ static func get_type_string(result_type: int) -> String:
         ASSERT_SURFACES_FULLY_CALCULATED_DURATION:
             return "ASSERT_SURFACES_FULLY_CALCULATED_DURATION"
             
+        FIND_SURFACES_IN_FALL_RANGE_FROM_SURFACE:
+            return "FIND_SURFACES_IN_FALL_RANGE_FROM_SURFACE"
+        GET_SURFACES_IN_JUMP_RANGE:
+            return "GET_SURFACES_IN_JUMP_RANGE"
+            
         UNKNOWN:
             return "UNKNOWN"
             
         _:
-            Utils.error("Invalid AnalyticsMetric: %s" % result_type)
+            Utils.error("Invalid ProfilerMetric: %s" % result_type)
             return "UNKNOWN"
