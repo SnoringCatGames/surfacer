@@ -288,7 +288,7 @@ static func find_surfaces_in_fall_range_from_surface( \
             surfaces_in_fall_range_with_jump_distance_result_set != null
     
     var fall_range_polygon_with_jump_distance := \
-            calculate_fall_range_polygon_from_surface( \
+            calculate_jump_or_fall_range_polygon_from_surface( \
                     movement_params, \
                     origin_surface, \
                     true) if \
@@ -296,7 +296,7 @@ static func find_surfaces_in_fall_range_from_surface( \
             []
     
     var fall_range_polygon_without_jump_distance := \
-            calculate_fall_range_polygon_from_surface( \
+            calculate_jump_or_fall_range_polygon_from_surface( \
                     movement_params, \
                     origin_surface, \
                     false)
@@ -318,7 +318,7 @@ static func find_surfaces_in_fall_range_from_surface( \
             fall_range_polygon_without_jump_distance, \
             all_possible_surfaces_set)
 
-static func calculate_fall_range_polygon_from_surface( \
+static func calculate_jump_or_fall_range_polygon_from_surface( \
         movement_params: MovementParams, \
         origin_surface: Surface, \
         is_considering_jump_distance: bool) -> Array:
@@ -357,12 +357,21 @@ static func calculate_fall_range_polygon_from_surface( \
     #   find_a_landing_trajectory case, where we only start with a single
     #   point, rather than a surface.
     
+    # FIXME: --------- Make this more specifically consider the distance in
+    #        left/right directions separately, depending on which wall wall
+    #        side we're jumping from.
+    
     var max_horizontal_jump_distance := \
             movement_params.get_max_horizontal_jump_distance( \
                     origin_surface.side) if \
             is_considering_jump_distance else \
             0.0
-    var offset_for_jump_distance := Vector2(max_horizontal_jump_distance, 0.0)
+    var horizontal_offset_during_jump_vertical_offset := \
+            movement_params.max_upward_jump_distance / slope
+    var offset_x_to_top_corner := \
+            max_horizontal_jump_distance - \
+            horizontal_offset_during_jump_vertical_offset
+    var offset_y_to_top_corner := -movement_params.max_upward_jump_distance
     
     var top_left := Vector2.INF
     var top_right := Vector2.INF
@@ -372,10 +381,12 @@ static func calculate_fall_range_polygon_from_surface( \
     match origin_surface.side:
         SurfaceSide.LEFT_WALL:
             if is_considering_jump_distance:
-                top_left = origin_surface.first_point - \
-                        offset_for_jump_distance
-                top_right = origin_surface.first_point + \
-                        offset_for_jump_distance
+                top_left = origin_surface.first_point + Vector2( \
+                        -offset_x_to_top_corner, \
+                        offset_y_to_top_corner)
+                top_right = origin_surface.first_point + Vector2( \
+                        offset_x_to_top_corner, \
+                        offset_y_to_top_corner)
                 bottom_left = top_left + Vector2( \
                         -offset_x_from_top_corner_to_bottom_corner, \
                         offset_y_from_top_corner_to_bottom_corner)
@@ -400,9 +411,14 @@ static func calculate_fall_range_polygon_from_surface( \
             
         SurfaceSide.RIGHT_WALL:
             if is_considering_jump_distance:
-                top_left = origin_surface.last_point - offset_for_jump_distance
-                top_right = origin_surface.last_point + \
-                        offset_for_jump_distance
+                top_left = \
+                        origin_surface.last_point + Vector2( \
+                        -offset_x_to_top_corner, \
+                        offset_y_to_top_corner)
+                top_right = \
+                        origin_surface.last_point + Vector2( \
+                        offset_x_to_top_corner, \
+                        offset_y_to_top_corner)
                 bottom_left = top_left + Vector2( \
                         -offset_x_from_top_corner_to_bottom_corner, \
                         offset_y_from_top_corner_to_bottom_corner)
@@ -428,9 +444,13 @@ static func calculate_fall_range_polygon_from_surface( \
         SurfaceSide.FLOOR:
             if is_considering_jump_distance:
                 top_left = \
-                        origin_surface.first_point - offset_for_jump_distance
+                        origin_surface.first_point + Vector2( \
+                        -offset_x_to_top_corner, \
+                        offset_y_to_top_corner)
                 top_right = \
-                        origin_surface.last_point + offset_for_jump_distance
+                        origin_surface.last_point + Vector2( \
+                        offset_x_to_top_corner, \
+                        offset_y_to_top_corner)
                 bottom_left = top_left + Vector2( \
                         -offset_x_from_top_corner_to_bottom_corner, \
                         offset_y_from_top_corner_to_bottom_corner)
@@ -452,7 +472,7 @@ static func calculate_fall_range_polygon_from_surface( \
         _:
             Utils.error()
             return []
-        
+    
     return [top_left, top_right, bottom_right, bottom_left, top_left]
 
 # This is only an approximation, since it only considers the end points of the

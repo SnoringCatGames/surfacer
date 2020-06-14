@@ -12,7 +12,8 @@ enum {
     DESTINATION,
     INSTRUCTION_START,
     INSTRUCTION_END,
-    POLYLINE,
+    FALL_RANGE_WITH_JUMP_DISTANCE,
+    FALL_RANGE_WITHOUT_JUMP_DISTANCE,
     UNKNOWN,
 }
 
@@ -40,8 +41,10 @@ static func get_type_string(type: int) -> String:
             return "INSTRUCTION_START"
         INSTRUCTION_END:
             return "INSTRUCTION_END"
-        POLYLINE:
-            return "POLYLINE"
+        FALL_RANGE_WITH_JUMP_DISTANCE:
+            return "FALL_RANGE_WITH_JUMP_DISTANCE"
+        FALL_RANGE_WITHOUT_JUMP_DISTANCE:
+            return "FALL_RANGE_WITHOUT_JUMP_DISTANCE"
         UNKNOWN:
             return "UNKNOWN"
         _:

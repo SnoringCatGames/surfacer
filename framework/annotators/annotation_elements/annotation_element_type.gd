@@ -8,7 +8,8 @@ enum {
     FAILED_EDGE_ATTEMPT,
     JUMP_LAND_POSITIONS,
     EDGE_STEP,
-    POLYLINE,
+    FALL_RANGE_WITH_JUMP_DISTANCE,
+    FALL_RANGE_WITHOUT_JUMP_DISTANCE,
     UNKNOWN,
 }
 
@@ -28,8 +29,10 @@ static func get_type_string(type: int) -> String:
             return "JUMP_LAND_POSITIONS"
         EDGE_STEP:
             return "EDGE_STEP"
-        POLYLINE:
-            return "POLYLINE"
+        FALL_RANGE_WITH_JUMP_DISTANCE:
+            return "FALL_RANGE_WITH_JUMP_DISTANCE"
+        FALL_RANGE_WITHOUT_JUMP_DISTANCE:
+            return "FALL_RANGE_WITHOUT_JUMP_DISTANCE"
         UNKNOWN:
             return "UNKNOWN"
         _:

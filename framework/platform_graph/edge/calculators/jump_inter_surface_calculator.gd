@@ -8,11 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# >>- Debug the jump/fall range annotaitons:
-#    - Fix legend items.
-#    - Fix upward jump range.
-#    - Test that correct surfaces are included.
-# 
 # - Add additional description items under origin items that show all surfaces
 #   in fall range and jump range.
 #   - Dynamically re-calculate these from within the controller class.

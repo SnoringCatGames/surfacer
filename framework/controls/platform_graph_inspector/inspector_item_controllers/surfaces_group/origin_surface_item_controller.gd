@@ -71,13 +71,13 @@ func _calculate_metadata() -> void:
             SurfaceHorizontalPositionComparator, \
             "sort")
     
-    fall_range_polygon_without_jump_distance = \
-            FallMovementUtils.calculate_fall_range_polygon_from_surface( \
+    fall_range_polygon_without_jump_distance = FallMovementUtils \
+            .calculate_jump_or_fall_range_polygon_from_surface( \
                     graph.movement_params, \
                     origin_surface, \
                     false)
-    fall_range_polygon_with_jump_distance = \
-            FallMovementUtils.calculate_fall_range_polygon_from_surface( \
+    fall_range_polygon_with_jump_distance = FallMovementUtils \
+            .calculate_jump_or_fall_range_polygon_from_surface( \
                     graph.movement_params, \
                     origin_surface, \
                     true)
@@ -245,7 +245,11 @@ func _get_annotation_elements_for_fall_range_description_item() -> Array:
             false)
     var element: SurfaceAnnotationElement
     for destination_surface in surfaces_in_fall_range:
-        element = DestinationSurfaceAnnotationElement.new(destination_surface)
+        if destination_surface != origin_surface:
+            element = DestinationSurfaceAnnotationElement.new( \
+                    destination_surface)
+        else:
+            element = OriginSurfaceAnnotationElement.new(origin_surface)
         elements.push_back(element)
     return elements
 
@@ -255,7 +259,11 @@ func _get_annotation_elements_for_jump_range_description_item() -> Array:
             true)
     var element: SurfaceAnnotationElement
     for destination_surface in surfaces_in_jump_range:
-        element = DestinationSurfaceAnnotationElement.new(destination_surface)
+        if destination_surface != origin_surface:
+            element = DestinationSurfaceAnnotationElement.new( \
+                    destination_surface)
+        else:
+            element = OriginSurfaceAnnotationElement.new(origin_surface)
         elements.push_back(element)
     return elements
 
@@ -266,9 +274,8 @@ func _get_jump_fall_range_annotation_elements( \
     
     if includes_fall_range:
         var fall_range_without_jump_distance_element := \
-                PolylineAnnotationElement.new( \
+                FallRangeWithoutJumpDistanceAnnotationElement.new( \
                         fall_range_polygon_without_jump_distance, \
-                        "Fall range without jump distance", \
                         AnnotationElementDefaults \
                                 .FALL_RANGE_POLYGON_COLOR_PARAMS, \
                         false, \
@@ -281,9 +288,8 @@ func _get_jump_fall_range_annotation_elements( \
     
     if includes_jump_range:
         var fall_range_with_jump_distance_element := \
-                PolylineAnnotationElement.new( \
+                FallRangeWithJumpDistanceAnnotationElement.new( \
                         fall_range_polygon_with_jump_distance, \
-                        "Fall range with jump distance", \
                         AnnotationElementDefaults \
                                 .FALL_RANGE_POLYGON_COLOR_PARAMS, \
                         false, \

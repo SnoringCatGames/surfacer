@@ -1,10 +1,8 @@
 extends AnnotationElement
 class_name PolylineAnnotationElement
 
-const TYPE := AnnotationElementType.POLYLINE
-
+var legend_item_class_reference
 var vertices: Array
-var legend_item_text: String
 var color_params: ColorParams
 var is_filled: bool
 var is_dashed: bool
@@ -13,22 +11,19 @@ var dash_gap: float
 var stroke_width: float
 
 func _init( \
+        type: int, \
+        legend_item_class_reference, \
         vertices: Array, \
-        legend_item_text: String, \
-        color_params := AnnotationElementDefaults \
-                .DEFAULT_POLYLINE_COLOR_PARAMS, \
-        is_filled := false, \
-        is_dashed := false, \
-        dash_length := \
-                AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_LENGTH, \
-        dash_gap := \
-                AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP, \
-        stroke_width := AnnotationElementDefaults \
-                .DEFAULT_POLYLINE_STROKE_WIDTH) \
-        .(TYPE) -> void:
+        color_params: ColorParams, \
+        is_filled: bool, \
+        is_dashed: bool, \
+        dash_length: float, \
+        dash_gap: float, \
+        stroke_width: float) \
+        .(type) -> void:
     assert(!is_filled or !is_dashed)
+    self.legend_item_class_reference = legend_item_class_reference
     self.vertices = vertices
-    self.legend_item_text = legend_item_text
     self.color_params = color_params
     self.is_filled = is_filled
     self.is_dashed = is_dashed
@@ -58,4 +53,11 @@ func draw(canvas: CanvasItem) -> void:
                 stroke_width)
 
 func _create_legend_items() -> Array:
-    return [PolylineLegendItem.new(legend_item_text)]
+    var legend_item: PolylineLegendItem = legend_item_class_reference.new( \
+            color_params, \
+            is_filled, \
+            is_dashed, \
+            dash_length, \
+            dash_gap, \
+            stroke_width)
+    return [legend_item]
