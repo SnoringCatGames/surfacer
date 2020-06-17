@@ -45,31 +45,7 @@ func _init( \
 func navigate_to_position(destination: PositionAlongSurface) -> bool:
     reset()
     
-    var path: PlatformGraphPath
-    if surface_state.is_grabbing_a_surface:
-        var origin := PositionAlongSurface.new( \
-                surface_state.center_position_along_surface)
-        path = graph.find_path( \
-                origin, \
-                destination)
-    else:
-        var origin := MovementUtils.create_position_without_surface( \
-                surface_state.center_position)
-        var air_to_surface_edge := \
-                air_to_surface_calculator.find_a_landing_trajectory( \
-                        null, \
-                        collision_params, \
-                        graph.surfaces_set, \
-                        origin, \
-                        player.velocity, \
-                        destination, \
-                        null)
-        if air_to_surface_edge != null:
-            path = graph.find_path( \
-                    air_to_surface_edge.end_position_along_surface, \
-                    destination)
-            if path != null:
-                path.push_front(air_to_surface_edge)
+    var path := find_path(destination)
     
     if path == null:
         # Destination cannot be reached from origin.
@@ -105,6 +81,37 @@ func navigate_to_position(destination: PositionAlongSurface) -> bool:
         _start_edge(0)
         
         return true
+
+func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
+    var path: PlatformGraphPath
+    
+    if surface_state.is_grabbing_a_surface:
+        var origin := PositionAlongSurface.new( \
+                surface_state.center_position_along_surface)
+        path = graph.find_path( \
+                origin, \
+                destination)
+        
+    else:
+        var origin := MovementUtils.create_position_without_surface( \
+                surface_state.center_position)
+        var air_to_surface_edge := \
+                air_to_surface_calculator.find_a_landing_trajectory( \
+                        null, \
+                        collision_params, \
+                        graph.surfaces_set, \
+                        origin, \
+                        player.velocity, \
+                        destination, \
+                        null)
+        if air_to_surface_edge != null:
+            path = graph.find_path( \
+                    air_to_surface_edge.end_position_along_surface, \
+                    destination)
+            if path != null:
+                path.push_front(air_to_surface_edge)
+    
+    return path
 
 func _set_reached_destination() -> void:
     # FIXME: Assert that we are close enough to the destination position.

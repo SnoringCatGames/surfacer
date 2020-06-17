@@ -5,6 +5,9 @@ var PRESELECTION_SURFACE_COLOR: Color = \
         Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
 var PRESELECTION_POSITION_INDICATOR_COLOR: Color = \
         Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
+var PRESELECTION_PATH_COLOR: Color = \
+        Colors.opacify(Colors.PURPLE, Colors.ALPHA_FAINT)
+
 const PRESELECTION_MIN_OPACITY := 0.5
 const PRESELECTION_MAX_OPACITY := 1.0
 const PRESELECTION_DURATION_SEC := 0.6
@@ -13,6 +16,7 @@ const PRESELECTION_SURFACE_OUTWARD_OFFSET := 64.0
 const PRESELECTION_SURFACE_LENGTH_PADDING := 64.0
 const PRESELECTION_POSITION_INDICATOR_LENGTH := 128.0
 const PRESELECTION_POSITION_INDICATOR_RADIUS := 32.0
+const PRESELECTION_PATH_STROKE_WIDTH := 12.0
 
 var player: Player
 var preselection_position_to_draw: PositionAlongSurface = null
@@ -24,6 +28,7 @@ var phantom_surface := Surface.new(
         null, \
         [])
 var phantom_position_along_surface := PositionAlongSurface.new()
+var phantom_path: PlatformGraphPath
 
 func _init(player: Player) -> void:
     self.player = player
@@ -57,6 +62,9 @@ func _process(delta_sec: float) -> void:
         
         if preselection_position_to_draw != null:
             _update_phantom_position_along_surface()
+            
+            phantom_path = \
+                    player.navigator.find_path(preselection_position_to_draw)
         
         update()
     
@@ -75,6 +83,24 @@ func _draw() -> void:
             (PRESELECTION_MAX_OPACITY - PRESELECTION_MIN_OPACITY) + \
             PRESELECTION_MIN_OPACITY)
     
+    # Draw path.
+    var path_alpha := \
+            PRESELECTION_PATH_COLOR.a * alpha_multiplier
+    var path_color := Color( \
+            PRESELECTION_PATH_COLOR.r, \
+            PRESELECTION_PATH_COLOR.g, \
+            PRESELECTION_PATH_COLOR.b, \
+            path_alpha)
+    DrawUtils.draw_path( \
+            self, \
+            phantom_path, \
+            PRESELECTION_PATH_STROKE_WIDTH, \
+            path_color, \
+            false, \
+            false, \
+            false)
+    
+    # Draw Surface.
     var surface_alpha := PRESELECTION_SURFACE_COLOR.a * alpha_multiplier
     var surface_color := Color( \
             PRESELECTION_SURFACE_COLOR.r, \
@@ -87,6 +113,7 @@ func _draw() -> void:
             surface_color, \
             PRESELECTION_SURFACE_DEPTH)
     
+    # Draw destination marker.
     var position_indicator_alpha := \
             PRESELECTION_POSITION_INDICATOR_COLOR.a * alpha_multiplier
     var position_indicator_color := Color( \

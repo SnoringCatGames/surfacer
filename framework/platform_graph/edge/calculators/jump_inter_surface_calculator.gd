@@ -8,9 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - When showing preselection surface, also show a big highlighted navigation
-#   path.
-# 
 # - Profiler!
 #   - Put together some interesting aggregations, such as:
 #     - Time spent calculating individual edges, edges of type, all edges.

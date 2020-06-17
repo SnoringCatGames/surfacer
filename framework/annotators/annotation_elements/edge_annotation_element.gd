@@ -31,10 +31,11 @@ func draw(canvas: CanvasItem) -> void:
     DrawUtils.draw_edge( \
             canvas, \
             edge, \
+            DrawUtils.EDGE_TRAJECTORY_WIDTH, \
+            color, \
             includes_waypoints, \
             includes_instruction_indicators, \
-            includes_continuous_positions, \
-            color)
+            includes_continuous_positions)
 
 func _create_legend_items() -> Array:
     var items := []

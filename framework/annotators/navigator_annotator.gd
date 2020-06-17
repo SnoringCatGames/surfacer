@@ -1,6 +1,8 @@
 extends Node2D
 class_name NavigatorAnnotator
 
+const TRAJECTORY_STROKE_WIDTH := 4.0
+
 var navigator: Navigator
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
@@ -10,13 +12,23 @@ func _init(navigator: Navigator) -> void:
 
 func _draw() -> void:
     if previous_path != null:
-        _draw_path( \
+        DrawUtils.draw_path( \
+                self, \
                 previous_path, \
-                AnnotationElementDefaults.NAVIGATOR_PREVIOUS_PATH_COLOR)
+                TRAJECTORY_STROKE_WIDTH, \
+                AnnotationElementDefaults.NAVIGATOR_PREVIOUS_PATH_COLOR, \
+                true, \
+                false, \
+                false)
     if current_path != null:
-        _draw_path( \
+        DrawUtils.draw_path( \
+                self, \
                 current_path, \
-                AnnotationElementDefaults.NAVIGATOR_CURRENT_PATH_COLOR)
+                TRAJECTORY_STROKE_WIDTH, \
+                AnnotationElementDefaults.NAVIGATOR_CURRENT_PATH_COLOR, \
+                true, \
+                false, \
+                false)
         
         # Draw the origin indicator.
         self.draw_circle( \
@@ -75,15 +87,3 @@ func check_for_update() -> void:
     if navigator.previous_path != previous_path:
         previous_path = navigator.previous_path
         update()
-
-func _draw_path( \
-        path: PlatformGraphPath, \
-        color: Color) -> void:
-    for edge in path.edges:
-        DrawUtils.draw_edge( \
-                self, \
-                edge, \
-                true, \
-                false, \
-                false, \
-                color)

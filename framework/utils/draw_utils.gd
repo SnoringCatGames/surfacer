@@ -6,7 +6,7 @@ const SURFACE_ALPHA_END_RATIO := .2
 
 const EDGE_TRAJECTORY_WIDTH := 1.0
 
-const EDGE_WAYPOINT_STROKE_WIDTH := 1.0
+const EDGE_WAYPOINT_STROKE_WIDTH := EDGE_TRAJECTORY_WIDTH
 const EDGE_WAYPOINT_RADIUS := 6.0 * EDGE_WAYPOINT_STROKE_WIDTH
 const EDGE_START_RADIUS := 3.0 * EDGE_WAYPOINT_STROKE_WIDTH
 const EDGE_END_RADIUS := EDGE_WAYPOINT_RADIUS
@@ -767,13 +767,32 @@ static func draw_ice_cream_cone( \
                 color, \
                 border_width)
 
+static func draw_path( \
+        canvas: CanvasItem, \
+        path: PlatformGraphPath, \
+        stroke_width := EDGE_TRAJECTORY_WIDTH, \
+        color := Color.white, \
+        includes_waypoints := false, \
+        includes_instruction_indicators := false, \
+        includes_continuous_positions := false) -> void:
+    for edge in path.edges:
+        draw_edge( \
+                canvas, \
+                edge, \
+                stroke_width, \
+                color, \
+                includes_waypoints, \
+                includes_instruction_indicators, \
+                includes_continuous_positions)
+
 static func draw_edge( \
         canvas: CanvasItem, \
         edge: Edge, \
+        stroke_width := EDGE_TRAJECTORY_WIDTH, \
+        base_color := Color.white, \
         includes_waypoints := false, \
         includes_instruction_indicators := false, \
-        includes_continuous_positions := false, \
-        base_color := Color.white) -> void:
+        includes_continuous_positions := false) -> void:
     if base_color == Color.white:
         base_color = AnnotationElementDefaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS.get_color()
@@ -786,48 +805,53 @@ static func draw_edge( \
         _draw_edge_from_instructions_positions( \
                 canvas, \
                 edge, \
+                stroke_width, \
+                base_color, \
                 includes_waypoints, \
                 includes_instruction_indicators, \
-                includes_continuous_positions, \
-                base_color)
+                includes_continuous_positions)
     elif edge is ClimbDownWallToFloorEdge or \
             edge is IntraSurfaceEdge or \
             edge is WalkToAscendWallFromFloorEdge:
         _draw_edge_from_end_points( \
                 canvas, \
                 edge, \
+                stroke_width, \
+                base_color, \
                 includes_waypoints, \
-                includes_instruction_indicators, \
-                base_color)
+                includes_instruction_indicators)
     elif edge is ClimbOverWallToFloorEdge:
         _draw_climb_over_wall_to_floor_edge( \
                 canvas, \
                 edge, \
+                stroke_width, \
+                base_color, \
                 includes_waypoints, \
-                includes_instruction_indicators, \
-                base_color)
+                includes_instruction_indicators)
     elif edge is FallFromFloorEdge:
         _draw_fall_from_floor_edge( \
                 canvas, \
                 edge, \
+                stroke_width, \
+                base_color, \
                 includes_waypoints, \
                 includes_instruction_indicators, \
-                includes_continuous_positions, \
-                base_color)
+                includes_continuous_positions)
     else:
         Utils.error("Unexpected Edge subclass: %s" % edge)
 
 static func _draw_edge_from_end_points( \
         canvas: CanvasItem, \
         edge: Edge, \
+        stroke_width: float, \
+        base_color: Color, \
         includes_waypoints: bool, \
-        includes_instruction_indicators: bool, \
-        base_color: Color) -> void:
+        includes_instruction_indicators: bool) -> void:
     canvas.draw_line( \
             edge.start, \
             edge.end, \
             base_color, \
-            EDGE_TRAJECTORY_WIDTH)
+            stroke_width)
     
     if includes_waypoints:
         var waypoint_color: Color = AnnotationElementDefaults \
@@ -857,20 +881,21 @@ static func _draw_edge_from_end_points( \
 static func _draw_climb_over_wall_to_floor_edge( \
         canvas: CanvasItem, \
         edge: ClimbOverWallToFloorEdge, \
+        stroke_width: float, \
+        base_color: Color, \
         includes_waypoints: bool, \
-        includes_instruction_indicators: bool, \
-        base_color: Color) -> void:
+        includes_instruction_indicators: bool) -> void:
     var mid_point := Vector2(edge.start.x, edge.end.y)
     canvas.draw_line( \
             edge.start, \
             mid_point, \
             base_color, \
-            EDGE_TRAJECTORY_WIDTH)
+            stroke_width)
     canvas.draw_line( \
             mid_point, \
             edge.end, \
             base_color, \
-            EDGE_TRAJECTORY_WIDTH)
+            stroke_width)
     
     if includes_waypoints:
         var waypoint_color: Color = AnnotationElementDefaults \
@@ -900,10 +925,11 @@ static func _draw_climb_over_wall_to_floor_edge( \
 static func _draw_fall_from_floor_edge( \
         canvas: CanvasItem, \
         edge: FallFromFloorEdge, \
+        stroke_width: float, \
+        base_color: Color, \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
-        includes_continuous_positions: bool, \
-        base_color: Color) -> void:
+        includes_continuous_positions: bool) -> void:
     # Render FallFromFloorEdges with a slight offset, so that they don't
     # overlap with ClimbOverWallToFloorEdges.
     var offset := Vector2( \
@@ -919,29 +945,31 @@ static func _draw_fall_from_floor_edge( \
             start_position + offset, \
             mid_point + offset, \
             base_color, \
-            EDGE_TRAJECTORY_WIDTH)
+            stroke_width)
     canvas.draw_line( \
             mid_point + offset, \
             fall_off_position + offset, \
             base_color, \
-            EDGE_TRAJECTORY_WIDTH)
+            stroke_width)
     
     _draw_edge_from_instructions_positions( \
             canvas, \
             edge, \
+            stroke_width, \
+            base_color, \
             includes_waypoints, \
             includes_instruction_indicators, \
             includes_continuous_positions, \
-            base_color, \
             edge.start)
 
 static func _draw_edge_from_instructions_positions( \
         canvas: CanvasItem, \
         edge: Edge, \
+        stroke_width: float, \
+        discrete_trajectory_color: Color, \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
         includes_continuous_positions: bool, \
-        discrete_trajectory_color: Color, \
         origin_position_override := Vector2.INF) -> void:
     # Set up colors.
     var continuous_trajectory_color: Color = AnnotationElementDefaults \
@@ -962,13 +990,13 @@ static func _draw_edge_from_instructions_positions( \
         canvas.draw_polyline( \
                 edge.trajectory.frame_continuous_positions_from_steps, \
                 continuous_trajectory_color, \
-                EDGE_TRAJECTORY_WIDTH)
+                stroke_width)
     # Draw the trajectory (as approximated via discrete time steps during
     # instruction test calculations).
     canvas.draw_polyline( \
             edge.trajectory.frame_discrete_positions_from_test, \
             discrete_trajectory_color, \
-            EDGE_TRAJECTORY_WIDTH)
+            stroke_width)
     
     if includes_waypoints:
         # Draw the intermediate waypoints.
@@ -980,7 +1008,7 @@ static func _draw_edge_from_instructions_positions( \
                     waypoint_position, \
                     EDGE_WAYPOINT_RADIUS, \
                     waypoint_color, \
-                    EDGE_WAYPOINT_STROKE_WIDTH, \
+                    stroke_width, \
                     4.0)
         
         draw_destination_marker( \
