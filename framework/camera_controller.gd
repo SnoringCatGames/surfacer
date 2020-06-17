@@ -14,7 +14,7 @@ var zoom: float setget _set_zoom, _get_zoom
 func _ready() -> void:
     Global.camera_controller = self
 
-func _process(delta: float) -> void:
+func _process(delta_sec: float) -> void:
     if _current_camera != null:
         # Handle zooming.
         if InputWrapper.is_action_pressed("zoom_in"):

@@ -33,7 +33,7 @@ func _ready() -> void:
             surface_parser, \
             space_state, \
             Global.player_params, \
-            Global.DEBUG_PARAMS)
+            Config.DEBUG_PARAMS)
     Global.platform_graph_inspector.set_graphs(platform_graphs.values())
     
     Global.is_level_ready = true

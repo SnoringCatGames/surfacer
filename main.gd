@@ -52,8 +52,8 @@ func _enter_tree() -> void:
     Global.register_edge_movements(EDGE_MOVEMENT_CLASSES)
     Global.register_player_params(PLAYER_PARAM_CLASSES)
     
-    if Global.IN_TEST_MODE:
-        var scene_path := Global.TEST_RUNNER_SCENE_RESOURCE_PATH
+    if Config.IN_TEST_MODE:
+        var scene_path := Config.TEST_RUNNER_SCENE_RESOURCE_PATH
         var test_scene = Utils.add_scene( \
                 self, \
                 scene_path)
@@ -75,21 +75,21 @@ func _enter_tree() -> void:
                     canvas_layers.screen_layer, \
                     LOADING_SCREEN_PATH)
 
-func _process(delta: float) -> void:
+func _process(delta_sec: float) -> void:
     # FIXME: Figure out a better way of loading/parsing the level without
     #        blocking the main thread?
     
-    if !Global.IN_TEST_MODE and \
+    if !Config.IN_TEST_MODE and \
             level == null and \
-            Global._get_elapsed_play_time_sec() > 0.5:
+            Time.elapsed_play_time_sec > 0.5:
         # Start loading the level and calculating the platform graphs.
         level = Utils.add_scene( \
                 self, \
-                Global.STARTING_LEVEL_RESOURCE_PATH, \
+                Config.STARTING_LEVEL_RESOURCE_PATH, \
                 false)
     
     if !is_level_ready and \
-            Global._get_elapsed_play_time_sec() > 2.0:
+            Time.elapsed_play_time_sec > 2.0:
         is_level_ready = true
         level.visible = true
         
@@ -103,10 +103,10 @@ func _process(delta: float) -> void:
         # will track the player, which makes the loading screen look offset.
         var position := \
                 Vector2(160.0, 0.0) if \
-                Global.STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 else \
+                Config.STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 else \
                 Vector2.ZERO
         level.add_player( \
-                Global.PLAYER_RESOURCE_PATH, \
+                Config.PLAYER_RESOURCE_PATH, \
                 false, \
                 position)
         

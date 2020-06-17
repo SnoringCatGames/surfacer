@@ -357,7 +357,7 @@ static func create_position_without_surface( \
 
 static func update_velocity_in_air( \
         velocity: Vector2, \
-        delta: float, \
+        delta_sec: float, \
         is_pressing_jump: bool, \
         is_first_jump: bool, \
         horizontal_acceleration_sign: int, \
@@ -366,15 +366,24 @@ static func update_velocity_in_air( \
     
     # Make gravity stronger when falling. This creates a more satisfying jump.
     # Similarly, make gravity stronger for double jumps.
-    var gravity_multiplier := 1.0 if !is_rising_from_jump else \
-            (movement_params.slow_rise_gravity_multiplier if is_first_jump \
-                    else movement_params.rise_double_jump_gravity_multiplier)
+    var gravity_multiplier := \
+            1.0 if \
+            !is_rising_from_jump else \
+            (movement_params.slow_rise_gravity_multiplier if \
+            is_first_jump else \
+            movement_params.rise_double_jump_gravity_multiplier)
     
     # Vertical movement.
-    velocity.y += delta * movement_params.gravity_fast_fall * gravity_multiplier
+    velocity.y += \
+            delta_sec * \
+            movement_params.gravity_fast_fall * \
+            gravity_multiplier
     
     # Horizontal movement.
-    velocity.x += delta * movement_params.in_air_horizontal_acceleration * horizontal_acceleration_sign
+    velocity.x += \
+            delta_sec * \
+            movement_params.in_air_horizontal_acceleration * \
+            horizontal_acceleration_sign
     
     return velocity
 
@@ -440,7 +449,7 @@ static func calculate_distance_to_stop_from_friction( \
     var distance := 0.0
     var speed := abs(velocity_x_start)
     while speed > movement_params.min_horizontal_speed:
-        distance += speed * Utils.PHYSICS_TIME_STEP
+        distance += speed * Time.PHYSICS_TIME_STEP_SEC
         speed -= friction_deceleration_per_frame
     return distance
 

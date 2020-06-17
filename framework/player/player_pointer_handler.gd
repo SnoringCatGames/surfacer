@@ -1,7 +1,13 @@
 extends Node2D
 class_name PlayerPointerHandler
 
+const DRAG_THROTTLE_INTERVAL_SEC := 0.1
+
 var player
+var throttled_set_new_drag_position: FuncRef = Time.throttle( \
+        funcref(self, "set_new_drag_position"), \
+        DRAG_THROTTLE_INTERVAL_SEC)
+var last_pointer_drag_position := Vector2.INF
 
 func _init(player) -> void:
     self.player = player
@@ -49,6 +55,9 @@ func _unhandled_input(event: InputEvent) -> void:
         pointer_drag_position = Utils.get_global_touch_position(event)
     
     if pointer_up_position != Vector2.INF:
+        last_pointer_drag_position = Vector2.INF
+        Time.cancel_pending_throttle(throttled_set_new_drag_position)
+        
         player.new_selection_target = pointer_up_position
         player.new_selection_position = \
                 _get_nearest_surface_position_within_distance_threshold( \
@@ -56,12 +65,15 @@ func _unhandled_input(event: InputEvent) -> void:
                         player)
         
     elif pointer_drag_position != Vector2.INF:
-        # FIXME: ---------------------- Consider debouncing this.
-        player.preselection_target = pointer_drag_position
-        player.preselection_position = \
-                _get_nearest_surface_position_within_distance_threshold( \
-                        pointer_drag_position, \
-                        player)
+        last_pointer_drag_position = pointer_drag_position
+        throttled_set_new_drag_position.call_func()
+
+func set_new_drag_position() -> void:
+    player.preselection_target = last_pointer_drag_position
+    player.preselection_position = \
+            _get_nearest_surface_position_within_distance_threshold( \
+                    last_pointer_drag_position, \
+                    player)
 
 static func _get_nearest_surface_position_within_distance_threshold( \
         target: Vector2, \

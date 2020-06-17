@@ -25,7 +25,7 @@ var current_annotation_elements := []
 func _init(inspector) -> void:
     self.inspector = inspector
 
-func _process(delta: float) -> void:
+func _process(delta_sec: float) -> void:
     if first_target != previous_first_target:
         previous_first_target = first_target
         update()

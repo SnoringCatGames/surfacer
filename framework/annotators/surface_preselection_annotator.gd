@@ -28,8 +28,8 @@ var phantom_position_along_surface := PositionAlongSurface.new()
 func _init(player: Player) -> void:
     self.player = player
 
-func _process(delta: float) -> void:
-    var current_time: float = Global.elapsed_play_time_sec
+func _process(delta_sec: float) -> void:
+    var current_time: float = Time.elapsed_play_time_sec
     
     var did_preselection_position_change = \
             preselection_position_to_draw != player.preselection_position

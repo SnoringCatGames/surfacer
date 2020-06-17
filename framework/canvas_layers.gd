@@ -23,7 +23,7 @@ func _enter_tree() -> void:
     _create_ruler_layer()
     _create_annotation_layer()
 
-func _process(delta: float) -> void:
+func _process(delta_sec: float) -> void:
     # Transform the annotation layer to follow the camera.
     var camera: Camera2D = Global.camera_controller.get_current_camera()
     if camera != null:
@@ -50,12 +50,12 @@ func _create_hud_layer() -> void:
     
     var utility_panel = Utils.add_scene( \
             hud_layer, \
-            Global.UTILITY_PANEL_RESOURCE_PATH)
+            Config.UTILITY_PANEL_RESOURCE_PATH)
     Global.utility_panel = utility_panel
     
     var welcome_panel = Utils.add_scene( \
             hud_layer, \
-            Global.WELCOME_PANEL_RESOURCE_PATH)
+            Config.WELCOME_PANEL_RESOURCE_PATH)
     Global.welcome_panel = welcome_panel
 
 func _create_ruler_layer() -> void:
@@ -79,7 +79,7 @@ func _create_annotation_layer() -> void:
     Global.element_annotator = element_annotator
 
 func _input(event: InputEvent) -> void:
-    var current_time: float = Global.elapsed_play_time_sec
+    var current_time: float = Time.elapsed_play_time_sec
     
     # Close the welcome panel on any mouse or key click event.
     if Global.welcome_panel != null and \

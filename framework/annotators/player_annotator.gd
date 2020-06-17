@@ -35,7 +35,7 @@ func _enter_tree() -> void:
     if navigator_annotator != null:
         add_child(navigator_annotator)
 
-func _physics_process(delta: float) -> void:
+func _physics_process(delta_sec: float) -> void:
     if !Geometry.are_points_equal_with_epsilon( \
             player.position, \
             previous_position, \

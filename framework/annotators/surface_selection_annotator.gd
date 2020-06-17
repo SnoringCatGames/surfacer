@@ -20,8 +20,8 @@ var is_a_selection_currently_rendered := false
 func _init(player: Player) -> void:
     self.player = player
 
-func _process(delta: float) -> void:
-    var current_time: float = Global.elapsed_play_time_sec
+func _process(delta_sec: float) -> void:
+    var current_time: float = Time.elapsed_play_time_sec
     
     # Has there been a new surface selection?
     if player.last_selection_position != selection_position_to_animate:

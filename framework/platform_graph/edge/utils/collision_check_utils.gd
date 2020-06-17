@@ -15,10 +15,10 @@ static func check_instructions_discrete_frame_state( \
     var movement_params := edge_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: EdgeInstruction = instructions.instructions[0]
-    var delta := Utils.PHYSICS_TIME_STEP
+    var delta_sec := Time.PHYSICS_TIME_STEP_SEC
     var is_first_jump := true
     var previous_time: float = instructions.instructions[0].time
-    var current_time := previous_time + delta
+    var current_time := previous_time + delta_sec
     var end_time := vertical_step.time_step_end
     var is_pressing_left := false
     var is_pressing_right := false
@@ -48,8 +48,8 @@ static func check_instructions_discrete_frame_state( \
     # Iterate through each physics frame, checking each for a collision.
     while current_time < end_time:
         # Update position for this frame, according to the velocity from the previous frame.
-        delta = Utils.PHYSICS_TIME_STEP
-        displacement = velocity * delta
+        delta_sec = Time.PHYSICS_TIME_STEP_SEC
+        displacement = velocity * delta_sec
         shape_query_params.transform = Transform2D(movement_params.collider_rotation, position)
         shape_query_params.motion = displacement
         
@@ -160,9 +160,9 @@ static func check_instructions_discrete_frame_state( \
 #        if !has_started_instructions:
 #            has_started_instructions = true
 #            # When we start executing the instruction set, the current elapsed time of the
-#            # instruction set will be less than a full frame. So we use a delta that represents the
+#            # instruction set will be less than a full frame. So we use a delta_sec that represents the
 #            # actual time the instruction set should have been running for so far.
-#            delta = current_time - instructions.instructions[0].time
+#            delta_sec = current_time - instructions.instructions[0].time
         
         # Record the position for edge annotation debugging.
         frame_discrete_positions.push_back(position)
@@ -171,7 +171,7 @@ static func check_instructions_discrete_frame_state( \
         position += displacement
         velocity = MovementUtils.update_velocity_in_air( \
                 velocity, \
-                delta, \
+                delta_sec, \
                 is_pressing_jump, \
                 is_first_jump, \
                 horizontal_acceleration_sign, \
@@ -181,14 +181,14 @@ static func check_instructions_discrete_frame_state( \
                 movement_params, \
                 movement_params.max_horizontal_speed_default)
         previous_time = current_time
-        current_time += delta
+        current_time += delta_sec
         
         # Record the position for edge annotation debugging.
 #        frame_continuous_positions.push_back(continuous_position) # FIXME: REMOVE
     
     # Check the last frame that puts us up to end_time.
-    delta = end_time - current_time
-    displacement = velocity * delta
+    delta_sec = end_time - current_time
+    displacement = velocity * delta_sec
     shape_query_params.transform = Transform2D( \
             movement_params.collider_rotation, \
             position)
@@ -236,12 +236,12 @@ static func check_discrete_horizontal_step_for_collision( \
         step_calc_params: EdgeStepCalcParams, \
         horizontal_step: EdgeStep) -> SurfaceCollision:
     var movement_params := edge_calc_params.movement_params
-    var delta := Utils.PHYSICS_TIME_STEP
+    var delta_sec := Time.PHYSICS_TIME_STEP_SEC
     var is_first_jump := true
     # On average, an instruction set will start halfway through a physics frame, so let's use that
     # average here.
-    var previous_time := horizontal_step.time_step_start - delta * 0.5
-    var current_time := previous_time + delta
+    var previous_time := horizontal_step.time_step_start - delta_sec * 0.5
+    var current_time := previous_time + delta_sec
     var step_end_time := horizontal_step.time_step_end
     var position := horizontal_step.position_step_start
     var velocity := horizontal_step.velocity_step_start
@@ -259,8 +259,8 @@ static func check_discrete_horizontal_step_for_collision( \
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
         # Update state for the current frame.
-        delta = Utils.PHYSICS_TIME_STEP
-        displacement = velocity * delta
+        delta_sec = Time.PHYSICS_TIME_STEP_SEC
+        displacement = velocity * delta_sec
         shape_query_params.transform = Transform2D(movement_params.collider_rotation, position)
         shape_query_params.motion = displacement
         
@@ -296,15 +296,15 @@ static func check_discrete_horizontal_step_for_collision( \
 #        if !has_started_instructions:
 #            has_started_instructions = true
 #            # When we start executing the instruction, the current elapsed time of the instruction
-#            # will be less than a full frame. So we use a delta that represents the actual time the
+#            # will be less than a full frame. So we use a delta_sec that represents the actual time the
 #            # instruction should have been running for so far.
-#            delta = current_time - horizontal_step.time_step_start
+#            delta_sec = current_time - horizontal_step.time_step_start
         
         # Update state for the next frame.
         position += displacement
         velocity = MovementUtils.update_velocity_in_air( \
                 velocity, \
-                delta, \
+                delta_sec, \
                 is_pressing_jump, \
                 is_first_jump, \
                 horizontal_acceleration_sign, \
@@ -314,11 +314,11 @@ static func check_discrete_horizontal_step_for_collision( \
                 movement_params, \
                 movement_params.max_horizontal_speed_default)
         previous_time = current_time
-        current_time += delta
+        current_time += delta_sec
     
     # Check the last frame that puts us up to end_time.
-    delta = step_end_time - current_time
-    displacement = velocity * delta
+    delta_sec = step_end_time - current_time
+    displacement = velocity * delta_sec
     shape_query_params.transform = Transform2D(movement_params.collider_rotation, position)
     shape_query_params.motion = displacement
     collision = FrameCollisionCheckUtils.check_frame_for_collision( \
@@ -345,9 +345,9 @@ static func check_continuous_horizontal_step_for_collision( \
     var vertical_step := step_calc_params.vertical_step
     var collider_half_width_height := movement_params.collider_half_width_height
     var surface_parser := edge_calc_params.surface_parser
-    var delta := Utils.PHYSICS_TIME_STEP
+    var delta_sec := Time.PHYSICS_TIME_STEP_SEC
     var previous_time := horizontal_step.time_step_start
-    var current_time := previous_time + delta
+    var current_time := previous_time + delta_sec
     var step_end_time := horizontal_step.time_step_end
     var previous_position := horizontal_step.position_step_start
     var current_position := previous_position
@@ -427,7 +427,7 @@ static func check_continuous_horizontal_step_for_collision( \
         # Update state for the next frame.
         previous_position = current_position
         previous_time = current_time
-        current_time += delta
+        current_time += delta_sec
         
         # Record the positions and velocities for edge annotation debugging.
         frame_positions.push_back(current_position)

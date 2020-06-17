@@ -1178,11 +1178,13 @@ config/icon="res://assets/images/icon.png"
 
 [autoload]
 
+Config="*res://framework/config.gd"
+Time="*res://framework/utils/time.gd"
 Utils="*res://framework/utils/utils.gd"
 Geometry="*res://framework/utils/geometry.gd"
 DrawUtils="*res://framework/utils/draw_utils.gd"
-Global="*res://framework/global.gd"
 Profiler="*res://framework/utils/profiler.gd"
+Global="*res://framework/global.gd"
 AnnotationElementDefaults="*res://framework/annotators/annotation_elements/annotation_element_defaults.gd"
 InputWrapper="*res://framework/input_wrapper.gd"
 

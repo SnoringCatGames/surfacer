@@ -18,7 +18,7 @@ func update( \
         actions: PlayerActionState, \
         previous_actions: PlayerActionState, \
         time_sec: float, \
-        delta: float, \
+        delta_sec: float, \
         navigation_state: PlayerNavigationState) -> void:
     Utils.error("Abstract PlayerActionSource.update is not implemented")
 

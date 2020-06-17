@@ -76,14 +76,14 @@ func _init() -> void:
     root = create_item()
 
 func _ready() -> void:
-    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+    if !Config.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     inspector_selector = PlatformGraphInspectorSelector.new(self)
     Global.canvas_layers.annotation_layer.add_child(inspector_selector)
 
-func _process(delta: float) -> void:
-    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+func _process(delta_sec: float) -> void:
+    if !Config.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     var next_focused_control := get_focus_owner()
@@ -115,7 +115,7 @@ func release_focus() -> void:
     .release_focus()
 
 func populate() -> void:
-    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+    if !Config.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     _should_be_populated = true
@@ -131,7 +131,7 @@ func populate() -> void:
         call_deferred("_select_initial_item")
 
 func clear() -> void:
-    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+    if !Config.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     release_focus()
@@ -140,7 +140,7 @@ func clear() -> void:
     .clear()
 
 func set_graphs(graphs: Array) -> void:
-    if !Global.DEBUG_PARAMS.is_inspector_enabled:
+    if !Config.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     self.graphs = graphs
@@ -150,12 +150,12 @@ func set_graphs(graphs: Array) -> void:
         populate()
 
 func _select_initial_item() -> void:
-    if !Global.DEBUG_PARAMS.has("limit_parsing") or \
-            !Global.DEBUG_PARAMS.limit_parsing.has("player_name"):
+    if !Config.DEBUG_PARAMS.has("limit_parsing") or \
+            !Config.DEBUG_PARAMS.limit_parsing.has("player_name"):
         # Don't select anything if we don't know the player to target.
         return
     
-    var limit_parsing: Dictionary = Global.DEBUG_PARAMS.limit_parsing
+    var limit_parsing: Dictionary = Config.DEBUG_PARAMS.limit_parsing
     var player_name: String = limit_parsing.player_name
     
     if limit_parsing.has("edge") and \

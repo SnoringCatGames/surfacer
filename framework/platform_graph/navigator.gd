@@ -33,7 +33,7 @@ func _init( \
     self.surface_state = player.surface_state
     self.movement_params = player.movement_params
     self.collision_params = CollisionCalcParams.new( \
-            Global.DEBUG_PARAMS, \
+            Config.DEBUG_PARAMS, \
             Global.space_state, \
             movement_params, \
             graph.surface_parser)
@@ -91,7 +91,7 @@ func navigate_to_position(destination: PositionAlongSurface) -> bool:
             "\n\tpath: %s," + \
             "\n}"
         var format_string_arguments := [ \
-                Global.elapsed_play_time_sec, \
+                Time.elapsed_play_time_sec, \
                 destination.to_string(), \
                 path.to_string_with_newlines(1), \
             ]
@@ -125,7 +125,7 @@ func _set_reached_destination() -> void:
     reset()
     reached_destination = true
     
-    print("REACHED END OF PATH: %8.3ft" % [Global.elapsed_play_time_sec])
+    print("REACHED END OF PATH: %8.3ft" % [Time.elapsed_play_time_sec])
 
 func reset() -> void:
     if current_path != null:
@@ -148,7 +148,7 @@ func _start_edge(index: int) -> void:
     
     var format_string_template := "STARTING EDGE NAV:   %8.3ft; %s"
     var format_string_arguments := [ \
-            Global.elapsed_play_time_sec, \
+            Time.elapsed_play_time_sec, \
             current_edge.to_string_with_newlines(0), \
         ]
     print(format_string_template % format_string_arguments)
@@ -166,7 +166,7 @@ func _start_edge(index: int) -> void:
     
     current_playback = instructions_action_source.start_instructions( \
             current_edge, \
-            Global.elapsed_play_time_sec)
+            Time.elapsed_play_time_sec)
     
     # Some instructions could be immediately skipped, depending on runtime
     # state, so this gives us a change to move straight to the next edge.
@@ -198,13 +198,13 @@ func update(just_started_new_edge = false) -> void:
                     "navigation_state.just_interrupted_by_user_action"
         
         print("EDGE MVT INTERRUPTED:%8.3ft; %s" % \
-                [Global.elapsed_play_time_sec, interruption_type_label])
+                [Time.elapsed_play_time_sec, interruption_type_label])
         # FIXME: Add back in at some point...
 #        navigate_to_nearest_surface(current_path.destination)
         reset()
     elif navigation_state.just_reached_end_of_edge:
         print("REACHED END OF EDGE: %8.3ft; %s" % \
-                [Global.elapsed_play_time_sec, current_edge.name])
+                [Time.elapsed_play_time_sec, current_edge.name])
     else:
         # Continuing along an edge.
         if surface_state.is_grabbing_a_surface:
@@ -224,7 +224,7 @@ func update(just_started_new_edge = false) -> void:
         # clear itself).
         instructions_action_source.cancel_playback( \
                 current_playback, \
-                Global.elapsed_play_time_sec)
+                Time.elapsed_play_time_sec)
         
         # Check for the next edge to navigate.
         var next_edge_index := current_edge_index + 1
@@ -241,7 +241,7 @@ func update(just_started_new_edge = false) -> void:
             else:
                 var format_string_template := "INSRT CTR-PROTR EDGE:%8.3ft; %s"
                 var format_string_arguments := [ \
-                        Global.elapsed_play_time_sec, \
+                        Time.elapsed_play_time_sec, \
                         backtracking_edge.to_string_with_newlines(0), \
                     ]
                 print(format_string_template % format_string_arguments)

@@ -146,19 +146,19 @@ func _init_navigator() -> void:
     navigation_state = navigator.navigation_state
     action_sources.push_back(navigator.instructions_action_source)
 
-func _physics_process(delta: float) -> void:
+func _physics_process(delta_sec: float) -> void:
     assert(Geometry.are_floats_equal_with_epsilon( \
-            delta, \
-            Utils.PHYSICS_TIME_STEP))
+            delta_sec, \
+            Time.PHYSICS_TIME_STEP_SEC))
     
-    _update_actions(delta)
+    _update_actions(delta_sec)
     _update_surface_state()
     _handle_pointer_selections()
     
     if surface_state.just_left_air:
         print("GRABBED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \
-                Global.elapsed_play_time_sec, \
+                Time.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
                 surface_state.grabbed_surface.to_string(), \
@@ -166,7 +166,7 @@ func _physics_process(delta: float) -> void:
     elif surface_state.just_entered_air:
         print("LAUNCHED   :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \
-                Global.elapsed_play_time_sec, \
+                Time.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
                 surface_state.previous_grabbed_surface.to_string(), \
@@ -181,7 +181,7 @@ func _physics_process(delta: float) -> void:
             side_str = "WALL"
         print("TOUCHED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
                 player_name, \
-                Global.elapsed_play_time_sec, \
+                Time.elapsed_play_time_sec, \
                 surface_state.center_position, \
                 velocity, \
                 side_str, \
@@ -193,11 +193,11 @@ func _physics_process(delta: float) -> void:
         # TODO: There's probably a more efficient way to do this.
         if navigator.actions_might_be_dirty:
             actions.copy(actions_from_previous_frame)
-            _update_actions(delta)
+            _update_actions(delta_sec)
             _update_surface_state(true)
     
-    actions.delta = delta
-    actions.log_new_presses_and_releases(self, Global.elapsed_play_time_sec)
+    actions.delta_sec = delta_sec
+    actions.log_new_presses_and_releases(self, Time.elapsed_play_time_sec)
     
     # Flip the horizontal direction of the animation according to which way the
     # player is facing.
@@ -227,6 +227,15 @@ func _physics_process(delta: float) -> void:
 
 func _handle_pointer_selections() -> void:
     if new_selection_target != Vector2.INF:
+        print("NEW POINTER SELECTION:%8s;%8.3ft;%29sp; %s" % [ \
+                player_name, \
+                Time.elapsed_play_time_sec, \
+                str(new_selection_target), \
+                new_selection_position.to_string() if \
+                new_selection_position != null else \
+                "[No matching surface]"
+            ])
+        
         if new_selection_position != null:
             last_selection_target = new_selection_target
             last_selection_position = new_selection_position
@@ -239,7 +248,7 @@ func _handle_pointer_selections() -> void:
         preselection_target = Vector2.INF
         preselection_position = null
 
-func _update_actions(delta: float) -> void:
+func _update_actions(delta_sec: float) -> void:
     # Record actions for the previous frame.
     actions_from_previous_frame.copy(actions)
     
@@ -251,8 +260,8 @@ func _update_actions(delta: float) -> void:
         action_source.update( \
                 actions, \
                 actions_from_previous_frame, \
-                Global.elapsed_play_time_sec, \
-                delta, \
+                Time.elapsed_play_time_sec, \
+                delta_sec, \
                 navigation_state)
     
     actions.start_dash = _can_dash and \

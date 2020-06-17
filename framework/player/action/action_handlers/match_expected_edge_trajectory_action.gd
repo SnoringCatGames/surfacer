@@ -15,12 +15,12 @@ func process(player: Player) -> bool:
     var current_edge := player.navigator.current_edge
     if current_edge != null and current_edge.includes_air_trajectory:
         var playback_elapsed_time: float = \
-                Global.elapsed_play_time_sec - \
+                Time.elapsed_play_time_sec - \
                 player.navigator.current_playback.start_time        
         var trajectory_velocities := \
                 current_edge.trajectory.frame_continuous_velocities_from_steps
         var velocity_index := \
-                floor(playback_elapsed_time / Utils.PHYSICS_TIME_STEP)
+                floor(playback_elapsed_time / Time.PHYSICS_TIME_STEP_SEC)
         var is_movement_beyond_expected_trajectory := \
                 velocity_index >= trajectory_velocities.size()
         

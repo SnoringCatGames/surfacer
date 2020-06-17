@@ -18,7 +18,7 @@ func update( \
         actions: PlayerActionState, \
         previous_actions: PlayerActionState, \
         time_sec: float, \
-        delta: float, \
+        delta_sec: float, \
         navigation_state: PlayerNavigationState) -> void:
     var is_pressed: bool
     var non_pressed_keys := []

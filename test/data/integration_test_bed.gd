@@ -124,7 +124,7 @@ func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
     # FIXME: ----------------
 #    var position := Vector2(160.0, 0.0) if data.scene_resource_path.find("test_") >= 0 \
 #            else Vector2.ZERO
-#    level.add_player(Global.PLAYER_RESOURCE_PATH, false, position)
+#    level.add_player(Config.PLAYER_RESOURCE_PATH, false, position)
 
 func destroy() -> void:
     # FIXME: This shouldn't be possible. Why does Gut trigger this sometimes?

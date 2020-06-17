@@ -1,10 +1,5 @@
 extends Node
 
-# In seconds.
-const PHYSICS_TIME_STEP := 1 / 60.0
-
-const IN_DEV_MODE := true
-
 const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 const GROUP_NAME_SURFACES := "surfaces"

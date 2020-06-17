@@ -8,12 +8,6 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
-# - Add additional description items under origin items that show all surfaces
-#   in fall range and jump range.
-#   - Dynamically re-calculate these from within the controller class.
-#   - Also render a dotted line to show the polygon we're using to represent
-#     the range.
-# 
 # - When showing preselection surface, also show a big highlighted navigation
 #   path.
 # 
@@ -197,7 +191,7 @@ const IS_A_JUMP_CALCULATOR := true
 # 
 # - Put together some illustrative screenshots with special one-off annotations
 #   to explain the graph parsing steps in the README.
-#   - Use global.DEBUG_PARAMS.extra_annotations
+#   - Use Config.DEBUG_PARAMS.extra_annotations
 #   - Screenshots:
 #     - A couple surfaces
 #     - Show different tiles, to illustrate how surfaces get merged.
