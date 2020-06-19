@@ -43,7 +43,7 @@ func calculate_edge( \
     edge_result_metadata = \
             edge_result_metadata if \
             edge_result_metadata != null else \
-            EdgeCalcResultMetadata.new(false)
+            EdgeCalcResultMetadata.new(false, false)
     
     var edge_calc_params := EdgeCalculator.create_edge_calc_params( \
             edge_result_metadata, \
@@ -68,11 +68,13 @@ func calculate_edge( \
     
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
+                    false, \
                     calc_result, \
                     true, \
                     SurfaceSide.NONE)
     var trajectory := \
             EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+                    false, \
                     calc_result, \
                     instructions)
     

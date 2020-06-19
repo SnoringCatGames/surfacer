@@ -77,7 +77,7 @@ func _create_children_inner() -> void:
             edge_result_metadata)
 
 func _calculate_edge_calc_result_metadata() -> void:
-    edge_result_metadata = EdgeCalcResultMetadata.new(true)
+    edge_result_metadata = EdgeCalcResultMetadata.new(true, false)
     var debug_edge: Edge = edge.calculator.calculate_edge( \
             edge_result_metadata, \
             graph.collision_params, \

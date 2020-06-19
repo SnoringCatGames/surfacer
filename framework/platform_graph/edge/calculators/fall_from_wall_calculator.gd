@@ -49,11 +49,14 @@ func get_all_inter_surface_edges_from_surface( \
                 surfaces_in_fall_range_set, \
                 jump_position, \
                 velocity_start, \
-                self)
+                self, \
+                true)
         
         for inter_surface_edges_result in inter_surface_edges_results:
             for calc_result in inter_surface_edges_result.edge_calc_results:
-                edge = _create_edge_from_calc_results(calc_result)
+                edge = _create_edge_from_calc_results( \
+                        true, \
+                        calc_result)
                 inter_surface_edges_result.valid_edges.push_back(edge)
 
 func calculate_edge( \
@@ -67,7 +70,7 @@ func calculate_edge( \
     edge_result_metadata = \
             edge_result_metadata if \
             edge_result_metadata != null else \
-            EdgeCalcResultMetadata.new(false)
+            EdgeCalcResultMetadata.new(false, false)
     var calc_result: EdgeCalcResult = \
             FallMovementUtils.find_landing_trajectory_between_positions( \
                     edge_result_metadata, \
@@ -77,7 +80,9 @@ func calculate_edge( \
                     velocity_start, \
                     needs_extra_wall_land_horizontal_speed)
     if calc_result != null:
-        return _create_edge_from_calc_results(calc_result)
+        return _create_edge_from_calc_results( \
+                edge_result_metadata.records_profile, \
+                calc_result)
     else:
         return null
 
@@ -122,17 +127,20 @@ func optimize_edge_land_position_for_path( \
             self)
 
 func _create_edge_from_calc_results( \
+        records_profile: bool, \
         calc_result: EdgeCalcResult) -> FallFromWallEdge:
     var jump_position := calc_result.edge_calc_params.origin_position
     var land_position := calc_result.edge_calc_params.destination_position
     
     var instructions := _calculate_instructions( \
+            records_profile, \
             jump_position, \
             land_position, \
             calc_result)
     
     var trajectory := \
             EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+                    records_profile, \
                     calc_result, \
                     instructions)
     
@@ -184,6 +192,7 @@ static func _get_jump_positions( \
     return [top_jump_position, bottom_jump_position]
 
 static func _calculate_instructions( \
+        records_profile: bool, \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         calc_result: EdgeCalcResult) -> EdgeInstructions:
@@ -193,6 +202,7 @@ static func _calculate_instructions( \
     # Calculate the fall-trajectory instructions.
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
+                    records_profile, \
                     calc_result, \
                     false, \
                     end.surface.side)

@@ -81,6 +81,8 @@ static func create_edge_calc_params(
         velocity_start: Vector2, \
         needs_extra_jump_duration: bool, \
         needs_extra_wall_land_horizontal_speed: bool) -> EdgeCalcParams:
+    Profiler.start(ProfilerMetric.CREATE_EDGE_CALC_PARAMS)
+    
     # When landing on a wall, ensure that we end with velocity moving into the
     # wall.
     var velocity_end_min_x := INF
@@ -113,6 +115,9 @@ static func create_edge_calc_params(
     if terminals.empty():
         # Cannot reach destination from origin (edge_result_metadata already
         # updated).
+        Profiler.stop_with_optional_metadata( \
+                ProfilerMetric.CREATE_EDGE_CALC_PARAMS, \
+                edge_result_metadata)
         return null
     
     var edge_calc_params := EdgeCalcParams.new( \
@@ -126,6 +131,9 @@ static func create_edge_calc_params(
             needs_extra_wall_land_horizontal_speed, \
             can_hold_jump_button)
     
+    Profiler.stop_with_optional_metadata( \
+            ProfilerMetric.CREATE_EDGE_CALC_PARAMS, \
+            edge_result_metadata)
     return edge_calc_params
 
 # Does some cheap checks to see if we should more expensive edge calculations
@@ -136,6 +144,8 @@ static func broad_phase_check( \
         jump_land_positions: JumpLandPositions, \
         other_valid_jump_land_position_results: Array, \
         allows_close_jump_positions: bool) -> bool:
+    Profiler.start(ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK)
+    
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     if should_skip_edge_calculation( \
@@ -145,6 +155,7 @@ static func broad_phase_check( \
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.SKIPPED_FOR_DEBUGGING
+        Profiler.stop(ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK)
         return false
     ###########################################################################
     
@@ -154,6 +165,7 @@ static func broad_phase_check( \
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.LESS_LIKELY_TO_BE_VALID
+        Profiler.stop(ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK)
         return false
     
     if !jump_land_positions.is_far_enough_from_others( \
@@ -166,8 +178,10 @@ static func broad_phase_check( \
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.CLOSE_TO_PREVIOUS_EDGE
+        Profiler.stop(ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK)
         return false
     
+    Profiler.stop(ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK)
     return true
 
 static func should_skip_edge_calculation( \

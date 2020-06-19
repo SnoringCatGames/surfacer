@@ -8,6 +8,8 @@ const IS_A_JUMP_CALCULATOR := true
 # FIXME: LEFT OFF HERE: ------------------------------------------------------A
 # FIXME: -----------------------------
 # 
+# >>>- Left off within recursive step calcs for adding Profiler calls.
+# 
 # - Profiler!
 #   - Put together some interesting aggregations, such as:
 #     - Time spent calculating individual edges, edges of type, all edges.
@@ -241,6 +243,12 @@ const IS_A_JUMP_CALCULATOR := true
 #     
 # ---  ---
 # 
+# - A* search should abandon search of it gets to far out of the way (rather
+#   than exhaustively searching the whole level)
+#   - I think this could work with an allowed max distance/weight threshold
+#     that is a ratio of the straight distance between origin and destination.
+#   - As soon as current frontier surpasses the threshold, give up.
+# 
 # - Improve annotation configuration.
 #   - Implement the bits of utility-menu UI to toggle annotations.
 #     - Add support for configuring in the menu which edge-type calculator to
@@ -436,11 +444,15 @@ func get_all_inter_surface_edges_from_surface( \
         
         jump_land_position_results_for_destination_surface.clear()
         
+        Profiler.start( \
+                ProfilerMetric.CALCULATE_JUMP_LAND_POSITIONS_FOR_SURFACE_PAIR)
         jump_land_positions_to_consider = JumpLandPositionsUtils \
                 .calculate_jump_land_positions_for_surface_pair( \
                         collision_params.movement_params, \
                         origin_surface, \
                         destination_surface)
+        Profiler.stop( \
+                ProfilerMetric.CALCULATE_JUMP_LAND_POSITIONS_FOR_SURFACE_PAIR)
         
         inter_surface_edges_result = InterSurfaceEdgesResult.new( \
                 origin_surface, \
@@ -453,7 +465,7 @@ func get_all_inter_surface_edges_from_surface( \
             ###################################################################
             # Record some extra debug state when we're limiting calculations to
             # a single edge (which must be this edge).
-            var record_calc_details: bool = \
+            var records_calc_details: bool = \
                     debug_params.has("limit_parsing") and \
                     debug_params.limit_parsing.has("edge") and \
                     debug_params.limit_parsing.edge.has("origin") and \
@@ -463,8 +475,9 @@ func get_all_inter_surface_edges_from_surface( \
                     debug_params.limit_parsing.edge.destination.has("position")
             ###################################################################
             
-            edge_result_metadata = \
-                    EdgeCalcResultMetadata.new(record_calc_details)
+            edge_result_metadata = EdgeCalcResultMetadata.new( \
+                    records_calc_details, \
+                    true)
             
             if !EdgeCalculator.broad_phase_check( \
                     edge_result_metadata, \
@@ -514,7 +527,9 @@ func calculate_edge( \
     edge_result_metadata = \
             edge_result_metadata if \
             edge_result_metadata != null else \
-            EdgeCalcResultMetadata.new(false)
+            EdgeCalcResultMetadata.new(false, false)
+    
+    Profiler.start(ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE)
     
     var edge_calc_params := \
             EdgeCalculator.create_edge_calc_params( \
@@ -530,11 +545,19 @@ func calculate_edge( \
         # Cannot reach destination from origin.
         assert(edge_result_metadata.edge_calc_result_type != \
                 EdgeCalcResultType.EDGE_VALID)
+        Profiler.stop_with_optional_metadata( \
+                ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
+                edge_result_metadata)
         return null
     
-    return create_edge_from_edge_calc_params( \
+    var edge := create_edge_from_edge_calc_params( \
             edge_result_metadata, \
             edge_calc_params)
+    
+    Profiler.stop_with_optional_metadata( \
+            ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
+            edge_result_metadata)
+    return edge
 
 func optimize_edge_jump_position_for_path( \
         collision_params: CollisionCalcParams, \
@@ -574,12 +597,16 @@ func create_edge_from_edge_calc_params( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams) -> \
         JumpInterSurfaceEdge:
+    Profiler.start(ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS)
     var calc_result := \
             EdgeStepUtils.calculate_steps_with_new_jump_height( \
                     edge_result_metadata, \
                     edge_calc_params, \
                     null, \
                     null)
+    Profiler.stop_with_optional_metadata( \
+            ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS, \
+            edge_result_metadata)
     if calc_result == null:
         # Unable to calculate a valid edge.
         assert(edge_result_metadata.edge_calc_result_type != \
@@ -591,11 +618,13 @@ func create_edge_from_edge_calc_params( \
     
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
+                    edge_result_metadata, \
                     calc_result, \
                     true, \
                     edge_calc_params.destination_position.surface.side)
     var trajectory := EdgeTrajectoryUtils \
             .calculate_trajectory_from_calculation_steps( \
+                    edge_result_metadata, \
                     calc_result, \
                     instructions)
     

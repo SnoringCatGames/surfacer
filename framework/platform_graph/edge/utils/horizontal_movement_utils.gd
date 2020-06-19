@@ -7,8 +7,11 @@ const MIN_MAX_VELOCITY_X_MARGIN := WaypointUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
 
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         step_calc_params: EdgeStepCalcParams, \
         edge_calc_params: EdgeCalcParams) -> EdgeStep:
+    Profiler.start(ProfilerMetric.CALCULATE_HORIZONTAL_STEP)
+    
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
     
@@ -55,6 +58,9 @@ static func calculate_horizontal_step( \
                     movement_params.in_air_horizontal_acceleration)
     if min_and_max_velocity_at_step_end.empty():
         # This waypoint cannot be reached.
+        Profiler.stop_with_optional_metadata( \
+                ProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+                edge_result_metadata)
         return null
     var min_velocity_end_x: float = min_and_max_velocity_at_step_end[0]
     var max_velocity_end_x: float = min_and_max_velocity_at_step_end[1]
@@ -78,8 +84,8 @@ static func calculate_horizontal_step( \
     
     var horizontal_acceleration_sign := \
             -1 if \
-            velocity_end_x - velocity_start_x < 0 \
-            else 1
+            velocity_end_x - velocity_start_x < 0 else \
+            1
     var acceleration := \
             movement_params.in_air_horizontal_acceleration * \
             horizontal_acceleration_sign
@@ -96,6 +102,9 @@ static func calculate_horizontal_step( \
         # position/velocity/time. This should never happen, since we should
         # have failed earlier during waypoint calculations.
         Utils.error()
+        Profiler.stop_with_optional_metadata( \
+                ProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+                edge_result_metadata)
         return null
     var time_instruction_start: float = \
             time_step_start + acceleration_start_and_end_time[0]
@@ -191,6 +200,10 @@ static func calculate_horizontal_step( \
     # FIXME: DEBUGGING: REMOVE:
 #    if velocity_end_x == -400:
 #        print("break")
+    
+    Profiler.stop_with_optional_metadata( \
+            ProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+            edge_result_metadata)
     
     return step
 

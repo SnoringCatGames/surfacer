@@ -34,7 +34,8 @@ func get_all_inter_surface_edges_from_surface( \
                 surfaces_in_fall_range_set, \
                 origin_surface, \
                 true, \
-                null)
+                null, \
+                true)
     
     if origin_surface.clockwise_concave_neighbor == null:
         # Calculating the fall-off state for the right edge of the floor.
@@ -45,7 +46,8 @@ func get_all_inter_surface_edges_from_surface( \
                 surfaces_in_fall_range_set, \
                 origin_surface, \
                 false, \
-                null)
+                null, \
+                true)
 
 func calculate_edge( \
         edge_result_metadata: EdgeCalcResultMetadata, \
@@ -64,7 +66,7 @@ func calculate_edge( \
     edge_result_metadata = \
             edge_result_metadata if \
             edge_result_metadata != null else \
-            EdgeCalcResultMetadata.new(false)
+            EdgeCalcResultMetadata.new(false, false)
     
     _get_all_edges_from_one_side( \
             inter_surface_edges_results, \
@@ -74,6 +76,7 @@ func calculate_edge( \
             origin_surface, \
             falls_on_left_side, \
             position_end, \
+            edge_result_metadata.records_profile, \
             needs_extra_wall_land_horizontal_speed)
     
     if !inter_surface_edges_results.empty() and \
@@ -163,9 +166,13 @@ func _get_all_edges_from_one_side( \
         origin_surface: Surface, \
         falls_on_left_side: bool, \
         exclusive_land_position: PositionAlongSurface, \
+        records_profile: bool, \
         needs_extra_wall_land_horizontal_speed := false) -> void:
     assert(!needs_extra_wall_land_horizontal_speed or \
             exclusive_land_position != null)
+    
+    Profiler.start( \
+            ProfilerMetric.FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION)
     
     var debug_params := collision_params.debug_params
     var movement_params := collision_params.movement_params
@@ -237,6 +244,11 @@ func _get_all_edges_from_one_side( \
     
     var fall_off_point_velocity_start := Vector2(velocity_x_fall_off, 0.0)
     
+    Profiler.stop( \
+            ProfilerMetric \
+                    .FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION, \
+            records_profile)
+    
     if exclusive_land_position != null:
         assert(edge_result_metadata != null)
         
@@ -282,7 +294,8 @@ func _get_all_edges_from_one_side( \
                 surfaces_in_fall_range_set, \
                 position_fall_off_wrapper, \
                 fall_off_point_velocity_start, \
-                self)
+                self, \
+                records_profile)
     
     var position_end: PositionAlongSurface
     var instructions: EdgeInstructions
@@ -296,12 +309,14 @@ func _get_all_edges_from_one_side( \
             
             instructions = EdgeInstructionsUtils \
                     .convert_calculation_steps_to_movement_instructions( \
+                            records_profile, \
                             calc_result, \
                             false, \
                             position_end.surface.side)
             
             trajectory = EdgeTrajectoryUtils \
                     .calculate_trajectory_from_calculation_steps( \
+                            records_profile, \
                             calc_result, \
                             instructions)
             

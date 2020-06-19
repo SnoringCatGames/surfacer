@@ -1,24 +1,32 @@
-# A collection of utility functions for calculating state related to EdgeInstructions.
+# A collection of utility functions for calculating state related to
+# EdgeInstructions.
 extends Reference
 class_name EdgeInstructionsUtils
 
 # FIXME: B 
-# - Should I remove this and force a slightly higher offset to target jump position directly? What
-#   about passing through waypoints? Would the increased time to get to the position for a
-#   wall-top waypoint result in too much downward velocity into the ceiling?
-# - Or what about the waypoint offset margins? Shouldn't those actually address any needed
-#   jump-height epsilon? Is this needlessly redundant with that mechanism?
+# - Should I remove this and force a slightly higher offset to target jump
+#   position directly? What about passing through waypoints? Would the
+#   increased time to get to the position for a wall-top waypoint result in too
+#   much downward velocity into the ceiling?
+# - Or what about the waypoint offset margins? Shouldn't those actually address
+#   any needed jump-height epsilon? Is this needlessly redundant with that
+#   mechanism?
 # - Though I may need to always at least have _some_ small value here...
 # FIXME: D Tweak this.
 const JUMP_DURATION_INCREASE_EPSILON := Time.PHYSICS_TIME_STEP_SEC * 0.5
-const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := Time.PHYSICS_TIME_STEP_SEC * 2.5
+const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := \
+        Time.PHYSICS_TIME_STEP_SEC * 2.5
 
-# Translates movement data from a form that is more useful when calculating the movement to a form
-# that is more useful when executing the movement.
+# Translates movement data from a form that is more useful when calculating the
+# movement to a form that is more useful when executing the movement.
 static func convert_calculation_steps_to_movement_instructions( \
+        records_profile_or_edge_result_metadata, \
         calc_result: EdgeCalcResult, \
         includes_jump: bool, \
         destination_side: int) -> EdgeInstructions:
+    Profiler.start( \
+            ProfilerMetric.CONVERT_CALCULATION_STEPS_TO_MOVEMENT_INSTRUCTIONS)
+    
     var steps := calc_result.horizontal_steps
     var vertical_step := calc_result.vertical_step
     
@@ -39,9 +47,11 @@ static func convert_calculation_steps_to_movement_instructions( \
                 step.horizontal_acceleration_sign < 0 else \
                 "move_right"
         time_instruction_end = \
-                step.time_instruction_end + MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON
+                step.time_instruction_end + \
+                MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON
         if i + 1 < steps.size():
-            # Ensure that the boosted end time doesn't exceed the following start time.
+            # Ensure that the boosted end time doesn't exceed the following
+            # start time.
             time_instruction_end = min( \
                     time_instruction_end, \
                     steps[i + 1].time_instruction_start - 0.0001)
@@ -65,15 +75,17 @@ static func convert_calculation_steps_to_movement_instructions( \
                 true)
         release = EdgeInstruction.new( \
                 input_key, \
-                vertical_step.time_instruction_end + JUMP_DURATION_INCREASE_EPSILON, \
+                vertical_step.time_instruction_end + \
+                        JUMP_DURATION_INCREASE_EPSILON, \
                 false)
         instructions.push_front(release)
         instructions.push_front(press)
     
-    if destination_side == SurfaceSide.LEFT_WALL or destination_side == SurfaceSide.RIGHT_WALL:
-        # When landing on a wall, we need to press input that ensures we grab on to the wall, but
-        # we also need to not do so in a way that changes the trajectory we've carefully
-        # calculated.
+    if destination_side == SurfaceSide.LEFT_WALL or \
+            destination_side == SurfaceSide.RIGHT_WALL:
+        # When landing on a wall, we need to press input that ensures we grab
+        # on to the wall, but we also need to not do so in a way that changes
+        # the trajectory we've carefully calculated.
         
         var last_step: EdgeStep = steps[steps.size() - 1]
         var time_step_start := last_step.time_instruction_end + \
@@ -98,4 +110,11 @@ static func convert_calculation_steps_to_movement_instructions( \
     
     var duration := vertical_step.time_step_end - vertical_step.time_step_start
     
-    return EdgeInstructions.new(instructions, duration)
+    var instructions_wrapper := EdgeInstructions.new(instructions, duration)
+    
+    Profiler.stop_with_optional_metadata( \
+            ProfilerMetric \
+                    .CONVERT_CALCULATION_STEPS_TO_MOVEMENT_INSTRUCTIONS, \
+            records_profile_or_edge_result_metadata)
+    
+    return instructions_wrapper

@@ -35,7 +35,7 @@ func calculate_edge( \
     edge_result_metadata = \
             edge_result_metadata if \
             edge_result_metadata != null else \
-            EdgeCalcResultMetadata.new(false)
+            EdgeCalcResultMetadata.new(false, false)
     return find_a_landing_trajectory( \
             edge_result_metadata, \
             collision_params, \
@@ -117,6 +117,7 @@ func find_a_landing_trajectory( \
                 origin, \
                 velocity_start, \
                 self, \
+                false, \
                 possible_landing_surfaces_from_point, \
                 true)
         if inter_surface_edges_results.empty() or \
@@ -128,11 +129,13 @@ func find_a_landing_trajectory( \
     var land_position := calc_result.edge_calc_params.destination_position
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
+                    false, \
                     calc_result, \
                     false, \
                     land_position.surface.side)
     var trajectory := \
             EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+                    false, \
                     calc_result, \
                     instructions)
     

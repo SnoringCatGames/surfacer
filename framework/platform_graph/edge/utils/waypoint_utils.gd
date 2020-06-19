@@ -5,8 +5,10 @@ class_name WaypointUtils
 # FIXME: D: Tweak this.
 const MIN_MAX_VELOCITY_X_OFFSET := 0.01# FIXME: ------------------------
 
-# FIXME: A: Replace the hard-coded usage of a max-speed ratio with a smarter x-velocity.
-const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER := 0.5
+# FIXME: A: Replace the hard-coded usage of a max-speed ratio with a smarter
+#        x-velocity.
+const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER := \
+        0.5
 
 static func create_terminal_waypoints( \
         edge_result_metadata: EdgeCalcResultMetadata, \
@@ -52,8 +54,8 @@ static func create_terminal_waypoints( \
         destination.min_velocity_x = velocity_end_min_x
         destination.max_velocity_x = velocity_end_max_x
     
-    # FIXME: B: Consider adding support for specifying required end x-velocity (and y direction)?
-    #           For hitting walls.
+    # FIXME: B: Consider adding support for specifying required end x-velocity
+    #        (and y direction)? For hitting walls.
     
     update_waypoint( \
             origin, \
@@ -75,16 +77,19 @@ static func create_terminal_waypoints( \
     if origin.is_valid and destination.is_valid:
         return [origin, destination]
     else:
-        edge_result_metadata.edge_calc_result_type = EdgeCalcResultType.WAYPOINT_INVALID
+        edge_result_metadata.edge_calc_result_type = \
+                EdgeCalcResultType.WAYPOINT_INVALID
         edge_result_metadata.waypoint_validity = \
                 destination.validity if \
                 !destination.is_valid else \
                 origin.validity
         return []
 
-# Assuming movement would otherwise collide with the given surface, this calculates positions along
-# the edges of the surface that the movement could pass through in order to go around the surface.
+# Assuming movement would otherwise collide with the given surface, this
+# calculates positions along the edges of the surface that the movement could
+# pass through in order to go around the surface.
 static func calculate_waypoints_around_surface( \
+        edge_result_metadata: EdgeCalcResultMetadata, \
         movement_params: MovementParams, \
         vertical_step: VerticalEdgeStep, \
         previous_waypoint: Waypoint, \
@@ -93,6 +98,8 @@ static func calculate_waypoints_around_surface( \
         destination_waypoint: Waypoint, \
         colliding_surface: Surface, \
         waypoint_offset: Vector2) -> Array:
+    Profiler.start(ProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE)
+    
     var passing_vertically: bool
     var should_stay_on_min_side_a: bool
     var should_stay_on_min_side_b: bool
@@ -146,28 +153,38 @@ static func calculate_waypoints_around_surface( \
     var should_skip_b := false
     
     # We ignore waypoints that would correspond to moving back the way we came.
-    if previous_waypoint.surface == colliding_surface.counter_clockwise_convex_neighbor:
+    if previous_waypoint.surface == \
+            colliding_surface.counter_clockwise_convex_neighbor:
         should_skip_a = true
-    if previous_waypoint.surface == colliding_surface.clockwise_convex_neighbor:
+    if previous_waypoint.surface == \
+            colliding_surface.clockwise_convex_neighbor:
         should_skip_b = true
     
-    # We ignore waypoints that are redundant with the connstraint we were already using with the
-    # previous step attempt.
+    # We ignore waypoints that are redundant with the connstraint we were
+    # already using with the previous step attempt.
     # 
-    # These indicate a problem with our step logic somewhere though, so we log an error.
+    # These indicate a problem with our step logic somewhere though, so we log
+    # an error.
     if position_a == next_waypoint.position:
         should_skip_a = true
-        Utils.error("Calculated a rendundant waypoint (same position as the next waypoint)", \
+        Utils.error( \
+                "Calculated a rendundant waypoint (same position as the " + \
+                "next waypoint)", \
                 false)
     if position_b == next_waypoint.position:
         should_skip_b = true
-        Utils.error("Calculated a rendundant waypoint (same position as the next waypoint)", \
+        Utils.error( \
+                "Calculated a rendundant waypoint (same position as the " + \
+                "next waypoint)", \
                 false)
     
     # FIXME: DEBUGGING: REMOVE
 #    if colliding_surface.normal.x == -1 and \
 #            colliding_surface.bounding_box.position == Vector2(128, 64) and \
-#            Geometry.are_points_equal_with_epsilon(position_a, Vector2(106, 37.5), 0.01):
+#            Geometry.are_points_equal_with_epsilon( \
+#                   position_a, \
+#                   Vector2(106, 37.5), \
+#                   0.01):
 #        print("break")
     
     var waypoint_a_original: Waypoint
@@ -192,8 +209,8 @@ static func calculate_waypoints_around_surface( \
                 vertical_step.can_hold_jump_button, \
                 vertical_step, \
                 Vector2.INF)
-        # If the waypoint is fake, then replace it with its real neighbor, and re-calculate state
-        # for the neighbor.
+        # If the waypoint is fake, then replace it with its real neighbor, and
+        # re-calculate state for the neighbor.
         if waypoint_a_original.is_fake:
             waypoint_a_final = _calculate_replacement_for_fake_waypoint( \
                     waypoint_a_original, \
@@ -226,8 +243,8 @@ static func calculate_waypoints_around_surface( \
                 vertical_step.can_hold_jump_button, \
                 vertical_step, \
                 Vector2.INF)
-        # If the waypoint is fake, then replace it with its real neighbor, and re-calculate state
-        # for the neighbor.
+        # If the waypoint is fake, then replace it with its real neighbor, and
+        # re-calculate state for the neighbor.
         if waypoint_b_original.is_fake:
             waypoint_b_final = _calculate_replacement_for_fake_waypoint( \
                     waypoint_b_original, \
@@ -243,9 +260,10 @@ static func calculate_waypoints_around_surface( \
         else:
             waypoint_b_final = waypoint_b_original
     
+    var waypoints: Array
     if !should_skip_a and !should_skip_b:
-        # Return the waypoints in sorted order according to which is more likely to produce
-        # successful movement.
+        # Return the waypoints in sorted order according to which is more
+        # likely to produce successful movement.
         if _compare_waypoints_by_more_likely_to_be_valid( \
                 waypoint_a_original, \
                 waypoint_b_original, \
@@ -253,19 +271,24 @@ static func calculate_waypoints_around_surface( \
                 waypoint_b_final, \
                 origin_waypoint, \
                 destination_waypoint):
-            return [waypoint_a_final, waypoint_b_final]
+            waypoints = [waypoint_a_final, waypoint_b_final]
         else:
-            return [waypoint_b_final, waypoint_a_final]
+            waypoints = [waypoint_b_final, waypoint_a_final]
     elif !should_skip_a:
-        return [waypoint_a_final]
+        waypoints = [waypoint_a_final]
     elif !should_skip_b:
-        return [waypoint_b_final]
+        waypoints = [waypoint_b_final]
     else:
         Utils.error()
-        return []
+        waypoints = []
+    
+    Profiler.stop_with_optional_metadata( \
+            ProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE, \
+            edge_result_metadata)
+    return waypoints
 
-# Use some basic heuristics to sort the waypoints. We try to attempt calculations for the 
-# waypoint that's most likely to be successful first.
+# Use some basic heuristics to sort the waypoints. We try to attempt
+# calculations for the waypoint that's most likely to be successful first.
 static func _compare_waypoints_by_more_likely_to_be_valid( \
         a_original: Waypoint, \
         b_original: Waypoint, \
@@ -282,26 +305,33 @@ static func _compare_waypoints_by_more_likely_to_be_valid( \
         var colliding_surface := a_original.surface
         
         if colliding_surface.side == SurfaceSide.FLOOR:
-            # When moving around a floor, prefer whichever waypoint is closer to the destination.
+            # When moving around a floor, prefer whichever waypoint is closer
+            # to the destination.
             # 
-            # Movement is more likely to be indirect and needless zig-zag around the surface when
-            # we consider the side further from the destination.
-            return a_original.position.distance_squared_to(destination.position) <= \
-                    b_original.position.distance_squared_to(destination.position)
+            # Movement is more likely to be indirect and needless zig-zag 
+            # around the surface when we consider the side further from the
+            # destination.
+            return a_original.position.distance_squared_to( \
+                            destination.position) <= \
+                    b_original.position.distance_squared_to( \
+                            destination.position)
         elif colliding_surface.side == SurfaceSide.CEILING:
-            # When moving around a ceiling, prefer whichever waypoint is closer to the origin.
+            # When moving around a ceiling, prefer whichever waypoint is closer
+            # to the origin.
             # 
-            # Movement is more likely to be direct and successful if we go over the region, rather
-            # than under and around, which is what we attempt when we consider the far end of a
-            # ceiling surface.
-            return a_original.position.distance_squared_to(origin.position) <= \
+            # Movement is more likely to be direct and successful if we go over
+            # the region, rather than under and around, which is what we
+            # attempt when we consider the far end of a ceiling surface.
+            return a_original.position.distance_squared_to( \
+                            origin.position) <= \
                     b_original.position.distance_squared_to(origin.position)
         else:
             # When moving around walls, prefer whichever waypoint is higher.
             # 
-            # The reasoning here is that the waypoint around the bottom edge of a wall will usually
-            # require movement to use a lower jump height, which would then invalidate the rest of the
-            # movement to the destination.
+            # The reasoning here is that the waypoint around the bottom edge of
+            # a wall will usually require movement to use a lower jump height,
+            # which would then invalidate the rest of the movement to the
+            # destination.
             return a_original.position.y <= b_original.position.y
 
 # Calculates and records various state on the given waypoint.
@@ -315,8 +345,8 @@ static func _compare_waypoints_by_more_likely_to_be_valid( \
 # - min_velocity_x
 # - max_velocity_x
 # 
-# These calculations take into account state from previous and upcoming neighbor waypoints as
-# well as various other parameters.
+# These calculations take into account state from previous and upcoming
+# neighbor waypoints as well as various other parameters.
 # 
 # Returns false if the waypoint cannot satisfy the given parameters.
 static func update_waypoint( \
@@ -327,31 +357,42 @@ static func update_waypoint( \
         can_hold_jump_button_at_origin: bool, \
         vertical_step: VerticalEdgeStep, \
         additional_high_waypoint_position: Vector2) -> void:
-    # Previous waypoint, next waypoint,  and vertical_step should be provided when updating
-    # intermediate waypoints.
-    assert(waypoint.previous_waypoint != null or waypoint.is_origin)
-    assert(waypoint.next_waypoint != null or waypoint.is_destination)
-    assert(vertical_step != null or waypoint.is_destination or waypoint.is_origin)
+    # Previous waypoint, next waypoint,  and vertical_step should be provided
+    # when updating intermediate waypoints.
+    assert(waypoint.previous_waypoint != null or \
+            waypoint.is_origin)
+    assert(waypoint.next_waypoint != null or \
+            waypoint.is_destination)
+    assert(vertical_step != null or \
+            waypoint.is_destination or \
+            waypoint.is_origin)
     
-    # additional_high_waypoint_position should only ever be provided for the destination, and
-    # then only when we're doing backtracking for a new jump-height.
-    assert(additional_high_waypoint_position == Vector2.INF or waypoint.is_destination)
-    assert(vertical_step != null or additional_high_waypoint_position == Vector2.INF)
+    # additional_high_waypoint_position should only ever be provided for the
+    # destination, and then only when we're doing backtracking for a new
+    # jump-height.
+    assert(additional_high_waypoint_position == Vector2.INF or \
+            waypoint.is_destination)
+    assert(vertical_step != null or \
+            additional_high_waypoint_position == Vector2.INF)
     
     _assign_horizontal_movement_sign(waypoint, velocity_start_origin)
     
-    var is_a_horizontal_surface := waypoint.surface != null and waypoint.surface.normal.x == 0
-    var is_a_fake_waypoint := waypoint.surface != null and \
+    var is_a_horizontal_surface := \
+            waypoint.surface != null and \
+            waypoint.surface.normal.x == 0
+    var is_a_fake_waypoint := \
+            waypoint.surface != null and \
             waypoint.horizontal_movement_sign != \
                     waypoint.horizontal_movement_sign_from_displacement and \
             is_a_horizontal_surface
     
     if is_a_fake_waypoint:
-        # This waypoint should be skipped, and movement should proceed directly to the next one
-        # (but we still need to keep this waypoint around long enough to calculate what that
-        # next waypoint is).
+        # This waypoint should be skipped, and movement should proceed directly
+        # to the next one (but we still need to keep this waypoint around long
+        # enough to calculate what that next waypoint is).
         waypoint.is_fake = true
-        waypoint.horizontal_movement_sign = waypoint.horizontal_movement_sign_from_displacement
+        waypoint.horizontal_movement_sign = \
+                waypoint.horizontal_movement_sign_from_displacement
         waypoint.validity = WaypointValidity.FAKE
     else:
         waypoint.validity = _update_waypoint_velocity_and_time( \
@@ -370,8 +411,8 @@ static func update_waypoint( \
 # - min_velocity_x
 # - max_velocity_x
 # 
-# These calculations take into account state from neighbor waypoints as well as various other
-# parameters.
+# These calculations take into account state from neighbor waypoints as well as
+# various other parameters.
 # 
 # Returns WaypointValidity.
 static func _update_waypoint_velocity_and_time( \
@@ -382,7 +423,8 @@ static func _update_waypoint_velocity_and_time( \
         can_hold_jump_button_at_origin: bool, \
         vertical_step: VerticalEdgeStep, \
         additional_high_waypoint_position: Vector2) -> int:
-    # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    # FIXME: B: Account for max y velocity when calculating any parabolic
+    #        motion.
     
     var time_passing_through: float
     var min_velocity_x: float
@@ -395,8 +437,8 @@ static func _update_waypoint_velocity_and_time( \
 #            Vector2(-190, -349), 10):
 #        print("break")
     
-    # Calculate the time that the movement would pass through the waypoint, as well as the min
-    # and max x-velocity when passing through the waypoint.
+    # Calculate the time that the movement would pass through the waypoint, as
+    # well as the min and max x-velocity when passing through the waypoint.
     if waypoint.is_origin:
         time_passing_through = 0.0
         min_velocity_x = velocity_start_origin.x
@@ -414,13 +456,15 @@ static func _update_waypoint_velocity_and_time( \
             return WaypointValidity.TOO_HIGH
         
         if waypoint.is_destination:
-            # We consider different parameters if we are starting a new movement calculation vs
-            # backtracking to consider a new jump height.
+            # We consider different parameters if we are starting a new
+            # movement calculation vs backtracking to consider a new jump
+            # height.
             var waypoint_position_to_calculate_jump_release_time_for: Vector2
             if additional_high_waypoint_position == Vector2.INF:
-                # We are starting a new movement calculation (not backtracking to consider a new
-                # jump height).
-                waypoint_position_to_calculate_jump_release_time_for = waypoint.position
+                # We are starting a new movement calculation (not backtracking
+                # to consider a new jump height).
+                waypoint_position_to_calculate_jump_release_time_for = \
+                        waypoint.position
             else:
                 # We are backtracking to consider a new jump height.
                 waypoint_position_to_calculate_jump_release_time_for = \
@@ -431,8 +475,8 @@ static func _update_waypoint_velocity_and_time( \
 #                        Vector2(64, -480), 10):
 #                    print("break")
             
-            # TODO: I should probably refactor these two calls, so we're doing fewer redundant
-            #       calculations here.
+            # TODO: I should probably refactor these two calls, so we're doing
+            #       fewer redundant calculations here.
             
             # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
 #            if Geometry.are_points_equal_with_epsilon( \
@@ -449,13 +493,16 @@ static func _update_waypoint_velocity_and_time( \
                     waypoint_position_to_calculate_jump_release_time_for - \
                     origin_waypoint.position
             
-            # If we already know the required time for reaching the destination, and we aren't
-            # performing a new backtracking step, then re-use the previously calculated time. The
-            # previous value encompasses more information that we may need to preserve, such as
-            # whether we already did some backtracking.
+            # If we already know the required time for reaching the
+            # destination, and we aren't performing a new backtracking step,
+            # then re-use the previously calculated time. The previous value
+            # encompasses more information that we may need to preserve, such
+            # as whether we already did some backtracking.
             var time_to_pass_through_waypoint_ignoring_others: float
-            if vertical_step != null and additional_high_waypoint_position == Vector2.INF:
-                time_to_pass_through_waypoint_ignoring_others = vertical_step.time_step_end
+            if vertical_step != null and \
+                    additional_high_waypoint_position == Vector2.INF:
+                time_to_pass_through_waypoint_ignoring_others = \
+                        vertical_step.time_step_end
             else:
                 time_to_pass_through_waypoint_ignoring_others = \
                         VerticalMovementUtils.calculate_time_to_jump_to_waypoint( \

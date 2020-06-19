@@ -106,7 +106,7 @@ func _create_children_inner() -> void:
                     edge_result_metadata)
 
 func _calculate_edge_calc_result_metadata() -> void:
-    edge_result_metadata = EdgeCalcResultMetadata.new(true)
+    edge_result_metadata = EdgeCalcResultMetadata.new(true, false)
     var start_position_along_surface := \
             MovementUtils.create_position_offset_from_target_point( \
                     failed_edge_attempt.start, \

@@ -29,7 +29,7 @@ static func calculate_steps_with_new_jump_height( \
             vertical_step)
     
     var step_result_metadata: EdgeStepCalcResultMetadata
-    if edge_result_metadata.record_calc_details:
+    if edge_result_metadata.records_calc_details:
         step_result_metadata = EdgeStepCalcResultMetadata.new( \
                 edge_result_metadata, \
                 parent_step_result_metadata, \
@@ -64,6 +64,7 @@ static func calculate_steps_between_waypoints( \
     
     var next_horizontal_step := \
             HorizontalMovementUtils.calculate_horizontal_step( \
+                    edge_result_metadata, \
                     step_calc_params, \
                     edge_calc_params)
     
@@ -141,6 +142,7 @@ static func calculate_steps_between_waypoints( \
     # Calculate possible waypoints to divert the movement around either side of
     # the colliding surface.
     var waypoints := WaypointUtils.calculate_waypoints_around_surface( \
+            edge_result_metadata, \
             edge_calc_params.movement_params, \
             vertical_step, \
             step_calc_params.start_waypoint, \

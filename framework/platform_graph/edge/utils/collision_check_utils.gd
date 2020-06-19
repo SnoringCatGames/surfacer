@@ -332,18 +332,23 @@ static func check_discrete_horizontal_step_for_collision( \
     
     return null
 
-# Checks whether a collision would occur with any surface during the given horizontal step. This
-# is calculated by considering the continuous physics state according to the parabolic equations of
-# motion. This does not necessarily accurately reflect the actual Player trajectory that would be
+# Checks whether a collision would occur with any surface during the given
+# horizontal step. This is calculated by considering the continuous physics
+# state according to the parabolic equations of motion. This does not
+# necessarily accurately reflect the actual Player trajectory that would be
 # used.
 static func check_continuous_horizontal_step_for_collision( \
         step_result_metadata: EdgeStepCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
         horizontal_step: EdgeStep) -> SurfaceCollision:
+    Profiler.start( \
+            ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION)
+    
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
-    var collider_half_width_height := movement_params.collider_half_width_height
+    var collider_half_width_height := \
+            movement_params.collider_half_width_height
     var surface_parser := edge_calc_params.surface_parser
     var delta_sec := Time.PHYSICS_TIME_STEP_SEC
     var previous_time := horizontal_step.time_step_start
@@ -358,7 +363,7 @@ static func check_continuous_horizontal_step_for_collision( \
     var vertical_state: Array
     var collision: SurfaceCollision
     
-    ###############################################################################################
+    ###########################################################################
     # Record some extra collision state when debugging an edge calculation.
     var collision_result_metadata: CollisionCalcResultMetadata
     if step_result_metadata != null:
@@ -366,8 +371,9 @@ static func check_continuous_horizontal_step_for_collision( \
                 edge_calc_params, \
                 step_calc_params, \
                 horizontal_step)
-        step_result_metadata.collision_result_metadata = collision_result_metadata
-    ###############################################################################################
+        step_result_metadata.collision_result_metadata = \
+                collision_result_metadata
+    ###########################################################################
     
     # Record the positions and velocities for edge annotation debugging.
     var frame_positions := [current_position]
@@ -384,20 +390,23 @@ static func check_continuous_horizontal_step_for_collision( \
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
         # Update state for the current frame.
-        horizontal_state = HorizontalMovementUtils.calculate_horizontal_state_for_time( \
-                movement_params, \
-                horizontal_step, \
-                current_time)
-        vertical_state = VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                movement_params, \
-                vertical_step, \
-                current_time)
+        horizontal_state = \
+                HorizontalMovementUtils.calculate_horizontal_state_for_time( \
+                        movement_params, \
+                        horizontal_step, \
+                        current_time)
+        vertical_state = VerticalMovementUtils \
+                .calculate_vertical_state_for_time_from_step( \
+                        movement_params, \
+                        vertical_step, \
+                        current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
         current_velocity.x = horizontal_state[1]
         current_velocity.y = vertical_state[1]
-        shape_query_params.transform = \
-                Transform2D(movement_params.collider_rotation, previous_position)
+        shape_query_params.transform = Transform2D( \
+                movement_params.collider_rotation, \
+                previous_position)
         shape_query_params.motion = current_position - previous_position
         
         assert(shape_query_params.motion != Vector2.ZERO)
@@ -407,10 +416,10 @@ static func check_continuous_horizontal_step_for_collision( \
         #         current_position, Vector2(686.626, -228.249), 0.001):
         #     print("yo")
         
-        ###########################################################################################
+        #######################################################################
         if collision_result_metadata != null:
             collision_result_metadata.frame_current_time = current_time
-        ###########################################################################################
+        #######################################################################
         
         # Check for collision.
         collision = FrameCollisionCheckUtils.check_frame_for_collision( \
@@ -435,21 +444,27 @@ static func check_continuous_horizontal_step_for_collision( \
     
     # Check the last frame that puts us up to end_time.
     current_time = step_end_time
-    if collision == null and !Geometry.are_floats_equal_with_epsilon(previous_time, current_time):
-        horizontal_state = HorizontalMovementUtils.calculate_horizontal_state_for_time( \
-                movement_params, \
-                horizontal_step, \
-                current_time)
-        vertical_state = VerticalMovementUtils.calculate_vertical_state_for_time_from_step( \
-                movement_params, \
-                vertical_step, \
-                current_time)
+    if collision == null and \
+            !Geometry.are_floats_equal_with_epsilon( \
+                    previous_time, \
+                    current_time):
+        horizontal_state = \
+                HorizontalMovementUtils.calculate_horizontal_state_for_time( \
+                        movement_params, \
+                        horizontal_step, \
+                        current_time)
+        vertical_state = VerticalMovementUtils \
+                .calculate_vertical_state_for_time_from_step( \
+                        movement_params, \
+                        vertical_step, \
+                        current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
         current_velocity.x = horizontal_state[1]
         current_velocity.y = vertical_state[1]
-        shape_query_params.transform = \
-                Transform2D(movement_params.collider_rotation, previous_position)
+        shape_query_params.transform = Transform2D( \
+                movement_params.collider_rotation, \
+                previous_position)
         shape_query_params.motion = current_position - previous_position
         assert(shape_query_params.motion != Vector2.ZERO)
         
@@ -463,8 +478,13 @@ static func check_continuous_horizontal_step_for_collision( \
                 collision_result_metadata)
         
         if collision == null:
-            # Record the positions and velocities for edge annotation debugging.
+            # Record the positions and velocities for edge annotation
+            # debugging.
             frame_positions.push_back(current_position)
             frame_velocities.push_back(current_velocity)
+    
+    Profiler.stop_with_optional_metadata( \
+            ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
+            step_result_metadata)
     
     return collision
