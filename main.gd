@@ -1,16 +1,10 @@
 extends Node
 class_name Main
 
-# FIXME: LEFT OFF HERE: -------------------------------------------------------
-# 
-# >>>- Left off within recursive step calcs for adding Profiler calls.
+###############################################################################
+### MAIN TODO LIST: ###
 # 
 # - Profiler!
-#   - Put together some interesting aggregations, such as:
-#     - How many collisions on avg.
-#     - How many steps calculated for an edge.
-#     - Step recursion depth (with and without backtracking).
-#     - How many backtracking attempts.
 #   - Step through and consider whether I want to show any other analytic
 #     description children for each item.
 #   - Try to use these analytics to inform decisions around which calculations
@@ -388,7 +382,7 @@ class_name Main
 
 ###############################################################################
 
-# FIXME: LEFT OFF HERE: Older master list (was in platform_graph.gd):
+# TODO: Older master list (was in platform_graph.gd):
 #
 # - Finish everything in JumpInterSurfaceCalculator (edge calculations,
 #   including movement waypoints from interfering surfaces).
@@ -524,7 +518,8 @@ class_name Main
 #   turning around, circling the entire circumference, bouncing forward, etc.).
 
 
-# FIXME: (old notes from jump_from_platform_movement) SUB-MASTER LIST *********
+# TODO: (old notes from jump_from_platform_movement) SUB-MASTER LIST *********
+# 
 # - Add support for specifying a required min/max end-x-velocity.
 #   - More notes in the backtracking method.
 # - Test support for specifying a required min/max end-x-velocity.
@@ -664,7 +659,7 @@ class_name Main
 
 
 
-# FIXME: LEFT OFF HERE: -------------------------------------------------A
+# TODO: 
 # 
 # #########
 # 
@@ -823,8 +818,8 @@ class_name Main
 #     - Use one Surface object, and keep track of an internal representation of regions with
 #       different friction values.
 #       - It would then be easy enough to query the region for a given PositionAlongSurface.
-
-
+# 
+###############################################################################
 
 
 

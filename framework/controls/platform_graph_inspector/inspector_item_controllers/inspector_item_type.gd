@@ -1,28 +1,30 @@
 class_name InspectorItemType
 
-enum { \
-    PLATFORM_GRAPH, \
-    EDGES_GROUP, \
-    SURFACES_GROUP, \
-    PROFILER_GROUP, \
-    GLOBAL_COUNTS_GROUP, \
-    SURFACE_PARSER_GROUP, \
-    PROFILER_METRIC, \
-    EDGE_TYPE_IN_EDGES_GROUP, \
-    FLOORS, \
-    LEFT_WALLS, \
-    RIGHT_WALLS, \
-    CEILINGS, \
-    ORIGIN_SURFACE, \
-    DESTINATION_SURFACE, \
-    EDGE_TYPE_IN_SURFACES_GROUP, \
-    FAILED_EDGES_GROUP, \
-    DESCRIPTION, \
-    VALID_EDGE, \
-    FAILED_EDGE, \
-    EDGE_CALC_RESULT_METADATA, \
-    EDGE_STEP_CALC_RESULT_METADATA, \
-    UNKNOWN, \
+enum {
+    PLATFORM_GRAPH,
+    EDGES_GROUP,
+    SURFACES_GROUP,
+    PROFILER_GROUP,
+    GLOBAL_COUNTS_GROUP,
+    SURFACE_PARSER_GROUP,
+    PROFILER_TIMING,
+    PROFILER_COUNT,
+    EDGE_TYPE_IN_EDGES_GROUP,
+    FLOORS,
+    LEFT_WALLS,
+    RIGHT_WALLS,
+    CEILINGS,
+    ORIGIN_SURFACE,
+    DESTINATION_SURFACE,
+    EDGE_TYPE_IN_SURFACES_GROUP,
+    FAILED_EDGES_GROUP,
+    DESCRIPTION,
+    VALID_EDGE,
+    FAILED_EDGE,
+    EDGE_CALC_RESULT_METADATA,
+    EDGE_CALC_PROFILER_GROUP,
+    EDGE_STEP_CALC_RESULT_METADATA,
+    UNKNOWN,
 }
 
 static func get_type_string(type: int) -> String:
@@ -39,8 +41,10 @@ static func get_type_string(type: int) -> String:
             return "GLOBAL_COUNTS_GROUP"
         SURFACE_PARSER_GROUP:
             return "SURFACE_PARSER_GROUP"
-        PROFILER_METRIC:
-            return "PROFILER_METRIC"
+        PROFILER_TIMING:
+            return "PROFILER_TIMING"
+        PROFILER_COUNT:
+            return "PROFILER_COUNT"
         EDGE_TYPE_IN_EDGES_GROUP:
             return "EDGE_TYPE_IN_EDGES_GROUP"
         FLOORS:
@@ -69,6 +73,8 @@ static func get_type_string(type: int) -> String:
             return "EDGE_CALC_RESULT_METADATA"
         EDGE_STEP_CALC_RESULT_METADATA:
             return "EDGE_STEP_CALC_RESULT_METADATA"
+        EDGE_CALC_PROFILER_GROUP:
+            return "EDGE_CALC_PROFILER_GROUP"
         UNKNOWN:
             return "UNKNOWN"
         _:

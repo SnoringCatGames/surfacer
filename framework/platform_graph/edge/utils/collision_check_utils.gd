@@ -483,8 +483,12 @@ static func check_continuous_horizontal_step_for_collision( \
             frame_positions.push_back(current_position)
             frame_velocities.push_back(current_velocity)
     
+    var edge_result_metadata := \
+            step_result_metadata.edge_result_metadata if \
+            step_result_metadata != null else \
+            null
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
-            step_result_metadata)
+            edge_result_metadata)
     
     return collision

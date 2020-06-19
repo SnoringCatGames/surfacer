@@ -203,12 +203,16 @@ func create_edge_from_edge_calc_params( \
         edge_calc_params: EdgeCalcParams) -> \
         JumpInterSurfaceEdge:
     Profiler.start(ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS)
+    Profiler.start(ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION)
     var calc_result := \
             EdgeStepUtils.calculate_steps_with_new_jump_height( \
                     edge_result_metadata, \
                     edge_calc_params, \
                     null, \
                     null)
+    Profiler.stop_with_optional_metadata( \
+            ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
+            edge_result_metadata)
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS, \
             edge_result_metadata)

@@ -1,17 +1,19 @@
 extends InspectorItemController
-class_name ProfilerMetricItemController
+class_name ProfilerTimingItemController
 
-const TYPE := InspectorItemType.PROFILER_METRIC
+const TYPE := InspectorItemType.PROFILER_TIMING
 const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
 var metric := ProfilerMetric.UNKNOWN
+var metadata_container: EdgeCalcResultMetadata
 
 func _init( \
         parent_item: TreeItem, \
         tree: Tree, \
         graph: PlatformGraph, \
-        metric: int) \
+        metric: int, \
+        metadata_container = null) \
         .( \
         TYPE, \
         IS_LEAF, \
@@ -20,30 +22,31 @@ func _init( \
         tree, \
         graph) -> void:
     self.metric = metric
+    self.metadata_container = metadata_container
     _post_init()
 
 func get_text() -> String:
     return "%sms: %s" % [ \
-        Profiler.get_sum(metric), \
+        Profiler.get_sum(metric, metadata_container), \
         ProfilerMetric.get_type_string(metric), \
     ]
 
 func get_description() -> String:
-    return ("The total time spent on the the %s stage while parsing the " + \
+    return ("The total time spent on the %s stage while parsing the " + \
             "platform graph for the %s player.") % [ \
         ProfilerMetric.get_type_string(metric), \
         graph.movement_params.name, \
     ]
 
 func get_has_children() -> bool:
-    return Profiler.get_count(metric) > 1
+    return Profiler.get_count(metric, metadata_container) > 1
 
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
     Utils.error( \
             "find_and_expand_controller should not be called for " + \
-            "PROFILER_METRIC.")
+            "PROFILER_TIMING.")
     return false
 
 func _create_children_inner() -> void:
@@ -52,20 +55,20 @@ func _create_children_inner() -> void:
     
     _create_child( \
             "Total", \
-            Profiler.get_sum(metric))
+            Profiler.get_sum(metric, metadata_container))
     _create_child( \
             "Average", \
-            Profiler.get_mean(metric))
+            Profiler.get_mean(metric, metadata_container))
     _create_child( \
             "Count", \
-            Profiler.get_count(metric), \
+            Profiler.get_count(metric, metadata_container), \
             "")
     _create_child( \
             "Min", \
-            Profiler.get_min(metric))
+            Profiler.get_min(metric, metadata_container))
     _create_child( \
             "Max", \
-            Profiler.get_max(metric))
+            Profiler.get_max(metric, metadata_container))
 
 func _create_child( \
         label: String, \

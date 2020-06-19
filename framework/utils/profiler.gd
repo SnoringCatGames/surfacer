@@ -6,6 +6,9 @@ var _stopwatch := Stopwatch.new()
 # Dictionary<ProfilerMetric, Array<float>>
 var _timings := {}
 
+# Dictionary<ProfilerMetric, int>
+var _counts := {}
+
 func start(metric: int) -> void:
     if !Config.DEBUG_PARAMS.is_inspector_enabled:
         return
@@ -44,46 +47,99 @@ func stop_with_optional_metadata( \
     else:
         return stop(metric)
 
-func get_timing(metric: int) -> float:
+func increment_count( \
+        metric: int, \
+        metadata_container = null) -> int:
+    if metadata_container != null and \
+            metadata_container.records_profile:
+        if !metadata_container.counts.has(metric):
+            metadata_container.counts[metric] = 0
+        metadata_container.counts[metric] += 1
+    
+    if !_counts.has(metric):
+        _counts[metric] = 0
+    _counts[metric] += 1
+    
+    return _counts[metric]
+
+func get_timing( \
+        metric: int, \
+        metadata_container = null) -> float:
     assert(Config.DEBUG_PARAMS.is_inspector_enabled)
-    var list: Array = _timings[metric]
+    var timings := _choose_timings(metadata_container)
+    var list: Array = timings[metric]
     assert(list.size() == 1)
     return list[0]
 
-func get_timing_list(metric: int) -> Array:
+func get_timing_list( \
+        metric: int, \
+        metadata_container = null) -> Array:
     assert(Config.DEBUG_PARAMS.is_inspector_enabled)
-    return _timings[metric] if \
-            _timings.has(metric) else \
+    var timings := _choose_timings(metadata_container)
+    return timings[metric] if \
+            timings.has(metric) else \
             []
 
-func get_mean(metric: int) -> float:
+func get_mean( \
+        metric: int, \
+        metadata_container = null) -> float:
     assert(Config.DEBUG_PARAMS.is_inspector_enabled)
-    if get_count(metric) == 0:
+    var count := get_count(metric, metadata_container)
+    if count == 0:
         return INF
     else:
-        return get_sum(metric) / get_timing_list(metric).size()
+        return get_sum(metric, metadata_container) / count
 
-func get_min(metric: int) -> float:
+func get_min( \
+        metric: int, \
+        metadata_container = null) -> float:
     assert(Config.DEBUG_PARAMS.is_inspector_enabled)
-    if get_count(metric) == 0:
+    if get_count(metric, metadata_container) == 0:
         return INF
     else:
-        return get_timing_list(metric).min()
+        return get_timing_list(metric, metadata_container).min()
 
-func get_max(metric: int) -> float:
+func get_max( \
+        metric: int, \
+        metadata_container = null) -> float:
     assert(Config.DEBUG_PARAMS.is_inspector_enabled)
-    if get_count(metric) == 0:
+    if get_count(metric, metadata_container) == 0:
         return INF
     else:
-        return get_timing_list(metric).max()
+        return get_timing_list(metric, metadata_container).max()
 
-func get_sum(metric: int) -> float:
+func get_sum( \
+        metric: int, \
+        metadata_container = null) -> float:
     assert(Config.DEBUG_PARAMS.is_inspector_enabled)
     var sum := 0.0
-    for timing in get_timing_list(metric):
+    for timing in get_timing_list(metric, metadata_container):
         sum += timing
     return sum
 
-func get_count(metric: int) -> int:
+func get_count( \
+        metric: int, \
+        metadata_container = null) -> int:
     assert(Config.DEBUG_PARAMS.is_inspector_enabled)
-    return get_timing_list(metric).size()
+    var is_timing := _choose_timings(metadata_container).has(metric)
+    var counts := _choose_counts(metadata_container)
+    var is_count := counts.has(metric)
+    assert(!is_timing or !is_count)
+    return counts[metric] if \
+            is_count else \
+            get_timing_list(metric, metadata_container).size()
+
+func is_timing( \
+        metric: int, \
+        metadata_container = null) -> bool:
+    return _choose_timings(metadata_container).has(metric)
+
+func _choose_timings(metadata_container) -> Dictionary:
+    return metadata_container.timings if \
+            metadata_container != null else \
+            _timings
+
+func _choose_counts(metadata_container) -> Dictionary:
+    return metadata_container.counts if \
+            metadata_container != null else \
+            _counts

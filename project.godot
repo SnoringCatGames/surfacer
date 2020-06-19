@@ -204,6 +204,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/models/edge_calc_params.gd"
 }, {
+"base": "InspectorItemController",
+"class": "EdgeCalcProfilerGroupItemController",
+"language": "GDScript",
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/edge_calc_profiler_group_item_controller.gd"
+}, {
 "base": "Reference",
 "class": "EdgeCalcResult",
 "language": "GDScript",
@@ -765,6 +770,11 @@ _global_script_classes=[ {
 "path": "res://framework/utils/priority_queue.gd"
 }, {
 "base": "InspectorItemController",
+"class": "ProfilerCountItemController",
+"language": "GDScript",
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/profiler_group/profiler_count_item_controller.gd"
+}, {
+"base": "InspectorItemController",
 "class": "ProfilerGroupItemController",
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/profiler_group/profiler_group_item_controller.gd"
@@ -775,9 +785,9 @@ _global_script_classes=[ {
 "path": "res://framework/utils/profiler_metric.gd"
 }, {
 "base": "InspectorItemController",
-"class": "ProfilerMetricItemController",
+"class": "ProfilerTimingItemController",
 "language": "GDScript",
-"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/profiler_group/profiler_metric_item_controller.gd"
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/profiler_group/profiler_timing_item_controller.gd"
 }, {
 "base": "SurfacesOfSideGroupItemController",
 "class": "RightWallsItemController",
@@ -1014,6 +1024,7 @@ _global_script_class_icons={
 "Edge": "",
 "EdgeAnnotationElement": "",
 "EdgeCalcParams": "",
+"EdgeCalcProfilerGroupItemController": "",
 "EdgeCalcResult": "",
 "EdgeCalcResultMetadata": "",
 "EdgeCalcResultMetadataItemController": "",
@@ -1126,9 +1137,10 @@ _global_script_class_icons={
 "PolylineLegendItem": "",
 "PositionAlongSurface": "",
 "PriorityQueue": "",
+"ProfilerCountItemController": "",
 "ProfilerGroupItemController": "",
 "ProfilerMetric": "",
-"ProfilerMetricItemController": "",
+"ProfilerTimingItemController": "",
 "RightWallsItemController": "",
 "RulerAnnotator": "",
 "SelectionDescription": "",

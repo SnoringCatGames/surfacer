@@ -68,6 +68,12 @@ func get_has_children() -> bool:
     return !edge_result_metadata.failed_before_creating_steps
 
 func _create_children_inner() -> void:
+    EdgeCalcProfilerGroupItemController.new( \
+            tree_item, \
+            tree, \
+            graph, \
+            edge_result_metadata)
+    
     for step_result_metadata in edge_result_metadata.children_step_attempts:
         EdgeStepCalcResultMetadataItemController.new( \
                 tree_item, \

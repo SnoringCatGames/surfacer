@@ -1,15 +1,18 @@
 extends InspectorItemController
-class_name SurfaceParserGroupItemController
+class_name EdgeCalcProfilerGroupItemController
 
-const TYPE := InspectorItemType.SURFACE_PARSER_GROUP
+const TYPE := InspectorItemType.EDGE_CALC_PROFILER_GROUP
 const IS_LEAF := false
-const STARTS_COLLAPSED := false
-const PREFIX := "Surface parser"
+const STARTS_COLLAPSED := true
+const PREFIX := "Profiler"
+
+var edge_result_metadata: EdgeCalcResultMetadata
 
 func _init( \
         parent_item: TreeItem, \
         tree: Tree, \
-        graph: PlatformGraph) \
+        graph: PlatformGraph, \
+        edge_result_metadata: EdgeCalcResultMetadata) \
         .( \
         TYPE, \
         IS_LEAF, \
@@ -17,36 +20,43 @@ func _init( \
         parent_item, \
         tree, \
         graph) -> void:
+    self.edge_result_metadata = edge_result_metadata
     _post_init()
 
 func get_text() -> String:
     return PREFIX
 
 func get_description() -> String:
-    return "Some stats on the time to parse the surfaces in the level."
+    return "Some stats on the time to calculate this edge."
 
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
     Utils.error( \
             "find_and_expand_controller should not be called for " + \
-            "SURFACE_PARSER_GROUP.")
+            "EDGE_CALC_PROFILER_GROUP.")
     return false
 
 func _create_children_inner() -> void:
-    for metric in ProfilerMetric.surface_parser_values():
+    var surface_parser_values := ProfilerMetric.surface_parser_values()
+    for metric in ProfilerMetric.values():
+        if surface_parser_values.find(metric) >= 0 or \
+                Profiler.get_count(metric, edge_result_metadata) == 0:
+            continue
         if Profiler.is_timing(metric):
             ProfilerTimingItemController.new( \
                     tree_item, \
                     tree, \
                     graph, \
-                    metric)
+                    metric, \
+                    edge_result_metadata)
         else:
             ProfilerCountItemController.new( \
                     tree_item, \
                     tree, \
                     graph, \
-                    metric)
+                    metric, \
+                    edge_result_metadata)
 
 func _destroy_children_inner() -> void:
     # Do nothing.

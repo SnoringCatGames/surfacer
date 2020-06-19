@@ -229,11 +229,15 @@ static func find_landing_trajectory_between_positions( \
                 step_calc_params, \
                 null)
     
+    Profiler.start(ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION)
     var calc_result := EdgeStepUtils.calculate_steps_between_waypoints( \
             edge_result_metadata, \
             step_result_metadata, \
             edge_calc_params, \
             step_calc_params)
+    Profiler.stop_with_optional_metadata( \
+            ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
+            edge_result_metadata)
     
     edge_result_metadata.edge_calc_result_type = \
             EdgeCalcResultType.FAILED_WHEN_CALCULATING_HORIZONTAL_STEPS if \

@@ -12,8 +12,13 @@ var edge_calc_result_type := EdgeCalcResultType.UNKNOWN
 # WaypointValidity
 var waypoint_validity := WaypointValidity.UNKNOWN
 
+# Miscellaneous timings used for profiling calculation performance.
 # Dictionary<ProfilerMetric, Array<float>>
 var timings := {}
+
+# Miscellaneous counts used for profiling calculation performance.
+# Dictionary<String, int>
+var counts := {}
 
 # Array<EdgeStepCalcResultMetadata>
 var children_step_attempts := []

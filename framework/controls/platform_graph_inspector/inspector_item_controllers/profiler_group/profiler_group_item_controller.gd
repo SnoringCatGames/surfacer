@@ -44,11 +44,18 @@ func _create_children_inner() -> void:
     for metric in ProfilerMetric.values():
         if surface_parser_values.find(metric) >= 0:
             continue
-        ProfilerMetricItemController.new( \
-                tree_item, \
-                tree, \
-                graph, \
-                metric)
+        if Profiler.is_timing(metric):
+            ProfilerTimingItemController.new( \
+                    tree_item, \
+                    tree, \
+                    graph, \
+                    metric)
+        else:
+            ProfilerCountItemController.new( \
+                    tree_item, \
+                    tree, \
+                    graph, \
+                    metric)
     
     surface_parser_item_controller = \
             SurfaceParserGroupItemController.new( \

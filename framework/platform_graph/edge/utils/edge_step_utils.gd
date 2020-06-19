@@ -111,6 +111,10 @@ static func calculate_steps_between_waypoints( \
             !collision.is_valid_collision_state:
         # An error occured during collision detection, so we abandon this step
         # calculation.
+        Profiler.increment_count( \
+                ProfilerMetric \
+                        .INVALID_COLLISION_STATE_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
+                edge_result_metadata)
         if step_result_metadata != null:
             step_result_metadata.edge_step_calc_result_type = \
                     EdgeStepCalcResultType.INVALID_COLLISON_STATE
@@ -127,6 +131,11 @@ static func calculate_steps_between_waypoints( \
                 [next_horizontal_step], \
                 vertical_step, \
                 edge_calc_params)
+    
+    Profiler.increment_count( \
+            ProfilerMetric \
+                    .COLLISION_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
+            edge_result_metadata)
     
     ### RECURSIVE CASES
     
@@ -227,6 +236,11 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> EdgeCalcResult:
+    Profiler.increment_count( \
+            ProfilerMetric \
+                    .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITHOUT_BACKTRACKING_ON_HEIGHT, \
+            edge_result_metadata)
+    
     var vertical_step := step_calc_params.vertical_step
     var previous_waypoint_original := step_calc_params.start_waypoint
     var next_waypoint_original := step_calc_params.end_waypoint
@@ -359,6 +373,11 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> EdgeCalcResult:
+    Profiler.increment_count( \
+            ProfilerMetric \
+                    .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITH_BACKTRACKING_ON_HEIGHT, \
+            edge_result_metadata)
+    
     var origin_original := edge_calc_params.origin_waypoint
     var destination_original := edge_calc_params.destination_waypoint
     var origin_copy: Waypoint
