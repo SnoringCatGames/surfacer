@@ -38,7 +38,10 @@ const STARTING_LEVEL_RESOURCE_PATH := \
 const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 #const PLAYER_RESOURCE_PATH := "res://players/data/test_player.tscn"
 
-const THREAD_COUNT := 4
+var THREAD_COUNT := \
+        4 if \
+        OS.can_use_threads() else \
+        1
 
 const DEBUG_PARAMS := \
         {} if \

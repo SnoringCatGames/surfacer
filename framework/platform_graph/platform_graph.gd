@@ -326,22 +326,25 @@ func _calculate_inter_surface_edges_total() -> void:
     for origin_surface in surfaces_set:
         surfaces_to_inter_surface_edges_results[origin_surface] = []
     
-    var thread: Thread
-    var threads := []
-    threads.resize(Config.THREAD_COUNT)
-    
-    # Use child threads to parallelize graph parsing.
-    for i in Config.THREAD_COUNT:
-        thread = Thread.new()
-        Profiler.init_thread("parse_edges:" + str(i))
-        threads[i] = thread
-        thread.start( \
-                self, \
-                "_calculate_inter_surface_edges_subset", \
-                i)
-    
-    for thread in threads:
-        thread.wait_to_finish()
+    if OS.can_use_threads():
+        var thread: Thread
+        var threads := []
+        threads.resize(Config.THREAD_COUNT)
+        
+        # Use child threads to parallelize graph parsing.
+        for i in Config.THREAD_COUNT:
+            thread = Thread.new()
+            Profiler.init_thread("parse_edges:" + str(i))
+            threads[i] = thread
+            thread.start( \
+                    self, \
+                    "_calculate_inter_surface_edges_subset", \
+                    i)
+        
+        for thread in threads:
+            thread.wait_to_finish()
+    else:
+        _calculate_inter_surface_edges_subset(0)
 
 func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
     var collision_params_for_thread := CollisionCalcParams.new( \
