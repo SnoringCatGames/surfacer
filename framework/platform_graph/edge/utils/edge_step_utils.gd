@@ -114,6 +114,7 @@ static func calculate_steps_between_waypoints( \
         Profiler.increment_count( \
                 ProfilerMetric \
                         .INVALID_COLLISION_STATE_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
+                edge_calc_params.collision_params.thread_id, \
                 edge_result_metadata)
         if step_result_metadata != null:
             step_result_metadata.edge_step_calc_result_type = \
@@ -135,6 +136,7 @@ static func calculate_steps_between_waypoints( \
     Profiler.increment_count( \
             ProfilerMetric \
                     .COLLISION_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
+            edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     
     ### RECURSIVE CASES
@@ -152,6 +154,7 @@ static func calculate_steps_between_waypoints( \
     # the colliding surface.
     var waypoints := WaypointUtils.calculate_waypoints_around_surface( \
             edge_result_metadata, \
+            edge_calc_params.collision_params, \
             edge_calc_params.movement_params, \
             vertical_step, \
             step_calc_params.start_waypoint, \
@@ -239,6 +242,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
     Profiler.increment_count( \
             ProfilerMetric \
                     .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITHOUT_BACKTRACKING_ON_HEIGHT, \
+            edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     
     var vertical_step := step_calc_params.vertical_step
@@ -376,6 +380,7 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
     Profiler.increment_count( \
             ProfilerMetric \
                     .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITH_BACKTRACKING_ON_HEIGHT, \
+            edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     
     var origin_original := edge_calc_params.origin_waypoint

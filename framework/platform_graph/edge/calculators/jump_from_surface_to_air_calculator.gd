@@ -69,12 +69,14 @@ func calculate_edge( \
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
                     false, \
+                    collision_params, \
                     calc_result, \
                     true, \
                     SurfaceSide.NONE)
     var trajectory := \
             EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
                     false, \
+                    collision_params, \
                     calc_result, \
                     instructions)
     

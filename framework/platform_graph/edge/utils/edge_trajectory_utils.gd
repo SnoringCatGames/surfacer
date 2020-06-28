@@ -17,9 +17,12 @@ const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
 # calculation results.
 static func calculate_trajectory_from_calculation_steps( \
         records_profile_or_edge_result_metadata, \
+        collision_params: CollisionCalcParams, \
         calc_result: EdgeCalcResult, \
         instructions: EdgeInstructions) -> EdgeTrajectory:
-    Profiler.start(ProfilerMetric.CALCULATE_TRAJECTORY_FROM_CALCULATION_STEPS)
+    Profiler.start( \
+            ProfilerMetric.CALCULATE_TRAJECTORY_FROM_CALCULATION_STEPS, \
+            collision_params.thread_id)
     
     var edge_calc_params := calc_result.edge_calc_params
     var steps := calc_result.horizontal_steps
@@ -71,6 +74,7 @@ static func calculate_trajectory_from_calculation_steps( \
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_TRAJECTORY_FROM_CALCULATION_STEPS, \
+            collision_params.thread_id, \
             records_profile_or_edge_result_metadata)
     
     return trajectory

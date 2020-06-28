@@ -55,6 +55,7 @@ func get_all_inter_surface_edges_from_surface( \
         for inter_surface_edges_result in inter_surface_edges_results:
             for calc_result in inter_surface_edges_result.edge_calc_results:
                 edge = _create_edge_from_calc_results( \
+                        collision_params, \
                         true, \
                         calc_result)
                 inter_surface_edges_result.valid_edges.push_back(edge)
@@ -81,6 +82,7 @@ func calculate_edge( \
                     needs_extra_wall_land_horizontal_speed)
     if calc_result != null:
         return _create_edge_from_calc_results( \
+                collision_params, \
                 edge_result_metadata.records_profile, \
                 calc_result)
     else:
@@ -127,12 +129,14 @@ func optimize_edge_land_position_for_path( \
             self)
 
 func _create_edge_from_calc_results( \
+        collision_params: CollisionCalcParams, \
         records_profile: bool, \
         calc_result: EdgeCalcResult) -> FallFromWallEdge:
     var jump_position := calc_result.edge_calc_params.origin_position
     var land_position := calc_result.edge_calc_params.destination_position
     
     var instructions := _calculate_instructions( \
+            collision_params, \
             records_profile, \
             jump_position, \
             land_position, \
@@ -141,6 +145,7 @@ func _create_edge_from_calc_results( \
     var trajectory := \
             EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
                     records_profile, \
+                    collision_params, \
                     calc_result, \
                     instructions)
     
@@ -192,6 +197,7 @@ static func _get_jump_positions( \
     return [top_jump_position, bottom_jump_position]
 
 static func _calculate_instructions( \
+        collision_params: CollisionCalcParams, \
         records_profile: bool, \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
@@ -203,6 +209,7 @@ static func _calculate_instructions( \
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
                     records_profile, \
+                    collision_params, \
                     calc_result, \
                     false, \
                     end.surface.side)

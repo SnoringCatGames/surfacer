@@ -21,11 +21,14 @@ const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := \
 # movement to a form that is more useful when executing the movement.
 static func convert_calculation_steps_to_movement_instructions( \
         records_profile_or_edge_result_metadata, \
+        collision_params: CollisionCalcParams, \
         calc_result: EdgeCalcResult, \
         includes_jump: bool, \
         destination_side: int) -> EdgeInstructions:
     Profiler.start( \
-            ProfilerMetric.CONVERT_CALCULATION_STEPS_TO_MOVEMENT_INSTRUCTIONS)
+            ProfilerMetric \
+                    .CONVERT_CALCULATION_STEPS_TO_MOVEMENT_INSTRUCTIONS, \
+            collision_params.thread_id)
     
     var steps := calc_result.horizontal_steps
     var vertical_step := calc_result.vertical_step
@@ -115,6 +118,7 @@ static func convert_calculation_steps_to_movement_instructions( \
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric \
                     .CONVERT_CALCULATION_STEPS_TO_MOVEMENT_INSTRUCTIONS, \
+            collision_params.thread_id, \
             records_profile_or_edge_result_metadata)
     
     return instructions_wrapper

@@ -343,7 +343,8 @@ static func check_continuous_horizontal_step_for_collision( \
         step_calc_params: EdgeStepCalcParams, \
         horizontal_step: EdgeStep) -> SurfaceCollision:
     Profiler.start( \
-            ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION)
+            ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
+            edge_calc_params.collision_params.thread_id)
     
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
@@ -489,6 +490,7 @@ static func check_continuous_horizontal_step_for_collision( \
             null
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
+            edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     
     return collision

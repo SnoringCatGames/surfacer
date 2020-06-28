@@ -172,7 +172,8 @@ func _get_all_edges_from_one_side( \
             exclusive_land_position != null)
     
     Profiler.start( \
-            ProfilerMetric.FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION)
+            ProfilerMetric.FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION, \
+            collision_params.thread_id)
     
     var debug_params := collision_params.debug_params
     var movement_params := collision_params.movement_params
@@ -247,6 +248,7 @@ func _get_all_edges_from_one_side( \
     Profiler.stop( \
             ProfilerMetric \
                     .FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION, \
+            collision_params.thread_id, \
             records_profile)
     
     if exclusive_land_position != null:
@@ -310,6 +312,7 @@ func _get_all_edges_from_one_side( \
             instructions = EdgeInstructionsUtils \
                     .convert_calculation_steps_to_movement_instructions( \
                             records_profile, \
+                            collision_params, \
                             calc_result, \
                             false, \
                             position_end.surface.side)
@@ -317,6 +320,7 @@ func _get_all_edges_from_one_side( \
             trajectory = EdgeTrajectoryUtils \
                     .calculate_trajectory_from_calculation_steps( \
                             records_profile, \
+                            collision_params, \
                             calc_result, \
                             instructions)
             

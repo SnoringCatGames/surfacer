@@ -85,6 +85,7 @@ func _calculate_metadata() -> void:
     var surfaces_in_fall_range_result_set := {}
     var surfaces_in_jump_range_result_set := {}
     graph.get_surfaces_in_jump_and_fall_range( \
+            graph.collision_params, \
             surfaces_in_fall_range_result_set, \
             surfaces_in_jump_range_result_set, \
             origin_surface)

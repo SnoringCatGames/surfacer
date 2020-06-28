@@ -8,7 +8,9 @@ class_name VerticalMovementUtils
 static func calculate_vertical_step( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams) -> VerticalEdgeStep:
-    Profiler.start(ProfilerMetric.CALCULATE_VERTICAL_STEP)
+    Profiler.start( \
+            ProfilerMetric.CALCULATE_VERTICAL_STEP, \
+            edge_calc_params.collision_params.thread_id)
     
     # FIXME: B: Account for max y velocity when calculating any parabolic
     #        motion.
@@ -42,6 +44,7 @@ static func calculate_vertical_step( \
                     .OUT_OF_REACH_WHEN_CALCULATING_VERTICAL_STEP
             Profiler.stop_with_optional_metadata( \
                     ProfilerMetric.CALCULATE_VERTICAL_STEP, \
+                    edge_calc_params.collision_params.thread_id, \
                     edge_result_metadata)
             return null
         
@@ -118,6 +121,7 @@ static func calculate_vertical_step( \
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_VERTICAL_STEP, \
+            edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     return step
 

@@ -50,14 +50,18 @@ func get_all_inter_surface_edges_from_surface( \
         jump_land_position_results_for_destination_surface.clear()
         
         Profiler.start( \
-                ProfilerMetric.CALCULATE_JUMP_LAND_POSITIONS_FOR_SURFACE_PAIR)
+                ProfilerMetric \
+                        .CALCULATE_JUMP_LAND_POSITIONS_FOR_SURFACE_PAIR, \
+                collision_params.thread_id)
         jump_land_positions_to_consider = JumpLandPositionsUtils \
                 .calculate_jump_land_positions_for_surface_pair( \
                         collision_params.movement_params, \
                         origin_surface, \
                         destination_surface)
         Profiler.stop( \
-                ProfilerMetric.CALCULATE_JUMP_LAND_POSITIONS_FOR_SURFACE_PAIR)
+                ProfilerMetric \
+                        .CALCULATE_JUMP_LAND_POSITIONS_FOR_SURFACE_PAIR, \
+                collision_params.thread_id)
         
         inter_surface_edges_result = InterSurfaceEdgesResult.new( \
                 origin_surface, \
@@ -134,7 +138,9 @@ func calculate_edge( \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(false, false)
     
-    Profiler.start(ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE)
+    Profiler.start( \
+            ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
+            collision_params.thread_id)
     
     var edge_calc_params := \
             EdgeCalculator.create_edge_calc_params( \
@@ -152,6 +158,7 @@ func calculate_edge( \
                 EdgeCalcResultType.EDGE_VALID)
         Profiler.stop_with_optional_metadata( \
                 ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
+                collision_params.thread_id, \
                 edge_result_metadata)
         return null
     
@@ -161,6 +168,7 @@ func calculate_edge( \
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
+            collision_params.thread_id, \
             edge_result_metadata)
     return edge
 
@@ -200,10 +208,13 @@ func optimize_edge_land_position_for_path( \
 
 func create_edge_from_edge_calc_params( \
         edge_result_metadata: EdgeCalcResultMetadata, \
-        edge_calc_params: EdgeCalcParams) -> \
-        JumpInterSurfaceEdge:
-    Profiler.start(ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS)
-    Profiler.start(ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION)
+        edge_calc_params: EdgeCalcParams) -> JumpInterSurfaceEdge:
+    Profiler.start( \
+            ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS, \
+            edge_calc_params.collision_params.thread_id)
+    Profiler.start( \
+            ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
+            edge_calc_params.collision_params.thread_id)
     var calc_result := \
             EdgeStepUtils.calculate_steps_with_new_jump_height( \
                     edge_result_metadata, \
@@ -212,9 +223,11 @@ func create_edge_from_edge_calc_params( \
                     null)
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
+            edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS, \
+            edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     if calc_result == null:
         # Unable to calculate a valid edge.
@@ -228,12 +241,14 @@ func create_edge_from_edge_calc_params( \
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \
                     edge_result_metadata, \
+                    edge_calc_params.collision_params, \
                     calc_result, \
                     true, \
                     edge_calc_params.destination_position.surface.side)
     var trajectory := EdgeTrajectoryUtils \
             .calculate_trajectory_from_calculation_steps( \
                     edge_result_metadata, \
+                    edge_calc_params.collision_params, \
                     calc_result, \
                     instructions)
     

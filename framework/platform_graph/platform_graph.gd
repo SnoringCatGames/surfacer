@@ -1,6 +1,10 @@
-# A PlatfromGraph is specific to a given player type. This is important since
-# different players have different jump parameters and can reach different
-# surfaces, so the edges in the graph will be different for each player.
+# -   This graph is optimized for run-time path-finding.
+# -   Graph parsing is slow and is done during app start.
+# -   Graph parsing is multi-threaded.
+# -   A PlatfromGraph is specific to a given player type. This is important
+#     since different players have different jump parameters and can reach
+#     different surfaces, so the edges in the graph will be different for each
+#     player.
 extends Reference
 class_name PlatformGraph
 
@@ -33,6 +37,9 @@ var counts := {}
 
 var debug_params := {}
 
+# Array<Thread>
+var _threads := []
+
 func _init( \
         player_params: PlayerParams, \
         collision_params: CollisionCalcParams) -> void:
@@ -49,10 +56,7 @@ func _init( \
             movement_params.can_grab_floors)
     self.surfaces_set = Utils.array_to_set(surfaces_array)
     
-    _calculate_nodes_and_edges( \
-            surfaces_set, \
-            player_params, \
-            debug_params)
+    _calculate_nodes_and_edges()
     
     _update_counts()
 
@@ -243,10 +247,9 @@ static func _record_frontier( \
 # 
 # Intra-surface edges are not calculated and stored ahead of time; they're only
 # calculated at run time when navigating a specific path.
-func _calculate_nodes_and_edges( \
-        surfaces_set: Dictionary, \
-        player_params: PlayerParams, \
-        debug_params: Dictionary) -> void:
+# 
+# This calculation is multi-threaded.
+func _calculate_nodes_and_edges() -> void:
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     if debug_params.has("limit_parsing") and \
@@ -254,55 +257,7 @@ func _calculate_nodes_and_edges( \
         return
     ###########################################################################
     
-    var surfaces_in_fall_range_set := {}
-    var surfaces_in_jump_range_set := {}
-    
-    # Array<InterSurfaceEdgeResult>
-    var inter_surface_edges_results: Array
-    
-    # Calculate all inter-surface edges.
-    for origin_surface in surfaces_set:
-        inter_surface_edges_results = []
-        surfaces_to_inter_surface_edges_results[origin_surface] = \
-                inter_surface_edges_results
-        surfaces_in_fall_range_set.clear()
-        surfaces_in_jump_range_set.clear()
-        
-        get_surfaces_in_jump_and_fall_range( \
-                surfaces_in_fall_range_set, \
-                surfaces_in_jump_range_set, \
-                origin_surface)
-        
-        for edge_calculator in player_params.edge_calculators:
-            ###################################################################
-            # Allow for debug mode to limit the scope of what's calculated.
-            if debug_params.has("limit_parsing") and \
-                    debug_params.limit_parsing.has("edge_type") and \
-                    edge_calculator.edge_type != \
-                            debug_params.limit_parsing.edge_type:
-                continue
-            ###################################################################
-            
-            if edge_calculator.get_can_traverse_from_surface(origin_surface):
-                # FIXME: B: REMOVE
-                movement_params.gravity_fast_fall *= EdgeTrajectoryUtils \
-                        .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-                movement_params.gravity_slow_rise *= EdgeTrajectoryUtils \
-                        .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-                
-                # Calculate the inter-surface edges.
-                edge_calculator.get_all_inter_surface_edges_from_surface( \
-                        inter_surface_edges_results, \
-                        collision_params, \
-                        origin_surface, \
-                        surfaces_in_fall_range_set, \
-                        surfaces_in_jump_range_set)
-                
-                # FIXME: B: REMOVE
-                movement_params.gravity_fast_fall /= EdgeTrajectoryUtils \
-                        .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-                movement_params.gravity_slow_rise /= EdgeTrajectoryUtils \
-                        .GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
+    _calculate_inter_surface_edges_total()
     
     # Dedup all edge-end positions (aka, nodes).
     var grid_cell_to_node := {}
@@ -365,6 +320,84 @@ func _calculate_nodes_and_edges( \
         # the inspector.
         surfaces_to_inter_surface_edges_results.clear()
 
+func _calculate_inter_surface_edges_total() -> void:
+    # Pre-allocate space in the Dictionary for thread-safe recording of the
+    # results.
+    for origin_surface in surfaces_set:
+        surfaces_to_inter_surface_edges_results[origin_surface] = []
+    
+    var thread: Thread
+    var threads := []
+    threads.resize(Config.THREAD_COUNT)
+    
+    # Use child threads to parallelize graph parsing.
+    for i in Config.THREAD_COUNT:
+        thread = Thread.new()
+        Profiler.init_thread("parse_edges:" + str(i))
+        threads[i] = thread
+        thread.start( \
+                self, \
+                "_calculate_inter_surface_edges_subset", \
+                i)
+    
+    for thread in threads:
+        thread.wait_to_finish()
+
+func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
+    var collision_params_for_thread := CollisionCalcParams.new( \
+            {}, \
+            null, \
+            null, \
+            null)
+    collision_params_for_thread.copy(collision_params)
+    collision_params_for_thread.thread_id = "parse_edges:" + str(thread_index)
+    
+    var surfaces_in_fall_range_set := {}
+    var surfaces_in_jump_range_set := {}
+    
+    # Array<InterSurfaceEdgeResult>
+    var inter_surface_edges_results: Array
+    
+    var i := -1
+    
+    # Calculate all inter-surface edges.
+    for origin_surface in surfaces_set:
+        i += 1
+        
+        # Divide the origin surfaces across threads.
+        if i % Config.THREAD_COUNT != thread_index:
+            continue
+        
+        inter_surface_edges_results = \
+                surfaces_to_inter_surface_edges_results[origin_surface]
+        surfaces_in_fall_range_set.clear()
+        surfaces_in_jump_range_set.clear()
+        
+        get_surfaces_in_jump_and_fall_range( \
+                collision_params_for_thread, \
+                surfaces_in_fall_range_set, \
+                surfaces_in_jump_range_set, \
+                origin_surface)
+        
+        for edge_calculator in player_params.edge_calculators:
+            ###################################################################
+            # Allow for debug mode to limit the scope of what's calculated.
+            if debug_params.has("limit_parsing") and \
+                    debug_params.limit_parsing.has("edge_type") and \
+                    edge_calculator.edge_type != \
+                            debug_params.limit_parsing.edge_type:
+                continue
+            ###################################################################
+            
+            if edge_calculator.get_can_traverse_from_surface(origin_surface):
+                # Calculate the inter-surface edges.
+                edge_calculator.get_all_inter_surface_edges_from_surface( \
+                        inter_surface_edges_results, \
+                        collision_params_for_thread, \
+                        origin_surface, \
+                        surfaces_in_fall_range_set, \
+                        surfaces_in_jump_range_set)
+
 # Checks whether a previous node with the same position has already been seen.
 #
 # - If there is a match, then the previous instance is returned.
@@ -400,6 +433,7 @@ static func _node_to_cell_id(node: PositionAlongSurface) -> String:
                     CLUSTER_CELL_SIZE) as int]
 
 func get_surfaces_in_jump_and_fall_range( \
+        collision_params: CollisionCalcParams, \
         surfaces_in_fall_range_result_set: Dictionary, \
         surfaces_in_jump_range_result_set: Dictionary, \
         origin_surface: Surface) -> void:
@@ -409,7 +443,8 @@ func get_surfaces_in_jump_and_fall_range( \
     # Get all surfaces that are within fall range from either end of the origin
     # surface.
     Profiler.start( \
-            ProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE)
+            ProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
+            collision_params.thread_id)
     FallMovementUtils.find_surfaces_in_fall_range_from_surface( \
             movement_params, \
             surfaces_set, \
@@ -417,7 +452,8 @@ func get_surfaces_in_jump_and_fall_range( \
             surfaces_in_jump_range_result_set, \
             origin_surface)
     Profiler.stop( \
-            ProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE)
+            ProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
+            collision_params.thread_id)
 
 func _update_counts() -> void:
     counts.clear()

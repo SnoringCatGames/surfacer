@@ -4,6 +4,8 @@ class_name EdgeCalcParams
 
 const TILE_MAP_COLLISION_LAYER := 7
 
+var collision_params: CollisionCalcParams
+
 var movement_params: MovementParams
 
 var surface_parser: SurfaceParser
@@ -56,6 +58,7 @@ func _init( \
         needs_extra_jump_duration: bool, \
         needs_extra_wall_land_horizontal_speed: bool, \
         can_backtrack_on_height: bool) -> void:
+    self.collision_params = collision_params
     self.movement_params = collision_params.movement_params
     self.space_state = collision_params.space_state
     self.surface_parser = collision_params.surface_parser

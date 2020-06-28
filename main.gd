@@ -4,19 +4,15 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Use threads when parsing.
-# 
-# - Add a movement_param for edge fall distance threshold.
-# - Add a movement_param for ignoring vertically occluded surfaces when calculating fall range surfaces.
-#   - Don't consider "jump-up" range surfaces as occluding though, since that could yield gals negatives.
-#     - But that should be easy, since that geometry is considered later anyway.
-#   - This should be simple enough to do, by keeping track of x-dimension ranges that are already consumed, and just making sure that any new surface being considered intersects with one of the remaining valid ranges.
-# 
-# - Add somewhat general support for custom computed/assigned metrics in top-level Profiler.
-#   - Will want to be able to show either single value or avg/min/max/count/total.
+# - Add somewhat general support for custom computed/assigned metrics in
+#   top-level Profiler.
+#   - Will want to be able to show either single value or
+#     avg/min/max/count/total.
 #   - Things to show:
-#     - Avg/min/max number of jump/land destination surfaces from an origin surface.
-#       - Probably want support to cut off occluded lower surfaces at some point?
+#     - Avg/min/max number of jump/land destination surfaces from an origin
+#       surface.
+#       - Probably want support to cut off occluded lower surfaces at some
+#         point?
 #     - Avg/min/max number of some "events" from individual edge calcs.
 #       - collisions, recursions, ...
 #     - 
@@ -233,7 +229,19 @@ class_name Main
 #   - We wouldn't be able to disable the normal Godot collision system if we
 #     still want the Player to be imperatively human-controlled though.
 # 
-# ---  ---
+# ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---
+# 
+# - Add a movement_param for edge fall distance threshold.
+# - Add a movement_param for ignoring vertically occluded surfaces when
+#   calculating fall range surfaces.
+#   - Don't consider "jump-up" range surfaces as occluding though, since that
+#     could yield gals negatives.
+#     - But that should be easy, since that geometry is considered later
+#       anyway.
+#   - This should be simple enough to do, by keeping track of x-dimension
+#     ranges that are already consumed, and just making sure that any new
+#     surface being considered intersects with one of the remaining valid
+#     ranges.
 # 
 # - Improve annotation configuration.
 #   - Implement the bits of utility-menu UI to toggle annotations.
@@ -836,6 +844,8 @@ class_name Main
 #     - Use one Surface object, and keep track of an internal representation of regions with
 #       different friction values.
 #       - It would then be easy enough to query the region for a given PositionAlongSurface.
+# 
+# - Add multi-threading for surface parsing.
 # 
 ###############################################################################
 

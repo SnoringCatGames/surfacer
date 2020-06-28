@@ -90,6 +90,7 @@ static func create_terminal_waypoints( \
 # pass through in order to go around the surface.
 static func calculate_waypoints_around_surface( \
         edge_result_metadata: EdgeCalcResultMetadata, \
+        collision_params: CollisionCalcParams, \
         movement_params: MovementParams, \
         vertical_step: VerticalEdgeStep, \
         previous_waypoint: Waypoint, \
@@ -98,7 +99,9 @@ static func calculate_waypoints_around_surface( \
         destination_waypoint: Waypoint, \
         colliding_surface: Surface, \
         waypoint_offset: Vector2) -> Array:
-    Profiler.start(ProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE)
+    Profiler.start( \
+            ProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE, \
+            collision_params.thread_id)
     
     var passing_vertically: bool
     var should_stay_on_min_side_a: bool
@@ -284,6 +287,7 @@ static func calculate_waypoints_around_surface( \
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE, \
+            collision_params.thread_id, \
             edge_result_metadata)
     return waypoints
 

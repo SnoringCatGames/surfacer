@@ -10,7 +10,9 @@ static func calculate_horizontal_step( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         step_calc_params: EdgeStepCalcParams, \
         edge_calc_params: EdgeCalcParams) -> EdgeStep:
-    Profiler.start(ProfilerMetric.CALCULATE_HORIZONTAL_STEP)
+    Profiler.start( \
+            ProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+            edge_calc_params.collision_params.thread_id)
     
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
@@ -60,6 +62,7 @@ static func calculate_horizontal_step( \
         # This waypoint cannot be reached.
         Profiler.stop_with_optional_metadata( \
                 ProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+                edge_calc_params.collision_params.thread_id, \
                 edge_result_metadata)
         return null
     var min_velocity_end_x: float = min_and_max_velocity_at_step_end[0]
@@ -104,6 +107,7 @@ static func calculate_horizontal_step( \
         Utils.error()
         Profiler.stop_with_optional_metadata( \
                 ProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+                edge_calc_params.collision_params.thread_id, \
                 edge_result_metadata)
         return null
     var time_instruction_start: float = \
@@ -203,6 +207,7 @@ static func calculate_horizontal_step( \
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+            edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     
     return step
