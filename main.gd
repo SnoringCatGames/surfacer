@@ -931,15 +931,15 @@ func _process(delta_sec: float) -> void:
     
     if !Config.IN_TEST_MODE and \
             level == null and \
-            Time.elapsed_play_time_sec > 0.5:
+            Time.elapsed_play_time_sec > 0.25:
         # Start loading the level and calculating the platform graphs.
         level = Utils.add_scene( \
                 self, \
                 Config.STARTING_LEVEL_RESOURCE_PATH, \
                 false)
     
-    if !is_level_ready and \
-            Time.elapsed_play_time_sec > 2.0:
+    elif !is_level_ready and \
+            Time.elapsed_play_time_sec > 0.5:
         is_level_ready = true
         level.visible = true
         
