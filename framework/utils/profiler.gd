@@ -187,14 +187,16 @@ func get_count( \
     if metadata_container != null:
         return metadata_container.counts[metric] if \
                 is_count else \
-                metadata_container.timings[metric].size()
+                get_timing_list( \
+                        metric, \
+                        metadata_container).size()
     else:
         if is_count:
             var count := 0
             for thread_id in _counts:
                 if _counts[thread_id].has(metric):
                     count += _counts[thread_id][metric]
-            return 0
+            return count
         else:
             return get_timing_list(metric).size()
 

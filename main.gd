@@ -4,53 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Add somewhat general support for custom computed/assigned metrics in
-#   top-level Profiler.
-#   - Will want to be able to show either single value or
-#     avg/min/max/count/total.
-#   - Things to show:
-#     - Avg/min/max number of jump/land destination surfaces from an origin
-#       surface.
-#       - Probably want support to cut off occluded lower surfaces at some
-#         point?
-#     - Avg/min/max number of some "events" from individual edge calcs.
-#       - collisions, recursions, ...
-#     - 
-#     -
-# 
-# - Profiler!
-#   - Step through and consider whether I want to show any other analytic
-#     description children for each item.
-#   - Try to use these analytics to inform decisions around which calculations
-#     are worth it.
-#     - Figure out exactly which part of collision calculations is most
-#       expensive, and determine whether we can cut down on it.
-#       - Any particular Godot API that's expensive?
-#       - Or are we just running too many collision calls in general?
-#       - In check_continuous_horizontal_step_for_collision, can we maybe only
-#         run collision checks on every nth frame (while still recording
-#         position/velocity per-frame), and just approximating collision checks
-#         with the cumulative displacement across those n frames?
-#         - We'd probably then need some way of fixing/ignoring/undoing
-#           unexpected collisions with the level at run time, and forcing state
-#           to match what's expected from the approximations?
-#         - This sounds like a hairy approach...
-#     - Maybe add a new configuration for max number of
-#       collisions/intermediate-waypoints to allow in an edge calculation
-#       before giving up (or, recursion depth (with and without backtracking))?
-#     - Tweak movement_params.exceptional_jump_instruction_duration_increase,
-#       and ensure that it is actually cutting down on the number of times we
-#       have to backtrack.
-# 
-# - Re-implement/use DEBUG_MODE flag:
-#   - Switch some MovementParam values when it's on:
-#     - syncs_player_velocity_to_edge_trajectory
-#     - ACTUALLY, maybe just implement another version of CatPlayer that only
-#       has MovementParams as different, then it's easy to toggle.
-#       - Would need to make it easy to re-use same animator logic though...
-#   - Switch which annotations are used.
-#   - Switch which level is used?
-# 
 # - When "backtracking" for height, re-use all previous waypoints, but reset
 #   their times and maybe velocities.
 #   - This should actually mean that we no longer "backtrack"/recurse
@@ -61,9 +14,6 @@ class_name Main
 #     the combined steps after calculating the result.
 #     - This should be useful, since we'll want to ensure that such
 #       calculations don't produce false positives.
-# 
-# - Debug performance with how many jump/land pairs get returned, and how
-#   costly the new extra previous-jump/land-position-distance checks are.
 # 
 # - Debug all the new jump/land optimization logic.
 # 
@@ -119,16 +69,36 @@ class_name Main
 # 
 # - Re-visit GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
 # 
-# - Fix performance.
-#   - Should I almost never be actually storing things in Pool arrays? It seems
-#     like I mostly end up passing them around as arguments to functions, to
-#     they get copied as values...
-# 
 # - Adjust cat_params to only allow subsets of EdgeCalculators, in
 #   order to test the non-jump edges
 # 
 # - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from
 #   an air position).
+# 
+# - Use Profiler analytics to inform decisions around which calculations are
+#   worth it.
+#   - Figure out exactly which part of collision calculations is most
+#     expensive, and determine whether we can cut down on it.
+#     - Any particular Godot API that's expensive?
+#     - Or are we just running too many collision calls in general?
+#     - In check_continuous_horizontal_step_for_collision, can we maybe only
+#       run collision checks on every nth frame (while still recording
+#       position/velocity per-frame), and just approximating collision checks
+#       with the cumulative displacement across those n frames?
+#       - We'd probably then need some way of fixing/ignoring/undoing
+#         unexpected collisions with the level at run time, and forcing state
+#         to match what's expected from the approximations?
+#       - This sounds like a hairy approach...
+#   - Maybe add a new configuration for max number of
+#     collisions/intermediate-waypoints to allow in an edge calculation
+#     before giving up (or, recursion depth (with and without backtracking))?
+#   - Tweak movement_params.exceptional_jump_instruction_duration_increase, and
+#     ensure that it is actually cutting down on the number of times we have to
+#     backtrack.
+#   - Should I almost never be actually storing things in Pool arrays? It seems
+#     like I mostly end up passing them around as arguments to functions, to
+#     they get copied as values...
+#     - Does this affect performance?
 # 
 # --- EASIER BITS ---
 # 
@@ -846,6 +816,15 @@ class_name Main
 #       - It would then be easy enough to query the region for a given PositionAlongSurface.
 # 
 # - Add multi-threading for surface parsing.
+# 
+# - Re-implement/use DEBUG_MODE flag:
+#   - Switch some MovementParam values when it's on:
+#     - syncs_player_velocity_to_edge_trajectory
+#     - ACTUALLY, maybe just implement another version of CatPlayer that only
+#       has MovementParams as different, then it's easy to toggle.
+#       - Would need to make it easy to re-use same animator logic though...
+#   - Switch which annotations are used.
+#   - Switch which level is used?
 # 
 ###############################################################################
 
