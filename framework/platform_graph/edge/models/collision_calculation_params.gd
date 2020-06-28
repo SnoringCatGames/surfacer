@@ -6,7 +6,7 @@ var debug_params: Dictionary
 var space_state: Physics2DDirectSpaceState
 var movement_params: MovementParams
 var surface_parser: SurfaceParser
-var thread_id := ""
+var thread_id := Profiler.DEFAULT_THREAD_ID
 
 func _init( \
         debug_params: Dictionary, \

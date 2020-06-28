@@ -344,7 +344,7 @@ func _calculate_inter_surface_edges_total() -> void:
         for thread in threads:
             thread.wait_to_finish()
     else:
-        _calculate_inter_surface_edges_subset(0)
+        _calculate_inter_surface_edges_subset(-1)
 
 func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
     var collision_params_for_thread := CollisionCalcParams.new( \
@@ -353,7 +353,10 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
             null, \
             null)
     collision_params_for_thread.copy(collision_params)
-    collision_params_for_thread.thread_id = "parse_edges:" + str(thread_index)
+    collision_params_for_thread.thread_id = \
+            "parse_edges:" + str(thread_index) if \
+            thread_index >= 0 else \
+            Profiler.DEFAULT_THREAD_ID
     
     var surfaces_in_fall_range_set := {}
     var surfaces_in_jump_range_set := {}
@@ -368,7 +371,8 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
         i += 1
         
         # Divide the origin surfaces across threads.
-        if i % Config.THREAD_COUNT != thread_index:
+        if thread_index >= 0 and \
+                i % Config.THREAD_COUNT != thread_index:
             continue
         
         inter_surface_edges_results = \
