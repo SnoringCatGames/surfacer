@@ -714,7 +714,8 @@ static func _update_waypoint_velocity_and_time( \
             var min_velocity_x_from_origin: float = min_and_max_velocity_from_origin[0]
             var max_velocity_x_from_origin: float = min_and_max_velocity_from_origin[1]
             
-            # Calculate the min and max velocity for movement through the waypoint.
+            # Calculate the min and max velocity for movement through the
+            # waypoint, in order for movement to reach the next waypoint.
             var min_and_max_velocity_for_next_step := \
                     _calculate_min_and_max_x_velocity_at_start_of_interval( \
                             displacement_to_next.x, \
@@ -1736,9 +1737,6 @@ static func update_neighbors_for_new_waypoint( \
         next_waypoint: Waypoint, \
         edge_calc_params: EdgeCalcParams, \
         vertical_step: VerticalEdgeStep) -> void:
-    previous_waypoint.next_waypoint = waypoint
-    next_waypoint.previous_waypoint = waypoint
-    
     update_waypoint( \
             previous_waypoint, \
             edge_calc_params.origin_waypoint, \

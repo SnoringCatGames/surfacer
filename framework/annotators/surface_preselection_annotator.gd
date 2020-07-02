@@ -8,6 +8,11 @@ var PRESELECTION_POSITION_INDICATOR_COLOR: Color = \
 var PRESELECTION_PATH_COLOR: Color = \
         Colors.opacify(Colors.PURPLE, Colors.ALPHA_FAINT)
 
+var INVALID_SURFACE_COLOR: Color = \
+        Colors.opacify(Colors.RED, Colors.ALPHA_XFAINT)
+var INVALID_POSITION_INDICATOR_COLOR: Color = \
+        Colors.opacify(Colors.RED, Colors.ALPHA_XFAINT)
+
 const PRESELECTION_MIN_OPACITY := 0.5
 const PRESELECTION_MAX_OPACITY := 1.0
 const PRESELECTION_DURATION_SEC := 0.6
@@ -83,29 +88,41 @@ func _draw() -> void:
             (PRESELECTION_MAX_OPACITY - PRESELECTION_MIN_OPACITY) + \
             PRESELECTION_MIN_OPACITY)
     
+    var surface_base_color: Color
+    var position_indicator_base_color: Color
+    var path_base_color: Color
+    if phantom_path != null:
+        surface_base_color = PRESELECTION_SURFACE_COLOR
+        position_indicator_base_color = PRESELECTION_POSITION_INDICATOR_COLOR
+        path_base_color = PRESELECTION_PATH_COLOR
+    else:
+        surface_base_color = INVALID_SURFACE_COLOR
+        position_indicator_base_color = INVALID_POSITION_INDICATOR_COLOR
+    
     # Draw path.
-    var path_alpha := \
-            PRESELECTION_PATH_COLOR.a * alpha_multiplier
-    var path_color := Color( \
-            PRESELECTION_PATH_COLOR.r, \
-            PRESELECTION_PATH_COLOR.g, \
-            PRESELECTION_PATH_COLOR.b, \
-            path_alpha)
-    DrawUtils.draw_path( \
-            self, \
-            phantom_path, \
-            PRESELECTION_PATH_STROKE_WIDTH, \
-            path_color, \
-            false, \
-            false, \
-            false)
+    if phantom_path != null:
+        var path_alpha := \
+                path_base_color.a * alpha_multiplier
+        var path_color := Color( \
+                path_base_color.r, \
+                path_base_color.g, \
+                path_base_color.b, \
+                path_alpha)
+        DrawUtils.draw_path( \
+                self, \
+                phantom_path, \
+                PRESELECTION_PATH_STROKE_WIDTH, \
+                path_color, \
+                false, \
+                false, \
+                false)
     
     # Draw Surface.
-    var surface_alpha := PRESELECTION_SURFACE_COLOR.a * alpha_multiplier
+    var surface_alpha := surface_base_color.a * alpha_multiplier
     var surface_color := Color( \
-            PRESELECTION_SURFACE_COLOR.r, \
-            PRESELECTION_SURFACE_COLOR.g, \
-            PRESELECTION_SURFACE_COLOR.b, \
+            surface_base_color.r, \
+            surface_base_color.g, \
+            surface_base_color.b, \
             surface_alpha)
     DrawUtils.draw_surface( \
             self, \
@@ -115,11 +132,11 @@ func _draw() -> void:
     
     # Draw destination marker.
     var position_indicator_alpha := \
-            PRESELECTION_POSITION_INDICATOR_COLOR.a * alpha_multiplier
+            position_indicator_base_color.a * alpha_multiplier
     var position_indicator_color := Color( \
-            PRESELECTION_POSITION_INDICATOR_COLOR.r, \
-            PRESELECTION_POSITION_INDICATOR_COLOR.g, \
-            PRESELECTION_POSITION_INDICATOR_COLOR.b, \
+            position_indicator_base_color.r, \
+            position_indicator_base_color.g, \
+            position_indicator_base_color.b, \
             position_indicator_alpha)
     var cone_end_point := \
             phantom_position_along_surface.target_projection_onto_surface

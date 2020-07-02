@@ -4,26 +4,25 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - When "backtracking" for height, re-use all previous waypoints, but reset
-#   their times and maybe velocities.
-#   - This should actually mean that we no longer "backtrack"/recurse
-#     specially.
+# - Finish calculate_steps_between_waypoints_with_increasing_jump_height:
+#   - Debug the current function. It seems to lose some valid edges that the
+#     other function would yield.
+#   - Afterward, if we did any jump-height increases, do a final pass over each
+#     step with check_continuous_horizontal_step_for_collision.
 #   - Conditionally use this approach behind a movement_params flag. This
 #     should improve efficiency and decrease accuracy.
 #   - Then also add another flag for whether to run a final collision test over
 #     the combined steps after calculating the result.
 #     - This should be useful, since we'll want to ensure that such
 #       calculations don't produce false positives.
+#   - Search/replace (some) references with "backtrack" to "increase jump
+#     height".
 # 
 # - Debug all the new jump/land optimization logic.
 # 
 # - Finish logic to consume Waypoint.needs_extra_jump_duration.
 #   - Started, but stopped partway through, with adding this usage in
 #     _update_waypoint_velocity_and_time.
-# 
-# - Check on current behavior of
-#   EdgeInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
-#   EdgeInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
 # 
 # --- Debug ---
 # 
@@ -99,6 +98,10 @@ class_name Main
 #     like I mostly end up passing them around as arguments to functions, to
 #     they get copied as values...
 #     - Does this affect performance?
+# 
+# - Check on current behavior of
+#   EdgeInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
+#   EdgeInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
 # 
 # --- EASIER BITS ---
 # 

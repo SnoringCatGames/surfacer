@@ -53,7 +53,7 @@ static func calculate_trajectory_from_calculation_steps( \
     edge_calc_params.movement_params.gravity_slow_rise /= \
             GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
-    # FIXME: -------- Rename? Refactor?
+    # FIXME: -------- Rename? Refactor? Remove? We've already checked each step individually (for continuous state).
     var collision := \
             CollisionCheckUtils.check_instructions_discrete_frame_state( \
                     edge_calc_params, \

@@ -326,7 +326,7 @@ func _calculate_inter_surface_edges_total() -> void:
     for origin_surface in surfaces_set:
         surfaces_to_inter_surface_edges_results[origin_surface] = []
     
-    if OS.can_use_threads():
+    if Config.USES_THREADS:
         var thread: Thread
         var threads := []
         threads.resize(Config.THREAD_COUNT)

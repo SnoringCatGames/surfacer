@@ -17,6 +17,7 @@ const WELCOME_PANEL_RESOURCE_PATH := \
         "res://framework/controls/panels/welcome_panel.tscn"
 
 const IN_DEBUG_MODE := true
+var USES_THREADS := false and OS.can_use_threads()
 const IN_TEST_MODE := false
 const UTILITY_PANEL_STARTS_OPEN := true
 
@@ -40,7 +41,7 @@ const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
 
 var THREAD_COUNT := \
         4 if \
-        OS.can_use_threads() else \
+        USES_THREADS else \
         1
 
 const DEBUG_PARAMS := \
@@ -51,14 +52,14 @@ const DEBUG_PARAMS := \
     limit_parsing = {
         player_name = "cat",
 #        
-#        edge = {
-#            origin = {
-#                surface_side = SurfaceSide.FLOOR,
-#            },
-#            destination = {
-#                surface_side = SurfaceSide.FLOOR,
-#            },
-#        },
+        edge = {
+            origin = {
+                surface_side = SurfaceSide.FLOOR,
+            },
+            destination = {
+                surface_side = SurfaceSide.FLOOR,
+            },
+        },
 #        
 #        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
