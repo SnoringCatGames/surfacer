@@ -1,7 +1,8 @@
 class_name InspectorSearchType
 
 enum { \
-    SURFACE, \
+    ORIGIN_SURFACE, \
+    DESTINATION_SURFACE, \
     EDGE, \
     EDGES_GROUP, \
     UNKNOWN, \
@@ -9,8 +10,10 @@ enum { \
 
 static func get_type_string(type: int) -> String:
     match type:
-        SURFACE:
-            return "SURFACE"
+        ORIGIN_SURFACE:
+            return "ORIGIN_SURFACE"
+        DESTINATION_SURFACE:
+            return "DESTINATION_SURFACE"
         EDGE:
             return "EDGE"
         EDGES_GROUP:

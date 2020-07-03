@@ -4,23 +4,21 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Finish logic to consume Waypoint.needs_extra_jump_duration.
-#   - Started, but stopped partway through, with adding this usage in
-#     _update_waypoint_velocity_and_time.
+# - Debug why selecting origin surface items is so slow.
+# - Debug why config with debug target to destination item selects origin and
+#   not destination surface.
+# - Debug calculate_steps_between_waypoints_with_increasing_jump_height by
+#   limiting calculations to just the one edge.
 # 
 # - Finish calculate_steps_between_waypoints_with_increasing_jump_height:
 #   - Debug the current function. It seems to lose some valid edges that the
 #     other function would yield.
-#   - Afterward, if we did any jump-height increases, do a final pass over each
-#     step with check_continuous_horizontal_step_for_collision.
 #   - Conditionally use this approach behind a movement_params flag. This
 #     should improve efficiency and decrease accuracy.
-#   - Then also add another flag for whether to run a final collision test over
-#     the combined steps after calculating the result.
-#     - This should be useful, since we'll want to ensure that such
-#       calculations don't produce false positives.
-#   - Search/replace (some) references with "backtrack" to "increase jump
-#     height".
+# 
+# - Finish logic to consume Waypoint.needs_extra_jump_duration.
+#   - Started, but stopped partway through, with adding this usage in
+#     _update_waypoint_velocity_and_time.
 # 
 # --- Debug ---
 # 

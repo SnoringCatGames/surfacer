@@ -117,7 +117,7 @@ func get_has_children() -> bool:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    if search_type == InspectorSearchType.SURFACE:
+    if search_type == InspectorSearchType.ORIGIN_SURFACE:
         if metadata.surface == origin_surface:
             expand()
             select()

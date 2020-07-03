@@ -61,6 +61,7 @@ func _init() -> void:
     collision_margin_for_waypoint_positions = 5.0
     skips_less_likely_jump_land_positions = false
     prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets = true
+    reuses_previous_waypoints_when_backtracking_on_jump_height = false
     
     max_horizontal_speed_default = 400.0
     min_horizontal_speed = 5.0

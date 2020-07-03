@@ -104,6 +104,11 @@ var skips_less_likely_jump_land_positions := false
 # surface end at the end of a path. This should be unnecessary if
 # forces_player_position_to_match_path_at_end is true.
 var prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets := false
+# If true, then edge calculations will re-use previously calculated
+# intermediate waypoints when attempting to backtrack and use a higher max jump
+# height. Otherwise, intermediate waypoints are recalculated, which can be more
+# expensive, but could produce slightly more accurate results.
+var reuses_previous_waypoints_when_backtracking_on_jump_height := true
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

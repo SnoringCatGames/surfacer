@@ -212,71 +212,83 @@ static func should_skip_edge_calculation( \
                 land_position_or_surface.surface if \
                 land_position_or_surface is PositionAlongSurface else \
                 land_position_or_surface
-        var jump_target_point: Vector2 = \
+        var jump_target_projection_point: Vector2 = \
                 jump_position_or_surface.target_projection_onto_surface if \
                 jump_position_or_surface is PositionAlongSurface else \
                 Vector2.INF
-        var land_target_point: Vector2 = \
+        var land_target_projection_point: Vector2 = \
                 land_position_or_surface.target_projection_onto_surface if \
                 land_position_or_surface is PositionAlongSurface else \
                 Vector2.INF
         
         if debug_params.limit_parsing.edge.has("origin"):
-            if jump_surface == null:
-                # Ignore this if we expect to know the jump position, but
-                # don't.
-                return false
-            
             var debug_origin: Dictionary = \
                     debug_params.limit_parsing.edge.origin
+            var origin_epsilon: float = \
+                    debug_origin.epsilon if \
+                    debug_origin.has("epsilon") else \
+                    0.1
             
-            if (debug_origin.has("surface_side") and \
-                    debug_origin.surface_side != jump_surface.side) or \
-                    (debug_origin.has("surface_start_vertex") and \
-                            debug_origin.surface_start_vertex != \
-                                    jump_surface.first_point) or \
-                    (debug_origin.has("surface_end_vertex") and \
-                            debug_origin.surface_end_vertex != \
-                            jump_surface.last_point):
-                # Ignore anything except the origin surface that we're
-                # debugging.
-                return true
+            # Ignore this if we expect to know the jump surface, but don't.
+            if jump_surface != null:
+                if (debug_origin.has("surface_side") and \
+                        debug_origin.surface_side != jump_surface.side) or \
+                        (debug_origin.has("surface_start_vertex") and \
+                                !Geometry.are_points_equal_with_epsilon( \
+                                        debug_origin.surface_start_vertex, \
+                                        jump_surface.first_point, \
+                                        origin_epsilon)) or \
+                        (debug_origin.has("surface_end_vertex") and \
+                                !Geometry.are_points_equal_with_epsilon( \
+                                        debug_origin.surface_end_vertex, \
+                                        jump_surface.last_point, \
+                                        origin_epsilon)):
+                    # Ignore anything except the origin surface that we're
+                    # debugging.
+                    return true
             
-            if debug_origin.has("position"):
+            if debug_origin.has("position") and \
+                    jump_target_projection_point != Vector2.INF:
                 if !Geometry.are_points_equal_with_epsilon( \
-                        jump_target_point, \
+                        jump_target_projection_point, \
                         debug_origin.position, \
-                        0.1):
+                        origin_epsilon):
                     # Ignore anything except the jump position that we're
                     # debugging.
                     return true
         
         if debug_params.limit_parsing.edge.has("destination"):
-            if land_surface == null:
-                # Ignore this if we expect to know the land position, but
-                # don't.
-                return false
-            
             var debug_destination: Dictionary = \
                     debug_params.limit_parsing.edge.destination
+            var destination_epsilon: float = \
+                    debug_destination.epsilon if \
+                    debug_destination.has("epsilon") else \
+                    0.1
             
-            if (debug_destination.has("surface_side") and \
-                    debug_destination.surface_side != land_surface.side) or \
-                    (debug_destination.has("surface_start_vertex") and \
-                            debug_destination.surface_start_vertex != \
-                                    land_surface.first_point) or \
-                    (debug_destination.has("surface_end_vertex") and \
-                            debug_destination.surface_end_vertex != \
-                                    land_surface.last_point):
-                # Ignore anything except the destination surface that we're
-                # debugging.
-                return true
+            # Ignore this if we expect to know the land surface, but don't.
+            if land_surface != null:
+                if (debug_destination.has("surface_side") and \
+                        debug_destination.surface_side != land_surface.side) or \
+                        (debug_destination.has("surface_start_vertex") and \
+                                !Geometry.are_points_equal_with_epsilon( \
+                                        debug_destination.surface_start_vertex, \
+                                        land_surface.first_point, \
+                                        destination_epsilon)) or \
+                        (debug_destination.has("surface_end_vertex") and \
+                                !Geometry.are_points_equal_with_epsilon( \
+                                        debug_destination.surface_end_vertex, \
+                                        land_surface.last_point, \
+                                        destination_epsilon)):
+                    # Ignore anything except the destination surface that we're
+                    # debugging.
+                    return true
             
-            if debug_destination.has("position"):
+            if debug_destination.has("position") and \
+                    land_target_projection_point != Vector2.INF:
                 if !Geometry.are_points_equal_with_epsilon( \
-                        land_target_point, \
+                        land_target_projection_point, \
                         debug_destination.position, \
-                        0.1):
+                        destination_epsilon):
                     # Ignore anything except the land position that we're
                     # debugging.
                     return true

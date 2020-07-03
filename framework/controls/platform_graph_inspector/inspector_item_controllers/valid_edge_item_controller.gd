@@ -69,12 +69,13 @@ func find_and_expand_controller( \
 func _create_children_inner() -> void:
     if edge_result_metadata == null:
         _calculate_edge_calc_result_metadata()
-    edge_calc_result_metadata_controller = EdgeCalcResultMetadataItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
-            edge, \
-            edge_result_metadata)
+    edge_calc_result_metadata_controller = \
+            EdgeCalcResultMetadataItemController.new( \
+                    tree_item, \
+                    tree, \
+                    graph, \
+                    edge, \
+                    edge_result_metadata)
 
 func _calculate_edge_calc_result_metadata() -> void:
     edge_result_metadata = EdgeCalcResultMetadata.new(true, false)

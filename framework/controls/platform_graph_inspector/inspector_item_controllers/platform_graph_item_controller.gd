@@ -71,7 +71,7 @@ func _find_and_expand_controller_recursive( \
                     search_type, \
                     metadata)
             
-        InspectorSearchType.SURFACE:
+        InspectorSearchType.ORIGIN_SURFACE:
             assert(metadata.has("surface"))
             if graph.surfaces_set.has(metadata.surface):
                 surfaces_item_controller.find_and_expand_controller( \

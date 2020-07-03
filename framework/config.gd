@@ -52,14 +52,14 @@ const DEBUG_PARAMS := \
     limit_parsing = {
         player_name = "cat",
 #        
-        edge = {
-            origin = {
-                surface_side = SurfaceSide.FLOOR,
-            },
-            destination = {
-                surface_side = SurfaceSide.FLOOR,
-            },
-        },
+#        edge = {
+#            origin = {
+#                surface_side = SurfaceSide.FLOOR,
+#            },
+#            destination = {
+#                surface_side = SurfaceSide.FLOOR,
+#            },
+#        },
 #        
 #        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
@@ -68,60 +68,20 @@ const DEBUG_PARAMS := \
 #        edge_type = EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
 #        
-#        # Level: long rise; fall-from-wall
-#        edge = {
-#            origin = {
-#                surface_side = SurfaceSide.LEFT_WALL,
-#                surface_start_vertex = Vector2(0, -448),
-#                surface_end_vertex = Vector2(0, -384),
-#                position = Vector2(0, -448),
-#            },
-#            destination = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(128, 64),
-#                surface_end_vertex = Vector2(192, 64),
-#                position = Vector2(128, 64),
-#            },
-#        },
-#        
-#        # Level: long rise; jump-up-left
-#        edge = {
-#            origin = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(128, 64),
-#                surface_end_vertex = Vector2(192, 64),
-#                position = Vector2(128, 64),
-#            },
-#            destination = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(-128, -448),
-#                surface_end_vertex = Vector2(0, -448),
-#                position = Vector2(-128, -448),
-#            },
-#        },
-#        
-#        # Level: long rise; fall-from-floor-lower-right
-#        edge = {
-#            origin = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(128, 64),
-#                position = Vector2(192, 64),
-#            },
-#        },
-#        
-#        # Level: jump-up-right from long base floor to close short floor
-#        edge = {
-#            origin = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(-960, 256),
-#                surface_end_vertex = Vector2(2688, 256),
-#            },
-#            destination = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(128, 64),
-#                surface_end_vertex = Vector2(192, 64),
-#            },
-#        },
+        edge = {
+            origin = {
+                surface_side = SurfaceSide.FLOOR,
+                surface_start_vertex = Vector2(-448, 256),
+                position = Vector2(128, 256),
+                epsilon = 100,
+            },
+            destination = {
+                surface_side = SurfaceSide.FLOOR,
+                surface_start_vertex = Vector2(-64, 64),
+                position = Vector2(64, 64),
+                epsilon = 100,
+            },
+        },
     },
     extra_annotations = {},
 }

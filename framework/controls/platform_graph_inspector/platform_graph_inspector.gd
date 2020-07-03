@@ -172,9 +172,14 @@ func _select_initial_item() -> void:
                 debug_origin.surface_end_vertex if \
                 debug_origin.has("surface_end_vertex") else \
                 Vector2.INF
+        var origin_epsilon: float = \
+                debug_origin.epsilon if \
+                debug_origin.has("epsilon") else \
+                0.1
         var origin_surface := _find_matching_surface( \
                 origin_start_vertex, \
                 origin_end_vertex, \
+                origin_epsilon, \
                 graph)
         
         if origin_surface != null:
@@ -190,9 +195,14 @@ func _select_initial_item() -> void:
                         debug_destination.surface_end_vertex if \
                         debug_destination.has("surface_end_vertex") else \
                         Vector2.INF
+                var destination_epsilon: float = \
+                        debug_destination.epsilon if \
+                        debug_destination.has("epsilon") else \
+                        0.1
                 destination_surface = _find_matching_surface( \
                         destination_start_vertex, \
                         destination_end_vertex, \
+                        destination_epsilon, \
                         graph)
                 
                 # TODO: Add support for searching for:
@@ -213,7 +223,7 @@ func _select_initial_item() -> void:
                     return
             
             # Search for the matching origin surface item.
-            _select_canonical_surface_item_controller( \
+            _select_canonical_origin_surface_item_controller( \
                     origin_surface, \
                     graph)
             return
@@ -233,6 +243,7 @@ func _select_initial_item() -> void:
 func _find_matching_surface( \
         start_vertex: Vector2, \
         end_vertex: Vector2, \
+        epsilon: float, \
         graph: PlatformGraph) -> Surface:
     if start_vertex != Vector2.INF or \
             end_vertex != Vector2.INF:
@@ -244,12 +255,12 @@ func _find_matching_surface( \
                     Geometry.are_points_equal_with_epsilon( \
                             surface.first_point, \
                             start_vertex, \
-                            0.1)
+                            epsilon)
             does_end_vertex_match = end_vertex == Vector2.INF or \
                     Geometry.are_points_equal_with_epsilon( \
                             surface.last_point, \
                             end_vertex, \
-                            0.1)
+                            epsilon)
             if does_start_vertex_match and does_end_vertex_match:
                 return surface
     return null
@@ -282,32 +293,32 @@ func select_edge_or_surface( \
         edge_type: int, \
         graph: PlatformGraph) -> void:
     if start_position.surface == end_position.surface:
-        _select_canonical_surface_item_controller( \
+        _select_canonical_origin_surface_item_controller( \
                 start_position.surface, \
                 graph)
     else:
         _select_canonical_edge_or_edge_attempt_item_controller( \
                 start_position.surface, \
                 end_position.surface, \
-                start_position.target_point, \
-                end_position.target_point, \
+                start_position.target_projection_onto_surface, \
+                end_position.target_projection_onto_surface, \
                 edge_type, \
                 graph)
 
-func _select_canonical_surface_item_controller( \
+func _select_canonical_origin_surface_item_controller( \
         surface: Surface, \
         graph: PlatformGraph) -> void:
     if graph_item_controllers.has(graph.movement_params.name):
         _trigger_find_and_expand_controller( \
                 graph.movement_params.name, \
-                InspectorSearchType.SURFACE, \
+                InspectorSearchType.ORIGIN_SURFACE, \
                 {surface = surface})
 
 func _select_canonical_edge_or_edge_attempt_item_controller( \
         start_surface: Surface, \
         end_surface: Surface, \
-        target_start: Vector2, \
-        target_end: Vector2, \
+        target_projection_start: Vector2, \
+        target_projection_end: Vector2, \
         edge_type: int, \
         graph: PlatformGraph, \
         throws_on_not_found := false) -> void:
@@ -317,22 +328,24 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
                     graph.movement_params, \
                     start_surface, \
                     end_surface)
-    var start := Vector2.INF
-    var end := Vector2.INF
+    var jump_position: PositionAlongSurface
+    var land_position: PositionAlongSurface
     if !all_jump_land_positions.empty():
         var closest_jump_land_positions := _find_closest_jump_land_positions( \
-                target_start, \
-                target_end, \
+                target_projection_start, \
+                target_projection_end, \
                 all_jump_land_positions)
-        start = closest_jump_land_positions.jump_position.target_point
-        end = closest_jump_land_positions.land_position.target_point
+        jump_position = closest_jump_land_positions.jump_position
+        land_position = closest_jump_land_positions.land_position
         
         # Show a descriptive message if the selection clicks were too far from
         # any jump-land positions.
-        if start.distance_squared_to(target_start) > \
+        if jump_position.target_projection_onto_surface \
+                        .distance_squared_to(target_projection_start) > \
                         PlatformGraphInspectorSelector\
                                 .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD or \
-                end.distance_squared_to(target_end) > \
+                land_position.target_projection_onto_surface \
+                        .distance_squared_to(target_projection_end) > \
                         PlatformGraphInspectorSelector \
                                 .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD:
             _clear_selection()
@@ -344,8 +357,8 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
         var metadata := { \
             origin_surface = start_surface, \
             destination_surface = end_surface, \
-            start = start, \
-            end = end, \
+            start = jump_position.target_point, \
+            end = land_position.target_point, \
             edge_type = edge_type, \
         }
         _trigger_find_and_expand_controller( \
@@ -386,7 +399,7 @@ func _on_find_and_expand_complete( \
                     controller.type != InspectorItemType.FAILED_EDGE:
                 selection_failure_message = \
                         SelectionDescription.NO_POSITIONS_PASSING_BROAD_PHASE
-        InspectorSearchType.SURFACE:
+        InspectorSearchType.ORIGIN_SURFACE:
             assert(controller.type == InspectorItemType.ORIGIN_SURFACE)
         InspectorSearchType.EDGES_GROUP:
             assert(controller.type == InspectorItemType.EDGES_GROUP)

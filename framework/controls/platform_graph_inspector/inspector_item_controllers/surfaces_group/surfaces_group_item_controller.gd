@@ -65,7 +65,7 @@ func _find_and_expand_controller_recursive( \
         metadata: Dictionary) -> void:
     var side: int = \
             metadata.surface.side if \
-            search_type == InspectorSearchType.SURFACE else \
+            search_type == InspectorSearchType.ORIGIN_SURFACE else \
             metadata.origin_surface.side
     match side:
         SurfaceSide.FLOOR:
