@@ -4,6 +4,10 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
+# - Finish logic to consume Waypoint.needs_extra_jump_duration.
+#   - Started, but stopped partway through, with adding this usage in
+#     _update_waypoint_velocity_and_time.
+# 
 # - Finish calculate_steps_between_waypoints_with_increasing_jump_height:
 #   - Debug the current function. It seems to lose some valid edges that the
 #     other function would yield.
@@ -18,15 +22,7 @@ class_name Main
 #   - Search/replace (some) references with "backtrack" to "increase jump
 #     height".
 # 
-# - Debug all the new jump/land optimization logic.
-# 
-# - Finish logic to consume Waypoint.needs_extra_jump_duration.
-#   - Started, but stopped partway through, with adding this usage in
-#     _update_waypoint_velocity_and_time.
-# 
 # --- Debug ---
-# 
-# - Check whether the dynamic edge optimizations are too expensive.
 # 
 # - Things to debug:
 #   - Jumping from floor of lower-small-block to floor of upper-small-black.

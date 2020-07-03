@@ -373,7 +373,7 @@ func _on_find_and_expand_complete( \
         metadata: Dictionary) -> void:
     print("Inspector search complete: player_name=%s, search_type=%s" % [ \
         player_name, \
-        search_type, \
+        InspectorSearchType.get_type_string(search_type), \
     ])
     
     var item := get_selected()

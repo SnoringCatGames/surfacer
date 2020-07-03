@@ -74,7 +74,8 @@ func on_item_expanded() -> void:
 
 func on_item_collapsed() -> void:
     _destroy_children_if_needed()
-    if !tree.get_is_find_and_expand_in_progress():
+    if !tree.get_is_find_and_expand_in_progress() and \
+            get_has_children():
         print("Inspector item collapsed: %s" % to_string())
 
 func expand() -> void:

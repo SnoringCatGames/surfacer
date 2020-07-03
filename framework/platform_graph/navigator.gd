@@ -43,40 +43,61 @@ func _init( \
 
 # Starts a new navigation to the given destination.
 func navigate_to_position(destination: PositionAlongSurface) -> bool:
+    Profiler.start(ProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
+    
     reset()
     
+    Profiler.start(ProfilerMetric.NAVIGATOR_FIND_PATH)
     var path := find_path(destination)
+    var duration_find_path := Profiler.stop(ProfilerMetric.NAVIGATOR_FIND_PATH)
     
     if path == null:
         # Destination cannot be reached from origin.
+        Profiler.stop(ProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
         print("CANNOT NAVIGATE TO TARGET: %s" % destination.to_string())
         return false
+        
     else:
         # Destination can be reached from origin.
         
         _interleave_intra_surface_edges( \
                 collision_params, \
                 path)
+        
+        Profiler.start(ProfilerMetric.NAVIGATOR_OPTIMIZE_EDGES_FOR_APPROACH)
         _optimize_edges_for_approach( \
                 collision_params, \
                 path, \
                 player.velocity)
-        
-        var format_string_template := "STARTING PATH NAV:   %8.3ft; {" + \
-            "\n\tdestination: %s," + \
-            "\n\tpath: %s," + \
-            "\n}"
-        var format_string_arguments := [ \
-                Time.elapsed_play_time_sec, \
-                destination.to_string(), \
-                path.to_string_with_newlines(1), \
-            ]
-        print(format_string_template % format_string_arguments)
+        var duration_optimize_edges_for_approach := Profiler.stop( \
+                ProfilerMetric.NAVIGATOR_OPTIMIZE_EDGES_FOR_APPROACH)
         
         current_destination = destination
         current_path = path
         is_currently_navigating = true
         reached_destination = false
+        
+        var duration_navigate_to_position := \
+                Profiler.stop(ProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
+        
+        var format_string_template := "STARTING PATH NAV:   %8.3ft; {" + \
+            "\n\tdestination: %s," + \
+            "\n\tpath: %s," + \
+            "\n\ttimings: {" + \
+            "\n\t\tduration_navigate_to_position: %s" + \
+            "\n\t\tduration_find_path: %s" + \
+            "\n\t\tduration_optimize_edges_for_approach: %s" + \
+            "\n\t}" + \
+            "\n}"
+        var format_string_arguments := [ \
+            Time.elapsed_play_time_sec, \
+            destination.to_string(), \
+            path.to_string_with_newlines(1), \
+            duration_navigate_to_position, \
+            duration_find_path, \
+            duration_optimize_edges_for_approach, \
+        ]
+        print(format_string_template % format_string_arguments)
         
         _start_edge(0)
         
@@ -150,15 +171,10 @@ func reset() -> void:
     navigation_state.reset()
 
 func _start_edge(index: int) -> void:
+    Profiler.start(ProfilerMetric.NAVIGATOR_START_EDGE)
+    
     current_edge_index = index
     current_edge = current_path.edges[index]
-    
-    var format_string_template := "STARTING EDGE NAV:   %8.3ft; %s"
-    var format_string_arguments := [ \
-            Time.elapsed_play_time_sec, \
-            current_edge.to_string_with_newlines(0), \
-        ]
-    print(format_string_template % format_string_arguments)
     
     if movement_params.forces_player_position_to_match_edge_at_start:
         player.position = current_edge.start
@@ -175,12 +191,26 @@ func _start_edge(index: int) -> void:
             current_edge, \
             Time.elapsed_play_time_sec)
     
+    var duration_start_edge := \
+            Profiler.stop(ProfilerMetric.NAVIGATOR_START_EDGE)
+    
+    var format_string_template := \
+            "STARTING EDGE NAV:   %8.3ft; %s; function duration=%s"
+    var format_string_arguments := [ \
+            Time.elapsed_play_time_sec, \
+            current_edge.to_string_with_newlines(0), \
+            str(duration_start_edge), \
+        ]
+    print(format_string_template % format_string_arguments)
+    
     # Some instructions could be immediately skipped, depending on runtime
     # state, so this gives us a change to move straight to the next edge.
     update(true)
 
 # Updates navigation state in response to the current surface state.
 func update(just_started_new_edge = false) -> void:
+    var edge_index := current_edge_index
+    
     actions_might_be_dirty = just_started_new_edge
     
     if !is_currently_navigating:
@@ -254,6 +284,7 @@ func update(just_started_new_edge = false) -> void:
                 print(format_string_template % format_string_arguments)
                 
                 current_path.edges.push_back(backtracking_edge)
+                
                 _start_edge(next_edge_index)
         else:
             _start_edge(next_edge_index)
