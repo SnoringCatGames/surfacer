@@ -212,6 +212,10 @@ static func find_landing_trajectory_between_positions( \
         # Cannot reach destination from origin.
         assert(edge_result_metadata.edge_calc_result_type != \
                 EdgeCalcResultType.EDGE_VALID)
+        Profiler.stop_with_optional_metadata( \
+                ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \
+                collision_params.thread_id, \
+                edge_result_metadata)
         return null
     
     var vertical_step: VerticalEdgeStep = \
@@ -222,6 +226,10 @@ static func find_landing_trajectory_between_positions( \
         # Cannot reach destination from origin.
         assert(edge_result_metadata.edge_calc_result_type != \
                 EdgeCalcResultType.EDGE_VALID)
+        Profiler.stop_with_optional_metadata( \
+                ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \
+                collision_params.thread_id, \
+                edge_result_metadata)
         return null
     
     var step_calc_params: EdgeStepCalcParams = EdgeStepCalcParams.new( \
