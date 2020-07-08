@@ -653,27 +653,25 @@ static func _update_waypoint_velocity_and_time( \
                 # We can't reach this waypoint from the previous waypoint.
                 return WaypointValidity.THIS_WAYPOINT_OUT_OF_REACH_FROM_PREVIOUS_WAYPOINT
             
-            var still_holding_jump_button := \
-                    time_passing_through < vertical_step.time_instruction_end
+            var still_ascending := \
+                    time_passing_through < vertical_step.time_peak_height
             
             # We can quit early for a few types of waypoints.
             if !waypoint.passing_vertically and \
                     waypoint.should_stay_on_min_side and \
-                    !still_holding_jump_button:
-                # Quit early if we are trying to go above a wall, but we already released the jump
-                # button.
-                return WaypointValidity.TRYING_TO_PASS_OVER_WALL_AFTER_RELEASING_JUMP
+                    !still_ascending:
+                # Quit early if we are trying to go above a wall, but we are already descending.
+                return WaypointValidity.TRYING_TO_PASS_OVER_WALL_WHILE_DESCENDING
             elif !waypoint.passing_vertically and \
                     !waypoint.should_stay_on_min_side and \
-                    still_holding_jump_button:
-                # Quit early if we are trying to go below a wall, but we are still holding the jump
-                # button.
-                return WaypointValidity.TRYING_TO_PASS_UNDER_WALL_WHILE_HOLDING_JUMP
+                    still_ascending:
+                # Quit early if we are trying to go below a wall, but we are still ascending.
+                return WaypointValidity.TRYING_TO_PASS_UNDER_WALL_WHILE_ASCENDING
             else:
                 # We should never hit a floor while still holding the jump button.
                 assert(!(waypoint.surface != null and \
                         waypoint.surface.side == SurfaceSide.FLOOR and \
-                        still_holding_jump_button))
+                        still_ascending))
             
             var duration_to_next := \
                     waypoint.next_waypoint.time_passing_through - time_passing_through

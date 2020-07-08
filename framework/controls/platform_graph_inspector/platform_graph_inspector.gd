@@ -6,8 +6,9 @@ class_name PlatformGraphInspector
 #   - Edges [#]
 #     - JUMP_INTER_SURFACE_EDGEs [#]
 #       - [(x,y), (x,y)]
-#         - EDGE_VALID [1]
+#         - EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT [1]
 #           - 1: Movement is valid.
+#           - ...
 #       - ...
 #     - ...
 #   - Surfaces [#]
@@ -18,8 +19,9 @@ class_name PlatformGraphInspector
 #         - FLOOR [(x,y), (x,y)]
 #           - JUMP_INTER_SURFACE_EDGEs [#]
 #             - [(x,y), (x,y)]
-#               - EDGE_VALID [1]
+#               - EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT [1]
 #                 - 1: Movement is valid.
+#                 - ...
 #             - ...
 #             - Failed edge calculations [#]
 #               - REASON_FOR_FAILING [(x,y), (x,y)]
@@ -175,7 +177,7 @@ func _select_initial_item() -> void:
         var origin_epsilon: float = \
                 debug_origin.epsilon if \
                 debug_origin.has("epsilon") else \
-                0.1
+                10.0
         var origin_surface := _find_matching_surface( \
                 origin_start_vertex, \
                 origin_end_vertex, \
@@ -198,7 +200,7 @@ func _select_initial_item() -> void:
                 var destination_epsilon: float = \
                         debug_destination.epsilon if \
                         debug_destination.has("epsilon") else \
-                        0.1
+                        10.0
                 destination_surface = _find_matching_surface( \
                         destination_start_vertex, \
                         destination_end_vertex, \
@@ -209,16 +211,23 @@ func _select_initial_item() -> void:
                 #       - InspectorItemType.DESTINATION_SURFACE
                 #       - InspectorItemType.EDGE_TYPE_IN_SURFACES_GROUP
                 
-                # Search for the matching edge item.
                 if debug_origin.has("position") and \
                         debug_destination.has("position") and \
                         limit_parsing.has("edge_type"):
+                    # Search for the matching edge item.
                     _select_canonical_edge_or_edge_attempt_item_controller( \
                             origin_surface, \
                             destination_surface, \
                             debug_origin.position, \
                             debug_destination.position, \
                             limit_parsing.edge_type, \
+                            graph)
+                    return
+                elif destination_surface != null:
+                    # Search for the matching origin surface item.
+                    _select_canonical_destination_surface_item_controller( \
+                            origin_surface, \
+                            destination_surface, \
                             graph)
                     return
             
@@ -306,13 +315,30 @@ func select_edge_or_surface( \
                 graph)
 
 func _select_canonical_origin_surface_item_controller( \
-        surface: Surface, \
+        origin_surface: Surface, \
         graph: PlatformGraph) -> void:
     if graph_item_controllers.has(graph.movement_params.name):
+        var metadata := {
+            origin_surface = origin_surface, \
+        }
         _trigger_find_and_expand_controller( \
                 graph.movement_params.name, \
                 InspectorSearchType.ORIGIN_SURFACE, \
-                {surface = surface})
+                metadata)
+
+func _select_canonical_destination_surface_item_controller( \
+        origin_surface: Surface, \
+        destination_surface: Surface, \
+        graph: PlatformGraph) -> void:
+    if graph_item_controllers.has(graph.movement_params.name):
+        var metadata := {
+            origin_surface = origin_surface, \
+            destination_surface = destination_surface, \
+        }
+        _trigger_find_and_expand_controller( \
+                graph.movement_params.name, \
+                InspectorSearchType.DESTINATION_SURFACE, \
+                metadata)
 
 func _select_canonical_edge_or_edge_attempt_item_controller( \
         start_surface: Surface, \
@@ -401,6 +427,8 @@ func _on_find_and_expand_complete( \
                         SelectionDescription.NO_POSITIONS_PASSING_BROAD_PHASE
         InspectorSearchType.ORIGIN_SURFACE:
             assert(controller.type == InspectorItemType.ORIGIN_SURFACE)
+        InspectorSearchType.DESTINATION_SURFACE:
+            assert(controller.type == InspectorItemType.DESTINATION_SURFACE)
         InspectorSearchType.EDGES_GROUP:
             assert(controller.type == InspectorItemType.EDGES_GROUP)
         _:
@@ -408,7 +436,6 @@ func _on_find_and_expand_complete( \
                     InspectorSearchType.get_type_string(search_type))
     
     if selection_failure_message != "":
-        _clear_selection()
         Global.selection_description.set_text(selection_failure_message)
     else:
         Global.selection_description.set_text(controller.get_description())

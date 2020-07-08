@@ -227,7 +227,7 @@ static func should_skip_edge_calculation( \
             var origin_epsilon: float = \
                     debug_origin.epsilon if \
                     debug_origin.has("epsilon") else \
-                    0.1
+                    10.0
             
             # Ignore this if we expect to know the jump surface, but don't.
             if jump_surface != null:
@@ -263,7 +263,7 @@ static func should_skip_edge_calculation( \
             var destination_epsilon: float = \
                     debug_destination.epsilon if \
                     debug_destination.has("epsilon") else \
-                    0.1
+                    10.0
             
             # Ignore this if we expect to know the land surface, but don't.
             if land_surface != null:

@@ -4,17 +4,10 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Debug why selecting origin surface items is so slow.
-# - Debug why config with debug target to destination item selects origin and
-#   not destination surface.
-# - Debug calculate_steps_between_waypoints_with_increasing_jump_height by
-#   limiting calculations to just the one edge.
-# 
-# - Finish calculate_steps_between_waypoints_with_increasing_jump_height:
-#   - Debug the current function. It seems to lose some valid edges that the
-#     other function would yield.
-#   - Conditionally use this approach behind a movement_params flag. This
-#     should improve efficiency and decrease accuracy.
+# - Add an inspector item for only seeing the edges that recursed.
+#   - EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP
+#   - EdgeCalcResultType.EDGE_VALID_WITHOUT_INCREASING_JUMP_HEIGHT
+#   - EdgeCalcResultType.EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT
 # 
 # - Finish logic to consume Waypoint.needs_extra_jump_duration.
 #   - Started, but stopped partway through, with adding this usage in
@@ -96,6 +89,12 @@ class_name Main
 # - Check on current behavior of
 #   EdgeInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
 #   EdgeInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
+# 
+# - Finish calculate_steps_between_waypoints_with_increasing_jump_height:
+#   - Debug the current function. It seems to lose some valid edges that the
+#     other function would yield.
+#   - Conditionally use this approach behind a movement_params flag. This
+#     should improve efficiency and decrease accuracy.
 # 
 # --- EASIER BITS ---
 # 

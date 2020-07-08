@@ -210,8 +210,8 @@ static func find_landing_trajectory_between_positions( \
                     needs_extra_wall_land_horizontal_speed)
     if edge_calc_params == null:
         # Cannot reach destination from origin.
-        assert(edge_result_metadata.edge_calc_result_type != \
-                EdgeCalcResultType.EDGE_VALID)
+        assert(!EdgeCalcResultType.get_is_valid( \
+                edge_result_metadata.edge_calc_result_type))
         Profiler.stop_with_optional_metadata( \
                 ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \
                 collision_params.thread_id, \
@@ -224,8 +224,8 @@ static func find_landing_trajectory_between_positions( \
                     edge_calc_params)
     if vertical_step == null:
         # Cannot reach destination from origin.
-        assert(edge_result_metadata.edge_calc_result_type != \
-                EdgeCalcResultType.EDGE_VALID)
+        assert(!EdgeCalcResultType.get_is_valid( \
+                edge_result_metadata.edge_calc_result_type))
         Profiler.stop_with_optional_metadata( \
                 ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \
                 collision_params.thread_id, \
@@ -261,7 +261,11 @@ static func find_landing_trajectory_between_positions( \
     edge_result_metadata.edge_calc_result_type = \
             EdgeCalcResultType.FAILED_WHEN_CALCULATING_HORIZONTAL_STEPS if \
             calc_result == null else \
-            EdgeCalcResultType.EDGE_VALID
+            (EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP if \
+            calc_result.horizontal_steps.size() == 1 else \
+            (EdgeCalcResultType.EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT if \
+            calc_result.increased_jump_height else \
+            EdgeCalcResultType.EDGE_VALID_WITHOUT_INCREASING_JUMP_HEIGHT))
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \

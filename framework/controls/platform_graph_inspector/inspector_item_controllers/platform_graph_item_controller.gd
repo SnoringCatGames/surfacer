@@ -71,15 +71,16 @@ func _find_and_expand_controller_recursive( \
                     search_type, \
                     metadata)
             
-        InspectorSearchType.ORIGIN_SURFACE:
-            assert(metadata.has("surface"))
-            if graph.surfaces_set.has(metadata.surface):
+        InspectorSearchType.ORIGIN_SURFACE, \
+        InspectorSearchType.DESTINATION_SURFACE:
+            assert(metadata.has("origin_surface"))
+            if graph.surfaces_set.has(metadata.origin_surface):
                 surfaces_item_controller.find_and_expand_controller( \
                         search_type, \
                         metadata)
             else:
                 Utils.error("Invalid Surface: %s" % \
-                        metadata.surface.to_string())
+                        metadata.origin_surface.to_string())
           
         InspectorSearchType.EDGES_GROUP:
             edges_item_controller.select()

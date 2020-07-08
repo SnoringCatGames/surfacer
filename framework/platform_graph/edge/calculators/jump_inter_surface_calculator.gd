@@ -154,8 +154,6 @@ func calculate_edge( \
                     needs_extra_wall_land_horizontal_speed)
     if edge_calc_params == null:
         # Cannot reach destination from origin.
-        assert(edge_result_metadata.edge_calc_result_type != \
-                EdgeCalcResultType.EDGE_VALID)
         Profiler.stop_with_optional_metadata( \
                 ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
                 collision_params.thread_id, \
@@ -231,12 +229,10 @@ func create_edge_from_edge_calc_params( \
             edge_result_metadata)
     if calc_result == null:
         # Unable to calculate a valid edge.
-        assert(edge_result_metadata.edge_calc_result_type != \
-                EdgeCalcResultType.EDGE_VALID)
         return null
     
-    assert(edge_result_metadata.edge_calc_result_type == \
-            EdgeCalcResultType.EDGE_VALID)
+    assert(EdgeCalcResultType.get_is_valid( \
+            edge_result_metadata.edge_calc_result_type))
     
     var instructions := EdgeInstructionsUtils \
             .convert_calculation_steps_to_movement_instructions( \

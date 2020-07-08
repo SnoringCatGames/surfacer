@@ -86,7 +86,7 @@ func calculate_edge( \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
     if edge_result_metadata != null:
         edge_result_metadata.edge_calc_result_type = \
-                EdgeCalcResultType.EDGE_VALID
+                EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP
         edge_result_metadata.waypoint_validity = \
                 WaypointValidity.WAYPOINT_VALID
     return ClimbOverWallToFloorEdge.new( \

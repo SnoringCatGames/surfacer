@@ -117,27 +117,33 @@ func get_has_children() -> bool:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    if search_type == InspectorSearchType.ORIGIN_SURFACE:
-        if metadata.surface == origin_surface:
-            expand()
-            select()
-            return true
-        else:
-            return false
-    else:
-        if metadata.origin_surface == origin_surface:
-            expand()
-            _trigger_find_and_expand_controller_recursive( \
-                    search_type, \
-                    metadata)
-            return true
-        else:
+    match search_type:
+        InspectorSearchType.ORIGIN_SURFACE:
+            if metadata.origin_surface == origin_surface:
+                expand()
+                select()
+                return true
+            else:
+                return false
+        InspectorSearchType.DESTINATION_SURFACE, \
+        InspectorSearchType.EDGE:
+            if metadata.origin_surface == origin_surface:
+                expand()
+                _trigger_find_and_expand_controller_recursive( \
+                        search_type, \
+                        metadata)
+                return true
+            else:
+                return false
+        _:
+            Utils.error()
             return false
 
 func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
-    assert(search_type == InspectorSearchType.EDGE)
+    assert(search_type == InspectorSearchType.EDGE or \
+            search_type == InspectorSearchType.DESTINATION_SURFACE)
     var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
@@ -284,7 +290,7 @@ func _get_jump_fall_range_annotation_elements( \
                         AnnotationElementDefaults \
                                 .DEFAULT_POLYLINE_DASH_LENGTH, \
                         AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP, \
-                        2.0)
+                        4.0)
         elements.push_back(fall_range_without_jump_distance_element)
     
     if includes_jump_range:
@@ -294,11 +300,11 @@ func _get_jump_fall_range_annotation_elements( \
                         AnnotationElementDefaults \
                                 .FALL_RANGE_POLYGON_COLOR_PARAMS, \
                         false, \
-                        true, \
+                        false, \
                         AnnotationElementDefaults \
                                 .DEFAULT_POLYLINE_DASH_LENGTH, \
                         AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP, \
-                        2.0)
+                        1.0)
         elements.push_back(fall_range_with_jump_distance_element)
     
     return elements

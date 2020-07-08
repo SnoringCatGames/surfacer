@@ -56,19 +56,31 @@ func get_description() -> String:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    assert(search_type == InspectorSearchType.EDGE)
-    if metadata.destination_surface == destination_surface:
-        expand()
-        _trigger_find_and_expand_controller_recursive( \
-                search_type, \
-                metadata)
-        return true
-    else:
-        return false
+    match search_type:
+        InspectorSearchType.DESTINATION_SURFACE:
+            if metadata.destination_surface == destination_surface:
+                expand()
+                select()
+                return true
+            else:
+                return false
+        InspectorSearchType.EDGE:
+            if metadata.destination_surface == destination_surface:
+                expand()
+                _trigger_find_and_expand_controller_recursive( \
+                        search_type, \
+                        metadata)
+                return true
+            else:
+                return false
+        _:
+            Utils.error()
+            return false
 
 func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
+    assert(search_type == InspectorSearchType.EDGE)
     var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:

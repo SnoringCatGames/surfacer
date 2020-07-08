@@ -86,6 +86,8 @@ func find_and_expand_controller( \
                     0.01):
         expand()
         select()
+        # TODO: This deferred select call shouldn't be necessary.
+        call_deferred("select")
         return true
     else:
         return false

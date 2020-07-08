@@ -277,12 +277,12 @@ func _get_all_edges_from_one_side( \
                         fall_off_point_velocity_start, \
                         needs_extra_wall_land_horizontal_speed)
         if calc_result != null:
-            assert(edge_result_metadata.edge_calc_result_type == \
-                    EdgeCalcResultType.EDGE_VALID)
+            assert(EdgeCalcResultType.get_is_valid( \
+                    edge_result_metadata.edge_calc_result_type))
             inter_surface_edges_result.edge_calc_results.push_back(calc_result)
         else:
-            assert(edge_result_metadata.edge_calc_result_type != \
-                    EdgeCalcResultType.EDGE_VALID)
+            assert(!EdgeCalcResultType.get_is_valid( \
+                    edge_result_metadata.edge_calc_result_type))
             var failed_attempt := FailedEdgeAttempt.new( \
                     jump_land_positions, \
                     edge_result_metadata, \
