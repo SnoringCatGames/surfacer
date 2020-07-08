@@ -3,13 +3,18 @@ class_name EdgesGroupItemController
 
 const TYPE := InspectorItemType.EDGES_GROUP
 const IS_LEAF := false
-const STARTS_COLLAPSED := true
+const STARTS_COLLAPSED := false
 const PREFIX := "Edges"
+
+# Dictionary<Surface, Dictionary<Surface, Dictionary<int,
+#         Array<InterSurfaceEdgesResult>>>>
+var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 
 func _init( \
         parent_item: TreeItem, \
         tree: Tree, \
-        graph: PlatformGraph) \
+        graph: PlatformGraph, \
+        surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
         .( \
         TYPE, \
         IS_LEAF, \
@@ -17,6 +22,8 @@ func _init( \
         parent_item, \
         tree, \
         graph) -> void:
+    self.surfaces_to_surfaces_to_edge_types_to_edges_results = \
+            surfaces_to_surfaces_to_edge_types_to_edges_results
     _post_init()
 
 func get_text() -> String:
@@ -48,14 +55,18 @@ func find_and_expand_controller( \
     return false
 
 func _create_children_inner() -> void:
-    for edge_type in EdgeType.values():
-        if InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge_type) >= 0:
-            continue
-        EdgeTypeInEdgesGroupItemController.new( \
-                tree_item, \
-                tree, \
-                graph, \
-                edge_type)
+    EdgesWithIncreasingJumpHeightGroupItemController.new( \
+            tree_item, \
+            tree, \
+            graph)
+    EdgesWithoutIncreasingJumpHeightGroupItemController.new( \
+            tree_item, \
+            tree, \
+            graph)
+    EdgesWithOneStepGroupItemController.new( \
+            tree_item, \
+            tree, \
+            graph)
 
 func _destroy_children_inner() -> void:
     # Do nothing.

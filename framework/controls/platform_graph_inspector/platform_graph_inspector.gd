@@ -4,13 +4,18 @@ class_name PlatformGraphInspector
 # INSPECTOR STRUCTURE:
 # - Platform graph [player_name]
 #   - Edges [#]
-#     - JUMP_INTER_SURFACE_EDGEs [#]
-#       - [(x,y), (x,y)]
-#         - EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT [1]
-#           - 1: Movement is valid.
-#           - ...
+#     - [#] Edges calculated with increasing jump height
+#       - JUMP_INTER_SURFACE_EDGEs [#]
+#         - [(x,y), (x,y)]
+#           - EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT [1]
+#             - 1: Movement is valid.
+#             - ...
+#         - ...
 #       - ...
-#     - ...
+#     - [#] Edges calculated without increasing jump height
+#       - ...
+#     - [#] Edges calculated with one step
+#       - ...
 #   - Surfaces [#]
 #     - FLOORs [#]
 #       - [(x,y), (x,y)]

@@ -92,7 +92,8 @@ func calculate_edge( \
             needs_extra_jump_duration, \
             collision_params.movement_params, \
             instructions, \
-            trajectory)
+            trajectory, \
+            calc_result.edge_calc_result_type)
     
     return edge
 

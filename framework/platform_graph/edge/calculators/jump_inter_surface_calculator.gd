@@ -261,6 +261,7 @@ func create_edge_from_edge_calc_params( \
             edge_calc_params.needs_extra_wall_land_horizontal_speed, \
             edge_calc_params.movement_params, \
             instructions, \
-            trajectory)
+            trajectory, \
+            calc_result.edge_calc_result_type)
     
     return edge

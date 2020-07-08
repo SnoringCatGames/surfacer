@@ -28,6 +28,7 @@ func _init( \
         movement_params: MovementParams, \
         instructions: EdgeInstructions, \
         trajectory: EdgeTrajectory, \
+        edge_calc_result_type: int, \
         falls_on_left_side: bool,
         fall_off_position: PositionAlongSurface) \
         .(TYPE, \
@@ -44,7 +45,8 @@ func _init( \
         includes_extra_wall_land_horizontal_speed, \
         movement_params, \
         instructions, \
-        trajectory) -> void:
+        trajectory, \
+        edge_calc_result_type) -> void:
     self.falls_on_left_side = falls_on_left_side
     self.fall_off_position = fall_off_position
 

@@ -348,6 +348,7 @@ func _get_all_edges_from_one_side( \
                     movement_params, \
                     instructions, \
                     trajectory, \
+                    calc_result.edge_calc_result_type, \
                     falls_on_left_side, \
                     position_fall_off_wrapper)
             inter_surface_edges_result.valid_edges.push_back(edge)

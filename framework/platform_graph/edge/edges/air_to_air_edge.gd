@@ -16,7 +16,8 @@ func _init( \
         velocity_end: Vector2, \
         movement_params: MovementParams, \
         instructions: EdgeInstructions, \
-        trajectory: EdgeTrajectory) \
+        trajectory: EdgeTrajectory, \
+        edge_calc_result_type: int) \
         .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
@@ -31,7 +32,8 @@ func _init( \
         false, \
         movement_params, \
         instructions, \
-        trajectory) -> void:
+        trajectory, \
+        edge_calc_result_type) -> void:
     pass
 
 func _calculate_distance( \

@@ -161,7 +161,8 @@ func _create_edge_from_calc_results( \
                     .needs_extra_wall_land_horizontal_speed, \
             calc_result.edge_calc_params.movement_params, \
             instructions, \
-            trajectory)
+            trajectory, \
+            calc_result.edge_calc_result_type)
 
 static func _get_start_velocity( \
         movement_params: MovementParams, \

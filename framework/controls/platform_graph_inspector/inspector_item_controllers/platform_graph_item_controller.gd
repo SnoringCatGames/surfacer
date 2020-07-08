@@ -93,7 +93,8 @@ func _create_children_inner() -> void:
     edges_item_controller = EdgesGroupItemController.new( \
             tree_item, \
             tree, \
-            graph)
+            graph, \
+            surfaces_to_surfaces_to_edge_types_to_edges_results)
     surfaces_item_controller = SurfacesGroupItemController.new( \
             tree_item, \
             tree, \

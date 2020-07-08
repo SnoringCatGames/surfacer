@@ -154,7 +154,8 @@ func find_a_landing_trajectory( \
                     .needs_extra_wall_land_horizontal_speed, \
             collision_params.movement_params, \
             instructions, \
-            trajectory)
+            trajectory, \
+            calc_result.edge_calc_result_type)
 
 class SurfaceMaxYComparator:
     static func sort(a: Surface, b: Surface) -> bool:

@@ -30,6 +30,8 @@ var instructions: EdgeInstructions
 
 var trajectory: EdgeTrajectory
 
+var edge_calc_result_type: int
+
 # In pixels.
 var distance: float
 # In seconds.
@@ -73,7 +75,8 @@ func _init( \
         includes_extra_wall_land_horizontal_speed: bool, \
         movement_params: MovementParams, \
         instructions: EdgeInstructions, \
-        trajectory: EdgeTrajectory) -> void:
+        trajectory: EdgeTrajectory, \
+        edge_calc_result_type: int) -> void:
     self.type = type
     self.is_time_based = is_time_based
     self.surface_type = surface_type
@@ -90,6 +93,7 @@ func _init( \
             includes_extra_wall_land_horizontal_speed
     self.instructions = instructions
     self.trajectory = trajectory
+    self.edge_calc_result_type = edge_calc_result_type
     self.distance = _calculate_distance( \
             start_position_along_surface, \
             end_position_along_surface, \

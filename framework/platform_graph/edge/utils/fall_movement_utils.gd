@@ -266,6 +266,9 @@ static func find_landing_trajectory_between_positions( \
             (EdgeCalcResultType.EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT if \
             calc_result.increased_jump_height else \
             EdgeCalcResultType.EDGE_VALID_WITHOUT_INCREASING_JUMP_HEIGHT))
+    if calc_result != null:
+        calc_result.edge_calc_result_type = \
+                edge_result_metadata.edge_calc_result_type
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \

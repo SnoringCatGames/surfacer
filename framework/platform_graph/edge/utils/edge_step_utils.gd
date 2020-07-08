@@ -50,6 +50,9 @@ static func calculate_steps_with_new_jump_height( \
             (EdgeCalcResultType.EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT if \
             calc_result.increased_jump_height else \
             EdgeCalcResultType.EDGE_VALID_WITHOUT_INCREASING_JUMP_HEIGHT))
+    if calc_result != null:
+        calc_result.edge_calc_result_type = \
+                edge_result_metadata.edge_calc_result_type
     
     return calc_result
 

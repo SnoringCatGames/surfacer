@@ -31,7 +31,8 @@ func _init( \
         false, \
         movement_params, \
         _calculate_instructions(start, end), \
-        null) -> void:
+        null, \
+        EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP) -> void:
     pass
 
 func _calculate_distance( \

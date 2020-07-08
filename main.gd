@@ -4,11 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Add an inspector item for only seeing the edges that recursed.
-#   - EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP
-#   - EdgeCalcResultType.EDGE_VALID_WITHOUT_INCREASING_JUMP_HEIGHT
-#   - EdgeCalcResultType.EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT
-# 
 # - Finish logic to consume Waypoint.needs_extra_jump_duration.
 #   - Started, but stopped partway through, with adding this usage in
 #     _update_waypoint_velocity_and_time.
