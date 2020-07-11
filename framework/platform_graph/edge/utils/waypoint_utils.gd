@@ -5,6 +5,8 @@ class_name WaypointUtils
 # FIXME: D: Tweak this.
 const MIN_MAX_VELOCITY_X_OFFSET := 0.01# FIXME: ------------------------
 
+const FAKE_REPLACEMENT_SEARCH_MAX_ITERATIONS := 6
+
 # FIXME: A: Replace the hard-coded usage of a max-speed ratio with a smarter
 #        x-velocity.
 const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER := \
@@ -218,14 +220,15 @@ static func calculate_waypoints_around_surface( \
             waypoint_a_final = _calculate_replacement_for_fake_waypoint( \
                     waypoint_a_original, \
                     waypoint_offset)
-            update_waypoint( \
-                    waypoint_a_final, \
-                    origin_waypoint, \
-                    movement_params, \
-                    vertical_step.velocity_step_start, \
-                    vertical_step.can_hold_jump_button, \
-                    vertical_step, \
-                    Vector2.INF)
+            if waypoint_a_final != null:
+                update_waypoint( \
+                        waypoint_a_final, \
+                        origin_waypoint, \
+                        movement_params, \
+                        vertical_step.velocity_step_start, \
+                        vertical_step.can_hold_jump_button, \
+                        vertical_step, \
+                        Vector2.INF)
         else:
             waypoint_a_final = waypoint_a_original
     
@@ -252,19 +255,23 @@ static func calculate_waypoints_around_surface( \
             waypoint_b_final = _calculate_replacement_for_fake_waypoint( \
                     waypoint_b_original, \
                     waypoint_offset)
-            update_waypoint( \
-                    waypoint_b_final, \
-                    origin_waypoint, \
-                    movement_params, \
-                    vertical_step.velocity_step_start, \
-                    vertical_step.can_hold_jump_button, \
-                    vertical_step, \
-                    Vector2.INF)
+            if waypoint_b_final != null:
+                update_waypoint( \
+                        waypoint_b_final, \
+                        origin_waypoint, \
+                        movement_params, \
+                        vertical_step.velocity_step_start, \
+                        vertical_step.can_hold_jump_button, \
+                        vertical_step, \
+                        Vector2.INF)
         else:
             waypoint_b_final = waypoint_b_original
     
     var waypoints: Array
-    if !should_skip_a and !should_skip_b:
+    if !should_skip_a and \
+            !should_skip_b and \
+            waypoint_a_final != null and \
+            waypoint_b_final != null:
         # Return the waypoints in sorted order according to which is more
         # likely to produce successful movement.
         if _compare_waypoints_by_more_likely_to_be_valid( \
@@ -277,12 +284,13 @@ static func calculate_waypoints_around_surface( \
             waypoints = [waypoint_a_final, waypoint_b_final]
         else:
             waypoints = [waypoint_b_final, waypoint_a_final]
-    elif !should_skip_a:
+    elif !should_skip_a and waypoint_a_final != null:
         waypoints = [waypoint_a_final]
-    elif !should_skip_b:
+    elif !should_skip_b and waypoint_b_final != null:
         waypoints = [waypoint_b_final]
     else:
-        Utils.error()
+        if should_skip_a and should_skip_b:
+            Utils.error()
         waypoints = []
     
     Profiler.stop_with_optional_metadata( \
@@ -1755,7 +1763,7 @@ static func update_neighbors_for_new_waypoint( \
 static func _calculate_replacement_for_fake_waypoint( \
         fake_waypoint: Waypoint, \
         waypoint_offset: Vector2) -> Waypoint:
-    var neighbor_surface: Surface
+    var replacement_surface: Surface
     var replacement_position := Vector2.INF
     var should_stay_on_min_side: bool
     
@@ -1765,53 +1773,94 @@ static func _calculate_replacement_for_fake_waypoint( \
             
             if fake_waypoint.should_stay_on_min_side:
                 # Replacing top-left corner with bottom-left corner.
+                
                 # In case of a concave neighbor, loop until we find the nearest
                 # convex wall.
-                neighbor_surface = \
+                var neighbor_surface := \
                         fake_waypoint.surface.counter_clockwise_neighbor
-                while neighbor_surface.side != SurfaceSide.RIGHT_WALL:
+                var iterations := 1
+                while iterations < FAKE_REPLACEMENT_SEARCH_MAX_ITERATIONS:
+                    if neighbor_surface.side == SurfaceSide.RIGHT_WALL and \
+                            neighbor_surface \
+                                    .counter_clockwise_convex_neighbor != null:
+                        replacement_surface = neighbor_surface
+                        replacement_position = neighbor_surface.first_point + \
+                                Vector2(-waypoint_offset.x, waypoint_offset.y)
+                        break
+                    
                     neighbor_surface = \
                             neighbor_surface.counter_clockwise_neighbor
-                replacement_position = neighbor_surface.first_point + \
-                        Vector2(-waypoint_offset.x, waypoint_offset.y)
+                    iterations += 1
             else:
                 # Replacing top-right corner with bottom-right corner.
+                
                 # In case of a concave neighbor, loop until we find the nearest
                 # convex wall.
-                neighbor_surface = fake_waypoint.surface.clockwise_neighbor
-                while neighbor_surface.side != SurfaceSide.LEFT_WALL:
+                var neighbor_surface := \
+                        fake_waypoint.surface.clockwise_neighbor
+                var iterations := 1
+                while iterations < FAKE_REPLACEMENT_SEARCH_MAX_ITERATIONS:
+                    if neighbor_surface.side == SurfaceSide.LEFT_WALL and \
+                            neighbor_surface.clockwise_convex_neighbor != null:
+                        replacement_surface = neighbor_surface
+                        replacement_position = neighbor_surface.last_point + \
+                                Vector2(waypoint_offset.x, waypoint_offset.y)
+                        break
+                    
                     neighbor_surface = neighbor_surface.clockwise_neighbor
-                replacement_position = neighbor_surface.last_point + \
-                        Vector2(waypoint_offset.x, waypoint_offset.y)
+                    iterations += 1
         
         SurfaceSide.CEILING:
             should_stay_on_min_side = true
             
             if fake_waypoint.should_stay_on_min_side:
                 # Replacing bottom-left corner with top-left corner.
+                
                 # In case of a concave neighbor, loop until we find the nearest
                 # convex wall.
-                neighbor_surface = fake_waypoint.surface.clockwise_neighbor
-                while neighbor_surface.side != SurfaceSide.RIGHT_WALL:
+                var neighbor_surface := \
+                        fake_waypoint.surface.clockwise_neighbor
+                var iterations := 1
+                while iterations < FAKE_REPLACEMENT_SEARCH_MAX_ITERATIONS:
+                    if neighbor_surface.side == SurfaceSide.RIGHT_WALL and \
+                            neighbor_surface.clockwise_convex_neighbor != null:
+                        replacement_surface = neighbor_surface
+                        replacement_position = neighbor_surface.last_point + \
+                                Vector2(-waypoint_offset.x, -waypoint_offset.y)
+                        break
+                    
                     neighbor_surface = neighbor_surface.clockwise_neighbor
-                replacement_position = neighbor_surface.last_point + \
-                        Vector2(-waypoint_offset.x, -waypoint_offset.y)
+                    iterations += 1
             else:
                 # Replacing bottom-right corner with top-right corner.
+                
                 # In case of a concave neighbor, loop until we find the nearest
                 # convex wall.
-                neighbor_surface = \
+                var neighbor_surface := \
                         fake_waypoint.surface.counter_clockwise_neighbor
-                while neighbor_surface.side != SurfaceSide.LEFT_WALL:
+                var iterations := 1
+                while iterations < FAKE_REPLACEMENT_SEARCH_MAX_ITERATIONS:
+                    if neighbor_surface.side == SurfaceSide.LEFT_WALL and \
+                            neighbor_surface \
+                                    .counter_clockwise_convex_neighbor != null:
+                        replacement_surface = neighbor_surface
+                        replacement_position = neighbor_surface.first_point + \
+                                Vector2(waypoint_offset.x, -waypoint_offset.y)
+                        break
+                    
                     neighbor_surface = \
                             neighbor_surface.counter_clockwise_neighbor
-                replacement_position = neighbor_surface.first_point + \
-                        Vector2(waypoint_offset.x, -waypoint_offset.y)
+                    iterations += 1
+            
         _:
             Utils.error()
     
+    if replacement_surface == null:
+        # We didn't find a replacement.
+        return null
+    
     var replacement := Waypoint.new( \
-            neighbor_surface, \
+            replacement_surface, \
             replacement_position, \
             false, \
             should_stay_on_min_side, \
