@@ -28,6 +28,9 @@ var last_point: Vector2 setget ,_get_last_point
 
 var center: Vector2 setget ,_get_center
 
+var clockwise_neighbor: Surface setget ,_get_clockwise_neighbor
+var counter_clockwise_neighbor: Surface setget ,_get_counter_clockwise_neighbor
+
 func _init( \
         vertices: Array, \
         side: int, \
@@ -55,3 +58,13 @@ func _get_last_point() -> Vector2:
 
 func _get_center() -> Vector2:
     return bounding_box.position + (bounding_box.end - bounding_box.position) / 2.0
+
+func _get_clockwise_neighbor() -> Surface:
+    return clockwise_convex_neighbor if \
+            clockwise_convex_neighbor != null else \
+            clockwise_concave_neighbor
+
+func _get_counter_clockwise_neighbor() -> Surface:
+    return counter_clockwise_convex_neighbor if \
+            counter_clockwise_convex_neighbor != null else \
+            counter_clockwise_concave_neighbor

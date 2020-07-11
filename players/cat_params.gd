@@ -5,6 +5,7 @@ func _init() -> void:
     # FIXME: Go back to using the old cat params and remove the floaty test-player params below.
     
     name = "cat"
+    player_resource_path = "res://players/cat_player.tscn"
     
     can_grab_walls = true
     can_grab_ceilings = false
@@ -57,11 +58,12 @@ func _init() -> void:
     exceptional_jump_instruction_duration_increase = 0.2
     recurses_when_colliding_during_horizontal_step_calculations = true
     backtracks_to_consider_higher_jumps_during_horizontal_step_calculations = true
-    collision_margin_for_edge_edge_calculations = 4.0
+    collision_margin_for_edge_calculations = 4.0
     collision_margin_for_waypoint_positions = 5.0
     skips_less_likely_jump_land_positions = false
     prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets = true
     reuses_previous_waypoints_when_backtracking_on_jump_height = false
+    asserts_no_preexisting_collisions_during_edge_calculations = false
     
     max_horizontal_speed_default = 400.0
     min_horizontal_speed = 5.0

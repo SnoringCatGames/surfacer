@@ -36,8 +36,8 @@ const UTILITY_PANEL_STARTS_OPEN := true
 const STARTING_LEVEL_RESOURCE_PATH := \
         "res://levels/level_6.tscn"
 
-const PLAYER_RESOURCE_PATH := "res://players/cat_player.tscn"
-#const PLAYER_RESOURCE_PATH := "res://players/data/test_player.tscn"
+const DEFAULT_PLAYER_NAME := "cat"
+#const DEFAULT_PLAYER_NAME := "test"
 
 var THREAD_COUNT := \
         4 if \
@@ -64,7 +64,7 @@ const DEBUG_PARAMS := \
 #        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
 #        edge_type = EdgeType.FALL_FROM_FLOOR_EDGE,
-        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
+#        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
 #        edge_type = EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
 #        
@@ -79,6 +79,21 @@ const DEBUG_PARAMS := \
 #                surface_side = SurfaceSide.FLOOR,
 #                surface_start_vertex = Vector2(-64, 64),
 #                position = Vector2(64, 64),
+#                epsilon = 10,
+#            },
+#        },
+#        
+#        edge = {
+#            origin = {
+#                surface_side = SurfaceSide.FLOOR,
+#                surface_start_vertex = Vector2(-448, 256),
+#                position = Vector2(-448, 256),
+#                epsilon = 10,
+#            },
+#            destination = {
+#                surface_side = SurfaceSide.FLOOR,
+#                surface_start_vertex = Vector2(-640, -128),
+#                position = Vector2(-640, -128),
 #                epsilon = 10,
 #            },
 #        },

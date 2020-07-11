@@ -101,7 +101,6 @@ var level: Level
 var player: TestPlayer
 var platform_graph: PlatformGraph
 var surface_parser: SurfaceParser
-var space_state: Physics2DDirectSpaceState
 var start_surface: Surface
 var end_surface: Surface
 
@@ -122,9 +121,16 @@ func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
     set_up_level(data)
     
     # FIXME: ----------------
-#    var position := Vector2(160.0, 0.0) if data.scene_resource_path.find("test_") >= 0 \
-#            else Vector2.ZERO
-#    level.add_player(Config.PLAYER_RESOURCE_PATH, false, position)
+#    var position := \
+#            Vector2(160.0, 0.0) if \
+#            data.scene_resource_path.find("test_") >= 0 else \
+#            Vector2.ZERO
+#    level.add_player( \
+#            Global.player_params[Config.DEFAULT_PLAYER_NAME] \
+#                    .player_resource_path, \
+#            position, \
+#            false, \
+#            false)
 
 func destroy() -> void:
     # FIXME: This shouldn't be possible. Why does Gut trigger this sometimes?
@@ -148,7 +154,6 @@ func destroy() -> void:
     platform_graph = null
     player = null
     surface_parser = null
-    space_state = null
     start_surface = null
     end_surface = null
 
@@ -161,7 +166,6 @@ func set_up_level(data: Dictionary) -> void:
     platform_graph = player.graph
     movement_params = player.movement_params
     surface_parser = level.surface_parser
-    space_state = level.get_world_2d().direct_space_state
     
     for edge_calculator in player.edge_calculators:
         if edge_calculator is ClimbDownWallToFloorCalculator:

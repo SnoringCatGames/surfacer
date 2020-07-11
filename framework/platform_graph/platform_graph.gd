@@ -15,7 +15,6 @@ var collision_params: CollisionCalcParams
 var player_params: PlayerParams
 var movement_params: MovementParams
 var surface_parser: SurfaceParser
-var space_state: Physics2DDirectSpaceState
 
 # Dictionary<Surface, Surface>
 var surfaces_set := {}

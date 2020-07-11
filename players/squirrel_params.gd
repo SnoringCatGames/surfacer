@@ -3,6 +3,7 @@ class_name SquirrelParams
 
 func _init() -> void:
     name = "squirrel"
+    player_resource_path = "res://players/squirrel_player.tscn"
     
     can_grab_walls = true
     can_grab_ceilings = false

@@ -21,6 +21,12 @@ var last_selection_target := Vector2.INF
 var last_selection_position: PositionAlongSurface
 var preselection_target := Vector2.INF
 var preselection_position: PositionAlongSurface
+
+var is_fake := false
+var is_initialized := false
+var is_navigator_initialized := false
+var is_ready := false
+
 var graph: PlatformGraph
 var surface_parser: SurfaceParser
 var navigator: Navigator
@@ -48,10 +54,10 @@ var _dash_fade_tween: Tween
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
-
-func _enter_tree() -> void:
-    var player_params: PlayerParams = Global.player_params[player_name]
+    
     self.level = Global.current_level
+    
+    var player_params: PlayerParams = Global.player_params[player_name]
     self.can_grab_walls = player_params.movement_params.can_grab_walls
     self.can_grab_ceilings = player_params.movement_params.can_grab_ceilings
     self.can_grab_floors = player_params.movement_params.can_grab_floors
@@ -60,10 +66,22 @@ func _enter_tree() -> void:
             player_params.movement_params.max_horizontal_speed_default
     self.edge_calculators = player_params.edge_calculators
     self.action_handlers = player_params.action_handlers
+
+func _enter_tree() -> void:
+    if is_fake:
+        # Fake players are only used for testing potential collisions under the
+        # hood.
+        return
+    
     self.pointer_handler = PlayerPointerHandler.new(self)
     add_child(pointer_handler)
 
 func _ready() -> void:
+    if is_fake:
+        # Fake players are only used for testing potential collisions under the
+        # hood.
+        return
+    
     # TODO: Somehow consolidate how collider shapes are defined?
     
     var shape_owners := get_shape_owners()
@@ -113,11 +131,16 @@ func _ready() -> void:
     # Start facing the right.
     surface_state.horizontal_facing_sign = 1
     animator.face_right()
+    
+    is_ready = true
+    _check_for_initialization_complete()
 
 func init_human_player_state() -> void:
     # Only a single, user-controlled player should have a camera.
     _set_camera()
     _init_user_controller_action_source()
+    is_navigator_initialized = true
+    _check_for_initialization_complete()
 
 func init_computer_player_state() -> void:
     _init_navigator()
@@ -125,11 +148,20 @@ func init_computer_player_state() -> void:
     _init_user_controller_action_source()
     # FIXME: E: Remove after debugging CP movement.
     _set_camera()
+    is_navigator_initialized = true
+    _check_for_initialization_complete()
 
 func set_platform_graph(graph: PlatformGraph) -> void:
     self.graph = graph
     self.surface_parser = graph.surface_parser
     self.possible_surfaces_set = graph.surfaces_set
+    _check_for_initialization_complete()
+
+func _check_for_initialization_complete() -> void:
+    self.is_initialized = \
+            graph != null and \
+            is_navigator_initialized and \
+            is_ready
 
 func _set_camera() -> void:
     var camera := Camera2D.new()
@@ -147,6 +179,14 @@ func _init_navigator() -> void:
     action_sources.push_back(navigator.instructions_action_source)
 
 func _physics_process(delta_sec: float) -> void:
+    if is_fake:
+        # Fake players are only used for testing potential collisions under the
+        # hood.
+        return
+    
+    if !is_initialized:
+        return
+    
     assert(Geometry.are_floats_equal_with_epsilon( \
             delta_sec, \
             Time.PHYSICS_TIME_STEP_SEC))
@@ -342,7 +382,7 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     surface_state.is_touching_ceiling = is_on_ceiling()
     surface_state.is_touching_wall = is_on_wall()
     
-    surface_state.which_wall = Utils.get_which_wall_collided(self)
+    surface_state.which_wall = Utils.get_which_wall_collided_for_body(self)
     surface_state.is_touching_left_wall = \
             surface_state.which_wall == SurfaceSide.LEFT_WALL
     surface_state.is_touching_right_wall = \
@@ -559,7 +599,10 @@ func _update_which_surface_is_grabbed( \
                             surface_state.grab_position_tile_map_coord, \
                             surface_state.grabbed_tile_map)
         
-        var next_grabbed_surface := calculate_grabbed_surface()
+        var next_grabbed_surface := surface_parser.get_surface_for_tile( \
+                surface_state.grabbed_tile_map, \
+                surface_state.grabbed_tile_map_index, \
+                surface_state.grabbed_side)
         surface_state.just_changed_surface = \
                 (preserves_just_changed_state and \
                         surface_state.just_changed_surface) or \
@@ -598,13 +641,6 @@ func _update_which_surface_is_grabbed( \
 func _update_collision_mask() -> void:
     set_collision_mask_bit(1, !surface_state.is_falling_through_floors)
     set_collision_mask_bit(2, surface_state.is_grabbing_walk_through_walls)
-
-# Finds the Surface the corresponds to the current PlayerSurfaceState.
-func calculate_grabbed_surface() -> Surface:
-    return surface_parser.get_surface_for_tile( \
-            surface_state.grabbed_tile_map, \
-            surface_state.grabbed_tile_map_index, \
-            surface_state.grabbed_side)
 
 static func _get_attached_surface_collision( \
         body: KinematicBody2D, \

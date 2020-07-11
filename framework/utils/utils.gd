@@ -60,15 +60,27 @@ static func get_children_by_type( \
             result.push_back(child)
     return result
 
-static func get_which_wall_collided(body: KinematicBody2D) -> int:
+static func get_which_wall_collided_for_body(body: KinematicBody2D) -> int:
     if body.is_on_wall():
         for i in range(body.get_slide_count()):
             var collision := body.get_slide_collision(i)
-            if collision.normal.x > 0:
-                return SurfaceSide.LEFT_WALL
-            elif collision.normal.x < 0:
-                return SurfaceSide.RIGHT_WALL
+            var side := get_which_surface_side_collided(collision)
+            if side == SurfaceSide.LEFT_WALL or side == SurfaceSide.RIGHT_WALL:
+                return side
     return SurfaceSide.NONE
+
+static func get_which_surface_side_collided( \
+        collision: KinematicCollision2D) -> int:
+    if abs(collision.normal.angle_to(Geometry.UP)) <= \
+            Geometry.FLOOR_MAX_ANGLE:
+        return SurfaceSide.FLOOR
+    elif abs(collision.normal.angle_to(Geometry.DOWN)) <= \
+            Geometry.FLOOR_MAX_ANGLE:
+        return SurfaceSide.CEILING
+    elif collision.normal.x > 0:
+        return SurfaceSide.LEFT_WALL
+    else:
+        return SurfaceSide.RIGHT_WALL
 
 static func get_floor_friction_multiplier(body: KinematicBody2D) -> float:
     var collision := _get_floor_collision(body)
@@ -90,11 +102,13 @@ static func _get_floor_collision( \
 static func add_scene( \
         parent: Node, \
         resource_path: String, \
+        is_attached := true, \
         is_visible := true) -> Node:
     var scene := load(resource_path)
     var node: Node = scene.instance()
     node.visible = is_visible
-    parent.add_child(node)
+    if is_attached:
+        parent.add_child(node)
     return node
 
 static func get_global_touch_position(input_event: InputEvent) -> Vector2:    

@@ -35,7 +35,8 @@ func _init( \
         self.collision_x_stroke_width = \
                 AnnotationElementDefaults.COLLISION_X_STROKE_WIDTH_FAINT
         self.collision_player_boundary_stroke_width = \
-                AnnotationElementDefaults.COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_FAINT
+                AnnotationElementDefaults \
+                        .COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_FAINT
     else:
         self.opacity = \
                 AnnotationElementDefaults.STEP_OPACITY_STRONG
@@ -48,7 +49,8 @@ func _init( \
         self.collision_x_stroke_width = \
                 AnnotationElementDefaults.COLLISION_X_STROKE_WIDTH_STRONG
         self.collision_player_boundary_stroke_width = \
-                AnnotationElementDefaults.COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_STRONG
+                AnnotationElementDefaults \
+                        .COLLISION_PLAYER_BOUNDARY_STROKE_WIDTH_STRONG
     
     self.color = _calculate_color(renders_faintly)
     
@@ -56,7 +58,8 @@ func _init( \
 
 func _calculate_color(renders_faintly: bool) -> Color:
     # Hue transitions evenly from start to end.
-    var total_step_count := step_result_metadata.edge_result_metadata.total_step_count
+    var total_step_count := \
+            step_result_metadata.edge_result_metadata.total_step_count
     var step_ratio := \
             (step_result_metadata.index / (total_step_count - 1.0)) if \
             total_step_count > 1 else \
@@ -78,7 +81,8 @@ func _create_labels() -> void:
     
     previous_out_of_reach_waypoint_label = Label.new()
     previous_out_of_reach_waypoint_label.rect_scale = \
-            AnnotationElementDefaults.PREVIOUS_OUT_OF_REACH_WAYPOINT_LABEL_SCALE
+            AnnotationElementDefaults \
+                    .PREVIOUS_OUT_OF_REACH_WAYPOINT_LABEL_SCALE
 
 func draw(canvas: CanvasItem) -> void:
     _attach_labels(canvas)
@@ -128,7 +132,8 @@ func _draw_step_end_points(canvas: CanvasItem) -> void:
             4.0)
 
 func _draw_collision(canvas: CanvasItem) -> void:
-    var collision_result_metadata := step_result_metadata.collision_result_metadata
+    var collision_result_metadata := \
+            step_result_metadata.collision_result_metadata
     
     # Draw any collision.
     if collision_result_metadata != null and \
@@ -151,7 +156,8 @@ func _draw_collision(canvas: CanvasItem) -> void:
                     collision.surface, \
                     collision_color)
         
-        # Draw an outline of the player's collision boundary at the point of collision.
+        # Draw an outline of the player's collision boundary at the point of
+        # collision.
         DrawUtils.draw_shape_outline( \
                 canvas, \
                 collision.player_position, \
@@ -162,7 +168,8 @@ func _draw_collision(canvas: CanvasItem) -> void:
         # Draw a dot at the center of the player's collision boundary.
         canvas.draw_circle( \
                 collision.player_position, \
-                AnnotationElementDefaults.COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS, \
+                AnnotationElementDefaults \
+                        .COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS, \
                 collision_color)
         
         if !renders_faintly:
@@ -174,15 +181,18 @@ func _draw_collision(canvas: CanvasItem) -> void:
                             upcoming_waypoint.position, \
                             AnnotationElementDefaults.VALID_WAYPOINT_WIDTH, \
                             color, \
-                            AnnotationElementDefaults.VALID_WAYPOINT_STROKE_WIDTH)
+                            AnnotationElementDefaults \
+                                    .VALID_WAYPOINT_STROKE_WIDTH)
                 else:
                     DrawUtils.draw_x( \
                             canvas, \
                             upcoming_waypoint.position, \
                             AnnotationElementDefaults.INVALID_WAYPOINT_WIDTH, \
-                            AnnotationElementDefaults.INVALID_WAYPOINT_HEIGHT, \
+                            AnnotationElementDefaults \
+                                    .INVALID_WAYPOINT_HEIGHT, \
                             color, \
-                            AnnotationElementDefaults.INVALID_WAYPOINT_STROKE_WIDTH)
+                            AnnotationElementDefaults \
+                                    .INVALID_WAYPOINT_STROKE_WIDTH)
             
             # Draw the bounding boxes at frame start, end, and previous.
             _draw_bounding_box_and_margin( \
@@ -198,30 +208,39 @@ func _draw_collision(canvas: CanvasItem) -> void:
                     collision_result_metadata.frame_previous_position, \
                     AnnotationElementDefaults.COLLISION_FRAME_PREVIOUS_COLOR)
             
-            # Draw the intersection points that were calculated by Godot's collision engine.
-            for intersection_point in collision_result_metadata.intersection_points:
+            # Draw the intersection points that were calculated by Godot's
+            # collision engine.
+            for intersection_point in \
+                    collision_result_metadata.intersection_points:
                 canvas.draw_circle( \
                         intersection_point, \
-                        AnnotationElementDefaults.COLLISION_INTERSECTION_POINT_RADIUS, \
-                        AnnotationElementDefaults.COLLISION_INTERSECTION_POINT_COLOR)
+                        AnnotationElementDefaults \
+                                .COLLISION_INTERSECTION_POINT_RADIUS, \
+                        AnnotationElementDefaults \
+                                .COLLISION_INTERSECTION_POINT_COLOR)
             
             # Check whether there was a pre-existing collision.
             if collision_result_metadata.collision_ratios.size() > 0:
-                # Draw the bounding boxes at the moment of collision and the moment just before collision.
+                # Draw the bounding boxes at the moment of collision and the
+                # moment just before collision.
                 _draw_bounding_box_and_margin( \
                         canvas, \
-                        collision_result_metadata.get_position_at_collision_ratio_index(0), \
+                        collision_result_metadata \
+                                .get_position_at_collision_ratio_index(0), \
                         AnnotationElementDefaults.COLLISION_AT_COLLISION_COLOR)
                 _draw_bounding_box_and_margin( \
                         canvas, \
-                        collision_result_metadata.get_position_at_collision_ratio_index(1), \
-                        AnnotationElementDefaults.COLLISION_JUST_BEFORE_COLLISION_COLOR)
+                        collision_result_metadata \
+                                .get_position_at_collision_ratio_index(1), \
+                        AnnotationElementDefaults \
+                                .COLLISION_JUST_BEFORE_COLLISION_COLOR)
 
 func _draw_bounding_box_and_margin( \
         canvas: CanvasItem, \
         center: Vector2, \
         color: Color) -> void:
-    var collision_result_metadata := step_result_metadata.collision_result_metadata
+    var collision_result_metadata := \
+            step_result_metadata.collision_result_metadata
     DrawUtils.draw_rectangle_outline( \
             canvas, \
             center, 
@@ -244,7 +263,8 @@ func _draw_bounding_box_and_margin( \
             false)
 
 func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
-    # For new backtracking steps, draw and label the waypoint that was used as the basis for a
+    # For new backtracking steps, draw and label the waypoint that was used as
+    # the basis for a
     # higher jump.
     if step_result_metadata.get_is_backtracking() and \
             !renders_faintly:
@@ -252,16 +272,21 @@ func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
         DrawUtils.draw_diamond_outline( \
                 canvas, \
                 step_result_metadata.previous_out_of_reach_waypoint.position, \
-                AnnotationElementDefaults.PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT, \
-                AnnotationElementDefaults.PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT, \
+                AnnotationElementDefaults \
+                        .PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT, \
+                AnnotationElementDefaults \
+                        .PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT, \
                 color, \
                 1.0)
         
         # Label the waypoint.
         previous_out_of_reach_waypoint_label.rect_position = \
-                step_result_metadata.previous_out_of_reach_waypoint.position + \
+                step_result_metadata.previous_out_of_reach_waypoint \
+                        .position + \
                 AnnotationElementDefaults.LABEL_OFFSET
-        previous_out_of_reach_waypoint_label.add_color_override("font_color", color)
+        previous_out_of_reach_waypoint_label.add_color_override( \
+                "font_color", \
+                color)
         previous_out_of_reach_waypoint_label.text = \
                 "The previously out-of-reach waypoint that was the basis\n" + \
                 "for increasing the jump height for backtracking."
@@ -303,7 +328,8 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
     var end := step_result_metadata.get_end().position
     var middle: Vector2 = start.linear_interpolate(end, 0.5)
     
-    # Render a dotted straight line with a bigger x in the middle for invalid steps.
+    # Render a dotted straight line with a bigger x in the middle for invalid
+    # steps.
     DrawUtils.draw_dashed_line( \
             canvas, \
             start, \

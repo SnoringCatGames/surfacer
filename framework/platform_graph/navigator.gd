@@ -8,8 +8,6 @@ const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
 var player
 var graph: PlatformGraph
 var surface_state: PlayerSurfaceState
-var movement_params: MovementParams
-var collision_params: CollisionCalcParams
 var instructions_action_source: InstructionsActionSource
 var air_to_surface_calculator: AirToSurfaceCalculator
 
@@ -31,12 +29,6 @@ func _init( \
     self.player = player
     self.graph = graph
     self.surface_state = player.surface_state
-    self.movement_params = player.movement_params
-    self.collision_params = CollisionCalcParams.new( \
-            Config.DEBUG_PARAMS, \
-            Global.space_state, \
-            movement_params, \
-            graph.surface_parser)
     self.instructions_action_source = \
             InstructionsActionSource.new(player, true)
     self.air_to_surface_calculator = AirToSurfaceCalculator.new()
@@ -61,12 +53,12 @@ func navigate_to_position(destination: PositionAlongSurface) -> bool:
         # Destination can be reached from origin.
         
         _interleave_intra_surface_edges( \
-                collision_params, \
+                graph.collision_params, \
                 path)
         
         Profiler.start(ProfilerMetric.NAVIGATOR_OPTIMIZE_EDGES_FOR_APPROACH)
         _optimize_edges_for_approach( \
-                collision_params, \
+                graph.collision_params, \
                 path, \
                 player.velocity)
         var duration_optimize_edges_for_approach := Profiler.stop( \
@@ -119,7 +111,7 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
         var air_to_surface_edge := \
                 air_to_surface_calculator.find_a_landing_trajectory( \
                         null, \
-                        collision_params, \
+                        graph.collision_params, \
                         graph.surfaces_set, \
                         origin, \
                         player.velocity, \
@@ -138,9 +130,9 @@ func _set_reached_destination() -> void:
     # FIXME: Assert that we are close enough to the destination position.
 #    assert()
     
-    if movement_params.forces_player_position_to_match_path_at_end:
+    if player.movement_params.forces_player_position_to_match_path_at_end:
         player.position = current_edge.end
-    if movement_params.forces_player_velocity_to_zero_at_path_end and \
+    if player.movement_params.forces_player_velocity_to_zero_at_path_end and \
             current_edge.end_surface != null:
         match current_edge.end_surface.side:
             SurfaceSide.FLOOR, SurfaceSide.CEILING:
@@ -176,9 +168,9 @@ func _start_edge(index: int) -> void:
     current_edge_index = index
     current_edge = current_path.edges[index]
     
-    if movement_params.forces_player_position_to_match_edge_at_start:
+    if player.movement_params.forces_player_position_to_match_edge_at_start:
         player.position = current_edge.start
-    if movement_params.forces_player_velocity_to_match_edge_at_start:
+    if player.movement_params.forces_player_velocity_to_match_edge_at_start:
         player.velocity = current_edge.velocity_start
         surface_state.horizontal_acceleration_sign = 0
     
@@ -269,7 +261,7 @@ func update(just_started_new_edge = false) -> void:
         if was_last_edge:
             var backtracking_edge := \
                     _possibly_backtrack_to_not_protrude_past_surface_end( \
-                            movement_params, \
+                            player.movement_params, \
                             current_edge, \
                             player.position, \
                             player.velocity)

@@ -3,6 +3,7 @@ class_name TestPlayerParams
 
 func _init() -> void:
     name = "test"
+    player_resource_path = "res://test/data/test_player.tscn"
     
     can_grab_walls = true
     can_grab_ceilings = false

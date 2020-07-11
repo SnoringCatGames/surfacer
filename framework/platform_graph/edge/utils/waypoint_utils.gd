@@ -1765,12 +1765,22 @@ static func _calculate_replacement_for_fake_waypoint( \
             
             if fake_waypoint.should_stay_on_min_side:
                 # Replacing top-left corner with bottom-left corner.
-                neighbor_surface = fake_waypoint.surface.counter_clockwise_convex_neighbor
+                # In case of a concave neighbor, loop until we find the nearest
+                # convex wall.
+                neighbor_surface = \
+                        fake_waypoint.surface.counter_clockwise_neighbor
+                while neighbor_surface.side != SurfaceSide.RIGHT_WALL:
+                    neighbor_surface = \
+                            neighbor_surface.counter_clockwise_neighbor
                 replacement_position = neighbor_surface.first_point + \
                         Vector2(-waypoint_offset.x, waypoint_offset.y)
             else:
                 # Replacing top-right corner with bottom-right corner.
-                neighbor_surface = fake_waypoint.surface.clockwise_convex_neighbor
+                # In case of a concave neighbor, loop until we find the nearest
+                # convex wall.
+                neighbor_surface = fake_waypoint.surface.clockwise_neighbor
+                while neighbor_surface.side != SurfaceSide.LEFT_WALL:
+                    neighbor_surface = neighbor_surface.clockwise_neighbor
                 replacement_position = neighbor_surface.last_point + \
                         Vector2(waypoint_offset.x, waypoint_offset.y)
         
@@ -1779,12 +1789,22 @@ static func _calculate_replacement_for_fake_waypoint( \
             
             if fake_waypoint.should_stay_on_min_side:
                 # Replacing bottom-left corner with top-left corner.
-                neighbor_surface = fake_waypoint.surface.clockwise_convex_neighbor
+                # In case of a concave neighbor, loop until we find the nearest
+                # convex wall.
+                neighbor_surface = fake_waypoint.surface.clockwise_neighbor
+                while neighbor_surface.side != SurfaceSide.RIGHT_WALL:
+                    neighbor_surface = neighbor_surface.clockwise_neighbor
                 replacement_position = neighbor_surface.last_point + \
                         Vector2(-waypoint_offset.x, -waypoint_offset.y)
             else:
                 # Replacing bottom-right corner with top-right corner.
-                neighbor_surface = fake_waypoint.surface.counter_clockwise_convex_neighbor
+                # In case of a concave neighbor, loop until we find the nearest
+                # convex wall.
+                neighbor_surface = \
+                        fake_waypoint.surface.counter_clockwise_neighbor
+                while neighbor_surface.side != SurfaceSide.LEFT_WALL:
+                    neighbor_surface = \
+                            neighbor_surface.counter_clockwise_neighbor
                 replacement_position = neighbor_surface.first_point + \
                         Vector2(waypoint_offset.x, -waypoint_offset.y)
         _:

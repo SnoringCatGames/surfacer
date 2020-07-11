@@ -7,8 +7,6 @@ const EDGE_MOVEMENTS := {}
 # Dictionary<String, PlayerParams>
 var player_params := {}
 
-var space_state: Physics2DDirectSpaceState
-
 var canvas_layers: CanvasLayers
 var current_level: Level
 var current_player_for_clicks: Player

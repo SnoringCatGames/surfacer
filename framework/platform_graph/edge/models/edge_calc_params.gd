@@ -8,11 +8,6 @@ var collision_params: CollisionCalcParams
 
 var movement_params: MovementParams
 
-var surface_parser: SurfaceParser
-
-# The Godot collision-detection APIs use this state.
-var space_state: Physics2DDirectSpaceState
-
 # The Godot collision-detection APIs use this data structure.
 var shape_query_params: Physics2DShapeQueryParameters
 
@@ -60,8 +55,6 @@ func _init( \
         can_backtrack_on_height: bool) -> void:
     self.collision_params = collision_params
     self.movement_params = collision_params.movement_params
-    self.space_state = collision_params.space_state
-    self.surface_parser = collision_params.surface_parser
     self.origin_position = origin_position
     self.destination_position = destination_position
     self.origin_waypoint = origin_waypoint
@@ -82,7 +75,7 @@ func _init( \
     shape_query_params.collision_layer = TILE_MAP_COLLISION_LAYER
     shape_query_params.exclude = []
     shape_query_params.margin = \
-            movement_params.collision_margin_for_edge_edge_calculations
+            movement_params.collision_margin_for_edge_calculations
     shape_query_params.motion = Vector2.ZERO
     shape_query_params.shape_rid = movement_params.collider_shape.get_rid()
     shape_query_params.transform = Transform2D( \

@@ -5,6 +5,8 @@ class_name MovementParams
 
 var name: String
 
+var player_resource_path: String
+
 # Array<String>
 var edge_calculator_names: Array
 # Array<String>
@@ -90,7 +92,7 @@ var backtracks_to_consider_higher_jumps_during_horizontal_step_calculations := t
 # FIXME: Check and adjust these.
 # The amount of extra margin to include around the player collision boundary when performing
 # collision detection for a given edge calculation.
-var collision_margin_for_edge_edge_calculations := 4.0#2.0
+var collision_margin_for_edge_calculations := 4.0#2.0
 # The amount of extra margin to include for waypoint offsets, so that the player doesn't collide
 # unexpectedly with the surface.
 var collision_margin_for_waypoint_positions := 5.0#2.5
@@ -109,6 +111,7 @@ var prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offset
 # height. Otherwise, intermediate waypoints are recalculated, which can be more
 # expensive, but could produce slightly more accurate results.
 var reuses_previous_waypoints_when_backtracking_on_jump_height := true
+var asserts_no_preexisting_collisions_during_edge_calculations := true
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

@@ -4,30 +4,46 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Finish logic to consume Waypoint.needs_extra_jump_duration.
-#   - Started, but stopped partway through, with adding this usage in
-#     _update_waypoint_velocity_and_time.
+# - Debug the edges that are still showing false-positives for jump-positions
+#   with concave neighbors.
 # 
-# --- Debug ---
+# - In follow-up commits: 
+#   - Delete frame_collision_check_utils_old.gd.
+#   - Remove all usages of Physics2DShapeQueryParameters.
+#   - Cleanup how collision_result_metadata is both written and read.
+#   - Finish adding/polishing inspector step calculation
+#     items/descriptions/annotations/legends.
+#   - Add an additional movement_params flag to include additional jump/land
+#     position start velocity of 0 for all cases (or rather, the flag should
+#     indicate whether it skips 0 values that are likely redundant).
 # 
-# - Things to debug:
-#   - Jumping from floor of lower-small-block to floor of upper-small-black.
-#     - Collision detection isn't correctly detecting the collision with the
-#       right-side of the upper block.
-#   - Jumping from floor of lower-small-block to far right-wall of
-#     upper-small-black.
-#   - Jumping from left-wall of upper-small-block to right-wall of
-#     upper-small-block.
+# - Update initial load to happen on a separate thread, so that main and
+#   loading_screen are not locked.
+#   - Update level loading to use ResourceLoader interactive mode?
 # 
-# >>- Fix how things work when minimizes_velocity_change_when_jumping is true.
+# - Offset jump/land positions to account for convex neighbors.
+#   - Document an assumption/constraint that levels shouldn't have surfaces
+#     facing eachother that are closer than the width of the player (and a
+#     margin of a handful of extra pixels).
+# 
+# - Move Profiler item out from under edge_calc_result_metadata item and up to
+#   be a sibling of it instead?
+# 
+# - Update label-based text that's rendered through annotators to not use scale
+#   and to instead use fonts of different size.
+# 
+# - Should we somehow consolidate collision logic between
+#   FrameCollisionCheckUtils and Player?
+# 
+# - Fix how things work when minimizes_velocity_change_when_jumping is true.
 #   - [no] Find and move all movement-offset constants to one central location?
 #     - EdgeInstructionsUtils
 #     - WaypointUtils
 #     - FrameCollisionCheckUtils
 #     - EdgeCalcParams
-#   >>>- Compare where instructions are pressed/released vs when I expect them.
+#   >>- Compare where instructions are pressed/released vs when I expect them.
 #   - Step through movement along an edge?
-#   >>- Should this be when I implement the logic to force the player's
+#   >- Should this be when I implement the logic to force the player's
 #     position to match the expected edge positions (with a weighted avg)?
 # 
 # - Debug edges.
@@ -84,6 +100,10 @@ class_name Main
 # - Check on current behavior of
 #   EdgeInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
 #   EdgeInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
+# 
+# - Finish logic to consume Waypoint.needs_extra_jump_duration.
+#   - Started, but stopped partway through, with adding this usage in
+#     _update_waypoint_velocity_and_time.
 # 
 # - Finish calculate_steps_between_waypoints_with_increasing_jump_height:
 #   - Debug the current function. It seems to lose some valid edges that the
@@ -865,7 +885,7 @@ var loading_screen: Node
 var camera_controller: CameraController
 var canvas_layers: CanvasLayers
 var level: Level
-var is_level_ready := false
+var is_loading_screen_shown := true
 
 func _enter_tree() -> void:
     Global.register_player_actions(PLAYER_ACTION_CLASSES)
@@ -906,11 +926,13 @@ func _process(delta_sec: float) -> void:
         level = Utils.add_scene( \
                 self, \
                 Config.STARTING_LEVEL_RESOURCE_PATH, \
+                true, \
                 false)
     
-    elif !is_level_ready and \
+    elif is_loading_screen_shown and \
+            Global.is_level_ready and \
             Time.elapsed_play_time_sec > 0.5:
-        is_level_ready = true
+        is_loading_screen_shown = false
         level.visible = true
         
         # Hide the loading screen.
@@ -926,9 +948,11 @@ func _process(delta_sec: float) -> void:
                 Config.STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 else \
                 Vector2.ZERO
         level.add_player( \
-                Config.PLAYER_RESOURCE_PATH, \
+                Global.player_params[Config.DEFAULT_PLAYER_NAME] \
+                        .movement_params.player_resource_path, \
+                position, \
                 false, \
-                position)
+                false)
         
         if OS.get_name() == "HTML5":
             JavaScript.eval("window.onLevelReady()")

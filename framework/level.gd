@@ -17,9 +17,6 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
     var scene_tree := get_tree()
-    var space_state := get_world_2d().direct_space_state
-    
-    Global.space_state = space_state
     
     # Get references to the TileMaps that define the collision boundaries of
     # this level.
@@ -31,7 +28,6 @@ func _ready() -> void:
     surface_parser = SurfaceParser.new(surface_tile_maps)
     platform_graphs = _create_platform_graphs( \
             surface_parser, \
-            space_state, \
             Global.player_params, \
             Config.DEBUG_PARAMS)
     Global.platform_graph_inspector.set_graphs(platform_graphs.values())
@@ -45,13 +41,13 @@ func _unhandled_input(event: InputEvent) -> void:
         # inspector.
         Global.platform_graph_inspector.release_focus()
 
-static func _create_platform_graphs( \
+func _create_platform_graphs( \
         surface_parser: SurfaceParser, \
-        space_state: Physics2DDirectSpaceState, \
         all_player_params: Dictionary, \
         debug_params: Dictionary) -> Dictionary:
     var graphs = {}
     var player_params: PlayerParams
+    var fake_player: KinematicBody2D
     var collision_params: CollisionCalcParams
     for player_name in all_player_params:
         #######################################################################
@@ -61,11 +57,18 @@ static func _create_platform_graphs( \
             continue
         #######################################################################
         player_params = all_player_params[player_name]
+        fake_player = add_player( \
+                player_params.movement_params.player_resource_path, \
+                Vector2.ZERO, \
+                false, \
+                true)
+        fake_player.set_safe_margin(player_params.movement_params \
+                .collision_margin_for_edge_calculations)
         collision_params = CollisionCalcParams.new( \
                 debug_params, \
-                space_state, \
                 player_params.movement_params, \
-                surface_parser)
+                surface_parser, \
+                fake_player)
         graphs[player_name] = PlatformGraph.new( \
                 player_params, \
                 collision_params)
@@ -73,21 +76,26 @@ static func _create_platform_graphs( \
 
 func add_player( \
         resource_path: String, \
+        position: Vector2, \
         is_human_player: bool, \
-        position: Vector2) -> Player:
+        is_fake := false) -> Player:
     var player: Player = Utils.add_scene( \
             self, \
-            resource_path)
-    
+            resource_path, \
+            !is_fake, \
+            !is_fake)
+    player.is_fake = is_fake
     player.position = position
+    add_child(player)
     
-    var group := \
-            Utils.GROUP_NAME_HUMAN_PLAYERS if \
-            is_human_player else \
-            Utils.GROUP_NAME_COMPUTER_PLAYERS
-    player.add_to_group(group)
-    
-    _record_player_reference(is_human_player)
+    if !is_fake:
+        var group := \
+                Utils.GROUP_NAME_HUMAN_PLAYERS if \
+                is_human_player else \
+                Utils.GROUP_NAME_COMPUTER_PLAYERS
+        player.add_to_group(group)
+        
+        _record_player_reference(is_human_player)
     
     return player
 
@@ -122,4 +130,3 @@ func _record_player_reference(is_human_player: bool) -> void:
         Global.canvas_layers.create_player_annotator( \
                 player, \
                 is_human_player)
-        
