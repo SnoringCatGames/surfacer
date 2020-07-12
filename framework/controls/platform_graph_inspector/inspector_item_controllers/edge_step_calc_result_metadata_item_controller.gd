@@ -40,22 +40,51 @@ func get_text() -> String:
     return _get_text_for_description_index(0)
 
 func get_description() -> String:
-    # FIXME: -------------
-    return ""
+    var description := ""
+    
+    var description_list := step_result_metadata.get_description_list()
+    for i in range(description_list.size()):
+        description += \
+                description_list[i].replace("\n                ", " ") + " "
+    
+    if step_result_metadata.get_is_backtracking():
+        description += \
+                "This step is the start of a backtracking sequence, to " + \
+                "consider a higher jump height."
+    
+    if step_result_metadata.get_replaced_a_fake():
+        description += \
+                "Replaced a \"fake\" intermediate constraint (a fake " + \
+                "constraint is a point along an end of a surface which " + \
+                "wouldn't actually be efficient to move through, since " + \
+                "movement should instead travel more directly through the " + \
+                "following constraint). "
+    
+    return description
 
 func _get_text_for_description_index(description_index: int) -> String:
-    return "%s: %s%s%s" % [ \
-            step_result_metadata.index + 1, \
-            "[BT] " if \
-                    step_result_metadata.get_is_backtracking() and \
-                            description_index == 0 else \
-                    "", \
-            "[RF] " if \
-                    step_result_metadata.get_replaced_a_fake() and \
-                            description_index == 0 else \
-                    "", \
-            step_result_metadata.get_description_list()[description_index], \
-        ]
+    match description_index:
+        0:
+            return "%s: %s%s%s" % [ \
+                    step_result_metadata.index + 1, \
+                    "[BT] " if \
+                            step_result_metadata.get_is_backtracking() else \
+                            "", \
+                    "[RF] " if \
+                            step_result_metadata.get_replaced_a_fake() else \
+                            "", \
+                    step_result_metadata.get_description_list()[0] \
+                            .replace("\n                ", " "), \
+                ]
+        1:
+            return "(%s: %s)" % [ \
+                    step_result_metadata.index + 1, \
+                    step_result_metadata.get_description_list()[1] \
+                            .replace("\n                ", " "), \
+                ]
+        _:
+            Utils.error()
+            return ""
 
 func find_and_expand_controller( \
         search_type: int, \
@@ -85,8 +114,7 @@ func _create_children_inner() -> void:
                 tree, \
                 graph, \
                 _get_text_for_description_index(1), \
-                # FIXME: ------------------ Use a better description.
-                _get_text_for_description_index(1), \
+                get_description(), \
                 funcref(self, "get_annotation_elements"))
 
 func _destroy_children_inner() -> void:

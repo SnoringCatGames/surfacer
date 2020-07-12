@@ -4,8 +4,14 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
+# - Update backtracking step metadata to get saved as children of their parent
+#   step items rather than the edge?
+# - Move Profiler item out from under edge_calc_result_metadata item and up to
+#   be a sibling of it instead?
+#   - Or at least render then in the inspector tree that way...
 # - Finish adding/polishing inspector step calculation
 #   items/descriptions/annotations/legends.
+# 
 # - Add an additional movement_params flag to include additional jump/land
 #   position start velocity of 0 for all cases (or rather, the flag should
 #   indicate whether it skips 0 values that are likely redundant).
@@ -18,12 +24,6 @@ class_name Main
 # - Update initial load to happen on a separate thread, so that main and
 #   loading_screen are not locked.
 #   - Update level loading to use ResourceLoader interactive mode?
-# 
-# - Move Profiler item out from under edge_calc_result_metadata item and up to
-#   be a sibling of it instead?
-# 
-# - Update label-based text that's rendered through annotators to not use scale
-#   and to instead use fonts of different size.
 # 
 # - Should we somehow consolidate collision logic between
 #   FrameCollisionCheckUtils and Player?

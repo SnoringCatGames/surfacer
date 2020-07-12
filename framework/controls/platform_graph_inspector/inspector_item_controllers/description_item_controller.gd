@@ -1,8 +1,6 @@
 extends InspectorItemController
 class_name DescriptionItemController
 
-var BACKGROUND_COLOR := Color.from_hsv(0.28, 0.05, 0.2, 1.0)
-
 const TYPE := InspectorItemType.DESCRIPTION
 const IS_LEAF := true
 const STARTS_COLLAPSED := true
@@ -33,7 +31,8 @@ func _init( \
     self.get_annotation_elements_arg = get_annotation_elements_arg
     self.tree_item.set_custom_bg_color( \
             0, \
-            BACKGROUND_COLOR)
+            AnnotationElementDefaults \
+                    .INSPECTOR_DESCRIPTION_ITEM_BACKGROUND_COLOR)
     _post_init()
 
 func to_string() -> String:

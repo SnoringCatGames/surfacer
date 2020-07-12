@@ -1,5 +1,11 @@
 extends Node
 
+### Miscellaneous
+
+var PANEL_BACKGROUND_COLOR := Color.from_hsv(0.278, 0.17, 0.07, 1.0)
+var INSPECTOR_DESCRIPTION_ITEM_BACKGROUND_COLOR := \
+        Color.from_hsv(0.278, 0.1, 0.1, 1.0)
+
 ### Surface
 
 const SURFACE_HUE_MIN := 0.0
@@ -244,8 +250,6 @@ var COLLISION_AT_COLLISION_COLOR := Color.from_hsv( \
         0.9, \
         0.5)
 
-const STEP_LABEL_SCALE := Vector2(2.0, 2.0)
-const PREVIOUS_OUT_OF_REACH_WAYPOINT_LABEL_SCALE := Vector2(1.4, 1.4)
 const LABEL_OFFSET := Vector2(15.0, -10.0)
 
 ### JumpLandPositions

@@ -1,6 +1,8 @@
 extends Node2D
 class_name GridIndicesAnnotator
 
+const MAIN_FONT_XS: Font = preload("res://assets/fonts/main_font_xs.tres")
+
 var TILE_INDICES_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_FAINT)
 
 var graph: PlatformGraph
@@ -19,9 +21,6 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
     var cell_position_text: String
     var tile_map_index: int
     var color := TILE_INDICES_COLOR
-    
-    var label := Label.new()
-    var font := label.get_font("")
     
     for tile_map in graph.surface_parser._tile_map_index_to_surface_maps:
         half_cell_size = tile_map.cell_size * 0.5
@@ -47,7 +46,7 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
             cell_center = cell_top_left_corner + half_cell_size
             tile_map_index = Geometry.get_tile_map_index_from_grid_coord(position, tile_map)
             draw_string( \
-                    font, \
+                    MAIN_FONT_XS, \
                     cell_center, \
                     str(tile_map_index), \
                     color)
@@ -55,5 +54,3 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
                     cell_center, \
                     1.0, \
                     color)
-    
-    label.free()

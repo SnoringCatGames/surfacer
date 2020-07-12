@@ -1,6 +1,8 @@
 extends AnnotationElement
 class_name EdgeStepAnnotationElement
 
+const MAIN_FONT_NORMAL: Font = preload("res://assets/fonts/main_font_normal.tres")
+
 const TYPE := AnnotationElementType.EDGE_STEP
 
 var step_result_metadata: EdgeStepCalcResultMetadata
@@ -77,12 +79,11 @@ func _calculate_color(renders_faintly: bool) -> Color:
 
 func _create_labels() -> void:
     step_label = Label.new()
-    step_label.rect_scale = AnnotationElementDefaults.STEP_LABEL_SCALE
+    step_label.add_font_override("font", MAIN_FONT_NORMAL)
     
     previous_out_of_reach_waypoint_label = Label.new()
-    previous_out_of_reach_waypoint_label.rect_scale = \
-            AnnotationElementDefaults \
-                    .PREVIOUS_OUT_OF_REACH_WAYPOINT_LABEL_SCALE
+    previous_out_of_reach_waypoint_label \
+            .add_font_override("font", MAIN_FONT_NORMAL)
 
 func draw(canvas: CanvasItem) -> void:
     _attach_labels(canvas)

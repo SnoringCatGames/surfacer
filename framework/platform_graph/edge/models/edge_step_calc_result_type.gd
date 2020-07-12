@@ -58,12 +58,16 @@ static func to_description_list(result: int) -> Array:
         RECURSION_VALID:
             return [ \
                 "Hit an intermediate surface.",
-                "Valid movement was found when recursing.", \
+                "Valid movement was found when recursing to consider " + \
+                        "separate" + \
+                "\n                movement to/from an intermediate " + \
+                        "waypoint.", \
             ]
         BACKTRACKING_VALID:
             return [ \
                 "Hit an intermediate surface.",
-                "Valid movement was found when backtracking.", \
+                "Valid movement was found when backtracking to consider " + \
+                "\n                a new max jump height.", \
             ]
         BACKTRACKING_INVALID:
             return [ \

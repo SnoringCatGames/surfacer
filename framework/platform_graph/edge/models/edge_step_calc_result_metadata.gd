@@ -1,5 +1,5 @@
-# Metadata that captures internal calculation information for a single edge horizontal step in
-# order to help with debugging.
+# Metadata that captures internal calculation information for a single edge
+# horizontal step in order to help with debugging.
 extends Reference
 class_name EdgeStepCalcResultMetadata
 
@@ -50,7 +50,8 @@ func get_result_type_string() -> String:
     return EdgeStepCalcResultType.get_type_string(edge_step_calc_result_type)
 
 func get_description_list() -> Array:
-    return EdgeStepCalcResultType.to_description_list(edge_step_calc_result_type)
+    return EdgeStepCalcResultType.to_description_list( \
+            edge_step_calc_result_type)
 
 func get_is_backtracking() -> bool:
     return previous_out_of_reach_waypoint != null

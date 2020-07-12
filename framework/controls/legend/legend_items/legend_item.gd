@@ -1,7 +1,7 @@
 extends Control
 class_name LegendItem
 
-const main_font_small: Font = preload("res://assets/main_font_xs.tres")
+const MAIN_FONT_XS: Font = preload("res://assets/fonts/main_font_xs.tres")
 
 const HEIGHT := 32.0
 const MARGIN_VERTICAL := 1.0
@@ -34,7 +34,7 @@ func _enter_tree() -> void:
     label.rect_size.y = SHAPE_REGION_HEIGHT
     label.valign = Label.VALIGN_CENTER
     label.max_lines_visible = 2
-    label.add_font_override("font", main_font_small)
+    label.add_font_override("font", MAIN_FONT_XS)
     label.text = text
     add_child(label)
 

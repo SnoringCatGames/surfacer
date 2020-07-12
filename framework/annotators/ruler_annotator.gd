@@ -1,6 +1,8 @@
 extends Node2D
 class_name RulerAnnotator
 
+const MAIN_FONT_XS: Font = preload("res://assets/fonts/main_font_xs.tres")
+
 const GRID_SPACING := 64.0
 
 const LINE_WIDTH := 1.0
@@ -45,9 +47,6 @@ func _draw() -> void:
     var vertical_line_count := floor(ruler_size.x / grid_spacing) as int + 1
     var horizontal_line_count := floor(ruler_size.y / grid_spacing) as int + 1
     
-    var label := Label.new()
-    var font := label.get_font("")
-    
     var start_x: float
     var start_y: float
     var start_position: Vector2
@@ -70,7 +69,7 @@ func _draw() -> void:
                 Global.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string( \
-                font, \
+                MAIN_FONT_XS, \
                 Vector2(start_position.x + 2, 14), \
                 text, \
                 TEXT_COLOR)
@@ -91,12 +90,10 @@ func _draw() -> void:
                 Global.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string( \
-                font, \
+                MAIN_FONT_XS, \
                 Vector2(2, start_position.y + 14), \
                 text, \
                 TEXT_COLOR)
-    
-    label.free()
 
 func _on_viewport_size_changed() -> void:
     viewport_size = viewport.get_visible_rect().size
