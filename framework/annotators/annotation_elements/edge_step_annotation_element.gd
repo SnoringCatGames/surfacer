@@ -207,33 +207,6 @@ func _draw_collision(canvas: CanvasItem) -> void:
                     canvas, \
                     collision_result_metadata.frame_previous_position, \
                     AnnotationElementDefaults.COLLISION_FRAME_PREVIOUS_COLOR)
-            
-            # Draw the intersection points that were calculated by Godot's
-            # collision engine.
-            for intersection_point in \
-                    collision_result_metadata.intersection_points:
-                canvas.draw_circle( \
-                        intersection_point, \
-                        AnnotationElementDefaults \
-                                .COLLISION_INTERSECTION_POINT_RADIUS, \
-                        AnnotationElementDefaults \
-                                .COLLISION_INTERSECTION_POINT_COLOR)
-            
-            # Check whether there was a pre-existing collision.
-            if collision_result_metadata.collision_ratios.size() > 0:
-                # Draw the bounding boxes at the moment of collision and the
-                # moment just before collision.
-                _draw_bounding_box_and_margin( \
-                        canvas, \
-                        collision_result_metadata \
-                                .get_position_at_collision_ratio_index(0), \
-                        AnnotationElementDefaults.COLLISION_AT_COLLISION_COLOR)
-                _draw_bounding_box_and_margin( \
-                        canvas, \
-                        collision_result_metadata \
-                                .get_position_at_collision_ratio_index(1), \
-                        AnnotationElementDefaults \
-                                .COLLISION_JUST_BEFORE_COLLISION_COLOR)
 
 func _draw_bounding_box_and_margin( \
         canvas: CanvasItem, \

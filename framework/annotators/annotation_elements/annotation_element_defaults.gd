@@ -208,7 +208,6 @@ const COLLISION_BOUNDING_BOX_STROKE_WIDTH := 1.0
 const COLLISION_MARGIN_STROKE_WIDTH := 1.0
 const COLLISION_MARGIN_DASH_LENGTH := 6.0
 const COLLISION_MARGIN_DASH_GAP := 10.0
-const COLLISION_INTERSECTION_POINT_RADIUS := 2.0
 var COLLISION_COLOR_FAINT := Color.from_hsv( \
         COLLISION_HUE, \
         STEP_SATURATION, \
@@ -234,11 +233,6 @@ var COLLISION_FRAME_PREVIOUS_COLOR := Color.from_hsv( \
         0.7, \
         0.9, \
         0.2)
-var COLLISION_INTERSECTION_POINT_COLOR := Color.from_hsv( \
-        0.8, \
-        0.8, \
-        0.9, \
-        0.7)
 var COLLISION_JUST_BEFORE_COLLISION_COLOR := Color.from_hsv( \
         COLLISION_HUE, \
         0.5, \

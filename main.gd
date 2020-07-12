@@ -4,25 +4,20 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Debug the edges that are still showing false-positives for jump-positions
-#   with concave neighbors.
-# 
-# - In follow-up commits:
-#   - Cleanup how collision_result_metadata is both written and read.
-#   - Finish adding/polishing inspector step calculation
-#     items/descriptions/annotations/legends.
-#   - Add an additional movement_params flag to include additional jump/land
-#     position start velocity of 0 for all cases (or rather, the flag should
-#     indicate whether it skips 0 values that are likely redundant).
-# 
-# - Update initial load to happen on a separate thread, so that main and
-#   loading_screen are not locked.
-#   - Update level loading to use ResourceLoader interactive mode?
+# - Finish adding/polishing inspector step calculation
+#   items/descriptions/annotations/legends.
+# - Add an additional movement_params flag to include additional jump/land
+#   position start velocity of 0 for all cases (or rather, the flag should
+#   indicate whether it skips 0 values that are likely redundant).
 # 
 # - Offset jump/land positions to account for convex neighbors.
 #   - Document an assumption/constraint that levels shouldn't have surfaces
 #     facing eachother that are closer than the width of the player (and a
 #     margin of a handful of extra pixels).
+# 
+# - Update initial load to happen on a separate thread, so that main and
+#   loading_screen are not locked.
+#   - Update level loading to use ResourceLoader interactive mode?
 # 
 # - Move Profiler item out from under edge_calc_result_metadata item and up to
 #   be a sibling of it instead?
@@ -288,38 +283,6 @@ class_name Main
 #   - Also, maybe still not quite far enough with the offset?
 # 
 # - Implement fall-through/walk-through movement-type utils.
-# 
-# - Cleanup frame_collison_check_utils:
-#   - Clean-up/break-apart/simplify current logic.
-#   - Maybe add some old ideas for extra improvements to
-#     check_frame_for_collision:
-#     - [maybe?] Rather than just using closest_intersection_point, sort all
-#       intersection_points, and try each of them in sequence when the first
-#       one fails	
-#     - [easy to add, might be nice for future] If that also fails, use a
-#       completely separate new cheap-and-dirty check-for-collision-in-frame
-#       method?	
-#       - Check if intersection_points is not-empty.
-#       - Sort them by closest in direction of motion (and ignoring behind
-#         points).
-#       - Iterate through points, trying to get tile index by a slight nudge
-#         offset from each
-#         intersection point in the direction of motion until one sticks.
-#       - Choose surface side just from dominant motion component.
-#     - Add a field on the collision class for the type of collision check
-#       used.
-#     - Add another field (or another option for the above field) to indicate
-#       that none of the collision checks worked, and this collision is in an
-#       error state.
-#     - Use this error state to abort collision/step/edge calculations (rather
-#       than the current approach of returning null, which is the same as with
-#       not detecting any collisions at all).
-#     - It might be worth adding a check before ray-tracing to check whether
-#       the starting point is_far_enough_from_other_jump_land_positionslies
-#       within a populated tile in the tilemap, and then trying the other
-#       perpendicular offset direction if so. However, this would require
-#       configuring a single global tile map that we expect collisions from,
-#       and plumbing that tile map through to here.
 # 
 # - Look into themes, and what default/global theme state I should set up.
 # - Look into what sort of anti-aliasing and scaling to do with GUI vs level vs

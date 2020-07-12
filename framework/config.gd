@@ -64,7 +64,7 @@ const DEBUG_PARAMS := \
 #        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
 #        edge_type = EdgeType.FALL_FROM_FLOOR_EDGE,
-        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
+#        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
 #        edge_type = EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
 #        
@@ -83,20 +83,20 @@ const DEBUG_PARAMS := \
 #            },
 #        },
 #        
-        edge = {
-            origin = {
-                surface_side = SurfaceSide.LEFT_WALL,
-                surface_start_vertex = Vector2(-960, -640),
-                position = Vector2(-960, -448),
-                epsilon = 10,
-            },
-            destination = {
-                surface_side = SurfaceSide.FLOOR,
-                surface_start_vertex = Vector2(-640, -128),
-                position = Vector2(-640, -128),
-                epsilon = 10,
-            },
-        },
+#        edge = {
+#            origin = {
+#                surface_side = SurfaceSide.LEFT_WALL,
+#                surface_start_vertex = Vector2(-960, -640),
+#                position = Vector2(-960, -448),
+#                epsilon = 10,
+#            },
+#            destination = {
+#                surface_side = SurfaceSide.FLOOR,
+#                surface_start_vertex = Vector2(-640, -128),
+#                position = Vector2(-640, -128),
+#                epsilon = 10,
+#            },
+#        },
     },
     extra_annotations = {},
 }

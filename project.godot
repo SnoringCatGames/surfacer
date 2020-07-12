@@ -459,11 +459,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/surfaces_group/floors_item_controller.gd"
 }, {
-"base": "Reference",
-"class": "FrameCollisionCheckUtils",
-"language": "GDScript",
-"path": "res://framework/platform_graph/edge/utils/frame_collision_check_utils.gd"
-}, {
 "base": "InspectorItemController",
 "class": "GlobalCountsGroupItemController",
 "language": "GDScript",
@@ -1100,7 +1095,6 @@ _global_script_class_icons={
 "FloorJumpAction": "",
 "FloorWalkAction": "",
 "FloorsItemController": "",
-"FrameCollisionCheckUtils": "",
 "GlobalCountsGroupItemController": "",
 "GridIndicesAnnotator": "",
 "HorizontalMovementUtils": "",
