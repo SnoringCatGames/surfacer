@@ -636,6 +636,9 @@ static func get_collision_tile_map_coord( \
                         tile_coord = bottom_right_cell_coord
                         surface_side = SurfaceSide.FLOOR
                     elif is_there_a_tile_at_top_left:
+                        # Assume Godot's collision engine determined the
+                        # opposite collision normal for floor/ceiling.
+                        is_godot_floor_ceiling_detection_correct = false
                         tile_coord = top_left_cell_coord
                         surface_side = SurfaceSide.LEFT_WALL
                     elif is_there_a_tile_at_top_right:
@@ -662,6 +665,9 @@ static func get_collision_tile_map_coord( \
                         tile_coord = bottom_left_cell_coord
                         surface_side = SurfaceSide.FLOOR
                     elif is_there_a_tile_at_top_right:
+                        # Assume Godot's collision engine determined the
+                        # opposite collision normal for floor/ceiling.
+                        is_godot_floor_ceiling_detection_correct = false
                         tile_coord = top_right_cell_coord
                         surface_side = SurfaceSide.RIGHT_WALL
                     elif is_there_a_tile_at_top_left:
@@ -713,6 +719,9 @@ static func get_collision_tile_map_coord( \
                         tile_coord = top_right_cell_coord
                         surface_side = SurfaceSide.CEILING
                     elif is_there_a_tile_at_bottom_left:
+                        # Assume Godot's collision engine determined the
+                        # opposite collision normal for floor/ceiling.
+                        is_godot_floor_ceiling_detection_correct = false
                         tile_coord = bottom_left_cell_coord
                         surface_side = SurfaceSide.LEFT_WALL
                     elif is_there_a_tile_at_bottom_right:
@@ -739,6 +748,9 @@ static func get_collision_tile_map_coord( \
                         tile_coord = top_left_cell_coord
                         surface_side = SurfaceSide.CEILING
                     elif is_there_a_tile_at_bottom_right:
+                        # Assume Godot's collision engine determined the
+                        # opposite collision normal for floor/ceiling.
+                        is_godot_floor_ceiling_detection_correct = false
                         tile_coord = bottom_right_cell_coord
                         surface_side = SurfaceSide.RIGHT_WALL
                     elif is_there_a_tile_at_bottom_left:
@@ -918,6 +930,7 @@ static func get_collision_tile_map_coord( \
                     "when the player is sliding along a corner."
         var print_message := """%s: 
             %s; 
+            is_godot_floor_ceiling_detection_correct=%s 
             position_world_coord=%s 
             is_touching_floor=%s 
             is_touching_ceiling=%s 
@@ -940,6 +953,7 @@ static func get_collision_tile_map_coord( \
             """ % [ \
                 first_statement, \
                 second_statement, \
+                is_godot_floor_ceiling_detection_correct, \
                 position_world_coord, \
                 is_touching_floor, \
                 is_touching_ceiling, \

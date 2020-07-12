@@ -602,6 +602,16 @@ func _update_which_surface_is_grabbed( \
                     surface_state.just_grabbed_floor = false
                     surface_state.grabbed_side = SurfaceSide.CEILING
                     surface_state.grabbed_surface_normal = Geometry.DOWN
+                SurfaceSide.LEFT_WALL, \
+                SurfaceSide.RIGHT_WALL:
+                    surface_state.is_touching_ceiling = \
+                            !surface_state.is_touching_ceiling
+                    surface_state.is_touching_floor = \
+                            !surface_state.is_touching_floor
+                    surface_state.is_grabbing_ceiling = false
+                    surface_state.is_grabbing_floor = false
+                    surface_state.just_grabbed_floor = false
+                    surface_state.just_grabbed_ceiling = false
                 _:
                     Utils.error()
         surface_state.just_changed_tile_map_coord = \

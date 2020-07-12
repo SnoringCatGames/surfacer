@@ -7,7 +7,7 @@ class_name Main
 # - Debug the edges that are still showing false-positives for jump-positions
 #   with concave neighbors.
 # 
-# - In follow-up commits: 
+# - In follow-up commits:
 #   - Cleanup how collision_result_metadata is both written and read.
 #   - Finish adding/polishing inspector step calculation
 #     items/descriptions/annotations/legends.
@@ -34,6 +34,9 @@ class_name Main
 #   FrameCollisionCheckUtils and Player?
 # 
 # - Add a flag for syncs_player_position_to_edge_trajectory?
+# 
+# - Fix occasional bug where phantom preselection indicator is still shown
+#   after clicking.
 # 
 # - Fix how things work when minimizes_velocity_change_when_jumping is true.
 #   - [no] Find and move all movement-offset constants to one central location?
