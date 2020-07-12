@@ -130,6 +130,11 @@ _global_script_classes=[ {
 "path": "res://framework/platform_graph/edge/utils/collision_check_utils.gd"
 }, {
 "base": "Reference",
+"class": "CollisionTileMapCoordResult",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/models/collision_tile_map_coord_result.gd"
+}, {
+"base": "Reference",
 "class": "ColorParams",
 "language": "GDScript",
 "path": "res://framework/annotators/color_params/color_params.gd"
@@ -1029,6 +1034,7 @@ _global_script_class_icons={
 "CollisionCalcParams": "",
 "CollisionCalcResultMetadata": "",
 "CollisionCheckUtils": "",
+"CollisionTileMapCoordResult": "",
 "ColorParams": "",
 "ColorParamsFactory": "",
 "ColorParamsType": "",
@@ -1234,7 +1240,7 @@ window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "gut" )
+enabled=PoolStringArray(  )
 
 [input]
 

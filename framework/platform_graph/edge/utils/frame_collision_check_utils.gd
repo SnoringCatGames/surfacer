@@ -45,17 +45,21 @@ static func check_frame_for_collision( \
     var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
     var is_touching_right_wall := surface_side == SurfaceSide.RIGHT_WALL
     var tile_map: TileMap = kinematic_collision.collider
-    var tile_map_coord: Vector2 = Geometry.get_collision_tile_map_coord( \
+    var tile_map_result := CollisionTileMapCoordResult.new()
+    Geometry.get_collision_tile_map_coord( \
+            tile_map_result, \
             kinematic_collision.position, \
             tile_map, \
             is_touching_floor, \
             is_touching_ceiling, \
             is_touching_left_wall, \
-            is_touching_right_wall, \
-            true, \
-            Vector2.INF)
+            is_touching_right_wall)
+    if !tile_map_result.is_godot_floor_ceiling_detection_correct:
+        is_touching_floor = !is_touching_floor
+        is_touching_ceiling = !is_touching_ceiling
+        surface_side = tile_map_result.surface_side
     
-    if tile_map_coord == Vector2.INF:
+    if tile_map_result.tile_map_coord == Vector2.INF:
         # Invalid collision state.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
@@ -64,7 +68,7 @@ static func check_frame_for_collision( \
         return null
     
     var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord( \
-            tile_map_coord, \
+            tile_map_result.tile_map_coord, \
             tile_map)
     if !collision_params.surface_parser.has_surface_for_tile( \
             tile_map, \

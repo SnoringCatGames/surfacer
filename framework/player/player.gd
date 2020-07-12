@@ -573,16 +573,37 @@ func _update_which_surface_is_grabbed( \
                                 surface_state.grabbed_tile_map)
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
-        var next_grab_position_tile_map_coord: Vector2 = \
-                Geometry.get_collision_tile_map_coord( \
-                        surface_state.grab_position, \
-                        surface_state.grabbed_tile_map, \
-                        surface_state.is_touching_floor, \
-                        surface_state.is_touching_ceiling, \
-                        surface_state.is_touching_left_wall, \
-                        surface_state.is_touching_right_wall, \
-                        true, \
-                        surface_state.grab_position_tile_map_coord)
+        Geometry.get_collision_tile_map_coord( \
+                surface_state.collision_tile_map_coord_result, \
+                surface_state.grab_position, \
+                surface_state.grabbed_tile_map, \
+                surface_state.is_touching_floor, \
+                surface_state.is_touching_ceiling, \
+                surface_state.is_touching_left_wall, \
+                surface_state.is_touching_right_wall)
+        var next_grab_position_tile_map_coord := \
+                surface_state.collision_tile_map_coord_result.tile_map_coord
+        if !surface_state.collision_tile_map_coord_result \
+                .is_godot_floor_ceiling_detection_correct:
+            match surface_state.collision_tile_map_coord_result.surface_side:
+                SurfaceSide.FLOOR:
+                    surface_state.is_touching_floor = true
+                    surface_state.is_grabbing_floor = true
+                    surface_state.is_touching_ceiling = false
+                    surface_state.is_grabbing_ceiling = false
+                    surface_state.just_grabbed_ceiling = false
+                    surface_state.grabbed_side = SurfaceSide.FLOOR
+                    surface_state.grabbed_surface_normal = Geometry.UP
+                SurfaceSide.CEILING:
+                    surface_state.is_touching_ceiling = true
+                    surface_state.is_grabbing_ceiling = true
+                    surface_state.is_touching_floor = false
+                    surface_state.is_grabbing_floor = false
+                    surface_state.just_grabbed_floor = false
+                    surface_state.grabbed_side = SurfaceSide.CEILING
+                    surface_state.grabbed_surface_normal = Geometry.DOWN
+                _:
+                    Utils.error()
         surface_state.just_changed_tile_map_coord = \
                 (preserves_just_changed_state and \
                         surface_state.just_changed_tile_map_coord) or \

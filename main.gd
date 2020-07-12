@@ -35,6 +35,8 @@ class_name Main
 # - Should we somehow consolidate collision logic between
 #   FrameCollisionCheckUtils and Player?
 # 
+# - Add a flag for syncs_player_position_to_edge_trajectory?
+# 
 # - Fix how things work when minimizes_velocity_change_when_jumping is true.
 #   - [no] Find and move all movement-offset constants to one central location?
 #     - EdgeInstructionsUtils

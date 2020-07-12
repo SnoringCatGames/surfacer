@@ -39,6 +39,7 @@ var center_position := Vector2.INF
 var previous_center_position := Vector2.INF
 var collision_count: int
 var grab_position := Vector2.INF
+var collision_tile_map_coord_result := CollisionTileMapCoordResult.new()
 var grab_position_tile_map_coord := Vector2.INF
 var grabbed_tile_map: TileMap
 var grabbed_tile_map_index: int

@@ -7,6 +7,10 @@ const RIGHT := Vector2.RIGHT
 const FLOOR_MAX_ANGLE := PI / 4.0
 const GRAVITY := 5000.0
 const FLOAT_EPSILON := 0.00001
+# TODO: We might want to instead replace this with a ratio (like 1.1) of the
+#       KinematicBody2D.get_safe_margin value (defaults to 0.08, but we set it
+#       higher during graph calculations).
+const COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD := 0.5
 
 # Calculates the minimum squared distance between a line segment and a point.
 static func get_distance_squared_from_point_to_segment( \
@@ -541,14 +545,13 @@ static func get_tile_map_index_from_grid_coord( \
     return (tile_map_position.y * tile_map_width + tile_map_position.x) as int
 
 static func get_collision_tile_map_coord( \
+        result: CollisionTileMapCoordResult, \
         position_world_coord: Vector2, \
         tile_map: TileMap, \
         is_touching_floor: bool, \
         is_touching_ceiling: bool, \
         is_touching_left_wall: bool, \
-        is_touching_right_wall: bool, \
-        expects_a_valid_result: bool, \
-        fallback_coord := Vector2.INF) -> Vector2:
+        is_touching_right_wall: bool) -> void:
     var half_cell_size = tile_map.cell_size / 2.0
     var used_rect = tile_map.get_used_rect()
     var position_relative_to_tile_map = \
@@ -561,17 +564,31 @@ static func get_collision_tile_map_coord( \
             position_relative_to_tile_map.y, \
             tile_map.cell_size.y))
     
-    var is_between_cells_horizontally = cell_width_mod < 0.001 or \
-            tile_map.cell_size.x - cell_width_mod < 0.001
-    var is_between_cells_vertically = cell_height_mod < 0.001 or \
-            tile_map.cell_size.y - cell_height_mod < 0.001
+    var is_between_cells_horizontally = \
+            cell_width_mod < COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD or \
+            tile_map.cell_size.x - cell_width_mod < \
+                    COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD
+    var is_between_cells_vertically = \
+            cell_height_mod < COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD or \
+            tile_map.cell_size.y - cell_height_mod < \
+                    COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD
     
+    var is_godot_floor_ceiling_detection_correct := true
+    var surface_side := SurfaceSide.NONE
     var tile_coord := Vector2.INF
+    var warning_message := ""
     var error_message := ""
     
     var top_left_cell_coord: Vector2
+    var top_right_cell_coord: Vector2
+    var bottom_left_cell_coord: Vector2
+    var bottom_right_cell_coord: Vector2
+    
     var left_cell_coord: Vector2
+    var right_cell_coord: Vector2
     var top_cell_coord: Vector2
+    var bottom_cell_coord: Vector2
+    
     var is_there_a_tile_at_top_left: bool
     var is_there_a_tile_at_top_right: bool
     var is_there_a_tile_at_bottom_left: bool
@@ -586,211 +603,367 @@ static func get_collision_tile_map_coord( \
                 Vector2(position_world_coord.x - half_cell_size.x, \
                         position_world_coord.y - half_cell_size.y), \
                 tile_map)
+        top_right_cell_coord = Vector2( \
+                top_left_cell_coord.x + 1, \
+                top_left_cell_coord.y)
+        bottom_left_cell_coord = Vector2( \
+                top_left_cell_coord.x, \
+                top_left_cell_coord.y + 1)
+        bottom_right_cell_coord = Vector2( \
+                top_left_cell_coord.x + 1, \
+                top_left_cell_coord.y + 1)
         
         is_there_a_tile_at_top_left = tile_map.get_cellv( \
                 top_left_cell_coord) >= 0
-        is_there_a_tile_at_top_right = tile_map.get_cell( \
-                top_left_cell_coord.x + 1, \
-                top_left_cell_coord.y) >= 0
-        is_there_a_tile_at_bottom_left = tile_map.get_cell( \
-                top_left_cell_coord.x, \
-                top_left_cell_coord.y + 1) >= 0
-        is_there_a_tile_at_bottom_right = tile_map.get_cell( \
-                top_left_cell_coord.x + 1, \
-                top_left_cell_coord.y + 1) >= 0
+        is_there_a_tile_at_top_right = tile_map.get_cellv( \
+                top_right_cell_coord) >= 0
+        is_there_a_tile_at_bottom_left = tile_map.get_cellv( \
+                bottom_left_cell_coord) >= 0
+        is_there_a_tile_at_bottom_right = tile_map.get_cellv( \
+                bottom_right_cell_coord) >= 0
         
         if is_touching_floor:
             if is_touching_left_wall:
-                assert(is_there_a_tile_at_bottom_left)
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x, top_left_cell_coord.y + 1)
-            if is_touching_right_wall:
-                assert(is_there_a_tile_at_bottom_right)
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x + 1, top_left_cell_coord.y + 1)
+                if is_there_a_tile_at_bottom_left:
+                    tile_coord = bottom_left_cell_coord
+                    surface_side = SurfaceSide.FLOOR
+                else:
+                    warning_message = \
+                            "Horizontally/vertically between cells, " + \
+                            "touching floor and left-wall, and no tile in " + \
+                            "lower-left cell"
+                    if is_there_a_tile_at_bottom_right:
+                        tile_coord = bottom_right_cell_coord
+                        surface_side = SurfaceSide.FLOOR
+                    elif is_there_a_tile_at_top_left:
+                        tile_coord = top_left_cell_coord
+                        surface_side = SurfaceSide.LEFT_WALL
+                    elif is_there_a_tile_at_top_right:
+                        # Assume Godot's collision engine determined the
+                        # opposite collision normal for floor/ceiling.
+                        is_godot_floor_ceiling_detection_correct = false
+                        tile_coord = top_right_cell_coord
+                        surface_side = SurfaceSide.CEILING
+                    else:
+                        # This should never happen.
+                        error_message = \
+                                "Horizontally/vertically between cells " + \
+                                "and no tiles in any surrounding cells"
+            elif is_touching_right_wall:
+                if is_there_a_tile_at_bottom_right:
+                    tile_coord = bottom_right_cell_coord
+                    surface_side = SurfaceSide.FLOOR
+                else:
+                    warning_message = \
+                            "Horizontally/vertically between cells, " + \
+                            "touching floor and right-wall, and no tile in " + \
+                            "lower-right cell"
+                    if is_there_a_tile_at_bottom_left:
+                        tile_coord = bottom_left_cell_coord
+                        surface_side = SurfaceSide.FLOOR
+                    elif is_there_a_tile_at_top_right:
+                        tile_coord = top_right_cell_coord
+                        surface_side = SurfaceSide.RIGHT_WALL
+                    elif is_there_a_tile_at_top_left:
+                        # Assume Godot's collision engine determined the
+                        # opposite collision normal for floor/ceiling.
+                        is_godot_floor_ceiling_detection_correct = false
+                        tile_coord = top_left_cell_coord
+                        surface_side = SurfaceSide.CEILING
+                    else:
+                        # This should never happen.
+                        error_message = \
+                                "Horizontally/vertically between cells " + \
+                                "and no tiles in any surrounding cells"
             elif is_there_a_tile_at_bottom_left:
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x, top_left_cell_coord.y + 1)
+                tile_coord = bottom_left_cell_coord
+                surface_side = SurfaceSide.FLOOR
             elif is_there_a_tile_at_bottom_right:
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x + 1, top_left_cell_coord.y + 1)
+                tile_coord = bottom_right_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            elif is_there_a_tile_at_top_left:
+                # Assume Godot's collision engine determined the opposite
+                # collision normal for floor/ceiling.
+                is_godot_floor_ceiling_detection_correct = false
+                tile_coord = top_left_cell_coord
+                surface_side = SurfaceSide.CEILING
+            elif is_there_a_tile_at_top_right:
+                # Assume Godot's collision engine determined the opposite
+                # collision normal for floor/ceiling.
+                is_godot_floor_ceiling_detection_correct = false
+                tile_coord = top_right_cell_coord
+                surface_side = SurfaceSide.CEILING
             else:
+                # This should never happen.
                 error_message = \
-                        "Invalid state: Problem calculating colliding " + \
-                        "cell on floor"
+                        "Horizontally/vertically between cells and no " + \
+                        "tiles in any surrounding cells"
+            
         elif is_touching_ceiling:
             if is_touching_left_wall:
-                assert(is_there_a_tile_at_top_left)
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x, \
-                        top_left_cell_coord.y)
-            if is_touching_right_wall:
-                assert(is_there_a_tile_at_top_right)
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x + 1, \
-                        top_left_cell_coord.y)
+                if is_there_a_tile_at_top_left:
+                    tile_coord = top_left_cell_coord
+                    surface_side = SurfaceSide.CEILING
+                else:
+                    warning_message = \
+                            "Horizontally/vertically between cells, " + \
+                            "touching ceiling and left-wall, and no tile " + \
+                            "in upper-left cell"
+                    if is_there_a_tile_at_top_right:
+                        tile_coord = top_right_cell_coord
+                        surface_side = SurfaceSide.CEILING
+                    elif is_there_a_tile_at_bottom_left:
+                        tile_coord = bottom_left_cell_coord
+                        surface_side = SurfaceSide.LEFT_WALL
+                    elif is_there_a_tile_at_bottom_right:
+                        # Assume Godot's collision engine determined the
+                        # opposite collision normal for floor/ceiling.
+                        is_godot_floor_ceiling_detection_correct = false
+                        tile_coord = bottom_right_cell_coord
+                        surface_side = SurfaceSide.FLOOR
+                    else:
+                        # This should never happen.
+                        error_message = \
+                                "Horizontally/vertically between cells " + \
+                                "and no tiles in any surrounding cells"
+            elif is_touching_right_wall:
+                if is_there_a_tile_at_top_right:
+                    tile_coord = top_right_cell_coord
+                    surface_side = SurfaceSide.CEILING
+                else:
+                    warning_message = \
+                            "Horizontally/vertically between cells, " + \
+                            "touching ceiling and right-wall, and no tile " + \
+                            "in upper-right cell"
+                    if is_there_a_tile_at_top_left:
+                        tile_coord = top_left_cell_coord
+                        surface_side = SurfaceSide.CEILING
+                    elif is_there_a_tile_at_bottom_right:
+                        tile_coord = bottom_right_cell_coord
+                        surface_side = SurfaceSide.RIGHT_WALL
+                    elif is_there_a_tile_at_bottom_left:
+                        # Assume Godot's collision engine determined the
+                        # opposite collision normal for floor/ceiling.
+                        is_godot_floor_ceiling_detection_correct = false
+                        tile_coord = bottom_left_cell_coord
+                        surface_side = SurfaceSide.FLOOR
+                    else:
+                        # This should never happen.
+                        error_message = \
+                                "Horizontally/vertically between cells " + \
+                                "and no tiles in any surrounding cells"
             elif is_there_a_tile_at_top_left:
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x, \
-                        top_left_cell_coord.y)
+                tile_coord = top_left_cell_coord
+                surface_side = SurfaceSide.CEILING
             elif is_there_a_tile_at_top_right:
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x + 1, \
-                        top_left_cell_coord.y)
+                tile_coord = top_right_cell_coord
+                surface_side = SurfaceSide.CEILING
+            elif is_there_a_tile_at_bottom_left:
+                # Assume Godot's collision engine determined the opposite
+                # collision normal for floor/ceiling.
+                is_godot_floor_ceiling_detection_correct = false
+                tile_coord = bottom_left_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            elif is_there_a_tile_at_bottom_right:
+                # Assume Godot's collision engine determined the opposite
+                # collision normal for floor/ceiling.
+                is_godot_floor_ceiling_detection_correct = false
+                tile_coord = bottom_right_cell_coord
+                surface_side = SurfaceSide.FLOOR
             else:
+                # This should never happen.
                 error_message = \
-                        "Invalid state: Problem calculating colliding " + \
-                        "cell on ceiling"
+                        "Horizontally/vertically between cells and no " + \
+                        "tiles in any surrounding cells"
+            
         elif is_touching_left_wall:
             if is_there_a_tile_at_top_left:
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x, \
-                        top_left_cell_coord.y)
+                tile_coord = top_left_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
             elif is_there_a_tile_at_bottom_left:
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x, \
-                        top_left_cell_coord.y + 1)
+                tile_coord = bottom_left_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
             else:
+                # This should never happen.
                 error_message = \
-                        "Invalid state: Problem calculating colliding " + \
-                        "cell on left wall"
+                        "Horizontally/vertically between cells, touching " + \
+                        "left-wall, and no tile in either left cell"
+            
         elif is_touching_right_wall:
             if is_there_a_tile_at_top_right:
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x + 1, \
-                        top_left_cell_coord.y)
+                tile_coord = top_right_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
             elif is_there_a_tile_at_bottom_right:
-                tile_coord = Vector2( \
-                        top_left_cell_coord.x + 1, \
-                        top_left_cell_coord.y + 1)
+                tile_coord = bottom_right_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
             else:
+                # This should never happen.
                 error_message = \
-                        "Invalid state: Problem calculating colliding " + \
-                        "cell on right wall"
+                        "Horizontally/vertically between cells, touching " + \
+                        "left-wall, and no tile in either right cell"
+            
         else:
-            error_message = "Invalid state: Problem calculating colliding cell"
-        
-    elif is_between_cells_horizontally:
-        left_cell_coord = world_to_tile_map( \
-                Vector2(position_world_coord.x - half_cell_size.x, \
-                        position_world_coord.y), \
-                tile_map)
-        is_there_a_tile_at_left = tile_map.get_cellv(left_cell_coord) >= 0
-        is_there_a_tile_at_right = tile_map.get_cell( \
-                left_cell_coord.x + 1, \
-                left_cell_coord.y) >= 0
-        
-        if is_touching_left_wall:
-            if is_there_a_tile_at_left:
-                tile_coord = Vector2(left_cell_coord.x, left_cell_coord.y)
-            else:
-                error_message = \
-                        "Invalid state: Problem calculating colliding " + \
-                        "cell on left wall"
-        elif is_touching_right_wall:
-            if is_there_a_tile_at_right:
-                tile_coord = Vector2(left_cell_coord.x + 1, left_cell_coord.y)
-            else:
-                error_message = \
-                        "Invalid state: Problem calculating colliding " + \
-                        "cell on right wall"
-        elif is_there_a_tile_at_left:
-            tile_coord = Vector2(left_cell_coord.x, left_cell_coord.y)
-        elif is_there_a_tile_at_right:
-            tile_coord = Vector2(left_cell_coord.x + 1, left_cell_coord.y)
-        else:
-            error_message = "Invalid state: Problem calculating colliding cell"
+            # This should never happen.
+            error_message = \
+                    "Somehow colliding, but not touching any floor/" + \
+                    "ceiling/wall (horizontally/vertically between cells)"
         
     elif is_between_cells_vertically:
         top_cell_coord = world_to_tile_map( \
                 Vector2(position_world_coord.x, \
                         position_world_coord.y - half_cell_size.y), \
                 tile_map)
-        is_there_a_tile_at_bottom = tile_map.get_cell( \
+        bottom_cell_coord = Vector2( \
                 top_cell_coord.x, \
-                top_cell_coord.y + 1) >= 0
+                top_cell_coord.y + 1)
         is_there_a_tile_at_top = tile_map.get_cellv(top_cell_coord) >= 0
+        is_there_a_tile_at_bottom = tile_map.get_cellv(bottom_cell_coord) >= 0
         
         if is_touching_floor:
             if is_there_a_tile_at_bottom:
-                tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y + 1)
+                tile_coord = bottom_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            elif is_there_a_tile_at_top:
+                # Assume Godot's collision engine determined the opposite
+                # collision normal for floor/ceiling.
+                is_godot_floor_ceiling_detection_correct = false
+                tile_coord = top_cell_coord
+                surface_side = SurfaceSide.CEILING
             else:
+                # This should never happen.
                 error_message = \
-                        "Invalid state: Problem calculating colliding " + \
-                        "cell on floor"
+                        "Vertically between cells, touching floor, and no " + \
+                        "tile in lower or upper cell"
         elif is_touching_ceiling:
             if is_there_a_tile_at_top:
-                tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y)
+                tile_coord = top_cell_coord
+                surface_side = SurfaceSide.CEILING
+            elif is_there_a_tile_at_bottom:
+                # Assume Godot's collision engine determined the opposite
+                # collision normal for floor/ceiling.
+                is_godot_floor_ceiling_detection_correct = false
+                tile_coord = bottom_cell_coord
+                surface_side = SurfaceSide.FLOOR
+            else:
+                # This should never happen.
+                error_message = \
+                        "Vertically between cells, touching ceiling, and " + \
+                        "no tile in upper or lower cell"
+        else:
+            # This should never happen.
+            error_message = \
+                    "Somehow colliding, but not touching any floor/" + \
+                    "ceiling (vertically between cells)"
+        
+    elif is_between_cells_horizontally:
+        left_cell_coord = world_to_tile_map( \
+                Vector2(position_world_coord.x - half_cell_size.x, \
+                        position_world_coord.y), \
+                tile_map)
+        right_cell_coord = Vector2( \
+                left_cell_coord.x + 1, \
+                left_cell_coord.y)
+        is_there_a_tile_at_left = tile_map.get_cellv(left_cell_coord) >= 0
+        is_there_a_tile_at_right = tile_map.get_cellv(right_cell_coord) >= 0
+        
+        if is_touching_left_wall:
+            if is_there_a_tile_at_left:
+                tile_coord = left_cell_coord
+                surface_side = SurfaceSide.LEFT_WALL
             else:
                 error_message = \
-                        "Invalid state: Problem calculating colliding " + \
-                        "cell on ceiling"
-        elif is_there_a_tile_at_bottom:
-            tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y + 1)
-        elif is_there_a_tile_at_top:
-            tile_coord = Vector2(top_cell_coord.x, top_cell_coord.y)
+                        "Horizontally between cells, touching left-wall, " + \
+                        "and no tile in left cell"
+        elif is_touching_right_wall:
+            if is_there_a_tile_at_right:
+                tile_coord = right_cell_coord
+                surface_side = SurfaceSide.RIGHT_WALL
+            else:
+                error_message = \
+                        "Horizontally between cells, touching right-wall, " + \
+                        "and no tile in right cell"
         else:
-            error_message = "Invalid state: Problem calculating colliding cell"
+            # This should never happen.
+            error_message = \
+                    "Somehow colliding, but not touching any wall " + \
+                    "(horizontally between cells)"
         
     else:
-        tile_coord = world_to_tile_map(position_world_coord, tile_map)
+        tile_coord = world_to_tile_map( \
+                position_world_coord, \
+                tile_map)
     
-    if !error_message.empty():
-        if expects_a_valid_result:
-            error_message = """%s; 
-                is_touching_floor=%s 
-                is_touching_ceiling=%s 
-                is_touching_left_wall=%s 
-                is_touching_right_wall=%s 
-                is_between_cells_horizontally=%s 
-                is_between_cells_vertically=%s 
-                top_left_cell_coord=%s 
-                left_cell_coord=%s 
-                top_cell_coord=%s 
-                is_there_a_tile_at_top_left=%s 
-                is_there_a_tile_at_top_right=%s 
-                is_there_a_tile_at_bottom_left=%s 
-                is_there_a_tile_at_bottom_right=%s 
-                is_there_a_tile_at_left=%s 
-                is_there_a_tile_at_right=%s 
-                is_there_a_tile_at_top=%s 
-                is_there_a_tile_at_bottom=%s 
-                fallback_coord=%s 
-                """ % [ \
-                    error_message, \
-                    is_touching_floor, \
-                    is_touching_ceiling, \
-                    is_touching_left_wall, \
-                    is_touching_right_wall, \
-                    is_between_cells_horizontally, \
-                    is_between_cells_vertically, \
-                    top_left_cell_coord, \
-                    left_cell_coord, \
-                    top_cell_coord, \
-                    is_there_a_tile_at_top_left, \
-                    is_there_a_tile_at_top_right, \
-                    is_there_a_tile_at_bottom_left, \
-                    is_there_a_tile_at_bottom_right, \
-                    is_there_a_tile_at_left, \
-                    is_there_a_tile_at_right, \
-                    is_there_a_tile_at_top, \
-                    is_there_a_tile_at_bottom, \
-                    fallback_coord, \
-                ]
-            
-            Utils.error(error_message)
-        
-        # TODO: There is an infrequent bug where we cannot properly calculate
-        #       the tile coordinate when the player is moving around a corner,
-        #       between climbing and walking. We should try to fix the
-        #       underlying cause, but, in the meantime, we can use this
-        #       fallback value.
-        return fallback_coord
-    else:
-        # Ensure the cell we calculated actually contains content.
-        assert(tile_map.get_cellv(tile_coord) >= 0)
-        
-        return tile_coord
+    result.tile_map_coord = tile_coord
+    result.surface_side = surface_side
+    result.is_godot_floor_ceiling_detection_correct = \
+            is_godot_floor_ceiling_detection_correct
+    
+    if !error_message.empty() or \
+            !warning_message.empty() or \
+            !is_godot_floor_ceiling_detection_correct:
+        var first_statement: String
+        var second_statement: String
+        if !error_message.empty():
+            first_statement = "ERROR: INVALID COLLISION TILEMAP STATE"
+            second_statement = error_message
+        elif !warning_message.empty():
+            first_statement = "WARNING: UNUSUAL COLLISION TILEMAP STATE"
+            second_statement = warning_message
+        else:
+            first_statement = "WARNING: UNUSUAL COLLISION TILEMAP STATE"
+            second_statement = \
+                    "Godot's underlying collision engine presumably " + \
+                    "calculated an incorrect (opposite direction) result " + \
+                    "for is_on_floor/is_on_ceiling. This usually happens " + \
+                    "when the player is sliding along a corner."
+        var print_message := """%s: 
+            %s; 
+            position_world_coord=%s 
+            is_touching_floor=%s 
+            is_touching_ceiling=%s 
+            is_touching_left_wall=%s 
+            is_touching_right_wall=%s 
+            is_between_cells_horizontally=%s 
+            is_between_cells_vertically=%s 
+            top_left_cell_coord=%s 
+            left_cell_coord=%s 
+            top_cell_coord=%s 
+            is_there_a_tile_at_top_left=%s 
+            is_there_a_tile_at_top_right=%s 
+            is_there_a_tile_at_bottom_left=%s 
+            is_there_a_tile_at_bottom_right=%s 
+            is_there_a_tile_at_left=%s 
+            is_there_a_tile_at_right=%s 
+            is_there_a_tile_at_top=%s 
+            is_there_a_tile_at_bottom=%s 
+            tile_coord=%s 
+            """ % [ \
+                first_statement, \
+                second_statement, \
+                position_world_coord, \
+                is_touching_floor, \
+                is_touching_ceiling, \
+                is_touching_left_wall, \
+                is_touching_right_wall, \
+                is_between_cells_horizontally, \
+                is_between_cells_vertically, \
+                top_left_cell_coord, \
+                left_cell_coord, \
+                top_cell_coord, \
+                is_there_a_tile_at_top_left, \
+                is_there_a_tile_at_top_right, \
+                is_there_a_tile_at_bottom_left, \
+                is_there_a_tile_at_bottom_right, \
+                is_there_a_tile_at_left, \
+                is_there_a_tile_at_right, \
+                is_there_a_tile_at_top, \
+                is_there_a_tile_at_bottom, \
+                tile_coord, \
+            ]
+        if !error_message.empty():
+            Utils.error(print_message)
+        else:
+            print(print_message)
 
 static func do_shapes_match( \
         a: Shape2D, \
