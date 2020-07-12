@@ -8,8 +8,6 @@ class_name Main
 #   with concave neighbors.
 # 
 # - In follow-up commits: 
-#   - Delete frame_collision_check_utils_old.gd.
-#   - Remove all usages of Physics2DShapeQueryParameters.
 #   - Cleanup how collision_result_metadata is both written and read.
 #   - Finish adding/polishing inspector step calculation
 #     items/descriptions/annotations/legends.

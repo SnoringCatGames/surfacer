@@ -28,7 +28,6 @@ static func check_instructions_discrete_frame_state( \
     var position := edge_calc_params.origin_waypoint.position
     var velocity := edge_calc_params.velocity_start
     var has_started_instructions := false
-    var shape_query_params := edge_calc_params.shape_query_params
     var displacement := Vector2.INF
     var collision: SurfaceCollision
     
@@ -50,8 +49,6 @@ static func check_instructions_discrete_frame_state( \
         # Update position for this frame, according to the velocity from the previous frame.
         delta_sec = Time.PHYSICS_TIME_STEP_SEC
         displacement = velocity * delta_sec
-        shape_query_params.transform = Transform2D(movement_params.collider_rotation, position)
-        shape_query_params.motion = displacement
         
         # Iterate through the horizontal steps in order to calculate what the frame positions would
         # be according to our continuous movement calculations.
@@ -77,7 +74,9 @@ static func check_instructions_discrete_frame_state( \
             # - To debug why this is failing, try rendering only the failing path somehow.
 #            collision = FrameCollisionCheckUtils.check_frame_for_collision( \
 #                    collision_params, \
-#                    shape_query_params)
+#                    null, \
+#                    position, \
+#                    displacement)
             if collision != null:
                 trajectory.frame_discrete_positions_from_test = \
                         PoolVector2Array(frame_discrete_positions)
@@ -189,10 +188,6 @@ static func check_instructions_discrete_frame_state( \
     # Check the last frame that puts us up to end_time.
     delta_sec = end_time - current_time
     displacement = velocity * delta_sec
-    shape_query_params.transform = Transform2D( \
-            movement_params.collider_rotation, \
-            position)
-    shape_query_params.motion = displacement
     continuous_horizontal_state = \
             HorizontalMovementUtils.calculate_horizontal_state_for_time( \
                     movement_params, \
@@ -209,7 +204,9 @@ static func check_instructions_discrete_frame_state( \
     # - To debug why this is failing, try rendering only the failing path somehow.
 #    collision = FrameCollisionCheckUtils.check_frame_for_collision( \
 #            collision_params, \
-#            shape_query_params)
+#            null, \
+#            position, \
+#            displacement)
     if collision != null:
         trajectory.frame_discrete_positions_from_test = \
                 PoolVector2Array(frame_discrete_positions)
@@ -252,7 +249,6 @@ static func check_discrete_horizontal_step_for_collision( \
     var is_pressing_move_horizontal := current_time > horizontal_step.time_instruction_start and \
             current_time < horizontal_step.time_instruction_end
     var horizontal_acceleration_sign := 0
-    var shape_query_params := edge_calc_params.shape_query_params
     var displacement := Vector2.INF
     var collision: SurfaceCollision
     
@@ -261,14 +257,14 @@ static func check_discrete_horizontal_step_for_collision( \
         # Update state for the current frame.
         delta_sec = Time.PHYSICS_TIME_STEP_SEC
         displacement = velocity * delta_sec
-        shape_query_params.transform = Transform2D(movement_params.collider_rotation, position)
-        shape_query_params.motion = displacement
         
         if displacement != Vector2.ZERO:
             # Check for collision.
             collision = FrameCollisionCheckUtils.check_frame_for_collision( \
                     collision_params, \
-                    shape_query_params)
+                    null, \
+                    position, \
+                    displacement)
             if collision != null:
                 return collision
         else:
@@ -316,11 +312,11 @@ static func check_discrete_horizontal_step_for_collision( \
     # Check the last frame that puts us up to end_time.
     delta_sec = step_end_time - current_time
     displacement = velocity * delta_sec
-    shape_query_params.transform = Transform2D(movement_params.collider_rotation, position)
-    shape_query_params.motion = displacement
     collision = FrameCollisionCheckUtils.check_frame_for_collision( \
             collision_params, \
-            shape_query_params)
+            null, \
+            position, \
+            displacement)
     if collision != null:
         return collision
     
@@ -350,7 +346,7 @@ static func check_continuous_horizontal_step_for_collision( \
     var previous_position := horizontal_step.position_step_start
     var current_position := previous_position
     var current_velocity := horizontal_step.velocity_step_start
-    var shape_query_params := edge_calc_params.shape_query_params
+    var displacement: Vector2
     var horizontal_state: Array
     var vertical_state: Array
     var collision: SurfaceCollision
@@ -396,12 +392,9 @@ static func check_continuous_horizontal_step_for_collision( \
         current_position.y = vertical_state[0]
         current_velocity.x = horizontal_state[1]
         current_velocity.y = vertical_state[1]
-        shape_query_params.transform = Transform2D( \
-                movement_params.collider_rotation, \
-                previous_position)
-        shape_query_params.motion = current_position - previous_position
+        displacement = current_position - previous_position
         
-        assert(shape_query_params.motion != Vector2.ZERO)
+        assert(displacement != Vector2.ZERO)
         
         # FIXME: DEBUGGING: REMOVE:
         # if Geometry.are_points_equal_with_epsilon( \
@@ -416,8 +409,9 @@ static func check_continuous_horizontal_step_for_collision( \
         # Check for collision.
         collision = FrameCollisionCheckUtils.check_frame_for_collision( \
                 collision_params, \
-                shape_query_params, \
-                collision_result_metadata)
+                collision_result_metadata, \
+                previous_position, \
+                displacement)
         if collision != null:
             break
         
@@ -450,16 +444,14 @@ static func check_continuous_horizontal_step_for_collision( \
         current_position.y = vertical_state[0]
         current_velocity.x = horizontal_state[1]
         current_velocity.y = vertical_state[1]
-        shape_query_params.transform = Transform2D( \
-                movement_params.collider_rotation, \
-                previous_position)
-        shape_query_params.motion = current_position - previous_position
-        assert(shape_query_params.motion != Vector2.ZERO)
+        displacement = current_position - previous_position
+        assert(displacement != Vector2.ZERO)
         
         collision = FrameCollisionCheckUtils.check_frame_for_collision( \
                 collision_params, \
-                shape_query_params, \
-                collision_result_metadata)
+                collision_result_metadata, \
+                previous_position, \
+                displacement)
         
         if collision == null:
             # Record the positions and velocities for edge annotation

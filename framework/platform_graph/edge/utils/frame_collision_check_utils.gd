@@ -6,11 +6,9 @@ class_name FrameCollisionCheckUtils
 # collision.
 static func check_frame_for_collision( \
         collision_params: CollisionCalcParams, \
-        shape_query_params: Physics2DShapeQueryParameters, \
-        collision_result_metadata = null) -> SurfaceCollision:
-    var displacement := shape_query_params.motion
-    var position_start := shape_query_params.transform.origin
-    
+        collision_result_metadata: CollisionCalcResultMetadata, \
+        position_start: Vector2, \
+        displacement: Vector2) -> SurfaceCollision:
     collision_params.player.position = position_start
     var kinematic_collision := collision_params.player.move_and_collide( \
             displacement, \
@@ -33,7 +31,8 @@ static func check_frame_for_collision( \
         _record_collision_result_metadata( \
                 collision_result_metadata, \
                 collision_params, \
-                shape_query_params, \
+                position_start, \
+                displacement, \
                 kinematic_collision, \
                 surface_collision)
     ###########################################################################
@@ -94,14 +93,14 @@ static func check_frame_for_collision( \
 static func _record_collision_result_metadata( \
         collision_result_metadata: CollisionCalcResultMetadata, \
         collision_params: CollisionCalcParams, \
-        shape_query_params: Physics2DShapeQueryParameters, \
+        position_start: Vector2, \
+        displacement: Vector2, \
         kinematic_collision: KinematicCollision2D, \
         surface_collision: SurfaceCollision) -> void:
-    collision_result_metadata.frame_motion = shape_query_params.motion
+    collision_result_metadata.frame_motion = displacement
     collision_result_metadata.frame_previous_position = \
             collision_result_metadata.frame_start_position
-    collision_result_metadata.frame_start_position = \
-            shape_query_params.transform[2]
+    collision_result_metadata.frame_start_position = position_start
     collision_result_metadata.frame_end_position = \
             collision_result_metadata.frame_start_position + \
             collision_result_metadata.frame_motion
@@ -124,10 +123,11 @@ static func _record_collision_result_metadata( \
     collision_result_metadata.intersection_points = [ \
         kinematic_collision.position, \
     ]
+    var collision_ratio := \
+            kinematic_collision.travel.length() / \
+            displacement.length()
     collision_result_metadata.collision_ratios = [ \
-        kinematic_collision.travel.length() / \
-                shape_query_params.motion.length(), \
-        kinematic_collision.travel.length() / \
-                shape_query_params.motion.length(), \
+        collision_ratio, \
+        collision_ratio, \
     ]
     collision_result_metadata.collision = surface_collision

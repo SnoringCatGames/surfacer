@@ -1,6 +1,8 @@
 extends Node2D
 class_name Level
 
+const TILE_MAP_COLLISION_LAYER := 7
+
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
 var surface_tile_maps: Array
@@ -47,7 +49,7 @@ func _create_platform_graphs( \
         debug_params: Dictionary) -> Dictionary:
     var graphs = {}
     var player_params: PlayerParams
-    var fake_player: KinematicBody2D
+    var fake_player: Player
     var collision_params: CollisionCalcParams
     for player_name in all_player_params:
         #######################################################################
@@ -57,13 +59,7 @@ func _create_platform_graphs( \
             continue
         #######################################################################
         player_params = all_player_params[player_name]
-        fake_player = add_player( \
-                player_params.movement_params.player_resource_path, \
-                Vector2.ZERO, \
-                false, \
-                true)
-        fake_player.set_safe_margin(player_params.movement_params \
-                .collision_margin_for_edge_calculations)
+        fake_player = create_fake_player_for_graph_calculation(player_params)
         collision_params = CollisionCalcParams.new( \
                 debug_params, \
                 player_params.movement_params, \
@@ -73,6 +69,19 @@ func _create_platform_graphs( \
                 player_params, \
                 collision_params)
     return graphs
+
+func create_fake_player_for_graph_calculation( \
+        player_params: PlayerParams) -> Player:
+    var fake_player := add_player( \
+            player_params.movement_params.player_resource_path, \
+            Vector2.ZERO, \
+            false, \
+            true)
+    fake_player.collision_layer = 0
+    fake_player.collision_mask = TILE_MAP_COLLISION_LAYER
+    fake_player.set_safe_margin(player_params.movement_params \
+            .collision_margin_for_edge_calculations)
+    return fake_player
 
 func add_player( \
         resource_path: String, \
@@ -88,7 +97,9 @@ func add_player( \
     player.position = position
     add_child(player)
     
-    if !is_fake:
+    if is_fake:
+        player.collision_layer = 0
+    else:
         var group := \
                 Utils.GROUP_NAME_HUMAN_PLAYERS if \
                 is_human_player else \

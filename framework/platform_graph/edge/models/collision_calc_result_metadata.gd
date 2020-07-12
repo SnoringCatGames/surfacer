@@ -47,7 +47,8 @@ func _init( \
         self.collider_rotation = edge_calc_params.movement_params.collider_rotation
         self.collider_half_width_height = \
                 edge_calc_params.movement_params.collider_half_width_height
-        self.margin = edge_calc_params.shape_query_params.margin
+        self.margin = edge_calc_params.movement_params \
+                .collision_margin_for_edge_calculations
     
     if step_calc_params != null:
         self.step_start_position = step_calc_params.start_waypoint.position

@@ -2,14 +2,9 @@
 extends Reference
 class_name EdgeCalcParams
 
-const TILE_MAP_COLLISION_LAYER := 7
-
 var collision_params: CollisionCalcParams
 
 var movement_params: MovementParams
-
-# The Godot collision-detection APIs use this data structure.
-var shape_query_params: Physics2DShapeQueryParameters
 
 # A margin to extend around the Player's Collider. This helps to compensate for the imprecision
 # of these calculations.
@@ -68,21 +63,6 @@ func _init( \
             Vector2(movement_params.collision_margin_for_waypoint_positions, \
                     movement_params.collision_margin_for_waypoint_positions)
     self._collided_surfaces = {}
-    
-    var shape_query_params := Physics2DShapeQueryParameters.new()
-    shape_query_params.collide_with_areas = false
-    shape_query_params.collide_with_bodies = true
-    shape_query_params.collision_layer = TILE_MAP_COLLISION_LAYER
-    shape_query_params.exclude = []
-    shape_query_params.margin = \
-            movement_params.collision_margin_for_edge_calculations
-    shape_query_params.motion = Vector2.ZERO
-    shape_query_params.shape_rid = movement_params.collider_shape.get_rid()
-    shape_query_params.transform = Transform2D( \
-            movement_params.collider_rotation, \
-            Vector2.ZERO)
-    shape_query_params.set_shape(movement_params.collider_shape)
-    self.shape_query_params = shape_query_params
 
 func have_backtracked_for_surface( \
         surface: Surface, \
