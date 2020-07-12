@@ -110,9 +110,12 @@ func find_path( \
         # intra-surface edge to the destination from this current_node.
         if current_node.surface == destination_surface:
             next_node = destination
-            new_actual_weight = current_weight + \
-                    current_node.target_point.distance_to( \
-                            next_node.target_point)
+            new_actual_weight = \
+                    current_weight + \
+                    _calculate_intra_surface_edge_weight( \
+                            movement_params, \
+                            current_node, \
+                            next_node)
             _record_frontier( \
                     current_node, \
                     next_node, \
@@ -135,9 +138,12 @@ func find_path( \
             # Record temporary intra-surface edges from the current node to
             # each other node on the same surface.
             for next_node in surfaces_to_outbound_nodes[current_node.surface]:
-                new_actual_weight = current_weight + \
-                        current_node.target_point.distance_to( \
-                                next_node.target_point)
+                new_actual_weight = \
+                        current_weight + \
+                        _calculate_intra_surface_edge_weight( \
+                                movement_params, \
+                                current_node, \
+                                next_node)
                 _record_frontier( \
                         current_node, \
                         next_node, \
@@ -213,6 +219,39 @@ func find_path( \
     assert(!edges.empty())
     
     return PlatformGraphPath.new(edges)
+
+static func _calculate_intra_surface_edge_weight( \
+        movement_params: MovementParams, \
+        node_a: PositionAlongSurface, \
+        node_b: PositionAlongSurface) -> float:
+    var distance := node_a.target_point.distance_to(node_b.target_point)
+    
+    # Use either the distance or the duration as the weight for the edge.
+    var weight: float
+    if movement_params.uses_duration_instead_of_distance_for_edge_weight:
+        weight = IntraSurfaceEdge.calculate_duration_to_move_along_surface( \
+                movement_params, \
+                node_a, \
+                node_b, \
+                distance)
+    else:
+        weight = distance
+    
+    # Apply a multiplier to the weight according to the type of edge.
+    match node_a.surface.side:
+        SurfaceSide.FLOOR, \
+        SurfaceSide.CEILING:
+            weight *= movement_params.walking_edge_weight_multiplier
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            weight *= movement_params.climbing_edge_weight_multiplier
+        _:
+            Utils.error()
+    
+    # Give a constant extra weight for each additional edge in a path.
+    weight += movement_params.additional_edge_weight_offset
+    
+    return weight
 
 # Helper function for find_path. This records new neighbor nodes for the given
 # node.

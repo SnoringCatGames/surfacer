@@ -107,21 +107,11 @@ func _calculate_duration( \
         end: PositionAlongSurface, \
         instructions: EdgeInstructions, \
         distance: float) -> float:
-    match surface_type:
-        SurfaceType.FLOOR:
-            return MovementUtils.calculate_time_to_walk( \
-                    distance, \
-                    0.0, \
-                    movement_params)
-        SurfaceType.WALL:
-            var is_climbing_upward := end.target_point.y < start.target_point.y
-            return MovementUtils.calculate_time_to_climb( \
-                    distance, \
-                    is_climbing_upward, \
-                    movement_params)
-        _:
-            Utils.error()
-            return INF
+    return calculate_duration_to_move_along_surface( \
+            movement_params, \
+            start, \
+            end, \
+            distance)
 
 func _check_did_just_reach_destination( \
         navigation_state: PlayerNavigationState, \
@@ -269,4 +259,26 @@ static func _calculate_stopping_distance( \
             return climb_speed * Time.PHYSICS_TIME_STEP_SEC + 0.01
         
         return 0.0
-        
+
+static func calculate_duration_to_move_along_surface( \
+        movement_params: MovementParams, \
+        start: PositionAlongSurface, \
+        end: PositionAlongSurface, \
+        distance: float) -> float:
+    match start.surface.side:
+        SurfaceSide.FLOOR, \
+        SurfaceSide.CEILING:
+            return MovementUtils.calculate_time_to_walk( \
+                    distance, \
+                    0.0, \
+                    movement_params)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            var is_climbing_upward := end.target_point.y < start.target_point.y
+            return MovementUtils.calculate_time_to_climb( \
+                    distance, \
+                    is_climbing_upward, \
+                    movement_params)
+        _:
+            Utils.error()
+            return INF

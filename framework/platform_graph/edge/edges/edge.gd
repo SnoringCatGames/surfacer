@@ -186,6 +186,8 @@ func get_weight() -> float:
             weight *= movement_params.climbing_edge_weight_multiplier
         SurfaceType.AIR:
             weight *= movement_params.air_edge_weight_multiplier
+        _:
+            Utils.error()
     
     # Give a constant extra weight for each additional edge in a path.
     weight += movement_params.additional_edge_weight_offset

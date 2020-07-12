@@ -4,6 +4,8 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
+# - Test and tweak A* weights.
+# 
 # - Update backtracking step metadata to get saved as children of their parent
 #   step items rather than the edge?
 # - Move Profiler item out from under edge_calc_result_metadata item and up to
@@ -32,6 +34,9 @@ class_name Main
 # 
 # - Fix occasional bug where phantom preselection indicator is still shown
 #   after clicking.
+# 
+# - Fix player to not sometimes face backwards against the direction of motion
+#   when jumping.
 # 
 # - Fix how things work when minimizes_velocity_change_when_jumping is true.
 #   - [no] Find and move all movement-offset constants to one central location?

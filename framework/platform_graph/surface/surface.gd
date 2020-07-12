@@ -4,8 +4,7 @@ class_name Surface
 # Vertices are always specified in clockwise order.
 var vertices: PoolVector2Array
 
-# SurfaceSide
-var side: int
+var side := SurfaceSide.NONE
 
 var tile_map: TileMap
 
