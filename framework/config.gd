@@ -50,7 +50,7 @@ const DEBUG_PARAMS := \
         {
     is_inspector_enabled = true,
     limit_parsing = {
-        player_name = "cat",
+#        player_name = "cat",
 #        
 #        edge = {
 #            origin = {

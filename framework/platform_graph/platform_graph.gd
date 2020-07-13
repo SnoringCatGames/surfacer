@@ -92,7 +92,6 @@ func find_path( \
     var next_edge: Edge
     var current_node: PositionAlongSurface
     var current_weight: float
-    var next_node: PositionAlongSurface
     var new_actual_weight: float
     
     # Determine the cheapest path.
@@ -109,7 +108,7 @@ func find_path( \
         # If we reached the destination surface, record a temporary
         # intra-surface edge to the destination from this current_node.
         if current_node.surface == destination_surface:
-            next_node = destination
+            var next_node := destination
             new_actual_weight = \
                     current_weight + \
                     _calculate_intra_surface_edge_weight( \
@@ -291,6 +290,7 @@ func _calculate_nodes_and_edges() -> void:
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
     if debug_params.has("limit_parsing") and \
+            debug_params.limit_parsing.has("player_name") and \
             player_params.name != debug_params.limit_parsing.player_name:
         return
     ###########################################################################
@@ -365,13 +365,12 @@ func _calculate_inter_surface_edges_total() -> void:
         surfaces_to_inter_surface_edges_results[origin_surface] = []
     
     if Config.USES_THREADS:
-        var thread: Thread
         var threads := []
         threads.resize(Config.THREAD_COUNT)
         
         # Use child threads to parallelize graph parsing.
         for i in Config.THREAD_COUNT:
-            thread = Thread.new()
+            var thread := Thread.new()
             Profiler.init_thread("parse_edges:" + str(i))
             threads[i] = thread
             thread.start( \

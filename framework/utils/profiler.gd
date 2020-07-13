@@ -3,12 +3,15 @@ extends Node
 
 const DEFAULT_THREAD_ID := ""
 
+# A mapping from thread ID to Stopwatch.
 # Dictionary<String, Stopwatch>
 var _stopwatches := {}
 
+# A mapping from thread ID, to ProfilerMetric, to a list of duration values.
 # Dictionary<String, Dictionary<ProfilerMetric, Array<float>>>
 var _timings := {}
 
+# A mapping from thread ID, to ProfilerMetric, to a count.
 # Dictionary<String, Dictionary<ProfilerMetric, int>>
 var _counts := {}
 
@@ -97,10 +100,10 @@ func get_timing( \
         assert(list.size() == 1)
         return list[0]
     else:
-        for thread_id in _timings:
-            var list: Array = _timings[thread_id][metric]
-            assert(list.size() == 1)
-            return list[0]
+        assert(_timings.has(DEFAULT_THREAD_ID))
+        var list: Array = _timings[DEFAULT_THREAD_ID][metric]
+        assert(list.size() == 1)
+        return list[0]
 
 func get_timing_list( \
         metric: int, \

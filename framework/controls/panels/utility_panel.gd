@@ -113,10 +113,8 @@ func _toggle_open() -> void:
     
     $VBoxContainer/GearContainer/GearButton.visible = !is_open
     
-    if is_open:
-        Global.platform_graph_inspector.populate()
-    else:
-        Global.platform_graph_inspector.clear()
+    if !is_open:
+        Global.platform_graph_inspector.collapse()
 
 func _set_position_y(value: float) -> void:
     rect_position.y = value

@@ -55,6 +55,7 @@ func _create_platform_graphs( \
         #######################################################################
         # Allow for debug mode to limit the scope of what's calculated.
         if debug_params.has("limit_parsing") and \
+                debug_params.limit_parsing.has("player_name") and \
                 player_name != debug_params.limit_parsing.player_name:
             continue
         #######################################################################

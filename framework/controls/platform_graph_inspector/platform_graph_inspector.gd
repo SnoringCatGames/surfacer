@@ -79,8 +79,6 @@ func _init() -> void:
             "item_collapsed", \
             self, \
             "_on_tree_item_expansion_toggled")
-    
-    root = create_item()
 
 func _ready() -> void:
     if !Config.DEBUG_PARAMS.is_inspector_enabled:
@@ -88,6 +86,8 @@ func _ready() -> void:
     
     inspector_selector = PlatformGraphInspectorSelector.new(self)
     Global.canvas_layers.annotation_layer.add_child(inspector_selector)
+    
+    _populate()
 
 func _process(delta_sec: float) -> void:
     if !Config.DEBUG_PARAMS.is_inspector_enabled:
@@ -121,11 +121,14 @@ func release_focus() -> void:
     grab_focus()
     .release_focus()
 
-func populate() -> void:
+func _populate() -> void:
     if !Config.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     _should_be_populated = true
+    
+    if root == null:
+        root = create_item()
     
     for graph in graphs:
         graph_item_controllers[graph.movement_params.name] = \
@@ -146,6 +149,16 @@ func clear() -> void:
     _should_be_populated = false
     .clear()
 
+func collapse() -> void:
+    if !Config.DEBUG_PARAMS.is_inspector_enabled:
+        return
+    
+    for graph_item_controller in graph_item_controllers.values():
+        graph_item_controller.collapse()
+    
+    release_focus()
+    _clear_selection()
+
 func set_graphs(graphs: Array) -> void:
     if !Config.DEBUG_PARAMS.is_inspector_enabled:
         return
@@ -154,7 +167,7 @@ func set_graphs(graphs: Array) -> void:
     if _should_be_populated:
         if !self.graphs.empty():
             clear()
-        populate()
+        _populate()
 
 func _select_initial_item() -> void:
     if !Config.DEBUG_PARAMS.has("limit_parsing") or \
@@ -263,7 +276,6 @@ func _find_matching_surface( \
             end_vertex != Vector2.INF:
         var does_start_vertex_match: bool
         var does_end_vertex_match: bool
-        var surface: Surface
         for surface in graph.surfaces_set:
             does_start_vertex_match = start_vertex == Vector2.INF or \
                     Geometry.are_points_equal_with_epsilon( \

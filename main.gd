@@ -6,8 +6,6 @@ class_name Main
 # 
 # - Test and tweak A* weights.
 # 
-# - Update backtracking step metadata to get saved as children of their parent
-#   step items rather than the edge?
 # - Move Profiler item out from under edge_calc_result_metadata item and up to
 #   be a sibling of it instead?
 #   - Or at least render then in the inspector tree that way...
@@ -849,7 +847,7 @@ const EDGE_MOVEMENT_CLASSES := [
 const PLAYER_PARAM_CLASSES := [
     preload("res://players/cat_params.gd"),
     preload("res://players/squirrel_params.gd"),
-    preload("res://test/data/test_player_params.gd"),
+#    preload("res://test/data/test_player_params.gd"),
 ]
 
 var loading_screen: Node
@@ -862,7 +860,7 @@ func _enter_tree() -> void:
     Global.register_player_actions(PLAYER_ACTION_CLASSES)
     Global.register_edge_movements(EDGE_MOVEMENT_CLASSES)
     Global.register_player_params(PLAYER_PARAM_CLASSES)
-    
+
     if Config.IN_TEST_MODE:
         var scene_path := Config.TEST_RUNNER_SCENE_RESOURCE_PATH
         var test_scene = Utils.add_scene( \
