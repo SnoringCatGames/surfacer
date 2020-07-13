@@ -7,6 +7,8 @@ class_name PlatformGraphInspector
 #     - [#] Edges calculated with increasing jump height
 #       - JUMP_INTER_SURFACE_EDGEs [#]
 #         - [(x,y), (x,y)]
+#           - Profiler
+#             - ...
 #           - EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT [1]
 #             - 1: Movement is valid.
 #             - ...
@@ -24,12 +26,16 @@ class_name PlatformGraphInspector
 #         - FLOOR [(x,y), (x,y)]
 #           - JUMP_INTER_SURFACE_EDGEs [#]
 #             - [(x,y), (x,y)]
+#               - Profiler
+#                 - ...
 #               - EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT [1]
 #                 - 1: Movement is valid.
 #                 - ...
 #             - ...
 #             - Failed edge calculations [#]
 #               - REASON_FOR_FAILING [(x,y), (x,y)]
+#                 - Profiler
+#                   - ...
 #                 - REASON_FOR_FAILING [#]
 #                   - 1: Step result info
 #                     - 2: Step result info
@@ -41,11 +47,13 @@ class_name PlatformGraphInspector
 #         - ...
 #       - ...
 #     - ...
-#   - Global counts
-#     - # total surfaces
-#     - # total edges
-#     - # JUMP_INTER_SURFACE_EDGEs
+#   - Profiler
 #     - ...
+#     - Global counts
+#       - # total surfaces
+#       - # total edges
+#       - # JUMP_INTER_SURFACE_EDGEs
+#       - ...
 
 var inspector_selector: PlatformGraphInspectorSelector
 
@@ -172,100 +180,101 @@ func set_graphs(graphs: Array) -> void:
 func _select_initial_item() -> void:
     if !Config.DEBUG_PARAMS.has("limit_parsing") or \
             !Config.DEBUG_PARAMS.limit_parsing.has("player_name"):
-        # Don't select anything if we don't know the player to target.
-        return
-    
-    var limit_parsing: Dictionary = Config.DEBUG_PARAMS.limit_parsing
-    var player_name: String = limit_parsing.player_name
-    
-    if limit_parsing.has("edge") and \
-            limit_parsing.edge.has("origin"):
-        var graph: PlatformGraph = graph_item_controllers[player_name].graph
-        var debug_edge: Dictionary = limit_parsing.edge
-        var debug_origin: Dictionary = debug_edge.origin
+        if !graph_item_controllers.empty():
+            graph_item_controllers.values().front().select()
+    else:
+        var limit_parsing: Dictionary = Config.DEBUG_PARAMS.limit_parsing
+        var player_name: String = limit_parsing.player_name
         
-        var origin_start_vertex: Vector2 = \
-                debug_origin.surface_start_vertex if \
-                debug_origin.has("surface_start_vertex") else \
-                Vector2.INF
-        var origin_end_vertex: Vector2 = \
-                debug_origin.surface_end_vertex if \
-                debug_origin.has("surface_end_vertex") else \
-                Vector2.INF
-        var origin_epsilon: float = \
-                debug_origin.epsilon if \
-                debug_origin.has("epsilon") else \
-                10.0
-        var origin_surface := _find_matching_surface( \
-                origin_start_vertex, \
-                origin_end_vertex, \
-                origin_epsilon, \
-                graph)
-        
-        if origin_surface != null:
-            var destination_surface: Surface
-            var debug_destination: Dictionary
-            if debug_edge.has("destination"):
-                debug_destination = debug_edge.destination
-                var destination_start_vertex: Vector2 = \
-                        debug_destination.surface_start_vertex if \
-                        debug_destination.has("surface_start_vertex") else \
-                        Vector2.INF
-                var destination_end_vertex: Vector2 = \
-                        debug_destination.surface_end_vertex if \
-                        debug_destination.has("surface_end_vertex") else \
-                        Vector2.INF
-                var destination_epsilon: float = \
-                        debug_destination.epsilon if \
-                        debug_destination.has("epsilon") else \
-                        10.0
-                destination_surface = _find_matching_surface( \
-                        destination_start_vertex, \
-                        destination_end_vertex, \
-                        destination_epsilon, \
-                        graph)
-                
-                # TODO: Add support for searching for:
-                #       - InspectorItemType.DESTINATION_SURFACE
-                #       - InspectorItemType.EDGE_TYPE_IN_SURFACES_GROUP
-                
-                if debug_origin.has("position") and \
-                        debug_destination.has("position") and \
-                        limit_parsing.has("edge_type"):
-                    # Search for the matching edge item.
-                    _select_canonical_edge_or_edge_attempt_item_controller( \
-                            origin_surface, \
-                            destination_surface, \
-                            debug_origin.position, \
-                            debug_destination.position, \
-                            limit_parsing.edge_type, \
-                            graph)
-                    return
-                elif destination_surface != null:
-                    # Search for the matching origin surface item.
-                    _select_canonical_destination_surface_item_controller( \
-                            origin_surface, \
-                            destination_surface, \
-                            graph)
-                    return
+        if limit_parsing.has("edge") and \
+                limit_parsing.edge.has("origin"):
+            var graph: PlatformGraph = graph_item_controllers[player_name].graph
+            var debug_edge: Dictionary = limit_parsing.edge
+            var debug_origin: Dictionary = debug_edge.origin
             
-            # Search for the matching origin surface item.
-            _select_canonical_origin_surface_item_controller( \
-                    origin_surface, \
+            var origin_start_vertex: Vector2 = \
+                    debug_origin.surface_start_vertex if \
+                    debug_origin.has("surface_start_vertex") else \
+                    Vector2.INF
+            var origin_end_vertex: Vector2 = \
+                    debug_origin.surface_end_vertex if \
+                    debug_origin.has("surface_end_vertex") else \
+                    Vector2.INF
+            var origin_epsilon: float = \
+                    debug_origin.epsilon if \
+                    debug_origin.has("epsilon") else \
+                    10.0
+            var origin_surface := _find_matching_surface( \
+                    origin_start_vertex, \
+                    origin_end_vertex, \
+                    origin_epsilon, \
                     graph)
-            return
-    
-    # TODO: Add support for search for:
-    #       - InspectorItemType.FLOORS
-    #       - InspectorItemType.LEFT_WALLS
-    #       - InspectorItemType.RIGHT_WALLS
-    #       - InspectorItemType.CEILINGS
-    
-    # By default, just select the top-level edges group.
-    _trigger_find_and_expand_controller( \
-            player_name, \
-            InspectorSearchType.EDGES_GROUP, \
-            {})
+            
+            if origin_surface != null:
+                var destination_surface: Surface
+                var debug_destination: Dictionary
+                if debug_edge.has("destination"):
+                    debug_destination = debug_edge.destination
+                    var destination_start_vertex: Vector2 = \
+                            debug_destination.surface_start_vertex if \
+                            debug_destination.has( \
+                                    "surface_start_vertex") else \
+                            Vector2.INF
+                    var destination_end_vertex: Vector2 = \
+                            debug_destination.surface_end_vertex if \
+                            debug_destination.has("surface_end_vertex") else \
+                            Vector2.INF
+                    var destination_epsilon: float = \
+                            debug_destination.epsilon if \
+                            debug_destination.has("epsilon") else \
+                            10.0
+                    destination_surface = _find_matching_surface( \
+                            destination_start_vertex, \
+                            destination_end_vertex, \
+                            destination_epsilon, \
+                            graph)
+                    
+                    # TODO: Add support for searching for:
+                    #       - InspectorItemType.DESTINATION_SURFACE
+                    #       - InspectorItemType.EDGE_TYPE_IN_SURFACES_GROUP
+                    
+                    if debug_origin.has("position") and \
+                            debug_destination.has("position") and \
+                            limit_parsing.has("edge_type"):
+                        # Search for the matching edge item.
+                        _select_canonical_edge_or_edge_attempt_item_controller( \
+                                origin_surface, \
+                                destination_surface, \
+                                debug_origin.position, \
+                                debug_destination.position, \
+                                limit_parsing.edge_type, \
+                                graph)
+                        return
+                    elif destination_surface != null:
+                        # Search for the matching origin surface item.
+                        _select_canonical_destination_surface_item_controller( \
+                                origin_surface, \
+                                destination_surface, \
+                                graph)
+                        return
+                
+                # Search for the matching origin surface item.
+                _select_canonical_origin_surface_item_controller( \
+                        origin_surface, \
+                        graph)
+                return
+        
+        # TODO: Add support for search for:
+        #       - InspectorItemType.FLOORS
+        #       - InspectorItemType.LEFT_WALLS
+        #       - InspectorItemType.RIGHT_WALLS
+        #       - InspectorItemType.CEILINGS
+        
+        # By default, just select the top-level edges group.
+        _trigger_find_and_expand_controller( \
+                player_name, \
+                InspectorSearchType.EDGES_GROUP, \
+                {})
 
 func _find_matching_surface( \
         start_vertex: Vector2, \

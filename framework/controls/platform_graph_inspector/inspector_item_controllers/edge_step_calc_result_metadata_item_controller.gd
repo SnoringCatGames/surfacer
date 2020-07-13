@@ -8,6 +8,7 @@ const STARTS_COLLAPSED := false
 var edge_or_edge_attempt
 var step_result_metadata: EdgeStepCalcResultMetadata
 var step_item_factory
+var background_color: Color
 
 func _init( \
         parent_item: TreeItem, \
@@ -27,6 +28,10 @@ func _init( \
     self.edge_or_edge_attempt = edge_or_edge_attempt
     self.step_result_metadata = step_result_metadata
     self.step_item_factory = step_item_factory
+    self.background_color = _calculate_background_color(step_result_metadata)
+    self.tree_item.set_custom_bg_color( \
+            0, \
+            background_color)
     _post_init()
 
 func to_string() -> String:
@@ -115,7 +120,9 @@ func _create_children_inner() -> void:
                 graph, \
                 _get_text_for_description_index(1), \
                 get_description(), \
-                funcref(self, "get_annotation_elements"))
+                funcref(self, "get_annotation_elements"), \
+                null, \
+                background_color)
 
 func _destroy_children_inner() -> void:
     # Do nothing.
@@ -126,3 +133,25 @@ func get_annotation_elements() -> Array:
             step_result_metadata, \
             false)
     return [element]
+
+static func _calculate_background_color( \
+        step_result_metadata: EdgeStepCalcResultMetadata) -> Color:
+    # Hue transitions evenly from start to end.
+    var total_step_count := \
+            step_result_metadata.edge_result_metadata.total_step_count
+    var step_ratio := \
+            (step_result_metadata.index / (total_step_count - 1.0)) if \
+            total_step_count > 1 else \
+            1.0
+    var step_hue: float = \
+            AnnotationElementDefaults.STEP_HUE_START + \
+            (AnnotationElementDefaults.STEP_HUE_END - \
+                    AnnotationElementDefaults.STEP_HUE_START) * \
+            step_ratio
+    return Color.from_hsv( \
+            step_hue, \
+            AnnotationElementDefaults \
+                    .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.s, \
+            AnnotationElementDefaults \
+                    .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.v, \
+            1.0)

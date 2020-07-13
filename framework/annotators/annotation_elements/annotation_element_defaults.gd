@@ -5,6 +5,8 @@ extends Node
 var PANEL_BACKGROUND_COLOR := Color.from_hsv(0.278, 0.17, 0.07, 1.0)
 var INSPECTOR_DESCRIPTION_ITEM_BACKGROUND_COLOR := \
         Color.from_hsv(0.278, 0.1, 0.1, 1.0)
+var INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR := \
+        Color.from_hsv(0.61, 0.3, 0.2, 1.0)
 
 ### Surface
 

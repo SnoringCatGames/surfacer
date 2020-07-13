@@ -4,6 +4,7 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
+# - When the inspector is open, select the first item by default.
 # - Finish adding/polishing inspector step calculation
 #   items/descriptions/annotations/legends.
 # 

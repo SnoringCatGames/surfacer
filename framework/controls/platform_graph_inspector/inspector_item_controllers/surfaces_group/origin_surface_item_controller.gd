@@ -26,7 +26,6 @@ var surfaces_in_jump_range: Array
 var valid_edges_count_item_controller: DescriptionItemController
 var fall_range_description_item_controller: DescriptionItemController
 var jump_range_description_item_controller: DescriptionItemController
-var destination_surfaces_description_item_controller: DescriptionItemController
 
 func _init( \
         parent_item: TreeItem, \
@@ -160,42 +159,30 @@ func _create_children_inner() -> void:
             tree_item, \
             tree, \
             graph, \
-            "_%s valid outbound edges_" % valid_edge_count, \
+            "%s valid outbound edges" % valid_edge_count, \
             get_description(), \
             funcref(self, \
                     "_get_annotation_elements_for_valid_edges_count_description_item"))
-    fall_range_description_item_controller = \
-            DescriptionItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
-                    "_%s surfaces in fall range_" % \
-                            surfaces_in_fall_range.size(), \
-                    "There are %s surfaces in fall range." % \
-                            surfaces_in_fall_range.size(), \
-                    funcref(self, \
-                            "_get_annotation_elements_for_fall_range_description_item"))
-    jump_range_description_item_controller = \
-            DescriptionItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
-                    "_%s surfaces in jump range_" % \
-                            surfaces_in_jump_range.size(), \
-                    "There are %s surfaces in jump range." % \
-                            surfaces_in_jump_range.size(), \
-                    funcref(self, \
-                            "_get_annotation_elements_for_jump_range_description_item"))
-    destination_surfaces_description_item_controller = \
-            DescriptionItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
-                    "_Destinations considered:_", \
-                    "The following surfaces have valid jump/land position " + \
-                            "pairs.", \
-                    funcref(self, \
-                            "_get_annotation_elements_for_destination_surfaces_description_item"))
+    fall_range_description_item_controller = DescriptionItemController.new( \
+            tree_item, \
+            tree, \
+            graph, \
+            "%s surfaces in fall range" % \
+                    surfaces_in_fall_range.size(), \
+            "There are %s surfaces in fall range." % \
+                    surfaces_in_fall_range.size(), \
+            funcref(self, \
+                    "_get_annotation_elements_for_fall_range_description_item"))
+    jump_range_description_item_controller = DescriptionItemController.new( \
+            tree_item, \
+            tree, \
+            graph, \
+            "%s surfaces in jump range" % \
+                    surfaces_in_jump_range.size(), \
+            "There are %s surfaces in jump range." % \
+                    surfaces_in_jump_range.size(), \
+            funcref(self, \
+                    "_get_annotation_elements_for_jump_range_description_item"))
     
     var edge_types_to_edges_results: Dictionary
     for destination_surface in attempted_destination_surfaces:
@@ -217,7 +204,6 @@ func _destroy_children_inner() -> void:
     valid_edges_count_item_controller = null
     fall_range_description_item_controller = null
     jump_range_description_item_controller = null
-    destination_surfaces_description_item_controller = null
 
 func get_annotation_elements() -> Array:
     var elements := _get_jump_fall_range_annotation_elements( \

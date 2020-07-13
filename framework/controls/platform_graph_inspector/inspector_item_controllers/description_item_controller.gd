@@ -17,7 +17,8 @@ func _init( \
         text: String, \
         description_text: String, \
         get_annotation_elements_funcref: FuncRef, \
-        get_annotation_elements_arg = null) \
+        get_annotation_elements_arg = null, \
+        background_color = null) \
         .( \
         TYPE, \
         IS_LEAF, \
@@ -29,10 +30,12 @@ func _init( \
     self.description_text = description_text
     self.get_annotation_elements_funcref = get_annotation_elements_funcref
     self.get_annotation_elements_arg = get_annotation_elements_arg
+    if background_color == null:
+        background_color = AnnotationElementDefaults \
+                    .INSPECTOR_DESCRIPTION_ITEM_BACKGROUND_COLOR
     self.tree_item.set_custom_bg_color( \
             0, \
-            AnnotationElementDefaults \
-                    .INSPECTOR_DESCRIPTION_ITEM_BACKGROUND_COLOR)
+            background_color)
     _post_init()
 
 func to_string() -> String:
