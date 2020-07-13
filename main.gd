@@ -4,7 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Move preloads out from main into a separate file.
 # - Move Profiler item out from under edge_calc_result_metadata item and up to
 #   be a sibling of it instead?
 #   - Or at least render then in the inspector tree that way...
