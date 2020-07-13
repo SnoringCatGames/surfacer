@@ -69,9 +69,9 @@ func get_text() -> String:
 func get_description() -> String:
     return "This jump/land pair was calculated as possibly corresponding " + \
                 "to a valid edge, but later calculations failed. %s" % \
-                BROAD_PHASE_DESCRIPTION if \
+                (BROAD_PHASE_DESCRIPTION if \
                 failed_edge_attempt.is_broad_phase_failure else \
-                NARROW_PHASE_DESCRIPTION
+                NARROW_PHASE_DESCRIPTION)
 
 func find_and_expand_controller( \
         search_type: int, \

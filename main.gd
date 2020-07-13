@@ -4,7 +4,13 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - When the inspector is open, select the first item by default.
+# 
+# >- Debug jumping down from right sides of top-right floor to middle-long
+#   floor.
+#   - It probably is an invalid edge, but it shouldn't be called both BP and
+#     FAKE...
+#   - And there seem to bemany other BP FAKE failures.
+# 
 # - Finish adding/polishing inspector step calculation
 #   items/descriptions/annotations/legends.
 # 

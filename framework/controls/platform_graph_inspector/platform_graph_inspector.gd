@@ -389,34 +389,39 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
                 all_jump_land_positions)
         jump_position = closest_jump_land_positions.jump_position
         land_position = closest_jump_land_positions.land_position
-        
-        # Show a descriptive message if the selection clicks were too far from
-        # any jump-land positions.
-        if jump_position.target_projection_onto_surface \
-                        .distance_squared_to(target_projection_start) > \
-                        PlatformGraphInspectorSelector\
-                                .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD or \
-                land_position.target_projection_onto_surface \
-                        .distance_squared_to(target_projection_end) > \
-                        PlatformGraphInspectorSelector \
-                                .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD:
-            _clear_selection()
-            Global.selection_description.set_text( \
-                    SelectionDescription.NO_MATCHING_JUMP_LAND_POSITIONS)
-            return
     
-    if graph_item_controllers.has(graph.movement_params.name):
-        var metadata := { \
-            origin_surface = start_surface, \
-            destination_surface = end_surface, \
-            start = jump_position.target_point, \
-            end = land_position.target_point, \
-            edge_type = edge_type, \
-        }
-        _trigger_find_and_expand_controller( \
-                graph.movement_params.name, \
-                InspectorSearchType.EDGE, \
-                metadata)
+    # Show a descriptive message if the selection clicks were too far from
+    # any jump-land positions.
+    if jump_position == null or \
+            land_position == null or \
+            jump_position.target_projection_onto_surface \
+                    .distance_squared_to(target_projection_start) > \
+                    PlatformGraphInspectorSelector \
+                            .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD or \
+            land_position.target_projection_onto_surface \
+                    .distance_squared_to(target_projection_end) > \
+                    PlatformGraphInspectorSelector \
+                            .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD:
+        _clear_selection()
+        Global.selection_description.set_text( \
+                SelectionDescription.NO_MATCHING_JUMP_LAND_POSITIONS)
+        return
+    
+    if !graph_item_controllers.has(graph.movement_params.name):
+        _clear_selection()
+        return
+    
+    var metadata := { \
+        origin_surface = start_surface, \
+        destination_surface = end_surface, \
+        start = jump_position.target_point, \
+        end = land_position.target_point, \
+        edge_type = edge_type, \
+    }
+    _trigger_find_and_expand_controller( \
+            graph.movement_params.name, \
+            InspectorSearchType.EDGE, \
+            metadata)
 
 func _trigger_find_and_expand_controller( \
         player_name: String, \

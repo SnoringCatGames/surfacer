@@ -53,8 +53,12 @@ func get_text() -> String:
     ]
 
 func get_description() -> String:
-    # FIXME: -------------
-    return ""
+    return EdgeCalcResultType.get_description_string( \
+                    edge_result_metadata.edge_calc_result_type) if \
+            edge_result_metadata.edge_calc_result_type != \
+                    EdgeCalcResultType.WAYPOINT_INVALID else \
+            WaypointValidity.get_description_string( \
+                    edge_result_metadata.waypoint_validity)
 
 func find_and_expand_controller( \
         search_type: int, \

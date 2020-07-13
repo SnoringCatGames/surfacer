@@ -59,11 +59,11 @@ func get_description() -> String:
     
     if step_result_metadata.get_replaced_a_fake():
         description += \
-                "Replaced a \"fake\" intermediate constraint (a fake " + \
-                "constraint is a point along an end of a surface which " + \
+                "Replaced a \"fake\" intermediate waypoint (a fake " + \
+                "waypoint is a point along an end of a surface which " + \
                 "wouldn't actually be efficient to move through, since " + \
                 "movement should instead travel more directly through the " + \
-                "following constraint). "
+                "following waypoint). "
     
     return description
 
