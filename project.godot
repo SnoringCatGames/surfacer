@@ -1223,6 +1223,7 @@ Profiler="*res://framework/utils/profiler.gd"
 Global="*res://framework/global.gd"
 AnnotationElementDefaults="*res://framework/annotators/annotation_elements/annotation_element_defaults.gd"
 InputWrapper="*res://framework/input_wrapper.gd"
+Preloads="*res://framework/preloads.gd"
 
 [display]
 

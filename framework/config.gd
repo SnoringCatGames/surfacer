@@ -36,6 +36,8 @@ const UTILITY_PANEL_STARTS_OPEN := true
 const STARTING_LEVEL_RESOURCE_PATH := \
         "res://levels/level_6.tscn"
 
+const LOADING_SCREEN_PATH := "res://loading_screen.tscn"
+
 const DEFAULT_PLAYER_NAME := "cat"
 #const DEFAULT_PLAYER_NAME := "test"
 

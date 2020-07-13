@@ -2,7 +2,7 @@ extends PanelContainer
 class_name WelcomePanel
 
 const CONTROLS_LEGEND = [
-  ["Auto nav", "click"], \
+  ["*Auto nav*", "click"], \
   ["Inspect graph", "ctrl + click (x2)"], \
   ["Walk/Climb", "arrow key / wasd"], \
   ["Jump", "space / x"], \
