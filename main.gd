@@ -4,9 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Move Profiler item out from under edge_calc_result_metadata item and up to
-#   be a sibling of it instead?
-#   - Or at least render then in the inspector tree that way...
 # - Finish adding/polishing inspector step calculation
 #   items/descriptions/annotations/legends.
 # 

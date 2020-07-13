@@ -8,6 +8,7 @@ const STARTS_COLLAPSED := true
 var edge: Edge
 var edge_result_metadata: EdgeCalcResultMetadata
 
+var profiler_controller: EdgeCalcProfilerGroupItemController
 var edge_calc_result_metadata_controller: EdgeCalcResultMetadataItemController
 
 func _init( \
@@ -69,6 +70,13 @@ func find_and_expand_controller( \
 func _create_children_inner() -> void:
     if edge_result_metadata == null:
         _calculate_edge_calc_result_metadata()
+    
+    profiler_controller = EdgeCalcProfilerGroupItemController.new( \
+            tree_item, \
+            tree, \
+            graph, \
+            edge_result_metadata)
+    
     edge_calc_result_metadata_controller = \
             EdgeCalcResultMetadataItemController.new( \
                     tree_item, \
@@ -92,6 +100,7 @@ func _calculate_edge_calc_result_metadata() -> void:
             !edge_result_metadata.failed_before_creating_steps)
 
 func _destroy_children_inner() -> void:
+    profiler_controller = null
     edge_calc_result_metadata_controller = null
 
 func get_annotation_elements() -> Array:

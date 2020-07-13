@@ -15,6 +15,7 @@ const NARROW_PHASE_DESCRIPTION := \
 var failed_edge_attempt: FailedEdgeAttempt
 var edge_result_metadata: EdgeCalcResultMetadata
 
+var profiler_controller: EdgeCalcProfilerGroupItemController
 var edge_calc_result_metadata_controller: EdgeCalcResultMetadataItemController
 
 func _init( \
@@ -99,6 +100,12 @@ func _create_children_inner() -> void:
     if edge_result_metadata == null:
         _calculate_edge_calc_result_metadata()
     
+    profiler_controller = EdgeCalcProfilerGroupItemController.new( \
+            tree_item, \
+            tree, \
+            graph, \
+            edge_result_metadata)
+    
     edge_calc_result_metadata_controller = \
             EdgeCalcResultMetadataItemController.new( \
                     tree_item, \
@@ -131,6 +138,7 @@ func _calculate_edge_calc_result_metadata() -> void:
                     .needs_extra_wall_land_horizontal_speed)
 
 func _destroy_children_inner() -> void:
+    profiler_controller = null
     edge_calc_result_metadata_controller = null
 
 func get_annotation_elements() -> Array:
