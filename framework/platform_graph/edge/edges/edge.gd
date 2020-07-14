@@ -1,9 +1,6 @@
 # Information for how to move from a start position to an end position.
-extends Reference
+extends EdgeAttempt
 class_name Edge
-
-# EdgeType
-var type: int
 
 # Whether the instructions for moving along this edge are updated according to
 # traversal time (vs according to surface state).
@@ -17,8 +14,6 @@ var enters_air: bool
 
 var includes_air_trajectory: bool
 
-var calculator
-
 var movement_params: MovementParams
 
 # Whether this edge was created by the navigator for a specific path at
@@ -30,30 +25,12 @@ var instructions: EdgeInstructions
 
 var trajectory: EdgeTrajectory
 
-var edge_calc_result_type: int
+var velocity_end := Vector2.INF
 
 # In pixels.
 var distance: float
 # In seconds.
 var duration: float
-
-# Whether this edge was calculated using extra jump duration from the start.
-var includes_extra_jump_duration: bool
-
-# Whether this edge was calculated using extra horizontal end velocity.
-var includes_extra_wall_land_horizontal_speed: bool
-
-var start_position_along_surface: PositionAlongSurface
-var end_position_along_surface: PositionAlongSurface
-
-var velocity_start: Vector2
-var velocity_end: Vector2
-
-var start: Vector2 setget ,_get_start
-var end: Vector2 setget ,_get_end
-
-var start_surface: Surface setget ,_get_start_surface
-var end_surface: Surface setget ,_get_end_surface
 
 var name: String setget ,_get_name
 
@@ -61,7 +38,7 @@ var should_end_by_colliding_with_surface: bool setget \
         ,_get_should_end_by_colliding_with_surface
 
 func _init( \
-        type: int, \
+        edge_type: int, \
         is_time_based: bool, \
         surface_type: int, \
         enters_air: bool, \
@@ -76,24 +53,25 @@ func _init( \
         movement_params: MovementParams, \
         instructions: EdgeInstructions, \
         trajectory: EdgeTrajectory, \
-        edge_calc_result_type: int) -> void:
-    self.type = type
+        edge_calc_result_type: int \
+        ).( \
+        edge_type, \
+        edge_calc_result_type, \
+        start_position_along_surface, \
+        end_position_along_surface, \
+        velocity_start, \
+        includes_extra_jump_duration, \
+        includes_extra_wall_land_horizontal_speed, \
+        calculator \
+        ) -> void:
     self.is_time_based = is_time_based
     self.surface_type = surface_type
     self.enters_air = enters_air
     self.includes_air_trajectory = includes_air_trajectory
-    self.calculator = calculator
     self.movement_params = movement_params
-    self.start_position_along_surface = start_position_along_surface
-    self.end_position_along_surface = end_position_along_surface
-    self.velocity_start = velocity_start
     self.velocity_end = velocity_end
-    self.includes_extra_jump_duration = includes_extra_jump_duration
-    self.includes_extra_wall_land_horizontal_speed = \
-            includes_extra_wall_land_horizontal_speed
     self.instructions = instructions
     self.trajectory = trajectory
-    self.edge_calc_result_type = edge_calc_result_type
     self.distance = _calculate_distance( \
             start_position_along_surface, \
             end_position_along_surface, \
@@ -210,7 +188,7 @@ func _get_end_string() -> String:
     return end_position_along_surface.to_string()
 
 func _get_name() -> String:
-    return EdgeType.get_type_string(type)
+    return EdgeType.get_type_string(edge_type)
 
 func _get_should_end_by_colliding_with_surface() -> bool:
     return end_position_along_surface.surface != \

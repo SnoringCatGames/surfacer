@@ -92,7 +92,7 @@ static func get_annotation_elements_from_graph_and_type( \
     for origin_surface in graph.surfaces_set:
         for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
             for edge in graph.nodes_to_nodes_to_edges[origin_node].values():
-                if edge.type == edge_type:
+                if edge.edge_type == edge_type:
                     element = EdgeAnnotationElement.new( \
                             edge, \
                             true, \

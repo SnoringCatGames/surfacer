@@ -67,7 +67,7 @@ func draw(canvas: CanvasItem) -> void:
             canvas, \
             end, \
             true, \
-            failed_edge_attempt.destination_surface.side, \
+            failed_edge_attempt.end_surface.side, \
             end_color)
     if includes_surfaces:
         SurfaceAnnotationElement.draw_from_surface( \

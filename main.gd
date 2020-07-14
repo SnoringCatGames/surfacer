@@ -4,15 +4,22 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
+# - Clear previous inspector selector selectionss when selection changes in the
+#   inpspector tree.
 # 
-# >- Debug jumping down from right sides of top-right floor to middle-long
-#   floor.
-#   - It probably is an invalid edge, but it shouldn't be called both BP and
-#     FAKE...
-#   - And there seem to bemany other BP FAKE failures.
+# - Debug path weights, from lowish lower-left floor to long middleish floor.
+# 
+# - On phone, the utility panel is closed, but the edges are still annotated;
+#   they shouldn't be.
+# 
+# - DEBUG: jump from start floor to closest edge on upper-right floor;failed,
+#          close to previous; edge detail info shows vaild_single_step, but 
+#          here are 2 child steps...
 # 
 # - Finish adding/polishing inspector step calculation
 #   items/descriptions/annotations/legends.
+#   - Use origin/destination indicator shapes.
+#   - ...
 # 
 # - Add an additional movement_params flag to include additional jump/land
 #   position start velocity of 0 for all cases (or rather, the flag should
@@ -113,6 +120,9 @@ class_name Main
 #     other function would yield.
 #   - Conditionally use this approach behind a movement_params flag. This
 #     should improve efficiency and decrease accuracy.
+# 
+# - Add some analytics for load times of different parts of load screen in HTML
+#   page.
 # 
 # --- EASIER BITS ---
 # 

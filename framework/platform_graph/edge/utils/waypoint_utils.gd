@@ -75,6 +75,17 @@ static func create_terminal_waypoints( \
             can_hold_jump_button, \
             null, \
             Vector2.INF)
+    # FIXME: ----------------------------------------- REMOVE
+    if origin.is_fake:
+        update_waypoint( \
+                origin, \
+                origin, \
+                movement_params, \
+                velocity_start, \
+                can_hold_jump_button, \
+                null, \
+                Vector2.INF)
+    assert(!origin.is_fake and !destination.is_fake)
     
     if origin.is_valid and destination.is_valid:
         return [origin, destination]
@@ -349,13 +360,13 @@ static func _compare_waypoints_by_more_likely_to_be_valid( \
 # Calculates and records various state on the given waypoint.
 # 
 # In particular, these waypoint properties are updated:
-# - is_fake
-# - is_valid
-# - horizontal_movement_sign
-# - horizontal_movement_sign_from_displacement
-# - time_passing_through
-# - min_velocity_x
-# - max_velocity_x
+# -   is_fake
+# -   is_valid
+# -   horizontal_movement_sign
+# -   horizontal_movement_sign_from_displacement
+# -   time_passing_through
+# -   min_velocity_x
+# -   max_velocity_x
 # 
 # These calculations take into account state from previous and upcoming
 # neighbor waypoints as well as various other parameters.
@@ -387,12 +398,16 @@ static func update_waypoint( \
     assert(vertical_step != null or \
             additional_high_waypoint_position == Vector2.INF)
     
-    _assign_horizontal_movement_sign(waypoint, velocity_start_origin)
+    _assign_horizontal_movement_sign( \
+            waypoint, \
+            velocity_start_origin)
     
     var is_a_horizontal_surface := \
             waypoint.surface != null and \
             waypoint.surface.normal.x == 0
     var is_a_fake_waypoint := \
+            !waypoint.is_origin and \
+            !waypoint.is_destination and \
             waypoint.surface != null and \
             waypoint.horizontal_movement_sign != \
                     waypoint.horizontal_movement_sign_from_displacement and \
@@ -419,9 +434,9 @@ static func update_waypoint( \
 # Calculates and records various state on the given waypoint.
 # 
 # In particular, these waypoint properties are updated:
-# - time_passing_through
-# - min_velocity_x
-# - max_velocity_x
+# -   time_passing_through
+# -   min_velocity_x
+# -   max_velocity_x
 # 
 # These calculations take into account state from neighbor waypoints as well as
 # various other parameters.
@@ -517,12 +532,14 @@ static func _update_waypoint_velocity_and_time( \
                         vertical_step.time_step_end
             else:
                 time_to_pass_through_waypoint_ignoring_others = \
-                        VerticalMovementUtils.calculate_time_to_jump_to_waypoint( \
-                                movement_params, \
-                                displacement_from_origin_to_waypoint, \
-                                velocity_start_origin, \
-                                can_hold_jump_button_at_origin, \
-                                additional_high_waypoint_position != Vector2.INF)
+                        VerticalMovementUtils \
+                                .calculate_time_to_jump_to_waypoint( \
+                                        movement_params, \
+                                        displacement_from_origin_to_waypoint, \
+                                        velocity_start_origin, \
+                                        can_hold_jump_button_at_origin, \
+                                        additional_high_waypoint_position != \
+                                                Vector2.INF)
                 if time_to_pass_through_waypoint_ignoring_others == INF:
                     # We can't reach this waypoint.
                     return WaypointValidity.OUT_OF_REACH_FROM_ORIGIN
@@ -531,15 +548,19 @@ static func _update_waypoint_velocity_and_time( \
             if additional_high_waypoint_position != Vector2.INF:
                 # We are backtracking to consider a new jump height.
                 # 
-                # The destination jump time should account for all of the following:
+                # The destination jump time should account for all of the
+                # following:
                 # 
-                # -   The time needed to reach any previous jump-heights before this current round
-                #     of jump-height backtracking (vertical_step.time_instruction_end).
-                # -   The time needed to reach this new previously-out-of-reach waypoint.
-                # -   The time needed to get to the destination from this new waypoint.
+                # -   The time needed to reach any previous jump-heights before
+                #     this current round of jump-height backtracking
+                #     (vertical_step.time_instruction_end).
+                # -   The time needed to reach this new previously-out-of-reach
+                #     waypoint.
+                # -   The time needed to get to the destination from this new
+                #     waypoint.
                 
-                # TODO: There might be cases that this fails for? We might need to add more time.
-                #       Revisit this if we see problems.
+                # TODO: There might be cases that this fails for? We might need
+                #       to add more time. Revisit this if we see problems.
                 
                 var time_to_get_to_destination_from_waypoint := \
                         _calculate_time_to_reach_destination_from_new_waypoint( \
@@ -548,24 +569,28 @@ static func _update_waypoint_velocity_and_time( \
                                 waypoint)
                 if time_to_get_to_destination_from_waypoint == INF:
                     # We can't reach the destination from this waypoint.
-                    return WaypointValidity.OUT_OF_REACH_FROM_ADDITIONAL_HIGH_WAYPOINT
+                    return WaypointValidity \
+                            .OUT_OF_REACH_FROM_ADDITIONAL_HIGH_WAYPOINT
                 
                 time_passing_through = max(vertical_step.time_step_end, \
                         time_to_pass_through_waypoint_ignoring_others + \
                                 time_to_get_to_destination_from_waypoint)
                 
             else:
-                time_passing_through = time_to_pass_through_waypoint_ignoring_others
+                time_passing_through = \
+                        time_to_pass_through_waypoint_ignoring_others
                 
-                # FIXME: LEFT OFF HERE: ----------------------------------------A:
-                # - Trying to add support for waypoint.needs_extra_jump_duration.
+                # FIXME: LEFT OFF HERE: --------------------------------------A:
+                # - Trying to add support for
+                #   waypoint.needs_extra_jump_duration.
                 
 #                if can_hold_jump_button_at_origin:
-#                    # Add a slight constant increase to jump instruction durations, to help get
-#                    # over and around surface ends (but don't continue the instruction uselessly
-#                    # beyond jump height).
-#                    var time_to_release_jump_button := \
-#                            VerticalMovementUtils.calculate_time_to_release_jump_button( \
+#                    # Add a slight constant increase to jump instruction
+#                    # durations, to help get over and around surface ends (but
+#                    # don't continue the instruction uselessly beyond jump
+#                    # height).
+#                    var time_to_release_jump_button := VerticalMovementUtils \
+#                           .calculate_time_to_release_jump_button( \
 #                                    movement_params, \
 #                                    time_passing_through, \
 #                                    displacement_from_origin_to_waypoint.y, \
@@ -576,26 +601,31 @@ static func _update_waypoint_velocity_and_time( \
 #                    # Algebra...:
 #                    #     t = -v_0/a
 #                    var time_to_max_height_with_slow_rise_gravity := \
-#                            -velocity_start_origin.y / movement_params.gravity_slow_rise
+#                            -velocity_start_origin.y / \
+#                            movement_params.gravity_slow_rise
 #                    var jump_duration_increase := \
-#                            movement_params.exceptional_jump_instruction_duration_increase if \
+#                            movement_params \
+#                                   .exceptional_jump_instruction_duration_increase if \
 #                            waypoint.needs_extra_jump_duration else \
-#                            movement_params.normal_jump_instruction_duration_increase
-#                    # FIXME: -------------- Uncomment (since this is the whole point), after
-#                    # getting the rest of this to work (the rest should be a no-op, but seems to
-#                    # break stuff).
+#                            movement_params \
+#                                   .normal_jump_instruction_duration_increase
+#                    # FIXME: -------------- Uncomment (since this is the whole
+#                    # point), after getting the rest of this to work (the rest
+#                    # should be a no-op, but seems to break stuff).
 ##                    time_to_release_jump_button = min( \
-##                            time_to_release_jump_button + jump_duration_increase, \
+##                            time_to_release_jump_button + \
+##                            jump_duration_increase, \
 ##                            time_to_max_height_with_slow_rise_gravity)
 #                    # FIXME: -------------- Is this needed?
 #                    time_to_release_jump_button -= 0.001
 #                    var vertical_state_at_jump_button_release := \
-#                            VerticalMovementUtils.calculate_vertical_state_for_time( \
-#                                    movement_params, \
-#                                    time_to_release_jump_button, \
-#                                    origin_waypoint.position.y, \
-#                                    velocity_start_origin.y, \
-#                                    time_to_release_jump_button)
+#                            VerticalMovementUtils \
+#                                   .calculate_vertical_state_for_time( \
+#                                           movement_params, \
+#                                           time_to_release_jump_button, \
+#                                           origin_waypoint.position.y, \
+#                                           velocity_start_origin.y, \
+#                                           time_to_release_jump_button)
 #                    var position_y_at_jump_button_release: float = \
 #                            vertical_state_at_jump_button_release[0]
 #                    var velocity_y_at_jump_button_release: float = \
@@ -605,7 +635,8 @@ static func _update_waypoint_velocity_and_time( \
 #                    #     v = v_0 + a*t
 #                    # Algebra...:
 #                    #     t = (sqrt(v_0^2 + 2*a*(s - s_0)) - v_0) / a
-#                    # FIXME: -------------- Re-insert these back into one expression.
+#                    # FIXME: -------------- Re-insert these back into one
+#                    # expression.
 #                    var foo := velocity_y_at_jump_button_release * \
 #                            velocity_y_at_jump_button_release
 #                    var disp := waypoint.position.y - \
@@ -622,19 +653,23 @@ static func _update_waypoint_velocity_and_time( \
 #                    # FIXME: --------------  Is this needed?
 #                    time_passing_through += 0.002
 #                    # FIXME: -------------- Remove.
-#                    if is_nan((time_passing_through - time_passing_through) / 2.0):
+#                    if is_nan((time_passing_through - \
+#                           time_passing_through) / 2.0):
 #                        print("break")
             
-            # We can't be more restrictive with the destination velocity limits, because otherwise,
-            # origin vs intermediate waypoints give us all sorts of invalid values, which they
-            # in-turn base their values off of.
+            # We can't be more restrictive with the destination velocity
+            # limits, because otherwise, origin vs intermediate waypoints give
+            # us all sorts of invalid values, which they in-turn base their
+            # values off of.
             # 
-            # Specifically, when the horizontal movement sign of the destination changes, due to a
-            # new intermediate waypoint, either the min or max would be incorrectly capped at 0
-            # when we're calculating the min/max for the new waypoint.
+            # Specifically, when the horizontal movement sign of the
+            # destination changes, due to a new intermediate waypoint, either
+            # the min or max would be incorrectly capped at 0 when we're
+            # calculating the min/max for the new waypoint.
             # 
-            # If this was already assigned a min/max (because we need the edge's movement to end in
-            # a certain direction), use that; otherwise, use max possible speed values.
+            # If this was already assigned a min/max (because we need the
+            # edge's movement to end in a certain direction), use that;
+            # otherwise, use max possible speed values.
             min_velocity_x = \
                     waypoint.min_velocity_x if \
                     waypoint.min_velocity_x != INF else \
@@ -647,11 +682,12 @@ static func _update_waypoint_velocity_and_time( \
         else:
             # This is an intermediate waypoint (not the origin or destination).
             
-            time_passing_through = \
-                    VerticalMovementUtils.calculate_time_for_passing_through_waypoint( \
+            time_passing_through = VerticalMovementUtils \
+                    .calculate_time_for_passing_through_waypoint( \
                             movement_params, \
                             waypoint, \
-                            waypoint.previous_waypoint.time_passing_through + 0.0001, \
+                            waypoint.previous_waypoint.time_passing_through + \
+                                    0.0001, \
                             vertical_step.position_step_start.y, \
                             vertical_step.velocity_step_start.y, \
                             vertical_step.time_instruction_end, \
@@ -659,7 +695,8 @@ static func _update_waypoint_velocity_and_time( \
                             vertical_step.velocity_instruction_end.y)
             if time_passing_through == INF:
                 # We can't reach this waypoint from the previous waypoint.
-                return WaypointValidity.THIS_WAYPOINT_OUT_OF_REACH_FROM_PREVIOUS_WAYPOINT
+                return WaypointValidity \
+                        .THIS_WAYPOINT_OUT_OF_REACH_FROM_PREVIOUS_WAYPOINT
             
             var still_ascending := \
                     time_passing_through < vertical_step.time_peak_height
@@ -668,13 +705,17 @@ static func _update_waypoint_velocity_and_time( \
             if !waypoint.passing_vertically and \
                     waypoint.should_stay_on_min_side and \
                     !still_ascending:
-                # Quit early if we are trying to go above a wall, but we are already descending.
-                return WaypointValidity.TRYING_TO_PASS_OVER_WALL_WHILE_DESCENDING
+                # Quit early if we are trying to go above a wall, but we are
+                # already descending.
+                return WaypointValidity \
+                        .TRYING_TO_PASS_OVER_WALL_WHILE_DESCENDING
             elif !waypoint.passing_vertically and \
                     !waypoint.should_stay_on_min_side and \
                     still_ascending:
-                # Quit early if we are trying to go below a wall, but we are still ascending.
-                return WaypointValidity.TRYING_TO_PASS_UNDER_WALL_WHILE_ASCENDING
+                # Quit early if we are trying to go below a wall, but we are
+                # still ascending.
+                return WaypointValidity \
+                        .TRYING_TO_PASS_UNDER_WALL_WHILE_ASCENDING
             else:
                 # We should never hit a floor while still holding the jump button.
                 assert(!(waypoint.surface != null and \
@@ -682,29 +723,36 @@ static func _update_waypoint_velocity_and_time( \
                         still_ascending))
             
             var duration_to_next := \
-                    waypoint.next_waypoint.time_passing_through - time_passing_through
+                    waypoint.next_waypoint.time_passing_through - \
+                    time_passing_through
             if duration_to_next <= 0:
                 # We can't reach the next waypoint from this waypoint.
-                return WaypointValidity.NEXT_WAYPOINT_OUT_OF_REACH_FROM_THIS_WAYPOINT
+                return WaypointValidity \
+                        .NEXT_WAYPOINT_OUT_OF_REACH_FROM_THIS_WAYPOINT
             
             var displacement_to_next := displacement
             var duration_from_origin := \
                     time_passing_through - origin_waypoint.time_passing_through
-            var displacement_from_origin := waypoint.position - origin_waypoint.position
+            var displacement_from_origin := \
+                    waypoint.position - origin_waypoint.position
             
             # FIXME: DEBUGGING: REMOVE
-#            if Geometry.are_floats_equal_with_epsilon(min_velocity_x, -112.517, 0.01):
-#            if Geometry.are_floats_equal_with_epsilon(duration_to_next, 0.372, 0.01) and \
+#            if Geometry.are_floats_equal_with_epsilon( \
+#                    min_velocity_x, -112.517, 0.01):
+#            if Geometry.are_floats_equal_with_epsilon( \
+#                    duration_to_next, 0.372, 0.01) and \
 #                    displacement_to_next.x == 62:
 #                print("break")
             
-            # We calculate min/max velocity limits for direct movement from the origin. These
-            # limits are more permissive than if we were calculating them from the actual
-            # immediately previous waypoint, but these can give an early indicator for whether
-            # this waypoint is invalid.
+            # We calculate min/max velocity limits for direct movement from the
+            # origin. These limits are more permissive than if we were
+            # calculating them from the actual immediately previous waypoint,
+            # but these can give an early indicator for whether this waypoint
+            # is invalid.
             # 
-            # NOTE: This check will still not guarantee that movement up to this waypoint can be
-            #       reached, since any previous intermediate waypoints could invalidate things.
+            # NOTE: This check will still not guarantee that movement up to
+            #       this waypoint can be reached, since any previous
+            #       intermediate waypoints could invalidate things.
             var min_and_max_velocity_from_origin := \
                     _calculate_min_and_max_x_velocity_at_end_of_interval( \
                             displacement_from_origin.x, \
@@ -717,8 +765,10 @@ static func _update_waypoint_velocity_and_time( \
             if min_and_max_velocity_from_origin.empty():
                 # We can't reach this waypoint from the previous waypoint.
                 return WaypointValidity.NO_VALID_VELOCITY_FROM_ORIGIN
-            var min_velocity_x_from_origin: float = min_and_max_velocity_from_origin[0]
-            var max_velocity_x_from_origin: float = min_and_max_velocity_from_origin[1]
+            var min_velocity_x_from_origin: float = \
+                    min_and_max_velocity_from_origin[0]
+            var max_velocity_x_from_origin: float = \
+                    min_and_max_velocity_from_origin[1]
             
             # Calculate the min and max velocity for movement through the
             # waypoint, in order for movement to reach the next waypoint.
@@ -734,13 +784,20 @@ static func _update_waypoint_velocity_and_time( \
             if min_and_max_velocity_for_next_step.empty():
                 # We can't reach the next waypoint from this waypoint.
                 return WaypointValidity.NO_VALID_VELOCITY_FOR_NEXT_STEP
-            var min_velocity_x_for_next_step: float = min_and_max_velocity_for_next_step[0]
-            var max_velocity_x_for_next_step: float = min_and_max_velocity_for_next_step[1]
+            var min_velocity_x_for_next_step: float = \
+                    min_and_max_velocity_for_next_step[0]
+            var max_velocity_x_for_next_step: float = \
+                    min_and_max_velocity_for_next_step[1]
             
-            min_velocity_x = max(min_velocity_x_from_origin, min_velocity_x_for_next_step)
-            max_velocity_x = min(max_velocity_x_from_origin, max_velocity_x_for_next_step)
+            min_velocity_x = max( \
+                    min_velocity_x_from_origin, \
+                    min_velocity_x_for_next_step)
+            max_velocity_x = min( \
+                    max_velocity_x_from_origin, \
+                    max_velocity_x_for_next_step)
         
-        # actual_velocity_x is calculated when calculating the horizontal steps.
+        # actual_velocity_x is calculated when calculating the horizontal
+        # steps.
         actual_velocity_x = INF
     
     waypoint.time_passing_through = time_passing_through
@@ -748,27 +805,34 @@ static func _update_waypoint_velocity_and_time( \
     waypoint.max_velocity_x = max_velocity_x
     waypoint.actual_velocity_x = actual_velocity_x
     
-    # FIXME: ---------------------- Debugging... Maybe remove the is_destination conditional?
+    # FIXME: ---------------------- Debugging...
+    # - Maybe remove the is_destination conditional?
     if !waypoint.is_destination:
-        # Ensure that the min and max velocities match the expected horizontal movement direction.
+        # Ensure that the min and max velocities match the expected horizontal
+        # movement direction.
         if waypoint.horizontal_movement_sign == 1:
-            assert(waypoint.min_velocity_x >= 0 and waypoint.max_velocity_x >= 0)
+            assert(waypoint.min_velocity_x >= 0 and \
+                    waypoint.max_velocity_x >= 0)
         elif waypoint.horizontal_movement_sign == -1:
-            assert(waypoint.min_velocity_x <= 0 and waypoint.max_velocity_x <= 0)
+            assert(waypoint.min_velocity_x <= 0 and \
+                    waypoint.max_velocity_x <= 0)
     
     return WaypointValidity.WAYPOINT_VALID
 
-# This only considers the time to move horizontally and the time to fall; this does not consider
-# the time to rise from the new waypoint to the destination.
+# This only considers the time to move horizontally and the time to fall; this
+# does not consider the time to rise from the new waypoint to the destination.
 # 
-# - We don't consider rise time, since that would require knowing more information around when the
-#   jump button is released and whether it could still be held. Also, this case is much less likely
-#   to impact the overall movement duration.
-# - For horizontal movement time, we don't need to know about vertical velocity or the jump button.
-# - For fall time, we can assume that vertical velocity will be zero when passing through this new
-#   waypoint (since it should be the highest point we reach in the jump). If the movement would
-#   require vertical velocity to _not_ be zero through this new waypoint, then that case should
-#   be covered by the horizontal time calculation.
+# -   We don't consider rise time, since that would require knowing more
+#     information around when the jump button is released and whether it could
+#     still be held. Also, this case is much less likely to impact the overall
+#     movement duration.
+# -   For horizontal movement time, we don't need to know about vertical
+#     velocity or the jump button.
+# -   For fall time, we can assume that vertical velocity will be zero when
+#     passing through this new waypoint (since it should be the highest point
+#     we reach in the jump). If the movement would require vertical velocity to
+#     _not_ be zero through this new waypoint, then that case should be covered
+#     by the horizontal time calculation.
 static func _calculate_time_to_reach_destination_from_new_waypoint( \
         movement_params: MovementParams, \
         new_waypoint_position: Vector2, \
@@ -778,11 +842,13 @@ static func _calculate_time_to_reach_destination_from_new_waypoint( \
     var velocity_x_at_new_waypoint: float
     var acceleration: float
     if displacement.x > 0:
-        velocity_x_at_new_waypoint = movement_params.max_horizontal_speed_default * \
+        velocity_x_at_new_waypoint = \
+                movement_params.max_horizontal_speed_default * \
                 CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER
         acceleration = movement_params.in_air_horizontal_acceleration
     else:
-        velocity_x_at_new_waypoint = -movement_params.max_horizontal_speed_default * \
+        velocity_x_at_new_waypoint = \
+                -movement_params.max_horizontal_speed_default * \
                 CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER
         acceleration = -movement_params.in_air_horizontal_acceleration
     
@@ -795,17 +861,20 @@ static func _calculate_time_to_reach_destination_from_new_waypoint( \
     
     var time_to_reach_fall_displacement: float
     if displacement.y > 0:
-        time_to_reach_fall_displacement = MovementUtils.calculate_movement_duration( \
-                displacement.y, \
-                0.0, \
-                movement_params.gravity_fast_fall, \
-                true, \
-                0.0, \
-                true)
+        time_to_reach_fall_displacement = \
+                MovementUtils.calculate_movement_duration( \
+                        displacement.y, \
+                        0.0, \
+                        movement_params.gravity_fast_fall, \
+                        true, \
+                        0.0, \
+                        true)
     else:
         time_to_reach_fall_displacement = 0.0
     
-    return max(time_to_reach_horizontal_displacement, time_to_reach_fall_displacement)
+    return max( \
+            time_to_reach_horizontal_displacement, \
+            time_to_reach_fall_displacement)
 
 static func _assign_horizontal_movement_sign( \
         waypoint: Waypoint, \
@@ -820,61 +889,85 @@ static func _assign_horizontal_movement_sign( \
     assert(previous_waypoint != null or is_origin)
     assert(next_waypoint != null or is_destination)
     
-    var displacement := waypoint.position - previous_waypoint.position if \
-            previous_waypoint != null else next_waypoint.position - waypoint.position
-    var neighbor_horizontal_movement_sign := previous_waypoint.horizontal_movement_sign if \
-            previous_waypoint != null else next_waypoint.horizontal_movement_sign
+    var displacement := \
+            waypoint.position - previous_waypoint.position if \
+            previous_waypoint != null else \
+            next_waypoint.position - waypoint.position
+    var neighbor_horizontal_movement_sign := \
+            previous_waypoint.horizontal_movement_sign if \
+            previous_waypoint != null else \
+            next_waypoint.horizontal_movement_sign
     
     var displacement_sign := \
-            0 if Geometry.are_floats_equal_with_epsilon(displacement.x, 0.0, 0.1) else \
-            (1 if displacement.x > 0 else \
+            0 if \
+            Geometry.are_floats_equal_with_epsilon( \
+                    displacement.x, \
+                    0.0, \
+                    0.1) else \
+            (1 if \
+            displacement.x > 0 else \
             -1)
     
     var horizontal_movement_sign_from_displacement := \
-            -1 if displacement_sign == -1 else \
-            (1 if displacement_sign == 1 else \
-            # For straight-vertical steps, if there was any horizontal movement through the
-            # previous, then we're going to need to backtrack in the opposition direction to reach
-            # the destination.
-            (-neighbor_horizontal_movement_sign if neighbor_horizontal_movement_sign != INF else \
-            # For straight vertical steps from the origin, we don't have much to go off of for
-            # picking the horizontal movement direction, so just default to rightward for now.
+            -1 if \
+            displacement_sign == -1 else \
+            (1 if \
+            displacement_sign == 1 else \
+            # For straight-vertical steps, if there was any horizontal movement
+            # through the previous, then we're going to need to backtrack in
+            # the opposition direction to reach the destination.
+            (-neighbor_horizontal_movement_sign if \
+            neighbor_horizontal_movement_sign != INF else \
+            # For straight vertical steps from the origin, we don't have much
+            # to go off of for picking the horizontal movement direction, so
+            # just default to rightward for now.
             1))
     
     var horizontal_movement_sign: int
     if is_origin:
         horizontal_movement_sign = \
-                1 if velocity_start_origin.x > 0 else \
-                (-1 if velocity_start_origin.x < 0 else \
+                1 if \
+                velocity_start_origin.x > 0 else \
+                (-1 if \
+                velocity_start_origin.x < 0 else \
                 horizontal_movement_sign_from_displacement)
     elif is_destination:
         horizontal_movement_sign = \
-                -1 if surface != null and surface.side == SurfaceSide.LEFT_WALL else \
-                (1 if surface != null and surface.side == SurfaceSide.RIGHT_WALL else \
+                -1 if \
+                surface != null and \
+                        surface.side == SurfaceSide.LEFT_WALL else \
+                (1 if \
+                surface != null and \
+                        surface.side == SurfaceSide.RIGHT_WALL else \
                 horizontal_movement_sign_from_displacement)
     else:
         horizontal_movement_sign = \
-                -1 if surface.side == SurfaceSide.LEFT_WALL else \
-                (1 if surface.side == SurfaceSide.RIGHT_WALL else \
-                (-1 if waypoint.should_stay_on_min_side else 1))
+                -1 if \
+                surface.side == SurfaceSide.LEFT_WALL else \
+                (1 if \
+                surface.side == SurfaceSide.RIGHT_WALL else \
+                (-1 if \
+                waypoint.should_stay_on_min_side else \
+                1))
     
     waypoint.horizontal_movement_sign = horizontal_movement_sign
     waypoint.horizontal_movement_sign_from_displacement = \
             horizontal_movement_sign_from_displacement
 
-# This calculates the range of possible x velocities at the start of a movement step.
+# This calculates the range of possible x velocities at the start of a movement
+# step.
 # 
 # This takes into consideration both:
 # 
-# - the given range of possible step-end x velocities that must be met in order for movement to be
-#   valid for the next step,
-# - and the range of possible step-start x velocities that can produce valid movement for the
-#   current step.
+# -   the given range of possible step-end x velocities that must be met in
+#     order for movement to be valid for the next step,
+# -   and the range of possible step-start x velocities that can produce valid
+#     movement for the current step.
 # 
 # An Array is returned:
 # 
-# - The first element represents the min velocity.
-# - The second element represents the max velocity.
+# -   The first element represents the min velocity.
+# -   The second element represents the max velocity.
 static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         displacement: float, \
         duration: float, \
@@ -883,20 +976,23 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         speed_max: float, \
         a_magnitude: float, \
         start_horizontal_movement_sign: int) -> Array:
-    ### Calculate more tightly-bounded min/max end velocity values, according to both the duration
-    ### of the current step and the given min/max values from the next waypoint.
+    ### Calculate more tightly-bounded min/max end velocity values, according
+    ### to both the duration of the current step and the given min/max values
+    ### from the next waypoint.
     
-    # The strategy here, is to first try min/max v_1 values that correspond to accelerating over
-    # the entire interval. If they do not result in movement that exceeds max speed, then we know
-    # that they are the most extreme possible end velocities. Otherwise, if the movement would
-    # exceed max speed, then we need to perform a slightly more expensive calculation that assumes
-    # a two-part movement profile: one part with constant acceleration and one part with constant
-    # velocity.
+    # The strategy here, is to first try min/max v_1 values that correspond to
+    # accelerating over the entire interval. If they do not result in movement
+    # that exceeds max speed, then we know that they are the most extreme
+    # possible end velocities. Otherwise, if the movement would exceed max
+    # speed, then we need to perform a slightly more expensive calculation
+    # that assumes a two-part movement profile: one part with constant
+    # acceleration and one part with constant velocity.
     
-    # Accelerating in a positive direction over the entire step corresponds to an upper bound on
-    # the end velocity and a lower boound on the start velocity, and accelerating in a negative
-    # direction over the entire step corresponds to a lower bound on the end velocity and an upper
-    # bound on the start velocity.
+    # Accelerating in a positive direction over the entire step corresponds to
+    # an upper bound on the end velocity and a lower boound on the start
+    # velocity, and accelerating in a negative direction over the entire step
+    # corresponds to a lower bound on the end velocity and an upper bound on
+    # the start velocity.
     # 
     # Derivation:
     # - From basic equations of motion:
@@ -912,9 +1008,11 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
     # From a basic equation of motion:
     #   v = v_0 + a*t
     var max_v_0_with_complete_neg_acc_and_no_max_speed := \
-            min_v_1_with_complete_neg_acc_and_no_max_speed + a_magnitude * duration
+            min_v_1_with_complete_neg_acc_and_no_max_speed + \
+            a_magnitude * duration
     var min_v_0_with_complete_pos_acc_and_no_max_speed := \
-            max_v_1_with_complete_pos_acc_and_no_max_speed - a_magnitude * duration
+            max_v_1_with_complete_pos_acc_and_no_max_speed - \
+            a_magnitude * duration
     
     var would_complete_neg_acc_exceed_max_speed_at_v_0 := \
             max_v_0_with_complete_neg_acc_and_no_max_speed > speed_max
@@ -925,11 +1023,13 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
     var max_v_1_from_partial_acc_and_no_max_speed_at_v_1: float
     
     if would_complete_neg_acc_exceed_max_speed_at_v_0:
-        # Accelerating over the entire step to min_v_1_that_can_be_reached would require starting
-        # with a velocity that exceeds max speed. So we need to instead consider a two-part
-        # movement profile when calculating min_v_1_that_can_be_reached: constant velocity
-        # followed by constant acceleration. Accelerating at the end, given the same start
-        # velocity, should result in a more extreme end velocity, than accelerating at the start.
+        # Accelerating over the entire step to min_v_1_that_can_be_reached
+        # would require starting with a velocity that exceeds max speed. So we
+        # need to instead consider a two-part movement profile when calculating
+        # min_v_1_that_can_be_reached: constant velocity followed by constant
+        # acceleration. Accelerating at the end, given the same start velocity,
+        # should result in a more extreme end velocity, than accelerating at
+        # the start.
         var acceleration := -a_magnitude
         var v_0 := speed_max
         min_v_1_from_partial_acc_and_no_max_speed_at_v_1 = \
@@ -947,11 +1047,13 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
                 min_v_1_with_complete_neg_acc_and_no_max_speed
     
     if would_complete_pos_acc_exceed_max_speed_at_v_0:
-        # Accelerating over the entire step to max_v_1_that_can_be_reached would require starting
-        # with a velocity that exceeds max speed. So we need to instead consider a two-part
-        # movement profile when calculating max_v_1_that_can_be_reached: constant velocity
-        # followed by constant acceleration. Accelerating at the end, given the same start
-        # velocity, should result in a more extreme end velocity, than accelerating at the start.
+        # Accelerating over the entire step to max_v_1_that_can_be_reached
+        # would require starting with a velocity that exceeds max speed. So we
+        # need to instead consider a two-part movement profile when calculating
+        # max_v_1_that_can_be_reached: constant velocity followed by constant
+        # acceleration. Accelerating at the end, given the same start velocity,
+        # should result in a more extreme end velocity, than accelerating at
+        # the start.
         var acceleration := a_magnitude
         var v_0 := -speed_max
         max_v_1_from_partial_acc_and_no_max_speed_at_v_1 = \
@@ -968,52 +1070,63 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         max_v_1_from_partial_acc_and_no_max_speed_at_v_1 = \
                 max_v_1_with_complete_pos_acc_and_no_max_speed
     
-    # The min and max possible v_1 are dependent on both the duration of the current step and the
-    # min and max possible start velocity from the next step, respectively.
+    # The min and max possible v_1 are dependent on both the duration of the
+    # current step and the min and max possible start velocity from the next
+    # step, respectively.
     # 
-    # The min/max from the next waypoint will not exceed max speed, so it doesn't matter if
-    # min_/max_v_1_from_partial_acc_and_no_max_speed exceed max speed.
+    # The min/max from the next waypoint will not exceed max speed, so it
+    # doesn't matter if min_/max_v_1_from_partial_acc_and_no_max_speed exceed
+    # max speed.
     var v_1_min := max(min_v_1_from_partial_acc_and_no_max_speed_at_v_1, \
             v_1_min_for_next_waypoint)
     var v_1_max := min(max_v_1_from_partial_acc_and_no_max_speed_at_v_1, \
             v_1_max_for_next_waypoint)
     
     if v_1_min > v_1_max:
-        # Neither direction of acceleration will work with the given min/max velocities from the
-        # next waypoint.
+        # Neither direction of acceleration will work with the given min/max
+        # velocities from the next waypoint.
         return []
     
-    ### Calculate min/max start velocities according to the min/max end velocities.
+    ### Calculate min/max start velocities according to the min/max end
+    ### velocities.
     
-    # At this point, there are a few different parameters we can adjust in order to define the
-    # movement from the previous waypoint to the next (and to define the start velocity). These
-    # parameters include:
+    # At this point, there are a few different parameters we can adjust in
+    # order to define the movement from the previous waypoint to the next (and
+    # to define the start velocity). These parameters include:
     # 
-    # - The end velocity.
-    # - The direction of acceleration.
-    # - When during the interval to apply acceleration (in this function, we only need to consider
-    #   acceleration at the very end or the very beginning of the step, since those will correspond
-    #   to upper and lower bounds on the start velocity).
+    # -   The end velocity.
+    # -   The direction of acceleration.
+    # -   When during the interval to apply acceleration (in this function, we
+    #     only need to consider acceleration at the very end or the very
+    #     beginning of the step, since those will correspond to upper and lower
+    #     bounds on the start velocity).
     # 
-    # The general strategy then is to pick values for these parameters that will produce the most
-    # extreme start velocities. We then calculate a few possible combinations of these parameters,
-    # and return the resulting min/max start velocities. This should work, because any velocity
-    # between the resulting min and max should be achievable (since the actual final movement will
-    # support applying acceleration at any point in the middle of the step).
+    # The general strategy then is to pick values for these parameters that
+    # will produce the most extreme start velocities. We then calculate a few
+    # possible combinations of these parameters, and return the resulting
+    # min/max start velocities. This should work, because any velocity between
+    # the resulting min and max should be achievable (since the actual final
+    # movement will support applying acceleration at any point in the middle of
+    # the step).
     #
     # Some notes about parameter selection:
     # 
-    # - Min and max end velocities correspond to max and min start velocities, respectively.
-    # - If negative acceleration is used during this interval, then we want to accelerate at
-    #   the start of the interval to find the max start velocity and accelerate at the end of the
-    #   interval to find the min start velocity.
-    # - If positive acceleration is used during this interval, then we want to accelerate at
-    #   the end of the interval to find the max start velocity and accelerate at the start of the
-    #   interval to find the min start velocity.
-    # - All of the above is true regardless of the direction of displacement for the interval.
+    # -   Min and max end velocities correspond to max and min start
+    #     velocities, respectively.
+    # -   If negative acceleration is used during this interval, then we want
+    #     to accelerate at the start of the interval to find the max start
+    #     velocity and accelerate at the end of the interval to find the min
+    #     start velocity.
+    # -   If positive acceleration is used during this interval, then we want
+    #     to accelerate at the end of the interval to find the max start
+    #     velocity and accelerate at the start of the interval to find the min
+    #     start velocity.
+    # -   All of the above is true regardless of the direction of displacement
+    #     for the interval.
     
-    # FIXME: If I see any problems from this logic, then just calculate the other four cases too,
-    #        and use the best valid ones from the whole set of 8.
+    # FIXME: If I see any problems from this logic, then just calculate the
+    #        other four cases too, and use the best valid ones from the whole
+    #        set of 8.
     
     var v_1: float
     var acceleration: float
@@ -1047,15 +1160,18 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
                 should_accelerate_at_start, \
                 should_return_min_result)
         
-        # Use the more extreme of the possible min/max values we calculated for positive/negative
-        # acceleration at the start/end.
+        # Use the more extreme of the possible min/max values we calculated for
+        # positive/negative acceleration at the start/end.
         v_0_max = \
                 max(v_0_max_neg_acc_at_start, v_0_max_pos_acc_at_end) if \
-                        v_0_max_neg_acc_at_start != INF and v_0_max_pos_acc_at_end != INF else \
-                (v_0_max_neg_acc_at_start if v_0_max_neg_acc_at_start != INF else \
+                        v_0_max_neg_acc_at_start != INF and \
+                        v_0_max_pos_acc_at_end != INF else \
+                (v_0_max_neg_acc_at_start if \
+                v_0_max_neg_acc_at_start != INF else \
                 v_0_max_pos_acc_at_end)
     else:
-        # FIXME: LEFT OFF HERE: Does this need to account for accurate displacement values or anything?
+        # FIXME: LEFT OFF HERE: Does this need to account for accurate
+        # displacement values or anything?
         
         # - From a basic equation of motion:
         #   v = v_0 + a*t
@@ -1087,25 +1203,29 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
                 should_accelerate_at_start, \
                 should_return_min_result)
         
-        # Use the more extreme of the possible min/max values we calculated for positive/negative
-        # acceleration at the start/end.
+        # Use the more extreme of the possible min/max values we calculated for
+        # positive/negative acceleration at the start/end.
         v_0_min = \
                 min(v_0_min_pos_acc_at_start, v_0_min_neg_acc_at_end) if \
-                        v_0_min_pos_acc_at_start != INF and v_0_min_neg_acc_at_end != INF else \
-                (v_0_min_pos_acc_at_start if v_0_min_pos_acc_at_start != INF else \
+                        v_0_min_pos_acc_at_start != INF and \
+                        v_0_min_neg_acc_at_end != INF else \
+                (v_0_min_pos_acc_at_start if \
+                v_0_min_pos_acc_at_start != INF else \
                 v_0_min_neg_acc_at_end)
     else:
-        # FIXME: LEFT OFF HERE: Does this need to account for accurate displacement values or anything?
+        # FIXME: LEFT OFF HERE: Does this need to account for accurate
+        # displacement values or anything?
         
         # - From a basic equation of motion:
         #   v = v_0 + a*t
         # - Uses positive acceleration.
         v_0_min = v_1_max - a_magnitude * duration
     
-    ### Sanitize the results (remove invalid results, cap values, correct for round-off errors).
+    ### Sanitize the results (remove invalid results, cap values, correct for
+    ### round-off errors).
     
-    # If we found valid v_1_min/v_1_max values, then there must be valid corresponding
-    # v_0_min/v_0_max values.
+    # If we found valid v_1_min/v_1_max values, then there must be valid
+    # corresponding v_0_min/v_0_max values.
     assert(v_0_max != INF)
     assert(v_0_min != INF)
     assert(v_0_max >= v_0_min)
@@ -1115,9 +1235,15 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
     v_0_max -= MIN_MAX_VELOCITY_X_OFFSET
     
     # Correct small floating-point errors around zero.
-    if Geometry.are_floats_equal_with_epsilon(v_0_min, 0.0, MIN_MAX_VELOCITY_X_OFFSET * 1.1):
+    if Geometry.are_floats_equal_with_epsilon( \
+            v_0_min, \
+            0.0, \
+            MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_0_min = 0.0
-    if Geometry.are_floats_equal_with_epsilon(v_0_max, 0.0, MIN_MAX_VELOCITY_X_OFFSET * 1.1):
+    if Geometry.are_floats_equal_with_epsilon( \
+            v_0_max, \
+            0.0, \
+            MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_0_max = 0.0
     
     if (start_horizontal_movement_sign > 0 and v_0_max < 0) or \
@@ -1140,10 +1266,10 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
     
     return [v_0_min, v_0_max]
 
-# Accelerating over the whole interval would result in an end velocity that exceeds the max speed.
-# So instead, we assume a 2-part movement profile with constant velocity in the first part and
-# constant acceleration in the second part. This 2-part movement should more accurately represent
-# the limit on v_1.
+# Accelerating over the whole interval would result in an end velocity that
+# exceeds the max speed. So instead, we assume a 2-part movement profile with
+# constant velocity in the first part and constant acceleration in the second
+# part. This 2-part movement should more accurately represent the limit on v_1.
 static func _calculate_v_1_with_v_0_limit( \
         displacement: float, \
         duration: float, \
@@ -1179,7 +1305,8 @@ static func _calculate_v_1_with_v_0_limit( \
     var t_result_1 := (result_1 - v_0) / acceleration
     var t_result_2 := (result_2 - v_0) / acceleration
     
-    # The results are invalid if they correspond to imaginary negative durations.
+    # The results are invalid if they correspond to imaginary negative
+    # durations.
     var is_result_1_valid := (t_result_1 >= 0 and t_result_1 <= duration)
     var is_result_2_valid := (t_result_2 >= 0 and t_result_2 <= duration)
     
@@ -1213,17 +1340,19 @@ static func _solve_for_start_velocity( \
     
     # We only need to consider two movement profiles:
     # 
-    # - Accelerate at start (2 parts):
-    #   - First, constant acceleration to v_1.
-    #   - Then, constant velocity at v_1 for the remaining duration.
-    # - Accelerate at end (2 parts):
-    #   - First, constant velocity at v_0.
-    #   - Then, constant acceleration for the remaining duration, ending at v_1.
+    # -   Accelerate at start (2 parts):
+    #     -   First, constant acceleration to v_1.
+    #     -   Then, constant velocity at v_1 for the remaining duration.
+    # -   Accelerate at end (2 parts):
+    #     -   First, constant velocity at v_0.
+    #     -   Then, constant acceleration for the remaining duration, ending at
+    #         v_1.
     # 
-    # No other movement profile--e.g., 3-part with constant v at v_0, accelerate to v_1, constant
-    # v at v_1--should produce more extreme start velocities, so we only need to consider these
-    # two. Any considerations for capping at max-speed will be handled by the consumer function
-    # that calls this one.
+    # No other movement profile--e.g., 3-part with constant v at v_0,
+    # accelerate to v_1, constant v at v_1--should produce more extreme start
+    # velocities, so we only need to consider these two. Any considerations for
+    # capping at max-speed will be handled by the consumer function that calls
+    # this one.
     
     if should_accelerate_at_start:
         # Derivation:
@@ -1246,7 +1375,8 @@ static func _solve_for_start_velocity( \
         # Derivation:
         # - There are two parts:
         #   - Part 1: Constant velocity at v_0.
-        #   - Part 2: Constant acceleration for the remaining duration, ending at v_1.
+        #   - Part 2: Constant acceleration for the remaining duration, ending
+        #     at v_1.
         # - Start with basic equations of motion:
         #   - s_1 = s_0 + v_0*t_0
         #   - v_1 = v_0 + a*t_1
@@ -1276,15 +1406,18 @@ static func _solve_for_start_velocity( \
     
     ###########################################
     # FIXME: --------------- REMOVE: DEBUGGING
-#    var disp_result_1_foo := v_0*t_result_1 + 0.5*acceleration*t_result_1*t_result_1
+#    var disp_result_1_foo := \
+#            v_0*t_result_1 + 0.5*acceleration*t_result_1*t_result_1
 #    var disp_result_1_bar := result_1*(duration-t_result_1)
 #    var disp_result_1_total := disp_result_1_foo + disp_result_1_bar
-#    var disp_result_2_foo := v_0*t_result_2 + 0.5*acceleration*t_result_2*t_result_2
+#    var disp_result_2_foo := \
+#            v_0*t_result_2 + 0.5*acceleration*t_result_2*t_result_2
 #    var disp_result_2_bar := result_2*(duration-t_result_2)
 #    var disp_result_2_total := disp_result_2_foo + disp_result_2_bar
     ###########################################
     
-    # The results are invalid if they correspond to imaginary negative durations.
+    # The results are invalid if they correspond to imaginary negative
+    # durations.
     var is_result_1_valid := t_result_1 >= 0 and t_result_1 <= duration
     var is_result_2_valid := t_result_2 >= 0 and t_result_2 <= duration
     
@@ -1300,19 +1433,20 @@ static func _solve_for_start_velocity( \
     else:
         return max(result_1, result_2)
 
-# This calculates the range of possible x velocities at the end of a movement step.
+# This calculates the range of possible x velocities at the end of a movement
+# step.
 # 
 # This takes into consideration both:
 # 
-# - the given range of possible step-start x velocities that must be met in order for movement to be
-#   valid for the previous step,
-# - and the range of possible step-end x velocities that can produce valid movement for the
-#   current step.
+# -   the given range of possible step-start x velocities that must be met in
+#     order for movement to be valid for the previous step,
+# -   and the range of possible step-end x velocities that can produce valid
+#     movement for the current step.
 # 
 # An Array is returned:
 # 
-# - The first element represents the min velocity.
-# - The second element represents the max velocity.
+# -   The first element represents the min velocity.
+# -   The second element represents the max velocity.
 static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         displacement: float, \
         duration: float, \
@@ -1321,20 +1455,23 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         speed_max: float, \
         a_magnitude: float, \
         end_horizontal_movement_sign: int) -> Array:
-    ### Calculate more tightly-bounded min/max start velocity values, according to both the duration
-    ### of the current step and the given min/max values from the previous waypoint.
+    ### Calculate more tightly-bounded min/max start velocity values, according
+    ### to both the duration of the current step and the given min/max values
+    ### from the previous waypoint.
     
-    # The strategy here, is to first try min/max v_0 values that correspond to accelerating over
-    # the entire interval. If they do not result in movement that exceeds max speed, then we know
-    # that they are the most extreme possible start velocities. Otherwise, if the movement would
-    # exceed max speed, then we need to perform a slightly more expensive calculation that assumes
-    # a two-part movement profile: one part with constant acceleration and one part with constant
-    # velocity.
+    # The strategy here, is to first try min/max v_0 values that correspond to
+    # accelerating over the entire interval. If they do not result in movement
+    # that exceeds max speed, then we know that they are the most extreme
+    # possible start velocities. Otherwise, if the movement would exceed max
+    # speed, then we need to perform a slightly more expensive calculation that
+    # assumes a two-part movement profile: one part with constant acceleration
+    # and one part with constant velocity.
     
-    # Accelerating in a positive direction over the entire step corresponds to an upper bound on
-    # the end velocity and a lower boound on the start velocity, and accelerating in a negative
-    # direction over the entire step corresponds to a lower bound on the end velocity and an upper
-    # bound on the start velocity.
+    # Accelerating in a positive direction over the entire step corresponds to
+    # an upper bound on the end velocity and a lower boound on the start
+    # velocity, and accelerating in a negative direction over the entire step
+    # corresponds to a lower bound on the end velocity and an upper bound on
+    # the start velocity.
     # 
     # Derivation:
     # - From basic equations of motion:
@@ -1349,9 +1486,11 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     # From a basic equation of motion:
     #   v_1 = v_0 + a*t
     var max_v_1_with_complete_pos_acc_and_no_max_speed := \
-            min_v_0_with_complete_pos_acc_and_no_max_speed + a_magnitude * duration
+            min_v_0_with_complete_pos_acc_and_no_max_speed + \
+            a_magnitude * duration
     var min_v_1_with_complete_neg_acc_and_no_max_speed := \
-            max_v_0_with_complete_neg_acc_and_no_max_speed - a_magnitude * duration
+            max_v_0_with_complete_neg_acc_and_no_max_speed - \
+            a_magnitude * duration
     
     var would_complete_pos_acc_exceed_max_speed_at_v_1 := \
             max_v_1_with_complete_pos_acc_and_no_max_speed > speed_max
@@ -1362,11 +1501,13 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     var max_v_0_from_partial_acc_and_no_max_speed_at_v_0: float
     
     if would_complete_pos_acc_exceed_max_speed_at_v_1:
-        # Accelerating over the entire step to min_v_0_that_can_reach_target would require ending
-        # with a velocity that exceeds max speed. So we need to instead consider a two-part
-        # movement profile when calculating min_v_0_that_can_reach_target: constant acceleration
-        # followed by constant velocity. Accelerating at the start, given the same end velocity,
-        # should result in a more extreme start velocity, than accelerating at the end.
+        # Accelerating over the entire step to min_v_0_that_can_reach_target
+        # would require ending with a velocity that exceeds max speed. So we
+        # need to instead consider a two-part movement profile when calculating
+        # min_v_0_that_can_reach_target: constant acceleration followed by
+        # constant velocity. Accelerating at the start, given the same end
+        # velocity, should result in a more extreme start velocity, than
+        # accelerating at the end.
         var acceleration := a_magnitude
         var v_1 := speed_max
         min_v_0_from_partial_acc_and_no_max_speed_at_v_0 = \
@@ -1384,11 +1525,13 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
                 min_v_0_with_complete_pos_acc_and_no_max_speed
     
     if would_complete_neg_acc_exceed_max_speed_at_v_1:
-        # Accelerating over the entire step to max_v_0_that_can_reach_target would require ending
-        # with a velocity that exceeds max speed. So we need to instead consider a two-part
-        # movement profile when calculating max_v_0_that_can_reach_target: constant acceleration
-        # followed by constant velocity. Accelerating at the start, given the same end velocity,
-        # should result in a more extreme start velocity, than accelerating at the end.
+        # Accelerating over the entire step to max_v_0_that_can_reach_target
+        # would require ending with a velocity that exceeds max speed. So we
+        # need to instead consider a two-part movement profile when calculating
+        # max_v_0_that_can_reach_target: constant acceleration followed by
+        # constant velocity. Accelerating at the start, given the same end
+        # velocity, should result in a more extreme start velocity, than
+        # accelerating at the end.
         var acceleration := -a_magnitude
         var v_1 := -speed_max
         max_v_0_from_partial_acc_and_no_max_speed_at_v_0 = \
@@ -1405,52 +1548,63 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         max_v_0_from_partial_acc_and_no_max_speed_at_v_0 = \
                 max_v_0_with_complete_neg_acc_and_no_max_speed
     
-    # The min and max possible v_0 are dependent on both the duration of the current step and the
-    # min and max possible end velocity from the previous step, respectively.
+    # The min and max possible v_0 are dependent on both the duration of the
+    # current step and the min and max possible end velocity from the previous
+    # step, respectively.
     # 
-    # The min/max from the previous waypoint will not exceed max speed, so it doesn't matter if
-    # min_/max_v_0_from_partial_acc_and_no_max_speed exceed max speed.
+    # The min/max from the previous waypoint will not exceed max speed, so it
+    # doesn't matter if min_/max_v_0_from_partial_acc_and_no_max_speed exceed
+    # max speed.
     var v_0_min := max(min_v_0_from_partial_acc_and_no_max_speed_at_v_0, \
             v_1_min_for_previous_waypoint)
     var v_0_max := min(max_v_0_from_partial_acc_and_no_max_speed_at_v_0, \
             v_1_max_for_previous_waypoint)
     
     if v_0_min > v_0_max:
-        # Neither direction of acceleration will work with the given min/max velocities from the
-        # previous waypoint.
+        # Neither direction of acceleration will work with the given min/max
+        # velocities from the previous waypoint.
         return []
     
-    ### Calculate min/max end velocities according to the min/max start velocities.
+    ### Calculate min/max end velocities according to the min/max start
+    ### velocities.
     
-    # At this point, there are a few different parameters we can adjust in order to define the
-    # movement from the previous waypoint to the next (and to define the start velocity). These
-    # parameters include:
+    # At this point, there are a few different parameters we can adjust in
+    # order to define the movement from the previous waypoint to the next (and
+    # to define the start velocity). These parameters include:
     # 
-    # - The start velocity.
-    # - The direction of acceleration.
-    # - When during the interval to apply acceleration (in this function, we only need to consider
-    #   acceleration at the very end or the very beginning of the step, since those will correspond
-    #   to upper and lower bounds on the end velocity).
+    # -   The start velocity.
+    # -   The direction of acceleration.
+    # -   When during the interval to apply acceleration (in this function, we
+    #     only need to consider acceleration at the very end or the very
+    #     beginning of the step, since those will correspond to upper and lower
+    #     bounds on the end velocity).
     # 
-    # The general strategy then is to pick values for these parameters that will produce the most
-    # extreme end velocities. We then calculate a few possible combinations of these parameters,
-    # and return the resulting min/max end velocities. This should work, because any velocity
-    # between the resulting min and max should be achievable (since the actual final movement will
-    # support applying acceleration at any point in the middle of the step).
+    # The general strategy then is to pick values for these parameters that
+    # will produce the most extreme end velocities. We then calculate a few
+    # possible combinations of these parameters, and return the resulting
+    # min/max end velocities. This should work, because any velocity between
+    # the resulting min and max should be achievable (since the actual final
+    # movement will support applying acceleration at any point in the middle of
+    # the step).
     #
     # Some notes about parameter selection:
     # 
-    # - Min and max start velocities correspond to max and min end velocities, respectively.
-    # - If negative acceleration is used during this interval, then we want to accelerate at
-    #   the start of the interval to find the max end velocity and accelerate at the end of the
-    #   interval to find the min end velocity.
-    # - If positive acceleration is used during this interval, then we want to accelerate at
-    #   the end of the interval to find the max end velocity and accelerate at the start of the
-    #   interval to find the min end velocity.
-    # - All of the above is true regardless of the direction of displacement for the interval.
+    # -   Min and max start velocities correspond to max and min end
+    #     velocities, respectively.
+    # -   If negative acceleration is used during this interval, then we want
+    #     to accelerate at the start of the interval to find the max end
+    #     velocity and accelerate at the end of the interval to find the min
+    #     end velocity.
+    # -   If positive acceleration is used during this interval, then we want
+    #     to accelerate at the end of the interval to find the max end velocity
+    #     and accelerate at the start of the interval to find the min end
+    #     velocity.
+    # -   All of the above is true regardless of the direction of displacement
+    #     for the interval.
     
-    # FIXME: If I see any problems from this logic, then just calculate the other four cases too,
-    #        and use the best valid ones from the whole set of 8.
+    # FIXME: If I see any problems from this logic, then just calculate the
+    #        other four cases too, and use the best valid ones from the whole
+    #        set of 8.
     
     var v_0: float
     var acceleration: float
@@ -1484,15 +1638,18 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
                 should_accelerate_at_start, \
                 should_return_min_result)
         
-        # Use the more extreme of the possible min/max values we calculated for positive/negative
-        # acceleration at the start/end.
+        # Use the more extreme of the possible min/max values we calculated for
+        # positive/negative acceleration at the start/end.
         v_1_max = \
                 max(v_1_max_neg_acc_at_start, v_1_max_pos_acc_at_end) if \
-                        v_1_max_neg_acc_at_start != INF and v_1_max_pos_acc_at_end != INF else \
-                (v_1_max_neg_acc_at_start if v_1_max_neg_acc_at_start != INF else \
+                        v_1_max_neg_acc_at_start != INF and \
+                        v_1_max_pos_acc_at_end != INF else \
+                (v_1_max_neg_acc_at_start if \
+                v_1_max_neg_acc_at_start != INF else \
                 v_1_max_pos_acc_at_end)
     else:
-        # FIXME: LEFT OFF HERE: Does this need to account for accurate displacement values or anything?
+        # FIXME: LEFT OFF HERE: Does this need to account for accurate
+        #        displacement values or anything?
         
         # - From a basic equation of motion:
         #   v = v_0 + a*t
@@ -1524,25 +1681,29 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
                 should_accelerate_at_start, \
                 should_return_min_result)
         
-        # Use the more extreme of the possible min/max values we calculated for positive/negative
-        # acceleration at the start/end.
+        # Use the more extreme of the possible min/max values we calculated for
+        # positive/negative acceleration at the start/end.
         v_1_min = \
                 min(v_1_min_pos_acc_at_start, v_1_min_neg_acc_at_end) if \
-                        v_1_min_pos_acc_at_start != INF and v_1_min_neg_acc_at_end != INF else \
-                (v_1_min_pos_acc_at_start if v_1_min_pos_acc_at_start != INF else \
+                        v_1_min_pos_acc_at_start != INF and \
+                        v_1_min_neg_acc_at_end != INF else \
+                (v_1_min_pos_acc_at_start if \
+                v_1_min_pos_acc_at_start != INF else \
                 v_1_min_neg_acc_at_end)
     else:
-        # FIXME: LEFT OFF HERE: Does this need to account for accurate displacement values or anything?
+        # FIXME: LEFT OFF HERE: Does this need to account for accurate
+        #        displacement values or anything?
         
         # - From a basic equation of motion:
         #   v = v_0 + a*t
         # - Uses negative acceleration.
         v_1_min = v_0_max - a_magnitude * duration
     
-    ### Sanitize the results (remove invalid results, cap values, correct for round-off errors).
+    ### Sanitize the results (remove invalid results, cap values, correct for
+    ### round-off errors).
     
-    # If we found valid v_1_min/v_1_max values, then there must be valid corresponding
-    # v_1_min/v_1_max values.
+    # If we found valid v_1_min/v_1_max values, then there must be valid
+    # corresponding v_1_min/v_1_max values.
     assert(v_1_max != INF)
     assert(v_1_min != INF)
     assert(v_1_max >= v_1_min)
@@ -1552,9 +1713,15 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     v_1_max -= MIN_MAX_VELOCITY_X_OFFSET
     
     # Correct small floating-point errors around zero.
-    if Geometry.are_floats_equal_with_epsilon(v_1_min, 0.0, MIN_MAX_VELOCITY_X_OFFSET * 1.1):
+    if Geometry.are_floats_equal_with_epsilon( \
+            v_1_min, \
+            0.0, \
+            MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_1_min = 0.0
-    if Geometry.are_floats_equal_with_epsilon(v_1_max, 0.0, MIN_MAX_VELOCITY_X_OFFSET * 1.1):
+    if Geometry.are_floats_equal_with_epsilon( \
+            v_1_max, \
+            0.0, \
+            MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_1_max = 0.0
     
     if (end_horizontal_movement_sign > 0 and v_1_max < 0) or \
@@ -1577,10 +1744,10 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     
     return [v_1_min, v_1_max]
 
-# Accelerating over the whole interval would result in an end velocity that exceeds the max speed.
-# So instead, we assume a 2-part movement profile with constant acceleration in the first part and
-# constant velocity in the second part. This 2-part movement should more accurately represent
-# the limit on v_0.
+# Accelerating over the whole interval would result in an end velocity that
+# exceeds the max speed. So instead, we assume a 2-part movement profile with
+# constant acceleration in the first part and constant velocity in the second 
+# art. This 2-part movement should more accurately represent the limit on v_0.
 static func _calculate_v_0_with_v_1_limit( \
         displacement: float, \
         duration: float, \
@@ -1600,7 +1767,8 @@ static func _calculate_v_0_with_v_1_limit( \
     
     var a := 0.5 / v_1
     var b := -1
-    var c := displacement * acceleration / v_1 + 0.5 * v_1 - acceleration * duration
+    var c := displacement * acceleration / v_1 + 0.5 * v_1 - \
+            acceleration * duration
     
     var discriminant := b * b - 4 * a * c
     if discriminant < 0:
@@ -1616,7 +1784,8 @@ static func _calculate_v_0_with_v_1_limit( \
     var t_result_1 := (v_1 - result_1) / acceleration
     var t_result_2 := (v_1 - result_2) / acceleration
     
-    # The results are invalid if they correspond to imaginary negative durations.
+    # The results are invalid if they correspond to imaginary negative
+    # durations.
     var is_result_1_valid := (t_result_1 >= 0 and t_result_1 <= duration)
     var is_result_2_valid := (t_result_2 >= 0 and t_result_2 <= duration)
     
@@ -1650,17 +1819,19 @@ static func _solve_for_end_velocity( \
     
     # We only need to consider two movement profiles:
     # 
-    # - Accelerate at start (2 parts):
-    #   - First, constant acceleration to v_1.
-    #   - Then, constant velocity at v_1 for the remaining duration.
-    # - Accelerate at end (2 parts):
-    #   - First, constant velocity at v_0.
-    #   - Then, constant acceleration for the remaining duration, ending at v_1.
+    # -   Accelerate at start (2 parts):
+    #     -   First, constant acceleration to v_1.
+    #     -   Then, constant velocity at v_1 for the remaining duration.
+    # -   Accelerate at end (2 parts):
+    #     -   First, constant velocity at v_0.
+    #     -   Then, constant acceleration for the remaining duration, ending at
+    #         v_1.
     # 
-    # No other movement profile--e.g., 3-part with constant v at v_0, accelerate to v_1, constant
-    # v at v_1--should produce more extreme end velocities, so we only need to consider these two.
-    # Any considerations for capping at max-speed will be handled by the consumer function that
-    # calls this one.
+    # No other movement profile--e.g., 3-part with constant v at v_0,
+    # accelerate to v_1, constant v at v_1--should produce more extreme end
+    # velocities, so we only need to consider these two. Any considerations for
+    # capping at max-speed will be handled by the consumer function that calls
+    # this one.
     
     if should_accelerate_at_start:
         # Derivation:
@@ -1683,7 +1854,8 @@ static func _solve_for_end_velocity( \
         # Derivation:
         # - There are two parts:
         #   - Part 1: Constant velocity at v_0.
-        #   - Part 2: Constant acceleration for the remaining duration, ending at v_1.
+        #   - Part 2: Constant acceleration for the remaining duration, ending
+        #     at v_1.
         # - Start with basic equations of motion:
         #   - s_1 = s_0 + v_0*t_0
         #   - v_1 = v_0 + a*t_1
@@ -1713,15 +1885,18 @@ static func _solve_for_end_velocity( \
     
     ###########################################
     # FIXME: --------------- REMOVE: DEBUGGING
-#    var disp_result_1_foo := v_0*t_result_1 + 0.5*acceleration*t_result_1*t_result_1
+#    var disp_result_1_foo := \
+#            v_0*t_result_1 + 0.5*acceleration*t_result_1*t_result_1
 #    var disp_result_1_bar := result_1*(duration-t_result_1)
 #    var disp_result_1_total := disp_result_1_foo + disp_result_1_bar
-#    var disp_result_2_foo := v_0*t_result_2 + 0.5*acceleration*t_result_2*t_result_2
+#    var disp_result_2_foo := \
+#            v_0*t_result_2 + 0.5*acceleration*t_result_2*t_result_2
 #    var disp_result_2_bar := result_2*(duration-t_result_2)
 #    var disp_result_2_total := disp_result_2_foo + disp_result_2_bar
     ###########################################
     
-    # The results are invalid if they correspond to imaginary negative durations.
+    # The results are invalid if they correspond to imaginary negative
+    # durations.
     var is_result_1_valid := t_result_1 >= 0 and t_result_1 <= duration
     var is_result_2_valid := t_result_2 >= 0 and t_result_2 <= duration
     

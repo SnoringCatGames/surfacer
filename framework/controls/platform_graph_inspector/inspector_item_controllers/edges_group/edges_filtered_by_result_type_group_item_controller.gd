@@ -47,11 +47,12 @@ func _init_edge_types_to_filtered_edges( \
     self.edge_types_to_filtered_edges = {}
     
     for edge in filtered_edges:
-        if !InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge.type) < 0:
+        if !InspectorItemController.EDGE_TYPES_TO_SKIP.find( \
+                edge.edge_type) < 0:
             continue
-        if !edge_types_to_filtered_edges.has(edge.type):
-            edge_types_to_filtered_edges[edge.type] = []
-        edge_types_to_filtered_edges[edge.type].push_back(edge)
+        if !edge_types_to_filtered_edges.has(edge.edge_type):
+            edge_types_to_filtered_edges[edge.edge_type] = []
+        edge_types_to_filtered_edges[edge.edge_type].push_back(edge)
 
 func get_text() -> String:
     return "[%s] %s" % [ \

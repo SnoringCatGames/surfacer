@@ -194,7 +194,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/legend/legend_items/discrete_edge_trajectory_legend_item.gd"
 }, {
-"base": "Reference",
+"base": "EdgeAttempt",
 "class": "Edge",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/edges/edge.gd"
@@ -203,6 +203,16 @@ _global_script_classes=[ {
 "class": "EdgeAnnotationElement",
 "language": "GDScript",
 "path": "res://framework/annotators/annotation_elements/edge_annotation_element.gd"
+}, {
+"base": "Reference",
+"class": "EdgeAttempt",
+"language": "GDScript",
+"path": "res://framework/platform_graph/edge/models/edge_attempt.gd"
+}, {
+"base": "InspectorItemController",
+"class": "EdgeAttemptItemController",
+"language": "GDScript",
+"path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/edge_attempt_item_controller.gd"
 }, {
 "base": "Reference",
 "class": "EdgeCalcParams",
@@ -349,7 +359,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/element_annotator.gd"
 }, {
-"base": "Reference",
+"base": "EdgeAttempt",
 "class": "FailedEdgeAttempt",
 "language": "GDScript",
 "path": "res://framework/platform_graph/edge/models/failed_edge_attempt.gd"
@@ -359,7 +369,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/annotators/annotation_elements/failed_edge_attempt_annotation_element.gd"
 }, {
-"base": "InspectorItemController",
+"base": "EdgeAttemptItemController",
 "class": "FailedEdgeItemController",
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/surfaces_group/failed_edge_item_controller.gd"
@@ -924,7 +934,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/panels/utility_panel.gd"
 }, {
-"base": "InspectorItemController",
+"base": "EdgeAttemptItemController",
 "class": "ValidEdgeItemController",
 "language": "GDScript",
 "path": "res://framework/controls/platform_graph_inspector/inspector_item_controllers/valid_edge_item_controller.gd"
@@ -1044,6 +1054,8 @@ _global_script_class_icons={
 "DiscreteEdgeTrajectoryLegendItem": "",
 "Edge": "",
 "EdgeAnnotationElement": "",
+"EdgeAttempt": "",
+"EdgeAttemptItemController": "",
 "EdgeCalcParams": "",
 "EdgeCalcProfilerGroupItemController": "",
 "EdgeCalcResult": "",

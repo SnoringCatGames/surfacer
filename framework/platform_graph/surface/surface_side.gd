@@ -24,6 +24,22 @@ static func get_side_string(side: int) -> String:
             Utils.error("Invalid SurfaceSide: %s" % side)
             return "???"
 
+static func get_side_prefix(side: int) -> String:
+    match side:
+        NONE:
+            return "N"
+        FLOOR:
+            return "F"
+        CEILING:
+            return "C"
+        LEFT_WALL:
+            return "LW"
+        RIGHT_WALL:
+            return "RW"
+        _:
+            Utils.error("Invalid SurfaceSide: %s" % side)
+            return "???"
+
 static func get_normal(side: int) -> Vector2:
     return \
             Geometry.UP if side == FLOOR else (\

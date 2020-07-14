@@ -1,9 +1,7 @@
-extends InspectorItemController
+extends EdgeAttemptItemController
 class_name FailedEdgeItemController
 
 const TYPE := InspectorItemType.FAILED_EDGE
-const IS_LEAF := false
-const STARTS_COLLAPSED := true
 
 const BROAD_PHASE_DESCRIPTION := \
     "These calculations failed during the \"broad phase\", which means " + \
@@ -13,10 +11,6 @@ const NARROW_PHASE_DESCRIPTION := \
     "during expensive edge trajectory calculations."
 
 var failed_edge_attempt: FailedEdgeAttempt
-var edge_result_metadata: EdgeCalcResultMetadata
-
-var profiler_controller: EdgeCalcProfilerGroupItemController
-var edge_calc_result_metadata_controller: EdgeCalcResultMetadataItemController
 
 func _init( \
         parent_item: TreeItem, \
@@ -25,11 +19,10 @@ func _init( \
         failed_edge_attempt: FailedEdgeAttempt) \
         .( \
         TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
         parent_item, \
         tree, \
-        graph) -> void:
+        graph, \
+        failed_edge_attempt) -> void:
     assert(failed_edge_attempt != null)
     self.failed_edge_attempt = failed_edge_attempt
     _post_init()
@@ -73,73 +66,8 @@ func get_description() -> String:
                 failed_edge_attempt.is_broad_phase_failure else \
                 NARROW_PHASE_DESCRIPTION)
 
-func find_and_expand_controller( \
-        search_type: int, \
-        metadata: Dictionary) -> bool:
-    assert(search_type == InspectorSearchType.EDGE)
-    if Geometry.are_points_equal_with_epsilon( \
-                    failed_edge_attempt.start, \
-                    metadata.start, \
-                    0.01) and \
-            Geometry.are_points_equal_with_epsilon( \
-                    failed_edge_attempt.end, \
-                    metadata.end, \
-                    0.01):
-        expand()
-        select()
-        # TODO: This deferred select call shouldn't be necessary.
-        call_deferred("select")
-        return true
-    else:
-        return false
-
 func get_has_children() -> bool:
     return !failed_edge_attempt.is_broad_phase_failure
-
-func _create_children_inner() -> void:
-    if edge_result_metadata == null:
-        _calculate_edge_calc_result_metadata()
-    
-    profiler_controller = EdgeCalcProfilerGroupItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
-            edge_result_metadata)
-    
-    edge_calc_result_metadata_controller = \
-            EdgeCalcResultMetadataItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
-                    failed_edge_attempt, \
-                    edge_result_metadata)
-
-func _calculate_edge_calc_result_metadata() -> void:
-    edge_result_metadata = EdgeCalcResultMetadata.new(true, false)
-    var start_position_along_surface := \
-            MovementUtils.create_position_offset_from_target_point( \
-                    failed_edge_attempt.start, \
-                    failed_edge_attempt.origin_surface, \
-                    graph.movement_params.collider_half_width_height)
-    var end_position_along_surface := \
-            MovementUtils.create_position_offset_from_target_point( \
-                    failed_edge_attempt.end, \
-                    failed_edge_attempt.destination_surface, \
-                    graph.movement_params.collider_half_width_height)
-    failed_edge_attempt.calculator.calculate_edge( \
-            edge_result_metadata, \
-            graph.collision_params, \
-            start_position_along_surface, \
-            end_position_along_surface, \
-            failed_edge_attempt.jump_land_positions.velocity_start, \
-            failed_edge_attempt.jump_land_positions \
-                    .needs_extra_jump_duration, \
-            failed_edge_attempt.jump_land_positions \
-                    .needs_extra_wall_land_horizontal_speed)
-
-func _destroy_children_inner() -> void:
-    profiler_controller = null
-    edge_calc_result_metadata_controller = null
 
 func get_annotation_elements() -> Array:
     var element := FailedEdgeAttemptAnnotationElement.new( \

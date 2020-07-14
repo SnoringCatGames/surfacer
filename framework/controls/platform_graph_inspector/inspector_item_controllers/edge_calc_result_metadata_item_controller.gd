@@ -4,15 +4,16 @@ class_name EdgeCalcResultMetadataItemController
 const TYPE := InspectorItemType.EDGE_CALC_RESULT_METADATA
 const IS_LEAF := false
 const STARTS_COLLAPSED := false
+const PREFIX := "Calculation"
 
-var edge_or_edge_attempt
+var edge_attempt: EdgeAttempt
 var edge_result_metadata: EdgeCalcResultMetadata
 
 func _init( \
         parent_item: TreeItem, \
         tree: Tree, \
         graph: PlatformGraph, \
-        edge_or_edge_attempt, \
+        edge_attempt: EdgeAttempt, \
         edge_result_metadata: EdgeCalcResultMetadata) \
         .( \
         TYPE, \
@@ -21,9 +22,9 @@ func _init( \
         parent_item, \
         tree, \
         graph) -> void:
-    assert(edge_or_edge_attempt != null)
+    assert(edge_attempt != null)
     assert(edge_result_metadata != null)
-    self.edge_or_edge_attempt = edge_or_edge_attempt
+    self.edge_attempt = edge_attempt
     self.edge_result_metadata = edge_result_metadata
     _post_init()
 
@@ -42,7 +43,8 @@ func to_string() -> String:
     ]
 
 func get_text() -> String:
-    return "%s [%s]" % [ \
+    return "%s (%s) [%s]" % [ \
+        PREFIX, \
         EdgeCalcResultType.get_type_string( \
                 edge_result_metadata.edge_calc_result_type) if \
         edge_result_metadata.edge_calc_result_type != \
@@ -53,12 +55,13 @@ func get_text() -> String:
     ]
 
 func get_description() -> String:
-    return EdgeCalcResultType.get_description_string( \
+    return "Calculation details for this edge. " + \
+            (EdgeCalcResultType.get_description_string( \
                     edge_result_metadata.edge_calc_result_type) if \
             edge_result_metadata.edge_calc_result_type != \
                     EdgeCalcResultType.WAYPOINT_INVALID else \
             WaypointValidity.get_description_string( \
-                    edge_result_metadata.waypoint_validity)
+                    edge_result_metadata.waypoint_validity))
 
 func find_and_expand_controller( \
         search_type: int, \
@@ -77,7 +80,7 @@ func _create_children_inner() -> void:
                 tree_item, \
                 tree, \
                 graph, \
-                edge_or_edge_attempt, \
+                edge_attempt, \
                 step_result_metadata, \
                 EdgeStepCalcResultMetadataItemControllerFactory)
 
@@ -95,9 +98,9 @@ func get_annotation_elements() -> Array:
                     step_result_metadata, \
                     true)
             elements.push_back(element)
-    elif edge_or_edge_attempt is FailedEdgeAttempt:
+    elif edge_attempt is FailedEdgeAttempt:
         element = FailedEdgeAttemptAnnotationElement.new( \
-                edge_or_edge_attempt, \
+                edge_attempt, \
                 AnnotationElementDefaults \
                         .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS, \
                 AnnotationElementDefaults.INVALID_EDGE_COLOR_PARAMS, \
@@ -108,6 +111,6 @@ func get_annotation_elements() -> Array:
                 false)
         elements.push_back(element)
     else:
-        assert(edge_or_edge_attempt is Edge and \
-                !edge_or_edge_attempt.includes_air_trajectory)
+        assert(edge_attempt is Edge and \
+                !edge_attempt.includes_air_trajectory)
     return elements

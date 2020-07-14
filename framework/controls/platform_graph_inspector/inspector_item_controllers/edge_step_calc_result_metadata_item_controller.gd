@@ -5,7 +5,7 @@ const TYPE := InspectorItemType.EDGE_STEP_CALC_RESULT_METADATA
 const IS_LEAF := false
 const STARTS_COLLAPSED := false
 
-var edge_or_edge_attempt
+var edge_attempt: EdgeAttempt
 var step_result_metadata: EdgeStepCalcResultMetadata
 var step_item_factory
 var background_color: Color
@@ -14,7 +14,7 @@ func _init( \
         parent_item: TreeItem, \
         tree: Tree, \
         graph: PlatformGraph, \
-        edge_or_edge_attempt, \
+        edge_attempt: EdgeAttempt, \
         step_result_metadata: EdgeStepCalcResultMetadata, \
         step_item_factory) \
         .( \
@@ -25,7 +25,7 @@ func _init( \
         tree, \
         graph) -> void:
     assert(step_result_metadata != null)
-    self.edge_or_edge_attempt = edge_or_edge_attempt
+    self.edge_attempt = edge_attempt
     self.step_result_metadata = step_result_metadata
     self.step_item_factory = step_item_factory
     self.background_color = _calculate_background_color(step_result_metadata)
@@ -109,7 +109,7 @@ func _create_children_inner() -> void:
                 tree_item, \
                 tree, \
                 graph, \
-                edge_or_edge_attempt, \
+                edge_attempt, \
                 child_step_result_metadata, \
                 step_item_factory)
     
