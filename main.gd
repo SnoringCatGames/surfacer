@@ -4,14 +4,21 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Debug path weights, from lowish lower-left floor to long middleish floor.
-# 
-# - On phone, the utility panel is closed, but the edges are still annotated;
-#   they shouldn't be.
-# 
 # - DEBUG: jump from start floor to closest edge on upper-right floor;failed,
 #          close to previous; edge detail info shows vaild_single_step, but 
 #          here are 2 child steps...
+# 
+# - Debug why some fall-from-floor edges have trajectory portions on the wrong
+#   side.
+# - Debug why there are zero valid fall-from-wall edges.
+# - Debug why you can get stuck against the wall and unable to move leftward
+#   when jump straight up in the lower-left pit.
+# - Debug jumping from bottom of stair steps to top (and vice versa): should be
+#   fewer big jumps rather than more small jumps.
+# 
+# - Select first inspector item when opening utility panel.
+# - On phone, the utility panel is closed, but the edges are still annotated;
+#   they shouldn't be.
 # 
 # - Finish adding/polishing inspector step calculation
 #   items/descriptions/annotations/legends.

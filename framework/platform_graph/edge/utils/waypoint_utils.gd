@@ -75,16 +75,6 @@ static func create_terminal_waypoints( \
             can_hold_jump_button, \
             null, \
             Vector2.INF)
-    # FIXME: ----------------------------------------- REMOVE
-    if origin.is_fake:
-        update_waypoint( \
-                origin, \
-                origin, \
-                movement_params, \
-                velocity_start, \
-                can_hold_jump_button, \
-                null, \
-                Vector2.INF)
     assert(!origin.is_fake and !destination.is_fake)
     
     if origin.is_valid and destination.is_valid:
@@ -193,15 +183,6 @@ static func calculate_waypoints_around_surface( \
                 "Calculated a rendundant waypoint (same position as the " + \
                 "next waypoint)", \
                 false)
-    
-    # FIXME: DEBUGGING: REMOVE
-#    if colliding_surface.normal.x == -1 and \
-#            colliding_surface.bounding_box.position == Vector2(128, 64) and \
-#            Geometry.are_points_equal_with_epsilon( \
-#                   position_a, \
-#                   Vector2(106, 37.5), \
-#                   0.01):
-#        print("break")
     
     var waypoint_a_original: Waypoint
     var waypoint_a_final: Waypoint
@@ -458,12 +439,6 @@ static func _update_waypoint_velocity_and_time( \
     var max_velocity_x: float
     var actual_velocity_x: float
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#    if Geometry.are_points_equal_with_epsilon( \
-#            waypoint.position, \
-#            Vector2(-190, -349), 10):
-#        print("break")
-    
     # Calculate the time that the movement would pass through the waypoint, as
     # well as the min and max x-velocity when passing through the waypoint.
     if waypoint.is_origin:
@@ -496,25 +471,9 @@ static func _update_waypoint_velocity_and_time( \
                 # We are backtracking to consider a new jump height.
                 waypoint_position_to_calculate_jump_release_time_for = \
                         additional_high_waypoint_position
-                # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#                if Geometry.are_points_equal_with_epsilon( \
-#                        waypoint_position_to_calculate_jump_release_time_for, \
-#                        Vector2(64, -480), 10):
-#                    print("break")
             
             # TODO: I should probably refactor these two calls, so we're doing
             #       fewer redundant calculations here.
-            
-            # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#            if Geometry.are_points_equal_with_epsilon( \
-#                    waypoint.previous_waypoint.position, \
-#                    Vector2(64, -480), 10):
-#                print("break")
-            # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#            if Geometry.are_points_equal_with_epsilon( \
-#                    waypoint.position, \
-#                    Vector2(2688, 226), 10):
-#                print("break")
             
             var displacement_from_origin_to_waypoint := \
                     waypoint_position_to_calculate_jump_release_time_for - \
@@ -735,14 +694,6 @@ static func _update_waypoint_velocity_and_time( \
                     time_passing_through - origin_waypoint.time_passing_through
             var displacement_from_origin := \
                     waypoint.position - origin_waypoint.position
-            
-            # FIXME: DEBUGGING: REMOVE
-#            if Geometry.are_floats_equal_with_epsilon( \
-#                    min_velocity_x, -112.517, 0.01):
-#            if Geometry.are_floats_equal_with_epsilon( \
-#                    duration_to_next, 0.372, 0.01) and \
-#                    displacement_to_next.x == 62:
-#                print("break")
             
             # We calculate min/max velocity limits for direct movement from the
             # origin. These limits are more permissive than if we were
@@ -1335,9 +1286,6 @@ static func _solve_for_start_velocity( \
     var b: float
     var c: float
     
-    # FIXME: -------------- REMOVE: DEBUGGING
-#    duration = 1.3
-    
     # We only need to consider two movement profiles:
     # 
     # -   Accelerate at start (2 parts):
@@ -1813,9 +1761,6 @@ static func _solve_for_end_velocity( \
     var a: float
     var b: float
     var c: float
-    
-    # FIXME: -------------- REMOVE: DEBUGGING
-#    duration = 1.3
     
     # We only need to consider two movement profiles:
     # 

@@ -29,24 +29,6 @@ static func calculate_horizontal_step( \
     var step_duration := time_step_end - time_step_start
     var displacement := position_end - position_step_start
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#    if Geometry.are_floats_equal_with_epsilon( \
-#            step_duration, 0.395, 0.01) and displacement.x == -62:
-#    if Geometry.are_floats_equal_with_epsilon( \
-#            step_duration, 0.372, 0.01) and displacement.x == 62:
-#        print("break")
-    
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE: -A
-#    if Geometry.are_points_equal_with_epsilon( \
-#                    start_waypoint.position, \
-#                    Vector2(57, -448), \
-#                    1.0) and \
-#            Geometry.are_points_equal_with_epsilon( \
-#                    end_waypoint.position, \
-#                    Vector2(214.731, 226), \
-#                    1.0):
-#        print("yo")
-    
     ### Calculate the end x-velocity, the direction of acceleration,
     ### acceleration start time, and acceleration end time.
     
@@ -133,12 +115,6 @@ static func calculate_horizontal_step( \
             0.5 * acceleration * duration_during_horizontal_acceleration * \
             duration_during_horizontal_acceleration
     
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#    if Geometry.are_points_equal_with_epsilon( \
-#            position_step_start, \
-#            Vector2(64, -480), 10):
-#        print("break")
-    
     var position_instruction_start_x := \
             position_step_start.x + displacement_x_during_initial_coast
     var position_instruction_end_x := \
@@ -200,10 +176,6 @@ static func calculate_horizontal_step( \
     step.velocity_step_end = Vector2(velocity_end_x, step_end_state[1])
     
     end_waypoint.actual_velocity_x = velocity_end_x
-    
-    # FIXME: DEBUGGING: REMOVE:
-#    if velocity_end_x == -400:
-#        print("break")
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
@@ -353,15 +325,6 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         min_velocity_end_for_valid_next_step: float, \
         max_velocity_end_for_valid_next_step: float, \
         acceleration_magnitude: float) -> Array:
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#    if displacement == 62 and Geometry.are_floats_equal_with_epsilon( \
-#            duration, 0.372, 0.01):
-#    if displacement == -190 and Geometry.are_floats_equal_with_epsilon( \
-#            duration, 0.395, 0.01):
-#        duration += 0.0001
-#        velocity_start += 10
-#        print("break")
-    
     var acceleration_sign_for_min := \
             1 if \
             min_velocity_end_for_valid_next_step >= velocity_start else \
@@ -389,6 +352,11 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
                 velocity_start, \
                 !should_accelerate_at_start_for_min, \
                 true)
+    # Round-off error can cause this to be slightly higher than max-speed
+    # sometimes.
+    if min_velocity_end < max_velocity_end_for_valid_next_step + 0.0001:
+        min_velocity_end = \
+                min(min_velocity_end, max_velocity_end_for_valid_next_step)
     if min_velocity_end == INF or \
             min_velocity_end > max_velocity_end_for_valid_next_step:
         # Movement cannot reach across this interval.
@@ -421,28 +389,17 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
                 velocity_start, \
                 !should_accelerate_at_start_for_max, \
                 false)
+    # Round-off error can cause this to be slightly higher than max-speed
+    # sometimes.
+    if max_velocity_end > min_velocity_end_for_valid_next_step - 0.0001:
+        max_velocity_end = \
+                max(max_velocity_end, min_velocity_end_for_valid_next_step)
     # If we found valid min velocity, then we should be able to find valid max
     # velocity.
     assert(max_velocity_end != INF)
     if max_velocity_end < min_velocity_end_for_valid_next_step:
         # Movement cannot reach across this interval.
         return []
-    
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#    if Geometry.are_floats_equal_with_epsilon( \
-#            min_velocity_end, -112.517, 0.01) or \
-#            Geometry.are_floats_equal_with_epsilon( \
-#                    max_velocity_end, -112.517, 0.01) or \
-#            Geometry.are_floats_equal_with_epsilon( \
-#                    min_velocity_end_for_valid_next_step, -112.517, 0.01) or \
-#            Geometry.are_floats_equal_with_epsilon( \
-#                    max_velocity_end_for_valid_next_step, -112.517, 0.01):
-#        print("break")
-    
-    # FIXME: LEFT OFF HERE: DEBUGGING: REMOVE:
-#    if displacement == 62 and Geometry.are_floats_equal_with_epsilon( \
-#            duration, 0.372, 0.01):
-#        print("break")
     
     # Account for round-off error.
     if Geometry.are_floats_equal_with_epsilon( \
