@@ -1,14 +1,18 @@
 # Surfacer
 
-**_NOTE_: This framework is still in development; there are still many rough edges and missing pieces.**
-
 _A procedural pathfinding 2D-platformer framework for [Godot](https://godotengine.org/)._
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 
-TODO: Once v1.0 of this framework is done, split this apart into two repos: one for the underlying framework, and one for the demo game ("Squirrel Away").
+--------
 
-TODO: Link to demo app.
+**_NOTE_: This framework is still in development; there are still many rough edges and missing pieces.**
+
+_TODO: Once v1.0 of this framework is done, split this apart into two repos: one for the underlying framework, and one for the demo game ("Squirrel Away")._
+
+_TODO: Link to demo app._
+
+--------
 
 **tl;dr**: Surfacer works by **pre-parsing** a level into a **"platform graph"**. The **nodes** are represented by points along the different surfaces in the level (floors, walls, and ceilings). The **edges** are represented by possible movement trajectories between points along surfaces. There are different types of edges for different types of movement (e.g., jumping from a floor to a floor, falling from a wall, walking along a floor). At run time, **[A* search](https://en.wikipedia.org/wiki/A*_search_algorithm)** is used to calculate a path to a given destination.
 
