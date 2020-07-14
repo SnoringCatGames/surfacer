@@ -1,5 +1,7 @@
 # Surfacer
 
+**_NOTE_: This framework is still in development; there are still many rough edges and missing pieces.**
+
 _A procedural pathfinding 2D-platformer framework for [Godot](https://godotengine.org/)._
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
