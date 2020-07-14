@@ -313,6 +313,9 @@ func _on_tree_item_selected() -> void:
         Global.selection_description.set_text(controller.get_description())
     
     controller.call_deferred("on_item_selected")
+    
+    if inspector_selector.should_selection_have_been_handled_in_tree_by_now():
+        inspector_selector.clear()
 
 func _on_tree_item_expansion_toggled(item: TreeItem) -> void:
     var controller: InspectorItemController = item.get_metadata(0)

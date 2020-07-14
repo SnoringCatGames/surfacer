@@ -4,9 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Clear previous inspector selector selectionss when selection changes in the
-#   inpspector tree.
-# 
 # - Debug path weights, from lowish lower-left floor to long middleish floor.
 # 
 # - On phone, the utility panel is closed, but the edges are still annotated;

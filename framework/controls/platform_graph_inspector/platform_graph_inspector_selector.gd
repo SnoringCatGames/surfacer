@@ -13,6 +13,8 @@ const ORIGIN_POSITION_RADIUS := 5.0
 
 const CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD := 10000
 
+const DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD_SEC := 0.6
+
 var inspector
 
 var first_target: PositionAlongSurface
@@ -21,6 +23,8 @@ var previous_first_target: PositionAlongSurface
 var possible_jump_land_positions := []
 # Array<AnnotationElement>
 var current_annotation_elements := []
+
+var selection_time_sec := -1.0
 
 func _init(inspector) -> void:
     self.inspector = inspector
@@ -46,6 +50,7 @@ func _unhandled_input(event: InputEvent) -> void:
         if first_target == null:
             # Selecting the jump position.
             first_target = surface_position
+            possible_jump_land_positions = []
         else:
             # Selecting the land position.
             
@@ -54,6 +59,8 @@ func _unhandled_input(event: InputEvent) -> void:
                             Global.current_player_for_clicks.movement_params, \
                             first_target.surface, \
                             surface_position.surface)
+            
+            selection_time_sec = Time.elapsed_play_time_sec
             
             # FIXME: Add support for configuring edge type and graph from radio
             #        buttons in the inspector.
@@ -103,3 +110,14 @@ func _draw_possible_jump_land_positions() -> void:
         current_annotation_elements.push_back(element)
     
     Global.element_annotator.add_all(current_annotation_elements)
+
+func clear() -> void:
+    first_target = null
+    possible_jump_land_positions = []
+    update()
+    selection_time_sec = -1.0
+
+func should_selection_have_been_handled_in_tree_by_now() -> bool:
+    return selection_time_sec + \
+            DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD_SEC < \
+            Time.elapsed_play_time_sec
