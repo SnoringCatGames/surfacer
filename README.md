@@ -358,11 +358,9 @@ TODO: Include a brief description of each annotator.
 
 ## Tests
 
-_NOTE: Sadly, the tests are not set up to automatically run on presubmit, so some of the tests are severely out-of-date and broken._
+_**NOTE**: Sadly, the tests are not set up to automatically run on presubmit, so some of the tests are severely out-of-date and broken._
 
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
-
-For convenience, the Gut tool is checked in the with rest of the Surfacer framework.
 
 ## Licenses
 
