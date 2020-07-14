@@ -262,7 +262,8 @@ static func find_landing_trajectory_between_positions( \
             EdgeCalcResultType.FAILED_WHEN_CALCULATING_HORIZONTAL_STEPS if \
             calc_result == null else \
             (EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP if \
-            calc_result.horizontal_steps.size() == 1 else \
+            calc_result.horizontal_steps.size() == 1 and \
+                    !calc_result.increased_jump_height else \
             (EdgeCalcResultType.EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT if \
             calc_result.increased_jump_height else \
             EdgeCalcResultType.EDGE_VALID_WITHOUT_INCREASING_JUMP_HEIGHT))

@@ -4,10 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - DEBUG: jump from start floor to closest edge on upper-right floor;failed,
-#          close to previous; edge detail info shows vaild_single_step, but 
-#          here are 2 child steps...
-# 
 # - Debug why some fall-from-floor edges have trajectory portions on the wrong
 #   side.
 # - Debug why there are zero valid fall-from-wall edges.
