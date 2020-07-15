@@ -300,12 +300,12 @@ pathfinding, but there are still many false negatives and rough edges.
 
 Here's a direct quote from a comment in Godot's underlying collision-calculation logic:
 
-> give me back regular physics engine logic
-> this is madness
-> and most people using this function will think
-> what it does is simpler than using physics
-> this took about a week to get right..
-> but is it right? who knows at this point..
+> give me back regular physics engine logic<br>
+> this is madness<br>
+> and most people using this function will think<br>
+> what it does is simpler than using physics<br>
+> this took about a week to get right..<br>
+> but is it right? who knows at this point..<br>
 
 (https://github.com/godotengine/godot/blob/a7f49ac9a107820a62677ee3fb49d38982a25165/servers/physics_2d/space_2d_sw.cpp#L692)
 
