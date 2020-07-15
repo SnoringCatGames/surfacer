@@ -61,6 +61,7 @@ const EDGE_CONTINUOUS_TRAJECTORY_ALPHA := 0.7
 const INCLUDES_WAYPOINTS := true
 const INCLUDES_INSTRUCTION_INDICATORS := true
 const INCLUDES_CONTINUOUS_POSITIONS := true
+const INCLUDES_DISCRETE_POSITIONS := true
 
 # - Lighter, more opaque.
 # - More accurate to what is actually executed.

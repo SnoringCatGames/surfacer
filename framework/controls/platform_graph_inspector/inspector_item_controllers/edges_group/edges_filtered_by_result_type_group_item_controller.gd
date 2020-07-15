@@ -97,6 +97,7 @@ func get_annotation_elements() -> Array:
                     edge, \
                     true, \
                     false, \
+                    true, \
                     false)
             elements.push_back(element)
     return elements

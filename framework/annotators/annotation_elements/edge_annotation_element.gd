@@ -7,6 +7,7 @@ var edge: Edge
 var includes_waypoints: bool
 var includes_instruction_indicators: bool
 var includes_continuous_positions: bool
+var includes_discrete_positions: bool
 var color_params: ColorParams
 
 func _init( \
@@ -17,6 +18,8 @@ func _init( \
                 AnnotationElementDefaults.INCLUDES_INSTRUCTION_INDICATORS, \
         includes_continuous_positions := \
                 AnnotationElementDefaults.INCLUDES_CONTINUOUS_POSITIONS, \
+        includes_discrete_positions := \
+                AnnotationElementDefaults.INCLUDES_DISCRETE_POSITIONS, \
         color_params := AnnotationElementDefaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS) \
         .(TYPE) -> void:
@@ -24,6 +27,7 @@ func _init( \
     self.includes_waypoints = includes_waypoints
     self.includes_instruction_indicators = includes_instruction_indicators
     self.includes_continuous_positions = includes_continuous_positions
+    self.includes_discrete_positions = includes_discrete_positions
     self.color_params = color_params
 
 func draw(canvas: CanvasItem) -> void:
@@ -35,13 +39,15 @@ func draw(canvas: CanvasItem) -> void:
             color, \
             includes_waypoints, \
             includes_instruction_indicators, \
-            includes_continuous_positions)
+            includes_continuous_positions, \
+            includes_discrete_positions)
 
 func _create_legend_items() -> Array:
     var items := []
     
-    var discrete_trajectory_item := DiscreteEdgeTrajectoryLegendItem.new()
-    items.push_back(discrete_trajectory_item)
+    if includes_discrete_positions:
+        var discrete_trajectory_item := DiscreteEdgeTrajectoryLegendItem.new()
+        items.push_back(discrete_trajectory_item)
     
     if includes_continuous_positions:
         var continuous_trajectory_item := \

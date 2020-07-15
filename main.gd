@@ -4,8 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Debug that one long jump trajectory off to the left that goes through a
-#   floor.
 # - Debug why there are zero valid fall-from-wall edges.
 # - Debug why you can get stuck against the wall and unable to move leftward
 #   when jump straight up in the lower-left pit.
@@ -73,8 +71,6 @@ class_name Main
 # 
 # - Fix issue where jumping around edge sometimes isn't going far enough; it's
 #   clipping the corner.
-# 
-# - Re-visit GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
 # 
 # - Adjust cat_params to only allow subsets of EdgeCalculators, in
 #   order to test the non-jump edges

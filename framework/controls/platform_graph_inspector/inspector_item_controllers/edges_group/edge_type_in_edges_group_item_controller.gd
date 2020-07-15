@@ -80,6 +80,7 @@ func get_annotation_elements() -> Array:
                 edge, \
                 true, \
                 false, \
+                true, \
                 false)
         elements.push_back(element)
     return elements
@@ -97,6 +98,7 @@ static func get_annotation_elements_from_graph_and_type( \
                             edge, \
                             true, \
                             false, \
+                            true, \
                             false)
                     elements.push_back(element)
     return elements

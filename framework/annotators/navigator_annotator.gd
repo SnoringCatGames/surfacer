@@ -20,6 +20,7 @@ func _draw() -> void:
                 AnnotationElementDefaults.NAVIGATOR_PREVIOUS_PATH_COLOR, \
                 true, \
                 false, \
+                true, \
                 false)
     if current_path != null:
         DrawUtils.draw_path( \
@@ -29,6 +30,7 @@ func _draw() -> void:
                 AnnotationElementDefaults.NAVIGATOR_CURRENT_PATH_COLOR, \
                 true, \
                 false, \
+                true, \
                 false)
         
         # Draw the origin indicator.

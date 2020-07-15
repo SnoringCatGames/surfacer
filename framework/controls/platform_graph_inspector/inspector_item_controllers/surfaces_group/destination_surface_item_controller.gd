@@ -132,6 +132,7 @@ func get_annotation_elements() -> Array:
                         valid_edge, \
                         true, \
                         false, \
+                        true, \
                         false)
                 elements.push_back(edge_element)
     

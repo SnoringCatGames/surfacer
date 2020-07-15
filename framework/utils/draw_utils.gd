@@ -774,7 +774,8 @@ static func draw_path( \
         color := Color.white, \
         includes_waypoints := false, \
         includes_instruction_indicators := false, \
-        includes_continuous_positions := false) -> void:
+        includes_continuous_positions := false, \
+        includes_discrete_positions := false) -> void:
     for edge in path.edges:
         draw_edge( \
                 canvas, \
@@ -783,7 +784,8 @@ static func draw_path( \
                 color, \
                 includes_waypoints, \
                 includes_instruction_indicators, \
-                includes_continuous_positions)
+                includes_continuous_positions, \
+                includes_discrete_positions)
 
 static func draw_edge( \
         canvas: CanvasItem, \
@@ -792,7 +794,8 @@ static func draw_edge( \
         base_color := Color.white, \
         includes_waypoints := false, \
         includes_instruction_indicators := false, \
-        includes_continuous_positions := false) -> void:
+        includes_continuous_positions := true, \
+        includes_discrete_positions := false) -> void:
     if base_color == Color.white:
         base_color = AnnotationElementDefaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS.get_color()
@@ -809,7 +812,8 @@ static func draw_edge( \
                 base_color, \
                 includes_waypoints, \
                 includes_instruction_indicators, \
-                includes_continuous_positions)
+                includes_continuous_positions, \
+                includes_discrete_positions)
     elif edge is ClimbDownWallToFloorEdge or \
             edge is IntraSurfaceEdge or \
             edge is WalkToAscendWallFromFloorEdge:
@@ -836,7 +840,8 @@ static func draw_edge( \
                 base_color, \
                 includes_waypoints, \
                 includes_instruction_indicators, \
-                includes_continuous_positions)
+                includes_continuous_positions, \
+                includes_discrete_positions)
     else:
         Utils.error("Unexpected Edge subclass: %s" % edge)
 
@@ -929,7 +934,8 @@ static func _draw_fall_from_floor_edge( \
         base_color: Color, \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
-        includes_continuous_positions: bool) -> void:
+        includes_continuous_positions: bool, \
+        includes_discrete_positions: bool) -> void:
     # Render FallFromFloorEdges with a slight offset, so that they don't
     # overlap with ClimbOverWallToFloorEdges.
     var offset := Vector2( \
@@ -960,6 +966,7 @@ static func _draw_fall_from_floor_edge( \
             includes_waypoints, \
             includes_instruction_indicators, \
             includes_continuous_positions, \
+            includes_discrete_positions, \
             edge.start)
 
 static func _draw_edge_from_instructions_positions( \
@@ -970,6 +977,7 @@ static func _draw_edge_from_instructions_positions( \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool, \
         includes_continuous_positions: bool, \
+        includes_discrete_positions: bool, \
         origin_position_override := Vector2.INF) -> void:
     # Set up colors.
     var continuous_trajectory_color: Color = AnnotationElementDefaults \
@@ -991,12 +999,27 @@ static func _draw_edge_from_instructions_positions( \
                 edge.trajectory.frame_continuous_positions_from_steps, \
                 continuous_trajectory_color, \
                 stroke_width)
-    # Draw the trajectory (as approximated via discrete time steps during
-    # instruction test calculations).
-    canvas.draw_polyline( \
-            edge.trajectory.frame_discrete_positions_from_test, \
-            discrete_trajectory_color, \
-            stroke_width)
+        canvas.draw_line( \
+                edge.trajectory.frame_continuous_positions_from_steps[ \
+                        edge.trajectory.frame_continuous_positions_from_steps \
+                                .size() - 1], \
+                edge.end, \
+                continuous_trajectory_color, \
+                stroke_width)
+    if includes_discrete_positions:
+        # Draw the trajectory (as approximated via discrete time steps during
+        # instruction test calculations).
+        canvas.draw_polyline( \
+                edge.trajectory.frame_discrete_positions_from_test, \
+                discrete_trajectory_color, \
+                stroke_width)
+        canvas.draw_line( \
+                edge.trajectory.frame_discrete_positions_from_test[ \
+                        edge.trajectory.frame_discrete_positions_from_test \
+                                .size() - 1], \
+                edge.end, \
+                discrete_trajectory_color, \
+                stroke_width)
     
     if includes_waypoints:
         # Draw the intermediate waypoints.

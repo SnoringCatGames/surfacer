@@ -47,5 +47,6 @@ func get_annotation_elements() -> Array:
             edge, \
             true, \
             true, \
+            true, \
             true)
     return [element]

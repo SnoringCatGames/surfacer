@@ -3,16 +3,6 @@
 extends Reference
 class_name EdgeTrajectoryUtils
 
-# FIXME: B: use this to record slow/fast gravities on the movement_params when
-#        initializing and update all usages to use the right one (rather than
-#        mutating the movement_params in the middle of edge calculations
-#        below).
-# FIXME: B: Update step calculation to increase durations by a slight amount
-#        (after calculating them all), in order to not have the
-#        rendered/discrete trajectory stop short?
-# FIXME: B: Update tests to use the new acceleration values.
-const GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION := 1.00#1.08
-
 # Calculates trajectory state for the movement represented by the given
 # calculation results.
 static func calculate_trajectory_from_calculation_steps( \
@@ -47,12 +37,6 @@ static func calculate_trajectory_from_calculation_steps( \
             waypoint_positions, \
             distance_from_continuous_frames)
     
-    # FIXME: B: REMOVE
-    edge_calc_params.movement_params.gravity_fast_fall /= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    edge_calc_params.movement_params.gravity_slow_rise /= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    
     # FIXME: -------- Rename? Refactor? Remove? We've already checked each step individually (for continuous state).
     var collision := \
             CollisionCheckUtils.check_instructions_discrete_frame_state( \
@@ -65,12 +49,6 @@ static func calculate_trajectory_from_calculation_steps( \
             (collision.is_valid_collision_state and \
             collision.surface == \
                     edge_calc_params.destination_waypoint.surface))
-
-    # FIXME: B: REMOVE
-    edge_calc_params.movement_params.gravity_fast_fall *= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
-    edge_calc_params.movement_params.gravity_slow_rise *= \
-            GRAVITY_MULTIPLIER_TO_ADJUST_FOR_FRAME_DISCRETIZATION
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_TRAJECTORY_FROM_CALCULATION_STEPS, \

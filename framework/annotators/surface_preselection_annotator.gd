@@ -115,6 +115,7 @@ func _draw() -> void:
                 path_color, \
                 false, \
                 false, \
+                true, \
                 false)
     
     # Draw Surface.

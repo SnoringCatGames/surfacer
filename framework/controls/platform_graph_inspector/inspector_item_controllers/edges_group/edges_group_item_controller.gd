@@ -88,6 +88,7 @@ static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
                         edge, \
                         true, \
                         false, \
+                        true, \
                         false)
                 elements.push_back(element)
     return elements
