@@ -254,6 +254,29 @@ static func project_point_onto_surface( \
         assert(intersection != Vector2.INF)
         return intersection
 
+# Projects the given point onto the given surface, then offsets the point away
+# from the surface (in the direction of the surface normal) to a distance
+# corresponding to either the x or y coordinate of the given offset magnitude
+# vector.
+static func project_point_onto_surface_with_offset( \
+        point: Vector2, \
+        surface: Surface, \
+        offset_magnitude: Vector2) -> Vector2:
+    var projection := project_point_onto_surface( \
+            point, \
+            surface)
+    projection += offset_magnitude * surface.normal
+    return projection
+
+# Offsets the point away from the surface (in the direction of the surface
+# normal) to a distance corresponding to either the x or y coordinate of the
+# given offset magnitude vector.
+static func offset_point_from_surface( \
+        point: Vector2, \
+        surface: Surface, \
+        offset_magnitude: Vector2) -> Vector2:
+    return point + offset_magnitude * surface.normal
+
 static func is_point_in_triangle( \
         point: Vector2, \
         a: Vector2, \

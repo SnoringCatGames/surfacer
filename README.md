@@ -306,7 +306,8 @@ Here's a direct quote from a comment in Godot's underlying collision-calculation
 (https://github.com/godotengine/godot/blob/a7f49ac9a107820a62677ee3fb49d38982a25165/servers/physics_2d/space_2d_sw.cpp#L692)
 
 Some known limitations and rough edges include:
--   TODO
+-   When a [`KinematicBody2D`](https://docs.godotengine.org/en/stable/classes/class_kinematicbody2d.html) is sliding around a corner of another collidable, Godot can sometimes calculate the wrong results (oppositite direction) for `is_floor()`/`is_ceiling()`.
+-   Inconsistency between the behavior of the [`KinematicBody2D`](https://docs.godotengine.org/en/stable/classes/class_kinematicbody2d.html) and [`Physics2DDirectSpaceState`](https://docs.godotengine.org/en/stable/classes/class_physics2ddirectspacestate.html) collision APIs.
 
 ### Navigator: Using the platform graph to move from A to B
 
@@ -331,6 +332,10 @@ When we create the edges, we represent the movement trajectories according to th
 When executing edge instructions, the resulting run-time trajectory is usually slightly off from the expected trajectory that was pre-calculated when creating the edge. This variance is usually pretty minor, but, just in case, a given player can be configured to use the exact pre-calculated edge trajectory rather than the run-time version.
 
 Theoretically, this discrepancy shouldn't exist, and we should be able to eliminate it at some point.
+
+## Platform graph inspector
+
+TODO
 
 ## Annotators
 
