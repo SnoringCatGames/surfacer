@@ -1,14 +1,18 @@
 # Surfacer
 
-**_NOTE_: This framework is still in development; there are still many rough edges and missing pieces.**
-
 _A procedural pathfinding 2D-platformer framework for [Godot](https://godotengine.org/)._
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 
-TODO: Once v1.0 of this framework is done, split this apart into two repos: one for the underlying framework, and one for the demo game ("Squirrel Away").
+--------
 
-TODO: Link to demo app.
+**_NOTE_: This framework is still in development; there are still many rough edges and missing pieces.**
+
+_TODO: Once v1.0 of this framework is done, split this apart into two repos: one for the underlying framework, and one for the demo game ("Squirrel Away")._
+
+_TODO: Link to demo app._
+
+--------
 
 **tl;dr**: Surfacer works by **pre-parsing** a level into a **"platform graph"**. The **nodes** are represented by points along the different surfaces in the level (floors, walls, and ceilings). The **edges** are represented by possible movement trajectories between points along surfaces. There are different types of edges for different types of movement (e.g., jumping from a floor to a floor, falling from a wall, walking along a floor). At run time, **[A* search](https://en.wikipedia.org/wiki/A*_search_algorithm)** is used to calculate a path to a given destination.
 
@@ -296,12 +300,12 @@ pathfinding, but there are still many false negatives and rough edges.
 
 Here's a direct quote from a comment in Godot's underlying collision-calculation logic:
 
-> give me back regular physics engine logic
-> this is madness
-> and most people using this function will think
-> what it does is simpler than using physics
-> this took about a week to get right..
-> but is it right? who knows at this point..
+> give me back regular physics engine logic<br>
+> this is madness<br>
+> and most people using this function will think<br>
+> what it does is simpler than using physics<br>
+> this took about a week to get right..<br>
+> but is it right? who knows at this point..<br>
 
 (https://github.com/godotengine/godot/blob/a7f49ac9a107820a62677ee3fb49d38982a25165/servers/physics_2d/space_2d_sw.cpp#L692)
 
@@ -359,11 +363,9 @@ TODO: Include a brief description of each annotator.
 
 ## Tests
 
-_NOTE: Sadly, the tests are not set up to automatically run on presubmit, so some of the tests are severely out-of-date and broken._
+_**NOTE**: Sadly, the tests are not set up to automatically run on presubmit, so some of the tests are severely out-of-date and broken._
 
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
-
-For convenience, the Gut tool is checked in the with rest of the Surfacer framework.
 
 ## Licenses
 
