@@ -11,6 +11,9 @@ static func error( \
     if should_assert:
         assert(false)
 
+static func warning(message := "An warning occurred"):
+    print("WARNING: %s" % message)
+
 # TODO: Replace this with any built-in feature whenever it exists
 #       (https://github.com/godotengine/godot/issues/4715).
 static func subarray( \

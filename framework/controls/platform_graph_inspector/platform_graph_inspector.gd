@@ -238,25 +238,26 @@ func _select_initial_item() -> void:
                     #       - InspectorItemType.DESTINATION_SURFACE
                     #       - InspectorItemType.EDGE_TYPE_IN_SURFACES_GROUP
                     
-                    if debug_origin.has("position") and \
-                            debug_destination.has("position") and \
-                            limit_parsing.has("edge_type"):
-                        # Search for the matching edge item.
-                        _select_canonical_edge_or_edge_attempt_item_controller( \
-                                origin_surface, \
-                                destination_surface, \
-                                debug_origin.position, \
-                                debug_destination.position, \
-                                limit_parsing.edge_type, \
-                                graph)
-                        return
-                    elif destination_surface != null:
-                        # Search for the matching origin surface item.
-                        _select_canonical_destination_surface_item_controller( \
-                                origin_surface, \
-                                destination_surface, \
-                                graph)
-                        return
+                    if destination_surface != null:
+                        if debug_origin.has("position") and \
+                                debug_destination.has("position") and \
+                                limit_parsing.has("edge_type"):
+                            # Search for the matching edge item.
+                            _select_canonical_edge_or_edge_attempt_item_controller( \
+                                    origin_surface, \
+                                    destination_surface, \
+                                    debug_origin.position, \
+                                    debug_destination.position, \
+                                    limit_parsing.edge_type, \
+                                    graph)
+                            return
+                        else:
+                            # Search for the matching origin surface item.
+                            _select_canonical_destination_surface_item_controller( \
+                                    origin_surface, \
+                                    destination_surface, \
+                                    graph)
+                            return
                 
                 # Search for the matching origin surface item.
                 _select_canonical_origin_surface_item_controller( \
@@ -450,6 +451,9 @@ func _on_find_and_expand_complete( \
     ])
     
     var item := get_selected()
+    if item == null:
+        Utils.error("No tree item selected after search: %s" % metadata)
+        return
     var controller: InspectorItemController = item.get_metadata(0)
     
     var selection_failure_message := ""

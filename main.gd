@@ -4,8 +4,7 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Debug why some fall-from-floor edges have trajectory portions on the wrong
-#   side.
+# - Debug why fall-from-floor off left side of start floor fails.
 # - Debug why there are zero valid fall-from-wall edges.
 # - Debug why you can get stuck against the wall and unable to move leftward
 #   when jump straight up in the lower-left pit.

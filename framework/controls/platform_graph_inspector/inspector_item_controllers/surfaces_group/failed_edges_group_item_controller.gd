@@ -60,7 +60,17 @@ func find_and_expand_controller( \
     _trigger_find_and_expand_controller_recursive( \
             search_type, \
             metadata)
-    return true
+    for failed_edge_attempt in edges_results.failed_edge_attempts:
+        if Geometry.are_points_equal_with_epsilon( \
+                        failed_edge_attempt.start, \
+                        metadata.start, \
+                        0.01) and \
+                Geometry.are_points_equal_with_epsilon( \
+                        failed_edge_attempt.end, \
+                        metadata.end, \
+                        0.01):
+            return true
+    return false
 
 func _find_and_expand_controller_recursive( \
         search_type: int, \
