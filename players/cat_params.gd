@@ -55,6 +55,7 @@ func _init() -> void:
     calculates_all_valid_edges_for_a_surface_pair = false
     always_includes_jump_land_positions_at_surface_ends = false
 #    always_includes_jump_land_positions_at_surface_ends = true
+    includes_redundant_jump_land_positions_with_zero_start_velocity = true
     normal_jump_instruction_duration_increase = 0.08
     exceptional_jump_instruction_duration_increase = 0.2
     recurses_when_colliding_during_horizontal_step_calculations = true

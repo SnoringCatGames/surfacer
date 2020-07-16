@@ -23,7 +23,7 @@ func _init( \
         movement_params: MovementParams) \
         .(TYPE, \
         IS_TIME_BASED, \
-        SurfaceType.get_type_from_side(start.surface.side), \
+        SurfaceType.get_type_from_side(start.side), \
         ENTERS_AIR, \
         INCLUDES_AIR_TRAJECTORY, \
         null, \
@@ -195,8 +195,8 @@ static func _calculate_velocity_end( \
         movement_params: MovementParams) -> Vector2:
     var displacement := end.target_point - start.target_point
     
-    if start.surface.side == SurfaceSide.FLOOR or \
-            start.surface.side == SurfaceSide.CEILING:
+    if start.side == SurfaceSide.FLOOR or \
+            start.side == SurfaceSide.CEILING:
         # We need to calculate the end velocity, taking into account whether we
         # will have had enough distance to reach max horizontal speed.
         var acceleration := \
@@ -265,7 +265,7 @@ static func calculate_duration_to_move_along_surface( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         distance: float) -> float:
-    match start.surface.side:
+    match start.side:
         SurfaceSide.FLOOR, \
         SurfaceSide.CEILING:
             return MovementUtils.calculate_time_to_walk( \

@@ -66,24 +66,25 @@ const DEBUG_PARAMS := \
 #        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
 #        edge_type = EdgeType.FALL_FROM_FLOOR_EDGE,
-#        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
+        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
 #        edge_type = EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
 #        
-#        edge = {
-#            origin = {
-#                surface_side = SurfaceSide.RIGHT_WALL,
-#                surface_start_vertex = Vector2(-64, 128),
-#                position = Vector2(-64, 64),
-#                epsilon = 10,
-#            },
-#            destination = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(-448, 256),
-#                position = Vector2(64, 64),
-#                epsilon = 10,
-#            },
-#        },
+        edge = {
+            origin = {
+                surface_side = SurfaceSide.FLOOR,
+                surface_start_vertex = Vector2(-256, 896),
+                position = Vector2(-198, 896),
+                epsilon = 10,
+            },
+            destination = {
+                surface_side = SurfaceSide.FLOOR,
+                surface_start_vertex = Vector2(-576, 576),
+                position = Vector2(-512, 576),
+                epsilon = 10,
+            },
+            velocity_start = Vector2(0, -1000),
+        },
 #        
 #        edge = {
 #            origin = {

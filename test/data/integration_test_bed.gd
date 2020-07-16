@@ -193,11 +193,11 @@ func set_up_level(data: Dictionary) -> void:
 
 func _store_surfaces(data: Dictionary) -> void:
     for surface in surface_parser.all_surfaces:
-        if surface.side == data.start.surface.side and \
+        if surface.side == data.start.side and \
                 surface.first_point == data.start.surface.first_point and \
                 surface.last_point == data.start.surface.last_point:
             start_surface = surface
-        elif surface.side == data.end.surface.side and \
+        elif surface.side == data.end.side and \
                 surface.first_point == data.end.surface.first_point and \
                 surface.last_point == data.end.surface.last_point:
             end_surface = surface

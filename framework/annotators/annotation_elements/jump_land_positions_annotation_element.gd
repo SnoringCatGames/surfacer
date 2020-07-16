@@ -49,7 +49,7 @@ func draw(canvas: CanvasItem) -> void:
             canvas, \
             end, \
             true, \
-            jump_land_positions.land_position.surface.side, \
+            jump_land_positions.land_position.side, \
             color)
 
 func _create_legend_items() -> Array:

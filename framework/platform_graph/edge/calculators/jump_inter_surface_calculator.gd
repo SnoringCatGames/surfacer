@@ -39,7 +39,8 @@ func get_all_inter_surface_edges_from_surface( \
         if EdgeCalculator.should_skip_edge_calculation( \
                 debug_params, \
                 origin_surface, \
-                destination_surface):
+                destination_surface, \
+                null):
             continue
         #######################################################################
         
@@ -240,7 +241,7 @@ func create_edge_from_edge_calc_params( \
                     edge_calc_params.collision_params, \
                     calc_result, \
                     true, \
-                    edge_calc_params.destination_position.surface.side)
+                    edge_calc_params.destination_position.side)
     var trajectory := EdgeTrajectoryUtils \
             .calculate_trajectory_from_calculation_steps( \
                     edge_result_metadata, \

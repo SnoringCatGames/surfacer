@@ -39,6 +39,7 @@ func get_all_inter_surface_edges_from_surface( \
         if EdgeCalculator.should_skip_edge_calculation( \
                 debug_params, \
                 jump_position, \
+                null, \
                 null):
             continue
         #######################################################################
@@ -206,8 +207,8 @@ static func _calculate_instructions( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         calc_result: EdgeCalcResult) -> EdgeInstructions:
-    assert(start.surface.side == SurfaceSide.LEFT_WALL || \
-            start.surface.side == SurfaceSide.RIGHT_WALL)
+    assert(start.side == SurfaceSide.LEFT_WALL || \
+            start.side == SurfaceSide.RIGHT_WALL)
     
     # Calculate the fall-trajectory instructions.
     var instructions := EdgeInstructionsUtils \
@@ -216,12 +217,12 @@ static func _calculate_instructions( \
                     collision_params, \
                     calc_result, \
                     false, \
-                    end.surface.side)
+                    end.side)
     
     # Calculate the wall-release instructions.
     var sideways_input_key := \
             "move_right" if \
-            start.surface.side == SurfaceSide.LEFT_WALL else \
+            start.side == SurfaceSide.LEFT_WALL else \
             "move_left"
     var outward_press := EdgeInstruction.new( \
             sideways_input_key, \

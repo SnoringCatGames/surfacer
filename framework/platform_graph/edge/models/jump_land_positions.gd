@@ -37,8 +37,8 @@ func _init( \
         needs_extra_wall_land_horizontal_speed: bool, \
         less_likely_to_be_valid: bool) -> void:
     assert(!needs_extra_wall_land_horizontal_speed or \
-            land_position.surface.side == SurfaceSide.LEFT_WALL or \
-            land_position.surface.side == SurfaceSide.RIGHT_WALL)
+            land_position.side == SurfaceSide.LEFT_WALL or \
+            land_position.side == SurfaceSide.RIGHT_WALL)
     
     self.jump_position = jump_position
     self.land_position = land_position

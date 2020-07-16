@@ -144,6 +144,7 @@ func _get_all_edges_from_one_side( \
     if EdgeCalculator.should_skip_edge_calculation( \
             debug_params, \
             position_start, \
+            null, \
             null):
         Profiler.stop( \
                 ProfilerMetric \
@@ -272,7 +273,7 @@ func _get_all_edges_from_one_side( \
                             collision_params, \
                             calc_result, \
                             false, \
-                            position_end.surface.side)
+                            position_end.side)
             
             trajectory = EdgeTrajectoryUtils \
                     .calculate_trajectory_from_calculation_steps( \

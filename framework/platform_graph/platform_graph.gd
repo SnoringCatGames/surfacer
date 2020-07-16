@@ -237,7 +237,7 @@ static func _calculate_intra_surface_edge_weight( \
         weight = distance
     
     # Apply a multiplier to the weight according to the type of edge.
-    match node_a.surface.side:
+    match node_a.side:
         SurfaceSide.FLOOR, \
         SurfaceSide.CEILING:
             weight *= movement_params.walking_edge_weight_multiplier
@@ -470,7 +470,7 @@ static func _dedup_node( \
 # - False negatives for node deduplication should be unlikely, but it should
 #   also be ok when it does happen. It'll just result in a little more storage.
 static func _node_to_cell_id(node: PositionAlongSurface) -> String:
-    return "%s,%s,%s" % [node.surface.side, \
+    return "%s,%s,%s" % [node.side, \
             floor((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / \
                     CLUSTER_CELL_SIZE) as int, \
             floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / \

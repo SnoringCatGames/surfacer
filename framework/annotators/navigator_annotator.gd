@@ -60,7 +60,7 @@ func _draw() -> void:
                 self, \
                 cone_end_point, \
                 false, \
-                current_destination.surface.side, \
+                current_destination.side, \
                 AnnotationElementDefaults \
                         .NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR, \
                 cone_length, \
@@ -73,7 +73,7 @@ func _draw() -> void:
                 self, \
                 cone_end_point, \
                 false, \
-                current_destination.surface.side, \
+                current_destination.side, \
                 AnnotationElementDefaults \
                         .NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR, \
                 cone_length, \

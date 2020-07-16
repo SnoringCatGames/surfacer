@@ -62,13 +62,13 @@ func _check_did_just_reach_destination( \
 static func _calculate_instructions( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface) -> EdgeInstructions:
-    assert(start.surface.side == SurfaceSide.LEFT_WALL || \
-            start.surface.side == SurfaceSide.RIGHT_WALL)
-    assert(end.surface.side == SurfaceSide.FLOOR)
+    assert(start.side == SurfaceSide.LEFT_WALL || \
+            start.side == SurfaceSide.RIGHT_WALL)
+    assert(end.side == SurfaceSide.FLOOR)
     
     var sideways_input_key := \
             "move_left" if \
-            start.surface.side == SurfaceSide.LEFT_WALL else \
+            start.side == SurfaceSide.LEFT_WALL else \
             "move_right"
     var inward_instruction := EdgeInstruction.new( \
             sideways_input_key, \

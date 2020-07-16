@@ -85,6 +85,7 @@ var calculates_all_valid_edges_for_a_surface_pair := false
 # between the two surfaces. This should always be redundant with the more
 # intelligent and efficient jump/land positions combinations.
 var always_includes_jump_land_positions_at_surface_ends := false
+var includes_redundant_jump_land_positions_with_zero_start_velocity := false
 # This is a constant increase to all jump durations. This could make it more
 # likely for edge calculations to succeed earlier, or it could just make the
 # player seem more floaty.

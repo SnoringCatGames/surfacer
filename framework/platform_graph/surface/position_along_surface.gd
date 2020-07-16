@@ -18,6 +18,8 @@ var target_point := Vector2.INF
 # Used for debugging. May not always be set.
 var target_projection_onto_surface := Vector2.INF
 
+var side: int setget ,_get_side
+
 func _init(position_to_copy = null) -> void:
     if position_to_copy != null:
         copy(self, position_to_copy)
@@ -88,6 +90,12 @@ func to_string() -> String:
                     surface != null else \
                     "NULL SURFACE", \
         ]
+
+func _get_side() -> int:
+    return surface.side if \
+            surface != null else \
+            SurfaceSide.NONE
+
 static func copy(\
         destination: PositionAlongSurface, \
         source: PositionAlongSurface) -> void:

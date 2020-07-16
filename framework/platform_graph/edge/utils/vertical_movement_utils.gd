@@ -446,7 +446,7 @@ static func calculate_time_for_passing_through_waypoint( \
     # We need to know whether the position corresponds to the rising or falling
     # side of the jump parabola, and whether the position corresponds to before
     # or after the jump button is released.
-    match waypoint.surface.side:
+    match waypoint.side:
         SurfaceSide.FLOOR:
             # Jump reaches the position after releasing the jump button (and
             # after the peak).

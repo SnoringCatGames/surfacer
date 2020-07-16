@@ -88,6 +88,8 @@ var validity := WaypointValidity.UNKNOWN
 # Whether this waypoint can be reached with the current jump height.
 var is_valid: bool setget ,_get_is_valid
 
+var side: int setget ,_get_side
+
 func _init( \
         surface: Surface, \
         position: Vector2, \
@@ -112,3 +114,8 @@ func to_string() -> String:
 
 func _get_is_valid() -> bool:
     return validity == WaypointValidity.WAYPOINT_VALID
+
+func _get_side() -> int:
+    return surface.side if \
+            surface != null else \
+            SurfaceSide.NONE

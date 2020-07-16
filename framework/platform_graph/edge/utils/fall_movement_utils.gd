@@ -71,7 +71,8 @@ static func find_landing_trajectories_to_any_surface( \
         if EdgeCalculator.should_skip_edge_calculation( \
                 debug_params, \
                 origin_position, \
-                destination_surface):
+                destination_surface, \
+                velocity_start):
             continue
         #######################################################################
         
@@ -173,7 +174,8 @@ static func find_landing_trajectory_between_positions( \
     if EdgeCalculator.should_skip_edge_calculation( \
             debug_params, \
             origin_position, \
-            land_position):
+            land_position, \
+            velocity_start):
         return null
     
     # Record some extra debug state when we're limiting calculations to a

@@ -95,11 +95,11 @@ static func create_edge_calc_params(
                         MIN_LAND_ON_WALL_EXTRA_SPEED_RATIO if \
                 needs_extra_wall_land_horizontal_speed else \
                 MIN_LAND_ON_WALL_SPEED
-        if destination_position.surface.side == SurfaceSide.LEFT_WALL:
+        if destination_position.side == SurfaceSide.LEFT_WALL:
             velocity_end_min_x = -collision_params.movement_params \
                     .max_horizontal_speed_default
             velocity_end_max_x = -min_land_on_wall_speed
-        if destination_position.surface.side == SurfaceSide.RIGHT_WALL:
+        if destination_position.side == SurfaceSide.RIGHT_WALL:
             velocity_end_min_x = min_land_on_wall_speed
             velocity_end_max_x = collision_params.movement_params \
                     .max_horizontal_speed_default
@@ -157,7 +157,8 @@ static func broad_phase_check( \
     if should_skip_edge_calculation( \
             collision_params.debug_params, \
             jump_land_positions.jump_position, \
-            jump_land_positions.land_position):
+            jump_land_positions.land_position, \
+            jump_land_positions.velocity_start):
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.SKIPPED_FOR_DEBUGGING
@@ -201,7 +202,8 @@ static func broad_phase_check( \
 static func should_skip_edge_calculation( \
         debug_params: Dictionary, \
         jump_position_or_surface, \
-        land_position_or_surface) -> bool:
+        land_position_or_surface, \
+        velocity_start) -> bool:
     if debug_params.has("limit_parsing") and \
             debug_params.limit_parsing.has("edge"):
         var jump_surface: Surface = \
@@ -290,6 +292,16 @@ static func should_skip_edge_calculation( \
                         debug_destination.position, \
                         destination_epsilon):
                     # Ignore anything except the land position that we're
+                    # debugging.
+                    return true
+        
+        if debug_params.limit_parsing.edge.has("velocity_start") and \
+                velocity_start != null:
+                if !Geometry.are_points_equal_with_epsilon( \
+                        velocity_start, \
+                        debug_params.limit_parsing.edge.velocity_start, \
+                        10.0):
+                    # Ignore anything except the start velocity that we're
                     # debugging.
                     return true
     

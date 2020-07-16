@@ -859,7 +859,7 @@ static func _draw_edge_from_end_points( \
                 canvas, \
                 edge.end, \
                 true, \
-                edge.end_position_along_surface.surface.side, \
+                edge.end_position_along_surface.side, \
                 waypoint_color)
         draw_origin_marker( \
                 canvas, \
@@ -903,7 +903,7 @@ static func _draw_climb_over_wall_to_floor_edge( \
                 canvas, \
                 edge.end, \
                 true, \
-                edge.end_position_along_surface.surface.side, \
+                edge.end_position_along_surface.side, \
                 waypoint_color)
         draw_origin_marker( \
                 canvas, \
@@ -987,7 +987,7 @@ static func _draw_edge_from_instructions_positions( \
                 canvas, \
                 edge.end, \
                 true, \
-                edge.end_position_along_surface.surface.side, \
+                edge.end_position_along_surface.side, \
                 waypoint_color)
         
         var origin_position := \

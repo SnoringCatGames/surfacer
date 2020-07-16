@@ -133,7 +133,7 @@ func find_a_landing_trajectory( \
                     collision_params, \
                     calc_result, \
                     false, \
-                    land_position.surface.side)
+                    land_position.side)
     var trajectory := \
             EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
                     false, \

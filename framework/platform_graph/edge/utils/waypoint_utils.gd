@@ -677,8 +677,7 @@ static func _update_waypoint_velocity_and_time( \
                         .TRYING_TO_PASS_UNDER_WALL_WHILE_ASCENDING
             else:
                 # We should never hit a floor while still holding the jump button.
-                assert(!(waypoint.surface != null and \
-                        waypoint.surface.side == SurfaceSide.FLOOR and \
+                assert(!(waypoint.side == SurfaceSide.FLOOR and \
                         still_ascending))
             
             var duration_to_next := \
@@ -1887,7 +1886,7 @@ static func _calculate_replacement_for_fake_waypoint( \
     var replacement_position := Vector2.INF
     var should_stay_on_min_side: bool
     
-    match fake_waypoint.surface.side:
+    match fake_waypoint.side:
         SurfaceSide.FLOOR:
             should_stay_on_min_side = false
             

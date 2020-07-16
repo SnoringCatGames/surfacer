@@ -534,7 +534,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/player/action/instructions_playback.gd"
 }, {
-"base": "Node",
+"base": "",
 "class": "IntegrationTestBed",
 "language": "GDScript",
 "path": "res://test/data/integration_test_bed.gd"
