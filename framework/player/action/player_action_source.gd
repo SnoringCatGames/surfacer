@@ -39,10 +39,15 @@ static func update_for_key_press( \
         "jump":
             was_pressed_in_previous_frame = previous_actions.pressed_jump
             was_already_pressed_in_current_frame = actions.pressed_jump
-            is_pressed_in_current_frame = is_pressed or \
+            is_pressed_in_current_frame = \
+                    is_pressed or \
                     (is_additive and was_already_pressed_in_current_frame)
-            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
-            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            just_pressed = \
+                    !was_pressed_in_previous_frame and \
+                    is_pressed_in_current_frame
+            just_released = \
+                    was_pressed_in_previous_frame and \
+                    !is_pressed_in_current_frame
             
             actions.pressed_jump = is_pressed_in_current_frame
             actions.just_pressed_jump = just_pressed
@@ -50,10 +55,15 @@ static func update_for_key_press( \
         "move_up":
             was_pressed_in_previous_frame = previous_actions.pressed_up
             was_already_pressed_in_current_frame = actions.pressed_up
-            is_pressed_in_current_frame = is_pressed or \
+            is_pressed_in_current_frame = \
+                    is_pressed or \
                     (is_additive and was_already_pressed_in_current_frame)
-            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
-            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            just_pressed = \
+                    !was_pressed_in_previous_frame and \
+                    is_pressed_in_current_frame
+            just_released = \
+                    was_pressed_in_previous_frame and \
+                    !is_pressed_in_current_frame
             
             actions.pressed_up = is_pressed_in_current_frame
             actions.just_pressed_up = just_pressed
@@ -61,10 +71,15 @@ static func update_for_key_press( \
         "move_down":
             was_pressed_in_previous_frame = previous_actions.pressed_down
             was_already_pressed_in_current_frame = actions.pressed_down
-            is_pressed_in_current_frame = is_pressed or \
+            is_pressed_in_current_frame = \
+                    is_pressed or \
                     (is_additive and was_already_pressed_in_current_frame)
-            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
-            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            just_pressed = \
+                    !was_pressed_in_previous_frame and \
+                    is_pressed_in_current_frame
+            just_released = \
+                    was_pressed_in_previous_frame and \
+                    !is_pressed_in_current_frame
             
             actions.pressed_down = is_pressed_in_current_frame
             actions.just_pressed_down = just_pressed
@@ -72,10 +87,15 @@ static func update_for_key_press( \
         "move_left":
             was_pressed_in_previous_frame = previous_actions.pressed_left
             was_already_pressed_in_current_frame = actions.pressed_left
-            is_pressed_in_current_frame = is_pressed or \
+            is_pressed_in_current_frame = \
+                    is_pressed or \
                     (is_additive and was_already_pressed_in_current_frame)
-            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
-            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            just_pressed = \
+                    !was_pressed_in_previous_frame and \
+                    is_pressed_in_current_frame
+            just_released = \
+                    was_pressed_in_previous_frame and \
+                    !is_pressed_in_current_frame
             
             actions.pressed_left = is_pressed_in_current_frame
             actions.just_pressed_left = just_pressed
@@ -83,10 +103,15 @@ static func update_for_key_press( \
         "move_right":
             was_pressed_in_previous_frame = previous_actions.pressed_right
             was_already_pressed_in_current_frame = actions.pressed_right
-            is_pressed_in_current_frame = is_pressed or \
+            is_pressed_in_current_frame = \
+                    is_pressed or \
                     (is_additive and was_already_pressed_in_current_frame)
-            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
-            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            just_pressed = \
+                    !was_pressed_in_previous_frame and \
+                    is_pressed_in_current_frame
+            just_released = \
+                    was_pressed_in_previous_frame and \
+                    !is_pressed_in_current_frame
             
             actions.pressed_right = is_pressed_in_current_frame
             actions.just_pressed_right = just_pressed
@@ -94,10 +119,15 @@ static func update_for_key_press( \
         "grab_wall":
             was_pressed_in_previous_frame = previous_actions.pressed_grab_wall
             was_already_pressed_in_current_frame = actions.pressed_grab_wall
-            is_pressed_in_current_frame = is_pressed or \
+            is_pressed_in_current_frame = \
+                    is_pressed or \
                     (is_additive and was_already_pressed_in_current_frame)
-            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
-            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            just_pressed = \
+                    !was_pressed_in_previous_frame and \
+                    is_pressed_in_current_frame
+            just_released = \
+                    was_pressed_in_previous_frame and \
+                    !is_pressed_in_current_frame
             
             actions.pressed_grab_wall = is_pressed_in_current_frame
             actions.just_pressed_grab_wall = just_pressed
@@ -105,10 +135,15 @@ static func update_for_key_press( \
         "face_left":
             was_pressed_in_previous_frame = previous_actions.pressed_face_left
             was_already_pressed_in_current_frame = actions.pressed_face_left
-            is_pressed_in_current_frame = is_pressed or \
+            is_pressed_in_current_frame = \
+                    is_pressed or \
                     (is_additive and was_already_pressed_in_current_frame)
-            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
-            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            just_pressed = \
+                    !was_pressed_in_previous_frame and \
+                    is_pressed_in_current_frame
+            just_released = \
+                    was_pressed_in_previous_frame and \
+                    !is_pressed_in_current_frame
             
             actions.pressed_face_left = is_pressed_in_current_frame
             actions.just_pressed_face_left = just_pressed
@@ -116,10 +151,15 @@ static func update_for_key_press( \
         "face_right":
             was_pressed_in_previous_frame = previous_actions.pressed_face_right
             was_already_pressed_in_current_frame = actions.pressed_face_right
-            is_pressed_in_current_frame = is_pressed or \
+            is_pressed_in_current_frame = \
+                    is_pressed or \
                     (is_additive and was_already_pressed_in_current_frame)
-            just_pressed = !was_pressed_in_previous_frame and is_pressed_in_current_frame
-            just_released = was_pressed_in_previous_frame and !is_pressed_in_current_frame
+            just_pressed = \
+                    !was_pressed_in_previous_frame and \
+                    is_pressed_in_current_frame
+            just_released = \
+                    was_pressed_in_previous_frame and \
+                    !is_pressed_in_current_frame
             
             actions.pressed_face_right = is_pressed_in_current_frame
             actions.just_pressed_face_right = just_pressed

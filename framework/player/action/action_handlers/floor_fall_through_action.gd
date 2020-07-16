@@ -13,8 +13,10 @@ func _init().( \
 
 func process(player: Player) -> bool:
     if player.surface_state.is_falling_through_floors:
-        # TODO: If we were already falling through the air, then we should instead maintain the previous velocity here.
-        player.velocity.y = player.movement_params.fall_through_floor_velocity_boost
+        # TODO: If we were already falling through the air, then we should
+        #       instead maintain the previous velocity here.
+        player.velocity.y = \
+                player.movement_params.fall_through_floor_velocity_boost
         return true
     else:
         return false

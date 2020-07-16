@@ -4,8 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Debug why you can get stuck against the wall and unable to move leftward
-#   when jump straight up in the lower-left pit.
 # - Debug jumping from bottom of stair steps to top (and vice versa): should be
 #   fewer big jumps rather than more small jumps.
 # 

@@ -34,8 +34,8 @@ func start(time_sec: float) -> void:
 func update( \
         time_sec: float, \
         navigation_state: PlayerNavigationState) -> Array:
-    # TODO: If we don't ever need more complicated dynamic instruction updates based on navigation
-    #       state, then remove that param.
+    # TODO: If we don't ever need more complicated dynamic instruction updates
+    #       based on navigation state, then remove that param.
     
     active_key_presses = _next_active_key_presses.duplicate()
     
@@ -76,10 +76,12 @@ func _get_start_time_for_next_instruction() -> float:
     if is_on_last_instruction:
         duration_until_next_instruction = edge.instructions.duration
         if edge.should_end_by_colliding_with_surface:
-            # With slight movement error it's possible for the edge duration to elapse before
-            # actually landing on the destination surface. So this should allow for a little extra
-            # time at the end in order to end by landing on the surface.
-            duration_until_next_instruction += EXTRA_DELAY_TO_ALLOW_COLLISION_WITH_SURFACE
+            # With slight movement error it's possible for the edge duration to
+            # elapse before actually landing on the destination surface. So
+            # this should allow for a little extra time at the end in order to
+            # end by landing on the surface.
+            duration_until_next_instruction += \
+                    EXTRA_DELAY_TO_ALLOW_COLLISION_WITH_SURFACE
     else:
         duration_until_next_instruction = next_instruction.time
     

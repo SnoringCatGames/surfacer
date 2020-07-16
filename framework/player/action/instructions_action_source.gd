@@ -25,7 +25,9 @@ func update( \
     
     for playback in _all_playback:
         # Handle any new key presses up till the current time.
-        var new_instructions: Array = playback.update(time_sec, navigation_state)
+        var new_instructions: Array = playback.update( \
+                time_sec, \
+                navigation_state)
         
         non_pressed_keys.clear()
         
@@ -57,7 +59,9 @@ func update( \
 func start_instructions( \
         edge: Edge, \
         time_sec: float) -> InstructionsPlayback:
-    var playback := InstructionsPlayback.new(edge, is_additive)
+    var playback := InstructionsPlayback.new( \
+            edge, \
+            is_additive)
     playback.start(time_sec)
     _all_playback.push_back(playback)
     return playback
