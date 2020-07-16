@@ -64,8 +64,8 @@ static func get_description_string(result_type: int) -> String:
             return "This edge is invalid. Its vertical step's destination " + \
                     "is out of reach."
         FAILED_WHEN_CALCULATING_HORIZONTAL_STEPS:
-            return "This edge is invalid. One of its horizontal steps end " + \
-                    "points is out of reach."
+            return "This edge is invalid. One of its horizontal steps' " + \
+                    "end points is out of reach."
         SKIPPED_FOR_DEBUGGING:
             return "This edge calculation was skipped, because a " + \
                     "debugging configuration filtered it out."

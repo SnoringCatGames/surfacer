@@ -466,7 +466,8 @@ static func check_continuous_horizontal_step_for_collision( \
 static func check_frame_for_collision( \
         collision_params: CollisionCalcParams, \
         position_start: Vector2, \
-        displacement: Vector2) -> SurfaceCollision:
+        displacement: Vector2, \
+        is_recursing := false) -> SurfaceCollision:
     collision_params.player.position = position_start
     var kinematic_collision := collision_params.player.move_and_collide( \
             displacement, \
@@ -533,5 +534,40 @@ static func check_frame_for_collision( \
     
     surface_collision.surface = surface
     surface_collision.is_valid_collision_state = true
+    
+    # Check whether this collision is with a surface that we're actually moving
+    # away from.
+    var is_moving_away_from_surface: bool 
+    match surface.side:
+        SurfaceSide.FLOOR:
+            is_moving_away_from_surface = displacement.y < 0.0
+        SurfaceSide.LEFT_WALL:
+            is_moving_away_from_surface = displacement.x > 0.0
+        SurfaceSide.RIGHT_WALL:
+            is_moving_away_from_surface = displacement.x < 0.0
+        SurfaceSide.CEILING:
+            is_moving_away_from_surface = displacement.y > 0.0
+        _:
+            Utils.error()
+    if is_moving_away_from_surface:
+        if is_recursing:
+            # Invalid collision state.
+            if collision_params.movement_params \
+                    .asserts_no_preexisting_collisions_during_edge_calculations:
+                Utils.error()
+            surface_collision.is_valid_collision_state = false
+            return null
+        
+        # Try the collision check again with a reduced margin and a slight
+        # offset.
+        var old_margin := collision_params.player.get_safe_margin()
+        collision_params.player.set_safe_margin(0.0)
+        position_start += surface.normal * 0.001
+        surface_collision = check_frame_for_collision( \
+                collision_params, \
+                position_start, \
+                displacement, \
+                true)
+        collision_params.player.set_safe_margin(old_margin)
     
     return surface_collision

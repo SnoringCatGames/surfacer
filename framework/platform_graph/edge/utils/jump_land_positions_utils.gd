@@ -2702,17 +2702,14 @@ static func _calculate_horizontal_movement_distance( \
     
     # This max movement range could slightly overshoot what's actually
     # reachable, so we subtract a portion of the player's width to more
-    # likely end up with a usable position (but we leave a minimum of at
-    # least half the player's width).
+    # likely end up with a usable position.
     var horizontal_movement_distance_partial_decrease := \
             player_half_width_horizontal_offset * \
             EDGE_MOVEMENT_HORIZONTAL_DISTANCE_SUBTRACT_PLAYER_WIDTH_RATIO
-    if horizontal_movement_distance > player_half_width_horizontal_offset + \
+    if horizontal_movement_distance > \
             horizontal_movement_distance_partial_decrease:
         horizontal_movement_distance -= \
                 horizontal_movement_distance_partial_decrease
-    elif horizontal_movement_distance > player_half_width_horizontal_offset:
-        horizontal_movement_distance = player_half_width_horizontal_offset
     
     return horizontal_movement_distance
 

@@ -36,3 +36,24 @@ func merge(other) -> void:
     Utils.concat( \
             self.edge_calc_results, \
             other.edge_calc_results)
+
+static func merge_results_with_matching_destination_surfaces( \
+        inter_surface_edges_results: Array) -> void:
+    # Dictionary<Surface, InterSurfaceEdgesResult>
+    var inter_surface_edges_results_set := {}
+    var i := 0
+    var old_result
+    var new_result
+    while i < inter_surface_edges_results.size():
+        new_result = inter_surface_edges_results[i]
+        if !inter_surface_edges_results_set.has( \
+                new_result.destination_surface):
+            inter_surface_edges_results_set[new_result.destination_surface] = \
+                    new_result
+        else:
+            old_result = inter_surface_edges_results_set[ \
+                    new_result.destination_surface]
+            inter_surface_edges_results.remove(i)
+            old_result.merge(new_result)
+            i -= 1
+        i += 1

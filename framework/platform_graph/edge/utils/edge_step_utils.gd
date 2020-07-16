@@ -179,13 +179,21 @@ static func calculate_steps_between_waypoints( \
                     edge_calc_params, \
                     step_calc_params, \
                     waypoints)
-    if calc_result != null or !edge_calc_params.can_backtrack_on_height:
+    if calc_result != null:
         # Recursion was successful without backtracking for a new max jump
         # height.
         if step_result_metadata != null:
             step_result_metadata.edge_step_calc_result_type = \
                     EdgeStepCalcResultType.RECURSION_VALID
         return calc_result
+    
+    if !edge_calc_params.can_backtrack_on_height:
+        # Recursion was not successful and we cannot backtrack for a new max
+        # jump height.
+        if step_result_metadata != null:
+            step_result_metadata.edge_step_calc_result_type = \
+                    EdgeStepCalcResultType.UNABLE_TO_BACKTRACK
+        return null
     
     if edge_calc_params.have_backtracked_for_surface( \
             collision.surface, \

@@ -59,6 +59,9 @@ func get_all_inter_surface_edges_from_surface( \
                         true, \
                         calc_result)
                 inter_surface_edges_result.valid_edges.push_back(edge)
+    
+    InterSurfaceEdgesResult.merge_results_with_matching_destination_surfaces( \
+            inter_surface_edges_results)
 
 func calculate_edge( \
         edge_result_metadata: EdgeCalcResultMetadata, \

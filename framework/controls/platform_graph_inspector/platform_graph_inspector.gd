@@ -406,26 +406,31 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
                     .distance_squared_to(target_projection_end) > \
                     PlatformGraphInspectorSelector \
                             .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD:
-        _clear_selection()
-        Global.selection_description.set_text( \
-                SelectionDescription.NO_MATCHING_JUMP_LAND_POSITIONS)
-        return
-    
-    if !graph_item_controllers.has(graph.movement_params.name):
-        _clear_selection()
-        return
-    
-    var metadata := { \
-        origin_surface = start_surface, \
-        destination_surface = end_surface, \
-        start = jump_position.target_point, \
-        end = land_position.target_point, \
-        edge_type = edge_type, \
-    }
-    _trigger_find_and_expand_controller( \
-            graph.movement_params.name, \
-            InspectorSearchType.EDGE, \
-            metadata)
+        
+        var metadata := { \
+            origin_surface = start_surface, \
+            destination_surface = end_surface, \
+        }
+        _trigger_find_and_expand_controller( \
+                graph.movement_params.name, \
+                InspectorSearchType.DESTINATION_SURFACE, \
+                metadata)
+    else:
+        if !graph_item_controllers.has(graph.movement_params.name):
+            _clear_selection()
+            return
+        
+        var metadata := { \
+            origin_surface = start_surface, \
+            destination_surface = end_surface, \
+            start = jump_position.target_point, \
+            end = land_position.target_point, \
+            edge_type = edge_type, \
+        }
+        _trigger_find_and_expand_controller( \
+                graph.movement_params.name, \
+                InspectorSearchType.EDGE, \
+                metadata)
 
 func _trigger_find_and_expand_controller( \
         player_name: String, \
@@ -467,6 +472,8 @@ func _on_find_and_expand_complete( \
             assert(controller.type == InspectorItemType.ORIGIN_SURFACE)
         InspectorSearchType.DESTINATION_SURFACE:
             assert(controller.type == InspectorItemType.DESTINATION_SURFACE)
+            selection_failure_message = \
+                    SelectionDescription.NO_MATCHING_JUMP_LAND_POSITIONS
         InspectorSearchType.EDGES_GROUP:
             assert(controller.type == InspectorItemType.EDGES_GROUP)
         _:

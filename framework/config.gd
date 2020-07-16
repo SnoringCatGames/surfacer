@@ -72,14 +72,14 @@ const DEBUG_PARAMS := \
 #        
 #        edge = {
 #            origin = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(-448, 256),
-#                position = Vector2(128, 256),
+#                surface_side = SurfaceSide.RIGHT_WALL,
+#                surface_start_vertex = Vector2(-64, 128),
+#                position = Vector2(-64, 64),
 #                epsilon = 10,
 #            },
 #            destination = {
 #                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(-64, 64),
+#                surface_start_vertex = Vector2(-448, 256),
 #                position = Vector2(64, 64),
 #                epsilon = 10,
 #            },

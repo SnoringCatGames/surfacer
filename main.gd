@@ -4,7 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Debug why there are zero valid fall-from-wall edges.
 # - Debug why you can get stuck against the wall and unable to move leftward
 #   when jump straight up in the lower-left pit.
 # - Debug jumping from bottom of stair steps to top (and vice versa): should be

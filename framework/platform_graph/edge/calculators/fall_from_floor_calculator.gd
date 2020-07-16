@@ -49,29 +49,8 @@ func get_all_inter_surface_edges_from_surface( \
                 null, \
                 true)
     
-    _merge_results_with_matching_destination_surfaces( \
+    InterSurfaceEdgesResult.merge_results_with_matching_destination_surfaces( \
             inter_surface_edges_results)
-
-static func _merge_results_with_matching_destination_surfaces( \
-        inter_surface_edges_results: Array) -> void:
-    # Dictionary<Surface, InterSurfaceEdgesResult>
-    var inter_surface_edges_results_set := {}
-    var i := 0
-    var old_result: InterSurfaceEdgesResult
-    var new_result: InterSurfaceEdgesResult
-    while i < inter_surface_edges_results.size():
-        new_result = inter_surface_edges_results[i]
-        if !inter_surface_edges_results_set.has( \
-                new_result.destination_surface):
-            inter_surface_edges_results_set[new_result.destination_surface] = \
-                    new_result
-        else:
-            old_result = inter_surface_edges_results_set[ \
-                    new_result.destination_surface]
-            inter_surface_edges_results.remove(i)
-            old_result.merge(new_result)
-            i -= 1
-        i += 1
 
 func calculate_edge( \
         edge_result_metadata: EdgeCalcResultMetadata, \

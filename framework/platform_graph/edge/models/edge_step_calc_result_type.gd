@@ -5,6 +5,7 @@ enum {
     TARGET_OUT_OF_REACH,
     ALREADY_BACKTRACKED_FOR_SURFACE,
     RECURSION_VALID,
+    UNABLE_TO_BACKTRACK,
     BACKTRACKING_VALID,
     BACKTRACKING_INVALID,
     INVALID_COLLISON_STATE,
@@ -23,6 +24,8 @@ static func get_type_string(result: int) -> String:
             return "ALREADY_BACKTRACKED_FOR_SURFACE"
         RECURSION_VALID:
             return "RECURSION_VALID"
+        UNABLE_TO_BACKTRACK:
+            return "UNABLE_TO_BACKTRACK"
         BACKTRACKING_VALID:
             return "BACKTRACKING_VALID"
         BACKTRACKING_INVALID:
@@ -62,6 +65,16 @@ static func to_description_list(result: int) -> Array:
                         "separate" + \
                 "\n                movement to/from an intermediate " + \
                         "waypoint.", \
+            ]
+        UNABLE_TO_BACKTRACK:
+            return [ \
+                "Hit an intermediate surface.", \
+                "Valid movement was not found when recursing to consider " + \
+                        "separate" + \
+                "\n                movement to/from an intermediate " + \
+                        "waypoint, and backtracking " + \
+                "\n                to consider a new max jump height " + \
+                        "isn't possible.", \
             ]
         BACKTRACKING_VALID:
             return [ \
