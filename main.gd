@@ -4,12 +4,17 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Debug jumping from bottom of stair steps to top (and vice versa): should be
-#   fewer big jumps rather than more small jumps.
-# 
 # - Select first inspector item when opening utility panel.
 # - On phone, the utility panel is closed, but the edges are still annotated;
 #   they shouldn't be.
+# 
+# - Offset jump/land positions to account for convex neighbors.
+#   - Document an assumption/constraint that levels shouldn't have surfaces
+#     facing eachother that are closer than the width of the player (and a
+#     margin of a handful of extra pixels).
+#   - Include a small extra margin.
+#   - Test that this fixes the problem with jumping from bottom of stairs to
+#     top.
 # 
 # - Finish adding/polishing inspector step calculation
 #   items/descriptions/annotations/legends.
@@ -20,19 +25,12 @@ class_name Main
 #   position start velocity of 0 for all cases (or rather, the flag should
 #   indicate whether it skips 0 values that are likely redundant).
 # 
-# - Offset jump/land positions to account for convex neighbors.
-#   - Document an assumption/constraint that levels shouldn't have surfaces
-#     facing eachother that are closer than the width of the player (and a
-#     margin of a handful of extra pixels).
-# 
 # - Update initial load to happen on a separate thread, so that main and
 #   loading_screen are not locked.
 #   - Update level loading to use ResourceLoader interactive mode?
 # 
 # - Should we somehow consolidate collision logic between
 #   FrameCollisionCheckUtils and Player?
-# 
-# - Add a flag for syncs_player_position_to_edge_trajectory?
 # 
 # - Fix occasional bug where phantom preselection indicator is still shown
 #   after clicking.

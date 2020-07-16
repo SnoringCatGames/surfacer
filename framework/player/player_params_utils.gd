@@ -103,7 +103,8 @@ static func _calculate_dependent_movement_params( \
     
     assert(movement_params.action_handler_names.find( \
             MatchExpectedEdgeTrajectoryAction.NAME) < 0)
-    if movement_params.syncs_player_velocity_to_edge_trajectory:
+    if movement_params.syncs_player_position_to_edge_trajectory or \
+            movement_params.syncs_player_velocity_to_edge_trajectory:
         movement_params.action_handler_names.push_back( \
                 MatchExpectedEdgeTrajectoryAction.NAME)
 

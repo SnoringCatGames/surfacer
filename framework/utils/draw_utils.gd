@@ -803,6 +803,7 @@ static func draw_edge( \
     if edge is AirToAirEdge or \
             edge is AirToSurfaceEdge or \
             edge is FallFromWallEdge or \
+            edge is FallFromFloorEdge or \
             edge is JumpInterSurfaceEdge or \
             edge is JumpFromSurfaceToAirEdge:
         _draw_edge_from_instructions_positions( \
@@ -832,16 +833,6 @@ static func draw_edge( \
                 base_color, \
                 includes_waypoints, \
                 includes_instruction_indicators)
-    elif edge is FallFromFloorEdge:
-        _draw_fall_from_floor_edge( \
-                canvas, \
-                edge, \
-                stroke_width, \
-                base_color, \
-                includes_waypoints, \
-                includes_instruction_indicators, \
-                includes_continuous_positions, \
-                includes_discrete_positions)
     else:
         Utils.error("Unexpected Edge subclass: %s" % edge)
 
@@ -926,48 +917,6 @@ static func _draw_climb_over_wall_to_floor_edge( \
         instruction_color.a = base_color.a
         
         # TODO: Draw instruction indicators.
-
-static func _draw_fall_from_floor_edge( \
-        canvas: CanvasItem, \
-        edge: FallFromFloorEdge, \
-        stroke_width: float, \
-        base_color: Color, \
-        includes_waypoints: bool, \
-        includes_instruction_indicators: bool, \
-        includes_continuous_positions: bool, \
-        includes_discrete_positions: bool) -> void:
-    # Render FallFromFloorEdges with a slight offset, so that they don't
-    # overlap with ClimbOverWallToFloorEdges.
-    var offset := Vector2( \
-            -1.0 if \
-            edge.falls_on_left_side else \
-            1.0, \
-            -1.0)
-    var start_position := edge.start
-    var fall_off_position := \
-            edge.trajectory.frame_continuous_positions_from_steps[0]
-    var mid_point := Vector2(fall_off_position.x, start_position.y)
-    canvas.draw_line( \
-            start_position + offset, \
-            mid_point + offset, \
-            base_color, \
-            stroke_width)
-    canvas.draw_line( \
-            mid_point + offset, \
-            fall_off_position + offset, \
-            base_color, \
-            stroke_width)
-    
-    _draw_edge_from_instructions_positions( \
-            canvas, \
-            edge, \
-            stroke_width, \
-            base_color, \
-            includes_waypoints, \
-            includes_instruction_indicators, \
-            includes_continuous_positions, \
-            includes_discrete_positions, \
-            edge.start)
 
 static func _draw_edge_from_instructions_positions( \
         canvas: CanvasItem, \

@@ -16,16 +16,27 @@ func process(player: Player) -> bool:
     if current_edge != null and current_edge.includes_air_trajectory:
         var playback_elapsed_time: float = \
                 Time.elapsed_play_time_sec - \
-                player.navigator.current_playback.start_time        
-        var trajectory_velocities := \
-                current_edge.trajectory.frame_continuous_velocities_from_steps
-        var velocity_index := \
-                floor(playback_elapsed_time / Time.PHYSICS_TIME_STEP_SEC)
+                player.navigator.current_playback.start_time
+        var index := floor(playback_elapsed_time / Time.PHYSICS_TIME_STEP_SEC)
+        var trajectory_positions := current_edge.trajectory \
+                .frame_continuous_positions_from_steps
+        var trajectory_velocities := current_edge.trajectory \
+                .frame_continuous_velocities_from_steps
         var is_movement_beyond_expected_trajectory := \
-                velocity_index >= trajectory_velocities.size()
+                index >= trajectory_positions.size()
+        
+        var synced_positions := false
+        var synced_velocities := false
         
         if !is_movement_beyond_expected_trajectory:
-            player.velocity = trajectory_velocities[velocity_index]
-            return true
+            if player.movement_params.syncs_player_position_to_edge_trajectory:
+                    player.position = trajectory_positions[index]
+                    synced_positions = true
+            
+            if player.movement_params.syncs_player_velocity_to_edge_trajectory:
+                    player.velocity = trajectory_velocities[index]
+                    synced_velocities = true
+        
+        return synced_positions or synced_velocities
     
     return false
