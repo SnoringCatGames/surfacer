@@ -177,11 +177,19 @@ func set_graphs(graphs: Array) -> void:
             clear()
         _populate()
 
+func select_first_item() -> void:
+    if !graph_item_controllers.empty():
+        graph_item_controllers.values().front().expand()
+        graph_item_controllers.values().front().select()
+
 func _select_initial_item() -> void:
+    if !Global.utility_panel.is_open:
+        # Don't auto-select anything if the panel isn't open.
+        return
+    
     if !Config.DEBUG_PARAMS.has("limit_parsing") or \
             !Config.DEBUG_PARAMS.limit_parsing.has("player_name"):
-        if !graph_item_controllers.empty():
-            graph_item_controllers.values().front().select()
+        select_first_item()
     else:
         var limit_parsing: Dictionary = Config.DEBUG_PARAMS.limit_parsing
         var player_name: String = limit_parsing.player_name
@@ -331,6 +339,9 @@ func select_edge_or_surface( \
         end_position: PositionAlongSurface, \
         edge_type: int, \
         graph: PlatformGraph) -> void:
+    # Ensure that the utility panel is open.
+    Global.utility_panel.set_is_open(true)
+    
     if start_position.surface == end_position.surface:
         _select_canonical_origin_surface_item_controller( \
                 start_position.surface, \

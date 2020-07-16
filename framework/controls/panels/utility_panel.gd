@@ -42,7 +42,8 @@ func _ready() -> void:
     Global.selection_description = \
             $VBoxContainer/Sections/SelectionDescription
     
-    if Config.UTILITY_PANEL_STARTS_OPEN and \
+    if (Config.UTILITY_PANEL_STARTS_OPEN or \
+                    Config.DEBUG_PARAMS.has("limit_parsing")) and \
             Config.DEBUG_PARAMS.is_inspector_enabled and \
             !OS.has_touchscreen_ui_hint():
         set_is_open(true)
@@ -113,7 +114,9 @@ func _toggle_open() -> void:
     
     $VBoxContainer/GearContainer/GearButton.visible = !is_open
     
-    if !is_open:
+    if is_open:
+        Global.platform_graph_inspector.select_first_item()
+    else:
         Global.platform_graph_inspector.collapse()
 
 func _set_position_y(value: float) -> void:

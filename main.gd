@@ -4,10 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Select first inspector item when opening utility panel.
-# - On phone, the utility panel is closed, but the edges are still annotated;
-#   they shouldn't be.
-# 
 # - Offset jump/land positions to account for convex neighbors.
 #   - Document an assumption/constraint that levels shouldn't have surfaces
 #     facing eachother that are closer than the width of the player (and a
