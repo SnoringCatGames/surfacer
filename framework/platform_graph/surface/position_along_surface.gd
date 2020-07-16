@@ -61,7 +61,7 @@ func _clip_and_project_target_point_for_center_of_collider( \
     
     var is_surface_horizontal = \
             surface.side == SurfaceSide.FLOOR or \
-            surface.side == SurfaceSide.CEILING    
+            surface.side == SurfaceSide.CEILING
     var distance_to_center := \
             collider_half_width_height.y if \
             is_surface_horizontal else \

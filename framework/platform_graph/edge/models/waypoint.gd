@@ -9,7 +9,7 @@
 # - Early-on during movement calculation, each waypoint is assigned a horizontal direction that
 #   the movement must travel along when passing through the waypoint:
 #   - For waypoints on left-wall surfaces: The direction of movement must be leftward.
-#   - For waypoints on right-wall surfaces: The direction of movement must be rightward. 
+#   - For waypoints on right-wall surfaces: The direction of movement must be rightward.
 #   - For waypoints on floor/ceiling surfaces, we instead look at whether the waypoint is on
 #     the left or right side of the surface.
 #     - For waypoints on the left-side: The direction of movement must be leftward.

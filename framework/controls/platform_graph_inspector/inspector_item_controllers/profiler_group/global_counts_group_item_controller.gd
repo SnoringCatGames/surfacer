@@ -94,5 +94,5 @@ func _get_annotation_elements_for_edges_description_item() -> Array:
 
 func _get_annotation_elements_for_edge_type_description_item(edge_type: int) -> Array:
     return EdgeTypeInEdgesGroupItemController.get_annotation_elements_from_graph_and_type( \
-            graph, 
+            graph, \
             edge_type)

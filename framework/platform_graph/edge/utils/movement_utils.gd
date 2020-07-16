@@ -29,7 +29,7 @@ static func calculate_movement_duration( \
         # Handle the degenerate case with no acceleration.
         if v_0 == 0.0:
             # We can't reach the destination, since we're not moving anywhere.
-            return INF 
+            return INF
         elif (displacement > 0.0) != (v_0 > 0.0):
             # We can't reach the destination, since we're moving in the wrong direction.
             return INF
@@ -149,7 +149,7 @@ static func calculate_duration_for_displacement( \
         # Handle the degenerate case with no acceleration.
         if velocity_start == 0.0:
             # We can't reach the destination, since we're not moving anywhere.
-            return INF 
+            return INF
         elif (displacement > 0.0) != (velocity_start > 0.0):
             # We can't reach the destination, since we're moving in the wrong direction.
             return INF
@@ -217,7 +217,7 @@ static func calculate_velocity_end_for_displacement( \
         # Handle the degenerate case with no acceleration.
         if velocity_start == 0.0:
             # We can't reach the destination, since we're not moving anywhere.
-            return INF 
+            return INF
         elif (displacement > 0.0) != (velocity_start > 0.0):
             # We can't reach the destination, since we're moving in the wrong direction.
             return INF

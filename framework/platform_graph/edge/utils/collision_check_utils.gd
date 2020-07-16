@@ -537,7 +537,7 @@ static func check_frame_for_collision( \
     
     # Check whether this collision is with a surface that we're actually moving
     # away from.
-    var is_moving_away_from_surface: bool 
+    var is_moving_away_from_surface: bool
     match surface.side:
         SurfaceSide.FLOOR:
             is_moving_away_from_surface = displacement.y < 0.0

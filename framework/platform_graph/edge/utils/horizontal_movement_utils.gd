@@ -220,7 +220,7 @@ static func _calculate_acceleration_start_and_end_time( \
     #   - v_1^2 = v_0^2 + 2*a*(s_2 - s_1)
     #   - t_total = t_0 + t_1 + t_2
     # - Do some algebra...
-    #   - t_0 = ((s_3 - s_0) + v_1*(t_1 - t_total) + (v_0^2 - v_1^2)/2/a) / 
+    #   - t_0 = ((s_3 - s_0) + v_1*(t_1 - t_total) + (v_0^2 - v_1^2)/2/a) /
     #           (v_0 - v_1)
     var duration_during_initial_coast := \
             (displacement + velocity_end * \

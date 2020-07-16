@@ -217,7 +217,7 @@ func _draw_bounding_box_and_margin( \
             step_result_metadata.collision_result_metadata
     DrawUtils.draw_rectangle_outline( \
             canvas, \
-            center, 
+            center, \
             collision_result_metadata.collider_half_width_height, \
             false, \
             color, \

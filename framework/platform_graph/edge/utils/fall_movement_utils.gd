@@ -4,7 +4,7 @@ extends Reference
 class_name FallMovementUtils
 
 # TODO: Integrate find_landing_trajectories_to_any_surface with
-#       failed_edge_attempts_result and 
+#       failed_edge_attempts_result and
 #       find_landing_trajectory_between_positions.
 
 # Finds all possible landing trajectories from the given start state.

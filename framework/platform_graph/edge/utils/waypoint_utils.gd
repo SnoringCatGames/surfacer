@@ -312,7 +312,7 @@ static func _compare_waypoints_by_more_likely_to_be_valid( \
             # When moving around a floor, prefer whichever waypoint is closer
             # to the destination.
             # 
-            # Movement is more likely to be indirect and needless zig-zag 
+            # Movement is more likely to be indirect and needless zig-zag
             # around the surface when we consider the side further from the
             # destination.
             return a_original.position.distance_squared_to( \
@@ -1694,7 +1694,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
 
 # Accelerating over the whole interval would result in an end velocity that
 # exceeds the max speed. So instead, we assume a 2-part movement profile with
-# constant acceleration in the first part and constant velocity in the second 
+# constant acceleration in the first part and constant velocity in the second
 # art. This 2-part movement should more accurately represent the limit on v_0.
 static func _calculate_v_0_with_v_1_limit( \
         displacement: float, \

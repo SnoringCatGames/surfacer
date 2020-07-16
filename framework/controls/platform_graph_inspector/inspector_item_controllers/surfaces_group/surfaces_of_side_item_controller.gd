@@ -7,7 +7,7 @@ var side := SurfaceSide.NONE
 # Dictionary<Surface, Dictionary<Surface, Dictionary<int,
 #         Array<InterSurfaceEdgesResult>>>>
 var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
-var surface_count := 0 
+var surface_count := 0
 
 func _init( \
         type: int, \

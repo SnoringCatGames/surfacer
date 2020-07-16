@@ -95,7 +95,7 @@ class_name Main
 #     - Does this affect performance?
 # 
 # - Check on current behavior of
-#   EdgeInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and 
+#   EdgeInstructionsUtils.JUMP_DURATION_INCREASE_EPSILON and
 #   EdgeInstructionsUtils.MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON.
 # 
 # - Finish logic to consume Waypoint.needs_extra_jump_duration.
@@ -145,7 +145,7 @@ class_name Main
 #     - All surfaces (different colors)
 #     - A couple edges
 #     - All edges
-#     - 
+#     -
 # 
 # - Update panel styling.
 #   - Flat.
@@ -166,7 +166,7 @@ class_name Main
 #     - Climbing down (just run climbing-up in reverse? Probably want to bound
 #       down, facing down, as opposed to cat. Will make transition weird, but
 #       whatever?)
-#     - 
+#     -
 # 
 # ---  ---
 # 
@@ -188,7 +188,7 @@ class_name Main
 #           to left, in front of letters.
 #     - V2: Have squirrel pause to the left of the S, with its tail overlapping
 #           the S. Give a couple tail twitches. Then have squirrel leave.
-#     
+# 
 # ---  ---
 # 
 # >- A* search should abandon search of it gets to far out of the way (rather
@@ -298,7 +298,7 @@ class_name Main
 # 
 # - Add a configurable method to the MovementParams API for defining arbitrary
 #   weight calculation for each character type (it could do things like
-#   strongly prefer certain edge types). 
+#   strongly prefer certain edge types).
 # 
 # - Check FIXMEs in CollisionCheckUtils. We should check on their accuracy now.
 # 
@@ -626,7 +626,7 @@ class_name Main
 #   recalculate the actual x velocity for all following waypoints in reverse
 #   order.
 # 
-# FIXME: B: 
+# FIXME: B:
 # - Make edge-calc annotations usable at run time, by clicking on the start and
 #   end positions to check.
 # 
@@ -634,12 +634,12 @@ class_name Main
 
 
 
-# TODO: 
+# TODO:
 # 
 # #########
 # 
 # - Try adding other edges now:
-#   - 
+#   -
 # 
 # - Add some sort of heuristic to choose when to go with smaller or larger velocity end during
 #   horizontal step calc.
@@ -662,7 +662,7 @@ class_name Main
 #     steps+surfaces+heights to here?
 # 
 # - Should we somehow ensure that jump height is always bumped up at least enough to cover the
-#   extra distance of waypoint offsets? 
+#   extra distance of waypoint offsets?
 #   - Since jumping up to a destination, around the other edge of the platform (which has the
 #     waypoint offset), seems like a common use-case, this would probably be a useful optimization.
 #   - [This is important, since the first attempt at getting to the top-right waypoint always
@@ -705,9 +705,9 @@ class_name Main
 #   - plus: left/right button start
 #   - minus: left/right button end
 #   - asterisk: jump button end
-#   - diamond: 
-#   - BT: 
-#   - RF: 
+#   - diamond:
+#   - BT:
+#   - RF:
 # 
 # - Polish description of approach in the README.
 #   - In general, a guiding heuristic in these calculations is to minimize movement. So, through

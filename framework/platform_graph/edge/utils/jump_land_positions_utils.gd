@@ -942,7 +942,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                                 goal_y = \
                                         jump_basis.y + \
                                         vertical_movement_displacement
-                                fail_if_outside_of_bounds = true 
+                                fail_if_outside_of_bounds = true
                                 land_position = _create_surface_interior_position( \
                                         goal_y, \
                                         land_surface, \
@@ -1640,7 +1640,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                             var goal_y := \
                                     land_basis.y - \
                                     vertical_movement_displacement
-                            var fail_if_outside_of_bounds := true 
+                            var fail_if_outside_of_bounds := true
                             jump_position = _create_surface_interior_position( \
                                     goal_y, \
                                     jump_surface, \
@@ -1790,7 +1790,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         var goal_y := \
                                 land_basis.y - \
                                 vertical_movement_displacement
-                        var fail_if_outside_of_bounds := true 
+                        var fail_if_outside_of_bounds := true
                         jump_position = _create_surface_interior_position( \
                                 goal_y, \
                                 jump_surface, \
@@ -2269,7 +2269,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         jump_surface_end_position, \
                         land_surface_end_position, \
                         velocity_start_zero)
-                all_jump_land_positions.push_back(jump_land_positions)    
+                all_jump_land_positions.push_back(jump_land_positions)
     
     return all_jump_land_positions
 
@@ -2766,7 +2766,7 @@ static func _calculate_vertical_movement_displacement( \
         return vertical_displacement_with_fast_fall_gravity
         
     else:
-        # Take into consideration the offset with slow-rise gravity. 
+        # Take into consideration the offset with slow-rise gravity.
         duration = max(duration, movement_params.time_to_max_upward_jump_distance)
         var vertical_displacement_with_slow_rise_gravity: float = \
                 VerticalMovementUtils \

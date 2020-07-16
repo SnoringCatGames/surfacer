@@ -18,7 +18,7 @@ func _create_legend_items() -> Array:
     Utils.error( \
             "Abstract AnnotationElement._create_legend_items is not " + \
             "implemented")
-    return []    
+    return []
 
 func draw(canvas: CanvasItem) -> void:
     Utils.error("Abstract AnnotationElement.draw is not implemented")

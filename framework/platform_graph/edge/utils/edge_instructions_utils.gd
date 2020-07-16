@@ -3,7 +3,7 @@
 extends Reference
 class_name EdgeInstructionsUtils
 
-# FIXME: B 
+# FIXME: B
 # - Should I remove this and force a slightly higher offset to target jump
 #   position directly? What about passing through waypoints? Would the
 #   increased time to get to the position for a wall-top waypoint result in too
