@@ -2915,12 +2915,12 @@ static func _create_jump_land_positions( \
     # TODO: Go through callsites, and update them if this offset might possibly
     #       make the other jump/land position be too far away.
     if !preserves_jump_position and \
-            !_ensure_position_is_not_too_close_to_concave_neighbor( \
+            !ensure_position_is_not_too_close_to_concave_neighbor( \
                     movement_params, \
                     jump_position):
         return null
     if !preserves_land_position and \
-            !_ensure_position_is_not_too_close_to_concave_neighbor( \
+            !ensure_position_is_not_too_close_to_concave_neighbor( \
                     movement_params, \
                     land_position):
         return null
@@ -2942,7 +2942,7 @@ static func _create_jump_land_positions( \
     return result
 
 # Returns false if there is not enough room for the player on the surface.
-static func _ensure_position_is_not_too_close_to_concave_neighbor( \
+static func ensure_position_is_not_too_close_to_concave_neighbor( \
         movement_params: MovementParams, \
         position: PositionAlongSurface) -> bool:
     var surface := position.surface

@@ -4,9 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# - Update FallFromWallCalculator._get_jump_positions to include concave 
-#   offset.
-# 
 # >- Debug why we seem to be missing 50% of climb-over-wall-to-floor edges.
 # >- Debug why there are zero fall-from-floor edges.
 # >- Debug why backtracking fails for jump from bottom of stairs to top of
@@ -37,6 +34,20 @@ class_name Main
 # 
 # - Fix player to not sometimes face backwards against the direction of motion
 #   when jumping.
+# 
+# - List notable limitations:
+#   - No support for surfaces of one point.
+#   - Can't include surfaces facing each other that are to close for player to fit between.
+#   - Will take a while with lots of surfaces (big levels, small cell size).
+# 
+# - List notable future work:
+#   - Networking
+#   - Double jump
+#   - Dash
+#   - Supporting surfaces of one point
+#   - Handle surfaces that face each other and are too close for player to fit between
+#   - Add an R-Tree for faster surfaces lookup
+#   - Support an alternate, template-based edge calxulation pattern
 # 
 # - Go through todo list.
 #   - Remove obsolete items.

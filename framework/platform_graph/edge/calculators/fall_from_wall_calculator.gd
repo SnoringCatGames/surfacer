@@ -199,7 +199,23 @@ static func _get_jump_positions( \
                     origin_bottom_point, \
                     origin_surface, \
                     movement_params.collider_half_width_height)
-    return [top_jump_position, bottom_jump_position]
+    
+    var positions := []
+    
+    # Offset each positition if needed, to ensure they aren't too close to a
+    # concave neighbor surface.
+    if JumpLandPositionsUtils \
+            .ensure_position_is_not_too_close_to_concave_neighbor( \
+                    movement_params, \
+                    top_jump_position):
+        positions.push_back(top_jump_position)
+    if JumpLandPositionsUtils \
+            .ensure_position_is_not_too_close_to_concave_neighbor( \
+                    movement_params, \
+                    bottom_jump_position):
+        positions.push_back(bottom_jump_position)
+    
+    return positions
 
 static func _calculate_instructions( \
         collision_params: CollisionCalcParams, \
