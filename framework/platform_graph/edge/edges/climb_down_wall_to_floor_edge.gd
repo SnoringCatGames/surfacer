@@ -59,6 +59,9 @@ func _check_did_just_reach_destination( \
         playback) -> bool:
     return surface_state.just_grabbed_floor
 
+func _get_weight_multiplier() -> float:
+    return movement_params.walking_edge_weight_multiplier
+
 static func _calculate_instructions( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface) -> EdgeInstructions:

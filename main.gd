@@ -4,9 +4,15 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
+# - Update FallFromWallCalculator._get_jump_positions to include concave 
+#   offset.
+# 
+# >- Debug why we seem to be missing 50% of climb-over-wall-to-floor edges.
+# >- Debug why there are zero fall-from-floor edges.
 # >- Debug why backtracking fails for jump from bottom of stairs to top of
 #    stairs.
-# - Test always_includes_jump_land_positions_at_surface_ends (performance and correctness).
+# - Test always_includes_jump_land_positions_at_surface_ends (performance and
+#   correctness).
 # - Add an additional movement_params flag to include additional jump/land
 #   position start velocity of 0 for all cases (or rather, the flag should
 #   indicate whether it skips 0 values that are likely redundant).
@@ -26,6 +32,12 @@ class_name Main
 #   - Use origin/destination indicator shapes.
 #   - ...
 # 
+# - Fix occasional bug where phantom preselection indicator is still shown
+#   after clicking.
+# 
+# - Fix player to not sometimes face backwards against the direction of motion
+#   when jumping.
+# 
 # - Go through todo list.
 #   - Remove obsolete items.
 #   - Group items into buckets:
@@ -42,12 +54,6 @@ class_name Main
 # - Should we somehow consolidate collision logic between
 #   FrameCollisionCheckUtils and Player?
 # 
-# - Fix occasional bug where phantom preselection indicator is still shown
-#   after clicking.
-# 
-# - Fix player to not sometimes face backwards against the direction of motion
-#   when jumping.
-# 
 # - Fix how things work when minimizes_velocity_change_when_jumping is true.
 #   - [no] Find and move all movement-offset constants to one central location?
 #     - EdgeInstructionsUtils
@@ -58,24 +64,6 @@ class_name Main
 #   - Step through movement along an edge?
 #   >- Should this be when I implement the logic to force the player's
 #     position to match the expected edge positions (with a weighted avg)?
-# 
-# - Debug edges.
-#   - Calculation: Check all edge-cases; look at all expected edge trajectories
-#     in each level.
-#   - Execution: Check that navigation actually follows paths and executes
-#     trajectories as expected.
-# 
-# - Debug why this edge calculation generates 35 steps...
-#   - test_level_long_rise
-#   - from top-most floor to bottom-most (wide) floor, on the right side
-# 
-# - Fix frame collision detection...
-#   - Seeing pre-existing collisions when jumping from walls.
-#   - Fix collision-detection errors from logs.
-#   - Go through levels and verify that all expected edges work.
-# 
-# - Fix issue where jumping around edge sometimes isn't going far enough; it's
-#   clipping the corner.
 # 
 # - Adjust cat_params to only allow subsets of EdgeCalculators, in
 #   order to test the non-jump edges

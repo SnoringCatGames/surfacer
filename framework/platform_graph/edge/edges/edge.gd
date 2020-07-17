@@ -157,20 +157,24 @@ func get_weight() -> float:
             distance
     
     # Apply a multiplier to the weight according to the type of edge.
-    match surface_type:
-        SurfaceType.FLOOR:
-            weight *= movement_params.walking_edge_weight_multiplier
-        SurfaceType.WALL:
-            weight *= movement_params.climbing_edge_weight_multiplier
-        SurfaceType.AIR:
-            weight *= movement_params.air_edge_weight_multiplier
-        _:
-            Utils.error()
+    weight *= _get_weight_multiplier()
     
     # Give a constant extra weight for each additional edge in a path.
     weight += movement_params.additional_edge_weight_offset
     
     return weight
+
+func _get_weight_multiplier() -> float:
+    match surface_type:
+        SurfaceType.FLOOR:
+            return movement_params.walking_edge_weight_multiplier
+        SurfaceType.WALL:
+            return movement_params.climbing_edge_weight_multiplier
+        SurfaceType.AIR:
+            return movement_params.air_edge_weight_multiplier
+        _:
+            Utils.error()
+            return INF
 
 func _get_start() -> Vector2:
     return start_position_along_surface.target_point
