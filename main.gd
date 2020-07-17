@@ -4,18 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# >- Debug why backtracking fails for jump from bottom of stairs to top of
-#    stairs.
-# - Test always_includes_jump_land_positions_at_surface_ends (performance and
-#   correctness).
-# - Add an additional movement_params flag to include additional jump/land
-#   position start velocity of 0 for all cases (or rather, the flag should
-#   indicate whether it skips 0 values that are likely redundant).
-#   - Test that this fixes the problem with jumping from bottom of stairs to
-#     top.
-# 
-# - Add a check for concave neighbors on intra-surface edges.
-# 
 # - Document an assumption/constraint that levels shouldn't have surfaces
 #   facing each other that are closer than the width of the player (and a
 #   margin of a handful of extra pixels).

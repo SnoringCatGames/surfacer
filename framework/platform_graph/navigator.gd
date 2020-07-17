@@ -37,6 +37,14 @@ func _init( \
 func navigate_to_position(destination: PositionAlongSurface) -> bool:
     Profiler.start(ProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
     
+    # Nudge the destination away from any concave neighbor surfaces, if
+    # necessary.
+    destination = PositionAlongSurface.new(destination)
+    JumpLandPositionsUtils \
+            .ensure_position_is_not_too_close_to_concave_neighbor( \
+                    player.movement_params, \
+                    destination)
+    
     reset()
     
     Profiler.start(ProfilerMetric.NAVIGATOR_FIND_PATH)
