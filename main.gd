@@ -4,8 +4,6 @@ class_name Main
 ###############################################################################
 ### MAIN TODO LIST: ###
 # 
-# >- Debug why we seem to be missing 50% of climb-over-wall-to-floor edges.
-# >- Debug why there are zero fall-from-floor edges.
 # >- Debug why backtracking fails for jump from bottom of stairs to top of
 #    stairs.
 # - Test always_includes_jump_land_positions_at_surface_ends (performance and

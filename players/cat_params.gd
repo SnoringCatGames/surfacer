@@ -84,9 +84,13 @@ func _init() -> void:
     
     uses_duration_instead_of_distance_for_edge_weight = true
     additional_edge_weight_offset = 128.0
+#    additional_edge_weight_offset = 0.0
     walking_edge_weight_multiplier = 1.2
+#    walking_edge_weight_multiplier = 1.0
     climbing_edge_weight_multiplier = 1.8
+#    climbing_edge_weight_multiplier = 1.0
     air_edge_weight_multiplier = 1.0
+#    air_edge_weight_multiplier = 1.0
     
     action_handler_names = [
         AirDashAction.NAME,

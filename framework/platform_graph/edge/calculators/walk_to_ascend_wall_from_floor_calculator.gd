@@ -71,6 +71,16 @@ func get_all_inter_surface_edges_from_surface( \
                         upper_neighbor_wall, \
                         movement_params.collider_half_width_height)
         
+        #######################################################################
+        # Allow for debug mode to limit the scope of what's calculated.
+        if EdgeCalculator.should_skip_edge_calculation( \
+                collision_params.debug_params, \
+                start_position, \
+                end_position, \
+                null):
+            continue
+        #######################################################################
+        
         var jump_land_positions := JumpLandPositions.new( \
                 start_position, \
                 end_position, \

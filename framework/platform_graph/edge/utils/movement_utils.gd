@@ -2,13 +2,16 @@
 extends Reference
 class_name MovementUtils
 
-# Calculates the duration to reach the destination with the given movement parameters.
+# Calculates the duration to reach the destination with the given movement
+# parameters.
 #
-# - Since we are dealing with a parabolic equation, there are likely two possible results.
-#   returns_lower_result indicates whether to return the lower, non-negative result.
-# - expects_only_one_positive_result indicates whether to report an error if there are two
-#   positive results.
-# - Returns INF if we cannot reach the destination with our movement parameters.
+# -   Since we are dealing with a parabolic equation, there are likely two
+#     possible results. returns_lower_result indicates whether to return the
+#     lower, non-negative result.
+# -   expects_only_one_positive_result indicates whether to report an error if
+#     there are two positive results.
+# -   Returns INF if we cannot reach the destination with our movement
+#     parameters.
 static func calculate_movement_duration( \
         displacement: float, \
         v_0: float, \
@@ -17,7 +20,8 @@ static func calculate_movement_duration( \
         min_duration := 0.0, \
         expects_only_one_positive_result := false, \
         allows_no_positive_results := false) -> float:
-    # FIXME: B: Account for max y velocity when calculating any parabolic motion.
+    # FIXME: B: Account for max y velocity when calculating any parabolic
+    #           motion.
     
     # Use only non-negative results.
     assert(min_duration >= 0.0)
@@ -31,7 +35,8 @@ static func calculate_movement_duration( \
             # We can't reach the destination, since we're not moving anywhere.
             return INF
         elif (displacement > 0.0) != (v_0 > 0.0):
-            # We can't reach the destination, since we're moving in the wrong direction.
+            # We can't reach the destination, since we're moving in the wrong
+            # direction.
             return INF
         else:
             # s = s_0 + v_0*t
@@ -76,9 +81,9 @@ static func calculate_movement_duration( \
         else:
             return max(t1, t2)
 
-# Calculates the duration to accelerate over in order to reach the destination at the given time,
-# given that velocity continues after acceleration stops and a new backward acceleration is
-# applied.
+# Calculates the duration to accelerate over in order to reach the destination
+# at the given time, given that velocity continues after acceleration stops and
+# a new backward acceleration is applied.
 # 
 # Note: This could depend on a speed that exceeds the max-allowed speed.
 # FIXME: F: Remove if no-one is still using this.
@@ -101,12 +106,15 @@ static func calculate_time_to_release_acceleration( \
     # - s_0 = s_0 + v_0*t_0 + 1/2*a_0*t_0^2
     # - t_2 = t_0 + t_1
     # - Do some algebra...
-    # - 0 = (1/2*(a_0 - a_1)) * t_0^2 + (t_2 * (a_1 - a_0)) * t_0 + (s_2 - s_0 - t_2 * (v_0 + 1/2*a_1*t_2))
+    # - 0 = (1/2*(a_0 - a_1)) * t_0^2 + (t_2 * (a_1 - a_0)) * t_0 + 
+    #       (s_2 - s_0 - t_2 * (v_0 + 1/2*a_1*t_2))
     # - Apply quadratic formula to solve for t_0.
     var a := 0.5 * (acceleration_start - post_release_backward_acceleration)
-    var b := duration * (post_release_backward_acceleration - acceleration_start)
+    var b := duration * \
+            (post_release_backward_acceleration - acceleration_start)
     var c := position_end - position_start - duration * \
-            (velocity_start + 0.5 * post_release_backward_acceleration * duration)
+            (velocity_start + \
+                    0.5 * post_release_backward_acceleration * duration)
     
     # This would produce a divide-by-zero.
     assert(a != 0.0)
@@ -135,8 +143,8 @@ static func calculate_time_to_release_acceleration( \
         else:
             return max(t1, t2)
 
-# Calculates the minimum required duration to reach the displacement, considering a maximum
-# velocity.
+# Calculates the minimum required duration to reach the displacement,
+# considering a maximum velocity.
 static func calculate_duration_for_displacement( \
         displacement: float, \
         velocity_start: float, \
@@ -151,15 +159,21 @@ static func calculate_duration_for_displacement( \
             # We can't reach the destination, since we're not moving anywhere.
             return INF
         elif (displacement > 0.0) != (velocity_start > 0.0):
-            # We can't reach the destination, since we're moving in the wrong direction.
+            # We can't reach the destination, since we're moving in the wrong
+            # direction.
             return INF
         else:
             # s = s_0 + v_0*t
             var duration := displacement / velocity_start
             
-            return duration if duration >= 0.0 else INF
+            return duration if \
+                    duration >= 0.0 else \
+                    INF
     
-    var velocity_at_max_speed := max_speed if displacement > 0.0 else -max_speed
+    var velocity_at_max_speed := \
+            max_speed if \
+            displacement > 0.0 else \
+            -max_speed
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
@@ -180,8 +194,10 @@ static func calculate_duration_for_displacement( \
             0.5 * acceleration * time_to_reach_max_speed * \
             time_to_reach_max_speed
     
-    if displacement_to_reach_max_speed > displacement and displacement > 0.0 or \
-            displacement_to_reach_max_speed < displacement and displacement < 0.0:
+    if displacement_to_reach_max_speed > displacement and \
+                    displacement > 0.0 or \
+            displacement_to_reach_max_speed < displacement and \
+                    displacement < 0.0:
         # We do not reach max speed before we reach the displacement.
         return calculate_movement_duration( \
                 displacement, \
@@ -193,7 +209,8 @@ static func calculate_duration_for_displacement( \
     else:
         # We reach max speed before we reach the displacement.
         
-        var remaining_displacement_at_max_speed := displacement - displacement_to_reach_max_speed
+        var remaining_displacement_at_max_speed := \
+                displacement - displacement_to_reach_max_speed
         # From a basic equation of motion:
         #     s = s_0 + v*t
         # Algebra...
@@ -219,13 +236,17 @@ static func calculate_velocity_end_for_displacement( \
             # We can't reach the destination, since we're not moving anywhere.
             return INF
         elif (displacement > 0.0) != (velocity_start > 0.0):
-            # We can't reach the destination, since we're moving in the wrong direction.
+            # We can't reach the destination, since we're moving in the wrong
+            # direction.
             return INF
         else:
             # s = s_0 + v_0*t
             return displacement / velocity_start
     
-    var velocity_at_max_speed := max_speed if displacement > 0.0 else -max_speed
+    var velocity_at_max_speed := \
+            max_speed if \
+            displacement > 0.0 else \
+            -max_speed
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
@@ -246,8 +267,10 @@ static func calculate_velocity_end_for_displacement( \
             0.5 * acceleration * time_to_reach_max_speed * \
             time_to_reach_max_speed
     
-    if displacement_to_reach_max_speed > displacement and displacement > 0.0 or \
-            displacement_to_reach_max_speed < displacement and displacement < 0.0:
+    if displacement_to_reach_max_speed > displacement and \
+                    displacement > 0.0 or \
+            displacement_to_reach_max_speed < displacement and \
+                    displacement < 0.0:
         # We do not reach max speed before we reach the displacement.
         
         var time_for_displacement := calculate_movement_duration( \
@@ -282,22 +305,28 @@ static func calculate_displacement_for_duration( \
         #     (s - s_0) = v*t
         return velocity_start * duration
     
-    var velocity_terminal := max_speed if acceleration > 0.0 else -max_speed
+    var velocity_terminal := \
+            max_speed if \
+            acceleration > 0.0 else \
+            -max_speed
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
     # Algebra...:
     #     t = (v - v_0) / a
-    var time_to_max_speed := (velocity_terminal - velocity_start) / acceleration
+    var time_to_max_speed := \
+            (velocity_terminal - velocity_start) / acceleration
     
     if time_to_max_speed > duration:
-        # The motion consists of constant acceleration over the entire interval.
+        # The motion consists of constant acceleration over the entire
+        # interval.
         
         # From a basic equation of motion:
         #     s = s_0 + v_0*t + 1/2*a*t^2
         # Algebra...:
         #     (s - s_0) = v_0*t + 1/2*a*t^2
-        return velocity_start * duration + 0.5 * acceleration * duration * duration
+        return velocity_start * duration + \
+                0.5 * acceleration * duration * duration
     else:
         # The motion consists of two parts:
         # 1.  Constant acceleration until reaching max speed.
@@ -308,14 +337,16 @@ static func calculate_displacement_for_duration( \
         # Algebra...:
         #     (s - s_0) = (v^2 - v_0^2) / 2 / a
         var displacement_during_acceleration := \
-                (velocity_terminal * velocity_terminal - velocity_start * velocity_start) / \
+                (velocity_terminal * velocity_terminal - \
+                        velocity_start * velocity_start) / \
                 2.0 / acceleration
         
         # From a basic equation of motion:
         #     s = s_0 + v*t
         # Algebra...:
         #     (s - s_0) = v*t
-        var displacement_at_max_speed := velocity_terminal * (duration - time_to_max_speed)
+        var displacement_at_max_speed := \
+                velocity_terminal * (duration - time_to_max_speed)
         
         return displacement_during_acceleration + displacement_at_max_speed
 
@@ -392,7 +423,10 @@ static func cap_velocity( \
         movement_params: MovementParams, \
         current_max_horizontal_speed: float) -> Vector2:
     # Cap horizontal speed at a max value.
-    velocity.x = clamp(velocity.x, -current_max_horizontal_speed, current_max_horizontal_speed)
+    velocity.x = clamp( \
+            velocity.x, \
+            -current_max_horizontal_speed, \
+            current_max_horizontal_speed)
     
     # Kill horizontal speed below a min value.
     if velocity.x > -movement_params.min_horizontal_speed and \
@@ -400,7 +434,9 @@ static func cap_velocity( \
         velocity.x = 0
     
     # Cap vertical speed at a max value.
-    velocity.y = clamp(velocity.y, -movement_params.max_vertical_speed, \
+    velocity.y = clamp( \
+            velocity.y, \
+            -movement_params.max_vertical_speed, \
             movement_params.max_vertical_speed)
     
     # Kill vertical speed below a min value.
@@ -414,7 +450,9 @@ static func calculate_time_to_climb( \
         distance: float, \
         is_climbing_upward: bool, \
         movement_params: MovementParams) -> float:
-    var speed := movement_params.climb_up_speed if is_climbing_upward else \
+    var speed := \
+            movement_params.climb_up_speed if \
+            is_climbing_upward else \
             movement_params.climb_down_speed
     # From a basic equation of motion:
     #     s = s_0 + v*t
@@ -437,9 +475,10 @@ static func calculate_distance_to_stop_from_friction( \
         velocity_x_start: float, \
         gravity: float, \
         friction_coefficient: float) -> float:
-    # TODO: This stopping-distance formula doesn't work for us (generates results that are way too
-    #       big). But we should adapt some sort of continuous analytic formula instead of this
-    #       discrete loop-based approach.
+    # TODO: This stopping-distance formula doesn't work for us (generates
+    #       results that are way too big). But we should adapt some sort of
+    #       continuous analytic formula instead of this discrete loop-based
+    #       approach.
     
 #    # Stopping distance formula:
 #    #     distance = speed_start^2 / 2 / friction_coefficient / gravity
@@ -474,17 +513,21 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
     if distance_from_end > \
             distance_to_max_horizontal_speed + \
             movement_params.stopping_distance_on_default_floor_from_max_speed:
-        # There is enough distance to both get to max speed and then slow to a stop from max speed.
-        return movement_params.stopping_distance_on_default_floor_from_max_speed
+        # There is enough distance to both get to max speed and then slow to a
+        # stop from max speed.
+        return movement_params \
+                .stopping_distance_on_default_floor_from_max_speed
         
     else:
-        # We need to calculate stopping distance from a speed that's less than the max.
+        # We need to calculate stopping distance from a speed that's less than
+        # the max.
         
         var speed_start := abs(velocity_x_start)
         var friction_deceleration := -friction_coefficient * gravity
         
-        # TODO: This math isn't generating the correct results. Debug it and use it to replace the
-        #       hand-wavy approximation we're now using instead.
+        # TODO: This math isn't generating the correct results. Debug it and
+        #       use it to replace the hand-wavy approximation we're now using
+        #       instead.
         
 #        # There are two parts of the motion:
 #        # 1.  Constant acceleration from walking.
@@ -499,8 +542,10 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
 #        #     s_1 = ((v_2^2 - v_0^2)/2 - s_2*a_1) / (a_0 - a_1)
 #        #     stopping_distance = s_2 - s_1
 #        var distance_to_instruction_end := \
-#                ((movement_params.min_horizontal_speed * movement_params.min_horizontal_speed - \
-#                speed_start * speed_start) / 2.0 - distance_from_end * friction_deceleration) / \
+#                ((movement_params.min_horizontal_speed * \
+#                        movement_params.min_horizontal_speed - \
+#                speed_start * speed_start) / 2.0 - \
+#                        distance_from_end * friction_deceleration) / \
 #                (movement_params.walk_acceleration - friction_deceleration)
 #        return distance_from_end - distance_to_instruction_end
         

@@ -78,17 +78,16 @@ func get_annotation_elements() -> Array:
 static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var elements := []
     var element: EdgeAnnotationElement
-    var edge: Edge
     for origin_surface in graph.surfaces_set:
         for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
             for destination_node in graph.nodes_to_nodes_to_edges[origin_node]:
-                edge = graph.nodes_to_nodes_to_edges \
-                        [origin_node][destination_node]
-                element = EdgeAnnotationElement.new( \
-                        edge, \
-                        true, \
-                        false, \
-                        true, \
-                        false)
-                elements.push_back(element)
+                for edge in graph.nodes_to_nodes_to_edges[origin_node][ \
+                        destination_node]:
+                    element = EdgeAnnotationElement.new( \
+                            edge, \
+                            true, \
+                            false, \
+                            true, \
+                            false)
+                    elements.push_back(element)
     return elements

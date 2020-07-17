@@ -25,7 +25,8 @@ var surfaces_to_outbound_nodes := {}
 # Intra-surface edges are not calculated and stored ahead of time; they're only
 # calculated at run time when navigating a specific path.
 # 
-# Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface, Edge>>
+# Dictionary<PositionAlongSurface, Dictionary<PositionAlongSurface,
+#         Array<Edge>>>
 var nodes_to_nodes_to_edges := {}
 
 # Dictionary<Surface, Array<InterSurfaceEdgeResult>>
@@ -89,7 +90,6 @@ func find_path( \
     frontier.insert(0.0, origin)
     
     var nodes_to_edges_for_current_node: Dictionary
-    var next_edge: Edge
     var current_node: PositionAlongSurface
     var current_weight: float
     var new_actual_weight: float
@@ -162,16 +162,16 @@ func find_path( \
         # weights, paths, and priorities.
         nodes_to_edges_for_current_node = nodes_to_nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
-            next_edge = nodes_to_edges_for_current_node[next_node]
-            new_actual_weight = current_weight + next_edge.get_weight()
-            _record_frontier( \
-                    current_node, \
-                    next_node, \
-                    destination, \
-                    new_actual_weight, \
-                    nodes_to_previous_nodes, \
-                    nodes_to_weights, \
-                    frontier)
+            for next_edge in nodes_to_edges_for_current_node[next_node]:
+                new_actual_weight = current_weight + next_edge.get_weight()
+                _record_frontier( \
+                        current_node, \
+                        next_node, \
+                        destination, \
+                        new_actual_weight, \
+                        nodes_to_previous_nodes, \
+                        nodes_to_weights, \
+                        frontier)
     
     # Collect the edges for the cheapest path.
     
@@ -185,6 +185,7 @@ func find_path( \
         return null
     
     while previous_node != null:
+        var next_edge: Edge
         if nodes_to_previous_nodes[previous_node] == null or edges.empty():
             # A terminal intra-surface edge.
             # 
@@ -207,7 +208,9 @@ func find_path( \
                     Vector2.ZERO, \
                     movement_params)
         else:
-            next_edge = nodes_to_nodes_to_edges[previous_node][current_node]
+            next_edge = _get_cheapest_edge_between_nodes( \
+                    previous_node, \
+                    current_node)
         
         assert(next_edge != null)
         
@@ -279,6 +282,19 @@ static func _record_frontier( \
         var priority = new_actual_weight + heuristic_weight
         frontier.insert(priority, next)
 
+func _get_cheapest_edge_between_nodes( \
+        origin: PositionAlongSurface, \
+        destination: PositionAlongSurface) -> Edge:
+    var cheapest_edge: Edge
+    var cheapest_weight := INF
+    var current_weight: float
+    for current_edge in nodes_to_nodes_to_edges[origin][destination]:
+        current_weight = current_edge.get_weight()
+        if current_weight < cheapest_weight:
+            cheapest_edge = current_edge
+            cheapest_weight = current_weight
+    return cheapest_edge
+
 # Calculates and stores the edges between surface nodes that this player type
 # can traverse.
 # 
@@ -348,10 +364,15 @@ func _calculate_nodes_and_edges() -> void:
         for inter_surface_edges_results in \
                 surfaces_to_inter_surface_edges_results[surface]:
             for edge in inter_surface_edges_results.valid_edges:
+                if !nodes_to_nodes_to_edges \
+                        [edge.start_position_along_surface] \
+                        .has(edge.end_position_along_surface):
+                    nodes_to_nodes_to_edges \
+                        [edge.start_position_along_surface] \
+                        [edge.end_position_along_surface] = []
                 nodes_to_nodes_to_edges \
                         [edge.start_position_along_surface] \
-                        [edge.end_position_along_surface] = \
-                        edge
+                        [edge.end_position_along_surface].push_back(edge)
     
     if !debug_params.is_inspector_enabled:
         # Free-up this memory if we don't need to display the graph state in
@@ -516,7 +537,6 @@ func _update_counts() -> void:
         counts[type] = 0
     
     var surface_side_string: String
-    var edge: Edge
     
     for surface in surfaces_set:
         # Increment the surface counts.
@@ -526,10 +546,11 @@ func _update_counts() -> void:
         
         for origin_node in surfaces_to_outbound_nodes[surface]:
             for destination_node in nodes_to_nodes_to_edges[origin_node]:
-                # Increment the edge counts.
-                edge = nodes_to_nodes_to_edges[origin_node][destination_node]
-                counts[edge.name] += 1
-                counts.total_edges += 1
+                for edge in \
+                        nodes_to_nodes_to_edges[origin_node][destination_node]:
+                    # Increment the edge counts.
+                    counts[edge.name] += 1
+                    counts.total_edges += 1
 
 func to_string() -> String:
     return "PlatformGraph{ player: %s, surfaces: %s, edges: %s }" % [ \

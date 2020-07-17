@@ -38,10 +38,10 @@ func _init_edge_types_to_filtered_edges( \
     for origin_surface in graph.surfaces_set:
         for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
             for destination_node in graph.nodes_to_nodes_to_edges[origin_node]:
-                var edge: Edge = graph.nodes_to_nodes_to_edges[origin_node] \
-                        [destination_node]
-                if edge.edge_calc_result_type == edge_calc_result_type:
-                    filtered_edges.push_back(edge)
+                for edge in graph.nodes_to_nodes_to_edges[origin_node][ \
+                        destination_node]:
+                    if edge.edge_calc_result_type == edge_calc_result_type:
+                        filtered_edges.push_back(edge)
     
     self.filtered_edge_count = filtered_edges.size()
     self.edge_types_to_filtered_edges = {}
