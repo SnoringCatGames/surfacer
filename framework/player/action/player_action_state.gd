@@ -196,7 +196,7 @@ static func _log_new_press_or_release( \
         player_position: Vector2, \
         player_velocity: Vector2) -> void:
     if just_pressed:
-        print("START %5s:%8s;%8.3ft;%29sp;%29sv" % [ \
+        print("START %5s:%8s;%8.3fs;P%29s;V%29s" % [ \
                 action_name, \
                 player_name, \
                 time_sec, \
@@ -204,7 +204,7 @@ static func _log_new_press_or_release( \
                 player_velocity \
                 ])
     if just_released:
-        print("STOP  %5s:%8s;%8.3ft;%29sp;%29sv" % [ \
+        print("STOP  %5s:%8s;%8.3fs;P%29s;V%29s" % [ \
                 action_name, \
                 player_name, \
                 time_sec, \

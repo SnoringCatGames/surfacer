@@ -41,7 +41,7 @@ func _init(player: Player) -> void:
 func _process(delta_sec: float) -> void:
     var current_time: float = Time.elapsed_play_time_sec
     
-    var did_preselection_position_change = \
+    var did_preselection_position_change := \
             preselection_position_to_draw != player.preselection_position
     
     if did_preselection_position_change and \

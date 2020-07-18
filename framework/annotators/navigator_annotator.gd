@@ -12,16 +12,6 @@ func _init(navigator: Navigator) -> void:
     self.navigator = navigator
 
 func _draw() -> void:
-    if previous_path != null:
-        DrawUtils.draw_path( \
-                self, \
-                previous_path, \
-                TRAJECTORY_STROKE_WIDTH, \
-                AnnotationElementDefaults.NAVIGATOR_PREVIOUS_PATH_COLOR, \
-                true, \
-                false, \
-                true, \
-                false)
     if current_path != null:
         DrawUtils.draw_path( \
                 self, \
@@ -82,6 +72,17 @@ func _draw() -> void:
                 false, \
                 AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH, \
                 4.0)
+    
+    elif previous_path != null:
+        DrawUtils.draw_path( \
+                self, \
+                previous_path, \
+                TRAJECTORY_STROKE_WIDTH, \
+                AnnotationElementDefaults.NAVIGATOR_PREVIOUS_PATH_COLOR, \
+                true, \
+                false, \
+                true, \
+                false)
 
 func check_for_update() -> void:
     if navigator.current_path != current_path:

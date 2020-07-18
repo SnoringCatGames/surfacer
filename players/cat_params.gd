@@ -42,6 +42,7 @@ func _init_production_params() -> void:
     forces_player_velocity_to_zero_at_path_end = false
     syncs_player_position_to_edge_trajectory = true
     syncs_player_velocity_to_edge_trajectory = true
+    retries_navigation_when_interrupted = true
     distance_squared_threshold_for_considering_additional_jump_land_points = 32.0 * 32.0
     stops_after_finding_first_valid_edge_for_a_surface_pair = false
     calculates_all_valid_edges_for_a_surface_pair = false
@@ -155,6 +156,7 @@ func _init_debug_params() -> void:
     syncs_player_position_to_edge_trajectory = true
     syncs_player_velocity_to_edge_trajectory = true
 #    syncs_player_velocity_to_edge_trajectory = false
+    retries_navigation_when_interrupted = true
 #    distance_squared_threshold_for_considering_additional_jump_land_points = 128.0 * 128.0
     distance_squared_threshold_for_considering_additional_jump_land_points = 32.0 * 32.0
     stops_after_finding_first_valid_edge_for_a_surface_pair = false

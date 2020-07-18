@@ -20,6 +20,7 @@ var current_edge: Edge
 var current_edge_index := -1
 var current_playback: InstructionsPlayback
 var actions_might_be_dirty := false
+var current_navigation_attempt_count := 0
 
 var navigation_state := PlayerNavigationState.new()
 
@@ -34,7 +35,9 @@ func _init( \
     self.air_to_surface_calculator = AirToSurfaceCalculator.new()
 
 # Starts a new navigation to the given destination.
-func navigate_to_position(destination: PositionAlongSurface) -> bool:
+func navigate_to_position( \
+        destination: PositionAlongSurface, \
+        is_retry := false) -> bool:
     Profiler.start(ProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
     
     # Nudge the destination away from any concave neighbor surfaces, if
@@ -45,7 +48,10 @@ func navigate_to_position(destination: PositionAlongSurface) -> bool:
                     player.movement_params, \
                     destination)
     
+    var previous_navigation_attempt_count := current_navigation_attempt_count
     reset()
+    if is_retry:
+        current_navigation_attempt_count = previous_navigation_attempt_count
     
     Profiler.start(ProfilerMetric.NAVIGATOR_FIND_PATH)
     var path := find_path(destination)
@@ -76,11 +82,12 @@ func navigate_to_position(destination: PositionAlongSurface) -> bool:
         current_path = path
         is_currently_navigating = true
         reached_destination = false
+        current_navigation_attempt_count += 1
         
         var duration_navigate_to_position := \
                 Profiler.stop(ProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
         
-        var format_string_template := "STARTING PATH NAV:   %8.3ft; {" + \
+        var format_string_template := "STARTING PATH NAV:   %8.3fs; {" + \
             "\n\tdestination: %s," + \
             "\n\tpath: %s," + \
             "\n\ttimings: {" + \
@@ -164,9 +171,6 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
     return path
 
 func _set_reached_destination() -> void:
-    # FIXME: Assert that we are close enough to the destination position.
-#    assert()
-    
     if player.movement_params.forces_player_position_to_match_path_at_end:
         player.position = current_edge.end
     if player.movement_params.forces_player_velocity_to_zero_at_path_end and \
@@ -182,7 +186,7 @@ func _set_reached_destination() -> void:
     reset()
     reached_destination = true
     
-    print("REACHED END OF PATH: %8.3ft" % [Time.elapsed_play_time_sec])
+    print("REACHED END OF PATH: %8.3fs" % Time.elapsed_play_time_sec)
 
 func reset() -> void:
     if current_path != null:
@@ -197,6 +201,7 @@ func reset() -> void:
     current_playback = null
     instructions_action_source.cancel_all_playback()
     actions_might_be_dirty = true
+    current_navigation_attempt_count = 0
     navigation_state.reset()
 
 func _start_edge(index: int) -> void:
@@ -224,7 +229,7 @@ func _start_edge(index: int) -> void:
             Profiler.stop(ProfilerMetric.NAVIGATOR_START_EDGE)
     
     var format_string_template := \
-            "STARTING EDGE NAV:   %8.3ft; %s; function duration=%s"
+            "STARTING EDGE NAV:   %8.3fs; %s; function duration=%s"
     var format_string_arguments := [ \
             Time.elapsed_play_time_sec, \
             current_edge.to_string_with_newlines(0), \
@@ -263,14 +268,20 @@ func update(just_started_new_edge = false) -> void:
             interruption_type_label = \
                     "navigation_state.just_interrupted_by_user_action"
         
-        print("EDGE MVT INTERRUPTED:%8.3ft; %s" % \
+        print("EDGE MVT INTERRUPTED:%8.3fs; %s" % \
                 [Time.elapsed_play_time_sec, interruption_type_label])
-        # FIXME: Add back in at some point...
-#        navigate_to_nearest_surface(current_path.destination)
-        reset()
+        
+        if player.movement_params.retries_navigation_when_interrupted:
+            navigate_to_position( \
+                    current_destination, \
+                    true)
+        else:
+            reset()
     elif navigation_state.just_reached_end_of_edge:
-        print("REACHED END OF EDGE: %8.3ft; %s" % \
-                [Time.elapsed_play_time_sec, current_edge.name])
+        print("REACHED END OF EDGE: %8.3fs; %s" % [ \
+            Time.elapsed_play_time_sec, \
+            current_edge.name, \
+        ])
     else:
         # Continuing along an edge.
         if surface_state.is_grabbing_a_surface:
@@ -305,7 +316,7 @@ func update(just_started_new_edge = false) -> void:
             if backtracking_edge == null:
                 _set_reached_destination()
             else:
-                var format_string_template := "INSRT CTR-PROTR EDGE:%8.3ft; %s"
+                var format_string_template := "INSRT CTR-PROTR EDGE:%8.3fs; %s"
                 var format_string_arguments := [ \
                         Time.elapsed_play_time_sec, \
                         backtracking_edge.to_string_with_newlines(0), \

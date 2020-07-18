@@ -7,8 +7,7 @@ const CONTROLS_LEGEND = [
   ["Walk/Climb", "arrow key / wasd"], \
   ["Jump", "space / x"], \
   ["Dash", "z"], \
-  ["Zoom in", "ctrl + ="], \
-  ["Zoom out", "ctrl + -"], \
+  ["Zoom in/out", "ctrl + =/-"], \
   ["Pan", "ctrl + arrow key"], \
 ]
 

@@ -8,8 +8,6 @@ class_name Main
 # 
 # --- Saturday ---
 # 
-# - Fix occasional bug where phantom preselection indicator is still shown
-#   after clicking.
 # - Debug why phantom selection surface indicator is showing red with valid
 #   selections sometimes.
 # - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from
@@ -17,6 +15,11 @@ class_name Main
 # 
 # - Fix player to not sometimes face backwards against the direction of motion
 #   when jumping.
+# 
+# - Add some checkboxes for toggling annotations from within the inspector.
+#   - Grid
+#   - Previous movement
+#   - Previous navigation
 # 
 # - Render an arrow to indicate the direction/magnitude of start velocity.
 #   - And legend item.
@@ -115,9 +118,6 @@ class_name Main
 # 
 # ---
 # 
-# - Prepare a different, more interesting level for demo (some walls connecting
-#   to floors too).
-# 
 # - Put together some illustrative screenshots with special one-off annotations
 #   to explain the graph parsing steps in the README.
 #   - Use Config.DEBUG_PARAMS.extra_annotations
@@ -136,6 +136,14 @@ class_name Main
 # - Update initial load to happen on a separate thread, so that main and
 #   loading_screen are not locked.
 #   - Update level loading to use ResourceLoader interactive mode?
+# 
+# - Fix threads to work with the new collision test logic.
+# 
+# - Add some legend items for the persistent annotations:
+#   - Previous movement
+#   - Previous navigation
+# 
+# - Try to debug run-time jitteriness.
 # 
 # ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  --
 # ### TODO: Eventually (probably before end of 2020). ###

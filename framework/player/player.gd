@@ -196,7 +196,7 @@ func _physics_process(delta_sec: float) -> void:
     _handle_pointer_selections()
     
     if surface_state.just_left_air:
-        print("GRABBED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
+        print("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s" % [ \
                 player_name, \
                 Time.elapsed_play_time_sec, \
                 surface_state.center_position, \
@@ -204,7 +204,7 @@ func _physics_process(delta_sec: float) -> void:
                 surface_state.grabbed_surface.to_string(), \
             ])
     elif surface_state.just_entered_air:
-        print("LAUNCHED   :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
+        print("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s" % [ \
                 player_name, \
                 Time.elapsed_play_time_sec, \
                 surface_state.center_position, \
@@ -219,7 +219,7 @@ func _physics_process(delta_sec: float) -> void:
             side_str = "CEILING"
         else:
             side_str = "WALL"
-        print("TOUCHED    :%8s;%8.3ft;%29sp;%29sv; %s" % [ \
+        print("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s" % [ \
                 player_name, \
                 Time.elapsed_play_time_sec, \
                 surface_state.center_position, \
@@ -267,7 +267,7 @@ func _physics_process(delta_sec: float) -> void:
 
 func _handle_pointer_selections() -> void:
     if new_selection_target != Vector2.INF:
-        print("NEW POINTER SELECTION:%8s;%8.3ft;%29sp; %s" % [ \
+        print("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s" % [ \
                 player_name, \
                 Time.elapsed_play_time_sec, \
                 str(new_selection_target), \

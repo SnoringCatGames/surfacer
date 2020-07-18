@@ -62,6 +62,7 @@ var syncs_player_position_to_edge_trajectory := false
 # edge-movement velocity during each frame. Without this, there is typically
 # some deviation at run-time from the expected calculated edge trajectories.
 var syncs_player_velocity_to_edge_trajectory := false
+var retries_navigation_when_interrupted := true
 var min_intra_surface_distance_to_optimize_jump_for := 16.0
 # When calculating possible edges between a given pair of surfaces, we usually
 # need to quit early (for performance) as soon as we've found enough edges,

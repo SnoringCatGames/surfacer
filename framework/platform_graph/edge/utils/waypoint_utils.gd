@@ -159,14 +159,16 @@ static func calculate_waypoints_around_surface( \
     var should_skip_b := false
     
     # We ignore waypoints that would correspond to moving back the way we came.
-    if previous_waypoint.surface == \
+    if previous_waypoint.surface != null and \
+            previous_waypoint.surface == \
             colliding_surface.counter_clockwise_convex_neighbor:
         should_skip_a = true
-    if previous_waypoint.surface == \
+    if previous_waypoint.surface != null and \
+            previous_waypoint.surface == \
             colliding_surface.clockwise_convex_neighbor:
         should_skip_b = true
     
-    # We ignore waypoints that are redundant with the connstraint we were
+    # We ignore waypoints that are redundant with the constraint we were
     # already using with the previous step attempt.
     # 
     # These indicate a problem with our step logic somewhere though, so we log

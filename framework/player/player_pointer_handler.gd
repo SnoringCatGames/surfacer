@@ -18,12 +18,14 @@ func _unhandled_input(event: InputEvent) -> void:
     
     var pointer_up_position := Vector2.INF
     var pointer_drag_position := Vector2.INF
+    var event_type := "UNKNOWN_INP"
     
     # Mouse-up: Position selection.
     if event is InputEventMouseButton and \
             event.button_index == BUTTON_LEFT and \
             !event.pressed and \
             !event.control:
+        event_type = "MOUSE_UP   "
         pointer_up_position = Global.current_level.get_global_mouse_position()
     
     # Mouse-down: Position pre-selection.
@@ -31,28 +33,40 @@ func _unhandled_input(event: InputEvent) -> void:
             event.button_index == BUTTON_LEFT and \
             event.pressed and \
             !event.control:
+        event_type = "MOUSE_DOWN "
         pointer_drag_position = \
                 Global.current_level.get_global_mouse_position()
     
     # Mouse-move: Position pre-selection.
     if event is InputEventMouseMotion and \
-            player.preselection_target != Vector2.INF:
+            last_pointer_drag_position != Vector2.INF:
+        event_type = "MOUSE_DRAG "
         pointer_drag_position = \
                 Global.current_level.get_global_mouse_position()
     
     # Touch-up: Position selection.
     if event is InputEventScreenTouch and \
             !event.pressed:
+        event_type = "TOUCH_UP   "
         pointer_up_position = Utils.get_global_touch_position(event)
     
     # Touch-down: Position pre-selection.
     if event is InputEventScreenTouch and \
             event.pressed:
+        event_type = "TOUCH_DOWN "
         pointer_drag_position = Utils.get_global_touch_position(event)
     
     # Touch-move: Position pre-selection.
     if event is InputEventScreenDrag:
+        event_type = "TOUCH_DRAG "
         pointer_drag_position = Utils.get_global_touch_position(event)
+    
+#    if pointer_up_position != Vector2.INF or \
+#            pointer_drag_position != Vector2.INF:
+#        print("%s:         %8.3fs" % [ \
+#                event_type, \
+#                Time.elapsed_play_time_sec, \
+#            ])
     
     if pointer_up_position != Vector2.INF:
         last_pointer_drag_position = Vector2.INF

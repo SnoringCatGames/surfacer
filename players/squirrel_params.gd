@@ -21,14 +21,39 @@ func _init() -> void:
     
     jump_boost = -1000.0
     in_air_horizontal_acceleration = 3200.0
-    max_jump_chain = 1
+    max_jump_chain = 2
     wall_jump_horizontal_boost = 400.0
+    wall_fall_horizontal_boost = 20.0
     
     walk_acceleration = 350.0
     climb_up_speed = -350.0
     climb_down_speed = 150.0
     
-    minimizes_velocity_change_when_jumping = true
+    minimizes_velocity_change_when_jumping = false
+    optimizes_edge_jump_positions_at_run_time = true
+    optimizes_edge_land_positions_at_run_time = true
+    forces_player_position_to_match_edge_at_start = true
+    forces_player_velocity_to_match_edge_at_start = true
+    forces_player_position_to_match_path_at_end = false
+    forces_player_velocity_to_zero_at_path_end = false
+    syncs_player_position_to_edge_trajectory = true
+    syncs_player_velocity_to_edge_trajectory = true
+    retries_navigation_when_interrupted = true
+    distance_squared_threshold_for_considering_additional_jump_land_points = 32.0 * 32.0
+    stops_after_finding_first_valid_edge_for_a_surface_pair = false
+    calculates_all_valid_edges_for_a_surface_pair = false
+    always_includes_jump_land_positions_at_surface_ends = false
+    includes_redundant_jump_land_positions_with_zero_start_velocity = true
+    normal_jump_instruction_duration_increase = 0.08
+    exceptional_jump_instruction_duration_increase = 0.2
+    recurses_when_colliding_during_horizontal_step_calculations = true
+    backtracks_to_consider_higher_jumps_during_horizontal_step_calculations = true
+    collision_margin_for_edge_calculations = 4.0
+    collision_margin_for_waypoint_positions = 5.0
+    skips_less_likely_jump_land_positions = false
+    prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets = true
+    reuses_previous_waypoints_when_backtracking_on_jump_height = false
+    asserts_no_preexisting_collisions_during_edge_calculations = false
     
     max_horizontal_speed_default = 400.0
     min_horizontal_speed = 5.0
@@ -45,10 +70,10 @@ func _init() -> void:
     
     friction_coefficient = 0.01
     
-    uses_duration_instead_of_distance_for_edge_weight = false
-    additional_edge_weight_offset = 32.0
+    uses_duration_instead_of_distance_for_edge_weight = true
+    additional_edge_weight_offset = 128.0
     walking_edge_weight_multiplier = 1.2
-    climbing_edge_weight_multiplier = 1.5
+    climbing_edge_weight_multiplier = 1.8
     air_edge_weight_multiplier = 1.0
     
     action_handler_names = [

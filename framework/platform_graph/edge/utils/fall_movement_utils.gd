@@ -233,7 +233,7 @@ static func find_landing_trajectory_between_positions( \
     Profiler.start( \
             ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
             collision_params.thread_id)
-    # FIXME: ----------------------------------------
+    # FIXME: ---------------------------------------- REMOVE
     if velocity_start.y != 1000.0 and \
             velocity_start.y != 0.0 and \
             land_position.surface.first_point == Vector2(-448, 256):

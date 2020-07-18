@@ -19,7 +19,7 @@ const WELCOME_PANEL_RESOURCE_PATH := \
 const IN_DEBUG_MODE := true
 var USES_THREADS := false and OS.can_use_threads()
 const IN_TEST_MODE := false
-const UTILITY_PANEL_STARTS_OPEN := true
+const UTILITY_PANEL_STARTS_OPEN := false
 
 #const STARTING_LEVEL_RESOURCE_PATH := \
 #        "res://test/data/test_level_long_rise.tscn"
@@ -51,17 +51,8 @@ const DEBUG_PARAMS := \
         !IN_DEBUG_MODE else \
         {
     is_inspector_enabled = true,
-    limit_parsing = {
-        player_name = "cat",
-#        
-#        edge = {
-#            origin = {
-#                surface_side = SurfaceSide.FLOOR,
-#            },
-#            destination = {
-#                surface_side = SurfaceSide.FLOOR,
-#            },
-#        },
+#    limit_parsing = {
+#        player_name = "cat",
 #        
 #        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
@@ -69,22 +60,6 @@ const DEBUG_PARAMS := \
 #        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
 #        edge_type = EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
 #        edge_type = EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
-#        
-#        edge = {
-#            origin = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(-256, 896),
-#                position = Vector2(-198, 896),
-#                epsilon = 10,
-#            },
-#            destination = {
-#                surface_side = SurfaceSide.FLOOR,
-#                surface_start_vertex = Vector2(-576, 576),
-#                position = Vector2(-512, 576),
-#                epsilon = 10,
-#            },
-#            velocity_start = Vector2(0, -1000),
-#        },
 #        
 #        edge = {
 #            origin = {
@@ -101,6 +76,6 @@ const DEBUG_PARAMS := \
 #            },
 #            #velocity_start = Vector2(0, -1000),
 #        },
-    },
+#    },
     extra_annotations = {},
 }
