@@ -2282,12 +2282,11 @@ static func calculate_land_positions_on_surface( \
     
     if land_surface.vertices.size() == 1:
         # The land surface consists of only a single point.
-        var jump_land_positions := \
-                _create_jump_land_positions_and_preserve_jump_position( \
-                        movement_params, \
-                        origin_position, \
-                        land_surface_first_point_wrapper, \
-                        velocity_start)
+        var jump_land_positions := _create_jump_land_positions( \
+                movement_params, \
+                origin_position, \
+                land_surface_first_point_wrapper, \
+                velocity_start)
         return [jump_land_positions] if \
                 jump_land_positions != null else \
                 []
@@ -2346,12 +2345,11 @@ static func calculate_land_positions_on_surface( \
                         movement_params.collider_half_width_height, \
                         land_surface_left_end_wrapper, \
                         land_surface_right_end_wrapper)
-                var jump_land_positions := \
-                        _create_jump_land_positions_and_preserve_jump_position( \
-                                movement_params, \
-                                origin_position, \
-                                land_position, \
-                                velocity_start)
+                var jump_land_positions := _create_jump_land_positions( \
+                        movement_params, \
+                        origin_position, \
+                        land_position, \
+                        velocity_start)
                 return [jump_land_positions] if \
                         jump_land_positions != null else \
                         []
@@ -2393,12 +2391,11 @@ static func calculate_land_positions_on_surface( \
                     is_below_bottom_of_wall and \
                     velocity_start.y < 0.0:
                 # We may be able to reach around to the bottom of the wall.
-                var jump_land_positions := \
-                        _create_jump_land_positions_and_preserve_jump_position( \
-                                movement_params, \
-                                origin_position, \
-                                land_surface_bottom_end_wrapper, \
-                                velocity_start)
+                var jump_land_positions := _create_jump_land_positions( \
+                        movement_params, \
+                        origin_position, \
+                        land_surface_bottom_end_wrapper, \
+                        velocity_start)
                 return [jump_land_positions] if \
                         jump_land_positions != null else \
                         []
@@ -2414,12 +2411,11 @@ static func calculate_land_positions_on_surface( \
                         movement_params.collider_half_width_height, \
                         land_surface_top_end_wrapper, \
                         land_surface_bottom_end_wrapper)
-                var jump_land_positions := \
-                        _create_jump_land_positions_and_preserve_jump_position( \
-                                movement_params, \
-                                origin_position, \
-                                land_position, \
-                                velocity_start)
+                var jump_land_positions := _create_jump_land_positions( \
+                        movement_params, \
+                        origin_position, \
+                        land_position, \
+                        velocity_start)
                 return [jump_land_positions] if \
                         jump_land_positions != null else \
                         []
@@ -2448,12 +2444,11 @@ static func calculate_land_positions_on_surface( \
                         movement_params.collider_half_width_height, \
                         land_surface_top_end_wrapper, \
                         land_surface_bottom_end_wrapper)
-                var jump_land_positions := \
-                        _create_jump_land_positions_and_preserve_jump_position( \
-                                movement_params, \
-                                origin_position, \
-                                land_position, \
-                                velocity_start)
+                var jump_land_positions := _create_jump_land_positions( \
+                        movement_params, \
+                        origin_position, \
+                        land_position, \
+                        velocity_start)
                 return [jump_land_positions] if \
                         jump_land_positions != null else \
                         []
@@ -2665,12 +2660,11 @@ static func _record_if_distinct( \
                 if is_close:
                     return null
     
-    var jump_land_positions := \
-            _create_jump_land_positions_and_preserve_jump_position( \
-                    movement_params, \
-                    current_jump_position, \
-                    current_land_position, \
-                    velocity_start)
+    var jump_land_positions := _create_jump_land_positions( \
+            movement_params, \
+            current_jump_position, \
+            current_land_position, \
+            velocity_start)
     if jump_land_positions != null:
         if inserts_at_front:
             results.push_front(jump_land_positions)
@@ -2886,22 +2880,6 @@ static func _calculate_jump_land_points_for_walls_facing_each_other( \
             other_jump_land_positions_1, \
             other_jump_land_positions_2)
 
-static func _create_jump_land_positions_and_preserve_jump_position( \
-        movement_params: MovementParams, \
-        jump_position: PositionAlongSurface, \
-        land_position: PositionAlongSurface, \
-        velocity_start: Vector2) -> JumpLandPositions:
-    return _create_jump_land_positions( \
-            movement_params, \
-            jump_position, \
-            land_position, \
-            velocity_start, \
-            null, \
-            false, \
-            false, \
-            true, \
-            false)
-
 static func _create_jump_land_positions( \
         movement_params: MovementParams, \
         jump_position: PositionAlongSurface, \
@@ -2946,6 +2924,13 @@ static func ensure_position_is_not_too_close_to_concave_neighbor( \
         movement_params: MovementParams, \
         position: PositionAlongSurface) -> bool:
     var surface := position.surface
+    
+    if surface.clockwise_concave_neighbor == null and \
+            surface.counter_clockwise_concave_neighbor == null:
+        # If the surface has no concave neighbors, then don't adjust the
+        # position.
+        return true
+    
     var x_offset := \
             movement_params.collider_half_width_height.x + \
             MARGIN_FROM_CONCAVE_NEIGHBOR

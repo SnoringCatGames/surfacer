@@ -65,8 +65,10 @@ func increment() -> void:
                 false
     
     next_index += 1
-    next_instruction = edge.instructions.instructions[next_index] if \
-            edge.instructions.instructions.size() > next_index else null
+    next_instruction = \
+            edge.instructions.instructions[next_index] if \
+            edge.instructions.instructions.size() > next_index else \
+            null
     is_on_last_instruction = next_instruction == null
 
 func _get_start_time_for_next_instruction() -> float:

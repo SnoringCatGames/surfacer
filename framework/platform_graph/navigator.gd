@@ -131,6 +131,22 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
                     destination)
             if path != null:
                 path.push_front(air_to_surface_edge)
+            
+        elif is_currently_navigating:
+            # FIXME: ---------------------------
+            
+            assert(current_edge.edge_type != EdgeType.INTRA_SURFACE_EDGE)
+            var elapsed_playback_time := \
+                    Time.elapsed_play_time_sec - \
+                    current_playback.start_time
+            air_to_surface_edge = AirToSurfaceCalculator \
+                    .create_edge_from_part_of_other_edge( \
+                            graph.collision_params, \
+                            current_edge, \
+                            elapsed_playback_time)
+            if air_to_surface_edge != null:
+                pass
+            
     
     return path
 

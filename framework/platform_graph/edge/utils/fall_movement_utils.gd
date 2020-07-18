@@ -40,23 +40,6 @@ static func find_landing_trajectories_to_any_surface( \
                 collision_params.thread_id, \
                 records_profile)
     
-    var origin_vertices: Array
-    var origin_bounding_box: Rect2
-    var origin_side: int
-    
-    if origin_position.surface != null:
-        origin_vertices = origin_position.surface.vertices
-        origin_bounding_box = origin_position.surface.bounding_box
-        origin_side = origin_position.surface.side
-    else:
-        origin_vertices = [origin_position.target_point]
-        origin_bounding_box = Rect2( \
-                origin_position.target_point.x, \
-                origin_position.target_point.y, \
-                0.0, \
-                0.0)
-        origin_side = SurfaceSide.CEILING
-    
     var jump_land_positions_to_consider: Array
     var inter_surface_edges_result: InterSurfaceEdgesResult
     var edge_result_metadata: EdgeCalcResultMetadata
@@ -250,6 +233,11 @@ static func find_landing_trajectory_between_positions( \
     Profiler.start( \
             ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
             collision_params.thread_id)
+    # FIXME: ----------------------------------------
+    if velocity_start.y != 1000.0 and \
+            velocity_start.y != 0.0 and \
+            land_position.surface.first_point == Vector2(-448, 256):
+        print("break")
     var calc_result := EdgeStepUtils.calculate_steps_between_waypoints( \
             edge_result_metadata, \
             step_result_metadata, \

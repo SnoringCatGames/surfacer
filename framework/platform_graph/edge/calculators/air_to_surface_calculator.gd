@@ -157,6 +157,39 @@ func find_a_landing_trajectory( \
             trajectory, \
             calc_result.edge_calc_result_type)
 
+static func create_edge_from_part_of_other_edge( \
+        collision_params: CollisionCalcParams, \
+        other_edge: Edge, \
+        elapsed_playback_time: float) -> AirToSurfaceEdge:
+    # FIXME: -----------------------------
+    # - if currently navigating
+    # - take the current edge
+    # - chop it up
+    # - look at what instructions are currently active
+    # - use a choped version of the current edge
+    # current_edge
+    # current_playback.active_key_presses
+    
+    
+    
+    
+    if other_edge.trajectory == null:
+        # Some edges can enter the air but also don't have explicit
+        # trajectories.
+        return null
+    
+    var trajectory_index := \
+            elapsed_playback_time / Time.PHYSICS_TIME_STEP_SEC
+    
+    
+    
+    
+    
+    
+    
+    
+    return null
+
 class SurfaceMaxYComparator:
     static func sort(a: Surface, b: Surface) -> bool:
         return a.bounding_box.position.y < b.bounding_box.position.y
