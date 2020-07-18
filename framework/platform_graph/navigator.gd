@@ -107,6 +107,8 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
     var path: PlatformGraphPath
     
     if surface_state.is_grabbing_a_surface:
+        # Find a path from a starting player position along a surface.
+        
         var origin := PositionAlongSurface.new( \
                 surface_state.center_position_along_surface)
         path = graph.find_path( \
@@ -114,6 +116,10 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
                 destination)
         
     else:
+        # Find a path from a starting player position in the air.
+        
+        # Try to dynamically calculate a valid air-to-surface edge from the
+        # current in-air position.
         var origin := MovementUtils.create_position_without_surface( \
                 surface_state.center_position)
         var air_to_surface_edge := \
@@ -125,28 +131,35 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
                         player.velocity, \
                         destination, \
                         null)
-        if air_to_surface_edge != null:
-            path = graph.find_path( \
-                    air_to_surface_edge.end_position_along_surface, \
-                    destination)
-            if path != null:
-                path.push_front(air_to_surface_edge)
+        
+        if air_to_surface_edge == null and \
+                is_currently_navigating and \
+                current_edge.end_surface != null:
+            # We weren't able to dynamically calculate a valid air-to-surface
+            # edge from the current in-air position, but the player was already
+            # navigating along a valid edge to a surface, so let's just re-use
+            # the remainder of that edge.
             
-        elif is_currently_navigating:
-            # FIXME: ---------------------------
+            # TODO: This case shouldn't be needed; in theory, we should have
+            #       been able to find a valid land trajectory above.
             
             assert(current_edge.edge_type != EdgeType.INTRA_SURFACE_EDGE)
             var elapsed_playback_time := \
                     Time.elapsed_play_time_sec - \
                     current_playback.start_time
-            air_to_surface_edge = AirToSurfaceCalculator \
+            air_to_surface_edge = air_to_surface_calculator \
                     .create_edge_from_part_of_other_edge( \
-                            graph.collision_params, \
                             current_edge, \
-                            elapsed_playback_time)
-            if air_to_surface_edge != null:
-                pass
-            
+                            elapsed_playback_time, \
+                            player)
+        
+        if air_to_surface_edge != null:
+            # We were able to calculate a valid air-to-surface edge.
+            path = graph.find_path( \
+                    air_to_surface_edge.end_position_along_surface, \
+                    destination)
+            if path != null:
+                path.push_front(air_to_surface_edge)
     
     return path
 

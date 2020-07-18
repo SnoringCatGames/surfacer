@@ -948,10 +948,15 @@ static func _draw_edge_from_instructions_positions( \
                 edge.trajectory.frame_continuous_positions_from_steps, \
                 continuous_trajectory_color, \
                 stroke_width)
-        canvas.draw_line( \
+        var trajectory_end := \
                 edge.trajectory.frame_continuous_positions_from_steps[ \
                         edge.trajectory.frame_continuous_positions_from_steps \
-                                .size() - 1], \
+                                .size() - 1] if \
+                edge.trajectory.frame_continuous_positions_from_steps \
+                        .size() > 0 else \
+                edge.start
+        canvas.draw_line( \
+                trajectory_end, \
                 edge.end, \
                 continuous_trajectory_color, \
                 stroke_width)
@@ -962,10 +967,15 @@ static func _draw_edge_from_instructions_positions( \
                 edge.trajectory.frame_discrete_positions_from_test, \
                 discrete_trajectory_color, \
                 stroke_width)
-        canvas.draw_line( \
+        var trajectory_end := \
                 edge.trajectory.frame_discrete_positions_from_test[ \
                         edge.trajectory.frame_discrete_positions_from_test \
-                                .size() - 1], \
+                                .size() - 1] if \
+                edge.trajectory.frame_discrete_positions_from_test \
+                        .size() > 0 else \
+                edge.start
+        canvas.draw_line( \
+                trajectory_end, \
                 edge.end, \
                 discrete_trajectory_color, \
                 stroke_width)

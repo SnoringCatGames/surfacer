@@ -2925,7 +2925,8 @@ static func ensure_position_is_not_too_close_to_concave_neighbor( \
         position: PositionAlongSurface) -> bool:
     var surface := position.surface
     
-    if surface.clockwise_concave_neighbor == null and \
+    if surface == null or \
+            surface.clockwise_concave_neighbor == null and \
             surface.counter_clockwise_concave_neighbor == null:
         # If the surface has no concave neighbors, then don't adjust the
         # position.

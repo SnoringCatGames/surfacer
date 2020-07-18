@@ -113,7 +113,9 @@ static func convert_calculation_steps_to_movement_instructions( \
     
     var duration := vertical_step.time_step_end - vertical_step.time_step_start
     
-    var instructions_wrapper := EdgeInstructions.new(instructions, duration)
+    var instructions_wrapper := EdgeInstructions.new( \
+            instructions, \
+            duration)
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric \
@@ -122,3 +124,57 @@ static func convert_calculation_steps_to_movement_instructions( \
             records_profile_or_edge_result_metadata)
     
     return instructions_wrapper
+
+static func sub_instructions( \
+        base_instructions: EdgeInstructions, \
+        start_time: float) -> EdgeInstructions:
+    # Dictionary<String, EdgeInstruction>
+    var active_key_presses := {}
+    var start_index := base_instructions.instructions.size()
+    var instruction: EdgeInstruction
+    
+    # Determine what index the start time corresponds to, and what instructions
+    # are currently being pressed at that point.
+    for index in range(base_instructions.instructions.size()):
+        instruction = base_instructions.instructions[index]
+        if instruction.time >= start_time:
+            start_index = index
+            break
+        if instruction.is_pressed:
+            active_key_presses[instruction.input_key] = instruction
+        else:
+            active_key_presses.erase(instruction.input_key)
+    
+    # Record any already-active instructions.
+    var instructions := []
+    for active_key_press in active_key_presses:
+        instruction = EdgeInstruction.new( \
+                active_key_press, \
+                0.0, \
+                true, \
+                active_key_presses[active_key_press].position)
+        instructions.push_back(instruction)
+    
+    # Record all remaining instructions.
+    var remaining_instructions := []
+    var remaining_instructions_size := \
+            base_instructions.instructions.size() - start_index
+    remaining_instructions.resize(remaining_instructions_size)
+    var base_instruction: EdgeInstruction
+    for i in range(remaining_instructions_size):
+        base_instruction = base_instructions.instructions[i + start_index]
+        remaining_instructions[i] = EdgeInstruction.new( \
+                base_instruction.input_key, \
+                base_instruction.time - start_time, \
+                base_instruction.is_pressed, \
+                base_instruction.position)
+    
+    Utils.concat( \
+            instructions, \
+            remaining_instructions)
+    
+    var duration := base_instructions.duration - start_time
+    
+    return EdgeInstructions.new( \
+            instructions, \
+            duration)

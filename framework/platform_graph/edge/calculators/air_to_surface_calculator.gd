@@ -157,38 +157,35 @@ func find_a_landing_trajectory( \
             trajectory, \
             calc_result.edge_calc_result_type)
 
-static func create_edge_from_part_of_other_edge( \
-        collision_params: CollisionCalcParams, \
+func create_edge_from_part_of_other_edge( \
         other_edge: Edge, \
-        elapsed_playback_time: float) -> AirToSurfaceEdge:
-    # FIXME: -----------------------------
-    # - if currently navigating
-    # - take the current edge
-    # - chop it up
-    # - look at what instructions are currently active
-    # - use a choped version of the current edge
-    # current_edge
-    # current_playback.active_key_presses
-    
-    
-    
-    
+        start_time: float, \
+        player) -> AirToSurfaceEdge:
     if other_edge.trajectory == null:
         # Some edges can enter the air but also don't have explicit
         # trajectories.
         return null
     
-    var trajectory_index := \
-            elapsed_playback_time / Time.PHYSICS_TIME_STEP_SEC
+    var origin := PositionAlongSurface.new( \
+            player.surface_state.center_position_along_surface)
+    var instructions := EdgeInstructionsUtils.sub_instructions( \
+            other_edge.instructions, \
+            start_time)
+    var trajectory := EdgeTrajectoryUtils.sub_trajectory( \
+            other_edge.trajectory, \
+            start_time)
     
-    
-    
-    
-    
-    
-    
-    
-    return null
+    return AirToSurfaceEdge.new( \
+            self, \
+            origin, \
+            other_edge.end_position_along_surface, \
+            player.velocity, \
+            other_edge.velocity_end, \
+            other_edge.includes_extra_wall_land_horizontal_speed, \
+            other_edge.movement_params, \
+            instructions, \
+            trajectory, \
+            other_edge.edge_calc_result_type)
 
 class SurfaceMaxYComparator:
     static func sort(a: Surface, b: Surface) -> bool:

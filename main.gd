@@ -6,13 +6,14 @@ class_name Main
 # 
 # ### TODO: Now (before end of July) ###
 # 
-# - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from
-#   an air position).
+# --- Saturday ---
 # 
 # - Fix occasional bug where phantom preselection indicator is still shown
 #   after clicking.
 # - Debug why phantom selection surface indicator is showing red with valid
 #   selections sometimes.
+# - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from
+#   an air position).
 # 
 # - Fix player to not sometimes face backwards against the direction of motion
 #   when jumping.
@@ -24,7 +25,10 @@ class_name Main
 #   - Use origin/destination indicator shapes.
 #   - ...
 # 
-# ---
+# - Add a loading screen message saying that platform graph parsing can take up
+#   to X seconds (check on phone; maybe 30seconds?).
+# 
+# --- Sunday ---
 # 
 # - Add a couple lists to the README, and add to these when I go through TODOs
 #   in the next step:
@@ -34,6 +38,9 @@ class_name Main
 #       player to fit between (plus a margin of a handful of extra pixels).
 #     - Will take a while with lots of surfaces (big levels, small cell size).
 #     - List exactly which Input Map keys this framework depends on.
+#     - Describe the discrepancy between discrete and continuous trajectories,
+#       and the various options to reconcile the two.
+#       - Maybe have this as a separate section entirely.
 #   - List notable future work:
 #     - Networking
 #     - Double jump
@@ -61,6 +68,19 @@ class_name Main
 #     - Maybe do eventually.
 #   - Also search through TODO/FIXME throughout codebase.
 # 
+# - Add logic for a separate computer player that just navigates to random
+#   positions.
+#   - Call this the squirrel player, but start out by re-using the cat
+#     animation.
+#   - Don't attempt any fancy prey navigation for now.
+#   - Instead, just start out by navigating to random positions (closest
+#     surface positions (not using distance cutoff threshold) to random points
+#     in level bounds.
+#   - Then follow up with being more intelligent about basing these positions
+#     off of points that are away from the player.
+# 
+# ---  ---
+# 
 # - Add squirrel assets and animation.
 #   - Start by copying-over the Piskel squirrel animation art.
 #   - Create squirrel parts art in Aseprite.
@@ -75,9 +95,21 @@ class_name Main
 #       whatever?)
 #     -
 # 
+# ---  ---
+# 
 # - Update level images:
 #   - Make background layers more faded
 #   - Make foreground images more wood-like
+# 
+# - Update background image parallax to also scroll in the Y direction.
+#   - Base background image off of the bottom of the level.
+#   - Make background image taller.
+#   - Make a simple sky image for the furthest back parallax layer, and let
+#     this repeat forever.
+#   - But don't let the other parallax layers repeat vertically at all.
+# 
+# - Update title image:
+#   - Brighter color, closer to squirrel color.
 # 
 # ---
 # 
@@ -94,6 +126,10 @@ class_name Main
 #     - A couple edges
 #     - All edges
 #     -
+# 
+# - Add percentage-based progress bar to loading screen for graph parsing.
+#   - Should I somehow break apart the platform graph parsing to happen over
+#     different event loops? Use call_deferred?
 # 
 # - Update initial load to happen on a separate thread, so that main and
 #   loading_screen are not locked.
@@ -282,6 +318,16 @@ class_name Main
 # 
 # - Consolidate/reuse per-frame state updates logic between the instruction
 #   calculations and actual Player movements?
+# 
+# - Maybe add a more intelligent proximity-avoidance search for the squirrel's
+#   navigation behavior.
+#   - Do a* to find most likely path from predator to prey.
+#   - Then given a target destination somewhere, presumably away from predator.
+#   - Then calculate a special path using a different sort of edge weight.
+#   - Edge weight will be based off nearest node in predators a* path.
+#   - Then, maybe also calculate at which node the predator will be closest to
+#     our prey path, and time the preyst traversal to avoid being near there at
+#     that time?
 # 
 # ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  --
 # 

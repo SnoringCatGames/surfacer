@@ -19,9 +19,26 @@ static func warning(message := "An warning occurred"):
 static func subarray( \
         array: Array, \
         start: int, \
-        length: int) -> Array:
-    var result = range(length)
-    for i in result:
+        length := -1) -> Array:
+    if length < 0:
+        length = array.size() - start
+    var result := []
+    result.resize(length)
+    for i in range(length):
+        result[i] = array[start + i]
+    return result
+
+# TODO: Replace this with any built-in feature whenever it exists
+#       (https://github.com/godotengine/godot/issues/4715).
+static func sub_pool_vector2_array( \
+        array: PoolVector2Array, \
+        start: int, \
+        length := -1) -> PoolVector2Array:
+    if length < 0:
+        length = array.size() - start
+    var result := PoolVector2Array()
+    result.resize(length)
+    for i in range(length):
         result[i] = array[start + i]
     return result
 
@@ -30,11 +47,9 @@ static func subarray( \
 static func concat( \
         result: Array, \
         other: Array) -> void:
-    var old_result_size = result.size()
-    var other_size = other.size()
-    
+    var old_result_size := result.size()
+    var other_size := other.size()
     result.resize(old_result_size + other_size)
-    
     for i in range(other_size):
         result[old_result_size + i] = other[i]
 

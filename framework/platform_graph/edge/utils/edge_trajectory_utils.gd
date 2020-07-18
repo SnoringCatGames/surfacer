@@ -37,7 +37,8 @@ static func calculate_trajectory_from_calculation_steps( \
             waypoint_positions, \
             distance_from_continuous_frames)
     
-    # FIXME: -------- Rename? Refactor? Remove? We've already checked each step individually (for continuous state).
+    # FIXME: -------- Rename? Refactor? Remove? We've already checked each step
+    #        individually (for continuous state).
     var collision := \
             CollisionCheckUtils.check_instructions_discrete_frame_state( \
                     edge_calc_params, \
@@ -100,3 +101,28 @@ static func _sum_distance_between_frames( \
         sum += previous_position.distance_to(next_position)
         previous_position = next_position
     return sum
+
+static func sub_trajectory( \
+        base_trajectory: EdgeTrajectory, \
+        start_time: float) -> EdgeTrajectory:
+    assert(base_trajectory.frame_continuous_positions_from_steps.size() == \
+            base_trajectory.frame_continuous_velocities_from_steps.size())
+    var start_index := ceil(start_time / Time.PHYSICS_TIME_STEP_SEC)
+    var frame_continuous_positions_from_steps := \
+            Utils.sub_pool_vector2_array( \
+                    base_trajectory.frame_continuous_positions_from_steps, \
+                    start_index)
+    var frame_continuous_velocities_from_steps := \
+            Utils.sub_pool_vector2_array( \
+                    base_trajectory.frame_continuous_velocities_from_steps, \
+                    start_index)
+    # TODO: Try to use frame_continuous_positions_from_steps to detect which
+    #       waypoint positions we've passed.
+    var waypoint_positions := base_trajectory.waypoint_positions
+    var distance_from_continuous_frames := \
+            _sum_distance_between_frames(frame_continuous_positions_from_steps)
+    return EdgeTrajectory.new( \
+            frame_continuous_positions_from_steps, \
+            frame_continuous_velocities_from_steps, \
+            waypoint_positions, \
+            distance_from_continuous_frames)
