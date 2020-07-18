@@ -68,6 +68,8 @@ class_name Main
 #     - Maybe do eventually.
 #   - Also search through TODO/FIXME throughout codebase.
 # 
+# ---  ---
+# 
 # - Add logic for a separate computer player that just navigates to random
 #   positions.
 #   - Call this the squirrel player, but start out by re-using the cat

@@ -776,16 +776,13 @@ static func draw_path( \
         includes_instruction_indicators := false, \
         includes_continuous_positions := false, \
         includes_discrete_positions := false) -> void:
+    var vertices := PoolVector2Array()
     for edge in path.edges:
-        draw_edge( \
-                canvas, \
-                edge, \
-                stroke_width, \
-                color, \
-                includes_waypoints, \
-                includes_instruction_indicators, \
-                includes_continuous_positions, \
-                includes_discrete_positions)
+        vertices.append_array(_get_edge_trajectory_vertices(edge))
+    canvas.draw_polyline( \
+            vertices, \
+            color, \
+            stroke_width)
 
 static func draw_edge( \
         canvas: CanvasItem, \
@@ -881,15 +878,9 @@ static func _draw_climb_over_wall_to_floor_edge( \
         base_color: Color, \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool) -> void:
-    var mid_point := Vector2(edge.start.x, edge.end.y)
-    canvas.draw_line( \
-            edge.start, \
-            mid_point, \
-            base_color, \
-            stroke_width)
-    canvas.draw_line( \
-            mid_point, \
-            edge.end, \
+    var vertices := _get_edge_trajectory_vertices(edge)
+    canvas.draw_polyline( \
+            vertices, \
             base_color, \
             stroke_width)
     
@@ -944,39 +935,21 @@ static func _draw_edge_from_instructions_positions( \
     if includes_continuous_positions:
         # Draw the trajectory (as calculated via continuous equations of motion
         # during step calculations).
+        var vertices := _get_edge_trajectory_vertices( \
+                edge, \
+                includes_continuous_positions)
         canvas.draw_polyline( \
-                edge.trajectory.frame_continuous_positions_from_steps, \
-                continuous_trajectory_color, \
-                stroke_width)
-        var trajectory_end := \
-                edge.trajectory.frame_continuous_positions_from_steps[ \
-                        edge.trajectory.frame_continuous_positions_from_steps \
-                                .size() - 1] if \
-                edge.trajectory.frame_continuous_positions_from_steps \
-                        .size() > 0 else \
-                edge.start
-        canvas.draw_line( \
-                trajectory_end, \
-                edge.end, \
+                vertices, \
                 continuous_trajectory_color, \
                 stroke_width)
     if includes_discrete_positions:
         # Draw the trajectory (as approximated via discrete time steps during
         # instruction test calculations).
+        var vertices := _get_edge_trajectory_vertices( \
+                edge, \
+                includes_discrete_positions)
         canvas.draw_polyline( \
-                edge.trajectory.frame_discrete_positions_from_test, \
-                discrete_trajectory_color, \
-                stroke_width)
-        var trajectory_end := \
-                edge.trajectory.frame_discrete_positions_from_test[ \
-                        edge.trajectory.frame_discrete_positions_from_test \
-                                .size() - 1] if \
-                edge.trajectory.frame_discrete_positions_from_test \
-                        .size() > 0 else \
-                edge.start
-        canvas.draw_line( \
-                trajectory_end, \
-                edge.end, \
+                vertices, \
                 discrete_trajectory_color, \
                 stroke_width)
     
@@ -1029,3 +1002,40 @@ static func _draw_edge_from_instructions_positions( \
                     edge.trajectory.jump_instruction_end.position, \
                     EDGE_INSTRUCTION_INDICATOR_LENGTH, \
                     instruction_color)
+
+static func _get_edge_trajectory_vertices( \
+        edge: Edge, \
+        is_continuous := true) -> PoolVector2Array:
+    match edge.edge_type:
+        EdgeType.AIR_TO_AIR_EDGE, \
+        EdgeType.AIR_TO_SURFACE_EDGE, \
+        EdgeType.FALL_FROM_FLOOR_EDGE, \
+        EdgeType.FALL_FROM_WALL_EDGE, \
+        EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE, \
+        EdgeType.JUMP_INTER_SURFACE_EDGE:
+            var vertices := \
+                    edge.trajectory.frame_continuous_positions_from_steps if \
+                    is_continuous else \
+                    edge.trajectory.frame_discrete_positions_from_test
+            if vertices.empty():
+                vertices.push_back(edge.start)
+            vertices.push_back(edge.end)
+            return vertices
+        EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE, \
+        EdgeType.INTRA_SURFACE_EDGE, \
+        EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE:
+            return PoolVector2Array([ \
+                edge.start, \
+                edge.end, \
+            ])
+        EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE:
+            var mid_point := Vector2(edge.start.x, edge.end.y)
+            return PoolVector2Array([ \
+                edge.start, \
+                mid_point, \
+                edge.end, \
+            ])
+        EdgeType.UNKNOWN, \
+        _:
+            Utils.error()
+            return PoolVector2Array()
