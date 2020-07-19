@@ -186,18 +186,7 @@ func find_path( \
     
     while previous_node != null:
         var next_edge: Edge
-        if nodes_to_previous_nodes[previous_node] == null or edges.empty():
-            # A terminal intra-surface edge.
-            # 
-            # The first and last edge are temporary and extend from/to the
-            # origin/destination, which are not aligned with normal node
-            # positions.
-            next_edge = IntraSurfaceEdge.new( \
-                    previous_node, \
-                    current_node, \
-                    Vector2.ZERO, \
-                    movement_params)
-        elif previous_node.surface == current_node.surface:
+        if previous_node.surface == current_node.surface:
             # An intermediate intra-surface edge.
             # 
             # The previous node is on the same surface as the current node, so

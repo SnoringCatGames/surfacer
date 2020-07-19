@@ -10,8 +10,6 @@ class_name Main
 # 
 # - Debug why phantom selection surface indicator is showing red with valid
 #   selections sometimes.
-# - Test/debug FallMovementUtils.find_a_landing_trajectory (when clicking from
-#   an air position).
 # 
 # - Fix player to not sometimes face backwards against the direction of motion
 #   when jumping.

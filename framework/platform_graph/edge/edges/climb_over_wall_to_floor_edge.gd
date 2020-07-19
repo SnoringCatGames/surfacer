@@ -95,12 +95,18 @@ func update_navigation_state( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback, \
-        just_started_new_edge: bool) -> void:
+        just_started_new_edge: bool, \
+        is_starting_navigation_retry: bool) -> void:
     .update_navigation_state( \
             navigation_state, \
             surface_state, \
             playback, \
-            just_started_new_edge)
+            just_started_new_edge, \
+            is_starting_navigation_retry)
+    if is_starting_navigation_retry:
+        # This should never happen.
+        Utils.error()
+        return
     
     var is_grabbed_surface_expected: bool = \
             surface_state.grabbed_surface == self.start_surface or \

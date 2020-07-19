@@ -92,7 +92,18 @@ func update_navigation_state( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback, \
-        just_started_new_edge: bool) -> void:
+        just_started_new_edge: bool, \
+        is_starting_navigation_retry: bool) -> void:
+    # When retrying navigation, we need to ignore whatever surface state in the 
+    # current frame led to the previous navigation being interrupted.
+    if is_starting_navigation_retry:
+        navigation_state.just_left_air_unexpectedly = false
+        navigation_state.just_entered_air_unexpectedly = false
+        navigation_state.just_interrupted_by_user_action = false
+        navigation_state.just_interrupted_navigation = false
+        navigation_state.just_reached_end_of_edge = false
+        return
+    
     var still_grabbing_start_surface_at_start := \
             just_started_new_edge and \
             surface_state.grabbed_surface == self.start_surface

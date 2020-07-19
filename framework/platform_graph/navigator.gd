@@ -48,14 +48,14 @@ func navigate_to_position( \
                     player.movement_params, \
                     destination)
     
+    Profiler.start(ProfilerMetric.NAVIGATOR_FIND_PATH)
+    var path := find_path(destination)
+    var duration_find_path := Profiler.stop(ProfilerMetric.NAVIGATOR_FIND_PATH)
+    
     var previous_navigation_attempt_count := current_navigation_attempt_count
     reset()
     if is_retry:
         current_navigation_attempt_count = previous_navigation_attempt_count
-    
-    Profiler.start(ProfilerMetric.NAVIGATOR_FIND_PATH)
-    var path := find_path(destination)
-    var duration_find_path := Profiler.stop(ProfilerMetric.NAVIGATOR_FIND_PATH)
     
     if path == null:
         # Destination cannot be reached from origin.
@@ -106,7 +106,9 @@ func navigate_to_position( \
         ]
         print(format_string_template % format_string_arguments)
         
-        _start_edge(0)
+        _start_edge( \
+                0, \
+                is_retry)
         
         return true
 
@@ -204,7 +206,9 @@ func reset() -> void:
     current_navigation_attempt_count = 0
     navigation_state.reset()
 
-func _start_edge(index: int) -> void:
+func _start_edge( \
+        index: int, \
+        is_starting_navigation_retry := false) -> void:
     Profiler.start(ProfilerMetric.NAVIGATOR_START_EDGE)
     
     current_edge_index = index
@@ -239,10 +243,14 @@ func _start_edge(index: int) -> void:
     
     # Some instructions could be immediately skipped, depending on runtime
     # state, so this gives us a change to move straight to the next edge.
-    update(true)
+    update( \
+            true, \
+            is_starting_navigation_retry)
 
 # Updates navigation state in response to the current surface state.
-func update(just_started_new_edge = false) -> void:
+func update( \
+        just_started_new_edge := false, \
+        is_starting_navigation_retry := false) -> void:
     var edge_index := current_edge_index
     
     actions_might_be_dirty = just_started_new_edge
@@ -254,7 +262,8 @@ func update(just_started_new_edge = false) -> void:
             navigation_state, \
             surface_state, \
             current_playback, \
-            just_started_new_edge)
+            just_started_new_edge, \
+            is_starting_navigation_retry)
     
     if navigation_state.just_interrupted_navigation:
         var interruption_type_label: String
@@ -267,7 +276,6 @@ func update(just_started_new_edge = false) -> void:
         else: # navigation_state.just_interrupted_by_user_action
             interruption_type_label = \
                     "navigation_state.just_interrupted_by_user_action"
-        
         print("EDGE MVT INTERRUPTED:%8.3fs; %s" % \
                 [Time.elapsed_play_time_sec, interruption_type_label])
         
@@ -277,6 +285,8 @@ func update(just_started_new_edge = false) -> void:
                     true)
         else:
             reset()
+        return
+        
     elif navigation_state.just_reached_end_of_edge:
         print("REACHED END OF EDGE: %8.3fs; %s" % [ \
             Time.elapsed_play_time_sec, \
@@ -643,13 +653,15 @@ static func _interleave_intra_surface_edges( \
     while i < count:
         edge = path.edges[i]
         # Check whether this edge lands on a surface from the air.
-        if edge.surface_type == SurfaceType.AIR and edge.end_surface != null:
+        if edge.surface_type == SurfaceType.AIR and \
+                edge.end_surface != null:
             # Since the surface lands on the surface from the air, there could
             # be enough movement error that we should move along the surface to
             # the intended land position before executing the next originally
             # calculated edge (but don't worry about IntraSurfaceEdges, since
             # they'll end up moving to the correct spot anyway).
-            if i + 1 < count and !(path.edges[i + 1] is IntraSurfaceEdge):
+            if i + 1 < count and \
+                    !(path.edges[i + 1] is IntraSurfaceEdge):
                 path.edges.insert(i + 1, \
                         IntraSurfaceEdge.new( \
                                 edge.end_position_along_surface, \

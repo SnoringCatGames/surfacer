@@ -95,8 +95,15 @@ func collapse() -> void:
 
 func select() -> void:
     tree_item.select(0)
+    
     # Scroll to the correct spot.
+    var before_scroll := tree.get_scroll()
     tree.ensure_cursor_is_visible()
+    var after_scroll := tree.get_scroll()
+    # Godot's default logic doesn't always scroll quite enough to make the
+    # selected item visible, so we add a little extra scroll.
+    var scrolled_down := after_scroll > before_scroll
+    # TODO: Godot doesn't seem to expose any way to assign the scroll position.
 
 func find_and_expand_controller( \
         search_type: int, \

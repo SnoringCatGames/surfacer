@@ -18,16 +18,18 @@ var _next_active_key_presses: Dictionary
 func _init( \
         edge: Edge, \
         is_additive: bool) -> void:
-    assert(!edge.instructions.instructions.empty())
     self.edge = edge
     self.is_additive = is_additive
 
 func start(time_sec: float) -> void:
     start_time = time_sec
     next_index = 0
-    next_instruction = edge.instructions.instructions[next_index]
-    is_finished = false
-    is_on_last_instruction = false
+    next_instruction = \
+            edge.instructions.instructions[next_index] if \
+            edge.instructions.instructions.size() > next_index else \
+            null
+    is_on_last_instruction = next_instruction == null
+    is_finished = is_on_last_instruction
     active_key_presses = {}
     _next_active_key_presses = {}
 
