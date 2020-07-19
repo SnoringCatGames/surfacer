@@ -152,7 +152,6 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
             # TODO: This case shouldn't be needed; in theory, we should have
             #       been able to find a valid land trajectory above.
             
-            assert(current_edge.edge_type != EdgeType.INTRA_SURFACE_EDGE)
             var elapsed_playback_time := \
                     Time.elapsed_play_time_sec - \
                     current_playback.start_time

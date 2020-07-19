@@ -11,6 +11,15 @@ var current_destination: PositionAlongSurface
 func _init(navigator: Navigator) -> void:
     self.navigator = navigator
 
+func _physics_process(delta_sec: float) -> void:
+    if navigator.current_path != current_path:
+        current_path = navigator.current_path
+        current_destination = navigator.current_destination
+        update()
+    if navigator.previous_path != previous_path:
+        previous_path = navigator.previous_path
+        update()
+
 func _draw() -> void:
     if current_path != null:
         DrawUtils.draw_path( \
@@ -83,12 +92,3 @@ func _draw() -> void:
                 false, \
                 true, \
                 false)
-
-func check_for_update() -> void:
-    if navigator.current_path != current_path:
-        current_path = navigator.current_path
-        current_destination = navigator.current_destination
-        update()
-    if navigator.previous_path != previous_path:
-        previous_path = navigator.previous_path
-        update()

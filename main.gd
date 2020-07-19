@@ -8,24 +8,6 @@ class_name Main
 # 
 # --- Saturday ---
 # 
-# - Debug why phantom selection surface indicator is showing red with valid
-#   selections sometimes.
-# 
-# - Fix player to not sometimes face backwards against the direction of motion
-#   when jumping.
-# 
-# - Add some checkboxes for toggling annotations from within the inspector.
-#   - Grid
-#   - Previous movement
-#   - Previous navigation
-# 
-# - Render an arrow to indicate the direction/magnitude of start velocity.
-#   - And legend item.
-# - Finish adding/polishing inspector step calculation
-#   items/descriptions/annotations/legends.
-#   - Use origin/destination indicator shapes.
-#   - ...
-# 
 # - Add a loading screen message saying that platform graph parsing can take up
 #   to X seconds (check on phone; maybe 30seconds?).
 # 
@@ -115,6 +97,17 @@ class_name Main
 #   - Brighter color, closer to squirrel color.
 # 
 # ---
+# 
+# - Render an arrow to indicate the direction/magnitude of start velocity.
+#   - And legend item.
+# - Finish adding/polishing inspector step calculation
+#   items/descriptions/annotations/legends.
+#   - Use origin/destination indicator shapes.
+#   - ...
+# 
+# - Fix player to not sometimes face backwards against the direction of motion
+#   when jumping (I think the current "face_left"/"face_right" input
+#   instructions are only being used when landing on a wall).
 # 
 # - Put together some illustrative screenshots with special one-off annotations
 #   to explain the graph parsing steps in the README.
@@ -492,6 +485,8 @@ func _process(delta_sec: float) -> void:
             loading_screen.queue_free()
             loading_screen = null
         
+        # FIXME: Move this player creation (and readiness recording) back into
+        #        Level.
         # Add the player after removing the loading screen, since the camera
         # will track the player, which makes the loading screen look offset.
         var position := \
@@ -504,6 +499,7 @@ func _process(delta_sec: float) -> void:
                 position, \
                 false, \
                 false)
+        Global.canvas_layers.on_level_ready()
         
         if OS.get_name() == "HTML5":
             JavaScript.eval("window.onLevelReady()")

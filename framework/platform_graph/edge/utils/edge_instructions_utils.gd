@@ -55,9 +55,11 @@ static func convert_calculation_steps_to_movement_instructions( \
         if i + 1 < steps.size():
             # Ensure that the boosted end time doesn't exceed the following
             # start time.
-            time_instruction_end = min( \
-                    time_instruction_end, \
-                    steps[i + 1].time_instruction_start - 0.0001)
+            time_instruction_end = max( \
+                    min( \
+                            time_instruction_end, \
+                            steps[i + 1].time_instruction_start - 0.0001), \
+                    0.0)
         press = EdgeInstruction.new( \
                 input_key, \
                 step.time_instruction_start, \
@@ -68,6 +70,8 @@ static func convert_calculation_steps_to_movement_instructions( \
                 false)
         instructions[i * 2] = press
         instructions[i * 2 + 1] = release
+        # FIXME: REMOVE: This shouldn't be needed anymore.
+        assert(press.time >= 0.0 and release.time >= press.time)
     
     # Record the jump instruction.
     if includes_jump:
@@ -168,6 +172,8 @@ static func sub_instructions( \
                 base_instruction.time - start_time, \
                 base_instruction.is_pressed, \
                 base_instruction.position)
+        # FIXME: REMOVE: This shouldn't be needed anymore.
+        assert(base_instruction.time - start_time >= 0.0)
     
     Utils.concat( \
             instructions, \

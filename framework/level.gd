@@ -138,7 +138,18 @@ func _record_player_reference(is_human_player: bool) -> void:
             Global.current_player_for_clicks = computer_player
         
         # Set up some annotators to help with debugging.
-#        Global.canvas_layers.create_grid_indices_annotator(graph)
         Global.canvas_layers.create_player_annotator( \
                 player, \
                 is_human_player)
+
+func set_level_visibility(is_visible: bool) -> void:
+    # TODO: Also show/hide background. Parallax doesn't extend from CanvasItem
+    #       or have the `visible` field though.
+#    var backgrounds := Utils.get_children_by_type( \
+#            self, \
+#            ParallaxBackground)
+    var foregrounds := Utils.get_children_by_type( \
+            self, \
+            TileMap)
+    for node in foregrounds:
+        node.visible = is_visible

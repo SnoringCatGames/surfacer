@@ -57,6 +57,17 @@ func _ready() -> void:
                 $VBoxContainer/Sections/Legend)
         $VBoxContainer/Sections.remove_child( \
                 $VBoxContainer/Sections/InspectorContainer)
+    
+    $VBoxContainer/Sections/Annotators/RulerGridCheckBox.pressed = \
+            Global.canvas_layers.is_annotator_enabled(AnnotatorType.RULER)
+    $VBoxContainer/Sections/Annotators/LevelCheckBox.pressed = \
+            Global.canvas_layers.is_annotator_enabled(AnnotatorType.LEVEL)
+    $VBoxContainer/Sections/Annotators/PlayerPositionCheckBox.pressed = \
+            Global.canvas_layers.is_annotator_enabled( \
+                    AnnotatorType.PLAYER_POSITION)
+    $VBoxContainer/Sections/Annotators/PlayerTrajectoryCheckBox.pressed = \
+            Global.canvas_layers.is_annotator_enabled( \
+                    AnnotatorType.PLAYER_TRAJECTORY)
 
 func _initialize_dimensions() -> void:
     self.anchor_left = 1.0
@@ -124,3 +135,23 @@ func _set_position_y(value: float) -> void:
 
 func _get_position_y() -> float:
     return rect_position.y
+
+func _on_ruler_grid_check_box_toggled(pressed: bool) -> void:
+    Global.canvas_layers.set_annotator_enabled( \
+            AnnotatorType.RULER, \
+            pressed)
+
+func _on_level_check_box_toggled(pressed: bool) -> void:
+    Global.canvas_layers.set_annotator_enabled( \
+            AnnotatorType.LEVEL, \
+            pressed)
+
+func _on_player_position_check_box_toggled(pressed: bool) -> void:
+    Global.canvas_layers.set_annotator_enabled( \
+            AnnotatorType.PLAYER_POSITION, \
+            pressed)
+
+func _on_player_trajectory_check_box_toggled(pressed: bool) -> void:
+    Global.canvas_layers.set_annotator_enabled( \
+            AnnotatorType.PLAYER_TRAJECTORY, \
+            pressed)

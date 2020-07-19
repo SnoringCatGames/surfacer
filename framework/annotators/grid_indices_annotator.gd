@@ -5,10 +5,10 @@ const MAIN_FONT_XS: Font = preload("res://assets/fonts/main_font_xs.tres")
 
 var TILE_INDICES_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_FAINT)
 
-var graph: PlatformGraph
+var surface_parser: SurfaceParser
 
-func _init(graph: PlatformGraph) -> void:
-    self.graph = graph
+func _init(surface_parser: SurfaceParser) -> void:
+    self.surface_parser = surface_parser
 
 func _draw() -> void:
     _draw_tile_indices()
@@ -22,7 +22,7 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
     var tile_map_index: int
     var color := TILE_INDICES_COLOR
     
-    for tile_map in graph.surface_parser._tile_map_index_to_surface_maps:
+    for tile_map in surface_parser._tile_map_index_to_surface_maps:
         half_cell_size = tile_map.cell_size * 0.5
         
         if only_render_used_indices:
@@ -44,7 +44,9 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
             # Draw the grid index of the cell.
             cell_top_left_corner = tile_map.map_to_world(position)
             cell_center = cell_top_left_corner + half_cell_size
-            tile_map_index = Geometry.get_tile_map_index_from_grid_coord(position, tile_map)
+            tile_map_index = Geometry.get_tile_map_index_from_grid_coord( \
+                    position, \
+                    tile_map)
             draw_string( \
                     MAIN_FONT_XS, \
                     cell_center, \

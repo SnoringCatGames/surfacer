@@ -17,24 +17,31 @@ const WELCOME_PANEL_RESOURCE_PATH := \
         "res://framework/controls/panels/welcome_panel.tscn"
 
 const IN_DEBUG_MODE := true
-var USES_THREADS := false and OS.can_use_threads()
 const IN_TEST_MODE := false
+var USES_THREADS := false and OS.can_use_threads()
+
 const UTILITY_PANEL_STARTS_OPEN := false
 
-#const STARTING_LEVEL_RESOURCE_PATH := \
-#        "res://test/data/test_level_long_rise.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := \
-#        "res://test/data/test_level_long_fall.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := \
-#        "res://test/data/test_level_far_distance.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := \
-#        "res://levels/level_3.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := \
-#        "res://levels/level_4.tscn"
-#const STARTING_LEVEL_RESOURCE_PATH := \
-#        "res://levels/level_5.tscn"
+# Dictionary<AnnotatorType, bool>
+const ANNOTATORS_DEFAULT_ENABLEMENT := {
+    AnnotatorType.RULER: false,
+    AnnotatorType.GRID_INDICES: false,
+    AnnotatorType.LEVEL: true,
+    AnnotatorType.PLAYER_POSITION: false,
+    AnnotatorType.PLAYER_TRAJECTORY: true,
+    AnnotatorType.NAVIGATOR: false,
+    AnnotatorType.CLICK: true,
+    AnnotatorType.SURFACE_SELECTION: true,
+}
+
 const STARTING_LEVEL_RESOURCE_PATH := \
         "res://levels/level_6.tscn"
+#        "res://test/data/test_level_long_rise.tscn"
+#        "res://test/data/test_level_long_fall.tscn"
+#        "res://test/data/test_level_far_distance.tscn"
+#        "res://levels/level_3.tscn"
+#        "res://levels/level_4.tscn"
+#        "res://levels/level_5.tscn"
 
 const LOADING_SCREEN_PATH := "res://loading_screen.tscn"
 

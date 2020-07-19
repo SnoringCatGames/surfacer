@@ -72,8 +72,9 @@ margin_bottom = 63.0
 [node name="InspectorContainer" type="VBoxContainer" parent="VBoxContainer/Sections"]
 margin_top = 63.0
 margin_right = 240.0
-margin_bottom = 300.0
+margin_bottom = 252.0
 size_flags_vertical = 3
+size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
 
 [node name="InspectorHeader" type="Label" parent="VBoxContainer/Sections/InspectorContainer"]
@@ -88,8 +89,53 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 23.0
 margin_right = 240.0
-margin_bottom = 237.0
+margin_bottom = 189.0
 size_flags_vertical = 3
+
+[node name="Annotators" type="GridContainer" parent="VBoxContainer/Sections"]
+margin_top = 252.0
+margin_right = 240.0
+margin_bottom = 300.0
+size_flags_vertical = 3
+custom_constants/vseparation = 0
+custom_constants/hseparation = 0
+columns = 2
+
+[node name="RulerGridCheckBox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
+margin_right = 120.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Ruler grid"
+flat = true
+
+[node name="LevelCheckBox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
+margin_left = 120.0
+margin_right = 240.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Level"
+flat = true
+
+[node name="PlayerPositionCheckBox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
+margin_top = 24.0
+margin_right = 120.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Player pos."
+flat = true
+
+[node name="PlayerTrajectoryCheckBox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
+margin_left = 120.0
+margin_top = 24.0
+margin_right = 240.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Player traj."
+flat = true
 
 [node name="FooterPaddingTop" type="Control" parent="VBoxContainer"]
 margin_top = 300.0
@@ -193,6 +239,10 @@ __meta__ = {
 
 [node name="CreditsPanel" parent="." instance=ExtResource( 2 )]
 visible = false
+[connection signal="toggled" from="VBoxContainer/Sections/Annotators/RulerGridCheckBox" to="." method="_on_ruler_grid_check_box_toggled"]
+[connection signal="toggled" from="VBoxContainer/Sections/Annotators/LevelCheckBox" to="." method="_on_level_check_box_toggled"]
+[connection signal="toggled" from="VBoxContainer/Sections/Annotators/PlayerPositionCheckBox" to="." method="_on_player_position_check_box_toggled"]
+[connection signal="toggled" from="VBoxContainer/Sections/Annotators/PlayerTrajectoryCheckBox" to="." method="_on_player_trajectory_check_box_toggled"]
 [connection signal="pressed" from="VBoxContainer/Footer/HBoxContainer/CreditsButton" to="." method="_on_credits_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/Footer/HBoxContainer/Control2/ XButton" to="." method="_toggle_open"]
 [connection signal="pressed" from="VBoxContainer/GearContainer/GearButton" to="." method="_toggle_open"]

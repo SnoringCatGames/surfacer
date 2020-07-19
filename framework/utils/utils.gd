@@ -71,11 +71,17 @@ static func translate_polyline( \
 
 static func get_children_by_type( \
         parent: Node, \
-        type) -> Array:
+        type, \
+        recursive := false) -> Array:
     var result = []
     for child in parent.get_children():
         if child is type:
             result.push_back(child)
+        if recursive:
+            get_children_by_type( \
+                    child, \
+                    type, \
+                    recursive)
     return result
 
 static func get_which_wall_collided_for_body(body: KinematicBody2D) -> int:
@@ -124,7 +130,8 @@ static func add_scene( \
         is_visible := true) -> Node:
     var scene := load(resource_path)
     var node: Node = scene.instance()
-    node.visible = is_visible
+    if node is CanvasItem:
+        node.visible = is_visible
     if is_attached:
         parent.add_child(node)
     return node
