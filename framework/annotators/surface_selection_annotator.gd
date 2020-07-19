@@ -7,7 +7,7 @@ var INVALID_SELECTION_COLOR: Color = \
         Colors.opacify(Colors.RED, Colors.ALPHA_SOLID)
 const SELECT_DURATION_SEC := max( \
         ClickAnnotator.CLICK_INNER_DURATION_SEC, \
-        ClickAnnotator.CLICK_OUTER_DURATION_SEC)
+        ClickAnnotator.CLICK_OUTER_DURATION_SEC) * 1.5
 
 var player: Player
 var selection_position_to_animate: PositionAlongSurface = null
@@ -31,8 +31,9 @@ func _process(delta_sec: float) -> void:
         # navigate to the selected position.
         selection_color = \
                 VALID_SELECTION_COLOR if \
-                player.last_selection_position == \
-                        player.navigator.current_destination else \
+                Geometry.are_position_wrappers_equal_with_epsilon( \
+                        player.last_selection_position, \
+                        player.navigator.current_destination) else \
                 INVALID_SELECTION_COLOR
         selection_position_to_animate = player.last_selection_position
         animation_start_time = current_time

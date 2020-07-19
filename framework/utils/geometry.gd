@@ -428,6 +428,13 @@ static func do_polyline_and_polygon_intersect( \
             return true
     return false
 
+static func are_floats_equal_with_epsilon( \
+        a: float, \
+        b: float, \
+        epsilon := FLOAT_EPSILON) -> bool:
+    var diff = b - a
+    return -epsilon < diff and diff < epsilon
+
 static func are_points_equal_with_epsilon( \
         a: Vector2, \
         b: Vector2, \
@@ -437,12 +444,20 @@ static func are_points_equal_with_epsilon( \
     return -epsilon < x_diff and x_diff < epsilon and \
             -epsilon < y_diff and y_diff < epsilon
 
-static func are_floats_equal_with_epsilon( \
-        a: float, \
-        b: float, \
+static func are_position_wrappers_equal_with_epsilon( \
+        a: PositionAlongSurface, \
+        b: PositionAlongSurface, \
         epsilon := FLOAT_EPSILON) -> bool:
-    var diff = b - a
-    return -epsilon < diff and diff < epsilon
+    if a == null and b == null:
+        return true
+    elif a == null or b == null:
+        return false
+    elif a.surface != b.surface:
+        return false
+    var x_diff = b.target_point.x - a.target_point.x
+    var y_diff = b.target_point.y - a.target_point.y
+    return -epsilon < x_diff and x_diff < epsilon and \
+            -epsilon < y_diff and y_diff < epsilon
 
 static func is_float_gte_with_epsilon( \
         a: float, \
