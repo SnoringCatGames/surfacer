@@ -839,6 +839,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/controls/selection_description.gd"
 }, {
+"base": "PlayerAnimator",
+"class": "SquirrelAnimator",
+"language": "GDScript",
+"path": "res://players/squirrel_animator.gd"
+}, {
 "base": "MovementParams",
 "class": "SquirrelParams",
 "language": "GDScript",
@@ -1186,6 +1191,7 @@ _global_script_class_icons={
 "RightWallsItemController": "",
 "RulerAnnotator": "",
 "SelectionDescription": "",
+"SquirrelAnimator": "",
 "SquirrelParams": "",
 "SquirrelPlayer": "",
 "Stopwatch": "",

@@ -3,6 +3,7 @@ extends Node
 const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 const GROUP_NAME_SURFACES := "surfaces"
+const GROUP_NAME_SQUIRREL_DESTINATIONS := "squirrel_destinations"
 
 static func error( \
         message := "An error occurred", \

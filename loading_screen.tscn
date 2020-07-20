@@ -4,7 +4,6 @@
 [ext_resource path="res://assets/images/squirrel-running-spritesheet.png" type="Texture" id=2]
 [ext_resource path="res://assets/images/logo.png" type="Texture" id=3]
 
-
 [sub_resource type="Animation" id=1]
 resource_name = "run"
 length = 0.56
@@ -102,7 +101,8 @@ margin_top = 373.0
 margin_right = 812.0
 margin_bottom = 445.0
 size_flags_vertical = 3
-text = "Calculating platform graph..."
+text = "Calculating platform graph...
+(can take up to 30 seconds)"
 align = 1
 valign = 1
 __meta__ = {

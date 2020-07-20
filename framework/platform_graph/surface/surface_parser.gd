@@ -17,6 +17,7 @@ var non_wall_surfaces := []
 var all_walls := []
 
 var max_tile_map_cell_size: Vector2
+var combined_tile_map_rect: Rect2
 
 # This supports mapping a cell in a TileMap to its corresponding surface.
 # Dictionary<TileMap, Dictionary<String, Dictionary<int, Surface>>>
@@ -25,12 +26,16 @@ var _tile_map_index_to_surface_maps := {}
 func _init(tile_maps: Array) -> void:
     assert(!tile_maps.empty())
     
-    # Record the maximum cell size from all tile maps.
+    # Record the maximum cell size and combined region from all tile maps.
     max_tile_map_cell_size = Vector2.ZERO
+    combined_tile_map_rect = \
+            Geometry.get_tile_map_bounds_in_world_coordinates(tile_maps[0])
     for tile_map in tile_maps:
         if tile_map.cell_size.x + tile_map.cell_size.y > \
                 max_tile_map_cell_size.x + max_tile_map_cell_size.y:
             max_tile_map_cell_size = tile_map.cell_size
+        combined_tile_map_rect = combined_tile_map_rect.merge( \
+                Geometry.get_tile_map_bounds_in_world_coordinates(tile_map))
     
     for tile_map in tile_maps:
         _parse_tile_map(tile_map)
@@ -950,7 +955,7 @@ static func find_closest_position_on_a_surface( \
     position.match_surface_target_and_collider( \
             surface, \
             target, \
-            player.collider_half_width_height, \
+            player.movement_params.collider_half_width_height, \
             true, \
             true)
     return position

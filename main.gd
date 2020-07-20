@@ -6,12 +6,23 @@ class_name Main
 # 
 # ### TODO: Now (before end of July) ###
 # 
-# --- Saturday ---
+# ---  ---
 # 
-# - Add a loading screen message saying that platform graph parsing can take up
-#   to X seconds (check on phone; maybe 30seconds?).
+# >- Debug why _calculate_acceleration_start_and_end_time can sometimes
+#    generate negative values.
 # 
-# --- Sunday ---
+# - Have the squirrel also constantly choose new position to navigate to after
+#   a random delay.
+# 
+# - Handle cat-squirrel collisions:
+#   - Add a simple animation (copy the click animation at first).
+#   - Move the squirrel to a random new position in the level.
+#     - Maybe re-use the same logic to pick a destination spot that's far from
+#       the cat.
+# 
+# - Add a second squirrel to the level.
+# 
+# ---  ---
 # 
 # - Add a couple lists to the README, and add to these when I go through TODOs
 #   in the next step:
@@ -50,19 +61,6 @@ class_name Main
 #     - Do before end of year.
 #     - Maybe do eventually.
 #   - Also search through TODO/FIXME throughout codebase.
-# 
-# ---  ---
-# 
-# - Add logic for a separate computer player that just navigates to random
-#   positions.
-#   - Call this the squirrel player, but start out by re-using the cat
-#     animation.
-#   - Don't attempt any fancy prey navigation for now.
-#   - Instead, just start out by navigating to random positions (closest
-#     surface positions (not using distance cutoff threshold) to random points
-#     in level bounds.
-#   - Then follow up with being more intelligent about basing these positions
-#     off of points that are away from the player.
 # 
 # ---  ---
 # 
@@ -135,6 +133,8 @@ class_name Main
 #   - Previous navigation
 # 
 # - Try to debug run-time jitteriness.
+# 
+# - Decouple squirrel-specific logic from the rest of the framework.
 # 
 # ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  --
 # ### TODO: Eventually (probably before end of 2020). ###
@@ -497,8 +497,19 @@ func _process(delta_sec: float) -> void:
                 Global.player_params[Config.DEFAULT_PLAYER_NAME] \
                         .movement_params.player_resource_path, \
                 position, \
-                false, \
+                true, \
                 false)
+        var starting_squirrel_positions := [
+            Vector2(192.0, -192.0),
+#            Vector2(-192.0, 192.0),
+        ]
+        for squirrel_position in starting_squirrel_positions:
+            level.add_player( \
+                    Global.player_params["squirrel"].movement_params \
+                            .player_resource_path, \
+                    squirrel_position, \
+                    false, \
+                    false)
         Global.canvas_layers.on_level_ready()
         
         if OS.get_name() == "HTML5":

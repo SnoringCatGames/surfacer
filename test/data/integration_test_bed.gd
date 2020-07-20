@@ -162,7 +162,7 @@ func set_up_level(data: Dictionary) -> void:
     level = level_scene.instance()
     sandbox.add_child(level)
     
-    player = level.human_player
+    player = Global.current_player_for_clicks
     platform_graph = player.graph
     movement_params = player.movement_params
     surface_parser = level.surface_parser

@@ -70,8 +70,10 @@ static func convert_calculation_steps_to_movement_instructions( \
                 false)
         instructions[i * 2] = press
         instructions[i * 2 + 1] = release
-        # FIXME: REMOVE: This shouldn't be needed anymore.
-        assert(press.time >= 0.0 and release.time >= press.time)
+        
+        assert(press.time >= -0.0001 and release.time >= press.time)
+        press.time = max(press.time, 0.0)
+        release.time = max(release.time, 0.0)
     
     # Record the jump instruction.
     if includes_jump:

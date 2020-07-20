@@ -235,7 +235,10 @@ static func _calculate_acceleration_start_and_end_time( \
     if Geometry.are_floats_equal_with_epsilon(time_acceleration_end, duration):
         time_acceleration_end = duration
     
-    if duration_during_acceleration < 0 or time_acceleration_end > duration:
+    if duration_during_acceleration < 0 or \
+            time_acceleration_end > duration or \
+            time_acceleration_start < -0.0001 or \
+            time_acceleration_end < -0.0001:
         # Something went wrong.
         Utils.error()
         return []

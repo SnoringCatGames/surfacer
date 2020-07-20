@@ -41,6 +41,8 @@ enum {
     NAVIGATOR_OPTIMIZE_EDGES_FOR_APPROACH,
     NAVIGATOR_START_EDGE,
     
+    START_NEW_SQUIRREL_NAVIGATION,
+    
     UNKNOWN,
 }
 
@@ -84,6 +86,8 @@ const VALUES = [
     NAVIGATOR_FIND_PATH,
     NAVIGATOR_OPTIMIZE_EDGES_FOR_APPROACH,
     NAVIGATOR_START_EDGE,
+    
+    START_NEW_SQUIRREL_NAVIGATION,
 ]
 static func values() -> Array:
     return VALUES
@@ -120,7 +124,7 @@ static func get_type_string(result_type: int) -> String:
             return "CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION"
         ASSERT_SURFACES_FULLY_CALCULATED_DURATION:
             return "ASSERT_SURFACES_FULLY_CALCULATED_DURATION"
-            
+        
         FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE:
             return "FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE"
         EDGE_CALC_BROAD_PHASE_CHECK:
@@ -131,7 +135,7 @@ static func get_type_string(result_type: int) -> String:
             return "NARROW_PHASE_EDGE_CALCULATION"
         CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION:
             return "CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION"
-            
+        
         CALCULATE_JUMP_INTER_SURFACE_EDGE:
             return "CALCULATE_JUMP_INTER_SURFACE_EDGE"
         FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION:
@@ -166,7 +170,7 @@ static func get_type_string(result_type: int) -> String:
             return "CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITHOUT_BACKTRACKING_ON_HEIGHT"
         CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITH_BACKTRACKING_ON_HEIGHT:
             return "CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITH_BACKTRACKING_ON_HEIGHT"
-            
+        
         NAVIGATOR_NAVIGATE_TO_POSITION:
             return "NAVIGATOR_NAVIGATE_TO_POSITION"
         NAVIGATOR_FIND_PATH:
@@ -176,9 +180,12 @@ static func get_type_string(result_type: int) -> String:
         NAVIGATOR_START_EDGE:
             return "NAVIGATOR_START_EDGE"
         
+        START_NEW_SQUIRREL_NAVIGATION:
+            return "START_NEW_SQUIRREL_NAVIGATION"
+        
         UNKNOWN:
             return "UNKNOWN"
-            
+        
         _:
             Utils.error("Invalid ProfilerMetric: %s" % result_type)
             return "UNKNOWN"

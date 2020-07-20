@@ -33,7 +33,6 @@ var navigator: Navigator
 var velocity := Vector2.ZERO
 var level
 var collider: CollisionShape2D
-var collider_half_width_height := Vector2.INF
 var animator: PlayerAnimator
 # Array<PlayerActionSource>
 var action_sources := []
@@ -103,8 +102,6 @@ func _ready() -> void:
 #    shape_owner_clear_shapes(owner_id)
 #    shape_owner_add_shape(owner_id, movement_params.collider_shape)
     
-    collider_half_width_height = movement_params.collider_half_width_height
-
     var animators: Array = Utils.get_children_by_type( \
             self, \
             PlayerAnimator)
@@ -134,20 +131,20 @@ func _ready() -> void:
     
     is_ready = true
     _check_for_initialization_complete()
+    
+    surface_state.previous_center_position = self.position
+    surface_state.center_position = self.position
 
 func init_human_player_state() -> void:
     # Only a single, user-controlled player should have a camera.
     _set_camera()
+    _init_navigator()
     _init_user_controller_action_source()
     is_navigator_initialized = true
     _check_for_initialization_complete()
 
 func init_computer_player_state() -> void:
     _init_navigator()
-    # FIXME: E: Remove after debugging CP movement.
-    _init_user_controller_action_source()
-    # FIXME: E: Remove after debugging CP movement.
-    _set_camera()
     is_navigator_initialized = true
     _check_for_initialization_complete()
 
@@ -228,13 +225,7 @@ func _physics_process(delta_sec: float) -> void:
             ])
     
     if navigator:
-        navigator.update()
-        
-        # TODO: There's probably a more efficient way to do this.
-        if navigator.actions_might_be_dirty:
-            actions.copy(actions_from_previous_frame)
-            _update_actions(delta_sec)
-            _update_surface_state(true)
+        _update_navigator(delta_sec)
     
     actions.delta_sec = delta_sec
     actions.log_new_presses_and_releases(self, Time.elapsed_play_time_sec)
@@ -264,6 +255,15 @@ func _physics_process(delta_sec: float) -> void:
     surface_state.previous_center_position = surface_state.center_position
     surface_state.center_position = self.position
     surface_state.collision_count = get_slide_count()
+
+func _update_navigator(delta_sec: float) -> void:
+    navigator.update()
+    
+    # TODO: There's probably a more efficient way to do this.
+    if navigator.actions_might_be_dirty:
+        actions.copy(actions_from_previous_frame)
+        _update_actions(delta_sec)
+        _update_surface_state(true)
 
 func _handle_pointer_selections() -> void:
     if new_selection_target != Vector2.INF:

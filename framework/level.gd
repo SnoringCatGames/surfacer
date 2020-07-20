@@ -6,8 +6,6 @@ const TILE_MAP_COLLISION_LAYER := 7
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
 var surface_tile_maps: Array
-var computer_player: Player
-var human_player: Player
 # Array<Player>
 var all_players: Array
 var surface_parser: SurfaceParser
@@ -34,6 +32,8 @@ func _ready() -> void:
             Config.DEBUG_PARAMS)
     Global.platform_graph_inspector.set_graphs(platform_graphs.values())
     
+    _parse_squirrel_destinations()
+    
     Global.is_level_ready = true
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -51,6 +51,7 @@ func _create_platform_graphs( \
     var player_params: PlayerParams
     var fake_player: Player
     var collision_params: CollisionCalcParams
+    var graph: PlatformGraph
     for player_name in all_player_params:
         #######################################################################
         # Allow for debug mode to limit the scope of what's calculated.
@@ -66,9 +67,11 @@ func _create_platform_graphs( \
                 player_params.movement_params, \
                 surface_parser, \
                 fake_player)
-        graphs[player_name] = PlatformGraph.new( \
+        graph = PlatformGraph.new( \
                 player_params, \
                 collision_params)
+        fake_player.set_platform_graph(graph)
+        graphs[player_name] = graph
     return graphs
 
 func create_fake_player_for_graph_calculation( \
@@ -127,15 +130,14 @@ func _record_player_reference(is_human_player: bool) -> void:
     
     if player != null:
         var graph: PlatformGraph = platform_graphs[player.player_name]
-        player.set_platform_graph(graph)
+        if graph != null:
+            player.set_platform_graph(graph)
         
         if is_human_player:
-            human_player = player
             player.init_human_player_state()
+            Global.current_player_for_clicks = player
         else:
-            computer_player = player
             player.init_computer_player_state()
-            Global.current_player_for_clicks = computer_player
         
         # Set up some annotators to help with debugging.
         Global.canvas_layers.create_player_annotator( \
@@ -153,3 +155,37 @@ func set_level_visibility(is_visible: bool) -> void:
             TileMap)
     for node in foregrounds:
         node.visible = is_visible
+
+# Array<PositionAlongSurface>
+var squirrel_destinations := []
+
+# FIXME: Decouple this squirrel-specific logic from the rest of the framework.
+func _parse_squirrel_destinations() -> void:
+    squirrel_destinations.clear()
+    var configured_destinations := get_tree().get_nodes_in_group( \
+            Utils.GROUP_NAME_SQUIRREL_DESTINATIONS)
+    if !configured_destinations.empty():
+        assert(configured_destinations.size() == 1)
+        var squirrel_player: SquirrelPlayer = \
+                platform_graphs["squirrel"].collision_params.player
+        for configured_point in configured_destinations[0].get_children():
+            assert(configured_point is Position2D)
+            var destination := \
+                    SurfaceParser.find_closest_position_on_a_surface( \
+                            configured_point.position, \
+                            squirrel_player)
+            squirrel_destinations.push_back(destination)
+    else:
+        for i in range(6):
+            squirrel_destinations.push_back( \
+                    _create_random_squirrel_spawn_position())
+
+func _create_random_squirrel_spawn_position() -> PositionAlongSurface:
+    var bounds := surface_parser.combined_tile_map_rect.grow( \
+            -SquirrelPlayer.SQUIRREL_SPAWN_LEVEL_OUTER_MARGIN)
+    var x := randf() * bounds.size.x + bounds.position.x
+    var y := randf() * bounds.size.y + bounds.position.y
+    var point := Vector2(x, y)
+    return SurfaceParser.find_closest_position_on_a_surface( \
+            point, \
+            self)

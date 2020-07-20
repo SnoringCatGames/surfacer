@@ -69,9 +69,9 @@ func _clip_and_project_target_point_for_center_of_collider( \
             is_surface_horizontal else \
             collider_half_width_height.x
     var target_offset_from_surface := \
-    distance_to_center * surface.normal if \
-            offsets_target_by_half_width_height else \
-            Vector2.ZERO
+            distance_to_center * surface.normal if \
+                    offsets_target_by_half_width_height else \
+                    Vector2.ZERO
     
     if clips_to_surface_bounds:
         return point_on_surface + target_offset_from_surface

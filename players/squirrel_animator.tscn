@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://players/cat_animator.gd" type="Script" id=1]
+[ext_resource path="res://players/squirrel_animator.gd" type="Script" id=1]
 [ext_resource path="res://assets/images/cat-parts.png" type="Texture" id=2]
 
 [sub_resource type="Animation" id=1]
@@ -6510,7 +6510,7 @@ tracks/77/keys = {
 "values": [ 0.0, 0.0, 0.0, 0.0 ]
 }
 
-[node name="CatAnimator" type="Node2D"]
+[node name="SquirrelAnimator" type="Node2D"]
 z_index = 2
 script = ExtResource( 1 )
 __meta__ = {
