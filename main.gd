@@ -8,11 +8,6 @@ class_name Main
 # 
 # ---  ---
 # 
-# - Have the squirrel also constantly choose new position to navigate to after
-#   a random delay.
-# 
-# ---  ---
-# 
 # - Add a couple lists to the README, and add to these when I go through TODOs
 #   in the next step:
 #   - List notable limitations:

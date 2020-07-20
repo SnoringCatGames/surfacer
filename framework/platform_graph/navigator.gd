@@ -13,6 +13,7 @@ var air_to_surface_calculator: AirToSurfaceCalculator
 
 var is_currently_navigating := false
 var reached_destination := false
+var just_reached_destination := false
 var current_destination: PositionAlongSurface
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
@@ -82,6 +83,7 @@ func navigate_to_position( \
         current_path = path
         is_currently_navigating = true
         reached_destination = false
+        just_reached_destination = false
         current_navigation_attempt_count += 1
         
         var duration_navigate_to_position := \
@@ -186,6 +188,7 @@ func _set_reached_destination() -> void:
     
     reset()
     reached_destination = true
+    just_reached_destination = true
     
     print_msg("REACHED END OF PATH: %8.3fs", Time.elapsed_play_time_sec)
 
@@ -199,6 +202,7 @@ func reset() -> void:
     current_edge_index = -1
     is_currently_navigating = false
     reached_destination = false
+    just_reached_destination = false
     current_playback = null
     instructions_action_source.cancel_all_playback()
     actions_might_be_dirty = true
@@ -246,10 +250,11 @@ func _start_edge( \
             true, \
             is_starting_navigation_retry)
 
-# Updates navigation state in response to the current surface state.
 func update( \
         just_started_new_edge := false, \
         is_starting_navigation_retry := false) -> void:
+    just_reached_destination = false
+    
     var edge_index := current_edge_index
     
     actions_might_be_dirty = just_started_new_edge
