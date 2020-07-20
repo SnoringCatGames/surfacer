@@ -8,19 +8,8 @@ class_name Main
 # 
 # ---  ---
 # 
-# >- Debug why _calculate_acceleration_start_and_end_time can sometimes
-#    generate negative values.
-# 
 # - Have the squirrel also constantly choose new position to navigate to after
 #   a random delay.
-# 
-# - Handle cat-squirrel collisions:
-#   - Add a simple animation (copy the click animation at first).
-#   - Move the squirrel to a random new position in the level.
-#     - Maybe re-use the same logic to pick a destination spot that's far from
-#       the cat.
-# 
-# - Add a second squirrel to the level.
 # 
 # ---  ---
 # 
@@ -35,6 +24,11 @@ class_name Main
 #     - Describe the discrepancy between discrete and continuous trajectories,
 #       and the various options to reconcile the two.
 #       - Maybe have this as a separate section entirely.
+#     - The framework is very opinionated. It requires that you have structured
+#       your app using TileMaps, specific Node Groups, and by subclassing some
+#       framework classes in order to create Players.
+#     - The Surfacer framework isn't yet decoupled from the Squirrel Away demo
+#       app logic (this should hopefully be resolved by the end of 2020).
 #   - List notable future work:
 #     - Networking
 #     - Double jump
@@ -96,6 +90,8 @@ class_name Main
 # 
 # ---
 # 
+# - Support toggling printing from the utility panel.
+# 
 # - Render an arrow to indicate the direction/magnitude of start velocity.
 #   - And legend item.
 # - Finish adding/polishing inspector step calculation
@@ -132,9 +128,22 @@ class_name Main
 #   - Previous movement
 #   - Previous navigation
 # 
+# - Use Profiler for player _process_physics.
+#   - Log avg/min/max every five seconds or so.
+# 
 # - Try to debug run-time jitteriness.
 # 
+# - Handle cat-squirrel collisions:
+#   - Add a simple animation (copy the click animation at first).
+#   - Move the squirrel to a random new position in the level.
+#     - Maybe re-use the same logic to pick a destination spot that's far from
+#       the cat.
+# 
+# - Add a second squirrel to the level.
+# 
 # - Decouple squirrel-specific logic from the rest of the framework.
+# 
+# 
 # 
 # ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  --
 # ### TODO: Eventually (probably before end of 2020). ###
@@ -329,6 +338,8 @@ class_name Main
 #   - Then, maybe also calculate at which node the predator will be closest to
 #     our prey path, and time the preyst traversal to avoid being near there at
 #     that time?
+# 
+# 
 # 
 # ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  --
 # 

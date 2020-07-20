@@ -115,99 +115,74 @@ func log_new_presses_and_releases( \
         player, \
         time_sec: float) -> void:
     _log_new_press_or_release( \
-            player.player_name, \
+            player, \
             "jump", \
             just_pressed_jump, \
             just_released_jump, \
-            time_sec, \
-            player.surface_state.center_position, \
-            player.velocity)
+            time_sec)
     _log_new_press_or_release( \
-            player.player_name, \
+            player, \
             "up", \
             just_pressed_up, \
             just_released_up, \
-            time_sec, \
-            player.surface_state.center_position, \
-            player.velocity)
+            time_sec)
     _log_new_press_or_release( \
-            player.player_name, \
+            player, \
             "down", \
             just_pressed_down, \
             just_released_down, \
-            time_sec, \
-            player.surface_state.center_position, \
-            player.velocity)
+            time_sec)
     _log_new_press_or_release( \
-            player.player_name, \
+            player, \
             "left", \
             just_pressed_left, \
             just_released_left, \
-            time_sec, \
-            player.surface_state.center_position, \
-            player.velocity)
+            time_sec)
     _log_new_press_or_release( \
-            player.player_name, \
+            player, \
             "right", \
             just_pressed_right, \
             just_released_right, \
-            time_sec, \
-            player.surface_state.center_position, \
-            player.velocity)
+            time_sec)
     _log_new_press_or_release( \
-            player.player_name, \
+            player, \
             "grab", \
             just_pressed_grab_wall, \
             just_released_grab_wall, \
-            time_sec, \
-            player.surface_state.center_position, \
-            player.velocity)
+            time_sec)
     _log_new_press_or_release( \
-            player.player_name, \
+            player, \
             "faceL", \
             just_pressed_face_left, \
             just_released_face_left, \
-            time_sec, \
-            player.surface_state.center_position, \
-            player.velocity)
+            time_sec)
     _log_new_press_or_release( \
-            player.player_name, \
+            player, \
             "faceR", \
             just_pressed_face_right, \
             just_released_face_right, \
-            time_sec, \
-            player.surface_state.center_position, \
-            player.velocity)
+            time_sec)
     _log_new_press_or_release( \
-            player.player_name, \
+            player, \
             "dash", \
             start_dash, \
             false, \
-            time_sec, \
-            player.surface_state.center_position, \
-            player.velocity)
+            time_sec)
 
 static func _log_new_press_or_release( \
-        player_name: String, \
+        player, \
         action_name: String, \
         just_pressed: bool, \
         just_released: bool, \
-        time_sec: float, \
-        player_position: Vector2, \
-        player_velocity: Vector2) -> void:
+        time_sec: float) -> void:
+    var message_args := [ \
+        action_name, \
+        player.player_name, \
+        time_sec, \
+        player.surface_state.center_position, \
+        player.velocity, \
+    ]
     if just_pressed:
-        print("START %5s:%8s;%8.3fs;P%29s;V%29s" % [ \
-                action_name, \
-                player_name, \
-                time_sec, \
-                player_position, \
-                player_velocity \
-                ])
+        player.print_msg("START %5s:%8s;%8.3fs;P%29s;V%29s", message_args)
     if just_released:
-        print("STOP  %5s:%8s;%8.3fs;P%29s;V%29s" % [ \
-                action_name, \
-                player_name, \
-                time_sec, \
-                player_position, \
-                player_velocity \
-                ])
+        player.print_msg("STOP  %5s:%8s;%8.3fs;P%29s;V%29s", message_args)

@@ -18,24 +18,24 @@ func _process(delta_sec: float) -> void:
     if _current_camera != null:
         # Handle zooming.
         if InputWrapper.is_action_pressed("zoom_in"):
-            print("ZOOM_IN")
+            print_msg("ZOOM_IN")
             _current_camera.zoom -= _current_camera.zoom * ZOOM_STEP_RATIO
         elif InputWrapper.is_action_pressed("zoom_out"):
-            print("ZOOM_OUT")
+            print_msg("ZOOM_OUT")
             _current_camera.zoom += _current_camera.zoom * ZOOM_STEP_RATIO
     
         # Handle Panning.
         if InputWrapper.is_action_pressed("pan_up"):
-            print("PAN_UP")
+            print_msg("PAN_UP")
             _current_camera.offset.y -= PAN_STEP
         elif InputWrapper.is_action_pressed("pan_down"):
-            print("PAN_DOWN")
+            print_msg("PAN_DOWN")
             _current_camera.offset.y += PAN_STEP
         elif InputWrapper.is_action_pressed("pan_left"):
-            print("PAN_LEFT")
+            print_msg("PAN_LEFT")
             _current_camera.offset.x -= PAN_STEP
         elif InputWrapper.is_action_pressed("pan_right"):
-            print("PAN_RIGHT")
+            print_msg("PAN_RIGHT")
             _current_camera.offset.x += PAN_STEP
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -43,10 +43,10 @@ func _unhandled_input(event: InputEvent) -> void:
     # considered to have just happened.
     if event is InputEventMouseButton:
         if event.button_index == BUTTON_WHEEL_UP:
-            print("ZOOM_IN")
+            print_msg("ZOOM_IN")
             _current_camera.zoom -= _current_camera.zoom * ZOOM_STEP_RATIO
         if event.button_index == BUTTON_WHEEL_DOWN:
-            print("ZOOM_OUT")
+            print_msg("ZOOM_OUT")
             _current_camera.zoom += _current_camera.zoom * ZOOM_STEP_RATIO
 
 func set_current_camera(camera: Camera2D) -> void:
@@ -79,3 +79,16 @@ func _get_zoom() -> float:
         return 1.0
     assert(_current_camera.zoom.x == _current_camera.zoom.y)
     return _current_camera.zoom.x
+
+# Conditionally prints the given message, depending on the Player's
+# configuration.
+func print_msg( \
+        message_template: String, \
+        message_args = null) -> void:
+    if Global.current_player_for_clicks != null and \
+            Global.current_player_for_clicks.movement_params \
+                    .logs_player_actions:
+        if message_args != null:
+            print(message_template % message_args)
+        else:
+            print(message_template)

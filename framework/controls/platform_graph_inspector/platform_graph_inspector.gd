@@ -461,7 +461,7 @@ func _on_find_and_expand_complete( \
         player_name: String, \
         search_type: int, \
         metadata: Dictionary) -> void:
-    print("Inspector search complete: player_name=%s, search_type=%s" % [ \
+    print_msg("Inspector search complete: player_name=%s, search_type=%s", [ \
         player_name, \
         InspectorSearchType.get_type_string(search_type), \
     ])
@@ -550,3 +550,16 @@ static func _find_closest_jump_land_positions( \
             closest_distance_sum = current_distance_sum
     
     return closest_jump_land_positions
+
+# Conditionally prints the given message, depending on the Player's
+# configuration.
+func print_msg( \
+        message_template: String, \
+        message_args = null) -> void:
+    if Global.current_player_for_clicks != null and \
+            Global.current_player_for_clicks.movement_params \
+                    .logs_inspector_events:
+        if message_args != null:
+            print(message_template % message_args)
+        else:
+            print(message_template)

@@ -22,6 +22,7 @@ var last_selection_position: PositionAlongSurface
 var preselection_target := Vector2.INF
 var preselection_position: PositionAlongSurface
 
+var is_human_player := false
 var is_fake := false
 var is_initialized := false
 var is_navigator_initialized := false
@@ -136,6 +137,7 @@ func _ready() -> void:
     surface_state.center_position = self.position
 
 func init_human_player_state() -> void:
+    is_human_player = true
     # Only a single, user-controlled player should have a camera.
     _set_camera()
     _init_navigator()
@@ -144,6 +146,7 @@ func init_human_player_state() -> void:
     _check_for_initialization_complete()
 
 func init_computer_player_state() -> void:
+    is_human_player = false
     _init_navigator()
     is_navigator_initialized = true
     _check_for_initialization_complete()
@@ -193,7 +196,7 @@ func _physics_process(delta_sec: float) -> void:
     _handle_pointer_selections()
     
     if surface_state.just_left_air:
-        print("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s" % [ \
+        print_msg("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s", [ \
                 player_name, \
                 Time.elapsed_play_time_sec, \
                 surface_state.center_position, \
@@ -201,7 +204,7 @@ func _physics_process(delta_sec: float) -> void:
                 surface_state.grabbed_surface.to_string(), \
             ])
     elif surface_state.just_entered_air:
-        print("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s" % [ \
+        print_msg("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s", [ \
                 player_name, \
                 Time.elapsed_play_time_sec, \
                 surface_state.center_position, \
@@ -216,7 +219,7 @@ func _physics_process(delta_sec: float) -> void:
             side_str = "CEILING"
         else:
             side_str = "WALL"
-        print("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s" % [ \
+        print_msg("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s", [ \
                 player_name, \
                 Time.elapsed_play_time_sec, \
                 surface_state.center_position, \
@@ -267,7 +270,7 @@ func _update_navigator(delta_sec: float) -> void:
 
 func _handle_pointer_selections() -> void:
     if new_selection_target != Vector2.INF:
-        print("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s" % [ \
+        print_msg("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [ \
                 player_name, \
                 Time.elapsed_play_time_sec, \
                 str(new_selection_target), \
@@ -281,7 +284,7 @@ func _handle_pointer_selections() -> void:
             last_selection_position = new_selection_position
             navigator.navigate_to_position(last_selection_position)
         else:
-            print("TARGET IS TOO FAR FROM ANY SURFACE")
+            print_msg("TARGET IS TOO FAR FROM ANY SURFACE")
         
         new_selection_target = Vector2.INF
         new_selection_position = null
@@ -741,3 +744,15 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
 
 func _dash_cooldown_finished() -> void:
     _can_dash = true
+
+# Conditionally prints the given message, depending on the Player's
+# configuration.
+func print_msg( \
+        message_template: String, \
+        message_args = null) -> void:
+    if movement_params.logs_player_actions and \
+            (is_human_player or movement_params.logs_computer_player_events):
+        if message_args != null:
+            print(message_template % message_args)
+        else:
+            print(message_template)

@@ -66,20 +66,20 @@ func destroy() -> void:
 func on_item_selected() -> void:
     if Global.utility_panel.is_open and \
             !tree.get_is_find_and_expand_in_progress():
-        print("Inspector item selected: %s" % to_string())
+        print_msg("Inspector item selected: %s", to_string())
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
     if Global.utility_panel.is_open and \
             !tree.get_is_find_and_expand_in_progress():
-        print("Inspector item expanded: %s" % to_string())
+        print_msg("Inspector item expanded: %s", to_string())
 
 func on_item_collapsed() -> void:
     _destroy_children_if_needed()
     if Global.utility_panel.is_open and \
             !tree.get_is_find_and_expand_in_progress() and \
             get_has_children():
-        print("Inspector item collapsed: %s" % to_string())
+        print_msg("Inspector item collapsed: %s", to_string())
 
 func expand() -> void:
     var was_collapsed := tree_item.collapsed
@@ -198,3 +198,14 @@ func _destroy_children_inner() -> void:
 func get_annotation_elements() -> Array:
     Utils.error("Abstract InspectorItemController.get_annotation_elements is not implemented")
     return []
+
+# Conditionally prints the given message, depending on the Player's
+# configuration.
+func print_msg( \
+        message_template: String, \
+        message_args = null) -> void:
+    if graph.movement_params.logs_inspector_events:
+        if message_args != null:
+            print(message_template % message_args)
+        else:
+            print(message_template)

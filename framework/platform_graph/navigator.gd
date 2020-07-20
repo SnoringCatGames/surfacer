@@ -60,7 +60,7 @@ func navigate_to_position( \
     if path == null:
         # Destination cannot be reached from origin.
         Profiler.stop(ProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
-        print("CANNOT NAVIGATE TO TARGET: %s" % destination.to_string())
+        print_msg("CANNOT NAVIGATE TO TARGET: %s", destination.to_string())
         return false
         
     else:
@@ -91,9 +91,9 @@ func navigate_to_position( \
             "\n\tdestination: %s," + \
             "\n\tpath: %s," + \
             "\n\ttimings: {" + \
-            "\n\t\tduration_navigate_to_position: %s" + \
-            "\n\t\tduration_find_path: %s" + \
-            "\n\t\tduration_optimize_edges_for_approach: %s" + \
+            "\n\t\tduration_navigate_to_position: %sms" + \
+            "\n\t\tduration_find_path: %sms" + \
+            "\n\t\tduration_optimize_edges_for_approach: %sms" + \
             "\n\t}" + \
             "\n}"
         var format_string_arguments := [ \
@@ -104,7 +104,7 @@ func navigate_to_position( \
             duration_find_path, \
             duration_optimize_edges_for_approach, \
         ]
-        print(format_string_template % format_string_arguments)
+        print_msg(format_string_template, format_string_arguments)
         
         _start_edge( \
                 0, \
@@ -187,7 +187,7 @@ func _set_reached_destination() -> void:
     reset()
     reached_destination = true
     
-    print("REACHED END OF PATH: %8.3fs" % Time.elapsed_play_time_sec)
+    print_msg("REACHED END OF PATH: %8.3fs", Time.elapsed_play_time_sec)
 
 func reset() -> void:
     if current_path != null:
@@ -232,13 +232,13 @@ func _start_edge( \
             Profiler.stop(ProfilerMetric.NAVIGATOR_START_EDGE)
     
     var format_string_template := \
-            "STARTING EDGE NAV:   %8.3fs; %s; function duration=%s"
+            "STARTING EDGE NAV:   %8.3fs; %s; calc duration=%sms"
     var format_string_arguments := [ \
             Time.elapsed_play_time_sec, \
             current_edge.to_string_with_newlines(0), \
             str(duration_start_edge), \
         ]
-    print(format_string_template % format_string_arguments)
+    print_msg(format_string_template, format_string_arguments)
     
     # Some instructions could be immediately skipped, depending on runtime
     # state, so this gives us a change to move straight to the next edge.
@@ -275,7 +275,7 @@ func update( \
         else: # navigation_state.just_interrupted_by_user_action
             interruption_type_label = \
                     "navigation_state.just_interrupted_by_user_action"
-        print("EDGE MVT INTERRUPTED:%8.3fs; %s" % \
+        print_msg("EDGE MVT INTERRUPTED:%8.3fs; %s", \
                 [Time.elapsed_play_time_sec, interruption_type_label])
         
         if player.movement_params.retries_navigation_when_interrupted:
@@ -287,17 +287,15 @@ func update( \
         return
         
     elif navigation_state.just_reached_end_of_edge:
-        print("REACHED END OF EDGE: %8.3fs; %s" % [ \
+        print_msg("REACHED END OF EDGE: %8.3fs; %s", [ \
             Time.elapsed_play_time_sec, \
             current_edge.name, \
         ])
     else:
         # Continuing along an edge.
         if surface_state.is_grabbing_a_surface:
-            # print("Moving along a surface along edge")
             pass
         else:
-            # print("Moving through the air along an edge")
             # FIXME: Detect when position is too far from expected. Then maybe
             #        auto-correct it?
             pass
@@ -330,13 +328,26 @@ func update( \
                         Time.elapsed_play_time_sec, \
                         backtracking_edge.to_string_with_newlines(0), \
                     ]
-                print(format_string_template % format_string_arguments)
+                print_msg(format_string_template, format_string_arguments)
                 
                 current_path.edges.push_back(backtracking_edge)
                 
                 _start_edge(next_edge_index)
         else:
             _start_edge(next_edge_index)
+
+# Conditionally prints the given message, depending on the Player's
+# configuration.
+func print_msg( \
+        message_template: String, \
+        message_args = null) -> void:
+    if player.movement_params.logs_navigator_events and \
+            (player.is_human_player or \
+                    player.movement_params.logs_computer_player_events):
+        if message_args != null:
+            print(message_template % message_args)
+        else:
+            print(message_template)
 
 static func _possibly_backtrack_to_not_protrude_past_surface_end(
         movement_params: MovementParams, \

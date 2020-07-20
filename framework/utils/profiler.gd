@@ -7,7 +7,8 @@ const DEFAULT_THREAD_ID := ""
 # Dictionary<String, Stopwatch>
 var _stopwatches := {}
 
-# A mapping from thread ID, to ProfilerMetric, to a list of duration values.
+# A mapping from thread ID, to ProfilerMetric, to a list of duration values, in
+# milliseconds.
 # Dictionary<String, Dictionary<ProfilerMetric, Array<float>>>
 var _timings := {}
 

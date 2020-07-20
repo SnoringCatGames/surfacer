@@ -197,16 +197,18 @@ static func _calculate_acceleration_start_and_end_time( \
         velocity_start: float, \
         velocity_end: float, \
         acceleration: float) -> Array:
-    var velocity_change := velocity_start - velocity_end
+    var velocity_change := velocity_end - velocity_start
     
-    if velocity_change == 0:
+    if Geometry.are_floats_equal_with_epsilon( \
+            velocity_change, \
+            0.0, \
+            0.0001):
         # We don't need to accelerate at all.
         return [0.0, 0.0]
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
-    var duration_during_acceleration := \
-            (velocity_end - velocity_start) / acceleration
+    var duration_during_acceleration := velocity_change / acceleration
     
     ## Derivation:
     # - There are three parts:
@@ -226,7 +228,7 @@ static func _calculate_acceleration_start_and_end_time( \
             (displacement + velocity_end * \
             (duration_during_acceleration - duration) + \
             (velocity_start * velocity_start - velocity_end * velocity_end) / \
-            2 / acceleration) / velocity_change
+            2 / acceleration) / (velocity_start - velocity_end)
     
     var time_acceleration_start := duration_during_initial_coast
     var time_acceleration_end := \
