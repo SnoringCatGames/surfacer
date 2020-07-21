@@ -7,7 +7,7 @@ func _init() -> void:
 
 func _init_production_params() -> void:
     name = "cat"
-    player_resource_path = "res://players/cat_player.tscn"
+    player_resource_path = "res://players/cat/cat_player.tscn"
     
     can_grab_walls = true
     can_grab_ceilings = false
@@ -112,7 +112,7 @@ func _init_production_params() -> void:
 # These params are "floaty" and have been useful for debugging.
 func _init_debug_params() -> void:
     name = "cat"
-    player_resource_path = "res://players/cat_player.tscn"
+    player_resource_path = "res://players/cat/cat_player.tscn"
     
     can_grab_walls = true
     can_grab_ceilings = false

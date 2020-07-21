@@ -8,6 +8,22 @@ class_name Main
 # 
 # ---  ---
 # 
+# - Update level images:
+#   - Make background layers more faded
+#   - Make foreground images more wood-like
+# 
+# - Update background image parallax to also scroll in the Y direction.
+#   - Base background image off of the bottom of the level.
+#   - Make background image taller.
+#   - Make a simple sky image for the furthest back parallax layer, and let
+#     this repeat forever.
+#   - But don't let the other parallax layers repeat vertically at all.
+# 
+# - Update title image:
+#   - Brighter color, closer to squirrel color.
+# 
+# ---  ---
+# 
 # - Add a couple lists to the README, and add to these when I go through TODOs
 #   in the next step:
 #   - List notable limitations:
@@ -50,38 +66,6 @@ class_name Main
 #     - Do before end of year.
 #     - Maybe do eventually.
 #   - Also search through TODO/FIXME throughout codebase.
-# 
-# ---  ---
-# 
-# - Add squirrel assets and animation.
-#   - Start by copying-over the Piskel squirrel animation art.
-#   - Create squirrel parts art in Aseprite.
-#   - Create squirrel animation key frames in Godot.
-#     - Idle, standing
-#     - Idle, climbing
-#     - Crawl-walk-sniff
-#     - Bounding walk
-#     - Climbing up
-#     - Climbing down (just run climbing-up in reverse? Probably want to bound
-#       down, facing down, as opposed to cat. Will make transition weird, but
-#       whatever?)
-#     -
-# 
-# ---  ---
-# 
-# - Update level images:
-#   - Make background layers more faded
-#   - Make foreground images more wood-like
-# 
-# - Update background image parallax to also scroll in the Y direction.
-#   - Base background image off of the bottom of the level.
-#   - Make background image taller.
-#   - Make a simple sky image for the furthest back parallax layer, and let
-#     this repeat forever.
-#   - But don't let the other parallax layers repeat vertically at all.
-# 
-# - Update title image:
-#   - Brighter color, closer to squirrel color.
 # 
 # ---
 # 

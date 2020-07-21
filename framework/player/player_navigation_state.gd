@@ -1,6 +1,7 @@
 extends Reference
 class_name PlayerNavigationState
 
+var is_human_player := false
 var is_expecting_to_enter_air := false
 var just_interrupted_navigation := false
 var just_left_air_unexpectedly := false

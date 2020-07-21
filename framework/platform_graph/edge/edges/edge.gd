@@ -120,6 +120,7 @@ func update_navigation_state( \
             !navigation_state.is_expecting_to_enter_air
     
     navigation_state.just_interrupted_by_user_action = \
+            navigation_state.is_human_player and \
             UserActionSource.get_is_some_user_action_pressed()
     
     navigation_state.just_interrupted_navigation = \

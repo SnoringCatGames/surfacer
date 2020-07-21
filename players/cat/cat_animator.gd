@@ -7,6 +7,8 @@ const HEAD_BLINK_REGION := Rect2(47, 91, 22, 18)
 func _create_params() -> PlayerAnimatorParams:
     var animator_params := PlayerAnimatorParams.new()
     
+    animator_params.faces_right_by_default = false
+    
     animator_params.rest_name = "Rest"
     animator_params.rest_on_wall_name = "RestOnWall"
     animator_params.jump_rise_name = "JumpRise"
@@ -21,7 +23,8 @@ func _create_params() -> PlayerAnimatorParams:
     animator_params.jump_fall_playback_rate = 1.0
     animator_params.walk_playback_rate = 7.5
     animator_params.climb_up_playback_rate = 9.0
-    animator_params.climb_down_playback_rate = -animator_params.climb_up_playback_rate / 2.33
+    animator_params.climb_down_playback_rate = \
+            -animator_params.climb_up_playback_rate / 2.33
 
     return animator_params
 

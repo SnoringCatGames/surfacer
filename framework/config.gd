@@ -29,7 +29,7 @@ const ANNOTATORS_DEFAULT_ENABLEMENT := {
     AnnotatorType.LEVEL: true,
     AnnotatorType.PLAYER_POSITION: false,
     AnnotatorType.PLAYER_TRAJECTORY: true,
-    AnnotatorType.NAVIGATOR: false,
+    AnnotatorType.NAVIGATOR: true,
     AnnotatorType.CLICK: true,
     AnnotatorType.SURFACE_SELECTION: true,
 }
@@ -46,7 +46,6 @@ const STARTING_LEVEL_RESOURCE_PATH := \
 const LOADING_SCREEN_PATH := "res://loading_screen.tscn"
 
 const DEFAULT_PLAYER_NAME := "cat"
-#const DEFAULT_PLAYER_NAME := "test"
 
 var THREAD_COUNT := \
         4 if \

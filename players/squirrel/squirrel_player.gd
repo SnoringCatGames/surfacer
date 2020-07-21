@@ -25,6 +25,9 @@ func _ready() -> void:
             SQUIRREL_TRIGGER_NEW_NAVIGATION_INTERVAL_SEC)
 
 func _trigger_new_navigation_recurring() -> void:
+    if is_human_player:
+        return
+    
     if !navigator.is_currently_navigating:
         _start_new_navigation()
     Time.set_timeout( \
@@ -32,6 +35,9 @@ func _trigger_new_navigation_recurring() -> void:
             SQUIRREL_TRIGGER_NEW_NAVIGATION_INTERVAL_SEC)
 
 func _update_navigator(delta_sec: float) -> void:
+    if is_human_player:
+        return
+    
     var cat_position: Vector2 = Global.current_player_for_clicks.position
     var is_cat_close := \
             self.position.distance_squared_to(cat_position) <= \

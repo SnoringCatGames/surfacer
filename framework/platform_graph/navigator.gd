@@ -31,6 +31,7 @@ func _init( \
     self.player = player
     self.graph = graph
     self.surface_state = player.surface_state
+    self.navigation_state.is_human_player = player.is_human_player
     self.instructions_action_source = \
             InstructionsActionSource.new(player, true)
     self.air_to_surface_calculator = AirToSurfaceCalculator.new()

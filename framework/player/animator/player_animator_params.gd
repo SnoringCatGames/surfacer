@@ -1,6 +1,8 @@
 extends Reference
 class_name PlayerAnimatorParams
 
+var faces_right_by_default: bool
+
 var rest_name: String
 var rest_on_wall_name: String
 var jump_rise_name: String

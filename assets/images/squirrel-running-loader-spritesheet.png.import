@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/paw-cursor.png-8fd4a87aaa2b002e8ac1b498edba1818.stex"
+path="res://.import/squirrel-running-loader-spritesheet.png-f0baec6a5f85e878c3b83b79ca7556ce.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/paw-cursor.png"
-dest_files=[ "res://.import/paw-cursor.png-8fd4a87aaa2b002e8ac1b498edba1818.stex" ]
+source_file="res://assets/images/squirrel-running-loader-spritesheet.png"
+dest_files=[ "res://.import/squirrel-running-loader-spritesheet.png-f0baec6a5f85e878c3b83b79ca7556ce.stex" ]
 
 [params]
 

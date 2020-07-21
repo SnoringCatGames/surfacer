@@ -2,6 +2,7 @@ extends Node2D
 class_name NavigatorAnnotator
 
 const TRAJECTORY_STROKE_WIDTH := 4.0
+const INCLUDES_PREVIOUS_NAVIGATION := false
 
 var navigator: Navigator
 var previous_path: PlatformGraphPath
@@ -21,6 +22,9 @@ func _physics_process(delta_sec: float) -> void:
         update()
 
 func _draw() -> void:
+    if !navigator.player.is_human_player:
+        return
+    
     if current_path != null:
         DrawUtils.draw_path( \
                 self, \
@@ -82,7 +86,7 @@ func _draw() -> void:
                 AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH, \
                 4.0)
     
-    elif previous_path != null:
+    elif previous_path != null and INCLUDES_PREVIOUS_NAVIGATION:
         DrawUtils.draw_path( \
                 self, \
                 previous_path, \

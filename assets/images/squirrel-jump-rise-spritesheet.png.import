@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/paw-cursor.png-8fd4a87aaa2b002e8ac1b498edba1818.stex"
+path="res://.import/squirrel-jump-rise-spritesheet.png-b9ab6241c8954f2bae21975c677e64e6.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/paw-cursor.png"
-dest_files=[ "res://.import/paw-cursor.png-8fd4a87aaa2b002e8ac1b498edba1818.stex" ]
+source_file="res://assets/images/squirrel-jump-rise-spritesheet.png"
+dest_files=[ "res://.import/squirrel-jump-rise-spritesheet.png-b9ab6241c8954f2bae21975c677e64e6.stex" ]
 
 [params]
 

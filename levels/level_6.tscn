@@ -27,7 +27,7 @@ position = Vector2( 530.386, 130.813 )
 position = Vector2( -915.689, 285.41 )
 
 [node name="Position2D3" type="Position2D" parent="SquirrelDestinations"]
-position = Vector2( -23.7841, 544.657 )
+position = Vector2( 70.5026, 598.535 )
 
 [node name="Position2D4" type="Position2D" parent="SquirrelDestinations"]
 position = Vector2( 504.224, 846.715 )
