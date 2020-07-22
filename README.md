@@ -367,8 +367,14 @@ _**NOTE**: Sadly, the tests are not set up to automatically run on presubmit, so
 
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
 
-## Licenses
+## Licenses and acknowledgements
 
 The Surfacer framework is published under the [MIT license](LICENSE).
 
 The Surface framework depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./docs/third-party-licenses.txt).
+
+The squirrel art was created using [Piskel](https://www.piskelapp.com/user/5663844106502144).
+
+All other art was created using [Aseprite](https://www.aseprite.org/).
+
+The Surfacer framework and Squirrel Away game were created using [Godot](https://godotengine.org/).

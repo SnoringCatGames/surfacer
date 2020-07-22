@@ -2,17 +2,19 @@
 
 [ext_resource path="res://framework/controls/panels/utility_panel.gd" type="Script" id=1]
 [ext_resource path="res://framework/controls/panels/credits_panel.tscn" type="PackedScene" id=2]
-[ext_resource path="res://assets/images/gear-active.png" type="Texture" id=3]
-[ext_resource path="res://assets/images/gear-hover.png" type="Texture" id=4]
-[ext_resource path="res://assets/images/gear-normal.png" type="Texture" id=5]
-[ext_resource path="res://assets/images/x-normal.png" type="Texture" id=6]
-[ext_resource path="res://assets/images/x-hover.png" type="Texture" id=7]
-[ext_resource path="res://assets/images/x-active.png" type="Texture" id=8]
+[ext_resource path="res://assets/images/icons/gear-active.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/icons/gear-hover.png" type="Texture" id=4]
+[ext_resource path="res://assets/images/icons/gear-normal.png" type="Texture" id=5]
+[ext_resource path="res://assets/images/icons/x-normal.png" type="Texture" id=6]
+[ext_resource path="res://assets/images/icons/x-hover.png" type="Texture" id=7]
+[ext_resource path="res://assets/images/icons/x-active.png" type="Texture" id=8]
 [ext_resource path="res://assets/main_theme.tres" type="Theme" id=9]
 [ext_resource path="res://framework/controls/selection_description.tscn" type="PackedScene" id=10]
 [ext_resource path="res://framework/controls/legend/legend.tscn" type="PackedScene" id=11]
 [ext_resource path="res://assets/header_theme.tres" type="Theme" id=12]
 [ext_resource path="res://framework/controls/platform_graph_inspector/platform_graph_inspector.tscn" type="PackedScene" id=13]
+
+
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )

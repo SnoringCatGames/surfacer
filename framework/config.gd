@@ -7,6 +7,7 @@ const LEVEL_RESOURCE_PATHS := [
     "res://levels/level_4.tscn",
     "res://levels/level_5.tscn",
     "res://levels/level_6.tscn",
+    "res://levels/level_7.tscn",
 ]
 
 const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://test/test_runner.tscn"
@@ -42,6 +43,7 @@ const STARTING_LEVEL_RESOURCE_PATH := \
 #        "res://levels/level_3.tscn"
 #        "res://levels/level_4.tscn"
 #        "res://levels/level_5.tscn"
+#        "res://levels/level_7.tscn"
 
 const LOADING_SCREEN_PATH := "res://loading_screen.tscn"
 

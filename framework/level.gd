@@ -8,6 +8,8 @@ const TILE_MAP_COLLISION_LAYER := 7
 var surface_tile_maps: Array
 # Array<Player>
 var all_players: Array
+# Dictionary<String, Player>
+var fake_players := {}
 var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
@@ -85,6 +87,7 @@ func create_fake_player_for_graph_calculation( \
     fake_player.collision_mask = TILE_MAP_COLLISION_LAYER
     fake_player.set_safe_margin(player_params.movement_params \
             .collision_margin_for_edge_calculations)
+    fake_players[fake_player.player_name] = fake_player
     return fake_player
 
 func add_player( \
@@ -188,4 +191,4 @@ func _create_random_squirrel_spawn_position() -> PositionAlongSurface:
     var point := Vector2(x, y)
     return SurfaceParser.find_closest_position_on_a_surface( \
             point, \
-            self)
+            fake_players["squirrel"])

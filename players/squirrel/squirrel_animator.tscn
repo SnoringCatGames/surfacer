@@ -1,13 +1,14 @@
 [gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://players/squirrel/squirrel_animator.gd" type="Script" id=1]
-[ext_resource path="res://assets/images/squirrel-running-spritesheet.png" type="Texture" id=2]
-[ext_resource path="res://assets/images/squirrel-climbing-up-spritesheet.png" type="Texture" id=3]
-[ext_resource path="res://assets/images/squirrel-climbing-down-spritesheet.png" type="Texture" id=4]
-[ext_resource path="res://assets/images/squirrel-standing-spritesheet.png" type="Texture" id=5]
-[ext_resource path="res://assets/images/squirrel-jump-fall-spritesheet.png" type="Texture" id=6]
-[ext_resource path="res://assets/images/squirrel-jump-rise-spritesheet.png" type="Texture" id=7]
-[ext_resource path="res://assets/images/squirrel-resting-on-wall-spritesheet.png" type="Texture" id=8]
+[ext_resource path="res://assets/images/players/squirrel-running-spritesheet.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/players/squirrel-climbing-up-spritesheet.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/players/squirrel-climbing-down-spritesheet.png" type="Texture" id=4]
+[ext_resource path="res://assets/images/players/squirrel-standing-spritesheet.png" type="Texture" id=5]
+[ext_resource path="res://assets/images/players/squirrel-jump-fall-spritesheet.png" type="Texture" id=6]
+[ext_resource path="res://assets/images/players/squirrel-jump-rise-spritesheet.png" type="Texture" id=7]
+[ext_resource path="res://assets/images/players/squirrel-resting-on-wall-spritesheet.png" type="Texture" id=8]
+
 
 [sub_resource type="Animation" id=26]
 resource_name = "ClimbDown"

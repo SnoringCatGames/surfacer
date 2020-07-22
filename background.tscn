@@ -1,54 +1,51 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/images/leaves-background.png" type="Texture" id=2]
-[ext_resource path="res://assets/images/far-trees-background.png" type="Texture" id=3]
-[ext_resource path="res://assets/images/near-trees-background.png" type="Texture" id=4]
-[ext_resource path="res://assets/images/near-bushes-background.png" type="Texture" id=5]
+[ext_resource path="res://assets/images/background/leaves-background.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/background/far-trees.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/background/near-trees.png" type="Texture" id=4]
+[ext_resource path="res://assets/images/background/near-bushes.png" type="Texture" id=5]
+
 
 
 [node name="Background" type="ParallaxBackground"]
-scroll_base_scale = Vector2( 1, 0 )
 
 [node name="FarLeaves" type="ParallaxLayer" parent="."]
-motion_scale = Vector2( 0.1, 1 )
-motion_mirroring = Vector2( 1843, 0 )
+motion_scale = Vector2( 0.1, 0.1 )
+motion_mirroring = Vector2( 1843, 1843 )
 
 [node name="Sprite" type="Sprite" parent="FarLeaves"]
 scale = Vector2( 1.8, 1.8 )
 texture = ExtResource( 2 )
-centered = false
 region_enabled = true
-region_rect = Rect2( 0, 0, 1024, 512 )
+region_rect = Rect2( 0, 0, 1024, 1024 )
 
 [node name="FarTrees" type="ParallaxLayer" parent="."]
-motion_scale = Vector2( 0.3, 1 )
-motion_mirroring = Vector2( 1843, 0 )
+motion_scale = Vector2( 0.3, 0.3 )
+motion_mirroring = Vector2( 1843, 1843 )
 
 [node name="Sprite" type="Sprite" parent="FarTrees"]
 scale = Vector2( 1.8, 1.8 )
 texture = ExtResource( 3 )
-centered = false
 region_enabled = true
-region_rect = Rect2( 0, 0, 1024, 512 )
+region_rect = Rect2( 0, 0, 1024, 1024 )
 
 [node name="NearTrees" type="ParallaxLayer" parent="."]
-motion_scale = Vector2( 0.6, 1 )
-motion_mirroring = Vector2( 1843, 0 )
+motion_scale = Vector2( 0.6, 0.6 )
+motion_mirroring = Vector2( 1843, 1843 )
 
 [node name="Sprite" type="Sprite" parent="NearTrees"]
 scale = Vector2( 1.8, 1.8 )
 texture = ExtResource( 4 )
-centered = false
 region_enabled = true
-region_rect = Rect2( 0, 0, 1024, 512 )
+region_rect = Rect2( 0, 0, 1024, 1024 )
 
 [node name="NearBushes" type="ParallaxLayer" parent="."]
-motion_scale = Vector2( 0.8, 1 )
+visible = false
+motion_scale = Vector2( 0.8, 0 )
 motion_mirroring = Vector2( 1843, 0 )
 
 [node name="Sprite" type="Sprite" parent="NearBushes"]
 scale = Vector2( 1.8, 1.8 )
 texture = ExtResource( 5 )
-centered = false
 region_enabled = true
 region_rect = Rect2( 0, 0, 1024, 512 )

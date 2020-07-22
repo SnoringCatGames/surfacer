@@ -6,24 +6,6 @@ class_name Main
 # 
 # ### TODO: Now (before end of July) ###
 # 
-# ---  ---
-# 
-# - Update level images:
-#   - Make background layers more faded
-#   - Make foreground images more wood-like
-# 
-# - Update background image parallax to also scroll in the Y direction.
-#   - Base background image off of the bottom of the level.
-#   - Make background image taller.
-#   - Make a simple sky image for the furthest back parallax layer, and let
-#     this repeat forever.
-#   - But don't let the other parallax layers repeat vertically at all.
-# 
-# - Update title image:
-#   - Brighter color, closer to squirrel color.
-# 
-# ---  ---
-# 
 # - Add a couple lists to the README, and add to these when I go through TODOs
 #   in the next step:
 #   - List notable limitations:
@@ -81,6 +63,9 @@ class_name Main
 # - Fix player to not sometimes face backwards against the direction of motion
 #   when jumping (I think the current "face_left"/"face_right" input
 #   instructions are only being used when landing on a wall).
+#   - Maybe just make the player always face the direction of horizontal motion
+#     when in the air?
+#     - Maybe add a movement_params flag to enable that.
 # 
 # - Put together some illustrative screenshots with special one-off annotations
 #   to explain the graph parsing steps in the README.
