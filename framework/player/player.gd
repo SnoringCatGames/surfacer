@@ -750,8 +750,10 @@ func _dash_cooldown_finished() -> void:
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if movement_params.logs_player_actions and \
-            (is_human_player or movement_params.logs_computer_player_events):
+    if Config.is_logging_events and \
+            movement_params.logs_player_actions and \
+            (is_human_player or \
+                    movement_params.logs_computer_player_events):
         if message_args != null:
             print(message_template % message_args)
         else:

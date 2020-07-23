@@ -204,7 +204,8 @@ func get_annotation_elements() -> Array:
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if graph.movement_params.logs_inspector_events:
+    if Config.is_logging_events and \
+            graph.movement_params.logs_inspector_events:
         if message_args != null:
             print(message_template % message_args)
         else:

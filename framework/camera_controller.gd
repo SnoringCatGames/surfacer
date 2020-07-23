@@ -85,7 +85,8 @@ func _get_zoom() -> float:
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if Global.current_player_for_clicks != null and \
+    if Config.is_logging_events and \
+            Global.current_player_for_clicks != null and \
             Global.current_player_for_clicks.movement_params \
                     .logs_player_actions:
         if message_args != null:

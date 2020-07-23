@@ -51,8 +51,6 @@ class_name Main
 # 
 # ---
 # 
-# - Support toggling printing from the utility panel.
-# 
 # - Render an arrow to indicate the direction/magnitude of start velocity.
 #   - And legend item.
 # - Finish adding/polishing inspector step calculation

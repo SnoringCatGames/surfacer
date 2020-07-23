@@ -58,16 +58,18 @@ func _ready() -> void:
         $VBoxContainer/Sections.remove_child( \
                 $VBoxContainer/Sections/InspectorContainer)
     
-    $VBoxContainer/Sections/Annotators/RulerGridCheckBox.pressed = \
+    $VBoxContainer/Sections/Annotators/RulerGridCheckbox.pressed = \
             Global.canvas_layers.is_annotator_enabled(AnnotatorType.RULER)
-    $VBoxContainer/Sections/Annotators/LevelCheckBox.pressed = \
+    $VBoxContainer/Sections/Annotators/LevelCheckbox.pressed = \
             Global.canvas_layers.is_annotator_enabled(AnnotatorType.LEVEL)
-    $VBoxContainer/Sections/Annotators/PlayerPositionCheckBox.pressed = \
+    $VBoxContainer/Sections/Annotators/PlayerPositionCheckbox.pressed = \
             Global.canvas_layers.is_annotator_enabled( \
                     AnnotatorType.PLAYER_POSITION)
-    $VBoxContainer/Sections/Annotators/PlayerTrajectoryCheckBox.pressed = \
+    $VBoxContainer/Sections/Annotators/PlayerTrajectoryCheckbox.pressed = \
             Global.canvas_layers.is_annotator_enabled( \
                     AnnotatorType.PLAYER_TRAJECTORY)
+    $VBoxContainer/Sections/Annotators/LogEventsCheckbox.pressed = \
+            Config.is_logging_events
 
 func _initialize_dimensions() -> void:
     self.anchor_left = 1.0
@@ -136,22 +138,25 @@ func _set_position_y(value: float) -> void:
 func _get_position_y() -> float:
     return rect_position.y
 
-func _on_ruler_grid_check_box_toggled(pressed: bool) -> void:
+func _on_ruler_grid_checkbox_toggled(pressed: bool) -> void:
     Global.canvas_layers.set_annotator_enabled( \
             AnnotatorType.RULER, \
             pressed)
 
-func _on_level_check_box_toggled(pressed: bool) -> void:
+func _on_level_checkbox_toggled(pressed: bool) -> void:
     Global.canvas_layers.set_annotator_enabled( \
             AnnotatorType.LEVEL, \
             pressed)
 
-func _on_player_position_check_box_toggled(pressed: bool) -> void:
+func _on_player_position_checkbox_toggled(pressed: bool) -> void:
     Global.canvas_layers.set_annotator_enabled( \
             AnnotatorType.PLAYER_POSITION, \
             pressed)
 
-func _on_player_trajectory_check_box_toggled(pressed: bool) -> void:
+func _on_player_trajectory_checkbox_toggled(pressed: bool) -> void:
     Global.canvas_layers.set_annotator_enabled( \
             AnnotatorType.PLAYER_TRAJECTORY, \
             pressed)
+
+func _on_log_events_checkbox_toggled(pressed: bool) -> void:
+    Config.is_logging_events = pressed

@@ -347,7 +347,8 @@ func update( \
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if player.movement_params.logs_navigator_events and \
+    if Config.is_logging_events and \
+            player.movement_params.logs_navigator_events and \
             (player.is_human_player or \
                     player.movement_params.logs_computer_player_events):
         if message_args != null:

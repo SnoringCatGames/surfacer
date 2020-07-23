@@ -54,6 +54,8 @@ var THREAD_COUNT := \
         USES_THREADS else \
         1
 
+var is_logging_events := false
+
 const DEBUG_PARAMS := \
         {} if \
         !IN_DEBUG_MODE else \
