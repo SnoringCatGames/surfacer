@@ -6,13 +6,13 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 
 --------
 
-**_NOTE_: This framework is still in development; there are still many rough edges and missing pieces.**
+**_NOTE_: This framework is still in development.**
 
 _TODO: Once v1.0 of this framework is done, split this apart into two repos: one for the underlying framework, and one for the demo game ("Squirrel Away")._
 
-_TODO: Link to demo app._
-
 --------
+
+![Surfaces and edges in a plattform graph](./docs/surfaces-and-edges.png)
 
 **tl;dr**: Surfacer works by **pre-parsing** a level into a **"platform graph"**. The **nodes** are represented by points along the different surfaces in the level (floors, walls, and ceilings). The **edges** are represented by possible movement trajectories between points along surfaces. There are different types of edges for different types of movement (e.g., jumping from a floor to a floor, falling from a wall, walking along a floor). At run time, **[A* search](https://en.wikipedia.org/wiki/A*_search_algorithm)** is used to calculate a path to a given destination.
 
@@ -58,9 +58,9 @@ The edges of this graph correspond to a type of movement that the player could p
 -   There could be multiple edges between a single pair of nodes, since there could be multiple types of movement that could get the player from the one to the other.
 -   These edges are specific to a given player type. If we need to consider a different player that has different movement parameters, then we need to calculate a separate platform graph for that player.
 
-TODO: diagrams:
-- show a screenshot with just surfaces highlighted and cell indices rendered
-- show a screenshot with just edge trajectories rendered
+![Surfaces in a plattform graph](./docs/surfaces.png)
+
+![Edges in a plattform graph](./docs/edges.png)
 
 ### Nodes: Parsing a Godot `TileMap` into surfaces
 
@@ -85,18 +85,12 @@ TODO: diagrams:
     -   We then also save a mapping from a `TileMap` cell index to each of the different surfaces we've calculated as existing in that cell.
 -   Repeat the above process for the right-side, left-side, and bottom-side surfaces.
 
-TODO: diagrams:
-- showing surfaces with cell indices
-
 #### Remove internal surfaces
 
 **NOTE**: This will only detect internal surface segments that are equivalent with another internal segment. But for grid-based tiling systems, this can often be enough.
 
 -   Check for pairs of floor+ceiling segments or left-wall+right-wall segments, such that both segments share the same vertices.
 -   Remove both segments in these pairs.
-
-TODO: diagrams:
-- eliminating internal surfaces
 
 #### Merge any connecting surfaces
 
@@ -113,16 +107,10 @@ TODO: diagrams:
     -   Remove B from the surface collection.
 -   Repeat the iteration until no merges were performed.
 
-TODO: diagrams:
-- merging connected surfaces
-
 #### Record adjacent neighbor surfaces
 
 -   Every surface should have both adjacent clockwise and counter-clockwise neighbor surfaces.
 -   Use a similar process as above for finding surfaces with matching end positions.
-
-TODO: diagrams:
-- detecting neighbor surfaces
 
 ### Edges: Calculating jump movement trajectories
 
@@ -150,8 +138,6 @@ TODO: diagrams:
     -   We calculate the necessary jump duration--and from that the vertical component of motion--up-front, and use this to determine times for each potential step and waypoint of the motion. Knowing these times up-front makes the horizontal min/max calculations easier.
 -   We have a broad-phase check to quickly eliminate possible surfaces that are obviously out of reach.
     -   This primarily looks at the horizontal and vertical distance from the origin to the destination.
-
-TODO: Include a screenshot of a collision that clips the corner of the wall when trying to jump to the above floor--a very common scenario.
 
 #### Calculating "good" jump and land positions
 
@@ -323,6 +309,8 @@ Once the platform graph has been parsed, finding and moving along a path through
     -   We can use distance or duration as the edge weights.
 -   Execute playback of the instruction set for each edge of the path, in sequence.
 
+![Navigator finding a path to a destination](./docs/navigator-preselection.png)
+
 #### Dynamic edge optimization according to runtime approach
 
 At runtime, after finding a path through build-time-calculated edges, we try to optimize the jump-off points of the edges to better account for the direction that the player will be approaching the edge from. This produces more efficient and natural movement. The build-time-calculated edge state would only use surface end-points or closest points. We also take this opportunity to update start velocities to exactly match what is allowed from the ramp-up distance along the edge, rather than either the fixed zero or max-speed value used for the build-time-calculated edge state.
@@ -341,7 +329,7 @@ Theoretically, this discrepancy shouldn't exist, and we should be able to elimin
 
 As you might imagine, the calculations for these edges can get quite complicated. To make these calculations easier to understand and debug, we created a powerful platform graph inspector. This can be accessed from the utility menu (the gear icon in the top-right corner of the screen).
 
-FIXME: Inspector screenshot.
+![Platform graph inspector](./docs/platform-graph.png)
 
 The inspector is a tree-view widget with the following structure:
 
@@ -402,25 +390,11 @@ The inspector is a tree-view widget with the following structure:
 
 Each entry in this inspector tree is encoded with annotation information which will render debugging info over the level for the corresponding entity. Additionally, each entry contains a detailed description. These are both shown when selecting the entry.
 
+![Edge-step calculation debugging annotation](./docs/edge-step-calculation-debugging.png)
+
 ## Annotators
 
-We include a large collection of annotators that are useful for visually debugging calculation of the platform graph. Some of the more note-worthy annotators include:
--   `CollisionCalculationAnnotator`:
--   `EdgeCalculationAnnotator`:
--   `EdgeCalculationTreeViewAnnotator`:
--   `InterSurfaceEdgesAnnotator`:
-    -   Each trajectory is shown with a smaller circle on one end and a larger circle on the other:
-        -   The smaller circle indicates the origin.
-        -   The larger circle indicates the destination.
-    -   When viewing edge calculation trajectories, each edge is shown with two trajectories:
-        -   The darker trajectory represents positions as calculated from _continuous equations of motion_.
-        -   The lighter trajectory represents positions as calculated from _simulating movement over distrete time steps_.
--   `NavigatorAnnotator`:
--   `PlayerAnnotator`:
--   `PlayerRecentMovementAnnotator`:
--   `RulerAnnotator`:
--   `SurfacesAnnotator`:
-TODO: Include a brief description of each annotator.
+We include a large collection of annotators that are useful for visually debugging calculation of the platform graph. Some of these are rendered by selecting entries in the platform graph inspector and some of them can be toggled through checkboxes in the utility panel.
 
 ## Tests
 
