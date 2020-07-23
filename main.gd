@@ -20,17 +20,6 @@ class_name Main
 #     when in the air?
 #     - Maybe add a movement_params flag to enable that.
 # 
-# - Put together some illustrative screenshots with special one-off annotations
-#   to explain the graph parsing steps in the README.
-#   - Use Config.DEBUG_PARAMS.extra_annotations
-#   - Screenshots:
-#     - A couple surfaces
-#     - Show different tiles, to illustrate how surfaces get merged.
-#     - All surfaces (different colors)
-#     - A couple edges
-#     - All edges
-#     -
-# 
 # - Add percentage-based progress bar to loading screen for graph parsing.
 #   - Should I somehow break apart the platform graph parsing to happen over
 #     different event loops? Use call_deferred?
@@ -38,6 +27,8 @@ class_name Main
 # - Update initial load to happen on a separate thread, so that main and
 #   loading_screen are not locked.
 #   - Update level loading to use ResourceLoader interactive mode?
+# 
+# - Have the squirrel face the cat when resting.
 # 
 # - Fix threads to work with the new collision test logic.
 # 
@@ -62,6 +53,14 @@ class_name Main
 # 
 # ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  --
 # ### TODO: Eventually (probably before end of 2020). ###
+# 
+# - HIGH-LEVEL FEATURE GOALS:
+#   - Improve run-time performance by bypassing Godot's physics and collisions.
+#   - Add networking.
+#   - Procedural level generation.
+#   - More intelligent squirral avoidance.
+#   - Better game-play goal, with an event that happens when you catch the
+#     squirrel.
 # 
 # - Think up ways to make some debug annotations more
 #   dynamic/intelligent/useful...
