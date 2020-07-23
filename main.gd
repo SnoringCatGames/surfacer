@@ -22,23 +22,6 @@ class_name Main
 #       framework classes in order to create Players.
 #     - The Surfacer framework isn't yet decoupled from the Squirrel Away demo
 #       app logic (this should hopefully be resolved by the end of 2020).
-#   - List notable future work:
-#     - Networking
-#     - Double jump
-#     - Dash
-#     - Implement fall-through/walk-through movement-type utils.
-#     - Supporting surfaces of one point
-#     - Handle surfaces that face each other and are too close for player to
-#       fit between
-#     - Add an R-Tree for faster surfaces lookup
-#     - Support an alternate, template-based edge calxulation pattern
-# 
-# - In the README, list the types of MovementParams.
-#   - Or rather, just link to the file.
-#   - Similarly, link to this main.gd file to referenc the master TODO list for
-#     future work.
-# 
-# - Describe inspector in README.
 # 
 # - Go through todo list.
 #   - Remove obsolete items.

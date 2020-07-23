@@ -4,6 +4,8 @@ _A procedural pathfinding 2D-platformer framework for [Godot](https://godotengin
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
 
+_Check out the example app for this framework: **[Squirrel Away](https://levi.dev/squirrel)**._
+
 --------
 
 **_NOTE_: This framework is still in development.**
@@ -395,6 +397,25 @@ Each entry in this inspector tree is encoded with annotation information which w
 ## Annotators
 
 We include a large collection of annotators that are useful for visually debugging calculation of the platform graph. Some of these are rendered by selecting entries in the platform graph inspector and some of them can be toggled through checkboxes in the utility panel.
+
+## Movement parameters
+
+We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these params, see [movement_params.gd](./framework/platform_graph/edge/models/movement_params.gd).
+
+## Future work
+
+For a list of planned future work items / TODOs, see [main.gd](./main.gd).
+
+Some high-level planned future features include:
+
+-   Bypass the Godot collision system at runtime, and use only the pre-calculated expected edge trajectories from the platform graph.
+-   Support for double jumps in the platform graph.
+-   Support for dashes in the platform graph.
+-   Support for fall-through floors and walls in the platform graph.
+-   Support for surfaces of one point.
+-   Support for surfaces that face each other and are too close for player to fit between.
+-   Use an R-Tree for faster surface lookup.
+-   Support an alternate, template-based edge calculation pattern, which should be able to offer faster build times and still have quick run times.
 
 ## Tests
 
