@@ -103,13 +103,12 @@ var recurses_when_colliding_during_horizontal_step_calculations := true
 # in order to move around intermediate surfaces, which will produce many false
 # negatives.
 var backtracks_to_consider_higher_jumps_during_horizontal_step_calculations := true
-# FIXME: Check and adjust these.
 # The amount of extra margin to include around the player collision boundary
 # when performing collision detection for a given edge calculation.
-var collision_margin_for_edge_calculations := 4.0#2.0
+var collision_margin_for_edge_calculations := 1.0
 # The amount of extra margin to include for waypoint offsets, so that the
 # player doesn't collide unexpectedly with the surface.
-var collision_margin_for_waypoint_positions := 5.0#2.5
+var collision_margin_for_waypoint_positions := 1.25
 # Some jump/land posititions are less likely to produce valid movement, simply
 # because of how the surfaces are arranged. Usually there is another more
 # likely pair for the given surfaces. However, sometimes such pairs can be
@@ -127,6 +126,7 @@ var prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offset
 # expensive, but could produce slightly more accurate results.
 var reuses_previous_waypoints_when_backtracking_on_jump_height := true
 var asserts_no_preexisting_collisions_during_edge_calculations := true
+var calculates_discrete_frame_state := true
 var logs_navigator_events := true
 var logs_player_actions := true
 var logs_inspector_events := true

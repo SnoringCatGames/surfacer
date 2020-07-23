@@ -73,9 +73,8 @@ static func check_instructions_discrete_frame_state( \
         
         if displacement != Vector2.ZERO:
             # Check for collision.
-            # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
-            # - To debug why this is failing, try rendering only the failing
-            #   path somehow.
+            # FIXME: Add back in: To debug why this is failing, try rendering
+            #        only the failing path somehow.
 #            collision = check_frame_for_collision( \
 #                    collision_params, \
 #                    position, \
@@ -105,7 +104,7 @@ static func check_instructions_discrete_frame_state( \
                 next_instruction.time < current_time:
             current_instruction_index += 1
             
-            # FIXME: --A:
+            # FIXME:
             # - Think about at what point the velocity change from the step
             #   instruction happens.
             # - Is this at the right time?
@@ -160,9 +159,8 @@ static func check_instructions_discrete_frame_state( \
                             instructions.instructions.size() else \
                     null
         
-        # FIXME: ------------------------------:
-        # - After implementing instruction execution, check whether it also
-        #   does this, and whether this should be uncommented.
+        # FIXME: Check whether instruction execution also does this, and
+        #        whether this should be uncommented.
 #        if !has_started_instructions:
 #            has_started_instructions = true
 #            # When we start executing the instruction set, the current elapsed
@@ -193,9 +191,8 @@ static func check_instructions_discrete_frame_state( \
     # Check the last frame that puts us up to end_time.
     delta_sec = end_time - current_time
     displacement = velocity * delta_sec
-    # FIXME: LEFT OFF HERE: DEBUGGING: Add back in:
-    # - To debug why this is failing, try rendering only the failing path
-    #   somehow.
+    # FIXME: To debug why this is failing, try rendering only the failing path
+    #        somehow.
 #    collision = check_frame_for_collision( \
 #            collision_params, \
 #            position, \
@@ -281,8 +278,8 @@ static func check_discrete_horizontal_step_for_collision( \
                 is_pressing_move_horizontal else \
                 0
         
-        # FIXME: E: After implementing instruction execution, check whether it
-        #           also does this, and whether this should be uncommented.
+        # FIXME: Check whether instruction execution also does this, and
+        #        whether this should be uncommented.
 #        if !has_started_instructions:
 #            has_started_instructions = true
 #            # When we start executing the instruction, the current elapsed

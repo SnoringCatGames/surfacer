@@ -3,8 +3,6 @@
 extends Reference
 class_name HorizontalMovementUtils
 
-const MIN_MAX_VELOCITY_X_MARGIN := WaypointUtils.MIN_MAX_VELOCITY_X_OFFSET * 10
-
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step( \
         edge_result_metadata: EdgeCalcResultMetadata, \
@@ -299,10 +297,10 @@ static func calculate_max_horizontal_displacement_before_returning_to_starting_h
         max_horizontal_speed_default: float, \
         gravity_slow_rise: float, \
         gravity_fast_fall: float) -> float:
-    # FIXME: D: Use velocity_start_x, and account for acceleration, in order to
-    #           further limit the displacement.
-    # FIXME: F: Add support for double jumps, dash, etc.
-    # FIXME: A: Add horizontal acceleration
+    # FIXME: Add horizontal acceleration.
+    # FIXME: Use velocity_start_x, and account for acceleration, in order to
+    #        further limit the displacement.
+    # TODO: Add support for double jumps, dash, etc.
     
     assert(velocity_start_y < 0.0)
     
@@ -418,9 +416,8 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
             0.001):
         max_velocity_end = min_velocity_end_for_valid_next_step
     
-    # FIXME: Remove?
-#    assert(min_velocity_end <= max_velocity_end_for_valid_next_step)
-#    assert(max_velocity_end >= min_velocity_end_for_valid_next_step)
+    assert(min_velocity_end <= max_velocity_end_for_valid_next_step)
+    assert(max_velocity_end >= min_velocity_end_for_valid_next_step)
     
     min_velocity_end = max(min_velocity_end, \
             min_velocity_end_for_valid_next_step)

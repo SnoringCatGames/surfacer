@@ -12,8 +12,7 @@ static func calculate_vertical_step( \
             ProfilerMetric.CALCULATE_VERTICAL_STEP, \
             edge_calc_params.collision_params.thread_id)
     
-    # FIXME: B: Account for max y velocity when calculating any parabolic
-    #        motion.
+    # FIXME: Account for max y velocity when calculating any parabolic motion.
     
     var movement_params := edge_calc_params.movement_params
     var origin_waypoint := edge_calc_params.origin_waypoint
@@ -414,16 +413,14 @@ static func calculate_time_to_release_jump_button( \
     
     if time_to_release_jump_button > \
             movement_params.time_to_max_upward_jump_distance:
-        # FIXME: B: This if statement shouldn't be needed; the above
-        #        discriminant should have accounted for the peak jump height
-        #        already.
+        # FIXME: This if statement shouldn't be needed; the above discriminant
+        #        should have accounted for the peak jump height already.
         return INF
     
     return time_to_release_jump_button
 
 # Calculates the time at which the movement would travel through the given
 # position with the given vertical_step.
-# FIXME: B: Update unit tests to include min_end_time.
 static func calculate_time_for_passing_through_waypoint( \
         movement_params: MovementParams, \
         waypoint: Waypoint, \
@@ -553,8 +550,7 @@ static func calculate_vertical_state_for_time( \
         position_step_start_y: float, \
         velocity_step_start_y: float, \
         time_jump_release: float) -> Array:
-    # FIXME: B: Account for max y velocity when calculating any parabolic
-    #        motion.
+    # FIXME: Account for max y velocity when calculating any parabolic motion.
     var slow_rise_end_time := min(time, time_jump_release)
     
     # Basic equations of motion.
@@ -644,7 +640,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
 # Returns a positive value.
 static func calculate_max_upward_distance( \
         movement_params: MovementParams) -> float:
-    # FIXME: F: Add support for double jumps, dash, etc.
+    # TODO: Add support for double jumps, dash, etc.
     
     # From a basic equation of motion:
     #     v^2 = v_0^2 + 2*a*(s - s_0)

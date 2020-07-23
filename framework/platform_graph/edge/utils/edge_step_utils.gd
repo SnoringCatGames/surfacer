@@ -223,7 +223,7 @@ static func calculate_steps_between_waypoints( \
     # Then, try to satisfy the waypoints with an increased jump height.
     if edge_calc_params.movement_params \
             .reuses_previous_waypoints_when_backtracking_on_jump_height:
-        # FIXME: ------------A: Finish debugging this.
+        # FIXME: Finish debugging this.
         calc_result = \
                 calculate_steps_between_waypoints_with_increasing_jump_height( \
                         edge_result_metadata, \
@@ -304,8 +304,6 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
             edge_calc_params.origin_waypoint = previous_waypoint_copy
         if next_waypoint_original == destination_original:
             edge_calc_params.destination_waypoint = next_waypoint_copy
-        
-        # FIXME: B: Verify this statement.
         
         # Update the previous and next waypoints, to account for this new
         # intermediate waypoint. These updates do not solve all cases, since we

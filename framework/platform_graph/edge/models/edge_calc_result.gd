@@ -1,5 +1,4 @@
 # Parameters that are used for calculating edge instructions.
-# FIXME: --A ********* doc
 extends Reference
 class_name EdgeCalcResult
 

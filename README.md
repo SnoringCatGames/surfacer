@@ -1,10 +1,10 @@
 # Surfacer
 
+_**Demo: [Squirrel Away](https://levi.dev/squirrel)**._
+
 _A procedural pathfinding 2D-platformer framework for [Godot](https://godotengine.org/)._
 
 _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all surfaces!_
-
-_Check out the example app for this framework: **[Squirrel Away](https://levi.dev/squirrel)**._
 
 --------
 
@@ -276,15 +276,10 @@ Unfortunately, most jump/land position calculations are highly dependent on the 
 
 TODO: screenshot of example scenario
 
-#### Example jump-movement cases that aren't currently covered
-
--   A single horizontal step that needs multiple different sideways-movement instructions (i.e., accelerating to both one side and then the other in the same jump):
-    -   For example, backward acceleration in order to not overshoot the end position as well as forward acceleration to then have enough step-end x velocity in order to reach the following waypoint for the next step.
-
 #### Collision calculation madness
 
 **tl;dr**: Godot's collision-detection engine is very broken. We try to make it work for our
-pathfinding, but there are still many false negatives and rough edges.
+pathfinding, but there are still false negatives and rough edges.
 
 Here's a direct quote from a comment in Godot's underlying collision-calculation logic:
 
@@ -300,6 +295,7 @@ Here's a direct quote from a comment in Godot's underlying collision-calculation
 Some known limitations and rough edges include:
 -   When a [`KinematicBody2D`](https://docs.godotengine.org/en/stable/classes/class_kinematicbody2d.html) is sliding around a corner of another collidable, Godot can sometimes calculate the wrong results (oppositite direction) for `is_floor()`/`is_ceiling()`.
 -   Inconsistency between the behavior of the [`KinematicBody2D`](https://docs.godotengine.org/en/stable/classes/class_kinematicbody2d.html) and [`Physics2DDirectSpaceState`](https://docs.godotengine.org/en/stable/classes/class_physics2ddirectspacestate.html) collision APIs.
+    -   We were originally using the Physics2DDirectSpaceState for most of our graph calculations. However, this API seems to be more broken than the KinematicBody2D API. Also, we're using the KinematicBody2D API at run time, so we see more consistent results by using the KinematicBody2D API at build time as well.
 
 ### Navigator: Using the platform graph to move from A to B
 
@@ -402,12 +398,45 @@ We include a large collection of annotators that are useful for visually debuggi
 
 We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these params, see [movement_params.gd](./framework/platform_graph/edge/models/movement_params.gd).
 
+## Notable limitations
+
+-   Our build-time graph calculations take a long time, especially for a level with lots of surfaces (such as a big level, or a level with a small cell size).
+-   There is slight discrepancy between discrete and continuous trajectories. The former is what we see from movement produced by the frame-by-frame application of gravity and input actions on the player. The latter is what we see from our precise numerical analysis of algebraic equations when pre-calculating the platform graph. We support a few different techniques for reconciling this:
+    -   `MovementParams.syncs_player_velocity_to_edge_trajectory`: When this flag is enabled, the player's run-time _velocity_ will be forced to match the expected pre-calculated (continuous) velocity for the current frame in the currently executing platform graph edge.
+    -   `MovementParams.syncs_player_position_to_edge_trajectory`: When this flag is enabled, the player's run-time _position_ will be forced to match the expected pre-calculated (continuous) velocity for the current frame in the currently executing platform graph edge.
+    -   `MovementParams.retries_navigation_when_interrupted`: When this flag is enabled, the navigator will re-attempt navigation to the original destination from the current position whenever it detects that the player has hit an unexpected surface, which is what can happen when the run-time discrete trajectories don't match build-time continuous trajectories.
+-   When two surfaces face each other and are too close for thte player to fit between (plus a margin of a handful of extra pixels), our graph calculations can produce some false positives.
+-   Surfacer doesn't currently fully support surfaces that consist of one point.
+-   Our platform graph calculations produce false negatives for some types of jump edge scenarios:
+    -   An jump edge that needs to displace the jump position in order to make it around an intermediate waypoint with enough horizontal velocity to then reach the destination.
+        -   For example, if the player is jumping from the bottom of a set of stair-like surfaces, the jump position ideally wouldn't be as close as possible to the first rise of the first step (because they can't start accelerating horizontally until vertically clearing the top of the rise). Instead, if the player jumps from a slight offset from the rise, then they can pass over the rise with more speed, which lets them travel further during the jump.
+    -   A single horizontal step that needs multiple different sideways-movement instructions (i.e., accelerating to both one side and then the other in the same jump):
+        -   For example, backward acceleration in order to not overshoot the end position as well as forward acceleration to then have enough step-end x velocity in order to reach the following waypoint for the next step.
+-   Surfacer is opinionated. It requires that you structure your app using TileMaps, specific node groups, and by subclassing certain framework classes in order to create players.
+    -   You need to define a set of input actions with the following names (via Project Settings > Input Map):
+        -   jump
+        -   move_up
+        -   move_down
+        -   move_left
+        -   move_right
+        -   dash
+        -   zoom_in
+        -   zoom_out
+        -   pan_up
+        -   pan_down
+        -   pan_left
+        -   pan_right
+        -   face_left
+        -   face_right
+        -   grab_wall
+    -   Your level collidable foreground tiles must be defined in a TileMap that belongs to the "surfaces" node group.
+    -   The Surfacer framework isn't yet decoupled from the Squirrel Away demo app logic.
+
 ## Future work
 
 For a list of planned future work items / TODOs, see [main.gd](./main.gd).
 
 Some high-level planned future features include:
-
 -   Bypass the Godot collision system at runtime, and use only the pre-calculated expected edge trajectories from the platform graph.
 -   Support for double jumps in the platform graph.
 -   Support for dashes in the platform graph.

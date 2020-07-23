@@ -233,11 +233,6 @@ static func find_landing_trajectory_between_positions( \
     Profiler.start( \
             ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
             collision_params.thread_id)
-    # FIXME: ---------------------------------------- REMOVE
-    if velocity_start.y != 1000.0 and \
-            velocity_start.y != 0.0 and \
-            land_position.surface.first_point == Vector2(-448, 256):
-        print("break")
     var calc_result := EdgeStepUtils.calculate_steps_between_waypoints( \
             edge_result_metadata, \
             step_result_metadata, \
@@ -274,7 +269,7 @@ static func find_surfaces_in_fall_range_from_point( \
         result_set: Dictionary, \
         origin: Vector2, \
         velocity_start: Vector2) -> void:
-    # FIXME: E: Offset the start_position_offset to account for velocity_start.
+    # FIXME: Offset the start_position_offset to account for velocity_start.
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
@@ -360,10 +355,10 @@ static func calculate_jump_or_fall_range_polygon_from_surface( \
         movement_params: MovementParams, \
         origin_surface: Surface, \
         is_considering_jump_distance: bool) -> Array:
-    # FIXME: E: Offset the start_position_offset to account for velocity_start.
-    # FIXME: E: There may be cases when it's worth considering both
-    #           offset_for_acceleration_to_terminal_velocity and
-    #           offset_for_jump_distance together.
+    # FIXME: Offset the start_position_offset to account for velocity_start.
+    # FIXME: There may be cases when it's worth considering both
+    #        offset_for_acceleration_to_terminal_velocity and
+    #        offset_for_jump_distance together.
     
     # From a basic equation of motion:
     #     v = v_0 + a*t
@@ -390,14 +385,9 @@ static func calculate_jump_or_fall_range_polygon_from_surface( \
     var offset_x_from_top_corner_to_bottom_corner := 100000.0
     var offset_y_from_top_corner_to_bottom_corner := 100000.0 * slope
     
-    # FIXME: LEFT OFF HERE: ----------------------------------A
-    # - Decide whether to adapt this function or create another for the
-    #   find_a_landing_trajectory case, where we only start with a single
-    #   point, rather than a surface.
-    
-    # FIXME: --------- Make this more specifically consider the distance in
-    #        left/right directions separately, depending on which wall wall
-    #        side we're jumping from.
+    # FIXME: Make this more specifically consider the distance in left/right
+    #        directions separately, depending on which wall wall side we're
+    #        jumping from.
     
     var max_horizontal_jump_distance := \
             movement_params.get_max_horizontal_jump_distance( \

@@ -302,14 +302,11 @@ func update( \
         if surface_state.is_grabbing_a_surface:
             pass
         else:
-            # FIXME: Detect when position is too far from expected. Then maybe
-            #        auto-correct it?
+            # TODO: Detect when position is too far from expected. Then maybe
+            #       auto-correct it?
             pass
     
     if navigation_state.just_reached_end_of_edge:
-        # FIXME: Assert that we are close enough to the destination position.
-        # assert()
-        
         # Cancel the current intra-surface instructions (in case it didn't
         # clear itself).
         instructions_action_source.cancel_playback( \

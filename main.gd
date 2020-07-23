@@ -6,34 +6,6 @@ class_name Main
 # 
 # ### TODO: Now (before end of July) ###
 # 
-# - Add a couple lists to the README, and add to these when I go through TODOs
-#   in the next step:
-#   - List notable limitations:
-#     - No support for surfaces of one point.
-#     - Can't include surfaces facing each other that are too close for the
-#       player to fit between (plus a margin of a handful of extra pixels).
-#     - Will take a while with lots of surfaces (big levels, small cell size).
-#     - List exactly which Input Map keys this framework depends on.
-#     - Describe the discrepancy between discrete and continuous trajectories,
-#       and the various options to reconcile the two.
-#       - Maybe have this as a separate section entirely.
-#     - The framework is very opinionated. It requires that you have structured
-#       your app using TileMaps, specific Node Groups, and by subclassing some
-#       framework classes in order to create Players.
-#     - The Surfacer framework isn't yet decoupled from the Squirrel Away demo
-#       app logic (this should hopefully be resolved by the end of 2020).
-# 
-# - Go through todo list.
-#   - Remove obsolete items.
-#   - Group items into buckets:
-#     - Do before show and tell.
-#     - Do shortly after, but not to block art phase.
-#     - Do before end of year.
-#     - Maybe do eventually.
-#   - Also search through TODO/FIXME throughout codebase.
-# 
-# ---
-# 
 # - Render an arrow to indicate the direction/magnitude of start velocity.
 #   - And legend item.
 # - Finish adding/polishing inspector step calculation
@@ -87,8 +59,6 @@ class_name Main
 # - Add a second squirrel to the level.
 # 
 # - Decouple squirrel-specific logic from the rest of the framework.
-# 
-# 
 # 
 # ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  --
 # ### TODO: Eventually (probably before end of 2020). ###

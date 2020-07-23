@@ -2,13 +2,13 @@
 extends Reference
 class_name WaypointUtils
 
-# FIXME: D: Tweak this.
-const MIN_MAX_VELOCITY_X_OFFSET := 0.01# FIXME: ------------------------
+# TODO: Tweak this.
+const MIN_MAX_VELOCITY_X_OFFSET := 0.01
 
 const FAKE_REPLACEMENT_SEARCH_MAX_ITERATIONS := 6
 
-# FIXME: A: Replace the hard-coded usage of a max-speed ratio with a smarter
-#        x-velocity.
+# TODO: Replace the hard-coded usage of a max-speed ratio with a smarter
+#       x-velocity.
 const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER := \
         0.5
 
@@ -55,9 +55,6 @@ static func create_terminal_waypoints( \
     if velocity_end_min_x != INF or velocity_end_max_x != INF:
         destination.min_velocity_x = velocity_end_min_x
         destination.max_velocity_x = velocity_end_max_x
-    
-    # FIXME: B: Consider adding support for specifying required end x-velocity
-    #        (and y direction)? For hitting walls.
     
     update_waypoint( \
             origin, \
@@ -433,8 +430,7 @@ static func _update_waypoint_velocity_and_time( \
         can_hold_jump_button_at_origin: bool, \
         vertical_step: VerticalEdgeStep, \
         additional_high_waypoint_position: Vector2) -> int:
-    # FIXME: B: Account for max y velocity when calculating any parabolic
-    #        motion.
+    # TODO: Account for max y velocity when calculating any parabolic motion.
     
     var time_passing_through: float
     var min_velocity_x: float
@@ -541,7 +537,7 @@ static func _update_waypoint_velocity_and_time( \
                 time_passing_through = \
                         time_to_pass_through_waypoint_ignoring_others
                 
-                # FIXME: LEFT OFF HERE: --------------------------------------A:
+                # FIXME: LEFT OFF HERE:
                 # - Trying to add support for
                 #   waypoint.needs_extra_jump_duration.
                 
@@ -570,14 +566,14 @@ static func _update_waypoint_velocity_and_time( \
 #                            waypoint.needs_extra_jump_duration else \
 #                            movement_params \
 #                                   .normal_jump_instruction_duration_increase
-#                    # FIXME: -------------- Uncomment (since this is the whole
-#                    # point), after getting the rest of this to work (the rest
-#                    # should be a no-op, but seems to break stuff).
+#                    # FIXME: Uncomment (since this is the whole point), after
+#                    #        getting the rest of this to work (the rest should
+#                    #        be a no-op, but seems to break stuff).
 ##                    time_to_release_jump_button = min( \
 ##                            time_to_release_jump_button + \
 ##                            jump_duration_increase, \
 ##                            time_to_max_height_with_slow_rise_gravity)
-#                    # FIXME: -------------- Is this needed?
+#                    # FIXME: Is this needed?
 #                    time_to_release_jump_button -= 0.001
 #                    var vertical_state_at_jump_button_release := \
 #                            VerticalMovementUtils \
@@ -596,8 +592,7 @@ static func _update_waypoint_velocity_and_time( \
 #                    #     v = v_0 + a*t
 #                    # Algebra...:
 #                    #     t = (sqrt(v_0^2 + 2*a*(s - s_0)) - v_0) / a
-#                    # FIXME: -------------- Re-insert these back into one
-#                    # expression.
+#                    # FIXME: Re-insert these back into one expression.
 #                    var foo := velocity_y_at_jump_button_release * \
 #                            velocity_y_at_jump_button_release
 #                    var disp := waypoint.position.y - \
@@ -611,9 +606,9 @@ static func _update_waypoint_velocity_and_time( \
 #                    time_passing_through = \
 #                            time_to_release_jump_button + \
 #                            time_to_destination_after_jump_button_release
-#                    # FIXME: --------------  Is this needed?
+#                    # FIXME: Is this needed?
 #                    time_passing_through += 0.002
-#                    # FIXME: -------------- Remove.
+#                    # FIXME: Remove.
 #                    if is_nan((time_passing_through - \
 #                           time_passing_through) / 2.0):
 #                        print("break")
@@ -757,8 +752,7 @@ static func _update_waypoint_velocity_and_time( \
     waypoint.max_velocity_x = max_velocity_x
     waypoint.actual_velocity_x = actual_velocity_x
     
-    # FIXME: ---------------------- Debugging...
-    # - Maybe remove the is_destination conditional?
+    # FIXME: DEBUGGING: Maybe remove the is_destination conditional?
     if !waypoint.is_destination:
         # Ensure that the min and max velocities match the expected horizontal
         # movement direction.
@@ -1354,7 +1348,7 @@ static func _solve_for_start_velocity( \
     var t_result_2 := (v_1 - result_2) / acceleration
     
     ###########################################
-    # FIXME: --------------- REMOVE: DEBUGGING
+    # FIXME: REMOVE: DEBUGGING:
 #    var disp_result_1_foo := \
 #            v_0*t_result_1 + 0.5*acceleration*t_result_1*t_result_1
 #    var disp_result_1_bar := result_1*(duration-t_result_1)
@@ -1830,7 +1824,7 @@ static func _solve_for_end_velocity( \
     var t_result_2 := (result_2 - v_0) / acceleration
     
     ###########################################
-    # FIXME: --------------- REMOVE: DEBUGGING
+    # FIXME: REMOVE: DEBUGGING:
 #    var disp_result_1_foo := \
 #            v_0*t_result_1 + 0.5*acceleration*t_result_1*t_result_1
 #    var disp_result_1_bar := result_1*(duration-t_result_1)

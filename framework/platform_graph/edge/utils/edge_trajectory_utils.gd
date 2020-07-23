@@ -37,19 +37,18 @@ static func calculate_trajectory_from_calculation_steps( \
             waypoint_positions, \
             distance_from_continuous_frames)
     
-    # FIXME: -------- Rename? Refactor? Remove? We've already checked each step
-    #        individually (for continuous state).
-    var collision := \
-            CollisionCheckUtils.check_instructions_discrete_frame_state( \
-                    edge_calc_params, \
-                    instructions, \
-                    vertical_step, \
-                    steps, \
-                    trajectory)
-    assert(collision == null or \
-            (collision.is_valid_collision_state and \
-            collision.surface == \
-                    edge_calc_params.destination_waypoint.surface))
+    if collision_params.movement_params.calculates_discrete_frame_state:
+        var collision := \
+                CollisionCheckUtils.check_instructions_discrete_frame_state( \
+                        edge_calc_params, \
+                        instructions, \
+                        vertical_step, \
+                        steps, \
+                        trajectory)
+        assert(collision == null or \
+                (collision.is_valid_collision_state and \
+                collision.surface == \
+                        edge_calc_params.destination_waypoint.surface))
     
     Profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_TRAJECTORY_FROM_CALCULATION_STEPS, \

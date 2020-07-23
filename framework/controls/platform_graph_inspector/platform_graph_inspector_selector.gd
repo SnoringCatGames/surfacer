@@ -62,8 +62,8 @@ func _unhandled_input(event: InputEvent) -> void:
             
             selection_time_sec = Time.elapsed_play_time_sec
             
-            # FIXME: Add support for configuring edge type and graph from radio
-            #        buttons in the inspector.
+            # TODO: Add support for configuring edge type and graph from radio
+            #       buttons in the inspector.
             inspector.select_edge_or_surface( \
                     first_target, \
                     surface_position, \

@@ -120,7 +120,7 @@ func after_each() -> void:
 func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
     set_up_level(data)
     
-    # FIXME: ----------------
+    # FIXME:
 #    var position := \
 #            Vector2(160.0, 0.0) if \
 #            data.scene_resource_path.find("test_") >= 0 else \

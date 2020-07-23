@@ -20,8 +20,7 @@ static func calculate_movement_duration( \
         min_duration := 0.0, \
         expects_only_one_positive_result := false, \
         allows_no_positive_results := false) -> float:
-    # FIXME: B: Account for max y velocity when calculating any parabolic
-    #           motion.
+    # FIXME: Account for max y velocity when calculating any parabolic motion.
     
     # Use only non-negative results.
     assert(min_duration >= 0.0)
@@ -86,7 +85,7 @@ static func calculate_movement_duration( \
 # a new backward acceleration is applied.
 # 
 # Note: This could depend on a speed that exceeds the max-allowed speed.
-# FIXME: F: Remove if no-one is still using this.
+# FIXME: Remove if no-one is still using this.
 static func calculate_time_to_release_acceleration( \
         time_start: float, \
         time_step_end: float, \

@@ -3,7 +3,7 @@
 extends Reference
 class_name EdgeInstructionsUtils
 
-# FIXME: B
+# FIXME:
 # - Should I remove this and force a slightly higher offset to target jump
 #   position directly? What about passing through waypoints? Would the
 #   increased time to get to the position for a wall-top waypoint result in too
@@ -12,7 +12,7 @@ class_name EdgeInstructionsUtils
 #   any needed jump-height epsilon? Is this needlessly redundant with that
 #   mechanism?
 # - Though I may need to always at least have _some_ small value here...
-# FIXME: D Tweak this.
+# FIXME: Tweak this.
 const JUMP_DURATION_INCREASE_EPSILON := Time.PHYSICS_TIME_STEP_SEC * 0.5
 const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := \
         Time.PHYSICS_TIME_STEP_SEC * 2.5
