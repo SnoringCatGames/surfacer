@@ -25,6 +25,7 @@ Some features include:
 -   Configurable movement parameters on a per-player basis (e.g., horizontal acceleration, jump power, gravity, collision boundary shape and size, which types of edge movement are allowed).
 -   Level creation using Godot's standard pattern with a [TileMap in the 2D scene editor](https://docs.godotengine.org/en/3.2/tutorials/2d/using_tilemaps.html).
 -   Preparsing the level into a platform graph, and using A* search for efficient path-finding at runtime.
+-   A powerful inspector for analyzing the platform graph, in order to debug and better understand how edges were calculated.
 
 ## Buy why?
 
@@ -437,14 +438,21 @@ We support a large number of flags and parameters for adjusting various aspects 
 For a list of planned future work items / TODOs, see [main.gd](./main.gd).
 
 Some high-level planned future features include:
+-   Add an option for saving/loading the platform graph instead of parsing it each time.
 -   Bypass the Godot collision system at runtime, and use only the pre-calculated expected edge trajectories from the platform graph.
+-   More intelligent squirral avoidance.
+-   Better game-play goal, with an event that happens when you catch the squirrel.
+-   Decouple the Surface framework logic from the Squirrel Away demo logic.
+-   Add Surfacer to the Godot Asset Library.
+-   Use an R-Tree for faster surface lookup.
+-   Support for fall-through floors and walls in the platform graph.
 -   Support for double jumps in the platform graph.
 -   Support for dashes in the platform graph.
--   Support for fall-through floors and walls in the platform graph.
--   Support for surfaces of one point.
 -   Support for surfaces that face each other and are too close for player to fit between.
--   Use an R-Tree for faster surface lookup.
+-   Support for surfaces of one point.
 -   Support an alternate, template-based edge calculation pattern, which should be able to offer faster build times and still have quick run times.
+-   Add networking.
+-   Procedural level generation.
 
 ## Tests
 
