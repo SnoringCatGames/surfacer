@@ -44,6 +44,7 @@ var action_handlers: Array
 # SurfaceType
 var current_action_type: int
 
+var just_triggered_jump := false
 var is_rising_from_jump := false
 var jump_count := 0
 
@@ -242,6 +243,7 @@ func _physics_process(delta_sec: float) -> void:
     
     _process_actions()
     _process_animation()
+    _process_sfx()
     _update_collision_mask()
     
     # We don't need to multiply velocity by delta because MoveAndSlide already
@@ -351,6 +353,9 @@ func _process_animation() -> void:
                 animator.jump_rise()
         _:
             Utils.error()
+
+func _process_sfx() -> void:
+    pass
 
 func processed_action(name: String) -> bool:
     return _previous_actions_this_frame.get(name) == true

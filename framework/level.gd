@@ -3,6 +3,8 @@ class_name Level
 
 const TILE_MAP_COLLISION_LAYER := 7
 
+const MUSIC_STREAM := preload("res://assets/music/on_a_quest.ogg")
+
 # The TileMaps that define the collision boundaries of this level.
 # Array<TileMap>
 var surface_tile_maps: Array
@@ -13,9 +15,13 @@ var fake_players := {}
 var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
+var music_player: AudioStreamPlayer
 
 func _enter_tree() -> void:
     Global.current_level = self
+    
+    music_player = AudioStreamPlayer.new()
+    add_child(music_player)
 
 func _ready() -> void:
     var scene_tree := get_tree()
@@ -35,6 +41,8 @@ func _ready() -> void:
     Global.platform_graph_inspector.set_graphs(platform_graphs.values())
     
     _parse_squirrel_destinations()
+    
+    _start_music()
     
     Global.is_level_ready = true
 
@@ -192,3 +200,7 @@ func _create_random_squirrel_spawn_position() -> PositionAlongSurface:
     return SurfaceParser.find_closest_position_on_a_surface( \
             point, \
             fake_players["squirrel"])
+
+func _start_music() -> void:
+    music_player.stream = MUSIC_STREAM
+    music_player.play()

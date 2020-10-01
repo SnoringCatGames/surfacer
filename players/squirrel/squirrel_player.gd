@@ -1,18 +1,46 @@
 extends Player
 class_name SquirrelPlayer
 
+const JUMP_SFX_STREAM := preload("res://assets/sfx/squirrel_jump.wav")
+const LAND_SFX_STREAM := preload("res://assets/sfx/squirrel_land.wav")
+const YELL_SFX_STREAM := preload("res://assets/sfx/squirrel_yell.wav")
+
 const TILE_MAP_COLLISION_LAYER := 7
 const SQUIRREL_SPAWN_COLLISION_MARGIN := 1.0
 const SQUIRREL_SPAWN_LEVEL_OUTER_MARGIN := 256.0
 const CAT_IS_CLOSE_DISTANCE_SQUARED_THRESHOLD := 512.0 * 512.0
 const SQUIRREL_TRIGGER_NEW_NAVIGATION_INTERVAL_SEC := 3.0
 
+var jump_sfx_player: AudioStreamPlayer
+var land_sfx_player: AudioStreamPlayer
+var yell_sfx_player: AudioStreamPlayer
+
 var was_cat_close_last_frame := false
 var previous_destination := \
         MovementUtils.create_position_without_surface(Vector2.INF)
 
 func _init().("squirrel") -> void:
-    pass
+    _init_sfx_players()
+
+func _init_sfx_players() -> void:
+    jump_sfx_player = AudioStreamPlayer.new()
+    jump_sfx_player.stream = JUMP_SFX_STREAM
+    add_child(jump_sfx_player)
+    
+    land_sfx_player = AudioStreamPlayer.new()
+    land_sfx_player.stream = LAND_SFX_STREAM
+    add_child(land_sfx_player)
+    
+    yell_sfx_player = AudioStreamPlayer.new()
+    yell_sfx_player.stream = YELL_SFX_STREAM
+    add_child(yell_sfx_player)
+
+func _process_sfx() -> void:
+    if just_triggered_jump:
+        jump_sfx_player.play()
+    
+    if surface_state.just_left_air:
+        land_sfx_player.play()
 
 func _ready() -> void:
     if is_fake:

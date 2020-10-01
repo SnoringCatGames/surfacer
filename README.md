@@ -460,14 +460,16 @@ _**NOTE**: Sadly, the tests are not set up to automatically run on presubmit, so
 
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
 
-## Licenses and acknowledgements
+## Software used
 
-The Surfacer framework is published under the [MIT license](LICENSE).
+-   [Godot](https://godotengine.org/) was used to create the Surfacer framework and Squirrel Away game.
+-   [Piskel](https://www.piskelapp.com/user/5663844106502144) was used to create the squirrel images.
+-   [Aseprite](https://www.aseprite.org/) was used to create all other images.
+-   [Bfxr](https://www.bfxr.net/) was used to create the sound effects.
+-   [DefleMask](https://deflemask.com/) was used to create the music.
 
-The Surface framework depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./docs/third-party-licenses.txt).
+## Licenses
 
-The squirrel art was created using [Piskel](https://www.piskelapp.com/user/5663844106502144).
-
-All other art was created using [Aseprite](https://www.aseprite.org/).
-
-The Surfacer framework and Squirrel Away game were created using [Godot](https://godotengine.org/).
+-   The Surfacer framework is published under the [MIT license](LICENSE).
+-   All art assets (files under `assets/images/`, `assets/music/`, and `assets/sfx/`) are published under the [CC0 1.0 Universal license](https://creativecommons.org/publicdomain/zero/1.0/deed.en).
+-   The Surface framework depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./docs/third-party-licenses.txt).

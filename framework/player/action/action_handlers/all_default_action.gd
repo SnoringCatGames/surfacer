@@ -12,6 +12,8 @@ func _init().( \
     pass
 
 func process(player: Player) -> bool:
+    player.just_triggered_jump = false
+    
     # Cancel any horizontal velocity when bumping into a wall.
     if player.surface_state.is_touching_wall and \
             !player.surface_state.is_pressing_away_from_wall:

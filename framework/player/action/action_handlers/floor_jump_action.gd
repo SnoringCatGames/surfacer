@@ -15,6 +15,7 @@ func process(player: Player) -> bool:
     if !player.processed_action(FloorFallThroughAction.NAME) and \
             player.actions.just_pressed_jump:
         player.jump_count = 1
+        player.just_triggered_jump = true
         player.is_rising_from_jump = true
         player.velocity.y = player.movement_params.jump_boost
 
