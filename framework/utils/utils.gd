@@ -8,12 +8,12 @@ const GROUP_NAME_SQUIRREL_DESTINATIONS := "squirrel_destinations"
 static func error( \
         message := "An error occurred", \
         should_assert := true):
-    print("ERROR: %s" % message)
+    push_error("ERROR: %s" % message)
     if should_assert:
         assert(false)
 
 static func warning(message := "An warning occurred"):
-    print("WARNING: %s" % message)
+    push_warning("WARNING: %s" % message)
 
 # TODO: Replace this with any built-in feature whenever it exists
 #       (https://github.com/godotengine/godot/issues/4715).

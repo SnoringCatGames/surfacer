@@ -15,7 +15,7 @@ func process(player: Player) -> bool:
     var current_edge := player.navigator.current_edge
     if current_edge != null and current_edge.includes_air_trajectory:
         var playback_elapsed_time: float = \
-                Time.elapsed_play_time_sec - \
+                Time.elapsed_play_time_actual_sec - \
                 player.navigator.current_playback.start_time
         var index := floor(playback_elapsed_time / Time.PHYSICS_TIME_STEP_SEC)
         var trajectory_positions := current_edge.trajectory \

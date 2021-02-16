@@ -1,4 +1,4 @@
-extends Node
+extends Node2D
 class_name Main
 
 ###############################################################################
@@ -30,6 +30,15 @@ class_name Main
 # 
 # ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  --
 # ### Small fixes to do next: ###
+# 
+# - Remove Time.PHYSICS_TIME_STEP_SEC.
+#   - Update things to not depend on that being constant.
+#   - Instead, reference the latest delta passed to Time._physics_process.
+#   - Some devices can't keep up with 60fps, and they will have a higher physics
+#     frame delta.
+# 
+# - Use the standard word "winding" to describe clockwise vs counter-clockwise
+#   orderings.
 # 
 # - Render an arrow to indicate the direction/magnitude of start velocity.
 #   - And legend item.
@@ -487,6 +496,12 @@ var canvas_layers: CanvasLayers
 var level: Level
 var is_loading_screen_shown := true
 
+func _notification(what):
+    if what == MainLoop.NOTIFICATION_WM_GO_BACK_REQUEST: 
+        # Handle the Android back button to navigate within the app instead of
+        # quitting the app.
+        get_tree().quit()
+
 func _enter_tree() -> void:
     if Config.IN_TEST_MODE:
         var scene_path := Config.TEST_RUNNER_SCENE_RESOURCE_PATH
@@ -517,7 +532,7 @@ func _process(delta_sec: float) -> void:
     
     if !Config.IN_TEST_MODE and \
             level == null and \
-            Time.elapsed_play_time_sec > 0.25:
+            Time.elapsed_play_time_actual_sec > 0.25:
         # Start loading the level and calculating the platform graphs.
         level = Utils.add_scene( \
                 self, \
@@ -527,7 +542,7 @@ func _process(delta_sec: float) -> void:
     
     elif is_loading_screen_shown and \
             Global.is_level_ready and \
-            Time.elapsed_play_time_sec > 0.5:
+            Time.elapsed_play_time_actual_sec > 0.5:
         is_loading_screen_shown = false
         level.visible = true
         

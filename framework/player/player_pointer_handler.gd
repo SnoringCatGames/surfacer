@@ -65,7 +65,7 @@ func _unhandled_input(event: InputEvent) -> void:
 #            pointer_drag_position != Vector2.INF:
 #        player.print_msg("%s:         %8.3fs", [ \
 #                event_type, \
-#                Time.elapsed_play_time_sec, \
+#                Time.elapsed_play_time_actual_sec, \
 #            ])
     
     if pointer_up_position != Vector2.INF:

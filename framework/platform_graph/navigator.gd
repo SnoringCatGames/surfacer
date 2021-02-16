@@ -100,7 +100,7 @@ func navigate_to_position( \
             "\n\t}" + \
             "\n}"
         var format_string_arguments := [ \
-            Time.elapsed_play_time_sec, \
+            Time.elapsed_play_time_actual_sec, \
             destination.to_string(), \
             path.to_string_with_newlines(1), \
             duration_navigate_to_position, \
@@ -156,7 +156,7 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
             #       been able to find a valid land trajectory above.
             
             var elapsed_playback_time := \
-                    Time.elapsed_play_time_sec - \
+                    Time.elapsed_play_time_actual_sec - \
                     current_playback.start_time
             air_to_surface_edge = air_to_surface_calculator \
                     .create_edge_from_part_of_other_edge( \
@@ -191,7 +191,7 @@ func _set_reached_destination() -> void:
     reached_destination = true
     just_reached_destination = true
     
-    print_msg("REACHED END OF PATH: %8.3fs", Time.elapsed_play_time_sec)
+    print_msg("REACHED END OF PATH: %8.3fs", Time.elapsed_play_time_actual_sec)
 
 func reset() -> void:
     if current_path != null:
@@ -231,7 +231,7 @@ func _start_edge( \
     
     current_playback = instructions_action_source.start_instructions( \
             current_edge, \
-            Time.elapsed_play_time_sec)
+            Time.elapsed_play_time_actual_sec)
     
     var duration_start_edge := \
             Profiler.stop(ProfilerMetric.NAVIGATOR_START_EDGE)
@@ -239,7 +239,7 @@ func _start_edge( \
     var format_string_template := \
             "STARTING EDGE NAV:   %8.3fs; %s; calc duration=%sms"
     var format_string_arguments := [ \
-            Time.elapsed_play_time_sec, \
+            Time.elapsed_play_time_actual_sec, \
             current_edge.to_string_with_newlines(0), \
             str(duration_start_edge), \
         ]
@@ -282,7 +282,7 @@ func update( \
             interruption_type_label = \
                     "navigation_state.just_interrupted_by_user_action"
         print_msg("EDGE MVT INTERRUPTED:%8.3fs; %s", \
-                [Time.elapsed_play_time_sec, interruption_type_label])
+                [Time.elapsed_play_time_actual_sec, interruption_type_label])
         
         if player.movement_params.retries_navigation_when_interrupted:
             navigate_to_position( \
@@ -294,7 +294,7 @@ func update( \
         
     elif navigation_state.just_reached_end_of_edge:
         print_msg("REACHED END OF EDGE: %8.3fs; %s", [ \
-            Time.elapsed_play_time_sec, \
+            Time.elapsed_play_time_actual_sec, \
             current_edge.name, \
         ])
     else:
@@ -311,7 +311,7 @@ func update( \
         # clear itself).
         instructions_action_source.cancel_playback( \
                 current_playback, \
-                Time.elapsed_play_time_sec)
+                Time.elapsed_play_time_actual_sec)
         
         # Check for the next edge to navigate.
         var next_edge_index := current_edge_index + 1
@@ -328,7 +328,7 @@ func update( \
             else:
                 var format_string_template := "INSRT CTR-PROTR EDGE:%8.3fs; %s"
                 var format_string_arguments := [ \
-                        Time.elapsed_play_time_sec, \
+                        Time.elapsed_play_time_actual_sec, \
                         backtracking_edge.to_string_with_newlines(0), \
                     ]
                 print_msg(format_string_template, format_string_arguments)

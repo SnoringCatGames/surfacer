@@ -619,7 +619,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://framework/level.gd"
 }, {
-"base": "Node",
+"base": "Node2D",
 "class": "Main",
 "language": "GDScript",
 "path": "res://main.gd"
@@ -929,7 +929,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://test/data/test_player_params.gd"
 }, {
-"base": "Node",
+"base": "",
 "class": "UnitTestBed",
 "language": "GDScript",
 "path": "res://test/data/unit_test_bed.gd"
@@ -1235,6 +1235,7 @@ _global_script_class_icons={
 config/name="Surfacer"
 run/main_scene="res://main.tscn"
 config/icon="res://assets/images/icon.png"
+config/quit_on_go_back=false
 
 [autoload]
 
@@ -1389,4 +1390,5 @@ face_right={
 
 [rendering]
 
+quality/2d/use_pixel_snap=true
 environment/default_environment="res://assets/default_env.tres"

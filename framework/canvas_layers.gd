@@ -108,7 +108,7 @@ func _create_annotation_layer() -> void:
     Global.element_annotator = element_annotator
 
 func _input(event: InputEvent) -> void:
-    var current_time: float = Time.elapsed_play_time_sec
+    var current_time: float = Time.elapsed_play_time_actual_sec
     
     # Close the welcome panel on any mouse or key click event.
     if Global.welcome_panel != null and \

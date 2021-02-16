@@ -550,19 +550,25 @@ static func compute_arc_points(
         start_angle: float, \
         end_angle: float, \
         sector_arc_length := 4.0) -> PoolVector2Array:
+    assert(sector_arc_length > 0.0)
+    
     var angle_diff := end_angle - start_angle
-    var sector_count := floor(angle_diff * radius / sector_arc_length)
-    var delta_theta := angle_diff / sector_count
+    var sector_count := floor(abs(angle_diff) * radius / sector_arc_length)
+    var delta_theta := sector_arc_length / radius
     var theta := start_angle
-    var should_include_partial_sector_at_end: bool = \
-            !Geometry.are_floats_equal_with_epsilon( \
-                    angle_diff / delta_theta, \
-                    0.0, \
-                    0.01)
-    var vertex_count := \
-            sector_count + 2 if \
-            should_include_partial_sector_at_end else \
-            sector_count + 1
+    
+    if angle_diff == 0:
+        return PoolVector2Array([ \
+                Vector2(cos(start_angle), sin(start_angle)) * radius + center])
+    elif angle_diff < 0:
+        delta_theta = -delta_theta
+    
+    var should_include_partial_sector_at_end := \
+            abs(angle_diff) - sector_count * delta_theta > 0.01
+    var vertex_count := sector_count + 1
+    if should_include_partial_sector_at_end:
+        vertex_count += 1
+    
     var points := PoolVector2Array()
     points.resize(vertex_count)
     var vertex: Vector2
