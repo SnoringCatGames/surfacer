@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/surfacer/level.gd" type="Script" id=1]
+[ext_resource path="res://assets/images/foreground/tileset_old.tres" type="TileSet" id=2]
+[ext_resource path="res://src/background.tscn" type="PackedScene" id=3]
+
+
+
+
+
+
+[node name="Level2" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Background" parent="." instance=ExtResource( 3 )]
+
+[node name="WallsAndFloors" type="TileMap" parent="." groups=[
+"surfaces",
+]]
+tile_set = ExtResource( 2 )
+format = 1
+tile_data = PoolIntArray( -65525, 7, 0, 65531, 9, 0, 8, 6, 0, 131070, 8, 0, 65541, 5, 0, 131073, 0, 0, 131074, 0, 0, 196609, 0, 0, 196610, 0, 0, 262145, 0, 0, 262146, 0, 0, 327681, 0, 0, 327682, 0, 0, 458743, 0, 0, 393217, 0, 0, 393218, 0, 0, 393231, 0, 0, 524279, 0, 0, 524280, 0, 0, 524281, 0, 0, 524282, 0, 0, 524283, 0, 0, 524284, 0, 0, 524285, 0, 0, 524286, 0, 0, 524287, 0, 0, 458752, 0, 0, 458753, 0, 0, 458754, 0, 0, 458755, 0, 0, 458756, 0, 0, 458757, 0, 0, 458758, 0, 0, 458759, 0, 0, 458760, 0, 0, 458761, 0, 0, 458762, 0, 0, 458763, 0, 0, 458764, 0, 0, 458765, 0, 0, 458766, 0, 0, 458767, 0, 0 )

@@ -1,0 +1,292 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/images/logo.png" type="Texture" id=1]
+[ext_resource path="res://assets/images/godot-logo-small.png" type="Texture" id=2]
+[ext_resource path="res://addons/surfacer/gui/panels/credits_panel.gd" type="Script" id=3]
+[ext_resource path="res://addons/surfacer/gui/panels/third_party_licenses_panel.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/main_theme.tres" type="Theme" id=5]
+[ext_resource path="res://assets/fonts/main_font_s.tres" type="DynamicFont" id=6]
+[ext_resource path="res://assets/fonts/main_font_xs.tres" type="DynamicFont" id=7]
+
+
+
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 1, 1, 1, 0.835294 )
+
+[node name="CreditsPanel" type="WindowDialog"]
+visible = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -150.0
+margin_top = -150.0
+margin_right = 150.0
+margin_bottom = 150.0
+theme = ExtResource( 5 )
+window_title = "Credits"
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 300.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 300, 300 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PaddingLeft" type="Control" parent="HBoxContainer"]
+margin_right = 29.0
+margin_bottom = 400.0
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+margin_left = 33.0
+margin_right = 266.0
+margin_bottom = 300.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 8.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PaddingTop" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_right = 233.0
+margin_bottom = 18.0
+size_flags_vertical = 3
+
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_top = 22.0
+margin_right = 233.0
+margin_bottom = 40.0
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="TextureRect" parent="HBoxContainer/VBoxContainer/Control"]
+margin_left = 14.7018
+margin_top = -7.60669
+margin_right = 272.702
+margin_bottom = 36.3933
+rect_scale = Vector2( 0.8, 0.8 )
+texture = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control4" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_top = 44.0
+margin_right = 233.0
+margin_bottom = 55.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.6
+
+[node name="Control6" type="Control" parent="HBoxContainer/VBoxContainer"]
+anchor_top = -0.00333333
+anchor_bottom = -0.00333333
+margin_top = 59.0
+margin_right = 233.0
+margin_bottom = 96.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="Label" type="LinkButton" parent="HBoxContainer/VBoxContainer/Control6"]
+margin_left = 27.1006
+margin_top = 6.20584
+margin_right = 260.101
+margin_bottom = 29.2058
+text = "Created by Levi Lindsey."
+underline = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="URL" type="LinkButton" parent="HBoxContainer/VBoxContainer/Control6"]
+margin_left = 59.8734
+margin_top = 27.3824
+margin_right = 172.873
+margin_bottom = 53.3824
+text = "https://levi.dev"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control5" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_top = 100.0
+margin_right = 233.0
+margin_bottom = 118.0
+size_flags_vertical = 3
+
+[node name="Control7" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_top = 122.0
+margin_right = 233.0
+margin_bottom = 178.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/Control7"]
+margin_left = -27.1892
+margin_top = 2.0
+margin_right = 260.811
+margin_bottom = 26.0
+custom_fonts/font = ExtResource( 7 )
+text = "Code published under the"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LinkButton2" type="LinkButton" parent="HBoxContainer/VBoxContainer/Control7"]
+margin_left = 88.0
+margin_top = 16.0
+margin_right = 156.0
+margin_bottom = 39.0
+custom_fonts/font = ExtResource( 7 )
+text = "MIT license."
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer/Control7"]
+margin_left = -15.4917
+margin_top = 36.2832
+margin_right = 250.508
+margin_bottom = 59.2832
+custom_fonts/font = ExtResource( 7 )
+text = "Art and sound published under the"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LinkButton" type="LinkButton" parent="HBoxContainer/VBoxContainer/Control7"]
+margin_left = 55.7568
+margin_top = 50.1081
+margin_right = 200.757
+margin_bottom = 73.1081
+custom_fonts/font = ExtResource( 7 )
+text = "CC0 1.0 Universal license."
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control8" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_top = 182.0
+margin_right = 233.0
+margin_bottom = 193.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control2" type="LinkButton" parent="HBoxContainer/VBoxContainer"]
+anchor_top = -0.00666667
+anchor_bottom = -0.00666667
+margin_top = 197.0
+margin_right = 233.0
+margin_bottom = 243.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.5
+
+[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer/Control2"]
+margin_left = 61.1648
+margin_top = 1.49451
+margin_right = 173.165
+margin_bottom = 45.4945
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer/Control2/Panel"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 91.0
+margin_bottom = 27.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GodotLogo" type="TextureRect" parent="HBoxContainer/VBoxContainer/Control2/Panel/Control"]
+margin_left = -1.94739
+margin_top = -1.83856
+margin_right = 724.053
+margin_bottom = 247.161
+rect_scale = Vector2( 0.14, 0.14 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer/Control2"]
+margin_left = 0.349182
+margin_top = 38.5009
+margin_right = 233.349
+margin_bottom = 64.5009
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 7 )
+text = "Created using Godot."
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_top = 247.0
+margin_right = 233.0
+margin_bottom = 250.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="Control3" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_top = 254.0
+margin_right = 233.0
+margin_bottom = 272.0
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer/Control3"]
+margin_left = 37.408
+margin_top = 7.8689
+margin_right = 197.408
+margin_bottom = 31.8689
+custom_fonts/font = ExtResource( 6 )
+text = "Show third-party licenses"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PaddingBottom" type="Control" parent="HBoxContainer/VBoxContainer"]
+margin_top = 276.0
+margin_right = 233.0
+margin_bottom = 300.0
+size_flags_vertical = 3
+
+[node name="PaddingRight" type="Control" parent="HBoxContainer"]
+margin_left = 270.0
+margin_right = 300.0
+margin_bottom = 300.0
+size_flags_horizontal = 3
+
+[node name="ThirdPartyLicensesPanel" parent="." instance=ExtResource( 4 )]
+visible = false
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Control6/Label" to="." method="_on_levi_link_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Control6/URL" to="." method="_on_levi_link_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Control7/LinkButton2" to="." method="_on_mit_license_link_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Control7/LinkButton" to="." method="_on_cc_license_link_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Control2" to="." method="_on_godot_link_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/Control3/Button" to="." method="_on_third_party_licenses_button_pressed"]
