@@ -337,7 +337,7 @@ static func draw_instruction_indicator( \
         "move_right":
             end_offset_from_mid = Vector2(half_length, 0.0)
         _:
-            Utils.error("Invalid input_key: %s" % input_key)
+            Utils.static_error("Invalid input_key: %s" % input_key)
     
     var start := position - end_offset_from_mid
     var end := position + end_offset_from_mid
@@ -501,7 +501,7 @@ static func draw_shape_outline( \
                 color, \
                 thickness)
     else:
-        Utils.error( \
+        Utils.static_error( \
                 "Invalid Shape2D provided for draw_shape: %s. The " + \
                 "supported shapes are: CircleShape2D, CapsuleShape2D, " + \
                 "RectangleShape2D." % shape)
@@ -837,7 +837,7 @@ static func draw_edge( \
                 includes_waypoints, \
                 includes_instruction_indicators)
     else:
-        Utils.error("Unexpected Edge subclass: %s" % edge)
+        Utils.static_error("Unexpected Edge subclass: %s" % edge)
 
 static func _draw_edge_from_end_points( \
         canvas: CanvasItem, \
@@ -1043,5 +1043,5 @@ static func _get_edge_trajectory_vertices( \
             ])
         EdgeType.UNKNOWN, \
         _:
-            Utils.error()
+            Utils.static_error()
             return PoolVector2Array()

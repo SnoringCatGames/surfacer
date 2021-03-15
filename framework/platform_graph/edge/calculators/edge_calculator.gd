@@ -27,7 +27,7 @@ func _init( \
     self.is_a_jump_calculator = is_a_jump_calculator
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
-    Utils.error( \
+    Utils.static_error( \
             "Abstract EdgeCalculator.get_can_traverse_from_surface is not " + \
             "implemented")
     return false
@@ -38,7 +38,7 @@ func get_all_inter_surface_edges_from_surface( \
         origin_surface: Surface, \
         surfaces_in_fall_range_set: Dictionary, \
         surfaces_in_jump_range_set: Dictionary) -> void:
-    Utils.error( \
+    Utils.static_error( \
             "Abstract EdgeCalculator" + \
             ".get_all_inter_surface_edges_from_surface is not implemented")
 
@@ -50,7 +50,7 @@ func calculate_edge( \
         velocity_start := Vector2.INF, \
         needs_extra_jump_duration := false, \
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
-    Utils.error("Abstract EdgeCalculator.calculate_edge is not implemented")
+    Utils.static_error("Abstract EdgeCalculator.calculate_edge is not implemented")
     return null
 
 func optimize_edge_jump_position_for_path( \

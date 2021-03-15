@@ -29,9 +29,9 @@ func _init_production_params() -> void:
     wall_jump_horizontal_boost = 400.0
     wall_fall_horizontal_boost = 20.0
     
-    walk_acceleration = 350.0
-    climb_up_speed = -350.0
-    climb_down_speed = 150.0
+    walk_acceleration = 400.0
+    climb_up_speed = -400.0
+    climb_down_speed = 200.0
     
     minimizes_velocity_change_when_jumping = false
     optimizes_edge_jump_positions_at_run_time = true
@@ -60,7 +60,7 @@ func _init_production_params() -> void:
     asserts_no_preexisting_collisions_during_edge_calculations = false
     calculates_discrete_frame_state = true
     
-    max_horizontal_speed_default = 400.0
+    max_horizontal_speed_default = 700.0
     min_horizontal_speed = 5.0
     max_vertical_speed = 4000.0
     min_vertical_speed = 0.0

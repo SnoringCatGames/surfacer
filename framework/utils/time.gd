@@ -1,5 +1,7 @@
 extends Node
 
+const _ADDITIONAL_FRAMERATE_MULTIPLIER_FOR_DEBUGGING := 1.0
+
 const PHYSICS_TIME_STEP_SEC := 1 / 60.0
 
 var _play_time: _PlayTime
@@ -34,6 +36,8 @@ var elapsed_play_time_modified_sec: float \
         setget ,_get_elapsed_play_time_modified_sec
 
 func _init() -> void:
+    print("Time._init")
+    
     pause_mode = Node.PAUSE_MODE_PROCESS
 
 func _enter_tree() -> void:
@@ -60,7 +64,7 @@ func _handle_timeouts() -> void:
             break
     
     if expired_timeout_id >= 0:
-        _timeouts[expired_timeout_id].callback.call_func()
+        _timeouts[expired_timeout_id].trigger()
         _timeouts.erase(expired_timeout_id)
 
 func _handle_intervals() -> void:
@@ -79,16 +83,18 @@ func _physics_process(delta_sec: float) -> void:
 
 func _set_physics_framerate_multiplier(value: float) -> void:
     physics_framerate_multiplier = value
-    _play_time.physics_framerate_multiplier = value
+    _play_time.physics_framerate_multiplier = \
+            _get_physics_framerate_multiplier()
 
 func _get_physics_framerate_multiplier() -> float:
-    return physics_framerate_multiplier
+    return physics_framerate_multiplier * \
+            _ADDITIONAL_FRAMERATE_MULTIPLIER_FOR_DEBUGGING
 
 func _get_elapsed_app_time_actual_sec() -> float:
     return _elapsed_latest_time_sec
 
 func _get_elapsed_app_time_modified_sec() -> float:
-    return _elapsed_latest_time_sec * physics_framerate_multiplier
+    return _elapsed_latest_time_sec * _get_physics_framerate_multiplier()
 
 func _get_elapsed_play_time_actual_sec() -> float:
     return _play_time.elapsed_time_actual_sec
@@ -98,10 +104,12 @@ func _get_elapsed_play_time_modified_sec() -> float:
 
 func set_timeout( \
         callback: FuncRef, \
-        delay_sec: float) -> int:
+        delay_sec: float, \
+        arguments := []) -> int:
     var timeout := _Timeout.new( \
             callback, \
-            _elapsed_latest_time_sec + delay_sec)
+            _elapsed_latest_time_sec + delay_sec, \
+            arguments)
     _timeouts[timeout.id] = timeout
     return timeout.id
 
@@ -111,23 +119,50 @@ func clear_timeout(timeout_id: int) -> bool:
 class _Timeout extends Reference:
     var callback: FuncRef
     var time_sec: float
+    var arguments: Array
     var id: int
     
     func _init( \
             callback: FuncRef, \
-            time_sec: float) -> void:
+            time_sec: float, \
+            arguments: Array) -> void:
         self.callback = callback
         self.time_sec = time_sec
+        self.arguments = arguments
         
         Time._last_timeout_id += 1
         self.id = Time._last_timeout_id
+    
+    func trigger() -> void:
+        if !callback.is_valid():
+            return
+        
+        match arguments.size():
+            0:
+                callback.call_func()
+            1:
+                callback.call_func(arguments[0])
+            2:
+                callback.call_func(arguments[0], arguments[1])
+            3:
+                callback.call_func(arguments[0], arguments[1], arguments[2])
+            4:
+                callback.call_func(arguments[0], arguments[1], arguments[2], \
+                        arguments[3])
+            5:
+                callback.call_func(arguments[0], arguments[1], arguments[2], \
+                        arguments[3], arguments[4])
+            _:
+                Utils.error()
 
 func set_interval( \
         callback: FuncRef, \
-        interval_sec: float) -> int:
+        interval_sec: float, \
+        arguments := []) -> int:
     var interval := _Interval.new( \
             callback, \
-            interval_sec)
+            interval_sec, \
+            arguments)
     _intervals[interval.id] = interval
     return interval.id
 
@@ -137,14 +172,17 @@ func clear_interval(interval_id: int) -> bool:
 class _Interval extends Reference:
     var callback: FuncRef
     var interval_sec: float
+    var arguments: Array
     var id: int
     var next_trigger_time_sec: float
     
     func _init( \
             callback: FuncRef, \
-            interval_sec: float) -> void:
+            interval_sec: float, \
+            arguments: Array) -> void:
         self.callback = callback
         self.interval_sec = interval_sec
+        self.arguments = arguments
         self.next_trigger_time_sec = \
                 Time._elapsed_latest_time_sec + interval_sec
         
@@ -152,9 +190,28 @@ class _Interval extends Reference:
         self.id = Time._last_timeout_id
     
     func trigger() -> void:
+        if !callback.is_valid():
+            return
+        
         next_trigger_time_sec = \
                 Time._elapsed_latest_time_sec + interval_sec
-        callback.call_func()
+        match arguments.size():
+            0:
+                callback.call_func()
+            1:
+                callback.call_func(arguments[0])
+            2:
+                callback.call_func(arguments[0], arguments[1])
+            3:
+                callback.call_func(arguments[0], arguments[1], arguments[2])
+            4:
+                callback.call_func(arguments[0], arguments[1], arguments[2], \
+                        arguments[3])
+            5:
+                callback.call_func(arguments[0], arguments[1], arguments[2], \
+                        arguments[3], arguments[4])
+            _:
+                Utils.error()
 
 func throttle( \
         callback: FuncRef, \
@@ -216,7 +273,8 @@ class _Throttler extends Reference:
     func _trigger_callback() -> void:
         _last_call_time_sec = Time.elapsed_app_time_actual_sec
         _is_callback_scheduled = false
-        _callback.call_func()
+        if _callback.is_valid():
+            _callback.call_func()
 
 # Keeps track of the current total elapsed time of _unpaused_ gameplay.
 class _PlayTime extends Node:

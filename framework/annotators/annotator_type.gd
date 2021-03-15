@@ -33,5 +33,5 @@ static func get_type_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Utils.error("Invalid AnnotatorType: %s" % type)
+            Utils.static_error("Invalid AnnotatorType: %s" % type)
             return "???"

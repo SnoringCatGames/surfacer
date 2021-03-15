@@ -181,7 +181,7 @@ func set_up_level(data: Dictionary) -> void:
         elif edge_calculator is WalkToAscendWallFromFloorCalculator:
             walk_to_ascend_wall_from_floor_calculator = edge_calculator
         else:
-            Utils.error()
+            Utils.static_error()
     assert(climb_down_wall_to_floor_calculator != null)
     assert(climb_over_wall_to_floor_calculator != null)
     assert(fall_from_floor_calculator != null)

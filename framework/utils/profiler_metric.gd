@@ -187,5 +187,5 @@ static func get_type_string(result_type: int) -> String:
             return "UNKNOWN"
         
         _:
-            Utils.error("Invalid ProfilerMetric: %s" % result_type)
+            Utils.static_error("Invalid ProfilerMetric: %s" % result_type)
             return "UNKNOWN"

@@ -193,7 +193,7 @@ func _create_annotator(annotator_type: int) -> void:
             if Global.current_level != null:
                 Global.current_level.set_level_visibility(true)
         _:
-            Utils.error()
+            Utils.static_error()
 
 func _destroy_annotator(annotator_type: int) -> void:
     assert(is_annotator_enabled(annotator_type))
@@ -225,4 +225,4 @@ func _destroy_annotator(annotator_type: int) -> void:
             if Global.current_level != null:
                 Global.current_level.set_level_visibility(false)
         _:
-            Utils.error()
+            Utils.static_error()

@@ -85,7 +85,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
         
         # If either surface has only a single point, then we only want to
         # consider the one jump/land pair.
-        Utils.error("Single-point surfaces are not yet supported in" + \
+        Utils.static_error("Single-point surfaces are not yet supported in" + \
                 "calculate_jump_land_positions_for_surface_pair (but they " + \
                 "should be easy to add support for).")
     
@@ -211,7 +211,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
             jump_surface_top_end_wrapper = null
             jump_surface_bottom_end_wrapper = null
         _:
-            Utils.error()
+            Utils.static_error()
     var land_surface_left_end := Vector2.INF
     var land_surface_right_end := Vector2.INF
     var land_surface_top_end := Vector2.INF
@@ -258,7 +258,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
             land_surface_top_end_wrapper = null
             land_surface_bottom_end_wrapper = null
         _:
-            Utils.error()
+            Utils.static_error()
     
     var are_surfaces_at_same_height: bool = \
             Geometry.are_floats_equal_with_epsilon( \
@@ -1551,7 +1551,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                         pass
                     
                 _:
-                    Utils.error("Unknown land surface side (jump from floor)")
+                    Utils.static_error("Unknown land surface side (jump from floor)")
             
         SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
             var is_jumping_from_left_wall := \
@@ -2188,11 +2188,11 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     # Jump from a wall, land on a ceiling.
                     
                     # TODO: Implement ceiling use-cases.
-                    Utils.error("calculate_jump_land_positions_for_surface_pair ceiling cases " + \
+                    Utils.static_error("calculate_jump_land_positions_for_surface_pair ceiling cases " + \
                             "not implemented yet")
                     
                 _:
-                    Utils.error("Unknown land surface side (jump from wall)")
+                    Utils.static_error("Unknown land surface side (jump from wall)")
             
         SurfaceSide.CEILING:
             match land_surface.side:
@@ -2200,7 +2200,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     # Jump from a ceiling, land on a floor.
                     
                     # TODO: Implement ceiling use-cases.
-                    Utils.error( \
+                    Utils.static_error( \
                             "calculate_jump_land_positions_for_surface_pair " + \
                             "ceiling cases not implemented yet")
                     
@@ -2208,7 +2208,7 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     # Jump from a ceiling, land on a wall.
                     
                     # TODO: Implement ceiling use-cases.
-                    Utils.error( \
+                    Utils.static_error( \
                             "calculate_jump_land_positions_for_surface_pair " + \
                             "ceiling cases not implemented yet")
                     
@@ -2221,10 +2221,10 @@ static func calculate_jump_land_positions_for_surface_pair( \
                     pass
                     
                 _:
-                    Utils.error("Unknown land surface side (jump from ceiling)")
+                    Utils.static_error("Unknown land surface side (jump from ceiling)")
             
         _:
-            Utils.error("Unknown jump surface side")
+            Utils.static_error("Unknown jump surface side")
     
     if movement_params.always_includes_jump_land_positions_at_surface_ends:
         # Record jump/land position combinations for the surface-end points.
@@ -2464,7 +2464,7 @@ static func calculate_land_positions_on_surface( \
                 return []
             
         _:
-            Utils.error("Unknown land surface side")
+            Utils.static_error("Unknown land surface side")
             return []
 
 static func get_velocity_start( \
@@ -2494,7 +2494,7 @@ static func get_velocity_start( \
                 velocity_start_y = 0.0
                 
             _:
-                Utils.error()
+                Utils.static_error()
                 return Vector2.INF
     
     return Vector2(velocity_start_x, velocity_start_y)
@@ -2531,7 +2531,7 @@ static func get_horizontal_velocity_start( \
                 return 0.0
             
         _:
-            Utils.error()
+            Utils.static_error()
             return INF
 
 # This returns a PositionAlongSurface instance for the given x/y coordinate
@@ -2960,7 +2960,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor( \
         SurfaceSide.NONE:
             pass
         _:
-            Utils.error()
+            Utils.static_error()
             return false
     
     # Offset position if it's too close to either end.
@@ -3029,7 +3029,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor( \
             pass
             
         _:
-            Utils.error()
+            Utils.static_error()
             return false
     
     return true

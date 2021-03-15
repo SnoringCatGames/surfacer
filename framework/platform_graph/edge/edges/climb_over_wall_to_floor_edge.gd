@@ -105,7 +105,7 @@ func update_navigation_state( \
             is_starting_navigation_retry)
     if is_starting_navigation_retry:
         # This should never happen.
-        Utils.error()
+        Utils.static_error()
         return
     
     var is_grabbed_surface_expected: bool = \

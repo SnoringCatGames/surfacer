@@ -343,7 +343,7 @@ func _process_animation() -> void:
                 elif actions.pressed_down:
                     animator.climb_down()
                 else:
-                    Utils.error()
+                    Utils.static_error()
             else:
                 animator.rest_on_wall()
         SurfaceType.AIR:
@@ -352,7 +352,7 @@ func _process_animation() -> void:
             else:
                 animator.jump_rise()
         _:
-            Utils.error()
+            Utils.static_error()
 
 func _process_sfx() -> void:
     pass
@@ -621,7 +621,7 @@ func _update_which_surface_is_grabbed( \
                     surface_state.just_grabbed_floor = false
                     surface_state.just_grabbed_ceiling = false
                 _:
-                    Utils.error()
+                    Utils.static_error()
         surface_state.just_changed_tile_map_coord = \
                 (preserves_just_changed_state and \
                         surface_state.just_changed_tile_map_coord) or \

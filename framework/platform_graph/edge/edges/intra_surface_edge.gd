@@ -280,5 +280,5 @@ static func calculate_duration_to_move_along_surface( \
                     is_climbing_upward, \
                     movement_params)
         _:
-            Utils.error()
+            Utils.static_error()
             return INF

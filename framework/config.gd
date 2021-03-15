@@ -13,9 +13,9 @@ const LEVEL_RESOURCE_PATHS := [
 const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://test/test_runner.tscn"
 
 const UTILITY_PANEL_RESOURCE_PATH := \
-        "res://framework/controls/panels/utility_panel.tscn"
+        "res://framework/gui/panels/utility_panel.tscn"
 const WELCOME_PANEL_RESOURCE_PATH := \
-        "res://framework/controls/panels/welcome_panel.tscn"
+        "res://framework/gui/panels/welcome_panel.tscn"
 
 const IN_DEBUG_MODE := true
 const IN_TEST_MODE := false

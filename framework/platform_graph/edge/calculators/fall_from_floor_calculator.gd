@@ -348,7 +348,7 @@ static func _calculate_player_center_at_fall_off_point( \
             fall_off_displacement_y = collider_shape.extents.y
         
     else:
-        Utils.error("Invalid Shape2D provided for " + \
+        Utils.static_error("Invalid Shape2D provided for " + \
                 "_calculate_player_center_at_fall_off_point: %s. " + \
                 "The supported shapes are: CircleShape2D, CapsuleShape2D, " + \
                 "RectangleShape2D." % \

@@ -5,15 +5,27 @@ const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 const GROUP_NAME_SURFACES := "surfaces"
 const GROUP_NAME_SQUIRREL_DESTINATIONS := "squirrel_destinations"
 
-static func error( \
+func _init() -> void:
+    print("Utils._init")
+
+func error( \
         message := "An error occurred", \
-        should_assert := true):
+        should_assert := true) -> void:
+    push_error("ERROR: %s" % message)
+    Global.print("**ERROR**: %s" % message)
+    if should_assert:
+         assert(false)
+
+static func static_error( \
+        message := "An error occurred", \
+        should_assert := true) -> void:
     push_error("ERROR: %s" % message)
     if should_assert:
-        assert(false)
+         assert(false)
 
-static func warning(message := "An warning occurred"):
+func warning(message := "An warning occurred") -> void:
     push_warning("WARNING: %s" % message)
+    Global.print("**WARNING**: %s" % message)
 
 # TODO: Replace this with any built-in feature whenever it exists
 #       (https://github.com/godotengine/godot/issues/4715).

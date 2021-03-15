@@ -237,7 +237,7 @@ static func _calculate_intra_surface_edge_weight( \
         SurfaceSide.RIGHT_WALL:
             weight *= movement_params.climbing_edge_weight_multiplier
         _:
-            Utils.error()
+            Utils.static_error()
     
     # Give a constant extra weight for each additional edge in a path.
     weight += movement_params.additional_edge_weight_offset
