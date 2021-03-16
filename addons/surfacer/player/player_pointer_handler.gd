@@ -48,18 +48,18 @@ func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventScreenTouch and \
             !event.pressed:
         event_type = "TOUCH_UP   "
-        pointer_up_position = Utils.get_global_touch_position(event)
+        pointer_up_position = ScaffoldUtils.get_global_touch_position(event)
     
     # Touch-down: Position pre-selection.
     if event is InputEventScreenTouch and \
             event.pressed:
         event_type = "TOUCH_DOWN "
-        pointer_drag_position = Utils.get_global_touch_position(event)
+        pointer_drag_position = ScaffoldUtils.get_global_touch_position(event)
     
     # Touch-move: Position pre-selection.
     if event is InputEventScreenDrag:
         event_type = "TOUCH_DRAG "
-        pointer_drag_position = Utils.get_global_touch_position(event)
+        pointer_drag_position = ScaffoldUtils.get_global_touch_position(event)
     
 #    if pointer_up_position != Vector2.INF or \
 #            pointer_drag_position != Vector2.INF:

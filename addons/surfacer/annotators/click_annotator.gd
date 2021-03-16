@@ -30,7 +30,7 @@ func _unhandled_input(event: InputEvent) -> void:
         
     elif event is InputEventScreenTouch and \
             !event.pressed:
-        position = Utils.get_global_touch_position(event)
+        position = ScaffoldUtils.get_global_touch_position(event)
     
     if position != Vector2.INF:
         click_position = position

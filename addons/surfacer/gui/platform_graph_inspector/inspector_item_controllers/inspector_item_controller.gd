@@ -108,7 +108,7 @@ func select() -> void:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    Utils.error( \
+    ScaffoldUtils.error( \
             "Abstract InspectorItemController" + \
             ".find_and_expand_controller is not implemented")
     return false
@@ -133,16 +133,16 @@ func _find_and_expand_controller_recursive_wrapper( \
 func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
-    Utils.error( \
+    ScaffoldUtils.error( \
             "Abstract InspectorItemController" + \
             "._find_and_expand_controller_recursive is not implemented")
 
 func get_text() -> String:
-    Utils.error("Abstract InspectorItemController.get_text is not implemented")
+    ScaffoldUtils.error("Abstract InspectorItemController.get_text is not implemented")
     return ""
 
 func get_description() -> String:
-    Utils.error( \
+    ScaffoldUtils.error( \
             "Abstract InspectorItemController.get_description is not " + \
             "implemented")
     return ""
@@ -190,13 +190,13 @@ func _update_text() -> void:
             get_text())
 
 func _create_children_inner() -> void:
-    Utils.error("Abstract InspectorItemController._create_children_inner is not implemented")
+    ScaffoldUtils.error("Abstract InspectorItemController._create_children_inner is not implemented")
 
 func _destroy_children_inner() -> void:
-    Utils.error("Abstract InspectorItemController._destroy_children_inner is not implemented")
+    ScaffoldUtils.error("Abstract InspectorItemController._destroy_children_inner is not implemented")
 
 func get_annotation_elements() -> Array:
-    Utils.error("Abstract InspectorItemController.get_annotation_elements is not implemented")
+    ScaffoldUtils.error("Abstract InspectorItemController.get_annotation_elements is not implemented")
     return []
 
 # Conditionally prints the given message, depending on the Player's
@@ -204,7 +204,7 @@ func get_annotation_elements() -> Array:
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if Config.is_logging_events and \
+    if SurfacerConfig.is_logging_events and \
             graph.movement_params.logs_inspector_events:
         if message_args != null:
             print(message_template % message_args)

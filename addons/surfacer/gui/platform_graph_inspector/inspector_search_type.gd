@@ -21,5 +21,5 @@ static func get_type_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Utils.error("Invalid InspectorSearchType: %s" % type)
+            ScaffoldUtils.error("Invalid InspectorSearchType: %s" % type)
             return ""

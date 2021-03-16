@@ -84,7 +84,7 @@ static func calculate_horizontal_step( \
         # There is no start velocity that can reach the target end
         # position/velocity/time. This should never happen, since we should
         # have failed earlier during waypoint calculations.
-        Utils.error()
+        ScaffoldUtils.error()
         Profiler.stop_with_optional_metadata( \
                 ProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
                 edge_calc_params.collision_params.thread_id, \
@@ -240,7 +240,7 @@ static func _calculate_acceleration_start_and_end_time( \
             time_acceleration_start < -0.0001 or \
             time_acceleration_end < -0.0001:
         # Something went wrong.
-        Utils.error()
+        ScaffoldUtils.error()
         return []
     
     return [time_acceleration_start, time_acceleration_end]

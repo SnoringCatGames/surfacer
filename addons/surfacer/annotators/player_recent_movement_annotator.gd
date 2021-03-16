@@ -184,7 +184,7 @@ func _draw_action_indicator( \
         PlayerActionType.RELEASED_FACE_RIGHT:
             pass
         _:
-            Utils.error( \
+            ScaffoldUtils.error( \
                     "Unknown PlayerActionType passed to " + \
                     "_draw_action_indicator: %s" % \
                     PlayerActionType.get_type_string(action))

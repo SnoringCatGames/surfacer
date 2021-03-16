@@ -24,16 +24,16 @@ func _init( \
     self.all_jump_land_positions = all_jump_land_positions
 
 func merge(other) -> void:
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             self.all_jump_land_positions, \
             other.all_jump_land_positions)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             self.failed_edge_attempts, \
             other.failed_edge_attempts)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             self.valid_edges, \
             other.valid_edges)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             self.edge_calc_results, \
             other.edge_calc_results)
 

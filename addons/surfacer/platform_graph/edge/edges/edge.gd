@@ -141,7 +141,7 @@ func _calculate_distance( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         trajectory: EdgeTrajectory) -> float:
-    Utils.error("Abstract Edge._calculate_distance is not implemented")
+    ScaffoldUtils.error("Abstract Edge._calculate_distance is not implemented")
     return INF
 
 func _calculate_duration( \
@@ -149,14 +149,14 @@ func _calculate_duration( \
         end: PositionAlongSurface, \
         instructions: EdgeInstructions, \
         distance: float) -> float:
-    Utils.error("Abstract Edge._calculate_duration is not implemented")
+    ScaffoldUtils.error("Abstract Edge._calculate_duration is not implemented")
     return INF
 
 func _check_did_just_reach_destination( \
         navigation_state: PlayerNavigationState, \
         surface_state: PlayerSurfaceState, \
         playback) -> bool:
-    Utils.error( \
+    ScaffoldUtils.error( \
             "Abstract Edge._check_did_just_reach_destination is not " + \
             "implemented")
     return false
@@ -185,7 +185,7 @@ func _get_weight_multiplier() -> float:
         SurfaceType.AIR:
             return movement_params.air_edge_weight_multiplier
         _:
-            Utils.error()
+            ScaffoldUtils.error()
             return INF
 
 func _get_start() -> Vector2:

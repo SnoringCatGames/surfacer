@@ -24,7 +24,8 @@ func _enter_tree() -> void:
             "_on_viewport_size_changed")
 
 func _process(delta_sec: float) -> void:
-    var next_screen_center: Vector2 = Global.camera_controller.get_position()
+    var next_screen_center: Vector2 = \
+            ScaffoldConfig.camera_controller.get_position()
     
     if next_screen_center != screen_center:
         # The camera position moved, so we need to update the ruler.
@@ -32,9 +33,11 @@ func _process(delta_sec: float) -> void:
         update()
 
 func _draw() -> void:
-    var grid_spacing: float = GRID_SPACING / Global.camera_controller.zoom
+    var grid_spacing: float = \
+            GRID_SPACING / ScaffoldConfig.camera_controller.zoom
     var screen_start_position: Vector2 = \
-            screen_center / Global.camera_controller.zoom - viewport_size / 2.0
+            screen_center / ScaffoldConfig.camera_controller.zoom - \
+            viewport_size / 2.0
     
     # Offset the start position to align with the grid cell boundaries.
     var ruler_start_position := Vector2( \
@@ -66,7 +69,7 @@ func _draw() -> void:
                 LINE_WIDTH)
         
         text = str(round((screen_start_position.x + start_x) * \
-                Global.camera_controller.zoom))
+                ScaffoldConfig.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string( \
                 MAIN_FONT_XS, \
@@ -87,7 +90,7 @@ func _draw() -> void:
                 LINE_WIDTH)
         
         text = str(round((screen_start_position.y + start_y) * \
-                Global.camera_controller.zoom))
+                ScaffoldConfig.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string( \
                 MAIN_FONT_XS, \

@@ -54,7 +54,7 @@ func _init( \
             movement_params.can_grab_walls, \
             movement_params.can_grab_ceilings, \
             movement_params.can_grab_floors)
-    self.surfaces_set = Utils.array_to_set(surfaces_array)
+    self.surfaces_set = ScaffoldUtils.array_to_set(surfaces_array)
     
     _calculate_nodes_and_edges()
     
@@ -237,7 +237,7 @@ static func _calculate_intra_surface_edge_weight( \
         SurfaceSide.RIGHT_WALL:
             weight *= movement_params.climbing_edge_weight_multiplier
         _:
-            Utils.error()
+            ScaffoldUtils.error()
     
     # Give a constant extra weight for each additional edge in a path.
     weight += movement_params.additional_edge_weight_offset
@@ -374,12 +374,12 @@ func _calculate_inter_surface_edges_total() -> void:
     for origin_surface in surfaces_set:
         surfaces_to_inter_surface_edges_results[origin_surface] = []
     
-    if Config.USES_THREADS:
+    if SurfacerConfig.USES_THREADS:
         var threads := []
-        threads.resize(Config.THREAD_COUNT)
+        threads.resize(SurfacerConfig.THREAD_COUNT)
         
         # Use child threads to parallelize graph parsing.
-        for i in Config.THREAD_COUNT:
+        for i in SurfacerConfig.THREAD_COUNT:
             var thread := Thread.new()
             Profiler.init_thread("parse_edges:" + str(i))
             threads[i] = thread
@@ -419,7 +419,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
         
         # Divide the origin surfaces across threads.
         if thread_index >= 0 and \
-                i % Config.THREAD_COUNT != thread_index:
+                i % SurfacerConfig.THREAD_COUNT != thread_index:
             continue
         
         inter_surface_edges_results = \

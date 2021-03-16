@@ -89,7 +89,7 @@ func update_navigation_state( \
             is_starting_navigation_retry)
     if is_starting_navigation_retry:
         # This should never happen.
-        Utils.error()
+        ScaffoldUtils.error()
         return
     
     var is_still_colliding_with_start_surface := \

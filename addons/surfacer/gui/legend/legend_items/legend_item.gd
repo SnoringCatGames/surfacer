@@ -46,4 +46,4 @@ func _draw() -> void:
 func _draw_shape( \
         center: Vector2, \
         size: Vector2) -> void:
-    Utils.error("Abstract LegendItem._draw_shape is not implemented")
+    ScaffoldUtils.error("Abstract LegendItem._draw_shape is not implemented")

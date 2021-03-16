@@ -39,7 +39,7 @@ static func get_type_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Utils.error("Invalid EdgeType: %s" % type)
+            ScaffoldUtils.error("Invalid EdgeType: %s" % type)
             return "???"
 
 static func get_description_string(type: int) -> String:
@@ -82,7 +82,7 @@ static func get_description_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Utils.error("Invalid EdgeType: %s" % type)
+            ScaffoldUtils.error("Invalid EdgeType: %s" % type)
             return "???"
 
 const KEYS = [

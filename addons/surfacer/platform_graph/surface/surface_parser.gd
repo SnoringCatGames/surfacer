@@ -198,50 +198,50 @@ func _store_surfaces( \
             self.right_walls)
     
     all_surfaces = []
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             all_surfaces, \
             self.floors)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             all_surfaces, \
             self.right_walls)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             all_surfaces, \
             self.left_walls)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             all_surfaces, \
             self.ceilings)
     non_ceiling_surfaces = []
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             non_ceiling_surfaces, \
             self.floors)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             non_ceiling_surfaces, \
             self.right_walls)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             non_ceiling_surfaces, \
             self.left_walls)
     non_floor_surfaces = []
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             non_floor_surfaces, \
             self.right_walls)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             non_floor_surfaces, \
             self.left_walls)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             non_floor_surfaces, \
             self.ceilings)
     non_wall_surfaces = []
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             non_wall_surfaces, \
             self.floors)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             non_wall_surfaces, \
             self.ceilings)
     all_walls = []
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             all_walls, \
             self.right_walls)
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             all_walls, \
             self.left_walls)
     
@@ -637,10 +637,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                     # Merge the two surfaces, replacing the first surface and
                     # removing the second surface.
                     surface2.vertices_array.pop_back()
-                    Utils.concat( \
+                    ScaffoldUtils.concat( \
                             surface2.vertices_array, \
                             surface1.vertices_array)
-                    Utils.concat( \
+                    ScaffoldUtils.concat( \
                             surface2.tile_map_indices, \
                             surface1.tile_map_indices)
                     surfaces.remove(j)
@@ -663,10 +663,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                     # Merge the two surfaces, replacing the first surface and
                     # removing the second surface.
                     surface1.vertices_array.pop_back()
-                    Utils.concat( \
+                    ScaffoldUtils.concat( \
                             surface1.vertices_array, \
                             surface2.vertices_array)
-                    Utils.concat( \
+                    ScaffoldUtils.concat( \
                             surface1.tile_map_indices, \
                             surface2.tile_map_indices)
                     surfaces.remove(j)
@@ -1046,7 +1046,7 @@ static func get_closest_surface( \
                                         last_point_diff.x < 0.0 and \
                                         -last_point_diff.x > last_point_diff.y
                         _:
-                            Utils.error("Invalid SurfaceSide")
+                            ScaffoldUtils.error("Invalid SurfaceSide")
                     
                     current_distance_squared += \
                             CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET if \

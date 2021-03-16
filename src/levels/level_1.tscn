@@ -1,13 +1,8 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://addons/surfacer/level.gd" type="Script" id=1]
+[ext_resource path="res://addons/surfacer/surfacer_level.gd" type="Script" id=1]
 [ext_resource path="res://assets/images/foreground/tileset_old.tres" type="TileSet" id=2]
 [ext_resource path="res://src/background.tscn" type="PackedScene" id=3]
-
-
-
-
-
 
 [node name="Level1" type="Node2D"]
 script = ExtResource( 1 )

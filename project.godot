@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Control",
+"class": "AccordionPanel",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/accordion_panel.gd"
+}, {
 "base": "PlayerActionHandler",
 "class": "AirDashAction",
 "language": "GDScript",
@@ -60,14 +65,24 @@ _global_script_classes=[ {
 "path": "res://addons/surfacer/annotators/annotator_type.gd"
 }, {
 "base": "Node2D",
+"class": "Annotators",
+"language": "GDScript",
+"path": "res://addons/surfacer/annotators/annotators.gd"
+}, {
+"base": "Node2D",
 "class": "CameraController",
 "language": "GDScript",
-"path": "res://addons/surfacer/camera_controller.gd"
+"path": "res://addons/scaffold/camera_controller.gd"
+}, {
+"base": "Node2D",
+"class": "CameraShake",
+"language": "GDScript",
+"path": "res://addons/scaffold/camera_shake.gd"
 }, {
 "base": "Node2D",
 "class": "CanvasLayers",
 "language": "GDScript",
-"path": "res://addons/surfacer/canvas_layers.gd"
+"path": "res://addons/scaffold/canvas_layers.gd"
 }, {
 "base": "PlayerActionHandler",
 "class": "CapVelocityAction",
@@ -93,6 +108,16 @@ _global_script_classes=[ {
 "class": "CeilingsItemController",
 "language": "GDScript",
 "path": "res://addons/surfacer/gui/platform_graph_inspector/inspector_item_controllers/surfaces_group/ceilings_item_controller.gd"
+}, {
+"base": "PanelContainer",
+"class": "CenteredInFullScreenPanel",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/centered_in_full_screen_panel.gd"
+}, {
+"base": "PanelContainer",
+"class": "CenteredPanel",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/centered_panel.gd"
 }, {
 "base": "Node2D",
 "class": "ClickAnnotator",
@@ -159,6 +184,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/utils/colors.gd"
 }, {
+"base": "Screen",
+"class": "ConfirmDataDeletionScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/confirm_data_deletion_screen.gd"
+}, {
 "base": "ValidEdgeTrajectoryLegendItem",
 "class": "ContinuousEdgeTrajectoryLegendItem",
 "language": "GDScript",
@@ -168,6 +198,21 @@ _global_script_classes=[ {
 "class": "CreditsPanel",
 "language": "GDScript",
 "path": "res://addons/surfacer/gui/panels/credits_panel.gd"
+}, {
+"base": "Screen",
+"class": "CreditsScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/credits_screen.gd"
+}, {
+"base": "Screen",
+"class": "DataAgreementScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/data_agreement_screen.gd"
+}, {
+"base": "Node2D",
+"class": "DebugPanel",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/debug_panel.gd"
 }, {
 "base": "InspectorItemController",
 "class": "DescriptionItemController",
@@ -364,6 +409,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/annotators/element_annotator.gd"
 }, {
+"base": "ColorRect",
+"class": "FadeTransition",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/fade_transition.gd"
+}, {
 "base": "EdgeAttempt",
 "class": "FailedEdgeAttempt",
 "language": "GDScript",
@@ -474,10 +524,30 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/gui/platform_graph_inspector/inspector_item_controllers/surfaces_group/floors_item_controller.gd"
 }, {
+"base": "PanelContainer",
+"class": "FullScreenPanel",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/full_screen_panel.gd"
+}, {
+"base": "Screen",
+"class": "GameScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/game_screen.gd"
+}, {
+"base": "Node2D",
+"class": "GestureRecord",
+"language": "GDScript",
+"path": "res://addons/scaffold/data/gesture_record.gd"
+}, {
 "base": "InspectorItemController",
 "class": "GlobalCountsGroupItemController",
 "language": "GDScript",
 "path": "res://addons/surfacer/gui/platform_graph_inspector/inspector_item_controllers/profiler_group/global_counts_group_item_controller.gd"
+}, {
+"base": "Screen",
+"class": "GodotSplashScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/godot_splash_screen.gd"
 }, {
 "base": "Node2D",
 "class": "GridIndicesAnnotator",
@@ -549,6 +619,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/platform_graph/edge/edges/intra_surface_edge.gd"
 }, {
+"base": "Reference",
+"class": "IosModelNames",
+"language": "GDScript",
+"path": "res://addons/scaffold/ios_model_names.gd"
+}, {
+"base": "Reference",
+"class": "IosResolutions",
+"language": "GDScript",
+"path": "res://addons/scaffold/ios_resolutions.gd"
+}, {
 "base": "EdgeCalculator",
 "class": "JumpFromSurfaceToAirCalculator",
 "language": "GDScript",
@@ -584,6 +664,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/platform_graph/edge/utils/jump_land_positions_utils.gd"
 }, {
+"base": "Reference",
+"class": "LabeledControlItemType",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/labeled_control_item_type.gd"
+}, {
+"base": "VBoxContainer",
+"class": "LabeledControlList",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/labeled_control_list.gd"
+}, {
 "base": "SurfacesOfSideGroupItemController",
 "class": "LeftWallsItemController",
 "language": "GDScript",
@@ -605,14 +695,14 @@ _global_script_classes=[ {
 "path": "res://addons/surfacer/gui/legend/legend_items/legend_item_type.gd"
 }, {
 "base": "Node2D",
-"class": "Level",
-"language": "GDScript",
-"path": "res://addons/surfacer/level.gd"
-}, {
-"base": "Node2D",
 "class": "Main",
 "language": "GDScript",
 "path": "res://src/main.gd"
+}, {
+"base": "Screen",
+"class": "MainMenuScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/main_menu_screen.gd"
 }, {
 "base": "PlayerActionHandler",
 "class": "MatchExpectedEdgeTrajectoryAction",
@@ -629,6 +719,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/platform_graph/edge/utils/movement_utils.gd"
 }, {
+"base": "PanelContainer",
+"class": "NavBar",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/nav_bar.gd"
+}, {
 "base": "Reference",
 "class": "Navigator",
 "language": "GDScript",
@@ -638,6 +733,11 @@ _global_script_classes=[ {
 "class": "NavigatorAnnotator",
 "language": "GDScript",
 "path": "res://addons/surfacer/annotators/navigator_annotator.gd"
+}, {
+"base": "Screen",
+"class": "NotificationScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/notification_screen.gd"
 }, {
 "base": "LegendItem",
 "class": "OriginLegendItem",
@@ -658,6 +758,11 @@ _global_script_classes=[ {
 "class": "OriginSurfaceLegendItem",
 "language": "GDScript",
 "path": "res://addons/surfacer/gui/legend/legend_items/origin_surface_legend_item.gd"
+}, {
+"base": "Screen",
+"class": "PauseScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/pause_screen.gd"
 }, {
 "base": "Reference",
 "class": "PlatformGraph",
@@ -792,7 +897,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "PriorityQueue",
 "language": "GDScript",
-"path": "res://addons/surfacer/utils/priority_queue.gd"
+"path": "res://addons/scaffold/priority_queue.gd"
 }, {
 "base": "InspectorItemController",
 "class": "ProfilerCountItemController",
@@ -814,6 +919,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/gui/platform_graph_inspector/inspector_item_controllers/profiler_group/profiler_timing_item_controller.gd"
 }, {
+"base": "Screen",
+"class": "RateAppScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/rate_app_screen.gd"
+}, {
 "base": "SurfacesOfSideGroupItemController",
 "class": "RightWallsItemController",
 "language": "GDScript",
@@ -824,15 +934,55 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/annotators/ruler_annotator.gd"
 }, {
+"base": "Node",
+"class": "ScaffoldBootstrap",
+"language": "GDScript",
+"path": "res://addons/scaffold/scaffold_bootstrap.gd"
+}, {
+"base": "Node2D",
+"class": "ScaffoldLevel",
+"language": "GDScript",
+"path": "res://addons/scaffold/scaffold_level.gd"
+}, {
+"base": "Node2D",
+"class": "Screen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screen.gd"
+}, {
 "base": "MarginContainer",
 "class": "SelectionDescription",
 "language": "GDScript",
 "path": "res://addons/surfacer/gui/selection_description.gd"
 }, {
+"base": "Screen",
+"class": "SettingsScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/settings_screen.gd"
+}, {
+"base": "Button",
+"class": "ShinyButton",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/shiny_button.gd"
+}, {
+"base": "Screen",
+"class": "SnoringCatSplashScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/snoring_cat_splash_screen.gd"
+}, {
 "base": "PlayerAnimator",
 "class": "SquirrelAnimator",
 "language": "GDScript",
 "path": "res://src/players/squirrel/squirrel_animator.gd"
+}, {
+"base": "Node",
+"class": "SquirrelAwayConfig",
+"language": "GDScript",
+"path": "res://src/squirrel_away_config.gd"
+}, {
+"base": "SurfacerLevel",
+"class": "SquirrelAwayLevel",
+"language": "GDScript",
+"path": "res://src/squirrel_away_level.gd"
 }, {
 "base": "MovementParams",
 "class": "SquirrelParams",
@@ -847,7 +997,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "Stopwatch",
 "language": "GDScript",
-"path": "res://addons/surfacer/utils/stopwatch.gd"
+"path": "res://addons/scaffold/stopwatch.gd"
 }, {
 "base": "Reference",
 "class": "Surface",
@@ -899,6 +1049,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/platform_graph/surface/surface_type.gd"
 }, {
+"base": "ScaffoldLevel",
+"class": "SurfacerLevel",
+"language": "GDScript",
+"path": "res://addons/surfacer/surfacer_level.gd"
+}, {
 "base": "InspectorItemController",
 "class": "SurfacesGroupItemController",
 "language": "GDScript",
@@ -908,6 +1063,26 @@ _global_script_classes=[ {
 "class": "SurfacesOfSideGroupItemController",
 "language": "GDScript",
 "path": "res://addons/surfacer/gui/platform_graph_inspector/inspector_item_controllers/surfaces_group/surfaces_of_side_item_controller.gd"
+}, {
+"base": "Screen",
+"class": "ThirdPartyLicensesScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/third_party_licenses_screen.gd"
+}, {
+"base": "TileMap",
+"class": "TierTileMap",
+"language": "GDScript",
+"path": "res://tier_tile_map.gd"
+}, {
+"base": "Node2D",
+"class": "TodoSign",
+"language": "GDScript",
+"path": "res://addons/scaffold/todo_sign.gd"
+}, {
+"base": "Reference",
+"class": "UUID",
+"language": "GDScript",
+"path": "res://addons/crypto_uuid_v4/uuid.gd"
 }, {
 "base": "PlayerActionSource",
 "class": "UserActionSource",
@@ -1000,6 +1175,7 @@ _global_script_classes=[ {
 "path": "res://addons/surfacer/gui/panels/welcome_panel.gd"
 } ]
 _global_script_class_icons={
+"AccordionPanel": "",
 "AirDashAction": "",
 "AirDefaultAction": "",
 "AirJumpAction": "",
@@ -1010,13 +1186,17 @@ _global_script_class_icons={
 "AnnotationElement": "",
 "AnnotationElementType": "",
 "AnnotatorType": "",
+"Annotators": "",
 "CameraController": "",
+"CameraShake": "",
 "CanvasLayers": "",
 "CapVelocityAction": "",
 "CatAnimator": "",
 "CatParams": "",
 "CatPlayer": "",
 "CeilingsItemController": "",
+"CenteredInFullScreenPanel": "",
+"CenteredPanel": "",
 "ClickAnnotator": "",
 "ClimbDownWallToFloorCalculator": "",
 "ClimbDownWallToFloorEdge": "",
@@ -1030,8 +1210,12 @@ _global_script_class_icons={
 "ColorParamsFactory": "",
 "ColorParamsType": "",
 "Colors": "",
+"ConfirmDataDeletionScreen": "",
 "ContinuousEdgeTrajectoryLegendItem": "",
 "CreditsPanel": "",
+"CreditsScreen": "",
+"DataAgreementScreen": "",
+"DebugPanel": "",
 "DescriptionItemController": "",
 "DestinationLegendItem": "",
 "DestinationSurfaceAnnotationElement": "",
@@ -1071,6 +1255,7 @@ _global_script_class_icons={
 "EdgesWithOneStepGroupItemController": "",
 "EdgesWithoutIncreasingJumpHeightGroupItemController": "",
 "ElementAnnotator": "",
+"FadeTransition": "",
 "FailedEdgeAttempt": "",
 "FailedEdgeAttemptAnnotationElement": "",
 "FailedEdgeItemController": "",
@@ -1093,7 +1278,11 @@ _global_script_class_icons={
 "FloorJumpAction": "",
 "FloorWalkAction": "",
 "FloorsItemController": "",
+"FullScreenPanel": "",
+"GameScreen": "",
+"GestureRecord": "",
 "GlobalCountsGroupItemController": "",
+"GodotSplashScreen": "",
 "GridIndicesAnnotator": "",
 "HorizontalMovementUtils": "",
 "HsvColorParams": "",
@@ -1108,6 +1297,8 @@ _global_script_class_icons={
 "InstructionsPlayback": "",
 "InterSurfaceEdgesResult": "",
 "IntraSurfaceEdge": "",
+"IosModelNames": "",
+"IosResolutions": "",
 "JumpFromSurfaceToAirCalculator": "",
 "JumpFromSurfaceToAirEdge": "",
 "JumpInterSurfaceCalculator": "",
@@ -1115,21 +1306,26 @@ _global_script_class_icons={
 "JumpLandPositions": "",
 "JumpLandPositionsAnnotationElement": "",
 "JumpLandPositionsUtils": "",
+"LabeledControlItemType": "",
+"LabeledControlList": "",
 "LeftWallsItemController": "",
 "Legend": "",
 "LegendItem": "",
 "LegendItemType": "",
-"Level": "",
 "Main": "",
+"MainMenuScreen": "",
 "MatchExpectedEdgeTrajectoryAction": "",
 "MovementParams": "",
 "MovementUtils": "",
+"NavBar": "",
 "Navigator": "",
 "NavigatorAnnotator": "",
+"NotificationScreen": "",
 "OriginLegendItem": "",
 "OriginSurfaceAnnotationElement": "",
 "OriginSurfaceItemController": "",
 "OriginSurfaceLegendItem": "",
+"PauseScreen": "",
 "PlatformGraph": "",
 "PlatformGraphInspector": "",
 "PlatformGraphInspectorSelector": "",
@@ -1161,10 +1357,19 @@ _global_script_class_icons={
 "ProfilerGroupItemController": "",
 "ProfilerMetric": "",
 "ProfilerTimingItemController": "",
+"RateAppScreen": "",
 "RightWallsItemController": "",
 "RulerAnnotator": "",
+"ScaffoldBootstrap": "",
+"ScaffoldLevel": "",
+"Screen": "",
 "SelectionDescription": "",
+"SettingsScreen": "",
+"ShinyButton": "",
+"SnoringCatSplashScreen": "",
 "SquirrelAnimator": "",
+"SquirrelAwayConfig": "",
+"SquirrelAwayLevel": "",
 "SquirrelParams": "",
 "SquirrelPlayer": "",
 "Stopwatch": "",
@@ -1178,8 +1383,13 @@ _global_script_class_icons={
 "SurfaceSelectionAnnotator": "",
 "SurfaceSide": "",
 "SurfaceType": "",
+"SurfacerLevel": "",
 "SurfacesGroupItemController": "",
 "SurfacesOfSideGroupItemController": "",
+"ThirdPartyLicensesScreen": "",
+"TierTileMap": "",
+"TodoSign": "",
+"UUID": "",
 "UserActionSource": "",
 "UtilityPanel": "",
 "ValidEdgeItemController": "",
@@ -1209,9 +1419,15 @@ config/quit_on_go_back=false
 
 [autoload]
 
-Config="*res://addons/surfacer/config.gd"
-Time="*res://addons/surfacer/utils/time.gd"
-Utils="*res://addons/surfacer/utils/utils.gd"
+ScaffoldConfig="*res://addons/scaffold/scaffold_config.gd"
+ScaffoldUtils="*res://addons/scaffold/scaffold_utils.gd"
+SaveState="*res://addons/scaffold/data/save_state.gd"
+Analytics="*res://addons/scaffold/data/analytics.gd"
+Log="*res://addons/scaffold/data/log.gd"
+Audio="*res://addons/scaffold/audio.gd"
+Nav="*res://addons/scaffold/navigation.gd"
+SurfacerConfig="*res://addons/surfacer/surfacer_config.gd"
+Time="*res://addons/scaffold/time.gd"
 Geometry="*res://addons/surfacer/utils/geometry.gd"
 DrawUtils="*res://addons/surfacer/utils/draw_utils.gd"
 Profiler="*res://addons/surfacer/utils/profiler.gd"

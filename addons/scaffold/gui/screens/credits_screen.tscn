@@ -1,0 +1,382 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://assets/images/gui/logo.png" type="Texture" id=1]
+[ext_resource path="res://assets/images/gui/godot-logo-about.png" type="Texture" id=2]
+[ext_resource path="res://addons/scaffold/gui/screens/credits_screen.gd" type="Script" id=3]
+[ext_resource path="res://addons/scaffold/gui/nav_bar.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/scaffold/gui/full_screen_panel.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/images/gui/snoring-cat-logo-about.png" type="Texture" id=6]
+[ext_resource path="res://assets/fonts/main_font_normal.tres" type="DynamicFont" id=7]
+[ext_resource path="res://addons/scaffold/gui/centered_panel.tscn" type="PackedScene" id=8]
+[ext_resource path="res://assets/fonts/main_font_s.tres" type="DynamicFont" id=9]
+[ext_resource path="res://addons/scaffold/gui/accordion_panel.tscn" type="PackedScene" id=10]
+[ext_resource path="res://assets/fonts/main_font_normal_bold.tres" type="DynamicFont" id=11]
+
+[node name="CreditsScreen" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="FullScreenPanel" parent="." instance=ExtResource( 5 )]
+margin_right = 480.0
+margin_bottom = 480.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
+margin_right = 480.0
+margin_bottom = 612.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NavBar" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 480.0
+margin_bottom = 128.0
+text = "About"
+shows_back = true
+shows_about = false
+shows_settings = false
+shows_logo = false
+shows_game_over = false
+
+[node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 8 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 132.0
+margin_right = 480.0
+margin_bottom = 612.0
+stretches_horizontally = false
+stretches_vertically = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
+margin_right = 480.0
+margin_bottom = 480.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer"]
+margin_right = 470.0
+margin_bottom = 822.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
+margin_left = 26.0
+margin_right = 443.0
+margin_bottom = 822.0
+
+[node name="Control" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_right = 417.0
+margin_bottom = 37.0
+rect_min_size = Vector2( 417, 37 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="TextureRect" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Control"]
+margin_right = 413.0
+margin_bottom = 34.0
+texture = ExtResource( 1 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer4" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 208.0
+margin_top = 41.0
+margin_right = 208.0
+margin_bottom = 71.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 83.0
+margin_top = 75.0
+margin_right = 333.0
+margin_bottom = 216.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+custom_constants/separation = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LinkButton2" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer4"]
+margin_right = 250.0
+margin_bottom = 85.0
+rect_min_size = Vector2( 235, 85 )
+
+[node name="SnoringCatLogo" type="TextureRect" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer4/LinkButton2"]
+margin_right = 469.0
+margin_bottom = 170.0
+rect_scale = Vector2( 0.5, 0.5 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 6 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LinkButton" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer4"]
+margin_top = 85.0
+margin_right = 250.0
+margin_bottom = 113.0
+size_flags_horizontal = 4
+custom_fonts/font = ExtResource( 7 )
+text = "Created by Snoring Cat LLC"
+underline = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LinkButton3" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer4"]
+margin_left = 9.0
+margin_top = 113.0
+margin_right = 241.0
+margin_bottom = 141.0
+size_flags_horizontal = 4
+custom_fonts/font = ExtResource( 7 )
+text = "https://snoringcat.games"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer3" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 208.0
+margin_top = 220.0
+margin_right = 208.0
+margin_bottom = 260.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.8
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 91.0
+margin_top = 264.0
+margin_right = 326.0
+margin_bottom = 377.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+custom_constants/separation = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LinkButton2" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer3"]
+margin_right = 235.0
+margin_bottom = 85.0
+rect_min_size = Vector2( 235, 85 )
+
+[node name="GodotLogo" type="TextureRect" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer3/LinkButton2"]
+margin_right = 469.0
+margin_bottom = 170.0
+rect_scale = Vector2( 0.5, 0.5 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 2 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LinkButton" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer3"]
+margin_left = 37.0
+margin_top = 85.0
+margin_right = 197.0
+margin_bottom = 113.0
+size_flags_horizontal = 4
+custom_fonts/font = ExtResource( 7 )
+text = "Made with Godot"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer1" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 208.0
+margin_top = 381.0
+margin_right = 208.0
+margin_bottom = 421.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_top = 425.0
+margin_right = 417.0
+margin_bottom = 554.0
+custom_constants/separation = 11
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer"]
+margin_left = 133.0
+margin_right = 283.0
+margin_bottom = 28.0
+size_flags_horizontal = 4
+custom_fonts/font = ExtResource( 11 )
+text = "Special thanks:"
+align = 1
+valign = 1
+
+[node name="Label2" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer"]
+margin_left = 137.0
+margin_top = 39.0
+margin_right = 280.0
+margin_bottom = 129.0
+size_flags_horizontal = 4
+text = "Mark Devine
+Roy Dorombozi
+Jake Shoudy"
+align = 1
+valign = 1
+
+[node name="Spacer5" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 208.0
+margin_top = 558.0
+margin_right = 208.0
+margin_bottom = 598.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.6
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_top = 602.0
+margin_right = 417.0
+margin_bottom = 708.0
+custom_constants/separation = 11
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TermsAndConditionsLink" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer2"]
+margin_left = 116.0
+margin_right = 300.0
+margin_bottom = 28.0
+size_flags_horizontal = 4
+text = "Terms & Conditions"
+
+[node name="PrivacyPolicyLink" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer2"]
+margin_left = 146.0
+margin_top = 39.0
+margin_right = 271.0
+margin_bottom = 67.0
+size_flags_horizontal = 4
+text = "Privacy Policy"
+
+[node name="SupportLink" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer2"]
+margin_left = 171.0
+margin_top = 78.0
+margin_right = 245.0
+margin_bottom = 106.0
+size_flags_horizontal = 4
+text = "Support"
+
+[node name="Spacer2" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 208.0
+margin_top = 712.0
+margin_right = 208.0
+margin_bottom = 742.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.6
+
+[node name="AccordionPanel" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 10 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 68.0
+margin_top = 746.0
+margin_right = 348.0
+margin_bottom = 778.0
+rect_min_size = Vector2( 280, 32 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+is_open = false
+includes_header = true
+header_text = "More details"
+header_min_height = 0.0
+header_font = null
+is_caret_on_left = false
+padding = Vector2( 16, 8 )
+extra_scroll_height_for_custom_header = 0.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel"]
+margin_right = 40.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer"]
+margin_left = 140.0
+margin_right = 140.0
+margin_bottom = 10.0
+rect_min_size = Vector2( 0, 10 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="DataDeletionButton" type="Button" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer"]
+margin_left = 40.0
+margin_top = 14.0
+margin_right = 240.0
+margin_bottom = 54.0
+rect_min_size = Vector2( 200, 40 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 9 )
+text = "Request data deletion"
+
+[node name="Spacer5" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer"]
+margin_left = 140.0
+margin_top = 58.0
+margin_right = 140.0
+margin_bottom = 88.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer"]
+margin_top = 92.0
+margin_right = 280.0
+margin_bottom = 142.0
+rect_min_size = Vector2( 280, 50 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 7 )
+text = "Show third-party licenses"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PaddingBottom" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 208.0
+margin_top = 782.0
+margin_right = 208.0
+margin_bottom = 822.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer4/LinkButton2" to="." method="_on_snoring_cat_games_link_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer4/LinkButton" to="." method="_on_snoring_cat_games_link_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer4/LinkButton3" to="." method="_on_snoring_cat_games_link_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer3/LinkButton2" to="." method="_on_godot_link_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer3/LinkButton" to="." method="_on_godot_link_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer2/TermsAndConditionsLink" to="." method="_on_TermsAndConditionsLink_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer2/PrivacyPolicyLink" to="." method="_on_PrivacyPolicyLink_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer2/SupportLink" to="." method="_on_SupportLink_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer/DataDeletionButton" to="." method="_on_DataDeletionButton_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer/Button" to="." method="_on_third_party_licenses_button_pressed"]

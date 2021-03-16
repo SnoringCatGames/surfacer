@@ -89,7 +89,7 @@ func _init() -> void:
             "_on_tree_item_expansion_toggled")
 
 func _ready() -> void:
-    if !Config.DEBUG_PARAMS.is_inspector_enabled:
+    if !SurfacerConfig.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     inspector_selector = PlatformGraphInspectorSelector.new(self)
@@ -98,7 +98,7 @@ func _ready() -> void:
     _populate()
 
 func _process(delta_sec: float) -> void:
-    if !Config.DEBUG_PARAMS.is_inspector_enabled:
+    if !SurfacerConfig.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     var next_focused_control := get_focus_owner()
@@ -130,7 +130,7 @@ func release_focus() -> void:
     .release_focus()
 
 func _populate() -> void:
-    if !Config.DEBUG_PARAMS.is_inspector_enabled:
+    if !SurfacerConfig.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     _should_be_populated = true
@@ -149,7 +149,7 @@ func _populate() -> void:
         call_deferred("_select_initial_item")
 
 func clear() -> void:
-    if !Config.DEBUG_PARAMS.is_inspector_enabled:
+    if !SurfacerConfig.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     release_focus()
@@ -158,7 +158,7 @@ func clear() -> void:
     .clear()
 
 func collapse() -> void:
-    if !Config.DEBUG_PARAMS.is_inspector_enabled:
+    if !SurfacerConfig.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     for graph_item_controller in graph_item_controllers.values():
@@ -168,7 +168,7 @@ func collapse() -> void:
     _clear_selection()
 
 func set_graphs(graphs: Array) -> void:
-    if !Config.DEBUG_PARAMS.is_inspector_enabled:
+    if !SurfacerConfig.DEBUG_PARAMS.is_inspector_enabled:
         return
     
     self.graphs = graphs
@@ -187,11 +187,11 @@ func _select_initial_item() -> void:
         # Don't auto-select anything if the panel isn't open.
         return
     
-    if !Config.DEBUG_PARAMS.has("limit_parsing") or \
-            !Config.DEBUG_PARAMS.limit_parsing.has("player_name"):
+    if !SurfacerConfig.DEBUG_PARAMS.has("limit_parsing") or \
+            !SurfacerConfig.DEBUG_PARAMS.limit_parsing.has("player_name"):
         select_first_item()
     else:
-        var limit_parsing: Dictionary = Config.DEBUG_PARAMS.limit_parsing
+        var limit_parsing: Dictionary = SurfacerConfig.DEBUG_PARAMS.limit_parsing
         var player_name: String = limit_parsing.player_name
         
         if limit_parsing.has("edge") and \
@@ -468,7 +468,7 @@ func _on_find_and_expand_complete( \
     
     var item := get_selected()
     if item == null:
-        Utils.error("No tree item selected after search: %s" % metadata)
+        ScaffoldUtils.error("No tree item selected after search: %s" % metadata)
         return
     var controller: InspectorItemController = item.get_metadata(0)
     
@@ -488,7 +488,7 @@ func _on_find_and_expand_complete( \
         InspectorSearchType.EDGES_GROUP:
             assert(controller.type == InspectorItemType.EDGES_GROUP)
         _:
-            Utils.error("Invalid InspectorSearchType: %s" % \
+            ScaffoldUtils.error("Invalid InspectorSearchType: %s" % \
                     InspectorSearchType.get_type_string(search_type))
     
     if selection_failure_message != "":
@@ -556,7 +556,7 @@ static func _find_closest_jump_land_positions( \
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if Config.is_logging_events and \
+    if SurfacerConfig.is_logging_events and \
             Global.current_player_for_clicks != null and \
             Global.current_player_for_clicks.movement_params \
                     .logs_inspector_events:

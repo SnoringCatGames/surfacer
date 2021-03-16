@@ -15,7 +15,7 @@ func process(player: Player) -> bool:
     if !player.processed_action(FloorJumpAction.NAME):
         # Friction.
         var friction_offset: float = \
-                Utils.get_floor_friction_multiplier(player) * \
+                ScaffoldUtils.get_floor_friction_multiplier(player) * \
                 player.movement_params.friction_coefficient * \
                 player.movement_params.gravity_fast_fall
         friction_offset = clamp(friction_offset, 0, abs(player.velocity.x))

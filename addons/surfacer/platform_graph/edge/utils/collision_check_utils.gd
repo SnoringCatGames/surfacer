@@ -150,7 +150,7 @@ static func check_instructions_discrete_frame_state( \
                 "face_right":
                     pass
                 _:
-                    Utils.error()
+                    ScaffoldUtils.error()
             
             next_instruction = \
                     instructions.instructions \
@@ -482,7 +482,7 @@ static func check_frame_for_collision( \
             position_start + kinematic_collision.travel
     
     var surface_side := \
-            Utils.get_which_surface_side_collided(kinematic_collision)
+            ScaffoldUtils.get_which_surface_side_collided(kinematic_collision)
     var is_touching_floor := surface_side == SurfaceSide.FLOOR
     var is_touching_ceiling := surface_side == SurfaceSide.CEILING
     var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
@@ -506,7 +506,7 @@ static func check_frame_for_collision( \
         # Invalid collision state.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
-            Utils.error()
+            ScaffoldUtils.error()
         surface_collision.is_valid_collision_state = false
         return null
     
@@ -520,7 +520,7 @@ static func check_frame_for_collision( \
         # Invalid collision state.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
-            Utils.error()
+            ScaffoldUtils.error()
         surface_collision.is_valid_collision_state = false
         return null
     
@@ -545,13 +545,13 @@ static func check_frame_for_collision( \
         SurfaceSide.CEILING:
             is_moving_away_from_surface = displacement.y > 0.0
         _:
-            Utils.error()
+            ScaffoldUtils.error()
     if is_moving_away_from_surface:
         if is_recursing:
             # Invalid collision state.
             if collision_params.movement_params \
                     .asserts_no_preexisting_collisions_during_edge_calculations:
-                Utils.error()
+                ScaffoldUtils.error()
             surface_collision.is_valid_collision_state = false
             return null
         

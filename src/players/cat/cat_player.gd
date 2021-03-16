@@ -60,8 +60,8 @@ func _check_for_squirrel_collision() -> void:
     
     # Calculate current computer-player collisions.
     var colliding_computer_players := []
-    for computer_player in \
-            get_tree().get_nodes_in_group(Utils.GROUP_NAME_COMPUTER_PLAYERS):
+    for computer_player in get_tree().get_nodes_in_group( \
+            SurfacerConfig.GROUP_NAME_COMPUTER_PLAYERS):
         collider_half_width_height = \
                 computer_player.movement_params.collider_half_width_height
         if collider_half_width_height.x > collider_half_width_height.y:

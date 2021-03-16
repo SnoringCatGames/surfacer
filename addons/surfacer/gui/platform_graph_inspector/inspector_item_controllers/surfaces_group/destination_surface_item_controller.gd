@@ -74,7 +74,7 @@ func find_and_expand_controller( \
             else:
                 return false
         _:
-            Utils.error()
+            ScaffoldUtils.error()
             return false
 
 func _find_and_expand_controller_recursive( \

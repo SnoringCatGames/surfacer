@@ -488,13 +488,7 @@ class_name Main
 # 
 ###############################################################################
 
-
-
-var loading_screen: Node
-var camera_controller: CameraController
-var canvas_layers: CanvasLayers
-var level: Level
-var is_loading_screen_shown := true
+const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://test/test_runner.tscn"
 
 func _notification(what):
     if what == MainLoop.NOTIFICATION_WM_GO_BACK_REQUEST: 
@@ -503,81 +497,32 @@ func _notification(what):
         get_tree().quit()
 
 func _enter_tree() -> void:
-    if Config.IN_TEST_MODE:
-        var scene_path := Config.TEST_RUNNER_SCENE_RESOURCE_PATH
-        var test_scene = Utils.add_scene( \
-                self, \
-                scene_path)
+    if SurfacerConfig.IN_TEST_MODE:
+        _bootstrap_test()
     else:
-        camera_controller = CameraController.new()
-        add_child(camera_controller)
-        
-        canvas_layers = CanvasLayers.new()
-        add_child(canvas_layers)
-        
-        if OS.get_name() == "HTML5":
-            # For HTML, don't use the Godot loading screen, and instead use an
-            # HTML screen, which will be more consistent with the other screens
-            # shown before.
-            JavaScript.eval("window.onLoadingScreenReady()")
-        else:
-            # For non-HTML platforms, show a loading screen in Godot.
-            loading_screen = Utils.add_scene( \
-                    canvas_layers.screen_layer, \
-                    Config.LOADING_SCREEN_PATH)
+        _bootstrap_app()
 
-func _process(delta_sec: float) -> void:
-    # FIXME: Figure out a better way of loading/parsing the level without
-    #        blocking the main thread?
+func _input(event: InputEvent) -> void:
+    # Close the welcome panel on any mouse or key click event.
+    if is_instance_valid(Global.welcome_panel) and \
+            (event is InputEventMouseButton or \
+                    event is InputEventScreenTouch or \
+                    event is InputEventKey) and \
+            Global.is_level_ready:
+        ScaffoldConfig.canvas_layers.layers.hud.remove_child( \
+                Global.welcome_panel)
+        Global.welcome_panel.queue_free()
+        Global.welcome_panel = null
+
+func _bootstrap_app() -> void:
+    var scaffold_config := SquirrelAwayConfig.new()
+    scaffold_config.configure_scaffolding(self)
     
-    if !Config.IN_TEST_MODE and \
-            level == null and \
-            Time.elapsed_play_time_actual_sec > 0.25:
-        # Start loading the level and calculating the platform graphs.
-        level = Utils.add_scene( \
-                self, \
-                Config.STARTING_LEVEL_RESOURCE_PATH, \
-                true, \
-                false)
-    
-    elif is_loading_screen_shown and \
-            Global.is_level_ready and \
-            Time.elapsed_play_time_actual_sec > 0.5:
-        is_loading_screen_shown = false
-        level.visible = true
-        
-        # Hide the loading screen.
-        if loading_screen != null:
-            canvas_layers.screen_layer.remove_child(loading_screen)
-            loading_screen.queue_free()
-            loading_screen = null
-        
-        # FIXME: Move this player creation (and readiness recording) back into
-        #        Level.
-        # Add the player after removing the loading screen, since the camera
-        # will track the player, which makes the loading screen look offset.
-        var position := \
-                Vector2(160.0, 0.0) if \
-                Config.STARTING_LEVEL_RESOURCE_PATH.find("test_") >= 0 else \
-                Vector2.ZERO
-        level.add_player( \
-                Global.player_params[Config.DEFAULT_PLAYER_NAME] \
-                        .movement_params.player_resource_path, \
-                position, \
-                true, \
-                false)
-        var starting_squirrel_positions := [
-            Vector2(192.0, -192.0),
-#            Vector2(-192.0, 192.0),
-        ]
-        for squirrel_position in starting_squirrel_positions:
-            level.add_player( \
-                    Global.player_params["squirrel"].movement_params \
-                            .player_resource_path, \
-                    squirrel_position, \
-                    false, \
-                    false)
-        Global.canvas_layers.on_level_ready()
-        
-        if OS.get_name() == "HTML5":
-            JavaScript.eval("window.onLevelReady()")
+    if OS.get_name() == "HTML5":
+        JavaScript.eval("window.onAppReady()")
+
+func _bootstrap_test() -> void:
+    var scene_path := TEST_RUNNER_SCENE_RESOURCE_PATH
+    var test_scene = ScaffoldUtils.add_scene( \
+            self, \
+            scene_path)

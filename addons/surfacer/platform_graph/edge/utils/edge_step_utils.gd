@@ -379,7 +379,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         
         # We found movement that satisfies the waypoint (without backtracking
         # for a new jump height).
-        Utils.concat( \
+        ScaffoldUtils.concat( \
                 calc_results_to_waypoint.horizontal_steps, \
                 calc_results_from_waypoint.horizontal_steps)
         result = calc_results_to_waypoint
@@ -568,7 +568,7 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height( \
             
             if previous_calc_results != null:
                 # Combine all the horizontal steps.
-                Utils.concat( \
+                ScaffoldUtils.concat( \
                         previous_calc_results.horizontal_steps, \
                         current_calc_results.horizontal_steps)
             else:

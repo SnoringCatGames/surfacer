@@ -88,13 +88,13 @@ func _get_text_for_description_index(description_index: int) -> String:
                             .replace("\n                ", " "), \
                 ]
         _:
-            Utils.error()
+            ScaffoldUtils.error()
             return ""
 
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    Utils.error( \
+    ScaffoldUtils.error( \
             "find_and_expand_controller should not be called for " + \
             "EDGE_STEP_CALC_RESULT_METADATA.")
     return false

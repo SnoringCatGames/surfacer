@@ -39,7 +39,7 @@ static func get_type_string(result: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Utils.error("Invalid EdgeStepCalcResultType: %s" % result)
+            ScaffoldUtils.error("Invalid EdgeStepCalcResultType: %s" % result)
             return "UNKNOWN"
 
 static func to_description_list(result: int) -> Array:
@@ -106,7 +106,7 @@ static func to_description_list(result: int) -> Array:
                 "Unexpected result", \
             ]
         _:
-            Utils.error("Invalid EdgeStepCalcResultType: %s" % result)
+            ScaffoldUtils.error("Invalid EdgeStepCalcResultType: %s" % result)
             return [ \
                 "Unexpected result", \
             ]

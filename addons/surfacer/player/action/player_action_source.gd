@@ -20,7 +20,7 @@ func update( \
         time_sec: float, \
         delta_sec: float, \
         navigation_state: PlayerNavigationState) -> void:
-    Utils.error("Abstract PlayerActionSource.update is not implemented")
+    ScaffoldUtils.error("Abstract PlayerActionSource.update is not implemented")
 
 static func update_for_key_press( \
         actions: PlayerActionState, \
@@ -165,7 +165,7 @@ static func update_for_key_press( \
             actions.just_pressed_face_right = just_pressed
             actions.just_released_face_right = just_released
         _:
-            Utils.error("Invalid input_key: %s" % input_key)
+            ScaffoldUtils.error("Invalid input_key: %s" % input_key)
 
 static func input_key_to_action_name(input_key: String) -> String:
     match input_key:
@@ -186,5 +186,5 @@ static func input_key_to_action_name(input_key: String) -> String:
         "face_right":
             return "faceR"
         _:
-            Utils.error()
+            ScaffoldUtils.error()
             return ""

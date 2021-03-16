@@ -86,9 +86,9 @@ var TEST_LEVEL_FAR_DISTANCE := {
 }
 
 const GROUPS := [
-    Utils.GROUP_NAME_HUMAN_PLAYERS,
-    Utils.GROUP_NAME_COMPUTER_PLAYERS,
-    Utils.GROUP_NAME_SURFACES,
+    SurfacerConfig.GROUP_NAME_HUMAN_PLAYERS,
+    SurfacerConfig.GROUP_NAME_COMPUTER_PLAYERS,
+    SurfacerConfig.GROUP_NAME_SURFACES,
 ]
 
 const END_COORDINATE_CLOSE_THRESHOLD := UnitTestBed.END_COORDINATE_CLOSE_THRESHOLD
@@ -126,7 +126,7 @@ func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
 #            data.scene_resource_path.find("test_") >= 0 else \
 #            Vector2.ZERO
 #    level.add_player( \
-#            Global.player_params[Config.DEFAULT_PLAYER_NAME] \
+#            Global.player_params[SurfacerConfig.DEFAULT_PLAYER_NAME] \
 #                    .player_resource_path, \
 #            position, \
 #            false, \
@@ -181,7 +181,7 @@ func set_up_level(data: Dictionary) -> void:
         elif edge_calculator is WalkToAscendWallFromFloorCalculator:
             walk_to_ascend_wall_from_floor_calculator = edge_calculator
         else:
-            Utils.static_error()
+            ScaffoldUtils.static_error()
     assert(climb_down_wall_to_floor_calculator != null)
     assert(climb_over_wall_to_floor_calculator != null)
     assert(fall_from_floor_calculator != null)

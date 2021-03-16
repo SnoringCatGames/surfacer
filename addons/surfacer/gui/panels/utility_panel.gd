@@ -42,13 +42,13 @@ func _ready() -> void:
     Global.selection_description = \
             $VBoxContainer/Sections/SelectionDescription
     
-    if (Config.UTILITY_PANEL_STARTS_OPEN or \
-                    Config.DEBUG_PARAMS.has("limit_parsing")) and \
-            Config.DEBUG_PARAMS.is_inspector_enabled and \
+    if (SurfacerConfig.UTILITY_PANEL_STARTS_OPEN or \
+                    SurfacerConfig.DEBUG_PARAMS.has("limit_parsing")) and \
+            SurfacerConfig.DEBUG_PARAMS.is_inspector_enabled and \
             !OS.has_touchscreen_ui_hint():
         set_is_open(true)
     
-    if !Config.DEBUG_PARAMS.is_inspector_enabled:
+    if !SurfacerConfig.DEBUG_PARAMS.is_inspector_enabled:
         $VBoxContainer/Sections.remove_child( \
                 $VBoxContainer/Sections/SelectionDescription)
         $VBoxContainer/Sections.remove_child( \
@@ -69,7 +69,7 @@ func _ready() -> void:
             Global.canvas_layers.is_annotator_enabled( \
                     AnnotatorType.PLAYER_TRAJECTORY)
     $VBoxContainer/Sections/Annotators/LogEventsCheckbox.pressed = \
-            Config.is_logging_events
+            SurfacerConfig.is_logging_events
 
 func _initialize_dimensions() -> void:
     self.anchor_left = 1.0
@@ -159,4 +159,4 @@ func _on_player_trajectory_checkbox_toggled(pressed: bool) -> void:
             pressed)
 
 func _on_log_events_checkbox_toggled(pressed: bool) -> void:
-    Config.is_logging_events = pressed
+    SurfacerConfig.is_logging_events = pressed

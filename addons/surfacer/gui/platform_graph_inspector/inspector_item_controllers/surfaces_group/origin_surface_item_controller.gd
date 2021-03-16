@@ -135,7 +135,7 @@ func find_and_expand_controller( \
             else:
                 return false
         _:
-            Utils.error()
+            ScaffoldUtils.error()
             return false
 
 func _find_and_expand_controller_recursive( \
@@ -212,7 +212,7 @@ func get_annotation_elements() -> Array:
     
     var valid_edges_annotation_elements := \
             _get_valid_edges_annotation_elements()
-    Utils.concat(elements, valid_edges_annotation_elements)
+    ScaffoldUtils.concat(elements, valid_edges_annotation_elements)
     
     var origin_element := OriginSurfaceAnnotationElement.new(origin_surface)
     elements.push_back(origin_element)

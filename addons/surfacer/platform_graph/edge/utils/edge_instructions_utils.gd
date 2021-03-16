@@ -177,7 +177,7 @@ static func sub_instructions( \
         # FIXME: REMOVE: This shouldn't be needed anymore.
         assert(base_instruction.time - start_time >= 0.0)
     
-    Utils.concat( \
+    ScaffoldUtils.concat( \
             instructions, \
             remaining_instructions)
     

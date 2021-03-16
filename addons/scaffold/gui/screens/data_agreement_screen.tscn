@@ -1,0 +1,159 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://addons/scaffold/gui/centered_panel.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/fonts/main_font_l.tres" type="DynamicFont" id=2]
+[ext_resource path="res://addons/scaffold/gui/full_screen_panel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/scaffold/gui/screens/data_agreement_screen.gd" type="Script" id=4]
+[ext_resource path="res://addons/scaffold/gui/shiny_button.tscn" type="PackedScene" id=5]
+[ext_resource path="res://addons/scaffold/gui/nav_bar.tscn" type="PackedScene" id=12]
+
+[node name="DataAgreementScreen" type="Node2D"]
+script = ExtResource( 4 )
+
+[node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
+margin_right = 480.0
+margin_bottom = 480.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
+margin_right = 480.0
+margin_bottom = 612.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NavBar" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 12 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 480.0
+margin_bottom = 128.0
+text = "Accept terms"
+shows_back = false
+shows_about = false
+shows_settings = false
+shows_logo = false
+shows_game_over = false
+
+[node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 132.0
+margin_right = 480.0
+margin_bottom = 612.0
+stretches_horizontally = false
+stretches_vertically = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
+margin_right = 480.0
+margin_bottom = 480.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer"]
+margin_right = 480.0
+margin_bottom = 480.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
+margin_left = 60.0
+margin_top = 132.0
+margin_right = 419.0
+margin_bottom = 348.0
+rect_min_size = Vector2( 280, 0 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_right = 359.0
+margin_bottom = 64.0
+
+[node name="Label" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer"]
+margin_right = 359.0
+margin_bottom = 28.0
+rect_min_size = Vector2( 320, 0 )
+text = "By using this app, you agree to our"
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer"]
+margin_left = 179.0
+margin_top = 32.0
+margin_right = 179.0
+margin_bottom = 32.0
+size_flags_horizontal = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer"]
+margin_top = 36.0
+margin_right = 359.0
+margin_bottom = 64.0
+custom_constants/separation = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TermsAndConditionsLink" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+margin_right = 184.0
+margin_bottom = 28.0
+size_flags_horizontal = 4
+text = "Terms & Conditions"
+
+[node name="Label" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+margin_left = 184.0
+margin_right = 229.0
+margin_bottom = 28.0
+text = " and "
+
+[node name="PrivacyPolicyLink" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+margin_left = 229.0
+margin_right = 354.0
+margin_bottom = 28.0
+size_flags_horizontal = 4
+text = "Privacy Policy"
+
+[node name="Label2" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+margin_left = 354.0
+margin_right = 359.0
+margin_bottom = 28.0
+text = "."
+
+[node name="Spacer3" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 179.0
+margin_top = 68.0
+margin_right = 179.0
+margin_bottom = 118.0
+rect_min_size = Vector2( 0, 50 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AgreeButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 5 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 79.0
+margin_top = 122.0
+margin_right = 279.0
+margin_bottom = 182.0
+rect_min_size = Vector2( 200, 60 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+custom_fonts/font = ExtResource( 2 )
+text = "I agree"
+texture = null
+
+[node name="Spacer4" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 179.0
+margin_top = 186.0
+margin_right = 179.0
+margin_bottom = 216.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer/TermsAndConditionsLink" to="." method="_on_TermsAndConditionsLink_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer/PrivacyPolicyLink" to="." method="_on_PrivacyPolicyLink_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AgreeButton" to="." method="_on_AgreeButton_pressed"]

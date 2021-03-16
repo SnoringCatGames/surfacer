@@ -185,7 +185,7 @@ func _set_reached_destination() -> void:
             SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
                 player.velocity.y = 0.0
             _:
-                Utils.error("Invalid SurfaceSide")
+                ScaffoldUtils.error("Invalid SurfaceSide")
     
     reset()
     reached_destination = true
@@ -344,7 +344,7 @@ func update( \
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if Config.is_logging_events and \
+    if SurfacerConfig.is_logging_events and \
             player.movement_params.logs_navigator_events and \
             (player.is_human_player or \
                     player.movement_params.logs_computer_player_events):
@@ -464,7 +464,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                                     PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
                                     surface.last_point.y)
             _:
-                Utils.error("Invalid SurfaceSide")
+                ScaffoldUtils.error("Invalid SurfaceSide")
         
         if would_protrude_past_surface_end_after_coming_to_a_stop:
             var start_position := \
@@ -645,7 +645,7 @@ static func _optimize_edges_for_approach( \
                                 PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
                                 surface.last_point.y)
                 _:
-                    Utils.error("Invalid SurfaceSide")
+                    ScaffoldUtils.error("Invalid SurfaceSide")
             
             if target_point != Vector2.INF:
                 last_edge.update_terminal( \

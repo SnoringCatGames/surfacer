@@ -1023,7 +1023,7 @@ static func get_collision_tile_map_coord( \
                 tile_coord, \
             ]
         if !error_message.empty():
-            Utils.error(print_message)
+            ScaffoldUtils.error(print_message)
         else:
             print(print_message)
 
@@ -1041,7 +1041,7 @@ static func do_shapes_match( \
         return b is RectangleShape2D and \
                 a.extents == b.extents
     else:
-        Utils.error( \
+        ScaffoldUtils.error( \
                 "Invalid Shape2D provided for do_shapes_match: %s. The " + \
                 "supported shapes are: CircleShape2D, CapsuleShape2D, " + \
                 "RectangleShape2D." % a)
@@ -1069,7 +1069,7 @@ static func calculate_half_width_height( \
     elif shape is RectangleShape2D:
         half_width_height = shape.extents
     else:
-        Utils.error( \
+        ScaffoldUtils.error( \
                 "Invalid Shape2D provided to calculate_half_width_height: " + \
                 "%s. The upported shapes are: CircleShape2D, " + \
                 "CapsuleShape2D, RectangleShape2D." % shape)

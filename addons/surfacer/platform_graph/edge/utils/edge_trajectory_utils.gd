@@ -62,7 +62,7 @@ static func _concatenate_step_frame_positions( \
     var combined_positions := []
     
     for step in steps:
-        Utils.concat(combined_positions, step.frame_positions)
+        ScaffoldUtils.concat(combined_positions, step.frame_positions)
         # Since the start-position of the next step is always the same as the
         # end-position of the previous step, we can de-dup them here.
         combined_positions.remove(combined_positions.size() - 1)
@@ -77,7 +77,7 @@ static func _concatenate_step_frame_velocities( \
     var combined_velocities := []
     
     for step in steps:
-        Utils.concat(combined_velocities, step.frame_velocities)
+        ScaffoldUtils.concat(combined_velocities, step.frame_velocities)
         # Since the start-position of the next step is always the same as the
         # end-position of the previous step, we can de-dup them here.
         combined_velocities.remove(combined_velocities.size() - 1)
@@ -108,11 +108,11 @@ static func sub_trajectory( \
             base_trajectory.frame_continuous_velocities_from_steps.size())
     var start_index := ceil(start_time / Time.PHYSICS_TIME_STEP_SEC)
     var frame_continuous_positions_from_steps := \
-            Utils.sub_pool_vector2_array( \
+            ScaffoldUtils.sub_pool_vector2_array( \
                     base_trajectory.frame_continuous_positions_from_steps, \
                     start_index)
     var frame_continuous_velocities_from_steps := \
-            Utils.sub_pool_vector2_array( \
+            ScaffoldUtils.sub_pool_vector2_array( \
                     base_trajectory.frame_continuous_velocities_from_steps, \
                     start_index)
     # TODO: Try to use frame_continuous_positions_from_steps to detect which

@@ -172,13 +172,13 @@ static func calculate_waypoints_around_surface( \
     # an error.
     if position_a == next_waypoint.position:
         should_skip_a = true
-        Utils.error( \
+        ScaffoldUtils.error( \
                 "Calculated a rendundant waypoint (same position as the " + \
                 "next waypoint)", \
                 false)
     if position_b == next_waypoint.position:
         should_skip_b = true
-        Utils.error( \
+        ScaffoldUtils.error( \
                 "Calculated a rendundant waypoint (same position as the " + \
                 "next waypoint)", \
                 false)
@@ -281,7 +281,7 @@ static func calculate_waypoints_around_surface( \
         waypoints = [waypoint_b_final]
     else:
         if should_skip_a and should_skip_b:
-            Utils.error()
+            ScaffoldUtils.error()
         waypoints = []
     
     Profiler.stop_with_optional_metadata( \
@@ -1968,7 +1968,7 @@ static func _calculate_replacement_for_fake_waypoint( \
                     iterations += 1
             
         _:
-            Utils.error()
+            ScaffoldUtils.error()
     
     if replacement_surface == null:
         # We didn't find a replacement.

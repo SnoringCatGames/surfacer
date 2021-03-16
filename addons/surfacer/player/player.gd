@@ -104,7 +104,7 @@ func _ready() -> void:
 #    shape_owner_clear_shapes(owner_id)
 #    shape_owner_add_shape(owner_id, movement_params.collider_shape)
     
-    var animators: Array = Utils.get_children_by_type( \
+    var animators: Array = ScaffoldUtils.get_children_by_type( \
             self, \
             PlayerAnimator)
     assert(animators.size() <= 1)
@@ -168,8 +168,9 @@ func _set_camera() -> void:
     var camera := Camera2D.new()
     add_child(camera)
     # Register the current camera, so it's globally accessible.
-    Global.camera_controller.set_current_camera(camera)
-    Global.camera_controller.zoom = CameraController.DEFAULT_CAMERA_ZOOM
+    ScaffoldConfig.camera_controller.set_current_camera(camera)
+    ScaffoldConfig.camera_controller.zoom = \
+            CameraController.DEFAULT_CAMERA_ZOOM
 
 func _init_user_controller_action_source() -> void:
     action_sources.push_back(UserActionSource.new(self, true))
@@ -343,7 +344,7 @@ func _process_animation() -> void:
                 elif actions.pressed_down:
                     animator.climb_down()
                 else:
-                    Utils.error()
+                    ScaffoldUtils.error()
             else:
                 animator.rest_on_wall()
         SurfaceType.AIR:
@@ -352,7 +353,7 @@ func _process_animation() -> void:
             else:
                 animator.jump_rise()
         _:
-            Utils.error()
+            ScaffoldUtils.error()
 
 func _process_sfx() -> void:
     pass
@@ -390,7 +391,7 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     surface_state.is_touching_ceiling = is_on_ceiling()
     surface_state.is_touching_wall = is_on_wall()
     
-    surface_state.which_wall = Utils.get_which_wall_collided_for_body(self)
+    surface_state.which_wall = ScaffoldUtils.get_which_wall_collided_for_body(self)
     surface_state.is_touching_left_wall = \
             surface_state.which_wall == SurfaceSide.LEFT_WALL
     surface_state.is_touching_right_wall = \
@@ -621,7 +622,7 @@ func _update_which_surface_is_grabbed( \
                     surface_state.just_grabbed_floor = false
                     surface_state.just_grabbed_ceiling = false
                 _:
-                    Utils.error()
+                    ScaffoldUtils.error()
         surface_state.just_changed_tile_map_coord = \
                 (preserves_just_changed_state and \
                         surface_state.just_changed_tile_map_coord) or \
@@ -755,7 +756,7 @@ func _dash_cooldown_finished() -> void:
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if Config.is_logging_events and \
+    if SurfacerConfig.is_logging_events and \
             movement_params.logs_player_actions and \
             (is_human_player or \
                     movement_params.logs_computer_player_events):

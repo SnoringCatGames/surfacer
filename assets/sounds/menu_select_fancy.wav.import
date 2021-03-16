@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/menu_select_fancy.wav-061b397242e28d45bcd3395f586e8365.sample"
+
+[deps]
+
+source_file="res://assets/sounds/menu_select_fancy.wav"
+dest_files=[ "res://.import/menu_select_fancy.wav-061b397242e28d45bcd3395f586e8365.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
