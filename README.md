@@ -472,4 +472,7 @@ Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and runn
 
 -   The Surfacer framework is published under the [MIT license](LICENSE).
 -   All art assets (files under `assets/images/`, `assets/music/`, and `assets/sfx/`) are published under the [CC0 1.0 Universal license](https://creativecommons.org/publicdomain/zero/1.0/deed.en).
--   The Surface framework depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./docs/third-party-licenses.txt).
+-   The Surface framework depends on various pieces of third-party code that are licensed separately. Here are lists of these third-party licenses:
+    -   [addons/scaffold/scaffold_third_party_licenses.gd](./addons/scaffold/scaffold_third_party_licenses.gd)
+    -   [addons/surfacer/surfacer_third_party_licenses.gd](./addons/surfacer/surfacer_third_party_licenses.gd)
+    -   [src/squirrel_away_third_party_licenses.gd](./src/squirrel_away_third_party_licenses.gd)

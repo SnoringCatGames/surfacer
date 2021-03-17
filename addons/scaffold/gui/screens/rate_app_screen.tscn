@@ -32,10 +32,6 @@ margin_right = 480.0
 margin_bottom = 128.0
 text = "How's it going?"
 shows_back = false
-shows_about = false
-shows_settings = false
-shows_logo = false
-shows_game_over = false
 
 [node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 1 )]
 anchor_right = 0.0
@@ -43,7 +39,6 @@ anchor_bottom = 0.0
 margin_top = 132.0
 margin_right = 480.0
 margin_bottom = 612.0
-stretches_horizontally = false
 stretches_vertically = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
@@ -93,7 +88,6 @@ rect_min_size = Vector2( 200, 40 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "Send feedback"
-texture = null
 
 [node name="Spacer2" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 margin_left = 140.0
@@ -127,7 +121,6 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 custom_fonts/font = ExtResource( 11 )
 text = "Rate app!"
-texture = null
 is_font_xl = true
 
 [node name="DontAskAgainButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer" instance=ExtResource( 2 )]
@@ -141,7 +134,6 @@ rect_min_size = Vector2( 200, 40 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "Don't ask again"
-texture = null
 
 [node name="Spacer3" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 margin_left = 140.0
@@ -163,7 +155,6 @@ rect_min_size = Vector2( 200, 40 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "Just keep playing!"
-texture = null
 
 [node name="Spacer4" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 140.0

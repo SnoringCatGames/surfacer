@@ -23,6 +23,7 @@ func _init( \
         includes_nav_bar := true, \
         includes_center_container := true) -> void:
     self.screen_name = screen_name
+    self.layer_name = layer_name
     self.includes_standard_hierarchy = includes_standard_hierarchy
     self.includes_nav_bar = includes_nav_bar
     self.includes_center_container = includes_center_container

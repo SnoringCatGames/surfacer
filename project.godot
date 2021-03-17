@@ -239,6 +239,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/gui/legend/legend_items/destination_surface_legend_item.gd"
 }, {
+"base": "Screen",
+"class": "DeveloperSplashScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/gui/screens/developer_splash_screen.gd"
+}, {
 "base": "ValidEdgeTrajectoryLegendItem",
 "class": "DiscreteEdgeTrajectoryLegendItem",
 "language": "GDScript",
@@ -944,6 +949,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/scaffold_level.gd"
 }, {
+"base": "Node",
+"class": "ScaffoldThirdPartyLicenses",
+"language": "GDScript",
+"path": "res://addons/scaffold/scaffold_third_party_licenses.gd"
+}, {
 "base": "Node2D",
 "class": "Screen",
 "language": "GDScript",
@@ -964,11 +974,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/gui/shiny_button.gd"
 }, {
-"base": "Screen",
-"class": "SnoringCatSplashScreen",
-"language": "GDScript",
-"path": "res://addons/scaffold/gui/screens/snoring_cat_splash_screen.gd"
-}, {
 "base": "PlayerAnimator",
 "class": "SquirrelAnimator",
 "language": "GDScript",
@@ -983,6 +988,11 @@ _global_script_classes=[ {
 "class": "SquirrelAwayLevel",
 "language": "GDScript",
 "path": "res://src/squirrel_away_level.gd"
+}, {
+"base": "Node",
+"class": "SquirrelAwayThirdPartyLicenses",
+"language": "GDScript",
+"path": "res://src/squirrel_away_third_party_licenses.gd"
 }, {
 "base": "MovementParams",
 "class": "SquirrelParams",
@@ -1053,6 +1063,11 @@ _global_script_classes=[ {
 "class": "SurfacerLevel",
 "language": "GDScript",
 "path": "res://addons/surfacer/surfacer_level.gd"
+}, {
+"base": "Node",
+"class": "SurfacerThirdPartyLicenses",
+"language": "GDScript",
+"path": "res://addons/surfacer/surfacer_third_party_licenses.gd"
 }, {
 "base": "InspectorItemController",
 "class": "SurfacesGroupItemController",
@@ -1221,6 +1236,7 @@ _global_script_class_icons={
 "DestinationSurfaceAnnotationElement": "",
 "DestinationSurfaceItemController": "",
 "DestinationSurfaceLegendItem": "",
+"DeveloperSplashScreen": "",
 "DiscreteEdgeTrajectoryLegendItem": "",
 "Edge": "",
 "EdgeAnnotationElement": "",
@@ -1362,14 +1378,15 @@ _global_script_class_icons={
 "RulerAnnotator": "",
 "ScaffoldBootstrap": "",
 "ScaffoldLevel": "",
+"ScaffoldThirdPartyLicenses": "",
 "Screen": "",
 "SelectionDescription": "",
 "SettingsScreen": "",
 "ShinyButton": "",
-"SnoringCatSplashScreen": "",
 "SquirrelAnimator": "",
 "SquirrelAwayConfig": "",
 "SquirrelAwayLevel": "",
+"SquirrelAwayThirdPartyLicenses": "",
 "SquirrelParams": "",
 "SquirrelPlayer": "",
 "Stopwatch": "",
@@ -1384,6 +1401,7 @@ _global_script_class_icons={
 "SurfaceSide": "",
 "SurfaceType": "",
 "SurfacerLevel": "",
+"SurfacerThirdPartyLicenses": "",
 "SurfacesGroupItemController": "",
 "SurfacesOfSideGroupItemController": "",
 "ThirdPartyLicensesScreen": "",
@@ -1414,6 +1432,7 @@ _global_script_class_icons={
 
 config/name="Surfacer"
 run/main_scene="res://src/main.tscn"
+boot_splash/image="res://addons/scaffold/assets/images/gui/godot_logo_splash.png"
 config/icon="res://assets/images/icon.png"
 config/quit_on_go_back=false
 
@@ -1438,7 +1457,7 @@ Preloads="*res://addons/surfacer/preloads.gd"
 
 [display]
 
-mouse_cursor/custom_image="res://assets/images/paw-cursor.png"
+mouse_cursor/custom_image="res://assets/images/paw_cursor.png"
 mouse_cursor/custom_image_hotspot=Vector2( 5, 4 )
 mouse_cursor/tooltip_position_offset=Vector2( 0, 0 )
 window/stretch/mode="2d"

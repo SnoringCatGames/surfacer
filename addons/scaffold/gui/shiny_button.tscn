@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://addons/scaffold/gui/shiny_button.gd" type="Script" id=1]
-[ext_resource path="res://assets/images/gui/shine-line-fat-sharp-x4.png" type="Texture" id=2]
+[ext_resource path="res://addons/scaffold/assets/images/gui/shine_line.png" type="Texture" id=2]
 [ext_resource path="res://assets/main_theme.tres" type="Theme" id=3]
 [ext_resource path="res://assets/fonts/main_font_normal.tres" type="DynamicFont" id=4]
 
@@ -32,15 +32,15 @@ includes_color_pulse = null
 is_font_xl = null
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-margin_right = 160.0
-margin_bottom = 40.0
+margin_right = 704.0
+margin_bottom = 160.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="BottomButton" type="Button" parent="MarginContainer"]
-margin_right = 160.0
-margin_bottom = 40.0
+margin_right = 704.0
+margin_bottom = 160.0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -50,12 +50,12 @@ __meta__ = {
 }
 
 [node name="ShineLine" type="Sprite" parent="MarginContainer"]
-position = Vector2( -80, 20 )
+position = Vector2( -352, 80 )
 texture = ExtResource( 2 )
 
 [node name="TextureWrapper" type="Control" parent="MarginContainer"]
-margin_right = 160.0
-margin_bottom = 40.0
+margin_right = 704.0
+margin_bottom = 160.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
@@ -73,8 +73,8 @@ __meta__ = {
 }
 
 [node name="TopButton" type="Button" parent="MarginContainer"]
-margin_right = 160.0
-margin_bottom = 40.0
+margin_right = 704.0
+margin_bottom = 160.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/hover = SubResource( 1 )

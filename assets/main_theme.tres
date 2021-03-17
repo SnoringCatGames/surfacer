@@ -1,7 +1,7 @@
 [gd_resource type="Theme" load_steps=20 format=2]
 
 [ext_resource path="res://assets/fonts/main_font_normal.tres" type="DynamicFont" id=1]
-[ext_resource path="res://assets/images/icons/x-normal-small.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/gui/x-normal-small.png" type="Texture" id=2]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.190667, 0.22, 0.176, 1 )

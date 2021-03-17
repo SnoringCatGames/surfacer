@@ -16,14 +16,6 @@ func _init().( \
         ) -> void:
     pass
 
-func _ready() -> void:
-    # FIXME: ------------------------
-    # - conditionally show/hide urls based on whether pp and tos are configured;
-    # - conditionally show this screen based on the same;
-    # - Also, conditionally show the data-deletion screen link, and corresponding urls in credits screen;
-    # - Also, dynamically update credits screen text based on urls?
-    pass
-
 func _get_focused_button() -> ShinyButton:
     return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/AgreeButton as ShinyButton

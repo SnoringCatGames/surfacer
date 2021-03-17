@@ -1,9 +1,9 @@
 extends Node
 
-const _DEFAULT_SCREEN_PATH_PREFIX := "res://src/controls/screens/"
+const _DEFAULT_SCREEN_PATH_PREFIX := "res://addons/scaffold/gui/screens/"
 const _DEFAULT_SCREEN_FILENAMES := [
     "godot_splash_screen.tscn",
-    "snoring_cat_splash_screen.tscn",
+    "developer_splash_screen.tscn",
     "main_menu_screen.tscn",
     "settings_screen.tscn",
     "pause_screen.tscn",
@@ -15,7 +15,7 @@ const _DEFAULT_SCREEN_FILENAMES := [
     "notification_screen.tscn",
 ]
 const FADE_TRANSITION_PATH := \
-        "res://src/controls/screens/fade_transition.tscn"
+        _DEFAULT_SCREEN_PATH_PREFIX + "fade_transition.tscn"
 
 const SCREEN_SLIDE_DURATION_SEC := 0.3
 const SCREEN_FADE_DURATION_SEC := 1.2
@@ -295,21 +295,23 @@ func _on_fade_complete() -> void:
 
 func splash() -> void:
     open("godot_splash")
-    Audio.play_sound("achievement")
+    Audio.play_sound(ScaffoldConfig.godot_splash_sound)
     yield(get_tree() \
             .create_timer(ScaffoldConfig.godot_splash_screen_duration_sec), \
             "timeout")
     
-    open("snoring_cat_splash")
-    Audio.play_sound("single_cat_snore")
-    yield(get_tree() \
-            .create_timer(ScaffoldConfig \
-                    .snoring_cat_splash_screen_duration_sec), \
-            "timeout")
+    if ScaffoldConfig.is_developer_splash_shown:
+        open("developer_splash")
+        Audio.play_sound(ScaffoldConfig.developer_splash_sound)
+        yield(get_tree() \
+                .create_timer(ScaffoldConfig \
+                        .developer_splash_screen_duration_sec), \
+                "timeout")
     
     var next_screen_name := \
         "main_menu" if \
-        ScaffoldConfig.agreed_to_terms else \
+        ScaffoldConfig.agreed_to_terms or \
+        !ScaffoldConfig.is_data_tracked else \
         "data_agreement"
     open(next_screen_name)
     # Start playing the default music for the menu screen.

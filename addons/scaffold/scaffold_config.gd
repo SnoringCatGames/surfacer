@@ -11,11 +11,6 @@ var app_name: String
 var app_id: String
 var app_version: String
 
-var google_analytics_id: String
-
-var godot_splash_screen_duration_sec: float
-var snoring_cat_splash_screen_duration_sec: float
-
 var main_font_normal: Font
 var main_font_large: Font
 var main_font_xl: Font
@@ -40,8 +35,30 @@ var screen_inclusions: Array
 
 var main_menu_music: String
 
-var snoring_cat_games_url := "https://snoringcat.games"
-var godot_url := "https://godotengine.org"
+var third_party_license_text: String
+var special_thanks_text: String
+
+var app_logo: Texture
+var developer_name: String
+var developer_url: String
+
+var developer_logo: Texture
+var developer_splash: Texture
+
+var godot_splash_sound := "achievement"
+var developer_splash_sound: String
+
+var godot_splash_screen_duration_sec := 0.8
+var developer_splash_screen_duration_sec := 1.0
+
+var main_menu_image_scene_path: String
+
+var fade_in_transition_texture := \
+        preload("res://addons/scaffold/assets/images/transition_in.png")
+var fade_out_transition_texture := \
+        preload("res://addons/scaffold/assets/images/transition_out.png")
+
+var google_analytics_id: String
 var terms_and_conditions_url: String
 var privacy_policy_url: String
 var android_app_store_url: String
@@ -54,6 +71,18 @@ var input_vibrate_duration_sec := 0.01
 var display_resize_throttle_interval_sec := 0.1
 
 var recent_gesture_events_for_debugging_buffer_size := 1000
+
+# --- Derived configuration ---
+
+var is_special_thanks_shown: bool
+var is_third_party_licenses_shown: bool
+var is_data_tracked: bool
+var is_rate_app_shown: bool
+var is_support_shown: bool
+var is_gesture_logging_supported: bool
+var is_developer_logo_shown: bool
+var is_developer_splash_shown: bool
+var is_main_menu_image_shown: bool
 
 # --- Global state ---
 
@@ -68,6 +97,7 @@ var canvas_layers: CanvasLayers
 var camera_controller: CameraController
 var debug_panel: DebugPanel
 var gesture_record: GestureRecord
+var next_level_resource_path: String
 var level: ScaffoldLevel
 
 # ---
@@ -79,7 +109,7 @@ const IS_DEBUG_TIME_SHOWN_SETTINGS_KEY := "is_debug_time_shown"
 const IS_MUSIC_ENABLED_SETTINGS_KEY := "is_music_enabled"
 const IS_SOUND_EFFECTS_ENABLED_SETTINGS_KEY := "is_sound_effects_enabled"
 
-const _DEBUG_PANEL_RESOURCE_PATH := "res://src/controls/debug_panel.tscn"
+const _DEBUG_PANEL_RESOURCE_PATH := "res://addons/scaffold/gui/debug_panel.tscn"
 
 # ---
 
@@ -93,11 +123,6 @@ func register_app_config(config: Dictionary) -> void:
     self.app_name = config.app_name
     self.app_id = config.app_id
     self.app_version = config.app_version
-    self.google_analytics_id = config.google_analytics_id
-    self.godot_splash_screen_duration_sec = \
-            config.godot_splash_screen_duration_sec
-    self.snoring_cat_splash_screen_duration_sec = \
-            config.snoring_cat_splash_screen_duration_sec
     self.main_font_normal = config.main_font_normal
     self.main_font_large = config.main_font_large
     self.main_font_xl = config.main_font_xl
@@ -116,11 +141,35 @@ func register_app_config(config: Dictionary) -> void:
     self.screen_exclusions = config.screen_exclusions
     self.screen_inclusions = config.screen_inclusions
     self.main_menu_music = config.main_menu_music
+    self.third_party_license_text = \
+            config.third_party_license_text.strip_edges()
+    self.special_thanks_text = config.special_thanks_text.strip_edges()
+    self.app_logo = config.app_logo
+    self.developer_name = config.developer_name
+    self.developer_url = config.developer_url
     
-    if config.has("snoring_cat_games_url"):
-        self.snoring_cat_games_url = config.snoring_cat_games_url
-    if config.has("godot_url"):
-        self.godot_url = config.godot_url
+    if config.has("developer_logo"):
+        self.developer_logo = config.developer_logo
+    if config.has("developer_splash"):
+        self.developer_splash = config.developer_splash
+    if config.has("godot_splash_sound"):
+        self.godot_splash_sound = config.godot_splash_sound
+    if config.has("developer_splash_sound"):
+        self.developer_splash_sound = config.developer_splash_sound
+    if config.has("godot_splash_screen_duration_sec"):
+        self.godot_splash_screen_duration_sec = \
+                config.godot_splash_screen_duration_sec
+    if config.has("developer_splash_screen_duration_sec"):
+        self.developer_splash_screen_duration_sec = \
+                config.developer_splash_screen_duration_sec
+    if config.has("main_menu_image_scene_path"):
+        self.main_menu_image_scene_path = config.main_menu_image_scene_path
+    if config.has("fade_in_transition_texture"):
+        self.fade_in_transition_texture = config.fade_in_transition_texture
+    if config.has("fade_out_transition_texture"):
+        self.fade_out_transition_texture = config.fade_out_transition_texture
+    if config.has("google_analytics_id"):
+        self.google_analytics_id = config.google_analytics_id
     if config.has("terms_and_conditions_url"):
         self.terms_and_conditions_url = config.terms_and_conditions_url
     if config.has("privacy_policy_url"):
@@ -142,6 +191,30 @@ func register_app_config(config: Dictionary) -> void:
     if config.has("recent_gesture_events_for_debugging_buffer_size"):
         self.recent_gesture_events_for_debugging_buffer_size = \
                 config.recent_gesture_events_for_debugging_buffer_size
+    
+    assert(self.google_analytics_id.empty() == \
+            self.privacy_policy_url.empty() and \
+            self.privacy_policy_url.empty() == \
+            self.terms_and_conditions_url.empty())
+    assert((self.developer_splash == null) == \
+            self.developer_splash_sound.empty())
+    
+    self.is_special_thanks_shown = !self.special_thanks_text.empty()
+    self.is_third_party_licenses_shown = !self.third_party_license_text.empty()
+    self.is_data_tracked = \
+            !self.privacy_policy_url.empty() and \
+            !self.terms_and_conditions_url.empty() and \
+            !self.google_analytics_id.empty()
+    self.is_rate_app_shown = \
+            !self.android_app_store_url.empty() and \
+            !self.ios_app_store_url.empty()
+    self.is_support_shown = !self.support_url_base.empty()
+    self.is_gesture_logging_supported = !self.log_gestures_url.empty()
+    self.is_developer_logo_shown = config.has("developer_logo")
+    self.is_developer_splash_shown = \
+            config.has("developer_splash") and \
+            config.has("developer_splash_sound")
+    self.is_main_menu_image_shown = config.has("main_menu_image_scene_path")
 
 func register_main(main: Node) -> void:
     camera_controller = CameraController.new()

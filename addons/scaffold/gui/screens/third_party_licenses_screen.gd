@@ -15,3 +15,7 @@ func _init().( \
         INCLUDES_CENTER_CONTAINER \
         ) -> void:
     pass
+
+func _ready() -> void:
+    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer \
+            /VBoxContainer/Label.text = ScaffoldConfig.third_party_license_text 

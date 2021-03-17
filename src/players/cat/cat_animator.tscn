@@ -1,7 +1,8 @@
 [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://src/players/cat/cat_animator.gd" type="Script" id=1]
-[ext_resource path="res://assets/images/players/cat-parts.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/players/cat_parts.png" type="Texture" id=2]
+
 
 
 

@@ -8,7 +8,7 @@ const EDGE_MOVEMENTS := {}
 var player_params := {}
 
 var canvas_layers: CanvasLayers
-var current_level: Level
+var current_level: SurfacerLevel
 var current_player_for_clicks: Player
 var element_annotator: ElementAnnotator
 var platform_graph_inspector: PlatformGraphInspector

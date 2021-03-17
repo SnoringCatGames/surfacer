@@ -6,6 +6,8 @@ func _init() -> void:
     ScaffoldUtils.print("Log._init")
 
 func record_recent_gestures() -> void:
+    assert(ScaffoldConfig.is_gesture_logging_supported)
+    
     var recent_top_level_events_raw_str := ""
     
     if is_instance_valid(ScaffoldConfig.gesture_record):
@@ -23,7 +25,8 @@ func record_recent_gestures() -> void:
     
     ScaffoldUtils.print("Log.record_recent_gestures: %s" % url)
     
-    if !ScaffoldConfig.agreed_to_terms:
+    if !ScaffoldConfig.agreed_to_terms or \
+            !ScaffoldConfig.is_data_tracked:
         # User hasn't agreed to data collection.
         ScaffoldUtils.error()
         return

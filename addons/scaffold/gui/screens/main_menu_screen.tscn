@@ -1,13 +1,11 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://addons/scaffold/gui/centered_panel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/images/gui/logo.png" type="Texture" id=2]
 [ext_resource path="res://addons/scaffold/gui/full_screen_panel.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/scaffold/gui/screens/main_menu_screen.gd" type="Script" id=4]
-[ext_resource path="res://assets/images/icons/go-icon-alternate.png" type="Texture" id=5]
-[ext_resource path="res://src/intro_animation/slope_animation_control.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/scaffold/assets/images/gui/go_icon_normal.png" type="Texture" id=5]
 [ext_resource path="res://addons/scaffold/gui/shiny_button.tscn" type="PackedScene" id=7]
-[ext_resource path="res://assets/fonts/main_font_xl.tres" type="DynamicFont" id=11]
 [ext_resource path="res://addons/scaffold/gui/nav_bar.tscn" type="PackedScene" id=12]
 
 [node name="MainMenuScreen" type="Node2D"]
@@ -32,12 +30,9 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 480.0
 margin_bottom = 128.0
-text = ""
 shows_back = false
 shows_about = true
 shows_settings = true
-shows_logo = false
-shows_game_over = false
 
 [node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 1 )]
 anchor_right = 0.0
@@ -45,7 +40,6 @@ anchor_bottom = 0.0
 margin_top = 132.0
 margin_right = 480.0
 margin_bottom = 612.0
-stretches_horizontally = false
 stretches_vertically = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
@@ -62,9 +56,9 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
 margin_left = 100.0
-margin_top = 6.0
+margin_top = 23.0
 margin_right = 380.0
-margin_bottom = 473.0
+margin_bottom = 456.0
 rect_min_size = Vector2( 280, 0 )
 
 [node name="LogoControl" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
@@ -85,37 +79,31 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Spacer2" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+[node name="MainMenuImageContainer" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 140.0
 margin_top = 41.0
 margin_right = 140.0
-margin_bottom = 71.0
-rect_min_size = Vector2( 0, 30 )
-size_flags_horizontal = 4
-size_flags_vertical = 3
-
-[node name="Control2" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
-margin_left = 140.0
-margin_top = 75.0
-margin_right = 140.0
-margin_bottom = 315.0
+margin_bottom = 281.0
 rect_min_size = Vector2( 0, 240 )
 size_flags_horizontal = 4
 size_flags_vertical = 0
 size_flags_stretch_ratio = 3.0
 
-[node name="SlopeAnimationControl" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Control2" instance=ExtResource( 6 )]
-margin_top = 120.0
-margin_bottom = 120.0
-rect_scale = Vector2( 4, 4 )
-size_flags_horizontal = 3
+[node name="Spacer2" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/MainMenuImageContainer"]
+margin_top = -34.0
+margin_bottom = -4.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 4
 size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Spacer3" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 140.0
-margin_top = 319.0
+margin_top = 285.0
 margin_right = 140.0
-margin_bottom = 349.0
+margin_bottom = 315.0
 rect_min_size = Vector2( 0, 30 )
 size_flags_horizontal = 4
 size_flags_vertical = 3
@@ -127,36 +115,20 @@ __meta__ = {
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 60.0
-margin_top = 353.0
+margin_top = 319.0
 margin_right = 220.0
-margin_bottom = 433.0
+margin_bottom = 399.0
 rect_min_size = Vector2( 160, 80 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource( 5 )
 
-[node name="StartGameButton2" type="Button" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
-visible = false
-margin_left = 19.0
-margin_top = 434.0
-margin_right = 259.0
-margin_bottom = 514.0
-rect_min_size = Vector2( 240, 80 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
-custom_fonts/font = ExtResource( 11 )
-text = "Select level"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="Spacer4" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 140.0
-margin_top = 437.0
+margin_top = 403.0
 margin_right = 140.0
-margin_bottom = 467.0
+margin_bottom = 433.0
 rect_min_size = Vector2( 0, 30 )
 size_flags_horizontal = 4
 size_flags_vertical = 3
 [connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/StartGameButton" to="." method="_on_StartGameButton_pressed"]
-[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/StartGameButton2" to="." method="_on_StartGameButton_pressed"]

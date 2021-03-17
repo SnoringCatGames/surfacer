@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/images/gui/godot-logo-splash.png" type="Texture" id=1]
+[ext_resource path="res://addons/scaffold/assets/images/gui/godot_logo_splash.png" type="Texture" id=1]
 [ext_resource path="res://addons/scaffold/gui/full_screen_panel.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/scaffold/gui/screens/godot_splash_screen.gd" type="Script" id=4]
 

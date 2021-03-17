@@ -7,7 +7,6 @@ export var shows_back := true setget _set_shows_back,_get_shows_back
 export var shows_about := false setget _set_shows_about,_get_shows_about
 export var shows_settings := false setget _set_shows_settings,_get_shows_settings
 export var shows_logo := false setget _set_shows_logo,_get_shows_logo
-export var shows_game_over := false setget _set_shows_game_over,_get_shows_game_over
 
 func _enter_tree() -> void:
     $MarginContainer.set( \
@@ -23,7 +22,7 @@ func _enter_tree() -> void:
     _set_shows_about(shows_about)
     _set_shows_settings(shows_settings)
     _set_shows_logo(shows_logo)
-    _set_shows_game_over(shows_game_over)
+    $MarginContainer/LogoControl/Control/Logo.texture = ScaffoldConfig.app_logo
 
 func _set_text(value: String) -> void:
     text = value
@@ -61,14 +60,6 @@ func _set_shows_logo(value: bool) -> void:
 
 func _get_shows_logo() -> bool:
     return shows_logo
-
-func _set_shows_game_over(value: bool) -> void:
-    shows_game_over = value
-    if $MarginContainer/GameOverControl != null:
-        $MarginContainer/GameOverControl.visible = shows_game_over
-
-func _get_shows_game_over() -> bool:
-    return shows_game_over
 
 func _on_BackButton_pressed():
     ScaffoldUtils.give_button_press_feedback()

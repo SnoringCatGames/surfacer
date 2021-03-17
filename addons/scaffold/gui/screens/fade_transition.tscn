@@ -1,7 +1,6 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/scaffold/gui/screens/fade_transition.gd" type="Script" id=1]
-[ext_resource path="res://assets/images/transition-5-out.png" type="Texture" id=2]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
@@ -25,7 +24,6 @@ void fragment() {
 shader = SubResource( 1 )
 shader_param/cutoff = null
 shader_param/smooth_size = 0.2
-shader_param/mask = ExtResource( 2 )
 
 [node name="FadeTransition" type="ColorRect"]
 material = SubResource( 2 )

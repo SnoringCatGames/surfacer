@@ -7,6 +7,8 @@ const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
 const INCLUDES_CENTER_CONTAINER := true
 
+var projected_image: Control
+
 func _init().( \
         NAME, \
         LAYER_NAME, \
@@ -17,6 +19,17 @@ func _init().( \
     pass
 
 func _ready() -> void:
+    if ScaffoldConfig.is_main_menu_image_shown:
+        projected_image = ScaffoldUtils.add_scene( \
+                $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
+                        CenterContainer/VBoxContainer/MainMenuImageContainer, \
+                ScaffoldConfig.main_menu_image_scene_path, \
+                true, \
+                true)
+    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
+            CenterContainer/VBoxContainer/LogoControl/Title.texture = \
+            ScaffoldConfig.app_logo
+    
     ScaffoldUtils.connect( \
             "display_resized", \
             self, \
@@ -35,25 +48,19 @@ func _handle_display_resized() -> void:
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/LogoControl.visible = \
                     !is_wide_enough_to_put_title_in_nav_bar
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer \
-            /CenterContainer/VBoxContainer/Spacer2.visible = \
-                    !is_wide_enough_to_put_title_in_nav_bar
     
     var is_tall_enough_to_have_large_animation := viewport_size.y > 600
+    var image_container: Control = \
+            $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
+            CenterContainer/VBoxContainer/MainMenuImageContainer
     if is_tall_enough_to_have_large_animation:
-        $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Control2 \
-                .rect_min_size.y = 240
-        $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Control2/SlopeAnimationControl \
-                .rect_scale = Vector2(4, 4)
-        $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Control2/SlopeAnimationControl \
-                .rect_position.y = 120
+        image_container.rect_min_size.y = 240
+        projected_image.rect_scale = Vector2(4, 4)
+        projected_image.rect_position.y = 120
     else:
-        $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Control2 \
-                .rect_min_size.y = 120
-        $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Control2/SlopeAnimationControl \
-                .rect_scale = Vector2(2, 2)
-        $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Control2/SlopeAnimationControl \
-                .rect_position.y = 60
+        image_container.rect_min_size.y = 120
+        projected_image.rect_scale = Vector2(2, 2)
+        projected_image.rect_position.y = 60
 
 func _on_StartGameButton_pressed() -> void:
     ScaffoldUtils.give_button_press_feedback()

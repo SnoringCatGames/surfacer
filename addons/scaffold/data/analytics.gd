@@ -181,7 +181,8 @@ func _trigger_collect( \
     var body := payload
     var entry := _AnalyticsEntry.new(payload)
     
-    if !ScaffoldConfig.agreed_to_terms:
+    if !ScaffoldConfig.agreed_to_terms or \
+            !ScaffoldConfig.is_data_tracked:
         # User hasn't agreed to data collection. Try again later.
         _retry_queue.push_back(entry)
         return

@@ -5,21 +5,29 @@ var debug := OS.is_debug_build()
 
 # TODO: Useful for getting screenshots at specific resolutions.
 # Play Store
-#var window_size := Vector2(3840, 2160)
+#var debug_window_size := Vector2(3840, 2160)
 # App Store: 6.5'' iPhone
-#var window_size := Vector2(2778, 1284)
+#var debug_window_size := Vector2(2778, 1284)
 # App Store: 5.5'' iPhone
-#var window_size := Vector2(2208, 1242)
+#var debug_window_size := Vector2(2208, 1242)
 # App Store: 12.9'' iPad (3rd Gen) and (2nd Gen)
-#var window_size := Vector2(2732, 2048)
+#var debug_window_size := Vector2(2732, 2048)
 # Google Ads: Landscape
-#var window_size := Vector2(1024, 768)
+#var debug_window_size := Vector2(1024, 768)
 # Google Ads: Portrait
-#var window_size := Vector2(768, 1024)
+#var debug_window_size := Vector2(768, 1024)
 # Default
-#var window_size := Vector2(480.0, 480.0)
+#var debug_window_size := Vector2(480.0, 480.0)
 # Just show as full screen.
-var window_size := Vector2.INF
+var debug_window_size := Vector2.INF
+
+var third_party_license_text := \
+        ScaffoldThirdPartyLicenses.TEXT + \
+        SurfacerThirdPartyLicenses.TEXT + \
+        SquirrelAwayThirdPartyLicenses.TEXT
+
+var special_thanks_text := """
+"""
 
 const _LEVEL_RESOURCE_PATH := "res://src/levels/level_6.tscn"
 
@@ -28,9 +36,7 @@ var _APP_MANIFEST := {
     debug = debug,
     #debug = false
     playtest = false,
-    window_size = window_size,
-    
-    google_analytics_id = "TODO",
+    debug_window_size = debug_window_size,
     
     app_name = "TODO",
     app_id = "games.snoringcat.TODO",
@@ -63,11 +69,41 @@ var _APP_MANIFEST := {
     
     main_menu_music = "on_a_quest",
     
-    snoring_cat_games_url = "https://snoringcat.games",
-    godot_url = "https://godotengine.org",
+    third_party_license_text = third_party_license_text,
+    special_thanks_text = special_thanks_text,
     
-    godot_splash_screen_duration_sec = 0.8 if !debug else 0.0,
-    snoring_cat_splash_screen_duration_sec = 1.0 if !debug else 0.0,
+    app_logo = preload("res://assets/images/gui/logo.png"),
+    developer_name = "Snoring Cat LLC",
+    developer_url = "https://snoringcat.games",
+    
+    developer_logo = preload( \
+            "res://addons/scaffold/assets/images/gui/snoring_cat_logo_about.png"),
+    developer_splash = preload( \
+            "res://addons/scaffold/assets/images/gui/snoring_cat_logo_splash.png"),
+    
+    godot_splash_sound = "achievement",
+    developer_splash_sound = "single_cat_snore",
+    
+    # FIXME: -----------------
+    godot_splash_screen_duration_sec = 0.8,
+    developer_splash_screen_duration_sec = 1.0,
+#    godot_splash_screen_duration_sec = 0.8 if !debug else 0.0,
+#    developer_splash_screen_duration_sec = 1.0 if !debug else 0.0,
+    
+    main_menu_image_scene_path = "res://src/main_menu_image.tscn",
+    
+    fade_in_transition_texture = \
+            preload("res://addons/scaffold/assets/images/transition_in.png"),
+    fade_out_transition_texture = \
+            preload("res://addons/scaffold/assets/images/transition_out.png"),
+    
+    google_analytics_id = "",
+    privacy_policy_url = "",
+    terms_and_conditions_url = "",
+    android_app_store_url = "",
+    ios_app_store_url = "",
+    support_url_base = "",
+    log_gestures_url = "",
     
     main_font_normal = \
             preload("res://assets/fonts/main_font_normal.tres"),

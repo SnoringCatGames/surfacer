@@ -11,38 +11,6 @@ const INCLUDES_CENTER_CONTAINER := true
 # Array<Dictionary>
 var list_items := [
     {
-        label = "Level:",
-        type = LabeledControlItemType.TEXT,
-    },
-    {
-        label = "Tier:",
-        type = LabeledControlItemType.TEXT,
-    },
-    {
-        label = "Current score:",
-        type = LabeledControlItemType.TEXT,
-    },
-    {
-        label = "High score:",
-        type = LabeledControlItemType.TEXT,
-    },
-    {
-        label = "Multiplier:",
-        type = LabeledControlItemType.TEXT,
-    },
-    {
-        label = "Speed:",
-        type = LabeledControlItemType.TEXT,
-    },
-    {
-        label = "Difficulty:",
-        type = LabeledControlItemType.TEXT,
-    },
-    {
-        label = "Lives:",
-        type = LabeledControlItemType.TEXT,
-    },
-    {
         label = "Time:",
         type = LabeledControlItemType.TEXT,
     },
@@ -63,10 +31,6 @@ func _ready() -> void:
     _control_list = $FullScreenPanel/VBoxContainer/CenteredPanel/ \
             ScrollContainer/CenterContainer/VBoxContainer/LabeledControlList
     _control_list.items = list_items
-    
-    if ScaffoldConfig.debug or ScaffoldConfig.playtest:
-        $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-                CenterContainer/VBoxContainer/MoreLivesWrapper.visible = true
 
 func _on_activated() -> void:
     ._on_activated()
@@ -93,13 +57,6 @@ func _update_stats() -> void:
 func _on_ExitLevelButton_pressed() -> void:
     ScaffoldUtils.give_button_press_feedback()
     Nav.close_current_screen()
-    Analytics.event( \
-            "level", \
-            "quit", \
-            LevelConfig.get_level_tier_version_string( \
-                    Global.level.level_id, \
-                    Global.level.current_tier_id), \
-            Time.elapsed_play_time_actual_sec - Global.level.tier_start_time)
     Global.level.quit()
 
 func _on_ResumeButton_pressed() -> void:

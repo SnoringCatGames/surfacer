@@ -1,9 +1,6 @@
 extends ColorRect
 class_name FadeTransition
 
-const FADE_IN_TEXTURE := preload("res://addons/scaffold/assets/images/transition_in.png")
-const FADE_OUT_TEXTURE := preload("res://addons/scaffold/assets/images/transition_out.png")
-
 signal fade_complete
 
 var tween: Tween
@@ -37,7 +34,7 @@ func _fade_out() -> void:
     if tween.is_connected("tween_completed", self, "_on_tween_complete"):
         tween.disconnect("tween_completed", self, "_on_tween_complete")
     tween.connect("tween_completed", self, "_fade_in")
-    _set_mask(FADE_OUT_TEXTURE)
+    _set_mask(ScaffoldConfig.fade_out_transition_texture)
     tween.interpolate_method( \
             self, \
             "_set_cutoff", \
@@ -57,7 +54,7 @@ func _fade_in( \
     if tween.is_connected("tween_completed", self, "_on_tween_complete"):
         tween.disconnect("tween_completed", self, "_on_tween_complete")
     tween.connect("tween_completed", self, "_on_tween_complete")
-    _set_mask(FADE_IN_TEXTURE)
+    _set_mask(ScaffoldConfig.fade_in_transition_texture)
     tween.interpolate_method( \
             self, \
             "_set_cutoff", \

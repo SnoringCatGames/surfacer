@@ -7,7 +7,7 @@ const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
 const INCLUDES_CENTER_CONTAINER := true
 
-const NEXT_SCREEN_TYPE := "game_over"
+const NEXT_SCREEN_TYPE := "main_menu"
 
 func _init().( \
         NAME, \
@@ -20,6 +20,7 @@ func _init().( \
 
 func _on_activated() -> void:
     ._on_activated()
+    assert(ScaffoldConfig.is_rate_app_shown)
     Audio.play_music(Music.MAIN_MENU_MUSIC_TYPE)
 
 func _get_focused_button() -> ShinyButton:

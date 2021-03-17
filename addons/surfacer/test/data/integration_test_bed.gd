@@ -97,7 +97,7 @@ const END_POSITION_CLOSE_THRESHOLD := UnitTestBed.END_POSITION_CLOSE_THRESHOLD
 var sandbox: Node
 
 var movement_params: MovementParams
-var level: Level
+var level: SurfacerLevel
 var player: TestPlayer
 var platform_graph: PlatformGraph
 var surface_parser: SurfaceParser

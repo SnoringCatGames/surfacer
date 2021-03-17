@@ -2,9 +2,7 @@ extends Node
 
 signal display_resized
 
-var _throttled_size_changed: FuncRef = Time.throttle( \
-        funcref(self, "_on_throttled_size_changed"), \
-        ScaffoldConfig.display_resize_throttle_interval_sec)
+var _throttled_size_changed: FuncRef
 
 var _ios_model_names
 var _ios_resolutions
@@ -15,7 +13,10 @@ func _init() -> void:
     _ios_model_names = IosModelNames.new()
     _ios_resolutions = IosResolutions.new()
 
-func _enter_tree() -> void:
+func on_time_ready() -> void:
+    _throttled_size_changed = Time.throttle( \
+            funcref(self, "_on_throttled_size_changed"), \
+            ScaffoldConfig.display_resize_throttle_interval_sec)
     get_viewport().connect( \
             "size_changed", \
             self, \

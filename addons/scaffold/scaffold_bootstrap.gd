@@ -30,9 +30,9 @@ func _process(_delta_sec: float) -> void:
             ScaffoldUtils.take_screenshot()
 
 func _set_window_debug_size_and_position() -> void:
-    if debug:
+    if ScaffoldConfig.debug:
         # Useful for getting screenshots at specific resolutions.
-        if debug_window_size == Vector2.INF:
+        if ScaffoldConfig.debug_window_size == Vector2.INF:
             if OS.get_screen_count() > 1:
                 # Show the game window on the other window, rather than
                 # over-top the editor.
@@ -41,4 +41,4 @@ func _set_window_debug_size_and_position() -> void:
             OS.window_fullscreen = true
             OS.window_borderless = true
         else:
-            OS.window_size = debug_window_size
+            OS.window_size = ScaffoldConfig.debug_window_size

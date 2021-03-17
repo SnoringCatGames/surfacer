@@ -39,7 +39,6 @@ anchor_bottom = 0.0
 margin_top = 132.0
 margin_right = 480.0
 margin_bottom = 612.0
-stretches_horizontally = false
 stretches_vertically = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
@@ -86,14 +85,10 @@ margin_left = 0.0
 margin_top = 270.0
 margin_right = 320.0
 margin_bottom = 270.0
-is_open = false
-includes_header = true
 header_text = "More settings"
 header_min_height = 32.0
-header_font = null
 is_caret_on_left = false
 padding = Vector2( 16, 8 )
-extra_scroll_height_for_custom_header = 0.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel"]
 margin_right = 40.0
