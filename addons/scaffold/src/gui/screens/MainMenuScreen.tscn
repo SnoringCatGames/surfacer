@@ -1,0 +1,139 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://addons/scaffold/src/gui/CenteredPanel.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/images/gui/logo.png" type="Texture" id=2]
+[ext_resource path="res://addons/scaffold/src/gui/FullScreenPanel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/scaffold/src/gui/screens/MainMenuScreen.gd" type="Script" id=4]
+[ext_resource path="res://addons/scaffold/assets/images/gui/go_icon_normal_large.png" type="Texture" id=5]
+[ext_resource path="res://addons/scaffold/src/gui/ShinyButton.tscn" type="PackedScene" id=7]
+[ext_resource path="res://addons/scaffold/src/gui/NavBar.tscn" type="PackedScene" id=12]
+
+
+
+
+
+
+
+[node name="MainMenuScreen" type="Node2D"]
+script = ExtResource( 4 )
+
+[node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
+margin_right = 480.0
+margin_bottom = 480.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
+margin_right = 480.0
+margin_bottom = 612.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NavBar" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 12 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 480.0
+margin_bottom = 128.0
+shows_back = false
+shows_about = true
+shows_settings = true
+
+[node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 132.0
+margin_right = 480.0
+margin_bottom = 612.0
+stretches_horizontally = false
+stretches_vertically = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
+margin_right = 480.0
+margin_bottom = 480.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer"]
+margin_right = 480.0
+margin_bottom = 480.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
+margin_left = 100.0
+margin_top = 128.0
+margin_right = 380.0
+margin_bottom = 351.0
+rect_min_size = Vector2( 280, 0 )
+
+[node name="LogoControl" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 140.0
+margin_right = 140.0
+margin_bottom = 37.0
+rect_min_size = Vector2( 0, 37 )
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="Title" type="TextureRect" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/LogoControl"]
+margin_left = -209.0
+margin_right = 208.0
+margin_bottom = 37.0
+texture = ExtResource( 2 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MainMenuImageContainer" type="PanelContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 140.0
+margin_top = 41.0
+margin_right = 140.0
+margin_bottom = 71.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+size_flags_stretch_ratio = 3.0
+
+[node name="Spacer2" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/MainMenuImageContainer"]
+margin_bottom = 30.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer3" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 140.0
+margin_top = 75.0
+margin_right = 140.0
+margin_bottom = 105.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StartGameButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 7 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 60.0
+margin_top = 109.0
+margin_right = 220.0
+margin_bottom = 189.0
+rect_min_size = Vector2( 160, 80 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 5 )
+
+[node name="Spacer4" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 140.0
+margin_top = 193.0
+margin_right = 140.0
+margin_bottom = 223.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/StartGameButton" to="." method="_on_StartGameButton_pressed"]

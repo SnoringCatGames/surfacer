@@ -1,0 +1,91 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://addons/scaffold/src/gui/ShinyButton.gd" type="Script" id=1]
+[ext_resource path="res://addons/scaffold/assets/images/gui/shine_line.png" type="Texture" id=2]
+[ext_resource path="res://assets/main_theme.tres" type="Theme" id=3]
+[ext_resource path="res://addons/scaffold/assets/fonts/main_font_m.tres" type="DynamicFont" id=4]
+
+
+
+
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="StyleBoxEmpty" id=2]
+
+[sub_resource type="StyleBoxEmpty" id=3]
+
+[sub_resource type="StyleBoxEmpty" id=4]
+
+[sub_resource type="StyleBoxEmpty" id=5]
+
+[node name="ShinyButton" type="Button"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -320.0
+margin_bottom = -440.0
+rect_clip_content = true
+theme = ExtResource( 3 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+texture_scale = null
+is_shiny = null
+includes_color_pulse = null
+is_font_xl = null
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+margin_right = 704.0
+margin_bottom = 160.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BottomButton" type="Button" parent="MarginContainer"]
+margin_right = 704.0
+margin_bottom = 160.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ShineLine" type="Sprite" parent="MarginContainer"]
+position = Vector2( -352, 80 )
+texture = ExtResource( 2 )
+
+[node name="TextureWrapper" type="Control" parent="MarginContainer"]
+margin_right = 704.0
+margin_bottom = 160.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/TextureWrapper"]
+margin_right = 160.0
+margin_bottom = 40.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TopButton" type="Button" parent="MarginContainer"]
+margin_right = 704.0
+margin_bottom = 160.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/hover = SubResource( 1 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 3 )
+custom_styles/disabled = SubResource( 4 )
+custom_styles/normal = SubResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
