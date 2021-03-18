@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/achievement.wav-ded879cfc1a722ae5fed563c39cc94c5.sample"
+
+[deps]
+
+source_file="res://addons/scaffold/assets/sounds/achievement.wav"
+dest_files=[ "res://.import/achievement.wav-ded879cfc1a722ae5fed563c39cc94c5.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

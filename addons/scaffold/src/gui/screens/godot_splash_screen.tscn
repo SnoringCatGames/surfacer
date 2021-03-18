@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://addons/scaffold/assets/images/gui/godot_logo_splash.png" type="Texture" id=1]
+[ext_resource path="res://addons/scaffold/src/gui/full_screen_panel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/scaffold/src/gui/screens/godot_splash_screen.gd" type="Script" id=4]
+
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.152941, 0.192157, 0.286275, 1 )
+shadow_size = 8
+shadow_offset = Vector2( -4, 4 )
+
+[node name="GodotSplashScreen" type="Node2D"]
+script = ExtResource( 4 )
+
+[node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
+margin_right = 480.0
+margin_bottom = 480.0
+custom_styles/panel = SubResource( 1 )
+
+[node name="Control" type="Control" parent="FullScreenPanel"]
+margin_left = 240.0
+margin_top = 240.0
+margin_right = 240.0
+margin_bottom = 240.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="TextureRect" type="TextureRect" parent="FullScreenPanel/Control"]
+margin_left = -450.0
+margin_top = -417.5
+margin_right = 450.0
+margin_bottom = 417.5
+rect_scale = Vector2( 0.533333, 0.533333 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource( 1 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}

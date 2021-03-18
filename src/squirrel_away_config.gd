@@ -1,5 +1,4 @@
 extends Node
-class_name SquirrelAwayConfig
 
 var debug := OS.is_debug_build()
 
@@ -29,17 +28,98 @@ var third_party_license_text := \
 var special_thanks_text := """
 """
 
-const _LEVEL_RESOURCE_PATH := "res://src/levels/level_6.tscn"
+var level_resource_path := "res://src/levels/level_6.tscn"
 
-var _APP_MANIFEST := {
+var test_runner_resource_path := "res://test/test_runner.tscn"
+
+var sounds_manifest := [
+    {
+        name = "fall",
+        volume_db = 18.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "cadence",
+        volume_db = 8.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "jump",
+        volume_db = -6.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "land",
+        volume_db = -0.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "menu_select",
+        volume_db = -2.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "menu_select_fancy",
+        volume_db = -6.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "walk",
+        volume_db = 15.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "achievement",
+        volume_db = 12.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "single_cat_snore",
+        volume_db = 17.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "cat_jump",
+        volume_db = 0.0,
+    },
+    {
+        name = "cat_land",
+        volume_db = 0.0,
+    },
+    {
+        name = "contact",
+        volume_db = 0.0,
+    },
+    {
+        name = "squirrel_jump",
+        volume_db = 0.0,
+    },
+    {
+        name = "squirrel_land",
+        volume_db = 0.0,
+    },
+    {
+        name = "squirrel_yell",
+        volume_db = 0.0,
+    },
+]
+
+var music_manifest := [
+    {
+        name = "on_a_quest",
+        volume_db = 0.0,
+    },
+]
+
+var app_manifest := {
     # TODO: Remember to reset these when creating releases.
     debug = debug,
     #debug = false
     playtest = false,
     debug_window_size = debug_window_size,
     
-    app_name = "TODO",
-    app_id = "games.snoringcat.TODO",
+    app_name = "Squirrel Away",
+    app_id = "games.snoringcat.squirrel_away",
     app_version = "0.0.1",
     
     #273149
@@ -63,10 +143,20 @@ var _APP_MANIFEST := {
     
     screen_exclusions = [
         "rate_app_screen.tscn",
+        "data_agreement_screen.tscn",
+        "confirm_data_deletion_screen.tscn",
     ],
     screen_inclusions = [
     ],
     
+    sounds_manifest = sounds_manifest,
+    default_sounds_path_prefix = "res://assets/sounds/",
+    default_sounds_file_suffix = ".wav",
+    default_sounds_bus_index = 1,
+    music_manifest = music_manifest,
+    default_music_path_prefix = "res://addons/scaffold/assets/music/",
+    default_music_file_suffix = ".ogg",
+    default_music_bus_index = 2,
     main_menu_music = "on_a_quest",
     
     third_party_license_text = third_party_license_text,
@@ -105,12 +195,14 @@ var _APP_MANIFEST := {
     support_url_base = "",
     log_gestures_url = "",
     
-    main_font_normal = \
-            preload("res://assets/fonts/main_font_normal.tres"),
-    main_font_large = \
-            preload("res://assets/fonts/main_font_l.tres"),
+    main_font_m = \
+            preload("res://addons/scaffold/assets/fonts/main_font_m.tres"),
+    main_font_xs = \
+            preload("res://addons/scaffold/assets/fonts/main_font_xs.tres"),
+    main_font_l = \
+            preload("res://addons/scaffold/assets/fonts/main_font_l.tres"),
     main_font_xl = \
-            preload("res://assets/fonts/main_font_xl.tres"),
+    preload("res://addons/scaffold/assets/fonts/main_font_xl.tres"),
     
     cell_size = Vector2(32.0, 32.0),
     
@@ -118,56 +210,5 @@ var _APP_MANIFEST := {
     aspect_ratio_min = 1.0 / 1.3,
 }
 
-var _SOUNDS_MANIFEST := [
-    {
-        name = "fall",
-        volume_db = 18.0,
-    },
-    {
-        name = "cadence",
-        volume_db = 8.0,
-    },
-    {
-        name = "jump",
-        volume_db = -6.0,
-    },
-    {
-        name = "land",
-        volume_db = -0.0,
-    },
-    {
-        name = "menu_select",
-        volume_db = -2.0,
-    },
-    {
-        name = "menu_select_fancy",
-        volume_db = -6.0,
-    },
-    {
-        name = "walk",
-        volume_db = 15.0,
-    },
-    {
-        name = "achievement",
-        volume_db = 12.0,
-    },
-    {
-        name = "single_cat_snore",
-        volume_db = 17.0,
-    },
-]
-
-var _MUSIC_MANIFEST := [
-    {
-        name = "on_a_quest",
-        volume_db = 0.0,
-    },
-]
-
-func configure_scaffolding(main: Node) -> void:
-    ScaffoldConfig.register_app_config(_APP_MANIFEST)
-    ScaffoldConfig.next_level_resource_path = _LEVEL_RESOURCE_PATH
-    Audio.register_sounds(_SOUNDS_MANIFEST)
-    Audio.register_music(_MUSIC_MANIFEST)
-    var scaffold_bootstrap := ScaffoldBootstrap.new()
-    scaffold_bootstrap.on_app_ready(main)
+func _init() -> void:
+    ScaffoldUtils.print("SquirrelAwayConfig._init")

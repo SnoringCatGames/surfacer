@@ -488,7 +488,17 @@ class_name Main
 # 
 ###############################################################################
 
-const TEST_RUNNER_SCENE_RESOURCE_PATH := "res://test/test_runner.tscn"
+func _init() -> void:
+    ScaffoldUtils.print("Main._init")
+
+func _enter_tree() -> void:
+    var surfacer_bootstrap := SurfacerBootstrap.new()
+    surfacer_bootstrap.on_app_ready(SquirrelAwayConfig.app_manifest, self)
+    ScaffoldConfig.next_level_resource_path = \
+            SquirrelAwayConfig.level_resource_path
+    
+    if OS.get_name() == "HTML5":
+        JavaScript.eval("window.onAppReady()")
 
 func _notification(what):
     if what == MainLoop.NOTIFICATION_WM_GO_BACK_REQUEST: 
@@ -496,33 +506,12 @@ func _notification(what):
         # quitting the app.
         get_tree().quit()
 
-func _enter_tree() -> void:
-    if SurfacerConfig.IN_TEST_MODE:
-        _bootstrap_test()
-    else:
-        _bootstrap_app()
-
 func _input(event: InputEvent) -> void:
     # Close the welcome panel on any mouse or key click event.
-    if is_instance_valid(Global.welcome_panel) and \
+    if is_instance_valid(SurfacerConfig.welcome_panel) and \
             (event is InputEventMouseButton or \
                     event is InputEventScreenTouch or \
                     event is InputEventKey) and \
-            Global.is_level_ready:
-        ScaffoldConfig.canvas_layers.layers.hud.remove_child( \
-                Global.welcome_panel)
-        Global.welcome_panel.queue_free()
-        Global.welcome_panel = null
-
-func _bootstrap_app() -> void:
-    var scaffold_config := SquirrelAwayConfig.new()
-    scaffold_config.configure_scaffolding(self)
-    
-    if OS.get_name() == "HTML5":
-        JavaScript.eval("window.onAppReady()")
-
-func _bootstrap_test() -> void:
-    var scene_path := TEST_RUNNER_SCENE_RESOURCE_PATH
-    var test_scene = ScaffoldUtils.add_scene( \
-            self, \
-            scene_path)
+            SurfacerConfig.is_level_ready:
+        SurfacerConfig.welcome_panel.queue_free()
+        SurfacerConfig.welcome_panel = null

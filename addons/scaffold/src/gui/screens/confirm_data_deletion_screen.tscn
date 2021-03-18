@@ -1,0 +1,211 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://addons/scaffold/src/gui/centered_panel.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/scaffold/assets/fonts/main_font_l.tres" type="DynamicFont" id=2]
+[ext_resource path="res://addons/scaffold/src/gui/full_screen_panel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/scaffold/assets/images/gui/alert_icon_normal_large.png" type="Texture" id=4]
+[ext_resource path="res://addons/scaffold/src/gui/screens/confirm_data_deletion_screen.gd" type="Script" id=5]
+[ext_resource path="res://addons/scaffold/src/gui/shiny_button.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/scaffold/src/gui/nav_bar.tscn" type="PackedScene" id=12]
+
+
+
+[node name="ConfirmDataDeletionScreen" type="Node2D"]
+script = ExtResource( 5 )
+
+[node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
+margin_right = 480.0
+margin_bottom = 480.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
+margin_right = 480.0
+margin_bottom = 612.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NavBar" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 12 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 480.0
+margin_bottom = 128.0
+text = "Are you sure?"
+
+[node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 132.0
+margin_right = 480.0
+margin_bottom = 612.0
+stretches_vertically = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
+margin_right = 480.0
+margin_bottom = 480.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer"]
+margin_right = 470.0
+margin_bottom = 708.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
+margin_left = 75.0
+margin_right = 395.0
+margin_bottom = 708.0
+rect_min_size = Vector2( 280, 0 )
+
+[node name="TextureRect" type="TextureRect" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 128.0
+margin_right = 192.0
+margin_bottom = 64.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 4 )
+
+[node name="Spacer3" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 160.0
+margin_top = 68.0
+margin_right = 160.0
+margin_bottom = 88.0
+rect_min_size = Vector2( 0, 20 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_top = 92.0
+margin_right = 320.0
+margin_bottom = 193.0
+rect_min_size = Vector2( 320, 0 )
+text = "This will both erase all game progress on this device and send a request to have your analytics usage data erased from our remote servers as well."
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer6" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 160.0
+margin_top = 197.0
+margin_right = 160.0
+margin_bottom = 217.0
+rect_min_size = Vector2( 0, 20 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_top = 221.0
+margin_right = 320.0
+margin_bottom = 426.0
+rect_min_size = Vector2( 320, 0 )
+text = "IMPORTANT: Record your client ID number (taking a screenshot might be easiest). In case there's a problem with your request, we'll need this number to know which data to delete. After you click the confirmation button below, you will not be able to retrieve this number. Here is your client ID number:"
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer7" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 160.0
+margin_top = 430.0
+margin_right = 160.0
+margin_bottom = 450.0
+rect_min_size = Vector2( 0, 20 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ClientIdNumber" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_top = 454.0
+margin_right = 320.0
+margin_bottom = 477.0
+rect_min_size = Vector2( 320, 0 )
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer8" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 160.0
+margin_top = 481.0
+margin_right = 160.0
+margin_bottom = 501.0
+rect_min_size = Vector2( 0, 20 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ConfirmButton" type="Button" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 27.0
+margin_top = 505.0
+margin_right = 292.0
+margin_bottom = 596.0
+rect_min_size = Vector2( 265, 91 )
+size_flags_horizontal = 4
+custom_fonts/font = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/ConfirmButton"]
+margin_right = 40.0
+margin_bottom = 28.0
+rect_min_size = Vector2( 265, 91 )
+text = "I'm sure.
+Please delete all my data."
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer5" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 160.0
+margin_top = 600.0
+margin_right = 160.0
+margin_bottom = 610.0
+rect_min_size = Vector2( 0, 10 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CancelButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 6 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 110.0
+margin_top = 614.0
+margin_right = 210.0
+margin_bottom = 654.0
+rect_min_size = Vector2( 100, 40 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Cancel!"
+
+[node name="Spacer4" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 160.0
+margin_top = 658.0
+margin_right = 160.0
+margin_bottom = 708.0
+rect_min_size = Vector2( 0, 50 )
+size_flags_horizontal = 4
+size_flags_vertical = 3
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/ConfirmButton" to="." method="_on_ConfirmButton_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/CancelButton" to="." method="_on_CancelButton_pressed"]

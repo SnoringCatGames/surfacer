@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/cat_land.wav-96089233349d78ce4717b7b63405331f.sample"
+
+[deps]
+
+source_file="res://assets/sounds/cat_land.wav"
+dest_files=[ "res://.import/cat_land.wav-96089233349d78ce4717b7b63405331f.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=false
+edit/loop=false
+compress/mode=0

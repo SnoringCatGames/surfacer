@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/squirrel_yell.wav-9efbf8eb07caf87de8b4159c3b95a823.sample"
+
+[deps]
+
+source_file="res://assets/sounds/squirrel_yell.wav"
+dest_files=[ "res://.import/squirrel_yell.wav-9efbf8eb07caf87de8b4159c3b95a823.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=false
+edit/loop=false
+compress/mode=0

@@ -2,7 +2,7 @@ extends "res://addons/gut/test.gd"
 class_name IntegrationTestBed
 
 var TEST_LEVEL_LONG_FALL := {
-    scene_resource_path = "res://addons/surfacer/test/data/test_level_long_fall.tscn",
+    scene_resource_path = "res://addons/surfacer/src/test/data/test_level_long_fall.tscn",
     start = {
         surface = Surface.new( \
                 [Vector2(128, 64), Vector2(192, 64)], \
@@ -30,7 +30,7 @@ var TEST_LEVEL_LONG_FALL := {
 }
 
 var TEST_LEVEL_LONG_RISE := {
-    scene_resource_path = "res://addons/surfacer/test/data/test_level_long_rise.tscn",
+    scene_resource_path = "res://addons/surfacer/src/test/data/test_level_long_rise.tscn",
     start = {
         surface = Surface.new( \
                 [Vector2(128, 64), Vector2(192, 64)], \
@@ -58,7 +58,7 @@ var TEST_LEVEL_LONG_RISE := {
 }
 
 var TEST_LEVEL_FAR_DISTANCE := {
-    scene_resource_path = "res://addons/surfacer/test/data/test_level_far_distance.tscn",
+    scene_resource_path = "res://addons/surfacer/src/test/data/test_level_far_distance.tscn",
     start = {
         surface = Surface.new( \
                 [Vector2(128, 64), Vector2(192, 64)], \
@@ -86,9 +86,9 @@ var TEST_LEVEL_FAR_DISTANCE := {
 }
 
 const GROUPS := [
-    SurfacerConfig.GROUP_NAME_HUMAN_PLAYERS,
-    SurfacerConfig.GROUP_NAME_COMPUTER_PLAYERS,
-    SurfacerConfig.GROUP_NAME_SURFACES,
+    SurfacerConfig.group_name_human_players,
+    SurfacerConfig.group_name_computer_players,
+    SurfacerConfig.group_name_surfaces,
 ]
 
 const END_COORDINATE_CLOSE_THRESHOLD := UnitTestBed.END_COORDINATE_CLOSE_THRESHOLD
@@ -126,7 +126,7 @@ func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
 #            data.scene_resource_path.find("test_") >= 0 else \
 #            Vector2.ZERO
 #    level.add_player( \
-#            Global.player_params[SurfacerConfig.DEFAULT_PLAYER_NAME] \
+#            SurfacerConfig.player_params[SurfacerConfig.default_player_name] \
 #                    .player_resource_path, \
 #            position, \
 #            false, \
@@ -162,7 +162,7 @@ func set_up_level(data: Dictionary) -> void:
     level = level_scene.instance()
     sandbox.add_child(level)
     
-    player = Global.current_player_for_clicks
+    player = SurfacerConfig.current_player_for_clicks
     platform_graph = player.graph
     movement_params = player.movement_params
     surface_parser = level.surface_parser

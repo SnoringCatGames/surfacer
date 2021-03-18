@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/menu_select_fancy.wav-7bfcf5a5d34c3e2b6f185a2ef623b773.sample"
+
+[deps]
+
+source_file="res://addons/scaffold/assets/sounds/menu_select_fancy.wav"
+dest_files=[ "res://.import/menu_select_fancy.wav-7bfcf5a5d34c3e2b6f185a2ef623b773.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

@@ -2,11 +2,7 @@
 
 [ext_resource path="res://src/background.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/images/foreground/tileset.tres" type="TileSet" id=2]
-[ext_resource path="res://addons/surfacer/surfacer_level.gd" type="Script" id=3]
-
-
-
-
+[ext_resource path="res://src/squirrel_away_level.gd" type="Script" id=3]
 
 [node name="Level7" type="Node2D"]
 script = ExtResource( 3 )

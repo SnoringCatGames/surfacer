@@ -1,0 +1,205 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://addons/surfacer/src/gui/panels/utility_panel.gd" type="Script" id=1]
+[ext_resource path="res://assets/images/gui/gear-active.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/gui/gear-hover.png" type="Texture" id=4]
+[ext_resource path="res://assets/images/gui/gear-normal.png" type="Texture" id=5]
+[ext_resource path="res://assets/images/gui/x-normal.png" type="Texture" id=6]
+[ext_resource path="res://assets/images/gui/x-hover.png" type="Texture" id=7]
+[ext_resource path="res://assets/images/gui/x-active.png" type="Texture" id=8]
+[ext_resource path="res://assets/main_theme.tres" type="Theme" id=9]
+[ext_resource path="res://addons/surfacer/src/gui/selection_description.tscn" type="PackedScene" id=10]
+[ext_resource path="res://addons/surfacer/src/gui/legend/legend.tscn" type="PackedScene" id=11]
+[ext_resource path="res://assets/header_theme.tres" type="Theme" id=12]
+[ext_resource path="res://addons/surfacer/src/gui/platform_graph_inspector/platform_graph_inspector.tscn" type="PackedScene" id=13]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="DebugPanel" type="Panel"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -260.0
+margin_top = -1.0
+margin_right = -19.9999
+margin_bottom = 379.0
+rect_min_size = Vector2( 240, 380 )
+theme = ExtResource( 9 )
+custom_styles/panel = SubResource( 1 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Header" type="HBoxContainer" parent="VBoxContainer"]
+margin_left = 215.0
+margin_right = 240.0
+margin_bottom = 27.0
+rect_min_size = Vector2( 0, 20 )
+size_flags_horizontal = 8
+custom_constants/separation = 0
+
+[node name="Control" type="Control" parent="VBoxContainer/Header"]
+margin_left = -1.0
+margin_top = -1.0
+margin_right = 24.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 25, 27 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name=" XButton" type="TextureButton" parent="VBoxContainer/Header/Control"]
+margin_top = 4.0
+margin_right = 80.0
+margin_bottom = 84.0
+rect_scale = Vector2( 0.3, 0.3 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource( 6 )
+texture_pressed = ExtResource( 8 )
+texture_hover = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sections" type="VBoxContainer" parent="VBoxContainer"]
+margin_top = 27.0
+margin_right = 240.0
+margin_bottom = 380.0
+rect_min_size = Vector2( 0, 300 )
+size_flags_vertical = 3
+custom_constants/separation = 0
+
+[node name="SelectionDescription" parent="VBoxContainer/Sections" instance=ExtResource( 10 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 240.0
+margin_bottom = 20.0
+
+[node name="LegendHeader" type="Label" parent="VBoxContainer/Sections"]
+margin_top = 20.0
+margin_right = 240.0
+margin_bottom = 43.0
+theme = ExtResource( 12 )
+text = "Legend"
+align = 1
+
+[node name="Legend" parent="VBoxContainer/Sections" instance=ExtResource( 11 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 43.0
+margin_right = 240.0
+margin_bottom = 63.0
+
+[node name="InspectorContainer" type="VBoxContainer" parent="VBoxContainer/Sections"]
+margin_top = 63.0
+margin_right = 240.0
+margin_bottom = 284.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 4.0
+custom_constants/separation = 0
+
+[node name="InspectorHeader" type="Label" parent="VBoxContainer/Sections/InspectorContainer"]
+margin_right = 240.0
+margin_bottom = 23.0
+theme = ExtResource( 12 )
+text = "Platform graph inspector"
+align = 1
+
+[node name="PlatformGraphInspector" parent="VBoxContainer/Sections/InspectorContainer" instance=ExtResource( 13 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 23.0
+margin_right = 240.0
+margin_bottom = 221.0
+size_flags_vertical = 3
+
+[node name="Annotators" type="GridContainer" parent="VBoxContainer/Sections"]
+margin_top = 284.0
+margin_right = 240.0
+margin_bottom = 353.0
+size_flags_vertical = 3
+custom_constants/vseparation = 0
+custom_constants/hseparation = 0
+columns = 2
+
+[node name="RulerGridCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
+margin_right = 120.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Ruler grid"
+flat = true
+
+[node name="LevelCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
+margin_left = 120.0
+margin_right = 240.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Level"
+flat = true
+
+[node name="PlayerPositionCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
+margin_top = 23.0
+margin_right = 120.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Player pos."
+flat = true
+
+[node name="PlayerTrajectoryCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
+margin_left = 120.0
+margin_top = 23.0
+margin_right = 240.0
+margin_bottom = 46.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Player traj."
+flat = true
+
+[node name="LogEventsCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
+margin_top = 46.0
+margin_right = 120.0
+margin_bottom = 69.0
+text = "Log events"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GearContainer" type="Panel" parent="VBoxContainer"]
+margin_top = 380.0
+margin_right = 240.0
+margin_bottom = 380.0
+
+[node name="GearButton" type="TextureButton" parent="VBoxContainer/GearContainer"]
+margin_left = 199.447
+margin_top = 2.91589
+margin_right = 279.447
+margin_bottom = 82.9159
+rect_scale = Vector2( 0.5, 0.5 )
+texture_normal = ExtResource( 5 )
+texture_pressed = ExtResource( 3 )
+texture_hover = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="VBoxContainer/Header/Control/ XButton" to="." method="_toggle_open"]
+[connection signal="toggled" from="VBoxContainer/Sections/Annotators/RulerGridCheckbox" to="." method="_on_ruler_grid_checkbox_toggled"]
+[connection signal="toggled" from="VBoxContainer/Sections/Annotators/LevelCheckbox" to="." method="_on_level_checkbox_toggled"]
+[connection signal="toggled" from="VBoxContainer/Sections/Annotators/PlayerPositionCheckbox" to="." method="_on_player_position_checkbox_toggled"]
+[connection signal="toggled" from="VBoxContainer/Sections/Annotators/PlayerTrajectoryCheckbox" to="." method="_on_player_trajectory_checkbox_toggled"]
+[connection signal="toggled" from="VBoxContainer/Sections/Annotators/LogEventsCheckbox" to="." method="_on_log_events_checkbox_toggled"]
+[connection signal="pressed" from="VBoxContainer/GearContainer/GearButton" to="." method="_toggle_open"]
