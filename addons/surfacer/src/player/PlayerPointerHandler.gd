@@ -26,7 +26,7 @@ func _unhandled_input(event: InputEvent) -> void:
             !event.pressed and \
             !event.control:
         event_type = "MOUSE_UP   "
-        pointer_up_position = ScaffoldConfig.level.get_global_mouse_position()
+        pointer_up_position = ScaffoldUtils.get_global_touch_position(event)
     
     # Mouse-down: Position pre-selection.
     if event is InputEventMouseButton and \
@@ -35,14 +35,14 @@ func _unhandled_input(event: InputEvent) -> void:
             !event.control:
         event_type = "MOUSE_DOWN "
         pointer_drag_position = \
-                ScaffoldConfig.level.get_global_mouse_position()
+                ScaffoldUtils.get_global_touch_position(event)
     
     # Mouse-move: Position pre-selection.
     if event is InputEventMouseMotion and \
             last_pointer_drag_position != Vector2.INF:
         event_type = "MOUSE_DRAG "
         pointer_drag_position = \
-                ScaffoldConfig.level.get_global_mouse_position()
+                ScaffoldUtils.get_global_touch_position(event)
     
     # Touch-up: Position selection.
     if event is InputEventScreenTouch and \

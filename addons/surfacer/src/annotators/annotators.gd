@@ -50,6 +50,7 @@ func _enter_tree() -> void:
             "ruler", \
             annotation_layer.layer + 5, \
             Node.PAUSE_MODE_STOP)
+    Nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
     
     element_annotator = ElementAnnotator.new()
     annotation_layer.add_child(element_annotator)

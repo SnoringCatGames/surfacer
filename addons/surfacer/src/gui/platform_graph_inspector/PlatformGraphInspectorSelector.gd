@@ -41,7 +41,7 @@ func _unhandled_input(event: InputEvent) -> void:
         # The user is ctrl+clicking.
         
         var click_position: Vector2 = \
-                ScaffoldConfig.level.get_global_mouse_position()
+                ScaffoldUtils.get_global_touch_position(event)
         var surface_position := \
                 SurfaceParser.find_closest_position_on_a_surface( \
                         click_position, \

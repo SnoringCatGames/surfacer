@@ -26,7 +26,7 @@ func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseButton and \
             event.button_index == BUTTON_LEFT and \
             !event.pressed:
-        position = ScaffoldConfig.level.get_global_mouse_position()
+        position = ScaffoldUtils.get_global_touch_position(event)
         
     elif event is InputEventScreenTouch and \
             !event.pressed:
