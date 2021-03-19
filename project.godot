@@ -110,11 +110,6 @@ _global_script_classes=[ {
 "path": "res://addons/surfacer/src/gui/platform_graph_inspector/inspector_item_controllers/surfaces_group/CeilingsItemController.gd"
 }, {
 "base": "PanelContainer",
-"class": "CenteredInFullScreenPanel",
-"language": "GDScript",
-"path": "res://addons/scaffold/src/gui/CenteredInFullScreenPanel.gd"
-}, {
-"base": "PanelContainer",
 "class": "CenteredPanel",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/gui/CenteredPanel.gd"
@@ -1195,7 +1190,6 @@ _global_script_class_icons={
 "CatParams": "",
 "CatPlayer": "",
 "CeilingsItemController": "",
-"CenteredInFullScreenPanel": "",
 "CenteredPanel": "",
 "ClickAnnotator": "",
 "ClimbDownWallToFloorCalculator": "",
@@ -1439,6 +1433,7 @@ SquirrelAwayConfig="*res://src/SquirrelAwayConfig.gd"
 
 [display]
 
+window/size/height=768
 mouse_cursor/custom_image="res://assets/images/paw_cursor.png"
 mouse_cursor/custom_image_hotspot=Vector2( 5, 4 )
 mouse_cursor/tooltip_position_offset=Vector2( 0, 0 )

@@ -3,7 +3,7 @@
 [ext_resource path="res://addons/scaffold/assets/fonts/Open_Sans/OpenSans-Regular.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 10
+size = 15
 extra_spacing_top = -2
 extra_spacing_bottom = -2
 font_data = ExtResource( 1 )

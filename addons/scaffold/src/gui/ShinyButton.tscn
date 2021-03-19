@@ -5,10 +5,6 @@
 [ext_resource path="res://assets/main_theme.tres" type="Theme" id=3]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_m.tres" type="DynamicFont" id=4]
 
-
-
-
-
 [sub_resource type="StyleBoxEmpty" id=1]
 
 [sub_resource type="StyleBoxEmpty" id=2]

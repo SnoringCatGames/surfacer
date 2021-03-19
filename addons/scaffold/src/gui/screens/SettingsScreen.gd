@@ -4,6 +4,7 @@ class_name SettingsScreen
 
 const NAME := "settings"
 const LAYER_NAME := "menu_screen"
+const AUTO_ADAPTS_GUI_SCALE := true
 const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
 const INCLUDES_CENTER_CONTAINER := true
@@ -43,6 +44,7 @@ var _details_list: LabeledControlList
 func _init().( \
         NAME, \
         LAYER_NAME, \
+        AUTO_ADAPTS_GUI_SCALE, \
         INCLUDES_STANDARD_HIERARCHY, \
         INCLUDES_NAV_BAR, \
         INCLUDES_CENTER_CONTAINER \

@@ -18,10 +18,10 @@ func _ready() -> void:
     ScaffoldUtils.connect( \
             "display_resized", \
             self, \
-            "_handle_display_resized")
-    _handle_display_resized()
+            "_on_resized")
+    _on_resized()
 
-func _handle_display_resized() -> void:
+func _on_resized() -> void:
     var viewport_size := get_viewport().size
     $PanelContainer/ScrollContainer.rect_min_size = viewport_size
     $PanelContainer/ScrollContainer/Label.rect_min_size.x = viewport_size.x

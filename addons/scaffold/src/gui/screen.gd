@@ -3,6 +3,7 @@ class_name Screen
 
 var screen_name: String
 var layer_name: String
+var auto_adapts_gui_scale: bool
 var includes_standard_hierarchy: bool
 var includes_nav_bar: bool
 var includes_center_container: bool
@@ -16,20 +17,29 @@ var _focused_button: ShinyButton
 
 var params: Dictionary
 
+var gui_scale := 1.0
+
 func _init( \
         screen_name: String, \
         layer_name: String, \
+        auto_adapts_gui_scale: bool, \
         includes_standard_hierarchy: bool, \
         includes_nav_bar := true, \
         includes_center_container := true) -> void:
     self.screen_name = screen_name
     self.layer_name = layer_name
+    self.auto_adapts_gui_scale = auto_adapts_gui_scale
     self.includes_standard_hierarchy = includes_standard_hierarchy
     self.includes_nav_bar = includes_nav_bar
     self.includes_center_container = includes_center_container
 
 func _ready() -> void:
     _validate_node_hierarchy()
+    ScaffoldUtils.connect( \
+            "display_resized", \
+            self, \
+            "_on_resized")
+    _on_resized()
 
 func _validate_node_hierarchy() -> void:
     # Give a shadow to the outer-most panel.
@@ -98,6 +108,26 @@ func _on_activated() -> void:
 
 func _on_deactivated() -> void:
     pass
+
+func _on_resized() -> void:
+    if !is_instance_valid(outer_panel_container):
+        return
+    
+    # FIXME: -------------
+    if screen_name != "credits":
+        return
+    
+    var new_gui_scale: float = ScaffoldConfig.gui_scale
+    new_gui_scale = Geometry.snap_float_to_integer(new_gui_scale, 0.001)
+    
+    if auto_adapts_gui_scale and \
+            gui_scale != new_gui_scale:
+        # Automatically resize the gui to adapt to different screen sizes.
+        var relative_scale := new_gui_scale / gui_scale
+        gui_scale = new_gui_scale
+        ScaffoldUtils.scale_gui_recursively( \
+                outer_panel_container, \
+                relative_scale)
 
 func _get_focused_button() -> ShinyButton:
     return null

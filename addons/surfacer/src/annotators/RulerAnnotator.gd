@@ -70,7 +70,7 @@ func _draw() -> void:
                 ScaffoldConfig.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string( \
-                ScaffoldConfig.main_font_xs, \
+                ScaffoldConfig.fonts.main_xs, \
                 Vector2(start_position.x + 2, 14), \
                 text, \
                 TEXT_COLOR)
@@ -91,7 +91,7 @@ func _draw() -> void:
                 ScaffoldConfig.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string( \
-                ScaffoldConfig.main_font_xs, \
+                ScaffoldConfig.fonts.main_xs, \
                 Vector2(2, start_position.y + 14), \
                 text, \
                 TEXT_COLOR)

@@ -13,6 +13,9 @@ func _init() -> void:
     _ios_model_names = IosModelNames.new()
     _ios_resolutions = IosResolutions.new()
 
+func _enter_tree() -> void:
+    _update_game_area_region_and_gui_scale()
+
 func on_time_ready() -> void:
     _throttled_size_changed = Time.throttle( \
             funcref(self, "_on_throttled_size_changed"), \
@@ -26,7 +29,51 @@ func _on_size_changed() -> void:
     _throttled_size_changed.call_func()
 
 func _on_throttled_size_changed() -> void:
+    _update_game_area_region_and_gui_scale()
     emit_signal("display_resized")
+
+func _update_game_area_region_and_gui_scale() -> void:
+    var viewport_size := get_viewport().size
+    var aspect_ratio := viewport_size.x / viewport_size.y
+    var game_area_position := Vector2.INF
+    var game_area_size := Vector2.INF
+    
+    if !ScaffoldConfig.is_app_configured:
+        game_area_size = viewport_size
+        game_area_position = Vector2.ZERO
+    if aspect_ratio < ScaffoldConfig.aspect_ratio_min:
+        # Show vertical margin around game area.
+        game_area_size = Vector2( \
+                viewport_size.x, \
+                viewport_size.x / ScaffoldConfig.aspect_ratio_min)
+        game_area_position = Vector2( \
+                0.0, \
+                (viewport_size.y - game_area_size.y) * 0.5)
+    elif aspect_ratio > ScaffoldConfig.aspect_ratio_max:
+        # Show horizontal margin around game area.
+        game_area_size = Vector2( \
+                viewport_size.y * ScaffoldConfig.aspect_ratio_max, \
+                viewport_size.y)
+        game_area_position = Vector2( \
+                (viewport_size.x - game_area_size.x) * 0.5, \
+                0.0)
+    else:
+        # Show no margins around game area.
+        game_area_size = viewport_size
+        game_area_position = Vector2.ZERO
+    
+    ScaffoldConfig.game_area_region = Rect2(game_area_position, game_area_size)
+    
+    if ScaffoldConfig.is_app_configured:
+        var default_aspect_ratio := \
+                ScaffoldConfig.default_game_area_size.x / \
+                ScaffoldConfig.default_game_area_size.y
+        ScaffoldConfig.gui_scale = \
+                viewport_size.x / ScaffoldConfig.default_game_area_size.x if \
+                aspect_ratio < default_aspect_ratio else \
+                viewport_size.y / ScaffoldConfig.default_game_area_size.y
+        ScaffoldConfig.gui_scale = \
+                max(ScaffoldConfig.gui_scale, ScaffoldConfig.MIN_GUI_SCALE)
 
 func print(message: String) -> void:
     if is_instance_valid(ScaffoldConfig.debug_panel):
@@ -197,35 +244,6 @@ static func get_global_touch_position(input_event: InputEvent) -> Vector2:
 
 func add_overlay_to_current_scene(node: Node) -> void:
     get_tree().get_current_scene().add_child(node)
-
-func get_game_area_region() -> Rect2:
-    var viewport_size := get_viewport().size
-    var aspect_ratio := viewport_size.x / viewport_size.y
-    var game_area_position := Vector2.INF
-    var game_area_size := Vector2.INF
-    
-    if aspect_ratio < ScaffoldConfig.aspect_ratio_min:
-        # Show vertical margin around game area.
-        game_area_size = Vector2( \
-                viewport_size.x, \
-                viewport_size.x / ScaffoldConfig.aspect_ratio_min)
-        game_area_position = Vector2( \
-                0.0, \
-                (viewport_size.y - game_area_size.y) * 0.5)
-    elif aspect_ratio > ScaffoldConfig.aspect_ratio_max:
-        # Show horizontal margin around game area.
-        game_area_size = Vector2( \
-                viewport_size.y * ScaffoldConfig.aspect_ratio_max, \
-                viewport_size.y)
-        game_area_position = Vector2( \
-                (viewport_size.x - game_area_size.x) * 0.5, \
-                0.0)
-    else:
-        # Show no margins around game area.
-        game_area_size = viewport_size
-        game_area_position = Vector2.ZERO
-    
-    return Rect2(game_area_position, game_area_size)
 
 func vibrate() -> void:
     if ScaffoldConfig.is_giving_haptic_feedback:
@@ -508,6 +526,38 @@ static func set_mouse_filter_recursively( \
             if !(child is Button):
                 child.mouse_filter = mouse_filter
         set_mouse_filter_recursively(child, mouse_filter)
+
+static func scale_gui_recursively( \
+        control: Control, \
+        gui_scale: float) -> void:
+    var snap_epsilon := 0.001
+    
+    # Only scale texture-based GUIs, since we scale fonts separately.
+    var is_gui_texture_based := \
+            control is TextureButton or \
+            control is ShinyButton or \
+            control is TextureRect
+    if is_gui_texture_based:
+        control.rect_scale *= gui_scale
+        control.rect_scale = Geometry.snap_vector2_to_integers( \
+                control.rect_scale, snap_epsilon)
+    else:
+        control.rect_min_size *= gui_scale
+        control.rect_min_size = Geometry.snap_vector2_to_integers( \
+                control.rect_min_size, snap_epsilon)
+        control.rect_size *= gui_scale
+        control.rect_size = Geometry.snap_vector2_to_integers( \
+                control.rect_size, snap_epsilon)
+        control.rect_position *= gui_scale
+        control.rect_position = Geometry.snap_vector2_to_integers( \
+                control.rect_position, snap_epsilon)
+        control.rect_pivot_offset *= gui_scale
+        control.rect_pivot_offset = Geometry.snap_vector2_to_integers( \
+                control.rect_pivot_offset, snap_epsilon)
+    
+    for child in control.get_children():
+        if child is Control:
+            scale_gui_recursively(child, gui_scale)
 
 static func get_node_vscroll_position( \
         scroll_container: ScrollContainer, \

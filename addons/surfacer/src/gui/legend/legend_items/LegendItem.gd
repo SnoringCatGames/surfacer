@@ -32,7 +32,7 @@ func _enter_tree() -> void:
     label.rect_size.y = SHAPE_REGION_HEIGHT
     label.valign = Label.VALIGN_CENTER
     label.max_lines_visible = 2
-    label.add_font_override("font", ScaffoldConfig.main_font_xs)
+    label.add_font_override("font", ScaffoldConfig.fonts.main_xs)
     label.text = text
     add_child(label)
 

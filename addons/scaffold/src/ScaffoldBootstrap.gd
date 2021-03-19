@@ -46,11 +46,23 @@ func on_app_ready( \
         JavaScript.eval("window.onGameReady()")
     
     Nav.splash()
+    
+    ScaffoldUtils.connect( \
+            "display_resized", \
+            self, \
+            "_on_resized")
+    _on_resized()
 
 func _process(_delta_sec: float) -> void:
     if ScaffoldConfig.debug or ScaffoldConfig.playtest:
         if Input.is_action_just_pressed("screenshot"):
             ScaffoldUtils.take_screenshot()
+
+func _on_resized() -> void:
+    for key in ScaffoldConfig.fonts:
+        ScaffoldConfig.fonts[key].size = \
+                ScaffoldConfig.original_font_sizes[key] * \
+                ScaffoldConfig.gui_scale
 
 func _set_window_debug_size_and_position() -> void:
     if ScaffoldConfig.debug:

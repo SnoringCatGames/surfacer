@@ -3,6 +3,7 @@ class_name GameScreen
 
 const NAME := "game"
 const LAYER_NAME := "game_screen"
+const AUTO_ADAPTS_GUI_SCALE := true
 const INCLUDES_STANDARD_HIERARCHY := false
 
 var level: ScaffoldLevel
@@ -10,6 +11,7 @@ var level: ScaffoldLevel
 func _init().( \
         NAME, \
         LAYER_NAME, \
+        AUTO_ADAPTS_GUI_SCALE, \
         INCLUDES_STANDARD_HIERARCHY \
         ) -> void:
     pass
@@ -17,11 +19,7 @@ func _init().( \
 func _enter_tree() -> void:
     move_canvas_layer_to_game_viewport("annotation")
     
-    ScaffoldUtils.connect( \
-            "display_resized", \
-            self, \
-            "_update_viewport_region")
-    _update_viewport_region()
+    _on_resized()
 
 func move_canvas_layer_to_game_viewport(name: String) -> void:
     var layer: CanvasLayer = ScaffoldConfig.canvas_layers.layers[name]
@@ -37,7 +35,8 @@ func _process(_delta_sec: float) -> void:
     ScaffoldConfig.canvas_layers.layers.annotation.transform = \
             level.get_canvas_transform()
 
-func _update_viewport_region() -> void:
+func _on_resized() -> void:
+    ._on_resized()
     _update_viewport_region_helper()
     
     # TODO: This hack seems to be needed in order for the viewport to actually
@@ -45,14 +44,14 @@ func _update_viewport_region() -> void:
     Time.set_timeout(funcref(self, "_update_viewport_region_helper"), 1.0)
 
 func _update_viewport_region_helper() -> void:
-    var game_area_region: Rect2 = ScaffoldUtils.get_game_area_region()
     var viewport_size := get_viewport().size
-    var game_area_position := (viewport_size - game_area_region.size) * 0.5
+    var game_area_position := \
+            (viewport_size - ScaffoldConfig.game_area_region.size) * 0.5
     
     $PanelContainer.rect_size = viewport_size
     $PanelContainer/ViewportContainer.rect_position = game_area_position
     $PanelContainer/ViewportContainer/Viewport.size = \
-            game_area_region.size
+            ScaffoldConfig.game_area_region.size
     
     call_deferred("_fix_viewport_dimensions_hack")
     Time.set_timeout(funcref(self, "_fix_viewport_dimensions_hack"), 0.4)

@@ -2,7 +2,6 @@
 
 [ext_resource path="res://addons/scaffold/assets/fonts/Open_Sans/OpenSans-Italic.ttf" type="DynamicFontData" id=1]
 
-
 [resource]
-size = 20
+size = 40
 font_data = ExtResource( 1 )

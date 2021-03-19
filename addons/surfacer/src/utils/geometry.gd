@@ -459,6 +459,27 @@ static func are_position_wrappers_equal_with_epsilon( \
     return -epsilon < x_diff and x_diff < epsilon and \
             -epsilon < y_diff and y_diff < epsilon
 
+static func is_float_integer_aligned_with_epsilon( \
+        number: float, \
+        epsilon := FLOAT_EPSILON) -> bool:
+    var remainder := fmod(number, 1.0)
+    return remainder < epsilon or remainder > 1.0 - epsilon
+
+static func snap_float_to_integer( \
+        number: float, \
+        epsilon := FLOAT_EPSILON) -> float:
+    if Geometry.is_float_integer_aligned_with_epsilon(number, epsilon):
+        return round(number)
+    else:
+        return number
+
+static func snap_vector2_to_integers( \
+        point: Vector2, \
+        epsilon := FLOAT_EPSILON) -> Vector2:
+    return Vector2( \
+            snap_float_to_integer(point.x), \
+            snap_float_to_integer(point.y))
+
 static func is_float_gte_with_epsilon( \
         a: float, \
         b: float, \

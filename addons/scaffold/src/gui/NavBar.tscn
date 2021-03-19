@@ -13,9 +13,6 @@
 [ext_resource path="res://addons/scaffold/assets/images/gui/about_icon_hover_large.png" type="Texture" id=11]
 [ext_resource path="res://assets/images/gui/logo.png" type="Texture" id=12]
 
-
-
-
 [sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="NavBar" type="PanelContainer"]
@@ -33,7 +30,7 @@ __meta__ = {
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_right = 576.0
-margin_bottom = 152.0
+margin_bottom = 320.0
 size_flags_horizontal = 3
 custom_constants/margin_right = 0
 custom_constants/margin_top = 0
@@ -41,10 +38,10 @@ custom_constants/margin_left = 0
 custom_constants/margin_bottom = 0
 
 [node name="Header" type="Label" parent="MarginContainer"]
-margin_top = 12.0
+margin_top = 63.0
 margin_right = 576.0
-margin_bottom = 140.0
-rect_min_size = Vector2( 0, 128 )
+margin_bottom = 255.0
+rect_min_size = Vector2( 0, 192 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 5 )
 align = 1
@@ -54,15 +51,15 @@ clip_text = true
 [node name="LogoControl" type="CenterContainer" parent="MarginContainer"]
 visible = false
 margin_right = 576.0
-margin_bottom = 152.0
+margin_bottom = 320.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Control" type="Control" parent="MarginContainer/LogoControl"]
 margin_left = 288.0
-margin_top = 76.0
+margin_top = 160.0
 margin_right = 288.0
-margin_bottom = 76.0
+margin_bottom = 160.0
 
 [node name="Logo" type="TextureRect" parent="MarginContainer/LogoControl/Control"]
 margin_right = 258.0
@@ -76,9 +73,9 @@ __meta__ = {
 }
 
 [node name="BackButton" type="TextureButton" parent="MarginContainer"]
-margin_right = 128.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
+margin_right = 96.0
+margin_bottom = 96.0
+rect_min_size = Vector2( 96, 96 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
 texture_normal = ExtResource( 2 )
@@ -89,9 +86,9 @@ stretch_mode = 3
 
 [node name="AboutButton" type="TextureButton" parent="MarginContainer"]
 visible = false
-margin_right = 128.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
+margin_right = 192.0
+margin_bottom = 192.0
+rect_min_size = Vector2( 192, 192 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
 texture_normal = ExtResource( 6 )
@@ -102,10 +99,10 @@ stretch_mode = 3
 
 [node name="SettingsButton" type="TextureButton" parent="MarginContainer"]
 visible = false
-margin_left = 448.0
+margin_left = 384.0
 margin_right = 576.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
+margin_bottom = 192.0
+rect_min_size = Vector2( 192, 192 )
 size_flags_horizontal = 8
 size_flags_vertical = 0
 texture_normal = ExtResource( 3 )

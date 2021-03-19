@@ -16,7 +16,7 @@ var debug_window_size := Vector2(1024, 768)
 # Google Ads: Portrait
 #var debug_window_size := Vector2(768, 1024)
 # Default
-#var debug_window_size := Vector2(480.0, 480.0)
+#var debug_window_size := Vector2(480, 480)
 # Just show as full screen.
 #var debug_window_size := Vector2.INF
 
@@ -31,6 +31,20 @@ var special_thanks_text := """
 var level_resource_path := "res://src/levels/Level6.tscn"
 
 var test_runner_resource_path := "res://test/TestRunner.tscn"
+
+var fonts := {
+    main_xs = preload("res://addons/scaffold/assets/fonts/main_font_xs.tres"),
+    main_xs_italic = preload( \
+            "res://addons/scaffold/assets/fonts/main_font_xs_italic.tres"),
+    main_s = preload("res://addons/scaffold/assets/fonts/main_font_s.tres"),
+    main_m = preload("res://addons/scaffold/assets/fonts/main_font_m.tres"),
+    main_m_bold = preload( \
+            "res://addons/scaffold/assets/fonts/main_font_m_bold.tres"),
+    main_m_italic = preload( \
+            "res://addons/scaffold/assets/fonts/main_font_m_italic.tres"),
+    main_l = preload("res://addons/scaffold/assets/fonts/main_font_l.tres"),
+    main_xl = preload("res://addons/scaffold/assets/fonts/main_font_xl.tres"),
+}
 
 var sounds_manifest := [
     {
@@ -149,6 +163,8 @@ var app_manifest := {
     screen_inclusions = [
     ],
     
+    fonts = fonts,
+    
     sounds_manifest = sounds_manifest,
     default_sounds_path_prefix = "res://assets/sounds/",
     default_sounds_file_suffix = ".wav",
@@ -195,17 +211,9 @@ var app_manifest := {
     support_url_base = "",
     log_gestures_url = "",
     
-    main_font_m = \
-            preload("res://addons/scaffold/assets/fonts/main_font_m.tres"),
-    main_font_xs = \
-            preload("res://addons/scaffold/assets/fonts/main_font_xs.tres"),
-    main_font_l = \
-            preload("res://addons/scaffold/assets/fonts/main_font_l.tres"),
-    main_font_xl = \
-    preload("res://addons/scaffold/assets/fonts/main_font_xl.tres"),
-    
     cell_size = Vector2(32.0, 32.0),
     
+    default_game_area_size = Vector2(1024, 768),
     aspect_ratio_max = 2.0 / 1.0,
     aspect_ratio_min = 1.0 / 2.0,
 }

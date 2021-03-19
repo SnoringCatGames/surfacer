@@ -3,6 +3,7 @@ class_name RateAppScreen
 
 const NAME := "rate_app"
 const LAYER_NAME := "menu_screen"
+const AUTO_ADAPTS_GUI_SCALE := true
 const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
 const INCLUDES_CENTER_CONTAINER := true
@@ -12,6 +13,7 @@ const NEXT_SCREEN_TYPE := "main_menu"
 func _init().( \
         NAME, \
         LAYER_NAME, \
+        AUTO_ADAPTS_GUI_SCALE, \
         INCLUDES_STANDARD_HIERARCHY, \
         INCLUDES_NAV_BAR, \
         INCLUDES_CENTER_CONTAINER \

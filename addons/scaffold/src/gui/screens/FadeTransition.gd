@@ -15,12 +15,12 @@ func _ready() -> void:
     ScaffoldUtils.connect( \
             "display_resized", \
             self, \
-            "_on_display_resized")
-    _on_display_resized()
+            "_on_resized")
+    _on_resized()
     
     _set_cutoff(0)
 
-func _on_display_resized() -> void:
+func _on_resized() -> void:
     rect_size = get_viewport().size
 
 func fade() -> void:

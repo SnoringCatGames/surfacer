@@ -1,5 +1,19 @@
 extends Node
 
+# ---
+
+const AGREED_TO_TERMS_SETTINGS_KEY := "agreed_to_terms"
+const IS_GIVING_HAPTIC_FEEDBACK_SETTINGS_KEY := "is_giving_haptic_feedback"
+const IS_DEBUG_PANEL_SHOWN_SETTINGS_KEY := "is_debug_panel_shown"
+const IS_DEBUG_TIME_SHOWN_SETTINGS_KEY := "is_debug_time_shown"
+const IS_MUSIC_ENABLED_SETTINGS_KEY := "is_music_enabled"
+const IS_SOUND_EFFECTS_ENABLED_SETTINGS_KEY := "is_sound_effects_enabled"
+
+const DEBUG_PANEL_RESOURCE_PATH := \
+        "res://addons/scaffold/src/gui/DebugPanel.tscn"
+
+const MIN_GUI_SCALE := 0.2
+
 # --- Static configuration state ---
 
 var debug: bool
@@ -12,12 +26,11 @@ var app_name: String
 var app_id: String
 var app_version: String
 
-var main_font_m: Font
-var main_font_xs: Font
-var main_font_l: Font
-var main_font_xl: Font
-
 var cell_size: Vector2
+
+# This should match what is configured in
+# Project Settings > Display > Window > Size > Width/Height.
+var default_game_area_size: Vector2
 
 var aspect_ratio_max: float
 var aspect_ratio_min: float
@@ -35,11 +48,13 @@ var option_button_pressed_color: Color
 var screen_exclusions: Array
 var screen_inclusions: Array
 
-var sounds_manifest: String
+var fonts: Dictionary
+
+var sounds_manifest: Array
 var default_sounds_path_prefix: String
 var default_sounds_file_suffix: String
 var default_sounds_bus_index: String
-var music_manifest: String
+var music_manifest: Array
 var default_music_path_prefix: String
 var default_music_file_suffix: String
 var default_music_bus_index: String
@@ -93,9 +108,11 @@ var is_gesture_logging_supported: bool
 var is_developer_logo_shown: bool
 var is_developer_splash_shown: bool
 var is_main_menu_image_shown: bool
+var original_font_sizes: Dictionary
 
 # --- Global state ---
 
+var is_app_configured := false
 var is_app_ready := false
 var agreed_to_terms: bool
 var is_giving_haptic_feedback: bool
@@ -103,23 +120,14 @@ var is_debug_panel_shown: bool setget \
         _set_is_debug_panel_shown, _get_is_debug_panel_shown
 var is_debug_time_shown: bool
 
+var game_area_region: Rect2
+var gui_scale := 1.0
 var canvas_layers: CanvasLayers
 var camera_controller: CameraController
 var debug_panel: DebugPanel
 var gesture_record: GestureRecord
 var next_level_resource_path: String
 var level: ScaffoldLevel
-
-# ---
-
-const AGREED_TO_TERMS_SETTINGS_KEY := "agreed_to_terms"
-const IS_GIVING_HAPTIC_FEEDBACK_SETTINGS_KEY := "is_giving_haptic_feedback"
-const IS_DEBUG_PANEL_SHOWN_SETTINGS_KEY := "is_debug_panel_shown"
-const IS_DEBUG_TIME_SHOWN_SETTINGS_KEY := "is_debug_time_shown"
-const IS_MUSIC_ENABLED_SETTINGS_KEY := "is_music_enabled"
-const IS_SOUND_EFFECTS_ENABLED_SETTINGS_KEY := "is_sound_effects_enabled"
-
-const DEBUG_PANEL_RESOURCE_PATH := "res://addons/scaffold/src/gui/DebugPanel.tscn"
 
 # ---
 
@@ -133,11 +141,8 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.app_name = manifest.app_name
     self.app_id = manifest.app_id
     self.app_version = manifest.app_version
-    self.main_font_m = manifest.main_font_m
-    self.main_font_xs = manifest.main_font_xs
-    self.main_font_l = manifest.main_font_l
-    self.main_font_xl = manifest.main_font_xl
     self.cell_size = manifest.cell_size
+    self.default_game_area_size = manifest.default_game_area_size
     self.aspect_ratio_max = manifest.aspect_ratio_max
     self.aspect_ratio_min = manifest.aspect_ratio_min
     self.screen_background_color = manifest.screen_background_color
@@ -151,6 +156,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.option_button_pressed_color = manifest.option_button_pressed_color
     self.screen_exclusions = manifest.screen_exclusions
     self.screen_inclusions = manifest.screen_inclusions
+    self.fonts = manifest.fonts
     self.sounds_manifest = manifest.sounds_manifest
     self.default_sounds_path_prefix = manifest.default_sounds_path_prefix
     self.default_sounds_file_suffix = manifest.default_sounds_file_suffix
@@ -245,6 +251,11 @@ func register_app_manifest(manifest: Dictionary) -> void:
             manifest.has("developer_splash") and \
             manifest.has("developer_splash_sound")
     self.is_main_menu_image_shown = manifest.has("main_menu_image_scene_path")
+    
+    self.is_app_configured = true
+    
+    _record_original_font_sizes()
+    ScaffoldUtils._update_game_area_region_and_gui_scale()
 
 func load_state() -> void:
     agreed_to_terms = SaveState.get_setting( \
@@ -279,3 +290,7 @@ func _set_is_debug_panel_shown(is_visible: bool) -> void:
 
 func _get_is_debug_panel_shown() -> bool:
     return is_debug_panel_shown
+
+func _record_original_font_sizes() -> void:
+    for key in fonts:
+        original_font_sizes[key] = fonts[key].size

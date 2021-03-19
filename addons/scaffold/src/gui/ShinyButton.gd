@@ -76,9 +76,9 @@ func _deferred_update() -> void:
     $MarginContainer/TextureWrapper/TextureRect.rect_size = \
             rect_size / texture_scale
     var font: Font = \
-            ScaffoldConfig.main_font_xl if \
+            ScaffoldConfig.fonts.main_xl if \
             is_font_xl else \
-            ScaffoldConfig.main_font_m
+            ScaffoldConfig.fonts.main_m
     $MarginContainer/BottomButton.add_font_override( \
             "font", \
             font)
