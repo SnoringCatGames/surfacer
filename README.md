@@ -1,6 +1,6 @@
 # Squirrel Away
 
-_**[Live demo](https://levi.dev/squirrel)**._
+_**[Live demo](https://levi.dev/squirrel)**_
 
 This simple game showcases procedural pathfinding across 2D-platformer surfaces using the [Surfacer](https://github.com/snoringcatgames/surfacer/) framework.
 

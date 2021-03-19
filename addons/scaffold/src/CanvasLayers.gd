@@ -4,27 +4,27 @@ class_name CanvasLayers
 const _DEFAULT_LAYERS_CONFIG := [
     {
         name = "menu_screen",
-        z_index = 400,
+        z_index = 40,
         pause_mode = Node.PAUSE_MODE_PROCESS,
     },
     {
         name = "top",
-        z_index = 500,
+        z_index = 50,
         pause_mode = Node.PAUSE_MODE_PROCESS,
     },
     {
         name = "hud",
-        z_index = 300,
+        z_index = 30,
         pause_mode = Node.PAUSE_MODE_STOP,
     },
     {
         name = "annotation",
-        z_index = 200,
+        z_index = 20,
         pause_mode = Node.PAUSE_MODE_STOP,
     },
     {
         name = "game_screen",
-        z_index = 100,
+        z_index = 10,
         pause_mode = Node.PAUSE_MODE_STOP,
     },
 ]
@@ -33,6 +33,8 @@ var layers := {}
 
 func _init() -> void:
     ScaffoldUtils.print("CanvasLayers._init")
+    name = "CanvasLayers"
+
 
 func _enter_tree() -> void:
     for config in _DEFAULT_LAYERS_CONFIG:

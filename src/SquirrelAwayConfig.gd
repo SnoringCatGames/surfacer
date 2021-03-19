@@ -12,13 +12,13 @@ var debug := OS.is_debug_build()
 # App Store: 12.9'' iPad (3rd Gen) and (2nd Gen)
 #var debug_window_size := Vector2(2732, 2048)
 # Google Ads: Landscape
-#var debug_window_size := Vector2(1024, 768)
+var debug_window_size := Vector2(1024, 768)
 # Google Ads: Portrait
 #var debug_window_size := Vector2(768, 1024)
 # Default
 #var debug_window_size := Vector2(480.0, 480.0)
 # Just show as full screen.
-var debug_window_size := Vector2.INF
+#var debug_window_size := Vector2.INF
 
 var third_party_license_text := \
         ScaffoldThirdPartyLicenses.TEXT + \
@@ -206,8 +206,8 @@ var app_manifest := {
     
     cell_size = Vector2(32.0, 32.0),
     
-    aspect_ratio_max = 1.0 / 1.0,
-    aspect_ratio_min = 1.0 / 1.3,
+    aspect_ratio_max = 2.0 / 1.0,
+    aspect_ratio_min = 1.0 / 2.0,
 }
 
 func _init() -> void:

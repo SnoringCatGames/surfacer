@@ -4,6 +4,9 @@ class_name GestureRecord
 # Array<GestureEventForDebugging>
 var recent_gesture_events_for_debugging := []
 
+func _init() -> void:
+    name = "GestureRecord"
+
 func _input(event: InputEvent) -> void:
     if (ScaffoldConfig.debug or ScaffoldConfig.playtest) and \
             (event is InputEventScreenTouch or event is InputEventScreenDrag):

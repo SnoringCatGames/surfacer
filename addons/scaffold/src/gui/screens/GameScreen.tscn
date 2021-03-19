@@ -2,8 +2,6 @@
 
 [ext_resource path="res://addons/scaffold/src/gui/screens/GameScreen.gd" type="Script" id=1]
 
-
-
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.345098, 0.431373, 0.603922, 1 )
 

@@ -37,7 +37,8 @@ func _draw() -> void:
     for element in _elements_set:
         element.draw(self)
         for legend_item in element.get_legend_items():
-            legend_items[legend_item.type] = legend_item
+            if is_instance_valid(legend_item):
+                legend_items[legend_item.type] = legend_item
     
     if is_instance_valid(SurfacerConfig.legend):
         SurfacerConfig.legend.clear()

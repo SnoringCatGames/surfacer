@@ -42,12 +42,13 @@ var annotation_layer: CanvasLayer
 var ruler_layer: CanvasLayer
 
 func _init() -> void:
+    name = "Annotators"
     annotation_layer = ScaffoldConfig.canvas_layers.layers.annotation
 
 func _enter_tree() -> void:
     ruler_layer = ScaffoldConfig.canvas_layers.create_layer( \
             "ruler", \
-            annotation_layer.layer + 50, \
+            annotation_layer.layer + 5, \
             Node.PAUSE_MODE_STOP)
     
     element_annotator = ElementAnnotator.new()

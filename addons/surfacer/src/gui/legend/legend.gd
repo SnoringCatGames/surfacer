@@ -13,6 +13,7 @@ func _ready() -> void:
     label.visible = true
 
 func add(item: LegendItem) -> void:
+    assert(item != null)
     _items[item.type] = item
     grid.add_child(item)
     label.visible = false
@@ -31,7 +32,7 @@ func has(item: LegendItem) -> bool:
 
 func clear() -> void:
     for type in _items:
-        grid.remove_child(_items[type])
-        _items[type].queue_free()
+        if is_instance_valid(_items[type]):
+            _items[type].queue_free()
     _items.clear()
     label.visible = true

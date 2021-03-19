@@ -15,6 +15,9 @@ var zoom: float setget _set_zoom, _get_zoom
 var zoom_tween: Tween
 var tween_zoom: float
 
+func _init() -> void:
+    name = "CameraController"
+
 func _enter_tree() -> void:
     zoom_tween = Tween.new()
     add_child(zoom_tween)
