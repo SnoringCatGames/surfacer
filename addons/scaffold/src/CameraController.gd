@@ -1,7 +1,6 @@
 extends Node2D
 class_name CameraController
 
-const DEFAULT_CAMERA_ZOOM := 1.0
 const ZOOM_STEP_RATIO := Vector2(0.05, 0.05)
 const PAN_STEP := 8.0
 
@@ -14,6 +13,7 @@ var zoom: float setget _set_zoom, _get_zoom
 
 var zoom_tween: Tween
 var tween_zoom: float
+var zoom_factor := 1.0
 
 func _init() -> void:
     name = "CameraController"
@@ -53,6 +53,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func set_current_camera(camera: Camera2D) -> void:
     camera.make_current()
     _current_camera = camera
+    _set_zoom(zoom_factor)
 
 func get_current_camera() -> Camera2D:
     return _current_camera
@@ -72,10 +73,11 @@ func get_position() -> Vector2:
         return Vector2.ZERO
     return _current_camera.get_camera_screen_center()
 
-func _set_zoom(zoom: float) -> void:
+func _set_zoom(zoom_factor: float) -> void:
+    self.zoom_factor = zoom_factor
     if !is_instance_valid(_current_camera):
         return
-    _current_camera.zoom = Vector2(zoom, zoom)
+    update_zoom()
 
 func _get_zoom() -> float:
     if !is_instance_valid(_current_camera):
@@ -101,3 +103,12 @@ func animate_to_zoom(zoom: float) -> void:
             Tween.TRANS_QUAD, \
             Tween.EASE_IN_OUT)
     zoom_tween.start()
+
+func update_zoom() -> void:
+    if !is_instance_valid(_current_camera):
+        return
+    var zoom: float = \
+            zoom_factor * \
+            ScaffoldConfig.default_camera_zoom / \
+            ScaffoldConfig.gui_scale
+    _current_camera.zoom = Vector2(zoom, zoom)

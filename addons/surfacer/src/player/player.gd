@@ -136,6 +136,15 @@ func _ready() -> void:
     
     surface_state.previous_center_position = self.position
     surface_state.center_position = self.position
+    
+    ScaffoldUtils.connect( \
+            "display_resized", \
+            self, \
+            "_on_resized")
+    _on_resized()
+
+func _on_resized() -> void:
+    ScaffoldConfig.camera_controller.update_zoom()
 
 func init_human_player_state() -> void:
     is_human_player = true
@@ -169,8 +178,6 @@ func _set_camera() -> void:
     add_child(camera)
     # Register the current camera, so it's globally accessible.
     ScaffoldConfig.camera_controller.set_current_camera(camera)
-    ScaffoldConfig.camera_controller.zoom = \
-            CameraController.DEFAULT_CAMERA_ZOOM
 
 func _init_user_controller_action_source() -> void:
     action_sources.push_back(UserActionSource.new(self, true))

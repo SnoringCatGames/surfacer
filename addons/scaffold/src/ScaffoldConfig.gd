@@ -91,6 +91,8 @@ var ios_app_store_url: String
 var support_url_base: String
 var log_gestures_url: String
 
+var default_camera_zoom := 1.0
+
 var input_vibrate_duration_sec := 0.01
 
 var display_resize_throttle_interval_sec := 0.1

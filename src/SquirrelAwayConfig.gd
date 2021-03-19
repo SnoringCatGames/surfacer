@@ -216,6 +216,8 @@ var app_manifest := {
     default_game_area_size = Vector2(1024, 768),
     aspect_ratio_max = 2.0 / 1.0,
     aspect_ratio_min = 1.0 / 2.0,
+    
+    default_camera_zoom = 1.0,
 }
 
 func _init() -> void:
