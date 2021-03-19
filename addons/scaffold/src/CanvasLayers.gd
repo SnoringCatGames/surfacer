@@ -35,17 +35,9 @@ func _init() -> void:
     ScaffoldUtils.print("CanvasLayers._init")
     name = "CanvasLayers"
 
-
 func _enter_tree() -> void:
     for config in _DEFAULT_LAYERS_CONFIG:
         create_layer(config.name, config.z_index, config.pause_mode)
-
-func _process(_delta_sec: float) -> void:
-    # Transform the annotation layer to follow the camera.
-    var camera: Camera2D = \
-            ScaffoldConfig.camera_controller.get_current_camera()
-    if is_instance_valid(camera):
-        layers.annotation.transform = get_canvas_transform()
 
 func create_layer( \
         name: String, \

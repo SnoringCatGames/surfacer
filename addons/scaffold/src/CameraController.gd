@@ -3,7 +3,7 @@ class_name CameraController
 
 const DEFAULT_CAMERA_ZOOM := 1.0
 const ZOOM_STEP_RATIO := Vector2(0.05, 0.05)
-const PAN_STEP := 32.0
+const PAN_STEP := 8.0
 
 const ZOOM_ANIMATION_DURATION_SEC := 0.3
 
