@@ -64,6 +64,7 @@ var third_party_license_text: String
 var special_thanks_text: String
 
 var app_logo: Texture
+var app_logo_scale: float
 var developer_name: String
 var developer_url: String
 
@@ -172,6 +173,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
             manifest.third_party_license_text.strip_edges()
     self.special_thanks_text = manifest.special_thanks_text.strip_edges()
     self.app_logo = manifest.app_logo
+    self.app_logo_scale = manifest.app_logo_scale
     self.developer_name = manifest.developer_name
     self.developer_url = manifest.developer_url
     

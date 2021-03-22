@@ -13,7 +13,7 @@ func _enter_tree() -> void:
     $MarginContainer.set( \
             "custom_constants/margin_top", \
             ScaffoldUtils.get_safe_area_margin_top())
-    $MarginContainer/BackButton.rect_position.x += \
+    $MarginContainer/BackButtonWrapper.rect_position.x += \
             ScaffoldUtils.get_safe_area_margin_left()
     $MarginContainer/AboutButton.rect_position.x += \
             ScaffoldUtils.get_safe_area_margin_left()
@@ -25,7 +25,8 @@ func _enter_tree() -> void:
     _set_shows_logo(shows_logo)
     $MarginContainer/LogoControl/Control/Logo.texture = ScaffoldConfig.app_logo
     $MarginContainer/LogoControl/Control/Logo.rect_position = \
-            -ScaffoldConfig.app_logo.get_size() / 2.0
+            -ScaffoldConfig.app_logo.get_size() / 2.0 * \
+            ScaffoldConfig.app_logo_scale
 
 func _set_text(value: String) -> void:
     text = value
@@ -34,8 +35,8 @@ func _set_text(value: String) -> void:
 
 func _set_shows_back(value: bool) -> void:
     shows_back = value
-    if $MarginContainer/BackButton != null:
-        $MarginContainer/BackButton.visible = shows_back
+    if $MarginContainer/BackButtonWrapper != null:
+        $MarginContainer/BackButtonWrapper.visible = shows_back
 
 func _get_shows_back() -> bool:
     return shows_back

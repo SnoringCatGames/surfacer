@@ -16,10 +16,6 @@
 [sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="NavBar" type="PanelContainer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_right = -448.0
-margin_bottom = -448.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 custom_styles/panel = SubResource( 1 )
@@ -29,8 +25,8 @@ __meta__ = {
 }
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-margin_right = 576.0
-margin_bottom = 320.0
+margin_right = 96.0
+margin_bottom = 192.0
 size_flags_horizontal = 3
 custom_constants/margin_right = 0
 custom_constants/margin_top = 0
@@ -38,9 +34,8 @@ custom_constants/margin_left = 0
 custom_constants/margin_bottom = 0
 
 [node name="Header" type="Label" parent="MarginContainer"]
-margin_top = 63.0
-margin_right = 576.0
-margin_bottom = 255.0
+margin_right = 96.0
+margin_bottom = 192.0
 rect_min_size = Vector2( 0, 192 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 5 )
@@ -50,20 +45,22 @@ clip_text = true
 
 [node name="LogoControl" type="CenterContainer" parent="MarginContainer"]
 visible = false
-margin_right = 576.0
-margin_bottom = 320.0
+margin_right = 96.0
+margin_bottom = 192.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Control" type="Control" parent="MarginContainer/LogoControl"]
-margin_left = 288.0
-margin_top = 160.0
-margin_right = 288.0
-margin_bottom = 160.0
+margin_left = 48.0
+margin_top = 96.0
+margin_right = 48.0
+margin_bottom = 96.0
 
 [node name="Logo" type="TextureRect" parent="MarginContainer/LogoControl/Control"]
-margin_right = 258.0
-margin_bottom = 44.0
+margin_left = -258.0
+margin_top = -44.0
+margin_bottom = -3.8147e-06
+rect_scale = Vector2( 2, 2 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
 texture = ExtResource( 12 )
@@ -72,10 +69,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="BackButton" type="TextureButton" parent="MarginContainer"]
+[node name="BackButtonWrapper" type="Control" parent="MarginContainer"]
 margin_right = 96.0
-margin_bottom = 96.0
+margin_bottom = 192.0
 rect_min_size = Vector2( 96, 96 )
+
+[node name="BackButton" type="TextureButton" parent="MarginContainer/BackButtonWrapper"]
+rect_min_size = Vector2( 96, 96 )
+rect_scale = Vector2( 2, 2 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
 texture_normal = ExtResource( 2 )
@@ -83,6 +84,9 @@ texture_pressed = ExtResource( 4 )
 texture_hover = ExtResource( 7 )
 expand = true
 stretch_mode = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="AboutButton" type="TextureButton" parent="MarginContainer"]
 visible = false
@@ -99,8 +103,8 @@ stretch_mode = 3
 
 [node name="SettingsButton" type="TextureButton" parent="MarginContainer"]
 visible = false
-margin_left = 384.0
-margin_right = 576.0
+margin_left = -96.0
+margin_right = 96.0
 margin_bottom = 192.0
 rect_min_size = Vector2( 192, 192 )
 size_flags_horizontal = 8
@@ -110,6 +114,6 @@ texture_pressed = ExtResource( 10 )
 texture_hover = ExtResource( 9 )
 expand = true
 stretch_mode = 3
-[connection signal="pressed" from="MarginContainer/BackButton" to="." method="_on_BackButton_pressed"]
+[connection signal="pressed" from="MarginContainer/BackButtonWrapper/BackButton" to="." method="_on_BackButton_pressed"]
 [connection signal="pressed" from="MarginContainer/AboutButton" to="." method="_on_AboutButton_pressed"]
 [connection signal="pressed" from="MarginContainer/SettingsButton" to="." method="_on_SettingsButton_pressed"]

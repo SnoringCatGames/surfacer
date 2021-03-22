@@ -548,12 +548,12 @@ static func scale_gui_recursively( \
         control.rect_size *= gui_scale
         control.rect_size = Geometry.snap_vector2_to_integers( \
                 control.rect_size, snap_epsilon)
-        control.rect_position *= gui_scale
-        control.rect_position = Geometry.snap_vector2_to_integers( \
-                control.rect_position, snap_epsilon)
-        control.rect_pivot_offset *= gui_scale
-        control.rect_pivot_offset = Geometry.snap_vector2_to_integers( \
-                control.rect_pivot_offset, snap_epsilon)
+#    control.rect_position /= gui_scale
+#    control.rect_position = Geometry.snap_vector2_to_integers( \
+#            control.rect_position, snap_epsilon)
+#    control.rect_pivot_offset *= gui_scale
+#    control.rect_pivot_offset = Geometry.snap_vector2_to_integers( \
+#            control.rect_pivot_offset, snap_epsilon)
     
     for child in control.get_children():
         if child is Control:

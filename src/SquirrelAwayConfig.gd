@@ -179,6 +179,7 @@ var app_manifest := {
     special_thanks_text = special_thanks_text,
     
     app_logo = preload("res://assets/images/gui/logo.png"),
+    app_logo_scale = 2.0,
     developer_name = "Snoring Cat LLC",
     developer_url = "https://snoringcat.games",
     
