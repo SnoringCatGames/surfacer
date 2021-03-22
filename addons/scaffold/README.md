@@ -2,6 +2,75 @@
 
 _**[Example app](https://github.com/snoringcatgames/squirrel-away)**_
 
+This is an opinionated framework that provides a bunch of general-purpose application scaffolding and utility functionality for Godot games.
+
+## Getting set up
+
+Probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel-away), and then adjust it to fit your needs.
+
+### Project Settings
+
+Some of these are just my personal preference, some are important for the framework to run correctly.
+
+-   Application > Config:
+    -   Name
+    -   Icon
+    -   Quit On Go Back: false
+-   Application > Run:
+    -   Main Scene
+-   Application > Boot Splash:
+    -   Image
+    -   Bg Color: Must match `ScaffoldConfig.screen_background_color`
+-   Rendering > Quality:
+    -   Use Pixel Snap: true
+    -   Framebuffer Allocation: 2D Without Sampling
+    -   Framebuffer Allocation.mobile: 2D Without Sampling
+-   Rendering > Environment:
+    -   Default Clear Color: Match `ScaffoldConfig.screen_background_color`
+    -   Default Environment: I usually move this out from the top-level directory.
+-   Display > Window:
+    -   Size > Width/Height: Must match `ScaffoldConfig.default_game_area_size`.
+    -   Stretch > Mode: disabled
+    -   Stretch > Aspect: expand
+-   Input Devices > Pointing:
+    -   Emulate Touch From Mouse: true
+    -   Ios > Touch Delay: 0.005
+-   Layer Names:
+    -   Name these!
+
+### `ScaffoldConfig`
+
+Configure the Godot Scaffold framework by calling `ScaffoldBootstrap.on_app_ready` at the start of your Main Scene.
+
+TODO
+
+### Handling viewport scaling
+
+This framework handles viewport scaling directly. You will need to turn off Godot's built-in viewport scaling (`Display > Window > Stretch > Mode = disabled`).
+
+This provides some powerful benefits over Godot's standard behaviors, but requires you to be careful with how you define your GUI layouts.
+
+#### Handling camera zoom
+
+This provides limited flexibility in how far the camera is zoomed. That is, you will be able to see more of the level on a larger screen, but not too much more of the level. Similarly, on a wider screen, you will be able to able to see more from side to side, but not too much more.
+
+-   You can configure a minimum and maximum aspect ratio for the game region.
+-   You can configure a default screen size and aspect ratio that the levels are designed around.
+-   At runtime, if the current viewport aspect ratio is greater than the max or less than the min, bars will be shown along the sides or top and bottom of the game area.
+-   At runtime, the camera zoom will be adjusted so that the same amount of level is showing, either vertically or horizontally, as would be visible with the configured default screen size. If the screen aspect ratio is different than the default, then a little more of the level is visible in the other direction.
+-   Any annotations that are drawn in the separate annotations CanvasLayer are automatically transformed to match whatever the game-area's current zoom and position is.
+-   Click positions can also be transformed to match the game area.
+
+#### Handling GUI scale
+
+-   At runtime, a `gui_scale` value is calculated according to how the current screen resolution compares to the expected default screen resolution, as described above.
+-   Then all fonts—which are registered with the scaffold configuration—are resized according to this `gui_scale`.
+-   Then the size, position, and scale of all GUI nodes are updated accordingly.
+
+#### Constraints for how you define your GUI layouts
+
+TODO
+
 ## Licenses
 
 -   All code is published under the [MIT license](LICENSE).

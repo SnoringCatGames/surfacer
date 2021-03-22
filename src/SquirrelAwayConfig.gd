@@ -136,6 +136,8 @@ var app_manifest := {
     app_id = "games.snoringcat.squirrel_away",
     app_version = "0.0.1",
     
+    # Must match Project Settings > Application > Boot Splash > Bg Color
+    # Must match Project Settings > Rendering > Environment > Default Clear Color
     #273149
     screen_background_color = Color.from_hsv(0.617, 0.47, 0.29, 1.0),
     #576d99
