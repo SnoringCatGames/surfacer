@@ -36,7 +36,7 @@ func _init(player: Player) -> void:
 
 func check_for_update() -> void:
     var most_recent_position := recent_positions[current_position_index]
-    if !Geometry.are_points_equal_with_epsilon( \
+    if !Gs.geometry.are_points_equal_with_epsilon( \
             player.position, \
             most_recent_position, \
             0.01):
@@ -190,10 +190,10 @@ func _draw_action_indicator( \
                     PlayerActionType.get_type_string(action))
     
     if input_key != "":
-        DrawUtils.draw_instruction_indicator( \
+        Gs.draw_utils.draw_instruction_indicator( \
                 self, \
                 input_key, \
                 is_pressed, \
                 position, \
-                DrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH, \
+                SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH, \
                 color)

@@ -20,7 +20,7 @@ func _init( \
     self.z_index = 2
 
 func _physics_process(delta_sec: float) -> void:
-    if !Geometry.are_points_equal_with_epsilon( \
+    if !Gs.geometry.are_points_equal_with_epsilon( \
             player.position, \
             previous_position, \
             0.01):

@@ -91,15 +91,15 @@ static func calculate_steps_between_waypoints( \
     # If this is the last horizontal step, then let's check whether whether we
     # calculated things correctly.
     if step_calc_params.end_waypoint.is_destination:
-        assert(Geometry.are_floats_equal_with_epsilon( \
+        assert(Gs.geometry.are_floats_equal_with_epsilon( \
                 next_horizontal_step.time_step_end, \
                 vertical_step.time_step_end, \
                 0.0001))
-        assert(Geometry.are_floats_equal_with_epsilon( \
+        assert(Gs.geometry.are_floats_equal_with_epsilon( \
                 next_horizontal_step.position_step_end.y, \
                 vertical_step.position_step_end.y, \
                 0.001))
-        assert(Geometry.are_points_equal_with_epsilon( \
+        assert(Gs.geometry.are_points_equal_with_epsilon( \
                 next_horizontal_step.position_step_end, \
                 edge_calc_params.destination_waypoint.position, \
                 0.0001))
@@ -115,7 +115,7 @@ static func calculate_steps_between_waypoints( \
             !collision.is_valid_collision_state:
         # An error occured during collision detection, so we abandon this step
         # calculation.
-        Profiler.increment_count( \
+        Gs.profiler.increment_count( \
                 ProfilerMetric \
                         .INVALID_COLLISION_STATE_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
                 edge_calc_params.collision_params.thread_id, \
@@ -137,7 +137,7 @@ static func calculate_steps_between_waypoints( \
                 vertical_step, \
                 edge_calc_params)
     
-    Profiler.increment_count( \
+    Gs.profiler.increment_count( \
             ProfilerMetric \
                     .COLLISION_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
             edge_calc_params.collision_params.thread_id, \
@@ -262,7 +262,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> EdgeCalcResult:
-    Profiler.increment_count( \
+    Gs.profiler.increment_count( \
             ProfilerMetric \
                     .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITHOUT_BACKTRACKING_ON_HEIGHT, \
             edge_calc_params.collision_params.thread_id, \
@@ -610,7 +610,7 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> EdgeCalcResult:
-    Profiler.increment_count( \
+    Gs.profiler.increment_count( \
             ProfilerMetric \
                     .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITH_BACKTRACKING_ON_HEIGHT, \
             edge_calc_params.collision_params.thread_id, \

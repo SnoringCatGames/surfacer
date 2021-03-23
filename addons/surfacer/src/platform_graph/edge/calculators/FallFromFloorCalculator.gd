@@ -117,7 +117,7 @@ func _get_all_edges_from_one_side( \
     assert(!needs_extra_wall_land_horizontal_speed or \
             exclusive_land_position != null)
     
-    Profiler.start( \
+    Gs.profiler.start( \
             ProfilerMetric.FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION, \
             collision_params.thread_id)
     
@@ -146,7 +146,7 @@ func _get_all_edges_from_one_side( \
             position_start, \
             null, \
             null):
-        Profiler.stop( \
+        Gs.profiler.stop( \
                 ProfilerMetric \
                         .FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION, \
                 collision_params.thread_id, \
@@ -199,7 +199,7 @@ func _get_all_edges_from_one_side( \
     
     var fall_off_point_velocity_start := Vector2(velocity_x_fall_off, 0.0)
     
-    Profiler.stop( \
+    Gs.profiler.stop( \
             ProfilerMetric \
                     .FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION, \
             collision_params.thread_id, \
@@ -318,10 +318,10 @@ static func _calculate_player_center_at_fall_off_point( \
         collider_rotation: float) -> Vector2:
     var is_rotated_90_degrees = \
             abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Geometry.FLOAT_EPSILON
+            Gs.geometry.FLOAT_EPSILON
     # Ensure that collision boundaries are only ever axially aligned.
     assert(is_rotated_90_degrees or \
-            abs(collider_rotation) < Geometry.FLOAT_EPSILON)
+            abs(collider_rotation) < Gs.geometry.FLOAT_EPSILON)
     
     var right_side_fall_off_displacement_x: float
     var fall_off_displacement_y: float
@@ -378,7 +378,7 @@ static func _prepend_walk_to_fall_off_portion( \
     # aligned with the first frame in which it is actually clear of the surface
     # edge.
     time_fall_off = frame_count_before_fall_off * Time.PHYSICS_TIME_STEP_SEC + \
-            Geometry.FLOAT_EPSILON
+            Gs.geometry.FLOAT_EPSILON
     
     # Increment instruction times.
     

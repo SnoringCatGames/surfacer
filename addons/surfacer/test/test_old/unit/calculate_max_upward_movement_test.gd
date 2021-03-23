@@ -12,4 +12,4 @@ func test_calculate_max_upward_movement() -> void:
 
     var result := PlayerParams.calculate_max_upward_movement(movement_params)
 
-    assert_almost_eq(result, -555.5555556, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(result, -555.5555556, Gs.geometry.FLOAT_EPSILON)

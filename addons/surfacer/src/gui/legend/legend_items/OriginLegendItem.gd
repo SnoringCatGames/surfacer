@@ -17,11 +17,11 @@ func _draw_shape( \
         size: Vector2) -> void:
     var color: Color = \
             AnnotationElementDefaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
-    var radius: float = DrawUtils.EDGE_START_RADIUS * SCALE
-    DrawUtils.draw_origin_marker( \
+    var radius: float = SurfacerDrawUtils.EDGE_START_RADIUS * SCALE
+    Gs.draw_utils.draw_origin_marker( \
             self, \
             center, \
             color, \
             radius, \
-            DrawUtils.EDGE_WAYPOINT_STROKE_WIDTH, \
+            SurfacerDrawUtils.EDGE_WAYPOINT_STROKE_WIDTH, \
             SECTOR_ARC_LENGTH)

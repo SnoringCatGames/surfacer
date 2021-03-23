@@ -27,11 +27,11 @@ func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
     assert(search_type == InspectorSearchType.EDGE)
-    if Geometry.are_points_equal_with_epsilon( \
+    if Gs.geometry.are_points_equal_with_epsilon( \
                     edge_attempt.start, \
                     metadata.start, \
                     0.01) and \
-            Geometry.are_points_equal_with_epsilon( \
+            Gs.geometry.are_points_equal_with_epsilon( \
                     edge_attempt.end, \
                     metadata.end, \
                     0.01):

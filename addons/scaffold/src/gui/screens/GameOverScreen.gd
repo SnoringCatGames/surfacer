@@ -52,30 +52,31 @@ func _update_stats() -> void:
     
     unlocked_new_level_label.visible = !new_unlocked_levels.empty()
     
-    high_score_label.visible = reached_new_high_score
+    high_score_label.visible = \
+            Gs.uses_level_scores and reached_new_high_score
     
-    control_list.items = [
-        {
-            label = "Level:",
-            type = LabeledControlItemType.TEXT,
-            text = level_id,
-        },
-        {
+    control_list.items = []
+    control_list.items.push_back({
+        label = "Level:",
+        type = LabeledControlItemType.TEXT,
+        text = level_id,
+    })
+    if Gs.uses_level_scores:
+        control_list.items.push_back({
             label = "Score:",
             type = LabeledControlItemType.TEXT,
             text = score,
-        },
-        {
+        })
+        control_list.items.push_back({
             label = "High score:",
             type = LabeledControlItemType.TEXT,
             text = high_score,
-        },
-        {
-            label = "Time:",
-            type = LabeledControlItemType.TEXT,
-            text = time,
-        },
-    ]
+        })
+    control_list.items.push_back({
+        label = "Time:",
+        type = LabeledControlItemType.TEXT,
+        text = time,
+    })
 
 func _on_SelectLevelButton_pressed():
     Gs.utils.give_button_press_feedback()

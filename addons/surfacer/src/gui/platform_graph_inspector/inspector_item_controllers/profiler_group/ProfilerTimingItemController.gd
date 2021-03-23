@@ -27,7 +27,7 @@ func _init( \
 
 func get_text() -> String:
     return "%sms: %s" % [ \
-        Profiler.get_sum(metric, metadata_container), \
+        Gs.profiler.get_sum(metric, metadata_container), \
         ProfilerMetric.get_type_string(metric), \
     ]
 
@@ -39,7 +39,7 @@ func get_description() -> String:
     ]
 
 func get_has_children() -> bool:
-    return Profiler.get_count(metric, metadata_container) > 1
+    return Gs.profiler.get_count(metric, metadata_container) > 1
 
 func find_and_expand_controller( \
         search_type: int, \
@@ -55,20 +55,20 @@ func _create_children_inner() -> void:
     
     _create_child( \
             "Total", \
-            Profiler.get_sum(metric, metadata_container))
+            Gs.profiler.get_sum(metric, metadata_container))
     _create_child( \
             "Average", \
-            Profiler.get_mean(metric, metadata_container))
+            Gs.profiler.get_mean(metric, metadata_container))
     _create_child( \
             "Count", \
-            Profiler.get_count(metric, metadata_container), \
+            Gs.profiler.get_count(metric, metadata_container), \
             "")
     _create_child( \
             "Min", \
-            Profiler.get_min(metric, metadata_container))
+            Gs.profiler.get_min(metric, metadata_container))
     _create_child( \
             "Max", \
-            Profiler.get_max(metric, metadata_container))
+            Gs.profiler.get_max(metric, metadata_container))
 
 func _create_child( \
         label: String, \

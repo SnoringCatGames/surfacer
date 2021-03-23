@@ -36,4 +36,4 @@ func _draw_shape( \
     draw_polyline( \
             PoolVector2Array(positions), \
             color_params.get_color(), \
-            DrawUtils.EDGE_TRAJECTORY_WIDTH)
+            SurfacerDrawUtils.EDGE_TRAJECTORY_WIDTH)

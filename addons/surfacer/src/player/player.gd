@@ -90,12 +90,12 @@ func _ready() -> void:
     var owner_id: int = shape_owners[0]
     assert(shape_owner_get_shape_count(owner_id) == 1)
     var collider_shape := shape_owner_get_shape(owner_id, 0)
-    assert(Geometry.do_shapes_match( \
+    assert(Gs.geometry.do_shapes_match( \
             collider_shape, \
             movement_params.collider_shape))
     var transform := shape_owner_get_transform(owner_id)
     assert(abs(transform.get_rotation() - \
-            movement_params.collider_rotation) < Geometry.FLOAT_EPSILON)
+            movement_params.collider_rotation) < Gs.geometry.FLOAT_EPSILON)
     
     # Ensure we use the actual Shape2D reference that is used by Godot's
     # collision system.
@@ -196,7 +196,7 @@ func _physics_process(delta_sec: float) -> void:
     if !is_initialized:
         return
     
-    assert(Geometry.are_floats_equal_with_epsilon( \
+    assert(Gs.geometry.are_floats_equal_with_epsilon( \
             delta_sec, \
             Time.PHYSICS_TIME_STEP_SEC))
     
@@ -260,10 +260,10 @@ func _physics_process(delta_sec: float) -> void:
     #       returns. This might be needed in order to move along slopes?
     move_and_slide( \
             velocity, \
-            Geometry.UP, \
+            Gs.geometry.UP, \
             false, \
             4, \
-            Geometry.FLOOR_MAX_ANGLE)
+            Gs.geometry.FLOOR_MAX_ANGLE)
     
     surface_state.previous_center_position = surface_state.center_position
     surface_state.center_position = self.position
@@ -556,13 +556,13 @@ func _update_which_side_is_grabbed( \
             SurfaceSide.NONE)))
     match surface_state.grabbed_side:
         SurfaceSide.FLOOR:
-            surface_state.grabbed_surface_normal = Geometry.UP
+            surface_state.grabbed_surface_normal = Gs.geometry.UP
         SurfaceSide.CEILING:
-            surface_state.grabbed_surface_normal = Geometry.DOWN
+            surface_state.grabbed_surface_normal = Gs.geometry.DOWN
         SurfaceSide.LEFT_WALL:
-            surface_state.grabbed_surface_normal = Geometry.RIGHT
+            surface_state.grabbed_surface_normal = Gs.geometry.RIGHT
         SurfaceSide.RIGHT_WALL:
-            surface_state.grabbed_surface_normal = Geometry.LEFT
+            surface_state.grabbed_surface_normal = Gs.geometry.LEFT
 
 func _update_which_surface_is_grabbed( \
         preserves_just_changed_state := false) -> void:
@@ -589,7 +589,7 @@ func _update_which_surface_is_grabbed( \
                                 surface_state.grabbed_tile_map)
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
-        Geometry.get_collision_tile_map_coord( \
+        Gs.geometry.get_collision_tile_map_coord( \
                 surface_state.collision_tile_map_coord_result, \
                 surface_state.grab_position, \
                 surface_state.grabbed_tile_map, \
@@ -609,7 +609,7 @@ func _update_which_surface_is_grabbed( \
                     surface_state.is_grabbing_ceiling = false
                     surface_state.just_grabbed_ceiling = false
                     surface_state.grabbed_side = SurfaceSide.FLOOR
-                    surface_state.grabbed_surface_normal = Geometry.UP
+                    surface_state.grabbed_surface_normal = Gs.geometry.UP
                 SurfaceSide.CEILING:
                     surface_state.is_touching_ceiling = true
                     surface_state.is_grabbing_ceiling = true
@@ -617,7 +617,7 @@ func _update_which_surface_is_grabbed( \
                     surface_state.is_grabbing_floor = false
                     surface_state.just_grabbed_floor = false
                     surface_state.grabbed_side = SurfaceSide.CEILING
-                    surface_state.grabbed_surface_normal = Geometry.DOWN
+                    surface_state.grabbed_surface_normal = Gs.geometry.DOWN
                 SurfaceSide.LEFT_WALL, \
                 SurfaceSide.RIGHT_WALL:
                     surface_state.is_touching_ceiling = \
@@ -642,7 +642,7 @@ func _update_which_surface_is_grabbed( \
         if surface_state.just_changed_tile_map_coord or \
                 surface_state.just_changed_tile_map:
             surface_state.grabbed_tile_map_index = \
-                    Geometry.get_tile_map_index_from_grid_coord( \
+                    Gs.geometry.get_tile_map_index_from_grid_coord( \
                             surface_state.grab_position_tile_map_coord, \
                             surface_state.grabbed_tile_map)
         
@@ -701,16 +701,16 @@ static func _get_attached_surface_collision( \
         
         if surface_state.is_grabbing_floor:
             current_normal_diff = \
-                    abs(current_collision.normal.angle_to(Geometry.UP))
+                    abs(current_collision.normal.angle_to(Gs.geometry.UP))
         elif surface_state.is_grabbing_ceiling:
             current_normal_diff = \
-                    abs(current_collision.normal.angle_to(Geometry.DOWN))
+                    abs(current_collision.normal.angle_to(Gs.geometry.DOWN))
         elif surface_state.is_grabbing_left_wall:
             current_normal_diff = \
-                    abs(current_collision.normal.angle_to(Geometry.RIGHT))
+                    abs(current_collision.normal.angle_to(Gs.geometry.RIGHT))
         elif surface_state.is_grabbing_right_wall:
             current_normal_diff = \
-                    abs(current_collision.normal.angle_to(Geometry.LEFT))
+                    abs(current_collision.normal.angle_to(Gs.geometry.LEFT))
         else:
             continue
         

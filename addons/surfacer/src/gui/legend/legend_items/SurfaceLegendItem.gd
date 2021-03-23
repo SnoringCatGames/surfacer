@@ -30,7 +30,7 @@ func _draw_shape( \
             SurfaceSide.FLOOR, \
             null, \
             [])
-    DrawUtils.draw_surface( \
+    Gs.draw_utils.draw_surface( \
             self, \
             surface, \
             color_params.get_color(), \

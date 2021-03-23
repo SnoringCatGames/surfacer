@@ -60,14 +60,14 @@ func _update_navigator(delta_sec: float) -> void:
     ._update_navigator(delta_sec)
 
 func _start_new_navigation() -> void:
-    Profiler.start(ProfilerMetric.START_NEW_SQUIRREL_NAVIGATION)
+    Gs.profiler.start(ProfilerMetric.START_NEW_SQUIRREL_NAVIGATION)
     
     var possible_destinations: Array = \
             Gs.level.squirrel_destinations
     var index: int
     var next_destination := previous_destination
     while next_destination.target_point == Vector2.INF or \
-            Geometry.are_points_equal_with_epsilon( \
+            Gs.geometry.are_points_equal_with_epsilon( \
                     next_destination.target_point, \
                     previous_destination.target_point, \
                     128.0):
@@ -77,7 +77,7 @@ func _start_new_navigation() -> void:
     previous_destination = next_destination
     
     var duration: float = \
-            Profiler.stop(ProfilerMetric.START_NEW_SQUIRREL_NAVIGATION)
+            Gs.profiler.stop(ProfilerMetric.START_NEW_SQUIRREL_NAVIGATION)
     print_msg(("SQUIRREL NEW NAV    ;" + \
             "%8.3fs; " + \
             "calc duration=%sms"), [ \

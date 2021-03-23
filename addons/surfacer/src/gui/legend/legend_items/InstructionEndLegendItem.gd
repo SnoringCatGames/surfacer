@@ -14,11 +14,11 @@ func _init().( \
 func _draw_shape( \
         center: Vector2, \
         size: Vector2) -> void:
-    DrawUtils.draw_instruction_indicator( \
+    Gs.draw_utils.draw_instruction_indicator( \
             self, \
             "move_right", \
             false, \
             center, \
-            DrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH * SCALE, \
+            SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH * SCALE, \
             AnnotationElementDefaults.DEFAULT_INSTRUCTION_COLOR_PARAMS \
                     .get_color())

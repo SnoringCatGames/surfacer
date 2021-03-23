@@ -108,7 +108,7 @@ func _draw() -> void:
                 path_base_color.g, \
                 path_base_color.b, \
                 path_alpha)
-        DrawUtils.draw_path( \
+        Gs.draw_utils.draw_path( \
                 self, \
                 phantom_path, \
                 PRESELECTION_PATH_STROKE_WIDTH, \
@@ -125,7 +125,7 @@ func _draw() -> void:
             surface_base_color.g, \
             surface_base_color.b, \
             surface_alpha)
-    DrawUtils.draw_surface( \
+    Gs.draw_utils.draw_surface( \
             self, \
             phantom_surface, \
             surface_color, \
@@ -143,7 +143,7 @@ func _draw() -> void:
             phantom_position_along_surface.target_projection_onto_surface
     var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
             PRESELECTION_POSITION_INDICATOR_RADIUS
-    DrawUtils.draw_destination_marker( \
+    Gs.draw_utils.draw_destination_marker( \
             self, \
             cone_end_point, \
             false, \
@@ -187,7 +187,7 @@ func _update_phantom_surface() -> void:
         phantom_surface.vertices[i] = \
                 transform.xform(phantom_surface.vertices[i])
     
-    phantom_surface.bounding_box = Geometry.get_bounding_box_for_points( \
+    phantom_surface.bounding_box = Gs.geometry.get_bounding_box_for_points( \
             phantom_surface.vertices)
 
 func _update_phantom_position_along_surface() -> void:

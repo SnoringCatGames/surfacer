@@ -29,13 +29,13 @@ func _init(tile_maps: Array) -> void:
     # Record the maximum cell size and combined region from all tile maps.
     max_tile_map_cell_size = Vector2.ZERO
     combined_tile_map_rect = \
-            Geometry.get_tile_map_bounds_in_world_coordinates(tile_maps[0])
+            Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_maps[0])
     for tile_map in tile_maps:
         if tile_map.cell_size.x + tile_map.cell_size.y > \
                 max_tile_map_cell_size.x + max_tile_map_cell_size.y:
             max_tile_map_cell_size = tile_map.cell_size
         combined_tile_map_rect = combined_tile_map_rect.merge( \
-                Geometry.get_tile_map_bounds_in_world_coordinates(tile_map))
+                Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_map))
     
     for tile_map in tile_maps:
         _parse_tile_map(tile_map)
@@ -100,70 +100,70 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     var left_walls := []
     var right_walls := []
     
-    Profiler.start(ProfilerMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
+    Gs.profiler.start(ProfilerMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
     _parse_tile_map_into_sides( \
             tile_map, \
             floors, \
             ceilings, \
             left_walls, \
             right_walls)
-    Profiler.stop(ProfilerMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
+    Gs.profiler.stop(ProfilerMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
     
-    Profiler.start(ProfilerMetric.REMOVE_INTERNAL_SURFACES_DURATION)
+    Gs.profiler.start(ProfilerMetric.REMOVE_INTERNAL_SURFACES_DURATION)
     _remove_internal_surfaces( \
             floors, \
             ceilings)
     _remove_internal_surfaces( \
             left_walls, \
             right_walls)
-    Profiler.stop(ProfilerMetric.REMOVE_INTERNAL_SURFACES_DURATION)
+    Gs.profiler.stop(ProfilerMetric.REMOVE_INTERNAL_SURFACES_DURATION)
     
-    Profiler.start(ProfilerMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
+    Gs.profiler.start(ProfilerMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
     _merge_continuous_surfaces(floors)
     _merge_continuous_surfaces(ceilings)
     _merge_continuous_surfaces(left_walls)
     _merge_continuous_surfaces(right_walls)
-    Profiler.stop(ProfilerMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
+    Gs.profiler.stop(ProfilerMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
     
-    Profiler.start(ProfilerMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
+    Gs.profiler.start(ProfilerMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
     _remove_internal_collinear_vertices(floors)
     _remove_internal_collinear_vertices(ceilings)
     _remove_internal_collinear_vertices(left_walls)
     _remove_internal_collinear_vertices(right_walls)
-    Profiler.stop(ProfilerMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
+    Gs.profiler.stop(ProfilerMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
     
-    Profiler.start(ProfilerMetric.STORE_SURFACES_DURATION)
+    Gs.profiler.start(ProfilerMetric.STORE_SURFACES_DURATION)
     _store_surfaces( \
             tile_map, \
             floors, \
             ceilings, \
             left_walls, \
             right_walls)
-    Profiler.stop(ProfilerMetric.STORE_SURFACES_DURATION)
+    Gs.profiler.stop(ProfilerMetric.STORE_SURFACES_DURATION)
     
-    Profiler.start(ProfilerMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
+    Gs.profiler.start(ProfilerMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
     _assign_neighbor_surfaces( \
             self.floors, \
             self.ceilings, \
             self.left_walls, \
             self.right_walls)
-    Profiler.stop(ProfilerMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
+    Gs.profiler.stop(ProfilerMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
     
-    Profiler.start(ProfilerMetric \
+    Gs.profiler.start(ProfilerMetric \
             .CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION)
     # Since this calculation will loop around transitive neigbors, and since
     # every surface should be connected transitively to a floor, it should also
     # end up recording the bounding box for all other surface sides too.
     _calculate_shape_bounding_boxes_for_surfaces(self.floors)
-    Profiler.stop(ProfilerMetric \
+    Gs.profiler.stop(ProfilerMetric \
             .CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION)
     
-    Profiler.start(ProfilerMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
+    Gs.profiler.start(ProfilerMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
     _assert_surfaces_fully_calculated(self.floors)
     _assert_surfaces_fully_calculated(self.ceilings)
     _assert_surfaces_fully_calculated(self.left_walls)
     _assert_surfaces_fully_calculated(self.right_walls)
-    Profiler.stop(ProfilerMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
+    Gs.profiler.stop(ProfilerMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
 
 func _store_surfaces( \
         tile_map: TileMap, \
@@ -277,7 +277,7 @@ static func _parse_tile_map_into_sides( \
     
     for position in used_cells:
         var tile_map_index: int = \
-                Geometry.get_tile_map_index_from_grid_coord( \
+                Gs.geometry.get_tile_map_index_from_grid_coord( \
                         position, \
                         tile_map)
         var tile_set_index := tile_map.get_cellv(position)
@@ -324,7 +324,7 @@ static func _parse_polygon_into_sides( \
         tile_map: TileMap, \
         tile_map_index: int) -> void:
     var vertex_count := vertices.size()
-    var is_clockwise: bool = Geometry.is_polygon_clockwise(vertices)
+    var is_clockwise: bool = Gs.geometry.is_polygon_clockwise(vertices)
     
     # Find the left-most, right-most, and bottom-most vertices.
     
@@ -379,8 +379,8 @@ static func _parse_polygon_into_sides( \
     v1 = vertices[i1]
     v2 = vertices[i2]
     pos_angle = abs(v1.angle_to_point(v2))
-    is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
-            pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
+    is_wall_segment = pos_angle > Gs.geometry.FLOOR_MAX_ANGLE and \
+            pos_angle < PI - Gs.geometry.FLOOR_MAX_ANGLE
     
     # If we find a non-wall segment, that's the start of the top-side. If we
     # instead find no non-wall segments until one segment after the top-most
@@ -392,8 +392,8 @@ static func _parse_polygon_into_sides( \
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
+        is_wall_segment = pos_angle > Gs.geometry.FLOOR_MAX_ANGLE and \
+                pos_angle < PI - Gs.geometry.FLOOR_MAX_ANGLE
     
     top_side_start_index = i1
     
@@ -409,8 +409,8 @@ static func _parse_polygon_into_sides( \
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
+        is_wall_segment = pos_angle > Gs.geometry.FLOOR_MAX_ANGLE and \
+                pos_angle < PI - Gs.geometry.FLOOR_MAX_ANGLE
     
     top_side_end_index = i1
     
@@ -426,8 +426,8 @@ static func _parse_polygon_into_sides( \
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
+        is_wall_segment = pos_angle > Gs.geometry.FLOOR_MAX_ANGLE and \
+                pos_angle < PI - Gs.geometry.FLOOR_MAX_ANGLE
     
     right_side_end_index = i1
     
@@ -443,8 +443,8 @@ static func _parse_polygon_into_sides( \
         v1 = vertices[i1]
         v2 = vertices[i2]
         pos_angle = abs(v1.angle_to_point(v2))
-        is_wall_segment = pos_angle > Geometry.FLOOR_MAX_ANGLE and \
-                pos_angle < PI - Geometry.FLOOR_MAX_ANGLE
+        is_wall_segment = pos_angle > Gs.geometry.FLOOR_MAX_ANGLE and \
+                pos_angle < PI - Gs.geometry.FLOOR_MAX_ANGLE
     
     left_side_start_index = i1
     
@@ -563,14 +563,14 @@ static func _remove_internal_surfaces( \
             front_back_diff_y = surface1_front.y - surface2_back.y
             back_front_diff_x = surface1_back.x - surface2_front.x
             back_front_diff_y = surface1_back.y - surface2_front.y
-            if front_back_diff_x < Geometry.FLOAT_EPSILON and \
-                    front_back_diff_x > -Geometry.FLOAT_EPSILON and \
-                    front_back_diff_y < Geometry.FLOAT_EPSILON and \
-                    front_back_diff_y > -Geometry.FLOAT_EPSILON and \
-                    back_front_diff_x < Geometry.FLOAT_EPSILON and \
-                    back_front_diff_x > -Geometry.FLOAT_EPSILON and \
-                    back_front_diff_y < Geometry.FLOAT_EPSILON and \
-                    back_front_diff_y > -Geometry.FLOAT_EPSILON:
+            if front_back_diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    front_back_diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    front_back_diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    front_back_diff_y > -Gs.geometry.FLOAT_EPSILON and \
+                    back_front_diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    back_front_diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    back_front_diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    back_front_diff_y > -Gs.geometry.FLOAT_EPSILON:
                 # We found a pair of equivalent (internal) segments, so remove
                 # them.
                 surfaces.remove(i)
@@ -627,10 +627,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                 front_back_diff_y = surface1_front.y - surface2_back.y
                 back_front_diff_x = surface1_back.x - surface2_front.x
                 back_front_diff_y = surface1_back.y - surface2_front.y
-                if front_back_diff_x < Geometry.FLOAT_EPSILON and \
-                        front_back_diff_x > -Geometry.FLOAT_EPSILON and \
-                        front_back_diff_y < Geometry.FLOAT_EPSILON and \
-                        front_back_diff_y > -Geometry.FLOAT_EPSILON:
+                if front_back_diff_x < Gs.geometry.FLOAT_EPSILON and \
+                        front_back_diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                        front_back_diff_y < Gs.geometry.FLOAT_EPSILON and \
+                        front_back_diff_y > -Gs.geometry.FLOAT_EPSILON:
                     # The start of surface 1 connects with the end of surface
                     # 2.
                     
@@ -653,10 +653,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                     j -= 1
                     count -= 1
                     merge_count += 1
-                elif back_front_diff_x < Geometry.FLOAT_EPSILON and \
-                        back_front_diff_x > -Geometry.FLOAT_EPSILON and \
-                        back_front_diff_y < Geometry.FLOAT_EPSILON and \
-                        back_front_diff_y > -Geometry.FLOAT_EPSILON:
+                elif back_front_diff_x < Gs.geometry.FLOAT_EPSILON and \
+                        back_front_diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                        back_front_diff_y < Gs.geometry.FLOAT_EPSILON and \
+                        back_front_diff_y > -Gs.geometry.FLOAT_EPSILON:
                     # The end of surface 1 connects with the start of surface
                     # 2.
                     
@@ -689,7 +689,7 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
         i = 0
         count = vertices.size()
         while i + 2 < count:
-            if Geometry.are_points_collinear( \
+            if Gs.geometry.are_points_collinear( \
                     vertices[i], \
                     vertices[i + 1], \
                     vertices[i + 2]):
@@ -720,10 +720,10 @@ static func _assign_neighbor_surfaces( \
             surface2_end = right_wall.last_point
             diff_x = surface1_end1.x - surface2_end.x
             diff_y = surface1_end1.y - surface2_end.y
-            if diff_x < Geometry.FLOAT_EPSILON and \
-                    diff_x > -Geometry.FLOAT_EPSILON and \
-                    diff_y < Geometry.FLOAT_EPSILON and \
-                    diff_y > -Geometry.FLOAT_EPSILON:
+            if diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    diff_y > -Gs.geometry.FLOAT_EPSILON:
                 floor_surface.counter_clockwise_convex_neighbor = right_wall
                 right_wall.clockwise_convex_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
@@ -738,10 +738,10 @@ static func _assign_neighbor_surfaces( \
             surface2_end = right_wall.first_point
             diff_x = surface1_end2.x - surface2_end.x
             diff_y = surface1_end2.y - surface2_end.y
-            if diff_x < Geometry.FLOAT_EPSILON and \
-                    diff_x > -Geometry.FLOAT_EPSILON and \
-                    diff_y < Geometry.FLOAT_EPSILON and \
-                    diff_y > -Geometry.FLOAT_EPSILON:
+            if diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    diff_y > -Gs.geometry.FLOAT_EPSILON:
                 floor_surface.clockwise_concave_neighbor = right_wall
                 right_wall.counter_clockwise_concave_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
@@ -756,10 +756,10 @@ static func _assign_neighbor_surfaces( \
             surface2_end = left_wall.first_point
             diff_x = surface1_end2.x - surface2_end.x
             diff_y = surface1_end2.y - surface2_end.y
-            if diff_x < Geometry.FLOAT_EPSILON and \
-                    diff_x > -Geometry.FLOAT_EPSILON and \
-                    diff_y < Geometry.FLOAT_EPSILON and \
-                    diff_y > -Geometry.FLOAT_EPSILON:
+            if diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    diff_y > -Gs.geometry.FLOAT_EPSILON:
                 floor_surface.clockwise_convex_neighbor = left_wall
                 left_wall.counter_clockwise_convex_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
@@ -773,10 +773,10 @@ static func _assign_neighbor_surfaces( \
             surface2_end = left_wall.last_point
             diff_x = surface1_end1.x - surface2_end.x
             diff_y = surface1_end1.y - surface2_end.y
-            if diff_x < Geometry.FLOAT_EPSILON and \
-                    diff_x > -Geometry.FLOAT_EPSILON and \
-                    diff_y < Geometry.FLOAT_EPSILON and \
-                    diff_y > -Geometry.FLOAT_EPSILON:
+            if diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    diff_y > -Gs.geometry.FLOAT_EPSILON:
                 floor_surface.counter_clockwise_concave_neighbor = left_wall
                 left_wall.clockwise_concave_neighbor = floor_surface
                 # There can only be one clockwise and one counter-clockwise
@@ -797,10 +797,10 @@ static func _assign_neighbor_surfaces( \
             surface2_end = left_wall.last_point
             diff_x = surface1_end1.x - surface2_end.x
             diff_y = surface1_end1.y - surface2_end.y
-            if diff_x < Geometry.FLOAT_EPSILON and \
-                    diff_x > -Geometry.FLOAT_EPSILON and \
-                    diff_y < Geometry.FLOAT_EPSILON and \
-                    diff_y > -Geometry.FLOAT_EPSILON:
+            if diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    diff_y > -Gs.geometry.FLOAT_EPSILON:
                 ceiling.counter_clockwise_convex_neighbor = left_wall
                 left_wall.clockwise_convex_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
@@ -814,10 +814,10 @@ static func _assign_neighbor_surfaces( \
             surface2_end = left_wall.first_point
             diff_x = surface1_end2.x - surface2_end.x
             diff_y = surface1_end2.y - surface2_end.y
-            if diff_x < Geometry.FLOAT_EPSILON and \
-                    diff_x > -Geometry.FLOAT_EPSILON and \
-                    diff_y < Geometry.FLOAT_EPSILON and \
-                    diff_y > -Geometry.FLOAT_EPSILON:
+            if diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    diff_y > -Gs.geometry.FLOAT_EPSILON:
                 ceiling.clockwise_concave_neighbor = left_wall
                 left_wall.counter_clockwise_concave_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
@@ -832,10 +832,10 @@ static func _assign_neighbor_surfaces( \
             surface2_end = right_wall.first_point
             diff_x = surface1_end2.x - surface2_end.x
             diff_y = surface1_end2.y - surface2_end.y
-            if diff_x < Geometry.FLOAT_EPSILON and \
-                    diff_x > -Geometry.FLOAT_EPSILON and \
-                    diff_y < Geometry.FLOAT_EPSILON and \
-                    diff_y > -Geometry.FLOAT_EPSILON:
+            if diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    diff_y > -Gs.geometry.FLOAT_EPSILON:
                 ceiling.clockwise_convex_neighbor = right_wall
                 right_wall.counter_clockwise_convex_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
@@ -849,10 +849,10 @@ static func _assign_neighbor_surfaces( \
             surface2_end = right_wall.last_point
             diff_x = surface1_end1.x - surface2_end.x
             diff_y = surface1_end1.y - surface2_end.y
-            if diff_x < Geometry.FLOAT_EPSILON and \
-                    diff_x > -Geometry.FLOAT_EPSILON and \
-                    diff_y < Geometry.FLOAT_EPSILON and \
-                    diff_y > -Geometry.FLOAT_EPSILON:
+            if diff_x < Gs.geometry.FLOAT_EPSILON and \
+                    diff_x > -Gs.geometry.FLOAT_EPSILON and \
+                    diff_y < Gs.geometry.FLOAT_EPSILON and \
+                    diff_y > -Gs.geometry.FLOAT_EPSILON:
                 ceiling.counter_clockwise_concave_neighbor = right_wall
                 right_wall.clockwise_concave_neighbor = ceiling
                 # There can only be one clockwise and one counter-clockwise
@@ -981,23 +981,23 @@ static func get_closest_surface( \
     
     for current_surface in surfaces_set:
         current_distance_squared = \
-                Geometry.distance_squared_from_point_to_rect( \
+                Gs.geometry.distance_squared_from_point_to_rect( \
                         target, \
                         current_surface.bounding_box)
         if current_distance_squared < closest_distance_squared:
-            closest_point = Geometry.get_closest_point_on_polyline_to_point( \
+            closest_point = Gs.geometry.get_closest_point_on_polyline_to_point( \
                     target, \
                     current_surface.vertices)
             current_distance_squared = \
                     target.distance_squared_to(closest_point)
             if current_distance_squared < closest_distance_squared:
                 is_closest_to_first_point = \
-                        Geometry.are_points_equal_with_epsilon( \
+                        Gs.geometry.are_points_equal_with_epsilon( \
                                 closest_point, \
                                 current_surface.first_point, \
                                 0.01)
                 is_closest_to_last_point = \
-                        Geometry.are_points_equal_with_epsilon( \
+                        Gs.geometry.are_points_equal_with_epsilon( \
                                 closest_point, \
                                 current_surface.last_point, \
                                 0.01)

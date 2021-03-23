@@ -35,7 +35,7 @@ func find_and_expand_controller( \
 
 func _create_children_inner() -> void:
     for metric in ProfilerMetric.surface_parser_values():
-        if Profiler.is_timing(metric):
+        if Gs.profiler.is_timing(metric):
             ProfilerTimingItemController.new( \
                     tree_item, \
                     tree, \

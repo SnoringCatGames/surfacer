@@ -58,7 +58,7 @@ func _clip_and_project_target_point_for_center_of_collider( \
         offsets_target_by_half_width_height: bool, \
         clips_to_surface_bounds: bool) -> Vector2:
     var point_on_surface: Vector2 = \
-            Geometry.project_point_onto_surface(target_point, surface)
+            Gs.geometry.project_point_onto_surface(target_point, surface)
     self.target_projection_onto_surface = point_on_surface
     
     var is_surface_horizontal = \

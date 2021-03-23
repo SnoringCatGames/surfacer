@@ -81,7 +81,7 @@ static func create_edge_calc_params(
         velocity_start: Vector2, \
         needs_extra_jump_duration: bool, \
         needs_extra_wall_land_horizontal_speed: bool) -> EdgeCalcParams:
-    Profiler.start( \
+    Gs.profiler.start( \
             ProfilerMetric.CREATE_EDGE_CALC_PARAMS, \
             collision_params.thread_id)
     
@@ -117,7 +117,7 @@ static func create_edge_calc_params(
     if terminals.empty():
         # Cannot reach destination from origin (edge_result_metadata already
         # updated).
-        Profiler.stop_with_optional_metadata( \
+        Gs.profiler.stop_with_optional_metadata( \
                 ProfilerMetric.CREATE_EDGE_CALC_PARAMS, \
                 collision_params.thread_id, \
                 edge_result_metadata)
@@ -134,7 +134,7 @@ static func create_edge_calc_params(
             needs_extra_wall_land_horizontal_speed, \
             can_hold_jump_button)
     
-    Profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata( \
             ProfilerMetric.CREATE_EDGE_CALC_PARAMS, \
             collision_params.thread_id, \
             edge_result_metadata)
@@ -148,7 +148,7 @@ static func broad_phase_check( \
         jump_land_positions: JumpLandPositions, \
         other_valid_jump_land_position_results: Array, \
         allows_close_jump_positions: bool) -> bool:
-    Profiler.start( \
+    Gs.profiler.start( \
             ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
             collision_params.thread_id)
     
@@ -162,7 +162,7 @@ static func broad_phase_check( \
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.SKIPPED_FOR_DEBUGGING
-        Profiler.stop( \
+        Gs.profiler.stop( \
                 ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
                 collision_params.thread_id)
         return false
@@ -174,7 +174,7 @@ static func broad_phase_check( \
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.LESS_LIKELY_TO_BE_VALID
-        Profiler.stop( \
+        Gs.profiler.stop( \
                 ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
                 collision_params.thread_id)
         return false
@@ -189,12 +189,12 @@ static func broad_phase_check( \
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.CLOSE_TO_PREVIOUS_EDGE
-        Profiler.stop( \
+        Gs.profiler.stop( \
                 ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
                 collision_params.thread_id)
         return false
     
-    Profiler.stop( \
+    Gs.profiler.stop( \
             ProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
             collision_params.thread_id)
     return true
@@ -236,12 +236,12 @@ static func should_skip_edge_calculation( \
                 if (debug_origin.has("surface_side") and \
                         debug_origin.surface_side != jump_surface.side) or \
                         (debug_origin.has("surface_start_vertex") and \
-                                !Geometry.are_points_equal_with_epsilon( \
+                                !Gs.geometry.are_points_equal_with_epsilon( \
                                         debug_origin.surface_start_vertex, \
                                         jump_surface.first_point, \
                                         origin_epsilon)) or \
                         (debug_origin.has("surface_end_vertex") and \
-                                !Geometry.are_points_equal_with_epsilon( \
+                                !Gs.geometry.are_points_equal_with_epsilon( \
                                         debug_origin.surface_end_vertex, \
                                         jump_surface.last_point, \
                                         origin_epsilon)):
@@ -251,7 +251,7 @@ static func should_skip_edge_calculation( \
             
             if debug_origin.has("position") and \
                     jump_target_projection_point != Vector2.INF:
-                if !Geometry.are_points_equal_with_epsilon( \
+                if !Gs.geometry.are_points_equal_with_epsilon( \
                         jump_target_projection_point, \
                         debug_origin.position, \
                         origin_epsilon):
@@ -272,12 +272,12 @@ static func should_skip_edge_calculation( \
                 if (debug_destination.has("surface_side") and \
                         debug_destination.surface_side != land_surface.side) or \
                         (debug_destination.has("surface_start_vertex") and \
-                                !Geometry.are_points_equal_with_epsilon( \
+                                !Gs.geometry.are_points_equal_with_epsilon( \
                                         debug_destination.surface_start_vertex, \
                                         land_surface.first_point, \
                                         destination_epsilon)) or \
                         (debug_destination.has("surface_end_vertex") and \
-                                !Geometry.are_points_equal_with_epsilon( \
+                                !Gs.geometry.are_points_equal_with_epsilon( \
                                         debug_destination.surface_end_vertex, \
                                         land_surface.last_point, \
                                         destination_epsilon)):
@@ -287,7 +287,7 @@ static func should_skip_edge_calculation( \
             
             if debug_destination.has("position") and \
                     land_target_projection_point != Vector2.INF:
-                if !Geometry.are_points_equal_with_epsilon( \
+                if !Gs.geometry.are_points_equal_with_epsilon( \
                         land_target_projection_point, \
                         debug_destination.position, \
                         destination_epsilon):
@@ -297,7 +297,7 @@ static func should_skip_edge_calculation( \
         
         if debug_params.limit_parsing.edge.has("velocity_start") and \
                 velocity_start != null:
-                if !Geometry.are_points_equal_with_epsilon( \
+                if !Gs.geometry.are_points_equal_with_epsilon( \
                         velocity_start, \
                         debug_params.limit_parsing.edge.velocity_start, \
                         10.0):

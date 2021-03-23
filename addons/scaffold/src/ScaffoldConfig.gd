@@ -136,8 +136,11 @@ var nav: ScaffoldNavigation
 var save_state: SaveState
 var analytics: Analytics
 var cloud_log: CloudLog
-var utils: ScaffoldUtils
+var utils: Utils
 var time: Time
+var profiler: Profiler
+var geometry: ScaffoldGeometry
+var draw_utils: DrawUtils
 var level_config: ScaffoldLevelConfig
 var canvas_layers: CanvasLayers
 var camera_controller: CameraController
@@ -277,10 +280,10 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.cloud_log = CloudLog.new()
     add_child(self.cloud_log)
     if manifest.has("utils"):
-        assert(manifest.utils is ScaffoldUtils)
+        assert(manifest.utils is Utils)
         self.utils = manifest.utils
     else:
-        self.utils = ScaffoldUtils.new()
+        self.utils = Utils.new()
     add_child(self.utils)
     if manifest.has("time"):
         assert(manifest.time is Time)
@@ -288,6 +291,24 @@ func register_app_manifest(manifest: Dictionary) -> void:
     else:
         self.time = Time.new()
     add_child(self.time)
+    if manifest.has("profiler"):
+        assert(manifest.profiler is Profiler)
+        self.profiler = manifest.profiler
+    else:
+        self.profiler = Profiler.new()
+    add_child(self.profiler)
+    if manifest.has("geometry"):
+        assert(manifest.geometry is ScaffoldGeometry)
+        self.geometry = manifest.geometry
+    else:
+        self.geometry = ScaffoldGeometry.new()
+    add_child(self.geometry)
+    if manifest.has("draw_utils"):
+        assert(manifest.draw_utils is DrawUtils)
+        self.draw_utils = manifest.draw_utils
+    else:
+        self.draw_utils = DrawUtils.new()
+    add_child(self.draw_utils)
     
     # This depends on SaveState, and must be instantiated after.
     self.level_config = manifest.level_config_class.new()

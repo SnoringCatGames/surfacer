@@ -19,7 +19,7 @@ func _init_production_params() -> void:
     collider_shape = shape
     collider_rotation = PI / 2.0
     
-    gravity_fast_fall = Geometry.GRAVITY
+    gravity_fast_fall = Gs.geometry.GRAVITY
     slow_rise_gravity_multiplier = 0.38
     rise_double_jump_gravity_multiplier = 0.68
     
@@ -125,7 +125,7 @@ func _init_debug_params() -> void:
     collider_shape = shape
     collider_rotation = PI / 2.0
     
-    gravity_fast_fall = Geometry.GRAVITY
+    gravity_fast_fall = Gs.geometry.GRAVITY
     slow_rise_gravity_multiplier = 0.18
 #    slow_rise_gravity_multiplier = 0.38
     rise_double_jump_gravity_multiplier = 0.08

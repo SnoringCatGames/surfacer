@@ -326,7 +326,7 @@ static func check_continuous_horizontal_step_for_collision( \
         edge_calc_params: EdgeCalcParams, \
         step_calc_params: EdgeStepCalcParams, \
         horizontal_step: EdgeStep) -> SurfaceCollision:
-    Profiler.start( \
+    Gs.profiler.start( \
             ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
             edge_calc_params.collision_params.thread_id)
     
@@ -404,7 +404,7 @@ static func check_continuous_horizontal_step_for_collision( \
     # Check the last frame that puts us up to end_time.
     current_time = step_end_time
     if collision == null and \
-            !Geometry.are_floats_equal_with_epsilon( \
+            !Gs.geometry.are_floats_equal_with_epsilon( \
                     previous_time, \
                     current_time):
         horizontal_state = \
@@ -447,7 +447,7 @@ static func check_continuous_horizontal_step_for_collision( \
             step_result_metadata.edge_result_metadata if \
             step_result_metadata != null else \
             null
-    Profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata( \
             ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
@@ -489,7 +489,7 @@ static func check_frame_for_collision( \
     var is_touching_right_wall := surface_side == SurfaceSide.RIGHT_WALL
     var tile_map: TileMap = kinematic_collision.collider
     var tile_map_result := CollisionTileMapCoordResult.new()
-    Geometry.get_collision_tile_map_coord( \
+    Gs.geometry.get_collision_tile_map_coord( \
             tile_map_result, \
             kinematic_collision.position, \
             tile_map, \
@@ -510,7 +510,7 @@ static func check_frame_for_collision( \
         surface_collision.is_valid_collision_state = false
         return null
     
-    var tile_map_index: int = Geometry.get_tile_map_index_from_grid_coord( \
+    var tile_map_index: int = Gs.geometry.get_tile_map_index_from_grid_coord( \
             tile_map_result.tile_map_coord, \
             tile_map)
     if !collision_params.surface_parser.has_surface_for_tile( \

@@ -41,9 +41,9 @@ func _create_children_inner() -> void:
     var surface_parser_values := ProfilerMetric.surface_parser_values()
     for metric in ProfilerMetric.values():
         if surface_parser_values.find(metric) >= 0 or \
-                Profiler.get_count(metric, edge_result_metadata) == 0:
+                Gs.profiler.get_count(metric, edge_result_metadata) == 0:
             continue
-        if Profiler.is_timing(metric):
+        if Gs.profiler.is_timing(metric):
             ProfilerTimingItemController.new( \
                     tree_item, \
                     tree, \

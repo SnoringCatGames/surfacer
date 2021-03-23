@@ -15,7 +15,7 @@ func _init( \
         is_pressed: bool = false, \
         position := Vector2.INF) -> void:
     # Correct for round-off error.
-    if Geometry.are_floats_equal_with_epsilon(time, 0.0, 0.00001):
+    if Gs.geometry.are_floats_equal_with_epsilon(time, 0.0, 0.00001):
         time = 0.0
     
     self.input_key = input_key

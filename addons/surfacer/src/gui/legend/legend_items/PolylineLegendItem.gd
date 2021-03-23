@@ -52,7 +52,7 @@ func _draw_shape( \
                 PoolVector2Array(vertices), \
                 color)
     elif is_dashed:
-        DrawUtils.draw_dashed_polyline( \
+        Gs.draw_utils.draw_dashed_polyline( \
                 self, \
                 vertices, \
                 color, \

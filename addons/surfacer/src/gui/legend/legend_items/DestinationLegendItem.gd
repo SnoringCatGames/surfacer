@@ -15,8 +15,8 @@ func _init().( \
 func _draw_shape( \
         center: Vector2, \
         size: Vector2) -> void:
-    var cone_length: float = DrawUtils.EDGE_END_CONE_LENGTH * SCALE
-    var radius: float = DrawUtils.EDGE_END_RADIUS * SCALE
+    var cone_length: float = SurfacerDrawUtils.EDGE_END_CONE_LENGTH * SCALE
+    var radius: float = SurfacerDrawUtils.EDGE_END_RADIUS * SCALE
     var length := cone_length + radius
     var cone_end_point := Vector2( \
             center.x, \
@@ -24,7 +24,7 @@ func _draw_shape( \
     var color: Color = \
             AnnotationElementDefaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
     
-    DrawUtils.draw_destination_marker( \
+    Gs.draw_utils.draw_destination_marker( \
             self, \
             cone_end_point, \
             false, \
@@ -33,5 +33,5 @@ func _draw_shape( \
             cone_length, \
             radius, \
             false, \
-            DrawUtils.EDGE_WAYPOINT_STROKE_WIDTH, \
+            SurfacerDrawUtils.EDGE_WAYPOINT_STROKE_WIDTH, \
             SECTOR_ARC_LENGTH)

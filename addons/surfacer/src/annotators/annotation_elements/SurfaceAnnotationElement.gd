@@ -37,7 +37,7 @@ static func draw_from_surface( \
         color_params: ColorParams, \
         depth := AnnotationElementDefaults.SURFACE_DEPTH) -> void:
     var color := color_params.get_color()
-    DrawUtils.draw_surface( \
+    Gs.draw_utils.draw_surface( \
             canvas, \
             surface, \
             color, \

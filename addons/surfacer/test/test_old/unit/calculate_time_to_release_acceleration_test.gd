@@ -19,7 +19,7 @@ func test_without_backward_acceleration() -> void:
             post_release_backward_acceleration, returns_lower_result, \
             expects_only_one_positive_result)
     
-    assert_almost_eq(result, 0.1450165565, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(result, 0.1450165565, Gs.geometry.FLOAT_EPSILON)
 
 func test_with_backward_acceleration_and_lower_result() -> void:
     var time_start := 0.0
@@ -37,7 +37,7 @@ func test_with_backward_acceleration_and_lower_result() -> void:
             post_release_backward_acceleration, returns_lower_result, \
             expects_only_one_positive_result)
     
-    assert_almost_eq(result, 0.4057473174, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(result, 0.4057473174, Gs.geometry.FLOAT_EPSILON)
 
 func test_with_backward_acceleration_and_higher_result() -> void:
     var time_start := 0.0
@@ -55,7 +55,7 @@ func test_with_backward_acceleration_and_higher_result() -> void:
             post_release_backward_acceleration, returns_lower_result, \
             expects_only_one_positive_result)
     
-    assert_almost_eq(result, 1.71098231, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(result, 1.71098231, Gs.geometry.FLOAT_EPSILON)
 
 func test_cant_reach_destination() -> void:
     var time_start := 0.0
@@ -109,4 +109,4 @@ func test_non_zero_inputs() -> void:
             post_release_backward_acceleration, returns_lower_result, \
             expects_only_one_positive_result)
     
-    assert_almost_eq(result, 0.2504809472, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(result, 0.2504809472, Gs.geometry.FLOAT_EPSILON)

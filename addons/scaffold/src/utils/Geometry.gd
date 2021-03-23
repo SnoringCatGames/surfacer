@@ -1,4 +1,5 @@
 extends Node
+class_name ScaffoldGeometry
 
 const UP := Vector2.UP
 const DOWN := Vector2.DOWN
@@ -11,6 +12,9 @@ const FLOAT_EPSILON := 0.00001
 #       KinematicBody2D.get_safe_margin value (defaults to 0.08, but we set it
 #       higher during graph calculations).
 const COLLISION_BETWEEN_CELLS_DISTANCE_THRESHOLD := 0.5
+
+func _init() -> void:
+    print("Geometry._init")
 
 # Calculates the minimum squared distance between a line segment and a point.
 static func get_distance_squared_from_point_to_segment( \
@@ -247,7 +251,7 @@ static func project_point_onto_surface( \
             segment_b = Vector2(surface.bounding_box.end.x, point.y)
         
         var intersection: Vector2 = \
-                Geometry.get_intersection_of_segment_and_polyline( \
+                Gs.geometry.get_intersection_of_segment_and_polyline( \
                         segment_a, \
                         segment_b, \
                         surface.vertices)
@@ -372,7 +376,7 @@ static func do_segment_and_polygon_intersect( \
         d = polygon_segment.y * segment_diff.x - \
                 polygon_segment.x * segment_diff.y
         
-        if abs(d) < Geometry.FLOAT_EPSILON:
+        if abs(d) < Gs.geometry.FLOAT_EPSILON:
             if n < 0:
                 return false
             else:
@@ -468,7 +472,7 @@ static func is_float_integer_aligned_with_epsilon( \
 static func snap_float_to_integer( \
         number: float, \
         epsilon := FLOAT_EPSILON) -> float:
-    if Geometry.is_float_integer_aligned_with_epsilon(number, epsilon):
+    if Gs.geometry.is_float_integer_aligned_with_epsilon(number, epsilon):
         return round(number)
     else:
         return number
@@ -1073,10 +1077,10 @@ static func calculate_half_width_height( \
         shape: Shape2D, \
         rotation: float) -> Vector2:
     var is_rotated_90_degrees = abs(fmod(rotation + PI * 2, PI) - PI / 2.0) < \
-            Geometry.FLOAT_EPSILON
+            Gs.geometry.FLOAT_EPSILON
     
     # Ensure that collision boundaries are only ever axially aligned.
-    assert(is_rotated_90_degrees or abs(rotation) < Geometry.FLOAT_EPSILON)
+    assert(is_rotated_90_degrees or abs(rotation) < Gs.geometry.FLOAT_EPSILON)
     
     var half_width_height: Vector2
     if shape is CircleShape2D:

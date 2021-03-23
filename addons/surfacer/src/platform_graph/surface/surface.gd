@@ -39,7 +39,7 @@ func _init( \
     self.side = side
     self.tile_map = tile_map
     self.tile_map_indices = tile_map_indices
-    self.bounding_box = Geometry.get_bounding_box_for_points(vertices)
+    self.bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
     self.normal = SurfaceSide.get_normal(side)
 
 func to_string() -> String:

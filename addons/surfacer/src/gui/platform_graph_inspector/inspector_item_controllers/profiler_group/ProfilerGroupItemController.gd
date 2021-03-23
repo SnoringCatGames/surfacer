@@ -44,7 +44,7 @@ func _create_children_inner() -> void:
     for metric in ProfilerMetric.values():
         if surface_parser_values.find(metric) >= 0:
             continue
-        if Profiler.is_timing(metric):
+        if Gs.profiler.is_timing(metric):
             ProfilerTimingItemController.new( \
                     tree_item, \
                     tree, \

@@ -33,7 +33,7 @@ var active_screen_stack := []
 var fade_transition: FadeTransition
 
 func _init() -> void:
-    print("ScaffoldNavigation._init")
+    print("Navigation._init")
 
 func _ready() -> void:
     fade_transition.connect( \

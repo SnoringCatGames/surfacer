@@ -31,7 +31,7 @@ func _process(delta_sec: float) -> void:
         # navigate to the selected position.
         selection_color = \
                 VALID_SELECTION_COLOR if \
-                Geometry.are_position_wrappers_equal_with_epsilon( \
+                Gs.geometry.are_position_wrappers_equal_with_epsilon( \
                         player.last_selection_position, \
                         player.navigator.current_destination) else \
                 INVALID_SELECTION_COLOR
@@ -60,7 +60,7 @@ func _draw() -> void:
             selection_color.b, \
             alpha)
     
-    DrawUtils.draw_surface( \
+    Gs.draw_utils.draw_surface( \
             self, \
             selection_position_to_animate.surface, \
             color)

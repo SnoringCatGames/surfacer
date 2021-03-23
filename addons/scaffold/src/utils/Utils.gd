@@ -1,5 +1,5 @@
 extends Node
-class_name ScaffoldUtils
+class_name Utils
 
 signal display_resized
 
@@ -9,7 +9,7 @@ var _ios_model_names
 var _ios_resolutions
 
 func _init() -> void:
-    self.print("ScaffoldUtils._init")
+    self.print("Utils._init")
     
     _ios_model_names = IosModelNames.new()
     _ios_resolutions = IosResolutions.new()
@@ -88,7 +88,7 @@ func _scale_gui_for_current_screen_size(gui: Control) -> void:
     var old_gui_scale: float = Gs.guis_to_scale[gui]
     
     var new_gui_scale: float = Gs.gui_scale
-    new_gui_scale = Geometry.snap_float_to_integer(new_gui_scale, 0.001)
+    new_gui_scale = Gs.geometry.snap_float_to_integer(new_gui_scale, 0.001)
     
     if old_gui_scale != new_gui_scale:
         var relative_scale := new_gui_scale / old_gui_scale
@@ -212,11 +212,11 @@ static func get_which_wall_collided_for_body(body: KinematicBody2D) -> int:
 
 static func get_which_surface_side_collided( \
         collision: KinematicCollision2D) -> int:
-    if abs(collision.normal.angle_to(Geometry.UP)) <= \
-            Geometry.FLOOR_MAX_ANGLE:
+    if abs(collision.normal.angle_to(Gs.geometry.UP)) <= \
+            Gs.geometry.FLOOR_MAX_ANGLE:
         return SurfaceSide.FLOOR
-    elif abs(collision.normal.angle_to(Geometry.DOWN)) <= \
-            Geometry.FLOOR_MAX_ANGLE:
+    elif abs(collision.normal.angle_to(Gs.geometry.DOWN)) <= \
+            Gs.geometry.FLOOR_MAX_ANGLE:
         return SurfaceSide.CEILING
     elif collision.normal.x > 0:
         return SurfaceSide.LEFT_WALL
@@ -235,8 +235,8 @@ static func _get_floor_collision( \
     if body.is_on_floor():
         for i in range(body.get_slide_count()):
             var collision := body.get_slide_collision(i)
-            if abs(collision.normal.angle_to(Geometry.UP)) <= \
-                    Geometry.FLOOR_MAX_ANGLE:
+            if abs(collision.normal.angle_to(Gs.geometry.UP)) <= \
+                    Gs.geometry.FLOOR_MAX_ANGLE:
                 return collision
     return null
 
@@ -554,34 +554,40 @@ func _scale_gui_recursively( \
         gui_scale: float) -> void:
     var snap_epsilon := 0.001
     
-    # Only scale texture-based GUIs, since we scale fonts separately.
     var is_gui_container := \
             control is Container
     var is_gui_texture_based := \
             control is TextureButton or \
             control is ShinyButton or \
             control is TextureRect
+    
+    control.rect_min_size *= gui_scale
+    control.rect_min_size = Gs.geometry.snap_vector2_to_integers( \
+            control.rect_min_size, snap_epsilon)
+    
     if is_gui_container:
-        control.rect_min_size *= gui_scale
-        control.rect_min_size = Geometry.snap_vector2_to_integers( \
-                control.rect_min_size, snap_epsilon)
         control.rect_size *= gui_scale
-        control.rect_size = Geometry.snap_vector2_to_integers( \
+        control.rect_size = Gs.geometry.snap_vector2_to_integers( \
                 control.rect_size, snap_epsilon)
         if control is VBoxContainer or \
                 control is HBoxContainer:
             var separation := control.get_constant("separation") * gui_scale
             control.add_constant_override("separation", separation)
     elif is_gui_texture_based:
+        # Only scale texture-based GUIs, since we scale fonts separately.
         control.rect_scale *= gui_scale
-        control.rect_scale = Geometry.snap_vector2_to_integers( \
+        control.rect_scale = Gs.geometry.snap_vector2_to_integers( \
                 control.rect_scale, snap_epsilon)
+        if control is ShinyButton:
+            control.texture_scale *= gui_scale
+            control.texture_scale = Gs.geometry.snap_vector2_to_integers( \
+                    control.texture_scale, snap_epsilon)
     
 #    control.rect_position /= gui_scale
-#    control.rect_position = Geometry.snap_vector2_to_integers( \
+#    control.rect_position = Gs.geometry.snap_vector2_to_integers( \
 #            control.rect_position, snap_epsilon)
 #    control.rect_pivot_offset *= gui_scale
-#    control.rect_pivot_offset = Geometry.snap_vector2_to_integers( \
+#    control.rect_pivot_offset = Gs.geometry.snap_vector2_to_integers( \
 #            control.rect_pivot_offset, snap_epsilon)
     
     for child in control.get_children():

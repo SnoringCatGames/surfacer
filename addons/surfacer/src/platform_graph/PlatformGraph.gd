@@ -381,7 +381,7 @@ func _calculate_inter_surface_edges_total() -> void:
         # Use child threads to parallelize graph parsing.
         for i in SurfacerConfig.thread_count:
             var thread := Thread.new()
-            Profiler.init_thread("parse_edges:" + str(i))
+            Gs.profiler.init_thread("parse_edges:" + str(i))
             threads[i] = thread
             thread.start( \
                     self, \
@@ -403,7 +403,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
     collision_params_for_thread.thread_id = \
             "parse_edges:" + str(thread_index) if \
             thread_index >= 0 else \
-            Profiler.DEFAULT_THREAD_ID
+            Gs.profiler.DEFAULT_THREAD_ID
     
     var surfaces_in_fall_range_set := {}
     var surfaces_in_jump_range_set := {}
@@ -496,7 +496,7 @@ func get_surfaces_in_jump_and_fall_range( \
     
     # Get all surfaces that are within fall range from either end of the origin
     # surface.
-    Profiler.start( \
+    Gs.profiler.start( \
             ProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
             collision_params.thread_id)
     FallMovementUtils.find_surfaces_in_fall_range_from_surface( \
@@ -505,7 +505,7 @@ func get_surfaces_in_jump_and_fall_range( \
             surfaces_in_fall_range_result_set, \
             surfaces_in_jump_range_result_set, \
             origin_surface)
-    Profiler.stop( \
+    Gs.profiler.stop( \
             ProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
             collision_params.thread_id)
 

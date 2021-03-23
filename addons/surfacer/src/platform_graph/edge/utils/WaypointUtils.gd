@@ -99,7 +99,7 @@ static func calculate_waypoints_around_surface( \
         destination_waypoint: Waypoint, \
         colliding_surface: Surface, \
         waypoint_offset: Vector2) -> Array:
-    Profiler.start( \
+    Gs.profiler.start( \
             ProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE, \
             collision_params.thread_id)
     
@@ -284,7 +284,7 @@ static func calculate_waypoints_around_surface( \
             Gs.utils.error()
         waypoints = []
     
-    Profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata( \
             ProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE, \
             collision_params.thread_id, \
             edge_result_metadata)
@@ -846,7 +846,7 @@ static func _assign_horizontal_movement_sign( \
     
     var displacement_sign := \
             0 if \
-            Geometry.are_floats_equal_with_epsilon( \
+            Gs.geometry.are_floats_equal_with_epsilon( \
                     displacement.x, \
                     0.0, \
                     0.1) else \
@@ -1181,12 +1181,12 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
     v_0_max -= MIN_MAX_VELOCITY_X_OFFSET
     
     # Correct small floating-point errors around zero.
-    if Geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon( \
             v_0_min, \
             0.0, \
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_0_min = 0.0
-    if Geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon( \
             v_0_max, \
             0.0, \
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
@@ -1656,12 +1656,12 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     v_1_max -= MIN_MAX_VELOCITY_X_OFFSET
     
     # Correct small floating-point errors around zero.
-    if Geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon( \
             v_1_min, \
             0.0, \
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_1_min = 0.0
-    if Geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon( \
             v_1_max, \
             0.0, \
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):

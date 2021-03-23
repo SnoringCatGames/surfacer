@@ -32,10 +32,10 @@ func _init( \
 
 func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
-    DrawUtils.draw_edge( \
+    Gs.draw_utils.draw_edge( \
             canvas, \
             edge, \
-            DrawUtils.EDGE_TRAJECTORY_WIDTH, \
+            SurfacerDrawUtils.EDGE_TRAJECTORY_WIDTH, \
             color, \
             includes_waypoints, \
             includes_instruction_indicators, \

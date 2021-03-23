@@ -23,7 +23,7 @@ static func find_landing_trajectories_to_any_surface( \
     
     if possible_landing_surfaces_from_point.empty():
         # Calculate which surfaces are within landing reach.
-        Profiler.start( \
+        Gs.profiler.start( \
                 ProfilerMetric.FIND_SURFACES_IN_FALL_RANGE_FROM_POINT, \
                 collision_params.thread_id)
         var possible_landing_surfaces_result_set := {}
@@ -35,7 +35,7 @@ static func find_landing_trajectories_to_any_surface( \
                 velocity_start)
         possible_landing_surfaces_from_point = \
                 possible_landing_surfaces_result_set.keys()
-        Profiler.stop( \
+        Gs.profiler.stop( \
                 ProfilerMetric.FIND_SURFACES_IN_FALL_RANGE_FROM_POINT, \
                 collision_params.thread_id, \
                 records_profile)
@@ -65,7 +65,7 @@ static func find_landing_trajectories_to_any_surface( \
         
         jump_land_position_results_for_destination_surface.clear()
         
-        Profiler.start( \
+        Gs.profiler.start( \
                 ProfilerMetric.CALCULATE_LAND_POSITIONS_ON_SURFACE, \
                 collision_params.thread_id)
         jump_land_positions_to_consider = \
@@ -74,7 +74,7 @@ static func find_landing_trajectories_to_any_surface( \
                         destination_surface, \
                         origin_position, \
                         velocity_start)
-        Profiler.stop( \
+        Gs.profiler.stop( \
                 ProfilerMetric.CALCULATE_LAND_POSITIONS_ON_SURFACE, \
                 collision_params.thread_id, \
                 records_profile)
@@ -179,7 +179,7 @@ static func find_landing_trajectory_between_positions( \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(records_calc_details, false)
     
-    Profiler.start( \
+    Gs.profiler.start( \
             ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \
             collision_params.thread_id)
     
@@ -197,7 +197,7 @@ static func find_landing_trajectory_between_positions( \
         # Cannot reach destination from origin.
         assert(!EdgeCalcResultType.get_is_valid( \
                 edge_result_metadata.edge_calc_result_type))
-        Profiler.stop_with_optional_metadata( \
+        Gs.profiler.stop_with_optional_metadata( \
                 ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \
                 collision_params.thread_id, \
                 edge_result_metadata)
@@ -211,7 +211,7 @@ static func find_landing_trajectory_between_positions( \
         # Cannot reach destination from origin.
         assert(!EdgeCalcResultType.get_is_valid( \
                 edge_result_metadata.edge_calc_result_type))
-        Profiler.stop_with_optional_metadata( \
+        Gs.profiler.stop_with_optional_metadata( \
                 ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \
                 collision_params.thread_id, \
                 edge_result_metadata)
@@ -230,7 +230,7 @@ static func find_landing_trajectory_between_positions( \
                 step_calc_params, \
                 null)
     
-    Profiler.start( \
+    Gs.profiler.start( \
             ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
             collision_params.thread_id)
     var calc_result := EdgeStepUtils.calculate_steps_between_waypoints( \
@@ -238,7 +238,7 @@ static func find_landing_trajectory_between_positions( \
             step_result_metadata, \
             edge_calc_params, \
             step_calc_params)
-    Profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata( \
             ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
             collision_params.thread_id, \
             edge_result_metadata)
@@ -256,7 +256,7 @@ static func find_landing_trajectory_between_positions( \
         calc_result.edge_calc_result_type = \
                 edge_result_metadata.edge_calc_result_type
     
-    Profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata( \
             ProfilerMetric.FIND_LANDING_TRAJECTORY_BETWEEN_POSITIONS, \
             collision_params.thread_id, \
             edge_result_metadata)
@@ -512,7 +512,7 @@ static func _get_surfaces_intersecting_triangle( \
         surfaces: Array) -> Array:
     var result := []
     for surface in surfaces:
-        if Geometry.do_segment_and_triangle_intersect( \
+        if Gs.geometry.do_segment_and_triangle_intersect( \
                 surface.vertices.front(), \
                 surface.vertices.back(), \
                 triangle_a, \
@@ -528,7 +528,7 @@ static func _get_surfaces_intersecting_polygon( \
         polygon: Array, \
         surfaces_set: Dictionary) -> void:
     for surface in surfaces_set:
-        if Geometry.do_segment_and_polygon_intersect( \
+        if Gs.geometry.do_segment_and_polygon_intersect( \
                 surface.first_point, \
                 surface.last_point, \
                 polygon):

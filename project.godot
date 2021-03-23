@@ -254,6 +254,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/gui/legend/legend_items/DiscreteEdgeTrajectoryLegendItem.gd"
 }, {
+"base": "Node",
+"class": "DrawUtils",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/utils/DrawUtils.gd"
+}, {
 "base": "EdgeAttempt",
 "class": "Edge",
 "language": "GDScript",
@@ -944,6 +949,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/utils/PriorityQueue.gd"
 }, {
+"base": "Node",
+"class": "Profiler",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/utils/Profiler.gd"
+}, {
 "base": "InspectorItemController",
 "class": "ProfilerCountItemController",
 "language": "GDScript",
@@ -989,6 +999,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/ScaffoldBootstrap.gd"
 }, {
+"base": "Node",
+"class": "ScaffoldGeometry",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/utils/Geometry.gd"
+}, {
 "base": "Node2D",
 "class": "ScaffoldLevel",
 "language": "GDScript",
@@ -1008,11 +1023,6 @@ _global_script_classes=[ {
 "class": "ScaffoldThirdPartyLicenses",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/ScaffoldThirdPartyLicenses.gd"
-}, {
-"base": "Node",
-"class": "ScaffoldUtils",
-"language": "GDScript",
-"path": "res://addons/scaffold/src/utils/ScaffoldUtils.gd"
 }, {
 "base": "Node2D",
 "class": "Screen",
@@ -1124,6 +1134,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/SurfacerBootstrap.gd"
 }, {
+"base": "DrawUtils",
+"class": "SurfacerDrawUtils",
+"language": "GDScript",
+"path": "res://addons/surfacer/src/utils/SurfacerDrawUtils.gd"
+}, {
 "base": "ScaffoldLevel",
 "class": "SurfacerLevel",
 "language": "GDScript",
@@ -1168,6 +1183,11 @@ _global_script_classes=[ {
 "class": "UtilityPanel",
 "language": "GDScript",
 "path": "res://addons/surfacer/src/gui/panels/UtilityPanel.gd"
+}, {
+"base": "Node",
+"class": "Utils",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/utils/Utils.gd"
 }, {
 "base": "EdgeAttemptItemController",
 "class": "ValidEdgeItemController",
@@ -1299,6 +1319,7 @@ _global_script_class_icons={
 "DestinationSurfaceLegendItem": "",
 "DeveloperSplashScreen": "",
 "DiscreteEdgeTrajectoryLegendItem": "",
+"DrawUtils": "",
 "Edge": "",
 "EdgeAnnotationElement": "",
 "EdgeAttempt": "",
@@ -1437,6 +1458,7 @@ _global_script_class_icons={
 "PolylineLegendItem": "",
 "PositionAlongSurface": "",
 "PriorityQueue": "",
+"Profiler": "",
 "ProfilerCountItemController": "",
 "ProfilerGroupItemController": "",
 "ProfilerMetric": "",
@@ -1446,11 +1468,11 @@ _global_script_class_icons={
 "RulerAnnotator": "",
 "SaveState": "",
 "ScaffoldBootstrap": "",
+"ScaffoldGeometry": "",
 "ScaffoldLevel": "",
 "ScaffoldLevelConfig": "",
 "ScaffoldNavigation": "",
 "ScaffoldThirdPartyLicenses": "",
-"ScaffoldUtils": "",
 "Screen": "",
 "SelectionDescription": "",
 "SettingsScreen": "",
@@ -1473,6 +1495,7 @@ _global_script_class_icons={
 "SurfaceSide": "",
 "SurfaceType": "",
 "SurfacerBootstrap": "",
+"SurfacerDrawUtils": "",
 "SurfacerLevel": "",
 "SurfacerThirdPartyLicenses": "",
 "SurfacesGroupItemController": "",
@@ -1482,6 +1505,7 @@ _global_script_class_icons={
 "UUID": "",
 "UserActionSource": "",
 "UtilityPanel": "",
+"Utils": "",
 "ValidEdgeItemController": "",
 "ValidEdgeTrajectoryLegendItem": "",
 "VerticalEdgeStep": "",
@@ -1513,9 +1537,6 @@ config/quit_on_go_back=false
 
 Gs="*res://addons/scaffold/src/ScaffoldConfig.gd"
 SurfacerConfig="*res://addons/surfacer/src/SurfacerConfig.gd"
-Geometry="*res://addons/surfacer/src/utils/Geometry.gd"
-DrawUtils="*res://addons/surfacer/src/utils/DrawUtils.gd"
-Profiler="*res://addons/surfacer/src/utils/Profiler.gd"
 AnnotationElementDefaults="*res://addons/surfacer/src/annotators/annotation_elements/AnnotationElementDefaults.gd"
 InputWrapper="*res://addons/surfacer/src/InputWrapper.gd"
 SquirrelAwayConfig="*res://src/SquirrelAwayConfig.gd"

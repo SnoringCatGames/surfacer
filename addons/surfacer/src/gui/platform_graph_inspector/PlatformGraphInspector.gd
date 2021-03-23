@@ -297,12 +297,12 @@ func _find_matching_surface( \
         var does_end_vertex_match: bool
         for surface in graph.surfaces_set:
             does_start_vertex_match = start_vertex == Vector2.INF or \
-                    Geometry.are_points_equal_with_epsilon( \
+                    Gs.geometry.are_points_equal_with_epsilon( \
                             surface.first_point, \
                             start_vertex, \
                             epsilon)
             does_end_vertex_match = end_vertex == Vector2.INF or \
-                    Geometry.are_points_equal_with_epsilon( \
+                    Gs.geometry.are_points_equal_with_epsilon( \
                             surface.last_point, \
                             end_vertex, \
                             epsilon)

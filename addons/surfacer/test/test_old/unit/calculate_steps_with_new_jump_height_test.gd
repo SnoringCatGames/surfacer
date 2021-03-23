@@ -20,7 +20,7 @@ func test_long_fall_near_positions() -> void:
     assert_not_null(results)
     assert_false(results.backtracked_for_new_jump_height)
     assert_eq(results.horizontal_steps.size(), 1)
-    assert_almost_eq(results.vertical_step.time_step_end, 0.79757, Geometry.FLOAT_EPSILON) # FIXME: Actually hand-calculate what this time should be
+    assert_almost_eq(results.vertical_step.time_step_end, 0.79757, Gs.geometry.FLOAT_EPSILON) # FIXME: Actually hand-calculate what this time should be
     assert_almost_eq(results.vertical_step.position_step_end.y, end_position.y, END_COORDINATE_CLOSE_THRESHOLD)
     assert_almost_eq(results.horizontal_steps[0].position_step_end, end_position, END_POSITION_CLOSE_THRESHOLD)
 
@@ -38,7 +38,7 @@ func test_long_fall_far_positions() -> void:
     assert_not_null(results)
     assert_false(results.backtracked_for_new_jump_height)
     assert_eq(results.horizontal_steps.size(), 1)
-    assert_almost_eq(results.vertical_step.time_step_end, 0.79757, Geometry.FLOAT_EPSILON) # FIXME: Actually hand-calculate what this time should be
+    assert_almost_eq(results.vertical_step.time_step_end, 0.79757, Gs.geometry.FLOAT_EPSILON) # FIXME: Actually hand-calculate what this time should be
     assert_almost_eq(results.vertical_step.position_step_end.y, end_position.y, END_COORDINATE_CLOSE_THRESHOLD)
     assert_almost_eq(results.horizontal_steps[0].position_step_end, end_position, END_POSITION_CLOSE_THRESHOLD)
 

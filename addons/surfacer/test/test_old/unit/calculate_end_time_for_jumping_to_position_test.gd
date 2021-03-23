@@ -51,7 +51,7 @@ func test_floor_with_constraint() -> void:
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
             vertical_step, target_point, upcoming_constraint, destination_surface)
 
-    assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(actual, expected, Gs.geometry.FLOAT_EPSILON)
 
 func test_floor_without_constraint() -> void:
     # is_position_before_peak = false
@@ -71,7 +71,7 @@ func test_floor_without_constraint() -> void:
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
             vertical_step, target_point, upcoming_constraint, destination_surface)
 
-    assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(actual, expected, Gs.geometry.FLOAT_EPSILON)
 
 func test_ceiling_before_releasing_jump_button() -> void:
     # is_position_before_peak = true
@@ -91,7 +91,7 @@ func test_ceiling_before_releasing_jump_button() -> void:
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
             vertical_step, target_point, upcoming_constraint, destination_surface)
 
-    assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(actual, expected, Gs.geometry.FLOAT_EPSILON)
 
 func test_ceiling_after_releasing_jump_button() -> void:
     # is_position_before_peak = true
@@ -112,7 +112,7 @@ func test_ceiling_after_releasing_jump_button() -> void:
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
             vertical_step, target_point, upcoming_constraint, destination_surface)
 
-    assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(actual, expected, Gs.geometry.FLOAT_EPSILON)
 
 func test_left_wall_with_should_stay_on_min_side_before_releasing() -> void:
     # is_position_before_peak = true
@@ -132,7 +132,7 @@ func test_left_wall_with_should_stay_on_min_side_before_releasing() -> void:
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
             vertical_step, target_point, upcoming_constraint, destination_surface)
 
-    assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(actual, expected, Gs.geometry.FLOAT_EPSILON)
 
 func test_left_wall_with_should_stay_on_min_side_after_releasing() -> void:
     # is_position_before_peak = true
@@ -152,7 +152,7 @@ func test_left_wall_with_should_stay_on_min_side_after_releasing() -> void:
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
             vertical_step, target_point, upcoming_constraint, destination_surface)
 
-    assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(actual, expected, Gs.geometry.FLOAT_EPSILON)
 
 func test_left_wall_without_should_stay_on_min_side() -> void:
     # is_position_before_peak = false
@@ -172,7 +172,7 @@ func test_left_wall_without_should_stay_on_min_side() -> void:
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
             vertical_step, target_point, upcoming_constraint, destination_surface)
 
-    assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(actual, expected, Gs.geometry.FLOAT_EPSILON)
 
 func test_left_wall_without_constraint() -> void:
     # is_position_before_peak = false
@@ -192,7 +192,7 @@ func test_left_wall_without_constraint() -> void:
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
             vertical_step, target_point, upcoming_constraint, destination_surface)
 
-    assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(actual, expected, Gs.geometry.FLOAT_EPSILON)
 
 func test_right_wall_without_constraint() -> void:
     # is_position_before_peak = false
@@ -212,4 +212,4 @@ func test_right_wall_without_constraint() -> void:
     var actual := Movement._calculate_time_for_passing_through_constraint(movement_params, \
             vertical_step, target_point, upcoming_constraint, destination_surface)
 
-    assert_almost_eq(actual, expected, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(actual, expected, Gs.geometry.FLOAT_EPSILON)

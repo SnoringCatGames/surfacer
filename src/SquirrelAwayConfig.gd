@@ -177,6 +177,7 @@ var app_manifest := {
     screen_inclusions = [
     ],
     
+    draw_utils = SurfacerDrawUtils.new(),
     level_config_class = SquirrelAwayLevelConfig,
     
     fonts = fonts,

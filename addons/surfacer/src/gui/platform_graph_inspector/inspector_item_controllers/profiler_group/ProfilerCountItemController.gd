@@ -27,7 +27,7 @@ func _init( \
 
 func get_text() -> String:
     return "%s: %s" % [ \
-        Profiler.get_count(metric, metadata_container), \
+        Gs.profiler.get_count(metric, metadata_container), \
         ProfilerMetric.get_type_string(metric), \
     ]
 

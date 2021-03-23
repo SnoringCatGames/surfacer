@@ -1,5 +1,7 @@
 class_name ProfilerMetric
 
+# FIXME: Refactor this; sholud be able to use Strings instead.
+
 enum {
     # SurfaceParser metrics.
     PARSE_TILE_MAP_INTO_SIDES_DURATION,

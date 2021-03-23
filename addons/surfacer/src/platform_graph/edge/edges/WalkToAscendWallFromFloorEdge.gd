@@ -40,7 +40,7 @@ func _calculate_distance( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         trajectory: EdgeTrajectory) -> float:
-    return Geometry.calculate_manhattan_distance( \
+    return Gs.geometry.calculate_manhattan_distance( \
             start.target_point, \
             end.target_point)
 

@@ -12,4 +12,4 @@ func test_calculate_max_horizontal_movement() -> void:
 
     var result := PlayerParams._calculate_max_horizontal_movement(movement_params)
 
-    assert_almost_eq(result, 1266.012506, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(result, 1266.012506, Gs.geometry.FLOAT_EPSILON)

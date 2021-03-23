@@ -62,7 +62,7 @@ static func calculate_movement_duration( \
         assert(allows_no_positive_results)
         return INF
     
-    min_duration += Geometry.FLOAT_EPSILON
+    min_duration += Gs.geometry.FLOAT_EPSILON
     
     if t1 < min_duration:
         if t2 < min_duration:

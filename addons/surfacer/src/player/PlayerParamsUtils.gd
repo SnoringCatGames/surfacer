@@ -51,7 +51,7 @@ static func _calculate_dependent_movement_params( \
             movement_params.gravity_fast_fall * \
             movement_params.slow_rise_gravity_multiplier
     movement_params.collider_half_width_height = \
-            Geometry.calculate_half_width_height( \
+            Gs.geometry.calculate_half_width_height( \
                     movement_params.collider_shape, \
                     movement_params.collider_rotation)
     movement_params.min_upward_jump_distance = VerticalMovementUtils \

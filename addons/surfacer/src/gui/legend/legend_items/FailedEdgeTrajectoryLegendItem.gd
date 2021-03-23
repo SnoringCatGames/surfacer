@@ -23,7 +23,7 @@ func _draw_shape( \
     var end := center + offset_from_center
     var color: Color = AnnotationElementDefaults \
             .FAILED_EDGE_ATTEMPT_COLOR_PARAMS.get_color()
-    DrawUtils.draw_dashed_line( \
+    Gs.draw_utils.draw_dashed_line( \
             self, \
             start, \
             end, \
@@ -32,7 +32,7 @@ func _draw_shape( \
             DASH_GAP, \
             0.0, \
             STROKE_WIDTH)
-    DrawUtils.draw_x( \
+    Gs.draw_utils.draw_x( \
             self, \
             center, \
             X_WIDTH, \

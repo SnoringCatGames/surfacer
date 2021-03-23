@@ -1,5 +1,7 @@
 extends Node
 
+# FIXME: Refactor this file to be more aligned with Scaffold framework patterns.
+
 var uses_threads := false and OS.can_use_threads()
 
 var utility_panel_starts_open := false

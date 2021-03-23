@@ -44,14 +44,14 @@ func set_up(state := {}) -> void:
             previous_step, vertical_step, upcoming_constraint)
 
 func assert_horizontal_step(step: EdgeStep, state: Dictionary) -> void:
-    assert_almost_eq(step.time_start, state.time_start, Geometry.FLOAT_EPSILON)
-    assert_almost_eq(step.time_instruction_end, state.time_instruction_end, Geometry.FLOAT_EPSILON)
-    assert_almost_eq(step.time_step_end, state.time_step_end, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(step.time_start, state.time_start, Gs.geometry.FLOAT_EPSILON)
+    assert_almost_eq(step.time_instruction_end, state.time_instruction_end, Gs.geometry.FLOAT_EPSILON)
+    assert_almost_eq(step.time_step_end, state.time_step_end, Gs.geometry.FLOAT_EPSILON)
     assert_almost_eq(step.position_start, state.position_start, END_POSITION_CLOSE_THRESHOLD)
     assert_almost_eq(step.position_step_end, state.position_step_end, END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(step.velocity_start.y, state.velocity_start_y, Geometry.FLOAT_EPSILON)
+    assert_almost_eq(step.velocity_start.y, state.velocity_start_y, Gs.geometry.FLOAT_EPSILON)
     assert_almost_eq(step.horizontal_movement_sign, state.horizontal_movement_sign, \
-            Geometry.FLOAT_EPSILON)
+            Gs.geometry.FLOAT_EPSILON)
 
 func test_with_no_previous_or_next_steps() -> void:
     # start and end time are same as vertical step

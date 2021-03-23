@@ -42,10 +42,10 @@ static func get_side_prefix(side: int) -> String:
 
 static func get_normal(side: int) -> Vector2:
     return \
-            Geometry.UP if side == FLOOR else (\
-            Geometry.DOWN if side == CEILING else (\
-            Geometry.RIGHT if side == LEFT_WALL else (\
-            Geometry.LEFT)))
+            Gs.geometry.UP if side == FLOOR else (\
+            Gs.geometry.DOWN if side == CEILING else (\
+            Gs.geometry.RIGHT if side == LEFT_WALL else (\
+            Gs.geometry.LEFT)))
 
 const KEYS = [
     "NONE",

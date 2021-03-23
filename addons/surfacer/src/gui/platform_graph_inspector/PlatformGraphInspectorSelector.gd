@@ -89,7 +89,7 @@ func _draw() -> void:
         _draw_possible_jump_land_positions()
 
 func _draw_selected_origin() -> void:
-    DrawUtils.draw_dashed_polyline( \
+    Gs.draw_utils.draw_dashed_polyline( \
             self, \
             first_target.surface.vertices, \
             ORIGIN_SURFACE_SELECTION_COLOR, \
@@ -97,7 +97,7 @@ func _draw_selected_origin() -> void:
             ORIGIN_SURFACE_SELECTION_DASH_GAP, \
             0.0, \
             ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
-    DrawUtils.draw_circle_outline( \
+    Gs.draw_utils.draw_circle_outline( \
             self, \
             first_target.target_point, \
             ORIGIN_POSITION_RADIUS, \

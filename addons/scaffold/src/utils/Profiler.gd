@@ -1,5 +1,6 @@
-# Measures and records timings for platform graph calculations.
+# Measures and records timings.
 extends Node
+class_name Profiler
 
 const DEFAULT_THREAD_ID := ""
 
@@ -17,6 +18,7 @@ var _timings := {}
 var _counts := {}
 
 func _init() -> void:
+    print("Profiler._init")
     init_thread(DEFAULT_THREAD_ID)
 
 func init_thread(thread_id: String) -> void:

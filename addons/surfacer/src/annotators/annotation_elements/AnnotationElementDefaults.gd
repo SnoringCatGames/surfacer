@@ -1,5 +1,8 @@
 extends Node
 
+# FIXME: Refactor how this is usedy by Surfacer, so the client doesn't need it
+#        to be an AutoLoad.
+
 ### Miscellaneous
 
 var PANEL_BACKGROUND_COLOR := Color.from_hsv(0.278, 0.17, 0.07, 1.0)
