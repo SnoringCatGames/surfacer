@@ -26,7 +26,7 @@ var _last_ping_time_sec := -INF
 var _retry_queue := []
 
 func _init() -> void:
-    Gs.utils.print("Analytics._init")
+    print("Analytics._init")
 
 func _process(_delta_sec: float) -> void:
     if _has_session_started and \

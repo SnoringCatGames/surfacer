@@ -198,7 +198,7 @@ func _physics_process(delta_sec: float) -> void:
     
     assert(Geometry.are_floats_equal_with_epsilon( \
             delta_sec, \
-            Gs.time.PHYSICS_TIME_STEP_SEC))
+            Time.PHYSICS_TIME_STEP_SEC))
     
     _update_actions(delta_sec)
     _update_surface_state()

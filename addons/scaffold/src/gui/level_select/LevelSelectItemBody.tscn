@@ -49,3 +49,4 @@ margin_right = 200.0
 margin_bottom = 108.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
+[connection signal="pressed" from="PlayButton" to="." method="_on_PlayButton_pressed"]

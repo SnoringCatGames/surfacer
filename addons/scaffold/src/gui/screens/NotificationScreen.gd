@@ -67,7 +67,7 @@ func _on_CloseButton_pressed():
     if params.has("next_screen"):
         Gs.nav.close_current_screen()
         Gs.time.set_timeout( \
-                funcref(Nav, "open"), \
+                funcref(Gs.nav, "open"), \
                 Gs.nav.SCREEN_SLIDE_DURATION_SEC / 2.0, \
                 [params["next_screen"]])
     else:

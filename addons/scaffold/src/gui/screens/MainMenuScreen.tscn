@@ -8,22 +8,16 @@
 [ext_resource path="res://addons/scaffold/src/gui/ShinyButton.tscn" type="PackedScene" id=7]
 [ext_resource path="res://addons/scaffold/src/gui/NavBar.tscn" type="PackedScene" id=12]
 
-
-
-
-
-
-
 [node name="MainMenuScreen" type="Node2D"]
 script = ExtResource( 4 )
 
 [node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
-margin_right = 480.0
-margin_bottom = 480.0
+margin_right = 960.0
+margin_bottom = 960.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
-margin_right = 480.0
-margin_bottom = 612.0
+margin_right = 960.0
+margin_bottom = 1156.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
@@ -32,10 +26,8 @@ __meta__ = {
 }
 
 [node name="NavBar" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 12 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_right = 480.0
-margin_bottom = 128.0
+margin_right = 960.0
+margin_bottom = 192.0
 shows_back = false
 shows_about = true
 shows_settings = true
@@ -43,29 +35,30 @@ shows_settings = true
 [node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 1 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 132.0
-margin_right = 480.0
-margin_bottom = 612.0
+margin_top = 196.0
+margin_right = 960.0
+margin_bottom = 1156.0
+rect_min_size = Vector2( 960, 960 )
 stretches_horizontally = false
 stretches_vertically = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
-margin_right = 480.0
-margin_bottom = 480.0
+margin_right = 960.0
+margin_bottom = 960.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CenterContainer" type="CenterContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer"]
-margin_right = 480.0
-margin_bottom = 480.0
+margin_right = 960.0
+margin_bottom = 960.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
-margin_left = 100.0
-margin_top = 128.0
-margin_right = 380.0
-margin_bottom = 351.0
+margin_left = 340.0
+margin_top = 368.0
+margin_right = 620.0
+margin_bottom = 591.0
 rect_min_size = Vector2( 280, 0 )
 
 [node name="LogoControl" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]

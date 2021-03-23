@@ -66,7 +66,7 @@ func _update_game_area_region_and_gui_scale() -> void:
     Gs.game_area_region = Rect2(game_area_position, game_area_size)
     
     if Gs.is_app_configured:
-        var default_aspect_ratio := \
+        var default_aspect_ratio: float = \
                 Gs.default_game_area_size.x / \
                 Gs.default_game_area_size.y
         Gs.gui_scale = \
@@ -454,7 +454,7 @@ static func mix_colors( \
     
     return Color.from_hsv(h, s, v, 1.0)
 
-static func get_datetime_string() -> String:
+func get_datetime_string() -> String:
     var datetime := OS.get_datetime()
     return "%s-%s-%s-%s-%s-%s" % [
         datetime.year,
@@ -465,7 +465,7 @@ static func get_datetime_string() -> String:
         datetime.second,
     ]
 
-static func get_time_string_from_seconds(time_sec: float) -> String:
+func get_time_string_from_seconds(time_sec: float) -> String:
     var time_str := ""
     
     # Hours.
@@ -540,7 +540,7 @@ func clear_directory( \
         if status != OK:
             error("Failed to delete directory", false)
 
-static func set_mouse_filter_recursively( \
+func set_mouse_filter_recursively( \
         node: Node, \
         mouse_filter: int) -> void:
     for child in node.get_children():
@@ -549,7 +549,7 @@ static func set_mouse_filter_recursively( \
                 child.mouse_filter = mouse_filter
         set_mouse_filter_recursively(child, mouse_filter)
 
-static func _scale_gui_recursively( \
+func _scale_gui_recursively( \
         control: Control, \
         gui_scale: float) -> void:
     var snap_epsilon := 0.001
@@ -588,7 +588,7 @@ static func _scale_gui_recursively( \
         if child is Control:
             _scale_gui_recursively(child, gui_scale)
 
-static func get_node_vscroll_position( \
+func get_node_vscroll_position( \
         scroll_container: ScrollContainer, \
         control: Control) -> int:
     var scroll_container_global_position := \
@@ -601,12 +601,12 @@ static func get_node_vscroll_position( \
     var max_vscroll_position := scroll_container.get_v_scrollbar().max_value
     return vscroll_position
 
-static func get_support_url() -> String:
+func get_support_url() -> String:
     var params := "?source=" + OS.get_name()
     params += "&app=inner-tube-climber"
     return Gs.support_url_base + params
 
-static func get_log_gestures_url() -> String:
+func get_log_gestures_url() -> String:
     var params := "?source=" + OS.get_name()
     params += "&app=inner-tube-climber"
     return Gs.log_gestures_url + params

@@ -3,7 +3,7 @@ extends Screen
 class_name LevelSelectScreen
 
 const LEVEL_SELECT_ITEM_RESOURCE_PATH := \
-        "res://src/controls/level_select_item.tscn"
+        "res://addons/scaffold/src/gui/level_select/LevelSelectItem.tscn"
 
 const SCROLL_TWEEN_DURATION_SEC := 0.3
 
@@ -35,7 +35,7 @@ func _on_activated() -> void:
     _update()
 
 func _ready() -> void:
-    for level_id in LevelConfig.get_level_ids():
+    for level_id in Gs.level_config.get_level_ids():
         var item: LevelSelectItem = Gs.utils.add_scene( \
                 $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer \
                         /CenterContainer/VBoxContainer/LevelSelectItems, \
@@ -64,7 +64,7 @@ func _deferred_update() -> void:
     if _new_unlocked_item == null:
         if previous_open_item == null:
             var suggested_level_id: String = \
-                    LevelConfig.get_suggested_next_level()
+                    Gs.level_config.get_suggested_next_level()
             var item_to_open: LevelSelectItem
             for item in level_items:
                 if item.level_id == suggested_level_id:
@@ -83,7 +83,7 @@ func _deferred_update() -> void:
                 is_closing_accordion_first)
 
 func _calculate_new_unlocked_item() -> void:
-    var new_unlocked_levels := Gs.save_state.get_new_unlocked_levels()
+    var new_unlocked_levels: Array = Gs.save_state.get_new_unlocked_levels()
     if new_unlocked_levels.empty():
         _new_unlocked_item = null
     else:
@@ -121,8 +121,8 @@ func _scroll_to_item_to_unlock( \
 
 func _interpolate_scroll(scroll_ratio: float) -> void:
     var scroll_start := scroll_container.get_v_scrollbar().min_value
-    var scroll_end := \
-            Gs.utils.get_node_vscroll_position(scroll_container, _scroll_target)
+    var scroll_end: int = Gs.utils.get_node_vscroll_position( \
+            scroll_container, _scroll_target)
     scroll_container.scroll_vertical = lerp( \
             scroll_start, \
             scroll_end, \

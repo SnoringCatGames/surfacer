@@ -19,6 +19,7 @@ const MIN_GUI_SCALE := 0.2
 var debug: bool
 var playtest: bool
 var test := false
+var are_all_levels_unlocked := false
 
 var debug_window_size: Vector2
 
@@ -35,6 +36,8 @@ var default_game_area_size: Vector2
 
 var aspect_ratio_max: float
 var aspect_ratio_min: float
+
+var uses_level_scores: bool
 
 var screen_background_color: Color
 var button_normal_color: Color
@@ -59,7 +62,12 @@ var music_manifest: Array
 var default_music_path_prefix: String
 var default_music_file_suffix: String
 var default_music_bus_index: String
+
 var main_menu_music: String
+var game_over_music: String
+var godot_splash_sound := "achievement"
+var developer_splash_sound: String
+var level_end_sound: String
 
 var third_party_license_text: String
 var special_thanks_text: String
@@ -71,9 +79,6 @@ var developer_url: String
 
 var developer_logo: Texture
 var developer_splash: Texture
-
-var godot_splash_sound := "achievement"
-var developer_splash_sound: String
 
 var godot_splash_screen_duration_sec := 0.8
 var developer_splash_screen_duration_sec := 1.0
@@ -138,7 +143,6 @@ var canvas_layers: CanvasLayers
 var camera_controller: CameraController
 var debug_panel: DebugPanel
 var gesture_record: GestureRecord
-var next_level_resource_path: String
 var level: ScaffoldLevel
 
 var guis_to_scale := {}
@@ -160,6 +164,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.default_game_area_size = manifest.default_game_area_size
     self.aspect_ratio_max = manifest.aspect_ratio_max
     self.aspect_ratio_min = manifest.aspect_ratio_min
+    self.uses_level_scores = manifest.uses_level_scores
     self.screen_background_color = manifest.screen_background_color
     self.button_normal_color = manifest.button_normal_color
     self.button_hover_color = manifest.button_hover_color
@@ -171,7 +176,6 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.option_button_pressed_color = manifest.option_button_pressed_color
     self.screen_exclusions = manifest.screen_exclusions
     self.screen_inclusions = manifest.screen_inclusions
-    self.level_config = manifest.level_config
     self.fonts = manifest.fonts
     self.sounds_manifest = manifest.sounds_manifest
     self.default_sounds_path_prefix = manifest.default_sounds_path_prefix
@@ -190,14 +194,22 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.developer_name = manifest.developer_name
     self.developer_url = manifest.developer_url
     
+    if manifest.has("test"):
+        self.test = manifest.test
+    if manifest.has("are_all_levels_unlocked"):
+        self.are_all_levels_unlocked = manifest.are_all_levels_unlocked
     if manifest.has("developer_logo"):
         self.developer_logo = manifest.developer_logo
     if manifest.has("developer_splash"):
         self.developer_splash = manifest.developer_splash
+    if manifest.has("game_over_music"):
+        self.game_over_music = manifest.game_over_music
     if manifest.has("godot_splash_sound"):
         self.godot_splash_sound = manifest.godot_splash_sound
     if manifest.has("developer_splash_sound"):
         self.developer_splash_sound = manifest.developer_splash_sound
+    if manifest.has("level_end_sound"):
+        self.level_end_sound = manifest.level_end_sound
     if manifest.has("godot_splash_screen_duration_sec"):
         self.godot_splash_screen_duration_sec = \
                 manifest.godot_splash_screen_duration_sec
@@ -239,36 +251,47 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.audio = manifest.audio
     else:
         self.audio = Audio.new()
+    add_child(self.audio)
     if manifest.has("nav"):
         assert(manifest.nav is ScaffoldNavigation)
         self.nav = manifest.nav
     else:
         self.nav = ScaffoldNavigation.new()
+    add_child(self.nav)
     if manifest.has("save_state"):
         assert(manifest.save_state is SaveState)
         self.save_state = manifest.save_state
     else:
         self.save_state = SaveState.new()
+    add_child(self.save_state)
     if manifest.has("analytics"):
         assert(manifest.analytics is Analytics)
         self.analytics = manifest.analytics
     else:
         self.analytics = Analytics.new()
+    add_child(self.analytics)
     if manifest.has("cloud_log"):
         assert(manifest.cloud_log is CloudLog)
         self.cloud_log = manifest.cloud_log
     else:
         self.cloud_log = CloudLog.new()
+    add_child(self.cloud_log)
     if manifest.has("utils"):
         assert(manifest.utils is ScaffoldUtils)
         self.utils = manifest.utils
     else:
         self.utils = ScaffoldUtils.new()
+    add_child(self.utils)
     if manifest.has("time"):
         assert(manifest.time is Time)
         self.time = manifest.time
     else:
         self.time = Time.new()
+    add_child(self.time)
+    
+    # This depends on SaveState, and must be instantiated after.
+    self.level_config = manifest.level_config_class.new()
+    add_child(self.level_config)
     
     self.audio.register_sounds( \
             manifest.sounds_manifest, \

@@ -62,16 +62,15 @@ func _fix_viewport_dimensions_hack() -> void:
     self.visible = false
     call_deferred("set_visible", true)
 
-func _on_activated() -> void:
-    start_level()
-
-func start_level() -> void:
+func start_level(level_id: String) -> void:
     if is_instance_valid(level):
         return
     
+    # FIXME: get path from level_config by id
+    
     level = Gs.utils.add_scene( \
             $PanelContainer/ViewportContainer/Viewport, \
-            Gs.next_level_resource_path, \
+            Gs.level_config.get_level_config(level_id).scene_path, \
             true, \
             true)
     level.start()
@@ -83,5 +82,7 @@ func destroy_level() -> void:
     level = null
 
 func restart_level() -> void:
+    assert(is_instance_valid(level))
+    var level_id := level.level_id
     destroy_level()
-    start_level()
+    start_level(level_id)

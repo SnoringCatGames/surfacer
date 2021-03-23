@@ -49,6 +49,7 @@ is_caret_on_left = false
 padding = Vector2( 16, 8 )
 
 [node name="LevelSelectItemBody" parent="AccordionPanel" instance=ExtResource( 5 )]
+[connection signal="unlock_finished" from="HeaderWrapper/LevelSelectItemLockedHeader" to="." method="_on_LevelSelectItemLockedHeader_unlock_finished"]
 [connection signal="pressed" from="HeaderWrapper/LevelSelectItemUnlockedHeader" to="." method="_on_LevelSelectItemUnlockedHeader_pressed"]
 [connection signal="caret_rotated" from="AccordionPanel" to="." method="_on_AccordionPanel_caret_rotated"]
 [connection signal="toggled" from="AccordionPanel" to="." method="_on_AccordionPanel_toggled"]

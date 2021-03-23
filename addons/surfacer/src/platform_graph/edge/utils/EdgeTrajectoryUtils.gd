@@ -106,7 +106,7 @@ static func sub_trajectory( \
         start_time: float) -> EdgeTrajectory:
     assert(base_trajectory.frame_continuous_positions_from_steps.size() == \
             base_trajectory.frame_continuous_velocities_from_steps.size())
-    var start_index := ceil(start_time / Gs.time.PHYSICS_TIME_STEP_SEC)
+    var start_index := ceil(start_time / Time.PHYSICS_TIME_STEP_SEC)
     var frame_continuous_positions_from_steps := \
             Gs.utils.sub_pool_vector2_array( \
                     base_trajectory.frame_continuous_positions_from_steps, \

@@ -107,4 +107,4 @@ var player_param_classes := [
 ]
 
 func _init() -> void:
-    Gs.utils.print("SurfacerConfig._init")
+    print("SurfacerConfig._init")

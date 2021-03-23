@@ -4,10 +4,9 @@
 [ext_resource path="res://assets/images/foreground/tileset.tres" type="TileSet" id=2]
 [ext_resource path="res://src/SquirrelAwayLevel.gd" type="Script" id=3]
 
-
-
 [node name="Level7" type="Node2D"]
 script = ExtResource( 3 )
+id = "7"
 
 [node name="Background" parent="." instance=ExtResource( 1 )]
 

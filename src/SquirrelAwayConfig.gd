@@ -79,6 +79,16 @@ var sounds_manifest := [
         path_prefix = "res://addons/scaffold/assets/sounds/",
     },
     {
+        name = "lock_low",
+        volume_db = 0.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
+        name = "lock_high",
+        volume_db = 0.0,
+        path_prefix = "res://addons/scaffold/assets/sounds/",
+    },
+    {
         name = "walk",
         volume_db = 15.0,
         path_prefix = "res://addons/scaffold/assets/sounds/",
@@ -167,7 +177,7 @@ var app_manifest := {
     screen_inclusions = [
     ],
     
-    level_config = SquirrelAwayLevelConfig.new(),
+    level_config_class = SquirrelAwayLevelConfig,
     
     fonts = fonts,
     
@@ -179,7 +189,12 @@ var app_manifest := {
     default_music_path_prefix = "res://addons/scaffold/assets/music/",
     default_music_file_suffix = ".ogg",
     default_music_bus_index = 2,
+    
     main_menu_music = "on_a_quest",
+    game_over_music = "on_a_quest",
+    godot_splash_sound = "achievement",
+    developer_splash_sound = "single_cat_snore",
+    level_end_sound = "cadence",
     
     third_party_license_text = third_party_license_text,
     special_thanks_text = special_thanks_text,
@@ -193,9 +208,6 @@ var app_manifest := {
             "res://addons/scaffold/assets/images/gui/snoring_cat_logo_about.png"),
     developer_splash = preload( \
             "res://addons/scaffold/assets/images/gui/snoring_cat_logo_splash.png"),
-    
-    godot_splash_sound = "achievement",
-    developer_splash_sound = "single_cat_snore",
     
     # FIXME: -----------------
     godot_splash_screen_duration_sec = 0.8,
@@ -223,9 +235,10 @@ var app_manifest := {
     default_game_area_size = Vector2(1024, 768),
     aspect_ratio_max = 2.0 / 1.0,
     aspect_ratio_min = 1.0 / 2.0,
+    uses_level_scores = true,
     
     default_camera_zoom = 1.0,
 }
 
 func _init() -> void:
-    Gs.utils.print("SquirrelAwayConfig._init")
+    print("SquirrelAwayConfig._init")

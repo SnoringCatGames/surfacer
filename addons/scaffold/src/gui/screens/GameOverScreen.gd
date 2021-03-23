@@ -31,19 +31,13 @@ func _ready() -> void:
 
 func _on_activated() -> void:
     ._on_activated()
-    Gs.audio.play_music(Music.GAME_OVER_MUSIC_TYPE)
+    Gs.audio.play_music(Gs.game_over_music)
     _update_stats()
 
 func _get_focused_button() -> ShinyButton:
-    # Conditionally suggest retry, if the player didn't finish the level.
-    if finished_level:
-        return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-                CenterContainer/VBoxContainer/VBoxContainer/ \
-                SelectLevelButton as ShinyButton
-    else:
-        return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-                CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer/ \
-                RetryButton as ShinyButton
+    return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
+            CenterContainer/VBoxContainer/VBoxContainer/ \
+            SelectLevelButton as ShinyButton
 
 func _update_stats() -> void:
     var unlocked_new_level_label := $FullScreenPanel/VBoxContainer/ \
@@ -84,16 +78,16 @@ func _update_stats() -> void:
     ]
 
 func _on_SelectLevelButton_pressed():
-    Global.give_button_press_feedback()
-    Gs.audio.play_music(Music.MAIN_MENU_MUSIC_TYPE)
-    Gs.nav.open(ScreenType.LEVEL_SELECT)
+    Gs.utils.give_button_press_feedback()
+    Gs.audio.play_music(Gs.main_menu_music)
+    Gs.nav.open("level_select")
 
 func _on_HomeButton_pressed():
-    Global.give_button_press_feedback()
-    Gs.audio.play_music(Music.MAIN_MENU_MUSIC_TYPE)
-    Gs.nav.open(ScreenType.MAIN_MENU)
+    Gs.utils.give_button_press_feedback()
+    Gs.audio.play_music(Gs.main_menu_music)
+    Gs.nav.open("main_menu")
 
 func _on_RetryButton_pressed():
-    Global.give_button_press_feedback(true)
-    Gs.nav.open(ScreenType.GAME, true)
-    Gs.nav.screens[ScreenType.GAME].start_level(level_id)
+    Gs.utils.give_button_press_feedback(true)
+    Gs.nav.open("game", true)
+    Gs.nav.screens["game"].start_level(level_id)

@@ -51,4 +51,4 @@ func _on_resized() -> void:
 
 func _on_StartGameButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()
-    Gs.nav.open("game")
+    Gs.nav.open("level_select")

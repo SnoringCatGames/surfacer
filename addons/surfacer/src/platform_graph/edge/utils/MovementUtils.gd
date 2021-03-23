@@ -487,7 +487,7 @@ static func calculate_distance_to_stop_from_friction( \
     var distance := 0.0
     var speed := abs(velocity_x_start)
     while speed > movement_params.min_horizontal_speed:
-        distance += speed * Gs.time.PHYSICS_TIME_STEP_SEC
+        distance += speed * Time.PHYSICS_TIME_STEP_SEC
         speed -= friction_deceleration_per_frame
     return distance
 

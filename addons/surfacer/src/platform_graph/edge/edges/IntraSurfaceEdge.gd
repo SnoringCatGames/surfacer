@@ -256,7 +256,7 @@ static func _calculate_stopping_distance( \
                     abs(movement_params.climb_up_speed) if \
                     displacement_to_end.y < 0 else \
                     abs(movement_params.climb_down_speed)
-            return climb_speed * Gs.time.PHYSICS_TIME_STEP_SEC + 0.01
+            return climb_speed * Time.PHYSICS_TIME_STEP_SEC + 0.01
         
         return 0.0
 

@@ -2,7 +2,7 @@ extends Node
 class_name ScaffoldBootstrap
 
 func _init() -> void:
-    Gs.utils.print("ScaffoldBootstrap._init")
+    print("ScaffoldBootstrap._init")
     name = "ScaffoldBootstrap"
 
 func on_app_ready( \

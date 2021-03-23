@@ -17,7 +17,7 @@ func process(player: Player) -> bool:
         var playback_elapsed_time: float = \
                 Gs.time.elapsed_play_time_actual_sec - \
                 player.navigator.current_playback.start_time
-        var index := floor(playback_elapsed_time / Gs.time.PHYSICS_TIME_STEP_SEC)
+        var index := floor(playback_elapsed_time / Time.PHYSICS_TIME_STEP_SEC)
         var trajectory_positions := current_edge.trajectory \
                 .frame_continuous_positions_from_steps
         var trajectory_velocities := current_edge.trajectory \

@@ -4,7 +4,22 @@ class_name LevelSelectItemBody
 var level_id: String
 
 func update() -> void:
-    pass
+    var high_score: int = Gs.save_state.get_level_high_score(level_id)
+    var total_plays: int = Gs.save_state.get_level_total_plays(level_id)
+    
+    var list_items := [
+        {
+            label = "High score:",
+            type = LabeledControlItemType.TEXT,
+            text = str(high_score),
+        },
+        {
+            label = "Total plays:",
+            type = LabeledControlItemType.TEXT,
+            text = str(total_plays),
+        },
+    ]
+    $LabeledControlList.items = list_items
 
 func get_button() -> ShinyButton:
     return $PlayButton as ShinyButton

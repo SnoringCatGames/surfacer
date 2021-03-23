@@ -1,8 +1,11 @@
+tool
 extends SurfacerLevel
 class_name SquirrelAwayLevel
 
 const _WELCOME_PANEL_RESOURCE_PATH := \
         "res://addons/surfacer/src/gui/panels/WelcomePanel.tscn"
+
+export var id: String setget _set_id,_get_id
 
 func start() -> void:
     .start()
@@ -40,9 +43,12 @@ func start() -> void:
 
 func destroy() -> void:
     .destroy()
-    pass
 
 func quit() -> void:
     .quit()
-    destroy()
-    Gs.nav.open("main_menu")
+
+func _set_id(value: String) -> void:
+    level_id = value
+
+func _get_id() -> String:
+    return level_id

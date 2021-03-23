@@ -32,7 +32,7 @@ var is_sound_effects_enabled := true setget \
         _set_is_sound_effects_enabled,_get_is_sound_effects_enabled
 
 func _init() -> void:
-    Gs.utils.print("Audio._init")
+    print("Audio._init")
 
 func _enter_tree() -> void:
     _fade_out_tween = Tween.new()
@@ -42,7 +42,7 @@ func _enter_tree() -> void:
     _fade_in_tween.connect( \
             "tween_completed", \
             self, \
-            "on_cross_fade_music_finished")
+            "_on_cross_fade_music_finished")
 
 func register_sounds( \
         manifest: Array, \
@@ -125,8 +125,17 @@ func play_music( \
     else:
         _cross_fade_music(music_name, transitions_immediately)
 
+func stop_music() -> void:
+    _get_current_music_player().stop()
+
 func _play_sound_deferred(sound_name: String) -> void:
     _inflated_sounds_config[sound_name].player.play()
+
+func get_sound_player(sound_name: String) -> AudioStreamPlayer:
+    return _inflated_sounds_config[sound_name].player
+
+func get_music_player(music_name: String) -> AudioStreamPlayer:
+    return _inflated_music_config[music_name].player
 
 func _get_previous_music_player() -> AudioStreamPlayer:
     return _inflated_music_config[_previous_music_name].player if \
@@ -141,7 +150,7 @@ func _get_current_music_player() -> AudioStreamPlayer:
 func _cross_fade_music( \
         music_name: String, \
         transitions_immediately := false) -> void:
-    on_cross_fade_music_finished()
+    _on_cross_fade_music_finished()
     
     var previous_music_player := _get_previous_music_player()
     var current_music_player := _get_current_music_player()
@@ -212,7 +221,7 @@ func _cross_fade_music( \
             Tween.EASE_OUT)
     _fade_in_tween.start()
 
-func on_cross_fade_music_finished( \
+func _on_cross_fade_music_finished( \
         _object = null, \
         _key = null) -> void:
     _fade_out_tween.stop_all()
