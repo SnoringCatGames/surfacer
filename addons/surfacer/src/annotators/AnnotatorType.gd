@@ -33,5 +33,5 @@ static func get_type_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            ScaffoldUtils.error("Invalid AnnotatorType: %s" % type)
+            Gs.utils.error("Invalid AnnotatorType: %s" % type)
             return "???"

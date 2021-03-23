@@ -22,7 +22,7 @@ func _init().( \
 
 func _on_activated() -> void:
     ._on_activated()
-    assert(ScaffoldConfig.is_rate_app_shown)
+    assert(Gs.is_rate_app_shown)
 
 func _get_focused_button() -> ShinyButton:
     return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
@@ -30,25 +30,25 @@ func _get_focused_button() -> ShinyButton:
             ShinyButton
 
 func _on_RateAppButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    SaveState.set_gave_feedback(true)
-    Nav.open(NEXT_SCREEN_TYPE)
+    Gs.utils.give_button_press_feedback()
+    Gs.save_state.set_gave_feedback(true)
+    Gs.nav.open(NEXT_SCREEN_TYPE)
     var app_store_url := \
-            ScaffoldConfig.ios_app_store_url if \
-            ScaffoldUtils.get_is_ios_device() else \
-            ScaffoldConfig.android_app_store_url
+            Gs.ios_app_store_url if \
+            Gs.utils.get_is_ios_device() else \
+            Gs.android_app_store_url
     OS.shell_open(app_store_url)
 
 func _on_DontAskAgainButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    SaveState.set_gave_feedback(true)
-    Nav.open(NEXT_SCREEN_TYPE)
+    Gs.utils.give_button_press_feedback()
+    Gs.save_state.set_gave_feedback(true)
+    Gs.nav.open(NEXT_SCREEN_TYPE)
 
 func _on_KeepPlayingButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.open(NEXT_SCREEN_TYPE)
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.open(NEXT_SCREEN_TYPE)
 
 func _on_SendFeedbackButton_pressed() -> void:
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.open(NEXT_SCREEN_TYPE)
-    OS.shell_open(ScaffoldUtils.get_support_url())
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.open(NEXT_SCREEN_TYPE)
+    OS.shell_open(Gs.utils.get_support_url())

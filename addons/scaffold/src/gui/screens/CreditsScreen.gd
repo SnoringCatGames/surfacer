@@ -23,76 +23,76 @@ func _init().( \
 func _ready() -> void:
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/Control/Title.texture = \
-            ScaffoldConfig.app_logo
+            Gs.app_logo
     
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/VBoxContainer4/ \
             DeveloperLogoLink/DeveloperLogo.visible = \
-            ScaffoldConfig.is_developer_logo_shown
+            Gs.is_developer_logo_shown
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/VBoxContainer4/ \
             DeveloperLogoLink/DeveloperLogo.texture = \
-            ScaffoldConfig.developer_logo
+            Gs.developer_logo
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/VBoxContainer4/ \
-            DeveloperNameLink.text = ScaffoldConfig.developer_name
+            DeveloperNameLink.text = Gs.developer_name
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/VBoxContainer4/ \
-            DeveloperUrlLink.text = ScaffoldConfig.developer_url
+            DeveloperUrlLink.text = Gs.developer_url
     
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/SpecialThanksContainer/ \
-            SpecialThanks.text = ScaffoldConfig.special_thanks_text
+            SpecialThanks.text = Gs.special_thanks_text
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/SpecialThanksContainer.visible = \
-            ScaffoldConfig.is_special_thanks_shown
+            Gs.is_special_thanks_shown
     
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/VBoxContainer2/ \
-            TermsAndConditionsLink.visible = ScaffoldConfig.is_data_tracked
+            TermsAndConditionsLink.visible = Gs.is_data_tracked
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/VBoxContainer2/ \
-            PrivacyPolicyLink.visible = ScaffoldConfig.is_data_tracked
+            PrivacyPolicyLink.visible = Gs.is_data_tracked
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer/ \
-            DataDeletionButton.visible = ScaffoldConfig.is_data_tracked
+            DataDeletionButton.visible = Gs.is_data_tracked
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer/ \
-            DataDeletionButtonPadding.visible = ScaffoldConfig.is_data_tracked
+            DataDeletionButtonPadding.visible = Gs.is_data_tracked
     
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/VBoxContainer2/ \
-            SupportLink.visible = ScaffoldConfig.is_support_shown
+            SupportLink.visible = Gs.is_support_shown
     
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer/ \
             ThirdPartyLicensesButton.visible = \
-            ScaffoldConfig.is_third_party_licenses_shown
+            Gs.is_third_party_licenses_shown
 
 func _on_third_party_licenses_button_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.open("third_party_licenses")
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.open("third_party_licenses")
 
 func _on_snoring_cat_games_link_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    OS.shell_open(ScaffoldConfig.developer_url)
+    Gs.utils.give_button_press_feedback()
+    OS.shell_open(Gs.developer_url)
 
 func _on_godot_link_pressed():
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     OS.shell_open(GODOT_URL)
 
 func _on_PrivacyPolicyLink_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    OS.shell_open(ScaffoldConfig.privacy_policy_url)
+    Gs.utils.give_button_press_feedback()
+    OS.shell_open(Gs.privacy_policy_url)
 
 func _on_TermsAndConditionsLink_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    OS.shell_open(ScaffoldConfig.terms_and_conditions_url)
+    Gs.utils.give_button_press_feedback()
+    OS.shell_open(Gs.terms_and_conditions_url)
 
 func _on_SupportLink_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    OS.shell_open(ScaffoldUtils.get_support_url())
+    Gs.utils.give_button_press_feedback()
+    OS.shell_open(Gs.utils.get_support_url())
 
 func _on_DataDeletionButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.open("confirm_data_deletion")
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.open("confirm_data_deletion")

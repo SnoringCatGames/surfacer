@@ -18,5 +18,5 @@ static func get_type_from_side(side: int) -> int:
         SurfaceSide.NONE:
             return AIR
         _:
-            ScaffoldUtils.error()
+            Gs.utils.error()
             return INF as int

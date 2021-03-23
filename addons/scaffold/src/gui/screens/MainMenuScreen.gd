@@ -21,16 +21,16 @@ func _init().( \
     pass
 
 func _ready() -> void:
-    if ScaffoldConfig.is_main_menu_image_shown:
-        projected_image = ScaffoldUtils.add_scene( \
+    if Gs.is_main_menu_image_shown:
+        projected_image = Gs.utils.add_scene( \
                 $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
                         CenterContainer/VBoxContainer/MainMenuImageContainer, \
-                ScaffoldConfig.main_menu_image_scene_path, \
+                Gs.main_menu_image_scene_path, \
                 true, \
                 true)
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/LogoControl/Title.texture = \
-            ScaffoldConfig.app_logo
+            Gs.app_logo
     
     _on_resized()
 
@@ -42,7 +42,7 @@ func _on_resized() -> void:
     ._on_resized()
     var viewport_size := get_viewport().size
     var is_wide_enough_to_put_title_in_nav_bar := \
-            viewport_size.x > ScaffoldConfig.app_logo.get_width() + 256
+            viewport_size.x > Gs.app_logo.get_width() + 256
     $FullScreenPanel/VBoxContainer/NavBar.shows_logo = \
             is_wide_enough_to_put_title_in_nav_bar
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
@@ -50,5 +50,5 @@ func _on_resized() -> void:
                     !is_wide_enough_to_put_title_in_nav_bar
 
 func _on_StartGameButton_pressed() -> void:
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.open("game")
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.open("game")

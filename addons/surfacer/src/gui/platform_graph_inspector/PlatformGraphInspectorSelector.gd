@@ -41,7 +41,7 @@ func _unhandled_input(event: InputEvent) -> void:
         # The user is ctrl+clicking.
         
         var click_position: Vector2 = \
-                ScaffoldUtils.get_global_touch_position(event)
+                Gs.utils.get_global_touch_position(event)
         var surface_position := \
                 SurfaceParser.find_closest_position_on_a_surface( \
                         click_position, \
@@ -60,7 +60,7 @@ func _unhandled_input(event: InputEvent) -> void:
                             first_target.surface, \
                             surface_position.surface)
             
-            selection_time_sec = Time.elapsed_play_time_actual_sec
+            selection_time_sec = Gs.time.elapsed_play_time_actual_sec
             
             # TODO: Add support for configuring edge type and graph from radio
             #       buttons in the inspector.
@@ -122,4 +122,4 @@ func clear() -> void:
 func should_selection_have_been_handled_in_tree_by_now() -> bool:
     return selection_time_sec + \
             DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD_SEC < \
-            Time.elapsed_play_time_actual_sec
+            Gs.time.elapsed_play_time_actual_sec

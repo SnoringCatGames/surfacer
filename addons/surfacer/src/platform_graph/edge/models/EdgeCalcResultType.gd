@@ -41,7 +41,7 @@ static func get_type_string(result_type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            ScaffoldUtils.error("Invalid EdgeCalcResultType: %s" % result_type)
+            Gs.utils.error("Invalid EdgeCalcResultType: %s" % result_type)
             return "UNKNOWN"
 
 static func get_description_string(result_type: int) -> String:
@@ -78,7 +78,7 @@ static func get_description_string(result_type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            ScaffoldUtils.error("Invalid EdgeCalcResultType: %s" % result_type)
+            Gs.utils.error("Invalid EdgeCalcResultType: %s" % result_type)
             return "UNKNOWN"
 
 static func get_is_broad_phase_failure(result_type: int) -> bool:

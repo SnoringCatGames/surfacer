@@ -77,11 +77,11 @@ func _calculate_color(renders_faintly: bool) -> Color:
 
 func _create_labels() -> void:
     step_label = Label.new()
-    step_label.add_font_override("font", ScaffoldConfig.fonts.main_m)
+    step_label.add_font_override("font", Gs.fonts.main_m)
     
     previous_out_of_reach_waypoint_label = Label.new()
     previous_out_of_reach_waypoint_label \
-            .add_font_override("font", ScaffoldConfig.fonts.main_m)
+            .add_font_override("font", Gs.fonts.main_m)
 
 func draw(canvas: CanvasItem) -> void:
     _attach_labels(canvas)

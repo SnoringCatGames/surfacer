@@ -10,7 +10,7 @@ var is_open := false
 var _toggle_open_tween: Tween
 
 func _ready() -> void:
-    ScaffoldConfig.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
+    Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
     
     $VBoxContainer/GearContainer/GearWrapper/GearButton.visible = !is_open
     
@@ -57,14 +57,14 @@ func _ready() -> void:
     # available.
     SurfacerConfig.annotators.element_annotator.update()
     
-    ScaffoldUtils.connect( \
+    Gs.utils.connect( \
             "display_resized", \
             self, \
             "_on_resized")
     _on_resized()
 
 func destroy() -> void:
-    ScaffoldConfig.guis_to_scale.erase(self)
+    Gs.guis_to_scale.erase(self)
 
 func _on_resized() -> void:
     self.rect_position.x = \
@@ -75,7 +75,7 @@ func _on_resized() -> void:
             -self.rect_size.y - 1.0
 
 func _on_credits_button_pressed():
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     $CreditsPanel.popup()
 
 func set_is_open(is_open: bool) -> void:
@@ -117,33 +117,33 @@ func _toggle_open() -> void:
         SurfacerConfig.platform_graph_inspector.collapse()
 
 func _on_ruler_grid_checkbox_toggled(pressed: bool) -> void:
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     SurfacerConfig.annotators.set_annotator_enabled( \
             AnnotatorType.RULER, \
             pressed)
 
 func _on_level_checkbox_toggled(pressed: bool) -> void:
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     SurfacerConfig.annotators.set_annotator_enabled( \
             AnnotatorType.LEVEL, \
             pressed)
 
 func _on_player_position_checkbox_toggled(pressed: bool) -> void:
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     SurfacerConfig.annotators.set_annotator_enabled( \
             AnnotatorType.PLAYER_POSITION, \
             pressed)
 
 func _on_player_trajectory_checkbox_toggled(pressed: bool) -> void:
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     SurfacerConfig.annotators.set_annotator_enabled( \
             AnnotatorType.PLAYER_TRAJECTORY, \
             pressed)
 
 func _on_log_events_checkbox_toggled(pressed: bool) -> void:
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     SurfacerConfig.is_logging_events = pressed
 
 func _on_PauseButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.open("pause")
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.open("pause")

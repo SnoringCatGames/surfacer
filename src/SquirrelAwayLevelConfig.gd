@@ -17,7 +17,7 @@ func get_level_ids() -> Array:
 func get_unlock_hint(level_id: String) -> String:
     # TODO
     return "Not yet unlocked" if \
-            !SaveState.get_level_is_unlocked(level_id) else \
+            !Gs.save_state.get_level_is_unlocked(level_id) else \
             ""
 
 func get_suggested_next_level() -> String:

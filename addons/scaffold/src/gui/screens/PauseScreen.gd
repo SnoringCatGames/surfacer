@@ -47,28 +47,28 @@ func _get_focused_button() -> ShinyButton:
             ShinyButton
 
 func _update_stats() -> void:
-    var level: ScaffoldLevel = ScaffoldConfig.level
+    var level: ScaffoldLevel = Gs.level
     
     _control_list.find_item("Time:").text = \
-        ScaffoldUtils.get_time_string_from_seconds( \
-                Time.elapsed_play_time_actual_sec - \
+        Gs.utils.get_time_string_from_seconds( \
+                Gs.time.elapsed_play_time_actual_sec - \
                 level.level_start_time)
     
     _control_list.items = list_items
 
 func _on_ExitLevelButton_pressed() -> void:
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.close_current_screen()
-    ScaffoldConfig.level.quit()
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.close_current_screen()
+    Gs.level.quit()
 
 func _on_ResumeButton_pressed() -> void:
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.close_current_screen()
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.close_current_screen()
 
 func _on_RestartButton_pressed() -> void:
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.screens["game"].restart_level()
-    Nav.close_current_screen(true)
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.screens["game"].restart_level()
+    Gs.nav.close_current_screen(true)
 
 func _on_SendRecentGestureEventsForDebugging_pressed() -> void:
-    Log.record_recent_gestures()
+    Gs.cloud_log.record_recent_gestures()

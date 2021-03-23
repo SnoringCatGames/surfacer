@@ -18,5 +18,5 @@ func _init( \
     self.priority = priority
 
 func process(player) -> bool:
-    ScaffoldUtils.error("abstract PlayerActionHandler.process is not implemented")
+    Gs.utils.error("abstract PlayerActionHandler.process is not implemented")
     return false

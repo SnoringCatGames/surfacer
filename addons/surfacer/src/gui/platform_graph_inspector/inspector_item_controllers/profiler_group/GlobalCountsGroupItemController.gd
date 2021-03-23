@@ -31,7 +31,7 @@ func get_description() -> String:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    ScaffoldUtils.error( \
+    Gs.utils.error( \
             "find_and_expand_controller should not be called for " + \
             "GLOBAL_COUNTS_GROUP.")
     return false
@@ -81,7 +81,7 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     var result := SurfacesGroupItemController.get_annotation_elements_from_graph(graph)
-    ScaffoldUtils.concat( \
+    Gs.utils.concat( \
             result, \
             EdgesGroupItemController.get_annotation_elements_from_graph(graph))
     return result

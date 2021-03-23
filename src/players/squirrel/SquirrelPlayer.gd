@@ -16,10 +16,10 @@ func _init().("squirrel") -> void:
 
 func _process_sfx() -> void:
     if just_triggered_jump:
-        Audio.play_sound("squirrel_jump")
+        Gs.audio.play_sound("squirrel_jump")
     
     if surface_state.just_left_air:
-        Audio.play_sound("squirrel_land")
+        Gs.audio.play_sound("squirrel_land")
 
 func _ready() -> void:
     if is_fake:
@@ -27,7 +27,7 @@ func _ready() -> void:
         # hood.
         return
     
-    Time.set_timeout( \
+    Gs.time.set_timeout( \
             funcref(self, "_trigger_new_navigation_recurring"), \
             SQUIRREL_TRIGGER_NEW_NAVIGATION_INTERVAL_SEC)
 
@@ -37,7 +37,7 @@ func _trigger_new_navigation_recurring() -> void:
     
     if !navigator.is_currently_navigating:
         _start_new_navigation()
-    Time.set_timeout( \
+    Gs.time.set_timeout( \
             funcref(self, "_trigger_new_navigation_recurring"), \
             SQUIRREL_TRIGGER_NEW_NAVIGATION_INTERVAL_SEC)
 
@@ -63,7 +63,7 @@ func _start_new_navigation() -> void:
     Profiler.start(ProfilerMetric.START_NEW_SQUIRREL_NAVIGATION)
     
     var possible_destinations: Array = \
-            ScaffoldConfig.level.squirrel_destinations
+            Gs.level.squirrel_destinations
     var index: int
     var next_destination := previous_destination
     while next_destination.target_point == Vector2.INF or \
@@ -81,6 +81,6 @@ func _start_new_navigation() -> void:
     print_msg(("SQUIRREL NEW NAV    ;" + \
             "%8.3fs; " + \
             "calc duration=%sms"), [ \
-        Time.elapsed_play_time_actual_sec, \
+        Gs.time.elapsed_play_time_actual_sec, \
         duration, \
     ])

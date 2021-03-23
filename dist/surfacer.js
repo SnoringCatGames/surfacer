@@ -266,8 +266,8 @@ Function('return this')()['Engine'] = (function() {
 			config.printErr = stderr;
 		var me = this;
 		initPromise = new Promise(function(resolve, reject) {
-			config['locateFile'] = Utils.createLocateRewrite(loadPath);
-			config['instantiateWasm'] = Utils.createInstantiatePromise(loadPromise);
+			config['locateFile'] = Gs.utils.createLocateRewrite(loadPath);
+			config['instantiateWasm'] = Gs.utils.createInstantiatePromise(loadPromise);
 			Godot(config).then(function(module) {
 				me.rtenv = module;
 				if (unloadAfterInit) {
@@ -299,7 +299,7 @@ Function('return this')()['Engine'] = (function() {
 			}
 
 			if (!(me.canvas instanceof HTMLCanvasElement)) {
-				me.canvas = Utils.findCanvas();
+				me.canvas = Gs.utils.findCanvas();
 			}
 
 			// Canvas can grab focus on click, or key events won't work.
@@ -435,7 +435,7 @@ Function('return this')()['Engine'] = (function() {
 
 	// Closure compiler exported engine methods.
 	/** @export */
-	Engine['isWebGLAvailable'] = Utils.isWebGLAvailable;
+	Engine['isWebGLAvailable'] = Gs.utils.isWebGLAvailable;
 	Engine['load'] = load;
 	Engine['unload'] = unload;
 	Engine.prototype['init'] = Engine.prototype.init;

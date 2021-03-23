@@ -21,30 +21,30 @@ func _init().( \
 func _ready() -> void:
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/ClientIdNumber.text = \
-            str(Analytics.client_id)
+            str(Gs.analytics.client_id)
 
 func _get_focused_button() -> ShinyButton:
     return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/CancelButton as ShinyButton
 
 func _on_ConfirmButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     
-    SaveState.erase_all_state()
+    Gs.save_state.erase_all_state()
     
     # Erase user files.
-    ScaffoldUtils.clear_directory("user://")
+    Gs.utils.clear_directory("user://")
     
-    var url := ScaffoldUtils.get_support_url()
-    url += "&request-data-deletion=true&client-id=" + str(Analytics.client_id)
+    var url := Gs.utils.get_support_url()
+    url += "&request-data-deletion=true&client-id=" + str(Gs.analytics.client_id)
     OS.shell_open(url)
     
     quit()
 
 func quit() -> void:
     get_tree().quit()
-    Nav.open("data_agreement")
+    Gs.nav.open("data_agreement")
 
 func _on_CancelButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.close_current_screen()
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.close_current_screen()

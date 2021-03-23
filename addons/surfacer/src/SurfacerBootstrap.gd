@@ -2,7 +2,7 @@ extends Node
 class_name SurfacerBootstrap
 
 func _init() -> void:
-    ScaffoldUtils.print("SurfacerBootstrap._init")
+    Gs.utils.print("SurfacerBootstrap._init")
 
 func on_app_ready( \
         app_manifest: Dictionary, \

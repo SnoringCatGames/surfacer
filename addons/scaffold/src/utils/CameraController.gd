@@ -109,6 +109,6 @@ func update_zoom() -> void:
         return
     var zoom: float = \
             zoom_factor * \
-            ScaffoldConfig.default_camera_zoom / \
-            ScaffoldConfig.gui_scale
+            Gs.default_camera_zoom / \
+            Gs.gui_scale
     _current_camera.zoom = Vector2(zoom, zoom)

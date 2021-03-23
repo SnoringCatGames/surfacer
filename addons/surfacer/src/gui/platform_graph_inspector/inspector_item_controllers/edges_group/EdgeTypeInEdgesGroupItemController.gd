@@ -56,7 +56,7 @@ func get_has_children() -> bool:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    ScaffoldUtils.error("find_and_expand_controller should not be called for " + \
+    Gs.utils.error("find_and_expand_controller should not be called for " + \
             "EDGE_TYPE_IN_EDGES_GROUP.")
     return false
 

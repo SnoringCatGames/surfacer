@@ -12,21 +12,21 @@ export var shows_logo := false setget _set_shows_logo,_get_shows_logo
 func _enter_tree() -> void:
     $MarginContainer.set( \
             "custom_constants/margin_top", \
-            ScaffoldUtils.get_safe_area_margin_top())
+            Gs.utils.get_safe_area_margin_top())
     $MarginContainer/BackButtonWrapper.rect_position.x += \
-            ScaffoldUtils.get_safe_area_margin_left()
+            Gs.utils.get_safe_area_margin_left()
     $MarginContainer/AboutButton.rect_position.x += \
-            ScaffoldUtils.get_safe_area_margin_left()
+            Gs.utils.get_safe_area_margin_left()
     $MarginContainer/SettingsButton.rect_position.x -= \
-            ScaffoldUtils.get_safe_area_margin_right()
+            Gs.utils.get_safe_area_margin_right()
     _set_shows_back(shows_back)
     _set_shows_about(shows_about)
     _set_shows_settings(shows_settings)
     _set_shows_logo(shows_logo)
-    $MarginContainer/LogoControl/Control/Logo.texture = ScaffoldConfig.app_logo
+    $MarginContainer/LogoControl/Control/Logo.texture = Gs.app_logo
     $MarginContainer/LogoControl/Control/Logo.rect_position = \
-            -ScaffoldConfig.app_logo.get_size() / 2.0 * \
-            ScaffoldConfig.app_logo_scale
+            -Gs.app_logo.get_size() / 2.0 * \
+            Gs.app_logo_scale
 
 func _set_text(value: String) -> void:
     text = value
@@ -66,13 +66,13 @@ func _get_shows_logo() -> bool:
     return shows_logo
 
 func _on_BackButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.close_current_screen()
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.close_current_screen()
 
 func _on_AboutButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.open("credits")
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.open("credits")
 
 func _on_SettingsButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.open("settings")
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.open("settings")

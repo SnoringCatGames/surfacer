@@ -4,7 +4,7 @@ class_name ScaffoldLevel
 var level_start_time: float
 
 func _ready() -> void:
-    ScaffoldUtils.connect( \
+    Gs.utils.connect( \
             "display_resized", \
             self, \
             "_on_resized")
@@ -14,7 +14,7 @@ func _on_resized() -> void:
     pass
 
 func start() -> void:
-    level_start_time = Time.elapsed_play_time_actual_sec
+    level_start_time = Gs.time.elapsed_play_time_actual_sec
 
 func destroy() -> void:
     pass

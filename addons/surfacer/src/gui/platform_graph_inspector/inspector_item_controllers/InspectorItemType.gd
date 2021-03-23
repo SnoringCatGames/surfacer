@@ -99,5 +99,5 @@ static func get_type_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            ScaffoldUtils.error("Invalid InspectorItemType: %s" % type)
+            Gs.utils.error("Invalid InspectorItemType: %s" % type)
             return ""

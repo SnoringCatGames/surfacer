@@ -1,4 +1,5 @@
 extends Node
+class_name Analytics
 
 signal session_end
 
@@ -25,13 +26,13 @@ var _last_ping_time_sec := -INF
 var _retry_queue := []
 
 func _init() -> void:
-    ScaffoldUtils.print("Analytics._init")
+    Gs.utils.print("Analytics._init")
 
 func _process(_delta_sec: float) -> void:
     if _has_session_started and \
-            Time.elapsed_app_time_actual_sec - _last_ping_time_sec > \
+            Gs.time.elapsed_app_time_actual_sec - _last_ping_time_sec > \
                     PING_INTERVAL_SEC:
-        _last_ping_time_sec = Time.elapsed_app_time_actual_sec
+        _last_ping_time_sec = Gs.time.elapsed_app_time_actual_sec
         _ping()
 
 func start_session() -> void:
@@ -87,8 +88,8 @@ func _log_device_info() -> void:
     event( \
             "device", \
             OS.get_name(), \
-            ScaffoldUtils.get_model_name(), \
-            int(ScaffoldUtils.get_viewport_diagonal_inches() * 1000), \
+            Gs.utils.get_model_name(), \
+            int(Gs.utils.get_viewport_diagonal_inches() * 1000), \
             true)
 
 func _ping( \
@@ -98,7 +99,7 @@ func _ping( \
             "ping", \
             "ping", \
             "ping", \
-            Time.elapsed_app_time_actual_sec, \
+            Gs.time.elapsed_app_time_actual_sec, \
             true, \
             extra_details, \
             is_session_end)
@@ -107,10 +108,10 @@ func _enter_tree() -> void:
     client_id = _get_client_id()
 
 func _get_client_id() -> String:
-    var id = SaveState.get_setting(CLIENT_ID_SAVE_KEY)
+    var id = Gs.save_state.get_setting(CLIENT_ID_SAVE_KEY)
     if id == null:
         id = str(UUID.new())
-        SaveState.set_setting( \
+        Gs.save_state.set_setting( \
                 CLIENT_ID_SAVE_KEY, \
                 id)
     return id
@@ -150,15 +151,15 @@ func _get_payload( \
         # Cache buster
         "&z=%s"
     ) % [
-        ScaffoldConfig.google_analytics_id,
+        Gs.google_analytics_id,
         client_id,
         hit_type,
         details,
         viewport_size_str,
         OS.get_locale(),
-        ScaffoldConfig.app_name.http_escape(),
-        ScaffoldConfig.app_id.http_escape(),
-        ScaffoldConfig.app_version.http_escape(),
+        Gs.app_name.http_escape(),
+        Gs.app_id.http_escape(),
+        Gs.app_version.http_escape(),
         str(randi()),
     ]
 
@@ -166,12 +167,12 @@ func _trigger_collect( \
         payload: String, \
         details: String, \
         is_session_end := false) -> void:
-    ScaffoldUtils.print("Analytics._trigger_collect: " + details)
+    Gs.utils.print("Analytics._trigger_collect: " + details)
     if VERBOSE:
-        ScaffoldUtils.print("  Payload (readable):\n    " + \
+        Gs.utils.print("  Payload (readable):\n    " + \
                 payload.replace("&", "\n    &"))
     
-    if ScaffoldConfig.debug:
+    if Gs.debug:
         # Skipping Analytics collection in debug environment
         if is_session_end:
             emit_signal("session_end")
@@ -181,8 +182,8 @@ func _trigger_collect( \
     var body := payload
     var entry := _AnalyticsEntry.new(payload)
     
-    if !ScaffoldConfig.agreed_to_terms or \
-            !ScaffoldConfig.is_data_tracked:
+    if !Gs.agreed_to_terms or \
+            !Gs.is_data_tracked:
         # User hasn't agreed to data collection. Try again later.
         _retry_queue.push_back(entry)
         return
@@ -198,7 +199,7 @@ func _trigger_collect( \
     
     # FIXME:
 #    if true and \
-#            Time.elapsed_app_time_actual_sec < 61:
+#            Gs.time.elapsed_app_time_actual_sec < 61:
 #        _on_collect_request_completed( \
 #                HTTPRequest.RESULT_CANT_CONNECT, \
 #                400, \
@@ -217,7 +218,7 @@ func _trigger_collect( \
             body)
     
     if status != OK:
-        ScaffoldUtils.error( \
+        Gs.utils.error( \
                 "Analytics._trigger_collect failed: status=%d, url=%s" % \
                         [status, url], \
                 false)
@@ -232,11 +233,11 @@ func _on_collect_request_completed( \
         url: String, \
         is_session_end: bool) -> void:
     if VERBOSE:
-        ScaffoldUtils.print( \
+        Gs.utils.print( \
                 "Analytics._on_collect_request_completed: result=%d, code=%d" % \
                 [result, response_code])
-        ScaffoldUtils.print("  Body:\n    " + body.get_string_from_utf8())
-        ScaffoldUtils.print("  Headers:\n    " + ScaffoldUtils.join(headers, ",\n    "))
+        Gs.utils.print("  Body:\n    " + body.get_string_from_utf8())
+        Gs.utils.print("  Headers:\n    " + Gs.utils.join(headers, ",\n    "))
     
     request.queue_free()
     
@@ -256,12 +257,12 @@ func _on_collect_request_completed( \
             result == HTTPRequest.RESULT_TIMEOUT or \
             (response_code >= 500 and response_code < 600):
         # Probably a temporary failure! Try again later.
-        if ScaffoldConfig.debug:
-            ScaffoldUtils.print("Analytics._on_collect_request_completed: " + \
+        if Gs.debug:
+            Gs.utils.print("Analytics._on_collect_request_completed: " + \
                     "Queuing entry for re-attempt")
         _retry_queue.push_back(entry)
     else:
-        ScaffoldUtils.error( \
+        Gs.utils.error( \
                 "Analytics._on_collect_request_completed failed: " + \
                 "result=%d, code=%d, url=%s, body=%s" % [
                     result, 
@@ -293,15 +294,15 @@ func _trigger_batch(batch: Array) -> void:
     var payload := ""
     for entry in batch:
         var queue_time_ms := \
-                int((Time.elapsed_app_time_actual_sec - entry.time_sec) * 1000)
+                int((Gs.time.elapsed_app_time_actual_sec - entry.time_sec) * 1000)
         var entry_payload: String = \
                 "qt=%d&%s\n" % [queue_time_ms, entry.payload]
         payload += entry_payload
     
     if VERBOSE:
-        ScaffoldUtils.print("Analytics._trigger_batch")
-        ScaffoldUtils.print("  Payload:\n    " + payload)
-        ScaffoldUtils.print("  Payload (readable):\n    " + \
+        Gs.utils.print("Analytics._trigger_batch")
+        Gs.utils.print("  Payload:\n    " + payload)
+        Gs.utils.print("  Payload (readable):\n    " + \
                 payload.replace("&", "\n    &"))
     
     var url := GOOGLE_ANALYTICS_BATCH_URL
@@ -318,7 +319,7 @@ func _trigger_batch(batch: Array) -> void:
     
     # FIXME:
 #    if true and \
-#            Time.elapsed_app_time_actual_sec < 61:
+#            Gs.time.elapsed_app_time_actual_sec < 61:
 #        _on_batch_request_completed( \
 #                HTTPRequest.RESULT_CANT_CONNECT, \
 #                400, \
@@ -337,7 +338,7 @@ func _trigger_batch(batch: Array) -> void:
             body)
     
     if status != OK:
-        ScaffoldUtils.error( \
+        Gs.utils.error( \
                 "Analytics._trigger_batch failed: status=%d, url=%s" % \
                         [status, url], \
                 false)
@@ -351,11 +352,11 @@ func _on_batch_request_completed( \
         request: HTTPRequest, \
         url: String) -> void:
     if VERBOSE:
-        ScaffoldUtils.print( \
+        Gs.utils.print( \
                 "Analytics._on_batch_request_completed: result=%d, code=%d" % \
                 [result, response_code])
-        ScaffoldUtils.print("  Body:\n    " + body.get_string_from_utf8())
-        ScaffoldUtils.print("  Headers:\n    " + ScaffoldUtils.join(headers, ",\n    "))
+        Gs.utils.print("  Body:\n    " + body.get_string_from_utf8())
+        Gs.utils.print("  Headers:\n    " + Gs.utils.join(headers, ",\n    "))
     
     request.queue_free()
     
@@ -373,13 +374,13 @@ func _on_batch_request_completed( \
             result == HTTPRequest.RESULT_TIMEOUT or \
             (response_code >= 500 and response_code < 600):
         # Probably a temporary failure! Try again later.
-        if ScaffoldConfig.debug:
-            ScaffoldUtils.print("Analytics._on_batch_request_completed: " + \
+        if Gs.debug:
+            Gs.utils.print("Analytics._on_batch_request_completed: " + \
                     "Queuing batch for re-attempt")
         for entry in batch:
             _retry_queue.push_back(entry)
     else:
-        ScaffoldUtils.error( \
+        Gs.utils.error( \
                 "Analytics._on_batch_request_completed failed: " + \
                 "result=%d, code=%d, url=%s, body=%s" % [
                     result, 
@@ -395,4 +396,4 @@ class _AnalyticsEntry extends Reference:
     
     func _init(payload: String) -> void:
         self.payload = payload
-        self.time_sec = Time.elapsed_app_time_actual_sec
+        self.time_sec = Gs.time.elapsed_app_time_actual_sec

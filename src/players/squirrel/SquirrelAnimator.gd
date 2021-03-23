@@ -61,4 +61,4 @@ func _show_sprite(animation_name: String) -> void:
         "JumpRise":
             $JumpRise.visible = true
         _:
-            ScaffoldUtils.static_error()
+            Gs.utils.static_error()

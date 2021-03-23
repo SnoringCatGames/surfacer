@@ -8,10 +8,10 @@ export var stretches_vertically := false \
         setget _set_stretches_vertically,_get_stretches_vertically
 
 func _init() -> void:
-    add_font_override("font", ScaffoldConfig.fonts.main_m)
+    add_font_override("font", Gs.fonts.main_m)
 
 func _ready() -> void:
-    ScaffoldUtils.connect( \
+    Gs.utils.connect( \
             "display_resized", \
             self, \
             "_on_resized")
@@ -27,9 +27,9 @@ func _on_resized() -> void:
         return
     
     rect_position = \
-            (viewport.size - ScaffoldConfig.game_area_region.size) * 0.5
-    rect_min_size = ScaffoldConfig.game_area_region.size
-    rect_size = ScaffoldConfig.game_area_region.size
+            (viewport.size - Gs.game_area_region.size) * 0.5
+    rect_min_size = Gs.game_area_region.size
+    rect_size = Gs.game_area_region.size
     
     if stretches_horizontally:
         size_flags_horizontal = Control.SIZE_EXPAND_FILL

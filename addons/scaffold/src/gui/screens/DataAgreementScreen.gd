@@ -23,14 +23,14 @@ func _get_focused_button() -> ShinyButton:
             CenterContainer/VBoxContainer/AgreeButton as ShinyButton
 
 func _on_PrivacyPolicyLink_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    OS.shell_open(ScaffoldConfig.privacy_policy_url)
+    Gs.utils.give_button_press_feedback()
+    OS.shell_open(Gs.privacy_policy_url)
 
 func _on_TermsAndConditionsLink_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    OS.shell_open(ScaffoldConfig.terms_and_conditions_url)
+    Gs.utils.give_button_press_feedback()
+    OS.shell_open(Gs.terms_and_conditions_url)
 
 func _on_AgreeButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
-    ScaffoldConfig.set_agreed_to_terms()
-    Nav.open("main_menu")
+    Gs.utils.give_button_press_feedback()
+    Gs.set_agreed_to_terms()
+    Gs.nav.open("main_menu")

@@ -21,7 +21,7 @@ static func get_side_string(side: int) -> String:
         RIGHT_WALL:
             return "RIGHT_WALL"
         _:
-            ScaffoldUtils.error("Invalid SurfaceSide: %s" % side)
+            Gs.utils.error("Invalid SurfaceSide: %s" % side)
             return "???"
 
 static func get_side_prefix(side: int) -> String:
@@ -37,7 +37,7 @@ static func get_side_prefix(side: int) -> String:
         RIGHT_WALL:
             return "RW"
         _:
-            ScaffoldUtils.error("Invalid SurfaceSide: %s" % side)
+            Gs.utils.error("Invalid SurfaceSide: %s" % side)
             return "???"
 
 static func get_normal(side: int) -> Vector2:

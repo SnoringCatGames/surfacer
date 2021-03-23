@@ -1,7 +1,8 @@
 # Surfacer
 
-_**[Live demo](https://levi.dev/squirrel)**_
-_**[Demo source](https://github.com/snoringcatgames/squirrel-away)**_
+> _**[Live demo](https://levi.dev/squirrel)**_
+
+> _**[Demo source](https://github.com/snoringcatgames/squirrel-away)**_
 
 _A procedural pathfinding 2D-platformer framework for [Godot](https://godotengine.org/)._
 
@@ -9,7 +10,7 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 
 --------
 
-_**NOTE**: This framework is still in development._
+> **NOTE:** _This framework is still in development._
 
 --------
 
@@ -77,7 +78,7 @@ The edges of this graph correspond to a type of movement that the player could p
 
 ### Nodes: Parsing a Godot `TileMap` into surfaces
 
-**NOTE**: The following algorithm assumes that the given `TileMap` only uses tiles with convex collision boundaries.
+> **NOTE:** The following algorithm assumes that the given `TileMap` only uses tiles with convex collision boundaries.
 
 #### Parse individual tiles into their constituent surfaces
 
@@ -100,7 +101,7 @@ The edges of this graph correspond to a type of movement that the player could p
 
 #### Remove internal surfaces
 
-**NOTE**: This will only detect internal surface segments that are equivalent with another internal segment. But for grid-based tiling systems, this can often be enough.
+> **NOTE:** This will only detect internal surface segments that are equivalent with another internal segment. But for grid-based tiling systems, this can often be enough.
 
 -   Check for pairs of floor+ceiling segments or left-wall+right-wall segments, such that both segments share the same vertices.
 -   Remove both segments in these pairs.
@@ -129,7 +130,7 @@ The edges of this graph correspond to a type of movement that the player could p
 
 **tl;dr**: The Surfacer framework uses a procedural approach to calculate trajectories for movement between surfaces. The algorithms used rely heavily on the classic [one-dimensional equations of motion for constant acceleration](https://physics.info/motion-equations/). These trajectories are calculated to match to the same abilities and limitations that are exhibited by corresponding human-controlled movement. After the trajectory for an edge is calculated, it is translated into a simple instruction/input-key start/end sequence that should reproduce the calculated trajectory.
 
-**NOTE**: A machine-learning-based approach would probably be a good alternate way to solve this general problem. However, one perk of a procedural approach is that it's relatively easy to understand how it works and to modify it to perform better for any given edge-case (and there are a _ton_ of edge-cases).
+> **NOTE:** A machine-learning-based approach would probably be a good alternate way to solve this general problem. However, one perk of a procedural approach is that it's relatively easy to understand how it works and to modify it to perform better for any given edge-case (and there are a _ton_ of edge-cases).
 
 #### The high-level steps
 
@@ -285,7 +286,7 @@ Unfortunately, most jump/land position calculations are highly dependent on the 
   -   After going through this new left-side (right-wall), top-side waypoint (#2), we can successfully reach the destination.
   -   With the resulting scenario, we shouldn't actually move through both of the intermediate waypoints (#1 and #2). We should should instead skip the first intermediate waypoint (#1) and go straight from the origin to the second intermediate waypoint (#2).
 
-TODO: screenshot of example scenario
+> TODO: screenshot of example scenario
 
 #### Collision calculation madness
 
@@ -466,7 +467,7 @@ Some high-level planned future features include:
 
 ## Tests
 
-_**NOTE**: Sadly, the tests are not set up to automatically run on presubmit, so some of the tests are severely out-of-date and broken._
+_> **NOTE:** Sadly, the tests are not set up to automatically run on presubmit, so some of the tests are severely out-of-date and broken._
 
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
 

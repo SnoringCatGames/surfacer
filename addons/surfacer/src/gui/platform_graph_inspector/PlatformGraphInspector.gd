@@ -93,7 +93,7 @@ func _ready() -> void:
         return
     
     inspector_selector = PlatformGraphInspectorSelector.new(self)
-    ScaffoldConfig.canvas_layers.layers.annotation \
+    Gs.canvas_layers.layers.annotation \
             .add_child(inspector_selector)
     
     _populate()
@@ -471,7 +471,7 @@ func _on_find_and_expand_complete( \
     
     var item := get_selected()
     if item == null:
-        ScaffoldUtils.error("No tree item selected after search: %s" % metadata)
+        Gs.utils.error("No tree item selected after search: %s" % metadata)
         return
     var controller: InspectorItemController = item.get_metadata(0)
     
@@ -491,7 +491,7 @@ func _on_find_and_expand_complete( \
         InspectorSearchType.EDGES_GROUP:
             assert(controller.type == InspectorItemType.EDGES_GROUP)
         _:
-            ScaffoldUtils.error("Invalid InspectorSearchType: %s" % \
+            Gs.utils.error("Invalid InspectorSearchType: %s" % \
                     InspectorSearchType.get_type_string(search_type))
     
     if selection_failure_message != "":

@@ -46,7 +46,7 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
                     position, \
                     tile_map)
             draw_string( \
-                    ScaffoldConfig.fonts.main_xs, \
+                    Gs.fonts.main_xs, \
                     cell_center, \
                     str(tile_map_index), \
                     color)

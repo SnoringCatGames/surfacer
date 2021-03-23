@@ -1,4 +1,5 @@
 extends Node
+class_name ScaffoldNavigation
 
 const _DEFAULT_SCREEN_PATH_PREFIX := "res://addons/scaffold/src/gui/screens/"
 const _DEFAULT_SCREEN_FILENAMES := [
@@ -32,7 +33,7 @@ var active_screen_stack := []
 var fade_transition: FadeTransition
 
 func _init() -> void:
-    ScaffoldUtils.print("Navigation._init")
+    Gs.utils.print("ScaffoldNavigation._init")
 
 func _ready() -> void:
     fade_transition.connect( \
@@ -40,26 +41,26 @@ func _ready() -> void:
             self, \
             "_on_fade_complete")
     get_tree().set_auto_accept_quit(false)
-    Analytics.connect( \
+    Gs.analytics.connect( \
             "session_end", \
             self, \
             "_on_session_end")
-    Analytics.start_session()
+    Gs.analytics.start_session()
 
 func _notification(notification: int) -> void:
     if notification == MainLoop.NOTIFICATION_WM_GO_BACK_REQUEST:
         # Handle the Android back button to navigate within the app instead of
         # quitting the app.
         if get_active_screen_name() == "main_menu":
-            Analytics.end_session()
-            Time.set_timeout( \
+            Gs.analytics.end_session()
+            Gs.time.set_timeout( \
                     funcref(self, "_on_session_end"), \
                     SESSION_END_TIMEOUT_SEC)
         else:
             call_deferred("close_current_screen")
     elif notification == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
-        Analytics.end_session()
-        Time.set_timeout( \
+        Gs.analytics.end_session()
+        Gs.time.set_timeout( \
                 funcref(self, "_on_session_end"), \
                 SESSION_END_TIMEOUT_SEC)
 
@@ -67,12 +68,12 @@ func _on_session_end() -> void:
     get_tree().quit()
 
 func _create_screen(path: String) -> void:
-    var screen: Screen = ScaffoldUtils.add_scene( \
+    var screen: Screen = Gs.utils.add_scene( \
             null, \
             path, \
             false, \
             false)
-    ScaffoldConfig.canvas_layers.layers[screen.layer_name].add_child(screen)
+    Gs.canvas_layers.layers[screen.layer_name].add_child(screen)
     screen.pause_mode = Node.PAUSE_MODE_STOP
     screens[screen.screen_name] = screen
 
@@ -91,8 +92,8 @@ func create_screens( \
     for path in inclusions:
         _create_screen(path)
     
-    fade_transition = ScaffoldUtils.add_scene( \
-            ScaffoldConfig.canvas_layers.layers.top, \
+    fade_transition = Gs.utils.add_scene( \
+            Gs.canvas_layers.layers.top, \
             FADE_TRANSITION_PATH, \
             true, \
             false)
@@ -106,7 +107,7 @@ func open( \
             get_active_screen_name() if \
             !active_screen_stack.empty() else \
             "-"
-    ScaffoldUtils.print("Nav.open: %s=>%s" % [
+    Gs.utils.print("Nav.open: %s=>%s" % [
         previous_name,
         screen_name,
     ])
@@ -127,7 +128,7 @@ func close_current_screen(includes_fade := false) -> void:
             active_screen_stack[previous_index - 1].screen_name if \
             previous_index > 0 else \
             "-"
-    ScaffoldUtils.print("Nav.close_current_screen: %s=>%s" % [
+    Gs.utils.print("Nav.close_current_screen: %s=>%s" % [
         previous_name,
         next_name,
     ])
@@ -273,7 +274,7 @@ func _set_screen_is_open( \
         if is_open:
             next_screen._scroll_to_top()
         
-        Analytics.screen(next_screen.screen_name)
+        Gs.analytics.screen(next_screen.screen_name)
 
 func _on_screen_slide_completed( \
         _object: Object, \
@@ -298,24 +299,23 @@ func _on_fade_complete() -> void:
 
 func splash() -> void:
     open("godot_splash")
-    Audio.play_sound(ScaffoldConfig.godot_splash_sound)
+    Gs.audio.play_sound(Gs.godot_splash_sound)
     yield(get_tree() \
-            .create_timer(ScaffoldConfig.godot_splash_screen_duration_sec), \
+            .create_timer(Gs.godot_splash_screen_duration_sec), \
             "timeout")
     
-    if ScaffoldConfig.is_developer_splash_shown:
+    if Gs.is_developer_splash_shown:
         open("developer_splash")
-        Audio.play_sound(ScaffoldConfig.developer_splash_sound)
+        Gs.audio.play_sound(Gs.developer_splash_sound)
         yield(get_tree() \
-                .create_timer(ScaffoldConfig \
-                        .developer_splash_screen_duration_sec), \
+                .create_timer(Gs.developer_splash_screen_duration_sec), \
                 "timeout")
     
     var next_screen_name := \
         "main_menu" if \
-        ScaffoldConfig.agreed_to_terms or \
-        !ScaffoldConfig.is_data_tracked else \
+        Gs.agreed_to_terms or \
+        !Gs.is_data_tracked else \
         "data_agreement"
     open(next_screen_name)
     # Start playing the default music for the menu screen.
-    Audio.play_music(ScaffoldConfig.main_menu_music, true)
+    Gs.audio.play_music(Gs.main_menu_music, true)

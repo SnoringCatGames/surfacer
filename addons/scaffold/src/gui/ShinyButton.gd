@@ -8,7 +8,7 @@ const SHINE_DURATION_SEC := 0.35
 const SHINE_INTERVAL_SEC := 3.5
 const COLOR_PULSE_DURATION_SEC := 1.2
 const COLOR_PULSE_INTERVAL_SEC := 2.4
-var color_pulse_color: Color = ScaffoldConfig.shiny_button_highlight_color
+var color_pulse_color: Color = Gs.shiny_button_highlight_color
 
 export var texture: Texture setget _set_texture,_get_texture
 export var texture_scale := Vector2(1.0, 1.0) setget \
@@ -52,7 +52,7 @@ func _ready() -> void:
             "button_down", self, "_on_button_down")
     $MarginContainer/TopButton.connect( \
             "button_up", self, "_on_button_up")
-    ScaffoldUtils.connect( \
+    Gs.utils.connect( \
             "display_resized", self, "update")
     update()
 
@@ -76,31 +76,31 @@ func _deferred_update() -> void:
     $MarginContainer/TextureWrapper/TextureRect.rect_size = \
             rect_size / texture_scale
     var font: Font = \
-            ScaffoldConfig.fonts.main_xl if \
+            Gs.fonts.main_xl if \
             is_font_xl else \
-            ScaffoldConfig.fonts.main_m
+            Gs.fonts.main_m
     $MarginContainer/BottomButton.add_font_override( \
             "font", \
             font)
     
     shine_tween.stop_all()
-    Time.clear_interval(shine_interval_id)
+    Gs.time.clear_interval(shine_interval_id)
     
     color_pulse_tween.stop_all()
-    Time.clear_interval(color_pulse_interval_id)
+    Gs.time.clear_interval(color_pulse_interval_id)
     $MarginContainer/BottomButton.add_stylebox_override( \
             "normal", \
             button_style_normal)
     
     if is_shiny:
         _trigger_shine()
-        shine_interval_id = Time.set_interval( \
+        shine_interval_id = Gs.time.set_interval( \
                 funcref(self, "_trigger_shine"), \
                 SHINE_INTERVAL_SEC)
     
     if includes_color_pulse:
         _trigger_color_pulse()
-        color_pulse_interval_id = Time.set_interval( \
+        color_pulse_interval_id = Gs.time.set_interval( \
                 funcref(self, "_trigger_color_pulse"), \
                 COLOR_PULSE_INTERVAL_SEC)
 
@@ -140,7 +140,7 @@ func _trigger_color_pulse() -> void:
     var color_original: Color = \
             button_style_normal.bg_color if \
             button_style_normal is StyleBoxFlat else \
-            ScaffoldConfig.button_normal_color
+            Gs.button_normal_color
     var color_pulse: Color = color_pulse_color
     var pulse_half_duration := COLOR_PULSE_DURATION_SEC / 2.0
     

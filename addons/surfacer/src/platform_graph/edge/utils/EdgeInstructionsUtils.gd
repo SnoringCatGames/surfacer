@@ -13,9 +13,9 @@ class_name EdgeInstructionsUtils
 #   mechanism?
 # - Though I may need to always at least have _some_ small value here...
 # FIXME: Tweak this.
-const JUMP_DURATION_INCREASE_EPSILON := Time.PHYSICS_TIME_STEP_SEC * 0.5
+const JUMP_DURATION_INCREASE_EPSILON := Gs.time.PHYSICS_TIME_STEP_SEC * 0.5
 const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := \
-        Time.PHYSICS_TIME_STEP_SEC * 2.5
+        Gs.time.PHYSICS_TIME_STEP_SEC * 2.5
 
 # Translates movement data from a form that is more useful when calculating the
 # movement to a form that is more useful when executing the movement.
@@ -177,7 +177,7 @@ static func sub_instructions( \
         # FIXME: REMOVE: This shouldn't be needed anymore.
         assert(base_instruction.time - start_time >= 0.0)
     
-    ScaffoldUtils.concat( \
+    Gs.utils.concat( \
             instructions, \
             remaining_instructions)
     

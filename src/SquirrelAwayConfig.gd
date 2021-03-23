@@ -228,4 +228,4 @@ var app_manifest := {
 }
 
 func _init() -> void:
-    ScaffoldUtils.print("SquirrelAwayConfig._init")
+    Gs.utils.print("SquirrelAwayConfig._init")

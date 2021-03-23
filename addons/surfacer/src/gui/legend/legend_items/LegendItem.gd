@@ -32,7 +32,7 @@ func _enter_tree() -> void:
     label.rect_size.y = SHAPE_REGION_HEIGHT
     label.valign = Label.VALIGN_CENTER
     label.max_lines_visible = 2
-    label.add_font_override("font", ScaffoldConfig.fonts.main_xs)
+    label.add_font_override("font", Gs.fonts.main_xs)
     label.text = text
     add_child(label)
 
@@ -44,4 +44,4 @@ func _draw() -> void:
 func _draw_shape( \
         center: Vector2, \
         size: Vector2) -> void:
-    ScaffoldUtils.error("Abstract LegendItem._draw_shape is not implemented")
+    Gs.utils.error("Abstract LegendItem._draw_shape is not implemented")

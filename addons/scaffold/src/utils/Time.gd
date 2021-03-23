@@ -1,4 +1,5 @@
 extends Node
+class_name Time
 
 const _ADDITIONAL_FRAMERATE_MULTIPLIER_FOR_DEBUGGING := 1.0
 
@@ -36,7 +37,7 @@ var elapsed_play_time_modified_sec: float \
         setget ,_get_elapsed_play_time_modified_sec
 
 func _init() -> void:
-    ScaffoldUtils.print("Time._init")
+    Gs.utils.print("Time._init")
     
     pause_mode = Node.PAUSE_MODE_PROCESS
 
@@ -49,7 +50,7 @@ func _ready() -> void:
     _elapsed_render_time_sec = 0.0
     _elapsed_latest_time_sec = 0.0
     
-    ScaffoldUtils.on_time_ready()
+    Gs.utils.on_time_ready()
 
 func _process(delta_sec: float) -> void:
     _elapsed_render_time_sec += delta_sec
@@ -132,8 +133,8 @@ class _Timeout extends Reference:
         self.time_sec = time_sec
         self.arguments = arguments
         
-        Time._last_timeout_id += 1
-        self.id = Time._last_timeout_id
+        Gs.time._last_timeout_id += 1
+        self.id = Gs.time._last_timeout_id
     
     func trigger() -> void:
         if !callback.is_valid():
@@ -155,7 +156,7 @@ class _Timeout extends Reference:
                 callback.call_func(arguments[0], arguments[1], arguments[2], \
                         arguments[3], arguments[4])
             _:
-                ScaffoldUtils.error()
+                Gs.utils.error()
 
 func set_interval( \
         callback: FuncRef, \
@@ -186,17 +187,17 @@ class _Interval extends Reference:
         self.interval_sec = interval_sec
         self.arguments = arguments
         self.next_trigger_time_sec = \
-                Time._elapsed_latest_time_sec + interval_sec
+                Gs.time._elapsed_latest_time_sec + interval_sec
         
-        Time._last_timeout_id += 1
-        self.id = Time._last_timeout_id
+        Gs.time._last_timeout_id += 1
+        self.id = Gs.time._last_timeout_id
     
     func trigger() -> void:
         if !callback.is_valid():
             return
         
         next_trigger_time_sec = \
-                Time._elapsed_latest_time_sec + interval_sec
+                Gs.time._elapsed_latest_time_sec + interval_sec
         match arguments.size():
             0:
                 callback.call_func()
@@ -213,7 +214,7 @@ class _Interval extends Reference:
                 callback.call_func(arguments[0], arguments[1], arguments[2], \
                         arguments[3], arguments[4])
             _:
-                ScaffoldUtils.error()
+                Gs.utils.error()
 
 func throttle( \
         callback: FuncRef, \
@@ -258,22 +259,22 @@ class _Throttler extends Reference:
     func on_call() -> void:
         if !_is_callback_scheduled:
             var current_call_time_sec: float = \
-                    Time.elapsed_app_time_actual_sec
+                    Gs.time.elapsed_app_time_actual_sec
             var next_call_time_sec := _last_call_time_sec + _interval_sec
             if current_call_time_sec > next_call_time_sec:
                 _trigger_callback()
             elif _invokes_at_end:
-                _last_timeout_id = Time.set_timeout( \
+                _last_timeout_id = Gs.time.set_timeout( \
                         _trigger_callback_callback, \
                         next_call_time_sec - current_call_time_sec)
                 _is_callback_scheduled = true
     
     func cancel() -> void:
-        Time.clear_timeout(_last_timeout_id)
+        Gs.time.clear_timeout(_last_timeout_id)
         _is_callback_scheduled = false
     
     func _trigger_callback() -> void:
-        _last_call_time_sec = Time.elapsed_app_time_actual_sec
+        _last_call_time_sec = Gs.time.elapsed_app_time_actual_sec
         _is_callback_scheduled = false
         if _callback.is_valid():
             _callback.call_func()

@@ -62,7 +62,7 @@ static func _concatenate_step_frame_positions( \
     var combined_positions := []
     
     for step in steps:
-        ScaffoldUtils.concat(combined_positions, step.frame_positions)
+        Gs.utils.concat(combined_positions, step.frame_positions)
         # Since the start-position of the next step is always the same as the
         # end-position of the previous step, we can de-dup them here.
         combined_positions.remove(combined_positions.size() - 1)
@@ -77,7 +77,7 @@ static func _concatenate_step_frame_velocities( \
     var combined_velocities := []
     
     for step in steps:
-        ScaffoldUtils.concat(combined_velocities, step.frame_velocities)
+        Gs.utils.concat(combined_velocities, step.frame_velocities)
         # Since the start-position of the next step is always the same as the
         # end-position of the previous step, we can de-dup them here.
         combined_velocities.remove(combined_velocities.size() - 1)
@@ -106,13 +106,13 @@ static func sub_trajectory( \
         start_time: float) -> EdgeTrajectory:
     assert(base_trajectory.frame_continuous_positions_from_steps.size() == \
             base_trajectory.frame_continuous_velocities_from_steps.size())
-    var start_index := ceil(start_time / Time.PHYSICS_TIME_STEP_SEC)
+    var start_index := ceil(start_time / Gs.time.PHYSICS_TIME_STEP_SEC)
     var frame_continuous_positions_from_steps := \
-            ScaffoldUtils.sub_pool_vector2_array( \
+            Gs.utils.sub_pool_vector2_array( \
                     base_trajectory.frame_continuous_positions_from_steps, \
                     start_index)
     var frame_continuous_velocities_from_steps := \
-            ScaffoldUtils.sub_pool_vector2_array( \
+            Gs.utils.sub_pool_vector2_array( \
                     base_trajectory.frame_continuous_velocities_from_steps, \
                     start_index)
     # TODO: Try to use frame_continuous_positions_from_steps to detect which

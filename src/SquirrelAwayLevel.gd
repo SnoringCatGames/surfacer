@@ -7,8 +7,8 @@ const _WELCOME_PANEL_RESOURCE_PATH := \
 func start() -> void:
     .start()
     
-    var welcome_panel: WelcomePanel = ScaffoldUtils.add_scene( \
-            ScaffoldConfig.canvas_layers.layers.hud, \
+    var welcome_panel: WelcomePanel = Gs.utils.add_scene( \
+            Gs.canvas_layers.layers.hud, \
             _WELCOME_PANEL_RESOURCE_PATH)
     SurfacerConfig.welcome_panel = welcome_panel
     
@@ -36,7 +36,7 @@ func start() -> void:
     
     SurfacerConfig.annotators.on_level_ready()
     
-    Audio.play_music("on_a_quest")
+    Gs.audio.play_music("on_a_quest")
 
 func destroy() -> void:
     .destroy()
@@ -45,4 +45,4 @@ func destroy() -> void:
 func quit() -> void:
     .quit()
     destroy()
-    Nav.open("main_menu")
+    Gs.nav.open("main_menu")

@@ -59,21 +59,21 @@ func _get_focused_button() -> ShinyButton:
             CenterContainer/VBoxContainer/CloseButton as ShinyButton
 
 func _on_CloseButton_pressed():
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     
     if params.has("close_callback"):
         params["close_callback"].call_func()
     
     if params.has("next_screen"):
-        Nav.close_current_screen()
-        Time.set_timeout( \
+        Gs.nav.close_current_screen()
+        Gs.time.set_timeout( \
                 funcref(Nav, "open"), \
-                Nav.SCREEN_SLIDE_DURATION_SEC / 2.0, \
+                Gs.nav.SCREEN_SLIDE_DURATION_SEC / 2.0, \
                 [params["next_screen"]])
     else:
-        Nav.close_current_screen()
+        Gs.nav.close_current_screen()
 
 func _on_NotificationLink_pressed():
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     
     OS.shell_open(params["link_href"])

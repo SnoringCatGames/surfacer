@@ -129,10 +129,10 @@ func create_surface(params: Dictionary) -> Surface:
             
         SurfaceSide.CEILING:
             # TODO: Implement.
-            ScaffoldUtils.static_error()
+            Gs.utils.static_error()
             
         _:
-            ScaffoldUtils.static_error()
+            Gs.utils.static_error()
     
     var vertices := [first_end, last_end]
     var tile_map: TileMap = null

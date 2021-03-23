@@ -171,7 +171,7 @@ static func draw_surface( \
     if vertices.size() > 1:
         for i in range(SURFACE_DEPTH_DIVISIONS_COUNT):
             translation = surface_depth_division_offset * i
-            polyline = ScaffoldUtils.translate_polyline(vertices, translation)
+            polyline = Gs.utils.translate_polyline(vertices, translation)
             progress = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
             color.a = alpha_start + progress * (alpha_end - alpha_start)
             canvas.draw_polyline( \
@@ -337,7 +337,7 @@ static func draw_instruction_indicator( \
         "move_right":
             end_offset_from_mid = Vector2(half_length, 0.0)
         _:
-            ScaffoldUtils.error("Invalid input_key: %s" % input_key)
+            Gs.utils.error("Invalid input_key: %s" % input_key)
     
     var start := position - end_offset_from_mid
     var end := position + end_offset_from_mid
@@ -501,7 +501,7 @@ static func draw_shape_outline( \
                 color, \
                 thickness)
     else:
-        ScaffoldUtils.error( \
+        Gs.utils.error( \
                 "Invalid Shape2D provided for draw_shape: %s. The " + \
                 "supported shapes are: CircleShape2D, CapsuleShape2D, " + \
                 "RectangleShape2D." % shape)
@@ -837,7 +837,7 @@ static func draw_edge( \
                 includes_waypoints, \
                 includes_instruction_indicators)
     else:
-        ScaffoldUtils.error("Unexpected Edge subclass: %s" % edge)
+        Gs.utils.error("Unexpected Edge subclass: %s" % edge)
 
 static func _draw_edge_from_end_points( \
         canvas: CanvasItem, \
@@ -1043,5 +1043,5 @@ static func _get_edge_trajectory_vertices( \
             ])
         EdgeType.UNKNOWN, \
         _:
-            ScaffoldUtils.error()
+            Gs.utils.error()
             return PoolVector2Array()

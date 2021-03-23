@@ -4,7 +4,7 @@ class_name PlayerPointerHandler
 const DRAG_THROTTLE_INTERVAL_SEC := 0.1
 
 var player
-var throttled_set_new_drag_position: FuncRef = Time.throttle( \
+var throttled_set_new_drag_position: FuncRef = Gs.time.throttle( \
         funcref(self, "set_new_drag_position"), \
         DRAG_THROTTLE_INTERVAL_SEC)
 var last_pointer_drag_position := Vector2.INF
@@ -26,7 +26,7 @@ func _unhandled_input(event: InputEvent) -> void:
             !event.pressed and \
             !event.control:
         event_type = "MOUSE_UP   "
-        pointer_up_position = ScaffoldUtils.get_global_touch_position(event)
+        pointer_up_position = Gs.utils.get_global_touch_position(event)
     
     # Mouse-down: Position pre-selection.
     if event is InputEventMouseButton and \
@@ -35,42 +35,42 @@ func _unhandled_input(event: InputEvent) -> void:
             !event.control:
         event_type = "MOUSE_DOWN "
         pointer_drag_position = \
-                ScaffoldUtils.get_global_touch_position(event)
+                Gs.utils.get_global_touch_position(event)
     
     # Mouse-move: Position pre-selection.
     if event is InputEventMouseMotion and \
             last_pointer_drag_position != Vector2.INF:
         event_type = "MOUSE_DRAG "
         pointer_drag_position = \
-                ScaffoldUtils.get_global_touch_position(event)
+                Gs.utils.get_global_touch_position(event)
     
     # Touch-up: Position selection.
     if event is InputEventScreenTouch and \
             !event.pressed:
         event_type = "TOUCH_UP   "
-        pointer_up_position = ScaffoldUtils.get_global_touch_position(event)
+        pointer_up_position = Gs.utils.get_global_touch_position(event)
     
     # Touch-down: Position pre-selection.
     if event is InputEventScreenTouch and \
             event.pressed:
         event_type = "TOUCH_DOWN "
-        pointer_drag_position = ScaffoldUtils.get_global_touch_position(event)
+        pointer_drag_position = Gs.utils.get_global_touch_position(event)
     
     # Touch-move: Position pre-selection.
     if event is InputEventScreenDrag:
         event_type = "TOUCH_DRAG "
-        pointer_drag_position = ScaffoldUtils.get_global_touch_position(event)
+        pointer_drag_position = Gs.utils.get_global_touch_position(event)
     
 #    if pointer_up_position != Vector2.INF or \
 #            pointer_drag_position != Vector2.INF:
 #        player.print_msg("%s:         %8.3fs", [ \
 #                event_type, \
-#                Time.elapsed_play_time_actual_sec, \
+#                Gs.time.elapsed_play_time_actual_sec, \
 #            ])
     
     if pointer_up_position != Vector2.INF:
         last_pointer_drag_position = Vector2.INF
-        Time.cancel_pending_throttle(throttled_set_new_drag_position)
+        Gs.time.cancel_pending_throttle(throttled_set_new_drag_position)
         
         player.new_selection_target = pointer_up_position
         player.new_selection_position = \

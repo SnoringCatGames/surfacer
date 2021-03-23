@@ -1,4 +1,5 @@
 extends Node
+class_name Audio
 
 const MUSIC_CROSS_FADE_DURATION_SEC := 2.0
 const SILENT_VOLUME_DB := -80.0
@@ -31,7 +32,7 @@ var is_sound_effects_enabled := true setget \
         _set_is_sound_effects_enabled,_get_is_sound_effects_enabled
 
 func _init() -> void:
-    ScaffoldUtils.print("Audio._init")
+    Gs.utils.print("Audio._init")
 
 func _enter_tree() -> void:
     _fade_out_tween = Tween.new()
@@ -150,7 +151,7 @@ func _cross_fade_music( \
     if previous_music_player != null and \
             previous_music_player != current_music_player and \
             previous_music_player.playing:
-        ScaffoldUtils.error( \
+        Gs.utils.error( \
                 "Previous music still playing when trying to play new music.")
         previous_music_player.stop()
     

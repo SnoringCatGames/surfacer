@@ -12,7 +12,7 @@ func _enter_tree() -> void:
     add_child(tween)
 
 func _ready() -> void:
-    ScaffoldUtils.connect( \
+    Gs.utils.connect( \
             "display_resized", \
             self, \
             "_on_resized")
@@ -34,7 +34,7 @@ func _fade_out() -> void:
     if tween.is_connected("tween_completed", self, "_on_tween_complete"):
         tween.disconnect("tween_completed", self, "_on_tween_complete")
     tween.connect("tween_completed", self, "_fade_in")
-    _set_mask(ScaffoldConfig.fade_out_transition_texture)
+    _set_mask(Gs.fade_out_transition_texture)
     tween.interpolate_method( \
             self, \
             "_set_cutoff", \
@@ -54,7 +54,7 @@ func _fade_in( \
     if tween.is_connected("tween_completed", self, "_on_tween_complete"):
         tween.disconnect("tween_completed", self, "_on_tween_complete")
     tween.connect("tween_completed", self, "_on_tween_complete")
-    _set_mask(ScaffoldConfig.fade_in_transition_texture)
+    _set_mask(Gs.fade_in_transition_texture)
     tween.interpolate_method( \
             self, \
             "_set_cutoff", \

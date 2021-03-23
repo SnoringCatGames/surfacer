@@ -1,4 +1,5 @@
 extends Node
+class_name SaveState
 
 const CONFIG_FILE_PATH := "user://settings.cfg"
 const SETTINGS_SECTION_KEY := "settings"
@@ -6,7 +7,7 @@ const SETTINGS_SECTION_KEY := "settings"
 var config: ConfigFile
 
 func _init() -> void:
-    ScaffoldUtils.print("SaveSate._init")
+    Gs.utils.print("SaveSate._init")
     _load_config()
 
 func _load_config() -> void:
@@ -14,12 +15,12 @@ func _load_config() -> void:
     var status := config.load(CONFIG_FILE_PATH)
     if status != OK and \
             status != ERR_FILE_NOT_FOUND:
-        ScaffoldUtils.error("An error occurred loading game state: %s" % status)
+        Gs.utils.error("An error occurred loading game state: %s" % status)
 
 func _save_config() -> void:
     var status := config.save(CONFIG_FILE_PATH)
     if status != OK:
-        ScaffoldUtils.error("An error occurred saving game state: %s" % status)
+        Gs.utils.error("An error occurred saving game state: %s" % status)
 
 func set_setting( \
         setting_key: String, \

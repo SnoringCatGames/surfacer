@@ -7,15 +7,15 @@ var is_ready := false
 var text := ""
 
 func _enter_tree() -> void:
-    position.y = max(CORNER_OFFSET.y, ScaffoldUtils.get_safe_area_margin_top())
-    position.x = max(CORNER_OFFSET.x, ScaffoldUtils.get_safe_area_margin_left())
+    position.y = max(CORNER_OFFSET.y, Gs.utils.get_safe_area_margin_top())
+    position.x = max(CORNER_OFFSET.x, Gs.utils.get_safe_area_margin_left())
     
     _log_device_settings()
 
 func _ready() -> void:
     is_ready = true
-    Time.set_timeout(funcref(self, "_delayed_init"), 0.8)
-    ScaffoldUtils.connect( \
+    Gs.time.set_timeout(funcref(self, "_delayed_init"), 0.8)
+    Gs.utils.connect( \
             "display_resized", \
             self, \
             "_on_resized")
@@ -28,49 +28,49 @@ func _on_resized() -> void:
 
 func _delayed_init() -> void:
     $PanelContainer/ScrollContainer/Label.text = text
-    Time.set_timeout(funcref(self, "_scroll_to_bottom"), 0.2)
+    Gs.time.set_timeout(funcref(self, "_scroll_to_bottom"), 0.2)
 
 func add_message(message: String) -> void:
     text += "> " + message + "\n"
     if is_ready:
         $PanelContainer/ScrollContainer/Label.text = text
-        Time.set_timeout(funcref(self, "_scroll_to_bottom"), 0.2)
+        Gs.time.set_timeout(funcref(self, "_scroll_to_bottom"), 0.2)
 
 func _scroll_to_bottom() -> void:
     $PanelContainer/ScrollContainer.scroll_vertical = \
             $PanelContainer/ScrollContainer.get_v_scrollbar().max_value
 
 func _log_device_settings() -> void:
-    var utils_model_name: String = ScaffoldUtils.get_model_name()
-    var utils_screen_scale: float = ScaffoldUtils.get_screen_scale()
+    var utils_model_name: String = Gs.utils.get_model_name()
+    var utils_screen_scale: float = Gs.utils.get_screen_scale()
     var ios_resolution: String = \
-            ScaffoldUtils._get_ios_screen_ppi() if \
-            ScaffoldUtils.get_is_ios_device() else \
+            Gs.utils._get_ios_screen_ppi() if \
+            Gs.utils.get_is_ios_device() else \
             "N/A"
     add_message("** Welcome to the debug panel! **")
     add_message( \
             ("Device settings:" + \
             "\n    OS.get_name()=%s" + \
             "\n    OS.get_model_name()=%s" + \
-            "\n    ScaffoldUtils.get_model_name()=%s" + \
+            "\n    Gs.utils.get_model_name()=%s" + \
             "\n    get_viewport().size=(%4d,%4d)" + \
             "\n    OS.window_size=%s" + \
             "\n    OS.get_real_window_size()=%s" + \
             "\n    OS.get_screen_size()=%s" + \
-            "\n    ScaffoldUtils.get_screen_scale()=%s" + \
+            "\n    Gs.utils.get_screen_scale()=%s" + \
             "\n    OS.get_screen_scale()=%s" + \
-            "\n    ScaffoldUtils.get_screen_ppi()=%s" + \
-            "\n    ScaffoldUtils.get_viewport_ppi()=%s" + \
+            "\n    Gs.utils.get_screen_ppi()=%s" + \
+            "\n    Gs.utils.get_viewport_ppi()=%s" + \
             "\n    OS.get_screen_dpi()=%s" + \
             "\n    IosResolutions.get_screen_ppi()=%s" + \
-            "\n    ScaffoldUtils.get_viewport_size_inches()=%s" + \
-            "\n    ScaffoldUtils.get_viewport_diagonal_inches()=%s" + \
-            "\n    ScaffoldUtils.get_viewport_safe_area()=%s" + \
+            "\n    Gs.utils.get_viewport_size_inches()=%s" + \
+            "\n    Gs.utils.get_viewport_diagonal_inches()=%s" + \
+            "\n    Gs.utils.get_viewport_safe_area()=%s" + \
             "\n    OS.get_window_safe_area()=%s" + \
-            "\n    ScaffoldUtils.get_safe_area_margin_top()=%s" + \
-            "\n    ScaffoldUtils.get_safe_area_margin_bottom()=%s" + \
-            "\n    ScaffoldUtils.get_safe_area_margin_left()=%s" + \
-            "\n    ScaffoldUtils.get_safe_area_margin_right()=%s" + \
+            "\n    Gs.utils.get_safe_area_margin_top()=%s" + \
+            "\n    Gs.utils.get_safe_area_margin_bottom()=%s" + \
+            "\n    Gs.utils.get_safe_area_margin_left()=%s" + \
+            "\n    Gs.utils.get_safe_area_margin_right()=%s" + \
             "") % [
                 OS.get_name(),
                 OS.get_model_name(),
@@ -82,18 +82,18 @@ func _log_device_settings() -> void:
                 OS.get_screen_size(),
                 utils_screen_scale,
                 OS.get_screen_scale(),
-                ScaffoldUtils.get_screen_ppi(),
-                ScaffoldUtils.get_viewport_ppi(),
+                Gs.utils.get_screen_ppi(),
+                Gs.utils.get_viewport_ppi(),
                 OS.get_screen_dpi(),
                 ios_resolution,
-                ScaffoldUtils.get_viewport_size_inches(),
-                ScaffoldUtils.get_viewport_diagonal_inches(),
-                ScaffoldUtils.get_viewport_safe_area(),
+                Gs.utils.get_viewport_size_inches(),
+                Gs.utils.get_viewport_diagonal_inches(),
+                Gs.utils.get_viewport_safe_area(),
                 OS.get_window_safe_area(),
-                ScaffoldUtils.get_safe_area_margin_top(),
-                ScaffoldUtils.get_safe_area_margin_bottom(),
-                ScaffoldUtils.get_safe_area_margin_left(),
-                ScaffoldUtils.get_safe_area_margin_right(),
+                Gs.utils.get_safe_area_margin_top(),
+                Gs.utils.get_safe_area_margin_bottom(),
+                Gs.utils.get_safe_area_margin_left(),
+                Gs.utils.get_safe_area_margin_right(),
             ])
 
 func _on_PanelContainer_gui_input(event: InputEvent) -> void:

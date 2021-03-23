@@ -108,7 +108,7 @@ func select() -> void:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    ScaffoldUtils.error( \
+    Gs.utils.error( \
             "Abstract InspectorItemController" + \
             ".find_and_expand_controller is not implemented")
     return false
@@ -133,16 +133,16 @@ func _find_and_expand_controller_recursive_wrapper( \
 func _find_and_expand_controller_recursive( \
         search_type: int, \
         metadata: Dictionary) -> void:
-    ScaffoldUtils.error( \
+    Gs.utils.error( \
             "Abstract InspectorItemController" + \
             "._find_and_expand_controller_recursive is not implemented")
 
 func get_text() -> String:
-    ScaffoldUtils.error("Abstract InspectorItemController.get_text is not implemented")
+    Gs.utils.error("Abstract InspectorItemController.get_text is not implemented")
     return ""
 
 func get_description() -> String:
-    ScaffoldUtils.error( \
+    Gs.utils.error( \
             "Abstract InspectorItemController.get_description is not " + \
             "implemented")
     return ""
@@ -190,13 +190,13 @@ func _update_text() -> void:
             get_text())
 
 func _create_children_inner() -> void:
-    ScaffoldUtils.error("Abstract InspectorItemController._create_children_inner is not implemented")
+    Gs.utils.error("Abstract InspectorItemController._create_children_inner is not implemented")
 
 func _destroy_children_inner() -> void:
-    ScaffoldUtils.error("Abstract InspectorItemController._destroy_children_inner is not implemented")
+    Gs.utils.error("Abstract InspectorItemController._destroy_children_inner is not implemented")
 
 func get_annotation_elements() -> Array:
-    ScaffoldUtils.error("Abstract InspectorItemController.get_annotation_elements is not implemented")
+    Gs.utils.error("Abstract InspectorItemController.get_annotation_elements is not implemented")
     return []
 
 # Conditionally prints the given message, depending on the Player's

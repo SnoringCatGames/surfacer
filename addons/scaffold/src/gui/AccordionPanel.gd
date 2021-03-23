@@ -81,15 +81,15 @@ func _create_header() -> void:
     _header.connect("pressed", self, "_on_header_pressed")
     
     var header_style_normal := StyleBoxFlat.new()
-    header_style_normal.bg_color = ScaffoldConfig.option_button_normal_color
+    header_style_normal.bg_color = Gs.option_button_normal_color
     _header.add_stylebox_override("normal", header_style_normal)
     
     var header_style_hover := StyleBoxFlat.new()
-    header_style_hover.bg_color = ScaffoldConfig.option_button_hover_color
+    header_style_hover.bg_color = Gs.option_button_hover_color
     _header.add_stylebox_override("hover", header_style_hover)
     
     var header_style_pressed := StyleBoxFlat.new()
-    header_style_pressed.bg_color = ScaffoldConfig.option_button_pressed_color
+    header_style_pressed.bg_color = Gs.option_button_pressed_color
     _header.add_stylebox_override("pressed", header_style_pressed)
     
     _header_hbox = HBoxContainer.new()
@@ -228,7 +228,7 @@ func _trigger_open_change(is_tweening: bool) -> void:
                 Tween.EASE_IN_OUT)
         if is_open:
             var scroll_container: ScrollContainer = \
-                    Nav.get_active_screen().scroll_container
+                    Gs.nav.get_active_screen().scroll_container
             _start_scroll_vertical = scroll_container.scroll_vertical
             _is_open_tween.interpolate_method( \
                     self, \
@@ -268,12 +268,12 @@ func _interpolate_caret_rotation(rotation: float) -> void:
 # off the top of the screen!
 func _interpolate_scroll(open_ratio: float) -> void:
     var scroll_container: ScrollContainer = \
-            Nav.get_active_screen().scroll_container
+            Gs.nav.get_active_screen().scroll_container
     if scroll_container == null:
         return
     
     var accordion_position_y_in_scroll_container: int = \
-            ScaffoldUtils.get_node_vscroll_position(scroll_container, self)
+            Gs.utils.get_node_vscroll_position(scroll_container, self)
     var accordion_height := _projected_control.rect_size.y
     if includes_header:
         accordion_height += _header.rect_size.y
@@ -319,7 +319,7 @@ func _get_configuration_warning() -> String:
     return configuration_warning
 
 func _on_header_pressed() -> void:
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     toggle()
 
 func toggle() -> void:

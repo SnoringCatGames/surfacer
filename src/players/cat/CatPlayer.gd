@@ -10,13 +10,13 @@ func _init().("cat") -> void:
 
 func _process_sfx() -> void:
     if just_triggered_jump:
-        Audio.play_sound("cat_jump")
+        Gs.audio.play_sound("cat_jump")
     
     if surface_state.just_left_air:
-        Audio.play_sound("cat_land")
+        Gs.audio.play_sound("cat_land")
     
     if just_collided_with_new_computer_player:
-        Audio.play_sound("contact")
+        Gs.audio.play_sound("contact")
 
 func _update_surface_state(preserves_just_changed_state := false) -> void:
     ._update_surface_state(preserves_just_changed_state)

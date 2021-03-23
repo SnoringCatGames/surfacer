@@ -1,6 +1,6 @@
 # Godot Scaffold
 
-_**[Example app](https://github.com/snoringcatgames/squirrel-away)**_
+> _**[Example app](https://github.com/snoringcatgames/squirrel-away)**_
 
 This is an opinionated framework that provides a bunch of general-purpose application scaffolding and utility functionality for Godot games.
 
@@ -20,16 +20,16 @@ Some of these are just my personal preference, some are important for the framew
     -   Main Scene
 -   Application > Boot Splash:
     -   Image
-    -   Bg Color: Must match `ScaffoldConfig.screen_background_color`
+    -   Bg Color: Must match `Gs.screen_background_color`
 -   Rendering > Quality:
     -   Use Pixel Snap: true
     -   Framebuffer Allocation: 2D Without Sampling
     -   Framebuffer Allocation.mobile: 2D Without Sampling
 -   Rendering > Environment:
-    -   Default Clear Color: Match `ScaffoldConfig.screen_background_color`
+    -   Default Clear Color: Match `Gs.screen_background_color`
     -   Default Environment: I usually move this out from the top-level directory.
 -   Display > Window:
-    -   Size > Width/Height: Must match `ScaffoldConfig.default_game_area_size`.
+    -   Size > Width/Height: Must match `Gs.default_game_area_size`.
     -   Stretch > Mode: disabled
     -   Stretch > Aspect: expand
 -   Input Devices > Pointing:
@@ -38,11 +38,32 @@ Some of these are just my personal preference, some are important for the framew
 -   Layer Names:
     -   Name these!
 
-### `ScaffoldConfig`
+### `Gs`
 
-Configure the Godot Scaffold framework by calling `ScaffoldBootstrap.on_app_ready` at the start of your Main Scene.
+All of the Godot Scaffold functionality is globally accessible through the `Gs` AutoLoad.
 
-TODO
+-   Define `Gs` as an AutoLoad (in Project Settings).
+    -   It should point to the path `res://addons/scaffold/src/ScaffoldConfig.gd`.
+    -   It should be the first AutoLoad in the list.
+-   Configure the Godot Scaffold framework by calling `Gs.on_app_ready` at the start of your Main Scene.
+
+> **NOTE:** `Gs` stands for "Godot Scaffold", in case that's helful to know!
+
+If you want to override or extend any Godot Scaffold functionality, you should be able to configure a replacement for the corresponding object. But make sure that your replacement `extends` the underlying Godot Scaffold class!
+
+Here's an example of overriding some Godot Scaffold functionality:
+```
+var my_app_manifest := {
+    ...
+    utils = MyCustomUtils.new(),
+}
+ScaffoldBootstrap.new().on_app_ready(my_app_manifest, self)
+
+class MyCustomUtils extends ScaffoldUtils:
+    ...
+```
+
+> TODO: Enumerate and describe each ScaffoldConfig property.
 
 ### Handling viewport scaling
 
@@ -69,7 +90,7 @@ This provides limited flexibility in how far the camera is zoomed. That is, you 
 
 #### Constraints for how you define your GUI layouts
 
-TODO
+> TODO: List any other constraints/tips.
 
 -   Don't specify custom positions, if at all possible. For example:
     -   Instead of encoding a margin/offset, use a VBoxContainer or HBoxContainer parent, and include an empty spacer sibling with size or min-size.

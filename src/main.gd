@@ -31,9 +31,9 @@ class_name Main
 # ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  ---  --
 # ### Small fixes to do next: ###
 # 
-# - Remove Time.PHYSICS_TIME_STEP_SEC.
+# - Remove Gs.time.PHYSICS_TIME_STEP_SEC.
 #   - Update things to not depend on that being constant.
-#   - Instead, reference the latest delta passed to Time._physics_process.
+#   - Instead, reference the latest delta passed to Gs.time._physics_process.
 #   - Some devices can't keep up with 60fps, and they will have a higher physics
 #     frame delta.
 # 
@@ -489,12 +489,12 @@ class_name Main
 ###############################################################################
 
 func _init() -> void:
-    ScaffoldUtils.print("Main._init")
+    Gs.utils.print("Main._init")
 
 func _enter_tree() -> void:
     var surfacer_bootstrap := SurfacerBootstrap.new()
     surfacer_bootstrap.on_app_ready(SquirrelAwayConfig.app_manifest, self)
-    ScaffoldConfig.next_level_resource_path = \
+    Gs.next_level_resource_path = \
             SquirrelAwayConfig.level_resource_path
     
     if OS.get_name() == "HTML5":

@@ -45,7 +45,7 @@ func _init() -> void:
     _odd_row_style = StyleBoxEmpty.new()
     
     _even_row_style = StyleBoxFlat.new()
-    _even_row_style.bg_color = ScaffoldConfig.key_value_even_row_color
+    _even_row_style.bg_color = Gs.key_value_even_row_color
 
 func _ready() -> void:
     _update_children()
@@ -121,7 +121,7 @@ func _update_children() -> void:
         spacer2.rect_min_size.x = padding_horizontal
         hbox.add_child(spacer2)
     
-    ScaffoldUtils.set_mouse_filter_recursively( \
+    Gs.utils.set_mouse_filter_recursively( \
             self, \
             Control.MOUSE_FILTER_PASS)
 
@@ -182,11 +182,11 @@ func _create_control( \
             item.control = dropdown
             return dropdown
         _:
-            ScaffoldUtils.error()
+            Gs.utils.error()
             return null
 
 func _on_control_pressed(_index: int) -> void:
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
 
 func _on_checkbox_pressed(checkbox_index: int) -> void:
     var item: Dictionary = items[checkbox_index]
@@ -196,7 +196,7 @@ func _on_checkbox_pressed(checkbox_index: int) -> void:
 func _on_dropdown_item_selected( \
         _option_index: int, \
         dropdown_index: int) -> void:
-    ScaffoldUtils.give_button_press_feedback()
+    Gs.utils.give_button_press_feedback()
     var item: Dictionary = items[dropdown_index]
     item.selected_index = item.control.selected
     emit_signal("control_changed", dropdown_index)
@@ -204,8 +204,8 @@ func _on_dropdown_item_selected( \
 func _on_description_button_pressed( \
         label: String, \
         description: String) -> void:
-    ScaffoldUtils.give_button_press_feedback()
-    Nav.open( \
+    Gs.utils.give_button_press_feedback()
+    Gs.nav.open( \
             "notification", \
             false, \
             {
@@ -220,7 +220,7 @@ func find_index(label: String) -> int:
     for index in range(items.size()):
         if items[index].label == label:
             return index
-    ScaffoldUtils.error()
+    Gs.utils.error()
     return -1
 
 func find_item(label: String) -> Dictionary:
@@ -229,7 +229,7 @@ func find_item(label: String) -> Dictionary:
 func _normalize_item(item: Dictionary) -> void:
     if !item.has("label") or \
             !item.has("type"):
-        ScaffoldUtils.error()
+        Gs.utils.error()
     
     if !item.has("disabled"):
         item["disabled"] = false
@@ -253,7 +253,7 @@ func _normalize_item(item: Dictionary) -> void:
             if !item.has("selected_index"):
                 item["selected_index"] = 0
         _:
-            ScaffoldUtils.error()
+            Gs.utils.error()
 
 func _set_items(value: Array) -> void:
     items = value

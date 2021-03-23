@@ -15,5 +15,5 @@ static func get_type_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            ScaffoldUtils.error("Invalid ColorParamsType: %s" % type)
+            Gs.utils.error("Invalid ColorParamsType: %s" % type)
             return ""

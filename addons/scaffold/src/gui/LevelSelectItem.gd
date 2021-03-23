@@ -7,17 +7,22 @@ signal pressed
 
 const HEADER_HEIGHT := 56.0
 const PADDING := Vector2(16.0, 8.0)
+const LOCKED_OPACITY := 0.6
 const FADE_TWEEN_DURATION_SEC := 0.3
+const LOCK_LOW_PART_DELAY_SEC := 0.4
+const LOCK_HIGH_PART_DELAY_SEC := 0.15
+const HINT_PULSE_DURATION_SEC := 2.0
 
 export var level_id := "" setget _set_level_id,_get_level_id
 export var is_open: bool setget _set_is_open,_get_is_open
 
-var locked_header: LevelSelectItemLockedHeader
-var unlocked_header: LevelSelectItemUnlockedHeader
-var accordion: AccordionPanel
-var body: LevelSelectItemBody
-
 var is_new_unlocked_item := false
+
+var hint_tween: Tween
+
+func _enter_tree() -> void:
+    hint_tween = Tween.new()
+    $HeaderWrapper/LockedWrapper/HintWrapper/Hint.add_child(hint_tween)
 
 func _ready() -> void:
     _init_children()
@@ -27,17 +32,13 @@ func _process(_delta_sec: float) -> void:
     rect_min_size.y = $AccordionPanel.rect_min_size.y
 
 func _init_children() -> void:
-    locked_header = $HeaderWrapper/LevelSelectItemLockedHeader
-    unlocked_header = $HeaderWrapper/LevelSelectItemUnlockedHeader
-    accordion = $AccordionPanel
-    body = $AccordionPanel/LevelSelectItemBody
-    
     var header_size := Vector2(rect_min_size.x, HEADER_HEIGHT)
     
     $HeaderWrapper/LockedWrapper.rect_min_size = header_size
     $HeaderWrapper/LockedWrapper/HintWrapper.modulate.a = 0.0
     
     $HeaderWrapper/Header.rect_min_size = header_size
+    $HeaderWrapper/Header.connect("pressed", self, "_on_header_pressed")
     $HeaderWrapper/Header/HBoxContainer \
             .add_constant_override("separation", PADDING.x)
     $HeaderWrapper/Header/HBoxContainer.rect_min_size = header_size
@@ -45,13 +46,13 @@ func _init_children() -> void:
             AccordionPanel.CARET_SIZE_DEFAULT * AccordionPanel.CARET_SCALE
     
     var header_style_normal := StyleBoxFlat.new()
-    header_style_normal.bg_color = Gs.option_button_normal_color
+    header_style_normal.bg_color = Constants.OPTION_BUTTON_COLOR_NORMAL
     $HeaderWrapper/Header.add_stylebox_override("normal", header_style_normal)
     var header_style_hover := StyleBoxFlat.new()
-    header_style_hover.bg_color = Gs.option_button_hover_color
+    header_style_hover.bg_color = Constants.OPTION_BUTTON_COLOR_HOVER
     $HeaderWrapper/Header.add_stylebox_override("hover", header_style_hover)
     var header_style_pressed := StyleBoxFlat.new()
-    header_style_pressed.bg_color = Gs.option_button_pressed_color
+    header_style_pressed.bg_color = Constants.OPTION_BUTTON_COLOR_PRESSED
     $HeaderWrapper/Header \
             .add_stylebox_override("pressed", header_style_pressed)
     
@@ -61,18 +62,17 @@ func _init_children() -> void:
     
     $AccordionPanel.extra_scroll_height_for_custom_header = \
             $HeaderWrapper.rect_size.y
+    $AccordionPanel.connect("caret_rotated", self, "_on_caret_rotated")
+    $AccordionPanel.connect("toggled", self, "_on_accordion_toggled")
 
 func update() -> void:
     if level_id == "":
         return
     
-    body.level_id = level_id
-    
-    var unlock_hint_message: String = \
-            Gs.level_config.get_unlock_hint(level_id)
-    var is_next_level_to_unlock: bool = \
-            Gs.level_config.get_next_level_to_unlock() == level_id
-    locked_header.unlock_hint_message = unlock_hint_message
+    var unlock_hint_message := LevelConfig.get_unlock_hint(level_id)
+    var is_next_level_to_unlock := \
+            LevelConfig.get_next_level_to_unlock() == level_id
+    $HeaderWrapper/LockedWrapper/HintWrapper/Hint.text = unlock_hint_message
     # TODO: Remove?
     var is_unlock_pulse_auto_shown := false
 #    var is_unlock_pulse_auto_shown := \
@@ -89,19 +89,20 @@ func update() -> void:
 #                LOCK_LOW_PART_DELAY_SEC + \
 #                LockAnimation.UNLOCK_DURATION_SEC + \
 #                FADE_TWEEN_DURATION_SEC)
-        Gs.time.set_timeout(funcref(locked_header, "pulse_unlock_hint"), delay)
+        Gs.time.set_timeout(funcref(self, "_pulse_unlock_hint"), delay)
     
-    var config: Dictionary = \
-            Gs.level_config.get_level_config(level_id)
-    var high_score: int = Gs.save_state.get_level_high_score(level_id)
-    var total_plays: int = Gs.save_state.get_level_total_plays(level_id)
-    var is_unlocked: bool = \
+    var config := LevelConfig.get_level_config(level_id)
+    var high_score := Gs.save_state.get_level_high_score(level_id)
+    var has_finished := Gs.save_state.get_level_has_finished(level_id)
+    var total_plays := Gs.save_state.get_level_total_plays(level_id)
+    var is_unlocked := \
             Gs.save_state.get_level_is_unlocked(level_id) and \
             !is_new_unlocked_item
     
-    locked_header.is_unlocked = is_unlocked
-    unlocked_header.is_unlocked = is_unlocked
+    $HeaderWrapper/LockedWrapper.visible = !is_unlocked
+    $HeaderWrapper/LockedWrapper.modulate.a = LOCKED_OPACITY
     
+    $HeaderWrapper/Header.visible = is_unlocked
     $HeaderWrapper/Header/HBoxContainer/LevelNumber.text = \
             str(config.number) + "."
     $HeaderWrapper/Header/HBoxContainer/LevelName.text = config.name
@@ -122,15 +123,12 @@ func update() -> void:
     
     # TODO: Fix this. This hard-coded height assignment shouldn't be needed,
     #       but for some reason the height keeps getting enlarged otherwise.
-    accordion.height_override = 268.0
+    $AccordionPanel.height_override = 268.0
     
-    locked_header.update()
-    unlocked_header.update()
-    accordion.update()
-    body.update()
+    $AccordionPanel.update()
 
 func toggle() -> void:
-    if Gs.nav.get_active_screen_name() == "level_select":
+    if Gs.nav.get_active_screen_type() == ScreenType.LEVEL_SELECT:
         $AccordionPanel.toggle()
 
 func unlock() -> void:
@@ -138,6 +136,10 @@ func unlock() -> void:
     $HeaderWrapper/LockedWrapper.modulate.a = LOCKED_OPACITY
     $HeaderWrapper/Header.visible = false
     $HeaderWrapper/Header.modulate.a = 0.0
+    $HeaderWrapper/LockedWrapper/LockAnimation.connect( \
+            "unlock_finished", \
+            self, \
+            "_on_unlock_animation_finished")
     
     Gs.time.set_timeout( \
             funcref($HeaderWrapper/LockedWrapper/LockAnimation, "unlock"), \
@@ -187,6 +189,44 @@ func _on_unlock_fade_finished(fade_tween: Tween) -> void:
     $HeaderWrapper/Header.visible = true
     emit_signal("pressed")
 
+func _pulse_unlock_hint() -> void:
+    hint_tween.stop_all()
+    var fade_in_duration_sec := 0.3
+    hint_tween.interpolate_property( \
+            $HeaderWrapper/LockedWrapper/HintWrapper, \
+            "modulate:a", \
+            0.0, \
+            1.0, \
+            fade_in_duration_sec, \
+            Tween.TRANS_QUAD, \
+            Tween.EASE_IN_OUT)
+    hint_tween.interpolate_property( \
+            $HeaderWrapper/LockedWrapper/HintWrapper, \
+            "modulate:a", \
+            1.0, \
+            0.0, \
+            fade_in_duration_sec, \
+            Tween.TRANS_QUAD, \
+            Tween.EASE_IN_OUT, \
+            HINT_PULSE_DURATION_SEC - fade_in_duration_sec)
+    hint_tween.start()
+
+func _on_header_pressed() -> void:
+    Global.give_button_press_feedback()
+    emit_signal("pressed")
+
+func _on_PlayButton_pressed():
+    Global.give_button_press_feedback(true)
+    Gs.nav.open(ScreenType.GAME, true)
+    Gs.nav.screens[ScreenType.GAME].start_level(level_id)
+
+func _on_accordion_toggled() -> void:
+    emit_signal("toggled")
+
+func _on_caret_rotated(rotation: float) -> void:
+    $HeaderWrapper/Header/HBoxContainer/CaretWrapper/Caret \
+            .rect_rotation = rotation
+
 func _set_level_id(value: String) -> void:
     level_id = value
     update()
@@ -202,15 +242,16 @@ func _get_is_open() -> bool:
     return $AccordionPanel.is_open
 
 func get_button() -> ShinyButton:
-    return $AccordionPanel/LevelSelectItemBody.get_button()
+    return $AccordionPanel/VBoxContainer/PlayButton as ShinyButton
 
-func _on_LevelSelectItemUnlockedHeader_pressed():
-    Gs.utils.give_button_press_feedback()
-    emit_signal("pressed")
-
-func _on_AccordionPanel_toggled():
-    emit_signal("toggled")
-
-func _on_AccordionPanel_caret_rotated():
-    $HeaderWrapper/LevelSelectItemUnlockedHeader \
-            .update_caret_rotation(rotation)
+func _on_LockedWrapper_gui_input(event: InputEvent) -> void:
+    var is_mouse_up: bool = \
+            event is InputEventMouseButton and \
+            !event.pressed and \
+            event.button_index == BUTTON_LEFT
+    var is_touch_up: bool = \
+            (event is InputEventScreenTouch and \
+                    !event.pressed)
+    
+    if is_mouse_up or is_touch_up:
+        _pulse_unlock_hint()

@@ -54,7 +54,7 @@ func _init( \
             movement_params.can_grab_walls, \
             movement_params.can_grab_ceilings, \
             movement_params.can_grab_floors)
-    self.surfaces_set = ScaffoldUtils.array_to_set(surfaces_array)
+    self.surfaces_set = Gs.utils.array_to_set(surfaces_array)
     
     _calculate_nodes_and_edges()
     
@@ -237,7 +237,7 @@ static func _calculate_intra_surface_edge_weight( \
         SurfaceSide.RIGHT_WALL:
             weight *= movement_params.climbing_edge_weight_multiplier
         _:
-            ScaffoldUtils.error()
+            Gs.utils.error()
     
     # Give a constant extra weight for each additional edge in a path.
     weight += movement_params.additional_edge_weight_offset

@@ -19,15 +19,15 @@ var platform_graphs: Dictionary
 var utility_panel: UtilityPanel
 
 func _enter_tree() -> void:
-    ScaffoldConfig.level = self
+    Gs.level = self
 
 func start() -> void:
     .start()
     
-    ScaffoldConfig.level = self
+    Gs.level = self
     
-    utility_panel = ScaffoldUtils.add_scene( \
-            ScaffoldConfig.canvas_layers.layers.hud, \
+    utility_panel = Gs.utils.add_scene( \
+            Gs.canvas_layers.layers.hud, \
             _UTILITY_PANEL_RESOURCE_PATH)
     SurfacerConfig.utility_panel = utility_panel
     
@@ -113,7 +113,7 @@ func add_player( \
         position: Vector2, \
         is_human_player: bool, \
         is_fake := false) -> Player:
-    var player: Player = ScaffoldUtils.add_scene( \
+    var player: Player = Gs.utils.add_scene( \
             self, \
             resource_path, \
             !is_fake, \
@@ -168,10 +168,10 @@ func _record_player_reference(is_human_player: bool) -> void:
 func set_level_visibility(is_visible: bool) -> void:
     # TODO: Also show/hide background. Parallax doesn't extend from CanvasItem
     #       or have the `visible` field though.
-#    var backgrounds := ScaffoldUtils.get_children_by_type( \
+#    var backgrounds := Gs.utils.get_children_by_type( \
 #            self, \
 #            ParallaxBackground)
-    var foregrounds := ScaffoldUtils.get_children_by_type( \
+    var foregrounds := Gs.utils.get_children_by_type( \
             self, \
             TileMap)
     for node in foregrounds:

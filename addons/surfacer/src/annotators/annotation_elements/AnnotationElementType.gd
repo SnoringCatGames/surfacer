@@ -36,5 +36,5 @@ static func get_type_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            ScaffoldUtils.error("Invalid AnnotationElementType: %s" % type)
+            Gs.utils.error("Invalid AnnotationElementType: %s" % type)
             return ""

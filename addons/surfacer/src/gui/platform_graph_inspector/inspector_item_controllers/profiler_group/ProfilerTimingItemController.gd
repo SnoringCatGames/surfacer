@@ -44,7 +44,7 @@ func get_has_children() -> bool:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    ScaffoldUtils.error( \
+    Gs.utils.error( \
             "find_and_expand_controller should not be called for " + \
             "PROFILER_TIMING.")
     return false

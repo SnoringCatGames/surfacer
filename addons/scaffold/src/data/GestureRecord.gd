@@ -8,7 +8,7 @@ func _init() -> void:
     name = "GestureRecord"
 
 func _input(event: InputEvent) -> void:
-    if (ScaffoldConfig.debug or ScaffoldConfig.playtest) and \
+    if (Gs.debug or Gs.playtest) and \
             (event is InputEventScreenTouch or event is InputEventScreenDrag):
         _record_new_gesture_event(event)
 
@@ -19,15 +19,15 @@ func _record_new_gesture_event(event: InputEvent) -> void:
     elif event is InputEventScreenDrag:
         gesture_name = "dr"
     else:
-        ScaffoldUtils.error()
+        Gs.utils.error()
         return
     var gesture_event := GestureEventForDebugging.new( \
             event.position, \
             gesture_name, \
-            Time.elapsed_play_time_actual_sec)
+            Gs.time.elapsed_play_time_actual_sec)
     recent_gesture_events_for_debugging.push_front(gesture_event)
     while recent_gesture_events_for_debugging.size() > \
-            ScaffoldConfig.recent_gesture_events_for_debugging_buffer_size:
+            Gs.recent_gesture_events_for_debugging_buffer_size:
         recent_gesture_events_for_debugging.pop_back()
 
 class GestureEventForDebugging extends Reference:

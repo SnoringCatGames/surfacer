@@ -43,14 +43,14 @@ var ruler_layer: CanvasLayer
 
 func _init() -> void:
     name = "Annotators"
-    annotation_layer = ScaffoldConfig.canvas_layers.layers.annotation
+    annotation_layer = Gs.canvas_layers.layers.annotation
 
 func _enter_tree() -> void:
-    ruler_layer = ScaffoldConfig.canvas_layers.create_layer( \
+    ruler_layer = Gs.canvas_layers.create_layer( \
             "ruler", \
             annotation_layer.layer + 5, \
             Node.PAUSE_MODE_STOP)
-    Nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
+    Gs.nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
     
     element_annotator = ElementAnnotator.new()
     annotation_layer.add_child(element_annotator)
@@ -123,10 +123,10 @@ func _create_annotator(annotator_type: int) -> void:
             ruler_annotator = RulerAnnotator.new()
             ruler_layer.add_child(ruler_annotator)
         AnnotatorType.GRID_INDICES:
-            if ScaffoldConfig.level != null and \
-                    ScaffoldConfig.level.surface_parser != null:
+            if Gs.level != null and \
+                    Gs.level.surface_parser != null:
                 grid_indices_annotator = GridIndicesAnnotator.new( \
-                        ScaffoldConfig.level.surface_parser)
+                        Gs.level.surface_parser)
                 annotation_layer.add_child(grid_indices_annotator)
         AnnotatorType.CLICK:
             click_annotator = ClickAnnotator.new()
@@ -142,10 +142,10 @@ func _create_annotator(annotator_type: int) -> void:
                                 SurfacerConfig.current_player_for_clicks)
                 annotation_layer.add_child(surface_preselection_annotator)
         AnnotatorType.LEVEL:
-            if ScaffoldConfig.level != null:
-                ScaffoldConfig.level.set_level_visibility(true)
+            if Gs.level != null:
+                Gs.level.set_level_visibility(true)
         _:
-            ScaffoldUtils.static_error()
+            Gs.utils.static_error()
 
 func _destroy_annotator(annotator_type: int) -> void:
     assert(is_annotator_enabled(annotator_type))
@@ -174,7 +174,7 @@ func _destroy_annotator(annotator_type: int) -> void:
                 surface_preselection_annotator.queue_free()
                 surface_preselection_annotator = null
         AnnotatorType.LEVEL:
-            if ScaffoldConfig.level != null:
-                ScaffoldConfig.level.set_level_visibility(false)
+            if Gs.level != null:
+                Gs.level.set_level_visibility(false)
         _:
-            ScaffoldUtils.static_error()
+            Gs.utils.static_error()

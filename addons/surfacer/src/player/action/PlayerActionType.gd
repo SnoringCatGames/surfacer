@@ -57,5 +57,5 @@ static func get_type_string(type: int) -> String:
         RELEASED_FACE_RIGHT:
             return "RELEASED_FACE_RIGHT"
         _:
-            ScaffoldUtils.error()
+            Gs.utils.error()
             return "UNKNOWN"

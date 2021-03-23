@@ -36,7 +36,7 @@ func _on_activated() -> void:
 
 func _ready() -> void:
     for level_id in LevelConfig.get_level_ids():
-        var item: LevelSelectItem = Utils.add_scene( \
+        var item: LevelSelectItem = Gs.utils.add_scene( \
                 $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer \
                         /CenterContainer/VBoxContainer/LevelSelectItems, \
                 LEVEL_SELECT_ITEM_RESOURCE_PATH, \
@@ -83,7 +83,7 @@ func _deferred_update() -> void:
                 is_closing_accordion_first)
 
 func _calculate_new_unlocked_item() -> void:
-    var new_unlocked_levels := SaveState.get_new_unlocked_levels()
+    var new_unlocked_levels := Gs.save_state.get_new_unlocked_levels()
     if new_unlocked_levels.empty():
         _new_unlocked_item = null
     else:
@@ -122,7 +122,7 @@ func _scroll_to_item_to_unlock( \
 func _interpolate_scroll(scroll_ratio: float) -> void:
     var scroll_start := scroll_container.get_v_scrollbar().min_value
     var scroll_end := \
-            Utils.get_node_vscroll_position(scroll_container, _scroll_target)
+            Gs.utils.get_node_vscroll_position(scroll_container, _scroll_target)
     scroll_container.scroll_vertical = lerp( \
             scroll_start, \
             scroll_end, \
@@ -133,7 +133,7 @@ func _on_unlock_scroll_finished( \
         scroll_tween: Tween) -> void:
     scroll_tween.queue_free()
     item.unlock()
-    SaveState.set_new_unlocked_levels([])
+    Gs.save_state.set_new_unlocked_levels([])
 
 func _get_focused_button() -> ShinyButton:
     return null
@@ -148,7 +148,7 @@ func _on_item_pressed(item: LevelSelectItem) -> void:
             delay = 0.05
     elif expanded_item == item:
         expanded_item = null
-    Time.set_timeout(funcref(item, "toggle"), delay)
+    Gs.time.set_timeout(funcref(item, "toggle"), delay)
 
 func _on_item_toggled(item: LevelSelectItem) -> void:
     _give_button_focus(item.get_button())

@@ -35,7 +35,7 @@ func _init( \
 
 func _ready() -> void:
     _validate_node_hierarchy()
-    ScaffoldUtils.connect( \
+    Gs.utils.connect( \
             "display_resized", \
             self, \
             "_on_resized")
@@ -53,7 +53,7 @@ func _validate_node_hierarchy() -> void:
     outer_panel_container.add_stylebox_override("panel", style_updated)
     
     if auto_adapts_gui_scale:
-        ScaffoldConfig.add_gui_to_scale( \
+        Gs.add_gui_to_scale( \
                 outer_panel_container, \
                 default_gui_scale)
     
@@ -86,7 +86,7 @@ func _validate_node_hierarchy() -> void:
                     ScrollContainer/VBoxContainer
             assert(inner_vbox != null)
         
-        ScaffoldUtils.set_mouse_filter_recursively( \
+        Gs.utils.set_mouse_filter_recursively( \
                 scroll_container, \
                 Control.MOUSE_FILTER_PASS)
 
@@ -95,19 +95,19 @@ func _unhandled_key_input(event: InputEventKey) -> void:
             event.scancode == KEY_ENTER) and \
             event.pressed and \
             _focused_button != null and \
-            Nav.get_active_screen() == self:
+            Gs.nav.get_active_screen() == self:
         _focused_button.press()
     elif (event.scancode == KEY_ESCAPE) and \
             event.pressed and \
             nav_bar != null and \
             nav_bar.shows_back and \
-            Nav.get_active_screen() == self:
-        Nav.close_current_screen()
+            Gs.nav.get_active_screen() == self:
+        Gs.nav.close_current_screen()
 
 func _on_activated() -> void:
     _give_button_focus(_get_focused_button())
     if includes_standard_hierarchy:
-        ScaffoldUtils.set_mouse_filter_recursively( \
+        Gs.utils.set_mouse_filter_recursively( \
                 scroll_container, \
                 Control.MOUSE_FILTER_PASS)
 

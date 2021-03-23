@@ -15,5 +15,5 @@ static func get_type_string(type: int) -> String:
         DROPDOWN:
             return "DROPDOWN"
         _:
-            ScaffoldUtils.error("Invalid LabeledControlItemType: %s" % type)
+            Gs.utils.error("Invalid LabeledControlItemType: %s" % type)
             return "???"

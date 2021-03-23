@@ -119,7 +119,7 @@ func get_timing_list( \
         var timings := []
         for thread_id in _timings:
             if _timings[thread_id].has(metric):
-                ScaffoldUtils.concat( \
+                Gs.utils.concat( \
                         timings, \
                         _timings[thread_id][metric])
         return timings

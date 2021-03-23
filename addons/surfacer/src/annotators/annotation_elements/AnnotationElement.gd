@@ -15,13 +15,13 @@ func get_legend_items() -> Array:
     return _legend_items
 
 func _create_legend_items() -> Array:
-    ScaffoldUtils.error( \
+    Gs.utils.error( \
             "Abstract AnnotationElement._create_legend_items is not " + \
             "implemented")
     return []
 
 func draw(canvas: CanvasItem) -> void:
-    ScaffoldUtils.error("Abstract AnnotationElement.draw is not implemented")
+    Gs.utils.error("Abstract AnnotationElement.draw is not implemented")
 
 func clear() -> void:
     # Do nothing unless the sub-class implements this.

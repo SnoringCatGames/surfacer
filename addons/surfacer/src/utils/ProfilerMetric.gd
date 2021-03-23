@@ -187,5 +187,5 @@ static func get_type_string(result_type: int) -> String:
             return "UNKNOWN"
         
         _:
-            ScaffoldUtils.error("Invalid ProfilerMetric: %s" % result_type)
+            Gs.utils.error("Invalid ProfilerMetric: %s" % result_type)
             return "UNKNOWN"

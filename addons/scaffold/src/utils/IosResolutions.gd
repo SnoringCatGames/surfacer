@@ -257,7 +257,7 @@ func _init() -> void:
     print("IosResolutions._init")
 
 func get_screen_ppi(ios_model_names: IosModelNames) -> int:
-    assert(ScaffoldUtils.get_is_ios_device())
+    assert(Gs.utils.get_is_ios_device())
     
     var model_name := ios_model_names.get_model_name().to_lower()
     var is_iphone := model_name.find("iphone") >= 0
@@ -272,7 +272,7 @@ func get_screen_ppi(ios_model_names: IosModelNames) -> int:
     elif is_ipod:
         suffix_and_ppis = IPOD_SUFFIX_AND_PPIS
     else:
-        ScaffoldUtils.error()
+        Gs.utils.error()
     
     var ppi := DEFAULT_PPI
     for suffix_and_ppi in suffix_and_ppis:

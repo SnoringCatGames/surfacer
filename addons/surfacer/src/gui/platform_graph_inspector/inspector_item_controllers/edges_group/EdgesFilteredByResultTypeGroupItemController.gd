@@ -69,7 +69,7 @@ func to_string() -> String:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    ScaffoldUtils.error( \
+    Gs.utils.error( \
             "find_and_expand_controller should not be called for " + \
             "%s." % InspectorItemType.get_type_string(type))
     return false

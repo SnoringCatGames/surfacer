@@ -32,7 +32,7 @@ const _DEFAULT_LAYERS_CONFIG := [
 var layers := {}
 
 func _init() -> void:
-    ScaffoldUtils.print("CanvasLayers._init")
+    Gs.utils.print("CanvasLayers._init")
     name = "CanvasLayers"
 
 func _enter_tree() -> void:
@@ -47,6 +47,6 @@ func create_layer( \
     canvas_layer.name = name
     canvas_layer.layer = z_index
     canvas_layer.pause_mode = pause_mode
-    ScaffoldUtils.add_overlay_to_current_scene(canvas_layer)
+    Gs.utils.add_overlay_to_current_scene(canvas_layer)
     layers[name] = canvas_layer
     return canvas_layer

@@ -31,7 +31,7 @@ func _ready() -> void:
 
 func _on_activated() -> void:
     ._on_activated()
-    Audio.play_music(Music.GAME_OVER_MUSIC_TYPE)
+    Gs.audio.play_music(Music.GAME_OVER_MUSIC_TYPE)
     _update_stats()
 
 func _get_focused_button() -> ShinyButton:
@@ -85,15 +85,15 @@ func _update_stats() -> void:
 
 func _on_SelectLevelButton_pressed():
     Global.give_button_press_feedback()
-    Audio.play_music(Music.MAIN_MENU_MUSIC_TYPE)
-    Nav.open(ScreenType.LEVEL_SELECT)
+    Gs.audio.play_music(Music.MAIN_MENU_MUSIC_TYPE)
+    Gs.nav.open(ScreenType.LEVEL_SELECT)
 
 func _on_HomeButton_pressed():
     Global.give_button_press_feedback()
-    Audio.play_music(Music.MAIN_MENU_MUSIC_TYPE)
-    Nav.open(ScreenType.MAIN_MENU)
+    Gs.audio.play_music(Music.MAIN_MENU_MUSIC_TYPE)
+    Gs.nav.open(ScreenType.MAIN_MENU)
 
 func _on_RetryButton_pressed():
     Global.give_button_press_feedback(true)
-    Nav.open(ScreenType.GAME, true)
-    Nav.screens[ScreenType.GAME].start_level(level_id)
+    Gs.nav.open(ScreenType.GAME, true)
+    Gs.nav.screens[ScreenType.GAME].start_level(level_id)

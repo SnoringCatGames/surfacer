@@ -107,4 +107,4 @@ var player_param_classes := [
 ]
 
 func _init() -> void:
-    ScaffoldUtils.print("SurfacerConfig._init")
+    Gs.utils.print("SurfacerConfig._init")

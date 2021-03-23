@@ -22,7 +22,7 @@ func _enter_tree() -> void:
     _on_resized()
 
 func move_canvas_layer_to_game_viewport(name: String) -> void:
-    var layer: CanvasLayer = ScaffoldConfig.canvas_layers.layers[name]
+    var layer: CanvasLayer = Gs.canvas_layers.layers[name]
     layer.get_parent().remove_child(layer)
     $PanelContainer/ViewportContainer/Viewport.add_child(layer)
 
@@ -32,7 +32,7 @@ func _process(_delta_sec: float) -> void:
     
     # Transform the annotation layer to follow the camera within the
     # game-screen viewport.
-    ScaffoldConfig.canvas_layers.layers.annotation.transform = \
+    Gs.canvas_layers.layers.annotation.transform = \
             level.get_canvas_transform()
 
 func _on_resized() -> void:
@@ -41,20 +41,20 @@ func _on_resized() -> void:
     
     # TODO: This hack seems to be needed in order for the viewport to actually
     #       update its dimensions correctly.
-    Time.set_timeout(funcref(self, "_update_viewport_region_helper"), 1.0)
+    Gs.time.set_timeout(funcref(self, "_update_viewport_region_helper"), 1.0)
 
 func _update_viewport_region_helper() -> void:
     var viewport_size := get_viewport().size
     var game_area_position := \
-            (viewport_size - ScaffoldConfig.game_area_region.size) * 0.5
+            (viewport_size - Gs.game_area_region.size) * 0.5
     
     $PanelContainer.rect_size = viewport_size
     $PanelContainer/ViewportContainer.rect_position = game_area_position
     $PanelContainer/ViewportContainer/Viewport.size = \
-            ScaffoldConfig.game_area_region.size
+            Gs.game_area_region.size
     
     call_deferred("_fix_viewport_dimensions_hack")
-    Time.set_timeout(funcref(self, "_fix_viewport_dimensions_hack"), 0.4)
+    Gs.time.set_timeout(funcref(self, "_fix_viewport_dimensions_hack"), 0.4)
 
 func _fix_viewport_dimensions_hack() -> void:
     # TODO: This hack seems to be needed in order for the viewport to actually
@@ -69,9 +69,9 @@ func start_level() -> void:
     if is_instance_valid(level):
         return
     
-    level = ScaffoldUtils.add_scene( \
+    level = Gs.utils.add_scene( \
             $PanelContainer/ViewportContainer/Viewport, \
-            ScaffoldConfig.next_level_resource_path, \
+            Gs.next_level_resource_path, \
             true, \
             true)
     level.start()

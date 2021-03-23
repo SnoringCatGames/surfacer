@@ -49,9 +49,6 @@ var option_button_pressed_color: Color
 var screen_exclusions: Array
 var screen_inclusions: Array
 
-var level_config: ScaffoldLevelConfig
-var audio: Audio
-
 var fonts: Dictionary
 
 var sounds_manifest: Array
@@ -129,6 +126,14 @@ var is_debug_time_shown: bool
 
 var game_area_region: Rect2
 var gui_scale := 1.0
+var audio: Audio
+var nav: ScaffoldNavigation
+var save_state: SaveState
+var analytics: Analytics
+var cloud_log: CloudLog
+var utils: ScaffoldUtils
+var time: Time
+var level_config: ScaffoldLevelConfig
 var canvas_layers: CanvasLayers
 var camera_controller: CameraController
 var debug_panel: DebugPanel
@@ -229,12 +234,48 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.recent_gesture_events_for_debugging_buffer_size = \
                 manifest.recent_gesture_events_for_debugging_buffer_size
     
-    Audio.register_sounds( \
+    if manifest.has("audio"):
+        assert(manifest.audio is Audio)
+        self.audio = manifest.audio
+    else:
+        self.audio = Audio.new()
+    if manifest.has("nav"):
+        assert(manifest.nav is ScaffoldNavigation)
+        self.nav = manifest.nav
+    else:
+        self.nav = ScaffoldNavigation.new()
+    if manifest.has("save_state"):
+        assert(manifest.save_state is SaveState)
+        self.save_state = manifest.save_state
+    else:
+        self.save_state = SaveState.new()
+    if manifest.has("analytics"):
+        assert(manifest.analytics is Analytics)
+        self.analytics = manifest.analytics
+    else:
+        self.analytics = Analytics.new()
+    if manifest.has("cloud_log"):
+        assert(manifest.cloud_log is CloudLog)
+        self.cloud_log = manifest.cloud_log
+    else:
+        self.cloud_log = CloudLog.new()
+    if manifest.has("utils"):
+        assert(manifest.utils is ScaffoldUtils)
+        self.utils = manifest.utils
+    else:
+        self.utils = ScaffoldUtils.new()
+    if manifest.has("time"):
+        assert(manifest.time is Time)
+        self.time = manifest.time
+    else:
+        self.time = Time.new()
+    
+    self.audio.register_sounds( \
             manifest.sounds_manifest, \
             manifest.default_sounds_path_prefix, \
             manifest.default_sounds_file_suffix, \
             manifest.default_sounds_bus_index)
-    Audio.register_music( \
+    self.audio.register_music( \
             manifest.music_manifest, \
             manifest.default_music_path_prefix, \
             manifest.default_music_file_suffix, \
@@ -267,38 +308,38 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.is_app_configured = true
     
     _record_original_font_sizes()
-    ScaffoldUtils._update_game_area_region_and_gui_scale()
+    self.utils._update_game_area_region_and_gui_scale()
 
 func add_gui_to_scale( \
         gui: Control, \
         default_gui_scale: float) -> void:
     guis_to_scale[gui] = default_gui_scale
-    ScaffoldUtils._scale_gui_for_current_screen_size(gui)
+    Gs.utils._scale_gui_for_current_screen_size(gui)
 
 func load_state() -> void:
-    agreed_to_terms = SaveState.get_setting( \
+    agreed_to_terms = Gs.save_state.get_setting( \
             AGREED_TO_TERMS_SETTINGS_KEY, \
             false)
-    is_giving_haptic_feedback = SaveState.get_setting( \
+    is_giving_haptic_feedback = Gs.save_state.get_setting( \
             IS_GIVING_HAPTIC_FEEDBACK_SETTINGS_KEY, \
-            ScaffoldUtils.get_is_android_device())
-    is_debug_panel_shown = SaveState.get_setting( \
+            Gs.utils.get_is_android_device())
+    is_debug_panel_shown = Gs.save_state.get_setting( \
             IS_DEBUG_PANEL_SHOWN_SETTINGS_KEY, \
             false)
-    is_debug_time_shown = SaveState.get_setting( \
+    is_debug_time_shown = Gs.save_state.get_setting( \
             IS_DEBUG_TIME_SHOWN_SETTINGS_KEY, \
             false)
-    Audio.is_music_enabled = SaveState.get_setting( \
+    Gs.audio.is_music_enabled = Gs.save_state.get_setting( \
             IS_MUSIC_ENABLED_SETTINGS_KEY, \
             true)
-    Audio.is_sound_effects_enabled = SaveState.get_setting( \
+    Gs.audio.is_sound_effects_enabled = Gs.save_state.get_setting( \
             IS_SOUND_EFFECTS_ENABLED_SETTINGS_KEY, \
             true)
 
 func set_agreed_to_terms() -> void:
     agreed_to_terms = true
-    SaveState.set_setting( \
-            ScaffoldConfig.AGREED_TO_TERMS_SETTINGS_KEY, \
+    Gs.save_state.set_setting( \
+            Gs.AGREED_TO_TERMS_SETTINGS_KEY, \
             true)
 
 func _set_is_debug_panel_shown(is_visible: bool) -> void:

@@ -49,6 +49,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/player/action/action_handlers/AllDefaultAction.gd"
 }, {
+"base": "Node",
+"class": "Analytics",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/data/Analytics.gd"
+}, {
 "base": "Reference",
 "class": "AnnotationElement",
 "language": "GDScript",
@@ -68,6 +73,11 @@ _global_script_classes=[ {
 "class": "Annotators",
 "language": "GDScript",
 "path": "res://addons/surfacer/src/annotators/Annotators.gd"
+}, {
+"base": "Node",
+"class": "Audio",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/utils/Audio.gd"
 }, {
 "base": "Node2D",
 "class": "CameraController",
@@ -138,6 +148,11 @@ _global_script_classes=[ {
 "class": "ClimbOverWallToFloorEdge",
 "language": "GDScript",
 "path": "res://addons/surfacer/src/platform_graph/edge/edges/ClimbOverWallToFloorEdge.gd"
+}, {
+"base": "Node",
+"class": "CloudLog",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/data/CloudLog.gd"
 }, {
 "base": "Reference",
 "class": "CollisionCalcParams",
@@ -965,6 +980,11 @@ _global_script_classes=[ {
 "path": "res://addons/surfacer/src/annotators/RulerAnnotator.gd"
 }, {
 "base": "Node",
+"class": "SaveState",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/data/SaveState.gd"
+}, {
+"base": "Node",
 "class": "ScaffoldBootstrap",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/ScaffoldBootstrap.gd"
@@ -980,9 +1000,19 @@ _global_script_classes=[ {
 "path": "res://addons/scaffold/src/ScaffoldLevelConfig.gd"
 }, {
 "base": "Node",
+"class": "ScaffoldNavigation",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/utils/Navigation.gd"
+}, {
+"base": "Node",
 "class": "ScaffoldThirdPartyLicenses",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/ScaffoldThirdPartyLicenses.gd"
+}, {
+"base": "Node",
+"class": "ScaffoldUtils",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/utils/ScaffoldUtils.gd"
 }, {
 "base": "Node2D",
 "class": "Screen",
@@ -1119,6 +1149,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/gui/screens/ThirdPartyLicensesScreen.gd"
 }, {
+"base": "Node",
+"class": "Time",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/utils/Time.gd"
+}, {
 "base": "Reference",
 "class": "UUID",
 "language": "GDScript",
@@ -1223,10 +1258,12 @@ _global_script_class_icons={
 "AirToSurfaceCalculator": "",
 "AirToSurfaceEdge": "",
 "AllDefaultAction": "",
+"Analytics": "",
 "AnnotationElement": "",
 "AnnotationElementType": "",
 "AnnotatorType": "",
 "Annotators": "",
+"Audio": "",
 "CameraController": "",
 "CameraShake": "",
 "CanvasLayers": "",
@@ -1241,6 +1278,7 @@ _global_script_class_icons={
 "ClimbDownWallToFloorEdge": "",
 "ClimbOverWallToFloorCalculator": "",
 "ClimbOverWallToFloorEdge": "",
+"CloudLog": "",
 "CollisionCalcParams": "",
 "CollisionCalcResultMetadata": "",
 "CollisionCheckUtils": "",
@@ -1406,10 +1444,13 @@ _global_script_class_icons={
 "RateAppScreen": "",
 "RightWallsItemController": "",
 "RulerAnnotator": "",
+"SaveState": "",
 "ScaffoldBootstrap": "",
 "ScaffoldLevel": "",
 "ScaffoldLevelConfig": "",
+"ScaffoldNavigation": "",
 "ScaffoldThirdPartyLicenses": "",
+"ScaffoldUtils": "",
 "Screen": "",
 "SelectionDescription": "",
 "SettingsScreen": "",
@@ -1437,6 +1478,7 @@ _global_script_class_icons={
 "SurfacesGroupItemController": "",
 "SurfacesOfSideGroupItemController": "",
 "ThirdPartyLicensesScreen": "",
+"Time": "",
 "UUID": "",
 "UserActionSource": "",
 "UtilityPanel": "",
@@ -1469,14 +1511,7 @@ config/quit_on_go_back=false
 
 [autoload]
 
-ScaffoldConfig="*res://addons/scaffold/src/ScaffoldConfig.gd"
-ScaffoldUtils="*res://addons/scaffold/src/utils/ScaffoldUtils.gd"
-Time="*res://addons/scaffold/src/utils/Time.gd"
-SaveState="*res://addons/scaffold/src/data/SaveState.gd"
-Analytics="*res://addons/scaffold/src/data/Analytics.gd"
-Log="*res://addons/scaffold/src/data/Log.gd"
-Audio="*res://addons/scaffold/src/utils/Audio.gd"
-Nav="*res://addons/scaffold/src/utils/Navigation.gd"
+Gs="*res://addons/scaffold/src/ScaffoldConfig.gd"
 SurfacerConfig="*res://addons/surfacer/src/SurfacerConfig.gd"
 Geometry="*res://addons/surfacer/src/utils/Geometry.gd"
 DrawUtils="*res://addons/surfacer/src/utils/DrawUtils.gd"

@@ -80,21 +80,21 @@ func _on_activated() -> void:
 
 func _initialize_selections() -> void:
     _main_list.find_item("Haptic feedback").pressed = \
-            ScaffoldConfig.is_giving_haptic_feedback
+            Gs.is_giving_haptic_feedback
     _details_list.find_item("Debug panel").pressed = \
-            ScaffoldConfig.is_debug_panel_shown
+            Gs.is_debug_panel_shown
     
     _details_list.find_item("Debug time display").pressed = \
-            ScaffoldConfig.is_debug_time_shown
+            Gs.is_debug_time_shown
     
     _main_list.find_item("Music").pressed = \
-            Audio.is_music_enabled
+            Gs.audio.is_music_enabled
     _main_list.find_item("Sound effects").pressed = \
-            Audio.is_sound_effects_enabled
+            Gs.audio.is_sound_effects_enabled
 
 func _initialize_enablement() -> void:
     _main_list.find_item("Haptic feedback").disabled = \
-            !ScaffoldUtils.get_is_mobile_device()
+            !Gs.utils.get_is_mobile_device()
     
     _details_list.find_item("Debug panel").disabled = false 
     _details_list.find_item("Debug time display").disabled = false 
@@ -121,35 +121,35 @@ func _on_control_changed( \
         "Sound effects":
             _on_sound_effects_pressed(item.pressed)
         _:
-            ScaffoldUtils.error()
+            Gs.utils.error()
 
 func _on_haptic_feedback_pressed(pressed: bool) -> void:
-    ScaffoldConfig.is_giving_haptic_feedback = pressed
-    SaveState.set_setting( \
-            ScaffoldConfig.IS_GIVING_HAPTIC_FEEDBACK_SETTINGS_KEY, \
-            ScaffoldConfig.is_giving_haptic_feedback)
+    Gs.is_giving_haptic_feedback = pressed
+    Gs.save_state.set_setting( \
+            Gs.IS_GIVING_HAPTIC_FEEDBACK_SETTINGS_KEY, \
+            Gs.is_giving_haptic_feedback)
 
 func _on_debug_panel_pressed(pressed: bool) -> void:
-    ScaffoldConfig.is_debug_panel_shown = pressed
-    SaveState.set_setting( \
-            ScaffoldConfig.IS_DEBUG_PANEL_SHOWN_SETTINGS_KEY, \
-            ScaffoldConfig.is_debug_panel_shown)
+    Gs.is_debug_panel_shown = pressed
+    Gs.save_state.set_setting( \
+            Gs.IS_DEBUG_PANEL_SHOWN_SETTINGS_KEY, \
+            Gs.is_debug_panel_shown)
 
 func _on_debug_time_display_pressed(pressed: bool) -> void:
-    ScaffoldConfig.is_debug_time_shown = pressed
-    SaveState.set_setting( \
-            ScaffoldConfig.IS_DEBUG_TIME_SHOWN_SETTINGS_KEY, \
-            ScaffoldConfig.is_debug_time_shown)
+    Gs.is_debug_time_shown = pressed
+    Gs.save_state.set_setting( \
+            Gs.IS_DEBUG_TIME_SHOWN_SETTINGS_KEY, \
+            Gs.is_debug_time_shown)
     # FIXME: -------------------
 
 func _on_music_pressed(pressed: bool):
-    Audio.is_music_enabled = pressed
-    SaveState.set_setting( \
-            ScaffoldConfig.IS_MUSIC_ENABLED_SETTINGS_KEY, \
-            Audio.is_music_enabled)
+    Gs.audio.is_music_enabled = pressed
+    Gs.save_state.set_setting( \
+            Gs.IS_MUSIC_ENABLED_SETTINGS_KEY, \
+            Gs.audio.is_music_enabled)
 
 func _on_sound_effects_pressed(pressed: bool):
-    Audio.is_sound_effects_enabled = pressed
-    SaveState.set_setting( \
-            ScaffoldConfig.IS_SOUND_EFFECTS_ENABLED_SETTINGS_KEY, \
-            Audio.is_sound_effects_enabled)
+    Gs.audio.is_sound_effects_enabled = pressed
+    Gs.save_state.set_setting( \
+            Gs.IS_SOUND_EFFECTS_ENABLED_SETTINGS_KEY, \
+            Gs.audio.is_sound_effects_enabled)

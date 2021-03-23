@@ -17,7 +17,7 @@ static func check_instructions_discrete_frame_state( \
     var movement_params := edge_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: EdgeInstruction = instructions.instructions[0]
-    var delta_sec := Time.PHYSICS_TIME_STEP_SEC
+    var delta_sec := Gs.time.PHYSICS_TIME_STEP_SEC
     var is_first_jump := true
     var previous_time: float = instructions.instructions[0].time
     var current_time := previous_time + delta_sec
@@ -48,7 +48,7 @@ static func check_instructions_discrete_frame_state( \
     while current_time < end_time:
         # Update position for this frame, according to the velocity from the
         # previous frame.
-        delta_sec = Time.PHYSICS_TIME_STEP_SEC
+        delta_sec = Gs.time.PHYSICS_TIME_STEP_SEC
         displacement = velocity * delta_sec
         
         # Iterate through the horizontal steps in order to calculate what the
@@ -150,7 +150,7 @@ static func check_instructions_discrete_frame_state( \
                 "face_right":
                     pass
                 _:
-                    ScaffoldUtils.error()
+                    Gs.utils.error()
             
             next_instruction = \
                     instructions.instructions \
@@ -222,7 +222,7 @@ static func check_discrete_horizontal_step_for_collision( \
         horizontal_step: EdgeStep) -> SurfaceCollision:
     var collision_params := edge_calc_params.collision_params
     var movement_params := edge_calc_params.movement_params
-    var delta_sec := Time.PHYSICS_TIME_STEP_SEC
+    var delta_sec := Gs.time.PHYSICS_TIME_STEP_SEC
     var is_first_jump := true
     # On average, an instruction set will start halfway through a physics
     # frame, so let's use that average here.
@@ -245,7 +245,7 @@ static func check_discrete_horizontal_step_for_collision( \
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
         # Update state for the current frame.
-        delta_sec = Time.PHYSICS_TIME_STEP_SEC
+        delta_sec = Gs.time.PHYSICS_TIME_STEP_SEC
         displacement = velocity * delta_sec
         
         if displacement != Vector2.ZERO:
@@ -333,7 +333,7 @@ static func check_continuous_horizontal_step_for_collision( \
     var collision_params := edge_calc_params.collision_params
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
-    var delta_sec := Time.PHYSICS_TIME_STEP_SEC
+    var delta_sec := Gs.time.PHYSICS_TIME_STEP_SEC
     var previous_time := horizontal_step.time_step_start
     var current_time := previous_time + delta_sec
     var step_end_time := horizontal_step.time_step_end
@@ -482,7 +482,7 @@ static func check_frame_for_collision( \
             position_start + kinematic_collision.travel
     
     var surface_side := \
-            ScaffoldUtils.get_which_surface_side_collided(kinematic_collision)
+            Gs.utils.get_which_surface_side_collided(kinematic_collision)
     var is_touching_floor := surface_side == SurfaceSide.FLOOR
     var is_touching_ceiling := surface_side == SurfaceSide.CEILING
     var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
@@ -506,7 +506,7 @@ static func check_frame_for_collision( \
         # Invalid collision state.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
-            ScaffoldUtils.error()
+            Gs.utils.error()
         surface_collision.is_valid_collision_state = false
         return null
     
@@ -520,7 +520,7 @@ static func check_frame_for_collision( \
         # Invalid collision state.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
-            ScaffoldUtils.error()
+            Gs.utils.error()
         surface_collision.is_valid_collision_state = false
         return null
     
@@ -545,13 +545,13 @@ static func check_frame_for_collision( \
         SurfaceSide.CEILING:
             is_moving_away_from_surface = displacement.y > 0.0
         _:
-            ScaffoldUtils.error()
+            Gs.utils.error()
     if is_moving_away_from_surface:
         if is_recursing:
             # Invalid collision state.
             if collision_params.movement_params \
                     .asserts_no_preexisting_collisions_during_edge_calculations:
-                ScaffoldUtils.error()
+                Gs.utils.error()
             surface_collision.is_valid_collision_state = false
             return null
         

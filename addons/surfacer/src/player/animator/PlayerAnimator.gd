@@ -12,16 +12,16 @@ func _init() -> void:
 
 func _ready() -> void:
     var animation_players: Array = \
-            ScaffoldUtils.get_children_by_type(self, AnimationPlayer)
+            Gs.utils.get_children_by_type(self, AnimationPlayer)
     assert(animation_players.size() == 1)
     animation_player = animation_players[0]
 
 func _create_params() -> PlayerAnimatorParams:
-    ScaffoldUtils.error("abstract PlayerAnimator._create_params is not implemented")
+    Gs.utils.error("abstract PlayerAnimator._create_params is not implemented")
     return null
 
 func _get_animation_player() -> AnimationPlayer:
-    ScaffoldUtils.error( \
+    Gs.utils.error( \
             "abstract PlayerAnimator._get_animation_player is not implemented")
     return null
             

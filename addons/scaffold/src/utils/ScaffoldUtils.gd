@@ -1,4 +1,5 @@
 extends Node
+class_name ScaffoldUtils
 
 signal display_resized
 
@@ -17,9 +18,9 @@ func _enter_tree() -> void:
     _update_game_area_region_and_gui_scale()
 
 func on_time_ready() -> void:
-    _throttled_size_changed = Time.throttle( \
+    _throttled_size_changed = Gs.time.throttle( \
             funcref(self, "_on_throttled_size_changed"), \
-            ScaffoldConfig.display_resize_throttle_interval_sec)
+            Gs.display_resize_throttle_interval_sec)
     get_viewport().connect( \
             "size_changed", \
             self, \
@@ -38,21 +39,21 @@ func _update_game_area_region_and_gui_scale() -> void:
     var game_area_position := Vector2.INF
     var game_area_size := Vector2.INF
     
-    if !ScaffoldConfig.is_app_configured:
+    if !Gs.is_app_configured:
         game_area_size = viewport_size
         game_area_position = Vector2.ZERO
-    if aspect_ratio < ScaffoldConfig.aspect_ratio_min:
+    if aspect_ratio < Gs.aspect_ratio_min:
         # Show vertical margin around game area.
         game_area_size = Vector2( \
                 viewport_size.x, \
-                viewport_size.x / ScaffoldConfig.aspect_ratio_min)
+                viewport_size.x / Gs.aspect_ratio_min)
         game_area_position = Vector2( \
                 0.0, \
                 (viewport_size.y - game_area_size.y) * 0.5)
-    elif aspect_ratio > ScaffoldConfig.aspect_ratio_max:
+    elif aspect_ratio > Gs.aspect_ratio_max:
         # Show horizontal margin around game area.
         game_area_size = Vector2( \
-                viewport_size.y * ScaffoldConfig.aspect_ratio_max, \
+                viewport_size.y * Gs.aspect_ratio_max, \
                 viewport_size.y)
         game_area_position = Vector2( \
                 (viewport_size.x - game_area_size.x) * 0.5, \
@@ -62,45 +63,45 @@ func _update_game_area_region_and_gui_scale() -> void:
         game_area_size = viewport_size
         game_area_position = Vector2.ZERO
     
-    ScaffoldConfig.game_area_region = Rect2(game_area_position, game_area_size)
+    Gs.game_area_region = Rect2(game_area_position, game_area_size)
     
-    if ScaffoldConfig.is_app_configured:
+    if Gs.is_app_configured:
         var default_aspect_ratio := \
-                ScaffoldConfig.default_game_area_size.x / \
-                ScaffoldConfig.default_game_area_size.y
-        ScaffoldConfig.gui_scale = \
-                viewport_size.x / ScaffoldConfig.default_game_area_size.x if \
+                Gs.default_game_area_size.x / \
+                Gs.default_game_area_size.y
+        Gs.gui_scale = \
+                viewport_size.x / Gs.default_game_area_size.x if \
                 aspect_ratio < default_aspect_ratio else \
-                viewport_size.y / ScaffoldConfig.default_game_area_size.y
-        ScaffoldConfig.gui_scale = \
-                max(ScaffoldConfig.gui_scale, ScaffoldConfig.MIN_GUI_SCALE)
+                viewport_size.y / Gs.default_game_area_size.y
+        Gs.gui_scale = \
+                max(Gs.gui_scale, Gs.MIN_GUI_SCALE)
     
-    for gui in ScaffoldConfig.guis_to_scale:
+    for gui in Gs.guis_to_scale:
         _scale_gui_for_current_screen_size(gui)
 
 # Automatically resize the gui to adapt to different screen sizes.
 func _scale_gui_for_current_screen_size(gui: Control) -> void:
     if !is_instance_valid(gui):
-        ScaffoldUtils.error()
+        error()
         return
     
-    var old_gui_scale: float = ScaffoldConfig.guis_to_scale[gui]
+    var old_gui_scale: float = Gs.guis_to_scale[gui]
     
-    var new_gui_scale: float = ScaffoldConfig.gui_scale
+    var new_gui_scale: float = Gs.gui_scale
     new_gui_scale = Geometry.snap_float_to_integer(new_gui_scale, 0.001)
     
     if old_gui_scale != new_gui_scale:
         var relative_scale := new_gui_scale / old_gui_scale
-        ScaffoldConfig.guis_to_scale[gui] = new_gui_scale
-        ScaffoldUtils._scale_gui_recursively( \
+        Gs.guis_to_scale[gui] = new_gui_scale
+        _scale_gui_recursively( \
                 gui, \
                 relative_scale)
 
 func print(message: String) -> void:
-    if is_instance_valid(ScaffoldConfig.debug_panel):
-        ScaffoldConfig.debug_panel.add_message(message)
+    if is_instance_valid(Gs.debug_panel):
+        Gs.debug_panel.add_message(message)
     else:
-        print("ScaffoldUtils.print (DebugPanel not ready yet): " + message)
+        print("Utils.print (DebugPanel not ready yet): " + message)
 
 func get_is_paused() -> bool:
     return get_tree().paused
@@ -115,7 +116,7 @@ func error( \
         message := "An error occurred", \
         should_assert := true) -> void:
     push_error("ERROR: %s" % message)
-    ScaffoldUtils.print("**ERROR**: %s" % message)
+    Gs.utils.print("**ERROR**: %s" % message)
     if should_assert:
          assert(false)
 
@@ -128,7 +129,7 @@ static func static_error( \
 
 func warning(message := "An warning occurred") -> void:
     push_warning("WARNING: %s" % message)
-    ScaffoldUtils.print("**WARNING**: %s" % message)
+    Gs.utils.print("**WARNING**: %s" % message)
 
 # TODO: Replace this with any built-in feature whenever it exists
 #       (https://github.com/godotengine/godot/issues/4715).
@@ -261,22 +262,22 @@ func add_scene( \
     return node
 
 static func get_global_touch_position(input_event: InputEvent) -> Vector2:
-    return ScaffoldConfig.level.make_input_local(input_event).position
+    return Gs.level.make_input_local(input_event).position
 
 func add_overlay_to_current_scene(node: Node) -> void:
     get_tree().get_current_scene().add_child(node)
 
 func vibrate() -> void:
-    if ScaffoldConfig.is_giving_haptic_feedback:
+    if Gs.is_giving_haptic_feedback:
         Input.vibrate_handheld( \
-                ScaffoldConfig.input_vibrate_duration_sec * 1000)
+                Gs.input_vibrate_duration_sec * 1000)
 
 func give_button_press_feedback(is_fancy := false) -> void:
     vibrate()
     if is_fancy:
-        Audio.play_sound("menu_select_fancy")
+        Gs.audio.play_sound("menu_select_fancy")
     else:
-        Audio.play_sound("menu_select")
+        Gs.audio.play_sound("menu_select")
 
 static func ease_name_to_param(name: String) -> float:
     match name:
@@ -378,13 +379,13 @@ func get_viewport_safe_area() -> Rect2:
             os_safe_area.size / get_screen_scale())
 
 func get_safe_area_margin_top() -> float:
-    return ScaffoldUtils.get_viewport_safe_area().position.y
+    return get_viewport_safe_area().position.y
 
 func get_safe_area_margin_bottom() -> float:
-    return get_viewport().size.y - ScaffoldUtils.get_viewport_safe_area().end.y
+    return get_viewport().size.y - get_viewport_safe_area().end.y
 
 func get_safe_area_margin_left() -> float:
-    return ScaffoldUtils.get_viewport_safe_area().position.x
+    return get_viewport_safe_area().position.x
 
 func get_safe_area_margin_right() -> float:
     return get_viewport().size.x - OS.get_window_safe_area().end.x
@@ -603,9 +604,9 @@ static func get_node_vscroll_position( \
 static func get_support_url() -> String:
     var params := "?source=" + OS.get_name()
     params += "&app=inner-tube-climber"
-    return ScaffoldConfig.support_url_base + params
+    return Gs.support_url_base + params
 
 static func get_log_gestures_url() -> String:
     var params := "?source=" + OS.get_name()
     params += "&app=inner-tube-climber"
-    return ScaffoldConfig.log_gestures_url + params
+    return Gs.log_gestures_url + params

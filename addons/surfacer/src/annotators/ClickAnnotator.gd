@@ -19,18 +19,18 @@ var outer_progress := 1.0
 var is_a_click_currently_rendered := false
 
 func _unhandled_input(event: InputEvent) -> void:
-    var current_time: float = Time.elapsed_play_time_actual_sec
+    var current_time: float = Gs.time.elapsed_play_time_actual_sec
     
     var position := Vector2.INF
     
     if event is InputEventMouseButton and \
             event.button_index == BUTTON_LEFT and \
             !event.pressed:
-        position = ScaffoldUtils.get_global_touch_position(event)
+        position = Gs.utils.get_global_touch_position(event)
         
     elif event is InputEventScreenTouch and \
             !event.pressed:
-        position = ScaffoldUtils.get_global_touch_position(event)
+        position = Gs.utils.get_global_touch_position(event)
     
     if position != Vector2.INF:
         click_position = position
@@ -40,7 +40,7 @@ func _unhandled_input(event: InputEvent) -> void:
         is_a_click_currently_rendered = true
 
 func _process(delta_sec: float) -> void:
-    var current_time: float = Time.elapsed_play_time_actual_sec
+    var current_time: float = Gs.time.elapsed_play_time_actual_sec
     
     inner_progress = (current_time - start_time) / CLICK_INNER_DURATION_SEC
     outer_progress = (current_time - start_time) / CLICK_OUTER_DURATION_SEC

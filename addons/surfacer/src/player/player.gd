@@ -56,7 +56,7 @@ var _dash_fade_tween: Tween
 func _init(player_name: String) -> void:
     self.player_name = player_name
     
-    self.level = ScaffoldConfig.level
+    self.level = Gs.level
     
     var player_params: PlayerParams = SurfacerConfig.player_params[player_name]
     self.can_grab_walls = player_params.movement_params.can_grab_walls
@@ -104,7 +104,7 @@ func _ready() -> void:
 #    shape_owner_clear_shapes(owner_id)
 #    shape_owner_add_shape(owner_id, movement_params.collider_shape)
     
-    var animators: Array = ScaffoldUtils.get_children_by_type( \
+    var animators: Array = Gs.utils.get_children_by_type( \
             self, \
             PlayerAnimator)
     assert(animators.size() <= 1)
@@ -137,14 +137,14 @@ func _ready() -> void:
     surface_state.previous_center_position = self.position
     surface_state.center_position = self.position
     
-    ScaffoldUtils.connect( \
+    Gs.utils.connect( \
             "display_resized", \
             self, \
             "_on_resized")
     _on_resized()
 
 func _on_resized() -> void:
-    ScaffoldConfig.camera_controller.update_zoom()
+    Gs.camera_controller.update_zoom()
 
 func init_human_player_state() -> void:
     is_human_player = true
@@ -177,7 +177,7 @@ func _set_camera() -> void:
     var camera := Camera2D.new()
     add_child(camera)
     # Register the current camera, so it's globally accessible.
-    ScaffoldConfig.camera_controller.set_current_camera(camera)
+    Gs.camera_controller.set_current_camera(camera)
 
 func _init_user_controller_action_source() -> void:
     action_sources.push_back(UserActionSource.new(self, true))
@@ -198,7 +198,7 @@ func _physics_process(delta_sec: float) -> void:
     
     assert(Geometry.are_floats_equal_with_epsilon( \
             delta_sec, \
-            Time.PHYSICS_TIME_STEP_SEC))
+            Gs.time.PHYSICS_TIME_STEP_SEC))
     
     _update_actions(delta_sec)
     _update_surface_state()
@@ -207,7 +207,7 @@ func _physics_process(delta_sec: float) -> void:
     if surface_state.just_left_air:
         print_msg("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s", [ \
                 player_name, \
-                Time.elapsed_play_time_actual_sec, \
+                Gs.time.elapsed_play_time_actual_sec, \
                 surface_state.center_position, \
                 velocity, \
                 surface_state.grabbed_surface.to_string(), \
@@ -215,7 +215,7 @@ func _physics_process(delta_sec: float) -> void:
     elif surface_state.just_entered_air:
         print_msg("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s", [ \
                 player_name, \
-                Time.elapsed_play_time_actual_sec, \
+                Gs.time.elapsed_play_time_actual_sec, \
                 surface_state.center_position, \
                 velocity, \
                 surface_state.previous_grabbed_surface.to_string(), \
@@ -230,7 +230,7 @@ func _physics_process(delta_sec: float) -> void:
             side_str = "WALL"
         print_msg("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s", [ \
                 player_name, \
-                Time.elapsed_play_time_actual_sec, \
+                Gs.time.elapsed_play_time_actual_sec, \
                 surface_state.center_position, \
                 velocity, \
                 side_str, \
@@ -240,7 +240,7 @@ func _physics_process(delta_sec: float) -> void:
         _update_navigator(delta_sec)
     
     actions.delta_sec = delta_sec
-    actions.log_new_presses_and_releases(self, Time.elapsed_play_time_actual_sec)
+    actions.log_new_presses_and_releases(self, Gs.time.elapsed_play_time_actual_sec)
     
     # Flip the horizontal direction of the animation according to which way the
     # player is facing.
@@ -282,7 +282,7 @@ func _handle_pointer_selections() -> void:
     if new_selection_target != Vector2.INF:
         print_msg("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [ \
                 player_name, \
-                Time.elapsed_play_time_actual_sec, \
+                Gs.time.elapsed_play_time_actual_sec, \
                 str(new_selection_target), \
                 new_selection_position.to_string() if \
                 new_selection_position != null else \
@@ -313,7 +313,7 @@ func _update_actions(delta_sec: float) -> void:
         action_source.update( \
                 actions, \
                 actions_from_previous_frame, \
-                Time.elapsed_play_time_actual_sec, \
+                Gs.time.elapsed_play_time_actual_sec, \
                 delta_sec, \
                 navigation_state)
     
@@ -351,7 +351,7 @@ func _process_animation() -> void:
                 elif actions.pressed_down:
                     animator.climb_down()
                 else:
-                    ScaffoldUtils.error()
+                    Gs.utils.error()
             else:
                 animator.rest_on_wall()
         SurfaceType.AIR:
@@ -360,7 +360,7 @@ func _process_animation() -> void:
             else:
                 animator.jump_rise()
         _:
-            ScaffoldUtils.error()
+            Gs.utils.error()
 
 func _process_sfx() -> void:
     pass
@@ -398,7 +398,7 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     surface_state.is_touching_ceiling = is_on_ceiling()
     surface_state.is_touching_wall = is_on_wall()
     
-    surface_state.which_wall = ScaffoldUtils.get_which_wall_collided_for_body(self)
+    surface_state.which_wall = Gs.utils.get_which_wall_collided_for_body(self)
     surface_state.is_touching_left_wall = \
             surface_state.which_wall == SurfaceSide.LEFT_WALL
     surface_state.is_touching_right_wall = \
@@ -629,7 +629,7 @@ func _update_which_surface_is_grabbed( \
                     surface_state.just_grabbed_floor = false
                     surface_state.just_grabbed_ceiling = false
                 _:
-                    ScaffoldUtils.error()
+                    Gs.utils.error()
         surface_state.just_changed_tile_map_coord = \
                 (preserves_just_changed_state and \
                         surface_state.just_changed_tile_map_coord) or \
