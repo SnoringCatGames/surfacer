@@ -1,6 +1,8 @@
 extends Node2D
 class_name ScaffoldLevel
 
+var level_start_time: float
+
 func _ready() -> void:
     ScaffoldUtils.connect( \
             "display_resized", \
@@ -12,7 +14,10 @@ func _on_resized() -> void:
     pass
 
 func start() -> void:
-    ScaffoldUtils.error("Abstract ScaffoldLevel.start is not implemented")
+    level_start_time = Time.elapsed_play_time_actual_sec
 
 func destroy() -> void:
-    ScaffoldUtils.error("Abstract ScaffoldLevel.destroy is not implemented")
+    pass
+
+func quit() -> void:
+    pass

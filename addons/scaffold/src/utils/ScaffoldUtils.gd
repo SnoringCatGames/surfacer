@@ -74,6 +74,27 @@ func _update_game_area_region_and_gui_scale() -> void:
                 viewport_size.y / ScaffoldConfig.default_game_area_size.y
         ScaffoldConfig.gui_scale = \
                 max(ScaffoldConfig.gui_scale, ScaffoldConfig.MIN_GUI_SCALE)
+    
+    for gui in ScaffoldConfig.guis_to_scale:
+        _scale_gui_for_current_screen_size(gui)
+
+# Automatically resize the gui to adapt to different screen sizes.
+func _scale_gui_for_current_screen_size(gui: Control) -> void:
+    if !is_instance_valid(gui):
+        ScaffoldUtils.error()
+        return
+    
+    var old_gui_scale: float = ScaffoldConfig.guis_to_scale[gui]
+    
+    var new_gui_scale: float = ScaffoldConfig.gui_scale
+    new_gui_scale = Geometry.snap_float_to_integer(new_gui_scale, 0.001)
+    
+    if old_gui_scale != new_gui_scale:
+        var relative_scale := new_gui_scale / old_gui_scale
+        ScaffoldConfig.guis_to_scale[gui] = new_gui_scale
+        ScaffoldUtils._scale_gui_recursively( \
+                gui, \
+                relative_scale)
 
 func print(message: String) -> void:
     if is_instance_valid(ScaffoldConfig.debug_panel):
@@ -527,27 +548,34 @@ static func set_mouse_filter_recursively( \
                 child.mouse_filter = mouse_filter
         set_mouse_filter_recursively(child, mouse_filter)
 
-static func scale_gui_recursively( \
+static func _scale_gui_recursively( \
         control: Control, \
         gui_scale: float) -> void:
     var snap_epsilon := 0.001
     
     # Only scale texture-based GUIs, since we scale fonts separately.
+    var is_gui_container := \
+            control is Container
     var is_gui_texture_based := \
             control is TextureButton or \
             control is ShinyButton or \
             control is TextureRect
-    if is_gui_texture_based:
-        control.rect_scale *= gui_scale
-        control.rect_scale = Geometry.snap_vector2_to_integers( \
-                control.rect_scale, snap_epsilon)
-    else:
+    if is_gui_container:
         control.rect_min_size *= gui_scale
         control.rect_min_size = Geometry.snap_vector2_to_integers( \
                 control.rect_min_size, snap_epsilon)
         control.rect_size *= gui_scale
         control.rect_size = Geometry.snap_vector2_to_integers( \
                 control.rect_size, snap_epsilon)
+        if control is VBoxContainer or \
+                control is HBoxContainer:
+            var separation := control.get_constant("separation") * gui_scale
+            control.add_constant_override("separation", separation)
+    elif is_gui_texture_based:
+        control.rect_scale *= gui_scale
+        control.rect_scale = Geometry.snap_vector2_to_integers( \
+                control.rect_scale, snap_epsilon)
+    
 #    control.rect_position /= gui_scale
 #    control.rect_position = Geometry.snap_vector2_to_integers( \
 #            control.rect_position, snap_epsilon)
@@ -557,7 +585,7 @@ static func scale_gui_recursively( \
     
     for child in control.get_children():
         if child is Control:
-            scale_gui_recursively(child, gui_scale)
+            _scale_gui_recursively(child, gui_scale)
 
 static func get_node_vscroll_position( \
         scroll_container: ScrollContainer, \

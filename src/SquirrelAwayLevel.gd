@@ -39,4 +39,10 @@ func start() -> void:
     Audio.play_music("on_a_quest")
 
 func destroy() -> void:
+    .destroy()
     pass
+
+func quit() -> void:
+    .quit()
+    destroy()
+    Nav.open("main_menu")

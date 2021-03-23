@@ -6,12 +6,6 @@
 [ext_resource path="res://addons/scaffold/src/gui/screens/ThirdPartyLicensesScreen.gd" type="Script" id=4]
 [ext_resource path="res://addons/scaffold/src/gui/CenteredPanel.tscn" type="PackedScene" id=5]
 
-
-
-
-
-
-
 [sub_resource type="StyleBoxEmpty" id=1]
 content_margin_left = 12.0
 content_margin_right = 12.0
@@ -22,44 +16,45 @@ content_margin_bottom = 12.0
 script = ExtResource( 4 )
 
 [node name="FullScreenPanel" parent="." instance=ExtResource( 1 )]
-margin_right = 480.0
-margin_bottom = 480.0
+margin_right = 960.0
+margin_bottom = 960.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
-margin_right = 480.0
-margin_bottom = 612.0
+margin_right = 1024.0
+margin_bottom = 1156.0
 
 [node name="NavBar" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 3 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_right = 480.0
-margin_bottom = 128.0
+margin_right = 1024.0
+margin_bottom = 192.0
 text = "Third-party licenses"
 
 [node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 5 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 132.0
-margin_right = 480.0
-margin_bottom = 612.0
+margin_top = 196.0
+margin_right = 1024.0
+margin_bottom = 676.0
+stretches_horizontally = false
 stretches_vertically = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
-margin_right = 480.0
+margin_right = 1024.0
 margin_bottom = 480.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 scroll_horizontal_enabled = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer"]
-margin_right = 480.0
+margin_right = 1024.0
 margin_bottom = 294.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/VBoxContainer"]
-margin_right = 480.0
+margin_left = 63.0
+margin_right = 959.0
 margin_bottom = 294.0
-rect_min_size = Vector2( 282, 294 )
+rect_min_size = Vector2( 896, 294 )
+size_flags_horizontal = 4
 custom_styles/normal = SubResource( 1 )
 custom_fonts/font = ExtResource( 2 )
 autowrap = true

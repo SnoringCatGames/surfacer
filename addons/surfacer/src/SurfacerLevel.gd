@@ -16,14 +16,17 @@ var fake_players := {}
 var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
+var utility_panel: UtilityPanel
 
 func _enter_tree() -> void:
     ScaffoldConfig.level = self
 
 func start() -> void:
+    .start()
+    
     ScaffoldConfig.level = self
     
-    var utility_panel: UtilityPanel = ScaffoldUtils.add_scene( \
+    utility_panel = ScaffoldUtils.add_scene( \
             ScaffoldConfig.canvas_layers.layers.hud, \
             _UTILITY_PANEL_RESOURCE_PATH)
     SurfacerConfig.utility_panel = utility_panel
@@ -45,6 +48,13 @@ func start() -> void:
     _parse_squirrel_destinations()
     
     SurfacerConfig.is_level_ready = true
+
+func destroy() -> void:
+    .destroy()
+    utility_panel.destroy()
+
+func quit() -> void:
+    .quit()
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseButton or \

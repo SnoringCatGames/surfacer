@@ -72,17 +72,17 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "CameraController",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/CameraController.gd"
+"path": "res://addons/scaffold/src/utils/CameraController.gd"
 }, {
 "base": "Node2D",
 "class": "CameraShake",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/CameraShake.gd"
+"path": "res://addons/scaffold/src/utils/CameraShake.gd"
 }, {
 "base": "Node2D",
 "class": "CanvasLayers",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/CanvasLayers.gd"
+"path": "res://addons/scaffold/src/utils/CanvasLayers.gd"
 }, {
 "base": "PlayerActionHandler",
 "class": "CapVelocityAction",
@@ -525,6 +525,11 @@ _global_script_classes=[ {
 "path": "res://addons/scaffold/src/gui/FullScreenPanel.gd"
 }, {
 "base": "Screen",
+"class": "GameOverScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/gui/screens/GameOverScreen.gd"
+}, {
+"base": "Screen",
 "class": "GameScreen",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/gui/screens/GameScreen.gd"
@@ -617,12 +622,12 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "IosModelNames",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/IosModelNames.gd"
+"path": "res://addons/scaffold/src/utils/IosModelNames.gd"
 }, {
 "base": "Reference",
 "class": "IosResolutions",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/IosResolutions.gd"
+"path": "res://addons/scaffold/src/utils/IosResolutions.gd"
 }, {
 "base": "EdgeCalculator",
 "class": "JumpFromSurfaceToAirCalculator",
@@ -688,6 +693,36 @@ _global_script_classes=[ {
 "class": "LegendItemType",
 "language": "GDScript",
 "path": "res://addons/surfacer/src/gui/legend/legend_items/LegendItemType.gd"
+}, {
+"base": "Control",
+"class": "LevelSelectItem",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/gui/level_select/LevelSelectItem.gd"
+}, {
+"base": "Node",
+"class": "LevelSelectItemBody",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/gui/level_select/LevelSelectItemBody.gd"
+}, {
+"base": "Control",
+"class": "LevelSelectItemLockedHeader",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/gui/level_select/LevelSelectItemLockedHeader.gd"
+}, {
+"base": "Control",
+"class": "LevelSelectItemUnlockedHeader",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/gui/level_select/LevelSelectItemUnlockedHeader.gd"
+}, {
+"base": "Screen",
+"class": "LevelSelectScreen",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/gui/screens/LevelSelectScreen.gd"
+}, {
+"base": "Control",
+"class": "LockAnimation",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/gui/level_select/LockAnimation.gd"
 }, {
 "base": "Node2D",
 "class": "Main",
@@ -892,7 +927,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "PriorityQueue",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/PriorityQueue.gd"
+"path": "res://addons/scaffold/src/utils/PriorityQueue.gd"
 }, {
 "base": "InspectorItemController",
 "class": "ProfilerCountItemController",
@@ -940,6 +975,11 @@ _global_script_classes=[ {
 "path": "res://addons/scaffold/src/ScaffoldLevel.gd"
 }, {
 "base": "Node",
+"class": "ScaffoldLevelConfig",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/ScaffoldLevelConfig.gd"
+}, {
+"base": "Node",
 "class": "ScaffoldThirdPartyLicenses",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/ScaffoldThirdPartyLicenses.gd"
@@ -975,6 +1015,11 @@ _global_script_classes=[ {
 "path": "res://src/SquirrelAwayLevel.gd"
 }, {
 "base": "Node",
+"class": "SquirrelAwayLevelConfig",
+"language": "GDScript",
+"path": "res://src/SquirrelAwayLevelConfig.gd"
+}, {
+"base": "Node",
 "class": "SquirrelAwayThirdPartyLicenses",
 "language": "GDScript",
 "path": "res://src/SquirrelAwayThirdPartyLicenses.gd"
@@ -992,7 +1037,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "Stopwatch",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/Stopwatch.gd"
+"path": "res://addons/scaffold/src/utils/Stopwatch.gd"
 }, {
 "base": "Reference",
 "class": "Surface",
@@ -1084,7 +1129,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/player/action/UserActionSource.gd"
 }, {
-"base": "Panel",
+"base": "PanelContainer",
 "class": "UtilityPanel",
 "language": "GDScript",
 "path": "res://addons/surfacer/src/gui/panels/UtilityPanel.gd"
@@ -1273,6 +1318,7 @@ _global_script_class_icons={
 "FloorWalkAction": "",
 "FloorsItemController": "",
 "FullScreenPanel": "",
+"GameOverScreen": "",
 "GameScreen": "",
 "GestureRecord": "",
 "GlobalCountsGroupItemController": "",
@@ -1306,6 +1352,12 @@ _global_script_class_icons={
 "Legend": "",
 "LegendItem": "",
 "LegendItemType": "",
+"LevelSelectItem": "",
+"LevelSelectItemBody": "",
+"LevelSelectItemLockedHeader": "",
+"LevelSelectItemUnlockedHeader": "",
+"LevelSelectScreen": "",
+"LockAnimation": "",
 "Main": "",
 "MainMenuScreen": "",
 "MatchExpectedEdgeTrajectoryAction": "",
@@ -1356,6 +1408,7 @@ _global_script_class_icons={
 "RulerAnnotator": "",
 "ScaffoldBootstrap": "",
 "ScaffoldLevel": "",
+"ScaffoldLevelConfig": "",
 "ScaffoldThirdPartyLicenses": "",
 "Screen": "",
 "SelectionDescription": "",
@@ -1363,6 +1416,7 @@ _global_script_class_icons={
 "ShinyButton": "",
 "SquirrelAnimator": "",
 "SquirrelAwayLevel": "",
+"SquirrelAwayLevelConfig": "",
 "SquirrelAwayThirdPartyLicenses": "",
 "SquirrelParams": "",
 "SquirrelPlayer": "",
@@ -1416,13 +1470,13 @@ config/quit_on_go_back=false
 [autoload]
 
 ScaffoldConfig="*res://addons/scaffold/src/ScaffoldConfig.gd"
-ScaffoldUtils="*res://addons/scaffold/src/ScaffoldUtils.gd"
-Time="*res://addons/scaffold/src/Time.gd"
+ScaffoldUtils="*res://addons/scaffold/src/utils/ScaffoldUtils.gd"
+Time="*res://addons/scaffold/src/utils/Time.gd"
 SaveState="*res://addons/scaffold/src/data/SaveState.gd"
 Analytics="*res://addons/scaffold/src/data/Analytics.gd"
 Log="*res://addons/scaffold/src/data/Log.gd"
-Audio="*res://addons/scaffold/src/Audio.gd"
-Nav="*res://addons/scaffold/src/Navigation.gd"
+Audio="*res://addons/scaffold/src/utils/Audio.gd"
+Nav="*res://addons/scaffold/src/utils/Navigation.gd"
 SurfacerConfig="*res://addons/surfacer/src/SurfacerConfig.gd"
 Geometry="*res://addons/surfacer/src/utils/Geometry.gd"
 DrawUtils="*res://addons/surfacer/src/utils/DrawUtils.gd"

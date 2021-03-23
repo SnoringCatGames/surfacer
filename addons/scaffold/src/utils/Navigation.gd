@@ -2,18 +2,20 @@ extends Node
 
 const _DEFAULT_SCREEN_PATH_PREFIX := "res://addons/scaffold/src/gui/screens/"
 const _DEFAULT_SCREEN_FILENAMES := [
-    "GodotSplashScreen.tscn",
-    "DeveloperSplashScreen.tscn",
-    "MainMenuScreen.tscn",
-    "SettingsScreen.tscn",
-    "PauseScreen.tscn",
-    "GameScreen.tscn",
-    "ThirdPartyLicensesScreen.tscn",
+    "ConfirmDataDeletionScreen.tscn",
     "CreditsScreen.tscn",
     "DataAgreementScreen.tscn",
-    "RateAppScreen.tscn",
-    "ConfirmDataDeletionScreen.tscn",
+    "DeveloperSplashScreen.tscn",
+    "GameScreen.tscn",
+    "GameOverScreen.tscn",
+    "GodotSplashScreen.tscn",
+    "LevelSelectScreen.tscn",
+    "MainMenuScreen.tscn",
     "NotificationScreen.tscn",
+    "PauseScreen.tscn",
+    "RateAppScreen.tscn",
+    "SettingsScreen.tscn",
+    "ThirdPartyLicensesScreen.tscn",
 ]
 const FADE_TRANSITION_PATH := \
         _DEFAULT_SCREEN_PATH_PREFIX + "FadeTransition.tscn"

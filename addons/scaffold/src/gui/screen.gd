@@ -8,6 +8,8 @@ var includes_standard_hierarchy: bool
 var includes_nav_bar: bool
 var includes_center_container: bool
 
+var default_gui_scale := 1.0
+
 var outer_panel_container: PanelContainer
 var nav_bar: Control
 var scroll_container: ScrollContainer
@@ -16,8 +18,6 @@ var inner_vbox: VBoxContainer
 var _focused_button: ShinyButton
 
 var params: Dictionary
-
-var gui_scale := 1.0
 
 func _init( \
         screen_name: String, \
@@ -51,6 +51,11 @@ func _validate_node_hierarchy() -> void:
     style_updated.shadow_size = 8
     style_updated.shadow_offset = Vector2(-4.0, 4.0)
     outer_panel_container.add_stylebox_override("panel", style_updated)
+    
+    if auto_adapts_gui_scale:
+        ScaffoldConfig.add_gui_to_scale( \
+                outer_panel_container, \
+                default_gui_scale)
     
     if includes_standard_hierarchy:
         var outer_vbox: VBoxContainer = $FullScreenPanel/VBoxContainer
@@ -110,24 +115,7 @@ func _on_deactivated() -> void:
     pass
 
 func _on_resized() -> void:
-    if !is_instance_valid(outer_panel_container):
-        return
-    
-    # FIXME: -------------
-    if screen_name != "credits":
-        return
-    
-    var new_gui_scale: float = ScaffoldConfig.gui_scale
-    new_gui_scale = Geometry.snap_float_to_integer(new_gui_scale, 0.001)
-    
-    if auto_adapts_gui_scale and \
-            gui_scale != new_gui_scale:
-        # Automatically resize the gui to adapt to different screen sizes.
-        var relative_scale := new_gui_scale / gui_scale
-        gui_scale = new_gui_scale
-        ScaffoldUtils.scale_gui_recursively( \
-                outer_panel_container, \
-                relative_scale)
+    pass
 
 func _get_focused_button() -> ShinyButton:
     return null

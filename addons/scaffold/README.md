@@ -71,10 +71,19 @@ This provides limited flexibility in how far the camera is zoomed. That is, you 
 
 TODO
 
+-   Don't specify custom positions, if at all possible. For example:
+    -   Instead of encoding a margin/offset, use a VBoxContainer or HBoxContainer parent, and include an empty spacer sibling with size or min-size.
+    -   This is especially important when your positioning is calculated to include bottom/right-side margins.
+
+In general, whenever possible, I find it helpful to use a VBoxContainer or HBoxContainer as a parent, and to have children use the shrink-center size flag for both horizontal and vertical directions along with a min-size.
+
 ## Licenses
 
 -   All code is published under the [MIT license](LICENSE).
 -   All art assets (files under `assets/images/`, `assets/music/`, and `assets/sounds/`) are published under the [CC0 1.0 Universal license](https://creativecommons.org/publicdomain/zero/1.0/deed.en).
 -   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/scaffold_third_party_licenses.gd).
 
-![An animated icon consisting of spinning gear, a game controller, and a pixelated jumping character](assets/images/spinning_gear_icon.gif)
+<p align="center">
+  <img src="assets/images/spinning_gear_icon.gif"
+       alt="An animated icon consisting of spinning gear, a game controller, and a pixelated jumping character">
+</p>

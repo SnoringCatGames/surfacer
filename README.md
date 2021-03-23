@@ -25,4 +25,7 @@ In this game, the user can click anywhere in the level, and the cat character wi
     -   [addons/surfacer/surfacer_third_party_licenses.gd](./addons/surfacer/surfacer_third_party_licenses.gd)
     -   [src/squirrel_away_third_party_licenses.gd](./src/squirrel_away_third_party_licenses.gd)
 
-![An animated GIF showing a squirrel running](assets/images/loading.gif)
+<p align="center">
+  <img src="assets/images/loading.gif"
+       alt="An animated GIF showing a squirrel running">
+</p>

@@ -28,7 +28,8 @@ var third_party_license_text := \
 var special_thanks_text := """
 """
 
-var level_resource_path := "res://src/levels/Level6.tscn"
+var level_resource_path := "res://src/levels/Level3.tscn"
+#var level_resource_path := "res://src/levels/Level6.tscn"
 
 var test_runner_resource_path := "res://test/TestRunner.tscn"
 
@@ -135,6 +136,7 @@ var app_manifest := {
     app_name = "Squirrel Away",
     app_id = "games.snoringcat.squirrel_away",
     app_version = "0.0.1",
+    score_version = "0.0.1",
     
     # Must match Project Settings > Application > Boot Splash > Bg Color
     # Must match Project Settings > Rendering > Environment > Default Clear Color
@@ -164,6 +166,8 @@ var app_manifest := {
     ],
     screen_inclusions = [
     ],
+    
+    level_config = SquirrelAwayLevelConfig.new(),
     
     fonts = fonts,
     

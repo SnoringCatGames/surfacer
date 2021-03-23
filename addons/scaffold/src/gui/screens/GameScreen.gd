@@ -67,7 +67,8 @@ func _on_activated() -> void:
 
 func start_level() -> void:
     if is_instance_valid(level):
-        destroy_level()
+        return
+    
     level = ScaffoldUtils.add_scene( \
             $PanelContainer/ViewportContainer/Viewport, \
             ScaffoldConfig.next_level_resource_path, \

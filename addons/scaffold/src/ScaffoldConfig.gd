@@ -25,6 +25,7 @@ var debug_window_size: Vector2
 var app_name: String
 var app_id: String
 var app_version: String
+var score_version: String
 
 var cell_size: Vector2
 
@@ -47,6 +48,9 @@ var option_button_pressed_color: Color
 
 var screen_exclusions: Array
 var screen_inclusions: Array
+
+var level_config: ScaffoldLevelConfig
+var audio: Audio
 
 var fonts: Dictionary
 
@@ -132,6 +136,8 @@ var gesture_record: GestureRecord
 var next_level_resource_path: String
 var level: ScaffoldLevel
 
+var guis_to_scale := {}
+
 # ---
 
 func _init() -> void:
@@ -144,6 +150,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.app_name = manifest.app_name
     self.app_id = manifest.app_id
     self.app_version = manifest.app_version
+    self.score_version = manifest.score_version
     self.cell_size = manifest.cell_size
     self.default_game_area_size = manifest.default_game_area_size
     self.aspect_ratio_max = manifest.aspect_ratio_max
@@ -159,6 +166,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.option_button_pressed_color = manifest.option_button_pressed_color
     self.screen_exclusions = manifest.screen_exclusions
     self.screen_inclusions = manifest.screen_inclusions
+    self.level_config = manifest.level_config
     self.fonts = manifest.fonts
     self.sounds_manifest = manifest.sounds_manifest
     self.default_sounds_path_prefix = manifest.default_sounds_path_prefix
@@ -260,6 +268,12 @@ func register_app_manifest(manifest: Dictionary) -> void:
     
     _record_original_font_sizes()
     ScaffoldUtils._update_game_area_region_and_gui_scale()
+
+func add_gui_to_scale( \
+        gui: Control, \
+        default_gui_scale: float) -> void:
+    guis_to_scale[gui] = default_gui_scale
+    ScaffoldUtils._scale_gui_for_current_screen_size(gui)
 
 func load_state() -> void:
     agreed_to_terms = SaveState.get_setting( \
