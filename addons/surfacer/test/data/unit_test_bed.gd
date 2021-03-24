@@ -1,5 +1,5 @@
-extends "res://addons/gut/test.gd"
 class_name UnitTestBed
+extends "res://addons/gut/test.gd"
 
 const END_COORDINATE_CLOSE_THRESHOLD := 0.001
 const END_POSITION_CLOSE_THRESHOLD := Vector2(0.001, 0.001)

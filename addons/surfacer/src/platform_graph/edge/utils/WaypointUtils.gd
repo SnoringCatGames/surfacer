@@ -1,6 +1,6 @@
 # A collection of utility functions for calculating state related to Waypoints.
-extends Reference
 class_name WaypointUtils
+extends Reference
 
 # TODO: Tweak this.
 const MIN_MAX_VELOCITY_X_OFFSET := 0.01

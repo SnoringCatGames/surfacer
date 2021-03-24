@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name EdgeStepCalcResultMetadataItemController
+extends InspectorItemController
 
 const TYPE := InspectorItemType.EDGE_STEP_CALC_RESULT_METADATA
 const IS_LEAF := false

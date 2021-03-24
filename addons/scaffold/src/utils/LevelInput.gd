@@ -1,5 +1,5 @@
-extends Node
 class_name LevelInput
+extends Node
 
 var _control: Control
 var _focused_control: Control

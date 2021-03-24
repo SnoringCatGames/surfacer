@@ -1,5 +1,5 @@
-extends EdgeCalculator
 class_name AirToSurfaceCalculator
+extends EdgeCalculator
 
 const NAME := "AirToSurfaceCalculator"
 const EDGE_TYPE := EdgeType.AIR_TO_SURFACE_EDGE

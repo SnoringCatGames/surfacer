@@ -1,5 +1,5 @@
-extends "res://addons/gut/test.gd"
 class_name IntegrationTestBed
+extends "res://addons/gut/test.gd"
 
 var TEST_LEVEL_LONG_FALL := {
     scene_resource_path = "res://addons/surfacer/src/test/data/TestLevelLongFall.tscn",

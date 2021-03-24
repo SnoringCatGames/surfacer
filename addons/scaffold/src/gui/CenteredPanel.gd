@@ -1,6 +1,6 @@
 tool
-extends PanelContainer
 class_name CenteredPanel
+extends PanelContainer
 
 export var stretches_horizontally := false \
         setget _set_stretches_horizontally,_get_stretches_horizontally

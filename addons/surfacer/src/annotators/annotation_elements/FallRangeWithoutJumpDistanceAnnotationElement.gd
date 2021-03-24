@@ -1,5 +1,5 @@
-extends PolylineAnnotationElement
 class_name FallRangeWithoutJumpDistanceAnnotationElement
+extends PolylineAnnotationElement
 
 const TYPE := AnnotationElementType.FALL_RANGE_WITHOUT_JUMP_DISTANCE
 const LEGEND_ITEM_CLASS_REFERENCE := FallRangeWithoutJumpDistanceLegendItem

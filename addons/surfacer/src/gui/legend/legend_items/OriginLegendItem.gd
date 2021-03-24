@@ -1,5 +1,5 @@
-extends LegendItem
 class_name OriginLegendItem
+extends LegendItem
 
 const TYPE := LegendItemType.ORIGIN
 const TEXT := "Origin"

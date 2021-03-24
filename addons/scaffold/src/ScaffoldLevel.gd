@@ -1,5 +1,5 @@
-extends Node2D
 class_name ScaffoldLevel
+extends Node2D
 
 var level_id: String
 var level_start_time: float

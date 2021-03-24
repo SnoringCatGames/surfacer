@@ -1,5 +1,5 @@
-extends Node2D
 class_name RulerAnnotator
+extends Node2D
 
 const GRID_SPACING := 64.0
 

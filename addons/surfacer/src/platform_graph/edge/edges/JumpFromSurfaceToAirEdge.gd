@@ -1,6 +1,6 @@
 # Information for how to move from a surface to a position in the air.
-extends Edge
 class_name JumpFromSurfaceToAirEdge
+extends Edge
 
 const TYPE := EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE
 const IS_TIME_BASED := true

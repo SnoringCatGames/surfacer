@@ -1,5 +1,5 @@
-extends CheckboxLabeledControlItem
 class_name SoundEffectsSettingsLabeledControlItem
+extends CheckboxLabeledControlItem
 
 const LABEL := "Sound effects"
 const DESCRIPTION := ""

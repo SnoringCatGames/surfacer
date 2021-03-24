@@ -1,5 +1,5 @@
-extends ColorRect
 class_name FadeTransition
+extends ColorRect
 
 signal fade_complete
 

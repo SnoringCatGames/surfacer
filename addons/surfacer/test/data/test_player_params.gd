@@ -1,5 +1,5 @@
-extends MovementParams
 class_name TestPlayerParams
+extends MovementParams
 
 func _init() -> void:
     name = "test"

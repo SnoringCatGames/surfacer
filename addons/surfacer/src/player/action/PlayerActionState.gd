@@ -1,5 +1,5 @@
-extends Reference
 class_name PlayerActionState
+extends Reference
 
 var delta_sec: float
 

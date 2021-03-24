@@ -1,5 +1,5 @@
-extends EdgeAttemptItemController
 class_name FailedEdgeItemController
+extends EdgeAttemptItemController
 
 const TYPE := InspectorItemType.FAILED_EDGE
 

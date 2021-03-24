@@ -1,5 +1,5 @@
-extends Screen
 class_name ThirdPartyLicensesScreen
+extends Screen
 
 const NAME := "third_party_licenses"
 const LAYER_NAME := "menu_screen"

@@ -1,5 +1,5 @@
-extends CheckboxLabeledControlItem
 class_name DebugPanelSettingsLabeledControlItem
+extends CheckboxLabeledControlItem
 
 const LABEL := "Debug panel"
 const DESCRIPTION := ""

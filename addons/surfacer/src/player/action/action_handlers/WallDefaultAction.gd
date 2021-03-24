@@ -1,5 +1,5 @@
-extends PlayerActionHandler
 class_name WallDefaultAction
+extends PlayerActionHandler
 
 const NAME := "WallDefaultAction"
 const TYPE := SurfaceType.WALL

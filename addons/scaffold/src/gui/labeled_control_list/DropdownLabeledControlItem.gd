@@ -1,5 +1,5 @@
-extends LabeledControlItem
 class_name DropdownLabeledControlItem
+extends LabeledControlItem
 
 var TYPE := LabeledControlItem.DROPDOWN
 

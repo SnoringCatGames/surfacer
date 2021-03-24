@@ -1,5 +1,5 @@
-extends SurfaceLegendItem
 class_name DestinationSurfaceLegendItem
+extends SurfaceLegendItem
 
 const TYPE := LegendItemType.DESTINATION_SURFACE
 const TEXT := "Destination\nsurface"

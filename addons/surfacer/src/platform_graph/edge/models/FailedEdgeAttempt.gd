@@ -1,7 +1,7 @@
 # This class records some state for failed edge calculations, including why
 # the calculation failed.
-extends EdgeAttempt
 class_name FailedEdgeAttempt
+extends EdgeAttempt
 
 var jump_land_positions: JumpLandPositions
 

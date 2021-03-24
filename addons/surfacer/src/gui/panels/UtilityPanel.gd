@@ -1,5 +1,5 @@
-extends PanelContainer
 class_name UtilityPanel
+extends PanelContainer
 
 const PANEL_MARGIN_RIGHT := 20.0
 const TOGGLE_DURATION := 0.2

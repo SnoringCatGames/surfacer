@@ -1,5 +1,5 @@
-extends Node2D
 class_name PlatformGraphInspectorSelector
+extends Node2D
 
 var ORIGIN_SURFACE_SELECTION_COLOR := SurfacerColors.opacify( \
         SurfacerColors.ORANGE, \

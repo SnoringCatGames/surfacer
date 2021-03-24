@@ -154,6 +154,7 @@ var app_manifest := {
     debug_window_size = debug_window_size,
     uses_threads = uses_threads,
     thread_count = thread_count,
+    is_mobile_supported = true,
     
     app_name = "Squirrel Away",
     app_id = "games.snoringcat.squirrel_away",

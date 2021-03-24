@@ -1,5 +1,5 @@
-extends Node2D
 class_name SurfaceSelectionAnnotator
+extends Node2D
 
 var VALID_SELECTION_COLOR: Color = \
         SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_SOLID)

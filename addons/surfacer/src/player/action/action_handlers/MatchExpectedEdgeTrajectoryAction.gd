@@ -1,5 +1,5 @@
-extends PlayerActionHandler
 class_name MatchExpectedEdgeTrajectoryAction
+extends PlayerActionHandler
 
 const NAME := "MatchExpectedEdgeTrajectoryAction"
 const TYPE := SurfaceType.OTHER

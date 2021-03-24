@@ -1,5 +1,5 @@
-extends TextLabeledControlItem
 class_name HighScoreLabeledControlItem
+extends TextLabeledControlItem
 
 const LABEL := "High score:"
 const DESCRIPTION := ""

@@ -1,5 +1,5 @@
-extends Node2D
 class_name CameraController
+extends Node2D
 
 const ZOOM_STEP_RATIO := Vector2(0.05, 0.05)
 const PAN_STEP := 8.0

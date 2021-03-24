@@ -1,5 +1,5 @@
-extends Reference
 class_name MovementParams
+extends Reference
 
 # TODO: Add defaults for some of these
 

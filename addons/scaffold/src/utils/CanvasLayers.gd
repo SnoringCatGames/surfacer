@@ -1,5 +1,5 @@
-extends Node2D
 class_name CanvasLayers
+extends Node2D
 
 const _DEFAULT_LAYERS_CONFIG := [
     {

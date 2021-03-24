@@ -1,5 +1,5 @@
-extends Node2D
 class_name ElementAnnotator
+extends Node2D
 
 # Dictionary<AnnotationElement, AnnotationElement>
 var _elements_set := {}

@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name EdgesFilteredByResultTypeGroupItemController
+extends InspectorItemController
 
 const IS_LEAF := false
 const STARTS_COLLAPSED := true

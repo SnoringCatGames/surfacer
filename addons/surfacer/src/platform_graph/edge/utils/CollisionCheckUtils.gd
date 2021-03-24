@@ -1,5 +1,5 @@
-extends Reference
 class_name CollisionCheckUtils
+extends Reference
 
 # Checks whether a collision would occur with any surface during the given
 # instructions.

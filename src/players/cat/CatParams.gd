@@ -1,5 +1,5 @@
-extends MovementParams
 class_name CatParams
+extends MovementParams
 
 func _init() -> void:
     _init_production_params()

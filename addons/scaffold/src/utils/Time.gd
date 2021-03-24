@@ -1,5 +1,5 @@
-extends Node
 class_name Time
+extends Node
 
 const _ADDITIONAL_FRAMERATE_MULTIPLIER_FOR_DEBUGGING := 1.0
 

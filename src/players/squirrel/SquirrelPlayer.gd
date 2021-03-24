@@ -1,5 +1,5 @@
-extends Player
 class_name SquirrelPlayer
+extends Player
 
 const TILE_MAP_COLLISION_LAYER := 7
 const SQUIRREL_SPAWN_COLLISION_MARGIN := 1.0

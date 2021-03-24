@@ -1,5 +1,5 @@
-extends PlayerActionHandler
 class_name CapVelocityAction
+extends PlayerActionHandler
 
 const NAME := "CapVelocityAction"
 const TYPE := SurfaceType.OTHER

@@ -1,5 +1,5 @@
-extends Screen
 class_name MainMenuScreen
+extends Screen
 
 const NAME := "main_menu"
 const LAYER_NAME := "menu_screen"

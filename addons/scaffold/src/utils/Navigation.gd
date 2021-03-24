@@ -1,5 +1,5 @@
-extends Node
 class_name ScaffoldNavigation
+extends Node
 
 const _DEFAULT_SCREEN_PATH_PREFIX := "res://addons/scaffold/src/gui/screens/"
 const _DEFAULT_SCREEN_FILENAMES := [

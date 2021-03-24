@@ -1,5 +1,5 @@
-extends Node
 class_name DrawUtils
+extends Node
 
 const SURFACE_DEPTH := 16.0
 const SURFACE_DEPTH_DIVISIONS_COUNT := 8

@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name DescriptionItemController
+extends InspectorItemController
 
 const TYPE := InspectorItemType.DESCRIPTION
 const IS_LEAF := true

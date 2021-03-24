@@ -1,6 +1,6 @@
 # A collection of utility functions for calculating state related to movement.
-extends Reference
 class_name MovementUtils
+extends Reference
 
 # Calculates the duration to reach the destination with the given movement
 # parameters.

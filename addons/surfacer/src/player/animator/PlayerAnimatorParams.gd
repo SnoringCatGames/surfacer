@@ -1,5 +1,5 @@
-extends Reference
 class_name PlayerAnimatorParams
+extends Reference
 
 var faces_right_by_default: bool
 

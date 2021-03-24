@@ -1,5 +1,5 @@
-extends Node
 class_name Audio
+extends Node
 
 const MUSIC_CROSS_FADE_DURATION_SEC := 2.0
 const SILENT_VOLUME_DB := -80.0

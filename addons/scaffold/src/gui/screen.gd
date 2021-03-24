@@ -1,5 +1,5 @@
-extends Node2D
 class_name Screen
+extends Node2D
 
 var screen_name: String
 var layer_name: String

@@ -1,6 +1,6 @@
 # Parameters that are used for calculating edge-movement collisions.
-extends Reference
 class_name CollisionCalcParams
+extends Reference
 
 var debug_params: Dictionary
 var movement_params: MovementParams

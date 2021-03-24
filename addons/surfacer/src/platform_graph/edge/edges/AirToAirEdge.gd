@@ -1,6 +1,6 @@
 # Information for how to move through the air from a start position to an end position.
-extends Edge
 class_name AirToAirEdge
+extends Edge
 
 const TYPE := EdgeType.AIR_TO_AIR_EDGE
 const IS_TIME_BASED := true

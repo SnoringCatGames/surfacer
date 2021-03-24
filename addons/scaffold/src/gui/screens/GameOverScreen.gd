@@ -1,6 +1,6 @@
 tool
-extends Screen
 class_name GameOverScreen
+extends Screen
 
 const NAME := "game_over"
 const LAYER_NAME := "menu_screen"

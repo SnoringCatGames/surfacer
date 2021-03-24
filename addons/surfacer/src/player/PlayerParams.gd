@@ -1,5 +1,5 @@
-extends Reference
 class_name PlayerParams
+extends Reference
 
 var name: String
 # PlayerType

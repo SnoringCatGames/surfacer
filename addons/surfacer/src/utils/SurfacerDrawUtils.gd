@@ -1,5 +1,5 @@
-extends DrawUtils
 class_name SurfacerDrawUtils
+extends DrawUtils
 
 const EDGE_TRAJECTORY_WIDTH := 1.0
 

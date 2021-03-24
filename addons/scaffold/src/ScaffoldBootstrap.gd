@@ -1,5 +1,5 @@
-extends Node
 class_name ScaffoldBootstrap
+extends Node
 
 func _init() -> void:
     print("ScaffoldBootstrap._init")

@@ -1,5 +1,5 @@
-extends MovementParams
 class_name SquirrelParams
+extends MovementParams
 
 func _init() -> void:
     name = "squirrel"

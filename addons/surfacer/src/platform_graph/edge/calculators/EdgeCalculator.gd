@@ -1,5 +1,5 @@
-extends Reference
 class_name EdgeCalculator
+extends Reference
 
 # This is the minimum speed that we require edge calculations to have at the
 # end of their jump trajectory when landing on a wall surface.

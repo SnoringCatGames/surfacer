@@ -1,5 +1,5 @@
-extends Node
 class_name ScaffoldGeometry
+extends Node
 
 const UP := Vector2.UP
 const DOWN := Vector2.DOWN

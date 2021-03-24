@@ -1,5 +1,5 @@
-extends Node2D
 class_name DebugPanel
+extends Node2D
 
 const CORNER_OFFSET := Vector2(0.0, 0.0)
 

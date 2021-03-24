@@ -1,5 +1,5 @@
-extends EdgeCalculator
 class_name WalkToAscendWallFromFloorCalculator
+extends EdgeCalculator
 
 const NAME := "WalkToAscendWallFromFloorCalculator"
 const EDGE_TYPE := EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE

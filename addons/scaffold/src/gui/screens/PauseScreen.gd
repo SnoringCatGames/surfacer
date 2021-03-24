@@ -1,6 +1,6 @@
 tool
-extends Screen
 class_name PauseScreen
+extends Screen
 
 const NAME := "pause"
 const LAYER_NAME := "menu_screen"

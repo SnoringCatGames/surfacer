@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name EdgeCalcProfilerGroupItemController
+extends InspectorItemController
 
 const TYPE := InspectorItemType.EDGE_CALC_PROFILER_GROUP
 const IS_LEAF := false

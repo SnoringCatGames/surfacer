@@ -1,5 +1,5 @@
-extends Node2D
 class_name SurfacePreselectionAnnotator
+extends Node2D
 
 var PRESELECTION_SURFACE_COLOR: Color = \
         SurfacerColors.opacify(SurfacerColors.PURPLE, SurfacerColors.ALPHA_XFAINT)

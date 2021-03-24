@@ -3,8 +3,8 @@
 # 
 # The instructions for this edge consist of two consecutive directional-key
 # presses (toward the wall, and upward), with no corresponding release.
-extends Edge
 class_name WalkToAscendWallFromFloorEdge
+extends Edge
 
 const TYPE := EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE
 const IS_TIME_BASED := false

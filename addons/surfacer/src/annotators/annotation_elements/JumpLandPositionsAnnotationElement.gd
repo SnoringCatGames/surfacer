@@ -1,5 +1,5 @@
-extends AnnotationElement
 class_name JumpLandPositionsAnnotationElement
+extends AnnotationElement
 
 const TYPE := AnnotationElementType.JUMP_LAND_POSITIONS
 

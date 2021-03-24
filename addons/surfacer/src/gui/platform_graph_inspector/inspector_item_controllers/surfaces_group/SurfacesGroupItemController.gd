@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name SurfacesGroupItemController
+extends InspectorItemController
 
 const TYPE := InspectorItemType.SURFACES_GROUP
 const IS_LEAF := false

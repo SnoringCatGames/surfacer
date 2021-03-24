@@ -1,7 +1,7 @@
 # Information for how to move from surface to surface to get from the given origin to the given
 # destination.
-extends Reference
 class_name PlatformGraphPath
+extends Reference
 
 # Array<Edge>
 var edges: Array

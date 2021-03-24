@@ -1,5 +1,5 @@
-extends Reference
 class_name InterSurfaceEdgesResult
+extends Reference
 
 var origin_surface: Surface
 var destination_surface: Surface

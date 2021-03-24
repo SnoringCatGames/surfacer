@@ -1,5 +1,5 @@
-extends Reference
 class_name InspectorItemController
+extends Reference
 
 const EDGE_TYPES_TO_SKIP := [ \
     EdgeType.AIR_TO_AIR_EDGE, \

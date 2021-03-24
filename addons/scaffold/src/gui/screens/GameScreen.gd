@@ -1,5 +1,5 @@
-extends Screen
 class_name GameScreen
+extends Screen
 
 const NAME := "game"
 const LAYER_NAME := "game_screen"

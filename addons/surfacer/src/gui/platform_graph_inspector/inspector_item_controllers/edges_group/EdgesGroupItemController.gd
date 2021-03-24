@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name EdgesGroupItemController
+extends InspectorItemController
 
 const TYPE := InspectorItemType.EDGES_GROUP
 const IS_LEAF := false

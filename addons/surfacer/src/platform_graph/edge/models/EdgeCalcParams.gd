@@ -1,6 +1,6 @@
 # Parameters that are used for calculating edge instructions.
-extends Reference
 class_name EdgeCalcParams
+extends Reference
 
 var collision_params: CollisionCalcParams
 

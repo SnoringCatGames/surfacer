@@ -1,5 +1,5 @@
-extends LabeledControlItem
 class_name TextLabeledControlItem
+extends LabeledControlItem
 
 var TYPE := LabeledControlItem.TEXT
 

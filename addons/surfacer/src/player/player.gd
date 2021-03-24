@@ -1,5 +1,5 @@
-extends KinematicBody2D
 class_name Player
+extends KinematicBody2D
 
 var player_name: String
 var can_grab_walls: bool

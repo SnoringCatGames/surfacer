@@ -6,8 +6,8 @@
 #     surface vertices.
 # 
 # The position always indicates the center of the player's bounding box.
-extends Reference
 class_name PositionAlongSurface
+extends Reference
 
 var surface: Surface
 

@@ -1,5 +1,5 @@
-extends Node2D
 class_name PlayerRecentMovementAnnotator
+extends Node2D
 
 const RECENT_POSITIONS_BUFFER_SIZE := 150
 

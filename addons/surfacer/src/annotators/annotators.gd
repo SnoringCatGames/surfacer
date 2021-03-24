@@ -1,5 +1,5 @@
-extends Node2D
 class_name Annotators
+extends Node2D
 
 var _PLAYER_SUB_ANNOTATORS := [
     AnnotatorType.PLAYER_POSITION,

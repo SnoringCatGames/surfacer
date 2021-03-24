@@ -1,5 +1,5 @@
-extends Node2D
 class_name NavigatorAnnotator
+extends Node2D
 
 const TRAJECTORY_STROKE_WIDTH := 4.0
 const INCLUDES_PREVIOUS_NAVIGATION := false

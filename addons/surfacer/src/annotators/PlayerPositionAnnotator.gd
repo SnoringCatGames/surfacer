@@ -1,5 +1,5 @@
-extends Node2D
 class_name PlayerPositionAnnotator
+extends Node2D
 
 var PLAYER_POSITION_COLOR := SurfacerColors.opacify(SurfacerColors.TEAL, SurfacerColors.ALPHA_XFAINT)
 var GRAB_POSITION_COLOR := SurfacerColors.opacify(SurfacerColors.TEAL_D, SurfacerColors.ALPHA_XFAINT)

@@ -1,5 +1,5 @@
-extends PlayerAnimator
 class_name SquirrelAnimator
+extends PlayerAnimator
 
 func _create_params() -> PlayerAnimatorParams:
     var animator_params := PlayerAnimatorParams.new()

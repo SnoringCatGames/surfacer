@@ -1,5 +1,5 @@
-extends LegendItem
 class_name SurfaceLegendItem
+extends LegendItem
 
 const DEFAULT_TYPE := LegendItemType.SURFACE
 const DEFAULT_TEXT := "Surface"

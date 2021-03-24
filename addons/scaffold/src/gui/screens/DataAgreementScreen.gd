@@ -1,5 +1,5 @@
-extends Screen
 class_name DataAgreementScreen
+extends Screen
 
 const NAME := "data_agreement"
 const LAYER_NAME := "menu_screen"

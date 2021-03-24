@@ -5,8 +5,8 @@
 #     since different players have different jump parameters and can reach
 #     different surfaces, so the edges in the graph will be different for each
 #     player.
-extends Reference
 class_name PlatformGraph
+extends Reference
 
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5

@@ -1,6 +1,6 @@
 tool
-extends Button
 class_name ShinyButton
+extends Button
 
 const SHINE_TEXTURE := \
         preload("res://addons/scaffold/assets/images/gui/shine_line.png")

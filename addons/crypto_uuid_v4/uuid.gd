@@ -1,5 +1,5 @@
-extends Reference
 class_name UUID
+extends Reference
 
 # Crypto UUID v4
 #

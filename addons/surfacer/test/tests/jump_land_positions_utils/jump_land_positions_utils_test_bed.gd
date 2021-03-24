@@ -1,5 +1,5 @@
-extends UnitTestBed
 class_name JumpLandPositionsUtilsTestBed
+extends UnitTestBed
 
 # NOTE: TestPlayer moves around 256px horizontally with max-speed start velocity while ascending
 #       to -448px.

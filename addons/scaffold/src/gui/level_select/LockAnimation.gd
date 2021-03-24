@@ -1,5 +1,5 @@
-extends Control
 class_name LockAnimation
+extends Control
 
 signal unlock_finished
 

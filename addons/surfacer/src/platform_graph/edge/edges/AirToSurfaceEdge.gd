@@ -1,6 +1,6 @@
 # Information for how to move through the air to a platform.
-extends Edge
 class_name AirToSurfaceEdge
+extends Edge
 
 const TYPE := EdgeType.AIR_TO_SURFACE_EDGE
 const IS_TIME_BASED := true

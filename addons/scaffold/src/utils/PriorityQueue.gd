@@ -1,5 +1,5 @@
-extends Reference
 class_name PriorityQueue
+extends Reference
 
 ###################################################################################################
 # By Hamfist McMutton

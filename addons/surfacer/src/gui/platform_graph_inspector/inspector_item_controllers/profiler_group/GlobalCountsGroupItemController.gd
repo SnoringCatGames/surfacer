@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name GlobalCountsGroupItemController
+extends InspectorItemController
 
 const TYPE := InspectorItemType.GLOBAL_COUNTS_GROUP
 const IS_LEAF := false

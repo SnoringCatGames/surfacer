@@ -1,6 +1,6 @@
 # An input event to trigger (or untrigger) at a specific time.
-extends Reference
 class_name EdgeInstruction
+extends Reference
 
 var input_key: String
 var time: float

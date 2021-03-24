@@ -1,5 +1,5 @@
-extends PlayerActionSource
 class_name UserActionSource
+extends PlayerActionSource
 
 const INPUT_KEYS := [
   "jump",

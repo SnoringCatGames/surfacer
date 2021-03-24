@@ -1,5 +1,5 @@
-extends Node2D
 class_name PlayerPointerHandler
+extends Node2D
 
 const DRAG_THROTTLE_INTERVAL_SEC := 0.1
 

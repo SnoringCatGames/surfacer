@@ -3,8 +3,8 @@
 # 
 # The instructions for an intra-surface edge consist of a single
 # directional-key press step, with no corresponding release.
-extends Edge
 class_name IntraSurfaceEdge
+extends Edge
 
 const TYPE := EdgeType.INTRA_SURFACE_EDGE
 const IS_TIME_BASED := false

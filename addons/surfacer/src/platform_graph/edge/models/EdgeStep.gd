@@ -26,8 +26,8 @@
 #   likely to happen before "step_end". If this is a vertical step, then this is the point at which
 #   the step starts using fast-fall gravity. If this is a horizontal step, then this is the point
 #   at which horizontal acceleration stops.
-extends Reference
 class_name EdgeStep
+extends Reference
 
 var input_key: String
 

@@ -1,5 +1,5 @@
-extends Control
 class_name LevelSelectItemUnlockedHeader
+extends Control
 
 const PADDING := Vector2(16.0, 8.0)
 

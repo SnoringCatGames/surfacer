@@ -1,6 +1,6 @@
 tool
-extends Control
 class_name AccordionPanel
+extends Control
 
 signal toggled
 signal caret_rotated

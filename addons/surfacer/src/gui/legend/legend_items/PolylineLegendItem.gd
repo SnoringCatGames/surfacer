@@ -1,5 +1,5 @@
-extends LegendItem
 class_name PolylineLegendItem
+extends LegendItem
 
 const NORMALIZED_FAKE_POSITIONS := [
     Vector2(0.15, 0.0), \

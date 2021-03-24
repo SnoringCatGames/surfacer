@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name OriginSurfaceItemController
+extends InspectorItemController
 
 const TYPE := InspectorItemType.ORIGIN_SURFACE
 const IS_LEAF := false

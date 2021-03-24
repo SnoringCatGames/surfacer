@@ -1,5 +1,5 @@
-extends Node
 class_name Analytics
+extends Node
 
 signal session_end
 

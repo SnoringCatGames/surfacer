@@ -1,5 +1,5 @@
-extends Reference
 class_name ColorParams
+extends Reference
 
 var type := ColorParamsType.UNKNOWN
 

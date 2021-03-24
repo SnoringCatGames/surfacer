@@ -1,5 +1,5 @@
-extends PlayerActionHandler
 class_name AllDefaultAction
+extends PlayerActionHandler
 
 const NAME := "AllDefaultAction"
 const TYPE := SurfaceType.OTHER

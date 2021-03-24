@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name ProfilerGroupItemController
+extends InspectorItemController
 
 const TYPE := InspectorItemType.PROFILER_GROUP
 const IS_LEAF := false

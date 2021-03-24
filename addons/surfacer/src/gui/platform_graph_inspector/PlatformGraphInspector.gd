@@ -1,5 +1,5 @@
-extends Tree
 class_name PlatformGraphInspector
+extends Tree
 
 # INSPECTOR STRUCTURE:
 # - Platform graph [player_name]

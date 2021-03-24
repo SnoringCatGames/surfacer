@@ -1,5 +1,5 @@
-extends VBoxContainer
 class_name Legend
+extends VBoxContainer
 
 # Dictionary<int, LegendItem>
 var _items := {}

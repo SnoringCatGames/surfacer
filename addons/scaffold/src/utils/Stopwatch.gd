@@ -1,5 +1,5 @@
-extends Reference
 class_name Stopwatch
+extends Reference
 
 # Dictionary<SurfacerProfilerMetric|String, int>
 var _start_times_msec := {}

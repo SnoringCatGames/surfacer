@@ -1,6 +1,6 @@
 tool
-extends SurfacerLevel
 class_name SquirrelAwayLevel
+extends SurfacerLevel
 
 const _WELCOME_PANEL_RESOURCE_PATH := \
         "res://addons/surfacer/src/gui/panels/WelcomePanel.tscn"

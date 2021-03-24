@@ -1,6 +1,6 @@
 # Measures and records timings.
-extends Node
 class_name Profiler
+extends Node
 
 const DEFAULT_THREAD_ID := ""
 

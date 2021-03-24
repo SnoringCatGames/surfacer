@@ -1,5 +1,5 @@
-extends Reference
 class_name PlayerActionSource
+extends Reference
 
 var source_type_prefix: String
 var player

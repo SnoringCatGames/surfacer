@@ -1,5 +1,5 @@
-extends PlayerAnimator
 class_name FakePlayerAnimator
+extends PlayerAnimator
 
 func _create_params() -> PlayerAnimatorParams:
     return PlayerAnimatorParams.new()

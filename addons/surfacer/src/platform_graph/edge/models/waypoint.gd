@@ -14,8 +14,8 @@
 #     the left or right side of the surface.
 #     - For waypoints on the left-side: The direction of movement must be leftward.
 #     - For waypoints on the right-side: The direction of movement must be rightward.
-extends Reference
 class_name Waypoint
+extends Reference
 
 # The surface that was collided with.
 var surface: Surface

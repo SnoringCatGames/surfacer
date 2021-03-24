@@ -1,6 +1,6 @@
 tool
-extends VBoxContainer
 class_name LabeledControlList
+extends VBoxContainer
 
 signal item_changed(item)
 

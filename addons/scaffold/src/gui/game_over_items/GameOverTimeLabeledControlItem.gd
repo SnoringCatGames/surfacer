@@ -1,5 +1,5 @@
-extends StaticTextLabeledControlItem
 class_name GameOverTimeLabeledControlItem
+extends StaticTextLabeledControlItem
 
 func _init(__ = null).( \
         "Time:", \

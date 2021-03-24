@@ -1,5 +1,5 @@
-extends EdgeCalculator
 class_name FallFromFloorCalculator
+extends EdgeCalculator
 
 const NAME := "FallFromFloorCalculator"
 const EDGE_TYPE := EdgeType.FALL_FROM_FLOOR_EDGE

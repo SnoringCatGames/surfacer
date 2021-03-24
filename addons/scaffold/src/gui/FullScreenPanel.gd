@@ -1,6 +1,6 @@
 tool
-extends PanelContainer
 class_name FullScreenPanel
+extends PanelContainer
 
 func _init() -> void:
     add_font_override("font", Gs.fonts.main_m)

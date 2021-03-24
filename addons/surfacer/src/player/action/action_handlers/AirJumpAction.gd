@@ -1,5 +1,5 @@
-extends PlayerActionHandler
 class_name AirJumpAction
+extends PlayerActionHandler
 
 const NAME := "AirJumpAction"
 const TYPE := SurfaceType.AIR

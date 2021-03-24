@@ -1,5 +1,5 @@
-extends Node
 class_name SurfacerThirdPartyLicenses
+extends Node
 
 const TEXT := """
 -------------------------------------------------------------------------------

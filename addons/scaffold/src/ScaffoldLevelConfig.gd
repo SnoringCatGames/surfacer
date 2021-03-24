@@ -1,5 +1,5 @@
-extends Node
 class_name ScaffoldLevelConfig
+extends Node
 
 # NOTE: Level config Dictionaries must have the following properties:
 # -   name: String: Try to keep this short and memorable.

@@ -1,5 +1,5 @@
-extends Reference
 class_name PlayerNavigationState
+extends Reference
 
 var is_human_player := false
 var is_expecting_to_enter_air := false

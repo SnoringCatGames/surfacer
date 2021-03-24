@@ -1,5 +1,5 @@
-extends StaticTextLabeledControlItem
 class_name GameOverScoreLabeledControlItem
+extends StaticTextLabeledControlItem
 
 func _init(__ = null).( \
         "Score:", \

@@ -1,5 +1,5 @@
-extends Node
 class_name SurfacerBootstrap
+extends Node
 
 func _init() -> void:
     print("SurfacerBootstrap._init")

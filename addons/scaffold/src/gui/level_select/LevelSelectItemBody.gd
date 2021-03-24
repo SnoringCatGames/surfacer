@@ -1,5 +1,5 @@
-extends Node
 class_name LevelSelectItemBody
+extends Node
 
 var level_id: String
 

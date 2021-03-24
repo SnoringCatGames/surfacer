@@ -1,5 +1,5 @@
-extends PlayerActionHandler
 class_name FloorDashAction
+extends PlayerActionHandler
 
 const NAME := "FloorDashAction"
 const TYPE := SurfaceType.FLOOR

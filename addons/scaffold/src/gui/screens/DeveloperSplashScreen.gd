@@ -1,6 +1,6 @@
 tool
-extends Screen
 class_name DeveloperSplashScreen
+extends Screen
 
 const NAME := "developer_splash"
 const LAYER_NAME := "menu_screen"

@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to
 # EdgeTrajectory.
-extends Reference
 class_name EdgeTrajectoryUtils
+extends Reference
 
 # Calculates trajectory state for the movement represented by the given
 # calculation results.

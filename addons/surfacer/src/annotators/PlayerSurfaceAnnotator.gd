@@ -1,5 +1,5 @@
-extends Node2D
 class_name PlayerSurfaceAnnotator
+extends Node2D
 
 var player: Player
 

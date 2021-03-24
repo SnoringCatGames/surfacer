@@ -2,8 +2,8 @@
 # 
 # The instructions for this edge consist of a single sideways key press, with
 # no corresponding release.
-extends Edge
 class_name FallFromWallEdge
+extends Edge
 
 const TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_TIME_BASED := false

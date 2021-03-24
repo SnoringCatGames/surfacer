@@ -6,8 +6,8 @@
 # - This edge consists of a small portion for walking from the start point to
 #   the fall-off point, and then another portion for falling from the fall-off
 #   point to the landing point.
-extends Edge
 class_name FallFromFloorEdge
+extends Edge
 
 const TYPE := EdgeType.FALL_FROM_FLOOR_EDGE
 const IS_TIME_BASED := false

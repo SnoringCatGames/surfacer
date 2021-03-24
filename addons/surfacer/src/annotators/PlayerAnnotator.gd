@@ -1,5 +1,5 @@
-extends Node2D
 class_name PlayerAnnotator
+extends Node2D
 
 var player: Player
 var is_human_player: bool

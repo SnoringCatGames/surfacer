@@ -1,5 +1,5 @@
-extends CheckboxLabeledControlItem
 class_name MusicSettingsLabeledControlItem
+extends CheckboxLabeledControlItem
 
 const LABEL := "Music"
 const DESCRIPTION := ""

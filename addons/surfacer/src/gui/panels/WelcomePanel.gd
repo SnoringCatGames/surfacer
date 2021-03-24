@@ -1,5 +1,5 @@
-extends PanelContainer
 class_name WelcomePanel
+extends PanelContainer
 
 const CONTROLS_LEGEND = [
   ["*Auto nav*", "click"], \

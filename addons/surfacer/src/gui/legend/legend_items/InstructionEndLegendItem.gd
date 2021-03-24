@@ -1,5 +1,5 @@
-extends LegendItem
 class_name InstructionEndLegendItem
+extends LegendItem
 
 const TYPE := LegendItemType.INSTRUCTION_END
 const TEXT := "Instruction\nend"

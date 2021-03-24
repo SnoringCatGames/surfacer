@@ -1,5 +1,5 @@
-extends Reference
 class_name Navigator
+extends Reference
 
 const NEARBY_SURFACE_DISTANCE_THRESHOLD := 160.0
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0

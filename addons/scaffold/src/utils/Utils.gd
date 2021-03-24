@@ -1,5 +1,5 @@
-extends Node
 class_name Utils
+extends Node
 
 signal display_resized
 

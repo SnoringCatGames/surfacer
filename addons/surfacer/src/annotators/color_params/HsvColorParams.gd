@@ -1,5 +1,5 @@
-extends ColorParams
 class_name HsvColorParams
+extends ColorParams
 
 const TYPE := ColorParamsType.HSV
 

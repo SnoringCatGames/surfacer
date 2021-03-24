@@ -1,5 +1,5 @@
-extends AnnotationElement
 class_name EdgeStepAnnotationElement
+extends AnnotationElement
 
 const TYPE := AnnotationElementType.EDGE_STEP
 

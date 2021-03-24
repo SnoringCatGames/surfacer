@@ -1,5 +1,5 @@
-extends Reference
 class_name SurfaceParser
+extends Reference
 
 # TODO: Map the TileMap into an RTree or QuadTree.
 

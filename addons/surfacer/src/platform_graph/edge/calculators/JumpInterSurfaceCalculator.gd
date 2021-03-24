@@ -1,5 +1,5 @@
-extends EdgeCalculator
 class_name JumpInterSurfaceCalculator
+extends EdgeCalculator
 
 const NAME := "JumpInterSurfaceCalculator"
 const EDGE_TYPE := EdgeType.JUMP_INTER_SURFACE_EDGE

@@ -1,5 +1,5 @@
-extends ValidEdgeTrajectoryLegendItem
 class_name ContinuousEdgeTrajectoryLegendItem
+extends ValidEdgeTrajectoryLegendItem
 
 const TYPE := LegendItemType.CONTINUOUS_EDGE_TRAJECTORY
 const TEXT := "Edge trajectory\n(continuous)"

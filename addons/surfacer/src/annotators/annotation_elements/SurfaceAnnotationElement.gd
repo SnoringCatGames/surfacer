@@ -1,5 +1,5 @@
-extends AnnotationElement
 class_name SurfaceAnnotationElement
+extends AnnotationElement
 
 const DEFAULT_TYPE := AnnotationElementType.SURFACE
 

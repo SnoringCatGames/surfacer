@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to
 # MovementCalcSteps.
-extends Reference
 class_name EdgeStepUtils
+extends Reference
 
 # Calculates movement steps to reach the given destination.
 # 

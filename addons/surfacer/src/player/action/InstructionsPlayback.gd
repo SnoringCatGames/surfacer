@@ -1,5 +1,5 @@
-extends Reference
 class_name InstructionsPlayback
+extends Reference
 
 const EXTRA_DELAY_TO_ALLOW_COLLISION_WITH_SURFACE := 0.25
 

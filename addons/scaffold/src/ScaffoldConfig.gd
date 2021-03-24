@@ -27,6 +27,8 @@ var debug_window_size: Vector2
 var uses_threads: bool
 var thread_count: int
 
+var is_mobile_supported: bool
+
 var app_name: String
 var app_id: String
 var app_version: String
@@ -178,6 +180,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.debug_window_size = manifest.debug_window_size
     self.uses_threads = manifest.uses_threads
     self.thread_count = manifest.thread_count
+    self.is_mobile_supported = manifest.is_mobile_supported
     self.app_name = manifest.app_name
     self.app_id = manifest.app_id
     self.app_version = manifest.app_version

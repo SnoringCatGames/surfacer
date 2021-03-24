@@ -1,5 +1,5 @@
-extends SurfacesOfSideGroupItemController
 class_name LeftWallsItemController
+extends SurfacesOfSideGroupItemController
 
 const TYPE := InspectorItemType.LEFT_WALLS
 const STARTS_COLLAPSED := true

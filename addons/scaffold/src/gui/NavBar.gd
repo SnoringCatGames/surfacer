@@ -1,6 +1,6 @@
 tool
-extends PanelContainer
 class_name NavBar
+extends PanelContainer
 
 export var text := "" setget _set_text
 export var shows_back := true setget _set_shows_back,_get_shows_back

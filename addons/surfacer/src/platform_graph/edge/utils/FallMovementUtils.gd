@@ -1,7 +1,7 @@
 # A collection of utility functions for calculating state related to fall
 # movement.
-extends Reference
 class_name FallMovementUtils
+extends Reference
 
 # TODO: Integrate find_landing_trajectories_to_any_surface with
 #       failed_edge_attempts_result and

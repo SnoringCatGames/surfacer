@@ -1,5 +1,5 @@
-extends Node2D
 class_name Main
+extends Node2D
 
 ###############################################################################
 ### MAIN TODO LIST: ###

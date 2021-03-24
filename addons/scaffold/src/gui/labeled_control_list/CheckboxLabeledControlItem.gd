@@ -1,5 +1,5 @@
-extends LabeledControlItem
 class_name CheckboxLabeledControlItem
+extends LabeledControlItem
 
 var TYPE := LabeledControlItem.CHECKBOX
 

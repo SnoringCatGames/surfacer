@@ -1,5 +1,5 @@
-extends InspectorItemController
 class_name SurfacesOfSideGroupItemController
+extends InspectorItemController
 
 const IS_LEAF := false
 

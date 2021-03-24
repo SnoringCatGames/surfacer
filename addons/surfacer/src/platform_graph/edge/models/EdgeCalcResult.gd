@@ -1,6 +1,6 @@
 # Parameters that are used for calculating edge instructions.
-extends Reference
 class_name EdgeCalcResult
+extends Reference
 
 # All of the horizontal steps for this local branch of movement.
 # Array<EdgeStep>
