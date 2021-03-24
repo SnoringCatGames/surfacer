@@ -20,6 +20,12 @@ var debug_window_size := Vector2(1024, 768)
 # Just show as full screen.
 #var debug_window_size := Vector2.INF
 
+var uses_threads := false and OS.can_use_threads()
+var thread_count := \
+        4 if \
+        uses_threads else \
+        1
+
 var third_party_license_text := \
         ScaffoldThirdPartyLicenses.TEXT + \
         SurfacerThirdPartyLicenses.TEXT + \
@@ -141,7 +147,13 @@ var app_manifest := {
     debug = debug,
     #debug = false
     playtest = false,
+    is_profiler_enabled = debug,
+    is_inspector_enabled = debug,
+    is_surfacer_logging = false,
+    utility_panel_starts_open = false,
     debug_window_size = debug_window_size,
+    uses_threads = uses_threads,
+    thread_count = thread_count,
     
     app_name = "Squirrel Away",
     app_id = "games.snoringcat.squirrel_away",
@@ -242,4 +254,4 @@ var app_manifest := {
 }
 
 func _init() -> void:
-    print("SquirrelAwayConfig._init")
+    print("SquirrelAway._init")

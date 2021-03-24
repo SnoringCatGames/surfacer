@@ -20,5 +20,5 @@ func _draw_shape( \
             false, \
             center, \
             SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH * SCALE, \
-            AnnotationElementDefaults.DEFAULT_INSTRUCTION_COLOR_PARAMS \
+            Surfacer.ann_defaults.DEFAULT_INSTRUCTION_COLOR_PARAMS \
                     .get_color())

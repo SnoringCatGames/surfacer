@@ -13,51 +13,61 @@ func _init(player) -> void:
     self.player = player
 
 func _unhandled_input(event: InputEvent) -> void:
-    if SurfacerConfig.current_player_for_clicks != player:
+    if Surfacer.current_player_for_clicks != player:
         return
     
     var pointer_up_position := Vector2.INF
     var pointer_drag_position := Vector2.INF
     var event_type := "UNKNOWN_INP"
     
-    # Mouse-up: Position selection.
-    if event is InputEventMouseButton and \
-            event.button_index == BUTTON_LEFT and \
-            !event.pressed and \
-            !event.control:
-        event_type = "MOUSE_UP   "
-        pointer_up_position = Gs.utils.get_global_touch_position(event)
+    # NOTE: Shouldn't need to handle mouse events, since we should be emulating
+    #       touch events.
     
-    # Mouse-down: Position pre-selection.
-    if event is InputEventMouseButton and \
-            event.button_index == BUTTON_LEFT and \
-            event.pressed and \
-            !event.control:
-        event_type = "MOUSE_DOWN "
-        pointer_drag_position = \
-                Gs.utils.get_global_touch_position(event)
+#    # Mouse-up: Position selection.
+#    if event is InputEventMouseButton and \
+#            event.button_index == BUTTON_LEFT and \
+#            !event.pressed and \
+#            !event.control:
+#        event_type = "MOUSE_UP   "
+#        pointer_up_position = Gs.utils.get_global_touch_position(event)
+#
+#    # Mouse-down: Position pre-selection.
+#    if event is InputEventMouseButton and \
+#            event.button_index == BUTTON_LEFT and \
+#            event.pressed and \
+#            !event.control:
+#        event_type = "MOUSE_DOWN "
+#        pointer_drag_position = \
+#                Gs.utils.get_global_touch_position(event)
+#
+#    # Mouse-move: Position pre-selection.
+#    if event is InputEventMouseMotion and \
+#            last_pointer_drag_position != Vector2.INF:
+#        event_type = "MOUSE_DRAG "
+#        pointer_drag_position = \
+#                Gs.utils.get_global_touch_position(event)
     
-    # Mouse-move: Position pre-selection.
-    if event is InputEventMouseMotion and \
-            last_pointer_drag_position != Vector2.INF:
-        event_type = "MOUSE_DRAG "
-        pointer_drag_position = \
-                Gs.utils.get_global_touch_position(event)
+    var is_control_pressed := \
+            Gs.level_input.is_key_pressed(KEY_CONTROL) or \
+            Gs.level_input.is_key_pressed(KEY_META)
     
     # Touch-up: Position selection.
     if event is InputEventScreenTouch and \
-            !event.pressed:
+            !event.pressed and \
+            !is_control_pressed:
         event_type = "TOUCH_UP   "
         pointer_up_position = Gs.utils.get_global_touch_position(event)
     
     # Touch-down: Position pre-selection.
     if event is InputEventScreenTouch and \
-            event.pressed:
+            event.pressed and \
+            !is_control_pressed:
         event_type = "TOUCH_DOWN "
         pointer_drag_position = Gs.utils.get_global_touch_position(event)
     
     # Touch-move: Position pre-selection.
-    if event is InputEventScreenDrag:
+    if event is InputEventScreenDrag and \
+            !is_control_pressed:
         event_type = "TOUCH_DRAG "
         pointer_drag_position = Gs.utils.get_global_touch_position(event)
     

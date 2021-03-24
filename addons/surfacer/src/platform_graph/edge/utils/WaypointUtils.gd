@@ -100,7 +100,7 @@ static func calculate_waypoints_around_surface( \
         colliding_surface: Surface, \
         waypoint_offset: Vector2) -> Array:
     Gs.profiler.start( \
-            ProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE, \
+            SurfacerProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE, \
             collision_params.thread_id)
     
     var passing_vertically: bool
@@ -285,7 +285,7 @@ static func calculate_waypoints_around_surface( \
         waypoints = []
     
     Gs.profiler.stop_with_optional_metadata( \
-            ProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE, \
+            SurfacerProfilerMetric.CALCULATE_WAYPOINTS_AROUND_SURFACE, \
             collision_params.thread_id, \
             edge_result_metadata)
     return waypoints

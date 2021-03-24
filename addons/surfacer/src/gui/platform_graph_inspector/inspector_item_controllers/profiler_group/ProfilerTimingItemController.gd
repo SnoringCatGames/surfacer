@@ -5,7 +5,7 @@ const TYPE := InspectorItemType.PROFILER_TIMING
 const IS_LEAF := false
 const STARTS_COLLAPSED := true
 
-var metric := ProfilerMetric.UNKNOWN
+var metric := SurfacerProfilerMetric.UNKNOWN
 var metadata_container: EdgeCalcResultMetadata
 
 func _init( \
@@ -28,13 +28,13 @@ func _init( \
 func get_text() -> String:
     return "%sms: %s" % [ \
         Gs.profiler.get_sum(metric, metadata_container), \
-        ProfilerMetric.get_type_string(metric), \
+        SurfacerProfilerMetric.get_type_string(metric), \
     ]
 
 func get_description() -> String:
     return ("The total time spent on the %s stage while parsing the " + \
             "platform graph for the %s player.") % [ \
-        ProfilerMetric.get_type_string(metric), \
+        SurfacerProfilerMetric.get_type_string(metric), \
         graph.movement_params.name, \
     ]
 
@@ -79,7 +79,7 @@ func _create_child( \
         suffix, \
         label, \
     ]
-    var description := text + " " + ProfilerMetric.get_type_string(metric)
+    var description := text + " " + SurfacerProfilerMetric.get_type_string(metric)
     DescriptionItemController.new( \
             tree_item, \
             tree, \

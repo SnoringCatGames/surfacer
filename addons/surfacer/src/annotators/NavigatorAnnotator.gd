@@ -30,7 +30,7 @@ func _draw() -> void:
                 self, \
                 current_path, \
                 TRAJECTORY_STROKE_WIDTH, \
-                AnnotationElementDefaults.NAVIGATOR_CURRENT_PATH_COLOR, \
+                Surfacer.ann_defaults.NAVIGATOR_CURRENT_PATH_COLOR, \
                 true, \
                 false, \
                 true, \
@@ -40,13 +40,13 @@ func _draw() -> void:
         self.draw_circle( \
                 current_path.origin, \
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS, \
-                AnnotationElementDefaults \
+                Surfacer.ann_defaults \
                         .NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR)
         Gs.draw_utils.draw_circle_outline( \
                 self, \
                 current_path.origin, \
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS, \
-                AnnotationElementDefaults \
+                Surfacer.ann_defaults \
                         .NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR, \
                 AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH, \
                 4.0)
@@ -64,7 +64,7 @@ func _draw() -> void:
                 cone_end_point, \
                 false, \
                 current_destination.side, \
-                AnnotationElementDefaults \
+                Surfacer.ann_defaults \
                         .NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR, \
                 cone_length, \
                 AnnotationElementDefaults \
@@ -77,7 +77,7 @@ func _draw() -> void:
                 cone_end_point, \
                 false, \
                 current_destination.side, \
-                AnnotationElementDefaults \
+                Surfacer.ann_defaults \
                         .NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR, \
                 cone_length, \
                 AnnotationElementDefaults \
@@ -91,7 +91,7 @@ func _draw() -> void:
                 self, \
                 previous_path, \
                 TRAJECTORY_STROKE_WIDTH, \
-                AnnotationElementDefaults.NAVIGATOR_PREVIOUS_PATH_COLOR, \
+                Surfacer.ann_defaults.NAVIGATOR_PREVIOUS_PATH_COLOR, \
                 true, \
                 false, \
                 true, \

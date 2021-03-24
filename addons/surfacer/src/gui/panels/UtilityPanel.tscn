@@ -19,7 +19,7 @@ bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[node name="DebugPanel" type="PanelContainer"]
+[node name="UtilityPanel" type="PanelContainer"]
 modulate = Color( 1, 1, 1, 0.733333 )
 margin_right = 320.0
 margin_bottom = 600.0

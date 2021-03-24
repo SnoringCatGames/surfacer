@@ -4,7 +4,7 @@ class_name OriginSurfaceLegendItem
 const TYPE := LegendItemType.ORIGIN_SURFACE
 const TEXT := "Origin\nsurface"
 var COLOR_PARAMS: ColorParams = \
-        AnnotationElementDefaults.ORIGIN_SURFACE_COLOR_PARAMS
+        Surfacer.ann_defaults.ORIGIN_SURFACE_COLOR_PARAMS
 
 func _init().( \
         TYPE, \

@@ -492,24 +492,7 @@ func _init() -> void:
     print("Main._init")
 
 func _enter_tree() -> void:
-    var surfacer_bootstrap := SurfacerBootstrap.new()
-    surfacer_bootstrap.on_app_ready(SquirrelAwayConfig.app_manifest, self)
+    SurfacerBootstrap.new().on_app_ready(SquirrelAway.app_manifest, self)
     
     if OS.get_name() == "HTML5":
         JavaScript.eval("window.onAppReady()")
-
-func _notification(what):
-    if what == MainLoop.NOTIFICATION_WM_GO_BACK_REQUEST: 
-        # Handle the Android back button to navigate within the app instead of
-        # quitting the app.
-        get_tree().quit()
-
-func _input(event: InputEvent) -> void:
-    # Close the welcome panel on any mouse or key click event.
-    if is_instance_valid(SurfacerConfig.welcome_panel) and \
-            (event is InputEventMouseButton or \
-                    event is InputEventScreenTouch or \
-                    event is InputEventKey) and \
-            SurfacerConfig.is_level_ready:
-        SurfacerConfig.welcome_panel.queue_free()
-        SurfacerConfig.welcome_panel = null

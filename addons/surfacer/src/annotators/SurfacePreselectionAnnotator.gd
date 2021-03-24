@@ -2,16 +2,16 @@ extends Node2D
 class_name SurfacePreselectionAnnotator
 
 var PRESELECTION_SURFACE_COLOR: Color = \
-        Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
+        SurfacerColors.opacify(SurfacerColors.PURPLE, SurfacerColors.ALPHA_XFAINT)
 var PRESELECTION_POSITION_INDICATOR_COLOR: Color = \
-        Colors.opacify(Colors.PURPLE, Colors.ALPHA_XFAINT)
+        SurfacerColors.opacify(SurfacerColors.PURPLE, SurfacerColors.ALPHA_XFAINT)
 var PRESELECTION_PATH_COLOR: Color = \
-        Colors.opacify(Colors.PURPLE, Colors.ALPHA_FAINT)
+        SurfacerColors.opacify(SurfacerColors.PURPLE, SurfacerColors.ALPHA_FAINT)
 
 var INVALID_SURFACE_COLOR: Color = \
-        Colors.opacify(Colors.RED, Colors.ALPHA_XFAINT)
+        SurfacerColors.opacify(SurfacerColors.RED, SurfacerColors.ALPHA_XFAINT)
 var INVALID_POSITION_INDICATOR_COLOR: Color = \
-        Colors.opacify(Colors.RED, Colors.ALPHA_XFAINT)
+        SurfacerColors.opacify(SurfacerColors.RED, SurfacerColors.ALPHA_XFAINT)
 
 const PRESELECTION_MIN_OPACITY := 0.5
 const PRESELECTION_MAX_OPACITY := 1.0

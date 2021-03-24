@@ -31,7 +31,7 @@ func _init( \
         self.waypoint_stroke_width = \
                 AnnotationElementDefaults.WAYPOINT_STROKE_WIDTH_FAINT
         self.collision_color = \
-                AnnotationElementDefaults.COLLISION_COLOR_FAINT
+                Surfacer.ann_defaults.COLLISION_COLOR_FAINT
         self.collision_x_stroke_width = \
                 AnnotationElementDefaults.COLLISION_X_STROKE_WIDTH_FAINT
         self.collision_player_boundary_stroke_width = \
@@ -45,7 +45,7 @@ func _init( \
         self.waypoint_stroke_width = \
                 AnnotationElementDefaults.WAYPOINT_STROKE_WIDTH_STRONG
         self.collision_color = \
-                AnnotationElementDefaults.COLLISION_COLOR_STRONG
+                Surfacer.ann_defaults.COLLISION_COLOR_STRONG
         self.collision_x_stroke_width = \
                 AnnotationElementDefaults.COLLISION_X_STROKE_WIDTH_STRONG
         self.collision_player_boundary_stroke_width = \
@@ -197,15 +197,15 @@ func _draw_collision(canvas: CanvasItem) -> void:
             _draw_bounding_box_and_margin( \
                     canvas, \
                     collision_result_metadata.frame_start_position, \
-                    AnnotationElementDefaults.COLLISION_FRAME_START_COLOR)
+                    Surfacer.ann_defaults.COLLISION_FRAME_START_COLOR)
             _draw_bounding_box_and_margin( \
                     canvas, \
                     collision_result_metadata.frame_end_position, \
-                    AnnotationElementDefaults.COLLISION_FRAME_END_COLOR)
+                    Surfacer.ann_defaults.COLLISION_FRAME_END_COLOR)
             _draw_bounding_box_and_margin( \
                     canvas, \
                     collision_result_metadata.frame_previous_position, \
-                    AnnotationElementDefaults.COLLISION_FRAME_PREVIOUS_COLOR)
+                    Surfacer.ann_defaults.COLLISION_FRAME_PREVIOUS_COLOR)
 
 func _draw_bounding_box_and_margin( \
         canvas: CanvasItem, \
@@ -306,7 +306,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             canvas, \
             start, \
             end, \
-            AnnotationElementDefaults.INVALID_EDGE_COLOR_PARAMS.get_color(), \
+            Surfacer.ann_defaults.INVALID_EDGE_COLOR_PARAMS.get_color(), \
             AnnotationElementDefaults.INVALID_EDGE_DASH_LENGTH, \
             AnnotationElementDefaults.INVALID_EDGE_DASH_GAP, \
             0.0, \
@@ -316,7 +316,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             middle, \
             AnnotationElementDefaults.INVALID_EDGE_X_WIDTH, \
             AnnotationElementDefaults.INVALID_EDGE_X_HEIGHT, \
-            AnnotationElementDefaults.INVALID_EDGE_COLOR_PARAMS.get_color(), \
+            Surfacer.ann_defaults.INVALID_EDGE_COLOR_PARAMS.get_color(), \
             AnnotationElementDefaults.INVALID_EDGE_DASH_STROKE_WIDTH)
 
 func _attach_labels(canvas: CanvasItem) -> void:

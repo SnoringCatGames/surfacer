@@ -25,19 +25,19 @@ func _enter_tree() -> void:
 func _process(_delta_sec: float) -> void:
     if is_instance_valid(_current_camera):
         # Handle zooming.
-        if Input.is_action_pressed("zoom_in"):
+        if Gs.level_input.is_action_pressed("zoom_in"):
             _current_camera.zoom -= _current_camera.zoom * ZOOM_STEP_RATIO
-        elif Input.is_action_pressed("zoom_out"):
+        elif Gs.level_input.is_action_pressed("zoom_out"):
             _current_camera.zoom += _current_camera.zoom * ZOOM_STEP_RATIO
     
         # Handle Panning.
-        if Input.is_action_pressed("pan_up"):
+        if Gs.level_input.is_action_pressed("pan_up"):
             _current_camera.offset.y -= PAN_STEP
-        elif Input.is_action_pressed("pan_down"):
+        elif Gs.level_input.is_action_pressed("pan_down"):
             _current_camera.offset.y += PAN_STEP
-        elif Input.is_action_pressed("pan_left"):
+        elif Gs.level_input.is_action_pressed("pan_left"):
             _current_camera.offset.x -= PAN_STEP
-        elif Input.is_action_pressed("pan_right"):
+        elif Gs.level_input.is_action_pressed("pan_right"):
             _current_camera.offset.x += PAN_STEP
 
 func _unhandled_input(event: InputEvent) -> void:

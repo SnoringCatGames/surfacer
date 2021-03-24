@@ -20,7 +20,7 @@ func _init( \
                 AnnotationElementDefaults.INCLUDES_CONTINUOUS_POSITIONS, \
         includes_discrete_positions := \
                 AnnotationElementDefaults.INCLUDES_DISCRETE_POSITIONS, \
-        color_params := AnnotationElementDefaults \
+        color_params := Surfacer.ann_defaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS) \
         .(TYPE) -> void:
     self.edge = edge

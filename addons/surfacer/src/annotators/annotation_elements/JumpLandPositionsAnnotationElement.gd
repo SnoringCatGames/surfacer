@@ -13,7 +13,7 @@ var dash_stroke_width: float
 func _init( \
         jump_land_positions: JumpLandPositions, \
         color_params := \
-                AnnotationElementDefaults.JUMP_LAND_POSITIONS_COLOR_PARAMS, \
+                Surfacer.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS, \
         dash_length := \
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH, \
         dash_gap := \

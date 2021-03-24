@@ -85,7 +85,7 @@ static func draw_edge( \
         includes_continuous_positions := true, \
         includes_discrete_positions := false) -> void:
     if base_color == Color.white:
-        base_color = AnnotationElementDefaults \
+        base_color = Surfacer.ann_defaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS.get_color()
     
     if edge is AirToAirEdge or \
@@ -138,7 +138,7 @@ static func _draw_edge_from_end_points( \
             stroke_width)
     
     if includes_waypoints:
-        var waypoint_color: Color = AnnotationElementDefaults \
+        var waypoint_color: Color = Surfacer.ann_defaults \
                 .WAYPOINT_COLOR_PARAMS.get_color()
         waypoint_color.h = base_color.h
         waypoint_color.a = base_color.a
@@ -155,7 +155,7 @@ static func _draw_edge_from_end_points( \
                 waypoint_color)
     
     if includes_instruction_indicators:
-        var instruction_color: Color = AnnotationElementDefaults \
+        var instruction_color: Color = Surfacer.ann_defaults \
                 .INSTRUCTION_COLOR_PARAMS.get_color()
         instruction_color.h = base_color.h
         instruction_color.a = base_color.a
@@ -176,7 +176,7 @@ static func _draw_climb_over_wall_to_floor_edge( \
             stroke_width)
     
     if includes_waypoints:
-        var waypoint_color: Color = AnnotationElementDefaults \
+        var waypoint_color: Color = Surfacer.ann_defaults \
                 .WAYPOINT_COLOR_PARAMS.get_color()
         waypoint_color.h = base_color.h
         waypoint_color.a = base_color.a
@@ -193,7 +193,7 @@ static func _draw_climb_over_wall_to_floor_edge( \
                 waypoint_color)
     
     if includes_instruction_indicators:
-        var instruction_color: Color = AnnotationElementDefaults \
+        var instruction_color: Color = Surfacer.ann_defaults \
                 .INSTRUCTION_COLOR_PARAMS.get_color()
         instruction_color.h = base_color.h
         instruction_color.a = base_color.a
@@ -211,14 +211,14 @@ static func _draw_edge_from_instructions_positions( \
         includes_discrete_positions: bool, \
         origin_position_override := Vector2.INF) -> void:
     # Set up colors.
-    var continuous_trajectory_color: Color = AnnotationElementDefaults \
+    var continuous_trajectory_color: Color = Surfacer.ann_defaults \
             .EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS.get_color()
     continuous_trajectory_color.h = discrete_trajectory_color.h
-    var waypoint_color: Color = AnnotationElementDefaults \
+    var waypoint_color: Color = Surfacer.ann_defaults \
             .WAYPOINT_COLOR_PARAMS.get_color()
     waypoint_color.h = discrete_trajectory_color.h
     waypoint_color.a = discrete_trajectory_color.a
-    var instruction_color: Color = AnnotationElementDefaults \
+    var instruction_color: Color = Surfacer.ann_defaults \
             .INSTRUCTION_COLOR_PARAMS.get_color()
     instruction_color.h = discrete_trajectory_color.h
     instruction_color.a = discrete_trajectory_color.a

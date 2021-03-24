@@ -4,7 +4,7 @@ class_name SurfaceLegendItem
 const DEFAULT_TYPE := LegendItemType.SURFACE
 const DEFAULT_TEXT := "Surface"
 var DEFAULT_COLOR_PARAMS: ColorParams = \
-        AnnotationElementDefaults.DEFAULT_SURFACE_COLOR_PARAMS
+        Surfacer.ann_defaults.DEFAULT_SURFACE_COLOR_PARAMS
 const SURFACE_DEPTH := 8.1
 
 var color_params: ColorParams

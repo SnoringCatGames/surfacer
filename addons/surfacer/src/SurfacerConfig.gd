@@ -1,27 +1,10 @@
 extends Node
 
-# FIXME: Refactor this file to be more aligned with Scaffold framework patterns.
-
-var uses_threads := false and OS.can_use_threads()
-
-var utility_panel_starts_open := false
-
-var default_player_name := "cat"
-
-var group_name_human_players := "human_players"
-var group_name_computer_players := "computer_players"
-var group_name_surfaces := "surfaces"
-var group_name_squirrel_destinations := "squirrel_destinations"
-
-var thread_count := \
-        4 if \
-        uses_threads else \
-        1
-
-var is_logging_events := false
+var is_inspector_enabled: bool
+var is_logging: bool
+var utility_panel_starts_open: bool
 
 var debug_params := {
-    is_inspector_enabled = true,
 #    limit_parsing = {
 #        player_name = "cat",
 #        
@@ -51,6 +34,13 @@ var debug_params := {
     extra_annotations = {},
 }
 
+var default_player_name := "cat"
+
+var group_name_human_players := "human_players"
+var group_name_computer_players := "computer_players"
+var group_name_surfaces := "surfaces"
+var group_name_squirrel_destinations := "squirrel_destinations"
+
 var player_actions := {}
 
 var edge_movements := {}
@@ -65,6 +55,8 @@ var selection_description: SelectionDescription
 var utility_panel: UtilityPanel
 var welcome_panel: WelcomePanel
 var annotators: Annotators
+
+var ann_defaults := AnnotationElementDefaults.new()
 
 var is_level_ready := false
 
@@ -109,4 +101,9 @@ var player_param_classes := [
 ]
 
 func _init() -> void:
-    print("SurfacerConfig._init")
+    print("Surfacer._init")
+
+func register_app_manifest(manifest: Dictionary) -> void:
+    self.is_inspector_enabled = manifest.is_inspector_enabled
+    self.is_logging = manifest.is_surfacer_logging
+    self.utility_panel_starts_open = manifest.utility_panel_starts_open

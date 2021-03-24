@@ -25,7 +25,7 @@ static func _get_action_handlers(movement_params: MovementParams) -> Array:
     var name: String
     for i in range(names.size()):
         name = names[i]
-        action_handlers[i] = SurfacerConfig.player_actions[name]
+        action_handlers[i] = Surfacer.player_actions[name]
     
     action_handlers.sort_custom(ActionHandlersComparator, "sort")
     
@@ -41,7 +41,7 @@ static func _get_edge_calculators(movement_params: MovementParams) -> Array:
     var name: String
     for i in range(names.size()):
         name = names[i]
-        edge_calculators[i] = SurfacerConfig.edge_movements[name]
+        edge_calculators[i] = Surfacer.edge_movements[name]
     
     return edge_calculators
 

@@ -7,20 +7,30 @@ const _WELCOME_PANEL_RESOURCE_PATH := \
 
 export var id: String setget _set_id,_get_id
 
+func _input(event: InputEvent) -> void:
+    # Close the welcome panel on any mouse or key click event.
+    if is_instance_valid(Surfacer.welcome_panel) and \
+            (event is InputEventMouseButton or \
+                    event is InputEventScreenTouch or \
+                    event is InputEventKey) and \
+            Surfacer.is_level_ready:
+        Surfacer.welcome_panel.queue_free()
+        Surfacer.welcome_panel = null
+
 func start() -> void:
     .start()
     
     var welcome_panel: WelcomePanel = Gs.utils.add_scene( \
             Gs.canvas_layers.layers.hud, \
             _WELCOME_PANEL_RESOURCE_PATH)
-    SurfacerConfig.welcome_panel = welcome_panel
+    Surfacer.welcome_panel = welcome_panel
     
     # FIXME: Move this player creation (and readiness recording) back into
     #        Level.
     # Add the player after removing the loading screen, since the camera
     # will track the player, which makes the loading screen look offset.
     add_player( \
-            SurfacerConfig.player_params[SurfacerConfig.default_player_name] \
+            Surfacer.player_params[Surfacer.default_player_name] \
                     .movement_params.player_resource_path, \
             Vector2.ZERO, \
             true, \
@@ -31,13 +41,13 @@ func start() -> void:
     ]
     for squirrel_position in starting_squirrel_positions:
         add_player( \
-                SurfacerConfig.player_params["squirrel"].movement_params \
+                Surfacer.player_params["squirrel"].movement_params \
                         .player_resource_path, \
                 squirrel_position, \
                 false, \
                 false)
     
-    SurfacerConfig.annotators.on_level_ready()
+    Surfacer.annotators.on_level_ready()
     
     Gs.audio.play_music("on_a_quest")
 

@@ -1,4 +1,4 @@
-class_name ProfilerMetric
+class_name SurfacerProfilerMetric
 
 # FIXME: Refactor this; sholud be able to use Strings instead.
 
@@ -189,5 +189,5 @@ static func get_type_string(result_type: int) -> String:
             return "UNKNOWN"
         
         _:
-            Gs.utils.error("Invalid ProfilerMetric: %s" % result_type)
+            Gs.utils.error("Invalid SurfacerProfilerMetric: %s" % result_type)
             return "UNKNOWN"

@@ -1,7 +1,7 @@
 extends Reference
 class_name Stopwatch
 
-# Dictionary<ProfilerMetric|String, int>
+# Dictionary<SurfacerProfilerMetric|String, int>
 var _start_times_msec := {}
 
 func start(metric_key) -> void:

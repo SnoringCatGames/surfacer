@@ -19,9 +19,13 @@ const MIN_GUI_SCALE := 0.2
 var debug: bool
 var playtest: bool
 var test := false
+var is_profiler_enabled: bool
 var are_all_levels_unlocked := false
 
 var debug_window_size: Vector2
+
+var uses_threads: bool
+var thread_count: int
 
 var app_name: String
 var app_id: String
@@ -141,6 +145,7 @@ var time: Time
 var profiler: Profiler
 var geometry: ScaffoldGeometry
 var draw_utils: DrawUtils
+var level_input: LevelInput
 var level_config: ScaffoldLevelConfig
 var canvas_layers: CanvasLayers
 var camera_controller: CameraController
@@ -149,6 +154,7 @@ var gesture_record: GestureRecord
 var level: ScaffoldLevel
 
 var guis_to_scale := {}
+var active_overlays := []
 
 # ---
 
@@ -158,7 +164,10 @@ func _init() -> void:
 func register_app_manifest(manifest: Dictionary) -> void:
     self.debug = manifest.debug
     self.playtest = manifest.playtest
+    self.is_profiler_enabled = manifest.is_profiler_enabled
     self.debug_window_size = manifest.debug_window_size
+    self.uses_threads = manifest.uses_threads
+    self.thread_count = manifest.thread_count
     self.app_name = manifest.app_name
     self.app_id = manifest.app_id
     self.app_version = manifest.app_version
@@ -309,6 +318,12 @@ func register_app_manifest(manifest: Dictionary) -> void:
     else:
         self.draw_utils = DrawUtils.new()
     add_child(self.draw_utils)
+    if manifest.has("level_input"):
+        assert(manifest.level_input is LevelInput)
+        self.level_input = manifest.level_input
+    else:
+        self.level_input = LevelInput.new()
+    add_child(self.level_input)
     
     # This depends on SaveState, and must be instantiated after.
     self.level_config = manifest.level_config_class.new()

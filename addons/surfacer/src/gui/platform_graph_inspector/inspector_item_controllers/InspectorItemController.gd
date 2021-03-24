@@ -64,19 +64,19 @@ func destroy() -> void:
     parent_item = null
 
 func on_item_selected() -> void:
-    if SurfacerConfig.utility_panel.is_open and \
+    if Surfacer.utility_panel.is_open and \
             !tree.get_is_find_and_expand_in_progress():
         print_msg("Inspector item selected: %s", to_string())
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
-    if SurfacerConfig.utility_panel.is_open and \
+    if Surfacer.utility_panel.is_open and \
             !tree.get_is_find_and_expand_in_progress():
         print_msg("Inspector item expanded: %s", to_string())
 
 func on_item_collapsed() -> void:
     _destroy_children_if_needed()
-    if SurfacerConfig.utility_panel.is_open and \
+    if Surfacer.utility_panel.is_open and \
             !tree.get_is_find_and_expand_in_progress() and \
             get_has_children():
         print_msg("Inspector item collapsed: %s", to_string())
@@ -204,7 +204,7 @@ func get_annotation_elements() -> Array:
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if SurfacerConfig.is_logging_events and \
+    if Surfacer.is_logging and \
             graph.movement_params.logs_inspector_events:
         if message_args != null:
             print(message_template % message_args)

@@ -327,7 +327,7 @@ static func check_continuous_horizontal_step_for_collision( \
         step_calc_params: EdgeStepCalcParams, \
         horizontal_step: EdgeStep) -> SurfaceCollision:
     Gs.profiler.start( \
-            ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
+            SurfacerProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
             edge_calc_params.collision_params.thread_id)
     
     var collision_params := edge_calc_params.collision_params
@@ -448,7 +448,7 @@ static func check_continuous_horizontal_step_for_collision( \
             step_result_metadata != null else \
             null
     Gs.profiler.stop_with_optional_metadata( \
-            ProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
+            SurfacerProfilerMetric.CHECK_CONTINUOUS_HORIZONTAL_STEP_FOR_COLLISION, \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     

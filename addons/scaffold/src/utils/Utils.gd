@@ -7,12 +7,18 @@ var _throttled_size_changed: FuncRef
 
 var _ios_model_names
 var _ios_resolutions
+var _focus_releaser: Control
 
 func _init() -> void:
     self.print("Utils._init")
     
     _ios_model_names = IosModelNames.new()
     _ios_resolutions = IosResolutions.new()
+    
+    _focus_releaser = Button.new()
+    _focus_releaser.modulate.a = 0.0
+    _focus_releaser.visible = false
+    add_child(_focus_releaser)
 
 func _enter_tree() -> void:
     _update_game_area_region_and_gui_scale()
@@ -616,3 +622,17 @@ func get_log_gestures_url() -> String:
     var params := "?source=" + OS.get_name()
     params += "&app=inner-tube-climber"
     return Gs.log_gestures_url + params
+
+func does_control_have_focus_recursively(control: Control) -> bool:
+    var focused_control := _focus_releaser.get_focus_owner()
+    while focused_control != null:
+        if focused_control == control:
+            return true
+        focused_control = focused_control.get_parent_control()
+    return false
+
+func release_focus(control = null) -> void:
+    if control == null or \
+            does_control_have_focus_recursively(control):
+        _focus_releaser.grab_focus()
+        _focus_releaser.release_focus()

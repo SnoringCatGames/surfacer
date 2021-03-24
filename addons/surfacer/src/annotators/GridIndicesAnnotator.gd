@@ -1,7 +1,7 @@
 extends Node2D
 class_name GridIndicesAnnotator
 
-var TILE_INDICES_COLOR := Colors.opacify(Colors.WHITE, Colors.ALPHA_FAINT)
+var TILE_INDICES_COLOR := SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_FAINT)
 
 var surface_parser: SurfaceParser
 

@@ -59,6 +59,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/annotators/annotation_elements/AnnotationElement.gd"
 }, {
+"base": "Node",
+"class": "AnnotationElementDefaults",
+"language": "GDScript",
+"path": "res://addons/surfacer/src/annotators/annotation_elements/AnnotationElementDefaults.gd"
+}, {
 "base": "Reference",
 "class": "AnnotationElementType",
 "language": "GDScript",
@@ -188,11 +193,6 @@ _global_script_classes=[ {
 "class": "ColorParamsType",
 "language": "GDScript",
 "path": "res://addons/surfacer/src/annotators/color_params/ColorParamsType.gd"
-}, {
-"base": "Reference",
-"class": "Colors",
-"language": "GDScript",
-"path": "res://addons/surfacer/src/utils/Colors.gd"
 }, {
 "base": "Screen",
 "class": "ConfirmDataDeletionScreen",
@@ -714,6 +714,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/gui/legend/legend_items/LegendItemType.gd"
 }, {
+"base": "Node",
+"class": "LevelInput",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/utils/LevelInput.gd"
+}, {
 "base": "Control",
 "class": "LevelSelectItem",
 "language": "GDScript",
@@ -964,11 +969,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/gui/platform_graph_inspector/inspector_item_controllers/profiler_group/ProfilerGroupItemController.gd"
 }, {
-"base": "Reference",
-"class": "ProfilerMetric",
-"language": "GDScript",
-"path": "res://addons/surfacer/src/utils/ProfilerMetric.gd"
-}, {
 "base": "InspectorItemController",
 "class": "ProfilerTimingItemController",
 "language": "GDScript",
@@ -1134,6 +1134,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/SurfacerBootstrap.gd"
 }, {
+"base": "Reference",
+"class": "SurfacerColors",
+"language": "GDScript",
+"path": "res://addons/surfacer/src/utils/SurfacerColors.gd"
+}, {
 "base": "DrawUtils",
 "class": "SurfacerDrawUtils",
 "language": "GDScript",
@@ -1143,6 +1148,11 @@ _global_script_classes=[ {
 "class": "SurfacerLevel",
 "language": "GDScript",
 "path": "res://addons/surfacer/src/SurfacerLevel.gd"
+}, {
+"base": "Reference",
+"class": "SurfacerProfilerMetric",
+"language": "GDScript",
+"path": "res://addons/surfacer/src/utils/SurfacerProfilerMetric.gd"
 }, {
 "base": "Node",
 "class": "SurfacerThirdPartyLicenses",
@@ -1280,6 +1290,7 @@ _global_script_class_icons={
 "AllDefaultAction": "",
 "Analytics": "",
 "AnnotationElement": "",
+"AnnotationElementDefaults": "",
 "AnnotationElementType": "",
 "AnnotatorType": "",
 "Annotators": "",
@@ -1306,7 +1317,6 @@ _global_script_class_icons={
 "ColorParams": "",
 "ColorParamsFactory": "",
 "ColorParamsType": "",
-"Colors": "",
 "ConfirmDataDeletionScreen": "",
 "ContinuousEdgeTrajectoryLegendItem": "",
 "CreditsScreen": "",
@@ -1411,6 +1421,7 @@ _global_script_class_icons={
 "Legend": "",
 "LegendItem": "",
 "LegendItemType": "",
+"LevelInput": "",
 "LevelSelectItem": "",
 "LevelSelectItemBody": "",
 "LevelSelectItemLockedHeader": "",
@@ -1461,7 +1472,6 @@ _global_script_class_icons={
 "Profiler": "",
 "ProfilerCountItemController": "",
 "ProfilerGroupItemController": "",
-"ProfilerMetric": "",
 "ProfilerTimingItemController": "",
 "RateAppScreen": "",
 "RightWallsItemController": "",
@@ -1495,8 +1505,10 @@ _global_script_class_icons={
 "SurfaceSide": "",
 "SurfaceType": "",
 "SurfacerBootstrap": "",
+"SurfacerColors": "",
 "SurfacerDrawUtils": "",
 "SurfacerLevel": "",
+"SurfacerProfilerMetric": "",
 "SurfacerThirdPartyLicenses": "",
 "SurfacesGroupItemController": "",
 "SurfacesOfSideGroupItemController": "",
@@ -1536,10 +1548,8 @@ config/quit_on_go_back=false
 [autoload]
 
 Gs="*res://addons/scaffold/src/ScaffoldConfig.gd"
-SurfacerConfig="*res://addons/surfacer/src/SurfacerConfig.gd"
-AnnotationElementDefaults="*res://addons/surfacer/src/annotators/annotation_elements/AnnotationElementDefaults.gd"
-InputWrapper="*res://addons/surfacer/src/InputWrapper.gd"
-SquirrelAwayConfig="*res://src/SquirrelAwayConfig.gd"
+Surfacer="*res://addons/surfacer/src/SurfacerConfig.gd"
+SquirrelAway="*res://src/SquirrelAwayConfig.gd"
 
 [display]
 

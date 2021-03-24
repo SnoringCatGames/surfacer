@@ -6,7 +6,7 @@ const LEGEND_ITEM_CLASS_REFERENCE := FallRangeWithoutJumpDistanceLegendItem
 
 func _init( \
         vertices: Array, \
-        color_params := AnnotationElementDefaults \
+        color_params := Surfacer.ann_defaults \
                 .DEFAULT_POLYLINE_COLOR_PARAMS, \
         is_filled := false, \
         is_dashed := false, \

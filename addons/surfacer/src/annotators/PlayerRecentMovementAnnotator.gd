@@ -3,7 +3,7 @@ class_name PlayerRecentMovementAnnotator
 
 const RECENT_POSITIONS_BUFFER_SIZE := 150
 
-const MOVEMENT_HUE := Colors.TEAL.h
+const MOVEMENT_HUE := SurfacerColors.TEAL.h
 const MOVEMENT_OPACITY_NEWEST := 0.7
 const MOVEMENT_OPACITY_OLDEST := 0.01
 const MOVEMENT_STROKE_WIDTH := 1

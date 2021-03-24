@@ -45,7 +45,7 @@ func _update_navigator(delta_sec: float) -> void:
     if is_human_player:
         return
     
-    var cat_position: Vector2 = SurfacerConfig.current_player_for_clicks.position
+    var cat_position: Vector2 = Surfacer.current_player_for_clicks.position
     var is_cat_close := \
             self.position.distance_squared_to(cat_position) <= \
             CAT_IS_CLOSE_DISTANCE_SQUARED_THRESHOLD
@@ -60,7 +60,7 @@ func _update_navigator(delta_sec: float) -> void:
     ._update_navigator(delta_sec)
 
 func _start_new_navigation() -> void:
-    Gs.profiler.start(ProfilerMetric.START_NEW_SQUIRREL_NAVIGATION)
+    Gs.profiler.start(SurfacerProfilerMetric.START_NEW_SQUIRREL_NAVIGATION)
     
     var possible_destinations: Array = \
             Gs.level.squirrel_destinations
@@ -77,7 +77,7 @@ func _start_new_navigation() -> void:
     previous_destination = next_destination
     
     var duration: float = \
-            Gs.profiler.stop(ProfilerMetric.START_NEW_SQUIRREL_NAVIGATION)
+            Gs.profiler.stop(SurfacerProfilerMetric.START_NEW_SQUIRREL_NAVIGATION)
     print_msg(("SQUIRREL NEW NAV    ;" + \
             "%8.3fs; " + \
             "calc duration=%sms"), [ \

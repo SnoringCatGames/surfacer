@@ -22,7 +22,7 @@ func _draw_shape( \
             center.x, \
             center.y + length / 2.0)
     var color: Color = \
-            AnnotationElementDefaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
+            Surfacer.ann_defaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
     
     Gs.draw_utils.draw_destination_marker( \
             self, \

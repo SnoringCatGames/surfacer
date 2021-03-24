@@ -5,7 +5,7 @@ const TYPE := InspectorItemType.PROFILER_COUNT
 const IS_LEAF := true
 const STARTS_COLLAPSED := true
 
-var metric := ProfilerMetric.UNKNOWN
+var metric := SurfacerProfilerMetric.UNKNOWN
 var metadata_container: EdgeCalcResultMetadata
 
 func _init( \
@@ -28,13 +28,13 @@ func _init( \
 func get_text() -> String:
     return "%s: %s" % [ \
         Gs.profiler.get_count(metric, metadata_container), \
-        ProfilerMetric.get_type_string(metric), \
+        SurfacerProfilerMetric.get_type_string(metric), \
     ]
 
 func get_description() -> String:
     return ("The total number of times the %s event happened while " + \
             "parsing the platform graph for the %s player.") % [ \
-        ProfilerMetric.get_type_string(metric), \
+        SurfacerProfilerMetric.get_type_string(metric), \
         graph.movement_params.name, \
     ]
 

@@ -72,10 +72,6 @@ var _should_be_populated := false
 
 var _find_and_expand_controller_recursive_count := 0
 
-var has_focus := false
-
-var _focused_control: Control
-
 func _init() -> void:
     hide_root = true
     hide_folding = false
@@ -89,7 +85,7 @@ func _init() -> void:
             "_on_tree_item_expansion_toggled")
 
 func _ready() -> void:
-    if !SurfacerConfig.debug_params.is_inspector_enabled:
+    if !Surfacer.is_inspector_enabled:
         return
     
     inspector_selector = PlatformGraphInspectorSelector.new(self)
@@ -98,40 +94,14 @@ func _ready() -> void:
     
     _populate()
 
-func _process(delta_sec: float) -> void:
-    if !SurfacerConfig.debug_params.is_inspector_enabled:
-        return
-    
-    var next_focused_control := get_focus_owner()
-    if _focused_control != next_focused_control:
-        _focused_control = next_focused_control
-        
-        if _focused_control != null:
-            if _focused_control == self:
-                has_focus = true
-                return
-            
-            var parent := _focused_control.get_parent_control()
-            while parent != null:
-                if parent == self:
-                    has_focus = true
-                    return
-                parent = parent.get_parent_control()
-        
-        has_focus = false
-
 func _gui_input(event: InputEvent) -> void:
     # Godot seems to have a bug where many clicks in the tree are
     # false-negatives. This at least prevents them from being consumed as
     # clicks within the level.
     accept_event()
 
-func release_focus() -> void:
-    grab_focus()
-    .release_focus()
-
 func _populate() -> void:
-    if !SurfacerConfig.debug_params.is_inspector_enabled:
+    if !Surfacer.is_inspector_enabled:
         return
     
     _should_be_populated = true
@@ -150,26 +120,26 @@ func _populate() -> void:
         call_deferred("_select_initial_item")
 
 func clear() -> void:
-    if !SurfacerConfig.debug_params.is_inspector_enabled:
+    if !Surfacer.is_inspector_enabled:
         return
     
-    release_focus()
+    Gs.utils.release_focus(self)
     _clear_selection()
     _should_be_populated = false
     .clear()
 
 func collapse() -> void:
-    if !SurfacerConfig.debug_params.is_inspector_enabled:
+    if !Surfacer.is_inspector_enabled:
         return
     
     for graph_item_controller in graph_item_controllers.values():
         graph_item_controller.collapse()
     
-    release_focus()
+    Gs.utils.release_focus(self)
     _clear_selection()
 
 func set_graphs(graphs: Array) -> void:
-    if !SurfacerConfig.debug_params.is_inspector_enabled:
+    if !Surfacer.is_inspector_enabled:
         return
     
     self.graphs = graphs
@@ -184,15 +154,15 @@ func select_first_item() -> void:
         graph_item_controllers.values().front().select()
 
 func _select_initial_item() -> void:
-    if !SurfacerConfig.utility_panel.is_open:
+    if !Surfacer.utility_panel.is_open:
         # Don't auto-select anything if the panel isn't open.
         return
     
-    if !SurfacerConfig.debug_params.has("limit_parsing") or \
-            !SurfacerConfig.debug_params.limit_parsing.has("player_name"):
+    if !Surfacer.debug_params.has("limit_parsing") or \
+            !Surfacer.debug_params.limit_parsing.has("player_name"):
         select_first_item()
     else:
-        var limit_parsing: Dictionary = SurfacerConfig.debug_params.limit_parsing
+        var limit_parsing: Dictionary = Surfacer.debug_params.limit_parsing
         var player_name: String = limit_parsing.player_name
         
         if limit_parsing.has("edge") and \
@@ -314,15 +284,15 @@ func _on_tree_item_selected() -> void:
     var item := get_selected()
     var controller: InspectorItemController = item.get_metadata(0)
     
-    SurfacerConfig.annotators.element_annotator \
+    Surfacer.annotators.element_annotator \
             .erase_all(current_annotation_elements)
     
     current_annotation_elements = controller.get_annotation_elements()
-    SurfacerConfig.annotators.element_annotator \
+    Surfacer.annotators.element_annotator \
             .add_all(current_annotation_elements)
     
     if !get_is_find_and_expand_in_progress():
-        SurfacerConfig.selection_description.set_text(controller.get_description())
+        Surfacer.selection_description.set_text(controller.get_description())
     
     controller.call_deferred("on_item_selected")
     
@@ -343,7 +313,7 @@ func select_edge_or_surface( \
         edge_type: int, \
         graph: PlatformGraph) -> void:
     # Ensure that the utility panel is open.
-    SurfacerConfig.utility_panel.set_is_open(true)
+    Surfacer.utility_panel.set_is_open(true)
     
     if start_position.surface == end_position.surface:
         _select_canonical_origin_surface_item_controller( \
@@ -495,9 +465,9 @@ func _on_find_and_expand_complete( \
                     InspectorSearchType.get_type_string(search_type))
     
     if selection_failure_message != "":
-        SurfacerConfig.selection_description.set_text(selection_failure_message)
+        Surfacer.selection_description.set_text(selection_failure_message)
     else:
-        SurfacerConfig.selection_description.set_text(controller.get_description())
+        Surfacer.selection_description.set_text(controller.get_description())
 
 func get_is_find_and_expand_in_progress() -> bool:
     return _find_and_expand_controller_recursive_count > 0
@@ -531,7 +501,7 @@ func _clear_selection() -> void:
         item.deselect(0)
     
     # Remove the current annotations.
-    SurfacerConfig.annotators.element_annotator \
+    Surfacer.annotators.element_annotator \
             .erase_all(current_annotation_elements)
     current_annotation_elements = []
 
@@ -560,9 +530,9 @@ static func _find_closest_jump_land_positions( \
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if SurfacerConfig.is_logging_events and \
-            SurfacerConfig.current_player_for_clicks != null and \
-            SurfacerConfig.current_player_for_clicks.movement_params \
+    if Surfacer.is_logging and \
+            Surfacer.current_player_for_clicks != null and \
+            Surfacer.current_player_for_clicks.movement_params \
                     .logs_inspector_events:
         if message_args != null:
             print(message_template % message_args)

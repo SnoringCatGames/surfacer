@@ -29,25 +29,25 @@ func start() -> void:
     utility_panel = Gs.utils.add_scene( \
             Gs.canvas_layers.layers.hud, \
             _UTILITY_PANEL_RESOURCE_PATH)
-    SurfacerConfig.utility_panel = utility_panel
+    Surfacer.utility_panel = utility_panel
     
     # Get references to the TileMaps that define the collision boundaries of
     # this level.
     surface_tile_maps = \
-            get_tree().get_nodes_in_group(SurfacerConfig.group_name_surfaces)
+            get_tree().get_nodes_in_group(Surfacer.group_name_surfaces)
     assert(surface_tile_maps.size() > 0)
     
     # Set up the PlatformGraphs for this level.
     surface_parser = SurfaceParser.new(surface_tile_maps)
     platform_graphs = _create_platform_graphs( \
             surface_parser, \
-            SurfacerConfig.player_params, \
-            SurfacerConfig.debug_params)
-    SurfacerConfig.platform_graph_inspector.set_graphs(platform_graphs.values())
+            Surfacer.player_params, \
+            Surfacer.debug_params)
+    Surfacer.platform_graph_inspector.set_graphs(platform_graphs.values())
     
     _parse_squirrel_destinations()
     
-    SurfacerConfig.is_level_ready = true
+    Surfacer.is_level_ready = true
 
 func destroy() -> void:
     .destroy()
@@ -61,7 +61,7 @@ func _unhandled_input(event: InputEvent) -> void:
             event is InputEventScreenTouch:
         # This ensures that pressing arrow keys won't change selections in the
         # inspector.
-        SurfacerConfig.platform_graph_inspector.release_focus()
+        Gs.utils.release_focus()
 
 func _create_platform_graphs( \
         surface_parser: SurfaceParser, \
@@ -126,9 +126,9 @@ func add_player( \
         player.collision_layer = 0
     else:
         var group: String = \
-                SurfacerConfig.group_name_human_players if \
+                Surfacer.group_name_human_players if \
                 is_human_player else \
-                SurfacerConfig.group_name_computer_players
+                Surfacer.group_name_computer_players
         player.add_to_group(group)
         
         _record_player_reference(is_human_player)
@@ -139,9 +139,9 @@ func _record_player_reference(is_human_player: bool) -> void:
     var scene_tree := get_tree()
     
     var group: String = \
-            SurfacerConfig.group_name_human_players if \
+            Surfacer.group_name_human_players if \
             is_human_player else \
-            SurfacerConfig.group_name_computer_players
+            Surfacer.group_name_computer_players
     var players := scene_tree.get_nodes_in_group(group)
     
     var player: Player = \
@@ -156,12 +156,12 @@ func _record_player_reference(is_human_player: bool) -> void:
         
         if is_human_player:
             player.init_human_player_state()
-            SurfacerConfig.current_player_for_clicks = player
+            Surfacer.current_player_for_clicks = player
         else:
             player.init_computer_player_state()
         
         # Set up some annotators to help with debugging.
-        SurfacerConfig.annotators.create_player_annotator( \
+        Surfacer.annotators.create_player_annotator( \
                 player, \
                 is_human_player)
 
@@ -184,7 +184,7 @@ var squirrel_destinations := []
 func _parse_squirrel_destinations() -> void:
     squirrel_destinations.clear()
     var configured_destinations := get_tree().get_nodes_in_group( \
-            SurfacerConfig.group_name_squirrel_destinations)
+            Surfacer.group_name_squirrel_destinations)
     if !configured_destinations.empty():
         assert(configured_destinations.size() == 1)
         var squirrel_player: SquirrelPlayer = \

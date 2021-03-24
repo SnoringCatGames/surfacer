@@ -8,13 +8,13 @@ const DEFAULT_THREAD_ID := ""
 # Dictionary<String, Stopwatch>
 var _stopwatches := {}
 
-# A mapping from thread ID, to ProfilerMetric, to a list of duration values, in
+# A mapping from thread ID, to SurfacerProfilerMetric, to a list of duration values, in
 # milliseconds.
-# Dictionary<String, Dictionary<ProfilerMetric, Array<float>>>
+# Dictionary<String, Dictionary<SurfacerProfilerMetric, Array<float>>>
 var _timings := {}
 
-# A mapping from thread ID, to ProfilerMetric, to a count.
-# Dictionary<String, Dictionary<ProfilerMetric, int>>
+# A mapping from thread ID, to SurfacerProfilerMetric, to a count.
+# Dictionary<String, Dictionary<SurfacerProfilerMetric, int>>
 var _counts := {}
 
 func _init() -> void:
@@ -29,7 +29,7 @@ func init_thread(thread_id: String) -> void:
 func start( \
         metric: int, \
         thread_id := DEFAULT_THREAD_ID) -> void:
-    if !SurfacerConfig.debug_params.is_inspector_enabled:
+    if !Gs.is_profiler_enabled:
         return
     _stopwatches[thread_id].start(metric)
 
@@ -38,7 +38,7 @@ func stop( \
         thread_id := DEFAULT_THREAD_ID, \
         records := true, \
         additional_timings_storage = null) -> float:
-    if !SurfacerConfig.debug_params.is_inspector_enabled:
+    if !Gs.is_profiler_enabled:
         return -1.0
     
     var duration: float = _stopwatches[thread_id].stop(metric)
@@ -97,7 +97,7 @@ func increment_count( \
 func get_timing( \
         metric: int, \
         metadata_container = null) -> float:
-    assert(SurfacerConfig.debug_params.is_inspector_enabled)
+    assert(Gs.is_profiler_enabled)
     if metadata_container != null:
         var list: Array = metadata_container.timings[metric]
         assert(list.size() == 1)
@@ -111,7 +111,7 @@ func get_timing( \
 func get_timing_list( \
         metric: int, \
         metadata_container = null) -> Array:
-    assert(SurfacerConfig.debug_params.is_inspector_enabled)
+    assert(Gs.is_profiler_enabled)
     if metadata_container != null:
         var timings: Dictionary = metadata_container.timings
         return timings[metric] if \
@@ -129,7 +129,7 @@ func get_timing_list( \
 func get_mean( \
         metric: int, \
         metadata_container = null) -> float:
-    assert(SurfacerConfig.debug_params.is_inspector_enabled)
+    assert(Gs.is_profiler_enabled)
     var count := get_count( \
             metric, \
             metadata_container)
@@ -143,7 +143,7 @@ func get_mean( \
 func get_min( \
         metric: int, \
         metadata_container = null) -> float:
-    assert(SurfacerConfig.debug_params.is_inspector_enabled)
+    assert(Gs.is_profiler_enabled)
     if get_count( \
             metric, \
             metadata_container) == 0:
@@ -156,7 +156,7 @@ func get_min( \
 func get_max( \
         metric: int, \
         metadata_container = null) -> float:
-    assert(SurfacerConfig.debug_params.is_inspector_enabled)
+    assert(Gs.is_profiler_enabled)
     if get_count( \
             metric, \
             metadata_container) == 0:
@@ -169,7 +169,7 @@ func get_max( \
 func get_sum( \
         metric: int, \
         metadata_container = null) -> float:
-    assert(SurfacerConfig.debug_params.is_inspector_enabled)
+    assert(Gs.is_profiler_enabled)
     var sum := 0.0
     for timing in get_timing_list( \
             metric, \
@@ -180,7 +180,7 @@ func get_sum( \
 func get_count( \
         metric: int, \
         metadata_container = null) -> int:
-    assert(SurfacerConfig.debug_params.is_inspector_enabled)
+    assert(Gs.is_profiler_enabled)
     
     var is_timing := is_timing( \
             metric, \

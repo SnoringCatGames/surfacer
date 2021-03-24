@@ -269,7 +269,7 @@ func _get_jump_fall_range_annotation_elements( \
         var fall_range_without_jump_distance_element := \
                 FallRangeWithoutJumpDistanceAnnotationElement.new( \
                         fall_range_polygon_without_jump_distance, \
-                        AnnotationElementDefaults \
+                        Surfacer.ann_defaults \
                                 .FALL_RANGE_POLYGON_COLOR_PARAMS, \
                         false, \
                         false, \
@@ -283,7 +283,7 @@ func _get_jump_fall_range_annotation_elements( \
         var fall_range_with_jump_distance_element := \
                 FallRangeWithJumpDistanceAnnotationElement.new( \
                         fall_range_polygon_with_jump_distance, \
-                        AnnotationElementDefaults \
+                        Surfacer.ann_defaults \
                                 .FALL_RANGE_POLYGON_COLOR_PARAMS, \
                         false, \
                         false, \

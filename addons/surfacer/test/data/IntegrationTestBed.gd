@@ -86,9 +86,9 @@ var TEST_LEVEL_FAR_DISTANCE := {
 }
 
 const GROUPS := [
-    SurfacerConfig.group_name_human_players,
-    SurfacerConfig.group_name_computer_players,
-    SurfacerConfig.group_name_surfaces,
+    Surfacer.group_name_human_players,
+    Surfacer.group_name_computer_players,
+    Surfacer.group_name_surfaces,
 ]
 
 const END_COORDINATE_CLOSE_THRESHOLD := UnitTestBed.END_COORDINATE_CLOSE_THRESHOLD
@@ -126,7 +126,7 @@ func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
 #            data.scene_resource_path.find("test_") >= 0 else \
 #            Vector2.ZERO
 #    level.add_player( \
-#            SurfacerConfig.player_params[SurfacerConfig.default_player_name] \
+#            Surfacer.player_params[Surfacer.default_player_name] \
 #                    .player_resource_path, \
 #            position, \
 #            false, \
@@ -162,7 +162,7 @@ func set_up_level(data: Dictionary) -> void:
     level = level_scene.instance()
     sandbox.add_child(level)
     
-    player = SurfacerConfig.current_player_for_clicks
+    player = Surfacer.current_player_for_clicks
     platform_graph = player.graph
     movement_params = player.movement_params
     surface_parser = level.surface_parser

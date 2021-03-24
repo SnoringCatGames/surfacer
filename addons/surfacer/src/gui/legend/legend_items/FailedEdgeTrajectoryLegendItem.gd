@@ -21,7 +21,7 @@ func _draw_shape( \
     var offset_from_center := size * 0.35 - Vector2(0.0, 6.0)
     var start := center - offset_from_center
     var end := center + offset_from_center
-    var color: Color = AnnotationElementDefaults \
+    var color: Color = Surfacer.ann_defaults \
             .FAILED_EDGE_ATTEMPT_COLOR_PARAMS.get_color()
     Gs.draw_utils.draw_dashed_line( \
             self, \

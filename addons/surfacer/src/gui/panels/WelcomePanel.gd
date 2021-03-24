@@ -11,9 +11,13 @@ const CONTROLS_LEGEND = [
   ["Pan", "ctrl + arrow key"], \
 ]
 
+const DEFAULT_GUI_SCALE := 1.0
+
 func _ready() -> void:
+    Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
+    
     for mapping in CONTROLS_LEGEND:
-        if !SurfacerConfig.debug_params.is_inspector_enabled and \
+        if !Surfacer.is_inspector_enabled and \
                 mapping[0] == "Inspect graph":
             continue
         

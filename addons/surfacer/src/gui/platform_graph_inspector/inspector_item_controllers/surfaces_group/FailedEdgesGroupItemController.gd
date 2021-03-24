@@ -106,9 +106,9 @@ func get_annotation_elements() -> Array:
     for failed_edge_attempt in edges_results.failed_edge_attempts:
         element = FailedEdgeAttemptAnnotationElement.new( \
                 failed_edge_attempt, \
-                AnnotationElementDefaults \
+                Surfacer.ann_defaults \
                         .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS, \
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS, \
+                Surfacer.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS, \
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH, \
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP, \
                 AnnotationElementDefaults \

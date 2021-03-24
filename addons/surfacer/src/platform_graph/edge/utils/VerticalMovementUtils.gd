@@ -9,7 +9,7 @@ static func calculate_vertical_step( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams) -> VerticalEdgeStep:
     Gs.profiler.start( \
-            ProfilerMetric.CALCULATE_VERTICAL_STEP, \
+            SurfacerProfilerMetric.CALCULATE_VERTICAL_STEP, \
             edge_calc_params.collision_params.thread_id)
     
     # FIXME: Account for max y velocity when calculating any parabolic motion.
@@ -42,7 +42,7 @@ static func calculate_vertical_step( \
             edge_result_metadata.edge_calc_result_type = EdgeCalcResultType \
                     .OUT_OF_REACH_WHEN_CALCULATING_VERTICAL_STEP
             Gs.profiler.stop_with_optional_metadata( \
-                    ProfilerMetric.CALCULATE_VERTICAL_STEP, \
+                    SurfacerProfilerMetric.CALCULATE_VERTICAL_STEP, \
                     edge_calc_params.collision_params.thread_id, \
                     edge_result_metadata)
             return null
@@ -119,7 +119,7 @@ static func calculate_vertical_step( \
     step.velocity_instruction_end = velocity_instruction_end
     
     Gs.profiler.stop_with_optional_metadata( \
-            ProfilerMetric.CALCULATE_VERTICAL_STEP, \
+            SurfacerProfilerMetric.CALCULATE_VERTICAL_STEP, \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     return step

@@ -3,7 +3,7 @@ class_name PlayerSurfaceAnnotator
 
 var player: Player
 
-var COLOR := Colors.opacify(Colors.TEAL, Colors.ALPHA_XFAINT)
+var COLOR := SurfacerColors.opacify(SurfacerColors.TEAL, SurfacerColors.ALPHA_XFAINT)
 
 func _init(player: Player) -> void:
     self.player = player

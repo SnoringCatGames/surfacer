@@ -4,9 +4,9 @@ class_name ClickAnnotator
 const CLICK_INNER_END_RADIUS := 58.0
 const CLICK_OUTER_END_RADIUS := 100.0
 var CLICK_INNER_COLOR := \
-        Colors.opacify(Colors.WHITE, Colors.ALPHA_SLIGHTLY_FAINT)
+        SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_SLIGHTLY_FAINT)
 var CLICK_OUTER_COLOR := \
-        Colors.opacify(Colors.WHITE, Colors.ALPHA_SLIGHTLY_FAINT)
+        SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_SLIGHTLY_FAINT)
 const CLICK_INNER_DURATION_SEC := 0.27
 const CLICK_OUTER_DURATION_SEC := 0.23
 
@@ -23,12 +23,15 @@ func _unhandled_input(event: InputEvent) -> void:
     
     var position := Vector2.INF
     
-    if event is InputEventMouseButton and \
-            event.button_index == BUTTON_LEFT and \
-            !event.pressed:
-        position = Gs.utils.get_global_touch_position(event)
-        
-    elif event is InputEventScreenTouch and \
+    # NOTE: Shouldn't need to handle mouse events, since we should be emulating
+    #       touch events.
+    
+#    if event is InputEventMouseButton and \
+#            event.button_index == BUTTON_LEFT and \
+#            !event.pressed:
+#        position = Gs.utils.get_global_touch_position(event)
+    
+    if event is InputEventScreenTouch and \
             !event.pressed:
         position = Gs.utils.get_global_touch_position(event)
     

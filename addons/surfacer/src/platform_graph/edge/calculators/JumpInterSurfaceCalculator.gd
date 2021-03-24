@@ -51,7 +51,7 @@ func get_all_inter_surface_edges_from_surface( \
         jump_land_position_results_for_destination_surface.clear()
         
         Gs.profiler.start( \
-                ProfilerMetric \
+                SurfacerProfilerMetric \
                         .CALCULATE_JUMP_LAND_POSITIONS_FOR_SURFACE_PAIR, \
                 collision_params.thread_id)
         jump_land_positions_to_consider = JumpLandPositionsUtils \
@@ -60,7 +60,7 @@ func get_all_inter_surface_edges_from_surface( \
                         origin_surface, \
                         destination_surface)
         Gs.profiler.stop( \
-                ProfilerMetric \
+                SurfacerProfilerMetric \
                         .CALCULATE_JUMP_LAND_POSITIONS_FOR_SURFACE_PAIR, \
                 collision_params.thread_id)
         
@@ -140,7 +140,7 @@ func calculate_edge( \
             EdgeCalcResultMetadata.new(false, false)
     
     Gs.profiler.start( \
-            ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
+            SurfacerProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
             collision_params.thread_id)
     
     var edge_calc_params := \
@@ -156,7 +156,7 @@ func calculate_edge( \
     if edge_calc_params == null:
         # Cannot reach destination from origin.
         Gs.profiler.stop_with_optional_metadata( \
-                ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
+                SurfacerProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
                 collision_params.thread_id, \
                 edge_result_metadata)
         return null
@@ -166,7 +166,7 @@ func calculate_edge( \
             edge_calc_params)
     
     Gs.profiler.stop_with_optional_metadata( \
-            ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
+            SurfacerProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_EDGE, \
             collision_params.thread_id, \
             edge_result_metadata)
     return edge
@@ -209,10 +209,10 @@ func create_edge_from_edge_calc_params( \
         edge_result_metadata: EdgeCalcResultMetadata, \
         edge_calc_params: EdgeCalcParams) -> JumpInterSurfaceEdge:
     Gs.profiler.start( \
-            ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS, \
+            SurfacerProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS, \
             edge_calc_params.collision_params.thread_id)
     Gs.profiler.start( \
-            ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
+            SurfacerProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
             edge_calc_params.collision_params.thread_id)
     var calc_result := \
             EdgeStepUtils.calculate_steps_with_new_jump_height( \
@@ -221,11 +221,11 @@ func create_edge_from_edge_calc_params( \
                     null, \
                     null)
     Gs.profiler.stop_with_optional_metadata( \
-            ProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
+            SurfacerProfilerMetric.NARROW_PHASE_EDGE_CALCULATION, \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     Gs.profiler.stop_with_optional_metadata( \
-            ProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS, \
+            SurfacerProfilerMetric.CALCULATE_JUMP_INTER_SURFACE_STEPS, \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     if calc_result == null:

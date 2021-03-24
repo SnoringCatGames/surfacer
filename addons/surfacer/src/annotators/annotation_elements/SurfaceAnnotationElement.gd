@@ -13,7 +13,7 @@ func _init( \
         surface: Surface, \
         depth := AnnotationElementDefaults.SURFACE_DEPTH, \
         color_params: ColorParams = \
-                AnnotationElementDefaults.SURFACE_COLOR_PARAMS, \
+                Surfacer.ann_defaults.SURFACE_COLOR_PARAMS, \
         is_origin := false, \
         is_destination := false, \
         type := DEFAULT_TYPE) \

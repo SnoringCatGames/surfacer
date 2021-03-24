@@ -26,7 +26,7 @@ static func convert_calculation_steps_to_movement_instructions( \
         includes_jump: bool, \
         destination_side: int) -> EdgeInstructions:
     Gs.profiler.start( \
-            ProfilerMetric \
+            SurfacerProfilerMetric \
                     .CONVERT_CALCULATION_STEPS_TO_MOVEMENT_INSTRUCTIONS, \
             collision_params.thread_id)
     
@@ -124,7 +124,7 @@ static func convert_calculation_steps_to_movement_instructions( \
             duration)
     
     Gs.profiler.stop_with_optional_metadata( \
-            ProfilerMetric \
+            SurfacerProfilerMetric \
                     .CONVERT_CALCULATION_STEPS_TO_MOVEMENT_INSTRUCTIONS, \
             collision_params.thread_id, \
             records_profile_or_edge_result_metadata)

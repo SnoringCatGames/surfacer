@@ -116,7 +116,7 @@ static func calculate_steps_between_waypoints( \
         # An error occured during collision detection, so we abandon this step
         # calculation.
         Gs.profiler.increment_count( \
-                ProfilerMetric \
+                SurfacerProfilerMetric \
                         .INVALID_COLLISION_STATE_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
                 edge_calc_params.collision_params.thread_id, \
                 edge_result_metadata)
@@ -138,7 +138,7 @@ static func calculate_steps_between_waypoints( \
                 edge_calc_params)
     
     Gs.profiler.increment_count( \
-            ProfilerMetric \
+            SurfacerProfilerMetric \
                     .COLLISION_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
@@ -263,7 +263,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> EdgeCalcResult:
     Gs.profiler.increment_count( \
-            ProfilerMetric \
+            SurfacerProfilerMetric \
                     .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITHOUT_BACKTRACKING_ON_HEIGHT, \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
@@ -611,7 +611,7 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> EdgeCalcResult:
     Gs.profiler.increment_count( \
-            ProfilerMetric \
+            SurfacerProfilerMetric \
                     .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITH_BACKTRACKING_ON_HEIGHT, \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)

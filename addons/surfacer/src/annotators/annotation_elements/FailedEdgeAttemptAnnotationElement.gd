@@ -14,10 +14,10 @@ var includes_surfaces: bool
 
 func _init( \
         failed_edge_attempt: FailedEdgeAttempt, \
-        end_color_params := AnnotationElementDefaults \
+        end_color_params := Surfacer.ann_defaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS, \
         line_color_params := \
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS, \
+                Surfacer.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS, \
         dash_length := \
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH, \
         dash_gap := \

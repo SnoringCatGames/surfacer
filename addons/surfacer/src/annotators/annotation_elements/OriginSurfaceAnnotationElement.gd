@@ -9,7 +9,7 @@ func _init( \
         .( \
         surface, \
         depth, \
-        AnnotationElementDefaults.ORIGIN_SURFACE_COLOR_PARAMS, \
+        Surfacer.ann_defaults.ORIGIN_SURFACE_COLOR_PARAMS, \
         true, \
         false, \
         TYPE) -> void:

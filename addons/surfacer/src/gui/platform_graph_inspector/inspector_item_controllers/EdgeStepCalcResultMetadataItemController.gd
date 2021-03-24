@@ -150,8 +150,8 @@ static func _calculate_background_color( \
             step_ratio
     return Color.from_hsv( \
             step_hue, \
-            AnnotationElementDefaults \
+            Surfacer.ann_defaults \
                     .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.s, \
-            AnnotationElementDefaults \
+            Surfacer.ann_defaults \
                     .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.v, \
             1.0)

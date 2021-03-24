@@ -58,7 +58,7 @@ func _init(player_name: String) -> void:
     
     self.level = Gs.level
     
-    var player_params: PlayerParams = SurfacerConfig.player_params[player_name]
+    var player_params: PlayerParams = Surfacer.player_params[player_name]
     self.can_grab_walls = player_params.movement_params.can_grab_walls
     self.can_grab_ceilings = player_params.movement_params.can_grab_ceilings
     self.can_grab_floors = player_params.movement_params.can_grab_floors
@@ -318,7 +318,7 @@ func _update_actions(delta_sec: float) -> void:
                 navigation_state)
     
     actions.start_dash = _can_dash and \
-            InputWrapper.is_action_just_pressed("dash")
+            Gs.level_input.is_action_just_pressed("dash")
 
 # Updates physics and player states in response to the current actions.
 func _process_actions() -> void:
@@ -763,7 +763,7 @@ func _dash_cooldown_finished() -> void:
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if SurfacerConfig.is_logging_events and \
+    if Surfacer.is_logging and \
             movement_params.logs_player_actions and \
             (is_human_player or \
                     movement_params.logs_computer_player_events):

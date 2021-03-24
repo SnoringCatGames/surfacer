@@ -1,5 +1,5 @@
 extends Reference
-class_name Colors
+class_name SurfacerColors
 
 const PANEL_BACKGROUND := Color8(16, 18, 15)
 const HEADER_BACKGROUND := Color8(43, 43, 43)

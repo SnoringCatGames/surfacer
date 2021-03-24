@@ -363,7 +363,7 @@ func _calculate_nodes_and_edges() -> void:
                         [edge.start_position_along_surface] \
                         [edge.end_position_along_surface].push_back(edge)
     
-    if !debug_params.is_inspector_enabled:
+    if !Surfacer.is_inspector_enabled:
         # Free-up this memory if we don't need to display the graph state in
         # the inspector.
         surfaces_to_inter_surface_edges_results.clear()
@@ -374,12 +374,12 @@ func _calculate_inter_surface_edges_total() -> void:
     for origin_surface in surfaces_set:
         surfaces_to_inter_surface_edges_results[origin_surface] = []
     
-    if SurfacerConfig.uses_threads:
+    if Gs.uses_threads:
         var threads := []
-        threads.resize(SurfacerConfig.thread_count)
+        threads.resize(Gs.thread_count)
         
         # Use child threads to parallelize graph parsing.
-        for i in SurfacerConfig.thread_count:
+        for i in Gs.thread_count:
             var thread := Thread.new()
             Gs.profiler.init_thread("parse_edges:" + str(i))
             threads[i] = thread
@@ -419,7 +419,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
         
         # Divide the origin surfaces across threads.
         if thread_index >= 0 and \
-                i % SurfacerConfig.THREAD_COUNT != thread_index:
+                i % Surfacer.THREAD_COUNT != thread_index:
             continue
         
         inter_surface_edges_results = \
@@ -497,7 +497,7 @@ func get_surfaces_in_jump_and_fall_range( \
     # Get all surfaces that are within fall range from either end of the origin
     # surface.
     Gs.profiler.start( \
-            ProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
+            SurfacerProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
             collision_params.thread_id)
     FallMovementUtils.find_surfaces_in_fall_range_from_surface( \
             movement_params, \
@@ -506,7 +506,7 @@ func get_surfaces_in_jump_and_fall_range( \
             surfaces_in_jump_range_result_set, \
             origin_surface)
     Gs.profiler.stop( \
-            ProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
+            SurfacerProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
             collision_params.thread_id)
 
 func _update_counts() -> void:
