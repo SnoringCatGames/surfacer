@@ -4,7 +4,7 @@ class_name DebugPanelSettingsLabeledControlItem
 const LABEL := "Debug panel"
 const DESCRIPTION := ""
 
-func _init().( \
+func _init(__ = null).( \
         LABEL, \
         DESCRIPTION \
         ) -> void:

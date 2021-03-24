@@ -56,17 +56,27 @@ func _update_stats() -> void:
             Gs.uses_level_scores and \
             reached_new_high_score
     
-    var items := []
-    items.push_back(LevelLabeledControlItem.new(level_id))
+    control_list.items = _get_items()
+
+func _get_default_item_classes() -> Array:
+    var default_items := []
+    default_items.push_back(LevelLabeledControlItem)
     if Gs.uses_level_scores:
-        items.push_back(StaticTextLabeledControlItem.new( \
-                "Score", \
-                score))
-        items.push_back(HighScoreLabeledControlItem.new(level_id))
-    items.push_back(StaticTextLabeledControlItem.new( \
-            "Score", \
-            time))
-    control_list.items = items
+        default_items.push_back(GameOverScoreLabeledControlItem)
+        default_items.push_back(HighScoreLabeledControlItem)
+    default_items.push_back(GameOverTimeLabeledControlItem)
+    return default_items
+
+func _get_items() -> Array:
+    var item_classes := \
+            Gs.utils.get_collection_from_exclusions_and_inclusions( \
+                    _get_default_item_classes(), \
+                    Gs.game_over_item_class_exclusions, \
+                    Gs.game_over_item_class_inclusions)
+    var items := []
+    for item_class in item_classes:
+        items.push_back(item_class.new(level_id))
+    return items
 
 func _on_SelectLevelButton_pressed():
     Gs.utils.give_button_press_feedback()

@@ -4,7 +4,7 @@ class_name MusicSettingsLabeledControlItem
 const LABEL := "Music"
 const DESCRIPTION := ""
 
-func _init().( \
+func _init(__ = null).( \
         LABEL, \
         DESCRIPTION \
         ) -> void:

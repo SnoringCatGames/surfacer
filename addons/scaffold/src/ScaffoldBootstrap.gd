@@ -38,9 +38,7 @@ func on_app_ready( \
     
     get_tree().root.set_pause_mode(Node.PAUSE_MODE_PROCESS)
     
-    Gs.nav.create_screens( \
-            Gs.screen_exclusions, \
-            Gs.screen_inclusions)
+    Gs.nav.create_screens()
     
     if Gs.utils.get_is_browser():
         JavaScript.eval("window.onGameReady()")

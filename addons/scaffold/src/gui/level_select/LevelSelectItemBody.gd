@@ -4,11 +4,25 @@ class_name LevelSelectItemBody
 var level_id: String
 
 func update() -> void:
-    var list_items := []
+    $LabeledControlList.items = _get_items()
+
+func _get_default_item_classes() -> Array:
+    var default_items := []
     if Gs.uses_level_scores:
-        list_items.push_back(HighScoreLabeledControlItem.new(level_id))
-    list_items.push_back(TotalPlaysLabeledControlItem.new(level_id))
-    $LabeledControlList.items = list_items
+        default_items.push_back(HighScoreLabeledControlItem)
+    default_items.push_back(TotalPlaysLabeledControlItem)
+    return default_items
+
+func _get_items() -> Array:
+    var item_classes := \
+            Gs.utils.get_collection_from_exclusions_and_inclusions( \
+                    _get_default_item_classes(), \
+                    Gs.level_select_item_class_exclusions, \
+                    Gs.level_select_item_class_inclusions)
+    var items := []
+    for item_class in item_classes:
+        items.push_back(item_class.new(level_id))
+    return items
 
 func get_button() -> ShinyButton:
     return $PlayButton as ShinyButton

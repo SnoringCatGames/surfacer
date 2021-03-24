@@ -4,7 +4,7 @@ class_name DebugTimeDisplaySettingsLabeledControlItem
 const LABEL := "Debug time display"
 const DESCRIPTION := ""
 
-func _init().( \
+func _init(__ = null).( \
         LABEL, \
         DESCRIPTION \
         ) -> void:

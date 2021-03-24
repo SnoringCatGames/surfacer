@@ -181,13 +181,22 @@ var app_manifest := {
     #1b2235
     option_button_pressed_color = Color.from_hsv(0.622, 0.49, 0.21, 1.0),
     
-    screen_exclusions = [
+    screen_filename_exclusions = [
         "RateAppScreen.tscn",
         "DataAgreementScreen.tscn",
         "ConfirmDataDeletionScreen.tscn",
     ],
-    screen_inclusions = [
-    ],
+    screen_path_inclusions = [],
+    settings_main_item_class_exclusions = [],
+    settings_main_item_class_inclusions = [],
+    settings_details_item_class_exclusions = [],
+    settings_details_item_class_inclusions = [],
+    pause_item_class_exclusions = [],
+    pause_item_class_inclusions = [],
+    game_over_item_class_exclusions = [],
+    game_over_item_class_inclusions = [],
+    level_select_item_class_exclusions = [],
+    level_select_item_class_inclusions = [],
     
     draw_utils = SurfacerDrawUtils.new(),
     level_config_class = SquirrelAwayLevelConfig,

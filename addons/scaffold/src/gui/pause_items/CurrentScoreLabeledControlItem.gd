@@ -4,7 +4,7 @@ class_name CurrentScoreLabeledControlItem
 const LABEL := "Current score:"
 const DESCRIPTION := ""
 
-func _init().( \
+func _init(__ = null).( \
         LABEL, \
         DESCRIPTION \
         ) -> void:

@@ -77,23 +77,21 @@ func _create_screen(path: String) -> void:
     screen.pause_mode = Node.PAUSE_MODE_STOP
     screens[screen.screen_name] = screen
 
-func create_screens( \
-        exclusions: Array, \
-        inclusions: Array) -> void:
-    var inclusions_set := {}
-    for inclusion in inclusions_set:
-        inclusions_set[inclusion] = true
-    var exclusions_set := {}
-    for exclusion in exclusions:
-        exclusions_set[exclusion] = true
-    
+func create_screens() -> void:
+    var default := []
     for filename in _DEFAULT_SCREEN_FILENAMES:
-        if inclusions_set.has(filename) or \
-                exclusions_set.has(filename):
-            continue
-        _create_screen(_DEFAULT_SCREEN_PATH_PREFIX + filename)
+        default.push_back(_DEFAULT_SCREEN_PATH_PREFIX + filename)
+    var exclusions := []
+    for filename in Gs.screen_filename_exclusions:
+        exclusions.push_back(_DEFAULT_SCREEN_PATH_PREFIX + filename)
     
-    for path in inclusions:
+    var screen_paths: Array = \
+            Gs.utils.get_collection_from_exclusions_and_inclusions( \
+                    default, \
+                    exclusions, \
+                    Gs.screen_path_inclusions)
+                    
+    for path in screen_paths:
         _create_screen(path)
     
     fade_transition = Gs.utils.add_scene( \

@@ -636,3 +636,28 @@ func release_focus(control = null) -> void:
             does_control_have_focus_recursively(control):
         _focus_releaser.grab_focus()
         _focus_releaser.release_focus()
+
+static func get_collection_from_exclusions_and_inclusions( \
+        default: Array, \
+        exclusions: Array, \
+        inclusions: Array) -> Array:
+    var inclusions_set := {}
+    for inclusion in inclusions_set:
+        inclusions_set[inclusion] = true
+    
+    var exclusions_set := {}
+    for exclusion in exclusions:
+        exclusions_set[exclusion] = true
+    
+    var collection := []
+    
+    for item in default:
+        if inclusions_set.has(item) or \
+                exclusions_set.has(item):
+            continue
+        collection.push_back(item)
+    
+    for item in inclusions:
+        collection.push_back(item)
+    
+    return collection

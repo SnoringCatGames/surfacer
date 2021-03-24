@@ -4,7 +4,7 @@ class_name HapticFeedbackSettingsLabeledControlItem
 const LABEL := "Haptic feedback"
 const DESCRIPTION := ""
 
-func _init().( \
+func _init(__ = null).( \
         LABEL, \
         DESCRIPTION \
         ) -> void:

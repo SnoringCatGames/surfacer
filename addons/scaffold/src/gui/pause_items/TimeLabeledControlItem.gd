@@ -4,7 +4,7 @@ class_name TimeLabeledControlItem
 const LABEL := "Time:"
 const DESCRIPTION := ""
 
-func _init().( \
+func _init(__ = null).( \
         LABEL, \
         DESCRIPTION \
         ) -> void:

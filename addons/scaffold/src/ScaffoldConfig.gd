@@ -53,8 +53,18 @@ var option_button_normal_color: Color
 var option_button_hover_color: Color
 var option_button_pressed_color: Color
 
-var screen_exclusions: Array
-var screen_inclusions: Array
+var screen_filename_exclusions: Array
+var screen_path_inclusions: Array
+var settings_main_item_class_exclusions: Array
+var settings_main_item_class_inclusions: Array
+var settings_details_item_class_exclusions: Array
+var settings_details_item_class_inclusions: Array
+var pause_item_class_exclusions: Array
+var pause_item_class_inclusions: Array
+var game_over_item_class_exclusions: Array
+var game_over_item_class_inclusions: Array
+var level_select_item_class_exclusions: Array
+var level_select_item_class_inclusions: Array
 
 var fonts: Dictionary
 
@@ -186,8 +196,26 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.option_button_normal_color = manifest.option_button_normal_color
     self.option_button_hover_color = manifest.option_button_hover_color
     self.option_button_pressed_color = manifest.option_button_pressed_color
-    self.screen_exclusions = manifest.screen_exclusions
-    self.screen_inclusions = manifest.screen_inclusions
+    self.screen_filename_exclusions = manifest.screen_filename_exclusions
+    self.screen_path_inclusions = manifest.screen_path_inclusions
+    self.settings_main_item_class_exclusions = \
+            manifest.settings_main_item_class_exclusions
+    self.settings_main_item_class_inclusions = \
+            manifest.settings_main_item_class_inclusions
+    self.settings_details_item_class_exclusions = \
+            manifest.settings_details_item_class_exclusions
+    self.settings_details_item_class_inclusions = \
+            manifest.settings_details_item_class_inclusions
+    self.pause_item_class_exclusions = manifest.pause_item_class_exclusions
+    self.pause_item_class_inclusions = manifest.pause_item_class_inclusions
+    self.game_over_item_class_exclusions = \
+            manifest.game_over_item_class_exclusions
+    self.game_over_item_class_inclusions = \
+            manifest.game_over_item_class_inclusions
+    self.level_select_item_class_exclusions = \
+            manifest.level_select_item_class_exclusions
+    self.level_select_item_class_inclusions = \
+            manifest.level_select_item_class_inclusions
     self.fonts = manifest.fonts
     self.sounds_manifest = manifest.sounds_manifest
     self.default_sounds_path_prefix = manifest.default_sounds_path_prefix

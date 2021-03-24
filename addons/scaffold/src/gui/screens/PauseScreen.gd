@@ -9,6 +9,13 @@ const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
 const INCLUDES_CENTER_CONTAINER := true
 
+var _default_item_classes := [
+    LevelLabeledControlItem,
+    CurrentScoreLabeledControlItem,
+    HighScoreLabeledControlItem,
+    TimeLabeledControlItem,
+]
+
 func _init().( \
         NAME, \
         LAYER_NAME, \
@@ -23,15 +30,21 @@ func _on_activated() -> void:
     ._on_activated()
     $FullScreenPanel/VBoxContainer/CenteredPanel/ \
             ScrollContainer/CenterContainer/VBoxContainer/LabeledControlList \
-            .items = [
-                LevelLabeledControlItem.new(Gs.level.level_id),
-                CurrentScoreLabeledControlItem.new(),
-                HighScoreLabeledControlItem.new(Gs.level.level_id),
-                TimeLabeledControlItem.new(),
-            ]
+            .items = _get_items()
     _give_button_focus($FullScreenPanel/VBoxContainer/CenteredPanel/ \
             ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/ \
             ResumeButton)
+
+func _get_items() -> Array:
+    var item_classes := \
+            Gs.utils.get_collection_from_exclusions_and_inclusions( \
+                    _default_item_classes, \
+                    Gs.pause_item_class_exclusions, \
+                    Gs.pause_item_class_inclusions)
+    var items := []
+    for item_class in item_classes:
+        items.push_back(item_class.new(Gs.level))
+    return items
 
 func _get_focused_button() -> ShinyButton:
     return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \

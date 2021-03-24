@@ -4,7 +4,7 @@ class_name SoundEffectsSettingsLabeledControlItem
 const LABEL := "Sound effects"
 const DESCRIPTION := ""
 
-func _init().( \
+func _init(__ = null).( \
         LABEL, \
         DESCRIPTION \
         ) -> void:
