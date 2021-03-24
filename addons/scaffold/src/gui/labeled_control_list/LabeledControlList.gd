@@ -2,7 +2,7 @@ tool
 extends VBoxContainer
 class_name LabeledControlList
 
-signal control_changed(index)
+signal item_changed(item)
 
 const ABOUT_ICON_NORMAL := \
         preload("res://addons/scaffold/assets/images/gui/about_icon_normal.png")
@@ -21,17 +21,7 @@ const CHECKBOX_OFFSET := Vector2(-28.0, -31.0)
 #const CHECKBOX_SCALE := Vector2(3.0, 3.0)
 #const CHECKBOX_OFFSET := Vector2(-48.0, -17.5)
 
-# label: String
-# type: LabeledControlType
-#
-# text: String
-#
-# pressed: bool
-#
-# selected_index: int
-# options: Array<String>
-#
-# description: String
+# Array<LabeledControlItem>
 var items := [] setget _set_items,_get_items
 
 export var row_height := 40.0 setget _set_row_height,_get_row_height
@@ -55,7 +45,7 @@ func _update_children() -> void:
         child.queue_free()
     
     for index in range(items.size()):
-        var item: Dictionary = items[index]
+        var item: LabeledControlItem = items[index]
         
         var row := PanelContainer.new()
         var style: StyleBox = \
@@ -79,9 +69,9 @@ func _update_children() -> void:
         var label := Label.new()
         label.text = item.label
         label.modulate.a = \
-                DISABLED_ALPHA if \
-                item.disabled else \
-                ENABLED_ALPHA
+                ENABLED_ALPHA if \
+                item.enabled else \
+                DISABLED_ALPHA
         label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
         label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
         hbox.add_child(label)
@@ -110,7 +100,7 @@ func _update_children() -> void:
             spacer3.rect_min_size.x = padding_horizontal * 2.0
             hbox.add_child(spacer3)
         
-        var control := _create_control(item, index, item.disabled)
+        var control := _create_control(item, index, !item.enabled)
         control.size_flags_horizontal = Control.SIZE_SHRINK_END
         control.size_flags_vertical = Control.SIZE_SHRINK_CENTER
         hbox.add_child(control)
@@ -126,7 +116,7 @@ func _update_children() -> void:
             Control.MOUSE_FILTER_PASS)
 
 func _create_control( \
-        item: Dictionary, \
+        item: LabeledControlItem, \
         index: int, \
         disabled: bool) -> Control:
     var alpha := \
@@ -134,13 +124,13 @@ func _create_control( \
             disabled else \
             ENABLED_ALPHA
     match item.type:
-        LabeledControlItemType.TEXT:
+        LabeledControlItem.TEXT:
             var label := Label.new()
             label.text = item.text
             label.modulate.a = alpha
             item.control = label
             return label
-        LabeledControlItemType.CHECKBOX:
+        LabeledControlItem.CHECKBOX:
             var checkbox := CheckBox.new()
             checkbox.pressed = item.pressed
             checkbox.disabled = disabled
@@ -163,7 +153,7 @@ func _create_control( \
             wrapper.add_child(checkbox)
             item.control = checkbox
             return wrapper
-        LabeledControlItemType.DROPDOWN:
+        LabeledControlItem.DROPDOWN:
             var dropdown := OptionButton.new()
             for option in item.options:
                 dropdown.add_item(option)
@@ -189,17 +179,21 @@ func _on_control_pressed(_index: int) -> void:
     Gs.utils.give_button_press_feedback()
 
 func _on_checkbox_pressed(checkbox_index: int) -> void:
-    var item: Dictionary = items[checkbox_index]
+    var item: CheckboxLabeledControlItem = items[checkbox_index]
     item.pressed = item.control.pressed
-    emit_signal("control_changed", checkbox_index)
+    item.on_pressed(item.pressed)
+    emit_signal("item_changed", item)
 
 func _on_dropdown_item_selected( \
         _option_index: int, \
         dropdown_index: int) -> void:
     Gs.utils.give_button_press_feedback()
-    var item: Dictionary = items[dropdown_index]
+    var item: DropdownLabeledControlItem = items[dropdown_index]
     item.selected_index = item.control.selected
-    emit_signal("control_changed", dropdown_index)
+    item.on_selected( \
+            item.selected_index, \
+            item.options[item.selected_index])
+    emit_signal("item_changed", item)
 
 func _on_description_button_pressed( \
         label: String, \
@@ -226,39 +220,23 @@ func find_index(label: String) -> int:
 func find_item(label: String) -> Dictionary:
     return items[find_index(label)]
 
-func _normalize_item(item: Dictionary) -> void:
-    if !item.has("label") or \
-            !item.has("type"):
-        Gs.utils.error()
-    
-    if !item.has("disabled"):
-        item["disabled"] = false
-    
-    if !item.has("control"):
-        item["control"] = null
-    
-    if !item.has("description"):
-        item["description"] = ""
+func _update_item(item: LabeledControlItem) -> void:
+    item.enabled = item.get_is_enabled()
     
     match item.type:
-        LabeledControlItemType.TEXT:
-            if !item.has("text"):
-                item["text"] = ""
-        LabeledControlItemType.CHECKBOX:
-            if !item.has("pressed"):
-                item["pressed"] = false
-        LabeledControlItemType.DROPDOWN:
-            if !item.has("options"):
-                item["options"] = []
-            if !item.has("selected_index"):
-                item["selected_index"] = 0
+        LabeledControlItem.TEXT:
+            item.text = item.get_text()
+        LabeledControlItem.CHECKBOX:
+            item.pressed = item.get_is_pressed()
+        LabeledControlItem.DROPDOWN:
+            item.selected_index = item.get_selected_index()
         _:
             Gs.utils.error()
 
 func _set_items(value: Array) -> void:
     items = value
     for item in items:
-        _normalize_item(item)
+        _update_item(item)
     _update_children()
 
 func _get_items() -> Array:

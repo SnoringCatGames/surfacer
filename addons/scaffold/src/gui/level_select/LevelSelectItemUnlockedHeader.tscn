@@ -4,6 +4,10 @@
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_l.tres" type="DynamicFont" id=2]
 [ext_resource path="res://addons/scaffold/assets/images/gui/left_caret_normal.png" type="Texture" id=3]
 
+
+
+
+
 [node name="LevelSelectItemUnlockedHeader" type="Button"]
 margin_right = 320.0
 margin_bottom = 56.0

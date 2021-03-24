@@ -4,7 +4,7 @@
 [ext_resource path="res://addons/scaffold/src/gui/NavBar.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/scaffold/src/gui/FullScreenPanel.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/scaffold/src/gui/screens/GameOverScreen.gd" type="Script" id=4]
-[ext_resource path="res://addons/scaffold/src/gui/LabeledControlList.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/scaffold/src/gui/labeled_control_list/LabeledControlList.tscn" type="PackedScene" id=6]
 [ext_resource path="res://addons/scaffold/assets/images/gui/go_icon_normal.png" type="Texture" id=7]
 [ext_resource path="res://addons/scaffold/assets/images/gui/retry_icon_normal.png" type="Texture" id=8]
 [ext_resource path="res://addons/scaffold/assets/images/gui/home_icon_normal.png" type="Texture" id=9]
@@ -39,6 +39,9 @@ margin_right = 960.0
 margin_bottom = 192.0
 text = "Game over"
 shows_back = false
+shows_about = false
+shows_settings = false
+shows_logo = false
 
 [node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 1 )]
 anchor_right = 0.0
@@ -124,9 +127,14 @@ margin_top = 32.0
 margin_right = 360.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 360, 0 )
+is_open = false
+includes_header = true
 header_text = "Details"
+header_min_height = 0.0
+header_font = null
 is_caret_on_left = false
 padding = Vector2( 16, 8 )
+extra_scroll_height_for_custom_header = 0.0
 
 [node name="LabeledControlList" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel" instance=ExtResource( 6 )]
 anchor_right = 0.0
@@ -188,6 +196,7 @@ rect_min_size = Vector2( 56, 56 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource( 9 )
+texture_scale = null
 
 [node name="RetryButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 10 )]
 anchor_right = 0.0
@@ -199,6 +208,7 @@ rect_min_size = Vector2( 56, 56 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource( 8 )
+texture_scale = null
 
 [node name="Spacer4" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 180.0

@@ -9,16 +9,6 @@ const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
 const INCLUDES_CENTER_CONTAINER := true
 
-# Array<Dictionary>
-var list_items := [
-    {
-        label = "Time:",
-        type = LabeledControlItemType.TEXT,
-    },
-]
-
-var _control_list: LabeledControlList
-
 func _init().( \
         NAME, \
         LAYER_NAME, \
@@ -29,14 +19,16 @@ func _init().( \
         ) -> void:
     pass
 
-func _ready() -> void:
-    _control_list = $FullScreenPanel/VBoxContainer/CenteredPanel/ \
-            ScrollContainer/CenterContainer/VBoxContainer/LabeledControlList
-    _control_list.items = list_items
-
 func _on_activated() -> void:
     ._on_activated()
-    _update_stats()
+    $FullScreenPanel/VBoxContainer/CenteredPanel/ \
+            ScrollContainer/CenterContainer/VBoxContainer/LabeledControlList \
+            .items = [
+                LevelLabeledControlItem.new(Gs.level.level_id),
+                CurrentScoreLabeledControlItem.new(),
+                HighScoreLabeledControlItem.new(Gs.level.level_id),
+                TimeLabeledControlItem.new(),
+            ]
     _give_button_focus($FullScreenPanel/VBoxContainer/CenteredPanel/ \
             ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/ \
             ResumeButton)
@@ -45,16 +37,6 @@ func _get_focused_button() -> ShinyButton:
     return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/VBoxContainer/ResumeButton as \
             ShinyButton
-
-func _update_stats() -> void:
-    var level: ScaffoldLevel = Gs.level
-    
-    _control_list.find_item("Time:").text = \
-        Gs.utils.get_time_string_from_seconds( \
-                Gs.time.elapsed_play_time_actual_sec - \
-                level.level_start_time)
-    
-    _control_list.items = list_items
 
 func _on_ExitLevelButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()

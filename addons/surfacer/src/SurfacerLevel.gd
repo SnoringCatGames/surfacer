@@ -18,13 +18,8 @@ var surface_parser: SurfaceParser
 var platform_graphs: Dictionary
 var utility_panel: UtilityPanel
 
-func _enter_tree() -> void:
-    Gs.level = self
-
 func start() -> void:
     .start()
-    
-    Gs.level = self
     
     utility_panel = Gs.utils.add_scene( \
             Gs.canvas_layers.layers.hud, \

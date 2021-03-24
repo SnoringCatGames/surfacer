@@ -5,7 +5,7 @@
 [ext_resource path="res://addons/scaffold/src/gui/NavBar.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/scaffold/src/gui/AccordionPanel.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/scaffold/src/gui/FullScreenPanel.tscn" type="PackedScene" id=5]
-[ext_resource path="res://addons/scaffold/src/gui/LabeledControlList.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/scaffold/src/gui/labeled_control_list/LabeledControlList.tscn" type="PackedScene" id=6]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.152941, 0.192157, 0.286275, 1 )
@@ -27,11 +27,13 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="NavBar" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 3 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
 margin_right = 960.0
 margin_bottom = 192.0
 text = "Settings"
+shows_back = true
+shows_about = false
+shows_settings = false
+shows_logo = false
 
 [node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 2 )]
 anchor_right = 0.0
@@ -40,6 +42,7 @@ margin_top = 196.0
 margin_right = 960.0
 margin_bottom = 1156.0
 rect_min_size = Vector2( 960, 960 )
+stretches_horizontally = false
 stretches_vertically = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
@@ -55,9 +58,9 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
-margin_left = 239.0
+margin_left = 240.0
 margin_top = 450.0
-margin_right = 719.0
+margin_right = 720.0
 margin_bottom = 510.0
 rect_min_size = Vector2( 480, 0 )
 custom_constants/separation = 0

@@ -45,7 +45,7 @@ All of the Godot Scaffold functionality is globally accessible through the `Gs` 
 -   Define `Gs` as an AutoLoad (in Project Settings).
     -   It should point to the path `res://addons/scaffold/src/ScaffoldConfig.gd`.
     -   It should be the first AutoLoad in the list.
--   Configure the Godot Scaffold framework by calling `Gs.on_app_ready` at the start of your Main Scene.
+-   Configure the Godot Scaffold framework by calling `ScaffoldBootstrap.on_app_ready` at the start of your Main Scene.
 
 > **NOTE:** `Gs` stands for "Godot Scaffold", in case that's helful to know!
 

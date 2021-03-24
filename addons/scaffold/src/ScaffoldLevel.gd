@@ -16,6 +16,7 @@ func _on_resized() -> void:
     pass
 
 func start() -> void:
+    Gs.level = self
     Gs.audio.play_music(_get_music_name())
     level_start_time = Gs.time.elapsed_play_time_actual_sec
     Gs.save_state.set_level_total_plays( \
@@ -27,7 +28,7 @@ func start() -> void:
             Gs.level_config.get_level_version_string(level_id))
 
 func destroy() -> void:
-    pass
+    Gs.level = null
 
 func quit() -> void:
     Gs.audio.stop_music()

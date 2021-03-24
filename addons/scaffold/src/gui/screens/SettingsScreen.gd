@@ -9,37 +9,18 @@ const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
 const INCLUDES_CENTER_CONTAINER := true
 
-const _DEFAULT_MAIN_ITEMS := [
-    {
-        label = "Music",
-        type = LabeledControlItemType.CHECKBOX,
-    },
-    {
-        label = "Sound effects",
-        type = LabeledControlItemType.CHECKBOX,
-    },
-    {
-        label = "Haptic feedback",
-        type = LabeledControlItemType.CHECKBOX,
-    },
+var _default_main_items := [
+    MusicSettingsLabeledControlItem.new(),
+    SoundEffectsSettingsLabeledControlItem.new(),
+    HapticFeedbackSettingsLabeledControlItem.new(),
 ]
 
-const _DEFAULT_DETAILS_ITEMS := [
-    {
-        label = "Debug time display",
-        type = LabeledControlItemType.CHECKBOX,
-    },
-    {
-        label = "Debug panel",
-        type = LabeledControlItemType.CHECKBOX,
-    },
+var _default_details_items := [
+    DebugPanelSettingsLabeledControlItem.new(),
 ]
 
 var main_items: Array
 var details_items: Array
-
-var _main_list: LabeledControlList
-var _details_list: LabeledControlList
 
 func _init().( \
         NAME, \
@@ -49,107 +30,14 @@ func _init().( \
         INCLUDES_NAV_BAR, \
         INCLUDES_CENTER_CONTAINER \
         ) -> void:
-    main_items = _DEFAULT_MAIN_ITEMS.duplicate()
-    details_items = _DEFAULT_DETAILS_ITEMS.duplicate()
-
-func _ready() -> void:
-    _main_list = $FullScreenPanel/VBoxContainer/CenteredPanel/ \
-            ScrollContainer/CenterContainer/VBoxContainer/MainList
-    _details_list = $FullScreenPanel/VBoxContainer/CenteredPanel/ \
-            ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel/ \
-            VBoxContainer/DetailsList
-    _main_list.connect( \
-            "control_changed", \
-            self, \
-            "_on_control_changed", \
-            [true])
-    _details_list.connect( \
-            "control_changed", \
-            self, \
-            "_on_control_changed", \
-            [false])
-    _main_list.items = main_items
-    _details_list.items = details_items
+    main_items = _default_main_items.duplicate()
+    details_items = _default_details_items.duplicate()
 
 func _on_activated() -> void:
     ._on_activated()
-    _initialize_selections()
-    _initialize_enablement()
-    _main_list.items = main_items
-    _details_list.items = details_items
-
-func _initialize_selections() -> void:
-    _main_list.find_item("Haptic feedback").pressed = \
-            Gs.is_giving_haptic_feedback
-    _details_list.find_item("Debug panel").pressed = \
-            Gs.is_debug_panel_shown
-    
-    _details_list.find_item("Debug time display").pressed = \
-            Gs.is_debug_time_shown
-    
-    _main_list.find_item("Music").pressed = \
-            Gs.audio.is_music_enabled
-    _main_list.find_item("Sound effects").pressed = \
-            Gs.audio.is_sound_effects_enabled
-
-func _initialize_enablement() -> void:
-    _main_list.find_item("Haptic feedback").disabled = \
-            !Gs.utils.get_is_mobile_device()
-    
-    _details_list.find_item("Debug panel").disabled = false 
-    _details_list.find_item("Debug time display").disabled = false 
-    _main_list.find_item("Music").disabled = false 
-    _main_list.find_item("Sound effects").disabled = false 
-
-func _on_control_changed( \
-        index: int, \
-        is_main: bool) -> void:
-    var item: Dictionary = \
-            main_items[index] if \
-            is_main else \
-            details_items[index]
-    
-    match item.label:
-        "Haptic feedback":
-            _on_haptic_feedback_pressed(item.pressed)
-        "Debug panel":
-            _on_debug_panel_pressed(item.pressed)
-        "Debug time display":
-            _on_debug_time_display_pressed(item.pressed)
-        "Music":
-            _on_music_pressed(item.pressed)
-        "Sound effects":
-            _on_sound_effects_pressed(item.pressed)
-        _:
-            Gs.utils.error()
-
-func _on_haptic_feedback_pressed(pressed: bool) -> void:
-    Gs.is_giving_haptic_feedback = pressed
-    Gs.save_state.set_setting( \
-            Gs.IS_GIVING_HAPTIC_FEEDBACK_SETTINGS_KEY, \
-            Gs.is_giving_haptic_feedback)
-
-func _on_debug_panel_pressed(pressed: bool) -> void:
-    Gs.is_debug_panel_shown = pressed
-    Gs.save_state.set_setting( \
-            Gs.IS_DEBUG_PANEL_SHOWN_SETTINGS_KEY, \
-            Gs.is_debug_panel_shown)
-
-func _on_debug_time_display_pressed(pressed: bool) -> void:
-    Gs.is_debug_time_shown = pressed
-    Gs.save_state.set_setting( \
-            Gs.IS_DEBUG_TIME_SHOWN_SETTINGS_KEY, \
-            Gs.is_debug_time_shown)
-    # FIXME: -------------------
-
-func _on_music_pressed(pressed: bool):
-    Gs.audio.is_music_enabled = pressed
-    Gs.save_state.set_setting( \
-            Gs.IS_MUSIC_ENABLED_SETTINGS_KEY, \
-            Gs.audio.is_music_enabled)
-
-func _on_sound_effects_pressed(pressed: bool):
-    Gs.audio.is_sound_effects_enabled = pressed
-    Gs.save_state.set_setting( \
-            Gs.IS_SOUND_EFFECTS_ENABLED_SETTINGS_KEY, \
-            Gs.audio.is_sound_effects_enabled)
+    $FullScreenPanel/VBoxContainer/CenteredPanel/ \
+            ScrollContainer/CenterContainer/VBoxContainer/MainList.items = \
+            main_items
+    $FullScreenPanel/VBoxContainer/CenteredPanel/ \
+            ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel/ \
+            VBoxContainer/DetailsList.items = details_items

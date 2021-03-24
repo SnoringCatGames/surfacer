@@ -80,12 +80,16 @@ func _create_screen(path: String) -> void:
 func create_screens( \
         exclusions: Array, \
         inclusions: Array) -> void:
+    var inclusions_set := {}
+    for inclusion in inclusions_set:
+        inclusions_set[inclusion] = true
     var exclusions_set := {}
     for exclusion in exclusions:
         exclusions_set[exclusion] = true
     
     for filename in _DEFAULT_SCREEN_FILENAMES:
-        if exclusions_set.has(filename):
+        if inclusions_set.has(filename) or \
+                exclusions_set.has(filename):
             continue
         _create_screen(_DEFAULT_SCREEN_PATH_PREFIX + filename)
     
