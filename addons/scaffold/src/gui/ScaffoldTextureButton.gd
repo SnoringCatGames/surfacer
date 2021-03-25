@@ -1,5 +1,5 @@
 tool
-class_name ScaffoldTextureButton
+class_name ScaffoldTextureButton, "res://addons/scaffold/assets/images/editor_icons/ScaffoldTextureButton.png"
 extends Control
 
 signal pressed
@@ -30,6 +30,7 @@ func _ready() -> void:
     _set_texture_disabled(texture_disabled)
     _set_texture_focused(texture_focused)
     _set_texture_click_mask(texture_click_mask)
+    _set_texture_scale(texture_scale)
     update_gui_scale(1.0)
 
 func update_gui_scale(gui_scale: float) -> void:

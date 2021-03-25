@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://addons/scaffold/src/gui/ShinyButton.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffold/assets/images/gui/shine_line.png" type="Texture" id=2]
 [ext_resource path="res://assets/main_theme.tres" type="Theme" id=3]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_m.tres" type="DynamicFont" id=4]
+[ext_resource path="res://addons/scaffold/src/gui/ScaffoldTextureRect.tscn" type="PackedScene" id=5]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
@@ -26,6 +27,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+texture_scale = null
 is_shiny = null
 includes_color_pulse = null
 is_font_xl = null
@@ -52,24 +54,15 @@ __meta__ = {
 position = Vector2( -352, 164 )
 texture = ExtResource( 2 )
 
-[node name="TextureWrapper" type="Control" parent="MarginContainer"]
-margin_right = 704.0
-margin_bottom = 328.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/TextureWrapper"]
-margin_right = 704.0
-margin_bottom = 328.0
-size_flags_horizontal = 0
-size_flags_vertical = 0
-stretch_mode = 4
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="ScaffoldTextureRect" parent="MarginContainer" instance=ExtResource( 5 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 352.0
+margin_top = 164.0
+margin_right = 352.0
+margin_bottom = 164.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="TopButton" type="Button" parent="MarginContainer"]
 margin_right = 704.0

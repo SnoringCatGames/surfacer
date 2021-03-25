@@ -1,5 +1,5 @@
 tool
-class_name ShinyButton
+class_name ShinyButton, "res://addons/scaffold/assets/images/editor_icons/ShinyButton.png"
 extends Button
 
 const SHINE_TEXTURE := \
@@ -56,6 +56,15 @@ func _ready() -> void:
             "display_resized", self, "update")
     update()
 
+func update_gui_scale(gui_scale: float) -> void:
+    texture_scale *= gui_scale
+    rect_min_size *= gui_scale
+    rect_size *= gui_scale
+    rect_position *= gui_scale
+    $MarginContainer/ShineLine.scale *= gui_scale
+    $MarginContainer/ScaffoldTextureRect.update_gui_scale(gui_scale)
+    update()
+
 func update() -> void:
     _deferred_update()
 
@@ -71,10 +80,8 @@ func _deferred_update() -> void:
     $MarginContainer/BottomButton.text = text
     $MarginContainer/ShineLine.position = \
             Vector2(shine_start_x, shine_base_position.y)
-    $MarginContainer/TextureWrapper/TextureRect.texture = texture
-    $MarginContainer/TextureWrapper/TextureRect.rect_scale = texture_scale
-    $MarginContainer/TextureWrapper/TextureRect.rect_size = \
-            rect_size / texture_scale
+    $MarginContainer/ScaffoldTextureRect.texture = texture
+    $MarginContainer/ScaffoldTextureRect.texture_scale = texture_scale
     var font: Font = \
             Gs.fonts.main_xl if \
             is_font_xl else \

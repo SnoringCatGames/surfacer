@@ -1,4 +1,4 @@
-class_name DebugPanel
+class_name DebugPanel, "res://addons/scaffold/assets/images/editor_icons/DebugPanel.png"
 extends Node2D
 
 const CORNER_OFFSET := Vector2(0.0, 0.0)

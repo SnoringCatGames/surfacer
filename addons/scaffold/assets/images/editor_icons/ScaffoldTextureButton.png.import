@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/icon-64.png-cd21c3475104f2222840825ab82fef76.stex"
+path="res://.import/ScaffoldTextureButton.png-4180817cb73c10ad7f6bce569c21e284.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/scaffold/assets/images/device-icons/icon-64.png"
-dest_files=[ "res://.import/icon-64.png-cd21c3475104f2222840825ab82fef76.stex" ]
+source_file="res://addons/scaffold/assets/images/editor_icons/ScaffoldTextureButton.png"
+dest_files=[ "res://.import/ScaffoldTextureButton.png-4180817cb73c10ad7f6bce569c21e284.stex" ]
 
 [params]
 

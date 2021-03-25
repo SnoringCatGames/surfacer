@@ -1,5 +1,5 @@
 tool
-class_name NavBar
+class_name NavBar, "res://addons/scaffold/assets/images/editor_icons/NavBar.png"
 extends PanelContainer
 
 export var text := "" setget _set_text
@@ -23,10 +23,9 @@ func _enter_tree() -> void:
     _set_shows_about(shows_about)
     _set_shows_settings(shows_settings)
     _set_shows_logo(shows_logo)
-    $MarginContainer/LogoControl/Control/Logo.texture = Gs.app_logo
-    $MarginContainer/LogoControl/Control/Logo.rect_position = \
-            -Gs.app_logo.get_size() / 2.0 * \
-            Gs.app_logo_scale
+    $MarginContainer/LogoWrapper/Logo.texture = Gs.app_logo
+    $MarginContainer/LogoWrapper/Logo.texture_scale = \
+            Vector2(Gs.app_logo_scale, Gs.app_logo_scale)
 
 func _set_text(value: String) -> void:
     text = value
@@ -59,8 +58,8 @@ func _get_shows_settings() -> bool:
 
 func _set_shows_logo(value: bool) -> void:
     shows_logo = value
-    if $MarginContainer/LogoControl != null:
-        $MarginContainer/LogoControl.visible = shows_logo
+    if $MarginContainer/LogoWrapper != null:
+        $MarginContainer/LogoWrapper.visible = shows_logo
 
 func _get_shows_logo() -> bool:
     return shows_logo

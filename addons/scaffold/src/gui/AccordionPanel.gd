@@ -1,5 +1,5 @@
 tool
-class_name AccordionPanel
+class_name AccordionPanel, "res://addons/scaffold/assets/images/editor_icons/AccordionPanel.png"
 extends Control
 
 signal toggled

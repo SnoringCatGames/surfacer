@@ -1079,6 +1079,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/gui/ScaffoldTextureButton.gd"
 }, {
+"base": "Control",
+"class": "ScaffoldTextureRect",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/gui/ScaffoldTextureRect.gd"
+}, {
 "base": "Node",
 "class": "ScaffoldThirdPartyLicenses",
 "language": "GDScript",
@@ -1365,7 +1370,7 @@ _global_script_classes=[ {
 "path": "res://addons/surfacer/src/gui/panels/WelcomePanel.gd"
 } ]
 _global_script_class_icons={
-"AccordionPanel": "",
+"AccordionPanel": "res://addons/scaffold/assets/images/editor_icons/AccordionPanel.png",
 "AirDashAction": "",
 "AirDefaultAction": "",
 "AirJumpAction": "",
@@ -1388,7 +1393,7 @@ _global_script_class_icons={
 "CatParams": "",
 "CatPlayer": "",
 "CeilingsItemController": "",
-"CenteredPanel": "",
+"CenteredPanel": "res://addons/scaffold/assets/images/editor_icons/CenteredPanel.png",
 "CheckboxLabeledControlItem": "",
 "ClickAnnotator": "",
 "ClimbDownWallToFloorCalculator": "",
@@ -1408,7 +1413,7 @@ _global_script_class_icons={
 "CreditsScreen": "",
 "CurrentScoreLabeledControlItem": "",
 "DataAgreementScreen": "",
-"DebugPanel": "",
+"DebugPanel": "res://addons/scaffold/assets/images/editor_icons/DebugPanel.png",
 "DebugPanelSettingsLabeledControlItem": "",
 "DebugTimeDisplaySettingsLabeledControlItem": "",
 "DescriptionItemController": "",
@@ -1476,7 +1481,7 @@ _global_script_class_icons={
 "FloorJumpAction": "",
 "FloorWalkAction": "",
 "FloorsItemController": "",
-"FullScreenPanel": "",
+"FullScreenPanel": "res://addons/scaffold/assets/images/editor_icons/FullScreenPanel.png",
 "GameOverScoreLabeledControlItem": "",
 "GameOverScreen": "",
 "GameOverTimeLabeledControlItem": "",
@@ -1510,7 +1515,7 @@ _global_script_class_icons={
 "JumpLandPositionsAnnotationElement": "",
 "JumpLandPositionsUtils": "",
 "LabeledControlItem": "",
-"LabeledControlList": "",
+"LabeledControlList": "res://addons/scaffold/assets/images/editor_icons/LabeledControlList.png",
 "LeftWallsItemController": "",
 "Legend": "",
 "LegendItem": "",
@@ -1529,7 +1534,7 @@ _global_script_class_icons={
 "MovementParams": "",
 "MovementUtils": "",
 "MusicSettingsLabeledControlItem": "",
-"NavBar": "",
+"NavBar": "res://addons/scaffold/assets/images/editor_icons/NavBar.png",
 "Navigator": "",
 "NavigatorAnnotator": "",
 "NotificationScreen": "",
@@ -1578,12 +1583,13 @@ _global_script_class_icons={
 "ScaffoldLevel": "",
 "ScaffoldLevelConfig": "",
 "ScaffoldNavigation": "",
-"ScaffoldTextureButton": "",
+"ScaffoldTextureButton": "res://addons/scaffold/assets/images/editor_icons/ScaffoldTextureButton.png",
+"ScaffoldTextureRect": "res://addons/scaffold/assets/images/editor_icons/ScaffoldTextureRect.png",
 "ScaffoldThirdPartyLicenses": "",
 "Screen": "",
 "SelectionDescription": "",
 "SettingsScreen": "",
-"ShinyButton": "",
+"ShinyButton": "res://addons/scaffold/assets/images/editor_icons/ShinyButton.png",
 "SoundEffectsSettingsLabeledControlItem": "",
 "SquirrelAnimator": "",
 "SquirrelAwayLevel": "",
@@ -1805,6 +1811,7 @@ pointing/emulate_touch_from_mouse=true
 
 quality/intended_usage/framebuffer_allocation=1
 quality/intended_usage/framebuffer_allocation.mobile=1
-quality/2d/use_pixel_snap=true
+2d/snapping/use_gpu_pixel_snap=true
 environment/default_clear_color=Color( 0.152941, 0.192157, 0.286275, 1 )
 environment/default_environment="res://assets/default_env.tres"
+quality/2d/use_pixel_snap=true

@@ -1,5 +1,5 @@
 tool
-class_name CenteredPanel
+class_name CenteredPanel, "res://addons/scaffold/assets/images/editor_icons/CenteredPanel.png"
 extends PanelContainer
 
 export var stretches_horizontally := false \

@@ -1,5 +1,5 @@
 tool
-class_name LabeledControlList
+class_name LabeledControlList, "res://addons/scaffold/assets/images/editor_icons/LabeledControlList.png"
 extends VBoxContainer
 
 signal item_changed(item)

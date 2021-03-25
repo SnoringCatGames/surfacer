@@ -22,8 +22,11 @@ func _init().( \
 
 func _ready() -> void:
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Control/Title.texture = \
+            CenterContainer/VBoxContainer/Title.texture = \
             Gs.app_logo
+    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
+            CenterContainer/VBoxContainer/Title.texture_scale = \
+            Vector2(Gs.app_logo_scale, Gs.app_logo_scale)
     
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/VBoxContainer4/ \

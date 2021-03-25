@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/icon-32.png-0d70db2e3280e9e70e7b2c58e5da7d72.stex"
+path="res://.import/AccordionPanel.png-b51e06d819da80de1bba722f6620d91c.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/scaffold/assets/images/device-icons/icon-32.png"
-dest_files=[ "res://.import/icon-32.png-0d70db2e3280e9e70e7b2c58e5da7d72.stex" ]
+source_file="res://addons/scaffold/assets/images/editor_icons/AccordionPanel.png"
+dest_files=[ "res://.import/AccordionPanel.png-b51e06d819da80de1bba722f6620d91c.stex" ]
 
 [params]
 

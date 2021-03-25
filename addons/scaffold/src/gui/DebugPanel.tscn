@@ -36,4 +36,5 @@ rect_min_size = Vector2( 200, 0 )
 custom_fonts/font = ExtResource( 1 )
 custom_colors/font_color = Color( 0.772549, 1, 0.368627, 1 )
 autowrap = true
+
 [connection signal="gui_input" from="PanelContainer" to="." method="_on_PanelContainer_gui_input"]

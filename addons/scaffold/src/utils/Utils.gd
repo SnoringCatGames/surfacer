@@ -560,7 +560,7 @@ func _scale_gui_recursively( \
         gui_scale: float) -> void:
     var snap_epsilon := 0.001
     
-    if control is ScaffoldTextureButton:
+    if control.has_method("update_gui_scale"):
         control.update_gui_scale(gui_scale)
         return
     

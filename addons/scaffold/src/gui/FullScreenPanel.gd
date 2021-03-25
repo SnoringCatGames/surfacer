@@ -1,5 +1,5 @@
 tool
-class_name FullScreenPanel
+class_name FullScreenPanel, "res://addons/scaffold/assets/images/editor_icons/FullScreenPanel.png"
 extends PanelContainer
 
 func _init() -> void:

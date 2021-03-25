@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/icon-128.png-a16bec5b2d3b6a154ee666151c7d5397.stex"
+path="res://.import/icon_128.png-b827e7c97f71d753a7bd22f9102abc4c.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/scaffold/assets/images/device-icons/icon-128.png"
-dest_files=[ "res://.import/icon-128.png-a16bec5b2d3b6a154ee666151c7d5397.stex" ]
+source_file="res://addons/scaffold/assets/images/device_icons/icon_128.png"
+dest_files=[ "res://.import/icon_128.png-b827e7c97f71d753a7bd22f9102abc4c.stex" ]
 
 [params]
 
