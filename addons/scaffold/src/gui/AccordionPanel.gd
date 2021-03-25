@@ -7,6 +7,8 @@ signal caret_rotated
 
 const CARET_LEFT_NORMAL: Texture = \
         preload("res://addons/scaffold/assets/images/gui/left_caret_normal.png")
+const SCAFFOLD_TEXTURE_RECT_SCENE_PATH := \
+        "res://addons/scaffold/src/gui/ScaffoldTextureRect.tscn"
 
 const CARET_SIZE_DEFAULT := Vector2(23.0, 32.0)
 const CARET_SCALE := Vector2(0.5, 0.5)
@@ -40,7 +42,7 @@ var _scroll_container: ScrollContainer
 var _header: Button
 var _header_hbox: HBoxContainer
 var _projected_control: Control
-var _caret: TextureRect
+var _caret: ScaffoldTextureRect
 var _is_open_tween: Tween
 
 var _start_scroll_vertical: int
@@ -100,18 +102,18 @@ func _create_header() -> void:
     spacer1.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
     spacer1.size_flags_vertical = Control.SIZE_SHRINK_CENTER
     
-    var caret_wrapper := Control.new()
-    caret_wrapper.rect_min_size = CARET_SIZE_DEFAULT * CARET_SCALE
-    caret_wrapper.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-    caret_wrapper.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-    
-    _caret = TextureRect.new()
+    _caret = Gs.utils.add_scene( \
+            null, \
+            SCAFFOLD_TEXTURE_RECT_SCENE_PATH, \
+            false, \
+            true)
+    _caret.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+    _caret.size_flags_vertical = Control.SIZE_SHRINK_CENTER
     _caret.texture = CARET_LEFT_NORMAL
-    _caret.rect_pivot_offset = CARET_SIZE_DEFAULT / 2.0
-    _caret.rect_scale = CARET_SCALE
-    _caret.rect_rotation = CARET_ROTATION_CLOSED
-    _caret.rect_position = -CARET_SIZE_DEFAULT * CARET_SCALE / 2.0
-    caret_wrapper.add_child(_caret)
+    _caret.texture_scale = CARET_SCALE
+    var inner_texture_rect := _caret.get_node("TextureRect")
+    inner_texture_rect.rect_pivot_offset = CARET_SIZE_DEFAULT / 2.0
+    inner_texture_rect.rect_rotation = CARET_ROTATION_CLOSED
     
     var label := Label.new()
     label.text = header_text
@@ -126,11 +128,11 @@ func _create_header() -> void:
     
     _header_hbox.add_child(spacer1)
     if is_caret_on_left:
-        _header_hbox.add_child(caret_wrapper)
+        _header_hbox.add_child(_caret)
         _header_hbox.add_child(label)
     else:
         _header_hbox.add_child(label)
-        _header_hbox.add_child(caret_wrapper)
+        _header_hbox.add_child(_caret)
     _header_hbox.add_child(spacer2)
     
     var texture_height := CARET_SIZE_DEFAULT.y * CARET_SCALE.y
@@ -261,7 +263,7 @@ func _interpolate_height(open_ratio: float) -> void:
 
 func _interpolate_caret_rotation(rotation: float) -> void:
     if is_instance_valid(_caret):
-        _caret.rect_rotation = rotation
+        _caret.get_node("TextureRect").rect_rotation = rotation
     emit_signal("caret_rotated", rotation)
 
 # Auto-scroll if opened past bottom of screen, but don't auto-scroll the header
