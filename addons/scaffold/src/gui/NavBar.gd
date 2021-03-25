@@ -13,7 +13,7 @@ func _enter_tree() -> void:
     $MarginContainer.set( \
             "custom_constants/margin_top", \
             Gs.utils.get_safe_area_margin_top())
-    $MarginContainer/BackButtonWrapper.rect_position.x += \
+    $MarginContainer/BackButton.rect_position.x += \
             Gs.utils.get_safe_area_margin_left()
     $MarginContainer/AboutButton.rect_position.x += \
             Gs.utils.get_safe_area_margin_left()
@@ -35,8 +35,8 @@ func _set_text(value: String) -> void:
 
 func _set_shows_back(value: bool) -> void:
     shows_back = value
-    if $MarginContainer/BackButtonWrapper != null:
-        $MarginContainer/BackButtonWrapper.visible = shows_back
+    if $MarginContainer/BackButton != null:
+        $MarginContainer/BackButton.visible = shows_back
 
 func _get_shows_back() -> bool:
     return shows_back

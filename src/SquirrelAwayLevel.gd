@@ -14,6 +14,7 @@ func _input(event: InputEvent) -> void:
                     event is InputEventScreenTouch or \
                     event is InputEventKey) and \
             Surfacer.is_level_ready:
+        Surfacer.welcome_panel.destroy()
         Surfacer.welcome_panel.queue_free()
         Surfacer.welcome_panel = null
 

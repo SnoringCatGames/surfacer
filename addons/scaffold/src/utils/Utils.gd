@@ -94,7 +94,7 @@ func _scale_gui_for_current_screen_size(gui: Control) -> void:
     var old_gui_scale: float = Gs.guis_to_scale[gui]
     
     var new_gui_scale: float = Gs.gui_scale
-    new_gui_scale = Gs.geometry.snap_float_to_integer(new_gui_scale, 0.001)
+#    new_gui_scale = Gs.geometry.snap_float_to_integer(new_gui_scale, 0.001)
     
     if old_gui_scale != new_gui_scale:
         var relative_scale := new_gui_scale / old_gui_scale
@@ -560,6 +560,10 @@ func _scale_gui_recursively( \
         gui_scale: float) -> void:
     var snap_epsilon := 0.001
     
+    if control is ScaffoldTextureButton:
+        control.update_gui_scale(gui_scale)
+        return
+    
     var is_gui_container := \
             control is Container
     var is_gui_texture_based := \
@@ -568,26 +572,32 @@ func _scale_gui_recursively( \
             control is TextureRect
     
     control.rect_min_size *= gui_scale
-    control.rect_min_size = Gs.geometry.snap_vector2_to_integers( \
-            control.rect_min_size, snap_epsilon)
     
-    if is_gui_container:
-        control.rect_size *= gui_scale
-        control.rect_size = Gs.geometry.snap_vector2_to_integers( \
-                control.rect_size, snap_epsilon)
-        if control is VBoxContainer or \
-                control is HBoxContainer:
-            var separation := control.get_constant("separation") * gui_scale
-            control.add_constant_override("separation", separation)
+    if control is VBoxContainer or \
+            control is HBoxContainer:
+        var separation := control.get_constant("separation") * gui_scale
+        control.add_constant_override("separation", separation)
+    
+    if control is TextureButton:
+        control.rect_scale *= gui_scale
+        control.rect_position *= gui_scale
+        control.rect_min_size /= gui_scale
     elif is_gui_texture_based:
         # Only scale texture-based GUIs, since we scale fonts separately.
         control.rect_scale *= gui_scale
-        control.rect_scale = Gs.geometry.snap_vector2_to_integers( \
-                control.rect_scale, snap_epsilon)
+        
+        # FIXME: ---------------------
+        control.rect_position *= gui_scale
+        
         if control is ShinyButton:
             control.texture_scale *= gui_scale
-            control.texture_scale = Gs.geometry.snap_vector2_to_integers( \
-                    control.texture_scale, snap_epsilon)
+        
+        # This ensures that control will shrink back down, since otherwise it's
+        # min would decrease but it's actual would stay constant.
+        if control.rect_min_size != Vector2.ZERO:
+            control.rect_size *= gui_scale
+    else:
+        control.rect_size *= gui_scale
     
 #    control.rect_position /= gui_scale
 #    control.rect_position = Gs.geometry.snap_vector2_to_integers( \

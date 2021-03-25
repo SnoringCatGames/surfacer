@@ -29,3 +29,6 @@ func _ready() -> void:
                 mapping[1], \
                 null, \
                 false)
+
+func destroy() -> void:
+    Gs.guis_to_scale.erase(self)

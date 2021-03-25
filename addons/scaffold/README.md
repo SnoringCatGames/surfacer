@@ -92,11 +92,14 @@ This provides limited flexibility in how far the camera is zoomed. That is, you 
 
 > TODO: List any other constraints/tips.
 
--   Don't specify custom positions, if at all possible. For example:
+-   Avoid custom positions, except maybe for centering images. For example:
     -   Instead of encoding a margin/offset, use a VBoxContainer or HBoxContainer parent, and include an empty spacer sibling with size or min-size.
     -   This is especially important when your positioning is calculated to include bottom/right-side margins.
-
-In general, whenever possible, I find it helpful to use a VBoxContainer or HBoxContainer as a parent, and to have children use the shrink-center size flag for both horizontal and vertical directions along with a min-size.
+-   Centering images:
+    -   To center an image, I often place a `TextureRect` inside of a `Control` inside of some time of auto-positioning container.
+    -   I then set the image position in this way: `TextureRect.rect_position = -TextureRect.rect_size/2`.
+    -   This wrapper pattern also works well when I need to scale the image.
+-   In general, whenever possible, I find it helpful to use a VBoxContainer or HBoxContainer as a parent, and to have children use the shrink-center size flag for both horizontal and vertical directions along with a min-size.
 
 ## Licenses
 
