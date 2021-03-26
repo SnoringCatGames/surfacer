@@ -87,7 +87,6 @@ func create_player_annotator( \
                 _annotator_enablement[annotator_type])
 
 func destroy_player_annotator(player: Player) -> void:
-    annotation_layer.remove_child(player_annotators[player])
     player_annotators[player].queue_free()
     player_annotators.erase(player)
 
@@ -152,25 +151,20 @@ func _destroy_annotator(annotator_type: int) -> void:
     match annotator_type:
         AnnotatorType.RULER:
             if ruler_annotator != null:
-                ruler_layer.remove_child(ruler_annotator)
                 ruler_annotator.queue_free()
                 ruler_annotator = null
         AnnotatorType.GRID_INDICES:
             if grid_indices_annotator != null:
-                annotation_layer.remove_child(grid_indices_annotator)
                 grid_indices_annotator.queue_free()
                 grid_indices_annotator = null
         AnnotatorType.CLICK:
             if click_annotator != null:
-                annotation_layer.remove_child(click_annotator)
                 click_annotator.queue_free()
                 click_annotator = null
         AnnotatorType.SURFACE_SELECTION:
             if surface_selection_annotator != null:
-                annotation_layer.remove_child(surface_selection_annotator)
                 surface_selection_annotator.queue_free()
                 surface_selection_annotator = null
-                annotation_layer.remove_child(surface_preselection_annotator)
                 surface_preselection_annotator.queue_free()
                 surface_preselection_annotator = null
         AnnotatorType.LEVEL:

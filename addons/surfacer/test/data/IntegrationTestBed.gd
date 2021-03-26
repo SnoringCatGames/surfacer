@@ -141,11 +141,9 @@ func destroy() -> void:
     
     for group in GROUPS:
         for node in scene_tree.get_nodes_in_group(group):
-            node.remove_from_group(group)
             node.queue_free()
     
     for node in sandbox.get_children():
-        sandbox.remove_child(node)
         node.queue_free()
     
     movement_params = null

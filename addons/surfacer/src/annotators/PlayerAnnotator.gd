@@ -83,21 +83,16 @@ func _destroy_annotator(annotator_type: int) -> void:
     assert(is_annotator_enabled(annotator_type))
     match annotator_type:
         AnnotatorType.PLAYER_POSITION:
-            remove_child(surface_annotator)
             surface_annotator.queue_free()
             surface_annotator = null
-            remove_child(position_annotator)
             position_annotator.queue_free()
             position_annotator = null
-            remove_child(tile_annotator)
             tile_annotator.queue_free()
             tile_annotator = null
         AnnotatorType.PLAYER_TRAJECTORY:
-            remove_child(recent_movement_annotator)
             recent_movement_annotator.queue_free()
             recent_movement_annotator = null
         AnnotatorType.NAVIGATOR:
-            remove_child(navigator_annotator)
             navigator_annotator.queue_free()
             navigator_annotator = null
         _:

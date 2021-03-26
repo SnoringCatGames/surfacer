@@ -50,7 +50,7 @@ func _post_init() -> void:
             self.call_deferred("_create_children_if_needed")
 
 func destroy() -> void:
-    if tree_item == null:
+    if !is_instance_valid(tree_item):
         # Already destroyed.
         return
     _destroy_children_if_needed()
@@ -59,7 +59,8 @@ func destroy() -> void:
     tree_item.set_metadata( \
             0, \
             null)
-    parent_item.remove_child(tree_item)
+    if is_instance_valid(parent_item):
+        parent_item.remove_child(tree_item)
     tree_item = null
     parent_item = null
 
@@ -88,6 +89,8 @@ func expand() -> void:
         on_item_expanded()
 
 func collapse() -> void:
+    if !is_instance_valid(tree_item):
+        return
     var was_collapsed := tree_item.collapsed
     tree_item.collapsed = true
     if !was_collapsed:
@@ -164,7 +167,9 @@ func _destroy_children_if_needed() -> void:
     if are_children_ready:
         var child := tree_item.get_children()
         while child != null:
-            child.get_metadata(0).destroy()
+            var metadata: InspectorItemController = child.get_metadata(0)
+            if is_instance_valid(metadata):
+                metadata.destroy()
             child = child.get_next()
         
         _destroy_children_inner()
