@@ -5,11 +5,14 @@ extends SurfacerLevel
 const _WELCOME_PANEL_RESOURCE_PATH := \
         "res://addons/surfacer/src/gui/panels/WelcomePanel.tscn"
 
+const MIN_CONTROLS_DISPLAY_TIME := 0.5
+
 export var id: String setget _set_id,_get_id
 
 func _input(event: InputEvent) -> void:
     # Close the welcome panel on any mouse or key click event.
     if is_instance_valid(Surfacer.welcome_panel) and \
+            _get_level_play_time() > MIN_CONTROLS_DISPLAY_TIME and \
             (event is InputEventMouseButton or \
                     event is InputEventScreenTouch or \
                     event is InputEventKey) and \

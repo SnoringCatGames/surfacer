@@ -170,7 +170,7 @@ size_flags_vertical = 4
 [node name="InspectorContainer" type="VBoxContainer" parent="VBoxContainer/Sections"]
 margin_top = 90.0
 margin_right = 320.0
-margin_bottom = 464.0
+margin_bottom = 462.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
@@ -188,11 +188,11 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 26.0
 margin_right = 320.0
-margin_bottom = 374.0
+margin_bottom = 372.0
 size_flags_vertical = 3
 
 [node name="Annotators" type="GridContainer" parent="VBoxContainer/Sections"]
-margin_top = 464.0
+margin_top = 462.0
 margin_right = 320.0
 margin_bottom = 558.0
 size_flags_vertical = 3
@@ -202,7 +202,7 @@ columns = 2
 
 [node name="RulerGridCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
 margin_right = 160.0
-margin_bottom = 34.0
+margin_bottom = 32.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 2 )
@@ -212,7 +212,7 @@ flat = true
 [node name="LevelCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
 margin_left = 160.0
 margin_right = 320.0
-margin_bottom = 34.0
+margin_bottom = 32.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 2 )
@@ -220,9 +220,9 @@ text = "Level"
 flat = true
 
 [node name="PlayerPositionCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_top = 34.0
+margin_top = 32.0
 margin_right = 160.0
-margin_bottom = 68.0
+margin_bottom = 64.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 2 )
@@ -231,9 +231,9 @@ flat = true
 
 [node name="PlayerTrajectoryCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
 margin_left = 160.0
-margin_top = 34.0
+margin_top = 32.0
 margin_right = 320.0
-margin_bottom = 68.0
+margin_bottom = 64.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 2 )
@@ -241,9 +241,9 @@ text = "Player traj."
 flat = true
 
 [node name="LogEventsCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_top = 68.0
+margin_top = 64.0
 margin_right = 160.0
-margin_bottom = 94.0
+margin_bottom = 96.0
 custom_fonts/font = ExtResource( 2 )
 text = "Log events"
 flat = true

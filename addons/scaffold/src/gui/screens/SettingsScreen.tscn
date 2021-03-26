@@ -61,8 +61,6 @@ rect_min_size = Vector2( 480, 0 )
 custom_constants/separation = 0
 
 [node name="MainList" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 6 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
 margin_right = 480.0
 row_height = 48.0
 padding_horizontal = 6.0
@@ -103,8 +101,6 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="DetailsList" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/AccordionPanel/VBoxContainer" instance=ExtResource( 6 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
 margin_top = 14.0
 margin_right = 40.0
 margin_bottom = 14.0

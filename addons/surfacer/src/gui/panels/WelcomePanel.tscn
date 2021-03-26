@@ -1,46 +1,44 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/WelcomePanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_xs_italic.tres" type="DynamicFont" id=2]
 [ext_resource path="res://assets/main_theme.tres" type="Theme" id=3]
-[ext_resource path="res://addons/scaffold/assets/fonts/main_font_s.tres" type="DynamicFont" id=4]
+[ext_resource path="res://addons/scaffold/src/gui/labeled_control_list/LabeledControlList.tscn" type="PackedScene" id=4]
 [ext_resource path="res://assets/header_theme.tres" type="Theme" id=5]
+[ext_resource path="res://addons/scaffold/assets/fonts/main_font_xl.tres" type="DynamicFont" id=6]
+[ext_resource path="res://addons/scaffold/assets/fonts/main_font_s.tres" type="DynamicFont" id=7]
 
-
-[node name="PanelContainer" type="PanelContainer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 400.0
-margin_top = 50.0
-margin_right = -384.5
-margin_bottom = -505.0
+[node name="WelcomePanel" type="VBoxContainer"]
+modulate = Color( 1, 1, 1, 0.701961 )
+margin_right = 380.0
+margin_bottom = 130.0
+rect_min_size = Vector2( 380, 0 )
 theme = ExtResource( 3 )
+custom_constants/separation = 0
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-margin_right = 239.5
-margin_bottom = 47.0
-custom_constants/separation = 0
-
-[node name="Header" type="Label" parent="VBoxContainer"]
-margin_right = 239.0
-margin_bottom = 23.0
+[node name="Header" type="Label" parent="."]
+margin_top = -1.0
+margin_right = 380.0
+margin_bottom = 87.0
+rect_min_size = Vector2( 0, 88 )
 theme = ExtResource( 5 )
+custom_fonts/font = ExtResource( 6 )
 text = "Squirrel Away!"
 align = 1
-valign = 2
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Subheader" type="Label" parent="VBoxContainer"]
-margin_top = 23.0
-margin_right = 239.0
-margin_bottom = 39.0
-rect_min_size = Vector2( 0, 16 )
+[node name="Subheader" type="Label" parent="."]
+margin_top = 87.0
+margin_right = 380.0
+margin_bottom = 129.0
+rect_min_size = Vector2( 0, 42 )
 theme = ExtResource( 5 )
 custom_fonts/font = ExtResource( 2 )
 text = "(Click window to give focus)"
@@ -50,25 +48,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
-margin_top = 39.0
-margin_right = 239.0
-margin_bottom = 47.0
-size_flags_horizontal = 3
-custom_constants/margin_top = 6
-custom_constants/margin_left = 8
-custom_constants/margin_bottom = 2
+[node name="PanelContainer" type="PanelContainer" parent="."]
+margin_top = 130.0
+margin_right = 380.0
+margin_bottom = 130.0
 
-[node name="Controls" type="ItemList" parent="VBoxContainer/MarginContainer"]
-margin_left = 8.0
-margin_top = 6.0
-margin_right = 239.0
-margin_bottom = 6.0
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 4 )
-auto_height = true
-max_columns = 2
-same_column_width = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="LabeledControlList" parent="PanelContainer" instance=ExtResource( 4 )]
+margin_right = 380.0
+size_flags_vertical = 4
+font = ExtResource( 7 )
+row_height = null
+padding_horizontal = null

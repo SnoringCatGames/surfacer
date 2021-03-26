@@ -2,8 +2,11 @@ class_name ScaffoldLevel
 extends Node2D
 
 var level_id: String
-var level_start_time: float
+var level_start_time := INF
 var score := 0.0
+
+var has_level_started: bool setget ,_get_has_level_started
+var level_play_time: float setget ,_get_level_play_time
 
 func _ready() -> void:
     Gs.utils.connect( \
@@ -100,3 +103,11 @@ func _get_is_rate_app_screen_next() -> bool:
             "Abstract ScaffoldLevel._get_is_rate_app_screen_next " + \
             "is not implemented")
     return false
+
+func _get_has_level_started() -> bool:
+    return level_start_time != INF
+
+func _get_level_play_time() -> float:
+    return Gs.time.elapsed_play_time_actual_sec - level_start_time if \
+            _get_has_level_started() else \
+            0.0

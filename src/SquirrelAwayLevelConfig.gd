@@ -18,24 +18,24 @@ var level_manifest := {
 #        priority = 20,
 #        scene_path = LEVELS_PATH_PREFIX + "Level2.tscn",
 #    },
-#    "3": {
-#        name = "Dev level 3",
-#        version = "0.0.1",
-#        priority = 30,
-#        scene_path = LEVELS_PATH_PREFIX + "Level3.tscn",
-#    },
-#    "4": {
-#        name = "Dev level 4",
-#        version = "0.0.1",
-#        priority = 40,
-#        scene_path = LEVELS_PATH_PREFIX + "Level4.tscn",
-#    },
-#    "5": {
-#        name = "Dev level 5",
-#        version = "0.0.1",
-#        priority = 50,
-#        scene_path = LEVELS_PATH_PREFIX + "Level5.tscn",
-#    },
+    "3": {
+        name = "Dev level 3",
+        version = "0.0.1",
+        priority = 30,
+        scene_path = LEVELS_PATH_PREFIX + "Level3.tscn",
+    },
+    "4": {
+        name = "Dev level 4",
+        version = "0.0.1",
+        priority = 40,
+        scene_path = LEVELS_PATH_PREFIX + "Level4.tscn",
+    },
+    "5": {
+        name = "Dev level 5",
+        version = "0.0.1",
+        priority = 50,
+        scene_path = LEVELS_PATH_PREFIX + "Level5.tscn",
+    },
     "6": {
         name = "Dev level 6",
         version = "0.0.1",
