@@ -3,8 +3,6 @@ extends Node
 
 signal display_resized
 
-var _throttled_size_changed: FuncRef
-
 var _ios_model_names
 var _ios_resolutions
 var _focus_releaser: Control
@@ -19,89 +17,6 @@ func _init() -> void:
     _focus_releaser.modulate.a = 0.0
     _focus_releaser.visible = false
     add_child(_focus_releaser)
-
-func _enter_tree() -> void:
-    _update_game_area_region_and_gui_scale()
-
-func on_time_ready() -> void:
-    _throttled_size_changed = Gs.time.throttle( \
-            funcref(self, "_on_throttled_size_changed"), \
-            Gs.display_resize_throttle_interval_sec)
-    get_viewport().connect( \
-            "size_changed", \
-            self, \
-            "_on_size_changed")
-
-func _on_size_changed() -> void:
-    _throttled_size_changed.call_func()
-
-func _on_throttled_size_changed() -> void:
-    _update_game_area_region_and_gui_scale()
-    emit_signal("display_resized")
-
-func _update_game_area_region_and_gui_scale() -> void:
-    var viewport_size := get_viewport().size
-    var aspect_ratio := viewport_size.x / viewport_size.y
-    var game_area_position := Vector2.INF
-    var game_area_size := Vector2.INF
-    
-    if !Gs.is_app_configured:
-        game_area_size = viewport_size
-        game_area_position = Vector2.ZERO
-    if aspect_ratio < Gs.aspect_ratio_min:
-        # Show vertical margin around game area.
-        game_area_size = Vector2( \
-                viewport_size.x, \
-                viewport_size.x / Gs.aspect_ratio_min)
-        game_area_position = Vector2( \
-                0.0, \
-                (viewport_size.y - game_area_size.y) * 0.5)
-    elif aspect_ratio > Gs.aspect_ratio_max:
-        # Show horizontal margin around game area.
-        game_area_size = Vector2( \
-                viewport_size.y * Gs.aspect_ratio_max, \
-                viewport_size.y)
-        game_area_position = Vector2( \
-                (viewport_size.x - game_area_size.x) * 0.5, \
-                0.0)
-    else:
-        # Show no margins around game area.
-        game_area_size = viewport_size
-        game_area_position = Vector2.ZERO
-    
-    Gs.game_area_region = Rect2(game_area_position, game_area_size)
-    
-    if Gs.is_app_configured:
-        var default_aspect_ratio: float = \
-                Gs.default_game_area_size.x / \
-                Gs.default_game_area_size.y
-        Gs.gui_scale = \
-                viewport_size.x / Gs.default_game_area_size.x if \
-                aspect_ratio < default_aspect_ratio else \
-                viewport_size.y / Gs.default_game_area_size.y
-        Gs.gui_scale = \
-                max(Gs.gui_scale, Gs.MIN_GUI_SCALE)
-    
-    for gui in Gs.guis_to_scale:
-        _scale_gui_for_current_screen_size(gui)
-
-# Automatically resize the gui to adapt to different screen sizes.
-func _scale_gui_for_current_screen_size(gui: Control) -> void:
-    if !is_instance_valid(gui):
-        error()
-        return
-    
-    var old_gui_scale: float = Gs.guis_to_scale[gui]
-    
-    var new_gui_scale: float = Gs.gui_scale
-#    new_gui_scale = Gs.geometry.snap_float_to_integer(new_gui_scale, 0.001)
-    
-    if old_gui_scale != new_gui_scale:
-        var relative_scale := new_gui_scale / old_gui_scale
-        Gs.guis_to_scale[gui] = new_gui_scale
-        _scale_gui_recursively( \
-                gui, \
-                relative_scale)
 
 func print(message: String) -> void:
     if is_instance_valid(Gs.debug_panel):
@@ -554,6 +469,23 @@ func set_mouse_filter_recursively( \
             if !(child is Button):
                 child.mouse_filter = mouse_filter
         set_mouse_filter_recursively(child, mouse_filter)
+
+# Automatically resize the gui to adapt to different screen sizes.
+func _scale_gui_for_current_screen_size(gui: Control) -> void:
+    if !is_instance_valid(gui) or \
+            !Gs.guis_to_scale.has(gui):
+        Gs.utils.error()
+        return
+    
+    var old_gui_scale: float = Gs.guis_to_scale[gui]
+    var new_gui_scale: float = Gs.gui_scale
+    
+    if old_gui_scale != new_gui_scale:
+        var relative_scale := new_gui_scale / old_gui_scale
+        Gs.guis_to_scale[gui] = new_gui_scale
+        Gs.utils._scale_gui_recursively( \
+                gui, \
+                relative_scale)
 
 func _scale_gui_recursively( \
         control: Control, \

@@ -5,14 +5,18 @@
 [node name="ScaffoldTextureRect" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = -1024.0
-margin_bottom = -768.0
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="TextureRect" type="TextureRect" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
 stretch_mode = 4
 __meta__ = {
 "_edit_use_anchors_": false

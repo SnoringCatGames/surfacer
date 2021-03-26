@@ -1054,6 +1054,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/ScaffoldBootstrap.gd"
 }, {
+"base": "Control",
+"class": "ScaffoldCheckBox",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/gui/ScaffoldCheckBox.gd"
+}, {
 "base": "Node",
 "class": "ScaffoldGeometry",
 "language": "GDScript",
@@ -1579,6 +1584,7 @@ _global_script_class_icons={
 "RulerAnnotator": "",
 "SaveState": "",
 "ScaffoldBootstrap": "",
+"ScaffoldCheckBox": "res://addons/scaffold/assets/images/editor_icons/ScaffoldCheckBox.png",
 "ScaffoldGeometry": "",
 "ScaffoldLevel": "",
 "ScaffoldLevelConfig": "",

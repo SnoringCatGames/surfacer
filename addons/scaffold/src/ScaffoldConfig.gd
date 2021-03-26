@@ -34,6 +34,8 @@ var app_id: String
 var app_version: String
 var score_version: String
 
+var theme: Theme
+
 var cell_size: Vector2
 
 # This should match what is configured in
@@ -122,6 +124,11 @@ var display_resize_throttle_interval_sec := 0.1
 
 var recent_gesture_events_for_debugging_buffer_size := 1000
 
+var checkbox_icon_path_prefix := \
+        "res://addons/scaffold/assets/images/gui/checkbox_"
+var default_checkbox_icon_size := 32
+var checkbox_icon_sizes := [16, 32, 64, 128]
+
 # --- Derived configuration ---
 
 var is_special_thanks_shown: bool
@@ -147,6 +154,7 @@ var is_debug_time_shown: bool
 
 var game_area_region: Rect2
 var gui_scale := 1.0
+var current_checkbox_icon_size := default_checkbox_icon_size
 var audio: Audio
 var nav: ScaffoldNavigation
 var save_state: SaveState
@@ -185,6 +193,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.app_id = manifest.app_id
     self.app_version = manifest.app_version
     self.score_version = manifest.score_version
+    self.theme = manifest.theme
     self.cell_size = manifest.cell_size
     self.default_game_area_size = manifest.default_game_area_size
     self.aspect_ratio_max = manifest.aspect_ratio_max
@@ -398,7 +407,6 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.is_app_configured = true
     
     _record_original_font_sizes()
-    self.utils._update_game_area_region_and_gui_scale()
 
 func add_gui_to_scale( \
         gui: Control, \

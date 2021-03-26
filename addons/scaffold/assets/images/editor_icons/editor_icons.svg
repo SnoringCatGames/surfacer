@@ -25,16 +25,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8"
-     inkscape:cx="-26.557999"
-     inkscape:cy="-80.68907"
+     inkscape:zoom="22.627417"
+     inkscape:cx="6.5243739"
+     inkscape:cy="-201.01939"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:window-width="3840"
      inkscape:window-height="2035"
-     inkscape:window-x="-13"
+     inkscape:window-x="3827"
      inkscape:window-y="-13"
      inkscape:window-maximized="1"
      inkscape:lockguides="false" />
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -359,6 +359,29 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="sccccccccccssssssss"
        inkscape:export-filename="E:\Repositories\surfacer\addons/scaffold/assets/images\editor_icons\ShinyButton.png"
+       inkscape:export-xdpi="192.05"
+       inkscape:export-ydpi="192.05" />
+    <path
+       id="path5575"
+       d="m -16.007292,291.11301 c -0.292259,0 -0.529167,0.23691 -0.529167,0.52916 v 2.38125 c 0,0.29226 0.236916,0.52917 0.529167,0.52917 h 2.38125 c 0.292259,0 0.529167,-0.23692 0.529167,-0.52917 v -1.30378 l -0.529167,0.52916 v 0.77462 h -2.38125 v -2.38125 h 1.742519 l 0.529167,-0.52916 z m 2.477373,0.5426 -1.309476,1.30948 -0.374147,-0.37415 -0.374147,0.37415 0.748268,0.74827 1.683623,-1.68362 z"
+       inkscape:connector-curvature="0"
+       style="fill:#a5efac;stroke-width:0.26458335" />
+    <path
+       id="path5575-5"
+       d="m 0.49609418,345.81562 c -0.29225895,0 -0.52916695,0.23691 -0.52916695,0.52916 v 2.38125 c 0,0.29226 0.236916,0.52917 0.52916695,0.52917 H 2.8773432 c 0.29226,0 0.529167,-0.23692 0.529167,-0.52917 v -1.30378 l -0.529167,0.52916 v 0.77462 H 0.49609418 v -2.38125 H 2.2386132 l 0.529167,-0.52916 z m 2.47737302,0.5426 -1.309476,1.30948 -0.374147,-0.37415 -0.37414702,0.37415 0.74826802,0.74827 1.683622,-1.68362 z"
+       inkscape:connector-curvature="0"
+       style="fill:#f6ed7a;stroke-width:0.26458335;fill-opacity:1"
+       inkscape:export-xdpi="192.05"
+       inkscape:export-ydpi="192.05" />
+    <rect
+       style="opacity:1;vector-effect:none;fill:#000000;fill-opacity:0;stroke:none;stroke-width:63.08065414;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect5342-88-3"
+       width="4.2333336"
+       height="4.2333336"
+       x="-0.42994809"
+       y="345.41876"
+       rx="0"
+       ry="0"
        inkscape:export-xdpi="192.05"
        inkscape:export-ydpi="192.05" />
   </g>

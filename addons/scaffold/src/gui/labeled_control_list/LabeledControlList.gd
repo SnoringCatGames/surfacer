@@ -11,6 +11,9 @@ const ABOUT_ICON_HOVER := \
 const ABOUT_ICON_ACTIVE := \
         preload("res://addons/scaffold/assets/images/gui/about_icon_active.png")
 
+const SCAFFOLD_CHECK_BOX_SCENE_PATH := \
+        "res://addons/scaffold/src/gui/ScaffoldCheckBox.tscn"
+
 const ENABLED_ALPHA := 1.0
 const DISABLED_ALPHA := 0.3
 
@@ -131,14 +134,19 @@ func _create_control( \
             item.control = label
             return label
         LabeledControlItem.CHECKBOX:
-            var checkbox := CheckBox.new()
+            var checkbox: ScaffoldCheckBox = Gs.utils.add_scene( \
+                    null, \
+                    SCAFFOLD_CHECK_BOX_SCENE_PATH, \
+                    false, \
+                    true)
             checkbox.pressed = item.pressed
             checkbox.disabled = disabled
             checkbox.modulate.a = alpha
             checkbox.size_flags_horizontal = 0
             checkbox.size_flags_vertical = 0
-            checkbox.rect_position = CHECKBOX_OFFSET
-            checkbox.rect_scale = CHECKBOX_SCALE
+            # FIXME: ----------------------
+#            checkbox.rect_position = CHECKBOX_OFFSET
+#            checkbox.rect_scale = CHECKBOX_SCALE
             checkbox.connect( \
                     "pressed", \
                     self, \
@@ -149,10 +157,8 @@ func _create_control( \
                     self, \
                     "_on_checkbox_pressed", \
                     [index])
-            var wrapper := Control.new()
-            wrapper.add_child(checkbox)
             item.control = checkbox
-            return wrapper
+            return checkbox
         LabeledControlItem.DROPDOWN:
             var dropdown := OptionButton.new()
             for option in item.options:

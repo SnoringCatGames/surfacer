@@ -49,8 +49,6 @@ func _ready() -> void:
     _elapsed_physics_time_sec = 0.0
     _elapsed_render_time_sec = 0.0
     _elapsed_latest_time_sec = 0.0
-    
-    Gs.utils.on_time_ready()
 
 func _process(delta_sec: float) -> void:
     _elapsed_render_time_sec += delta_sec

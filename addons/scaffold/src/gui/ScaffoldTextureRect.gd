@@ -12,12 +12,6 @@ var _is_ready := false
 
 func _ready() -> void:
     _is_ready = true
-    $TextureRect.anchor_left = 0.5
-    $TextureRect.anchor_top = 0.5
-    $TextureRect.anchor_right = 0.5
-    $TextureRect.anchor_bottom = 0.5
-    $TextureRect.grow_horizontal = Control.GROW_DIRECTION_BOTH
-    $TextureRect.grow_vertical = Control.GROW_DIRECTION_BOTH
     _set_texture(texture)
     _set_texture_scale(texture_scale)
     update_gui_scale(1.0)
