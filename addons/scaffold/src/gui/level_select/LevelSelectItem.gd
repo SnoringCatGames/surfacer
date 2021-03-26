@@ -23,7 +23,7 @@ func _ready() -> void:
     call_deferred("update")
 
 func _process(_delta_sec: float) -> void:
-    rect_min_size.y = $AccordionPanel.rect_min_size.y
+    rect_min_size.y = accordion.rect_min_size.y
 
 func _init_children() -> void:
     locked_header = $HeaderWrapper/LevelSelectItemLockedHeader
@@ -35,7 +35,7 @@ func _init_children() -> void:
     locked_header.init_children(header_size)
     unlocked_header.init_children(header_size)
     
-    $AccordionPanel.extra_scroll_height_for_custom_header = \
+    accordion.extra_scroll_height_for_custom_header = \
             $HeaderWrapper.rect_size.y
 
 func update() -> void:
@@ -61,7 +61,7 @@ func update() -> void:
 
 func toggle() -> void:
     if Gs.nav.get_active_screen_name() == "level_select":
-        $AccordionPanel.toggle()
+        accordion.toggle()
 
 func unlock() -> void:
     unlocked_header.visible = false
@@ -82,11 +82,11 @@ func _get_level_id() -> String:
     return level_id
 
 func _set_is_open(value: bool) -> void:
-    $AccordionPanel.is_open = value
+    accordion.is_open = value
     update()
 
 func _get_is_open() -> bool:
-    return $AccordionPanel.is_open
+    return accordion.is_open
 
 func get_button() -> ShinyButton:
     return body.get_button()

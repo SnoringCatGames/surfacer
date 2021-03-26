@@ -507,7 +507,7 @@ func _scale_gui_recursively( \
     
     if control is VBoxContainer or \
             control is HBoxContainer:
-        var separation := control.get_constant("separation") * gui_scale
+        var separation := round(control.get_constant("separation") * gui_scale)
         control.add_constant_override("separation", separation)
     
     if control is TextureButton:

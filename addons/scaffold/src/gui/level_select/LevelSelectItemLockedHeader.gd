@@ -19,6 +19,15 @@ func init_children(header_size: Vector2) -> void:
     rect_min_size = header_size
     $HintWrapper.modulate.a = 0.0
 
+func update_gui_scale(gui_scale: float) -> void:
+    rect_position.x *= gui_scale
+    rect_min_size *= gui_scale
+    rect_size *= gui_scale
+    
+    $HintWrapper/Hint.rect_min_size *= gui_scale
+    
+    $LockAnimation.update_gui_scale(gui_scale)
+
 func update_is_unlocked(is_unlocked: bool) -> void:
     var unlock_hint_message: String = \
             Gs.level_config.get_unlock_hint(level_id)

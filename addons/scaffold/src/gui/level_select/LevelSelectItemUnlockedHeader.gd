@@ -9,8 +9,11 @@ func init_children(header_size: Vector2) -> void:
     rect_min_size = header_size
     $HBoxContainer.add_constant_override("separation", PADDING.x)
     $HBoxContainer.rect_min_size = header_size
-    $HBoxContainer/CaretWrapper.rect_min_size = \
-            AccordionPanel.CARET_SIZE_DEFAULT * AccordionPanel.CARET_SCALE
+    
+    $HBoxContainer/Caret/TextureRect.rect_pivot_offset = \
+            AccordionPanel.CARET_SIZE_DEFAULT / 2.0
+    $HBoxContainer/Caret/TextureRect.rect_rotation = \
+            AccordionPanel.CARET_ROTATION_CLOSED
     
     var header_style_normal := StyleBoxFlat.new()
     header_style_normal.bg_color = Gs.option_button_normal_color
@@ -26,6 +29,20 @@ func init_children(header_size: Vector2) -> void:
             self, \
             Control.MOUSE_FILTER_IGNORE)
 
+func update_gui_scale(gui_scale: float) -> void:
+    rect_position.x *= gui_scale
+    rect_min_size *= gui_scale
+    rect_size *= gui_scale
+    
+    var separation: float = \
+            round($HBoxContainer.get_constant("separation") * gui_scale)
+    $HBoxContainer.add_constant_override("separation", separation)
+    $HBoxContainer.rect_min_size = rect_min_size
+    $HBoxContainer.rect_size = rect_size
+    
+    $HBoxContainer/Caret.texture_scale = \
+            AccordionPanel.CARET_SCALE * Gs.gui_scale
+
 func update_is_unlocked(is_unlocked: bool) -> void:
     visible = is_unlocked
     
@@ -35,4 +52,4 @@ func update_is_unlocked(is_unlocked: bool) -> void:
     $HBoxContainer/LevelName.text = config.name
 
 func update_caret_rotation(rotation: float) -> void:
-    $HBoxContainer/CaretWrapper/Caret.rect_rotation = rotation
+    $HBoxContainer/Caret/TextureRect.rect_rotation = rotation

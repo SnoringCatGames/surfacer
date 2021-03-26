@@ -50,5 +50,6 @@ text = "(Finish the previous level)"
 align = 1
 valign = 1
 autowrap = true
+
 [connection signal="gui_input" from="." to="." method="_on_LevelSelectItemLockedHeader_gui_input"]
 [connection signal="unlock_finished" from="LockAnimation" to="." method="_on_LockAnimation_unlock_finished"]

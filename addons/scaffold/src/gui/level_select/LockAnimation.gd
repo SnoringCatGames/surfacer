@@ -11,6 +11,14 @@ func _ready() -> void:
             self, \
             "_on_lock_animation_finished")
 
+func update_gui_scale(gui_scale: float) -> void:
+    rect_position.x *= gui_scale
+    rect_min_size *= gui_scale
+    rect_size *= gui_scale
+    $Control.rect_position *= gui_scale
+    $Control/Node2D.position *= gui_scale
+    $Control/Node2D/Lock.scale *= gui_scale
+
 func play(name: String) -> void:
     assert(name == "Locked" or \
             name == "Unlocked" or \

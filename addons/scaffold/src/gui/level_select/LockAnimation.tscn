@@ -3,7 +3,6 @@
 [ext_resource path="res://addons/scaffold/assets/images/gui/lock.png" type="Texture" id=1]
 [ext_resource path="res://addons/scaffold/src/gui/level_select/LockAnimation.gd" type="Script" id=2]
 
-
 [sub_resource type="Animation" id=1]
 resource_name = "Locked"
 length = 0.1
@@ -61,8 +60,8 @@ __meta__ = {
 [node name="Control" type="Control" parent="."]
 margin_left = -16.0
 margin_top = -16.0
-margin_right = 16.0
-margin_bottom = 16.0
+margin_right = -16.0
+margin_bottom = -16.0
 __meta__ = {
 "_edit_use_anchors_": false
 }

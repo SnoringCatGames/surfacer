@@ -41,6 +41,7 @@ var _is_ready := false
 var _scroll_container: ScrollContainer
 var _header: Button
 var _header_hbox: HBoxContainer
+var _header_label: Label
 var _projected_control: Control
 var _caret: ScaffoldTextureRect
 var _is_open_tween: Tween
@@ -63,6 +64,38 @@ func _ready() -> void:
     
     _update_children()
     call_deferred("_update_children")
+
+func update_gui_scale(gui_scale: float) -> void:
+    rect_position.x *= gui_scale
+    rect_min_size *= gui_scale
+    rect_size *= gui_scale
+    
+    if is_instance_valid(_header):
+        if includes_header:
+            _header_hbox.add_constant_override( \
+                    "separation", \
+                    padding.x * Gs.gui_scale)
+            
+            _caret.texture_scale = CARET_SCALE * Gs.gui_scale
+            
+            var texture_height := \
+                    CARET_SIZE_DEFAULT.y * CARET_SCALE.y * Gs.gui_scale
+            var label_height := _header_label.rect_size.y
+            var header_height := max( \
+                    header_min_height * Gs.gui_scale, \
+                    max( \
+                            label_height, \
+                            texture_height)) + \
+                    padding.y * 2.0 * Gs.gui_scale
+            _header.rect_size = Vector2(rect_size.x, header_height)
+            _header_hbox.rect_size = _header.rect_size
+        else:
+            Gs.utils._scale_gui_recursively(_header, gui_scale)
+    
+    Gs.utils._scale_gui_recursively(_projected_control, gui_scale)
+    _projected_control.rect_size.x = rect_size.x
+    if is_instance_valid(_header):
+        _projected_control.rect_position.y = _header.rect_size.y
 
 func add_child(child: Node, legible_unique_name=false) -> void:
     .add_child(child, legible_unique_name)
@@ -95,7 +128,6 @@ func _create_header() -> void:
     _header.add_stylebox_override("pressed", header_style_pressed)
     
     _header_hbox = HBoxContainer.new()
-    _header_hbox.add_constant_override("separation", padding.x)
     _header.add_child(_header_hbox)
     
     var spacer1 := Control.new()
@@ -110,17 +142,16 @@ func _create_header() -> void:
     _caret.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
     _caret.size_flags_vertical = Control.SIZE_SHRINK_CENTER
     _caret.texture = CARET_LEFT_NORMAL
-    _caret.texture_scale = CARET_SCALE
     var inner_texture_rect := _caret.get_node("TextureRect")
     inner_texture_rect.rect_pivot_offset = CARET_SIZE_DEFAULT / 2.0
     inner_texture_rect.rect_rotation = CARET_ROTATION_CLOSED
     
-    var label := Label.new()
-    label.text = header_text
-    label.align = Label.ALIGN_LEFT
-    label.valign = Label.VALIGN_CENTER
-    label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+    _header_label = Label.new()
+    _header_label.text = header_text
+    _header_label.align = Label.ALIGN_LEFT
+    _header_label.valign = Label.VALIGN_CENTER
+    _header_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    _header_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
     
     var spacer2 := Control.new()
     spacer2.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -129,22 +160,11 @@ func _create_header() -> void:
     _header_hbox.add_child(spacer1)
     if is_caret_on_left:
         _header_hbox.add_child(_caret)
-        _header_hbox.add_child(label)
+        _header_hbox.add_child(_header_label)
     else:
-        _header_hbox.add_child(label)
+        _header_hbox.add_child(_header_label)
         _header_hbox.add_child(_caret)
     _header_hbox.add_child(spacer2)
-    
-    var texture_height := CARET_SIZE_DEFAULT.y * CARET_SCALE.y
-    var label_height := label.rect_size.y
-    var header_height := max( \
-            header_min_height, \
-            max( \
-                    label_height, \
-                    texture_height)) + \
-            padding.y * 2.0
-    _header.rect_size = Vector2(rect_size.x, header_height)
-    _header_hbox.rect_size = _header.rect_size
     
     add_child(_header)
 
@@ -183,13 +203,14 @@ func _update_children() -> void:
         return
     
     _projected_control = projected_node
-    _projected_control.rect_size.x = rect_size.x
     _projected_control.size_flags_vertical = Control.SIZE_SHRINK_CENTER
     
     configuration_warning = ""
     update_configuration_warning()
     
     call_deferred("_trigger_open_change", false)
+    
+    update_gui_scale(1.0)
 
 func _trigger_open_change(is_tweening: bool) -> void:
     _is_open_tween.stop_all()
@@ -249,7 +270,7 @@ func _interpolate_height(open_ratio: float) -> void:
     #       original height of the project content. Otherwise, us changing its
     #       position here seems to cause it's size to change as well.
     var projected_height := \
-            height_override if \
+            height_override * Gs.gui_scale if \
             height_override != INF else \
             _projected_control.rect_size.y
     _projected_control.rect_size.y = projected_height

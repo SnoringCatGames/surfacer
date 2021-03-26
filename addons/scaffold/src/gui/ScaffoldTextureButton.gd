@@ -36,8 +36,8 @@ func _ready() -> void:
 func update_gui_scale(gui_scale: float) -> void:
     rect_position *= gui_scale
     $TextureButton.rect_scale *= gui_scale
-    _set_size(gui_scale * rect_size)
     set_custom_minimum_size(gui_scale * rect_min_size)
+    _set_size(gui_scale * rect_size)
 
 func _set_size(size: Vector2) -> void:
     ._set_size(size)

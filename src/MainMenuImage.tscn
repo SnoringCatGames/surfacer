@@ -1,6 +1,7 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://assets/images/players/squirrel_running_spritesheet.png" type="Texture" id=1]
+[ext_resource path="res://src/MainMenuImage.gd" type="Script" id=2]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 1 )
@@ -43,8 +44,7 @@ animations = [ {
 } ]
 
 [node name="MainMenuImage" type="Control"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -53,5 +53,4 @@ __meta__ = {
 position = Vector2( -21, 0 )
 scale = Vector2( 2, 2 )
 frames = SubResource( 9 )
-frame = 6
 playing = true
