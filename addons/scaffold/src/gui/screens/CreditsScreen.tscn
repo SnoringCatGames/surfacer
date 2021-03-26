@@ -61,7 +61,6 @@ margin_bottom = 904.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 380.0
-margin_bottom = 0.0
 
 [node name="Spacer4" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 190.0
@@ -93,8 +92,8 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="DeveloperLogo" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer4/DeveloperLogoLink" instance=ExtResource( 12 )]
-margin_right = 0.0
-margin_bottom = 0.0
+margin_right = 235.0
+margin_bottom = 85.0
 texture_scale = Vector2( 0.5, 0.5 )
 
 [node name="DeveloperNameLink" type="LinkButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer4"]

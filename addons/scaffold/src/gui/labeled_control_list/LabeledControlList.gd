@@ -17,13 +17,6 @@ const SCAFFOLD_CHECK_BOX_SCENE_PATH := \
 const ENABLED_ALPHA := 1.0
 const DISABLED_ALPHA := 0.3
 
-const CHECKBOX_SCALE := Vector2(2.0, 2.0)
-const CHECKBOX_OFFSET := Vector2(-28.0, -31.0)
-#const CHECKBOX_SCALE := Vector2(1.0, 1.0)
-#const CHECKBOX_OFFSET := Vector2(0.0, 0.0)
-#const CHECKBOX_SCALE := Vector2(3.0, 3.0)
-#const CHECKBOX_OFFSET := Vector2(-48.0, -17.5)
-
 # Array<LabeledControlItem>
 var items := [] setget _set_items,_get_items
 
@@ -144,9 +137,8 @@ func _create_control( \
             checkbox.modulate.a = alpha
             checkbox.size_flags_horizontal = 0
             checkbox.size_flags_vertical = 0
-            # FIXME: ----------------------
-#            checkbox.rect_position = CHECKBOX_OFFSET
-#            checkbox.rect_scale = CHECKBOX_SCALE
+            checkbox.rect_min_size.x = \
+                    Gs.default_checkbox_icon_size * Gs.gui_scale
             checkbox.connect( \
                     "pressed", \
                     self, \
@@ -157,6 +149,8 @@ func _create_control( \
                     self, \
                     "_on_checkbox_pressed", \
                     [index])
+#            var checkbox_inner: CheckBox = checkbox.get_node("CheckBox")
+#            checkbox_inner.
             item.control = checkbox
             return checkbox
         LabeledControlItem.DROPDOWN:

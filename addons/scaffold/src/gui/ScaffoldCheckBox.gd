@@ -19,13 +19,18 @@ func _ready() -> void:
     update_gui_scale(1.0)
 
 func update_gui_scale(gui_scale: float) -> void:
-    $CheckBox.rect_pivot_offset = Vector2( \
-            Gs.current_checkbox_icon_size / 2.0, \
-            Gs.current_checkbox_icon_size / 2.0)
-    $CheckBox.rect_scale = Vector2(_get_icon_scale(), _get_icon_scale())
-    rect_position *= gui_scale
+    $CheckBox.rect_size = Vector2( \
+            Gs.current_checkbox_icon_size, \
+            Gs.current_checkbox_icon_size)
+    var check_box_scale := _get_icon_scale()
+    $CheckBox.rect_scale = Vector2(check_box_scale, check_box_scale)
     rect_min_size *= gui_scale
     rect_size *= gui_scale
+    call_deferred("_update_check_box_position")
+
+func _update_check_box_position() -> void:
+    $CheckBox.rect_position = \
+            (rect_size - $CheckBox.rect_size * _get_icon_scale()) / 2.0
 
 func _get_icon_scale() -> float:
     var target_icon_size := Gs.default_checkbox_icon_size * Gs.gui_scale

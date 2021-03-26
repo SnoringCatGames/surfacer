@@ -3,19 +3,17 @@
 [ext_resource path="res://addons/scaffold/src/gui/ScaffoldCheckBox.gd" type="Script" id=1]
 
 [node name="ScaffoldCheckBox" type="Control"]
-margin_right = 24.0
-margin_bottom = 24.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="CheckBox" type="CheckBox" parent="."]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_right = 24.0
-margin_bottom = 24.0
-grow_horizontal = 2
-grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
