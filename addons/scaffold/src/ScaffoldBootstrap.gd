@@ -65,9 +65,10 @@ func _on_resized() -> void:
     _throttled_size_changed.call_func()
 
 func _on_throttled_size_changed() -> void:
+    _update_game_area_region_and_gui_scale()
     _update_font_sizes()
     _update_checkbox_size()
-    _update_game_area_region_and_gui_scale()
+    _scale_guis()
     Gs.utils.emit_signal("display_resized")
 
 func _update_font_sizes() -> void:
@@ -140,7 +141,8 @@ func _update_game_area_region_and_gui_scale() -> void:
                 viewport_size.y / Gs.default_game_area_size.y
         Gs.gui_scale = \
                 max(Gs.gui_scale, Gs.MIN_GUI_SCALE)
-    
+
+func _scale_guis() -> void:
     for gui in Gs.guis_to_scale:
         Gs.utils._scale_gui_for_current_screen_size(gui)
 
