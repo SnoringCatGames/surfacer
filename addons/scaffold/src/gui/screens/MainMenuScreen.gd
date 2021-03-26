@@ -29,7 +29,7 @@ func _ready() -> void:
                 true, \
                 true)
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/LogoControl/Title.texture = \
+            CenterContainer/VBoxContainer/Title.texture = \
             Gs.app_logo
     
     _on_resized()
@@ -46,7 +46,7 @@ func _on_resized() -> void:
     $FullScreenPanel/VBoxContainer/NavBar.shows_logo = \
             is_wide_enough_to_put_title_in_nav_bar
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/LogoControl.visible = \
+            CenterContainer/VBoxContainer/Title.visible = \
                     !is_wide_enough_to_put_title_in_nav_bar
 
 func _on_StartGameButton_pressed() -> void:

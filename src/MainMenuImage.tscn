@@ -44,13 +44,25 @@ animations = [ {
 } ]
 
 [node name="MainMenuImage" type="Control"]
+margin_right = 280.0
+margin_bottom = 176.0
+rect_min_size = Vector2( 322, 176 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
-position = Vector2( -21, 0 )
-scale = Vector2( 2, 2 )
+[node name="Control" type="Control" parent="."]
+margin_left = 140.0
+margin_top = 88.0
+margin_right = 140.0
+margin_bottom = 88.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="Control"]
+scale = Vector2( 4, 4 )
 frames = SubResource( 9 )
+frame = 2
 playing = true
