@@ -1,15 +1,11 @@
 class_name LevelSelectItemUnlockedHeader
-extends Control
+extends Button
 
 const PADDING := Vector2(16.0, 8.0)
 
 var level_id: String
 
-func init_children(header_size: Vector2) -> void:
-    rect_min_size = header_size
-    $HBoxContainer.add_constant_override("separation", PADDING.x)
-    $HBoxContainer.rect_min_size = header_size
-    
+func init_children() -> void:
     $HBoxContainer/Caret/TextureRect.rect_pivot_offset = \
             AccordionPanel.CARET_SIZE_DEFAULT / 2.0
     $HBoxContainer/Caret/TextureRect.rect_rotation = \
@@ -29,19 +25,19 @@ func init_children(header_size: Vector2) -> void:
             self, \
             Control.MOUSE_FILTER_IGNORE)
 
-func update_gui_scale(gui_scale: float) -> void:
-    rect_position.x *= gui_scale
-    rect_min_size *= gui_scale
-    rect_size *= gui_scale
+func update_size(header_size: Vector2) -> void:
+    rect_min_size = header_size
     
-    var separation: float = \
-            round($HBoxContainer.get_constant("separation") * gui_scale)
-    $HBoxContainer.add_constant_override("separation", separation)
-    $HBoxContainer.rect_min_size = rect_min_size
-    $HBoxContainer.rect_size = rect_size
+    $HBoxContainer.add_constant_override( \
+            "separation", \
+            PADDING.x * Gs.gui_scale)
+    $HBoxContainer.rect_min_size = header_size
+    $HBoxContainer.rect_size = header_size
     
     $HBoxContainer/Caret.texture_scale = \
             AccordionPanel.CARET_SCALE * Gs.gui_scale
+    
+    rect_size = header_size
 
 func update_is_unlocked(is_unlocked: bool) -> void:
     visible = is_unlocked

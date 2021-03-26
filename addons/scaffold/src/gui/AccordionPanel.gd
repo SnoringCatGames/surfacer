@@ -66,6 +66,14 @@ func _ready() -> void:
     call_deferred("_update_children")
 
 func update_gui_scale(gui_scale: float) -> void:
+    update_gui_scale_deferred(gui_scale)
+    # TODO: Fix the underlying dependency, instead of this double-call hack.
+    #       (To repro the problem: run, open SettingsScreen,
+    #        maximize window, unmaximize window, Details AccordionPanel hasn't
+    #        shrunk back to the correct size.)
+    call_deferred("update_gui_scale_deferred", 1.0)
+
+func update_gui_scale_deferred(gui_scale: float) -> void:
     rect_position.x *= gui_scale
     rect_min_size *= gui_scale
     rect_size *= gui_scale
@@ -307,7 +315,7 @@ func _interpolate_scroll(open_ratio: float) -> void:
             scroll_container.rect_size.y
     var max_scroll_vertical_to_show_accordion_top := \
             accordion_position_y_in_scroll_container - \
-            extra_scroll_height_for_custom_header
+            extra_scroll_height_for_custom_header * Gs.gui_scale
     
     var is_scrolling_upward := \
             scroll_container.scroll_vertical > \

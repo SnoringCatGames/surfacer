@@ -66,7 +66,7 @@ func update_gui_scale(gui_scale: float) -> void:
     update()
 
 func update() -> void:
-    _deferred_update()
+    call_deferred("_deferred_update")
 
 func _deferred_update() -> void:
     var half_size := rect_size / 2.0

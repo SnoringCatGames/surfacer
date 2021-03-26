@@ -11,22 +11,27 @@ const HINT_PULSE_DURATION_SEC := 2.0
 var level_id: String
 var hint_tween: Tween
 
+var previous_gui_scale: float
+
 func _enter_tree() -> void:
     hint_tween = Tween.new()
     $HintWrapper/Hint.add_child(hint_tween)
 
-func init_children(header_size: Vector2) -> void:
-    rect_min_size = header_size
+func init_children() -> void:
     $HintWrapper.modulate.a = 0.0
+    previous_gui_scale = Gs.gui_scale
 
-func update_gui_scale(gui_scale: float) -> void:
-    rect_position.x *= gui_scale
-    rect_min_size *= gui_scale
-    rect_size *= gui_scale
+func update_size(header_size: Vector2) -> void:
+    rect_min_size = header_size
     
-    $HintWrapper/Hint.rect_min_size *= gui_scale
+    var relative_gui_scale := Gs.gui_scale / previous_gui_scale
+    previous_gui_scale = Gs.gui_scale
+    $HintWrapper/Hint.rect_min_size *= relative_gui_scale
+    $HintWrapper/Hint.rect_size = header_size
+    $HintWrapper.rect_size = header_size
+    $LockAnimation.update_gui_scale(relative_gui_scale)
     
-    $LockAnimation.update_gui_scale(gui_scale)
+    rect_size = header_size
 
 func update_is_unlocked(is_unlocked: bool) -> void:
     var unlock_hint_message: String = \

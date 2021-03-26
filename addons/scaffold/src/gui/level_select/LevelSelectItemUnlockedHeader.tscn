@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/scaffold/src/gui/level_select/LevelSelectItemUnlockedHeader.gd" type="Script" id=1]
-[ext_resource path="res://addons/scaffold/assets/fonts/main_font_l.tres" type="DynamicFont" id=2]
+[ext_resource path="res://addons/scaffold/assets/fonts/main_font_m.tres" type="DynamicFont" id=2]
 [ext_resource path="res://addons/scaffold/assets/images/gui/left_caret_normal.png" type="Texture" id=3]
 [ext_resource path="res://addons/scaffold/src/gui/ScaffoldTextureRect.tscn" type="PackedScene" id=4]
 
@@ -27,34 +27,38 @@ __meta__ = {
 }
 
 [node name="Spacer" type="Control" parent="HBoxContainer"]
-margin_top = 29.0
-margin_bottom = 29.0
+margin_top = 28.0
+margin_bottom = 28.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="LevelNumber" type="Label" parent="HBoxContainer"]
 margin_left = 16.0
+margin_top = 7.0
 margin_right = 46.0
-margin_bottom = 58.0
+margin_bottom = 49.0
 rect_min_size = Vector2( 30, 0 )
 custom_fonts/font = ExtResource( 2 )
 align = 2
+valign = 1
 
 [node name="LevelName" type="Label" parent="HBoxContainer"]
 margin_left = 62.0
+margin_top = 7.0
 margin_right = 357.0
-margin_bottom = 58.0
+margin_bottom = 49.0
 rect_clip_content = true
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
+valign = 1
 
 [node name="Caret" parent="HBoxContainer" instance=ExtResource( 4 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 372.0
-margin_top = 21.0
+margin_top = 20.0
 margin_right = 383.5
-margin_bottom = 37.0
+margin_bottom = 36.0
 rect_min_size = Vector2( 11.5, 16 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -63,9 +67,9 @@ texture_scale = Vector2( 0.5, 0.5 )
 
 [node name="Spacer2" type="Control" parent="HBoxContainer"]
 margin_left = 400.0
-margin_top = 29.0
+margin_top = 28.0
 margin_right = 400.0
-margin_bottom = 29.0
+margin_bottom = 28.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 

@@ -23,7 +23,9 @@ func _ready() -> void:
     call_deferred("update")
 
 func _process(_delta_sec: float) -> void:
-    rect_min_size.y = accordion.rect_min_size.y
+    rect_min_size.y = \
+            $HeaderWrapper.rect_min_size.y + \
+            $AccordionPanel.rect_min_size.y
 
 func _init_children() -> void:
     locked_header = $HeaderWrapper/LevelSelectItemLockedHeader
@@ -31,12 +33,28 @@ func _init_children() -> void:
     accordion = $AccordionPanel
     body = $AccordionPanel/LevelSelectItemBody
     
-    var header_size := Vector2(rect_min_size.x, HEADER_HEIGHT)
-    locked_header.init_children(header_size)
-    unlocked_header.init_children(header_size)
+    locked_header.init_children()
+    unlocked_header.init_children()
     
     accordion.extra_scroll_height_for_custom_header = \
             $HeaderWrapper.rect_size.y
+    
+    update_gui_scale(1.0)
+
+func update_gui_scale(gui_scale: float) -> void:
+    rect_position.x *= gui_scale
+    rect_min_size *= gui_scale
+    rect_size = rect_min_size
+    
+    var header_size := Vector2( \
+            rect_min_size.x, \
+            HEADER_HEIGHT * Gs.gui_scale)
+    $HeaderWrapper.rect_min_size = header_size
+    $HeaderWrapper.rect_size = header_size
+    locked_header.update_size(header_size)
+    unlocked_header.update_size(header_size)
+    
+    accordion.update_gui_scale(gui_scale)
 
 func update() -> void:
     if level_id == "":

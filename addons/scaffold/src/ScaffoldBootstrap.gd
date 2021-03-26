@@ -70,6 +70,11 @@ func _on_throttled_size_changed() -> void:
     _update_checkbox_size()
     _scale_guis()
     Gs.utils.emit_signal("display_resized")
+    # TODO: Fix the underlying dependency, instead of this double-call hack.
+    #       (To repro the problem: run, maximize window, unmaximize window,
+    #        Screen hasn't shrunk back to the correct size.)
+    _scale_guis()
+    Gs.utils.emit_signal("display_resized")
 
 func _update_font_sizes() -> void:
     for key in Gs.fonts:

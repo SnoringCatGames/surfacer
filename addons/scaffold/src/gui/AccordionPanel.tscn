@@ -3,8 +3,6 @@
 [ext_resource path="res://addons/scaffold/src/gui/AccordionPanel.gd" type="Script" id=1]
 
 [node name="AccordionPanel" type="Control"]
-anchor_right = 1.0
-anchor_bottom = 1.0
 margin_left = -0.314972
 margin_right = -0.314972
 rect_clip_content = true

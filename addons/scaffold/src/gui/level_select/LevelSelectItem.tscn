@@ -1,18 +1,13 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://addons/scaffold/src/gui/level_select/LevelSelectItem.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffold/src/gui/AccordionPanel.tscn" type="PackedScene" id=2]
-[ext_resource path="res://addons/scaffold/assets/fonts/main_font_l.tres" type="DynamicFont" id=3]
 [ext_resource path="res://addons/scaffold/src/gui/level_select/LevelSelectItemLockedHeader.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/scaffold/src/gui/level_select/LevelSelectItemBody.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/scaffold/src/gui/level_select/LevelSelectItemUnlockedHeader.tscn" type="PackedScene" id=8]
 
 [node name="LevelSelectItem" type="VBoxContainer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_right = -160.0
-margin_bottom = -480.0
-rect_min_size = Vector2( 400, 0 )
+rect_min_size = Vector2( 400, 56 )
 size_flags_horizontal = 3
 size_flags_vertical = 4
 custom_constants/separation = 0
@@ -23,29 +18,28 @@ __meta__ = {
 is_open = null
 
 [node name="HeaderWrapper" type="Control" parent="."]
-margin_right = 864.0
+margin_right = 400.0
 margin_bottom = 56.0
 rect_min_size = Vector2( 400, 56 )
 mouse_filter = 2
 mouse_default_cursor_shape = 2
 
 [node name="LevelSelectItemLockedHeader" parent="HeaderWrapper" instance=ExtResource( 4 )]
+size_flags_horizontal = 3
+size_flags_vertical = 4
 
 [node name="LevelSelectItemUnlockedHeader" parent="HeaderWrapper" instance=ExtResource( 8 )]
 visible = false
 
 [node name="AccordionPanel" parent="." instance=ExtResource( 2 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 56.0
-margin_right = 864.0
+margin_right = 400.0
 margin_bottom = 56.0
 size_flags_horizontal = 3
 includes_header = false
 header_text = " "
 header_min_height = 40.0
-header_font = ExtResource( 3 )
 is_caret_on_left = false
 padding = Vector2( 16, 8 )
 
