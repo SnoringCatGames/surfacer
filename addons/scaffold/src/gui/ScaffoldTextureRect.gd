@@ -17,6 +17,13 @@ func _ready() -> void:
     update_gui_scale(1.0)
 
 func update_gui_scale(gui_scale: float) -> void:
+    _update_gui_scale_deferred(gui_scale)
+    # TODO: Fix the underlying dependency, instead of this double-call hack.
+    #       (To repro the problem: run, open CreditsScreen, logo and publisher
+    #        ScaffoldTextureRects are mis-aligned.)
+    call_deferred("_update_gui_scale_deferred", gui_scale)
+
+func _update_gui_scale_deferred(gui_scale: float) -> void:
     rect_position *= gui_scale
     if texture != null:
         $TextureRect.rect_pivot_offset = texture.get_size() / 2.0
