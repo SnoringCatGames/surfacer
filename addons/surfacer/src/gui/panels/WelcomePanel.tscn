@@ -2,9 +2,9 @@
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/WelcomePanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_xs_italic.tres" type="DynamicFont" id=2]
-[ext_resource path="res://assets/main_theme.tres" type="Theme" id=3]
+[ext_resource path="res://addons/scaffold/src/main_theme.tres" type="Theme" id=3]
 [ext_resource path="res://addons/scaffold/src/gui/labeled_control_list/LabeledControlList.tscn" type="PackedScene" id=4]
-[ext_resource path="res://assets/header_theme.tres" type="Theme" id=5]
+[ext_resource path="res://src/header_theme.tres" type="Theme" id=5]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_xl.tres" type="DynamicFont" id=6]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_s.tres" type="DynamicFont" id=7]
 

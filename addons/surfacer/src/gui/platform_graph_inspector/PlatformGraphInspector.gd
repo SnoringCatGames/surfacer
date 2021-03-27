@@ -313,7 +313,7 @@ func select_edge_or_surface( \
         edge_type: int, \
         graph: PlatformGraph) -> void:
     # Ensure that the utility panel is open.
-    Surfacer.utility_panel.set_is_open(true)
+    Surfacer.utility_panel.is_open = true
     
     if start_position.surface == end_position.surface:
         _select_canonical_origin_surface_item_controller( \

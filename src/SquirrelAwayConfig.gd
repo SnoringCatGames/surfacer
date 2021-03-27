@@ -34,7 +34,7 @@ var third_party_license_text := \
 var special_thanks_text := """
 """
 
-var theme := preload("res://assets/main_theme.tres")
+var theme := preload("res://addons/scaffold/src/main_theme.tres")
 
 var test_runner_resource_path := "res://test/TestRunner.tscn"
 

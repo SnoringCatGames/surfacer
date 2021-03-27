@@ -1,18 +1,20 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/UtilityPanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_s.tres" type="DynamicFont" id=2]
-[ext_resource path="res://assets/images/gui/gear-active.png" type="Texture" id=3]
-[ext_resource path="res://assets/images/gui/gear-hover.png" type="Texture" id=4]
-[ext_resource path="res://assets/images/gui/gear-normal.png" type="Texture" id=5]
-[ext_resource path="res://assets/images/gui/x-normal.png" type="Texture" id=6]
-[ext_resource path="res://assets/images/gui/x-hover.png" type="Texture" id=7]
-[ext_resource path="res://assets/images/gui/x-active.png" type="Texture" id=8]
-[ext_resource path="res://assets/main_theme.tres" type="Theme" id=9]
+[ext_resource path="res://addons/scaffold/assets/images/gui/gear_icon_hover_large.png" type="Texture" id=3]
+[ext_resource path="res://addons/scaffold/assets/images/gui/gear_icon_active_large.png" type="Texture" id=4]
+[ext_resource path="res://addons/scaffold/assets/images/gui/gear_icon_normal_large.png" type="Texture" id=5]
+[ext_resource path="res://addons/scaffold/assets/fonts/main_font_xs.tres" type="DynamicFont" id=6]
+[ext_resource path="res://addons/scaffold/src/main_theme.tres" type="Theme" id=9]
 [ext_resource path="res://addons/surfacer/src/gui/SelectionDescription.tscn" type="PackedScene" id=10]
 [ext_resource path="res://addons/surfacer/src/gui/legend/Legend.tscn" type="PackedScene" id=11]
-[ext_resource path="res://assets/header_theme.tres" type="Theme" id=12]
+[ext_resource path="res://src/header_theme.tres" type="Theme" id=12]
 [ext_resource path="res://addons/surfacer/src/gui/platform_graph_inspector/PlatformGraphInspector.tscn" type="PackedScene" id=13]
+[ext_resource path="res://addons/scaffold/src/gui/ScaffoldTextureButton.tscn" type="PackedScene" id=14]
+[ext_resource path="res://addons/scaffold/assets/images/gui/close_normal.png" type="Texture" id=15]
+[ext_resource path="res://addons/scaffold/assets/images/gui/close_active.png" type="Texture" id=16]
+[ext_resource path="res://addons/scaffold/assets/images/gui/close_hover.png" type="Texture" id=17]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
@@ -21,7 +23,7 @@ corner_radius_bottom_left = 5
 
 [node name="UtilityPanel" type="PanelContainer"]
 modulate = Color( 1, 1, 1, 0.733333 )
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 600.0
 theme = ExtResource( 9 )
 custom_styles/panel = SubResource( 1 )
@@ -31,7 +33,7 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 600.0
 custom_constants/separation = 0
 __meta__ = {
@@ -39,7 +41,7 @@ __meta__ = {
 }
 
 [node name="Header" type="HBoxContainer" parent="VBoxContainer"]
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 0, 42 )
 size_flags_horizontal = 3
@@ -64,52 +66,48 @@ text = "Pause"
 
 [node name="Spacer2" type="Control" parent="VBoxContainer/Header"]
 margin_left = 148.0
-margin_right = 312.0
+margin_right = 352.0
 margin_bottom = 42.0
 size_flags_horizontal = 3
 
-[node name="Control" type="Control" parent="VBoxContainer/Header"]
-margin_left = 316.0
+[node name="XButtonWrapper" type="Control" parent="VBoxContainer/Header"]
+margin_left = 356.0
 margin_top = 21.0
-margin_right = 316.0
+margin_right = 356.0
 margin_bottom = 21.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name=" XButton" type="TextureButton" parent="VBoxContainer/Header/Control"]
-margin_left = -24.0
+[node name="XButton" parent="VBoxContainer/Header/XButtonWrapper" instance=ExtResource( 14 )]
+margin_left = -30.0
 margin_top = -12.0
-margin_right = 56.0
-margin_bottom = 68.0
-rect_scale = Vector2( 0.3, 0.3 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_normal = ExtResource( 6 )
-texture_pressed = ExtResource( 8 )
-texture_hover = ExtResource( 7 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_right = -6.0
+margin_bottom = 12.0
+rect_min_size = Vector2( 24, 24 )
+texture_normal = ExtResource( 15 )
+texture_pressed = ExtResource( 16 )
+texture_hover = ExtResource( 17 )
+texture_scale = Vector2( 0.75, 0.75 )
 
 [node name="Spacer3" type="Control" parent="VBoxContainer/Header"]
-margin_left = 320.0
+margin_left = 360.0
 margin_top = 21.0
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 21.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="Sections" type="VBoxContainer" parent="VBoxContainer"]
 margin_top = 42.0
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 600.0
 rect_min_size = Vector2( 0, 300 )
 size_flags_vertical = 3
 custom_constants/separation = 0
 
 [node name="Spacer" type="Control" parent="VBoxContainer/Sections"]
-margin_left = 160.0
-margin_right = 160.0
+margin_left = 180.0
+margin_right = 180.0
 margin_bottom = 4.0
 rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
@@ -119,14 +117,14 @@ size_flags_vertical = 4
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 4.0
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 32.0
 size_flags_vertical = 4
 
 [node name="Spacer3" type="Control" parent="VBoxContainer/Sections"]
-margin_left = 160.0
+margin_left = 180.0
 margin_top = 32.0
-margin_right = 160.0
+margin_right = 180.0
 margin_bottom = 36.0
 rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
@@ -134,7 +132,7 @@ size_flags_vertical = 4
 
 [node name="LegendHeader" type="Label" parent="VBoxContainer/Sections"]
 margin_top = 36.0
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 62.0
 theme = ExtResource( 12 )
 custom_fonts/font = ExtResource( 2 )
@@ -142,9 +140,9 @@ text = "Legend"
 align = 1
 
 [node name="Spacer4" type="Control" parent="VBoxContainer/Sections"]
-margin_left = 160.0
+margin_left = 180.0
 margin_top = 62.0
-margin_right = 160.0
+margin_right = 180.0
 margin_bottom = 66.0
 rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
@@ -154,14 +152,14 @@ size_flags_vertical = 4
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 66.0
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 86.0
 size_flags_vertical = 4
 
 [node name="Spacer2" type="Control" parent="VBoxContainer/Sections"]
-margin_left = 160.0
+margin_left = 180.0
 margin_top = 86.0
-margin_right = 160.0
+margin_right = 180.0
 margin_bottom = 90.0
 rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
@@ -169,14 +167,14 @@ size_flags_vertical = 4
 
 [node name="InspectorContainer" type="VBoxContainer" parent="VBoxContainer/Sections"]
 margin_top = 90.0
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 462.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
 
 [node name="InspectorHeader" type="Label" parent="VBoxContainer/Sections/InspectorContainer"]
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 26.0
 theme = ExtResource( 12 )
 custom_fonts/font = ExtResource( 2 )
@@ -187,13 +185,14 @@ align = 1
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 26.0
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 372.0
 size_flags_vertical = 3
+custom_fonts/font = ExtResource( 6 )
 
 [node name="Annotators" type="GridContainer" parent="VBoxContainer/Sections"]
 margin_top = 462.0
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 558.0
 size_flags_vertical = 3
 custom_constants/vseparation = 0
@@ -201,7 +200,7 @@ custom_constants/hseparation = 0
 columns = 2
 
 [node name="RulerGridCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_right = 160.0
+margin_right = 180.0
 margin_bottom = 32.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -210,8 +209,8 @@ text = "Ruler grid"
 flat = true
 
 [node name="LevelCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_left = 160.0
-margin_right = 320.0
+margin_left = 180.0
+margin_right = 360.0
 margin_bottom = 32.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -221,7 +220,7 @@ flat = true
 
 [node name="PlayerPositionCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
 margin_top = 32.0
-margin_right = 160.0
+margin_right = 180.0
 margin_bottom = 64.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -230,9 +229,9 @@ text = "Player pos."
 flat = true
 
 [node name="PlayerTrajectoryCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_left = 160.0
+margin_left = 180.0
 margin_top = 32.0
-margin_right = 320.0
+margin_right = 360.0
 margin_bottom = 64.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -242,7 +241,7 @@ flat = true
 
 [node name="LogEventsCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
 margin_top = 64.0
-margin_right = 160.0
+margin_right = 180.0
 margin_bottom = 96.0
 custom_fonts/font = ExtResource( 2 )
 text = "Log events"
@@ -251,50 +250,55 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GearContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="GearContainerWrapper" type="Control" parent="VBoxContainer"]
+margin_left = 180.0
 margin_top = 600.0
-margin_right = 320.0
+margin_right = 180.0
 margin_bottom = 600.0
-size_flags_horizontal = 3
-size_flags_vertical = 4
-custom_constants/separation = 0
-
-[node name="Spacer" type="Control" parent="VBoxContainer/GearContainer"]
-margin_right = 260.0
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[node name="GearWrapper" type="Control" parent="VBoxContainer/GearContainer"]
-margin_left = 260.0
-margin_right = 300.0
-rect_min_size = Vector2( 40, 0 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="GearButton" type="TextureButton" parent="VBoxContainer/GearContainer/GearWrapper"]
-margin_top = 20.0
-margin_right = 80.0
-margin_bottom = 100.0
-rect_scale = Vector2( 0.5, 0.5 )
-texture_normal = ExtResource( 5 )
-texture_pressed = ExtResource( 3 )
-texture_hover = ExtResource( 4 )
+[node name="GearContainer" type="HBoxContainer" parent="VBoxContainer/GearContainerWrapper"]
+margin_left = -160.0
+margin_right = 160.0
+margin_bottom = 64.0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Spacer2" type="Control" parent="VBoxContainer/GearContainer"]
-margin_left = 300.0
+[node name="Spacer" type="Control" parent="VBoxContainer/GearContainerWrapper/GearContainer"]
+margin_top = 32.0
 margin_right = 320.0
-rect_min_size = Vector2( 20, 0 )
+margin_bottom = 32.0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="GearButtonWrapper" type="Control" parent="VBoxContainer/GearContainerWrapper/GearContainer"]
+margin_left = 320.0
+margin_top = 32.0
+margin_right = 320.0
+margin_bottom = 32.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
+[node name="GearButton" parent="VBoxContainer/GearContainerWrapper/GearContainer/GearButtonWrapper" instance=ExtResource( 14 )]
+margin_left = -72.0
+margin_top = -4.0
+margin_right = -8.0
+margin_bottom = 60.0
+rect_min_size = Vector2( 64, 64 )
+texture_normal = ExtResource( 5 )
+texture_pressed = ExtResource( 4 )
+texture_hover = ExtResource( 3 )
+
 [connection signal="pressed" from="VBoxContainer/Header/PauseButton" to="." method="_on_PauseButton_pressed"]
-[connection signal="pressed" from="VBoxContainer/Header/Control/ XButton" to="." method="_toggle_open"]
+[connection signal="pressed" from="VBoxContainer/Header/XButtonWrapper/XButton" to="." method="_toggle_open"]
 [connection signal="toggled" from="VBoxContainer/Sections/Annotators/RulerGridCheckbox" to="." method="_on_ruler_grid_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/Sections/Annotators/LevelCheckbox" to="." method="_on_level_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/Sections/Annotators/PlayerPositionCheckbox" to="." method="_on_player_position_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/Sections/Annotators/PlayerTrajectoryCheckbox" to="." method="_on_player_trajectory_checkbox_toggled"]
 [connection signal="toggled" from="VBoxContainer/Sections/Annotators/LogEventsCheckbox" to="." method="_on_log_events_checkbox_toggled"]
-[connection signal="pressed" from="VBoxContainer/GearContainer/GearWrapper/GearButton" to="." method="_toggle_open"]
+[connection signal="pressed" from="VBoxContainer/GearContainerWrapper/GearContainer/GearButtonWrapper/GearButton" to="." method="_toggle_open"]

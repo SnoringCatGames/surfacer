@@ -52,8 +52,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Logo" parent="MarginContainer/LogoWrapper" instance=ExtResource( 14 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
 margin_left = 96.0
 margin_top = 96.0
 margin_right = 96.0

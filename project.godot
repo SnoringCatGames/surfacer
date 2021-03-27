@@ -674,11 +674,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/player/action/InstructionsPlayback.gd"
 }, {
-"base": "",
-"class": "IntegrationTestBed",
-"language": "GDScript",
-"path": "res://addons/surfacer/test/data/IntegrationTestBed.gd"
-}, {
 "base": "Reference",
 "class": "InterSurfaceEdgesResult",
 "language": "GDScript",
@@ -733,11 +728,6 @@ _global_script_classes=[ {
 "class": "JumpLandPositionsUtils",
 "language": "GDScript",
 "path": "res://addons/surfacer/src/platform_graph/edge/utils/JumpLandPositionsUtils.gd"
-}, {
-"base": "UnitTestBed",
-"class": "JumpLandPositionsUtilsTestBed",
-"language": "GDScript",
-"path": "res://addons/surfacer/test/tests/jump_land_positions_utils/jump_land_positions_utils_test_bed.gd"
 }, {
 "base": "Reference",
 "class": "LabeledControlItem",
@@ -1264,16 +1254,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/gui/platform_graph_inspector/inspector_item_controllers/surfaces_group/SurfacesOfSideItemController.gd"
 }, {
-"base": "Player",
-"class": "TestPlayer",
-"language": "GDScript",
-"path": "res://addons/surfacer/test/data/test_player.gd"
-}, {
-"base": "MovementParams",
-"class": "TestPlayerParams",
-"language": "GDScript",
-"path": "res://addons/surfacer/test/data/test_player_params.gd"
-}, {
 "base": "LabeledControlItem",
 "class": "TextLabeledControlItem",
 "language": "GDScript",
@@ -1303,11 +1283,6 @@ _global_script_classes=[ {
 "class": "UUID",
 "language": "GDScript",
 "path": "res://addons/crypto_uuid_v4/uuid.gd"
-}, {
-"base": "",
-"class": "UnitTestBed",
-"language": "GDScript",
-"path": "res://addons/surfacer/test/data/unit_test_bed.gd"
 }, {
 "base": "PlayerActionSource",
 "class": "UserActionSource",
@@ -1538,7 +1513,6 @@ _global_script_class_icons={
 "InstructionStartLegendItem": "",
 "InstructionsActionSource": "",
 "InstructionsPlayback": "",
-"IntegrationTestBed": "",
 "InterSurfaceEdgesResult": "",
 "IntraSurfaceEdge": "",
 "IosModelNames": "",
@@ -1550,7 +1524,6 @@ _global_script_class_icons={
 "JumpLandPositions": "",
 "JumpLandPositionsAnnotationElement": "",
 "JumpLandPositionsUtils": "",
-"JumpLandPositionsUtilsTestBed": "",
 "LabeledControlItem": "",
 "LabeledControlList": "res://addons/scaffold/assets/images/editor_icons/LabeledControlList.png",
 "LeftWallsItemController": "",
@@ -1656,15 +1629,12 @@ _global_script_class_icons={
 "SurfacerThirdPartyLicenses": "",
 "SurfacesGroupItemController": "",
 "SurfacesOfSideGroupItemController": "",
-"TestPlayer": "",
-"TestPlayerParams": "",
 "TextLabeledControlItem": "",
 "ThirdPartyLicensesScreen": "",
 "Time": "",
 "TimeLabeledControlItem": "",
 "TotalPlaysLabeledControlItem": "",
 "UUID": "",
-"UnitTestBed": "",
 "UserActionSource": "",
 "UtilityPanel": "",
 "Utils": "",
@@ -1855,5 +1825,5 @@ quality/intended_usage/framebuffer_allocation=1
 quality/intended_usage/framebuffer_allocation.mobile=1
 2d/snapping/use_gpu_pixel_snap=true
 environment/default_clear_color=Color( 0.152941, 0.192157, 0.286275, 1 )
-environment/default_environment="res://assets/default_env.tres"
+environment/default_environment="res://src/default_env.tres"
 quality/2d/use_pixel_snap=true

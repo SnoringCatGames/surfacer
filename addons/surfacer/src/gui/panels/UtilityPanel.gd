@@ -12,7 +12,7 @@ var _toggle_open_tween: Tween
 func _ready() -> void:
     Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
     
-    $VBoxContainer/GearContainer/GearWrapper/GearButton.visible = !is_open
+    $VBoxContainer/GearContainerWrapper.visible = !is_open
     
     _toggle_open_tween = Tween.new()
     add_child(_toggle_open_tween)
@@ -112,7 +112,7 @@ func _toggle_open() -> void:
             Tween.EASE_IN)
     _toggle_open_tween.start()
     
-    $VBoxContainer/GearContainer/GearWrapper/GearButton.visible = !is_open
+    $VBoxContainer/GearContainerWrapper.visible = !is_open
     
     if is_open:
         Surfacer.platform_graph_inspector.select_first_item()

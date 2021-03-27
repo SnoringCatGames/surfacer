@@ -1,7 +1,7 @@
 [gd_resource type="Theme" load_steps=28 format=2]
 
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_m.tres" type="DynamicFont" id=1]
-[ext_resource path="res://assets/images/gui/x-normal-small.png" type="Texture" id=2]
+[ext_resource path="res://addons/scaffold/assets/images/gui/close_normal.png" type="Texture" id=2]
 [ext_resource path="res://addons/scaffold/assets/images/gui/checkbox_unchecked_32.png" type="Texture" id=3]
 [ext_resource path="res://addons/scaffold/assets/images/gui/checkbox_checked_32.png" type="Texture" id=4]
 

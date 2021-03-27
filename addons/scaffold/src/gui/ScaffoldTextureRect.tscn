@@ -3,10 +3,6 @@
 [ext_resource path="res://addons/scaffold/src/gui/ScaffoldTextureRect.gd" type="Script" id=1]
 
 [node name="ScaffoldTextureRect" type="Control"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_right = 2048.0
-margin_bottom = 1536.0
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
