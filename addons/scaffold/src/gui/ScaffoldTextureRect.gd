@@ -21,7 +21,7 @@ func update_gui_scale(gui_scale: float) -> void:
     # TODO: Fix the underlying dependency, instead of this double-call hack.
     #       (To repro the problem: run, open CreditsScreen, logo and publisher
     #        ScaffoldTextureRects are mis-aligned.)
-    call_deferred("_update_gui_scale_deferred", gui_scale)
+    call_deferred("_update_gui_scale_deferred", 1.0)
 
 func _update_gui_scale_deferred(gui_scale: float) -> void:
     rect_position *= gui_scale

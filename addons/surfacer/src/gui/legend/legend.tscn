@@ -4,16 +4,7 @@
 [ext_resource path="res://addons/scaffold/src/main_theme.tres" type="Theme" id=2]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_xs_italic.tres" type="DynamicFont" id=3]
 
-
-
-
-
-
-
-
 [node name="Legend" type="VBoxContainer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
 margin_top = 0.519775
 margin_bottom = 0.519775
 theme = ExtResource( 2 )
@@ -24,7 +15,7 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="."]
-margin_right = 1024.0
+margin_right = 174.0
 margin_bottom = 20.0
 rect_min_size = Vector2( 0, 20 )
 size_flags_horizontal = 3
@@ -35,7 +26,7 @@ valign = 1
 
 [node name="GridContainer" type="GridContainer" parent="."]
 margin_top = 20.0
-margin_right = 1024.0
+margin_right = 174.0
 margin_bottom = 20.0
 custom_constants/vseparation = 0
 custom_constants/hseparation = 0

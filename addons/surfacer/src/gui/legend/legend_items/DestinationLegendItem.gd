@@ -15,9 +15,11 @@ func _init().( \
 func _draw_shape( \
         center: Vector2, \
         size: Vector2) -> void:
-    var cone_length: float = SurfacerDrawUtils.EDGE_END_CONE_LENGTH * SCALE
-    var radius: float = SurfacerDrawUtils.EDGE_END_RADIUS * SCALE
-    var length := cone_length + radius
+    var cone_length: float = \
+            SurfacerDrawUtils.EDGE_END_CONE_LENGTH * SCALE * Gs.gui_scale
+    var radius: float = \
+            SurfacerDrawUtils.EDGE_END_RADIUS * SCALE * Gs.gui_scale
+    var length := cone_length + radius * Gs.gui_scale
     var cone_end_point := Vector2( \
             center.x, \
             center.y + length / 2.0)

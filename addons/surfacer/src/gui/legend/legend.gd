@@ -12,6 +12,22 @@ func _ready() -> void:
     label = $Label
     label.visible = true
 
+func update_gui_scale(gui_scale: float) -> void:
+    update_gui_scale_helper(gui_scale)
+    # TODO: Fix the underlying dependency, instead of this double-call hack.
+    #       (To repro the problem: run, start level, maximize window.)
+    update_gui_scale_helper(1.0)
+
+func update_gui_scale_helper(gui_scale: float) -> void:
+    var next_rect_size := rect_size * gui_scale
+    rect_size = next_rect_size
+    for item in _items.values():
+        if is_instance_valid(item):
+            item.update()
+    for child in get_children():
+        Gs.utils._scale_gui_recursively(child, gui_scale)
+    rect_size = next_rect_size
+
 func add(item: LegendItem) -> void:
     assert(item != null)
     _items[item.type] = item

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/UtilityPanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_s.tres" type="DynamicFont" id=2]
@@ -16,23 +16,26 @@
 [ext_resource path="res://addons/scaffold/assets/images/gui/close_active.png" type="Texture" id=16]
 [ext_resource path="res://addons/scaffold/assets/images/gui/close_hover.png" type="Texture" id=17]
 
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[node name="UtilityPanel" type="PanelContainer"]
+[node name="UtilityPanel" type="VBoxContainer"]
 modulate = Color( 1, 1, 1, 0.733333 )
 margin_right = 360.0
-margin_bottom = 600.0
+margin_bottom = 684.0
 theme = ExtResource( 9 )
-custom_styles/panel = SubResource( 1 )
+custom_constants/separation = 0
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
+margin_left = -1.0
+margin_right = 359.0
+margin_bottom = 600.0
+rect_min_size = Vector2( 360, 600 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 margin_right = 360.0
 margin_bottom = 600.0
 custom_constants/separation = 0
@@ -40,45 +43,55 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Header" type="HBoxContainer" parent="VBoxContainer"]
-margin_right = 360.0
-margin_bottom = 42.0
-rect_min_size = Vector2( 0, 42 )
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[node name="Spacer" type="Control" parent="VBoxContainer/Header"]
-margin_top = 21.0
-margin_bottom = 21.0
+[node name="Spacer" type="Control" parent="PanelContainer/VBoxContainer"]
+margin_left = 180.0
+margin_right = 180.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 0, 8 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="PauseButton" type="Button" parent="VBoxContainer/Header"]
-margin_left = 4.0
+[node name="Header" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 margin_top = 8.0
-margin_right = 144.0
+margin_right = 360.0
 margin_bottom = 34.0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+custom_constants/separation = 0
+
+[node name="Spacer" type="Control" parent="PanelContainer/VBoxContainer/Header"]
+margin_top = 13.0
+margin_right = 8.0
+margin_bottom = 13.0
+rect_min_size = Vector2( 8, 0 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="PauseButton" type="Button" parent="PanelContainer/VBoxContainer/Header"]
+margin_left = 8.0
+margin_right = 148.0
+margin_bottom = 26.0
 rect_min_size = Vector2( 140, 0 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 custom_fonts/font = ExtResource( 2 )
 text = "Pause"
 
-[node name="Spacer2" type="Control" parent="VBoxContainer/Header"]
+[node name="Spacer2" type="Control" parent="PanelContainer/VBoxContainer/Header"]
 margin_left = 148.0
-margin_right = 352.0
-margin_bottom = 42.0
+margin_right = 360.0
+margin_bottom = 26.0
 size_flags_horizontal = 3
 
-[node name="XButtonWrapper" type="Control" parent="VBoxContainer/Header"]
-margin_left = 356.0
-margin_top = 21.0
-margin_right = 356.0
-margin_bottom = 21.0
+[node name="XButtonWrapper" type="Control" parent="PanelContainer/VBoxContainer/Header"]
+margin_left = 360.0
+margin_top = 13.0
+margin_right = 360.0
+margin_bottom = 13.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="XButton" parent="VBoxContainer/Header/XButtonWrapper" instance=ExtResource( 14 )]
+[node name="XButton" parent="PanelContainer/VBoxContainer/Header/XButtonWrapper" instance=ExtResource( 14 )]
 margin_left = -30.0
 margin_top = -12.0
 margin_right = -6.0
@@ -89,23 +102,23 @@ texture_pressed = ExtResource( 16 )
 texture_hover = ExtResource( 17 )
 texture_scale = Vector2( 0.75, 0.75 )
 
-[node name="Spacer3" type="Control" parent="VBoxContainer/Header"]
+[node name="Spacer3" type="Control" parent="PanelContainer/VBoxContainer/Header"]
 margin_left = 360.0
-margin_top = 21.0
+margin_top = 13.0
 margin_right = 360.0
-margin_bottom = 21.0
+margin_bottom = 13.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Sections" type="VBoxContainer" parent="VBoxContainer"]
-margin_top = 42.0
+[node name="Sections" type="VBoxContainer" parent="PanelContainer/VBoxContainer"]
+margin_top = 34.0
 margin_right = 360.0
 margin_bottom = 600.0
 rect_min_size = Vector2( 0, 300 )
 size_flags_vertical = 3
 custom_constants/separation = 0
 
-[node name="Spacer" type="Control" parent="VBoxContainer/Sections"]
+[node name="Spacer" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
 margin_left = 180.0
 margin_right = 180.0
 margin_bottom = 4.0
@@ -113,7 +126,7 @@ rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="SelectionDescription" parent="VBoxContainer/Sections" instance=ExtResource( 10 )]
+[node name="SelectionDescription" parent="PanelContainer/VBoxContainer/Sections" instance=ExtResource( 10 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 4.0
@@ -121,7 +134,7 @@ margin_right = 360.0
 margin_bottom = 32.0
 size_flags_vertical = 4
 
-[node name="Spacer3" type="Control" parent="VBoxContainer/Sections"]
+[node name="Spacer3" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
 margin_left = 180.0
 margin_top = 32.0
 margin_right = 180.0
@@ -130,7 +143,7 @@ rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="LegendHeader" type="Label" parent="VBoxContainer/Sections"]
+[node name="LegendHeader" type="Label" parent="PanelContainer/VBoxContainer/Sections"]
 margin_top = 36.0
 margin_right = 360.0
 margin_bottom = 62.0
@@ -139,7 +152,7 @@ custom_fonts/font = ExtResource( 2 )
 text = "Legend"
 align = 1
 
-[node name="Spacer4" type="Control" parent="VBoxContainer/Sections"]
+[node name="Spacer4" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
 margin_left = 180.0
 margin_top = 62.0
 margin_right = 180.0
@@ -148,15 +161,13 @@ rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Legend" parent="VBoxContainer/Sections" instance=ExtResource( 11 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="Legend" parent="PanelContainer/VBoxContainer/Sections" instance=ExtResource( 11 )]
 margin_top = 66.0
 margin_right = 360.0
 margin_bottom = 86.0
 size_flags_vertical = 4
 
-[node name="Spacer2" type="Control" parent="VBoxContainer/Sections"]
+[node name="Spacer2" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
 margin_left = 180.0
 margin_top = 86.0
 margin_right = 180.0
@@ -165,15 +176,15 @@ rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="InspectorContainer" type="VBoxContainer" parent="VBoxContainer/Sections"]
+[node name="InspectorContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Sections"]
 margin_top = 90.0
 margin_right = 360.0
-margin_bottom = 462.0
+margin_bottom = 458.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
 
-[node name="InspectorHeader" type="Label" parent="VBoxContainer/Sections/InspectorContainer"]
+[node name="InspectorHeader" type="Label" parent="PanelContainer/VBoxContainer/Sections/InspectorContainer"]
 margin_right = 360.0
 margin_bottom = 26.0
 theme = ExtResource( 12 )
@@ -181,26 +192,36 @@ custom_fonts/font = ExtResource( 2 )
 text = "Platform graph inspector"
 align = 1
 
-[node name="PlatformGraphInspector" parent="VBoxContainer/Sections/InspectorContainer" instance=ExtResource( 13 )]
+[node name="PlatformGraphInspector" parent="PanelContainer/VBoxContainer/Sections/InspectorContainer" instance=ExtResource( 13 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 26.0
 margin_right = 360.0
-margin_bottom = 372.0
+margin_bottom = 368.0
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 6 )
 
-[node name="Annotators" type="GridContainer" parent="VBoxContainer/Sections"]
-margin_top = 462.0
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer/Sections"]
+margin_top = 458.0
 margin_right = 360.0
-margin_bottom = 558.0
+margin_bottom = 566.0
+custom_constants/margin_right = 4
+custom_constants/margin_top = 4
+custom_constants/margin_left = 4
+custom_constants/margin_bottom = 4
+
+[node name="Annotators" type="GridContainer" parent="PanelContainer/VBoxContainer/Sections/MarginContainer"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 356.0
+margin_bottom = 104.0
 size_flags_vertical = 3
-custom_constants/vseparation = 0
+custom_constants/vseparation = 2
 custom_constants/hseparation = 0
 columns = 2
 
-[node name="RulerGridCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_right = 180.0
+[node name="RulerGridCheckbox" type="CheckBox" parent="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators"]
+margin_right = 176.0
 margin_bottom = 32.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -208,9 +229,9 @@ custom_fonts/font = ExtResource( 2 )
 text = "Ruler grid"
 flat = true
 
-[node name="LevelCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_left = 180.0
-margin_right = 360.0
+[node name="LevelCheckbox" type="CheckBox" parent="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators"]
+margin_left = 176.0
+margin_right = 352.0
 margin_bottom = 32.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -218,31 +239,31 @@ custom_fonts/font = ExtResource( 2 )
 text = "Level"
 flat = true
 
-[node name="PlayerPositionCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_top = 32.0
-margin_right = 180.0
-margin_bottom = 64.0
+[node name="PlayerPositionCheckbox" type="CheckBox" parent="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators"]
+margin_top = 34.0
+margin_right = 176.0
+margin_bottom = 66.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 2 )
 text = "Player pos."
 flat = true
 
-[node name="PlayerTrajectoryCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_left = 180.0
-margin_top = 32.0
-margin_right = 360.0
-margin_bottom = 64.0
+[node name="PlayerTrajectoryCheckbox" type="CheckBox" parent="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators"]
+margin_left = 176.0
+margin_top = 34.0
+margin_right = 352.0
+margin_bottom = 66.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 2 )
 text = "Player traj."
 flat = true
 
-[node name="LogEventsCheckbox" type="CheckBox" parent="VBoxContainer/Sections/Annotators"]
-margin_top = 64.0
-margin_right = 180.0
-margin_bottom = 96.0
+[node name="LogEventsCheckbox" type="CheckBox" parent="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators"]
+margin_top = 68.0
+margin_right = 176.0
+margin_bottom = 100.0
 custom_fonts/font = ExtResource( 2 )
 text = "Log events"
 flat = true
@@ -250,55 +271,85 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GearContainerWrapper" type="Control" parent="VBoxContainer"]
+[node name="Spacer" type="Control" parent="."]
 margin_left = 180.0
 margin_top = 600.0
 margin_right = 180.0
-margin_bottom = 600.0
+margin_bottom = 620.0
+rect_min_size = Vector2( 0, 20 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="GearContainer" type="HBoxContainer" parent="VBoxContainer/GearContainerWrapper"]
-margin_left = -160.0
-margin_right = 160.0
-margin_bottom = 64.0
-size_flags_horizontal = 3
+[node name="Footer" type="HBoxContainer" parent="."]
+margin_left = 180.0
+margin_top = 620.0
+margin_right = 360.0
+margin_bottom = 684.0
+rect_min_size = Vector2( 0, 64 )
+size_flags_horizontal = 8
 size_flags_vertical = 4
 custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Spacer" type="Control" parent="VBoxContainer/GearContainerWrapper/GearContainer"]
+[node name="Spacer" type="Control" parent="Footer"]
 margin_top = 32.0
-margin_right = 320.0
+margin_right = 32.0
 margin_bottom = 32.0
+rect_min_size = Vector2( 32, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="GearButtonWrapper" type="Control" parent="VBoxContainer/GearContainerWrapper/GearContainer"]
-margin_left = 320.0
-margin_top = 32.0
-margin_right = 320.0
-margin_bottom = 32.0
+[node name="GearButton" parent="Footer" instance=ExtResource( 14 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 32.0
+margin_right = 96.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
-
-[node name="GearButton" parent="VBoxContainer/GearContainerWrapper/GearContainer/GearButtonWrapper" instance=ExtResource( 14 )]
-margin_left = -72.0
-margin_top = -4.0
-margin_right = -8.0
-margin_bottom = 60.0
-rect_min_size = Vector2( 64, 64 )
 texture_normal = ExtResource( 5 )
 texture_pressed = ExtResource( 4 )
 texture_hover = ExtResource( 3 )
 
-[connection signal="pressed" from="VBoxContainer/Header/PauseButton" to="." method="_on_PauseButton_pressed"]
-[connection signal="pressed" from="VBoxContainer/Header/XButtonWrapper/XButton" to="." method="_toggle_open"]
-[connection signal="toggled" from="VBoxContainer/Sections/Annotators/RulerGridCheckbox" to="." method="_on_ruler_grid_checkbox_toggled"]
-[connection signal="toggled" from="VBoxContainer/Sections/Annotators/LevelCheckbox" to="." method="_on_level_checkbox_toggled"]
-[connection signal="toggled" from="VBoxContainer/Sections/Annotators/PlayerPositionCheckbox" to="." method="_on_player_position_checkbox_toggled"]
-[connection signal="toggled" from="VBoxContainer/Sections/Annotators/PlayerTrajectoryCheckbox" to="." method="_on_player_trajectory_checkbox_toggled"]
-[connection signal="toggled" from="VBoxContainer/Sections/Annotators/LogEventsCheckbox" to="." method="_on_log_events_checkbox_toggled"]
-[connection signal="pressed" from="VBoxContainer/GearContainerWrapper/GearContainer/GearButtonWrapper/GearButton" to="." method="_toggle_open"]
+[node name="Spacer2" type="Control" parent="Footer"]
+margin_left = 96.0
+margin_top = 32.0
+margin_right = 116.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 20, 0 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="PauseButton" parent="Footer" instance=ExtResource( 14 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 116.0
+margin_right = 180.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource( 5 )
+texture_pressed = ExtResource( 4 )
+texture_hover = ExtResource( 3 )
+
+[node name="Spacer3" type="Control" parent="Footer"]
+margin_left = 180.0
+margin_top = 32.0
+margin_right = 180.0
+margin_bottom = 32.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Header/PauseButton" to="." method="_on_PauseButton_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton" to="." method="_toggle_open"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/RulerGridCheckbox" to="." method="_on_ruler_grid_checkbox_toggled"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/LevelCheckbox" to="." method="_on_level_checkbox_toggled"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/PlayerPositionCheckbox" to="." method="_on_player_position_checkbox_toggled"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/PlayerTrajectoryCheckbox" to="." method="_on_player_trajectory_checkbox_toggled"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/LogEventsCheckbox" to="." method="_on_log_events_checkbox_toggled"]
+[connection signal="pressed" from="Footer/GearButton" to="." method="_on_GearButton_pressed"]
+[connection signal="pressed" from="Footer/PauseButton" to="." method="_on_PauseButton_pressed"]

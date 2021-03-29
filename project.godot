@@ -1289,7 +1289,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/surfacer/src/player/action/UserActionSource.gd"
 }, {
-"base": "PanelContainer",
+"base": "VBoxContainer",
 "class": "UtilityPanel",
 "language": "GDScript",
 "path": "res://addons/surfacer/src/gui/panels/UtilityPanel.gd"

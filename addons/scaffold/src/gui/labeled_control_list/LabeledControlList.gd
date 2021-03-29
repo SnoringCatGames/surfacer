@@ -186,7 +186,7 @@ func _on_control_pressed(_index: int) -> void:
 
 func _on_checkbox_pressed(checkbox_index: int) -> void:
     var item: CheckboxLabeledControlItem = items[checkbox_index]
-    item.pressed = item.control.pressed
+    item.pressed = !item.pressed
     item.on_pressed(item.pressed)
     emit_signal("item_changed", item)
 

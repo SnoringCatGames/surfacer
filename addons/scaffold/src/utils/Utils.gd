@@ -503,6 +503,9 @@ func _scale_gui_recursively( \
             control is ShinyButton or \
             control is TextureRect
     
+    var explicitly_updates_rect_size := false
+    var next_rect_size := control.rect_size * gui_scale
+    
     control.rect_min_size *= gui_scale
     
     if control is VBoxContainer or \
@@ -518,8 +521,7 @@ func _scale_gui_recursively( \
         # Only scale texture-based GUIs, since we scale fonts separately.
         control.rect_scale *= gui_scale
         
-        # FIXME: ---------------------
-        control.rect_position *= gui_scale
+#        control.rect_position *= gui_scale
         
         if control is ShinyButton:
             control.texture_scale *= gui_scale
@@ -527,9 +529,12 @@ func _scale_gui_recursively( \
         # This ensures that control will shrink back down, since otherwise it's
         # min would decrease but it's actual would stay constant.
         if control.rect_min_size != Vector2.ZERO:
-            control.rect_size *= gui_scale
+            explicitly_updates_rect_size = true
     else:
-        control.rect_size *= gui_scale
+        explicitly_updates_rect_size = true
+    
+    if explicitly_updates_rect_size:
+        control.rect_size = next_rect_size
     
 #    control.rect_position /= gui_scale
 #    control.rect_position = Gs.geometry.snap_vector2_to_integers( \
@@ -541,6 +546,11 @@ func _scale_gui_recursively( \
     for child in control.get_children():
         if child is Control:
             _scale_gui_recursively(child, gui_scale)
+    
+    # Try setting the rect_size again, in case children rect_min_size values
+    # prevented this from updating correctly before.
+    if explicitly_updates_rect_size:
+        control.rect_size = next_rect_size
 
 func get_node_vscroll_position( \
         scroll_container: ScrollContainer, \

@@ -1,5 +1,5 @@
 class_name UtilityPanel
-extends PanelContainer
+extends VBoxContainer
 
 const PANEL_MARGIN_RIGHT := 20.0
 const TOGGLE_DURATION := 0.2
@@ -12,17 +12,18 @@ var _toggle_open_tween: Tween
 func _ready() -> void:
     Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
     
-    $VBoxContainer/GearContainerWrapper.visible = !is_open
+    _set_footer_visibility(!is_open)
     
     _toggle_open_tween = Tween.new()
     add_child(_toggle_open_tween)
     
     Surfacer.platform_graph_inspector = \
-            $VBoxContainer/Sections/InspectorContainer/PlatformGraphInspector
+            $PanelContainer/VBoxContainer/Sections/InspectorContainer/ \
+            PlatformGraphInspector
     Surfacer.legend = \
-            $VBoxContainer/Sections/Legend
+            $PanelContainer/VBoxContainer/Sections/Legend
     Surfacer.selection_description = \
-            $VBoxContainer/Sections/SelectionDescription
+            $PanelContainer/VBoxContainer/Sections/SelectionDescription
     
     if (Surfacer.utility_panel_starts_open or \
                     Surfacer.debug_params.has("limit_parsing")) and \
@@ -31,52 +32,65 @@ func _ready() -> void:
         _set_is_open(true)
     
     if !Surfacer.is_inspector_enabled:
-        $VBoxContainer/Sections.remove_child( \
-                $VBoxContainer/Sections/SelectionDescription)
-        $VBoxContainer/Sections.remove_child( \
-                $VBoxContainer/Sections/LegendHeader)
-        $VBoxContainer/Sections.remove_child( \
-                $VBoxContainer/Sections/Legend)
-        $VBoxContainer/Sections.remove_child( \
-                $VBoxContainer/Sections/InspectorContainer)
+        $PanelContainer/VBoxContainer/Sections.remove_child( \
+                $PanelContainer/VBoxContainer/Sections/SelectionDescription)
+        $PanelContainer/VBoxContainer/Sections.remove_child( \
+                $PanelContainer/VBoxContainer/Sections/LegendHeader)
+        $PanelContainer/VBoxContainer/Sections.remove_child( \
+                $PanelContainer/VBoxContainer/Sections/Legend)
+        $PanelContainer/VBoxContainer/Sections.remove_child( \
+                $PanelContainer/VBoxContainer/Sections/InspectorContainer)
     
-    $VBoxContainer/Sections/Annotators/RulerGridCheckbox.pressed = \
-            Surfacer.annotators.is_annotator_enabled(AnnotatorType.RULER)
-    $VBoxContainer/Sections/Annotators/LevelCheckbox.pressed = \
-            Surfacer.annotators.is_annotator_enabled(AnnotatorType.LEVEL)
-    $VBoxContainer/Sections/Annotators/PlayerPositionCheckbox.pressed = \
-            Surfacer.annotators.is_annotator_enabled( \
-                    AnnotatorType.PLAYER_POSITION)
-    $VBoxContainer/Sections/Annotators/PlayerTrajectoryCheckbox.pressed = \
-            Surfacer.annotators.is_annotator_enabled( \
-                    AnnotatorType.PLAYER_TRAJECTORY)
-    $VBoxContainer/Sections/Annotators/LogEventsCheckbox.pressed = \
-            Surfacer.is_logging
+    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
+            RulerGridCheckbox.pressed = \
+                    Surfacer.annotators.is_annotator_enabled( \
+                            AnnotatorType.RULER)
+    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
+            LevelCheckbox.pressed = \
+                    Surfacer.annotators.is_annotator_enabled( \
+                            AnnotatorType.LEVEL)
+    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
+            PlayerPositionCheckbox.pressed = \
+                    Surfacer.annotators.is_annotator_enabled( \
+                            AnnotatorType.PLAYER_POSITION)
+    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
+            PlayerTrajectoryCheckbox.pressed = \
+                    Surfacer.annotators.is_annotator_enabled( \
+                            AnnotatorType.PLAYER_TRAJECTORY)
+    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
+            LogEventsCheckbox.pressed = Surfacer.is_logging
     
     # Tell the element annotator to populate the legend, now that it's
     # available.
     Surfacer.annotators.element_annotator.update()
     
-    Gs.utils.connect( \
-            "display_resized", \
-            self, \
-            "_on_resized")
-    _on_resized()
+    update_gui_scale(1.0)
+
+func update_gui_scale(gui_scale: float) -> void:
+    update_gui_scale_helper(gui_scale)
+    update_gui_scale_helper(1.0)
+    call_deferred("update_gui_scale_helper", 1.0)
+
+func update_gui_scale_helper(gui_scale: float) -> void:
+    for child in get_children():
+        if child is Control:
+            Gs.utils._scale_gui_recursively(child, gui_scale)
+    rect_size.x = $PanelContainer.rect_size.x
+    _set_footer_visibility(!is_open)
+    rect_position.x = \
+            get_viewport().size.x - \
+            rect_size.x - \
+            PANEL_MARGIN_RIGHT * Gs.gui_scale
+    rect_position.y = \
+            0.0 if \
+            is_open else \
+            _get_closed_position_y()
 
 func destroy() -> void:
     Gs.guis_to_scale.erase(self)
 
-func _on_resized() -> void:
-    self.rect_position.x = \
-            get_viewport().size.x - self.rect_size.x - PANEL_MARGIN_RIGHT
-    self.rect_position.y = \
-            0.0 if \
-            self.is_open else \
-            -self.rect_size.y - 1.0
-
-func _on_credits_button_pressed():
-    Gs.utils.give_button_press_feedback()
-    $CreditsPanel.popup()
+func _get_closed_position_y() -> float:
+    return -$PanelContainer.rect_size.y - 1.0
 
 func _set_is_open(value: bool) -> void:
     if is_open != value:
@@ -97,7 +111,7 @@ func _toggle_open() -> void:
         position_y_end = 0.0
         duration = TOGGLE_DURATION
     else:
-        position_y_end = -self.rect_size.y - 1.0
+        position_y_end = _get_closed_position_y()
         duration = TOGGLE_DURATION
     
     # Start the sliding animation.
@@ -112,7 +126,7 @@ func _toggle_open() -> void:
             Tween.EASE_IN)
     _toggle_open_tween.start()
     
-    $VBoxContainer/GearContainerWrapper.visible = !is_open
+    _set_footer_visibility(!is_open)
     
     if is_open:
         Surfacer.platform_graph_inspector.select_first_item()
@@ -122,6 +136,17 @@ func _toggle_open() -> void:
     Gs.active_overlays.erase(self)
     if is_open:
         Gs.active_overlays.push_back(self)
+
+func _set_footer_visibility(is_visible: bool) -> void:
+    # FIXME: ----------------------
+#    $Spacer.visible = is_visible
+#    $Footer.visible = is_visible
+    rect_size.y = \
+            $PanelContainer.rect_size.y + \
+                    $Spacer.rect_size.y + \
+                    $Footer.rect_size.y if \
+            is_visible else \
+            $PanelContainer.rect_size.y
 
 func _on_ruler_grid_checkbox_toggled(pressed: bool) -> void:
     Gs.utils.give_button_press_feedback()
@@ -151,6 +176,10 @@ func _on_log_events_checkbox_toggled(pressed: bool) -> void:
     Gs.utils.give_button_press_feedback()
     Surfacer.is_logging = pressed
 
-func _on_PauseButton_pressed():
+func _on_GearButton_pressed() -> void:
+    Gs.utils.give_button_press_feedback()
+    _toggle_open()
+
+func _on_PauseButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()
     Gs.nav.open("pause")
