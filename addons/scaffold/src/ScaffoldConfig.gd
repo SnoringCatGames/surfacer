@@ -129,6 +129,11 @@ var checkbox_icon_path_prefix := \
 var default_checkbox_icon_size := 32
 var checkbox_icon_sizes := [16, 32, 64, 128]
 
+var tree_arrow_icon_path_prefix := \
+        "res://addons/scaffold/assets/images/gui/tree_arrow_"
+var default_tree_arrow_icon_size := 16
+var tree_arrow_icon_sizes := [8, 16, 32, 64]
+
 # --- Derived configuration ---
 
 var is_special_thanks_shown: bool
@@ -155,6 +160,7 @@ var is_debug_time_shown: bool
 var game_area_region: Rect2
 var gui_scale := 1.0
 var current_checkbox_icon_size := default_checkbox_icon_size
+var current_tree_arrow_icon_size := default_checkbox_icon_size
 var audio: Audio
 var nav: ScaffoldNavigation
 var save_state: SaveState

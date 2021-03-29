@@ -68,6 +68,7 @@ func _on_throttled_size_changed() -> void:
     _update_game_area_region_and_gui_scale()
     _update_font_sizes()
     _update_checkbox_size()
+    _update_tree_arrow_size()
     _scale_guis()
     Gs.utils.emit_signal("display_resized")
     # TODO: Fix the underlying dependency, instead of this double-call hack.
@@ -103,6 +104,30 @@ func _update_checkbox_size() -> void:
     
     Gs.theme.set_icon("checked", "CheckBox", checked_icon)
     Gs.theme.set_icon("unchecked", "CheckBox", unchecked_icon)
+
+func _update_tree_arrow_size() -> void:
+    var target_icon_size := Gs.default_tree_arrow_icon_size * Gs.gui_scale
+    var closest_icon_size := Gs.default_tree_arrow_icon_size
+    for icon_size in Gs.tree_arrow_icon_sizes:
+        if abs(target_icon_size - icon_size) < \
+                abs(target_icon_size - closest_icon_size):
+            closest_icon_size = icon_size
+    Gs.current_tree_arrow_icon_size = closest_icon_size
+    
+    var open_icon_path := \
+            Gs.tree_arrow_icon_path_prefix + "open_" + \
+            str(Gs.current_tree_arrow_icon_size) + ".png"
+    var closed_icon_path := \
+            Gs.tree_arrow_icon_path_prefix + "closed_" + \
+            str(Gs.current_tree_arrow_icon_size) + ".png"
+    
+    var open_icon := load(open_icon_path)
+    var closed_icon := load(closed_icon_path)
+    
+    Gs.theme.set_icon("arrow", "Tree", open_icon)
+    Gs.theme.set_icon("arrow_collapsed", "Tree", closed_icon)
+    Gs.theme.set_constant( \
+            "item_margin", "Tree", Gs.current_tree_arrow_icon_size)
 
 func _update_game_area_region_and_gui_scale() -> void:
     var viewport_size := get_viewport().size

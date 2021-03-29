@@ -1,9 +1,11 @@
-[gd_resource type="Theme" load_steps=28 format=2]
+[gd_resource type="Theme" load_steps=30 format=2]
 
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_m.tres" type="DynamicFont" id=1]
 [ext_resource path="res://addons/scaffold/assets/images/gui/close_normal.png" type="Texture" id=2]
 [ext_resource path="res://addons/scaffold/assets/images/gui/checkbox_unchecked_32.png" type="Texture" id=3]
 [ext_resource path="res://addons/scaffold/assets/images/gui/checkbox_checked_32.png" type="Texture" id=4]
+[ext_resource path="res://addons/scaffold/assets/images/gui/tree_arrow_open_16.png" type="Texture" id=5]
+[ext_resource path="res://addons/scaffold/assets/images/gui/tree_arrow_closed_16.png" type="Texture" id=6]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.190667, 0.22, 0.176, 1 )
@@ -260,14 +262,14 @@ Tree/constants/button_margin = 4
 Tree/constants/draw_guides = 1
 Tree/constants/draw_relationship_lines = 1
 Tree/constants/hseparation = 4
-Tree/constants/item_margin = 12
+Tree/constants/item_margin = 16
 Tree/constants/scroll_border = 4
 Tree/constants/scroll_speed = 12
 Tree/constants/vseparation = 4
 Tree/fonts/font = null
 Tree/fonts/title_button_font = null
-Tree/icons/arrow = null
-Tree/icons/arrow_collapsed = null
+Tree/icons/arrow = ExtResource( 5 )
+Tree/icons/arrow_collapsed = ExtResource( 6 )
 Tree/icons/checked = null
 Tree/icons/select_arrow = null
 Tree/icons/unchecked = null
