@@ -41,16 +41,6 @@ func _ready() -> void:
     button_style_pressed = \
             $MarginContainer/BottomButton.get_stylebox("pressed")
     
-    $MarginContainer/TopButton.connect( \
-            "pressed", self, "_on_pressed")
-    $MarginContainer/TopButton.connect( \
-            "mouse_entered", self, "_on_mouse_entered")
-    $MarginContainer/TopButton.connect( \
-            "mouse_exited", self, "_on_mouse_exited")
-    $MarginContainer/TopButton.connect( \
-            "button_down", self, "_on_button_down")
-    $MarginContainer/TopButton.connect( \
-            "button_up", self, "_on_button_up")
     Gs.utils.connect( \
             "display_resized", self, "update")
     update()
@@ -64,7 +54,7 @@ func update_gui_scale(gui_scale: float) -> bool:
     rect_min_size *= gui_scale
     rect_size *= gui_scale
     rect_position *= gui_scale
-    $MarginContainer/ShineLine.scale *= gui_scale
+    $MarginContainer/ShineLineWrapper/ShineLine.scale *= gui_scale
     $MarginContainer/ScaffoldTextureRect.update_gui_scale(gui_scale)
     update()
     
@@ -90,7 +80,7 @@ func _deferred_update() -> void:
     
     $MarginContainer.rect_size = rect_size
     $MarginContainer/BottomButton.text = text
-    $MarginContainer/ShineLine.position = \
+    $MarginContainer/ShineLineWrapper/ShineLine.position = \
             Vector2(shine_start_x, shine_base_position.y)
     $MarginContainer/ScaffoldTextureRect.texture = texture
     $MarginContainer/ScaffoldTextureRect.texture_scale = texture_scale
@@ -123,25 +113,9 @@ func _deferred_update() -> void:
                 funcref(self, "_trigger_color_pulse"), \
                 COLOR_PULSE_INTERVAL_SEC)
 
-func _on_mouse_entered() -> void:
-    $MarginContainer/BottomButton \
-            .add_stylebox_override("normal", button_style_hover)
-
-func _on_mouse_exited() -> void:
-    $MarginContainer/BottomButton \
-            .add_stylebox_override("normal", button_style_normal)
-
-func _on_button_down() -> void:
-    $MarginContainer/BottomButton \
-            .add_stylebox_override("normal", button_style_pressed)
-
-func _on_button_up() -> void:
-    $MarginContainer/BottomButton \
-            .add_stylebox_override("normal", button_style_hover)
-
 func _trigger_shine() -> void:
     shine_tween.interpolate_property( \
-            $MarginContainer/ShineLine, \
+            $MarginContainer/ShineLineWrapper/ShineLine, \
             "position:x", \
             shine_start_x, \
             shine_end_x, \
@@ -222,7 +196,23 @@ func _get_is_font_xl() -> bool:
     return is_font_xl
 
 func press() -> void:
-    _on_pressed()
+    _on_TopButton_pressed()
 
-func _on_pressed() -> void:
+func _on_TopButton_pressed() -> void:
     emit_signal("pressed")
+
+func _on_TopButton_mouse_entered() -> void:
+    $MarginContainer/BottomButton \
+            .add_stylebox_override("normal", button_style_hover)
+
+func _on_TopButton_mouse_exited() -> void:
+    $MarginContainer/BottomButton \
+            .add_stylebox_override("normal", button_style_normal)
+
+func _on_TopButton_button_down() -> void:
+    $MarginContainer/BottomButton \
+            .add_stylebox_override("normal", button_style_pressed)
+
+func _on_TopButton_button_up() -> void:
+    $MarginContainer/BottomButton \
+            .add_stylebox_override("normal", button_style_hover)
