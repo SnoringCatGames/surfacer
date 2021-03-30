@@ -178,7 +178,9 @@ func _scale_guis() -> void:
         Gs.utils._scale_gui_for_current_screen_size(gui)
 
 func _set_window_debug_size_and_position() -> void:
-    if Gs.debug:
+    if Gs.debug and \
+            (Gs.utils.get_is_windows_device() or \
+            Gs.utils.get_is_mac_device()):
         # Useful for getting screenshots at specific resolutions.
         if Gs.debug_window_size == Vector2.INF:
             if OS.get_screen_count() > 1:

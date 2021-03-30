@@ -1692,6 +1692,7 @@ SquirrelAway="*res://src/SquirrelAwayConfig.gd"
 [display]
 
 window/size/height=768
+window/handheld/orientation="sensor"
 mouse_cursor/custom_image="res://assets/images/paw_cursor.png"
 mouse_cursor/custom_image_hotspot=Vector2( 5, 4 )
 mouse_cursor/tooltip_position_offset=Vector2( 0, 0 )

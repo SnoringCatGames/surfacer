@@ -14,7 +14,7 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 
 --------
 
-![Surfaces and edges in a plattform graph](./docs/surfaces-and-edges.png)
+![Surfaces and edges in a platform graph](./docs/surfaces-and-edges.png)
 
 **tl;dr**: Surfacer works by **pre-parsing** a level into a **"platform graph"**. The **nodes** are represented by points along the different surfaces in the level (floors, walls, and ceilings). The **edges** are represented by possible movement trajectories between points along surfaces. There are different types of edges for different types of movement (e.g., jumping from a floor to a floor, falling from a wall, walking along a floor). At run time, **[A* search](https://en.wikipedia.org/wiki/A*_search_algorithm)** is used to calculate a path to a given destination.
 
@@ -413,6 +413,12 @@ We include a large collection of annotators that are useful for visually debuggi
 
 We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these params, see [movement_params.gd](./framework/platform_graph/edge/models/movement_params.gd).
 
+## Extensible framework for custom movement mechanics
+
+> TODO: Describe this system. For now, look at the code under `src/player/action/action_handlers/` for examples.
+
+> **NOTE:** The procedural pathfinding logic is implemented independently of this framework. So, you can use this to add cool new movement for human-controlled movement, but the automatic pathfinding will only know about the specific default mechanics that it was designed around.
+
 ## Notable limitations
 
 -   Our build-time graph calculations take a long time, especially for a level with lots of surfaces (such as a big level, or a level with a small cell size).
@@ -445,6 +451,9 @@ We support a large number of flags and parameters for adjusting various aspects 
         -   face_right
         -   grab_wall
     -   Your level collidable foreground tiles must be defined in a TileMap that belongs to the "surfaces" node group.
+    -   Surfacer uses a very specific set of movement mechanics.
+        -   Fortunately, this set includes most features commonly used in platforms and is able to provide pretty sophisticated movement.
+        -   But the procedural path-finding doesn't know about complex platformer mechanics like special in-air friction or coyote time.
     -   The Surfacer framework isn't yet decoupled from the Squirrel Away demo app logic.
 
 ## Future work

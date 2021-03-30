@@ -30,6 +30,7 @@ Some of these are just my personal preference, some are important for the framew
     -   Default Environment: I usually move this out from the top-level directory.
 -   Display > Window:
     -   Size > Width/Height: Must match `Gs.default_game_area_size`.
+    -   Handheld > Orientation: sensor
     -   Stretch > Mode: disabled
     -   Stretch > Aspect: expand
 -   Input Devices > Pointing:
