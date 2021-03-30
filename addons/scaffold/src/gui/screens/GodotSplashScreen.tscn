@@ -7,18 +7,12 @@
 
 
 
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.152941, 0.192157, 0.286275, 1 )
-shadow_size = 8
-shadow_offset = Vector2( -4, 4 )
-
 [node name="GodotSplashScreen" type="Node2D"]
 script = ExtResource( 4 )
 
 [node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
 margin_right = 480.0
 margin_bottom = 480.0
-custom_styles/panel = SubResource( 1 )
 
 [node name="Control" type="Control" parent="FullScreenPanel"]
 margin_left = 240.0

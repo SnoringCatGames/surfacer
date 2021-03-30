@@ -2,9 +2,10 @@
 
 [ext_resource path="res://addons/scaffold/src/gui/ShinyButton.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffold/assets/images/gui/shine_line.png" type="Texture" id=2]
-[ext_resource path="res://addons/scaffold/src/main_theme.tres" type="Theme" id=3]
+[ext_resource path="res://addons/scaffold/src/config/main_theme.tres" type="Theme" id=3]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_m.tres" type="DynamicFont" id=4]
 [ext_resource path="res://addons/scaffold/src/gui/ScaffoldTextureRect.tscn" type="PackedScene" id=5]
+
 
 [sub_resource type="StyleBoxEmpty" id=1]
 

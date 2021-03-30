@@ -11,15 +11,15 @@ func init_children() -> void:
     $HBoxContainer/Caret/TextureRect.rect_rotation = \
             AccordionPanel.CARET_ROTATION_CLOSED
     
-    var header_style_normal := StyleBoxFlat.new()
-    header_style_normal.bg_color = Gs.option_button_normal_color
-    add_stylebox_override("normal", header_style_normal)
-    var header_style_hover := StyleBoxFlat.new()
-    header_style_hover.bg_color = Gs.option_button_hover_color
-    add_stylebox_override("hover", header_style_hover)
-    var header_style_pressed := StyleBoxFlat.new()
-    header_style_pressed.bg_color = Gs.option_button_pressed_color
-    add_stylebox_override("pressed", header_style_pressed)
+    add_stylebox_override( \
+            "normal", \
+            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_normal_color))
+    add_stylebox_override( \
+            "hover", \
+            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_hover_color))
+    add_stylebox_override( \
+            "pressed", \
+            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_pressed_color))
     
     Gs.utils.set_mouse_filter_recursively( \
             self, \

@@ -8,7 +8,7 @@
 [ext_resource path="res://addons/scaffold/src/gui/labeled_control_list/LabeledControlList.tscn" type="PackedScene" id=6]
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.152941, 0.192157, 0.286275, 1 )
+bg_color = Color( 0.145098, 0.129412, 0.101961, 1 )
 shadow_size = 8
 shadow_offset = Vector2( -4, 4 )
 
@@ -37,7 +37,6 @@ anchor_bottom = 0.0
 margin_top = 196.0
 margin_right = 960.0
 margin_bottom = 1156.0
-rect_min_size = Vector2( 960, 960 )
 stretches_vertically = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]

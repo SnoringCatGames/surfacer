@@ -66,8 +66,6 @@ func start_level(level_id: String) -> void:
     if is_instance_valid(level):
         return
     
-    # FIXME: get path from level_config by id
-    
     level = Gs.utils.add_scene( \
             $PanelContainer/ViewportContainer/Viewport, \
             Gs.level_config.get_level_config(level_id).scene_path, \

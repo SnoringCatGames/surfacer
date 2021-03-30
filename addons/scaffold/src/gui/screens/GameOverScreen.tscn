@@ -11,18 +11,12 @@
 [ext_resource path="res://addons/scaffold/src/gui/ShinyButton.tscn" type="PackedScene" id=10]
 [ext_resource path="res://addons/scaffold/src/gui/AccordionPanel.tscn" type="PackedScene" id=11]
 
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.152941, 0.192157, 0.286275, 1 )
-shadow_size = 8
-shadow_offset = Vector2( -4, 4 )
-
 [node name="GameOverScreen" type="Node2D"]
 script = ExtResource( 4 )
 
 [node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
 margin_right = 960.0
 margin_bottom = 1156.0
-custom_styles/panel = SubResource( 1 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
 margin_right = 960.0

@@ -5,18 +5,12 @@
 [ext_resource path="res://addons/scaffold/src/gui/NavBar.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/scaffold/src/gui/CenteredPanel.tscn" type="PackedScene" id=4]
 
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.152941, 0.192157, 0.286275, 1 )
-shadow_size = 8
-shadow_offset = Vector2( -4, 4 )
-
 [node name="LevelSelectScreen" type="Node2D"]
 script = ExtResource( 1 )
 
 [node name="FullScreenPanel" parent="." instance=ExtResource( 2 )]
 margin_right = 960.0
 margin_bottom = 960.0
-custom_styles/panel = SubResource( 1 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
 margin_right = 960.0

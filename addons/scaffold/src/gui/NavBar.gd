@@ -10,6 +10,14 @@ export var shows_settings := false setget \
 export var shows_logo := false setget _set_shows_logo,_get_shows_logo
 
 func _enter_tree() -> void:
+    # FIXME: -------- CReate a utils method to do this; but actually remove the style override here;
+    var style_updated := StyleBoxFlat.new()
+    style_updated.bg_color = Gs.colors.background_color
+    add_stylebox_override("panel", style_updated)
+    
+    $MarginContainer/Header.add_color_override( \
+            "font_color", Gs.colors.header_font_color)
+    
     $MarginContainer.set( \
             "custom_constants/margin_top", \
             Gs.utils.get_safe_area_margin_top())

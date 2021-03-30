@@ -123,17 +123,15 @@ func _create_header() -> void:
     _header = Button.new()
     _header.connect("pressed", self, "_on_header_pressed")
     
-    var header_style_normal := StyleBoxFlat.new()
-    header_style_normal.bg_color = Gs.option_button_normal_color
-    _header.add_stylebox_override("normal", header_style_normal)
-    
-    var header_style_hover := StyleBoxFlat.new()
-    header_style_hover.bg_color = Gs.option_button_hover_color
-    _header.add_stylebox_override("hover", header_style_hover)
-    
-    var header_style_pressed := StyleBoxFlat.new()
-    header_style_pressed.bg_color = Gs.option_button_pressed_color
-    _header.add_stylebox_override("pressed", header_style_pressed)
+    _header.add_stylebox_override( \
+            "normal", \
+            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_normal_color))
+    _header.add_stylebox_override( \
+            "hover", \
+            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_hover_color))
+    _header.add_stylebox_override( \
+            "pressed", \
+            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_pressed_color))
     
     _header_hbox = HBoxContainer.new()
     _header.add_child(_header_hbox)
@@ -338,6 +336,7 @@ func _interpolate_scroll(open_ratio: float) -> void:
 
 func _on_is_open_tween_started() -> void:
     _projected_control.visible = true
+    rect_clip_content = true
 
 func _on_is_open_tween_completed( \
         _object = null, \
@@ -345,6 +344,7 @@ func _on_is_open_tween_completed( \
     var open_ratio := 1.0 if is_open else 0.0
     _interpolate_height(open_ratio)
     _projected_control.visible = is_open
+    rect_clip_content = !is_open
 
 func _get_configuration_warning() -> String:
     return configuration_warning

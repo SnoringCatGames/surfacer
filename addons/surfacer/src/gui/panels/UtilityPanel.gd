@@ -138,9 +138,8 @@ func _toggle_open() -> void:
         Gs.active_overlays.push_back(self)
 
 func _set_footer_visibility(is_visible: bool) -> void:
-    # FIXME: ----------------------
-#    $Spacer.visible = is_visible
-#    $Footer.visible = is_visible
+    $Spacer.visible = is_visible
+    $Footer.visible = is_visible
     rect_size.y = \
             $PanelContainer.rect_size.y + \
                     $Spacer.rect_size.y + \

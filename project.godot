@@ -1054,35 +1054,45 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/data/SaveState.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "ScaffoldBootstrap",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/ScaffoldBootstrap.gd"
+"path": "res://addons/scaffold/src/config/ScaffoldBootstrap.gd"
 }, {
 "base": "Control",
 "class": "ScaffoldCheckBox",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/gui/ScaffoldCheckBox.gd"
 }, {
+"base": "Reference",
+"class": "ScaffoldColors",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/config/ScaffoldColors.gd"
+}, {
 "base": "Node",
 "class": "ScaffoldGeometry",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/utils/Geometry.gd"
 }, {
-"base": "Node2D",
+"base": "Reference",
 "class": "ScaffoldLevel",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/ScaffoldLevel.gd"
+"path": "res://addons/scaffold/src/config/ScaffoldLevel.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "ScaffoldLevelConfig",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/ScaffoldLevelConfig.gd"
+"path": "res://addons/scaffold/src/config/ScaffoldLevelConfig.gd"
 }, {
 "base": "Node",
 "class": "ScaffoldNavigation",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/utils/Navigation.gd"
+}, {
+"base": "Reference",
+"class": "ScaffoldStyles",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/config/ScoffoldStyles.gd"
 }, {
 "base": "Control",
 "class": "ScaffoldTextureButton",
@@ -1094,10 +1104,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/gui/ScaffoldTextureRect.gd"
 }, {
-"base": "Node",
+"base": "Reference",
 "class": "ScaffoldThirdPartyLicenses",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/ScaffoldThirdPartyLicenses.gd"
+"path": "res://addons/scaffold/src/config/ScaffoldThirdPartyLicenses.gd"
 }, {
 "base": "Node2D",
 "class": "Screen",
@@ -1217,7 +1227,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "SurfacerBootstrap",
 "language": "GDScript",
-"path": "res://addons/surfacer/src/SurfacerBootstrap.gd"
+"path": "res://addons/surfacer/src/config/SurfacerBootstrap.gd"
 }, {
 "base": "Reference",
 "class": "SurfacerColors",
@@ -1232,7 +1242,7 @@ _global_script_classes=[ {
 "base": "ScaffoldLevel",
 "class": "SurfacerLevel",
 "language": "GDScript",
-"path": "res://addons/surfacer/src/SurfacerLevel.gd"
+"path": "res://addons/surfacer/src/config/SurfacerLevel.gd"
 }, {
 "base": "Reference",
 "class": "SurfacerProfilerMetric",
@@ -1242,7 +1252,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "SurfacerThirdPartyLicenses",
 "language": "GDScript",
-"path": "res://addons/surfacer/src/SurfacerThirdPartyLicenses.gd"
+"path": "res://addons/surfacer/src/config/SurfacerThirdPartyLicenses.gd"
 }, {
 "base": "InspectorItemController",
 "class": "SurfacesGroupItemController",
@@ -1591,10 +1601,12 @@ _global_script_class_icons={
 "SaveState": "",
 "ScaffoldBootstrap": "",
 "ScaffoldCheckBox": "res://addons/scaffold/assets/images/editor_icons/ScaffoldCheckBox.png",
+"ScaffoldColors": "",
 "ScaffoldGeometry": "",
 "ScaffoldLevel": "",
 "ScaffoldLevelConfig": "",
 "ScaffoldNavigation": "",
+"ScaffoldStyles": "",
 "ScaffoldTextureButton": "res://addons/scaffold/assets/images/editor_icons/ScaffoldTextureButton.png",
 "ScaffoldTextureRect": "res://addons/scaffold/assets/images/editor_icons/ScaffoldTextureRect.png",
 "ScaffoldThirdPartyLicenses": "",
@@ -1661,14 +1673,14 @@ _global_script_class_icons={
 config/name="Surfacer"
 run/main_scene="res://src/Main.tscn"
 boot_splash/image="res://addons/scaffold/assets/images/gui/godot_logo_splash.png"
-boot_splash/bg_color=Color( 0.152941, 0.192157, 0.286275, 1 )
+boot_splash/bg_color=Color( 0.278431, 0.239216, 0.176471, 1 )
 config/icon="res://assets/images/icon.png"
 config/quit_on_go_back=false
 
 [autoload]
 
-Gs="*res://addons/scaffold/src/ScaffoldConfig.gd"
-Surfacer="*res://addons/surfacer/src/SurfacerConfig.gd"
+Gs="*res://addons/scaffold/src/config/ScaffoldConfig.gd"
+Surfacer="*res://addons/surfacer/src/config/SurfacerConfig.gd"
 SquirrelAway="*res://src/SquirrelAwayConfig.gd"
 
 [display]
@@ -1824,6 +1836,6 @@ pointing/emulate_touch_from_mouse=true
 quality/intended_usage/framebuffer_allocation=1
 quality/intended_usage/framebuffer_allocation.mobile=1
 2d/snapping/use_gpu_pixel_snap=true
-environment/default_clear_color=Color( 0.152941, 0.192157, 0.286275, 1 )
+environment/default_clear_color=Color( 0.278431, 0.239216, 0.176471, 1 )
 environment/default_environment="res://src/default_env.tres"
 quality/2d/use_pixel_snap=true

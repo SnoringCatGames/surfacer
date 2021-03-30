@@ -197,19 +197,6 @@ func _trigger_collect( \
             [entry, request, url, is_session_end])
     add_child(request)
     
-    # FIXME:
-#    if true and \
-#            Gs.time.elapsed_app_time_actual_sec < 61:
-#        _on_collect_request_completed( \
-#                HTTPRequest.RESULT_CANT_CONNECT, \
-#                400, \
-#                [], \
-#                [], \
-#                entry, \
-#                request, \
-#                url)
-#        return
-    
     var status: int = request.request( \
             url, \
             HEADERS, \
@@ -316,19 +303,6 @@ func _trigger_batch(batch: Array) -> void:
             "_on_batch_request_completed", \
             [batch, request, url])
     add_child(request)
-    
-    # FIXME:
-#    if true and \
-#            Gs.time.elapsed_app_time_actual_sec < 61:
-#        _on_batch_request_completed( \
-#                HTTPRequest.RESULT_CANT_CONNECT, \
-#                400, \
-#                [], \
-#                [], \
-#                batch, \
-#                request, \
-#                url)
-#        return
     
     var status: int = request.request( \
             url, \

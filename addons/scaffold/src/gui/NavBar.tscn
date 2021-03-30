@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://addons/scaffold/src/gui/NavBar.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffold/assets/images/gui/left_caret_normal.png" type="Texture" id=2]
@@ -14,20 +14,19 @@
 [ext_resource path="res://addons/scaffold/src/gui/ScaffoldTextureButton.tscn" type="PackedScene" id=13]
 [ext_resource path="res://addons/scaffold/src/gui/ScaffoldTextureRect.tscn" type="PackedScene" id=14]
 
-[sub_resource type="StyleBoxEmpty" id=1]
-
 [node name="NavBar" type="PanelContainer"]
 size_flags_horizontal = 3
 size_flags_vertical = 0
-custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-margin_right = 192.0
-margin_bottom = 192.0
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 199.0
+margin_bottom = 199.0
 size_flags_horizontal = 3
 custom_constants/margin_right = 0
 custom_constants/margin_top = 0

@@ -34,7 +34,7 @@ var third_party_license_text := \
 var special_thanks_text := """
 """
 
-var theme := preload("res://addons/scaffold/src/main_theme.tres")
+var theme := preload("res://addons/scaffold/src/config/main_theme.tres")
 
 var test_runner_resource_path := "res://test/TestRunner.tscn"
 
@@ -141,6 +141,48 @@ var music_manifest := [
     },
 ]
 
+var colors_manifest := {
+    # Must match Project Settings > Application > Boot Splash > Bg Color
+    # Must match Project Settings > Rendering > Environment > Default Clear Color
+    background_color = Color("473d2d"),
+    font_color = Color("eeeeee"),
+    header_font_color = Color("eeeeee"),
+    button_color = Color("3e7025"),
+    shiny_button_highlight_color = Color("72d113"),
+    button_disabled_hsv_delta = {h=0.0, s=-0.4, v=0.15, a=-0.2},
+    button_focused_hsv_delta = {h=0.0, s=-0.15, v=0.15},
+    button_hover_hsv_delta = {h=0.0, s=-0.15, v=0.15},
+    button_pressed_hsv_delta = {h=0.0, s=-0.05, v=-0.1},
+    dropdown_color = Color("473d2d"),
+    dropdown_disabled_hsv_delta = {h=0.0, s=-0.4, v=0.15, a=-0.2},
+    dropdown_focused_hsv_delta = {h=0.0, s=-0.15, v=0.15},
+    dropdown_hover_hsv_delta = {h=0.0, s=-0.15, v=0.15},
+    dropdown_pressed_hsv_delta = {h=0.0, s=-0.05, v=-0.1},
+    popup_background_hsv_delta = {h=0.0, s=-0.05, v=0.05},
+    scroll_bar_background_hsv_delta = {h=0.0, s=-0.2, v=-0.2},
+    scroll_bar_grabber_normal_hsv_delta = {h=0.0, s=-0.2, v=-0.1},
+    scroll_bar_grabber_hover_hsv_delta = {h=0.0, s=0.15, v=0.2},
+    scroll_bar_grabber_pressed_hsv_delta = {h=0.0, s=-0.15, v=-0.1},
+    zebra_stripe_even_row_color_hsv_delta = {h=0.0, s=-0.05, v=0.05},
+}
+
+var styles_manifest := {
+    button_corner_radius = 4,
+    button_corner_detail = 3,
+    button_shadow_size = 3,
+    
+    dropdown_corner_radius = 4,
+    dropdown_corner_detail = 3,
+    
+    scroll_corner_radius = 6,
+    scroll_corner_detail = 3,
+    # Width of the scrollbar.
+    scroll_content_margin = 7,
+    
+    scroll_grabber_corner_radius = 8,
+    scroll_grabber_corner_detail = 3,
+}
+
 var app_manifest := {
     # TODO: Remember to reset these when creating releases.
     debug = debug,
@@ -161,27 +203,6 @@ var app_manifest := {
     score_version = "0.0.1",
     
     theme = theme,
-    
-    # Must match Project Settings > Application > Boot Splash > Bg Color
-    # Must match Project Settings > Rendering > Environment > Default Clear Color
-    #273149
-    screen_background_color = Color.from_hsv(0.617, 0.47, 0.29, 1.0),
-    #576d99
-    button_normal_color = Color.from_hsv(0.6111, 0.43, 0.6, 1.0),
-    #89b4f0
-    button_hover_color = Color.from_hsv(0.597, 0.43, 0.94, 1.0),
-    #3a446e
-    button_pressed_color = Color.from_hsv(0.633, 0.47, 0.43, 1.0),
-    #bcc4c3
-    shiny_button_highlight_color = Color.from_hsv(0.472, 0.40, 0.77, 1.0),
-    #313b52
-    key_value_even_row_color = Color.from_hsv(0.617, 0.4, 0.32, 1.0),
-    #273149
-    option_button_normal_color = Color.from_hsv(0.617, 0.47, 0.29, 1.0),
-    #3e4c6f
-    option_button_hover_color = Color.from_hsv(0.619, 0.44, 0.44, 1.0),
-    #1b2235
-    option_button_pressed_color = Color.from_hsv(0.622, 0.49, 0.21, 1.0),
     
     screen_filename_exclusions = [
         "RateAppScreen.tscn",
@@ -213,6 +234,9 @@ var app_manifest := {
     default_music_path_prefix = "res://addons/scaffold/assets/music/",
     default_music_file_suffix = ".ogg",
     default_music_bus_index = 2,
+    
+    colors_manifest = colors_manifest,
+    styles_manifest = styles_manifest,
     
     main_menu_music = "on_a_quest",
     game_over_music = "on_a_quest",

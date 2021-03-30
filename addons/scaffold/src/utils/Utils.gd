@@ -613,3 +613,28 @@ static func get_collection_from_exclusions_and_inclusions( \
         collection.push_back(item)
     
     return collection
+
+static func create_stylebox_flat(config) -> StyleBoxFlat:
+        var stylebox := StyleBoxFlat.new()
+        
+        if config is Color:
+            stylebox.bg_color = config
+        else:
+            if config.has("bg_color"):
+                stylebox.bg_color = config.bg_color
+            if config.has("corner_radius"):
+                stylebox.corner_radius_top_left = config.corner_radius
+                stylebox.corner_radius_top_right = config.corner_radius
+                stylebox.corner_radius_bottom_left = config.corner_radius
+                stylebox.corner_radius_bottom_right = config.corner_radius
+            if config.has("corner_detail"):
+                stylebox.corner_detail = config.corner_detail
+            if config.has("content_margin"):
+                stylebox.content_margin_left = config.content_margin
+                stylebox.content_margin_top = config.content_margin
+                stylebox.content_margin_right = config.content_margin
+                stylebox.content_margin_bottom = config.content_margin
+            if config.has("shadow_size"):
+                stylebox.shadow_size = config.shadow_size
+        
+        return stylebox

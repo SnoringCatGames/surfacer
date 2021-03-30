@@ -13,7 +13,7 @@ script = ExtResource( 4 )
 
 [node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
 margin_right = 960.0
-margin_bottom = 1156.0
+margin_bottom = 960.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
 margin_right = 960.0
@@ -38,7 +38,6 @@ anchor_bottom = 0.0
 margin_top = 196.0
 margin_right = 960.0
 margin_bottom = 1156.0
-rect_min_size = Vector2( 960, 960 )
 stretches_vertically = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
@@ -61,10 +60,7 @@ margin_bottom = 588.0
 rect_min_size = Vector2( 280, 0 )
 
 [node name="Title" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 2 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
 margin_right = 280.0
-margin_bottom = 0.0
 texture_scale = Vector2( 1.5, 1.5 )
 
 [node name="MainMenuImageContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
@@ -99,8 +95,6 @@ __meta__ = {
 }
 
 [node name="StartGameButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 7 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
 margin_left = 60.0
 margin_top = 102.0
 margin_right = 220.0
@@ -109,6 +103,10 @@ rect_min_size = Vector2( 160, 80 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource( 5 )
+texture_scale = Vector2( 1, 1 )
+is_shiny = false
+includes_color_pulse = false
+is_font_xl = false
 
 [node name="Spacer4" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 140.0

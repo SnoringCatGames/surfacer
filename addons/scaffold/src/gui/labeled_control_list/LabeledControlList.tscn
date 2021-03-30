@@ -1,7 +1,8 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://addons/scaffold/src/gui/labeled_control_list/LabeledControlList.gd" type="Script" id=1]
-[ext_resource path="res://addons/scaffold/src/main_theme.tres" type="Theme" id=2]
+[ext_resource path="res://addons/scaffold/src/config/main_theme.tres" type="Theme" id=2]
+
 
 [node name="LabeledControlList" type="VBoxContainer"]
 theme = ExtResource( 2 )

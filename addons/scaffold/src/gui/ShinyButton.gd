@@ -8,7 +8,6 @@ const SHINE_DURATION_SEC := 0.35
 const SHINE_INTERVAL_SEC := 3.5
 const COLOR_PULSE_DURATION_SEC := 1.2
 const COLOR_PULSE_INTERVAL_SEC := 2.4
-var color_pulse_color: Color = Gs.shiny_button_highlight_color
 
 export var texture: Texture setget _set_texture,_get_texture
 export var texture_scale := Vector2(1.0, 1.0) setget \
@@ -74,7 +73,12 @@ func _deferred_update() -> void:
     shine_start_x = shine_base_position.x - rect_size.x
     shine_end_x = shine_base_position.x + rect_size.x
     
-    button_style_pulse = StyleBoxFlat.new()
+    button_style_pulse = Gs.utils.create_stylebox_flat({
+        bg_color = Gs.colors.button_normal_color,
+        corner_radius = Gs.styles.button_corner_radius,
+        corner_detail = Gs.styles.button_corner_detail,
+        shadow_size = Gs.styles.button_shadow_size,
+    })
     
     $MarginContainer.rect_size = rect_size
     $MarginContainer/BottomButton.text = text
@@ -147,8 +151,8 @@ func _trigger_color_pulse() -> void:
     var color_original: Color = \
             button_style_normal.bg_color if \
             button_style_normal is StyleBoxFlat else \
-            Gs.button_normal_color
-    var color_pulse: Color = color_pulse_color
+            Gs.colors.button_normal_color
+    var color_pulse: Color = Gs.colors.shiny_button_highlight_color
     var pulse_half_duration := COLOR_PULSE_DURATION_SEC / 2.0
     
     button_style_pulse.bg_color = color_original

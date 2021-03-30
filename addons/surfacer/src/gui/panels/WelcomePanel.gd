@@ -16,21 +16,21 @@ const DEFAULT_GUI_SCALE := 1.0
 func _ready() -> void:
     Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
     
-    var faded_color: Color = Gs.key_value_even_row_color
+    var faded_color: Color = Gs.colors.zebra_stripe_even_row_color
     faded_color.a *= 0.3
     
     $PanelContainer/LabeledControlList.even_row_color = faded_color
     $PanelContainer/LabeledControlList.items = controls_items
     
-    Gs.utils.connect( \
-            "display_resized", \
-            self, \
-            "_on_resized")
-    call_deferred("_on_resized")
+    update_gui_scale(1.0)
 
-func _on_resized() -> void:
-    var viewport_size := get_viewport().size
-    rect_position = (viewport_size - rect_size) / 2.0
+func update_gui_scale(gui_scale: float) -> void:
+    for child in get_children():
+        Gs.utils._scale_gui_recursively(child, gui_scale)
+        
+    rect_min_size *= gui_scale
+    rect_size.x = rect_min_size.x
+    rect_position = (get_viewport().size - rect_size) / 2.0
 
 func destroy() -> void:
     Gs.guis_to_scale.erase(self)
