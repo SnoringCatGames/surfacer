@@ -458,7 +458,7 @@ We support a large number of flags and parameters for adjusting various aspects 
 
 ## Future work
 
-For a list of planned future work items / TODOs, see [main.gd](./main.gd).
+For a list of planned future work items / TODOs, see [Main.gd](./Main.gd).
 
 Some high-level planned future features include:
 -   Add an option for saving/loading the platform graph instead of parsing it each time.
