@@ -7,6 +7,8 @@ var font_color: Color
 
 var header_font_color: Color
 
+# Should match Project Settings > Application > Boot Splash > Bg Color
+# Should match Project Settings > Rendering > Environment > Default Clear Color
 var background_color: Color
 
 var button_color: Color

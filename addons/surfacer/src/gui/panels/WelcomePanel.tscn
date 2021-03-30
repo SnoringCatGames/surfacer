@@ -2,9 +2,9 @@
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/WelcomePanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_xs_italic.tres" type="DynamicFont" id=2]
-[ext_resource path="res://addons/scaffold/src/config/main_theme.tres" type="Theme" id=3]
+[ext_resource path="res://addons/surfacer/src/gui/panels/panel_body_stylebox.tres" type="StyleBox" id=3]
 [ext_resource path="res://addons/scaffold/src/gui/labeled_control_list/LabeledControlList.tscn" type="PackedScene" id=4]
-[ext_resource path="res://src/header_theme.tres" type="Theme" id=5]
+[ext_resource path="res://addons/surfacer/src/gui/panels/panel_header_stylebox.tres" type="StyleBox" id=5]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_xl.tres" type="DynamicFont" id=6]
 [ext_resource path="res://addons/scaffold/assets/fonts/main_font_s.tres" type="DynamicFont" id=7]
 
@@ -13,7 +13,6 @@ modulate = Color( 1, 1, 1, 0.701961 )
 margin_right = 380.0
 margin_bottom = 130.0
 rect_min_size = Vector2( 380, 0 )
-theme = ExtResource( 3 )
 custom_constants/separation = 0
 script = ExtResource( 1 )
 __meta__ = {
@@ -24,7 +23,7 @@ __meta__ = {
 margin_right = 380.0
 margin_bottom = 88.0
 rect_min_size = Vector2( 0, 88 )
-theme = ExtResource( 5 )
+custom_styles/normal = ExtResource( 5 )
 custom_fonts/font = ExtResource( 6 )
 text = "Squirrel Away!"
 align = 1
@@ -38,7 +37,7 @@ margin_top = 88.0
 margin_right = 380.0
 margin_bottom = 130.0
 rect_min_size = Vector2( 0, 42 )
-theme = ExtResource( 5 )
+custom_styles/normal = ExtResource( 5 )
 custom_fonts/font = ExtResource( 2 )
 text = "(Click window to give focus)"
 align = 1
@@ -50,14 +49,10 @@ __meta__ = {
 [node name="PanelContainer" type="PanelContainer" parent="."]
 margin_top = 130.0
 margin_right = 380.0
-margin_bottom = 144.0
+margin_bottom = 130.0
+custom_styles/panel = ExtResource( 3 )
 
 [node name="LabeledControlList" parent="PanelContainer" instance=ExtResource( 4 )]
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 373.0
-margin_bottom = 7.0
+margin_right = 380.0
 size_flags_vertical = 4
 font = ExtResource( 7 )
-row_height = null
-padding_horizontal = null

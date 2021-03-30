@@ -60,6 +60,7 @@ func configure_theme() -> void:
                 corner_radius = Gs.styles.button_corner_radius,
                 corner_detail = Gs.styles.button_corner_detail,
                 shadow_size = round(Gs.styles.button_shadow_size * 1.5),
+                shadow_color = Color.from_hsv(0, 0, 0, 0.5),
             })
     _configure_theme_stylebox( \
             "hover", "Button", {
@@ -67,6 +68,7 @@ func configure_theme() -> void:
                 corner_radius = Gs.styles.button_corner_radius,
                 corner_detail = Gs.styles.button_corner_detail,
                 shadow_size = round(Gs.styles.button_shadow_size * 1.5),
+                shadow_color = Color.from_hsv(0, 0, 0, 0.5),
             })
     _configure_theme_stylebox( \
             "normal", "Button", {
@@ -180,6 +182,9 @@ func configure_theme() -> void:
     _configure_theme_stylebox_empty("hover_pressed", "CheckBox")
     _configure_theme_stylebox_empty("normal", "CheckBox")
     _configure_theme_stylebox_empty("pressed", "CheckBox")
+    
+    if Gs.theme.default_font == null:
+        Gs.theme.default_font = Gs.fonts.main_m
 
 func _configure_theme_color( \
         name: String, \

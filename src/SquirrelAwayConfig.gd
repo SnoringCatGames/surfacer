@@ -2,23 +2,20 @@ extends Node
 
 var debug := OS.is_debug_build()
 
-# TODO: Useful for getting screenshots at specific resolutions.
-# Play Store
-#var debug_window_size := Vector2(3840, 2160)
-# App Store: 6.5'' iPhone
-#var debug_window_size := Vector2(2778, 1284)
-# App Store: 5.5'' iPhone
-#var debug_window_size := Vector2(2208, 1242)
-# App Store: 12.9'' iPad (3rd Gen) and (2nd Gen)
-#var debug_window_size := Vector2(2732, 2048)
-# Google Ads: Landscape
-var debug_window_size := Vector2(1024, 768)
-# Google Ads: Portrait
-#var debug_window_size := Vector2(768, 1024)
-# Default
-#var debug_window_size := Vector2(480, 480)
-# Just show as full screen.
-#var debug_window_size := Vector2.INF
+# Useful for getting screenshots at specific resolutions.
+const SCREEN_RESOLUTIONS := {
+    # Should match Project Settings > Display > Window > Size > Width/Height
+    default = Vector2(1024, 768),
+    full_screen = Vector2.INF,
+    play_store = Vector2(3840, 2160),
+    iphone_6_5 = Vector2(2778, 1284),
+    iphone_5_5 = Vector2(2208, 1242),
+    ipad_12_9 = Vector2(2732, 2048),
+    google_ads_landscape = Vector2(1024, 768),
+    google_ads_portrait = Vector2(768, 1024),
+}
+
+var debug_window_size: Vector2 = SCREEN_RESOLUTIONS.default
 
 var uses_threads := false and OS.can_use_threads()
 var thread_count := \
@@ -34,7 +31,7 @@ var third_party_license_text := \
 var special_thanks_text := """
 """
 
-var theme := preload("res://addons/scaffold/src/config/main_theme.tres")
+var theme := preload("res://src/default_theme.tres")
 
 var test_runner_resource_path := "res://test/TestRunner.tscn"
 
@@ -142,8 +139,8 @@ var music_manifest := [
 ]
 
 var colors_manifest := {
-    # Must match Project Settings > Application > Boot Splash > Bg Color
-    # Must match Project Settings > Rendering > Environment > Default Clear Color
+    # Should match Project Settings > Application > Boot Splash > Bg Color
+    # Should match Project Settings > Rendering > Environment > Default Clear Color
     background_color = Color("473d2d"),
     font_color = Color("eeeeee"),
     header_font_color = Color("eeeeee"),
@@ -280,6 +277,7 @@ var app_manifest := {
     
     cell_size = Vector2(32.0, 32.0),
     
+    # Should match Project Settings > Display > Window > Size > Width/Height
     default_game_area_size = Vector2(1024, 768),
     aspect_ratio_max = 2.0 / 1.0,
     aspect_ratio_min = 1.0 / 2.0,

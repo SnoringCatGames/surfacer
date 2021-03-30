@@ -10,6 +10,8 @@ var is_open := false setget _set_is_open,_get_is_open
 var _toggle_open_tween: Tween
 
 func _ready() -> void:
+    theme = Gs.theme
+    
     Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
     
     _set_footer_visibility(!is_open)

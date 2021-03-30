@@ -7,6 +7,8 @@ var is_ready := false
 var text := ""
 
 func _enter_tree() -> void:
+    $PanelContainer.theme = Gs.theme
+    
     position.y = max(CORNER_OFFSET.y, Gs.utils.get_safe_area_margin_top())
     position.x = max(CORNER_OFFSET.x, Gs.utils.get_safe_area_margin_left())
     

@@ -14,6 +14,8 @@ var controls_items := [
 const DEFAULT_GUI_SCALE := 1.0
 
 func _ready() -> void:
+    theme = Gs.theme
+    
     Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
     
     var faded_color: Color = Gs.colors.zebra_stripe_even_row_color
@@ -30,6 +32,10 @@ func update_gui_scale(gui_scale: float) -> bool:
         
     rect_min_size *= gui_scale
     rect_size.x = rect_min_size.x
+    rect_size.y = \
+            $Header.rect_size.y + \
+            $Subheader.rect_size.y + \
+            $PanelContainer.rect_size.y
     rect_position = (get_viewport().size - rect_size) / 2.0
     
     return true

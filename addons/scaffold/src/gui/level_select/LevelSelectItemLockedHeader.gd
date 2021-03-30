@@ -13,13 +13,36 @@ var hint_tween: Tween
 
 var previous_gui_scale: float
 
+var header_stylebox: StyleBoxFlatScalable
+var hint_stylebox: StyleBoxFlatScalable
+
 func _enter_tree() -> void:
     hint_tween = Tween.new()
     $HintWrapper/Hint.add_child(hint_tween)
 
+func _exit_tree() -> void:
+    if is_instance_valid(header_stylebox):
+        header_stylebox.destroy()
+    if is_instance_valid(hint_stylebox):
+        hint_stylebox.destroy()
+
 func init_children() -> void:
     $HintWrapper.modulate.a = 0.0
     previous_gui_scale = Gs.gui_scale
+    
+    header_stylebox = Gs.utils.create_stylebox_flat_scalable({
+        stylebox = get_stylebox("panel"),
+        corner_radius = Gs.styles.dropdown_corner_radius,
+        corner_detail = Gs.styles.dropdown_corner_detail,
+    })
+    add_stylebox_override("panel", header_stylebox)
+    
+    hint_stylebox = Gs.utils.create_stylebox_flat_scalable({
+        stylebox = get_stylebox("panel"),
+        corner_radius = Gs.styles.dropdown_corner_radius,
+        corner_detail = Gs.styles.dropdown_corner_detail,
+    })
+    $HintWrapper.add_stylebox_override("panel", hint_stylebox)
 
 func update_size(header_size: Vector2) -> bool:
     rect_min_size = header_size

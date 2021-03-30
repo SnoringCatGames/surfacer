@@ -8,6 +8,7 @@ export var stretches_vertically := false \
         setget _set_stretches_vertically,_get_stretches_vertically
 
 func _init() -> void:
+    theme = Gs.theme
     add_font_override("font", Gs.fonts.main_m)
 
 func _ready() -> void:

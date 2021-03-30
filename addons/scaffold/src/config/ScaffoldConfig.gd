@@ -38,8 +38,7 @@ var theme: Theme
 
 var cell_size: Vector2
 
-# This should match what is configured in
-# Project Settings > Display > Window > Size > Width/Height.
+# Should match Project Settings > Display > Window > Size > Width/Height
 var default_game_area_size: Vector2
 
 var aspect_ratio_max: float

@@ -3,6 +3,7 @@ class_name FullScreenPanel, "res://addons/scaffold/assets/images/editor_icons/Fu
 extends PanelContainer
 
 func _init() -> void:
+    theme = Gs.theme
     add_font_override("font", Gs.fonts.main_m)
 
 func _enter_tree() -> void:

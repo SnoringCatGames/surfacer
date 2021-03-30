@@ -634,7 +634,13 @@ func create_stylebox_flat_scalable(config) -> StyleBoxFlatScalable:
 
 func _create_stylebox_flat_scalable_from_config( \
         config: Dictionary) -> StyleBoxFlatScalable:
-    var stylebox := StyleBoxFlatScalable.new()
+    var stylebox: StyleBoxFlatScalable
+    if config.has("stylebox"):
+        stylebox = _create_stylebox_flat_scalable_from_stylebox( \
+                config.stylebox)
+    else:
+        stylebox = StyleBoxFlatScalable.new()
+    
     if config.has("bg_color"):
         stylebox.bg_color = config.bg_color
     if config.has("border_width"):
@@ -659,6 +665,8 @@ func _create_stylebox_flat_scalable_from_config( \
         stylebox.expand_margin_top = config.expand_margin
         stylebox.expand_margin_right = config.expand_margin
         stylebox.expand_margin_bottom = config.expand_margin
+    if config.has("shadow_color"):
+        stylebox.shadow_color = config.shadow_color
     if config.has("shadow_offset"):
         stylebox.shadow_offset = config.shadow_offset
     if config.has("shadow_size"):

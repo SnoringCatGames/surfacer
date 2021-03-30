@@ -136,12 +136,21 @@ func _create_header() -> void:
     _header = Button.new()
     _header.connect("pressed", self, "_on_header_pressed")
     
-    _header_normal_stylebox = Gs.utils.create_stylebox_flat_scalable( \
-            Gs.colors.dropdown_normal_color)
-    _header_hover_stylebox = Gs.utils.create_stylebox_flat_scalable( \
-            Gs.colors.dropdown_hover_color)
-    _header_pressed_stylebox = Gs.utils.create_stylebox_flat_scalable( \
-            Gs.colors.dropdown_pressed_color)
+    _header_normal_stylebox = Gs.utils.create_stylebox_flat_scalable({
+        bg_color = Gs.colors.dropdown_normal_color,
+        corner_radius = Gs.styles.dropdown_corner_radius,
+        corner_detail = Gs.styles.dropdown_corner_detail,
+    })
+    _header_hover_stylebox = Gs.utils.create_stylebox_flat_scalable({
+        bg_color = Gs.colors.dropdown_hover_color,
+        corner_radius = Gs.styles.dropdown_corner_radius,
+        corner_detail = Gs.styles.dropdown_corner_detail,
+    })
+    _header_pressed_stylebox = Gs.utils.create_stylebox_flat_scalable({
+        bg_color = Gs.colors.dropdown_pressed_color,
+        corner_radius = Gs.styles.dropdown_corner_radius,
+        corner_detail = Gs.styles.dropdown_corner_detail,
+    })
     
     _header.add_stylebox_override("normal", _header_normal_stylebox)
     _header.add_stylebox_override("hover", _header_hover_stylebox)
