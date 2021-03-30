@@ -5,21 +5,34 @@ const PADDING := Vector2(16.0, 8.0)
 
 var level_id: String
 
+var normal_stylebox: StyleBoxFlatScalable
+var hover_stylebox: StyleBoxFlatScalable
+var pressed_stylebox: StyleBoxFlatScalable
+
+func _exit_tree() -> void:
+    if is_instance_valid(normal_stylebox):
+        normal_stylebox.destroy()
+    if is_instance_valid(hover_stylebox):
+        hover_stylebox.destroy()
+    if is_instance_valid(pressed_stylebox):
+        pressed_stylebox.destroy()
+
 func init_children() -> void:
     $HBoxContainer/Caret/TextureRect.rect_pivot_offset = \
             AccordionPanel.CARET_SIZE_DEFAULT / 2.0
     $HBoxContainer/Caret/TextureRect.rect_rotation = \
             AccordionPanel.CARET_ROTATION_CLOSED
     
-    add_stylebox_override( \
-            "normal", \
-            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_normal_color))
-    add_stylebox_override( \
-            "hover", \
-            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_hover_color))
-    add_stylebox_override( \
-            "pressed", \
-            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_pressed_color))
+    normal_stylebox = Gs.utils.create_stylebox_flat_scalable( \
+            Gs.colors.dropdown_normal_color)
+    hover_stylebox = Gs.utils.create_stylebox_flat_scalable( \
+            Gs.colors.dropdown_hover_color)
+    pressed_stylebox = Gs.utils.create_stylebox_flat_scalable( \
+            Gs.colors.dropdown_pressed_color)
+    
+    add_stylebox_override("normal", normal_stylebox)
+    add_stylebox_override("hover", hover_stylebox)
+    add_stylebox_override("pressed", pressed_stylebox)
     
     Gs.utils.set_mouse_filter_recursively( \
             self, \

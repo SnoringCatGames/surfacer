@@ -18,7 +18,7 @@ func _ready() -> void:
     _set_disabled(disabled)
     update_gui_scale(1.0)
 
-func update_gui_scale(gui_scale: float) -> void:
+func update_gui_scale(gui_scale: float) -> bool:
     $CheckBox.rect_size = Vector2( \
             Gs.current_checkbox_icon_size, \
             Gs.current_checkbox_icon_size)
@@ -27,6 +27,7 @@ func update_gui_scale(gui_scale: float) -> void:
     rect_min_size *= gui_scale
     rect_size *= gui_scale
     call_deferred("_update_check_box_position")
+    return true
 
 func _update_check_box_position() -> void:
     $CheckBox.rect_position = \

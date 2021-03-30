@@ -17,7 +17,6 @@ func _input(event: InputEvent) -> void:
                     event is InputEventScreenTouch or \
                     event is InputEventKey) and \
             Surfacer.is_level_ready:
-        Surfacer.welcome_panel.destroy()
         Surfacer.welcome_panel.queue_free()
         Surfacer.welcome_panel = null
 
@@ -54,9 +53,6 @@ func start() -> void:
     Surfacer.annotators.on_level_ready()
     
     Gs.audio.play_music("on_a_quest")
-
-func destroy() -> void:
-    .destroy()
 
 func quit() -> void:
     .quit()

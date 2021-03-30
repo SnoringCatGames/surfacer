@@ -73,14 +73,13 @@ func start_level(level_id: String) -> void:
             true)
     level.start()
 
-func destroy_level() -> void:
+func quit_level() -> void:
     assert(level != null)
-    level.destroy()
-    level.queue_free()
+    level.quit()
     level = null
 
 func restart_level() -> void:
     assert(is_instance_valid(level))
     var level_id := level.level_id
-    destroy_level()
+    quit_level()
     start_level(level_id)

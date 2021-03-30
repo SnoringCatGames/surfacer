@@ -21,7 +21,7 @@ func init_children() -> void:
     $HintWrapper.modulate.a = 0.0
     previous_gui_scale = Gs.gui_scale
 
-func update_size(header_size: Vector2) -> void:
+func update_size(header_size: Vector2) -> bool:
     rect_min_size = header_size
     
     var relative_gui_scale := Gs.gui_scale / previous_gui_scale
@@ -32,6 +32,8 @@ func update_size(header_size: Vector2) -> void:
     $LockAnimation.update_gui_scale(relative_gui_scale)
     
     rect_size = header_size
+    
+    return true
 
 func update_is_unlocked(is_unlocked: bool) -> void:
     var unlock_hint_message: String = \

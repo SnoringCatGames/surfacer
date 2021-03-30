@@ -471,7 +471,7 @@ func set_mouse_filter_recursively( \
         set_mouse_filter_recursively(child, mouse_filter)
 
 # Automatically resize the gui to adapt to different screen sizes.
-func _scale_gui_for_current_screen_size(gui: Control) -> void:
+func _scale_gui_for_current_screen_size(gui) -> void:
     if !is_instance_valid(gui) or \
             !Gs.guis_to_scale.has(gui):
         Gs.utils.error()
@@ -488,13 +488,17 @@ func _scale_gui_for_current_screen_size(gui: Control) -> void:
                 relative_scale)
 
 func _scale_gui_recursively( \
-        control: Control, \
+        gui, \
         gui_scale: float) -> void:
     var snap_epsilon := 0.001
     
-    if control.has_method("update_gui_scale"):
-        control.update_gui_scale(gui_scale)
-        return
+    if gui.has_method("update_gui_scale"):
+        var handled: bool = gui.update_gui_scale(gui_scale)
+        if handled:
+            return
+    
+    assert(gui is Control)
+    var control: Control = gui
     
     var is_gui_container := \
             control is Container
@@ -614,27 +618,86 @@ static func get_collection_from_exclusions_and_inclusions( \
     
     return collection
 
-static func create_stylebox_flat(config) -> StyleBoxFlat:
-        var stylebox := StyleBoxFlat.new()
-        
-        if config is Color:
-            stylebox.bg_color = config
-        else:
-            if config.has("bg_color"):
-                stylebox.bg_color = config.bg_color
-            if config.has("corner_radius"):
-                stylebox.corner_radius_top_left = config.corner_radius
-                stylebox.corner_radius_top_right = config.corner_radius
-                stylebox.corner_radius_bottom_left = config.corner_radius
-                stylebox.corner_radius_bottom_right = config.corner_radius
-            if config.has("corner_detail"):
-                stylebox.corner_detail = config.corner_detail
-            if config.has("content_margin"):
-                stylebox.content_margin_left = config.content_margin
-                stylebox.content_margin_top = config.content_margin
-                stylebox.content_margin_right = config.content_margin
-                stylebox.content_margin_bottom = config.content_margin
-            if config.has("shadow_size"):
-                stylebox.shadow_size = config.shadow_size
-        
+func create_stylebox_flat_scalable(config) -> StyleBoxFlatScalable:
+    if config is Color:
+        var stylebox := StyleBoxFlatScalable.new()
+        stylebox.bg_color = config
+        stylebox.ready()
         return stylebox
+    elif config is Dictionary:
+        return _create_stylebox_flat_scalable_from_config(config)
+    elif config is StyleBox:
+        return _create_stylebox_flat_scalable_from_stylebox(config)
+    else:
+        Gs.utils.error()
+        return null
+
+func _create_stylebox_flat_scalable_from_config( \
+        config: Dictionary) -> StyleBoxFlatScalable:
+    var stylebox := StyleBoxFlatScalable.new()
+    if config.has("bg_color"):
+        stylebox.bg_color = config.bg_color
+    if config.has("border_width"):
+        stylebox.border_width_left = config.border_width
+        stylebox.border_width_top = config.border_width
+        stylebox.border_width_right = config.border_width
+        stylebox.border_width_bottom = config.border_width
+    if config.has("content_margin"):
+        stylebox.content_margin_left = config.content_margin
+        stylebox.content_margin_top = config.content_margin
+        stylebox.content_margin_right = config.content_margin
+        stylebox.content_margin_bottom = config.content_margin
+    if config.has("corner_detail"):
+        stylebox.corner_detail = config.corner_detail
+    if config.has("corner_radius"):
+        stylebox.corner_radius_top_left = config.corner_radius
+        stylebox.corner_radius_top_right = config.corner_radius
+        stylebox.corner_radius_bottom_left = config.corner_radius
+        stylebox.corner_radius_bottom_right = config.corner_radius
+    if config.has("expand_margin"):
+        stylebox.expand_margin_left = config.expand_margin
+        stylebox.expand_margin_top = config.expand_margin
+        stylebox.expand_margin_right = config.expand_margin
+        stylebox.expand_margin_bottom = config.expand_margin
+    if config.has("shadow_offset"):
+        stylebox.shadow_offset = config.shadow_offset
+    if config.has("shadow_size"):
+        stylebox.shadow_size = config.shadow_size
+    stylebox.ready()
+    return stylebox
+
+func _create_stylebox_flat_scalable_from_stylebox( \
+        old: StyleBox) -> StyleBoxFlatScalable:
+    var new := StyleBoxFlatScalable.new()
+    
+    new.expand_margin_left = old.expand_margin_left
+    new.expand_margin_top = old.expand_margin_top
+    new.expand_margin_right = old.expand_margin_right
+    new.expand_margin_bottom = old.expand_margin_bottom
+    
+    if old is StyleBoxFlat:
+        new.anti_aliasing = old.anti_aliasing
+        new.anti_aliasing_size = old.anti_aliasing_size
+        new.bg_color = old.bg_color
+        new.border_blend = old.border_blend
+        new.border_color = old.border_color
+        new.border_width_left = old.border_width_left
+        new.border_width_top = old.border_width_top
+        new.border_width_right = old.border_width_right
+        new.border_width_bottom = old.border_width_bottom
+        new.content_margin_left = old.content_margin_left
+        new.content_margin_top = old.content_margin_top
+        new.content_margin_right = old.content_margin_right
+        new.content_margin_bottom = old.content_margin_bottom
+        new.corner_detail = old.corner_detail
+        new.corner_radius_top_left = old.corner_radius_top_left
+        new.corner_radius_top_right = old.corner_radius_top_right
+        new.corner_radius_bottom_left = old.corner_radius_bottom_left
+        new.corner_radius_bottom_right = old.corner_radius_bottom_right
+        new.draw_center = old.draw_center
+        new.shadow_color = old.shadow_color
+        new.shadow_offset = old.shadow_offset
+        new.shadow_size = old.shadow_size
+    
+    new.ready()
+    return new

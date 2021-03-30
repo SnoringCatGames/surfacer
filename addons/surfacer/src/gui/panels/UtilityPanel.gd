@@ -66,10 +66,11 @@ func _ready() -> void:
     
     update_gui_scale(1.0)
 
-func update_gui_scale(gui_scale: float) -> void:
+func update_gui_scale(gui_scale: float) -> bool:
     update_gui_scale_helper(gui_scale)
     update_gui_scale_helper(1.0)
     call_deferred("update_gui_scale_helper", 1.0)
+    return true
 
 func update_gui_scale_helper(gui_scale: float) -> void:
     for child in get_children():
@@ -86,8 +87,8 @@ func update_gui_scale_helper(gui_scale: float) -> void:
             is_open else \
             _get_closed_position_y()
 
-func destroy() -> void:
-    Gs.guis_to_scale.erase(self)
+func _exit_tree() -> void:
+    Gs.remove_gui_to_scale(self)
 
 func _get_closed_position_y() -> float:
     return -$PanelContainer.rect_size.y - 1.0

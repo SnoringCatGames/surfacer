@@ -11,11 +11,6 @@ func _init() -> void:
     add_font_override("font", Gs.fonts.main_m)
 
 func _ready() -> void:
-    # FIXME: -------------- remove?
-    var style_updated := StyleBoxFlat.new()
-    style_updated.bg_color = Gs.colors.background_color
-    add_stylebox_override("panel", style_updated)
-    
     Gs.utils.connect( \
             "display_resized", \
             self, \

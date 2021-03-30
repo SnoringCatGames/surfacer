@@ -46,6 +46,10 @@ var _projected_control: Control
 var _caret: ScaffoldTextureRect
 var _is_open_tween: Tween
 
+var _header_normal_stylebox: StyleBoxFlatScalable
+var _header_hover_stylebox: StyleBoxFlatScalable
+var _header_pressed_stylebox: StyleBoxFlatScalable
+
 var _start_scroll_vertical: int
 
 func _enter_tree() -> void:
@@ -65,13 +69,22 @@ func _ready() -> void:
     _update_children()
     call_deferred("_update_children")
 
-func update_gui_scale(gui_scale: float) -> void:
+func _exit_tree() -> void:
+    if is_instance_valid(_header_normal_stylebox):
+        _header_normal_stylebox.destroy()
+    if is_instance_valid(_header_hover_stylebox):
+        _header_hover_stylebox.destroy()
+    if is_instance_valid(_header_pressed_stylebox):
+        _header_pressed_stylebox.destroy()
+
+func update_gui_scale(gui_scale: float) -> bool:
     update_gui_scale_deferred(gui_scale)
     # TODO: Fix the underlying dependency, instead of this double-call hack.
     #       (To repro the problem: run, open SettingsScreen,
     #        maximize window, unmaximize window, Details AccordionPanel hasn't
     #        shrunk back to the correct size.)
     call_deferred("update_gui_scale_deferred", 1.0)
+    return true
 
 func update_gui_scale_deferred(gui_scale: float) -> void:
     rect_position.x *= gui_scale
@@ -123,15 +136,16 @@ func _create_header() -> void:
     _header = Button.new()
     _header.connect("pressed", self, "_on_header_pressed")
     
-    _header.add_stylebox_override( \
-            "normal", \
-            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_normal_color))
-    _header.add_stylebox_override( \
-            "hover", \
-            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_hover_color))
-    _header.add_stylebox_override( \
-            "pressed", \
-            Gs.utils.create_stylebox_flat(Gs.colors.dropdown_pressed_color))
+    _header_normal_stylebox = Gs.utils.create_stylebox_flat_scalable( \
+            Gs.colors.dropdown_normal_color)
+    _header_hover_stylebox = Gs.utils.create_stylebox_flat_scalable( \
+            Gs.colors.dropdown_hover_color)
+    _header_pressed_stylebox = Gs.utils.create_stylebox_flat_scalable( \
+            Gs.colors.dropdown_pressed_color)
+    
+    _header.add_stylebox_override("normal", _header_normal_stylebox)
+    _header.add_stylebox_override("hover", _header_hover_stylebox)
+    _header.add_stylebox_override("pressed", _header_pressed_stylebox)
     
     _header_hbox = HBoxContainer.new()
     _header.add_child(_header_hbox)

@@ -1054,7 +1054,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/data/SaveState.gd"
 }, {
-"base": "Reference",
+"base": "Node",
 "class": "ScaffoldBootstrap",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/config/ScaffoldBootstrap.gd"
@@ -1064,7 +1064,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/gui/ScaffoldCheckBox.gd"
 }, {
-"base": "Reference",
+"base": "Node",
 "class": "ScaffoldColors",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/config/ScaffoldColors.gd"
@@ -1074,12 +1074,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/utils/Geometry.gd"
 }, {
-"base": "Reference",
+"base": "Node2D",
 "class": "ScaffoldLevel",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/config/ScaffoldLevel.gd"
 }, {
-"base": "Reference",
+"base": "Node",
 "class": "ScaffoldLevelConfig",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/config/ScaffoldLevelConfig.gd"
@@ -1089,10 +1089,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/utils/Navigation.gd"
 }, {
-"base": "Reference",
+"base": "Node",
 "class": "ScaffoldStyles",
 "language": "GDScript",
-"path": "res://addons/scaffold/src/config/ScoffoldStyles.gd"
+"path": "res://addons/scaffold/src/config/ScaffoldStyles.gd"
 }, {
 "base": "Control",
 "class": "ScaffoldTextureButton",
@@ -1104,7 +1104,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/scaffold/src/gui/ScaffoldTextureRect.gd"
 }, {
-"base": "Reference",
+"base": "Node",
 "class": "ScaffoldThirdPartyLicenses",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/config/ScaffoldThirdPartyLicenses.gd"
@@ -1173,6 +1173,11 @@ _global_script_classes=[ {
 "class": "Stopwatch",
 "language": "GDScript",
 "path": "res://addons/scaffold/src/utils/Stopwatch.gd"
+}, {
+"base": "StyleBoxFlat",
+"class": "StyleBoxFlatScalable",
+"language": "GDScript",
+"path": "res://addons/scaffold/src/config/StyleBoxFlatScalable.gd"
 }, {
 "base": "Reference",
 "class": "Surface",
@@ -1623,6 +1628,7 @@ _global_script_class_icons={
 "SquirrelPlayer": "",
 "StaticTextLabeledControlItem": "",
 "Stopwatch": "",
+"StyleBoxFlatScalable": "",
 "Surface": "",
 "SurfaceAnnotationElement": "",
 "SurfaceCollision": "",

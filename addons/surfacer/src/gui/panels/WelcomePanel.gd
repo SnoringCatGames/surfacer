@@ -24,13 +24,15 @@ func _ready() -> void:
     
     update_gui_scale(1.0)
 
-func update_gui_scale(gui_scale: float) -> void:
+func update_gui_scale(gui_scale: float) -> bool:
     for child in get_children():
         Gs.utils._scale_gui_recursively(child, gui_scale)
         
     rect_min_size *= gui_scale
     rect_size.x = rect_min_size.x
     rect_position = (get_viewport().size - rect_size) / 2.0
+    
+    return true
 
-func destroy() -> void:
-    Gs.guis_to_scale.erase(self)
+func _exit_tree() -> void:
+    Gs.remove_gui_to_scale(self)

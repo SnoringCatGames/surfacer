@@ -41,7 +41,7 @@ func _init_children() -> void:
     
     update_gui_scale(1.0)
 
-func update_gui_scale(gui_scale: float) -> void:
+func update_gui_scale(gui_scale: float) -> bool:
     rect_position.x *= gui_scale
     rect_min_size *= gui_scale
     rect_size = rect_min_size
@@ -55,6 +55,8 @@ func update_gui_scale(gui_scale: float) -> void:
     unlocked_header.update_size(header_size)
     
     accordion.update_gui_scale(gui_scale)
+    
+    return true
 
 func update() -> void:
     if level_id == "":

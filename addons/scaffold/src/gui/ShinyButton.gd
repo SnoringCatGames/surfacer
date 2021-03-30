@@ -55,7 +55,11 @@ func _ready() -> void:
             "display_resized", self, "update")
     update()
 
-func update_gui_scale(gui_scale: float) -> void:
+func _exit_tree() -> void:
+    if is_instance_valid(button_style_pulse):
+        button_style_pulse.destroy()
+
+func update_gui_scale(gui_scale: float) -> bool:
     texture_scale *= gui_scale
     rect_min_size *= gui_scale
     rect_size *= gui_scale
@@ -63,6 +67,8 @@ func update_gui_scale(gui_scale: float) -> void:
     $MarginContainer/ShineLine.scale *= gui_scale
     $MarginContainer/ScaffoldTextureRect.update_gui_scale(gui_scale)
     update()
+    
+    return true
 
 func update() -> void:
     call_deferred("_deferred_update")
@@ -73,7 +79,9 @@ func _deferred_update() -> void:
     shine_start_x = shine_base_position.x - rect_size.x
     shine_end_x = shine_base_position.x + rect_size.x
     
-    button_style_pulse = Gs.utils.create_stylebox_flat({
+    if is_instance_valid(button_style_pulse):
+        button_style_pulse.destroy()
+    button_style_pulse = Gs.utils.create_stylebox_flat_scalable({
         bg_color = Gs.colors.button_normal_color,
         corner_radius = Gs.styles.button_corner_radius,
         corner_detail = Gs.styles.button_corner_detail,

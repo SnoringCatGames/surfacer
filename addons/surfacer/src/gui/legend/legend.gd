@@ -12,11 +12,12 @@ func _ready() -> void:
     label = $Label
     label.visible = true
 
-func update_gui_scale(gui_scale: float) -> void:
+func update_gui_scale(gui_scale: float) -> bool:
     update_gui_scale_helper(gui_scale)
     # TODO: Fix the underlying dependency, instead of this double-call hack.
     #       (To repro the problem: run, start level, maximize window.)
     update_gui_scale_helper(1.0)
+    return true
 
 func update_gui_scale_helper(gui_scale: float) -> void:
     var next_rect_size := rect_size * gui_scale
