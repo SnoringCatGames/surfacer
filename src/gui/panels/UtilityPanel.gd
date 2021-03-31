@@ -68,6 +68,12 @@ func _ready() -> void:
     
     update_gui_scale(1.0)
 
+func _exit_tree() -> void:
+    Gs.remove_gui_to_scale(self)
+    Surfacer.platform_graph_inspector = null
+    Surfacer.legend = null
+    Surfacer.selection_description = null
+
 func update_gui_scale(gui_scale: float) -> bool:
     update_gui_scale_helper(gui_scale)
     update_gui_scale_helper(1.0)
@@ -88,9 +94,6 @@ func update_gui_scale_helper(gui_scale: float) -> void:
             0.0 if \
             is_open else \
             _get_closed_position_y()
-
-func _exit_tree() -> void:
-    Gs.remove_gui_to_scale(self)
 
 func _get_closed_position_y() -> float:
     return -$PanelContainer.rect_size.y - 1.0

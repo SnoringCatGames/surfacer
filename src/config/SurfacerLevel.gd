@@ -17,6 +17,8 @@ var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
 var utility_panel: UtilityPanel
+# Array<PositionAlongSurface>
+var squirrel_destinations := []
 
 func start() -> void:
     .start()
@@ -41,14 +43,15 @@ func start() -> void:
     Surfacer.platform_graph_inspector.set_graphs(platform_graphs.values())
     
     _parse_squirrel_destinations()
-    
-    Surfacer.is_level_ready = true
 
 func _exit_tree() -> void:
     utility_panel.queue_free()
+    Surfacer.annotators.on_level_destroyed()
+    Surfacer.current_player_for_clicks = null
+    squirrel_destinations.clear()
 
-func quit() -> void:
-    .quit()
+func quit(immediately := true) -> void:
+    .quit(immediately)
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseButton or \
@@ -170,9 +173,6 @@ func set_level_visibility(is_visible: bool) -> void:
             TileMap)
     for node in foregrounds:
         node.visible = is_visible
-
-# Array<PositionAlongSurface>
-var squirrel_destinations := []
 
 # FIXME: Decouple this squirrel-specific logic from the rest of the framework.
 func _parse_squirrel_destinations() -> void:

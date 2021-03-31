@@ -1,4 +1,6 @@
-extends Node
+# FIXME: ----------------------------------------
+class_name SurfacerConfig
+extends ScaffoldConfig
 
 var is_inspector_enabled: bool
 var is_logging: bool
@@ -58,8 +60,6 @@ var annotators: Annotators
 
 var ann_defaults := AnnotationElementDefaults.new()
 
-var is_level_ready := false
-
 # ---
 
 var player_action_classes := [
@@ -99,9 +99,6 @@ var player_param_classes := [
     preload("res://src/players/squirrel/SquirrelParams.gd"),
 #    preload("res://test/data/TestPlayerParams.gd"),
 ]
-
-func _init() -> void:
-    print("Surfacer._init")
 
 func register_app_manifest(manifest: Dictionary) -> void:
     self.is_inspector_enabled = manifest.is_inspector_enabled
