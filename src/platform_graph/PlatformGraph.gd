@@ -419,7 +419,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
         
         # Divide the origin surfaces across threads.
         if thread_index >= 0 and \
-                i % Surfacer.THREAD_COUNT != thread_index:
+                i % Gs.thread_count != thread_index:
             continue
         
         inter_surface_edges_results = \
