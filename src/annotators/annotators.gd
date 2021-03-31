@@ -63,20 +63,23 @@ func _enter_tree() -> void:
 func on_level_ready() -> void:
     # Ensure any enabled annotators that depend on the level get drawn, now
     # that the level is available.
-    _set_level_annotators_enabled(false)
-    _set_level_annotators_enabled(true)
-
-func on_level_destroyed() -> void:
-    _set_level_annotators_enabled(false)
-    for player in player_annotators.keys():
-        destroy_player_annotator(player)
-
-func _set_level_annotators_enabled(enabled: bool) -> void:
     for annotator_type in _LEVEL_SPECIFIC_ANNOTATORS:
-        if enabled != is_annotator_enabled(annotator_type):
+        if is_annotator_enabled(annotator_type):
             set_annotator_enabled( \
                     annotator_type, \
-                    enabled)
+                    false)
+            set_annotator_enabled( \
+                    annotator_type, \
+                    true)
+
+func on_level_destroyed() -> void:
+    for annotator_type in _LEVEL_SPECIFIC_ANNOTATORS:
+        if is_annotator_enabled(annotator_type):
+            set_annotator_enabled( \
+                    annotator_type, \
+                    false)
+    for player in player_annotators.keys():
+        destroy_player_annotator(player)
 
 func create_player_annotator( \
         player: Player, \
