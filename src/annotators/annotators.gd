@@ -73,6 +73,7 @@ func on_level_ready() -> void:
                     true)
 
 func on_level_destroyed() -> void:
+    Surfacer.annotators.element_annotator.clear()
     for annotator_type in _LEVEL_SPECIFIC_ANNOTATORS:
         if is_annotator_enabled(annotator_type):
             set_annotator_enabled( \
