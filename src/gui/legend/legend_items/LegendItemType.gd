@@ -17,7 +17,7 @@ enum {
     UNKNOWN,
 }
 
-static func get_type_string(type: int) -> String:
+static func get_string(type: int) -> String:
     match type:
         SURFACE:
             return "SURFACE"

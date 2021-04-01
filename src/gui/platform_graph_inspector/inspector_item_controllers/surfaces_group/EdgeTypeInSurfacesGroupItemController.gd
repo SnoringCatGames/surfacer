@@ -35,19 +35,19 @@ func _init( \
 
 func to_string() -> String:
     return "%s { edge_type=%s, valid_edge_count=%s }" % [ \
-        InspectorItemType.get_type_string(type), \
-        EdgeType.get_type_string(edge_type), \
+        InspectorItemType.get_string(type), \
+        EdgeType.get_string(edge_type), \
         edges_results.valid_edges.size(), \
     ]
 
 func get_text() -> String:
     return "%ss [%s]" % [ \
-        EdgeType.get_type_string(edge_type), \
+        EdgeType.get_string(edge_type), \
         edges_results.valid_edges.size(), \
     ]
 
 func get_description() -> String:
-    return EdgeType.get_description_string(edge_type)
+    return EdgeType.get_description(edge_type)
 
 func get_has_children() -> bool:
     return !edges_results.valid_edges.empty() or \

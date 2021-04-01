@@ -47,7 +47,7 @@ func get_description() -> String:
 
 func to_string() -> String:
     return "%s { count=%s }" % [ \
-        InspectorItemType.get_type_string(type), \
+        InspectorItemType.get_string(type), \
         graph.counts.total_surfaces, \
     ]
 
@@ -83,7 +83,7 @@ func _find_and_expand_controller_recursive( \
                     metadata)
         _:
             Gs.utils.error("Invalid SurfaceSide: %s" % \
-                    SurfaceSide.get_side_string(side))
+                    SurfaceSide.get_string(side))
 
 func _create_children_inner() -> void:
     floors_item_controller = FloorsItemController.new( \

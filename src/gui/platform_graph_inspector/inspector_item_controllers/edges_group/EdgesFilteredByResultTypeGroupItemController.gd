@@ -62,7 +62,7 @@ func get_text() -> String:
 
 func to_string() -> String:
     return "%s { count=%s }" % [ \
-        InspectorItemType.get_type_string(type), \
+        InspectorItemType.get_string(type), \
         filtered_edge_count, \
     ]
 
@@ -71,7 +71,7 @@ func find_and_expand_controller( \
         metadata: Dictionary) -> bool:
     Gs.utils.error( \
             "find_and_expand_controller should not be called for " + \
-            "%s." % InspectorItemType.get_type_string(type))
+            "%s." % InspectorItemType.get_string(type))
     return false
 
 func _create_children_inner() -> void:

@@ -34,7 +34,7 @@ func _init( \
 
 func to_string() -> String:
     return "%s { failed_count=%s }" % [ \
-        InspectorItemType.get_type_string(type), \
+        InspectorItemType.get_string(type), \
         edges_results.failed_edge_attempts.size(), \
     ]
 

@@ -151,7 +151,7 @@ func get_description() -> String:
     return ""
 
 func to_string() -> String:
-    return "%s {}" % InspectorItemType.get_type_string(type)
+    return "%s {}" % InspectorItemType.get_string(type)
 
 func get_has_children() -> bool:
     return !is_leaf

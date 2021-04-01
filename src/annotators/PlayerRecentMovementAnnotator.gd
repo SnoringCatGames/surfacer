@@ -187,7 +187,7 @@ func _draw_action_indicator( \
             Gs.utils.error( \
                     "Unknown PlayerActionType passed to " + \
                     "_draw_action_indicator: %s" % \
-                    PlayerActionType.get_type_string(action))
+                    PlayerActionType.get_string(action))
     
     if input_key != "":
         Gs.draw_utils.draw_instruction_indicator( \

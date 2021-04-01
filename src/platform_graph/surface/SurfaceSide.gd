@@ -8,7 +8,7 @@ enum {
     RIGHT_WALL,
 }
 
-static func get_side_string(side: int) -> String:
+static func get_string(side: int) -> String:
     match side:
         NONE:
             return "NONE"
@@ -24,7 +24,7 @@ static func get_side_string(side: int) -> String:
             Gs.utils.error("Invalid SurfaceSide: %s" % side)
             return "???"
 
-static func get_side_prefix(side: int) -> String:
+static func get_prefix(side: int) -> String:
     match side:
         NONE:
             return "N"

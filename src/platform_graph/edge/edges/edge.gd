@@ -204,7 +204,7 @@ func _get_end_string() -> String:
     return end_position_along_surface.to_string()
 
 func _get_name() -> String:
-    return EdgeType.get_type_string(edge_type)
+    return EdgeType.get_string(edge_type)
 
 func _get_should_end_by_colliding_with_surface() -> bool:
     return end_position_along_surface.surface != \

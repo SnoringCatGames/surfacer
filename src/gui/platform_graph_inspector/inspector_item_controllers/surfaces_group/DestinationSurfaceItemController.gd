@@ -34,14 +34,14 @@ func _init( \
 
 func to_string() -> String:
     return "%s{ [%s, %s] }" % [ \
-        InspectorItemType.get_type_string(TYPE), \
+        InspectorItemType.get_string(TYPE), \
         str(destination_surface.first_point), \
         str(destination_surface.last_point), \
     ]
 
 func get_text() -> String:
     return "%s [%s, %s]" % [ \
-        SurfaceSide.get_side_string(destination_surface.side), \
+        SurfaceSide.get_string(destination_surface.side), \
         str(destination_surface.first_point), \
         str(destination_surface.last_point), \
     ]
@@ -49,8 +49,8 @@ func get_text() -> String:
 func get_description() -> String:
     return ("There are %s valid edges from this %s to this %s.") % [ \
         valid_edge_count, \
-        SurfaceSide.get_side_string(origin_surface.side), \
-        SurfaceSide.get_side_string(destination_surface.side), \
+        SurfaceSide.get_string(origin_surface.side), \
+        SurfaceSide.get_string(destination_surface.side), \
     ]
 
 func find_and_expand_controller( \
