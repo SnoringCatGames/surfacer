@@ -771,11 +771,11 @@ func _dash_cooldown_finished() -> void:
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if Surfacer.is_logging and \
+    if Surfacer.is_surfacer_logging and \
             movement_params.logs_player_actions and \
             (is_human_player or \
                     movement_params.logs_computer_player_events):
         if message_args != null:
-            print(message_template % message_args)
+            Gs.utils.print(message_template % message_args)
         else:
-            print(message_template)
+            Gs.utils.print(message_template)

@@ -530,11 +530,11 @@ static func _find_closest_jump_land_positions( \
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if Surfacer.is_logging and \
+    if Surfacer.is_surfacer_logging and \
             Surfacer.current_player_for_clicks != null and \
             Surfacer.current_player_for_clicks.movement_params \
                     .logs_inspector_events:
         if message_args != null:
-            print(message_template % message_args)
+            Gs.utils.print(message_template % message_args)
         else:
-            print(message_template)
+            Gs.utils.print(message_template)
