@@ -17,8 +17,6 @@ var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
 var utility_panel: UtilityPanel
-# Array<PositionAlongSurface>
-var squirrel_destinations := []
 
 func start() -> void:
     .start()
@@ -41,8 +39,6 @@ func start() -> void:
             Surfacer.player_params, \
             Surfacer.debug_params)
     Surfacer.platform_graph_inspector.set_graphs(platform_graphs.values())
-    
-    _parse_squirrel_destinations()
 
 func _destroy() -> void:
     for group in [ \
@@ -52,7 +48,6 @@ func _destroy() -> void:
             player._destroy()
     
     utility_panel.queue_free()
-    squirrel_destinations.clear()
     Surfacer.annotators.on_level_destroyed()
     Surfacer.current_player_for_clicks = null
     
@@ -179,34 +174,3 @@ func set_level_visibility(is_visible: bool) -> void:
             TileMap)
     for node in foregrounds:
         node.visible = is_visible
-
-# FIXME: Decouple this squirrel-specific logic from the rest of the framework.
-func _parse_squirrel_destinations() -> void:
-    squirrel_destinations.clear()
-    var configured_destinations := get_tree().get_nodes_in_group( \
-            SquirrelAway.group_name_squirrel_destinations)
-    if !configured_destinations.empty():
-        assert(configured_destinations.size() == 1)
-        var squirrel_player: SquirrelPlayer = \
-                platform_graphs["squirrel"].collision_params.player
-        for configured_point in configured_destinations[0].get_children():
-            assert(configured_point is Position2D)
-            var destination := \
-                    SurfaceParser.find_closest_position_on_a_surface( \
-                            configured_point.position, \
-                            squirrel_player)
-            squirrel_destinations.push_back(destination)
-    else:
-        for i in range(6):
-            squirrel_destinations.push_back( \
-                    _create_random_squirrel_spawn_position())
-
-func _create_random_squirrel_spawn_position() -> PositionAlongSurface:
-    var bounds := surface_parser.combined_tile_map_rect.grow( \
-            -SquirrelPlayer.SQUIRREL_SPAWN_LEVEL_OUTER_MARGIN)
-    var x := randf() * bounds.size.x + bounds.position.x
-    var y := randf() * bounds.size.y + bounds.position.y
-    var point := Vector2(x, y)
-    return SurfaceParser.find_closest_position_on_a_surface( \
-            point, \
-            fake_players["squirrel"])
