@@ -97,7 +97,6 @@ var platform_graph_inspector: PlatformGraphInspector
 var legend: Legend
 var selection_description: SelectionDescription
 var utility_panel: UtilityPanel
-var welcome_panel: WelcomePanel
 var annotators: Annotators
 
 var ann_defaults := AnnotationElementDefaults.new()
