@@ -22,6 +22,7 @@
 [node name="UtilityPanel" type="VBoxContainer"]
 margin_right = 360.0
 margin_bottom = 684.0
+mouse_filter = 2
 custom_constants/separation = 0
 script = ExtResource( 1 )
 __meta__ = {
@@ -280,8 +281,12 @@ margin_top = 600.0
 margin_right = 180.0
 margin_bottom = 620.0
 rect_min_size = Vector2( 0, 20 )
+mouse_filter = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Footer" type="HBoxContainer" parent="."]
 margin_left = 180.0
@@ -289,6 +294,7 @@ margin_top = 620.0
 margin_right = 360.0
 margin_bottom = 684.0
 rect_min_size = Vector2( 0, 64 )
+mouse_filter = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
 custom_constants/separation = 0
@@ -301,6 +307,7 @@ margin_top = 32.0
 margin_right = 32.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 0 )
+mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
@@ -323,6 +330,7 @@ margin_top = 32.0
 margin_right = 116.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 20, 0 )
+mouse_filter = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
@@ -344,6 +352,7 @@ margin_left = 180.0
 margin_top = 32.0
 margin_right = 180.0
 margin_bottom = 32.0
+mouse_filter = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 

@@ -70,6 +70,7 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
     Gs.remove_gui_to_scale(self)
+    Gs.active_overlays.erase(self)
     Surfacer.platform_graph_inspector = null
     Surfacer.legend = null
     Surfacer.selection_description = null
