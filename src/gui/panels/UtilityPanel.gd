@@ -187,4 +187,4 @@ func _on_GearButton_pressed() -> void:
 
 func _on_PauseButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()
-    Gs.nav.open("pause")
+    Gs.level.pause()
