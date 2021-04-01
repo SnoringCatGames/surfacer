@@ -24,9 +24,10 @@ var preselection_position: PositionAlongSurface
 
 var is_human_player := false
 var is_fake := false
-var is_initialized := false
-var is_navigator_initialized := false
-var is_ready := false
+var _is_initialized := false
+var _is_destroyed := false
+var _is_navigator_initialized := false
+var _is_ready := false
 
 var graph: PlatformGraph
 var surface_parser: SurfaceParser
@@ -131,7 +132,7 @@ func _ready() -> void:
     surface_state.horizontal_facing_sign = 1
     animator.face_right()
     
-    is_ready = true
+    _is_ready = true
     _check_for_initialization_complete()
     
     surface_state.previous_center_position = self.position
@@ -144,6 +145,7 @@ func _ready() -> void:
     _on_resized()
 
 func _destroy() -> void:
+    _is_destroyed = true
     queue_free()
 
 func _on_resized() -> void:
@@ -155,13 +157,13 @@ func init_human_player_state() -> void:
     _set_camera()
     _init_navigator()
     _init_user_controller_action_source()
-    is_navigator_initialized = true
+    _is_navigator_initialized = true
     _check_for_initialization_complete()
 
 func init_computer_player_state() -> void:
     is_human_player = false
     _init_navigator()
-    is_navigator_initialized = true
+    _is_navigator_initialized = true
     _check_for_initialization_complete()
 
 func set_platform_graph(graph: PlatformGraph) -> void:
@@ -171,10 +173,10 @@ func set_platform_graph(graph: PlatformGraph) -> void:
     _check_for_initialization_complete()
 
 func _check_for_initialization_complete() -> void:
-    self.is_initialized = \
+    self._is_initialized = \
             graph != null and \
-            is_navigator_initialized and \
-            is_ready
+            _is_navigator_initialized and \
+            _is_ready
 
 func _set_camera() -> void:
     var camera := Camera2D.new()
@@ -196,7 +198,10 @@ func _physics_process(delta_sec: float) -> void:
         # hood.
         return
     
-    if !is_initialized:
+    if !_is_initialized:
+        return
+    
+    if _is_destroyed:
         return
     
     assert(Gs.geometry.are_floats_equal_with_epsilon( \

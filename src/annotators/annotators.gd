@@ -76,9 +76,7 @@ func on_level_destroyed() -> void:
     Surfacer.annotators.element_annotator.clear()
     for annotator_type in _LEVEL_SPECIFIC_ANNOTATORS:
         if is_annotator_enabled(annotator_type):
-            set_annotator_enabled( \
-                    annotator_type, \
-                    false)
+            _destroy_annotator(annotator_type)
     for player in player_annotators.keys():
         destroy_player_annotator(player)
 
