@@ -184,7 +184,7 @@ func set_level_visibility(is_visible: bool) -> void:
 func _parse_squirrel_destinations() -> void:
     squirrel_destinations.clear()
     var configured_destinations := get_tree().get_nodes_in_group( \
-            Surfacer.group_name_squirrel_destinations)
+            SquirrelAway.group_name_squirrel_destinations)
     if !configured_destinations.empty():
         assert(configured_destinations.size() == 1)
         var squirrel_player: SquirrelPlayer = \

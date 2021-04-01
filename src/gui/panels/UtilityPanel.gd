@@ -60,7 +60,7 @@ func _ready() -> void:
                     Surfacer.annotators.is_annotator_enabled( \
                             AnnotatorType.PLAYER_TRAJECTORY)
     $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
-            LogEventsCheckbox.pressed = Surfacer.is_logging
+            LogEventsCheckbox.pressed = Surfacer.is_surfacer_logging
     
     # Tell the element annotator to populate the legend, now that it's
     # available.
@@ -180,7 +180,7 @@ func _on_player_trajectory_checkbox_toggled(pressed: bool) -> void:
 
 func _on_log_events_checkbox_toggled(pressed: bool) -> void:
     Gs.utils.give_button_press_feedback()
-    Surfacer.is_logging = pressed
+    Surfacer.is_surfacer_logging = pressed
 
 func _on_GearButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()

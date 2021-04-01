@@ -345,14 +345,14 @@ func update( \
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if Surfacer.is_logging and \
+    if Surfacer.is_surfacer_logging and \
             player.movement_params.logs_navigator_events and \
             (player.is_human_player or \
                     player.movement_params.logs_computer_player_events):
         if message_args != null:
-            print(message_template % message_args)
+            Gs.utils.print(message_template % message_args)
         else:
-            print(message_template)
+            Gs.utils.print(message_template)
 
 static func _possibly_backtrack_to_not_protrude_past_surface_end(
         movement_params: MovementParams, \

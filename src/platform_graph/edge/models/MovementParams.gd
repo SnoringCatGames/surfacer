@@ -130,7 +130,7 @@ var calculates_discrete_frame_state := true
 var logs_navigator_events := true
 var logs_player_actions := true
 var logs_inspector_events := true
-var logs_computer_player_events := true
+var logs_computer_player_events := false
 
 var max_horizontal_speed_default: float
 var min_horizontal_speed: float

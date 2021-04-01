@@ -209,9 +209,9 @@ func get_annotation_elements() -> Array:
 func print_msg( \
         message_template: String, \
         message_args = null) -> void:
-    if Surfacer.is_logging and \
+    if Surfacer.is_surfacer_logging and \
             graph.movement_params.logs_inspector_events:
         if message_args != null:
-            print(message_template % message_args)
+            Gs.utils.print(message_template % message_args)
         else:
-            print(message_template)
+            Gs.utils.print(message_template)
