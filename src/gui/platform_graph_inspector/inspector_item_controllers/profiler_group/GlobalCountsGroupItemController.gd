@@ -61,7 +61,7 @@ func _create_children_inner() -> void:
         if InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge_type) >= 0:
             continue
         
-        type_name = EdgeType.get_type_string(edge_type)
+        type_name = EdgeType.get_string(edge_type)
         text = "%s %ss" % [ \
             graph.counts[type_name], \
             type_name, \

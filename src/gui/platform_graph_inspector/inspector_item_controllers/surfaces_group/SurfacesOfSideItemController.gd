@@ -27,18 +27,18 @@ func _init( \
     self.side = side
     self.surfaces_to_surfaces_to_edge_types_to_edges_results = \
             surfaces_to_surfaces_to_edge_types_to_edges_results
-    self.surface_count = graph.counts[SurfaceSide.get_side_string(side)]
+    self.surface_count = graph.counts[SurfaceSide.get_string(side)]
     _post_init()
 
 func to_string() -> String:
     return "%s { surface_count=%s }" % [ \
-        InspectorItemType.get_type_string(type), \
+        InspectorItemType.get_string(type), \
         surface_count, \
     ]
 
 func get_text() -> String:
     return "%ss [%s]" % [ \
-        SurfaceSide.get_side_string(side), \
+        SurfaceSide.get_string(side), \
         surface_count, \
     ]
 

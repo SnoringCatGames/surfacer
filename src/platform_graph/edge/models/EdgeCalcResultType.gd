@@ -18,7 +18,7 @@ enum {
     UNKNOWN,
 }
 
-static func get_type_string(result_type: int) -> String:
+static func get_string(result_type: int) -> String:
     match result_type:
         EDGE_VALID_WITH_ONE_STEP:
             return "EDGE_VALID_WITH_ONE_STEP"
@@ -44,7 +44,7 @@ static func get_type_string(result_type: int) -> String:
             Gs.utils.error("Invalid EdgeCalcResultType: %s" % result_type)
             return "UNKNOWN"
 
-static func get_description_string(result_type: int) -> String:
+static func get_description(result_type: int) -> String:
     match result_type:
         EDGE_VALID_WITH_ONE_STEP:
             return "This edge is valid. It was calculated directly using " + \

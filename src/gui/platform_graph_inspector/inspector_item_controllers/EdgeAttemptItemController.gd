@@ -55,14 +55,14 @@ func _create_children_inner() -> void:
     var description: String
     
     text = "%s(%d,%d): Origin" % [ \
-        SurfaceSide.get_side_prefix(edge_attempt.start_surface.side), \
+        SurfaceSide.get_prefix(edge_attempt.start_surface.side), \
         edge_attempt.start.x, \
         edge_attempt.start.y, \
     ]
     description = \
             "The start position for this edge attempt is %s, along a %s." % [ \
         edge_attempt.start, \
-        SurfaceSide.get_side_string(edge_attempt.start_surface.side), \
+        SurfaceSide.get_string(edge_attempt.start_surface.side), \
     ]
     DescriptionItemController.new( \
             tree_item, \
@@ -73,14 +73,14 @@ func _create_children_inner() -> void:
             get_annotation_elements_funcref)
     
     text = "%s(%d,%d): Destination" % [ \
-        SurfaceSide.get_side_prefix(edge_attempt.end_surface.side), \
+        SurfaceSide.get_prefix(edge_attempt.end_surface.side), \
         edge_attempt.end.x, \
         edge_attempt.end.y, \
     ]
     description = \
             "The end position for this edge attempt is %s, along a %s." % [ \
         edge_attempt.end, \
-        SurfaceSide.get_side_string(edge_attempt.end_surface.side), \
+        SurfaceSide.get_string(edge_attempt.end_surface.side), \
     ]
     DescriptionItemController.new( \
             tree_item, \

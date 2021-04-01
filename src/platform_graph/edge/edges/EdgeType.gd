@@ -14,7 +14,7 @@ enum {
     UNKNOWN,
 }
 
-static func get_type_string(type: int) -> String:
+static func get_string(type: int) -> String:
     match type:
         AIR_TO_AIR_EDGE:
             return "AIR_TO_AIR_EDGE"
@@ -42,7 +42,7 @@ static func get_type_string(type: int) -> String:
             Gs.utils.error("Invalid EdgeType: %s" % type)
             return "???"
 
-static func get_description_string(type: int) -> String:
+static func get_description(type: int) -> String:
     match type:
         AIR_TO_AIR_EDGE:
             return "An AIR_TO_AIR_EDGE represents movement from one air " + \

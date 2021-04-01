@@ -36,8 +36,8 @@ func _init( \
 
 func to_string() -> String:
     return "%s { edge_step_calc_result_type=%s }" % [ \
-        InspectorItemType.get_type_string(type), \
-        EdgeStepCalcResultType.get_type_string( \
+        InspectorItemType.get_string(type), \
+        EdgeStepCalcResultType.get_string( \
                 step_result_metadata.edge_step_calc_result_type), \
     ]
 

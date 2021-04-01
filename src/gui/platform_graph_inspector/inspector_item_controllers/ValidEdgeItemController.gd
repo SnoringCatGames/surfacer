@@ -22,8 +22,8 @@ func _init( \
 
 func to_string() -> String:
     return "%s { %s [%s, %s] }" % [ \
-        InspectorItemType.get_type_string(type), \
-        EdgeType.get_type_string(edge.edge_type), \
+        InspectorItemType.get_string(type), \
+        EdgeType.get_string(edge.edge_type), \
         str(edge.start), \
         str(edge.end), \
     ]
@@ -36,7 +36,7 @@ func get_text() -> String:
 
 func get_description() -> String:
     return ("This %s consists of %s horizontal instructions.") % [ \
-        EdgeType.get_type_string(edge.edge_type), \
+        EdgeType.get_string(edge.edge_type), \
         edge.trajectory.horizontal_instructions.size() if \
         edge.trajectory != null else \
         1, \

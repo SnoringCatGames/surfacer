@@ -529,7 +529,7 @@ func _update_counts() -> void:
     
     for surface in surfaces_set:
         # Increment the surface counts.
-        surface_side_string = SurfaceSide.get_side_string(surface.side)
+        surface_side_string = SurfaceSide.get_string(surface.side)
         counts[surface_side_string] += 1
         counts.total_surfaces += 1
         

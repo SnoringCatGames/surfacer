@@ -40,7 +40,7 @@ func _init( \
 
 func to_string() -> String:
     return "%s { text=%s }" % [ \
-        InspectorItemType.get_type_string(type), \
+        InspectorItemType.get_string(type), \
         text, \
     ]
 

@@ -29,16 +29,16 @@ func _init( \
 
 func to_string() -> String:
     return "%s { %s; [%s] %s; [%s, %s] }" % [ \
-        InspectorItemType.get_type_string(type), \
-        EdgeType.get_type_string(failed_edge_attempt.edge_type), \
+        InspectorItemType.get_string(type), \
+        EdgeType.get_string(failed_edge_attempt.edge_type), \
         "BP" if \
         failed_edge_attempt.is_broad_phase_failure else \
         "NP", \
-        EdgeCalcResultType.get_type_string( \
+        EdgeCalcResultType.get_string( \
                 failed_edge_attempt.edge_calc_result_type) if \
         failed_edge_attempt.edge_calc_result_type != \
                 EdgeCalcResultType.WAYPOINT_INVALID else \
-        WaypointValidity.get_type_string( \
+        WaypointValidity.get_string( \
                 failed_edge_attempt.waypoint_validity), \
         str(failed_edge_attempt.start), \
         str(failed_edge_attempt.end), \
@@ -49,11 +49,11 @@ func get_text() -> String:
         "BP" if \
         failed_edge_attempt.is_broad_phase_failure else \
         "NP", \
-        EdgeCalcResultType.get_type_string( \
+        EdgeCalcResultType.get_string( \
                 failed_edge_attempt.edge_calc_result_type) if \
         failed_edge_attempt.edge_calc_result_type != \
                 EdgeCalcResultType.WAYPOINT_INVALID else \
-        WaypointValidity.get_type_string( \
+        WaypointValidity.get_string( \
                 failed_edge_attempt.waypoint_validity), \
         str(failed_edge_attempt.start), \
         str(failed_edge_attempt.end), \

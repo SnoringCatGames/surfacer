@@ -40,9 +40,9 @@ func to_string() -> String:
                 "end: %s " + \
             "}" % \
             [ \
-                EdgeCalcResultType.get_type_string(edge_calc_result_type), \
-                EdgeType.get_type_string(edge_type), \
-                WaypointValidity.get_type_string(waypoint_validity), \
+                EdgeCalcResultType.get_string(edge_calc_result_type), \
+                EdgeType.get_string(edge_type), \
+                WaypointValidity.get_string(waypoint_validity), \
                 str(jump_land_positions.jump_position.target_point), \
                 str(jump_land_positions.land_position.target_point), \
             ]

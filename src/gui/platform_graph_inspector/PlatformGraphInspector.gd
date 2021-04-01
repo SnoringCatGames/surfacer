@@ -436,7 +436,7 @@ func _on_find_and_expand_complete( \
         metadata: Dictionary) -> void:
     print_msg("Inspector search complete: player_name=%s, search_type=%s", [ \
         player_name, \
-        InspectorSearchType.get_type_string(search_type), \
+        InspectorSearchType.get_string(search_type), \
     ])
     
     var item := get_selected()
@@ -462,7 +462,7 @@ func _on_find_and_expand_complete( \
             assert(controller.type == InspectorItemType.EDGES_GROUP)
         _:
             Gs.utils.error("Invalid InspectorSearchType: %s" % \
-                    InspectorSearchType.get_type_string(search_type))
+                    InspectorSearchType.get_string(search_type))
     
     if selection_failure_message != "":
         Surfacer.selection_description.set_text(selection_failure_message)

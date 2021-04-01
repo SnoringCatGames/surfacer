@@ -34,10 +34,10 @@ func to_string() -> String:
             "waypoint_validity=%s, " + \
             "step_count=%s " + \
             "}") % [ \
-        InspectorItemType.get_type_string(type), \
-        EdgeCalcResultType.get_type_string( \
+        InspectorItemType.get_string(type), \
+        EdgeCalcResultType.get_string( \
                 edge_result_metadata.edge_calc_result_type), \
-        WaypointValidity.get_type_string( \
+        WaypointValidity.get_string( \
                 edge_result_metadata.waypoint_validity), \
         edge_result_metadata.total_step_count, \
     ]
@@ -45,22 +45,22 @@ func to_string() -> String:
 func get_text() -> String:
     return "%s (%s) [%s]" % [ \
         PREFIX, \
-        EdgeCalcResultType.get_type_string( \
+        EdgeCalcResultType.get_string( \
                 edge_result_metadata.edge_calc_result_type) if \
         edge_result_metadata.edge_calc_result_type != \
                 EdgeCalcResultType.WAYPOINT_INVALID else \
-        WaypointValidity.get_type_string( \
+        WaypointValidity.get_string( \
                 edge_result_metadata.waypoint_validity), \
         edge_result_metadata.total_step_count, \
     ]
 
 func get_description() -> String:
     return "Calculation details for this edge. " + \
-            (EdgeCalcResultType.get_description_string( \
+            (EdgeCalcResultType.get_description( \
                     edge_result_metadata.edge_calc_result_type) if \
             edge_result_metadata.edge_calc_result_type != \
                     EdgeCalcResultType.WAYPOINT_INVALID else \
-            WaypointValidity.get_description_string( \
+            WaypointValidity.get_description( \
                     edge_result_metadata.waypoint_validity))
 
 func find_and_expand_controller( \

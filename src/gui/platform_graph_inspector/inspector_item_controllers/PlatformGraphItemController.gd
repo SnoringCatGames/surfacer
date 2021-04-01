@@ -42,7 +42,7 @@ func get_description() -> String:
 
 func to_string() -> String:
     return "%s { player_name=%s }" % [ \
-        InspectorItemType.get_type_string(type), \
+        InspectorItemType.get_string(type), \
         graph.movement_params.name, \
     ]
 
@@ -87,7 +87,7 @@ func _find_and_expand_controller_recursive( \
         
         _:
             Gs.utils.error("Invalid InspectorSearchType: %s" % \
-                    InspectorSearchType.get_type_string(search_type))
+                    InspectorSearchType.get_string(search_type))
 
 func _create_children_inner() -> void:
     edges_item_controller = EdgesGroupItemController.new( \

@@ -42,7 +42,7 @@ func get_description() -> String:
 
 func to_string() -> String:
     return "%s { count=%s }" % [ \
-        InspectorItemType.get_type_string(type), \
+        InspectorItemType.get_string(type), \
         graph.counts.total_edges, \
     ]
 
