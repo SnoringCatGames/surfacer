@@ -394,16 +394,19 @@ func _calculate_inter_surface_edges_total() -> void:
         _calculate_inter_surface_edges_subset(-1)
 
 func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
+    var thread_id := \
+            "parse_edges:" + str(thread_index) if \
+            thread_index >= 0 else \
+            Gs.profiler.DEFAULT_THREAD_ID
+    OS.set_thread_name(thread_id)
+    
     var collision_params_for_thread := CollisionCalcParams.new( \
             {}, \
             null, \
             null, \
             null)
     collision_params_for_thread.copy(collision_params)
-    collision_params_for_thread.thread_id = \
-            "parse_edges:" + str(thread_index) if \
-            thread_index >= 0 else \
-            Gs.profiler.DEFAULT_THREAD_ID
+    collision_params_for_thread.thread_id = thread_id
     
     var surfaces_in_fall_range_set := {}
     var surfaces_in_jump_range_set := {}
