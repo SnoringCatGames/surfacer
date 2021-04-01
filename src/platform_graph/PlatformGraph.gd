@@ -374,7 +374,7 @@ func _calculate_inter_surface_edges_total() -> void:
     for origin_surface in surfaces_set:
         surfaces_to_inter_surface_edges_results[origin_surface] = []
     
-    if Gs.uses_threads:
+    if Surfacer.uses_threads_for_platform_graph_calculation:
         var threads := []
         threads.resize(Gs.thread_count)
         

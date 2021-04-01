@@ -4,6 +4,7 @@ extends Node
 var is_inspector_enabled: bool
 var is_logging: bool
 var utility_panel_starts_open: bool
+var uses_threads_for_platform_graph_calculation: bool
 
 var debug_params := {
 #    limit_parsing = {
@@ -145,5 +146,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.is_inspector_enabled = manifest.is_inspector_enabled
     self.is_logging = manifest.is_surfacer_logging
     self.utility_panel_starts_open = manifest.utility_panel_starts_open
+    self.uses_threads_for_platform_graph_calculation = \
+            uses_threads_for_platform_graph_calculation
     Gs.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
     Gs.profiler.preregister_metric_keys(surface_parser_metric_keys)
