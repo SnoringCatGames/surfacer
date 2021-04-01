@@ -44,19 +44,19 @@ func start() -> void:
     
     _parse_squirrel_destinations()
 
-func _exit_tree() -> void:
-    utility_panel.queue_free()
-    Surfacer.annotators.on_level_destroyed()
-    Surfacer.current_player_for_clicks = null
-    squirrel_destinations.clear()
-
 func _destroy() -> void:
-    ._destroy()
     for group in [ \
             Surfacer.group_name_human_players, \
             Surfacer.group_name_computer_players]:
         for player in get_tree().get_nodes_in_group(group):
             player._destroy()
+    
+    utility_panel.queue_free()
+    squirrel_destinations.clear()
+    Surfacer.annotators.on_level_destroyed()
+    Surfacer.current_player_for_clicks = null
+    
+    ._destroy()
 
 func quit(immediately := true) -> void:
     .quit(immediately)

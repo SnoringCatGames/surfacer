@@ -9,7 +9,7 @@ static func calculate_horizontal_step( \
         step_calc_params: EdgeStepCalcParams, \
         edge_calc_params: EdgeCalcParams) -> EdgeStep:
     Gs.profiler.start( \
-            SurfacerProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+            "calculate_horizontal_step", \
             edge_calc_params.collision_params.thread_id)
     
     var movement_params := edge_calc_params.movement_params
@@ -41,7 +41,7 @@ static func calculate_horizontal_step( \
     if min_and_max_velocity_at_step_end.empty():
         # This waypoint cannot be reached.
         Gs.profiler.stop_with_optional_metadata( \
-                SurfacerProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+                "calculate_horizontal_step", \
                 edge_calc_params.collision_params.thread_id, \
                 edge_result_metadata)
         return null
@@ -86,7 +86,7 @@ static func calculate_horizontal_step( \
         # have failed earlier during waypoint calculations.
         Gs.utils.error()
         Gs.profiler.stop_with_optional_metadata( \
-                SurfacerProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+                "calculate_horizontal_step", \
                 edge_calc_params.collision_params.thread_id, \
                 edge_result_metadata)
         return null
@@ -176,7 +176,7 @@ static func calculate_horizontal_step( \
     end_waypoint.actual_velocity_x = velocity_end_x
     
     Gs.profiler.stop_with_optional_metadata( \
-            SurfacerProfilerMetric.CALCULATE_HORIZONTAL_STEP, \
+            "calculate_horizontal_step", \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     

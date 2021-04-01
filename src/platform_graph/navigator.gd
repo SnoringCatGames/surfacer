@@ -40,7 +40,7 @@ func _init( \
 func navigate_to_position( \
         destination: PositionAlongSurface, \
         is_retry := false) -> bool:
-    Gs.profiler.start(SurfacerProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
+    Gs.profiler.start("navigator_navigate_to_position")
     
     # Nudge the destination away from any concave neighbor surfaces, if
     # necessary.
@@ -50,10 +50,10 @@ func navigate_to_position( \
                     player.movement_params, \
                     destination)
     
-    Gs.profiler.start(SurfacerProfilerMetric.NAVIGATOR_FIND_PATH)
+    Gs.profiler.start("navigator_find_path")
     var path := find_path(destination)
     var duration_find_path: float = \
-            Gs.profiler.stop(SurfacerProfilerMetric.NAVIGATOR_FIND_PATH)
+            Gs.profiler.stop("navigator_find_path")
     
     var previous_navigation_attempt_count := current_navigation_attempt_count
     reset()
@@ -62,7 +62,7 @@ func navigate_to_position( \
     
     if path == null:
         # Destination cannot be reached from origin.
-        Gs.profiler.stop(SurfacerProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
+        Gs.profiler.stop("navigator_navigate_to_position")
         print_msg("CANNOT NAVIGATE TO TARGET: %s", destination.to_string())
         return false
         
@@ -73,13 +73,13 @@ func navigate_to_position( \
                 graph.collision_params, \
                 path)
         
-        Gs.profiler.start(SurfacerProfilerMetric.NAVIGATOR_OPTIMIZE_EDGES_FOR_APPROACH)
+        Gs.profiler.start("navigator_optimize_edges_for_approach")
         _optimize_edges_for_approach( \
                 graph.collision_params, \
                 path, \
                 player.velocity)
         var duration_optimize_edges_for_approach: float = Gs.profiler.stop( \
-                SurfacerProfilerMetric.NAVIGATOR_OPTIMIZE_EDGES_FOR_APPROACH)
+                "navigator_optimize_edges_for_approach")
         
         current_destination = destination
         current_path = path
@@ -89,7 +89,7 @@ func navigate_to_position( \
         current_navigation_attempt_count += 1
         
         var duration_navigate_to_position: float = \
-                Gs.profiler.stop(SurfacerProfilerMetric.NAVIGATOR_NAVIGATE_TO_POSITION)
+                Gs.profiler.stop("navigator_navigate_to_position")
         
         var format_string_template := "STARTING PATH NAV:   %8.3fs; {" + \
             "\n\tdestination: %s," + \
@@ -214,7 +214,7 @@ func reset() -> void:
 func _start_edge( \
         index: int, \
         is_starting_navigation_retry := false) -> void:
-    Gs.profiler.start(SurfacerProfilerMetric.NAVIGATOR_START_EDGE)
+    Gs.profiler.start("navigator_start_edge")
     
     current_edge_index = index
     current_edge = current_path.edges[index]
@@ -235,7 +235,7 @@ func _start_edge( \
             Gs.time.elapsed_play_time_actual_sec)
     
     var duration_start_edge: float = \
-            Gs.profiler.stop(SurfacerProfilerMetric.NAVIGATOR_START_EDGE)
+            Gs.profiler.stop("navigator_start_edge")
     
     var format_string_template := \
             "STARTING EDGE NAV:   %8.3fs; %s; calc duration=%sms"

@@ -116,8 +116,7 @@ static func calculate_steps_between_waypoints( \
         # An error occured during collision detection, so we abandon this step
         # calculation.
         Gs.profiler.increment_count( \
-                SurfacerProfilerMetric \
-                        .INVALID_COLLISION_STATE_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
+                "invalid_collision_state_in_calculate_steps_between_waypoints", \
                 edge_calc_params.collision_params.thread_id, \
                 edge_result_metadata)
         if step_result_metadata != null:
@@ -138,8 +137,7 @@ static func calculate_steps_between_waypoints( \
                 edge_calc_params)
     
     Gs.profiler.increment_count( \
-            SurfacerProfilerMetric \
-                    .COLLISION_IN_CALCULATE_STEPS_BETWEEN_WAYPOINTS, \
+            "collision_in_calculate_steps_between_waypoints", \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     
@@ -263,8 +261,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> EdgeCalcResult:
     Gs.profiler.increment_count( \
-            SurfacerProfilerMetric \
-                    .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITHOUT_BACKTRACKING_ON_HEIGHT, \
+            "calculate_steps_between_waypoints_without_backtracking_on_height", \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     
@@ -611,8 +608,7 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         step_calc_params: EdgeStepCalcParams, \
         waypoints: Array) -> EdgeCalcResult:
     Gs.profiler.increment_count( \
-            SurfacerProfilerMetric \
-                    .CALCULATE_STEPS_BETWEEN_WAYPOINTS_WITH_BACKTRACKING_ON_HEIGHT, \
+            "calculate_steps_between_waypoints_with_backtracking_on_height", \
             edge_calc_params.collision_params.thread_id, \
             edge_result_metadata)
     
