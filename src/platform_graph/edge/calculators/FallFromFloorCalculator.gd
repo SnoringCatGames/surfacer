@@ -118,7 +118,7 @@ func _get_all_edges_from_one_side( \
             exclusive_land_position != null)
     
     Gs.profiler.start( \
-            SurfacerProfilerMetric.FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION, \
+            "fall_from_floor_walk_to_fall_off_point_calculation", \
             collision_params.thread_id)
     
     var debug_params := collision_params.debug_params
@@ -147,8 +147,7 @@ func _get_all_edges_from_one_side( \
             null, \
             null):
         Gs.profiler.stop( \
-                SurfacerProfilerMetric \
-                        .FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION, \
+                "fall_from_floor_walk_to_fall_off_point_calculation", \
                 collision_params.thread_id, \
                 records_profile)
         return
@@ -200,8 +199,7 @@ func _get_all_edges_from_one_side( \
     var fall_off_point_velocity_start := Vector2(velocity_x_fall_off, 0.0)
     
     Gs.profiler.stop( \
-            SurfacerProfilerMetric \
-                    .FALL_FROM_FLOOR_WALK_TO_FALL_OFF_POINT_CALCULATION, \
+            "fall_from_floor_walk_to_fall_off_point_calculation", \
             collision_params.thread_id, \
             records_profile)
     

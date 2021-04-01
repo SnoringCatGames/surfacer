@@ -497,7 +497,7 @@ func get_surfaces_in_jump_and_fall_range( \
     # Get all surfaces that are within fall range from either end of the origin
     # surface.
     Gs.profiler.start( \
-            SurfacerProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
+            "find_surfaces_in_jump_fall_range_from_surface", \
             collision_params.thread_id)
     FallMovementUtils.find_surfaces_in_fall_range_from_surface( \
             movement_params, \
@@ -506,7 +506,7 @@ func get_surfaces_in_jump_and_fall_range( \
             surfaces_in_jump_range_result_set, \
             origin_surface)
     Gs.profiler.stop( \
-            SurfacerProfilerMetric.FIND_SURFACES_IN_JUMP_FALL_RANGE_FROM_SURFACE, \
+            "find_surfaces_in_jump_fall_range_from_surface", \
             collision_params.thread_id)
 
 func _update_counts() -> void:

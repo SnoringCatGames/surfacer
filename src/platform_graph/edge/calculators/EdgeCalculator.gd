@@ -82,7 +82,7 @@ static func create_edge_calc_params(
         needs_extra_jump_duration: bool, \
         needs_extra_wall_land_horizontal_speed: bool) -> EdgeCalcParams:
     Gs.profiler.start( \
-            SurfacerProfilerMetric.CREATE_EDGE_CALC_PARAMS, \
+            "create_edge_calc_params", \
             collision_params.thread_id)
     
     # When landing on a wall, ensure that we end with velocity moving into the
@@ -118,7 +118,7 @@ static func create_edge_calc_params(
         # Cannot reach destination from origin (edge_result_metadata already
         # updated).
         Gs.profiler.stop_with_optional_metadata( \
-                SurfacerProfilerMetric.CREATE_EDGE_CALC_PARAMS, \
+                "create_edge_calc_params", \
                 collision_params.thread_id, \
                 edge_result_metadata)
         return null
@@ -135,7 +135,7 @@ static func create_edge_calc_params(
             can_hold_jump_button)
     
     Gs.profiler.stop_with_optional_metadata( \
-            SurfacerProfilerMetric.CREATE_EDGE_CALC_PARAMS, \
+            "create_edge_calc_params", \
             collision_params.thread_id, \
             edge_result_metadata)
     return edge_calc_params
@@ -149,7 +149,7 @@ static func broad_phase_check( \
         other_valid_jump_land_position_results: Array, \
         allows_close_jump_positions: bool) -> bool:
     Gs.profiler.start( \
-            SurfacerProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
+            "edge_calc_broad_phase_check", \
             collision_params.thread_id)
     
     ###########################################################################
@@ -163,7 +163,7 @@ static func broad_phase_check( \
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.SKIPPED_FOR_DEBUGGING
         Gs.profiler.stop( \
-                SurfacerProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
+                "edge_calc_broad_phase_check", \
                 collision_params.thread_id)
         return false
     ###########################################################################
@@ -175,7 +175,7 @@ static func broad_phase_check( \
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.LESS_LIKELY_TO_BE_VALID
         Gs.profiler.stop( \
-                SurfacerProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
+                "edge_calc_broad_phase_check", \
                 collision_params.thread_id)
         return false
     
@@ -190,12 +190,12 @@ static func broad_phase_check( \
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.CLOSE_TO_PREVIOUS_EDGE
         Gs.profiler.stop( \
-                SurfacerProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
+                "edge_calc_broad_phase_check", \
                 collision_params.thread_id)
         return false
     
     Gs.profiler.stop( \
-            SurfacerProfilerMetric.EDGE_CALC_BROAD_PHASE_CHECK, \
+            "edge_calc_broad_phase_check", \
             collision_params.thread_id)
     return true
 

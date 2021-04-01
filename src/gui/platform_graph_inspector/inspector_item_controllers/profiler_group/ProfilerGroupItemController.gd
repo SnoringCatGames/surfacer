@@ -40,9 +40,8 @@ func find_and_expand_controller( \
     return false
 
 func _create_children_inner() -> void:
-    var surface_parser_values := SurfacerProfilerMetric.surface_parser_values()
-    for metric in SurfacerProfilerMetric.values():
-        if surface_parser_values.find(metric) >= 0:
+    for metric in Gs.profiler.get_preregistered_metric_keys():
+        if Surfacer.surface_parser_metric_keys.find(metric) >= 0:
             continue
         if Gs.profiler.is_timing(metric):
             ProfilerTimingItemController.new( \

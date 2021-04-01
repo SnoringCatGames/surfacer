@@ -144,7 +144,7 @@ func _ready() -> void:
     _on_resized()
 
 func _destroy() -> void:
-    pass
+    queue_free()
 
 func _on_resized() -> void:
     Gs.camera_controller.update_zoom()

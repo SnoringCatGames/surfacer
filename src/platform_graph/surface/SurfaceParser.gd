@@ -100,70 +100,68 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     var left_walls := []
     var right_walls := []
     
-    Gs.profiler.start(SurfacerProfilerMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
+    Gs.profiler.start("parse_tile_map_into_sides_duration")
     _parse_tile_map_into_sides( \
             tile_map, \
             floors, \
             ceilings, \
             left_walls, \
             right_walls)
-    Gs.profiler.stop(SurfacerProfilerMetric.PARSE_TILE_MAP_INTO_SIDES_DURATION)
+    Gs.profiler.stop("parse_tile_map_into_sides_duration")
     
-    Gs.profiler.start(SurfacerProfilerMetric.REMOVE_INTERNAL_SURFACES_DURATION)
+    Gs.profiler.start("remove_internal_surfaces_duration")
     _remove_internal_surfaces( \
             floors, \
             ceilings)
     _remove_internal_surfaces( \
             left_walls, \
             right_walls)
-    Gs.profiler.stop(SurfacerProfilerMetric.REMOVE_INTERNAL_SURFACES_DURATION)
+    Gs.profiler.stop("remove_internal_surfaces_duration")
     
-    Gs.profiler.start(SurfacerProfilerMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
+    Gs.profiler.start("merge_continuous_surfaces_duration")
     _merge_continuous_surfaces(floors)
     _merge_continuous_surfaces(ceilings)
     _merge_continuous_surfaces(left_walls)
     _merge_continuous_surfaces(right_walls)
-    Gs.profiler.stop(SurfacerProfilerMetric.MERGE_CONTINUOUS_SURFACES_DURATION)
+    Gs.profiler.stop("merge_continuous_surfaces_duration")
     
-    Gs.profiler.start(SurfacerProfilerMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
+    Gs.profiler.start("remove_internal_collinear_vertices_duration")
     _remove_internal_collinear_vertices(floors)
     _remove_internal_collinear_vertices(ceilings)
     _remove_internal_collinear_vertices(left_walls)
     _remove_internal_collinear_vertices(right_walls)
-    Gs.profiler.stop(SurfacerProfilerMetric.REMOVE_INTERNAL_COLLINEAR_VERTICES_DURATION)
+    Gs.profiler.stop("remove_internal_collinear_vertices_duration")
     
-    Gs.profiler.start(SurfacerProfilerMetric.STORE_SURFACES_DURATION)
+    Gs.profiler.start("store_surfaces_duration")
     _store_surfaces( \
             tile_map, \
             floors, \
             ceilings, \
             left_walls, \
             right_walls)
-    Gs.profiler.stop(SurfacerProfilerMetric.STORE_SURFACES_DURATION)
+    Gs.profiler.stop("store_surfaces_duration")
     
-    Gs.profiler.start(SurfacerProfilerMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
+    Gs.profiler.start("assign_neighbor_surfaces_duration")
     _assign_neighbor_surfaces( \
             self.floors, \
             self.ceilings, \
             self.left_walls, \
             self.right_walls)
-    Gs.profiler.stop(SurfacerProfilerMetric.ASSIGN_NEIGHBOR_SURFACES_DURATION)
+    Gs.profiler.stop("assign_neighbor_surfaces_duration")
     
-    Gs.profiler.start(SurfacerProfilerMetric \
-            .CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION)
+    Gs.profiler.start("calculate_shape_bounding_boxes_for_surfaces_duration")
     # Since this calculation will loop around transitive neigbors, and since
     # every surface should be connected transitively to a floor, it should also
     # end up recording the bounding box for all other surface sides too.
     _calculate_shape_bounding_boxes_for_surfaces(self.floors)
-    Gs.profiler.stop(SurfacerProfilerMetric \
-            .CALCULATE_SHAPE_BOUNDING_BOXES_FOR_SURFACES_DURATION)
+    Gs.profiler.stop("calculate_shape_bounding_boxes_for_surfaces_duration")
     
-    Gs.profiler.start(SurfacerProfilerMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
+    Gs.profiler.start("assert_surfaces_fully_calculated_duration")
     _assert_surfaces_fully_calculated(self.floors)
     _assert_surfaces_fully_calculated(self.ceilings)
     _assert_surfaces_fully_calculated(self.left_walls)
     _assert_surfaces_fully_calculated(self.right_walls)
-    Gs.profiler.stop(SurfacerProfilerMetric.ASSERT_SURFACES_FULLY_CALCULATED_DURATION)
+    Gs.profiler.stop("assert_surfaces_fully_calculated_duration")
 
 func _store_surfaces( \
         tile_map: TileMap, \

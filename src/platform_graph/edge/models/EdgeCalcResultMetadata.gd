@@ -13,7 +13,7 @@ var edge_calc_result_type := EdgeCalcResultType.UNKNOWN
 var waypoint_validity := WaypointValidity.UNKNOWN
 
 # Miscellaneous timings used for profiling calculation performance.
-# Dictionary<SurfacerProfilerMetric, Array<float>>
+# Dictionary<String, Array<float>>
 var timings := {}
 
 # Miscellaneous counts used for profiling calculation performance.

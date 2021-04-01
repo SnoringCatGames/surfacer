@@ -11,7 +11,7 @@ static func calculate_trajectory_from_calculation_steps( \
         calc_result: EdgeCalcResult, \
         instructions: EdgeInstructions) -> EdgeTrajectory:
     Gs.profiler.start( \
-            SurfacerProfilerMetric.CALCULATE_TRAJECTORY_FROM_CALCULATION_STEPS, \
+            "calculate_trajectory_from_calculation_steps", \
             collision_params.thread_id)
     
     var edge_calc_params := calc_result.edge_calc_params
@@ -51,7 +51,7 @@ static func calculate_trajectory_from_calculation_steps( \
                         edge_calc_params.destination_waypoint.surface))
     
     Gs.profiler.stop_with_optional_metadata( \
-            SurfacerProfilerMetric.CALCULATE_TRAJECTORY_FROM_CALCULATION_STEPS, \
+            "calculate_trajectory_from_calculation_steps", \
             collision_params.thread_id, \
             records_profile_or_edge_result_metadata)
     
