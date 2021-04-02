@@ -10,6 +10,7 @@ var _PLAYER_SUB_ANNOTATORS := [
 
 var _LEVEL_SPECIFIC_ANNOTATORS := [
     AnnotatorType.LEVEL,
+    AnnotatorType.SURFACES,
     AnnotatorType.GRID_INDICES,
     AnnotatorType.SURFACE_SELECTION,
 ]
@@ -17,6 +18,7 @@ var _LEVEL_SPECIFIC_ANNOTATORS := [
 # Dictionary<AnnotatorType, bool>
 const _DEFAULT_ENABLEMENT := {
     AnnotatorType.RULER: false,
+    AnnotatorType.SURFACES: false,
     AnnotatorType.GRID_INDICES: false,
     AnnotatorType.LEVEL: true,
     AnnotatorType.PLAYER: true,
@@ -28,6 +30,7 @@ const _DEFAULT_ENABLEMENT := {
 }
 
 var ruler_annotator: RulerAnnotator
+var surfaces_annotator: SurfacesAnnotator
 var grid_indices_annotator: GridIndicesAnnotator
 var surface_selection_annotator: SurfaceSelectionAnnotator
 var surface_preselection_annotator: SurfacePreselectionAnnotator
@@ -134,6 +137,12 @@ func _create_annotator(annotator_type: int) -> void:
         AnnotatorType.RULER:
             ruler_annotator = RulerAnnotator.new()
             ruler_layer.add_child(ruler_annotator)
+        AnnotatorType.SURFACES:
+            if Gs.level != null and \
+                    Gs.level.surface_parser != null:
+                surfaces_annotator = \
+                        SurfacesAnnotator.new(Gs.level.surface_parser)
+                annotation_layer.add_child(surfaces_annotator)
         AnnotatorType.GRID_INDICES:
             if Gs.level != null and \
                     Gs.level.surface_parser != null:
@@ -166,6 +175,10 @@ func _destroy_annotator(annotator_type: int) -> void:
             if ruler_annotator != null:
                 ruler_annotator.queue_free()
                 ruler_annotator = null
+        AnnotatorType.SURFACES:
+            if surfaces_annotator != null:
+                surfaces_annotator.queue_free()
+                surfaces_annotator = null
         AnnotatorType.GRID_INDICES:
             if grid_indices_annotator != null:
                 grid_indices_annotator.queue_free()

@@ -13,8 +13,9 @@ var _checkbox_control_item_classes := [
     PlayerAnnotatorSettingsLabeledControlItem,
     PlayerPositionAnnotatorSettingsLabeledControlItem,
     PlayerTrajectoryAnnotatorSettingsLabeledControlItem,
-    RulerAnnotatorSettingsLabeledControlItem,
+    SurfacesAnnotatorSettingsLabeledControlItem,
     LevelAnnotatorSettingsLabeledControlItem,
+    RulerAnnotatorSettingsLabeledControlItem,
     LogSurfacerEventsSettingsLabeledControlItem,
 ]
 
@@ -147,6 +148,8 @@ func _toggle_open() -> void:
     Gs.active_overlays.erase(self)
     if is_open:
         Gs.active_overlays.push_back(self)
+    
+    Gs.utils.release_focus()
 
 func _set_footer_visibility(is_visible: bool) -> void:
     $Spacer.visible = is_visible
