@@ -85,8 +85,7 @@ func _init() -> void:
             "_on_tree_item_expansion_toggled")
 
 func _ready() -> void:
-    if !Surfacer.is_inspector_enabled:
-        return
+    assert(Surfacer.is_inspector_enabled)
     
     inspector_selector = PlatformGraphInspectorSelector.new(self)
     Gs.canvas_layers.layers.annotation \
@@ -101,9 +100,6 @@ func _gui_input(event: InputEvent) -> void:
     accept_event()
 
 func _populate() -> void:
-    if !Surfacer.is_inspector_enabled:
-        return
-    
     _should_be_populated = true
     
     if root == null:
@@ -120,18 +116,12 @@ func _populate() -> void:
         call_deferred("_select_initial_item")
 
 func clear() -> void:
-    if !Surfacer.is_inspector_enabled:
-        return
-    
     Gs.utils.release_focus(self)
     _clear_selection()
     _should_be_populated = false
     .clear()
 
 func collapse() -> void:
-    if !Surfacer.is_inspector_enabled:
-        return
-    
     for graph_item_controller in graph_item_controllers.values():
         graph_item_controller.collapse()
     
@@ -139,9 +129,6 @@ func collapse() -> void:
     _clear_selection()
 
 func set_graphs(graphs: Array) -> void:
-    if !Surfacer.is_inspector_enabled:
-        return
-    
     self.graphs = graphs
     if _should_be_populated:
         if !self.graphs.empty():
@@ -154,7 +141,7 @@ func select_first_item() -> void:
         graph_item_controllers.values().front().select()
 
 func _select_initial_item() -> void:
-    if !Surfacer.utility_panel.is_open:
+    if !Surfacer.get_is_inspector_panel_open():
         # Don't auto-select anything if the panel isn't open.
         return
     
@@ -312,8 +299,8 @@ func select_edge_or_surface( \
         end_position: PositionAlongSurface, \
         edge_type: int, \
         graph: PlatformGraph) -> void:
-    # Ensure that the utility panel is open.
-    Surfacer.utility_panel.is_open = true
+    # Ensure that the inspector panel is open.
+    Surfacer.inspector_panel.is_open = true
     
     if start_position.surface == end_position.surface:
         _select_canonical_origin_surface_item_controller( \

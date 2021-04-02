@@ -4,6 +4,7 @@ enum {
     RULER,
     GRID_INDICES,
     LEVEL,
+    PLAYER,
     PLAYER_POSITION,
     PLAYER_TRAJECTORY,
     NAVIGATOR,
@@ -20,6 +21,8 @@ static func get_string(type: int) -> String:
             return "GRID_INDICES"
         LEVEL:
             return "LEVEL"
+        PLAYER:
+            return "PLAYER"
         PLAYER_POSITION:
             return "PLAYER_POSITION"
         PLAYER_TRAJECTORY:

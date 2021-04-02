@@ -2,6 +2,7 @@ class_name Annotators
 extends Node2D
 
 var _PLAYER_SUB_ANNOTATORS := [
+    AnnotatorType.PLAYER,
     AnnotatorType.PLAYER_POSITION,
     AnnotatorType.PLAYER_TRAJECTORY,
     AnnotatorType.NAVIGATOR,
@@ -18,6 +19,7 @@ const _DEFAULT_ENABLEMENT := {
     AnnotatorType.RULER: false,
     AnnotatorType.GRID_INDICES: false,
     AnnotatorType.LEVEL: true,
+    AnnotatorType.PLAYER: true,
     AnnotatorType.PLAYER_POSITION: false,
     AnnotatorType.PLAYER_TRAJECTORY: true,
     AnnotatorType.NAVIGATOR: true,
