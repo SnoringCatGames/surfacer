@@ -11,10 +11,10 @@ var _toggle_open_tween: Tween
 
 var _checkbox_control_item_classes := [
     PlayerAnnotatorSettingsLabeledControlItem,
-    PlayerPositionAnnotatorSettingsLabeledControlItem,
-    PlayerTrajectoryAnnotatorSettingsLabeledControlItem,
-    SurfacesAnnotatorSettingsLabeledControlItem,
     LevelAnnotatorSettingsLabeledControlItem,
+    PlayerPositionAnnotatorSettingsLabeledControlItem,
+    SurfacesAnnotatorSettingsLabeledControlItem,
+    PlayerTrajectoryAnnotatorSettingsLabeledControlItem,
     RulerAnnotatorSettingsLabeledControlItem,
     LogSurfacerEventsSettingsLabeledControlItem,
 ]
