@@ -39,6 +39,12 @@ func start() -> void:
             Surfacer.player_params, \
             Surfacer.debug_params)
     Surfacer.platform_graph_inspector.set_graphs(platform_graphs.values())
+    
+    call_deferred("_initialize_annotators")
+
+func _initialize_annotators() -> void:
+    set_level_visibility(false)
+    Surfacer.annotators.on_level_ready()
 
 func _destroy() -> void:
     for group in [ \

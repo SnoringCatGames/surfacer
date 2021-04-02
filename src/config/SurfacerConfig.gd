@@ -77,7 +77,9 @@ var player_param_classes: Array
 
 func register_app_manifest(manifest: Dictionary) -> void:
     self.is_inspector_enabled = manifest.is_inspector_enabled
-    self.is_surfacer_logging = manifest.is_surfacer_logging
+    self.is_surfacer_logging = Gs.save_state.get_setting( \
+            "is_surfacer_logging", \
+            false)
     self.utility_panel_starts_open = manifest.utility_panel_starts_open
     self.uses_threads_for_platform_graph_calculation = \
             manifest.uses_threads_for_platform_graph_calculation
