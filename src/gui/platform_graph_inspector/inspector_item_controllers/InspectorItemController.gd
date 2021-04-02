@@ -65,19 +65,19 @@ func destroy() -> void:
     parent_item = null
 
 func on_item_selected() -> void:
-    if Surfacer.utility_panel.is_open and \
+    if Surfacer.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
         print_msg("Inspector item selected: %s", to_string())
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
-    if Surfacer.utility_panel.is_open and \
+    if Surfacer.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
         print_msg("Inspector item expanded: %s", to_string())
 
 func on_item_collapsed() -> void:
     _destroy_children_if_needed()
-    if Surfacer.utility_panel.is_open and \
+    if Surfacer.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress() and \
             get_has_children():
         print_msg("Inspector item collapsed: %s", to_string())

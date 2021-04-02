@@ -2,7 +2,9 @@ class_name SurfacerLevel
 extends ScaffoldLevel
 
 const _UTILITY_PANEL_RESOURCE_PATH := \
-        "res://addons/surfacer/src/gui/panels/UtilityPanel.tscn"
+        "res://addons/surfacer/src/gui/panels/InspectorPanel.tscn"
+const _PAUSE_BUTTON_RESOURCE_PATH := \
+        "res://addons/surfacer/src/gui/PauseButton.tscn"
 
 const TILE_MAP_COLLISION_LAYER := 7
 
@@ -16,15 +18,21 @@ var fake_players := {}
 var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
-var utility_panel: UtilityPanel
+var inspector_panel: InspectorPanel
+var pause_button: PauseButton
 
 func start() -> void:
     .start()
     
-    utility_panel = Gs.utils.add_scene( \
-            Gs.canvas_layers.layers.hud, \
-            _UTILITY_PANEL_RESOURCE_PATH)
-    Surfacer.utility_panel = utility_panel
+    if Surfacer.is_inspector_enabled:
+        inspector_panel = Gs.utils.add_scene( \
+                Gs.canvas_layers.layers.hud, \
+                _UTILITY_PANEL_RESOURCE_PATH)
+        Surfacer.inspector_panel = inspector_panel
+    else:
+        pause_button = Gs.utils.add_scene( \
+                Gs.canvas_layers.layers.hud, \
+                _PAUSE_BUTTON_RESOURCE_PATH)
     
     # Get references to the TileMaps that define the collision boundaries of
     # this level.
@@ -38,7 +46,8 @@ func start() -> void:
             surface_parser, \
             Surfacer.player_params, \
             Surfacer.debug_params)
-    Surfacer.platform_graph_inspector.set_graphs(platform_graphs.values())
+    if Surfacer.is_inspector_enabled:
+        Surfacer.platform_graph_inspector.set_graphs(platform_graphs.values())
     
     call_deferred("_initialize_annotators")
 
@@ -53,7 +62,10 @@ func _destroy() -> void:
         for player in get_tree().get_nodes_in_group(group):
             player._destroy()
     
-    utility_panel.queue_free()
+    if is_instance_valid(inspector_panel):
+        inspector_panel.queue_free()
+    if is_instance_valid(pause_button):
+        pause_button.queue_free()
     Surfacer.annotators.on_level_destroyed()
     Surfacer.current_player_for_clicks = null
     

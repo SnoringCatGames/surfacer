@@ -4,6 +4,7 @@ extends ScaffoldBootstrap
 func on_app_ready( \
         app_manifest: Dictionary, \
         main: Node) -> void:
+    Surfacer.amend_app_manifest(app_manifest)
     .on_app_ready(app_manifest, main)
     Surfacer.register_app_manifest(app_manifest)
     

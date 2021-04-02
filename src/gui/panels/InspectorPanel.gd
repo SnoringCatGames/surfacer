@@ -1,4 +1,4 @@
-class_name UtilityPanel
+class_name InspectorPanel
 extends VBoxContainer
 
 const PANEL_MARGIN_RIGHT := 20.0
@@ -7,11 +7,20 @@ const DEFAULT_GUI_SCALE := 1.0
 
 var is_open := false setget _set_is_open,_get_is_open
 
-var _is_initialized := false
-
 var _toggle_open_tween: Tween
 
+var _checkbox_control_item_classes := [
+    PlayerAnnotatorSettingsLabeledControlItem,
+    PlayerPositionAnnotatorSettingsLabeledControlItem,
+    PlayerTrajectoryAnnotatorSettingsLabeledControlItem,
+    RulerAnnotatorSettingsLabeledControlItem,
+    LevelAnnotatorSettingsLabeledControlItem,
+    LogSurfacerEventsSettingsLabeledControlItem,
+]
+
 func _ready() -> void:
+    assert(Surfacer.is_inspector_enabled)
+    
     theme = Gs.theme
     
     Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
@@ -29,48 +38,18 @@ func _ready() -> void:
     Surfacer.selection_description = \
             $PanelContainer/VBoxContainer/Sections/SelectionDescription
     
-    if (Surfacer.utility_panel_starts_open or \
+    if (Surfacer.inspector_panel_starts_open or \
                     Surfacer.debug_params.has("limit_parsing")) and \
-            Surfacer.is_inspector_enabled and \
             !OS.has_touchscreen_ui_hint():
         _set_is_open(true)
     
-    if !Surfacer.is_inspector_enabled:
-        $PanelContainer/VBoxContainer/Sections.remove_child( \
-                $PanelContainer/VBoxContainer/Sections/SelectionDescription)
-        $PanelContainer/VBoxContainer/Sections.remove_child( \
-                $PanelContainer/VBoxContainer/Sections/LegendHeader)
-        $PanelContainer/VBoxContainer/Sections.remove_child( \
-                $PanelContainer/VBoxContainer/Sections/Legend)
-        $PanelContainer/VBoxContainer/Sections.remove_child( \
-                $PanelContainer/VBoxContainer/Sections/InspectorContainer)
-    
-    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
-            RulerGridCheckbox.pressed = \
-                    Surfacer.annotators.is_annotator_enabled( \
-                            AnnotatorType.RULER)
-    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
-            LevelCheckbox.pressed = \
-                    Surfacer.annotators.is_annotator_enabled( \
-                            AnnotatorType.LEVEL)
-    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
-            PlayerPositionCheckbox.pressed = \
-                    Surfacer.annotators.is_annotator_enabled( \
-                            AnnotatorType.PLAYER_POSITION)
-    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
-            PlayerTrajectoryCheckbox.pressed = \
-                    Surfacer.annotators.is_annotator_enabled( \
-                            AnnotatorType.PLAYER_TRAJECTORY)
-    $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators/ \
-            LogEventsCheckbox.pressed = Surfacer.is_surfacer_logging
+    _initialize_annotator_checkboxes()
     
     # Tell the element annotator to populate the legend, now that it's
     # available.
     Surfacer.annotators.element_annotator.update()
     
     update_gui_scale(1.0)
-    
-    _is_initialized = true
 
 func _exit_tree() -> void:
     Gs.remove_gui_to_scale(self)
@@ -99,6 +78,27 @@ func update_gui_scale_helper(gui_scale: float) -> void:
             0.0 if \
             is_open else \
             _get_closed_position_y()
+
+func _initialize_annotator_checkboxes() -> void:
+    for item_class in _checkbox_control_item_classes:
+        var item: CheckboxLabeledControlItem = item_class.new()
+        item.pressed = item.get_is_pressed()
+        var checkbox := CheckBox.new()
+        checkbox.pressed = item.get_is_pressed()
+        checkbox.text = item.label
+        checkbox.connect( \
+                "pressed", \
+                self, \
+                "_on_checkbox_pressed", \
+                [item])
+        $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators \
+                .add_child(checkbox)
+        item.control = checkbox
+
+func _on_checkbox_pressed(item: CheckboxLabeledControlItem) -> void:
+    Gs.utils.give_button_press_feedback()
+    item.pressed = !item.pressed
+    item.on_pressed(item.pressed)
 
 func _get_closed_position_y() -> float:
     return -$PanelContainer.rect_size.y - 1.0
@@ -157,59 +157,6 @@ func _set_footer_visibility(is_visible: bool) -> void:
                     $Footer.rect_size.y if \
             is_visible else \
             $PanelContainer.rect_size.y
-
-func _on_ruler_grid_checkbox_toggled(pressed: bool) -> void:
-    if !_is_initialized:
-        return
-    Gs.utils.give_button_press_feedback()
-    Surfacer.annotators.set_annotator_enabled( \
-            AnnotatorType.RULER, \
-            pressed)
-    Gs.save_state.set_setting( \
-            AnnotatorType.get_settings_key(AnnotatorType.RULER), \
-            pressed)
-
-func _on_level_checkbox_toggled(pressed: bool) -> void:
-    if !_is_initialized:
-        return
-    Gs.utils.give_button_press_feedback()
-    Surfacer.annotators.set_annotator_enabled( \
-            AnnotatorType.LEVEL, \
-            pressed)
-    Gs.save_state.set_setting( \
-            AnnotatorType.get_settings_key(AnnotatorType.LEVEL), \
-            pressed)
-
-func _on_player_position_checkbox_toggled(pressed: bool) -> void:
-    if !_is_initialized:
-        return
-    Gs.utils.give_button_press_feedback()
-    Surfacer.annotators.set_annotator_enabled( \
-            AnnotatorType.PLAYER_POSITION, \
-            pressed)
-    Gs.save_state.set_setting( \
-            AnnotatorType.get_settings_key(AnnotatorType.PLAYER_POSITION), \
-            pressed)
-
-func _on_player_trajectory_checkbox_toggled(pressed: bool) -> void:
-    if !_is_initialized:
-        return
-    Gs.utils.give_button_press_feedback()
-    Surfacer.annotators.set_annotator_enabled( \
-            AnnotatorType.PLAYER_TRAJECTORY, \
-            pressed)
-    Gs.save_state.set_setting( \
-            AnnotatorType.get_settings_key(AnnotatorType.PLAYER_TRAJECTORY), \
-            pressed)
-
-func _on_log_events_checkbox_toggled(pressed: bool) -> void:
-    if !_is_initialized:
-        return
-    Gs.utils.give_button_press_feedback()
-    Surfacer.is_surfacer_logging = pressed
-    Gs.save_state.set_setting( \
-            "is_surfacer_logging", \
-            pressed)
 
 func _on_GearButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()

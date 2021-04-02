@@ -340,7 +340,7 @@ Theoretically, this discrepancy shouldn't exist, and we should be able to elimin
 
 ## Platform graph inspector
 
-As you might imagine, the calculations for these edges can get quite complicated. To make these calculations easier to understand and debug, we created a powerful platform graph inspector. This can be accessed from the utility menu (the gear icon in the top-right corner of the screen).
+As you might imagine, the calculations for these edges can get quite complicated. To make these calculations easier to understand and debug, we created a powerful platform graph inspector. This can be accessed from the inspector panel (the gear icon in the top-right corner of the screen).
 
 ![Platform graph inspector](./docs/platform-graph.png)
 
@@ -407,7 +407,7 @@ Each entry in this inspector tree is encoded with annotation information which w
 
 ## Annotators
 
-We include a large collection of annotators that are useful for visually debugging calculation of the platform graph. Some of these are rendered by selecting entries in the platform graph inspector and some of them can be toggled through checkboxes in the utility panel.
+We include a large collection of annotators that are useful for visually debugging calculation of the platform graph. Some of these are rendered by selecting entries in the platform graph inspector and some of them can be toggled through checkboxes in the inspector panel.
 
 ## Movement parameters
 
