@@ -1,7 +1,8 @@
 class_name PlayerTileAnnotator
 extends Node2D
 
-var TILE_BORDER_COLOR := SurfacerColors.opacify(SurfacerColors.YELLOW, SurfacerColors.ALPHA_XXFAINT)
+var TILE_BORDER_COLOR := SurfacerColors.opacify( \
+        SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
 const TILE_BORDER_WIDTH := 6.0
 
 var player: Player

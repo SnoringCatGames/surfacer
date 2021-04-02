@@ -779,3 +779,9 @@ func print_msg( \
             Gs.utils.print(message_template % message_args)
         else:
             Gs.utils.print(message_template)
+
+func set_is_sprite_visible(is_visible: bool) -> void:
+    animator.visible = is_visible
+
+func get_is_sprite_visible() -> bool:
+    return animator.visible

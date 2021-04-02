@@ -52,7 +52,7 @@ func start() -> void:
     call_deferred("_initialize_annotators")
 
 func _initialize_annotators() -> void:
-    set_level_visibility(false)
+    set_tile_map_visibility(false)
     Surfacer.annotators.on_level_ready()
 
 func _destroy() -> void:
@@ -177,11 +177,12 @@ func _record_player_reference(is_human_player: bool) -> void:
             player.init_computer_player_state()
         
         # Set up some annotators to help with debugging.
+        player.set_is_sprite_visible(false)
         Surfacer.annotators.create_player_annotator( \
                 player, \
                 is_human_player)
 
-func set_level_visibility(is_visible: bool) -> void:
+func set_tile_map_visibility(is_visible: bool) -> void:
     # TODO: Also show/hide background. Parallax doesn't extend from CanvasItem
     #       or have the `visible` field though.
 #    var backgrounds := Gs.utils.get_children_by_type( \
