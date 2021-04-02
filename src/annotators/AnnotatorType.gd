@@ -2,6 +2,7 @@ class_name AnnotatorType
 
 enum {
     RULER,
+    SURFACES,
     GRID_INDICES,
     LEVEL,
     PLAYER,
@@ -17,6 +18,8 @@ static func get_string(type: int) -> String:
     match type:
         RULER:
             return "RULER"
+        SURFACES:
+            return "SURFACES"
         GRID_INDICES:
             return "GRID_INDICES"
         LEVEL:

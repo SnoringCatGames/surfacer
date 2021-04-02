@@ -14,6 +14,7 @@ var _settings_details_item_class_inclusions := [
     PlayerTrajectoryAnnotatorSettingsLabeledControlItem,
     PlayerAnnotatorSettingsLabeledControlItem,
     LevelAnnotatorSettingsLabeledControlItem,
+    SurfacesAnnotatorSettingsLabeledControlItem,
     RulerAnnotatorSettingsLabeledControlItem,
     LogSurfacerEventsSettingsLabeledControlItem,
 ]
