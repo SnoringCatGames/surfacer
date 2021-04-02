@@ -56,9 +56,12 @@ func _enter_tree() -> void:
     annotation_layer.add_child(element_annotator)
     
     for annotator_type in _DEFAULT_ENABLEMENT:
+        var is_enabled: bool = Gs.save_state.get_setting( \
+                AnnotatorType.get_settings_key(annotator_type), \
+                _DEFAULT_ENABLEMENT[annotator_type])
         set_annotator_enabled( \
                 annotator_type, \
-                _DEFAULT_ENABLEMENT[annotator_type])
+                is_enabled)
 
 func on_level_ready() -> void:
     # Ensure any enabled annotators that depend on the level get drawn, now

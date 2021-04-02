@@ -7,6 +7,8 @@ const DEFAULT_GUI_SCALE := 1.0
 
 var is_open := false setget _set_is_open,_get_is_open
 
+var _is_initialized := false
+
 var _toggle_open_tween: Tween
 
 func _ready() -> void:
@@ -67,6 +69,8 @@ func _ready() -> void:
     Surfacer.annotators.element_annotator.update()
     
     update_gui_scale(1.0)
+    
+    _is_initialized = true
 
 func _exit_tree() -> void:
     Gs.remove_gui_to_scale(self)
@@ -155,32 +159,57 @@ func _set_footer_visibility(is_visible: bool) -> void:
             $PanelContainer.rect_size.y
 
 func _on_ruler_grid_checkbox_toggled(pressed: bool) -> void:
+    if !_is_initialized:
+        return
     Gs.utils.give_button_press_feedback()
     Surfacer.annotators.set_annotator_enabled( \
             AnnotatorType.RULER, \
             pressed)
+    Gs.save_state.set_setting( \
+            AnnotatorType.get_settings_key(AnnotatorType.RULER), \
+            pressed)
 
 func _on_level_checkbox_toggled(pressed: bool) -> void:
+    if !_is_initialized:
+        return
     Gs.utils.give_button_press_feedback()
     Surfacer.annotators.set_annotator_enabled( \
             AnnotatorType.LEVEL, \
             pressed)
+    Gs.save_state.set_setting( \
+            AnnotatorType.get_settings_key(AnnotatorType.LEVEL), \
+            pressed)
 
 func _on_player_position_checkbox_toggled(pressed: bool) -> void:
+    if !_is_initialized:
+        return
     Gs.utils.give_button_press_feedback()
     Surfacer.annotators.set_annotator_enabled( \
             AnnotatorType.PLAYER_POSITION, \
             pressed)
+    Gs.save_state.set_setting( \
+            AnnotatorType.get_settings_key(AnnotatorType.PLAYER_POSITION), \
+            pressed)
 
 func _on_player_trajectory_checkbox_toggled(pressed: bool) -> void:
+    if !_is_initialized:
+        return
     Gs.utils.give_button_press_feedback()
     Surfacer.annotators.set_annotator_enabled( \
             AnnotatorType.PLAYER_TRAJECTORY, \
             pressed)
+    Gs.save_state.set_setting( \
+            AnnotatorType.get_settings_key(AnnotatorType.PLAYER_TRAJECTORY), \
+            pressed)
 
 func _on_log_events_checkbox_toggled(pressed: bool) -> void:
+    if !_is_initialized:
+        return
     Gs.utils.give_button_press_feedback()
     Surfacer.is_surfacer_logging = pressed
+    Gs.save_state.set_setting( \
+            "is_surfacer_logging", \
+            pressed)
 
 func _on_GearButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()

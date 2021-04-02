@@ -35,3 +35,6 @@ static func get_string(type: int) -> String:
         _:
             Gs.utils.error("Invalid AnnotatorType: %s" % type)
             return "???"
+
+static func get_settings_key(type: int) -> String:
+    return get_string(type) + "_enabled"
