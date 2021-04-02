@@ -1,18 +1,23 @@
 class_name PlayerPositionAnnotator
 extends Node2D
 
-var PLAYER_POSITION_COLOR := SurfacerColors.opacify(SurfacerColors.TEAL, SurfacerColors.ALPHA_XFAINT)
-var GRAB_POSITION_COLOR := SurfacerColors.opacify(SurfacerColors.TEAL_D, SurfacerColors.ALPHA_XFAINT)
+var PLAYER_POSITION_COLOR := SurfacerColors.opacify( \
+        SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
+var GRAB_POSITION_COLOR := SurfacerColors.opacify( \
+        SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
 const PLAYER_POSITION_RADIUS := 3.0
 const GRAB_POSITION_LINE_WIDTH := 5.0
-const GRAB_POSITION_LINE_LENGTH := 28.0
+const GRAB_POSITION_LINE_LENGTH := 10.0
 
-var POSITION_ALONG_SURFACE_COLOR = SurfacerColors.opacify(SurfacerColors.TEAL, SurfacerColors.ALPHA_XFAINT)
+var POSITION_ALONG_SURFACE_COLOR := SurfacerColors.opacify( \
+        SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
 const POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS := 4.0
-const POSITION_ALONG_SURFACE_T_LENGTH := 16.0
+const POSITION_ALONG_SURFACE_T_LENGTH_IN_SURFACE := 0.0
+const POSITION_ALONG_SURFACE_T_LENGTH_OUT_OF_SURFACE := 20.0
 const POSITION_ALONG_SURFACE_T_WIDTH := 4.0
 
-var COLLIDER_COLOR := SurfacerColors.opacify(SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
+var COLLIDER_COLOR := SurfacerColors.opacify( \
+        SurfacerColors.TEAL, SurfacerColors.ALPHA_XFAINT)
 const COLLIDER_THICKNESS := 4.0
 
 var player: Player
@@ -36,7 +41,10 @@ func _draw_player_position() -> void:
 
 func _draw_grab_position() -> void:
     var from := player.surface_state.grab_position
-    var to := from - player.surface_state.grabbed_surface_normal * GRAB_POSITION_LINE_LENGTH
+    var to := \
+            from + \
+            player.surface_state.grabbed_surface_normal * \
+                    GRAB_POSITION_LINE_LENGTH
     draw_line( \
             from, \
             to, \
@@ -50,7 +58,8 @@ func _draw_position_along_surface() -> void:
             POSITION_ALONG_SURFACE_COLOR, \
             POSITION_ALONG_SURFACE_COLOR, \
             POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS, \
-            POSITION_ALONG_SURFACE_T_LENGTH, \
+            POSITION_ALONG_SURFACE_T_LENGTH_IN_SURFACE, \
+            POSITION_ALONG_SURFACE_T_LENGTH_OUT_OF_SURFACE, \
             POSITION_ALONG_SURFACE_T_WIDTH, \
             true, \
             false, \

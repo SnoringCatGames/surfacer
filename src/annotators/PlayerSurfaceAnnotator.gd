@@ -3,7 +3,8 @@ extends Node2D
 
 var player: Player
 
-var COLOR := SurfacerColors.opacify(SurfacerColors.TEAL, SurfacerColors.ALPHA_XFAINT)
+var COLOR := SurfacerColors.opacify( \
+        SurfacerColors.TEAL, SurfacerColors.ALPHA_XFAINT)
 
 func _init(player: Player) -> void:
     self.player = player

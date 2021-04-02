@@ -155,7 +155,7 @@ func _create_annotator(annotator_type: int) -> void:
                 annotation_layer.add_child(surface_preselection_annotator)
         AnnotatorType.LEVEL:
             if Gs.level != null:
-                Gs.level.set_level_visibility(true)
+                Gs.level.set_tile_map_visibility(true)
         _:
             Gs.utils.static_error()
 
@@ -182,6 +182,6 @@ func _destroy_annotator(annotator_type: int) -> void:
                 surface_preselection_annotator = null
         AnnotatorType.LEVEL:
             if Gs.level != null:
-                Gs.level.set_level_visibility(false)
+                Gs.level.set_tile_map_visibility(false)
         _:
             Gs.utils.static_error()

@@ -50,8 +50,7 @@ func set_annotator_enabled( \
 func is_annotator_enabled(annotator_type: int) -> bool:
     match annotator_type:
         AnnotatorType.PLAYER:
-            # FIXME: ----------------------------
-            return true
+            return player.get_is_sprite_visible()
         AnnotatorType.PLAYER_POSITION:
             return position_annotator != null
         AnnotatorType.PLAYER_TRAJECTORY:
@@ -66,8 +65,7 @@ func _create_annotator(annotator_type: int) -> void:
     assert(!is_annotator_enabled(annotator_type))
     match annotator_type:
         AnnotatorType.PLAYER:
-            # FIXME: ----------------------------
-            pass
+            player.set_is_sprite_visible(true)
         AnnotatorType.PLAYER_POSITION:
             surface_annotator = PlayerSurfaceAnnotator.new(player)
             add_child(surface_annotator)
@@ -89,8 +87,7 @@ func _destroy_annotator(annotator_type: int) -> void:
     assert(is_annotator_enabled(annotator_type))
     match annotator_type:
         AnnotatorType.PLAYER:
-            # FIXME: ----------------------------
-            pass
+            player.set_is_sprite_visible(false)
         AnnotatorType.PLAYER_POSITION:
             surface_annotator.queue_free()
             surface_annotator = null
