@@ -122,7 +122,7 @@ static func draw_edge( \
                 includes_waypoints, \
                 includes_instruction_indicators)
     else:
-        Gs.utils.error("Unexpected Edge subclass: %s" % edge)
+        Gs.logger.error("Unexpected Edge subclass: %s" % edge)
 
 static func _draw_edge_from_end_points( \
         canvas: CanvasItem, \
@@ -328,5 +328,5 @@ static func _get_edge_trajectory_vertices( \
             ])
         EdgeType.UNKNOWN, \
         _:
-            Gs.utils.error()
+            Gs.logger.error()
             return PoolVector2Array()

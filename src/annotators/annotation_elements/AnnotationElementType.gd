@@ -36,5 +36,5 @@ static func get_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.utils.error("Invalid AnnotationElementType: %s" % type)
+            Gs.logger.error("Invalid AnnotationElementType: %s" % type)
             return ""

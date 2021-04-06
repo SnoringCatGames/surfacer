@@ -7,5 +7,5 @@ func _init(type: int) -> void:
     self.type = type
 
 func get_color() -> Color:
-    Gs.utils.error("Abstract ColorParams.get_color is not implemented")
+    Gs.logger.error("Abstract ColorParams.get_color is not implemented")
     return Color.black

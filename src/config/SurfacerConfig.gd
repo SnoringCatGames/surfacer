@@ -21,6 +21,7 @@ var _settings_details_item_class_inclusions := [
 
 # ---
 
+var manifest: Dictionary
 var is_inspector_enabled: bool
 var is_surfacer_logging: bool
 var inspector_panel_starts_open: bool
@@ -89,7 +90,7 @@ var selection_description: SelectionDescription
 var inspector_panel: InspectorPanel
 var annotators: Annotators
 
-var ann_defaults := AnnotationElementDefaults.new()
+var ann_defaults: AnnotationElementDefaults
 
 var player_action_classes: Array
 var edge_movement_classes: Array
@@ -128,12 +129,7 @@ func amend_app_manifest(manifest: Dictionary) -> void:
             manifest.settings_details_item_class_inclusions.push_back(inclusion)
 
 func register_app_manifest(manifest: Dictionary) -> void:
-    self.is_inspector_enabled = Gs.save_state.get_setting( \
-            "is_inspector_enabled", \
-            manifest.is_inspector_enabled_default)
-    self.is_surfacer_logging = Gs.save_state.get_setting( \
-            "is_surfacer_logging", \
-            false)
+    self.manifest = manifest
     self.inspector_panel_starts_open = manifest.inspector_panel_starts_open
     self.uses_threads_for_platform_graph_calculation = \
             manifest.uses_threads_for_platform_graph_calculation
@@ -141,9 +137,21 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.edge_movement_classes = manifest.edge_movement_classes
     self.player_param_classes = manifest.player_param_classes
     self.debug_params = manifest.debug_params
+
+func initialize() -> void:
+    self.is_inspector_enabled = Gs.save_state.get_setting( \
+            "is_inspector_enabled", \
+            manifest.is_inspector_enabled_default)
+    self.is_surfacer_logging = Gs.save_state.get_setting( \
+            "is_surfacer_logging", \
+            false)
     
     Gs.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
     Gs.profiler.preregister_metric_keys(surface_parser_metric_keys)
+    
+    ann_defaults = AnnotationElementDefaults.new()
+    annotators = Annotators.new()
+    add_child(Surfacer.annotators)
 
 func get_is_inspector_panel_open() -> bool:
     return is_instance_valid(inspector_panel) and inspector_panel.is_open

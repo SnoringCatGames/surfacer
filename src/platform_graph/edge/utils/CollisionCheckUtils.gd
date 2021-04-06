@@ -150,7 +150,7 @@ static func check_instructions_discrete_frame_state( \
                 "face_right":
                     pass
                 _:
-                    Gs.utils.error()
+                    Gs.logger.error()
             
             next_instruction = \
                     instructions.instructions \
@@ -506,7 +506,7 @@ static func check_frame_for_collision( \
         # Invalid collision state.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
-            Gs.utils.error()
+            Gs.logger.error()
         surface_collision.is_valid_collision_state = false
         return null
     
@@ -520,7 +520,7 @@ static func check_frame_for_collision( \
         # Invalid collision state.
         if collision_params.movement_params \
                 .asserts_no_preexisting_collisions_during_edge_calculations:
-            Gs.utils.error()
+            Gs.logger.error()
         surface_collision.is_valid_collision_state = false
         return null
     
@@ -545,13 +545,13 @@ static func check_frame_for_collision( \
         SurfaceSide.CEILING:
             is_moving_away_from_surface = displacement.y > 0.0
         _:
-            Gs.utils.error()
+            Gs.logger.error()
     if is_moving_away_from_surface:
         if is_recursing:
             # Invalid collision state.
             if collision_params.movement_params \
                     .asserts_no_preexisting_collisions_during_edge_calculations:
-                Gs.utils.error()
+                Gs.logger.error()
             surface_collision.is_valid_collision_state = false
             return null
         

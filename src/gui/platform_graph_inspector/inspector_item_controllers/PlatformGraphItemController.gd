@@ -79,14 +79,14 @@ func _find_and_expand_controller_recursive( \
                         search_type, \
                         metadata)
             else:
-                Gs.utils.error("Invalid Surface: %s" % \
+                Gs.logger.error("Invalid Surface: %s" % \
                         metadata.origin_surface.to_string())
           
         InspectorSearchType.EDGES_GROUP:
             edges_item_controller.select()
         
         _:
-            Gs.utils.error("Invalid InspectorSearchType: %s" % \
+            Gs.logger.error("Invalid InspectorSearchType: %s" % \
                     InspectorSearchType.get_string(search_type))
 
 func _create_children_inner() -> void:

@@ -67,7 +67,7 @@ func _find_and_expand_controller_recursive( \
             return
         child = child.get_next()
     select()
-    Gs.utils.error("No matching Surface found: %s" % metadata)
+    Gs.logger.error("No matching Surface found: %s" % metadata)
 
 func _create_children_inner() -> void:
     var surfaces_to_edge_types_to_edges_results: Dictionary

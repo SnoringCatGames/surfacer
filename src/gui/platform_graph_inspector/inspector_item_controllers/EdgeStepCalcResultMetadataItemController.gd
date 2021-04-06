@@ -88,13 +88,13 @@ func _get_text_for_description_index(description_index: int) -> String:
                             .replace("\n                ", " "), \
                 ]
         _:
-            Gs.utils.error()
+            Gs.logger.error()
             return ""
 
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    Gs.utils.error( \
+    Gs.logger.error( \
             "find_and_expand_controller should not be called for " + \
             "EDGE_STEP_CALC_RESULT_METADATA.")
     return false
