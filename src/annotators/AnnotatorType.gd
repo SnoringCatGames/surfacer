@@ -39,7 +39,7 @@ static func get_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.utils.error("Invalid AnnotatorType: %s" % type)
+            Gs.logger.error("Invalid AnnotatorType: %s" % type)
             return "???"
 
 static func get_settings_key(type: int) -> String:

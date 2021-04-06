@@ -428,7 +428,7 @@ func _on_find_and_expand_complete( \
     
     var item := get_selected()
     if item == null:
-        Gs.utils.error("No tree item selected after search: %s" % metadata)
+        Gs.logger.error("No tree item selected after search: %s" % metadata)
         return
     var controller: InspectorItemController = item.get_metadata(0)
     
@@ -448,7 +448,7 @@ func _on_find_and_expand_complete( \
         InspectorSearchType.EDGES_GROUP:
             assert(controller.type == InspectorItemType.EDGES_GROUP)
         _:
-            Gs.utils.error("Invalid InspectorSearchType: %s" % \
+            Gs.logger.error("Invalid InspectorSearchType: %s" % \
                     InspectorSearchType.get_string(search_type))
     
     if selection_failure_message != "":
@@ -522,6 +522,6 @@ func print_msg( \
             Surfacer.current_player_for_clicks.movement_params \
                     .logs_inspector_events:
         if message_args != null:
-            Gs.utils.print(message_template % message_args)
+            Gs.logger.print(message_template % message_args)
         else:
-            Gs.utils.print(message_template)
+            Gs.logger.print(message_template)

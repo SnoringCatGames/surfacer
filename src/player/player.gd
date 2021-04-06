@@ -359,7 +359,7 @@ func _process_animation() -> void:
                 elif actions.pressed_down:
                     animator.climb_down()
                 else:
-                    Gs.utils.error()
+                    Gs.logger.error()
             else:
                 animator.rest_on_wall()
         SurfaceType.AIR:
@@ -368,7 +368,7 @@ func _process_animation() -> void:
             else:
                 animator.jump_rise()
         _:
-            Gs.utils.error()
+            Gs.logger.error()
 
 func _process_sfx() -> void:
     pass
@@ -637,7 +637,7 @@ func _update_which_surface_is_grabbed( \
                     surface_state.just_grabbed_floor = false
                     surface_state.just_grabbed_ceiling = false
                 _:
-                    Gs.utils.error()
+                    Gs.logger.error()
         surface_state.just_changed_tile_map_coord = \
                 (preserves_just_changed_state and \
                         surface_state.just_changed_tile_map_coord) or \
@@ -776,9 +776,9 @@ func print_msg( \
             (is_human_player or \
                     movement_params.logs_computer_player_events):
         if message_args != null:
-            Gs.utils.print(message_template % message_args)
+            Gs.logger.print(message_template % message_args)
         else:
-            Gs.utils.print(message_template)
+            Gs.logger.print(message_template)
 
 func set_is_sprite_visible(is_visible: bool) -> void:
     animator.visible = is_visible

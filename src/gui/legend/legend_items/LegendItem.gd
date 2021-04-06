@@ -52,4 +52,4 @@ func _draw() -> void:
 func _draw_shape( \
         center: Vector2, \
         size: Vector2) -> void:
-    Gs.utils.error("Abstract LegendItem._draw_shape is not implemented")
+    Gs.logger.error("Abstract LegendItem._draw_shape is not implemented")

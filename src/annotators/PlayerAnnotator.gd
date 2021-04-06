@@ -58,7 +58,7 @@ func is_annotator_enabled(annotator_type: int) -> bool:
         AnnotatorType.NAVIGATOR:
             return navigator_annotator != null
         _:
-            Gs.utils.error()
+            Gs.logger.error()
             return false
 
 func _create_annotator(annotator_type: int) -> void:
@@ -81,7 +81,7 @@ func _create_annotator(annotator_type: int) -> void:
             navigator_annotator = NavigatorAnnotator.new(player.navigator)
             add_child(navigator_annotator)
         _:
-            Gs.utils.error()
+            Gs.logger.error()
 
 func _destroy_annotator(annotator_type: int) -> void:
     assert(is_annotator_enabled(annotator_type))
@@ -102,4 +102,4 @@ func _destroy_annotator(annotator_type: int) -> void:
             navigator_annotator.queue_free()
             navigator_annotator = null
         _:
-            Gs.utils.error()
+            Gs.logger.error()

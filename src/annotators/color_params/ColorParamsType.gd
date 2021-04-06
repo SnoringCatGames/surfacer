@@ -15,5 +15,5 @@ static func get_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.utils.error("Invalid ColorParamsType: %s" % type)
+            Gs.logger.error("Invalid ColorParamsType: %s" % type)
             return ""

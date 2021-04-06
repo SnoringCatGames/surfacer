@@ -184,7 +184,7 @@ func _draw_action_indicator( \
         PlayerActionType.RELEASED_FACE_RIGHT:
             pass
         _:
-            Gs.utils.error( \
+            Gs.logger.error( \
                     "Unknown PlayerActionType passed to " + \
                     "_draw_action_indicator: %s" % \
                     PlayerActionType.get_string(action))

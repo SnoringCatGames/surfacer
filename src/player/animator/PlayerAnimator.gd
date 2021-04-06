@@ -17,11 +17,11 @@ func _ready() -> void:
     animation_player = animation_players[0]
 
 func _create_params() -> PlayerAnimatorParams:
-    Gs.utils.error("abstract PlayerAnimator._create_params is not implemented")
+    Gs.logger.error("abstract PlayerAnimator._create_params is not implemented")
     return null
 
 func _get_animation_player() -> AnimationPlayer:
-    Gs.utils.error( \
+    Gs.logger.error( \
             "abstract PlayerAnimator._get_animation_player is not implemented")
     return null
             

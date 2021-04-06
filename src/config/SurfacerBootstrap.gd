@@ -1,19 +1,24 @@
 class_name SurfacerBootstrap
 extends ScaffoldBootstrap
 
-func on_app_ready( \
-        app_manifest: Dictionary, \
-        main: Node) -> void:
+func _amend_app_manifest() -> void:
+    ._amend_app_manifest()
     Surfacer.amend_app_manifest(app_manifest)
-    .on_app_ready(app_manifest, main)
+
+func _register_app_manifest() -> void:
+    ._register_app_manifest()
     Surfacer.register_app_manifest(app_manifest)
-    
-    Surfacer.annotators = Annotators.new()
-    main.add_child(Surfacer.annotators)
+
+func _initialize_framework() -> void:
+    ._initialize_framework()
+    Surfacer.initialize()
     
     _register_player_actions(Surfacer.player_action_classes)
     _register_edge_movements(Surfacer.edge_movement_classes)
     _register_player_params(Surfacer.player_param_classes)
+
+#func _on_app_ready() -> void:
+#    ._on_app_ready()
 
 func _register_player_actions(player_action_classes: Array) -> void:
     # Instantiate the various PlayerActions.

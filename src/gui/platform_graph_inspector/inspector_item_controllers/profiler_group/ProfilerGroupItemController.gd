@@ -34,7 +34,7 @@ func get_description() -> String:
 func find_and_expand_controller( \
         search_type: int, \
         metadata: Dictionary) -> bool:
-    Gs.utils.error( \
+    Gs.logger.error( \
             "find_and_expand_controller should not be called for " + \
             "PROFILER_GROUP.")
     return false

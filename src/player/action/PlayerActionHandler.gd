@@ -18,5 +18,5 @@ func _init( \
     self.priority = priority
 
 func process(player) -> bool:
-    Gs.utils.error("abstract PlayerActionHandler.process is not implemented")
+    Gs.logger.error("abstract PlayerActionHandler.process is not implemented")
     return false

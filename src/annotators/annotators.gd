@@ -166,7 +166,7 @@ func _create_annotator(annotator_type: int) -> void:
             if Gs.level != null:
                 Gs.level.set_tile_map_visibility(true)
         _:
-            Gs.utils.static_error()
+            Gs.logger.error()
 
 func _destroy_annotator(annotator_type: int) -> void:
     assert(is_annotator_enabled(annotator_type))
@@ -197,4 +197,4 @@ func _destroy_annotator(annotator_type: int) -> void:
             if Gs.level != null:
                 Gs.level.set_tile_map_visibility(false)
         _:
-            Gs.utils.static_error()
+            Gs.logger.error()

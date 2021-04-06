@@ -1044,7 +1044,7 @@ static func get_closest_surface( \
                                         last_point_diff.x < 0.0 and \
                                         -last_point_diff.x > last_point_diff.y
                         _:
-                            Gs.utils.error("Invalid SurfaceSide")
+                            Gs.logger.error("Invalid SurfaceSide")
                     
                     current_distance_squared += \
                             CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET if \
