@@ -1,5 +1,5 @@
 class_name SurfacerBootstrap
-extends ScaffoldBootstrap
+extends ScaffolderBootstrap
 
 func _amend_app_manifest() -> void:
     ._amend_app_manifest()

@@ -5,7 +5,7 @@
        alt="The Surfacer icon, showing a path between surfaces">
 </p>
 
-> _**[Live demo](https://levi.dev/squirrel)**_
+> _**[Live demo](https://snoringcat.games/play/squirrel-away)**_
 > 
 > _**[Demo source](https://github.com/snoringcatgames/squirrel-away)**_
 
@@ -21,6 +21,8 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 
 ![Surfaces and edges in a platform graph](./docs/surfaces-and-edges.png)
 
+## What is this?
+
 **tl;dr**: Surfacer works by **pre-parsing** a level into a **"platform graph"**. The **nodes** are represented by points along the different surfaces in the level (floors, walls, and ceilings). The **edges** are represented by possible movement trajectories between points along surfaces. There are different types of edges for different types of movement (e.g., jumping from a floor to a floor, falling from a wall, walking along a floor). At run time, **[A* search](https://en.wikipedia.org/wiki/A*_search_algorithm)** is used to calculate a path to a given destination.
 
 Some features include:
@@ -31,20 +33,6 @@ Some features include:
 -   Level creation using Godot's standard pattern with a [TileMap in the 2D scene editor](https://docs.godotengine.org/en/3.2/tutorials/2d/using_tilemaps.html).
 -   Preparsing the level into a platform graph, and using A* search for efficient path-finding at runtime.
 -   A powerful inspector for analyzing the platform graph, in order to debug and better understand how edges were calculated.
-
-## Getting set up
-
-Probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel-away), and then adjust it to fit your needs.
-
--   Add the [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library to your `addons/` folder.
-    -   This is a framework that provides some general-purpose infrastructure that can be useful for adding a bunch of app boilerplate that you might want for your game.
-    -   Surfacer currently depends on this additional framework.
-    -   See the Scaffolder [README](https://github.com/snoringcatgames/scaffolder/README.md) for details on setting it up.
--   Add the [Surfacer](https://github.com/snoringcatgames/surfacer/) library to your `addons/` folder.
--   Define `Surfacer` as an AutoLoad (in Project Settings).
-    -   It should point to the path `res://addons/surfacer/src/SurfacerConfig.gd`.
-    -   It should be the second AutoLoad in the list, just after `Gs` (for Scaffolder).
--   Configure both the Surfacer and Scaffolder frameworks by calling `SurfacerBootstrap.on_app_ready` at the start of your Main Scene.
 
 ## Buy why?
 
@@ -63,6 +51,20 @@ There are two key reasons why good path-finding AI isn't really used in platform
 2.  Dumb AI is usually plenty effective on its own to create compelling gameplay. The user often doesn't really notice or care how simple the behavior is.
 
 But there are use-cases for which we really benefit from an AI that can accurately immitate the same movement mechanics of the player. One example is if we want to be able to control the player by tapping on locations that they should move through the level toward. Another example is if we want to have a flexible game mode in which a computer player can swap in for a human player depending on how many humans are present.
+
+## Getting set up
+
+Probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel-away), and then adjust it to fit your needs.
+
+-   Add the [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library to your `addons/` folder.
+    -   This is a framework that provides some general-purpose infrastructure that can be useful for adding a bunch of app boilerplate that you might want for your game.
+    -   Surfacer currently depends on this additional framework.
+    -   See the Scaffolder [README](https://github.com/snoringcatgames/scaffolder/README.md) for details on setting it up.
+-   Add the [Surfacer](https://github.com/snoringcatgames/surfacer/) library to your `addons/` folder.
+-   Define `Surfacer` as an AutoLoad (in Project Settings).
+    -   It should point to the path `res://addons/surfacer/src/SurfacerConfig.gd`.
+    -   It should be the second AutoLoad in the list, just after `Gs` (for Scaffolder).
+-   Configure both the Surfacer and Scaffolder frameworks by calling `SurfacerBootstrap.on_app_ready` at the start of your Main Scene.
 
 ## Platformer AI
 
@@ -416,7 +418,7 @@ We include a large collection of annotators that are useful for visually debuggi
 
 ## Movement parameters
 
-We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these params, see [movement_params.gd](./framework/platform_graph/edge/models/movement_params.gd).
+We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these params, see [MovementParams.gd](./src/platform_graph/edge/models/MovementParams.gd).
 
 ## Extensible framework for custom movement mechanics
 
@@ -461,27 +463,6 @@ We support a large number of flags and parameters for adjusting various aspects 
         -   But the procedural path-finding doesn't know about complex platformer mechanics like special in-air friction or coyote time.
     -   The Surfacer framework isn't yet decoupled from the Squirrel Away demo app logic.
 
-## Future work
-
-For a list of planned future work items / TODOs, see [Main.gd](./Main.gd).
-
-Some high-level planned future features include:
--   Add an option for saving/loading the platform graph instead of parsing it each time.
--   Bypass the Godot collision system at runtime, and use only the pre-calculated expected edge trajectories from the platform graph.
--   More intelligent squirral avoidance.
--   Better game-play goal, with an event that happens when you catch the squirrel.
--   Decouple the Surface framework logic from the Squirrel Away demo logic.
--   Add Surfacer to the Godot Asset Library.
--   Use an R-Tree for faster surface lookup.
--   Support for fall-through floors and walls in the platform graph.
--   Support for double jumps in the platform graph.
--   Support for dashes in the platform graph.
--   Support for surfaces that face each other and are too close for player to fit between.
--   Support for surfaces of one point.
--   Support an alternate, template-based edge calculation pattern, which should be able to offer faster build times and still have quick run times.
--   Add networking.
--   Procedural level generation.
-
 ## Tests
 
 _> **NOTE:** Sadly, the tests are not set up to automatically run on presubmit, so some of the tests are severely out-of-date and broken._
@@ -491,7 +472,7 @@ Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and runn
 ## Licenses
 
 -   All code is published under the [MIT license](LICENSE).
--   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/surfacer_third_party_licenses.gd).
+-   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/config/SurfacerThirdPartyLicenses.gd).
 
 <p align="center">
   <img src="assets/images/device_icons/icon_64.png"
