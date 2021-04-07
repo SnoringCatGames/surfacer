@@ -489,6 +489,6 @@ Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and runn
 -   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/surfacer_third_party_licenses.gd).
 
 <p align="center">
-  <img src="https://github.com/SnoringCatGames/godot_scaffold/blob/master/assets/images/spinning_gear_icon.gif"
+  <img src="https://github.com/SnoringCatGames/scaffolder/blob/master/assets/images/spinning_gear_icon.gif"
        alt="An animated icon consisting of spinning gear, a game controller, and a pixelated jumping character">
 </p>
