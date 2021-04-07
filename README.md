@@ -31,15 +31,15 @@ Some features include:
 
 Probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel-away), and then adjust it to fit your needs.
 
--   Add the [Godot Scaffold](https://github.com/snoringcatgames/godot-scaffold/) library to your `addons/` folder.
+-   Add the [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library to your `addons/` folder.
     -   This is a framework that provides some general-purpose infrastructure that can be useful for adding a bunch of app boilerplate that you might want for your game.
     -   Surfacer currently depends on this additional framework.
-    -   See the Godot Scaffold [README](https://github.com/snoringcatgames/godot-scaffold/README.md) for details on setting it up.
+    -   See the Scaffolder [README](https://github.com/snoringcatgames/scaffolder/README.md) for details on setting it up.
 -   Add the [Surfacer](https://github.com/snoringcatgames/surfacer/) library to your `addons/` folder.
 -   Define `Surfacer` as an AutoLoad (in Project Settings).
     -   It should point to the path `res://addons/surfacer/src/SurfacerConfig.gd`.
-    -   It should be the second AutoLoad in the list, just after `Gs` (for Godot Scaffold).
--   Configure both the Surfacer and Godot Scaffold frameworks by calling `SurfacerBootstrap.on_app_ready` at the start of your Main Scene.
+    -   It should be the second AutoLoad in the list, just after `Gs` (for Scaffolder).
+-   Configure both the Surfacer and Scaffolder frameworks by calling `SurfacerBootstrap.on_app_ready` at the start of your Main Scene.
 
 ## Buy why?
 
