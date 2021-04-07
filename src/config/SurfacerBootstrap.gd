@@ -20,6 +20,12 @@ func _initialize_framework() -> void:
 #func _on_app_ready() -> void:
 #    ._on_app_ready()
 
+func _on_splash_finished() -> void:
+    if !Surfacer.is_precomputing_platform_graphs:
+        ._on_splash_finished()
+    else:
+        Gs.nav.open("precompute_platform_graphs")
+
 func _register_player_actions(player_action_classes: Array) -> void:
     # Instantiate the various PlayerActions.
     for player_action_class in player_action_classes:

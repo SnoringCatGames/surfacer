@@ -1,0 +1,80 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://addons/scaffolder/src/gui/CenteredPanel.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/scaffolder/src/gui/FullScreenPanel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/surfacer/src/gui/PrecomputePlatformGraphsScreen.gd" type="Script" id=4]
+[ext_resource path="res://addons/scaffolder/src/gui/ShinyButton.tscn" type="PackedScene" id=7]
+[ext_resource path="res://addons/scaffolder/src/gui/NavBar.tscn" type="PackedScene" id=12]
+
+[node name="PrecomputePlatformGraphsScreen" type="Node2D"]
+script = ExtResource( 4 )
+
+[node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
+margin_right = 974.0
+margin_bottom = 1184.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 967.0
+margin_bottom = 1177.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NavBar" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 12 )]
+margin_right = 960.0
+margin_bottom = 206.0
+text = "Computing platform graphs"
+shows_back = false
+
+[node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 210.0
+margin_right = 960.0
+margin_bottom = 1170.0
+stretches_vertically = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 953.0
+margin_bottom = 953.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer"]
+margin_right = 946.0
+margin_bottom = 946.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
+margin_left = 333.0
+margin_top = 448.0
+margin_right = 613.0
+margin_bottom = 498.0
+rect_min_size = Vector2( 280, 0 )
+
+[node name="ProgressBar" type="ProgressBar" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_right = 280.0
+margin_bottom = 14.0
+
+[node name="Label" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_top = 18.0
+margin_right = 280.0
+margin_bottom = 32.0
+text = "TODO"
+align = 1
+
+[node name="CloseButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 7 )]
+margin_top = 36.0
+margin_right = 280.0
+margin_bottom = 50.0
+text = "Close"
+
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/CloseButton" to="." method="_on_CloseButton_pressed"]

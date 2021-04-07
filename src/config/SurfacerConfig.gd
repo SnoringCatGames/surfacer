@@ -5,6 +5,10 @@ extends Node
 
 var _must_restart_level_to_change_settings := true
 
+var _screen_path_inclusions := [
+    "res://addons/surfacer/src/gui/PrecomputePlatformGraphsScreen.tscn",
+]
+
 var _settings_main_item_class_exclusions := []
 var _settings_main_item_class_inclusions := []
 var _settings_details_item_class_exclusions := []
@@ -26,6 +30,8 @@ var is_inspector_enabled: bool
 var is_surfacer_logging: bool
 var inspector_panel_starts_open: bool
 var uses_threads_for_platform_graph_calculation: bool
+var precompute_platform_graph_for_levels: Array
+var is_precomputing_platform_graphs: bool
 
 var debug_params: Dictionary
 
@@ -102,14 +108,16 @@ func amend_app_manifest(manifest: Dictionary) -> void:
     manifest.must_restart_level_to_change_settings = \
             _must_restart_level_to_change_settings
     
-    if !manifest.has("settings_main_item_class_exclusions"):
-        manifest.settings_main_item_class_exclusions = []
-    if !manifest.has("settings_main_item_class_inclusions"):
-        manifest.settings_main_item_class_inclusions = []
-    if !manifest.has("settings_details_item_class_exclusions"):
-        manifest.settings_details_item_class_exclusions = []
-    if !manifest.has("settings_details_item_class_inclusions"):
-        manifest.settings_details_item_class_inclusions = []
+    var is_precomputing_platform_graphs: bool = \
+            manifest.has("precompute_platform_graph_for_levels") and \
+            !manifest.precompute_platform_graph_for_levels.empty()
+    if is_precomputing_platform_graphs:
+        manifest.is_splash_skipped = true
+    
+    for inclusion in _screen_path_inclusions:
+        if !manifest.screen_path_exclusions.has(inclusion) and \
+                !manifest.screen_path_inclusions.has(inclusion):
+            manifest.screen_path_inclusions.push_back(inclusion)
     
     for exclusion in _settings_main_item_class_exclusions:
         if !manifest.settings_main_item_class_exclusions.has(exclusion) and \
@@ -137,6 +145,13 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.edge_movement_classes = manifest.edge_movement_classes
     self.player_param_classes = manifest.player_param_classes
     self.debug_params = manifest.debug_params
+    
+    self.is_precomputing_platform_graphs = \
+            manifest.has("precompute_platform_graph_for_levels") and \
+            !manifest.precompute_platform_graph_for_levels.empty()
+    if self.is_precomputing_platform_graphs:
+        self.precompute_platform_graph_for_levels = \
+                manifest.precompute_platform_graph_for_levels
 
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting( \
