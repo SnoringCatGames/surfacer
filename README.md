@@ -1,5 +1,10 @@
 # Surfacer
 
+<p align="center">
+  <img src="assets/images/device_icons/icon_64.png"
+       alt="The Surfacer icon, showing a path between surfaces">
+</p>
+
 > _**[Live demo](https://levi.dev/squirrel)**_
 > 
 > _**[Demo source](https://github.com/snoringcatgames/squirrel-away)**_
@@ -489,6 +494,6 @@ Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and runn
 -   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/surfacer_third_party_licenses.gd).
 
 <p align="center">
-  <img src="https://github.com/SnoringCatGames/scaffolder/blob/master/assets/images/spinning_gear_icon.gif"
-       alt="An animated icon consisting of spinning gear, a game controller, and a pixelated jumping character">
+  <img src="assets/images/device_icons/icon_64.png"
+       alt="The Surfacer icon, showing a path between surfaces">
 </p>
