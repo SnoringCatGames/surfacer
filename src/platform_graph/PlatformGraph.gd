@@ -555,14 +555,16 @@ func to_string() -> String:
 
 
 
-func serialize(file: File) -> void:
-    # FIXME: -------------------------------------------
+func serialize() -> Dictionary:
+    # FIXME: ----------------------------------------
     # - Record surfaces (by get_instance_id).
     # - Record nodes (by get_instance_id).
     # - Record inter_surface_edges_results.
+    pass
+    return {}
     
     
-    surface_parser.serialize(file)
+    surface_parser.serialize()
     
     
 #    for surface in surfaces_to_inter_surface_edges_results:

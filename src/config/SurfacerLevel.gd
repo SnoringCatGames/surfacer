@@ -1,6 +1,8 @@
 class_name SurfacerLevel
 extends ScaffolderLevel
 
+const PLATFORM_GRAPHS_DIRECTORY_NAME := "platform_graphs"
+
 const _UTILITY_PANEL_RESOURCE_PATH := \
         "res://addons/surfacer/src/gui/panels/InspectorPanel.tscn"
 const _PAUSE_BUTTON_RESOURCE_PATH := \
@@ -35,14 +37,22 @@ func start() -> void:
                 _PAUSE_BUTTON_RESOURCE_PATH)
     
     _record_tile_maps()
+    _instantiate_platform_graphs()
+
+func _instantiate_platform_graphs() -> void:
+    var platform_graphs_path := \
+            "res://%s/level_%s.json" % [PLATFORM_GRAPHS_DIRECTORY_NAME, _id]
+    if File.new().file_exists(platform_graphs_path):
+        _load_platform_graphs()
+    else:
+        # Set up the PlatformGraphs for this level.
+        surface_parser = SurfaceParser.new()
+        surface_parser.calculate(surface_tile_maps)
+        platform_graphs = _calculate_platform_graphs( \
+                surface_parser, \
+                Surfacer.player_params, \
+                Surfacer.debug_params)
     
-    # Set up the PlatformGraphs for this level.
-    surface_parser = SurfaceParser.new()
-    surface_parser.calculate(surface_tile_maps)
-    platform_graphs = _create_platform_graphs( \
-            surface_parser, \
-            Surfacer.player_params, \
-            Surfacer.debug_params)
     if Surfacer.is_inspector_enabled:
         Surfacer.platform_graph_inspector.set_graphs(platform_graphs.values())
     
@@ -94,7 +104,7 @@ func _unhandled_input(event: InputEvent) -> void:
         # inspector.
         Gs.utils.release_focus()
 
-func _create_platform_graphs( \
+func _calculate_platform_graphs( \
         surface_parser: SurfaceParser, \
         all_player_params: Dictionary, \
         debug_params: Dictionary) -> Dictionary:
@@ -207,3 +217,78 @@ func set_tile_map_visibility(is_visible: bool) -> void:
             TileMap)
     for node in foregrounds:
         node.visible = is_visible
+
+func _load_platform_graphs() -> void:
+    # FIXME: ----------------------------------
+    pass
+    surface_parser = SurfaceParser.new()
+    
+    
+#    player_params = all_player_params[player_name]
+#    fake_player = create_fake_player_for_graph_calculation(player_params)
+#    collision_params = CollisionCalcParams.new( \
+#            debug_params, \
+#            player_params.movement_params, \
+#            surface_parser, \
+#            fake_player)
+#    graph = PlatformGraph.new()
+#    graph.calculate( \
+#            player_params, \
+#            collision_params)
+#    fake_player.set_platform_graph(graph)
+#    graphs[player_name] = graph
+    
+
+# FIXME: ------------------------------- Call this
+func save_platform_graphs() -> void:
+    assert(Gs.utils.get_is_pc_device())
+    
+    var serialized_dictionary := serialize()
+    var serialized_string := JSON.print(serialized_dictionary)
+    
+    var directory_path := \
+            ProjectSettings.globalize_path("res://") + \
+            PLATFORM_GRAPHS_DIRECTORY_NAME
+    
+    if !Gs.utils.ensure_directory_exists(directory_path):
+        return
+    
+    var file_name := "level_%s.json" % _id
+    var path := directory_path + "/" + file_name
+    
+    var file := File.new()
+    var status := file.open(path, File.WRITE)
+    if status != OK:
+        push_error("Unable to open file: " + path)
+    file.store_string(serialized_string)
+    file.close()
+
+func serialize() -> Dictionary:
+    return {
+        level_id = _id,
+        tile_map_ids = _get_tile_map_ids(),
+        player_names = _get_player_names(),
+        surface_parser = surface_parser.serialize(),
+        graphs = _serialize_platform_graphs(),
+    }
+
+func _get_tile_map_ids() -> Array:
+    var result := []
+    result.resize(surface_tile_maps.size())
+    for i in range(surface_tile_maps.size()):
+        result[i] = surface_tile_maps[i].id
+    return result
+
+func _get_player_names() -> Array:
+    var result := []
+    result.resize(all_players.size())
+    for i in range(all_players.size()):
+        result[i] = all_players[i].player_name
+    return result
+
+func _serialize_platform_graphs() -> Array:
+    var result := []
+    result.resize(platform_graphs.size())
+    for i in range(platform_graphs.size()):
+        result[i] = platform_graphs[i].serialize()
+    return result
