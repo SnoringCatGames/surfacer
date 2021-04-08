@@ -40,7 +40,7 @@ var debug_params := {}
 # Array<Thread>
 var _threads := []
 
-func _init( \
+func calculate( \
         player_params: PlayerParams, \
         collision_params: CollisionCalcParams) -> void:
     self.collision_params = collision_params
@@ -550,3 +550,29 @@ func to_string() -> String:
             counts.total_surfaces, \
             counts.total_edges, \
             ]
+
+
+
+
+
+func serialize(file: File) -> void:
+    # FIXME: -------------------------------------------
+    # - Record surfaces (by get_instance_id).
+    # - Record nodes (by get_instance_id).
+    # - Record inter_surface_edges_results.
+    
+    
+    surface_parser.serialize(file)
+    
+    
+#    for surface in surfaces_to_inter_surface_edges_results:
+#        for inter_surface_edges_result in \
+#                surfaces_to_inter_surface_edges_results[surface]:
+#            for jump_land_positions in \
+#                    inter_surface_edges_result.all_jump_land_positions:
+#                jump_land_positions.jump_position
+#                jump_land_positions.land_position
+#
+#            for edge in inter_surface_edges_result.valid_edges:
+#                edge.start_position_along_surface
+#                edge.end_position_along_surface

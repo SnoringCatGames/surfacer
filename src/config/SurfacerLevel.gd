@@ -9,7 +9,7 @@ const _PAUSE_BUTTON_RESOURCE_PATH := \
 const TILE_MAP_COLLISION_LAYER := 7
 
 # The TileMaps that define the collision boundaries of this level.
-# Array<TileMap>
+# Array<SurfacesTileMap>
 var surface_tile_maps: Array
 # Array<Player>
 var all_players: Array
@@ -34,14 +34,11 @@ func start() -> void:
                 Gs.canvas_layers.layers.hud, \
                 _PAUSE_BUTTON_RESOURCE_PATH)
     
-    # Get references to the TileMaps that define the collision boundaries of
-    # this level.
-    surface_tile_maps = \
-            get_tree().get_nodes_in_group(Surfacer.group_name_surfaces)
-    assert(surface_tile_maps.size() > 0)
+    _record_tile_maps()
     
     # Set up the PlatformGraphs for this level.
-    surface_parser = SurfaceParser.new(surface_tile_maps)
+    surface_parser = SurfaceParser.new()
+    surface_parser.calculate(surface_tile_maps)
     platform_graphs = _create_platform_graphs( \
             surface_parser, \
             Surfacer.player_params, \
@@ -50,6 +47,22 @@ func start() -> void:
         Surfacer.platform_graph_inspector.set_graphs(platform_graphs.values())
     
     call_deferred("_initialize_annotators")
+
+# Get references to the TileMaps that define the collision boundaries of this
+# level.
+func _record_tile_maps() -> void:
+    surface_tile_maps = \
+            get_tree().get_nodes_in_group(Surfacer.group_name_surfaces)
+    
+    # Validate the TileMaps.
+    if Gs.debug or Gs.playtest:
+        assert(surface_tile_maps.size() > 0)
+        var tile_map_ids := {}
+        for tile_map in surface_tile_maps:
+            assert(tile_map is SurfacesTileMap)
+            assert(tile_map.id != "" or surface_tile_maps.size() == 1)
+            assert(!tile_map_ids.has(tile_map.id))
+            tile_map_ids[tile_map.id] = true
 
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
@@ -105,7 +118,8 @@ func _create_platform_graphs( \
                 player_params.movement_params, \
                 surface_parser, \
                 fake_player)
-        graph = PlatformGraph.new( \
+        graph = PlatformGraph.new()
+        graph.calculate( \
                 player_params, \
                 collision_params)
         fake_player.set_platform_graph(graph)

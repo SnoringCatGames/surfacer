@@ -1,6 +1,15 @@
 class_name SurfacerConfig
 extends Node
 
+const SERIALIZE_START_INDICATOR := "#S:"
+const SERIALIZE_END_INDICATOR := "#E:"
+const SERIALIZE_ALL_INDICATOR := "#A:"
+const TILE_MAP_SERIALIZE_ID := "SurfacesTileMap"
+const PLATFORM_GRAPH_SERIALIZE_ID := "PlatformGraph"
+const SURFACE_PARSER_SERIALIZE_ID := "SurfaceParser"
+const SURFACE_SERIALIZE_ID := "Surface"
+const POSITION_ALONG_SURFACE_SERIALIZE_ID := "Node"
+
 # --- Manifest additions ---
 
 var _must_restart_level_to_change_settings := true

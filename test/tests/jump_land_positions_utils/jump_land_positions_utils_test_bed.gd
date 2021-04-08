@@ -135,7 +135,7 @@ func create_surface(params: Dictionary) -> Surface:
             Gs.logger.error()
     
     var vertices := [first_end, last_end]
-    var tile_map: TileMap = null
+    var tile_map: SurfacesTileMap = null
     var tile_map_indices := []
     
     var surface := Surface.new( \
