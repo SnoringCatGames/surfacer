@@ -487,7 +487,7 @@ static func check_frame_for_collision( \
     var is_touching_ceiling := surface_side == SurfaceSide.CEILING
     var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
     var is_touching_right_wall := surface_side == SurfaceSide.RIGHT_WALL
-    var tile_map: TileMap = kinematic_collision.collider
+    var tile_map: SurfacesTileMap = kinematic_collision.collider
     var tile_map_result := CollisionTileMapCoordResult.new()
     Gs.geometry.get_collision_tile_map_coord( \
             tile_map_result, \

@@ -6,7 +6,7 @@ var vertices: PoolVector2Array
 
 var side := SurfaceSide.NONE
 
-var tile_map: TileMap
+var tile_map: SurfacesTileMap
 
 # Array<int>
 var tile_map_indices: Array
@@ -33,7 +33,7 @@ var counter_clockwise_neighbor: Surface setget ,_get_counter_clockwise_neighbor
 func _init( \
         vertices: Array, \
         side: int, \
-        tile_map: TileMap, \
+        tile_map: SurfacesTileMap, \
         tile_map_indices: Array) -> void:
     self.vertices = PoolVector2Array(vertices)
     self.side = side
@@ -67,3 +67,9 @@ func _get_counter_clockwise_neighbor() -> Surface:
     return counter_clockwise_convex_neighbor if \
             counter_clockwise_convex_neighbor != null else \
             counter_clockwise_concave_neighbor
+
+#func to_serialize_string() -> String:
+#    # FIXME: ----------------------------------------
+#    return SurfacerConfig.SERIALIZE_ALL_INDICATOR + \
+#            SurfacerConfig.SURFACE_SERIALIZE_ID + \
+#            ""

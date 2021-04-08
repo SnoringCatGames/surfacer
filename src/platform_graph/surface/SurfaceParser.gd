@@ -20,10 +20,10 @@ var max_tile_map_cell_size: Vector2
 var combined_tile_map_rect: Rect2
 
 # This supports mapping a cell in a TileMap to its corresponding surface.
-# Dictionary<TileMap, Dictionary<String, Dictionary<int, Surface>>>
+# Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
-func _init(tile_maps: Array) -> void:
+func calculate(tile_maps: Array) -> void:
     assert(!tile_maps.empty())
     
     # Record the maximum cell size and combined region from all tile maps.
@@ -43,13 +43,13 @@ func _init(tile_maps: Array) -> void:
 # Gets the surface corresponding to the given side of the given tile in the
 # given TileMap.
 func get_surface_for_tile( \
-        tile_map: TileMap, \
+        tile_map: SurfacesTileMap, \
         tile_map_index: int, \
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
 
 func has_surface_for_tile( \
-        tile_map: TileMap, \
+        tile_map: SurfacesTileMap, \
         tile_map_index: int, \
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side].has(tile_map_index)
@@ -94,7 +94,7 @@ func get_subset_of_surfaces( \
 # - The given TileMap only uses collidable tiles. Use a separate TileMap to
 #   paint any non-collidable tiles.
 # - The given TileMap only uses tiles with convex collision boundaries.
-func _parse_tile_map(tile_map: TileMap) -> void:
+func _parse_tile_map(tile_map: SurfacesTileMap) -> void:
     var floors := []
     var ceilings := []
     var left_walls := []
@@ -164,7 +164,7 @@ func _parse_tile_map(tile_map: TileMap) -> void:
     Gs.profiler.stop("assert_surfaces_fully_calculated_duration")
 
 func _store_surfaces( \
-        tile_map: TileMap, \
+        tile_map: SurfacesTileMap, \
         floors: Array, \
         ceilings: Array, \
         left_walls: Array, \
@@ -264,7 +264,7 @@ func _store_surfaces( \
 # Parses the tiles of given TileMap into their constituent top-sides,
 # left-sides, and right-sides.
 static func _parse_tile_map_into_sides( \
-        tile_map: TileMap, \
+        tile_map: SurfacesTileMap, \
         floors: Array, \
         ceilings: Array, \
         left_walls: Array, \
@@ -319,7 +319,7 @@ static func _parse_polygon_into_sides( \
         ceilings: Array, \
         left_walls: Array, \
         right_walls: Array, \
-        tile_map: TileMap, \
+        tile_map: SurfacesTileMap, \
         tile_map_index: int) -> void:
     var vertex_count := vertices.size()
     var is_clockwise: bool = Gs.geometry.is_polygon_clockwise(vertices)
@@ -937,7 +937,7 @@ static func _free_objects(objects: Array) -> void:
 class _TmpSurface extends Object:
     # Array<Vector2>
     var vertices_array: Array
-    var tile_map: TileMap
+    var tile_map: SurfacesTileMap
     # Array<int>
     var tile_map_indices: Array
     var surface: Surface
@@ -1056,3 +1056,43 @@ static func get_closest_surface( \
                     closest_surface = current_surface
     
     return closest_surface
+
+
+
+
+
+
+#func serialize(file: File) -> void:
+#    # FIXME: --------------------------
+### Collections of surfaces.
+### Array<Surface>
+##var floors := []
+##var ceilings := []
+##var left_walls := []
+##var right_walls := []
+##
+##var all_surfaces := []
+##var non_ceiling_surfaces := []
+##var non_floor_surfaces := []
+##var non_wall_surfaces := []
+##var all_walls := []
+##
+##var max_tile_map_cell_size: Vector2
+##var combined_tile_map_rect: Rect2
+##
+### This supports mapping a cell in a TileMap to its corresponding surface.
+### Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
+##var _tile_map_index_to_surface_maps := {}
+#    pass
+#
+#    file.store_line( \
+#            SurfacerConfig.SERIALIZE_START_INDICATOR + \
+#            SurfacerConfig.SURFACE_PARSER_SERIALIZE_ID)
+#
+#
+#
+#
+#
+#    file.store_line( \
+#            SurfacerConfig.SERIALIZE_END_INDICATOR + \
+#            SurfacerConfig.SURFACE_PARSER_SERIALIZE_ID)
