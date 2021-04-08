@@ -1062,37 +1062,26 @@ static func get_closest_surface( \
 
 
 
-#func serialize(file: File) -> void:
-#    # FIXME: --------------------------
-### Collections of surfaces.
-### Array<Surface>
-##var floors := []
-##var ceilings := []
-##var left_walls := []
-##var right_walls := []
-##
-##var all_surfaces := []
-##var non_ceiling_surfaces := []
-##var non_floor_surfaces := []
-##var non_wall_surfaces := []
-##var all_walls := []
-##
-##var max_tile_map_cell_size: Vector2
-##var combined_tile_map_rect: Rect2
-##
-### This supports mapping a cell in a TileMap to its corresponding surface.
-### Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
-##var _tile_map_index_to_surface_maps := {}
-#    pass
+func serialize() -> Dictionary:
+    # FIXME: ----------------------------------------
+## Collections of surfaces.
+## Array<Surface>
+#var floors := []
+#var ceilings := []
+#var left_walls := []
+#var right_walls := []
 #
-#    file.store_line( \
-#            SurfacerConfig.SERIALIZE_START_INDICATOR + \
-#            SurfacerConfig.SURFACE_PARSER_SERIALIZE_ID)
+#var all_surfaces := []
+#var non_ceiling_surfaces := []
+#var non_floor_surfaces := []
+#var non_wall_surfaces := []
+#var all_walls := []
 #
+#var max_tile_map_cell_size: Vector2
+#var combined_tile_map_rect: Rect2
 #
-#
-#
-#
-#    file.store_line( \
-#            SurfacerConfig.SERIALIZE_END_INDICATOR + \
-#            SurfacerConfig.SURFACE_PARSER_SERIALIZE_ID)
+## This supports mapping a cell in a TileMap to its corresponding surface.
+## Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
+#var _tile_map_index_to_surface_maps := {}
+    pass
+    return {}

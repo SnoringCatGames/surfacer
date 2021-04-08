@@ -68,8 +68,7 @@ func _get_counter_clockwise_neighbor() -> Surface:
             counter_clockwise_convex_neighbor != null else \
             counter_clockwise_concave_neighbor
 
-#func to_serialize_string() -> String:
-#    # FIXME: ----------------------------------------
-#    return SurfacerConfig.SERIALIZE_ALL_INDICATOR + \
-#            SurfacerConfig.SURFACE_SERIALIZE_ID + \
-#            ""
+func serialize() -> Dictionary:
+    # FIXME: ----------------------------------------
+    pass
+    return {}

@@ -25,6 +25,8 @@ func _init().( \
 func _on_activated(previous_screen_name: String) -> void:
     ._on_activated(previous_screen_name)
     
+    assert(Gs.debug)
+    assert(Gs.utils.get_is_pc_device())
     assert(Surfacer.is_precomputing_platform_graphs)
     assert(!Surfacer.precompute_platform_graph_for_levels.empty())
     
@@ -49,6 +51,8 @@ func _on_activated(previous_screen_name: String) -> void:
     # - Add this progress bar to both the precompute screen and the game screen.
     # - Show a success message and a close button when calculating is done.
     #   - Have button be shiny/autofocused within Screen for pressing via enter.
+    # - Display a link to open the file location:
+    #   - OS.shell_open(get_user_data_dir() + "/" + SurfacerLevel.PLATFORM_GRAPHS_DIRECTORY_NAME)
     pass
     
     for level_id in Surfacer.precompute_platform_graph_for_levels:

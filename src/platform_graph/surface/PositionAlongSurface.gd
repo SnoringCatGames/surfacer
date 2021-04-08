@@ -103,3 +103,8 @@ static func copy(\
     destination.target_point = source.target_point
     destination.target_projection_onto_surface = \
             source.target_projection_onto_surface
+
+func serialize() -> Dictionary:
+    # FIXME: ----------------------------------------
+    pass
+    return {}
