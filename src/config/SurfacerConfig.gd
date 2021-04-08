@@ -35,8 +35,8 @@ var is_precomputing_platform_graphs: bool
 
 var debug_params: Dictionary
 
-var group_name_human_players := "human_players"
-var group_name_computer_players := "computer_players"
+var group_name_human_players := Player.GROUP_NAME_HUMAN_PLAYERS
+var group_name_computer_players := Player.GROUP_NAME_COMPUTER_PLAYERS
 var group_name_surfaces := SurfacesTileMap.GROUP_NAME_SURFACES
 
 var non_surface_parser_metric_keys := [

@@ -8,8 +8,6 @@ const _UTILITY_PANEL_RESOURCE_PATH := \
 const _PAUSE_BUTTON_RESOURCE_PATH := \
         "res://addons/surfacer/src/gui/PauseButton.tscn"
 
-const TILE_MAP_COLLISION_LAYER := 7
-
 # The TileMaps that define the collision boundaries of this level.
 # Array<SurfacesTileMap>
 var surface_tile_maps: Array
@@ -36,8 +34,22 @@ func start() -> void:
                 Gs.canvas_layers.layers.hud, \
                 _PAUSE_BUTTON_RESOURCE_PATH)
     
+    _create_fake_players_for_collision_calculations()
     _record_tile_maps()
     _instantiate_platform_graphs()
+
+func _create_fake_players_for_collision_calculations() -> void:
+    for player_name in Surfacer.player_params:
+        var movement_params: MovementParams = \
+                Surfacer.player_params[player_name].movement_params
+        var fake_player := add_player( \
+                movement_params.player_resource_path, \
+                Vector2.ZERO, \
+                false, \
+                true)
+        fake_player.set_safe_margin( \
+                movement_params.collision_margin_for_edge_calculations)
+        fake_players[fake_player.player_name] = fake_player
 
 func _instantiate_platform_graphs() -> void:
     var platform_graphs_path := \
@@ -48,10 +60,7 @@ func _instantiate_platform_graphs() -> void:
         # Set up the PlatformGraphs for this level.
         surface_parser = SurfaceParser.new()
         surface_parser.calculate(surface_tile_maps)
-        platform_graphs = _calculate_platform_graphs( \
-                surface_parser, \
-                Surfacer.player_params, \
-                Surfacer.debug_params)
+        platform_graphs = _calculate_platform_graphs()
     
     if Surfacer.is_inspector_enabled:
         Surfacer.platform_graph_inspector.set_graphs(platform_graphs.values())
@@ -104,51 +113,21 @@ func _unhandled_input(event: InputEvent) -> void:
         # inspector.
         Gs.utils.release_focus()
 
-func _calculate_platform_graphs( \
-        surface_parser: SurfaceParser, \
-        all_player_params: Dictionary, \
-        debug_params: Dictionary) -> Dictionary:
+func _calculate_platform_graphs() -> Dictionary:
     var graphs = {}
-    var player_params: PlayerParams
-    var fake_player: Player
-    var collision_params: CollisionCalcParams
     var graph: PlatformGraph
-    for player_name in all_player_params:
+    for player_name in Surfacer.player_params:
         #######################################################################
         # Allow for debug mode to limit the scope of what's calculated.
-        if debug_params.has("limit_parsing") and \
-                debug_params.limit_parsing.has("player_name") and \
-                player_name != debug_params.limit_parsing.player_name:
+        if Surfacer.debug_params.has("limit_parsing") and \
+                Surfacer.debug_params.limit_parsing.has("player_name") and \
+                player_name != Surfacer.debug_params.limit_parsing.player_name:
             continue
         #######################################################################
-        player_params = all_player_params[player_name]
-        fake_player = create_fake_player_for_graph_calculation(player_params)
-        collision_params = CollisionCalcParams.new( \
-                debug_params, \
-                player_params.movement_params, \
-                surface_parser, \
-                fake_player)
         graph = PlatformGraph.new()
-        graph.calculate( \
-                player_params, \
-                collision_params)
-        fake_player.set_platform_graph(graph)
+        graph.calculate(player_name)
         graphs[player_name] = graph
     return graphs
-
-func create_fake_player_for_graph_calculation( \
-        player_params: PlayerParams) -> Player:
-    var fake_player := add_player( \
-            player_params.movement_params.player_resource_path, \
-            Vector2.ZERO, \
-            false, \
-            true)
-    fake_player.collision_layer = 0
-    fake_player.collision_mask = TILE_MAP_COLLISION_LAYER
-    fake_player.set_safe_margin(player_params.movement_params \
-            .collision_margin_for_edge_calculations)
-    fake_players[fake_player.player_name] = fake_player
-    return fake_player
 
 func add_player( \
         resource_path: String, \
@@ -162,34 +141,16 @@ func add_player( \
             !is_fake)
     player.is_fake = is_fake
     player.position = position
+    player.name = "fake_" + player.name
     add_child(player)
     
-    if is_fake:
-        player.collision_layer = 0
-    else:
+    if !is_fake:
         var group: String = \
                 Surfacer.group_name_human_players if \
                 is_human_player else \
                 Surfacer.group_name_computer_players
         player.add_to_group(group)
         
-        _record_player_reference(is_human_player)
-    
-    return player
-
-func _record_player_reference(is_human_player: bool) -> void:
-    var group: String = \
-            Surfacer.group_name_human_players if \
-            is_human_player else \
-            Surfacer.group_name_computer_players
-    var players := get_tree().get_nodes_in_group(group)
-    
-    var player: Player = \
-            players[0] if \
-            players.size() > 0 else \
-            null
-    
-    if player != null:
         var graph: PlatformGraph = platform_graphs[player.player_name]
         if graph != null:
             player.set_platform_graph(graph)
@@ -205,6 +166,8 @@ func _record_player_reference(is_human_player: bool) -> void:
         Surfacer.annotators.create_player_annotator( \
                 player, \
                 is_human_player)
+    
+    return player
 
 func set_tile_map_visibility(is_visible: bool) -> void:
     # TODO: Also show/hide background. Parallax doesn't extend from CanvasItem
@@ -219,25 +182,69 @@ func set_tile_map_visibility(is_visible: bool) -> void:
         node.visible = is_visible
 
 func _load_platform_graphs() -> void:
-    # FIXME: ----------------------------------
-    pass
+    var platform_graphs_path := \
+            "res://%s/level_%s.json" % [PLATFORM_GRAPHS_DIRECTORY_NAME, _id]
+    
+    var file := File.new()
+    var status := file.open(platform_graphs_path, File.READ)
+    if status != OK:
+        push_error("Unable to open file: " + platform_graphs_path)
+        return
+    
+    var serialized_string := file.get_as_text()
+    var parse_result := JSON.parse(serialized_string)
+    if parse_result.error != OK:
+        push_error("Unable to parse JSON: %s; %s:%s:%s" % [ \
+            platform_graphs_path, \
+            parse_result.error, \
+            parse_result.error_line, \
+            parse_result.error_string, \
+        ])
+        return
+    var serialized_dictionary: Dictionary = parse_result.result
+    
+    if Gs.debug or Gs.playtest:
+        _validate_tile_maps(serialized_dictionary)
+        _validate_players(serialized_dictionary)
+        _validate_surfaces(serialized_dictionary)
+        _validate_platform_graphs(serialized_dictionary)
+    
     surface_parser = SurfaceParser.new()
+    surface_parser.load_serialized_dictionary( \
+            serialized_dictionary.surface_parser)
     
+    for serialized_graph in serialized_dictionary.platform_graphs:
+        var graph := PlatformGraph.new()
+        graph.load_serialized_dictionary(serialized_graph)
+        platform_graphs[graph.player_params.name] = graph
+
+func _validate_tile_maps(serialized_dictionary: Dictionary) -> void:
+    var expected_id_set := {}
+    for tile_map in surface_tile_maps:
+        expected_id_set[tile_map.id] = true
     
-#    player_params = all_player_params[player_name]
-#    fake_player = create_fake_player_for_graph_calculation(player_params)
-#    collision_params = CollisionCalcParams.new( \
-#            debug_params, \
-#            player_params.movement_params, \
-#            surface_parser, \
-#            fake_player)
-#    graph = PlatformGraph.new()
-#    graph.calculate( \
-#            player_params, \
-#            collision_params)
-#    fake_player.set_platform_graph(graph)
-#    graphs[player_name] = graph
+    for id in serialized_dictionary.surfaces_tile_map_ids:
+        assert(expected_id_set.has(id))
+        expected_id_set.erase(id)
+    assert(expected_id_set.empty())
+
+func _validate_players(serialized_dictionary: Dictionary) -> void:
+    var expected_name_set := {}
+    for player_name in Surfacer.player_params:
+        expected_name_set[player_name] = true
     
+    for name in serialized_dictionary.player_names:
+        assert(expected_name_set.has(name))
+        expected_name_set.erase(name)
+    assert(expected_name_set.empty())
+
+func _validate_surfaces(serialized_dictionary: Dictionary) -> void:
+    # FIXME: ------------------------------------
+    pass
+
+func _validate_platform_graphs(serialized_dictionary: Dictionary) -> void:
+    # FIXME: ------------------------------------
+    pass
 
 # FIXME: ------------------------------- Call this
 func save_platform_graphs() -> void:
@@ -266,13 +273,13 @@ func save_platform_graphs() -> void:
 func serialize() -> Dictionary:
     return {
         level_id = _id,
-        tile_map_ids = _get_tile_map_ids(),
+        surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
         player_names = _get_player_names(),
         surface_parser = surface_parser.serialize(),
-        graphs = _serialize_platform_graphs(),
+        platform_graphs = _serialize_platform_graphs(),
     }
 
-func _get_tile_map_ids() -> Array:
+func _get_surfaces_tile_map_ids() -> Array:
     var result := []
     result.resize(surface_tile_maps.size())
     for i in range(surface_tile_maps.size()):

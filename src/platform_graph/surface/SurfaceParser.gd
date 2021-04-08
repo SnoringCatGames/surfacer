@@ -1060,7 +1060,8 @@ static func get_closest_surface( \
 
 
 
-
+func load_serialized_dictionary(serialized_dictionary: Dictionary) -> void:
+    pass
 
 func serialize() -> Dictionary:
     # FIXME: ----------------------------------------
@@ -1084,4 +1085,5 @@ func serialize() -> Dictionary:
 ## Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
 #var _tile_map_index_to_surface_maps := {}
     pass
-    return {}
+    return {
+    }
