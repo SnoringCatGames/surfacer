@@ -40,14 +40,18 @@ var debug_params := {}
 # Array<Thread>
 var _threads := []
 
-func calculate( \
-        player_params: PlayerParams, \
-        collision_params: CollisionCalcParams) -> void:
-    self.collision_params = collision_params
-    self.player_params = player_params
+func calculate(player_name: String) -> void:
+    self.player_params = Surfacer.player_params[player_name]
     self.movement_params = player_params.movement_params
-    self.surface_parser = collision_params.surface_parser
-    self.debug_params = collision_params.debug_params
+    self.debug_params = Surfacer.debug_params
+    self.surface_parser = Gs.level.surface_parser
+    
+    var fake_player = Gs.level.fake_players[player_name]
+    self.collision_params = CollisionCalcParams.new( \
+            self.debug_params, \
+            self.movement_params, \
+            self.surface_parser, \
+            fake_player)
     
     # Store the subset of surfaces that this player type can interact with.
     var surfaces_array := surface_parser.get_subset_of_surfaces( \
@@ -59,6 +63,8 @@ func calculate( \
     _calculate_nodes_and_edges()
     
     _update_counts()
+    
+    fake_player.set_platform_graph(self)
 
 # Uses A* search.
 func find_path( \
@@ -553,7 +559,35 @@ func to_string() -> String:
 
 
 
-
+func load_serialized_dictionary(serialized_dictionary: Dictionary) -> void:
+    var player_name: String = serialized_dictionary.player_name
+    
+    self.player_params = Surfacer.player_params[player_name]
+    self.movement_params = player_params.movement_params
+    self.debug_params = Surfacer.debug_params
+    self.surface_parser = Gs.level.surface_parser
+    
+    var fake_player = Gs.level.fake_players[player_name]
+    self.collision_params = CollisionCalcParams.new( \
+            self.debug_params, \
+            self.movement_params, \
+            self.surface_parser, \
+            fake_player)
+    
+    # Store the subset of surfaces that this player type can interact with.
+    var surfaces_array := surface_parser.get_subset_of_surfaces( \
+            movement_params.can_grab_walls, \
+            movement_params.can_grab_ceilings, \
+            movement_params.can_grab_floors)
+    self.surfaces_set = Gs.utils.array_to_set(surfaces_array)
+    
+    # FIXME: ----------------------------------------
+    pass
+#    _calculate_nodes_and_edges()
+    
+    _update_counts()
+    
+    fake_player.set_platform_graph(self)
 
 func serialize() -> Dictionary:
     # FIXME: ----------------------------------------
@@ -561,7 +595,9 @@ func serialize() -> Dictionary:
     # - Record nodes (by get_instance_id).
     # - Record inter_surface_edges_results.
     pass
-    return {}
+    return {
+        player_name = player_params.player_name,
+    }
     
     
     surface_parser.serialize()

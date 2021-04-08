@@ -1,6 +1,9 @@
 class_name Player
 extends KinematicBody2D
 
+const GROUP_NAME_HUMAN_PLAYERS := "human_players"
+const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
+
 var player_name: String
 var can_grab_walls: bool
 var can_grab_ceilings: bool
