@@ -96,7 +96,7 @@ func _get_side() -> int:
             surface != null else \
             SurfaceSide.NONE
 
-static func copy(\
+static func copy( \
         destination: PositionAlongSurface, \
         source: PositionAlongSurface) -> void:
     destination.surface = source.surface
@@ -104,7 +104,16 @@ static func copy(\
     destination.target_projection_onto_surface = \
             source.target_projection_onto_surface
 
+func load_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    surface = context.id_to_surface[json_object.s]
+    target_point = Gs.utils.from_json_object(json_object.t)
+    target_projection_onto_surface = Gs.utils.from_json_object(json_object.p)
+
 func to_json_object() -> Dictionary:
-    # FIXME: ----------------------------------------
-    pass
-    return {}
+    return {
+        s = surface.get_instance_id(),
+        t = Gs.utils.to_json_object(target_point),
+        p = Gs.utils.to_json_object(target_projection_onto_surface),
+    }

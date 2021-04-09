@@ -23,8 +23,10 @@ var frame_continuous_velocities_from_steps: PoolVector2Array
 # The end positions of each EdgeStep. These correspond to
 # intermediate-surface waypoints and the destination position. This is used for
 # annotation debugging.
+# Array<Vector2>
 var waypoint_positions: Array
 
+# Array<EdgeInstruction>
 var horizontal_instructions: Array
 
 var jump_instruction_end: EdgeInstruction

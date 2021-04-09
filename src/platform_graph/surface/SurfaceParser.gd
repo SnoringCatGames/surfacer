@@ -1086,6 +1086,9 @@ func load_from_json_object( \
     
     # FIXME: ------------------ This is broken with multiple tilemaps
     _populate_derivative_collections(tile_maps[0])
+    
+    for surface in all_surfaces:
+        surface.load_references_from_json_context(json_object, context)
 
 func to_json_object() -> Dictionary:
     return {
