@@ -213,16 +213,16 @@ func _load_platform_graphs() -> void:
     for tile_map in surface_tile_maps:
         context.id_to_tile_map[tile_map.id] = tile_map
     
-    if Gs.debug or Gs.playtest:
-        _validate_tile_maps(json_object)
-        _validate_players(json_object)
-        _validate_surfaces(json_object)
-        _validate_platform_graphs(json_object)
-    
     surface_parser = SurfaceParser.new()
     surface_parser.load_from_json_object( \
             json_object.surface_parser, \
             context)
+    
+    if Gs.debug or Gs.playtest:
+        _validate_tile_maps(json_object)
+        _validate_players(json_object)
+        _validate_surfaces(surface_parser)
+        _validate_platform_graphs(json_object)
     
     for graph_json_object in json_object.platform_graphs:
         var graph := PlatformGraph.new()
@@ -251,15 +251,61 @@ func _validate_players(json_object: Dictionary) -> void:
         expected_name_set.erase(name)
     assert(expected_name_set.empty())
 
-func _validate_surfaces(json_object: Dictionary) -> void:
-    # FIXME: ------------------------------------
-    pass
+func _validate_surfaces(surface_parser: SurfaceParser) -> void:
+    var expected_id_set := {}
+    for tile_map in surface_tile_maps:
+        expected_id_set[tile_map.id] = true
+    
+    for tile_map in surface_parser._tile_map_index_to_surface_maps:
+        assert(expected_id_set.has(tile_map.id))
+        expected_id_set.erase(tile_map.id)
+    assert(expected_id_set.empty())
+    
+    if Surfacer.are_loaded_surfaces_deeply_validated:
+        var expected_surface_parser = SurfaceParser.new()
+        expected_surface_parser.calculate(surface_tile_maps)
+        
+        assert(surface_parser.max_tile_map_cell_size == \
+                expected_surface_parser.max_tile_map_cell_size)
+        assert(surface_parser.combined_tile_map_rect == \
+                expected_surface_parser.combined_tile_map_rect)
+        
+        assert(surface_parser.floors.size() == \
+                expected_surface_parser.floors.size())
+        assert(surface_parser.ceilings.size() == \
+                expected_surface_parser.ceilings.size())
+        assert(surface_parser.left_walls.size() == \
+                expected_surface_parser.left_walls.size())
+        assert(surface_parser.right_walls.size() == \
+                expected_surface_parser.right_walls.size())
+        
+        for i in surface_parser.floors.size():
+            assert(surface_parser.floors[i].probably_equal( \
+                    expected_surface_parser.floors[i]))
+        
+        for i in surface_parser.ceilings.size():
+            assert(surface_parser.ceilings[i].probably_equal( \
+                    expected_surface_parser.ceilings[i]))
+        
+        for i in surface_parser.left_walls.size():
+            assert(surface_parser.left_walls[i].probably_equal( \
+                    expected_surface_parser.left_walls[i]))
+        
+        for i in surface_parser.right_walls.size():
+            assert(surface_parser.right_walls[i].probably_equal( \
+                    expected_surface_parser.right_walls[i]))
 
 func _validate_platform_graphs(json_object: Dictionary) -> void:
-    # FIXME: ------------------------------------
-    pass
+    var expected_name_set := {}
+    for player_name in Surfacer.player_params:
+        expected_name_set[player_name] = true
+    
+    for graph_json_object in json_object.platform_graphs:
+        assert(expected_name_set.has(graph_json_object.player_name))
+        expected_name_set.erase(graph_json_object.player_name)
+    
+    assert(expected_name_set.empty())
 
-# FIXME: ------------------------------- Call this
 func save_platform_graphs() -> void:
     assert(Gs.utils.get_is_pc_device())
     

@@ -37,9 +37,6 @@ var counts := {}
 
 var debug_params := {}
 
-# Array<Thread>
-var _threads := []
-
 func calculate(player_name: String) -> void:
     self.player_params = Surfacer.player_params[player_name]
     self.movement_params = player_params.movement_params
@@ -307,82 +304,10 @@ func _calculate_nodes_and_edges() -> void:
     ###########################################################################
     
     _calculate_inter_surface_edges_total()
-    
-    # Dedup all edge-end positions (aka, nodes).
-    var grid_cell_to_node := {}
-    for surface in surfaces_to_inter_surface_edges_results:
-        for inter_surface_edges_result in \
-                surfaces_to_inter_surface_edges_results[surface]:
-            for jump_land_positions in \
-                    inter_surface_edges_result.all_jump_land_positions:
-                jump_land_positions.jump_position = _dedup_node( \
-                        jump_land_positions.jump_position, \
-                        grid_cell_to_node)
-                jump_land_positions.land_position = _dedup_node( \
-                        jump_land_positions.land_position, \
-                        grid_cell_to_node)
-            
-            for edge in inter_surface_edges_result.valid_edges:
-                edge.start_position_along_surface = _dedup_node( \
-                        edge.start_position_along_surface, \
-                        grid_cell_to_node)
-                edge.end_position_along_surface = _dedup_node( \
-                        edge.end_position_along_surface, \
-                        grid_cell_to_node)
-            
-            for failed_attempt in \
-                    inter_surface_edges_result.failed_edge_attempts:
-                failed_attempt.start_position_along_surface = _dedup_node( \
-                        failed_attempt.start_position_along_surface, \
-                        grid_cell_to_node)
-                failed_attempt.end_position_along_surface = _dedup_node( \
-                        failed_attempt.end_position_along_surface, \
-                        grid_cell_to_node)
-    
-    # Record mappings from surfaces to nodes.
-    var nodes_set := {}
-    var cell_id: String
-    for surface in surfaces_to_inter_surface_edges_results:
-        nodes_set.clear()
-        
-        # Get a deduped set of all nodes on this surface.
-        for inter_surface_edges_results in \
-                surfaces_to_inter_surface_edges_results[surface]:
-            for edge in inter_surface_edges_results.valid_edges:
-                cell_id = _node_to_cell_id(edge.start_position_along_surface)
-                nodes_set[cell_id] = edge.start_position_along_surface
-        
-        surfaces_to_outbound_nodes[surface] = nodes_set.values()
-    
-    # Set up edge mappings.
-    for surface in surfaces_to_outbound_nodes:
-        for node in surfaces_to_outbound_nodes[surface]:
-            nodes_to_nodes_to_edges[node] = {}
-    
-    # Record inter-surface edges.
-    for surface in surfaces_to_inter_surface_edges_results:
-        for inter_surface_edges_results in \
-                surfaces_to_inter_surface_edges_results[surface]:
-            for edge in inter_surface_edges_results.valid_edges:
-                if !nodes_to_nodes_to_edges \
-                        [edge.start_position_along_surface] \
-                        .has(edge.end_position_along_surface):
-                    nodes_to_nodes_to_edges \
-                        [edge.start_position_along_surface] \
-                        [edge.end_position_along_surface] = []
-                nodes_to_nodes_to_edges \
-                        [edge.start_position_along_surface] \
-                        [edge.end_position_along_surface].push_back(edge)
-    
-    if !Surfacer.is_inspector_enabled:
-        # Free-up this memory if we don't need to display the graph state in
-        # the inspector.
-        surfaces_to_inter_surface_edges_results.clear()
-    else:
-        for surface in surfaces_to_inter_surface_edges_results:
-            for inter_surface_edges_results in \
-                    surfaces_to_inter_surface_edges_results[surface]:
-                inter_surface_edges_results.edge_calc_results.clear()
+    _dedup_nodes()
+    _derive_surfaces_to_outbound_nodes()
+    _derive_nodes_to_nodes_to_edges()
+    _cleanup_edge_calc_results()
 
 func _calculate_inter_surface_edges_total() -> void:
     # Pre-allocate space in the Dictionary for thread-safe recording of the
@@ -471,6 +396,89 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
                         surfaces_in_fall_range_set, \
                         surfaces_in_jump_range_set)
 
+func _dedup_nodes() -> void:
+    # Dedup all edge-end positions (aka, nodes).
+    var grid_cell_to_node := {}
+    for surface in surfaces_to_inter_surface_edges_results:
+        for inter_surface_edges_result in \
+                surfaces_to_inter_surface_edges_results[surface]:
+            for jump_land_positions in \
+                    inter_surface_edges_result.all_jump_land_positions:
+                jump_land_positions.jump_position = _dedup_node( \
+                        jump_land_positions.jump_position, \
+                        grid_cell_to_node)
+                jump_land_positions.land_position = _dedup_node( \
+                        jump_land_positions.land_position, \
+                        grid_cell_to_node)
+            
+            for edge in inter_surface_edges_result.valid_edges:
+                edge.start_position_along_surface = _dedup_node( \
+                        edge.start_position_along_surface, \
+                        grid_cell_to_node)
+                edge.end_position_along_surface = _dedup_node( \
+                        edge.end_position_along_surface, \
+                        grid_cell_to_node)
+                if edge is FallFromFloorEdge:
+                    edge.fall_off_position = _dedup_node( \
+                            edge.fall_off_position, \
+                            grid_cell_to_node)
+            
+            for failed_attempt in \
+                    inter_surface_edges_result.failed_edge_attempts:
+                failed_attempt.start_position_along_surface = _dedup_node( \
+                        failed_attempt.start_position_along_surface, \
+                        grid_cell_to_node)
+                failed_attempt.end_position_along_surface = _dedup_node( \
+                        failed_attempt.end_position_along_surface, \
+                        grid_cell_to_node)
+
+func _derive_surfaces_to_outbound_nodes() -> void:
+    # Record mappings from surfaces to nodes.
+    var nodes_set := {}
+    var cell_id: String
+    for surface in surfaces_to_inter_surface_edges_results:
+        nodes_set.clear()
+        
+        # Get a deduped set of all nodes on this surface.
+        for inter_surface_edges_results in \
+                surfaces_to_inter_surface_edges_results[surface]:
+            for edge in inter_surface_edges_results.valid_edges:
+                cell_id = _node_to_cell_id(edge.start_position_along_surface)
+                nodes_set[cell_id] = edge.start_position_along_surface
+        
+        surfaces_to_outbound_nodes[surface] = nodes_set.values()
+
+func _derive_nodes_to_nodes_to_edges() -> void:
+    # Set up edge mappings.
+    for surface in surfaces_to_outbound_nodes:
+        for node in surfaces_to_outbound_nodes[surface]:
+            nodes_to_nodes_to_edges[node] = {}
+    
+    # Record inter-surface edges.
+    for surface in surfaces_to_inter_surface_edges_results:
+        for inter_surface_edges_results in \
+                surfaces_to_inter_surface_edges_results[surface]:
+            for edge in inter_surface_edges_results.valid_edges:
+                if !nodes_to_nodes_to_edges \
+                        [edge.start_position_along_surface] \
+                        .has(edge.end_position_along_surface):
+                    nodes_to_nodes_to_edges \
+                        [edge.start_position_along_surface] \
+                        [edge.end_position_along_surface] = []
+                nodes_to_nodes_to_edges \
+                        [edge.start_position_along_surface] \
+                        [edge.end_position_along_surface].push_back(edge)
+
+func _cleanup_edge_calc_results() -> void:
+    if !Surfacer.is_inspector_enabled:
+        # Free-up this memory if we don't need to display the graph state in
+        # the inspector.
+        surfaces_to_inter_surface_edges_results.clear()
+    else:
+        for surface in surfaces_to_inter_surface_edges_results:
+            for inter_surface_edges_results in \
+                    surfaces_to_inter_surface_edges_results[surface]:
+                inter_surface_edges_results.edge_calc_results.clear()
 # Checks whether a previous node with the same position has already been seen.
 #
 # - If there is a match, then the previous instance is returned.
@@ -567,8 +575,6 @@ func to_string() -> String:
         counts.total_edges, \
     ]
 
-
-
 func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
@@ -595,22 +601,13 @@ func load_from_json_object( \
     
     _load_position_along_surfaces_from_json_object(json_object, context)
     _load_jump_land_positions_from_json_object(json_object, context)
+    _load_surfaces_to_inter_surface_edges_results_from_json_object( \
+            json_object, \
+            context)
     
-    # FIXME: ----------------------------------------
-    pass
-    ## Dictionary<Surface, Array<InterSurfaceEdgesResult>>
-    #var surfaces_to_inter_surface_edges_results := {}
-    
-    
-    
-    for surface_id in json_object.surface_id_to_inter_surface_edges_results:
-        var surface: Surface = context.id_to_surface[surface_id]
-        surfaces_to_inter_surface_edges_results[surface] = []
-        
-        for inter_surface_edges_result in json_object \
-                .surface_id_to_inter_surface_edges_results[surface_id]:
-            pass
-    
+    _derive_surfaces_to_outbound_nodes()
+    _derive_nodes_to_nodes_to_edges()
+    _cleanup_edge_calc_results()
     _update_counts()
     
     fake_player.set_platform_graph(self)
@@ -639,31 +636,38 @@ func _load_jump_land_positions_from_json_object( \
                 context)
         context.id_to_jump_land_positions[id] = jump_land_positions
 
+func _load_surfaces_to_inter_surface_edges_results_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    for surface_id in json_object.surface_id_to_inter_surface_edges_results:
+        var inter_surface_edges_results_json_object: Array = json_object \
+                .surface_id_to_inter_surface_edges_results[surface_id]
+        
+        var surface: Surface = context.id_to_surface[surface_id]
+        
+        var inter_surface_edges_results := []
+        inter_surface_edges_results.resize( \
+                inter_surface_edges_results_json_object.size())
+        surfaces_to_inter_surface_edges_results[surface] = \
+                inter_surface_edges_results
+        
+        for i in inter_surface_edges_results_json_object.size():
+            var inter_surface_edges_result := InterSurfaceEdgesResult.new()
+            inter_surface_edges_result.load_from_json_object( \
+                    inter_surface_edges_results_json_object[i], \
+                    context)
+            inter_surface_edges_results[i] = inter_surface_edges_result
+
 func to_json_object() -> Dictionary:
-    # FIXME: ----------------------------------------
-    # - Record inter_surface_edges_results.
-    pass
     return {
         player_name = player_params.player_name,
         position_along_surface_id_to_json_object = \
                 _get_position_along_surface_id_to_json_object(),
         jump_land_positions_id_to_json_object = \
                 _get_jump_land_positions_id_to_json_object(),
+        surface_id_to_inter_surface_edges_results = \
+                _get_surface_id_to_inter_surface_edges_results_json_object(),
     }
-    
-    
-    
-#    for surface in surfaces_to_inter_surface_edges_results:
-#        for inter_surface_edges_result in \
-#                surfaces_to_inter_surface_edges_results[surface]:
-#            for jump_land_positions in \
-#                    inter_surface_edges_result.all_jump_land_positions:
-#                jump_land_positions.jump_position
-#                jump_land_positions.land_position
-#
-#            for edge in inter_surface_edges_result.valid_edges:
-#                edge.start_position_along_surface
-#                edge.end_position_along_surface
 
 func _get_position_along_surface_id_to_json_object() -> Dictionary:
     var results := {}
@@ -683,6 +687,9 @@ func _get_position_along_surface_id_to_json_object() -> Dictionary:
                 results[node.get_instance_id()] = node.to_json_object()
                 node = edge.end_position_along_surface
                 results[node.get_instance_id()] = node.to_json_object()
+                if edge is FallFromFloorEdge:
+                    node = edge.fall_off_position
+                    results[node.get_instance_id()] = node.to_json_object()
             
             for failed_attempt in \
                     inter_surface_edges_result.failed_edge_attempts:
@@ -713,4 +720,23 @@ func _get_jump_land_positions_id_to_json_object() -> Dictionary:
                 # FIXME: Remove this assert after checking it's actually true?
                 assert(results.has( \
                         failed_attempt.jump_land_positions.get_instance_id()))
+    return results
+
+func _get_surface_id_to_inter_surface_edges_results_json_object() -> Dictionary:
+    var results := {}
+    for surface in surfaces_to_inter_surface_edges_results:
+        var inter_surface_edges_results: Array = \
+                surfaces_to_inter_surface_edges_results[surface]
+        
+        var inter_surface_edges_results_json_object := []
+        inter_surface_edges_results_json_object.resize( \
+                inter_surface_edges_results.size())
+        results[surface.get_instance_id()] = \
+                inter_surface_edges_results_json_object
+        
+        for i in inter_surface_edges_results.size():
+            var inter_surface_edges_result: InterSurfaceEdgesResult = \
+                    inter_surface_edges_results[i]
+            inter_surface_edges_results_json_object[i] = \
+                    inter_surface_edges_result.to_json_object()
     return results
