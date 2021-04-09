@@ -77,6 +77,7 @@ var surface_parser_metric_keys := [
     "merge_continuous_surfaces_duration",
     "remove_internal_collinear_vertices_duration",
     "store_surfaces_duration",
+    "populate_derivative_collections",
     "assign_neighbor_surfaces_duration",
     "calculate_shape_bounding_boxes_for_surfaces_duration",
     "assert_surfaces_fully_calculated_duration",

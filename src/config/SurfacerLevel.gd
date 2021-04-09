@@ -201,48 +201,48 @@ func _load_platform_graphs() -> void:
             parse_result.error_string, \
         ])
         return
-    var serialized_dictionary: Dictionary = parse_result.result
+    var json_object: Dictionary = parse_result.result
     
     if Gs.debug or Gs.playtest:
-        _validate_tile_maps(serialized_dictionary)
-        _validate_players(serialized_dictionary)
-        _validate_surfaces(serialized_dictionary)
-        _validate_platform_graphs(serialized_dictionary)
+        _validate_tile_maps(json_object)
+        _validate_players(json_object)
+        _validate_surfaces(json_object)
+        _validate_platform_graphs(json_object)
     
     surface_parser = SurfaceParser.new()
-    surface_parser.load_serialized_dictionary( \
-            serialized_dictionary.surface_parser)
+    surface_parser.load_from_json_object( \
+            json_object.surface_parser)
     
-    for serialized_graph in serialized_dictionary.platform_graphs:
+    for serialized_graph in json_object.platform_graphs:
         var graph := PlatformGraph.new()
-        graph.load_serialized_dictionary(serialized_graph)
+        graph.load_from_json_object(serialized_graph)
         platform_graphs[graph.player_params.name] = graph
 
-func _validate_tile_maps(serialized_dictionary: Dictionary) -> void:
+func _validate_tile_maps(json_object: Dictionary) -> void:
     var expected_id_set := {}
     for tile_map in surface_tile_maps:
         expected_id_set[tile_map.id] = true
     
-    for id in serialized_dictionary.surfaces_tile_map_ids:
+    for id in json_object.surfaces_tile_map_ids:
         assert(expected_id_set.has(id))
         expected_id_set.erase(id)
     assert(expected_id_set.empty())
 
-func _validate_players(serialized_dictionary: Dictionary) -> void:
+func _validate_players(json_object: Dictionary) -> void:
     var expected_name_set := {}
     for player_name in Surfacer.player_params:
         expected_name_set[player_name] = true
     
-    for name in serialized_dictionary.player_names:
+    for name in json_object.player_names:
         assert(expected_name_set.has(name))
         expected_name_set.erase(name)
     assert(expected_name_set.empty())
 
-func _validate_surfaces(serialized_dictionary: Dictionary) -> void:
+func _validate_surfaces(json_object: Dictionary) -> void:
     # FIXME: ------------------------------------
     pass
 
-func _validate_platform_graphs(serialized_dictionary: Dictionary) -> void:
+func _validate_platform_graphs(json_object: Dictionary) -> void:
     # FIXME: ------------------------------------
     pass
 
@@ -250,8 +250,8 @@ func _validate_platform_graphs(serialized_dictionary: Dictionary) -> void:
 func save_platform_graphs() -> void:
     assert(Gs.utils.get_is_pc_device())
     
-    var serialized_dictionary := serialize()
-    var serialized_string := JSON.print(serialized_dictionary)
+    var json_object := serialize()
+    var serialized_string := JSON.print(json_object)
     
     var directory_path := \
             ProjectSettings.globalize_path("res://") + \
@@ -270,7 +270,7 @@ func save_platform_graphs() -> void:
     file.store_string(serialized_string)
     file.close()
 
-func serialize() -> Dictionary:
+func to_json_object() -> Dictionary:
     return {
         level_id = _id,
         surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
