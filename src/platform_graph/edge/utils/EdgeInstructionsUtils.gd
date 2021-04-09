@@ -42,7 +42,7 @@ static func convert_calculation_steps_to_movement_instructions( \
     var release: EdgeInstruction
 
     # Record the various sideways movement instructions.
-    for i in range(steps.size()):
+    for i in steps.size():
         step = steps[i]
         input_key = \
                 "move_left" if \
@@ -139,7 +139,7 @@ static func sub_instructions( \
     
     # Determine what index the start time corresponds to, and what instructions
     # are currently being pressed at that point.
-    for index in range(base_instructions.instructions.size()):
+    for index in base_instructions.instructions.size():
         instruction = base_instructions.instructions[index]
         if instruction.time >= start_time:
             start_index = index
@@ -165,7 +165,7 @@ static func sub_instructions( \
             base_instructions.instructions.size() - start_index
     remaining_instructions.resize(remaining_instructions_size)
     var base_instruction: EdgeInstruction
-    for i in range(remaining_instructions_size):
+    for i in remaining_instructions_size:
         base_instruction = base_instructions.instructions[i + start_index]
         remaining_instructions[i] = EdgeInstruction.new( \
                 base_instruction.input_key, \

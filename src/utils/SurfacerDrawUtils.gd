@@ -247,7 +247,7 @@ static func _draw_edge_from_instructions_positions( \
     if includes_waypoints:
         # Draw the intermediate waypoints.
         var waypoint_position: Vector2
-        for i in range(edge.trajectory.waypoint_positions.size() - 1):
+        for i in edge.trajectory.waypoint_positions.size() - 1:
             waypoint_position = edge.trajectory.waypoint_positions[i]
             draw_circle_outline( \
                     canvas, \

@@ -33,8 +33,8 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
             var tile_map_height = tile_map_used_rect.size.y
             positions = []
             positions.resize(tile_map_width * tile_map_height)
-            for y in range(tile_map_height):
-                for x in range(tile_map_width):
+            for y in tile_map_height:
+                for x in tile_map_width:
                     positions[y * tile_map_width + x] = \
                             Vector2(x + tile_map_start_x, y + tile_map_start_y)
         

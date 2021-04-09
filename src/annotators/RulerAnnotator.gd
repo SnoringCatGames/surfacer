@@ -56,7 +56,7 @@ func _draw() -> void:
     
     # Draw the vertical lines.
     start_y = ruler_start_position.y
-    for i in range(vertical_line_count):
+    for i in vertical_line_count:
         start_x = ruler_start_position.x + grid_spacing * i
         start_position = Vector2(start_x, start_y)
         end_position = Vector2(start_x, start_y + ruler_size.y)

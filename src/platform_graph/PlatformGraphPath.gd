@@ -26,7 +26,7 @@ func push_back(edge: Edge) -> void:
 
 func to_string_with_newlines(indent_level := 0) -> String:
     var indent_level_str := ""
-    for i in range(indent_level):
+    for i in indent_level:
         indent_level_str += "\t"
     var edges_str := ""
     for edge in edges:

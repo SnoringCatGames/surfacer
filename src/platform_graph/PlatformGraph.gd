@@ -552,14 +552,16 @@ func _update_counts() -> void:
 
 func to_string() -> String:
     return "PlatformGraph{ player: %s, surfaces: %s, edges: %s }" % [ \
-            movement_params.name, \
-            counts.total_surfaces, \
-            counts.total_edges, \
-            ]
+        movement_params.name, \
+        counts.total_surfaces, \
+        counts.total_edges, \
+    ]
 
 
 
-func load_from_json_object(json_object: Dictionary) -> void:
+func load_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
     var player_name: String = json_object.player_name
     
     self.player_params = Surfacer.player_params[player_name]
@@ -599,8 +601,6 @@ func to_json_object() -> Dictionary:
         player_name = player_params.player_name,
     }
     
-    
-    surface_parser.serialize()
     
     
 #    for surface in surfaces_to_inter_surface_edges_results:

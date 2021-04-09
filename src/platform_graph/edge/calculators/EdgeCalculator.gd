@@ -346,7 +346,7 @@ static func optimize_edge_jump_position_for_path_helper( \
         var jump_position: PositionAlongSurface
         var optimized_edge: Edge
         
-        for i in range(jump_ratios.size()):
+        for i in jump_ratios.size():
             if jump_ratios[i] == 0.0:
                 jump_position = previous_edge.start_position_along_surface
             else:
@@ -401,7 +401,7 @@ static func optimize_edge_jump_position_for_path_helper( \
         var velocity_start: Vector2
         var optimized_edge: Edge
         
-        for i in range(jump_ratios.size()):
+        for i in jump_ratios.size():
             if jump_ratios[i] == 0.0:
                 jump_position = previous_edge.start_position_along_surface
             else:
@@ -469,7 +469,7 @@ static func optimize_edge_land_position_for_path_helper( \
         var calc_result: EdgeCalcResult
         var optimized_edge: Edge
         
-        for i in range(land_ratios.size()):
+        for i in land_ratios.size():
             if land_ratios[i] == 1.0:
                 land_position = next_edge.end_position_along_surface
             else:
@@ -512,7 +512,7 @@ static func optimize_edge_land_position_for_path_helper( \
         var calc_result: EdgeCalcResult
         var optimized_edge: Edge
         
-        for i in range(land_ratios.size()):
+        for i in land_ratios.size():
             if land_ratios[i] == 1.0:
                 land_position = next_edge.end_position_along_surface
             else:

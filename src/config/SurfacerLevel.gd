@@ -203,6 +203,9 @@ func _load_platform_graphs() -> void:
         return
     var json_object: Dictionary = parse_result.result
     
+    # FIXME: ----------------------------------------------------------------
+    var context := {}
+    
     if Gs.debug or Gs.playtest:
         _validate_tile_maps(json_object)
         _validate_players(json_object)
@@ -211,11 +214,14 @@ func _load_platform_graphs() -> void:
     
     surface_parser = SurfaceParser.new()
     surface_parser.load_from_json_object( \
-            json_object.surface_parser)
+            json_object.surface_parser, \
+            context)
     
-    for serialized_graph in json_object.platform_graphs:
+    for graph_json_object in json_object.platform_graphs:
         var graph := PlatformGraph.new()
-        graph.load_from_json_object(serialized_graph)
+        graph.load_from_json_object( \
+                graph_json_object, \
+                context)
         platform_graphs[graph.player_params.name] = graph
 
 func _validate_tile_maps(json_object: Dictionary) -> void:
@@ -250,7 +256,7 @@ func _validate_platform_graphs(json_object: Dictionary) -> void:
 func save_platform_graphs() -> void:
     assert(Gs.utils.get_is_pc_device())
     
-    var json_object := serialize()
+    var json_object := to_json_object()
     var serialized_string := JSON.print(json_object)
     
     var directory_path := \
@@ -275,27 +281,27 @@ func to_json_object() -> Dictionary:
         level_id = _id,
         surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
         player_names = _get_player_names(),
-        surface_parser = surface_parser.serialize(),
+        surface_parser = surface_parser.to_json_object(),
         platform_graphs = _serialize_platform_graphs(),
     }
 
 func _get_surfaces_tile_map_ids() -> Array:
     var result := []
     result.resize(surface_tile_maps.size())
-    for i in range(surface_tile_maps.size()):
+    for i in surface_tile_maps.size():
         result[i] = surface_tile_maps[i].id
     return result
 
 func _get_player_names() -> Array:
     var result := []
     result.resize(all_players.size())
-    for i in range(all_players.size()):
+    for i in all_players.size():
         result[i] = all_players[i].player_name
     return result
 
 func _serialize_platform_graphs() -> Array:
     var result := []
     result.resize(platform_graphs.size())
-    for i in range(platform_graphs.size()):
-        result[i] = platform_graphs[i].serialize()
+    for i in platform_graphs.size():
+        result[i] = platform_graphs[i].to_json_object()
     return result
