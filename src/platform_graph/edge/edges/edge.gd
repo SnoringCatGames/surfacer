@@ -72,15 +72,16 @@ func _init( \
     self.velocity_end = velocity_end
     self.instructions = instructions
     self.trajectory = trajectory
-    self.distance = _calculate_distance( \
-            start_position_along_surface, \
-            end_position_along_surface, \
-            trajectory)
-    self.duration = _calculate_duration( \
-            start_position_along_surface, \
-            end_position_along_surface, \
-            instructions, \
-            distance)
+    if start_position_along_surface != null:
+        self.distance = _calculate_distance( \
+                start_position_along_surface, \
+                end_position_along_surface, \
+                trajectory)
+        self.duration = _calculate_duration( \
+                start_position_along_surface, \
+                end_position_along_surface, \
+                instructions, \
+                distance)
 
 func update_for_surface_state( \
         surface_state: PlayerSurfaceState, \
@@ -287,3 +288,45 @@ static func check_just_landed_on_expected_surface( \
         end_surface: Surface) -> bool:
     return surface_state.just_left_air and \
             surface_state.grabbed_surface == end_surface
+
+func load_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    _load_edge_state_from_json_object(json_object, context)
+
+func to_json_object() -> Dictionary:
+    var json_object := {}
+    _edge_state_to_json_object(json_object)
+    return json_object
+
+func _load_edge_state_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    _load_edge_attempt_state_from_json_object(json_object, context)
+    is_time_based = json_object.tb
+    surface_type = json_object.st
+    enters_air = json_object.ea
+    includes_air_trajectory = json_object.ia
+    movement_params = Surfacer.player_params[json_object.pn]
+    is_optimized_for_path = json_object.io
+    instructions = EdgeInstructions.new()
+    trajectory.load_from_json_object(json_object.in, context)
+    trajectory = EdgeTrajectory.new()
+    trajectory.load_from_json_object(json_object.tr, context)
+    velocity_end = Gs.utils.from_json_object(json_object.ve)
+    distance = json_object.di
+    duration = json_object.du
+
+func _edge_state_to_json_object(json_object: Dictionary) -> void:
+    _edge_attempt_state_to_json_object(json_object)
+    json_object.tb = is_time_based
+    json_object.st = surface_type
+    json_object.ea = enters_air
+    json_object.ia = includes_air_trajectory
+    json_object.pn = movement_params.name
+    json_object.io = is_optimized_for_path
+    json_object.in = instructions.to_json_object()
+    json_object.tr = trajectory.to_json_object()
+    json_object.ve = Gs.utils.to_json_object(velocity_end)
+    json_object.di = distance
+    json_object.du = duration

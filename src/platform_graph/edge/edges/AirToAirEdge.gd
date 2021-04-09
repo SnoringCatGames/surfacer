@@ -9,15 +9,15 @@ const ENTERS_AIR := false
 const INCLUDES_AIR_TRAJECTORY := true
 
 func _init( \
-        calculator, \
-        start: Vector2, \
-        end: Vector2, \
-        velocity_start: Vector2, \
-        velocity_end: Vector2, \
-        movement_params: MovementParams, \
-        instructions: EdgeInstructions, \
-        trajectory: EdgeTrajectory, \
-        edge_calc_result_type: int) \
+        calculator = null, \
+        start := Vector2.INF, \
+        end := Vector2.INF, \
+        velocity_start := Vector2.INF, \
+        velocity_end := Vector2.INF, \
+        movement_params: MovementParams = null, \
+        instructions: EdgeInstructions = null, \
+        trajectory: EdgeTrajectory = null, \
+        edge_calc_result_type := EdgeCalcResultType.UNKNOWN) \
         .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \

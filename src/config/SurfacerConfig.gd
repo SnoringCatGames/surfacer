@@ -99,6 +99,8 @@ var annotators: Annotators
 
 var ann_defaults: AnnotationElementDefaults
 
+var edge_from_json_factory := EdgeFromJsonFactory.new()
+
 var player_action_classes: Array
 var edge_movement_classes: Array
 var player_param_classes: Array

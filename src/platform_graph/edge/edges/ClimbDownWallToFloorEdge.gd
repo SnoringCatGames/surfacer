@@ -13,10 +13,10 @@ const ENTERS_AIR := false
 const INCLUDES_AIR_TRAJECTORY := false
 
 func _init( \
-        calculator, \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
-        movement_params: MovementParams) \
+        calculator = null, \
+        start: PositionAlongSurface = null, \
+        end: PositionAlongSurface = null, \
+        movement_params: MovementParams = null) \
         .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \

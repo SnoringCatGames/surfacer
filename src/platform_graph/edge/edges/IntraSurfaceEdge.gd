@@ -17,10 +17,10 @@ var stopping_distance := INF
 var is_backtracking_to_not_protrude_past_surface_end := false
 
 func _init( \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
-        velocity_start: Vector2, \
-        movement_params: MovementParams) \
+        start: PositionAlongSurface = null, \
+        end: PositionAlongSurface = null, \
+        velocity_start := Vector2.INF, \
+        movement_params: MovementParams = null) \
         .(TYPE, \
         IS_TIME_BASED, \
         SurfaceType.get_type_from_side(start.side), \

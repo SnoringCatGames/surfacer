@@ -19,18 +19,18 @@ var falls_on_left_side: bool
 var fall_off_position: PositionAlongSurface
 
 func _init( \
-        calculator, \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
-        velocity_start: Vector2, \
-        velocity_end: Vector2, \
-        includes_extra_wall_land_horizontal_speed: bool, \
-        movement_params: MovementParams, \
-        instructions: EdgeInstructions, \
-        trajectory: EdgeTrajectory, \
-        edge_calc_result_type: int, \
-        falls_on_left_side: bool,
-        fall_off_position: PositionAlongSurface) \
+        calculator = null, \
+        start: PositionAlongSurface = null, \
+        end: PositionAlongSurface = null, \
+        velocity_start := Vector2.INF, \
+        velocity_end := Vector2.INF, \
+        includes_extra_wall_land_horizontal_speed := false, \
+        movement_params: MovementParams = null, \
+        instructions: EdgeInstructions = null, \
+        trajectory: EdgeTrajectory = null, \
+        edge_calc_result_type := EdgeCalcResultType.UNKNOWN, \
+        falls_on_left_side := false,
+        fall_off_position: PositionAlongSurface = null) \
         .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \
@@ -115,3 +115,18 @@ func update_navigation_state( \
                     navigation_state, \
                     surface_state, \
                     playback)
+
+func load_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    _load_edge_state_from_json_object(json_object, context)
+    falls_on_left_side = json_object.fl
+    fall_off_position = context.id_to_position_along_surface[json_object.fp]
+
+func to_json_object() -> Dictionary:
+    var json_object := {
+        fl = falls_on_left_side,
+        fp = fall_off_position.get_instance_id(),
+    }
+    _edge_state_to_json_object(json_object)
+    return json_object
