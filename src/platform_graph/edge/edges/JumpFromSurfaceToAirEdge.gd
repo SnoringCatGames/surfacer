@@ -9,16 +9,16 @@ const ENTERS_AIR := true
 const INCLUDES_AIR_TRAJECTORY := true
 
 func _init( \
-        calculator, \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
-        velocity_start: Vector2, \
-        velocity_end: Vector2, \
-        includes_extra_jump_duration: bool, \
-        movement_params: MovementParams, \
-        instructions: EdgeInstructions, \
-        trajectory: EdgeTrajectory, \
-        edge_calc_result_type: int) \
+        calculator = null, \
+        start: PositionAlongSurface = null, \
+        end: PositionAlongSurface = null, \
+        velocity_start := Vector2.INF, \
+        velocity_end := Vector2.INF, \
+        includes_extra_jump_duration := false, \
+        movement_params: MovementParams = null, \
+        instructions: EdgeInstructions = null, \
+        trajectory: EdgeTrajectory = null, \
+        edge_calc_result_type := EdgeCalcResultType.UNKNOWN) \
         .(TYPE, \
         IS_TIME_BASED, \
         SURFACE_TYPE, \

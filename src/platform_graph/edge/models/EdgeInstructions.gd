@@ -8,8 +8,8 @@ var duration: float
 
 # Instructions don't need to be pre-sorted.
 func _init( \
-        instructions: Array, \
-        duration: float) -> void:
+        instructions := [], \
+        duration := INF) -> void:
     self.instructions = instructions
     self.duration = duration
     
@@ -110,3 +110,33 @@ func to_string_with_newlines(indent_level := 0) -> String:
             indent_level_str, \
         ]
     return format_string_template % format_string_arguments
+
+func load_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    instructions = _load_instructions_json_array(json_object.i, context)
+    duration = json_object.d
+
+func _load_instructions_json_array(\
+        json_object: Array, \
+        context: Dictionary) -> Array:
+    var result := []
+    result.resize(json_object.size())
+    for i in json_object.size():
+        var instruction := EdgeInstruction.new()
+        instruction.load_from_json_object(json_object[i], context)
+        result[i] = instruction
+    return result
+
+func to_json_object() -> Dictionary:
+    return {
+        i = _get_instructions_json_array(),
+        d = duration,
+    }
+
+func _get_instructions_json_array() -> Array:
+    var result := []
+    result.resize(instructions.size())
+    for i in instructions.size():
+        result[i] = instructions[i].to_json_object()
+    return result

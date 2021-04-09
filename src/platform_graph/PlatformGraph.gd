@@ -29,7 +29,7 @@ var surfaces_to_outbound_nodes := {}
 #         Array<Edge>>>
 var nodes_to_nodes_to_edges := {}
 
-# Dictionary<Surface, Array<InterSurfaceEdgeResult>>
+# Dictionary<Surface, Array<InterSurfaceEdgesResult>>
 var surfaces_to_inter_surface_edges_results := {}
 
 # Dictionary<String, int>
@@ -378,6 +378,11 @@ func _calculate_nodes_and_edges() -> void:
         # Free-up this memory if we don't need to display the graph state in
         # the inspector.
         surfaces_to_inter_surface_edges_results.clear()
+    else:
+        for surface in surfaces_to_inter_surface_edges_results:
+            for inter_surface_edges_results in \
+                    surfaces_to_inter_surface_edges_results[surface]:
+                inter_surface_edges_results.edge_calc_results.clear()
 
 func _calculate_inter_surface_edges_total() -> void:
     # Pre-allocate space in the Dictionary for thread-safe recording of the
@@ -422,7 +427,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
     var surfaces_in_fall_range_set := {}
     var surfaces_in_jump_range_set := {}
     
-    # Array<InterSurfaceEdgeResult>
+    # Array<InterSurfaceEdgesResult>
     var inter_surface_edges_results: Array
     
     var i := -1
@@ -588,13 +593,13 @@ func load_from_json_object( \
             movement_params.can_grab_floors)
     self.surfaces_set = Gs.utils.array_to_set(surfaces_array)
     
-    # FIXME: ----------------------------------------
-    pass
-    ## Dictionary<Surface, Array<InterSurfaceEdgeResult>>
-    #var surfaces_to_inter_surface_edges_results := {}
-    
     _load_position_along_surfaces_from_json_object(json_object, context)
     _load_jump_land_positions_from_json_object(json_object, context)
+    
+    # FIXME: ----------------------------------------
+    pass
+    ## Dictionary<Surface, Array<InterSurfaceEdgesResult>>
+    #var surfaces_to_inter_surface_edges_results := {}
     
     
     
@@ -636,8 +641,6 @@ func _load_jump_land_positions_from_json_object( \
 
 func to_json_object() -> Dictionary:
     # FIXME: ----------------------------------------
-    # - Record surfaces (by get_instance_id).
-    # - Record nodes (by get_instance_id).
     # - Record inter_surface_edges_results.
     pass
     return {
