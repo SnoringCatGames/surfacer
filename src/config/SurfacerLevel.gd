@@ -203,8 +203,16 @@ func _load_platform_graphs() -> void:
         return
     var json_object: Dictionary = parse_result.result
     
-    # FIXME: ----------------------------------------------------------------
-    var context := {}
+    var id_to_tile_map := {}
+    for tile_map in surface_tile_maps:
+        id_to_tile_map[tile_map.id] = tile_map
+    
+    var context := {
+        id_to_tile_map = id_to_tile_map,
+        id_to_surface = {},
+        id_to_position_along_surface = {},
+        id_to_edge_attempt = {},
+    }
     
     if Gs.debug or Gs.playtest:
         _validate_tile_maps(json_object)

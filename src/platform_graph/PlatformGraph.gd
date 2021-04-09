@@ -330,9 +330,14 @@ func _calculate_nodes_and_edges() -> void:
                         edge.end_position_along_surface, \
                         grid_cell_to_node)
             
-            # InterSurfaceEdgesResult.failed_edge_attempts only indirectly
-            # references PositionAlongSurface objects through the
-            # JumpLandPositions object, which has already been deduped.
+            for failed_attempt in \
+                    inter_surface_edges_result.failed_edge_attempts:
+                failed_attempt.start_position_along_surface = _dedup_node( \
+                        failed_attempt.start_position_along_surface, \
+                        grid_cell_to_node)
+                failed_attempt.end_position_along_surface = _dedup_node( \
+                        failed_attempt.end_position_along_surface, \
+                        grid_cell_to_node)
     
     # Record mappings from surfaces to nodes.
     var nodes_set := {}
@@ -585,11 +590,36 @@ func load_from_json_object( \
     
     # FIXME: ----------------------------------------
     pass
-#    _calculate_nodes_and_edges()
+    ## Dictionary<Surface, Array<InterSurfaceEdgeResult>>
+    #var surfaces_to_inter_surface_edges_results := {}
+    
+    _load_position_along_surfaces_from_json_object(json_object, context)
+    
+    
+    
+    for surface_id in json_object.surface_id_to_inter_surface_edges_results:
+        var surface: Surface = context.id_to_surface[surface_id]
+        surfaces_to_inter_surface_edges_results[surface] = []
+        
+        for inter_surface_edges_result in json_object \
+                .surface_id_to_inter_surface_edges_results[surface_id]:
+            pass
     
     _update_counts()
     
     fake_player.set_platform_graph(self)
+
+func _load_position_along_surfaces_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    for id in json_object.node_id_to_json_object:
+        var node_json_object: Dictionary = \
+                json_object.node_id_to_json_object[id]
+        var position_along_surface := PositionAlongSurface.new()
+        position_along_surface.load_from_json_object( \
+                node_json_object, \
+                context)
+        context.id_to_position_along_surface[id] = position_along_surface
 
 func to_json_object() -> Dictionary:
     # FIXME: ----------------------------------------
@@ -599,6 +629,8 @@ func to_json_object() -> Dictionary:
     pass
     return {
         player_name = player_params.player_name,
+        node_id_to_json_object = \
+                _get_position_along_surface_id_to_json_object(),
     }
     
     
@@ -614,3 +646,36 @@ func to_json_object() -> Dictionary:
 #            for edge in inter_surface_edges_result.valid_edges:
 #                edge.start_position_along_surface
 #                edge.end_position_along_surface
+
+func _get_position_along_surface_id_to_json_object() -> Dictionary:
+    var results := {}
+    var node: PositionAlongSurface
+    for surface in surfaces_to_inter_surface_edges_results:
+        for inter_surface_edges_result in \
+                surfaces_to_inter_surface_edges_results[surface]:
+            for jump_land_positions in \
+                    inter_surface_edges_result.all_jump_land_positions:
+                node = jump_land_positions.jump_position
+                results[node.get_instance_id()] = node.to_json_object()
+                node = jump_land_positions.land_position
+                results[node.get_instance_id()] = node.to_json_object()
+            
+            for edge in inter_surface_edges_result.valid_edges:
+                node = edge.start_position_along_surface
+                results[node.get_instance_id()] = node.to_json_object()
+                node = edge.end_position_along_surface
+                results[node.get_instance_id()] = node.to_json_object()
+            
+            for failed_attempt in \
+                    inter_surface_edges_result.failed_edge_attempts:
+                # FIXME: Remove these asserts after checking they are actually
+                #        true?
+                assert(results.has(failed_attempt \
+                        .start_position_along_surface.get_instance_id()))
+                assert(results.has(failed_attempt \
+                        .end_position_along_surface.get_instance_id()))
+                node = failed_attempt.start_position_along_surface
+                results[node.get_instance_id()] = node.to_json_object()
+                node = failed_attempt.end_position_along_surface
+                results[node.get_instance_id()] = node.to_json_object()
+    return results

@@ -73,12 +73,17 @@ func _get_counter_clockwise_neighbor() -> Surface:
 func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
+    context.id_to_surface[json_object.d] = self
     vertices = PoolVector2Array(Gs.utils.from_json_object(json_object.v))
     side = json_object.s
-    tile_map = context.id_to_tile_map[json_object.t]
     tile_map_indices = json_object.i
     bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
     normal = SurfaceSide.get_normal(side)
+
+func load_references_from_json_context( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    tile_map = context.id_to_tile_map[json_object.t]
     connected_region_bounding_box = Gs.utils.from_json_object(json_object.crbb)
     clockwise_convex_neighbor = context.id_to_surface[json_object.cwv]
     counter_clockwise_convex_neighbor = context.id_to_surface[json_object.ccwv]
@@ -88,6 +93,7 @@ func load_from_json_object( \
 
 func to_json_object() -> Dictionary:
     return {
+        d = self.get_instance_id(),
         v = Gs.utils.to_json_object(vertices),
         s = side,
         t = tile_map.id,
