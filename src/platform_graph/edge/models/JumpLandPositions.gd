@@ -30,12 +30,12 @@ var needs_extra_wall_land_horizontal_speed: bool
 var less_likely_to_be_valid: bool
 
 func _init( \
-        jump_position: PositionAlongSurface, \
-        land_position: PositionAlongSurface, \
-        velocity_start: Vector2, \
-        needs_extra_jump_duration: bool, \
-        needs_extra_wall_land_horizontal_speed: bool, \
-        less_likely_to_be_valid: bool) -> void:
+        jump_position: PositionAlongSurface = null, \
+        land_position: PositionAlongSurface = null, \
+        velocity_start := Vector2.INF, \
+        needs_extra_jump_duration := false, \
+        needs_extra_wall_land_horizontal_speed := false, \
+        less_likely_to_be_valid := false) -> void:
     assert(!needs_extra_wall_land_horizontal_speed or \
             land_position.side == SurfaceSide.LEFT_WALL or \
             land_position.side == SurfaceSide.RIGHT_WALL)
@@ -93,3 +93,23 @@ func to_string() -> String:
         velocity_start, \
         needs_extra_jump_duration, \
     ]
+
+func load_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    jump_position = context.id_to_position_along_surface[json_object.j]
+    land_position = context.id_to_position_along_surface[json_object.l]
+    velocity_start = Gs.utils.from_json_object(json_object.v)
+    needs_extra_jump_duration = json_object.d
+    needs_extra_wall_land_horizontal_speed = json_object.s
+    less_likely_to_be_valid = json_object.i
+
+func to_json_object() -> Dictionary:
+    return {
+        j = jump_position.get_instance_id(),
+        l = land_position.get_instance_id(),
+        v = Gs.utils.to_json_object(velocity_start),
+        d = needs_extra_jump_duration,
+        s = needs_extra_wall_land_horizontal_speed,
+        i = less_likely_to_be_valid,
+    }
