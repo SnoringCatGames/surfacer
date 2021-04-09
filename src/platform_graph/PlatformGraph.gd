@@ -594,6 +594,7 @@ func load_from_json_object( \
     #var surfaces_to_inter_surface_edges_results := {}
     
     _load_position_along_surfaces_from_json_object(json_object, context)
+    _load_jump_land_positions_from_json_object(json_object, context)
     
     
     
@@ -612,14 +613,26 @@ func load_from_json_object( \
 func _load_position_along_surfaces_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
-    for id in json_object.node_id_to_json_object:
-        var node_json_object: Dictionary = \
-                json_object.node_id_to_json_object[id]
+    for id in json_object.position_along_surface_id_to_json_object:
+        var position_along_surface_json_object: Dictionary = \
+                json_object.position_along_surface_id_to_json_object[id]
         var position_along_surface := PositionAlongSurface.new()
         position_along_surface.load_from_json_object( \
-                node_json_object, \
+                position_along_surface_json_object, \
                 context)
         context.id_to_position_along_surface[id] = position_along_surface
+
+func _load_jump_land_positions_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    for id in json_object.jump_land_positions_id_to_json_object:
+        var jump_land_positions_json_object: Dictionary = \
+                json_object.jump_land_positions_id_to_json_object[id]
+        var jump_land_positions := JumpLandPositions.new()
+        jump_land_positions.load_from_json_object( \
+                jump_land_positions_json_object, \
+                context)
+        context.id_to_jump_land_positions[id] = jump_land_positions
 
 func to_json_object() -> Dictionary:
     # FIXME: ----------------------------------------
@@ -629,8 +642,10 @@ func to_json_object() -> Dictionary:
     pass
     return {
         player_name = player_params.player_name,
-        node_id_to_json_object = \
+        position_along_surface_id_to_json_object = \
                 _get_position_along_surface_id_to_json_object(),
+        jump_land_positions_id_to_json_object = \
+                _get_jump_land_positions_id_to_json_object(),
     }
     
     
@@ -678,4 +693,21 @@ func _get_position_along_surface_id_to_json_object() -> Dictionary:
                 results[node.get_instance_id()] = node.to_json_object()
                 node = failed_attempt.end_position_along_surface
                 results[node.get_instance_id()] = node.to_json_object()
+    return results
+
+func _get_jump_land_positions_id_to_json_object() -> Dictionary:
+    var results := {}
+    for surface in surfaces_to_inter_surface_edges_results:
+        for inter_surface_edges_result in \
+                surfaces_to_inter_surface_edges_results[surface]:
+            for jump_land_positions in \
+                    inter_surface_edges_result.all_jump_land_positions:
+                results[jump_land_positions.get_instance_id()] = \
+                        jump_land_positions.to_json_object()
+            
+            for failed_attempt in \
+                    inter_surface_edges_result.failed_edge_attempts:
+                # FIXME: Remove this assert after checking it's actually true?
+                assert(results.has( \
+                        failed_attempt.jump_land_positions.get_instance_id()))
     return results
