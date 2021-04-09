@@ -104,7 +104,7 @@ static func copy(\
     destination.target_projection_onto_surface = \
             source.target_projection_onto_surface
 
-func serialize() -> Dictionary:
+func to_json_object() -> Dictionary:
     # FIXME: ----------------------------------------
     pass
     return {}

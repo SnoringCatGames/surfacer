@@ -27,15 +27,8 @@ func calculate(tile_maps: Array) -> void:
     assert(!tile_maps.empty())
     
     # Record the maximum cell size and combined region from all tile maps.
-    max_tile_map_cell_size = Vector2.ZERO
-    combined_tile_map_rect = \
-            Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_maps[0])
-    for tile_map in tile_maps:
-        if tile_map.cell_size.x + tile_map.cell_size.y > \
-                max_tile_map_cell_size.x + max_tile_map_cell_size.y:
-            max_tile_map_cell_size = tile_map.cell_size
-        combined_tile_map_rect = combined_tile_map_rect.merge( \
-                Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_map))
+    _calculate_max_tile_map_cell_size(tile_maps)
+    _calculate_combined_tile_map_rect(tile_maps)
     
     for tile_map in tile_maps:
         _parse_tile_map(tile_map)
@@ -80,6 +73,20 @@ func get_subset_of_surfaces( \
                 return floors
             else:
                 return []
+
+func _calculate_max_tile_map_cell_size(tile_maps: Array) -> Vector2:
+    max_tile_map_cell_size = Vector2.ZERO
+    for tile_map in tile_maps:
+        if tile_map.cell_size.x + tile_map.cell_size.y > \
+                max_tile_map_cell_size.x + max_tile_map_cell_size.y:
+            max_tile_map_cell_size = tile_map.cell_size
+
+func _calculate_combined_tile_map_rect(tile_maps: Array) -> Rect2:
+    combined_tile_map_rect = \
+            Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_maps[0])
+    for tile_map in tile_maps:
+        combined_tile_map_rect = combined_tile_map_rect.merge( \
+                Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_map))
 
 # Parses the given TileMap into a set of nodes for the platform graph.
 # 
@@ -141,6 +148,10 @@ func _parse_tile_map(tile_map: SurfacesTileMap) -> void:
             right_walls)
     Gs.profiler.stop("store_surfaces_duration")
     
+    Gs.profiler.start("populate_derivative_collections")
+    _populate_derivative_collections(tile_map)
+    Gs.profiler.stop("populate_derivative_collections")
+    
     Gs.profiler.start("assign_neighbor_surfaces_duration")
     _assign_neighbor_surfaces( \
             self.floors, \
@@ -195,6 +206,13 @@ func _store_surfaces( \
             right_walls, \
             self.right_walls)
     
+    _free_objects(floors)
+    _free_objects(ceilings)
+    _free_objects(left_walls)
+    _free_objects(right_walls)
+
+func _populate_derivative_collections(tile_map: SurfacesTileMap) -> void:
+    # FIXME: ------------------ This is broken with multiple tilemaps
     all_surfaces = []
     Gs.utils.concat( \
             all_surfaces, \
@@ -243,18 +261,14 @@ func _store_surfaces( \
             all_walls, \
             self.left_walls)
     
-    var floor_mapping = _create_tile_map_mapping_from_surfaces(floors)
-    var ceiling_mapping = _create_tile_map_mapping_from_surfaces(ceilings)
-    var left_wall_mapping = _create_tile_map_mapping_from_surfaces(left_walls)
+    var floor_mapping = _create_tile_map_mapping_from_surfaces(self.floors)
+    var ceiling_mapping = _create_tile_map_mapping_from_surfaces(self.ceilings)
+    var left_wall_mapping = \
+            _create_tile_map_mapping_from_surfaces(self.left_walls)
     var right_wall_mapping = \
-            _create_tile_map_mapping_from_surfaces(right_walls)
+            _create_tile_map_mapping_from_surfaces(self.right_walls)
     
-    _free_objects(floors)
-    _free_objects(ceilings)
-    _free_objects(left_walls)
-    _free_objects(right_walls)
-    
-    _tile_map_index_to_surface_maps[tile_map] = {
+    self._tile_map_index_to_surface_maps[tile_map] = {
         SurfaceSide.FLOOR: floor_mapping,
         SurfaceSide.CEILING: ceiling_mapping,
         SurfaceSide.LEFT_WALL: left_wall_mapping,
@@ -923,11 +937,11 @@ static func _copy_surfaces_to_main_collection( \
         main_collection.push_back(tmp_surface.surface)
 
 static func _create_tile_map_mapping_from_surfaces( \
-        tmp_surfaces: Array) -> Dictionary:
+        surfaces: Array) -> Dictionary:
     var result = {}
-    for tmp_surface in tmp_surfaces:
-        for tile_map_index in tmp_surface.tile_map_indices:
-            result[tile_map_index] = tmp_surface.surface
+    for surface in surfaces:
+        for tile_map_index in surface.tile_map_indices:
+            result[tile_map_index] = surface
     return result
 
 static func _free_objects(objects: Array) -> void:
@@ -1057,33 +1071,46 @@ static func get_closest_surface( \
     
     return closest_surface
 
+func load_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    var tile_maps: Array = context.id_to_tile_map.values()
+    _calculate_max_tile_map_cell_size(tile_maps)
+    _calculate_combined_tile_map_rect(tile_maps)
+    
+    floors = _json_object_to_surface_array(json_object.floors, context)
+    ceilings = _json_object_to_surface_array(json_object.ceilings, context)
+    left_walls = _json_object_to_surface_array(json_object.left_walls, context)
+    right_walls = \
+            _json_object_to_surface_array(json_object.right_walls, context)
+    
+    # FIXME: ------------------ This is broken with multiple tilemaps
+    _populate_derivative_collections(tile_maps[0])
 
-
-
-func load_serialized_dictionary(serialized_dictionary: Dictionary) -> void:
-    pass
-
-func serialize() -> Dictionary:
-    # FIXME: ----------------------------------------
-## Collections of surfaces.
-## Array<Surface>
-#var floors := []
-#var ceilings := []
-#var left_walls := []
-#var right_walls := []
-#
-#var all_surfaces := []
-#var non_ceiling_surfaces := []
-#var non_floor_surfaces := []
-#var non_wall_surfaces := []
-#var all_walls := []
-#
-#var max_tile_map_cell_size: Vector2
-#var combined_tile_map_rect: Rect2
-#
-## This supports mapping a cell in a TileMap to its corresponding surface.
-## Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
-#var _tile_map_index_to_surface_maps := {}
-    pass
+func to_json_object() -> Dictionary:
     return {
+        floors = _surface_array_to_json_object(floors),
+        ceilings = _surface_array_to_json_object(ceilings),
+        left_walls = _surface_array_to_json_object(left_walls),
+        right_walls = _surface_array_to_json_object(right_walls),
     }
+
+func _json_object_to_surface_array( \
+        json_object: Array, \
+        context: Dictionary) -> Array:
+    var result := []
+    result.resize(json_object.size())
+    for i in range(json_object.size()):
+        var surface := Surface.new()
+        surface.load_from_json_object( \
+                json_object[i], \
+                context)
+        result[i] = surface
+    return result
+
+func _surface_array_to_json_object(surfaces: Array) -> Array:
+    var result := []
+    result.resize(surfaces.size())
+    for i in range(surfaces.size()):
+        result[i] = surfaces[i].to_json_object()
+    return result

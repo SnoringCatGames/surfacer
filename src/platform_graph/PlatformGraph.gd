@@ -559,8 +559,8 @@ func to_string() -> String:
 
 
 
-func load_serialized_dictionary(serialized_dictionary: Dictionary) -> void:
-    var player_name: String = serialized_dictionary.player_name
+func load_from_json_object(json_object: Dictionary) -> void:
+    var player_name: String = json_object.player_name
     
     self.player_params = Surfacer.player_params[player_name]
     self.movement_params = player_params.movement_params
@@ -589,7 +589,7 @@ func load_serialized_dictionary(serialized_dictionary: Dictionary) -> void:
     
     fake_player.set_platform_graph(self)
 
-func serialize() -> Dictionary:
+func to_json_object() -> Dictionary:
     # FIXME: ----------------------------------------
     # - Record surfaces (by get_instance_id).
     # - Record nodes (by get_instance_id).

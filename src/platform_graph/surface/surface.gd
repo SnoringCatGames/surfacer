@@ -31,16 +31,18 @@ var clockwise_neighbor: Surface setget ,_get_clockwise_neighbor
 var counter_clockwise_neighbor: Surface setget ,_get_counter_clockwise_neighbor
 
 func _init( \
-        vertices: Array, \
-        side: int, \
-        tile_map: SurfacesTileMap, \
-        tile_map_indices: Array) -> void:
+        vertices := [], \
+        side := SurfaceSide.NONE, \
+        tile_map = null, \
+        tile_map_indices := []) -> void:
     self.vertices = PoolVector2Array(vertices)
     self.side = side
     self.tile_map = tile_map
     self.tile_map_indices = tile_map_indices
-    self.bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
-    self.normal = SurfaceSide.get_normal(side)
+    if !vertices.empty():
+        self.bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
+    if side != SurfaceSide.NONE:
+        self.normal = SurfaceSide.get_normal(side)
 
 func to_string() -> String:
     return "Surface{ %s, [ %s, %s ] }" % [ \
@@ -68,7 +70,31 @@ func _get_counter_clockwise_neighbor() -> Surface:
             counter_clockwise_convex_neighbor != null else \
             counter_clockwise_concave_neighbor
 
-func serialize() -> Dictionary:
-    # FIXME: ----------------------------------------
-    pass
-    return {}
+func load_from_json_object( \
+        json_object: Dictionary, \
+        context: Dictionary) -> void:
+    vertices = PoolVector2Array(Gs.utils.from_json_object(json_object.v))
+    side = json_object.s
+    tile_map = context.id_to_tile_map[json_object.t]
+    tile_map_indices = json_object.i
+    bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
+    normal = SurfaceSide.get_normal(side)
+    connected_region_bounding_box = Gs.utils.from_json_object(json_object.crbb)
+    clockwise_convex_neighbor = context.id_to_surface[json_object.cwv]
+    counter_clockwise_convex_neighbor = context.id_to_surface[json_object.ccwv]
+    clockwise_concave_neighbor = context.id_to_surface[json_object.cwc]
+    counter_clockwise_concave_neighbor = \
+            context.id_to_surface[json_object.ccwc]
+
+func to_json_object() -> Dictionary:
+    return {
+        v = Gs.utils.to_json_object(vertices),
+        s = side,
+        t = tile_map.id,
+        i = Gs.utils.to_json_object(tile_map_indices),
+        crbb = Gs.utils.to_json_object(connected_region_bounding_box),
+        cwv = clockwise_convex_neighbor.get_instance_id(),
+        ccwv = counter_clockwise_convex_neighbor.get_instance_id(),
+        cwc = clockwise_concave_neighbor.get_instance_id(),
+        ccwc = counter_clockwise_concave_neighbor.get_instance_id(),
+    }
