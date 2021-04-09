@@ -16,10 +16,10 @@ var valid_edges := []
 var edge_calc_results := []
 
 func _init( \
-        origin_surface: Surface, \
-        destination_surface: Surface, \
-        edge_type: int, \
-        all_jump_land_positions: Array) -> void:
+        origin_surface: Surface = null, \
+        destination_surface: Surface = null, \
+        edge_type := EdgeType.UNKNOWN, \
+        all_jump_land_positions := []) -> void:
     self.origin_surface = origin_surface
     self.destination_surface = destination_surface
     self.edge_type = edge_type

@@ -27,6 +27,7 @@ var _settings_details_item_class_inclusions := [
 
 var manifest: Dictionary
 var is_inspector_enabled: bool
+var are_loaded_surfaces_deeply_validated: bool
 var is_surfacer_logging: bool
 var inspector_panel_starts_open: bool
 var uses_threads_for_platform_graph_calculation: bool
@@ -141,6 +142,8 @@ func amend_app_manifest(manifest: Dictionary) -> void:
 
 func register_app_manifest(manifest: Dictionary) -> void:
     self.manifest = manifest
+    self.are_loaded_surfaces_deeply_validated = \
+            are_loaded_surfaces_deeply_validated
     self.inspector_panel_starts_open = manifest.inspector_panel_starts_open
     self.uses_threads_for_platform_graph_calculation = \
             manifest.uses_threads_for_platform_graph_calculation

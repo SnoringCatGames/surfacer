@@ -70,6 +70,58 @@ func _get_counter_clockwise_neighbor() -> Surface:
             counter_clockwise_convex_neighbor != null else \
             counter_clockwise_concave_neighbor
 
+func probably_equal(other: Surface) -> bool:
+    if self.side != other.side:
+        return false
+    
+    if self.tile_map != other.tile_map:
+        return false
+    
+    if self.vertices.size() != other.vertices.size():
+        return false
+    for i in self.vertices.size():
+        if !Gs.geometry.are_points_equal_with_epsilon( \
+                self.vertices[i], \
+                other.vertices[i], \
+                0.0001):
+            return false
+    
+    if self.tile_map_indices.size() != other.tile_map_indices.size():
+        return false
+    for i in self.tile_map_indices.size():
+        if self.tile_map_indices[i] != other.tile_map_indices[i]:
+            return false
+    
+    if !Gs.geometry.are_rects_equal_with_epsilon( \
+            self.bounding_box, \
+            other.bounding_box, \
+            0.0001):
+        return false
+    
+    if !Gs.geometry.are_rects_equal_with_epsilon( \
+            self.connected_region_bounding_box, \
+            other.connected_region_bounding_box, \
+            0.0001):
+        return false
+    
+    if (self.clockwise_convex_neighbor == null) != \
+            (other.clockwise_convex_neighbor == null):
+        return false
+    
+    if (self.counter_clockwise_convex_neighbor == null) != \
+            (other.counter_clockwise_convex_neighbor == null):
+        return false
+    
+    if (self.clockwise_concave_neighbor == null) != \
+            (other.clockwise_concave_neighbor == null):
+        return false
+    
+    if (self.counter_clockwise_concave_neighbor == null) != \
+            (other.counter_clockwise_concave_neighbor == null):
+        return false
+    
+    return true
+
 func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
