@@ -48,7 +48,7 @@ func get_description() -> String:
     var description := ""
     
     var description_list := step_result_metadata.get_description_list()
-    for i in range(description_list.size()):
+    for i in description_list.size():
         description += \
                 description_list[i].replace("\n                ", " ") + " "
     

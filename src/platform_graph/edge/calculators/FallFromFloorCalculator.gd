@@ -441,7 +441,7 @@ static func _prepend_walk_to_fall_off_portion( \
     var current_frame_velocity := Vector2(velocity_x_start, \
             PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
     
-    for frame_index in range(frame_count_before_fall_off):
+    for frame_index in frame_count_before_fall_off:
         trajectory.frame_discrete_positions_from_test[frame_index] = \
                 current_frame_position
         trajectory.frame_continuous_positions_from_steps[frame_index] = \

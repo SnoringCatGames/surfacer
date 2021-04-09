@@ -74,14 +74,14 @@ func get_subset_of_surfaces( \
             else:
                 return []
 
-func _calculate_max_tile_map_cell_size(tile_maps: Array) -> Vector2:
+func _calculate_max_tile_map_cell_size(tile_maps: Array) -> void:
     max_tile_map_cell_size = Vector2.ZERO
     for tile_map in tile_maps:
         if tile_map.cell_size.x + tile_map.cell_size.y > \
                 max_tile_map_cell_size.x + max_tile_map_cell_size.y:
             max_tile_map_cell_size = tile_map.cell_size
 
-func _calculate_combined_tile_map_rect(tile_maps: Array) -> Rect2:
+func _calculate_combined_tile_map_rect(tile_maps: Array) -> void:
     combined_tile_map_rect = \
             Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_maps[0])
     for tile_map in tile_maps:
@@ -307,7 +307,7 @@ static func _parse_tile_map_into_sides( \
         var vertex_count: int = shape.points.size()
         var tile_vertices_world_coords := Array()
         tile_vertices_world_coords.resize(vertex_count)
-        for i in range(vertex_count):
+        for i in vertex_count:
             var vertex: Vector2 = shape.points[i]
             var vertex_world_coords: Vector2 = \
                     shape_transform.xform(vertex) + position * cell_size
@@ -1100,7 +1100,7 @@ func _json_object_to_surface_array( \
         context: Dictionary) -> Array:
     var result := []
     result.resize(json_object.size())
-    for i in range(json_object.size()):
+    for i in json_object.size():
         var surface := Surface.new()
         surface.load_from_json_object( \
                 json_object[i], \
@@ -1111,6 +1111,6 @@ func _json_object_to_surface_array( \
 func _surface_array_to_json_object(surfaces: Array) -> Array:
     var result := []
     result.resize(surfaces.size())
-    for i in range(surfaces.size()):
+    for i in surfaces.size():
         result[i] = surfaces[i].to_json_object()
     return result

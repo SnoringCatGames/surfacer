@@ -31,7 +31,7 @@ func _draw_shape( \
     var offset := center - 0.5 * size * SCALE
     var positions := []
     positions.resize(NORMALIZED_FAKE_POSITIONS.size())
-    for i in range(NORMALIZED_FAKE_POSITIONS.size()):
+    for i in NORMALIZED_FAKE_POSITIONS.size():
         positions[i] = NORMALIZED_FAKE_POSITIONS[i] * size * SCALE + offset
     draw_polyline( \
             PoolVector2Array(positions), \

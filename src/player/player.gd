@@ -707,7 +707,7 @@ static func _get_attached_surface_collision( \
     var closest_collision: KinematicCollision2D
     var current_normal_diff: float
     var current_collision: KinematicCollision2D
-    for i in range(surface_state.collision_count):
+    for i in surface_state.collision_count:
         current_collision = body.get_slide_collision(i)
         
         if surface_state.is_grabbing_floor:

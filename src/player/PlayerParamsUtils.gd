@@ -23,7 +23,7 @@ static func _get_action_handlers(movement_params: MovementParams) -> Array:
     action_handlers.resize(names.size())
     
     var name: String
-    for i in range(names.size()):
+    for i in names.size():
         name = names[i]
         action_handlers[i] = Surfacer.player_actions[name]
     
@@ -39,7 +39,7 @@ static func _get_edge_calculators(movement_params: MovementParams) -> Array:
     edge_calculators.resize(names.size())
     
     var name: String
-    for i in range(names.size()):
+    for i in names.size():
         name = names[i]
         edge_calculators[i] = Surfacer.edge_movements[name]
     

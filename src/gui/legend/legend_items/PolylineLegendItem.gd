@@ -43,7 +43,7 @@ func _draw_shape( \
     var offset := center - 0.5 * size * SCALE
     var vertices := []
     vertices.resize(NORMALIZED_FAKE_POSITIONS.size())
-    for i in range(NORMALIZED_FAKE_POSITIONS.size()):
+    for i in NORMALIZED_FAKE_POSITIONS.size():
         vertices[i] = NORMALIZED_FAKE_POSITIONS[i] * size * SCALE + offset
     var color := color_params.get_color()
     

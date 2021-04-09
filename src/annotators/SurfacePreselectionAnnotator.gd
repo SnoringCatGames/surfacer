@@ -183,7 +183,7 @@ func _update_phantom_surface() -> void:
     transform = transform.translated(translation / scale_factor)
     transform = transform.translated(surface_center / scale_factor)
     
-    for i in range(phantom_surface.vertices.size()):
+    for i in phantom_surface.vertices.size():
         phantom_surface.vertices[i] = \
                 transform.xform(phantom_surface.vertices[i])
     
