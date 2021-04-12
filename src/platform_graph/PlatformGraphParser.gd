@@ -221,15 +221,11 @@ func save_platform_graphs() -> void:
     var json_object := to_json_object()
     var serialized_string := JSON.print(json_object)
     
-    var directory_path := \
-            ProjectSettings.globalize_path("res://") + \
-            PLATFORM_GRAPHS_DIRECTORY_NAME
-    
-    if !Gs.utils.ensure_directory_exists(directory_path):
+    if !Gs.utils.ensure_directory_exists(get_directory_path()):
         return
     
     var file_name: String = "level_%s.json" % level_id
-    var path := directory_path + "/" + file_name
+    var path := get_directory_path() + "/" + file_name
     
     var file := File.new()
     var status := file.open(path, File.WRITE)
@@ -268,3 +264,7 @@ func _get_resource_path() -> String:
         PLATFORM_GRAPHS_DIRECTORY_NAME,
         level_id,
     ]
+
+static func get_directory_path() -> String:
+    return ProjectSettings.globalize_path("res://") + \
+            PLATFORM_GRAPHS_DIRECTORY_NAME
