@@ -139,15 +139,15 @@ func _create_annotator(annotator_type: int) -> void:
             ruler_layer.add_child(ruler_annotator)
         AnnotatorType.SURFACES:
             if Gs.level != null and \
-                    Gs.level.surface_parser != null:
+                    Surfacer.graph_parser.surface_parser != null:
                 surfaces_annotator = \
-                        SurfacesAnnotator.new(Gs.level.surface_parser)
+                        SurfacesAnnotator.new(Surfacer.graph_parser.surface_parser)
                 annotation_layer.add_child(surfaces_annotator)
         AnnotatorType.GRID_INDICES:
             if Gs.level != null and \
-                    Gs.level.surface_parser != null:
+                    Surfacer.graph_parser.surface_parser != null:
                 grid_indices_annotator = GridIndicesAnnotator.new( \
-                        Gs.level.surface_parser)
+                        Surfacer.graph_parser.surface_parser)
                 annotation_layer.add_child(grid_indices_annotator)
         AnnotatorType.CLICK:
             click_annotator = ClickAnnotator.new()

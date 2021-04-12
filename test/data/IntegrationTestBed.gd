@@ -163,7 +163,7 @@ func set_up_level(data: Dictionary) -> void:
     player = Surfacer.current_player_for_clicks
     platform_graph = player.graph
     movement_params = player.movement_params
-    surface_parser = level.surface_parser
+    surface_parser = level.graph_parser.surface_parser
     
     for edge_calculator in player.edge_calculators:
         if edge_calculator is ClimbDownWallToFloorCalculator:
