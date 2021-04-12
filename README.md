@@ -1,7 +1,7 @@
 # Surfacer
 
 <p align="center">
-  <img src="assets/images/device_icons/icon_64.png"
+  <img src="assets/images/device_icons/icon_128.png"
        alt="The Surfacer icon, showing a path between surfaces">
 </p>
 
@@ -475,6 +475,6 @@ Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and runn
 -   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/config/SurfacerThirdPartyLicenses.gd).
 
 <p align="center">
-  <img src="assets/images/device_icons/icon_64.png"
+  <img src="assets/images/device_icons/icon_128.png"
        alt="The Surfacer icon, showing a path between surfaces">
 </p>
