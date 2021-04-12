@@ -17,8 +17,8 @@ func _initialize_framework() -> void:
     _register_edge_movements(Surfacer.edge_movement_classes)
     _register_player_params(Surfacer.player_param_classes)
 
-#func _on_app_ready() -> void:
-#    ._on_app_ready()
+#func _on_app_initialized() -> void:
+#    ._on_app_initialized()
 
 func _on_splash_finished() -> void:
     if !Surfacer.is_precomputing_platform_graphs:

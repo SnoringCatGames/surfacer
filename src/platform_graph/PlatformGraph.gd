@@ -41,9 +41,9 @@ func calculate(player_name: String) -> void:
     self.player_params = Surfacer.player_params[player_name]
     self.movement_params = player_params.movement_params
     self.debug_params = Surfacer.debug_params
-    self.surface_parser = Gs.level.surface_parser
+    self.surface_parser = Surfacer.graph_parser.surface_parser
     
-    var fake_player = Gs.level.fake_players[player_name]
+    var fake_player = Surfacer.graph_parser.fake_players[player_name]
     self.collision_params = CollisionCalcParams.new( \
             self.debug_params, \
             self.movement_params, \
@@ -583,9 +583,9 @@ func load_from_json_object( \
     self.player_params = Surfacer.player_params[player_name]
     self.movement_params = player_params.movement_params
     self.debug_params = Surfacer.debug_params
-    self.surface_parser = Gs.level.surface_parser
+    self.surface_parser = Surfacer.graph_parser.surface_parser
     
-    var fake_player = Gs.level.fake_players[player_name]
+    var fake_player = Surfacer.graph_parser.fake_players[player_name]
     self.collision_params = CollisionCalcParams.new( \
             self.debug_params, \
             self.movement_params, \
@@ -660,7 +660,7 @@ func _load_surfaces_to_inter_surface_edges_results_from_json_object( \
 
 func to_json_object() -> Dictionary:
     return {
-        player_name = player_params.player_name,
+        player_name = player_params.name,
         position_along_surface_id_to_json_object = \
                 _get_position_along_surface_id_to_json_object(),
         jump_land_positions_id_to_json_object = \

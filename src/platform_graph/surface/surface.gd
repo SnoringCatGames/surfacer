@@ -137,11 +137,14 @@ func load_references_from_json_context( \
         context: Dictionary) -> void:
     tile_map = context.id_to_tile_map[json_object.t]
     connected_region_bounding_box = Gs.utils.from_json_object(json_object.crbb)
-    clockwise_convex_neighbor = context.id_to_surface[json_object.cwv]
-    counter_clockwise_convex_neighbor = context.id_to_surface[json_object.ccwv]
-    clockwise_concave_neighbor = context.id_to_surface[json_object.cwc]
+    clockwise_convex_neighbor = \
+            _get_surface_from_id(json_object.cwv, context.id_to_surface)
+    counter_clockwise_convex_neighbor = \
+            _get_surface_from_id(json_object.ccwv, context.id_to_surface)
+    clockwise_concave_neighbor = \
+            _get_surface_from_id(json_object.cwc, context.id_to_surface)
     counter_clockwise_concave_neighbor = \
-            context.id_to_surface[json_object.ccwc]
+            _get_surface_from_id(json_object.ccwc, context.id_to_surface)
 
 func to_json_object() -> Dictionary:
     return {
@@ -151,8 +154,15 @@ func to_json_object() -> Dictionary:
         t = tile_map.id,
         i = Gs.utils.to_json_object(tile_map_indices),
         crbb = Gs.utils.to_json_object(connected_region_bounding_box),
-        cwv = clockwise_convex_neighbor.get_instance_id(),
-        ccwv = counter_clockwise_convex_neighbor.get_instance_id(),
-        cwc = clockwise_concave_neighbor.get_instance_id(),
-        ccwc = counter_clockwise_concave_neighbor.get_instance_id(),
+        cwv = Gs.utils.get_instance_id_or_not(clockwise_convex_neighbor),
+        ccwv = Gs.utils.get_instance_id_or_not(counter_clockwise_convex_neighbor),
+        cwc = Gs.utils.get_instance_id_or_not(clockwise_concave_neighbor),
+        ccwc = Gs.utils.get_instance_id_or_not(counter_clockwise_concave_neighbor),
     }
+
+func _get_surface_from_id( \
+        id: int, \
+        id_to_surface: Dictionary) -> Surface:
+    return id_to_surface[id] if \
+            id >= 0 else \
+            null

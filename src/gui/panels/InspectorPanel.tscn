@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/InspectorPanel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffolder/assets/fonts/main_font_s.tres" type="DynamicFont" id=2]
@@ -18,6 +18,7 @@
 [ext_resource path="res://addons/scaffolder/assets/images/gui/close_active.png" type="Texture" id=16]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/close_hover.png" type="Texture" id=17]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/pause_icon_active_large.png" type="Texture" id=18]
+[ext_resource path="res://addons/scaffolder/assets/fonts/header_font_s.tres" type="DynamicFont" id=19]
 
 [node name="InspectorPanel" type="VBoxContainer"]
 margin_right = 360.0
@@ -57,15 +58,15 @@ size_flags_vertical = 4
 [node name="Header" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 margin_top = 8.0
 margin_right = 360.0
-margin_bottom = 40.0
+margin_bottom = 36.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
 custom_constants/separation = 0
 
 [node name="Spacer" type="Control" parent="PanelContainer/VBoxContainer/Header"]
-margin_top = 16.0
+margin_top = 14.0
 margin_right = 8.0
-margin_bottom = 16.0
+margin_bottom = 14.0
 rect_min_size = Vector2( 8, 0 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -73,7 +74,7 @@ size_flags_vertical = 4
 [node name="PauseButton" type="Button" parent="PanelContainer/VBoxContainer/Header"]
 margin_left = 8.0
 margin_right = 148.0
-margin_bottom = 32.0
+margin_bottom = 28.0
 rect_min_size = Vector2( 140, 0 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -83,14 +84,14 @@ text = "Pause"
 [node name="Spacer2" type="Control" parent="PanelContainer/VBoxContainer/Header"]
 margin_left = 148.0
 margin_right = 360.0
-margin_bottom = 32.0
+margin_bottom = 28.0
 size_flags_horizontal = 3
 
 [node name="XButtonWrapper" type="Control" parent="PanelContainer/VBoxContainer/Header"]
 margin_left = 360.0
-margin_top = 16.0
+margin_top = 14.0
 margin_right = 360.0
-margin_bottom = 16.0
+margin_bottom = 14.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
@@ -107,14 +108,14 @@ texture_scale = Vector2( 0.75, 0.75 )
 
 [node name="Spacer3" type="Control" parent="PanelContainer/VBoxContainer/Header"]
 margin_left = 360.0
-margin_top = 16.0
+margin_top = 14.0
 margin_right = 360.0
-margin_bottom = 16.0
+margin_bottom = 14.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="Sections" type="VBoxContainer" parent="PanelContainer/VBoxContainer"]
-margin_top = 40.0
+margin_top = 36.0
 margin_right = 360.0
 margin_bottom = 600.0
 rect_min_size = Vector2( 0, 300 )
@@ -134,55 +135,55 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 4.0
 margin_right = 360.0
-margin_bottom = 32.0
+margin_bottom = 28.0
 size_flags_vertical = 4
 
 [node name="Spacer3" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
 margin_left = 180.0
-margin_top = 32.0
+margin_top = 28.0
 margin_right = 180.0
-margin_bottom = 36.0
+margin_bottom = 32.0
 rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="LegendHeader" type="Label" parent="PanelContainer/VBoxContainer/Sections"]
-margin_top = 36.0
+margin_top = 32.0
 margin_right = 360.0
-margin_bottom = 62.0
+margin_bottom = 58.0
 custom_styles/normal = ExtResource( 7 )
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 19 )
 text = "Legend"
 align = 1
 
 [node name="Spacer4" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
 margin_left = 180.0
-margin_top = 62.0
+margin_top = 58.0
 margin_right = 180.0
-margin_bottom = 66.0
+margin_bottom = 62.0
 rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="Legend" parent="PanelContainer/VBoxContainer/Sections" instance=ExtResource( 11 )]
-margin_top = 66.0
+margin_top = 62.0
 margin_right = 360.0
-margin_bottom = 86.0
+margin_bottom = 82.0
 size_flags_vertical = 4
 
 [node name="Spacer2" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
 margin_left = 180.0
-margin_top = 86.0
+margin_top = 82.0
 margin_right = 180.0
-margin_bottom = 90.0
+margin_bottom = 86.0
 rect_min_size = Vector2( 0, 4 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="InspectorContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Sections"]
-margin_top = 90.0
+margin_top = 86.0
 margin_right = 360.0
-margin_bottom = 552.0
+margin_bottom = 556.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
@@ -191,7 +192,7 @@ custom_constants/separation = 0
 margin_right = 360.0
 margin_bottom = 26.0
 custom_styles/normal = ExtResource( 7 )
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 19 )
 text = "Platform graph inspector"
 align = 1
 
@@ -200,15 +201,15 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 26.0
 margin_right = 360.0
-margin_bottom = 462.0
+margin_bottom = 470.0
 size_flags_vertical = 3
 custom_styles/bg = ExtResource( 8 )
 custom_fonts/font = ExtResource( 6 )
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer/Sections"]
-margin_top = 552.0
+margin_top = 556.0
 margin_right = 360.0
-margin_bottom = 560.0
+margin_bottom = 564.0
 custom_constants/margin_right = 4
 custom_constants/margin_top = 4
 custom_constants/margin_left = 4

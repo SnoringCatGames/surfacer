@@ -31,7 +31,7 @@ func _ready() -> void:
     _toggle_open_tween = Tween.new()
     add_child(_toggle_open_tween)
     
-    Surfacer.platform_graph_inspector = \
+    Surfacer.graph_inspector = \
             $PanelContainer/VBoxContainer/Sections/InspectorContainer/ \
             PlatformGraphInspector
     Surfacer.legend = \
@@ -55,7 +55,7 @@ func _ready() -> void:
 func _exit_tree() -> void:
     Gs.remove_gui_to_scale(self)
     Gs.active_overlays.erase(self)
-    Surfacer.platform_graph_inspector = null
+    Surfacer.graph_inspector = null
     Surfacer.legend = null
     Surfacer.selection_description = null
 
@@ -141,9 +141,9 @@ func _toggle_open() -> void:
     _set_footer_visibility(!is_open)
     
     if is_open:
-        Surfacer.platform_graph_inspector.select_first_item()
+        Surfacer.graph_inspector.select_first_item()
     else:
-        Surfacer.platform_graph_inspector.collapse()
+        Surfacer.graph_inspector.collapse()
     
     Gs.active_overlays.erase(self)
     if is_open:

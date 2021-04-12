@@ -92,7 +92,8 @@ var edge_movements := {}
 var player_params := {}
 
 var current_player_for_clicks: Player
-var platform_graph_inspector: PlatformGraphInspector
+var graph_parser: PlatformGraphParser
+var graph_inspector: PlatformGraphInspector
 var legend: Legend
 var selection_description: SelectionDescription
 var inspector_panel: InspectorPanel
