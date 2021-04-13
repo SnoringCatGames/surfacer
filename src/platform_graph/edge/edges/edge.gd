@@ -299,7 +299,7 @@ func _load_edge_state_from_json_object( \
     if json_object.has("tr"):
         trajectory = EdgeTrajectory.new()
         trajectory.load_from_json_object(json_object.tr, context)
-    velocity_end = Gs.utils.from_json_object(json_object.ve)
+    velocity_end = Gs.utils.decode_vector2(json_object.ve)
     distance = json_object.di
     duration = json_object.du
 
@@ -314,6 +314,6 @@ func _edge_state_to_json_object(json_object: Dictionary) -> void:
     json_object.in = instructions.to_json_object()
     if trajectory != null:
         json_object.tr = trajectory.to_json_object()
-    json_object.ve = Gs.utils.to_json_object(velocity_end)
+    json_object.ve = Gs.utils.encode_vector2(velocity_end)
     json_object.di = distance
     json_object.du = duration

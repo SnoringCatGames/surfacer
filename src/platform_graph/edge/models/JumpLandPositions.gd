@@ -99,7 +99,7 @@ func load_from_json_object( \
         context: Dictionary) -> void:
     jump_position = context.id_to_position_along_surface[int(json_object.j)]
     land_position = context.id_to_position_along_surface[int(json_object.l)]
-    velocity_start = Gs.utils.from_json_object(json_object.v)
+    velocity_start = Gs.utils.decode_vector2(json_object.v)
     needs_extra_jump_duration = json_object.d
     needs_extra_wall_land_horizontal_speed = json_object.s
     less_likely_to_be_valid = json_object.i
@@ -108,7 +108,7 @@ func to_json_object() -> Dictionary:
     return {
         j = jump_position.get_instance_id(),
         l = land_position.get_instance_id(),
-        v = Gs.utils.to_json_object(velocity_start),
+        v = Gs.utils.encode_vector2(velocity_start),
         d = needs_extra_jump_duration,
         s = needs_extra_wall_land_horizontal_speed,
         i = less_likely_to_be_valid,
