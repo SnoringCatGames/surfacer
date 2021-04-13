@@ -180,7 +180,7 @@ func _on_progress(step: String, finished := false) -> void:
             CenterContainer/VBoxContainer/Label.text = \
             label
     
-    Gs.logger.print("*** Precompute progress ***: " + label)
+    Gs.logger.print("Precompute progress: " + label)
 
 func _on_finished() -> void:
     Gs.audio.play_sound("achievement")
