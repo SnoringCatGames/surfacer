@@ -45,9 +45,9 @@ static func convert_calculation_steps_to_movement_instructions( \
     for i in steps.size():
         step = steps[i]
         input_key = \
-                "move_left" if \
+                "ml" if \
                 step.horizontal_acceleration_sign < 0 else \
-                "move_right"
+                "mr"
         time_instruction_end = \
                 step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON
@@ -76,7 +76,7 @@ static func convert_calculation_steps_to_movement_instructions( \
     
     # Record the jump instruction.
     if includes_jump:
-        input_key = "jump"
+        input_key = "j"
         press = EdgeInstruction.new( \
                 input_key, \
                 vertical_step.time_instruction_start, \
@@ -99,7 +99,7 @@ static func convert_calculation_steps_to_movement_instructions( \
         var time_step_start := last_step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
         
-        input_key = "grab_wall"
+        input_key = "gw"
         press = EdgeInstruction.new( \
                 input_key, \
                 time_step_start, \
@@ -107,9 +107,9 @@ static func convert_calculation_steps_to_movement_instructions( \
         instructions.push_back(press)
         
         input_key = \
-                "face_left" if \
+                "fl" if \
                 destination_side == SurfaceSide.LEFT_WALL else \
-                "face_right"
+                "fr"
         press = EdgeInstruction.new( \
                 input_key, \
                 time_step_start, \

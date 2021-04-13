@@ -129,7 +129,7 @@ func _check_did_just_reach_destination( \
     
     if surface_state.is_grabbing_wall:
         var is_moving_upward: bool = \
-                instructions.instructions[0].input_key == "move_up"
+                instructions.instructions[0].input_key == "mu"
         var position_y_instruction_end := \
                 end.y + stopping_distance if \
                 is_moving_upward else \
@@ -143,7 +143,7 @@ func _check_did_just_reach_destination( \
         
     else:
         var is_moving_leftward: bool = \
-                instructions.instructions[0].input_key == "move_left"
+                instructions.instructions[0].input_key == "ml"
         var position_x_instruction_end := \
                 end.x + stopping_distance if \
                 is_moving_leftward else \
@@ -170,14 +170,14 @@ static func _calculate_instructions( \
     var is_wall_surface := end.surface.normal.y == 0.0
     if is_wall_surface:
         if start.target_point.y < end.target_point.y:
-            input_key = "move_down"
+            input_key = "md"
         else:
-            input_key = "move_up"
+            input_key = "mu"
     else:
         if start.target_point.x < end.target_point.x:
-            input_key = "move_right"
+            input_key = "mr"
         else:
-            input_key = "move_left"
+            input_key = "ml"
     
     var instruction := EdgeInstruction.new( \
             input_key, \

@@ -36,7 +36,7 @@ static func update_for_key_press( \
     var just_released: bool
     
     match input_key:
-        "jump":
+        "j":
             was_pressed_in_previous_frame = previous_actions.pressed_jump
             was_already_pressed_in_current_frame = actions.pressed_jump
             is_pressed_in_current_frame = \
@@ -52,7 +52,7 @@ static func update_for_key_press( \
             actions.pressed_jump = is_pressed_in_current_frame
             actions.just_pressed_jump = just_pressed
             actions.just_released_jump = just_released
-        "move_up":
+        "mu":
             was_pressed_in_previous_frame = previous_actions.pressed_up
             was_already_pressed_in_current_frame = actions.pressed_up
             is_pressed_in_current_frame = \
@@ -68,7 +68,7 @@ static func update_for_key_press( \
             actions.pressed_up = is_pressed_in_current_frame
             actions.just_pressed_up = just_pressed
             actions.just_released_up = just_released
-        "move_down":
+        "md":
             was_pressed_in_previous_frame = previous_actions.pressed_down
             was_already_pressed_in_current_frame = actions.pressed_down
             is_pressed_in_current_frame = \
@@ -84,7 +84,7 @@ static func update_for_key_press( \
             actions.pressed_down = is_pressed_in_current_frame
             actions.just_pressed_down = just_pressed
             actions.just_released_down = just_released
-        "move_left":
+        "ml":
             was_pressed_in_previous_frame = previous_actions.pressed_left
             was_already_pressed_in_current_frame = actions.pressed_left
             is_pressed_in_current_frame = \
@@ -100,7 +100,7 @@ static func update_for_key_press( \
             actions.pressed_left = is_pressed_in_current_frame
             actions.just_pressed_left = just_pressed
             actions.just_released_left = just_released
-        "move_right":
+        "mr":
             was_pressed_in_previous_frame = previous_actions.pressed_right
             was_already_pressed_in_current_frame = actions.pressed_right
             is_pressed_in_current_frame = \
@@ -116,7 +116,7 @@ static func update_for_key_press( \
             actions.pressed_right = is_pressed_in_current_frame
             actions.just_pressed_right = just_pressed
             actions.just_released_right = just_released
-        "grab_wall":
+        "gw":
             was_pressed_in_previous_frame = previous_actions.pressed_grab_wall
             was_already_pressed_in_current_frame = actions.pressed_grab_wall
             is_pressed_in_current_frame = \
@@ -132,7 +132,7 @@ static func update_for_key_press( \
             actions.pressed_grab_wall = is_pressed_in_current_frame
             actions.just_pressed_grab_wall = just_pressed
             actions.just_released_grab_wall = just_released
-        "face_left":
+        "fl":
             was_pressed_in_previous_frame = previous_actions.pressed_face_left
             was_already_pressed_in_current_frame = actions.pressed_face_left
             is_pressed_in_current_frame = \
@@ -148,7 +148,7 @@ static func update_for_key_press( \
             actions.pressed_face_left = is_pressed_in_current_frame
             actions.just_pressed_face_left = just_pressed
             actions.just_released_face_left = just_released
-        "face_right":
+        "fr":
             was_pressed_in_previous_frame = previous_actions.pressed_face_right
             was_already_pressed_in_current_frame = actions.pressed_face_right
             is_pressed_in_current_frame = \
@@ -169,21 +169,21 @@ static func update_for_key_press( \
 
 static func input_key_to_action_name(input_key: String) -> String:
     match input_key:
-        "jump":
+        "j":
             return "jump"
-        "move_up":
+        "mu":
             return "up"
-        "move_down":
+        "md":
             return "down"
-        "move_left":
+        "ml":
             return "left"
-        "move_right":
+        "mr":
             return "right"
-        "grab_wall":
+        "gw":
             return "grab"
-        "face_left":
+        "fl":
             return "faceL"
-        "face_right":
+        "fr":
             return "faceR"
         _:
             Gs.logger.error()

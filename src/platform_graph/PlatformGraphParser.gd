@@ -1,6 +1,8 @@
 class_name PlatformGraphParser
 extends Node
 
+signal parsed
+
 const PLATFORM_GRAPHS_DIRECTORY_NAME := "platform_graphs"
 
 var level_id: String
@@ -73,7 +75,7 @@ func _instantiate_platform_graphs( \
     if Surfacer.is_inspector_enabled:
         Surfacer.graph_inspector.set_graphs(platform_graphs.values())
     
-    call_deferred("_initialize_annotators")
+    emit_signal("parsed")
 
 func _calculate_platform_graphs() -> Dictionary:
     var graphs = {}
@@ -97,13 +99,13 @@ func _load_platform_graphs() -> void:
     var file := File.new()
     var status := file.open(platform_graphs_path, File.READ)
     if status != OK:
-        push_error("Unable to open file: " + platform_graphs_path)
+        Gs.logger.error("Unable to open file: " + platform_graphs_path)
         return
     
     var serialized_string := file.get_as_text()
     var parse_result := JSON.parse(serialized_string)
     if parse_result.error != OK:
-        push_error("Unable to parse JSON: %s; %s:%s:%s" % [ \
+        Gs.logger.error("Unable to parse JSON: %s; %s:%s:%s" % [ \
             platform_graphs_path, \
             parse_result.error, \
             parse_result.error_line, \
@@ -230,7 +232,7 @@ func save_platform_graphs() -> void:
     var file := File.new()
     var status := file.open(path, File.WRITE)
     if status != OK:
-        push_error("Unable to open file: " + path)
+        Gs.logger.error("Unable to open file: " + path)
     file.store_string(serialized_string)
     file.close()
 

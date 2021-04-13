@@ -56,8 +56,9 @@ func load_from_json_object( \
     waypoint_positions = Gs.utils.from_json_object(json_object.w)
     horizontal_instructions = \
             _load_horizontal_instructions_json_array(json_object.h, context)
-    jump_instruction_end = EdgeInstruction.new()
-    jump_instruction_end.load_from_json_object(json_object.j, context)
+    if json_object.has("j"):
+        jump_instruction_end = EdgeInstruction.new()
+        jump_instruction_end.load_from_json_object(json_object.j, context)
     distance_from_continuous_frames = json_object.f
 
 func _load_horizontal_instructions_json_array(\
@@ -72,15 +73,17 @@ func _load_horizontal_instructions_json_array(\
     return result
 
 func to_json_object() -> Dictionary:
-    return {
+    var json_object := {
         d = Gs.utils.to_json_object(frame_discrete_positions_from_test),
         p = Gs.utils.to_json_object(frame_continuous_positions_from_steps),
         v = Gs.utils.to_json_object(frame_continuous_velocities_from_steps),
         w = Gs.utils.to_json_object(waypoint_positions),
         h = _get_horizontal_instructions_json_array(),
-        j = jump_instruction_end.to_json_object(),
         f = distance_from_continuous_frames,
     }
+    if jump_instruction_end != null:
+        json_object.j = jump_instruction_end.to_json_object()
+    return json_object
 
 func _get_horizontal_instructions_json_array() -> Array:
     var result := []

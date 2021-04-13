@@ -159,22 +159,22 @@ func _draw_action_indicator( \
     var is_pressed: bool
     match action:
         PlayerActionType.PRESSED_JUMP:
-            input_key = "jump"
+            input_key = "j"
             is_pressed = true
         PlayerActionType.RELEASED_JUMP:
-            input_key = "jump"
+            input_key = "j"
             is_pressed = false
         PlayerActionType.PRESSED_LEFT:
-            input_key = "move_left"
+            input_key = "ml"
             is_pressed = true
         PlayerActionType.RELEASED_LEFT:
-            input_key = "move_left"
+            input_key = "ml"
             is_pressed = false
         PlayerActionType.PRESSED_RIGHT:
-            input_key = "move_right"
+            input_key = "mr"
             is_pressed = true
         PlayerActionType.RELEASED_RIGHT:
-            input_key = "move_right"
+            input_key = "mr"
             is_pressed = false
         PlayerActionType.PRESSED_GRAB_WALL, \
         PlayerActionType.RELEASED_GRAB_WALL, \

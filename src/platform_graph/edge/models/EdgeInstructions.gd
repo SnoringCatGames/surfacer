@@ -115,7 +115,7 @@ func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
     instructions = _load_instructions_json_array(json_object.i, context)
-    duration = json_object.d
+    duration = json_object.d if json_object.d != -1 else INF
 
 func _load_instructions_json_array(\
         json_object: Array, \
@@ -131,7 +131,7 @@ func _load_instructions_json_array(\
 func to_json_object() -> Dictionary:
     return {
         i = _get_instructions_json_array(),
-        d = duration,
+        d = duration if duration != INF else -1,
     }
 
 func _get_instructions_json_array() -> Array:

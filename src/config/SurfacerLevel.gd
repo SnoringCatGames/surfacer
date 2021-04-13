@@ -29,7 +29,11 @@ func start() -> void:
                 Gs.canvas_layers.layers.hud, \
                 _PAUSE_BUTTON_RESOURCE_PATH)
     
+    graph_parser.connect("parsed", self, "_on_graphs_parsed")
     graph_parser.parse(_id)
+
+func _on_graphs_parsed() -> void:
+    call_deferred("_initialize_annotators")
 
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)

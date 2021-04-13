@@ -16,7 +16,7 @@ func _draw_shape( \
         size: Vector2) -> void:
     Gs.draw_utils.draw_instruction_indicator( \
             self, \
-            "move_right", \
+            "mr", \
             true, \
             center, \
             SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH * SCALE, \

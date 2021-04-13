@@ -119,7 +119,7 @@ static func check_instructions_discrete_frame_state( \
                     continuous_position)
             
             match next_instruction.input_key:
-                "jump":
+                "j":
                     is_pressing_jump = next_instruction.is_pressed
                     if is_pressing_jump:
                         velocity.y = movement_params.jump_boost
@@ -127,7 +127,7 @@ static func check_instructions_discrete_frame_state( \
                         # Record the positions of instruction starts and ends.
                         trajectory.jump_instruction_end = \
                                 instruction_with_position
-                "move_left":
+                "ml":
                     horizontal_acceleration_sign = \
                             -1 if \
                             next_instruction.is_pressed else \
@@ -135,7 +135,7 @@ static func check_instructions_discrete_frame_state( \
                     # Record the positions of instruction starts and ends.
                     trajectory.horizontal_instructions.push_back( \
                             instruction_with_position)
-                "move_right":
+                "mr":
                     horizontal_acceleration_sign = \
                             1 if \
                             next_instruction.is_pressed else \
@@ -143,11 +143,11 @@ static func check_instructions_discrete_frame_state( \
                     # Record the positions of instruction starts and ends.
                     trajectory.horizontal_instructions.push_back( \
                             instruction_with_position)
-                "grab_wall":
+                "gw":
                     pass
-                "face_left":
+                "fl":
                     pass
-                "face_right":
+                "fr":
                     pass
                 _:
                     Gs.logger.error()

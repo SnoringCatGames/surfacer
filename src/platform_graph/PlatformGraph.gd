@@ -470,7 +470,8 @@ func _derive_nodes_to_nodes_to_edges() -> void:
                         [edge.end_position_along_surface].push_back(edge)
 
 func _cleanup_edge_calc_results() -> void:
-    if !Surfacer.is_inspector_enabled:
+    if !Surfacer.is_inspector_enabled and \
+            !Surfacer.is_precomputing_platform_graphs:
         # Free-up this memory if we don't need to display the graph state in
         # the inspector.
         surfaces_to_inter_surface_edges_results.clear()
@@ -479,6 +480,7 @@ func _cleanup_edge_calc_results() -> void:
             for inter_surface_edges_results in \
                     surfaces_to_inter_surface_edges_results[surface]:
                 inter_surface_edges_results.edge_calc_results.clear()
+
 # Checks whether a previous node with the same position has already been seen.
 #
 # - If there is a match, then the previous instance is returned.
