@@ -65,6 +65,9 @@ func _get_weight_multiplier() -> float:
 static func _calculate_instructions( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface) -> EdgeInstructions:
+    if start == null or end == null:
+        return null
+    
     assert(start.side == SurfaceSide.LEFT_WALL || \
             start.side == SurfaceSide.RIGHT_WALL)
     assert(end.side == SurfaceSide.FLOOR)

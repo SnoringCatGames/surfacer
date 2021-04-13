@@ -69,7 +69,7 @@ func _check_did_just_reach_destination( \
         playback) -> bool:
     return Edge.check_just_landed_on_expected_surface( \
             surface_state, \
-            self.end_surface)
+            self.get_end_surface())
 
 # When walking off the end of a surface, Godot's underlying collision engine
 # can trigger multiple extraneous launch/land events if the player's collision
@@ -93,12 +93,12 @@ func update_navigation_state( \
         return
     
     var is_still_colliding_with_start_surface := \
-            surface_state.grabbed_surface == self.start_surface
+            surface_state.grabbed_surface == self.get_start_surface()
     if is_still_colliding_with_start_surface:
         navigation_state.is_expecting_to_enter_air = true
     
     var is_grabbed_surface_expected: bool = \
-            surface_state.grabbed_surface == self.end_surface or \
+            surface_state.grabbed_surface == self.get_end_surface() or \
             is_still_colliding_with_start_surface
     navigation_state.just_left_air_unexpectedly = \
             surface_state.just_left_air and \
@@ -121,7 +121,7 @@ func load_from_json_object( \
         context: Dictionary) -> void:
     _load_edge_state_from_json_object(json_object, context)
     falls_on_left_side = json_object.fl
-    fall_off_position = context.id_to_position_along_surface[json_object.fp]
+    fall_off_position = context.id_to_position_along_surface[int(json_object.fp)]
 
 func to_json_object() -> Dictionary:
     var json_object := {

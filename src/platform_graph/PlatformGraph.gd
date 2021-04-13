@@ -567,7 +567,7 @@ func _update_counts() -> void:
                 for edge in \
                         nodes_to_nodes_to_edges[origin_node][destination_node]:
                     # Increment the edge counts.
-                    counts[edge.name] += 1
+                    counts[edge.get_name()] += 1
                     counts.total_edges += 1
 
 func to_string() -> String:
@@ -624,7 +624,7 @@ func _load_position_along_surfaces_from_json_object( \
         position_along_surface.load_from_json_object( \
                 position_along_surface_json_object, \
                 context)
-        context.id_to_position_along_surface[id] = position_along_surface
+        context.id_to_position_along_surface[int(id)] = position_along_surface
 
 func _load_jump_land_positions_from_json_object( \
         json_object: Dictionary, \
@@ -636,7 +636,7 @@ func _load_jump_land_positions_from_json_object( \
         jump_land_positions.load_from_json_object( \
                 jump_land_positions_json_object, \
                 context)
-        context.id_to_jump_land_positions[id] = jump_land_positions
+        context.id_to_jump_land_positions[int(id)] = jump_land_positions
 
 func _load_surfaces_to_inter_surface_edges_results_from_json_object( \
         json_object: Dictionary, \
@@ -645,7 +645,7 @@ func _load_surfaces_to_inter_surface_edges_results_from_json_object( \
         var inter_surface_edges_results_json_object: Array = json_object \
                 .surface_id_to_inter_surface_edges_results[surface_id]
         
-        var surface: Surface = context.id_to_surface[surface_id]
+        var surface: Surface = context.id_to_surface[int(surface_id)]
         
         var inter_surface_edges_results := []
         inter_surface_edges_results.resize( \

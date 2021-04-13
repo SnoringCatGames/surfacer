@@ -166,6 +166,9 @@ func _check_did_just_reach_destination( \
 static func _calculate_instructions( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface) -> EdgeInstructions:
+    if start == null or end == null:
+        return null
+    
     var input_key: String
     var is_wall_surface := end.surface.normal.y == 0.0
     if is_wall_surface:
@@ -230,10 +233,10 @@ static func _calculate_stopping_distance( \
     if movement_params.forces_player_position_to_match_path_at_end:
         return 0.0
     
-    if edge.end_surface.side == SurfaceSide.FLOOR:
+    if edge.get_end_surface().side == SurfaceSide.FLOOR:
         var friction_coefficient: float = \
                 movement_params.friction_coefficient * \
-                edge.end_surface.tile_map.collision_friction
+                edge.get_end_surface().tile_map.collision_friction
         var stopping_distance := MovementUtils \
                 .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed( \
                         movement_params, \
@@ -250,8 +253,8 @@ static func _calculate_stopping_distance( \
     else:
         # TODO: Add support for acceleration and friction alongs walls and ceilings.
         
-        if edge.end_surface.side == SurfaceSide.LEFT_WALL or \
-                edge.end_surface.side == SurfaceSide.RIGHT_WALL:
+        if edge.get_end_surface().side == SurfaceSide.LEFT_WALL or \
+                edge.get_end_surface().side == SurfaceSide.RIGHT_WALL:
             var climb_speed := \
                     abs(movement_params.climb_up_speed) if \
                     displacement_to_end.y < 0 else \

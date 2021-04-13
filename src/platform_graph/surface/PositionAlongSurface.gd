@@ -107,7 +107,7 @@ static func copy( \
 func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
-    surface = context.id_to_surface[json_object.s]
+    surface = context.id_to_surface[int(json_object.s)]
     target_point = Gs.utils.from_json_object(json_object.t)
     target_projection_onto_surface = Gs.utils.from_json_object(json_object.p)
 

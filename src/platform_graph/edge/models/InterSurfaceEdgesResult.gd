@@ -63,8 +63,8 @@ static func merge_results_with_matching_destination_surfaces( \
 func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
-    origin_surface = context.id_to_surface[json_object.o]
-    destination_surface = context.id_to_surface[json_object.d]
+    origin_surface = context.id_to_surface[int(json_object.o)]
+    destination_surface = context.id_to_surface[int(json_object.d)]
     edge_type = json_object.t
     all_jump_land_positions = \
             _load_all_jump_land_positions_json_array(json_object.p, context)
@@ -78,7 +78,7 @@ func _load_all_jump_land_positions_json_array(\
     var result := []
     result.resize(json_object.size())
     for i in json_object.size():
-        result[i] = context.id_to_jump_land_positions[json_object[i]]
+        result[i] = context.id_to_jump_land_positions[int(json_object[i])]
     return result
 
 func _load_failed_edge_attempts_json_array(\

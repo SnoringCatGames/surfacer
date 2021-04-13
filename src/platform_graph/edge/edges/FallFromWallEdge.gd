@@ -29,9 +29,7 @@ func _init( \
         calculator, \
         start, \
         end, \
-        Vector2(movement_params.wall_fall_horizontal_boost * \
-                        start.surface.normal.x, \
-                0.0), \
+        _get_velocity_start(movement_params, start), \
         velocity_end, \
         false, \
         includes_extra_wall_land_horizontal_speed, \
@@ -60,4 +58,13 @@ func _check_did_just_reach_destination( \
         playback) -> bool:
     return Edge.check_just_landed_on_expected_surface( \
             surface_state, \
-            self.end_surface)
+            self.get_end_surface())
+
+static func _get_velocity_start( \
+        movement_params: MovementParams, \
+        start: PositionAlongSurface) -> Vector2:
+    return Vector2(movement_params.wall_fall_horizontal_boost * \
+                        start.surface.normal.x, \
+                0.0) if \
+            movement_params != null and start != null else \
+            Vector2.INF

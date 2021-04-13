@@ -11,18 +11,18 @@ var destination := Vector2.INF
 
 func _init(edges: Array) -> void:
     self.edges = edges
-    self.origin = edges.front().start
-    self.destination = edges.back().end
+    self.origin = edges.front().get_start()
+    self.destination = edges.back().get_end()
 
 func push_front(edge: Edge) -> void:
-    assert(Gs.geometry.are_points_equal_with_epsilon(edge.end, origin))
+    assert(Gs.geometry.are_points_equal_with_epsilon(edge.get_end(), origin))
     self.edges.push_front(edge)
-    self.origin = edge.start
+    self.origin = edge.get_start()
 
 func push_back(edge: Edge) -> void:
     assert(Gs.geometry.are_points_equal_with_epsilon(edge.start, destination))
     self.edges.push_back(edge)
-    self.destination = edge.end
+    self.destination = edge.get_end()
 
 func to_string_with_newlines(indent_level := 0) -> String:
     var indent_level_str := ""

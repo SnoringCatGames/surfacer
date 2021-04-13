@@ -28,11 +28,11 @@ func find_and_expand_controller( \
         metadata: Dictionary) -> bool:
     assert(search_type == InspectorSearchType.EDGE)
     if Gs.geometry.are_points_equal_with_epsilon( \
-                    edge_attempt.start, \
+                    edge_attempt.get_start(), \
                     metadata.start, \
                     0.01) and \
             Gs.geometry.are_points_equal_with_epsilon( \
-                    edge_attempt.end, \
+                    edge_attempt.get_end(), \
                     metadata.end, \
                     0.01):
         expand()
@@ -55,14 +55,14 @@ func _create_children_inner() -> void:
     var description: String
     
     text = "%s(%d,%d): Origin" % [ \
-        SurfaceSide.get_prefix(edge_attempt.start_surface.side), \
-        edge_attempt.start.x, \
-        edge_attempt.start.y, \
+        SurfaceSide.get_prefix(edge_attempt.get_start_surface().side), \
+        edge_attempt.get_start().x, \
+        edge_attempt.get_start().y, \
     ]
     description = \
             "The start position for this edge attempt is %s, along a %s." % [ \
-        edge_attempt.start, \
-        SurfaceSide.get_string(edge_attempt.start_surface.side), \
+        edge_attempt.get_start(), \
+        SurfaceSide.get_string(edge_attempt.get_start_surface().side), \
     ]
     DescriptionItemController.new( \
             tree_item, \
@@ -73,14 +73,14 @@ func _create_children_inner() -> void:
             get_annotation_elements_funcref)
     
     text = "%s(%d,%d): Destination" % [ \
-        SurfaceSide.get_prefix(edge_attempt.end_surface.side), \
-        edge_attempt.end.x, \
-        edge_attempt.end.y, \
+        SurfaceSide.get_prefix(edge_attempt.get_end_surface().side), \
+        edge_attempt.get_end().x, \
+        edge_attempt.get_end().y, \
     ]
     description = \
             "The end position for this edge attempt is %s, along a %s." % [ \
-        edge_attempt.end, \
-        SurfaceSide.get_string(edge_attempt.end_surface.side), \
+        edge_attempt.get_end(), \
+        SurfaceSide.get_string(edge_attempt.get_end_surface().side), \
     ]
     DescriptionItemController.new( \
             tree_item, \

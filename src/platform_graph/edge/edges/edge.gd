@@ -32,11 +32,6 @@ var distance: float
 # In seconds.
 var duration: float
 
-var name: String setget ,_get_name
-
-var should_end_by_colliding_with_surface: bool setget \
-        ,_get_should_end_by_colliding_with_surface
-
 func _init( \
         edge_type: int, \
         is_time_based: bool, \
@@ -107,9 +102,9 @@ func update_navigation_state( \
     
     var still_grabbing_start_surface_at_start := \
             just_started_new_edge and \
-            surface_state.grabbed_surface == self.start_surface
+            surface_state.grabbed_surface == self.get_start_surface()
     var is_grabbed_surface_expected: bool = \
-            surface_state.grabbed_surface == self.end_surface
+            surface_state.grabbed_surface == self.get_end_surface()
     navigation_state.just_left_air_unexpectedly = \
             surface_state.just_left_air and \
             !is_grabbed_surface_expected and \
@@ -189,25 +184,15 @@ func _get_weight_multiplier() -> float:
             Gs.logger.error()
             return INF
 
-func _get_start() -> Vector2:
-    return start_position_along_surface.target_point
-func _get_end() -> Vector2:
-    return end_position_along_surface.target_point
-
-func _get_start_surface() -> Surface:
-    return start_position_along_surface.surface
-func _get_end_surface() -> Surface:
-    return end_position_along_surface.surface
-
 func _get_start_string() -> String:
     return start_position_along_surface.to_string()
 func _get_end_string() -> String:
     return end_position_along_surface.to_string()
 
-func _get_name() -> String:
+func get_name() -> String:
     return EdgeType.get_string(edge_type)
 
-func _get_should_end_by_colliding_with_surface() -> bool:
+func get_should_end_by_colliding_with_surface() -> bool:
     return end_position_along_surface.surface != \
             start_position_along_surface.surface and \
             end_position_along_surface.surface != null
@@ -225,7 +210,7 @@ func to_string() -> String:
             "instructions: %s " + \
             "}"
     var format_string_arguments := [ \
-            _get_name(), \
+            get_name(), \
             _get_start_string(), \
             _get_end_string(), \
             str(velocity_start), \
@@ -253,7 +238,7 @@ func to_string_with_newlines(indent_level: int) -> String:
             "\n\t%sinstructions: %s," + \
         "\n%s}"
     var format_string_arguments := [ \
-            _get_name(), \
+            get_name(), \
             indent_level_str, \
             _get_start_string(), \
             indent_level_str, \
@@ -307,10 +292,10 @@ func _load_edge_state_from_json_object( \
     surface_type = json_object.st
     enters_air = json_object.ea
     includes_air_trajectory = json_object.ia
-    movement_params = Surfacer.player_params[json_object.pn]
+    movement_params = Surfacer.player_params[json_object.pn].movement_params
     is_optimized_for_path = json_object.io
     instructions = EdgeInstructions.new()
-    trajectory.load_from_json_object(json_object.in, context)
+    instructions.load_from_json_object(json_object.in, context)
     if json_object.has("tr"):
         trajectory = EdgeTrajectory.new()
         trajectory.load_from_json_object(json_object.tr, context)

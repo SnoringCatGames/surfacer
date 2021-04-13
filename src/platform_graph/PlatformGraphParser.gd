@@ -119,7 +119,6 @@ func _load_platform_graphs() -> void:
         id_to_surface = {},
         id_to_position_along_surface = {},
         id_to_jump_land_positions = {},
-        id_to_edge_attempt = {},
     }
     for tile_map in surface_tile_maps:
         context.id_to_tile_map[tile_map.id] = tile_map

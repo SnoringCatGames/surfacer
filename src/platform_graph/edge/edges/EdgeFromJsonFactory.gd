@@ -18,6 +18,6 @@ var EDGE_TYPE_TO_CLASS := {
 func create( \
         json_object: Dictionary, \
         context: Dictionary) -> Edge:
-    var edge: Edge = EDGE_TYPE_TO_CLASS[json_object.edge_type].new()
+    var edge: Edge = EDGE_TYPE_TO_CLASS[int(json_object.t)].new()
     edge.load_from_json_object(json_object, context)
     return edge

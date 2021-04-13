@@ -102,9 +102,9 @@ func optimize_edge_jump_position_for_path( \
     assert(edge is FallFromWallEdge)
     
     var is_wall_surface := \
-            previous_edge.start_surface != null and \
-            (previous_edge.start_surface.side == SurfaceSide.LEFT_WALL or \
-            previous_edge.start_surface.side == SurfaceSide.RIGHT_WALL)
+            previous_edge.get_start_surface() != null and \
+            (previous_edge.get_start_surface().side == SurfaceSide.LEFT_WALL or \
+            previous_edge.get_start_surface().side == SurfaceSide.RIGHT_WALL)
     assert(is_wall_surface)
     
     EdgeCalculator.optimize_edge_jump_position_for_path_helper( \
@@ -223,6 +223,9 @@ static func _calculate_instructions( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface, \
         calc_result: EdgeCalcResult) -> EdgeInstructions:
+    if start == null or end == null:
+        return null
+    
     assert(start.side == SurfaceSide.LEFT_WALL || \
             start.side == SurfaceSide.RIGHT_WALL)
     

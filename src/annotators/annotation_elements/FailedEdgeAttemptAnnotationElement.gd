@@ -40,8 +40,8 @@ func _init( \
 func draw(canvas: CanvasItem) -> void:
     var end_color := end_color_params.get_color()
     var line_color := line_color_params.get_color()
-    var start := failed_edge_attempt.start
-    var end := failed_edge_attempt.end
+    var start := failed_edge_attempt.get_start()
+    var end := failed_edge_attempt.get_end()
     var middle: Vector2 = start.linear_interpolate(end, 0.5)
     Gs.draw_utils.draw_dashed_line( \
             canvas, \
@@ -67,16 +67,16 @@ func draw(canvas: CanvasItem) -> void:
             canvas, \
             end, \
             true, \
-            failed_edge_attempt.end_surface.side, \
+            failed_edge_attempt.get_end_surface().side, \
             end_color)
     if includes_surfaces:
         SurfaceAnnotationElement.draw_from_surface( \
                 canvas, \
-                failed_edge_attempt.start_surface, \
+                failed_edge_attempt.get_start_surface(), \
                 end_color_params)
         SurfaceAnnotationElement.draw_from_surface( \
                 canvas, \
-                failed_edge_attempt.end_surface, \
+                failed_edge_attempt.get_end_surface(), \
                 end_color_params)
 
 func _create_legend_items() -> Array:

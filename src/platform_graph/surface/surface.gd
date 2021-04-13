@@ -125,13 +125,10 @@ func probably_equal(other: Surface) -> bool:
 func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
-    # FIXME: -----------------------------------
-#    if json_object.d == 5267:
-#        print("break") # FIXME: LEFT OFF HERE: ------------------- This _may_ be happening? triggers an infinite-loop bug with Godot thinking that Surface.gd:58 happens infinitely after this. So....
-    context.id_to_surface[json_object.d] = self
+    context.id_to_surface[int(json_object.d)] = self
     vertices = PoolVector2Array(Gs.utils.from_json_object(json_object.v))
     side = json_object.s
-    tile_map_indices = json_object.i
+    tile_map_indices = to_int_array(json_object.i)
     bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
     normal = SurfaceSide.get_normal(side)
 
@@ -150,9 +147,6 @@ func load_references_from_json_context( \
             _get_surface_from_id(json_object.ccwc, context.id_to_surface)
 
 func to_json_object() -> Dictionary:
-    # FIXME: ----------------------------------
-#    if self.get_instance_id() == 5267:
-#        print("break")
     return {
         d = self.get_instance_id(),
         v = Gs.utils.to_json_object(vertices),
@@ -172,3 +166,10 @@ func _get_surface_from_id( \
     return id_to_surface[id] if \
             id >= 0 else \
             null
+
+func to_int_array(source: Array) -> Array:
+    var result := []
+    result.resize(source.size())
+    for i in source.size():
+        result[i] = int(source[i])
+    return result

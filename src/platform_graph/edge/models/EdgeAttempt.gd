@@ -19,12 +19,6 @@ var includes_extra_wall_land_horizontal_speed: bool
 
 var calculator
 
-var start: Vector2 setget ,_get_start
-var end: Vector2 setget ,_get_end
-
-var start_surface: Surface setget ,_get_start_surface
-var end_surface: Surface setget ,_get_end_surface
-
 func _init( \
         edge_type: int, \
         edge_calc_result_type: int, \
@@ -44,14 +38,14 @@ func _init( \
             includes_extra_wall_land_horizontal_speed
     self.calculator = calculator
 
-func _get_start() -> Vector2:
+func get_start() -> Vector2:
     return start_position_along_surface.target_point
-func _get_end() -> Vector2:
+func get_end() -> Vector2:
     return end_position_along_surface.target_point
 
-func _get_start_surface() -> Surface:
+func get_start_surface() -> Surface:
     return start_position_along_surface.surface
-func _get_end_surface() -> Surface:
+func get_end_surface() -> Surface:
     return end_position_along_surface.surface
 
 func load_from_json_object( \
@@ -70,9 +64,9 @@ func _load_edge_attempt_state_from_json_object( \
     edge_type = json_object.t
     edge_calc_result_type = json_object.r
     start_position_along_surface = \
-            context.id_to_position_along_surface[json_object.s]
+            context.id_to_position_along_surface[int(json_object.s)]
     end_position_along_surface = \
-            context.id_to_position_along_surface[json_object.e]
+            context.id_to_position_along_surface[int(json_object.e)]
     velocity_start = Gs.utils.from_json_object(json_object.v)
     includes_extra_jump_duration = json_object.d
     includes_extra_wall_land_horizontal_speed = json_object.h
