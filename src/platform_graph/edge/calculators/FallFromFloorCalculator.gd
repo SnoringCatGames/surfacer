@@ -404,32 +404,43 @@ static func _prepend_walk_to_fall_off_portion( \
     
     # Insert frame state for the walk-to-fall-off portion of the trajectory.
     
-    var walking_and_falling_frame_discrete_positions_from_test = \
-            PoolVector2Array()
-    walking_and_falling_frame_discrete_positions_from_test.resize( \
-            frame_count_before_fall_off)
-    var walking_and_falling_frame_continuous_positions_from_steps = \
-            PoolVector2Array()
-    walking_and_falling_frame_continuous_positions_from_steps.resize( \
-            frame_count_before_fall_off)
-    var walking_and_falling_frame_continuous_velocities_from_steps = \
-            PoolVector2Array()
-    walking_and_falling_frame_continuous_velocities_from_steps.resize( \
-            frame_count_before_fall_off)
+    if !movement_params.includes_discrete_frame_state and \
+            !movement_params \
+                    .includes_continuous_frame_positions and \
+            !movement_params.includes_continuous_frame_velocities:
+        return
     
-    walking_and_falling_frame_discrete_positions_from_test.append_array( \
-            trajectory.frame_discrete_positions_from_test)
-    walking_and_falling_frame_continuous_positions_from_steps.append_array( \
-            trajectory.frame_continuous_positions_from_steps)
-    walking_and_falling_frame_continuous_velocities_from_steps.append_array( \
-            trajectory.frame_continuous_velocities_from_steps)
+    if movement_params.includes_discrete_frame_state:
+        var walking_and_falling_frame_discrete_positions_from_test = \
+                PoolVector2Array()
+        walking_and_falling_frame_discrete_positions_from_test.resize( \
+                frame_count_before_fall_off)
+        walking_and_falling_frame_discrete_positions_from_test.append_array( \
+                trajectory.frame_discrete_positions_from_test)
+        trajectory.frame_discrete_positions_from_test = \
+                walking_and_falling_frame_discrete_positions_from_test
     
-    trajectory.frame_discrete_positions_from_test = \
-            walking_and_falling_frame_discrete_positions_from_test
-    trajectory.frame_continuous_positions_from_steps = \
-            walking_and_falling_frame_continuous_positions_from_steps
-    trajectory.frame_continuous_velocities_from_steps = \
-            walking_and_falling_frame_continuous_velocities_from_steps
+    if movement_params.includes_continuous_frame_positions:
+        var walking_and_falling_frame_continuous_positions_from_steps = \
+                PoolVector2Array()
+        walking_and_falling_frame_continuous_positions_from_steps.resize( \
+                frame_count_before_fall_off)
+        walking_and_falling_frame_continuous_positions_from_steps \
+                .append_array( \
+                trajectory.frame_continuous_positions_from_steps)
+        trajectory.frame_continuous_positions_from_steps = \
+                walking_and_falling_frame_continuous_positions_from_steps
+    
+    if movement_params.includes_continuous_frame_velocities:
+        var walking_and_falling_frame_continuous_velocities_from_steps = \
+                PoolVector2Array()
+        walking_and_falling_frame_continuous_velocities_from_steps.resize( \
+                frame_count_before_fall_off)
+        walking_and_falling_frame_continuous_velocities_from_steps \
+                .append_array( \
+                trajectory.frame_continuous_velocities_from_steps)
+        trajectory.frame_continuous_velocities_from_steps = \
+                walking_and_falling_frame_continuous_velocities_from_steps
     
     var acceleration_x := \
             -movement_params.walk_acceleration if \
@@ -442,12 +453,15 @@ static func _prepend_walk_to_fall_off_portion( \
             PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
     
     for frame_index in frame_count_before_fall_off:
-        trajectory.frame_discrete_positions_from_test[frame_index] = \
-                current_frame_position
-        trajectory.frame_continuous_positions_from_steps[frame_index] = \
-                current_frame_position
-        trajectory.frame_continuous_velocities_from_steps[frame_index] = \
-                current_frame_velocity
+        if movement_params.includes_discrete_frame_state:
+            trajectory.frame_discrete_positions_from_test[frame_index] = \
+                    current_frame_position
+        if movement_params.includes_continuous_frame_positions:
+            trajectory.frame_continuous_positions_from_steps[frame_index] = \
+                    current_frame_position
+        if movement_params.includes_continuous_frame_velocities:
+            trajectory.frame_continuous_velocities_from_steps[frame_index] = \
+                    current_frame_velocity
         
         current_frame_position += \
                 current_frame_velocity * Time.PHYSICS_TIME_STEP_SEC
