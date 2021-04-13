@@ -288,7 +288,7 @@ static func _draw_edge_from_instructions_positions( \
         if edge.trajectory.jump_instruction_end != null:
             draw_instruction_indicator( \
                     canvas, \
-                    "jump", \
+                    "j", \
                     false, \
                     edge.trajectory.jump_instruction_end.position, \
                     EDGE_INSTRUCTION_INDICATOR_LENGTH, \

@@ -388,9 +388,9 @@ static func _prepend_walk_to_fall_off_portion( \
     # Insert the walk-to-fall-off instructions.
     
     var sideways_input_key := \
-            "move_left" if \
+            "ml" if \
             falls_on_left_side else \
-            "move_right"
+            "mr"
     var outward_press := EdgeInstruction.new( \
             sideways_input_key, \
             0.0, \

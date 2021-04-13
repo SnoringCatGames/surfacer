@@ -45,6 +45,11 @@ func _compute() -> void:
     Surfacer.is_inspector_enabled = false
     
     # FIXME: ------------------------------------------------------------
+    # - LEFT OFF HERE:
+    #   - Go through to/from-json functions and handle possible INF values.
+    #   - Replace Utils.to/from-json functions with new versions that assume
+    #     specific input types are expected, and encode with fewer characters.
+    # 
     # - Refactor the platform graph parsing a little:
     #   - if !Surfacer.uses_threads_for_platform_graph_calculation
     #   - Between every iteration of the graph-calculation for-loop, call the
@@ -59,7 +64,6 @@ func _compute() -> void:
     #   level (during computation).
     #   - This should help give some indication that the current level parsing
     #     might take longer.
-    pass
     
     precompute_level_index = 0
     call_deferred("_initialize_next")

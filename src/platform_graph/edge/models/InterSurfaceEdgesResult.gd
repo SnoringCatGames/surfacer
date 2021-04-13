@@ -78,9 +78,7 @@ func _load_all_jump_land_positions_json_array(\
     var result := []
     result.resize(json_object.size())
     for i in json_object.size():
-        var jump_land_positions := JumpLandPositions.new()
-        jump_land_positions.load_from_json_object(json_object[i], context)
-        result[i] = jump_land_positions
+        result[i] = context.id_to_jump_land_positions[json_object[i]]
     return result
 
 func _load_failed_edge_attempts_json_array(\
@@ -118,7 +116,7 @@ func _get_all_jump_land_positions_json_array() -> Array:
     var result := []
     result.resize(all_jump_land_positions.size())
     for i in all_jump_land_positions.size():
-        result[i] = all_jump_land_positions[i].to_json_object()
+        result[i] = all_jump_land_positions[i].get_instance_id()
     return result
 
 func _get_failed_edge_attempts_json_array() -> Array:

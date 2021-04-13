@@ -237,9 +237,9 @@ static func _calculate_instructions( \
     
     # Calculate the wall-release instructions.
     var sideways_input_key := \
-            "move_right" if \
+            "mr" if \
             start.side == SurfaceSide.LEFT_WALL else \
-            "move_left"
+            "ml"
     var outward_press := EdgeInstruction.new( \
             sideways_input_key, \
             0.0, \

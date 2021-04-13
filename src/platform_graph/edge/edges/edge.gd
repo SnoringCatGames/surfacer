@@ -311,8 +311,9 @@ func _load_edge_state_from_json_object( \
     is_optimized_for_path = json_object.io
     instructions = EdgeInstructions.new()
     trajectory.load_from_json_object(json_object.in, context)
-    trajectory = EdgeTrajectory.new()
-    trajectory.load_from_json_object(json_object.tr, context)
+    if json_object.has("tr"):
+        trajectory = EdgeTrajectory.new()
+        trajectory.load_from_json_object(json_object.tr, context)
     velocity_end = Gs.utils.from_json_object(json_object.ve)
     distance = json_object.di
     duration = json_object.du
@@ -326,7 +327,8 @@ func _edge_state_to_json_object(json_object: Dictionary) -> void:
     json_object.pn = movement_params.name
     json_object.io = is_optimized_for_path
     json_object.in = instructions.to_json_object()
-    json_object.tr = trajectory.to_json_object()
+    if trajectory != null:
+        json_object.tr = trajectory.to_json_object()
     json_object.ve = Gs.utils.to_json_object(velocity_end)
     json_object.di = distance
     json_object.du = duration
