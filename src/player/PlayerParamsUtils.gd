@@ -142,6 +142,10 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(!movement_params.forces_player_position_to_match_path_at_end or \
             !movement_params \
                     .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets)
+    assert(!movement_params.syncs_player_position_to_edge_trajectory or \
+            movement_params.includes_continuous_frame_positions)
+    assert(!movement_params.syncs_player_velocity_to_edge_trajectory or \
+            movement_params.includes_continuous_frame_velocities)
 
 class ActionHandlersComparator:
     static func sort( \

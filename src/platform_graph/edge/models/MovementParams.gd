@@ -62,6 +62,10 @@ var syncs_player_position_to_edge_trajectory := false
 # edge-movement velocity during each frame. Without this, there is typically
 # some deviation at run-time from the expected calculated edge trajectories.
 var syncs_player_velocity_to_edge_trajectory := false
+var includes_discrete_frame_state := true
+var includes_continuous_frame_positions := true
+var includes_continuous_frame_velocities := true
+
 var retries_navigation_when_interrupted := true
 var min_intra_surface_distance_to_optimize_jump_for := 16.0
 # When calculating possible edges between a given pair of surfaces, we usually
@@ -126,7 +130,7 @@ var prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offset
 # expensive, but could produce slightly more accurate results.
 var reuses_previous_waypoints_when_backtracking_on_jump_height := true
 var asserts_no_preexisting_collisions_during_edge_calculations := true
-var calculates_discrete_frame_state := true
+
 var logs_navigator_events := true
 var logs_player_actions := true
 var logs_inspector_events := true

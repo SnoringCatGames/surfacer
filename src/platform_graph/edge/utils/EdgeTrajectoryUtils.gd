@@ -25,11 +25,16 @@ static func calculate_trajectory_from_calculation_steps( \
     
     var frame_continuous_positions_from_steps := \
             _concatenate_step_frame_positions(steps)
-    var frame_continuous_velocities_from_steps := \
-            _concatenate_step_frame_velocities(steps)
-    
-    var distance_from_continuous_frames = \
+    var distance_from_continuous_frames := \
             _sum_distance_between_frames(frame_continuous_positions_from_steps)
+    if !collision_params.movement_params.includes_continuous_frame_positions:
+        frame_continuous_positions_from_steps = PoolVector2Array()
+    
+    var frame_continuous_velocities_from_steps := \
+            _concatenate_step_frame_velocities(steps) if \
+            collision_params.movement_params \
+                    .includes_continuous_frame_velocities else \
+            PoolVector2Array()
     
     var trajectory := EdgeTrajectory.new( \
             frame_continuous_positions_from_steps, \
@@ -37,7 +42,7 @@ static func calculate_trajectory_from_calculation_steps( \
             waypoint_positions, \
             distance_from_continuous_frames)
     
-    if collision_params.movement_params.calculates_discrete_frame_state:
+    if collision_params.movement_params.includes_discrete_frame_state:
         var collision := \
                 CollisionCheckUtils.check_instructions_discrete_frame_state( \
                         edge_calc_params, \
@@ -104,22 +109,43 @@ static func _sum_distance_between_frames( \
 static func sub_trajectory( \
         base_trajectory: EdgeTrajectory, \
         start_time: float) -> EdgeTrajectory:
-    assert(base_trajectory.frame_continuous_positions_from_steps.size() == \
+    var includes_continuous_positions := \
+            !base_trajectory.frame_continuous_positions_from_steps.empty()
+    var includes_continuous_velocities := \
+            !base_trajectory.frame_continuous_velocities_from_steps.empty()
+    
+    assert(!includes_continuous_positions or \
+            !includes_continuous_velocities or \
+            base_trajectory.frame_continuous_positions_from_steps.size() == \
             base_trajectory.frame_continuous_velocities_from_steps.size())
+    
     var start_index := ceil(start_time / Time.PHYSICS_TIME_STEP_SEC)
+    
     var frame_continuous_positions_from_steps := \
-            Gs.utils.sub_pool_vector2_array( \
-                    base_trajectory.frame_continuous_positions_from_steps, \
-                    start_index)
+                Gs.utils.sub_pool_vector2_array( \
+                        base_trajectory.frame_continuous_positions_from_steps, \
+                        start_index) if \
+                includes_continuous_positions else \
+                PoolVector2Array()
     var frame_continuous_velocities_from_steps := \
             Gs.utils.sub_pool_vector2_array( \
                     base_trajectory.frame_continuous_velocities_from_steps, \
-                    start_index)
+                    start_index) if \
+                includes_continuous_velocities else \
+                PoolVector2Array()
+    
     # TODO: Try to use frame_continuous_positions_from_steps to detect which
     #       waypoint positions we've passed.
     var waypoint_positions := base_trajectory.waypoint_positions
+    
+    # TODO: Calculate a more accurate value for this distance when we aren't
+    #       saving continuous frame state.
     var distance_from_continuous_frames := \
-            _sum_distance_between_frames(frame_continuous_positions_from_steps)
+            _sum_distance_between_frames( \
+                    frame_continuous_positions_from_steps) if \
+            includes_continuous_positions else \
+            base_trajectory.distance_from_continuous_frames
+    
     return EdgeTrajectory.new( \
             frame_continuous_positions_from_steps, \
             frame_continuous_velocities_from_steps, \

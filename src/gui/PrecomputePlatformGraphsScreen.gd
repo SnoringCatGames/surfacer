@@ -46,6 +46,9 @@ func _compute() -> void:
     
     # FIXME: ------------------------------------------------------------
     # - LEFT OFF HERE:
+    #   - Take a screen recording of scrolling through the current encoding.
+    #   - Make a copy of the current encoding. Compare size later.
+    #   
     #   - Go through to/from-json functions and handle possible INF values.
     #   - Replace Utils.to/from-json functions with new versions that assume
     #     specific input types are expected, and encode with fewer characters.
