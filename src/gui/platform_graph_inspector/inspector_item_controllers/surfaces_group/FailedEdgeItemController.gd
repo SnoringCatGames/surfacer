@@ -40,8 +40,8 @@ func to_string() -> String:
                 EdgeCalcResultType.WAYPOINT_INVALID else \
         WaypointValidity.get_string( \
                 failed_edge_attempt.waypoint_validity), \
-        str(failed_edge_attempt.start), \
-        str(failed_edge_attempt.end), \
+        str(failed_edge_attempt.get_start()), \
+        str(failed_edge_attempt.get_end()), \
     ]
 
 func get_text() -> String:
@@ -55,8 +55,8 @@ func get_text() -> String:
                 EdgeCalcResultType.WAYPOINT_INVALID else \
         WaypointValidity.get_string( \
                 failed_edge_attempt.waypoint_validity), \
-        str(failed_edge_attempt.start), \
-        str(failed_edge_attempt.end), \
+        str(failed_edge_attempt.get_start()), \
+        str(failed_edge_attempt.get_end()), \
     ]
 
 func get_description() -> String:

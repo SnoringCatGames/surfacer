@@ -132,8 +132,8 @@ static func _draw_edge_from_end_points( \
         includes_waypoints: bool, \
         includes_instruction_indicators: bool) -> void:
     canvas.draw_line( \
-            edge.start, \
-            edge.end, \
+            edge.get_start(), \
+            edge.get_end(), \
             base_color, \
             stroke_width)
     
@@ -145,13 +145,13 @@ static func _draw_edge_from_end_points( \
         
         draw_destination_marker( \
                 canvas, \
-                edge.end, \
+                edge.get_end(), \
                 true, \
                 edge.end_position_along_surface.side, \
                 waypoint_color)
         draw_origin_marker( \
                 canvas, \
-                edge.start, \
+                edge.get_start(), \
                 waypoint_color)
     
     if includes_instruction_indicators:
@@ -183,13 +183,13 @@ static func _draw_climb_over_wall_to_floor_edge( \
         
         draw_destination_marker( \
                 canvas, \
-                edge.end, \
+                edge.get_end(), \
                 true, \
                 edge.end_position_along_surface.side, \
                 waypoint_color)
         draw_origin_marker( \
                 canvas, \
-                edge.start, \
+                edge.get_start(), \
                 waypoint_color)
     
     if includes_instruction_indicators:
@@ -259,7 +259,7 @@ static func _draw_edge_from_instructions_positions( \
         
         draw_destination_marker( \
                 canvas, \
-                edge.end, \
+                edge.get_end(), \
                 true, \
                 edge.end_position_along_surface.side, \
                 waypoint_color)
@@ -267,7 +267,7 @@ static func _draw_edge_from_instructions_positions( \
         var origin_position := \
                 origin_position_override if \
                 origin_position_override != Vector2.INF else \
-                edge.start
+                edge.get_start()
         draw_origin_marker( \
                 canvas, \
                 origin_position, \
@@ -309,22 +309,22 @@ static func _get_edge_trajectory_vertices( \
                     is_continuous else \
                     edge.trajectory.frame_discrete_positions_from_test
             if vertices.empty():
-                vertices.push_back(edge.start)
-            vertices.push_back(edge.end)
+                vertices.push_back(edge.get_start())
+            vertices.push_back(edge.get_end())
             return vertices
         EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE, \
         EdgeType.INTRA_SURFACE_EDGE, \
         EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE:
             return PoolVector2Array([ \
-                edge.start, \
-                edge.end, \
+                edge.get_start(), \
+                edge.get_end(), \
             ])
         EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE:
-            var mid_point := Vector2(edge.start.x, edge.end.y)
+            var mid_point := Vector2(edge.get_start().x, edge.get_end().y)
             return PoolVector2Array([ \
-                edge.start, \
+                edge.get_start(), \
                 mid_point, \
-                edge.end, \
+                edge.get_end(), \
             ])
         EdgeType.UNKNOWN, \
         _:

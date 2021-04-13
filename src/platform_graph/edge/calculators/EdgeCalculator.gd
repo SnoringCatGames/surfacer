@@ -321,12 +321,12 @@ static func optimize_edge_jump_position_for_path_helper( \
     
     var movement_params := collision_params.movement_params
     
-    var previous_edge_displacement := previous_edge.end - previous_edge.start
+    var previous_edge_displacement := previous_edge.get_end() - previous_edge.get_start()
     
     var is_horizontal_surface := \
-            previous_edge.start_surface != null and \
-            (previous_edge.start_surface.side == SurfaceSide.FLOOR or \
-            previous_edge.start_surface.side == SurfaceSide.CEILING)
+            previous_edge.get_start_surface() != null and \
+            (previous_edge.get_start_surface().side == SurfaceSide.FLOOR or \
+            previous_edge.get_start_surface().side == SurfaceSide.CEILING)
     
     if is_horizontal_surface:
         # Jumping from a floor or ceiling.
@@ -352,11 +352,11 @@ static func optimize_edge_jump_position_for_path_helper( \
             else:
                 jump_position = MovementUtils \
                         .create_position_offset_from_target_point( \
-                                Vector2(previous_edge.start.x + \
+                                Vector2(previous_edge.get_start().x + \
                                         previous_edge_displacement.x * \
                                         jump_ratios[i], \
                                         0.0), \
-                                previous_edge.start_surface, \
+                                previous_edge.get_start_surface(), \
                                 movement_params.collider_half_width_height)
             
             # Calculate the start velocity to use according to the available
@@ -364,7 +364,7 @@ static func optimize_edge_jump_position_for_path_helper( \
             var velocity_start_x: float = MovementUtils \
                     .calculate_velocity_end_for_displacement( \
                             jump_position.target_point.x - \
-                                    previous_edge.start.x, \
+                                    previous_edge.get_start().x, \
                             previous_velocity_end_x, \
                             acceleration_x, \
                             movement_params.max_horizontal_speed_default)
@@ -408,10 +408,10 @@ static func optimize_edge_jump_position_for_path_helper( \
                 jump_position = MovementUtils \
                         .create_position_offset_from_target_point( \
                                 Vector2(0.0, \
-                                        previous_edge.start.y + \
+                                        previous_edge.get_start().y + \
                                         previous_edge_displacement.y * \
                                         jump_ratios[i]), \
-                                previous_edge.start_surface, \
+                                previous_edge.get_start_surface(), \
                                 movement_params.collider_half_width_height)
             
             velocity_start = JumpLandPositionsUtils.get_velocity_start( \
@@ -455,12 +455,12 @@ static func optimize_edge_land_position_for_path_helper( \
     
     var movement_params := collision_params.movement_params
     
-    var next_edge_displacement := next_edge.end - next_edge.start
+    var next_edge_displacement := next_edge.get_end() - next_edge.get_start()
     
     var is_horizontal_surface := \
-            next_edge.start_surface != null and \
-            (next_edge.start_surface.side == SurfaceSide.FLOOR or \
-            next_edge.start_surface.side == SurfaceSide.CEILING)
+            next_edge.get_start_surface() != null and \
+            (next_edge.get_start_surface().side == SurfaceSide.FLOOR or \
+            next_edge.get_start_surface().side == SurfaceSide.CEILING)
     
     if is_horizontal_surface:
         # Landing on a floor or ceiling.
@@ -475,11 +475,11 @@ static func optimize_edge_land_position_for_path_helper( \
             else:
                 land_position = MovementUtils \
                         .create_position_offset_from_target_point( \
-                                Vector2(next_edge.start.x + \
+                                Vector2(next_edge.get_start().x + \
                                         next_edge_displacement.x * \
                                         land_ratios[i], \
                                         0.0), \
-                                next_edge.start_surface, \
+                                next_edge.get_start_surface(), \
                                 movement_params.collider_half_width_height)
             
             optimized_edge = edge_calculator.calculate_edge( \
@@ -518,10 +518,10 @@ static func optimize_edge_land_position_for_path_helper( \
             else:
                 land_position = MovementUtils \
                         .create_position_offset_from_target_point( \
-                                Vector2(0.0, next_edge.start.y + \
+                                Vector2(0.0, next_edge.get_start().y + \
                                         next_edge_displacement.y * \
                                         land_ratios[i]), \
-                                next_edge.start_surface, \
+                                next_edge.get_start_surface(), \
                                 movement_params.collider_half_width_height)
             
             if JumpLandPositionsUtils.is_land_position_close_to_wall_bottom( \

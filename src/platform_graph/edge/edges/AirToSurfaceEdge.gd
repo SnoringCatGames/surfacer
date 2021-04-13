@@ -56,4 +56,4 @@ func _check_did_just_reach_destination( \
         playback) -> bool:
     return Edge.check_just_landed_on_expected_surface( \
             surface_state, \
-            self.end_surface)
+            self.get_end_surface())

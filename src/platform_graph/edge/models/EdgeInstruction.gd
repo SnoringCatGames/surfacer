@@ -38,7 +38,7 @@ func load_from_json_object( \
     time = json_object.t
     is_pressed = json_object.i
     if json_object.has("p"):
-        position = json_object.p
+        position = Gs.utils.from_json_object(json_object.p)
 
 func to_json_object() -> Dictionary:
     var json_object := {
@@ -47,5 +47,5 @@ func to_json_object() -> Dictionary:
         i = is_pressed,
     }
     if position != Vector2.INF:
-        json_object.p = position
+        json_object.p = Gs.utils.to_json_object(position)
     return json_object

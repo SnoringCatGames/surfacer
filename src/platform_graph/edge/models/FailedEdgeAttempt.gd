@@ -15,18 +15,34 @@ func _init( \
         edge_result_metadata: EdgeCalcResultMetadata = null, \
         calculator = null \
         ).( \
-        calculator.edge_type, \
-        edge_result_metadata.edge_calc_result_type, \
-        jump_land_positions.jump_position, \
-        jump_land_positions.land_position, \
-        jump_land_positions.velocity_start, \
-        jump_land_positions.needs_extra_jump_duration, \
-        jump_land_positions.needs_extra_wall_land_horizontal_speed, \
+        calculator.edge_type if \
+                calculator != null else \
+                EdgeType.UNKNOWN, \
+        edge_result_metadata.edge_calc_result_type if \
+                edge_result_metadata != null else \
+                EdgeCalcResultType.UNKNOWN, \
+        jump_land_positions.jump_position if \
+                jump_land_positions != null else \
+                null, \
+        jump_land_positions.land_position if \
+                jump_land_positions != null else \
+                null, \
+        jump_land_positions.velocity_start if \
+                jump_land_positions != null else \
+                Vector2.INF, \
+        jump_land_positions.needs_extra_jump_duration if \
+                jump_land_positions != null else \
+                false, \
+        jump_land_positions.needs_extra_wall_land_horizontal_speed if \
+                jump_land_positions != null else \
+                false, \
         calculator \
         ) -> void:
     self.jump_land_positions = jump_land_positions
-    self.edge_calc_result_type = edge_result_metadata.edge_calc_result_type
-    self.waypoint_validity = edge_result_metadata.waypoint_validity
+    self.waypoint_validity = \
+            edge_result_metadata.waypoint_validity if \
+            edge_result_metadata != null else \
+            WaypointValidity.UNKNOWN
     self.is_broad_phase_failure = \
             EdgeCalcResultType.get_is_broad_phase_failure( \
                     edge_calc_result_type)
@@ -51,7 +67,7 @@ func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
     _load_edge_attempt_state_from_json_object(json_object, context)
-    jump_land_positions = context.id_to_jump_land_positions[json_object.p]
+    jump_land_positions = context.id_to_jump_land_positions[int(json_object.p)]
     waypoint_validity = json_object.w
     is_broad_phase_failure = EdgeCalcResultType.get_is_broad_phase_failure( \
             edge_calc_result_type)

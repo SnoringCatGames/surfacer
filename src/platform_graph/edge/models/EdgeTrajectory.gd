@@ -47,15 +47,20 @@ func _init(frame_continuous_positions_from_steps := PoolVector2Array(), \
 func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
-    frame_discrete_positions_from_test = \
-            Gs.utils.from_json_object(json_object.d)
-    frame_continuous_positions_from_steps = \
-            Gs.utils.from_json_object(json_object.p)
-    frame_continuous_velocities_from_steps = \
-            Gs.utils.from_json_object(json_object.v)
-    waypoint_positions = Gs.utils.from_json_object(json_object.w)
-    horizontal_instructions = \
-            _load_horizontal_instructions_json_array(json_object.h, context)
+    if json_object.has("d"):
+        frame_discrete_positions_from_test = \
+                Gs.utils.from_json_object(json_object.d)
+    if json_object.has("p"):
+        frame_continuous_positions_from_steps = \
+                Gs.utils.from_json_object(json_object.p)
+    if json_object.has("v"):
+        frame_continuous_velocities_from_steps = \
+                Gs.utils.from_json_object(json_object.v)
+    if json_object.has("w"):
+        waypoint_positions = Gs.utils.from_json_object(json_object.w)
+    if json_object.has("h"):
+        horizontal_instructions = _load_horizontal_instructions_json_array( \
+                json_object.h, context)
     if json_object.has("j"):
         jump_instruction_end = EdgeInstruction.new()
         jump_instruction_end.load_from_json_object(json_object.j, context)
@@ -74,13 +79,25 @@ func _load_horizontal_instructions_json_array(\
 
 func to_json_object() -> Dictionary:
     var json_object := {
-        d = Gs.utils.to_json_object(frame_discrete_positions_from_test),
-        p = Gs.utils.to_json_object(frame_continuous_positions_from_steps),
-        v = Gs.utils.to_json_object(frame_continuous_velocities_from_steps),
-        w = Gs.utils.to_json_object(waypoint_positions),
-        h = _get_horizontal_instructions_json_array(),
         f = distance_from_continuous_frames,
     }
+    if !frame_discrete_positions_from_test.empty():
+        json_object.d = \
+                Gs.utils.to_json_object(frame_discrete_positions_from_test)
+    if !frame_continuous_positions_from_steps.empty():
+        json_object.p = \
+                Gs.utils.to_json_object(frame_continuous_positions_from_steps)
+    if !frame_continuous_velocities_from_steps.empty():
+        json_object.v = \
+                Gs.utils.to_json_object(frame_continuous_velocities_from_steps)
+    if !waypoint_positions.empty():
+        json_object.w = \
+                Gs.utils.to_json_object(waypoint_positions)
+    var horizontal_instructions_json_object := \
+            _get_horizontal_instructions_json_array()
+    if !horizontal_instructions_json_object.empty():
+        json_object.h = \
+                Gs.utils.to_json_object(horizontal_instructions_json_object)
     if jump_instruction_end != null:
         json_object.j = jump_instruction_end.to_json_object()
     return json_object

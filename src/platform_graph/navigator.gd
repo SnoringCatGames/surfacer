@@ -147,7 +147,7 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
         
         if air_to_surface_edge == null and \
                 is_currently_navigating and \
-                current_edge.end_surface != null:
+                current_edge.get_end_surface() != null:
             # We weren't able to dynamically calculate a valid air-to-surface
             # edge from the current in-air position, but the player was already
             # navigating along a valid edge to a surface, so let's just re-use
@@ -177,10 +177,10 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
 
 func _set_reached_destination() -> void:
     if player.movement_params.forces_player_position_to_match_path_at_end:
-        player.position = current_edge.end
+        player.position = current_edge.get_end()
     if player.movement_params.forces_player_velocity_to_zero_at_path_end and \
-            current_edge.end_surface != null:
-        match current_edge.end_surface.side:
+            current_edge.get_end_surface() != null:
+        match current_edge.get_end_surface().side:
             SurfaceSide.FLOOR, SurfaceSide.CEILING:
                 player.velocity.x = 0.0
             SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
@@ -220,7 +220,7 @@ func _start_edge( \
     current_edge = current_path.edges[index]
     
     if player.movement_params.forces_player_position_to_match_edge_at_start:
-        player.position = current_edge.start
+        player.position = current_edge.get_start()
     if player.movement_params.forces_player_velocity_to_match_edge_at_start:
         player.velocity = current_edge.velocity_start
         surface_state.horizontal_acceleration_sign = 0
@@ -296,7 +296,7 @@ func update( \
     elif navigation_state.just_reached_end_of_edge:
         print_msg("REACHED END OF EDGE: %8.3fs; %s", [ \
             Gs.time.elapsed_play_time_actual_sec, \
-            current_edge.name, \
+            current_edge.get_name(), \
         ])
     else:
         # Continuing along an edge.
@@ -362,7 +362,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
     if movement_params \
             .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets and \
             !current_edge.is_backtracking_to_not_protrude_past_surface_end:
-        var surface := current_edge.end_surface
+        var surface := current_edge.get_end_surface()
         
         var position_after_coming_to_a_stop: Vector2
         if surface.side == SurfaceSide.FLOOR:
@@ -550,8 +550,8 @@ static func _optimize_edges_for_approach( \
         if path.edges.size() > 1 and \
                 path.edges[0] is IntraSurfaceEdge and \
                 Gs.geometry.are_points_equal_with_epsilon( \
-                        path.edges[0].start, \
-                        path.edges[1].start, \
+                        path.edges[0].get_start(), \
+                        path.edges[1].get_start(), \
                         1.0):
             path.edges.remove(0)
     
@@ -589,7 +589,7 @@ static func _optimize_edges_for_approach( \
             .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets:
         var last_edge: Edge = path.edges.back()
         if last_edge is IntraSurfaceEdge:
-            var surface := last_edge.end_surface
+            var surface := last_edge.get_end_surface()
             var end_position := last_edge.end_position_along_surface
             var target_point := Vector2.INF
             match surface.side:
@@ -669,7 +669,7 @@ static func _interleave_intra_surface_edges( \
         edge = path.edges[i]
         # Check whether this edge lands on a surface from the air.
         if edge.surface_type == SurfaceType.AIR and \
-                edge.end_surface != null:
+                edge.get_end_surface() != null:
             # Since the surface lands on the surface from the air, there could
             # be enough movement error that we should move along the surface to
             # the intended land position before executing the next originally

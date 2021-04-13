@@ -65,6 +65,9 @@ func _get_weight_multiplier() -> float:
 static func _calculate_instructions( \
         start: PositionAlongSurface, \
         end: PositionAlongSurface) -> EdgeInstructions:
+    if start == null or end == null:
+        return null
+    
     assert(start.side == SurfaceSide.LEFT_WALL || \
             start.side == SurfaceSide.RIGHT_WALL)
     assert(end.side == SurfaceSide.FLOOR)
@@ -109,8 +112,8 @@ func update_navigation_state( \
         return
     
     var is_grabbed_surface_expected: bool = \
-            surface_state.grabbed_surface == self.start_surface or \
-            surface_state.grabbed_surface == self.end_surface
+            surface_state.grabbed_surface == self.get_start_surface() or \
+            surface_state.grabbed_surface == self.get_end_surface()
     navigation_state.just_left_air_unexpectedly = \
             surface_state.just_left_air and \
             !is_grabbed_surface_expected and \

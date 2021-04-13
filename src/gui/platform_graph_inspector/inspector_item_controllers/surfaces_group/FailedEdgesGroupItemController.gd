@@ -62,11 +62,11 @@ func find_and_expand_controller( \
             metadata)
     for failed_edge_attempt in edges_results.failed_edge_attempts:
         if Gs.geometry.are_points_equal_with_epsilon( \
-                        failed_edge_attempt.start, \
+                        failed_edge_attempt.get_start(), \
                         metadata.start, \
                         0.01) and \
                 Gs.geometry.are_points_equal_with_epsilon( \
-                        failed_edge_attempt.end, \
+                        failed_edge_attempt.get_end(), \
                         metadata.end, \
                         0.01):
             return true

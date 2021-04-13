@@ -97,8 +97,8 @@ func to_string() -> String:
 func load_from_json_object( \
         json_object: Dictionary, \
         context: Dictionary) -> void:
-    jump_position = context.id_to_position_along_surface[json_object.j]
-    land_position = context.id_to_position_along_surface[json_object.l]
+    jump_position = context.id_to_position_along_surface[int(json_object.j)]
+    land_position = context.id_to_position_along_surface[int(json_object.l)]
     velocity_start = Gs.utils.from_json_object(json_object.v)
     needs_extra_jump_duration = json_object.d
     needs_extra_wall_land_horizontal_speed = json_object.s

@@ -8,10 +8,10 @@ const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
 const INCLUDES_CENTER_CONTAINER := true
 
-const INITIALIZE_SUB_STEP_PROGRESS_RATIO := 1.0
-const PARSE_SUB_STEP_PROGRESS_RATIO := 1.0
-const SAVE_SUB_STEP_PROGRESS_RATIO := 1.0
-const CLEAN_UP_SUB_STEP_PROGRESS_RATIO := 1.0
+const INITIALIZE_SUB_STEP_PROGRESS_RATIO := 0.05
+const PARSE_SUB_STEP_PROGRESS_RATIO := 0.7
+const SAVE_SUB_STEP_PROGRESS_RATIO := 0.2
+const CLEAN_UP_SUB_STEP_PROGRESS_RATIO := 0.05
 const PROGRESS_RATIO_TOTAL := \
         INITIALIZE_SUB_STEP_PROGRESS_RATIO + \
         PARSE_SUB_STEP_PROGRESS_RATIO + \
@@ -56,7 +56,7 @@ func _compute() -> void:
     # - Refactor the platform graph parsing a little:
     #   - if !Surfacer.uses_threads_for_platform_graph_calculation
     #   - Between every iteration of the graph-calculation for-loop, call the
-    #     next iteration via call_deferred.
+    #     next iteration via defer.
     #   - Then emit a signal with the current calculation progress.
     #   - Use this signal to update a progress bar.
     # - Add this progress bar to both the precompute screen and the game screen.
@@ -69,7 +69,7 @@ func _compute() -> void:
     #     might take longer.
     
     precompute_level_index = 0
-    call_deferred("_initialize_next")
+    defer("_initialize_next")
 
 var precompute_level_index := -1
 var level_id: String
@@ -91,17 +91,17 @@ func _initialize_next() -> void:
     platform_graph_parser = PlatformGraphParser.new()
     level.add_child(platform_graph_parser)
     _on_progress("initialize")
-    call_deferred("_parse_next")
+    defer("_parse_next")
 
 func _parse_next() -> void:
     platform_graph_parser.parse(level_id, true)
     _on_progress("parse")
-    call_deferred("_save_next")
+    defer("_save_next")
 
 func _save_next() -> void:
     platform_graph_parser.save_platform_graphs()
     _on_progress("save")
-    call_deferred("_clean_up_next")
+    defer("_clean_up_next")
 
 func _clean_up_next() -> void:
     platform_graph_parser.queue_free()
@@ -113,9 +113,12 @@ func _clean_up_next() -> void:
     
     precompute_level_index += 1
     if finished:
-        call_deferred("_on_finished")
+        defer("_on_finished")
     else:
-        call_deferred("_initialize_next")
+        defer("_initialize_next")
+
+func defer(method: String) -> void:
+    Gs.time.set_timeout(funcref(self, method), 0.1)
 
 func _on_progress(step: String, finished := false) -> void:
     var sub_step_progress: float

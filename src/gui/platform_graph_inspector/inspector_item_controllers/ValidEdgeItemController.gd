@@ -24,14 +24,14 @@ func to_string() -> String:
     return "%s { %s [%s, %s] }" % [ \
         InspectorItemType.get_string(type), \
         EdgeType.get_string(edge.edge_type), \
-        str(edge.start), \
-        str(edge.end), \
+        str(edge.get_start()), \
+        str(edge.get_end()), \
     ]
 
 func get_text() -> String:
     return "[%s, %s]" % [ \
-        str(edge.start), \
-        str(edge.end), \
+        str(edge.get_start()), \
+        str(edge.get_end()), \
     ]
 
 func get_description() -> String:
