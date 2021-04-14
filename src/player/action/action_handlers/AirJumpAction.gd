@@ -5,7 +5,7 @@ const NAME := "AirJumpAction"
 const TYPE := SurfaceType.AIR
 const PRIORITY := 320
 
-func _init().( \
+func _init().(
         NAME,
         TYPE,
         PRIORITY) -> void:

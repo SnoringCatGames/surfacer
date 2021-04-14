@@ -5,12 +5,12 @@ const TYPE := InspectorItemType.VALID_EDGE
 
 var edge: Edge
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         edge: Edge) \
-        .( \
+        .(
         TYPE,
         parent_item,
         tree,
@@ -43,7 +43,7 @@ func get_description() -> String:
     ]
 
 func get_annotation_elements() -> Array:
-    var element := EdgeAnnotationElement.new( \
+    var element := EdgeAnnotationElement.new(
             edge,
             true,
             true,

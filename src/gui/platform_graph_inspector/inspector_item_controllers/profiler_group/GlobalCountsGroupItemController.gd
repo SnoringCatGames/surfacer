@@ -6,11 +6,11 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := false
 const PREFIX := "Global counts"
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -28,17 +28,17 @@ func get_description() -> String:
         graph.movement_params.name,
     ]
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "find_and_expand_controller should not be called for " + \
             "GLOBAL_COUNTS_GROUP.")
     return false
 
 func _create_children_inner() -> void:
     var text: String = "%s total surfaces" % graph.counts.total_surfaces
-    DescriptionItemController.new( \
+    DescriptionItemController.new(
             tree_item,
             tree,
             graph,
@@ -47,7 +47,7 @@ func _create_children_inner() -> void:
             funcref(self,
                     "_get_annotation_elements_for_surfaces_description_item"))
     text = "%s total edges" % graph.counts.total_edges
-    DescriptionItemController.new( \
+    DescriptionItemController.new(
             tree_item,
             tree,
             graph,
@@ -66,7 +66,7 @@ func _create_children_inner() -> void:
             graph.counts[type_name],
             type_name,
         ]
-        DescriptionItemController.new( \
+        DescriptionItemController.new(
                 tree_item,
                 tree,
                 graph,
@@ -81,7 +81,7 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     var result := SurfacesGroupItemController.get_annotation_elements_from_graph(graph)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             result,
             EdgesGroupItemController.get_annotation_elements_from_graph(graph))
     return result
@@ -93,6 +93,6 @@ func _get_annotation_elements_for_edges_description_item() -> Array:
     return EdgesGroupItemController.get_annotation_elements_from_graph(graph)
 
 func _get_annotation_elements_for_edge_type_description_item(edge_type: int) -> Array:
-    return EdgeTypeInEdgesGroupItemController.get_annotation_elements_from_graph_and_type( \
+    return EdgeTypeInEdgesGroupItemController.get_annotation_elements_from_graph_and_type(
             graph,
             edge_type)

@@ -30,7 +30,7 @@ var center: Vector2 setget ,_get_center
 var clockwise_neighbor: Surface setget ,_get_clockwise_neighbor
 var counter_clockwise_neighbor: Surface setget ,_get_counter_clockwise_neighbor
 
-func _init( \
+func _init(
         vertices := [],
         side := SurfaceSide.NONE,
         tile_map = null,
@@ -80,7 +80,7 @@ func probably_equal(other: Surface) -> bool:
     if self.vertices.size() != other.vertices.size():
         return false
     for i in self.vertices.size():
-        if !Gs.geometry.are_points_equal_with_epsilon( \
+        if !Gs.geometry.are_points_equal_with_epsilon(
                 self.vertices[i],
                 other.vertices[i],
                 0.0001):
@@ -92,13 +92,13 @@ func probably_equal(other: Surface) -> bool:
         if self.tile_map_indices[i] != other.tile_map_indices[i]:
             return false
     
-    if !Gs.geometry.are_rects_equal_with_epsilon( \
+    if !Gs.geometry.are_rects_equal_with_epsilon(
             self.bounding_box,
             other.bounding_box,
             0.0001):
         return false
     
-    if !Gs.geometry.are_rects_equal_with_epsilon( \
+    if !Gs.geometry.are_rects_equal_with_epsilon(
             self.connected_region_bounding_box,
             other.connected_region_bounding_box,
             0.0001):
@@ -122,7 +122,7 @@ func probably_equal(other: Surface) -> bool:
     
     return true
 
-func load_from_json_object( \
+func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     context.id_to_surface[int(json_object.d)] = self
@@ -132,7 +132,7 @@ func load_from_json_object( \
     bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
     normal = SurfaceSide.get_normal(side)
 
-func load_references_from_json_context( \
+func load_references_from_json_context(
         json_object: Dictionary,
         context: Dictionary) -> void:
     tile_map = context.id_to_tile_map[json_object.t]
@@ -160,7 +160,7 @@ func to_json_object() -> Dictionary:
         ccwc = Gs.utils.get_instance_id_or_not(counter_clockwise_concave_neighbor),
     }
 
-func _get_surface_from_id( \
+func _get_surface_from_id(
         id: int,
         id_to_surface: Dictionary) -> Surface:
     return id_to_surface[id] if \

@@ -90,7 +90,7 @@ var is_valid: bool setget ,_get_is_valid
 
 var side: int setget ,_get_side
 
-func _init( \
+func _init(
         surface: Surface,
         position: Vector2,
         passing_vertically: bool,

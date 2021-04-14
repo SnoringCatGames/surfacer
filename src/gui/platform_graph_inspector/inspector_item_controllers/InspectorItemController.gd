@@ -19,7 +19,7 @@ var tree: Tree
 var graph: PlatformGraph
 var are_children_ready: bool
 
-func _init( \
+func _init(
         type: int,
         is_leaf: bool,
         starts_collapsed: bool,
@@ -34,7 +34,7 @@ func _init( \
     self.graph = graph
     
     self.tree_item = tree.create_item(parent_item)
-    self.tree_item.set_metadata( \
+    self.tree_item.set_metadata(
             0,
             self)
     self.tree_item.collapsed = starts_collapsed
@@ -56,7 +56,7 @@ func destroy() -> void:
     _destroy_children_if_needed()
     if get_has_children():
         _destroy_placeholder_item()
-    tree_item.set_metadata( \
+    tree_item.set_metadata(
             0,
             null)
     if is_instance_valid(parent_item):
@@ -108,35 +108,35 @@ func select() -> void:
     var scrolled_down := after_scroll > before_scroll
     # TODO: Godot doesn't seem to expose any way to assign the scroll position.
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "Abstract InspectorItemController" + \
             ".find_and_expand_controller is not implemented")
     return false
 
-func _trigger_find_and_expand_controller_recursive( \
+func _trigger_find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
     tree._increment_find_and_expand_controller_recursive_count()
-    call_deferred( \
+    call_deferred(
             "_find_and_expand_controller_recursive_wrapper",
             search_type,
             metadata)
 
-func _find_and_expand_controller_recursive_wrapper( \
+func _find_and_expand_controller_recursive_wrapper(
         search_type: int,
         metadata: Dictionary) -> void:
-    _find_and_expand_controller_recursive( \
+    _find_and_expand_controller_recursive(
             search_type,
             metadata)
     tree.call_deferred("_decrement_find_and_expand_controller_recursive_count")
 
-func _find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
-    Gs.logger.error( \
+    Gs.logger.error(
             "Abstract InspectorItemController" + \
             "._find_and_expand_controller_recursive is not implemented")
 
@@ -145,7 +145,7 @@ func get_text() -> String:
     return ""
 
 func get_description() -> String:
-    Gs.logger.error( \
+    Gs.logger.error(
             "Abstract InspectorItemController.get_description is not " + \
             "implemented")
     return ""
@@ -190,7 +190,7 @@ func _destroy_placeholder_item() -> void:
     placeholder_item = null
 
 func _update_text() -> void:
-    tree_item.set_text( \
+    tree_item.set_text(
             0,
             get_text())
 
@@ -206,7 +206,7 @@ func get_annotation_elements() -> Array:
 
 # Conditionally prints the given message, depending on the Player's
 # configuration.
-func print_msg( \
+func print_msg(
         message_template: String,
         message_args = null) -> void:
     if Surfacer.is_surfacer_logging and \

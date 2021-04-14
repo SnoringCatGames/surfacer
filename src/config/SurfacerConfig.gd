@@ -161,10 +161,10 @@ func register_app_manifest(manifest: Dictionary) -> void:
                 manifest.precompute_platform_graph_for_levels
 
 func initialize() -> void:
-    self.is_inspector_enabled = Gs.save_state.get_setting( \
+    self.is_inspector_enabled = Gs.save_state.get_setting(
             "is_inspector_enabled",
             manifest.is_inspector_enabled_default)
-    self.is_surfacer_logging = Gs.save_state.get_setting( \
+    self.is_surfacer_logging = Gs.save_state.get_setting(
             "is_surfacer_logging",
             false)
     

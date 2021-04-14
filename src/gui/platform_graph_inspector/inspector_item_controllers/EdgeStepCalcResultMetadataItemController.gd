@@ -10,14 +10,14 @@ var step_result_metadata: EdgeStepCalcResultMetadata
 var step_item_factory
 var background_color: Color
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         edge_attempt: EdgeAttempt,
         step_result_metadata: EdgeStepCalcResultMetadata,
         step_item_factory) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -29,7 +29,7 @@ func _init( \
     self.step_result_metadata = step_result_metadata
     self.step_item_factory = step_item_factory
     self.background_color = _calculate_background_color(step_result_metadata)
-    self.tree_item.set_custom_bg_color( \
+    self.tree_item.set_custom_bg_color(
             0,
             background_color)
     _post_init()
@@ -37,7 +37,7 @@ func _init( \
 func to_string() -> String:
     return "%s { edge_step_calc_result_type=%s }" % [
         InspectorItemType.get_string(type),
-        EdgeStepCalcResultType.get_string( \
+        EdgeStepCalcResultType.get_string(
                 step_result_metadata.edge_step_calc_result_type),
     ]
 
@@ -91,10 +91,10 @@ func _get_text_for_description_index(description_index: int) -> String:
             Gs.logger.error()
             return ""
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "find_and_expand_controller should not be called for " + \
             "EDGE_STEP_CALC_RESULT_METADATA.")
     return false
@@ -105,7 +105,7 @@ func get_has_children() -> bool:
 func _create_children_inner() -> void:
     for child_step_result_metadata in \
             step_result_metadata.children_step_attempts:
-        step_item_factory.create( \
+        step_item_factory.create(
                 tree_item,
                 tree,
                 graph,
@@ -114,7 +114,7 @@ func _create_children_inner() -> void:
                 step_item_factory)
     
     if step_result_metadata.get_description_list().size() > 1:
-        DescriptionItemController.new( \
+        DescriptionItemController.new(
                 tree_item,
                 tree,
                 graph,
@@ -129,12 +129,12 @@ func _destroy_children_inner() -> void:
     pass
 
 func get_annotation_elements() -> Array:
-    var element := EdgeStepAnnotationElement.new( \
+    var element := EdgeStepAnnotationElement.new(
             step_result_metadata,
             false)
     return [element]
 
-static func _calculate_background_color( \
+static func _calculate_background_color(
         step_result_metadata: EdgeStepCalcResultMetadata) -> Color:
     # Hue transitions evenly from start to end.
     var total_step_count := \
@@ -148,7 +148,7 @@ static func _calculate_background_color( \
             (AnnotationElementDefaults.STEP_HUE_END - \
                     AnnotationElementDefaults.STEP_HUE_START) * \
             step_ratio
-    return Color.from_hsv( \
+    return Color.from_hsv(
             step_hue,
             Surfacer.ann_defaults \
                     .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.s,

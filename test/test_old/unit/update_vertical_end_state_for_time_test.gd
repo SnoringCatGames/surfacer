@@ -31,7 +31,7 @@ func test_updates_step_end_for_time_after_jump_instruction_end() -> void:
     var time := 2.0
     var is_step_end_time := true
 
-    Movement.calculate_vertical_state_for_time( \
+    Movement.calculate_vertical_state_for_time(
             output_step, movement_params, vertical_step, time, is_step_end_time)
 
     assert_almost_eq(output_step.position_step_end, Vector2(INF, 1460.5),
@@ -52,7 +52,7 @@ func test_updates_instruction_end_for_time_after_jump_instruction_end() -> void:
     var time := 2.0
     var is_step_end_time := false
 
-    Movement.calculate_vertical_state_for_time( \
+    Movement.calculate_vertical_state_for_time(
             output_step, movement_params, vertical_step, time, is_step_end_time)
 
     assert_almost_eq(output_step.position_step_end, Vector2(INF, INF),
@@ -73,7 +73,7 @@ func test_time_before_jump_instruction_end() -> void:
     var time := 0.5
     var is_step_end_time := true
 
-    Movement.calculate_vertical_state_for_time( \
+    Movement.calculate_vertical_state_for_time(
             output_step, movement_params, vertical_step, time, is_step_end_time)
 
     assert_almost_eq(output_step.position_step_end, Vector2(INF, -387.5),

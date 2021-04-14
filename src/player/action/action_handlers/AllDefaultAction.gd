@@ -5,7 +5,7 @@ const NAME := "AllDefaultAction"
 const TYPE := SurfaceType.OTHER
 const PRIORITY := 10
 
-func _init().( \
+func _init().(
         NAME,
         TYPE,
         PRIORITY) -> void:

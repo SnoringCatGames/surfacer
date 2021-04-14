@@ -18,7 +18,7 @@ var edge_type: int
 
 var is_a_jump_calculator: bool
 
-func _init( \
+func _init(
         name: String,
         edge_type: int,
         is_a_jump_calculator: bool) -> void:
@@ -27,22 +27,22 @@ func _init( \
     self.is_a_jump_calculator = is_a_jump_calculator
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "Abstract EdgeCalculator.get_can_traverse_from_surface is not " + \
             "implemented")
     return false
 
-func get_all_inter_surface_edges_from_surface( \
+func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
         collision_params: CollisionCalcParams,
         origin_surface: Surface,
         surfaces_in_fall_range_set: Dictionary,
         surfaces_in_jump_range_set: Dictionary) -> void:
-    Gs.logger.error( \
+    Gs.logger.error(
             "Abstract EdgeCalculator" + \
             ".get_all_inter_surface_edges_from_surface is not implemented")
 
-func calculate_edge( \
+func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
         position_start: PositionAlongSurface,
@@ -53,7 +53,7 @@ func calculate_edge( \
     Gs.logger.error("Abstract EdgeCalculator.calculate_edge is not implemented")
     return null
 
-func optimize_edge_jump_position_for_path( \
+func optimize_edge_jump_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
         edge_index: int,
@@ -63,7 +63,7 @@ func optimize_edge_jump_position_for_path( \
     # Do nothing by default. Sub-classes implement this as needed.
     pass
 
-func optimize_edge_land_position_for_path( \
+func optimize_edge_land_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
         edge_index: int,
@@ -81,7 +81,7 @@ static func create_edge_calc_params(
         velocity_start: Vector2,
         needs_extra_jump_duration: bool,
         needs_extra_wall_land_horizontal_speed: bool) -> EdgeCalcParams:
-    Gs.profiler.start( \
+    Gs.profiler.start(
             "create_edge_calc_params",
             collision_params.thread_id)
     
@@ -104,7 +104,7 @@ static func create_edge_calc_params(
             velocity_end_max_x = collision_params.movement_params \
                     .max_horizontal_speed_default
     
-    var terminals := WaypointUtils.create_terminal_waypoints( \
+    var terminals := WaypointUtils.create_terminal_waypoints(
             edge_result_metadata,
             origin_position,
             destination_position,
@@ -117,13 +117,13 @@ static func create_edge_calc_params(
     if terminals.empty():
         # Cannot reach destination from origin (edge_result_metadata already
         # updated).
-        Gs.profiler.stop_with_optional_metadata( \
+        Gs.profiler.stop_with_optional_metadata(
                 "create_edge_calc_params",
                 collision_params.thread_id,
                 edge_result_metadata)
         return null
     
-    var edge_calc_params := EdgeCalcParams.new( \
+    var edge_calc_params := EdgeCalcParams.new(
             collision_params,
             origin_position,
             destination_position,
@@ -134,7 +134,7 @@ static func create_edge_calc_params(
             needs_extra_wall_land_horizontal_speed,
             can_hold_jump_button)
     
-    Gs.profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata(
             "create_edge_calc_params",
             collision_params.thread_id,
             edge_result_metadata)
@@ -142,19 +142,19 @@ static func create_edge_calc_params(
 
 # Does some cheap checks to see if we should more expensive edge calculations
 # for the given jump/land pair.
-static func broad_phase_check( \
+static func broad_phase_check(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
         jump_land_positions: JumpLandPositions,
         other_valid_jump_land_position_results: Array,
         allows_close_jump_positions: bool) -> bool:
-    Gs.profiler.start( \
+    Gs.profiler.start(
             "edge_calc_broad_phase_check",
             collision_params.thread_id)
     
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    if should_skip_edge_calculation( \
+    if should_skip_edge_calculation(
             collision_params.debug_params,
             jump_land_positions.jump_position,
             jump_land_positions.land_position,
@@ -162,7 +162,7 @@ static func broad_phase_check( \
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.SKIPPED_FOR_DEBUGGING
-        Gs.profiler.stop( \
+        Gs.profiler.stop(
                 "edge_calc_broad_phase_check",
                 collision_params.thread_id)
         return false
@@ -174,12 +174,12 @@ static func broad_phase_check( \
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.LESS_LIKELY_TO_BE_VALID
-        Gs.profiler.stop( \
+        Gs.profiler.stop(
                 "edge_calc_broad_phase_check",
                 collision_params.thread_id)
         return false
     
-    if !jump_land_positions.is_far_enough_from_others( \
+    if !jump_land_positions.is_far_enough_from_others(
             collision_params.movement_params,
             other_valid_jump_land_position_results,
             !allows_close_jump_positions,
@@ -189,17 +189,17 @@ static func broad_phase_check( \
         if edge_result_metadata != null:
             edge_result_metadata.edge_calc_result_type = \
                     EdgeCalcResultType.CLOSE_TO_PREVIOUS_EDGE
-        Gs.profiler.stop( \
+        Gs.profiler.stop(
                 "edge_calc_broad_phase_check",
                 collision_params.thread_id)
         return false
     
-    Gs.profiler.stop( \
+    Gs.profiler.stop(
             "edge_calc_broad_phase_check",
             collision_params.thread_id)
     return true
 
-static func should_skip_edge_calculation( \
+static func should_skip_edge_calculation(
         debug_params: Dictionary,
         jump_position_or_surface,
         land_position_or_surface,
@@ -236,12 +236,12 @@ static func should_skip_edge_calculation( \
                 if (debug_origin.has("surface_side") and \
                         debug_origin.surface_side != jump_surface.side) or \
                         (debug_origin.has("surface_start_vertex") and \
-                                !Gs.geometry.are_points_equal_with_epsilon( \
+                                !Gs.geometry.are_points_equal_with_epsilon(
                                         debug_origin.surface_start_vertex,
                                         jump_surface.first_point,
                                         origin_epsilon)) or \
                         (debug_origin.has("surface_end_vertex") and \
-                                !Gs.geometry.are_points_equal_with_epsilon( \
+                                !Gs.geometry.are_points_equal_with_epsilon(
                                         debug_origin.surface_end_vertex,
                                         jump_surface.last_point,
                                         origin_epsilon)):
@@ -251,7 +251,7 @@ static func should_skip_edge_calculation( \
             
             if debug_origin.has("position") and \
                     jump_target_projection_point != Vector2.INF:
-                if !Gs.geometry.are_points_equal_with_epsilon( \
+                if !Gs.geometry.are_points_equal_with_epsilon(
                         jump_target_projection_point,
                         debug_origin.position,
                         origin_epsilon):
@@ -272,12 +272,12 @@ static func should_skip_edge_calculation( \
                 if (debug_destination.has("surface_side") and \
                         debug_destination.surface_side != land_surface.side) or \
                         (debug_destination.has("surface_start_vertex") and \
-                                !Gs.geometry.are_points_equal_with_epsilon( \
+                                !Gs.geometry.are_points_equal_with_epsilon(
                                         debug_destination.surface_start_vertex,
                                         land_surface.first_point,
                                         destination_epsilon)) or \
                         (debug_destination.has("surface_end_vertex") and \
-                                !Gs.geometry.are_points_equal_with_epsilon( \
+                                !Gs.geometry.are_points_equal_with_epsilon(
                                         debug_destination.surface_end_vertex,
                                         land_surface.last_point,
                                         destination_epsilon)):
@@ -287,7 +287,7 @@ static func should_skip_edge_calculation( \
             
             if debug_destination.has("position") and \
                     land_target_projection_point != Vector2.INF:
-                if !Gs.geometry.are_points_equal_with_epsilon( \
+                if !Gs.geometry.are_points_equal_with_epsilon(
                         land_target_projection_point,
                         debug_destination.position,
                         destination_epsilon):
@@ -297,7 +297,7 @@ static func should_skip_edge_calculation( \
         
         if debug_params.limit_parsing.edge.has("velocity_start") and \
                 velocity_start != null:
-                if !Gs.geometry.are_points_equal_with_epsilon( \
+                if !Gs.geometry.are_points_equal_with_epsilon(
                         velocity_start,
                         debug_params.limit_parsing.edge.velocity_start,
                         10.0):
@@ -307,7 +307,7 @@ static func should_skip_edge_calculation( \
     
     return false
 
-static func optimize_edge_jump_position_for_path_helper( \
+static func optimize_edge_jump_position_for_path_helper(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
         edge_index: int,
@@ -351,7 +351,7 @@ static func optimize_edge_jump_position_for_path_helper( \
                 jump_position = previous_edge.start_position_along_surface
             else:
                 jump_position = MovementUtils \
-                        .create_position_offset_from_target_point( \
+                        .create_position_offset_from_target_point(
                                 Vector2(previous_edge.get_start().x + \
                                         previous_edge_displacement.x * \
                                         jump_ratios[i],
@@ -362,7 +362,7 @@ static func optimize_edge_jump_position_for_path_helper( \
             # Calculate the start velocity to use according to the available
             # ramp-up distance and max speed.
             var velocity_start_x: float = MovementUtils \
-                    .calculate_velocity_end_for_displacement( \
+                    .calculate_velocity_end_for_displacement(
                             jump_position.target_point.x - \
                                     previous_edge.get_start().x,
                             previous_velocity_end_x,
@@ -371,7 +371,7 @@ static func optimize_edge_jump_position_for_path_helper( \
             var velocity_start_y := movement_params.jump_boost
             var velocity_start = Vector2(velocity_start_x, velocity_start_y)
             
-            optimized_edge = edge_calculator.calculate_edge( \
+            optimized_edge = edge_calculator.calculate_edge(
                     null,
                     collision_params,
                     jump_position,
@@ -383,7 +383,7 @@ static func optimize_edge_jump_position_for_path_helper( \
             if optimized_edge != null:
                 optimized_edge.is_optimized_for_path = true
                 
-                previous_edge = IntraSurfaceEdge.new( \
+                previous_edge = IntraSurfaceEdge.new(
                         previous_edge.start_position_along_surface,
                         jump_position,
                         Vector2(previous_velocity_end_x, 0.0),
@@ -406,7 +406,7 @@ static func optimize_edge_jump_position_for_path_helper( \
                 jump_position = previous_edge.start_position_along_surface
             else:
                 jump_position = MovementUtils \
-                        .create_position_offset_from_target_point( \
+                        .create_position_offset_from_target_point(
                                 Vector2(0.0,
                                         previous_edge.get_start().y + \
                                         previous_edge_displacement.y * \
@@ -414,12 +414,12 @@ static func optimize_edge_jump_position_for_path_helper( \
                                 previous_edge.get_start_surface(),
                                 movement_params.collider_half_width_height)
             
-            velocity_start = JumpLandPositionsUtils.get_velocity_start( \
+            velocity_start = JumpLandPositionsUtils.get_velocity_start(
                     movement_params,
                     jump_position.surface,
                     edge_calculator.is_a_jump_calculator)
             
-            optimized_edge = edge_calculator.calculate_edge( \
+            optimized_edge = edge_calculator.calculate_edge(
                     null,
                     collision_params,
                     jump_position,
@@ -431,7 +431,7 @@ static func optimize_edge_jump_position_for_path_helper( \
             if optimized_edge != null:
                 optimized_edge.is_optimized_for_path = true
                 
-                previous_edge = IntraSurfaceEdge.new( \
+                previous_edge = IntraSurfaceEdge.new(
                         previous_edge.start_position_along_surface,
                         jump_position,
                         Vector2.ZERO,
@@ -442,7 +442,7 @@ static func optimize_edge_jump_position_for_path_helper( \
                 
                 return
 
-static func optimize_edge_land_position_for_path_helper( \
+static func optimize_edge_land_position_for_path_helper(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
         edge_index: int,
@@ -474,7 +474,7 @@ static func optimize_edge_land_position_for_path_helper( \
                 land_position = next_edge.end_position_along_surface
             else:
                 land_position = MovementUtils \
-                        .create_position_offset_from_target_point( \
+                        .create_position_offset_from_target_point(
                                 Vector2(next_edge.get_start().x + \
                                         next_edge_displacement.x * \
                                         land_ratios[i],
@@ -482,7 +482,7 @@ static func optimize_edge_land_position_for_path_helper( \
                                 next_edge.get_start_surface(),
                                 movement_params.collider_half_width_height)
             
-            optimized_edge = edge_calculator.calculate_edge( \
+            optimized_edge = edge_calculator.calculate_edge(
                     null,
                     collision_params,
                     edge.start_position_along_surface,
@@ -494,7 +494,7 @@ static func optimize_edge_land_position_for_path_helper( \
             if optimized_edge != null:
                 optimized_edge.is_optimized_for_path = true
                 
-                next_edge = IntraSurfaceEdge.new( \
+                next_edge = IntraSurfaceEdge.new(
                         land_position,
                         next_edge.end_position_along_surface,
                         optimized_edge.velocity_end,
@@ -517,20 +517,20 @@ static func optimize_edge_land_position_for_path_helper( \
                 land_position = next_edge.end_position_along_surface
             else:
                 land_position = MovementUtils \
-                        .create_position_offset_from_target_point( \
+                        .create_position_offset_from_target_point(
                                 Vector2(0.0, next_edge.get_start().y + \
                                         next_edge_displacement.y * \
                                         land_ratios[i]),
                                 next_edge.get_start_surface(),
                                 movement_params.collider_half_width_height)
             
-            if JumpLandPositionsUtils.is_land_position_close_to_wall_bottom( \
+            if JumpLandPositionsUtils.is_land_position_close_to_wall_bottom(
                     land_position):
                 # If we're too close to the wall bottom, than this and future
                 # possible optimized land positions aren't valid.
                 return
             
-            optimized_edge = edge_calculator.calculate_edge( \
+            optimized_edge = edge_calculator.calculate_edge(
                     null,
                     collision_params,
                     edge.start_position_along_surface,
@@ -542,7 +542,7 @@ static func optimize_edge_land_position_for_path_helper( \
             if optimized_edge != null:
                 optimized_edge.is_optimized_for_path = true
                 
-                next_edge = IntraSurfaceEdge.new( \
+                next_edge = IntraSurfaceEdge.new(
                         land_position,
                         next_edge.end_position_along_surface,
                         Vector2.ZERO,

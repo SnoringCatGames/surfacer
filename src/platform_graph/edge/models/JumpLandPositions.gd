@@ -29,7 +29,7 @@ var needs_extra_wall_land_horizontal_speed: bool
 # might be the only option.
 var less_likely_to_be_valid: bool
 
-func _init( \
+func _init(
         jump_position: PositionAlongSurface = null,
         land_position: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
@@ -48,7 +48,7 @@ func _init( \
             needs_extra_wall_land_horizontal_speed
     self.less_likely_to_be_valid = less_likely_to_be_valid
 
-func is_far_enough_from_others( \
+func is_far_enough_from_others(
         movement_params: MovementParams,
         other_jump_land_positions: Array,
         checking_distance_for_jump_positions: bool,
@@ -63,7 +63,7 @@ func is_far_enough_from_others( \
     
     if checking_distance_for_jump_positions:
         for other in other_jump_land_positions:
-            if self.jump_position.target_point.distance_squared_to( \
+            if self.jump_position.target_point.distance_squared_to(
                     other.jump_position.target_point) < \
                     movement_params \
                             .distance_squared_threshold_for_considering_additional_jump_land_points:
@@ -72,7 +72,7 @@ func is_far_enough_from_others( \
     
     if checking_distance_for_land_positions:
         for other in other_jump_land_positions:
-            if self.land_position.target_point.distance_squared_to( \
+            if self.land_position.target_point.distance_squared_to(
                     other.land_position.target_point) < \
                     movement_params \
                             .distance_squared_threshold_for_considering_additional_jump_land_points:
@@ -94,7 +94,7 @@ func to_string() -> String:
         needs_extra_jump_duration,
     ]
 
-func load_from_json_object( \
+func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     jump_position = context.id_to_position_along_surface[int(json_object.j)]

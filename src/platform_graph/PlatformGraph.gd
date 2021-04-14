@@ -9,7 +9,7 @@
 class_name PlatformGraph
 extends Reference
 
-signal calculation_progress( \
+signal calculation_progress(
         origin_surface_index,
         surface_count)
 signal calculation_finished
@@ -50,14 +50,14 @@ func calculate(player_name: String) -> void:
     self.surface_parser = Surfacer.graph_parser.surface_parser
     
     var fake_player = Surfacer.graph_parser.fake_players[player_name]
-    self.collision_params = CollisionCalcParams.new( \
+    self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
             self.surface_parser,
             fake_player)
     
     # Store the subset of surfaces that this player type can interact with.
-    var surfaces_array := surface_parser.get_subset_of_surfaces( \
+    var surfaces_array := surface_parser.get_subset_of_surfaces(
             movement_params.can_grab_walls,
             movement_params.can_grab_ceilings,
             movement_params.can_grab_floors)
@@ -66,7 +66,7 @@ func calculate(player_name: String) -> void:
     _calculate_nodes_and_edges()
 
 # Uses A* search.
-func find_path( \
+func find_path(
         origin: PositionAlongSurface,
         destination: PositionAlongSurface) -> PlatformGraphPath:
     # TODO: Add an early-cutoff mechanism for paths that deviate too far from
@@ -79,7 +79,7 @@ func find_path( \
     if origin_surface == destination_surface:
         # If the we are simply trying to get to a different position on the
         # same surface, then we don't need A*.
-        var edges := [IntraSurfaceEdge.new( \
+        var edges := [IntraSurfaceEdge.new(
                 origin,
                 destination,
                 Vector2.ZERO,
@@ -116,11 +116,11 @@ func find_path( \
             var next_node := destination
             new_actual_weight = \
                     current_weight + \
-                    _calculate_intra_surface_edge_weight( \
+                    _calculate_intra_surface_edge_weight(
                             movement_params,
                             current_node,
                             next_node)
-            _record_frontier( \
+            _record_frontier(
                     current_node,
                     next_node,
                     destination,
@@ -144,11 +144,11 @@ func find_path( \
             for next_node in surfaces_to_outbound_nodes[current_node.surface]:
                 new_actual_weight = \
                         current_weight + \
-                        _calculate_intra_surface_edge_weight( \
+                        _calculate_intra_surface_edge_weight(
                                 movement_params,
                                 current_node,
                                 next_node)
-                _record_frontier( \
+                _record_frontier(
                         current_node,
                         next_node,
                         destination,
@@ -169,7 +169,7 @@ func find_path( \
         for next_node in nodes_to_edges_for_current_node:
             for next_edge in nodes_to_edges_for_current_node[next_node]:
                 new_actual_weight = current_weight + next_edge.get_weight()
-                _record_frontier( \
+                _record_frontier(
                         current_node,
                         next_node,
                         destination,
@@ -196,13 +196,13 @@ func find_path( \
             # 
             # The previous node is on the same surface as the current node, so
             # we create an intra-surface edge.
-            next_edge = IntraSurfaceEdge.new( \
+            next_edge = IntraSurfaceEdge.new(
                     previous_node,
                     current_node,
                     Vector2.ZERO,
                     movement_params)
         else:
-            next_edge = _get_cheapest_edge_between_nodes( \
+            next_edge = _get_cheapest_edge_between_nodes(
                     previous_node,
                     current_node)
         
@@ -216,7 +216,7 @@ func find_path( \
     
     return PlatformGraphPath.new(edges)
 
-static func _calculate_intra_surface_edge_weight( \
+static func _calculate_intra_surface_edge_weight(
         movement_params: MovementParams,
         node_a: PositionAlongSurface,
         node_b: PositionAlongSurface) -> float:
@@ -225,7 +225,7 @@ static func _calculate_intra_surface_edge_weight( \
     # Use either the distance or the duration as the weight for the edge.
     var weight: float
     if movement_params.uses_duration_instead_of_distance_for_edge_weight:
-        weight = IntraSurfaceEdge.calculate_duration_to_move_along_surface( \
+        weight = IntraSurfaceEdge.calculate_duration_to_move_along_surface(
                 movement_params,
                 node_a,
                 node_b,
@@ -251,7 +251,7 @@ static func _calculate_intra_surface_edge_weight( \
 
 # Helper function for find_path. This records new neighbor nodes for the given
 # node.
-static func _record_frontier( \
+static func _record_frontier(
         current: PositionAlongSurface,
         next: PositionAlongSurface,
         destination: PositionAlongSurface,
@@ -276,7 +276,7 @@ static func _record_frontier( \
         var priority = new_actual_weight + heuristic_weight
         frontier.insert(priority, next)
 
-func _get_cheapest_edge_between_nodes( \
+func _get_cheapest_edge_between_nodes(
         origin: PositionAlongSurface,
         destination: PositionAlongSurface) -> Edge:
     var cheapest_edge: Edge
@@ -319,7 +319,7 @@ func _calculate_nodes_and_edges() -> void:
             var thread := Thread.new()
             Gs.profiler.init_thread("parse_edges:" + str(i))
             threads[i] = thread
-            thread.start( \
+            thread.start(
                     self,
                     "_calculate_inter_surface_edges_subset",
                     i)
@@ -338,7 +338,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
             Gs.profiler.DEFAULT_THREAD_ID
     OS.set_thread_name(thread_id)
     
-    var collision_params_for_thread := CollisionCalcParams.new( \
+    var collision_params_for_thread := CollisionCalcParams.new(
             {},
             null,
             null,
@@ -352,7 +352,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
     var surfaces := surfaces_set.keys()
     
     # Calculate all inter-surface edges.
-    _calculate_inter_surface_edges_for_next_origin( \
+    _calculate_inter_surface_edges_for_next_origin(
             0,
             surfaces,
             thread_index,
@@ -360,7 +360,7 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
             surfaces_in_fall_range_set,
             surfaces_in_jump_range_set)
 
-func _calculate_inter_surface_edges_for_next_origin( \
+func _calculate_inter_surface_edges_for_next_origin(
         origin_index: int,
         surfaces: Array,
         thread_index: int,
@@ -377,7 +377,7 @@ func _calculate_inter_surface_edges_for_next_origin( \
         surfaces_in_fall_range_set.clear()
         surfaces_in_jump_range_set.clear()
         
-        get_surfaces_in_jump_and_fall_range( \
+        get_surfaces_in_jump_and_fall_range(
                 collision_params,
                 surfaces_in_fall_range_set,
                 surfaces_in_jump_range_set,
@@ -395,7 +395,7 @@ func _calculate_inter_surface_edges_for_next_origin( \
             
             if edge_calculator.get_can_traverse_from_surface(origin_surface):
                 # Calculate the inter-surface edges.
-                edge_calculator.get_all_inter_surface_edges_from_surface( \
+                edge_calculator.get_all_inter_surface_edges_from_surface(
                         inter_surface_edges_results,
                         collision_params,
                         origin_surface,
@@ -448,31 +448,31 @@ func _dedup_nodes() -> void:
                 surfaces_to_inter_surface_edges_results[surface]:
             for jump_land_positions in \
                     inter_surface_edges_result.all_jump_land_positions:
-                jump_land_positions.jump_position = _dedup_node( \
+                jump_land_positions.jump_position = _dedup_node(
                         jump_land_positions.jump_position,
                         grid_cell_to_node)
-                jump_land_positions.land_position = _dedup_node( \
+                jump_land_positions.land_position = _dedup_node(
                         jump_land_positions.land_position,
                         grid_cell_to_node)
             
             for edge in inter_surface_edges_result.valid_edges:
-                edge.start_position_along_surface = _dedup_node( \
+                edge.start_position_along_surface = _dedup_node(
                         edge.start_position_along_surface,
                         grid_cell_to_node)
-                edge.end_position_along_surface = _dedup_node( \
+                edge.end_position_along_surface = _dedup_node(
                         edge.end_position_along_surface,
                         grid_cell_to_node)
                 if edge is FallFromFloorEdge:
-                    edge.fall_off_position = _dedup_node( \
+                    edge.fall_off_position = _dedup_node(
                             edge.fall_off_position,
                             grid_cell_to_node)
             
             for failed_attempt in \
                     inter_surface_edges_result.failed_edge_attempts:
-                failed_attempt.start_position_along_surface = _dedup_node( \
+                failed_attempt.start_position_along_surface = _dedup_node(
                         failed_attempt.start_position_along_surface,
                         grid_cell_to_node)
-                failed_attempt.end_position_along_surface = _dedup_node( \
+                failed_attempt.end_position_along_surface = _dedup_node(
                         failed_attempt.end_position_along_surface,
                         grid_cell_to_node)
 
@@ -529,7 +529,7 @@ func _cleanup_edge_calc_results() -> void:
 #
 # - If there is a match, then the previous instance is returned.
 # - Otherwise, the new new instance is recorded and returned.
-static func _dedup_node( \
+static func _dedup_node(
         node: PositionAlongSurface,
         grid_cell_to_node: Dictionary) -> PositionAlongSurface:
     var cell_id := _node_to_cell_id(node)
@@ -559,7 +559,7 @@ static func _node_to_cell_id(node: PositionAlongSurface) -> String:
             floor((node.target_point.y - CLUSTER_CELL_HALF_SIZE) / \
                     CLUSTER_CELL_SIZE) as int]
 
-func get_surfaces_in_jump_and_fall_range( \
+func get_surfaces_in_jump_and_fall_range(
         collision_params: CollisionCalcParams,
         surfaces_in_fall_range_result_set: Dictionary,
         surfaces_in_jump_range_result_set: Dictionary,
@@ -569,16 +569,16 @@ func get_surfaces_in_jump_and_fall_range( \
     
     # Get all surfaces that are within fall range from either end of the origin
     # surface.
-    Gs.profiler.start( \
+    Gs.profiler.start(
             "find_surfaces_in_jump_fall_range_from_surface",
             collision_params.thread_id)
-    FallMovementUtils.find_surfaces_in_fall_range_from_surface( \
+    FallMovementUtils.find_surfaces_in_fall_range_from_surface(
             movement_params,
             surfaces_set,
             surfaces_in_fall_range_result_set,
             surfaces_in_jump_range_result_set,
             origin_surface)
-    Gs.profiler.stop( \
+    Gs.profiler.stop(
             "find_surfaces_in_jump_fall_range_from_surface",
             collision_params.thread_id)
 
@@ -621,7 +621,7 @@ func to_string() -> String:
         counts.total_edges,
     ]
 
-func load_from_json_object( \
+func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     var player_name: String = json_object.player_name
@@ -632,14 +632,14 @@ func load_from_json_object( \
     self.surface_parser = Surfacer.graph_parser.surface_parser
     
     var fake_player = Surfacer.graph_parser.fake_players[player_name]
-    self.collision_params = CollisionCalcParams.new( \
+    self.collision_params = CollisionCalcParams.new(
             self.debug_params,
             self.movement_params,
             self.surface_parser,
             fake_player)
     
     # Store the subset of surfaces that this player type can interact with.
-    var surfaces_array := surface_parser.get_subset_of_surfaces( \
+    var surfaces_array := surface_parser.get_subset_of_surfaces(
             movement_params.can_grab_walls,
             movement_params.can_grab_ceilings,
             movement_params.can_grab_floors)
@@ -647,7 +647,7 @@ func load_from_json_object( \
     
     _load_position_along_surfaces_from_json_object(json_object, context)
     _load_jump_land_positions_from_json_object(json_object, context)
-    _load_surfaces_to_inter_surface_edges_results_from_json_object( \
+    _load_surfaces_to_inter_surface_edges_results_from_json_object(
             json_object,
             context)
     
@@ -658,31 +658,31 @@ func load_from_json_object( \
     
     fake_player.set_platform_graph(self)
 
-func _load_position_along_surfaces_from_json_object( \
+func _load_position_along_surfaces_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     for id in json_object.position_along_surface_id_to_json_object:
         var position_along_surface_json_object: Dictionary = \
                 json_object.position_along_surface_id_to_json_object[id]
         var position_along_surface := PositionAlongSurface.new()
-        position_along_surface.load_from_json_object( \
+        position_along_surface.load_from_json_object(
                 position_along_surface_json_object,
                 context)
         context.id_to_position_along_surface[int(id)] = position_along_surface
 
-func _load_jump_land_positions_from_json_object( \
+func _load_jump_land_positions_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     for id in json_object.jump_land_positions_id_to_json_object:
         var jump_land_positions_json_object: Dictionary = \
                 json_object.jump_land_positions_id_to_json_object[id]
         var jump_land_positions := JumpLandPositions.new()
-        jump_land_positions.load_from_json_object( \
+        jump_land_positions.load_from_json_object(
                 jump_land_positions_json_object,
                 context)
         context.id_to_jump_land_positions[int(id)] = jump_land_positions
 
-func _load_surfaces_to_inter_surface_edges_results_from_json_object( \
+func _load_surfaces_to_inter_surface_edges_results_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     for surface_id in json_object.surface_id_to_inter_surface_edges_results:
@@ -692,14 +692,14 @@ func _load_surfaces_to_inter_surface_edges_results_from_json_object( \
         var surface: Surface = context.id_to_surface[int(surface_id)]
         
         var inter_surface_edges_results := []
-        inter_surface_edges_results.resize( \
+        inter_surface_edges_results.resize(
                 inter_surface_edges_results_json_object.size())
         surfaces_to_inter_surface_edges_results[surface] = \
                 inter_surface_edges_results
         
         for i in inter_surface_edges_results_json_object.size():
             var inter_surface_edges_result := InterSurfaceEdgesResult.new()
-            inter_surface_edges_result.load_from_json_object( \
+            inter_surface_edges_result.load_from_json_object(
                     inter_surface_edges_results_json_object[i],
                     context)
             inter_surface_edges_results[i] = inter_surface_edges_result
@@ -764,7 +764,7 @@ func _get_jump_land_positions_id_to_json_object() -> Dictionary:
             for failed_attempt in \
                     inter_surface_edges_result.failed_edge_attempts:
                 # FIXME: Remove this assert after checking it's actually true?
-                assert(results.has( \
+                assert(results.has(
                         failed_attempt.jump_land_positions.get_instance_id()))
     return results
 
@@ -775,7 +775,7 @@ func _get_surface_id_to_inter_surface_edges_results_json_object() -> Dictionary:
                 surfaces_to_inter_surface_edges_results[surface]
         
         var inter_surface_edges_results_json_object := []
-        inter_surface_edges_results_json_object.resize( \
+        inter_surface_edges_results_json_object.resize(
                 inter_surface_edges_results.size())
         results[surface.get_instance_id()] = \
                 inter_surface_edges_results_json_object

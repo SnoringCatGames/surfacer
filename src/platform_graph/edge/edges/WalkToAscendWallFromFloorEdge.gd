@@ -12,7 +12,7 @@ const SURFACE_TYPE := SurfaceType.FLOOR
 const ENTERS_AIR := false
 const INCLUDES_AIR_TRAJECTORY := false
 
-func _init( \
+func _init(
         calculator = null,
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
@@ -36,32 +36,32 @@ func _init( \
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP) -> void:
     pass
 
-func _calculate_distance( \
+func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
-    return Gs.geometry.calculate_manhattan_distance( \
+    return Gs.geometry.calculate_manhattan_distance(
             start.target_point,
             end.target_point)
 
-func _calculate_duration( \
+func _calculate_duration(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         instructions: EdgeInstructions,
         distance: float) -> float:
-    return MovementUtils.calculate_time_to_walk( \
+    return MovementUtils.calculate_time_to_walk(
             distance,
             0.0,
             movement_params)
 
-func _check_did_just_reach_destination( \
+func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
     return surface_state.just_grabbed_left_wall or \
             surface_state.just_grabbed_right_wall
 
-static func _calculate_instructions( \
+static func _calculate_instructions(
         start: PositionAlongSurface,
         end: PositionAlongSurface) -> EdgeInstructions:
     if start == null or end == null:
@@ -75,16 +75,16 @@ static func _calculate_instructions( \
             "ml" if \
             end.side == SurfaceSide.LEFT_WALL else \
             "mr"
-    var inward_instruction := EdgeInstruction.new( \
+    var inward_instruction := EdgeInstruction.new(
             sideways_input_key,
             0.0,
             true)
     
-    var upward_instruction := EdgeInstruction.new( \
+    var upward_instruction := EdgeInstruction.new(
             "mu",
             0.0,
             true)
     
-    return EdgeInstructions.new( \
+    return EdgeInstructions.new(
             [inward_instruction, upward_instruction],
             INF)

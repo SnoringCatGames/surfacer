@@ -9,7 +9,7 @@ var side := SurfaceSide.NONE
 var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 var surface_count := 0
 
-func _init( \
+func _init(
         type: int,
         starts_collapsed: bool,
         parent_item: TreeItem,
@@ -17,7 +17,7 @@ func _init( \
         graph: PlatformGraph,
         side: int,
         surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
-        .( \
+        .(
         type,
         IS_LEAF,
         starts_collapsed,
@@ -45,22 +45,22 @@ func get_text() -> String:
 func get_has_children() -> bool:
     return surface_count > 0
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     expand()
-    _trigger_find_and_expand_controller_recursive( \
+    _trigger_find_and_expand_controller_recursive(
             search_type,
             metadata)
     return true
 
-func _find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
     var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
-        is_subtree_found = child.get_metadata(0).find_and_expand_controller( \
+        is_subtree_found = child.get_metadata(0).find_and_expand_controller(
                 search_type,
                 metadata)
         if is_subtree_found:
@@ -76,10 +76,10 @@ func _create_children_inner() -> void:
             surfaces_to_edge_types_to_edges_results = \
                     surfaces_to_surfaces_to_edge_types_to_edges_results \
                             [surface] if \
-                    surfaces_to_surfaces_to_edge_types_to_edges_results.has( \
+                    surfaces_to_surfaces_to_edge_types_to_edges_results.has(
                             surface) else \
                     {}
-            OriginSurfaceItemController.new( \
+            OriginSurfaceItemController.new(
                     tree_item,
                     tree,
                     graph,

@@ -35,19 +35,19 @@ func calculate(tile_maps: Array) -> void:
 
 # Gets the surface corresponding to the given side of the given tile in the
 # given TileMap.
-func get_surface_for_tile( \
+func get_surface_for_tile(
         tile_map: SurfacesTileMap,
         tile_map_index: int,
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
 
-func has_surface_for_tile( \
+func has_surface_for_tile(
         tile_map: SurfacesTileMap,
         tile_map_index: int,
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side].has(tile_map_index)
 
-func get_subset_of_surfaces( \
+func get_subset_of_surfaces(
         include_walls: bool,
         include_ceilings: bool,
         include_floors: bool) -> Array:
@@ -85,7 +85,7 @@ func _calculate_combined_tile_map_rect(tile_maps: Array) -> void:
     combined_tile_map_rect = \
             Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_maps[0])
     for tile_map in tile_maps:
-        combined_tile_map_rect = combined_tile_map_rect.merge( \
+        combined_tile_map_rect = combined_tile_map_rect.merge(
                 Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_map))
 
 # Parses the given TileMap into a set of nodes for the platform graph.
@@ -108,7 +108,7 @@ func _parse_tile_map(tile_map: SurfacesTileMap) -> void:
     var right_walls := []
     
     Gs.profiler.start("parse_tile_map_into_sides_duration")
-    _parse_tile_map_into_sides( \
+    _parse_tile_map_into_sides(
             tile_map,
             floors,
             ceilings,
@@ -117,10 +117,10 @@ func _parse_tile_map(tile_map: SurfacesTileMap) -> void:
     Gs.profiler.stop("parse_tile_map_into_sides_duration")
     
     Gs.profiler.start("remove_internal_surfaces_duration")
-    _remove_internal_surfaces( \
+    _remove_internal_surfaces(
             floors,
             ceilings)
-    _remove_internal_surfaces( \
+    _remove_internal_surfaces(
             left_walls,
             right_walls)
     Gs.profiler.stop("remove_internal_surfaces_duration")
@@ -140,7 +140,7 @@ func _parse_tile_map(tile_map: SurfacesTileMap) -> void:
     Gs.profiler.stop("remove_internal_collinear_vertices_duration")
     
     Gs.profiler.start("store_surfaces_duration")
-    _store_surfaces( \
+    _store_surfaces(
             tile_map,
             floors,
             ceilings,
@@ -153,7 +153,7 @@ func _parse_tile_map(tile_map: SurfacesTileMap) -> void:
     Gs.profiler.stop("populate_derivative_collections")
     
     Gs.profiler.start("assign_neighbor_surfaces_duration")
-    _assign_neighbor_surfaces( \
+    _assign_neighbor_surfaces(
             self.floors,
             self.ceilings,
             self.left_walls,
@@ -174,35 +174,35 @@ func _parse_tile_map(tile_map: SurfacesTileMap) -> void:
     _assert_surfaces_fully_calculated(self.right_walls)
     Gs.profiler.stop("assert_surfaces_fully_calculated_duration")
 
-func _store_surfaces( \
+func _store_surfaces(
         tile_map: SurfacesTileMap,
         floors: Array,
         ceilings: Array,
         left_walls: Array,
         right_walls: Array) -> void:
-    _populate_surface_objects( \
+    _populate_surface_objects(
             floors,
             SurfaceSide.FLOOR)
-    _populate_surface_objects( \
+    _populate_surface_objects(
             ceilings,
             SurfaceSide.CEILING)
-    _populate_surface_objects( \
+    _populate_surface_objects(
             left_walls,
             SurfaceSide.LEFT_WALL)
-    _populate_surface_objects( \
+    _populate_surface_objects(
             right_walls,
             SurfaceSide.RIGHT_WALL)
     
-    _copy_surfaces_to_main_collection( \
+    _copy_surfaces_to_main_collection(
             floors,
             self.floors)
-    _copy_surfaces_to_main_collection( \
+    _copy_surfaces_to_main_collection(
             ceilings,
             self.ceilings)
-    _copy_surfaces_to_main_collection( \
+    _copy_surfaces_to_main_collection(
             left_walls,
             self.left_walls)
-    _copy_surfaces_to_main_collection( \
+    _copy_surfaces_to_main_collection(
             right_walls,
             self.right_walls)
     
@@ -214,50 +214,50 @@ func _store_surfaces( \
 func _populate_derivative_collections(tile_map: SurfacesTileMap) -> void:
     # FIXME: ------------------ This is broken with multiple tilemaps
     all_surfaces = []
-    Gs.utils.concat( \
+    Gs.utils.concat(
             all_surfaces,
             self.floors)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             all_surfaces,
             self.right_walls)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             all_surfaces,
             self.left_walls)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             all_surfaces,
             self.ceilings)
     non_ceiling_surfaces = []
-    Gs.utils.concat( \
+    Gs.utils.concat(
             non_ceiling_surfaces,
             self.floors)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             non_ceiling_surfaces,
             self.right_walls)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             non_ceiling_surfaces,
             self.left_walls)
     non_floor_surfaces = []
-    Gs.utils.concat( \
+    Gs.utils.concat(
             non_floor_surfaces,
             self.right_walls)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             non_floor_surfaces,
             self.left_walls)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             non_floor_surfaces,
             self.ceilings)
     non_wall_surfaces = []
-    Gs.utils.concat( \
+    Gs.utils.concat(
             non_wall_surfaces,
             self.floors)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             non_wall_surfaces,
             self.ceilings)
     all_walls = []
-    Gs.utils.concat( \
+    Gs.utils.concat(
             all_walls,
             self.right_walls)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             all_walls,
             self.left_walls)
     
@@ -277,7 +277,7 @@ func _populate_derivative_collections(tile_map: SurfacesTileMap) -> void:
 
 # Parses the tiles of given TileMap into their constituent top-sides,
 # left-sides, and right-sides.
-static func _parse_tile_map_into_sides( \
+static func _parse_tile_map_into_sides(
         tile_map: SurfacesTileMap,
         floors: Array,
         ceilings: Array,
@@ -289,7 +289,7 @@ static func _parse_tile_map_into_sides( \
     
     for position in used_cells:
         var tile_map_index: int = \
-                Gs.geometry.get_tile_map_index_from_grid_coord( \
+                Gs.geometry.get_tile_map_index_from_grid_coord(
                         position,
                         tile_map)
         var tile_set_index := tile_map.get_cellv(position)
@@ -315,7 +315,7 @@ static func _parse_tile_map_into_sides( \
         
         # Calculate and store the polylines from this shape that correspond to
         # the shape's top-side, right-side, and left-side.
-        _parse_polygon_into_sides( \
+        _parse_polygon_into_sides(
                 tile_vertices_world_coords,
                 floors,
                 ceilings,
@@ -327,7 +327,7 @@ static func _parse_tile_map_into_sides( \
 # Parses the given polygon into separate polylines corresponding to the
 # top-side, left-side, and right-side of the shape. Each of these polylines
 # will be stored with their vertices in clockwise order.
-static func _parse_polygon_into_sides( \
+static func _parse_polygon_into_sides(
         vertices: Array,
         floors: Array,
         ceilings: Array,
@@ -528,7 +528,7 @@ static func _parse_polygon_into_sides( \
 # these pairs are considered internal, and are removed.
 # 
 # Any surface polyline that consists of more than one segment is ignored.
-static func _remove_internal_surfaces( \
+static func _remove_internal_surfaces(
         surfaces: Array,
         opposite_surfaces: Array) -> void:
     var i: int
@@ -649,10 +649,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                     # Merge the two surfaces, replacing the first surface and
                     # removing the second surface.
                     surface2.vertices_array.pop_back()
-                    Gs.utils.concat( \
+                    Gs.utils.concat(
                             surface2.vertices_array,
                             surface1.vertices_array)
-                    Gs.utils.concat( \
+                    Gs.utils.concat(
                             surface2.tile_map_indices,
                             surface1.tile_map_indices)
                     surfaces.remove(j)
@@ -675,10 +675,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
                     # Merge the two surfaces, replacing the first surface and
                     # removing the second surface.
                     surface1.vertices_array.pop_back()
-                    Gs.utils.concat( \
+                    Gs.utils.concat(
                             surface1.vertices_array,
                             surface2.vertices_array)
-                    Gs.utils.concat( \
+                    Gs.utils.concat(
                             surface1.tile_map_indices,
                             surface2.tile_map_indices)
                     surfaces.remove(j)
@@ -701,7 +701,7 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
         i = 0
         count = vertices.size()
         while i + 2 < count:
-            if Gs.geometry.are_points_collinear( \
+            if Gs.geometry.are_points_collinear(
                     vertices[i],
                     vertices[i + 1],
                     vertices[i + 2]):
@@ -710,7 +710,7 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
                 count -= 1
             i += 1
 
-static func _assign_neighbor_surfaces( \
+static func _assign_neighbor_surfaces(
         floors: Array,
         ceilings: Array,
         left_walls: Array,
@@ -874,7 +874,7 @@ static func _assign_neighbor_surfaces( \
                         ceiling.clockwise_convex_neighbor != null:
                     break
 
-static func _calculate_shape_bounding_boxes_for_surfaces( \
+static func _calculate_shape_bounding_boxes_for_surfaces(
         surfaces: Array) -> void:
     var connected_region_bounding_box: Rect2
     var connected_surface: Surface
@@ -889,7 +889,7 @@ static func _calculate_shape_bounding_boxes_for_surfaces( \
                 surface.clockwise_convex_neighbor
         while connected_surface != surface:
             connected_region_bounding_box = \
-                    connected_region_bounding_box.merge( \
+                    connected_region_bounding_box.merge(
                             connected_surface.bounding_box)
             connected_surface = \
                     connected_surface.clockwise_concave_neighbor if \
@@ -920,23 +920,23 @@ static func _assert_surfaces_fully_calculated(surfaces: Array) -> void:
                 Vector2.INF and \
                 surface.connected_region_bounding_box.size != Vector2.INF)
 
-static func _populate_surface_objects( \
+static func _populate_surface_objects(
         tmp_surfaces: Array,
         side: int) -> void:
     for tmp_surface in tmp_surfaces:
-        tmp_surface.surface = Surface.new( \
+        tmp_surface.surface = Surface.new(
                 tmp_surface.vertices_array,
                 side,
                 tmp_surface.tile_map,
                 tmp_surface.tile_map_indices)
 
-static func _copy_surfaces_to_main_collection( \
+static func _copy_surfaces_to_main_collection(
         tmp_surfaces: Array,
         main_collection: Array) -> void:
     for tmp_surface in tmp_surfaces:
         main_collection.push_back(tmp_surface.surface)
 
-static func _create_tile_map_mapping_from_surfaces( \
+static func _create_tile_map_mapping_from_surfaces(
         surfaces: Array) -> Dictionary:
     var result = {}
     for surface in surfaces:
@@ -957,14 +957,14 @@ class _TmpSurface extends Object:
     var surface: Surface
 
 # Finds the closest PositionAlongSurface to the given target point.
-static func find_closest_position_on_a_surface( \
+static func find_closest_position_on_a_surface(
         target: Vector2,
         player) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
-    var surface := get_closest_surface( \
+    var surface := get_closest_surface(
             target,
             player.possible_surfaces_set)
-    position.match_surface_target_and_collider( \
+    position.match_surface_target_and_collider(
             surface,
             target,
             player.movement_params.collider_half_width_height,
@@ -976,7 +976,7 @@ const CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET := 0.02
 const CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01
 
 # Gets the closest surface to the given point.
-static func get_closest_surface( \
+static func get_closest_surface(
         target: Vector2,
         surfaces_set: Dictionary) -> Surface:
     assert(!surfaces_set.empty())
@@ -993,23 +993,23 @@ static func get_closest_surface( \
     
     for current_surface in surfaces_set:
         current_distance_squared = \
-                Gs.geometry.distance_squared_from_point_to_rect( \
+                Gs.geometry.distance_squared_from_point_to_rect(
                         target,
                         current_surface.bounding_box)
         if current_distance_squared < closest_distance_squared:
-            closest_point = Gs.geometry.get_closest_point_on_polyline_to_point( \
+            closest_point = Gs.geometry.get_closest_point_on_polyline_to_point(
                     target,
                     current_surface.vertices)
             current_distance_squared = \
                     target.distance_squared_to(closest_point)
             if current_distance_squared < closest_distance_squared:
                 is_closest_to_first_point = \
-                        Gs.geometry.are_points_equal_with_epsilon( \
+                        Gs.geometry.are_points_equal_with_epsilon(
                                 closest_point,
                                 current_surface.first_point,
                                 0.01)
                 is_closest_to_last_point = \
-                        Gs.geometry.are_points_equal_with_epsilon( \
+                        Gs.geometry.are_points_equal_with_epsilon(
                                 closest_point,
                                 current_surface.last_point,
                                 0.01)
@@ -1071,7 +1071,7 @@ static func get_closest_surface( \
     
     return closest_surface
 
-func load_from_json_object( \
+func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     var tile_maps: Array = context.id_to_tile_map.values()
@@ -1088,19 +1088,19 @@ func load_from_json_object( \
     _populate_derivative_collections(tile_maps[0])
     
     for i in floors.size():
-        floors[i].load_references_from_json_context( \
+        floors[i].load_references_from_json_context(
                 json_object.floors[i],
                 context)
     for i in ceilings.size():
-        ceilings[i].load_references_from_json_context( \
+        ceilings[i].load_references_from_json_context(
                 json_object.ceilings[i],
                 context)
     for i in left_walls.size():
-        left_walls[i].load_references_from_json_context( \
+        left_walls[i].load_references_from_json_context(
                 json_object.left_walls[i],
                 context)
     for i in right_walls.size():
-        right_walls[i].load_references_from_json_context( \
+        right_walls[i].load_references_from_json_context(
                 json_object.right_walls[i],
                 context)
 
@@ -1112,14 +1112,14 @@ func to_json_object() -> Dictionary:
         right_walls = _surface_array_to_json_object(right_walls),
     }
 
-func _json_object_to_surface_array( \
+func _json_object_to_surface_array(
         json_object: Array,
         context: Dictionary) -> Array:
     var result := []
     result.resize(json_object.size())
     for i in json_object.size():
         var surface := Surface.new()
-        surface.load_from_json_object( \
+        surface.load_from_json_object(
                 json_object[i],
                 context)
         result[i] = surface

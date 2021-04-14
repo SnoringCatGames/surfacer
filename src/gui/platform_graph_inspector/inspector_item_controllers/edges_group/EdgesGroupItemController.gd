@@ -10,12 +10,12 @@ const PREFIX := "Edges"
 #         Array<InterSurfaceEdgesResult>>>>
 var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -46,24 +46,24 @@ func to_string() -> String:
         graph.counts.total_edges,
     ]
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "find_and_expand_controller should not be called for " + \
             "EDGES_GROUP.")
     return false
 
 func _create_children_inner() -> void:
-    EdgesWithIncreasingJumpHeightGroupItemController.new( \
+    EdgesWithIncreasingJumpHeightGroupItemController.new(
             tree_item,
             tree,
             graph)
-    EdgesWithoutIncreasingJumpHeightGroupItemController.new( \
+    EdgesWithoutIncreasingJumpHeightGroupItemController.new(
             tree_item,
             tree,
             graph)
-    EdgesWithOneStepGroupItemController.new( \
+    EdgesWithOneStepGroupItemController.new(
             tree_item,
             tree,
             graph)
@@ -83,7 +83,7 @@ static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
             for destination_node in graph.nodes_to_nodes_to_edges[origin_node]:
                 for edge in graph.nodes_to_nodes_to_edges[origin_node][ \
                         destination_node]:
-                    element = EdgeAnnotationElement.new( \
+                    element = EdgeAnnotationElement.new(
                             edge,
                             true,
                             false,

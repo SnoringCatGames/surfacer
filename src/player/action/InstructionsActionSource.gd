@@ -4,17 +4,17 @@ extends PlayerActionSource
 # Array<InstructionsPlayback>
 var _all_playback := []
 
-func _init( \
+func _init(
         player,
         is_additive: bool) \
-        .( \
+        .(
         "CP",
         player,
         is_additive) -> void:
     pass
 
 # Calculates actions for the current frame.
-func update( \
+func update(
         actions: PlayerActionState,
         previous_actions: PlayerActionState,
         time_sec: float,
@@ -25,7 +25,7 @@ func update( \
     
     for playback in _all_playback:
         # Handle any new key presses up till the current time.
-        var new_instructions: Array = playback.update( \
+        var new_instructions: Array = playback.update(
                 time_sec,
                 navigation_state)
         
@@ -34,7 +34,7 @@ func update( \
         # Handle all previously started keys that are still pressed.
         for input_key in playback.active_key_presses:
             is_pressed = playback.active_key_presses[input_key]
-            PlayerActionSource.update_for_key_press( \
+            PlayerActionSource.update_for_key_press(
                     actions,
                     previous_actions,
                     input_key,
@@ -56,17 +56,17 @@ func update( \
             i -= 1
         i += 1
 
-func start_instructions( \
+func start_instructions(
         edge: Edge,
         time_sec: float) -> InstructionsPlayback:
-    var playback := InstructionsPlayback.new( \
+    var playback := InstructionsPlayback.new(
             edge,
             is_additive)
     playback.start(time_sec)
     _all_playback.push_back(playback)
     return playback
 
-func cancel_playback( \
+func cancel_playback(
         playback: InstructionsPlayback,
         time_sec: float) -> bool:
     # Remove the playback.

@@ -16,7 +16,7 @@ const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
 var stopping_distance := INF
 var is_backtracking_to_not_protrude_past_surface_end := false
 
-func _init( \
+func _init(
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
@@ -30,7 +30,7 @@ func _init( \
         start,
         end,
         velocity_start,
-        _calculate_velocity_end( \
+        _calculate_velocity_end(
                 start,
                 end,
                 velocity_start,
@@ -45,42 +45,42 @@ func _init( \
     # they're only calculated at run time when navigating a specific path.
     self.is_optimized_for_path = true
 
-func update_terminal( \
+func update_terminal(
         is_start: bool,
         target_point: Vector2) -> void:
     if is_start:
         start_position_along_surface = \
-                MovementUtils.create_position_offset_from_target_point( \
+                MovementUtils.create_position_offset_from_target_point(
                         target_point,
                         start_position_along_surface.surface,
                         movement_params.collider_half_width_height,
                         true)
     else:
         end_position_along_surface = \
-                MovementUtils.create_position_offset_from_target_point( \
+                MovementUtils.create_position_offset_from_target_point(
                         target_point,
                         end_position_along_surface.surface,
                         movement_params.collider_half_width_height,
                         true)
-    velocity_end = _calculate_velocity_end( \
+    velocity_end = _calculate_velocity_end(
             start_position_along_surface,
             end_position_along_surface,
             velocity_start,
             movement_params)
-    distance = _calculate_distance( \
+    distance = _calculate_distance(
             start_position_along_surface,
             end_position_along_surface,
             null)
-    duration = _calculate_duration( \
+    duration = _calculate_duration(
             start_position_along_surface,
             end_position_along_surface,
             instructions,
             distance)
 
-func update_for_surface_state( \
+func update_for_surface_state(
         surface_state: PlayerSurfaceState,
         is_final_edge: bool) -> void:
-    instructions = _calculate_instructions( \
+    instructions = _calculate_instructions(
             surface_state.center_position_along_surface,
             end_position_along_surface)
     
@@ -88,7 +88,7 @@ func update_for_surface_state( \
         var displacement_to_end := \
                 end_position_along_surface.target_point - \
                 surface_state.center_position
-        stopping_distance = _calculate_stopping_distance( \
+        stopping_distance = _calculate_stopping_distance(
                 movement_params,
                 self,
                 surface_state.velocity,
@@ -96,24 +96,24 @@ func update_for_surface_state( \
     else:
         stopping_distance = 0.0
 
-func _calculate_distance( \
+func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     return start.target_point.distance_to(end.target_point)
 
-func _calculate_duration( \
+func _calculate_duration(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         instructions: EdgeInstructions,
         distance: float) -> float:
-    return calculate_duration_to_move_along_surface( \
+    return calculate_duration_to_move_along_surface(
             movement_params,
             start,
             end,
             distance)
 
-func _check_did_just_reach_destination( \
+func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
@@ -163,7 +163,7 @@ func _check_did_just_reach_destination( \
             is_close_to_destination or \
             is_moving_away_from_destination
 
-static func _calculate_instructions( \
+static func _calculate_instructions(
         start: PositionAlongSurface,
         end: PositionAlongSurface) -> EdgeInstructions:
     if start == null or end == null:
@@ -182,16 +182,16 @@ static func _calculate_instructions( \
         else:
             input_key = "ml"
     
-    var instruction := EdgeInstruction.new( \
+    var instruction := EdgeInstruction.new(
             input_key,
             0.0,
             true)
     
-    return EdgeInstructions.new( \
+    return EdgeInstructions.new(
             [instruction],
             INF)
 
-static func _calculate_velocity_end( \
+static func _calculate_velocity_end(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_start: Vector2,
@@ -207,7 +207,7 @@ static func _calculate_velocity_end( \
                 displacement.x > 0.0 else \
                 -movement_params.walk_acceleration
         var velocity_end_x: float = \
-                MovementUtils.calculate_velocity_end_for_displacement( \
+                MovementUtils.calculate_velocity_end_for_displacement(
                         displacement.x,
                         velocity_start.x,
                         acceleration,
@@ -225,7 +225,7 @@ static func _calculate_velocity_end( \
 # be released, so that the player comes to rest at the desired end position
 # after decelerating due to friction (and with accelerating, or coasting at
 # max-speed, until starting deceleration).
-static func _calculate_stopping_distance( \
+static func _calculate_stopping_distance(
         movement_params: MovementParams,
         edge: IntraSurfaceEdge,
         velocity_start: Vector2,
@@ -238,7 +238,7 @@ static func _calculate_stopping_distance( \
                 movement_params.friction_coefficient * \
                 edge.get_end_surface().tile_map.collision_friction
         var stopping_distance := MovementUtils \
-                .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed( \
+                .calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
                         movement_params,
                         velocity_start.x,
                         displacement_to_end.x,
@@ -263,7 +263,7 @@ static func _calculate_stopping_distance( \
         
         return 0.0
 
-static func calculate_duration_to_move_along_surface( \
+static func calculate_duration_to_move_along_surface(
         movement_params: MovementParams,
         start: PositionAlongSurface,
         end: PositionAlongSurface,
@@ -271,14 +271,14 @@ static func calculate_duration_to_move_along_surface( \
     match start.side:
         SurfaceSide.FLOOR, \
         SurfaceSide.CEILING:
-            return MovementUtils.calculate_time_to_walk( \
+            return MovementUtils.calculate_time_to_walk(
                     distance,
                     0.0,
                     movement_params)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
             var is_climbing_upward := end.target_point.y < start.target_point.y
-            return MovementUtils.calculate_time_to_climb( \
+            return MovementUtils.calculate_time_to_climb(
                     distance,
                     is_climbing_upward,
                     movement_params)

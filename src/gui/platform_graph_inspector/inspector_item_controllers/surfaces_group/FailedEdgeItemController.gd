@@ -12,12 +12,12 @@ const NARROW_PHASE_DESCRIPTION := \
 
 var failed_edge_attempt: FailedEdgeAttempt
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         failed_edge_attempt: FailedEdgeAttempt) \
-        .( \
+        .(
         TYPE,
         parent_item,
         tree,
@@ -34,11 +34,11 @@ func to_string() -> String:
         "BP" if \
         failed_edge_attempt.is_broad_phase_failure else \
         "NP",
-        EdgeCalcResultType.get_string( \
+        EdgeCalcResultType.get_string(
                 failed_edge_attempt.edge_calc_result_type) if \
         failed_edge_attempt.edge_calc_result_type != \
                 EdgeCalcResultType.WAYPOINT_INVALID else \
-        WaypointValidity.get_string( \
+        WaypointValidity.get_string(
                 failed_edge_attempt.waypoint_validity),
         str(failed_edge_attempt.get_start()),
         str(failed_edge_attempt.get_end()),
@@ -49,11 +49,11 @@ func get_text() -> String:
         "BP" if \
         failed_edge_attempt.is_broad_phase_failure else \
         "NP",
-        EdgeCalcResultType.get_string( \
+        EdgeCalcResultType.get_string(
                 failed_edge_attempt.edge_calc_result_type) if \
         failed_edge_attempt.edge_calc_result_type != \
                 EdgeCalcResultType.WAYPOINT_INVALID else \
-        WaypointValidity.get_string( \
+        WaypointValidity.get_string(
                 failed_edge_attempt.waypoint_validity),
         str(failed_edge_attempt.get_start()),
         str(failed_edge_attempt.get_end()),
@@ -70,7 +70,7 @@ func get_has_children() -> bool:
     return !failed_edge_attempt.is_broad_phase_failure
 
 func get_annotation_elements() -> Array:
-    var element := FailedEdgeAttemptAnnotationElement.new( \
+    var element := FailedEdgeAttemptAnnotationElement.new(
             failed_edge_attempt,
             Surfacer.ann_defaults.EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,
             Surfacer.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS,

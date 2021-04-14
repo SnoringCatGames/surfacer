@@ -29,7 +29,7 @@ func _draw_surface(surface: Surface) -> void:
             alpha_with_inspector_open if \
             was_inspector_open else \
             alpha_with_inspector_closed
-    Gs.draw_utils.draw_surface( \
+    Gs.draw_utils.draw_surface(
             self,
             surface,
             color)

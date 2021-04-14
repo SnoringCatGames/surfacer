@@ -4,7 +4,7 @@ extends Node2D
 const DRAG_THROTTLE_INTERVAL_SEC := 0.1
 
 var player
-var throttled_set_new_drag_position: FuncRef = Gs.time.throttle( \
+var throttled_set_new_drag_position: FuncRef = Gs.time.throttle(
         funcref(self, "set_new_drag_position"),
         DRAG_THROTTLE_INTERVAL_SEC)
 var last_pointer_drag_position := Vector2.INF
@@ -84,7 +84,7 @@ func _unhandled_input(event: InputEvent) -> void:
         
         player.new_selection_target = pointer_up_position
         player.new_selection_position = \
-                _get_nearest_surface_position_within_distance_threshold( \
+                _get_nearest_surface_position_within_distance_threshold(
                         pointer_up_position,
                         player)
         
@@ -95,14 +95,14 @@ func _unhandled_input(event: InputEvent) -> void:
 func set_new_drag_position() -> void:
     player.preselection_target = last_pointer_drag_position
     player.preselection_position = \
-            _get_nearest_surface_position_within_distance_threshold( \
+            _get_nearest_surface_position_within_distance_threshold(
                     last_pointer_drag_position,
                     player)
 
-static func _get_nearest_surface_position_within_distance_threshold( \
+static func _get_nearest_surface_position_within_distance_threshold(
         target: Vector2,
         player) -> PositionAlongSurface:
-    var closest_position := SurfaceParser.find_closest_position_on_a_surface( \
+    var closest_position := SurfaceParser.find_closest_position_on_a_surface(
             target,
             player)
     if closest_position.target_point.distance_squared_to(target) <= \

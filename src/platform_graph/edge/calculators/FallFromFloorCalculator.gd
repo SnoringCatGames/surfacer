@@ -7,7 +7,7 @@ const IS_A_JUMP_CALCULATOR := false
 
 const EXTRA_FALL_OFF_POSITION_MARGIN := 2.0
 
-func _init().( \
+func _init().(
         NAME,
         EDGE_TYPE,
         IS_A_JUMP_CALCULATOR) -> void:
@@ -19,7 +19,7 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
             (surface.counter_clockwise_concave_neighbor == null or \
             surface.clockwise_concave_neighbor == null)
 
-func get_all_inter_surface_edges_from_surface( \
+func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
         collision_params: CollisionCalcParams,
         origin_surface: Surface,
@@ -27,7 +27,7 @@ func get_all_inter_surface_edges_from_surface( \
         surfaces_in_jump_range_set: Dictionary) -> void:
     if origin_surface.counter_clockwise_concave_neighbor == null:
         # Calculating the fall-off state for the left edge of the floor.
-        _get_all_edges_from_one_side( \
+        _get_all_edges_from_one_side(
                 inter_surface_edges_results,
                 null,
                 collision_params,
@@ -39,7 +39,7 @@ func get_all_inter_surface_edges_from_surface( \
     
     if origin_surface.clockwise_concave_neighbor == null:
         # Calculating the fall-off state for the right edge of the floor.
-        _get_all_edges_from_one_side( \
+        _get_all_edges_from_one_side(
                 inter_surface_edges_results,
                 null,
                 collision_params,
@@ -49,10 +49,10 @@ func get_all_inter_surface_edges_from_surface( \
                 null,
                 true)
     
-    InterSurfaceEdgesResult.merge_results_with_matching_destination_surfaces( \
+    InterSurfaceEdgesResult.merge_results_with_matching_destination_surfaces(
             inter_surface_edges_results)
 
-func calculate_edge( \
+func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
         position_start: PositionAlongSurface,
@@ -71,7 +71,7 @@ func calculate_edge( \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(false, false)
     
-    _get_all_edges_from_one_side( \
+    _get_all_edges_from_one_side(
             inter_surface_edges_results,
             edge_result_metadata,
             collision_params,
@@ -88,7 +88,7 @@ func calculate_edge( \
     else:
         return null
 
-func optimize_edge_land_position_for_path( \
+func optimize_edge_land_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
         edge_index: int,
@@ -96,7 +96,7 @@ func optimize_edge_land_position_for_path( \
         next_edge: IntraSurfaceEdge) -> void:
     assert(edge is FallFromFloorEdge)
     
-    EdgeCalculator.optimize_edge_land_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_land_position_for_path_helper(
             collision_params,
             path,
             edge_index,
@@ -104,7 +104,7 @@ func optimize_edge_land_position_for_path( \
             next_edge,
             self)
 
-func _get_all_edges_from_one_side( \
+func _get_all_edges_from_one_side(
         inter_surface_edges_results: Array,
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
@@ -117,7 +117,7 @@ func _get_all_edges_from_one_side( \
     assert(!needs_extra_wall_land_horizontal_speed or \
             exclusive_land_position != null)
     
-    Gs.profiler.start( \
+    Gs.profiler.start(
             "fall_from_floor_walk_to_fall_off_point_calculation",
             collision_params.thread_id)
     
@@ -132,7 +132,7 @@ func _get_all_edges_from_one_side( \
             origin_surface.last_point
     
     var position_start := PositionAlongSurface.new()
-    position_start.match_surface_target_and_collider( \
+    position_start.match_surface_target_and_collider(
             origin_surface,
             edge_point,
             movement_params.collider_half_width_height,
@@ -141,26 +141,26 @@ func _get_all_edges_from_one_side( \
     
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    if EdgeCalculator.should_skip_edge_calculation( \
+    if EdgeCalculator.should_skip_edge_calculation(
             debug_params,
             position_start,
             null,
             null):
-        Gs.profiler.stop( \
+        Gs.profiler.stop(
                 "fall_from_floor_walk_to_fall_off_point_calculation",
                 collision_params.thread_id,
                 records_profile)
         return
     ###########################################################################
     
-    var position_fall_off := _calculate_player_center_at_fall_off_point( \
+    var position_fall_off := _calculate_player_center_at_fall_off_point(
             edge_point,
             falls_on_left_side,
             movement_params.collider_shape,
             movement_params.collider_rotation)
     
     var position_fall_off_wrapper := \
-            MovementUtils.create_position_from_target_point( \
+            MovementUtils.create_position_from_target_point(
                     position_fall_off,
                     origin_surface,
                     movement_params.collider_half_width_height)
@@ -174,7 +174,7 @@ func _get_all_edges_from_one_side( \
             movement_params.walk_acceleration
     
     var surface_end_velocity_start: Vector2 = \
-            JumpLandPositionsUtils.get_velocity_start( \
+            JumpLandPositionsUtils.get_velocity_start(
                     movement_params,
                     origin_surface,
                     false,
@@ -183,14 +183,14 @@ func _get_all_edges_from_one_side( \
     var velocity_x_start := surface_end_velocity_start.x
     
     var velocity_x_fall_off: float = \
-            MovementUtils.calculate_velocity_end_for_displacement( \
+            MovementUtils.calculate_velocity_end_for_displacement(
                     displacement_from_start_to_fall_off.x,
                     velocity_x_start,
                     acceleration,
                     movement_params.max_horizontal_speed_default)
     
     var time_fall_off: float = \
-            MovementUtils.calculate_duration_for_displacement( \
+            MovementUtils.calculate_duration_for_displacement(
                     displacement_from_start_to_fall_off.x,
                     velocity_x_start,
                     acceleration,
@@ -198,7 +198,7 @@ func _get_all_edges_from_one_side( \
     
     var fall_off_point_velocity_start := Vector2(velocity_x_fall_off, 0.0)
     
-    Gs.profiler.stop( \
+    Gs.profiler.stop(
             "fall_from_floor_walk_to_fall_off_point_calculation",
             collision_params.thread_id,
             records_profile)
@@ -206,14 +206,14 @@ func _get_all_edges_from_one_side( \
     if exclusive_land_position != null:
         assert(edge_result_metadata != null)
         
-        var jump_land_positions := JumpLandPositions.new( \
+        var jump_land_positions := JumpLandPositions.new(
                 position_start,
                 exclusive_land_position,
                 surface_end_velocity_start,
                 false,
                 needs_extra_wall_land_horizontal_speed,
                 false)
-        var inter_surface_edges_result := InterSurfaceEdgesResult.new( \
+        var inter_surface_edges_result := InterSurfaceEdgesResult.new(
                 origin_surface,
                 exclusive_land_position.surface,
                 edge_type,
@@ -221,7 +221,7 @@ func _get_all_edges_from_one_side( \
         inter_surface_edges_results.push_back(inter_surface_edges_result)
         
         var calc_result: EdgeCalcResult = \
-                FallMovementUtils.find_landing_trajectory_between_positions( \
+                FallMovementUtils.find_landing_trajectory_between_positions(
                         edge_result_metadata,
                         collision_params,
                         position_fall_off_wrapper,
@@ -229,20 +229,20 @@ func _get_all_edges_from_one_side( \
                         fall_off_point_velocity_start,
                         needs_extra_wall_land_horizontal_speed)
         if calc_result != null:
-            assert(EdgeCalcResultType.get_is_valid( \
+            assert(EdgeCalcResultType.get_is_valid(
                     edge_result_metadata.edge_calc_result_type))
             inter_surface_edges_result.edge_calc_results.push_back(calc_result)
         else:
-            assert(!EdgeCalcResultType.get_is_valid( \
+            assert(!EdgeCalcResultType.get_is_valid(
                     edge_result_metadata.edge_calc_result_type))
-            var failed_attempt := FailedEdgeAttempt.new( \
+            var failed_attempt := FailedEdgeAttempt.new(
                     jump_land_positions,
                     edge_result_metadata,
                     self)
-            inter_surface_edges_result.failed_edge_attempts.push_back( \
+            inter_surface_edges_result.failed_edge_attempts.push_back(
                     failed_attempt)
     else:
-        FallMovementUtils.find_landing_trajectories_to_any_surface( \
+        FallMovementUtils.find_landing_trajectories_to_any_surface(
                 inter_surface_edges_results,
                 collision_params,
                 surfaces_in_fall_range_set,
@@ -258,7 +258,7 @@ func _get_all_edges_from_one_side( \
     var velocity_end: Vector2
     var edge: FallFromFloorEdge
     
-    for i in range( \
+    for i in range(
             new_inter_surface_edges_results_start_index,
             inter_surface_edges_results.size()):
         inter_surface_edges_result = inter_surface_edges_results[i]
@@ -266,7 +266,7 @@ func _get_all_edges_from_one_side( \
             position_end = calc_result.edge_calc_params.destination_position
             
             instructions = EdgeInstructionsUtils \
-                    .convert_calculation_steps_to_movement_instructions( \
+                    .convert_calculation_steps_to_movement_instructions(
                             records_profile,
                             collision_params,
                             calc_result,
@@ -274,13 +274,13 @@ func _get_all_edges_from_one_side( \
                             position_end.side)
             
             trajectory = EdgeTrajectoryUtils \
-                    .calculate_trajectory_from_calculation_steps( \
+                    .calculate_trajectory_from_calculation_steps(
                             records_profile,
                             collision_params,
                             calc_result,
                             instructions)
             
-            _prepend_walk_to_fall_off_portion( \
+            _prepend_walk_to_fall_off_portion(
                     position_start,
                     position_end,
                     velocity_x_start,
@@ -293,7 +293,7 @@ func _get_all_edges_from_one_side( \
             velocity_end = \
                     calc_result.horizontal_steps.back().velocity_step_end
             
-            edge = FallFromFloorEdge.new( \
+            edge = FallFromFloorEdge.new(
                     self,
                     position_start,
                     position_end,
@@ -309,7 +309,7 @@ func _get_all_edges_from_one_side( \
                     position_fall_off_wrapper)
             inter_surface_edges_result.valid_edges.push_back(edge)
 
-static func _calculate_player_center_at_fall_off_point( \
+static func _calculate_player_center_at_fall_off_point(
         edge_point: Vector2,
         falls_on_left_side: bool,
         collider_shape: Shape2D,
@@ -354,13 +354,13 @@ static func _calculate_player_center_at_fall_off_point( \
     
     right_side_fall_off_displacement_x += EXTRA_FALL_OFF_POSITION_MARGIN
     
-    return edge_point + Vector2( \
+    return edge_point + Vector2(
             -right_side_fall_off_displacement_x if \
                     falls_on_left_side else \
                     right_side_fall_off_displacement_x,
             fall_off_displacement_y)
 
-static func _prepend_walk_to_fall_off_portion( \
+static func _prepend_walk_to_fall_off_portion(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         velocity_x_start: float,
@@ -391,11 +391,11 @@ static func _prepend_walk_to_fall_off_portion( \
             "ml" if \
             falls_on_left_side else \
             "mr"
-    var outward_press := EdgeInstruction.new( \
+    var outward_press := EdgeInstruction.new(
             sideways_input_key,
             0.0,
             true)
-    var outward_release := EdgeInstruction.new( \
+    var outward_release := EdgeInstruction.new(
             sideways_input_key,
             time_fall_off - 0.0001,
             false)
@@ -413,9 +413,9 @@ static func _prepend_walk_to_fall_off_portion( \
     if movement_params.includes_discrete_frame_state:
         var walking_and_falling_frame_discrete_positions_from_test = \
                 PoolVector2Array()
-        walking_and_falling_frame_discrete_positions_from_test.resize( \
+        walking_and_falling_frame_discrete_positions_from_test.resize(
                 frame_count_before_fall_off)
-        walking_and_falling_frame_discrete_positions_from_test.append_array( \
+        walking_and_falling_frame_discrete_positions_from_test.append_array(
                 trajectory.frame_discrete_positions_from_test)
         trajectory.frame_discrete_positions_from_test = \
                 walking_and_falling_frame_discrete_positions_from_test
@@ -423,10 +423,10 @@ static func _prepend_walk_to_fall_off_portion( \
     if movement_params.includes_continuous_frame_positions:
         var walking_and_falling_frame_continuous_positions_from_steps = \
                 PoolVector2Array()
-        walking_and_falling_frame_continuous_positions_from_steps.resize( \
+        walking_and_falling_frame_continuous_positions_from_steps.resize(
                 frame_count_before_fall_off)
         walking_and_falling_frame_continuous_positions_from_steps \
-                .append_array( \
+                .append_array(
                 trajectory.frame_continuous_positions_from_steps)
         trajectory.frame_continuous_positions_from_steps = \
                 walking_and_falling_frame_continuous_positions_from_steps
@@ -434,10 +434,10 @@ static func _prepend_walk_to_fall_off_portion( \
     if movement_params.includes_continuous_frame_velocities:
         var walking_and_falling_frame_continuous_velocities_from_steps = \
                 PoolVector2Array()
-        walking_and_falling_frame_continuous_velocities_from_steps.resize( \
+        walking_and_falling_frame_continuous_velocities_from_steps.resize(
                 frame_count_before_fall_off)
         walking_and_falling_frame_continuous_velocities_from_steps \
-                .append_array( \
+                .append_array(
                 trajectory.frame_continuous_velocities_from_steps)
         trajectory.frame_continuous_velocities_from_steps = \
                 walking_and_falling_frame_continuous_velocities_from_steps

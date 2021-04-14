@@ -15,7 +15,7 @@ var EDGE_TYPE_TO_CLASS := {
             WalkToAscendWallFromFloorEdge,
 }
 
-func create( \
+func create(
         json_object: Dictionary,
         context: Dictionary) -> Edge:
     var edge: Edge = EDGE_TYPE_TO_CLASS[int(json_object.t)].new()

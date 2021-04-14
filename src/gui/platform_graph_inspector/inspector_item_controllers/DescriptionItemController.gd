@@ -10,7 +10,7 @@ var description_text: String
 var get_annotation_elements_funcref: FuncRef
 var get_annotation_elements_arg
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
@@ -19,7 +19,7 @@ func _init( \
         get_annotation_elements_funcref: FuncRef,
         get_annotation_elements_arg = null,
         background_color = null) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -33,7 +33,7 @@ func _init( \
     if background_color == null:
         background_color = Surfacer.ann_defaults \
                     .INSPECTOR_DESCRIPTION_ITEM_BACKGROUND_COLOR
-    self.tree_item.set_custom_bg_color( \
+    self.tree_item.set_custom_bg_color(
             0,
             background_color)
     _post_init()
@@ -50,7 +50,7 @@ func get_text() -> String:
 func get_description() -> String:
     return description_text
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     return false

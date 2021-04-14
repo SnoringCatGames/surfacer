@@ -22,7 +22,7 @@ var frame_previous_position := Vector2.INF
 
 var collision: SurfaceCollision
 
-func _init( \
+func _init(
         edge_calc_params = null,
         step_calc_params = null,
         horizontal_step = null) -> void:
@@ -62,7 +62,7 @@ func _init( \
         self.frame_start_position = horizontal_step.position_step_start
         self.frame_previous_position = horizontal_step.position_step_start
 
-func record_collision( \
+func record_collision(
         position_start: Vector2,
         displacement: Vector2,
         surface_collision: SurfaceCollision) -> void:

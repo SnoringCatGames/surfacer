@@ -8,7 +8,7 @@ extends Reference
 #       find_landing_trajectory_between_positions.
 
 # Finds all possible landing trajectories from the given start state.
-static func find_landing_trajectories_to_any_surface( \
+static func find_landing_trajectories_to_any_surface(
         inter_surface_edges_results: Array,
         collision_params: CollisionCalcParams,
         all_possible_surfaces_set: Dictionary,
@@ -23,11 +23,11 @@ static func find_landing_trajectories_to_any_surface( \
     
     if possible_landing_surfaces_from_point.empty():
         # Calculate which surfaces are within landing reach.
-        Gs.profiler.start( \
+        Gs.profiler.start(
                 "find_surfaces_in_fall_range_from_point",
                 collision_params.thread_id)
         var possible_landing_surfaces_result_set := {}
-        find_surfaces_in_fall_range_from_point( \
+        find_surfaces_in_fall_range_from_point(
                 movement_params,
                 all_possible_surfaces_set,
                 possible_landing_surfaces_result_set,
@@ -35,7 +35,7 @@ static func find_landing_trajectories_to_any_surface( \
                 velocity_start)
         possible_landing_surfaces_from_point = \
                 possible_landing_surfaces_result_set.keys()
-        Gs.profiler.stop( \
+        Gs.profiler.stop(
                 "find_surfaces_in_fall_range_from_point",
                 collision_params.thread_id,
                 records_profile)
@@ -51,7 +51,7 @@ static func find_landing_trajectories_to_any_surface( \
     for destination_surface in possible_landing_surfaces_from_point:
         #######################################################################
         # Allow for debug mode to limit the scope of what's calculated.
-        if EdgeCalculator.should_skip_edge_calculation( \
+        if EdgeCalculator.should_skip_edge_calculation(
                 debug_params,
                 origin_position,
                 destination_surface,
@@ -65,21 +65,21 @@ static func find_landing_trajectories_to_any_surface( \
         
         jump_land_position_results_for_destination_surface.clear()
         
-        Gs.profiler.start( \
+        Gs.profiler.start(
                 "calculate_land_positions_on_surface",
                 collision_params.thread_id)
         jump_land_positions_to_consider = \
-                JumpLandPositionsUtils.calculate_land_positions_on_surface( \
+                JumpLandPositionsUtils.calculate_land_positions_on_surface(
                         movement_params,
                         destination_surface,
                         origin_position,
                         velocity_start)
-        Gs.profiler.stop( \
+        Gs.profiler.stop(
                 "calculate_land_positions_on_surface",
                 collision_params.thread_id,
                 records_profile)
         
-        inter_surface_edges_result = InterSurfaceEdgesResult.new( \
+        inter_surface_edges_result = InterSurfaceEdgesResult.new(
                 origin_position.surface,
                 destination_surface,
                 calculator.edge_type,
@@ -94,31 +94,31 @@ static func find_landing_trajectories_to_any_surface( \
                     debug_params.has("limit_parsing") and \
                     debug_params.limit_parsing.has("edge") and \
                     debug_params.limit_parsing.edge.has("origin") and \
-                    debug_params.limit_parsing.edge.origin.has( \
+                    debug_params.limit_parsing.edge.origin.has(
                             "position") and \
                     debug_params.limit_parsing.edge.has("destination") and \
                     debug_params.limit_parsing.edge.destination.has("position")
             ###################################################################
             
-            edge_result_metadata = EdgeCalcResultMetadata.new( \
+            edge_result_metadata = EdgeCalcResultMetadata.new(
                     records_calc_details,
                     records_profile)
             
-            if !EdgeCalculator.broad_phase_check( \
+            if !EdgeCalculator.broad_phase_check(
                     edge_result_metadata,
                     collision_params,
                     jump_land_positions,
                     jump_land_position_results_for_destination_surface,
                     true):
-                failed_attempt = FailedEdgeAttempt.new( \
+                failed_attempt = FailedEdgeAttempt.new(
                         jump_land_positions,
                         edge_result_metadata,
                         calculator)
-                inter_surface_edges_result.failed_edge_attempts.push_back( \
+                inter_surface_edges_result.failed_edge_attempts.push_back(
                         failed_attempt)
                 continue
             
-            calc_result = find_landing_trajectory_between_positions( \
+            calc_result = find_landing_trajectory_between_positions(
                     edge_result_metadata,
                     collision_params,
                     jump_land_positions.jump_position,
@@ -127,23 +127,23 @@ static func find_landing_trajectories_to_any_surface( \
                     jump_land_positions.needs_extra_wall_land_horizontal_speed)
             
             if calc_result != null:
-                inter_surface_edges_result.edge_calc_results.push_back( \
+                inter_surface_edges_result.edge_calc_results.push_back(
                         calc_result)
                 calc_result = null
-                jump_land_position_results_for_destination_surface.push_back( \
+                jump_land_position_results_for_destination_surface.push_back(
                         jump_land_positions)
                 
                 if only_returns_first_result:
                     return
             else:
-                failed_attempt = FailedEdgeAttempt.new( \
+                failed_attempt = FailedEdgeAttempt.new(
                         jump_land_positions,
                         edge_result_metadata,
                         calculator)
-                inter_surface_edges_result.failed_edge_attempts.push_back( \
+                inter_surface_edges_result.failed_edge_attempts.push_back(
                         failed_attempt)
 
-static func find_landing_trajectory_between_positions( \
+static func find_landing_trajectory_between_positions(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
         origin_position: PositionAlongSurface,
@@ -154,7 +154,7 @@ static func find_landing_trajectory_between_positions( \
     
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
-    if EdgeCalculator.should_skip_edge_calculation( \
+    if EdgeCalculator.should_skip_edge_calculation(
             debug_params,
             origin_position,
             land_position,
@@ -179,12 +179,12 @@ static func find_landing_trajectory_between_positions( \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(records_calc_details, false)
     
-    Gs.profiler.start( \
+    Gs.profiler.start(
             "find_landing_trajectory_between_positions",
             collision_params.thread_id)
     
     var edge_calc_params: EdgeCalcParams = \
-            EdgeCalculator.create_edge_calc_params( \
+            EdgeCalculator.create_edge_calc_params(
                     edge_result_metadata,
                     collision_params,
                     origin_position,
@@ -195,50 +195,50 @@ static func find_landing_trajectory_between_positions( \
                     needs_extra_wall_land_horizontal_speed)
     if edge_calc_params == null:
         # Cannot reach destination from origin.
-        assert(!EdgeCalcResultType.get_is_valid( \
+        assert(!EdgeCalcResultType.get_is_valid(
                 edge_result_metadata.edge_calc_result_type))
-        Gs.profiler.stop_with_optional_metadata( \
+        Gs.profiler.stop_with_optional_metadata(
                 "find_landing_trajectory_between_positions",
                 collision_params.thread_id,
                 edge_result_metadata)
         return null
     
     var vertical_step: VerticalEdgeStep = \
-            VerticalMovementUtils.calculate_vertical_step( \
+            VerticalMovementUtils.calculate_vertical_step(
                     edge_result_metadata,
                     edge_calc_params)
     if vertical_step == null:
         # Cannot reach destination from origin.
-        assert(!EdgeCalcResultType.get_is_valid( \
+        assert(!EdgeCalcResultType.get_is_valid(
                 edge_result_metadata.edge_calc_result_type))
-        Gs.profiler.stop_with_optional_metadata( \
+        Gs.profiler.stop_with_optional_metadata(
                 "find_landing_trajectory_between_positions",
                 collision_params.thread_id,
                 edge_result_metadata)
         return null
     
-    var step_calc_params: EdgeStepCalcParams = EdgeStepCalcParams.new( \
+    var step_calc_params: EdgeStepCalcParams = EdgeStepCalcParams.new(
             edge_calc_params.origin_waypoint,
             edge_calc_params.destination_waypoint,
             vertical_step)
     
     var step_result_metadata: EdgeStepCalcResultMetadata
     if edge_result_metadata.records_calc_details:
-        step_result_metadata = EdgeStepCalcResultMetadata.new( \
+        step_result_metadata = EdgeStepCalcResultMetadata.new(
                 edge_result_metadata,
                 null,
                 step_calc_params,
                 null)
     
-    Gs.profiler.start( \
+    Gs.profiler.start(
             "narrow_phase_edge_calculation",
             collision_params.thread_id)
-    var calc_result := EdgeStepUtils.calculate_steps_between_waypoints( \
+    var calc_result := EdgeStepUtils.calculate_steps_between_waypoints(
             edge_result_metadata,
             step_result_metadata,
             edge_calc_params,
             step_calc_params)
-    Gs.profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata(
             "narrow_phase_edge_calculation",
             collision_params.thread_id,
             edge_result_metadata)
@@ -256,14 +256,14 @@ static func find_landing_trajectory_between_positions( \
         calc_result.edge_calc_result_type = \
                 edge_result_metadata.edge_calc_result_type
     
-    Gs.profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata(
             "find_landing_trajectory_between_positions",
             collision_params.thread_id,
             edge_result_metadata)
     
     return calc_result
 
-static func find_surfaces_in_fall_range_from_point( \
+static func find_surfaces_in_fall_range_from_point(
         movement_params: MovementParams,
         all_possible_surfaces_set: Dictionary,
         result_set: Dictionary,
@@ -297,19 +297,19 @@ static func find_surfaces_in_fall_range_from_point( \
     
     var top_left := origin - offset_for_acceleration_to_terminal_velocity
     var top_right := origin + offset_for_acceleration_to_terminal_velocity
-    var bottom_left := top_left + Vector2( \
+    var bottom_left := top_left + Vector2(
             -offset_x_from_top_corner_to_bottom_corner,
             offset_y_from_top_corner_to_bottom_corner)
-    var bottom_right := top_right + Vector2( \
+    var bottom_right := top_right + Vector2(
             offset_x_from_top_corner_to_bottom_corner,
             offset_y_from_top_corner_to_bottom_corner)
     
-    _get_surfaces_intersecting_polygon( \
+    _get_surfaces_intersecting_polygon(
             result_set,
             [top_left, top_right, bottom_right, bottom_left, top_left],
             all_possible_surfaces_set)
 
-static func find_surfaces_in_fall_range_from_surface( \
+static func find_surfaces_in_fall_range_from_surface(
         movement_params: MovementParams,
         all_possible_surfaces_set: Dictionary,
         surfaces_in_fall_range_without_jump_distance_result_set: Dictionary,
@@ -321,7 +321,7 @@ static func find_surfaces_in_fall_range_from_surface( \
             surfaces_in_fall_range_with_jump_distance_result_set != null
     
     var fall_range_polygon_with_jump_distance := \
-            calculate_jump_or_fall_range_polygon_from_surface( \
+            calculate_jump_or_fall_range_polygon_from_surface(
                     movement_params,
                     origin_surface,
                     true) if \
@@ -329,13 +329,13 @@ static func find_surfaces_in_fall_range_from_surface( \
             []
     
     var fall_range_polygon_without_jump_distance := \
-            calculate_jump_or_fall_range_polygon_from_surface( \
+            calculate_jump_or_fall_range_polygon_from_surface(
                     movement_params,
                     origin_surface,
                     false)
     
     if is_considering_jump_distance:
-        _get_surfaces_intersecting_polygon( \
+        _get_surfaces_intersecting_polygon(
                 surfaces_in_fall_range_with_jump_distance_result_set,
                 fall_range_polygon_with_jump_distance,
                 all_possible_surfaces_set)
@@ -346,12 +346,12 @@ static func find_surfaces_in_fall_range_from_surface( \
         all_possible_surfaces_set = \
                 surfaces_in_fall_range_with_jump_distance_result_set
     
-    _get_surfaces_intersecting_polygon( \
+    _get_surfaces_intersecting_polygon(
             surfaces_in_fall_range_without_jump_distance_result_set,
             fall_range_polygon_without_jump_distance,
             all_possible_surfaces_set)
 
-static func calculate_jump_or_fall_range_polygon_from_surface( \
+static func calculate_jump_or_fall_range_polygon_from_surface(
         movement_params: MovementParams,
         origin_surface: Surface,
         is_considering_jump_distance: bool) -> Array:
@@ -390,7 +390,7 @@ static func calculate_jump_or_fall_range_polygon_from_surface( \
     #        jumping from.
     
     var max_horizontal_jump_distance := \
-            movement_params.get_max_horizontal_jump_distance( \
+            movement_params.get_max_horizontal_jump_distance(
                     origin_surface.side) if \
             is_considering_jump_distance else \
             0.0
@@ -409,16 +409,16 @@ static func calculate_jump_or_fall_range_polygon_from_surface( \
     match origin_surface.side:
         SurfaceSide.LEFT_WALL:
             if is_considering_jump_distance:
-                top_left = origin_surface.first_point + Vector2( \
+                top_left = origin_surface.first_point + Vector2(
                         -offset_x_to_top_corner,
                         offset_y_to_top_corner)
-                top_right = origin_surface.first_point + Vector2( \
+                top_right = origin_surface.first_point + Vector2(
                         offset_x_to_top_corner,
                         offset_y_to_top_corner)
-                bottom_left = top_left + Vector2( \
+                bottom_left = top_left + Vector2(
                         -offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
-                bottom_right = top_right + Vector2( \
+                bottom_right = top_right + Vector2(
                         offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
             else:
@@ -430,27 +430,27 @@ static func calculate_jump_or_fall_range_polygon_from_surface( \
                         offset_for_acceleration_to_terminal_velocity
                 top_right = origin_surface.first_point + \
                         offset_for_acceleration_to_terminal_velocity
-                bottom_left = top_left + Vector2( \
+                bottom_left = top_left + Vector2(
                         -offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
-                bottom_right = top_right + Vector2( \
+                bottom_right = top_right + Vector2(
                         offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
             
         SurfaceSide.RIGHT_WALL:
             if is_considering_jump_distance:
                 top_left = \
-                        origin_surface.last_point + Vector2( \
+                        origin_surface.last_point + Vector2(
                         -offset_x_to_top_corner,
                         offset_y_to_top_corner)
                 top_right = \
-                        origin_surface.last_point + Vector2( \
+                        origin_surface.last_point + Vector2(
                         offset_x_to_top_corner,
                         offset_y_to_top_corner)
-                bottom_left = top_left + Vector2( \
+                bottom_left = top_left + Vector2(
                         -offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
-                bottom_right = top_right + Vector2( \
+                bottom_right = top_right + Vector2(
                         offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
             else:
@@ -462,27 +462,27 @@ static func calculate_jump_or_fall_range_polygon_from_surface( \
                         offset_for_acceleration_to_terminal_velocity
                 top_right = origin_surface.first_point + \
                         offset_for_acceleration_to_terminal_velocity
-                bottom_left = top_left + Vector2( \
+                bottom_left = top_left + Vector2(
                         -offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
-                bottom_right = top_right + Vector2( \
+                bottom_right = top_right + Vector2(
                         offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
             
         SurfaceSide.FLOOR:
             if is_considering_jump_distance:
                 top_left = \
-                        origin_surface.first_point + Vector2( \
+                        origin_surface.first_point + Vector2(
                         -offset_x_to_top_corner,
                         offset_y_to_top_corner)
                 top_right = \
-                        origin_surface.last_point + Vector2( \
+                        origin_surface.last_point + Vector2(
                         offset_x_to_top_corner,
                         offset_y_to_top_corner)
-                bottom_left = top_left + Vector2( \
+                bottom_left = top_left + Vector2(
                         -offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
-                bottom_right = top_right + Vector2( \
+                bottom_right = top_right + Vector2(
                         offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
             else:
@@ -490,10 +490,10 @@ static func calculate_jump_or_fall_range_polygon_from_surface( \
                         offset_for_acceleration_to_terminal_velocity
                 top_right = origin_surface.last_point + \
                         offset_for_acceleration_to_terminal_velocity
-                bottom_left = top_left + Vector2( \
+                bottom_left = top_left + Vector2(
                         -offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
-                bottom_right = top_right + Vector2( \
+                bottom_right = top_right + Vector2(
                         offset_x_from_top_corner_to_bottom_corner,
                         offset_y_from_top_corner_to_bottom_corner)
             
@@ -505,14 +505,14 @@ static func calculate_jump_or_fall_range_polygon_from_surface( \
 
 # This is only an approximation, since it only considers the end points of the
 # surface rather than each segment of the surface polyline.
-static func _get_surfaces_intersecting_triangle( \
+static func _get_surfaces_intersecting_triangle(
         triangle_a: Vector2,
         triangle_b: Vector2,
         triangle_c: Vector2,
         surfaces: Array) -> Array:
     var result := []
     for surface in surfaces:
-        if Gs.geometry.do_segment_and_triangle_intersect( \
+        if Gs.geometry.do_segment_and_triangle_intersect(
                 surface.vertices.front(),
                 surface.vertices.back(),
                 triangle_a,
@@ -523,12 +523,12 @@ static func _get_surfaces_intersecting_triangle( \
 
 # This is only an approximation, since it only considers the end points of the
 # surface rather than each segment of the surface polyline.
-static func _get_surfaces_intersecting_polygon( \
+static func _get_surfaces_intersecting_polygon(
         result_set: Dictionary,
         polygon: Array,
         surfaces_set: Dictionary) -> void:
     for surface in surfaces_set:
-        if Gs.geometry.do_segment_and_polygon_intersect( \
+        if Gs.geometry.do_segment_and_polygon_intersect(
                 surface.first_point,
                 surface.last_point,
                 polygon):

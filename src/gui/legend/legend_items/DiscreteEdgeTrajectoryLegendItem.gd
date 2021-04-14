@@ -6,7 +6,7 @@ const TEXT := "Edge trajectory\n(discrete)"
 var COLOR_PARAMS: ColorParams = \
         Surfacer.ann_defaults.DEFAULT_EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS
 
-func _init().( \
+func _init().(
         TYPE,
         TEXT,
         COLOR_PARAMS) -> void:

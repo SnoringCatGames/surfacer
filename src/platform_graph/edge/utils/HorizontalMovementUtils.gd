@@ -4,11 +4,11 @@ class_name HorizontalMovementUtils
 extends Reference
 
 # Calculates a new step for the current horizontal part of the movement.
-static func calculate_horizontal_step( \
+static func calculate_horizontal_step(
         edge_result_metadata: EdgeCalcResultMetadata,
         step_calc_params: EdgeStepCalcParams,
         edge_calc_params: EdgeCalcParams) -> EdgeStep:
-    Gs.profiler.start( \
+    Gs.profiler.start(
             "calculate_horizontal_step",
             edge_calc_params.collision_params.thread_id)
     
@@ -31,7 +31,7 @@ static func calculate_horizontal_step( \
     ### acceleration start time, and acceleration end time.
     
     var min_and_max_velocity_at_step_end := \
-            _calculate_min_and_max_x_velocity_at_end_of_interval( \
+            _calculate_min_and_max_x_velocity_at_end_of_interval(
                     displacement.x,
                     step_duration,
                     velocity_start_x,
@@ -40,7 +40,7 @@ static func calculate_horizontal_step( \
                     movement_params.in_air_horizontal_acceleration)
     if min_and_max_velocity_at_step_end.empty():
         # This waypoint cannot be reached.
-        Gs.profiler.stop_with_optional_metadata( \
+        Gs.profiler.stop_with_optional_metadata(
                 "calculate_horizontal_step",
                 edge_calc_params.collision_params.thread_id,
                 edge_result_metadata)
@@ -74,7 +74,7 @@ static func calculate_horizontal_step( \
             horizontal_acceleration_sign
     
     var acceleration_start_and_end_time := \
-            _calculate_acceleration_start_and_end_time( \
+            _calculate_acceleration_start_and_end_time(
                     displacement.x,
                     step_duration,
                     velocity_start_x,
@@ -85,7 +85,7 @@ static func calculate_horizontal_step( \
         # position/velocity/time. This should never happen, since we should
         # have failed earlier during waypoint calculations.
         Gs.logger.error()
-        Gs.profiler.stop_with_optional_metadata( \
+        Gs.profiler.stop_with_optional_metadata(
                 "calculate_horizontal_step",
                 edge_calc_params.collision_params.thread_id,
                 edge_result_metadata)
@@ -119,31 +119,31 @@ static func calculate_horizontal_step( \
             position_instruction_start_x + displacement_x_during_acceleration
     
     var step_start_state := VerticalMovementUtils \
-            .calculate_vertical_state_for_time_from_step( \
+            .calculate_vertical_state_for_time_from_step(
                     movement_params,
                     vertical_step,
                     time_step_start)
     var instruction_start_state := VerticalMovementUtils \
-            .calculate_vertical_state_for_time_from_step( \
+            .calculate_vertical_state_for_time_from_step(
                     movement_params,
                     vertical_step,
                     time_instruction_start)
     var instruction_end_state := VerticalMovementUtils \
-            .calculate_vertical_state_for_time_from_step( \
+            .calculate_vertical_state_for_time_from_step(
                     movement_params,
                     vertical_step,
                     time_instruction_end)
     var step_end_state := VerticalMovementUtils \
-            .calculate_vertical_state_for_time_from_step( \
+            .calculate_vertical_state_for_time_from_step(
                     movement_params,
                     vertical_step,
                     time_step_end)
     
-    assert(Gs.geometry.are_floats_equal_with_epsilon( \
+    assert(Gs.geometry.are_floats_equal_with_epsilon(
             step_end_state[0],
             position_end.y,
             0.2))
-    assert(Gs.geometry.are_floats_equal_with_epsilon( \
+    assert(Gs.geometry.are_floats_equal_with_epsilon(
             step_start_state[0],
             position_step_start.y,
             0.2))
@@ -175,7 +175,7 @@ static func calculate_horizontal_step( \
     
     end_waypoint.actual_velocity_x = velocity_end_x
     
-    Gs.profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata(
             "calculate_horizontal_step",
             edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
@@ -189,7 +189,7 @@ static func calculate_horizontal_step( \
 # 1.  Constant velocity
 # 2.  Constant acceleration
 # 3.  Constant velocity
-static func _calculate_acceleration_start_and_end_time( \
+static func _calculate_acceleration_start_and_end_time(
         displacement: float,
         duration: float,
         velocity_start: float,
@@ -197,7 +197,7 @@ static func _calculate_acceleration_start_and_end_time( \
         acceleration: float) -> Array:
     var velocity_change := velocity_end - velocity_start
     
-    if Gs.geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon(
             velocity_change,
             0.0,
             0.0001):
@@ -248,7 +248,7 @@ static func _calculate_acceleration_start_and_end_time( \
 # Calculates the horizontal component of position and velocity according to the
 # given horizontal movement state and the given time. These are then returned
 # in an Array: [0] is position and [1] is velocity.
-static func calculate_horizontal_state_for_time( \
+static func calculate_horizontal_state_for_time(
         movement_params: MovementParams,
         horizontal_step: EdgeStep,
         time: float) -> Array:
@@ -291,7 +291,7 @@ static func calculate_horizontal_state_for_time( \
     
     return [position, velocity]
 
-static func calculate_max_horizontal_displacement_before_returning_to_starting_height( \
+static func calculate_max_horizontal_displacement_before_returning_to_starting_height(
         velocity_start_x: float,
         velocity_start_y: float,
         max_horizontal_speed_default: float,
@@ -321,7 +321,7 @@ static func calculate_max_horizontal_displacement_before_returning_to_starting_h
     # s = s_0 + v * t
     return max_time_to_starting_height * max_horizontal_speed_default
 
-static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
+static func _calculate_min_and_max_x_velocity_at_end_of_interval(
         displacement: float,
         duration: float,
         velocity_start: float,
@@ -340,7 +340,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     #     give us the min end velocity.
     var should_accelerate_at_start_for_min := acceleration_sign_for_min == 1
     
-    var min_velocity_end := WaypointUtils._solve_for_end_velocity( \
+    var min_velocity_end := WaypointUtils._solve_for_end_velocity(
             displacement,
             duration,
             acceleration_for_min,
@@ -348,7 +348,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
             should_accelerate_at_start_for_min,
             true)
     if min_velocity_end == INF:
-        min_velocity_end = WaypointUtils._solve_for_end_velocity( \
+        min_velocity_end = WaypointUtils._solve_for_end_velocity(
                 displacement,
                 duration,
                 -acceleration_for_min,
@@ -377,7 +377,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     #     give us the max end velocity.
     var should_accelerate_at_start_for_max := acceleration_sign_for_max == -1
     
-    var max_velocity_end := WaypointUtils._solve_for_end_velocity( \
+    var max_velocity_end := WaypointUtils._solve_for_end_velocity(
             displacement,
             duration,
             acceleration_for_max,
@@ -385,7 +385,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
             should_accelerate_at_start_for_max,
             false)
     if max_velocity_end == INF:
-        max_velocity_end = WaypointUtils._solve_for_end_velocity( \
+        max_velocity_end = WaypointUtils._solve_for_end_velocity(
                 displacement,
                 duration,
                 -acceleration_for_max,
@@ -405,12 +405,12 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         return []
     
     # Account for round-off error.
-    if Gs.geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon(
             min_velocity_end,
             max_velocity_end_for_valid_next_step,
             0.001):
         min_velocity_end = max_velocity_end_for_valid_next_step
-    if Gs.geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon(
             max_velocity_end,
             min_velocity_end_for_valid_next_step,
             0.001):

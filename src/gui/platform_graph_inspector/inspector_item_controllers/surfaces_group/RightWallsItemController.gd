@@ -5,12 +5,12 @@ const TYPE := InspectorItemType.RIGHT_WALLS
 const STARTS_COLLAPSED := true
 const SIDE := SurfaceSide.RIGHT_WALL
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
-        .( \
+        .(
         TYPE,
         STARTS_COLLAPSED,
         parent_item,

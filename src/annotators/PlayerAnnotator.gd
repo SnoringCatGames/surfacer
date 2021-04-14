@@ -12,7 +12,7 @@ var surface_annotator: PlayerSurfaceAnnotator
 var position_annotator: PlayerPositionAnnotator
 var tile_annotator: PlayerTileAnnotator
 
-func _init( \
+func _init(
         player: Player,
         is_human_player: bool) -> void:
     self.player = player
@@ -20,7 +20,7 @@ func _init( \
     self.z_index = 2
 
 func _physics_process(delta_sec: float) -> void:
-    if !Gs.geometry.are_points_equal_with_epsilon( \
+    if !Gs.geometry.are_points_equal_with_epsilon(
             player.position,
             previous_position,
             0.01):
@@ -35,7 +35,7 @@ func _physics_process(delta_sec: float) -> void:
         if tile_annotator != null:
             tile_annotator.check_for_update()
 
-func set_annotator_enabled( \
+func set_annotator_enabled(
         annotator_type: int,
         is_enabled: bool) -> void:
     if is_annotator_enabled(annotator_type) == is_enabled:

@@ -8,7 +8,7 @@ const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := false
 const INCLUDES_AIR_TRAJECTORY := true
 
-func _init( \
+func _init(
         calculator = null,
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
@@ -37,23 +37,23 @@ func _init( \
         edge_calc_result_type) -> void:
     pass
 
-func _calculate_distance( \
+func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     return trajectory.distance_from_continuous_frames
 
-func _calculate_duration( \
+func _calculate_duration(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         instructions: EdgeInstructions,
         distance: float) -> float:
     return instructions.duration
 
-func _check_did_just_reach_destination( \
+func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
-    return Edge.check_just_landed_on_expected_surface( \
+    return Edge.check_just_landed_on_expected_surface(
             surface_state,
             self.get_end_surface())

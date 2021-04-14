@@ -5,7 +5,7 @@ const NAME := "WallWalkAction"
 const TYPE := SurfaceType.WALL
 const PRIORITY := 140
 
-func _init().( \
+func _init().(
         NAME,
         TYPE,
         PRIORITY) -> void:

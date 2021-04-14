@@ -10,14 +10,14 @@ var edge_type := EdgeType.UNKNOWN
 # Array<Edge>
 var edges: Array
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         edge_calc_result_type: int,
         edge_type: int,
         edges: Array) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -53,7 +53,7 @@ func get_description() -> String:
 func get_has_children() -> bool:
     return !edges.empty()
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error("find_and_expand_controller should not be called for " + \
@@ -62,7 +62,7 @@ func find_and_expand_controller( \
 
 func _create_children_inner() -> void:
     for edge in edges:
-        ValidEdgeItemController.new( \
+        ValidEdgeItemController.new(
                 tree_item,
                 tree,
                 graph,
@@ -76,7 +76,7 @@ func get_annotation_elements() -> Array:
     var elements := []
     var element: EdgeAnnotationElement
     for edge in edges:
-        element = EdgeAnnotationElement.new( \
+        element = EdgeAnnotationElement.new(
                 edge,
                 true,
                 false,
@@ -85,7 +85,7 @@ func get_annotation_elements() -> Array:
         elements.push_back(element)
     return elements
 
-static func get_annotation_elements_from_graph_and_type( \
+static func get_annotation_elements_from_graph_and_type(
         graph: PlatformGraph,
         edge_type: int) -> Array:
     var elements := []
@@ -96,7 +96,7 @@ static func get_annotation_elements_from_graph_and_type( \
                 for edge in graph.nodes_to_nodes_to_edges[origin_node][ \
                         destination_node]:
                     if edge.edge_type == edge_type:
-                        element = EdgeAnnotationElement.new( \
+                        element = EdgeAnnotationElement.new(
                                 edge,
                                 true,
                                 false,

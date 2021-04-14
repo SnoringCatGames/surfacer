@@ -6,11 +6,11 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := false
 const PREFIX := "Surface parser"
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -25,10 +25,10 @@ func get_text() -> String:
 func get_description() -> String:
     return "Some stats on the time to parse the surfaces in the level."
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "find_and_expand_controller should not be called for " + \
             "SURFACE_PARSER_GROUP.")
     return false
@@ -36,13 +36,13 @@ func find_and_expand_controller( \
 func _create_children_inner() -> void:
     for metric in Surfacer.surface_parser_metric_keys:
         if Gs.profiler.is_timing(metric):
-            ProfilerTimingItemController.new( \
+            ProfilerTimingItemController.new(
                     tree_item,
                     tree,
                     graph,
                     metric)
         else:
-            ProfilerCountItemController.new( \
+            ProfilerCountItemController.new(
                     tree_item,
                     tree,
                     graph,

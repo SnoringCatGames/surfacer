@@ -5,7 +5,7 @@ const NAME := "FloorFrictionAction"
 const TYPE := SurfaceType.FLOOR
 const PRIORITY := 250
 
-func _init().( \
+func _init().(
         NAME,
         TYPE,
         PRIORITY) -> void:

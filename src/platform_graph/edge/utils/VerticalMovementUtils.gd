@@ -5,10 +5,10 @@ extends Reference
 
 # Calculates a new step for the vertical part of the movement and the
 # corresponding total jump duration.
-static func calculate_vertical_step( \
+static func calculate_vertical_step(
         edge_result_metadata: EdgeCalcResultMetadata,
         edge_calc_params: EdgeCalcParams) -> VerticalEdgeStep:
-    Gs.profiler.start( \
+    Gs.profiler.start(
             "calculate_vertical_step",
             edge_calc_params.collision_params.thread_id)
     
@@ -32,7 +32,7 @@ static func calculate_vertical_step( \
     # or not we can hold the jump button to manipulate the jump height.
     if can_hold_jump_button:
         var displacement: Vector2 = position_end - position_start
-        time_instruction_end = calculate_time_to_release_jump_button( \
+        time_instruction_end = calculate_time_to_release_jump_button(
                 movement_params,
                 time_step_end,
                 displacement.y,
@@ -41,7 +41,7 @@ static func calculate_vertical_step( \
             # We can't reach the given displacement with the given duration.
             edge_result_metadata.edge_calc_result_type = EdgeCalcResultType \
                     .OUT_OF_REACH_WHEN_CALCULATING_VERTICAL_STEP
-            Gs.profiler.stop_with_optional_metadata( \
+            Gs.profiler.stop_with_optional_metadata(
                     "calculate_vertical_step",
                     edge_calc_params.collision_params.thread_id,
                     edge_result_metadata)
@@ -89,16 +89,16 @@ static func calculate_vertical_step( \
     step.velocity_step_start = velocity_start
     step.velocity_instruction_start = velocity_start
     
-    var step_end_state := calculate_vertical_state_for_time_from_step( \
+    var step_end_state := calculate_vertical_state_for_time_from_step(
             movement_params,
             step,
             time_step_end)
-    var peak_height_end_state := calculate_vertical_state_for_time_from_step( \
+    var peak_height_end_state := calculate_vertical_state_for_time_from_step(
             movement_params,
             step,
             time_peak_height)
     
-    assert(Gs.geometry.are_floats_equal_with_epsilon( \
+    assert(Gs.geometry.are_floats_equal_with_epsilon(
             step_end_state[0],
             position_end.y,
             0.2))
@@ -108,7 +108,7 @@ static func calculate_vertical_step( \
     
     if position_instruction_end == Vector2.INF:
         var instruction_end_state := \
-                calculate_vertical_state_for_time_from_step( \
+                calculate_vertical_state_for_time_from_step(
                         movement_params,
                         step,
                         time_instruction_end)
@@ -118,7 +118,7 @@ static func calculate_vertical_step( \
     step.position_instruction_end = position_instruction_end
     step.velocity_instruction_end = velocity_instruction_end
     
-    Gs.profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata(
             "calculate_vertical_step",
             edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
@@ -138,7 +138,7 @@ static func calculate_vertical_step( \
 # horizontal displacement before we've already past the destination vertically
 # on the upward side of the trajectory. In that case, we need to consider the
 # minimum time for the upward and downward motion of the jump.
-static func calculate_time_to_jump_to_waypoint( \
+static func calculate_time_to_jump_to_waypoint(
         movement_params: MovementParams,
         displacement: Vector2,
         velocity_start: Vector2,
@@ -185,7 +185,7 @@ static func calculate_time_to_jump_to_waypoint( \
                 # We need more motion than just the initial jump boost to reach
                 # the destination.
                 var time_to_release_jump_button: float = \
-                        MovementUtils.calculate_movement_duration( \
+                        MovementUtils.calculate_movement_duration(
                                 distance_to_release_button_for_shorter_jump,
                                 velocity_start.y,
                                 movement_params.gravity_slow_rise,
@@ -218,7 +218,7 @@ static func calculate_time_to_jump_to_waypoint( \
                 # In this case, we set up the vertical step to hit the end
                 # position while still travelling upward.
                 duration_to_reach_upward_displacement = \
-                        MovementUtils.calculate_movement_duration( \
+                        MovementUtils.calculate_movement_duration(
                                 displacement.y,
                                 velocity_start.y,
                                 movement_params.gravity_fast_fall,
@@ -235,7 +235,7 @@ static func calculate_time_to_jump_to_waypoint( \
         var duration_to_reach_downward_displacement: float
         if displacement.y > 0:
             duration_to_reach_downward_displacement = \
-                    MovementUtils.calculate_movement_duration( \
+                    MovementUtils.calculate_movement_duration(
                             displacement.y,
                             velocity_start.y,
                             movement_params.gravity_fast_fall,
@@ -257,7 +257,7 @@ static func calculate_time_to_jump_to_waypoint( \
         ### Calculate the time needed to move horizontally.
         
         var duration_to_reach_horizontal_displacement := \
-                MovementUtils.calculate_duration_for_displacement( \
+                MovementUtils.calculate_duration_for_displacement(
                         displacement.x,
                         velocity_start.x,
                         movement_params.in_air_horizontal_acceleration * \
@@ -268,7 +268,7 @@ static func calculate_time_to_jump_to_waypoint( \
             # direction, try the other direction.
             horizontal_acceleration_sign = -horizontal_acceleration_sign
             duration_to_reach_horizontal_displacement = \
-                    MovementUtils.calculate_duration_for_displacement( \
+                    MovementUtils.calculate_duration_for_displacement(
                             displacement.x,
                             velocity_start.x,
                             movement_params.in_air_horizontal_acceleration * \
@@ -312,7 +312,7 @@ static func calculate_time_to_jump_to_waypoint( \
             # motion of the jump.
             
             var duration_to_reach_upward_displacement_with_only_fast_fall = \
-                    MovementUtils.calculate_movement_duration( \
+                    MovementUtils.calculate_movement_duration(
                             displacement.y,
                             velocity_start.y,
                             movement_params.gravity_fast_fall,
@@ -325,7 +325,7 @@ static func calculate_time_to_jump_to_waypoint( \
                     duration_to_reach_upward_displacement_with_only_fast_fall < \
                     duration_to_reach_horizontal_displacement:
                 duration_to_reach_upward_displacement_on_fall = \
-                        MovementUtils.calculate_movement_duration( \
+                        MovementUtils.calculate_movement_duration(
                                 displacement.y,
                                 velocity_start.y,
                                 movement_params.gravity_fast_fall,
@@ -359,7 +359,7 @@ static func calculate_time_to_jump_to_waypoint( \
         # If we can't currently hold the jump button, then there is no
         # slow-rise and variable jump height to consider. So our movement
         # duration is a lot simpler to calculate.
-        return MovementUtils.calculate_movement_duration( \
+        return MovementUtils.calculate_movement_duration(
                 displacement.y,
                 velocity_start.y,
                 movement_params.gravity_fast_fall,
@@ -369,7 +369,7 @@ static func calculate_time_to_jump_to_waypoint( \
                 true)
 
 # Given the total duration, calculate the time to release the jump button.
-static func calculate_time_to_release_jump_button( \
+static func calculate_time_to_release_jump_button(
         movement_params: MovementParams,
         duration: float,
         displacement_y: float,
@@ -421,7 +421,7 @@ static func calculate_time_to_release_jump_button( \
 
 # Calculates the time at which the movement would travel through the given
 # position with the given vertical_step.
-static func calculate_time_for_passing_through_waypoint( \
+static func calculate_time_for_passing_through_waypoint(
         movement_params: MovementParams,
         waypoint: Waypoint,
         min_end_time: float,
@@ -501,7 +501,7 @@ static func calculate_time_for_passing_through_waypoint( \
     
     if is_position_before_instruction_end:
         var displacement := target_height - position_start_y
-        duration_of_slow_rise = MovementUtils.calculate_movement_duration( \
+        duration_of_slow_rise = MovementUtils.calculate_movement_duration(
                 displacement,
                 velocity_start_y,
                 movement_params.gravity_slow_rise,
@@ -517,7 +517,7 @@ static func calculate_time_for_passing_through_waypoint( \
         min_end_time = max(min_end_time - duration_of_slow_rise, 0.0)
         var displacement_of_fast_fall := \
                 target_height - position_instruction_end_y
-        duration_of_fast_fall = MovementUtils.calculate_movement_duration( \
+        duration_of_fast_fall = MovementUtils.calculate_movement_duration(
                 displacement_of_fast_fall,
                 velocity_instruction_end_y,
                 movement_params.gravity_fast_fall,
@@ -530,11 +530,11 @@ static func calculate_time_for_passing_through_waypoint( \
     
     return duration_of_fast_fall + duration_of_slow_rise
 
-static func calculate_vertical_state_for_time_from_step( \
+static func calculate_vertical_state_for_time_from_step(
         movement_params: MovementParams,
         step: VerticalEdgeStep,
         time: float) -> Array:
-    return calculate_vertical_state_for_time( \
+    return calculate_vertical_state_for_time(
             movement_params,
             time,
             step.position_step_start.y,
@@ -544,7 +544,7 @@ static func calculate_vertical_state_for_time_from_step( \
 # Calculates the vertical component of position and velocity according to the
 # given vertical movement state and the given time. These are then returned in
 # an Array: [0] is position and [1] is velocity.
-static func calculate_vertical_state_for_time( \
+static func calculate_vertical_state_for_time(
         movement_params: MovementParams,
         time: float,
         position_step_start_y: float,
@@ -586,7 +586,7 @@ static func calculate_vertical_state_for_time( \
 
 # Calculates the vertical displacement with the given duration if using
 # slow-rise gravity as long as possible.
-static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gravity( \
+static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gravity(
         movement_params: MovementParams,
         duration: float,
         velocity_y_start: float) -> float:
@@ -638,7 +638,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
 # slow-rise gravity until hitting the peak.
 # 
 # Returns a positive value.
-static func calculate_max_upward_distance( \
+static func calculate_max_upward_distance(
         movement_params: MovementParams) -> float:
     # TODO: Add support for double jumps, dash, etc.
     
@@ -655,7 +655,7 @@ static func calculate_max_upward_distance( \
 # fast-fall gravity from the very start.
 # 
 # Returns a positive value.
-static func calculate_min_upward_distance( \
+static func calculate_min_upward_distance(
         movement_params: MovementParams) -> float:
     # From a basic equation of motion:
     #     v^2 = v_0^2 + 2*a*(s - s_0)

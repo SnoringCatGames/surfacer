@@ -18,7 +18,7 @@ const INCLUDES_AIR_TRAJECTORY := true
 var falls_on_left_side: bool
 var fall_off_position: PositionAlongSurface
 
-func _init( \
+func _init(
         calculator = null,
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
@@ -50,24 +50,24 @@ func _init( \
     self.falls_on_left_side = falls_on_left_side
     self.fall_off_position = fall_off_position
 
-func _calculate_distance( \
+func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     return trajectory.distance_from_continuous_frames
 
-func _calculate_duration( \
+func _calculate_duration(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         instructions: EdgeInstructions,
         distance: float) -> float:
     return instructions.duration
 
-func _check_did_just_reach_destination( \
+func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
-    return Edge.check_just_landed_on_expected_surface( \
+    return Edge.check_just_landed_on_expected_surface(
             surface_state,
             self.get_end_surface())
 
@@ -75,13 +75,13 @@ func _check_did_just_reach_destination( \
 # can trigger multiple extraneous launch/land events if the player's collision
 # boundary is not square. So this function override adds logic to ignore any of
 # these extra collisions with the starting surface.
-func update_navigation_state( \
+func update_navigation_state(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback,
         just_started_new_edge: bool,
         is_starting_navigation_retry: bool) -> void:
-    .update_navigation_state( \
+    .update_navigation_state(
             navigation_state,
             surface_state,
             playback,
@@ -111,12 +111,12 @@ func update_navigation_state( \
             navigation_state.just_interrupted_by_user_action
     
     navigation_state.just_reached_end_of_edge = \
-            _check_did_just_reach_destination( \
+            _check_did_just_reach_destination(
                     navigation_state,
                     surface_state,
                     playback)
 
-func load_from_json_object( \
+func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_state_from_json_object(json_object, context)

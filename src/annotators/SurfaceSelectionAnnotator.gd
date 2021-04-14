@@ -5,7 +5,7 @@ var VALID_SELECTION_COLOR: Color = \
         SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_SOLID)
 var INVALID_SELECTION_COLOR: Color = \
         SurfacerColors.opacify(SurfacerColors.RED, SurfacerColors.ALPHA_SOLID)
-const SELECT_DURATION_SEC := max( \
+const SELECT_DURATION_SEC := max(
         ClickAnnotator.CLICK_INNER_DURATION_SEC,
         ClickAnnotator.CLICK_OUTER_DURATION_SEC) * 1.5
 
@@ -31,7 +31,7 @@ func _process(delta_sec: float) -> void:
         # navigate to the selected position.
         selection_color = \
                 VALID_SELECTION_COLOR if \
-                Gs.geometry.are_position_wrappers_equal_with_epsilon( \
+                Gs.geometry.are_position_wrappers_equal_with_epsilon(
                         player.last_selection_position,
                         player.navigator.current_destination) else \
                 INVALID_SELECTION_COLOR
@@ -54,13 +54,13 @@ func _draw() -> void:
         return
     
     var alpha := selection_color.a * (1 - animation_progress)
-    var color := Color( \
+    var color := Color(
             selection_color.r,
             selection_color.g,
             selection_color.b,
             alpha)
     
-    Gs.draw_utils.draw_surface( \
+    Gs.draw_utils.draw_surface(
             self,
             selection_position_to_animate.surface,
             color)
