@@ -65,6 +65,7 @@ Probably the easiest way to get set up is to copy the [Squirrel Away example app
     -   It should point to the path `res://addons/surfacer/src/SurfacerConfig.gd`.
     -   It should be the second AutoLoad in the list, just after `Gs` (for Scaffolder).
 -   Configure both the Surfacer and Scaffolder frameworks by calling `SurfacerBootstrap.on_app_ready` at the start of your Main Scene.
+-   Include `*.json` under "Filters to export non-resource files/folders" in your export settings.
 
 ## Platformer AI
 
