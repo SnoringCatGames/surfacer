@@ -430,6 +430,8 @@ We support a large number of flags and parameters for adjusting various aspects 
 ## Notable limitations
 
 -   Our build-time graph calculations take a long time, especially for a level with lots of surfaces (such as a big level, or a level with a small cell size).
+    -   To ameliorate this, you can precompute graphs and save them to JSON files, which can be loaded much more quickly at play time.
+    -   Use the `precompute_platform_graph_for_levels` property in your app manifest to precompute graphs.
 -   There is slight discrepancy between discrete and continuous trajectories. The former is what we see from movement produced by the frame-by-frame application of gravity and input actions on the player. The latter is what we see from our precise numerical analysis of algebraic equations when pre-calculating the platform graph. We support a few different techniques for reconciling this:
     -   `MovementParams.syncs_player_velocity_to_edge_trajectory`: When this flag is enabled, the player's run-time _velocity_ will be forced to match the expected pre-calculated (continuous) velocity for the current frame in the currently executing platform graph edge.
     -   `MovementParams.syncs_player_position_to_edge_trajectory`: When this flag is enabled, the player's run-time _position_ will be forced to match the expected pre-calculated (continuous) velocity for the current frame in the currently executing platform graph edge.
@@ -458,11 +460,13 @@ We support a large number of flags and parameters for adjusting various aspects 
         -   face_left
         -   face_right
         -   grab_wall
-    -   Your level collidable foreground tiles must be defined in a TileMap that belongs to the "surfaces" node group.
+    -   Your level collidable foreground tiles must be defined in a _single_ TileMap that belongs to the "surfaces" node group.
     -   Surfacer uses a very specific set of movement mechanics.
         -   Fortunately, this set includes most features commonly used in platforms and is able to provide pretty sophisticated movement.
         -   But the procedural path-finding doesn't know about complex platformer mechanics like special in-air friction or coyote time.
     -   The Surfacer framework isn't yet decoupled from the Squirrel Away demo app logic.
+
+> **NOTE:** All collidable tiles in a level must be defined in a _single_ TileMap.
 
 ## Tests
 

@@ -212,7 +212,7 @@ func _store_surfaces(
     _free_objects(right_walls)
 
 func _populate_derivative_collections(tile_map: SurfacesTileMap) -> void:
-    # FIXME: ------------------ This is broken with multiple tilemaps
+    # TODO: This is broken with multiple tilemaps.
     all_surfaces = []
     Gs.utils.concat(
             all_surfaces,
@@ -1084,7 +1084,7 @@ func load_from_json_object(
     right_walls = \
             _json_object_to_surface_array(json_object.right_walls, context)
     
-    # FIXME: ------------------ This is broken with multiple tilemaps
+    # TODO: This is broken with multiple tilemaps.
     _populate_derivative_collections(tile_maps[0])
     
     for i in floors.size():
