@@ -29,10 +29,12 @@ func start() -> void:
                 Gs.canvas_layers.layers.hud,
                 _PAUSE_BUTTON_RESOURCE_PATH)
     
-    graph_parser.connect("parse_finished", self, "_on_graphs_parsed")
+    set_hud_visibility(false)
+    
     graph_parser.parse(_id)
 
-func _on_graphs_parsed() -> void:
+func _on_loaded() -> void:
+    set_hud_visibility(true)
     call_deferred("_initialize_annotators")
 
 func _initialize_annotators() -> void:
@@ -112,6 +114,12 @@ func set_tile_map_visibility(is_visible: bool) -> void:
             TileMap)
     for node in foregrounds:
         node.visible = is_visible
+
+func set_hud_visibility(is_visible: bool) -> void:
+    if is_instance_valid(inspector_panel):
+        inspector_panel.visible = is_visible
+    if is_instance_valid(pause_button):
+        pause_button.visible = is_visible
 
 func _get_platform_graph_for_player(player_name: String) -> PlatformGraph:
     return graph_parser.platform_graphs[player_name]

@@ -222,7 +222,7 @@ margin_right = 356.0
 margin_bottom = 4.0
 size_flags_vertical = 3
 custom_constants/vseparation = 2
-custom_constants/hseparation = 0
+custom_constants/hseparation = 16
 columns = 2
 
 [node name="Spacer" type="Control" parent="."]

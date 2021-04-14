@@ -45,19 +45,7 @@ func _compute() -> void:
     Surfacer.is_inspector_enabled = false
     
     # FIXME: ------------------------------------------------------------
-    # - Test current updates to defer each iteration in parser and graph.
-    # - Refactor the presentation of the progress info.
     # 
-    # - LEFT OFF HERE:
-    #   - Take a screen recording of scrolling through the current encoding.
-    #   - Make a copy of the current encoding. Compare size later.
-    # 
-    # - Refactor the platform graph parsing a little:
-    #   - if !Surfacer.uses_threads_for_platform_graph_calculation
-    #   - Between every iteration of the graph-calculation for-loop, call the
-    #     next iteration via defer.
-    #   - Then emit a signal with the current calculation progress.
-    #   - Use this signal to update a progress bar.
     # - Add this progress bar to both the precompute screen and the game screen.
     # - Add calls to Profiler, and print results within screen (and console).
     #   - Use these results to give some ballpark sub-step ratios for updating
@@ -135,7 +123,7 @@ func _on_graph_parse_progress(
         origin_surface_index: int,
         surface_count: int) -> void:
     var current_graph_calculation_progress_ratio := \
-        origin_surface_index / float(surface_count)
+            origin_surface_index / float(surface_count)
     var current_level_calculation_progress_ratio := \
             (player_index + current_graph_calculation_progress_ratio) / \
             float(player_count)
@@ -151,24 +139,24 @@ func _on_graph_parse_progress(
             100.0
     
     var player_name: String = Surfacer.player_params.keys()[player_index]
-    var label_1 := "%s level %s (%s of %s)" % [
-        "Parsing",
+    var label_1 := "Level %s (%s of %s)" % [
         Surfacer.precompute_platform_graph_for_levels[ \
                 precompute_level_index],
         precompute_level_index + 1,
         Surfacer.precompute_platform_graph_for_levels.size(),
     ]
-    var label_2 := "Player %s (%s of %s)" % [
+    var label_2 := "Parsing"
+    var label_3 := "Player %s (%s of %s)" % [
         player_name,
         player_index + 1,
         player_count,
     ]
-    var label_3 := "Origin surface %s of %s" % [
+    var label_4 := "Out-bound surface %s of %s" % [
         origin_surface_index,
         surface_count,
     ]
     
-    _set_progress(progress, label_1, label_2, label_3)
+    _set_progress(progress, label_1, label_2, label_3, label_4)
 
 func _on_stage_progress(
         step: String,
@@ -205,9 +193,11 @@ func _on_stage_progress(
             Surfacer.precompute_platform_graph_for_levels.size() * \
             100.0
     
-    var label: String
+    var label_1: String
+    var label_2: String
     if finished:
-        label = "Done processing all levels."
+        label_1 = "Done processing all levels."
+        label_2 = ""
     else:
         var next_step_label: String = {
             "initialize": "Parsing",
@@ -216,30 +206,33 @@ func _on_stage_progress(
             "clean_up": "Initializing",
         }[step]
         
-        label = "%s level %s (%s of %s)" % [
-            next_step_label,
+        label_1 = "Level %s (%s of %s)" % [
             Surfacer.precompute_platform_graph_for_levels[ \
                     precompute_level_index],
             precompute_level_index + 1,
             Surfacer.precompute_platform_graph_for_levels.size(),
         ]
+        label_2 = next_step_label
     
-    _set_progress(progress, label)
+    _set_progress(progress, label_1, label_2)
 
 func _set_progress(
         progress: float,
         label_1: String,
-        label_2 := "",
-        label_3 := "") -> void:
+        label_2: String,
+        label_3 := "",
+        label_4 := "") -> void:
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/ProgressBar.value = round(progress)
     
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Label.text = label_1
+            CenterContainer/VBoxContainer/Label1.text = label_1
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/Label2.text = label_2
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/Label3.text = label_3
+    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
+            CenterContainer/VBoxContainer/Label4.text = label_4
     
     Gs.logger.print("Precompute progress: %s | %s | %s" % \
             [label_1, label_2, label_3])

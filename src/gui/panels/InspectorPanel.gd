@@ -87,6 +87,7 @@ func _initialize_annotator_checkboxes() -> void:
         var checkbox := CheckBox.new()
         checkbox.pressed = item.get_is_pressed()
         checkbox.text = item.label
+        checkbox.add_font_override("font", Gs.fonts.main_s)
         checkbox.connect(
                 "pressed",
                 self,

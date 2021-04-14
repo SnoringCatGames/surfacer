@@ -1,6 +1,8 @@
 class_name PlatformGraphParser
 extends Node
 
+signal calculation_started
+signal load_started
 signal calculation_progress(
         player_index,
         player_count,
@@ -70,7 +72,10 @@ func _instantiate_platform_graphs(
         force_calculation_from_tile_maps := false) -> void:
     if !force_calculation_from_tile_maps and \
             File.new().file_exists(_get_resource_path()):
-        _load_platform_graphs()
+        emit_signal("load_started")
+        Gs.time.set_timeout(
+                funcref(self, "_load_platform_graphs"),
+                0.01)
         _on_graphs_parsed()
     else:
         # Set up the PlatformGraphs for this level.
@@ -78,7 +83,8 @@ func _instantiate_platform_graphs(
         surface_parser.calculate(surface_tile_maps)
         platform_graphs = {}
         assert(!Surfacer.player_params.empty())
-        _calculate_next_platform_graph(0)
+        emit_signal("calculation_started")
+        _defer_calculate_next_platform_graph(-1)
 
 func _on_graphs_parsed() -> void:
     if Surfacer.is_inspector_enabled:
@@ -154,12 +160,15 @@ func _on_graph_calculation_finished(
         player_index: int,
         was_last_player: bool) -> void:
     if !was_last_player:
-        Gs.time.set_timeout(
-                funcref(self, "_calculate_next_platform_graph"),
-                0.01,
-                [player_index + 1])
+        _defer_calculate_next_platform_graph(player_index)
     else:
         _on_graphs_parsed()
+
+func _defer_calculate_next_platform_graph(last_player_index: int) -> void:
+    Gs.time.set_timeout(
+            funcref(self, "_calculate_next_platform_graph"),
+            0.01,
+            [last_player_index + 1])
 
 func _load_platform_graphs() -> void:
     var platform_graphs_path := _get_resource_path()
