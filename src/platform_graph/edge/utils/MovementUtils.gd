@@ -13,12 +13,12 @@ extends Reference
 # -   Returns INF if we cannot reach the destination with our movement
 #     parameters.
 static func calculate_movement_duration( \
-        displacement: float, \
-        v_0: float, \
-        a: float, \
-        returns_lower_result := true, \
-        min_duration := 0.0, \
-        expects_only_one_positive_result := false, \
+        displacement: float,
+        v_0: float,
+        a: float,
+        returns_lower_result := true,
+        min_duration := 0.0,
+        expects_only_one_positive_result := false,
         allows_no_positive_results := false) -> float:
     # FIXME: Account for max y velocity when calculating any parabolic motion.
     
@@ -87,14 +87,14 @@ static func calculate_movement_duration( \
 # Note: This could depend on a speed that exceeds the max-allowed speed.
 # FIXME: Remove if no-one is still using this.
 static func calculate_time_to_release_acceleration( \
-        time_start: float, \
-        time_step_end: float, \
-        position_start: float, \
-        position_end: float, \
-        velocity_start: float, \
-        acceleration_start: float, \
-        post_release_backward_acceleration: float, \
-        returns_lower_result := true, \
+        time_start: float,
+        time_step_end: float,
+        position_start: float,
+        position_end: float,
+        velocity_start: float,
+        acceleration_start: float,
+        post_release_backward_acceleration: float,
+        returns_lower_result := true,
         expects_only_one_positive_result := false) -> float:
     var duration := time_step_end - time_start
     
@@ -145,9 +145,9 @@ static func calculate_time_to_release_acceleration( \
 # Calculates the minimum required duration to reach the displacement,
 # considering a maximum velocity.
 static func calculate_duration_for_displacement( \
-        displacement: float, \
-        velocity_start: float, \
-        acceleration: float, \
+        displacement: float,
+        velocity_start: float,
+        acceleration: float,
         max_speed: float) -> float:
     if displacement == 0.0:
         # The start position is the destination.
@@ -199,11 +199,11 @@ static func calculate_duration_for_displacement( \
                     displacement < 0.0:
         # We do not reach max speed before we reach the displacement.
         return calculate_movement_duration( \
-                displacement, \
-                velocity_start, \
-                acceleration, \
-                true, \
-                0.0, \
+                displacement,
+                velocity_start,
+                acceleration,
+                true,
+                0.0,
                 true)
     else:
         # We reach max speed before we reach the displacement.
@@ -222,9 +222,9 @@ static func calculate_duration_for_displacement( \
         return duration if duration > 0.0 else INF
 
 static func calculate_velocity_end_for_displacement( \
-        displacement: float, \
-        velocity_start: float, \
-        acceleration: float, \
+        displacement: float,
+        velocity_start: float,
+        acceleration: float,
         max_speed: float) -> float:
     if displacement == 0.0:
         # The start position is the destination.
@@ -273,11 +273,11 @@ static func calculate_velocity_end_for_displacement( \
         # We do not reach max speed before we reach the displacement.
         
         var time_for_displacement := calculate_movement_duration( \
-                displacement, \
-                velocity_start, \
-                acceleration, \
-                true, \
-                0.0, \
+                displacement,
+                velocity_start,
+                acceleration,
+                true,
+                0.0,
                 true)
         
         # From a basic equation of motion:
@@ -288,9 +288,9 @@ static func calculate_velocity_end_for_displacement( \
         return velocity_at_max_speed
 
 static func calculate_displacement_for_duration( \
-        duration: float, \
-        velocity_start: float, \
-        acceleration: float, \
+        duration: float,
+        velocity_start: float,
+        acceleration: float,
         max_speed: float) -> float:
     assert(duration >= 0.0)
     
@@ -350,32 +350,32 @@ static func calculate_displacement_for_duration( \
         return displacement_during_acceleration + displacement_at_max_speed
 
 static func create_position_offset_from_target_point( \
-        target_point: Vector2, \
-        surface: Surface, \
-        collider_half_width_height: Vector2, \
+        target_point: Vector2,
+        surface: Surface,
+        collider_half_width_height: Vector2,
         clips_to_surface_bounds := false) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
     position.match_surface_target_and_collider( \
-            surface, \
-            target_point, \
-            collider_half_width_height, \
-            true, \
+            surface,
+            target_point,
+            collider_half_width_height,
+            true,
             clips_to_surface_bounds)
     return position
 
 static func create_position_from_target_point( \
-        target_point: Vector2, \
-        surface: Surface, \
-        collider_half_width_height: Vector2, \
-        offsets_target_by_half_width_height := false, \
+        target_point: Vector2,
+        surface: Surface,
+        collider_half_width_height: Vector2,
+        offsets_target_by_half_width_height := false,
         clips_to_surface_bounds := false) -> PositionAlongSurface:
     assert(surface != null)
     var position := PositionAlongSurface.new()
     position.match_surface_target_and_collider( \
-            surface, \
-            target_point, \
-            collider_half_width_height, \
-            offsets_target_by_half_width_height, \
+            surface,
+            target_point,
+            collider_half_width_height,
+            offsets_target_by_half_width_height,
             clips_to_surface_bounds)
     return position
 
@@ -386,11 +386,11 @@ static func create_position_without_surface( \
     return position
 
 static func update_velocity_in_air( \
-        velocity: Vector2, \
-        delta_sec: float, \
-        is_pressing_jump: bool, \
-        is_first_jump: bool, \
-        horizontal_acceleration_sign: int, \
+        velocity: Vector2,
+        delta_sec: float,
+        is_pressing_jump: bool,
+        is_first_jump: bool,
+        horizontal_acceleration_sign: int,
         movement_params: MovementParams) -> Vector2:
     var is_rising_from_jump := velocity.y < 0 and is_pressing_jump
     
@@ -418,13 +418,13 @@ static func update_velocity_in_air( \
     return velocity
 
 static func cap_velocity( \
-        velocity: Vector2, \
-        movement_params: MovementParams, \
+        velocity: Vector2,
+        movement_params: MovementParams,
         current_max_horizontal_speed: float) -> Vector2:
     # Cap horizontal speed at a max value.
     velocity.x = clamp( \
-            velocity.x, \
-            -current_max_horizontal_speed, \
+            velocity.x,
+            -current_max_horizontal_speed,
             current_max_horizontal_speed)
     
     # Kill horizontal speed below a min value.
@@ -434,8 +434,8 @@ static func cap_velocity( \
     
     # Cap vertical speed at a max value.
     velocity.y = clamp( \
-            velocity.y, \
-            -movement_params.max_vertical_speed, \
+            velocity.y,
+            -movement_params.max_vertical_speed,
             movement_params.max_vertical_speed)
     
     # Kill vertical speed below a min value.
@@ -446,8 +446,8 @@ static func cap_velocity( \
     return velocity
 
 static func calculate_time_to_climb( \
-        distance: float, \
-        is_climbing_upward: bool, \
+        distance: float,
+        is_climbing_upward: bool,
         movement_params: MovementParams) -> float:
     var speed := \
             movement_params.climb_up_speed if \
@@ -460,19 +460,19 @@ static func calculate_time_to_climb( \
     return distance / speed
 
 static func calculate_time_to_walk( \
-        distance: float, \
-        v_0: float, \
+        distance: float,
+        v_0: float,
         movement_params: MovementParams) -> float:
     return calculate_duration_for_displacement( \
-            distance, \
-            v_0, \
-            movement_params.walk_acceleration, \
+            distance,
+            v_0,
+            movement_params.walk_acceleration,
             movement_params.max_horizontal_speed_default)
 
 static func calculate_distance_to_stop_from_friction( \
-        movement_params: MovementParams, \
-        velocity_x_start: float, \
-        gravity: float, \
+        movement_params: MovementParams,
+        velocity_x_start: float,
+        gravity: float,
         friction_coefficient: float) -> float:
     # TODO: This stopping-distance formula doesn't work for us (generates
     #       results that are way too big). But we should adapt some sort of
@@ -492,10 +492,10 @@ static func calculate_distance_to_stop_from_friction( \
     return distance
 
 static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed( \
-        movement_params: MovementParams, \
-        velocity_x_start: float, \
-        displacement_x_from_end: float, \
-        gravity: float, \
+        movement_params: MovementParams,
+        velocity_x_start: float,
+        displacement_x_from_end: float,
+        gravity: float,
         friction_coefficient: float) -> float:
     var distance_from_end := abs(displacement_x_from_end)
     

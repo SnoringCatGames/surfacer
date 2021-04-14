@@ -20,13 +20,13 @@ var includes_extra_wall_land_horizontal_speed: bool
 var calculator
 
 func _init( \
-        edge_type: int, \
-        edge_calc_result_type: int, \
-        start_position_along_surface: PositionAlongSurface, \
-        end_position_along_surface: PositionAlongSurface, \
-        velocity_start: Vector2, \
-        includes_extra_jump_duration: bool, \
-        includes_extra_wall_land_horizontal_speed: bool, \
+        edge_type: int,
+        edge_calc_result_type: int,
+        start_position_along_surface: PositionAlongSurface,
+        end_position_along_surface: PositionAlongSurface,
+        velocity_start: Vector2,
+        includes_extra_jump_duration: bool,
+        includes_extra_wall_land_horizontal_speed: bool,
         calculator) -> void:
     self.edge_type = edge_type
     self.edge_calc_result_type = edge_calc_result_type
@@ -49,7 +49,7 @@ func get_end_surface() -> Surface:
     return end_position_along_surface.surface
 
 func load_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     Gs.logger.error( \
             "Abstract EdgeAttempt.load_from_json_object is not implemented")
@@ -59,7 +59,7 @@ func to_json_object() -> Dictionary:
     return {}
 
 func _load_edge_attempt_state_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     edge_type = json_object.t
     edge_calc_result_type = json_object.r

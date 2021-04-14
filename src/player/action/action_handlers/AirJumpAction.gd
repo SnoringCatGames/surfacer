@@ -6,8 +6,8 @@ const TYPE := SurfaceType.AIR
 const PRIORITY := 320
 
 func _init().( \
-        NAME, \
-        TYPE, \
+        NAME,
+        TYPE,
         PRIORITY) -> void:
     pass
 

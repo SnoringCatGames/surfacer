@@ -11,18 +11,18 @@ var edge_type := EdgeType.UNKNOWN
 var edges: Array
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
-        edge_calc_result_type: int, \
-        edge_type: int, \
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
+        edge_calc_result_type: int,
+        edge_type: int,
         edges: Array) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     self.edge_calc_result_type = edge_calc_result_type
     self.edge_type = edge_type
@@ -34,17 +34,17 @@ func to_string() -> String:
             "edge_calc_result_type=%s, " + \
             "edge_type=%s, " + \
             "valid_edge_count=%s " + \
-            "}") % [ \
-        InspectorItemType.get_string(type), \
+            "}") % [
+        InspectorItemType.get_string(type),
         EdgeCalcResultType.get_string(edge_calc_result_type),
-        EdgeType.get_string(edge_type), \
-        edges.size(), \
+        EdgeType.get_string(edge_type),
+        edges.size(),
     ]
 
 func get_text() -> String:
-    return "%ss [%s]" % [ \
-        EdgeType.get_string(edge_type), \
-        edges.size(), \
+    return "%ss [%s]" % [
+        EdgeType.get_string(edge_type),
+        edges.size(),
     ]
 
 func get_description() -> String:
@@ -54,7 +54,7 @@ func get_has_children() -> bool:
     return !edges.empty()
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error("find_and_expand_controller should not be called for " + \
             "EDGE_TYPE_IN_EDGES_GROUP.")
@@ -63,9 +63,9 @@ func find_and_expand_controller( \
 func _create_children_inner() -> void:
     for edge in edges:
         ValidEdgeItemController.new( \
-                tree_item, \
-                tree, \
-                graph, \
+                tree_item,
+                tree,
+                graph,
                 edge)
 
 func _destroy_children_inner() -> void:
@@ -77,16 +77,16 @@ func get_annotation_elements() -> Array:
     var element: EdgeAnnotationElement
     for edge in edges:
         element = EdgeAnnotationElement.new( \
-                edge, \
-                true, \
-                false, \
-                true, \
+                edge,
+                true,
+                false,
+                true,
                 false)
         elements.push_back(element)
     return elements
 
 static func get_annotation_elements_from_graph_and_type( \
-        graph: PlatformGraph, \
+        graph: PlatformGraph,
         edge_type: int) -> Array:
     var elements := []
     var element: EdgeAnnotationElement
@@ -97,10 +97,10 @@ static func get_annotation_elements_from_graph_and_type( \
                         destination_node]:
                     if edge.edge_type == edge_type:
                         element = EdgeAnnotationElement.new( \
-                                edge, \
-                                true, \
-                                false, \
-                                true, \
+                                edge,
+                                true,
+                                false,
+                                true,
                                 false)
                         elements.push_back(element)
     return elements

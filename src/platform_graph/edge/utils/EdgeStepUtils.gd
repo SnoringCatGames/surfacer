@@ -12,34 +12,34 @@ extends Reference
 # This can trigger recursive calls if horizontal movement cannot be satisfied
 # without backtracking to consider a new higher jump height.
 static func calculate_steps_with_new_jump_height( \
-        edge_result_metadata: EdgeCalcResultMetadata, \
-        edge_calc_params: EdgeCalcParams, \
-        parent_step_result_metadata = null, \
+        edge_result_metadata: EdgeCalcResultMetadata,
+        edge_calc_params: EdgeCalcParams,
+        parent_step_result_metadata = null,
         previous_out_of_reach_waypoint = null) -> EdgeCalcResult:
     var vertical_step := VerticalMovementUtils.calculate_vertical_step( \
-            edge_result_metadata, \
+            edge_result_metadata,
             edge_calc_params)
     if vertical_step == null:
         # The destination is out of reach.
         return null
     
     var step_calc_params := EdgeStepCalcParams.new( \
-            edge_calc_params.origin_waypoint, \
-            edge_calc_params.destination_waypoint, \
+            edge_calc_params.origin_waypoint,
+            edge_calc_params.destination_waypoint,
             vertical_step)
     
     var step_result_metadata: EdgeStepCalcResultMetadata
     if edge_result_metadata.records_calc_details:
         step_result_metadata = EdgeStepCalcResultMetadata.new( \
-                edge_result_metadata, \
-                parent_step_result_metadata, \
-                step_calc_params, \
+                edge_result_metadata,
+                parent_step_result_metadata,
+                step_calc_params,
                 previous_out_of_reach_waypoint)
     
     var calc_result := calculate_steps_between_waypoints( \
-            edge_result_metadata, \
-            step_result_metadata, \
-            edge_calc_params, \
+            edge_result_metadata,
+            step_result_metadata,
+            edge_calc_params,
             step_calc_params)
     
     edge_result_metadata.edge_calc_result_type = \
@@ -64,16 +64,16 @@ static func calculate_steps_with_new_jump_height( \
 # find that a waypoint cannot be satisfied with just horizontal movement, we
 # may backtrack and try a new recursive traversal using a higher jump height.
 static func calculate_steps_between_waypoints( \
-        edge_result_metadata: EdgeCalcResultMetadata, \
-        step_result_metadata: EdgeStepCalcResultMetadata, \
-        edge_calc_params: EdgeCalcParams, \
+        edge_result_metadata: EdgeCalcResultMetadata,
+        step_result_metadata: EdgeStepCalcResultMetadata,
+        edge_calc_params: EdgeCalcParams,
         step_calc_params: EdgeStepCalcParams) -> EdgeCalcResult:
     ### BASE CASES
     
     var next_horizontal_step := \
             HorizontalMovementUtils.calculate_horizontal_step( \
-                    edge_result_metadata, \
-                    step_calc_params, \
+                    edge_result_metadata,
+                    step_calc_params,
                     edge_calc_params)
     
     if step_result_metadata != null:
@@ -92,23 +92,23 @@ static func calculate_steps_between_waypoints( \
     # calculated things correctly.
     if step_calc_params.end_waypoint.is_destination:
         assert(Gs.geometry.are_floats_equal_with_epsilon( \
-                next_horizontal_step.time_step_end, \
-                vertical_step.time_step_end, \
+                next_horizontal_step.time_step_end,
+                vertical_step.time_step_end,
                 0.0001))
         assert(Gs.geometry.are_floats_equal_with_epsilon( \
-                next_horizontal_step.position_step_end.y, \
-                vertical_step.position_step_end.y, \
+                next_horizontal_step.position_step_end.y,
+                vertical_step.position_step_end.y,
                 0.001))
         assert(Gs.geometry.are_points_equal_with_epsilon( \
-                next_horizontal_step.position_step_end, \
-                edge_calc_params.destination_waypoint.position, \
+                next_horizontal_step.position_step_end,
+                edge_calc_params.destination_waypoint.position,
                 0.0001))
     
     var collision := CollisionCheckUtils \
             .check_continuous_horizontal_step_for_collision( \
-                    step_result_metadata, \
-                    edge_calc_params, \
-                    step_calc_params, \
+                    step_result_metadata,
+                    edge_calc_params,
+                    step_calc_params,
                     next_horizontal_step)
     
     if collision != null and \
@@ -116,8 +116,8 @@ static func calculate_steps_between_waypoints( \
         # An error occured during collision detection, so we abandon this step
         # calculation.
         Gs.profiler.increment_count( \
-                "invalid_collision_state_in_calculate_steps_between_waypoints", \
-                edge_calc_params.collision_params.thread_id, \
+                "invalid_collision_state_in_calculate_steps_between_waypoints",
+                edge_calc_params.collision_params.thread_id,
                 edge_result_metadata)
         if step_result_metadata != null:
             step_result_metadata.edge_step_calc_result_type = \
@@ -132,13 +132,13 @@ static func calculate_steps_between_waypoints( \
             step_result_metadata.edge_step_calc_result_type = \
                     EdgeStepCalcResultType.MOVEMENT_VALID
         return EdgeCalcResult.new( \
-                [next_horizontal_step], \
-                vertical_step, \
+                [next_horizontal_step],
+                vertical_step,
                 edge_calc_params)
     
     Gs.profiler.increment_count( \
-            "collision_in_calculate_steps_between_waypoints", \
-            edge_calc_params.collision_params.thread_id, \
+            "collision_in_calculate_steps_between_waypoints",
+            edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
     
     ### RECURSIVE CASES
@@ -155,15 +155,15 @@ static func calculate_steps_between_waypoints( \
     # Calculate possible waypoints to divert the movement around either side of
     # the colliding surface.
     var waypoints := WaypointUtils.calculate_waypoints_around_surface( \
-            edge_result_metadata, \
-            edge_calc_params.collision_params, \
-            edge_calc_params.movement_params, \
-            vertical_step, \
-            step_calc_params.start_waypoint, \
-            step_calc_params.end_waypoint, \
-            edge_calc_params.origin_waypoint, \
-            edge_calc_params.destination_waypoint, \
-            collision.surface, \
+            edge_result_metadata,
+            edge_calc_params.collision_params,
+            edge_calc_params.movement_params,
+            vertical_step,
+            step_calc_params.start_waypoint,
+            step_calc_params.end_waypoint,
+            edge_calc_params.origin_waypoint,
+            edge_calc_params.destination_waypoint,
+            collision.surface,
             edge_calc_params.waypoint_offset)
     if step_result_metadata != null:
         step_result_metadata.upcoming_waypoints = waypoints
@@ -172,10 +172,10 @@ static func calculate_steps_between_waypoints( \
     # new max jump height.
     var calc_result := \
             calculate_steps_between_waypoints_without_backtracking_on_height( \
-                    edge_result_metadata, \
-                    step_result_metadata, \
-                    edge_calc_params, \
-                    step_calc_params, \
+                    edge_result_metadata,
+                    step_result_metadata,
+                    edge_calc_params,
+                    step_calc_params,
                     waypoints)
     if calc_result != null:
         # Recursion was successful without backtracking for a new max jump
@@ -194,7 +194,7 @@ static func calculate_steps_between_waypoints( \
         return null
     
     if edge_calc_params.have_backtracked_for_surface( \
-            collision.surface, \
+            collision.surface,
             vertical_step.time_instruction_end):
         # We've already tried backtracking for a collision with this surface,
         # so this movement won't work. Without this check, we'd recurse through
@@ -206,7 +206,7 @@ static func calculate_steps_between_waypoints( \
         return null
     
     edge_calc_params.record_backtracked_surface( \
-            collision.surface, \
+            collision.surface,
             vertical_step.time_instruction_end)
     
     if !edge_calc_params.movement_params \
@@ -224,18 +224,18 @@ static func calculate_steps_between_waypoints( \
         # FIXME: Finish debugging this.
         calc_result = \
                 calculate_steps_between_waypoints_with_increasing_jump_height( \
-                        edge_result_metadata, \
-                        step_result_metadata, \
-                        edge_calc_params, \
-                        step_calc_params, \
+                        edge_result_metadata,
+                        step_result_metadata,
+                        edge_calc_params,
+                        step_calc_params,
                         waypoints)
     else:
         calc_result = \
                 calculate_steps_between_waypoints_with_backtracking_on_height( \
-                        edge_result_metadata, \
-                        step_result_metadata, \
-                        edge_calc_params, \
-                        step_calc_params, \
+                        edge_result_metadata,
+                        step_result_metadata,
+                        edge_calc_params,
+                        step_calc_params,
                         waypoints)
     
     if calc_result != null:
@@ -255,14 +255,14 @@ static func calculate_steps_between_waypoints( \
 # Check whether either waypoint can be satisfied with our current max jump
 # height.
 static func calculate_steps_between_waypoints_without_backtracking_on_height( \
-        edge_result_metadata: EdgeCalcResultMetadata, \
-        step_result_metadata: EdgeStepCalcResultMetadata, \
-        edge_calc_params: EdgeCalcParams, \
-        step_calc_params: EdgeStepCalcParams, \
+        edge_result_metadata: EdgeCalcResultMetadata,
+        step_result_metadata: EdgeStepCalcResultMetadata,
+        edge_calc_params: EdgeCalcParams,
+        step_calc_params: EdgeStepCalcParams,
         waypoints: Array) -> EdgeCalcResult:
     Gs.profiler.increment_count( \
-            "calculate_steps_between_waypoints_without_backtracking_on_height", \
-            edge_calc_params.collision_params.thread_id, \
+            "calculate_steps_between_waypoints_without_backtracking_on_height",
+            edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
     
     var vertical_step := step_calc_params.vertical_step
@@ -309,10 +309,10 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         # result in the addition/removal of other intermediate waypoints. But
         # we have found that these two updates are enough for most cases.
         WaypointUtils.update_neighbors_for_new_waypoint( \
-                waypoint, \
-                previous_waypoint_copy, \
-                next_waypoint_copy, \
-                edge_calc_params, \
+                waypoint,
+                previous_waypoint_copy,
+                next_waypoint_copy,
+                edge_calc_params,
                 vertical_step)
         if !previous_waypoint_copy.is_valid or !next_waypoint_copy.is_valid:
             continue
@@ -320,19 +320,19 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         ### RECURSE: Calculate movement to the waypoint.
         
         step_calc_params_to_waypoint = EdgeStepCalcParams.new( \
-                previous_waypoint_copy, \
-                waypoint, \
+                previous_waypoint_copy,
+                waypoint,
                 vertical_step)
         if step_result_metadata != null:
             child_step_result_metadata = EdgeStepCalcResultMetadata.new( \
-                    edge_result_metadata, \
-                    step_result_metadata, \
-                    step_calc_params_to_waypoint, \
+                    edge_result_metadata,
+                    step_result_metadata,
+                    step_calc_params_to_waypoint,
                     null)
         calc_results_to_waypoint = calculate_steps_between_waypoints( \
-                edge_result_metadata, \
-                child_step_result_metadata, \
-                edge_calc_params, \
+                edge_result_metadata,
+                child_step_result_metadata,
+                edge_calc_params,
                 step_calc_params_to_waypoint)
         
         if calc_results_to_waypoint == null:
@@ -349,19 +349,19 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         ###          destination.
         
         step_calc_params_from_waypoint = EdgeStepCalcParams.new( \
-                waypoint, \
-                next_waypoint_copy, \
+                waypoint,
+                next_waypoint_copy,
                 vertical_step)
         if step_result_metadata != null:
             child_step_result_metadata = EdgeStepCalcResultMetadata.new( \
-                    edge_result_metadata, \
-                    step_result_metadata, \
-                    step_calc_params_from_waypoint, \
+                    edge_result_metadata,
+                    step_result_metadata,
+                    step_calc_params_from_waypoint,
                     null)
         calc_results_from_waypoint = calculate_steps_between_waypoints( \
-                edge_result_metadata, \
-                child_step_result_metadata, \
-                edge_calc_params, \
+                edge_result_metadata,
+                child_step_result_metadata,
+                edge_calc_params,
                 step_calc_params_from_waypoint)
         
         if calc_results_from_waypoint == null:
@@ -377,7 +377,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         # We found movement that satisfies the waypoint (without backtracking
         # for a new jump height).
         Gs.utils.concat( \
-                calc_results_to_waypoint.horizontal_steps, \
+                calc_results_to_waypoint.horizontal_steps,
                 calc_results_from_waypoint.horizontal_steps)
         result = calc_results_to_waypoint
         break
@@ -386,10 +386,10 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
         # Update the original waypoints to match the state for this successful
         # navigation.
         WaypointUtils.copy_waypoint( \
-                previous_waypoint_original, \
+                previous_waypoint_original,
                 previous_waypoint_copy)
         WaypointUtils.copy_waypoint( \
-                next_waypoint_original, \
+                next_waypoint_original,
                 next_waypoint_copy)
         previous_waypoint_copy.next_waypoint.previous_waypoint = \
                 previous_waypoint_original
@@ -411,10 +411,10 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height( \
 # - And then this updates all previous horizontal steps to use this new jump
 #   height.
 static func calculate_steps_between_waypoints_with_increasing_jump_height( \
-        edge_result_metadata: EdgeCalcResultMetadata, \
-        step_result_metadata: EdgeStepCalcResultMetadata, \
-        edge_calc_params: EdgeCalcParams, \
-        step_calc_params: EdgeStepCalcParams, \
+        edge_result_metadata: EdgeCalcResultMetadata,
+        step_result_metadata: EdgeStepCalcResultMetadata,
+        edge_calc_params: EdgeCalcParams,
+        step_calc_params: EdgeStepCalcParams,
         waypoints_around_colliding_surface: Array) -> EdgeCalcResult:
     var vertical_step_original := step_calc_params.vertical_step
     var origin_original := edge_calc_params.origin_waypoint
@@ -472,12 +472,12 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height( \
         # jump height, which would enable movement through this new
         # intermediate waypoint.
         WaypointUtils.update_waypoint( \
-                destination_copy, \
-                origin_copy, \
-                edge_calc_params.movement_params, \
-                vertical_step_original.velocity_step_start, \
-                true, \
-                vertical_step_original, \
+                destination_copy,
+                origin_copy,
+                edge_calc_params.movement_params,
+                vertical_step_original.velocity_step_start,
+                true,
+                vertical_step_original,
                 waypoint_around_collision.position)
         if !destination_copy.is_valid:
             # The waypoint is out of reach.
@@ -485,7 +485,7 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height( \
         
         var vertical_step_with_increased_height := \
                 VerticalMovementUtils.calculate_vertical_step( \
-                        edge_result_metadata, \
+                        edge_result_metadata,
                         edge_calc_params)
         if vertical_step_with_increased_height == null:
             # The new jump height is invalid.
@@ -497,12 +497,12 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height( \
         current_waypoint_copy = destination_copy.previous_waypoint
         while current_waypoint_copy != null:
             WaypointUtils.update_waypoint( \
-                    current_waypoint_copy, \
-                    origin_copy, \
-                    edge_calc_params.movement_params, \
-                    vertical_step_with_increased_height.velocity_step_start, \
-                    true, \
-                    vertical_step_with_increased_height, \
+                    current_waypoint_copy,
+                    origin_copy,
+                    edge_calc_params.movement_params,
+                    vertical_step_with_increased_height.velocity_step_start,
+                    true,
+                    vertical_step_with_increased_height,
                     Vector2.INF)
             if !current_waypoint_copy.is_valid:
                 # The waypoint is out of reach.
@@ -527,22 +527,22 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height( \
                 was_horizontal_step_already_validated = false
             
             step_calc_params_between_waypoints = EdgeStepCalcParams.new( \
-                    previous_waypoint_copy, \
-                    current_waypoint_copy, \
+                    previous_waypoint_copy,
+                    current_waypoint_copy,
                     vertical_step_with_increased_height)
             
             if step_result_metadata != null:
                 step_result_metadata_between_waypoints = \
                         EdgeStepCalcResultMetadata.new( \
-                                edge_result_metadata, \
-                                step_result_metadata, \
-                                step_calc_params_between_waypoints, \
+                                edge_result_metadata,
+                                step_result_metadata,
+                                step_calc_params_between_waypoints,
                                 waypoint_around_collision_copy)
             
             current_calc_results = calculate_steps_between_waypoints( \
-                    edge_result_metadata, \
-                    step_result_metadata_between_waypoints, \
-                    edge_calc_params, \
+                    edge_result_metadata,
+                    step_result_metadata_between_waypoints,
+                    edge_calc_params,
                     step_calc_params_between_waypoints)
             
             if current_calc_results == null:
@@ -566,7 +566,7 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height( \
             if previous_calc_results != null:
                 # Combine all the horizontal steps.
                 Gs.utils.concat( \
-                        previous_calc_results.horizontal_steps, \
+                        previous_calc_results.horizontal_steps,
                         current_calc_results.horizontal_steps)
             else:
                 previous_calc_results = current_calc_results
@@ -585,10 +585,10 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height( \
         # Update the original destination waypoint to match the state for this
         # successful navigation.
         WaypointUtils.copy_waypoint( \
-                origin_original, \
+                origin_original,
                 origin_copy)
         WaypointUtils.copy_waypoint( \
-                destination_original, \
+                destination_original,
                 destination_copy)
         origin_copy.next_waypoint.previous_waypoint = origin_original
         destination_copy.previous_waypoint.next_waypoint = destination_original
@@ -602,14 +602,14 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height( \
 # function recalculates all intermediate waypoints and horizontal steps, rather
 # than re-using anything that was already calculated.
 static func calculate_steps_between_waypoints_with_backtracking_on_height( \
-        edge_result_metadata: EdgeCalcResultMetadata, \
-        step_result_metadata: EdgeStepCalcResultMetadata, \
-        edge_calc_params: EdgeCalcParams, \
-        step_calc_params: EdgeStepCalcParams, \
+        edge_result_metadata: EdgeCalcResultMetadata,
+        step_result_metadata: EdgeStepCalcResultMetadata,
+        edge_calc_params: EdgeCalcParams,
+        step_calc_params: EdgeStepCalcParams,
         waypoints: Array) -> EdgeCalcResult:
     Gs.profiler.increment_count( \
-            "calculate_steps_between_waypoints_with_backtracking_on_height", \
-            edge_calc_params.collision_params.thread_id, \
+            "calculate_steps_between_waypoints_with_backtracking_on_height",
+            edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
     
     var vertical_step_original := step_calc_params.vertical_step
@@ -638,12 +638,12 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         # jump height, which would enable movement through this new
         # intermediate waypoint.
         WaypointUtils.update_waypoint( \
-                destination_copy, \
-                edge_calc_params.origin_waypoint, \
-                edge_calc_params.movement_params, \
-                vertical_step_original.velocity_step_start, \
-                true, \
-                vertical_step_original, \
+                destination_copy,
+                edge_calc_params.origin_waypoint,
+                edge_calc_params.movement_params,
+                vertical_step_original.velocity_step_start,
+                true,
+                vertical_step_original,
                 waypoint.position)
         if !destination_copy.is_valid:
             # The waypoint is out of reach.
@@ -652,9 +652,9 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         # Recurse: Backtrack and try a higher jump (to the same destination
         # waypoint as before).
         calc_result = calculate_steps_with_new_jump_height( \
-                edge_result_metadata, \
-                edge_calc_params, \
-                step_result_metadata, \
+                edge_result_metadata,
+                edge_calc_params,
+                step_result_metadata,
                 waypoint)
         
         if calc_result != null:
@@ -667,10 +667,10 @@ static func calculate_steps_between_waypoints_with_backtracking_on_height( \
         # Update the original destination waypoint to match the state for this
         # successful navigation.
         WaypointUtils.copy_waypoint( \
-                origin_original, \
+                origin_original,
                 origin_copy)
         WaypointUtils.copy_waypoint( \
-                destination_original, \
+                destination_original,
                 destination_copy)
         origin_copy.next_waypoint.previous_waypoint = origin_original
         destination_copy.previous_waypoint.next_waypoint = destination_original

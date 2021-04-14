@@ -2,11 +2,11 @@ class_name PolylineLegendItem
 extends LegendItem
 
 const NORMALIZED_FAKE_POSITIONS := [
-    Vector2(0.15, 0.0), \
-    Vector2(0.85, 0.0), \
-    Vector2(1.0, 1.0), \
-    Vector2(0.0, 1.0), \
-    Vector2(0.15, 0.0), \
+    Vector2(0.15, 0.0),
+    Vector2(0.85, 0.0),
+    Vector2(1.0, 1.0),
+    Vector2(0.0, 1.0),
+    Vector2(0.15, 0.0),
 ]
 const SCALE := 0.8
 
@@ -18,16 +18,16 @@ var dash_gap: float
 var stroke_width: float
 
 func _init( \
-        type: int, \
-        text: String, \
-        color_params: ColorParams, \
-        is_filled: bool, \
-        is_dashed: bool, \
-        dash_length: float, \
-        dash_gap: float, \
+        type: int,
+        text: String,
+        color_params: ColorParams,
+        is_filled: bool,
+        is_dashed: bool,
+        dash_length: float,
+        dash_gap: float,
         stroke_width: float) \
         .( \
-        type, \
+        type,
         text) -> void:
     assert(!is_filled or !is_dashed)
     self.color_params = color_params
@@ -38,7 +38,7 @@ func _init( \
     self.stroke_width = stroke_width
 
 func _draw_shape( \
-        center: Vector2, \
+        center: Vector2,
         size: Vector2) -> void:
     var offset := center - 0.5 * size * SCALE
     var vertices := []
@@ -49,19 +49,19 @@ func _draw_shape( \
     
     if is_filled:
         draw_colored_polygon( \
-                PoolVector2Array(vertices), \
+                PoolVector2Array(vertices),
                 color)
     elif is_dashed:
         Gs.draw_utils.draw_dashed_polyline( \
-                self, \
-                vertices, \
-                color, \
-                dash_length, \
-                dash_gap, \
-                0.0, \
+                self,
+                vertices,
+                color,
+                dash_length,
+                dash_gap,
+                0.0,
                 stroke_width)
     else:
         draw_polyline( \
-                PoolVector2Array(vertices), \
-                color, \
+                PoolVector2Array(vertices),
+                color,
                 stroke_width)

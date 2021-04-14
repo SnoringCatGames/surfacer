@@ -30,32 +30,32 @@ func reset() -> void:
     self.target_projection_onto_surface = Vector2.INF
 
 func match_current_grab( \
-        surface: Surface, \
+        surface: Surface,
         player_center: Vector2) -> void:
     self.surface = surface
     self.target_point = player_center
     self.target_projection_onto_surface = Vector2.INF
 
 func match_surface_target_and_collider( \
-        surface: Surface, \
-        target_point: Vector2, \
-        collider_half_width_height: Vector2, \
-        offsets_target_by_half_width_height := false, \
+        surface: Surface,
+        target_point: Vector2,
+        collider_half_width_height: Vector2,
+        offsets_target_by_half_width_height := false,
         clips_to_surface_bounds := false) -> void:
     self.surface = surface
     self.target_point = \
             _clip_and_project_target_point_for_center_of_collider( \
-                    surface, \
-                    target_point, \
-                    collider_half_width_height, \
-                    offsets_target_by_half_width_height, \
+                    surface,
+                    target_point,
+                    collider_half_width_height,
+                    offsets_target_by_half_width_height,
                     clips_to_surface_bounds)
     
 func _clip_and_project_target_point_for_center_of_collider( \
-        surface: Surface, \
-        target_point: Vector2, \
-        collider_half_width_height: Vector2, \
-        offsets_target_by_half_width_height: bool, \
+        surface: Surface,
+        target_point: Vector2,
+        collider_half_width_height: Vector2,
+        offsets_target_by_half_width_height: bool,
         clips_to_surface_bounds: bool) -> Vector2:
     var point_on_surface: Vector2 = \
             Gs.geometry.project_point_onto_surface(target_point, surface)
@@ -84,11 +84,11 @@ func _clip_and_project_target_point_for_center_of_collider( \
                     target_offset_from_surface
 
 func to_string() -> String:
-    return "PositionAlongSurface{ %s, %s }" % [ \
-            target_point, \
+    return "PositionAlongSurface{ %s, %s }" % [
+            target_point,
             surface.to_string() if \
                     surface != null else \
-                    "NULL SURFACE", \
+                    "NULL SURFACE",
         ]
 
 func _get_side() -> int:
@@ -97,7 +97,7 @@ func _get_side() -> int:
             SurfaceSide.NONE
 
 static func copy( \
-        destination: PositionAlongSurface, \
+        destination: PositionAlongSurface,
         source: PositionAlongSurface) -> void:
     destination.surface = source.surface
     destination.target_point = source.target_point
@@ -105,7 +105,7 @@ static func copy( \
             source.target_projection_onto_surface
 
 func load_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     surface = context.id_to_surface[int(json_object.s)]
     target_point = Gs.utils.decode_vector2(json_object.t)

@@ -5,7 +5,7 @@ const DRAG_THROTTLE_INTERVAL_SEC := 0.1
 
 var player
 var throttled_set_new_drag_position: FuncRef = Gs.time.throttle( \
-        funcref(self, "set_new_drag_position"), \
+        funcref(self, "set_new_drag_position"),
         DRAG_THROTTLE_INTERVAL_SEC)
 var last_pointer_drag_position := Vector2.INF
 
@@ -73,9 +73,9 @@ func _unhandled_input(event: InputEvent) -> void:
     
 #    if pointer_up_position != Vector2.INF or \
 #            pointer_drag_position != Vector2.INF:
-#        player.print_msg("%s:         %8.3fs", [ \
-#                event_type, \
-#                Gs.time.elapsed_play_time_actual_sec, \
+#        player.print_msg("%s:         %8.3fs", [
+#                event_type,
+#                Gs.time.elapsed_play_time_actual_sec,
 #            ])
     
     if pointer_up_position != Vector2.INF:
@@ -85,7 +85,7 @@ func _unhandled_input(event: InputEvent) -> void:
         player.new_selection_target = pointer_up_position
         player.new_selection_position = \
                 _get_nearest_surface_position_within_distance_threshold( \
-                        pointer_up_position, \
+                        pointer_up_position,
                         player)
         
     elif pointer_drag_position != Vector2.INF:
@@ -96,14 +96,14 @@ func set_new_drag_position() -> void:
     player.preselection_target = last_pointer_drag_position
     player.preselection_position = \
             _get_nearest_surface_position_within_distance_threshold( \
-                    last_pointer_drag_position, \
+                    last_pointer_drag_position,
                     player)
 
 static func _get_nearest_surface_position_within_distance_threshold( \
-        target: Vector2, \
+        target: Vector2,
         player) -> PositionAlongSurface:
     var closest_position := SurfaceParser.find_closest_position_on_a_surface( \
-            target, \
+            target,
             player)
     if closest_position.target_point.distance_squared_to(target) <= \
             Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD * \

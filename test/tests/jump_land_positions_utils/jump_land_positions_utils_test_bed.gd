@@ -56,17 +56,17 @@ func create_surface(params: Dictionary) -> Surface:
                     FLOOR_LENGTH_LONG / 2.0
             
             first_end = Vector2( \
-                    origin_x - half_length, \
+                    origin_x - half_length,
                     origin_y)
             last_end = Vector2( \
-                    origin_x + half_length, \
+                    origin_x + half_length,
                     origin_y)
             var connected_region_position := first_end
             var connected_region_size := Vector2( \
-                    half_length * 2.0, \
+                    half_length * 2.0,
                     CONNECTED_REGION_DEPTH)
             connected_region_bounding_box = Rect2( \
-                    connected_region_position, \
+                    connected_region_position,
                     connected_region_size)
             
         SurfaceSide.LEFT_WALL:
@@ -84,19 +84,19 @@ func create_surface(params: Dictionary) -> Surface:
                     WALL_LENGTH_LONG / 2.0
             
             first_end = Vector2( \
-                    origin_x, \
+                    origin_x,
                     origin_y - half_length)
             last_end = Vector2( \
-                    origin_x, \
+                    origin_x,
                     origin_y + half_length)
             var connected_region_position := Vector2( \
-                    first_end.x - CONNECTED_REGION_DEPTH, \
+                    first_end.x - CONNECTED_REGION_DEPTH,
                     first_end.y)
             var connected_region_size := Vector2( \
-                    CONNECTED_REGION_DEPTH, \
+                    CONNECTED_REGION_DEPTH,
                     half_length * 2.0)
             connected_region_bounding_box = Rect2( \
-                    connected_region_position, \
+                    connected_region_position,
                     connected_region_size)
             
         SurfaceSide.RIGHT_WALL:
@@ -114,17 +114,17 @@ func create_surface(params: Dictionary) -> Surface:
                     WALL_LENGTH_LONG / 2.0
             
             first_end = Vector2( \
-                    origin_x, \
+                    origin_x,
                     origin_y + half_length)
             last_end = Vector2( \
-                    origin_x, \
+                    origin_x,
                     origin_y - half_length)
             var connected_region_position := last_end
             var connected_region_size := Vector2( \
-                    CONNECTED_REGION_DEPTH, \
+                    CONNECTED_REGION_DEPTH,
                     half_length * 2.0)
             connected_region_bounding_box = Rect2( \
-                    connected_region_position, \
+                    connected_region_position,
                     connected_region_size)
             
         SurfaceSide.CEILING:
@@ -139,16 +139,16 @@ func create_surface(params: Dictionary) -> Surface:
     var tile_map_indices := []
     
     var surface := Surface.new( \
-            vertices, \
-            side, \
-            tile_map, \
+            vertices,
+            side,
+            tile_map,
             tile_map_indices)
     surface.connected_region_bounding_box = connected_region_bounding_box
     
     return surface
 
 static func translate_surface( \
-        surface: Surface, \
+        surface: Surface,
         translation: Vector2) -> void:
     for i in surface.vertices.size():
         surface.vertices[i] += translation

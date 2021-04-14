@@ -7,15 +7,15 @@ const EDGE_CALC_RESULT_TYPE := \
 const TEXT := "Edges calculated without increasing jump height"
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
+        parent_item: TreeItem,
+        tree: Tree,
         graph: PlatformGraph) \
         .( \
-        TYPE, \
-        parent_item, \
-        tree, \
-        graph, \
-        EDGE_CALC_RESULT_TYPE, \
+        TYPE,
+        parent_item,
+        tree,
+        graph,
+        EDGE_CALC_RESULT_TYPE,
         TEXT) -> void:
     pass
 
@@ -25,6 +25,6 @@ func get_description() -> String:
             "collisions. " + \
             "There are %s valid edges that were calculated with " + \
             "intermediate waypoints and without backtracking to increase " + \
-            "their jump height.") % [ \
-                filtered_edge_count, \
+            "their jump height.") % [
+                filtered_edge_count,
             ]

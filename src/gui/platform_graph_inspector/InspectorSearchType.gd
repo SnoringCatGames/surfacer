@@ -1,11 +1,11 @@
 class_name InspectorSearchType
 
 enum { \
-    ORIGIN_SURFACE, \
-    DESTINATION_SURFACE, \
-    EDGE, \
-    EDGES_GROUP, \
-    UNKNOWN, \
+    ORIGIN_SURFACE,
+    DESTINATION_SURFACE,
+    EDGE,
+    EDGES_GROUP,
+    UNKNOWN,
 }
 
 static func get_string(type: int) -> String:

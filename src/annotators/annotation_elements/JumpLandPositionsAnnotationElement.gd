@@ -11,13 +11,13 @@ var dash_gap: float
 var dash_stroke_width: float
 
 func _init( \
-        jump_land_positions: JumpLandPositions, \
+        jump_land_positions: JumpLandPositions,
         color_params := \
-                Surfacer.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS, \
+                Surfacer.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS,
         dash_length := \
-                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH, \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH,
         dash_gap := \
-                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP, \
+                AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP,
         dash_stroke_width := AnnotationElementDefaults \
                 .JUMP_LAND_POSITIONS_DASH_STROKE_WIDTH) \
         .(TYPE) -> void:
@@ -33,31 +33,31 @@ func draw(canvas: CanvasItem) -> void:
     var start := jump_land_positions.jump_position.target_point
     var end := jump_land_positions.land_position.target_point
     Gs.draw_utils.draw_dashed_line( \
-            canvas, \
-            start, \
-            end, \
-            color, \
-            dash_length, \
-            dash_gap, \
-            0.0, \
+            canvas,
+            start,
+            end,
+            color,
+            dash_length,
+            dash_gap,
+            0.0,
             dash_stroke_width)
     Gs.draw_utils.draw_origin_marker( \
-            canvas, \
-            start, \
+            canvas,
+            start,
             color)
     Gs.draw_utils.draw_destination_marker( \
-            canvas, \
-            end, \
-            true, \
-            jump_land_positions.land_position.side, \
+            canvas,
+            end,
+            true,
+            jump_land_positions.land_position.side,
             color)
 
 func _create_legend_items() -> Array:
     var hypothetical_edge_item := HypotheticalEdgeTrajectoryLegendItem.new()
     var origin_item := OriginLegendItem.new()
     var destination_item := DestinationLegendItem.new()
-    return [ \
-        hypothetical_edge_item, \
-        origin_item, \
-        destination_item, \
+    return [
+        hypothetical_edge_item,
+        origin_item,
+        destination_item,
     ]

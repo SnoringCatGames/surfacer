@@ -40,7 +40,7 @@ func set_up(state := {}) -> void:
     vertical_step.velocity_instruction_end = Vector2(INF, state.velocity_jump_instruction_end_y)
     
     var position_start := Vector2.INF
-    step_calc_params = EdgeStepCalcParams.new(position_start, state.position_end, \
+    step_calc_params = EdgeStepCalcParams.new(position_start, state.position_end,
             previous_step, vertical_step, upcoming_constraint)
 
 func assert_horizontal_step(step: EdgeStep, state: Dictionary) -> void:
@@ -50,7 +50,7 @@ func assert_horizontal_step(step: EdgeStep, state: Dictionary) -> void:
     assert_almost_eq(step.position_start, state.position_start, END_POSITION_CLOSE_THRESHOLD)
     assert_almost_eq(step.position_step_end, state.position_step_end, END_POSITION_CLOSE_THRESHOLD)
     assert_almost_eq(step.velocity_start.y, state.velocity_start_y, Gs.geometry.FLOAT_EPSILON)
-    assert_almost_eq(step.horizontal_movement_sign, state.horizontal_movement_sign, \
+    assert_almost_eq(step.horizontal_movement_sign, state.horizontal_movement_sign,
             Gs.geometry.FLOAT_EPSILON)
 
 func test_with_no_previous_or_next_steps() -> void:

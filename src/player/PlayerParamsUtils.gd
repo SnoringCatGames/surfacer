@@ -10,9 +10,9 @@ static func create_player_params(param_class) -> PlayerParams:
     var action_handlers := _get_action_handlers(movement_params)
 
     return PlayerParams.new( \
-            movement_params.name, \
-            movement_params, \
-            edge_calculators, \
+            movement_params.name,
+            movement_params,
+            edge_calculators,
             action_handlers)
 
 # Array<PlayerActionHandler>
@@ -52,7 +52,7 @@ static func _calculate_dependent_movement_params( \
             movement_params.slow_rise_gravity_multiplier
     movement_params.collider_half_width_height = \
             Gs.geometry.calculate_half_width_height( \
-                    movement_params.collider_shape, \
+                    movement_params.collider_shape,
                     movement_params.collider_rotation)
     movement_params.min_upward_jump_distance = VerticalMovementUtils \
             .calculate_min_upward_distance(movement_params)
@@ -62,8 +62,8 @@ static func _calculate_dependent_movement_params( \
             .calculate_max_upward_distance(movement_params)
     movement_params.time_to_max_upward_jump_distance = MovementUtils \
             .calculate_movement_duration( \
-                    -movement_params.max_upward_jump_distance, \
-                    movement_params.jump_boost, \
+                    -movement_params.max_upward_jump_distance,
+                    movement_params.jump_boost,
                     movement_params.gravity_slow_rise)
     # From a basic equation of motion:
     #     v^2 = v_0^2 + 2*a*(s - s_0)
@@ -81,24 +81,24 @@ static func _calculate_dependent_movement_params( \
     movement_params.floor_jump_max_horizontal_jump_distance = \
             HorizontalMovementUtils \
                     .calculate_max_horizontal_displacement_before_returning_to_starting_height( \
-                            0.0, \
-                            movement_params.jump_boost, \
-                            movement_params.max_horizontal_speed_default, \
-                            movement_params.gravity_slow_rise, \
+                            0.0,
+                            movement_params.jump_boost,
+                            movement_params.max_horizontal_speed_default,
+                            movement_params.gravity_slow_rise,
                             movement_params.gravity_fast_fall)
     movement_params.wall_jump_max_horizontal_jump_distance = \
             HorizontalMovementUtils \
                     .calculate_max_horizontal_displacement_before_returning_to_starting_height( \
-                            movement_params.wall_jump_horizontal_boost, \
-                            movement_params.jump_boost, \
-                            movement_params.max_horizontal_speed_default, \
-                            movement_params.gravity_slow_rise, \
+                            movement_params.wall_jump_horizontal_boost,
+                            movement_params.jump_boost,
+                            movement_params.max_horizontal_speed_default,
+                            movement_params.gravity_slow_rise,
                             movement_params.gravity_fast_fall)
     movement_params.stopping_distance_on_default_floor_from_max_speed = \
             MovementUtils.calculate_distance_to_stop_from_friction( \
-                    movement_params, \
-                    movement_params.max_horizontal_speed_default, \
-                    movement_params.gravity_fast_fall, \
+                    movement_params,
+                    movement_params.max_horizontal_speed_default,
+                    movement_params.gravity_fast_fall,
                     movement_params.friction_coefficient)
     
     assert(movement_params.action_handler_names.find( \
@@ -149,6 +149,6 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
 
 class ActionHandlersComparator:
     static func sort( \
-            a: PlayerActionHandler, \
+            a: PlayerActionHandler,
             b: PlayerActionHandler) -> bool:
         return a.priority < b.priority

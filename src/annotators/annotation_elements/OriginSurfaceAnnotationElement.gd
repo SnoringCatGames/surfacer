@@ -4,14 +4,14 @@ extends SurfaceAnnotationElement
 const TYPE := AnnotationElementType.ORIGIN_SURFACE
 
 func _init( \
-        surface: Surface, \
+        surface: Surface,
         depth := AnnotationElementDefaults.SURFACE_DEPTH) \
         .( \
-        surface, \
-        depth, \
-        Surfacer.ann_defaults.ORIGIN_SURFACE_COLOR_PARAMS, \
-        true, \
-        false, \
+        surface,
+        depth,
+        Surfacer.ann_defaults.ORIGIN_SURFACE_COLOR_PARAMS,
+        true,
+        false,
         TYPE) -> void:
     pass
 

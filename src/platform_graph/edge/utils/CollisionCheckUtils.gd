@@ -8,10 +8,10 @@ extends Reference
 #     should exactly emulate the actual Player trajectory that would be used.
 # -   This also records some trajectory state.
 static func check_instructions_discrete_frame_state( \
-        edge_calc_params: EdgeCalcParams, \
-        instructions: EdgeInstructions, \
-        vertical_step: VerticalEdgeStep, \
-        horizontal_steps: Array, \
+        edge_calc_params: EdgeCalcParams,
+        instructions: EdgeInstructions,
+        vertical_step: VerticalEdgeStep,
+        horizontal_steps: Array,
         trajectory: EdgeTrajectory) -> SurfaceCollision:
     var collision_params := edge_calc_params.collision_params
     var movement_params := edge_calc_params.movement_params
@@ -60,13 +60,13 @@ static func check_instructions_discrete_frame_state( \
                     horizontal_steps[current_horizontal_step_index]
         continuous_horizontal_state = \
                 HorizontalMovementUtils.calculate_horizontal_state_for_time( \
-                        movement_params, \
-                        current_horizontal_step, \
+                        movement_params,
+                        current_horizontal_step,
                         current_time)
         continuous_vertical_state = VerticalMovementUtils \
                 .calculate_vertical_state_for_time_from_step( \
-                        movement_params, \
-                        vertical_step, \
+                        movement_params,
+                        vertical_step,
                         current_time)
         continuous_position.x = continuous_horizontal_state[0]
         continuous_position.y = continuous_vertical_state[0]
@@ -76,8 +76,8 @@ static func check_instructions_discrete_frame_state( \
             # FIXME: Add back in: To debug why this is failing, try rendering
             #        only the failing path somehow.
 #            collision = check_frame_for_collision( \
-#                    collision_params, \
-#                    position, \
+#                    collision_params,
+#                    position,
 #                    displacement)
             if collision != null:
                 trajectory.frame_discrete_positions_from_test = \
@@ -113,9 +113,9 @@ static func check_instructions_discrete_frame_state( \
             # - Should initial jump_boost happen sooner?
             
             instruction_with_position = EdgeInstruction.new( \
-                    next_instruction.input_key, \
-                    next_instruction.time, \
-                    next_instruction.is_pressed, \
+                    next_instruction.input_key,
+                    next_instruction.time,
+                    next_instruction.is_pressed,
                     continuous_position)
             
             match next_instruction.input_key:
@@ -175,15 +175,15 @@ static func check_instructions_discrete_frame_state( \
         # Update state for the next frame.
         position += displacement
         velocity = MovementUtils.update_velocity_in_air( \
-                velocity, \
-                delta_sec, \
-                is_pressing_jump, \
-                is_first_jump, \
-                horizontal_acceleration_sign, \
+                velocity,
+                delta_sec,
+                is_pressing_jump,
+                is_first_jump,
+                horizontal_acceleration_sign,
                 movement_params)
         velocity = MovementUtils.cap_velocity( \
-                velocity, \
-                movement_params, \
+                velocity,
+                movement_params,
                 movement_params.max_horizontal_speed_default)
         previous_time = current_time
         current_time += delta_sec
@@ -194,8 +194,8 @@ static func check_instructions_discrete_frame_state( \
     # FIXME: To debug why this is failing, try rendering only the failing path
     #        somehow.
 #    collision = check_frame_for_collision( \
-#            collision_params, \
-#            position, \
+#            collision_params,
+#            position,
 #            displacement)
     if collision != null:
         trajectory.frame_discrete_positions_from_test = \
@@ -217,8 +217,8 @@ static func check_instructions_discrete_frame_state( \
 # executing a resulting instruction set, the physics frame boundaries will line
 # up at different times.
 static func check_discrete_horizontal_step_for_collision( \
-        edge_calc_params: EdgeCalcParams, \
-        step_calc_params: EdgeStepCalcParams, \
+        edge_calc_params: EdgeCalcParams,
+        step_calc_params: EdgeStepCalcParams,
         horizontal_step: EdgeStep) -> SurfaceCollision:
     var collision_params := edge_calc_params.collision_params
     var movement_params := edge_calc_params.movement_params
@@ -251,8 +251,8 @@ static func check_discrete_horizontal_step_for_collision( \
         if displacement != Vector2.ZERO:
             # Check for collision.
             collision = check_frame_for_collision( \
-                    collision_params, \
-                    position, \
+                    collision_params,
+                    position,
                     displacement)
             if collision != null:
                 return collision
@@ -291,15 +291,15 @@ static func check_discrete_horizontal_step_for_collision( \
         # Update state for the next frame.
         position += displacement
         velocity = MovementUtils.update_velocity_in_air( \
-                velocity, \
-                delta_sec, \
-                is_pressing_jump, \
-                is_first_jump, \
-                horizontal_acceleration_sign, \
+                velocity,
+                delta_sec,
+                is_pressing_jump,
+                is_first_jump,
+                horizontal_acceleration_sign,
                 movement_params)
         velocity = MovementUtils.cap_velocity( \
-                velocity, \
-                movement_params, \
+                velocity,
+                movement_params,
                 movement_params.max_horizontal_speed_default)
         previous_time = current_time
         current_time += delta_sec
@@ -308,8 +308,8 @@ static func check_discrete_horizontal_step_for_collision( \
     delta_sec = step_end_time - current_time
     displacement = velocity * delta_sec
     collision = check_frame_for_collision( \
-            collision_params, \
-            position, \
+            collision_params,
+            position,
             displacement)
     if collision != null:
         return collision
@@ -322,12 +322,12 @@ static func check_discrete_horizontal_step_for_collision( \
 # necessarily accurately reflect the actual Player trajectory that would be
 # used.
 static func check_continuous_horizontal_step_for_collision( \
-        step_result_metadata: EdgeStepCalcResultMetadata, \
-        edge_calc_params: EdgeCalcParams, \
-        step_calc_params: EdgeStepCalcParams, \
+        step_result_metadata: EdgeStepCalcResultMetadata,
+        edge_calc_params: EdgeCalcParams,
+        step_calc_params: EdgeStepCalcParams,
         horizontal_step: EdgeStep) -> SurfaceCollision:
     Gs.profiler.start( \
-            "check_continuous_horizontal_step_for_collision", \
+            "check_continuous_horizontal_step_for_collision",
             edge_calc_params.collision_params.thread_id)
     
     var collision_params := edge_calc_params.collision_params
@@ -350,8 +350,8 @@ static func check_continuous_horizontal_step_for_collision( \
     var collision_result_metadata: CollisionCalcResultMetadata
     if step_result_metadata != null:
         collision_result_metadata = CollisionCalcResultMetadata.new( \
-                edge_calc_params, \
-                step_calc_params, \
+                edge_calc_params,
+                step_calc_params,
                 horizontal_step)
         step_result_metadata.collision_result_metadata = \
                 collision_result_metadata
@@ -368,13 +368,13 @@ static func check_continuous_horizontal_step_for_collision( \
         # Update state for the current frame.
         horizontal_state = \
                 HorizontalMovementUtils.calculate_horizontal_state_for_time( \
-                        movement_params, \
-                        horizontal_step, \
+                        movement_params,
+                        horizontal_step,
                         current_time)
         vertical_state = VerticalMovementUtils \
                 .calculate_vertical_state_for_time_from_step( \
-                        movement_params, \
-                        vertical_step, \
+                        movement_params,
+                        vertical_step,
                         current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
@@ -386,8 +386,8 @@ static func check_continuous_horizontal_step_for_collision( \
         
         # Check for collision.
         collision = check_frame_for_collision( \
-                collision_params, \
-                previous_position, \
+                collision_params,
+                previous_position,
                 displacement)
         if collision != null:
             break
@@ -405,17 +405,17 @@ static func check_continuous_horizontal_step_for_collision( \
     current_time = step_end_time
     if collision == null and \
             !Gs.geometry.are_floats_equal_with_epsilon( \
-                    previous_time, \
+                    previous_time,
                     current_time):
         horizontal_state = \
                 HorizontalMovementUtils.calculate_horizontal_state_for_time( \
-                        movement_params, \
-                        horizontal_step, \
+                        movement_params,
+                        horizontal_step,
                         current_time)
         vertical_state = VerticalMovementUtils \
                 .calculate_vertical_state_for_time_from_step( \
-                        movement_params, \
-                        vertical_step, \
+                        movement_params,
+                        vertical_step,
                         current_time)
         current_position.x = horizontal_state[0]
         current_position.y = vertical_state[0]
@@ -425,8 +425,8 @@ static func check_continuous_horizontal_step_for_collision( \
         assert(displacement != Vector2.ZERO)
         
         collision = check_frame_for_collision( \
-                collision_params, \
-                previous_position, \
+                collision_params,
+                previous_position,
                 displacement)
         
         if collision == null:
@@ -439,8 +439,8 @@ static func check_continuous_horizontal_step_for_collision( \
         # Record some extra state from before/after/during collision for
         # debugging.
         collision_result_metadata.record_collision( \
-                previous_position, \
-                displacement, \
+                previous_position,
+                displacement,
                 collision)
     
     var edge_result_metadata := \
@@ -448,8 +448,8 @@ static func check_continuous_horizontal_step_for_collision( \
             step_result_metadata != null else \
             null
     Gs.profiler.stop_with_optional_metadata( \
-            "check_continuous_horizontal_step_for_collision", \
-            edge_calc_params.collision_params.thread_id, \
+            "check_continuous_horizontal_step_for_collision",
+            edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
     
     return collision
@@ -461,15 +461,15 @@ static func check_continuous_horizontal_step_for_collision( \
 #     surface that they were already colliding with beforehand.
 # -   If a collision would occur, this returns information about the collision.
 static func check_frame_for_collision( \
-        collision_params: CollisionCalcParams, \
-        position_start: Vector2, \
-        displacement: Vector2, \
+        collision_params: CollisionCalcParams,
+        position_start: Vector2,
+        displacement: Vector2,
         is_recursing := false) -> SurfaceCollision:
     collision_params.player.position = position_start
     var kinematic_collision := collision_params.player.move_and_collide( \
-            displacement, \
-            true, \
-            true, \
+            displacement,
+            true,
+            true,
             true)
     
     if kinematic_collision == null:
@@ -490,12 +490,12 @@ static func check_frame_for_collision( \
     var tile_map: SurfacesTileMap = kinematic_collision.collider
     var tile_map_result := CollisionTileMapCoordResult.new()
     Gs.geometry.get_collision_tile_map_coord( \
-            tile_map_result, \
-            kinematic_collision.position, \
-            tile_map, \
-            is_touching_floor, \
-            is_touching_ceiling, \
-            is_touching_left_wall, \
+            tile_map_result,
+            kinematic_collision.position,
+            tile_map,
+            is_touching_floor,
+            is_touching_ceiling,
+            is_touching_left_wall,
             is_touching_right_wall)
     if !tile_map_result.is_godot_floor_ceiling_detection_correct:
         is_touching_floor = !is_touching_floor
@@ -511,11 +511,11 @@ static func check_frame_for_collision( \
         return null
     
     var tile_map_index: int = Gs.geometry.get_tile_map_index_from_grid_coord( \
-            tile_map_result.tile_map_coord, \
+            tile_map_result.tile_map_coord,
             tile_map)
     if !collision_params.surface_parser.has_surface_for_tile( \
-            tile_map, \
-            tile_map_index, \
+            tile_map,
+            tile_map_index,
             surface_side):
         # Invalid collision state.
         if collision_params.movement_params \
@@ -525,8 +525,8 @@ static func check_frame_for_collision( \
         return null
     
     var surface := collision_params.surface_parser.get_surface_for_tile( \
-            tile_map, \
-            tile_map_index, \
+            tile_map,
+            tile_map_index,
             surface_side)
     
     surface_collision.surface = surface
@@ -561,9 +561,9 @@ static func check_frame_for_collision( \
         collision_params.player.set_safe_margin(0.0)
         position_start += surface.normal * 0.001
         surface_collision = check_frame_for_collision( \
-                collision_params, \
-                position_start, \
-                displacement, \
+                collision_params,
+                position_start,
+                displacement,
                 true)
         collision_params.player.set_safe_margin(old_margin)
     

@@ -6,17 +6,17 @@ const STARTS_COLLAPSED := true
 const SIDE := SurfaceSide.RIGHT_WALL
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
         surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
         .( \
-        TYPE, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
-        graph, \
-        SIDE, \
+        TYPE,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
+        graph,
+        SIDE,
         surfaces_to_surfaces_to_edge_types_to_edges_results) -> void:
     pass
 

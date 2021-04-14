@@ -33,30 +33,30 @@ var distance: float
 var duration: float
 
 func _init( \
-        edge_type: int, \
-        is_time_based: bool, \
-        surface_type: int, \
-        enters_air: bool, \
-        includes_air_trajectory: bool, \
-        calculator, \
-        start_position_along_surface: PositionAlongSurface, \
-        end_position_along_surface: PositionAlongSurface, \
-        velocity_start: Vector2, \
-        velocity_end: Vector2, \
-        includes_extra_jump_duration: bool, \
-        includes_extra_wall_land_horizontal_speed: bool, \
-        movement_params: MovementParams, \
-        instructions: EdgeInstructions, \
-        trajectory: EdgeTrajectory, \
+        edge_type: int,
+        is_time_based: bool,
+        surface_type: int,
+        enters_air: bool,
+        includes_air_trajectory: bool,
+        calculator,
+        start_position_along_surface: PositionAlongSurface,
+        end_position_along_surface: PositionAlongSurface,
+        velocity_start: Vector2,
+        velocity_end: Vector2,
+        includes_extra_jump_duration: bool,
+        includes_extra_wall_land_horizontal_speed: bool,
+        movement_params: MovementParams,
+        instructions: EdgeInstructions,
+        trajectory: EdgeTrajectory,
         edge_calc_result_type: int \
         ).( \
-        edge_type, \
-        edge_calc_result_type, \
-        start_position_along_surface, \
-        end_position_along_surface, \
-        velocity_start, \
-        includes_extra_jump_duration, \
-        includes_extra_wall_land_horizontal_speed, \
+        edge_type,
+        edge_calc_result_type,
+        start_position_along_surface,
+        end_position_along_surface,
+        velocity_start,
+        includes_extra_jump_duration,
+        includes_extra_wall_land_horizontal_speed,
         calculator \
         ) -> void:
     self.is_time_based = is_time_based
@@ -69,26 +69,26 @@ func _init( \
     self.trajectory = trajectory
     if start_position_along_surface != null:
         self.distance = _calculate_distance( \
-                start_position_along_surface, \
-                end_position_along_surface, \
+                start_position_along_surface,
+                end_position_along_surface,
                 trajectory)
         self.duration = _calculate_duration( \
-                start_position_along_surface, \
-                end_position_along_surface, \
-                instructions, \
+                start_position_along_surface,
+                end_position_along_surface,
+                instructions,
                 distance)
 
 func update_for_surface_state( \
-        surface_state: PlayerSurfaceState, \
+        surface_state: PlayerSurfaceState,
         is_final_edge: bool) -> void:
     # Do nothing unless the sub-class implements this.
     pass
 
 func update_navigation_state( \
-        navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, \
-        playback, \
-        just_started_new_edge: bool, \
+        navigation_state: PlayerNavigationState,
+        surface_state: PlayerSurfaceState,
+        playback,
+        just_started_new_edge: bool,
         is_starting_navigation_retry: bool) -> void:
     # When retrying navigation, we need to ignore whatever surface state in the 
     # current frame led to the previous navigation being interrupted.
@@ -129,28 +129,28 @@ func update_navigation_state( \
     
     navigation_state.just_reached_end_of_edge = \
             _check_did_just_reach_destination( \
-                    navigation_state, \
-                    surface_state, \
+                    navigation_state,
+                    surface_state,
                     playback)
 
 func _calculate_distance( \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     Gs.logger.error("Abstract Edge._calculate_distance is not implemented")
     return INF
 
 func _calculate_duration( \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
-        instructions: EdgeInstructions, \
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
+        instructions: EdgeInstructions,
         distance: float) -> float:
     Gs.logger.error("Abstract Edge._calculate_duration is not implemented")
     return INF
 
 func _check_did_just_reach_destination( \
-        navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, \
+        navigation_state: PlayerNavigationState,
+        surface_state: PlayerSurfaceState,
         playback) -> bool:
     Gs.logger.error( \
             "Abstract Edge._check_did_just_reach_destination is not " + \
@@ -209,16 +209,16 @@ func to_string() -> String:
             "is_optimized_for_path: %s, " + \
             "instructions: %s " + \
             "}"
-    var format_string_arguments := [ \
-            get_name(), \
-            _get_start_string(), \
-            _get_end_string(), \
-            str(velocity_start), \
-            str(velocity_end), \
-            distance, \
-            duration, \
-            is_optimized_for_path, \
-            instructions.to_string(), \
+    var format_string_arguments := [
+            get_name(),
+            _get_start_string(),
+            _get_end_string(),
+            str(velocity_start),
+            str(velocity_end),
+            distance,
+            duration,
+            is_optimized_for_path,
+            instructions.to_string(),
         ]
     return format_string_template % format_string_arguments
 
@@ -237,25 +237,25 @@ func to_string_with_newlines(indent_level: int) -> String:
             "\n\t%sis_optimized_for_path: %s," + \
             "\n\t%sinstructions: %s," + \
         "\n%s}"
-    var format_string_arguments := [ \
-            get_name(), \
-            indent_level_str, \
-            _get_start_string(), \
-            indent_level_str, \
-            _get_end_string(), \
-            indent_level_str, \
-            str(velocity_start), \
-            indent_level_str, \
-            str(velocity_end), \
-            indent_level_str, \
-            distance, \
-            indent_level_str, \
-            duration, \
-            indent_level_str, \
-            is_optimized_for_path, \
-            indent_level_str, \
-            instructions.to_string_with_newlines(indent_level + 1), \
-            indent_level_str, \
+    var format_string_arguments := [
+            get_name(),
+            indent_level_str,
+            _get_start_string(),
+            indent_level_str,
+            _get_end_string(),
+            indent_level_str,
+            str(velocity_start),
+            indent_level_str,
+            str(velocity_end),
+            indent_level_str,
+            distance,
+            indent_level_str,
+            duration,
+            indent_level_str,
+            is_optimized_for_path,
+            indent_level_str,
+            instructions.to_string_with_newlines(indent_level + 1),
+            indent_level_str,
         ]
     
     return format_string_template % format_string_arguments
@@ -269,13 +269,13 @@ static func vector2_to_position_along_surface(target_point: Vector2) -> \
     return position_along_surface
 
 static func check_just_landed_on_expected_surface( \
-        surface_state: PlayerSurfaceState, \
+        surface_state: PlayerSurfaceState,
         end_surface: Surface) -> bool:
     return surface_state.just_left_air and \
             surface_state.grabbed_surface == end_surface
 
 func load_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_state_from_json_object(json_object, context)
 
@@ -285,7 +285,7 @@ func to_json_object() -> Dictionary:
     return json_object
 
 func _load_edge_state_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_attempt_state_from_json_object(json_object, context)
     is_time_based = json_object.tb

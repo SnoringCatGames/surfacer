@@ -2,9 +2,9 @@ class_name PlatformGraphParser
 extends Node
 
 signal calculation_progress( \
-        player_index, \
-        player_count, \
-        origin_surface_index, \
+        player_index,
+        player_count,
+        origin_surface_index,
         surface_count)
 signal parse_finished
 
@@ -27,7 +27,7 @@ func _exit_tree() -> void:
     Surfacer.graph_parser = null
 
 func parse( \
-        level_id: String, \
+        level_id: String,
         force_calculation_from_tile_maps := false) -> void:
     self.level_id = level_id
     _record_tile_maps()
@@ -55,9 +55,9 @@ func _create_fake_players_for_collision_calculations() -> void:
         var movement_params: MovementParams = \
                 Surfacer.player_params[player_name].movement_params
         var fake_player: Player = Gs.utils.add_scene( \
-                self, \
-                movement_params.player_resource_path, \
-                false, \
+                self,
+                movement_params.player_resource_path,
+                false,
                 false)
         fake_player.is_fake = true
         fake_player.name = "fake_" + fake_player.name
@@ -86,20 +86,20 @@ func _on_graphs_parsed() -> void:
     
     for platform_graph in platform_graphs.values():
         if platform_graph.is_connected( \
-                    "calculation_progress", \
-                    self, \
+                    "calculation_progress",
+                    self,
                     "_on_graph_calculation_progress"):
             platform_graph.disconnect( \
-                    "calculation_progress", \
-                    self, \
+                    "calculation_progress",
+                    self,
                     "_on_graph_calculation_progress")
         if platform_graph.is_connected( \
-                    "calculation_finished", \
-                    self, \
+                    "calculation_finished",
+                    self,
                     "_on_graph_calculation_finished"):
             platform_graph.disconnect( \
-                    "calculation_finished", \
-                    self, \
+                    "calculation_finished",
+                    self,
                     "_on_graph_calculation_finished")
     
     emit_signal("parse_finished")
@@ -120,14 +120,14 @@ func _calculate_next_platform_graph(player_index: int) -> void:
     if !should_skip_player:
         var graph := PlatformGraph.new()
         graph.connect( \
-                "calculation_progress", \
-                self, \
-                "_on_graph_calculation_progress", \
+                "calculation_progress",
+                self,
+                "_on_graph_calculation_progress",
                 [graph, player_index, player_name])
         graph.connect( \
-                "calculation_finished", \
-                self, \
-                "_on_graph_calculation_finished", \
+                "calculation_finished",
+                self,
+                "_on_graph_calculation_finished",
                 [player_index, is_last_player])
         graph.calculate(player_name)
         platform_graphs[player_name] = graph
@@ -138,25 +138,25 @@ func _calculate_next_platform_graph(player_index: int) -> void:
             _on_graphs_parsed()
 
 func _on_graph_calculation_progress( \
-        origin_surface_index, \
-        surface_count, \
-        graph: PlatformGraph, \
-        player_index: int, \
+        origin_surface_index,
+        surface_count,
+        graph: PlatformGraph,
+        player_index: int,
         player_name: String) -> void:
     emit_signal( \
-            "calculation_progress", \
-            player_index, \
-            Surfacer.player_params.size(), \
-            origin_surface_index, \
+            "calculation_progress",
+            player_index,
+            Surfacer.player_params.size(),
+            origin_surface_index,
             surface_count)
 
 func _on_graph_calculation_finished( \
-        player_index: int, \
+        player_index: int,
         was_last_player: bool) -> void:
     if !was_last_player:
         Gs.time.set_timeout( \
-                funcref(self, "_calculate_next_platform_graph"), \
-                0.01, \
+                funcref(self, "_calculate_next_platform_graph"),
+                0.01,
                 [player_index + 1])
     else:
         _on_graphs_parsed()
@@ -173,11 +173,11 @@ func _load_platform_graphs() -> void:
     var serialized_string := file.get_as_text()
     var parse_result := JSON.parse(serialized_string)
     if parse_result.error != OK:
-        Gs.logger.error("Unable to parse JSON: %s; %s:%s:%s" % [ \
-            platform_graphs_path, \
-            parse_result.error, \
-            parse_result.error_line, \
-            parse_result.error_string, \
+        Gs.logger.error("Unable to parse JSON: %s; %s:%s:%s" % [
+            platform_graphs_path,
+            parse_result.error,
+            parse_result.error_line,
+            parse_result.error_string,
         ])
         return
     var json_object: Dictionary = parse_result.result
@@ -193,7 +193,7 @@ func _load_platform_graphs() -> void:
     
     surface_parser = SurfaceParser.new()
     surface_parser.load_from_json_object( \
-            json_object.surface_parser, \
+            json_object.surface_parser,
             context)
     
     if Gs.debug or Gs.playtest:
@@ -205,7 +205,7 @@ func _load_platform_graphs() -> void:
     for graph_json_object in json_object.platform_graphs:
         var graph := PlatformGraph.new()
         graph.load_from_json_object( \
-                graph_json_object, \
+                graph_json_object,
                 context)
         platform_graphs[graph.player_params.name] = graph
 
@@ -329,7 +329,7 @@ func _serialize_platform_graphs() -> Array:
     return result
 
 func _get_resource_path() -> String:
-    return "res://%s/level_%s.json" % [ \
+    return "res://%s/level_%s.json" % [
         PLATFORM_GRAPHS_DIRECTORY_NAME,
         level_id,
     ]

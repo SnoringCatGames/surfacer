@@ -7,7 +7,7 @@ var COLOR_PARAMS: ColorParams = Surfacer.ann_defaults \
         .DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS
 
 func _init().( \
-        TYPE, \
-        TEXT, \
+        TYPE,
+        TEXT,
         COLOR_PARAMS) -> void:
     pass

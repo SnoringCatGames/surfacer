@@ -23,11 +23,11 @@ var go_icon_scale_multiplier := 1.0
 var projected_image: Control
 
 func _init().( \
-        NAME, \
-        LAYER_NAME, \
-        AUTO_ADAPTS_GUI_SCALE, \
-        INCLUDES_STANDARD_HIERARCHY, \
-        INCLUDES_NAV_BAR, \
+        NAME,
+        LAYER_NAME,
+        AUTO_ADAPTS_GUI_SCALE,
+        INCLUDES_STANDARD_HIERARCHY,
+        INCLUDES_NAV_BAR,
         INCLUDES_CENTER_CONTAINER \
         ) -> void:
     pass
@@ -79,9 +79,9 @@ func _initialize_next() -> void:
     level_id = Surfacer.precompute_platform_graph_for_levels[ \
             precompute_level_index]
     level = Gs.utils.add_scene( \
-            null, \
-            Gs.level_config.get_level_config(level_id).scene_path, \
-            false, \
+            null,
+            Gs.level_config.get_level_config(level_id).scene_path,
+            false,
             true)
     level.id = level_id
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
@@ -94,12 +94,12 @@ func _initialize_next() -> void:
 
 func _parse_next() -> void:
     platform_graph_parser.connect( \
-            "calculation_progress", \
-            self, \
+            "calculation_progress",
+            self,
             "_on_graph_parse_progress")
     platform_graph_parser.connect( \
-            "parse_finished", \
-            self, \
+            "parse_finished",
+            self,
             "_on_calculation_finished")
     platform_graph_parser.parse(level_id, true)
 
@@ -130,9 +130,9 @@ func defer(method: String) -> void:
     Gs.time.set_timeout(funcref(self, method), 0.01)
 
 func _on_graph_parse_progress( \
-        player_index: int, \
-        player_count: int, \
-        origin_surface_index: int, \
+        player_index: int,
+        player_count: int,
+        origin_surface_index: int,
         surface_count: int) -> void:
     var current_graph_calculation_progress_ratio := \
         origin_surface_index / float(surface_count)
@@ -171,7 +171,7 @@ func _on_graph_parse_progress( \
     _set_progress(progress, label_1, label_2, label_3)
 
 func _on_stage_progress( \
-        step: String, \
+        step: String,
         finished := false) -> void:
     var sub_step_progress: float
     match step:
@@ -227,9 +227,9 @@ func _on_stage_progress( \
     _set_progress(progress, label)
 
 func _set_progress( \
-        progress: float, \
-        label_1: String, \
-        label_2 := "", \
+        progress: float,
+        label_1: String,
+        label_2 := "",
         label_3 := "") -> void:
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/ProgressBar.value = round(progress)

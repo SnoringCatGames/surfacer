@@ -16,10 +16,10 @@ func before_each() -> void:
 func assert_vertical_step(step: VerticalEdgeStep, state: Dictionary) -> void:
     assert_not_null(step)
     assert_eq(step.time_start, 0.0)
-    assert_almost_eq(step.time_instruction_end, state.time_instruction_end, \
+    assert_almost_eq(step.time_instruction_end, state.time_instruction_end,
             END_COORDINATE_CLOSE_THRESHOLD)
     assert_almost_eq(step.time_step_end, state.time_step_end, END_COORDINATE_CLOSE_THRESHOLD)
-    assert_almost_eq(step.time_peak_height, state.time_peak_height, \
+    assert_almost_eq(step.time_peak_height, state.time_peak_height,
             END_COORDINATE_CLOSE_THRESHOLD)
     assert_eq(step.position_start, state.position_start)
     assert_almost_eq(step.velocity_start, Vector2(0, -1000.0), END_POSITION_CLOSE_THRESHOLD)
@@ -114,7 +114,7 @@ func test_creates_step_calc_params() -> void:
     var step_calc_params := JumpFromSurfaceToSurfaceCalculator._calculate_vertical_step( \
             movement_params, position_start, position_end)
 
-    assert_almost_eq(step_calc_params.position_start, position_start, \
+    assert_almost_eq(step_calc_params.position_start, position_start,
             END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(step_calc_params.position_end, position_end, \
+    assert_almost_eq(step_calc_params.position_end, position_end,
             END_POSITION_CLOSE_THRESHOLD)

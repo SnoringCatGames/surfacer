@@ -14,9 +14,9 @@ func test_without_backward_acceleration() -> void:
     var returns_lower_result := true
     var expects_only_one_positive_result := false
 
-    var result := Movement._calculate_time_to_release_acceleration(time_start, \
-            time_step_end, position_start, position_end, velocity_start, acceleration_start, \
-            post_release_backward_acceleration, returns_lower_result, \
+    var result := Movement._calculate_time_to_release_acceleration(time_start,
+            time_step_end, position_start, position_end, velocity_start, acceleration_start,
+            post_release_backward_acceleration, returns_lower_result,
             expects_only_one_positive_result)
     
     assert_almost_eq(result, 0.1450165565, Gs.geometry.FLOAT_EPSILON)
@@ -32,9 +32,9 @@ func test_with_backward_acceleration_and_lower_result() -> void:
     var returns_lower_result := true
     var expects_only_one_positive_result := false
 
-    var result := Movement._calculate_time_to_release_acceleration(time_start, \
-            time_step_end, position_start, position_end, velocity_start, acceleration_start, \
-            post_release_backward_acceleration, returns_lower_result, \
+    var result := Movement._calculate_time_to_release_acceleration(time_start,
+            time_step_end, position_start, position_end, velocity_start, acceleration_start,
+            post_release_backward_acceleration, returns_lower_result,
             expects_only_one_positive_result)
     
     assert_almost_eq(result, 0.4057473174, Gs.geometry.FLOAT_EPSILON)
@@ -50,9 +50,9 @@ func test_with_backward_acceleration_and_higher_result() -> void:
     var returns_lower_result := false
     var expects_only_one_positive_result := false
 
-    var result := Movement._calculate_time_to_release_acceleration(time_start, \
-            time_step_end, position_start, position_end, velocity_start, acceleration_start, \
-            post_release_backward_acceleration, returns_lower_result, \
+    var result := Movement._calculate_time_to_release_acceleration(time_start,
+            time_step_end, position_start, position_end, velocity_start, acceleration_start,
+            post_release_backward_acceleration, returns_lower_result,
             expects_only_one_positive_result)
     
     assert_almost_eq(result, 1.71098231, Gs.geometry.FLOAT_EPSILON)
@@ -68,9 +68,9 @@ func test_cant_reach_destination() -> void:
     var returns_lower_result := true
     var expects_only_one_positive_result := false
 
-    var result := Movement._calculate_time_to_release_acceleration(time_start, \
-            time_step_end, position_start, position_end, velocity_start, acceleration_start, \
-            post_release_backward_acceleration, returns_lower_result, \
+    var result := Movement._calculate_time_to_release_acceleration(time_start,
+            time_step_end, position_start, position_end, velocity_start, acceleration_start,
+            post_release_backward_acceleration, returns_lower_result,
             expects_only_one_positive_result)
     
     assert_eq(result, INF)
@@ -86,9 +86,9 @@ func test_zero_distance() -> void:
     var returns_lower_result := true
     var expects_only_one_positive_result := false
 
-    var result := Movement._calculate_time_to_release_acceleration(time_start, \
-            time_step_end, position_start, position_end, velocity_start, acceleration_start, \
-            post_release_backward_acceleration, returns_lower_result, \
+    var result := Movement._calculate_time_to_release_acceleration(time_start,
+            time_step_end, position_start, position_end, velocity_start, acceleration_start,
+            post_release_backward_acceleration, returns_lower_result,
             expects_only_one_positive_result)
     
     assert_eq(result, 0.0)
@@ -104,9 +104,9 @@ func test_non_zero_inputs() -> void:
     var returns_lower_result := true
     var expects_only_one_positive_result := false
 
-    var result := Movement._calculate_time_to_release_acceleration(time_start, \
-            time_step_end, position_start, position_end, velocity_start, acceleration_start, \
-            post_release_backward_acceleration, returns_lower_result, \
+    var result := Movement._calculate_time_to_release_acceleration(time_start,
+            time_step_end, position_start, position_end, velocity_start, acceleration_start,
+            post_release_backward_acceleration, returns_lower_result,
             expects_only_one_positive_result)
     
     assert_almost_eq(result, 0.2504809472, Gs.geometry.FLOAT_EPSILON)

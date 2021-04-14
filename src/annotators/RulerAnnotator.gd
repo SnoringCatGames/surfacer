@@ -17,8 +17,8 @@ func _enter_tree() -> void:
     viewport = get_viewport()
     viewport_size = viewport.get_visible_rect().size
     get_tree().get_root().connect( \
-            "size_changed", \
-            self, \
+            "size_changed",
+            self,
             "_on_viewport_size_changed")
 
 func _process(delta_sec: float) -> void:
@@ -39,9 +39,9 @@ func _draw() -> void:
     
     # Offset the start position to align with the grid cell boundaries.
     var ruler_start_position := Vector2( \
-            -fmod((screen_start_position.x + grid_spacing * 1000000000), \
-                    grid_spacing), \
-            -fmod((screen_start_position.y + grid_spacing * 1000000000), \
+            -fmod((screen_start_position.x + grid_spacing * 1000000000),
+                    grid_spacing),
+            -fmod((screen_start_position.y + grid_spacing * 1000000000),
                     grid_spacing))
     
     var ruler_size := viewport_size + Vector2(grid_spacing, grid_spacing)
@@ -61,18 +61,18 @@ func _draw() -> void:
         start_position = Vector2(start_x, start_y)
         end_position = Vector2(start_x, start_y + ruler_size.y)
         draw_line( \
-                start_position, \
-                end_position, \
-                LINE_COLOR, \
+                start_position,
+                end_position,
+                LINE_COLOR,
                 LINE_WIDTH)
         
         text = str(round((screen_start_position.x + start_x) * \
                 Gs.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string( \
-                Gs.fonts.main_xs, \
-                Vector2(start_position.x + 2, 14), \
-                text, \
+                Gs.fonts.main_xs,
+                Vector2(start_position.x + 2, 14),
+                text,
                 TEXT_COLOR)
     
     # Draw the horizontal lines.
@@ -82,18 +82,18 @@ func _draw() -> void:
         start_position = Vector2(start_x, start_y)
         end_position = Vector2(start_x + ruler_size.x, start_y)
         draw_line( \
-                start_position, \
-                end_position, \
-                LINE_COLOR, \
+                start_position,
+                end_position,
+                LINE_COLOR,
                 LINE_WIDTH)
         
         text = str(round((screen_start_position.y + start_y) * \
                 Gs.camera_controller.zoom))
         text = "0" if text == "-0" else text
         draw_string( \
-                Gs.fonts.main_xs, \
-                Vector2(2, start_position.y + 14), \
-                text, \
+                Gs.fonts.main_xs,
+                Vector2(2, start_position.y + 14),
+                text,
                 TEXT_COLOR)
 
 func _on_viewport_size_changed() -> void:

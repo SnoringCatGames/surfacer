@@ -34,13 +34,13 @@ func test_updates_step_end_for_time_after_jump_instruction_end() -> void:
     Movement.calculate_vertical_state_for_time( \
             output_step, movement_params, vertical_step, time, is_step_end_time)
 
-    assert_almost_eq(output_step.position_step_end, Vector2(INF, 1460.5), \
+    assert_almost_eq(output_step.position_step_end, Vector2(INF, 1460.5),
             END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(output_step.velocity_step_end, Vector2(INF, 4490.0), \
+    assert_almost_eq(output_step.velocity_step_end, Vector2(INF, 4490.0),
             END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(output_step.position_instruction_end, Vector2(INF, INF), \
+    assert_almost_eq(output_step.position_instruction_end, Vector2(INF, INF),
             END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(output_step.velocity_instruction_end, Vector2(INF, INF), \
+    assert_almost_eq(output_step.velocity_instruction_end, Vector2(INF, INF),
             END_POSITION_CLOSE_THRESHOLD)
 
 func test_updates_instruction_end_for_time_after_jump_instruction_end() -> void:
@@ -55,13 +55,13 @@ func test_updates_instruction_end_for_time_after_jump_instruction_end() -> void:
     Movement.calculate_vertical_state_for_time( \
             output_step, movement_params, vertical_step, time, is_step_end_time)
 
-    assert_almost_eq(output_step.position_step_end, Vector2(INF, INF), \
+    assert_almost_eq(output_step.position_step_end, Vector2(INF, INF),
             END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(output_step.velocity_step_end, Vector2(INF, INF), \
+    assert_almost_eq(output_step.velocity_step_end, Vector2(INF, INF),
             END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(output_step.position_instruction_end, Vector2(INF, 1460.5), \
+    assert_almost_eq(output_step.position_instruction_end, Vector2(INF, 1460.5),
             END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(output_step.velocity_instruction_end, Vector2(INF, 4490.0), \
+    assert_almost_eq(output_step.velocity_instruction_end, Vector2(INF, 4490.0),
             END_POSITION_CLOSE_THRESHOLD)
 
 func test_time_before_jump_instruction_end() -> void:
@@ -76,7 +76,7 @@ func test_time_before_jump_instruction_end() -> void:
     Movement.calculate_vertical_state_for_time( \
             output_step, movement_params, vertical_step, time, is_step_end_time)
 
-    assert_almost_eq(output_step.position_step_end, Vector2(INF, -387.5), \
+    assert_almost_eq(output_step.position_step_end, Vector2(INF, -387.5),
             END_POSITION_CLOSE_THRESHOLD)
-    assert_almost_eq(output_step.velocity_step_end, Vector2(INF, -550.0), \
+    assert_almost_eq(output_step.velocity_step_end, Vector2(INF, -550.0),
             END_POSITION_CLOSE_THRESHOLD)

@@ -45,68 +45,68 @@ static func get_string(result: int) -> String:
 static func to_description_list(result: int) -> Array:
     match result:
         MOVEMENT_VALID:
-            return [ \
-                "Movement is valid.", \
+            return [
+                "Movement is valid.",
             ]
         TARGET_OUT_OF_REACH:
-            return [ \
-                "The target is out of reach.", \
+            return [
+                "The target is out of reach.",
             ]
         ALREADY_BACKTRACKED_FOR_SURFACE:
-            return [ \
+            return [
                 "Hit an intermediate surface.",
                 "We considered this surface when backtracking to consider" + \
-                "\n                a new max jump height after colliding.", \
+                "\n                a new max jump height after colliding.",
             ]
         RECURSION_VALID:
-            return [ \
+            return [
                 "Hit an intermediate surface.",
                 "Valid movement was found when recursing to consider " + \
                         "separate" + \
                 "\n                movement to/from an intermediate " + \
-                        "waypoint.", \
+                        "waypoint.",
             ]
         UNABLE_TO_BACKTRACK:
-            return [ \
-                "Hit an intermediate surface.", \
+            return [
+                "Hit an intermediate surface.",
                 "Valid movement was not found when recursing to consider " + \
                         "separate" + \
                 "\n                movement to/from an intermediate " + \
                         "waypoint, and backtracking " + \
                 "\n                to consider a new max jump height " + \
-                        "isn't possible.", \
+                        "isn't possible.",
             ]
         BACKTRACKING_VALID:
-            return [ \
+            return [
                 "Hit an intermediate surface.",
                 "Valid movement was found when backtracking to consider " + \
-                "\n                a new max jump height.", \
+                "\n                a new max jump height.",
             ]
         BACKTRACKING_INVALID:
-            return [ \
+            return [
                 "Hit an intermediate surface.",
                 "No valid movement around was found despite backtracking" + \
-                "\n                to consider a new max jump height.", \
+                "\n                to consider a new max jump height.",
             ]
         INVALID_COLLISON_STATE:
-            return [ \
-                "Invalid collision state.", \
+            return [
+                "Invalid collision state.",
             ]
         CONFIGURED_TO_SKIP_RECURSION:
-            return [ \
-                "Configured to skip recursion.", \
+            return [
+                "Configured to skip recursion.",
             ]
         CONFIGURED_TO_SKIP_BACKTRACKING:
-            return [ \
+            return [
                 "Configured to skip backtracking to consider a new " + \
-                "\n                max jump height.", \
+                "\n                max jump height.",
             ]
         UNKNOWN:
-            return [ \
-                "Unexpected result", \
+            return [
+                "Unexpected result",
             ]
         _:
             Gs.logger.error("Invalid EdgeStepCalcResultType: %s" % result)
-            return [ \
-                "Unexpected result", \
+            return [
+                "Unexpected result",
             ]

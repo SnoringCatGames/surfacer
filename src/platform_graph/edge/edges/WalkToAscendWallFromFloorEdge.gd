@@ -13,56 +13,56 @@ const ENTERS_AIR := false
 const INCLUDES_AIR_TRAJECTORY := false
 
 func _init( \
-        calculator = null, \
-        start: PositionAlongSurface = null, \
-        end: PositionAlongSurface = null, \
-        velocity_start := Vector2.INF, \
+        calculator = null,
+        start: PositionAlongSurface = null,
+        end: PositionAlongSurface = null,
+        velocity_start := Vector2.INF,
         movement_params: MovementParams = null) \
-        .(TYPE, \
-        IS_TIME_BASED, \
-        SURFACE_TYPE, \
-        ENTERS_AIR, \
-        INCLUDES_AIR_TRAJECTORY, \
-        calculator, \
-        start, \
-        end, \
-        velocity_start, \
-        Vector2.ZERO, \
-        false, \
-        false, \
-        movement_params, \
-        _calculate_instructions(start, end), \
-        null, \
+        .(TYPE,
+        IS_TIME_BASED,
+        SURFACE_TYPE,
+        ENTERS_AIR,
+        INCLUDES_AIR_TRAJECTORY,
+        calculator,
+        start,
+        end,
+        velocity_start,
+        Vector2.ZERO,
+        false,
+        false,
+        movement_params,
+        _calculate_instructions(start, end),
+        null,
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP) -> void:
     pass
 
 func _calculate_distance( \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     return Gs.geometry.calculate_manhattan_distance( \
-            start.target_point, \
+            start.target_point,
             end.target_point)
 
 func _calculate_duration( \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
-        instructions: EdgeInstructions, \
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
+        instructions: EdgeInstructions,
         distance: float) -> float:
     return MovementUtils.calculate_time_to_walk( \
-            distance, \
-            0.0, \
+            distance,
+            0.0,
             movement_params)
 
 func _check_did_just_reach_destination( \
-        navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, \
+        navigation_state: PlayerNavigationState,
+        surface_state: PlayerSurfaceState,
         playback) -> bool:
     return surface_state.just_grabbed_left_wall or \
             surface_state.just_grabbed_right_wall
 
 static func _calculate_instructions( \
-        start: PositionAlongSurface, \
+        start: PositionAlongSurface,
         end: PositionAlongSurface) -> EdgeInstructions:
     if start == null or end == null:
         return null
@@ -76,15 +76,15 @@ static func _calculate_instructions( \
             end.side == SurfaceSide.LEFT_WALL else \
             "mr"
     var inward_instruction := EdgeInstruction.new( \
-            sideways_input_key, \
-            0.0, \
+            sideways_input_key,
+            0.0,
             true)
     
     var upward_instruction := EdgeInstruction.new( \
-            "mu", \
-            0.0, \
+            "mu",
+            0.0,
             true)
     
     return EdgeInstructions.new( \
-            [inward_instruction, upward_instruction], \
+            [inward_instruction, upward_instruction],
             INF)

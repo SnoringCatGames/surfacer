@@ -10,15 +10,15 @@ var surface_parser_item_controller: SurfaceParserGroupItemController
 var global_counts_item_controller: GlobalCountsGroupItemController
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
+        parent_item: TreeItem,
+        tree: Tree,
         graph: PlatformGraph) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     _post_init()
 
@@ -27,12 +27,12 @@ func get_text() -> String:
 
 func get_description() -> String:
     return ("Some stats on the time to parse the platform graph for the " + \
-            "%s player.") % [ \
-        graph.movement_params.name, \
+            "%s player.") % [
+        graph.movement_params.name,
     ]
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error( \
             "find_and_expand_controller should not be called for " + \
@@ -45,27 +45,27 @@ func _create_children_inner() -> void:
             continue
         if Gs.profiler.is_timing(metric):
             ProfilerTimingItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
+                    tree_item,
+                    tree,
+                    graph,
                     metric)
         else:
             ProfilerCountItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
+                    tree_item,
+                    tree,
+                    graph,
                     metric)
     
     surface_parser_item_controller = \
             SurfaceParserGroupItemController.new( \
-                    tree_item, \
-                    tree, \
+                    tree_item,
+                    tree,
                     graph)
     
     global_counts_item_controller = \
             GlobalCountsGroupItemController.new( \
-                    tree_item, \
-                    tree, \
+                    tree_item,
+                    tree,
                     graph)
 
 func _destroy_children_inner() -> void:

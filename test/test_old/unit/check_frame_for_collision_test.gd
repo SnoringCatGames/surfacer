@@ -15,9 +15,9 @@ var end_tile_bottom_left_corner := Vector2(256.0, 896.0)
 var end_tile_bottom_right_corner := Vector2(320.0, 896.0)
 
 var start_tile_top_mid := Vector2(start_tile_top_left_corner.x + \
-        (start_tile_top_right_corner.x - start_tile_top_left_corner.x) / 2.0, \
+        (start_tile_top_right_corner.x - start_tile_top_left_corner.x) / 2.0,
         start_tile_top_left_corner.y)
-var start_tile_left_mid := Vector2(start_tile_top_left_corner.x, \
+var start_tile_left_mid := Vector2(start_tile_top_left_corner.x,
         start_tile_top_left_corner.y + \
         (start_tile_bottom_left_corner.y - start_tile_top_left_corner.y) / 2.0)
 
@@ -34,9 +34,9 @@ func set_frame_space_state(start_position: Vector2, displacement: Vector2) -> vo
 func assert_collison_state(collision: SurfaceCollision, expected_state: Dictionary) -> void:
     assert_not_null(collision)
     assert_eq(collision.surface.side, expected_state.side)
-    assert_eq(collision.surface.vertices, \
+    assert_eq(collision.surface.vertices,
             PoolVector2Array([expected_state.surface_start, expected_state.surface_end]))
-    assert_almost_eq(collision.position, expected_state.point_of_intersection, \
+    assert_almost_eq(collision.position, expected_state.point_of_intersection,
             END_POSITION_CLOSE_THRESHOLD)
 
 func test_move_into_top_left_corner_from_left() -> void:

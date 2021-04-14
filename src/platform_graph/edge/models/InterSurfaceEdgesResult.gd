@@ -15,10 +15,10 @@ var valid_edges := []
 # Array<EdgeCalcResult>
 var edge_calc_results := []
 
-func _init( \
-        origin_surface: Surface = null, \
-        destination_surface: Surface = null, \
-        edge_type := EdgeType.UNKNOWN, \
+func _init(
+        origin_surface: Surface = null,
+        destination_surface: Surface = null,
+        edge_type := EdgeType.UNKNOWN,
         all_jump_land_positions := []) -> void:
     self.origin_surface = origin_surface
     self.destination_surface = destination_surface
@@ -26,20 +26,20 @@ func _init( \
     self.all_jump_land_positions = all_jump_land_positions
 
 func merge(other) -> void:
-    Gs.utils.concat( \
-            self.all_jump_land_positions, \
+    Gs.utils.concat(
+            self.all_jump_land_positions,
             other.all_jump_land_positions)
-    Gs.utils.concat( \
-            self.failed_edge_attempts, \
+    Gs.utils.concat(
+            self.failed_edge_attempts,
             other.failed_edge_attempts)
-    Gs.utils.concat( \
-            self.valid_edges, \
+    Gs.utils.concat(
+            self.valid_edges,
             other.valid_edges)
-    Gs.utils.concat( \
-            self.edge_calc_results, \
+    Gs.utils.concat(
+            self.edge_calc_results,
             other.edge_calc_results)
 
-static func merge_results_with_matching_destination_surfaces( \
+static func merge_results_with_matching_destination_surfaces(
         inter_surface_edges_results: Array) -> void:
     # Dictionary<Surface, InterSurfaceEdgesResult>
     var inter_surface_edges_results_set := {}
@@ -48,7 +48,7 @@ static func merge_results_with_matching_destination_surfaces( \
     var new_result
     while i < inter_surface_edges_results.size():
         new_result = inter_surface_edges_results[i]
-        if !inter_surface_edges_results_set.has( \
+        if !inter_surface_edges_results_set.has(
                 new_result.destination_surface):
             inter_surface_edges_results_set[new_result.destination_surface] = \
                     new_result
@@ -60,8 +60,8 @@ static func merge_results_with_matching_destination_surfaces( \
             i -= 1
         i += 1
 
-func load_from_json_object( \
-        json_object: Dictionary, \
+func load_from_json_object(
+        json_object: Dictionary,
         context: Dictionary) -> void:
     origin_surface = context.id_to_surface[int(json_object.o)]
     destination_surface = context.id_to_surface[int(json_object.d)]
@@ -73,7 +73,7 @@ func load_from_json_object( \
     valid_edges = _load_valid_edges_json_array(json_object.v, context)
 
 func _load_all_jump_land_positions_json_array(\
-        json_object: Array, \
+        json_object: Array,
         context: Dictionary) -> Array:
     var result := []
     result.resize(json_object.size())
@@ -81,8 +81,8 @@ func _load_all_jump_land_positions_json_array(\
         result[i] = context.id_to_jump_land_positions[int(json_object[i])]
     return result
 
-func _load_failed_edge_attempts_json_array(\
-        json_object: Array, \
+func _load_failed_edge_attempts_json_array(
+        json_object: Array,
         context: Dictionary) -> Array:
     var result := []
     result.resize(json_object.size())
@@ -93,7 +93,7 @@ func _load_failed_edge_attempts_json_array(\
     return result
 
 func _load_valid_edges_json_array(\
-        json_object: Array, \
+        json_object: Array,
         context: Dictionary) -> Array:
     var result := []
     result.resize(json_object.size())

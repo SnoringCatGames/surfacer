@@ -5,9 +5,9 @@ var TEST_LEVEL_LONG_FALL := {
     scene_resource_path = "res://addons/surfacer/src/test/data/TestLevelLongFall.tscn",
     start = {
         surface = Surface.new( \
-                [Vector2(128, 64), Vector2(192, 64)], \
-                SurfaceSide.FLOOR, \
-                null, \
+                [Vector2(128, 64), Vector2(192, 64)],
+                SurfaceSide.FLOOR,
+                null,
                 [0]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
@@ -17,9 +17,9 @@ var TEST_LEVEL_LONG_FALL := {
     },
     end = {
         surface = Surface.new( \
-                [Vector2(256, 832), Vector2(320, 832)], \
-                SurfaceSide.FLOOR, \
-                null, \
+                [Vector2(256, 832), Vector2(320, 832)],
+                SurfaceSide.FLOOR,
+                null,
                 [38]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
@@ -33,9 +33,9 @@ var TEST_LEVEL_LONG_RISE := {
     scene_resource_path = "res://addons/surfacer/src/test/data/TestLevelLongRise.tscn",
     start = {
         surface = Surface.new( \
-                [Vector2(128, 64), Vector2(192, 64)], \
-                SurfaceSide.FLOOR, \
-                null, \
+                [Vector2(128, 64), Vector2(192, 64)],
+                SurfaceSide.FLOOR,
+                null,
                 [44]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
@@ -45,9 +45,9 @@ var TEST_LEVEL_LONG_RISE := {
     },
     end = {
         surface = Surface.new( \
-                [Vector2(-128, -448), Vector2(-64, -448)], \
-                SurfaceSide.FLOOR, \
-                null, \
+                [Vector2(-128, -448), Vector2(-64, -448)],
+                SurfaceSide.FLOOR,
+                null,
                 [0]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
@@ -61,9 +61,9 @@ var TEST_LEVEL_FAR_DISTANCE := {
     scene_resource_path = "res://addons/surfacer/src/test/data/TestLevelFarDistance.tscn",
     start = {
         surface = Surface.new( \
-                [Vector2(128, 64), Vector2(192, 64)], \
-                SurfaceSide.FLOOR, \
-                null, \
+                [Vector2(128, 64), Vector2(192, 64)],
+                SurfaceSide.FLOOR,
+                null,
                 [0]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
@@ -73,9 +73,9 @@ var TEST_LEVEL_FAR_DISTANCE := {
     },
     end = {
         surface = Surface.new( \
-                [Vector2(704, 64), Vector2(768, 64)], \
-                SurfaceSide.FLOOR, \
-                null, \
+                [Vector2(704, 64), Vector2(768, 64)],
+                SurfaceSide.FLOOR,
+                null,
                 [9]),
         # These are the Player's center positions when jumping/landing on this part of the Surface.
         positions = {
@@ -127,9 +127,9 @@ func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
 #            Vector2.ZERO
 #    level.add_player( \
 #            Surfacer.player_params[Surfacer.default_player_name] \
-#                    .player_resource_path, \
-#            position, \
-#            false, \
+#                    .player_resource_path,
+#            position,
+#            false,
 #            false)
 
 func destroy() -> void:

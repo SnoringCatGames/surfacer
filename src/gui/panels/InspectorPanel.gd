@@ -88,9 +88,9 @@ func _initialize_annotator_checkboxes() -> void:
         checkbox.pressed = item.get_is_pressed()
         checkbox.text = item.label
         checkbox.connect( \
-                "pressed", \
-                self, \
-                "_on_checkbox_pressed", \
+                "pressed",
+                self,
+                "_on_checkbox_pressed",
                 [item])
         $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators \
                 .add_child(checkbox)
@@ -129,12 +129,12 @@ func _toggle_open() -> void:
     # Start the sliding animation.
     _toggle_open_tween.reset_all()
     _toggle_open_tween.interpolate_property( \
-            self, \
-            "rect_position:y", \
-            position_y_start, \
-            position_y_end, \
-            duration, \
-            Tween.TRANS_LINEAR, \
+            self,
+            "rect_position:y",
+            position_y_start,
+            position_y_end,
+            duration,
+            Tween.TRANS_LINEAR,
             Tween.EASE_IN)
     _toggle_open_tween.start()
     

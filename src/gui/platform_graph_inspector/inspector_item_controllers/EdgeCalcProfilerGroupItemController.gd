@@ -9,16 +9,16 @@ const PREFIX := "Profiler"
 var edge_result_metadata: EdgeCalcResultMetadata
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
         edge_result_metadata: EdgeCalcResultMetadata) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     self.edge_result_metadata = edge_result_metadata
     _post_init()
@@ -30,7 +30,7 @@ func get_description() -> String:
     return "Some stats on the time to calculate this edge."
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error( \
             "find_and_expand_controller should not be called for " + \
@@ -44,17 +44,17 @@ func _create_children_inner() -> void:
             continue
         if Gs.profiler.is_timing(metric):
             ProfilerTimingItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
-                    metric, \
+                    tree_item,
+                    tree,
+                    graph,
+                    metric,
                     edge_result_metadata)
         else:
             ProfilerCountItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
-                    metric, \
+                    tree_item,
+                    tree,
+                    graph,
+                    metric,
                     edge_result_metadata)
 
 func _destroy_children_inner() -> void:

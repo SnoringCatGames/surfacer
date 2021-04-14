@@ -10,12 +10,12 @@ var is_origin: bool
 var is_destination: bool
 
 func _init( \
-        surface: Surface, \
-        depth := AnnotationElementDefaults.SURFACE_DEPTH, \
+        surface: Surface,
+        depth := AnnotationElementDefaults.SURFACE_DEPTH,
         color_params: ColorParams = \
-                Surfacer.ann_defaults.SURFACE_COLOR_PARAMS, \
-        is_origin := false, \
-        is_destination := false, \
+                Surfacer.ann_defaults.SURFACE_COLOR_PARAMS,
+        is_origin := false,
+        is_destination := false,
         type := DEFAULT_TYPE) \
         .(type) -> void:
     self.surface = surface
@@ -26,21 +26,21 @@ func _init( \
 
 func draw(canvas: CanvasItem) -> void:
     draw_from_surface( \
-            canvas, \
-            surface, \
-            color_params, \
+            canvas,
+            surface,
+            color_params,
             depth)
 
 static func draw_from_surface( \
-        canvas: CanvasItem, \
-        surface: Surface, \
-        color_params: ColorParams, \
+        canvas: CanvasItem,
+        surface: Surface,
+        color_params: ColorParams,
         depth := AnnotationElementDefaults.SURFACE_DEPTH) -> void:
     var color := color_params.get_color()
     Gs.draw_utils.draw_surface( \
-            canvas, \
-            surface, \
-            color, \
+            canvas,
+            surface,
+            color,
             depth)
 
 func _create_legend_items() -> Array:

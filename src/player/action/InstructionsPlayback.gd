@@ -16,7 +16,7 @@ var active_key_presses: Dictionary
 var _next_active_key_presses: Dictionary
 
 func _init( \
-        edge: Edge, \
+        edge: Edge,
         is_additive: bool) -> void:
     self.edge = edge
     self.is_additive = is_additive
@@ -34,7 +34,7 @@ func start(time_sec: float) -> void:
     _next_active_key_presses = {}
 
 func update( \
-        time_sec: float, \
+        time_sec: float,
         navigation_state: PlayerNavigationState) -> Array:
     # TODO: If we don't ever need more complicated dynamic instruction updates
     #       based on navigation state, then remove that param.

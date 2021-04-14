@@ -11,15 +11,15 @@ var includes_discrete_positions: bool
 var color_params: ColorParams
 
 func _init( \
-        edge: Edge, \
+        edge: Edge,
         includes_waypoints := \
-                AnnotationElementDefaults.INCLUDES_WAYPOINTS, \
+                AnnotationElementDefaults.INCLUDES_WAYPOINTS,
         includes_instruction_indicators := \
-                AnnotationElementDefaults.INCLUDES_INSTRUCTION_INDICATORS, \
+                AnnotationElementDefaults.INCLUDES_INSTRUCTION_INDICATORS,
         includes_continuous_positions := \
-                AnnotationElementDefaults.INCLUDES_CONTINUOUS_POSITIONS, \
+                AnnotationElementDefaults.INCLUDES_CONTINUOUS_POSITIONS,
         includes_discrete_positions := \
-                AnnotationElementDefaults.INCLUDES_DISCRETE_POSITIONS, \
+                AnnotationElementDefaults.INCLUDES_DISCRETE_POSITIONS,
         color_params := Surfacer.ann_defaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS) \
         .(TYPE) -> void:
@@ -33,13 +33,13 @@ func _init( \
 func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
     Gs.draw_utils.draw_edge( \
-            canvas, \
-            edge, \
-            SurfacerDrawUtils.EDGE_TRAJECTORY_WIDTH, \
-            color, \
-            includes_waypoints, \
-            includes_instruction_indicators, \
-            includes_continuous_positions, \
+            canvas,
+            edge,
+            SurfacerDrawUtils.EDGE_TRAJECTORY_WIDTH,
+            color,
+            includes_waypoints,
+            includes_instruction_indicators,
+            includes_continuous_positions,
             includes_discrete_positions)
 
 func _create_legend_items() -> Array:

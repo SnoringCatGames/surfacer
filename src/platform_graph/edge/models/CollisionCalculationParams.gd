@@ -9,9 +9,9 @@ var player: KinematicBody2D
 var thread_id: String = Gs.profiler.DEFAULT_THREAD_ID
 
 func _init( \
-        debug_params: Dictionary, \
-        movement_params: MovementParams, \
-        surface_parser: SurfaceParser, \
+        debug_params: Dictionary,
+        movement_params: MovementParams,
+        surface_parser: SurfaceParser,
         player: KinematicBody2D) -> void:
     self.debug_params = debug_params
     self.movement_params = movement_params

@@ -11,7 +11,7 @@ const DESCRIPTION := \
 var settings_key := "is_surfacer_logging"
 
 func _init(__ = null).( \
-        LABEL, \
+        LABEL,
         DESCRIPTION \
         ) -> void:
     pass
@@ -19,7 +19,7 @@ func _init(__ = null).( \
 func on_pressed(pressed: bool) -> void:
     Surfacer.is_surfacer_logging = pressed
     Gs.save_state.set_setting( \
-            settings_key, \
+            settings_key,
             pressed)
 
 func get_is_pressed() -> bool:
