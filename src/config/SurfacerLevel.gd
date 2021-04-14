@@ -79,7 +79,6 @@ func add_player(
             true,
             true)
     player.position = position
-    add_child(player)
     
     var group: String = \
             Surfacer.group_name_human_players if \

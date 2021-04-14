@@ -301,12 +301,12 @@ func _update_metrics() -> void:
 func _on_finished() -> void:
     Gs.audio.play_sound("achievement")
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Buttons/OpenFolderButton \
+            CenterContainer/VBoxContainer/OpenFolderButton \
             .visible = true
 
 func _get_focused_button() -> ShinyButton:
     return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Buttons/CloseButton as \
+            CenterContainer/VBoxContainer/CloseButton as \
             ShinyButton
 
 func _on_OpenFolderButton_pressed() -> void:

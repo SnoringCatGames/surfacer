@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://addons/scaffolder/src/gui/CenteredPanel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/scaffolder/src/gui/labeled_control_list/LabeledControlList.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://addons/scaffolder/assets/fonts/main_font_xs.tres" type="DynamicFont" id=5]
 [ext_resource path="res://addons/scaffolder/assets/fonts/main_font_s.tres" type="DynamicFont" id=6]
 [ext_resource path="res://addons/scaffolder/src/gui/ShinyButton.tscn" type="PackedScene" id=7]
+[ext_resource path="res://src/gui/LoadingImage.tscn" type="PackedScene" id=8]
 [ext_resource path="res://addons/scaffolder/src/gui/NavBar.tscn" type="PackedScene" id=12]
 
 [node name="PrecomputePlatformGraphsScreen" type="Node2D"]
@@ -31,7 +32,7 @@ __meta__ = {
 [node name="NavBar" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 12 )]
 margin_right = 960.0
 margin_bottom = 206.0
-text = "Computing platform graphs"
+text = "Calculating platform graphs"
 shows_back = false
 
 [node name="CenteredPanel" parent="FullScreenPanel/VBoxContainer" instance=ExtResource( 1 )]
@@ -58,23 +59,35 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
 margin_left = 313.0
-margin_top = 292.0
+margin_top = 298.0
 margin_right = 633.0
-margin_bottom = 654.0
+margin_bottom = 648.0
 rect_min_size = Vector2( 280, 0 )
 custom_constants/separation = 16
 
+[node name="LoadingImageWrapper" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 120.0
+margin_right = 200.0
+margin_bottom = 44.0
+rect_min_size = Vector2( 80, 44 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="LoadingImage" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/LoadingImageWrapper" instance=ExtResource( 8 )]
+rect_scale = Vector2( 0.25, 0.25 )
+
 [node name="ProgressBar" type="ProgressBar" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_top = 60.0
 margin_right = 320.0
-margin_bottom = 14.0
+margin_bottom = 74.0
 rect_min_size = Vector2( 320, 0 )
 size_flags_horizontal = 4
 size_flags_vertical = 5
 
 [node name="Labels" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
-margin_top = 30.0
+margin_top = 90.0
 margin_right = 320.0
-margin_bottom = 130.0
+margin_bottom = 190.0
 
 [node name="Label1" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Labels"]
 margin_right = 320.0
@@ -110,17 +123,17 @@ align = 1
 
 [node name="Spacer" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 160.0
-margin_top = 146.0
+margin_top = 206.0
 margin_right = 160.0
-margin_bottom = 146.0
+margin_bottom = 206.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="Metrics" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 80.0
-margin_top = 162.0
+margin_top = 222.0
 margin_right = 240.0
-margin_bottom = 198.0
+margin_bottom = 258.0
 rect_min_size = Vector2( 160, 0 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -129,7 +142,7 @@ size_flags_vertical = 4
 margin_right = 160.0
 margin_bottom = 14.0
 custom_fonts/font = ExtResource( 5 )
-text = "Computation time"
+text = "Calculation time"
 align = 1
 
 [node name="DurationLabel" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Metrics"]
@@ -144,41 +157,25 @@ margin_top = 36.0
 margin_right = 160.0
 margin_bottom = 36.0
 font = ExtResource( 5 )
+row_height = 20.0
 
-[node name="Spacer2" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
-margin_left = 160.0
-margin_top = 214.0
-margin_right = 160.0
-margin_bottom = 214.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="Buttons" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
-margin_left = 40.0
-margin_top = 230.0
-margin_right = 280.0
-margin_bottom = 346.0
-rect_min_size = Vector2( 240, 116 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
-custom_constants/separation = 16
-alignment = 2
-
-[node name="OpenFolderButton" type="Button" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Buttons"]
+[node name="OpenFolderButton" type="Button" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 visible = false
-margin_top = -136.0
-margin_right = 320.0
-margin_bottom = -76.0
+margin_left = 40.0
+margin_top = 138.0
+margin_right = 360.0
+margin_bottom = 198.0
 rect_min_size = Vector2( 180, 40 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 custom_fonts/font = ExtResource( 6 )
 text = "Open folder"
 
-[node name="CloseButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Buttons" instance=ExtResource( 7 )]
-margin_top = 56.0
-margin_right = 240.0
-margin_bottom = 116.0
+[node name="CloseButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 7 )]
+margin_left = 40.0
+margin_top = 274.0
+margin_right = 280.0
+margin_bottom = 334.0
 rect_min_size = Vector2( 240, 60 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -188,9 +185,9 @@ text = "Close"
 [node name="LevelWrapper" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
 margin_left = 160.0
-margin_top = 362.0
+margin_top = 350.0
 margin_right = 160.0
-margin_bottom = 362.0
+margin_bottom = 350.0
 rect_clip_content = true
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -201,5 +198,5 @@ handle_input_locally = false
 usage = 0
 render_target_update_mode = 3
 
-[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Buttons/OpenFolderButton" to="." method="_on_OpenFolderButton_pressed"]
-[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Buttons/CloseButton" to="." method="_on_CloseButton_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/OpenFolderButton" to="." method="_on_OpenFolderButton_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/CloseButton" to="." method="_on_CloseButton_pressed"]

@@ -739,16 +739,10 @@ func _get_position_along_surface_id_to_json_object() -> Dictionary:
             
             for failed_attempt in \
                     inter_surface_edges_result.failed_edge_attempts:
-                # FIXME: Remove these asserts after checking they are actually
-                #        true?
                 assert(results.has(failed_attempt \
                         .start_position_along_surface.get_instance_id()))
                 assert(results.has(failed_attempt \
                         .end_position_along_surface.get_instance_id()))
-                node = failed_attempt.start_position_along_surface
-                results[node.get_instance_id()] = node.to_json_object()
-                node = failed_attempt.end_position_along_surface
-                results[node.get_instance_id()] = node.to_json_object()
     return results
 
 func _get_jump_land_positions_id_to_json_object() -> Dictionary:
@@ -763,7 +757,6 @@ func _get_jump_land_positions_id_to_json_object() -> Dictionary:
             
             for failed_attempt in \
                     inter_surface_edges_result.failed_edge_attempts:
-                # FIXME: Remove this assert after checking it's actually true?
                 assert(results.has(
                         failed_attempt.jump_land_positions.get_instance_id()))
     return results
