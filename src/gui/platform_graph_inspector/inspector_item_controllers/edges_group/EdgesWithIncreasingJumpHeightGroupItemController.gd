@@ -20,9 +20,9 @@ func _init(
     pass
 
 func get_description() -> String:
-    return ("Some edge calculations need to backtrack and consider a " + \
-            "higher jump height midway through the calculation. " + \
-            "There are %s valid edges that were calculated with " + \
+    return ("Some edge calculations need to backtrack and consider a " +
+            "higher jump height midway through the calculation. " +
+            "There are %s valid edges that were calculated with " +
             "backtracking to increase their jump height.") % [
                 filtered_edge_count,
             ]

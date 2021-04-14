@@ -3,12 +3,12 @@ extends EdgeAttemptItemController
 
 const TYPE := InspectorItemType.FAILED_EDGE
 
-const BROAD_PHASE_DESCRIPTION := \
-    "These calculations failed during the \"broad phase\", which means " + \
-    "that expensive edge trajectories hadn't yet been calculated."
-const NARROW_PHASE_DESCRIPTION := \
-    "These calculations failed during the \"narrow phase\", which means " + \
-    "during expensive edge trajectory calculations."
+const BROAD_PHASE_DESCRIPTION := (
+    "These calculations failed during the \"broad phase\", which means " +
+    "that expensive edge trajectories hadn't yet been calculated.")
+const NARROW_PHASE_DESCRIPTION := (
+    "These calculations failed during the \"narrow phase\", which means " +
+    "during expensive edge trajectory calculations.")
 
 var failed_edge_attempt: FailedEdgeAttempt
 
@@ -60,8 +60,8 @@ func get_text() -> String:
     ]
 
 func get_description() -> String:
-    return "This jump/land pair was calculated as possibly corresponding " + \
-                "to a valid edge, but later calculations failed. %s" % \
+    return ("This jump/land pair was calculated as possibly corresponding " +
+                "to a valid edge, but later calculations failed. %s") % \
                 (BROAD_PHASE_DESCRIPTION if \
                 failed_edge_attempt.is_broad_phase_failure else \
                 NARROW_PHASE_DESCRIPTION)

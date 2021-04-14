@@ -30,10 +30,10 @@ func _init(
     _post_init()
 
 func to_string() -> String:
-    return ("%s { " + \
-            "edge_calc_result_type=%s, " + \
-            "edge_type=%s, " + \
-            "valid_edge_count=%s " + \
+    return ("%s { " +
+            "edge_calc_result_type=%s, " +
+            "edge_type=%s, " +
+            "valid_edge_count=%s " +
             "}") % [
         InspectorItemType.get_string(type),
         EdgeCalcResultType.get_string(edge_calc_result_type),
@@ -56,7 +56,8 @@ func get_has_children() -> bool:
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error("find_and_expand_controller should not be called for " + \
+    Gs.logger.error(
+            "find_and_expand_controller should not be called for " +
             "EDGE_TYPE_IN_EDGES_GROUP.")
     return false
 

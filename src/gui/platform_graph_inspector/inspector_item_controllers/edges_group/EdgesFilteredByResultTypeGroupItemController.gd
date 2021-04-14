@@ -69,9 +69,9 @@ func to_string() -> String:
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error(
-            "find_and_expand_controller should not be called for " + \
-            "%s." % InspectorItemType.get_string(type))
+    Gs.logger.error((
+            "find_and_expand_controller should not be called for " +
+            "%s.") % InspectorItemType.get_string(type))
     return false
 
 func _create_children_inner() -> void:

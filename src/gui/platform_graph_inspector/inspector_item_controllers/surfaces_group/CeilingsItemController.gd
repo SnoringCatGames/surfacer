@@ -21,7 +21,7 @@ func _init(
     pass
 
 func get_description() -> String:
-    return ("There are %s ceiling surfaces in the plaform graph for the %s " + \
+    return ("There are %s ceiling surfaces in the plaform graph for the %s " +
             "player.") % [
         surface_count,
         graph.movement_params.name,

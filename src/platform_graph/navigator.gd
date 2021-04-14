@@ -91,15 +91,16 @@ func navigate_to_position(
         var duration_navigate_to_position: float = \
                 Gs.profiler.stop("navigator_navigate_to_position")
         
-        var format_string_template := "STARTING PATH NAV:   %8.3fs; {" + \
-            "\n\tdestination: %s," + \
-            "\n\tpath: %s," + \
-            "\n\ttimings: {" + \
-            "\n\t\tduration_navigate_to_position: %sms" + \
-            "\n\t\tduration_find_path: %sms" + \
-            "\n\t\tduration_optimize_edges_for_approach: %sms" + \
-            "\n\t}" + \
-            "\n}"
+        var format_string_template := (
+                "STARTING PATH NAV:   %8.3fs; {" +
+                "\n\tdestination: %s," +
+                "\n\tpath: %s," +
+                "\n\ttimings: {" +
+                "\n\t\tduration_navigate_to_position: %sms" +
+                "\n\t\tduration_find_path: %sms" +
+                "\n\t\tduration_optimize_edges_for_approach: %sms" +
+                "\n\t}" +
+                "\n}")
         var format_string_arguments := [
             Gs.time.elapsed_play_time_actual_sec,
             destination.to_string(),

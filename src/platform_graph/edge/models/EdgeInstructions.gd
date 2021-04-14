@@ -102,9 +102,10 @@ func to_string_with_newlines(indent_level := 0) -> String:
                 instruction.to_string(),
             ]
     
-    var format_string_template := "EdgeInstructions{ instructions: [ " + \
-            "%s" + \
-            "\n%s] }"
+    var format_string_template := (\
+            "EdgeInstructions{ instructions: [ " +
+            "%s" +
+            "\n%s] }")
     var format_string_arguments := [
             instructions_str,
             indent_level_str,

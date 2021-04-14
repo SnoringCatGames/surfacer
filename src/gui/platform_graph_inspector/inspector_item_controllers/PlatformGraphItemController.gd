@@ -35,9 +35,9 @@ func get_text() -> String:
     ]
 
 func get_description() -> String:
-    return ("A platform graph consists of nodes, which are positions " + \
-            "along surfaces, and edges, which are movements between these " + \
-            "surface positions. Since different players have different " + \
+    return ("A platform graph consists of nodes, which are positions " +
+            "along surfaces, and edges, which are movements between these " +
+            "surface positions. Since different players have different " +
             "movement parameters, a graph is specific to a given player.")
 
 func to_string() -> String:

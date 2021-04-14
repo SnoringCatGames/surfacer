@@ -259,9 +259,9 @@ func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
         previous_out_of_reach_waypoint_label.add_color_override(
                 "font_color",
                 color)
-        previous_out_of_reach_waypoint_label.text = \
-                "The previously out-of-reach waypoint that was the basis\n" + \
-                "for increasing the jump height for backtracking."
+        previous_out_of_reach_waypoint_label.text = (
+                "The previously out-of-reach waypoint that was the basis\n" +
+                "for increasing the jump height for backtracking.")
     else:
         previous_out_of_reach_waypoint_label.text = ""
 

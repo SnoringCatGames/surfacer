@@ -29,7 +29,7 @@ func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error(
-            "find_and_expand_controller should not be called for " + \
+            "find_and_expand_controller should not be called for " +
             "SURFACE_PARSER_GROUP.")
     return false
 

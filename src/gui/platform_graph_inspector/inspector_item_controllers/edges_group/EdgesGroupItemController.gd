@@ -33,8 +33,8 @@ func get_text() -> String:
     ]
 
 func get_description() -> String:
-    return ("An edge represents movement between two surface positions. " + \
-            "There are %s total edges in this platform graph for the %s " + \
+    return ("An edge represents movement between two surface positions. " +
+            "There are %s total edges in this platform graph for the %s " +
             "player.") % [
                 graph.counts.total_edges,
                 graph.movement_params.name,
@@ -50,7 +50,7 @@ func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error(
-            "find_and_expand_controller should not be called for " + \
+            "find_and_expand_controller should not be called for " +
             "EDGES_GROUP.")
     return false
 

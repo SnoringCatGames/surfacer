@@ -112,7 +112,7 @@ func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error(
-            "Abstract InspectorItemController" + \
+            "Abstract InspectorItemController" +
             ".find_and_expand_controller is not implemented")
     return false
 
@@ -137,7 +137,7 @@ func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
     Gs.logger.error(
-            "Abstract InspectorItemController" + \
+            "Abstract InspectorItemController" +
             "._find_and_expand_controller_recursive is not implemented")
 
 func get_text() -> String:
@@ -146,7 +146,7 @@ func get_text() -> String:
 
 func get_description() -> String:
     Gs.logger.error(
-            "Abstract InspectorItemController.get_description is not " + \
+            "Abstract InspectorItemController.get_description is not " +
             "implemented")
     return ""
 

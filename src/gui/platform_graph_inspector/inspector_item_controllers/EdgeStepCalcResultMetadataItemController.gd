@@ -53,17 +53,17 @@ func get_description() -> String:
                 description_list[i].replace("\n                ", " ") + " "
     
     if step_result_metadata.get_is_backtracking():
-        description += \
-                "This step is the start of a backtracking sequence, to " + \
-                "consider a higher jump height."
+        description += (
+                "This step is the start of a backtracking sequence, to " +
+                "consider a higher jump height.")
     
     if step_result_metadata.get_replaced_a_fake():
-        description += \
-                "Replaced a \"fake\" intermediate waypoint (a fake " + \
-                "waypoint is a point along an end of a surface which " + \
-                "wouldn't actually be efficient to move through, since " + \
-                "movement should instead travel more directly through the " + \
-                "following waypoint). "
+        description += (
+                "Replaced a \"fake\" intermediate waypoint (a fake " +
+                "waypoint is a point along an end of a surface which " +
+                "wouldn't actually be efficient to move through, since " +
+                "movement should instead travel more directly through the " +
+                "following waypoint). ")
     
     return description
 
@@ -95,7 +95,7 @@ func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error(
-            "find_and_expand_controller should not be called for " + \
+            "find_and_expand_controller should not be called for " +
             "EDGE_STEP_CALC_RESULT_METADATA.")
     return false
 
