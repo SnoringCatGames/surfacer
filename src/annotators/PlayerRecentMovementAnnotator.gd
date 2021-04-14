@@ -185,8 +185,8 @@ func _draw_action_indicator(
             pass
         _:
             Gs.logger.error(
-                    "Unknown PlayerActionType passed to " + \
-                    "_draw_action_indicator: %s" % \
+                    ("Unknown PlayerActionType passed to " +
+                    "_draw_action_indicator: %s") % \
                     PlayerActionType.get_string(action))
     
     if input_key != "":

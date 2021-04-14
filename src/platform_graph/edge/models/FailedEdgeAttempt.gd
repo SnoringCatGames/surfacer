@@ -48,13 +48,13 @@ func _init(
                     edge_calc_result_type)
 
 func to_string() -> String:
-    return "FailedEdgeAttempt{ " + \
-                "%s, " + \
-                "edge_type: %s, " + \
-                "waypoint_validity: %s, " + \
-                "start: %s, " + \
-                "end: %s " + \
-            "}" % \
+    return ("FailedEdgeAttempt{ " +
+                "%s, " +
+                "edge_type: %s, " +
+                "waypoint_validity: %s, " +
+                "start: %s, " +
+                "end: %s " +
+            "}") % \
             [
                 EdgeCalcResultType.get_string(edge_calc_result_type),
                 EdgeType.get_string(edge_type),

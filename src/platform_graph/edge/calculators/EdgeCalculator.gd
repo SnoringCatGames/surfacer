@@ -28,7 +28,7 @@ func _init(
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     Gs.logger.error(
-            "Abstract EdgeCalculator.get_can_traverse_from_surface is not " + \
+            "Abstract EdgeCalculator.get_can_traverse_from_surface is not " +
             "implemented")
     return false
 
@@ -39,7 +39,7 @@ func get_all_inter_surface_edges_from_surface(
         surfaces_in_fall_range_set: Dictionary,
         surfaces_in_jump_range_set: Dictionary) -> void:
     Gs.logger.error(
-            "Abstract EdgeCalculator" + \
+            "Abstract EdgeCalculator" +
             ".get_all_inter_surface_edges_from_surface is not implemented")
 
 func calculate_edge(

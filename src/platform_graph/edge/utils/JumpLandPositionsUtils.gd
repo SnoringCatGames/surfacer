@@ -85,8 +85,8 @@ static func calculate_jump_land_positions_for_surface_pair(
         
         # If either surface has only a single point, then we only want to
         # consider the one jump/land pair.
-        Gs.logger.error("Single-point surfaces are not yet supported in" + \
-                "calculate_jump_land_positions_for_surface_pair (but they " + \
+        Gs.logger.error("Single-point surfaces are not yet supported in" +
+                "calculate_jump_land_positions_for_surface_pair (but they " +
                 "should be easy to add support for).")
     
     var jump_surface_first_point := jump_surface.first_point
@@ -2188,8 +2188,9 @@ static func calculate_jump_land_positions_for_surface_pair(
                     # Jump from a wall, land on a ceiling.
                     
                     # TODO: Implement ceiling use-cases.
-                    Gs.logger.error("calculate_jump_land_positions_for_surface_pair ceiling cases " + \
-                            "not implemented yet")
+                    Gs.logger.error( \
+                            "calculate_jump_land_positions_for_surface_pair " +
+                            "ceiling cases not implemented yet")
                     
                 _:
                     Gs.logger.error("Unknown land surface side (jump from wall)")
@@ -2201,7 +2202,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                     
                     # TODO: Implement ceiling use-cases.
                     Gs.logger.error(
-                            "calculate_jump_land_positions_for_surface_pair " + \
+                            "calculate_jump_land_positions_for_surface_pair " +
                             "ceiling cases not implemented yet")
                     
                 SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
@@ -2209,7 +2210,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                     
                     # TODO: Implement ceiling use-cases.
                     Gs.logger.error(
-                            "calculate_jump_land_positions_for_surface_pair " + \
+                            "calculate_jump_land_positions_for_surface_pair " +
                             "ceiling cases not implemented yet")
                     
                 SurfaceSide.CEILING:

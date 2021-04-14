@@ -32,7 +32,7 @@ func get_text() -> String:
     ]
 
 func get_description() -> String:
-    return ("The total number of times the %s event happened while " + \
+    return ("The total number of times the %s event happened while " +
             "parsing the platform graph for the %s player.") % [
         metric,
         graph.movement_params.name,
@@ -45,7 +45,7 @@ func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error(
-            "find_and_expand_controller should not be called for " + \
+            "find_and_expand_controller should not be called for " +
             "PROFILER_COUNT.")
     return false
 

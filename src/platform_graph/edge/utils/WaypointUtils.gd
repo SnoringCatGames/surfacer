@@ -173,13 +173,13 @@ static func calculate_waypoints_around_surface(
     if position_a == next_waypoint.position:
         should_skip_a = true
         Gs.logger.error(
-                "Calculated a rendundant waypoint (same position as the " + \
+                "Calculated a rendundant waypoint (same position as the " +
                 "next waypoint)",
                 false)
     if position_b == next_waypoint.position:
         should_skip_b = true
         Gs.logger.error(
-                "Calculated a rendundant waypoint (same position as the " + \
+                "Calculated a rendundant waypoint (same position as the " +
                 "next waypoint)",
                 false)
     

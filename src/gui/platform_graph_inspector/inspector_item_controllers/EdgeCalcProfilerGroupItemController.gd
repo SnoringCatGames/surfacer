@@ -33,7 +33,7 @@ func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error(
-            "find_and_expand_controller should not be called for " + \
+            "find_and_expand_controller should not be called for " +
             "EDGE_CALC_PROFILER_GROUP.")
     return false
 

@@ -26,7 +26,7 @@ func get_text() -> String:
     return PREFIX
 
 func get_description() -> String:
-    return ("Some stats on the time to parse the platform graph for the " + \
+    return ("Some stats on the time to parse the platform graph for the " +
             "%s player.") % [
         graph.movement_params.name,
     ]
@@ -35,7 +35,7 @@ func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error(
-            "find_and_expand_controller should not be called for " + \
+            "find_and_expand_controller should not be called for " +
             "PROFILER_GROUP.")
     return false
 

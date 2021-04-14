@@ -20,11 +20,11 @@ func _init(
     pass
 
 func get_description() -> String:
-    return ("Some edge calculations need to consider extra movement " + \
-            "around surface ends (waypoints) in order to avoid " + \
-            "collisions. " + \
-            "There are %s valid edges that were calculated with " + \
-            "intermediate waypoints and without backtracking to increase " + \
+    return ("Some edge calculations need to consider extra movement " +
+            "around surface ends (waypoints) in order to avoid " +
+            "collisions. " +
+            "There are %s valid edges that were calculated with " +
+            "intermediate waypoints and without backtracking to increase " +
             "their jump height.") % [
                 filtered_edge_count,
             ]

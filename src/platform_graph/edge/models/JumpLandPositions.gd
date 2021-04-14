@@ -82,12 +82,12 @@ func is_far_enough_from_others(
     return true
 
 func to_string() -> String:
-    return "JumpLandPositions{ " + \
-            "jump: %s, " + \
-            "land: %s, " + \
-            "v_0: %s, " + \
-            "extra_duration: %s " + \
-            "}" % [
+    return ("JumpLandPositions{ " +
+            "jump: %s, " +
+            "land: %s, " +
+            "v_0: %s, " +
+            "extra_duration: %s " +
+            "}") % [
         jump_position.to_string(),
         land_position.to_string(),
         velocity_start,

@@ -29,10 +29,10 @@ func _init(
     _post_init()
 
 func to_string() -> String:
-    return ("%s { " + \
-            "edge_calc_result_type=%s, " + \
-            "waypoint_validity=%s, " + \
-            "step_count=%s " + \
+    return ("%s { " +
+            "edge_calc_result_type=%s, " +
+            "waypoint_validity=%s, " +
+            "step_count=%s " +
             "}") % [
         InspectorItemType.get_string(type),
         EdgeCalcResultType.get_string(
@@ -67,7 +67,7 @@ func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error(
-            "find_and_expand_controller should not be called for " + \
+            "find_and_expand_controller should not be called for " +
             "EDGE_CALC_RESULT_METADATA.")
     return false
 

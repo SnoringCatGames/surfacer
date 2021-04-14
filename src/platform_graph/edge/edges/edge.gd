@@ -153,7 +153,7 @@ func _check_did_just_reach_destination(
         surface_state: PlayerSurfaceState,
         playback) -> bool:
     Gs.logger.error(
-            "Abstract Edge._check_did_just_reach_destination is not " + \
+            "Abstract Edge._check_did_just_reach_destination is not " +
             "implemented")
     return false
 
@@ -198,17 +198,17 @@ func get_should_end_by_colliding_with_surface() -> bool:
             end_position_along_surface.surface != null
 
 func to_string() -> String:
-    var format_string_template := \
-            "%s{ " + \
-            "start: %s, " + \
-            "end: %s, " + \
-            "velocity_start: %s, " + \
-            "velocity_end: %s, " + \
-            "distance: %s, " + \
-            "duration: %s, " + \
-            "is_optimized_for_path: %s, " + \
-            "instructions: %s " + \
-            "}"
+    var format_string_template := (
+            "%s{ " +
+            "start: %s, " +
+            "end: %s, " +
+            "velocity_start: %s, " +
+            "velocity_end: %s, " +
+            "distance: %s, " +
+            "duration: %s, " +
+            "is_optimized_for_path: %s, " +
+            "instructions: %s " +
+            "}")
     var format_string_arguments := [
             get_name(),
             _get_start_string(),
@@ -227,16 +227,16 @@ func to_string_with_newlines(indent_level: int) -> String:
     for i in indent_level:
         indent_level_str += "\t"
     
-    var format_string_template := "%s{" + \
-            "\n\t%sstart: %s," + \
-            "\n\t%send: %s," + \
-            "\n\t%svelocity_start: %s," + \
-            "\n\t%svelocity_end: %s," + \
-            "\n\t%sdistance: %s," + \
-            "\n\t%sduration: %s," + \
-            "\n\t%sis_optimized_for_path: %s," + \
-            "\n\t%sinstructions: %s," + \
-        "\n%s}"
+    var format_string_template := ("%s{" +
+            "\n\t%sstart: %s," +
+            "\n\t%send: %s," +
+            "\n\t%svelocity_start: %s," +
+            "\n\t%svelocity_end: %s," +
+            "\n\t%sdistance: %s," +
+            "\n\t%sduration: %s," +
+            "\n\t%sis_optimized_for_path: %s," +
+            "\n\t%sinstructions: %s," +
+        "\n%s}")
     var format_string_arguments := [
             get_name(),
             indent_level_str,

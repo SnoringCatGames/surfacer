@@ -34,13 +34,14 @@ func to_string_with_newlines(indent_level := 0) -> String:
                 indent_level_str,
                 edge.to_string_with_newlines(indent_level + 2),
             ]
-    var format_string_template := "PlatformGraphPath{ " + \
-            "\n\t%sorigin: %s," + \
-            "\n\t%sdestination: %s," + \
-            "\n\t%sedges: [" + \
-            "%s" + \
-            "\n\t%s]," + \
-            "\n%s}"
+    var format_string_template := (
+            "PlatformGraphPath{ " +
+            "\n\t%sorigin: %s," +
+            "\n\t%sdestination: %s," +
+            "\n\t%sedges: [" +
+            "%s" +
+            "\n\t%s]," +
+            "\n%s}")
     var format_string_arguments := [
             indent_level_str,
             String(origin),

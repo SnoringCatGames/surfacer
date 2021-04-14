@@ -55,38 +55,38 @@ static func to_description_list(result: int) -> Array:
         ALREADY_BACKTRACKED_FOR_SURFACE:
             return [
                 "Hit an intermediate surface.",
-                "We considered this surface when backtracking to consider" + \
-                "\n                a new max jump height after colliding.",
+                ("We considered this surface when backtracking to consider" +
+                "\n                a new max jump height after colliding."),
             ]
         RECURSION_VALID:
             return [
                 "Hit an intermediate surface.",
-                "Valid movement was found when recursing to consider " + \
-                        "separate" + \
-                "\n                movement to/from an intermediate " + \
-                        "waypoint.",
+                ("Valid movement was found when recursing to consider " +
+                        "separate" +
+                "\n                movement to/from an intermediate " +
+                        "waypoint."),
             ]
         UNABLE_TO_BACKTRACK:
             return [
                 "Hit an intermediate surface.",
-                "Valid movement was not found when recursing to consider " + \
-                        "separate" + \
-                "\n                movement to/from an intermediate " + \
-                        "waypoint, and backtracking " + \
-                "\n                to consider a new max jump height " + \
-                        "isn't possible.",
+                ("Valid movement was not found when recursing to consider " +
+                        "separate" +
+                "\n                movement to/from an intermediate " +
+                        "waypoint, and backtracking " +
+                "\n                to consider a new max jump height " +
+                        "isn't possible."),
             ]
         BACKTRACKING_VALID:
             return [
                 "Hit an intermediate surface.",
-                "Valid movement was found when backtracking to consider " + \
-                "\n                a new max jump height.",
+                ("Valid movement was found when backtracking to consider " +
+                "\n                a new max jump height."),
             ]
         BACKTRACKING_INVALID:
             return [
                 "Hit an intermediate surface.",
-                "No valid movement around was found despite backtracking" + \
-                "\n                to consider a new max jump height.",
+                ("No valid movement around was found despite backtracking" +
+                "\n                to consider a new max jump height."),
             ]
         INVALID_COLLISON_STATE:
             return [
@@ -98,8 +98,8 @@ static func to_description_list(result: int) -> Array:
             ]
         CONFIGURED_TO_SKIP_BACKTRACKING:
             return [
-                "Configured to skip backtracking to consider a new " + \
-                "\n                max jump height.",
+                ("Configured to skip backtracking to consider a new " +
+                "\n                max jump height."),
             ]
         UNKNOWN:
             return [

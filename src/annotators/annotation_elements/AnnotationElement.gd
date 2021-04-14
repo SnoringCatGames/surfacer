@@ -16,7 +16,7 @@ func get_legend_items() -> Array:
 
 func _create_legend_items() -> Array:
     Gs.logger.error(
-            "Abstract AnnotationElement._create_legend_items is not " + \
+            "Abstract AnnotationElement._create_legend_items is not " +
             "implemented")
     return []
 
