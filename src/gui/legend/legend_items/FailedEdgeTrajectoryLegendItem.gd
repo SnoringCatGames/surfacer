@@ -10,12 +10,12 @@ const DASH_LENGTH := 3.0
 const DASH_GAP := 4.0
 const STROKE_WIDTH := 1.3
 
-func _init().( \
+func _init().(
         TYPE,
         TEXT) -> void:
     pass
 
-func _draw_shape( \
+func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
     var offset_from_center := size * 0.35 - Vector2(0.0, 6.0) * Gs.gui_scale
@@ -23,7 +23,7 @@ func _draw_shape( \
     var end := center + offset_from_center
     var color: Color = Surfacer.ann_defaults \
             .FAILED_EDGE_ATTEMPT_COLOR_PARAMS.get_color()
-    Gs.draw_utils.draw_dashed_line( \
+    Gs.draw_utils.draw_dashed_line(
             self,
             start,
             end,
@@ -32,7 +32,7 @@ func _draw_shape( \
             DASH_GAP,
             0.0,
             STROKE_WIDTH)
-    Gs.draw_utils.draw_x( \
+    Gs.draw_utils.draw_x(
             self,
             center,
             X_WIDTH,

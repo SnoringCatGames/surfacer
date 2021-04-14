@@ -5,7 +5,7 @@ const NAME := "AirToSurfaceCalculator"
 const EDGE_TYPE := EdgeType.AIR_TO_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := false
 
-func _init().( \
+func _init().(
         NAME,
         EDGE_TYPE,
         IS_A_JUMP_CALCULATOR) -> void:
@@ -14,17 +14,17 @@ func _init().( \
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface == null
 
-func get_all_inter_surface_edges_from_surface( \
+func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
         collision_params: CollisionCalcParams,
         origin_surface: Surface,
         surfaces_in_fall_range_set: Dictionary,
         surfaces_in_jump_range_set: Dictionary) -> void:
-    Gs.logger.error( \
+    Gs.logger.error(
             "AirToSurfaceCalculator." + \
             "get_all_inter_surface_edges_from_surface should not be called")
 
-func calculate_edge( \
+func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
         position_start: PositionAlongSurface,
@@ -36,7 +36,7 @@ func calculate_edge( \
             edge_result_metadata if \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(false, false)
-    return find_a_landing_trajectory( \
+    return find_a_landing_trajectory(
             edge_result_metadata,
             collision_params,
             {},
@@ -46,7 +46,7 @@ func calculate_edge( \
             position_end,
             needs_extra_wall_land_horizontal_speed)
 
-func optimize_edge_land_position_for_path( \
+func optimize_edge_land_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
         edge_index: int,
@@ -54,7 +54,7 @@ func optimize_edge_land_position_for_path( \
         next_edge: IntraSurfaceEdge) -> void:
     assert(edge is AirToSurfaceEdge)
     
-    EdgeCalculator.optimize_edge_land_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_land_position_for_path_helper(
             collision_params,
             path,
             edge_index,
@@ -67,7 +67,7 @@ func optimize_edge_land_position_for_path( \
 # surfaces to reach the given target.
 #
 # Returns null if no possible landing exists.
-func find_a_landing_trajectory( \
+func find_a_landing_trajectory(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
         all_possible_surfaces_set: Dictionary,
@@ -85,7 +85,7 @@ func find_a_landing_trajectory( \
     
     if exclusive_land_position != null:
         calc_result = \
-                FallMovementUtils.find_landing_trajectory_between_positions( \
+                FallMovementUtils.find_landing_trajectory_between_positions(
                         edge_result_metadata,
                         collision_params,
                         origin,
@@ -97,20 +97,20 @@ func find_a_landing_trajectory( \
     else:
         # Find all possible surfaces in landing range.
         var result_set := {}
-        FallMovementUtils.find_surfaces_in_fall_range_from_point( \
+        FallMovementUtils.find_surfaces_in_fall_range_from_point(
                 collision_params.movement_params,
                 all_possible_surfaces_set,
                 result_set,
                 origin.target_point,
                 velocity_start)
         var possible_landing_surfaces_from_point := result_set.keys()
-        possible_landing_surfaces_from_point.sort_custom( \
+        possible_landing_surfaces_from_point.sort_custom(
                 SurfaceMaxYComparator,
                 "sort")
         
         # Find the closest landing trajectory.
         var inter_surface_edges_results := []
-        FallMovementUtils.find_landing_trajectories_to_any_surface( \
+        FallMovementUtils.find_landing_trajectories_to_any_surface(
                 inter_surface_edges_results,
                 collision_params,
                 all_possible_surfaces_set,
@@ -128,14 +128,14 @@ func find_a_landing_trajectory( \
     # Calculate instructions for the given landing trajectory.
     var land_position := calc_result.edge_calc_params.destination_position
     var instructions := EdgeInstructionsUtils \
-            .convert_calculation_steps_to_movement_instructions( \
+            .convert_calculation_steps_to_movement_instructions(
                     false,
                     collision_params,
                     calc_result,
                     false,
                     land_position.side)
     var trajectory := \
-            EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+            EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps(
                     false,
                     collision_params,
                     calc_result,
@@ -144,7 +144,7 @@ func find_a_landing_trajectory( \
     var velocity_end: Vector2 = \
             calc_result.horizontal_steps.back().velocity_step_end
     
-    return AirToSurfaceEdge.new( \
+    return AirToSurfaceEdge.new(
             self,
             origin,
             land_position,
@@ -157,7 +157,7 @@ func find_a_landing_trajectory( \
             trajectory,
             calc_result.edge_calc_result_type)
 
-func create_edge_from_part_of_other_edge( \
+func create_edge_from_part_of_other_edge(
         other_edge: Edge,
         start_time: float,
         player) -> AirToSurfaceEdge:
@@ -166,16 +166,16 @@ func create_edge_from_part_of_other_edge( \
         # trajectories.
         return null
     
-    var origin := MovementUtils.create_position_without_surface( \
+    var origin := MovementUtils.create_position_without_surface(
             player.surface_state.center_position)
-    var instructions := EdgeInstructionsUtils.sub_instructions( \
+    var instructions := EdgeInstructionsUtils.sub_instructions(
             other_edge.instructions,
             start_time)
-    var trajectory := EdgeTrajectoryUtils.sub_trajectory( \
+    var trajectory := EdgeTrajectoryUtils.sub_trajectory(
             other_edge.trajectory,
             start_time)
     
-    return AirToSurfaceEdge.new( \
+    return AirToSurfaceEdge.new(
             self,
             origin,
             other_edge.end_position_along_surface,

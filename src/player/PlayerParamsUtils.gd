@@ -9,7 +9,7 @@ static func create_player_params(param_class) -> PlayerParams:
     var edge_calculators := _get_edge_calculators(movement_params)
     var action_handlers := _get_action_handlers(movement_params)
 
-    return PlayerParams.new( \
+    return PlayerParams.new(
             movement_params.name,
             movement_params,
             edge_calculators,
@@ -45,13 +45,13 @@ static func _get_edge_calculators(movement_params: MovementParams) -> Array:
     
     return edge_calculators
 
-static func _calculate_dependent_movement_params( \
+static func _calculate_dependent_movement_params(
         movement_params: MovementParams) -> void:
     movement_params.gravity_slow_rise = \
             movement_params.gravity_fast_fall * \
             movement_params.slow_rise_gravity_multiplier
     movement_params.collider_half_width_height = \
-            Gs.geometry.calculate_half_width_height( \
+            Gs.geometry.calculate_half_width_height(
                     movement_params.collider_shape,
                     movement_params.collider_rotation)
     movement_params.min_upward_jump_distance = VerticalMovementUtils \
@@ -61,7 +61,7 @@ static func _calculate_dependent_movement_params( \
     movement_params.max_upward_jump_distance = VerticalMovementUtils \
             .calculate_max_upward_distance(movement_params)
     movement_params.time_to_max_upward_jump_distance = MovementUtils \
-            .calculate_movement_duration( \
+            .calculate_movement_duration(
                     -movement_params.max_upward_jump_distance,
                     movement_params.jump_boost,
                     movement_params.gravity_slow_rise)
@@ -80,7 +80,7 @@ static func _calculate_dependent_movement_params( \
             2.0 / movement_params.walk_acceleration
     movement_params.floor_jump_max_horizontal_jump_distance = \
             HorizontalMovementUtils \
-                    .calculate_max_horizontal_displacement_before_returning_to_starting_height( \
+                    .calculate_max_horizontal_displacement_before_returning_to_starting_height(
                             0.0,
                             movement_params.jump_boost,
                             movement_params.max_horizontal_speed_default,
@@ -88,24 +88,24 @@ static func _calculate_dependent_movement_params( \
                             movement_params.gravity_fast_fall)
     movement_params.wall_jump_max_horizontal_jump_distance = \
             HorizontalMovementUtils \
-                    .calculate_max_horizontal_displacement_before_returning_to_starting_height( \
+                    .calculate_max_horizontal_displacement_before_returning_to_starting_height(
                             movement_params.wall_jump_horizontal_boost,
                             movement_params.jump_boost,
                             movement_params.max_horizontal_speed_default,
                             movement_params.gravity_slow_rise,
                             movement_params.gravity_fast_fall)
     movement_params.stopping_distance_on_default_floor_from_max_speed = \
-            MovementUtils.calculate_distance_to_stop_from_friction( \
+            MovementUtils.calculate_distance_to_stop_from_friction(
                     movement_params,
                     movement_params.max_horizontal_speed_default,
                     movement_params.gravity_fast_fall,
                     movement_params.friction_coefficient)
     
-    assert(movement_params.action_handler_names.find( \
+    assert(movement_params.action_handler_names.find(
             MatchExpectedEdgeTrajectoryAction.NAME) < 0)
     if movement_params.syncs_player_position_to_edge_trajectory or \
             movement_params.syncs_player_velocity_to_edge_trajectory:
-        movement_params.action_handler_names.push_back( \
+        movement_params.action_handler_names.push_back(
                 MatchExpectedEdgeTrajectoryAction.NAME)
 
 static func _check_movement_params(movement_params: MovementParams) -> void:
@@ -148,7 +148,7 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
             movement_params.includes_continuous_frame_velocities)
 
 class ActionHandlersComparator:
-    static func sort( \
+    static func sort(
             a: PlayerActionHandler,
             b: PlayerActionHandler) -> bool:
         return a.priority < b.priority

@@ -9,7 +9,7 @@ var name: String
 var type: int
 var priority: int
 
-func _init( \
+func _init(
         name: String,
         type: int,
         priority: int) -> void:

@@ -12,14 +12,14 @@ var edge_types_to_edges_results: Dictionary
 var valid_edge_count: int
 var failed_edge_count: int
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         origin_surface: Surface,
         destination_surface: Surface,
         edge_types_to_edges_results: Dictionary) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -53,7 +53,7 @@ func get_description() -> String:
         SurfaceSide.get_string(destination_surface.side),
     ]
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     match search_type:
@@ -67,7 +67,7 @@ func find_and_expand_controller( \
         InspectorSearchType.EDGE:
             if metadata.destination_surface == destination_surface:
                 expand()
-                _trigger_find_and_expand_controller_recursive( \
+                _trigger_find_and_expand_controller_recursive(
                         search_type,
                         metadata)
                 return true
@@ -77,14 +77,14 @@ func find_and_expand_controller( \
             Gs.logger.error()
             return false
 
-func _find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
     assert(search_type == InspectorSearchType.EDGE)
     var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
-        is_subtree_found = child.get_metadata(0).find_and_expand_controller( \
+        is_subtree_found = child.get_metadata(0).find_and_expand_controller(
                 search_type,
                 metadata)
         if is_subtree_found:
@@ -102,7 +102,7 @@ func _create_children_inner() -> void:
         if edge_types_to_edges_results.has(edge_type):
             for edges_result in edge_types_to_edges_results[edge_type]:
                 calculator = graph.player_params.get_edge_calculator(edge_type)
-                EdgeTypeInSurfacesGroupItemController.new( \
+                EdgeTypeInSurfacesGroupItemController.new(
                         tree_item,
                         tree,
                         graph,
@@ -120,7 +120,7 @@ func get_annotation_elements() -> Array:
     
     var origin_element := OriginSurfaceAnnotationElement.new(origin_surface)
     elements.push_back(origin_element)
-    var destination_element := DestinationSurfaceAnnotationElement.new( \
+    var destination_element := DestinationSurfaceAnnotationElement.new(
             destination_surface)
     elements.push_back(destination_element)
     
@@ -128,7 +128,7 @@ func get_annotation_elements() -> Array:
     for edge_type in edge_types_to_edges_results:
         for edges_result in edge_types_to_edges_results[edge_type]:
             for valid_edge in edges_result.valid_edges:
-                edge_element = EdgeAnnotationElement.new( \
+                edge_element = EdgeAnnotationElement.new(
                         valid_edge,
                         true,
                         false,

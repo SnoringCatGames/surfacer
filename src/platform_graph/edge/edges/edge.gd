@@ -32,7 +32,7 @@ var distance: float
 # In seconds.
 var duration: float
 
-func _init( \
+func _init(
         edge_type: int,
         is_time_based: bool,
         surface_type: int,
@@ -49,7 +49,7 @@ func _init( \
         instructions: EdgeInstructions,
         trajectory: EdgeTrajectory,
         edge_calc_result_type: int \
-        ).( \
+        ).(
         edge_type,
         edge_calc_result_type,
         start_position_along_surface,
@@ -68,23 +68,23 @@ func _init( \
     self.instructions = instructions
     self.trajectory = trajectory
     if start_position_along_surface != null:
-        self.distance = _calculate_distance( \
+        self.distance = _calculate_distance(
                 start_position_along_surface,
                 end_position_along_surface,
                 trajectory)
-        self.duration = _calculate_duration( \
+        self.duration = _calculate_duration(
                 start_position_along_surface,
                 end_position_along_surface,
                 instructions,
                 distance)
 
-func update_for_surface_state( \
+func update_for_surface_state(
         surface_state: PlayerSurfaceState,
         is_final_edge: bool) -> void:
     # Do nothing unless the sub-class implements this.
     pass
 
-func update_navigation_state( \
+func update_navigation_state(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback,
@@ -128,19 +128,19 @@ func update_navigation_state( \
         navigation_state.is_expecting_to_enter_air = false
     
     navigation_state.just_reached_end_of_edge = \
-            _check_did_just_reach_destination( \
+            _check_did_just_reach_destination(
                     navigation_state,
                     surface_state,
                     playback)
 
-func _calculate_distance( \
+func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     Gs.logger.error("Abstract Edge._calculate_distance is not implemented")
     return INF
 
-func _calculate_duration( \
+func _calculate_duration(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         instructions: EdgeInstructions,
@@ -148,11 +148,11 @@ func _calculate_duration( \
     Gs.logger.error("Abstract Edge._calculate_duration is not implemented")
     return INF
 
-func _check_did_just_reach_destination( \
+func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "Abstract Edge._check_did_just_reach_destination is not " + \
             "implemented")
     return false
@@ -268,13 +268,13 @@ static func vector2_to_position_along_surface(target_point: Vector2) -> \
     position_along_surface.target_point = target_point
     return position_along_surface
 
-static func check_just_landed_on_expected_surface( \
+static func check_just_landed_on_expected_surface(
         surface_state: PlayerSurfaceState,
         end_surface: Surface) -> bool:
     return surface_state.just_left_air and \
             surface_state.grabbed_surface == end_surface
 
-func load_from_json_object( \
+func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_state_from_json_object(json_object, context)
@@ -284,7 +284,7 @@ func to_json_object() -> Dictionary:
     _edge_state_to_json_object(json_object)
     return json_object
 
-func _load_edge_state_from_json_object( \
+func _load_edge_state_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_attempt_state_from_json_object(json_object, context)

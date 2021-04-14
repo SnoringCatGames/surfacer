@@ -3,10 +3,10 @@ extends SurfaceAnnotationElement
 
 const TYPE := AnnotationElementType.ORIGIN_SURFACE
 
-func _init( \
+func _init(
         surface: Surface,
         depth := AnnotationElementDefaults.SURFACE_DEPTH) \
-        .( \
+        .(
         surface,
         depth,
         Surfacer.ann_defaults.ORIGIN_SURFACE_COLOR_PARAMS,

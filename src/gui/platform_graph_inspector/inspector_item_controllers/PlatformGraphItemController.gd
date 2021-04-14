@@ -14,11 +14,11 @@ var edges_item_controller: EdgesGroupItemController
 var surfaces_item_controller: SurfacesGroupItemController
 var profiler_item_controller: ProfilerGroupItemController
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -46,16 +46,16 @@ func to_string() -> String:
         graph.movement_params.name,
     ]
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     expand()
-    _trigger_find_and_expand_controller_recursive( \
+    _trigger_find_and_expand_controller_recursive(
             search_type,
             metadata)
     return true
 
-func _find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
     # TODO: Create separate metadata classes for InspectorSearchType metadata,
@@ -67,7 +67,7 @@ func _find_and_expand_controller_recursive( \
                     metadata.has("start") and \
                     metadata.has("end") and \
                     metadata.has("edge_type"))
-            surfaces_item_controller.find_and_expand_controller( \
+            surfaces_item_controller.find_and_expand_controller(
                     search_type,
                     metadata)
             
@@ -75,7 +75,7 @@ func _find_and_expand_controller_recursive( \
         InspectorSearchType.DESTINATION_SURFACE:
             assert(metadata.has("origin_surface"))
             if graph.surfaces_set.has(metadata.origin_surface):
-                surfaces_item_controller.find_and_expand_controller( \
+                surfaces_item_controller.find_and_expand_controller(
                         search_type,
                         metadata)
             else:
@@ -90,18 +90,18 @@ func _find_and_expand_controller_recursive( \
                     InspectorSearchType.get_string(search_type))
 
 func _create_children_inner() -> void:
-    edges_item_controller = EdgesGroupItemController.new( \
+    edges_item_controller = EdgesGroupItemController.new(
             tree_item,
             tree,
             graph,
             surfaces_to_surfaces_to_edge_types_to_edges_results)
-    surfaces_item_controller = SurfacesGroupItemController.new( \
+    surfaces_item_controller = SurfacesGroupItemController.new(
             tree_item,
             tree,
             graph,
             surfaces_to_surfaces_to_edge_types_to_edges_results)
     profiler_item_controller = \
-            ProfilerGroupItemController.new( \
+            ProfilerGroupItemController.new(
                     tree_item,
                     tree,
                     graph)
@@ -116,7 +116,7 @@ func _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings() -> 
     var destination_surface: Surface
     var edge_type: int
     for origin_surface in graph.surfaces_to_inter_surface_edges_results:
-        if !surfaces_to_surfaces_to_edge_types_to_edges_results.has( \
+        if !surfaces_to_surfaces_to_edge_types_to_edges_results.has(
                 origin_surface):
             destination_surfaces_to_edge_types_to_edges_results = {}
             surfaces_to_surfaces_to_edge_types_to_edges_results \
@@ -133,7 +133,7 @@ func _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings() -> 
                     inter_surface_edges_results.destination_surface
             edge_type = inter_surface_edges_results.edge_type
             
-            if !destination_surfaces_to_edge_types_to_edges_results.has( \
+            if !destination_surfaces_to_edge_types_to_edges_results.has(
                     destination_surface):
                 edge_types_to_edges_results = {}
                 destination_surfaces_to_edge_types_to_edges_results \
@@ -166,7 +166,7 @@ func get_annotation_elements() -> Array:
 static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var result := SurfacesGroupItemController \
             .get_annotation_elements_from_graph(graph)
-    Gs.utils.concat( \
+    Gs.utils.concat(
             result,
             EdgesGroupItemController \
                     .get_annotation_elements_from_graph(graph))

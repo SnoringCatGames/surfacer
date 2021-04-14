@@ -18,7 +18,7 @@ func set_up(data = null) -> void:
     movement_params = \
             data.movement_params if \
             data != null and data.has('movement_params') else \
-            PlayerParamsUtils.create_player_params( \
+            PlayerParamsUtils.create_player_params(
                     TestPlayerParams).movement_params
 
 func destroy() -> void:

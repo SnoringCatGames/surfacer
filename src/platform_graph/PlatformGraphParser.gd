@@ -1,7 +1,7 @@
 class_name PlatformGraphParser
 extends Node
 
-signal calculation_progress( \
+signal calculation_progress(
         player_index,
         player_count,
         origin_surface_index,
@@ -26,7 +26,7 @@ func _init() -> void:
 func _exit_tree() -> void:
     Surfacer.graph_parser = null
 
-func parse( \
+func parse(
         level_id: String,
         force_calculation_from_tile_maps := false) -> void:
     self.level_id = level_id
@@ -54,19 +54,19 @@ func _create_fake_players_for_collision_calculations() -> void:
     for player_name in Surfacer.player_params:
         var movement_params: MovementParams = \
                 Surfacer.player_params[player_name].movement_params
-        var fake_player: Player = Gs.utils.add_scene( \
+        var fake_player: Player = Gs.utils.add_scene(
                 self,
                 movement_params.player_resource_path,
                 false,
                 false)
         fake_player.is_fake = true
         fake_player.name = "fake_" + fake_player.name
-        fake_player.set_safe_margin( \
+        fake_player.set_safe_margin(
                 movement_params.collision_margin_for_edge_calculations)
         add_child(fake_player)
         fake_players[fake_player.player_name] = fake_player
 
-func _instantiate_platform_graphs( \
+func _instantiate_platform_graphs(
         force_calculation_from_tile_maps := false) -> void:
     if !force_calculation_from_tile_maps and \
             File.new().file_exists(_get_resource_path()):
@@ -85,19 +85,19 @@ func _on_graphs_parsed() -> void:
         Surfacer.graph_inspector.set_graphs(platform_graphs.values())
     
     for platform_graph in platform_graphs.values():
-        if platform_graph.is_connected( \
+        if platform_graph.is_connected(
                     "calculation_progress",
                     self,
                     "_on_graph_calculation_progress"):
-            platform_graph.disconnect( \
+            platform_graph.disconnect(
                     "calculation_progress",
                     self,
                     "_on_graph_calculation_progress")
-        if platform_graph.is_connected( \
+        if platform_graph.is_connected(
                     "calculation_finished",
                     self,
                     "_on_graph_calculation_finished"):
-            platform_graph.disconnect( \
+            platform_graph.disconnect(
                     "calculation_finished",
                     self,
                     "_on_graph_calculation_finished")
@@ -119,12 +119,12 @@ func _calculate_next_platform_graph(player_index: int) -> void:
     
     if !should_skip_player:
         var graph := PlatformGraph.new()
-        graph.connect( \
+        graph.connect(
                 "calculation_progress",
                 self,
                 "_on_graph_calculation_progress",
                 [graph, player_index, player_name])
-        graph.connect( \
+        graph.connect(
                 "calculation_finished",
                 self,
                 "_on_graph_calculation_finished",
@@ -137,24 +137,24 @@ func _calculate_next_platform_graph(player_index: int) -> void:
         else:
             _on_graphs_parsed()
 
-func _on_graph_calculation_progress( \
+func _on_graph_calculation_progress(
         origin_surface_index,
         surface_count,
         graph: PlatformGraph,
         player_index: int,
         player_name: String) -> void:
-    emit_signal( \
+    emit_signal(
             "calculation_progress",
             player_index,
             Surfacer.player_params.size(),
             origin_surface_index,
             surface_count)
 
-func _on_graph_calculation_finished( \
+func _on_graph_calculation_finished(
         player_index: int,
         was_last_player: bool) -> void:
     if !was_last_player:
-        Gs.time.set_timeout( \
+        Gs.time.set_timeout(
                 funcref(self, "_calculate_next_platform_graph"),
                 0.01,
                 [player_index + 1])
@@ -192,7 +192,7 @@ func _load_platform_graphs() -> void:
         context.id_to_tile_map[tile_map.id] = tile_map
     
     surface_parser = SurfaceParser.new()
-    surface_parser.load_from_json_object( \
+    surface_parser.load_from_json_object(
             json_object.surface_parser,
             context)
     
@@ -204,7 +204,7 @@ func _load_platform_graphs() -> void:
     
     for graph_json_object in json_object.platform_graphs:
         var graph := PlatformGraph.new()
-        graph.load_from_json_object( \
+        graph.load_from_json_object(
                 graph_json_object,
                 context)
         platform_graphs[graph.player_params.name] = graph
@@ -258,19 +258,19 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
                 expected_surface_parser.right_walls.size())
         
         for i in surface_parser.floors.size():
-            assert(surface_parser.floors[i].probably_equal( \
+            assert(surface_parser.floors[i].probably_equal(
                     expected_surface_parser.floors[i]))
         
         for i in surface_parser.ceilings.size():
-            assert(surface_parser.ceilings[i].probably_equal( \
+            assert(surface_parser.ceilings[i].probably_equal(
                     expected_surface_parser.ceilings[i]))
         
         for i in surface_parser.left_walls.size():
-            assert(surface_parser.left_walls[i].probably_equal( \
+            assert(surface_parser.left_walls[i].probably_equal(
                     expected_surface_parser.left_walls[i]))
         
         for i in surface_parser.right_walls.size():
-            assert(surface_parser.right_walls[i].probably_equal( \
+            assert(surface_parser.right_walls[i].probably_equal(
                     expected_surface_parser.right_walls[i]))
 
 func _validate_platform_graphs(json_object: Dictionary) -> void:

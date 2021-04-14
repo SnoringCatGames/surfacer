@@ -17,7 +17,7 @@ var dash_length: float
 var dash_gap: float
 var stroke_width: float
 
-func _init( \
+func _init(
         type: int,
         text: String,
         color_params: ColorParams,
@@ -26,7 +26,7 @@ func _init( \
         dash_length: float,
         dash_gap: float,
         stroke_width: float) \
-        .( \
+        .(
         type,
         text) -> void:
     assert(!is_filled or !is_dashed)
@@ -37,7 +37,7 @@ func _init( \
     self.dash_gap = dash_gap
     self.stroke_width = stroke_width
 
-func _draw_shape( \
+func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
     var offset := center - 0.5 * size * SCALE
@@ -48,11 +48,11 @@ func _draw_shape( \
     var color := color_params.get_color()
     
     if is_filled:
-        draw_colored_polygon( \
+        draw_colored_polygon(
                 PoolVector2Array(vertices),
                 color)
     elif is_dashed:
-        Gs.draw_utils.draw_dashed_polyline( \
+        Gs.draw_utils.draw_dashed_polyline(
                 self,
                 vertices,
                 color,
@@ -61,7 +61,7 @@ func _draw_shape( \
                 0.0,
                 stroke_width)
     else:
-        draw_polyline( \
+        draw_polyline(
                 PoolVector2Array(vertices),
                 color,
                 stroke_width)

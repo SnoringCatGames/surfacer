@@ -29,14 +29,14 @@ func reset() -> void:
     self.target_point = Vector2.INF
     self.target_projection_onto_surface = Vector2.INF
 
-func match_current_grab( \
+func match_current_grab(
         surface: Surface,
         player_center: Vector2) -> void:
     self.surface = surface
     self.target_point = player_center
     self.target_projection_onto_surface = Vector2.INF
 
-func match_surface_target_and_collider( \
+func match_surface_target_and_collider(
         surface: Surface,
         target_point: Vector2,
         collider_half_width_height: Vector2,
@@ -44,14 +44,14 @@ func match_surface_target_and_collider( \
         clips_to_surface_bounds := false) -> void:
     self.surface = surface
     self.target_point = \
-            _clip_and_project_target_point_for_center_of_collider( \
+            _clip_and_project_target_point_for_center_of_collider(
                     surface,
                     target_point,
                     collider_half_width_height,
                     offsets_target_by_half_width_height,
                     clips_to_surface_bounds)
     
-func _clip_and_project_target_point_for_center_of_collider( \
+func _clip_and_project_target_point_for_center_of_collider(
         surface: Surface,
         target_point: Vector2,
         collider_half_width_height: Vector2,
@@ -96,7 +96,7 @@ func _get_side() -> int:
             surface != null else \
             SurfaceSide.NONE
 
-static func copy( \
+static func copy(
         destination: PositionAlongSurface,
         source: PositionAlongSurface) -> void:
     destination.surface = source.surface
@@ -104,7 +104,7 @@ static func copy( \
     destination.target_projection_onto_surface = \
             source.target_projection_onto_surface
 
-func load_from_json_object( \
+func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     surface = context.id_to_surface[int(json_object.s)]

@@ -3,7 +3,7 @@
 # EdgeStepCalcResultMetadataItemController.
 class_name EdgeStepCalcResultMetadataItemControllerFactory
 
-static func create( \
+static func create(
         tree_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
@@ -11,7 +11,7 @@ static func create( \
         step_result_metadata: EdgeStepCalcResultMetadata,
         step_item_factory \
         ) -> EdgeStepCalcResultMetadataItemController:
-    return EdgeStepCalcResultMetadataItemController.new( \
+    return EdgeStepCalcResultMetadataItemController.new(
             tree_item,
             tree,
             graph,

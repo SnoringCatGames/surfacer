@@ -12,7 +12,7 @@ var edges_results: InterSurfaceEdgesResult
 
 var failed_edges_controller: FailedEdgesGroupItemController
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
@@ -20,7 +20,7 @@ func _init( \
         destination_surface: Surface,
         edge_type: int,
         edges_results: InterSurfaceEdgesResult) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -53,27 +53,27 @@ func get_has_children() -> bool:
     return !edges_results.valid_edges.empty() or \
             !edges_results.failed_edge_attempts.empty()
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     assert(search_type == InspectorSearchType.EDGE)
     if metadata.edge_type == edge_type:
         expand()
-        _trigger_find_and_expand_controller_recursive( \
+        _trigger_find_and_expand_controller_recursive(
                 search_type,
                 metadata)
         return true
     else:
         return false
 
-func _find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
     assert(search_type == InspectorSearchType.EDGE)
     var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
-        is_subtree_found = child.get_metadata(0).find_and_expand_controller( \
+        is_subtree_found = child.get_metadata(0).find_and_expand_controller(
                 search_type,
                 metadata)
         if is_subtree_found:
@@ -83,13 +83,13 @@ func _find_and_expand_controller_recursive( \
 
 func _create_children_inner() -> void:
     for valid_edge in edges_results.valid_edges:
-        ValidEdgeItemController.new( \
+        ValidEdgeItemController.new(
                 tree_item,
                 tree,
                 graph,
                 valid_edge)
     
-    failed_edges_controller = FailedEdgesGroupItemController.new( \
+    failed_edges_controller = FailedEdgesGroupItemController.new(
             tree_item,
             tree,
             graph,
@@ -112,7 +112,7 @@ func get_annotation_elements() -> Array:
     elements.push_back(element)
     
     for jump_land_positions in edges_results.all_jump_land_positions:
-        element = JumpLandPositionsAnnotationElement.new( \
+        element = JumpLandPositionsAnnotationElement.new(
                 jump_land_positions,
                 Surfacer.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS,
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH,

@@ -22,7 +22,7 @@ var go_icon_scale_multiplier := 1.0
 
 var projected_image: Control
 
-func _init().( \
+func _init().(
         NAME,
         LAYER_NAME,
         AUTO_ADAPTS_GUI_SCALE,
@@ -78,7 +78,7 @@ var level: SurfacerLevel
 func _initialize_next() -> void:
     level_id = Surfacer.precompute_platform_graph_for_levels[ \
             precompute_level_index]
-    level = Gs.utils.add_scene( \
+    level = Gs.utils.add_scene(
             null,
             Gs.level_config.get_level_config(level_id).scene_path,
             false,
@@ -93,11 +93,11 @@ func _initialize_next() -> void:
     defer("_parse_next")
 
 func _parse_next() -> void:
-    platform_graph_parser.connect( \
+    platform_graph_parser.connect(
             "calculation_progress",
             self,
             "_on_graph_parse_progress")
-    platform_graph_parser.connect( \
+    platform_graph_parser.connect(
             "parse_finished",
             self,
             "_on_calculation_finished")
@@ -129,7 +129,7 @@ func _clean_up_next() -> void:
 func defer(method: String) -> void:
     Gs.time.set_timeout(funcref(self, method), 0.01)
 
-func _on_graph_parse_progress( \
+func _on_graph_parse_progress(
         player_index: int,
         player_count: int,
         origin_surface_index: int,
@@ -170,7 +170,7 @@ func _on_graph_parse_progress( \
     
     _set_progress(progress, label_1, label_2, label_3)
 
-func _on_stage_progress( \
+func _on_stage_progress(
         step: String,
         finished := false) -> void:
     var sub_step_progress: float
@@ -226,7 +226,7 @@ func _on_stage_progress( \
     
     _set_progress(progress, label)
 
-func _set_progress( \
+func _set_progress(
         progress: float,
         label_1: String,
         label_2 := "",

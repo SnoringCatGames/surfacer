@@ -9,13 +9,13 @@ const PREFIX := "Calculation"
 var edge_attempt: EdgeAttempt
 var edge_result_metadata: EdgeCalcResultMetadata
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         edge_attempt: EdgeAttempt,
         edge_result_metadata: EdgeCalcResultMetadata) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -35,9 +35,9 @@ func to_string() -> String:
             "step_count=%s " + \
             "}") % [
         InspectorItemType.get_string(type),
-        EdgeCalcResultType.get_string( \
+        EdgeCalcResultType.get_string(
                 edge_result_metadata.edge_calc_result_type),
-        WaypointValidity.get_string( \
+        WaypointValidity.get_string(
                 edge_result_metadata.waypoint_validity),
         edge_result_metadata.total_step_count,
     ]
@@ -45,28 +45,28 @@ func to_string() -> String:
 func get_text() -> String:
     return "%s (%s) [%s]" % [
         PREFIX,
-        EdgeCalcResultType.get_string( \
+        EdgeCalcResultType.get_string(
                 edge_result_metadata.edge_calc_result_type) if \
         edge_result_metadata.edge_calc_result_type != \
                 EdgeCalcResultType.WAYPOINT_INVALID else \
-        WaypointValidity.get_string( \
+        WaypointValidity.get_string(
                 edge_result_metadata.waypoint_validity),
         edge_result_metadata.total_step_count,
     ]
 
 func get_description() -> String:
     return "Calculation details for this edge. " + \
-            (EdgeCalcResultType.get_description( \
+            (EdgeCalcResultType.get_description(
                     edge_result_metadata.edge_calc_result_type) if \
             edge_result_metadata.edge_calc_result_type != \
                     EdgeCalcResultType.WAYPOINT_INVALID else \
-            WaypointValidity.get_description( \
+            WaypointValidity.get_description(
                     edge_result_metadata.waypoint_validity))
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "find_and_expand_controller should not be called for " + \
             "EDGE_CALC_RESULT_METADATA.")
     return false
@@ -76,7 +76,7 @@ func get_has_children() -> bool:
 
 func _create_children_inner() -> void:
     for step_result_metadata in edge_result_metadata.children_step_attempts:
-        EdgeStepCalcResultMetadataItemController.new( \
+        EdgeStepCalcResultMetadataItemController.new(
                 tree_item,
                 tree,
                 graph,
@@ -94,12 +94,12 @@ func get_annotation_elements() -> Array:
     if !edge_result_metadata.failed_before_creating_steps:
         for step_result_metadata in \
                 edge_result_metadata.children_step_attempts:
-            element = EdgeStepAnnotationElement.new( \
+            element = EdgeStepAnnotationElement.new(
                     step_result_metadata,
                     true)
             elements.push_back(element)
     elif edge_attempt is FailedEdgeAttempt:
-        element = FailedEdgeAttemptAnnotationElement.new( \
+        element = FailedEdgeAttemptAnnotationElement.new(
                 edge_attempt,
                 Surfacer.ann_defaults \
                         .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,

@@ -103,12 +103,12 @@ func _draw() -> void:
     if phantom_path != null:
         var path_alpha := \
                 path_base_color.a * alpha_multiplier
-        var path_color := Color( \
+        var path_color := Color(
                 path_base_color.r,
                 path_base_color.g,
                 path_base_color.b,
                 path_alpha)
-        Gs.draw_utils.draw_path( \
+        Gs.draw_utils.draw_path(
                 self,
                 phantom_path,
                 PRESELECTION_PATH_STROKE_WIDTH,
@@ -120,12 +120,12 @@ func _draw() -> void:
     
     # Draw Surface.
     var surface_alpha := surface_base_color.a * alpha_multiplier
-    var surface_color := Color( \
+    var surface_color := Color(
             surface_base_color.r,
             surface_base_color.g,
             surface_base_color.b,
             surface_alpha)
-    Gs.draw_utils.draw_surface( \
+    Gs.draw_utils.draw_surface(
             self,
             phantom_surface,
             surface_color,
@@ -134,7 +134,7 @@ func _draw() -> void:
     # Draw destination marker.
     var position_indicator_alpha := \
             position_indicator_base_color.a * alpha_multiplier
-    var position_indicator_color := Color( \
+    var position_indicator_color := Color(
             position_indicator_base_color.r,
             position_indicator_base_color.g,
             position_indicator_base_color.b,
@@ -143,7 +143,7 @@ func _draw() -> void:
             phantom_position_along_surface.target_projection_onto_surface
     var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
             PRESELECTION_POSITION_INDICATOR_RADIUS
-    Gs.draw_utils.draw_destination_marker( \
+    Gs.draw_utils.draw_destination_marker(
             self,
             cone_end_point,
             false,
@@ -187,11 +187,11 @@ func _update_phantom_surface() -> void:
         phantom_surface.vertices[i] = \
                 transform.xform(phantom_surface.vertices[i])
     
-    phantom_surface.bounding_box = Gs.geometry.get_bounding_box_for_points( \
+    phantom_surface.bounding_box = Gs.geometry.get_bounding_box_for_points(
             phantom_surface.vertices)
 
 func _update_phantom_position_along_surface() -> void:
-    phantom_position_along_surface.match_surface_target_and_collider( \
+    phantom_position_along_surface.match_surface_target_and_collider(
             phantom_surface,
             preselection_position_to_draw.target_point,
             Vector2.ZERO,

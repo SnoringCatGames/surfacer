@@ -12,7 +12,7 @@ const FAKE_REPLACEMENT_SEARCH_MAX_ITERATIONS := 6
 const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER := \
         0.5
 
-static func create_terminal_waypoints( \
+static func create_terminal_waypoints(
         edge_result_metadata: EdgeCalcResultMetadata,
         origin_position: PositionAlongSurface,
         destination_position: PositionAlongSurface,
@@ -31,14 +31,14 @@ static func create_terminal_waypoints( \
             destination_position.surface != null \
             else true
     
-    var origin := Waypoint.new( \
+    var origin := Waypoint.new(
             origin_position.surface,
             origin_position.target_point,
             origin_passing_vertically,
             false,
             null,
             null)
-    var destination := Waypoint.new( \
+    var destination := Waypoint.new(
             destination_position.surface,
             destination_position.target_point,
             destination_passing_vertically,
@@ -56,7 +56,7 @@ static func create_terminal_waypoints( \
         destination.min_velocity_x = velocity_end_min_x
         destination.max_velocity_x = velocity_end_max_x
     
-    update_waypoint( \
+    update_waypoint(
             origin,
             origin,
             movement_params,
@@ -64,7 +64,7 @@ static func create_terminal_waypoints( \
             can_hold_jump_button,
             null,
             Vector2.INF)
-    update_waypoint( \
+    update_waypoint(
             destination,
             origin,
             movement_params,
@@ -88,7 +88,7 @@ static func create_terminal_waypoints( \
 # Assuming movement would otherwise collide with the given surface, this
 # calculates positions along the edges of the surface that the movement could
 # pass through in order to go around the surface.
-static func calculate_waypoints_around_surface( \
+static func calculate_waypoints_around_surface(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
         movement_params: MovementParams,
@@ -99,7 +99,7 @@ static func calculate_waypoints_around_surface( \
         destination_waypoint: Waypoint,
         colliding_surface: Surface,
         waypoint_offset: Vector2) -> Array:
-    Gs.profiler.start( \
+    Gs.profiler.start(
             "calculate_waypoints_around_surface",
             collision_params.thread_id)
     
@@ -172,13 +172,13 @@ static func calculate_waypoints_around_surface( \
     # an error.
     if position_a == next_waypoint.position:
         should_skip_a = true
-        Gs.logger.error( \
+        Gs.logger.error(
                 "Calculated a rendundant waypoint (same position as the " + \
                 "next waypoint)",
                 false)
     if position_b == next_waypoint.position:
         should_skip_b = true
-        Gs.logger.error( \
+        Gs.logger.error(
                 "Calculated a rendundant waypoint (same position as the " + \
                 "next waypoint)",
                 false)
@@ -189,7 +189,7 @@ static func calculate_waypoints_around_surface( \
     var waypoint_b_final: Waypoint
     
     if !should_skip_a:
-        waypoint_a_original = Waypoint.new( \
+        waypoint_a_original = Waypoint.new(
                 colliding_surface,
                 position_a,
                 passing_vertically,
@@ -197,7 +197,7 @@ static func calculate_waypoints_around_surface( \
                 previous_waypoint,
                 next_waypoint)
         # Calculate and record state for the waypoint.
-        update_waypoint( \
+        update_waypoint(
                 waypoint_a_original,
                 origin_waypoint,
                 movement_params,
@@ -208,11 +208,11 @@ static func calculate_waypoints_around_surface( \
         # If the waypoint is fake, then replace it with its real neighbor, and
         # re-calculate state for the neighbor.
         if waypoint_a_original.is_fake:
-            waypoint_a_final = _calculate_replacement_for_fake_waypoint( \
+            waypoint_a_final = _calculate_replacement_for_fake_waypoint(
                     waypoint_a_original,
                     waypoint_offset)
             if waypoint_a_final != null:
-                update_waypoint( \
+                update_waypoint(
                         waypoint_a_final,
                         origin_waypoint,
                         movement_params,
@@ -224,7 +224,7 @@ static func calculate_waypoints_around_surface( \
             waypoint_a_final = waypoint_a_original
     
     if !should_skip_b:
-        waypoint_b_original = Waypoint.new( \
+        waypoint_b_original = Waypoint.new(
                 colliding_surface,
                 position_b,
                 passing_vertically,
@@ -232,7 +232,7 @@ static func calculate_waypoints_around_surface( \
                 previous_waypoint,
                 next_waypoint)
         # Calculate and record state for the waypoint.
-        update_waypoint( \
+        update_waypoint(
                 waypoint_b_original,
                 origin_waypoint,
                 movement_params,
@@ -243,11 +243,11 @@ static func calculate_waypoints_around_surface( \
         # If the waypoint is fake, then replace it with its real neighbor, and
         # re-calculate state for the neighbor.
         if waypoint_b_original.is_fake:
-            waypoint_b_final = _calculate_replacement_for_fake_waypoint( \
+            waypoint_b_final = _calculate_replacement_for_fake_waypoint(
                     waypoint_b_original,
                     waypoint_offset)
             if waypoint_b_final != null:
-                update_waypoint( \
+                update_waypoint(
                         waypoint_b_final,
                         origin_waypoint,
                         movement_params,
@@ -265,7 +265,7 @@ static func calculate_waypoints_around_surface( \
             waypoint_b_final != null:
         # Return the waypoints in sorted order according to which is more
         # likely to produce successful movement.
-        if _compare_waypoints_by_more_likely_to_be_valid( \
+        if _compare_waypoints_by_more_likely_to_be_valid(
                 waypoint_a_original,
                 waypoint_b_original,
                 waypoint_a_final,
@@ -284,7 +284,7 @@ static func calculate_waypoints_around_surface( \
             Gs.logger.error()
         waypoints = []
     
-    Gs.profiler.stop_with_optional_metadata( \
+    Gs.profiler.stop_with_optional_metadata(
             "calculate_waypoints_around_surface",
             collision_params.thread_id,
             edge_result_metadata)
@@ -292,7 +292,7 @@ static func calculate_waypoints_around_surface( \
 
 # Use some basic heuristics to sort the waypoints. We try to attempt
 # calculations for the waypoint that's most likely to be successful first.
-static func _compare_waypoints_by_more_likely_to_be_valid( \
+static func _compare_waypoints_by_more_likely_to_be_valid(
         a_original: Waypoint,
         b_original: Waypoint,
         a_final: Waypoint,
@@ -314,9 +314,9 @@ static func _compare_waypoints_by_more_likely_to_be_valid( \
             # Movement is more likely to be indirect and needless zig-zag
             # around the surface when we consider the side further from the
             # destination.
-            return a_original.position.distance_squared_to( \
+            return a_original.position.distance_squared_to(
                             destination.position) <= \
-                    b_original.position.distance_squared_to( \
+                    b_original.position.distance_squared_to(
                             destination.position)
         elif colliding_surface.side == SurfaceSide.CEILING:
             # When moving around a ceiling, prefer whichever waypoint is closer
@@ -325,7 +325,7 @@ static func _compare_waypoints_by_more_likely_to_be_valid( \
             # Movement is more likely to be direct and successful if we go over
             # the region, rather than under and around, which is what we
             # attempt when we consider the far end of a ceiling surface.
-            return a_original.position.distance_squared_to( \
+            return a_original.position.distance_squared_to(
                             origin.position) <= \
                     b_original.position.distance_squared_to(origin.position)
         else:
@@ -352,7 +352,7 @@ static func _compare_waypoints_by_more_likely_to_be_valid( \
 # neighbor waypoints as well as various other parameters.
 # 
 # Returns false if the waypoint cannot satisfy the given parameters.
-static func update_waypoint( \
+static func update_waypoint(
         waypoint: Waypoint,
         origin_waypoint: Waypoint,
         movement_params: MovementParams,
@@ -378,7 +378,7 @@ static func update_waypoint( \
     assert(vertical_step != null or \
             additional_high_waypoint_position == Vector2.INF)
     
-    _assign_horizontal_movement_sign( \
+    _assign_horizontal_movement_sign(
             waypoint,
             velocity_start_origin)
     
@@ -402,7 +402,7 @@ static func update_waypoint( \
                 waypoint.horizontal_movement_sign_from_displacement
         waypoint.validity = WaypointValidity.FAKE
     else:
-        waypoint.validity = _update_waypoint_velocity_and_time( \
+        waypoint.validity = _update_waypoint_velocity_and_time(
                 waypoint,
                 origin_waypoint,
                 movement_params,
@@ -422,7 +422,7 @@ static func update_waypoint( \
 # various other parameters.
 # 
 # Returns WaypointValidity.
-static func _update_waypoint_velocity_and_time( \
+static func _update_waypoint_velocity_and_time(
         waypoint: Waypoint,
         origin_waypoint: Waypoint,
         movement_params: MovementParams,
@@ -490,7 +490,7 @@ static func _update_waypoint_velocity_and_time( \
             else:
                 time_to_pass_through_waypoint_ignoring_others = \
                         VerticalMovementUtils \
-                                .calculate_time_to_jump_to_waypoint( \
+                                .calculate_time_to_jump_to_waypoint(
                                         movement_params,
                                         displacement_from_origin_to_waypoint,
                                         velocity_start_origin,
@@ -520,7 +520,7 @@ static func _update_waypoint_velocity_and_time( \
                 #       to add more time. Revisit this if we see problems.
                 
                 var time_to_get_to_destination_from_waypoint := \
-                        _calculate_time_to_reach_destination_from_new_waypoint( \
+                        _calculate_time_to_reach_destination_from_new_waypoint(
                                 movement_params,
                                 additional_high_waypoint_position,
                                 waypoint)
@@ -547,7 +547,7 @@ static func _update_waypoint_velocity_and_time( \
 #                    # don't continue the instruction uselessly beyond jump
 #                    # height).
 #                    var time_to_release_jump_button := VerticalMovementUtils \
-#                           .calculate_time_to_release_jump_button( \
+#                           .calculate_time_to_release_jump_button(
 #                                    movement_params,
 #                                    time_passing_through,
 #                                    displacement_from_origin_to_waypoint.y,
@@ -569,7 +569,7 @@ static func _update_waypoint_velocity_and_time( \
 #                    # FIXME: Uncomment (since this is the whole point), after
 #                    #        getting the rest of this to work (the rest should
 #                    #        be a no-op, but seems to break stuff).
-##                    time_to_release_jump_button = min( \
+##                    time_to_release_jump_button = min(
 ##                            time_to_release_jump_button + \
 ##                            jump_duration_increase,
 ##                            time_to_max_height_with_slow_rise_gravity)
@@ -577,7 +577,7 @@ static func _update_waypoint_velocity_and_time( \
 #                    time_to_release_jump_button -= 0.001
 #                    var vertical_state_at_jump_button_release := \
 #                            VerticalMovementUtils \
-#                                   .calculate_vertical_state_for_time( \
+#                                   .calculate_vertical_state_for_time(
 #                                           movement_params,
 #                                           time_to_release_jump_button,
 #                                           origin_waypoint.position.y,
@@ -639,7 +639,7 @@ static func _update_waypoint_velocity_and_time( \
             # This is an intermediate waypoint (not the origin or destination).
             
             time_passing_through = VerticalMovementUtils \
-                    .calculate_time_for_passing_through_waypoint( \
+                    .calculate_time_for_passing_through_waypoint(
                             movement_params,
                             waypoint,
                             waypoint.previous_waypoint.time_passing_through + \
@@ -701,7 +701,7 @@ static func _update_waypoint_velocity_and_time( \
             #       this waypoint can be reached, since any previous
             #       intermediate waypoints could invalidate things.
             var min_and_max_velocity_from_origin := \
-                    _calculate_min_and_max_x_velocity_at_end_of_interval( \
+                    _calculate_min_and_max_x_velocity_at_end_of_interval(
                             displacement_from_origin.x,
                             duration_from_origin,
                             origin_waypoint.min_velocity_x,
@@ -720,7 +720,7 @@ static func _update_waypoint_velocity_and_time( \
             # Calculate the min and max velocity for movement through the
             # waypoint, in order for movement to reach the next waypoint.
             var min_and_max_velocity_for_next_step := \
-                    _calculate_min_and_max_x_velocity_at_start_of_interval( \
+                    _calculate_min_and_max_x_velocity_at_start_of_interval(
                             displacement_to_next.x,
                             duration_to_next,
                             waypoint.next_waypoint.min_velocity_x,
@@ -736,10 +736,10 @@ static func _update_waypoint_velocity_and_time( \
             var max_velocity_x_for_next_step: float = \
                     min_and_max_velocity_for_next_step[1]
             
-            min_velocity_x = max( \
+            min_velocity_x = max(
                     min_velocity_x_from_origin,
                     min_velocity_x_for_next_step)
-            max_velocity_x = min( \
+            max_velocity_x = min(
                     max_velocity_x_from_origin,
                     max_velocity_x_for_next_step)
         
@@ -779,7 +779,7 @@ static func _update_waypoint_velocity_and_time( \
 #     we reach in the jump). If the movement would require vertical velocity to
 #     _not_ be zero through this new waypoint, then that case should be covered
 #     by the horizontal time calculation.
-static func _calculate_time_to_reach_destination_from_new_waypoint( \
+static func _calculate_time_to_reach_destination_from_new_waypoint(
         movement_params: MovementParams,
         new_waypoint_position: Vector2,
         destination: Waypoint) -> float:
@@ -799,7 +799,7 @@ static func _calculate_time_to_reach_destination_from_new_waypoint( \
         acceleration = -movement_params.in_air_horizontal_acceleration
     
     var time_to_reach_horizontal_displacement := \
-            MovementUtils.calculate_duration_for_displacement( \
+            MovementUtils.calculate_duration_for_displacement(
                     displacement.x,
                     velocity_x_at_new_waypoint,
                     acceleration,
@@ -808,7 +808,7 @@ static func _calculate_time_to_reach_destination_from_new_waypoint( \
     var time_to_reach_fall_displacement: float
     if displacement.y > 0:
         time_to_reach_fall_displacement = \
-                MovementUtils.calculate_movement_duration( \
+                MovementUtils.calculate_movement_duration(
                         displacement.y,
                         0.0,
                         movement_params.gravity_fast_fall,
@@ -818,11 +818,11 @@ static func _calculate_time_to_reach_destination_from_new_waypoint( \
     else:
         time_to_reach_fall_displacement = 0.0
     
-    return max( \
+    return max(
             time_to_reach_horizontal_displacement,
             time_to_reach_fall_displacement)
 
-static func _assign_horizontal_movement_sign( \
+static func _assign_horizontal_movement_sign(
         waypoint: Waypoint,
         velocity_start_origin: Vector2) -> void:
     var previous_waypoint := waypoint.previous_waypoint
@@ -846,7 +846,7 @@ static func _assign_horizontal_movement_sign( \
     
     var displacement_sign := \
             0 if \
-            Gs.geometry.are_floats_equal_with_epsilon( \
+            Gs.geometry.are_floats_equal_with_epsilon(
                     displacement.x,
                     0.0,
                     0.1) else \
@@ -914,7 +914,7 @@ static func _assign_horizontal_movement_sign( \
 # 
 # -   The first element represents the min velocity.
 # -   The second element represents the max velocity.
-static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
+static func _calculate_min_and_max_x_velocity_at_start_of_interval(
         displacement: float,
         duration: float,
         v_1_min_for_next_waypoint: float,
@@ -979,7 +979,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         var acceleration := -a_magnitude
         var v_0 := speed_max
         min_v_1_from_partial_acc_and_no_max_speed_at_v_1 = \
-                _calculate_v_1_with_v_0_limit( \
+                _calculate_v_1_with_v_0_limit(
                         displacement,
                         duration,
                         v_0,
@@ -1003,7 +1003,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         var acceleration := a_magnitude
         var v_0 := -speed_max
         max_v_1_from_partial_acc_and_no_max_speed_at_v_1 = \
-                _calculate_v_1_with_v_0_limit( \
+                _calculate_v_1_with_v_0_limit(
                         displacement,
                         duration,
                         v_0,
@@ -1086,7 +1086,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         acceleration = -a_magnitude
         should_accelerate_at_start = true
         should_return_min_result = false
-        var v_0_max_neg_acc_at_start := _solve_for_start_velocity( \
+        var v_0_max_neg_acc_at_start := _solve_for_start_velocity(
                 displacement,
                 duration,
                 acceleration,
@@ -1098,7 +1098,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         acceleration = a_magnitude
         should_accelerate_at_start = false
         should_return_min_result = false
-        var v_0_max_pos_acc_at_end := _solve_for_start_velocity( \
+        var v_0_max_pos_acc_at_end := _solve_for_start_velocity(
                 displacement,
                 duration,
                 acceleration,
@@ -1129,7 +1129,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         acceleration = a_magnitude
         should_accelerate_at_start = true
         should_return_min_result = true
-        var v_0_min_pos_acc_at_start := _solve_for_start_velocity( \
+        var v_0_min_pos_acc_at_start := _solve_for_start_velocity(
                 displacement,
                 duration,
                 acceleration,
@@ -1141,7 +1141,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
         acceleration = -a_magnitude
         should_accelerate_at_start = false
         should_return_min_result = true
-        var v_0_min_neg_acc_at_end := _solve_for_start_velocity( \
+        var v_0_min_neg_acc_at_end := _solve_for_start_velocity(
                 displacement,
                 duration,
                 acceleration,
@@ -1181,12 +1181,12 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
     v_0_max -= MIN_MAX_VELOCITY_X_OFFSET
     
     # Correct small floating-point errors around zero.
-    if Gs.geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon(
             v_0_min,
             0.0,
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_0_min = 0.0
-    if Gs.geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon(
             v_0_max,
             0.0,
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
@@ -1216,7 +1216,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval( \
 # exceeds the max speed. So instead, we assume a 2-part movement profile with
 # constant velocity in the first part and constant acceleration in the second
 # part. This 2-part movement should more accurately represent the limit on v_1.
-static func _calculate_v_1_with_v_0_limit( \
+static func _calculate_v_1_with_v_0_limit(
         displacement: float,
         duration: float,
         v_0: float,
@@ -1268,7 +1268,7 @@ static func _calculate_v_1_with_v_0_limit( \
     else:
         return max(result_1, result_2)
 
-static func _solve_for_start_velocity( \
+static func _solve_for_start_velocity(
         displacement: float,
         duration: float,
         acceleration: float,
@@ -1390,7 +1390,7 @@ static func _solve_for_start_velocity( \
 # 
 # -   The first element represents the min velocity.
 # -   The second element represents the max velocity.
-static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
+static func _calculate_min_and_max_x_velocity_at_end_of_interval(
         displacement: float,
         duration: float,
         v_1_min_for_previous_waypoint: float,
@@ -1454,7 +1454,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         var acceleration := a_magnitude
         var v_1 := speed_max
         min_v_0_from_partial_acc_and_no_max_speed_at_v_0 = \
-                _calculate_v_0_with_v_1_limit( \
+                _calculate_v_0_with_v_1_limit(
                         displacement,
                         duration,
                         v_1,
@@ -1478,7 +1478,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         var acceleration := -a_magnitude
         var v_1 := -speed_max
         max_v_0_from_partial_acc_and_no_max_speed_at_v_0 = \
-                _calculate_v_0_with_v_1_limit( \
+                _calculate_v_0_with_v_1_limit(
                         displacement,
                         duration,
                         v_1,
@@ -1561,7 +1561,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         acceleration = -a_magnitude
         should_accelerate_at_start = true
         should_return_min_result = false
-        var v_1_max_neg_acc_at_start := _solve_for_end_velocity( \
+        var v_1_max_neg_acc_at_start := _solve_for_end_velocity(
                 displacement,
                 duration,
                 acceleration,
@@ -1573,7 +1573,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         acceleration = a_magnitude
         should_accelerate_at_start = false
         should_return_min_result = false
-        var v_1_max_pos_acc_at_end := _solve_for_end_velocity( \
+        var v_1_max_pos_acc_at_end := _solve_for_end_velocity(
                 displacement,
                 duration,
                 acceleration,
@@ -1604,7 +1604,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         acceleration = a_magnitude
         should_accelerate_at_start = true
         should_return_min_result = true
-        var v_1_min_pos_acc_at_start := _solve_for_end_velocity( \
+        var v_1_min_pos_acc_at_start := _solve_for_end_velocity(
                 displacement,
                 duration,
                 acceleration,
@@ -1616,7 +1616,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
         acceleration = -a_magnitude
         should_accelerate_at_start = false
         should_return_min_result = true
-        var v_1_min_neg_acc_at_end := _solve_for_end_velocity( \
+        var v_1_min_neg_acc_at_end := _solve_for_end_velocity(
                 displacement,
                 duration,
                 acceleration,
@@ -1656,12 +1656,12 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
     v_1_max -= MIN_MAX_VELOCITY_X_OFFSET
     
     # Correct small floating-point errors around zero.
-    if Gs.geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon(
             v_1_min,
             0.0,
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_1_min = 0.0
-    if Gs.geometry.are_floats_equal_with_epsilon( \
+    if Gs.geometry.are_floats_equal_with_epsilon(
             v_1_max,
             0.0,
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
@@ -1691,7 +1691,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval( \
 # exceeds the max speed. So instead, we assume a 2-part movement profile with
 # constant acceleration in the first part and constant velocity in the second
 # art. This 2-part movement should more accurately represent the limit on v_0.
-static func _calculate_v_0_with_v_1_limit( \
+static func _calculate_v_0_with_v_1_limit(
         displacement: float,
         duration: float,
         v_1: float,
@@ -1744,7 +1744,7 @@ static func _calculate_v_0_with_v_1_limit( \
     else:
         return max(result_1, result_2)
 
-static func _solve_for_end_velocity( \
+static func _solve_for_end_velocity(
         displacement: float,
         duration: float,
         acceleration: float,
@@ -1852,13 +1852,13 @@ static func _solve_for_end_velocity( \
     else:
         return max(result_1, result_2)
 
-static func update_neighbors_for_new_waypoint( \
+static func update_neighbors_for_new_waypoint(
         waypoint: Waypoint,
         previous_waypoint: Waypoint,
         next_waypoint: Waypoint,
         edge_calc_params: EdgeCalcParams,
         vertical_step: VerticalEdgeStep) -> void:
-    update_waypoint( \
+    update_waypoint(
             previous_waypoint,
             edge_calc_params.origin_waypoint,
             edge_calc_params.movement_params,
@@ -1866,7 +1866,7 @@ static func update_neighbors_for_new_waypoint( \
             vertical_step.can_hold_jump_button,
             vertical_step,
             Vector2.INF)
-    update_waypoint( \
+    update_waypoint(
             next_waypoint,
             edge_calc_params.origin_waypoint,
             edge_calc_params.movement_params,
@@ -1875,7 +1875,7 @@ static func update_neighbors_for_new_waypoint( \
             vertical_step,
             Vector2.INF)
 
-static func _calculate_replacement_for_fake_waypoint( \
+static func _calculate_replacement_for_fake_waypoint(
         fake_waypoint: Waypoint,
         waypoint_offset: Vector2) -> Waypoint:
     var replacement_surface: Surface
@@ -1974,7 +1974,7 @@ static func _calculate_replacement_for_fake_waypoint( \
         # We didn't find a replacement.
         return null
     
-    var replacement := Waypoint.new( \
+    var replacement := Waypoint.new(
             replacement_surface,
             replacement_position,
             false,
@@ -1985,7 +1985,7 @@ static func _calculate_replacement_for_fake_waypoint( \
     return replacement
 
 static func clone_waypoint(original: Waypoint) -> Waypoint:
-    var clone := Waypoint.new( \
+    var clone := Waypoint.new(
             original.surface,
             original.position,
             original.passing_vertically,
@@ -1995,7 +1995,7 @@ static func clone_waypoint(original: Waypoint) -> Waypoint:
     copy_waypoint(clone, original)
     return clone
 
-static func copy_waypoint( \
+static func copy_waypoint(
         destination: Waypoint,
         source: Waypoint) -> void:
     destination.surface = source.surface

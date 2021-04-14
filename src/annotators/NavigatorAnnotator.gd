@@ -26,7 +26,7 @@ func _draw() -> void:
         return
     
     if current_path != null:
-        Gs.draw_utils.draw_path( \
+        Gs.draw_utils.draw_path(
                 self,
                 current_path,
                 TRAJECTORY_STROKE_WIDTH,
@@ -37,12 +37,12 @@ func _draw() -> void:
                 false)
         
         # Draw the origin indicator.
-        self.draw_circle( \
+        self.draw_circle(
                 current_path.origin,
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
                 Surfacer.ann_defaults \
                         .NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR)
-        Gs.draw_utils.draw_circle_outline( \
+        Gs.draw_utils.draw_circle_outline(
                 self,
                 current_path.origin,
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
@@ -59,7 +59,7 @@ func _draw() -> void:
                         .NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH - \
                 AnnotationElementDefaults \
                         .NAVIGATOR_DESTINATION_INDICATOR_RADIUS
-        Gs.draw_utils.draw_destination_marker( \
+        Gs.draw_utils.draw_destination_marker(
                 self,
                 cone_end_point,
                 false,
@@ -72,7 +72,7 @@ func _draw() -> void:
                 true,
                 INF,
                 4.0)
-        Gs.draw_utils.draw_destination_marker( \
+        Gs.draw_utils.draw_destination_marker(
                 self,
                 cone_end_point,
                 false,
@@ -87,7 +87,7 @@ func _draw() -> void:
                 4.0)
     
     elif previous_path != null and INCLUDES_PREVIOUS_NAVIGATION:
-        Gs.draw_utils.draw_path( \
+        Gs.draw_utils.draw_path(
                 self,
                 previous_path,
                 TRAJECTORY_STROKE_WIDTH,

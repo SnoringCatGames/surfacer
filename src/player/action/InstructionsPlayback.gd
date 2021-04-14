@@ -15,7 +15,7 @@ var active_key_presses: Dictionary
 # Dictionary<String, boolean>
 var _next_active_key_presses: Dictionary
 
-func _init( \
+func _init(
         edge: Edge,
         is_additive: bool) -> void:
     self.edge = edge
@@ -33,7 +33,7 @@ func start(time_sec: float) -> void:
     active_key_presses = {}
     _next_active_key_presses = {}
 
-func update( \
+func update(
         time_sec: float,
         navigation_state: PlayerNavigationState) -> Array:
     # TODO: If we don't ever need more complicated dynamic instruction updates

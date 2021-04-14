@@ -38,7 +38,7 @@ var can_backtrack_on_height: bool
 # Dictionary<String, bool>
 var _collided_surfaces: Dictionary
 
-func _init( \
+func _init(
         collision_params: CollisionCalcParams,
         origin_position: PositionAlongSurface,
         destination_position: PositionAlongSurface,
@@ -64,13 +64,13 @@ func _init( \
                     movement_params.collision_margin_for_waypoint_positions)
     self._collided_surfaces = {}
 
-func have_backtracked_for_surface( \
+func have_backtracked_for_surface(
         surface: Surface,
         time_jump_release: float) -> bool:
     var key := surface.to_string() + str(time_jump_release)
     return _collided_surfaces.has(key)
 
-func record_backtracked_surface( \
+func record_backtracked_surface(
         surface: Surface,
         time_jump_release: float) -> void:
     var key := surface.to_string() + str(time_jump_release)

@@ -111,65 +111,65 @@ func copy(other: PlayerActionState) -> void:
     
     self.start_dash = other.start_dash
 
-func log_new_presses_and_releases( \
+func log_new_presses_and_releases(
         player,
         time_sec: float) -> void:
-    _log_new_press_or_release( \
+    _log_new_press_or_release(
             player,
             "jump",
             just_pressed_jump,
             just_released_jump,
             time_sec)
-    _log_new_press_or_release( \
+    _log_new_press_or_release(
             player,
             "up",
             just_pressed_up,
             just_released_up,
             time_sec)
-    _log_new_press_or_release( \
+    _log_new_press_or_release(
             player,
             "down",
             just_pressed_down,
             just_released_down,
             time_sec)
-    _log_new_press_or_release( \
+    _log_new_press_or_release(
             player,
             "left",
             just_pressed_left,
             just_released_left,
             time_sec)
-    _log_new_press_or_release( \
+    _log_new_press_or_release(
             player,
             "right",
             just_pressed_right,
             just_released_right,
             time_sec)
-    _log_new_press_or_release( \
+    _log_new_press_or_release(
             player,
             "grab",
             just_pressed_grab_wall,
             just_released_grab_wall,
             time_sec)
-    _log_new_press_or_release( \
+    _log_new_press_or_release(
             player,
             "faceL",
             just_pressed_face_left,
             just_released_face_left,
             time_sec)
-    _log_new_press_or_release( \
+    _log_new_press_or_release(
             player,
             "faceR",
             just_pressed_face_right,
             just_released_face_right,
             time_sec)
-    _log_new_press_or_release( \
+    _log_new_press_or_release(
             player,
             "dash",
             start_dash,
             false,
             time_sec)
 
-static func _log_new_press_or_release( \
+static func _log_new_press_or_release(
         player,
         action_name: String,
         just_pressed: bool,

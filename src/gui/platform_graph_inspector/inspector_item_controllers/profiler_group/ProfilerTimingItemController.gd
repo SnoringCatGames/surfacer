@@ -8,13 +8,13 @@ const STARTS_COLLAPSED := true
 var metric: String
 var metadata_container: EdgeCalcResultMetadata
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         metric: String,
         metadata_container = null) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -41,10 +41,10 @@ func get_description() -> String:
 func get_has_children() -> bool:
     return Gs.profiler.get_count(metric, metadata_container) > 1
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "find_and_expand_controller should not be called for " + \
             "PROFILER_TIMING.")
     return false
@@ -53,24 +53,24 @@ func _create_children_inner() -> void:
     if !get_has_children():
         return
     
-    _create_child( \
+    _create_child(
             "Total",
             Gs.profiler.get_sum(metric, metadata_container))
-    _create_child( \
+    _create_child(
             "Average",
             Gs.profiler.get_mean(metric, metadata_container))
-    _create_child( \
+    _create_child(
             "Count",
             Gs.profiler.get_count(metric, metadata_container),
             "")
-    _create_child( \
+    _create_child(
             "Min",
             Gs.profiler.get_min(metric, metadata_container))
-    _create_child( \
+    _create_child(
             "Max",
             Gs.profiler.get_max(metric, metadata_container))
 
-func _create_child( \
+func _create_child(
         label: String,
         value: float,
         suffix := "ms") -> void:
@@ -80,7 +80,7 @@ func _create_child( \
         label,
     ]
     var description := text + " " + metric
-    DescriptionItemController.new( \
+    DescriptionItemController.new(
             tree_item,
             tree,
             graph,

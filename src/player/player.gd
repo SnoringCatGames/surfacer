@@ -94,7 +94,7 @@ func _ready() -> void:
     var owner_id: int = shape_owners[0]
     assert(shape_owner_get_shape_count(owner_id) == 1)
     var collider_shape := shape_owner_get_shape(owner_id, 0)
-    assert(Gs.geometry.do_shapes_match( \
+    assert(Gs.geometry.do_shapes_match(
             collider_shape,
             movement_params.collider_shape))
     var transform := shape_owner_get_transform(owner_id)
@@ -108,7 +108,7 @@ func _ready() -> void:
 #    shape_owner_clear_shapes(owner_id)
 #    shape_owner_add_shape(owner_id, movement_params.collider_shape)
     
-    var animators: Array = Gs.utils.get_children_by_type( \
+    var animators: Array = Gs.utils.get_children_by_type(
             self,
             PlayerAnimator)
     assert(animators.size() <= 1)
@@ -125,7 +125,7 @@ func _ready() -> void:
     _dash_cooldown_timer = Timer.new()
     _dash_cooldown_timer.one_shot = true
     #warning-ignore:return_value_discarded
-    _dash_cooldown_timer.connect( \
+    _dash_cooldown_timer.connect(
             "timeout",
             self,
             "_dash_cooldown_finished")
@@ -141,7 +141,7 @@ func _ready() -> void:
     surface_state.previous_center_position = self.position
     surface_state.center_position = self.position
     
-    Gs.utils.connect( \
+    Gs.utils.connect(
             "display_resized",
             self,
             "_on_resized")
@@ -207,7 +207,7 @@ func _physics_process(delta_sec: float) -> void:
     if _is_destroyed:
         return
     
-    assert(Gs.geometry.are_floats_equal_with_epsilon( \
+    assert(Gs.geometry.are_floats_equal_with_epsilon(
             delta_sec,
             Time.PHYSICS_TIME_STEP_SEC))
     
@@ -269,7 +269,7 @@ func _physics_process(delta_sec: float) -> void:
     # takes delta time into account.
     # TODO: Use the remaining pre-collision movement that move_and_slide
     #       returns. This might be needed in order to move along slopes?
-    move_and_slide( \
+    move_and_slide(
             velocity,
             Gs.geometry.UP,
             false,
@@ -321,7 +321,7 @@ func _update_actions(delta_sec: float) -> void:
     
     # Update actions for the current frame.
     for action_source in action_sources:
-        action_source.update( \
+        action_source.update(
                 actions,
                 actions_from_previous_frame,
                 Gs.time.elapsed_play_time_actual_sec,
@@ -493,7 +493,7 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     _update_which_side_is_grabbed(preserves_just_changed_state)
     _update_which_surface_is_grabbed(preserves_just_changed_state)
 
-func _update_which_side_is_grabbed( \
+func _update_which_side_is_grabbed(
         preserves_just_changed_state := false) -> void:
     var next_is_grabbing_floor := false
     var next_is_grabbing_ceiling := false
@@ -575,9 +575,9 @@ func _update_which_side_is_grabbed( \
         SurfaceSide.RIGHT_WALL:
             surface_state.grabbed_surface_normal = Gs.geometry.LEFT
 
-func _update_which_surface_is_grabbed( \
+func _update_which_surface_is_grabbed(
         preserves_just_changed_state := false) -> void:
-    var collision := _get_attached_surface_collision( \
+    var collision := _get_attached_surface_collision(
             self,
             surface_state)
     assert((collision != null) == surface_state.is_grabbing_a_surface)
@@ -600,7 +600,7 @@ func _update_which_surface_is_grabbed( \
                                 surface_state.grabbed_tile_map)
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
-        Gs.geometry.get_collision_tile_map_coord( \
+        Gs.geometry.get_collision_tile_map_coord(
                 surface_state.collision_tile_map_coord_result,
                 surface_state.grab_position,
                 surface_state.grabbed_tile_map,
@@ -653,11 +653,11 @@ func _update_which_surface_is_grabbed( \
         if surface_state.just_changed_tile_map_coord or \
                 surface_state.just_changed_tile_map:
             surface_state.grabbed_tile_map_index = \
-                    Gs.geometry.get_tile_map_index_from_grid_coord( \
+                    Gs.geometry.get_tile_map_index_from_grid_coord(
                             surface_state.grab_position_tile_map_coord,
                             surface_state.grabbed_tile_map)
         
-        var next_grabbed_surface := surface_parser.get_surface_for_tile( \
+        var next_grabbed_surface := surface_parser.get_surface_for_tile(
                 surface_state.grabbed_tile_map,
                 surface_state.grabbed_tile_map_index,
                 surface_state.grabbed_side)
@@ -673,7 +673,7 @@ func _update_which_surface_is_grabbed( \
                     surface_state.grabbed_surface
         surface_state.grabbed_surface = next_grabbed_surface
         
-        surface_state.center_position_along_surface.match_current_grab( \
+        surface_state.center_position_along_surface.match_current_grab(
                 surface_state.grabbed_surface,
                 surface_state.center_position)
     
@@ -700,7 +700,7 @@ func _update_collision_mask() -> void:
     set_collision_mask_bit(1, !surface_state.is_falling_through_floors)
     set_collision_mask_bit(2, surface_state.is_grabbing_walk_through_walls)
 
-static func _get_attached_surface_collision( \
+static func _get_attached_surface_collision(
         body: KinematicBody2D,
         surface_state: PlayerSurfaceState) -> KinematicCollision2D:
     var closest_normal_diff: float = PI
@@ -746,7 +746,7 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     #warning-ignore:return_value_discarded
     _dash_fade_tween.reset_all()
     #warning-ignore:return_value_discarded
-    _dash_fade_tween.interpolate_property( \
+    _dash_fade_tween.interpolate_property(
             self,
             "current_max_horizontal_speed",
             movement_params.max_horizontal_speed_default * \
@@ -771,7 +771,7 @@ func _dash_cooldown_finished() -> void:
 
 # Conditionally prints the given message, depending on the Player's
 # configuration.
-func print_msg( \
+func print_msg(
         message_template: String,
         message_args = null) -> void:
     if Surfacer.is_surfacer_logging and \

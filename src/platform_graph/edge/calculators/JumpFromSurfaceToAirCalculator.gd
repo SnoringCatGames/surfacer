@@ -5,7 +5,7 @@ const NAME := "JumpFromSurfaceToAirCalculator"
 const EDGE_TYPE := EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE
 const IS_A_JUMP_CALCULATOR := true
 
-func _init().( \
+func _init().(
         NAME,
         EDGE_TYPE,
         IS_A_JUMP_CALCULATOR) -> void:
@@ -14,7 +14,7 @@ func _init().( \
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null
 
-func get_all_inter_surface_edges_from_surface( \
+func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
         collision_params: CollisionCalcParams,
         origin_surface: Surface,
@@ -23,7 +23,7 @@ func get_all_inter_surface_edges_from_surface( \
     Gs.logger.error("JumpFromSurfaceToAirCalculator" + \
             ".get_all_inter_surface_edges_from_surface should not be called")
 
-func calculate_edge( \
+func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
         position_start: PositionAlongSurface,
@@ -34,7 +34,7 @@ func calculate_edge( \
     if velocity_start == Vector2.INF:
         var is_moving_leftward := position_end.target_point.x - \
                 position_start.target_point.x < 0.0
-        velocity_start = EdgeCalculator.get_velocity_start( \
+        velocity_start = EdgeCalculator.get_velocity_start(
                 collision_params.movement_params,
                 position_start.surface,
                 true,
@@ -45,7 +45,7 @@ func calculate_edge( \
             edge_result_metadata != null else \
             EdgeCalcResultMetadata.new(false, false)
     
-    var edge_calc_params := EdgeCalculator.create_edge_calc_params( \
+    var edge_calc_params := EdgeCalculator.create_edge_calc_params(
             edge_result_metadata,
             collision_params,
             position_start,
@@ -58,7 +58,7 @@ func calculate_edge( \
         # Cannot reach destination from origin.
         return null
     
-    var calc_result := EdgeStepUtils.calculate_steps_with_new_jump_height( \
+    var calc_result := EdgeStepUtils.calculate_steps_with_new_jump_height(
             edge_result_metadata,
             edge_calc_params,
             null,
@@ -67,14 +67,14 @@ func calculate_edge( \
         return null
     
     var instructions := EdgeInstructionsUtils \
-            .convert_calculation_steps_to_movement_instructions( \
+            .convert_calculation_steps_to_movement_instructions(
                     false,
                     collision_params,
                     calc_result,
                     true,
                     SurfaceSide.NONE)
     var trajectory := \
-            EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps( \
+            EdgeTrajectoryUtils.calculate_trajectory_from_calculation_steps(
                     false,
                     collision_params,
                     calc_result,
@@ -83,7 +83,7 @@ func calculate_edge( \
     var velocity_end: Vector2 = \
             calc_result.horizontal_steps.back().velocity_step_end
     
-    var edge := JumpFromSurfaceToAirEdge.new( \
+    var edge := JumpFromSurfaceToAirEdge.new(
             self,
             position_start,
             position_end,
@@ -97,7 +97,7 @@ func calculate_edge( \
     
     return edge
 
-func optimize_edge_jump_position_for_path( \
+func optimize_edge_jump_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
         edge_index: int,
@@ -106,7 +106,7 @@ func optimize_edge_jump_position_for_path( \
         edge: Edge) -> void:
     assert(edge is JumpFromSurfaceToAirEdge)
     
-    EdgeCalculator.optimize_edge_jump_position_for_path_helper( \
+    EdgeCalculator.optimize_edge_jump_position_for_path_helper(
             collision_params,
             path,
             edge_index,

@@ -10,14 +10,14 @@ var text: String
 var edge_types_to_filtered_edges: Dictionary
 var filtered_edge_count: int
 
-func _init( \
+func _init(
         type: int,
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         edge_calc_result_type: int,
         text) \
-        .( \
+        .(
         type,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -26,12 +26,12 @@ func _init( \
         graph) -> void:
     self.edge_calc_result_type = edge_calc_result_type
     self.text = text
-    _init_edge_types_to_filtered_edges( \
+    _init_edge_types_to_filtered_edges(
             graph,
             edge_calc_result_type)
     _post_init()
 
-func _init_edge_types_to_filtered_edges( \
+func _init_edge_types_to_filtered_edges(
         graph: PlatformGraph,
         edge_calc_result_type: int) -> void:
     var filtered_edges := []
@@ -47,7 +47,7 @@ func _init_edge_types_to_filtered_edges( \
     self.edge_types_to_filtered_edges = {}
     
     for edge in filtered_edges:
-        if !InspectorItemController.EDGE_TYPES_TO_SKIP.find( \
+        if !InspectorItemController.EDGE_TYPES_TO_SKIP.find(
                 edge.edge_type) < 0:
             continue
         if !edge_types_to_filtered_edges.has(edge.edge_type):
@@ -66,17 +66,17 @@ func to_string() -> String:
         filtered_edge_count,
     ]
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "find_and_expand_controller should not be called for " + \
             "%s." % InspectorItemType.get_string(type))
     return false
 
 func _create_children_inner() -> void:
     for edge_type in edge_types_to_filtered_edges:
-        EdgeTypeInEdgesGroupItemController.new( \
+        EdgeTypeInEdgesGroupItemController.new(
                 tree_item,
                 tree,
                 graph,
@@ -93,7 +93,7 @@ func get_annotation_elements() -> Array:
     var element: EdgeAnnotationElement
     for edge_type in edge_types_to_filtered_edges:
         for edge in edge_types_to_filtered_edges[edge_type]:
-            element = EdgeAnnotationElement.new( \
+            element = EdgeAnnotationElement.new(
                     edge,
                     true,
                     false,

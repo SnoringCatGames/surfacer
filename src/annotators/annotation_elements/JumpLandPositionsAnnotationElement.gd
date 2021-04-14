@@ -10,7 +10,7 @@ var dash_length: float
 var dash_gap: float
 var dash_stroke_width: float
 
-func _init( \
+func _init(
         jump_land_positions: JumpLandPositions,
         color_params := \
                 Surfacer.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS,
@@ -32,7 +32,7 @@ func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
     var start := jump_land_positions.jump_position.target_point
     var end := jump_land_positions.land_position.target_point
-    Gs.draw_utils.draw_dashed_line( \
+    Gs.draw_utils.draw_dashed_line(
             canvas,
             start,
             end,
@@ -41,11 +41,11 @@ func draw(canvas: CanvasItem) -> void:
             dash_gap,
             0.0,
             dash_stroke_width)
-    Gs.draw_utils.draw_origin_marker( \
+    Gs.draw_utils.draw_origin_marker(
             canvas,
             start,
             color)
-    Gs.draw_utils.draw_destination_marker( \
+    Gs.draw_utils.draw_destination_marker(
             canvas,
             end,
             true,

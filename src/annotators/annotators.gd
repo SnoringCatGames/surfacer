@@ -51,7 +51,7 @@ func _init() -> void:
     annotation_layer = Gs.canvas_layers.layers.annotation
 
 func _enter_tree() -> void:
-    ruler_layer = Gs.canvas_layers.create_layer( \
+    ruler_layer = Gs.canvas_layers.create_layer(
             "ruler",
             annotation_layer.layer + 5,
             Node.PAUSE_MODE_STOP)
@@ -61,10 +61,10 @@ func _enter_tree() -> void:
     annotation_layer.add_child(element_annotator)
     
     for annotator_type in _DEFAULT_ENABLEMENT:
-        var is_enabled: bool = Gs.save_state.get_setting( \
+        var is_enabled: bool = Gs.save_state.get_setting(
                 AnnotatorType.get_settings_key(annotator_type),
                 _DEFAULT_ENABLEMENT[annotator_type])
-        set_annotator_enabled( \
+        set_annotator_enabled(
                 annotator_type,
                 is_enabled)
 
@@ -73,10 +73,10 @@ func on_level_ready() -> void:
     # that the level is available.
     for annotator_type in _LEVEL_SPECIFIC_ANNOTATORS:
         if is_annotator_enabled(annotator_type):
-            set_annotator_enabled( \
+            set_annotator_enabled(
                     annotator_type,
                     false)
-            set_annotator_enabled( \
+            set_annotator_enabled(
                     annotator_type,
                     true)
 
@@ -88,17 +88,17 @@ func on_level_destroyed() -> void:
     for player in player_annotators.keys():
         destroy_player_annotator(player)
 
-func create_player_annotator( \
+func create_player_annotator(
         player: Player,
         is_human_player: bool) -> void:
-    var player_annotator := PlayerAnnotator.new( \
+    var player_annotator := PlayerAnnotator.new(
             player,
             is_human_player)
     annotation_layer.add_child(player_annotator)
     player_annotators[player] = player_annotator
     
     for annotator_type in _PLAYER_SUB_ANNOTATORS:
-        player_annotator.set_annotator_enabled( \
+        player_annotator.set_annotator_enabled(
                 annotator_type,
                 _annotator_enablement[annotator_type])
 
@@ -106,7 +106,7 @@ func destroy_player_annotator(player: Player) -> void:
     player_annotators[player].queue_free()
     player_annotators.erase(player)
 
-func set_annotator_enabled( \
+func set_annotator_enabled(
         annotator_type: int,
         is_enabled: bool) -> void:
     if is_annotator_enabled(annotator_type) == is_enabled:
@@ -115,7 +115,7 @@ func set_annotator_enabled( \
     
     if _PLAYER_SUB_ANNOTATORS.find(annotator_type) >= 0:
         for player_annotator in player_annotators.values():
-            player_annotator.set_annotator_enabled( \
+            player_annotator.set_annotator_enabled(
                     annotator_type,
                     is_enabled)
     else:
@@ -146,7 +146,7 @@ func _create_annotator(annotator_type: int) -> void:
         AnnotatorType.GRID_INDICES:
             if Gs.level != null and \
                     Surfacer.graph_parser.surface_parser != null:
-                grid_indices_annotator = GridIndicesAnnotator.new( \
+                grid_indices_annotator = GridIndicesAnnotator.new(
                         Surfacer.graph_parser.surface_parser)
                 annotation_layer.add_child(grid_indices_annotator)
         AnnotatorType.CLICK:
@@ -155,11 +155,11 @@ func _create_annotator(annotator_type: int) -> void:
         AnnotatorType.SURFACE_SELECTION:
             if Surfacer.current_player_for_clicks != null:
                 surface_selection_annotator = \
-                        SurfaceSelectionAnnotator.new( \
+                        SurfaceSelectionAnnotator.new(
                                 Surfacer.current_player_for_clicks)
                 annotation_layer.add_child(surface_selection_annotator)
                 surface_preselection_annotator = \
-                        SurfacePreselectionAnnotator.new( \
+                        SurfacePreselectionAnnotator.new(
                                 Surfacer.current_player_for_clicks)
                 annotation_layer.add_child(surface_preselection_annotator)
         AnnotatorType.LEVEL:

@@ -6,11 +6,11 @@ const EDGE_CALC_RESULT_TYPE := \
         EdgeCalcResultType.EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT
 const TEXT := "Edges calculated with increasing jump height"
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph) \
-        .( \
+        .(
         TYPE,
         parent_item,
         tree,

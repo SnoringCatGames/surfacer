@@ -9,7 +9,7 @@ var is_pressed: bool
 # Optional
 var position := Vector2.INF
 
-func _init( \
+func _init(
         input_key := "",
         time := INF,
         is_pressed := false,
@@ -31,7 +31,7 @@ func to_string() -> String:
             ", %s" % position if position != Vector2.INF else ""
         ]
 
-func load_from_json_object( \
+func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     input_key = json_object.k

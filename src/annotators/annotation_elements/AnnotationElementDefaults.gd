@@ -151,23 +151,23 @@ var INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR := \
         Color.from_hsv(0.61, 0.3, 0.2, 1.0)
 
 var SURFACE_COLOR_PARAMS := \
-        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
                 SURFACE_HUE_MIN,
                 SURFACE_HUE_MAX,
                 SURFACE_SATURATION,
                 SURFACE_VALUE,
                 SURFACE_ALPHA)
-var DEFAULT_SURFACE_COLOR_PARAMS := HsvColorParams.new( \
+var DEFAULT_SURFACE_COLOR_PARAMS := HsvColorParams.new(
         DEFAULT_SURFACE_HUE,
         SURFACE_SATURATION,
         SURFACE_VALUE,
         SURFACE_ALPHA)
-var ORIGIN_SURFACE_COLOR_PARAMS := HsvColorParams.new( \
+var ORIGIN_SURFACE_COLOR_PARAMS := HsvColorParams.new(
         ORIGIN_SURFACE_HUE,
         SURFACE_SATURATION,
         SURFACE_VALUE,
         SURFACE_ALPHA)
-var DESTINATION_SURFACE_COLOR_PARAMS := HsvColorParams.new( \
+var DESTINATION_SURFACE_COLOR_PARAMS := HsvColorParams.new(
         DESTINATION_SURFACE_HUE,
         SURFACE_SATURATION,
         SURFACE_VALUE,
@@ -177,7 +177,7 @@ var DESTINATION_SURFACE_COLOR_PARAMS := HsvColorParams.new( \
 # - More accurate to what is actually executed.
 # - Less accurate to what is originally calculated.
 var EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS := \
-        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
                 EDGE_HUE_MIN,
                 EDGE_HUE_MAX,
                 EDGE_DISCRETE_TRAJECTORY_SATURATION,
@@ -187,7 +187,7 @@ var EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS := \
 # - More accurate to what is originally calculated.
 # - Less accurate to what is actually executed.
 var EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS := \
-        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
                 EDGE_HUE_MIN,
                 EDGE_HUE_MAX,
                 EDGE_CONTINUOUS_TRAJECTORY_SATURATION,
@@ -196,7 +196,7 @@ var EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS := \
 
 var DEFAULT_EDGE_DISCRETE_TRAJECTORY_HUE := DEFAULT_SURFACE_HUE
 var DEFAULT_EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS := \
-        HsvColorParams.new( \
+        HsvColorParams.new(
                 DEFAULT_EDGE_DISCRETE_TRAJECTORY_HUE,
                 EDGE_DISCRETE_TRAJECTORY_SATURATION,
                 EDGE_DISCRETE_TRAJECTORY_VALUE,
@@ -205,14 +205,14 @@ var DEFAULT_EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS := \
 var DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE := \
         DEFAULT_EDGE_DISCRETE_TRAJECTORY_HUE
 var DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS := \
-        HsvColorParams.new( \
+        HsvColorParams.new(
                 DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE,
                 EDGE_CONTINUOUS_TRAJECTORY_SATURATION,
                 EDGE_CONTINUOUS_TRAJECTORY_VALUE,
                 EDGE_CONTINUOUS_TRAJECTORY_ALPHA)
 
 var WAYPOINT_COLOR_PARAMS := \
-        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
                 WAYPOINT_HUE_MIN,
                 WAYPOINT_HUE_MAX,
                 WAYPOINT_SATURATION,
@@ -221,14 +221,14 @@ var WAYPOINT_COLOR_PARAMS := \
 
 var DEFAULT_WAYPOINT_HUE := DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE
 var DEFAULT_WAYPOINT_COLOR_PARAMS := \
-        HsvColorParams.new( \
+        HsvColorParams.new(
                 DEFAULT_WAYPOINT_HUE,
                 WAYPOINT_SATURATION,
                 WAYPOINT_VALUE,
                 WAYPOINT_ALPHA)
 
 var INSTRUCTION_COLOR_PARAMS := \
-        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
                 INSTRUCTION_HUE_MIN,
                 INSTRUCTION_HUE_MAX,
                 INSTRUCTION_SATURATION,
@@ -237,62 +237,62 @@ var INSTRUCTION_COLOR_PARAMS := \
 
 var DEFAULT_INSTRUCTION_HUE := DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE
 var DEFAULT_INSTRUCTION_COLOR_PARAMS := \
-        HsvColorParams.new( \
+        HsvColorParams.new(
                 DEFAULT_INSTRUCTION_HUE,
                 INSTRUCTION_SATURATION,
                 INSTRUCTION_VALUE,
                 INSTRUCTION_ALPHA)
 
-var FAILED_EDGE_ATTEMPT_COLOR_PARAMS := HsvColorParams.new( \
+var FAILED_EDGE_ATTEMPT_COLOR_PARAMS := HsvColorParams.new(
         COLLISION_HUE,
         FAILED_EDGE_ATTEMPT_SATURATION,
         FAILED_EDGE_ATTEMPT_VALUE,
         FAILED_EDGE_ATTEMPT_OPACITY)
 
-var INVALID_EDGE_COLOR_PARAMS := HsvColorParams.new( \
+var INVALID_EDGE_COLOR_PARAMS := HsvColorParams.new(
         COLLISION_HUE,
         STEP_SATURATION,
         STEP_VALUE,
         STEP_OPACITY_STRONG)
 
-var COLLISION_COLOR_FAINT := Color.from_hsv( \
+var COLLISION_COLOR_FAINT := Color.from_hsv(
         COLLISION_HUE,
         STEP_SATURATION,
         STEP_VALUE,
         STEP_OPACITY_FAINT)
-var COLLISION_COLOR_STRONG := Color.from_hsv( \
+var COLLISION_COLOR_STRONG := Color.from_hsv(
         COLLISION_HUE,
         STEP_SATURATION,
         STEP_VALUE,
         STEP_OPACITY_STRONG)
-var COLLISION_FRAME_START_COLOR := Color.from_hsv( \
+var COLLISION_FRAME_START_COLOR := Color.from_hsv(
         COLLISION_FRAME_START_HUE,
         0.7,
         0.9,
         0.5)
-var COLLISION_FRAME_END_COLOR := Color.from_hsv( \
+var COLLISION_FRAME_END_COLOR := Color.from_hsv(
         COLLISION_FRAME_END_HUE,
         0.7,
         0.9,
         0.5)
-var COLLISION_FRAME_PREVIOUS_COLOR := Color.from_hsv( \
+var COLLISION_FRAME_PREVIOUS_COLOR := Color.from_hsv(
         COLLISION_FRAME_PREVIOUS_HUE,
         0.7,
         0.9,
         0.2)
-var COLLISION_JUST_BEFORE_COLLISION_COLOR := Color.from_hsv( \
+var COLLISION_JUST_BEFORE_COLLISION_COLOR := Color.from_hsv(
         COLLISION_HUE,
         0.5,
         0.6,
         0.2)
-var COLLISION_AT_COLLISION_COLOR := Color.from_hsv( \
+var COLLISION_AT_COLLISION_COLOR := Color.from_hsv(
         COLLISION_HUE,
         0.7,
         0.9,
         0.5)
 
 var JUMP_LAND_POSITIONS_COLOR_PARAMS := \
-        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva( \
+        ColorParamsFactory.create_hsv_range_color_params_with_constant_sva(
                 JUMP_LAND_POSITIONS_HUE_MIN,
                 JUMP_LAND_POSITIONS_HUE_MAX,
                 JUMP_LAND_POSITIONS_SATURATION,
@@ -301,22 +301,22 @@ var JUMP_LAND_POSITIONS_COLOR_PARAMS := \
 
 var DEFAULT_JUMP_LAND_POSITIONS_HUE := DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_HUE
 var DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS := \
-        HsvColorParams.new( \
+        HsvColorParams.new(
                 DEFAULT_JUMP_LAND_POSITIONS_HUE,
                 JUMP_LAND_POSITIONS_SATURATION,
                 JUMP_LAND_POSITIONS_VALUE,
                 JUMP_LAND_POSITIONS_ALPHA)
 
-var NAVIGATOR_CURRENT_PATH_COLOR := SurfacerColors.opacify( \
+var NAVIGATOR_CURRENT_PATH_COLOR := SurfacerColors.opacify(
         SurfacerColors.PURPLE,
         SurfacerColors.ALPHA_FAINT)
-var NAVIGATOR_PREVIOUS_PATH_COLOR := SurfacerColors.opacify( \
+var NAVIGATOR_PREVIOUS_PATH_COLOR := SurfacerColors.opacify(
         SurfacerColors.PURPLE,
         SurfacerColors.ALPHA_XFAINT)
-var NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := SurfacerColors.opacify( \
+var NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := SurfacerColors.opacify(
         SurfacerColors.PURPLE,
         SurfacerColors.ALPHA_XXFAINT)
-var NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := SurfacerColors.opacify( \
+var NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := SurfacerColors.opacify(
         SurfacerColors.PURPLE,
         SurfacerColors.ALPHA_SLIGHTLY_FAINT)
 var NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
@@ -324,12 +324,12 @@ var NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
 var NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR := \
         NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
 
-var DEFAULT_POLYLINE_COLOR_PARAMS := HsvColorParams.new( \
+var DEFAULT_POLYLINE_COLOR_PARAMS := HsvColorParams.new(
         DEFAULT_POLYLINE_HUE,
         DEFAULT_POLYLINE_SATURATION,
         DEFAULT_POLYLINE_VALUE,
         DEFAULT_POLYLINE_OPACITY)
-var FALL_RANGE_POLYGON_COLOR_PARAMS := HsvColorParams.new( \
+var FALL_RANGE_POLYGON_COLOR_PARAMS := HsvColorParams.new(
         DESTINATION_SURFACE_HUE,
         DEFAULT_POLYLINE_SATURATION,
         DEFAULT_POLYLINE_VALUE,

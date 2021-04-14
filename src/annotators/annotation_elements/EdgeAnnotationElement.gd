@@ -10,7 +10,7 @@ var includes_continuous_positions: bool
 var includes_discrete_positions: bool
 var color_params: ColorParams
 
-func _init( \
+func _init(
         edge: Edge,
         includes_waypoints := \
                 AnnotationElementDefaults.INCLUDES_WAYPOINTS,
@@ -32,7 +32,7 @@ func _init( \
 
 func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
-    Gs.draw_utils.draw_edge( \
+    Gs.draw_utils.draw_edge(
             canvas,
             edge,
             SurfacerDrawUtils.EDGE_TRAJECTORY_WIDTH,

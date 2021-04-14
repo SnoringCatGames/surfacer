@@ -7,13 +7,13 @@ const STARTS_COLLAPSED := true
 var edge_attempt: EdgeAttempt
 var edge_result_metadata: EdgeCalcResultMetadata
 
-func _init( \
+func _init(
         type,
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         edge_attempt: EdgeAttempt) \
-        .( \
+        .(
         type,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -23,15 +23,15 @@ func _init( \
     assert(edge_attempt != null)
     self.edge_attempt = edge_attempt
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     assert(search_type == InspectorSearchType.EDGE)
-    if Gs.geometry.are_points_equal_with_epsilon( \
+    if Gs.geometry.are_points_equal_with_epsilon(
                     edge_attempt.get_start(),
                     metadata.start,
                     0.01) and \
-            Gs.geometry.are_points_equal_with_epsilon( \
+            Gs.geometry.are_points_equal_with_epsilon(
                     edge_attempt.get_end(),
                     metadata.end,
                     0.01):
@@ -45,7 +45,7 @@ func find_and_expand_controller( \
 
 func _create_children_inner() -> void:
     if edge_result_metadata == null:
-        edge_result_metadata = _calculate_edge_calc_result_metadata( \
+        edge_result_metadata = _calculate_edge_calc_result_metadata(
                 edge_attempt,
                 graph)
     var get_annotation_elements_funcref := \
@@ -64,7 +64,7 @@ func _create_children_inner() -> void:
         edge_attempt.get_start(),
         SurfaceSide.get_string(edge_attempt.get_start_surface().side),
     ]
-    DescriptionItemController.new( \
+    DescriptionItemController.new(
             tree_item,
             tree,
             graph,
@@ -82,7 +82,7 @@ func _create_children_inner() -> void:
         edge_attempt.get_end(),
         SurfaceSide.get_string(edge_attempt.get_end_surface().side),
     ]
-    DescriptionItemController.new( \
+    DescriptionItemController.new(
             tree_item,
             tree,
             graph,
@@ -94,7 +94,7 @@ func _create_children_inner() -> void:
     description = \
             "The start velocity for this edge attempt is %s." % \
             edge_attempt.velocity_start
-    DescriptionItemController.new( \
+    DescriptionItemController.new(
             tree_item,
             tree,
             graph,
@@ -102,24 +102,24 @@ func _create_children_inner() -> void:
             description,
             get_annotation_elements_funcref)
     
-    EdgeCalcResultMetadataItemController.new( \
+    EdgeCalcResultMetadataItemController.new(
             tree_item,
             tree,
             graph,
             edge_attempt,
             edge_result_metadata)
     
-    EdgeCalcProfilerGroupItemController.new( \
+    EdgeCalcProfilerGroupItemController.new(
             tree_item,
             tree,
             graph,
             edge_result_metadata)
 
-static func _calculate_edge_calc_result_metadata( \
+static func _calculate_edge_calc_result_metadata(
         edge_attempt: EdgeAttempt,
         graph: PlatformGraph) -> EdgeCalcResultMetadata:
     var edge_result_metadata := EdgeCalcResultMetadata.new(true, false)
-    edge_attempt.calculator.calculate_edge( \
+    edge_attempt.calculator.calculate_edge(
             edge_result_metadata,
             graph.collision_params,
             edge_attempt.start_position_along_surface,

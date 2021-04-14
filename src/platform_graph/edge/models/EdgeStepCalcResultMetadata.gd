@@ -23,7 +23,7 @@ var step: EdgeStep
 
 var collision_result_metadata: CollisionCalcResultMetadata
 
-func _init( \
+func _init(
         edge_result_metadata: EdgeCalcResultMetadata,
         parent_step_result_metadata: EdgeStepCalcResultMetadata,
         step_calc_params: EdgeStepCalcParams,
@@ -50,7 +50,7 @@ func get_result_type_string() -> String:
     return EdgeStepCalcResultType.get_string(edge_step_calc_result_type)
 
 func get_description_list() -> Array:
-    return EdgeStepCalcResultType.to_description_list( \
+    return EdgeStepCalcResultType.to_description_list(
             edge_step_calc_result_type)
 
 func get_is_backtracking() -> bool:

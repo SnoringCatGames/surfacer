@@ -10,7 +10,7 @@ var edge_calculators: Array
 # Array<PlayerActionHandler>
 var action_handlers: Array
 
-func _init( \
+func _init(
         name: String,
         movement_params: MovementParams,
         edge_calculators: Array,

@@ -72,7 +72,7 @@ func load_from_json_object(
             _load_failed_edge_attempts_json_array(json_object.f, context)
     valid_edges = _load_valid_edges_json_array(json_object.v, context)
 
-func _load_all_jump_land_positions_json_array(\
+func _load_all_jump_land_positions_json_array(
         json_object: Array,
         context: Dictionary) -> Array:
     var result := []
@@ -92,7 +92,7 @@ func _load_failed_edge_attempts_json_array(
         result[i] = failed_edge_attempt
     return result
 
-func _load_valid_edges_json_array(\
+func _load_valid_edges_json_array(
         json_object: Array,
         context: Dictionary) -> Array:
     var result := []

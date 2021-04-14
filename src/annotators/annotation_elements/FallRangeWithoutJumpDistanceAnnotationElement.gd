@@ -4,7 +4,7 @@ extends PolylineAnnotationElement
 const TYPE := AnnotationElementType.FALL_RANGE_WITHOUT_JUMP_DISTANCE
 const LEGEND_ITEM_CLASS_REFERENCE := FallRangeWithoutJumpDistanceLegendItem
 
-func _init( \
+func _init(
         vertices: Array,
         color_params := Surfacer.ann_defaults \
                 .DEFAULT_POLYLINE_COLOR_PARAMS,
@@ -16,7 +16,7 @@ func _init( \
                 AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP,
         stroke_width := AnnotationElementDefaults \
                 .DEFAULT_POLYLINE_STROKE_WIDTH) \
-        .( \
+        .(
         TYPE,
         LEGEND_ITEM_CLASS_REFERENCE,
         vertices,

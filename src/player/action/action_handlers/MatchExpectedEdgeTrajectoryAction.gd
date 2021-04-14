@@ -5,7 +5,7 @@ const NAME := "MatchExpectedEdgeTrajectoryAction"
 const TYPE := SurfaceType.OTHER
 const PRIORITY := 10010
 
-func _init().( \
+func _init().(
         NAME,
         TYPE,
         PRIORITY) -> void:

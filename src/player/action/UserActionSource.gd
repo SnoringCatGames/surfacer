@@ -12,17 +12,17 @@ const ACTIONS_TO_INPUT_KEYS := {
   "face_right": "fr",
 }
 
-func _init( \
+func _init(
         player,
         is_additive: bool) \
-        .( \
+        .(
         "HP",
         player,
         is_additive) -> void:
     pass
 
 # Calculates actions for the current frame.
-func update( \
+func update(
         actions: PlayerActionState,
         previous_actions: PlayerActionState,
         time_sec: float,
@@ -33,7 +33,7 @@ func update( \
         var input_key: String = ACTIONS_TO_INPUT_KEYS[action]
         is_pressed = Gs.level_input.is_action_pressed(action)
         if !Gs.level_input.is_key_pressed(KEY_CONTROL):
-            PlayerActionSource.update_for_key_press( \
+            PlayerActionSource.update_for_key_press(
                     actions,
                     previous_actions,
                     input_key,

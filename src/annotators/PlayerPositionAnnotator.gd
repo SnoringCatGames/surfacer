@@ -1,22 +1,22 @@
 class_name PlayerPositionAnnotator
 extends Node2D
 
-var PLAYER_POSITION_COLOR := SurfacerColors.opacify( \
+var PLAYER_POSITION_COLOR := SurfacerColors.opacify(
         SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
-var GRAB_POSITION_COLOR := SurfacerColors.opacify( \
+var GRAB_POSITION_COLOR := SurfacerColors.opacify(
         SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
 const PLAYER_POSITION_RADIUS := 3.0
 const GRAB_POSITION_LINE_WIDTH := 5.0
 const GRAB_POSITION_LINE_LENGTH := 10.0
 
-var POSITION_ALONG_SURFACE_COLOR := SurfacerColors.opacify( \
+var POSITION_ALONG_SURFACE_COLOR := SurfacerColors.opacify(
         SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
 const POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS := 4.0
 const POSITION_ALONG_SURFACE_T_LENGTH_IN_SURFACE := 0.0
 const POSITION_ALONG_SURFACE_T_LENGTH_OUT_OF_SURFACE := 20.0
 const POSITION_ALONG_SURFACE_T_WIDTH := 4.0
 
-var COLLIDER_COLOR := SurfacerColors.opacify( \
+var COLLIDER_COLOR := SurfacerColors.opacify(
         SurfacerColors.TEAL, SurfacerColors.ALPHA_XFAINT)
 const COLLIDER_THICKNESS := 4.0
 
@@ -34,7 +34,7 @@ func _draw() -> void:
         _draw_position_along_surface()
 
 func _draw_player_position() -> void:
-    draw_circle( \
+    draw_circle(
             player.surface_state.center_position,
             PLAYER_POSITION_RADIUS,
             PLAYER_POSITION_COLOR)
@@ -45,14 +45,14 @@ func _draw_grab_position() -> void:
             from + \
             player.surface_state.grabbed_surface_normal * \
                     GRAB_POSITION_LINE_LENGTH
-    draw_line( \
+    draw_line(
             from,
             to,
             GRAB_POSITION_COLOR,
             GRAB_POSITION_LINE_WIDTH)
 
 func _draw_position_along_surface() -> void:
-    Gs.draw_utils.draw_position_along_surface( \
+    Gs.draw_utils.draw_position_along_surface(
             self,
             player.surface_state.center_position_along_surface,
             POSITION_ALONG_SURFACE_COLOR,
@@ -66,7 +66,7 @@ func _draw_position_along_surface() -> void:
             false)
 
 func _draw_collider_outline() -> void:
-    Gs.draw_utils.draw_shape_outline( \
+    Gs.draw_utils.draw_shape_outline(
             self,
             player.position,
             player.movement_params.collider_shape,
@@ -75,7 +75,7 @@ func _draw_collider_outline() -> void:
             COLLIDER_THICKNESS)
 
 func check_for_update() -> void:
-    if !Gs.geometry.are_points_equal_with_epsilon( \
+    if !Gs.geometry.are_points_equal_with_epsilon(
             player.position,
             previous_position,
             0.001):

@@ -16,16 +16,16 @@ const SCALE := 0.8
 
 var color_params: ColorParams
 
-func _init( \
+func _init(
         type: int,
         text: String,
         color_params: ColorParams) \
-        .( \
+        .(
         type,
         text) -> void:
     self.color_params = color_params
 
-func _draw_shape( \
+func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
     var offset := center - 0.5 * size * SCALE
@@ -33,7 +33,7 @@ func _draw_shape( \
     positions.resize(NORMALIZED_FAKE_POSITIONS.size())
     for i in NORMALIZED_FAKE_POSITIONS.size():
         positions[i] = NORMALIZED_FAKE_POSITIONS[i] * size * SCALE + offset
-    draw_polyline( \
+    draw_polyline(
             PoolVector2Array(positions),
             color_params.get_color(),
             SurfacerDrawUtils.EDGE_TRAJECTORY_WIDTH)

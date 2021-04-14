@@ -36,7 +36,7 @@ func _init(player: Player) -> void:
 
 func check_for_update() -> void:
     var most_recent_position := recent_positions[current_position_index]
-    if !Gs.geometry.are_points_equal_with_epsilon( \
+    if !Gs.geometry.are_points_equal_with_epsilon(
             player.position,
             most_recent_position,
             0.01):
@@ -119,7 +119,7 @@ func _draw() -> void:
         opacity = i / (position_count as float) * \
                 (MOVEMENT_OPACITY_NEWEST - MOVEMENT_OPACITY_OLDEST) + \
                 MOVEMENT_OPACITY_OLDEST
-        color = Color.from_hsv( \
+        color = Color.from_hsv(
                 MOVEMENT_HUE,
                 0.7,
                 0.7,
@@ -129,7 +129,7 @@ func _draw() -> void:
         i = (start_index + i) % RECENT_POSITIONS_BUFFER_SIZE
         next_position = recent_positions[i]
         
-        draw_line( \
+        draw_line(
                 previous_position,
                 next_position,
                 color,
@@ -137,7 +137,7 @@ func _draw() -> void:
         
         action = recent_actions[i]
         if action != PlayerActionType.NONE:
-            _draw_action_indicator( \
+            _draw_action_indicator(
                     action,
                     next_position,
                     opacity)
@@ -145,11 +145,11 @@ func _draw() -> void:
         previous_position = next_position
 
 # Draw an indicator for the action that happened at this point.
-func _draw_action_indicator( \
+func _draw_action_indicator(
         action: int,
         position: Vector2,
         opacity: float) -> void:
-    var color := Color.from_hsv( \
+    var color := Color.from_hsv(
             MOVEMENT_HUE,
             0.3,
             0.9,
@@ -184,13 +184,13 @@ func _draw_action_indicator( \
         PlayerActionType.RELEASED_FACE_RIGHT:
             pass
         _:
-            Gs.logger.error( \
+            Gs.logger.error(
                     "Unknown PlayerActionType passed to " + \
                     "_draw_action_indicator: %s" % \
                     PlayerActionType.get_string(action))
     
     if input_key != "":
-        Gs.draw_utils.draw_instruction_indicator( \
+        Gs.draw_utils.draw_instruction_indicator(
                 self,
                 input_key,
                 is_pressed,

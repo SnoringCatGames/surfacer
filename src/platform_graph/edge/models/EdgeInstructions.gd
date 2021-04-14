@@ -7,20 +7,20 @@ var instructions: Array
 var duration: float
 
 # Instructions don't need to be pre-sorted.
-func _init( \
+func _init(
         instructions := [],
         duration := INF) -> void:
     self.instructions = instructions
     self.duration = duration
     
-    self.instructions.sort_custom( \
+    self.instructions.sort_custom(
             self,
             "instruction_comparator")
 
 # Inserts the given instruction in sorted order.
 # TODO: Remove?
 func insert(instruction: EdgeInstruction) -> int:
-    var index := instructions.bsearch_custom( \
+    var index := instructions.bsearch_custom(
             instruction,
             self,
             "instruction_comparator")
@@ -30,7 +30,7 @@ func insert(instruction: EdgeInstruction) -> int:
 # Removes the given instruction if it exists.
 # TODO: Remove?
 func remove(instruction: EdgeInstruction) -> bool:
-    var index := instructions.bsearch_custom( \
+    var index := instructions.bsearch_custom(
             instruction,
             self,
             "instruction_comparator")
@@ -42,14 +42,14 @@ func remove(instruction: EdgeInstruction) -> bool:
 
 # This will mutate the time field on the given EdgeInstruction.
 # TODO: Remove?
-func is_instruction_in_range( \
+func is_instruction_in_range(
         instruction: EdgeInstruction,
         min_time: float,
         max_time: float) -> bool:
     var instruction_count := instructions.size()
     var possible_match: EdgeInstruction
     instruction.time = min_time
-    var index := instructions.bsearch_custom( \
+    var index := instructions.bsearch_custom(
             instruction,
             self,
             "instruction_comparator")
@@ -79,7 +79,7 @@ func is_instruction_in_range( \
     
     return false
 
-static func instruction_comparator( \
+static func instruction_comparator(
         a: EdgeInstruction,
         b: EdgeInstruction) -> bool:
     return a.time < b.time
@@ -111,13 +111,13 @@ func to_string_with_newlines(indent_level := 0) -> String:
         ]
     return format_string_template % format_string_arguments
 
-func load_from_json_object( \
+func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     instructions = _load_instructions_json_array(json_object.i, context)
     duration = json_object.d if json_object.d != -1 else INF
 
-func _load_instructions_json_array(\
+func _load_instructions_json_array(
         json_object: Array,
         context: Dictionary) -> Array:
     var result := []

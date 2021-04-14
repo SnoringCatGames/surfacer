@@ -14,7 +14,7 @@ func test_long_fall_near_positions() -> void:
     edge_calc_params.position_start = start_position
     edge_calc_params.position_end = end_position
     
-    var results := jump_from_platform_movement._calculate_steps_with_new_jump_height( \
+    var results := jump_from_platform_movement._calculate_steps_with_new_jump_height(
             edge_calc_params, edge_calc_params.position_end, null)
     
     assert_not_null(results)
@@ -32,7 +32,7 @@ func test_long_fall_far_positions() -> void:
     edge_calc_params.position_start = start_position
     edge_calc_params.position_end = end_position
     
-    var results := jump_from_platform_movement._calculate_steps_with_new_jump_height( \
+    var results := jump_from_platform_movement._calculate_steps_with_new_jump_height(
             edge_calc_params, edge_calc_params.position_end, null)
     
     assert_not_null(results)

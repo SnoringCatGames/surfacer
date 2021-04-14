@@ -5,7 +5,7 @@ const NAME := "AirDefaultAction"
 const TYPE := SurfaceType.AIR
 const PRIORITY := 310
 
-func _init().( \
+func _init().(
         NAME,
         TYPE,
         PRIORITY) -> void:
@@ -29,7 +29,7 @@ func process(player: Player) -> bool:
                     player.velocity.x > 0.0)):
         player.velocity.x = 0.0
     
-    player.velocity = MovementUtils.update_velocity_in_air( \
+    player.velocity = MovementUtils.update_velocity_in_air(
             player.velocity,
             player.actions.delta_sec,
             player.actions.pressed_jump,

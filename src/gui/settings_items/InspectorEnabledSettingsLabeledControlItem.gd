@@ -8,7 +8,7 @@ const DESCRIPTION := \
 
 var settings_key := "is_inspector_enabled"
 
-func _init(__ = null).( \
+func _init(__ = null).(
         LABEL,
         DESCRIPTION \
         ) -> void:
@@ -16,7 +16,7 @@ func _init(__ = null).( \
 
 func on_pressed(pressed: bool) -> void:
     Surfacer.is_inspector_enabled = pressed
-    Gs.save_state.set_setting( \
+    Gs.save_state.set_setting(
             settings_key,
             Surfacer.is_inspector_enabled)
 

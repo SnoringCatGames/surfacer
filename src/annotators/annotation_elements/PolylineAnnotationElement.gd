@@ -10,7 +10,7 @@ var dash_length: float
 var dash_gap: float
 var stroke_width: float
 
-func _init( \
+func _init(
         type: int,
         legend_item_class_reference,
         vertices: Array,
@@ -34,11 +34,11 @@ func _init( \
 func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
     if is_filled:
-        canvas.draw_colored_polygon( \
+        canvas.draw_colored_polygon(
                 PoolVector2Array(vertices),
                 color)
     elif is_dashed:
-        Gs.draw_utils.draw_dashed_polyline( \
+        Gs.draw_utils.draw_dashed_polyline(
                 canvas,
                 vertices,
                 color,
@@ -47,13 +47,13 @@ func draw(canvas: CanvasItem) -> void:
                 0.0,
                 stroke_width)
     else:
-        canvas.draw_polyline( \
+        canvas.draw_polyline(
                 PoolVector2Array(vertices),
                 color,
                 stroke_width)
 
 func _create_legend_items() -> Array:
-    var legend_item: PolylineLegendItem = legend_item_class_reference.new( \
+    var legend_item: PolylineLegendItem = legend_item_class_reference.new(
             color_params,
             is_filled,
             is_dashed,

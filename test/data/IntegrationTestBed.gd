@@ -4,7 +4,7 @@ extends "res://addons/gut/test.gd"
 var TEST_LEVEL_LONG_FALL := {
     scene_resource_path = "res://addons/surfacer/src/test/data/TestLevelLongFall.tscn",
     start = {
-        surface = Surface.new( \
+        surface = Surface.new(
                 [Vector2(128, 64), Vector2(192, 64)],
                 SurfaceSide.FLOOR,
                 null,
@@ -16,7 +16,7 @@ var TEST_LEVEL_LONG_FALL := {
         }
     },
     end = {
-        surface = Surface.new( \
+        surface = Surface.new(
                 [Vector2(256, 832), Vector2(320, 832)],
                 SurfaceSide.FLOOR,
                 null,
@@ -32,7 +32,7 @@ var TEST_LEVEL_LONG_FALL := {
 var TEST_LEVEL_LONG_RISE := {
     scene_resource_path = "res://addons/surfacer/src/test/data/TestLevelLongRise.tscn",
     start = {
-        surface = Surface.new( \
+        surface = Surface.new(
                 [Vector2(128, 64), Vector2(192, 64)],
                 SurfaceSide.FLOOR,
                 null,
@@ -44,7 +44,7 @@ var TEST_LEVEL_LONG_RISE := {
         }
     },
     end = {
-        surface = Surface.new( \
+        surface = Surface.new(
                 [Vector2(-128, -448), Vector2(-64, -448)],
                 SurfaceSide.FLOOR,
                 null,
@@ -60,7 +60,7 @@ var TEST_LEVEL_LONG_RISE := {
 var TEST_LEVEL_FAR_DISTANCE := {
     scene_resource_path = "res://addons/surfacer/src/test/data/TestLevelFarDistance.tscn",
     start = {
-        surface = Surface.new( \
+        surface = Surface.new(
                 [Vector2(128, 64), Vector2(192, 64)],
                 SurfaceSide.FLOOR,
                 null,
@@ -72,7 +72,7 @@ var TEST_LEVEL_FAR_DISTANCE := {
         }
     },
     end = {
-        surface = Surface.new( \
+        surface = Surface.new(
                 [Vector2(704, 64), Vector2(768, 64)],
                 SurfaceSide.FLOOR,
                 null,
@@ -125,7 +125,7 @@ func set_up(data := TEST_LEVEL_LONG_FALL) -> void:
 #            Vector2(160.0, 0.0) if \
 #            data.scene_resource_path.find("test_") >= 0 else \
 #            Vector2.ZERO
-#    level.add_player( \
+#    level.add_player(
 #            Surfacer.player_params[Surfacer.default_player_name] \
 #                    .player_resource_path,
 #            position,

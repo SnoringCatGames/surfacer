@@ -8,7 +8,7 @@ func _ready() -> void:
     # Do nothing.
     pass
 
-func _play_animation( \
+func _play_animation(
         name: String,
         playback_rate: float = 1) -> bool:
     # Do nothing.

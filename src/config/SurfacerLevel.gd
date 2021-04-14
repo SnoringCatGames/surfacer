@@ -20,12 +20,12 @@ func start() -> void:
     add_child(graph_parser)
     
     if Surfacer.is_inspector_enabled:
-        inspector_panel = Gs.utils.add_scene( \
+        inspector_panel = Gs.utils.add_scene(
                 Gs.canvas_layers.layers.hud,
                 _UTILITY_PANEL_RESOURCE_PATH)
         Surfacer.inspector_panel = inspector_panel
     else:
-        pause_button = Gs.utils.add_scene( \
+        pause_button = Gs.utils.add_scene(
                 Gs.canvas_layers.layers.hud,
                 _PAUSE_BUTTON_RESOURCE_PATH)
     
@@ -65,11 +65,11 @@ func _unhandled_input(event: InputEvent) -> void:
         # inspector.
         Gs.utils.release_focus()
 
-func add_player( \
+func add_player(
         resource_path: String,
         position: Vector2,
         is_human_player: bool) -> Player:
-    var player: Player = Gs.utils.add_scene( \
+    var player: Player = Gs.utils.add_scene(
             self,
             resource_path,
             true,
@@ -95,7 +95,7 @@ func add_player( \
     
     # Set up some annotators to help with debugging.
     player.set_is_sprite_visible(false)
-    Surfacer.annotators.create_player_annotator( \
+    Surfacer.annotators.create_player_annotator(
             player,
             is_human_player)
     
@@ -104,10 +104,10 @@ func add_player( \
 func set_tile_map_visibility(is_visible: bool) -> void:
     # TODO: Also show/hide background. Parallax doesn't extend from CanvasItem
     #       or have the `visible` field though.
-#    var backgrounds := Gs.utils.get_children_by_type( \
+#    var backgrounds := Gs.utils.get_children_by_type(
 #            self,
 #            ParallaxBackground)
-    var foregrounds := Gs.utils.get_children_by_type( \
+    var foregrounds := Gs.utils.get_children_by_type(
             self,
             TileMap)
     for node in foregrounds:

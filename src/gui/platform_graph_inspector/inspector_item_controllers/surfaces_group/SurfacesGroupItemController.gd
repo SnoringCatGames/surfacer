@@ -15,12 +15,12 @@ var left_walls_item_controller: LeftWallsItemController
 var right_walls_item_controller: RightWallsItemController
 var ceilings_item_controller: CeilingsItemController
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -51,34 +51,34 @@ func to_string() -> String:
         graph.counts.total_surfaces,
     ]
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     expand()
-    _trigger_find_and_expand_controller_recursive( \
+    _trigger_find_and_expand_controller_recursive(
             search_type,
             metadata)
     return true
 
-func _find_and_expand_controller_recursive( \
+func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
     var side: int = metadata.origin_surface.side
     match side:
         SurfaceSide.FLOOR:
-            floors_item_controller.find_and_expand_controller( \
+            floors_item_controller.find_and_expand_controller(
                     search_type,
                     metadata)
         SurfaceSide.LEFT_WALL:
-            left_walls_item_controller.find_and_expand_controller( \
+            left_walls_item_controller.find_and_expand_controller(
                     search_type,
                     metadata)
         SurfaceSide.RIGHT_WALL:
-            right_walls_item_controller.find_and_expand_controller( \
+            right_walls_item_controller.find_and_expand_controller(
                     search_type,
                     metadata)
         SurfaceSide.CEILING:
-            ceilings_item_controller.find_and_expand_controller( \
+            ceilings_item_controller.find_and_expand_controller(
                     search_type,
                     metadata)
         _:
@@ -86,22 +86,22 @@ func _find_and_expand_controller_recursive( \
                     SurfaceSide.get_string(side))
 
 func _create_children_inner() -> void:
-    floors_item_controller = FloorsItemController.new( \
+    floors_item_controller = FloorsItemController.new(
             tree_item,
             tree,
             graph,
             surfaces_to_surfaces_to_edge_types_to_edges_results)
-    left_walls_item_controller = LeftWallsItemController.new( \
+    left_walls_item_controller = LeftWallsItemController.new(
             tree_item,
             tree,
             graph,
             surfaces_to_surfaces_to_edge_types_to_edges_results)
-    right_walls_item_controller = RightWallsItemController.new( \
+    right_walls_item_controller = RightWallsItemController.new(
             tree_item,
             tree,
             graph,
             surfaces_to_surfaces_to_edge_types_to_edges_results)
-    ceilings_item_controller = CeilingsItemController.new( \
+    ceilings_item_controller = CeilingsItemController.new(
             tree_item,
             tree,
             graph,

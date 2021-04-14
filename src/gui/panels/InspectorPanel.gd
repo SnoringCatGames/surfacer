@@ -87,7 +87,7 @@ func _initialize_annotator_checkboxes() -> void:
         var checkbox := CheckBox.new()
         checkbox.pressed = item.get_is_pressed()
         checkbox.text = item.label
-        checkbox.connect( \
+        checkbox.connect(
                 "pressed",
                 self,
                 "_on_checkbox_pressed",
@@ -128,7 +128,7 @@ func _toggle_open() -> void:
     
     # Start the sliding animation.
     _toggle_open_tween.reset_all()
-    _toggle_open_tween.interpolate_property( \
+    _toggle_open_tween.interpolate_property(
             self,
             "rect_position:y",
             position_y_start,

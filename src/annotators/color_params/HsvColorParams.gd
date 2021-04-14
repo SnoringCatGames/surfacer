@@ -8,7 +8,7 @@ var saturation: float
 var value: float
 var alpha: float
 
-func _init( \
+func _init(
         hue: float,
         saturation: float,
         value: float,
@@ -20,7 +20,7 @@ func _init( \
     self.alpha = alpha
 
 func get_color() -> Color:
-    return Color.from_hsv( \
+    return Color.from_hsv(
             hue,
             saturation,
             value,

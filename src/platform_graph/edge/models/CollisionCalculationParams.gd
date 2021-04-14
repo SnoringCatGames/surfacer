@@ -8,7 +8,7 @@ var surface_parser: SurfaceParser
 var player: KinematicBody2D
 var thread_id: String = Gs.profiler.DEFAULT_THREAD_ID
 
-func _init( \
+func _init(
         debug_params: Dictionary,
         movement_params: MovementParams,
         surface_parser: SurfaceParser,

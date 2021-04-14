@@ -11,14 +11,14 @@ const EDGE_END_CONE_LENGTH := EDGE_WAYPOINT_RADIUS * 2.0
 
 const EDGE_INSTRUCTION_INDICATOR_LENGTH := 24
 
-static func draw_origin_marker( \
+static func draw_origin_marker(
         canvas: CanvasItem,
         target: Vector2,
         color: Color,
         radius := EDGE_START_RADIUS,
         border_width := 1.0,
         sector_arc_length := 3.0) -> void:
-    draw_circle_outline( \
+    draw_circle_outline(
             canvas,
             target,
             radius,
@@ -26,7 +26,7 @@ static func draw_origin_marker( \
             border_width,
             sector_arc_length)
 
-static func draw_destination_marker( \
+static func draw_destination_marker(
         canvas: CanvasItem,
         target: Vector2,
         is_target_at_circle_center: bool,
@@ -48,7 +48,7 @@ static func draw_destination_marker( \
         cone_end_point = target
         circle_center = target + normal * cone_length
     
-    draw_ice_cream_cone( \
+    draw_ice_cream_cone(
             canvas,
             cone_end_point,
             circle_center,
@@ -58,7 +58,7 @@ static func draw_destination_marker( \
             border_width,
             sector_arc_length)
 
-static func draw_path( \
+static func draw_path(
         canvas: CanvasItem,
         path: PlatformGraphPath,
         stroke_width := EDGE_TRAJECTORY_WIDTH,
@@ -70,12 +70,12 @@ static func draw_path( \
     var vertices := PoolVector2Array()
     for edge in path.edges:
         vertices.append_array(_get_edge_trajectory_vertices(edge))
-    canvas.draw_polyline( \
+    canvas.draw_polyline(
             vertices,
             color,
             stroke_width)
 
-static func draw_edge( \
+static func draw_edge(
         canvas: CanvasItem,
         edge: Edge,
         stroke_width := EDGE_TRAJECTORY_WIDTH,
@@ -94,7 +94,7 @@ static func draw_edge( \
             edge is FallFromFloorEdge or \
             edge is JumpInterSurfaceEdge or \
             edge is JumpFromSurfaceToAirEdge:
-        _draw_edge_from_instructions_positions( \
+        _draw_edge_from_instructions_positions(
                 canvas,
                 edge,
                 stroke_width,
@@ -106,7 +106,7 @@ static func draw_edge( \
     elif edge is ClimbDownWallToFloorEdge or \
             edge is IntraSurfaceEdge or \
             edge is WalkToAscendWallFromFloorEdge:
-        _draw_edge_from_end_points( \
+        _draw_edge_from_end_points(
                 canvas,
                 edge,
                 stroke_width,
@@ -114,7 +114,7 @@ static func draw_edge( \
                 includes_waypoints,
                 includes_instruction_indicators)
     elif edge is ClimbOverWallToFloorEdge:
-        _draw_climb_over_wall_to_floor_edge( \
+        _draw_climb_over_wall_to_floor_edge(
                 canvas,
                 edge,
                 stroke_width,
@@ -124,14 +124,14 @@ static func draw_edge( \
     else:
         Gs.logger.error("Unexpected Edge subclass: %s" % edge)
 
-static func _draw_edge_from_end_points( \
+static func _draw_edge_from_end_points(
         canvas: CanvasItem,
         edge: Edge,
         stroke_width: float,
         base_color: Color,
         includes_waypoints: bool,
         includes_instruction_indicators: bool) -> void:
-    canvas.draw_line( \
+    canvas.draw_line(
             edge.get_start(),
             edge.get_end(),
             base_color,
@@ -143,13 +143,13 @@ static func _draw_edge_from_end_points( \
         waypoint_color.h = base_color.h
         waypoint_color.a = base_color.a
         
-        draw_destination_marker( \
+        draw_destination_marker(
                 canvas,
                 edge.get_end(),
                 true,
                 edge.end_position_along_surface.side,
                 waypoint_color)
-        draw_origin_marker( \
+        draw_origin_marker(
                 canvas,
                 edge.get_start(),
                 waypoint_color)
@@ -162,7 +162,7 @@ static func _draw_edge_from_end_points( \
         
         # TODO: Draw instruction indicators.
 
-static func _draw_climb_over_wall_to_floor_edge( \
+static func _draw_climb_over_wall_to_floor_edge(
         canvas: CanvasItem,
         edge: ClimbOverWallToFloorEdge,
         stroke_width: float,
@@ -170,7 +170,7 @@ static func _draw_climb_over_wall_to_floor_edge( \
         includes_waypoints: bool,
         includes_instruction_indicators: bool) -> void:
     var vertices := _get_edge_trajectory_vertices(edge)
-    canvas.draw_polyline( \
+    canvas.draw_polyline(
             vertices,
             base_color,
             stroke_width)
@@ -181,13 +181,13 @@ static func _draw_climb_over_wall_to_floor_edge( \
         waypoint_color.h = base_color.h
         waypoint_color.a = base_color.a
         
-        draw_destination_marker( \
+        draw_destination_marker(
                 canvas,
                 edge.get_end(),
                 true,
                 edge.end_position_along_surface.side,
                 waypoint_color)
-        draw_origin_marker( \
+        draw_origin_marker(
                 canvas,
                 edge.get_start(),
                 waypoint_color)
@@ -200,7 +200,7 @@ static func _draw_climb_over_wall_to_floor_edge( \
         
         # TODO: Draw instruction indicators.
 
-static func _draw_edge_from_instructions_positions( \
+static func _draw_edge_from_instructions_positions(
         canvas: CanvasItem,
         edge: Edge,
         stroke_width: float,
@@ -226,20 +226,20 @@ static func _draw_edge_from_instructions_positions( \
     if includes_continuous_positions:
         # Draw the trajectory (as calculated via continuous equations of motion
         # during step calculations).
-        var vertices := _get_edge_trajectory_vertices( \
+        var vertices := _get_edge_trajectory_vertices(
                 edge,
                 includes_continuous_positions)
-        canvas.draw_polyline( \
+        canvas.draw_polyline(
                 vertices,
                 continuous_trajectory_color,
                 stroke_width)
     if includes_discrete_positions:
         # Draw the trajectory (as approximated via discrete time steps during
         # instruction test calculations).
-        var vertices := _get_edge_trajectory_vertices( \
+        var vertices := _get_edge_trajectory_vertices(
                 edge,
                 includes_discrete_positions)
-        canvas.draw_polyline( \
+        canvas.draw_polyline(
                 vertices,
                 discrete_trajectory_color,
                 stroke_width)
@@ -249,7 +249,7 @@ static func _draw_edge_from_instructions_positions( \
         var waypoint_position: Vector2
         for i in edge.trajectory.waypoint_positions.size() - 1:
             waypoint_position = edge.trajectory.waypoint_positions[i]
-            draw_circle_outline( \
+            draw_circle_outline(
                     canvas,
                     waypoint_position,
                     EDGE_WAYPOINT_RADIUS,
@@ -257,7 +257,7 @@ static func _draw_edge_from_instructions_positions( \
                     stroke_width,
                     4.0)
         
-        draw_destination_marker( \
+        draw_destination_marker(
                 canvas,
                 edge.get_end(),
                 true,
@@ -268,7 +268,7 @@ static func _draw_edge_from_instructions_positions( \
                 origin_position_override if \
                 origin_position_override != Vector2.INF else \
                 edge.get_start()
-        draw_origin_marker( \
+        draw_origin_marker(
                 canvas,
                 origin_position,
                 waypoint_color)
@@ -276,7 +276,7 @@ static func _draw_edge_from_instructions_positions( \
     if includes_instruction_indicators:
         # Draw the horizontal instruction positions.
         for instruction in edge.trajectory.horizontal_instructions:
-            draw_instruction_indicator( \
+            draw_instruction_indicator(
                     canvas,
                     instruction.input_key,
                     instruction.is_pressed,
@@ -286,7 +286,7 @@ static func _draw_edge_from_instructions_positions( \
         
         # Draw the vertical instruction end position.
         if edge.trajectory.jump_instruction_end != null:
-            draw_instruction_indicator( \
+            draw_instruction_indicator(
                     canvas,
                     "j",
                     false,
@@ -294,7 +294,7 @@ static func _draw_edge_from_instructions_positions( \
                     EDGE_INSTRUCTION_INDICATOR_LENGTH,
                     instruction_color)
 
-static func _get_edge_trajectory_vertices( \
+static func _get_edge_trajectory_vertices(
         edge: Edge,
         is_continuous := true) -> PoolVector2Array:
     match edge.edge_type:

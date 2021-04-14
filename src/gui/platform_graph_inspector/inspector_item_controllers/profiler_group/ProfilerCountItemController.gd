@@ -8,13 +8,13 @@ const STARTS_COLLAPSED := true
 var metric: String
 var metadata_container: EdgeCalcResultMetadata
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph,
         metric: String,
         metadata_container = null) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -41,10 +41,10 @@ func get_description() -> String:
 func get_has_children() -> bool:
     return false
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "find_and_expand_controller should not be called for " + \
             "PROFILER_COUNT.")
     return false

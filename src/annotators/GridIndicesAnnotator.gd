@@ -42,15 +42,15 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
             # Draw the grid index of the cell.
             cell_top_left_corner = tile_map.map_to_world(position)
             cell_center = cell_top_left_corner + half_cell_size
-            tile_map_index = Gs.geometry.get_tile_map_index_from_grid_coord( \
+            tile_map_index = Gs.geometry.get_tile_map_index_from_grid_coord(
                     position,
                     tile_map)
-            draw_string( \
+            draw_string(
                     Gs.fonts.main_xs,
                     cell_center,
                     str(tile_map_index),
                     color)
-            draw_circle( \
+            draw_circle(
                     cell_center,
                     1.0,
                     color)

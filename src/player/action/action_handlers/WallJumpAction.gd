@@ -5,7 +5,7 @@ const NAME := "WallJumpAction"
 const TYPE := SurfaceType.WALL
 const PRIORITY := 120
 
-func _init().( \
+func _init().(
         NAME,
         TYPE,
         PRIORITY) -> void:

@@ -9,11 +9,11 @@ const PREFIX := "Profiler"
 var surface_parser_item_controller: SurfaceParserGroupItemController
 var global_counts_item_controller: GlobalCountsGroupItemController
 
-func _init( \
+func _init(
         parent_item: TreeItem,
         tree: Tree,
         graph: PlatformGraph) \
-        .( \
+        .(
         TYPE,
         IS_LEAF,
         STARTS_COLLAPSED,
@@ -31,10 +31,10 @@ func get_description() -> String:
         graph.movement_params.name,
     ]
 
-func find_and_expand_controller( \
+func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error( \
+    Gs.logger.error(
             "find_and_expand_controller should not be called for " + \
             "PROFILER_GROUP.")
     return false
@@ -44,26 +44,26 @@ func _create_children_inner() -> void:
         if Surfacer.surface_parser_metric_keys.find(metric) >= 0:
             continue
         if Gs.profiler.is_timing(metric):
-            ProfilerTimingItemController.new( \
+            ProfilerTimingItemController.new(
                     tree_item,
                     tree,
                     graph,
                     metric)
         else:
-            ProfilerCountItemController.new( \
+            ProfilerCountItemController.new(
                     tree_item,
                     tree,
                     graph,
                     metric)
     
     surface_parser_item_controller = \
-            SurfaceParserGroupItemController.new( \
+            SurfaceParserGroupItemController.new(
                     tree_item,
                     tree,
                     graph)
     
     global_counts_item_controller = \
-            GlobalCountsGroupItemController.new( \
+            GlobalCountsGroupItemController.new(
                     tree_item,
                     tree,
                     graph)
