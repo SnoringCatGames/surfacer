@@ -2,7 +2,7 @@ class_name PlatformGraphInspectorSelector
 extends Node2D
 
 var ORIGIN_SURFACE_SELECTION_COLOR := SurfacerColors.opacify( \
-        SurfacerColors.ORANGE, \
+        SurfacerColors.ORANGE,
         SurfacerColors.ALPHA_FAINT)
 
 const ORIGIN_SURFACE_SELECTION_DASH_LENGTH := 6.0
@@ -44,7 +44,7 @@ func _unhandled_input(event: InputEvent) -> void:
                 Gs.utils.get_global_touch_position(event)
         var surface_position := \
                 SurfaceParser.find_closest_position_on_a_surface( \
-                        click_position, \
+                        click_position,
                         Surfacer.current_player_for_clicks)
         
         if first_target == null:
@@ -56,8 +56,8 @@ func _unhandled_input(event: InputEvent) -> void:
             
             possible_jump_land_positions = JumpLandPositionsUtils \
                     .calculate_jump_land_positions_for_surface_pair( \
-                            Surfacer.current_player_for_clicks.movement_params, \
-                            first_target.surface, \
+                            Surfacer.current_player_for_clicks.movement_params,
+                            first_target.surface,
                             surface_position.surface)
             
             selection_time_sec = Gs.time.elapsed_play_time_actual_sec
@@ -65,9 +65,9 @@ func _unhandled_input(event: InputEvent) -> void:
             # TODO: Add support for configuring edge type and graph from radio
             #       buttons in the inspector.
             inspector.select_edge_or_surface( \
-                    first_target, \
-                    surface_position, \
-                    EdgeType.JUMP_INTER_SURFACE_EDGE, \
+                    first_target,
+                    surface_position,
+                    EdgeType.JUMP_INTER_SURFACE_EDGE,
                     Surfacer.current_player_for_clicks.graph)
             first_target = null
         
@@ -90,18 +90,18 @@ func _draw() -> void:
 
 func _draw_selected_origin() -> void:
     Gs.draw_utils.draw_dashed_polyline( \
-            self, \
-            first_target.surface.vertices, \
-            ORIGIN_SURFACE_SELECTION_COLOR, \
-            ORIGIN_SURFACE_SELECTION_DASH_LENGTH, \
-            ORIGIN_SURFACE_SELECTION_DASH_GAP, \
-            0.0, \
+            self,
+            first_target.surface.vertices,
+            ORIGIN_SURFACE_SELECTION_COLOR,
+            ORIGIN_SURFACE_SELECTION_DASH_LENGTH,
+            ORIGIN_SURFACE_SELECTION_DASH_GAP,
+            0.0,
             ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
     Gs.draw_utils.draw_circle_outline( \
-            self, \
-            first_target.target_point, \
-            ORIGIN_POSITION_RADIUS, \
-            ORIGIN_SURFACE_SELECTION_COLOR, \
+            self,
+            first_target.target_point,
+            ORIGIN_POSITION_RADIUS,
+            ORIGIN_SURFACE_SELECTION_COLOR,
             ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
 
 func _draw_possible_jump_land_positions() -> void:

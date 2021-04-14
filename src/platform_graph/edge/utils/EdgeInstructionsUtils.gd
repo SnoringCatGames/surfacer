@@ -20,13 +20,13 @@ const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := \
 # Translates movement data from a form that is more useful when calculating the
 # movement to a form that is more useful when executing the movement.
 static func convert_calculation_steps_to_movement_instructions( \
-        records_profile_or_edge_result_metadata, \
-        collision_params: CollisionCalcParams, \
-        calc_result: EdgeCalcResult, \
-        includes_jump: bool, \
+        records_profile_or_edge_result_metadata,
+        collision_params: CollisionCalcParams,
+        calc_result: EdgeCalcResult,
+        includes_jump: bool,
         destination_side: int) -> EdgeInstructions:
     Gs.profiler.start( \
-            "convert_calculation_steps_to_movement_instructions", \
+            "convert_calculation_steps_to_movement_instructions",
             collision_params.thread_id)
     
     var steps := calc_result.horizontal_steps
@@ -56,16 +56,16 @@ static func convert_calculation_steps_to_movement_instructions( \
             # start time.
             time_instruction_end = max( \
                     min( \
-                            time_instruction_end, \
-                            steps[i + 1].time_instruction_start - 0.0001), \
+                            time_instruction_end,
+                            steps[i + 1].time_instruction_start - 0.0001),
                     0.0)
         press = EdgeInstruction.new( \
-                input_key, \
-                step.time_instruction_start, \
+                input_key,
+                step.time_instruction_start,
                 true)
         release = EdgeInstruction.new( \
-                input_key, \
-                time_instruction_end, \
+                input_key,
+                time_instruction_end,
                 false)
         instructions[i * 2] = press
         instructions[i * 2 + 1] = release
@@ -78,13 +78,13 @@ static func convert_calculation_steps_to_movement_instructions( \
     if includes_jump:
         input_key = "j"
         press = EdgeInstruction.new( \
-                input_key, \
-                vertical_step.time_instruction_start, \
+                input_key,
+                vertical_step.time_instruction_start,
                 true)
         release = EdgeInstruction.new( \
-                input_key, \
+                input_key,
                 vertical_step.time_instruction_end + \
-                        JUMP_DURATION_INCREASE_EPSILON, \
+                        JUMP_DURATION_INCREASE_EPSILON,
                 false)
         instructions.push_front(release)
         instructions.push_front(press)
@@ -101,8 +101,8 @@ static func convert_calculation_steps_to_movement_instructions( \
         
         input_key = "gw"
         press = EdgeInstruction.new( \
-                input_key, \
-                time_step_start, \
+                input_key,
+                time_step_start,
                 true)
         instructions.push_back(press)
         
@@ -111,26 +111,26 @@ static func convert_calculation_steps_to_movement_instructions( \
                 destination_side == SurfaceSide.LEFT_WALL else \
                 "fr"
         press = EdgeInstruction.new( \
-                input_key, \
-                time_step_start, \
+                input_key,
+                time_step_start,
                 true)
         instructions.push_back(press)
     
     var duration := vertical_step.time_step_end - vertical_step.time_step_start
     
     var instructions_wrapper := EdgeInstructions.new( \
-            instructions, \
+            instructions,
             duration)
     
     Gs.profiler.stop_with_optional_metadata( \
-            "convert_calculation_steps_to_movement_instructions", \
-            collision_params.thread_id, \
+            "convert_calculation_steps_to_movement_instructions",
+            collision_params.thread_id,
             records_profile_or_edge_result_metadata)
     
     return instructions_wrapper
 
 static func sub_instructions( \
-        base_instructions: EdgeInstructions, \
+        base_instructions: EdgeInstructions,
         start_time: float) -> EdgeInstructions:
     # Dictionary<String, EdgeInstruction>
     var active_key_presses := {}
@@ -153,9 +153,9 @@ static func sub_instructions( \
     var instructions := []
     for active_key_press in active_key_presses:
         instruction = EdgeInstruction.new( \
-                active_key_press, \
-                0.0, \
-                true, \
+                active_key_press,
+                0.0,
+                true,
                 active_key_presses[active_key_press].position)
         instructions.push_back(instruction)
     
@@ -168,19 +168,19 @@ static func sub_instructions( \
     for i in remaining_instructions_size:
         base_instruction = base_instructions.instructions[i + start_index]
         remaining_instructions[i] = EdgeInstruction.new( \
-                base_instruction.input_key, \
-                base_instruction.time - start_time, \
-                base_instruction.is_pressed, \
+                base_instruction.input_key,
+                base_instruction.time - start_time,
+                base_instruction.is_pressed,
                 base_instruction.position)
         # FIXME: REMOVE: This shouldn't be needed anymore.
         assert(base_instruction.time - start_time >= 0.0)
     
     Gs.utils.concat( \
-            instructions, \
+            instructions,
             remaining_instructions)
     
     var duration := base_instructions.duration - start_time
     
     return EdgeInstructions.new( \
-            instructions, \
+            instructions,
             duration)

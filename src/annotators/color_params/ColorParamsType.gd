@@ -1,9 +1,9 @@
 class_name ColorParamsType
 
 enum { \
-    HSV, \
-    HSV_RANGE, \
-    UNKNOWN, \
+    HSV,
+    HSV_RANGE,
+    UNKNOWN,
 }
 
 static func get_string(type: int) -> String:

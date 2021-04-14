@@ -24,9 +24,9 @@ var step: EdgeStep
 var collision_result_metadata: CollisionCalcResultMetadata
 
 func _init( \
-        edge_result_metadata: EdgeCalcResultMetadata, \
-        parent_step_result_metadata: EdgeStepCalcResultMetadata, \
-        step_calc_params: EdgeStepCalcParams, \
+        edge_result_metadata: EdgeCalcResultMetadata,
+        parent_step_result_metadata: EdgeStepCalcResultMetadata,
+        step_calc_params: EdgeStepCalcParams,
         previous_out_of_reach_waypoint: Waypoint) -> void:
     self.edge_result_metadata = edge_result_metadata
     self.step_calc_params = step_calc_params

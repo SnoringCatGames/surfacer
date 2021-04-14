@@ -15,23 +15,23 @@ var surfaces_item_controller: SurfacesGroupItemController
 var profiler_item_controller: ProfilerGroupItemController
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
+        parent_item: TreeItem,
+        tree: Tree,
         graph: PlatformGraph) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings()
     _post_init()
 
 func get_text() -> String:
-    return "%s [%s]" % [ \
-        PREFIX, \
-        graph.movement_params.name, \
+    return "%s [%s]" % [
+        PREFIX,
+        graph.movement_params.name,
     ]
 
 func get_description() -> String:
@@ -41,22 +41,22 @@ func get_description() -> String:
             "movement parameters, a graph is specific to a given player.")
 
 func to_string() -> String:
-    return "%s { player_name=%s }" % [ \
-        InspectorItemType.get_string(type), \
-        graph.movement_params.name, \
+    return "%s { player_name=%s }" % [
+        InspectorItemType.get_string(type),
+        graph.movement_params.name,
     ]
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     expand()
     _trigger_find_and_expand_controller_recursive( \
-            search_type, \
+            search_type,
             metadata)
     return true
 
 func _find_and_expand_controller_recursive( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> void:
     # TODO: Create separate metadata classes for InspectorSearchType metadata,
     #       rather than relying on these asserts here.
@@ -68,7 +68,7 @@ func _find_and_expand_controller_recursive( \
                     metadata.has("end") and \
                     metadata.has("edge_type"))
             surfaces_item_controller.find_and_expand_controller( \
-                    search_type, \
+                    search_type,
                     metadata)
             
         InspectorSearchType.ORIGIN_SURFACE, \
@@ -76,7 +76,7 @@ func _find_and_expand_controller_recursive( \
             assert(metadata.has("origin_surface"))
             if graph.surfaces_set.has(metadata.origin_surface):
                 surfaces_item_controller.find_and_expand_controller( \
-                        search_type, \
+                        search_type,
                         metadata)
             else:
                 Gs.logger.error("Invalid Surface: %s" % \
@@ -91,19 +91,19 @@ func _find_and_expand_controller_recursive( \
 
 func _create_children_inner() -> void:
     edges_item_controller = EdgesGroupItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
+            tree_item,
+            tree,
+            graph,
             surfaces_to_surfaces_to_edge_types_to_edges_results)
     surfaces_item_controller = SurfacesGroupItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
+            tree_item,
+            tree,
+            graph,
             surfaces_to_surfaces_to_edge_types_to_edges_results)
     profiler_item_controller = \
             ProfilerGroupItemController.new( \
-                    tree_item, \
-                    tree, \
+                    tree_item,
+                    tree,
                     graph)
 
 # Parse the inter-surface edge-calculation results into a structure that's
@@ -167,7 +167,7 @@ static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var result := SurfacesGroupItemController \
             .get_annotation_elements_from_graph(graph)
     Gs.utils.concat( \
-            result, \
+            result,
             EdgesGroupItemController \
                     .get_annotation_elements_from_graph(graph))
     return result

@@ -10,9 +10,9 @@ var is_pressed: bool
 var position := Vector2.INF
 
 func _init( \
-        input_key := "", \
-        time := INF, \
-        is_pressed := false, \
+        input_key := "",
+        time := INF,
+        is_pressed := false,
         position := Vector2.INF) -> void:
     # Correct for round-off error.
     if Gs.geometry.are_floats_equal_with_epsilon(time, 0.0, 0.00001):
@@ -24,15 +24,15 @@ func _init( \
     self.position = position
 
 func to_string() -> String:
-    return "EdgeInstruction{ %s, %.2f, %s%s }" % [ \
-            input_key, \
-            time, \
-            is_pressed, \
+    return "EdgeInstruction{ %s, %.2f, %s%s }" % [
+            input_key,
+            time,
+            is_pressed,
             ", %s" % position if position != Vector2.INF else ""
         ]
 
 func load_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     input_key = json_object.k
     time = json_object.t

@@ -6,8 +6,8 @@ const TYPE := SurfaceType.WALL
 const PRIORITY := 150
 
 func _init().( \
-        NAME, \
-        TYPE, \
+        NAME,
+        TYPE,
         PRIORITY) -> void:
     pass
 

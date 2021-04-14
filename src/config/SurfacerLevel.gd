@@ -21,12 +21,12 @@ func start() -> void:
     
     if Surfacer.is_inspector_enabled:
         inspector_panel = Gs.utils.add_scene( \
-                Gs.canvas_layers.layers.hud, \
+                Gs.canvas_layers.layers.hud,
                 _UTILITY_PANEL_RESOURCE_PATH)
         Surfacer.inspector_panel = inspector_panel
     else:
         pause_button = Gs.utils.add_scene( \
-                Gs.canvas_layers.layers.hud, \
+                Gs.canvas_layers.layers.hud,
                 _PAUSE_BUTTON_RESOURCE_PATH)
     
     graph_parser.connect("parse_finished", self, "_on_graphs_parsed")
@@ -40,8 +40,8 @@ func _initialize_annotators() -> void:
     Surfacer.annotators.on_level_ready()
 
 func _destroy() -> void:
-    for group in [ \
-            Surfacer.group_name_human_players, \
+    for group in [
+            Surfacer.group_name_human_players,
             Surfacer.group_name_computer_players]:
         for player in get_tree().get_nodes_in_group(group):
             player._destroy()
@@ -66,13 +66,13 @@ func _unhandled_input(event: InputEvent) -> void:
         Gs.utils.release_focus()
 
 func add_player( \
-        resource_path: String, \
-        position: Vector2, \
+        resource_path: String,
+        position: Vector2,
         is_human_player: bool) -> Player:
     var player: Player = Gs.utils.add_scene( \
-            self, \
-            resource_path, \
-            true, \
+            self,
+            resource_path,
+            true,
             true)
     player.position = position
     add_child(player)
@@ -96,7 +96,7 @@ func add_player( \
     # Set up some annotators to help with debugging.
     player.set_is_sprite_visible(false)
     Surfacer.annotators.create_player_annotator( \
-            player, \
+            player,
             is_human_player)
     
     return player
@@ -105,10 +105,10 @@ func set_tile_map_visibility(is_visible: bool) -> void:
     # TODO: Also show/hide background. Parallax doesn't extend from CanvasItem
     #       or have the `visible` field though.
 #    var backgrounds := Gs.utils.get_children_by_type( \
-#            self, \
+#            self,
 #            ParallaxBackground)
     var foregrounds := Gs.utils.get_children_by_type( \
-            self, \
+            self,
             TileMap)
     for node in foregrounds:
         node.visible = is_visible

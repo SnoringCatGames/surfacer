@@ -162,10 +162,10 @@ func register_app_manifest(manifest: Dictionary) -> void:
 
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting( \
-            "is_inspector_enabled", \
+            "is_inspector_enabled",
             manifest.is_inspector_enabled_default)
     self.is_surfacer_logging = Gs.save_state.get_setting( \
-            "is_surfacer_logging", \
+            "is_surfacer_logging",
             false)
     
     Gs.profiler.preregister_metric_keys(non_surface_parser_metric_keys)

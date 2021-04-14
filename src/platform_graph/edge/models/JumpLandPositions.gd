@@ -30,11 +30,11 @@ var needs_extra_wall_land_horizontal_speed: bool
 var less_likely_to_be_valid: bool
 
 func _init( \
-        jump_position: PositionAlongSurface = null, \
-        land_position: PositionAlongSurface = null, \
-        velocity_start := Vector2.INF, \
-        needs_extra_jump_duration := false, \
-        needs_extra_wall_land_horizontal_speed := false, \
+        jump_position: PositionAlongSurface = null,
+        land_position: PositionAlongSurface = null,
+        velocity_start := Vector2.INF,
+        needs_extra_jump_duration := false,
+        needs_extra_wall_land_horizontal_speed := false,
         less_likely_to_be_valid := false) -> void:
     assert(!needs_extra_wall_land_horizontal_speed or \
             land_position.side == SurfaceSide.LEFT_WALL or \
@@ -49,9 +49,9 @@ func _init( \
     self.less_likely_to_be_valid = less_likely_to_be_valid
 
 func is_far_enough_from_others( \
-        movement_params: MovementParams, \
-        other_jump_land_positions: Array, \
-        checking_distance_for_jump_positions: bool, \
+        movement_params: MovementParams,
+        other_jump_land_positions: Array,
+        checking_distance_for_jump_positions: bool,
         checking_distance_for_land_positions: bool) -> bool:
     if other_jump_land_positions.empty():
         return true
@@ -87,15 +87,15 @@ func to_string() -> String:
             "land: %s, " + \
             "v_0: %s, " + \
             "extra_duration: %s " + \
-            "}" % [ \
-        jump_position.to_string(), \
-        land_position.to_string(), \
-        velocity_start, \
-        needs_extra_jump_duration, \
+            "}" % [
+        jump_position.to_string(),
+        land_position.to_string(),
+        velocity_start,
+        needs_extra_jump_duration,
     ]
 
 func load_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     jump_position = context.id_to_position_along_surface[int(json_object.j)]
     land_position = context.id_to_position_along_surface[int(json_object.l)]

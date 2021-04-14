@@ -52,8 +52,8 @@ func _init() -> void:
 
 func _enter_tree() -> void:
     ruler_layer = Gs.canvas_layers.create_layer( \
-            "ruler", \
-            annotation_layer.layer + 5, \
+            "ruler",
+            annotation_layer.layer + 5,
             Node.PAUSE_MODE_STOP)
     Gs.nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
     
@@ -62,10 +62,10 @@ func _enter_tree() -> void:
     
     for annotator_type in _DEFAULT_ENABLEMENT:
         var is_enabled: bool = Gs.save_state.get_setting( \
-                AnnotatorType.get_settings_key(annotator_type), \
+                AnnotatorType.get_settings_key(annotator_type),
                 _DEFAULT_ENABLEMENT[annotator_type])
         set_annotator_enabled( \
-                annotator_type, \
+                annotator_type,
                 is_enabled)
 
 func on_level_ready() -> void:
@@ -74,10 +74,10 @@ func on_level_ready() -> void:
     for annotator_type in _LEVEL_SPECIFIC_ANNOTATORS:
         if is_annotator_enabled(annotator_type):
             set_annotator_enabled( \
-                    annotator_type, \
+                    annotator_type,
                     false)
             set_annotator_enabled( \
-                    annotator_type, \
+                    annotator_type,
                     true)
 
 func on_level_destroyed() -> void:
@@ -89,17 +89,17 @@ func on_level_destroyed() -> void:
         destroy_player_annotator(player)
 
 func create_player_annotator( \
-        player: Player, \
+        player: Player,
         is_human_player: bool) -> void:
     var player_annotator := PlayerAnnotator.new( \
-            player, \
+            player,
             is_human_player)
     annotation_layer.add_child(player_annotator)
     player_annotators[player] = player_annotator
     
     for annotator_type in _PLAYER_SUB_ANNOTATORS:
         player_annotator.set_annotator_enabled( \
-                annotator_type, \
+                annotator_type,
                 _annotator_enablement[annotator_type])
 
 func destroy_player_annotator(player: Player) -> void:
@@ -107,7 +107,7 @@ func destroy_player_annotator(player: Player) -> void:
     player_annotators.erase(player)
 
 func set_annotator_enabled( \
-        annotator_type: int, \
+        annotator_type: int,
         is_enabled: bool) -> void:
     if is_annotator_enabled(annotator_type) == is_enabled:
         # Do nothing. The annotator is already correct.
@@ -116,7 +116,7 @@ func set_annotator_enabled( \
     if _PLAYER_SUB_ANNOTATORS.find(annotator_type) >= 0:
         for player_annotator in player_annotators.values():
             player_annotator.set_annotator_enabled( \
-                    annotator_type, \
+                    annotator_type,
                     is_enabled)
     else:
         if is_enabled:

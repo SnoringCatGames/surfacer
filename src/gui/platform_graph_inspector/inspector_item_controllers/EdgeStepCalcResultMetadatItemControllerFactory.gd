@@ -4,17 +4,17 @@
 class_name EdgeStepCalcResultMetadataItemControllerFactory
 
 static func create( \
-        tree_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
-        edge_attempt: EdgeAttempt, \
-        step_result_metadata: EdgeStepCalcResultMetadata, \
+        tree_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
+        edge_attempt: EdgeAttempt,
+        step_result_metadata: EdgeStepCalcResultMetadata,
         step_item_factory \
         ) -> EdgeStepCalcResultMetadataItemController:
     return EdgeStepCalcResultMetadataItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
-            edge_attempt, \
-            step_result_metadata, \
+            tree_item,
+            tree,
+            graph,
+            edge_attempt,
+            step_result_metadata,
             step_item_factory)

@@ -41,41 +41,41 @@ func face_right() -> void:
 
 func rest() -> void:
     _play_animation( \
-            animator_params.rest_name, \
+            animator_params.rest_name,
             animator_params.rest_playback_rate)
 
 func rest_on_wall() -> void:
     _play_animation( \
-            animator_params.rest_on_wall_name, \
+            animator_params.rest_on_wall_name,
             animator_params.rest_on_wall_playback_rate)
 
 func jump_rise() -> void:
     _play_animation( \
-            animator_params.jump_rise_name, \
+            animator_params.jump_rise_name,
             animator_params.jump_rise_playback_rate)
 
 func jump_fall() -> void:
     _play_animation( \
-            animator_params.jump_fall_name, \
+            animator_params.jump_fall_name,
             animator_params.jump_fall_playback_rate)
 
 func walk() -> void:
     _play_animation( \
-            animator_params.walk_name, \
+            animator_params.walk_name,
             animator_params.walk_playback_rate)
 
 func climb_up() -> void:
     _play_animation( \
-            animator_params.climb_up_name, \
+            animator_params.climb_up_name,
             animator_params.climb_up_playback_rate)
 
 func climb_down() -> void:
     _play_animation( \
-            animator_params.climb_down_name, \
+            animator_params.climb_down_name,
             animator_params.climb_down_playback_rate)
 
 func _play_animation( \
-        name: String, \
+        name: String,
         playback_rate: float = 1) -> bool:
     var is_current_animatior := animation_player.current_animation == name
     var is_playing := animation_player.is_playing()

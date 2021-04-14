@@ -17,7 +17,7 @@ var step_label: Label
 var previous_out_of_reach_waypoint_label: Label
 
 func _init( \
-        step_result_metadata: EdgeStepCalcResultMetadata, \
+        step_result_metadata: EdgeStepCalcResultMetadata,
         renders_faintly: bool) \
         .(TYPE) -> void:
     self.step_result_metadata = step_result_metadata
@@ -70,9 +70,9 @@ func _calculate_color(renders_faintly: bool) -> Color:
                     AnnotationElementDefaults.STEP_HUE_START) * \
             step_ratio
     return Color.from_hsv( \
-            step_hue, \
-            AnnotationElementDefaults.STEP_SATURATION, \
-            AnnotationElementDefaults.STEP_VALUE, \
+            step_hue,
+            AnnotationElementDefaults.STEP_SATURATION,
+            AnnotationElementDefaults.STEP_VALUE,
             opacity)
 
 func _create_labels() -> void:
@@ -102,12 +102,12 @@ func _draw_trajectory(canvas: CanvasItem) -> void:
     if step != null and step.frame_positions.size() > 1:
         # Draw the valid step trajectory.
         Gs.draw_utils.draw_dashed_polyline( \
-                canvas, \
-                PoolVector2Array(step.frame_positions), \
-                color, \
-                AnnotationElementDefaults.STEP_TRAJECTORY_DASH_LENGTH, \
-                AnnotationElementDefaults.STEP_TRAJECTORY_DASH_GAP, \
-                0.0, \
+                canvas,
+                PoolVector2Array(step.frame_positions),
+                color,
+                AnnotationElementDefaults.STEP_TRAJECTORY_DASH_LENGTH,
+                AnnotationElementDefaults.STEP_TRAJECTORY_DASH_GAP,
+                0.0,
                 trajectory_stroke_width)
     else:
         # The calculation failed before a step object could be created.
@@ -116,18 +116,18 @@ func _draw_trajectory(canvas: CanvasItem) -> void:
 func _draw_step_end_points(canvas: CanvasItem) -> void:
     # Draw the step end points.
     Gs.draw_utils.draw_circle_outline( \
-            canvas, \
-            step_result_metadata.get_start().position, \
-            AnnotationElementDefaults.WAYPOINT_RADIUS, \
-            color, \
-            waypoint_stroke_width, \
+            canvas,
+            step_result_metadata.get_start().position,
+            AnnotationElementDefaults.WAYPOINT_RADIUS,
+            color,
+            waypoint_stroke_width,
             4.0)
     Gs.draw_utils.draw_circle_outline( \
-            canvas, \
-            step_result_metadata.get_end().position, \
-            AnnotationElementDefaults.WAYPOINT_RADIUS, \
-            color, \
-            waypoint_stroke_width, \
+            canvas,
+            step_result_metadata.get_end().position,
+            AnnotationElementDefaults.WAYPOINT_RADIUS,
+            color,
+            waypoint_stroke_width,
             4.0)
 
 func _draw_collision(canvas: CanvasItem) -> void:
@@ -141,34 +141,34 @@ func _draw_collision(canvas: CanvasItem) -> void:
         if collision.position != Vector2.INF:
             # Draw an X at the actual point of collision.
             Gs.draw_utils.draw_x( \
-                    canvas, \
-                    collision.position, \
-                    AnnotationElementDefaults.COLLISION_X_WIDTH_HEIGHT.x, \
-                    AnnotationElementDefaults.COLLISION_X_WIDTH_HEIGHT.y, \
-                    collision_color, \
+                    canvas,
+                    collision.position,
+                    AnnotationElementDefaults.COLLISION_X_WIDTH_HEIGHT.x,
+                    AnnotationElementDefaults.COLLISION_X_WIDTH_HEIGHT.y,
+                    collision_color,
                     collision_x_stroke_width)
         
         if !renders_faintly and collision.surface != null:
             # Draw the surface that was collided with.
             Gs.draw_utils.draw_surface( \
-                    canvas, \
-                    collision.surface, \
+                    canvas,
+                    collision.surface,
                     collision_color)
         
         # Draw an outline of the player's collision boundary at the point of
         # collision.
         Gs.draw_utils.draw_shape_outline( \
-                canvas, \
-                collision.player_position, \
-                collision_result_metadata.collider_shape, \
-                collision_result_metadata.collider_rotation, \
-                collision_color, \
+                canvas,
+                collision.player_position,
+                collision_result_metadata.collider_shape,
+                collision_result_metadata.collider_rotation,
+                collision_color,
                 collision_player_boundary_stroke_width)
         # Draw a dot at the center of the player's collision boundary.
         canvas.draw_circle( \
-                collision.player_position, \
+                collision.player_position,
                 AnnotationElementDefaults \
-                        .COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS, \
+                        .COLLISION_PLAYER_BOUNDARY_CENTER_RADIUS,
                 collision_color)
         
         if !renders_faintly:
@@ -176,62 +176,62 @@ func _draw_collision(canvas: CanvasItem) -> void:
             for upcoming_waypoint in step_result_metadata.upcoming_waypoints:
                 if upcoming_waypoint.is_valid:
                     Gs.draw_utils.draw_checkmark( \
-                            canvas, \
-                            upcoming_waypoint.position, \
-                            AnnotationElementDefaults.VALID_WAYPOINT_WIDTH, \
-                            color, \
+                            canvas,
+                            upcoming_waypoint.position,
+                            AnnotationElementDefaults.VALID_WAYPOINT_WIDTH,
+                            color,
                             AnnotationElementDefaults \
                                     .VALID_WAYPOINT_STROKE_WIDTH)
                 else:
                     Gs.draw_utils.draw_x( \
-                            canvas, \
-                            upcoming_waypoint.position, \
-                            AnnotationElementDefaults.INVALID_WAYPOINT_WIDTH, \
+                            canvas,
+                            upcoming_waypoint.position,
+                            AnnotationElementDefaults.INVALID_WAYPOINT_WIDTH,
                             AnnotationElementDefaults \
-                                    .INVALID_WAYPOINT_HEIGHT, \
-                            color, \
+                                    .INVALID_WAYPOINT_HEIGHT,
+                            color,
                             AnnotationElementDefaults \
                                     .INVALID_WAYPOINT_STROKE_WIDTH)
             
             # Draw the bounding boxes at frame start, end, and previous.
             _draw_bounding_box_and_margin( \
-                    canvas, \
-                    collision_result_metadata.frame_start_position, \
+                    canvas,
+                    collision_result_metadata.frame_start_position,
                     Surfacer.ann_defaults.COLLISION_FRAME_START_COLOR)
             _draw_bounding_box_and_margin( \
-                    canvas, \
-                    collision_result_metadata.frame_end_position, \
+                    canvas,
+                    collision_result_metadata.frame_end_position,
                     Surfacer.ann_defaults.COLLISION_FRAME_END_COLOR)
             _draw_bounding_box_and_margin( \
-                    canvas, \
-                    collision_result_metadata.frame_previous_position, \
+                    canvas,
+                    collision_result_metadata.frame_previous_position,
                     Surfacer.ann_defaults.COLLISION_FRAME_PREVIOUS_COLOR)
 
 func _draw_bounding_box_and_margin( \
-        canvas: CanvasItem, \
-        center: Vector2, \
+        canvas: CanvasItem,
+        center: Vector2,
         color: Color) -> void:
     var collision_result_metadata := \
             step_result_metadata.collision_result_metadata
     Gs.draw_utils.draw_rectangle_outline( \
-            canvas, \
-            center, \
-            collision_result_metadata.collider_half_width_height, \
-            false, \
-            color, \
+            canvas,
+            center,
+            collision_result_metadata.collider_half_width_height,
+            false,
+            color,
             AnnotationElementDefaults.COLLISION_BOUNDING_BOX_STROKE_WIDTH)
     Gs.draw_utils.draw_dashed_rectangle( \
-            canvas, \
-            center, \
+            canvas,
+            center,
             collision_result_metadata.collider_half_width_height + \
-                    Vector2(collision_result_metadata.margin, \
-                            collision_result_metadata.margin), \
-            false, \
-            color, \
-            AnnotationElementDefaults.COLLISION_MARGIN_DASH_LENGTH, \
-            AnnotationElementDefaults.COLLISION_MARGIN_DASH_GAP, \
-            0.0, \
-            AnnotationElementDefaults.COLLISION_MARGIN_STROKE_WIDTH, \
+                    Vector2(collision_result_metadata.margin,
+                            collision_result_metadata.margin),
+            false,
+            color,
+            AnnotationElementDefaults.COLLISION_MARGIN_DASH_LENGTH,
+            AnnotationElementDefaults.COLLISION_MARGIN_DASH_GAP,
+            0.0,
+            AnnotationElementDefaults.COLLISION_MARGIN_STROKE_WIDTH,
             false)
 
 func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
@@ -242,13 +242,13 @@ func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
             !renders_faintly:
         # Draw the waypoint position.
         Gs.draw_utils.draw_diamond_outline( \
-                canvas, \
-                step_result_metadata.previous_out_of_reach_waypoint.position, \
+                canvas,
+                step_result_metadata.previous_out_of_reach_waypoint.position,
                 AnnotationElementDefaults \
-                        .PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT, \
+                        .PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT,
                 AnnotationElementDefaults \
-                        .PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT, \
-                color, \
+                        .PREVIOUS_OUT_OF_REACH_WAYPOINT_WIDTH_HEIGHT,
+                color,
                 1.0)
         
         # Label the waypoint.
@@ -257,7 +257,7 @@ func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
                         .position + \
                 AnnotationElementDefaults.LABEL_OFFSET
         previous_out_of_reach_waypoint_label.add_color_override( \
-                "font_color", \
+                "font_color",
                 color)
         previous_out_of_reach_waypoint_label.text = \
                 "The previously out-of-reach waypoint that was the basis\n" + \
@@ -273,9 +273,9 @@ func _draw_description(canvas: CanvasItem) -> void:
                 AnnotationElementDefaults.LABEL_OFFSET
         step_label.add_color_override("font_color", color)
         var description_list := step_result_metadata.get_description_list()
-        var line_1 := "Step %s/%s:" % [ \
-            step_result_metadata.index + 1, \
-            step_result_metadata.edge_result_metadata.total_step_count, \
+        var line_1 := "Step %s/%s:" % [
+            step_result_metadata.index + 1,
+            step_result_metadata.edge_result_metadata.total_step_count,
         ]
         var line_2 := \
                 "\n        [Backtracking]" if \
@@ -303,20 +303,20 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
     # Render a dotted straight line with a bigger x in the middle for invalid
     # steps.
     Gs.draw_utils.draw_dashed_line( \
-            canvas, \
-            start, \
-            end, \
-            Surfacer.ann_defaults.INVALID_EDGE_COLOR_PARAMS.get_color(), \
-            AnnotationElementDefaults.INVALID_EDGE_DASH_LENGTH, \
-            AnnotationElementDefaults.INVALID_EDGE_DASH_GAP, \
-            0.0, \
+            canvas,
+            start,
+            end,
+            Surfacer.ann_defaults.INVALID_EDGE_COLOR_PARAMS.get_color(),
+            AnnotationElementDefaults.INVALID_EDGE_DASH_LENGTH,
+            AnnotationElementDefaults.INVALID_EDGE_DASH_GAP,
+            0.0,
             AnnotationElementDefaults.INVALID_EDGE_DASH_STROKE_WIDTH)
     Gs.draw_utils.draw_x( \
-            canvas, \
-            middle, \
-            AnnotationElementDefaults.INVALID_EDGE_X_WIDTH, \
-            AnnotationElementDefaults.INVALID_EDGE_X_HEIGHT, \
-            Surfacer.ann_defaults.INVALID_EDGE_COLOR_PARAMS.get_color(), \
+            canvas,
+            middle,
+            AnnotationElementDefaults.INVALID_EDGE_X_WIDTH,
+            AnnotationElementDefaults.INVALID_EDGE_X_HEIGHT,
+            Surfacer.ann_defaults.INVALID_EDGE_COLOR_PARAMS.get_color(),
             AnnotationElementDefaults.INVALID_EDGE_DASH_STROKE_WIDTH)
 
 func _attach_labels(canvas: CanvasItem) -> void:

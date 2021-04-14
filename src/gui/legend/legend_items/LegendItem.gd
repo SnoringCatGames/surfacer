@@ -9,7 +9,7 @@ const LINE_SPACING := -3
 const SHAPE_REGION_HEIGHT := HEIGHT - MARGIN_VERTICAL * 2.0
 const SHAPE_REGION_WIDTH := SHAPE_REGION_HEIGHT
 const SHAPE_REGION_CENTER := Vector2( \
-        MARGIN_HORIZONTAL + SHAPE_REGION_WIDTH / 2.0, \
+        MARGIN_HORIZONTAL + SHAPE_REGION_WIDTH / 2.0,
         MARGIN_VERTICAL + SHAPE_REGION_HEIGHT / 2.0)
 
 var type := LegendItemType.UNKNOWN
@@ -17,7 +17,7 @@ var text: String
 var label: Label
 
 func _init( \
-        type: int, \
+        type: int,
         text: String) -> void:
     self.type = type
     self.text = text
@@ -46,10 +46,10 @@ func update() -> void:
 
 func _draw() -> void:
     _draw_shape( \
-            SHAPE_REGION_CENTER * Gs.gui_scale, \
+            SHAPE_REGION_CENTER * Gs.gui_scale,
             Vector2(SHAPE_REGION_WIDTH, SHAPE_REGION_HEIGHT) * Gs.gui_scale)
 
 func _draw_shape( \
-        center: Vector2, \
+        center: Vector2,
         size: Vector2) -> void:
     Gs.logger.error("Abstract LegendItem._draw_shape is not implemented")

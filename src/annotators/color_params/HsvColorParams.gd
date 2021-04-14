@@ -9,9 +9,9 @@ var value: float
 var alpha: float
 
 func _init( \
-        hue: float, \
-        saturation: float, \
-        value: float, \
+        hue: float,
+        saturation: float,
+        value: float,
         alpha: float) \
         .(TYPE) -> void:
     self.hue = hue
@@ -21,7 +21,7 @@ func _init( \
 
 func get_color() -> Color:
     return Color.from_hsv( \
-            hue, \
-            saturation, \
-            value, \
+            hue,
+            saturation,
+            value,
             alpha)

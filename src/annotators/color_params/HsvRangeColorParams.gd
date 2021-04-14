@@ -13,13 +13,13 @@ var alpha_min: float
 var alpha_max: float
 
 func _init( \
-        hue_min: float, \
-        hue_max: float, \
-        saturation_min: float, \
-        saturation_max: float, \
-        value_min: float, \
-        value_max: float, \
-        alpha_min: float, \
+        hue_min: float,
+        hue_max: float,
+        saturation_min: float,
+        saturation_max: float,
+        value_min: float,
+        value_max: float,
+        alpha_min: float,
         alpha_max: float) \
         .(TYPE) -> void:
     self.hue_min = hue_min
@@ -37,7 +37,7 @@ func get_color() -> Color:
     var value := randf() * (value_max - value_min) + value_min
     var alpha := randf() * (alpha_max - alpha_min) + alpha_min
     return Color.from_hsv( \
-            hue, \
-            saturation, \
-            value, \
+            hue,
+            saturation,
+            value,
             alpha)

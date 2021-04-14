@@ -39,14 +39,14 @@ var can_backtrack_on_height: bool
 var _collided_surfaces: Dictionary
 
 func _init( \
-        collision_params: CollisionCalcParams, \
-        origin_position: PositionAlongSurface, \
-        destination_position: PositionAlongSurface, \
-        origin_waypoint: Waypoint, \
-        destination_waypoint: Waypoint, \
-        velocity_start: Vector2, \
-        needs_extra_jump_duration: bool, \
-        needs_extra_wall_land_horizontal_speed: bool, \
+        collision_params: CollisionCalcParams,
+        origin_position: PositionAlongSurface,
+        destination_position: PositionAlongSurface,
+        origin_waypoint: Waypoint,
+        destination_waypoint: Waypoint,
+        velocity_start: Vector2,
+        needs_extra_jump_duration: bool,
+        needs_extra_wall_land_horizontal_speed: bool,
         can_backtrack_on_height: bool) -> void:
     self.collision_params = collision_params
     self.movement_params = collision_params.movement_params
@@ -60,18 +60,18 @@ func _init( \
     self.needs_extra_wall_land_horizontal_speed = needs_extra_wall_land_horizontal_speed
     self.waypoint_offset = \
             movement_params.collider_half_width_height + \
-            Vector2(movement_params.collision_margin_for_waypoint_positions, \
+            Vector2(movement_params.collision_margin_for_waypoint_positions,
                     movement_params.collision_margin_for_waypoint_positions)
     self._collided_surfaces = {}
 
 func have_backtracked_for_surface( \
-        surface: Surface, \
+        surface: Surface,
         time_jump_release: float) -> bool:
     var key := surface.to_string() + str(time_jump_release)
     return _collided_surfaces.has(key)
 
 func record_backtracked_surface( \
-        surface: Surface, \
+        surface: Surface,
         time_jump_release: float) -> void:
     var key := surface.to_string() + str(time_jump_release)
     _collided_surfaces[key] = true

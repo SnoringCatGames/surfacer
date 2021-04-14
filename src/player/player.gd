@@ -95,7 +95,7 @@ func _ready() -> void:
     assert(shape_owner_get_shape_count(owner_id) == 1)
     var collider_shape := shape_owner_get_shape(owner_id, 0)
     assert(Gs.geometry.do_shapes_match( \
-            collider_shape, \
+            collider_shape,
             movement_params.collider_shape))
     var transform := shape_owner_get_transform(owner_id)
     assert(abs(transform.get_rotation() - \
@@ -109,7 +109,7 @@ func _ready() -> void:
 #    shape_owner_add_shape(owner_id, movement_params.collider_shape)
     
     var animators: Array = Gs.utils.get_children_by_type( \
-            self, \
+            self,
             PlayerAnimator)
     assert(animators.size() <= 1)
     animator = \
@@ -126,8 +126,8 @@ func _ready() -> void:
     _dash_cooldown_timer.one_shot = true
     #warning-ignore:return_value_discarded
     _dash_cooldown_timer.connect( \
-            "timeout", \
-            self, \
+            "timeout",
+            self,
             "_dash_cooldown_finished")
     add_child(_dash_cooldown_timer)
     
@@ -142,8 +142,8 @@ func _ready() -> void:
     surface_state.center_position = self.position
     
     Gs.utils.connect( \
-            "display_resized", \
-            self, \
+            "display_resized",
+            self,
             "_on_resized")
     _on_resized()
 
@@ -208,7 +208,7 @@ func _physics_process(delta_sec: float) -> void:
         return
     
     assert(Gs.geometry.are_floats_equal_with_epsilon( \
-            delta_sec, \
+            delta_sec,
             Time.PHYSICS_TIME_STEP_SEC))
     
     _update_actions(delta_sec)
@@ -216,20 +216,20 @@ func _physics_process(delta_sec: float) -> void:
     _handle_pointer_selections()
     
     if surface_state.just_left_air:
-        print_msg("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s", [ \
-                player_name, \
-                Gs.time.elapsed_play_time_actual_sec, \
-                surface_state.center_position, \
-                velocity, \
-                surface_state.grabbed_surface.to_string(), \
+        print_msg("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s", [
+                player_name,
+                Gs.time.elapsed_play_time_actual_sec,
+                surface_state.center_position,
+                velocity,
+                surface_state.grabbed_surface.to_string(),
             ])
     elif surface_state.just_entered_air:
-        print_msg("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s", [ \
-                player_name, \
-                Gs.time.elapsed_play_time_actual_sec, \
-                surface_state.center_position, \
-                velocity, \
-                surface_state.previous_grabbed_surface.to_string(), \
+        print_msg("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s", [
+                player_name,
+                Gs.time.elapsed_play_time_actual_sec,
+                surface_state.center_position,
+                velocity,
+                surface_state.previous_grabbed_surface.to_string(),
             ])
     elif surface_state.just_touched_a_surface:
         var side_str: String
@@ -239,12 +239,12 @@ func _physics_process(delta_sec: float) -> void:
             side_str = "CEILING"
         else:
             side_str = "WALL"
-        print_msg("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s", [ \
-                player_name, \
-                Gs.time.elapsed_play_time_actual_sec, \
-                surface_state.center_position, \
-                velocity, \
-                side_str, \
+        print_msg("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s", [
+                player_name,
+                Gs.time.elapsed_play_time_actual_sec,
+                surface_state.center_position,
+                velocity,
+                side_str,
             ])
     
     if navigator:
@@ -270,10 +270,10 @@ func _physics_process(delta_sec: float) -> void:
     # TODO: Use the remaining pre-collision movement that move_and_slide
     #       returns. This might be needed in order to move along slopes?
     move_and_slide( \
-            velocity, \
-            Gs.geometry.UP, \
-            false, \
-            4, \
+            velocity,
+            Gs.geometry.UP,
+            false,
+            4,
             Gs.geometry.FLOOR_MAX_ANGLE)
     
     surface_state.previous_center_position = surface_state.center_position
@@ -291,10 +291,10 @@ func _update_navigator(delta_sec: float) -> void:
 
 func _handle_pointer_selections() -> void:
     if new_selection_target != Vector2.INF:
-        print_msg("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [ \
-                player_name, \
-                Gs.time.elapsed_play_time_actual_sec, \
-                str(new_selection_target), \
+        print_msg("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
+                player_name,
+                Gs.time.elapsed_play_time_actual_sec,
+                str(new_selection_target),
                 new_selection_position.to_string() if \
                 new_selection_position != null else \
                 "[No matching surface]"
@@ -322,10 +322,10 @@ func _update_actions(delta_sec: float) -> void:
     # Update actions for the current frame.
     for action_source in action_sources:
         action_source.update( \
-                actions, \
-                actions_from_previous_frame, \
-                Gs.time.elapsed_play_time_actual_sec, \
-                delta_sec, \
+                actions,
+                actions_from_previous_frame,
+                Gs.time.elapsed_play_time_actual_sec,
+                delta_sec,
                 navigation_state)
     
     actions.start_dash = _can_dash and \
@@ -578,7 +578,7 @@ func _update_which_side_is_grabbed( \
 func _update_which_surface_is_grabbed( \
         preserves_just_changed_state := false) -> void:
     var collision := _get_attached_surface_collision( \
-            self, \
+            self,
             surface_state)
     assert((collision != null) == surface_state.is_grabbing_a_surface)
     
@@ -601,12 +601,12 @@ func _update_which_surface_is_grabbed( \
         surface_state.grabbed_tile_map = next_grabbed_tile_map
         
         Gs.geometry.get_collision_tile_map_coord( \
-                surface_state.collision_tile_map_coord_result, \
-                surface_state.grab_position, \
-                surface_state.grabbed_tile_map, \
-                surface_state.is_touching_floor, \
-                surface_state.is_touching_ceiling, \
-                surface_state.is_touching_left_wall, \
+                surface_state.collision_tile_map_coord_result,
+                surface_state.grab_position,
+                surface_state.grabbed_tile_map,
+                surface_state.is_touching_floor,
+                surface_state.is_touching_ceiling,
+                surface_state.is_touching_left_wall,
                 surface_state.is_touching_right_wall)
         var next_grab_position_tile_map_coord := \
                 surface_state.collision_tile_map_coord_result.tile_map_coord
@@ -654,12 +654,12 @@ func _update_which_surface_is_grabbed( \
                 surface_state.just_changed_tile_map:
             surface_state.grabbed_tile_map_index = \
                     Gs.geometry.get_tile_map_index_from_grid_coord( \
-                            surface_state.grab_position_tile_map_coord, \
+                            surface_state.grab_position_tile_map_coord,
                             surface_state.grabbed_tile_map)
         
         var next_grabbed_surface := surface_parser.get_surface_for_tile( \
-                surface_state.grabbed_tile_map, \
-                surface_state.grabbed_tile_map_index, \
+                surface_state.grabbed_tile_map,
+                surface_state.grabbed_tile_map_index,
                 surface_state.grabbed_side)
         surface_state.just_changed_surface = \
                 (preserves_just_changed_state and \
@@ -674,7 +674,7 @@ func _update_which_surface_is_grabbed( \
         surface_state.grabbed_surface = next_grabbed_surface
         
         surface_state.center_position_along_surface.match_current_grab( \
-                surface_state.grabbed_surface, \
+                surface_state.grabbed_surface,
                 surface_state.center_position)
     
     else:
@@ -701,7 +701,7 @@ func _update_collision_mask() -> void:
     set_collision_mask_bit(2, surface_state.is_grabbing_walk_through_walls)
 
 static func _get_attached_surface_collision( \
-        body: KinematicBody2D, \
+        body: KinematicBody2D,
         surface_state: PlayerSurfaceState) -> KinematicCollision2D:
     var closest_normal_diff: float = PI
     var closest_collision: KinematicCollision2D
@@ -747,14 +747,14 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     _dash_fade_tween.reset_all()
     #warning-ignore:return_value_discarded
     _dash_fade_tween.interpolate_property( \
-            self, \
-            "current_max_horizontal_speed", \
+            self,
+            "current_max_horizontal_speed",
             movement_params.max_horizontal_speed_default * \
-                    movement_params.dash_speed_multiplier, \
-            movement_params.max_horizontal_speed_default, \
-            movement_params.dash_fade_duration, \
-            Tween.TRANS_LINEAR, \
-            Tween.EASE_IN, \
+                    movement_params.dash_speed_multiplier,
+            movement_params.max_horizontal_speed_default,
+            movement_params.dash_fade_duration,
+            Tween.TRANS_LINEAR,
+            Tween.EASE_IN,
             movement_params.dash_duration - movement_params.dash_fade_duration)
     #warning-ignore:return_value_discarded
     _dash_fade_tween.start()
@@ -772,7 +772,7 @@ func _dash_cooldown_finished() -> void:
 # Conditionally prints the given message, depending on the Player's
 # configuration.
 func print_msg( \
-        message_template: String, \
+        message_template: String,
         message_args = null) -> void:
     if Surfacer.is_surfacer_logging and \
             movement_params.logs_player_actions and \

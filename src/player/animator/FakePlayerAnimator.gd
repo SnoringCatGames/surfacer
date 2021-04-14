@@ -9,7 +9,7 @@ func _ready() -> void:
     pass
 
 func _play_animation( \
-        name: String, \
+        name: String,
         playback_rate: float = 1) -> bool:
     # Do nothing.
     return false

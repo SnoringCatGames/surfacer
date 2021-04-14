@@ -31,9 +31,9 @@ var clockwise_neighbor: Surface setget ,_get_clockwise_neighbor
 var counter_clockwise_neighbor: Surface setget ,_get_counter_clockwise_neighbor
 
 func _init( \
-        vertices := [], \
-        side := SurfaceSide.NONE, \
-        tile_map = null, \
+        vertices := [],
+        side := SurfaceSide.NONE,
+        tile_map = null,
         tile_map_indices := []) -> void:
     self.vertices = PoolVector2Array(vertices)
     self.side = side
@@ -45,10 +45,10 @@ func _init( \
         self.normal = SurfaceSide.get_normal(side)
 
 func to_string() -> String:
-    return "Surface{ %s, [ %s, %s ] }" % [ \
-            SurfaceSide.get_string(side), \
-            vertices[0], \
-            vertices[vertices.size() - 1], \
+    return "Surface{ %s, [ %s, %s ] }" % [
+            SurfaceSide.get_string(side),
+            vertices[0],
+            vertices[vertices.size() - 1],
         ]
 
 func _get_first_point() -> Vector2:
@@ -81,8 +81,8 @@ func probably_equal(other: Surface) -> bool:
         return false
     for i in self.vertices.size():
         if !Gs.geometry.are_points_equal_with_epsilon( \
-                self.vertices[i], \
-                other.vertices[i], \
+                self.vertices[i],
+                other.vertices[i],
                 0.0001):
             return false
     
@@ -93,14 +93,14 @@ func probably_equal(other: Surface) -> bool:
             return false
     
     if !Gs.geometry.are_rects_equal_with_epsilon( \
-            self.bounding_box, \
-            other.bounding_box, \
+            self.bounding_box,
+            other.bounding_box,
             0.0001):
         return false
     
     if !Gs.geometry.are_rects_equal_with_epsilon( \
-            self.connected_region_bounding_box, \
-            other.connected_region_bounding_box, \
+            self.connected_region_bounding_box,
+            other.connected_region_bounding_box,
             0.0001):
         return false
     
@@ -123,7 +123,7 @@ func probably_equal(other: Surface) -> bool:
     return true
 
 func load_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     context.id_to_surface[int(json_object.d)] = self
     vertices = PoolVector2Array(Gs.utils.decode_vector2_array(json_object.v))
@@ -133,7 +133,7 @@ func load_from_json_object( \
     normal = SurfaceSide.get_normal(side)
 
 func load_references_from_json_context( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     tile_map = context.id_to_tile_map[json_object.t]
     connected_region_bounding_box = Gs.utils.decode_rect2(json_object.crbb)
@@ -161,7 +161,7 @@ func to_json_object() -> Dictionary:
     }
 
 func _get_surface_from_id( \
-        id: int, \
+        id: int,
         id_to_surface: Dictionary) -> Surface:
     return id_to_surface[id] if \
             id >= 0 else \

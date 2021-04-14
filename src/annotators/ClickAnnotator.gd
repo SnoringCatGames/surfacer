@@ -63,27 +63,27 @@ func _draw() -> void:
     if !is_inner_animation_complete:
         var alpha := CLICK_INNER_COLOR.a * (1 - inner_progress)
         var color := Color( \
-                CLICK_INNER_COLOR.r, \
-                CLICK_INNER_COLOR.g, \
-                CLICK_INNER_COLOR.b, \
+                CLICK_INNER_COLOR.r,
+                CLICK_INNER_COLOR.g,
+                CLICK_INNER_COLOR.b,
                 alpha)
         var radius := CLICK_INNER_END_RADIUS * inner_progress
         
         draw_circle( \
-                click_position, \
-                radius, \
+                click_position,
+                radius,
                 color)
     
     if !is_outer_animation_complete:
         var alpha := CLICK_OUTER_COLOR.a * (1 - outer_progress)
         var color := Color( \
-                CLICK_OUTER_COLOR.r, \
-                CLICK_OUTER_COLOR.g, \
-                CLICK_OUTER_COLOR.b, \
+                CLICK_OUTER_COLOR.r,
+                CLICK_OUTER_COLOR.g,
+                CLICK_OUTER_COLOR.b,
                 alpha)
         var radius := CLICK_OUTER_END_RADIUS * outer_progress
         
         draw_circle( \
-                click_position, \
-                radius, \
+                click_position,
+                radius,
                 color)

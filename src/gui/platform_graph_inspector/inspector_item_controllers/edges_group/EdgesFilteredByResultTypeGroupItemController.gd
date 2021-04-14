@@ -11,28 +11,28 @@ var edge_types_to_filtered_edges: Dictionary
 var filtered_edge_count: int
 
 func _init( \
-        type: int, \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
-        edge_calc_result_type: int, \
+        type: int,
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
+        edge_calc_result_type: int,
         text) \
         .( \
-        type, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        type,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     self.edge_calc_result_type = edge_calc_result_type
     self.text = text
     _init_edge_types_to_filtered_edges( \
-            graph, \
+            graph,
             edge_calc_result_type)
     _post_init()
 
 func _init_edge_types_to_filtered_edges( \
-        graph: PlatformGraph, \
+        graph: PlatformGraph,
         edge_calc_result_type: int) -> void:
     var filtered_edges := []
     for origin_surface in graph.surfaces_set:
@@ -55,19 +55,19 @@ func _init_edge_types_to_filtered_edges( \
         edge_types_to_filtered_edges[edge.edge_type].push_back(edge)
 
 func get_text() -> String:
-    return "[%s] %s" % [ \
-        filtered_edge_count, \
-        text, \
+    return "[%s] %s" % [
+        filtered_edge_count,
+        text,
     ]
 
 func to_string() -> String:
-    return "%s { count=%s }" % [ \
-        InspectorItemType.get_string(type), \
-        filtered_edge_count, \
+    return "%s { count=%s }" % [
+        InspectorItemType.get_string(type),
+        filtered_edge_count,
     ]
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error( \
             "find_and_expand_controller should not be called for " + \
@@ -77,11 +77,11 @@ func find_and_expand_controller( \
 func _create_children_inner() -> void:
     for edge_type in edge_types_to_filtered_edges:
         EdgeTypeInEdgesGroupItemController.new( \
-                tree_item, \
-                tree, \
-                graph, \
-                edge_calc_result_type, \
-                edge_type, \
+                tree_item,
+                tree,
+                graph,
+                edge_calc_result_type,
+                edge_type,
                 edge_types_to_filtered_edges[edge_type])
 
 func _destroy_children_inner() -> void:
@@ -94,10 +94,10 @@ func get_annotation_elements() -> Array:
     for edge_type in edge_types_to_filtered_edges:
         for edge in edge_types_to_filtered_edges[edge_type]:
             element = EdgeAnnotationElement.new( \
-                    edge, \
-                    true, \
-                    false, \
-                    true, \
+                    edge,
+                    true,
+                    false,
+                    true,
                     false)
             elements.push_back(element)
     return elements

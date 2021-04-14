@@ -6,8 +6,8 @@ const TYPE := SurfaceType.AIR
 const PRIORITY := 310
 
 func _init().( \
-        NAME, \
-        TYPE, \
+        NAME,
+        TYPE,
         PRIORITY) -> void:
     pass
 
@@ -30,11 +30,11 @@ func process(player: Player) -> bool:
         player.velocity.x = 0.0
     
     player.velocity = MovementUtils.update_velocity_in_air( \
-            player.velocity, \
-            player.actions.delta_sec, \
-            player.actions.pressed_jump, \
-            is_first_jump, \
-            player.surface_state.horizontal_acceleration_sign, \
+            player.velocity,
+            player.actions.delta_sec,
+            player.actions.pressed_jump,
+            is_first_jump,
+            player.surface_state.horizontal_acceleration_sign,
             player.movement_params)
     
     # Hit ceiling.

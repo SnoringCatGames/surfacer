@@ -11,20 +11,20 @@ var get_annotation_elements_funcref: FuncRef
 var get_annotation_elements_arg
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
-        text: String, \
-        description_text: String, \
-        get_annotation_elements_funcref: FuncRef, \
-        get_annotation_elements_arg = null, \
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
+        text: String,
+        description_text: String,
+        get_annotation_elements_funcref: FuncRef,
+        get_annotation_elements_arg = null,
         background_color = null) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     self.text = text
     self.description_text = description_text
@@ -34,14 +34,14 @@ func _init( \
         background_color = Surfacer.ann_defaults \
                     .INSPECTOR_DESCRIPTION_ITEM_BACKGROUND_COLOR
     self.tree_item.set_custom_bg_color( \
-            0, \
+            0,
             background_color)
     _post_init()
 
 func to_string() -> String:
-    return "%s { text=%s }" % [ \
-        InspectorItemType.get_string(type), \
-        text, \
+    return "%s { text=%s }" % [
+        InspectorItemType.get_string(type),
+        text,
     ]
 
 func get_text() -> String:
@@ -51,7 +51,7 @@ func get_description() -> String:
     return description_text
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     return false
 

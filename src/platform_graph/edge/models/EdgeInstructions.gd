@@ -8,21 +8,21 @@ var duration: float
 
 # Instructions don't need to be pre-sorted.
 func _init( \
-        instructions := [], \
+        instructions := [],
         duration := INF) -> void:
     self.instructions = instructions
     self.duration = duration
     
     self.instructions.sort_custom( \
-            self, \
+            self,
             "instruction_comparator")
 
 # Inserts the given instruction in sorted order.
 # TODO: Remove?
 func insert(instruction: EdgeInstruction) -> int:
     var index := instructions.bsearch_custom( \
-            instruction, \
-            self, \
+            instruction,
+            self,
             "instruction_comparator")
     instructions.insert(index, instruction)
     return index
@@ -31,8 +31,8 @@ func insert(instruction: EdgeInstruction) -> int:
 # TODO: Remove?
 func remove(instruction: EdgeInstruction) -> bool:
     var index := instructions.bsearch_custom( \
-            instruction, \
-            self, \
+            instruction,
+            self,
             "instruction_comparator")
     if instructions[index] == instruction:
         instructions.remove(index)
@@ -43,15 +43,15 @@ func remove(instruction: EdgeInstruction) -> bool:
 # This will mutate the time field on the given EdgeInstruction.
 # TODO: Remove?
 func is_instruction_in_range( \
-        instruction: EdgeInstruction, \
-        min_time: float, \
+        instruction: EdgeInstruction,
+        min_time: float,
         max_time: float) -> bool:
     var instruction_count := instructions.size()
     var possible_match: EdgeInstruction
     instruction.time = min_time
     var index := instructions.bsearch_custom( \
-            instruction, \
-            self, \
+            instruction,
+            self,
             "instruction_comparator")
     
     if index >= instruction_count:
@@ -80,7 +80,7 @@ func is_instruction_in_range( \
     return false
 
 static func instruction_comparator( \
-        a: EdgeInstruction, \
+        a: EdgeInstruction,
         b: EdgeInstruction) -> bool:
     return a.time < b.time
 
@@ -97,28 +97,28 @@ func to_string_with_newlines(indent_level := 0) -> String:
     
     var instructions_str := ""
     for instruction in instructions:
-        instructions_str += "\n\t%s%s," % [ \
-                indent_level_str, \
-                instruction.to_string(), \
+        instructions_str += "\n\t%s%s," % [
+                indent_level_str,
+                instruction.to_string(),
             ]
     
     var format_string_template := "EdgeInstructions{ instructions: [ " + \
             "%s" + \
             "\n%s] }"
-    var format_string_arguments := [ \
-            instructions_str, \
-            indent_level_str, \
+    var format_string_arguments := [
+            instructions_str,
+            indent_level_str,
         ]
     return format_string_template % format_string_arguments
 
 func load_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     instructions = _load_instructions_json_array(json_object.i, context)
     duration = json_object.d if json_object.d != -1 else INF
 
 func _load_instructions_json_array(\
-        json_object: Array, \
+        json_object: Array,
         context: Dictionary) -> Array:
     var result := []
     result.resize(json_object.size())

@@ -4,6 +4,6 @@ extends JumpLandPositionsUtilsTestBed
 
 func test_placeholder() -> void:
     assert_eq( \
-            true, \
-            false, \
+            true,
+            false,
             "Not implemented")

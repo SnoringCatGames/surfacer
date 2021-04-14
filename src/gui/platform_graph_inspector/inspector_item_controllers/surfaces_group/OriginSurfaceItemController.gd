@@ -28,17 +28,17 @@ var fall_range_description_item_controller: DescriptionItemController
 var jump_range_description_item_controller: DescriptionItemController
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
-        origin_surface: Surface, \
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
+        origin_surface: Surface,
         destination_surfaces_to_edge_types_to_edges_results: Dictionary) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     self.origin_surface = origin_surface
     self.destination_surfaces_to_edge_types_to_edges_results = \
@@ -67,54 +67,54 @@ func _calculate_metadata() -> void:
             destination_surfaces_to_edge_types_to_edges_results:
         attempted_destination_surfaces.push_back(destination_surface)
     attempted_destination_surfaces.sort_custom( \
-            SurfaceHorizontalPositionComparator, \
+            SurfaceHorizontalPositionComparator,
             "sort")
     
     fall_range_polygon_without_jump_distance = FallMovementUtils \
             .calculate_jump_or_fall_range_polygon_from_surface( \
-                    graph.movement_params, \
-                    origin_surface, \
+                    graph.movement_params,
+                    origin_surface,
                     false)
     fall_range_polygon_with_jump_distance = FallMovementUtils \
             .calculate_jump_or_fall_range_polygon_from_surface( \
-                    graph.movement_params, \
-                    origin_surface, \
+                    graph.movement_params,
+                    origin_surface,
                     true)
     
     var surfaces_in_fall_range_result_set := {}
     var surfaces_in_jump_range_result_set := {}
     graph.get_surfaces_in_jump_and_fall_range( \
-            graph.collision_params, \
-            surfaces_in_fall_range_result_set, \
-            surfaces_in_jump_range_result_set, \
+            graph.collision_params,
+            surfaces_in_fall_range_result_set,
+            surfaces_in_jump_range_result_set,
             origin_surface)
     surfaces_in_fall_range = surfaces_in_fall_range_result_set.keys()
     surfaces_in_jump_range = surfaces_in_jump_range_result_set.keys()
 
 func to_string() -> String:
-    return "%s{ [%s, %s] }" % [ \
-        InspectorItemType.get_string(TYPE), \
-        str(origin_surface.first_point), \
-        str(origin_surface.last_point), \
+    return "%s{ [%s, %s] }" % [
+        InspectorItemType.get_string(TYPE),
+        str(origin_surface.first_point),
+        str(origin_surface.last_point),
     ]
 
 func get_text() -> String:
-    return "[%s, %s]" % [ \
-        str(origin_surface.first_point), \
-        str(origin_surface.last_point), \
+    return "[%s, %s]" % [
+        str(origin_surface.first_point),
+        str(origin_surface.last_point),
     ]
 
 func get_description() -> String:
-    return ("There are %s valid outbound edges from this %s surface.") % [ \
-        valid_edge_count, \
-        SurfaceSide.get_string(origin_surface.side), \
+    return ("There are %s valid outbound edges from this %s surface.") % [
+        valid_edge_count,
+        SurfaceSide.get_string(origin_surface.side),
     ]
 
 func get_has_children() -> bool:
     return destination_surfaces_to_edge_types_to_edges_results.size() > 0
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     match search_type:
         InspectorSearchType.ORIGIN_SURFACE:
@@ -129,7 +129,7 @@ func find_and_expand_controller( \
             if metadata.origin_surface == origin_surface:
                 expand()
                 _trigger_find_and_expand_controller_recursive( \
-                        search_type, \
+                        search_type,
                         metadata)
                 return true
             else:
@@ -139,7 +139,7 @@ func find_and_expand_controller( \
             return false
 
 func _find_and_expand_controller_recursive( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> void:
     assert(search_type == InspectorSearchType.EDGE or \
             search_type == InspectorSearchType.DESTINATION_SURFACE)
@@ -147,7 +147,7 @@ func _find_and_expand_controller_recursive( \
     var child := tree_item.get_children()
     while child != null:
         is_subtree_found = child.get_metadata(0).find_and_expand_controller( \
-                search_type, \
+                search_type,
                 metadata)
         if is_subtree_found:
             return
@@ -156,32 +156,32 @@ func _find_and_expand_controller_recursive( \
 
 func _create_children_inner() -> void:
     valid_edges_count_item_controller = DescriptionItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
-            "%s valid outbound edges" % valid_edge_count, \
-            get_description(), \
-            funcref(self, \
+            tree_item,
+            tree,
+            graph,
+            "%s valid outbound edges" % valid_edge_count,
+            get_description(),
+            funcref(self,
                     "_get_annotation_elements_for_valid_edges_count_description_item"))
     fall_range_description_item_controller = DescriptionItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
+            tree_item,
+            tree,
+            graph,
             "%s surfaces in fall range" % \
-                    surfaces_in_fall_range.size(), \
+                    surfaces_in_fall_range.size(),
             "There are %s surfaces in fall range." % \
-                    surfaces_in_fall_range.size(), \
-            funcref(self, \
+                    surfaces_in_fall_range.size(),
+            funcref(self,
                     "_get_annotation_elements_for_fall_range_description_item"))
     jump_range_description_item_controller = DescriptionItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
+            tree_item,
+            tree,
+            graph,
             "%s surfaces in jump range" % \
-                    surfaces_in_jump_range.size(), \
+                    surfaces_in_jump_range.size(),
             "There are %s surfaces in jump range." % \
-                    surfaces_in_jump_range.size(), \
-            funcref(self, \
+                    surfaces_in_jump_range.size(),
+            funcref(self,
                     "_get_annotation_elements_for_jump_range_description_item"))
     
     var edge_types_to_edges_results: Dictionary
@@ -193,11 +193,11 @@ func _create_children_inner() -> void:
                         destination_surface) else \
                 {}
         DestinationSurfaceItemController.new( \
-                tree_item, \
-                tree, \
-                graph, \
-                origin_surface, \
-                destination_surface, \
+                tree_item,
+                tree,
+                graph,
+                origin_surface,
+                destination_surface,
                 edge_types_to_edges_results)
 
 func _destroy_children_inner() -> void:
@@ -207,7 +207,7 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     var elements := _get_jump_fall_range_annotation_elements( \
-            true, \
+            true,
             true)
     
     var valid_edges_annotation_elements := \
@@ -234,7 +234,7 @@ func _get_annotation_elements_for_destination_surfaces_description_item() -> \
 
 func _get_annotation_elements_for_fall_range_description_item() -> Array:
     var elements := _get_jump_fall_range_annotation_elements( \
-            true, \
+            true,
             false)
     var element: SurfaceAnnotationElement
     for destination_surface in surfaces_in_fall_range:
@@ -248,7 +248,7 @@ func _get_annotation_elements_for_fall_range_description_item() -> Array:
 
 func _get_annotation_elements_for_jump_range_description_item() -> Array:
     var elements := _get_jump_fall_range_annotation_elements( \
-            false, \
+            false,
             true)
     var element: SurfaceAnnotationElement
     for destination_surface in surfaces_in_jump_range:
@@ -261,35 +261,35 @@ func _get_annotation_elements_for_jump_range_description_item() -> Array:
     return elements
 
 func _get_jump_fall_range_annotation_elements( \
-        includes_fall_range: bool, \
+        includes_fall_range: bool,
         includes_jump_range: bool) -> Array:
     var elements := []
     
     if includes_fall_range:
         var fall_range_without_jump_distance_element := \
                 FallRangeWithoutJumpDistanceAnnotationElement.new( \
-                        fall_range_polygon_without_jump_distance, \
+                        fall_range_polygon_without_jump_distance,
                         Surfacer.ann_defaults \
-                                .FALL_RANGE_POLYGON_COLOR_PARAMS, \
-                        false, \
-                        false, \
+                                .FALL_RANGE_POLYGON_COLOR_PARAMS,
+                        false,
+                        false,
                         AnnotationElementDefaults \
-                                .DEFAULT_POLYLINE_DASH_LENGTH, \
-                        AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP, \
+                                .DEFAULT_POLYLINE_DASH_LENGTH,
+                        AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP,
                         4.0)
         elements.push_back(fall_range_without_jump_distance_element)
     
     if includes_jump_range:
         var fall_range_with_jump_distance_element := \
                 FallRangeWithJumpDistanceAnnotationElement.new( \
-                        fall_range_polygon_with_jump_distance, \
+                        fall_range_polygon_with_jump_distance,
                         Surfacer.ann_defaults \
-                                .FALL_RANGE_POLYGON_COLOR_PARAMS, \
-                        false, \
-                        false, \
+                                .FALL_RANGE_POLYGON_COLOR_PARAMS,
+                        false,
+                        false,
                         AnnotationElementDefaults \
-                                .DEFAULT_POLYLINE_DASH_LENGTH, \
-                        AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP, \
+                                .DEFAULT_POLYLINE_DASH_LENGTH,
+                        AnnotationElementDefaults.DEFAULT_POLYLINE_DASH_GAP,
                         1.0)
         elements.push_back(fall_range_with_jump_distance_element)
     
@@ -308,17 +308,17 @@ func _get_valid_edges_annotation_elements() -> Array:
                             [destination_surface][edge_type]:
                 for valid_edge in edges_result.valid_edges:
                     element = EdgeAnnotationElement.new( \
-                            valid_edge, \
-                            true, \
-                            false, \
-                            true, \
+                            valid_edge,
+                            true,
+                            false,
+                            true,
                             false)
                     elements.push_back(element)
     return elements
 
 class SurfaceHorizontalPositionComparator:
     static func sort( \
-            a: Surface, \
+            a: Surface,
             b: Surface) -> bool:
         return a.bounding_box.position.x < b.bounding_box.position.x if \
                 a.bounding_box.position.x != b.bounding_box.position.x else \

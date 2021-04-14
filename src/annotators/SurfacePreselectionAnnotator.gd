@@ -28,9 +28,9 @@ var preselection_position_to_draw: PositionAlongSurface = null
 var animation_start_time := -PRESELECTION_DURATION_SEC
 var animation_progress := 1.0
 var phantom_surface := Surface.new(
-        [Vector2.INF], \
-        SurfaceSide.FLOOR, \
-        null, \
+        [Vector2.INF],
+        SurfaceSide.FLOOR,
+        null,
         [])
 var phantom_position_along_surface := PositionAlongSurface.new()
 var phantom_path: PlatformGraphPath
@@ -104,55 +104,55 @@ func _draw() -> void:
         var path_alpha := \
                 path_base_color.a * alpha_multiplier
         var path_color := Color( \
-                path_base_color.r, \
-                path_base_color.g, \
-                path_base_color.b, \
+                path_base_color.r,
+                path_base_color.g,
+                path_base_color.b,
                 path_alpha)
         Gs.draw_utils.draw_path( \
-                self, \
-                phantom_path, \
-                PRESELECTION_PATH_STROKE_WIDTH, \
-                path_color, \
-                false, \
-                false, \
-                true, \
+                self,
+                phantom_path,
+                PRESELECTION_PATH_STROKE_WIDTH,
+                path_color,
+                false,
+                false,
+                true,
                 false)
     
     # Draw Surface.
     var surface_alpha := surface_base_color.a * alpha_multiplier
     var surface_color := Color( \
-            surface_base_color.r, \
-            surface_base_color.g, \
-            surface_base_color.b, \
+            surface_base_color.r,
+            surface_base_color.g,
+            surface_base_color.b,
             surface_alpha)
     Gs.draw_utils.draw_surface( \
-            self, \
-            phantom_surface, \
-            surface_color, \
+            self,
+            phantom_surface,
+            surface_color,
             PRESELECTION_SURFACE_DEPTH)
     
     # Draw destination marker.
     var position_indicator_alpha := \
             position_indicator_base_color.a * alpha_multiplier
     var position_indicator_color := Color( \
-            position_indicator_base_color.r, \
-            position_indicator_base_color.g, \
-            position_indicator_base_color.b, \
+            position_indicator_base_color.r,
+            position_indicator_base_color.g,
+            position_indicator_base_color.b,
             position_indicator_alpha)
     var cone_end_point := \
             phantom_position_along_surface.target_projection_onto_surface
     var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
             PRESELECTION_POSITION_INDICATOR_RADIUS
     Gs.draw_utils.draw_destination_marker( \
-            self, \
-            cone_end_point, \
-            false, \
-            phantom_surface.side, \
-            position_indicator_color, \
-            cone_length, \
-            PRESELECTION_POSITION_INDICATOR_RADIUS, \
-            true, \
-            INF, \
+            self,
+            cone_end_point,
+            false,
+            phantom_surface.side,
+            position_indicator_color,
+            cone_length,
+            PRESELECTION_POSITION_INDICATOR_RADIUS,
+            true,
+            INF,
             4.0)
 
 func _update_phantom_surface() -> void:
@@ -192,8 +192,8 @@ func _update_phantom_surface() -> void:
 
 func _update_phantom_position_along_surface() -> void:
     phantom_position_along_surface.match_surface_target_and_collider( \
-            phantom_surface, \
-            preselection_position_to_draw.target_point, \
-            Vector2.ZERO, \
-            true, \
+            phantom_surface,
+            preselection_position_to_draw.target_point,
+            Vector2.ZERO,
+            true,
             true)

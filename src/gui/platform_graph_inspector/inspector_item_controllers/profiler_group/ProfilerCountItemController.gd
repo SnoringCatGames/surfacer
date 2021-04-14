@@ -9,40 +9,40 @@ var metric: String
 var metadata_container: EdgeCalcResultMetadata
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
-        metric: String, \
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
+        metric: String,
         metadata_container = null) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     self.metric = metric
     self.metadata_container = metadata_container
     _post_init()
 
 func get_text() -> String:
-    return "%s: %s" % [ \
-        Gs.profiler.get_count(metric, metadata_container), \
-        metric, \
+    return "%s: %s" % [
+        Gs.profiler.get_count(metric, metadata_container),
+        metric,
     ]
 
 func get_description() -> String:
     return ("The total number of times the %s event happened while " + \
-            "parsing the platform graph for the %s player.") % [ \
-        metric, \
-        graph.movement_params.name, \
+            "parsing the platform graph for the %s player.") % [
+        metric,
+        graph.movement_params.name,
     ]
 
 func get_has_children() -> bool:
     return false
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error( \
             "find_and_expand_controller should not be called for " + \

@@ -7,15 +7,15 @@ const STARTS_COLLAPSED := false
 const PREFIX := "Global counts"
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
+        parent_item: TreeItem,
+        tree: Tree,
         graph: PlatformGraph) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     _post_init()
 
@@ -24,12 +24,12 @@ func get_text() -> String:
 
 func get_description() -> String:
     return ("Some stats on the overall platform graph for the %s " + \
-            "player.") % [ \
-        graph.movement_params.name, \
+            "player.") % [
+        graph.movement_params.name,
     ]
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error( \
             "find_and_expand_controller should not be called for " + \
@@ -39,21 +39,21 @@ func find_and_expand_controller( \
 func _create_children_inner() -> void:
     var text: String = "%s total surfaces" % graph.counts.total_surfaces
     DescriptionItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
-            text, \
-            text, \
-            funcref(self, \
+            tree_item,
+            tree,
+            graph,
+            text,
+            text,
+            funcref(self,
                     "_get_annotation_elements_for_surfaces_description_item"))
     text = "%s total edges" % graph.counts.total_edges
     DescriptionItemController.new( \
-            tree_item, \
-            tree, \
-            graph, \
-            text, \
-            text, \
-            funcref(self, \
+            tree_item,
+            tree,
+            graph,
+            text,
+            text,
+            funcref(self,
                     "_get_annotation_elements_for_edges_description_item"))
     
     var type_name: String
@@ -62,17 +62,17 @@ func _create_children_inner() -> void:
             continue
         
         type_name = EdgeType.get_string(edge_type)
-        text = "%s %ss" % [ \
-            graph.counts[type_name], \
-            type_name, \
+        text = "%s %ss" % [
+            graph.counts[type_name],
+            type_name,
         ]
         DescriptionItemController.new( \
-                tree_item, \
-                tree, \
-                graph, \
-                text, \
-                text, \
-                funcref(self, "_get_annotation_elements_for_edge_type_description_item"), \
+                tree_item,
+                tree,
+                graph,
+                text,
+                text,
+                funcref(self, "_get_annotation_elements_for_edge_type_description_item"),
                 edge_type)
 
 func _destroy_children_inner() -> void:
@@ -82,7 +82,7 @@ func _destroy_children_inner() -> void:
 func get_annotation_elements() -> Array:
     var result := SurfacesGroupItemController.get_annotation_elements_from_graph(graph)
     Gs.utils.concat( \
-            result, \
+            result,
             EdgesGroupItemController.get_annotation_elements_from_graph(graph))
     return result
 
@@ -94,5 +94,5 @@ func _get_annotation_elements_for_edges_description_item() -> Array:
 
 func _get_annotation_elements_for_edge_type_description_item(edge_type: int) -> Array:
     return EdgeTypeInEdgesGroupItemController.get_annotation_elements_from_graph_and_type( \
-            graph, \
+            graph,
             edge_type)

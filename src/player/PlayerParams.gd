@@ -11,9 +11,9 @@ var edge_calculators: Array
 var action_handlers: Array
 
 func _init( \
-        name: String, \
-        movement_params: MovementParams, \
-        edge_calculators: Array, \
+        name: String,
+        movement_params: MovementParams,
+        edge_calculators: Array,
         action_handlers: Array) -> void:
     self.name = name
     self.movement_params = movement_params

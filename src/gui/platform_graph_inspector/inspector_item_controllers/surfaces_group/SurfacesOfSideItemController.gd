@@ -10,19 +10,19 @@ var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 var surface_count := 0
 
 func _init( \
-        type: int, \
-        starts_collapsed: bool, \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
-        side: int, \
+        type: int,
+        starts_collapsed: bool,
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
+        side: int,
         surfaces_to_surfaces_to_edge_types_to_edges_results: Dictionary) \
         .( \
-        type, \
-        IS_LEAF, \
-        starts_collapsed, \
-        parent_item, \
-        tree, \
+        type,
+        IS_LEAF,
+        starts_collapsed,
+        parent_item,
+        tree,
         graph) -> void:
     self.side = side
     self.surfaces_to_surfaces_to_edge_types_to_edges_results = \
@@ -31,37 +31,37 @@ func _init( \
     _post_init()
 
 func to_string() -> String:
-    return "%s { surface_count=%s }" % [ \
-        InspectorItemType.get_string(type), \
-        surface_count, \
+    return "%s { surface_count=%s }" % [
+        InspectorItemType.get_string(type),
+        surface_count,
     ]
 
 func get_text() -> String:
-    return "%ss [%s]" % [ \
-        SurfaceSide.get_string(side), \
-        surface_count, \
+    return "%ss [%s]" % [
+        SurfaceSide.get_string(side),
+        surface_count,
     ]
 
 func get_has_children() -> bool:
     return surface_count > 0
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     expand()
     _trigger_find_and_expand_controller_recursive( \
-            search_type, \
+            search_type,
             metadata)
     return true
 
 func _find_and_expand_controller_recursive( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> void:
     var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
         is_subtree_found = child.get_metadata(0).find_and_expand_controller( \
-                search_type, \
+                search_type,
                 metadata)
         if is_subtree_found:
             return
@@ -80,10 +80,10 @@ func _create_children_inner() -> void:
                             surface) else \
                     {}
             OriginSurfaceItemController.new( \
-                    tree_item, \
-                    tree, \
-                    graph, \
-                    surface, \
+                    tree_item,
+                    tree,
+                    graph,
+                    surface,
                     surfaces_to_edge_types_to_edges_results)
 
 func _destroy_children_inner() -> void:

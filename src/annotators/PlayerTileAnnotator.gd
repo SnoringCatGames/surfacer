@@ -24,11 +24,11 @@ func _draw_tile_border() -> void:
     var center := (coord + Vector2(0.5, 0.5)) * cell_size
     
     Gs.draw_utils.draw_rectangle_outline( \
-            self, \
-            center, \
-            cell_size / 2.0, \
-            false, \
-            TILE_BORDER_COLOR, \
+            self,
+            center,
+            cell_size / 2.0,
+            false,
+            TILE_BORDER_COLOR,
             TILE_BORDER_WIDTH)
 
 func check_for_update() -> void:

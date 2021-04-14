@@ -12,8 +12,8 @@ var end_waypoint: Waypoint
 var vertical_step: VerticalEdgeStep
 
 func _init( \
-        start_waypoint: Waypoint, \
-        end_waypoint: Waypoint, \
+        start_waypoint: Waypoint,
+        end_waypoint: Waypoint,
         vertical_step: VerticalEdgeStep) -> void:
     self.start_waypoint = start_waypoint
     self.end_waypoint = end_waypoint

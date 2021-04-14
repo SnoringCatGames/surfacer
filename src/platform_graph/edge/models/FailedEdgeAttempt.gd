@@ -11,31 +11,31 @@ var waypoint_validity := WaypointValidity.UNKNOWN
 var is_broad_phase_failure: bool
 
 func _init( \
-        jump_land_positions: JumpLandPositions = null, \
-        edge_result_metadata: EdgeCalcResultMetadata = null, \
+        jump_land_positions: JumpLandPositions = null,
+        edge_result_metadata: EdgeCalcResultMetadata = null,
         calculator = null \
         ).( \
         calculator.edge_type if \
                 calculator != null else \
-                EdgeType.UNKNOWN, \
+                EdgeType.UNKNOWN,
         edge_result_metadata.edge_calc_result_type if \
                 edge_result_metadata != null else \
-                EdgeCalcResultType.UNKNOWN, \
+                EdgeCalcResultType.UNKNOWN,
         jump_land_positions.jump_position if \
                 jump_land_positions != null else \
-                null, \
+                null,
         jump_land_positions.land_position if \
                 jump_land_positions != null else \
-                null, \
+                null,
         jump_land_positions.velocity_start if \
                 jump_land_positions != null else \
-                Vector2.INF, \
+                Vector2.INF,
         jump_land_positions.needs_extra_jump_duration if \
                 jump_land_positions != null else \
-                false, \
+                false,
         jump_land_positions.needs_extra_wall_land_horizontal_speed if \
                 jump_land_positions != null else \
-                false, \
+                false,
         calculator \
         ) -> void:
     self.jump_land_positions = jump_land_positions
@@ -55,16 +55,16 @@ func to_string() -> String:
                 "start: %s, " + \
                 "end: %s " + \
             "}" % \
-            [ \
-                EdgeCalcResultType.get_string(edge_calc_result_type), \
-                EdgeType.get_string(edge_type), \
-                WaypointValidity.get_string(waypoint_validity), \
-                str(jump_land_positions.jump_position.target_point), \
-                str(jump_land_positions.land_position.target_point), \
+            [
+                EdgeCalcResultType.get_string(edge_calc_result_type),
+                EdgeType.get_string(edge_type),
+                WaypointValidity.get_string(waypoint_validity),
+                str(jump_land_positions.jump_position.target_point),
+                str(jump_land_positions.land_position.target_point),
             ]
 
 func load_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_attempt_state_from_json_object(json_object, context)
     jump_land_positions = context.id_to_jump_land_positions[int(json_object.p)]

@@ -13,20 +13,20 @@ const ACTIONS_TO_INPUT_KEYS := {
 }
 
 func _init( \
-        player, \
+        player,
         is_additive: bool) \
         .( \
-        "HP", \
-        player, \
+        "HP",
+        player,
         is_additive) -> void:
     pass
 
 # Calculates actions for the current frame.
 func update( \
-        actions: PlayerActionState, \
-        previous_actions: PlayerActionState, \
-        time_sec: float, \
-        delta_sec: float, \
+        actions: PlayerActionState,
+        previous_actions: PlayerActionState,
+        time_sec: float,
+        delta_sec: float,
         navigation_state: PlayerNavigationState) -> void:
     var is_pressed: bool
     for action in ACTIONS_TO_INPUT_KEYS:
@@ -34,11 +34,11 @@ func update( \
         is_pressed = Gs.level_input.is_action_pressed(action)
         if !Gs.level_input.is_key_pressed(KEY_CONTROL):
             PlayerActionSource.update_for_key_press( \
-                    actions, \
-                    previous_actions, \
-                    input_key, \
-                    is_pressed, \
-                    time_sec, \
+                    actions,
+                    previous_actions,
+                    input_key,
+                    is_pressed,
+                    time_sec,
                     is_additive)
 
 static func get_is_some_user_action_pressed() -> bool:

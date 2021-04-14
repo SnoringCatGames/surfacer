@@ -23,8 +23,8 @@ var frame_previous_position := Vector2.INF
 var collision: SurfaceCollision
 
 func _init( \
-        edge_calc_params = null, \
-        step_calc_params = null, \
+        edge_calc_params = null,
+        step_calc_params = null,
         horizontal_step = null) -> void:
     if edge_calc_params != null:
         self.collider_shape = edge_calc_params.movement_params.collider_shape
@@ -63,8 +63,8 @@ func _init( \
         self.frame_previous_position = horizontal_step.position_step_start
 
 func record_collision( \
-        position_start: Vector2, \
-        displacement: Vector2, \
+        position_start: Vector2,
+        displacement: Vector2,
         surface_collision: SurfaceCollision) -> void:
     self.frame_previous_position = self.frame_start_position
     self.frame_start_position = position_start

@@ -13,17 +13,17 @@ var dash_stroke_width: float
 var includes_surfaces: bool
 
 func _init( \
-        failed_edge_attempt: FailedEdgeAttempt, \
+        failed_edge_attempt: FailedEdgeAttempt,
         end_color_params := Surfacer.ann_defaults \
-                .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS, \
+                .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,
         line_color_params := \
-                Surfacer.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS, \
+                Surfacer.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS,
         dash_length := \
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH,
         dash_gap := \
-                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP, \
+                AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP,
         dash_stroke_width := AnnotationElementDefaults \
-                .FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH, \
+                .FAILED_EDGE_ATTEMPT_DASH_STROKE_WIDTH,
         includes_surfaces := AnnotationElementDefaults \
                 .FAILED_EDGE_ATTEMPT_INCLUDES_SURFACES) \
         .(TYPE) -> void:
@@ -44,47 +44,47 @@ func draw(canvas: CanvasItem) -> void:
     var end := failed_edge_attempt.get_end()
     var middle: Vector2 = start.linear_interpolate(end, 0.5)
     Gs.draw_utils.draw_dashed_line( \
-            canvas, \
-            start, \
-            end, \
-            line_color, \
-            dash_length, \
-            dash_gap, \
-            0.0, \
+            canvas,
+            start,
+            end,
+            line_color,
+            dash_length,
+            dash_gap,
+            0.0,
             dash_stroke_width)
     Gs.draw_utils.draw_x( \
-            canvas, \
-            middle, \
-            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_WIDTH, \
-            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_HEIGHT, \
-            line_color, \
+            canvas,
+            middle,
+            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_WIDTH,
+            AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_HEIGHT,
+            line_color,
             dash_stroke_width)
     Gs.draw_utils.draw_origin_marker( \
-            canvas, \
-            start, \
+            canvas,
+            start,
             end_color)
     Gs.draw_utils.draw_destination_marker( \
-            canvas, \
-            end, \
-            true, \
-            failed_edge_attempt.get_end_surface().side, \
+            canvas,
+            end,
+            true,
+            failed_edge_attempt.get_end_surface().side,
             end_color)
     if includes_surfaces:
         SurfaceAnnotationElement.draw_from_surface( \
-                canvas, \
-                failed_edge_attempt.get_start_surface(), \
+                canvas,
+                failed_edge_attempt.get_start_surface(),
                 end_color_params)
         SurfaceAnnotationElement.draw_from_surface( \
-                canvas, \
-                failed_edge_attempt.get_end_surface(), \
+                canvas,
+                failed_edge_attempt.get_end_surface(),
                 end_color_params)
 
 func _create_legend_items() -> Array:
     var failed_edge_item := FailedEdgeTrajectoryLegendItem.new()
     var origin_item := OriginLegendItem.new()
     var destination_item := DestinationLegendItem.new()
-    return [ \
-        failed_edge_item, \
-        origin_item, \
-        destination_item, \
+    return [
+        failed_edge_item,
+        origin_item,
+        destination_item,
     ]

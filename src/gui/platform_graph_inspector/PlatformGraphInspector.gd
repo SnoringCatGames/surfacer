@@ -76,12 +76,12 @@ func _init() -> void:
     hide_root = true
     hide_folding = false
     connect( \
-            "item_selected", \
-            self, \
+            "item_selected",
+            self,
             "_on_tree_item_selected")
     connect( \
-            "item_collapsed", \
-            self, \
+            "item_collapsed",
+            self,
             "_on_tree_item_expansion_toggled")
 
 func _ready() -> void:
@@ -108,8 +108,8 @@ func _populate() -> void:
     for graph in graphs:
         graph_item_controllers[graph.movement_params.name] = \
                 PlatformGraphItemController.new( \
-                        root, \
-                        self, \
+                        root,
+                        self,
                         graph)
     
     if !graphs.empty():
@@ -171,9 +171,9 @@ func _select_initial_item() -> void:
                     debug_origin.has("epsilon") else \
                     10.0
             var origin_surface := _find_matching_surface( \
-                    origin_start_vertex, \
-                    origin_end_vertex, \
-                    origin_epsilon, \
+                    origin_start_vertex,
+                    origin_end_vertex,
+                    origin_epsilon,
                     graph)
             
             if origin_surface != null:
@@ -195,9 +195,9 @@ func _select_initial_item() -> void:
                             debug_destination.has("epsilon") else \
                             10.0
                     destination_surface = _find_matching_surface( \
-                            destination_start_vertex, \
-                            destination_end_vertex, \
-                            destination_epsilon, \
+                            destination_start_vertex,
+                            destination_end_vertex,
+                            destination_epsilon,
                             graph)
                     
                     # TODO: Add support for searching for:
@@ -210,24 +210,24 @@ func _select_initial_item() -> void:
                                 limit_parsing.has("edge_type"):
                             # Search for the matching edge item.
                             _select_canonical_edge_or_edge_attempt_item_controller( \
-                                    origin_surface, \
-                                    destination_surface, \
-                                    debug_origin.position, \
-                                    debug_destination.position, \
-                                    limit_parsing.edge_type, \
+                                    origin_surface,
+                                    destination_surface,
+                                    debug_origin.position,
+                                    debug_destination.position,
+                                    limit_parsing.edge_type,
                                     graph)
                             return
                         else:
                             # Search for the matching origin surface item.
                             _select_canonical_destination_surface_item_controller( \
-                                    origin_surface, \
-                                    destination_surface, \
+                                    origin_surface,
+                                    destination_surface,
                                     graph)
                             return
                 
                 # Search for the matching origin surface item.
                 _select_canonical_origin_surface_item_controller( \
-                        origin_surface, \
+                        origin_surface,
                         graph)
                 return
         
@@ -239,14 +239,14 @@ func _select_initial_item() -> void:
         
         # By default, just select the top-level edges group.
         _trigger_find_and_expand_controller( \
-                player_name, \
-                InspectorSearchType.EDGES_GROUP, \
+                player_name,
+                InspectorSearchType.EDGES_GROUP,
                 {})
 
 func _find_matching_surface( \
-        start_vertex: Vector2, \
-        end_vertex: Vector2, \
-        epsilon: float, \
+        start_vertex: Vector2,
+        end_vertex: Vector2,
+        epsilon: float,
         graph: PlatformGraph) -> Surface:
     if start_vertex != Vector2.INF or \
             end_vertex != Vector2.INF:
@@ -255,13 +255,13 @@ func _find_matching_surface( \
         for surface in graph.surfaces_set:
             does_start_vertex_match = start_vertex == Vector2.INF or \
                     Gs.geometry.are_points_equal_with_epsilon( \
-                            surface.first_point, \
-                            start_vertex, \
+                            surface.first_point,
+                            start_vertex,
                             epsilon)
             does_end_vertex_match = end_vertex == Vector2.INF or \
                     Gs.geometry.are_points_equal_with_epsilon( \
-                            surface.last_point, \
-                            end_vertex, \
+                            surface.last_point,
+                            end_vertex,
                             epsilon)
             if does_start_vertex_match and does_end_vertex_match:
                 return surface
@@ -295,72 +295,72 @@ func _on_tree_item_expansion_toggled(item: TreeItem) -> void:
         controller.call_deferred("on_item_expanded")
 
 func select_edge_or_surface( \
-        start_position: PositionAlongSurface, \
-        end_position: PositionAlongSurface, \
-        edge_type: int, \
+        start_position: PositionAlongSurface,
+        end_position: PositionAlongSurface,
+        edge_type: int,
         graph: PlatformGraph) -> void:
     # Ensure that the inspector panel is open.
     Surfacer.inspector_panel.is_open = true
     
     if start_position.surface == end_position.surface:
         _select_canonical_origin_surface_item_controller( \
-                start_position.surface, \
+                start_position.surface,
                 graph)
     else:
         _select_canonical_edge_or_edge_attempt_item_controller( \
-                start_position.surface, \
-                end_position.surface, \
-                start_position.target_projection_onto_surface, \
-                end_position.target_projection_onto_surface, \
-                edge_type, \
+                start_position.surface,
+                end_position.surface,
+                start_position.target_projection_onto_surface,
+                end_position.target_projection_onto_surface,
+                edge_type,
                 graph)
 
 func _select_canonical_origin_surface_item_controller( \
-        origin_surface: Surface, \
+        origin_surface: Surface,
         graph: PlatformGraph) -> void:
     if graph_item_controllers.has(graph.movement_params.name):
         var metadata := {
-            origin_surface = origin_surface, \
+            origin_surface = origin_surface,
         }
         _trigger_find_and_expand_controller( \
-                graph.movement_params.name, \
-                InspectorSearchType.ORIGIN_SURFACE, \
+                graph.movement_params.name,
+                InspectorSearchType.ORIGIN_SURFACE,
                 metadata)
 
 func _select_canonical_destination_surface_item_controller( \
-        origin_surface: Surface, \
-        destination_surface: Surface, \
+        origin_surface: Surface,
+        destination_surface: Surface,
         graph: PlatformGraph) -> void:
     if graph_item_controllers.has(graph.movement_params.name):
         var metadata := {
-            origin_surface = origin_surface, \
-            destination_surface = destination_surface, \
+            origin_surface = origin_surface,
+            destination_surface = destination_surface,
         }
         _trigger_find_and_expand_controller( \
-                graph.movement_params.name, \
-                InspectorSearchType.DESTINATION_SURFACE, \
+                graph.movement_params.name,
+                InspectorSearchType.DESTINATION_SURFACE,
                 metadata)
 
 func _select_canonical_edge_or_edge_attempt_item_controller( \
-        start_surface: Surface, \
-        end_surface: Surface, \
-        target_projection_start: Vector2, \
-        target_projection_end: Vector2, \
-        edge_type: int, \
-        graph: PlatformGraph, \
+        start_surface: Surface,
+        end_surface: Surface,
+        target_projection_start: Vector2,
+        target_projection_end: Vector2,
+        edge_type: int,
+        graph: PlatformGraph,
         throws_on_not_found := false) -> void:
     # Determine which start/end positions to check.
     var all_jump_land_positions := JumpLandPositionsUtils \
             .calculate_jump_land_positions_for_surface_pair( \
-                    graph.movement_params, \
-                    start_surface, \
+                    graph.movement_params,
+                    start_surface,
                     end_surface)
     var jump_position: PositionAlongSurface
     var land_position: PositionAlongSurface
     if !all_jump_land_positions.empty():
         var closest_jump_land_positions := _find_closest_jump_land_positions( \
-                target_projection_start, \
-                target_projection_end, \
+                target_projection_start,
+                target_projection_end,
                 all_jump_land_positions)
         jump_position = closest_jump_land_positions.jump_position
         land_position = closest_jump_land_positions.land_position
@@ -379,12 +379,12 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
                             .CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD:
         
         var metadata := { \
-            origin_surface = start_surface, \
-            destination_surface = end_surface, \
+            origin_surface = start_surface,
+            destination_surface = end_surface,
         }
         _trigger_find_and_expand_controller( \
-                graph.movement_params.name, \
-                InspectorSearchType.DESTINATION_SURFACE, \
+                graph.movement_params.name,
+                InspectorSearchType.DESTINATION_SURFACE,
                 metadata)
     else:
         if !graph_item_controllers.has(graph.movement_params.name):
@@ -392,38 +392,38 @@ func _select_canonical_edge_or_edge_attempt_item_controller( \
             return
         
         var metadata := { \
-            origin_surface = start_surface, \
-            destination_surface = end_surface, \
-            start = jump_position.target_point, \
-            end = land_position.target_point, \
-            edge_type = edge_type, \
+            origin_surface = start_surface,
+            destination_surface = end_surface,
+            start = jump_position.target_point,
+            end = land_position.target_point,
+            edge_type = edge_type,
         }
         _trigger_find_and_expand_controller( \
-                graph.movement_params.name, \
-                InspectorSearchType.EDGE, \
+                graph.movement_params.name,
+                InspectorSearchType.EDGE,
                 metadata)
 
 func _trigger_find_and_expand_controller( \
-        player_name: String, \
-        search_type: int, \
+        player_name: String,
+        search_type: int,
         metadata: Dictionary) -> void:
     _increment_find_and_expand_controller_recursive_count()
     graph_item_controllers[player_name].find_and_expand_controller( \
-            search_type, \
+            search_type,
             metadata)
     _decrement_find_and_expand_controller_recursive_count()
     _poll_is_find_and_expand_in_progress( \
-            player_name, \
-            search_type, \
+            player_name,
+            search_type,
             metadata)
 
 func _on_find_and_expand_complete( \
-        player_name: String, \
-        search_type: int, \
+        player_name: String,
+        search_type: int,
         metadata: Dictionary) -> void:
-    print_msg("Inspector search complete: player_name=%s, search_type=%s", [ \
-        player_name, \
-        InspectorSearchType.get_string(search_type), \
+    print_msg("Inspector search complete: player_name=%s, search_type=%s", [
+        player_name,
+        InspectorSearchType.get_string(search_type),
     ])
     
     var item := get_selected()
@@ -466,19 +466,19 @@ func _decrement_find_and_expand_controller_recursive_count() -> void:
     _find_and_expand_controller_recursive_count -= 1
 
 func _poll_is_find_and_expand_in_progress( \
-        player_name: String, \
-        search_type: int, \
+        player_name: String,
+        search_type: int,
         metadata: Dictionary) -> void:
     if get_is_find_and_expand_in_progress():
         call_deferred( \
-                "_poll_is_find_and_expand_in_progress", \
-                player_name, \
-                search_type, \
+                "_poll_is_find_and_expand_in_progress",
+                player_name,
+                search_type,
                 metadata)
     else:
         _on_find_and_expand_complete( \
-                player_name, \
-                search_type, \
+                player_name,
+                search_type,
                 metadata)
 
 func _clear_selection() -> void:
@@ -493,8 +493,8 @@ func _clear_selection() -> void:
     current_annotation_elements = []
 
 static func _find_closest_jump_land_positions( \
-        target_jump_position: Vector2, \
-        target_land_position: Vector2, \
+        target_jump_position: Vector2,
+        target_land_position: Vector2,
         all_jump_land_positions: Array) -> JumpLandPositions:
     var closest_jump_land_positions: JumpLandPositions
     var closest_distance_sum := INF
@@ -515,7 +515,7 @@ static func _find_closest_jump_land_positions( \
 # Conditionally prints the given message, depending on the Player's
 # configuration.
 func print_msg( \
-        message_template: String, \
+        message_template: String,
         message_args = null) -> void:
     if Surfacer.is_surfacer_logging and \
             Surfacer.current_player_for_clicks != null and \

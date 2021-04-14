@@ -19,56 +19,56 @@ var falls_on_left_side: bool
 var fall_off_position: PositionAlongSurface
 
 func _init( \
-        calculator = null, \
-        start: PositionAlongSurface = null, \
-        end: PositionAlongSurface = null, \
-        velocity_start := Vector2.INF, \
-        velocity_end := Vector2.INF, \
-        includes_extra_wall_land_horizontal_speed := false, \
-        movement_params: MovementParams = null, \
-        instructions: EdgeInstructions = null, \
-        trajectory: EdgeTrajectory = null, \
-        edge_calc_result_type := EdgeCalcResultType.UNKNOWN, \
+        calculator = null,
+        start: PositionAlongSurface = null,
+        end: PositionAlongSurface = null,
+        velocity_start := Vector2.INF,
+        velocity_end := Vector2.INF,
+        includes_extra_wall_land_horizontal_speed := false,
+        movement_params: MovementParams = null,
+        instructions: EdgeInstructions = null,
+        trajectory: EdgeTrajectory = null,
+        edge_calc_result_type := EdgeCalcResultType.UNKNOWN,
         falls_on_left_side := false,
         fall_off_position: PositionAlongSurface = null) \
-        .(TYPE, \
-        IS_TIME_BASED, \
-        SURFACE_TYPE, \
-        ENTERS_AIR, \
-        INCLUDES_AIR_TRAJECTORY, \
-        calculator, \
-        start, \
-        end, \
-        velocity_start, \
-        velocity_end, \
-        false, \
-        includes_extra_wall_land_horizontal_speed, \
-        movement_params, \
-        instructions, \
-        trajectory, \
+        .(TYPE,
+        IS_TIME_BASED,
+        SURFACE_TYPE,
+        ENTERS_AIR,
+        INCLUDES_AIR_TRAJECTORY,
+        calculator,
+        start,
+        end,
+        velocity_start,
+        velocity_end,
+        false,
+        includes_extra_wall_land_horizontal_speed,
+        movement_params,
+        instructions,
+        trajectory,
         edge_calc_result_type) -> void:
     self.falls_on_left_side = falls_on_left_side
     self.fall_off_position = fall_off_position
 
 func _calculate_distance( \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     return trajectory.distance_from_continuous_frames
 
 func _calculate_duration( \
-        start: PositionAlongSurface, \
-        end: PositionAlongSurface, \
-        instructions: EdgeInstructions, \
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
+        instructions: EdgeInstructions,
         distance: float) -> float:
     return instructions.duration
 
 func _check_did_just_reach_destination( \
-        navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, \
+        navigation_state: PlayerNavigationState,
+        surface_state: PlayerSurfaceState,
         playback) -> bool:
     return Edge.check_just_landed_on_expected_surface( \
-            surface_state, \
+            surface_state,
             self.get_end_surface())
 
 # When walking off the end of a surface, Godot's underlying collision engine
@@ -76,16 +76,16 @@ func _check_did_just_reach_destination( \
 # boundary is not square. So this function override adds logic to ignore any of
 # these extra collisions with the starting surface.
 func update_navigation_state( \
-        navigation_state: PlayerNavigationState, \
-        surface_state: PlayerSurfaceState, \
-        playback, \
-        just_started_new_edge: bool, \
+        navigation_state: PlayerNavigationState,
+        surface_state: PlayerSurfaceState,
+        playback,
+        just_started_new_edge: bool,
         is_starting_navigation_retry: bool) -> void:
     .update_navigation_state( \
-            navigation_state, \
-            surface_state, \
-            playback, \
-            just_started_new_edge, \
+            navigation_state,
+            surface_state,
+            playback,
+            just_started_new_edge,
             is_starting_navigation_retry)
     if is_starting_navigation_retry:
         # This should never happen.
@@ -112,12 +112,12 @@ func update_navigation_state( \
     
     navigation_state.just_reached_end_of_edge = \
             _check_did_just_reach_destination( \
-                    navigation_state, \
-                    surface_state, \
+                    navigation_state,
+                    surface_state,
                     playback)
 
 func load_from_json_object( \
-        json_object: Dictionary, \
+        json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_state_from_json_object(json_object, context)
     falls_on_left_side = json_object.fl

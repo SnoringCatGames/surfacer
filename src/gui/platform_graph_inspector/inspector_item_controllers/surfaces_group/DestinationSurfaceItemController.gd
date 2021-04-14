@@ -13,18 +13,18 @@ var valid_edge_count: int
 var failed_edge_count: int
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
-        origin_surface: Surface, \
-        destination_surface: Surface, \
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
+        origin_surface: Surface,
+        destination_surface: Surface,
         edge_types_to_edges_results: Dictionary) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     self.origin_surface = origin_surface
     self.destination_surface = destination_surface
@@ -33,28 +33,28 @@ func _init( \
     _post_init()
 
 func to_string() -> String:
-    return "%s{ [%s, %s] }" % [ \
-        InspectorItemType.get_string(TYPE), \
-        str(destination_surface.first_point), \
-        str(destination_surface.last_point), \
+    return "%s{ [%s, %s] }" % [
+        InspectorItemType.get_string(TYPE),
+        str(destination_surface.first_point),
+        str(destination_surface.last_point),
     ]
 
 func get_text() -> String:
-    return "%s [%s, %s]" % [ \
-        SurfaceSide.get_string(destination_surface.side), \
-        str(destination_surface.first_point), \
-        str(destination_surface.last_point), \
+    return "%s [%s, %s]" % [
+        SurfaceSide.get_string(destination_surface.side),
+        str(destination_surface.first_point),
+        str(destination_surface.last_point),
     ]
 
 func get_description() -> String:
-    return ("There are %s valid edges from this %s to this %s.") % [ \
-        valid_edge_count, \
-        SurfaceSide.get_string(origin_surface.side), \
-        SurfaceSide.get_string(destination_surface.side), \
+    return ("There are %s valid edges from this %s to this %s.") % [
+        valid_edge_count,
+        SurfaceSide.get_string(origin_surface.side),
+        SurfaceSide.get_string(destination_surface.side),
     ]
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     match search_type:
         InspectorSearchType.DESTINATION_SURFACE:
@@ -68,7 +68,7 @@ func find_and_expand_controller( \
             if metadata.destination_surface == destination_surface:
                 expand()
                 _trigger_find_and_expand_controller_recursive( \
-                        search_type, \
+                        search_type,
                         metadata)
                 return true
             else:
@@ -78,14 +78,14 @@ func find_and_expand_controller( \
             return false
 
 func _find_and_expand_controller_recursive( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> void:
     assert(search_type == InspectorSearchType.EDGE)
     var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
         is_subtree_found = child.get_metadata(0).find_and_expand_controller( \
-                search_type, \
+                search_type,
                 metadata)
         if is_subtree_found:
             return
@@ -103,12 +103,12 @@ func _create_children_inner() -> void:
             for edges_result in edge_types_to_edges_results[edge_type]:
                 calculator = graph.player_params.get_edge_calculator(edge_type)
                 EdgeTypeInSurfacesGroupItemController.new( \
-                        tree_item, \
-                        tree, \
-                        graph, \
-                        origin_surface, \
-                        destination_surface, \
-                        edge_type, \
+                        tree_item,
+                        tree,
+                        graph,
+                        origin_surface,
+                        destination_surface,
+                        edge_type,
                         edges_result)
 
 func _destroy_children_inner() -> void:
@@ -129,10 +129,10 @@ func get_annotation_elements() -> Array:
         for edges_result in edge_types_to_edges_results[edge_type]:
             for valid_edge in edges_result.valid_edges:
                 edge_element = EdgeAnnotationElement.new( \
-                        valid_edge, \
-                        true, \
-                        false, \
-                        true, \
+                        valid_edge,
+                        true,
+                        false,
+                        true,
                         false)
                 elements.push_back(edge_element)
     

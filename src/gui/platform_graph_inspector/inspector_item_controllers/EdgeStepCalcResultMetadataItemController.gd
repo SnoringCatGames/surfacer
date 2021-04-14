@@ -11,18 +11,18 @@ var step_item_factory
 var background_color: Color
 
 func _init( \
-        parent_item: TreeItem, \
-        tree: Tree, \
-        graph: PlatformGraph, \
-        edge_attempt: EdgeAttempt, \
-        step_result_metadata: EdgeStepCalcResultMetadata, \
+        parent_item: TreeItem,
+        tree: Tree,
+        graph: PlatformGraph,
+        edge_attempt: EdgeAttempt,
+        step_result_metadata: EdgeStepCalcResultMetadata,
         step_item_factory) \
         .( \
-        TYPE, \
-        IS_LEAF, \
-        STARTS_COLLAPSED, \
-        parent_item, \
-        tree, \
+        TYPE,
+        IS_LEAF,
+        STARTS_COLLAPSED,
+        parent_item,
+        tree,
         graph) -> void:
     assert(step_result_metadata != null)
     self.edge_attempt = edge_attempt
@@ -30,15 +30,15 @@ func _init( \
     self.step_item_factory = step_item_factory
     self.background_color = _calculate_background_color(step_result_metadata)
     self.tree_item.set_custom_bg_color( \
-            0, \
+            0,
             background_color)
     _post_init()
 
 func to_string() -> String:
-    return "%s { edge_step_calc_result_type=%s }" % [ \
-        InspectorItemType.get_string(type), \
+    return "%s { edge_step_calc_result_type=%s }" % [
+        InspectorItemType.get_string(type),
         EdgeStepCalcResultType.get_string( \
-                step_result_metadata.edge_step_calc_result_type), \
+                step_result_metadata.edge_step_calc_result_type),
     ]
 
 func get_text() -> String:
@@ -70,29 +70,29 @@ func get_description() -> String:
 func _get_text_for_description_index(description_index: int) -> String:
     match description_index:
         0:
-            return "%s: %s%s%s" % [ \
-                    step_result_metadata.index + 1, \
+            return "%s: %s%s%s" % [
+                    step_result_metadata.index + 1,
                     "[BT] " if \
                             step_result_metadata.get_is_backtracking() else \
-                            "", \
+                            "",
                     "[RF] " if \
                             step_result_metadata.get_replaced_a_fake() else \
-                            "", \
+                            "",
                     step_result_metadata.get_description_list()[0] \
-                            .replace("\n                ", " "), \
+                            .replace("\n                ", " "),
                 ]
         1:
-            return "(%s: %s)" % [ \
-                    step_result_metadata.index + 1, \
+            return "(%s: %s)" % [
+                    step_result_metadata.index + 1,
                     step_result_metadata.get_description_list()[1] \
-                            .replace("\n                ", " "), \
+                            .replace("\n                ", " "),
                 ]
         _:
             Gs.logger.error()
             return ""
 
 func find_and_expand_controller( \
-        search_type: int, \
+        search_type: int,
         metadata: Dictionary) -> bool:
     Gs.logger.error( \
             "find_and_expand_controller should not be called for " + \
@@ -106,22 +106,22 @@ func _create_children_inner() -> void:
     for child_step_result_metadata in \
             step_result_metadata.children_step_attempts:
         step_item_factory.create( \
-                tree_item, \
-                tree, \
-                graph, \
-                edge_attempt, \
-                child_step_result_metadata, \
+                tree_item,
+                tree,
+                graph,
+                edge_attempt,
+                child_step_result_metadata,
                 step_item_factory)
     
     if step_result_metadata.get_description_list().size() > 1:
         DescriptionItemController.new( \
-                tree_item, \
-                tree, \
-                graph, \
-                _get_text_for_description_index(1), \
-                get_description(), \
-                funcref(self, "get_annotation_elements"), \
-                null, \
+                tree_item,
+                tree,
+                graph,
+                _get_text_for_description_index(1),
+                get_description(),
+                funcref(self, "get_annotation_elements"),
+                null,
                 background_color)
 
 func _destroy_children_inner() -> void:
@@ -130,7 +130,7 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     var element := EdgeStepAnnotationElement.new( \
-            step_result_metadata, \
+            step_result_metadata,
             false)
     return [element]
 
@@ -149,9 +149,9 @@ static func _calculate_background_color( \
                     AnnotationElementDefaults.STEP_HUE_START) * \
             step_ratio
     return Color.from_hsv( \
-            step_hue, \
+            step_hue,
             Surfacer.ann_defaults \
-                    .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.s, \
+                    .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.s,
             Surfacer.ann_defaults \
-                    .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.v, \
+                    .INSPECTOR_STEP_CALC_ITEM_BACKGROUND_COLOR.v,
             1.0)

@@ -5,20 +5,20 @@ extends PlayerActionSource
 var _all_playback := []
 
 func _init( \
-        player, \
+        player,
         is_additive: bool) \
         .( \
-        "CP", \
-        player, \
+        "CP",
+        player,
         is_additive) -> void:
     pass
 
 # Calculates actions for the current frame.
 func update( \
-        actions: PlayerActionState, \
-        previous_actions: PlayerActionState, \
-        time_sec: float, \
-        delta_sec: float, \
+        actions: PlayerActionState,
+        previous_actions: PlayerActionState,
+        time_sec: float,
+        delta_sec: float,
         navigation_state: PlayerNavigationState) -> void:
     var is_pressed: bool
     var non_pressed_keys := []
@@ -26,7 +26,7 @@ func update( \
     for playback in _all_playback:
         # Handle any new key presses up till the current time.
         var new_instructions: Array = playback.update( \
-                time_sec, \
+                time_sec,
                 navigation_state)
         
         non_pressed_keys.clear()
@@ -35,11 +35,11 @@ func update( \
         for input_key in playback.active_key_presses:
             is_pressed = playback.active_key_presses[input_key]
             PlayerActionSource.update_for_key_press( \
-                    actions, \
-                    previous_actions, \
-                    input_key, \
-                    is_pressed, \
-                    time_sec, \
+                    actions,
+                    previous_actions,
+                    input_key,
+                    is_pressed,
+                    time_sec,
                     is_additive)
             if !is_pressed:
                 non_pressed_keys.push_back(input_key)
@@ -57,17 +57,17 @@ func update( \
         i += 1
 
 func start_instructions( \
-        edge: Edge, \
+        edge: Edge,
         time_sec: float) -> InstructionsPlayback:
     var playback := InstructionsPlayback.new( \
-            edge, \
+            edge,
             is_additive)
     playback.start(time_sec)
     _all_playback.push_back(playback)
     return playback
 
 func cancel_playback( \
-        playback: InstructionsPlayback, \
+        playback: InstructionsPlayback,
         time_sec: float) -> bool:
     # Remove the playback.
     var index := _all_playback.find(playback)

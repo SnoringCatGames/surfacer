@@ -26,7 +26,7 @@ var current_navigation_attempt_count := 0
 var navigation_state := PlayerNavigationState.new()
 
 func _init( \
-        player, \
+        player,
         graph: PlatformGraph) -> void:
     self.player = player
     self.graph = graph
@@ -38,7 +38,7 @@ func _init( \
 
 # Starts a new navigation to the given destination.
 func navigate_to_position( \
-        destination: PositionAlongSurface, \
+        destination: PositionAlongSurface,
         is_retry := false) -> bool:
     Gs.profiler.start("navigator_navigate_to_position")
     
@@ -47,7 +47,7 @@ func navigate_to_position( \
     destination = PositionAlongSurface.new(destination)
     JumpLandPositionsUtils \
             .ensure_position_is_not_too_close_to_concave_neighbor( \
-                    player.movement_params, \
+                    player.movement_params,
                     destination)
     
     Gs.profiler.start("navigator_find_path")
@@ -70,13 +70,13 @@ func navigate_to_position( \
         # Destination can be reached from origin.
         
         _interleave_intra_surface_edges( \
-                graph.collision_params, \
+                graph.collision_params,
                 path)
         
         Gs.profiler.start("navigator_optimize_edges_for_approach")
         _optimize_edges_for_approach( \
-                graph.collision_params, \
-                path, \
+                graph.collision_params,
+                path,
                 player.velocity)
         var duration_optimize_edges_for_approach: float = Gs.profiler.stop( \
                 "navigator_optimize_edges_for_approach")
@@ -100,18 +100,18 @@ func navigate_to_position( \
             "\n\t\tduration_optimize_edges_for_approach: %sms" + \
             "\n\t}" + \
             "\n}"
-        var format_string_arguments := [ \
-            Gs.time.elapsed_play_time_actual_sec, \
-            destination.to_string(), \
-            path.to_string_with_newlines(1), \
-            duration_navigate_to_position, \
-            duration_find_path, \
-            duration_optimize_edges_for_approach, \
+        var format_string_arguments := [
+            Gs.time.elapsed_play_time_actual_sec,
+            destination.to_string(),
+            path.to_string_with_newlines(1),
+            duration_navigate_to_position,
+            duration_find_path,
+            duration_optimize_edges_for_approach,
         ]
         print_msg(format_string_template, format_string_arguments)
         
         _start_edge( \
-                0, \
+                0,
                 is_retry)
         
         return true
@@ -125,7 +125,7 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
         var origin := PositionAlongSurface.new( \
                 surface_state.center_position_along_surface)
         path = graph.find_path( \
-                origin, \
+                origin,
                 destination)
         
     else:
@@ -137,12 +137,12 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
                 surface_state.center_position)
         var air_to_surface_edge := \
                 air_to_surface_calculator.find_a_landing_trajectory( \
-                        null, \
-                        graph.collision_params, \
-                        graph.surfaces_set, \
-                        origin, \
-                        player.velocity, \
-                        destination, \
+                        null,
+                        graph.collision_params,
+                        graph.surfaces_set,
+                        origin,
+                        player.velocity,
+                        destination,
                         null)
         
         if air_to_surface_edge == null and \
@@ -161,14 +161,14 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
                     current_playback.start_time
             air_to_surface_edge = air_to_surface_calculator \
                     .create_edge_from_part_of_other_edge( \
-                            current_edge, \
-                            elapsed_playback_time, \
+                            current_edge,
+                            elapsed_playback_time,
                             player)
         
         if air_to_surface_edge != null:
             # We were able to calculate a valid air-to-surface edge.
             path = graph.find_path( \
-                    air_to_surface_edge.end_position_along_surface, \
+                    air_to_surface_edge.end_position_along_surface,
                     destination)
             if path != null:
                 path.push_front(air_to_surface_edge)
@@ -212,7 +212,7 @@ func reset() -> void:
     navigation_state.reset()
 
 func _start_edge( \
-        index: int, \
+        index: int,
         is_starting_navigation_retry := false) -> void:
     Gs.profiler.start("navigator_start_edge")
     
@@ -226,12 +226,12 @@ func _start_edge( \
         surface_state.horizontal_acceleration_sign = 0
     
     current_edge.update_for_surface_state( \
-            surface_state, \
+            surface_state,
             current_edge == current_path.edges.back())
     navigation_state.is_expecting_to_enter_air = current_edge.enters_air
     
     current_playback = instructions_action_source.start_instructions( \
-            current_edge, \
+            current_edge,
             Gs.time.elapsed_play_time_actual_sec)
     
     var duration_start_edge: float = \
@@ -239,21 +239,21 @@ func _start_edge( \
     
     var format_string_template := \
             "STARTING EDGE NAV:   %8.3fs; %s; calc duration=%sms"
-    var format_string_arguments := [ \
-            Gs.time.elapsed_play_time_actual_sec, \
-            current_edge.to_string_with_newlines(0), \
-            str(duration_start_edge), \
+    var format_string_arguments := [
+            Gs.time.elapsed_play_time_actual_sec,
+            current_edge.to_string_with_newlines(0),
+            str(duration_start_edge),
         ]
     print_msg(format_string_template, format_string_arguments)
     
     # Some instructions could be immediately skipped, depending on runtime
     # state, so this gives us a change to move straight to the next edge.
     update( \
-            true, \
+            true,
             is_starting_navigation_retry)
 
 func update( \
-        just_started_new_edge := false, \
+        just_started_new_edge := false,
         is_starting_navigation_retry := false) -> void:
     just_reached_destination = false
     
@@ -265,10 +265,10 @@ func update( \
         return
     
     current_edge.update_navigation_state( \
-            navigation_state, \
-            surface_state, \
-            current_playback, \
-            just_started_new_edge, \
+            navigation_state,
+            surface_state,
+            current_playback,
+            just_started_new_edge,
             is_starting_navigation_retry)
     
     if navigation_state.just_interrupted_navigation:
@@ -282,21 +282,21 @@ func update( \
         else: # navigation_state.just_interrupted_by_user_action
             interruption_type_label = \
                     "navigation_state.just_interrupted_by_user_action"
-        print_msg("EDGE MVT INTERRUPTED:%8.3fs; %s", \
+        print_msg("EDGE MVT INTERRUPTED:%8.3fs; %s",
                 [Gs.time.elapsed_play_time_actual_sec, interruption_type_label])
         
         if player.movement_params.retries_navigation_when_interrupted:
             navigate_to_position( \
-                    current_destination, \
+                    current_destination,
                     true)
         else:
             reset()
         return
         
     elif navigation_state.just_reached_end_of_edge:
-        print_msg("REACHED END OF EDGE: %8.3fs; %s", [ \
-            Gs.time.elapsed_play_time_actual_sec, \
-            current_edge.get_name(), \
+        print_msg("REACHED END OF EDGE: %8.3fs; %s", [
+            Gs.time.elapsed_play_time_actual_sec,
+            current_edge.get_name(),
         ])
     else:
         # Continuing along an edge.
@@ -311,7 +311,7 @@ func update( \
         # Cancel the current intra-surface instructions (in case it didn't
         # clear itself).
         instructions_action_source.cancel_playback( \
-                current_playback, \
+                current_playback,
                 Gs.time.elapsed_play_time_actual_sec)
         
         # Check for the next edge to navigate.
@@ -320,17 +320,17 @@ func update( \
         if was_last_edge:
             var backtracking_edge := \
                     _possibly_backtrack_to_not_protrude_past_surface_end( \
-                            player.movement_params, \
-                            current_edge, \
-                            player.position, \
+                            player.movement_params,
+                            current_edge,
+                            player.position,
                             player.velocity)
             if backtracking_edge == null:
                 _set_reached_destination()
             else:
                 var format_string_template := "INSRT CTR-PROTR EDGE:%8.3fs; %s"
-                var format_string_arguments := [ \
-                        Gs.time.elapsed_play_time_actual_sec, \
-                        backtracking_edge.to_string_with_newlines(0), \
+                var format_string_arguments := [
+                        Gs.time.elapsed_play_time_actual_sec,
+                        backtracking_edge.to_string_with_newlines(0),
                     ]
                 print_msg(format_string_template, format_string_arguments)
                 
@@ -343,7 +343,7 @@ func update( \
 # Conditionally prints the given message, depending on the Player's
 # configuration.
 func print_msg( \
-        message_template: String, \
+        message_template: String,
         message_args = null) -> void:
     if Surfacer.is_surfacer_logging and \
             player.movement_params.logs_navigator_events and \
@@ -355,9 +355,9 @@ func print_msg( \
             Gs.logger.print(message_template)
 
 static func _possibly_backtrack_to_not_protrude_past_surface_end(
-        movement_params: MovementParams, \
-        current_edge: Edge, \
-        current_position: Vector2, \
+        movement_params: MovementParams,
+        current_edge: Edge,
+        current_position: Vector2,
         current_velocity: Vector2) -> IntraSurfaceEdge:
     if movement_params \
             .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets and \
@@ -368,16 +368,16 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
         if surface.side == SurfaceSide.FLOOR:
             var stopping_distance := \
                     MovementUtils.calculate_distance_to_stop_from_friction( \
-                            movement_params, \
-                            abs(current_velocity.x), \
-                            movement_params.gravity_fast_fall, \
+                            movement_params,
+                            abs(current_velocity.x),
+                            movement_params.gravity_fast_fall,
                             movement_params.friction_coefficient)
             var stopping_displacement := \
                     stopping_distance if \
                     current_velocity.x > 0.0 else \
                     -stopping_distance
             position_after_coming_to_a_stop = Vector2( \
-                    current_position.x + stopping_displacement, \
+                    current_position.x + stopping_displacement,
                     current_position.y)
         else:
             # TODO: Add support for acceleration and friction along wall and
@@ -396,7 +396,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                             true
                     end_target_point = \
                             Vector2(surface.first_point.x + \
-                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
+                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                     surface.first_point.y)
                 elif position_after_coming_to_a_stop.x > \
                         surface.last_point.x - \
@@ -405,7 +405,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                             true
                     end_target_point = \
                             Vector2(surface.last_point.x - \
-                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
+                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                     surface.last_point.y)
             SurfaceSide.LEFT_WALL:
                 if position_after_coming_to_a_stop.y < \
@@ -414,7 +414,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                     would_protrude_past_surface_end_after_coming_to_a_stop = \
                             true
                     end_target_point = \
-                            Vector2(surface.first_point.x, \
+                            Vector2(surface.first_point.x,
                                     surface.first_point.y + \
                                     PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
                 elif position_after_coming_to_a_stop.y > \
@@ -423,7 +423,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                     would_protrude_past_surface_end_after_coming_to_a_stop = \
                             true
                     end_target_point = \
-                            Vector2(surface.last_point.x, \
+                            Vector2(surface.last_point.x,
                                     surface.last_point.y - \
                                     PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
             SurfaceSide.RIGHT_WALL:
@@ -433,7 +433,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                     would_protrude_past_surface_end_after_coming_to_a_stop = \
                             true
                     end_target_point = \
-                            Vector2(surface.first_point.x, \
+                            Vector2(surface.first_point.x,
                                     surface.first_point.y - \
                                     PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
                 elif position_after_coming_to_a_stop.y < \
@@ -442,7 +442,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                     would_protrude_past_surface_end_after_coming_to_a_stop = \
                             true
                     end_target_point = \
-                            Vector2(surface.last_point.x, \
+                            Vector2(surface.last_point.x,
                                     surface.last_point.y + \
                                     PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
             SurfaceSide.CEILING:
@@ -453,7 +453,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                             true
                     end_target_point = \
                             Vector2(surface.first_point.x - \
-                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
+                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                     surface.first_point.y)
                 elif position_after_coming_to_a_stop.x < \
                         surface.last_point.x + \
@@ -462,7 +462,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                             true
                     end_target_point = \
                             Vector2(surface.last_point.x + \
-                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
+                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                     surface.last_point.y)
             _:
                 Gs.logger.error("Invalid SurfaceSide")
@@ -470,20 +470,20 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
         if would_protrude_past_surface_end_after_coming_to_a_stop:
             var start_position := \
                     MovementUtils.create_position_offset_from_target_point( \
-                            current_position, \
-                            surface, \
-                            movement_params.collider_half_width_height, \
+                            current_position,
+                            surface,
+                            movement_params.collider_half_width_height,
                             true)
             var end_position := \
                     MovementUtils.create_position_offset_from_target_point( \
-                            end_target_point, \
-                            surface, \
-                            movement_params.collider_half_width_height, \
+                            end_target_point,
+                            surface,
+                            movement_params.collider_half_width_height,
                             true)
             var backtracking_edge := IntraSurfaceEdge.new( \
-                    start_position, \
-                    end_position, \
-                    current_velocity, \
+                    start_position,
+                    end_position,
+                    current_velocity,
                     movement_params)
             backtracking_edge \
                     .is_backtracking_to_not_protrude_past_surface_end = true
@@ -496,8 +496,8 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
 # build-time when calculating possible edges.
 # - This also updates start velocity when updating start position.
 static func _optimize_edges_for_approach( \
-        collision_params: CollisionCalcParams, \
-        path: PlatformGraphPath, \
+        collision_params: CollisionCalcParams,
+        path: PlatformGraphPath,
         velocity_start: Vector2) -> void:
     var movement_params := collision_params.movement_params
     
@@ -535,11 +535,11 @@ static func _optimize_edges_for_approach( \
             if is_previous_edge_long_enough_to_be_worth_optimizing_jump_position and \
                     previous_edge is IntraSurfaceEdge:
                 current_edge.calculator.optimize_edge_jump_position_for_path( \
-                        collision_params, \
-                        path, \
-                        i, \
-                        previous_velocity_end_x, \
-                        previous_edge, \
+                        collision_params,
+                        path,
+                        i,
+                        previous_velocity_end_x,
+                        previous_edge,
                         current_edge)
             
             previous_velocity_end_x = previous_edge.velocity_end.x
@@ -550,8 +550,8 @@ static func _optimize_edges_for_approach( \
         if path.edges.size() > 1 and \
                 path.edges[0] is IntraSurfaceEdge and \
                 Gs.geometry.are_points_equal_with_epsilon( \
-                        path.edges[0].get_start(), \
-                        path.edges[1].get_start(), \
+                        path.edges[0].get_start(),
+                        path.edges[1].get_start(),
                         1.0):
             path.edges.remove(0)
     
@@ -579,10 +579,10 @@ static func _optimize_edges_for_approach( \
                     current_edge is IntraSurfaceEdge:
                 previous_edge.calculator \
                         .optimize_edge_land_position_for_path( \
-                                collision_params, \
-                                path, \
-                                i - 1, \
-                                previous_edge, \
+                                collision_params,
+                                path,
+                                i - 1,
+                                previous_edge,
                                 current_edge)
     
     if movement_params \
@@ -598,38 +598,38 @@ static func _optimize_edges_for_approach( \
                             PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
                         target_point = Vector2( \
                                 surface.first_point.x + \
-                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
+                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                 surface.first_point.y)
                     elif end_position.target_point.x > surface.last_point.x - \
                             PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
                         target_point = Vector2( \
                                 surface.last_point.x - \
-                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
+                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                 surface.last_point.y)
                 SurfaceSide.LEFT_WALL:
                     if end_position.target_point.y < surface.first_point.y + \
                             PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
                         target_point = Vector2( \
-                                surface.first_point.x, \
+                                surface.first_point.x,
                                 surface.first_point.y + \
                                 PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
                     elif end_position.target_point.y > surface.last_point.y - \
                             PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
                         target_point = Vector2( \
-                                surface.last_point.x, \
+                                surface.last_point.x,
                                 surface.last_point.y - \
                                 PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
                 SurfaceSide.RIGHT_WALL:
                     if end_position.target_point.y > surface.first_point.y - \
                             PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
                         target_point = Vector2( \
-                                surface.first_point.x, \
+                                surface.first_point.x,
                                 surface.first_point.y - \
                                 PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
                     elif end_position.target_point.y < surface.last_point.y + \
                             PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
                         target_point = Vector2( \
-                                surface.last_point.x, \
+                                surface.last_point.x,
                                 surface.last_point.y + \
                                 PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
                 SurfaceSide.CEILING:
@@ -637,27 +637,27 @@ static func _optimize_edges_for_approach( \
                             PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
                         target_point = Vector2( \
                                 surface.first_point.x - \
-                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
+                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                 surface.first_point.y)
                     elif end_position.target_point.x < surface.last_point.x + \
                             PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
                         target_point = Vector2( \
                                 surface.last_point.x + \
-                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET, \
+                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
                                 surface.last_point.y)
                 _:
                     Gs.logger.error("Invalid SurfaceSide")
             
             if target_point != Vector2.INF:
                 last_edge.update_terminal( \
-                        false, \
+                        false,
                         target_point)
 
 # Inserts extra intra-surface between any edges that land and then immediately
 # jump from the same position, since the land position could be off due to
 # movement error at runtime.
 static func _interleave_intra_surface_edges( \
-        collision_params: CollisionCalcParams, \
+        collision_params: CollisionCalcParams,
         path: PlatformGraphPath) -> void:
     # Insert extra intra-surface between any edges that land and then
     # immediately jump from the same position, since the land position could be
@@ -677,13 +677,13 @@ static func _interleave_intra_surface_edges( \
             # they'll end up moving to the correct spot anyway).
             if i + 1 < count and \
                     !(path.edges[i + 1] is IntraSurfaceEdge):
-                path.edges.insert(i + 1, \
+                path.edges.insert(i + 1,
                         IntraSurfaceEdge.new( \
-                                edge.end_position_along_surface, \
-                                edge.end_position_along_surface, \
+                                edge.end_position_along_surface,
+                                edge.end_position_along_surface,
                                 # TODO: Calculate a more accurate
                                 #       surface-aligned value.
-                                edge.velocity_end, \
+                                edge.velocity_end,
                                 collision_params.movement_params))
                 i += 1
                 count += 1

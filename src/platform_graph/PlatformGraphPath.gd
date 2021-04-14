@@ -30,9 +30,9 @@ func to_string_with_newlines(indent_level := 0) -> String:
         indent_level_str += "\t"
     var edges_str := ""
     for edge in edges:
-        edges_str += "\n\t\t%s%s, " % [ \
-                indent_level_str, \
-                edge.to_string_with_newlines(indent_level + 2), \
+        edges_str += "\n\t\t%s%s, " % [
+                indent_level_str,
+                edge.to_string_with_newlines(indent_level + 2),
             ]
     var format_string_template := "PlatformGraphPath{ " + \
             "\n\t%sorigin: %s," + \
@@ -41,14 +41,14 @@ func to_string_with_newlines(indent_level := 0) -> String:
             "%s" + \
             "\n\t%s]," + \
             "\n%s}"
-    var format_string_arguments := [ \
-            indent_level_str, \
-            String(origin), \
-            indent_level_str, \
-            String(destination), \
-            indent_level_str, \
-            edges_str, \
-            indent_level_str, \
-            indent_level_str, \
+    var format_string_arguments := [
+            indent_level_str,
+            String(origin),
+            indent_level_str,
+            String(destination),
+            indent_level_str,
+            edges_str,
+            indent_level_str,
+            indent_level_str,
         ]
     return format_string_template % format_string_arguments

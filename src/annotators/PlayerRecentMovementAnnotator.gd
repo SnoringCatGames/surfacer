@@ -37,8 +37,8 @@ func _init(player: Player) -> void:
 func check_for_update() -> void:
     var most_recent_position := recent_positions[current_position_index]
     if !Gs.geometry.are_points_equal_with_epsilon( \
-            player.position, \
-            most_recent_position, \
+            player.position,
+            most_recent_position,
             0.01):
         # Record the action as belonging to the previous frame.
         if player.actions.just_pressed_jump:
@@ -120,9 +120,9 @@ func _draw() -> void:
                 (MOVEMENT_OPACITY_NEWEST - MOVEMENT_OPACITY_OLDEST) + \
                 MOVEMENT_OPACITY_OLDEST
         color = Color.from_hsv( \
-                MOVEMENT_HUE, \
-                0.7, \
-                0.7, \
+                MOVEMENT_HUE,
+                0.7,
+                0.7,
                 opacity)
         
         # Calculate our current index in the circular buffer.
@@ -130,29 +130,29 @@ func _draw() -> void:
         next_position = recent_positions[i]
         
         draw_line( \
-                previous_position, \
-                next_position, \
-                color, \
+                previous_position,
+                next_position,
+                color,
                 MOVEMENT_STROKE_WIDTH)
         
         action = recent_actions[i]
         if action != PlayerActionType.NONE:
             _draw_action_indicator( \
-                    action, \
-                    next_position, \
+                    action,
+                    next_position,
                     opacity)
         
         previous_position = next_position
 
 # Draw an indicator for the action that happened at this point.
 func _draw_action_indicator( \
-        action: int, \
-        position: Vector2, \
+        action: int,
+        position: Vector2,
         opacity: float) -> void:
     var color := Color.from_hsv( \
-            MOVEMENT_HUE, \
-            0.3, \
-            0.9, \
+            MOVEMENT_HUE,
+            0.3,
+            0.9,
             opacity)
     
     var input_key := ""
@@ -191,9 +191,9 @@ func _draw_action_indicator( \
     
     if input_key != "":
         Gs.draw_utils.draw_instruction_indicator( \
-                self, \
-                input_key, \
-                is_pressed, \
-                position, \
-                SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH, \
+                self,
+                input_key,
+                is_pressed,
+                position,
+                SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH,
                 color)
