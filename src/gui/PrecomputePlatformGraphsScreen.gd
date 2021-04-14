@@ -8,19 +8,24 @@ const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
 const INCLUDES_CENTER_CONTAINER := true
 
-const INITIALIZE_SUB_STEP_PROGRESS_RATIO := 0.05
-const PARSE_SUB_STEP_PROGRESS_RATIO := 0.75
-const SAVE_SUB_STEP_PROGRESS_RATIO := 0.15
-const CLEAN_UP_SUB_STEP_PROGRESS_RATIO := 0.05
+const INITIALIZE_SUB_STEP_PROGRESS_RATIO := 0.04
+const PARSE_SUB_STEP_PROGRESS_RATIO := 0.85
+const SAVE_SUB_STEP_PROGRESS_RATIO := 0.1
+const CLEAN_UP_SUB_STEP_PROGRESS_RATIO := 0.01
 const PROGRESS_RATIO_TOTAL := \
         INITIALIZE_SUB_STEP_PROGRESS_RATIO + \
         PARSE_SUB_STEP_PROGRESS_RATIO + \
         SAVE_SUB_STEP_PROGRESS_RATIO + \
         CLEAN_UP_SUB_STEP_PROGRESS_RATIO
 
-var go_icon_scale_multiplier := 1.0
+var STAGES_TO_DISPLAY_METRICS_FOR := ["parse", "save"]
+var stage_to_metric_items := {}
 
-var projected_image: Control
+var start_time := -INF
+var precompute_level_index := -1
+var level_id: String
+var platform_graph_parser: PlatformGraphParser
+var level: SurfacerLevel
 
 func _init().(
         NAME,
@@ -44,26 +49,34 @@ func _compute() -> void:
     
     Surfacer.is_inspector_enabled = false
     
-    # FIXME: ------------------------------------------------------------
-    # 
-    # - Add this progress bar to both the precompute screen and the game screen.
-    # - Add calls to Profiler, and print results within screen (and console).
-    #   - Use these results to give some ballpark sub-step ratios for updating
-    #     the progress bar.
-    # - Also print number of used cells in combined tile maps for the current
-    #   level (during computation).
-    #   - This should help give some indication that the current level parsing
-    #     might take longer.
+    _initialize_metrics()
     
     precompute_level_index = 0
     defer("_initialize_next")
 
-var precompute_level_index := -1
-var level_id: String
-var platform_graph_parser: PlatformGraphParser
-var level: SurfacerLevel
+func _initialize_metrics() -> void:
+    start_time = Gs.time.elapsed_app_time_actual_sec
+    
+    for stage in STAGES_TO_DISPLAY_METRICS_FOR:
+        stage_to_metric_items[stage] = [
+            HeaderLabeledControlItem.new(stage),
+            StaticTextLabeledControlItem.new("Sum", "-"),
+            StaticTextLabeledControlItem.new("Mean", "-"),
+            StaticTextLabeledControlItem.new("Min", "-"),
+            StaticTextLabeledControlItem.new("Max", "-"),
+        ]
+    
+    var metrics_items := []
+    for stage in STAGES_TO_DISPLAY_METRICS_FOR:
+        for item in stage_to_metric_items[stage]:
+            metrics_items.push_back(item)
+    
+    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
+            CenterContainer/VBoxContainer/Metrics/MetricsList.items = \
+            metrics_items
 
 func _initialize_next() -> void:
+    Gs.profiler.start("initialize")
     level_id = Surfacer.precompute_platform_graph_for_levels[ \
             precompute_level_index]
     level = Gs.utils.add_scene(
@@ -77,10 +90,12 @@ func _initialize_next() -> void:
             .add_child(level)
     platform_graph_parser = PlatformGraphParser.new()
     level.add_child(platform_graph_parser)
+    Gs.profiler.stop("initialize")
     _on_stage_progress("initialize")
     defer("_parse_next")
 
 func _parse_next() -> void:
+    Gs.profiler.start("parse")
     platform_graph_parser.connect(
             "calculation_progress",
             self,
@@ -92,17 +107,22 @@ func _parse_next() -> void:
     platform_graph_parser.parse(level_id, true)
 
 func _on_calculation_finished() -> void:
+    Gs.profiler.stop("parse")
     _on_stage_progress("parse")
     defer("_save_next")
 
 func _save_next() -> void:
+    Gs.profiler.start("save")
     platform_graph_parser.save_platform_graphs()
+    Gs.profiler.stop("save")
     _on_stage_progress("save")
     defer("_clean_up_next")
 
 func _clean_up_next() -> void:
+    Gs.profiler.start("clean_up")
     platform_graph_parser.queue_free()
     level.queue_free()
+    Gs.profiler.stop("clean_up")
     
     var finished := precompute_level_index == \
             Surfacer.precompute_platform_graph_for_levels.size() - 1
@@ -226,26 +246,67 @@ func _set_progress(
             CenterContainer/VBoxContainer/ProgressBar.value = round(progress)
     
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Label1.text = label_1
+            CenterContainer/VBoxContainer/Labels/Label1.text = label_1
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Label2.text = label_2
+            CenterContainer/VBoxContainer/Labels/Label2.text = label_2
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Label3.text = label_3
+            CenterContainer/VBoxContainer/Labels/Label3.text = label_3
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Label4.text = label_4
+            CenterContainer/VBoxContainer/Labels/Label4.text = label_4
     
     Gs.logger.print("Precompute progress: %s | %s | %s" % \
             [label_1, label_2, label_3])
+    
+    _update_metrics()
+
+func _update_metrics() -> void:
+    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
+            CenterContainer/VBoxContainer/Metrics/DurationLabel.text = \
+            Gs.utils.get_time_string_from_seconds( \
+                    Gs.time.elapsed_app_time_actual_sec - start_time, \
+                    false, \
+                    false, \
+                    true)
+    
+    for stage in STAGES_TO_DISPLAY_METRICS_FOR:
+        stage_to_metric_items[stage][1].text = \
+                Gs.utils.get_time_string_from_seconds( \
+                        Gs.profiler.get_sum(stage) / 1000.0, \
+                        true, \
+                        false, \
+                        false)
+        stage_to_metric_items[stage][1].update_control()
+        stage_to_metric_items[stage][2].text = \
+                Gs.utils.get_time_string_from_seconds( \
+                        Gs.profiler.get_mean(stage) / 1000.0, \
+                        true, \
+                        false, \
+                        false)
+        stage_to_metric_items[stage][2].update_control()
+        stage_to_metric_items[stage][3].text = \
+                Gs.utils.get_time_string_from_seconds( \
+                        Gs.profiler.get_min(stage) / 1000.0, \
+                        true, \
+                        false, \
+                        false)
+        stage_to_metric_items[stage][3].update_control()
+        stage_to_metric_items[stage][4].text = \
+                Gs.utils.get_time_string_from_seconds( \
+                        Gs.profiler.get_max(stage) / 1000.0, \
+                        true, \
+                        false, \
+                        false)
+        stage_to_metric_items[stage][4].update_control()
 
 func _on_finished() -> void:
     Gs.audio.play_sound("achievement")
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/VBoxContainer/OpenFolderButton \
+            CenterContainer/VBoxContainer/Buttons/OpenFolderButton \
             .visible = true
 
 func _get_focused_button() -> ShinyButton:
     return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/VBoxContainer/CloseButton as \
+            CenterContainer/VBoxContainer/Buttons/CloseButton as \
             ShinyButton
 
 func _on_OpenFolderButton_pressed() -> void:
