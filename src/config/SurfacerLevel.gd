@@ -29,7 +29,7 @@ func start() -> void:
                 Gs.canvas_layers.layers.hud, \
                 _PAUSE_BUTTON_RESOURCE_PATH)
     
-    graph_parser.connect("parsed", self, "_on_graphs_parsed")
+    graph_parser.connect("parse_finished", self, "_on_graphs_parsed")
     graph_parser.parse(_id)
 
 func _on_graphs_parsed() -> void:

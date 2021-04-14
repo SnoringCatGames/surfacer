@@ -1,7 +1,12 @@
 class_name PlatformGraphParser
 extends Node
 
-signal parsed
+signal calculation_progress( \
+        player_index, \
+        player_count, \
+        origin_surface_index, \
+        surface_count)
+signal parse_finished
 
 const PLATFORM_GRAPHS_DIRECTORY_NAME := "platform_graphs"
 
@@ -66,32 +71,95 @@ func _instantiate_platform_graphs( \
     if !force_calculation_from_tile_maps and \
             File.new().file_exists(_get_resource_path()):
         _load_platform_graphs()
+        _on_graphs_parsed()
     else:
         # Set up the PlatformGraphs for this level.
         surface_parser = SurfaceParser.new()
         surface_parser.calculate(surface_tile_maps)
-        platform_graphs = _calculate_platform_graphs()
-    
+        platform_graphs = {}
+        assert(!Surfacer.player_params.empty())
+        _calculate_next_platform_graph(0)
+
+func _on_graphs_parsed() -> void:
     if Surfacer.is_inspector_enabled:
         Surfacer.graph_inspector.set_graphs(platform_graphs.values())
     
-    emit_signal("parsed")
+    for platform_graph in platform_graphs.values():
+        if platform_graph.is_connected( \
+                    "calculation_progress", \
+                    self, \
+                    "_on_graph_calculation_progress"):
+            platform_graph.disconnect( \
+                    "calculation_progress", \
+                    self, \
+                    "_on_graph_calculation_progress")
+        if platform_graph.is_connected( \
+                    "calculation_finished", \
+                    self, \
+                    "_on_graph_calculation_finished"):
+            platform_graph.disconnect( \
+                    "calculation_finished", \
+                    self, \
+                    "_on_graph_calculation_finished")
+    
+    emit_signal("parse_finished")
 
-func _calculate_platform_graphs() -> Dictionary:
-    var graphs = {}
-    var graph: PlatformGraph
-    for player_name in Surfacer.player_params:
-        #######################################################################
-        # Allow for debug mode to limit the scope of what's calculated.
-        if Surfacer.debug_params.has("limit_parsing") and \
-                Surfacer.debug_params.limit_parsing.has("player_name") and \
-                player_name != Surfacer.debug_params.limit_parsing.player_name:
-            continue
-        #######################################################################
-        graph = PlatformGraph.new()
+func _calculate_next_platform_graph(player_index: int) -> void:
+    var player_names: Array = Surfacer.player_params.keys()
+    var player_name: String = player_names[player_index]
+    var is_last_player := player_index == player_names.size() - 1
+    
+    #######################################################################
+    # Allow for debug mode to limit the scope of what's calculated.
+    var should_skip_player: bool = \
+            Surfacer.debug_params.has("limit_parsing") and \
+            Surfacer.debug_params.limit_parsing.has("player_name") and \
+            player_name != Surfacer.debug_params.limit_parsing.player_name
+    #######################################################################
+    
+    if !should_skip_player:
+        var graph := PlatformGraph.new()
+        graph.connect( \
+                "calculation_progress", \
+                self, \
+                "_on_graph_calculation_progress", \
+                [graph, player_index, player_name])
+        graph.connect( \
+                "calculation_finished", \
+                self, \
+                "_on_graph_calculation_finished", \
+                [player_index, is_last_player])
         graph.calculate(player_name)
-        graphs[player_name] = graph
-    return graphs
+        platform_graphs[player_name] = graph
+    else:
+        if !is_last_player:
+            _calculate_next_platform_graph(player_index + 1)
+        else:
+            _on_graphs_parsed()
+
+func _on_graph_calculation_progress( \
+        origin_surface_index, \
+        surface_count, \
+        graph: PlatformGraph, \
+        player_index: int, \
+        player_name: String) -> void:
+    emit_signal( \
+            "calculation_progress", \
+            player_index, \
+            Surfacer.player_params.size(), \
+            origin_surface_index, \
+            surface_count)
+
+func _on_graph_calculation_finished( \
+        player_index: int, \
+        was_last_player: bool) -> void:
+    if !was_last_player:
+        Gs.time.set_timeout( \
+                funcref(self, "_calculate_next_platform_graph"), \
+                0.01, \
+                [player_index + 1])
+    else:
+        _on_graphs_parsed()
 
 func _load_platform_graphs() -> void:
     var platform_graphs_path := _get_resource_path()
