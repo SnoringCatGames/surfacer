@@ -12,12 +12,14 @@ var graph_parser: PlatformGraphParser
 var inspector_panel: InspectorPanel
 var pause_button: PauseButton
 
+func _init() -> void:
+    graph_parser = PlatformGraphParser.new()
+    add_child(graph_parser)
+
 func start() -> void:
     .start()
     
-    graph_parser = PlatformGraphParser.new()
     graph_parser.level_id = _id
-    add_child(graph_parser)
     
     if Surfacer.is_inspector_enabled:
         inspector_panel = Gs.utils.add_scene(

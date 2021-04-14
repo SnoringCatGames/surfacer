@@ -21,6 +21,7 @@ var fake_players := {}
 var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
+var is_loaded_from_file := false
 
 func _init() -> void:
     Surfacer.graph_parser = self
@@ -70,13 +71,14 @@ func _create_fake_players_for_collision_calculations() -> void:
 
 func _instantiate_platform_graphs(
         force_calculation_from_tile_maps := false) -> void:
-    if !force_calculation_from_tile_maps and \
-            File.new().file_exists(_get_resource_path()):
+    is_loaded_from_file = \
+            !force_calculation_from_tile_maps and \
+            File.new().file_exists(_get_resource_path())
+    if is_loaded_from_file:
         emit_signal("load_started")
         Gs.time.set_timeout(
                 funcref(self, "_load_platform_graphs"),
-                0.01)
-        _on_graphs_parsed()
+                0.3)
     else:
         # Set up the PlatformGraphs for this level.
         surface_parser = SurfaceParser.new()
@@ -217,6 +219,8 @@ func _load_platform_graphs() -> void:
                 graph_json_object,
                 context)
         platform_graphs[graph.player_params.name] = graph
+    
+    _on_graphs_parsed()
 
 func _validate_tile_maps(json_object: Dictionary) -> void:
     var expected_id_set := {}
