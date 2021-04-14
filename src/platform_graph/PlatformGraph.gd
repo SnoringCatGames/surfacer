@@ -1,12 +1,18 @@
 # -   This graph is optimized for run-time path-finding.
-# -   Graph parsing is slow and is done during app start.
-# -   Graph parsing is multi-threaded.
+# -   Graph parsing is slow and can done either dynamically when starting the
+#     level or ahead of time and saved to separate file.
+# -   Graph parsing can be multi-threaded.
 # -   A PlatfromGraph is specific to a given player type. This is important
 #     since different players have different jump parameters and can reach
 #     different surfaces, so the edges in the graph will be different for each
 #     player.
 class_name PlatformGraph
 extends Reference
+
+signal calculation_progress( \
+        origin_surface_index, \
+        surface_count)
+signal calculation_finished
 
 const CLUSTER_CELL_SIZE := 0.5
 const CLUSTER_CELL_HALF_SIZE := CLUSTER_CELL_SIZE * 0.5
@@ -58,10 +64,6 @@ func calculate(player_name: String) -> void:
     self.surfaces_set = Gs.utils.array_to_set(surfaces_array)
     
     _calculate_nodes_and_edges()
-    
-    _update_counts()
-    
-    fake_player.set_platform_graph(self)
 
 # Uses A* search.
 func find_path( \
@@ -303,13 +305,6 @@ func _calculate_nodes_and_edges() -> void:
         return
     ###########################################################################
     
-    _calculate_inter_surface_edges_total()
-    _dedup_nodes()
-    _derive_surfaces_to_outbound_nodes()
-    _derive_nodes_to_nodes_to_edges()
-    _cleanup_edge_calc_results()
-
-func _calculate_inter_surface_edges_total() -> void:
     # Pre-allocate space in the Dictionary for thread-safe recording of the
     # results.
     for origin_surface in surfaces_set:
@@ -331,6 +326,8 @@ func _calculate_inter_surface_edges_total() -> void:
         
         for thread in threads:
             thread.wait_to_finish()
+        
+        _on_inter_surface_edges_calculated()
     else:
         _calculate_inter_surface_edges_subset(-1)
 
@@ -352,27 +349,36 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
     var surfaces_in_fall_range_set := {}
     var surfaces_in_jump_range_set := {}
     
-    # Array<InterSurfaceEdgesResult>
-    var inter_surface_edges_results: Array
-    
-    var i := -1
+    var surfaces := surfaces_set.keys()
     
     # Calculate all inter-surface edges.
-    for origin_surface in surfaces_set:
-        i += 1
-        
-        # Divide the origin surfaces across threads.
-        if thread_index >= 0 and \
-                i % Gs.thread_count != thread_index:
-            continue
-        
-        inter_surface_edges_results = \
+    _calculate_inter_surface_edges_for_next_origin( \
+            0, \
+            surfaces, \
+            thread_index, \
+            collision_params_for_thread, \
+            surfaces_in_fall_range_set, \
+            surfaces_in_jump_range_set)
+
+func _calculate_inter_surface_edges_for_next_origin( \
+        origin_index: int, \
+        surfaces: Array, \
+        thread_index: int, \
+        collision_params: CollisionCalcParams, \
+        surfaces_in_fall_range_set: Dictionary, \
+        surfaces_in_jump_range_set: Dictionary) -> void:
+    # Divide the origin surfaces across threads.
+    if thread_index < 0 or \
+            origin_index % Gs.thread_count == thread_index:
+        var origin_surface: Surface = surfaces[origin_index]
+        # Array<InterSurfaceEdgesResult>
+        var inter_surface_edges_results: Array = \
                 surfaces_to_inter_surface_edges_results[origin_surface]
         surfaces_in_fall_range_set.clear()
         surfaces_in_jump_range_set.clear()
         
         get_surfaces_in_jump_and_fall_range( \
-                collision_params_for_thread, \
+                collision_params, \
                 surfaces_in_fall_range_set, \
                 surfaces_in_jump_range_set, \
                 origin_surface)
@@ -391,10 +397,48 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
                 # Calculate the inter-surface edges.
                 edge_calculator.get_all_inter_surface_edges_from_surface( \
                         inter_surface_edges_results, \
-                        collision_params_for_thread, \
+                        collision_params, \
                         origin_surface, \
                         surfaces_in_fall_range_set, \
                         surfaces_in_jump_range_set)
+    
+    var was_last_iteration := origin_index == surfaces.size() - 1
+    
+    if thread_index < 0:
+        emit_signal("calculation_progress", origin_index, surfaces.size())
+        if !was_last_iteration:
+            Gs.time.set_timeout(
+                    funcref(self, \
+                            "_calculate_inter_surface_edges_for_next_origin"),
+                    0.1,
+                    [
+                        origin_index + 1,
+                        surfaces,
+                        thread_index,
+                        collision_params,
+                        surfaces_in_fall_range_set,
+                        surfaces_in_jump_range_set,
+                    ])
+        else:
+            _on_inter_surface_edges_calculated()
+    else:
+        if !was_last_iteration:
+            _calculate_inter_surface_edges_for_next_origin(
+                    origin_index + 1,
+                    surfaces,
+                    thread_index,
+                    collision_params,
+                    surfaces_in_fall_range_set,
+                    surfaces_in_jump_range_set)
+
+func _on_inter_surface_edges_calculated() -> void:
+    _dedup_nodes()
+    _derive_surfaces_to_outbound_nodes()
+    _derive_nodes_to_nodes_to_edges()
+    _cleanup_edge_calc_results()
+    _update_counts()
+    collision_params.player.set_platform_graph(self)
+    emit_signal("calculation_finished")
 
 func _dedup_nodes() -> void:
     # Dedup all edge-end positions (aka, nodes).

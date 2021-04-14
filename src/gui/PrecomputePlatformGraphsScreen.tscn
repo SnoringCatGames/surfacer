@@ -55,9 +55,9 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
 margin_left = 313.0
-margin_top = 357.0
+margin_top = 289.0
 margin_right = 633.0
-margin_bottom = 589.0
+margin_bottom = 657.0
 rect_min_size = Vector2( 280, 0 )
 custom_constants/separation = 16
 
@@ -76,30 +76,54 @@ size_flags_horizontal = 3
 text = "Warming up..."
 align = 1
 
+[node name="Label2" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_top = 60.0
+margin_right = 320.0
+margin_bottom = 74.0
+size_flags_horizontal = 3
+align = 1
+
+[node name="Label3" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_top = 90.0
+margin_right = 320.0
+margin_bottom = 104.0
+size_flags_horizontal = 3
+align = 1
+
 [node name="Spacer" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 160.0
-margin_top = 60.0
+margin_top = 120.0
 margin_right = 160.0
-margin_bottom = 140.0
+margin_bottom = 200.0
 rect_min_size = Vector2( 0, 80 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="OpenFolderButton" type="Button" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+margin_left = 40.0
+margin_top = 216.0
+margin_right = 280.0
+margin_bottom = 352.0
+rect_min_size = Vector2( 240, 136 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+custom_constants/separation = 16
+alignment = 2
+
+[node name="OpenFolderButton" type="Button" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer"]
 visible = false
-margin_top = 156.0
+margin_top = -136.0
 margin_right = 320.0
-margin_bottom = 176.0
+margin_bottom = -76.0
 rect_min_size = Vector2( 240, 60 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "Open folder"
 
-[node name="CloseButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 7 )]
-margin_left = 40.0
-margin_top = 156.0
-margin_right = 280.0
-margin_bottom = 216.0
+[node name="CloseButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer" instance=ExtResource( 7 )]
+margin_top = 76.0
+margin_right = 240.0
+margin_bottom = 136.0
 rect_min_size = Vector2( 240, 60 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -108,9 +132,9 @@ text = "Close"
 [node name="LevelWrapper" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
 margin_left = 160.0
-margin_top = 232.0
+margin_top = 368.0
 margin_right = 160.0
-margin_bottom = 232.0
+margin_bottom = 368.0
 rect_clip_content = true
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -121,5 +145,5 @@ handle_input_locally = false
 usage = 0
 render_target_update_mode = 3
 
-[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/OpenFolderButton" to="." method="_on_OpenFolderButton_pressed"]
-[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/CloseButton" to="." method="_on_CloseButton_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/OpenFolderButton" to="." method="_on_OpenFolderButton_pressed"]
+[connection signal="pressed" from="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/VBoxContainer/CloseButton" to="." method="_on_CloseButton_pressed"]
