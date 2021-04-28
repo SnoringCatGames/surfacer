@@ -442,7 +442,6 @@ func _on_find_and_expand_complete(
         InspectorSearchType.ORIGIN_SURFACE:
             assert(controller.type == InspectorItemType.ORIGIN_SURFACE)
         InspectorSearchType.DESTINATION_SURFACE:
-            assert(controller.type == InspectorItemType.DESTINATION_SURFACE)
             selection_failure_message = \
                     SelectionDescription.NO_MATCHING_JUMP_LAND_POSITIONS
         InspectorSearchType.EDGES_GROUP:
