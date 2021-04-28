@@ -26,6 +26,9 @@ var _tile_map_index_to_surface_maps := {}
 func calculate(tile_maps: Array) -> void:
     assert(!tile_maps.empty())
     
+    # TODO: Add support for more than one collidable TileMap.
+    assert(tile_maps.size() == 1)
+    
     # Record the maximum cell size and combined region from all tile maps.
     _calculate_max_tile_map_cell_size(tile_maps)
     _calculate_combined_tile_map_rect(tile_maps)
