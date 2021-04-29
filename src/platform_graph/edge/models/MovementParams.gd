@@ -21,6 +21,9 @@ var collider_shape: Shape2D
 var collider_rotation: float
 var collider_half_width_height := Vector2.INF
 
+var passing_platform_corner_calc_shape: Shape2D
+var passing_platform_corner_calc_shape_rotation: float
+
 var gravity_fast_fall: float
 var slow_rise_gravity_multiplier: float
 var gravity_slow_rise: float
