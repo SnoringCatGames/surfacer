@@ -43,7 +43,7 @@ const MIN_LAND_DISTANCE_FROM_WALL_BOTTOM := 12.0
 # 
 # For illustrations of the various jump/land position combinations for each
 # surface arrangement, see:
-# https://github.com/levilindsey/surfacer/tree/master/docs
+# https://github.com/snoringcatgames/surfacer/tree/master/docs
 static func calculate_jump_land_positions_for_surface_pair(
         movement_params: MovementParams,
         jump_surface: Surface,
@@ -309,7 +309,7 @@ static func calculate_jump_land_positions_for_surface_pair(
             match land_surface.side:
                 SurfaceSide.FLOOR:
                     # Jump from a floor, land on a floor.
-                    # https://github.com/levilindsey/surfacer/tree/master/docs/
+                    # https://github.com/snoringcatgames/surfacer/tree/master/docs/
                     #         jump-land-positions-floor-to-floor.png
                     
                     var is_jump_surface_much_lower := \
@@ -812,7 +812,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                     
                 SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
                     # Jump from a floor, land on a wall.
-                    # https://github.com/levilindsey/surfacer/tree/master/docs/
+                    # https://github.com/snoringcatgames/surfacer/tree/master/docs/
                     #         jump-land-positions-floor-to-wall.png
                     
                     var is_landing_on_left_wall := \
@@ -1365,7 +1365,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                     
                 SurfaceSide.CEILING:
                     # Jump from a floor, land on a ceiling.
-                    # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-floor-to-ceiling.png
+                    # https://github.com/snoringcatgames/surfacer/tree/master/docs/jump-land-positions-floor-to-ceiling.png
                     
                     if is_jump_surface_lower:
                         var do_surfaces_overlap_horizontally := \
@@ -1569,7 +1569,7 @@ static func calculate_jump_land_positions_for_surface_pair(
             match land_surface.side:
                 SurfaceSide.FLOOR:
                     # Jump from a wall, land on a floor.
-                    # https://github.com/levilindsey/surfacer/tree/master/docs/
+                    # https://github.com/snoringcatgames/surfacer/tree/master/docs/
                     #         jump-land-positions-wall-to-floor.png
                     
                     var is_wall_fully_higher_than_floor := \
@@ -1819,9 +1819,9 @@ static func calculate_jump_land_positions_for_surface_pair(
                     
                 SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
                     # Jump from a wall, land on a wall.
-                    # https://github.com/levilindsey/surfacer/tree/master/docs/
+                    # https://github.com/snoringcatgames/surfacer/tree/master/docs/
                     #         jump-land-positions-wall-to-same-wall.png
-                    # https://github.com/levilindsey/surfacer/tree/master/docs/
+                    # https://github.com/snoringcatgames/surfacer/tree/master/docs/
                     #         jump-land-positions-wall-to-opposite-wall.png
                     
                     var top_end_displacement_y := \
@@ -1839,7 +1839,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                     
                     if jump_surface.side == land_surface.side:
                         # Jump between walls of the same side.
-                        # https://github.com/levilindsey/surfacer/tree/master/
+                        # https://github.com/snoringcatgames/surfacer/tree/master/
                         #        docs/jump-land-positions-wall-to-same-wall.png
                         # 
                         # This means that we must go around one end of one of the walls.
@@ -2039,7 +2039,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         
                     elif are_walls_facing_each_other:
                         # Jump between two walls that are facing each other.
-                        # https://github.com/levilindsey/surfacer/tree/master/
+                        # https://github.com/snoringcatgames/surfacer/tree/master/
                         #    docs/jump-land-positions-wall-to-opposite-wall.png
                         
                         var jump_basis: Vector2
@@ -2142,7 +2142,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                         
                     else:
                         # Jump between two walls that are facing away from each other.
-                        # https://github.com/levilindsey/surfacer/tree/master/docs/jump-land-positions-wall-to-opposite-wall.png
+                        # https://github.com/snoringcatgames/surfacer/tree/master/docs/jump-land-positions-wall-to-opposite-wall.png
                         
                         # Consider one pair for the top ends.
                         var needs_extra_jump_duration := true
@@ -2326,6 +2326,7 @@ static func calculate_land_positions_on_surface(
                 
             else:
                 # We may be able to reach the floor.
+                var result := []
                 var land_basis: Vector2 = \
                         Gs.geometry.project_point_onto_surface_with_offset(
                                 origin_target_point,
@@ -2352,16 +2353,36 @@ static func calculate_land_positions_on_surface(
                         movement_params.collider_half_width_height,
                         land_surface_left_end_wrapper,
                         land_surface_right_end_wrapper)
-                var jump_land_positions := _create_jump_land_positions(
-                        movement_params,
-                        origin_position,
-                        land_position,
-                        velocity_start)
-                return [jump_land_positions] if \
-                        jump_land_positions != null else \
-                        []
+                var jump_land_positions_with_horizontal_movement_distance := \
+                        _create_jump_land_positions(
+                                movement_params,
+                                origin_position,
+                                land_position,
+                                velocity_start)
+                if jump_land_positions_with_horizontal_movement_distance != null:
+                    result.push_back( \
+                            jump_land_positions_with_horizontal_movement_distance)
+                
+                land_position = _create_surface_interior_position(
+                        origin_target_point.x,
+                        land_surface,
+                        movement_params.collider_half_width_height,
+                        land_surface_left_end_wrapper,
+                        land_surface_right_end_wrapper)
+                var jump_land_positions_without_horizontal_movement_distance := \
+                        _create_jump_land_positions(
+                                movement_params,
+                                origin_position,
+                                land_position,
+                                velocity_start)
+                if jump_land_positions_without_horizontal_movement_distance != null:
+                    result.push_back( \
+                            jump_land_positions_without_horizontal_movement_distance)
+                
+                return result
             
-        SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
             var is_left_wall := land_surface.side == SurfaceSide.LEFT_WALL
             var land_surface_top_end_wrapper := \
                     land_surface_first_point_wrapper if \
