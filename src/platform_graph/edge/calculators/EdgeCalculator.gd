@@ -350,7 +350,7 @@ static func optimize_edge_jump_position_for_path_helper(
             if jump_ratios[i] == 0.0:
                 jump_position = previous_edge.start_position_along_surface
             else:
-                jump_position = MovementUtils \
+                jump_position = PositionAlongSurfaceFactory \
                         .create_position_offset_from_target_point(
                                 Vector2(previous_edge.get_start().x + \
                                         previous_edge_displacement.x * \
@@ -405,7 +405,7 @@ static func optimize_edge_jump_position_for_path_helper(
             if jump_ratios[i] == 0.0:
                 jump_position = previous_edge.start_position_along_surface
             else:
-                jump_position = MovementUtils \
+                jump_position = PositionAlongSurfaceFactory \
                         .create_position_offset_from_target_point(
                                 Vector2(0.0,
                                         previous_edge.get_start().y + \
@@ -473,7 +473,7 @@ static func optimize_edge_land_position_for_path_helper(
             if land_ratios[i] == 1.0:
                 land_position = next_edge.end_position_along_surface
             else:
-                land_position = MovementUtils \
+                land_position = PositionAlongSurfaceFactory \
                         .create_position_offset_from_target_point(
                                 Vector2(next_edge.get_start().x + \
                                         next_edge_displacement.x * \
@@ -516,7 +516,7 @@ static func optimize_edge_land_position_for_path_helper(
             if land_ratios[i] == 1.0:
                 land_position = next_edge.end_position_along_surface
             else:
-                land_position = MovementUtils \
+                land_position = PositionAlongSurfaceFactory \
                         .create_position_offset_from_target_point(
                                 Vector2(0.0, next_edge.get_start().y + \
                                         next_edge_displacement.y * \

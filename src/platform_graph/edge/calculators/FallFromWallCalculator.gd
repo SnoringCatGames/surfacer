@@ -189,13 +189,13 @@ static func _get_jump_positions(
     else:
         origin_top_point = origin_surface.last_point
         origin_bottom_point = origin_surface.first_point
-    var top_jump_position := \
-            MovementUtils.create_position_offset_from_target_point(
+    var top_jump_position := PositionAlongSurfaceFactory \
+            .create_position_offset_from_target_point(
                     origin_top_point,
                     origin_surface,
                     movement_params.collider_half_width_height)
-    var bottom_jump_position := \
-            MovementUtils.create_position_offset_from_target_point(
+    var bottom_jump_position := PositionAlongSurfaceFactory \
+            .create_position_offset_from_target_point(
                     origin_bottom_point,
                     origin_surface,
                     movement_params.collider_half_width_height)

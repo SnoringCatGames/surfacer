@@ -44,13 +44,13 @@ func get_all_inter_surface_edges_from_surface(
         # There is no floor surface to climb up to.
         return
     
-    var start_position := \
-            MovementUtils.create_position_offset_from_target_point(
+    var start_position := PositionAlongSurfaceFactory \
+            .create_position_offset_from_target_point(
                     wall_top_point,
                     origin_surface,
                     movement_params.collider_half_width_height)
-    var end_position := \
-            MovementUtils.create_position_offset_from_target_point(
+    var end_position := PositionAlongSurfaceFactory \
+            .create_position_offset_from_target_point(
                     floor_edge_point,
                     upper_neighbor_floor,
                     movement_params.collider_half_width_height)

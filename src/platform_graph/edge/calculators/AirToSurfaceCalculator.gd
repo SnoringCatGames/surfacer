@@ -166,7 +166,7 @@ func create_edge_from_part_of_other_edge(
         # trajectories.
         return null
     
-    var origin := MovementUtils.create_position_without_surface(
+    var origin := PositionAlongSurfaceFactory.create_position_without_surface(
             player.surface_state.center_position)
     var instructions := EdgeInstructionsUtils.sub_instructions(
             other_edge.instructions,

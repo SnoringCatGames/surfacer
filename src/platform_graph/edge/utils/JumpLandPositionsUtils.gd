@@ -97,25 +97,29 @@ static func calculate_jump_land_positions_for_surface_pair(
     # Create wrapper PositionAlongSurface ahead of time, so later calculations
     # can all reference the same instances.
     var jump_surface_first_point_wrapper: PositionAlongSurface = \
-            MovementUtils.create_position_offset_from_target_point(
-                    jump_surface_first_point,
-                    jump_surface,
-                    movement_params.collider_half_width_height)
+            PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
+                            jump_surface_first_point,
+                            jump_surface,
+                            movement_params.collider_half_width_height)
     var jump_surface_last_point_wrapper: PositionAlongSurface = \
-            MovementUtils.create_position_offset_from_target_point(
-                    jump_surface_last_point,
-                    jump_surface,
-                    movement_params.collider_half_width_height)
+            PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
+                            jump_surface_last_point,
+                            jump_surface,
+                            movement_params.collider_half_width_height)
     var land_surface_first_point_wrapper: PositionAlongSurface = \
-            MovementUtils.create_position_offset_from_target_point(
-                    land_surface_first_point,
-                    land_surface,
-                    movement_params.collider_half_width_height)
+            PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
+                            land_surface_first_point,
+                            land_surface,
+                            movement_params.collider_half_width_height)
     var land_surface_last_point_wrapper: PositionAlongSurface = \
-            MovementUtils.create_position_offset_from_target_point(
-                    land_surface_last_point,
-                    land_surface,
-                    movement_params.collider_half_width_height)
+            PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
+                            land_surface_last_point,
+                            land_surface,
+                            movement_params.collider_half_width_height)
     
     # Create some additional variables, so we can conveniently reference end
     # points according to near/far.
@@ -1517,14 +1521,14 @@ static func calculate_jump_land_positions_for_surface_pair(
                             if is_jump_point_distinct and is_land_point_distinct:
                                 # The closest points aren't too close to the ends, so we can create
                                 # new surface-interior positions for them.
-                                jump_position = \
-                                        MovementUtils.create_position_offset_from_target_point(
+                                jump_position = PositionAlongSurfaceFactory \
+                                        .create_position_offset_from_target_point(
                                                 jump_surface_closest_point,
                                                 jump_surface,
                                                 movement_params.collider_half_width_height,
                                                 true)
-                                land_position = \
-                                        MovementUtils.create_position_offset_from_target_point(
+                                land_position = PositionAlongSurfaceFactory \
+                                        .create_position_offset_from_target_point(
                                                 land_surface_closest_point,
                                                 land_surface,
                                                 movement_params.collider_half_width_height,
@@ -2276,10 +2280,11 @@ static func calculate_land_positions_on_surface(
         origin_position: PositionAlongSurface,
         velocity_start: Vector2) -> Array:
     var land_surface_first_point_wrapper: PositionAlongSurface = \
-            MovementUtils.create_position_offset_from_target_point(
-                    land_surface.first_point,
-                    land_surface,
-                    movement_params.collider_half_width_height)
+            PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
+                            land_surface.first_point,
+                            land_surface,
+                            movement_params.collider_half_width_height)
     
     if land_surface.vertices.size() == 1:
         # The land surface consists of only a single point.
@@ -2293,10 +2298,11 @@ static func calculate_land_positions_on_surface(
                 []
     
     var land_surface_last_point_wrapper: PositionAlongSurface = \
-            MovementUtils.create_position_offset_from_target_point(
-                    land_surface.last_point,
-                    land_surface,
-                    movement_params.collider_half_width_height)
+            PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
+                            land_surface.last_point,
+                            land_surface,
+                            movement_params.collider_half_width_height)
     
     var land_surface_left_bound := land_surface.bounding_box.position.x
     var land_surface_right_bound := land_surface.bounding_box.end.x
@@ -2585,11 +2591,12 @@ static func _create_surface_interior_position(
                 Vector2(goal_coordinate, INF) if \
                 is_considering_x_axis else \
                 Vector2(INF, goal_coordinate)
-        return MovementUtils.create_position_offset_from_target_point(
-                target_point,
-                surface,
-                collider_half_width_height,
-                true)
+        return PositionAlongSurfaceFactory \
+                .create_position_offset_from_target_point(
+                        target_point,
+                        surface,
+                        collider_half_width_height,
+                        true)
 
 # Checks whether the given jump/land positions are far enough away from all
 # other previous jump/land positions, and records it in the given results

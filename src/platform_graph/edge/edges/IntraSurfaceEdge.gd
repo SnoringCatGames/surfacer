@@ -49,15 +49,15 @@ func update_terminal(
         is_start: bool,
         target_point: Vector2) -> void:
     if is_start:
-        start_position_along_surface = \
-                MovementUtils.create_position_offset_from_target_point(
+        start_position_along_surface = PositionAlongSurfaceFactory \
+                .create_position_offset_from_target_point(
                         target_point,
                         start_position_along_surface.surface,
                         movement_params.collider_half_width_height,
                         true)
     else:
-        end_position_along_surface = \
-                MovementUtils.create_position_offset_from_target_point(
+        end_position_along_surface = PositionAlongSurfaceFactory \
+                .create_position_offset_from_target_point(
                         target_point,
                         end_position_along_surface.surface,
                         movement_params.collider_half_width_height,
