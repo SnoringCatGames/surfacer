@@ -104,3 +104,10 @@ func calculate_edge(
             position_start,
             position_end,
             collision_params.movement_params)
+
+# FIXME: LEFT OFF HERE: ----------------------------
+# - movement_params.passing_platform_corner_calc_shape
+# - movement_params.passing_platform_corner_calc_shape_rotation
+
+static func _calculate_trajectory() -> void:
+    pass

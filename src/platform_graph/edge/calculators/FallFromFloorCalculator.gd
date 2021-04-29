@@ -156,8 +156,8 @@ func _get_all_edges_from_one_side(
     var position_fall_off := _calculate_player_center_at_fall_off_point(
             edge_point,
             falls_on_left_side,
-            movement_params.collider_shape,
-            movement_params.collider_rotation)
+            movement_params.passing_platform_corner_calc_shape,
+            movement_params.passing_platform_corner_calc_shape_rotation)
     
     var position_fall_off_wrapper := \
             PositionAlongSurfaceFactory.create_position_from_target_point(
@@ -283,6 +283,7 @@ func _get_all_edges_from_one_side(
             _prepend_walk_to_fall_off_portion(
                     position_start,
                     position_end,
+                    edge_point,
                     velocity_x_start,
                     time_fall_off,
                     instructions,
@@ -309,61 +310,10 @@ func _get_all_edges_from_one_side(
                     position_fall_off_wrapper)
             inter_surface_edges_result.valid_edges.push_back(edge)
 
-static func _calculate_player_center_at_fall_off_point(
-        edge_point: Vector2,
-        falls_on_left_side: bool,
-        collider_shape: Shape2D,
-        collider_rotation: float) -> Vector2:
-    var is_rotated_90_degrees = \
-            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
-            Gs.geometry.FLOAT_EPSILON
-    # Ensure that collision boundaries are only ever axially aligned.
-    assert(is_rotated_90_degrees or \
-            abs(collider_rotation) < Gs.geometry.FLOAT_EPSILON)
-    
-    var right_side_fall_off_displacement_x: float
-    var fall_off_displacement_y: float
-    
-    if collider_shape is CircleShape2D:
-        right_side_fall_off_displacement_x = collider_shape.radius
-        fall_off_displacement_y = 0.0
-        
-    elif collider_shape is CapsuleShape2D:
-        if is_rotated_90_degrees:
-            right_side_fall_off_displacement_x = \
-                    collider_shape.radius + collider_shape.height * 0.5
-            fall_off_displacement_y = 0.0
-        else:
-            right_side_fall_off_displacement_x = collider_shape.radius
-            fall_off_displacement_y = -collider_shape.height * 0.5
-        
-    elif collider_shape is RectangleShape2D:
-        if is_rotated_90_degrees:
-            right_side_fall_off_displacement_x = collider_shape.extents.y
-            fall_off_displacement_y = collider_shape.extents.x
-        else:
-            right_side_fall_off_displacement_x = collider_shape.extents.x
-            fall_off_displacement_y = collider_shape.extents.y
-        
-    else:
-        Gs.logger.error((
-                "Invalid Shape2D provided for " +
-                "_calculate_player_center_at_fall_off_point: %s. " +
-                "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
-                "RectangleShape2D.") % \
-                collider_shape)
-    
-    right_side_fall_off_displacement_x += EXTRA_FALL_OFF_POSITION_MARGIN
-    
-    return edge_point + Vector2(
-            -right_side_fall_off_displacement_x if \
-                    falls_on_left_side else \
-                    right_side_fall_off_displacement_x,
-            fall_off_displacement_y)
-
 static func _prepend_walk_to_fall_off_portion(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
+        edge_point: Vector2,
         velocity_x_start: float,
         time_fall_off: float,
         instructions: EdgeInstructions,
@@ -464,9 +414,130 @@ static func _prepend_walk_to_fall_off_portion(
             trajectory.frame_continuous_velocities_from_steps[frame_index] = \
                     current_frame_velocity
         
-        current_frame_position += \
-                current_frame_velocity * Time.PHYSICS_TIME_STEP_SEC
+        var frame_position_x := \
+                current_frame_position.x + \
+                current_frame_velocity.x * Time.PHYSICS_TIME_STEP_SEC
+        var distance_past_edge := \
+                start.target_point.x - frame_position_x if \
+                falls_on_left_side else \
+                frame_position_x - start.target_point.x
+        var frame_position_y := \
+                edge_point.y + \
+                _calculate_displacement_y_for_horizontal_distance_past_edge(
+                        distance_past_edge,
+                        movement_params.passing_platform_corner_calc_shape,
+                        movement_params \
+                                .passing_platform_corner_calc_shape_rotation)
+        
+        current_frame_position.x = frame_position_x
+        current_frame_position.y = frame_position_y
         current_frame_velocity += acceleration * Time.PHYSICS_TIME_STEP_SEC
         clamp(current_frame_velocity.x,
                 -movement_params.max_horizontal_speed_default,
                 movement_params.max_horizontal_speed_default)
+
+static func _calculate_player_center_at_fall_off_point(
+        edge_point: Vector2,
+        falls_on_left_side: bool,
+        collider_shape: Shape2D,
+        collider_rotation: float) -> Vector2:
+    var is_rotated_90_degrees = \
+            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
+            Gs.geometry.FLOAT_EPSILON
+    # Ensure that collision boundaries are only ever axially aligned.
+    assert(is_rotated_90_degrees or \
+            abs(collider_rotation) < Gs.geometry.FLOAT_EPSILON)
+    
+    var right_side_fall_off_displacement_x: float
+    var fall_off_displacement_y: float
+    
+    if collider_shape is CircleShape2D:
+        right_side_fall_off_displacement_x = collider_shape.radius
+        fall_off_displacement_y = 0.0
+        
+    elif collider_shape is CapsuleShape2D:
+        if is_rotated_90_degrees:
+            right_side_fall_off_displacement_x = \
+                    collider_shape.radius + collider_shape.height * 0.5
+            fall_off_displacement_y = 0.0
+        else:
+            right_side_fall_off_displacement_x = collider_shape.radius
+            fall_off_displacement_y = -collider_shape.height * 0.5
+        
+    elif collider_shape is RectangleShape2D:
+        if is_rotated_90_degrees:
+            right_side_fall_off_displacement_x = collider_shape.extents.y
+            fall_off_displacement_y = -collider_shape.extents.x
+        else:
+            right_side_fall_off_displacement_x = collider_shape.extents.x
+            fall_off_displacement_y = -collider_shape.extents.y
+        
+    else:
+        Gs.logger.error((
+                "Invalid Shape2D provided for " +
+                "_calculate_player_center_at_fall_off_point: %s. " +
+                "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
+                "RectangleShape2D.") % \
+                collider_shape)
+    
+    right_side_fall_off_displacement_x += EXTRA_FALL_OFF_POSITION_MARGIN
+    
+    return edge_point + Vector2(
+            -right_side_fall_off_displacement_x if \
+                    falls_on_left_side else \
+                    right_side_fall_off_displacement_x,
+            fall_off_displacement_y)
+
+static func _calculate_displacement_y_for_horizontal_distance_past_edge( \
+        distance_past_edge: float,
+        collider_shape: Shape2D,
+        collider_rotation: float) -> float:
+    var is_rotated_90_degrees = \
+            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
+            Gs.geometry.FLOAT_EPSILON
+    
+    if collider_shape is CircleShape2D:
+        if distance_past_edge >= collider_shape.radius:
+            return 0.0
+        else:
+            return _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
+                distance_past_edge,
+                collider_shape.radius)
+        
+    elif collider_shape is CapsuleShape2D:
+        if is_rotated_90_degrees:
+            distance_past_edge -= collider_shape.height * 0.5
+            if distance_past_edge <= 0:
+                # Treat the same as a rectangle.
+                return -collider_shape.radius
+            else:
+                # Treat the same as an offset circle.
+                return _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
+                        distance_past_edge,
+                        collider_shape.radius)
+        else:
+            return _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
+                    distance_past_edge,
+                    collider_shape.radius)
+        
+    elif collider_shape is RectangleShape2D:
+        if is_rotated_90_degrees:
+            return -collider_shape.extents.x
+        else:
+            return -collider_shape.extents.y
+        
+    else:
+        Gs.logger.error((
+                "Invalid Shape2D provided for " +
+                "_calculate_displacement_y_for_horizontal_distance_past_edge: %s. " +
+                "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
+                "RectangleShape2D.") % \
+                collider_shape)
+        return INF
+
+static func _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
+        distance_past_edge: float,
+        radius: float) -> float:
+    return 0 if \
+            distance_past_edge >= radius else \
+            -sqrt(radius * radius - distance_past_edge * distance_past_edge)
