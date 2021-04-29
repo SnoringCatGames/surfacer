@@ -3,6 +3,8 @@ extends AnnotationElement
 
 const TYPE := AnnotationElementType.EDGE_STEP
 
+const LABEL_SCALE := 0.5
+
 var step_result_metadata: EdgeStepCalcResultMetadata
 var renders_faintly: bool
 var opacity: float
@@ -77,11 +79,14 @@ func _calculate_color(renders_faintly: bool) -> Color:
 
 func _create_labels() -> void:
     step_label = Label.new()
-    step_label.add_font_override("font", Gs.fonts.main_m)
+    step_label.add_font_override("font", Gs.fonts.main_xs)
+    step_label.rect_scale = Vector2(LABEL_SCALE, LABEL_SCALE)
     
     previous_out_of_reach_waypoint_label = Label.new()
     previous_out_of_reach_waypoint_label \
-            .add_font_override("font", Gs.fonts.main_m)
+            .add_font_override("font", Gs.fonts.main_xs)
+    previous_out_of_reach_waypoint_label.rect_scale = \
+            Vector2(LABEL_SCALE, LABEL_SCALE)
 
 func draw(canvas: CanvasItem) -> void:
     _attach_labels(canvas)
