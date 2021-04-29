@@ -160,7 +160,7 @@ func _get_all_edges_from_one_side(
             movement_params.collider_rotation)
     
     var position_fall_off_wrapper := \
-            MovementUtils.create_position_from_target_point(
+            PositionAlongSurfaceFactory.create_position_from_target_point(
                     position_fall_off,
                     origin_surface,
                     movement_params.collider_half_width_height)

@@ -35,6 +35,9 @@ func parse(
     self.level_id = level_id
     _record_tile_maps()
     _create_fake_players_for_collision_calculations()
+    force_calculation_from_tile_maps = \
+            force_calculation_from_tile_maps or \
+            Surfacer.ignores_platform_graph_save_files
     _instantiate_platform_graphs(force_calculation_from_tile_maps)
 
 # Get references to the TileMaps that define the collision boundaries of this

@@ -134,8 +134,8 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
         
         # Try to dynamically calculate a valid air-to-surface edge from the
         # current in-air position.
-        var origin := MovementUtils.create_position_without_surface(
-                surface_state.center_position)
+        var origin := PositionAlongSurfaceFactory \
+                .create_position_without_surface(surface_state.center_position)
         var air_to_surface_edge := \
                 air_to_surface_calculator.find_a_landing_trajectory(
                         null,
@@ -469,14 +469,14 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
                 Gs.logger.error("Invalid SurfaceSide")
         
         if would_protrude_past_surface_end_after_coming_to_a_stop:
-            var start_position := \
-                    MovementUtils.create_position_offset_from_target_point(
+            var start_position := PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
                             current_position,
                             surface,
                             movement_params.collider_half_width_height,
                             true)
-            var end_position := \
-                    MovementUtils.create_position_offset_from_target_point(
+            var end_position := PositionAlongSurfaceFactory \
+                    .create_position_offset_from_target_point(
                             end_target_point,
                             surface,
                             movement_params.collider_half_width_height,

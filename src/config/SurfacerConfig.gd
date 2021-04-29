@@ -32,7 +32,9 @@ var is_surfacer_logging: bool
 var inspector_panel_starts_open: bool
 var uses_threads_for_platform_graph_calculation: bool
 var precompute_platform_graph_for_levels: Array
+var ignores_platform_graph_save_files := false
 var is_precomputing_platform_graphs: bool
+var default_player_name: String
 
 var debug_params: Dictionary
 
@@ -152,6 +154,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.edge_movement_classes = manifest.edge_movement_classes
     self.player_param_classes = manifest.player_param_classes
     self.debug_params = manifest.debug_params
+    self.default_player_name = manifest.default_player_name
     
     self.is_precomputing_platform_graphs = \
             manifest.has("precompute_platform_graph_for_levels") and \
@@ -159,6 +162,10 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if self.is_precomputing_platform_graphs:
         self.precompute_platform_graph_for_levels = \
                 manifest.precompute_platform_graph_for_levels
+    
+    if manifest.has("ignores_platform_graph_save_files"):
+        self.ignores_platform_graph_save_files = \
+                manifest.ignores_platform_graph_save_files
 
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting(
