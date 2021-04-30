@@ -2347,37 +2347,41 @@ static func calculate_land_positions_on_surface(
                                 horizontal_movement_distance if \
                         velocity_start.x > 0.0 else \
                         origin_target_point.x - horizontal_movement_distance
-                var land_position := _create_surface_interior_position(
-                        land_x,
-                        land_surface,
-                        movement_params.collider_half_width_height,
-                        land_surface_left_end_wrapper,
-                        land_surface_right_end_wrapper)
+                var land_position_with_horizontal_movement_distance := \
+                        _create_surface_interior_position(
+                                land_x,
+                                land_surface,
+                                movement_params.collider_half_width_height,
+                                land_surface_left_end_wrapper,
+                                land_surface_right_end_wrapper)
                 var jump_land_positions_with_horizontal_movement_distance := \
                         _create_jump_land_positions(
                                 movement_params,
                                 origin_position,
-                                land_position,
+                                land_position_with_horizontal_movement_distance,
                                 velocity_start)
                 if jump_land_positions_with_horizontal_movement_distance != null:
                     result.push_back( \
                             jump_land_positions_with_horizontal_movement_distance)
                 
-                land_position = _create_surface_interior_position(
-                        origin_target_point.x,
-                        land_surface,
-                        movement_params.collider_half_width_height,
-                        land_surface_left_end_wrapper,
-                        land_surface_right_end_wrapper)
-                var jump_land_positions_without_horizontal_movement_distance := \
-                        _create_jump_land_positions(
-                                movement_params,
-                                origin_position,
-                                land_position,
-                                velocity_start)
-                if jump_land_positions_without_horizontal_movement_distance != null:
-                    result.push_back( \
-                            jump_land_positions_without_horizontal_movement_distance)
+                var land_position_without_horizontal_movement_distance := \
+                        _create_surface_interior_position(
+                                origin_target_point.x,
+                                land_surface,
+                                movement_params.collider_half_width_height,
+                                land_surface_left_end_wrapper,
+                                land_surface_right_end_wrapper)
+                if land_position_without_horizontal_movement_distance != \
+                        land_position_with_horizontal_movement_distance:
+                    var jump_land_positions_without_horizontal_movement_distance := \
+                            _create_jump_land_positions(
+                                    movement_params,
+                                    origin_position,
+                                    land_position_without_horizontal_movement_distance,
+                                    velocity_start)
+                    if jump_land_positions_without_horizontal_movement_distance != null:
+                        result.push_back( \
+                                jump_land_positions_without_horizontal_movement_distance)
                 
                 return result
             

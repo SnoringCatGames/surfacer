@@ -100,11 +100,10 @@ func _create_children_inner() -> void:
             tree,
             graph,
             surfaces_to_surfaces_to_edge_types_to_edges_results)
-    profiler_item_controller = \
-            ProfilerGroupItemController.new(
-                    tree_item,
-                    tree,
-                    graph)
+    profiler_item_controller = ProfilerGroupItemController.new(
+            tree_item,
+            tree,
+            graph)
 
 # Parse the inter-surface edge-calculation results into a structure that's
 # easier to use from the inspector.
