@@ -2512,7 +2512,8 @@ static func get_velocity_start(
         velocity_start_y = 0.0
     else:
         match origin_surface.side:
-            SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
+            SurfaceSide.LEFT_WALL, \
+            SurfaceSide.RIGHT_WALL:
                 velocity_start_y = movement_params.jump_boost
                 
             SurfaceSide.FLOOR:
@@ -2539,7 +2540,8 @@ static func get_horizontal_velocity_start(
         SurfaceSide.RIGHT_WALL:
             return -movement_params.wall_jump_horizontal_boost
             
-        SurfaceSide.FLOOR, SurfaceSide.CEILING:
+        SurfaceSide.FLOOR, \
+        SurfaceSide.CEILING:
             if prefer_zero_horizontal_speed:
                 return 0.0
             

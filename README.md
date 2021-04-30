@@ -30,7 +30,7 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 Some features include:
 -   Walking on floors, climbing on walls, climbing on ceilings, jumping and falling from anywhere.
 -   [Variable-height jump and fast-fall](https://kotaku.com/the-mechanics-behind-satisfying-2d-jumping-1761940693).
--   Adjusting movement trajectories around intermediate surfaces (such as jumping over a wall or under an overhang).
+-   Adjusting movement trajectories around intermediate surfaces (such as jumping over a wall or around a floor).
 -   Configurable movement parameters on a per-player basis (e.g., horizontal acceleration, jump power, gravity, collision boundary shape and size, which types of edge movement are allowed).
 -   Level creation using Godot's standard pattern with a [TileMap in the 2D scene editor](https://docs.godotengine.org/en/3.2/tutorials/2d/using_tilemaps.html).
 -   Preparsing the level into a platform graph, and using A* search for efficient path-finding at runtime.
