@@ -92,6 +92,7 @@ static func draw_edge(
             edge is AirToSurfaceEdge or \
             edge is FallFromWallEdge or \
             edge is FallFromFloorEdge or \
+            edge is ClimbOverWallToFloorEdge or \
             edge is JumpInterSurfaceEdge or \
             edge is JumpFromSurfaceToAirEdge:
         _draw_edge_from_instructions_positions(
@@ -113,14 +114,6 @@ static func draw_edge(
                 base_color,
                 includes_waypoints,
                 includes_instruction_indicators)
-    elif edge is ClimbOverWallToFloorEdge:
-        _draw_climb_over_wall_to_floor_edge(
-                canvas,
-                edge,
-                stroke_width,
-                base_color,
-                includes_waypoints,
-                includes_instruction_indicators)
     else:
         Gs.logger.error("Unexpected Edge subclass: %s" % edge)
 
@@ -134,44 +127,6 @@ static func _draw_edge_from_end_points(
     canvas.draw_line(
             edge.get_start(),
             edge.get_end(),
-            base_color,
-            stroke_width)
-    
-    if includes_waypoints:
-        var waypoint_color: Color = Surfacer.ann_defaults \
-                .WAYPOINT_COLOR_PARAMS.get_color()
-        waypoint_color.h = base_color.h
-        waypoint_color.a = base_color.a
-        
-        draw_destination_marker(
-                canvas,
-                edge.get_end(),
-                true,
-                edge.end_position_along_surface.side,
-                waypoint_color)
-        draw_origin_marker(
-                canvas,
-                edge.get_start(),
-                waypoint_color)
-    
-    if includes_instruction_indicators:
-        var instruction_color: Color = Surfacer.ann_defaults \
-                .INSTRUCTION_COLOR_PARAMS.get_color()
-        instruction_color.h = base_color.h
-        instruction_color.a = base_color.a
-        
-        # TODO: Draw instruction indicators.
-
-static func _draw_climb_over_wall_to_floor_edge(
-        canvas: CanvasItem,
-        edge: ClimbOverWallToFloorEdge,
-        stroke_width: float,
-        base_color: Color,
-        includes_waypoints: bool,
-        includes_instruction_indicators: bool) -> void:
-    var vertices := _get_edge_trajectory_vertices(edge)
-    canvas.draw_polyline(
-            vertices,
             base_color,
             stroke_width)
     
