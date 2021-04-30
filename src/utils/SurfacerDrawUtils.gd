@@ -302,6 +302,7 @@ static func _get_edge_trajectory_vertices(
         EdgeType.AIR_TO_SURFACE_EDGE, \
         EdgeType.FALL_FROM_FLOOR_EDGE, \
         EdgeType.FALL_FROM_WALL_EDGE, \
+        EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE, \
         EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE, \
         EdgeType.JUMP_INTER_SURFACE_EDGE:
             var vertices := \
@@ -317,13 +318,6 @@ static func _get_edge_trajectory_vertices(
         EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE:
             return PoolVector2Array([
                 edge.get_start(),
-                edge.get_end(),
-            ])
-        EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE:
-            var mid_point := Vector2(edge.get_start().x, edge.get_end().y)
-            return PoolVector2Array([
-                edge.get_start(),
-                mid_point,
                 edge.get_end(),
             ])
         EdgeType.UNKNOWN, \

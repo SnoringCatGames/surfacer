@@ -156,8 +156,8 @@ func _get_all_edges_from_one_side(
     var position_fall_off := _calculate_player_center_at_fall_off_point(
             edge_point,
             falls_on_left_side,
-            movement_params.passing_platform_corner_calc_shape,
-            movement_params.passing_platform_corner_calc_shape_rotation)
+            movement_params.fall_from_floor_corner_calc_shape,
+            movement_params.fall_from_floor_corner_calc_shape_rotation)
     
     var position_fall_off_wrapper := PositionAlongSurfaceFactory \
             .create_position_from_unmodified_target_point(
@@ -425,9 +425,9 @@ static func _prepend_walk_to_fall_off_portion(
                 edge_point.y + \
                 _calculate_displacement_y_for_horizontal_distance_past_edge(
                         distance_past_edge,
-                        movement_params.passing_platform_corner_calc_shape,
+                        movement_params.fall_from_floor_corner_calc_shape,
                         movement_params \
-                                .passing_platform_corner_calc_shape_rotation)
+                                .fall_from_floor_corner_calc_shape_rotation)
         
         current_frame_position.x = frame_position_x
         current_frame_position.y = frame_position_y
@@ -501,8 +501,8 @@ static func _calculate_displacement_y_for_horizontal_distance_past_edge( \
             return 0.0
         else:
             return _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
-                distance_past_edge,
-                collider_shape.radius)
+                    distance_past_edge,
+                    collider_shape.radius)
         
     elif collider_shape is CapsuleShape2D:
         if is_rotated_90_degrees:
@@ -518,7 +518,7 @@ static func _calculate_displacement_y_for_horizontal_distance_past_edge( \
         else:
             return _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
                     distance_past_edge,
-                    collider_shape.radius)
+                    collider_shape.radius) + collider_shape.height / 2.0
         
     elif collider_shape is RectangleShape2D:
         if is_rotated_90_degrees:
@@ -538,6 +538,6 @@ static func _calculate_displacement_y_for_horizontal_distance_past_edge( \
 static func _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
         distance_past_edge: float,
         radius: float) -> float:
-    return 0 if \
+    return 0.0 if \
             distance_past_edge >= radius else \
             -sqrt(radius * radius - distance_past_edge * distance_past_edge)

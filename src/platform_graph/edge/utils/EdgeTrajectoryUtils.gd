@@ -26,7 +26,7 @@ static func calculate_trajectory_from_calculation_steps(
     var frame_continuous_positions_from_steps := \
             _concatenate_step_frame_positions(steps)
     var distance_from_continuous_frames := \
-            _sum_distance_between_frames(frame_continuous_positions_from_steps)
+            sum_distance_between_frames(frame_continuous_positions_from_steps)
     if !collision_params.movement_params.includes_continuous_frame_positions:
         frame_continuous_positions_from_steps = PoolVector2Array()
     
@@ -92,7 +92,7 @@ static func _concatenate_step_frame_velocities(
     
     return PoolVector2Array(combined_velocities)
 
-static func _sum_distance_between_frames(
+static func sum_distance_between_frames(
         frame_positions: PoolVector2Array) -> float:
     if frame_positions.size() < 2:
         return 0.0
@@ -141,7 +141,7 @@ static func sub_trajectory(
     # TODO: Calculate a more accurate value for this distance when we aren't
     #       saving continuous frame state.
     var distance_from_continuous_frames := \
-            _sum_distance_between_frames(
+            sum_distance_between_frames(
                     frame_continuous_positions_from_steps) if \
             includes_continuous_positions else \
             base_trajectory.distance_from_continuous_frames

@@ -16,7 +16,8 @@ func _init(
         calculator = null,
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
-        movement_params: MovementParams = null) \
+        movement_params: MovementParams = null,
+        trajectory: EdgeTrajectory = null) \
         .(TYPE,
         IS_TIME_BASED,
         SURFACE_TYPE,
@@ -31,7 +32,7 @@ func _init(
         false,
         movement_params,
         _calculate_instructions(start, end),
-        null,
+        trajectory,
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP) -> void:
     pass
 
@@ -39,17 +40,16 @@ func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
-    return Gs.geometry.calculate_manhattan_distance(
-            start.target_point,
-            end.target_point)
+    return trajectory.distance_from_continuous_frames
 
 func _calculate_duration(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         instructions: EdgeInstructions,
         distance: float) -> float:
+    var distance_y := end.target_point.y - start.target_point.y
     return MovementUtils.calculate_time_to_climb(
-            distance,
+            distance_y,
             true,
             movement_params)
 

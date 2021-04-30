@@ -13,8 +13,10 @@ func _init() -> void:
     shape.extents = Vector2(10, 10)
     collider_shape = shape
     collider_rotation = 0.0
-    passing_platform_corner_calc_shape = collider_shape
-    passing_platform_corner_calc_shape_rotation = collider_rotation
+    fall_from_floor_corner_calc_shape = collider_shape
+    fall_from_floor_corner_calc_shape_rotation = collider_rotation
+    fall_from_floor_corner_calc_shape = collider_shape
+    fall_from_floor_corner_calc_shape_rotation = collider_rotation
     
     gravity_fast_fall = Gs.geometry.GRAVITY
     slow_rise_gravity_multiplier = 0.18
