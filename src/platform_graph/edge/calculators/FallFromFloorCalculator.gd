@@ -180,6 +180,13 @@ func _get_all_edges_from_one_side(
                     false,
                     falls_on_left_side)
     
+    # TODO: Remove this. There is some bug makes the walk-to-fall-off portion
+    #       sometimes take way too long otherwise.
+    surface_end_velocity_start.x = \
+            -movement_params.max_horizontal_speed_default if \
+            falls_on_left_side else \
+            movement_params.max_horizontal_speed_default
+    
     var velocity_x_start := surface_end_velocity_start.x
     
     var velocity_x_fall_off: float = \
@@ -326,7 +333,8 @@ static func _prepend_walk_to_fall_off_portion(
     # Round the fall-off time up, so that we actually consider it to start
     # aligned with the first frame in which it is actually clear of the surface
     # edge.
-    time_fall_off = frame_count_before_fall_off * Time.PHYSICS_TIME_STEP_SEC + \
+    time_fall_off = \
+            frame_count_before_fall_off * Time.PHYSICS_TIME_STEP_SEC + \
             Gs.geometry.FLOAT_EPSILON
     
     # Increment instruction times.
@@ -400,7 +408,8 @@ static func _prepend_walk_to_fall_off_portion(
     var acceleration := Vector2(acceleration_x, 0.0)
     
     var current_frame_position := start.target_point
-    var current_frame_velocity := Vector2(velocity_x_start,
+    var current_frame_velocity := Vector2(
+            velocity_x_start,
             PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
     
     for frame_index in frame_count_before_fall_off:
