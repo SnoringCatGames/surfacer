@@ -105,9 +105,9 @@ func calculate_edge(
             position_end,
             collision_params.movement_params)
 
-# FIXME: LEFT OFF HERE: ----------------------------
-# - movement_params.passing_platform_corner_calc_shape
-# - movement_params.passing_platform_corner_calc_shape_rotation
-
 static func _calculate_trajectory() -> void:
+    # FIXME: LEFT OFF HERE: ----------------------------
+    # - Make sure that the inward velocity accounts for the pressing-into-wall velocity as well.
+    # - movement_params.passing_platform_corner_calc_shape
+    # - movement_params.passing_platform_corner_calc_shape_rotation
     pass
