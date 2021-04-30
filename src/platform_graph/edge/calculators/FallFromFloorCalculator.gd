@@ -136,8 +136,8 @@ func _get_all_edges_from_one_side(
             origin_surface,
             edge_point,
             movement_params.collider_half_width_height,
-            true,
-            false)
+            false,
+            true)
     
     ###########################################################################
     # Allow for debug mode to limit the scope of what's calculated.
@@ -159,8 +159,8 @@ func _get_all_edges_from_one_side(
             movement_params.passing_platform_corner_calc_shape,
             movement_params.passing_platform_corner_calc_shape_rotation)
     
-    var position_fall_off_wrapper := \
-            PositionAlongSurfaceFactory.create_position_from_target_point(
+    var position_fall_off_wrapper := PositionAlongSurfaceFactory \
+            .create_position_from_unmodified_target_point(
                     position_fall_off,
                     origin_surface,
                     movement_params.collider_half_width_height)

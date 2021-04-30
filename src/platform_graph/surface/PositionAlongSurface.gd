@@ -40,23 +40,23 @@ func match_surface_target_and_collider(
         surface: Surface,
         target_point: Vector2,
         collider_half_width_height: Vector2,
-        offsets_target_by_half_width_height := false,
-        clips_to_surface_bounds := false) -> void:
+        clips_to_surface_bounds := false,
+        matches_target_to_player_dimensions := true) -> void:
     self.surface = surface
     self.target_point = \
             _clip_and_project_target_point_for_center_of_collider(
                     surface,
                     target_point,
                     collider_half_width_height,
-                    offsets_target_by_half_width_height,
-                    clips_to_surface_bounds)
+                    clips_to_surface_bounds,
+                    matches_target_to_player_dimensions)
     
 func _clip_and_project_target_point_for_center_of_collider(
         surface: Surface,
         target_point: Vector2,
         collider_half_width_height: Vector2,
-        offsets_target_by_half_width_height: bool,
-        clips_to_surface_bounds: bool) -> Vector2:
+        clips_to_surface_bounds: bool,
+        matches_target_to_player_dimensions: bool) -> Vector2:
     var point_on_surface: Vector2 = \
             Gs.geometry.project_point_onto_surface(target_point, surface)
     self.target_projection_onto_surface = point_on_surface
@@ -64,14 +64,20 @@ func _clip_and_project_target_point_for_center_of_collider(
     var is_surface_horizontal = \
             surface.side == SurfaceSide.FLOOR or \
             surface.side == SurfaceSide.CEILING
-    var distance_to_center := \
-            collider_half_width_height.y if \
-            is_surface_horizontal else \
-            collider_half_width_height.x
+    
+    var target_offset_from_surface_distance: float
+    if matches_target_to_player_dimensions:
+        target_offset_from_surface_distance = \
+                collider_half_width_height.y if \
+                is_surface_horizontal else \
+                collider_half_width_height.x
+    else:
+        target_offset_from_surface_distance = \
+                abs(target_point.y - point_on_surface.y) if \
+                is_surface_horizontal else \
+                abs(target_point.x - point_on_surface.x)
     var target_offset_from_surface := \
-            distance_to_center * surface.normal if \
-                    offsets_target_by_half_width_height else \
-                    Vector2.ZERO
+            target_offset_from_surface_distance * surface.normal
     
     if clips_to_surface_bounds:
         return point_on_surface + target_offset_from_surface
