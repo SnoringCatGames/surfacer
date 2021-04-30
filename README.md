@@ -46,17 +46,17 @@ The vast majority of platformers use pretty simple computer-player AI for moveme
 -   Move with a regular bounce or surface-following pattern.
 -   Move horizontally toward the human player, "floating" vertically as needed in order to move around obstacles and platforms.
 
-Most examples of more sophisticated AI pathfinding behavior are usually still pretty limited. One common technique uses machine-learning and is trained by hundreds to thousands of human-generated jumps on an explicit pre-fabricated level. This makes level-generation difficult and is not flexible to dynamic platform creation/movement.
+Most examples of more sophisticated AI pathfinding behavior are still pretty limited. One common technique uses machine-learning and is trained by hundreds to thousands of human-generated jumps on an explicit pre-fabricated level. This makes level-generation difficult and is not flexible to dynamic platform creation/movement.
 
 There are two key reasons why good path-finding AI isn't really used in platformers:
 1.  It's hard to implement right; there is a lot of math involved, and there are a lot of different edge cases to account for.
 2.  Dumb AI is usually plenty effective on its own to create compelling gameplay. The user often doesn't really notice or care how simple the behavior is.
 
-But there are use-cases for which we really benefit from an AI that can accurately immitate the same movement mechanics of the player. One example is if we want to be able to control the player by tapping on locations that they should move through the level toward. Another example is if we want to have a flexible game mode in which a computer player can swap in for a human player depending on how many humans are present.
+But there are use-cases for which we really benefit from an AI that can accurately immitate the same movement mechanics of the player. One example is if we want to be able to control the player by tapping on locations that they should move toward through the level. Another example is if we want to have a flexible game mode in which a computer player can swap in for a human player depending on how many humans are present.
 
 ## Getting set up
 
-Probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel-away), and then adjust it to fit your needs.
+I will not lie, this is a complex framework! Hopefully it's external API isn't _too_ convoluted, but still, probably the easiest way to get set up is to copy the [Squirrel Away example app](https://github.com/snoringcatgames/squirrel-away), and then adjust it to fit your needs.
 
 -   Add the [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library to your `addons/` folder.
     -   This is a framework that provides some general-purpose infrastructure that can be useful for adding a bunch of app boilerplate that you might want for your game.
@@ -66,7 +66,7 @@ Probably the easiest way to get set up is to copy the [Squirrel Away example app
 -   Define `Surfacer` as an AutoLoad (in Project Settings).
     -   It should point to the path `res://addons/surfacer/src/SurfacerConfig.gd`.
     -   It should be the second AutoLoad in the list, just after `Gs` (for Scaffolder).
--   Configure both the Surfacer and Scaffolder frameworks by calling `SurfacerBootstrap.on_app_ready` at the start of your Main Scene.
+-   Configure both the Surfacer and Scaffolder frameworks by calling `SurfacerBootstrap._initialize_framework` at the start of your Main Scene.
 -   Include `*.json` under "Filters to export non-resource files/folders" in your export settings.
 
 ## Platformer AI
@@ -472,7 +472,7 @@ We support a large number of flags and parameters for adjusting various aspects 
 
 ## Tests
 
-_> **NOTE:** Sadly, the tests are not set up to automatically run on presubmit, so some of the tests are severely out-of-date and broken._
+_> **NOTE:** Sadly, the tests are not set up to automatically run on presubmit, so pretty much all of the tests are significently out-of-date and broken._
 
 Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
 

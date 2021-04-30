@@ -99,15 +99,177 @@ func calculate_edge(
                 EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP
         edge_result_metadata.waypoint_validity = \
                 WaypointValidity.WAYPOINT_VALID
+    var trajectory := _calculate_trajectory(
+            collision_params.movement_params,
+            position_start,
+            position_end)
     return ClimbOverWallToFloorEdge.new(
             self,
             position_start,
             position_end,
-            collision_params.movement_params)
+            collision_params.movement_params,
+            trajectory)
 
-static func _calculate_trajectory() -> void:
-    # FIXME: LEFT OFF HERE: ----------------------------
-    # - Make sure that the inward velocity accounts for the pressing-into-wall velocity as well.
-    # - movement_params.passing_platform_corner_calc_shape
-    # - movement_params.passing_platform_corner_calc_shape_rotation
-    pass
+static func _calculate_trajectory(
+        movement_params: MovementParams,
+        start: PositionAlongSurface,
+        end: PositionAlongSurface) -> EdgeTrajectory:
+    var is_left_wall := start.surface.side == SurfaceSide.LEFT_WALL
+    var edge_point := \
+            start.surface.first_point if \
+            is_left_wall else \
+            start.surface.last_point
+    
+    var distance_y := end.target_point.y - start.target_point.y
+    var duration := MovementUtils.calculate_time_to_climb(
+            distance_y,
+            true,
+            movement_params)
+    
+    var frame_count := ceil(duration / Time.PHYSICS_TIME_STEP_SEC)
+    
+    # Insert frame state for the walk-to-fall-off portion of the trajectory.
+    
+    if !movement_params.includes_discrete_frame_state and \
+            !movement_params \
+                    .includes_continuous_frame_positions and \
+            !movement_params.includes_continuous_frame_velocities:
+        return EdgeTrajectory.new(
+                PoolVector2Array(),
+                PoolVector2Array(),
+                [],
+                Gs.geometry.calculate_manhattan_distance(
+                        start.target_point, end.target_point))
+    
+    var frame_discrete_positions_from_test: PoolVector2Array
+    if movement_params.includes_discrete_frame_state:
+        frame_discrete_positions_from_test = PoolVector2Array()
+        frame_discrete_positions_from_test.resize(frame_count)
+    
+    var frame_continuous_positions_from_steps: PoolVector2Array
+    if movement_params.includes_continuous_frame_positions:
+        frame_continuous_positions_from_steps = PoolVector2Array()
+        frame_continuous_positions_from_steps.resize(frame_count)
+    
+    var frame_continuous_velocities_from_steps: PoolVector2Array
+    if movement_params.includes_continuous_frame_velocities:
+        frame_continuous_velocities_from_steps = PoolVector2Array()
+        frame_continuous_velocities_from_steps.resize(frame_count)
+    
+    var velocity := Vector2(
+            PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION,
+            movement_params.climb_up_speed)
+    
+    var current_frame_position := start.target_point
+    
+    for frame_index in frame_count:
+        if movement_params.includes_discrete_frame_state:
+            frame_discrete_positions_from_test[frame_index] = \
+                    current_frame_position
+        if movement_params.includes_continuous_frame_positions:
+            frame_continuous_positions_from_steps[frame_index] = \
+                    current_frame_position
+        if movement_params.includes_continuous_frame_velocities:
+            frame_continuous_velocities_from_steps[frame_index] = \
+                    velocity
+        
+        var frame_position_y := \
+                current_frame_position.y + \
+                velocity.y * Time.PHYSICS_TIME_STEP_SEC
+        var distance_past_edge := start.target_point.y - frame_position_y
+        var frame_position_x := \
+                edge_point.x + \
+                _calculate_displacement_x_for_vertical_distance_past_edge(
+                        distance_past_edge,
+                        is_left_wall,
+                        movement_params.climb_over_wall_corner_calc_shape,
+                        movement_params \
+                                .climb_over_wall_corner_calc_shape_rotation)
+        
+        current_frame_position.x = frame_position_x
+        current_frame_position.y = frame_position_y
+    
+    
+    var distance_from_continuous_frames := EdgeTrajectoryUtils \
+            .sum_distance_between_frames(frame_continuous_positions_from_steps)
+    var trajectory := EdgeTrajectory.new(
+            frame_continuous_positions_from_steps,
+            frame_continuous_velocities_from_steps,
+            [],
+            distance_from_continuous_frames)
+    trajectory.frame_discrete_positions_from_test = \
+            frame_discrete_positions_from_test
+    return trajectory
+
+static func _calculate_displacement_x_for_vertical_distance_past_edge( \
+        distance_past_edge: float,
+        is_left_wall: bool,
+        collider_shape: Shape2D,
+        collider_rotation: float) -> float:
+    var is_rotated_90_degrees = \
+            abs(fmod(collider_rotation + PI * 2, PI) - PI / 2) < \
+            Gs.geometry.FLOAT_EPSILON
+    
+    if collider_shape is CircleShape2D:
+        if distance_past_edge >= collider_shape.radius:
+            return 0.0
+        else:
+            return _calculate_circular_displacement_x_for_vertical_distance_past_edge(
+                    distance_past_edge,
+                    collider_shape.radius,
+                    is_left_wall)
+        
+    elif collider_shape is CapsuleShape2D:
+        if is_rotated_90_degrees:
+            var half_height_offset: float = \
+                    collider_shape.height / 2.0 if \
+                    is_left_wall else \
+                    -collider_shape.height / 2.0
+            return _calculate_circular_displacement_x_for_vertical_distance_past_edge(
+                    distance_past_edge,
+                    collider_shape.radius,
+                    is_left_wall) + half_height_offset
+        else:
+            distance_past_edge -= collider_shape.height / 2.0
+            if distance_past_edge <= 0:
+                # Treat the same as a rectangle.
+                return collider_shape.radius if \
+                        is_left_wall else \
+                        -collider_shape.radius
+            else:
+                # Treat the same as an offset circle.
+                return _calculate_circular_displacement_x_for_vertical_distance_past_edge(
+                        distance_past_edge,
+                        collider_shape.radius,
+                        is_left_wall)
+        
+    elif collider_shape is RectangleShape2D:
+        if is_rotated_90_degrees:
+            return collider_shape.extents.y if \
+                    is_left_wall else \
+                    -collider_shape.extents.y
+        else:
+            return collider_shape.extents.x if \
+                    is_left_wall else \
+                    -collider_shape.extents.x
+        
+    else:
+        Gs.logger.error((
+                "Invalid Shape2D provided for " +
+                "_calculate_displacement_x_for_vertical_distance_past_edge: %s. " +
+                "The supported shapes are: CircleShape2D, CapsuleShape2D, " +
+                "RectangleShape2D.") % \
+                collider_shape)
+        return INF
+
+static func _calculate_circular_displacement_x_for_vertical_distance_past_edge(
+        distance_past_edge: float,
+        radius: float,
+        is_left_wall: bool) -> float:
+    var distance_x := \
+            0.0 if \
+            distance_past_edge >= radius else \
+            sqrt(radius * radius - distance_past_edge * distance_past_edge)
+    return distance_x if \
+            is_left_wall else \
+            -distance_x

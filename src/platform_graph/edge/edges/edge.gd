@@ -48,7 +48,7 @@ func _init(
         movement_params: MovementParams,
         instructions: EdgeInstructions,
         trajectory: EdgeTrajectory,
-        edge_calc_result_type: int \
+        edge_calc_result_type: int
         ).(
         edge_type,
         edge_calc_result_type,
