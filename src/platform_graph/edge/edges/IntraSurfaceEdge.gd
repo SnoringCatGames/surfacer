@@ -113,6 +113,87 @@ func _calculate_duration(
             end,
             distance)
 
+func get_position_at_time(edge_time: float) -> Vector2:
+    if edge_time > duration:
+        return Vector2.INF
+    var start := get_start()
+    var displacement := get_end() - start
+    var surface := get_start_surface()
+    match surface.side:
+        SurfaceSide.FLOOR, \
+        SurfaceSide.CEILING:
+            var acceleration_x := \
+                    movement_params.walk_acceleration if \
+                    displacement.x > 0 else \
+                    -movement_params.walk_acceleration
+            var displacement_x := \
+                    MovementUtils.calculate_displacement_for_duration(
+                            edge_time,
+                            velocity_start.x,
+                            acceleration_x,
+                            movement_params.max_horizontal_speed_default)
+            var position_x := start.x + displacement_x
+            return Gs.geometry.project_point_onto_surface_with_offset(
+                    Vector2(position_x, 0.0),
+                    surface,
+                    movement_params.collider_half_width_height)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            var velocity_y := \
+                    movement_params.climb_up_speed if \
+                    displacement.y < 0.0 else \
+                    movement_params.climb_down_speed
+            var position_y := start.y + velocity_y * edge_time
+            return Gs.geometry.project_point_onto_surface_with_offset(
+                    Vector2(0.0, position_y),
+                    surface,
+                    movement_params.collider_half_width_height)
+        _:
+            Gs.logger.error()
+            return Vector2.INF
+
+func get_velocity_at_time(edge_time: float) -> Vector2:
+    if edge_time > duration:
+        return Vector2.INF
+    var start := get_start()
+    var displacement := get_end() - start
+    var surface := get_start_surface()
+    match surface.side:
+        SurfaceSide.FLOOR, \
+        SurfaceSide.CEILING:
+            var acceleration_x := \
+                    movement_params.walk_acceleration if \
+                    displacement.x > 0 else \
+                    -movement_params.walk_acceleration
+            var velocity_x := velocity_start.x + acceleration_x * edge_time
+            velocity_x = clamp(
+                    velocity_x,
+                    -movement_params.max_horizontal_speed_default,
+                    movement_params.max_horizontal_speed_default)
+            var velocity_y := \
+                    PlayerActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION if \
+                    surface.side == SurfaceSide.FLOOR else \
+                    -PlayerActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+            return Vector2(velocity_x, velocity_y)
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            var velocity_x := \
+                    -PlayerActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
+                    surface.side == SurfaceSide.LEFT_WALL else \
+                    PlayerActionHandler \
+                            .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+            var velocity_y := \
+                    movement_params.climb_up_speed if \
+                    displacement.y < 0.0 else \
+                    movement_params.climb_down_speed
+            return Vector2(velocity_x, velocity_y)
+        _:
+            Gs.logger.error()
+            return Vector2.INF
+
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
