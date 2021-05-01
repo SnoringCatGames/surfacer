@@ -148,6 +148,18 @@ func _calculate_duration(
     Gs.logger.error("Abstract Edge._calculate_duration is not implemented")
     return INF
 
+func get_position_at_time(edge_time: float) -> Vector2:
+    var index := floor(edge_time / Time.PHYSICS_TIME_STEP_SEC)
+    if index >= trajectory.frame_continuous_positions_from_steps.size():
+        return Vector2.INF
+    return trajectory.frame_continuous_positions_from_steps[index]
+
+func get_velocity_at_time(edge_time: float) -> Vector2:
+    var index := floor(edge_time / Time.PHYSICS_TIME_STEP_SEC)
+    if index >= trajectory.frame_continuous_velocities_from_steps.size():
+        return Vector2.INF
+    return trajectory.frame_continuous_velocities_from_steps[index]
+
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
@@ -288,10 +300,6 @@ func _load_edge_state_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_attempt_state_from_json_object(json_object, context)
-    is_time_based = json_object.tb
-    surface_type = json_object.st
-    enters_air = json_object.ea
-    includes_air_trajectory = json_object.ia
     movement_params = Surfacer.player_params[json_object.pn].movement_params
     is_optimized_for_path = json_object.io
     instructions = EdgeInstructions.new()
@@ -305,10 +313,6 @@ func _load_edge_state_from_json_object(
 
 func _edge_state_to_json_object(json_object: Dictionary) -> void:
     _edge_attempt_state_to_json_object(json_object)
-    json_object.tb = is_time_based
-    json_object.st = surface_type
-    json_object.ea = enters_air
-    json_object.ia = includes_air_trajectory
     json_object.pn = movement_params.name
     json_object.io = is_optimized_for_path
     json_object.in = instructions.to_json_object()

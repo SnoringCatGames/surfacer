@@ -88,13 +88,7 @@ static func draw_edge(
         base_color = Surfacer.ann_defaults \
                 .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS.get_color()
     
-    if edge is AirToAirEdge or \
-            edge is AirToSurfaceEdge or \
-            edge is FallFromWallEdge or \
-            edge is FallFromFloorEdge or \
-            edge is ClimbOverWallToFloorEdge or \
-            edge is JumpInterSurfaceEdge or \
-            edge is JumpFromSurfaceToAirEdge:
+    if edge.includes_air_trajectory:
         _draw_edge_from_instructions_positions(
                 canvas,
                 edge,
@@ -104,9 +98,7 @@ static func draw_edge(
                 includes_instruction_indicators,
                 includes_continuous_positions,
                 includes_discrete_positions)
-    elif edge is ClimbDownWallToFloorEdge or \
-            edge is IntraSurfaceEdge or \
-            edge is WalkToAscendWallFromFloorEdge:
+    else:
         _draw_edge_from_end_points(
                 canvas,
                 edge,
@@ -114,8 +106,6 @@ static func draw_edge(
                 base_color,
                 includes_waypoints,
                 includes_instruction_indicators)
-    else:
-        Gs.logger.error("Unexpected Edge subclass: %s" % edge)
 
 static func _draw_edge_from_end_points(
         canvas: CanvasItem,

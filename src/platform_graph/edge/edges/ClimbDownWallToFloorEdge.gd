@@ -53,6 +53,28 @@ func _calculate_duration(
             false,
             movement_params)
 
+func get_position_at_time(edge_time: float) -> Vector2:
+    if edge_time > duration:
+        return Vector2.INF
+    var start := get_start()
+    var surface := get_start_surface()
+    var position_y := start.y + movement_params.climb_down_speed * edge_time
+    return Gs.geometry.project_point_onto_surface_with_offset(
+            Vector2(0.0, position_y),
+            surface,
+            movement_params.collider_half_width_height)
+
+func get_velocity_at_time(edge_time: float) -> Vector2:
+    if edge_time > duration:
+        return Vector2.INF
+    var velocity_x := \
+            -PlayerActionHandler \
+                    .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION if \
+            get_start_surface().side == SurfaceSide.LEFT_WALL else \
+            PlayerActionHandler \
+                    .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+    return Vector2(velocity_x, movement_params.climb_down_speed)
+
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
