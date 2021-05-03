@@ -73,6 +73,9 @@ func increment() -> void:
             null
     is_on_last_instruction = next_instruction == null
 
+func get_elapsed_time() -> float:
+    return Gs.time.elapsed_play_time_actual_sec - start_time
+
 func _get_start_time_for_next_instruction() -> float:
     assert(!is_finished)
     

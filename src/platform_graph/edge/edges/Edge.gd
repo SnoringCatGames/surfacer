@@ -90,6 +90,10 @@ func update_navigation_state(
         playback,
         just_started_new_edge: bool,
         is_starting_navigation_retry: bool) -> void:
+    _update_position_along_surface(
+            navigation_state.expected_position_along_surface,
+            playback.get_elapsed_time())
+    
     # When retrying navigation, we need to ignore whatever surface state in the 
     # current frame led to the previous navigation being interrupted.
     if is_starting_navigation_retry:
@@ -159,6 +163,16 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
     if index >= trajectory.frame_continuous_velocities_from_steps.size():
         return Vector2.INF
     return trajectory.frame_continuous_velocities_from_steps[index]
+
+func _update_position_along_surface(
+        position: PositionAlongSurface,
+        edge_time: float) -> void:
+    position.surface = get_start_surface()
+    position.target_point = get_position_at_time(edge_time)
+    if position.surface != null:
+        position.update_target_projection_onto_surface()
+    else:
+        position.target_projection_onto_surface = Vector2.INF
 
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,

@@ -101,6 +101,14 @@ func _ready() -> void:
     assert(abs(transform.get_rotation() - \
             movement_params.collider_rotation) < Gs.geometry.FLOAT_EPSILON)
     
+    if movement_params.bypasses_runtime_physics:
+        set_collision_mask_bit(
+                Surfacer.WALLS_AND_FLOORS_COLLISION_MASK_BIT, false)
+        set_collision_mask_bit(
+                Surfacer.FALL_THROUGH_FLOORS_COLLISION_MASK_BIT, false)
+        set_collision_mask_bit(
+                Surfacer.WALK_THROUGH_WALLS_COLLISION_MASK_BIT, false)
+    
     # Ensure we use the actual Shape2D reference that is used by Godot's
     # collision system.
     movement_params.collider_shape = collider_shape
@@ -249,11 +257,11 @@ func _physics_process(delta_sec: float) -> void:
                 side_str,
             ])
     
-    if navigator:
-        _update_navigator(delta_sec)
+    _update_navigator(delta_sec)
     
     actions.delta_sec = delta_sec
-    actions.log_new_presses_and_releases(self, Gs.time.elapsed_play_time_actual_sec)
+    actions.log_new_presses_and_releases(
+            self, Gs.time.elapsed_play_time_actual_sec)
     
     # Flip the horizontal direction of the animation according to which way the
     # player is facing.
@@ -264,23 +272,24 @@ func _physics_process(delta_sec: float) -> void:
     
     _process_actions()
     _process_animation()
-    _process_sfx()
+    _process_sounds()
     _update_collision_mask()
     
-    # We don't need to multiply velocity by delta because MoveAndSlide already
-    # takes delta time into account.
-    # TODO: Use the remaining pre-collision movement that move_and_slide
-    #       returns. This might be needed in order to move along slopes?
-    move_and_slide(
-            velocity,
-            Gs.geometry.UP,
-            false,
-            4,
-            Gs.geometry.FLOOR_MAX_ANGLE)
+    if !movement_params.bypasses_runtime_physics:
+        # We don't need to multiply velocity by delta because MoveAndSlide
+        # already takes delta time into account.
+        # TODO: Use the remaining pre-collision movement that move_and_slide
+        #       returns. This might be needed in order to move along slopes?
+        move_and_slide(
+                velocity,
+                Gs.geometry.UP,
+                false,
+                4,
+                Gs.geometry.FLOOR_MAX_ANGLE)
+        surface_state.collision_count = get_slide_count()
     
     surface_state.previous_center_position = surface_state.center_position
     surface_state.center_position = self.position
-    surface_state.collision_count = get_slide_count()
 
 func _update_navigator(delta_sec: float) -> void:
     navigator.update()
@@ -345,8 +354,14 @@ func _process_actions() -> void:
         current_action_type = SurfaceType.AIR
     
     for action_handler in action_handlers:
-        if action_handler.type == current_action_type or \
-                action_handler.type == SurfaceType.OTHER:
+        var is_action_relevant_for_surface: bool = \
+                action_handler.type == current_action_type or \
+                action_handler.type == SurfaceType.OTHER
+        var is_action_relevant_for_physics_mode: bool = \
+                !movement_params.bypasses_runtime_physics or \
+                !action_handler.uses_runtime_physics
+        if is_action_relevant_for_surface and \
+                is_action_relevant_for_physics_mode:
             _previous_actions_this_frame[action_handler.name] = \
                     action_handler.process(self)
 
@@ -375,7 +390,7 @@ func _process_animation() -> void:
         _:
             Gs.logger.error()
 
-func _process_sfx() -> void:
+func _process_sounds() -> void:
     pass
 
 func processed_action(name: String) -> bool:
@@ -402,16 +417,35 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     else:
         surface_state.horizontal_acceleration_sign = 0
     
-    # Note: These might give false negatives when colliding with a corner.
-    #       AFAICT, Godot will simply pick one of the corner's adjacent
-    #       segments to base the collision normal off of, so the other segment
-    #       will be ignored (and the other segment could correspond to floor or
-    #       ceiling).
-    surface_state.is_touching_floor = is_on_floor()
-    surface_state.is_touching_ceiling = is_on_ceiling()
-    surface_state.is_touching_wall = is_on_wall()
+    if movement_params.bypasses_runtime_physics:
+        var expected_surface := navigator.navigation_state \
+                .expected_position_along_surface.surface
+        surface_state.is_touching_floor = \
+                expected_surface != null and \
+                expected_surface.side == SurfaceSide.FLOOR
+        surface_state.is_touching_ceiling = \
+                expected_surface != null and \
+                expected_surface.side == SurfaceSide.CEILING
+        surface_state.is_touching_wall = \
+                expected_surface != null and \
+                (expected_surface.side == SurfaceSide.LEFT_WALL or \
+                expected_surface.side == SurfaceSide.RIGHT_WALL)
+        surface_state.which_wall = \
+                SurfaceSide.NONE if \
+                !surface_state.is_touching_wall else \
+                expected_surface.side
+    else:
+        # Note: These might give false negatives when colliding with a corner.
+        #       AFAICT, Godot will simply pick one of the corner's adjacent
+        #       segments to base the collision normal off of, so the other
+        #       segment will be ignored (and the other segment could correspond
+        #       to floor or ceiling).
+        surface_state.is_touching_floor = is_on_floor()
+        surface_state.is_touching_ceiling = is_on_ceiling()
+        surface_state.is_touching_wall = is_on_wall()
+        surface_state.which_wall = \
+                Gs.utils.get_which_wall_collided_for_body(self)
     
-    surface_state.which_wall = Gs.utils.get_which_wall_collided_for_body(self)
     surface_state.is_touching_left_wall = \
             surface_state.which_wall == SurfaceSide.LEFT_WALL
     surface_state.is_touching_right_wall = \
@@ -579,28 +613,13 @@ func _update_which_side_is_grabbed(
 
 func _update_which_surface_is_grabbed(
         preserves_just_changed_state := false) -> void:
-    var collision := _get_attached_surface_collision(
-            self,
-            surface_state)
-    assert((collision != null) == surface_state.is_grabbing_a_surface)
-    
     if surface_state.is_grabbing_a_surface:
-        var next_grab_position := collision.position
-        surface_state.just_changed_grab_position = \
-                (preserves_just_changed_state and \
-                        surface_state.just_changed_grab_position) or \
-                (surface_state.just_left_air or \
-                        next_grab_position != surface_state.grab_position)
-        surface_state.grab_position = next_grab_position
-        
-        var next_grabbed_tile_map := collision.collider
-        surface_state.just_changed_tile_map = \
-                (preserves_just_changed_state and \
-                        surface_state.just_changed_tile_map) or \
-                (surface_state.just_left_air or \
-                        next_grabbed_tile_map != \
-                                surface_state.grabbed_tile_map)
-        surface_state.grabbed_tile_map = next_grabbed_tile_map
+        if movement_params.bypasses_runtime_physics:
+            _update_grab_state_from_expected_navigation(
+                    preserves_just_changed_state)
+        else:
+            _update_grab_state_from_collision(
+                    preserves_just_changed_state)
         
         Gs.geometry.get_collision_tile_map_coord(
                 surface_state.collision_tile_map_coord_result,
@@ -678,7 +697,7 @@ func _update_which_surface_is_grabbed(
         surface_state.center_position_along_surface.match_current_grab(
                 surface_state.grabbed_surface,
                 surface_state.center_position)
-    
+        
     else:
         if surface_state.just_entered_air:
             surface_state.just_changed_grab_position = true
@@ -696,11 +715,62 @@ func _update_which_surface_is_grabbed(
         surface_state.grabbed_surface = null
         surface_state.center_position_along_surface.reset()
 
+func _update_grab_state_from_expected_navigation(
+        preserves_just_changed_state: bool) -> void:
+    var position_along_surface := \
+            navigator.navigation_state.expected_position_along_surface
+    
+    var next_grab_position := \
+            position_along_surface.target_projection_onto_surface
+    surface_state.just_changed_grab_position = \
+            (preserves_just_changed_state and \
+                    surface_state.just_changed_grab_position) or \
+            (surface_state.just_left_air or \
+                    next_grab_position != surface_state.grab_position)
+    surface_state.grab_position = next_grab_position
+    
+    var next_grabbed_tile_map := position_along_surface.surface.tile_map
+    surface_state.just_changed_tile_map = \
+            (preserves_just_changed_state and \
+                    surface_state.just_changed_tile_map) or \
+            (surface_state.just_left_air or \
+                    next_grabbed_tile_map != \
+                            surface_state.grabbed_tile_map)
+    surface_state.grabbed_tile_map = next_grabbed_tile_map
+
+func _update_grab_state_from_collision(
+        preserves_just_changed_state: bool) -> void:
+    var collision := _get_attached_surface_collision(
+            self,
+            surface_state)
+    assert((collision != null) == surface_state.is_grabbing_a_surface)
+    
+    var next_grab_position := collision.position
+    surface_state.just_changed_grab_position = \
+            (preserves_just_changed_state and \
+                    surface_state.just_changed_grab_position) or \
+            (surface_state.just_left_air or \
+                    next_grab_position != surface_state.grab_position)
+    surface_state.grab_position = next_grab_position
+    
+    var next_grabbed_tile_map := collision.collider
+    surface_state.just_changed_tile_map = \
+            (preserves_just_changed_state and \
+                    surface_state.just_changed_tile_map) or \
+            (surface_state.just_left_air or \
+                    next_grabbed_tile_map != \
+                            surface_state.grabbed_tile_map)
+    surface_state.grabbed_tile_map = next_grabbed_tile_map
+
 # Update whether or not we should currently consider collisions with
 # fall-through floors and walk-through walls.
 func _update_collision_mask() -> void:
-    set_collision_mask_bit(1, !surface_state.is_falling_through_floors)
-    set_collision_mask_bit(2, surface_state.is_grabbing_walk_through_walls)
+    set_collision_mask_bit(
+            Surfacer.FALL_THROUGH_FLOORS_COLLISION_MASK_BIT,
+            !surface_state.is_falling_through_floors)
+    set_collision_mask_bit(
+            Surfacer.WALK_THROUGH_WALLS_COLLISION_MASK_BIT,
+            surface_state.is_grabbing_walk_through_walls)
 
 static func _get_attached_surface_collision(
         body: KinematicBody2D,

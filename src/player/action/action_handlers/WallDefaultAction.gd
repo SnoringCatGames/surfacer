@@ -3,11 +3,13 @@ extends PlayerActionHandler
 
 const NAME := "WallDefaultAction"
 const TYPE := SurfaceType.WALL
+const USES_RUNTIME_PHYSICS := true
 const PRIORITY := 110
 
 func _init().(
         NAME,
         TYPE,
+        USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass
 
