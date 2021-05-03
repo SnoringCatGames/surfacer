@@ -157,13 +157,10 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
             # TODO: This case shouldn't be needed; in theory, we should have
             #       been able to find a valid land trajectory above.
             
-            var elapsed_playback_time := \
-                    Gs.time.elapsed_play_time_actual_sec - \
-                    current_playback.start_time
             air_to_surface_edge = air_to_surface_calculator \
                     .create_edge_from_part_of_other_edge(
                             current_edge,
-                            elapsed_playback_time,
+                            current_playback.get_elapsed_time(),
                             player)
         
         if air_to_surface_edge != null:

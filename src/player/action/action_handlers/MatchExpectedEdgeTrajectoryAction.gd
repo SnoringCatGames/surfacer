@@ -3,11 +3,13 @@ extends PlayerActionHandler
 
 const NAME := "MatchExpectedEdgeTrajectoryAction"
 const TYPE := SurfaceType.OTHER
+const USES_RUNTIME_PHYSICS := false
 const PRIORITY := 10010
 
 func _init().(
         NAME,
         TYPE,
+        USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass
 
@@ -15,8 +17,7 @@ func process(player: Player) -> bool:
     var current_edge := player.navigator.current_edge
     if current_edge != null:
         var playback_elapsed_time: float = \
-                Gs.time.elapsed_play_time_actual_sec - \
-                player.navigator.current_playback.start_time
+                player.navigator.current_playback.get_elapsed_time()
         
         var synced_positions := false
         if player.movement_params.syncs_player_position_to_edge_trajectory:

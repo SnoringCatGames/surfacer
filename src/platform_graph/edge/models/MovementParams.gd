@@ -70,6 +70,11 @@ var syncs_player_velocity_to_edge_trajectory := false
 var includes_discrete_frame_state := true
 var includes_continuous_frame_positions := true
 var includes_continuous_frame_velocities := true
+# If true, then the player position will be updated according to pre-calculated
+# edge trajectories, and Godot's physics and collision engine will not be used
+# to update player state. This also means that the user will not be able to
+# control movement with standard move and jump key-press actions.
+var bypasses_runtime_physics := false
 
 var retries_navigation_when_interrupted := true
 var min_intra_surface_distance_to_optimize_jump_for := 16.0

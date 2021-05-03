@@ -146,6 +146,8 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
             movement_params.includes_continuous_frame_positions)
     assert(!movement_params.syncs_player_velocity_to_edge_trajectory or \
             movement_params.includes_continuous_frame_velocities)
+    assert(!movement_params.bypasses_runtime_physics or \
+            movement_params.syncs_player_position_to_edge_trajectory)
 
 class ActionHandlersComparator:
     static func sort(

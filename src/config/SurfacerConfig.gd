@@ -1,6 +1,10 @@
 class_name SurfacerConfig
 extends Node
 
+const WALLS_AND_FLOORS_COLLISION_MASK_BIT := 0
+const FALL_THROUGH_FLOORS_COLLISION_MASK_BIT := 1
+const WALK_THROUGH_WALLS_COLLISION_MASK_BIT := 2
+
 # --- Manifest additions ---
 
 var _must_restart_level_to_change_settings := true

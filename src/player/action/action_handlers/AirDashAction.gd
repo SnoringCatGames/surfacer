@@ -3,11 +3,13 @@ extends PlayerActionHandler
 
 const NAME := "AirDashAction"
 const TYPE := SurfaceType.AIR
+const USES_RUNTIME_PHYSICS := true
 const PRIORITY := 330
 
 func _init().(
         NAME,
         TYPE,
+        USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass
 

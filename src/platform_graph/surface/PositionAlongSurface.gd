@@ -50,16 +50,18 @@ func match_surface_target_and_collider(
                     collider_half_width_height,
                     clips_to_surface_bounds,
                     matches_target_to_player_dimensions)
-    
+
+func update_target_projection_onto_surface() -> void:
+    self.target_projection_onto_surface = \
+            Gs.geometry.project_point_onto_surface(target_point, surface)
+
 func _clip_and_project_target_point_for_center_of_collider(
         surface: Surface,
         target_point: Vector2,
         collider_half_width_height: Vector2,
         clips_to_surface_bounds: bool,
         matches_target_to_player_dimensions: bool) -> Vector2:
-    var point_on_surface: Vector2 = \
-            Gs.geometry.project_point_onto_surface(target_point, surface)
-    self.target_projection_onto_surface = point_on_surface
+    update_target_projection_onto_surface()
     
     var is_surface_horizontal = \
             surface.side == SurfaceSide.FLOOR or \
@@ -73,20 +75,24 @@ func _clip_and_project_target_point_for_center_of_collider(
                 collider_half_width_height.x
     else:
         target_offset_from_surface_distance = \
-                abs(target_point.y - point_on_surface.y) if \
+                abs(target_point.y - target_projection_onto_surface.y) if \
                 is_surface_horizontal else \
-                abs(target_point.x - point_on_surface.x)
+                abs(target_point.x - target_projection_onto_surface.x)
     var target_offset_from_surface := \
             target_offset_from_surface_distance * surface.normal
     
     if clips_to_surface_bounds:
-        return point_on_surface + target_offset_from_surface
+        return target_projection_onto_surface + target_offset_from_surface
     else:
         if is_surface_horizontal:
-            return Vector2(target_point.x, point_on_surface.y) + \
+            return Vector2(
+                        target_point.x,
+                        target_projection_onto_surface.y) + \
                     target_offset_from_surface
         else:
-            return Vector2(point_on_surface.x, target_point.y) + \
+            return Vector2(
+                        target_projection_onto_surface.x, 
+                        target_point.y) + \
                     target_offset_from_surface
 
 func to_string() -> String:
