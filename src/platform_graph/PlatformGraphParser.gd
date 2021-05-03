@@ -58,7 +58,7 @@ func _record_tile_maps() -> void:
             tile_map_ids[tile_map.id] = true
 
 func _create_fake_players_for_collision_calculations() -> void:
-    for player_name in Surfacer.player_params:
+    for player_name in _get_player_names():
         var movement_params: MovementParams = \
                 Surfacer.player_params[player_name].movement_params
         var fake_player: Player = Gs.utils.add_scene(
@@ -119,7 +119,7 @@ func _on_graphs_parsed() -> void:
     emit_signal("parse_finished")
 
 func _calculate_next_platform_graph(player_index: int) -> void:
-    var player_names: Array = Surfacer.player_params.keys()
+    var player_names: Array = _get_player_names()
     var player_name: String = player_names[player_index]
     var is_last_player := player_index == player_names.size() - 1
     
@@ -160,7 +160,7 @@ func _on_graph_calculation_progress(
     emit_signal(
             "calculation_progress",
             player_index,
-            Surfacer.player_params.size(),
+            _get_player_names().size(),
             origin_surface_index,
             surface_count)
 
@@ -240,7 +240,7 @@ func _validate_tile_maps(json_object: Dictionary) -> void:
 
 func _validate_players(json_object: Dictionary) -> void:
     var expected_name_set := {}
-    for player_name in Surfacer.player_params:
+    for player_name in _get_player_names():
         expected_name_set[player_name] = true
     
     for name in json_object.player_names:
@@ -294,7 +294,7 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
 
 func _validate_platform_graphs(json_object: Dictionary) -> void:
     var expected_name_set := {}
-    for player_name in Surfacer.player_params:
+    for player_name in _get_player_names():
         expected_name_set[player_name] = true
     
     for graph_json_object in json_object.platform_graphs:
@@ -339,7 +339,7 @@ func _get_surfaces_tile_map_ids() -> Array:
     return result
 
 func _get_player_names() -> Array:
-    return Surfacer.player_params.keys()
+    return Gs.level_config.get_level_config(level_id).player_names
 
 func _serialize_platform_graphs() -> Array:
     var result := []
