@@ -180,13 +180,6 @@ func _get_all_edges_from_one_side(
                     false,
                     falls_on_left_side)
     
-    # TODO: Remove this. There is some bug makes the walk-to-fall-off portion
-    #       sometimes take way too long otherwise.
-    surface_end_velocity_start.x = \
-            -movement_params.max_horizontal_speed_default if \
-            falls_on_left_side else \
-            movement_params.max_horizontal_speed_default
-    
     var velocity_x_start := surface_end_velocity_start.x
     
     var velocity_x_fall_off: float = \
