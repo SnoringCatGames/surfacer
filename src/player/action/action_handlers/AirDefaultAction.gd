@@ -40,7 +40,7 @@ func process(player: Player) -> bool:
     # Hit ceiling.
     if player.surface_state.is_touching_ceiling:
         player.is_rising_from_jump = false
-        player.velocity.y = PlayerActionHandler \
-                .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+        player.velocity.y = \
+                PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
     
     return true

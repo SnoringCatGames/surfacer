@@ -17,7 +17,8 @@ func process(player: Player) -> bool:
         var friction_offset: float = \
                 Gs.utils.get_floor_friction_multiplier(player) * \
                 player.movement_params.friction_coefficient * \
-                player.movement_params.gravity_fast_fall
+                player.movement_params.gravity_fast_fall * \
+                player.actions.delta_sec
         friction_offset = clamp(friction_offset, 0, abs(player.velocity.x))
         player.velocity.x += -sign(player.velocity.x) * friction_offset
         

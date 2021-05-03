@@ -16,7 +16,8 @@ func process(player: Player) -> bool:
             player.surface_state.is_pressing_away_from_wall:
         player.surface_state.is_grabbing_wall = false
         # Cancel any velocity toward the wall.
-        player.velocity.x = -player.surface_state.toward_wall_sign * \
+        player.velocity.x = \
+                -player.surface_state.toward_wall_sign * \
                 player.movement_params.wall_fall_horizontal_boost
         return true
     else:
