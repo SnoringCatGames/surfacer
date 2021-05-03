@@ -140,8 +140,8 @@ func _create_annotator(annotator_type: int) -> void:
         AnnotatorType.SURFACES:
             if Gs.level != null and \
                     Surfacer.graph_parser.surface_parser != null:
-                surfaces_annotator = \
-                        SurfacesAnnotator.new(Surfacer.graph_parser.surface_parser)
+                surfaces_annotator = SurfacesAnnotator.new( \
+                        Surfacer.graph_parser.surface_parser)
                 annotation_layer.add_child(surfaces_annotator)
         AnnotatorType.GRID_INDICES:
             if Gs.level != null and \
