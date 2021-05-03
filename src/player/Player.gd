@@ -184,7 +184,7 @@ func _check_for_initialization_complete() -> void:
 func _set_camera() -> void:
     var camera := Camera2D.new()
     camera.smoothing_enabled = true
-    camera.smoothing_speed = 10.0
+    camera.smoothing_speed = Gs.camera_smoothing_speed
     add_child(camera)
     # Register the current camera, so it's globally accessible.
     Gs.camera_controller.set_current_camera(camera)
