@@ -22,8 +22,9 @@ var surface_parser: SurfaceParser
 # Dictionary<String, PlatformGraph>
 var platform_graphs: Dictionary
 var is_loaded_from_file := false
+var is_parse_finished := false
 
-func _init() -> void:
+func _enter_tree() -> void:
     Surfacer.graph_parser = self
 
 func _exit_tree() -> void:
@@ -112,6 +113,8 @@ func _on_graphs_parsed() -> void:
                     "calculation_finished",
                     self,
                     "_on_graph_calculation_finished")
+    
+    is_parse_finished = true
     
     emit_signal("parse_finished")
 

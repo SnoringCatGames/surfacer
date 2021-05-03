@@ -19,8 +19,6 @@ func _init() -> void:
 func start() -> void:
     .start()
     
-    graph_parser.level_id = _id
-    
     if Surfacer.is_inspector_enabled:
         inspector_panel = Gs.utils.add_scene(
                 Gs.canvas_layers.layers.hud,
