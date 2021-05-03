@@ -158,7 +158,8 @@ func _on_graph_parse_progress(
             Surfacer.precompute_platform_graph_for_levels.size() * \
             100.0
     
-    var player_name: String = Surfacer.player_params.keys()[player_index]
+    var player_name: String = Gs.level_config.get_level_config(level_id) \
+            .player_names[player_index]
     var label_1 := "Level %s (%s of %s)" % [
         Surfacer.precompute_platform_graph_for_levels[ \
                 precompute_level_index],
