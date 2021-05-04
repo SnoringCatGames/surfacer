@@ -56,6 +56,7 @@ func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
-    return Edge.check_just_landed_on_expected_surface(
+    return check_just_landed_on_expected_surface(
             surface_state,
-            self.get_end_surface())
+            self.get_end_surface(),
+            playback)

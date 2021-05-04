@@ -61,7 +61,8 @@ func _clip_and_project_target_point_for_center_of_collider(
         collider_half_width_height: Vector2,
         clips_to_surface_bounds: bool,
         matches_target_to_player_dimensions: bool) -> Vector2:
-    update_target_projection_onto_surface()
+    self.target_projection_onto_surface = \
+            Gs.geometry.project_point_onto_surface(target_point, surface)
     
     var is_surface_horizontal = \
             surface.side == SurfaceSide.FLOOR or \

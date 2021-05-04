@@ -102,8 +102,11 @@ func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
-    return surface_state.just_grabbed_left_wall or \
-            surface_state.just_grabbed_right_wall
+    if movement_params.bypasses_runtime_physics:
+        return playback.get_elapsed_time() >= duration
+    else:
+        return surface_state.just_grabbed_left_wall or \
+                surface_state.just_grabbed_right_wall
 
 static func _calculate_instructions(
         start: PositionAlongSurface,

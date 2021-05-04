@@ -57,7 +57,10 @@ func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
-    return surface_state.just_grabbed_floor
+    if movement_params.bypasses_runtime_physics:
+        return playback.get_elapsed_time() >= duration
+    else:
+        return surface_state.just_grabbed_floor
 
 func _get_weight_multiplier() -> float:
     return movement_params.walking_edge_weight_multiplier

@@ -54,4 +54,7 @@ func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
-    return playback.is_finished
+    if movement_params.bypasses_runtime_physics:
+        return playback.get_elapsed_time() >= duration
+    else:
+        return playback.is_finished

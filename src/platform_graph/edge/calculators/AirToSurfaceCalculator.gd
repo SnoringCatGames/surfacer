@@ -120,10 +120,12 @@ func find_a_landing_trajectory(
                 false,
                 possible_landing_surfaces_from_point,
                 true)
-        if inter_surface_edges_results.empty() or \
-                inter_surface_edges_results[0].edge_calc_results.empty():
+        for inter_surface_edges_result in inter_surface_edges_results:
+            if !inter_surface_edges_result.edge_calc_results.empty():
+                calc_result = inter_surface_edges_result.edge_calc_results[0]
+                break
+        if calc_result == null:
             return null
-        calc_result = inter_surface_edges_results[0].edge_calc_results[0]
     
     # Calculate instructions for the given landing trajectory.
     var land_position := calc_result.edge_calc_params.destination_position
