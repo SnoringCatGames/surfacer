@@ -7,7 +7,7 @@ var edge: Edge
 var is_additive: bool
 var next_index: int
 var next_instruction: EdgeInstruction
-var start_time: float
+var start_time_modified: float
 var is_finished: bool
 var is_on_last_instruction: bool
 # Dictionary<String, boolean>
@@ -22,7 +22,7 @@ func _init(
     self.is_additive = is_additive
 
 func start(time_sec: float) -> void:
-    start_time = time_sec
+    start_time_modified = time_sec
     next_index = 0
     next_instruction = \
             edge.instructions.instructions[next_index] if \
@@ -42,7 +42,8 @@ func update(
     active_key_presses = _next_active_key_presses.duplicate()
     
     var new_instructions := []
-    while !is_finished and _get_start_time_for_next_instruction() <= time_sec:
+    while !is_finished and \
+            _get_start_time_modified_for_next_instruction() <= time_sec:
         if !is_on_last_instruction:
             new_instructions.push_back(next_instruction)
         increment()
@@ -73,10 +74,10 @@ func increment() -> void:
             null
     is_on_last_instruction = next_instruction == null
 
-func get_elapsed_time() -> float:
-    return Gs.time.elapsed_play_time_actual_sec - start_time
+func get_elapsed_time_modified() -> float:
+    return Gs.time.elapsed_play_time_modified_sec - start_time_modified
 
-func _get_start_time_for_next_instruction() -> float:
+func _get_start_time_modified_for_next_instruction() -> float:
     assert(!is_finished)
     
     var duration_until_next_instruction: float
@@ -92,4 +93,4 @@ func _get_start_time_for_next_instruction() -> float:
     else:
         duration_until_next_instruction = next_instruction.time
     
-    return start_time + duration_until_next_instruction
+    return start_time_modified + duration_until_next_instruction

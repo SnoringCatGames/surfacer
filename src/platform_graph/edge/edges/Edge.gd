@@ -92,7 +92,7 @@ func update_navigation_state(
         is_starting_navigation_retry: bool) -> void:
     _update_position_along_surface(
             navigation_state.expected_position_along_surface,
-            playback.get_elapsed_time())
+            playback.get_elapsed_time_modified())
     
     # When retrying navigation, we need to ignore whatever surface state in the 
     # current frame led to the previous navigation being interrupted.
@@ -299,7 +299,7 @@ func check_just_landed_on_expected_surface(
         end_surface: Surface,
         playback) -> bool:
     if movement_params.bypasses_runtime_physics:
-        return playback.get_elapsed_time() >= duration
+        return playback.get_elapsed_time_modified() >= duration
     else:
         return surface_state.just_left_air and \
                 surface_state.grabbed_surface == end_surface

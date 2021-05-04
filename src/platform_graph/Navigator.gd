@@ -162,7 +162,7 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
             air_to_surface_edge = air_to_surface_calculator \
                     .create_edge_from_part_of_other_edge(
                             current_edge,
-                            current_playback.get_elapsed_time(),
+                            current_playback.get_elapsed_time_modified(),
                             player)
         
         if air_to_surface_edge != null:
@@ -234,7 +234,7 @@ func _start_edge(
     
     current_playback = instructions_action_source.start_instructions(
             current_edge,
-            Gs.time.elapsed_play_time_actual_sec)
+            Gs.time.elapsed_play_time_modified_sec)
     
     var duration_start_edge: float = \
             Gs.profiler.stop("navigator_start_edge")
@@ -314,7 +314,7 @@ func update(
         # clear itself).
         instructions_action_source.cancel_playback(
                 current_playback,
-                Gs.time.elapsed_play_time_actual_sec)
+                Gs.time.elapsed_play_time_modified_sec)
         
         # Check for the next edge to navigate.
         var next_edge_index := current_edge_index + 1
