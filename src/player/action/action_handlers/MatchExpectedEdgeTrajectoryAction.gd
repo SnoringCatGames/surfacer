@@ -17,7 +17,7 @@ func process(player: Player) -> bool:
     var current_edge := player.navigator.current_edge
     if current_edge != null:
         var playback_elapsed_time: float = \
-                player.navigator.current_playback.get_elapsed_time()
+                player.navigator.current_playback.get_elapsed_time_modified()
         
         var synced_positions := false
         if player.movement_params.syncs_player_position_to_edge_trajectory:

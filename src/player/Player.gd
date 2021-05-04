@@ -335,7 +335,7 @@ func _update_actions(delta_sec: float) -> void:
         action_source.update(
                 actions,
                 actions_from_previous_frame,
-                Gs.time.elapsed_play_time_actual_sec,
+                Gs.time.elapsed_play_time_modified_sec,
                 delta_sec,
                 navigation_state)
     

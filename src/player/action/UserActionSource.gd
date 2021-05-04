@@ -25,7 +25,7 @@ func _init(
 func update(
         actions: PlayerActionState,
         previous_actions: PlayerActionState,
-        time_sec: float,
+        time_modified_sec: float,
         delta_sec: float,
         navigation_state: PlayerNavigationState) -> void:
     var is_pressed: bool
@@ -38,7 +38,7 @@ func update(
                     previous_actions,
                     input_key,
                     is_pressed,
-                    time_sec,
+                    time_modified_sec,
                     is_additive)
 
 static func get_is_some_user_action_pressed() -> bool:
