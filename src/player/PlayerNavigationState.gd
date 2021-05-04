@@ -8,6 +8,7 @@ var just_left_air_unexpectedly := false
 var just_entered_air_unexpectedly := false
 var just_interrupted_by_user_action := false
 var just_reached_end_of_edge := false
+var is_stalling_one_frame_before_reaching_end := false
 var expected_position_along_surface := PositionAlongSurface.new()
 
 func reset() -> void:
@@ -17,4 +18,5 @@ func reset() -> void:
     self.just_entered_air_unexpectedly = false
     self.just_interrupted_by_user_action = false
     self.just_reached_end_of_edge = false
+    self.is_stalling_one_frame_before_reaching_end = false
     self.expected_position_along_surface.reset()
