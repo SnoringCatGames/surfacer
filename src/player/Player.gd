@@ -206,20 +206,12 @@ func _init_navigator() -> void:
     action_sources.push_back(navigator.instructions_action_source)
 
 func _physics_process(delta_sec: float) -> void:
-    if is_fake:
+    if is_fake or \
+            !_is_initialized or \
+            _is_destroyed:
         # Fake players are only used for testing potential collisions under the
         # hood.
         return
-    
-    if !_is_initialized:
-        return
-    
-    if _is_destroyed:
-        return
-    
-    assert(Gs.geometry.are_floats_equal_with_epsilon(
-            delta_sec,
-            Time.PHYSICS_TIME_STEP_SEC))
     
     _update_actions(delta_sec)
     _update_surface_state()
@@ -419,8 +411,8 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
         surface_state.horizontal_acceleration_sign = 0
     
     if movement_params.bypasses_runtime_physics:
-        var expected_surface := navigator.navigation_state \
-                .expected_position_along_surface.surface
+        var expected_surface := \
+                _get_expected_position_for_bypassing_runtime_physics().surface
         surface_state.is_touching_floor = \
                 expected_surface != null and \
                 expected_surface.side == SurfaceSide.FLOOR
@@ -719,7 +711,7 @@ func _update_which_surface_is_grabbed(
 func _update_grab_state_from_expected_navigation(
         preserves_just_changed_state: bool) -> void:
     var position_along_surface := \
-            navigator.navigation_state.expected_position_along_surface
+            _get_expected_position_for_bypassing_runtime_physics()
     
     var next_grab_position := \
             position_along_surface.target_projection_onto_surface
@@ -738,6 +730,12 @@ func _update_grab_state_from_expected_navigation(
                     next_grabbed_tile_map != \
                             surface_state.grabbed_tile_map)
     surface_state.grabbed_tile_map = next_grabbed_tile_map
+
+func _get_expected_position_for_bypassing_runtime_physics() -> \
+        PositionAlongSurface:
+    return navigator.navigation_state.expected_position_along_surface if \
+            navigator.is_currently_navigating else \
+            navigator.get_previous_destination()
 
 func _update_grab_state_from_collision(
         preserves_just_changed_state: bool) -> void:

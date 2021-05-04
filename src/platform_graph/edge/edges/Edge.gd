@@ -92,7 +92,8 @@ func update_navigation_state(
         is_starting_navigation_retry: bool) -> void:
     _update_position_along_surface(
             navigation_state.expected_position_along_surface,
-            playback.get_elapsed_time_modified())
+            playback.get_elapsed_time_modified(),
+            just_started_new_edge)
     
     # When retrying navigation, we need to ignore whatever surface state in the 
     # current frame led to the previous navigation being interrupted.
@@ -166,8 +167,12 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
 
 func _update_position_along_surface(
         position: PositionAlongSurface,
-        edge_time: float) -> void:
-    position.surface = get_start_surface()
+        edge_time: float,
+        just_started_new_edge: bool) -> void:
+    position.surface = \
+            get_start_surface() if \
+            just_started_new_edge or !enters_air else \
+            null
     position.target_point = get_position_at_time(edge_time)
     if position.surface != null:
         position.update_target_projection_onto_surface()

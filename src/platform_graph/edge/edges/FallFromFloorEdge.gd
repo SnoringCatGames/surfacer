@@ -17,6 +17,7 @@ const INCLUDES_AIR_TRAJECTORY := true
 
 var falls_on_left_side: bool
 var fall_off_position: PositionAlongSurface
+var time_fall_off: float
 
 func _init(
         calculator = null,
@@ -30,7 +31,8 @@ func _init(
         trajectory: EdgeTrajectory = null,
         edge_calc_result_type := EdgeCalcResultType.UNKNOWN,
         falls_on_left_side := false,
-        fall_off_position: PositionAlongSurface = null) \
+        fall_off_position: PositionAlongSurface = null,
+        time_fall_off := INF) \
         .(TYPE,
         IS_TIME_BASED,
         SURFACE_TYPE,
@@ -49,6 +51,7 @@ func _init(
         edge_calc_result_type) -> void:
     self.falls_on_left_side = falls_on_left_side
     self.fall_off_position = fall_off_position
+    self.time_fall_off = time_fall_off
 
 func _calculate_distance(
         start: PositionAlongSurface,
@@ -62,6 +65,18 @@ func _calculate_duration(
         instructions: EdgeInstructions,
         distance: float) -> float:
     return instructions.duration
+
+func _update_position_along_surface(
+        position: PositionAlongSurface,
+        edge_time: float,
+        just_started_new_edge: bool) -> void:
+    position.target_point = get_position_at_time(edge_time)
+    if edge_time < time_fall_off:
+        position.surface = get_start_surface()
+        position.update_target_projection_onto_surface()
+    else:
+        position.surface = null
+        position.target_projection_onto_surface = Vector2.INF
 
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,

@@ -307,7 +307,8 @@ func _get_all_edges_from_one_side(
                     trajectory,
                     calc_result.edge_calc_result_type,
                     falls_on_left_side,
-                    position_fall_off_wrapper)
+                    position_fall_off_wrapper,
+                    time_fall_off)
             inter_surface_edges_result.valid_edges.push_back(edge)
 
 static func _prepend_walk_to_fall_off_portion(

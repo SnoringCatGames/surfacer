@@ -342,6 +342,9 @@ func update(
         else:
             _start_edge(next_edge_index)
 
+func get_previous_destination() -> PositionAlongSurface:
+    return previous_path.edges.back().end_position_along_surface
+
 # Conditionally prints the given message, depending on the Player's
 # configuration.
 func print_msg(
