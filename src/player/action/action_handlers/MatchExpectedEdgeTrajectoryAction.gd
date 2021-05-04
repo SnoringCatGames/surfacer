@@ -26,7 +26,7 @@ func process(player: Player) -> bool:
             var is_movement_beyond_expected_trajectory := \
                     position == Vector2.INF
             if !is_movement_beyond_expected_trajectory:
-                player.position = position
+                player.set_position(position)
                 synced_positions = true
         
         var synced_velocities := false

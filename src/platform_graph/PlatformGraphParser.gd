@@ -45,7 +45,7 @@ func parse(
 # level.
 func _record_tile_maps() -> void:
     surface_tile_maps = \
-            get_tree().get_nodes_in_group(Surfacer.group_name_surfaces)
+            Gs.utils.get_all_nodes_in_group(Surfacer.group_name_surfaces)
     
     # Validate the TileMaps.
     if Gs.debug or Gs.playtest:

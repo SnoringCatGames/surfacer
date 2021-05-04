@@ -517,8 +517,8 @@ func print_msg(
         message_template: String,
         message_args = null) -> void:
     if Surfacer.is_surfacer_logging and \
-            Surfacer.current_player_for_clicks != null and \
-            Surfacer.current_player_for_clicks.movement_params \
+            Surfacer.human_player != null and \
+            Surfacer.human_player.movement_params \
                     .logs_inspector_events:
         if message_args != null:
             Gs.logger.print(message_template % message_args)

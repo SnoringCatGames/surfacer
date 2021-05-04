@@ -2,8 +2,8 @@ tool
 class_name DebugLevel
 extends SurfacerLevel
 
-func _on_loaded() -> void:
-    ._on_loaded()
+func _start() -> void:
+    ._start()
     
     # FIXME: Move this player creation (and readiness recording) back into
     #        Level.

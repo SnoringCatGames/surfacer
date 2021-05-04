@@ -35,7 +35,8 @@ func _process(delta_sec: float) -> void:
         update()
 
 func _unhandled_input(event: InputEvent) -> void:
-    if event is InputEventMouseButton and \
+    if Gs.is_user_interaction_enabled and \
+            event is InputEventMouseButton and \
             event.button_index == BUTTON_LEFT and \
             !event.pressed and event.control:
         # The user is ctrl+clicking.
@@ -45,7 +46,7 @@ func _unhandled_input(event: InputEvent) -> void:
         var surface_position := \
                 SurfaceParser.find_closest_position_on_a_surface(
                         click_position,
-                        Surfacer.current_player_for_clicks)
+                        Surfacer.human_player)
         
         if first_target == null:
             # Selecting the jump position.
@@ -56,7 +57,7 @@ func _unhandled_input(event: InputEvent) -> void:
             
             possible_jump_land_positions = JumpLandPositionsUtils \
                     .calculate_jump_land_positions_for_surface_pair(
-                            Surfacer.current_player_for_clicks.movement_params,
+                            Surfacer.human_player.movement_params,
                             first_target.surface,
                             surface_position.surface)
             
@@ -68,7 +69,7 @@ func _unhandled_input(event: InputEvent) -> void:
                     first_target,
                     surface_position,
                     EdgeType.JUMP_INTER_SURFACE_EDGE,
-                    Surfacer.current_player_for_clicks.graph)
+                    Surfacer.human_player.graph)
             first_target = null
         
     elif event is InputEventKey and \

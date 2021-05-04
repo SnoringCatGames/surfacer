@@ -13,7 +13,8 @@ func _init(player) -> void:
     self.player = player
 
 func _unhandled_input(event: InputEvent) -> void:
-    if Surfacer.current_player_for_clicks != player:
+    if !Gs.is_user_interaction_enabled or \
+            Surfacer.human_player != player:
         return
     
     var pointer_up_position := Vector2.INF
@@ -84,9 +85,11 @@ func _unhandled_input(event: InputEvent) -> void:
         
         player.new_selection_target = pointer_up_position
         player.new_selection_position = \
-                _get_nearest_surface_position_within_distance_threshold(
-                        pointer_up_position,
-                        player)
+                SurfaceParser.find_closest_position_on_a_surface(
+                            pointer_up_position,
+                            player,
+                            Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD * \
+                            Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD)
         
     elif pointer_drag_position != Vector2.INF:
         last_pointer_drag_position = pointer_drag_position
@@ -95,19 +98,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func set_new_drag_position() -> void:
     player.preselection_target = last_pointer_drag_position
     player.preselection_position = \
-            _get_nearest_surface_position_within_distance_threshold(
+            SurfaceParser.find_closest_position_on_a_surface(
                     last_pointer_drag_position,
-                    player)
-
-static func _get_nearest_surface_position_within_distance_threshold(
-        target: Vector2,
-        player) -> PositionAlongSurface:
-    var closest_position := SurfaceParser.find_closest_position_on_a_surface(
-            target,
-            player)
-    if closest_position.target_point.distance_squared_to(target) <= \
-            Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD * \
-            Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD:
-        # The nearest position-along-a-surface is close enough to use.
-        return closest_position
-    return null
+                    player,
+                    Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD * \
+                    Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD)

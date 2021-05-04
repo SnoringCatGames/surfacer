@@ -962,7 +962,8 @@ class _TmpSurface extends Object:
 # Finds the closest PositionAlongSurface to the given target point.
 static func find_closest_position_on_a_surface(
         target: Vector2,
-        player) -> PositionAlongSurface:
+        player,
+        max_distance_squared_threshold := INF) -> PositionAlongSurface:
     var position := PositionAlongSurface.new()
     var surface := get_closest_surface(
             target,
@@ -973,7 +974,11 @@ static func find_closest_position_on_a_surface(
             player.movement_params.collider_half_width_height,
             true,
             true)
-    return position
+    if position.target_point.distance_squared_to(target) <= \
+            max_distance_squared_threshold:
+        return position
+    else:
+        return null
 
 const CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET := 0.02
 const CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01

@@ -153,14 +153,14 @@ func _create_annotator(annotator_type: int) -> void:
             click_annotator = ClickAnnotator.new()
             annotation_layer.add_child(click_annotator)
         AnnotatorType.SURFACE_SELECTION:
-            if Surfacer.current_player_for_clicks != null:
+            if Surfacer.human_player != null:
                 surface_selection_annotator = \
                         SurfaceSelectionAnnotator.new(
-                                Surfacer.current_player_for_clicks)
+                                Surfacer.human_player)
                 annotation_layer.add_child(surface_selection_annotator)
                 surface_preselection_annotator = \
                         SurfacePreselectionAnnotator.new(
-                                Surfacer.current_player_for_clicks)
+                                Surfacer.human_player)
                 annotation_layer.add_child(surface_preselection_annotator)
         AnnotatorType.LEVEL:
             if Gs.level != null:
