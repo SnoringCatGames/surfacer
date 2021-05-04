@@ -198,51 +198,54 @@ func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
-    # Check whether we were on the other side of the destination in the
-    # previous frame.
-    
-    var end := end_position_along_surface.target_point
-    
-    var was_less_than_end: bool
-    var is_less_than_end: bool
-    var diff: float
-    var is_moving_away_from_destination: bool
-    
-    if surface_state.is_grabbing_wall:
-        var is_moving_upward: bool = \
-                instructions.instructions[0].input_key == "mu"
-        var position_y_instruction_end := \
-                end.y + stopping_distance if \
-                is_moving_upward else \
-                end.y - stopping_distance
-        was_less_than_end = surface_state.previous_center_position.y < \
-                position_y_instruction_end
-        is_less_than_end = surface_state.center_position.y < \
-                position_y_instruction_end
-        diff = position_y_instruction_end - surface_state.center_position.y
-        is_moving_away_from_destination = (diff > 0) == is_moving_upward
-        
+    if movement_params.bypasses_runtime_physics:
+        return playback.get_elapsed_time() >= duration
     else:
-        var is_moving_leftward: bool = \
-                instructions.instructions[0].input_key == "ml"
-        var position_x_instruction_end := \
-                end.x + stopping_distance if \
-                is_moving_leftward else \
-                end.x - stopping_distance
-        was_less_than_end = surface_state.previous_center_position.x < \
-                position_x_instruction_end
-        is_less_than_end = surface_state.center_position.x < \
-                position_x_instruction_end
-        diff = position_x_instruction_end - surface_state.center_position.x
-        is_moving_away_from_destination = (diff > 0) == is_moving_leftward
-    
-    var moved_across_destination := was_less_than_end != is_less_than_end
-    var is_close_to_destination := \
-            abs(diff) < REACHED_DESTINATION_DISTANCE_THRESHOLD
-    
-    return moved_across_destination or \
-            is_close_to_destination or \
-            is_moving_away_from_destination
+        # Check whether we were on the other side of the destination in the
+        # previous frame.
+        
+        var end := end_position_along_surface.target_point
+        
+        var was_less_than_end: bool
+        var is_less_than_end: bool
+        var diff: float
+        var is_moving_away_from_destination: bool
+        
+        if surface_state.is_grabbing_wall:
+            var is_moving_upward: bool = \
+                    instructions.instructions[0].input_key == "mu"
+            var position_y_instruction_end := \
+                    end.y + stopping_distance if \
+                    is_moving_upward else \
+                    end.y - stopping_distance
+            was_less_than_end = surface_state.previous_center_position.y < \
+                    position_y_instruction_end
+            is_less_than_end = surface_state.center_position.y < \
+                    position_y_instruction_end
+            diff = position_y_instruction_end - surface_state.center_position.y
+            is_moving_away_from_destination = (diff > 0) == is_moving_upward
+            
+        else:
+            var is_moving_leftward: bool = \
+                    instructions.instructions[0].input_key == "ml"
+            var position_x_instruction_end := \
+                    end.x + stopping_distance if \
+                    is_moving_leftward else \
+                    end.x - stopping_distance
+            was_less_than_end = surface_state.previous_center_position.x < \
+                    position_x_instruction_end
+            is_less_than_end = surface_state.center_position.x < \
+                    position_x_instruction_end
+            diff = position_x_instruction_end - surface_state.center_position.x
+            is_moving_away_from_destination = (diff > 0) == is_moving_leftward
+        
+        var moved_across_destination := was_less_than_end != is_less_than_end
+        var is_close_to_destination := \
+                abs(diff) < REACHED_DESTINATION_DISTANCE_THRESHOLD
+        
+        return moved_across_destination or \
+                is_close_to_destination or \
+                is_moving_away_from_destination
 
 static func _calculate_instructions(
         start: PositionAlongSurface,

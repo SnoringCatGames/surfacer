@@ -145,6 +145,7 @@ func _execute_next_step() -> void:
             "animation":
                 # TODO: Implement Choreographer `animation` triggers.
                 pass
+            "duration", \
             "trans_type", \
             "ease_type":
                 # Do nothing. Handled elsewhere.

@@ -294,11 +294,15 @@ static func vector2_to_position_along_surface(target_point: Vector2) -> \
     position_along_surface.target_point = target_point
     return position_along_surface
 
-static func check_just_landed_on_expected_surface(
+func check_just_landed_on_expected_surface(
         surface_state: PlayerSurfaceState,
-        end_surface: Surface) -> bool:
-    return surface_state.just_left_air and \
-            surface_state.grabbed_surface == end_surface
+        end_surface: Surface,
+        playback) -> bool:
+    if movement_params.bypasses_runtime_physics:
+        return playback.get_elapsed_time() >= duration
+    else:
+        return surface_state.just_left_air and \
+                surface_state.grabbed_surface == end_surface
 
 func load_from_json_object(
         json_object: Dictionary,
