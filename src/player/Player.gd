@@ -339,7 +339,8 @@ func _update_actions(delta_sec: float) -> void:
                 delta_sec,
                 navigation_state)
     
-    actions.start_dash = _can_dash and \
+    actions.start_dash = \
+            _can_dash and \
             Gs.level_input.is_action_just_pressed("dash")
 
 # Updates physics and player states in response to the current actions.
@@ -860,3 +861,10 @@ func set_is_sprite_visible(is_visible: bool) -> void:
 
 func get_is_sprite_visible() -> bool:
     return animator.visible
+
+func set_position(position: Vector2) -> void:
+    self.position = position
+    surface_state.center_position = position
+    surface_state.center_position_along_surface.match_current_grab(
+            surface_state.grabbed_surface,
+            surface_state.center_position)

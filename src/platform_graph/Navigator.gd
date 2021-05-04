@@ -1,6 +1,8 @@
 class_name Navigator
 extends Reference
 
+signal reached_destination
+
 const NEARBY_SURFACE_DISTANCE_THRESHOLD := 160.0
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
@@ -12,7 +14,7 @@ var instructions_action_source: InstructionsActionSource
 var air_to_surface_calculator: AirToSurfaceCalculator
 
 var is_currently_navigating := false
-var reached_destination := false
+var has_reached_destination := false
 var just_reached_destination := false
 var current_destination: PositionAlongSurface
 var previous_path: PlatformGraphPath
@@ -84,7 +86,7 @@ func navigate_to_position(
         current_destination = destination
         current_path = path
         is_currently_navigating = true
-        reached_destination = false
+        has_reached_destination = false
         just_reached_destination = false
         current_navigation_attempt_count += 1
         
@@ -175,7 +177,7 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
 
 func _set_reached_destination() -> void:
     if player.movement_params.forces_player_position_to_match_path_at_end:
-        player.position = current_edge.get_end()
+        player.set_position(current_edge.get_end())
     if player.movement_params.forces_player_velocity_to_zero_at_path_end and \
             current_edge.get_end_surface() != null:
         match current_edge.get_end_surface().side:
@@ -187,10 +189,12 @@ func _set_reached_destination() -> void:
                 Gs.logger.error("Invalid SurfaceSide")
     
     reset()
-    reached_destination = true
+    has_reached_destination = true
     just_reached_destination = true
     
     print_msg("REACHED END OF PATH: %8.3fs", Gs.time.elapsed_play_time_actual_sec)
+    
+    emit_signal("reached_destination")
 
 func reset() -> void:
     if current_path != null:
@@ -201,7 +205,7 @@ func reset() -> void:
     current_edge = null
     current_edge_index = -1
     is_currently_navigating = false
-    reached_destination = false
+    has_reached_destination = false
     just_reached_destination = false
     current_playback = null
     instructions_action_source.cancel_all_playback()
@@ -218,7 +222,7 @@ func _start_edge(
     current_edge = current_path.edges[index]
     
     if player.movement_params.forces_player_position_to_match_edge_at_start:
-        player.position = current_edge.get_start()
+        player.set_position(current_edge.get_start())
     if player.movement_params.forces_player_velocity_to_match_edge_at_start:
         player.velocity = current_edge.velocity_start
         surface_state.horizontal_acceleration_sign = 0

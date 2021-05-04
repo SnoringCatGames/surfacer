@@ -11,13 +11,14 @@ var all_players: Array
 var graph_parser: PlatformGraphParser
 var inspector_panel: InspectorPanel
 var pause_button: PauseButton
+var intro_choreographer: Choreographer
 
 func _init() -> void:
     graph_parser = PlatformGraphParser.new()
     add_child(graph_parser)
 
-func start() -> void:
-    .start()
+func _load() -> void:
+    ._load()
     
     if Surfacer.is_inspector_enabled:
         inspector_panel = Gs.utils.add_scene(
@@ -33,9 +34,31 @@ func start() -> void:
     
     graph_parser.parse(_id)
 
-func _on_loaded() -> void:
+func _start() -> void:
+    ._start()
+    
+    add_player(
+            Surfacer.player_params[Surfacer.default_player_name] \
+                    .movement_params.player_resource_path,
+            get_player_start_position(),
+            true)
+    _execute_intro_choreography()
+    
     set_hud_visibility(true)
     call_deferred("_initialize_annotators")
+
+# Execute any intro cut-scene or initial navigation.
+func _execute_intro_choreography() -> void:
+    intro_choreographer = \
+            Gs.level_config.get_intro_choreographer(Surfacer.human_player)
+    intro_choreographer.connect(
+            "finished", self, "_on_intro_choreography_finished")
+    add_child(intro_choreographer)
+    intro_choreographer.start()
+
+func _on_intro_choreography_finished() -> void:
+    intro_choreographer.queue_free()
+    intro_choreographer = null
 
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
@@ -45,7 +68,7 @@ func _destroy() -> void:
     for group in [
             Surfacer.group_name_human_players,
             Surfacer.group_name_computer_players]:
-        for player in get_tree().get_nodes_in_group(group):
+        for player in Gs.utils.get_all_nodes_in_group(group):
             player._destroy()
     
     if is_instance_valid(inspector_panel):
@@ -53,7 +76,7 @@ func _destroy() -> void:
     if is_instance_valid(pause_button):
         pause_button.queue_free()
     Surfacer.annotators.on_level_destroyed()
-    Surfacer.current_player_for_clicks = null
+    Surfacer.human_player = null
     
     ._destroy()
 
@@ -76,7 +99,7 @@ func add_player(
             resource_path,
             true,
             true)
-    player.position = position
+    player.set_position(position)
     
     var group: String = \
             Surfacer.group_name_human_players if \
@@ -90,7 +113,7 @@ func add_player(
     
     if is_human_player:
         player.init_human_player_state()
-        Surfacer.current_player_for_clicks = player
+        Surfacer.human_player = player
     else:
         player.init_computer_player_state()
     
@@ -122,3 +145,11 @@ func set_hud_visibility(is_visible: bool) -> void:
 
 func _get_platform_graph_for_player(player_name: String) -> PlatformGraph:
     return graph_parser.platform_graphs[player_name]
+
+func get_player_start_position() -> Vector2:
+    var nodes := Gs.utils.get_all_nodes_in_group(
+            SurfacerLevelConfig.PLAYER_START_POSITION_GROUP_NAME)
+    if nodes.empty():
+        return Vector2.ZERO
+    else:
+        return nodes[0].position

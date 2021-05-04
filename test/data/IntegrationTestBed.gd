@@ -140,7 +140,7 @@ func destroy() -> void:
     var scene_tree := sandbox.get_tree()
     
     for group in GROUPS:
-        for node in scene_tree.get_nodes_in_group(group):
+        for node in Gs.utils.get_all_nodes_in_group(group):
             node.queue_free()
     
     for node in sandbox.get_children():
@@ -160,7 +160,7 @@ func set_up_level(data: Dictionary) -> void:
     level = level_scene.instance()
     sandbox.add_child(level)
     
-    player = Surfacer.current_player_for_clicks
+    player = Surfacer.human_player
     platform_graph = player.graph
     movement_params = player.movement_params
     surface_parser = level.graph_parser.surface_parser

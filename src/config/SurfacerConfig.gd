@@ -97,7 +97,7 @@ var edge_movements := {}
 # Dictionary<String, PlayerParams>
 var player_params := {}
 
-var current_player_for_clicks: Player
+var human_player: Player
 var graph_parser: PlatformGraphParser
 var graph_inspector: PlatformGraphInspector
 var legend: Legend
