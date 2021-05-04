@@ -66,17 +66,18 @@ func _calculate_duration(
         distance: float) -> float:
     return instructions.duration
 
-func _update_position_along_surface(
-        position: PositionAlongSurface,
-        edge_time: float,
-        just_started_new_edge: bool) -> void:
-    position.target_point = get_position_at_time(edge_time)
+func _update_expected_position_along_surface(
+        navigation_state: PlayerNavigationState,
+        edge_time: float) -> void:
+    var position := navigation_state.expected_position_along_surface
     if edge_time < time_fall_off:
+        position.target_point = get_position_at_time(edge_time)
         position.surface = get_start_surface()
         position.update_target_projection_onto_surface()
     else:
-        position.surface = null
-        position.target_projection_onto_surface = Vector2.INF
+        ._update_expected_position_along_surface(
+                navigation_state,
+                edge_time)
 
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
@@ -126,11 +127,24 @@ func update_navigation_state(
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_user_action
     
-    navigation_state.just_reached_end_of_edge = \
-            _check_did_just_reach_destination(
-                    navigation_state,
-                    surface_state,
-                    playback)
+    if movement_params.bypasses_runtime_physics:
+        navigation_state.just_reached_end_of_edge = \
+                navigation_state.is_stalling_one_frame_before_reaching_end
+        navigation_state.is_stalling_one_frame_before_reaching_end = \
+                !navigation_state.just_reached_end_of_edge and \
+                _check_did_just_reach_destination(
+                        navigation_state,
+                        surface_state,
+                        playback)
+        _update_expected_position_along_surface(
+                navigation_state,
+                playback.get_elapsed_time_modified())
+    else:
+        navigation_state.just_reached_end_of_edge = \
+                _check_did_just_reach_destination(
+                        navigation_state,
+                        surface_state,
+                        playback)
 
 func load_from_json_object(
         json_object: Dictionary,

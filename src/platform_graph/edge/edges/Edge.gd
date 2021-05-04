@@ -90,11 +90,6 @@ func update_navigation_state(
         playback,
         just_started_new_edge: bool,
         is_starting_navigation_retry: bool) -> void:
-    _update_position_along_surface(
-            navigation_state.expected_position_along_surface,
-            playback.get_elapsed_time_modified(),
-            just_started_new_edge)
-    
     # When retrying navigation, we need to ignore whatever surface state in the 
     # current frame led to the previous navigation being interrupted.
     if is_starting_navigation_retry:
@@ -103,6 +98,7 @@ func update_navigation_state(
         navigation_state.just_interrupted_by_user_action = false
         navigation_state.just_interrupted_navigation = false
         navigation_state.just_reached_end_of_edge = false
+        navigation_state.is_stalling_one_frame_before_reaching_end = false
         return
     
     var still_grabbing_start_surface_at_start := \
@@ -132,11 +128,24 @@ func update_navigation_state(
     if surface_state.just_entered_air:
         navigation_state.is_expecting_to_enter_air = false
     
-    navigation_state.just_reached_end_of_edge = \
-            _check_did_just_reach_destination(
-                    navigation_state,
-                    surface_state,
-                    playback)
+    if movement_params.bypasses_runtime_physics:
+        navigation_state.just_reached_end_of_edge = \
+                navigation_state.is_stalling_one_frame_before_reaching_end
+        navigation_state.is_stalling_one_frame_before_reaching_end = \
+                !navigation_state.just_reached_end_of_edge and \
+                _check_did_just_reach_destination(
+                        navigation_state,
+                        surface_state,
+                        playback)
+        _update_expected_position_along_surface(
+                navigation_state,
+                playback.get_elapsed_time_modified())
+    else:
+        navigation_state.just_reached_end_of_edge = \
+                _check_did_just_reach_destination(
+                        navigation_state,
+                        surface_state,
+                        playback)
 
 func _calculate_distance(
         start: PositionAlongSurface,
@@ -165,13 +174,14 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
         return Vector2.INF
     return trajectory.frame_continuous_velocities_from_steps[index]
 
-func _update_position_along_surface(
-        position: PositionAlongSurface,
-        edge_time: float,
-        just_started_new_edge: bool) -> void:
+func _update_expected_position_along_surface(
+        navigation_state: PlayerNavigationState,
+        edge_time: float) -> void:
+    var position := navigation_state.expected_position_along_surface
     position.surface = \
-            get_start_surface() if \
-            just_started_new_edge or !enters_air else \
+            get_end_surface() if \
+            navigation_state.is_stalling_one_frame_before_reaching_end or \
+                    !enters_air else \
             null
     position.target_point = get_position_at_time(edge_time)
     if position.surface != null:

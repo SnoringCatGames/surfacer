@@ -53,6 +53,20 @@ func _calculate_duration(
             true,
             movement_params)
 
+func _update_expected_position_along_surface(
+        navigation_state: PlayerNavigationState,
+        edge_time: float) -> void:
+    var position := navigation_state.expected_position_along_surface
+    position.surface = \
+            get_end_surface() if \
+            navigation_state.is_stalling_one_frame_before_reaching_end else \
+            get_start_surface()
+    position.target_point = get_position_at_time(edge_time)
+    if position.surface != null:
+        position.update_target_projection_onto_surface()
+    else:
+        position.target_projection_onto_surface = Vector2.INF
+
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
@@ -129,8 +143,21 @@ func update_navigation_state(
             navigation_state.just_entered_air_unexpectedly or \
             navigation_state.just_interrupted_by_user_action
     
-    navigation_state.just_reached_end_of_edge = \
-            _check_did_just_reach_destination(
-                    navigation_state,
-                    surface_state,
-                    playback)
+    if movement_params.bypasses_runtime_physics:
+        navigation_state.just_reached_end_of_edge = \
+                navigation_state.is_stalling_one_frame_before_reaching_end
+        navigation_state.is_stalling_one_frame_before_reaching_end = \
+                !navigation_state.just_reached_end_of_edge and \
+                _check_did_just_reach_destination(
+                        navigation_state,
+                        surface_state,
+                        playback)
+        _update_expected_position_along_surface(
+                navigation_state,
+                playback.get_elapsed_time_modified())
+    else:
+        navigation_state.just_reached_end_of_edge = \
+                _check_did_just_reach_destination(
+                        navigation_state,
+                        surface_state,
+                        playback)
