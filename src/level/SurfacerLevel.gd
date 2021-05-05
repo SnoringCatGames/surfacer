@@ -66,6 +66,15 @@ func _destroy() -> void:
 func quit(immediately := true) -> void:
     .quit(immediately)
 
+func _input(event: InputEvent) -> void:
+    if _get_level_play_time_actual() > min_controls_display_time and \
+            (event is InputEventMouseButton or \
+                    event is InputEventScreenTouch or \
+                    event is InputEventKey) and \
+            _get_is_started():
+        if intro_choreographer != null:
+            intro_choreographer.on_interaction()
+
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseButton or \
             event is InputEventScreenTouch:
