@@ -104,9 +104,7 @@ var legend: Legend
 var selection_description: SelectionDescription
 var inspector_panel: InspectorPanel
 var annotators: Annotators
-
 var ann_defaults: AnnotationElementDefaults
-
 var edge_from_json_factory := EdgeFromJsonFactory.new()
 
 var player_action_classes: Array

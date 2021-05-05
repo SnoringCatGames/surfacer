@@ -73,6 +73,9 @@ func _unhandled_input(event: InputEvent) -> void:
         # inspector.
         Gs.utils.release_focus()
 
+#func _on_initial_input() -> void:
+#    ._on_initial_input()
+
 # Execute any intro cut-scene or initial navigation.
 func _execute_intro_choreography() -> void:
     intro_choreographer = \
@@ -85,6 +88,7 @@ func _execute_intro_choreography() -> void:
 func _on_intro_choreography_finished() -> void:
     intro_choreographer.queue_free()
     intro_choreographer = null
+    _show_welcome_panel()
 
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
