@@ -132,29 +132,30 @@ func _draw() -> void:
                 surface_color,
                 PRESELECTION_SURFACE_DEPTH)
     
-    # Draw destination marker.
-    var position_indicator_alpha := \
-            position_indicator_base_color.a * alpha_multiplier
-    var position_indicator_color := Color(
-            position_indicator_base_color.r,
-            position_indicator_base_color.g,
-            position_indicator_base_color.b,
-            position_indicator_alpha)
-    var cone_end_point := \
-            phantom_position_along_surface.target_projection_onto_surface
-    var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
-            PRESELECTION_POSITION_INDICATOR_RADIUS
-    Gs.draw_utils.draw_destination_marker(
-            self,
-            cone_end_point,
-            false,
-            phantom_surface.side,
-            position_indicator_color,
-            cone_length,
-            PRESELECTION_POSITION_INDICATOR_RADIUS,
-            true,
-            INF,
-            4.0)
+    if Surfacer.is_navigation_destination_shown:
+        # Draw destination marker.
+        var position_indicator_alpha := \
+                position_indicator_base_color.a * alpha_multiplier
+        var position_indicator_color := Color(
+                position_indicator_base_color.r,
+                position_indicator_base_color.g,
+                position_indicator_base_color.b,
+                position_indicator_alpha)
+        var cone_end_point := \
+                phantom_position_along_surface.target_projection_onto_surface
+        var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
+                PRESELECTION_POSITION_INDICATOR_RADIUS
+        Gs.draw_utils.draw_destination_marker(
+                self,
+                cone_end_point,
+                false,
+                phantom_surface.side,
+                position_indicator_color,
+                cone_length,
+                PRESELECTION_POSITION_INDICATOR_RADIUS,
+                true,
+                INF,
+                4.0)
 
 func _update_phantom_surface() -> void:
     # Copy the vertices from the target surface.

@@ -19,6 +19,7 @@ var _checkbox_control_item_classes := [
     PreselectionTrajectoryAnnotatorSettingsLabeledControlItem,
     PreviousTrajectoryAnnotatorSettingsLabeledControlItem,
     ActiveTrajectoryAnnotatorSettingsLabeledControlItem,
+    NavigationDestinationAnnotatorSettingsLabeledControlItem,
     LogSurfacerEventsSettingsLabeledControlItem,
 ]
 

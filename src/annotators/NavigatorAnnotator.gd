@@ -51,40 +51,41 @@ func _draw() -> void:
                     AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
                     4.0)
         
-        # Draw the destination indicator.
-        var cone_end_point := \
-                current_destination.target_projection_onto_surface
-        var cone_length: float = \
-                AnnotationElementDefaults \
-                        .NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH - \
-                AnnotationElementDefaults \
-                        .NAVIGATOR_DESTINATION_INDICATOR_RADIUS
-        Gs.draw_utils.draw_destination_marker(
-                self,
-                cone_end_point,
-                false,
-                current_destination.side,
-                Surfacer.ann_defaults \
-                        .NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR,
-                cone_length,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
-                true,
-                INF,
-                4.0)
-        Gs.draw_utils.draw_destination_marker(
-                self,
-                cone_end_point,
-                false,
-                current_destination.side,
-                Surfacer.ann_defaults \
-                        .NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR,
-                cone_length,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
-                false,
-                AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
-                4.0)
+        if Surfacer.is_navigation_destination_shown:
+            # Draw the destination indicator.
+            var cone_end_point := \
+                    current_destination.target_projection_onto_surface
+            var cone_length: float = \
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH - \
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_DESTINATION_INDICATOR_RADIUS
+            Gs.draw_utils.draw_destination_marker(
+                    self,
+                    cone_end_point,
+                    false,
+                    current_destination.side,
+                    Surfacer.ann_defaults \
+                            .NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR,
+                    cone_length,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
+                    true,
+                    INF,
+                    4.0)
+            Gs.draw_utils.draw_destination_marker(
+                    self,
+                    cone_end_point,
+                    false,
+                    current_destination.side,
+                    Surfacer.ann_defaults \
+                            .NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR,
+                    cone_length,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
+                    false,
+                    AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
+                    4.0)
     
     elif previous_path != null and \
             Surfacer.is_previous_trajectory_shown:
