@@ -12,6 +12,8 @@ const ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_active_trajectory_shown"
 const PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_previous_trajectory_shown"
 const PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY := \
         "is_preselection_trajectory_shown"
+const NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
+        "is_navigation_destination_shown"
 
 # --- Manifest additions ---
 
@@ -30,6 +32,7 @@ var _settings_details_item_class_inclusions := [
     PreselectionTrajectoryAnnotatorSettingsLabeledControlItem,
     ActiveTrajectoryAnnotatorSettingsLabeledControlItem,
     PreviousTrajectoryAnnotatorSettingsLabeledControlItem,
+    NavigationDestinationAnnotatorSettingsLabeledControlItem,
     PlayerPositionAnnotatorSettingsLabeledControlItem,
     RecentMovementAnnotatorSettingsLabeledControlItem,
     PlayerAnnotatorSettingsLabeledControlItem,
@@ -54,6 +57,7 @@ var is_intro_choreography_shown: bool
 var is_active_trajectory_shown: bool
 var is_previous_trajectory_shown: bool
 var is_preselection_trajectory_shown: bool
+var is_navigation_destination_shown: bool
 var default_player_name: String
 
 var debug_params: Dictionary
@@ -203,6 +207,9 @@ func initialize() -> void:
             false)
     self.is_preselection_trajectory_shown = Gs.save_state.get_setting(
             PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
+            true)
+    self.is_navigation_destination_shown = Gs.save_state.get_setting(
+            NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
             true)
     
     Gs.profiler.preregister_metric_keys(non_surface_parser_metric_keys)

@@ -309,7 +309,7 @@ var DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS := \
 
 var NAVIGATOR_CURRENT_PATH_COLOR := SurfacerColors.opacify(
         SurfacerColors.PURPLE,
-        SurfacerColors.ALPHA_FAINT)
+        SurfacerColors.ALPHA_XFAINT)
 var NAVIGATOR_PREVIOUS_PATH_COLOR := SurfacerColors.opacify(
         SurfacerColors.PURPLE,
         SurfacerColors.ALPHA_XXFAINT)
