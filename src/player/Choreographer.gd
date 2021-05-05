@@ -43,20 +43,27 @@ signal finished
 
 const _DEFAULT_TRANS_TYPE := Tween.TRANS_QUAD
 const _DEFAULT_EASE_TYPE := Tween.EASE_IN_OUT
-const _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER := 12.0
+const _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER := 10.0
 
 # Array<Dictionary>
 var sequence: Array
 var index := -1
 var is_finished := false
+var is_skippable := true
+var _is_skipped := false
 var player: Player
 var level
+
+var _tween: Tween
 
 var _initial_is_previous_trajectory_shown: bool
 var _initial_is_active_trajectory_shown: bool
 var _initial_is_navigation_destination_shown: bool
+
+var _initial_zoom: float
 var _initial_framerate_multiplier: float
-var _tween: Tween
+var _current_zoom: float
+var _current_framerate_multiplier: float
 
 func _enter_tree() -> void:
     _tween = Tween.new()
@@ -75,10 +82,12 @@ func start() -> void:
     assert(is_instance_valid(player))
     assert(index == -1)
     assert(is_finished == false)
+    
     player.navigator.connect(
             "reached_destination",
             self,
             "_execute_next_step")
+    
     _initial_is_previous_trajectory_shown = \
             Surfacer.is_previous_trajectory_shown
     Surfacer.is_previous_trajectory_shown = false
@@ -87,11 +96,16 @@ func start() -> void:
     _initial_is_navigation_destination_shown = \
             Surfacer.is_navigation_destination_shown
     Surfacer.is_navigation_destination_shown = false
+    
+    _initial_zoom = Gs.camera_controller.zoom
     _initial_framerate_multiplier = Gs.time.physics_framerate_multiplier
-    if !Surfacer.is_intro_choreography_shown:
-        Gs.time.physics_framerate_multiplier *= \
-                _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
+    _current_zoom = _initial_zoom
+    _current_framerate_multiplier = _initial_framerate_multiplier
+    
     _execute_next_step()
+    
+    if !Surfacer.is_intro_choreography_shown:
+        skip()
 
 func _on_finished() -> void:
     _tween.stop_all()
@@ -106,6 +120,7 @@ func _on_finished() -> void:
     Surfacer.is_active_trajectory_shown = _initial_is_active_trajectory_shown
     Surfacer.is_navigation_destination_shown = \
             _initial_is_navigation_destination_shown
+    Gs.camera_controller.zoom = _initial_zoom
     Gs.time.physics_framerate_multiplier = _initial_framerate_multiplier
     emit_signal("finished")
 
@@ -150,32 +165,35 @@ func _execute_next_step() -> void:
                         player.navigator.navigate_to_position(destination)
                 assert(is_navigation_valid)
             "zoom":
+                _current_zoom = step.zoom
                 if is_step_immediate:
-                    Gs.camera_controller.zoom = step.zoom
+                    Gs.camera_controller.zoom = _current_zoom
                 else:
                     _tween.interpolate_property(
                             Gs.camera_controller,
                             "zoom",
                             Gs.camera_controller.zoom,
-                            step.zoom,
+                            _current_zoom,
                             duration,
                             trans_type,
                             ease_type)
                     is_tween_registered = true
             "framerate_multiplier":
-                var multiplier: float = \
+                _current_framerate_multiplier = \
                         _initial_framerate_multiplier * \
                         step.framerate_multiplier
                 if Surfacer.is_intro_choreography_shown:
-                    multiplier *= _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
+                    _current_framerate_multiplier *= \
+                            _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
                 if is_step_immediate:
-                    Gs.time.physics_framerate_multiplier = multiplier
+                    Gs.time.physics_framerate_multiplier = \
+                            _current_framerate_multiplier
                 else:
                     _tween.interpolate_property(
                             Gs.time,
                             "physics_framerate_multiplier",
                             Gs.time.physics_framerate_multiplier,
-                            multiplier,
+                            _current_framerate_multiplier,
                             duration,
                             trans_type,
                             ease_type)
@@ -218,3 +236,21 @@ func _execute_next_step() -> void:
                     step.duration + 0.0001)
         else:
             _execute_next_step()
+
+func on_interaction() -> void:
+    if is_skippable:
+        skip()
+
+func skip() -> void:
+    if _is_skipped:
+        return
+    Gs.logger.print("Skipping choreography")
+    _is_skipped = true
+    _current_framerate_multiplier *= _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
+    _tween.stop_all()
+    # TODO: Consider tweening these very quickly instead of setting them
+    #       immediately.
+    if Gs.time.physics_framerate_multiplier != _current_framerate_multiplier:
+        Gs.time.physics_framerate_multiplier = _current_framerate_multiplier
+    if Gs.camera_controller.zoom != _current_zoom:
+        Gs.camera_controller.zoom
