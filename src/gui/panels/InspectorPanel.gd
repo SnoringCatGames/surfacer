@@ -14,8 +14,11 @@ var _checkbox_control_item_classes := [
     LevelAnnotatorSettingsLabeledControlItem,
     PlayerPositionAnnotatorSettingsLabeledControlItem,
     SurfacesAnnotatorSettingsLabeledControlItem,
-    PlayerTrajectoryAnnotatorSettingsLabeledControlItem,
+    RecentMovementAnnotatorSettingsLabeledControlItem,
     RulerAnnotatorSettingsLabeledControlItem,
+    PreselectionTrajectoryAnnotatorSettingsLabeledControlItem,
+    PreviousTrajectoryAnnotatorSettingsLabeledControlItem,
+    ActiveTrajectoryAnnotatorSettingsLabeledControlItem,
     LogSurfacerEventsSettingsLabeledControlItem,
 ]
 

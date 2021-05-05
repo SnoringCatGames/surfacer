@@ -53,7 +53,7 @@ func is_annotator_enabled(annotator_type: int) -> bool:
             return player.get_is_sprite_visible()
         AnnotatorType.PLAYER_POSITION:
             return position_annotator != null
-        AnnotatorType.PLAYER_TRAJECTORY:
+        AnnotatorType.RECENT_MOVEMENT:
             return recent_movement_annotator != null
         AnnotatorType.NAVIGATOR:
             return navigator_annotator != null
@@ -73,7 +73,7 @@ func _create_annotator(annotator_type: int) -> void:
             add_child(position_annotator)
             tile_annotator = PlayerTileAnnotator.new(player)
             add_child(tile_annotator)
-        AnnotatorType.PLAYER_TRAJECTORY:
+        AnnotatorType.RECENT_MOVEMENT:
             recent_movement_annotator = \
                     PlayerRecentMovementAnnotator.new(player)
             add_child(recent_movement_annotator)
@@ -95,7 +95,7 @@ func _destroy_annotator(annotator_type: int) -> void:
             position_annotator = null
             tile_annotator.queue_free()
             tile_annotator = null
-        AnnotatorType.PLAYER_TRAJECTORY:
+        AnnotatorType.RECENT_MOVEMENT:
             recent_movement_annotator.queue_free()
             recent_movement_annotator = null
         AnnotatorType.NAVIGATOR:
