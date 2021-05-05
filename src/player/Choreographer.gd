@@ -52,6 +52,8 @@ var is_finished := false
 var player: Player
 var level
 
+var _initial_is_previous_trajectory_shown: bool
+var _initial_is_active_trajectory_shown: bool
 var _initial_framerate_multiplier: float
 var _tween: Tween
 
@@ -76,6 +78,11 @@ func start() -> void:
             "reached_destination",
             self,
             "_execute_next_step")
+    _initial_is_previous_trajectory_shown = \
+            Surfacer.is_previous_trajectory_shown
+    Surfacer.is_previous_trajectory_shown = false
+    _initial_is_active_trajectory_shown = Surfacer.is_active_trajectory_shown
+    Surfacer.is_active_trajectory_shown = false
     _initial_framerate_multiplier = Gs.time.physics_framerate_multiplier
     if !Surfacer.is_intro_choreography_shown:
         Gs.time.physics_framerate_multiplier *= \
@@ -90,6 +97,9 @@ func _on_finished() -> void:
             "_execute_next_step")
     index = -1
     is_finished = true
+    Surfacer.is_previous_trajectory_shown = \
+            _initial_is_previous_trajectory_shown
+    Surfacer.is_active_trajectory_shown = _initial_is_active_trajectory_shown
     Gs.time.physics_framerate_multiplier = _initial_framerate_multiplier
     emit_signal("finished")
 
