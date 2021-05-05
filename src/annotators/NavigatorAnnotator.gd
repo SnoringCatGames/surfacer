@@ -1,15 +1,18 @@
 class_name NavigatorAnnotator
 extends Node2D
 
-const TRAJECTORY_STROKE_WIDTH := 4.0
-
 var navigator: Navigator
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
 var current_destination: PositionAlongSurface
 
+var previous_path_back_end_trim_radius: float
+
 func _init(navigator: Navigator) -> void:
     self.navigator = navigator
+    self.previous_path_back_end_trim_radius = min(
+            navigator.player.movement_params.collider_half_width_height.x,
+            navigator.player.movement_params.collider_half_width_height.y)
 
 func _physics_process(delta_sec: float) -> void:
     if navigator.current_path != current_path:
@@ -29,8 +32,17 @@ func _draw() -> void:
             Gs.draw_utils.draw_path(
                     self,
                     current_path,
-                    TRAJECTORY_STROKE_WIDTH,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
                     Surfacer.ann_defaults.NAVIGATOR_CURRENT_PATH_COLOR,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_ORIGIN_INDICATOR_RADIUS + 
+                            AnnotationElementDefaults \
+                                .NAVIGATOR_TRAJECTORY_STROKE_WIDTH / 2.0,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_DESTINATION_INDICATOR_RADIUS + 
+                            AnnotationElementDefaults \
+                                .NAVIGATOR_TRAJECTORY_STROKE_WIDTH / 2.0,
                     true,
                     false,
                     true,
@@ -92,8 +104,11 @@ func _draw() -> void:
         Gs.draw_utils.draw_path(
                 self,
                 previous_path,
-                TRAJECTORY_STROKE_WIDTH,
+                AnnotationElementDefaults \
+                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
                 Surfacer.ann_defaults.NAVIGATOR_PREVIOUS_PATH_COLOR,
+                0.0,
+                previous_path_back_end_trim_radius,
                 true,
                 false,
                 true,
