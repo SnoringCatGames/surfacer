@@ -111,18 +111,10 @@ static func _calculate_instructions(
 # generates many false-positive departures and collisions when rounding the
 # corner between surfaces. So we need to be more permissible here for what we
 # consider to be expected when leaving and entering the air.
-func update_navigation_state(
+func _update_navigation_state_expected_surface_air_helper(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
-        playback,
-        just_started_new_edge: bool,
         is_starting_navigation_retry: bool) -> void:
-    .update_navigation_state(
-            navigation_state,
-            surface_state,
-            playback,
-            just_started_new_edge,
-            is_starting_navigation_retry)
     if is_starting_navigation_retry:
         # This should never happen.
         Gs.logger.error()
@@ -137,27 +129,3 @@ func update_navigation_state(
             surface_state.collision_count > 0
     
     navigation_state.just_entered_air_unexpectedly = false
-    
-    navigation_state.just_interrupted_navigation = \
-            navigation_state.just_left_air_unexpectedly or \
-            navigation_state.just_entered_air_unexpectedly or \
-            navigation_state.just_interrupted_by_user_action
-    
-    if movement_params.bypasses_runtime_physics:
-        navigation_state.just_reached_end_of_edge = \
-                navigation_state.is_stalling_one_frame_before_reaching_end
-        navigation_state.is_stalling_one_frame_before_reaching_end = \
-                !navigation_state.just_reached_end_of_edge and \
-                _check_did_just_reach_destination(
-                        navigation_state,
-                        surface_state,
-                        playback)
-        _update_expected_position_along_surface(
-                navigation_state,
-                playback.get_elapsed_time_modified())
-    else:
-        navigation_state.just_reached_end_of_edge = \
-                _check_did_just_reach_destination(
-                        navigation_state,
-                        surface_state,
-                        playback)
