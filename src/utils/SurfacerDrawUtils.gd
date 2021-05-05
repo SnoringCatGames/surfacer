@@ -11,6 +11,8 @@ const EDGE_END_CONE_LENGTH := EDGE_WAYPOINT_RADIUS * 2.0
 
 const EDGE_INSTRUCTION_INDICATOR_LENGTH := 24
 
+const ADJACENT_VERTEX_TOO_CLOSE_DISTANCE_SQUARED_THRESHOLD := 0.25
+
 static func draw_origin_marker(
         canvas: CanvasItem,
         target: Vector2,
@@ -63,17 +65,101 @@ static func draw_path(
         path: PlatformGraphPath,
         stroke_width := EDGE_TRAJECTORY_WIDTH,
         color := Color.white,
+        trim_front_end_radius := 0.0,
+        trim_back_end_radius := 0.0,
         includes_waypoints := false,
         includes_instruction_indicators := false,
         includes_continuous_positions := false,
         includes_discrete_positions := false) -> void:
-    var vertices := PoolVector2Array()
+    var vertices := PoolVector2Array([0])
     for edge in path.edges:
+        # The end positions of adjacent edges should be identical, so remove
+        # one of them.
+        vertices.resize(vertices.size() - 1)
         vertices.append_array(_get_edge_trajectory_vertices(edge))
+    if trim_front_end_radius > 0.0:
+        vertices = _trim_front_end(
+                vertices,
+                trim_front_end_radius)
+    if trim_back_end_radius > 0.0:
+        vertices = _trim_back_end(
+                vertices,
+                trim_back_end_radius)
     canvas.draw_polyline(
             vertices,
             color,
             stroke_width)
+
+static func _trim_front_end(
+        vertices: PoolVector2Array,
+        trim_radius: float) -> PoolVector2Array:
+    if vertices.empty():
+        return vertices
+    
+    var trim_radius_squared := trim_radius * trim_radius
+    var end_position := vertices[0]
+    
+    var front_index := 1
+    for i in range(1, vertices.size()):
+        if vertices[i].distance_squared_to(end_position) < trim_radius_squared:
+            front_index = i + 1
+    
+    if front_index >= vertices.size():
+        return PoolVector2Array()
+    
+    front_index -= 1
+    
+    var start_replacement := \
+            Gs.geometry.get_intersection_of_segment_and_circle(
+                    vertices[front_index + 1],
+                    vertices[front_index],
+                    end_position,
+                    trim_radius)
+    
+    vertices = Gs.utils.sub_pool_vector2_array(
+            vertices,
+            front_index)
+    
+    vertices[0] = start_replacement
+    
+    return vertices
+
+static func _trim_back_end(
+        vertices: PoolVector2Array,
+        trim_radius: float) -> PoolVector2Array:
+    if vertices.empty():
+        return vertices
+    
+    var trim_radius_squared := trim_radius * trim_radius
+    var count := vertices.size()
+    var end_position := vertices[vertices.size() - 1]
+    
+    var back_index := count - 2
+    for i in range(1, count):
+        i = count - i - 1
+        if vertices[i].distance_squared_to(end_position) < trim_radius_squared:
+            back_index = i - 1
+    
+    if back_index < 0:
+        return PoolVector2Array()
+    
+    back_index += 1
+    
+    var end_replacement := \
+            Gs.geometry.get_intersection_of_segment_and_circle(
+                    vertices[back_index - 1],
+                    vertices[back_index],
+                    end_position,
+                    trim_radius)
+    
+    vertices = Gs.utils.sub_pool_vector2_array(
+            vertices,
+            0,
+            back_index + 1)
+    
+    vertices[vertices.size() - 1] = end_replacement
+    
+    return vertices
 
 static func draw_edge(
         canvas: CanvasItem,
@@ -241,7 +327,8 @@ static func _draw_edge_from_instructions_positions(
 
 static func _get_edge_trajectory_vertices(
         edge: Edge,
-        is_continuous := true) -> PoolVector2Array:
+        is_continuous := true,
+        removes_too_close_vertices := false) -> PoolVector2Array:
     match edge.edge_type:
         EdgeType.AIR_TO_AIR_EDGE, \
         EdgeType.AIR_TO_SURFACE_EDGE, \
@@ -257,6 +344,8 @@ static func _get_edge_trajectory_vertices(
             if vertices.empty():
                 vertices.push_back(edge.get_start())
             vertices.push_back(edge.get_end())
+            if removes_too_close_vertices:
+                vertices = _remove_too_close_neighbors(vertices)
             return vertices
         EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE, \
         EdgeType.INTRA_SURFACE_EDGE, \
@@ -269,3 +358,22 @@ static func _get_edge_trajectory_vertices(
         _:
             Gs.logger.error()
             return PoolVector2Array()
+
+static func _remove_too_close_neighbors(
+        vertices: PoolVector2Array) -> PoolVector2Array:
+    var result := PoolVector2Array()
+    result.resize(vertices.size())
+    var previous_vertex := vertices[0]
+    result[0] = previous_vertex
+    var result_size := 1
+    
+    for index in range(1, vertices.size()):
+        var vertex := vertices[index]
+        if vertex.distance_squared_to(previous_vertex) > \
+                ADJACENT_VERTEX_TOO_CLOSE_DISTANCE_SQUARED_THRESHOLD:
+            previous_vertex = vertex
+            result[result_size] = previous_vertex
+            result_size += 1
+    
+    result.resize(result_size)
+    return result

@@ -16,14 +16,16 @@ var INVALID_POSITION_INDICATOR_COLOR: Color = \
 const PRESELECTION_MIN_OPACITY := 0.5
 const PRESELECTION_MAX_OPACITY := 1.0
 const PRESELECTION_DURATION_SEC := 0.6
-var PRESELECTION_SURFACE_DEPTH: float = DrawUtils.SURFACE_DEPTH * 4.0
-const PRESELECTION_SURFACE_OUTWARD_OFFSET := 64.0
-const PRESELECTION_SURFACE_LENGTH_PADDING := 64.0
+var PRESELECTION_SURFACE_DEPTH: float = DrawUtils.SURFACE_DEPTH + 4.0
+const PRESELECTION_SURFACE_OUTWARD_OFFSET := 4.0
+const PRESELECTION_SURFACE_LENGTH_PADDING := 4.0
 const PRESELECTION_POSITION_INDICATOR_LENGTH := 128.0
 const PRESELECTION_POSITION_INDICATOR_RADIUS := 32.0
 const PRESELECTION_PATH_STROKE_WIDTH := 12.0
+const PATH_BACK_END_TRIM_RADIUS := 0.0
 
 var player: Player
+var path_front_end_trim_radius: float
 var preselection_position_to_draw: PositionAlongSurface = null
 var animation_start_time := -PRESELECTION_DURATION_SEC
 var animation_progress := 1.0
@@ -37,6 +39,9 @@ var phantom_path: PlatformGraphPath
 
 func _init(player: Player) -> void:
     self.player = player
+    self.path_front_end_trim_radius = min(
+            player.movement_params.collider_half_width_height.x,
+            player.movement_params.collider_half_width_height.y)
 
 func _process(delta_sec: float) -> void:
     var current_time: float = Gs.time.elapsed_play_time_actual_sec
@@ -114,6 +119,8 @@ func _draw() -> void:
                     phantom_path,
                     PRESELECTION_PATH_STROKE_WIDTH,
                     path_color,
+                    path_front_end_trim_radius,
+                    PATH_BACK_END_TRIM_RADIUS,
                     false,
                     false,
                     true,
