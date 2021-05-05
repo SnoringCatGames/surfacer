@@ -4,7 +4,7 @@ extends Node2D
 var _PLAYER_SUB_ANNOTATORS := [
     AnnotatorType.PLAYER,
     AnnotatorType.PLAYER_POSITION,
-    AnnotatorType.PLAYER_TRAJECTORY,
+    AnnotatorType.RECENT_MOVEMENT,
     AnnotatorType.NAVIGATOR,
 ]
 
@@ -23,7 +23,7 @@ const _DEFAULT_ENABLEMENT := {
     AnnotatorType.LEVEL: true,
     AnnotatorType.PLAYER: true,
     AnnotatorType.PLAYER_POSITION: false,
-    AnnotatorType.PLAYER_TRAJECTORY: true,
+    AnnotatorType.RECENT_MOVEMENT: true,
     AnnotatorType.NAVIGATOR: true,
     AnnotatorType.CLICK: true,
     AnnotatorType.SURFACE_SELECTION: true,
@@ -33,7 +33,7 @@ var ruler_annotator: RulerAnnotator
 var surfaces_annotator: SurfacesAnnotator
 var grid_indices_annotator: GridIndicesAnnotator
 var surface_selection_annotator: SurfaceSelectionAnnotator
-var surface_preselection_annotator: SurfacePreselectionAnnotator
+var path_preselection_annotator: PathPreselectionAnnotator
 var click_annotator: ClickAnnotator
 
 # Dictonary<Player, PlayerAnnotator>
@@ -158,10 +158,9 @@ func _create_annotator(annotator_type: int) -> void:
                         SurfaceSelectionAnnotator.new(
                                 Surfacer.human_player)
                 annotation_layer.add_child(surface_selection_annotator)
-                surface_preselection_annotator = \
-                        SurfacePreselectionAnnotator.new(
-                                Surfacer.human_player)
-                annotation_layer.add_child(surface_preselection_annotator)
+                path_preselection_annotator = \
+                        PathPreselectionAnnotator.new(Surfacer.human_player)
+                annotation_layer.add_child(path_preselection_annotator)
         AnnotatorType.LEVEL:
             if Gs.level != null:
                 Gs.level.set_tile_map_visibility(true)
@@ -191,8 +190,8 @@ func _destroy_annotator(annotator_type: int) -> void:
             if surface_selection_annotator != null:
                 surface_selection_annotator.queue_free()
                 surface_selection_annotator = null
-                surface_preselection_annotator.queue_free()
-                surface_preselection_annotator = null
+                path_preselection_annotator.queue_free()
+                path_preselection_annotator = null
         AnnotatorType.LEVEL:
             if Gs.level != null:
                 Gs.level.set_tile_map_visibility(false)

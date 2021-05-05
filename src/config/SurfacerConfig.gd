@@ -5,6 +5,14 @@ const WALLS_AND_FLOORS_COLLISION_MASK_BIT := 0
 const FALL_THROUGH_FLOORS_COLLISION_MASK_BIT := 1
 const WALK_THROUGH_WALLS_COLLISION_MASK_BIT := 2
 
+const IS_INSPECTOR_ENABLED_SETTINGS_KEY := "is_inspector_enabled"
+const IS_SURFACER_LOGGING_SETTINGS_KEY := "is_surfacer_logging"
+const IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY := "is_intro_choreography_shown"
+const ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_active_trajectory_shown"
+const PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_previous_trajectory_shown"
+const PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY := \
+        "is_preselection_trajectory_shown"
+
 # --- Manifest additions ---
 
 var _must_restart_level_to_change_settings := true
@@ -19,8 +27,11 @@ var _settings_details_item_class_exclusions := []
 var _settings_details_item_class_inclusions := [
     IntroChoreographySettingsLabeledControlItem,
     InspectorEnabledSettingsLabeledControlItem,
+    PreselectionTrajectoryAnnotatorSettingsLabeledControlItem,
+    ActiveTrajectoryAnnotatorSettingsLabeledControlItem,
+    PreviousTrajectoryAnnotatorSettingsLabeledControlItem,
     PlayerPositionAnnotatorSettingsLabeledControlItem,
-    PlayerTrajectoryAnnotatorSettingsLabeledControlItem,
+    RecentMovementAnnotatorSettingsLabeledControlItem,
     PlayerAnnotatorSettingsLabeledControlItem,
     LevelAnnotatorSettingsLabeledControlItem,
     SurfacesAnnotatorSettingsLabeledControlItem,
@@ -40,6 +51,9 @@ var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
 var is_precomputing_platform_graphs: bool
 var is_intro_choreography_shown: bool
+var is_active_trajectory_shown: bool
+var is_previous_trajectory_shown: bool
+var is_preselection_trajectory_shown: bool
 var default_player_name: String
 
 var debug_params: Dictionary
@@ -171,10 +185,6 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.ignores_platform_graph_save_files = \
                 manifest.ignores_platform_graph_save_files
 
-const IS_INSPECTOR_ENABLED_SETTINGS_KEY := "is_inspector_enabled"
-const IS_SURFACER_LOGGING_SETTINGS_KEY := "is_surfacer_logging"
-const IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY := "is_intro_choreography_shown"
-
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
@@ -184,6 +194,15 @@ func initialize() -> void:
             false)
     self.is_intro_choreography_shown = Gs.save_state.get_setting(
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
+            true)
+    self.is_active_trajectory_shown = Gs.save_state.get_setting(
+            ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY,
+            true)
+    self.is_previous_trajectory_shown = Gs.save_state.get_setting(
+            PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
+            false)
+    self.is_preselection_trajectory_shown = Gs.save_state.get_setting(
+            PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
             true)
     
     Gs.profiler.preregister_metric_keys(non_surface_parser_metric_keys)

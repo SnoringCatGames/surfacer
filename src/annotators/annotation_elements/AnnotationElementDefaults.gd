@@ -312,7 +312,7 @@ var NAVIGATOR_CURRENT_PATH_COLOR := SurfacerColors.opacify(
         SurfacerColors.ALPHA_FAINT)
 var NAVIGATOR_PREVIOUS_PATH_COLOR := SurfacerColors.opacify(
         SurfacerColors.PURPLE,
-        SurfacerColors.ALPHA_XFAINT)
+        SurfacerColors.ALPHA_XXFAINT)
 var NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := SurfacerColors.opacify(
         SurfacerColors.PURPLE,
         SurfacerColors.ALPHA_XXFAINT)

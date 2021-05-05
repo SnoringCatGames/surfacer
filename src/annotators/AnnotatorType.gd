@@ -7,7 +7,7 @@ enum {
     LEVEL,
     PLAYER,
     PLAYER_POSITION,
-    PLAYER_TRAJECTORY,
+    RECENT_MOVEMENT,
     NAVIGATOR,
     CLICK,
     SURFACE_SELECTION,
@@ -28,8 +28,8 @@ static func get_string(type: int) -> String:
             return "PLAYER"
         PLAYER_POSITION:
             return "PLAYER_POSITION"
-        PLAYER_TRAJECTORY:
-            return "PLAYER_TRAJECTORY"
+        RECENT_MOVEMENT:
+            return "RECENT_MOVEMENT"
         NAVIGATOR:
             return "NAVIGATOR"
         CLICK:
