@@ -43,6 +43,7 @@ signal finished
 
 const _DEFAULT_TRANS_TYPE := Tween.TRANS_QUAD
 const _DEFAULT_EASE_TYPE := Tween.EASE_IN_OUT
+const _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER := 12.0
 
 # Array<Dictionary>
 var sequence: Array
@@ -51,6 +52,7 @@ var is_finished := false
 var player: Player
 var level
 
+var _initial_framerate_multiplier: float
 var _tween: Tween
 
 func _enter_tree() -> void:
@@ -74,6 +76,10 @@ func start() -> void:
             "reached_destination",
             self,
             "_execute_next_step")
+    _initial_framerate_multiplier = Gs.time.physics_framerate_multiplier
+    if !Surfacer.is_intro_choreography_shown:
+        Gs.time.physics_framerate_multiplier *= \
+                _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
     _execute_next_step()
 
 func _on_finished() -> void:
@@ -84,6 +90,7 @@ func _on_finished() -> void:
             "_execute_next_step")
     index = -1
     is_finished = true
+    Gs.time.physics_framerate_multiplier = _initial_framerate_multiplier
     emit_signal("finished")
 
 func _execute_next_step() -> void:
@@ -105,6 +112,15 @@ func _execute_next_step() -> void:
             step.ease_type if \
             step.has("ease_type") else \
             _DEFAULT_EASE_TYPE
+    var duration: float = \
+            step.duration if \
+            step.has("duration") else \
+            0.0
+    if !Surfacer.is_intro_choreography_shown:
+        duration /= _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
+    var is_step_immediate := duration == 0.0
+    
+    var is_tween_registered := false
     
     for key in step.keys():
         match key:
@@ -118,30 +134,36 @@ func _execute_next_step() -> void:
                         player.navigator.navigate_to_position(destination)
                 assert(is_navigation_valid)
             "zoom":
-                if step.has("duration"):
+                if is_step_immediate:
+                    Gs.camera_controller.zoom = step.zoom
+                else:
                     _tween.interpolate_property(
                             Gs.camera_controller,
                             "zoom",
                             Gs.camera_controller.zoom,
                             step.zoom,
-                            step.duration,
+                            duration,
                             trans_type,
                             ease_type)
-                else:
-                    Gs.camera_controller.zoom = step.zoom
+                    is_tween_registered = true
             "framerate_multiplier":
-                if step.has("duration"):
+                var multiplier: float = \
+                        _initial_framerate_multiplier * \
+                        step.framerate_multiplier
+                if Surfacer.is_intro_choreography_shown:
+                    multiplier *= _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
+                if is_step_immediate:
+                    Gs.time.physics_framerate_multiplier = multiplier
+                else:
                     _tween.interpolate_property(
                             Gs.time,
                             "physics_framerate_multiplier",
                             Gs.time.physics_framerate_multiplier,
-                            step.framerate_multiplier,
-                            step.duration,
+                            multiplier,
+                            duration,
                             trans_type,
                             ease_type)
-                else:
-                    Gs.time.physics_framerate_multiplier = \
-                            step.framerate_multiplier
+                    is_tween_registered = true
             "is_user_interaction_enabled":
                 Gs.is_user_interaction_enabled = \
                         step.is_user_interaction_enabled
@@ -166,11 +188,15 @@ func _execute_next_step() -> void:
             _:
                 Gs.logger.error("Unrecognized Choreographer step key: " + key)
     
-    _tween.start()
+    if is_tween_registered:
+        _tween.start()
     
     # Handle triggering the next step.
     if !step.has("destination"):
         if step.has("duration"):
+            # Schedule the next step to happen after a delay if we didn't just
+            # start any other events that would otherwise trigger the next step
+            # after they complete.
             Gs.time.set_timeout(
                     funcref(self, "_execute_next_step"),
                     step.duration + 0.0001)

@@ -17,6 +17,7 @@ var _settings_main_item_class_exclusions := []
 var _settings_main_item_class_inclusions := []
 var _settings_details_item_class_exclusions := []
 var _settings_details_item_class_inclusions := [
+    IntroChoreographySettingsLabeledControlItem,
     InspectorEnabledSettingsLabeledControlItem,
     PlayerPositionAnnotatorSettingsLabeledControlItem,
     PlayerTrajectoryAnnotatorSettingsLabeledControlItem,
@@ -38,6 +39,7 @@ var uses_threads_for_platform_graph_calculation: bool
 var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
 var is_precomputing_platform_graphs: bool
+var is_intro_choreography_shown: bool
 var default_player_name: String
 
 var debug_params: Dictionary
@@ -169,13 +171,20 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.ignores_platform_graph_save_files = \
                 manifest.ignores_platform_graph_save_files
 
+const IS_INSPECTOR_ENABLED_SETTINGS_KEY := "is_inspector_enabled"
+const IS_SURFACER_LOGGING_SETTINGS_KEY := "is_surfacer_logging"
+const IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY := "is_intro_choreography_shown"
+
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting(
-            "is_inspector_enabled",
+            IS_INSPECTOR_ENABLED_SETTINGS_KEY,
             manifest.is_inspector_enabled_default)
     self.is_surfacer_logging = Gs.save_state.get_setting(
-            "is_surfacer_logging",
+            IS_SURFACER_LOGGING_SETTINGS_KEY,
             false)
+    self.is_intro_choreography_shown = Gs.save_state.get_setting(
+            IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
+            true)
     
     Gs.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
     Gs.profiler.preregister_metric_keys(surface_parser_metric_keys)
