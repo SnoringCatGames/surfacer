@@ -36,6 +36,10 @@ signal finished
 #         -   A piece of music to play.
 #     -   animation
 #         -   A player animation to trigger.
+#     -   level_callback
+#         -   The name of a function to call on the level.
+#     -   level_callback_args
+#         -   Arguments to pass to level_callback.
 
 const _DEFAULT_TRANS_TYPE := Tween.TRANS_QUAD
 const _DEFAULT_EASE_TYPE := Tween.EASE_IN_OUT
@@ -45,6 +49,7 @@ var sequence: Array
 var index := -1
 var is_finished := false
 var player: Player
+var level
 
 var _tween: Tween
 
@@ -54,9 +59,11 @@ func _enter_tree() -> void:
 
 func configure(
         sequence: Array,
-        player: Player) -> void:
+        player: Player,
+        level) -> void:
     self.sequence = sequence
     self.player = player
+    self.level = level
 
 func start() -> void:
     assert(!sequence.empty())
@@ -145,9 +152,15 @@ func _execute_next_step() -> void:
             "animation":
                 # TODO: Implement Choreographer `animation` triggers.
                 pass
+            "level_callback":
+                if step.has("level_callback_args"):
+                    level.callv(step.level_callback, step.level_callback_args)
+                else:
+                    level.call(step.level_callback)
             "duration", \
             "trans_type", \
-            "ease_type":
+            "ease_type", \
+            "level_callback_args":
                 # Do nothing. Handled elsewhere.
                 pass
             _:

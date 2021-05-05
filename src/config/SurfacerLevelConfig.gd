@@ -33,5 +33,5 @@ func get_intro_choreographer(player: Player) -> Choreographer:
         ]
     
     var choreographer := Choreographer.new()
-    choreographer.configure(sequence, player)
+    choreographer.configure(sequence, player, Gs.level)
     return choreographer

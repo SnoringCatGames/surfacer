@@ -47,23 +47,6 @@ func _start() -> void:
     set_hud_visibility(true)
     call_deferred("_initialize_annotators")
 
-# Execute any intro cut-scene or initial navigation.
-func _execute_intro_choreography() -> void:
-    intro_choreographer = \
-            Gs.level_config.get_intro_choreographer(Surfacer.human_player)
-    intro_choreographer.connect(
-            "finished", self, "_on_intro_choreography_finished")
-    add_child(intro_choreographer)
-    intro_choreographer.start()
-
-func _on_intro_choreography_finished() -> void:
-    intro_choreographer.queue_free()
-    intro_choreographer = null
-
-func _initialize_annotators() -> void:
-    set_tile_map_visibility(false)
-    Surfacer.annotators.on_level_ready()
-
 func _destroy() -> void:
     for group in [
             Surfacer.group_name_human_players,
@@ -89,6 +72,23 @@ func _unhandled_input(event: InputEvent) -> void:
         # This ensures that pressing arrow keys won't change selections in the
         # inspector.
         Gs.utils.release_focus()
+
+# Execute any intro cut-scene or initial navigation.
+func _execute_intro_choreography() -> void:
+    intro_choreographer = \
+            Gs.level_config.get_intro_choreographer(Surfacer.human_player)
+    intro_choreographer.connect(
+            "finished", self, "_on_intro_choreography_finished")
+    add_child(intro_choreographer)
+    intro_choreographer.start()
+
+func _on_intro_choreography_finished() -> void:
+    intro_choreographer.queue_free()
+    intro_choreographer = null
+
+func _initialize_annotators() -> void:
+    set_tile_map_visibility(false)
+    Surfacer.annotators.on_level_ready()
 
 func add_player(
         resource_path: String,
