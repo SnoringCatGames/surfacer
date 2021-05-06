@@ -170,7 +170,7 @@ func _unhandled_input(event: InputEvent) -> void:
         navigator.stop()
 
 func _on_resized() -> void:
-    Gs.camera_controller.update_zoom()
+    Gs.camera_controller._on_resized()
 
 func init_human_player_state() -> void:
     is_human_player = true
