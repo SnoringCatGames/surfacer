@@ -4,7 +4,7 @@ extends Node2D
 var VALID_SELECTION_COLOR: Color = \
         SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_SOLID)
 var INVALID_SELECTION_COLOR: Color = \
-        SurfacerColors.opacify(SurfacerColors.RED, SurfacerColors.ALPHA_SOLID)
+        SurfacerColors.opacify(Surfacer.colors.red, SurfacerColors.ALPHA_SOLID)
 const SELECT_DURATION_SEC := max(
         ClickAnnotator.CLICK_INNER_DURATION_SEC,
         ClickAnnotator.CLICK_OUTER_DURATION_SEC) * 1.5

@@ -9,9 +9,9 @@ var PRESELECTION_PATH_COLOR: Color = \
         SurfacerColors.opacify(SurfacerColors.PURPLE, SurfacerColors.ALPHA_FAINT)
 
 var INVALID_SURFACE_COLOR: Color = \
-        SurfacerColors.opacify(SurfacerColors.RED, SurfacerColors.ALPHA_XFAINT)
+        SurfacerColors.opacify(Surfacer.colors.red, SurfacerColors.ALPHA_XFAINT)
 var INVALID_POSITION_INDICATOR_COLOR: Color = \
-        SurfacerColors.opacify(SurfacerColors.RED, SurfacerColors.ALPHA_XFAINT)
+        SurfacerColors.opacify(Surfacer.colors.red, SurfacerColors.ALPHA_XFAINT)
 
 const PRESELECTION_MIN_OPACITY := 0.5
 const PRESELECTION_MAX_OPACITY := 1.0
