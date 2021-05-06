@@ -16,8 +16,17 @@ func _init().(
 func process(player: Player) -> bool:
     var current_edge := player.navigator.current_edge
     if current_edge != null:
-        var playback_elapsed_time: float = \
-                player.navigator.current_playback.get_elapsed_time_modified()
+        var playback := player.navigator.current_playback
+        var playback_previous_elapsed_time: float = \
+                playback.get_previous_elapsed_time_modified()
+        var playback_elapsed_time: float = playback.get_elapsed_time_modified()
+        
+        # Don't re-sync if we already synced for the current index.
+        if !_get_has_trajectory_index_changed(
+                    playback_previous_elapsed_time,
+                    playback_elapsed_time) and \
+                playback_elapsed_time != 0:
+            return false
         
         var synced_positions := false
         if player.movement_params.syncs_player_position_to_edge_trajectory:
@@ -42,3 +51,9 @@ func process(player: Player) -> bool:
         return synced_positions or synced_velocities
     
     return false
+
+static func _get_has_trajectory_index_changed(
+        previous_time: float,
+        next_time: float) -> bool:
+    return int(previous_time / Time.PHYSICS_TIME_STEP_SEC) != \
+            int(next_time / Time.PHYSICS_TIME_STEP_SEC)

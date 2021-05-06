@@ -8,6 +8,8 @@ var is_additive: bool
 var next_index: int
 var next_instruction: EdgeInstruction
 var start_time_modified: float
+var previous_time_modified: float
+var current_time_modified: float
 var is_finished: bool
 var is_on_last_instruction: bool
 # Dictionary<String, boolean>
@@ -23,6 +25,8 @@ func _init(
 
 func start(modified_time_sec: float) -> void:
     start_time_modified = modified_time_sec
+    previous_time_modified = modified_time_sec
+    current_time_modified = modified_time_sec
     next_index = 0
     next_instruction = \
             edge.instructions.instructions[next_index] if \
@@ -38,6 +42,9 @@ func update(
         navigation_state: PlayerNavigationState) -> Array:
     # TODO: If we don't ever need more complicated dynamic instruction updates
     #       based on navigation state, then remove that param.
+    
+    previous_time_modified = current_time_modified
+    current_time_modified = modified_time_sec
     
     active_key_presses = _next_active_key_presses.duplicate()
     
@@ -75,8 +82,11 @@ func increment() -> void:
             null
     is_on_last_instruction = next_instruction == null
 
+func get_previous_elapsed_time_modified() -> float:
+    return previous_time_modified - start_time_modified
+
 func get_elapsed_time_modified() -> float:
-    return Gs.time.elapsed_play_time_modified_sec - start_time_modified
+    return current_time_modified - start_time_modified
 
 func _get_start_time_modified_for_next_instruction() -> float:
     assert(!is_finished)
