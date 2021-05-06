@@ -13,7 +13,8 @@ var TEXT_COLOR := Gs.colors.opacify(
 var viewport: Viewport
 
 var viewport_size: Vector2
-var screen_center := Vector2.ZERO
+var previous_camera_position := Vector2.ZERO
+var previous_camera_zoom := 1.0
 
 func _enter_tree() -> void:
     viewport = get_viewport()
@@ -24,19 +25,20 @@ func _enter_tree() -> void:
             "_on_viewport_size_changed")
 
 func _process(_delta_sec: float) -> void:
-    var next_screen_center: Vector2 = \
-            Gs.camera_controller.get_position()
+    var next_camera_position: Vector2 = Gs.camera_controller.get_position()
+    var next_camera_zoom: float = Gs.camera_controller.get_derived_zoom()
     
-    if next_screen_center != screen_center:
-        # The camera position moved, so we need to update the ruler.
-        screen_center = next_screen_center
+    if next_camera_position != previous_camera_position or \
+            next_camera_zoom != previous_camera_zoom:
+        # The camera changed, so we need to update the ruler.
+        previous_camera_position = next_camera_position
+        previous_camera_zoom = next_camera_zoom
         update()
 
 func _draw() -> void:
-    var grid_spacing: float = \
-            GRID_SPACING / Gs.camera_controller.zoom
+    var grid_spacing: float = GRID_SPACING / previous_camera_zoom
     var screen_start_position: Vector2 = \
-            screen_center / Gs.camera_controller.zoom - \
+            previous_camera_position / previous_camera_zoom - \
             viewport_size / 2.0
     
     # Offset the start position to align with the grid cell boundaries.
@@ -69,7 +71,7 @@ func _draw() -> void:
                 LINE_WIDTH)
         
         text = str(round((screen_start_position.x + start_x) * \
-                Gs.camera_controller.zoom))
+                previous_camera_zoom))
         text = "0" if text == "-0" else text
         draw_string(
                 Gs.fonts.main_xs,
@@ -90,7 +92,7 @@ func _draw() -> void:
                 LINE_WIDTH)
         
         text = str(round((screen_start_position.y + start_y) * \
-                Gs.camera_controller.zoom))
+                previous_camera_zoom))
         text = "0" if text == "-0" else text
         draw_string(
                 Gs.fonts.main_xs,

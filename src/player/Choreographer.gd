@@ -97,7 +97,7 @@ func start() -> void:
             Surfacer.is_navigation_destination_shown
     Surfacer.is_navigation_destination_shown = false
     
-    _initial_zoom = Gs.camera_controller.zoom
+    _initial_zoom = Gs.camera_controller.zoom_factor
     _initial_framerate_multiplier = Gs.time.framerate_multiplier
     _current_zoom = _initial_zoom
     _current_framerate_multiplier = _initial_framerate_multiplier
@@ -120,7 +120,7 @@ func _on_finished() -> void:
     Surfacer.is_active_trajectory_shown = _initial_is_active_trajectory_shown
     Surfacer.is_navigation_destination_shown = \
             _initial_is_navigation_destination_shown
-    Gs.camera_controller.zoom = _initial_zoom
+    Gs.camera_controller.zoom_factor = _initial_zoom
     Gs.time.framerate_multiplier = _initial_framerate_multiplier
     emit_signal("finished")
 
@@ -167,12 +167,12 @@ func _execute_next_step() -> void:
             "zoom":
                 _current_zoom = step.zoom
                 if is_step_immediate:
-                    Gs.camera_controller.zoom = _current_zoom
+                    Gs.camera_controller.zoom_factor = _current_zoom
                 else:
                     _tween.interpolate_property(
                             Gs.camera_controller,
-                            "zoom",
-                            Gs.camera_controller.zoom,
+                            "zoom_factor",
+                            Gs.camera_controller.zoom_factor,
                             _current_zoom,
                             duration,
                             trans_type,
@@ -252,5 +252,5 @@ func skip() -> void:
     #       immediately.
     if Gs.time.framerate_multiplier != _current_framerate_multiplier:
         Gs.time.framerate_multiplier = _current_framerate_multiplier
-    if Gs.camera_controller.zoom != _current_zoom:
-        Gs.camera_controller.zoom
+    if Gs.camera_controller.zoom_factor != _current_zoom:
+        Gs.camera_controller.zoom_factor
