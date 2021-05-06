@@ -26,7 +26,7 @@ func update(
         actions: PlayerActionState,
         previous_actions: PlayerActionState,
         time_modified_sec: float,
-        delta_sec: float,
+        _modified_delta_sec: float,
         navigation_state: PlayerNavigationState) -> void:
     var is_pressed: bool
     for action in ACTIONS_TO_INPUT_KEYS:

@@ -21,7 +21,7 @@ var is_a_selection_currently_rendered := false
 func _init(player: Player) -> void:
     self.player = player
 
-func _process(delta_sec: float) -> void:
+func _process(_delta_sec: float) -> void:
     var current_time: float = Gs.time.elapsed_play_time_actual_sec
     
     # Has there been a new surface selection?

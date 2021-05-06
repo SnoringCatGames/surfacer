@@ -12,17 +12,6 @@ const input_key_to_action_name := {
     "fr": "face_right",
 }
 
-const input_key_to_short_readable_action_name := {
-    "j": "jump",
-    "mu": "up",
-    "md": "down",
-    "ml": "left",
-    "mr": "right",
-    "gw": "grab",
-    "fl": "faceL",
-    "fr": "faceR",
-}
-
 var source_type_prefix: String
 var player
 var is_additive: bool
@@ -40,7 +29,7 @@ func update(
         actions: PlayerActionState,
         previous_actions: PlayerActionState,
         time_modified_sec: float,
-        delta_sec: float,
+        modified_delta_sec: float,
         navigation_state: PlayerNavigationState) -> void:
     Gs.logger.error("Abstract PlayerActionSource.update is not implemented")
 

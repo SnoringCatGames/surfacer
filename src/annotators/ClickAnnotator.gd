@@ -40,7 +40,7 @@ func _unhandled_input(event: InputEvent) -> void:
         outer_end_time = start_time + CLICK_OUTER_DURATION_SEC
         is_a_click_currently_rendered = true
 
-func _process(delta_sec: float) -> void:
+func _process(_delta_sec: float) -> void:
     var current_time: float = Gs.time.elapsed_play_time_actual_sec
     
     inner_progress = (current_time - start_time) / CLICK_INNER_DURATION_SEC

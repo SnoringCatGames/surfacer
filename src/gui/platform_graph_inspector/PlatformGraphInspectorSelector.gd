@@ -27,7 +27,7 @@ var selection_time_sec := -1.0
 func _init(inspector) -> void:
     self.inspector = inspector
 
-func _process(delta_sec: float) -> void:
+func _process(_delta_sec: float) -> void:
     if first_target != previous_first_target:
         previous_first_target = first_target
         update()
