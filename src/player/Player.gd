@@ -159,6 +159,16 @@ func _destroy() -> void:
     _is_destroyed = true
     queue_free()
 
+func _unhandled_input(event: InputEvent) -> void:
+    if _is_initialized and \
+            !_is_destroyed and \
+            Gs.is_user_interaction_enabled and \
+            navigator.is_currently_navigating and \
+            (event is InputEventMouseButton or \
+            event is InputEventScreenTouch or \
+            event is InputEventKey):
+        navigator.stop()
+
 func _on_resized() -> void:
     Gs.camera_controller.update_zoom()
 

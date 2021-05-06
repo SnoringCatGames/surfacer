@@ -58,7 +58,7 @@ func navigate_to_position(
             Gs.profiler.stop("navigator_find_path")
     
     var previous_navigation_attempt_count := current_navigation_attempt_count
-    reset()
+    _reset()
     if is_retry:
         current_navigation_attempt_count = previous_navigation_attempt_count
     
@@ -175,6 +175,9 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
     
     return path
 
+func stop() -> void:
+    _reset()
+
 func _set_reached_destination() -> void:
     if player.movement_params.forces_player_position_to_match_path_at_end:
         player.set_position(current_edge.get_end())
@@ -188,7 +191,7 @@ func _set_reached_destination() -> void:
             _:
                 Gs.logger.error("Invalid SurfaceSide")
     
-    reset()
+    _reset()
     has_reached_destination = true
     just_reached_destination = true
     
@@ -196,7 +199,7 @@ func _set_reached_destination() -> void:
     
     emit_signal("reached_destination")
 
-func reset() -> void:
+func _reset() -> void:
     if current_path != null:
         previous_path = current_path
     
@@ -292,7 +295,7 @@ func update(
                     current_destination,
                     true)
         else:
-            reset()
+            _reset()
         return
         
     elif navigation_state.just_reached_end_of_edge:
