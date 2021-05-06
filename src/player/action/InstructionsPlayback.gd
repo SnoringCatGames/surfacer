@@ -21,8 +21,8 @@ func _init(
     self.edge = edge
     self.is_additive = is_additive
 
-func start(time_sec: float) -> void:
-    start_time_modified = time_sec
+func start(modified_time_sec: float) -> void:
+    start_time_modified = modified_time_sec
     next_index = 0
     next_instruction = \
             edge.instructions.instructions[next_index] if \
@@ -34,7 +34,7 @@ func start(time_sec: float) -> void:
     _next_active_key_presses = {}
 
 func update(
-        time_sec: float,
+        modified_time_sec: float,
         navigation_state: PlayerNavigationState) -> Array:
     # TODO: If we don't ever need more complicated dynamic instruction updates
     #       based on navigation state, then remove that param.
@@ -43,7 +43,8 @@ func update(
     
     var new_instructions := []
     while !is_finished and \
-            _get_start_time_modified_for_next_instruction() <= time_sec:
+            _get_start_time_modified_for_next_instruction() <= \
+                    modified_time_sec:
         if !is_on_last_instruction:
             new_instructions.push_back(next_instruction)
         increment()
