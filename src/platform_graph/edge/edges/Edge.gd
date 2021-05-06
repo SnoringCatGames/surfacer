@@ -181,13 +181,13 @@ func _calculate_duration(
     return INF
 
 func get_position_at_time(edge_time: float) -> Vector2:
-    var index := floor(edge_time / Time.PHYSICS_TIME_STEP_SEC)
+    var index := int(edge_time / Time.PHYSICS_TIME_STEP_SEC)
     if index >= trajectory.frame_continuous_positions_from_steps.size():
         return Vector2.INF
     return trajectory.frame_continuous_positions_from_steps[index]
 
 func get_velocity_at_time(edge_time: float) -> Vector2:
-    var index := floor(edge_time / Time.PHYSICS_TIME_STEP_SEC)
+    var index := int(edge_time / Time.PHYSICS_TIME_STEP_SEC)
     if index >= trajectory.frame_continuous_velocities_from_steps.size():
         return Vector2.INF
     return trajectory.frame_continuous_velocities_from_steps[index]
