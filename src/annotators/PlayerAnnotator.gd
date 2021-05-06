@@ -20,14 +20,15 @@ func _init(
     self.z_index = 2
 
 func _physics_process(_delta_sec: float) -> void:
+    if recent_movement_annotator != null:
+        recent_movement_annotator.check_for_update()
+    
     if !Gs.geometry.are_points_equal_with_epsilon(
             player.position,
             previous_position,
             0.01):
         previous_position = player.position
         
-        if recent_movement_annotator != null:
-            recent_movement_annotator.check_for_update()
         if surface_annotator != null:
             surface_annotator.check_for_update()
         if position_annotator != null:
