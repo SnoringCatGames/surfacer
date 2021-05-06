@@ -25,7 +25,7 @@ signal finished
 #     -   zoom
 #         -   Updates the camera zoom.
 #     -   framerate_multiplier
-#         -   Updates the framerate (Time.physics_framerate_multiplier).
+#         -   Updates the framerate (Time.framerate_multiplier).
 #     -   trans_type
 #     -   ease_type
 #     -   is_user_interaction_enabled
@@ -98,7 +98,7 @@ func start() -> void:
     Surfacer.is_navigation_destination_shown = false
     
     _initial_zoom = Gs.camera_controller.zoom
-    _initial_framerate_multiplier = Gs.time.physics_framerate_multiplier
+    _initial_framerate_multiplier = Gs.time.framerate_multiplier
     _current_zoom = _initial_zoom
     _current_framerate_multiplier = _initial_framerate_multiplier
     
@@ -121,7 +121,7 @@ func _on_finished() -> void:
     Surfacer.is_navigation_destination_shown = \
             _initial_is_navigation_destination_shown
     Gs.camera_controller.zoom = _initial_zoom
-    Gs.time.physics_framerate_multiplier = _initial_framerate_multiplier
+    Gs.time.framerate_multiplier = _initial_framerate_multiplier
     emit_signal("finished")
 
 func _execute_next_step() -> void:
@@ -186,13 +186,13 @@ func _execute_next_step() -> void:
                     _current_framerate_multiplier *= \
                             _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
                 if is_step_immediate:
-                    Gs.time.physics_framerate_multiplier = \
+                    Gs.time.framerate_multiplier = \
                             _current_framerate_multiplier
                 else:
                     _tween.interpolate_property(
                             Gs.time,
-                            "physics_framerate_multiplier",
-                            Gs.time.physics_framerate_multiplier,
+                            "framerate_multiplier",
+                            Gs.time.framerate_multiplier,
                             _current_framerate_multiplier,
                             duration,
                             trans_type,
@@ -250,7 +250,7 @@ func skip() -> void:
     _tween.stop_all()
     # TODO: Consider tweening these very quickly instead of setting them
     #       immediately.
-    if Gs.time.physics_framerate_multiplier != _current_framerate_multiplier:
-        Gs.time.physics_framerate_multiplier = _current_framerate_multiplier
+    if Gs.time.framerate_multiplier != _current_framerate_multiplier:
+        Gs.time.framerate_multiplier = _current_framerate_multiplier
     if Gs.camera_controller.zoom != _current_zoom:
         Gs.camera_controller.zoom
