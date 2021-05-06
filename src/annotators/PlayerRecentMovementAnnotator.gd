@@ -35,62 +35,63 @@ func _init(player: Player) -> void:
     self.recent_actions.resize(RECENT_POSITIONS_BUFFER_SIZE)
 
 func check_for_update() -> void:
-    var most_recent_position := recent_positions[current_position_index]
-    if !Gs.geometry.are_points_equal_with_epsilon(
+    # Record the action as belonging to the previous frame.
+    if player.actions.just_pressed_jump:
+        recent_actions[current_position_index] = \
+                PlayerActionType.PRESSED_JUMP
+    elif player.actions.just_pressed_left:
+        recent_actions[current_position_index] = \
+                PlayerActionType.PRESSED_LEFT
+    elif player.actions.just_pressed_right:
+        recent_actions[current_position_index] = \
+                PlayerActionType.PRESSED_RIGHT
+    elif player.actions.just_pressed_grab_wall:
+        recent_actions[current_position_index] = \
+                PlayerActionType.PRESSED_GRAB_WALL
+    elif player.actions.just_pressed_face_left:
+        recent_actions[current_position_index] = \
+                PlayerActionType.PRESSED_FACE_LEFT
+    elif player.actions.just_pressed_face_right:
+        recent_actions[current_position_index] = \
+                PlayerActionType.PRESSED_FACE_RIGHT
+    elif player.actions.just_released_jump:
+        recent_actions[current_position_index] = \
+                PlayerActionType.RELEASED_JUMP
+    elif player.actions.just_released_left:
+        recent_actions[current_position_index] = \
+                PlayerActionType.RELEASED_LEFT
+    elif player.actions.just_released_right:
+        recent_actions[current_position_index] = \
+                PlayerActionType.RELEASED_RIGHT
+    elif player.actions.just_released_grab_wall:
+        recent_actions[current_position_index] = \
+                PlayerActionType.RELEASED_GRAB_WALL
+    elif player.actions.just_released_face_left:
+        recent_actions[current_position_index] = \
+                PlayerActionType.RELEASED_FACE_LEFT
+    elif player.actions.just_released_face_right:
+        recent_actions[current_position_index] = \
+                PlayerActionType.RELEASED_FACE_RIGHT
+    elif !Gs.geometry.are_points_equal_with_epsilon(
             player.position,
-            most_recent_position,
+            recent_positions[current_position_index],
             0.01):
-        # Record the action as belonging to the previous frame.
-        if player.actions.just_pressed_jump:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.PRESSED_JUMP
-        elif player.actions.just_pressed_left:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.PRESSED_LEFT
-        elif player.actions.just_pressed_right:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.PRESSED_RIGHT
-        elif player.actions.just_pressed_grab_wall:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.PRESSED_GRAB_WALL
-        elif player.actions.just_pressed_face_left:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.PRESSED_FACE_LEFT
-        elif player.actions.just_pressed_face_right:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.PRESSED_FACE_RIGHT
-        elif player.actions.just_released_jump:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.RELEASED_JUMP
-        elif player.actions.just_released_left:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.RELEASED_LEFT
-        elif player.actions.just_released_right:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.RELEASED_RIGHT
-        elif player.actions.just_released_grab_wall:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.RELEASED_GRAB_WALL
-        elif player.actions.just_released_face_left:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.RELEASED_FACE_LEFT
-        elif player.actions.just_released_face_right:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.RELEASED_FACE_RIGHT
-        else:
-            recent_actions[current_position_index] = \
-                    PlayerActionType.NONE
-        
-        total_position_count += 1
-        current_position_index = \
-                (current_position_index + 1) % RECENT_POSITIONS_BUFFER_SIZE
-        
-        # Record the new position for the current frame.
-        recent_positions[current_position_index] = player.position
-        # Record an empty place-holder action value for the current frame.
-        recent_actions[current_position_index] = PlayerActionType.NONE
-        
-        update()
+        recent_actions[current_position_index] = \
+                PlayerActionType.NONE
+    else:
+        # Ignore this frame, since there was no movement or action.
+        return
+    
+    total_position_count += 1
+    current_position_index = \
+            (current_position_index + 1) % RECENT_POSITIONS_BUFFER_SIZE
+    
+    # Record the new position for the current frame.
+    recent_positions[current_position_index] = player.position
+    # Record an empty place-holder action value for the current frame.
+    recent_actions[current_position_index] = PlayerActionType.NONE
+    
+    update()
 
 func _draw() -> void:
     if total_position_count < 2:
