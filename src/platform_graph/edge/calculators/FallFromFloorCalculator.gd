@@ -322,11 +322,7 @@ static func _prepend_walk_to_fall_off_portion(
         movement_params: MovementParams,
         falls_on_left_side: bool) -> void:
     var frame_count_before_fall_off := \
-            ceil(time_fall_off / Time.PHYSICS_TIME_STEP_SEC)
-    
-    # Round the fall-off time up, so that we actually consider it to start
-    # aligned with the first frame in which it is actually clear of the surface
-    # edge.
+            floor(time_fall_off / Time.PHYSICS_TIME_STEP_SEC)
     time_fall_off = \
             frame_count_before_fall_off * Time.PHYSICS_TIME_STEP_SEC + \
             Gs.geometry.FLOAT_EPSILON
