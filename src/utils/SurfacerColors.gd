@@ -1,16 +1,29 @@
 class_name SurfacerColors
-extends Reference
+extends ScaffolderColors
 
-const PANEL_BACKGROUND := Color8(16, 18, 15)
-const HEADER_BACKGROUND := Color8(43, 43, 43)
+# --- Configured colors ---
 
-# Lightness values (from 0 to 100).
-const LIGHTNESS_NORMAL := 64
-const LIGHTNESS_LIGHT := 80
-const LIGHTNESS_DARK := 40
-const LIGHTNESS_XDARK := 20
+var click
 
-const TRANSPARENT := Color8(0, 0, 0, 0)
+
+# --- Derived colors ---
+
+# ---
+
+func register_colors(manifest: Dictionary) -> void:
+    # FIXME: LEFT OFF HERE: ------------------------------------
+    pass
+
+    .register_colors(manifest)
+
+func _derive_colors() -> void:
+    ._derive_colors()
+    
+    # FIXME: LEFT OFF HERE: ------------------------------------
+    pass
+
+# FIXME: LEFT OFF HERE: ------------------------------------
+
 const WHITE := Color8(255, 255, 255)
 const BLACK := Color8(0, 0, 0)
 const GREY := Color8(163, 163, 163)
