@@ -309,18 +309,18 @@ var DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS := \
                 JUMP_LAND_POSITIONS_VALUE,
                 JUMP_LAND_POSITIONS_ALPHA)
 
-var NAVIGATOR_CURRENT_PATH_COLOR := SurfacerColors.opacify(
-        SurfacerColors.PURPLE,
-        SurfacerColors.ALPHA_XFAINT)
-var NAVIGATOR_PREVIOUS_PATH_COLOR := SurfacerColors.opacify(
-        SurfacerColors.PURPLE,
-        SurfacerColors.ALPHA_XXFAINT)
-var NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := SurfacerColors.opacify(
-        SurfacerColors.PURPLE,
-        SurfacerColors.ALPHA_XXFAINT)
-var NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := SurfacerColors.opacify(
-        SurfacerColors.PURPLE,
-        SurfacerColors.ALPHA_SLIGHTLY_FAINT)
+var NAVIGATOR_CURRENT_PATH_COLOR := Gs.colors.opacify(
+        Gs.colors.navigation,
+        ScaffolderColors.ALPHA_XFAINT)
+var NAVIGATOR_PREVIOUS_PATH_COLOR := Gs.colors.opacify(
+        Gs.colors.navigation,
+        ScaffolderColors.ALPHA_XXFAINT)
+var NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Gs.colors.opacify(
+        Gs.colors.navigation,
+        ScaffolderColors.ALPHA_XXFAINT)
+var NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Gs.colors.opacify(
+        Gs.colors.navigation,
+        ScaffolderColors.ALPHA_SLIGHTLY_FAINT)
 var NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
         NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
 var NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR := \

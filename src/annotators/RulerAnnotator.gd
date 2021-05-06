@@ -5,8 +5,10 @@ const GRID_SPACING := 64.0
 
 const LINE_WIDTH := 1.0
 
-var LINE_COLOR := SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_XXFAINT)
-var TEXT_COLOR := SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_XFAINT)
+var LINE_COLOR := Gs.colors.opacify(
+        Gs.colors.ruler, ScaffolderColors.ALPHA_XXFAINT)
+var TEXT_COLOR := Gs.colors.opacify(
+        Gs.colors.ruler, ScaffolderColors.ALPHA_XFAINT)
 
 var viewport: Viewport
 

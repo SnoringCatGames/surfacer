@@ -3,10 +3,8 @@ extends Node2D
 
 const CLICK_INNER_END_RADIUS := 58.0
 const CLICK_OUTER_END_RADIUS := 100.0
-var CLICK_INNER_COLOR := \
-        SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_SLIGHTLY_FAINT)
-var CLICK_OUTER_COLOR := \
-        SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_SLIGHTLY_FAINT)
+var CLICK_INNER_COLOR: Color = Gs.colors.click
+var CLICK_OUTER_COLOR: Color = Gs.colors.click
 const CLICK_INNER_DURATION_SEC := 0.27
 const CLICK_OUTER_DURATION_SEC := 0.23
 

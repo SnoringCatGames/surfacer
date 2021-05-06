@@ -1,10 +1,9 @@
 class_name SurfaceSelectionAnnotator
 extends Node2D
 
-var VALID_SELECTION_COLOR: Color = \
-        SurfacerColors.opacify(SurfacerColors.WHITE, SurfacerColors.ALPHA_SOLID)
-var INVALID_SELECTION_COLOR: Color = \
-        SurfacerColors.opacify(Surfacer.colors.red, SurfacerColors.ALPHA_SOLID)
+var VALID_SELECTION_COLOR: Color = Gs.colors.surface_click_selection
+var INVALID_SELECTION_COLOR := Gs.colors.opacify(
+        Gs.colors.invalid, ScaffolderColors.ALPHA_SOLID)
 const SELECT_DURATION_SEC := max(
         ClickAnnotator.CLICK_INNER_DURATION_SEC,
         ClickAnnotator.CLICK_OUTER_DURATION_SEC) * 1.5
