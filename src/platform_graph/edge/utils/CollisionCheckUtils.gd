@@ -382,15 +382,14 @@ static func check_continuous_horizontal_step_for_collision(
         current_velocity.y = vertical_state[1]
         displacement = current_position - previous_position
         
-        assert(displacement != Vector2.ZERO)
-        
-        # Check for collision.
-        collision = check_frame_for_collision(
-                collision_params,
-                previous_position,
-                displacement)
-        if collision != null:
-            break
+        if displacement != Vector2.ZERO:
+            # Check for collision.
+            collision = check_frame_for_collision(
+                    collision_params,
+                    previous_position,
+                    displacement)
+            if collision != null:
+                break
         
         # Update state for the next frame.
         previous_position = current_position

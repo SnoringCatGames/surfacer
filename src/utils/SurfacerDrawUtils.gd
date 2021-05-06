@@ -103,6 +103,8 @@ static func _trim_front_end(
     for i in range(1, vertices.size()):
         if vertices[i].distance_squared_to(end_position) < trim_radius_squared:
             front_index = i + 1
+        else:
+            break
     
     if front_index >= vertices.size():
         return PoolVector2Array()
@@ -139,6 +141,8 @@ static func _trim_back_end(
         i = count - i - 1
         if vertices[i].distance_squared_to(end_position) < trim_radius_squared:
             back_index = i - 1
+        else:
+            break
     
     if back_index < 0:
         return PoolVector2Array()
