@@ -213,7 +213,9 @@ func _physics_process(delta_sec: float) -> void:
         # hood.
         return
     
-    _update_actions(delta_sec)
+    var modified_delta_sec := Gs.time.modify_delta(delta_sec)
+    
+    _update_actions(modified_delta_sec)
     _update_surface_state()
     _handle_pointer_selections()
     
@@ -249,9 +251,9 @@ func _physics_process(delta_sec: float) -> void:
                 side_str,
             ])
     
-    _update_navigator(delta_sec)
+    _update_navigator(modified_delta_sec)
     
-    actions.delta_sec = delta_sec
+    actions.modified_delta_sec = modified_delta_sec
     actions.log_new_presses_and_releases(
             self, Gs.time.elapsed_play_time_actual_sec)
     
@@ -268,12 +270,14 @@ func _physics_process(delta_sec: float) -> void:
     _update_collision_mask()
     
     if !movement_params.bypasses_runtime_physics:
-        # We don't need to multiply velocity by delta because MoveAndSlide
-        # already takes delta time into account.
+        # Since move_and_slide automatically accounts for delta_sec, we need to
+        # compensate for that in order to support our modified framerate.
+        var modified_velocity := velocity * Gs.time.get_combined_multiplier()
+        
         # TODO: Use the remaining pre-collision movement that move_and_slide
         #       returns. This might be needed in order to move along slopes?
         move_and_slide(
-                velocity,
+                modified_velocity,
                 Gs.geometry.UP,
                 false,
                 4,
@@ -283,13 +287,13 @@ func _physics_process(delta_sec: float) -> void:
     surface_state.previous_center_position = surface_state.center_position
     surface_state.center_position = self.position
 
-func _update_navigator(delta_sec: float) -> void:
+func _update_navigator(modified_delta_sec: float) -> void:
     navigator.update()
     
     # TODO: There's probably a more efficient way to do this.
     if navigator.actions_might_be_dirty:
         actions.copy(actions_from_previous_frame)
-        _update_actions(delta_sec)
+        _update_actions(modified_delta_sec)
         _update_surface_state(true)
 
 func _handle_pointer_selections() -> void:
@@ -315,7 +319,7 @@ func _handle_pointer_selections() -> void:
         preselection_target = Vector2.INF
         preselection_position = null
 
-func _update_actions(delta_sec: float) -> void:
+func _update_actions(modified_delta_sec: float) -> void:
     # Record actions for the previous frame.
     actions_from_previous_frame.copy(actions)
     
@@ -328,7 +332,7 @@ func _update_actions(delta_sec: float) -> void:
                 actions,
                 actions_from_previous_frame,
                 Gs.time.elapsed_play_time_modified_sec,
-                delta_sec,
+                modified_delta_sec,
                 navigation_state)
     
     actions.start_dash = \
@@ -814,20 +818,20 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     velocity.y += movement_params.dash_vertical_boost
     
     _dash_cooldown_timer.start(movement_params.dash_cooldown)
-    #warning-ignore:return_value_discarded
     _dash_fade_tween.reset_all()
-    #warning-ignore:return_value_discarded
     _dash_fade_tween.interpolate_property(
             self,
             "current_max_horizontal_speed",
             movement_params.max_horizontal_speed_default * \
                     movement_params.dash_speed_multiplier,
             movement_params.max_horizontal_speed_default,
-            movement_params.dash_fade_duration,
+            movement_params.dash_fade_duration / \
+                    Gs.time.get_combined_multiplier(),
             Tween.TRANS_LINEAR,
             Tween.EASE_IN,
-            movement_params.dash_duration - movement_params.dash_fade_duration)
-    #warning-ignore:return_value_discarded
+            (movement_params.dash_duration - 
+                    movement_params.dash_fade_duration) / \
+                    Gs.time.get_combined_multiplier())
     _dash_fade_tween.start()
     
     if horizontal_acceleration_sign > 0:

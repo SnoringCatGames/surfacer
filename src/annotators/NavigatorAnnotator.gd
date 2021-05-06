@@ -14,7 +14,7 @@ func _init(navigator: Navigator) -> void:
             navigator.player.movement_params.collider_half_width_height.x,
             navigator.player.movement_params.collider_half_width_height.y)
 
-func _physics_process(delta_sec: float) -> void:
+func _physics_process(_delta_sec: float) -> void:
     if navigator.current_path != current_path:
         current_path = navigator.current_path
         current_destination = navigator.current_destination

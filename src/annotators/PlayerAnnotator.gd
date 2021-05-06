@@ -19,7 +19,7 @@ func _init(
     self.is_human_player = is_human_player
     self.z_index = 2
 
-func _physics_process(delta_sec: float) -> void:
+func _physics_process(_delta_sec: float) -> void:
     if !Gs.geometry.are_points_equal_with_epsilon(
             player.position,
             previous_position,

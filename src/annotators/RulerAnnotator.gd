@@ -23,7 +23,7 @@ func _enter_tree() -> void:
             self,
             "_on_viewport_size_changed")
 
-func _process(delta_sec: float) -> void:
+func _process(_delta_sec: float) -> void:
     var next_screen_center: Vector2 = \
             Gs.camera_controller.get_position()
     

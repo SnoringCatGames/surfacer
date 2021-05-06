@@ -18,7 +18,7 @@ func process(player: Player) -> bool:
         # Horizontal movement.
         player.velocity.x += \
                 player.movement_params.walk_acceleration * \
-                player.actions.delta_sec * \
+                player.actions.modified_delta_sec * \
                 player.surface_state.horizontal_acceleration_sign
         
         return true
