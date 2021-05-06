@@ -3,7 +3,7 @@ extends Node2D
 
 const RECENT_POSITIONS_BUFFER_SIZE := 150
 
-const MOVEMENT_HUE := SurfacerColors.TEAL.h
+var MOVEMENT_HUE: float = Gs.colors.recent_movement.h
 const MOVEMENT_OPACITY_NEWEST := 0.7
 const MOVEMENT_OPACITY_OLDEST := 0.01
 const MOVEMENT_STROKE_WIDTH := 1
@@ -121,8 +121,8 @@ func _draw() -> void:
                 MOVEMENT_OPACITY_OLDEST
         color = Color.from_hsv(
                 MOVEMENT_HUE,
-                0.7,
-                0.7,
+                0.6,
+                0.9,
                 opacity)
         
         # Calculate our current index in the circular buffer.
@@ -152,7 +152,7 @@ func _draw_action_indicator(
     var color := Color.from_hsv(
             MOVEMENT_HUE,
             0.3,
-            0.9,
+            0.99,
             opacity)
     
     var input_key := ""

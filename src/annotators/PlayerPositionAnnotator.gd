@@ -1,23 +1,23 @@
 class_name PlayerPositionAnnotator
 extends Node2D
 
-var PLAYER_POSITION_COLOR := SurfacerColors.opacify(
-        SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
-var GRAB_POSITION_COLOR := SurfacerColors.opacify(
-        SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
+var PLAYER_POSITION_COLOR := Gs.colors.opacify(
+        Gs.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
+var GRAB_POSITION_COLOR := Gs.colors.opacify(
+        Gs.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
 const PLAYER_POSITION_RADIUS := 3.0
 const GRAB_POSITION_LINE_WIDTH := 5.0
 const GRAB_POSITION_LINE_LENGTH := 10.0
 
-var POSITION_ALONG_SURFACE_COLOR := SurfacerColors.opacify(
-        SurfacerColors.TEAL, SurfacerColors.ALPHA_XXFAINT)
+var POSITION_ALONG_SURFACE_COLOR := Gs.colors.opacify(
+        Gs.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
 const POSITION_ALONG_SURFACE_TARGET_POINT_RADIUS := 4.0
 const POSITION_ALONG_SURFACE_T_LENGTH_IN_SURFACE := 0.0
 const POSITION_ALONG_SURFACE_T_LENGTH_OUT_OF_SURFACE := 20.0
 const POSITION_ALONG_SURFACE_T_WIDTH := 4.0
 
-var COLLIDER_COLOR := SurfacerColors.opacify(
-        SurfacerColors.TEAL, SurfacerColors.ALPHA_XFAINT)
+var COLLIDER_COLOR := Gs.colors.opacify(
+        Gs.colors.player_position, ScaffolderColors.ALPHA_XFAINT)
 const COLLIDER_THICKNESS := 4.0
 
 var player: Player
