@@ -233,7 +233,9 @@ func _execute_next_step() -> void:
             # after they complete.
             Gs.time.set_timeout(
                     funcref(self, "_execute_next_step"),
-                    step.duration + 0.0001)
+                    step.duration + 0.0001,
+                    [],
+                    Time.PLAY_PHYSICS_TIME)
         else:
             _execute_next_step()
 
