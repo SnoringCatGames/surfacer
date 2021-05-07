@@ -44,7 +44,7 @@ func _init(player: Player) -> void:
             player.movement_params.collider_half_width_height.y)
 
 func _process(_delta_sec: float) -> void:
-    var current_time: float = Gs.time.elapsed_play_time_actual_sec
+    var current_time: float = Gs.time.get_play_time_sec()
     
     var did_preselection_position_change := \
             preselection_position_to_draw != player.preselection_position

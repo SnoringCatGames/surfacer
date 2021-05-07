@@ -67,7 +67,7 @@ func quit(immediately := true) -> void:
     .quit(immediately)
 
 func _input(event: InputEvent) -> void:
-    if _get_level_play_time_actual() > min_controls_display_time and \
+    if _get_level_play_time_unscaled() > min_controls_display_time and \
             (event is InputEventMouseButton or \
                     event is InputEventScreenTouch or \
                     event is InputEventKey) and \
@@ -95,6 +95,7 @@ func _execute_intro_choreography() -> void:
     intro_choreographer.start()
 
 func _on_intro_choreography_finished() -> void:
+    Gs.logger.print("Intro choreography finished")
     intro_choreographer.queue_free()
     intro_choreographer = null
     _show_welcome_panel()

@@ -104,7 +104,7 @@ func navigate_to_position(
                 "\n\t}" +
                 "\n}")
         var format_string_arguments := [
-            Gs.time.elapsed_play_time_actual_sec,
+            Gs.time.get_play_time_sec(),
             destination.to_string(),
             path.to_string_with_newlines(1),
             duration_navigate_to_position,
@@ -195,7 +195,7 @@ func _set_reached_destination() -> void:
     has_reached_destination = true
     just_reached_destination = true
     
-    print_msg("REACHED END OF PATH: %8.3fs", Gs.time.elapsed_play_time_actual_sec)
+    print_msg("REACHED END OF PATH: %8.3fs", Gs.time.get_play_time_sec())
     
     emit_signal("reached_destination")
 
@@ -237,7 +237,7 @@ func _start_edge(
     
     current_playback = instructions_action_source.start_instructions(
             current_edge,
-            Gs.time.elapsed_play_time_modified_sec)
+            Gs.time.get_scaled_play_time_sec())
     
     var duration_start_edge: float = \
             Gs.profiler.stop("navigator_start_edge")
@@ -245,7 +245,7 @@ func _start_edge(
     var format_string_template := \
             "STARTING EDGE NAV:   %8.3fs; %s; calc duration=%sms"
     var format_string_arguments := [
-            Gs.time.elapsed_play_time_actual_sec,
+            Gs.time.get_play_time_sec(),
             current_edge.to_string_with_newlines(0),
             str(duration_start_edge),
         ]
@@ -288,7 +288,7 @@ func update(
             interruption_type_label = \
                     "navigation_state.just_interrupted_by_user_action"
         print_msg("EDGE MVT INTERRUPTED:%8.3fs; %s",
-                [Gs.time.elapsed_play_time_actual_sec, interruption_type_label])
+                [Gs.time.get_play_time_sec(), interruption_type_label])
         
         if player.movement_params.retries_navigation_when_interrupted:
             navigate_to_position(
@@ -300,7 +300,7 @@ func update(
         
     elif navigation_state.just_reached_end_of_edge:
         print_msg("REACHED END OF EDGE: %8.3fs; %s", [
-            Gs.time.elapsed_play_time_actual_sec,
+            Gs.time.get_play_time_sec(),
             current_edge.get_name(),
         ])
     else:
@@ -317,7 +317,7 @@ func update(
         # clear itself).
         instructions_action_source.cancel_playback(
                 current_playback,
-                Gs.time.elapsed_play_time_modified_sec)
+                Gs.time.get_scaled_play_time_sec())
         
         # Check for the next edge to navigate.
         var next_edge_index := current_edge_index + 1
@@ -334,7 +334,7 @@ func update(
             else:
                 var format_string_template := "INSRT CTR-PROTR EDGE:%8.3fs; %s"
                 var format_string_arguments := [
-                        Gs.time.elapsed_play_time_actual_sec,
+                        Gs.time.get_play_time_sec(),
                         backtracking_edge.to_string_with_newlines(0),
                     ]
                 print_msg(format_string_template, format_string_arguments)
