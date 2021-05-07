@@ -17,7 +17,7 @@ var outer_progress := 1.0
 var is_a_click_currently_rendered := false
 
 func _unhandled_input(event: InputEvent) -> void:
-    var current_time: float = Gs.time.elapsed_play_time_actual_sec
+    var current_time: float = Gs.time.get_play_time_sec()
     
     var position := Vector2.INF
     
@@ -41,7 +41,7 @@ func _unhandled_input(event: InputEvent) -> void:
         is_a_click_currently_rendered = true
 
 func _process(_delta_sec: float) -> void:
-    var current_time: float = Gs.time.elapsed_play_time_actual_sec
+    var current_time: float = Gs.time.get_play_time_sec()
     
     inner_progress = (current_time - start_time) / CLICK_INNER_DURATION_SEC
     outer_progress = (current_time - start_time) / CLICK_OUTER_DURATION_SEC

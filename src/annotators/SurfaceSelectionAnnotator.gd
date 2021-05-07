@@ -22,7 +22,7 @@ func _init(player: Player) -> void:
     self.player = player
 
 func _process(_delta_sec: float) -> void:
-    var current_time: float = Gs.time.elapsed_play_time_actual_sec
+    var current_time: float = Gs.time.get_play_time_sec()
     
     # Has there been a new surface selection?
     if player.last_selection_position != selection_position_to_animate:

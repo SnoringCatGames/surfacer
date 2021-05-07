@@ -1,8 +1,6 @@
 class_name RulerAnnotator
 extends Node2D
 
-const GRID_SPACING := 64.0
-
 const LINE_WIDTH := 1.0
 
 var LINE_COLOR := Gs.colors.opacify(
@@ -36,21 +34,22 @@ func _process(_delta_sec: float) -> void:
         update()
 
 func _draw() -> void:
-    var grid_spacing: float = GRID_SPACING / previous_camera_zoom
+    var grid_spacing: Vector2 = Gs.cell_size / previous_camera_zoom
     var screen_start_position: Vector2 = \
             previous_camera_position / previous_camera_zoom - \
             viewport_size / 2.0
     
     # Offset the start position to align with the grid cell boundaries.
     var ruler_start_position := Vector2(
-            -fmod((screen_start_position.x + grid_spacing * 1000000000),
-                    grid_spacing),
-            -fmod((screen_start_position.y + grid_spacing * 1000000000),
-                    grid_spacing))
+            -fmod((screen_start_position.x + grid_spacing.x * 1000000000),
+                    grid_spacing.x),
+            -fmod((screen_start_position.y + grid_spacing.y * 1000000000),
+                    grid_spacing.y))
     
-    var ruler_size := viewport_size + Vector2(grid_spacing, grid_spacing)
-    var vertical_line_count := floor(ruler_size.x / grid_spacing) as int + 1
-    var horizontal_line_count := floor(ruler_size.y / grid_spacing) as int + 1
+    var ruler_size := viewport_size + grid_spacing
+    var vertical_line_count := floor(ruler_size.x / grid_spacing.x) as int + 1
+    var horizontal_line_count := \
+            floor(ruler_size.y / grid_spacing.y) as int + 1
     
     var start_x: float
     var start_y: float
@@ -61,7 +60,7 @@ func _draw() -> void:
     # Draw the vertical lines.
     start_y = ruler_start_position.y
     for i in vertical_line_count:
-        start_x = ruler_start_position.x + grid_spacing * i
+        start_x = ruler_start_position.x + grid_spacing.x * i
         start_position = Vector2(start_x, start_y)
         end_position = Vector2(start_x, start_y + ruler_size.y)
         draw_line(
@@ -82,7 +81,7 @@ func _draw() -> void:
     # Draw the horizontal lines.
     start_x = ruler_start_position.x
     for i in range(1, horizontal_line_count):
-        start_y = ruler_start_position.y + grid_spacing * i
+        start_y = ruler_start_position.y + grid_spacing.y * i
         start_position = Vector2(start_x, start_y)
         end_position = Vector2(start_x + ruler_size.x, start_y)
         draw_line(

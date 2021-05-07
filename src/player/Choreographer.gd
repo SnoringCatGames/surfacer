@@ -24,8 +24,8 @@ signal finished
 #             finishes navigating to the given destination.
 #     -   zoom
 #         -   Updates the camera zoom.
-#     -   framerate_multiplier
-#         -   Updates the framerate (Time.framerate_multiplier).
+#     -   time_scale
+#         -   Updates the framerate (Time.time_scale).
 #     -   trans_type
 #     -   ease_type
 #     -   is_user_interaction_enabled
@@ -61,9 +61,9 @@ var _initial_is_active_trajectory_shown: bool
 var _initial_is_navigation_destination_shown: bool
 
 var _initial_zoom: float
-var _initial_framerate_multiplier: float
+var _initial_time_scale: float
 var _current_zoom: float
-var _current_framerate_multiplier: float
+var _current_time_scale: float
 
 func _enter_tree() -> void:
     _tween = Tween.new()
@@ -98,9 +98,9 @@ func start() -> void:
     Surfacer.is_navigation_destination_shown = false
     
     _initial_zoom = Gs.camera_controller.zoom_factor
-    _initial_framerate_multiplier = Gs.time.framerate_multiplier
+    _initial_time_scale = Gs.time.time_scale
     _current_zoom = _initial_zoom
-    _current_framerate_multiplier = _initial_framerate_multiplier
+    _current_time_scale = _initial_time_scale
     
     _execute_next_step()
     
@@ -121,7 +121,7 @@ func _on_finished() -> void:
     Surfacer.is_navigation_destination_shown = \
             _initial_is_navigation_destination_shown
     Gs.camera_controller.zoom_factor = _initial_zoom
-    Gs.time.framerate_multiplier = _initial_framerate_multiplier
+    Gs.time.time_scale = _initial_time_scale
     emit_signal("finished")
 
 func _execute_next_step() -> void:
@@ -178,22 +178,22 @@ func _execute_next_step() -> void:
                             trans_type,
                             ease_type)
                     is_tween_registered = true
-            "framerate_multiplier":
-                _current_framerate_multiplier = \
-                        _initial_framerate_multiplier * \
-                        step.framerate_multiplier
+            "time_scale":
+                _current_time_scale = \
+                        _initial_time_scale * \
+                        step.time_scale
                 if Surfacer.is_intro_choreography_shown:
-                    _current_framerate_multiplier *= \
+                    _current_time_scale *= \
                             _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
                 if is_step_immediate:
-                    Gs.time.framerate_multiplier = \
-                            _current_framerate_multiplier
+                    Gs.time.time_scale = \
+                            _current_time_scale
                 else:
                     _tween.interpolate_property(
                             Gs.time,
-                            "framerate_multiplier",
-                            Gs.time.framerate_multiplier,
-                            _current_framerate_multiplier,
+                            "time_scale",
+                            Gs.time.time_scale,
+                            _current_time_scale,
                             duration,
                             trans_type,
                             ease_type)
@@ -246,11 +246,11 @@ func skip() -> void:
         return
     Gs.logger.print("Skipping choreography")
     _is_skipped = true
-    _current_framerate_multiplier *= _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
+    _current_time_scale *= _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
     _tween.stop_all()
     # TODO: Consider tweening these very quickly instead of setting them
     #       immediately.
-    if Gs.time.framerate_multiplier != _current_framerate_multiplier:
-        Gs.time.framerate_multiplier = _current_framerate_multiplier
+    if Gs.time.time_scale != _current_time_scale:
+        Gs.time.time_scale = _current_time_scale
     if Gs.camera_controller.zoom_factor != _current_zoom:
         Gs.camera_controller.zoom_factor

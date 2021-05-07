@@ -223,7 +223,7 @@ func _physics_process(delta_sec: float) -> void:
         # hood.
         return
     
-    var modified_delta_sec := Gs.time.modify_delta(delta_sec)
+    var modified_delta_sec := Gs.time.scale_delta(delta_sec)
     
     _update_actions(modified_delta_sec)
     _update_surface_state()
@@ -232,7 +232,7 @@ func _physics_process(delta_sec: float) -> void:
     if surface_state.just_left_air:
         print_msg("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s", [
                 player_name,
-                Gs.time.elapsed_play_time_actual_sec,
+                Gs.time.get_play_time_sec(),
                 surface_state.center_position,
                 velocity,
                 surface_state.grabbed_surface.to_string(),
@@ -240,7 +240,7 @@ func _physics_process(delta_sec: float) -> void:
     elif surface_state.just_entered_air:
         print_msg("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s", [
                 player_name,
-                Gs.time.elapsed_play_time_actual_sec,
+                Gs.time.get_play_time_sec(),
                 surface_state.center_position,
                 velocity,
                 surface_state.previous_grabbed_surface.to_string(),
@@ -255,7 +255,7 @@ func _physics_process(delta_sec: float) -> void:
             side_str = "WALL"
         print_msg("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s", [
                 player_name,
-                Gs.time.elapsed_play_time_actual_sec,
+                Gs.time.get_play_time_sec(),
                 surface_state.center_position,
                 velocity,
                 side_str,
@@ -265,7 +265,7 @@ func _physics_process(delta_sec: float) -> void:
     
     actions.modified_delta_sec = modified_delta_sec
     actions.log_new_presses_and_releases(
-            self, Gs.time.elapsed_play_time_actual_sec)
+            self, Gs.time.get_play_time_sec())
     
     # Flip the horizontal direction of the animation according to which way the
     # player is facing.
@@ -282,7 +282,7 @@ func _physics_process(delta_sec: float) -> void:
     if !movement_params.bypasses_runtime_physics:
         # Since move_and_slide automatically accounts for delta_sec, we need to
         # compensate for that in order to support our modified framerate.
-        var modified_velocity := velocity * Gs.time.get_combined_multiplier()
+        var modified_velocity := velocity * Gs.time.get_combined_scale()
         
         # TODO: Use the remaining pre-collision movement that move_and_slide
         #       returns. This might be needed in order to move along slopes?
@@ -310,7 +310,7 @@ func _handle_pointer_selections() -> void:
     if new_selection_target != Vector2.INF:
         print_msg("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
                 player_name,
-                Gs.time.elapsed_play_time_actual_sec,
+                Gs.time.get_play_time_sec(),
                 str(new_selection_target),
                 new_selection_position.to_string() if \
                 new_selection_position != null else \
@@ -341,7 +341,7 @@ func _update_actions(modified_delta_sec: float) -> void:
         action_source.update(
                 actions,
                 actions_from_previous_frame,
-                Gs.time.elapsed_play_time_modified_sec,
+                Gs.time.get_scaled_play_time_sec(),
                 modified_delta_sec,
                 navigation_state)
     
@@ -836,12 +836,12 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
                     movement_params.dash_speed_multiplier,
             movement_params.max_horizontal_speed_default,
             movement_params.dash_fade_duration / \
-                    Gs.time.get_combined_multiplier(),
+                    Gs.time.get_combined_scale(),
             Tween.TRANS_LINEAR,
             Tween.EASE_IN,
             (movement_params.dash_duration - 
                     movement_params.dash_fade_duration) / \
-                    Gs.time.get_combined_multiplier())
+                    Gs.time.get_combined_scale())
     _dash_fade_tween.start()
     
     if horizontal_acceleration_sign > 0:
