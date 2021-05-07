@@ -265,45 +265,6 @@ static func find_landing_trajectory_between_positions(
     
     return calc_result
 
-static func find_landing_trajectory_with_no_input(
-        collision_params: CollisionCalcParams,
-        origin_position: PositionAlongSurface,
-        velocity_start: Vector2) -> void:
-    # FIXME: --------------------------------------
-    pass
-    
-    var duration_to_check := MovementUtils.calculate_movement_duration(
-            FALL_DISTANCE_TO_CHECK_FOR_INPUTLESS_LANDING,
-            velocity_start.y,
-            Gs.geometry.GRAVITY)
-    # This should be valid, since gravity and distance should have the same
-    # sign.
-    assert(duration_to_check != INF)
-    
-    var displacement_x := MovementUtils.calculate_displacement_for_duration(
-            duration_to_check,
-            velocity_start.x,
-            0.0,
-            collision_params.movement_params.max_horizontal_speed_default)
-    var displacement := Vector2(
-            displacement_x,
-            FALL_DISTANCE_TO_CHECK_FOR_INPUTLESS_LANDING)
-    var dummy_land_position := PositionAlongSurfaceFactory \
-            .create_position_without_surface(
-                    origin_position.target_point + displacement)
-    
-    # FIXME: LEFT OFF HERE: ---------------------------------
-    # - Not quite right. This would try to move around any collisions, rather than finding the first collision.
-    # - Wait... Let's just abandon this approach of find-what-we'd-hit-if-no-button-were-pressed, and instead just find the first valid land position like we've previously supported!
-    var edge_calc_result := find_landing_trajectory_between_positions(
-            null,
-            collision_params,
-            origin_position,
-            dummy_land_position,
-            velocity_start,
-            false)
-    
-
 static func find_surfaces_in_fall_range_from_point(
         movement_params: MovementParams,
         all_possible_surfaces_set: Dictionary,
