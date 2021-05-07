@@ -156,8 +156,8 @@ align = 1
 margin_top = 36.0
 margin_right = 160.0
 margin_bottom = 36.0
-font = ExtResource( 5 )
 row_height = 20.0
+font = ExtResource( 5 )
 
 [node name="OpenFolderButton" type="Button" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 visible = false
