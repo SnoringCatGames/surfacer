@@ -4,12 +4,16 @@ extends VBoxContainer
 const PANEL_MARGIN_RIGHT := 20.0
 const TOGGLE_DURATION := 0.2
 const DEFAULT_GUI_SCALE := 1.0
+const ANNOTATOR_ROW_HEIGHT := 40.0
+const SLIDER_WIDTH := 64.0
 
 var is_open := false setget _set_is_open,_get_is_open
 
 var _toggle_open_tween: Tween
 
-var _checkbox_control_item_classes := [
+var _annotator_control_items := []
+
+var _annotator_control_item_classes := [
     PlayerAnnotatorSettingsLabeledControlItem,
     LevelAnnotatorSettingsLabeledControlItem,
     PlayerPositionAnnotatorSettingsLabeledControlItem,
@@ -20,6 +24,7 @@ var _checkbox_control_item_classes := [
     PreviousTrajectoryAnnotatorSettingsLabeledControlItem,
     ActiveTrajectoryAnnotatorSettingsLabeledControlItem,
     NavigationDestinationAnnotatorSettingsLabeledControlItem,
+    TimeScaleSettingsLabeledControlItem,
     LogSurfacerEventsSettingsLabeledControlItem,
 ]
 
@@ -85,26 +90,25 @@ func update_gui_scale_helper(gui_scale: float) -> void:
             _get_closed_position_y()
 
 func _initialize_annotator_checkboxes() -> void:
-    for item_class in _checkbox_control_item_classes:
-        var item: CheckboxLabeledControlItem = item_class.new()
-        item.pressed = item.get_is_pressed()
-        var checkbox := CheckBox.new()
-        checkbox.pressed = item.get_is_pressed()
-        checkbox.text = item.label
-        checkbox.add_font_override("font", Gs.fonts.main_s)
-        checkbox.connect(
-                "pressed",
-                self,
-                "_on_checkbox_pressed",
-                [item])
+    var empty_style := StyleBoxEmpty.new()
+    for item_class in _annotator_control_item_classes:
+        var item: LabeledControlItem = item_class.new()
+        item.update_item()
+        _annotator_control_items.push_back(item)
+        
+        var row := item.create_row(
+                empty_style,
+                ANNOTATOR_ROW_HEIGHT,
+                0.0,
+                false)
+        for label in Gs.utils.get_children_by_type(row, Label, true):
+            label.add_font_override("font", Gs.fonts.main_xs)
         $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators \
-                .add_child(checkbox)
-        item.control = checkbox
-
-func _on_checkbox_pressed(item: CheckboxLabeledControlItem) -> void:
-    Gs.utils.give_button_press_feedback()
-    item.pressed = !item.pressed
-    item.on_pressed(item.pressed)
+                .add_child(row)
+        
+        if item.control is Slider:
+            item.width = SLIDER_WIDTH
+            item.control.rect_min_size.x = SLIDER_WIDTH
 
 func _get_closed_position_y() -> float:
     return -$PanelContainer.rect_size.y - 1.0

@@ -27,6 +27,7 @@ var _settings_main_item_class_exclusions := []
 var _settings_main_item_class_inclusions := []
 var _settings_details_item_class_exclusions := []
 var _settings_details_item_class_inclusions := [
+    TimeScaleSettingsLabeledControlItem,
     IntroChoreographySettingsLabeledControlItem,
     InspectorEnabledSettingsLabeledControlItem,
     PreselectionTrajectoryAnnotatorSettingsLabeledControlItem,
