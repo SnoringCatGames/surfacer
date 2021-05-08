@@ -143,7 +143,7 @@ var asserts_no_preexisting_collisions_during_edge_calculations := true
 
 var logs_navigator_events := false
 var logs_player_actions := false
-var logs_inspector_events := true
+var logs_inspector_events := false
 var logs_computer_player_events := false
 
 var max_horizontal_speed_default: float
