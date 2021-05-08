@@ -54,8 +54,8 @@ var jump_count := 0
 
 var current_max_horizontal_speed: float
 var _can_dash := true
-var _dash_cooldown_timer: Timer
-var _dash_fade_tween: Tween
+var _dash_cooldown_timeout: int
+var _dash_fade_tween: ScaffolderTween
 
 func _init(player_name: String) -> void:
     self.player_name = player_name
@@ -126,18 +126,8 @@ func _ready() -> void:
             FakePlayerAnimator.new()
 
     # Set up a Tween for the fade-out at the end of a dash.
-    _dash_fade_tween = Tween.new()
+    _dash_fade_tween = ScaffolderTween.new()
     add_child(_dash_fade_tween)
-    
-    # Set up a Timer for the dash cooldown.
-    _dash_cooldown_timer = Timer.new()
-    _dash_cooldown_timer.one_shot = true
-    #warning-ignore:return_value_discarded
-    _dash_cooldown_timer.connect(
-            "timeout",
-            self,
-            "_dash_cooldown_finished")
-    add_child(_dash_cooldown_timer)
     
     # Start facing the right.
     surface_state.horizontal_facing_sign = 1
@@ -820,29 +810,40 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     if !_can_dash:
         return
     
-    current_max_horizontal_speed = \
+    var start_max_speed := \
             movement_params.max_horizontal_speed_default * \
             movement_params.dash_speed_multiplier
-    velocity.x = current_max_horizontal_speed * horizontal_acceleration_sign
+    var end_max_speed := movement_params.max_horizontal_speed_default
+    var duration := \
+            movement_params.dash_fade_duration / \
+            Gs.time.get_combined_scale()
+    var delay := \
+            (movement_params.dash_duration - 
+            movement_params.dash_fade_duration) / \
+            Gs.time.get_combined_scale()
     
+    current_max_horizontal_speed = start_max_speed
+    
+    velocity.x = current_max_horizontal_speed * horizontal_acceleration_sign
     velocity.y += movement_params.dash_vertical_boost
     
-    _dash_cooldown_timer.start(movement_params.dash_cooldown)
-    _dash_fade_tween.reset_all()
+    _dash_fade_tween.stop_all()
     _dash_fade_tween.interpolate_property(
             self,
             "current_max_horizontal_speed",
-            movement_params.max_horizontal_speed_default * \
-                    movement_params.dash_speed_multiplier,
-            movement_params.max_horizontal_speed_default,
-            movement_params.dash_fade_duration / \
-                    Gs.time.get_combined_scale(),
-            Tween.TRANS_LINEAR,
-            Tween.EASE_IN,
-            (movement_params.dash_duration - 
-                    movement_params.dash_fade_duration) / \
-                    Gs.time.get_combined_scale())
+            start_max_speed,
+            end_max_speed,
+            duration,
+            "ease_in",
+            delay,
+            TimeType.PLAY_RENDER_SCALED)
     _dash_fade_tween.start()
+    
+    Gs.time.clear_timeout(_dash_cooldown_timeout)
+    _dash_cooldown_timeout = Gs.time.set_timeout(
+            funcref(self, "set"),
+            movement_params.dash_cooldown,
+            ["_can_dash", true])
     
     if horizontal_acceleration_sign > 0:
         animator.face_right()
@@ -850,9 +851,6 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
         animator.face_left()
     
     _can_dash = false
-
-func _dash_cooldown_finished() -> void:
-    _can_dash = true
 
 # Conditionally prints the given message, depending on the Player's
 # configuration.
