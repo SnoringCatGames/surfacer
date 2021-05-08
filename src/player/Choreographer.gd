@@ -235,7 +235,7 @@ func _execute_next_step() -> void:
                     funcref(self, "_execute_next_step"),
                     step.duration + 0.0001,
                     [],
-                    Time.PLAY_PHYSICS_TIME)
+                    TimeType.PLAY_PHYSICS)
         else:
             _execute_next_step()
 
