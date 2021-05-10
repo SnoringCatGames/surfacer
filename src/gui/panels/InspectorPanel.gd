@@ -4,7 +4,7 @@ extends VBoxContainer
 const PANEL_MARGIN_RIGHT := 20.0
 const TOGGLE_DURATION := 0.2
 const DEFAULT_GUI_SCALE := 1.0
-const ANNOTATOR_ROW_HEIGHT := 40.0
+const ANNOTATOR_ROW_HEIGHT := 21.0
 const SLIDER_WIDTH := 64.0
 
 var is_open := false setget _set_is_open,_get_is_open
@@ -103,6 +103,9 @@ func _initialize_annotator_checkboxes() -> void:
                 false)
         for label in Gs.utils.get_children_by_type(row, Label, true):
             label.add_font_override("font", Gs.fonts.main_xs)
+        for check_box in Gs.utils.get_children_by_type(
+                row, ScaffolderCheckBox, true):
+            check_box.scale = 0.625
         $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators \
                 .add_child(row)
         

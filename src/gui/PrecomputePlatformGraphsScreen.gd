@@ -276,28 +276,28 @@ func _update_metrics() -> void:
                         true, \
                         false, \
                         false)
-        stage_to_metric_items[stage][1].update_control()
+        stage_to_metric_items[stage][1].update_item()
         stage_to_metric_items[stage][2].text = \
                 Gs.utils.get_time_string_from_seconds( \
                         Gs.profiler.get_mean(stage) / 1000.0, \
                         true, \
                         false, \
                         false)
-        stage_to_metric_items[stage][2].update_control()
+        stage_to_metric_items[stage][2].update_item()
         stage_to_metric_items[stage][3].text = \
                 Gs.utils.get_time_string_from_seconds( \
                         Gs.profiler.get_min(stage) / 1000.0, \
                         true, \
                         false, \
                         false)
-        stage_to_metric_items[stage][3].update_control()
+        stage_to_metric_items[stage][3].update_item()
         stage_to_metric_items[stage][4].text = \
                 Gs.utils.get_time_string_from_seconds( \
                         Gs.profiler.get_max(stage) / 1000.0, \
                         true, \
                         false, \
                         false)
-        stage_to_metric_items[stage][4].update_control()
+        stage_to_metric_items[stage][4].update_item()
 
 func _on_finished() -> void:
     Gs.audio.play_sound("achievement")
