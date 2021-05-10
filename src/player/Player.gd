@@ -154,9 +154,7 @@ func _unhandled_input(event: InputEvent) -> void:
             !_is_destroyed and \
             Gs.is_user_interaction_enabled and \
             navigator.is_currently_navigating and \
-            (event is InputEventMouseButton or \
-            event is InputEventScreenTouch or \
-            event is InputEventKey):
+            event is InputEventKey:
         navigator.stop()
 
 func _on_resized() -> void:

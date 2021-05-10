@@ -15,5 +15,5 @@ func _start() -> void:
             Vector2.ZERO,
             true)
 
-func _get_music_name() -> String:
+func get_music_name() -> String:
     return "on_a_quest"

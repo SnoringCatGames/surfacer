@@ -91,9 +91,13 @@ func _unhandled_input(event: InputEvent) -> void:
                             Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD * \
                             Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD)
         
+        Surfacer.slow_motion.set_slow_motion_enabled(false)
+        
     elif pointer_drag_position != Vector2.INF:
         last_pointer_drag_position = pointer_drag_position
         throttled_set_new_drag_position.call_func()
+        
+        Surfacer.slow_motion.set_slow_motion_enabled(true)
 
 func set_new_drag_position() -> void:
     player.preselection_target = last_pointer_drag_position

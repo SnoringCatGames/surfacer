@@ -60,6 +60,7 @@ var is_previous_trajectory_shown: bool
 var is_preselection_trajectory_shown: bool
 var is_navigation_destination_shown: bool
 var default_player_name: String
+var nav_selection_slowmo_time_scale := 0.1
 
 var debug_params: Dictionary
 
@@ -127,6 +128,7 @@ var inspector_panel: InspectorPanel
 var annotators: Annotators
 var ann_defaults: AnnotationElementDefaults
 var edge_from_json_factory := EdgeFromJsonFactory.new()
+var slow_motion: SlowMotionHandler
 
 var player_action_classes: Array
 var edge_movement_classes: Array
@@ -189,6 +191,10 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("ignores_platform_graph_save_files"):
         self.ignores_platform_graph_save_files = \
                 manifest.ignores_platform_graph_save_files
+    
+    if manifest.has("nav_selection_slowmo_time_scale"):
+        self.nav_selection_slowmo_time_scale = \
+                manifest.nav_selection_slowmo_time_scale
 
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting(
@@ -219,6 +225,9 @@ func initialize() -> void:
     ann_defaults = AnnotationElementDefaults.new()
     annotators = Annotators.new()
     add_child(Surfacer.annotators)
+    
+    slow_motion = SlowMotionHandler.new()
+    add_child(slow_motion)
 
 func get_is_inspector_panel_open() -> bool:
     return is_instance_valid(inspector_panel) and inspector_panel.is_open
