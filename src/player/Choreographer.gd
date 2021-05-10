@@ -26,8 +26,8 @@ signal finished
 #         -   Updates the camera zoom.
 #     -   time_scale
 #         -   Updates the framerate (Time.time_scale).
-#     -   trans_type
-#     -   ease_type
+#     -   ease_name
+#         -   A String. See Utils.ease_by_name.
 #     -   is_user_interaction_enabled
 #         -   Toggles whether the user can interact with the game.
 #     -   sound
@@ -41,8 +41,7 @@ signal finished
 #     -   level_callback_args
 #         -   Arguments to pass to level_callback.
 
-const _DEFAULT_TRANS_TYPE := Tween.TRANS_QUAD
-const _DEFAULT_EASE_TYPE := Tween.EASE_IN_OUT
+const _DEFAULT_EASE_NAME := "ease_in_out"
 const _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER := 10.0
 
 # Array<Dictionary>
@@ -54,7 +53,7 @@ var _is_skipped := false
 var player: Player
 var level
 
-var _tween: Tween
+var _tween: ScaffolderTween
 
 var _initial_is_previous_trajectory_shown: bool
 var _initial_is_active_trajectory_shown: bool
@@ -66,7 +65,7 @@ var _current_zoom: float
 var _current_time_scale: float
 
 func _enter_tree() -> void:
-    _tween = Tween.new()
+    _tween = ScaffolderTween.new()
     add_child(_tween)
 
 func configure(
@@ -135,14 +134,10 @@ func _execute_next_step() -> void:
     
     var step: Dictionary = sequence[index]
     
-    var trans_type: int = \
-            step.trans_type if \
-            step.has("trans_type") else \
-            _DEFAULT_TRANS_TYPE
-    var ease_type: int = \
-            step.ease_type if \
-            step.has("ease_type") else \
-            _DEFAULT_EASE_TYPE
+    var ease_name: String = \
+            step.ease_name if \
+            step.has("ease_name") else \
+            _DEFAULT_EASE_NAME
     var duration: float = \
             step.duration if \
             step.has("duration") else \
@@ -178,8 +173,7 @@ func _execute_next_step() -> void:
                             Gs.camera_controller.zoom_factor,
                             _current_zoom,
                             duration,
-                            trans_type,
-                            ease_type)
+                            ease_name)
                     is_tween_registered = true
             "time_scale":
                 _current_time_scale = \
@@ -198,8 +192,7 @@ func _execute_next_step() -> void:
                             Gs.time.time_scale,
                             _current_time_scale,
                             duration,
-                            trans_type,
-                            ease_type)
+                            ease_name)
                     is_tween_registered = true
             "is_user_interaction_enabled":
                 Gs.is_user_interaction_enabled = \

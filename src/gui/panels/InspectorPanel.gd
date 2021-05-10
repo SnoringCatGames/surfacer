@@ -9,8 +9,6 @@ const SLIDER_WIDTH := 64.0
 
 var is_open := false setget _set_is_open,_get_is_open
 
-var _toggle_open_tween: Tween
-
 var _annotator_control_items := []
 
 var _annotator_control_item_classes := [
@@ -36,9 +34,6 @@ func _ready() -> void:
     Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
     
     _set_footer_visibility(!is_open)
-    
-    _toggle_open_tween = Tween.new()
-    add_child(_toggle_open_tween)
     
     Surfacer.graph_inspector = \
             $PanelContainer/VBoxContainer/Sections/InspectorContainer/ \
@@ -139,16 +134,13 @@ func _toggle_open() -> void:
         duration = TOGGLE_DURATION
     
     # Start the sliding animation.
-    _toggle_open_tween.reset_all()
-    _toggle_open_tween.interpolate_property(
+    Gs.time.tween_property(
             self,
             "rect_position:y",
             position_y_start,
             position_y_end,
             duration,
-            Tween.TRANS_LINEAR,
-            Tween.EASE_IN)
-    _toggle_open_tween.start()
+            "ease_in")
     
     _set_footer_visibility(!is_open)
     
