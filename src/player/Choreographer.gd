@@ -157,7 +157,10 @@ func _execute_next_step() -> void:
         match key:
             "destination":
                 var target: Vector2 = \
-                        Gs.utils.get_node_in_group(step.destination).position
+                        Gs.utils.get_node_in_group(step.destination) \
+                                .position if \
+                        step.destination is String else \
+                        step.destination
                 var destination := \
                         SurfaceParser.find_closest_position_on_a_surface(
                                 target, player)
