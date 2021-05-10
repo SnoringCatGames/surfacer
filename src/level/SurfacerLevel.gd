@@ -100,6 +100,9 @@ func _on_intro_choreography_finished() -> void:
     intro_choreographer = null
     _show_welcome_panel()
 
+func get_slow_motion_music_name() -> String:
+    return ""
+
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
     Surfacer.annotators.on_level_ready()
