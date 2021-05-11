@@ -60,13 +60,15 @@ var is_previous_trajectory_shown: bool
 var is_preselection_trajectory_shown: bool
 var is_navigation_destination_shown: bool
 var default_player_name: String
-var nav_selection_slowmo_time_scale := 0.1
+var nav_selection_slow_mo_time_scale := 0.1
+var nav_selection_slow_mo_saturation := 0.2
 
 var debug_params: Dictionary
 
 var group_name_human_players := Player.GROUP_NAME_HUMAN_PLAYERS
 var group_name_computer_players := Player.GROUP_NAME_COMPUTER_PLAYERS
 var group_name_surfaces := SurfacesTileMap.GROUP_NAME_SURFACES
+var group_name_desaturatable := "desaturatables"
 
 var non_surface_parser_metric_keys := [
     "find_surfaces_in_jump_fall_range_from_surface",
@@ -192,9 +194,13 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.ignores_platform_graph_save_files = \
                 manifest.ignores_platform_graph_save_files
     
-    if manifest.has("nav_selection_slowmo_time_scale"):
-        self.nav_selection_slowmo_time_scale = \
-                manifest.nav_selection_slowmo_time_scale
+    if manifest.has("nav_selection_slow_mo_time_scale"):
+        self.nav_selection_slow_mo_time_scale = \
+                manifest.nav_selection_slow_mo_time_scale
+    
+    if manifest.has("nav_selection_slow_mo_saturation"):
+        self.nav_selection_slow_mo_saturation = \
+                manifest.nav_selection_slow_mo_saturation
 
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting(
