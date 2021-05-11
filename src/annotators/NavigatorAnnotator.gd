@@ -5,6 +5,7 @@ var navigator: Navigator
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
 var current_destination: PositionAlongSurface
+var is_slow_motion_enabled := false
 
 var previous_path_back_end_trim_radius: float
 
@@ -22,9 +23,13 @@ func _physics_process(_delta_sec: float) -> void:
     if navigator.previous_path != previous_path:
         previous_path = navigator.previous_path
         update()
+    if Surfacer.slow_motion.is_enabled != is_slow_motion_enabled:
+        is_slow_motion_enabled = Surfacer.slow_motion.is_enabled
+        update()
 
 func _draw() -> void:
-    if !navigator.player.is_human_player:
+    if !navigator.player.is_human_player or \
+            is_slow_motion_enabled:
         return
     
     if current_path != null:

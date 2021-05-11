@@ -123,6 +123,7 @@ func add_player(
             is_human_player else \
             Surfacer.group_name_computer_players
     player.add_to_group(group)
+    player.add_to_group(Surfacer.group_name_desaturatable)
     
     var graph = _get_platform_graph_for_player(player.player_name)
     if graph != null:
