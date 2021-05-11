@@ -76,6 +76,9 @@ func _process(_delta_sec: float) -> void:
             phantom_path = \
                     player.navigator.find_path(preselection_position_to_draw)
             # FIXME: LEFT OFF HERE: -----------------------------
+#            player.navigator.predict_animation_state(
+#                result: PlayerAnimationState,
+#                elapsed_time_from_now: float)
         
         update()
     
