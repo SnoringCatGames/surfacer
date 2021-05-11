@@ -124,6 +124,7 @@ func _ready() -> void:
             animators[0] if \
             !animators.empty() else \
             FakePlayerAnimator.new()
+    animator.set_player(self)
 
     # Set up a Tween for the fade-out at the end of a dash.
     _dash_fade_tween = ScaffolderTween.new()

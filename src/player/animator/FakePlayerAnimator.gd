@@ -1,9 +1,6 @@
 class_name FakePlayerAnimator
 extends PlayerAnimator
 
-func _create_params() -> PlayerAnimatorParams:
-    return PlayerAnimatorParams.new()
-
 func _ready() -> void:
     # Do nothing.
     pass

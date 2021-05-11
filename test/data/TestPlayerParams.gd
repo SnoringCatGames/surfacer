@@ -1,7 +1,7 @@
 class_name TestPlayerParams
 extends MovementParams
 
-func _init() -> void:
+func _init_params() -> void:
     name = "test"
     player_resource_path = "res://test/data/TestPlayer.tscn"
     
@@ -82,3 +82,6 @@ func _init() -> void:
         ClimbDownWallToFloorCalculator.NAME,
         WalkToAscendWallFromFloorCalculator.NAME,
     ]
+
+func _init_animator_params() -> void:
+    animator_params = PlayerAnimatorParams.new()
