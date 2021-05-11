@@ -9,10 +9,11 @@ var animation_player: AnimationPlayer
 
 var _base_rate := 1.0
 
-func _init() -> void:
-    self.animator_params = _create_params()
+func set_player(player) -> void:
+    self.animator_params = player.movement_params.animator_params
+    _initialize()
 
-func _ready() -> void:
+func _initialize() -> void:
     var animation_players: Array = \
             Gs.utils.get_children_by_type(self, AnimationPlayer)
     assert(animation_players.size() == 1)
@@ -22,11 +23,6 @@ func _ready() -> void:
     var sprites := Gs.utils.get_children_by_type(self, Sprite, true)
     for sprite in sprites:
         sprite.add_to_group(Surfacer.group_name_desaturatable)
-
-func _create_params() -> PlayerAnimatorParams:
-    Gs.logger.error(
-            "Abstract PlayerAnimator._create_params is not implemented")
-    return null
 
 func _get_animation_player() -> AnimationPlayer:
     Gs.logger.error(
