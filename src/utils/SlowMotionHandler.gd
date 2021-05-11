@@ -111,8 +111,10 @@ func _get_time_scale() -> float:
     return Gs.time.time_scale
 
 func _set_time_scale(value: float) -> void:
+    # Update the main time_scale.
     Gs.time.time_scale = value
     
+    # Update PlayerAnimators.
     var computer_players := Gs.utils.get_all_nodes_in_group(
             Surfacer.group_name_computer_players)
     var human_players := [Surfacer.human_player]

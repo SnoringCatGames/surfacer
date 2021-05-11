@@ -21,6 +21,7 @@ func process(player: Player) -> bool:
     # the player into the floor. If we just zero this out, is_on_floor() will
     # give false negatives.
     player.velocity.y = \
-            PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+            PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION / \
+            Gs.time.get_combined_scale()
 
     return true
