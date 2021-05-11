@@ -7,6 +7,8 @@ const FLIPPED_HORIZONTAL_SCALE := Vector2(-1, 1)
 var animator_params: PlayerAnimatorParams
 var animation_player: AnimationPlayer
 
+var _base_rate := 1.0
+
 func _init() -> void:
     self.animator_params = _create_params()
 
@@ -15,14 +17,20 @@ func _ready() -> void:
             Gs.utils.get_children_by_type(self, AnimationPlayer)
     assert(animation_players.size() == 1)
     animation_player = animation_players[0]
+    
+    # Register these as desaturatable for the slow-motion effect.
+    var sprites := Gs.utils.get_children_by_type(self, Sprite, true)
+    for sprite in sprites:
+        sprite.add_to_group(Surfacer.group_name_desaturatable)
 
 func _create_params() -> PlayerAnimatorParams:
-    Gs.logger.error("abstract PlayerAnimator._create_params is not implemented")
+    Gs.logger.error(
+            "Abstract PlayerAnimator._create_params is not implemented")
     return null
 
 func _get_animation_player() -> AnimationPlayer:
     Gs.logger.error(
-            "abstract PlayerAnimator._get_animation_player is not implemented")
+            "Abstract PlayerAnimator._get_animation_player is not implemented")
     return null
             
 func face_left() -> void:
@@ -77,10 +85,13 @@ func climb_down() -> void:
 func _play_animation(
         name: String,
         playback_rate: float = 1) -> bool:
+    _base_rate = playback_rate
+    var rate := playback_rate * Gs.time.time_scale
+    
     var is_current_animatior := animation_player.current_animation == name
     var is_playing := animation_player.is_playing()
     var is_changing_direction := \
-            (animation_player.get_playing_speed() < 0) != (playback_rate < 0)
+            (animation_player.get_playing_speed() < 0) != (rate < 0)
     
     var animation_was_not_playing := !is_current_animatior or !is_playing
     var animation_was_playing_in_wrong_direction := \
@@ -88,7 +99,10 @@ func _play_animation(
     
     if animation_was_not_playing or \
             animation_was_playing_in_wrong_direction:
-        animation_player.play(name, .1, playback_rate)
+        animation_player.play(name, .1, rate)
         return true
     else:
         return false
+
+func match_rate_to_time_scale() -> void:
+    animation_player.playback_speed = _base_rate * Gs.time.time_scale

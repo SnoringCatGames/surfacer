@@ -60,9 +60,9 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
         saturation_duration = time_scale_duration
     
     # Update time scale.
-    _slow_motion_tween.interpolate_property(
-            Gs.time,
-            "time_scale",
+    _slow_motion_tween.interpolate_method(
+            self,
+            "_set_time_scale",
             Gs.time.time_scale,
             next_time_scale,
             time_scale_duration,
@@ -106,3 +106,16 @@ func _get_saturation() -> float:
 
 func _set_saturation(saturation: float) -> void:
     _desaturation_material.set_shader_param("saturation", saturation)
+
+func _get_time_scale() -> float:
+    return Gs.time.time_scale
+
+func _set_time_scale(value: float) -> void:
+    Gs.time.time_scale = value
+    
+    var computer_players := Gs.utils.get_all_nodes_in_group(
+            Surfacer.group_name_computer_players)
+    var human_players := [Surfacer.human_player]
+    for players in [computer_players, human_players]:
+        for player in players:
+            player.animator.match_rate_to_time_scale()
