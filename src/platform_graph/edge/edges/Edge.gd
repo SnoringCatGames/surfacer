@@ -149,7 +149,7 @@ func update_navigation_state(
                         playback)
         _update_expected_position_along_surface(
                 navigation_state,
-                playback.get_elapsed_time_modified())
+                playback.get_elapsed_time_scaled())
     else:
         navigation_state.just_reached_end_of_edge = \
                 _check_did_just_reach_destination(
@@ -191,6 +191,10 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
     if index >= trajectory.frame_continuous_velocities_from_steps.size():
         return Vector2.INF
     return trajectory.frame_continuous_velocities_from_steps[index]
+
+func get_animation_state_at_time(result: PlayerAnimationState) -> void:
+    # FIXME: ---------------------
+    pass
 
 func _update_expected_position_along_surface(
         navigation_state: PlayerNavigationState,
@@ -332,7 +336,7 @@ func check_just_landed_on_expected_surface(
         end_surface: Surface,
         playback) -> bool:
     if movement_params.bypasses_runtime_physics:
-        return playback.get_elapsed_time_modified() >= duration
+        return playback.get_elapsed_time_scaled() >= duration
     else:
         return surface_state.just_left_air and \
                 surface_state.grabbed_surface == end_surface

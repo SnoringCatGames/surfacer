@@ -75,6 +75,7 @@ func _process(_delta_sec: float) -> void:
             
             phantom_path = \
                     player.navigator.find_path(preselection_position_to_draw)
+            # FIXME: LEFT OFF HERE: -----------------------------
         
         update()
     

@@ -1,5 +1,5 @@
-# Information for how to move from surface to surface to get from the given origin to the given
-# destination.
+# Information for how to move from surface to surface to get from the given
+# origin to the given destination.
 class_name PlatformGraphPath
 extends Reference
 
@@ -9,10 +9,19 @@ var edges: Array
 var origin := Vector2.INF
 var destination := Vector2.INF
 
+var duration: float
+
 func _init(edges: Array) -> void:
     self.edges = edges
     self.origin = edges.front().get_start()
     self.destination = edges.back().get_end()
+    self.duration = _calculate_duration()
+
+func _calculate_duration() -> float:
+    var duration := 0.0
+    for edge in edges:
+        duration += edge.duration
+    return duration
 
 func push_front(edge: Edge) -> void:
     assert(Gs.geometry.are_points_equal_with_epsilon(edge.get_end(), origin))

@@ -18,8 +18,8 @@ func process(player: Player) -> bool:
     if current_edge != null:
         var playback := player.navigator.current_playback
         var playback_previous_elapsed_time: float = \
-                playback.get_previous_elapsed_time_modified()
-        var playback_elapsed_time: float = playback.get_elapsed_time_modified()
+                playback.get_previous_elapsed_time_scaled()
+        var playback_elapsed_time: float = playback.get_elapsed_time_scaled()
         
         # Don't re-sync if we already synced for the current index.
         if !_get_has_trajectory_index_changed(

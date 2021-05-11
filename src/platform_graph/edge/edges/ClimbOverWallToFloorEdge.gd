@@ -72,7 +72,7 @@ func _check_did_just_reach_destination(
         surface_state: PlayerSurfaceState,
         playback) -> bool:
     if movement_params.bypasses_runtime_physics:
-        return playback.get_elapsed_time_modified() >= duration
+        return playback.get_elapsed_time_scaled() >= duration
     else:
         return surface_state.just_grabbed_floor
 

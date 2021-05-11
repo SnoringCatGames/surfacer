@@ -17,8 +17,8 @@ func _init(
 func update(
         actions: PlayerActionState,
         previous_actions: PlayerActionState,
-        time_modified_sec: float,
-        _modified_delta_sec: float,
+        time_scaled_sec: float,
+        _delta_scaled_sec: float,
         navigation_state: PlayerNavigationState) -> void:
     var is_pressed: bool
     var non_pressed_keys := []
@@ -26,7 +26,7 @@ func update(
     for playback in _all_playback:
         # Handle any new key presses up till the current time.
         var new_instructions: Array = playback.update(
-                time_modified_sec,
+                time_scaled_sec,
                 navigation_state)
         
         non_pressed_keys.clear()
@@ -39,7 +39,7 @@ func update(
                     previous_actions,
                     input_key,
                     is_pressed,
-                    time_modified_sec,
+                    time_scaled_sec,
                     is_additive)
             if !is_pressed:
                 non_pressed_keys.push_back(input_key)
@@ -58,17 +58,17 @@ func update(
 
 func start_instructions(
         edge: Edge,
-        time_modified_sec: float) -> InstructionsPlayback:
+        time_scaled_sec: float) -> InstructionsPlayback:
     var playback := InstructionsPlayback.new(
             edge,
             is_additive)
-    playback.start(time_modified_sec)
+    playback.start(time_scaled_sec)
     _all_playback.push_back(playback)
     return playback
 
 func cancel_playback(
         playback: InstructionsPlayback,
-        time_modified_sec: float) -> bool:
+        time_scaled_sec: float) -> bool:
     # Remove the playback.
     var index := _all_playback.find(playback)
     if index < 0:

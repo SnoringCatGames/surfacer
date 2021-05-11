@@ -19,6 +19,7 @@ var just_reached_destination := false
 var current_destination: PositionAlongSurface
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
+var current_path_start_time_scaled := INF
 var current_edge: Edge
 var current_edge_index := -1
 var current_playback: InstructionsPlayback
@@ -85,6 +86,7 @@ func navigate_to_position(
         
         current_destination = destination
         current_path = path
+        current_path_start_time_scaled = Gs.time.get_scaled_play_time_sec()
         is_currently_navigating = true
         has_reached_destination = false
         just_reached_destination = false
@@ -162,7 +164,7 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
             air_to_surface_edge = air_to_surface_calculator \
                     .create_edge_from_part_of_other_edge(
                             current_edge,
-                            current_playback.get_elapsed_time_modified(),
+                            current_playback.get_elapsed_time_scaled(),
                             player)
         
         if air_to_surface_edge != null:
@@ -205,6 +207,7 @@ func _reset() -> void:
     
     current_destination = null
     current_path = null
+    current_path_start_time_scaled = INF
     current_edge = null
     current_edge_index = -1
     is_currently_navigating = false
@@ -344,6 +347,31 @@ func update(
                 _start_edge(next_edge_index)
         else:
             _start_edge(next_edge_index)
+
+func get_animation_state_at_time(
+        result: PlayerAnimationState,
+        elapsed_time_from_now: float) -> bool:
+    # FIXME: ----------------------------
+    # - Check whether we are currently navigating.
+    # - Get current elapsed time in current path.
+    # - Check whether elapsed_time_from_now would happen before the end-time of
+    #   the current path.
+    #   - Get whichever edge would be active at the time.
+    #   - Get the start-time of that edge.
+    #   - Edge.get_animation_state_at_time
+    # - If we can guess state based off the future of the in-progress
+    #   navigation, then return true.
+    #   - Otherwise, assign navigation-end state (or current state, if no
+    #     active navigation), and return false.
+    
+    if !is_currently_navigating:
+        return false
+    
+    var path_elapsed_time := \
+            Gs.time.get_scaled_play_time_sec() - \
+            current_path_start_time_scaled
+    
+    return false
 
 func get_previous_destination() -> PositionAlongSurface:
     return previous_path.edges.back().end_position_along_surface

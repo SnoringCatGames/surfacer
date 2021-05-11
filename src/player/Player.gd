@@ -211,9 +211,9 @@ func _physics_process(delta_sec: float) -> void:
         # hood.
         return
     
-    var modified_delta_sec := Gs.time.scale_delta(delta_sec)
+    var delta_scaled_sec := Gs.time.scale_delta(delta_sec)
     
-    _update_actions(modified_delta_sec)
+    _update_actions(delta_scaled_sec)
     _update_surface_state()
     _handle_pointer_selections()
     
@@ -249,9 +249,9 @@ func _physics_process(delta_sec: float) -> void:
                 side_str,
             ])
     
-    _update_navigator(modified_delta_sec)
+    _update_navigator(delta_scaled_sec)
     
-    actions.modified_delta_sec = modified_delta_sec
+    actions.delta_scaled_sec = delta_scaled_sec
     actions.log_new_presses_and_releases(
             self, Gs.time.get_play_time_sec())
     
@@ -285,13 +285,13 @@ func _physics_process(delta_sec: float) -> void:
     surface_state.previous_center_position = surface_state.center_position
     surface_state.center_position = self.position
 
-func _update_navigator(modified_delta_sec: float) -> void:
+func _update_navigator(delta_scaled_sec: float) -> void:
     navigator.update()
     
     # TODO: There's probably a more efficient way to do this.
     if navigator.actions_might_be_dirty:
         actions.copy(actions_from_previous_frame)
-        _update_actions(modified_delta_sec)
+        _update_actions(delta_scaled_sec)
         _update_surface_state(true)
 
 func _handle_pointer_selections() -> void:
@@ -317,7 +317,7 @@ func _handle_pointer_selections() -> void:
         preselection_target = Vector2.INF
         preselection_position = null
 
-func _update_actions(modified_delta_sec: float) -> void:
+func _update_actions(delta_scaled_sec: float) -> void:
     # Record actions for the previous frame.
     actions_from_previous_frame.copy(actions)
     
@@ -330,7 +330,7 @@ func _update_actions(modified_delta_sec: float) -> void:
                 actions,
                 actions_from_previous_frame,
                 Gs.time.get_scaled_play_time_sec(),
-                modified_delta_sec,
+                delta_scaled_sec,
                 navigation_state)
     
     actions.start_dash = \
