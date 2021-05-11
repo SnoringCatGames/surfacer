@@ -176,6 +176,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
                     surface.side == SurfaceSide.FLOOR else \
                     -PlayerActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+            velocity_y /= Gs.time.get_combined_scale()
             return Vector2(velocity_x, velocity_y)
         SurfaceSide.LEFT_WALL, \
         SurfaceSide.RIGHT_WALL:
@@ -185,6 +186,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
                     surface.side == SurfaceSide.LEFT_WALL else \
                     PlayerActionHandler \
                             .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION
+            velocity_x /= Gs.time.get_combined_scale()
             var velocity_y := \
                     movement_params.climb_up_speed if \
                     displacement.y < 0.0 else \

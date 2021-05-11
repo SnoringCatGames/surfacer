@@ -96,6 +96,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
             get_start_surface().side == SurfaceSide.FLOOR else \
             -PlayerActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
+    velocity_y /= Gs.time.get_combined_scale()
     return Vector2(velocity_x, velocity_y)
 
 func _check_did_just_reach_destination(

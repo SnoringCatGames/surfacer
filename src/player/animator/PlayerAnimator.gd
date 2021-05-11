@@ -84,14 +84,14 @@ func climb_down() -> void:
 
 func _play_animation(
         name: String,
-        playback_rate: float = 1) -> bool:
+        playback_rate: float = 1,
+        blend := 0.1) -> bool:
     _base_rate = playback_rate
-    var rate := playback_rate * Gs.time.time_scale
     
     var is_current_animatior := animation_player.current_animation == name
     var is_playing := animation_player.is_playing()
     var is_changing_direction := \
-            (animation_player.get_playing_speed() < 0) != (rate < 0)
+            (animation_player.get_playing_speed() < 0) != (playback_rate < 0)
     
     var animation_was_not_playing := !is_current_animatior or !is_playing
     var animation_was_playing_in_wrong_direction := \
@@ -99,10 +99,11 @@ func _play_animation(
     
     if animation_was_not_playing or \
             animation_was_playing_in_wrong_direction:
-        animation_player.play(name, .1, rate)
+        animation_player.play(name, blend, playback_rate)
+        match_rate_to_time_scale()
         return true
     else:
         return false
 
 func match_rate_to_time_scale() -> void:
-    animation_player.playback_speed = _base_rate * Gs.time.time_scale
+    animation_player.playback_speed = _base_rate * Gs.time.get_combined_scale()
