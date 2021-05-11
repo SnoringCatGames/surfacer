@@ -1,7 +1,7 @@
 class_name PlayerActionState
 extends Reference
 
-var modified_delta_sec: float
+var delta_scaled_sec: float
 
 var pressed_jump := false
 var just_pressed_jump := false
@@ -38,7 +38,7 @@ var just_released_face_right := false
 var start_dash := false
 
 func clear() -> void:
-    self.modified_delta_sec = INF
+    self.delta_scaled_sec = INF
     
     self.pressed_jump = false
     self.just_pressed_jump = false
@@ -75,7 +75,7 @@ func clear() -> void:
     self.start_dash = false
 
 func copy(other: PlayerActionState) -> void:
-    self.modified_delta_sec = other.modified_delta_sec
+    self.delta_scaled_sec = other.delta_scaled_sec
     
     self.pressed_jump = other.pressed_jump
     self.just_pressed_jump = other.just_pressed_jump

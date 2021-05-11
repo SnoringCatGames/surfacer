@@ -33,7 +33,7 @@ func process(player: Player) -> bool:
     
     player.velocity = MovementUtils.update_velocity_in_air(
             player.velocity,
-            player.actions.modified_delta_sec,
+            player.actions.delta_scaled_sec,
             player.actions.pressed_jump,
             is_first_jump,
             player.surface_state.horizontal_acceleration_sign,

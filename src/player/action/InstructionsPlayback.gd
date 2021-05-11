@@ -7,9 +7,9 @@ var edge: Edge
 var is_additive: bool
 var next_index: int
 var next_instruction: EdgeInstruction
-var start_time_modified: float
-var previous_time_modified: float
-var current_time_modified: float
+var start_time_scaled: float
+var previous_time_scaled: float
+var current_time_scaled: float
 var is_finished: bool
 var is_on_last_instruction: bool
 # Dictionary<String, boolean>
@@ -23,10 +23,10 @@ func _init(
     self.edge = edge
     self.is_additive = is_additive
 
-func start(modified_time_sec: float) -> void:
-    start_time_modified = modified_time_sec
-    previous_time_modified = modified_time_sec
-    current_time_modified = modified_time_sec
+func start(scaled_time_sec: float) -> void:
+    start_time_scaled = scaled_time_sec
+    previous_time_scaled = scaled_time_sec
+    current_time_scaled = scaled_time_sec
     next_index = 0
     next_instruction = \
             edge.instructions.instructions[next_index] if \
@@ -38,20 +38,20 @@ func start(modified_time_sec: float) -> void:
     _next_active_key_presses = {}
 
 func update(
-        modified_time_sec: float,
+        scaled_time_sec: float,
         navigation_state: PlayerNavigationState) -> Array:
     # TODO: If we don't ever need more complicated dynamic instruction updates
     #       based on navigation state, then remove that param.
     
-    previous_time_modified = current_time_modified
-    current_time_modified = modified_time_sec
+    previous_time_scaled = current_time_scaled
+    current_time_scaled = scaled_time_sec
     
     active_key_presses = _next_active_key_presses.duplicate()
     
     var new_instructions := []
     while !is_finished and \
-            _get_start_time_modified_for_next_instruction() <= \
-                    modified_time_sec:
+            _get_start_time_scaled_for_next_instruction() <= \
+                    scaled_time_sec:
         if !is_on_last_instruction:
             new_instructions.push_back(next_instruction)
         increment()
@@ -82,13 +82,13 @@ func increment() -> void:
             null
     is_on_last_instruction = next_instruction == null
 
-func get_previous_elapsed_time_modified() -> float:
-    return previous_time_modified - start_time_modified
+func get_previous_elapsed_time_scaled() -> float:
+    return previous_time_scaled - start_time_scaled
 
-func get_elapsed_time_modified() -> float:
-    return current_time_modified - start_time_modified
+func get_elapsed_time_scaled() -> float:
+    return current_time_scaled - start_time_scaled
 
-func _get_start_time_modified_for_next_instruction() -> float:
+func _get_start_time_scaled_for_next_instruction() -> float:
     assert(!is_finished)
     
     var duration_until_next_instruction: float
@@ -104,4 +104,4 @@ func _get_start_time_modified_for_next_instruction() -> float:
     else:
         duration_until_next_instruction = next_instruction.time
     
-    return start_time_modified + duration_until_next_instruction
+    return start_time_scaled + duration_until_next_instruction

@@ -28,8 +28,8 @@ func _init(
 func update(
         actions: PlayerActionState,
         previous_actions: PlayerActionState,
-        time_modified_sec: float,
-        modified_delta_sec: float,
+        time_scaled_sec: float,
+        delta_scaled_sec: float,
         navigation_state: PlayerNavigationState) -> void:
     Gs.logger.error("Abstract PlayerActionSource.update is not implemented")
 
@@ -38,7 +38,7 @@ static func update_for_key_press(
         previous_actions: PlayerActionState,
         input_key: String,
         is_pressed: bool,
-        time_modified_sec: float,
+        time_scaled_sec: float,
         is_additive: bool) -> void:
     var action_name: String = input_key_to_action_name[input_key]
     var pressed_action_key := "pressed_" + action_name
