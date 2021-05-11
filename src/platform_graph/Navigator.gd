@@ -348,30 +348,41 @@ func update(
         else:
             _start_edge(next_edge_index)
 
-func get_animation_state_at_time(
+func predict_animation_state(
         result: PlayerAnimationState,
         elapsed_time_from_now: float) -> bool:
-    # FIXME: ----------------------------
-    # - Check whether we are currently navigating.
-    # - Get current elapsed time in current path.
-    # - Check whether elapsed_time_from_now would happen before the end-time of
-    #   the current path.
-    #   - Get whichever edge would be active at the time.
-    #   - Get the start-time of that edge.
-    #   - Edge.get_animation_state_at_time
-    # - If we can guess state based off the future of the in-progress
-    #   navigation, then return true.
-    #   - Otherwise, assign navigation-end state (or current state, if no
-    #     active navigation), and return false.
-    
     if !is_currently_navigating:
+        player.get_current_animation_state(result)
         return false
     
-    var path_elapsed_time := \
+    var current_path_elapsed_time := \
             Gs.time.get_scaled_play_time_sec() - \
             current_path_start_time_scaled
+    var prediction_path_time := \
+            current_path_elapsed_time + elapsed_time_from_now
+    var is_prediction_time_before_path_end_time := \
+            prediction_path_time < current_path.duration
     
-    return false
+    if !is_prediction_time_before_path_end_time:
+        var last_edge: Edge = current_path.edges.back()
+        last_edge.get_animation_state_at_time(result, last_edge.duration)
+        return false
+    
+    var edge_start_time := 0.0
+    var prediction_edge: Edge
+    var prediction_edge_start_time := INF
+    for edge in current_path:
+        if edge_start_time + edge.duration >= prediction_path_time - 0.0001:
+            prediction_edge = edge
+            prediction_edge_start_time = edge_start_time
+            break
+    assert(prediction_edge != null)
+    
+    var prediction_edge_time := \
+            prediction_path_time - prediction_edge_start_time
+    prediction_edge.get_animation_state_at_time(result, prediction_edge_time)
+    
+    return true
 
 func get_previous_destination() -> PositionAlongSurface:
     return previous_path.edges.back().end_position_along_surface

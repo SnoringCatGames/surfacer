@@ -876,3 +876,9 @@ func set_position(position: Vector2) -> void:
     surface_state.center_position_along_surface.match_current_grab(
             surface_state.grabbed_surface,
             surface_state.center_position)
+
+func get_current_animation_state(result: PlayerAnimationState) -> void:
+    result.player_position = position
+    result.animation_name = animator.animation_player.current_animation
+    result.animation_position = \
+            animator.animation_player.current_animation_position
