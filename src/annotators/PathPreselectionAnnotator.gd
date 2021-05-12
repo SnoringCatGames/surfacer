@@ -24,6 +24,7 @@ const PRESELECTION_POSITION_INDICATOR_RADIUS := 32.0
 const PRESELECTION_PATH_STROKE_WIDTH := 12.0
 const PATH_BACK_END_TRIM_RADIUS := 0.0
 
+var _predictions_container: Node2D
 var player: Player
 var path_front_end_trim_radius: float
 var preselection_position_to_draw: PositionAlongSurface = null
@@ -42,6 +43,14 @@ func _init(player: Player) -> void:
     self.path_front_end_trim_radius = min(
             player.movement_params.collider_half_width_height.x,
             player.movement_params.collider_half_width_height.y)
+    self._predictions_container = Node2D.new()
+    add_child(_predictions_container)
+
+func add_prediction(prediction: PlayerPrediction) -> void:
+    _predictions_container.add_child(prediction)
+
+func remove_prediction(prediction: PlayerPrediction) -> void:
+    _predictions_container.remove_child(prediction)
 
 func _process(_delta_sec: float) -> void:
     var current_time: float = Gs.time.get_play_time_sec()
@@ -75,18 +84,26 @@ func _process(_delta_sec: float) -> void:
             
             phantom_path = \
                     player.navigator.find_path(preselection_position_to_draw)
-            # FIXME: LEFT OFF HERE: -----------------------------
-            # - Create a new data type to store the animation state and fake
-            #   player animator on?
-            if phantom_path != null:
-                pass
-#                player.navigator.predict_animation_state(
-#                        player.prediction_animation_state,
-#                        phantom_path.duration)
             
-#            player.animator.set_static_frame(
-#                    animation_type: int,
-#                    animation_position: float)
+            if phantom_path != null:
+                for group in [
+                        Surfacer.group_name_human_players,
+                        Surfacer.group_name_computer_players]:
+                    for player in Gs.utils.get_all_nodes_in_group(group):
+                        var animation_state: PlayerAnimationState = \
+                                player.prediction.animation_state
+                        player.navigator.predict_animation_state(
+                                animation_state,
+                                phantom_path.duration)
+                        player.prediction.position = \
+                                animation_state.player_position
+                        player.prediction.animator.set_static_frame(
+                                animation_state.animation_type,
+                                animation_state.animation_position)
+        else:
+            phantom_path = null
+        
+        _predictions_container.visible = phantom_path != null
         
         update()
     

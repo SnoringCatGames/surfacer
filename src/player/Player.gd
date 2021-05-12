@@ -39,6 +39,7 @@ var velocity := Vector2.ZERO
 var level
 var collider: CollisionShape2D
 var animator: PlayerAnimator
+var prediction: PlayerPrediction
 # Array<PlayerActionSource>
 var action_sources := []
 # Dictionary<String, bool>
@@ -125,7 +126,12 @@ func _ready() -> void:
             !animators.empty() else \
             FakePlayerAnimator.new()
     animator.set_player(self)
-
+    
+    if Surfacer.annotators.is_annotator_enabled(
+            AnnotatorType.SURFACE_SELECTION):
+        prediction = PlayerPrediction.new()
+        prediction.set_player(self)
+    
     # Set up a Tween for the fade-out at the end of a dash.
     _dash_fade_tween = ScaffolderTween.new()
     add_child(_dash_fade_tween)
@@ -146,8 +152,16 @@ func _ready() -> void:
             "_on_resized")
     _on_resized()
 
+func _on_annotators_ready() -> void:
+    if is_instance_valid(prediction):
+        Surfacer.annotators.path_preselection_annotator \
+                .add_prediction(prediction)
+
 func _destroy() -> void:
     _is_destroyed = true
+    if is_instance_valid(prediction):
+        Surfacer.annotators.path_preselection_annotator \
+                .remove_prediction(prediction)
     queue_free()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -880,7 +894,6 @@ func set_position(position: Vector2) -> void:
 
 func get_current_animation_state(result: PlayerAnimationState) -> void:
     result.player_position = position
-    result.animation_type = \
-            animator.animation_player.get_current_animation_type()
+    result.animation_type = animator.get_current_animation_type()
     result.animation_position = \
             animator.animation_player.current_animation_position

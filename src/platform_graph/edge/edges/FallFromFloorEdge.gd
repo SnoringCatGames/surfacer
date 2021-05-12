@@ -18,6 +18,7 @@ const INCLUDES_AIR_TRAJECTORY := true
 var falls_on_left_side: bool
 var fall_off_position: PositionAlongSurface
 var time_fall_off: float
+var time_peak_height := 0.0
 
 func _init(
         calculator = null,
@@ -65,6 +66,13 @@ func _calculate_duration(
         instructions: EdgeInstructions,
         distance: float) -> float:
     return instructions.duration
+
+func get_animation_state_at_time(
+        result: PlayerAnimationState,
+        edge_time: float) -> void:
+    result.player_position = get_position_at_time(edge_time)
+    result.animation_type = PlayerAnimationType.JUMP_FALL
+    result.animation_position = edge_time
 
 func _update_expected_position_along_surface(
         navigation_state: PlayerNavigationState,

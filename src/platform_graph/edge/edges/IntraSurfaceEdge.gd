@@ -196,6 +196,26 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
             Gs.logger.error()
             return Vector2.INF
 
+func get_animation_state_at_time(
+        result: PlayerAnimationState,
+        edge_time: float) -> void:
+    result.player_position = get_position_at_time(edge_time)
+    result.animation_position = edge_time
+    
+    match get_start_surface().side:
+        SurfaceSide.FLOOR, \
+        SurfaceSide.CEILING:
+            result.animation_type = PlayerAnimationType.WALK
+        SurfaceSide.LEFT_WALL, \
+        SurfaceSide.RIGHT_WALL:
+            var displacement := get_end() - get_start()
+            result.animation_type = \
+                    PlayerAnimationType.CLIMB_UP if \
+                    displacement.y < 0.0 else \
+                    PlayerAnimationType.CLIMB_DOWN
+        _:
+            Gs.logger.error()
+
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,

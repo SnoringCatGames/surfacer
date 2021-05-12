@@ -10,6 +10,9 @@ var animation_player: AnimationPlayer
 var _animation_type := PlayerAnimationType.UNKNOWN
 var _base_rate := 1.0
 
+func copy(other: PlayerAnimator) -> void:
+    self.animator_params = other.animator_params
+
 func set_player(player) -> void:
     self.animator_params = player.movement_params.animator_params
     _initialize()
