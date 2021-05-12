@@ -8,6 +8,8 @@ const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := false
 const INCLUDES_AIR_TRAJECTORY := true
 
+var time_peak_height := INF
+
 func _init(
         calculator = null,
         start: PositionAlongSurface = null,
@@ -18,7 +20,8 @@ func _init(
         movement_params: MovementParams = null,
         instructions: EdgeInstructions = null,
         trajectory: EdgeTrajectory = null,
-        edge_calc_result_type := EdgeCalcResultType.UNKNOWN) \
+        edge_calc_result_type := EdgeCalcResultType.UNKNOWN,
+        time_peak_height := INF) \
         .(TYPE,
         IS_TIME_BASED,
         SURFACE_TYPE,
@@ -35,7 +38,7 @@ func _init(
         instructions,
         trajectory,
         edge_calc_result_type) -> void:
-    pass
+    self.time_peak_height = time_peak_height
 
 func _calculate_distance(
         start: PositionAlongSurface,
@@ -49,6 +52,17 @@ func _calculate_duration(
         instructions: EdgeInstructions,
         distance: float) -> float:
     return instructions.duration
+
+func get_animation_state_at_time(
+        result: PlayerAnimationState,
+        edge_time: float) -> void:
+    result.player_position = get_position_at_time(edge_time)
+    if edge_time < time_peak_height:
+        result.animation_type = PlayerAnimationType.JUMP_RISE
+        result.animation_position = edge_time
+    else:
+        result.animation_type = PlayerAnimationType.JUMP_FALL
+        result.animation_position = edge_time - time_peak_height
 
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,

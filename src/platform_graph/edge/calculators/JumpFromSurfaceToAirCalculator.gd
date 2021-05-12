@@ -94,7 +94,8 @@ func calculate_edge(
             collision_params.movement_params,
             instructions,
             trajectory,
-            calc_result.edge_calc_result_type)
+            calc_result.edge_calc_result_type,
+            calc_result.vertical_step.time_peak_height)
     
     return edge
 

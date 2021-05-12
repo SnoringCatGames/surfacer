@@ -11,6 +11,8 @@ const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
 const INCLUDES_AIR_TRAJECTORY := true
 
+var time_peak_height := 0.0
+
 func _init(
         calculator = null,
         start: PositionAlongSurface = null,
@@ -51,6 +53,13 @@ func _calculate_duration(
         instructions: EdgeInstructions,
         distance: float) -> float:
     return instructions.duration
+
+func get_animation_state_at_time(
+        result: PlayerAnimationState,
+        edge_time: float) -> void:
+    result.player_position = get_position_at_time(edge_time)
+    result.animation_type = PlayerAnimationType.JUMP_FALL
+    result.animation_position = edge_time
 
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,

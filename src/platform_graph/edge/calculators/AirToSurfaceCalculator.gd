@@ -157,7 +157,8 @@ func find_a_landing_trajectory(
             collision_params.movement_params,
             instructions,
             trajectory,
-            calc_result.edge_calc_result_type)
+            calc_result.edge_calc_result_type,
+            calc_result.vertical_step.time_peak_height)
 
 func create_edge_from_part_of_other_edge(
         other_edge: Edge,
@@ -176,6 +177,8 @@ func create_edge_from_part_of_other_edge(
     var trajectory := EdgeTrajectoryUtils.sub_trajectory(
             other_edge.trajectory,
             start_time)
+    var time_peak_height: float = \
+            max(other_edge.time_peak_height - start_time, 0.0)
     
     return AirToSurfaceEdge.new(
             self,
@@ -187,7 +190,8 @@ func create_edge_from_part_of_other_edge(
             other_edge.movement_params,
             instructions,
             trajectory,
-            other_edge.edge_calc_result_type)
+            other_edge.edge_calc_result_type,
+            time_peak_height)
 
 class SurfaceMaxYComparator:
     static func sort(a: Surface, b: Surface) -> bool:

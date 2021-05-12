@@ -53,6 +53,13 @@ func _calculate_duration(
             true,
             movement_params)
 
+func get_animation_state_at_time(
+        result: PlayerAnimationState,
+        edge_time: float) -> void:
+    result.player_position = get_position_at_time(edge_time)
+    result.animation_type = PlayerAnimationType.CLIMB_UP
+    result.animation_position = edge_time
+
 func _update_expected_position_along_surface(
         navigation_state: PlayerNavigationState,
         edge_time: float) -> void:

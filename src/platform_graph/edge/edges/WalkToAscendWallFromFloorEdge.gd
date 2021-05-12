@@ -99,6 +99,13 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
     velocity_y /= Gs.time.get_combined_scale()
     return Vector2(velocity_x, velocity_y)
 
+func get_animation_state_at_time(
+        result: PlayerAnimationState,
+        edge_time: float) -> void:
+    result.player_position = get_position_at_time(edge_time)
+    result.animation_type = PlayerAnimationType.WALK
+    result.animation_position = edge_time
+
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,

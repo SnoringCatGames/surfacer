@@ -106,6 +106,11 @@ func get_slow_motion_music_name() -> String:
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
     Surfacer.annotators.on_level_ready()
+    for group in [
+            Surfacer.group_name_human_players,
+            Surfacer.group_name_computer_players]:
+        for player in Gs.utils.get_all_nodes_in_group(group):
+            player._on_annotators_ready()
 
 func add_player(
         resource_path: String,

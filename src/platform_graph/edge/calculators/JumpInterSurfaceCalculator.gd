@@ -261,6 +261,7 @@ func create_edge_from_edge_calc_params(
             edge_calc_params.movement_params,
             instructions,
             trajectory,
-            calc_result.edge_calc_result_type)
+            calc_result.edge_calc_result_type,
+            calc_result.vertical_step.time_peak_height)
     
     return edge
