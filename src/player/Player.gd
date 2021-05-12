@@ -127,12 +127,12 @@ func _ready() -> void:
                 movement_params.animator_params.player_animator_scene_path)
     else:
         animator = animators[0]
-    animator.set_player(self)
+    animator.set_up(self, true)
     
     if Surfacer.annotators.is_annotator_enabled(
             AnnotatorType.SURFACE_SELECTION):
         prediction = PlayerPrediction.new()
-        prediction.set_player(self)
+        prediction.set_up(self)
     
     # Set up a Tween for the fade-out at the end of a dash.
     _dash_fade_tween = ScaffolderTween.new()

@@ -4,11 +4,11 @@ extends Node2D
 var animation_state := PlayerAnimationState.new()
 var animator := PlayerAnimator.new()
 
-func set_player(player) -> void:
+func set_up(player) -> void:
     animator = Gs.utils.add_scene(
             self,
             player.movement_params.animator_params.player_animator_scene_path)
-    animator.set_player(player)
+    animator.set_up(player, false)
 
 func match_navigator(
         navigator: Navigator,

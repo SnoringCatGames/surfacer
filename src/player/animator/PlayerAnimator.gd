@@ -7,10 +7,12 @@ const FLIPPED_HORIZONTAL_SCALE := Vector2(-1, 1)
 var animator_params: PlayerAnimatorParams
 var animation_player: AnimationPlayer
 
+var is_desaturatable: bool
 var _animation_type := PlayerAnimationType.UNKNOWN
 var _base_rate := 1.0
 
-func set_player(player) -> void:
+func set_up(player, is_desaturatable: bool) -> void:
+    self.is_desaturatable = is_desaturatable
     self.animator_params = player.movement_params.animator_params
     _initialize()
 
@@ -20,10 +22,11 @@ func _initialize() -> void:
     assert(animation_players.size() == 1)
     animation_player = animation_players[0]
     
-    # Register these as desaturatable for the slow-motion effect.
-    var sprites := Gs.utils.get_children_by_type(self, Sprite, true)
-    for sprite in sprites:
-        sprite.add_to_group(Surfacer.group_name_desaturatable)
+    if is_desaturatable:
+        # Register these as desaturatable for the slow-motion effect.
+        var sprites := Gs.utils.get_children_by_type(self, Sprite, true)
+        for sprite in sprites:
+            sprite.add_to_group(Surfacer.group_name_desaturatable)
 
 func _get_animation_player() -> AnimationPlayer:
     Gs.logger.error(
