@@ -38,24 +38,31 @@ func face_left() -> void:
             FLIPPED_HORIZONTAL_SCALE if \
             animator_params.faces_right_by_default else \
             UNFLIPPED_HORIZONTAL_SCALE
-    set_scale(scale)
+    self.scale = scale
 
 func face_right() -> void:
     var scale := \
             UNFLIPPED_HORIZONTAL_SCALE if \
             animator_params.faces_right_by_default else \
             FLIPPED_HORIZONTAL_SCALE
-    set_scale(scale)
+    self.scale = scale
 
 func play(animation_type: int) -> void:
     _play_animation(animation_type)
 
-func set_static_frame(
-        animation_type: int,
-        animation_position: float) -> void:
-    var animation_name := _animation_type_to_name(animation_type)
-    animation_player.play(animation_name)
-    animation_player.seek(animation_position, true)
+func set_static_frame(animation_state: PlayerAnimationState) -> void:
+    var name := _animation_type_to_name(animation_state.animation_type)
+    var playback_rate := \
+            _animation_type_to_playback_rate(animation_state.animation_type)
+    var position := animation_state.animation_position * playback_rate
+    
+    if animation_state.facing_left:
+        face_left()
+    else:
+        face_right()
+    
+    animation_player.play(name, -1)
+    animation_player.seek(position, true)
     animation_player.stop(false)
 
 func match_rate_to_time_scale() -> void:

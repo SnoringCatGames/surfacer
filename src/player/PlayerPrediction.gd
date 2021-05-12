@@ -17,9 +17,7 @@ func match_navigator(
             animation_state,
             elapsed_time_from_now)
     position = animation_state.player_position
-    animator.set_static_frame(
-            animation_state.animation_type,
-            animation_state.animation_position)
+    animator.set_static_frame(animation_state)
 
 func match_path(
         path: PlatformGraphPath,
@@ -28,6 +26,4 @@ func match_path(
             animation_state,
             elapsed_time_from_now)
     position = animation_state.player_position
-    animator.set_static_frame(
-            animation_state.animation_type,
-            animation_state.animation_position)
+    animator.set_static_frame(animation_state)
