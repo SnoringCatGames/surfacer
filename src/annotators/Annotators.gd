@@ -55,7 +55,6 @@ func _enter_tree() -> void:
             "ruler",
             annotation_layer.layer + 5,
             Node.PAUSE_MODE_STOP)
-    Gs.nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
     
     element_annotator = ElementAnnotator.new()
     annotation_layer.add_child(element_annotator)
@@ -67,6 +66,9 @@ func _enter_tree() -> void:
         set_annotator_enabled(
                 annotator_type,
                 is_enabled)
+
+func _on_app_initialized() -> void:
+    Gs.nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
 
 func on_level_ready() -> void:
     # Ensure any enabled annotators that depend on the level get drawn, now
