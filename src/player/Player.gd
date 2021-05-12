@@ -365,24 +365,24 @@ func _process_animation() -> void:
     match current_action_type:
         SurfaceType.FLOOR:
             if actions.pressed_left or actions.pressed_right:
-                animator.walk()
+                animator.play(PlayerAnimationType.WALK)
             else:
-                animator.rest()
+                animator.play(PlayerAnimationType.REST)
         SurfaceType.WALL:
             if processed_action("WallClimbAction"):
                 if actions.pressed_up:
-                    animator.climb_up()
+                    animator.play(PlayerAnimationType.CLIMB_UP)
                 elif actions.pressed_down:
-                    animator.climb_down()
+                    animator.play(PlayerAnimationType.CLIMB_DOWN)
                 else:
                     Gs.logger.error()
             else:
-                animator.rest_on_wall()
+                animator.play(PlayerAnimationType.REST_ON_WALL)
         SurfaceType.AIR:
             if velocity.y > 0:
-                animator.jump_fall()
+                animator.play(PlayerAnimationType.JUMP_FALL)
             else:
-                animator.jump_rise()
+                animator.play(PlayerAnimationType.JUMP_RISE)
         _:
             Gs.logger.error()
 
@@ -880,6 +880,7 @@ func set_position(position: Vector2) -> void:
 
 func get_current_animation_state(result: PlayerAnimationState) -> void:
     result.player_position = position
-    result.animation_name = animator.animation_player.current_animation
+    result.animation_type = \
+            animator.animation_player.get_current_animation_type()
     result.animation_position = \
             animator.animation_player.current_animation_position

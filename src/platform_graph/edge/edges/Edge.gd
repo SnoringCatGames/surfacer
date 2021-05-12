@@ -198,8 +198,8 @@ func get_animation_state_at_time(
     # FIXME: ---------------------
     pass
     result.player_position = get_position_at_time(edge_time)
-    result.animation_name
-    result.animation_position
+#    result.animation_type = player.
+#    result.animation_position
 
 func _update_expected_position_along_surface(
         navigation_state: PlayerNavigationState,

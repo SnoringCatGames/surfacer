@@ -76,9 +76,17 @@ func _process(_delta_sec: float) -> void:
             phantom_path = \
                     player.navigator.find_path(preselection_position_to_draw)
             # FIXME: LEFT OFF HERE: -----------------------------
-#            player.navigator.predict_animation_state(
-#                result: PlayerAnimationState,
-#                elapsed_time_from_now: float)
+            # - Create a new data type to store the animation state and fake
+            #   player animator on?
+            if phantom_path != null:
+                pass
+#                player.navigator.predict_animation_state(
+#                        player.prediction_animation_state,
+#                        phantom_path.duration)
+            
+#            player.animator.set_static_frame(
+#                    animation_type: int,
+#                    animation_position: float)
         
         update()
     
