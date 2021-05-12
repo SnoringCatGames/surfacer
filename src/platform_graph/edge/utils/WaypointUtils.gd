@@ -500,6 +500,13 @@ static func _update_waypoint_velocity_and_time(
                 if time_to_pass_through_waypoint_ignoring_others == INF:
                     # We can't reach this waypoint.
                     return WaypointValidity.OUT_OF_REACH_FROM_ORIGIN
+                # TODO: This was added because we saw an instance of
+                #       displacement_from_origin_to_waypoint.y == 0, which led
+                #       to to the time being zero. Maybe this isn't the right
+                #       fix?
+                if time_to_pass_through_waypoint_ignoring_others == 0.0:
+                    time_to_pass_through_waypoint_ignoring_others += 0.0001
+                
                 assert(time_to_pass_through_waypoint_ignoring_others > 0.0)
             
             if additional_high_waypoint_position != Vector2.INF:
