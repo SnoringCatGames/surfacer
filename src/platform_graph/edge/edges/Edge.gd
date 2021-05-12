@@ -27,6 +27,8 @@ var trajectory: EdgeTrajectory
 
 var velocity_end := Vector2.INF
 
+var time_peak_height := 0.0
+
 # In pixels.
 var distance: float
 # In seconds.
@@ -48,7 +50,8 @@ func _init(
         movement_params: MovementParams,
         instructions: EdgeInstructions,
         trajectory: EdgeTrajectory,
-        edge_calc_result_type: int
+        edge_calc_result_type: int,
+        time_peak_height: float
         ).(
         edge_type,
         edge_calc_result_type,
@@ -67,6 +70,7 @@ func _init(
     self.velocity_end = velocity_end
     self.instructions = instructions
     self.trajectory = trajectory
+    self.time_peak_height = time_peak_height
     if start_position_along_surface != null:
         self.distance = _calculate_distance(
                 start_position_along_surface,

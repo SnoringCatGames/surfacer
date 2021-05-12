@@ -86,20 +86,17 @@ func _process(_delta_sec: float) -> void:
                     player.navigator.find_path(preselection_position_to_draw)
             
             if phantom_path != null:
-                for group in [
-                        Surfacer.group_name_human_players,
-                        Surfacer.group_name_computer_players]:
-                    for player in Gs.utils.get_all_nodes_in_group(group):
-                        var animation_state: PlayerAnimationState = \
-                                player.prediction.animation_state
-                        player.navigator.predict_animation_state(
-                                animation_state,
-                                phantom_path.duration)
-                        player.prediction.position = \
-                                animation_state.player_position
-                        player.prediction.animator.set_static_frame(
-                                animation_state.animation_type,
-                                animation_state.animation_position)
+                # Update the human-player prediction.
+                player.prediction.match_path(
+                        phantom_path,
+                        phantom_path.duration)
+                
+                # Update computer-player predictions.
+                for computer_player in Gs.utils.get_all_nodes_in_group(
+                        Surfacer.group_name_computer_players):
+                    computer_player.prediction.match_navigator(
+                            computer_player.navigator,
+                            phantom_path.duration)
         else:
             phantom_path = null
         

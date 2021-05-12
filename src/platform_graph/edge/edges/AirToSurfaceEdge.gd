@@ -8,8 +8,6 @@ const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := false
 const INCLUDES_AIR_TRAJECTORY := true
 
-var time_peak_height := INF
-
 func _init(
         calculator = null,
         start: PositionAlongSurface = null,
@@ -37,8 +35,9 @@ func _init(
         movement_params,
         instructions,
         trajectory,
-        edge_calc_result_type) -> void:
-    self.time_peak_height = time_peak_height
+        edge_calc_result_type,
+        time_peak_height) -> void:
+    pass
 
 func _calculate_distance(
         start: PositionAlongSurface,

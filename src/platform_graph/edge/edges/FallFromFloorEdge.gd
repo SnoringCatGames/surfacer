@@ -18,7 +18,6 @@ const INCLUDES_AIR_TRAJECTORY := true
 var falls_on_left_side: bool
 var fall_off_position: PositionAlongSurface
 var time_fall_off: float
-var time_peak_height := 0.0
 
 func _init(
         calculator = null,
@@ -49,7 +48,8 @@ func _init(
         movement_params,
         instructions,
         trajectory,
-        edge_calc_result_type) -> void:
+        edge_calc_result_type,
+        0.0) -> void:
     self.falls_on_left_side = falls_on_left_side
     self.fall_off_position = fall_off_position
     self.time_fall_off = time_fall_off

@@ -121,10 +121,12 @@ func _ready() -> void:
             self,
             PlayerAnimator)
     assert(animators.size() <= 1)
-    animator = \
-            animators[0] if \
-            !animators.empty() else \
-            FakePlayerAnimator.new()
+    if animators.empty():
+        animator = Gs.utils.add_scene(
+                self,
+                movement_params.animator_params.player_animator_scene_path)
+    else:
+        animator = animators[0]
     animator.set_player(self)
     
     if Surfacer.annotators.is_annotator_enabled(
