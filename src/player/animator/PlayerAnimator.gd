@@ -66,6 +66,7 @@ func set_static_frame(animation_state: PlayerAnimationState) -> void:
     animation_player.stop(false)
 
 func match_rate_to_time_scale() -> void:
+    print(">>>>%s; %s" % [_base_rate, Gs.time.get_combined_scale()])
     animation_player.playback_speed = _base_rate * Gs.time.get_combined_scale()
 
 func get_current_animation_type() -> int:
@@ -91,7 +92,7 @@ func _play_animation(
     
     if animation_was_not_playing or \
             animation_was_playing_in_wrong_direction:
-        animation_player.play(name, blend, playback_rate)
+        animation_player.play(name, blend)
         match_rate_to_time_scale()
         return true
     else:
