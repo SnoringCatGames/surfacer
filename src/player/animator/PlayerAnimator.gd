@@ -61,7 +61,7 @@ func set_static_frame(animation_state: PlayerAnimationState) -> void:
     else:
         face_right()
     
-    animation_player.play(name, -1)
+    animation_player.play(name)
     animation_player.seek(position, true)
     animation_player.stop(false)
 
