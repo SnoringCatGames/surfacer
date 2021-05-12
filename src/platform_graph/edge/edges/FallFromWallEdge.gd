@@ -59,6 +59,8 @@ func get_animation_state_at_time(
     result.player_position = get_position_at_time(edge_time)
     result.animation_type = PlayerAnimationType.JUMP_FALL
     result.animation_position = edge_time
+    # TODO: Check instructions to determine actual facing-direction.
+    result.facing_left = get_velocity_at_time(edge_time).x < 0.0
 
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,

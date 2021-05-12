@@ -83,6 +83,7 @@ func get_animation_state_at_time(
     result.player_position = get_position_at_time(edge_time)
     result.animation_type = PlayerAnimationType.CLIMB_DOWN
     result.animation_position = edge_time
+    result.facing_left = get_start_surface().side == SurfaceSide.LEFT_WALL
 
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
