@@ -899,3 +899,4 @@ func get_current_animation_state(result: PlayerAnimationState) -> void:
     result.animation_type = animator.get_current_animation_type()
     result.animation_position = \
             animator.animation_player.current_animation_position
+    result.facing_left = surface_state.horizontal_facing_sign == -1
