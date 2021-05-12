@@ -62,7 +62,11 @@ static func calculate_movement_duration(
         assert(allows_no_positive_results)
         return INF
     
-    min_duration += Gs.geometry.FLOAT_EPSILON
+    # This epsilon is important for calculations that depend on the result
+    # actually happening within expected values, but for calculations that just
+    # expect any value over 0.0, we don't need the epsilon.
+    if min_duration != 0.0:
+        min_duration += Gs.geometry.FLOAT_EPSILON
     
     if t1 < min_duration:
         if t2 < min_duration:
