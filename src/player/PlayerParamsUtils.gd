@@ -148,6 +148,33 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
             movement_params.includes_continuous_frame_velocities)
     assert(!movement_params.bypasses_runtime_physics or \
             movement_params.syncs_player_position_to_edge_trajectory)
+    
+    _check_animator_params(movement_params.animator_params)
+
+static func _check_animator_params(
+        animator_params: PlayerAnimatorParams) -> void:
+    assert(animator_params.rest_name != "")
+    assert(animator_params.rest_on_wall_name != "")
+    assert(animator_params.jump_rise_name != "")
+    assert(animator_params.jump_fall_name != "")
+    assert(animator_params.walk_name != "")
+    assert(animator_params.climb_up_name != "")
+    assert(animator_params.climb_down_name != "")
+    
+    assert(animator_params.rest_playback_rate != 0.0 and 
+            !is_inf(animator_params.rest_playback_rate))
+    assert(animator_params.rest_on_wall_playback_rate != 0.0 and 
+            !is_inf(animator_params.rest_on_wall_playback_rate))
+    assert(animator_params.jump_rise_playback_rate != 0.0 and 
+            !is_inf(animator_params.jump_rise_playback_rate))
+    assert(animator_params.jump_fall_playback_rate != 0.0 and 
+            !is_inf(animator_params.jump_fall_playback_rate))
+    assert(animator_params.walk_playback_rate != 0.0 and 
+            !is_inf(animator_params.walk_playback_rate))
+    assert(animator_params.climb_up_playback_rate != 0.0 and 
+            !is_inf(animator_params.climb_up_playback_rate))
+    assert(animator_params.climb_down_playback_rate != 0.0 and \
+            !is_inf(animator_params.climb_down_playback_rate))
 
 class ActionHandlersComparator:
     static func sort(

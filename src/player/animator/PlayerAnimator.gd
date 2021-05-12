@@ -7,6 +7,7 @@ const FLIPPED_HORIZONTAL_SCALE := Vector2(-1, 1)
 var animator_params: PlayerAnimatorParams
 var animation_player: AnimationPlayer
 
+var _animation_type := PlayerAnimationType.UNKNOWN
 var _base_rate := 1.0
 
 func set_player(player) -> void:
@@ -43,45 +44,30 @@ func face_right() -> void:
             FLIPPED_HORIZONTAL_SCALE
     set_scale(scale)
 
-func rest() -> void:
-    _play_animation(
-            animator_params.rest_name,
-            animator_params.rest_playback_rate)
+func play(animation_type: int) -> void:
+    _play_animation(animation_type)
 
-func rest_on_wall() -> void:
-    _play_animation(
-            animator_params.rest_on_wall_name,
-            animator_params.rest_on_wall_playback_rate)
+func set_static_frame(
+        animation_type: int,
+        animation_position: float) -> void:
+    var animation_name := _animation_type_to_name(animation_type)
+    animation_player.play(animation_name)
+    animation_player.seek(animation_position, true)
+    animation_player.stop(false)
 
-func jump_rise() -> void:
-    _play_animation(
-            animator_params.jump_rise_name,
-            animator_params.jump_rise_playback_rate)
+func match_rate_to_time_scale() -> void:
+    animation_player.playback_speed = _base_rate * Gs.time.get_combined_scale()
 
-func jump_fall() -> void:
-    _play_animation(
-            animator_params.jump_fall_name,
-            animator_params.jump_fall_playback_rate)
-
-func walk() -> void:
-    _play_animation(
-            animator_params.walk_name,
-            animator_params.walk_playback_rate)
-
-func climb_up() -> void:
-    _play_animation(
-            animator_params.climb_up_name,
-            animator_params.climb_up_playback_rate)
-
-func climb_down() -> void:
-    _play_animation(
-            animator_params.climb_down_name,
-            animator_params.climb_down_playback_rate)
+func get_current_animation_type() -> int:
+    return _animation_type
 
 func _play_animation(
-        name: String,
-        playback_rate: float = 1,
+        animation_type: int,
         blend := 0.1) -> bool:
+    var name := _animation_type_to_name(animation_type)
+    var playback_rate := _animation_type_to_playback_rate(animation_type)
+    
+    _animation_type = animation_type
     _base_rate = playback_rate
     
     var is_current_animatior := animation_player.current_animation == name
@@ -101,5 +87,44 @@ func _play_animation(
     else:
         return false
 
-func match_rate_to_time_scale() -> void:
-    animation_player.playback_speed = _base_rate * Gs.time.get_combined_scale()
+func _animation_type_to_name(animation_type: int) -> String:
+    match animation_type:
+        PlayerAnimationType.REST:
+            return animator_params.rest_name
+        PlayerAnimationType.REST_ON_WALL:
+            return animator_params.rest_on_wall_name
+        PlayerAnimationType.JUMP_RISE:
+            return animator_params.jump_rise_name
+        PlayerAnimationType.JUMP_FALL:
+            return animator_params.jump_fall_name
+        PlayerAnimationType.WALK:
+            return animator_params.walk_name
+        PlayerAnimationType.CLIMB_UP:
+            return animator_params.climb_up_name
+        PlayerAnimationType.CLIMB_DOWN:
+            return animator_params.climb_down_name
+        _:
+            Gs.utils.error(
+                    "Unrecognized PlayerAnimationType: %s" % animation_type)
+            return ""
+
+func _animation_type_to_playback_rate(animation_type: int) -> float:
+    match animation_type:
+        PlayerAnimationType.REST:
+            return animator_params.rest_playback_rate
+        PlayerAnimationType.REST_ON_WALL:
+            return animator_params.rest_on_wall_playback_rate
+        PlayerAnimationType.JUMP_RISE:
+            return animator_params.jump_rise_playback_rate
+        PlayerAnimationType.JUMP_FALL:
+            return animator_params.jump_fall_playback_rate
+        PlayerAnimationType.WALK:
+            return animator_params.walk_playback_rate
+        PlayerAnimationType.CLIMB_UP:
+            return animator_params.climb_up_playback_rate
+        PlayerAnimationType.CLIMB_DOWN:
+            return animator_params.climb_down_playback_rate
+        _:
+            Gs.utils.error(
+                    "Unrecognized PlayerAnimationType: %s" % animation_type)
+            return 0.0
