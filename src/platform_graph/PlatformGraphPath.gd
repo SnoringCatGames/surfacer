@@ -36,7 +36,7 @@ func push_back(edge: Edge) -> void:
 func predict_animation_state(
         result: PlayerAnimationState,
         path_time: float) -> bool:
-    var is_before_path_end_time := path_time <= duration
+    var is_before_path_end_time := path_time < duration
     if !is_before_path_end_time:
         var last_edge: Edge = edges.back()
         last_edge.get_animation_state_at_time(result, last_edge.duration)
