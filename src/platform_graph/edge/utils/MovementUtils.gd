@@ -421,7 +421,7 @@ static func calculate_time_to_climb(
     #     s = s_0 + v*t
     # Algebra...
     #     t = (s - s_0) / v
-    return distance / speed
+    return distance / abs(speed)
 
 static func calculate_time_to_walk(
         distance: float,

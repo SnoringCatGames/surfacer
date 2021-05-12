@@ -40,7 +40,8 @@ func _init(
         movement_params,
         _calculate_instructions(start, end),
         null,
-        EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP) -> void:
+        EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
+        0.0) -> void:
     # Intra-surface edges are never calculated and stored ahead of time;
     # they're only calculated at run time when navigating a specific path.
     self.is_optimized_for_path = true

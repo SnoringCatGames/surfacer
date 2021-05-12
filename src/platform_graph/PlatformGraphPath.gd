@@ -33,6 +33,33 @@ func push_back(edge: Edge) -> void:
     self.edges.push_back(edge)
     self.destination = edge.get_end()
 
+func predict_animation_state(
+        result: PlayerAnimationState,
+        path_time: float) -> bool:
+    var is_before_path_end_time := path_time <= duration
+    if !is_before_path_end_time:
+        var last_edge: Edge = edges.back()
+        last_edge.get_animation_state_at_time(result, last_edge.duration)
+        return false
+    
+    var edge_start_time := 0.0
+    var prediction_edge: Edge
+    var prediction_edge_start_time := INF
+    for edge in edges:
+        if edge_start_time + edge.duration >= path_time:
+            prediction_edge = edge
+            prediction_edge_start_time = edge_start_time
+            break
+        edge_start_time += edge.duration
+    if prediction_edge == null:
+        prediction_edge = edges.back()
+        prediction_edge_start_time = edge_start_time
+    
+    var prediction_edge_time := path_time - prediction_edge_start_time
+    prediction_edge.get_animation_state_at_time(result, prediction_edge_time)
+    
+    return true
+
 func to_string_with_newlines(indent_level := 0) -> String:
     var indent_level_str := ""
     for i in indent_level:

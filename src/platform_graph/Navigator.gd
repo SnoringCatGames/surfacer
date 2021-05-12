@@ -360,29 +360,8 @@ func predict_animation_state(
             current_path_start_time_scaled
     var prediction_path_time := \
             current_path_elapsed_time + elapsed_time_from_now
-    var is_prediction_time_before_path_end_time := \
-            prediction_path_time < current_path.duration
     
-    if !is_prediction_time_before_path_end_time:
-        var last_edge: Edge = current_path.edges.back()
-        last_edge.get_animation_state_at_time(result, last_edge.duration)
-        return false
-    
-    var edge_start_time := 0.0
-    var prediction_edge: Edge
-    var prediction_edge_start_time := INF
-    for edge in current_path:
-        if edge_start_time + edge.duration >= prediction_path_time - 0.0001:
-            prediction_edge = edge
-            prediction_edge_start_time = edge_start_time
-            break
-    assert(prediction_edge != null)
-    
-    var prediction_edge_time := \
-            prediction_path_time - prediction_edge_start_time
-    prediction_edge.get_animation_state_at_time(result, prediction_edge_time)
-    
-    return true
+    return current_path.predict_animation_state(result, prediction_path_time)
 
 func get_previous_destination() -> PositionAlongSurface:
     return previous_path.edges.back().end_position_along_surface
