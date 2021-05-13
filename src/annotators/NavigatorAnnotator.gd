@@ -28,9 +28,22 @@ func _physics_process(_delta_sec: float) -> void:
         update()
 
 func _draw() -> void:
-    if !navigator.player.is_human_player or \
-            is_slow_motion_enabled:
-        return
+    if navigator.player.is_human_player:
+        if is_slow_motion_enabled and \
+                !Surfacer \
+                    .is_human_current_nav_trajectory_shown_with_slow_mo or \
+                !is_slow_motion_enabled and \
+                !Surfacer \
+                    .is_human_current_nav_trajectory_shown_without_slow_mo:
+            return
+    else:
+        if is_slow_motion_enabled and \
+                !Surfacer \
+                    .is_computer_current_nav_trajectory_shown_with_slow_mo or \
+                !is_slow_motion_enabled and \
+                !Surfacer \
+                    .is_computer_current_nav_trajectory_shown_without_slow_mo:
+            return
     
     if current_path != null:
         if Surfacer.is_active_trajectory_shown:
