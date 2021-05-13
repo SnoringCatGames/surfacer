@@ -47,12 +47,17 @@ func _draw() -> void:
     
     if current_path != null:
         if Surfacer.is_active_trajectory_shown:
+            var current_path_color: Color = \
+                    Surfacer.ann_defaults \
+                            .HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
+                    navigator.player.is_human_player else \
+                    Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
             Gs.draw_utils.draw_path(
                     self,
                     current_path,
                     AnnotationElementDefaults \
                             .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-                    Surfacer.ann_defaults.NAVIGATOR_CURRENT_PATH_COLOR,
+                    current_path_color,
                     AnnotationElementDefaults \
                             .NAVIGATOR_ORIGIN_INDICATOR_RADIUS + 
                             AnnotationElementDefaults \
@@ -67,17 +72,27 @@ func _draw() -> void:
                     false)
             
             # Draw the origin indicator.
+            var origin_indicator_fill_color: Color = \
+                    Surfacer.ann_defaults \
+                            .HUMAN_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR if \
+                    navigator.player.is_human_player else \
+                    Surfacer.ann_defaults \
+                            .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR
             self.draw_circle(
                     current_path.origin,
                     AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
+                    origin_indicator_fill_color)
+            var origin_indicator_stroke_color: Color = \
                     Surfacer.ann_defaults \
-                            .NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR)
+                            .HUMAN_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR if \
+                    navigator.player.is_human_player else \
+                    Surfacer.ann_defaults \
+                            .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR
             Gs.draw_utils.draw_circle_outline(
                     self,
                     current_path.origin,
                     AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
-                    Surfacer.ann_defaults \
-                            .NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR,
+                    origin_indicator_stroke_color,
                     AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
                     4.0)
         
@@ -90,26 +105,36 @@ func _draw() -> void:
                             .NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH - \
                     AnnotationElementDefaults \
                             .NAVIGATOR_DESTINATION_INDICATOR_RADIUS
+            var destination_indicator_fill_color: Color = \
+                    Surfacer.ann_defaults \
+                            .HUMAN_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR if \
+                    navigator.player.is_human_player else \
+                    Surfacer.ann_defaults \
+                            .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
             Gs.draw_utils.draw_destination_marker(
                     self,
                     cone_end_point,
                     false,
                     current_destination.side,
-                    Surfacer.ann_defaults \
-                            .NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR,
+                    destination_indicator_fill_color,
                     cone_length,
                     AnnotationElementDefaults \
                             .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
                     true,
                     INF,
                     4.0)
+            var destination_indicator_stroke_color: Color = \
+                    Surfacer.ann_defaults \
+                            .HUMAN_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR if \
+                    navigator.player.is_human_player else \
+                    Surfacer.ann_defaults \
+                            .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
             Gs.draw_utils.draw_destination_marker(
                     self,
                     cone_end_point,
                     false,
                     current_destination.side,
-                    Surfacer.ann_defaults \
-                            .NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR,
+                    destination_indicator_stroke_color,
                     cone_length,
                     AnnotationElementDefaults \
                             .NAVIGATOR_DESTINATION_INDICATOR_RADIUS,
@@ -119,12 +144,16 @@ func _draw() -> void:
     
     elif previous_path != null and \
             Surfacer.is_previous_trajectory_shown:
+        var previous_path_color: Color = \
+                Surfacer.ann_defaults.HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR if \
+                navigator.player.is_human_player else \
+                Surfacer.ann_defaults.COMPUTER_NAVIGATOR_PREVIOUS_PATH_COLOR
         Gs.draw_utils.draw_path(
                 self,
                 previous_path,
                 AnnotationElementDefaults \
                         .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-                Surfacer.ann_defaults.NAVIGATOR_PREVIOUS_PATH_COLOR,
+                previous_path_color,
                 0.0,
                 previous_path_back_end_trim_radius,
                 true,
