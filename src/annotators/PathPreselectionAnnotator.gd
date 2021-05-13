@@ -58,7 +58,8 @@ func _init(player: Player) -> void:
             player.movement_params.collider_half_width_height.y)
     self._predictions_container = Node2D.new()
     _predictions_container.visible = false
-    _predictions_container.modulate.a = 0.5
+    _predictions_container.modulate.a = \
+            Surfacer.nav_selection_prediction_opacity
     add_child(_predictions_container)
 
 func add_prediction(prediction: PlayerPrediction) -> void:

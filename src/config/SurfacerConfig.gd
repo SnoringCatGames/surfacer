@@ -70,6 +70,8 @@ var is_computer_prediction_shown := true
 var default_player_name: String
 var nav_selection_slow_mo_time_scale := 0.1
 var nav_selection_slow_mo_saturation := 0.2
+var nav_selection_prediction_opacity := 0.5
+var nav_selection_prediction_tween_duration := 0.15
 
 var debug_params: Dictionary
 
@@ -225,6 +227,14 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("nav_selection_slow_mo_saturation"):
         self.nav_selection_slow_mo_saturation = \
                 manifest.nav_selection_slow_mo_saturation
+    
+    if manifest.has("nav_selection_prediction_opacity"):
+        self.nav_selection_prediction_opacity = \
+                manifest.nav_selection_prediction_opacity
+    
+    if manifest.has("nav_selection_prediction_tween_duration"):
+        self.nav_selection_prediction_tween_duration = \
+                manifest.nav_selection_prediction_tween_duration
     
     if manifest.has("is_human_prediction_shown"):
         self.is_human_prediction_shown = \
