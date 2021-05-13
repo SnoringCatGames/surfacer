@@ -14,7 +14,8 @@ var surface_click_selection: Color
 var grid_indices: Color
 var ruler: Color
 var invalid: Color
-var navigation: Color
+var human_navigation: Color
+var computer_navigation: Color
 var player_position: Color
 var recent_movement: Color
 var inspector_origin: Color
@@ -28,7 +29,8 @@ var _surfacer_defaults := {
             WHITE, ScaffolderColors.ALPHA_FAINT),
     ruler = WHITE,
     invalid = RED,
-    navigation = PURPLE,
+    human_navigation = PURPLE,
+    computer_navigation = PURPLE,
     player_position = TEAL,
     recent_movement = TEAL,
     inspector_origin = ScaffolderColors.static_opacify(

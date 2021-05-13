@@ -1,12 +1,25 @@
 class_name PathPreselectionAnnotator
 extends Node2D
 
-var PRESELECTION_SURFACE_COLOR := Gs.colors.opacify(
-        Gs.colors.navigation, ScaffolderColors.ALPHA_XFAINT)
-var PRESELECTION_POSITION_INDICATOR_COLOR := Gs.colors.opacify(
-        Gs.colors.navigation, ScaffolderColors.ALPHA_XFAINT)
-var PRESELECTION_PATH_COLOR := Gs.colors.opacify(
-        Gs.colors.navigation, ScaffolderColors.ALPHA_FAINT)
+var HUMAN_PRESELECTION_SURFACE_COLOR := Gs.colors.opacify(
+        Gs.colors.human_navigation,
+        ScaffolderColors.ALPHA_XFAINT)
+var HUMAN_PRESELECTION_POSITION_INDICATOR_COLOR := Gs.colors.opacify(
+        Gs.colors.human_navigation,
+        ScaffolderColors.ALPHA_XFAINT)
+var HUMAN_PRESELECTION_PATH_COLOR := Gs.colors.opacify(
+        Gs.colors.human_navigation,
+        ScaffolderColors.ALPHA_FAINT)
+
+var COMPUTER_PRESELECTION_SURFACE_COLOR := Gs.colors.opacify(
+        Gs.colors.computer_navigation,
+        ScaffolderColors.ALPHA_XFAINT)
+var COMPUTER_PRESELECTION_POSITION_INDICATOR_COLOR := Gs.colors.opacify(
+        Gs.colors.computer_navigation,
+        ScaffolderColors.ALPHA_XFAINT)
+var COMPUTER_PRESELECTION_PATH_COLOR := Gs.colors.opacify(
+        Gs.colors.computer_navigation,
+        ScaffolderColors.ALPHA_FAINT)
 
 var INVALID_SURFACE_COLOR := Gs.colors.opacify(
         Gs.colors.invalid, ScaffolderColors.ALPHA_XFAINT)
@@ -125,9 +138,16 @@ func _draw() -> void:
     var position_indicator_base_color: Color
     var path_base_color: Color
     if phantom_path != null:
-        surface_base_color = PRESELECTION_SURFACE_COLOR
-        position_indicator_base_color = PRESELECTION_POSITION_INDICATOR_COLOR
-        path_base_color = PRESELECTION_PATH_COLOR
+        if player.is_human_player:
+            surface_base_color = HUMAN_PRESELECTION_SURFACE_COLOR
+            position_indicator_base_color = \
+                    HUMAN_PRESELECTION_POSITION_INDICATOR_COLOR
+            path_base_color = HUMAN_PRESELECTION_PATH_COLOR
+        else:
+            surface_base_color = COMPUTER_PRESELECTION_SURFACE_COLOR
+            position_indicator_base_color = \
+                    COMPUTER_PRESELECTION_POSITION_INDICATOR_COLOR
+            path_base_color = COMPUTER_PRESELECTION_PATH_COLOR
     else:
         surface_base_color = INVALID_SURFACE_COLOR
         position_indicator_base_color = INVALID_POSITION_INDICATOR_COLOR
