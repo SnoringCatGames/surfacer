@@ -51,9 +51,10 @@ func play(animation_type: int) -> void:
     _play_animation(animation_type)
 
 func set_static_frame(animation_state: PlayerAnimationState) -> void:
-    var name := _animation_type_to_name(animation_state.animation_type)
-    var playback_rate := \
-            _animation_type_to_playback_rate(animation_state.animation_type)
+    _animation_type = animation_state.animation_type
+    
+    var name := animation_type_to_name(_animation_type)
+    var playback_rate := animation_type_to_playback_rate(_animation_type)
     var position := animation_state.animation_position * playback_rate
     
     if animation_state.facing_left:
@@ -65,6 +66,11 @@ func set_static_frame(animation_state: PlayerAnimationState) -> void:
     animation_player.seek(position, true)
     animation_player.stop(false)
 
+func set_static_frame_position(animation_position: float) -> void:
+    var playback_rate := animation_type_to_playback_rate(_animation_type)
+    var position := animation_position * playback_rate
+    animation_player.seek(position, true)
+
 func match_rate_to_time_scale() -> void:
     animation_player.playback_speed = _base_rate * Gs.time.get_combined_scale()
 
@@ -74,8 +80,8 @@ func get_current_animation_type() -> int:
 func _play_animation(
         animation_type: int,
         blend := 0.1) -> bool:
-    var name := _animation_type_to_name(animation_type)
-    var playback_rate := _animation_type_to_playback_rate(animation_type)
+    var name := animation_type_to_name(animation_type)
+    var playback_rate := animation_type_to_playback_rate(animation_type)
     
     _animation_type = animation_type
     _base_rate = playback_rate
@@ -97,7 +103,7 @@ func _play_animation(
     else:
         return false
 
-func _animation_type_to_name(animation_type: int) -> String:
+func animation_type_to_name(animation_type: int) -> String:
     match animation_type:
         PlayerAnimationType.REST:
             return animator_params.rest_name
@@ -118,7 +124,7 @@ func _animation_type_to_name(animation_type: int) -> String:
                     "Unrecognized PlayerAnimationType: %s" % animation_type)
             return ""
 
-func _animation_type_to_playback_rate(animation_type: int) -> float:
+func animation_type_to_playback_rate(animation_type: int) -> float:
     match animation_type:
         PlayerAnimationType.REST:
             return animator_params.rest_playback_rate

@@ -143,7 +143,8 @@ func _draw() -> void:
                     4.0)
     
     elif previous_path != null and \
-            Surfacer.is_previous_trajectory_shown:
+            Surfacer.is_previous_trajectory_shown and \
+            navigator.player.is_human_player:
         var previous_path_color: Color = \
                 Surfacer.ann_defaults.HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR if \
                 navigator.player.is_human_player else \
