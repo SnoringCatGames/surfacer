@@ -66,7 +66,6 @@ func set_static_frame(animation_state: PlayerAnimationState) -> void:
     animation_player.stop(false)
 
 func match_rate_to_time_scale() -> void:
-    print(">>>>%s; %s" % [_base_rate, Gs.time.get_combined_scale()])
     animation_player.playback_speed = _base_rate * Gs.time.get_combined_scale()
 
 func get_current_animation_type() -> int:

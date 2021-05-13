@@ -59,6 +59,14 @@ var is_active_trajectory_shown: bool
 var is_previous_trajectory_shown: bool
 var is_preselection_trajectory_shown: bool
 var is_navigation_destination_shown: bool
+
+var is_human_current_nav_trajectory_shown_with_slow_mo := false
+var is_computer_current_nav_trajectory_shown_with_slow_mo := true
+var is_human_current_nav_trajectory_shown_without_slow_mo := true
+var is_computer_current_nav_trajectory_shown_without_slow_mo := false
+var is_human_prediction_shown := true
+var is_computer_prediction_shown := true
+
 var default_player_name: String
 var nav_selection_slow_mo_time_scale := 0.1
 var nav_selection_slow_mo_saturation := 0.2
@@ -198,9 +206,33 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.nav_selection_slow_mo_time_scale = \
                 manifest.nav_selection_slow_mo_time_scale
     
+    if manifest.has("is_human_current_nav_trajectory_shown_with_slow_mo"):
+        self.is_human_current_nav_trajectory_shown_with_slow_mo = \
+                manifest.is_human_current_nav_trajectory_shown_with_slow_mo
+    
+    if manifest.has("is_computer_current_nav_trajectory_shown_with_slow_mo"):
+        self.is_computer_current_nav_trajectory_shown_with_slow_mo = \
+                manifest.is_computer_current_nav_trajectory_shown_with_slow_mo
+    
+    if manifest.has("is_human_current_nav_trajectory_shown_without_slow_mo"):
+        self.is_human_current_nav_trajectory_shown_without_slow_mo = \
+                manifest.is_human_current_nav_trajectory_shown_without_slow_mo
+    
+    if manifest.has("is_computer_current_nav_trajectory_shown_without_slow_mo"):
+        self.is_computer_current_nav_trajectory_shown_without_slow_mo = \
+                manifest.is_computer_current_nav_trajectory_shown_without_slow_mo
+    
     if manifest.has("nav_selection_slow_mo_saturation"):
         self.nav_selection_slow_mo_saturation = \
                 manifest.nav_selection_slow_mo_saturation
+    
+    if manifest.has("is_human_prediction_shown"):
+        self.is_human_prediction_shown = \
+                manifest.is_human_prediction_shown
+    
+    if manifest.has("is_computer_prediction_shown"):
+        self.is_computer_prediction_shown = \
+                manifest.is_computer_prediction_shown
 
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting(
