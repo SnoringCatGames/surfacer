@@ -10,8 +10,9 @@ var current_destination: PositionAlongSurface
 var is_enabled := false
 var is_slow_motion_enabled := false
 
-var previous_fade_in_progress := 0.0
-var fade_in_progress := 0.0
+var is_fade_in_progress := false
+var previous_fade_progress := 0.0
+var fade_progress := 0.0
 
 var previous_path_back_end_trim_radius: float
 
@@ -31,22 +32,15 @@ func _init(navigator: Navigator) -> void:
     add_child(tween)
 
 func _physics_process(_delta_sec: float) -> void:
+    is_fade_in_progress = fade_progress != previous_fade_progress
+    previous_fade_progress = fade_progress
+    
     if navigator.current_path != current_path:
         current_path = navigator.current_path
         current_destination = navigator.current_destination
-        
-        tween.stop_all()
-        tween.interpolate_property(
-                self,
-                "fade_in_progress",
-                0.0,
-                1.0,
-                FADE_IN_DURATION,
-                "ease_out",
-                0.0,
-                TimeType.PLAY_PHYSICS)
-        tween.start()
-        
+        if current_path != null and \
+                is_enabled:
+            _trigger_fade_in(true)
         update()
     
     if navigator.previous_path != previous_path:
@@ -55,34 +49,49 @@ func _physics_process(_delta_sec: float) -> void:
     
     if Surfacer.slow_motion.is_enabled != is_slow_motion_enabled:
         is_slow_motion_enabled = Surfacer.slow_motion.is_enabled
-        self.is_enabled = _get_is_enabled()
+        is_enabled = _get_is_enabled()
+        _trigger_fade_in(is_enabled)
         update()
     
-    if fade_in_progress != previous_fade_in_progress:
+    if is_fade_in_progress:
         update()
-    
-    previous_fade_in_progress = fade_in_progress
+
+func _trigger_fade_in(is_fade_in := true) -> void:
+    tween.stop_all()
+    tween.interpolate_property(
+            self,
+            "fade_progress",
+            0.0 if is_fade_in else 1.0,
+            1.0 if is_fade_in else 0.0,
+            FADE_IN_DURATION,
+            "ease_out",
+            0.0,
+            TimeType.PLAY_PHYSICS)
+    tween.start()
 
 func _draw() -> void:
-    if !is_enabled:
+    if !is_enabled and \
+            !is_fade_in_progress:
         return
     
     if current_path != null:
-        _draw_current_path()
+        _draw_current_path(current_path, fade_progress)
     
     elif previous_path != null and \
             Surfacer.is_previous_trajectory_shown and \
             navigator.player.is_human_player:
         _draw_previous_path()
 
-func _draw_current_path() -> void:
+func _draw_current_path(
+        current_path: PlatformGraphPath,
+        fade_progress: float) -> void:
     if Surfacer.is_active_trajectory_shown:
         var current_path_color: Color = \
                 Surfacer.ann_defaults \
                         .HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
                 navigator.player.is_human_player else \
                 Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
-        current_path_color.a *= fade_in_progress
+        current_path_color.a *= fade_progress
         Gs.draw_utils.draw_path(
                 self,
                 current_path,
@@ -109,7 +118,7 @@ func _draw_current_path() -> void:
                 navigator.player.is_human_player else \
                 Surfacer.ann_defaults \
                         .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR
-        origin_indicator_fill_color.a *= fade_in_progress
+        origin_indicator_fill_color.a *= fade_progress
         self.draw_circle(
                 current_path.origin,
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
@@ -120,7 +129,7 @@ func _draw_current_path() -> void:
                 navigator.player.is_human_player else \
                 Surfacer.ann_defaults \
                         .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR
-        origin_indicator_stroke_color.a *= fade_in_progress
+        origin_indicator_stroke_color.a *= fade_progress
         Gs.draw_utils.draw_circle_outline(
                 self,
                 current_path.origin,
@@ -144,7 +153,7 @@ func _draw_current_path() -> void:
                 navigator.player.is_human_player else \
                 Surfacer.ann_defaults \
                         .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
-        destination_indicator_fill_color.a *= fade_in_progress
+        destination_indicator_fill_color.a *= fade_progress
         Gs.draw_utils.draw_destination_marker(
                 self,
                 cone_end_point,
@@ -163,7 +172,7 @@ func _draw_current_path() -> void:
                 navigator.player.is_human_player else \
                 Surfacer.ann_defaults \
                         .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
-        destination_indicator_stroke_color *= fade_in_progress
+        destination_indicator_stroke_color *= fade_progress
         Gs.draw_utils.draw_destination_marker(
                 self,
                 cone_end_point,

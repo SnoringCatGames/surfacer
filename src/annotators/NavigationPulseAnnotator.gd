@@ -49,6 +49,9 @@ func _draw() -> void:
         return
     
     var progress := current_path_elapsed_time / current_path_pulse_duration
+    
+    var opacity_multiplier := \
+            1.0 - Gs.utils.ease_by_name(progress, "ease_in_strong")
     progress = Gs.utils.ease_by_name(progress, "ease_out")
     
     if progress < 0.0001 or \
@@ -79,6 +82,7 @@ func _draw() -> void:
                     .HUMAN_NAVIGATOR_PULSE_PATH_COLOR if \
             navigator.player.is_human_player else \
             Surfacer.ann_defaults.COMPUTER_NAVIGATOR_PULSE_PATH_COLOR
+    path_color.a *= opacity_multiplier
     var trim_front_end_radius := 0.0
     var trim_back_end_radius := 0.0
     
