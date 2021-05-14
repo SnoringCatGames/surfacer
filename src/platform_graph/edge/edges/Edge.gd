@@ -29,6 +29,9 @@ var velocity_end := Vector2.INF
 
 var time_peak_height := 0.0
 
+# If true, then this edge starts and ends at the same position.
+var is_degenerate: bool
+
 # In pixels.
 var distance: float
 # In seconds.
@@ -71,7 +74,16 @@ func _init(
     self.instructions = instructions
     self.trajectory = trajectory
     self.time_peak_height = time_peak_height
+    
+    assert(trajectory == null or \
+            (!trajectory.frame_continuous_positions_from_steps.empty() or \
+            !movement_params.includes_continuous_frame_positions))
+    
     if start_position_along_surface != null:
+        self.is_degenerate = Gs.geometry.are_points_equal_with_epsilon(
+                start_position_along_surface.target_point,
+                end_position_along_surface.target_point,
+                0.00001)
         self.distance = _calculate_distance(
                 start_position_along_surface,
                 end_position_along_surface,

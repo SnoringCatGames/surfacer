@@ -175,3 +175,6 @@ func get_player_start_position() -> Vector2:
         return Vector2.ZERO
     else:
         return nodes[0].position
+
+func get_is_intro_choreography_running() -> bool:
+    return intro_choreographer != null

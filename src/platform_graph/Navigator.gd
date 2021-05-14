@@ -1,6 +1,7 @@
 class_name Navigator
 extends Reference
 
+signal started_navigation
 signal reached_destination
 
 const NEARBY_SURFACE_DISTANCE_THRESHOLD := 160.0
@@ -84,6 +85,8 @@ func navigate_to_position(
         var duration_optimize_edges_for_approach: float = Gs.profiler.stop(
                 "navigator_optimize_edges_for_approach")
         
+        path.update_distance_and_duration()
+        
         current_destination = destination
         current_path = path
         current_path_start_time_scaled = Gs.time.get_scaled_play_time_sec()
@@ -118,6 +121,8 @@ func navigate_to_position(
         _start_edge(
                 0,
                 is_retry)
+        
+        emit_signal("started_navigation")
         
         return true
 
@@ -160,12 +165,19 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
             
             # TODO: This case shouldn't be needed; in theory, we should have
             #       been able to find a valid land trajectory above.
+            Gs.logger.print("Unable to calculate air-to-surface edge")
             
-            air_to_surface_edge = air_to_surface_calculator \
-                    .create_edge_from_part_of_other_edge(
-                            current_edge,
-                            current_playback.get_elapsed_time_scaled(),
-                            player)
+            var elapsed_edge_time := current_playback.get_elapsed_time_scaled()
+            if elapsed_edge_time < current_edge.duration:
+                air_to_surface_edge = air_to_surface_calculator \
+                        .create_edge_from_part_of_other_edge(
+                                current_edge,
+                                elapsed_edge_time,
+                                player)
+            else:
+                Gs.logger.print(
+                        "Unable to re-use current edge as air-to-surface " +
+                        "edge: edge playback time exceeds edge duration")
         
         if air_to_surface_edge != null:
             # We were able to calculate a valid air-to-surface edge.

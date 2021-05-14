@@ -71,12 +71,9 @@ static func draw_path(
         includes_instruction_indicators := false,
         includes_continuous_positions := false,
         includes_discrete_positions := false) -> void:
-    var vertices := PoolVector2Array([0])
+    var vertices := PoolVector2Array()
     for edge in path.edges:
-        # The end positions of adjacent edges should be identical, so remove
-        # one of them.
-        vertices.resize(vertices.size() - 1)
-        vertices.append_array(_get_edge_trajectory_vertices(edge))
+        vertices.append_array(_get_edge_trajectory_vertices(edge, false))
     if trim_front_end_radius > 0.0:
         vertices = _trim_front_end(
                 vertices,
@@ -85,6 +82,168 @@ static func draw_path(
         vertices = _trim_back_end(
                 vertices,
                 trim_back_end_radius)
+    canvas.draw_polyline(
+            vertices,
+            color,
+            stroke_width)
+
+# NOTE: Calculating a distance-based segment instead of a duration-based
+#       segment may be more intuitive, but it's a much more expensive
+#       operation. There are two reasons for this:
+# -   Trajectory vertices are already calculated according to time
+#     intervals--rather than distance intervals.
+# -   And distance calculations would require performing many sqrt calls for
+#     adjacent vertices each frame, as well as allocating and resizing unknown
+#     space for arrays to store this data.
+static func draw_path_duration_segment(
+        canvas: CanvasItem,
+        path: PlatformGraphPath,
+        segment_time_start: float,
+        segment_time_end: float,
+        stroke_width := EDGE_TRAJECTORY_WIDTH,
+        color := Color.white,
+        trim_front_end_radius := 0.0,
+        trim_back_end_radius := 0.0) -> void:
+    var vertices: PoolVector2Array
+    var edge_start_time := 0.0
+    var has_segment_started := false
+    for edge in path.edges:
+        if edge.edge_type == EdgeType.JUMP_INTER_SURFACE_EDGE:
+            var a := true
+        
+        var edge_end_time: float = edge_start_time + edge.duration
+        var is_start_of_segment := \
+                !has_segment_started and \
+                edge_end_time > segment_time_start
+        var is_end_of_segment := edge_end_time > segment_time_end
+        
+        var edge_vertices: PoolVector2Array
+        if has_segment_started or \
+                is_start_of_segment:
+            edge_vertices = _get_edge_trajectory_vertices(edge, false)
+        
+        # Calculate the index and point at the start of the segment.
+        var index_before_segment := -1
+        var first_vertex_in_segment: Vector2
+        if is_start_of_segment:
+            var time_of_index_before: float
+            var time_of_index_after: float
+            if edge.trajectory != null:
+                index_before_segment = \
+                        int((segment_time_start - edge_start_time) / \
+                                Time.PHYSICS_TIME_STEP_SEC)
+                index_before_segment = \
+                        min(index_before_segment, edge_vertices.size() - 1)
+                time_of_index_before = \
+                        edge_start_time + \
+                        index_before_segment * Time.PHYSICS_TIME_STEP_SEC
+                time_of_index_after = \
+                        time_of_index_before + Time.PHYSICS_TIME_STEP_SEC
+            else:
+                index_before_segment = 0
+                time_of_index_before = edge_start_time
+                time_of_index_after = edge_end_time
+            
+            # Calculate a temp point that aligns with the time boundary.
+            if index_before_segment == edge_vertices.size() - 1:
+                first_vertex_in_segment = \
+                        edge_vertices[edge_vertices.size() - 1]
+            else:
+                var weight := \
+                        (segment_time_start - time_of_index_before) / \
+                        (time_of_index_after - time_of_index_before)
+                first_vertex_in_segment = lerp(
+                        edge_vertices[index_before_segment],
+                        edge_vertices[index_before_segment + 1],
+                        weight)
+        
+        # Calculate the index and point at the end of the segment.
+        var index_after_segment := -1
+        var last_vertex_in_segment: Vector2
+        if is_end_of_segment:
+            var time_of_index_before: float
+            var time_of_index_after: float
+            if edge.trajectory != null:
+                index_after_segment = \
+                        int((segment_time_end - edge_start_time) / \
+                                Time.PHYSICS_TIME_STEP_SEC) + 1
+                index_after_segment = \
+                        min(index_after_segment, edge_vertices.size() - 1)
+                time_of_index_after = \
+                        edge_start_time + \
+                        index_after_segment * Time.PHYSICS_TIME_STEP_SEC
+                time_of_index_before = \
+                        time_of_index_after - Time.PHYSICS_TIME_STEP_SEC
+            else:
+                index_after_segment = 1
+                time_of_index_before = edge_start_time
+                time_of_index_after = edge_end_time
+            
+            # Calculate a temp point that aligns with the time boundary.
+            if index_after_segment == 0:
+                last_vertex_in_segment = edge_vertices[0]
+            else:
+                var weight := \
+                        (segment_time_end - time_of_index_before) / \
+                        (time_of_index_after - time_of_index_before)
+                last_vertex_in_segment = lerp(
+                        edge_vertices[index_after_segment - 1],
+                        edge_vertices[index_after_segment],
+                        weight)
+        
+        if is_start_of_segment and \
+                is_end_of_segment:
+            # Capture part of the edge.
+            vertices = Gs.utils.sub_pool_vector2_array(
+                    edge_vertices,
+                    index_before_segment,
+                    index_after_segment + 1 - index_before_segment)
+            # Substitute the first and last vertices for a temp end point that
+            # aligns with the time boundary.
+            vertices[0] = first_vertex_in_segment
+            vertices[vertices.size() - 1] = last_vertex_in_segment
+            break
+        elif is_start_of_segment:
+            has_segment_started = true
+            # Capture part of the edge.
+            vertices = Gs.utils.sub_pool_vector2_array(
+                    edge_vertices,
+                    index_before_segment)
+            # Substitute the first vertex for a temp end point that aligns with
+            # the time boundary.
+            vertices[0] = first_vertex_in_segment
+        elif is_end_of_segment:
+            # Capture part of the edge.
+            var sub_edge_vertices := Gs.utils.sub_pool_vector2_array(
+                    edge_vertices,
+                    0,
+                    index_after_segment + 1)
+            vertices.append_array(sub_edge_vertices)
+            # Substitute the last vertex for a temp end point that aligns with
+            # the time boundary.
+            vertices[vertices.size() - 1] = last_vertex_in_segment
+            break
+        elif has_segment_started:
+            # Capture the entire edge.
+            vertices.append_array(edge_vertices)
+        else:
+            # We haven't reached the segment yet.
+            pass
+        
+        edge_start_time = edge_end_time
+    
+    if trim_front_end_radius > 0.0:
+        vertices = _trim_front_end(
+                vertices,
+                trim_front_end_radius)
+    if trim_back_end_radius > 0.0:
+        vertices = _trim_back_end(
+                vertices,
+                trim_back_end_radius)
+    
+    if vertices.size() < 2:
+        return
+    
     canvas.draw_polyline(
             vertices,
             color,
@@ -263,6 +422,7 @@ static func _draw_edge_from_instructions_positions(
         # during step calculations).
         var vertices := _get_edge_trajectory_vertices(
                 edge,
+                true,
                 includes_continuous_positions)
         canvas.draw_polyline(
                 vertices,
@@ -273,6 +433,7 @@ static func _draw_edge_from_instructions_positions(
         # instruction test calculations).
         var vertices := _get_edge_trajectory_vertices(
                 edge,
+                true,
                 includes_discrete_positions)
         canvas.draw_polyline(
                 vertices,
@@ -331,37 +492,26 @@ static func _draw_edge_from_instructions_positions(
 
 static func _get_edge_trajectory_vertices(
         edge: Edge,
+        includes_end_points := true,
         is_continuous := true,
         removes_too_close_vertices := false) -> PoolVector2Array:
-    match edge.edge_type:
-        EdgeType.AIR_TO_AIR_EDGE, \
-        EdgeType.AIR_TO_SURFACE_EDGE, \
-        EdgeType.FALL_FROM_FLOOR_EDGE, \
-        EdgeType.FALL_FROM_WALL_EDGE, \
-        EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE, \
-        EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE, \
-        EdgeType.JUMP_INTER_SURFACE_EDGE:
-            var vertices := \
-                    edge.trajectory.frame_continuous_positions_from_steps if \
-                    is_continuous else \
-                    edge.trajectory.frame_discrete_positions_from_test
+    if edge.trajectory != null:
+        var vertices := \
+                edge.trajectory.frame_continuous_positions_from_steps if \
+                is_continuous else \
+                edge.trajectory.frame_discrete_positions_from_test
+        if includes_end_points:
             if vertices.empty():
                 vertices.push_back(edge.get_start())
             vertices.push_back(edge.get_end())
-            if removes_too_close_vertices:
-                vertices = _remove_too_close_neighbors(vertices)
-            return vertices
-        EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE, \
-        EdgeType.INTRA_SURFACE_EDGE, \
-        EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE:
-            return PoolVector2Array([
-                edge.get_start(),
-                edge.get_end(),
-            ])
-        EdgeType.UNKNOWN, \
-        _:
-            Gs.logger.error()
-            return PoolVector2Array()
+        if removes_too_close_vertices:
+            vertices = _remove_too_close_neighbors(vertices)
+        return vertices
+    else:
+        return PoolVector2Array([
+            edge.get_start(),
+            edge.get_end(),
+        ])
 
 static func _remove_too_close_neighbors(
         vertices: PoolVector2Array) -> PoolVector2Array:
