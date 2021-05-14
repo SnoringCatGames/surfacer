@@ -333,6 +333,7 @@ func update(
         instructions_action_source.cancel_playback(
                 current_playback,
                 Gs.time.get_scaled_play_time_sec())
+        current_playback = null
         
         # Check for the next edge to navigate.
         var next_edge_index := current_edge_index + 1
