@@ -68,6 +68,8 @@ var is_human_nav_pulse_shown_with_slow_mo := false
 var is_computer_nav_pulse_shown_with_slow_mo := true
 var is_human_nav_pulse_shown_without_slow_mo := true
 var is_computer_nav_pulse_shown_without_slow_mo := false
+var does_human_nav_pulse_grow := false
+var does_computer_nav_pulse_grow := true
 var is_human_prediction_shown := true
 var is_computer_prediction_shown := true
 
@@ -226,9 +228,11 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.is_human_current_nav_trajectory_shown_without_slow_mo = \
                 manifest.is_human_current_nav_trajectory_shown_without_slow_mo
     
-    if manifest.has("is_computer_current_nav_trajectory_shown_without_slow_mo"):
+    if manifest.has(
+            "is_computer_current_nav_trajectory_shown_without_slow_mo"):
         self.is_computer_current_nav_trajectory_shown_without_slow_mo = \
-                manifest.is_computer_current_nav_trajectory_shown_without_slow_mo
+                manifest \
+                    .is_computer_current_nav_trajectory_shown_without_slow_mo
     
     if manifest.has("is_human_nav_pulse_shown_with_slow_mo"):
         self.is_human_nav_pulse_shown_with_slow_mo = \
@@ -245,6 +249,14 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("is_computer_nav_pulse_shown_without_slow_mo"):
         self.is_computer_nav_pulse_shown_without_slow_mo = \
                 manifest.is_computer_nav_pulse_shown_without_slow_mo
+    
+    if manifest.has("does_human_nav_pulse_grow"):
+        self.does_human_nav_pulse_grow = \
+                manifest.does_human_nav_pulse_grow
+    
+    if manifest.has("does_computer_nav_pulse_grow"):
+        self.does_computer_nav_pulse_grow = \
+                manifest.does_computer_nav_pulse_grow
     
     if manifest.has("nav_selection_slow_mo_saturation"):
         self.nav_selection_slow_mo_saturation = \
