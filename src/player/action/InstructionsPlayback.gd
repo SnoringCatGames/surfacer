@@ -86,7 +86,7 @@ func get_previous_elapsed_time_scaled() -> float:
     return previous_time_scaled - start_time_scaled
 
 func get_elapsed_time_scaled() -> float:
-    return current_time_scaled - start_time_scaled
+    return Gs.time.get_scaled_play_time_sec() - start_time_scaled
 
 func _get_start_time_scaled_for_next_instruction() -> float:
     assert(!is_finished)
