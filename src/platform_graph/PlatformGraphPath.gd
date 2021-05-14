@@ -9,13 +9,24 @@ var edges: Array
 var origin := Vector2.INF
 var destination := Vector2.INF
 
+var distance: float
 var duration: float
 
 func _init(edges: Array) -> void:
     self.edges = edges
     self.origin = edges.front().get_start()
     self.destination = edges.back().get_end()
+    update_distance_and_duration()
+
+func update_distance_and_duration() -> void:
+    self.distance = _calculate_distance()
     self.duration = _calculate_duration()
+
+func _calculate_distance() -> float:
+    var distance := 0.0
+    for edge in edges:
+        distance += edge.distance
+    return distance
 
 func _calculate_duration() -> float:
     var duration := 0.0

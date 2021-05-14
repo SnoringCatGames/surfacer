@@ -101,18 +101,24 @@ func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
-    return start.target_point.distance_to(end.target_point)
+    if is_degenerate:
+        return 0.00001
+    else:
+        return start.target_point.distance_to(end.target_point)
 
 func _calculate_duration(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         instructions: EdgeInstructions,
         distance: float) -> float:
-    return calculate_duration_to_move_along_surface(
-            movement_params,
-            start,
-            end,
-            distance)
+    if is_degenerate:
+        return 0.00001
+    else:
+        return calculate_duration_to_move_along_surface(
+                movement_params,
+                start,
+                end,
+                distance)
 
 func get_position_at_time(edge_time: float) -> Vector2:
     if edge_time > duration:
