@@ -73,7 +73,7 @@ static func draw_path(
         includes_discrete_positions := false) -> void:
     var vertices := PoolVector2Array()
     for edge in path.edges:
-        vertices.append_array(_get_edge_trajectory_vertices(edge, false))
+        vertices.append_array(_get_edge_trajectory_vertices(edge))
     if trim_front_end_radius > 0.0:
         vertices = _trim_front_end(
                 vertices,

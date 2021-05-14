@@ -5,6 +5,7 @@ var navigator: Navigator
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
 var current_destination: PositionAlongSurface
+var is_enabled := false
 var is_slow_motion_enabled := false
 
 var previous_path_back_end_trim_radius: float
@@ -32,25 +33,12 @@ func _physics_process(_delta_sec: float) -> void:
     
     if Surfacer.slow_motion.is_enabled != is_slow_motion_enabled:
         is_slow_motion_enabled = Surfacer.slow_motion.is_enabled
+        self.is_enabled = _get_is_enabled()
         update()
 
 func _draw() -> void:
-    if navigator.player.is_human_player:
-        if is_slow_motion_enabled and \
-                !Surfacer \
-                    .is_human_current_nav_trajectory_shown_with_slow_mo or \
-                !is_slow_motion_enabled and \
-                !Surfacer \
-                    .is_human_current_nav_trajectory_shown_without_slow_mo:
-            return
-    else:
-        if is_slow_motion_enabled and \
-                !Surfacer \
-                    .is_computer_current_nav_trajectory_shown_with_slow_mo or \
-                !is_slow_motion_enabled and \
-                !Surfacer \
-                    .is_computer_current_nav_trajectory_shown_without_slow_mo:
-            return
+    if !is_enabled:
+        return
     
     if current_path != null:
         _draw_current_path()
@@ -174,3 +162,19 @@ func _draw_previous_path() -> void:
             false,
             true,
             false)
+
+func _get_is_enabled() -> bool:
+    if navigator.player.is_human_player:
+        if is_slow_motion_enabled:
+            return Surfacer \
+                    .is_human_current_nav_trajectory_shown_with_slow_mo
+        else:
+            return Surfacer \
+                    .is_human_current_nav_trajectory_shown_without_slow_mo
+    else:
+        if is_slow_motion_enabled:
+            return Surfacer \
+                    .is_computer_current_nav_trajectory_shown_with_slow_mo
+        else:
+            return Surfacer \
+                    .is_computer_current_nav_trajectory_shown_without_slow_mo
