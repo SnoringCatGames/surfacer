@@ -5,7 +5,7 @@ const PANEL_MARGIN_RIGHT := 20.0
 const TOGGLE_DURATION := 0.2
 const DEFAULT_GUI_SCALE := 1.0
 const ANNOTATOR_ROW_HEIGHT := 21.0
-const SLIDER_WIDTH := 64.0
+const SLIDER_WIDTH := 128.0
 
 var is_open := false setget _set_is_open,_get_is_open
 
@@ -66,7 +66,7 @@ func _exit_tree() -> void:
 func update_gui_scale(gui_scale: float) -> bool:
     update_gui_scale_helper(gui_scale)
     update_gui_scale_helper(1.0)
-    call_deferred("update_gui_scale_helper", 1.0)
+    Gs.time.set_timeout(funcref(self, "update_gui_scale_helper"), 1.0, [1.0])
     return true
 
 func update_gui_scale_helper(gui_scale: float) -> void:
@@ -86,27 +86,38 @@ func update_gui_scale_helper(gui_scale: float) -> void:
 
 func _initialize_annotator_checkboxes() -> void:
     var empty_style := StyleBoxEmpty.new()
+    var annotators := \
+            $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators
+    var item_width: float = \
+            (annotators.rect_size.x - \
+                annotators.get_constant("hseparation")) / \
+            2.0
     for item_class in _annotator_control_item_classes:
         var item: LabeledControlItem = item_class.new()
+        item.is_control_on_right_side = false
         item.update_item()
         _annotator_control_items.push_back(item)
         
         var row := item.create_row(
                 empty_style,
                 ANNOTATOR_ROW_HEIGHT,
+                1.0,
                 0.0,
                 false)
+        row.rect_min_size.x = item_width
+        
         for label in Gs.utils.get_children_by_type(row, Label, true):
             label.add_font_override("font", Gs.fonts.main_xs)
-        for check_box in Gs.utils.get_children_by_type(
-                row, ScaffolderCheckBox, true):
-            check_box.scale = 0.625
-        $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators \
-                .add_child(row)
         
-        if item.control is Slider:
+        var check_box_scale := 0.625
+        if item.type == LabeledControlItem.CHECKBOX:
+            item.set_check_box_scale(check_box_scale)
+        
+        if item.type == LabeledControlItem.SLIDER:
             item.width = SLIDER_WIDTH
             item.control.rect_min_size.x = SLIDER_WIDTH
+        
+        annotators.add_child(row)
 
 func _get_closed_position_y() -> float:
     return -$PanelContainer.rect_size.y - 1.0

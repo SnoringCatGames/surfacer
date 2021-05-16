@@ -93,6 +93,14 @@ func _init(
                 end_position_along_surface,
                 instructions,
                 distance)
+    
+    var expected_frame_count_for_duration := int(duration / Time.PHYSICS_TIME_STEP_SEC)
+    assert(trajectory == null or \
+            trajectory.frame_continuous_positions_from_steps.empty() or \
+            trajectory.frame_continuous_positions_from_steps.size() == \
+                    expected_frame_count_for_duration or \
+            trajectory.frame_continuous_positions_from_steps.size() == \
+                    expected_frame_count_for_duration + 1)
 
 func update_for_surface_state(
         surface_state: PlayerSurfaceState,

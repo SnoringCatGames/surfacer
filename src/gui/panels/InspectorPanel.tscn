@@ -220,6 +220,7 @@ margin_left = 4.0
 margin_top = 4.0
 margin_right = 356.0
 margin_bottom = 4.0
+size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/vseparation = 2
 custom_constants/hseparation = 16
