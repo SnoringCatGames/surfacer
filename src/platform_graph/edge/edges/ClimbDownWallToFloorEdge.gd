@@ -30,7 +30,7 @@ func _init(
         false,
         false,
         movement_params,
-        _calculate_instructions(start, end),
+        null,
         null,
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
         0.0) -> void:
@@ -99,7 +99,8 @@ func _get_weight_multiplier() -> float:
 
 static func _calculate_instructions(
         start: PositionAlongSurface,
-        end: PositionAlongSurface) -> EdgeInstructions:
+        end: PositionAlongSurface,
+        duration: float) -> EdgeInstructions:
     if start == null or end == null:
         return null
     
@@ -114,4 +115,4 @@ static func _calculate_instructions(
     
     return EdgeInstructions.new(
             [instruction],
-            INF)
+            duration)

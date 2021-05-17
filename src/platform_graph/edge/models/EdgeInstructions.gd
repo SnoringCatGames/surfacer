@@ -12,7 +12,6 @@ func _init(
         duration := INF) -> void:
     self.instructions = instructions
     self.duration = duration
-    
     self.instructions.sort_custom(
             self,
             "instruction_comparator")

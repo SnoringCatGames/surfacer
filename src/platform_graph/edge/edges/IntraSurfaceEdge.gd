@@ -38,7 +38,7 @@ func _init(
         false,
         false,
         movement_params,
-        _calculate_instructions(start, end),
+        null,
         null,
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
         0.0) -> void:
@@ -83,7 +83,8 @@ func update_for_surface_state(
         is_final_edge: bool) -> void:
     instructions = _calculate_instructions(
             surface_state.center_position_along_surface,
-            end_position_along_surface)
+            end_position_along_surface,
+            duration)
     
     if is_final_edge:
         var displacement_to_end := \
@@ -282,7 +283,8 @@ func _check_did_just_reach_destination(
 
 static func _calculate_instructions(
         start: PositionAlongSurface,
-        end: PositionAlongSurface) -> EdgeInstructions:
+        end: PositionAlongSurface,
+        duration: float) -> EdgeInstructions:
     if start == null or end == null:
         return null
     
@@ -306,7 +308,7 @@ static func _calculate_instructions(
     
     return EdgeInstructions.new(
             [instruction],
-            INF)
+            duration)
 
 static func _calculate_velocity_end(
         start: PositionAlongSurface,
