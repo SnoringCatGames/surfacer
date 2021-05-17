@@ -141,16 +141,15 @@ func calculate_edge(
             "calculate_jump_inter_surface_edge",
             collision_params.thread_id)
     
-    var edge_calc_params := \
-            EdgeCalculator.create_edge_calc_params(
-                    edge_result_metadata,
-                    collision_params,
-                    position_start,
-                    position_end,
-                    true,
-                    velocity_start,
-                    needs_extra_jump_duration,
-                    needs_extra_wall_land_horizontal_speed)
+    var edge_calc_params := EdgeCalculator.create_edge_calc_params(
+            edge_result_metadata,
+            collision_params,
+            position_start,
+            position_end,
+            true,
+            velocity_start,
+            needs_extra_jump_duration,
+            needs_extra_wall_land_horizontal_speed)
     if edge_calc_params == null:
         # Cannot reach destination from origin.
         Gs.profiler.stop_with_optional_metadata(
@@ -212,12 +211,11 @@ func create_edge_from_edge_calc_params(
     Gs.profiler.start(
             "narrow_phase_edge_calculation",
             edge_calc_params.collision_params.thread_id)
-    var calc_result := \
-            EdgeStepUtils.calculate_steps_with_new_jump_height(
-                    edge_result_metadata,
-                    edge_calc_params,
-                    null,
-                    null)
+    var calc_result := EdgeStepUtils.calculate_steps_with_new_jump_height(
+            edge_result_metadata,
+            edge_calc_params,
+            null,
+            null)
     Gs.profiler.stop_with_optional_metadata(
             "narrow_phase_edge_calculation",
             edge_calc_params.collision_params.thread_id,
@@ -249,6 +247,21 @@ func create_edge_from_edge_calc_params(
     
     var velocity_end: Vector2 = \
             calc_result.horizontal_steps.back().velocity_step_end
+    
+    # FIXME: -----------------------------------------
+    var expected_frame_count_for_duration := \
+            int(instructions.duration / Time.PHYSICS_TIME_STEP_SEC)
+    var allowed_variance_from_expected_frame_count := 8
+    if trajectory.frame_continuous_positions_from_steps.size() < \
+                    expected_frame_count_for_duration - 8 or \
+            trajectory.frame_continuous_positions_from_steps.size() > \
+                    expected_frame_count_for_duration + 8:
+        print("break")
+        calc_result = EdgeStepUtils.calculate_steps_with_new_jump_height(
+                edge_result_metadata,
+                edge_calc_params,
+                null,
+                null)
     
     var edge := JumpInterSurfaceEdge.new(
             self,

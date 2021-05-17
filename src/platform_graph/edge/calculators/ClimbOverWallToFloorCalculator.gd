@@ -103,6 +103,13 @@ func calculate_edge(
             collision_params.movement_params,
             position_start,
             position_end)
+    # FIXME: -------------------------------------
+    if trajectory.frame_continuous_positions_from_steps.empty():
+        print("foo")
+        trajectory = _calculate_trajectory(
+                collision_params.movement_params,
+                position_start,
+                position_end)
     return ClimbOverWallToFloorEdge.new(
             self,
             position_start,

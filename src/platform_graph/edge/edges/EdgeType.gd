@@ -1,14 +1,12 @@
 class_name EdgeType
 
 enum {
-    AIR_TO_AIR_EDGE,
     AIR_TO_SURFACE_EDGE,
     CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
     CLIMB_OVER_WALL_TO_FLOOR_EDGE,
     FALL_FROM_FLOOR_EDGE,
     FALL_FROM_WALL_EDGE,
     INTRA_SURFACE_EDGE,
-    JUMP_FROM_SURFACE_TO_AIR_EDGE,
     JUMP_INTER_SURFACE_EDGE,
     WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
     UNKNOWN,
@@ -16,8 +14,6 @@ enum {
 
 static func get_string(type: int) -> String:
     match type:
-        AIR_TO_AIR_EDGE:
-            return "AIR_TO_AIR_EDGE"
         AIR_TO_SURFACE_EDGE:
             return "AIR_TO_SURFACE_EDGE"
         CLIMB_DOWN_WALL_TO_FLOOR_EDGE:
@@ -30,8 +26,6 @@ static func get_string(type: int) -> String:
             return "FALL_FROM_WALL_EDGE"
         INTRA_SURFACE_EDGE:
             return "INTRA_SURFACE_EDGE"
-        JUMP_FROM_SURFACE_TO_AIR_EDGE:
-            return "JUMP_FROM_SURFACE_TO_AIR_EDGE"
         JUMP_INTER_SURFACE_EDGE:
             return "JUMP_INTER_SURFACE_EDGE"
         WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE:
@@ -44,9 +38,6 @@ static func get_string(type: int) -> String:
 
 static func get_description(type: int) -> String:
     match type:
-        AIR_TO_AIR_EDGE:
-            return ("An AIR_TO_AIR_EDGE represents movement from one air " +
-                    "position to another.")
         AIR_TO_SURFACE_EDGE:
             return ("An AIR_TO_SURFACE_EDGE represents movement from an " +
                     "air position to land on a surface position.")
@@ -68,10 +59,6 @@ static func get_description(type: int) -> String:
         INTRA_SURFACE_EDGE:
             return ("An INTRA_SURFACE_EDGE represents movement between two " +
                     "points along the same surface.")
-        JUMP_FROM_SURFACE_TO_AIR_EDGE:
-            return ("A JUMP_FROM_SURFACE_TO_AIR_EDGE represents movement " +
-                    "from jumping from a surface position to a position " +
-                    "in the air.")
         JUMP_INTER_SURFACE_EDGE:
             return ("A JUMP_INTER_SURFACE_EDGE represents movement from " +
                     "jumping between two surface positions.")
@@ -86,14 +73,12 @@ static func get_description(type: int) -> String:
             return "???"
 
 const KEYS = [
-    "AIR_TO_AIR_EDGE",
     "AIR_TO_SURFACE_EDGE",
     "CLIMB_DOWN_WALL_TO_FLOOR_EDGE",
     "CLIMB_OVER_WALL_TO_FLOOR_EDGE",
     "FALL_FROM_FLOOR_EDGE",
     "FALL_FROM_WALL_EDGE",
     "INTRA_SURFACE_EDGE",
-    "JUMP_FROM_SURFACE_TO_AIR_EDGE",
     "JUMP_INTER_SURFACE_EDGE",
     "WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE",
     "UNKNOWN",
@@ -102,14 +87,12 @@ static func keys() -> Array:
     return KEYS
 
 const VALUES = [
-    AIR_TO_AIR_EDGE,
     AIR_TO_SURFACE_EDGE,
     CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
     CLIMB_OVER_WALL_TO_FLOOR_EDGE,
     FALL_FROM_FLOOR_EDGE,
     FALL_FROM_WALL_EDGE,
     INTRA_SURFACE_EDGE,
-    JUMP_FROM_SURFACE_TO_AIR_EDGE,
     JUMP_INTER_SURFACE_EDGE,
     WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
     UNKNOWN,

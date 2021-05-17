@@ -18,12 +18,10 @@ var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var navigation_state: PlayerNavigationState
 var pointer_handler: PlayerPointerHandler
-var new_selection_target := Vector2.INF
-var new_selection_position: PositionAlongSurface
-var last_selection_target := Vector2.INF
-var last_selection_position: PositionAlongSurface
-var preselection_target := Vector2.INF
-var preselection_position: PositionAlongSurface
+
+var new_selection: PointerSelectionPosition
+var last_selection: PointerSelectionPosition
+var pre_selection: PointerSelectionPosition
 
 var is_human_player := false
 var is_fake := false
@@ -72,6 +70,10 @@ func _init(player_name: String) -> void:
             player_params.movement_params.max_horizontal_speed_default
     self.edge_calculators = player_params.edge_calculators
     self.action_handlers = player_params.action_handlers
+    
+    self.new_selection = PointerSelectionPosition.new(self)
+    self.last_selection = PointerSelectionPosition.new(self)
+    self.pre_selection = PointerSelectionPosition.new(self)
 
 func _enter_tree() -> void:
     if is_fake:
@@ -314,27 +316,33 @@ func _update_navigator(delta_scaled_sec: float) -> void:
         _update_surface_state(true)
 
 func _handle_pointer_selections() -> void:
-    if new_selection_target != Vector2.INF:
+    if new_selection.get_has_selection():
         print_msg("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
                 player_name,
                 Gs.time.get_play_time_sec(),
-                str(new_selection_target),
-                new_selection_position.to_string() if \
-                new_selection_position != null else \
+                str(new_selection.pointer_position),
+                new_selection.navigation_destination.to_string() if \
+                new_selection.get_is_selection_navigatable() != null else \
                 "[No matching surface]"
             ])
         
-        if new_selection_position != null:
-            last_selection_target = new_selection_target
-            last_selection_position = new_selection_position
-            navigator.navigate_to_position(last_selection_position)
+        # FIXME: LEFT OFF HERE: -----------------------------------------------
+        # - Use new navigator.surface_to_air_calculator.
+        # - Draw in-air destination with an X formed from icecream cones.
+        # - Start simple with just concatenating a surface-to-air edge onto the
+        #   end of a path.
+        # - Then add optimization, which could eliminate whole edges from the
+        #   path.
+        
+        if new_selection.get_is_selection_navigatable():
+            last_selection.copy(new_selection)
+            navigator.navigate_to_position(
+                    last_selection.navigation_destination)
         else:
             print_msg("TARGET IS TOO FAR FROM ANY SURFACE")
         
-        new_selection_target = Vector2.INF
-        new_selection_position = null
-        preselection_target = Vector2.INF
-        preselection_position = null
+        new_selection.clear()
+        pre_selection.clear()
 
 func _update_actions(delta_scaled_sec: float) -> void:
     # Record actions for the previous frame.
