@@ -95,7 +95,7 @@ func _init(
                 instructions,
                 distance)
         assert(!is_inf(duration))
-        if instructions == null:
+        if self.instructions == null:
             self.instructions = _calculate_instructions(
                     start_position_along_surface,
                     end_position_along_surface,

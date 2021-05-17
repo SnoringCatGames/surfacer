@@ -48,13 +48,11 @@ func _ready() -> void:
             !OS.has_touchscreen_ui_hint():
         _set_is_open(true)
     
-    _initialize_annotator_checkboxes()
-    
     # Tell the element annotator to populate the legend, now that it's
     # available.
     Surfacer.annotators.element_annotator.update()
     
-    update_gui_scale(1.0)
+    call_deferred("update_gui_scale", 1.0)
 
 func _exit_tree() -> void:
     Gs.remove_gui_to_scale(self)
@@ -67,6 +65,7 @@ func update_gui_scale(gui_scale: float) -> bool:
     update_gui_scale_helper(gui_scale)
     update_gui_scale_helper(1.0)
     Gs.time.set_timeout(funcref(self, "update_gui_scale_helper"), 1.0, [1.0])
+    _initialize_annotator_checkboxes()
     return true
 
 func update_gui_scale_helper(gui_scale: float) -> void:
@@ -88,10 +87,13 @@ func _initialize_annotator_checkboxes() -> void:
     var empty_style := StyleBoxEmpty.new()
     var annotators := \
             $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators
+    for child in annotators.get_children():
+        annotators.remove_child(child)
+        child.queue_free()
     var item_width: float = \
             (annotators.rect_size.x - \
                 annotators.get_constant("hseparation")) / \
-            2.0
+            4.0
     for item_class in _annotator_control_item_classes:
         var item: LabeledControlItem = item_class.new()
         item.is_control_on_right_side = false
@@ -101,17 +103,19 @@ func _initialize_annotator_checkboxes() -> void:
         var row := item.create_row(
                 empty_style,
                 ANNOTATOR_ROW_HEIGHT,
-                1.0,
-                0.0,
+                2.0,
+                2.0,
                 false)
         row.rect_min_size.x = item_width
         
         for label in Gs.utils.get_children_by_type(row, Label, true):
             label.add_font_override("font", Gs.fonts.main_xs)
         
-        var check_box_scale := 0.625
         if item.type == LabeledControlItem.CHECKBOX:
-            item.set_check_box_scale(check_box_scale)
+            # TODO: These values are a hacky fix.
+            item.set_check_box_scale(0.5)
+            item.control.rect_min_size.x *= 0.35
+            item.control.rect_size.x *= 0.35
         
         if item.type == LabeledControlItem.SLIDER:
             item.width = SLIDER_WIDTH

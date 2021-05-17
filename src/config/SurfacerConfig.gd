@@ -78,7 +78,7 @@ var nav_selection_slow_mo_time_scale := 0.1
 var nav_selection_slow_mo_saturation := 0.2
 var nav_selection_prediction_opacity := 0.5
 var nav_selection_prediction_tween_duration := 0.15
-var new_path_pulse_duration_multiplier := 0.3
+var new_path_pulse_duration_multiplier := 0.4
 var new_path_pulse_time_length := 1.0
 
 var debug_params: Dictionary
