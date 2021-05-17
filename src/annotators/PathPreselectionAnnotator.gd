@@ -72,22 +72,24 @@ func _process(_delta_sec: float) -> void:
     var current_time: float = Gs.time.get_play_time_sec()
     
     var did_preselection_position_change := \
-            preselection_position_to_draw != player.preselection_position
+            preselection_position_to_draw != \
+            player.pre_selection.navigation_destination
     
     if did_preselection_position_change and \
-            player.new_selection_target == Vector2.INF:
+            !player.new_selection.get_has_selection():
         var previous_preselection_surface := \
                 preselection_position_to_draw.surface if \
                 preselection_position_to_draw != null else \
                 null
         var next_preselection_surface := \
-                player.preselection_position.surface if \
-                player.preselection_position != null else \
+                player.pre_selection.navigation_destination.surface if \
+                player.pre_selection.get_is_selection_navigatable() else \
                 null
         var did_preselection_surface_change := \
                 previous_preselection_surface != next_preselection_surface
         
-        preselection_position_to_draw = player.preselection_position
+        preselection_position_to_draw = \
+                player.pre_selection.navigation_destination
         
         if did_preselection_surface_change:
             animation_start_time = current_time

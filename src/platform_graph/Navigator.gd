@@ -4,7 +4,8 @@ extends Reference
 signal started_navigation
 signal reached_destination
 
-const NEARBY_SURFACE_DISTANCE_THRESHOLD := 160.0
+const SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO := 0.8
+const POINTER_TO_SURFACE_SELECTION_THRESHOLD := 144.0
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
 
@@ -13,6 +14,7 @@ var graph: PlatformGraph
 var surface_state: PlayerSurfaceState
 var instructions_action_source: InstructionsActionSource
 var air_to_surface_calculator: AirToSurfaceCalculator
+var surface_to_air_calculator: JumpInterSurfaceCalculator
 
 var is_currently_navigating := false
 var has_reached_destination := false
@@ -39,6 +41,7 @@ func _init(
     self.instructions_action_source = \
             InstructionsActionSource.new(player, true)
     self.air_to_surface_calculator = AirToSurfaceCalculator.new()
+    self.surface_to_air_calculator = JumpInterSurfaceCalculator.new()
 
 # Starts a new navigation to the given destination.
 func navigate_to_position(

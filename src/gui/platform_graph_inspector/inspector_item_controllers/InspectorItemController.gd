@@ -2,10 +2,8 @@ class_name InspectorItemController
 extends Reference
 
 const EDGE_TYPES_TO_SKIP := [
-    EdgeType.AIR_TO_AIR_EDGE,
     EdgeType.AIR_TO_SURFACE_EDGE,
     EdgeType.INTRA_SURFACE_EDGE,
-    EdgeType.JUMP_FROM_SURFACE_TO_AIR_EDGE,
     EdgeType.UNKNOWN,
 ]
 

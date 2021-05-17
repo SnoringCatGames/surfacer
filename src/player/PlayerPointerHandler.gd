@@ -4,6 +4,7 @@ extends Node2D
 const DRAG_THROTTLE_INTERVAL_SEC := 0.1
 
 var player
+var nearby_surface_distance_squared_threshold: float
 var throttled_set_new_drag_position: FuncRef = Gs.time.throttle(
         funcref(self, "set_new_drag_position"),
         DRAG_THROTTLE_INTERVAL_SEC)
@@ -11,6 +12,12 @@ var last_pointer_drag_position := Vector2.INF
 
 func _init(player) -> void:
     self.player = player
+    var nearby_surface_distance_threshold: float = \
+            player.movement_params.max_upward_jump_distance * \
+            Navigator.SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO
+    self.nearby_surface_distance_squared_threshold = \
+            nearby_surface_distance_threshold * \
+            nearby_surface_distance_threshold
 
 func _unhandled_input(event: InputEvent) -> void:
     if !Gs.is_user_interaction_enabled or \
@@ -83,13 +90,7 @@ func _unhandled_input(event: InputEvent) -> void:
         last_pointer_drag_position = Vector2.INF
         Gs.time.cancel_pending_throttle(throttled_set_new_drag_position)
         
-        player.new_selection_target = pointer_up_position
-        player.new_selection_position = \
-                SurfaceParser.find_closest_position_on_a_surface(
-                            pointer_up_position,
-                            player,
-                            Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD * \
-                            Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD)
+        player.new_selection.update_pointer_position(pointer_up_position)
         
         Surfacer.slow_motion.set_slow_motion_enabled(false)
         
@@ -100,10 +101,4 @@ func _unhandled_input(event: InputEvent) -> void:
         Surfacer.slow_motion.set_slow_motion_enabled(true)
 
 func set_new_drag_position() -> void:
-    player.preselection_target = last_pointer_drag_position
-    player.preselection_position = \
-            SurfaceParser.find_closest_position_on_a_surface(
-                    last_pointer_drag_position,
-                    player,
-                    Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD * \
-                    Navigator.NEARBY_SURFACE_DISTANCE_THRESHOLD)
+    player.pre_selection.update_pointer_position(last_pointer_drag_position)
