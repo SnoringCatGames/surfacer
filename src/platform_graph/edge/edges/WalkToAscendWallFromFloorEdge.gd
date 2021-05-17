@@ -31,7 +31,7 @@ func _init(
         false,
         false,
         movement_params,
-        _calculate_instructions(start, end),
+        null,
         null,
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
         0.0) -> void:
@@ -120,7 +120,8 @@ func _check_did_just_reach_destination(
 
 static func _calculate_instructions(
         start: PositionAlongSurface,
-        end: PositionAlongSurface) -> EdgeInstructions:
+        end: PositionAlongSurface,
+        duration: float) -> EdgeInstructions:
     if start == null or end == null:
         return null
     
@@ -144,4 +145,4 @@ static func _calculate_instructions(
     
     return EdgeInstructions.new(
             [inward_instruction, upward_instruction],
-            INF)
+            duration)

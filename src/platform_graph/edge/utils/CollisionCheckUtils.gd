@@ -210,113 +210,6 @@ static func check_instructions_discrete_frame_state(
     return null
 
 # Checks whether a collision would occur with any surface during the given
-# horizontal step. This is calculated by stepping through each physics frame,
-# which should exactly emulate the actual Player trajectory that would be used.
-# The main error with this approach is that successive steps will be tested
-# with their start time perfectly aligned to a physics frame boundary, but when
-# executing a resulting instruction set, the physics frame boundaries will line
-# up at different times.
-static func check_discrete_horizontal_step_for_collision(
-        edge_calc_params: EdgeCalcParams,
-        step_calc_params: EdgeStepCalcParams,
-        horizontal_step: EdgeStep) -> SurfaceCollision:
-    var collision_params := edge_calc_params.collision_params
-    var movement_params := edge_calc_params.movement_params
-    var delta_sec := Time.PHYSICS_TIME_STEP_SEC
-    var is_first_jump := true
-    # On average, an instruction set will start halfway through a physics
-    # frame, so let's use that average here.
-    var previous_time := horizontal_step.time_step_start - delta_sec * 0.5
-    var current_time := previous_time + delta_sec
-    var step_end_time := horizontal_step.time_step_end
-    var position := horizontal_step.position_step_start
-    var velocity := horizontal_step.velocity_step_start
-    var has_started_instructions := false
-    var jump_instruction_end_time := \
-            step_calc_params.vertical_step.time_instruction_end
-    var is_pressing_jump := jump_instruction_end_time > current_time
-    var is_pressing_move_horizontal := \
-            current_time > horizontal_step.time_instruction_start and \
-            current_time < horizontal_step.time_instruction_end
-    var horizontal_acceleration_sign := 0
-    var displacement := Vector2.INF
-    var collision: SurfaceCollision
-    
-    # Iterate through each physics frame, checking each for a collision.
-    while current_time < step_end_time:
-        # Update state for the current frame.
-        delta_sec = Time.PHYSICS_TIME_STEP_SEC
-        displacement = velocity * delta_sec
-        
-        if displacement != Vector2.ZERO:
-            # Check for collision.
-            collision = check_frame_for_collision(
-                    collision_params,
-                    position,
-                    displacement)
-            if collision != null:
-                return collision
-        else:
-            # Don't check for collisions if we aren't moving anywhere.
-            # We can assume that all frame starting positions are not colliding
-            # with anything; otherwise, it should have been caught from the
-            # motion of the previous frame. The collision margin could yield
-            # collision results in the initial frame, but we want to ignore
-            # these.
-            collision = null
-        
-        # Determine whether the jump button is still being pressed.
-        is_pressing_jump = jump_instruction_end_time > current_time
-        
-        # Determine whether the horizontal movement button is still being
-        # pressed.
-        is_pressing_move_horizontal = \
-                current_time > horizontal_step.time_instruction_start and \
-                current_time < horizontal_step.time_instruction_end
-        horizontal_acceleration_sign = \
-                horizontal_step.horizontal_acceleration_sign if \
-                is_pressing_move_horizontal else \
-                0
-        
-        # FIXME: Check whether instruction execution also does this, and
-        #        whether this should be uncommented.
-#        if !has_started_instructions:
-#            has_started_instructions = true
-#            # When we start executing the instruction, the current elapsed
-#            # time of the instruction will be less than a full frame. So we
-#            # use a delta_sec that represents the actual time the instruction
-#            # should have been running for so far.
-#            delta_sec = current_time - horizontal_step.time_step_start
-        
-        # Update state for the next frame.
-        position += displacement
-        velocity = MovementUtils.update_velocity_in_air(
-                velocity,
-                delta_sec,
-                is_pressing_jump,
-                is_first_jump,
-                horizontal_acceleration_sign,
-                movement_params)
-        velocity = MovementUtils.cap_velocity(
-                velocity,
-                movement_params,
-                movement_params.max_horizontal_speed_default)
-        previous_time = current_time
-        current_time += delta_sec
-    
-    # Check the last frame that puts us up to end_time.
-    delta_sec = step_end_time - current_time
-    displacement = velocity * delta_sec
-    collision = check_frame_for_collision(
-            collision_params,
-            position,
-            displacement)
-    if collision != null:
-        return collision
-    
-    return null
-
-# Checks whether a collision would occur with any surface during the given
 # horizontal step. This is calculated by considering the continuous physics
 # state according to the parabolic equations of motion. This does not
 # necessarily accurately reflect the actual Player trajectory that would be
@@ -434,7 +327,8 @@ static func check_continuous_horizontal_step_for_collision(
             frame_positions.push_back(current_position)
             frame_velocities.push_back(current_velocity)
     
-    if collision != null and collision_result_metadata != null:
+    if collision != null and \
+            collision_result_metadata != null:
         # Record some extra state from before/after/during collision for
         # debugging.
         collision_result_metadata.record_collision(

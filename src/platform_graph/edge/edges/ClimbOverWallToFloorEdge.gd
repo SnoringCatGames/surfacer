@@ -31,7 +31,7 @@ func _init(
         false,
         false,
         movement_params,
-        _calculate_instructions(start, end),
+        null,
         trajectory,
         EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP,
         0.0) -> void:
@@ -90,7 +90,8 @@ func _get_weight_multiplier() -> float:
 
 static func _calculate_instructions(
         start: PositionAlongSurface,
-        end: PositionAlongSurface) -> EdgeInstructions:
+        end: PositionAlongSurface,
+        duration: float) -> EdgeInstructions:
     if start == null or end == null:
         return null
     
@@ -114,7 +115,7 @@ static func _calculate_instructions(
     
     return EdgeInstructions.new(
             [inward_instruction, upward_instruction],
-            INF)
+            duration)
 
 # This edge needs to override this function, since Godot's collision engine
 # generates many false-positive departures and collisions when rounding the

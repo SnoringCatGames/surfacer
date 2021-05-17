@@ -88,19 +88,29 @@ func _init(
                 start_position_along_surface,
                 end_position_along_surface,
                 trajectory)
+        assert(!is_inf(distance))
         self.duration = _calculate_duration(
                 start_position_along_surface,
                 end_position_along_surface,
                 instructions,
                 distance)
+        assert(!is_inf(duration))
+        if instructions == null:
+            self.instructions = _calculate_instructions(
+                    start_position_along_surface,
+                    end_position_along_surface,
+                    duration)
+        assert(!is_inf(self.instructions.duration))
     
-    var expected_frame_count_for_duration := int(duration / Time.PHYSICS_TIME_STEP_SEC)
+    var expected_frame_count_for_duration := \
+            int(duration / Time.PHYSICS_TIME_STEP_SEC)
+    var allowed_variance_from_expected_frame_count := 8
     assert(trajectory == null or \
             trajectory.frame_continuous_positions_from_steps.empty() or \
-            trajectory.frame_continuous_positions_from_steps.size() == \
-                    expected_frame_count_for_duration or \
-            trajectory.frame_continuous_positions_from_steps.size() == \
-                    expected_frame_count_for_duration + 1)
+            (trajectory.frame_continuous_positions_from_steps.size() >= \
+                    expected_frame_count_for_duration - 8 and \
+            trajectory.frame_continuous_positions_from_steps.size() <= \
+                    expected_frame_count_for_duration + 8))
 
 func update_for_surface_state(
         surface_state: PlayerSurfaceState,
@@ -203,6 +213,13 @@ func _calculate_duration(
         distance: float) -> float:
     Gs.logger.error("Abstract Edge._calculate_duration is not implemented")
     return INF
+
+static func _calculate_instructions(
+        start: PositionAlongSurface,
+        end: PositionAlongSurface,
+        duration: float) -> EdgeInstructions:
+    Gs.logger.error("Abstract Edge._calculate_instructions is not implemented")
+    return null
 
 func get_position_at_time(edge_time: float) -> Vector2:
     var index := int(edge_time / Time.PHYSICS_TIME_STEP_SEC)
