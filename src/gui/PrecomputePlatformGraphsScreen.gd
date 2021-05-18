@@ -255,8 +255,8 @@ func _set_progress(
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/Labels/Label4.text = label_4
     
-    Gs.logger.print("Precompute progress: %s | %s | %s" % \
-            [label_1, label_2, label_3])
+    Gs.logger.print("Precompute progress: %s | %s | %s | %s" % \
+            [label_1, label_2, label_3, label_4])
     
     _update_metrics()
 

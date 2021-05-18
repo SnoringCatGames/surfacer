@@ -358,8 +358,10 @@ static func check_frame_for_collision(
         position_start: Vector2,
         displacement: Vector2,
         is_recursing := false) -> SurfaceCollision:
-    collision_params.player.position = position_start
-    var kinematic_collision := collision_params.player.move_and_collide(
+    var player: KinematicBody2D = collision_params.player
+    
+    player.position = position_start
+    var kinematic_collision := player.move_and_collide(
             displacement,
             true,
             true,
@@ -374,61 +376,14 @@ static func check_frame_for_collision(
     surface_collision.player_position = \
             position_start + kinematic_collision.travel
     
+    var tile_map: SurfacesTileMap = kinematic_collision.collider
     var surface_side := \
             Gs.utils.get_which_surface_side_collided(kinematic_collision)
-    var is_touching_floor := surface_side == SurfaceSide.FLOOR
-    var is_touching_ceiling := surface_side == SurfaceSide.CEILING
-    var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
-    var is_touching_right_wall := surface_side == SurfaceSide.RIGHT_WALL
-    var tile_map: SurfacesTileMap = kinematic_collision.collider
     var tile_map_result := CollisionTileMapCoordResult.new()
-    Gs.geometry.get_collision_tile_map_coord(
-            tile_map_result,
-            kinematic_collision.position,
-            tile_map,
-            is_touching_floor,
-            is_touching_ceiling,
-            is_touching_left_wall,
-            is_touching_right_wall)
-    if !tile_map_result.is_godot_floor_ceiling_detection_correct:
-        is_touching_floor = !is_touching_floor
-        is_touching_ceiling = !is_touching_ceiling
-        surface_side = tile_map_result.surface_side
     
-    if tile_map_result.tile_map_coord == Vector2.INF:
-        # Invalid collision state.
-        if collision_params.movement_params \
-                .asserts_no_preexisting_collisions_during_edge_calculations:
-            Gs.logger.error()
-        surface_collision.is_valid_collision_state = false
-        return null
-    
-    var tile_map_index: int = Gs.geometry.get_tile_map_index_from_grid_coord(
-            tile_map_result.tile_map_coord,
-            tile_map)
-    if !collision_params.surface_parser.has_surface_for_tile(
-            tile_map,
-            tile_map_index,
-            surface_side):
-        # Invalid collision state.
-        if collision_params.movement_params \
-                .asserts_no_preexisting_collisions_during_edge_calculations:
-            Gs.logger.error()
-        surface_collision.is_valid_collision_state = false
-        return null
-    
-    var surface := collision_params.surface_parser.get_surface_for_tile(
-            tile_map,
-            tile_map_index,
-            surface_side)
-    
-    surface_collision.surface = surface
-    surface_collision.is_valid_collision_state = true
-    
-    # Check whether this collision is with a surface that we're actually moving
-    # away from.
+    # Is this collision with a surface that we're actually moving away from?
     var is_moving_away_from_surface: bool
-    match surface.side:
+    match surface_side:
         SurfaceSide.FLOOR:
             is_moving_away_from_surface = displacement.y < 0.0
         SurfaceSide.LEFT_WALL:
@@ -439,20 +394,224 @@ static func check_frame_for_collision(
             is_moving_away_from_surface = displacement.y > 0.0
         _:
             Gs.logger.error()
-    if is_moving_away_from_surface:
-        if is_recursing:
+    
+    # Are we likely to be looking at the wrong intersection point, according to
+    # how oblique movement is relative to the surface tangent?
+    var collision_normal := kinematic_collision.normal
+    var displacement_aspect_ratio := \
+            abs(displacement.x / displacement.y) if \
+            displacement.y != 0.0 else \
+            INF
+    var collision_normal_aspect_ratio := \
+            abs(collision_normal.x / collision_normal.y) if \
+            collision_normal.y != 0.0 else \
+            INF
+    var threshold: float = player.movement_params \
+            .oblique_collison_normal_aspect_ratio_threshold_threshold
+    var inverse_threshold := 1.0 / threshold
+    var is_collision_normal_expected: bool = \
+            !player.movement_params \
+            .checks_for_alternate_intersection_points_for_very_oblique_collisions or \
+            !(displacement_aspect_ratio > threshold and \
+            collision_normal_aspect_ratio < inverse_threshold or \
+            displacement_aspect_ratio < inverse_threshold and \
+            collision_normal_aspect_ratio > threshold)
+    
+    if !is_moving_away_from_surface and \
+            !is_collision_normal_expected:
+        # Consider an alternate intersection point that might correspond to an
+        # adjacent surface around a corner, and a less oblique collision.
+        
+        var space_rid := player.get_world_2d().space
+        var space_state := Physics2DServer.space_get_direct_state(space_rid)
+        var params := Physics2DShapeQueryParameters.new()
+        
+        var shape_owner_id: int = player.get_shape_owners()[0]
+        var shape_count := player.shape_owner_get_shape_count(shape_owner_id)
+        assert(shape_count == 1)
+        var shape := player.shape_owner_get_shape(shape_owner_id, 0)
+        params.set_shape(shape)
+        
+        params.transform = Transform2D(
+                player.movement_params.collider_rotation,
+                position_start)
+        params.motion = displacement
+        params.margin = \
+                player.movement_params.collision_margin_for_edge_calculations
+        
+        var intersection_points := space_state.collide_shape(params)
+        
+        if !intersection_points.empty():
+            # Choose the intersection point that most likely corresponds to a
+            # non-oblique collision.
+            var expected_surface_side_for_displacement := SurfaceSide.NONE
+            var most_likely_collision_point: Vector2
+            if displacement_aspect_ratio > threshold and \
+                    collision_normal_aspect_ratio < inverse_threshold:
+                # Moving horizontally, but collided vertically.
+                expected_surface_side_for_displacement = \
+                        SurfaceSide.LEFT_WALL if \
+                        displacement.x < 0.0 else \
+                        SurfaceSide.RIGHT_WALL
+                most_likely_collision_point = intersection_points[0]
+                for i in range(1, intersection_points.size()):
+                    var current_point: Vector2 = intersection_points[i]
+                    if collision_normal.y < 0:
+                        if current_point.y > most_likely_collision_point.y:
+                            most_likely_collision_point = current_point
+                    else:
+                        if current_point.y < most_likely_collision_point.y:
+                            most_likely_collision_point = current_point
+            elif displacement_aspect_ratio < inverse_threshold and \
+                    collision_normal_aspect_ratio > threshold:
+                # Moving vertically, but collided horizontally.
+                expected_surface_side_for_displacement = \
+                        SurfaceSide.CEILING if \
+                        displacement.y < 0.0 else \
+                        SurfaceSide.FLOOR
+                most_likely_collision_point = intersection_points[0]
+                for i in range(1, intersection_points.size()):
+                    var current_point: Vector2 = intersection_points[i]
+                    if collision_normal.x < 0:
+                        if current_point.x > most_likely_collision_point.x:
+                            most_likely_collision_point = current_point
+                    else:
+                        if current_point.x < most_likely_collision_point.x:
+                            most_likely_collision_point = current_point
+            
+            if expected_surface_side_for_displacement != SurfaceSide.NONE:
+                var expected_touching_floor := \
+                        expected_surface_side_for_displacement == \
+                        SurfaceSide.FLOOR
+                var expected_touching_ceiling := \
+                        expected_surface_side_for_displacement == \
+                        SurfaceSide.CEILING
+                var expected_touching_left_wall := \
+                        expected_surface_side_for_displacement == \
+                        SurfaceSide.LEFT_WALL
+                var expected_touching_right_wall := \
+                        expected_surface_side_for_displacement == \
+                        SurfaceSide.RIGHT_WALL
+                Gs.geometry.get_collision_tile_map_coord(
+                        tile_map_result,
+                        most_likely_collision_point,
+                        tile_map,
+                        expected_touching_floor,
+                        expected_touching_ceiling,
+                        expected_touching_left_wall,
+                        expected_touching_right_wall,
+                        true)
+                
+                if tile_map_result \
+                        .is_godot_floor_ceiling_detection_correct and \
+                        tile_map_result.error_message == "":
+                    surface_side = expected_surface_side_for_displacement
+    
+    if tile_map_result.tile_map_coord == Vector2.INF or \
+            !tile_map_result.is_godot_floor_ceiling_detection_correct:
+        # Consider the default collision point returned from move_and_collide.
+        
+        var is_touching_floor := surface_side == SurfaceSide.FLOOR
+        var is_touching_ceiling := surface_side == SurfaceSide.CEILING
+        var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
+        var is_touching_right_wall := surface_side == SurfaceSide.RIGHT_WALL
+        Gs.geometry.get_collision_tile_map_coord(
+                tile_map_result,
+                kinematic_collision.position,
+                tile_map,
+                is_touching_floor,
+                is_touching_ceiling,
+                is_touching_left_wall,
+                is_touching_right_wall)
+        if !tile_map_result.is_godot_floor_ceiling_detection_correct:
+            # TODO: This may never happen anymore?
+            is_touching_floor = !is_touching_floor
+            is_touching_ceiling = !is_touching_ceiling
+            surface_side = tile_map_result.surface_side
+        
+        if tile_map_result.tile_map_coord == Vector2.INF:
             # Invalid collision state.
             if collision_params.movement_params \
                     .asserts_no_preexisting_collisions_during_edge_calculations:
                 Gs.logger.error()
             surface_collision.is_valid_collision_state = false
             return null
+    
+    if tile_map_result.tile_map_coord != Vector2.INF:
+        # Put-together the return result.
+        
+        var tile_map_index: int = \
+                Gs.geometry.get_tile_map_index_from_grid_coord(
+                        tile_map_result.tile_map_coord,
+                        tile_map)
+        if !collision_params.surface_parser.has_surface_for_tile(
+                tile_map,
+                tile_map_index,
+                surface_side):
+            # Invalid collision state: This happens when tile_map_index
+            # corresponds to a tile that isn't open on the expected side.
+            if collision_params.movement_params \
+                    .asserts_no_preexisting_collisions_during_edge_calculations:
+                Gs.logger.error()
+            surface_collision.is_valid_collision_state = false
+            return null
+        
+        var surface := collision_params.surface_parser.get_surface_for_tile(
+                tile_map,
+                tile_map_index,
+                surface_side)
+        
+        surface_collision.surface = surface
+        surface_collision.is_valid_collision_state = true
+        
+        # Is this collision with a surface that we're actually moving away
+        # from.
+        match surface.side:
+            SurfaceSide.FLOOR:
+                is_moving_away_from_surface = displacement.y < 0.0
+            SurfaceSide.LEFT_WALL:
+                is_moving_away_from_surface = displacement.x > 0.0
+            SurfaceSide.RIGHT_WALL:
+                is_moving_away_from_surface = displacement.x < 0.0
+            SurfaceSide.CEILING:
+                is_moving_away_from_surface = displacement.y > 0.0
+            _:
+                Gs.logger.error()
+    
+    if is_moving_away_from_surface:
+        # The player is moving away from the collision point.
+        # This means one of two things:
+        # -   There was a pre-existing collision (happens infrequently).
+        # -   The extra "safe_margin" used in calculating the collision extends
+        #     into a surface the player is departing, even though the player
+        #     wasn't directly colliding with the surface (happens frequently).
+        
+        if is_recursing:
+            # Invalid collision state: Happens infrequently.
+            if collision_params.movement_params \
+                    .asserts_no_preexisting_collisions_during_edge_calculations:
+                Gs.logger.error()
+            surface_collision.is_valid_collision_state = false
+            return null
+        
+        var surface_normal: Vector2
+        match surface_side:
+            SurfaceSide.FLOOR:
+                surface_normal = Vector2.UP
+            SurfaceSide.LEFT_WALL:
+                surface_normal = Vector2.RIGHT
+            SurfaceSide.RIGHT_WALL:
+                surface_normal = Vector2.LEFT
+            SurfaceSide.CEILING:
+                surface_normal = Vector2.DOWN
+            _:
+                Gs.logger.error()
         
         # Try the collision check again with a reduced margin and a slight
         # offset.
         var old_margin := collision_params.player.get_safe_margin()
         collision_params.player.set_safe_margin(0.0)
-        position_start += surface.normal * 0.001
+        position_start += surface_normal * 0.001
         surface_collision = check_frame_for_collision(
                 collision_params,
                 position_start,
