@@ -17,6 +17,8 @@ var edge_calc_params: EdgeCalcParams
 
 var edge_calc_result_type := EdgeCalcResultType.UNKNOWN
 
+var collision_time := INF
+
 func _init(
         horizontal_steps: Array,
         vertical_step: VerticalEdgeStep,

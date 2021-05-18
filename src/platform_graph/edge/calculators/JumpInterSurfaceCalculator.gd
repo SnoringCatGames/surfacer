@@ -248,21 +248,6 @@ func create_edge_from_edge_calc_params(
     var velocity_end: Vector2 = \
             calc_result.horizontal_steps.back().velocity_step_end
     
-    # FIXME: -----------------------------------------
-    var expected_frame_count_for_duration := \
-            int(instructions.duration / Time.PHYSICS_TIME_STEP_SEC)
-    var allowed_variance_from_expected_frame_count := 8
-    if trajectory.frame_continuous_positions_from_steps.size() < \
-                    expected_frame_count_for_duration - 8 or \
-            trajectory.frame_continuous_positions_from_steps.size() > \
-                    expected_frame_count_for_duration + 8:
-        print("break")
-        calc_result = EdgeStepUtils.calculate_steps_with_new_jump_height(
-                edge_result_metadata,
-                edge_calc_params,
-                null,
-                null)
-    
     var edge := JumpInterSurfaceEdge.new(
             self,
             edge_calc_params.origin_position,
