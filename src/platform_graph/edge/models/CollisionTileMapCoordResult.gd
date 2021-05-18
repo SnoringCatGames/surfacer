@@ -13,3 +13,9 @@ var surface_side := SurfaceSide.NONE
 var tile_map_coord := Vector2.INF
 
 var error_message := ""
+
+func reset() -> void:
+    self.is_godot_floor_ceiling_detection_correct = true
+    self.surface_side = SurfaceSide.NONE
+    self.tile_map_coord = Vector2.INF
+    self.error_message = ""

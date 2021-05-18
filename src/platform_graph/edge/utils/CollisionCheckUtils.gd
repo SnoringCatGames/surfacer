@@ -511,6 +511,8 @@ static func check_frame_for_collision(
             !tile_map_result.is_godot_floor_ceiling_detection_correct:
         # Consider the default collision point returned from move_and_collide.
         
+        tile_map_result.reset()
+        
         var is_touching_floor := surface_side == SurfaceSide.FLOOR
         var is_touching_ceiling := surface_side == SurfaceSide.CEILING
         var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
