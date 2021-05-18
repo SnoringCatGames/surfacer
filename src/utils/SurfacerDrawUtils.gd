@@ -1,6 +1,8 @@
 class_name SurfacerDrawUtils
 extends DrawUtils
 
+const SQRT_TWO := sqrt(2.0)
+
 const EDGE_TRAJECTORY_WIDTH := 1.0
 
 const EDGE_WAYPOINT_STROKE_WIDTH := EDGE_TRAJECTORY_WIDTH
@@ -30,35 +32,70 @@ static func draw_origin_marker(
 
 static func draw_destination_marker(
         canvas: CanvasItem,
-        target: Vector2,
-        is_target_at_circle_center: bool,
-        surface_side: int,
+        destination: PositionAlongSurface,
+        is_based_on_target_point: bool,
         color: Color,
         cone_length := EDGE_END_CONE_LENGTH,
         circle_radius := EDGE_END_RADIUS,
         is_filled := false,
         border_width := EDGE_WAYPOINT_STROKE_WIDTH,
         sector_arc_length := 4.0) -> void:
-    var normal := SurfaceSide.get_normal(surface_side)
-    
-    var cone_end_point: Vector2
-    var circle_center: Vector2
-    if is_target_at_circle_center:
-        cone_end_point = target - normal * cone_length
-        circle_center = target
+    if destination.surface != null:
+        # Draw a cone pointing toward the surface.
+        
+        var normal := SurfaceSide.get_normal(destination.side)
+        
+        var cone_end_point: Vector2
+        var circle_center: Vector2
+        if is_based_on_target_point:
+            cone_end_point = destination.target_point - normal * cone_length
+            circle_center = destination.target_point
+        else:
+            cone_end_point = destination.target_projection_onto_surface
+            circle_center = \
+                    destination.target_projection_onto_surface + \
+                    normal * cone_length
+        
+        draw_ice_cream_cone(
+                canvas,
+                cone_end_point,
+                circle_center,
+                circle_radius,
+                color,
+                is_filled,
+                border_width,
+                sector_arc_length)
     else:
-        cone_end_point = target
-        circle_center = target + normal * cone_length
-    
-    draw_ice_cream_cone(
-            canvas,
-            cone_end_point,
-            circle_center,
-            circle_radius,
-            color,
-            is_filled,
-            border_width,
-            sector_arc_length)
+        # Draw an X centered on the target point.
+        
+        var cone_end_point := destination.target_point
+        
+        var cone_center_displacement := cone_length * SQRT_TWO / 2.0
+        var circle_centers := [
+            cone_end_point + Vector2(
+                    cone_center_displacement,
+                    cone_center_displacement),
+            cone_end_point + Vector2(
+                    -cone_center_displacement,
+                    cone_center_displacement),
+            cone_end_point + Vector2(
+                    -cone_center_displacement,
+                    -cone_center_displacement),
+            cone_end_point + Vector2(
+                    cone_center_displacement,
+                    -cone_center_displacement),
+        ]
+        
+        for circle_center in circle_centers:
+            draw_ice_cream_cone(
+                    canvas,
+                    cone_end_point,
+                    circle_center,
+                    circle_radius,
+                    color,
+                    is_filled,
+                    border_width,
+                    sector_arc_length)
 
 static func draw_path(
         canvas: CanvasItem,
@@ -377,9 +414,8 @@ static func _draw_edge_from_end_points(
         
         draw_destination_marker(
                 canvas,
-                edge.get_end(),
+                edge.end_position_along_surface,
                 true,
-                edge.end_position_along_surface.side,
                 waypoint_color)
         draw_origin_marker(
                 canvas,
@@ -455,9 +491,8 @@ static func _draw_edge_from_instructions_positions(
         
         draw_destination_marker(
                 canvas,
-                edge.get_end(),
+                edge.end_position_along_surface,
                 true,
-                edge.end_position_along_surface.side,
                 waypoint_color)
         
         var origin_position := \

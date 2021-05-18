@@ -4,8 +4,6 @@ extends Reference
 signal started_navigation
 signal reached_destination
 
-const SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO := 0.8
-const POINTER_TO_SURFACE_SELECTION_THRESHOLD := 144.0
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
 
@@ -45,9 +43,18 @@ func _init(
 
 # Starts a new navigation to the given destination.
 func navigate_to_position(
-        destination: PositionAlongSurface,
+        destination_or_selection,
         is_retry := false) -> bool:
     Gs.profiler.start("navigator_navigate_to_position")
+    
+    var destination: PositionAlongSurface = \
+            destination_or_selection.navigation_destination if \
+            destination_or_selection is PointerSelectionPosition else \
+            destination_or_selection
+    var graph_destination: PositionAlongSurface = \
+            destination_or_selection.nearby_position_along_surface if \
+            destination_or_selection is PointerSelectionPosition else \
+            null
     
     # Nudge the destination away from any concave neighbor surfaces, if
     # necessary.
@@ -58,7 +65,7 @@ func navigate_to_position(
                     destination)
     
     Gs.profiler.start("navigator_find_path")
-    var path := find_path(destination)
+    var path := find_path(destination, graph_destination)
     var duration_find_path: float = \
             Gs.profiler.stop("navigator_find_path")
     
@@ -129,20 +136,20 @@ func navigate_to_position(
         
         return true
 
-func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
-    var path: PlatformGraphPath
+func find_path(
+        destination: PositionAlongSurface,
+        graph_destination: PositionAlongSurface = null) -> PlatformGraphPath:
+    var graph_origin: PositionAlongSurface
+    var prefix_edge: AirToSurfaceEdge
+    var suffix_edge: JumpInterSurfaceEdge
     
+    # Handle the start of the path.
     if surface_state.is_grabbing_a_surface:
-        # Find a path from a starting player position along a surface.
-        
-        var origin := PositionAlongSurface.new(
+        # Find a path from a starting player-position along a surface.
+        graph_origin = PositionAlongSurface.new(
                 surface_state.center_position_along_surface)
-        path = graph.find_path(
-                origin,
-                destination)
-        
     else:
-        # Find a path from a starting player position in the air.
+        # Find a path from a starting player-position in the air.
         
         # Try to dynamically calculate a valid air-to-surface edge from the
         # current in-air position.
@@ -184,11 +191,59 @@ func find_path(destination: PositionAlongSurface) -> PlatformGraphPath:
         
         if air_to_surface_edge != null:
             # We were able to calculate a valid air-to-surface edge.
-            path = graph.find_path(
-                    air_to_surface_edge.end_position_along_surface,
-                    destination)
-            if path != null:
-                path.push_front(air_to_surface_edge)
+            graph_origin = air_to_surface_edge.end_position_along_surface
+            prefix_edge = air_to_surface_edge
+        else:
+            return null
+    
+    # Handle the end of the path.
+    if destination.surface != null:
+        # Find a path to an ending player-position along a surface.
+        graph_destination = destination
+    else:
+        # Find a path to an ending player-position in the air.
+        
+        assert(graph_destination != null)
+        
+        # Nudge the graph-destination away from any concave neighbor surfaces,
+        # if necessary.
+        graph_destination = PositionAlongSurface.new(graph_destination)
+        JumpLandPositionsUtils \
+                .ensure_position_is_not_too_close_to_concave_neighbor(
+                        player.movement_params,
+                        graph_destination)
+        
+        # Try to dynamically calculate a valid surface-to-air edge.
+        var velocity_start := JumpLandPositionsUtils.get_velocity_start(
+                player.movement_params,
+                graph_destination.surface,
+                surface_to_air_calculator.is_a_jump_calculator,
+                false,
+                true)
+        var surface_to_air_edge := surface_to_air_calculator.calculate_edge(
+                null,
+                graph.collision_params,
+                graph_destination,
+                destination,
+                velocity_start,
+                false,
+                false)
+        
+        if surface_to_air_edge != null:
+            # We were able to calculate a valid surface-to-air edge.
+            suffix_edge = surface_to_air_edge
+        else:
+            Gs.logger.print("Unable to calculate surface-to-air edge")
+            return null
+    
+    var path := graph.find_path(
+            graph_origin,
+            graph_destination)
+    if path != null:
+        if prefix_edge != null:
+            path.push_front(prefix_edge)
+        if suffix_edge != null:
+            path.push_back(suffix_edge)
     
     return path
 

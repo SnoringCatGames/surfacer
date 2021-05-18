@@ -65,9 +65,8 @@ func draw(canvas: CanvasItem) -> void:
             end_color)
     Gs.draw_utils.draw_destination_marker(
             canvas,
-            end,
+            failed_edge_attempt.end_position_along_surface,
             true,
-            failed_edge_attempt.get_end_surface().side,
             end_color)
     if includes_surfaces:
         SurfaceAnnotationElement.draw_from_surface(

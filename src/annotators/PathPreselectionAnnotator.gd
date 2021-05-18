@@ -40,12 +40,13 @@ const PATH_BACK_END_TRIM_RADIUS := 0.0
 var _predictions_container: Node2D
 var player: Player
 var path_front_end_trim_radius: float
-var preselection_position_to_draw: PositionAlongSurface = null
+var preselection_destination: PositionAlongSurface = null
+var preselection_nearby_position_along_surface: PositionAlongSurface = null
 var animation_start_time := -PRESELECTION_DURATION_SEC
 var animation_progress := 1.0
 var phantom_surface := Surface.new(
         [Vector2.INF],
-        SurfaceSide.FLOOR,
+        SurfaceSide.NONE,
         null,
         [])
 var phantom_position_along_surface := PositionAlongSurface.new()
@@ -72,14 +73,14 @@ func _process(_delta_sec: float) -> void:
     var current_time: float = Gs.time.get_play_time_sec()
     
     var did_preselection_position_change := \
-            preselection_position_to_draw != \
+            preselection_destination != \
             player.pre_selection.navigation_destination
     
     if did_preselection_position_change and \
             !player.new_selection.get_has_selection():
         var previous_preselection_surface := \
-                preselection_position_to_draw.surface if \
-                preselection_position_to_draw != null else \
+                preselection_destination.surface if \
+                preselection_destination != null else \
                 null
         var next_preselection_surface := \
                 player.pre_selection.navigation_destination.surface if \
@@ -88,20 +89,22 @@ func _process(_delta_sec: float) -> void:
         var did_preselection_surface_change := \
                 previous_preselection_surface != next_preselection_surface
         
-        preselection_position_to_draw = \
+        preselection_destination = \
                 player.pre_selection.navigation_destination
+        preselection_nearby_position_along_surface = \
+                player.pre_selection.nearby_position_along_surface
         
         if did_preselection_surface_change:
             animation_start_time = current_time
             
-            if next_preselection_surface != null:
-                _update_phantom_surface()
+            _update_phantom_surface()
         
-        if preselection_position_to_draw != null:
+        if preselection_destination != null:
             _update_phantom_position_along_surface()
             
-            phantom_path = \
-                    player.navigator.find_path(preselection_position_to_draw)
+            phantom_path = player.navigator.find_path(
+                    preselection_destination,
+                    preselection_nearby_position_along_surface)
             
             if phantom_path != null:
                 # Update the human-player prediction.
@@ -122,13 +125,13 @@ func _process(_delta_sec: float) -> void:
         
         update()
     
-    if preselection_position_to_draw != null:
+    if preselection_destination != null:
         animation_progress = fmod((current_time - animation_start_time) / \
                 PRESELECTION_DURATION_SEC, 1.0)
         update()
 
 func _draw() -> void:
-    if preselection_position_to_draw == null:
+    if preselection_destination == null:
         # When we don't render anything in this draw call, it clears the draw
         # buffer.
         return
@@ -177,18 +180,19 @@ func _draw() -> void:
                     true,
                     false)
         
-        # Draw Surface.
-        var surface_alpha := surface_base_color.a * alpha_multiplier
-        var surface_color := Color(
-                surface_base_color.r,
-                surface_base_color.g,
-                surface_base_color.b,
-                surface_alpha)
-        Gs.draw_utils.draw_surface(
-                self,
-                phantom_surface,
-                surface_color,
-                PRESELECTION_SURFACE_DEPTH)
+        if phantom_surface.side != SurfaceSide.NONE:
+            # Draw Surface.
+            var surface_alpha := surface_base_color.a * alpha_multiplier
+            var surface_color := Color(
+                    surface_base_color.r,
+                    surface_base_color.g,
+                    surface_base_color.b,
+                    surface_alpha)
+            Gs.draw_utils.draw_surface(
+                    self,
+                    phantom_surface,
+                    surface_color,
+                    PRESELECTION_SURFACE_DEPTH)
     
     if Surfacer.is_navigation_destination_shown:
         # Draw destination marker.
@@ -199,15 +203,12 @@ func _draw() -> void:
                 position_indicator_base_color.g,
                 position_indicator_base_color.b,
                 position_indicator_alpha)
-        var cone_end_point := \
-                phantom_position_along_surface.target_projection_onto_surface
         var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
                 PRESELECTION_POSITION_INDICATOR_RADIUS
         Gs.draw_utils.draw_destination_marker(
                 self,
-                cone_end_point,
+                phantom_position_along_surface,
                 false,
-                phantom_surface.side,
                 position_indicator_color,
                 cone_length,
                 PRESELECTION_POSITION_INDICATOR_RADIUS,
@@ -216,44 +217,57 @@ func _draw() -> void:
                 4.0)
 
 func _update_phantom_surface() -> void:
-    # Copy the vertices from the target surface.
-    
-    phantom_surface.vertices = preselection_position_to_draw.surface.vertices
-    phantom_surface.side = preselection_position_to_draw.surface.side
-    phantom_surface.normal = preselection_position_to_draw.surface.normal
-    
-    # Enlarge and offset the phantom surface, so that it stands out more.
-    
-    var surface_center := preselection_position_to_draw.surface.center
-    
-    var length := \
-            preselection_position_to_draw.surface.bounding_box.size.x if \
-            preselection_position_to_draw.surface.normal.x == 0.0 else \
-            preselection_position_to_draw.surface.bounding_box.size.y
-    var scale_factor := \
-            (length + PRESELECTION_SURFACE_LENGTH_PADDING * 2.0) / length
-    var scale := Vector2(scale_factor, scale_factor)
-    
-    var translation := preselection_position_to_draw.surface.normal * \
-            PRESELECTION_SURFACE_OUTWARD_OFFSET
-    
-    var transform := Transform2D()
-    transform = transform.translated(-surface_center)
-    transform = transform.scaled(scale)
-    transform = transform.translated(translation / scale_factor)
-    transform = transform.translated(surface_center / scale_factor)
-    
-    for i in phantom_surface.vertices.size():
-        phantom_surface.vertices[i] = \
-                transform.xform(phantom_surface.vertices[i])
-    
-    phantom_surface.bounding_box = Gs.geometry.get_bounding_box_for_points(
-            phantom_surface.vertices)
+    if preselection_destination.surface == null:
+        phantom_surface.vertices = []
+        phantom_surface.side = SurfaceSide.NONE
+        phantom_surface.normal = Vector2.INF
+        phantom_surface.bounding_box = Rect2()
+    else:
+        # Copy the vertices from the target surface.
+        
+        phantom_surface.vertices = preselection_destination.surface.vertices
+        phantom_surface.side = preselection_destination.surface.side
+        phantom_surface.normal = preselection_destination.surface.normal
+        
+        # Enlarge and offset the phantom surface, so that it stands out more.
+        
+        var surface_center := preselection_destination.surface.center
+        
+        var length := \
+                preselection_destination.surface.bounding_box.size.x if \
+                preselection_destination.surface.normal.x == 0.0 else \
+                preselection_destination.surface.bounding_box.size.y
+        var scale_factor := \
+                (length + PRESELECTION_SURFACE_LENGTH_PADDING * 2.0) / length
+        var scale := Vector2(scale_factor, scale_factor)
+        
+        var translation := preselection_destination.surface.normal * \
+                PRESELECTION_SURFACE_OUTWARD_OFFSET
+        
+        var transform := Transform2D()
+        transform = transform.translated(-surface_center)
+        transform = transform.scaled(scale)
+        transform = transform.translated(translation / scale_factor)
+        transform = transform.translated(surface_center / scale_factor)
+        
+        for i in phantom_surface.vertices.size():
+            phantom_surface.vertices[i] = \
+                    transform.xform(phantom_surface.vertices[i])
+        
+        phantom_surface.bounding_box = Gs.geometry.get_bounding_box_for_points(
+                phantom_surface.vertices)
 
 func _update_phantom_position_along_surface() -> void:
-    phantom_position_along_surface.match_surface_target_and_collider(
-            phantom_surface,
-            preselection_position_to_draw.target_point,
-            Vector2.ZERO,
-            true,
-            true)
+    if phantom_surface.side != SurfaceSide.NONE:
+        phantom_position_along_surface.match_surface_target_and_collider(
+                phantom_surface,
+                preselection_destination.target_point,
+                Vector2.ZERO,
+                true,
+                true)
+    else:
+        phantom_position_along_surface.surface = null
+        phantom_position_along_surface.target_point = \
+                preselection_destination.target_point
+        phantom_position_along_surface.target_projection_onto_surface = \
+                Vector2.INF

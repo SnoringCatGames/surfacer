@@ -76,6 +76,11 @@ func find_path(
     var origin_surface := origin.surface
     var destination_surface := destination.surface
     
+    if origin_surface == null or \
+            destination_surface == null:
+        # The graph only handles nodes along surfaces.
+        return null
+    
     if origin_surface == destination_surface:
         # If the we are simply trying to get to a different position on the
         # same surface, then we don't need A*.

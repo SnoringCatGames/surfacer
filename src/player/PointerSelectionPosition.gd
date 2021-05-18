@@ -1,6 +1,9 @@
 class_name PointerSelectionPosition
 extends Reference
 
+const SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO := 0.8
+const POINTER_TO_SURFACE_SELECTION_THRESHOLD := 144.0
+
 var _player
 var _surface_to_air_jump_distance_squared_threshold: float
 var _pointer_to_surface_distance_squared_threshold: float
@@ -19,13 +22,13 @@ func _init(player) -> void:
     self._player = player
     var surface_to_air_jump_distance_threshold: float = \
             player.movement_params.max_upward_jump_distance * \
-            Navigator.SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO
+            SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO
     self._surface_to_air_jump_distance_squared_threshold = \
             surface_to_air_jump_distance_threshold * \
             surface_to_air_jump_distance_threshold
     self._pointer_to_surface_distance_squared_threshold = \
-            Navigator.POINTER_TO_SURFACE_SELECTION_THRESHOLD * \
-            Navigator.POINTER_TO_SURFACE_SELECTION_THRESHOLD
+            POINTER_TO_SURFACE_SELECTION_THRESHOLD * \
+            POINTER_TO_SURFACE_SELECTION_THRESHOLD
 
 func update_pointer_position(pointer_position: Vector2) -> void:
     self.pointer_position = pointer_position

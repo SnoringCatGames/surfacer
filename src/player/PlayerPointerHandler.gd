@@ -14,7 +14,7 @@ func _init(player) -> void:
     self.player = player
     var nearby_surface_distance_threshold: float = \
             player.movement_params.max_upward_jump_distance * \
-            Navigator.SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO
+            PointerSelectionPosition.SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO
     self.nearby_surface_distance_squared_threshold = \
             nearby_surface_distance_threshold * \
             nearby_surface_distance_threshold

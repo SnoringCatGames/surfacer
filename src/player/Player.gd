@@ -326,18 +326,9 @@ func _handle_pointer_selections() -> void:
                 "[No matching surface]"
             ])
         
-        # FIXME: LEFT OFF HERE: -----------------------------------------------
-        # - Use new navigator.surface_to_air_calculator.
-        # - Draw in-air destination with an X formed from icecream cones.
-        # - Start simple with just concatenating a surface-to-air edge onto the
-        #   end of a path.
-        # - Then add optimization, which could eliminate whole edges from the
-        #   path.
-        
         if new_selection.get_is_selection_navigatable():
             last_selection.copy(new_selection)
-            navigator.navigate_to_position(
-                    last_selection.navigation_destination)
+            navigator.navigate_to_position(last_selection)
         else:
             print_msg("TARGET IS TOO FAR FROM ANY SURFACE")
         
