@@ -25,12 +25,16 @@ func _draw_shape(
             center.y + length / 2.0)
     var color: Color = \
             Surfacer.ann_defaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
+    var surface := Surface.new()
+    surface.side = SurfaceSide.FLOOR
+    var position := PositionAlongSurface.new()
+    position.surface = surface
+    position.target_projection_onto_surface = cone_end_point
     
     Gs.draw_utils.draw_destination_marker(
             self,
-            cone_end_point,
+            position,
             false,
-            SurfaceSide.FLOOR,
             color,
             cone_length,
             radius,

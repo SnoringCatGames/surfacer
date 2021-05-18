@@ -47,9 +47,8 @@ func draw(canvas: CanvasItem) -> void:
             color)
     Gs.draw_utils.draw_destination_marker(
             canvas,
-            end,
+            jump_land_positions.land_position,
             true,
-            jump_land_positions.land_position.side,
             color)
 
 func _create_legend_items() -> Array:

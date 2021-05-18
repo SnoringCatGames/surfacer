@@ -140,8 +140,6 @@ func _draw_current_path(
     
     if Surfacer.is_navigation_destination_shown:
         # Draw the destination indicator.
-        var cone_end_point := \
-                current_destination.target_projection_onto_surface
         var cone_length: float = \
                 AnnotationElementDefaults \
                         .NAVIGATOR_DESTINATIAN_INDICATOR_LENGTH - \
@@ -156,9 +154,8 @@ func _draw_current_path(
         destination_indicator_fill_color.a *= fade_progress
         Gs.draw_utils.draw_destination_marker(
                 self,
-                cone_end_point,
+                current_destination,
                 false,
-                current_destination.side,
                 destination_indicator_fill_color,
                 cone_length,
                 AnnotationElementDefaults \
@@ -175,9 +172,8 @@ func _draw_current_path(
         destination_indicator_stroke_color *= fade_progress
         Gs.draw_utils.draw_destination_marker(
                 self,
-                cone_end_point,
+                current_destination,
                 false,
-                current_destination.side,
                 destination_indicator_stroke_color,
                 cone_length,
                 AnnotationElementDefaults \
