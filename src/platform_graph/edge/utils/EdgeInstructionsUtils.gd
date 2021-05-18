@@ -116,7 +116,12 @@ static func convert_calculation_steps_to_movement_instructions(
                 true)
         instructions.push_back(press)
     
-    var duration := vertical_step.time_step_end - vertical_step.time_step_start
+    var vertical_step_duration := \
+            vertical_step.time_step_end - vertical_step.time_step_start
+    var duration := \
+            min(vertical_step_duration, calc_result.collision_time) if \
+            calc_result.collision_time != INF else \
+            vertical_step_duration
     
     var instructions_wrapper := EdgeInstructions.new(
             instructions,
