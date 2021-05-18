@@ -9,6 +9,7 @@ enum {
     BACKTRACKING_VALID,
     BACKTRACKING_INVALID,
     INVALID_COLLISON_STATE,
+    EXPECTED_SURFACE_BUT_TOO_FEW_FRAMES,
     CONFIGURED_TO_SKIP_RECURSION,
     CONFIGURED_TO_SKIP_BACKTRACKING,
     UNKNOWN,
@@ -32,6 +33,8 @@ static func get_string(result: int) -> String:
             return "NO_RESULTS_FROM_BACKTRACKING"
         INVALID_COLLISON_STATE:
             return "INVALID_COLLISON_STATE"
+        EXPECTED_SURFACE_BUT_TOO_FEW_FRAMES:
+            return "EXPECTED_SURFACE_BUT_TOO_FEW_FRAMES"
         CONFIGURED_TO_SKIP_RECURSION:
             return "CONFIGURED_TO_SKIP_RECURSION"
         CONFIGURED_TO_SKIP_BACKTRACKING:
@@ -91,6 +94,10 @@ static func to_description_list(result: int) -> Array:
         INVALID_COLLISON_STATE:
             return [
                 "Invalid collision state.",
+            ]
+        EXPECTED_SURFACE_BUT_TOO_FEW_FRAMES:
+            return [
+                "Hit the expected surface, but hit it too quickly.",
             ]
         CONFIGURED_TO_SKIP_RECURSION:
             return [

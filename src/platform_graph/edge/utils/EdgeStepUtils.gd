@@ -128,13 +128,25 @@ static func calculate_steps_between_waypoints(
             (collision.surface == \
             edge_calc_params.destination_waypoint.surface):
         # There is no intermediate surface interfering with this movement.
-        if step_result_metadata != null:
-            step_result_metadata.edge_step_calc_result_type = \
-                    EdgeStepCalcResultType.MOVEMENT_VALID
-        return EdgeCalcResult.new(
-                [next_horizontal_step],
-                vertical_step,
-                edge_calc_params)
+        
+        if next_horizontal_step.frame_positions.size() < \
+                edge_calc_params.movement_params \
+                .min_valid_frame_count_when_colliding_early_with_expected_surface:
+            # Hit the expected surface too early.
+            if step_result_metadata != null:
+                step_result_metadata.edge_step_calc_result_type = \
+                        EdgeStepCalcResultType\
+                                .EXPECTED_SURFACE_BUT_TOO_FEW_FRAMES
+            return null
+            
+        else:
+            if step_result_metadata != null:
+                step_result_metadata.edge_step_calc_result_type = \
+                        EdgeStepCalcResultType.MOVEMENT_VALID
+            return EdgeCalcResult.new(
+                    [next_horizontal_step],
+                    vertical_step,
+                    edge_calc_params)
     
     Gs.profiler.increment_count(
             "collision_in_calculate_steps_between_waypoints",

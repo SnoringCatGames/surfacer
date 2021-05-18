@@ -102,6 +102,9 @@ func _init(
                     duration)
         assert(!is_inf(self.instructions.duration))
     
+    # -   Too few frames probably means that a collision was detected much
+    #     earlier than expected.
+    # -   Too many frames probably means ...
     var expected_frame_count_for_duration := \
             int(duration / Time.PHYSICS_TIME_STEP_SEC)
     var allowed_variance_from_expected_frame_count := 8
