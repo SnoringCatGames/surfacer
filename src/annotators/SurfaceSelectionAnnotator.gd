@@ -25,16 +25,18 @@ func _process(_delta_sec: float) -> void:
     var current_time: float = Gs.time.get_play_time_sec()
     
     # Has there been a new surface selection?
-    if player.last_selection_position != selection_position_to_animate:
+    if player.last_selection.navigation_destination != \
+            selection_position_to_animate:
         # Choose a color that indicates whether the navigator could actually
         # navigate to the selected position.
         selection_color = \
                 VALID_SELECTION_COLOR if \
                 Gs.geometry.are_position_wrappers_equal_with_epsilon(
-                        player.last_selection_position,
+                        player.last_selection.navigation_destination,
                         player.navigator.current_destination) else \
                 INVALID_SELECTION_COLOR
-        selection_position_to_animate = player.last_selection_position
+        selection_position_to_animate = \
+                player.last_selection.navigation_destination
         animation_start_time = current_time
         animation_end_time = animation_start_time + SELECT_DURATION_SEC
         is_a_selection_currently_rendered = true
@@ -50,6 +52,9 @@ func _draw() -> void:
         # When we don't render anything in this draw call, it clears the draw
         # buffer.
         is_a_selection_currently_rendered = false
+        return
+    
+    if selection_position_to_animate.surface == null:
         return
     
     var alpha := selection_color.a * (1 - animation_progress)

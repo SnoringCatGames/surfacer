@@ -6,7 +6,7 @@ var _surface_to_air_jump_distance_squared_threshold: float
 var _pointer_to_surface_distance_squared_threshold: float
 
 # The position of the click/tap.
-var pointer_position: Vector2
+var pointer_position := Vector2.INF
 
 # The nearest position along a surface, or null if no surface is close enough.
 var nearby_position_along_surface: PositionAlongSurface

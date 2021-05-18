@@ -142,6 +142,15 @@ var prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offset
 # expensive, but could produce slightly more accurate results.
 var reuses_previous_waypoints_when_backtracking_on_jump_height := true
 var asserts_no_preexisting_collisions_during_edge_calculations := true
+# If true, then edge calculations will attempt to consider alternate
+# intersection points from shape-casting when calculating collision details,
+# rather than the default point returned from move_and_collide, when the
+# default point corresponds to a very oblique collision angle.
+# For example, move_and_collide could otherwise detect collisons with the
+# adjacent wall when moving vertically and colliding with the edge of a
+# ceiling.
+var checks_for_alternate_intersection_points_for_very_oblique_collisions := true
+var oblique_collison_normal_aspect_ratio_threshold_threshold := 10.0
 
 var logs_navigator_events := false
 var logs_player_actions := false
