@@ -360,7 +360,7 @@ The inspector is a tree-view widget with the following structure:
  - Platform graph [player_name]
    - Edges [#]
      - [#] Edges calculated with increasing jump height
-       - JUMP_INTER_SURFACE_EDGEs [#]
+       - JUMP_FROM_SURFACE_EDGEs [#]
          - [(x,y), (x,y)]
            - Profiler
              - ...
@@ -379,7 +379,7 @@ The inspector is a tree-view widget with the following structure:
          - _# valid outbound edges_
          - _Destination surfaces:_
          - FLOOR [(x,y), (x,y)]
-           - JUMP_INTER_SURFACE_EDGEs [#]
+           - JUMP_FROM_SURFACE_EDGEs [#]
              - [(x,y), (x,y)]
                - Profiler
                  - ...
@@ -407,7 +407,7 @@ The inspector is a tree-view widget with the following structure:
      - Global counts
        - # total surfaces
        - # total edges
-       - # JUMP_INTER_SURFACE_EDGEs
+       - # JUMP_FROM_SURFACE_EDGEs
        - ...
 ```
 

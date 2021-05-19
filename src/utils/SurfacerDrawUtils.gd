@@ -145,7 +145,7 @@ static func draw_path_duration_segment(
     var edge_start_time := 0.0
     var has_segment_started := false
     for edge in path.edges:
-        if edge.edge_type == EdgeType.JUMP_INTER_SURFACE_EDGE:
+        if edge.edge_type == EdgeType.JUMP_FROM_SURFACE_EDGE:
             var a := true
         
         var edge_end_time: float = edge_start_time + edge.duration

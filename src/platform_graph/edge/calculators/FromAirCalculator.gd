@@ -1,8 +1,8 @@
-class_name AirToSurfaceCalculator
+class_name FromAirCalculator
 extends EdgeCalculator
 
-const NAME := "AirToSurfaceCalculator"
-const EDGE_TYPE := EdgeType.AIR_TO_SURFACE_EDGE
+const NAME := "FromAirCalculator"
+const EDGE_TYPE := EdgeType.FROM_AIR_EDGE
 const IS_A_JUMP_CALCULATOR := false
 
 func _init().(
@@ -21,7 +21,7 @@ func get_all_inter_surface_edges_from_surface(
         surfaces_in_fall_range_set: Dictionary,
         surfaces_in_jump_range_set: Dictionary) -> void:
     Gs.logger.error(
-            "AirToSurfaceCalculator." +
+            "FromAirCalculator." +
             "get_all_inter_surface_edges_from_surface should not be called")
 
 func calculate_edge(
@@ -52,7 +52,7 @@ func optimize_edge_land_position_for_path(
         edge_index: int,
         edge: Edge,
         next_edge: IntraSurfaceEdge) -> void:
-    assert(edge is AirToSurfaceEdge)
+    assert(edge is FromAirEdge)
     
     EdgeCalculator.optimize_edge_land_position_for_path_helper(
             collision_params,
@@ -75,7 +75,7 @@ func find_a_landing_trajectory(
         velocity_start: Vector2,
         goal: PositionAlongSurface,
         exclusive_land_position: PositionAlongSurface,
-        needs_extra_wall_land_horizontal_speed := false) -> AirToSurfaceEdge:
+        needs_extra_wall_land_horizontal_speed := false) -> FromAirEdge:
     # TODO: Use goal param.
     
     assert(!needs_extra_wall_land_horizontal_speed or \
@@ -146,7 +146,7 @@ func find_a_landing_trajectory(
     var velocity_end: Vector2 = \
             calc_result.horizontal_steps.back().velocity_step_end
     
-    return AirToSurfaceEdge.new(
+    return FromAirEdge.new(
             self,
             origin,
             land_position,
@@ -163,7 +163,7 @@ func find_a_landing_trajectory(
 func create_edge_from_part_of_other_edge(
         other_edge: Edge,
         start_time: float,
-        player) -> AirToSurfaceEdge:
+        player) -> FromAirEdge:
     if other_edge.trajectory == null:
         # Some edges can enter the air but also don't have explicit
         # trajectories.
@@ -180,7 +180,7 @@ func create_edge_from_part_of_other_edge(
     var time_peak_height: float = \
             max(other_edge.time_peak_height - start_time, 0.0)
     
-    return AirToSurfaceEdge.new(
+    return FromAirEdge.new(
             self,
             origin,
             other_edge.end_position_along_surface,

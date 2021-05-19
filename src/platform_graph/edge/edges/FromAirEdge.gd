@@ -1,12 +1,11 @@
-# Information for how to move through the air from a start (jump) position on
-# one surface to an end (landing) position on another surface.
-class_name JumpInterSurfaceEdge
+# Information for how to move through the air to a platform.
+class_name FromAirEdge
 extends Edge
 
-const TYPE := EdgeType.JUMP_INTER_SURFACE_EDGE
+const TYPE := EdgeType.FROM_AIR_EDGE
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR
-const ENTERS_AIR := true
+const ENTERS_AIR := false
 const INCLUDES_AIR_TRAJECTORY := true
 
 func _init(
@@ -15,7 +14,6 @@ func _init(
         end: PositionAlongSurface = null,
         velocity_start := Vector2.INF,
         velocity_end := Vector2.INF,
-        includes_extra_jump_duration := false,
         includes_extra_wall_land_horizontal_speed := false,
         movement_params: MovementParams = null,
         instructions: EdgeInstructions = null,
@@ -32,7 +30,7 @@ func _init(
         end,
         velocity_start,
         velocity_end,
-        includes_extra_jump_duration,
+        false,
         includes_extra_wall_land_horizontal_speed,
         movement_params,
         instructions,

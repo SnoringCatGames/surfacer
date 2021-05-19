@@ -11,8 +11,8 @@ var player
 var graph: PlatformGraph
 var surface_state: PlayerSurfaceState
 var instructions_action_source: InstructionsActionSource
-var air_to_surface_calculator: AirToSurfaceCalculator
-var surface_to_air_calculator: JumpInterSurfaceCalculator
+var from_air_calculator: FromAirCalculator
+var surface_to_air_calculator: JumpFromSurfaceCalculator
 
 var is_currently_navigating := false
 var has_reached_destination := false
@@ -38,8 +38,8 @@ func _init(
     self.navigation_state.is_human_player = player.is_human_player
     self.instructions_action_source = \
             InstructionsActionSource.new(player, true)
-    self.air_to_surface_calculator = AirToSurfaceCalculator.new()
-    self.surface_to_air_calculator = JumpInterSurfaceCalculator.new()
+    self.from_air_calculator = FromAirCalculator.new()
+    self.surface_to_air_calculator = JumpFromSurfaceCalculator.new()
 
 # Starts a new navigation to the given destination.
 func navigate_to_position(
@@ -140,8 +140,8 @@ func find_path(
         destination: PositionAlongSurface,
         graph_destination: PositionAlongSurface = null) -> PlatformGraphPath:
     var graph_origin: PositionAlongSurface
-    var prefix_edge: AirToSurfaceEdge
-    var suffix_edge: JumpInterSurfaceEdge
+    var prefix_edge: FromAirEdge
+    var suffix_edge: JumpFromSurfaceEdge
     
     # Handle the start of the path.
     if surface_state.is_grabbing_a_surface:
@@ -155,8 +155,8 @@ func find_path(
         # current in-air position.
         var origin := PositionAlongSurfaceFactory \
                 .create_position_without_surface(surface_state.center_position)
-        var air_to_surface_edge := \
-                air_to_surface_calculator.find_a_landing_trajectory(
+        var from_air_edge := \
+                from_air_calculator.find_a_landing_trajectory(
                         null,
                         graph.collision_params,
                         graph.surfaces_set,
@@ -165,7 +165,7 @@ func find_path(
                         destination,
                         null)
         
-        if air_to_surface_edge == null and \
+        if from_air_edge == null and \
                 is_currently_navigating and \
                 current_edge.get_end_surface() != null:
             # We weren't able to dynamically calculate a valid air-to-surface
@@ -179,7 +179,7 @@ func find_path(
             
             var elapsed_edge_time := current_playback.get_elapsed_time_scaled()
             if elapsed_edge_time < current_edge.duration:
-                air_to_surface_edge = air_to_surface_calculator \
+                from_air_edge = from_air_calculator \
                         .create_edge_from_part_of_other_edge(
                                 current_edge,
                                 elapsed_edge_time,
@@ -189,10 +189,10 @@ func find_path(
                         "Unable to re-use current edge as air-to-surface " +
                         "edge: edge playback time exceeds edge duration")
         
-        if air_to_surface_edge != null:
+        if from_air_edge != null:
             # We were able to calculate a valid air-to-surface edge.
-            graph_origin = air_to_surface_edge.end_position_along_surface
-            prefix_edge = air_to_surface_edge
+            graph_origin = from_air_edge.end_position_along_surface
+            prefix_edge = from_air_edge
         else:
             return null
     
