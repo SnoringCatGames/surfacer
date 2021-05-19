@@ -66,7 +66,7 @@ func _unhandled_input(event: InputEvent) -> void:
             inspector.select_edge_or_surface(
                     first_target,
                     surface_position,
-                    EdgeType.JUMP_INTER_SURFACE_EDGE,
+                    EdgeType.JUMP_FROM_SURFACE_EDGE,
                     Surfacer.human_player.graph)
             first_target = null
         

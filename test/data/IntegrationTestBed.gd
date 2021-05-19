@@ -108,7 +108,7 @@ var climb_down_wall_to_floor_calculator: ClimbDownWallToFloorCalculator
 var climb_over_wall_to_floor_calculator: ClimbOverWallToFloorCalculator
 var fall_from_floor_calculator: FallFromFloorCalculator
 var fall_from_wall_calculator: FallFromWallCalculator
-var jump_inter_surface_calculator: JumpInterSurfaceCalculator
+var jump_from_surface_calculator: JumpFromSurfaceCalculator
 var walk_to_ascend_wall_from_floor_calculator: WalkToAscendWallFromFloorCalculator
 
 func before_each() -> void:
@@ -147,7 +147,7 @@ func destroy() -> void:
         node.queue_free()
     
     movement_params = null
-    jump_inter_surface_calculator = null
+    jump_from_surface_calculator = null
     level = null
     platform_graph = null
     player = null
@@ -174,8 +174,8 @@ func set_up_level(data: Dictionary) -> void:
             fall_from_floor_calculator = edge_calculator
         elif edge_calculator is FallFromWallCalculator:
             fall_from_wall_calculator = edge_calculator
-        elif edge_calculator is JumpInterSurfaceCalculator:
-            jump_inter_surface_calculator = edge_calculator
+        elif edge_calculator is JumpFromSurfaceCalculator:
+            jump_from_surface_calculator = edge_calculator
         elif edge_calculator is WalkToAscendWallFromFloorCalculator:
             walk_to_ascend_wall_from_floor_calculator = edge_calculator
         else:
@@ -184,7 +184,7 @@ func set_up_level(data: Dictionary) -> void:
     assert(climb_over_wall_to_floor_calculator != null)
     assert(fall_from_floor_calculator != null)
     assert(fall_from_wall_calculator != null)
-    assert(jump_inter_surface_calculator != null)
+    assert(jump_from_surface_calculator != null)
     assert(walk_to_ascend_wall_from_floor_calculator != null)
     
     _store_surfaces(data)

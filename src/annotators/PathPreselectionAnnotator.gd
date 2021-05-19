@@ -217,7 +217,8 @@ func _draw() -> void:
                 4.0)
 
 func _update_phantom_surface() -> void:
-    if preselection_destination.surface == null:
+    if preselection_destination == null or \
+            preselection_destination.surface == null:
         phantom_surface.vertices = []
         phantom_surface.side = SurfaceSide.NONE
         phantom_surface.normal = Vector2.INF

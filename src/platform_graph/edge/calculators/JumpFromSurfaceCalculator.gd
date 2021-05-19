@@ -1,8 +1,8 @@
-class_name JumpInterSurfaceCalculator
+class_name JumpFromSurfaceCalculator
 extends EdgeCalculator
 
-const NAME := "JumpInterSurfaceCalculator"
-const EDGE_TYPE := EdgeType.JUMP_INTER_SURFACE_EDGE
+const NAME := "JumpFromSurfaceCalculator"
+const EDGE_TYPE := EdgeType.JUMP_FROM_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := true
 
 func _init().(
@@ -27,7 +27,7 @@ func get_all_inter_surface_edges_from_surface(
     var inter_surface_edges_result: InterSurfaceEdgesResult
     var edge_result_metadata: EdgeCalcResultMetadata
     var failed_attempt: FailedEdgeAttempt
-    var edge: JumpInterSurfaceEdge
+    var edge: JumpFromSurfaceEdge
     
     for destination_surface in surfaces_in_jump_range_set:
         # This makes the assumption that traversing through any
@@ -138,7 +138,7 @@ func calculate_edge(
             EdgeCalcResultMetadata.new(false, false)
     
     Gs.profiler.start(
-            "calculate_jump_inter_surface_edge",
+            "calculate_jump_from_surface_edge",
             collision_params.thread_id)
     
     var edge_calc_params := EdgeCalculator.create_edge_calc_params(
@@ -153,7 +153,7 @@ func calculate_edge(
     if edge_calc_params == null:
         # Cannot reach destination from origin.
         Gs.profiler.stop_with_optional_metadata(
-                "calculate_jump_inter_surface_edge",
+                "calculate_jump_from_surface_edge",
                 collision_params.thread_id,
                 edge_result_metadata)
         return null
@@ -163,7 +163,7 @@ func calculate_edge(
             edge_calc_params)
     
     Gs.profiler.stop_with_optional_metadata(
-            "calculate_jump_inter_surface_edge",
+            "calculate_jump_from_surface_edge",
             collision_params.thread_id,
             edge_result_metadata)
     return edge
@@ -175,7 +175,7 @@ func optimize_edge_jump_position_for_path(
         previous_velocity_end_x: float,
         previous_edge: IntraSurfaceEdge,
         edge: Edge) -> void:
-    assert(edge is JumpInterSurfaceEdge)
+    assert(edge is JumpFromSurfaceEdge)
     
     EdgeCalculator.optimize_edge_jump_position_for_path_helper(
             collision_params,
@@ -192,7 +192,7 @@ func optimize_edge_land_position_for_path(
         edge_index: int,
         edge: Edge,
         next_edge: IntraSurfaceEdge) -> void:
-    assert(edge is JumpInterSurfaceEdge)
+    assert(edge is JumpFromSurfaceEdge)
     
     EdgeCalculator.optimize_edge_land_position_for_path_helper(
             collision_params,
@@ -204,9 +204,9 @@ func optimize_edge_land_position_for_path(
 
 func create_edge_from_edge_calc_params(
         edge_result_metadata: EdgeCalcResultMetadata,
-        edge_calc_params: EdgeCalcParams) -> JumpInterSurfaceEdge:
+        edge_calc_params: EdgeCalcParams) -> JumpFromSurfaceEdge:
     Gs.profiler.start(
-            "calculate_jump_inter_surface_steps",
+            "calculate_jump_from_surface_steps",
             edge_calc_params.collision_params.thread_id)
     Gs.profiler.start(
             "narrow_phase_edge_calculation",
@@ -221,7 +221,7 @@ func create_edge_from_edge_calc_params(
             edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
     Gs.profiler.stop_with_optional_metadata(
-            "calculate_jump_inter_surface_steps",
+            "calculate_jump_from_surface_steps",
             edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
     if calc_result == null:
@@ -248,7 +248,7 @@ func create_edge_from_edge_calc_params(
     var velocity_end: Vector2 = \
             calc_result.horizontal_steps.back().velocity_step_end
     
-    var edge := JumpInterSurfaceEdge.new(
+    var edge := JumpFromSurfaceEdge.new(
             self,
             edge_calc_params.origin_position,
             edge_calc_params.destination_position,
