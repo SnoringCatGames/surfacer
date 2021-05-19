@@ -13,6 +13,9 @@ const EDGE_END_CONE_LENGTH := EDGE_WAYPOINT_RADIUS * 2.0
 
 const EDGE_INSTRUCTION_INDICATOR_LENGTH := 24
 
+const IN_AIR_DESTINATION_INDICATOR_CONE_COUNT := 3
+const IN_AIR_DESTINATION_INDICATOR_SIZE_RATIO := 0.8
+
 const ADJACENT_VERTEX_TOO_CLOSE_DISTANCE_SQUARED_THRESHOLD := 0.25
 
 static func draw_origin_marker(
@@ -70,7 +73,9 @@ static func draw_destination_marker(
         
         var cone_end_point := destination.target_point
         
-        var cone_center_displacement := cone_length * SQRT_TWO / 2.0
+        var cone_center_displacement := \
+                cone_length * SQRT_TWO / 2.0 * \
+                IN_AIR_DESTINATION_INDICATOR_SIZE_RATIO
         var circle_centers := [
             cone_end_point + Vector2(
                     cone_center_displacement,
@@ -86,12 +91,15 @@ static func draw_destination_marker(
                     -cone_center_displacement),
         ]
         
-        for circle_center in circle_centers:
+        for i in IN_AIR_DESTINATION_INDICATOR_CONE_COUNT:
+            var circle_offset := Vector2(0.0, -cone_center_displacement) \
+                    .rotated((2.0 * PI * i) / \
+                            IN_AIR_DESTINATION_INDICATOR_CONE_COUNT)
             draw_ice_cream_cone(
                     canvas,
                     cone_end_point,
-                    circle_center,
-                    circle_radius,
+                    cone_end_point + circle_offset,
+                    circle_radius * IN_AIR_DESTINATION_INDICATOR_SIZE_RATIO,
                     color,
                     is_filled,
                     border_width,
