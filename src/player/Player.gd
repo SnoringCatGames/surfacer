@@ -328,7 +328,7 @@ func _handle_pointer_selections() -> void:
         
         if new_selection.get_is_selection_navigatable():
             last_selection.copy(new_selection)
-            navigator.navigate_to_position(last_selection)
+            navigator.navigate_path(last_selection.path)
         else:
             print_msg("TARGET IS TOO FAR FROM ANY SURFACE")
         

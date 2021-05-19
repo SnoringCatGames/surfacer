@@ -33,7 +33,7 @@ func _process(_delta_sec: float) -> void:
                 VALID_SELECTION_COLOR if \
                 Gs.geometry.are_position_wrappers_equal_with_epsilon(
                         player.last_selection.navigation_destination,
-                        player.navigator.current_destination) else \
+                        player.navigator.get_destination()) else \
                 INVALID_SELECTION_COLOR
         selection_position_to_animate = \
                 player.last_selection.navigation_destination

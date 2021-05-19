@@ -41,7 +41,6 @@ var _predictions_container: Node2D
 var player: Player
 var path_front_end_trim_radius: float
 var preselection_destination: PositionAlongSurface = null
-var preselection_nearby_position_along_surface: PositionAlongSurface = null
 var animation_start_time := -PRESELECTION_DURATION_SEC
 var animation_progress := 1.0
 var phantom_surface := Surface.new(
@@ -50,7 +49,7 @@ var phantom_surface := Surface.new(
         null,
         [])
 var phantom_position_along_surface := PositionAlongSurface.new()
-var phantom_path: PlatformGraphPath
+var preselection_path: PlatformGraphPath
 
 func _init(player: Player) -> void:
     self.player = player
@@ -91,8 +90,7 @@ func _process(_delta_sec: float) -> void:
         
         preselection_destination = \
                 player.pre_selection.navigation_destination
-        preselection_nearby_position_along_surface = \
-                player.pre_selection.nearby_position_along_surface
+        preselection_path = player.pre_selection.path
         
         if did_preselection_surface_change:
             animation_start_time = current_time
@@ -102,26 +100,22 @@ func _process(_delta_sec: float) -> void:
         if preselection_destination != null:
             _update_phantom_position_along_surface()
             
-            phantom_path = player.navigator.find_path(
-                    preselection_destination,
-                    preselection_nearby_position_along_surface)
-            
-            if phantom_path != null:
+            if preselection_path != null:
                 # Update the human-player prediction.
                 player.prediction.match_path(
-                        phantom_path,
-                        phantom_path.duration)
+                        preselection_path,
+                        preselection_path.duration)
                 
                 # Update computer-player predictions.
                 for computer_player in Gs.utils.get_all_nodes_in_group(
                         Surfacer.group_name_computer_players):
                     computer_player.prediction.match_navigator(
                             computer_player.navigator,
-                            phantom_path.duration)
+                            preselection_path.duration)
         else:
-            phantom_path = null
+            preselection_path = null
         
-        _predictions_container.visible = phantom_path != null
+        _predictions_container.visible = preselection_path != null
         
         update()
     
@@ -143,7 +137,7 @@ func _draw() -> void:
     var surface_base_color: Color
     var position_indicator_base_color: Color
     var path_base_color: Color
-    if phantom_path != null:
+    if preselection_path != null:
         if player.is_human_player:
             surface_base_color = HUMAN_PRESELECTION_SURFACE_COLOR
             position_indicator_base_color = \
@@ -160,7 +154,7 @@ func _draw() -> void:
     
     if Surfacer.is_preselection_trajectory_shown:
         # Draw path.
-        if phantom_path != null:
+        if preselection_path != null:
             var path_alpha := \
                     path_base_color.a * alpha_multiplier
             var path_color := Color(
@@ -170,7 +164,7 @@ func _draw() -> void:
                     path_alpha)
             Gs.draw_utils.draw_path(
                     self,
-                    phantom_path,
+                    preselection_path,
                     PRESELECTION_PATH_STROKE_WIDTH,
                     path_color,
                     path_front_end_trim_radius,

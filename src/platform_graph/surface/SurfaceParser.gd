@@ -963,11 +963,13 @@ class _TmpSurface extends Object:
 static func find_closest_position_on_a_surface(
         target: Vector2,
         player,
-        max_distance_squared_threshold := INF) -> PositionAlongSurface:
+        max_distance_squared_threshold := INF,
+        surfaces = []) -> PositionAlongSurface:
+    surfaces = surfaces if !surfaces.empty() else player.possible_surfaces_set
     var position := PositionAlongSurface.new()
     var surface := get_closest_surface(
             target,
-            player.possible_surfaces_set)
+            surfaces)
     position.match_surface_target_and_collider(
             surface,
             target,
@@ -986,8 +988,8 @@ const CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01
 # Gets the closest surface to the given point.
 static func get_closest_surface(
         target: Vector2,
-        surfaces_set: Dictionary) -> Surface:
-    assert(!surfaces_set.empty())
+        surfaces) -> Surface:
+    assert(!surfaces.empty())
     
     var closest_point: Vector2
     var is_closest_to_first_point: bool
@@ -999,7 +1001,7 @@ static func get_closest_surface(
     var closest_distance_squared: float = INF
     var current_distance_squared: float
     
-    for current_surface in surfaces_set:
+    for current_surface in surfaces:
         current_distance_squared = \
                 Gs.geometry.distance_squared_from_point_to_rect(
                         target,
