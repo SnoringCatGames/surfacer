@@ -17,14 +17,12 @@ var surface_to_air_calculator: JumpFromSurfaceCalculator
 var is_currently_navigating := false
 var has_reached_destination := false
 var just_reached_destination := false
-var current_destination: PositionAlongSurface
-var selection: PointerSelectionPosition
 var previous_path: PlatformGraphPath
-var current_path: PlatformGraphPath
-var current_path_start_time_scaled := INF
-var current_edge: Edge
-var current_edge_index := -1
-var current_playback: InstructionsPlayback
+var path: PlatformGraphPath
+var path_start_time_scaled := INF
+var edge: Edge
+var edge_index := -1
+var playback: InstructionsPlayback
 var actions_might_be_dirty := false
 var current_navigation_attempt_count := 0
 
@@ -42,33 +40,10 @@ func _init(
     self.from_air_calculator = FromAirCalculator.new()
     self.surface_to_air_calculator = JumpFromSurfaceCalculator.new()
 
-# Starts a new navigation to the given destination.
-func navigate_to_position(
-        destination_or_selection,
+func navigate_path(
+        path: PlatformGraphPath,
         is_retry := false) -> bool:
-    Gs.profiler.start("navigator_navigate_to_position")
-    
-    var destination: PositionAlongSurface = \
-            destination_or_selection.navigation_destination if \
-            destination_or_selection is PointerSelectionPosition else \
-            destination_or_selection
-    var graph_destination: PositionAlongSurface = \
-            destination_or_selection.nearby_position_along_surface if \
-            destination_or_selection is PointerSelectionPosition else \
-            null
-    
-    # Nudge the destination away from any concave neighbor surfaces, if
-    # necessary.
-    destination = PositionAlongSurface.new(destination)
-    JumpLandPositionsUtils \
-            .ensure_position_is_not_too_close_to_concave_neighbor(
-                    player.movement_params,
-                    destination)
-    
-    Gs.profiler.start("navigator_find_path")
-    var path := find_path(destination, graph_destination)
-    var duration_find_path: float = \
-            Gs.profiler.stop("navigator_find_path")
+    Gs.profiler.start("navigator_navigate_path")
     
     var previous_navigation_attempt_count := current_navigation_attempt_count
     _reset()
@@ -77,12 +52,17 @@ func navigate_to_position(
     
     if path == null:
         # Destination cannot be reached from origin.
-        Gs.profiler.stop("navigator_navigate_to_position")
-        print_msg("CANNOT NAVIGATE TO TARGET: %s", destination.to_string())
+        Gs.profiler.stop("navigator_navigate_path")
+        print_msg("CANNOT NAVIGATE NULL PATH")
         return false
         
     else:
         # Destination can be reached from origin.
+        
+        assert(Gs.geometry.are_points_equal_with_epsilon(
+                player.position,
+                path.origin.target_point,
+                1.0))
         
         _interleave_intra_surface_edges(
                 graph.collision_params,
@@ -98,21 +78,15 @@ func navigate_to_position(
         
         path.update_distance_and_duration()
         
-        selection = \
-                destination_or_selection if \
-                destination_or_selection is PointerSelectionPosition else \
-                null
-        
-        current_destination = destination
-        current_path = path
-        current_path_start_time_scaled = Gs.time.get_scaled_play_time_sec()
+        self.path = path
+        self.path_start_time_scaled = Gs.time.get_scaled_play_time_sec()
         is_currently_navigating = true
         has_reached_destination = false
         just_reached_destination = false
         current_navigation_attempt_count += 1
         
         var duration_navigate_to_position: float = \
-                Gs.profiler.stop("navigator_navigate_to_position")
+                Gs.profiler.stop("navigator_navigate_path")
         
         var format_string_template := (
                 "STARTING PATH NAV:   %8.3fs; {" +
@@ -120,16 +94,14 @@ func navigate_to_position(
                 "\n\tpath: %s," +
                 "\n\ttimings: {" +
                 "\n\t\tduration_navigate_to_position: %sms" +
-                "\n\t\tduration_find_path: %sms" +
                 "\n\t\tduration_optimize_edges_for_approach: %sms" +
                 "\n\t}" +
                 "\n}")
         var format_string_arguments := [
             Gs.time.get_play_time_sec(),
-            destination.to_string(),
+            path.destination.to_string(),
             path.to_string_with_newlines(1),
             duration_navigate_to_position,
-            duration_find_path,
             duration_optimize_edges_for_approach,
         ]
         print_msg(format_string_template, format_string_arguments)
@@ -142,9 +114,40 @@ func navigate_to_position(
         
         return true
 
+# Starts a new navigation to the given destination.
+func navigate_to_position(
+        destination: PositionAlongSurface,
+        graph_destination_for_in_air_destination: PositionAlongSurface = null,
+        is_retry := false) -> bool:
+    # Nudge the destination away from any concave neighbor surfaces, if
+    # necessary.
+    destination = PositionAlongSurface.new(destination)
+    JumpLandPositionsUtils \
+            .ensure_position_is_not_too_close_to_concave_neighbor(
+                    player.movement_params,
+                    destination)
+    
+    if graph_destination_for_in_air_destination != null:    
+        # Nudge the graph-destination away from any concave neighbor surfaces,
+        # if necessary.
+        graph_destination_for_in_air_destination = PositionAlongSurface.new(
+                graph_destination_for_in_air_destination)
+        JumpLandPositionsUtils \
+                .ensure_position_is_not_too_close_to_concave_neighbor(
+                        player.movement_params,
+                        graph_destination_for_in_air_destination)
+    
+    var path := find_path(
+            destination, graph_destination_for_in_air_destination)
+    
+    return navigate_path(path, is_retry)
+
 func find_path(
         destination: PositionAlongSurface,
-        graph_destination: PositionAlongSurface = null) -> PlatformGraphPath:
+        graph_destination_for_in_air_destination: PositionAlongSurface = \
+                null) -> PlatformGraphPath:
+    Gs.profiler.start("navigator_find_path")
+    
     var graph_origin: PositionAlongSurface
     var prefix_edge: FromAirEdge
     var suffix_edge: JumpFromSurfaceEdge
@@ -173,7 +176,7 @@ func find_path(
         
         if from_air_edge == null and \
                 is_currently_navigating and \
-                current_edge.get_end_surface() != null:
+                edge.get_end_surface() != null:
             # We weren't able to dynamically calculate a valid air-to-surface
             # edge from the current in-air position, but the player was already
             # navigating along a valid edge to a surface, so let's just re-use
@@ -183,11 +186,11 @@ func find_path(
             #       been able to find a valid land trajectory above.
             Gs.logger.print("Unable to calculate air-to-surface edge")
             
-            var elapsed_edge_time := current_playback.get_elapsed_time_scaled()
-            if elapsed_edge_time < current_edge.duration:
+            var elapsed_edge_time := playback.get_elapsed_time_scaled()
+            if elapsed_edge_time < edge.duration:
                 from_air_edge = from_air_calculator \
                         .create_edge_from_part_of_other_edge(
-                                current_edge,
+                                edge,
                                 elapsed_edge_time,
                                 player)
             else:
@@ -200,36 +203,29 @@ func find_path(
             graph_origin = from_air_edge.end_position_along_surface
             prefix_edge = from_air_edge
         else:
+            Gs.profiler.stop("navigator_find_path")
             return null
     
     # Handle the end of the path.
     if destination.surface != null:
         # Find a path to an ending player-position along a surface.
-        graph_destination = destination
+        graph_destination_for_in_air_destination = destination
     else:
         # Find a path to an ending player-position in the air.
         
-        assert(graph_destination != null)
-        
-        # Nudge the graph-destination away from any concave neighbor surfaces,
-        # if necessary.
-        graph_destination = PositionAlongSurface.new(graph_destination)
-        JumpLandPositionsUtils \
-                .ensure_position_is_not_too_close_to_concave_neighbor(
-                        player.movement_params,
-                        graph_destination)
+        assert(graph_destination_for_in_air_destination != null)
         
         # Try to dynamically calculate a valid surface-to-air edge.
         var velocity_start := JumpLandPositionsUtils.get_velocity_start(
                 player.movement_params,
-                graph_destination.surface,
+                graph_destination_for_in_air_destination.surface,
                 surface_to_air_calculator.is_a_jump_calculator,
                 false,
                 true)
         var surface_to_air_edge := surface_to_air_calculator.calculate_edge(
                 null,
                 graph.collision_params,
-                graph_destination,
+                graph_destination_for_in_air_destination,
                 destination,
                 velocity_start,
                 false,
@@ -240,16 +236,21 @@ func find_path(
             suffix_edge = surface_to_air_edge
         else:
             Gs.logger.print("Unable to calculate surface-to-air edge")
+            Gs.profiler.stop("navigator_find_path")
             return null
     
     var path := graph.find_path(
             graph_origin,
-            graph_destination)
+            graph_destination_for_in_air_destination)
     if path != null:
+        path.graph_destination_for_in_air_destination = \
+                graph_destination_for_in_air_destination
         if prefix_edge != null:
             path.push_front(prefix_edge)
         if suffix_edge != null:
             path.push_back(suffix_edge)
+    
+    Gs.profiler.stop("navigator_find_path")
     
     return path
 
@@ -258,10 +259,10 @@ func stop() -> void:
 
 func _set_reached_destination() -> void:
     if player.movement_params.forces_player_position_to_match_path_at_end:
-        player.set_position(current_edge.get_end())
+        player.set_position(edge.get_end())
     if player.movement_params.forces_player_velocity_to_zero_at_path_end and \
-            current_edge.get_end_surface() != null:
-        match current_edge.get_end_surface().side:
+            edge.get_end_surface() != null:
+        match edge.get_end_surface().side:
             SurfaceSide.FLOOR, SurfaceSide.CEILING:
                 player.velocity.x = 0.0
             SurfaceSide.LEFT_WALL, SurfaceSide.RIGHT_WALL:
@@ -278,19 +279,17 @@ func _set_reached_destination() -> void:
     emit_signal("reached_destination")
 
 func _reset() -> void:
-    if current_path != null:
-        previous_path = current_path
+    if path != null:
+        previous_path = path
     
-    current_destination = null
-    selection = null
-    current_path = null
-    current_path_start_time_scaled = INF
-    current_edge = null
-    current_edge_index = -1
+    path = null
+    path_start_time_scaled = INF
+    edge = null
+    edge_index = -1
     is_currently_navigating = false
     has_reached_destination = false
     just_reached_destination = false
-    current_playback = null
+    playback = null
     instructions_action_source.cancel_all_playback()
     actions_might_be_dirty = true
     current_navigation_attempt_count = 0
@@ -301,22 +300,22 @@ func _start_edge(
         is_starting_navigation_retry := false) -> void:
     Gs.profiler.start("navigator_start_edge")
     
-    current_edge_index = index
-    current_edge = current_path.edges[index]
+    edge_index = index
+    edge = path.edges[index]
     
     if player.movement_params.forces_player_position_to_match_edge_at_start:
-        player.set_position(current_edge.get_start())
+        player.set_position(edge.get_start())
     if player.movement_params.forces_player_velocity_to_match_edge_at_start:
-        player.velocity = current_edge.velocity_start
+        player.velocity = edge.velocity_start
         surface_state.horizontal_acceleration_sign = 0
     
-    current_edge.update_for_surface_state(
+    edge.update_for_surface_state(
             surface_state,
-            current_edge == current_path.edges.back())
-    navigation_state.is_expecting_to_enter_air = current_edge.enters_air
+            edge == path.edges.back())
+    navigation_state.is_expecting_to_enter_air = edge.enters_air
     
-    current_playback = instructions_action_source.start_instructions(
-            current_edge,
+    playback = instructions_action_source.start_instructions(
+            edge,
             Gs.time.get_scaled_play_time_sec())
     
     var duration_start_edge: float = \
@@ -326,7 +325,7 @@ func _start_edge(
             "STARTING EDGE NAV:   %8.3fs; %s; calc duration=%sms"
     var format_string_arguments := [
             Gs.time.get_play_time_sec(),
-            current_edge.to_string_with_newlines(0),
+            edge.to_string_with_newlines(0),
             str(duration_start_edge),
         ]
     print_msg(format_string_template, format_string_arguments)
@@ -342,17 +341,15 @@ func update(
         is_starting_navigation_retry := false) -> void:
     just_reached_destination = false
     
-    var edge_index := current_edge_index
-    
     actions_might_be_dirty = just_started_new_edge
     
     if !is_currently_navigating:
         return
     
-    current_edge.update_navigation_state(
+    edge.update_navigation_state(
             navigation_state,
             surface_state,
-            current_playback,
+            playback,
             just_started_new_edge,
             is_starting_navigation_retry)
     
@@ -371,12 +368,9 @@ func update(
                 [Gs.time.get_play_time_sec(), interruption_type_label])
         
         if player.movement_params.retries_navigation_when_interrupted:
-            var destination_or_selection = \
-                    selection if \
-                    selection != null else \
-                    current_destination
             navigate_to_position(
-                    destination_or_selection,
+                    path.destination,
+                    path.graph_destination_for_in_air_destination,
                     true)
         else:
             _reset()
@@ -385,7 +379,7 @@ func update(
     elif navigation_state.just_reached_end_of_edge:
         print_msg("REACHED END OF EDGE: %8.3fs; %s", [
             Gs.time.get_play_time_sec(),
-            current_edge.get_name(),
+            edge.get_name(),
         ])
     else:
         # Continuing along an edge.
@@ -400,18 +394,18 @@ func update(
         # Cancel the current intra-surface instructions (in case it didn't
         # clear itself).
         instructions_action_source.cancel_playback(
-                current_playback,
+                playback,
                 Gs.time.get_scaled_play_time_sec())
-        current_playback = null
+        playback = null
         
         # Check for the next edge to navigate.
-        var next_edge_index := current_edge_index + 1
-        var was_last_edge := current_path.edges.size() == next_edge_index
+        var next_edge_index := edge_index + 1
+        var was_last_edge := path.edges.size() == next_edge_index
         if was_last_edge:
             var backtracking_edge := \
                     _possibly_backtrack_to_not_protrude_past_surface_end(
                             player.movement_params,
-                            current_edge,
+                            edge,
                             player.position,
                             player.velocity)
             if backtracking_edge == null:
@@ -424,7 +418,7 @@ func update(
                     ]
                 print_msg(format_string_template, format_string_arguments)
                 
-                current_path.edges.push_back(backtracking_edge)
+                path.edges.push_back(backtracking_edge)
                 
                 _start_edge(next_edge_index)
         else:
@@ -439,14 +433,17 @@ func predict_animation_state(
     
     var current_path_elapsed_time := \
             Gs.time.get_scaled_play_time_sec() - \
-            current_path_start_time_scaled
+            path_start_time_scaled
     var prediction_path_time := \
             current_path_elapsed_time + elapsed_time_from_now
     
-    return current_path.predict_animation_state(result, prediction_path_time)
+    return path.predict_animation_state(result, prediction_path_time)
+
+func get_destination() -> PositionAlongSurface:
+    return path.destination if path != null else null
 
 func get_previous_destination() -> PositionAlongSurface:
-    return previous_path.edges.back().end_position_along_surface
+    return previous_path.destination if previous_path != null else null
 
 # Conditionally prints the given message, depending on the Player's
 # configuration.
@@ -464,33 +461,33 @@ func print_msg(
 
 static func _possibly_backtrack_to_not_protrude_past_surface_end(
         movement_params: MovementParams,
-        current_edge: Edge,
-        current_position: Vector2,
-        current_velocity: Vector2) -> IntraSurfaceEdge:
+        edge: Edge,
+        position: Vector2,
+        velocity: Vector2) -> IntraSurfaceEdge:
     if movement_params \
             .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets and \
-            !current_edge.is_backtracking_to_not_protrude_past_surface_end:
-        var surface := current_edge.get_end_surface()
+            !edge.is_backtracking_to_not_protrude_past_surface_end:
+        var surface := edge.get_end_surface()
         
         var position_after_coming_to_a_stop: Vector2
         if surface.side == SurfaceSide.FLOOR:
             var stopping_distance := \
                     MovementUtils.calculate_distance_to_stop_from_friction(
                             movement_params,
-                            abs(current_velocity.x),
+                            abs(velocity.x),
                             movement_params.gravity_fast_fall,
                             movement_params.friction_coefficient)
             var stopping_displacement := \
                     stopping_distance if \
-                    current_velocity.x > 0.0 else \
+                    velocity.x > 0.0 else \
                     -stopping_distance
             position_after_coming_to_a_stop = Vector2(
-                    current_position.x + stopping_displacement,
-                    current_position.y)
+                    position.x + stopping_displacement,
+                    position.y)
         else:
             # TODO: Add support for acceleration and friction along wall and
             #       ceiling surfaces.
-            position_after_coming_to_a_stop = current_position
+            position_after_coming_to_a_stop = position
         
         var would_protrude_past_surface_end_after_coming_to_a_stop := false
         var end_target_point := Vector2.INF
@@ -578,7 +575,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
         if would_protrude_past_surface_end_after_coming_to_a_stop:
             var start_position := PositionAlongSurfaceFactory \
                     .create_position_offset_from_target_point(
-                            current_position,
+                            position,
                             surface,
                             movement_params.collider_half_width_height,
                             true)
@@ -591,7 +588,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
             var backtracking_edge := IntraSurfaceEdge.new(
                     start_position,
                     end_position,
-                    current_velocity,
+                    velocity,
                     movement_params)
             backtracking_edge \
                     .is_backtracking_to_not_protrude_past_surface_end = true

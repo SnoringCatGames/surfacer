@@ -35,9 +35,9 @@ func _physics_process(_delta_sec: float) -> void:
     is_fade_in_progress = fade_progress != previous_fade_progress
     previous_fade_progress = fade_progress
     
-    if navigator.current_path != current_path:
-        current_path = navigator.current_path
-        current_destination = navigator.current_destination
+    if navigator.path != current_path:
+        current_path = navigator.path
+        current_destination = navigator.get_destination()
         if current_path != null and \
                 is_enabled:
             _trigger_fade_in(true)
@@ -120,7 +120,7 @@ func _draw_current_path(
                         .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR
         origin_indicator_fill_color.a *= fade_progress
         self.draw_circle(
-                current_path.origin,
+                current_path.origin.target_point,
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
                 origin_indicator_fill_color)
         var origin_indicator_stroke_color: Color = \
@@ -132,7 +132,7 @@ func _draw_current_path(
         origin_indicator_stroke_color.a *= fade_progress
         Gs.draw_utils.draw_circle_outline(
                 self,
-                current_path.origin,
+                current_path.origin.target_point,
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
                 origin_indicator_stroke_color,
                 AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,

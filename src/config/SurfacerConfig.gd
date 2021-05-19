@@ -114,7 +114,7 @@ var non_surface_parser_metric_keys := [
     "calculate_steps_between_waypoints_without_backtracking_on_height",
     "calculate_steps_between_waypoints_with_backtracking_on_height",
     
-    "navigator_navigate_to_position",
+    "navigator_navigate_path",
     "navigator_find_path",
     "navigator_optimize_edges_for_approach",
     "navigator_start_edge",

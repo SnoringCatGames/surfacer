@@ -15,8 +15,8 @@ func _init(navigator: Navigator) -> void:
     self.navigator = navigator
 
 func _physics_process(_delta_sec: float) -> void:
-    if navigator.current_path != current_path:
-        current_path = navigator.current_path
+    if navigator.path != current_path:
+        current_path = navigator.path
         if current_path != null:
             current_path_start_time = Gs.time.get_play_time_sec()
             is_pulse_active = true

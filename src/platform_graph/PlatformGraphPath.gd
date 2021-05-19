@@ -6,16 +6,19 @@ extends Reference
 # Array<Edge>
 var edges: Array
 
-var origin := Vector2.INF
-var destination := Vector2.INF
+var origin: PositionAlongSurface
+var destination: PositionAlongSurface
+var graph_destination_for_in_air_destination: PositionAlongSurface
 
 var distance: float
 var duration: float
 
+var is_optimized := false
+
 func _init(edges: Array) -> void:
     self.edges = edges
-    self.origin = edges.front().get_start()
-    self.destination = edges.back().get_end()
+    self.origin = edges.front().start_position_along_surface
+    self.destination = edges.back().end_position_along_surface
     update_distance_and_duration()
 
 func update_distance_and_duration() -> void:
@@ -36,17 +39,17 @@ func _calculate_duration() -> float:
 
 func push_front(edge: Edge) -> void:
     assert(Gs.geometry.are_points_equal_with_epsilon(
-            edge.get_end(),
-            origin))
+            edge.end_position_along_surface.target_point,
+            origin.target_point))
     self.edges.push_front(edge)
-    self.origin = edge.get_start()
+    self.origin = edge.start_position_along_surface
 
 func push_back(edge: Edge) -> void:
     assert(Gs.geometry.are_points_equal_with_epsilon(
-            edge.get_start(),
-            destination))
+            edge.start_position_along_surface.target_point,
+            destination.target_point))
     self.edges.push_back(edge)
-    self.destination = edge.get_end()
+    self.destination = edge.end_position_along_surface
 
 func predict_animation_state(
         result: PlayerAnimationState,
@@ -95,9 +98,9 @@ func to_string_with_newlines(indent_level := 0) -> String:
             "\n%s}")
     var format_string_arguments := [
             indent_level_str,
-            String(origin),
+            String(origin.target_point),
             indent_level_str,
-            String(destination),
+            String(destination.target_point),
             indent_level_str,
             edges_str,
             indent_level_str,
