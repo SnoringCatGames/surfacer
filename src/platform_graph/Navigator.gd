@@ -18,6 +18,7 @@ var is_currently_navigating := false
 var has_reached_destination := false
 var just_reached_destination := false
 var current_destination: PositionAlongSurface
+var selection: PointerSelectionPosition
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
 var current_path_start_time_scaled := INF
@@ -96,6 +97,11 @@ func navigate_to_position(
                 "navigator_optimize_edges_for_approach")
         
         path.update_distance_and_duration()
+        
+        selection = \
+                destination_or_selection if \
+                destination_or_selection is PointerSelectionPosition else \
+                null
         
         current_destination = destination
         current_path = path
@@ -276,6 +282,7 @@ func _reset() -> void:
         previous_path = current_path
     
     current_destination = null
+    selection = null
     current_path = null
     current_path_start_time_scaled = INF
     current_edge = null
@@ -364,8 +371,12 @@ func update(
                 [Gs.time.get_play_time_sec(), interruption_type_label])
         
         if player.movement_params.retries_navigation_when_interrupted:
+            var destination_or_selection = \
+                    selection if \
+                    selection != null else \
+                    current_destination
             navigate_to_position(
-                    current_destination,
+                    destination_or_selection,
                     true)
         else:
             _reset()
