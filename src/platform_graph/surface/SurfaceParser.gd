@@ -3,6 +3,9 @@ extends Reference
 
 # TODO: Map the TileMap into an RTree or QuadTree.
 
+const CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET := 0.02
+const CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01
+
 # Collections of surfaces.
 # Array<Surface>
 var floors := []
@@ -959,36 +962,56 @@ class _TmpSurface extends Object:
     var tile_map_indices: Array
     var surface: Surface
 
-# Finds the closest PositionAlongSurface to the given target point.
 static func find_closest_position_on_a_surface(
         target: Vector2,
         player,
         max_distance_squared_threshold := INF,
         surfaces = []) -> PositionAlongSurface:
-    surfaces = surfaces if !surfaces.empty() else player.possible_surfaces_set
-    var position := PositionAlongSurface.new()
-    var surface := get_closest_surface(
+    var positions := find_closest_positions_on_a_surface(
             target,
+            player,
+            1,
+            max_distance_squared_threshold,
             surfaces)
-    position.match_surface_target_and_collider(
-            surface,
-            target,
-            player.movement_params.collider_half_width_height,
-            true,
-            true)
-    if position.target_point.distance_squared_to(target) <= \
-            max_distance_squared_threshold:
-        return position
-    else:
+    if positions.empty():
         return null
+    else:
+        return positions[0]
 
-const CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET := 0.02
-const CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET := 0.01
+static func find_closest_positions_on_a_surface(
+        target: Vector2,
+        player,
+        position_count: int,
+        max_distance_squared_threshold := INF,
+        surfaces = []) -> Array:
+    surfaces = surfaces if !surfaces.empty() else player.possible_surfaces_set
+    var closest_surfaces := get_closest_surfaces(
+            target,
+            surfaces,
+            position_count,
+            max_distance_squared_threshold)
+    
+    var closest_positions := []
+    closest_positions.resize(closest_surfaces.size())
+    
+    for i in closest_surfaces.size():
+        var position := PositionAlongSurface.new()
+        position.match_surface_target_and_collider(
+                closest_surfaces[i],
+                target,
+                player.movement_params.collider_half_width_height,
+                true,
+                true)
+        closest_positions[i] = position
+    
+    return closest_positions
 
 # Gets the closest surface to the given point.
-static func get_closest_surface(
+static func get_closest_surfaces(
         target: Vector2,
-        surfaces) -> Surface:
+        surfaces,
+        surface_count: int,
+        max_distance_squared_threshold := INF) -> Array:
     assert(!surfaces.empty())
     
     var closest_point: Vector2
@@ -997,22 +1020,23 @@ static func get_closest_surface(
     var first_point_diff: Vector2
     var last_point_diff: Vector2
     var is_more_than_45_deg_from_normal_from_corner: bool
-    var closest_surface: Surface
-    var closest_distance_squared: float = INF
     var current_distance_squared: float
+    var next_distance_squared_to_beat := max_distance_squared_threshold
+    
+    var closest_surfaces_and_distances := []
     
     for current_surface in surfaces:
         current_distance_squared = \
                 Gs.geometry.distance_squared_from_point_to_rect(
                         target,
                         current_surface.bounding_box)
-        if current_distance_squared < closest_distance_squared:
+        if current_distance_squared < next_distance_squared_to_beat:
             closest_point = Gs.geometry.get_closest_point_on_polyline_to_point(
                     target,
                     current_surface.vertices)
             current_distance_squared = \
                     target.distance_squared_to(closest_point)
-            if current_distance_squared < closest_distance_squared:
+            if current_distance_squared < next_distance_squared_to_beat:
                 is_closest_to_first_point = \
                         Gs.geometry.are_points_equal_with_epsilon(
                                 closest_point,
@@ -1074,12 +1098,47 @@ static func get_closest_surface(
                             CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET if \
                             is_more_than_45_deg_from_normal_from_corner else \
                             CORNER_TARGET_MORE_PREFERRED_SURFACE_SIDE_OFFSET
-                    
-                if current_distance_squared < closest_distance_squared:
-                    closest_distance_squared = current_distance_squared
-                    closest_surface = current_surface
+                
+                var was_added := maybe_add_surface_to_closest_n_collection(
+                        closest_surfaces_and_distances,
+                        [current_surface, current_distance_squared],
+                        surface_count)
+                if was_added:
+                    next_distance_squared_to_beat = \
+                            closest_surfaces_and_distances[ \
+                                    surface_count - 1][1] if \
+                            closest_surfaces_and_distances.size() == \
+                                    surface_count else \
+                            max_distance_squared_threshold
     
-    return closest_surface
+    var closest_surfaces := []
+    closest_surfaces.resize(closest_surfaces_and_distances.size())
+    for i in closest_surfaces_and_distances.size():
+        closest_surfaces[i] = closest_surfaces_and_distances[i][0]
+    
+    return closest_surfaces
+
+static func maybe_add_surface_to_closest_n_collection(
+        collection: Array,
+        surface_and_distance: Array,
+        n: int) -> bool:
+    if collection.size() < n:
+        collection.push_back(surface_and_distance)
+        collection.sort_custom(_SurfaceAndDistanceComparator, "sort_ascending")
+        return true
+    else:
+        if surface_and_distance[1] < collection[n - 1][1]:
+            collection[n - 1] = surface_and_distance
+            collection.sort_custom(
+                    _SurfaceAndDistanceComparator, "sort_ascending")
+            return true
+    return false
+
+class _SurfaceAndDistanceComparator:
+    static func sort_ascending(a: Array, b: Array):
+        if a[1] < b[1]:
+            return true
+        return false
 
 func load_from_json_object(
         json_object: Dictionary,
