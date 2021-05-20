@@ -82,8 +82,6 @@ func navigate_path(
         var duration_optimize_edges_for_approach: float = Gs.profiler.stop(
                 "navigator_optimize_edges_for_approach")
         
-        path.update_distance_and_duration()
-        
         self.path = path
         self.path_start_time_scaled = Gs.time.get_scaled_play_time_sec()
         is_currently_navigating = true
@@ -222,20 +220,9 @@ func find_path(
         assert(graph_destination_for_in_air_destination != null)
         
         # Try to dynamically calculate a valid surface-to-air edge.
-        var velocity_start := JumpLandPositionsUtils.get_velocity_start(
-                player.movement_params,
-                graph_destination_for_in_air_destination.surface,
-                surface_to_air_calculator.is_a_jump_calculator,
-                false,
-                true)
-        var surface_to_air_edge := surface_to_air_calculator.calculate_edge(
-                null,
-                graph.collision_params,
+        var surface_to_air_edge := _calculate_surface_to_air_edge(
                 graph_destination_for_in_air_destination,
-                destination,
-                velocity_start,
-                false,
-                false)
+                destination)
         
         if surface_to_air_edge != null:
             # We were able to calculate a valid surface-to-air edge.
@@ -259,6 +246,24 @@ func find_path(
     Gs.profiler.stop("navigator_find_path")
     
     return path
+
+func _calculate_surface_to_air_edge(
+        start: PositionAlongSurface,
+        end: PositionAlongSurface) -> JumpFromSurfaceEdge:
+    var velocity_start := JumpLandPositionsUtils.get_velocity_start(
+            player.movement_params,
+            start.surface,
+            surface_to_air_calculator.is_a_jump_calculator,
+            false,
+            true)
+    return surface_to_air_calculator.calculate_edge(
+            null,
+            graph.collision_params,
+            start,
+            end,
+            velocity_start,
+            false,
+            false) as JumpFromSurfaceEdge
 
 func stop() -> void:
     _reset()
@@ -607,11 +612,15 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
 # Tries to update each jump edge to jump from the earliest point possible along
 # the surface rather than from the safe end/closest point that was used at
 # build-time when calculating possible edges.
-# - This also updates start velocity when updating start position.
-static func _optimize_edges_for_approach(
+# -   This also updates start velocity when updating start position.
+func _optimize_edges_for_approach(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
         velocity_start: Vector2) -> void:
+    if path.is_optimized:
+        # Already optimized.
+        return
+    
     var movement_params := collision_params.movement_params
     
     # At runtime, after finding a path through build-time-calculated edges, try
@@ -623,6 +632,40 @@ static func _optimize_edges_for_approach(
     # allowed from the ramp-up distance along the edge, rather than either the
     # fixed zero or max-speed value used for the build-time-calculated edge
     # state.
+    
+    if movement_params.optimizes_edge_jump_positions_at_run_time and \
+            path.destination.surface == null:
+        # Optimize jump-off point to reach in-air destination.
+        
+        var index_of_earliest_possible_edge_to_replace := max(0,
+                path.edges.size() - 1 - movement_params \
+                        .max_edges_to_remove_from_end_of_path_for_optimization_to_in_air_destination)
+        for i in range(
+                index_of_earliest_possible_edge_to_replace, path.edges.size()):
+            var jump_off_surface: Surface = path.edges[i].get_start_surface()
+            if jump_off_surface == null:
+                continue
+            
+            var closest_jump_off_point := PositionAlongSurface.new()
+            closest_jump_off_point.match_surface_target_and_collider(
+                    jump_off_surface,
+                    path.destination.target_point,
+                    movement_params.collider_half_width_height,
+                    true,
+                    true)
+            
+            var surface_to_air_edge := _calculate_surface_to_air_edge(
+                    closest_jump_off_point, path.destination)
+            if surface_to_air_edge == null:
+                continue
+            
+            # We found a position on an earlier surface that we can jump from,
+            # so remove the old edges after this.
+            path.edges[i] = surface_to_air_edge
+            path.edges.resize(i + 1)
+            path.graph_destination_for_in_air_destination = \
+                    closest_jump_off_point
+            break
     
     if movement_params.optimizes_edge_jump_positions_at_run_time:
         # Optimize jump positions.
@@ -765,6 +808,14 @@ static func _optimize_edges_for_approach(
                 last_edge.update_terminal(
                         false,
                         target_point)
+    
+    if movement_params.optimizes_edge_jump_positions_at_run_time or \
+            movement_params.optimizes_edge_land_positions_at_run_time or \
+            movement_params \
+            .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets:
+        path.update_distance_and_duration()
+    
+    path.is_optimized = true
 
 # Inserts extra intra-surface between any edges that land and then immediately
 # jump from the same position, since the land position could be off due to
