@@ -76,7 +76,7 @@ func _update_expected_position_along_surface(
     else:
         position.target_projection_onto_surface = Vector2.INF
 
-func _check_did_just_reach_destination(
+func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:

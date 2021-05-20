@@ -261,10 +261,34 @@ func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
+    if end_position_along_surface.surface == null:
+        return _check_did_just_reach_in_air_destination(
+                navigation_state,
+                surface_state,
+                playback)
+    else:
+        return _check_did_just_reach_surface_destination(
+                navigation_state,
+                surface_state,
+                playback)
+
+func _check_did_just_reach_surface_destination(
+        navigation_state: PlayerNavigationState,
+        surface_state: PlayerSurfaceState,
+        playback) -> bool:
     Gs.logger.error(
-            "Abstract Edge._check_did_just_reach_destination is not " +
+            "Abstract Edge._check_did_just_reach_surface_destination is not " +
             "implemented")
     return false
+
+func _check_did_just_reach_in_air_destination(
+        navigation_state: PlayerNavigationState,
+        surface_state: PlayerSurfaceState,
+        playback) -> bool:
+    return surface_state.center_position.distance_squared_to(
+            end_position_along_surface.target_point) < \
+            movement_params \
+                    .reached_in_air_destination_distance_squared_threshold
 
 func get_weight() -> float:
     # Use either the distance or the duration as the weight for the edge.
