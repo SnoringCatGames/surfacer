@@ -321,7 +321,8 @@ static func optimize_edge_jump_position_for_path_helper(
     
     var movement_params := collision_params.movement_params
     
-    var previous_edge_displacement := previous_edge.get_end() - previous_edge.get_start()
+    var previous_edge_displacement := \
+            previous_edge.get_end() - previous_edge.get_start()
     
     var is_horizontal_surface := \
             previous_edge.get_start_surface() != null and \
