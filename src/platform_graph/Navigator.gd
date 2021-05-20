@@ -74,13 +74,10 @@ func navigate_path(
                 graph.collision_params,
                 path)
         
-        Gs.profiler.start("navigator_optimize_edges_for_approach")
         _optimize_edges_for_approach(
                 graph.collision_params,
                 path,
                 player.velocity)
-        var duration_optimize_edges_for_approach: float = Gs.profiler.stop(
-                "navigator_optimize_edges_for_approach")
         
         self.path = path
         self.path_start_time_scaled = Gs.time.get_scaled_play_time_sec()
@@ -98,7 +95,6 @@ func navigate_path(
                 "\n\tpath: %s," +
                 "\n\ttimings: {" +
                 "\n\t\tduration_navigate_to_position: %sms" +
-                "\n\t\tduration_optimize_edges_for_approach: %sms" +
                 "\n\t}" +
                 "\n}")
         var format_string_arguments := [
@@ -106,7 +102,6 @@ func navigate_path(
             path.destination.to_string(),
             path.to_string_with_newlines(1),
             duration_navigate_to_position,
-            duration_optimize_edges_for_approach,
         ]
         print_msg(format_string_template, format_string_arguments)
         
@@ -244,6 +239,12 @@ func find_path(
             path.push_back(suffix_edge)
     
     Gs.profiler.stop("navigator_find_path")
+    
+    if player.movement_params.also_optimizes_preselection_path:
+        _optimize_edges_for_approach(
+                graph.collision_params,
+                path,
+                player.velocity)
     
     return path
 
@@ -621,6 +622,8 @@ func _optimize_edges_for_approach(
         # Already optimized.
         return
     
+    Gs.profiler.start("navigator_optimize_edges_for_approach")
+    
     var movement_params := collision_params.movement_params
     
     # At runtime, after finding a path through build-time-calculated edges, try
@@ -816,6 +819,8 @@ func _optimize_edges_for_approach(
         path.update_distance_and_duration()
     
     path.is_optimized = true
+    
+    Gs.profiler.stop("navigator_optimize_edges_for_approach")
 
 # Inserts extra intra-surface between any edges that land and then immediately
 # jump from the same position, since the land position could be off due to

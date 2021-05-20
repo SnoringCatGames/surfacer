@@ -57,6 +57,7 @@ var minimizes_velocity_change_when_jumping := true
 # used for the build-time-calculated edge state.
 var optimizes_edge_jump_positions_at_run_time := false
 var optimizes_edge_land_positions_at_run_time := false
+var also_optimizes_preselection_path := false
 var forces_player_position_to_match_edge_at_start := false
 var forces_player_velocity_to_match_edge_at_start := false
 var forces_player_position_to_match_path_at_end := false
