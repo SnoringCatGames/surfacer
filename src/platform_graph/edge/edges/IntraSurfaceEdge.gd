@@ -228,7 +228,7 @@ func get_animation_state_at_time(
         _:
             Gs.logger.error()
 
-func _check_did_just_reach_destination(
+func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:

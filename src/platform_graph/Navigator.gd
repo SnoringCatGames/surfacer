@@ -50,6 +50,17 @@ func navigate_path(
     if is_retry:
         current_navigation_attempt_count = previous_navigation_attempt_count
     
+    if path != null and \
+            !Gs.geometry.are_points_equal_with_epsilon(
+                    player.position,
+                    path.origin.target_point,
+                    4.0):
+        # The selection and its path are stale, so update the path to match
+        # the player's current position.
+        path = find_path(
+                path.destination,
+                path.graph_destination_for_in_air_destination)
+    
     if path == null:
         # Destination cannot be reached from origin.
         Gs.profiler.stop("navigator_navigate_path")
@@ -58,11 +69,6 @@ func navigate_path(
         
     else:
         # Destination can be reached from origin.
-        
-        assert(Gs.geometry.are_points_equal_with_epsilon(
-                player.position,
-                path.origin.target_point,
-                1.0))
         
         _interleave_intra_surface_edges(
                 graph.collision_params,
@@ -464,137 +470,139 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
         edge: Edge,
         position: Vector2,
         velocity: Vector2) -> IntraSurfaceEdge:
-    if movement_params \
-            .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets and \
-            !edge.is_backtracking_to_not_protrude_past_surface_end:
-        var surface := edge.get_end_surface()
-        
-        var position_after_coming_to_a_stop: Vector2
-        if surface.side == SurfaceSide.FLOOR:
-            var stopping_distance := \
-                    MovementUtils.calculate_distance_to_stop_from_friction(
-                            movement_params,
-                            abs(velocity.x),
-                            movement_params.gravity_fast_fall,
-                            movement_params.friction_coefficient)
-            var stopping_displacement := \
-                    stopping_distance if \
-                    velocity.x > 0.0 else \
-                    -stopping_distance
-            position_after_coming_to_a_stop = Vector2(
-                    position.x + stopping_displacement,
-                    position.y)
-        else:
-            # TODO: Add support for acceleration and friction along wall and
-            #       ceiling surfaces.
-            position_after_coming_to_a_stop = position
-        
-        var would_protrude_past_surface_end_after_coming_to_a_stop := false
-        var end_target_point := Vector2.INF
-        
-        match surface.side:
-            SurfaceSide.FLOOR:
-                if position_after_coming_to_a_stop.x < \
-                        surface.first_point.x + \
-                        PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
-                    would_protrude_past_surface_end_after_coming_to_a_stop = \
-                            true
-                    end_target_point = \
-                            Vector2(surface.first_point.x + \
-                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
-                                    surface.first_point.y)
-                elif position_after_coming_to_a_stop.x > \
-                        surface.last_point.x - \
-                        PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
-                    would_protrude_past_surface_end_after_coming_to_a_stop = \
-                            true
-                    end_target_point = \
-                            Vector2(surface.last_point.x - \
-                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
-                                    surface.last_point.y)
-            SurfaceSide.LEFT_WALL:
-                if position_after_coming_to_a_stop.y < \
-                        surface.first_point.y + \
-                        PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
-                    would_protrude_past_surface_end_after_coming_to_a_stop = \
-                            true
-                    end_target_point = \
-                            Vector2(surface.first_point.x,
-                                    surface.first_point.y + \
-                                    PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
-                elif position_after_coming_to_a_stop.y > \
-                        surface.last_point.y - \
-                        PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
-                    would_protrude_past_surface_end_after_coming_to_a_stop = \
-                            true
-                    end_target_point = \
-                            Vector2(surface.last_point.x,
-                                    surface.last_point.y - \
-                                    PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
-            SurfaceSide.RIGHT_WALL:
-                if position_after_coming_to_a_stop.y > \
-                        surface.first_point.y - \
-                        PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
-                    would_protrude_past_surface_end_after_coming_to_a_stop = \
-                            true
-                    end_target_point = \
-                            Vector2(surface.first_point.x,
-                                    surface.first_point.y - \
-                                    PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
-                elif position_after_coming_to_a_stop.y < \
-                        surface.last_point.y + \
-                        PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
-                    would_protrude_past_surface_end_after_coming_to_a_stop = \
-                            true
-                    end_target_point = \
-                            Vector2(surface.last_point.x,
-                                    surface.last_point.y + \
-                                    PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
-            SurfaceSide.CEILING:
-                if position_after_coming_to_a_stop.x > \
-                        surface.first_point.x - \
-                        PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
-                    would_protrude_past_surface_end_after_coming_to_a_stop = \
-                            true
-                    end_target_point = \
-                            Vector2(surface.first_point.x - \
-                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
-                                    surface.first_point.y)
-                elif position_after_coming_to_a_stop.x < \
-                        surface.last_point.x + \
-                        PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
-                    would_protrude_past_surface_end_after_coming_to_a_stop = \
-                            true
-                    end_target_point = \
-                            Vector2(surface.last_point.x + \
-                                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
-                                    surface.last_point.y)
-            _:
-                Gs.logger.error("Invalid SurfaceSide")
-        
-        if would_protrude_past_surface_end_after_coming_to_a_stop:
-            var start_position := PositionAlongSurfaceFactory \
-                    .create_position_offset_from_target_point(
-                            position,
-                            surface,
-                            movement_params.collider_half_width_height,
-                            true)
-            var end_position := PositionAlongSurfaceFactory \
-                    .create_position_offset_from_target_point(
-                            end_target_point,
-                            surface,
-                            movement_params.collider_half_width_height,
-                            true)
-            var backtracking_edge := IntraSurfaceEdge.new(
-                    start_position,
-                    end_position,
-                    velocity,
-                    movement_params)
-            backtracking_edge \
-                    .is_backtracking_to_not_protrude_past_surface_end = true
-            return backtracking_edge
+    var surface := edge.get_end_surface()
     
-    return null
+    if surface == null or \
+            !movement_params \
+            .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets or \
+            edge.is_backtracking_to_not_protrude_past_surface_end:
+        return null
+    
+    var position_after_coming_to_a_stop: Vector2
+    if surface.side == SurfaceSide.FLOOR:
+        var stopping_distance := \
+                MovementUtils.calculate_distance_to_stop_from_friction(
+                        movement_params,
+                        abs(velocity.x),
+                        movement_params.gravity_fast_fall,
+                        movement_params.friction_coefficient)
+        var stopping_displacement := \
+                stopping_distance if \
+                velocity.x > 0.0 else \
+                -stopping_distance
+        position_after_coming_to_a_stop = Vector2(
+                position.x + stopping_displacement,
+                position.y)
+    else:
+        # TODO: Add support for acceleration and friction along wall and
+        #       ceiling surfaces.
+        position_after_coming_to_a_stop = position
+    
+    var would_protrude_past_surface_end_after_coming_to_a_stop := false
+    var end_target_point := Vector2.INF
+    
+    match surface.side:
+        SurfaceSide.FLOOR:
+            if position_after_coming_to_a_stop.x < \
+                    surface.first_point.x + \
+                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
+                would_protrude_past_surface_end_after_coming_to_a_stop = \
+                        true
+                end_target_point = \
+                        Vector2(surface.first_point.x + \
+                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
+                                surface.first_point.y)
+            elif position_after_coming_to_a_stop.x > \
+                    surface.last_point.x - \
+                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
+                would_protrude_past_surface_end_after_coming_to_a_stop = \
+                        true
+                end_target_point = \
+                        Vector2(surface.last_point.x - \
+                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
+                                surface.last_point.y)
+        SurfaceSide.LEFT_WALL:
+            if position_after_coming_to_a_stop.y < \
+                    surface.first_point.y + \
+                    PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
+                would_protrude_past_surface_end_after_coming_to_a_stop = \
+                        true
+                end_target_point = \
+                        Vector2(surface.first_point.x,
+                                surface.first_point.y + \
+                                PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
+            elif position_after_coming_to_a_stop.y > \
+                    surface.last_point.y - \
+                    PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
+                would_protrude_past_surface_end_after_coming_to_a_stop = \
+                        true
+                end_target_point = \
+                        Vector2(surface.last_point.x,
+                                surface.last_point.y - \
+                                PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
+        SurfaceSide.RIGHT_WALL:
+            if position_after_coming_to_a_stop.y > \
+                    surface.first_point.y - \
+                    PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
+                would_protrude_past_surface_end_after_coming_to_a_stop = \
+                        true
+                end_target_point = \
+                        Vector2(surface.first_point.x,
+                                surface.first_point.y - \
+                                PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
+            elif position_after_coming_to_a_stop.y < \
+                    surface.last_point.y + \
+                    PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET:
+                would_protrude_past_surface_end_after_coming_to_a_stop = \
+                        true
+                end_target_point = \
+                        Vector2(surface.last_point.x,
+                                surface.last_point.y + \
+                                PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET)
+        SurfaceSide.CEILING:
+            if position_after_coming_to_a_stop.x > \
+                    surface.first_point.x - \
+                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
+                would_protrude_past_surface_end_after_coming_to_a_stop = \
+                        true
+                end_target_point = \
+                        Vector2(surface.first_point.x - \
+                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
+                                surface.first_point.y)
+            elif position_after_coming_to_a_stop.x < \
+                    surface.last_point.x + \
+                    PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET:
+                would_protrude_past_surface_end_after_coming_to_a_stop = \
+                        true
+                end_target_point = \
+                        Vector2(surface.last_point.x + \
+                                PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET,
+                                surface.last_point.y)
+        _:
+            Gs.logger.error("Invalid SurfaceSide")
+    
+    if !would_protrude_past_surface_end_after_coming_to_a_stop:
+        return null
+    
+    var start_position := PositionAlongSurfaceFactory \
+            .create_position_offset_from_target_point(
+                    position,
+                    surface,
+                    movement_params.collider_half_width_height,
+                    true)
+    var end_position := PositionAlongSurfaceFactory \
+            .create_position_offset_from_target_point(
+                    end_target_point,
+                    surface,
+                    movement_params.collider_half_width_height,
+                    true)
+    var backtracking_edge := IntraSurfaceEdge.new(
+            start_position,
+            end_position,
+            velocity,
+            movement_params)
+    backtracking_edge.is_backtracking_to_not_protrude_past_surface_end = true
+    return backtracking_edge
 
 # Tries to update each jump edge to jump from the earliest point possible along
 # the surface rather than from the safe end/closest point that was used at

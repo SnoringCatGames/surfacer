@@ -65,7 +65,7 @@ func get_animation_state_at_time(
     # TODO: Check instructions to determine actual facing-direction.
     result.facing_left = get_velocity_at_time(edge_time).x < 0.0
 
-func _check_did_just_reach_destination(
+func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
         playback) -> bool:
