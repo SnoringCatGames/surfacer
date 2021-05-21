@@ -314,18 +314,20 @@ static func check_continuous_horizontal_step_for_collision(
         current_velocity.x = horizontal_state[1]
         current_velocity.y = vertical_state[1]
         displacement = current_position - previous_position
-        assert(displacement != Vector2.ZERO)
         
-        collision = check_frame_for_collision(
-                collision_params,
-                previous_position,
-                displacement)
-        
-        if collision == null:
-            # Record the positions and velocities for edge annotation
-            # debugging.
-            frame_positions.push_back(current_position)
-            frame_velocities.push_back(current_velocity)
+        # In very rare cases, displacement can be zero when previous_time is
+        # very close to current_time.
+        if displacement != Vector2.ZERO:
+            collision = check_frame_for_collision(
+                    collision_params,
+                    previous_position,
+                    displacement)
+            
+            if collision == null:
+                # Record the positions and velocities for edge annotation
+                # debugging.
+                frame_positions.push_back(current_position)
+                frame_velocities.push_back(current_velocity)
     
     if collision != null and \
             collision_result_metadata != null:

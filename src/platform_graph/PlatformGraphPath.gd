@@ -58,6 +58,16 @@ func predict_animation_state(
     if !is_before_path_end_time:
         var last_edge: Edge = edges.back()
         last_edge.get_animation_state_at_time(result, last_edge.duration)
+        
+        var confidence_progress := min(
+                (path_time - duration) / \
+                PlayerAnimationState.POST_PATH_DURATION_TO_MIN_CONFIDENCE,
+                1.0)
+        result.confidence_multiplier = lerp(
+                1.0,
+                0.0,
+                confidence_progress)
+        
         return false
     
     var edge_start_time := 0.0

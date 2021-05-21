@@ -4,7 +4,6 @@ extends Node2D
 var FADE_IN_DURATION := 0.35
 
 var EXCLAMATION_MARK_SCALE_START := Vector2(0.2, 0.2)
-var EXCLAMATION_MARK_SCALE_MIDDLE := Vector2(0.8, 0.8)
 var EXCLAMATION_MARK_SCALE_END := Vector2(1.5, 1.5)
 var EXCLAMATION_MARK_DURATION := 1.0
 var EXCLAMATION_MARK_VERTICAL_OFFSET := -32.0
@@ -119,7 +118,7 @@ func _trigger_exclamation_mark() -> void:
     var opacity_start := 1.0
     var opacity_end := 0.0
     
-    var scale_delay := EXCLAMATION_MARK_DURATION * 0.1
+    var scale_delay := EXCLAMATION_MARK_DURATION * 0.0
     var scale_duration := EXCLAMATION_MARK_DURATION - scale_delay
     var opacity_delay := EXCLAMATION_MARK_DURATION * 0.3
     var opacity_duration := EXCLAMATION_MARK_DURATION - opacity_delay
@@ -133,18 +132,9 @@ func _trigger_exclamation_mark() -> void:
             exclamation_mark,
             "rect_scale",
             EXCLAMATION_MARK_SCALE_START,
-            EXCLAMATION_MARK_SCALE_MIDDLE,
-            scale_delay,
-            "ease_out_strong",
-            0.0,
-            TimeType.PLAY_PHYSICS_SCALED)
-    exclamation_mark_tween.interpolate_property(
-            exclamation_mark,
-            "rect_scale",
-            EXCLAMATION_MARK_SCALE_MIDDLE,
             EXCLAMATION_MARK_SCALE_END,
             scale_duration,
-            "ease_out_strong",
+            "ease_out_very_strong",
             scale_delay,
             TimeType.PLAY_PHYSICS_SCALED)
     exclamation_mark_tween.interpolate_property(
@@ -153,7 +143,7 @@ func _trigger_exclamation_mark() -> void:
             opacity_start,
             opacity_end,
             opacity_duration,
-            "ease_out_strong",
+            "ease_out_very_strong",
             opacity_delay,
             TimeType.PLAY_PHYSICS_SCALED)
     exclamation_mark_tween.start()

@@ -16,22 +16,12 @@ func set_up(player) -> void:
     _tween = ScaffolderTween.new()
     add_child(_tween)
 
-func match_navigator(
-        navigator: Navigator,
+func match_navigator_or_path(
+        navigator_or_path,
         elapsed_time_from_now: float,
         tweens_player_position := true,
         tweens_animation_position := true) -> void:
-    navigator.predict_animation_state(
-            animation_state,
-            elapsed_time_from_now)
-    _update(tweens_player_position, tweens_animation_position)
-
-func match_path(
-        path: PlatformGraphPath,
-        elapsed_time_from_now: float,
-        tweens_player_position := true,
-        tweens_animation_position := true) -> void:
-    path.predict_animation_state(
+    navigator_or_path.predict_animation_state(
             animation_state,
             elapsed_time_from_now)
     _update(tweens_player_position, tweens_animation_position)
@@ -76,6 +66,17 @@ func _update(
                 "linear",
                 0.0,
                 TimeType.PLAY_PHYSICS)
+    
+    var modulation_progress := animation_state.confidence_multiplier
+    var modulation: Color = lerp(
+            PlayerAnimationState.LOW_CONFIDENCE_MODULATE_MASK,
+            Color.white,
+            modulation_progress)
+    modulation.a = lerp(
+            PlayerAnimationState.MIN_POST_PATH_CONFIDENCE_OPACITY,
+            1.0,
+            modulation_progress)
+    animator.set_modulation(modulation)
     
     _tween.start()
 
