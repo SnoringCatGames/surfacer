@@ -15,7 +15,7 @@ func _init().(
 
 func process(player: Player) -> bool:
     if player.actions.just_pressed_jump:
-        player.surface_state.is_grabbing_wall = false
+        player.release_wall()
         player.jump_count = 1
         player.just_triggered_jump = true
         player.is_rising_from_jump = true

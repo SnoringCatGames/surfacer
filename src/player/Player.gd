@@ -409,6 +409,24 @@ func _process_sounds() -> void:
 func processed_action(name: String) -> bool:
     return _previous_actions_this_frame.get(name) == true
 
+func release_wall() -> void:
+    if !surface_state.is_grabbing_wall:
+        return
+    
+    surface_state.is_grabbing_wall = false
+    surface_state.is_grabbing_left_wall = false
+    surface_state.is_grabbing_right_wall = false
+    
+    surface_state.is_grabbing_walk_through_walls = \
+            actions.pressed_up
+    
+    if surface_state.is_touching_floor:
+        surface_state.is_grabbing_floor = true
+        surface_state.just_grabbed_floor = true
+        surface_state.just_grabbed_a_surface = true
+    else:
+        surface_state.is_grabbing_a_surface = false
+
 # Updates some basic surface-related state for player's actions and environment
 # of the current frame.
 func _update_surface_state(preserves_just_changed_state := false) -> void:
@@ -430,16 +448,19 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     else:
         surface_state.horizontal_acceleration_sign = 0
     
+    var next_is_touching_floor: bool
+    var next_is_touching_ceiling: bool
+    var next_is_touching_wall: bool
     if movement_params.bypasses_runtime_physics:
         var expected_surface := \
                 _get_expected_position_for_bypassing_runtime_physics().surface
-        surface_state.is_touching_floor = \
+        next_is_touching_floor = \
                 expected_surface != null and \
                 expected_surface.side == SurfaceSide.FLOOR
-        surface_state.is_touching_ceiling = \
+        next_is_touching_ceiling = \
                 expected_surface != null and \
                 expected_surface.side == SurfaceSide.CEILING
-        surface_state.is_touching_wall = \
+        next_is_touching_wall = \
                 expected_surface != null and \
                 (expected_surface.side == SurfaceSide.LEFT_WALL or \
                 expected_surface.side == SurfaceSide.RIGHT_WALL)
@@ -453,9 +474,9 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
         #       segments to base the collision normal off of, so the other
         #       segment will be ignored (and the other segment could correspond
         #       to floor or ceiling).
-        surface_state.is_touching_floor = is_on_floor()
-        surface_state.is_touching_ceiling = is_on_ceiling()
-        surface_state.is_touching_wall = is_on_wall()
+        next_is_touching_floor = is_on_floor()
+        next_is_touching_ceiling = is_on_ceiling()
+        next_is_touching_wall = is_on_wall()
         surface_state.which_wall = \
                 Gs.utils.get_which_wall_collided_for_body(self)
     
@@ -465,9 +486,43 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
             surface_state.which_wall == SurfaceSide.RIGHT_WALL
     
     var next_is_touching_a_surface := \
-            surface_state.is_touching_floor or \
-            surface_state.is_touching_ceiling or \
-            surface_state.is_touching_wall
+            next_is_touching_floor or \
+            next_is_touching_ceiling or \
+            next_is_touching_wall
+    
+    surface_state.just_touched_floor = \
+            (preserves_just_changed_state and \
+                    surface_state.just_touched_floor) or \
+            (next_is_touching_floor and \
+                    !surface_state.is_touching_floor)
+    surface_state.just_stopped_touching_floor = \
+            (preserves_just_changed_state and \
+                    surface_state.just_stopped_touching_floor) or \
+            (!next_is_touching_floor and \
+                    surface_state.is_touching_floor)
+    
+    surface_state.just_touched_ceiling = \
+            (preserves_just_changed_state and \
+                    surface_state.just_touched_ceiling) or \
+            (next_is_touching_ceiling and \
+                    !surface_state.is_touching_ceiling)
+    surface_state.just_stopped_touching_ceiling = \
+            (preserves_just_changed_state and \
+                    surface_state.just_stopped_touching_ceiling) or \
+            (!next_is_touching_ceiling and \
+                    surface_state.is_touching_ceiling)
+    
+    surface_state.just_touched_wall = \
+            (preserves_just_changed_state and \
+                    surface_state.just_touched_wall) or \
+            (next_is_touching_wall and \
+                    !surface_state.is_touching_wall)
+    surface_state.just_stopped_touching_wall = \
+            (preserves_just_changed_state and \
+                    surface_state.just_stopped_touching_wall) or \
+            (!next_is_touching_wall and \
+                    surface_state.is_touching_wall)
+    
     surface_state.just_touched_a_surface = \
             (preserves_just_changed_state and \
                     surface_state.just_touched_a_surface) or \
@@ -478,6 +533,10 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
                     surface_state.just_stopped_touching_a_surface) or \
             (!next_is_touching_a_surface and \
                     surface_state.is_touching_a_surface)
+    
+    surface_state.is_touching_floor = next_is_touching_floor
+    surface_state.is_touching_ceiling = next_is_touching_ceiling
+    surface_state.is_touching_wall = next_is_touching_wall
     surface_state.is_touching_a_surface = next_is_touching_a_surface
     
     # Calculate the sign of a colliding wall's direction.
@@ -510,19 +569,25 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
             actions.pressed_grab_wall and \
             (surface_state.is_facing_wall or \
                     surface_state.is_pressing_into_wall)
+    var touching_floor_and_pressing_down: bool = \
+            surface_state.is_touching_floor and \
+            actions.pressed_down
     surface_state.is_triggering_wall_grab = \
-            surface_state.is_pressing_into_wall or \
+            (surface_state.is_pressing_into_wall or \
             facing_into_wall_and_pressing_up or \
-            facing_into_wall_and_pressing_grab
+            facing_into_wall_and_pressing_grab) and \
+            !touching_floor_and_pressing_down
     
     surface_state.is_triggering_fall_through = \
-            actions.pressed_down and actions.just_pressed_jump
+            actions.pressed_down and \
+            actions.just_pressed_jump
     
     # Whether we are grabbing a wall.
     surface_state.is_grabbing_wall = \
             surface_state.is_touching_wall and \
             (surface_state.is_grabbing_wall or \
-                    surface_state.is_triggering_wall_grab)
+                    surface_state.is_triggering_wall_grab) and \
+            !touching_floor_and_pressing_down
     
     # Whether we should fall through fall-through floors.
     if surface_state.is_grabbing_wall:
@@ -535,7 +600,8 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     
     # Whether we should fall through fall-through floors.
     surface_state.is_grabbing_walk_through_walls = \
-            surface_state.is_grabbing_wall or actions.pressed_up
+            surface_state.is_grabbing_wall or \
+            actions.pressed_up
     
     surface_state.velocity = velocity
     
@@ -558,8 +624,10 @@ func _update_which_side_is_grabbed(
         next_is_grabbing_floor = true
     
     var next_is_grabbing_a_surface := \
-            next_is_grabbing_floor or next_is_grabbing_ceiling or \
-            next_is_grabbing_left_wall or next_is_grabbing_right_wall
+            next_is_grabbing_floor or \
+            next_is_grabbing_ceiling or \
+            next_is_grabbing_left_wall or \
+            next_is_grabbing_right_wall
     
     surface_state.just_grabbed_floor = \
             (preserves_just_changed_state and \

@@ -8,6 +8,12 @@ var is_touching_right_wall := false
 var is_touching_wall := false
 var is_touching_a_surface := false
 
+var just_touched_floor := false
+var just_stopped_touching_floor := false
+var just_touched_ceiling := false
+var just_stopped_touching_ceiling := false
+var just_touched_wall := false
+var just_stopped_touching_wall := false
 var just_touched_a_surface := false
 var just_stopped_touching_a_surface := false
 

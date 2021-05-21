@@ -153,7 +153,7 @@ var asserts_no_preexisting_collisions_during_edge_calculations := true
 var checks_for_alternate_intersection_points_for_very_oblique_collisions := true
 var oblique_collison_normal_aspect_ratio_threshold_threshold := 10.0
 var min_valid_frame_count_when_colliding_early_with_expected_surface := 4
-var reached_in_air_destination_distance_squared_threshold := 10.0 * 10.0
+var reached_in_air_destination_distance_squared_threshold := 16.0 * 16.0
 var max_edges_to_remove_from_end_of_path_for_optimization_to_in_air_destination := 2
 
 var logs_navigator_events := false
