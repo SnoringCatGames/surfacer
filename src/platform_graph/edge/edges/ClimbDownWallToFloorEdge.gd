@@ -92,7 +92,7 @@ func _check_did_just_reach_surface_destination(
     if movement_params.bypasses_runtime_physics:
         return playback.get_elapsed_time_scaled() >= duration
     else:
-        return surface_state.just_grabbed_floor
+        return surface_state.is_grabbing_floor
 
 func _get_weight_multiplier() -> float:
     return movement_params.walking_edge_weight_multiplier
