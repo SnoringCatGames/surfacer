@@ -78,6 +78,30 @@ func is_instruction_in_range(
     
     return false
 
+func get_is_facing_left_at_time(
+        time: float,
+        starts_facing_left := false) -> bool:
+    var is_facing_left := starts_facing_left
+    for instruction in instructions:
+        if instruction.time > time:
+            break
+        match instruction.input_key:
+            "ml", \
+            "fl":
+                is_facing_left = true
+            "mr", \
+            "fr":
+                is_facing_left = false
+            "j", \
+            "mu", \
+            "md", \
+            "gw":
+                # This input does not affect the direction the player faces.
+                pass
+            _:
+                Utils.error()
+    return is_facing_left
+
 static func instruction_comparator(
         a: EdgeInstruction,
         b: EdgeInstruction) -> bool:

@@ -73,9 +73,9 @@ func get_animation_state_at_time(
     result.player_position = get_position_at_time(edge_time)
     result.animation_type = PlayerAnimationType.JUMP_FALL
     result.animation_position = edge_time
-    # TODO: Check instructions to determine actual facing-direction.
     result.facing_left = \
-            get_velocity_at_time(edge_time).x < 0.0 if \
+            instructions.get_is_facing_left_at_time(
+                    edge_time, falls_on_left_side) if \
             edge_time > time_fall_off else \
             falls_on_left_side
 
