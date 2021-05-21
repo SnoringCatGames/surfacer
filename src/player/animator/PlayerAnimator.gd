@@ -77,6 +77,9 @@ func match_rate_to_time_scale() -> void:
 func get_current_animation_type() -> int:
     return _animation_type
 
+func set_modulation(modulation: Color) -> void:
+    self.modulate = modulation
+
 func _play_animation(
         animation_type: int,
         blend := 0.1) -> bool:

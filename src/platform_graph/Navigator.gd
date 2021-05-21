@@ -441,6 +441,16 @@ func predict_animation_state(
         elapsed_time_from_now: float) -> bool:
     if !is_currently_navigating:
         player.get_current_animation_state(result)
+        
+        var confidence_progress := min(
+                elapsed_time_from_now / \
+                PlayerAnimationState.POST_PATH_DURATION_TO_MIN_CONFIDENCE,
+                1.0)
+        result.confidence_multiplier = lerp(
+                1.0,
+                0.0,
+                confidence_progress)
+        
         return false
     
     var current_path_elapsed_time := \

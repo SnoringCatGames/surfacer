@@ -102,14 +102,14 @@ func _process(_delta_sec: float) -> void:
             
             if preselection_path != null:
                 # Update the human-player prediction.
-                player.prediction.match_path(
+                player.prediction.match_navigator_or_path(
                         preselection_path,
                         preselection_path.duration)
                 
                 # Update computer-player predictions.
                 for computer_player in Gs.utils.get_all_nodes_in_group(
                         Surfacer.group_name_computer_players):
-                    computer_player.prediction.match_navigator(
+                    computer_player.prediction.match_navigator_or_path(
                             computer_player.navigator,
                             preselection_path.duration)
         else:
