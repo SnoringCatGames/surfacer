@@ -27,11 +27,11 @@ func _unhandled_input(event: InputEvent) -> void:
 #    if event is InputEventMouseButton and \
 #            event.button_index == BUTTON_LEFT and \
 #            !event.pressed:
-#        position = Gs.utils.get_global_touch_position(event)
+#        position = Gs.utils.get_level_touch_position(event)
     
     if event is InputEventScreenTouch and \
             !event.pressed:
-        position = Gs.utils.get_global_touch_position(event)
+        position = Gs.utils.get_level_touch_position(event)
     
     if position != Vector2.INF:
         click_position = position

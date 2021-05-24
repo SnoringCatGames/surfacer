@@ -9,6 +9,7 @@ const _PAUSE_BUTTON_RESOURCE_PATH := \
 # Array<Player>
 var all_players: Array
 var graph_parser: PlatformGraphParser
+var camera_pan_controller: CameraPanController
 var inspector_panel: InspectorPanel
 var pause_button: PauseButton
 var intro_choreographer: Choreographer
@@ -36,6 +37,9 @@ func _load() -> void:
 
 func _start() -> void:
     ._start()
+    
+    camera_pan_controller = CameraPanController.new()
+    add_child(camera_pan_controller)
     
     add_player(
             Surfacer.player_params[Surfacer.default_player_name] \
