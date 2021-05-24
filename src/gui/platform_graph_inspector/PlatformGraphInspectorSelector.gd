@@ -40,7 +40,7 @@ func _unhandled_input(event: InputEvent) -> void:
         # The user is ctrl+clicking.
         
         var click_position: Vector2 = \
-                Gs.utils.get_global_touch_position(event)
+                Gs.utils.get_level_touch_position(event)
         var surface_position := \
                 SurfaceParser.find_closest_position_on_a_surface(
                         click_position,

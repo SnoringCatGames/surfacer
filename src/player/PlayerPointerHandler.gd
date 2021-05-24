@@ -37,7 +37,7 @@ func _unhandled_input(event: InputEvent) -> void:
 #            !event.pressed and \
 #            !event.control:
 #        event_type = "MOUSE_UP   "
-#        pointer_up_position = Gs.utils.get_global_touch_position(event)
+#        pointer_up_position = Gs.utils.get_level_touch_position(event)
 #
 #    # Mouse-down: Position pre-selection.
 #    if event is InputEventMouseButton and \
@@ -46,14 +46,14 @@ func _unhandled_input(event: InputEvent) -> void:
 #            !event.control:
 #        event_type = "MOUSE_DOWN "
 #        pointer_drag_position = \
-#                Gs.utils.get_global_touch_position(event)
+#                Gs.utils.get_level_touch_position(event)
 #
 #    # Mouse-move: Position pre-selection.
 #    if event is InputEventMouseMotion and \
 #            last_pointer_drag_position != Vector2.INF:
 #        event_type = "MOUSE_DRAG "
 #        pointer_drag_position = \
-#                Gs.utils.get_global_touch_position(event)
+#                Gs.utils.get_level_touch_position(event)
     
     var is_control_pressed := \
             Gs.level_input.is_key_pressed(KEY_CONTROL) or \
@@ -64,20 +64,20 @@ func _unhandled_input(event: InputEvent) -> void:
             !event.pressed and \
             !is_control_pressed:
         event_type = "TOUCH_UP   "
-        pointer_up_position = Gs.utils.get_global_touch_position(event)
+        pointer_up_position = Gs.utils.get_level_touch_position(event)
     
     # Touch-down: Position pre-selection.
     if event is InputEventScreenTouch and \
             event.pressed and \
             !is_control_pressed:
         event_type = "TOUCH_DOWN "
-        pointer_drag_position = Gs.utils.get_global_touch_position(event)
+        pointer_drag_position = Gs.utils.get_level_touch_position(event)
     
     # Touch-move: Position pre-selection.
     if event is InputEventScreenDrag and \
             !is_control_pressed:
         event_type = "TOUCH_DRAG "
-        pointer_drag_position = Gs.utils.get_global_touch_position(event)
+        pointer_drag_position = Gs.utils.get_level_touch_position(event)
     
 #    if pointer_up_position != Vector2.INF or \
 #            pointer_drag_position != Vector2.INF:
