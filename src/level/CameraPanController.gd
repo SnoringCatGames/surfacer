@@ -57,7 +57,8 @@ var duration_to_max_pan_and_zoom_from_pointer_at_max_control := 1.0
 var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.25
 func _validate() -> void:
     assert(max_zoom_multiplier_from_pointer >= 0.0)
-    assert(screen_size_ratio_distance_from_edge_to_start_pan_from_pointer <= 0.5)
+    assert(screen_size_ratio_distance_from_edge_to_start_pan_from_pointer <= \
+            0.5)
 
 func _stop_drag() -> void:
     _last_pointer_position = Vector2.INF
@@ -95,7 +96,8 @@ func _update_camera_from_pointer() -> void:
             pointer_max_control_bounds.size / 2.0
     var min_control_bounds_size := \
             pointer_max_control_bounds.size * \
-            (1 - screen_size_ratio_distance_from_edge_to_start_pan_from_pointer * 2)
+            (1 - \
+            screen_size_ratio_distance_from_edge_to_start_pan_from_pointer * 2)
     var min_control_bounds_position := \
             pointer_max_control_bounds.position + \
             pointer_max_control_bounds.size * \
