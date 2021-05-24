@@ -240,7 +240,8 @@ func find_path(
     
     Gs.profiler.stop("navigator_find_path")
     
-    if player.movement_params.also_optimizes_preselection_path:
+    if path != null and \
+            player.movement_params.also_optimizes_preselection_path:
         _optimize_edges_for_approach(
                 graph.collision_params,
                 path,
