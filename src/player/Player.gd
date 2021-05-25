@@ -214,7 +214,7 @@ func _set_camera() -> void:
     camera.smoothing_speed = Gs.camera_smoothing_speed
     add_child(camera)
     # Register the current camera, so it's globally accessible.
-    Gs.camera_controller.set_current_camera(camera)
+    Gs.camera_controller.set_current_camera(camera, self)
 
 func _init_user_controller_action_source() -> void:
     action_sources.push_back(UserActionSource.new(self, true))
@@ -322,7 +322,7 @@ func _handle_pointer_selections() -> void:
                 Gs.time.get_play_time_sec(),
                 str(new_selection.pointer_position),
                 new_selection.navigation_destination.to_string() if \
-                new_selection.get_is_selection_navigatable() != null else \
+                new_selection.get_is_selection_navigatable() else \
                 "[No matching surface]"
             ])
         
