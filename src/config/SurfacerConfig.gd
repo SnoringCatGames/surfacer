@@ -55,6 +55,9 @@ var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
 var is_precomputing_platform_graphs: bool
 var is_intro_choreography_shown: bool
+
+var default_player_name: String
+
 var is_active_trajectory_shown: bool
 var is_previous_trajectory_shown: bool
 var is_preselection_trajectory_shown: bool
@@ -68,18 +71,25 @@ var is_human_nav_pulse_shown_with_slow_mo := false
 var is_computer_nav_pulse_shown_with_slow_mo := true
 var is_human_nav_pulse_shown_without_slow_mo := true
 var is_computer_nav_pulse_shown_without_slow_mo := false
+
 var does_human_nav_pulse_grow := false
 var does_computer_nav_pulse_grow := true
 var is_human_prediction_shown := true
 var is_computer_prediction_shown := true
-
-var default_player_name: String
 var nav_selection_slow_mo_time_scale := 0.1
 var nav_selection_slow_mo_saturation := 0.2
 var nav_selection_prediction_opacity := 0.5
 var nav_selection_prediction_tween_duration := 0.15
 var new_path_pulse_duration_multiplier := 0.4
 var new_path_pulse_time_length := 1.0
+
+# Params for CameraPanController.
+var snaps_camera_back_to_player := true
+var max_zoom_multiplier_from_pointer := 1.5
+var max_pan_distance_from_pointer := 512.0
+var duration_to_max_pan_from_pointer_at_max_control := 0.67
+var duration_to_max_zoom_from_pointer_at_max_control := 3.0
+var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.4
 
 var debug_params: Dictionary
 
