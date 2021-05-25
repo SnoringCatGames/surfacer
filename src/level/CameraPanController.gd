@@ -1,15 +1,15 @@
 class_name CameraPanController
 extends Node2D
 
-const _PAN_THROTTLE_INTERVAL_SEC := 0.05
+const _PAN_INTERVAL_SEC := 0.05
 const _TWEEN_DURATION := 0.1
 
-var _last_pointer_position := Vector2.INF
-var _throttled_set_new_drag_position: FuncRef = Gs.time.throttle(
-        funcref(self, "_update_camera_from_pointer"),
-        _PAN_THROTTLE_INTERVAL_SEC)
+var _interval_id := -1
 
 var _tween: ScaffolderTween
+
+var _delta_offset := Vector2.INF
+var _delta_zoom_multiplier := INF
 
 var _offset := Vector2.ZERO
 var _zoom_multiplier := 1.0
@@ -64,18 +64,22 @@ func _validate() -> void:
             0.0)
 
 func _stop_drag() -> void:
-    _last_pointer_position = Vector2.INF
-    Gs.time.cancel_pending_throttle(_throttled_set_new_drag_position)
+    _delta_offset = Vector2.INF
+    _delta_zoom_multiplier = INF
+    Gs.time.clear_interval(_interval_id)
+    _interval_id = -1
     if keeps_camera_anchored_on_player:
         _update_camera(Vector2.ZERO, 1.0)
 
 func _update_drag(pointer_position: Vector2) -> void:
-    _last_pointer_position = pointer_position
-    _throttled_set_new_drag_position.call_func()
+    _update_pan_and_zoom_delta_from_pointer(pointer_position)
+    if _interval_id < 0:
+        _interval_id = Gs.time.set_interval(
+                funcref(self, "_update_camera_from_deltas"),
+                _PAN_INTERVAL_SEC)
 
-func _update_camera_from_pointer() -> void:
-    assert(_last_pointer_position != Vector2.INF)
-    
+func _update_pan_and_zoom_delta_from_pointer(
+        pointer_position: Vector2) -> void:
     # Calculate the camera bounds and the region that controls pan and zoom.
     var pointer_max_control_bounds := Gs.camera_controller.get_bounds()
     var camera_center := \
@@ -93,83 +97,76 @@ func _update_camera_from_pointer() -> void:
             min_control_bounds_position,
             min_control_bounds_size)
     
-    # FIXME: -------------------------------
-    print(">>>>pointer_max_control_bounds.position = %s" % pointer_max_control_bounds.position)
-    print(">>>>pointer_max_control_bounds.end = %s" % pointer_max_control_bounds.end)
-    print(">>>>_last_pointer_position = %s" % _last_pointer_position)
-    
     # Calculate drag control weights according to the pointer position.
     var pan_zoom_control_weight_x: float
-    if _last_pointer_position.x < camera_center.x:
-        # FIXME: -------------- Add these asserts back in?
-#        assert(_last_pointer_position.x >= \
-#                pointer_max_control_bounds.position.x - 2)
-        _last_pointer_position.x = max(
-                _last_pointer_position.x,
+    if pointer_position.x < camera_center.x:
+        assert(pointer_position.x >= \
+                pointer_max_control_bounds.position.x - 1)
+        pointer_position.x = max(
+                pointer_position.x,
                 pointer_max_control_bounds.position.x)
-        if _last_pointer_position.x < pointer_min_control_bounds.position.x:
+        if pointer_position.x < pointer_min_control_bounds.position.x:
             # Dragging left.
             pan_zoom_control_weight_x = \
                     -1 * \
                     (pointer_min_control_bounds.position.x - \
-                            _last_pointer_position.x) / \
+                            pointer_position.x) / \
                     (pointer_min_control_bounds.position.x - \
                             pointer_max_control_bounds.position.x)
     else:
-#        assert(_last_pointer_position.x <= \
-#                pointer_max_control_bounds.end.x + 2)
-        _last_pointer_position.x = min(
-                _last_pointer_position.x,
+        assert(pointer_position.x <= \
+                pointer_max_control_bounds.end.x + 1)
+        pointer_position.x = min(
+                pointer_position.x,
                 pointer_max_control_bounds.end.x)
-        if _last_pointer_position.x > pointer_min_control_bounds.end.x:
+        if pointer_position.x > pointer_min_control_bounds.end.x:
             # Dragging right.
             pan_zoom_control_weight_x = \
-                    (_last_pointer_position.x - \
+                    (pointer_position.x - \
                             pointer_min_control_bounds.end.x) / \
                     (pointer_max_control_bounds.end.x - \
                             pointer_min_control_bounds.end.x)
     var pan_zoom_control_weight_y: float
-    if _last_pointer_position.y < camera_center.y:
-#        assert(_last_pointer_position.y >= \
-#                pointer_max_control_bounds.position.y - 2)
-        _last_pointer_position.y = max(
-                _last_pointer_position.y,
+    if pointer_position.y < camera_center.y:
+        assert(pointer_position.y >= \
+                pointer_max_control_bounds.position.y - 1)
+        pointer_position.y = max(
+                pointer_position.y,
                 pointer_max_control_bounds.position.y)
-        if _last_pointer_position.y < pointer_min_control_bounds.position.y:
+        if pointer_position.y < pointer_min_control_bounds.position.y:
             # Dragging up.
             pan_zoom_control_weight_y = \
                     -1 * \
                     (pointer_min_control_bounds.position.y - \
-                            _last_pointer_position.y) / \
+                            pointer_position.y) / \
                     (pointer_min_control_bounds.position.y - \
                             pointer_max_control_bounds.position.y)
     else:
-#        assert(_last_pointer_position.y <= \
-#                pointer_max_control_bounds.end.y + 2)
-        _last_pointer_position.y = min(
-                _last_pointer_position.y,
+        assert(pointer_position.y <= \
+                pointer_max_control_bounds.end.y + 1)
+        pointer_position.y = min(
+                pointer_position.y,
                 pointer_max_control_bounds.end.y)
-        if _last_pointer_position.y > pointer_min_control_bounds.end.y:
+        if pointer_position.y > pointer_min_control_bounds.end.y:
             # Dragging down.
             pan_zoom_control_weight_y = \
-                    (_last_pointer_position.y - \
+                    (pointer_position.y - \
                             pointer_min_control_bounds.end.y) / \
                     (pointer_max_control_bounds.end.y - \
                             pointer_min_control_bounds.end.y)
     
     # Calcute the pan and zoom deltas for the current frame and drag weight.
     var per_frame_ratio := \
-            _PAN_THROTTLE_INTERVAL_SEC / \
+            _PAN_INTERVAL_SEC / \
             duration_to_max_pan_and_zoom_from_pointer_at_max_control
     var max_pan_distance_per_frame := \
             max_pan_distance_from_pointer * per_frame_ratio
     var max_zoom_delta_per_frame := \
             max_zoom_multiplier_from_pointer * per_frame_ratio
-    var delta_offset_x := \
-            pan_zoom_control_weight_x * max_pan_distance_per_frame
-    var delta_offset_y := \
-            pan_zoom_control_weight_y * max_pan_distance_per_frame
-    var delta_zoom := \
+    _delta_offset = Vector2(
+            pan_zoom_control_weight_x * max_pan_distance_per_frame,
+            pan_zoom_control_weight_y * max_pan_distance_per_frame)
+    _delta_zoom_multiplier = \
             max(abs(pan_zoom_control_weight_x),
                 abs(pan_zoom_control_weight_y)) * \
             max_zoom_delta_per_frame
@@ -177,14 +174,20 @@ func _update_camera_from_pointer() -> void:
     # FIXME: LEFT OFF HERE: ------------------------------------------
     # - Relax pan/zoom back when still pressing, but dragged back to center?
     # - Ease-out the delta according to how close we are to the max offset?
+    pass
+
+func _update_camera_from_deltas() -> void:
+    assert(_delta_offset != Vector2.INF)
+    assert(_delta_zoom_multiplier != INF)
     
+    # Calculate the next values.
     var next_offset: Vector2
     var next_zoom_multiplier: float
     if keeps_camera_anchored_on_player:
-        next_offset = _offset + Vector2(delta_offset_x, delta_offset_y)
-        next_zoom_multiplier = _zoom_multiplier + delta_zoom
+        next_offset = _offset + _delta_offset
+        next_zoom_multiplier = _zoom_multiplier + _delta_zoom_multiplier
     else:
-        next_offset = _offset + Vector2(delta_offset_x, delta_offset_y)
+        next_offset = _offset + _delta_offset
         next_zoom_multiplier = 1.0
     
     # Don't let the pan and zoom exceed their max bounds.
@@ -204,14 +207,15 @@ func _update_camera_from_pointer() -> void:
     _update_camera(next_offset, next_zoom_multiplier)
 
 func _update_camera(
-        pan: Vector2,
-        zoom: float) -> void:
+        next_offset: Vector2,
+        next_zoom_multiplier: float) -> void:
+    # Transition to the new values.
     _tween.stop_all()
     _tween.interpolate_method(
             self,
             "_update_pan",
             _offset,
-            pan,
+            next_offset,
             _TWEEN_DURATION,
             "linear",
             0.0,
@@ -220,7 +224,7 @@ func _update_camera(
             self,
             "_update_zoom",
             _zoom_multiplier,
-            zoom,
+            next_zoom_multiplier,
             _TWEEN_DURATION,
             "linear",
             0.0,
