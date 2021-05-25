@@ -329,8 +329,10 @@ func _handle_pointer_selections() -> void:
         if new_selection.get_is_selection_navigatable():
             last_selection.copy(new_selection)
             navigator.navigate_path(last_selection.path)
+            Gs.audio.play_sound("nav_select_success")
         else:
             print_msg("TARGET IS TOO FAR FROM ANY SURFACE")
+            Gs.audio.play_sound("nav_select_fail")
         
         new_selection.clear()
         pre_selection.clear()
