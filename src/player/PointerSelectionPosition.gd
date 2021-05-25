@@ -46,6 +46,11 @@ func update_pointer_position(pointer_position: Vector2) -> void:
                         _surface_to_air_jump_distance_squared_threshold)
     
     if !nearby_positions_along_surface.empty():
+        JumpLandPositionsUtils \
+                .ensure_position_is_not_too_close_to_concave_neighbor(
+                        _player.movement_params,
+                        nearby_positions_along_surface[0])
+        
         if pointer_position.distance_squared_to(
                 nearby_positions_along_surface[0].target_point) < \
                 _pointer_to_surface_distance_squared_threshold:
@@ -65,7 +70,7 @@ func update_pointer_position(pointer_position: Vector2) -> void:
     if navigation_destination != null:
         if navigation_destination.surface != null:
             self.path = _player.navigator.find_path(navigation_destination)
-            self.nearby_position_along_surface = nearby_positions_along_surface[0]
+            self.nearby_position_along_surface = navigation_destination
         else:
             _update_path_for_in_air_destination(nearby_positions_along_surface)
     else:
@@ -75,6 +80,11 @@ func update_pointer_position(pointer_position: Vector2) -> void:
 func _update_path_for_in_air_destination(
         nearby_positions_along_surface: Array) -> void:
     for nearby_position_along_surface in nearby_positions_along_surface:
+        JumpLandPositionsUtils \
+                .ensure_position_is_not_too_close_to_concave_neighbor(
+                        _player.movement_params,
+                        nearby_position_along_surface)
+        
         var path: PlatformGraphPath = _player.navigator.find_path(
                 navigation_destination,
                 nearby_position_along_surface)
