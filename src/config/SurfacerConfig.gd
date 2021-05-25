@@ -43,6 +43,44 @@ var _settings_details_item_class_inclusions := [
     LogSurfacerEventsSettingsLabeledControlItem,
 ]
 
+var _sounds_manifest := [
+    {
+        name = "nav_select_fail",
+        volume_db = 0.0,
+        path_prefix = "res://addons/surfacer/assets/sounds/",
+    },
+    {
+        name = "nav_select_success",
+        volume_db = 0.0,
+        path_prefix = "res://addons/surfacer/assets/sounds/",
+    },
+    {
+        name = "slow_down",
+        volume_db = 0.0,
+        path_prefix = "res://addons/surfacer/assets/sounds/",
+    },
+    {
+        name = "speed_up",
+        volume_db = 0.0,
+        path_prefix = "res://addons/surfacer/assets/sounds/",
+    },
+    {
+        name = "tick",
+        volume_db = 0.0,
+        path_prefix = "res://addons/surfacer/assets/sounds/",
+    },
+    {
+        name = "tock_low",
+        volume_db = 0.0,
+        path_prefix = "res://addons/surfacer/assets/sounds/",
+    },
+    {
+        name = "tock_high",
+        volume_db = 0.0,
+        path_prefix = "res://addons/surfacer/assets/sounds/",
+    },
+]
+
 # ---
 
 var manifest: Dictionary
@@ -89,7 +127,7 @@ var max_zoom_multiplier_from_pointer := 1.5
 var max_pan_distance_from_pointer := 512.0
 var duration_to_max_pan_from_pointer_at_max_control := 0.67
 var duration_to_max_zoom_from_pointer_at_max_control := 3.0
-var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.4
+var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.3
 
 var debug_params: Dictionary
 
@@ -175,6 +213,9 @@ func amend_app_manifest(manifest: Dictionary) -> void:
             !manifest.precompute_platform_graph_for_levels.empty()
     if is_precomputing_platform_graphs:
         manifest.is_splash_skipped = true
+    
+    # Add Surfacer sounds to the front, so they can be overridden by the app.
+    Gs.utils.concat(manifest.sounds_manifest, _sounds_manifest, false)
     
     for inclusion in _screen_path_inclusions:
         if !manifest.screen_path_exclusions.has(inclusion) and \

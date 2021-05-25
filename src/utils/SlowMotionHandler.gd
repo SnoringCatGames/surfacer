@@ -99,6 +99,13 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
         if !is_enabled:
             Gs.audio.seek(_previous_playback_position)
     
+    # Trigger sound effect.
+    var sound_name := \
+            "slow_down" if \
+            is_enabled else \
+            "speed_up"
+    Gs.audio.play_sound(sound_name)
+    
     _slow_motion_tween.start()
 
 func _get_saturation() -> float:
