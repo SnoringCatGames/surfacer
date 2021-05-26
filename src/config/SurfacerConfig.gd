@@ -66,17 +66,22 @@ var _sounds_manifest := [
     },
     {
         name = "tick",
-        volume_db = 0.0,
+        volume_db = -6.0,
         path_prefix = "res://addons/surfacer/assets/sounds/",
     },
     {
         name = "tock_low",
-        volume_db = 0.0,
+        volume_db = -6.0,
         path_prefix = "res://addons/surfacer/assets/sounds/",
     },
     {
         name = "tock_high",
-        volume_db = 0.0,
+        volume_db = -6.0,
+        path_prefix = "res://addons/surfacer/assets/sounds/",
+    },
+    {
+        name = "tock_higher",
+        volume_db = -6.0,
         path_prefix = "res://addons/surfacer/assets/sounds/",
     },
 ]
@@ -114,7 +119,8 @@ var does_human_nav_pulse_grow := false
 var does_computer_nav_pulse_grow := true
 var is_human_prediction_shown := true
 var is_computer_prediction_shown := true
-var nav_selection_slow_mo_time_scale := 0.1
+var nav_selection_slow_mo_time_scale := 0.02
+var nav_selection_slow_mo_tick_tock_tempo_multiplier := 25
 var nav_selection_slow_mo_saturation := 0.2
 var nav_selection_prediction_opacity := 0.5
 var nav_selection_prediction_tween_duration := 0.15
@@ -266,6 +272,9 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("nav_selection_slow_mo_time_scale"):
         self.nav_selection_slow_mo_time_scale = \
                 manifest.nav_selection_slow_mo_time_scale
+    if manifest.has("nav_selection_slow_mo_tick_tock_tempo_multiplier"):
+        self.nav_selection_slow_mo_tick_tock_tempo_multiplier = \
+                manifest.nav_selection_slow_mo_tick_tock_tempo_multiplier
     
     if manifest.has("is_human_current_nav_trajectory_shown_with_slow_mo"):
         self.is_human_current_nav_trajectory_shown_with_slow_mo = \
