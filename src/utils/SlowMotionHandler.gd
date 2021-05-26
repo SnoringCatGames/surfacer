@@ -6,17 +6,19 @@ const DESATURATION_SHADER := \
 
 const ENABLE_SLOW_MOTION_DURATION_SEC := 0.3
 const DISABLE_SLOW_MOTION_DURATION_SEC := 0.2
-const DISABLE_SLOW_MOTION_CROSS_FADE_DURATION_MULTIPLIER := 1.2
 const DISABLE_SLOW_MOTION_SATURATION_DURATION_MULTIPLIER := 0.9
 
 var is_enabled := false
-var _previous_playback_position := 0.0
 
+var _slow_motion_music: SlowMotionMusic
 var _slow_motion_tween: ScaffolderTween
 var _desaturation_material: ShaderMaterial
 
 func _init() -> void:
     Gs.logger.print("SlowMotionHandler._init")
+    
+    _slow_motion_music = SlowMotionMusic.new()
+    add_child(_slow_motion_music)
     
     _slow_motion_tween = ScaffolderTween.new()
     add_child(_slow_motion_tween)
@@ -37,16 +39,12 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
     var next_time_scale: float
     var time_scale_duration: float
     var ease_name: String
-    var cross_fade_duration: float
     var next_saturation: float
     var saturation_duration: float
     if is_enabled:
         next_time_scale = Surfacer.nav_selection_slow_mo_time_scale
         time_scale_duration = ENABLE_SLOW_MOTION_DURATION_SEC
         ease_name = "ease_in"
-        cross_fade_duration = \
-                time_scale_duration * \
-                DISABLE_SLOW_MOTION_CROSS_FADE_DURATION_MULTIPLIER
         next_saturation = Surfacer.nav_selection_slow_mo_saturation
         saturation_duration = \
                 time_scale_duration * \
@@ -55,7 +53,6 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
         next_time_scale = 1.0
         time_scale_duration = DISABLE_SLOW_MOTION_DURATION_SEC
         ease_name = "ease_out"
-        cross_fade_duration = time_scale_duration
         next_saturation = 1.0
         saturation_duration = time_scale_duration
     
@@ -85,28 +82,13 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
             0.0,
             TimeType.PLAY_PHYSICS)
     
-    # Update music.
-    if is_instance_valid(Gs.level):
-        if is_enabled:
-            _previous_playback_position = Gs.audio.get_playback_position()
-        
-        var music_name: String = \
-                Gs.level.get_slow_motion_music_name() if \
-                is_enabled else \
-                Gs.level.get_music_name()
-        Gs.audio.cross_fade_music(music_name, cross_fade_duration)
-        
-        if !is_enabled:
-            Gs.audio.seek(_previous_playback_position)
-    
-    # Trigger sound effect.
-    var sound_name := \
-            "slow_down" if \
-            is_enabled else \
-            "speed_up"
-    Gs.audio.play_sound(sound_name)
-    
     _slow_motion_tween.start()
+    
+    # Update music.
+    if is_enabled:
+        _slow_motion_music.start(time_scale_duration)
+    else:
+        _slow_motion_music.stop(time_scale_duration)
 
 func _get_saturation() -> float:
     return _desaturation_material.get_shader_param("saturation")
