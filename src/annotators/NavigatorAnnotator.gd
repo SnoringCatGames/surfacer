@@ -193,6 +193,43 @@ func _draw_current_path(
                 true,
                 false)
         
+        if is_slow_motion_enabled:
+            Gs.draw_utils.draw_path_beat_hashes(
+                    self,
+                    current_path,
+                    Surfacer.slow_motion.music.time_to_next_music_beat,
+                    Surfacer.slow_motion.music.next_music_beat_index,
+                    Surfacer.slow_motion.music.music_beat_duration,
+                    Surfacer.slow_motion.music.meter,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_TRAJECTORY_OFFBEAT_HASH_LENGTH,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+                    current_path_color,
+                    current_path_color)
+        else:
+            Gs.draw_utils.draw_path_beat_hashes(
+                    self,
+                    current_path,
+                    Gs.audio.time_to_next_beat,
+                    Gs.audio.next_beat_index,
+                    Gs.audio.get_beat_duration(),
+                    Gs.audio.get_meter(),
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_TRAJECTORY_OFFBEAT_HASH_LENGTH,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+                    AnnotationElementDefaults \
+                            .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+                    current_path_color,
+                    current_path_color)
+        
         # Draw the origin indicator.
         var origin_indicator_fill_color: Color = \
                 Surfacer.ann_defaults \

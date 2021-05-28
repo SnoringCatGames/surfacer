@@ -372,12 +372,14 @@ func initialize() -> void:
     Gs.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
     Gs.profiler.preregister_metric_keys(surface_parser_metric_keys)
     
-    ann_defaults = AnnotationElementDefaults.new()
-    annotators = Annotators.new()
-    add_child(Surfacer.annotators)
+    Gs.audio.is_tracking_beat = true
     
     slow_motion = SlowMotionHandler.new()
     add_child(slow_motion)
+    
+    ann_defaults = AnnotationElementDefaults.new()
+    annotators = Annotators.new()
+    add_child(Surfacer.annotators)
 
 func get_is_inspector_panel_open() -> bool:
     return is_instance_valid(inspector_panel) and inspector_panel.is_open

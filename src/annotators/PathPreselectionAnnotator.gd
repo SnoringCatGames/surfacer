@@ -35,6 +35,12 @@ const PRESELECTION_SURFACE_LENGTH_PADDING := 4.0
 const PRESELECTION_POSITION_INDICATOR_LENGTH := 128.0
 const PRESELECTION_POSITION_INDICATOR_RADIUS := 32.0
 const PRESELECTION_PATH_STROKE_WIDTH := 12.0
+const PRESELECTION_PATH_DOWNBEAT_HASH_LENGTH := \
+        PRESELECTION_PATH_STROKE_WIDTH * 5
+const PRESELECTION_PATH_OFFBEAT_HASH_LENGTH := \
+        PRESELECTION_PATH_STROKE_WIDTH * 3
+const PRESELECTION_PATH_DOWNBEAT_STROKE_WIDTH := PRESELECTION_PATH_STROKE_WIDTH
+const PRESELECTION_PATH_OFFBEAT_STROKE_WIDTH := PRESELECTION_PATH_STROKE_WIDTH
 const PATH_BACK_END_TRIM_RADIUS := 0.0
 
 var _predictions_container: Node2D
@@ -173,6 +179,20 @@ func _draw() -> void:
                     false,
                     true,
                     false)
+            
+            Gs.draw_utils.draw_path_beat_hashes(
+                    self,
+                    preselection_path,
+                    Surfacer.slow_motion.music.time_to_next_music_beat,
+                    Surfacer.slow_motion.music.next_music_beat_index,
+                    Surfacer.slow_motion.music.music_beat_duration,
+                    Surfacer.slow_motion.music.meter,
+                    PRESELECTION_PATH_DOWNBEAT_HASH_LENGTH,
+                    PRESELECTION_PATH_OFFBEAT_HASH_LENGTH,
+                    PRESELECTION_PATH_DOWNBEAT_STROKE_WIDTH,
+                    PRESELECTION_PATH_OFFBEAT_STROKE_WIDTH,
+                    path_color,
+                    path_color)
         
         if phantom_surface.side != SurfaceSide.NONE:
             # Draw Surface.

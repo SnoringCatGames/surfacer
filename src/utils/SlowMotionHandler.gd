@@ -10,18 +10,19 @@ const DISABLE_SLOW_MOTION_SATURATION_DURATION_MULTIPLIER := 0.9
 
 var is_enabled := false
 
-var _slow_motion_music: SlowMotionMusic
-var _slow_motion_tween: ScaffolderTween
+var music: SlowMotionMusic
+
+var _tween: ScaffolderTween
 var _desaturation_material: ShaderMaterial
 
 func _init() -> void:
     Gs.logger.print("SlowMotionHandler._init")
     
-    _slow_motion_music = SlowMotionMusic.new()
-    add_child(_slow_motion_music)
+    music = SlowMotionMusic.new()
+    add_child(music)
     
-    _slow_motion_tween = ScaffolderTween.new()
-    add_child(_slow_motion_tween)
+    _tween = ScaffolderTween.new()
+    add_child(_tween)
     
     _desaturation_material = ShaderMaterial.new()
     _desaturation_material.shader = DESATURATION_SHADER
@@ -34,7 +35,7 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
     
     self.is_enabled = is_enabled
     
-    _slow_motion_tween.stop_all()
+    _tween.stop_all()
     
     var next_time_scale: float
     var time_scale_duration: float
@@ -57,7 +58,7 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
         saturation_duration = time_scale_duration
     
     # Update time scale.
-    _slow_motion_tween.interpolate_method(
+    _tween.interpolate_method(
             self,
             "_set_time_scale",
             Gs.time.time_scale,
@@ -72,7 +73,7 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
             Surfacer.group_name_desaturatable)
     for node in desaturatables:
         node.material = _desaturation_material
-    _slow_motion_tween.interpolate_method(
+    _tween.interpolate_method(
             self,
             "_set_saturation",
             _get_saturation(),
@@ -82,13 +83,13 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
             0.0,
             TimeType.PLAY_PHYSICS)
     
-    _slow_motion_tween.start()
+    _tween.start()
     
     # Update music.
     if is_enabled:
-        _slow_motion_music.start(time_scale_duration)
+        music.start(time_scale_duration)
     else:
-        _slow_motion_music.stop(time_scale_duration)
+        music.stop(time_scale_duration)
 
 func _get_saturation() -> float:
     return _desaturation_material.get_shader_param("saturation")

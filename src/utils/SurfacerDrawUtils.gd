@@ -11,6 +11,9 @@ const EDGE_START_RADIUS := 3.0 * EDGE_WAYPOINT_STROKE_WIDTH
 const EDGE_END_RADIUS := EDGE_WAYPOINT_RADIUS
 const EDGE_END_CONE_LENGTH := EDGE_WAYPOINT_RADIUS * 2.0
 
+const PATH_DOWNBEAT_HASH_LENGTH := EDGE_TRAJECTORY_WIDTH * 5
+const PATH_OFFBEAT_HASH_LENGTH := EDGE_TRAJECTORY_WIDTH * 3
+
 const EDGE_INSTRUCTION_INDICATOR_LENGTH := 24
 
 const IN_AIR_DESTINATION_INDICATOR_CONE_COUNT := 3
@@ -153,9 +156,6 @@ static func draw_path_duration_segment(
     var edge_start_time := 0.0
     var has_segment_started := false
     for edge in path.edges:
-        if edge.edge_type == EdgeType.JUMP_FROM_SURFACE_EDGE:
-            var a := true
-        
         var edge_end_time: float = edge_start_time + edge.duration
         var is_start_of_segment := \
                 !has_segment_started and \
@@ -368,6 +368,91 @@ static func _trim_back_end(
     vertices[vertices.size() - 1] = end_replacement
     
     return vertices
+
+static func draw_path_beat_hashes(
+        canvas: CanvasItem,
+        path: PlatformGraphPath,
+        time_to_next_beat: float,
+        next_beat_index: int,
+        beat_duration: float,
+        meter: int,
+        downbeat_hash_length := PATH_DOWNBEAT_HASH_LENGTH,
+        offbeat_hash_length := PATH_OFFBEAT_HASH_LENGTH,
+        downbeat_stroke_width := EDGE_TRAJECTORY_WIDTH,
+        offbeat_stroke_width := EDGE_TRAJECTORY_WIDTH,
+        downbeat_color := Color.white,
+        offbeat_color := Color.white) -> void:
+    var path_time_of_next_beat := time_to_next_beat
+    var edge_start_time := 0.0
+    
+    for edge in path.edges:
+        var edge_end_time: float = edge_start_time + edge.duration
+        
+        while edge_end_time >= path_time_of_next_beat:
+            var position_before: Vector2
+            var position_after: Vector2
+            var weight: float
+            if edge.trajectory != null:
+                var edge_vertices := _get_edge_trajectory_vertices(edge, false)
+                var index_before_hash := \
+                        int((path_time_of_next_beat - edge_start_time) / \
+                                Time.PHYSICS_TIME_STEP_SEC)
+                if index_before_hash < edge_vertices.size() - 1:
+                    var time_of_index_before := \
+                            edge_start_time + \
+                            index_before_hash * Time.PHYSICS_TIME_STEP_SEC
+                    position_before = edge_vertices[index_before_hash]
+                    position_after = edge_vertices[index_before_hash + 1]
+                    weight = \
+                            (path_time_of_next_beat - time_of_index_before) / \
+                            Time.PHYSICS_TIME_STEP_SEC
+                else:
+                    position_before = edge_vertices[edge_vertices.size() - 1]
+                    position_after = position_before
+                    weight = 1.0
+            else:
+                position_before = edge.get_start()
+                position_after = edge.get_end()
+                weight = \
+                        (path_time_of_next_beat - edge_start_time) / \
+                        edge.duration
+            
+            var hash_position: Vector2 = lerp(
+                    position_before,
+                    position_after,
+                    weight)
+            var hash_direction: Vector2 = \
+                    (position_after - position_before).tangent().normalized()
+            
+            var is_downbeat := next_beat_index % meter == 0
+            var hash_length: float
+            var stroke_width: float
+            var color: Color
+            if is_downbeat:
+                hash_length = downbeat_hash_length
+                stroke_width = downbeat_stroke_width
+                color = downbeat_color
+            else:
+                hash_length = offbeat_hash_length
+                stroke_width = offbeat_stroke_width
+                color = offbeat_color
+            
+            var hash_half_displacement := \
+                    hash_length * hash_direction / 2.0
+            var hash_from := hash_position + hash_half_displacement
+            var hash_to := hash_position - hash_half_displacement
+            
+            canvas.draw_line(
+                    hash_from,
+                    hash_to,
+                    color,
+                    stroke_width,
+                    false)
+            
+            path_time_of_next_beat += beat_duration
+            next_beat_index += 1
+        
+        edge_start_time = edge_end_time
 
 static func draw_edge(
         canvas: CanvasItem,
