@@ -183,6 +183,7 @@ func _draw() -> void:
             Gs.draw_utils.draw_path_beat_hashes(
                     self,
                     preselection_path,
+                    0.0,
                     Surfacer.slow_motion.music.time_to_next_music_beat,
                     Surfacer.slow_motion.music.next_music_beat_index,
                     Surfacer.slow_motion.music.music_beat_duration,

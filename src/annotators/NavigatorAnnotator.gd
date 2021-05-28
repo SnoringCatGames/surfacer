@@ -11,6 +11,8 @@ var EXCLAMATION_MARK_VERTICAL_OFFSET := -32.0
 var navigator: Navigator
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
+var previous_path_start_time_scaled: float
+var current_path_start_time_scaled: float
 var current_destination: PositionAlongSurface
 var is_enabled := false
 var is_slow_motion_enabled := false
@@ -72,6 +74,7 @@ func _physics_process(_delta_sec: float) -> void:
     
     if navigator.path != current_path:
         current_path = navigator.path
+        current_path_start_time_scaled = navigator.path_start_time_scaled
         current_destination = navigator.get_destination()
         if current_path != null:
             _trigger_exclamation_mark()
@@ -81,6 +84,8 @@ func _physics_process(_delta_sec: float) -> void:
     
     if navigator.previous_path != previous_path:
         previous_path = navigator.previous_path
+        previous_path_start_time_scaled = \
+                navigator.previous_path_start_time_scaled
         update()
     
     if Surfacer.slow_motion.is_enabled != is_slow_motion_enabled:
@@ -193,7 +198,10 @@ func _draw_current_path(
                 true,
                 false)
         
-        _draw_beat_hashes(current_path, current_path_color)
+        _draw_beat_hashes(
+                current_path,
+                current_path_start_time_scaled,
+                current_path_color)
         
         # Draw the origin indicator.
         var origin_indicator_fill_color: Color = \
@@ -283,7 +291,10 @@ func _draw_previous_path() -> void:
             false,
             true,
             false)
-    _draw_beat_hashes(previous_path, previous_path_color)
+    _draw_beat_hashes(
+            previous_path,
+            previous_path_start_time_scaled,
+            previous_path_color)
 
 func _get_is_enabled() -> bool:
     if navigator.player.is_human_player:
@@ -303,11 +314,15 @@ func _get_is_enabled() -> bool:
 
 func _draw_beat_hashes(
         path: PlatformGraphPath,
+        path_start_time_scaled: float,
         color: Color) -> void:
+    var elapsed_path_time := \
+            Gs.time.get_scaled_play_time_sec() - path_start_time_scaled
     if is_slow_motion_enabled:
         Gs.draw_utils.draw_path_beat_hashes(
                 self,
                 path,
+                elapsed_path_time,
                 Surfacer.slow_motion.music.time_to_next_music_beat,
                 Surfacer.slow_motion.music.next_music_beat_index,
                 Surfacer.slow_motion.music.music_beat_duration,
@@ -326,6 +341,7 @@ func _draw_beat_hashes(
         Gs.draw_utils.draw_path_beat_hashes(
                 self,
                 path,
+                elapsed_path_time,
                 Gs.audio.time_to_next_beat,
                 Gs.audio.next_beat_index,
                 Gs.audio.get_beat_duration(),

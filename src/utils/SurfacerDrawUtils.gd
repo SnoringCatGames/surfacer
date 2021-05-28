@@ -372,6 +372,7 @@ static func _trim_back_end(
 static func draw_path_beat_hashes(
         canvas: CanvasItem,
         path: PlatformGraphPath,
+        elapsed_path_time: float,
         time_to_next_beat: float,
         next_beat_index: int,
         beat_duration: float,
@@ -382,6 +383,15 @@ static func draw_path_beat_hashes(
         offbeat_stroke_width := EDGE_TRAJECTORY_WIDTH,
         downbeat_color := Color.white,
         offbeat_color := Color.white) -> void:
+    var time_from_path_start_to_next_beat := \
+            time_to_next_beat + elapsed_path_time
+    
+    time_to_next_beat = fmod(
+            time_from_path_start_to_next_beat,
+            beat_duration)
+    next_beat_index -= \
+            int(time_from_path_start_to_next_beat / beat_duration)
+    
     var path_time_of_next_beat := time_to_next_beat
     var edge_start_time := 0.0
     
