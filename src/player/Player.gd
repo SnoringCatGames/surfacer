@@ -17,7 +17,7 @@ var actions_from_previous_frame := PlayerActionState.new()
 var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var navigation_state: PlayerNavigationState
-var pointer_handler: PlayerPointerHandler
+var pointer_handler: PlayerPointerListener
 
 var new_selection: PointerSelectionPosition
 var last_selection: PointerSelectionPosition
@@ -81,7 +81,7 @@ func _enter_tree() -> void:
         # hood.
         return
     
-    self.pointer_handler = PlayerPointerHandler.new(self)
+    self.pointer_handler = PlayerPointerListener.new(self)
     add_child(pointer_handler)
 
 func _ready() -> void:

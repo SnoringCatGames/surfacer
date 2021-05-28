@@ -202,7 +202,7 @@ var inspector_panel: InspectorPanel
 var annotators: Annotators
 var ann_defaults: AnnotationElementDefaults
 var edge_from_json_factory := EdgeFromJsonFactory.new()
-var slow_motion: SlowMotionHandler
+var slow_motion: SlowMotionController
 
 var player_action_classes: Array
 var edge_movement_classes: Array
@@ -374,7 +374,7 @@ func initialize() -> void:
     
     Gs.audio.is_tracking_beat = true
     
-    slow_motion = SlowMotionHandler.new()
+    slow_motion = SlowMotionController.new()
     add_child(slow_motion)
     
     ann_defaults = AnnotationElementDefaults.new()
