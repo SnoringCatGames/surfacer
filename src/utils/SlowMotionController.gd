@@ -1,6 +1,8 @@
 class_name SlowMotionController
 extends Node
 
+signal slow_motion_toggled(is_enabled)
+
 const DESATURATION_SHADER := \
         preload("res://addons/surfacer/src/Desaturation.shader")
 
@@ -8,7 +10,7 @@ const ENABLE_SLOW_MOTION_DURATION_SEC := 0.3
 const DISABLE_SLOW_MOTION_DURATION_SEC := 0.2
 const DISABLE_SLOW_MOTION_SATURATION_DURATION_MULTIPLIER := 0.9
 
-var is_enabled := false
+var is_enabled := false setget set_slow_motion_enabled
 
 var music: SlowMotionMusic
 
@@ -28,12 +30,12 @@ func _init() -> void:
     _desaturation_material.shader = DESATURATION_SHADER
     _set_saturation(1.0)
 
-func set_slow_motion_enabled(is_enabled: bool) -> void:
-    if is_enabled == self.is_enabled:
+func set_slow_motion_enabled(value: bool) -> void:
+    if value == is_enabled:
         # No change.
         return
     
-    self.is_enabled = is_enabled
+    is_enabled = value
     
     _tween.stop_all()
     
@@ -90,6 +92,8 @@ func set_slow_motion_enabled(is_enabled: bool) -> void:
         music.start(time_scale_duration)
     else:
         music.stop(time_scale_duration)
+    
+    emit_signal("slow_motion_toggled", is_enabled)
 
 func _get_saturation() -> float:
     return _desaturation_material.get_shader_param("saturation")

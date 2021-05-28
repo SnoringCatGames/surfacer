@@ -15,6 +15,11 @@ const HORIZONTAL_INSTRUCTION_END_STROKE_WIDTH := 1
 const VERTICAL_INSTRUCTION_START_END_LENGTH := 11
 const VERTICAL_INSTRUCTION_START_END_STROKE_WIDTH := 1
 
+const DOWNBEAT_HASH_LENGTH := 20.0
+const OFFBEAT_HASH_LENGTH := 8.0
+const DOWNBEAT_HASH_STROKE_WIDTH := 1.0
+const OFFBEAT_HASH_STROKE_WIDTH := 1.0
+
 var player: Player
 
 # We use this as a circular buffer.
@@ -22,6 +27,9 @@ var recent_positions: PoolVector2Array
 
 # We use this as a circular buffer.
 var recent_actions: PoolIntArray
+
+# We use this as a circular buffer.
+var recent_beats: PoolIntArray
 
 var current_position_index := -1
 
@@ -33,6 +41,22 @@ func _init(player: Player) -> void:
     self.recent_positions.resize(RECENT_POSITIONS_BUFFER_SIZE)
     self.recent_actions = PoolIntArray()
     self.recent_actions.resize(RECENT_POSITIONS_BUFFER_SIZE)
+    self.recent_beats = PoolIntArray()
+    self.recent_beats.resize(RECENT_POSITIONS_BUFFER_SIZE)
+    
+    Gs.audio.connect("beat", self, "_on_beat")
+    Surfacer.slow_motion.music.connect("music_beat", self, "_on_beat")
+    
+    Gs.audio.connect("music_changed", self, "_on_music_changed")
+
+func _on_beat(
+        is_downbeat: bool,
+        beat_index: int,
+        meter: int) -> void:
+    recent_beats[current_position_index] = beat_index
+
+func _on_music_changed(music_name: String) -> void:
+    pass
 
 func check_for_update() -> void:
     # Record the action as belonging to the previous frame.
@@ -90,6 +114,8 @@ func check_for_update() -> void:
     recent_positions[current_position_index] = player.position
     # Record an empty place-holder action value for the current frame.
     recent_actions[current_position_index] = PlayerActionType.NONE
+    # Record an empty place-holder beat value for the current frame.
+    recent_beats[current_position_index] = -1
     
     update()
 
@@ -114,6 +140,7 @@ func _draw() -> void:
     var opacity: float
     var color: Color
     var action: int
+    var beat_index: int
     
     for i in range(1, position_count):
         # Older positions fade out.
@@ -140,6 +167,14 @@ func _draw() -> void:
         if action != PlayerActionType.NONE:
             _draw_action_indicator(
                     action,
+                    next_position,
+                    opacity)
+        
+        beat_index = recent_beats[i]
+        if beat_index >= 0:
+            _draw_beat_hash(
+                    beat_index,
+                    previous_position,
                     next_position,
                     opacity)
         
@@ -198,3 +233,42 @@ func _draw_action_indicator(
                 position,
                 SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH,
                 color)
+
+func _draw_beat_hash(
+        beat_index: int,
+        previous_position: Vector2,
+        next_position: Vector2,
+        opacity: float) -> void:
+    var is_downbeat := beat_index % Gs.audio.get_meter() == 0
+    var hash_length: float
+    var stroke_width: float
+    if is_downbeat:
+        hash_length = DOWNBEAT_HASH_LENGTH
+        stroke_width = DOWNBEAT_HASH_STROKE_WIDTH
+    else:
+        hash_length = OFFBEAT_HASH_LENGTH
+        stroke_width = OFFBEAT_HASH_STROKE_WIDTH
+    
+    var color := Color.from_hsv(
+            MOVEMENT_HUE,
+            0.6,
+            0.9,
+            opacity)
+    
+    var hash_position: Vector2 = lerp(
+            previous_position,
+            next_position,
+            0.5)
+    var hash_direction: Vector2 = \
+            (next_position - previous_position).tangent().normalized()
+    var hash_half_displacement := \
+            hash_length * hash_direction / 2.0
+    var hash_from := hash_position + hash_half_displacement
+    var hash_to := hash_position - hash_half_displacement
+    
+    self.draw_line(
+            hash_from,
+            hash_to,
+            color,
+            stroke_width,
+            false)

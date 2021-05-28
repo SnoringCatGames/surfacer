@@ -1,6 +1,9 @@
 class_name SlowMotionMusic
 extends Node
 
+signal music_beat(is_downbeat, beat_index, meter)
+signal tick_tock_beat(is_downbeat, beat_index, meter)
+
 var playback_position := INF
 var time_to_next_music_beat := INF
 var time_to_next_tick_tock_beat := INF
@@ -12,11 +15,13 @@ var music_beat_duration := INF
 var tick_tock_beat_duration := INF
 
 var _is_active := false
+var _is_transition_complete := false
 var _start_time := INF
 var _start_playback_position := INF
+var _is_transition_complete_timeout_id := -1
 
-var _on_beat_timeout_id := -1
-var _on_beat_callback := funcref(self, "_on_beat")
+func _init() -> void:
+    Gs.audio.connect("music_changed", self, "_on_music_changed")
 
 func _process(_delta_sec: float) -> void:
     if _is_active:
@@ -39,9 +44,11 @@ func start(time_scale_duration: float) -> void:
         var music_name: String = Gs.level.get_slow_motion_music_name()
         Gs.audio.cross_fade_music(music_name, time_scale_duration)
         
-        _on_beat_timeout_id = Gs.time.set_timeout(
-                funcref(self, "_cue_beat"),
-                time_scale_duration)
+        _is_transition_complete = false
+        _is_transition_complete_timeout_id = Gs.time.set_timeout(
+                funcref(self, "set"),
+                time_scale_duration,
+                ["_is_transition_complete", true])
     
     Gs.audio.play_sound("slow_down")
     
@@ -59,11 +66,12 @@ func stop(time_scale_duration: float) -> void:
                 _start_playback_position + slow_motion_duration
         Gs.audio.seek(playback_position)
     
-    Gs.time.clear_timeout(_on_beat_timeout_id)
+    Gs.time.clear_timeout(_is_transition_complete_timeout_id)
     
     Gs.audio.play_sound("speed_up")
     
     _is_active = false
+    _is_transition_complete = false
     _start_time = INF
     _start_playback_position = INF
     meter = -1
@@ -84,6 +92,7 @@ func _update_playback_state() -> void:
             fmod(playback_position, music_beat_duration)
     time_to_next_music_beat = music_beat_duration - current_music_beat_progress
     
+    var previous_music_beat_index := next_music_beat_index
     next_music_beat_index = int(playback_position / music_beat_duration) + 1
     
     var current_tick_tock_beat_progress := \
@@ -91,19 +100,29 @@ func _update_playback_state() -> void:
     time_to_next_tick_tock_beat = \
             tick_tock_beat_duration - current_tick_tock_beat_progress
     
+    var previous_tick_tock_beat_index := next_tick_tock_beat_index
     next_tick_tock_beat_index = \
             int(playback_position / tick_tock_beat_duration) + 1
+    
+    if _is_transition_complete:
+        if previous_music_beat_index != next_music_beat_index:
+            var is_downbeat := (next_music_beat_index - 1) % meter == 0
+            emit_signal(
+                    "music_beat",
+                    is_downbeat,
+                    next_music_beat_index - 1,
+                    meter)
+        
+        if previous_tick_tock_beat_index != next_tick_tock_beat_index:
+            var is_downbeat := (next_tick_tock_beat_index - 1) % meter == 0
+            _on_tick_tock_beat(is_downbeat, next_tick_tock_beat_index - 1)
+            emit_signal(
+                    "tick_tock_beat",
+                    is_downbeat,
+                    next_tick_tock_beat_index - 1,
+                    meter)
 
-func _cue_beat() -> void:
-    _update_playback_state()
-    var is_next_downbeat := next_tick_tock_beat_index % meter == 0
-    _on_beat_timeout_id = Gs.time.set_timeout(
-            _on_beat_callback,
-            time_to_next_tick_tock_beat,
-            [is_next_downbeat, next_tick_tock_beat_index],
-            TimeType.APP_PHYSICS_SCALED)
-
-func _on_beat(
+func _on_tick_tock_beat(
         is_downbeat: bool,
         beat_index: int) -> void:
     assert(!is_downbeat or \
@@ -124,5 +143,8 @@ func _on_beat(
             -16.0
     
     Gs.audio.play_sound(sound_name, volume_offset)
-    
-    _cue_beat()
+
+func _on_music_changed(music_name: String) -> void:
+    # Changing the music while slow-motion is active isn't supported.
+    assert(music_name == "" or \
+            !Surfacer.slow_motion.is_enabled)
