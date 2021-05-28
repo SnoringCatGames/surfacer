@@ -19,6 +19,7 @@ var has_reached_destination := false
 var just_reached_destination := false
 var previous_path: PlatformGraphPath
 var path: PlatformGraphPath
+var previous_path_start_time_scaled := INF
 var path_start_time_scaled := INF
 var edge: Edge
 var edge_index := -1
@@ -294,6 +295,7 @@ func _set_reached_destination() -> void:
 func _reset() -> void:
     if path != null:
         previous_path = path
+        previous_path_start_time_scaled = path_start_time_scaled
     
     path = null
     path_start_time_scaled = INF
@@ -466,7 +468,9 @@ func get_destination() -> PositionAlongSurface:
     return path.destination if path != null else null
 
 func get_previous_destination() -> PositionAlongSurface:
-    return previous_path.destination if previous_path != null else null
+    return previous_path.destination if \
+            previous_path != null else \
+            null
 
 # Conditionally prints the given message, depending on the Player's
 # configuration.
