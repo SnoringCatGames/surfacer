@@ -1,4 +1,4 @@
-class_name SlowMotionHandler
+class_name SlowMotionController
 extends Node
 
 const DESATURATION_SHADER := \
@@ -16,7 +16,7 @@ var _tween: ScaffolderTween
 var _desaturation_material: ShaderMaterial
 
 func _init() -> void:
-    Gs.logger.print("SlowMotionHandler._init")
+    Gs.logger.print("SlowMotionController._init")
     
     music = SlowMotionMusic.new()
     add_child(music)

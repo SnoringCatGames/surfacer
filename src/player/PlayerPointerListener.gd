@@ -1,4 +1,4 @@
-class_name PlayerPointerHandler
+class_name PlayerPointerListener
 extends Node2D
 
 const DRAG_THROTTLE_INTERVAL_SEC := 0.1
