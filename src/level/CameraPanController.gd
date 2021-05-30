@@ -98,8 +98,6 @@ func _update_pan_and_zoom_delta_from_pointer(
     # Calculate drag control weights according to the pointer position.
     var pan_zoom_control_weight_x: float
     if pointer_position.x < camera_center.x:
-        assert(pointer_position.x >= \
-                pointer_max_control_bounds.position.x - 1)
         pointer_position.x = max(
                 pointer_position.x,
                 pointer_max_control_bounds.position.x)
@@ -112,8 +110,6 @@ func _update_pan_and_zoom_delta_from_pointer(
                     (pointer_min_control_bounds.position.x - \
                             pointer_max_control_bounds.position.x)
     else:
-        assert(pointer_position.x <= \
-                pointer_max_control_bounds.end.x + 1)
         pointer_position.x = min(
                 pointer_position.x,
                 pointer_max_control_bounds.end.x)
@@ -126,8 +122,6 @@ func _update_pan_and_zoom_delta_from_pointer(
                             pointer_min_control_bounds.end.x)
     var pan_zoom_control_weight_y: float
     if pointer_position.y < camera_center.y:
-        assert(pointer_position.y >= \
-                pointer_max_control_bounds.position.y - 1)
         pointer_position.y = max(
                 pointer_position.y,
                 pointer_max_control_bounds.position.y)
@@ -140,8 +134,6 @@ func _update_pan_and_zoom_delta_from_pointer(
                     (pointer_min_control_bounds.position.y - \
                             pointer_max_control_bounds.position.y)
     else:
-        assert(pointer_position.y <= \
-                pointer_max_control_bounds.end.y + 1)
         pointer_position.y = min(
                 pointer_position.y,
                 pointer_max_control_bounds.end.y)
