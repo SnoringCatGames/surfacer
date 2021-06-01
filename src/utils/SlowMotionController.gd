@@ -11,6 +11,7 @@ const DISABLE_SLOW_MOTION_DURATION_SEC := 0.2
 const DISABLE_SLOW_MOTION_SATURATION_DURATION_MULTIPLIER := 0.9
 
 var is_enabled := false setget set_slow_motion_enabled
+var is_transitioning := false
 
 var music: SlowMotionMusic
 
@@ -36,6 +37,7 @@ func set_slow_motion_enabled(value: bool) -> void:
         return
     
     is_enabled = value
+    is_transitioning = true
     
     _tween.stop_all()
     
@@ -93,6 +95,8 @@ func set_slow_motion_enabled(value: bool) -> void:
     else:
         music.stop(time_scale_duration)
     
+    music.connect("transition_complete", self, "_on_music_transition_complete")
+    
     emit_signal("slow_motion_toggled", is_enabled)
 
 func _get_saturation() -> float:
@@ -115,3 +119,9 @@ func _set_time_scale(value: float) -> void:
     for players in [computer_players, human_players]:
         for player in players:
             player.animator.match_rate_to_time_scale()
+
+func _on_music_transition_complete(is_active: bool) -> void:
+    is_transitioning = false
+
+func get_is_enabled_or_transitioning() -> bool:
+    return is_enabled or is_transitioning
