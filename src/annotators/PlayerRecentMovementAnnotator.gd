@@ -255,10 +255,16 @@ func _draw_beat_hash(
             0.9,
             opacity)
     
+    # FIXME: ------------------------------
+    # - Is this right? Or is there some other off-by-one error with my timing?
     var hash_position: Vector2 = lerp(
             previous_position,
             next_position,
             0.5)
+#    var hash_position: Vector2 = lerp(
+#            previous_position,
+#            next_position,
+#            1.0)
     var hash_direction: Vector2 = \
             (next_position - previous_position).tangent().normalized()
     var hash_half_displacement := \

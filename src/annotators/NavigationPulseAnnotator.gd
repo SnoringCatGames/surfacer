@@ -29,8 +29,10 @@ func _physics_process(_delta_sec: float) -> void:
                     Surfacer.does_computer_nav_pulse_grow
         update()
     
-    if Surfacer.slow_motion.is_enabled != is_slow_motion_enabled:
-        is_slow_motion_enabled = Surfacer.slow_motion.is_enabled
+    if Surfacer.slow_motion.get_is_enabled_or_transitioning() != \
+            is_slow_motion_enabled:
+        is_slow_motion_enabled = \
+                Surfacer.slow_motion.get_is_enabled_or_transitioning()
         is_enabled = _get_is_pulse_enabled()
         update()
     

@@ -3,6 +3,7 @@ extends Node
 
 signal music_beat(is_downbeat, beat_index, meter)
 signal tick_tock_beat(is_downbeat, beat_index, meter)
+signal transition_complete(is_active)
 
 var playback_position := INF
 var time_to_next_music_beat := INF
@@ -29,6 +30,8 @@ func _process(_delta_sec: float) -> void:
         _update_playback_state()
 
 func start(time_scale_duration: float) -> void:
+    Gs.time.clear_timeout(_is_transition_complete_timeout_id)
+    
     _is_active = true
     
     _start_time_scaled = Gs.time.get_scaled_play_time_sec()
@@ -41,46 +44,61 @@ func start(time_scale_duration: float) -> void:
         
         var music_name: String = Gs.level.get_slow_motion_music_name()
         Gs.audio.cross_fade_music(music_name, time_scale_duration)
+        Gs.audio.is_beat_event_emission_paused = true
         
         _is_transition_complete = false
         _is_transition_complete_timeout_id = Gs.time.set_timeout(
-                funcref(self, "set"),
-                time_scale_duration,
-                ["_is_transition_complete", true])
+                funcref(self, "_on_transition_complete"),
+                time_scale_duration)
     
     Gs.audio.play_sound("slow_down")
     
     _update_playback_state()
 
 func stop(time_scale_duration: float) -> void:
+    Gs.time.clear_timeout(_is_transition_complete_timeout_id)
+    
     # Update music.
     if is_instance_valid(Gs.level):
+        _is_transition_complete = false
+        _is_transition_complete_timeout_id = Gs.time.set_timeout(
+                funcref(self, "_on_transition_complete"),
+                time_scale_duration)
+    
+    Gs.audio.play_sound("speed_up")
+    
+    _is_active = false
+
+func _on_transition_complete() -> void:
+    _is_transition_complete = true
+    
+    if !_is_active and \
+            is_instance_valid(Gs.level):
+        # Resume music playback at the correct position given the elapsed
+        # scaled-time during slow-motion mode and the transitions into and out
+        # of slow-motion mode.
         var music_name: String = Gs.level.get_music_name()
-        Gs.audio.cross_fade_music(music_name, time_scale_duration)
-        
+        Gs.audio.cross_fade_music(music_name, 0.01)
         var slow_motion_duration_scaled := \
                 Gs.time.get_scaled_play_time_sec() - _start_time_scaled
         var playback_position := \
                 _start_playback_position + slow_motion_duration_scaled
         Gs.audio.seek(playback_position)
+        Gs.audio.is_beat_event_emission_paused = false
+        
+        _start_time_scaled = INF
+        _start_playback_position = INF
+        _music_bpm_unscaled = INF
+        meter = -1
+        music_beat_duration_unscaled = INF
+        tick_tock_beat_duration_unscaled = INF
+        playback_position = INF
+        time_to_next_music_beat = INF
+        time_to_next_tick_tock_beat = INF
+        next_music_beat_index = -1
+        next_tick_tock_beat_index = -1
     
-    Gs.time.clear_timeout(_is_transition_complete_timeout_id)
-    
-    Gs.audio.play_sound("speed_up")
-    
-    _is_active = false
-    _is_transition_complete = false
-    _start_time_scaled = INF
-    _start_playback_position = INF
-    _music_bpm_unscaled = INF
-    meter = -1
-    music_beat_duration_unscaled = INF
-    tick_tock_beat_duration_unscaled = INF
-    playback_position = INF
-    time_to_next_music_beat = INF
-    time_to_next_tick_tock_beat = INF
-    next_music_beat_index = -1
-    next_tick_tock_beat_index = -1
+    emit_signal("transition_complete", _is_active)
 
 func _update_playback_state() -> void:
     Gs.audio._update_scaled_speed()
