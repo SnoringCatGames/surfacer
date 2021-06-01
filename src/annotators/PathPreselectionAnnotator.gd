@@ -186,7 +186,7 @@ func _draw() -> void:
                     0.0,
                     Surfacer.slow_motion.music.time_to_next_music_beat,
                     Surfacer.slow_motion.music.next_music_beat_index,
-                    Surfacer.slow_motion.music.music_beat_duration,
+                    Surfacer.slow_motion.music.music_beat_duration_unscaled,
                     Surfacer.slow_motion.music.meter,
                     PRESELECTION_PATH_DOWNBEAT_HASH_LENGTH,
                     PRESELECTION_PATH_OFFBEAT_HASH_LENGTH,

@@ -11,13 +11,14 @@ var next_music_beat_index := -1
 var next_tick_tock_beat_index := -1
 
 var meter := -1
-var music_beat_duration := INF
-var tick_tock_beat_duration := INF
+var music_beat_duration_unscaled := INF
+var tick_tock_beat_duration_unscaled := INF
 
 var _is_active := false
 var _is_transition_complete := false
-var _start_time := INF
+var _start_time_scaled := INF
 var _start_playback_position := INF
+var _music_bpm_unscaled := INF
 var _is_transition_complete_timeout_id := -1
 
 func _init() -> void:
@@ -30,16 +31,13 @@ func _process(_delta_sec: float) -> void:
 func start(time_scale_duration: float) -> void:
     _is_active = true
     
-    _start_time = Gs.time.get_scaled_play_time_sec()
+    _start_time_scaled = Gs.time.get_scaled_play_time_sec()
     
     # Update music.
     if is_instance_valid(Gs.level):
         meter = Gs.audio.get_meter()
-        music_beat_duration = Gs.audio.get_beat_duration()
-        tick_tock_beat_duration = \
-                music_beat_duration / \
-                Surfacer.nav_selection_slow_mo_tick_tock_tempo_multiplier
         _start_playback_position = Gs.audio.get_playback_position()
+        _music_bpm_unscaled = Gs.audio.get_bpm_unscaled()
         
         var music_name: String = Gs.level.get_slow_motion_music_name()
         Gs.audio.cross_fade_music(music_name, time_scale_duration)
@@ -60,10 +58,10 @@ func stop(time_scale_duration: float) -> void:
         var music_name: String = Gs.level.get_music_name()
         Gs.audio.cross_fade_music(music_name, time_scale_duration)
         
-        var slow_motion_duration := \
-                Gs.time.get_scaled_play_time_sec() - _start_time
+        var slow_motion_duration_scaled := \
+                Gs.time.get_scaled_play_time_sec() - _start_time_scaled
         var playback_position := \
-                _start_playback_position + slow_motion_duration
+                _start_playback_position + slow_motion_duration_scaled
         Gs.audio.seek(playback_position)
     
     Gs.time.clear_timeout(_is_transition_complete_timeout_id)
@@ -72,11 +70,12 @@ func stop(time_scale_duration: float) -> void:
     
     _is_active = false
     _is_transition_complete = false
-    _start_time = INF
+    _start_time_scaled = INF
     _start_playback_position = INF
+    _music_bpm_unscaled = INF
     meter = -1
-    music_beat_duration = INF
-    tick_tock_beat_duration = INF
+    music_beat_duration_unscaled = INF
+    tick_tock_beat_duration_unscaled = INF
     playback_position = INF
     time_to_next_music_beat = INF
     time_to_next_tick_tock_beat = INF
@@ -84,25 +83,36 @@ func stop(time_scale_duration: float) -> void:
     next_tick_tock_beat_index = -1
 
 func _update_playback_state() -> void:
-    var slow_motion_duration := \
-            Gs.time.get_scaled_play_time_sec() - _start_time
-    playback_position = _start_playback_position + slow_motion_duration
+    Gs.audio._update_scaled_speed()
+    
+    music_beat_duration_unscaled = \
+            60.0 / _music_bpm_unscaled / \
+            Gs.audio.playback_speed_multiplier
+    tick_tock_beat_duration_unscaled = \
+            music_beat_duration_unscaled / \
+            Surfacer.nav_selection_slow_mo_tick_tock_tempo_multiplier
+    
+    var slow_motion_duration_scaled := \
+            Gs.time.get_scaled_play_time_sec() - _start_time_scaled
+    playback_position = _start_playback_position + slow_motion_duration_scaled
     
     var current_music_beat_progress := \
-            fmod(playback_position, music_beat_duration)
-    time_to_next_music_beat = music_beat_duration - current_music_beat_progress
+            fmod(playback_position, music_beat_duration_unscaled)
+    time_to_next_music_beat = \
+            music_beat_duration_unscaled - current_music_beat_progress
     
     var previous_music_beat_index := next_music_beat_index
-    next_music_beat_index = int(playback_position / music_beat_duration) + 1
+    next_music_beat_index = \
+            int(playback_position / music_beat_duration_unscaled) + 1
     
     var current_tick_tock_beat_progress := \
-            fmod(playback_position, tick_tock_beat_duration)
+            fmod(playback_position, tick_tock_beat_duration_unscaled)
     time_to_next_tick_tock_beat = \
-            tick_tock_beat_duration - current_tick_tock_beat_progress
+            tick_tock_beat_duration_unscaled - current_tick_tock_beat_progress
     
     var previous_tick_tock_beat_index := next_tick_tock_beat_index
     next_tick_tock_beat_index = \
-            int(playback_position / tick_tock_beat_duration) + 1
+            int(playback_position / tick_tock_beat_duration_unscaled) + 1
     
     if _is_transition_complete:
         if previous_music_beat_index != next_music_beat_index:
