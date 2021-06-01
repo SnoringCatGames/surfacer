@@ -325,7 +325,7 @@ func _draw_beat_hashes(
                 elapsed_path_time,
                 Surfacer.slow_motion.music.time_to_next_music_beat,
                 Surfacer.slow_motion.music.next_music_beat_index,
-                Surfacer.slow_motion.music.music_beat_duration,
+                Surfacer.slow_motion.music.music_beat_duration_unscaled,
                 Surfacer.slow_motion.music.meter,
                 AnnotationElementDefaults \
                         .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
@@ -344,7 +344,7 @@ func _draw_beat_hashes(
                 elapsed_path_time,
                 Gs.audio.time_to_next_beat,
                 Gs.audio.next_beat_index,
-                Gs.audio.get_beat_duration(),
+                Gs.audio.get_beat_duration_unscaled(),
                 Gs.audio.get_meter(),
                 AnnotationElementDefaults \
                         .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
