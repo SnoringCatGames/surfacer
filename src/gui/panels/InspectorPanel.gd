@@ -24,6 +24,7 @@ var _annotator_control_item_classes := [
     NavigationDestinationAnnotatorSettingsLabeledControlItem,
     TimeScaleSettingsLabeledControlItem,
     LogSurfacerEventsSettingsLabeledControlItem,
+    MetronomeSettingsLabeledControlItem,
 ]
 
 func _ready() -> void:

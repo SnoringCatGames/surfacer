@@ -7,6 +7,7 @@ const WALK_THROUGH_WALLS_COLLISION_MASK_BIT := 2
 
 const IS_INSPECTOR_ENABLED_SETTINGS_KEY := "is_inspector_enabled"
 const IS_SURFACER_LOGGING_SETTINGS_KEY := "is_surfacer_logging"
+const IS_METRONOME_ENABLED_SETTINGS_KEY := "is_metronome_enabled"
 const IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY := "is_intro_choreography_shown"
 const ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_active_trajectory_shown"
 const PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_previous_trajectory_shown"
@@ -41,6 +42,7 @@ var _settings_details_item_class_inclusions := [
     SurfacesAnnotatorSettingsLabeledControlItem,
     RulerAnnotatorSettingsLabeledControlItem,
     LogSurfacerEventsSettingsLabeledControlItem,
+    MetronomeSettingsLabeledControlItem,
 ]
 
 var _sounds_manifest := [
@@ -92,6 +94,7 @@ var manifest: Dictionary
 var is_inspector_enabled: bool
 var are_loaded_surfaces_deeply_validated: bool
 var is_surfacer_logging: bool
+var is_metronome_enabled: bool
 var inspector_panel_starts_open: bool
 var uses_threads_for_platform_graph_calculation: bool
 var precompute_platform_graph_for_levels: Array
@@ -352,6 +355,9 @@ func initialize() -> void:
             manifest.is_inspector_enabled_default)
     self.is_surfacer_logging = Gs.save_state.get_setting(
             IS_SURFACER_LOGGING_SETTINGS_KEY,
+            false)
+    self.is_metronome_enabled = Gs.save_state.get_setting(
+            IS_METRONOME_ENABLED_SETTINGS_KEY,
             false)
     self.is_intro_choreography_shown = Gs.save_state.get_setting(
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
