@@ -10,8 +10,8 @@ const STEP := (MAX_CONTROL_VALUE - MIN_CONTROL_VALUE) / 32.0
 const WIDTH := 128.0
 const TICK_COUNT := 3
 
-const MIN_SCALE_VALUE := 0.1
-const MAX_SCALE_VALUE := 10.0
+const MIN_SCALE_VALUE := 0.25
+const MAX_SCALE_VALUE := 4.0
 const MID_SCALE_VALUE := 1.0
 
 func _init(__ = null).(
