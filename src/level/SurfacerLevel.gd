@@ -89,6 +89,12 @@ func _unhandled_input(event: InputEvent) -> void:
 #func _on_initial_input() -> void:
 #    ._on_initial_input()
 
+#func pause() -> void:
+#    .pause()
+
+#func on_unpause() -> void:
+#    .on_unpause()
+
 # Execute any intro cut-scene or initial navigation.
 func _execute_intro_choreography() -> void:
     intro_choreographer = \
