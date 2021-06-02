@@ -117,6 +117,8 @@ var is_human_nav_pulse_shown_with_slow_mo := false
 var is_computer_nav_pulse_shown_with_slow_mo := true
 var is_human_nav_pulse_shown_without_slow_mo := true
 var is_computer_nav_pulse_shown_without_slow_mo := false
+var is_human_new_nav_exclamation_mark_shown := false
+var is_computer_new_nav_exclamation_mark_shown := true
 
 var does_human_nav_pulse_grow := false
 var does_computer_nav_pulse_grow := true
@@ -312,6 +314,14 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("is_computer_nav_pulse_shown_without_slow_mo"):
         self.is_computer_nav_pulse_shown_without_slow_mo = \
                 manifest.is_computer_nav_pulse_shown_without_slow_mo
+    
+    if manifest.has("is_human_new_nav_exclamation_mark_shown"):
+        self.is_human_new_nav_exclamation_mark_shown = \
+                manifest.is_human_new_nav_exclamation_mark_shown
+    
+    if manifest.has("is_computer_new_nav_exclamation_mark_shown"):
+        self.is_computer_new_nav_exclamation_mark_shown = \
+                manifest.is_computer_new_nav_exclamation_mark_shown
     
     if manifest.has("does_human_nav_pulse_grow"):
         self.does_human_nav_pulse_grow = \
