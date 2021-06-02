@@ -340,18 +340,9 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     #     give us the min end velocity.
     var should_accelerate_at_start_for_min := acceleration_sign_for_min == 1
     
-    # In order to allow for some slight epsilon-variance between the
-    # calculations of the min and max values, we slightly constrain the
-    # duration for the min calculations more than the max calculations.
-    # Otherwise, it is possible that our logic thinks a min_velocity_end result
-    # is just barely valid, while a max_velocity_end result is just barely
-    # invalid.
-    var duration_for_min_velocity_end_calculation := duration - 0.001
-    var duration_for_max_velocity_end_calculation := duration
-    
     var min_velocity_end := WaypointUtils._solve_for_end_velocity(
             displacement,
-            duration_for_min_velocity_end_calculation,
+            duration,
             acceleration_for_min,
             velocity_start,
             should_accelerate_at_start_for_min,
@@ -359,7 +350,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     if min_velocity_end == INF:
         min_velocity_end = WaypointUtils._solve_for_end_velocity(
                 displacement,
-                duration_for_min_velocity_end_calculation,
+                duration,
                 -acceleration_for_min,
                 velocity_start,
                 !should_accelerate_at_start_for_min,
@@ -388,7 +379,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     
     var max_velocity_end := WaypointUtils._solve_for_end_velocity(
             displacement,
-            duration_for_max_velocity_end_calculation,
+            duration,
             acceleration_for_max,
             velocity_start,
             should_accelerate_at_start_for_max,
@@ -396,7 +387,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     if max_velocity_end == INF:
         max_velocity_end = WaypointUtils._solve_for_end_velocity(
                 displacement,
-                duration_for_max_velocity_end_calculation,
+                duration,
                 -acceleration_for_max,
                 velocity_start,
                 !should_accelerate_at_start_for_max,
@@ -406,9 +397,11 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     if max_velocity_end > min_velocity_end_for_valid_next_step - 0.0001:
         max_velocity_end = \
                 max(max_velocity_end, min_velocity_end_for_valid_next_step)
-    # If we found valid min velocity, then we should be able to find valid max
-    # velocity.
-    assert(max_velocity_end != INF)
+    if max_velocity_end == INF:
+        # It can rarely happen that our logic thinks a min_velocity_end result
+        # is just barely valid, while a max_velocity_end result is just barely
+        # invalid.
+        return []
     if max_velocity_end < min_velocity_end_for_valid_next_step:
         # Movement cannot reach across this interval.
         return []
