@@ -28,7 +28,7 @@ var INVALID_POSITION_INDICATOR_COLOR := Gs.colors.opacify(
 
 const PRESELECTION_MIN_OPACITY := 0.5
 const PRESELECTION_MAX_OPACITY := 1.0
-const PRESELECTION_DURATION_SEC := 0.6
+const PRESELECTION_DEFAULT_DURATION_SEC := 0.6
 var PRESELECTION_SURFACE_DEPTH: float = DrawUtils.SURFACE_DEPTH + 4.0
 const PRESELECTION_SURFACE_OUTWARD_OFFSET := 4.0
 const PRESELECTION_SURFACE_LENGTH_PADDING := 4.0
@@ -47,7 +47,7 @@ var _predictions_container: Node2D
 var player: Player
 var path_front_end_trim_radius: float
 var preselection_destination: PositionAlongSurface = null
-var animation_start_time := -PRESELECTION_DURATION_SEC
+var animation_start_time := -PRESELECTION_DEFAULT_DURATION_SEC
 var animation_progress := 1.0
 var phantom_surface := Surface.new(
         [Vector2.INF],
@@ -67,6 +67,21 @@ func _init(player: Player) -> void:
     _predictions_container.modulate.a = \
             Surfacer.nav_selection_prediction_opacity
     add_child(_predictions_container)
+    Surfacer.slow_motion.connect(
+            "slow_motion_toggled", self, "_on_slow_motion_toggled")
+    Surfacer.slow_motion.music.connect(
+            "tick_tock_beat", self, "_on_slow_motion_tick_tock_beat")
+
+func _on_slow_motion_toggled(is_enabled: bool) -> void:
+    animation_start_time = -PRESELECTION_DEFAULT_DURATION_SEC
+
+func _on_slow_motion_tick_tock_beat(
+        is_downbeat: bool,
+        beat_index: int,
+        meter: int) -> void:
+    if is_downbeat or \
+            animation_start_time < 0:
+        animation_start_time = Gs.time.get_play_time_sec()
 
 func add_prediction(prediction: PlayerPrediction) -> void:
     _predictions_container.add_child(prediction)
@@ -99,8 +114,6 @@ func _process(_delta_sec: float) -> void:
         preselection_path = player.pre_selection.path
         
         if did_preselection_surface_change:
-            animation_start_time = current_time
-            
             _update_phantom_surface()
         
         if preselection_destination != null:
@@ -126,8 +139,16 @@ func _process(_delta_sec: float) -> void:
         update()
     
     if preselection_destination != null:
+        var preselection_duration_sec: float = \
+                Surfacer.slow_motion.music \
+                        .tick_tock_beat_duration_unscaled * \
+                    Surfacer \
+                        .nav_selection_slow_mo_tick_tock_tempo_multiplier * \
+                    2.0 if \
+                Surfacer.slow_motion.is_enabled else \
+                PRESELECTION_DEFAULT_DURATION_SEC
         animation_progress = fmod((current_time - animation_start_time) / \
-                PRESELECTION_DURATION_SEC, 1.0)
+                preselection_duration_sec, 1.0)
         update()
 
 func _draw() -> void:
