@@ -1,7 +1,7 @@
 class_name NavigatorAnnotator
 extends Node2D
 
-var FADE_IN_DURATION := 0.35
+var FADE_IN_DURATION := 0.2
 
 var EXCLAMATION_MARK_WIDTH_START := 8.0
 var EXCLAMATION_MARK_LENGTH_START := 48.0
@@ -60,7 +60,10 @@ func _physics_process(_delta_sec: float) -> void:
         current_path_start_time_scaled = navigator.path_start_time_scaled
         current_destination = navigator.get_destination()
         if current_path != null:
-            _trigger_exclamation_mark()
+            if _get_is_exclamation_mark_shown():
+                is_exclamation_mark_shown = true
+                exclamation_mark_trigger_time_scaled = \
+                        Gs.time.get_scaled_play_time_sec()
             if is_enabled:
                 _trigger_fade_in(true)
         update()
@@ -97,10 +100,6 @@ func _trigger_fade_in(is_fade_in := true) -> void:
             0.0,
             TimeType.PLAY_PHYSICS)
     fade_tween.start()
-
-func _trigger_exclamation_mark() -> void:
-    is_exclamation_mark_shown = true
-    exclamation_mark_trigger_time_scaled = Gs.time.get_scaled_play_time_sec()
 
 func _draw() -> void:
     if is_exclamation_mark_shown:
@@ -260,6 +259,11 @@ func _get_is_enabled() -> bool:
         else:
             return Surfacer \
                     .is_computer_current_nav_trajectory_shown_without_slow_mo
+
+func _get_is_exclamation_mark_shown() -> bool:
+    return Surfacer.is_human_new_nav_exclamation_mark_shown if \
+            navigator.player.is_human_player else \
+            Surfacer.is_computer_new_nav_exclamation_mark_shown
 
 func _draw_beat_hashes(
         path: PlatformGraphPath,
