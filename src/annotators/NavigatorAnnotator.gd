@@ -103,6 +103,9 @@ func _trigger_exclamation_mark() -> void:
     exclamation_mark_trigger_time_scaled = Gs.time.get_scaled_play_time_sec()
 
 func _draw() -> void:
+    if is_exclamation_mark_shown:
+        _draw_exclamation_mark()
+    
     if !is_enabled and \
             !is_fade_in_progress:
         return
@@ -114,9 +117,6 @@ func _draw() -> void:
             Surfacer.is_previous_trajectory_shown and \
             navigator.player.is_human_player:
         _draw_previous_path()
-    
-    if is_exclamation_mark_shown:
-        _draw_exclamation_mark()
 
 func _draw_current_path(
         current_path: PlatformGraphPath,
