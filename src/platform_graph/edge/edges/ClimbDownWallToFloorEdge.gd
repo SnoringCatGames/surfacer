@@ -1,10 +1,10 @@
+class_name ClimbDownWallToFloorEdge
+extends Edge
 # Information for how to climb down a wall to stand on the adjacent floor.
 # 
 # The instructions for this edge consist of a single downward key press, with no corresponding
 # release. This will cause the player to climb down the wall, then grab the floor once they reach
 # it.
-class_name ClimbDownWallToFloorEdge
-extends Edge
 
 const TYPE := EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE
 const IS_TIME_BASED := false

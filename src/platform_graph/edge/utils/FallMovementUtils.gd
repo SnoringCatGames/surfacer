@@ -1,7 +1,7 @@
-# A collection of utility functions for calculating state related to fall
-# movement.
 class_name FallMovementUtils
 extends Reference
+# A collection of utility functions for calculating state related to fall
+# movement.
 
 const FALL_DISTANCE_TO_CHECK_FOR_INPUTLESS_LANDING := 1000.0
 

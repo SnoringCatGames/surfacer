@@ -1,9 +1,9 @@
+class_name FallFromWallEdge
+extends Edge
 # Information for how to let go of a wall in order to fall.
 # 
 # The instructions for this edge consist of a single sideways key press, with
 # no corresponding release.
-class_name FallFromWallEdge
-extends Edge
 
 const TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_TIME_BASED := false

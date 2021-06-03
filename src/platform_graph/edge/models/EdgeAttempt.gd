@@ -1,6 +1,6 @@
-# Basic information for a hypothetical edge.
 class_name EdgeAttempt
 extends Reference
+# Basic information for a hypothetical edge.
 
 var edge_type := EdgeType.UNKNOWN
 

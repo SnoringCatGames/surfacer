@@ -1,7 +1,7 @@
-# A collection of utility functions for calculating state related to vertical
-# movement.
 class_name VerticalMovementUtils
 extends Reference
+# A collection of utility functions for calculating state related to vertical
+# movement.
 
 # Calculates a new step for the vertical part of the movement and the
 # corresponding total jump duration.

@@ -1,7 +1,7 @@
-# A collection of utility functions for calculating state related to
-# EdgeInstructions.
 class_name EdgeInstructionsUtils
 extends Reference
+# A collection of utility functions for calculating state related to
+# EdgeInstructions.
 
 # FIXME:
 # - Should I remove this and force a slightly higher offset to target jump

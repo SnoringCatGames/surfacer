@@ -1,7 +1,7 @@
-# A collection of utility functions for calculating state related to jump/land
-# positions.
 class_name JumpLandPositionsUtils
 extends Reference
+# A collection of utility functions for calculating state related to jump/land
+# positions.
 
 const EXTRA_JUMP_LAND_POSITION_MARGIN := 2.0
 const PLAYER_HEIGHT_VERTICAL_CLEARANCE_RATIO := 2.0

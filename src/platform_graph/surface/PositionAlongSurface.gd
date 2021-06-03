@@ -1,3 +1,5 @@
+class_name PositionAlongSurface
+extends Reference
 # Represents a position along a surface.
 # 
 # -   Rather than considering polyline length, this only specifies the position
@@ -6,8 +8,6 @@
 #     surface vertices.
 # 
 # The position always indicates the center of the player's bounding box.
-class_name PositionAlongSurface
-extends Reference
 
 var surface: Surface
 
