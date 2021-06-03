@@ -66,11 +66,12 @@ func _process(_delta: float) -> void:
         update()
     
     # Animate beats along the path as we hit them.
-    var next_navigator_beat := _get_last_beat_from_navigator()
-    if last_navigator_beat != next_navigator_beat:
-        last_navigator_beat = next_navigator_beat
-        if next_navigator_beat != null:
-            _trigger_beat_hash_animation(next_navigator_beat)
+    if is_enabled:
+        var next_navigator_beat := _get_last_beat_from_navigator()
+        if last_navigator_beat != next_navigator_beat:
+            last_navigator_beat = next_navigator_beat
+            if next_navigator_beat != null:
+                _trigger_beat_hash_animation(next_navigator_beat)
 
 func _draw() -> void:
     if !is_enabled and \
