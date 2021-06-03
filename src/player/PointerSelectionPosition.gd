@@ -20,6 +20,7 @@ var nearby_position_along_surface: PositionAlongSurface
 var navigation_destination: PositionAlongSurface
 
 var path: PlatformGraphPath
+var path_beats_time_start := INF
 # Array<PathBeatPrediction>
 var path_beats: Array
 
@@ -73,17 +74,20 @@ func update_pointer_position(pointer_position: Vector2) -> void:
         if navigation_destination.surface != null:
             self.path = _player.navigator.find_path(navigation_destination)
             if path != null:
+                self.path_beats_time_start = Gs.time.get_scaled_play_time_sec()
                 self.path_beats = _player.navigator \
                         .calculate_path_beat_hashes_for_current_mode(
                                 path,
-                                Gs.time.get_scaled_play_time_sec())
+                                path_beats_time_start)
             else:
+                self.path_beats_time_start = INF
                 self.path_beats = []
             self.nearby_position_along_surface = navigation_destination
         else:
             _update_path_for_in_air_destination(nearby_positions_along_surface)
     else:
         self.path = null
+        self.path_beats_time_start = INF
         self.path_beats = []
         self.nearby_position_along_surface = null
 
@@ -100,16 +104,18 @@ func _update_path_for_in_air_destination(
                 nearby_position_along_surface)
         if path != null:
             self.path = path
+            self.path_beats_time_start = Gs.time.get_scaled_play_time_sec()
             self.path_beats = _player.navigator \
                     .calculate_path_beat_hashes_for_current_mode(
                             path,
-                            Gs.time.get_scaled_play_time_sec())
+                            path_beats_time_start)
             self.nearby_position_along_surface = nearby_position_along_surface
             return
     
     # We weren't able to find any valid navigation to the destination
     # position.
     self.path = null
+    self.path_beats_time_start = INF
     self.path_beats = []
     self.nearby_position_along_surface = null
 
@@ -119,10 +125,19 @@ func get_has_selection() -> bool:
 func get_is_selection_navigatable() -> bool:
     return path != null
 
+func update_beats() -> void:
+    if path != null:
+        self.path_beats_time_start = Gs.time.get_scaled_play_time_sec()
+        self.path_beats = _player.navigator \
+                .calculate_path_beat_hashes_for_current_mode(
+                        path,
+                        path_beats_time_start)
+
 func clear() -> void:
     self.pointer_position = Vector2.INF
     self.navigation_destination = null
     self.path = null
+    self.path_beats_time_start = INF
     self.path_beats = []
     self.nearby_position_along_surface = null
 
@@ -130,5 +145,6 @@ func copy(other) -> void:
     self.pointer_position = other.pointer_position
     self.navigation_destination = other.navigation_destination
     self.path = other.path
+    self.path_beats_time_start = INF
     self.path_beats = other.path_beats
     self.nearby_position_along_surface = other.nearby_position_along_surface
