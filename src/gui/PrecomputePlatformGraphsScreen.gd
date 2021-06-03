@@ -97,7 +97,7 @@ func _initialize_next() -> void:
 func _parse_next() -> void:
     Gs.profiler.start("parse")
     platform_graph_parser.connect(
-            "calculation_progress",
+            "calculation_progressed",
             self,
             "_on_graph_parse_progress")
     platform_graph_parser.connect(

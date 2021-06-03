@@ -3,7 +3,7 @@ extends Node
 
 signal calculation_started
 signal load_started
-signal calculation_progress(
+signal calculation_progressed(
         player_index,
         player_count,
         origin_surface_index,
@@ -98,11 +98,11 @@ func _on_graphs_parsed() -> void:
     
     for platform_graph in platform_graphs.values():
         if platform_graph.is_connected(
-                    "calculation_progress",
+                    "calculation_progressed",
                     self,
                     "_on_graph_calculation_progress"):
             platform_graph.disconnect(
-                    "calculation_progress",
+                    "calculation_progressed",
                     self,
                     "_on_graph_calculation_progress")
         if platform_graph.is_connected(
@@ -134,7 +134,7 @@ func _calculate_next_platform_graph(player_index: int) -> void:
     if !should_skip_player:
         var graph := PlatformGraph.new()
         graph.connect(
-                "calculation_progress",
+                "calculation_progressed",
                 self,
                 "_on_graph_calculation_progress",
                 [graph, player_index, player_name])
@@ -158,7 +158,7 @@ func _on_graph_calculation_progress(
         player_index: int,
         player_name: String) -> void:
     emit_signal(
-            "calculation_progress",
+            "calculation_progressed",
             player_index,
             _get_player_names().size(),
             origin_surface_index,

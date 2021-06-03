@@ -83,7 +83,7 @@ func start() -> void:
     assert(is_finished == false)
     
     player.navigator.connect(
-            "reached_destination",
+            "destination_reached",
             self,
             "_execute_next_step")
     
@@ -109,7 +109,7 @@ func start() -> void:
 func _on_finished() -> void:
     _tween.stop_all()
     player.navigator.disconnect(
-            "reached_destination",
+            "destination_reached",
             self,
             "_execute_next_step")
     index = -1

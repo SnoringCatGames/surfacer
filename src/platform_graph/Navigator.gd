@@ -1,8 +1,8 @@
 class_name Navigator
 extends Reference
 
-signal started_navigation
-signal reached_destination
+signal navigation_started
+signal destination_reached
 
 const PROTRUSION_PREVENTION_SURFACE_END_FLOOR_OFFSET := 1.0
 const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
@@ -118,7 +118,7 @@ func navigate_path(
                 0,
                 is_retry)
         
-        emit_signal("started_navigation")
+        emit_signal("navigation_started")
         
         return true
 
@@ -298,7 +298,7 @@ func _set_reached_destination() -> void:
     
     print_msg("REACHED END OF PATH: %8.3fs", Gs.time.get_play_time())
     
-    emit_signal("reached_destination")
+    emit_signal("destination_reached")
 
 func _reset() -> void:
     if path != null:
