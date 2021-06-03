@@ -56,6 +56,7 @@ var phantom_surface := Surface.new(
         [])
 var phantom_position_along_surface := PositionAlongSurface.new()
 var preselection_path: PlatformGraphPath
+var preselection_path_beats: Array
 
 func _init(player: Player) -> void:
     self.player = player
@@ -112,6 +113,7 @@ func _process(_delta_sec: float) -> void:
         preselection_destination = \
                 player.pre_selection.navigation_destination
         preselection_path = player.pre_selection.path
+        preselection_path_beats = player.pre_selection.path_beats
         
         if did_preselection_surface_change:
             _update_phantom_surface()
@@ -133,6 +135,7 @@ func _process(_delta_sec: float) -> void:
                             preselection_path.duration)
         else:
             preselection_path = null
+            preselection_path_beats = []
         
         _predictions_container.visible = preselection_path != null
         
@@ -201,14 +204,9 @@ func _draw() -> void:
                     true,
                     false)
             
-            Gs.draw_utils.draw_path_beat_hashes(
+            Gs.draw_utils.draw_beat_hashes(
                     self,
-                    preselection_path,
-                    0.0,
-                    Surfacer.slow_motion.music.time_to_next_music_beat,
-                    Surfacer.slow_motion.music.next_music_beat_index,
-                    Surfacer.slow_motion.music.music_beat_duration_unscaled,
-                    Surfacer.slow_motion.music.meter,
+                    preselection_path_beats,
                     PRESELECTION_PATH_DOWNBEAT_HASH_LENGTH,
                     PRESELECTION_PATH_OFFBEAT_HASH_LENGTH,
                     PRESELECTION_PATH_DOWNBEAT_STROKE_WIDTH,
