@@ -3,14 +3,6 @@ extends Node2D
 
 var FADE_IN_DURATION := 0.2
 
-var EXCLAMATION_MARK_WIDTH_START := 8.0
-var EXCLAMATION_MARK_LENGTH_START := 48.0
-var EXCLAMATION_MARK_STROKE_WIDTH_START := 3.0
-var EXCLAMATION_MARK_SCALE_END := 2.0
-var EXCLAMATION_MARK_VERTICAL_OFFSET := 0.0
-var EXCLAMATION_MARK_DURATION := 1.0
-var EXCLAMATION_MARK_OPACITY_DELAY := 0.3
-
 var navigator: Navigator
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
@@ -25,13 +17,8 @@ var fade_progress := 0.0
 
 var previous_path_back_end_trim_radius: float
 
-var is_exclamation_mark_shown := false
-var exclamation_mark_trigger_time_scaled := INF
-var exclamation_mark_offset: Vector2
-
 var pulse_annotator: NavigationPulseAnnotator
 var fade_tween: ScaffolderTween
-var exclamation_mark_tween: ScaffolderTween
 
 func _init(navigator: Navigator) -> void:
     self.navigator = navigator
@@ -44,11 +31,6 @@ func _init(navigator: Navigator) -> void:
     
     self.fade_tween = ScaffolderTween.new()
     add_child(fade_tween)
-    
-    self.exclamation_mark_tween = ScaffolderTween.new()
-    exclamation_mark_tween.connect(
-            "tween_all_completed", self, "_exclamation_mark_tween_completed")
-    add_child(exclamation_mark_tween)
 
 func _physics_process(_delta: float) -> void:
     is_fade_in_progress = fade_progress != previous_fade_progress
@@ -59,9 +41,9 @@ func _physics_process(_delta: float) -> void:
         current_path_beats = navigator.path_beats
         if current_path != null:
             if _get_is_exclamation_mark_shown():
-                is_exclamation_mark_shown = true
-                exclamation_mark_trigger_time_scaled = \
-                        Gs.time.get_scaled_play_time()
+                Surfacer.annotators.add_transient(
+                        NewNavExclamationMarkAnnotator.new(
+                                navigator.player))
             if is_enabled:
                 _trigger_fade_in(true)
         update()
@@ -81,9 +63,6 @@ func _physics_process(_delta: float) -> void:
     
     if is_fade_in_progress:
         update()
-    
-    if is_exclamation_mark_shown:
-        update()
 
 func _trigger_fade_in(is_fade_in := true) -> void:
     fade_tween.stop_all()
@@ -99,9 +78,6 @@ func _trigger_fade_in(is_fade_in := true) -> void:
     fade_tween.start()
 
 func _draw() -> void:
-    if is_exclamation_mark_shown:
-        _draw_exclamation_mark()
-    
     if !is_enabled and \
             !is_fade_in_progress:
         return
@@ -276,77 +252,3 @@ func _draw_beat_hashes(
                     .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
             color,
             color)
-
-func _draw_exclamation_mark() -> void:
-    var current_time_scaled := Gs.time.get_scaled_play_time()
-    var end_time_scaled := \
-            exclamation_mark_trigger_time_scaled + EXCLAMATION_MARK_DURATION
-    
-    if current_time_scaled > end_time_scaled:
-        is_exclamation_mark_shown = false
-        exclamation_mark_trigger_time_scaled = INF
-        return
-    
-    var scale_progress := \
-            (current_time_scaled - exclamation_mark_trigger_time_scaled) / \
-            EXCLAMATION_MARK_DURATION
-    scale_progress = min(scale_progress, 1.0)
-    scale_progress = Gs.utils.ease_by_name(
-            scale_progress, "ease_out_very_strong")
-    var scale: float = lerp(
-            1.0,
-            EXCLAMATION_MARK_SCALE_END,
-            scale_progress)
-    
-    var opacity_progress := \
-            (current_time_scaled - \
-                    EXCLAMATION_MARK_OPACITY_DELAY - \
-                    exclamation_mark_trigger_time_scaled) / \
-            (EXCLAMATION_MARK_DURATION - \
-                    EXCLAMATION_MARK_OPACITY_DELAY)
-    opacity_progress = clamp(
-            opacity_progress,
-            0.0,
-            1.0)
-    opacity_progress = Gs.utils.ease_by_name(
-            opacity_progress, "ease_out_very_strong")
-    var opacity: float = lerp(
-            1.0,
-            0.0,
-            opacity_progress)
-    
-    var width := EXCLAMATION_MARK_WIDTH_START * scale
-    var length := EXCLAMATION_MARK_LENGTH_START * scale
-    var stroke_width := EXCLAMATION_MARK_STROKE_WIDTH_START * scale
-    
-    var center: Vector2 = navigator.player.position + Vector2(
-            0.0,
-            -navigator.player.movement_params.collider_half_width_height.y - \
-            EXCLAMATION_MARK_LENGTH_START * EXCLAMATION_MARK_SCALE_END / 2.0 + \
-            EXCLAMATION_MARK_VERTICAL_OFFSET)
-    
-    var fill_color: Color = \
-            Surfacer.ann_defaults.HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
-            navigator.player.is_human_player else \
-            Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
-    fill_color.a = opacity
-    
-    var stroke_color: Color = Color.white
-    stroke_color.a = opacity
-    
-    Gs.draw_utils.draw_exclamation_mark(
-            self,
-            center,
-            width,
-            length,
-            stroke_color,
-            false,
-            stroke_width)
-    Gs.draw_utils.draw_exclamation_mark(
-            self,
-            center,
-            width,
-            length,
-            fill_color,
-            true,
-            0.0)
