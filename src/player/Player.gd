@@ -132,7 +132,7 @@ func _ready() -> void:
     animator.set_up(self, true)
     
     if Surfacer.annotators.is_annotator_enabled(
-            AnnotatorType.SURFACE_SELECTION) and \
+            AnnotatorType.PATH_PRESELECTION) and \
             (is_human_player and Surfacer.is_human_prediction_shown or \
             !is_human_player and Surfacer.is_computer_prediction_shown):
         prediction = PlayerPrediction.new()
