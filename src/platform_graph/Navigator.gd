@@ -18,11 +18,11 @@ var is_currently_navigating := false
 var has_reached_destination := false
 var just_reached_destination := false
 
-var previous_path: PlatformGraphPath
 var path: PlatformGraphPath
+var previous_path: PlatformGraphPath
 
-var previous_path_start_time_scaled := INF
 var path_start_time_scaled := INF
+var previous_path_start_time_scaled := INF
 
 var path_beats: Array
 var previous_path_beats: Array
@@ -475,7 +475,9 @@ func predict_animation_state(
     return path.predict_animation_state(result, prediction_path_time)
 
 func get_destination() -> PositionAlongSurface:
-    return path.destination if path != null else null
+    return path.destination if \
+            path != null else \
+            null
 
 func get_previous_destination() -> PositionAlongSurface:
     return previous_path.destination if \

@@ -265,7 +265,7 @@ func _draw_beat_hashes(
         color: Color) -> void:
     Gs.draw_utils.draw_beat_hashes(
             self,
-            current_path_beats,
+            beats,
             AnnotationElementDefaults \
                     .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
             AnnotationElementDefaults \
