@@ -470,12 +470,6 @@ We support a large number of flags and parameters for adjusting various aspects 
 
 > **NOTE:** All collidable tiles in a level must be defined in a _single_ TileMap.
 
-## Tests
-
-_> **NOTE:** Sadly, the tests are not set up to automatically run on presubmit, so pretty much all of the tests are significently out-of-date and broken._
-
-Surfacer uses the [Gut tool](https://github.com/bitwes/Gut) for writing and running unit tests.
-
 ## Licenses
 
 -   All code is published under the [MIT license](LICENSE).
