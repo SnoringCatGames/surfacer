@@ -8,6 +8,7 @@ var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
 var previous_path_beats: Array
 var current_path_beats: Array
+var last_navigator_beat: PathBeatPrediction
 var is_enabled := false
 var is_slow_motion_enabled := false
 
@@ -32,7 +33,7 @@ func _init(navigator: Navigator) -> void:
     self.fade_tween = ScaffolderTween.new()
     add_child(fade_tween)
 
-func _physics_process(_delta: float) -> void:
+func _process(_delta: float) -> void:
     is_fade_in_progress = fade_progress != previous_fade_progress
     previous_fade_progress = fade_progress
     
@@ -63,19 +64,13 @@ func _physics_process(_delta: float) -> void:
     
     if is_fade_in_progress:
         update()
-
-func _trigger_fade_in(is_fade_in := true) -> void:
-    fade_tween.stop_all()
-    fade_tween.interpolate_property(
-            self,
-            "fade_progress",
-            0.0 if is_fade_in else 1.0,
-            1.0 if is_fade_in else 0.0,
-            FADE_IN_DURATION,
-            "ease_out",
-            0.0,
-            TimeType.PLAY_PHYSICS)
-    fade_tween.start()
+    
+    # Animate beats along the path as we hit them.
+    var next_navigator_beat := _get_last_beat_from_navigator()
+    if last_navigator_beat != next_navigator_beat:
+        last_navigator_beat = next_navigator_beat
+        if next_navigator_beat != null:
+            _trigger_beat_hash_animation(next_navigator_beat)
 
 func _draw() -> void:
     if !is_enabled and \
@@ -83,16 +78,14 @@ func _draw() -> void:
         return
     
     if current_path != null:
-        _draw_current_path(current_path, fade_progress)
+        _draw_current_path(current_path)
     
     elif previous_path != null and \
             Surfacer.is_previous_trajectory_shown and \
             navigator.player.is_human_player:
         _draw_previous_path()
 
-func _draw_current_path(
-        current_path: PlatformGraphPath,
-        fade_progress: float) -> void:
+func _draw_current_path(current_path: PlatformGraphPath) -> void:
     if Surfacer.is_active_trajectory_shown:
         var current_path_color: Color = \
                 Surfacer.ann_defaults \
@@ -215,6 +208,23 @@ func _draw_previous_path() -> void:
             previous_path_beats,
             previous_path_color)
 
+func _draw_beat_hashes(
+        beats: Array,
+        color: Color) -> void:
+    Gs.draw_utils.draw_beat_hashes(
+            self,
+            beats,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_TRAJECTORY_OFFBEAT_HASH_LENGTH,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+            color,
+            color)
+
 func _get_is_enabled() -> bool:
     if navigator.player.is_human_player:
         if is_slow_motion_enabled:
@@ -236,12 +246,42 @@ func _get_is_exclamation_mark_shown() -> bool:
             navigator.player.is_human_player else \
             Surfacer.is_computer_new_nav_exclamation_mark_shown
 
-func _draw_beat_hashes(
-        beats: Array,
-        color: Color) -> void:
-    Gs.draw_utils.draw_beat_hashes(
+func _get_last_beat_from_navigator() -> PathBeatPrediction:
+    if !navigator.is_currently_navigating:
+        return null
+    
+    var current_path_time := \
+            Gs.time.get_scaled_play_time() - navigator.path_start_time_scaled
+    var last_beat: PathBeatPrediction = null
+    for next_beat in navigator.path_beats:
+        if next_beat.time > current_path_time:
+            break
+        last_beat = next_beat
+    return last_beat
+
+func _trigger_fade_in(is_fade_in := true) -> void:
+    fade_tween.stop_all()
+    fade_tween.interpolate_property(
             self,
-            beats,
+            "fade_progress",
+            0.0 if is_fade_in else 1.0,
+            1.0 if is_fade_in else 0.0,
+            FADE_IN_DURATION,
+            "ease_out",
+            0.0,
+            TimeType.PLAY_PHYSICS)
+    fade_tween.start()
+
+func _trigger_beat_hash_animation(beat: PathBeatPrediction) -> void:
+    var current_path_color: Color = \
+            Surfacer.ann_defaults \
+                    .HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
+            navigator.player.is_human_player else \
+            Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
+    current_path_color.a *= fade_progress
+    
+    Surfacer.annotators.add_transient(OnBeatHashAnnotator.new(
+            beat,
             AnnotationElementDefaults \
                     .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
             AnnotationElementDefaults \
@@ -250,5 +290,5 @@ func _draw_beat_hashes(
                     .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
             AnnotationElementDefaults \
                     .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-            color,
-            color)
+            current_path_color,
+            current_path_color))

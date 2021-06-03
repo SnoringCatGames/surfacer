@@ -11,11 +11,12 @@ var EXCLAMATION_MARK_OPACITY_DELAY := 0.3
 
 var player
 
-var mark_scale := 1.0
-var opacity := 1.0
+var mark_scale: float
+var opacity: float
 
 func _init(player).(EXCLAMATION_MARK_DURATION) -> void:
     self.player = player
+    _update()
 
 func _update() -> void:
     ._update()

@@ -1,5 +1,5 @@
 class_name PathBeatPrediction
-extends Node
+extends Reference
 
 var time: float
 var position: Vector2
