@@ -36,7 +36,7 @@ func _update() -> void:
     progress = max(progress, 0.0)
     progress = Gs.utils.ease_by_name(progress, ease_name)
     
-    if progress > 1.0:
+    if progress >= 1.0:
         emit_signal("completed")
         return
     

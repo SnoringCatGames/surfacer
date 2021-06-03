@@ -14,13 +14,13 @@ const CLICK_INNER_DURATION := 0.27
 const CLICK_OUTER_DURATION := 0.23
 const SURFACE_DURATION := 0.4
 
-var click_position := Vector2.INF
+var click_position: Vector2
 var selected_surface: Surface
 var is_surface_navigatable: bool
 
-var inner_progress := 0.0
-var outer_progress := 0.0
-var surface_progress := 0.0
+var inner_progress: float
+var outer_progress: float
+var surface_progress: float
 
 func _init(
         click_position: Vector2,
@@ -35,6 +35,7 @@ func _init(
     self.click_position = click_position
     self.selected_surface = selected_surface
     self.is_surface_navigatable = is_surface_navigatable
+    _update()
 
 func _update() -> void:
     ._update()
