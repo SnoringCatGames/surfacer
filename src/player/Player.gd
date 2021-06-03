@@ -17,7 +17,7 @@ var actions_from_previous_frame := PlayerActionState.new()
 var actions := PlayerActionState.new()
 var surface_state := PlayerSurfaceState.new()
 var navigation_state: PlayerNavigationState
-var pointer_handler: PlayerPointerListener
+var pointer_listener: PlayerPointerListener
 
 var new_selection: PointerSelectionPosition
 var last_selection: PointerSelectionPosition
@@ -81,8 +81,8 @@ func _enter_tree() -> void:
         # hood.
         return
     
-    self.pointer_handler = PlayerPointerListener.new(self)
-    add_child(pointer_handler)
+    self.pointer_listener = PlayerPointerListener.new(self)
+    add_child(pointer_listener)
 
 func _ready() -> void:
     if is_fake:
@@ -305,6 +305,12 @@ func _physics_process(delta_sec: float) -> void:
     
     surface_state.previous_center_position = surface_state.center_position
     surface_state.center_position = self.position
+    
+    var moved := \
+            surface_state.previous_center_position != \
+            surface_state.center_position
+    if moved:
+        pointer_listener.on_player_moved()
 
 func _update_navigator(delta_scaled_sec: float) -> void:
     navigator.update()
