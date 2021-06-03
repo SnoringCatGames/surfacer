@@ -14,9 +14,8 @@ var EXCLAMATION_MARK_OPACITY_DELAY_SEC := 0.3
 var navigator: Navigator
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
-var previous_path_start_time_scaled: float
-var current_path_start_time_scaled: float
-var current_destination: PositionAlongSurface
+var previous_path_beats: Array
+var current_path_beats: Array
 var is_enabled := false
 var is_slow_motion_enabled := false
 
@@ -57,8 +56,7 @@ func _physics_process(_delta_sec: float) -> void:
     
     if navigator.path != current_path:
         current_path = navigator.path
-        current_path_start_time_scaled = navigator.path_start_time_scaled
-        current_destination = navigator.get_destination()
+        current_path_beats = navigator.path_beats
         if current_path != null:
             if _get_is_exclamation_mark_shown():
                 is_exclamation_mark_shown = true
@@ -70,8 +68,7 @@ func _physics_process(_delta_sec: float) -> void:
     
     if navigator.previous_path != previous_path:
         previous_path = navigator.previous_path
-        previous_path_start_time_scaled = \
-                navigator.previous_path_start_time_scaled
+        previous_path_beats = navigator.previous_path_beats
         update()
     
     if Surfacer.slow_motion.get_is_enabled_or_transitioning() != \
@@ -147,8 +144,7 @@ func _draw_current_path(
                 false)
         
         _draw_beat_hashes(
-                current_path,
-                current_path_start_time_scaled,
+                current_path_beats,
                 current_path_color)
         
         # Draw the origin indicator.
@@ -194,7 +190,7 @@ func _draw_current_path(
         destination_indicator_fill_color.a *= fade_progress
         Gs.draw_utils.draw_destination_marker(
                 self,
-                current_destination,
+                current_path.destination,
                 false,
                 destination_indicator_fill_color,
                 cone_length,
@@ -212,7 +208,7 @@ func _draw_current_path(
         destination_indicator_stroke_color *= fade_progress
         Gs.draw_utils.draw_destination_marker(
                 self,
-                current_destination,
+                current_path.destination,
                 false,
                 destination_indicator_stroke_color,
                 cone_length,
@@ -240,8 +236,7 @@ func _draw_previous_path() -> void:
             true,
             false)
     _draw_beat_hashes(
-            previous_path,
-            previous_path_start_time_scaled,
+            previous_path_beats,
             previous_path_color)
 
 func _get_is_enabled() -> bool:
@@ -266,49 +261,21 @@ func _get_is_exclamation_mark_shown() -> bool:
             Surfacer.is_computer_new_nav_exclamation_mark_shown
 
 func _draw_beat_hashes(
-        path: PlatformGraphPath,
-        path_start_time_scaled: float,
+        beats: Array,
         color: Color) -> void:
-    var elapsed_path_time := \
-            Gs.time.get_scaled_play_time_sec() - path_start_time_scaled
-    if is_slow_motion_enabled:
-        Gs.draw_utils.draw_path_beat_hashes(
-                self,
-                path,
-                elapsed_path_time,
-                Surfacer.slow_motion.music.time_to_next_music_beat,
-                Surfacer.slow_motion.music.next_music_beat_index,
-                Surfacer.slow_motion.music.music_beat_duration_unscaled,
-                Surfacer.slow_motion.music.meter,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_OFFBEAT_HASH_LENGTH,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-                color,
-                color)
-    else:
-        Gs.draw_utils.draw_path_beat_hashes(
-                self,
-                path,
-                elapsed_path_time,
-                Gs.audio.time_to_next_beat,
-                Gs.audio.next_beat_index,
-                Gs.audio.get_beat_duration_unscaled(),
-                Gs.audio.get_meter(),
-                AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_OFFBEAT_HASH_LENGTH,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-                AnnotationElementDefaults \
-                        .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
-                color,
-                color)
+    Gs.draw_utils.draw_beat_hashes(
+            self,
+            current_path_beats,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_TRAJECTORY_DOWNBEAT_HASH_LENGTH,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_TRAJECTORY_OFFBEAT_HASH_LENGTH,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+            AnnotationElementDefaults \
+                    .NAVIGATOR_TRAJECTORY_STROKE_WIDTH,
+            color,
+            color)
 
 func _draw_exclamation_mark() -> void:
     var current_time_scaled := Gs.time.get_scaled_play_time_sec()
