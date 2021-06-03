@@ -1,7 +1,7 @@
-# A collection of utility functions for calculating state related to horizontal
-# movement.
 class_name HorizontalMovementUtils
 extends Reference
+# A collection of utility functions for calculating state related to horizontal
+# movement.
 
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step(

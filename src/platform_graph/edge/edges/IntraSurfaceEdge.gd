@@ -1,10 +1,10 @@
+class_name IntraSurfaceEdge
+extends Edge
 # Information for how to move along a surface from a start position to an end
 # position.
 # 
 # The instructions for an intra-surface edge consist of a single
 # directional-key press step, with no corresponding release.
-class_name IntraSurfaceEdge
-extends Edge
 
 const TYPE := EdgeType.INTRA_SURFACE_EDGE
 const IS_TIME_BASED := false

@@ -1,10 +1,10 @@
+class_name ClimbOverWallToFloorEdge
+extends Edge
 # Information for how to climb up and over a wall to stand on the adjacent
 # floor.
 # 
 # The instructions for this edge consist of two consecutive directional-key
 # presses (into the wall, and upward), with no corresponding release.
-class_name ClimbOverWallToFloorEdge
-extends Edge
 
 const TYPE := EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE
 const IS_TIME_BASED := false

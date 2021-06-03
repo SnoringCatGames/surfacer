@@ -1,7 +1,7 @@
-# Metadata that captures internal calculation information for a single
-# collision in order to help with debugging.
 class_name CollisionCalcResultMetadata
 extends Reference
+# Metadata that captures internal calculation information for a single
+# collision in order to help with debugging.
 
 var step_start_position := Vector2.INF
 var step_start_surface_position := Vector2.INF

@@ -1,7 +1,7 @@
-# Metadata that captures internal calculation information for a single edge
-# horizontal step in order to help with debugging.
 class_name EdgeStepCalcResultMetadata
 extends Reference
+# Metadata that captures internal calculation information for a single edge
+# horizontal step in order to help with debugging.
 
 var edge_result_metadata: EdgeCalcResultMetadata
 

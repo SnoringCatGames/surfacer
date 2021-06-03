@@ -1,3 +1,5 @@
+class_name PlatformGraph
+extends Reference
 # -   This graph is optimized for run-time path-finding.
 # -   Graph parsing is slow and can done either dynamically when starting the
 #     level or ahead of time and saved to separate file.
@@ -6,8 +8,6 @@
 #     since different players have different jump parameters and can reach
 #     different surfaces, so the edges in the graph will be different for each
 #     player.
-class_name PlatformGraph
-extends Reference
 
 signal calculation_progressed(
         origin_surface_index,

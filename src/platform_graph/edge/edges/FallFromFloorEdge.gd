@@ -1,13 +1,13 @@
-# Information for how to walk to and off the edge of a floor.
-# 
-# - The instructions for this edge consist of a single sideways key press, with
-#   no corresponding release.
-# - The start point for this edge corresponds to the surface-edge end point.
-# - This edge consists of a small portion for walking from the start point to
-#   the fall-off point, and then another portion for falling from the fall-off
-#   point to the landing point.
 class_name FallFromFloorEdge
 extends Edge
+# Information for how to walk to and off the edge of a floor.
+# 
+# -   The instructions for this edge consist of a single sideways key press,
+#     with no corresponding release.
+# -   The start point for this edge corresponds to the surface-edge end point.
+# -   This edge consists of a small portion for walking from the start point
+#     to the fall-off point, and then another portion for falling from the
+#     fall-off point to the landing point.
 
 const TYPE := EdgeType.FALL_FROM_FLOOR_EDGE
 const IS_TIME_BASED := false

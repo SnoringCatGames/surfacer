@@ -1,7 +1,7 @@
-# Potential jump position, land position, and start velocity for an edge
-# calculation.
 class_name JumpLandPositions
 extends Reference
+# Potential jump position, land position, and start velocity for an edge
+# calculation.
 
 var jump_position: PositionAlongSurface
 var land_position: PositionAlongSurface
