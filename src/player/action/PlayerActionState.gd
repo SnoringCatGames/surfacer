@@ -1,7 +1,7 @@
 class_name PlayerActionState
 extends Reference
 
-var delta_scaled_sec: float
+var delta_scaled: float
 
 var pressed_jump := false
 var just_pressed_jump := false
@@ -38,7 +38,7 @@ var just_released_face_right := false
 var start_dash := false
 
 func clear() -> void:
-    self.delta_scaled_sec = INF
+    self.delta_scaled = INF
     
     self.pressed_jump = false
     self.just_pressed_jump = false
@@ -75,7 +75,7 @@ func clear() -> void:
     self.start_dash = false
 
 func copy(other: PlayerActionState) -> void:
-    self.delta_scaled_sec = other.delta_scaled_sec
+    self.delta_scaled = other.delta_scaled
     
     self.pressed_jump = other.pressed_jump
     self.just_pressed_jump = other.just_pressed_jump
@@ -113,72 +113,72 @@ func copy(other: PlayerActionState) -> void:
 
 func log_new_presses_and_releases(
         player,
-        time_sec: float) -> void:
+        time: float) -> void:
     _log_new_press_or_release(
             player,
             "jump",
             just_pressed_jump,
             just_released_jump,
-            time_sec)
+            time)
     _log_new_press_or_release(
             player,
             "up",
             just_pressed_up,
             just_released_up,
-            time_sec)
+            time)
     _log_new_press_or_release(
             player,
             "down",
             just_pressed_down,
             just_released_down,
-            time_sec)
+            time)
     _log_new_press_or_release(
             player,
             "left",
             just_pressed_left,
             just_released_left,
-            time_sec)
+            time)
     _log_new_press_or_release(
             player,
             "right",
             just_pressed_right,
             just_released_right,
-            time_sec)
+            time)
     _log_new_press_or_release(
             player,
             "grab",
             just_pressed_grab_wall,
             just_released_grab_wall,
-            time_sec)
+            time)
     _log_new_press_or_release(
             player,
             "faceL",
             just_pressed_face_left,
             just_released_face_left,
-            time_sec)
+            time)
     _log_new_press_or_release(
             player,
             "faceR",
             just_pressed_face_right,
             just_released_face_right,
-            time_sec)
+            time)
     _log_new_press_or_release(
             player,
             "dash",
             start_dash,
             false,
-            time_sec)
+            time)
 
 static func _log_new_press_or_release(
         player,
         action_name: String,
         just_pressed: bool,
         just_released: bool,
-        time_sec: float) -> void:
+        time: float) -> void:
     var message_args := [
         action_name,
         player.player_name,
-        time_sec,
+        time,
         player.surface_state.center_position,
         player.velocity,
     ]

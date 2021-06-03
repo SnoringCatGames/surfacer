@@ -17,10 +17,10 @@ static func check_instructions_discrete_frame_state(
     var movement_params := edge_calc_params.movement_params
     var current_instruction_index := -1
     var next_instruction: EdgeInstruction = instructions.instructions[0]
-    var delta_sec := Time.PHYSICS_TIME_STEP_SEC
+    var delta := Time.PHYSICS_TIME_STEP
     var is_first_jump := true
     var previous_time: float = instructions.instructions[0].time
-    var current_time := previous_time + delta_sec
+    var current_time := previous_time + delta
     var end_time := vertical_step.time_step_end
     var is_pressing_left := false
     var is_pressing_right := false
@@ -48,8 +48,8 @@ static func check_instructions_discrete_frame_state(
     while current_time < end_time:
         # Update position for this frame, according to the velocity from the
         # previous frame.
-        delta_sec = Time.PHYSICS_TIME_STEP_SEC
-        displacement = velocity * delta_sec
+        delta = Time.PHYSICS_TIME_STEP
+        displacement = velocity * delta
         
         # Iterate through the horizontal steps in order to calculate what the
         # frame positions would be according to our continuous movement
@@ -165,9 +165,9 @@ static func check_instructions_discrete_frame_state(
 #            has_started_instructions = true
 #            # When we start executing the instruction set, the current elapsed
 #            # time of the instruction set will be less than a full frame. So
-#            # we use a delta_sec that represents the actual time the
+#            # we use a delta that represents the actual time the
 #            # instruction set should have been running for so far.
-#            delta_sec = current_time - instructions.instructions[0].time
+#            delta = current_time - instructions.instructions[0].time
         
         # Record the position for edge annotation debugging.
         frame_discrete_positions.push_back(position)
@@ -176,7 +176,7 @@ static func check_instructions_discrete_frame_state(
         position += displacement
         velocity = MovementUtils.update_velocity_in_air(
                 velocity,
-                delta_sec,
+                delta,
                 is_pressing_jump,
                 is_first_jump,
                 horizontal_acceleration_sign,
@@ -186,11 +186,11 @@ static func check_instructions_discrete_frame_state(
                 movement_params,
                 movement_params.max_horizontal_speed_default)
         previous_time = current_time
-        current_time += delta_sec
+        current_time += delta
     
     # Check the last frame that puts us up to end_time.
-    delta_sec = end_time - current_time
-    displacement = velocity * delta_sec
+    delta = end_time - current_time
+    displacement = velocity * delta
     # FIXME: To debug why this is failing, try rendering only the failing path
     #        somehow.
 #    collision = check_frame_for_collision(
@@ -226,9 +226,9 @@ static func check_continuous_horizontal_step_for_collision(
     var collision_params := edge_calc_params.collision_params
     var movement_params := edge_calc_params.movement_params
     var vertical_step := step_calc_params.vertical_step
-    var delta_sec := Time.PHYSICS_TIME_STEP_SEC
+    var delta := Time.PHYSICS_TIME_STEP
     var previous_time := horizontal_step.time_step_start
-    var current_time := previous_time + delta_sec
+    var current_time := previous_time + delta
     var step_end_time := horizontal_step.time_step_end
     var previous_position := horizontal_step.position_step_start
     var current_position := previous_position
@@ -287,7 +287,7 @@ static func check_continuous_horizontal_step_for_collision(
         # Update state for the next frame.
         previous_position = current_position
         previous_time = current_time
-        current_time += delta_sec
+        current_time += delta
         
         # Record the positions and velocities for edge annotation debugging.
         frame_positions.push_back(current_position)

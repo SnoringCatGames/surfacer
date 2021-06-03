@@ -14,11 +14,11 @@ var does_pulse_grow := false
 func _init(navigator: Navigator) -> void:
     self.navigator = navigator
 
-func _physics_process(_delta_sec: float) -> void:
+func _physics_process(_delta: float) -> void:
     if navigator.path != current_path:
         current_path = navigator.path
         if current_path != null:
-            current_path_start_time = Gs.time.get_play_time_sec()
+            current_path_start_time = Gs.time.get_play_time()
             is_pulse_active = true
             current_path_pulse_duration = \
                     current_path.duration * \
@@ -38,7 +38,7 @@ func _physics_process(_delta_sec: float) -> void:
     
     if is_pulse_active:
         current_path_elapsed_time = \
-                Gs.time.get_play_time_sec() - current_path_start_time
+                Gs.time.get_play_time() - current_path_start_time
         is_pulse_active = \
                 current_path_elapsed_time < current_path_pulse_duration
         update()

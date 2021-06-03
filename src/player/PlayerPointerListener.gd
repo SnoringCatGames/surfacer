@@ -1,18 +1,18 @@
 class_name PlayerPointerListener
 extends Node2D
 
-const DRAG_UPDATE_THROTTLE_INTERVAL_SEC := 0.1
-const BEAT_UPDATE_THROTTLE_INTERVAL_SEC := 0.1
+const DRAG_UPDATE_THROTTLE_INTERVAL := 0.1
+const BEAT_UPDATE_THROTTLE_INTERVAL := 0.1
 
 var _player
 var _nearby_surface_distance_squared_threshold: float
 var _is_preselection_path_update_pending := false
 var _throttled_update_preselection_path: FuncRef = Gs.time.throttle(
         funcref(self, "_update_preselection_path"),
-        DRAG_UPDATE_THROTTLE_INTERVAL_SEC)
+        DRAG_UPDATE_THROTTLE_INTERVAL)
 var _throttled_update_preselection_beats: FuncRef = Gs.time.throttle(
         funcref(self, "_update_preselection_beats"),
-        BEAT_UPDATE_THROTTLE_INTERVAL_SEC)
+        BEAT_UPDATE_THROTTLE_INTERVAL)
 var _last_pointer_drag_position := Vector2.INF
 
 func _init(player) -> void:
@@ -24,7 +24,7 @@ func _init(player) -> void:
             nearby_surface_distance_threshold * \
             nearby_surface_distance_threshold
 
-func _process(_delta_sec: float) -> void:
+func _process(_delta: float) -> void:
     if _last_pointer_drag_position != Vector2.INF:
         _throttled_update_preselection_beats.call_func()
 
@@ -92,7 +92,7 @@ func _unhandled_input(event: InputEvent) -> void:
 #            pointer_drag_position != Vector2.INF:
 #        _player.print_msg("%s:         %8.3fs", [
 #                event_type,
-#                Gs.time.get_play_time_sec(),
+#                Gs.time.get_play_time(),
 #            ])
     
     if pointer_up_position != Vector2.INF:

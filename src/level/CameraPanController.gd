@@ -1,7 +1,7 @@
 class_name CameraPanController
 extends Node2D
 
-const _PAN_AND_ZOOM_INTERVAL_SEC := 0.05
+const _PAN_AND_ZOOM_INTERVAL := 0.05
 const _TWEEN_DURATION := 0.1
 
 var _interval_id := -1
@@ -74,7 +74,7 @@ func _update_drag(pointer_position: Vector2) -> void:
     if _interval_id < 0:
         _interval_id = Gs.time.set_interval(
                 funcref(self, "_update_camera_from_deltas"),
-                _PAN_AND_ZOOM_INTERVAL_SEC)
+                _PAN_AND_ZOOM_INTERVAL)
 
 func _update_pan_and_zoom_delta_from_pointer(
         pointer_position: Vector2) -> void:
@@ -147,10 +147,10 @@ func _update_pan_and_zoom_delta_from_pointer(
     
     # Calcute the pan and zoom deltas for the current frame and drag weight.
     var per_frame_pan_ratio := \
-            _PAN_AND_ZOOM_INTERVAL_SEC / \
+            _PAN_AND_ZOOM_INTERVAL / \
             Surfacer.duration_to_max_pan_from_pointer_at_max_control
     var per_frame_zoom_ratio := \
-            _PAN_AND_ZOOM_INTERVAL_SEC / \
+            _PAN_AND_ZOOM_INTERVAL / \
             Surfacer.duration_to_max_zoom_from_pointer_at_max_control
     var max_pan_distance_per_frame := \
             Surfacer.max_pan_distance_from_pointer * per_frame_pan_ratio

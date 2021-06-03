@@ -355,7 +355,7 @@ static func calculate_displacement_for_duration(
 
 static func update_velocity_in_air(
         velocity: Vector2,
-        delta_sec: float,
+        delta: float,
         is_pressing_jump: bool,
         is_first_jump: bool,
         horizontal_acceleration_sign: int,
@@ -373,13 +373,13 @@ static func update_velocity_in_air(
     
     # Vertical movement.
     velocity.y += \
-            delta_sec * \
+            delta * \
             movement_params.gravity_fast_fall * \
             gravity_multiplier
     
     # Horizontal movement.
     velocity.x += \
-            delta_sec * \
+            delta * \
             movement_params.in_air_horizontal_acceleration * \
             horizontal_acceleration_sign
     
@@ -455,7 +455,7 @@ static func calculate_distance_to_stop_from_friction(
     var distance := 0.0
     var speed := abs(velocity_x_start)
     while speed > movement_params.min_horizontal_speed:
-        distance += speed * Time.PHYSICS_TIME_STEP_SEC
+        distance += speed * Time.PHYSICS_TIME_STEP
         speed -= friction_deceleration_per_frame
     return distance
 

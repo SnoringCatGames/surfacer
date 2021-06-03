@@ -11,7 +11,7 @@ const ORIGIN_POSITION_RADIUS := 5.0
 
 const CLICK_POSITION_DISTANCE_SQUARED_THRESHOLD := 10000
 
-const DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD_SEC := 0.6
+const DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD := 0.6
 
 var inspector
 
@@ -22,12 +22,12 @@ var possible_jump_land_positions := []
 # Array<AnnotationElement>
 var current_annotation_elements := []
 
-var selection_time_sec := -1.0
+var selection_time := -1.0
 
 func _init(inspector) -> void:
     self.inspector = inspector
 
-func _process(_delta_sec: float) -> void:
+func _process(_delta: float) -> void:
     if first_target != previous_first_target:
         previous_first_target = first_target
         update()
@@ -59,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
                             first_target.surface,
                             surface_position.surface)
             
-            selection_time_sec = Gs.time.get_play_time_sec()
+            selection_time = Gs.time.get_play_time()
             
             # TODO: Add support for configuring edge type and graph from radio
             #       buttons in the inspector.
@@ -116,9 +116,9 @@ func clear() -> void:
     first_target = null
     possible_jump_land_positions = []
     update()
-    selection_time_sec = -1.0
+    selection_time = -1.0
 
 func should_selection_have_been_handled_in_tree_by_now() -> bool:
-    return selection_time_sec + \
-            DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD_SEC < \
-            Gs.time.get_play_time_sec()
+    return selection_time + \
+            DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD < \
+            Gs.time.get_play_time()

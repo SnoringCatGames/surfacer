@@ -9,7 +9,7 @@ var EXCLAMATION_MARK_STROKE_WIDTH_START := 3.0
 var EXCLAMATION_MARK_SCALE_END := 2.0
 var EXCLAMATION_MARK_VERTICAL_OFFSET := 0.0
 var EXCLAMATION_MARK_DURATION := 1.0
-var EXCLAMATION_MARK_OPACITY_DELAY_SEC := 0.3
+var EXCLAMATION_MARK_OPACITY_DELAY := 0.3
 
 var navigator: Navigator
 var previous_path: PlatformGraphPath
@@ -50,7 +50,7 @@ func _init(navigator: Navigator) -> void:
             "tween_all_completed", self, "_exclamation_mark_tween_completed")
     add_child(exclamation_mark_tween)
 
-func _physics_process(_delta_sec: float) -> void:
+func _physics_process(_delta: float) -> void:
     is_fade_in_progress = fade_progress != previous_fade_progress
     previous_fade_progress = fade_progress
     
@@ -61,7 +61,7 @@ func _physics_process(_delta_sec: float) -> void:
             if _get_is_exclamation_mark_shown():
                 is_exclamation_mark_shown = true
                 exclamation_mark_trigger_time_scaled = \
-                        Gs.time.get_scaled_play_time_sec()
+                        Gs.time.get_scaled_play_time()
             if is_enabled:
                 _trigger_fade_in(true)
         update()
@@ -278,7 +278,7 @@ func _draw_beat_hashes(
             color)
 
 func _draw_exclamation_mark() -> void:
-    var current_time_scaled := Gs.time.get_scaled_play_time_sec()
+    var current_time_scaled := Gs.time.get_scaled_play_time()
     var end_time_scaled := \
             exclamation_mark_trigger_time_scaled + EXCLAMATION_MARK_DURATION
     
@@ -300,10 +300,10 @@ func _draw_exclamation_mark() -> void:
     
     var opacity_progress := \
             (current_time_scaled - \
-                    EXCLAMATION_MARK_OPACITY_DELAY_SEC - \
+                    EXCLAMATION_MARK_OPACITY_DELAY - \
                     exclamation_mark_trigger_time_scaled) / \
             (EXCLAMATION_MARK_DURATION - \
-                    EXCLAMATION_MARK_OPACITY_DELAY_SEC)
+                    EXCLAMATION_MARK_OPACITY_DELAY)
     opacity_progress = clamp(
             opacity_progress,
             0.0,

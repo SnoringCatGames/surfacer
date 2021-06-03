@@ -4,15 +4,15 @@ extends Node2D
 var VALID_SELECTION_COLOR: Color = Gs.colors.surface_click_selection
 var INVALID_SELECTION_COLOR := Gs.colors.opacify(
         Gs.colors.invalid, ScaffolderColors.ALPHA_SOLID)
-const SELECT_DURATION_SEC := max(
-        ClickAnnotator.CLICK_INNER_DURATION_SEC,
-        ClickAnnotator.CLICK_OUTER_DURATION_SEC) * 1.5
+const SELECT_DURATION := max(
+        ClickAnnotator.CLICK_INNER_DURATION,
+        ClickAnnotator.CLICK_OUTER_DURATION) * 1.5
 
 var player: Player
 var selection_position_to_animate: PositionAlongSurface = null
 var selection_color: Color
-var animation_start_time := -SELECT_DURATION_SEC
-var animation_end_time := -SELECT_DURATION_SEC
+var animation_start_time := -SELECT_DURATION
+var animation_end_time := -SELECT_DURATION
 var animation_progress := 1.0
 # This separate field is used to ensure we clear any remaining rendering after
 # the animation is done.
@@ -21,8 +21,8 @@ var is_a_selection_currently_rendered := false
 func _init(player: Player) -> void:
     self.player = player
 
-func _process(_delta_sec: float) -> void:
-    var current_time: float = Gs.time.get_play_time_sec()
+func _process(_delta: float) -> void:
+    var current_time: float = Gs.time.get_play_time()
     
     # Has there been a new surface selection?
     if player.last_selection.navigation_destination != \
@@ -38,13 +38,13 @@ func _process(_delta_sec: float) -> void:
         selection_position_to_animate = \
                 player.last_selection.navigation_destination
         animation_start_time = current_time
-        animation_end_time = animation_start_time + SELECT_DURATION_SEC
+        animation_end_time = animation_start_time + SELECT_DURATION
         is_a_selection_currently_rendered = true
     
     if animation_end_time > current_time or \
             is_a_selection_currently_rendered:
         animation_progress = \
-                (current_time - animation_start_time) / SELECT_DURATION_SEC
+                (current_time - animation_start_time) / SELECT_DURATION
         update()
 
 func _draw() -> void:

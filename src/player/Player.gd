@@ -224,7 +224,7 @@ func _init_navigator() -> void:
     navigation_state = navigator.navigation_state
     action_sources.push_back(navigator.instructions_action_source)
 
-func _physics_process(delta_sec: float) -> void:
+func _physics_process(delta: float) -> void:
     if is_fake or \
             !_is_initialized or \
             _is_destroyed:
@@ -232,16 +232,16 @@ func _physics_process(delta_sec: float) -> void:
         # hood.
         return
     
-    var delta_scaled_sec := Gs.time.scale_delta(delta_sec)
+    var delta_scaled := Gs.time.scale_delta(delta)
     
-    _update_actions(delta_scaled_sec)
+    _update_actions(delta_scaled)
     _update_surface_state()
     _handle_pointer_selections()
     
     if surface_state.just_left_air:
         print_msg("GRABBED    :%8s;%8.3fs;P%29s;V%29s; %s", [
                 player_name,
-                Gs.time.get_play_time_sec(),
+                Gs.time.get_play_time(),
                 surface_state.center_position,
                 velocity,
                 surface_state.grabbed_surface.to_string(),
@@ -249,7 +249,7 @@ func _physics_process(delta_sec: float) -> void:
     elif surface_state.just_entered_air:
         print_msg("LAUNCHED   :%8s;%8.3fs;P%29s;V%29s; %s", [
                 player_name,
-                Gs.time.get_play_time_sec(),
+                Gs.time.get_play_time(),
                 surface_state.center_position,
                 velocity,
                 surface_state.previous_grabbed_surface.to_string(),
@@ -264,17 +264,17 @@ func _physics_process(delta_sec: float) -> void:
             side_str = "WALL"
         print_msg("TOUCHED    :%8s;%8.3fs;P%29s;V%29s; %s", [
                 player_name,
-                Gs.time.get_play_time_sec(),
+                Gs.time.get_play_time(),
                 surface_state.center_position,
                 velocity,
                 side_str,
             ])
     
-    _update_navigator(delta_scaled_sec)
+    _update_navigator(delta_scaled)
     
-    actions.delta_scaled_sec = delta_scaled_sec
+    actions.delta_scaled = delta_scaled
     actions.log_new_presses_and_releases(
-            self, Gs.time.get_play_time_sec())
+            self, Gs.time.get_play_time())
     
     # Flip the horizontal direction of the animation according to which way the
     # player is facing.
@@ -289,7 +289,7 @@ func _physics_process(delta_sec: float) -> void:
     _update_collision_mask()
     
     if !movement_params.bypasses_runtime_physics:
-        # Since move_and_slide automatically accounts for delta_sec, we need to
+        # Since move_and_slide automatically accounts for delta, we need to
         # compensate for that in order to support our modified framerate.
         var modified_velocity := velocity * Gs.time.get_combined_scale()
         
@@ -312,20 +312,20 @@ func _physics_process(delta_sec: float) -> void:
     if moved:
         pointer_listener.on_player_moved()
 
-func _update_navigator(delta_scaled_sec: float) -> void:
+func _update_navigator(delta_scaled: float) -> void:
     navigator.update()
     
     # TODO: There's probably a more efficient way to do this.
     if navigator.actions_might_be_dirty:
         actions.copy(actions_from_previous_frame)
-        _update_actions(delta_scaled_sec)
+        _update_actions(delta_scaled)
         _update_surface_state(true)
 
 func _handle_pointer_selections() -> void:
     if new_selection.get_has_selection():
         print_msg("NEW POINTER SELECTION:%8s;%8.3fs;P%29s; %s", [
                 player_name,
-                Gs.time.get_play_time_sec(),
+                Gs.time.get_play_time(),
                 str(new_selection.pointer_position),
                 new_selection.navigation_destination.to_string() if \
                 new_selection.get_is_selection_navigatable() else \
@@ -343,7 +343,7 @@ func _handle_pointer_selections() -> void:
         new_selection.clear()
         pre_selection.clear()
 
-func _update_actions(delta_scaled_sec: float) -> void:
+func _update_actions(delta_scaled: float) -> void:
     # Record actions for the previous frame.
     actions_from_previous_frame.copy(actions)
     
@@ -355,8 +355,8 @@ func _update_actions(delta_scaled_sec: float) -> void:
         action_source.update(
                 actions,
                 actions_from_previous_frame,
-                Gs.time.get_scaled_play_time_sec(),
-                delta_scaled_sec,
+                Gs.time.get_scaled_play_time(),
+                delta_scaled,
                 navigation_state)
     
     actions.start_dash = \
