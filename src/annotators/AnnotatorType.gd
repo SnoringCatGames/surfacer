@@ -9,8 +9,7 @@ enum {
     PLAYER_POSITION,
     RECENT_MOVEMENT,
     NAVIGATOR,
-    CLICK,
-    SURFACE_SELECTION,
+    PATH_PRESELECTION,
     UNKNOWN,
 }
 
@@ -32,10 +31,8 @@ static func get_string(type: int) -> String:
             return "RECENT_MOVEMENT"
         NAVIGATOR:
             return "NAVIGATOR"
-        CLICK:
-            return "CLICK"
-        SURFACE_SELECTION:
-            return "SURFACE_SELECTION"
+        PATH_PRESELECTION:
+            return "PATH_PRESELECTION"
         UNKNOWN:
             return "UNKNOWN"
         _:

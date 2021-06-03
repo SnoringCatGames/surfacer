@@ -12,7 +12,7 @@ var _LEVEL_SPECIFIC_ANNOTATORS := [
     AnnotatorType.LEVEL,
     AnnotatorType.SURFACES,
     AnnotatorType.GRID_INDICES,
-    AnnotatorType.SURFACE_SELECTION,
+    AnnotatorType.PATH_PRESELECTION,
 ]
 
 # Dictionary<AnnotatorType, bool>
@@ -25,21 +25,20 @@ const _DEFAULT_ENABLEMENT := {
     AnnotatorType.PLAYER_POSITION: false,
     AnnotatorType.RECENT_MOVEMENT: true,
     AnnotatorType.NAVIGATOR: true,
-    AnnotatorType.CLICK: true,
-    AnnotatorType.SURFACE_SELECTION: true,
+    AnnotatorType.PATH_PRESELECTION: true,
 }
 
 var ruler_annotator: RulerAnnotator
 var surfaces_annotator: SurfacesAnnotator
 var grid_indices_annotator: GridIndicesAnnotator
-var surface_selection_annotator: SurfaceSelectionAnnotator
 var path_preselection_annotator: PathPreselectionAnnotator
-var click_annotator: ClickAnnotator
 
 # Dictonary<Player, PlayerAnnotator>
 var player_annotators := {}
 
 var element_annotator: ElementAnnotator
+
+var transient_annotator_registry: TransientAnnotatorRegistry
 
 var _annotator_enablement := {}
 
@@ -58,6 +57,9 @@ func _enter_tree() -> void:
     
     element_annotator = ElementAnnotator.new()
     annotation_layer.add_child(element_annotator)
+    
+    transient_annotator_registry = TransientAnnotatorRegistry.new()
+    annotation_layer.add_child(transient_annotator_registry)
     
     for annotator_type in _DEFAULT_ENABLEMENT:
         var is_enabled: bool = Gs.save_state.get_setting(
@@ -83,7 +85,8 @@ func on_level_ready() -> void:
                     true)
 
 func on_level_destroyed() -> void:
-    Surfacer.annotators.element_annotator.clear()
+    element_annotator.clear()
+    transient_annotator_registry.clear()
     for annotator_type in _LEVEL_SPECIFIC_ANNOTATORS:
         if is_annotator_enabled(annotator_type):
             _destroy_annotator(annotator_type)
@@ -151,15 +154,8 @@ func _create_annotator(annotator_type: int) -> void:
                 grid_indices_annotator = GridIndicesAnnotator.new(
                         Surfacer.graph_parser.surface_parser)
                 annotation_layer.add_child(grid_indices_annotator)
-        AnnotatorType.CLICK:
-            click_annotator = ClickAnnotator.new()
-            annotation_layer.add_child(click_annotator)
-        AnnotatorType.SURFACE_SELECTION:
+        AnnotatorType.PATH_PRESELECTION:
             if Surfacer.human_player != null:
-                surface_selection_annotator = \
-                        SurfaceSelectionAnnotator.new(
-                                Surfacer.human_player)
-                annotation_layer.add_child(surface_selection_annotator)
                 path_preselection_annotator = \
                         PathPreselectionAnnotator.new(Surfacer.human_player)
                 annotation_layer.add_child(path_preselection_annotator)
@@ -184,14 +180,8 @@ func _destroy_annotator(annotator_type: int) -> void:
             if grid_indices_annotator != null:
                 grid_indices_annotator.queue_free()
                 grid_indices_annotator = null
-        AnnotatorType.CLICK:
-            if click_annotator != null:
-                click_annotator.queue_free()
-                click_annotator = null
-        AnnotatorType.SURFACE_SELECTION:
-            if surface_selection_annotator != null:
-                surface_selection_annotator.queue_free()
-                surface_selection_annotator = null
+        AnnotatorType.PATH_PRESELECTION:
+            if path_preselection_annotator != null:
                 path_preselection_annotator.queue_free()
                 path_preselection_annotator = null
         AnnotatorType.LEVEL:
@@ -199,3 +189,6 @@ func _destroy_annotator(annotator_type: int) -> void:
                 Gs.level.set_tile_map_visibility(false)
         _:
             Gs.logger.error()
+
+func add_transient(annotator: TransientAnnotator) -> void:
+    transient_annotator_registry.add(annotator)

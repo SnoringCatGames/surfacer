@@ -116,6 +116,16 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
     Gs.time.cancel_pending_throttle(_throttled_update_preselection_path)
     Gs.time.cancel_pending_throttle(_throttled_update_preselection_beats)
     _player.new_selection.update_pointer_position(pointer_position)
+    
+    var selected_surface: Surface = \
+            _player.new_selection.navigation_destination.surface if \
+            _player.new_selection.navigation_destination != null else \
+            null
+    var is_surface_navigatable: bool = _player.new_selection.path != null
+    Surfacer.annotators.add_transient(ClickAnnotator.new(
+            pointer_position,
+            selected_surface,
+            is_surface_navigatable))
 
 func _on_pointer_moved(pointer_position: Vector2) -> void:
     _last_pointer_drag_position = pointer_position
