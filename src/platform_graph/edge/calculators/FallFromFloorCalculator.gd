@@ -322,9 +322,9 @@ static func _prepend_walk_to_fall_off_portion(
         movement_params: MovementParams,
         falls_on_left_side: bool) -> void:
     var frame_count_before_fall_off := \
-            floor(time_fall_off / Time.PHYSICS_TIME_STEP_SEC)
+            floor(time_fall_off / Time.PHYSICS_TIME_STEP)
     time_fall_off = \
-            frame_count_before_fall_off * Time.PHYSICS_TIME_STEP_SEC + \
+            frame_count_before_fall_off * Time.PHYSICS_TIME_STEP + \
             Gs.geometry.FLOAT_EPSILON
     
     # Increment instruction times.
@@ -415,7 +415,7 @@ static func _prepend_walk_to_fall_off_portion(
         
         var frame_position_x := \
                 current_frame_position.x + \
-                current_frame_velocity.x * Time.PHYSICS_TIME_STEP_SEC
+                current_frame_velocity.x * Time.PHYSICS_TIME_STEP
         var distance_past_edge := \
                 start.target_point.x - frame_position_x if \
                 falls_on_left_side else \
@@ -430,7 +430,7 @@ static func _prepend_walk_to_fall_off_portion(
         
         current_frame_position.x = frame_position_x
         current_frame_position.y = frame_position_y
-        current_frame_velocity += acceleration * Time.PHYSICS_TIME_STEP_SEC
+        current_frame_velocity += acceleration * Time.PHYSICS_TIME_STEP
         clamp(current_frame_velocity.x,
                 -movement_params.max_horizontal_speed_default,
                 movement_params.max_horizontal_speed_default)

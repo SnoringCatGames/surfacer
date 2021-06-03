@@ -55,5 +55,5 @@ func process(player: Player) -> bool:
 static func _get_has_trajectory_index_changed(
         previous_time: float,
         next_time: float) -> bool:
-    return int(previous_time / Time.PHYSICS_TIME_STEP_SEC) != \
-            int(next_time / Time.PHYSICS_TIME_STEP_SEC)
+    return int(previous_time / Time.PHYSICS_TIME_STEP) != \
+            int(next_time / Time.PHYSICS_TIME_STEP)

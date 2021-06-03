@@ -23,10 +23,10 @@ func _init(
     self.edge = edge
     self.is_additive = is_additive
 
-func start(scaled_time_sec: float) -> void:
-    start_time_scaled = scaled_time_sec
-    previous_time_scaled = scaled_time_sec
-    current_time_scaled = scaled_time_sec
+func start(scaled_time: float) -> void:
+    start_time_scaled = scaled_time
+    previous_time_scaled = scaled_time
+    current_time_scaled = scaled_time
     next_index = 0
     next_instruction = \
             edge.instructions.instructions[next_index] if \
@@ -38,20 +38,20 @@ func start(scaled_time_sec: float) -> void:
     _next_active_key_presses = {}
 
 func update(
-        scaled_time_sec: float,
+        scaled_time: float,
         navigation_state: PlayerNavigationState) -> Array:
     # TODO: If we don't ever need more complicated dynamic instruction updates
     #       based on navigation state, then remove that param.
     
     previous_time_scaled = current_time_scaled
-    current_time_scaled = scaled_time_sec
+    current_time_scaled = scaled_time
     
     active_key_presses = _next_active_key_presses.duplicate()
     
     var new_instructions := []
     while !is_finished and \
             _get_start_time_scaled_for_next_instruction() <= \
-                    scaled_time_sec:
+                    scaled_time:
         if !is_on_last_instruction:
             new_instructions.push_back(next_instruction)
         increment()
@@ -86,7 +86,7 @@ func get_previous_elapsed_time_scaled() -> float:
     return previous_time_scaled - start_time_scaled
 
 func get_elapsed_time_scaled() -> float:
-    return Gs.time.get_scaled_play_time_sec() - start_time_scaled
+    return Gs.time.get_scaled_play_time() - start_time_scaled
 
 func _get_start_time_scaled_for_next_instruction() -> float:
     assert(!is_finished)

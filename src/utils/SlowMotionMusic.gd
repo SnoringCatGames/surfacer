@@ -26,14 +26,14 @@ var _is_transition_complete_timeout_id := -1
 func _init() -> void:
     Gs.audio.connect("music_changed", self, "_on_music_changed")
 
-func _process(_delta_sec: float) -> void:
+func _process(_delta: float) -> void:
     if _is_active:
         _update_playback_state()
 
 func start(time_scale_duration: float) -> void:
     _is_active = true
     
-    _start_time_scaled = Gs.time.get_scaled_play_time_sec()
+    _start_time_scaled = Gs.time.get_scaled_play_time()
     
     if !_is_transition_complete:
         # We didn't finish transitioning out of the previous slow-motion mode.
@@ -87,7 +87,7 @@ func _on_transition_complete() -> void:
                 ""
         Gs.audio.cross_fade_music(music_name, 0.01)
         var slow_motion_duration_scaled := \
-                Gs.time.get_scaled_play_time_sec() - _start_time_scaled
+                Gs.time.get_scaled_play_time() - _start_time_scaled
         var playback_position := \
                 _start_playback_position + slow_motion_duration_scaled
         Gs.audio.seek(playback_position)
@@ -119,7 +119,7 @@ func _update_playback_state() -> void:
             Surfacer.nav_selection_slow_mo_tick_tock_tempo_multiplier
     
     var slow_motion_duration_scaled := \
-            Gs.time.get_scaled_play_time_sec() - _start_time_scaled
+            Gs.time.get_scaled_play_time() - _start_time_scaled
     playback_position = _start_playback_position + slow_motion_duration_scaled
     
     var current_music_beat_progress := \

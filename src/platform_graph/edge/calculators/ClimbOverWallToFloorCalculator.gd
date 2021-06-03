@@ -126,7 +126,7 @@ static func _calculate_trajectory(
             true,
             movement_params)
     
-    var frame_count := ceil(duration / Time.PHYSICS_TIME_STEP_SEC)
+    var frame_count := ceil(duration / Time.PHYSICS_TIME_STEP)
     
     # Insert frame state for the walk-to-fall-off portion of the trajectory.
     
@@ -175,7 +175,7 @@ static func _calculate_trajectory(
         
         var frame_position_y := \
                 current_frame_position.y + \
-                velocity.y * Time.PHYSICS_TIME_STEP_SEC
+                velocity.y * Time.PHYSICS_TIME_STEP
         var distance_past_edge := start.target_point.y - frame_position_y
         var frame_position_x := \
                 edge_point.x + \

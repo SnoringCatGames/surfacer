@@ -19,7 +19,7 @@ func _init(
     self.is_human_player = is_human_player
     self.z_index = 2
 
-func _physics_process(_delta_sec: float) -> void:
+func _physics_process(_delta: float) -> void:
     if recent_movement_annotator != null:
         recent_movement_annotator.check_for_update()
     

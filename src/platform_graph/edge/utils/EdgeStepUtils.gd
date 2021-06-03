@@ -151,7 +151,7 @@ static func calculate_steps_between_waypoints(
             if collision != null:
                 result.collision_time = \
                         next_horizontal_step.time_step_start + \
-                        frame_count * Time.PHYSICS_TIME_STEP_SEC
+                        frame_count * Time.PHYSICS_TIME_STEP
             return result
     
     Gs.profiler.increment_count(

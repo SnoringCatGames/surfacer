@@ -5,19 +5,19 @@ const CLICK_INNER_END_RADIUS := 58.0
 const CLICK_OUTER_END_RADIUS := 100.0
 var CLICK_INNER_COLOR: Color = Gs.colors.click
 var CLICK_OUTER_COLOR: Color = Gs.colors.click
-const CLICK_INNER_DURATION_SEC := 0.27
-const CLICK_OUTER_DURATION_SEC := 0.23
+const CLICK_INNER_DURATION := 0.27
+const CLICK_OUTER_DURATION := 0.23
 
 var click_position := Vector2.INF
-var start_time := -CLICK_INNER_DURATION_SEC
-var inner_end_time := -CLICK_INNER_DURATION_SEC
-var outer_end_time := -CLICK_OUTER_DURATION_SEC
+var start_time := -CLICK_INNER_DURATION
+var inner_end_time := -CLICK_INNER_DURATION
+var outer_end_time := -CLICK_OUTER_DURATION
 var inner_progress := 1.0
 var outer_progress := 1.0
 var is_a_click_currently_rendered := false
 
 func _unhandled_input(event: InputEvent) -> void:
-    var current_time: float = Gs.time.get_play_time_sec()
+    var current_time: float = Gs.time.get_play_time()
     
     var position := Vector2.INF
     
@@ -36,15 +36,15 @@ func _unhandled_input(event: InputEvent) -> void:
     if position != Vector2.INF:
         click_position = position
         start_time = current_time
-        inner_end_time = start_time + CLICK_INNER_DURATION_SEC
-        outer_end_time = start_time + CLICK_OUTER_DURATION_SEC
+        inner_end_time = start_time + CLICK_INNER_DURATION
+        outer_end_time = start_time + CLICK_OUTER_DURATION
         is_a_click_currently_rendered = true
 
-func _process(_delta_sec: float) -> void:
-    var current_time: float = Gs.time.get_play_time_sec()
+func _process(_delta: float) -> void:
+    var current_time: float = Gs.time.get_play_time()
     
-    inner_progress = (current_time - start_time) / CLICK_INNER_DURATION_SEC
-    outer_progress = (current_time - start_time) / CLICK_OUTER_DURATION_SEC
+    inner_progress = (current_time - start_time) / CLICK_INNER_DURATION
+    outer_progress = (current_time - start_time) / CLICK_OUTER_DURATION
     
     if is_a_click_currently_rendered:
         update()

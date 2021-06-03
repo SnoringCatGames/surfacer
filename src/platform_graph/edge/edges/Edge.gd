@@ -106,7 +106,7 @@ func _init(
     #     earlier than expected.
     # -   Too many frames probably means ...
     var expected_frame_count_for_duration := \
-            int(duration / Time.PHYSICS_TIME_STEP_SEC)
+            int(duration / Time.PHYSICS_TIME_STEP)
     var allowed_variance_from_expected_frame_count := 8
     assert(trajectory == null or \
             trajectory.frame_continuous_positions_from_steps.empty() or \
@@ -225,13 +225,13 @@ static func _calculate_instructions(
     return null
 
 func get_position_at_time(edge_time: float) -> Vector2:
-    var index := int(edge_time / Time.PHYSICS_TIME_STEP_SEC)
+    var index := int(edge_time / Time.PHYSICS_TIME_STEP)
     if index >= trajectory.frame_continuous_positions_from_steps.size():
         return Vector2.INF
     return trajectory.frame_continuous_positions_from_steps[index]
 
 func get_velocity_at_time(edge_time: float) -> Vector2:
-    var index := int(edge_time / Time.PHYSICS_TIME_STEP_SEC)
+    var index := int(edge_time / Time.PHYSICS_TIME_STEP)
     if index >= trajectory.frame_continuous_velocities_from_steps.size():
         return Vector2.INF
     return trajectory.frame_continuous_velocities_from_steps[index]

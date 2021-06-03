@@ -55,7 +55,7 @@ func _compute() -> void:
     defer("_initialize_next")
 
 func _initialize_metrics() -> void:
-    start_time = Gs.time.get_clock_time_sec()
+    start_time = Gs.time.get_clock_time()
     
     for stage in STAGES_TO_DISPLAY_METRICS_FOR:
         stage_to_metric_items[stage] = [
@@ -264,7 +264,7 @@ func _update_metrics() -> void:
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/Metrics/DurationLabel.text = \
             Gs.utils.get_time_string_from_seconds( \
-                    Gs.time.get_clock_time_sec() - start_time, \
+                    Gs.time.get_clock_time() - start_time, \
                     false, \
                     false, \
                     true)

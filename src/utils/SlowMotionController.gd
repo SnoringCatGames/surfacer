@@ -6,8 +6,8 @@ signal slow_motion_toggled(is_enabled)
 const DESATURATION_SHADER := \
         preload("res://addons/surfacer/src/Desaturation.shader")
 
-const ENABLE_SLOW_MOTION_DURATION_SEC := 0.3
-const DISABLE_SLOW_MOTION_DURATION_SEC := 0.2
+const ENABLE_SLOW_MOTION_DURATION := 0.3
+const DISABLE_SLOW_MOTION_DURATION := 0.2
 const DISABLE_SLOW_MOTION_SATURATION_DURATION_MULTIPLIER := 0.9
 
 var is_enabled := false setget set_slow_motion_enabled
@@ -50,7 +50,7 @@ func set_slow_motion_enabled(value: bool) -> void:
     var saturation_duration: float
     if is_enabled:
         next_time_scale = Surfacer.nav_selection_slow_mo_time_scale
-        time_scale_duration = ENABLE_SLOW_MOTION_DURATION_SEC
+        time_scale_duration = ENABLE_SLOW_MOTION_DURATION
         ease_name = "ease_in"
         next_saturation = Surfacer.nav_selection_slow_mo_saturation
         saturation_duration = \
@@ -58,7 +58,7 @@ func set_slow_motion_enabled(value: bool) -> void:
                 DISABLE_SLOW_MOTION_SATURATION_DURATION_MULTIPLIER
     else:
         next_time_scale = 1.0
-        time_scale_duration = DISABLE_SLOW_MOTION_DURATION_SEC
+        time_scale_duration = DISABLE_SLOW_MOTION_DURATION
         ease_name = "ease_out"
         next_saturation = 1.0
         saturation_duration = time_scale_duration
