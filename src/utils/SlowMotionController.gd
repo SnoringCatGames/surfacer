@@ -31,7 +31,7 @@ func _init() -> void:
     _desaturation_material.shader = DESATURATION_SHADER
     _set_saturation(1.0)
     
-    music.connect("transition_complete", self, "_on_music_transition_complete")
+    music.connect("transition_completed", self, "_on_music_transition_complete")
 
 func set_slow_motion_enabled(value: bool) -> void:
     if value == is_enabled:

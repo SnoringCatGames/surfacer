@@ -9,7 +9,7 @@
 class_name PlatformGraph
 extends Reference
 
-signal calculation_progress(
+signal calculation_progressed(
         origin_surface_index,
         surface_count)
 signal calculation_finished
@@ -410,7 +410,7 @@ func _calculate_inter_surface_edges_for_next_origin(
     var was_last_iteration := origin_index == surfaces.size() - 1
     
     if thread_index < 0:
-        emit_signal("calculation_progress", origin_index, surfaces.size())
+        emit_signal("calculation_progressed", origin_index, surfaces.size())
         if !was_last_iteration:
             Gs.time.set_timeout(
                     funcref(self,

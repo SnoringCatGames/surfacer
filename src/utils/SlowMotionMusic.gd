@@ -3,7 +3,7 @@ extends Node
 
 signal music_beat(is_downbeat, beat_index, meter)
 signal tick_tock_beat(is_downbeat, beat_index, meter)
-signal transition_complete(is_active)
+signal transition_completed(is_active)
 
 var playback_position := INF
 var time_to_next_music_beat := INF
@@ -106,7 +106,7 @@ func _on_transition_complete() -> void:
         next_music_beat_index = -1
         next_tick_tock_beat_index = -1
     
-    emit_signal("transition_complete", _is_active)
+    emit_signal("transition_completed", _is_active)
 
 func _update_playback_state() -> void:
     Gs.audio._update_scaled_speed()
