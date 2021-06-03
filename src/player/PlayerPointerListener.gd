@@ -5,8 +5,8 @@ const DRAG_THROTTLE_INTERVAL_SEC := 0.1
 
 var player
 var nearby_surface_distance_squared_threshold: float
-var throttled_set_new_drag_position: FuncRef = Gs.time.throttle(
-        funcref(self, "set_new_drag_position"),
+var throttled_update_preselection: FuncRef = Gs.time.throttle(
+        funcref(self, "_update_preselection"),
         DRAG_THROTTLE_INTERVAL_SEC)
 var last_pointer_drag_position := Vector2.INF
 
@@ -87,18 +87,25 @@ func _unhandled_input(event: InputEvent) -> void:
 #            ])
     
     if pointer_up_position != Vector2.INF:
-        last_pointer_drag_position = Vector2.INF
-        Gs.time.cancel_pending_throttle(throttled_set_new_drag_position)
-        
-        player.new_selection.update_pointer_position(pointer_up_position)
-        
-        Surfacer.slow_motion.set_slow_motion_enabled(false)
-        
+        _on_pointer_released(pointer_up_position)
     elif pointer_drag_position != Vector2.INF:
-        last_pointer_drag_position = pointer_drag_position
-        throttled_set_new_drag_position.call_func()
-        
-        Surfacer.slow_motion.set_slow_motion_enabled(true)
+        _on_pointer_moved(pointer_drag_position)
 
-func set_new_drag_position() -> void:
+func _update_preselection() -> void:
     player.pre_selection.update_pointer_position(last_pointer_drag_position)
+
+func _on_pointer_released(pointer_position: Vector2) -> void:
+    last_pointer_drag_position = Vector2.INF
+    Surfacer.slow_motion.set_slow_motion_enabled(false)
+    Gs.time.cancel_pending_throttle(throttled_update_preselection)
+    player.new_selection.update_pointer_position(pointer_position)
+
+func _on_pointer_moved(pointer_position: Vector2) -> void:
+    last_pointer_drag_position = pointer_position
+    Surfacer.slow_motion.set_slow_motion_enabled(true)
+    throttled_update_preselection.call_func()
+
+func on_player_moved() -> void:
+    if last_pointer_drag_position != Vector2.INF:
+        Surfacer.slow_motion.set_slow_motion_enabled(true)
+        throttled_update_preselection.call_func()
