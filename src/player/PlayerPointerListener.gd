@@ -1,27 +1,36 @@
 class_name PlayerPointerListener
 extends Node2D
 
-const DRAG_THROTTLE_INTERVAL_SEC := 0.1
+const DRAG_UPDATE_THROTTLE_INTERVAL_SEC := 0.1
+const BEAT_UPDATE_THROTTLE_INTERVAL_SEC := 0.1
 
-var player
-var nearby_surface_distance_squared_threshold: float
-var throttled_update_preselection: FuncRef = Gs.time.throttle(
-        funcref(self, "_update_preselection"),
-        DRAG_THROTTLE_INTERVAL_SEC)
-var last_pointer_drag_position := Vector2.INF
+var _player
+var _nearby_surface_distance_squared_threshold: float
+var _is_preselection_path_update_pending := false
+var _throttled_update_preselection_path: FuncRef = Gs.time.throttle(
+        funcref(self, "_update_preselection_path"),
+        DRAG_UPDATE_THROTTLE_INTERVAL_SEC)
+var _throttled_update_preselection_beats: FuncRef = Gs.time.throttle(
+        funcref(self, "_update_preselection_beats"),
+        BEAT_UPDATE_THROTTLE_INTERVAL_SEC)
+var _last_pointer_drag_position := Vector2.INF
 
 func _init(player) -> void:
-    self.player = player
+    self._player = player
     var nearby_surface_distance_threshold: float = \
-            player.movement_params.max_upward_jump_distance * \
+            _player.movement_params.max_upward_jump_distance * \
             PointerSelectionPosition.SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO
-    self.nearby_surface_distance_squared_threshold = \
+    self._nearby_surface_distance_squared_threshold = \
             nearby_surface_distance_threshold * \
             nearby_surface_distance_threshold
 
+func _process(_delta_sec: float) -> void:
+    if _last_pointer_drag_position != Vector2.INF:
+        _throttled_update_preselection_beats.call_func()
+
 func _unhandled_input(event: InputEvent) -> void:
     if !Gs.is_user_interaction_enabled or \
-            Surfacer.human_player != player:
+            Surfacer.human_player != _player:
         return
     
     var pointer_up_position := Vector2.INF
@@ -50,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
 #
 #    # Mouse-move: Position pre-selection.
 #    if event is InputEventMouseMotion and \
-#            last_pointer_drag_position != Vector2.INF:
+#            _last_pointer_drag_position != Vector2.INF:
 #        event_type = "MOUSE_DRAG "
 #        pointer_drag_position = \
 #                Gs.utils.get_level_touch_position(event)
@@ -81,7 +90,7 @@ func _unhandled_input(event: InputEvent) -> void:
     
 #    if pointer_up_position != Vector2.INF or \
 #            pointer_drag_position != Vector2.INF:
-#        player.print_msg("%s:         %8.3fs", [
+#        _player.print_msg("%s:         %8.3fs", [
 #                event_type,
 #                Gs.time.get_play_time_sec(),
 #            ])
@@ -91,21 +100,30 @@ func _unhandled_input(event: InputEvent) -> void:
     elif pointer_drag_position != Vector2.INF:
         _on_pointer_moved(pointer_drag_position)
 
-func _update_preselection() -> void:
-    player.pre_selection.update_pointer_position(last_pointer_drag_position)
+func _update_preselection_path() -> void:
+    _is_preselection_path_update_pending = false
+    _player.pre_selection.update_pointer_position(_last_pointer_drag_position)
+
+func _update_preselection_beats() -> void:
+    # Skip the beat update if we're already going to the the whole path update.
+    if !_is_preselection_path_update_pending:
+        _player.pre_selection.update_beats()
 
 func _on_pointer_released(pointer_position: Vector2) -> void:
-    last_pointer_drag_position = Vector2.INF
+    _last_pointer_drag_position = Vector2.INF
     Surfacer.slow_motion.set_slow_motion_enabled(false)
-    Gs.time.cancel_pending_throttle(throttled_update_preselection)
-    player.new_selection.update_pointer_position(pointer_position)
+    _is_preselection_path_update_pending = false
+    Gs.time.cancel_pending_throttle(_throttled_update_preselection_path)
+    Gs.time.cancel_pending_throttle(_throttled_update_preselection_beats)
+    _player.new_selection.update_pointer_position(pointer_position)
 
 func _on_pointer_moved(pointer_position: Vector2) -> void:
-    last_pointer_drag_position = pointer_position
+    _last_pointer_drag_position = pointer_position
     Surfacer.slow_motion.set_slow_motion_enabled(true)
-    throttled_update_preselection.call_func()
+    _is_preselection_path_update_pending = true
+    _throttled_update_preselection_path.call_func()
 
 func on_player_moved() -> void:
-    if last_pointer_drag_position != Vector2.INF:
+    if _last_pointer_drag_position != Vector2.INF:
         Surfacer.slow_motion.set_slow_motion_enabled(true)
-        throttled_update_preselection.call_func()
+        _throttled_update_preselection_path.call_func()

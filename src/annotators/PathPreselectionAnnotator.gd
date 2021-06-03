@@ -56,6 +56,7 @@ var phantom_surface := Surface.new(
         [])
 var phantom_position_along_surface := PositionAlongSurface.new()
 var preselection_path: PlatformGraphPath
+var preselection_path_beats_time_start: float
 var preselection_path_beats: Array
 
 func _init(player: Player) -> void:
@@ -93,11 +94,13 @@ func remove_prediction(prediction: PlayerPrediction) -> void:
 func _process(_delta_sec: float) -> void:
     var current_time: float = Gs.time.get_play_time_sec()
     
-    var did_preselection_position_change := \
+    var did_preselection_change := \
             preselection_destination != \
-            player.pre_selection.navigation_destination
+                    player.pre_selection.navigation_destination or \
+            preselection_path_beats_time_start != \
+                    player.pre_selection.path_beats_time_start
     
-    if did_preselection_position_change and \
+    if did_preselection_change and \
             !player.new_selection.get_has_selection():
         var previous_preselection_surface := \
                 preselection_destination.surface if \
@@ -113,6 +116,8 @@ func _process(_delta_sec: float) -> void:
         preselection_destination = \
                 player.pre_selection.navigation_destination
         preselection_path = player.pre_selection.path
+        preselection_path_beats_time_start = \
+                player.pre_selection.path_beats_time_start
         preselection_path_beats = player.pre_selection.path_beats
         
         if did_preselection_surface_change:
@@ -135,6 +140,7 @@ func _process(_delta_sec: float) -> void:
                             preselection_path.duration)
         else:
             preselection_path = null
+            preselection_path_beats_time_start = INF
             preselection_path_beats = []
         
         _predictions_container.visible = preselection_path != null
