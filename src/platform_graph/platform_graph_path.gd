@@ -126,3 +126,14 @@ func to_string_with_newlines(indent_level := 0) -> String:
             indent_level_str,
         ]
     return format_string_template % format_string_arguments
+
+
+func copy(other: PlatformGraphPath) -> void:
+    self.edges = other.edges
+    self.origin = other.origin
+    self.destination = other.destination
+    self.graph_destination_for_in_air_destination = \
+            other.graph_destination_for_in_air_destination
+    self.distance = other.distance
+    self.duration = other.duration
+    self.is_optimized = other.is_optimized
