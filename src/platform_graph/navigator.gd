@@ -310,6 +310,9 @@ func _set_reached_destination() -> void:
 
 
 func _reset() -> void:
+    # FIXME: --------------------------
+    if player.is_human_player:
+        print("break")
     if path != null:
         previous_path = path
         previous_path_start_time_scaled = path_start_time_scaled
