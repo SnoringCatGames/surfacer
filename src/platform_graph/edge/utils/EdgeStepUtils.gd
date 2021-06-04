@@ -291,12 +291,6 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height(
     
     var previous_waypoint_copy: Waypoint
     var next_waypoint_copy: Waypoint
-    var step_calc_params_to_waypoint: EdgeStepCalcParams
-    var step_calc_params_from_waypoint: EdgeStepCalcParams
-    var child_step_result_metadata: EdgeStepCalcResultMetadata
-    var calc_results_to_waypoint: EdgeCalcResult
-    var calc_results_from_waypoint: EdgeCalcResult
-    
     var result: EdgeCalcResult
     
     for waypoint in waypoints:
@@ -337,17 +331,18 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height(
         
         ### RECURSE: Calculate movement to the waypoint.
         
-        step_calc_params_to_waypoint = EdgeStepCalcParams.new(
+        var step_calc_params_to_waypoint := EdgeStepCalcParams.new(
                 previous_waypoint_copy,
                 waypoint,
                 vertical_step)
+        var child_step_result_metadata: EdgeStepCalcResultMetadata
         if step_result_metadata != null:
             child_step_result_metadata = EdgeStepCalcResultMetadata.new(
                     edge_result_metadata,
                     step_result_metadata,
                     step_calc_params_to_waypoint,
                     null)
-        calc_results_to_waypoint = calculate_steps_between_waypoints(
+        var calc_results_to_waypoint := calculate_steps_between_waypoints(
                 edge_result_metadata,
                 child_step_result_metadata,
                 edge_calc_params,
@@ -366,7 +361,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height(
         ### RECURSE: Calculate movement from the waypoint to the original
         ###          destination.
         
-        step_calc_params_from_waypoint = EdgeStepCalcParams.new(
+        var step_calc_params_from_waypoint := EdgeStepCalcParams.new(
                 waypoint,
                 next_waypoint_copy,
                 vertical_step)
@@ -376,7 +371,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height(
                     step_result_metadata,
                     step_calc_params_from_waypoint,
                     null)
-        calc_results_from_waypoint = calculate_steps_between_waypoints(
+        var calc_results_from_waypoint := calculate_steps_between_waypoints(
                 edge_result_metadata,
                 child_step_result_metadata,
                 edge_calc_params,
@@ -467,17 +462,12 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height(
     edge_calc_params.origin_waypoint = origin_copy
     edge_calc_params.destination_waypoint = destination_copy
     
-    var waypoint_around_collision_copy: Waypoint
-    var step_result_metadata_between_waypoints: EdgeStepCalcResultMetadata
-    var step_calc_params_between_waypoints: EdgeStepCalcParams
     var previous_calc_results: EdgeCalcResult
-    var current_calc_results: EdgeCalcResult
-    var was_horizontal_step_already_validated: bool
     
     for waypoint_around_collision in waypoints_around_colliding_surface:
         # Create a copy of the collision waypoint (so we don't conflict with
         # other recursion branches), and update previous/next pointers.
-        waypoint_around_collision_copy = \
+        var waypoint_around_collision_copy := \
                 WaypointUtils.clone_waypoint(waypoint_around_collision)
         waypoint_around_collision_copy.previous_waypoint = \
                 previous_waypoint_copy
@@ -535,7 +525,7 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height(
         # (because the increased jump height, the time, min/max/actual
         # x-velocity, and trajectories can all be different). Update in forward
         # order.
-        was_horizontal_step_already_validated = true
+        var was_horizontal_step_already_validated := true
         previous_waypoint_copy = origin_copy
         current_waypoint_copy = origin_copy.next_waypoint
         while current_waypoint_copy != null:
@@ -544,11 +534,13 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height(
                 # already been calculated and determined to be valid.
                 was_horizontal_step_already_validated = false
             
-            step_calc_params_between_waypoints = EdgeStepCalcParams.new(
+            var step_calc_params_between_waypoints := EdgeStepCalcParams.new(
                     previous_waypoint_copy,
                     current_waypoint_copy,
                     vertical_step_with_increased_height)
             
+            var step_result_metadata_between_waypoints: \
+                    EdgeStepCalcResultMetadata
             if step_result_metadata != null:
                 step_result_metadata_between_waypoints = \
                         EdgeStepCalcResultMetadata.new(
@@ -557,7 +549,7 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height(
                                 step_calc_params_between_waypoints,
                                 waypoint_around_collision_copy)
             
-            current_calc_results = calculate_steps_between_waypoints(
+            var current_calc_results := calculate_steps_between_waypoints(
                     edge_result_metadata,
                     step_result_metadata_between_waypoints,
                     edge_calc_params,

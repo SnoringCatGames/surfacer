@@ -57,12 +57,12 @@ func find_and_expand_controller(
 func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
-    var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
-        is_subtree_found = child.get_metadata(0).find_and_expand_controller(
-                search_type,
-                metadata)
+        var is_subtree_found: bool = \
+                child.get_metadata(0).find_and_expand_controller(
+                        search_type,
+                        metadata)
         if is_subtree_found:
             return
         child = child.get_next()
@@ -70,10 +70,9 @@ func _find_and_expand_controller_recursive(
     Gs.logger.error("No matching Surface found: %s" % metadata)
 
 func _create_children_inner() -> void:
-    var surfaces_to_edge_types_to_edges_results: Dictionary
     for surface in graph.surfaces_set:
         if surface.side == side:
-            surfaces_to_edge_types_to_edges_results = \
+            var surfaces_to_edge_types_to_edges_results: Dictionary = \
                     surfaces_to_surfaces_to_edge_types_to_edges_results \
                             [surface] if \
                     surfaces_to_surfaces_to_edge_types_to_edges_results.has(
@@ -92,9 +91,8 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     var elements := []
-    var element: SurfaceAnnotationElement
     for surface in graph.surfaces_set:
         if surface.side == side:
-            element = SurfaceAnnotationElement.new(surface)
+            var element := SurfaceAnnotationElement.new(surface)
             elements.push_back(element)
     return elements

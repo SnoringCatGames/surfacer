@@ -497,10 +497,9 @@ static func _find_closest_jump_land_positions(
         all_jump_land_positions: Array) -> JumpLandPositions:
     var closest_jump_land_positions: JumpLandPositions
     var closest_distance_sum := INF
-    var current_distance_sum: float
     
     for jump_land_positions in all_jump_land_positions:
-        current_distance_sum = \
+        var current_distance_sum := \
                 target_jump_position.distance_to(
                         jump_land_positions.jump_position.target_point) + \
                 target_land_position.distance_to(

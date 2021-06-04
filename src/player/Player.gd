@@ -872,11 +872,10 @@ static func _get_attached_surface_collision(
         surface_state: PlayerSurfaceState) -> KinematicCollision2D:
     var closest_normal_diff: float = PI
     var closest_collision: KinematicCollision2D
-    var current_normal_diff: float
-    var current_collision: KinematicCollision2D
     for i in surface_state.collision_count:
-        current_collision = body.get_slide_collision(i)
+        var current_collision := body.get_slide_collision(i)
         
+        var current_normal_diff: float
         if surface_state.is_grabbing_floor:
             current_normal_diff = \
                     abs(current_collision.normal.angle_to(Gs.geometry.UP))

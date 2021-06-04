@@ -122,8 +122,7 @@ func get_annotation_elements() -> Array:
 
 static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var elements := []
-    var element: SurfaceAnnotationElement
     for surface in graph.surfaces_set:
-        element = SurfaceAnnotationElement.new(surface)
+        var element := SurfaceAnnotationElement.new(surface)
         elements.push_back(element)
     return elements

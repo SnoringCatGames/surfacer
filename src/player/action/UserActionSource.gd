@@ -28,10 +28,9 @@ func update(
         time_scaled: float,
         _delta_scaled: float,
         navigation_state: PlayerNavigationState) -> void:
-    var is_pressed: bool
     for action in ACTIONS_TO_INPUT_KEYS:
         var input_key: String = ACTIONS_TO_INPUT_KEYS[action]
-        is_pressed = Gs.level_input.is_action_pressed(action)
+        var is_pressed: bool = Gs.level_input.is_action_pressed(action)
         if !Gs.level_input.is_key_pressed(KEY_CONTROL):
             PlayerActionSource.update_for_key_press(
                     actions,

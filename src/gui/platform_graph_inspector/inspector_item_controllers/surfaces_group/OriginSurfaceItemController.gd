@@ -143,12 +143,12 @@ func _find_and_expand_controller_recursive(
         metadata: Dictionary) -> void:
     assert(search_type == InspectorSearchType.EDGE or \
             search_type == InspectorSearchType.DESTINATION_SURFACE)
-    var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
-        is_subtree_found = child.get_metadata(0).find_and_expand_controller(
-                search_type,
-                metadata)
+        var is_subtree_found: bool = \
+                child.get_metadata(0).find_and_expand_controller(
+                        search_type,
+                        metadata)
         if is_subtree_found:
             return
         child = child.get_next()

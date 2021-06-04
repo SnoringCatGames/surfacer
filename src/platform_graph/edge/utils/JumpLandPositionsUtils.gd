@@ -2650,12 +2650,6 @@ static func _record_if_distinct(
     var is_considering_x_coordinate_for_land_position:= \
             current_land_position.surface.normal.x == 0.0
     
-    var current_jump_coordinate: float
-    var current_land_coordinate: float
-    var previous_jump_coordinate: float
-    var previous_land_coordinate: float
-    var is_close: bool
-    
     if !movement_params \
             .includes_redundant_jump_land_positions_with_zero_start_velocity:
         for previous_jump_land_positions in [
@@ -2664,6 +2658,11 @@ static func _record_if_distinct(
                 previous_jump_land_positions_3,
                 ]:
             if previous_jump_land_positions != null:
+                var current_jump_coordinate: float
+                var current_land_coordinate: float
+                var previous_jump_coordinate: float
+                var previous_land_coordinate: float
+                
                 if is_considering_x_coordinate_for_jump_position:
                     current_jump_coordinate = current_jump_position \
                             .target_projection_onto_surface.x
@@ -2690,7 +2689,7 @@ static func _record_if_distinct(
                             previous_jump_land_positions.land_position \
                                     .target_projection_onto_surface.y
                 
-                is_close = \
+                var is_close := \
                         abs(previous_jump_coordinate - \
                                 current_jump_coordinate) < \
                         distance_threshold and \
@@ -3007,13 +3006,13 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
     match position.side:
         SurfaceSide.FLOOR:
             var new_coordinate := position.target_projection_onto_surface.x
-            var boundary_coordinate: float
             if surface.clockwise_concave_neighbor != null:
-                boundary_coordinate = surface.bounding_box.end.x - x_offset
+                var boundary_coordinate := \
+                        surface.bounding_box.end.x - x_offset
                 if new_coordinate > boundary_coordinate:
                     new_coordinate = boundary_coordinate
             if surface.counter_clockwise_concave_neighbor != null:
-                boundary_coordinate = \
+                var boundary_coordinate := \
                         surface.bounding_box.position.x + x_offset
                 if new_coordinate < boundary_coordinate:
                     new_coordinate = boundary_coordinate
@@ -3022,13 +3021,13 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
             
         SurfaceSide.LEFT_WALL:
             var new_coordinate := position.target_projection_onto_surface.y
-            var boundary_coordinate: float
             if surface.clockwise_concave_neighbor != null:
-                boundary_coordinate = surface.bounding_box.end.y - y_offset
+                var boundary_coordinate := \
+                        surface.bounding_box.end.y - y_offset
                 if new_coordinate > boundary_coordinate:
                     new_coordinate = boundary_coordinate
             if surface.counter_clockwise_concave_neighbor != null:
-                boundary_coordinate = \
+                var boundary_coordinate := \
                         surface.bounding_box.position.y + y_offset
                 if new_coordinate < boundary_coordinate:
                     new_coordinate = boundary_coordinate
@@ -3037,13 +3036,13 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
             
         SurfaceSide.RIGHT_WALL:
             var new_coordinate := position.target_projection_onto_surface.y
-            var boundary_coordinate: float
             if surface.counter_clockwise_concave_neighbor != null:
-                boundary_coordinate = surface.bounding_box.end.y - y_offset
+                var boundary_coordinate := \
+                        surface.bounding_box.end.y - y_offset
                 if new_coordinate > boundary_coordinate:
                     new_coordinate = boundary_coordinate
             if surface.clockwise_concave_neighbor != null:
-                boundary_coordinate = \
+                var boundary_coordinate := \
                         surface.bounding_box.position.y + y_offset
                 if new_coordinate < boundary_coordinate:
                     new_coordinate = boundary_coordinate
@@ -3052,13 +3051,13 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
             
         SurfaceSide.CEILING:
             var new_coordinate := position.target_projection_onto_surface.x
-            var boundary_coordinate: float
             if surface.counter_clockwise_concave_neighbor != null:
-                boundary_coordinate = surface.bounding_box.end.x - x_offset
+                var boundary_coordinate := \
+                        surface.bounding_box.end.x - x_offset
                 if new_coordinate > boundary_coordinate:
                     new_coordinate = boundary_coordinate
             if surface.clockwise_concave_neighbor != null:
-                boundary_coordinate = \
+                var boundary_coordinate := \
                         surface.bounding_box.position.x + x_offset
                 if new_coordinate < boundary_coordinate:
                     new_coordinate = boundary_coordinate

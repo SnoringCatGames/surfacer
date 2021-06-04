@@ -81,27 +81,24 @@ func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
     assert(search_type == InspectorSearchType.EDGE)
-    var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
-        is_subtree_found = child.get_metadata(0).find_and_expand_controller(
-                search_type,
-                metadata)
+        var is_subtree_found: bool = \
+                child.get_metadata(0).find_and_expand_controller(
+                        search_type,
+                        metadata)
         if is_subtree_found:
             return
         child = child.get_next()
     select()
 
 func _create_children_inner() -> void:
-    var calculator: EdgeCalculator
-    
     for edge_type in EdgeType.values():
         if InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge_type) >= 0:
             continue
         
         if edge_types_to_edges_results.has(edge_type):
             for edges_result in edge_types_to_edges_results[edge_type]:
-                calculator = graph.player_params.get_edge_calculator(edge_type)
                 EdgeTypeInSurfacesGroupItemController.new(
                         tree_item,
                         tree,
@@ -124,11 +121,10 @@ func get_annotation_elements() -> Array:
             destination_surface)
     elements.push_back(destination_element)
     
-    var edge_element: EdgeAnnotationElement
     for edge_type in edge_types_to_edges_results:
         for edges_result in edge_types_to_edges_results[edge_type]:
             for valid_edge in edges_result.valid_edges:
-                edge_element = EdgeAnnotationElement.new(
+                var edge_element := EdgeAnnotationElement.new(
                         valid_edge,
                         true,
                         false,

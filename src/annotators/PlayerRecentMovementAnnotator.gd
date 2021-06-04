@@ -136,18 +136,13 @@ func _draw() -> void:
             RECENT_POSITIONS_BUFFER_SIZE
     
     var previous_position := recent_positions[start_index]
-    var next_position: Vector2
-    var opacity: float
-    var color: Color
-    var action: int
-    var beat_index: int
     
     for i in range(1, position_count):
         # Older positions fade out.
-        opacity = i / (position_count as float) * \
+        var opacity := i / (position_count as float) * \
                 (MOVEMENT_OPACITY_NEWEST - MOVEMENT_OPACITY_OLDEST) + \
                 MOVEMENT_OPACITY_OLDEST
-        color = Color.from_hsv(
+        var color := Color.from_hsv(
                 MOVEMENT_HUE,
                 0.6,
                 0.9,
@@ -155,7 +150,7 @@ func _draw() -> void:
         
         # Calculate our current index in the circular buffer.
         i = (start_index + i) % RECENT_POSITIONS_BUFFER_SIZE
-        next_position = recent_positions[i]
+        var next_position := recent_positions[i]
         
         draw_line(
                 previous_position,
@@ -163,14 +158,14 @@ func _draw() -> void:
                 color,
                 MOVEMENT_STROKE_WIDTH)
         
-        action = recent_actions[i]
+        var action: int = recent_actions[i]
         if action != PlayerActionType.NONE:
             _draw_action_indicator(
                     action,
                     next_position,
                     opacity)
         
-        beat_index = recent_beats[i]
+        var beat_index: int = recent_beats[i]
         if beat_index >= 0:
             _draw_beat_hash(
                     beat_index,

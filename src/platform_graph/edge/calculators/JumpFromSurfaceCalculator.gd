@@ -23,11 +23,6 @@ func get_all_inter_surface_edges_from_surface(
     var debug_params := collision_params.debug_params
     
     var jump_land_position_results_for_destination_surface := []
-    var jump_land_positions_to_consider: Array
-    var inter_surface_edges_result: InterSurfaceEdgesResult
-    var edge_result_metadata: EdgeCalcResultMetadata
-    var failed_attempt: FailedEdgeAttempt
-    var edge: JumpFromSurfaceEdge
     
     for destination_surface in surfaces_in_jump_range_set:
         # This makes the assumption that traversing through any
@@ -53,7 +48,7 @@ func get_all_inter_surface_edges_from_surface(
         Gs.profiler.start(
                 "calculate_jump_land_positions_for_surface_pair",
                 collision_params.thread_id)
-        jump_land_positions_to_consider = JumpLandPositionsUtils \
+        var jump_land_positions_to_consider := JumpLandPositionsUtils \
                 .calculate_jump_land_positions_for_surface_pair(
                         collision_params.movement_params,
                         origin_surface,
@@ -62,7 +57,7 @@ func get_all_inter_surface_edges_from_surface(
                 "calculate_jump_land_positions_for_surface_pair",
                 collision_params.thread_id)
         
-        inter_surface_edges_result = InterSurfaceEdgesResult.new(
+        var inter_surface_edges_result := InterSurfaceEdgesResult.new(
                 origin_surface,
                 destination_surface,
                 edge_type,
@@ -83,7 +78,7 @@ func get_all_inter_surface_edges_from_surface(
                     debug_params.limit_parsing.edge.destination.has("position")
             ###################################################################
             
-            edge_result_metadata = EdgeCalcResultMetadata.new(
+            var edge_result_metadata := EdgeCalcResultMetadata.new(
                     records_calc_details,
                     true)
             
@@ -93,7 +88,7 @@ func get_all_inter_surface_edges_from_surface(
                     jump_land_positions,
                     jump_land_position_results_for_destination_surface,
                     false):
-                failed_attempt = FailedEdgeAttempt.new(
+                var failed_attempt := FailedEdgeAttempt.new(
                         jump_land_positions,
                         edge_result_metadata,
                         self)
@@ -101,7 +96,7 @@ func get_all_inter_surface_edges_from_surface(
                         failed_attempt)
                 continue
             
-            edge = calculate_edge(
+            var edge := calculate_edge(
                     edge_result_metadata,
                     collision_params,
                     jump_land_positions.jump_position,
@@ -117,7 +112,7 @@ func get_all_inter_surface_edges_from_surface(
                 jump_land_position_results_for_destination_surface.push_back(
                         jump_land_positions)
             else:
-                failed_attempt = FailedEdgeAttempt.new(
+                var failed_attempt := FailedEdgeAttempt.new(
                         jump_land_positions,
                         edge_result_metadata,
                         self)

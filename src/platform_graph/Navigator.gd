@@ -700,20 +700,17 @@ func _optimize_edges_for_approach(
     if movement_params.optimizes_edge_jump_positions_at_run_time:
         # Optimize jump positions.
         
-        var previous_edge: Edge
-        var current_edge: Edge
-        var is_previous_edge_long_enough_to_be_worth_optimizing_jump_position: bool
         var previous_velocity_end_x := velocity_start.x
         
         for i in range(1, path.edges.size()):
-            previous_edge = path.edges[i - 1]
-            current_edge = path.edges[i]
+            var previous_edge: Edge = path.edges[i - 1]
+            var current_edge: Edge = path.edges[i]
             
             # We shouldn't have two intra-surface edges in a row.
             assert(!(previous_edge is IntraSurfaceEdge) or \
                     !(current_edge is IntraSurfaceEdge))
             
-            is_previous_edge_long_enough_to_be_worth_optimizing_jump_position = \
+            var is_previous_edge_long_enough_to_be_worth_optimizing_jump_position := \
                     previous_edge.distance >= \
                     movement_params \
                             .min_intra_surface_distance_to_optimize_jump_for
@@ -744,19 +741,15 @@ func _optimize_edges_for_approach(
     if movement_params.optimizes_edge_land_positions_at_run_time:
         # Optimize land positions.
         
-        var previous_edge: Edge
-        var current_edge: Edge
-        var is_current_edge_long_enough_to_be_worth_optimizing_land_position: bool
-        
         for i in range(1, path.edges.size()):
-            previous_edge = path.edges[i - 1]
-            current_edge = path.edges[i]
+            var previous_edge: Edge = path.edges[i - 1]
+            var current_edge: Edge = path.edges[i]
             
             # We shouldn't have two intra-surface edges in a row.
             assert(!(previous_edge is IntraSurfaceEdge) or \
                     !(current_edge is IntraSurfaceEdge))
             
-            is_current_edge_long_enough_to_be_worth_optimizing_land_position = \
+            var is_current_edge_long_enough_to_be_worth_optimizing_land_position := \
                     current_edge.distance >= \
                     movement_params \
                             .min_intra_surface_distance_to_optimize_jump_for
@@ -860,9 +853,8 @@ static func _interleave_intra_surface_edges(
     # off due to movement error at runtime.
     var i := 0
     var count := path.edges.size()
-    var edge: Edge
     while i < count:
-        edge = path.edges[i]
+        var edge: Edge = path.edges[i]
         # Check whether this edge lands on a surface from the air.
         if edge.surface_type == SurfaceType.AIR and \
                 edge.get_end_surface() != null:

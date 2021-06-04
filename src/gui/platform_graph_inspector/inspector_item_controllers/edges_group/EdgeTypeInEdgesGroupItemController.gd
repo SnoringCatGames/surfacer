@@ -75,9 +75,8 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     var elements := []
-    var element: EdgeAnnotationElement
     for edge in edges:
-        element = EdgeAnnotationElement.new(
+        var element := EdgeAnnotationElement.new(
                 edge,
                 true,
                 false,
@@ -90,14 +89,13 @@ static func get_annotation_elements_from_graph_and_type(
         graph: PlatformGraph,
         edge_type: int) -> Array:
     var elements := []
-    var element: EdgeAnnotationElement
     for origin_surface in graph.surfaces_set:
         for origin_node in graph.surfaces_to_outbound_nodes[origin_surface]:
             for destination_node in graph.nodes_to_nodes_to_edges[origin_node]:
                 for edge in graph.nodes_to_nodes_to_edges[origin_node][ \
                         destination_node]:
                     if edge.edge_type == edge_type:
-                        element = EdgeAnnotationElement.new(
+                        var element := EdgeAnnotationElement.new(
                                 edge,
                                 true,
                                 false,

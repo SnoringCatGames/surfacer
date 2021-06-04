@@ -90,10 +90,9 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     var elements := []
-    var element: EdgeAnnotationElement
     for edge_type in edge_types_to_filtered_edges:
         for edge in edge_types_to_filtered_edges[edge_type]:
-            element = EdgeAnnotationElement.new(
+            var element := EdgeAnnotationElement.new(
                     edge,
                     true,
                     false,

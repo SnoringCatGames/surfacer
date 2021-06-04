@@ -109,12 +109,8 @@ func _create_children_inner() -> void:
 # easier to use from the inspector.
 func _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings() -> \
         void:
-    var destination_surfaces_to_edge_types_to_edges_results: Dictionary
-    var edge_types_to_edges_results: Dictionary
-    var edges_results: Array
-    var destination_surface: Surface
-    var edge_type: int
     for origin_surface in graph.surfaces_to_inter_surface_edges_results:
+        var destination_surfaces_to_edge_types_to_edges_results: Dictionary
         if !surfaces_to_surfaces_to_edge_types_to_edges_results.has(
                 origin_surface):
             destination_surfaces_to_edge_types_to_edges_results = {}
@@ -128,10 +124,11 @@ func _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings() -> 
         
         for inter_surface_edges_results in \
                 graph.surfaces_to_inter_surface_edges_results[origin_surface]:
-            destination_surface = \
+            var destination_surface: Surface = \
                     inter_surface_edges_results.destination_surface
-            edge_type = inter_surface_edges_results.edge_type
+            var edge_type: int = inter_surface_edges_results.edge_type
             
+            var edge_types_to_edges_results: Dictionary
             if !destination_surfaces_to_edge_types_to_edges_results.has(
                     destination_surface):
                 edge_types_to_edges_results = {}
@@ -143,6 +140,7 @@ func _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings() -> 
                         destination_surfaces_to_edge_types_to_edges_results \
                                 [destination_surface]
             
+            var edges_results: Array
             if !edge_types_to_edges_results.has(edge_type):
                 edges_results = []
                 edge_types_to_edges_results[edge_type] = edges_results

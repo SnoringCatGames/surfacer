@@ -104,10 +104,9 @@ func _draw_selected_origin() -> void:
             ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
 
 func _draw_possible_jump_land_positions() -> void:
-    var element: JumpLandPositionsAnnotationElement
     for jump_land_positions in possible_jump_land_positions:
-        element = JumpLandPositionsAnnotationElement.new(jump_land_positions)
-        current_annotation_elements.push_back(element)
+        current_annotation_elements.push_back(
+                JumpLandPositionsAnnotationElement.new(jump_land_positions))
     
     Surfacer.annotators.element_annotator \
             .add_all(current_annotation_elements)
