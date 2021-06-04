@@ -118,7 +118,7 @@ func _update_preselection_beats() -> void:
 
 func _on_pointer_released(pointer_position: Vector2) -> void:
     _last_pointer_drag_position = Vector2.INF
-    Surfacer.slow_motion.set_slow_motion_enabled(false)
+    Gs.slow_motion.set_slow_motion_enabled(false)
     _is_preselection_path_update_pending = false
     Gs.time.cancel_pending_throttle(_throttled_update_preselection_path)
     Gs.time.cancel_pending_throttle(_throttled_update_preselection_beats)
@@ -137,12 +137,12 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
 
 func _on_pointer_moved(pointer_position: Vector2) -> void:
     _last_pointer_drag_position = pointer_position
-    Surfacer.slow_motion.set_slow_motion_enabled(true)
+    Gs.slow_motion.set_slow_motion_enabled(true)
     _is_preselection_path_update_pending = true
     _throttled_update_preselection_path.call_func()
 
 
 func on_player_moved() -> void:
     if _last_pointer_drag_position != Vector2.INF:
-        Surfacer.slow_motion.set_slow_motion_enabled(true)
+        Gs.slow_motion.set_slow_motion_enabled(true)
         _throttled_update_preselection_path.call_func()

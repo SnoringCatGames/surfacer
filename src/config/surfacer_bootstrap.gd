@@ -24,8 +24,6 @@ func _initialize_framework() -> void:
 func _on_app_initialized() -> void:
     ._on_app_initialized()
     Surfacer.annotators._on_app_initialized()
-    
-    Gs.audio.connect("beat", self, "_on_beat")
 
 
 func _on_splash_finished() -> void:
@@ -54,15 +52,3 @@ func _register_player_params(player_param_classes: Array) -> void:
         var player_params: PlayerParams = \
                 PlayerParamsUtils.create_player_params(param_class)
         Surfacer.player_params[player_params.name] = player_params
-
-
-func _on_beat(
-        is_downbeat: bool,
-        beat_index: int,
-        meter: int) -> void:
-    if Surfacer.is_metronome_enabled:
-        var sound_name := \
-                "tock_high" if \
-                is_downbeat else \
-                "tock_low"
-        Gs.audio.play_sound(sound_name)
