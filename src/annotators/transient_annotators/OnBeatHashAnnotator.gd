@@ -1,6 +1,7 @@
 class_name OnBeatHashAnnotator
 extends TransientAnnotator
 
+
 const DOWNBEAT_DURATION := 0.35
 const OFFBEAT_DURATION := DOWNBEAT_DURATION
 

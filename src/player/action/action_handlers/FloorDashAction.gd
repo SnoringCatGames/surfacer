@@ -1,6 +1,7 @@
 class_name FloorDashAction
 extends PlayerActionHandler
 
+
 const NAME := "FloorDashAction"
 const TYPE := SurfaceType.FLOOR
 const USES_RUNTIME_PHYSICS := true

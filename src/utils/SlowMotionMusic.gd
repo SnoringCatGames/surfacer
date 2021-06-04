@@ -1,6 +1,7 @@
 class_name SlowMotionMusic
 extends Node
 
+
 signal music_beat(is_downbeat, beat_index, meter)
 signal tick_tock_beat(is_downbeat, beat_index, meter)
 signal transition_completed(is_active)

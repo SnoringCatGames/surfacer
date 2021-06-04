@@ -1,6 +1,7 @@
 class_name PlayerTileAnnotator
 extends Node2D
 
+
 var TILE_BORDER_COLOR := Gs.colors.opacify(
         Gs.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
 const TILE_BORDER_WIDTH := 6.0

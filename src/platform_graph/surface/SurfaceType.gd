@@ -1,5 +1,6 @@
 class_name SurfaceType
 
+
 enum {
     FLOOR,
     WALL,

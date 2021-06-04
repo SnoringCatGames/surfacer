@@ -1,6 +1,7 @@
 class_name HsvColorParams
 extends ColorParams
 
+
 const TYPE := ColorParamsType.HSV
 
 var hue: float

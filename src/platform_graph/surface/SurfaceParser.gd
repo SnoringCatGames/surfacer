@@ -1,6 +1,7 @@
 class_name SurfaceParser
 extends Reference
 
+
 # TODO: Map the TileMap into an RTree or QuadTree.
 
 const CORNER_TARGET_LESS_PREFERRED_SURFACE_SIDE_OFFSET := 0.02

@@ -1,6 +1,7 @@
 class_name EdgeTrajectory
 extends Reference
 
+
 # The positions of each frame of movement according to the discrete per-frame
 # movement calculations of the instruction test. This is used for annotation
 # debugging.

@@ -1,6 +1,7 @@
 class_name InspectorPanel
 extends VBoxContainer
 
+
 const PANEL_MARGIN_RIGHT := 20.0
 const TOGGLE_DURATION := 0.2
 const DEFAULT_GUI_SCALE := 1.0

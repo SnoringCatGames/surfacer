@@ -1,6 +1,7 @@
 class_name LevelAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Level"
 const DESCRIPTION := ""
 

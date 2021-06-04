@@ -17,6 +17,7 @@ extends Reference
 #     - For waypoints on the left-side: The direction of movement must be leftward.
 #     - For waypoints on the right-side: The direction of movement must be rightward.
 
+
 # The surface that was collided with.
 var surface: Surface
 

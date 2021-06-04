@@ -1,6 +1,7 @@
 class_name AirJumpAction
 extends PlayerActionHandler
 
+
 const NAME := "AirJumpAction"
 const TYPE := SurfaceType.AIR
 const USES_RUNTIME_PHYSICS := true

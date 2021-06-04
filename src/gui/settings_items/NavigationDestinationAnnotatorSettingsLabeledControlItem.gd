@@ -1,6 +1,7 @@
 class_name NavigationDestinationAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Nav destination"
 const DESCRIPTION := ("")
 

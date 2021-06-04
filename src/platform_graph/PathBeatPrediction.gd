@@ -1,6 +1,7 @@
 class_name PathBeatPrediction
 extends Reference
 
+
 var time: float
 var position: Vector2
 var direction: Vector2

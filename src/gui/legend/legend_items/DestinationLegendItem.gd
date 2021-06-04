@@ -1,6 +1,7 @@
 class_name DestinationLegendItem
 extends LegendItem
 
+
 const TYPE := LegendItemType.DESTINATION
 const TEXT := "Destination"
 

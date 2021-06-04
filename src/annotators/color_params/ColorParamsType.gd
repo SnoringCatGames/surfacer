@@ -1,5 +1,6 @@
 class_name ColorParamsType
 
+
 enum { \
     HSV,
     HSV_RANGE,

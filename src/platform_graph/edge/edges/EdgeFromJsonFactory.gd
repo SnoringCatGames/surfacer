@@ -1,6 +1,7 @@
 class_name EdgeFromJsonFactory
 extends Node
 
+
 var EDGE_TYPE_TO_CLASS := {
     EdgeType.FROM_AIR_EDGE: FromAirEdge,
     EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE: ClimbDownWallToFloorEdge,

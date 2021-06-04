@@ -8,6 +8,7 @@ extends EdgeStep
 # - Or a vertical step could just be a placeholder for storing some of the vertical movement state
 #   (for fall movements).
 
+
 # The time at which movement for this step should reach the maximum height.
 var time_peak_height: float
 

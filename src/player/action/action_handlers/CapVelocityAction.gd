@@ -1,6 +1,7 @@
 class_name CapVelocityAction
 extends PlayerActionHandler
 
+
 const NAME := "CapVelocityAction"
 const TYPE := SurfaceType.OTHER
 const USES_RUNTIME_PHYSICS := true

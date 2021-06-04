@@ -1,6 +1,7 @@
 class_name SurfaceAnnotationElement
 extends AnnotationElement
 
+
 const DEFAULT_TYPE := AnnotationElementType.SURFACE
 
 var surface: Surface

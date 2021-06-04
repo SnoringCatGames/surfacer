@@ -1,6 +1,7 @@
 class_name SurfacerLevel
 extends ScaffolderLevel
 
+
 const _UTILITY_PANEL_RESOURCE_PATH := \
         "res://addons/surfacer/src/gui/panels/InspectorPanel.tscn"
 const _PAUSE_BUTTON_RESOURCE_PATH := \

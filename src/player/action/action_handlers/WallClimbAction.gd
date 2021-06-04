@@ -1,6 +1,7 @@
 class_name WallClimbAction
 extends PlayerActionHandler
 
+
 const NAME := "WallClimbAction"
 const TYPE := SurfaceType.WALL
 const USES_RUNTIME_PHYSICS := true

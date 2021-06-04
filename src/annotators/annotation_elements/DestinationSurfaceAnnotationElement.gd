@@ -1,6 +1,7 @@
 class_name DestinationSurfaceAnnotationElement
 extends SurfaceAnnotationElement
 
+
 const TYPE := AnnotationElementType.DESTINATION_SURFACE
 
 

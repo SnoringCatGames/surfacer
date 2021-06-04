@@ -1,6 +1,7 @@
 class_name FloorsItemController
 extends SurfacesOfSideGroupItemController
 
+
 const TYPE := InspectorItemType.FLOORS
 const STARTS_COLLAPSED := true
 const SIDE := SurfaceSide.FLOOR

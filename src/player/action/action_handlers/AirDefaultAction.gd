@@ -1,6 +1,7 @@
 class_name AirDefaultAction
 extends PlayerActionHandler
 
+
 const NAME := "AirDefaultAction"
 const TYPE := SurfaceType.AIR
 const USES_RUNTIME_PHYSICS := true

@@ -1,6 +1,7 @@
 class_name FromAirCalculator
 extends EdgeCalculator
 
+
 const NAME := "FromAirCalculator"
 const EDGE_TYPE := EdgeType.FROM_AIR_EDGE
 const IS_A_JUMP_CALCULATOR := false

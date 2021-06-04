@@ -1,6 +1,7 @@
 class_name PreselectionTrajectoryAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Preselection trajectory"
 const DESCRIPTION := ("")
 

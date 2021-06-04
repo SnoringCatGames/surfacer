@@ -1,6 +1,7 @@
 class_name EdgesWithOneStepGroupItemController
 extends EdgesFilteredByResultTypeGroupItemController
 
+
 const TYPE := InspectorItemType.EDGES_WITH_ONE_STEP_GROUP
 const EDGE_CALC_RESULT_TYPE := EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP
 const TEXT := "Edges calculated with one step"

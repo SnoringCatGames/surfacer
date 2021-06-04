@@ -1,6 +1,7 @@
 class_name PlayerAnimator
 extends Node2D
 
+
 const UNFLIPPED_HORIZONTAL_SCALE := Vector2(1, 1)
 const FLIPPED_HORIZONTAL_SCALE := Vector2(-1, 1)
 

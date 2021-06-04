@@ -1,6 +1,7 @@
 class_name HypotheticalEdgeTrajectoryLegendItem
 extends LegendItem
 
+
 const TYPE := LegendItemType.HYPOTHETICAL_EDGE_TRAJECTORY
 const TEXT := "Hypothetical\nedge"
 

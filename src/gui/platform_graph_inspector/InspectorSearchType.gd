@@ -1,5 +1,6 @@
 class_name InspectorSearchType
 
+
 enum { \
     ORIGIN_SURFACE,
     DESTINATION_SURFACE,

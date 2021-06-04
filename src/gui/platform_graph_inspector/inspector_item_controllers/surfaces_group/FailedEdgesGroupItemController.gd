@@ -1,6 +1,7 @@
 class_name FailedEdgesGroupItemController
 extends InspectorItemController
 
+
 const TYPE := InspectorItemType.FAILED_EDGES_GROUP
 const IS_LEAF := false
 const STARTS_COLLAPSED := true

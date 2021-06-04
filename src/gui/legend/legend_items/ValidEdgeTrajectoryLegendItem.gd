@@ -1,6 +1,7 @@
 class_name ValidEdgeTrajectoryLegendItem
 extends LegendItem
 
+
 const NORMALIZED_FAKE_POSITIONS := [
     Vector2(0.0, 1.0),
     Vector2(0.125, 0.5625),

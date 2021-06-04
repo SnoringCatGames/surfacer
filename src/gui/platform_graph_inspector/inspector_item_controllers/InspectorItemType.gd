@@ -1,5 +1,6 @@
 class_name InspectorItemType
 
+
 enum {
     PLATFORM_GRAPH,
     

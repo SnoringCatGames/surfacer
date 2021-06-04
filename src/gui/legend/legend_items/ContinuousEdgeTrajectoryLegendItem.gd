@@ -1,6 +1,7 @@
 class_name ContinuousEdgeTrajectoryLegendItem
 extends ValidEdgeTrajectoryLegendItem
 
+
 const TYPE := LegendItemType.CONTINUOUS_EDGE_TRAJECTORY
 const TEXT := "Edge trajectory\n(continuous)"
 var COLOR_PARAMS: ColorParams = Surfacer.ann_defaults \

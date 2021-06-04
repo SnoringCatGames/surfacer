@@ -1,6 +1,7 @@
 class_name Annotators
 extends Node2D
 
+
 var _PLAYER_SUB_ANNOTATORS := [
     AnnotatorType.PLAYER,
     AnnotatorType.PLAYER_POSITION,

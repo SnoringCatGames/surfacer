@@ -1,6 +1,7 @@
 class_name ProfilerTimingItemController
 extends InspectorItemController
 
+
 const TYPE := InspectorItemType.PROFILER_TIMING
 const IS_LEAF := false
 const STARTS_COLLAPSED := true

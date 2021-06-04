@@ -2,6 +2,7 @@ class_name FromAirEdge
 extends Edge
 # Information for how to move through the air to a platform.
 
+
 const TYPE := EdgeType.FROM_AIR_EDGE
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR

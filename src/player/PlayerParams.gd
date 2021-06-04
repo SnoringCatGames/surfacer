@@ -1,6 +1,7 @@
 class_name PlayerParams
 extends Reference
 
+
 var name: String
 # PlayerType
 var type: int

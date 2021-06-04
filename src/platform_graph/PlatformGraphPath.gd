@@ -3,6 +3,7 @@ extends Reference
 # Information for how to move from surface to surface to get from the given
 # origin to the given destination.
 
+
 # Array<Edge>
 var edges: Array
 

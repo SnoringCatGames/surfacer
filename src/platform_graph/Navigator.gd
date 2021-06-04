@@ -1,6 +1,7 @@
 class_name Navigator
 extends Reference
 
+
 signal navigation_started
 signal destination_reached
 

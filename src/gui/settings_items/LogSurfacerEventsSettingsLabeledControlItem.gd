@@ -1,6 +1,7 @@
 class_name LogSurfacerEventsSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Surfacer logs"
 const DESCRIPTION := (
         "This toggles whether log are printed for Surfacer events. " +

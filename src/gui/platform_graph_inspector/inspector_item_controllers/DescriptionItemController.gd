@@ -1,6 +1,7 @@
 class_name DescriptionItemController
 extends InspectorItemController
 
+
 const TYPE := InspectorItemType.DESCRIPTION
 const IS_LEAF := true
 const STARTS_COLLAPSED := true

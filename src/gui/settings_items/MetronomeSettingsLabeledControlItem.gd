@@ -1,6 +1,7 @@
 class_name MetronomeSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Metronome"
 const DESCRIPTION := (
         "")

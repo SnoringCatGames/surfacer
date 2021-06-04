@@ -9,6 +9,7 @@ extends Reference
 #     different surfaces, so the edges in the graph will be different for each
 #     player.
 
+
 signal calculation_progressed(
         origin_surface_index,
         surface_count)

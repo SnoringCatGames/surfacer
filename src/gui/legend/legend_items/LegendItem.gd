@@ -1,6 +1,7 @@
 class_name LegendItem
 extends Control
 
+
 const HEIGHT := 40.0
 const MARGIN_VERTICAL := 1.0
 const MARGIN_HORIZONTAL := 4.0

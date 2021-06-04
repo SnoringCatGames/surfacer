@@ -1,6 +1,7 @@
 class_name Surface
 extends Reference
 
+
 # Vertices are always specified in clockwise order.
 var vertices: PoolVector2Array
 

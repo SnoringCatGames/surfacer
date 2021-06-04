@@ -1,6 +1,7 @@
 class_name PlayerRecentMovementAnnotator
 extends Node2D
 
+
 const RECENT_POSITIONS_BUFFER_SIZE := 150
 
 var MOVEMENT_HUE: float = Gs.colors.recent_movement.h

@@ -1,6 +1,7 @@
 class_name FloorFallThroughAction
 extends PlayerActionHandler
 
+
 const NAME := "FloorFallThroughAction"
 const TYPE := SurfaceType.FLOOR
 const USES_RUNTIME_PHYSICS := true

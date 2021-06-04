@@ -1,6 +1,7 @@
 class_name OriginSurfaceItemController
 extends InspectorItemController
 
+
 const TYPE := InspectorItemType.ORIGIN_SURFACE
 const IS_LEAF := false
 const STARTS_COLLAPSED := true

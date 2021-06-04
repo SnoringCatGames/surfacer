@@ -1,6 +1,7 @@
 class_name EdgeCalcResultMetadataItemController
 extends InspectorItemController
 
+
 const TYPE := InspectorItemType.EDGE_CALC_RESULT_METADATA
 const IS_LEAF := false
 const STARTS_COLLAPSED := false

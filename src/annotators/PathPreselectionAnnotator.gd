@@ -1,6 +1,7 @@
 class_name PathPreselectionAnnotator
 extends Node2D
 
+
 var HUMAN_PRESELECTION_SURFACE_COLOR := Gs.colors.opacify(
         Gs.colors.human_navigation,
         ScaffolderColors.ALPHA_XFAINT)

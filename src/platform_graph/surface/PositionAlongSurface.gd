@@ -9,6 +9,7 @@ extends Reference
 # 
 # The position always indicates the center of the player's bounding box.
 
+
 var surface: Surface
 
 # An approximation for the center of the player's collision boundary

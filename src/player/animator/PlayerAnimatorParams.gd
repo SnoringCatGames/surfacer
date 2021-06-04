@@ -1,6 +1,7 @@
 class_name PlayerAnimatorParams
 extends Reference
 
+
 var player_animator_scene_path: String
 
 var faces_right_by_default: bool

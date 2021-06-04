@@ -1,5 +1,6 @@
 class_name LegendItemType
 
+
 enum {
     SURFACE,
     ORIGIN_SURFACE,

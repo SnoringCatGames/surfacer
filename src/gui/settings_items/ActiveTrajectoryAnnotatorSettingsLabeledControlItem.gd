@@ -1,6 +1,7 @@
 class_name ActiveTrajectoryAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Active trajectory"
 const DESCRIPTION := ("")
 

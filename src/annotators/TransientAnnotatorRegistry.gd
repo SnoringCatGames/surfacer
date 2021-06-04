@@ -1,6 +1,7 @@
 class_name TransientAnnotatorRegistry
 extends Node2D
 
+
 # Dictionary<Annotator, bool>
 var _annotators := {}
 

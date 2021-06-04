@@ -1,6 +1,7 @@
 class_name AnnotationElementDefaults
 extends Node
 
+
 ### Surface
 
 const SURFACE_HUE_MIN := 0.0

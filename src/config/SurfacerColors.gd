@@ -1,6 +1,7 @@
 class_name SurfacerColors
 extends ScaffolderColors
 
+
 const WHITE := Color(1.0, 1.0, 1.0)
 const PURPLE := Color(0.734, 0.277, 1.0)
 const TEAL := Color(0.277, 0.973, 1.0)

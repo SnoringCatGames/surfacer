@@ -1,6 +1,7 @@
 class_name RecentMovementAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Recent movement"
 const DESCRIPTION := ""
 

@@ -1,6 +1,7 @@
 class_name SurfaceCollision
 extends Reference
 
+
 # The surface being collided with.
 var surface: Surface
 

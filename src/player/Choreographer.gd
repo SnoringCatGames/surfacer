@@ -1,6 +1,7 @@
 class_name Choreographer
 extends Node
 
+
 signal finished
 
 # -   Each step is executed in sequence.

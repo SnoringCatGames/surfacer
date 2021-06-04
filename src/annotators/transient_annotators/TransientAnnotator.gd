@@ -1,6 +1,7 @@
 class_name TransientAnnotator
 extends Node2D
 
+
 signal completed
 
 var duration: float

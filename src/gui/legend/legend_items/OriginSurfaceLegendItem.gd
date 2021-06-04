@@ -1,6 +1,7 @@
 class_name OriginSurfaceLegendItem
 extends SurfaceLegendItem
 
+
 const TYPE := LegendItemType.ORIGIN_SURFACE
 const TEXT := "Origin\nsurface"
 var COLOR_PARAMS: ColorParams = \

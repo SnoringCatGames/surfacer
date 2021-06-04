@@ -1,5 +1,6 @@
 class_name AnnotationElementType
 
+
 enum {
     SURFACE,
     ORIGIN_SURFACE,

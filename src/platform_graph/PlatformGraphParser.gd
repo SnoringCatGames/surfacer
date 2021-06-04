@@ -1,6 +1,7 @@
 class_name PlatformGraphParser
 extends Node
 
+
 signal calculation_started
 signal load_started
 signal calculation_progressed(

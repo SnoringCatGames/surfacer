@@ -1,6 +1,7 @@
 class_name PlayerPointerListener
 extends Node2D
 
+
 const DRAG_UPDATE_THROTTLE_INTERVAL := 0.1
 const BEAT_UPDATE_THROTTLE_INTERVAL := 0.1
 

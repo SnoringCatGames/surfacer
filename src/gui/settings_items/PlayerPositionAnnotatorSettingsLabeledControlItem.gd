@@ -1,6 +1,7 @@
 class_name PlayerPositionAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Player positions"
 const DESCRIPTION := ""
 

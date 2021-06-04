@@ -1,5 +1,6 @@
 class_name SurfaceSide
 
+
 enum {
     NONE,
     FLOOR,

@@ -1,6 +1,7 @@
 class_name WallDashAction
 extends PlayerActionHandler
 
+
 const NAME := "WallDashAction"
 const TYPE := SurfaceType.WALL
 const USES_RUNTIME_PHYSICS := true

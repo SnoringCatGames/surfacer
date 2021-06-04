@@ -1,6 +1,7 @@
 class_name SurfaceParserGroupItemController
 extends InspectorItemController
 
+
 const TYPE := InspectorItemType.SURFACE_PARSER_GROUP
 const IS_LEAF := false
 const STARTS_COLLAPSED := false

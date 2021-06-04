@@ -1,6 +1,7 @@
 class_name NavigatorAnnotator
 extends Node2D
 
+
 var FADE_IN_DURATION := 0.2
 
 var navigator: Navigator

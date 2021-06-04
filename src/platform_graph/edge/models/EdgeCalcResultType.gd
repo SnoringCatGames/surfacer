@@ -1,5 +1,6 @@
 class_name EdgeCalcResultType
 
+
 enum {
     EDGE_VALID_WITH_ONE_STEP,
     EDGE_VALID_WITHOUT_INCREASING_JUMP_HEIGHT,

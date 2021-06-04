@@ -1,6 +1,7 @@
 class_name EdgeInstructions
 extends Reference
 
+
 # Array<EdgeInstruction>
 var instructions: Array
 

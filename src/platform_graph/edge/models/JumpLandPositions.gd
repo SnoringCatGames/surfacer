@@ -3,6 +3,7 @@ extends Reference
 # Potential jump position, land position, and start velocity for an edge
 # calculation.
 
+
 var jump_position: PositionAlongSurface
 var land_position: PositionAlongSurface
 var velocity_start: Vector2

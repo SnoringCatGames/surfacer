@@ -1,5 +1,6 @@
 class_name WaypointValidity
 
+
 enum {
     WAYPOINT_VALID,
     FAKE,
