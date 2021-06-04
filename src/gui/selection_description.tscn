@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://addons/surfacer/src/gui/SelectionDescription.gd" type="Script" id=1]
+[ext_resource path="res://addons/surfacer/src/gui/selection_description.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffolder/assets/fonts/main_font_xs.tres" type="DynamicFont" id=3]
 
 

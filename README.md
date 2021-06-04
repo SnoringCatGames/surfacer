@@ -31,7 +31,7 @@ Some features include:
 -   Walking on floors, climbing on walls, climbing on ceilings, jumping and falling from anywhere.
 -   [Variable-height jump and fast-fall](https://kotaku.com/the-mechanics-behind-satisfying-2d-jumping-1761940693).
 -   Adjusting movement trajectories around intermediate surfaces (such as jumping over a wall or around a floor).
--   [Configurable movement parameters](./src/platform_graph/edge/models/MovementParams.gd) on a per-player basis (e.g., horizontal acceleration, jump power, gravity, collision boundary shape and size, which types of edge movement are allowed).
+-   [Configurable movement parameters](./src/platform_graph/edge/models/movement_params.gd) on a per-player basis (e.g., horizontal acceleration, jump power, gravity, collision boundary shape and size, which types of edge movement are allowed).
 -   Level creation using Godot's standard pattern with a [TileMap in the 2D scene editor](https://docs.godotengine.org/en/3.2/tutorials/2d/using_tilemaps.html).
 -   Preparsing the level into a platform graph, and using A* search for efficient path-finding at runtime.
 -   A powerful inspector for analyzing the platform graph, in order to debug and better understand how edges were calculated.
@@ -64,7 +64,7 @@ I will not lie, this is a complex framework! Hopefully it's external API isn't _
     -   See the Scaffolder [README](https://github.com/snoringcatgames/scaffolder/README.md) for details on setting it up.
 -   Add the [Surfacer](https://github.com/snoringcatgames/surfacer/) library to your `addons/` folder.
 -   Define `Surfacer` as an AutoLoad (in Project Settings).
-    -   It should point to the path `res://addons/surfacer/src/SurfacerConfig.gd`.
+    -   It should point to the path `res://addons/surfacer/src/surfacer_config.gd`.
     -   It should be the second AutoLoad in the list, just after `Gs` (for Scaffolder).
 -   Configure both the Surfacer and Scaffolder frameworks by calling `SurfacerBootstrap._initialize_framework` at the start of your Main Scene.
 -   Include `*.json` under "Filters to export non-resource files/folders" in your export settings.
@@ -421,7 +421,7 @@ We include a large collection of annotators that are useful for visually debuggi
 
 ## Movement parameters
 
-We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these params, see [MovementParams.gd](./src/platform_graph/edge/models/MovementParams.gd).
+We support a large number of flags and parameters for adjusting various aspects of player/movement/platform-graph behavior. For a complete list of these params, see [_movement_params.gd](./src/platform_graph/edge/models/movement_params.gd).
 
 ## Extensible framework for custom movement mechanics
 
@@ -473,7 +473,7 @@ We support a large number of flags and parameters for adjusting various aspects 
 ## Licenses
 
 -   All code is published under the [MIT license](LICENSE).
--   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/config/SurfacerThirdPartyLicenses.gd).
+-   This project depends on various pieces of third-party code that are licensed separately. [Here is a list of these third-party licenses](./src/config/surfacer_third_party_licenses.gd).
 
 <p align="center">
   <img src="assets/images/device_icons/icon_128.png"

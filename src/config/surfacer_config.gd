@@ -22,7 +22,7 @@ const NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
 var _must_restart_level_to_change_settings := true
 
 var _screen_path_inclusions := [
-    "res://addons/surfacer/src/gui/PrecomputePlatformGraphsScreen.tscn",
+    "res://addons/surfacer/src/gui/precompute_platform_graphs_screen.tscn",
 ]
 
 var _settings_main_item_class_exclusions := []

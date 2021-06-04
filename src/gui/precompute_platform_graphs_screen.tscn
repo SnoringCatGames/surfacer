@@ -1,14 +1,14 @@
 [gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://addons/scaffolder/src/gui/CenteredPanel.tscn" type="PackedScene" id=1]
-[ext_resource path="res://addons/scaffolder/src/gui/labeled_control_list/LabeledControlList.tscn" type="PackedScene" id=2]
-[ext_resource path="res://addons/scaffolder/src/gui/FullScreenPanel.tscn" type="PackedScene" id=3]
-[ext_resource path="res://addons/surfacer/src/gui/PrecomputePlatformGraphsScreen.gd" type="Script" id=4]
+[ext_resource path="res://addons/scaffolder/src/gui/centered_panel.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/scaffolder/src/gui/labeled_control_list/labeled_control_list.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/scaffolder/src/gui/full_screen_panel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/surfacer/src/gui/precompute_platform_graphs_screen.gd" type="Script" id=4]
 [ext_resource path="res://addons/scaffolder/assets/fonts/main_font_xs.tres" type="DynamicFont" id=5]
 [ext_resource path="res://addons/scaffolder/assets/fonts/main_font_s.tres" type="DynamicFont" id=6]
-[ext_resource path="res://addons/scaffolder/src/gui/ShinyButton.tscn" type="PackedScene" id=7]
-[ext_resource path="res://src/gui/LoadingImage.tscn" type="PackedScene" id=8]
-[ext_resource path="res://addons/scaffolder/src/gui/NavBar.tscn" type="PackedScene" id=12]
+[ext_resource path="res://addons/scaffolder/src/gui/shiny_button.tscn" type="PackedScene" id=7]
+[ext_resource path="res://src/gui/loading_image.tscn" type="PackedScene" id=8]
+[ext_resource path="res://addons/scaffolder/src/gui/nav_bar.tscn" type="PackedScene" id=12]
 
 [node name="PrecomputePlatformGraphsScreen" type="Node2D"]
 script = ExtResource( 4 )

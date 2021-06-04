@@ -3,9 +3,9 @@ extends ScaffolderLevel
 
 
 const _UTILITY_PANEL_RESOURCE_PATH := \
-        "res://addons/surfacer/src/gui/panels/InspectorPanel.tscn"
+        "res://addons/surfacer/src/gui/panels/inspector_panel.tscn"
 const _PAUSE_BUTTON_RESOURCE_PATH := \
-        "res://addons/surfacer/src/gui/PauseButton.tscn"
+        "res://addons/surfacer/src/gui/pause_button.tscn"
 
 # Array<Player>
 var all_players: Array
