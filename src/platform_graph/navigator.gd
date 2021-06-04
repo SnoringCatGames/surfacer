@@ -692,10 +692,13 @@ func _optimize_edges_for_approach(
                         .max_edges_to_remove_from_end_of_path_for_optimization_to_in_air_destination)
         for i in range(
                 index_of_earliest_possible_edge_to_replace, path.edges.size()):
-            var jump_off_surface: Surface = path.edges[i].get_start_surface()
-            if jump_off_surface == null:
+            var edge: Edge = path.edges[i]
+            
+            # We can only alter the end position of IntraSurfaceEdges.
+            if !(edge is IntraSurfaceEdge):
                 continue
             
+            var jump_off_surface: Surface = edge.get_start_surface()
             var closest_jump_off_point := PositionAlongSurface.new()
             closest_jump_off_point.match_surface_target_and_collider(
                     jump_off_surface,
@@ -709,10 +712,16 @@ func _optimize_edges_for_approach(
             if surface_to_air_edge == null:
                 continue
             
-            # We found a position on an earlier surface that we can jump from,
-            # so remove the old edges after this.
-            path.edges[i] = surface_to_air_edge
-            path.edges.resize(i + 1)
+            # We found an earlier position along an IntraSurfaceEdge that we
+            # can jump from.
+            # -   Update the end position of the IntraSurfaceEdge.
+            # -   Record the new surface-to-air edge.
+            # -   Remove the old following edges.
+            edge.update_terminal(
+                    false,
+                    closest_jump_off_point.target_point)
+            path.edges.resize(i + 2)
+            path.edges[i + 1] = surface_to_air_edge
             path.graph_destination_for_in_air_destination = \
                     closest_jump_off_point
             break
