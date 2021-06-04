@@ -12,6 +12,7 @@ var dash_gap: float
 var dash_stroke_width: float
 var includes_surfaces: bool
 
+
 func _init(
         failed_edge_attempt: FailedEdgeAttempt,
         end_color_params := Surfacer.ann_defaults \
@@ -36,6 +37,7 @@ func _init(
     self.dash_gap = dash_gap
     self.dash_stroke_width = dash_stroke_width
     self.includes_surfaces = includes_surfaces
+
 
 func draw(canvas: CanvasItem) -> void:
     var end_color := end_color_params.get_color()
@@ -77,6 +79,7 @@ func draw(canvas: CanvasItem) -> void:
                 canvas,
                 failed_edge_attempt.get_end_surface(),
                 end_color_params)
+
 
 func _create_legend_items() -> Array:
     var failed_edge_item := FailedEdgeTrajectoryLegendItem.new()

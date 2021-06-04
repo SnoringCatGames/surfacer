@@ -4,10 +4,12 @@ extends LegendItem
 const TYPE := LegendItemType.HYPOTHETICAL_EDGE_TRAJECTORY
 const TEXT := "Hypothetical\nedge"
 
+
 func _init().(
         TYPE,
         TEXT) -> void:
     pass
+
 
 func _draw_shape(
         center: Vector2,

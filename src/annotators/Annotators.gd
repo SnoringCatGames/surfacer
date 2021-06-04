@@ -45,9 +45,11 @@ var _annotator_enablement := {}
 var annotation_layer: CanvasLayer
 var ruler_layer: CanvasLayer
 
+
 func _init() -> void:
     name = "Annotators"
     annotation_layer = Gs.canvas_layers.layers.annotation
+
 
 func _enter_tree() -> void:
     ruler_layer = Gs.canvas_layers.create_layer(
@@ -69,8 +71,10 @@ func _enter_tree() -> void:
                 annotator_type,
                 is_enabled)
 
+
 func _on_app_initialized() -> void:
     Gs.nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
+
 
 func on_level_ready() -> void:
     # Ensure any enabled annotators that depend on the level get drawn, now
@@ -84,6 +88,7 @@ func on_level_ready() -> void:
                     annotator_type,
                     true)
 
+
 func on_level_destroyed() -> void:
     element_annotator.clear()
     transient_annotator_registry.clear()
@@ -92,6 +97,7 @@ func on_level_destroyed() -> void:
             _destroy_annotator(annotator_type)
     for player in player_annotators.keys():
         destroy_player_annotator(player)
+
 
 func create_player_annotator(
         player: Player,
@@ -107,9 +113,11 @@ func create_player_annotator(
                 annotator_type,
                 _annotator_enablement[annotator_type])
 
+
 func destroy_player_annotator(player: Player) -> void:
     player_annotators[player].queue_free()
     player_annotators.erase(player)
+
 
 func set_annotator_enabled(
         annotator_type: int,
@@ -131,10 +139,12 @@ func set_annotator_enabled(
     
     _annotator_enablement[annotator_type] = is_enabled
 
+
 func is_annotator_enabled(annotator_type: int) -> bool:
     if !_annotator_enablement.has(annotator_type):
         _annotator_enablement[annotator_type] = false
     return _annotator_enablement[annotator_type]
+
 
 func _create_annotator(annotator_type: int) -> void:
     assert(!is_annotator_enabled(annotator_type))
@@ -165,6 +175,7 @@ func _create_annotator(annotator_type: int) -> void:
         _:
             Gs.logger.error()
 
+
 func _destroy_annotator(annotator_type: int) -> void:
     assert(is_annotator_enabled(annotator_type))
     match annotator_type:
@@ -189,6 +200,7 @@ func _destroy_annotator(annotator_type: int) -> void:
                 Gs.level.set_tile_map_visibility(false)
         _:
             Gs.logger.error()
+
 
 func add_transient(annotator: TransientAnnotator) -> void:
     transient_annotator_registry.add(annotator)

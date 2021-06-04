@@ -10,6 +10,7 @@ var edge_calculators: Array
 # Array<PlayerActionHandler>
 var action_handlers: Array
 
+
 func _init(
         name: String,
         movement_params: MovementParams,
@@ -19,6 +20,7 @@ func _init(
     self.movement_params = movement_params
     self.edge_calculators = edge_calculators
     self.action_handlers = action_handlers
+
 
 func get_edge_calculator(edge_type: int) -> EdgeCalculator:
     for calculator in edge_calculators:

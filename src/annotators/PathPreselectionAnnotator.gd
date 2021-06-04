@@ -59,6 +59,7 @@ var preselection_path: PlatformGraphPath
 var preselection_path_beats_time_start: float
 var preselection_path_beats: Array
 
+
 func _init(player: Player) -> void:
     self.player = player
     self.path_front_end_trim_radius = min(
@@ -74,8 +75,10 @@ func _init(player: Player) -> void:
     Surfacer.slow_motion.music.connect(
             "tick_tock_beat", self, "_on_slow_motion_tick_tock_beat")
 
+
 func _on_slow_motion_toggled(is_enabled: bool) -> void:
     animation_start_time = -PRESELECTION_DEFAULT_DURATION
+
 
 func _on_slow_motion_tick_tock_beat(
         is_downbeat: bool,
@@ -85,11 +88,14 @@ func _on_slow_motion_tick_tock_beat(
             animation_start_time < 0:
         animation_start_time = Gs.time.get_play_time()
 
+
 func add_prediction(prediction: PlayerPrediction) -> void:
     _predictions_container.add_child(prediction)
 
+
 func remove_prediction(prediction: PlayerPrediction) -> void:
     _predictions_container.remove_child(prediction)
+
 
 func _process(_delta: float) -> void:
     var current_time: float = Gs.time.get_play_time()
@@ -159,6 +165,7 @@ func _process(_delta: float) -> void:
         animation_progress = fmod((current_time - animation_start_time) / \
                 preselection_duration, 1.0)
         update()
+
 
 func _draw() -> void:
     if preselection_destination == null:
@@ -256,6 +263,7 @@ func _draw() -> void:
                 INF,
                 4.0)
 
+
 func _update_phantom_surface() -> void:
     if preselection_destination == null or \
             preselection_destination.surface == null:
@@ -297,6 +305,7 @@ func _update_phantom_surface() -> void:
         
         phantom_surface.bounding_box = Gs.geometry.get_bounding_box_for_points(
                 phantom_surface.vertices)
+
 
 func _update_phantom_position_along_surface() -> void:
     if phantom_surface.side != SurfaceSide.NONE:

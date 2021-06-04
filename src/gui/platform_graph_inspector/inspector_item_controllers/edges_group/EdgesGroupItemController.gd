@@ -10,6 +10,7 @@ const PREFIX := "Edges"
 #         Array<InterSurfaceEdgesResult>>>>
 var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -26,11 +27,13 @@ func _init(
             surfaces_to_surfaces_to_edge_types_to_edges_results
     _post_init()
 
+
 func get_text() -> String:
     return "%s [%s]" % [
         PREFIX,
         graph.counts.total_edges,
     ]
+
 
 func get_description() -> String:
     return ("An edge represents movement between two surface positions. " +
@@ -40,11 +43,13 @@ func get_description() -> String:
                 graph.movement_params.name,
             ]
 
+
 func to_string() -> String:
     return "%s { count=%s }" % [
         InspectorItemType.get_string(type),
         graph.counts.total_edges,
     ]
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -53,6 +58,7 @@ func find_and_expand_controller(
             "find_and_expand_controller should not be called for " +
             "EDGES_GROUP.")
     return false
+
 
 func _create_children_inner() -> void:
     EdgesWithIncreasingJumpHeightGroupItemController.new(
@@ -68,12 +74,15 @@ func _create_children_inner() -> void:
             tree,
             graph)
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
 
+
 func get_annotation_elements() -> Array:
     return get_annotation_elements_from_graph(graph)
+
 
 static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var elements := []

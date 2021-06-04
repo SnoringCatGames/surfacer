@@ -29,6 +29,7 @@ var needs_extra_wall_land_horizontal_speed: bool
 # might be the only option.
 var less_likely_to_be_valid: bool
 
+
 func _init(
         jump_position: PositionAlongSurface = null,
         land_position: PositionAlongSurface = null,
@@ -47,6 +48,7 @@ func _init(
     self.needs_extra_wall_land_horizontal_speed = \
             needs_extra_wall_land_horizontal_speed
     self.less_likely_to_be_valid = less_likely_to_be_valid
+
 
 func is_far_enough_from_others(
         movement_params: MovementParams,
@@ -81,6 +83,7 @@ func is_far_enough_from_others(
     
     return true
 
+
 func to_string() -> String:
     return ("JumpLandPositions{ " +
             "jump: %s, " +
@@ -94,6 +97,7 @@ func to_string() -> String:
         needs_extra_jump_duration,
     ]
 
+
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
@@ -103,6 +107,7 @@ func load_from_json_object(
     needs_extra_jump_duration = json_object.d
     needs_extra_wall_land_horizontal_speed = json_object.s
     less_likely_to_be_valid = json_object.i
+
 
 func to_json_object() -> Dictionary:
     return {

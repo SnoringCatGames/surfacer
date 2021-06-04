@@ -9,6 +9,7 @@ var side := SurfaceSide.NONE
 var surfaces_to_surfaces_to_edge_types_to_edges_results := {}
 var surface_count := 0
 
+
 func _init(
         type: int,
         starts_collapsed: bool,
@@ -30,11 +31,13 @@ func _init(
     self.surface_count = graph.counts[SurfaceSide.get_string(side)]
     _post_init()
 
+
 func to_string() -> String:
     return "%s { surface_count=%s }" % [
         InspectorItemType.get_string(type),
         surface_count,
     ]
+
 
 func get_text() -> String:
     return "%ss [%s]" % [
@@ -42,8 +45,10 @@ func get_text() -> String:
         surface_count,
     ]
 
+
 func get_has_children() -> bool:
     return surface_count > 0
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -53,6 +58,7 @@ func find_and_expand_controller(
             search_type,
             metadata)
     return true
+
 
 func _find_and_expand_controller_recursive(
         search_type: int,
@@ -68,6 +74,7 @@ func _find_and_expand_controller_recursive(
         child = child.get_next()
     select()
     Gs.logger.error("No matching Surface found: %s" % metadata)
+
 
 func _create_children_inner() -> void:
     for surface in graph.surfaces_set:
@@ -85,9 +92,11 @@ func _create_children_inner() -> void:
                     surface,
                     surfaces_to_edge_types_to_edges_results)
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func get_annotation_elements() -> Array:
     var elements := []

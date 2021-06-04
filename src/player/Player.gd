@@ -56,6 +56,7 @@ var _can_dash := true
 var _dash_cooldown_timeout: int
 var _dash_fade_tween: ScaffolderTween
 
+
 func _init(player_name: String) -> void:
     self.player_name = player_name
     
@@ -75,6 +76,7 @@ func _init(player_name: String) -> void:
     self.last_selection = PointerSelectionPosition.new(self)
     self.pre_selection = PointerSelectionPosition.new(self)
 
+
 func _enter_tree() -> void:
     if is_fake:
         # Fake players are only used for testing potential collisions under the
@@ -83,6 +85,7 @@ func _enter_tree() -> void:
     
     self.pointer_listener = PlayerPointerListener.new(self)
     add_child(pointer_listener)
+
 
 func _ready() -> void:
     if is_fake:
@@ -158,10 +161,12 @@ func _ready() -> void:
             "_on_resized")
     _on_resized()
 
+
 func _on_annotators_ready() -> void:
     if is_instance_valid(prediction):
         Surfacer.annotators.path_preselection_annotator \
                 .add_prediction(prediction)
+
 
 func _destroy() -> void:
     _is_destroyed = true
@@ -169,6 +174,7 @@ func _destroy() -> void:
         Surfacer.annotators.path_preselection_annotator \
                 .remove_prediction(prediction)
     queue_free()
+
 
 func _unhandled_input(event: InputEvent) -> void:
     if _is_initialized and \
@@ -178,8 +184,10 @@ func _unhandled_input(event: InputEvent) -> void:
             event is InputEventKey:
         navigator.stop()
 
+
 func _on_resized() -> void:
     Gs.camera_controller._on_resized()
+
 
 func init_human_player_state() -> void:
     is_human_player = true
@@ -190,11 +198,13 @@ func init_human_player_state() -> void:
     _is_navigator_initialized = true
     _check_for_initialization_complete()
 
+
 func init_computer_player_state() -> void:
     is_human_player = false
     _init_navigator()
     _is_navigator_initialized = true
     _check_for_initialization_complete()
+
 
 func set_platform_graph(graph: PlatformGraph) -> void:
     self.graph = graph
@@ -202,11 +212,13 @@ func set_platform_graph(graph: PlatformGraph) -> void:
     self.possible_surfaces_set = graph.surfaces_set
     _check_for_initialization_complete()
 
+
 func _check_for_initialization_complete() -> void:
     self._is_initialized = \
             graph != null and \
             _is_navigator_initialized and \
             _is_ready
+
 
 func _set_camera() -> void:
     var camera := Camera2D.new()
@@ -216,13 +228,16 @@ func _set_camera() -> void:
     # Register the current camera, so it's globally accessible.
     Gs.camera_controller.set_current_camera(camera, self)
 
+
 func _init_user_controller_action_source() -> void:
     action_sources.push_back(UserActionSource.new(self, true))
+
 
 func _init_navigator() -> void:
     navigator = Navigator.new(self, graph)
     navigation_state = navigator.navigation_state
     action_sources.push_back(navigator.instructions_action_source)
+
 
 func _physics_process(delta: float) -> void:
     if is_fake or \
@@ -312,6 +327,7 @@ func _physics_process(delta: float) -> void:
     if moved:
         pointer_listener.on_player_moved()
 
+
 func _update_navigator(delta_scaled: float) -> void:
     navigator.update()
     
@@ -320,6 +336,7 @@ func _update_navigator(delta_scaled: float) -> void:
         actions.copy(actions_from_previous_frame)
         _update_actions(delta_scaled)
         _update_surface_state(true)
+
 
 func _handle_pointer_selections() -> void:
     if new_selection.get_has_selection():
@@ -343,6 +360,7 @@ func _handle_pointer_selections() -> void:
         new_selection.clear()
         pre_selection.clear()
 
+
 func _update_actions(delta_scaled: float) -> void:
     # Record actions for the previous frame.
     actions_from_previous_frame.copy(actions)
@@ -362,6 +380,7 @@ func _update_actions(delta_scaled: float) -> void:
     actions.start_dash = \
             _can_dash and \
             Gs.level_input.is_action_just_pressed("dash")
+
 
 # Updates physics and player states in response to the current actions.
 func _process_actions() -> void:
@@ -385,6 +404,7 @@ func _process_actions() -> void:
                 is_action_relevant_for_physics_mode:
             _previous_actions_this_frame[action_handler.name] = \
                     action_handler.process(self)
+
 
 func _process_animation() -> void:
     match current_action_type:
@@ -411,11 +431,14 @@ func _process_animation() -> void:
         _:
             Gs.logger.error()
 
+
 func _process_sounds() -> void:
     pass
 
+
 func processed_action(name: String) -> bool:
     return _previous_actions_this_frame.get(name) == true
+
 
 func release_wall() -> void:
     if !surface_state.is_grabbing_wall:
@@ -434,6 +457,7 @@ func release_wall() -> void:
         surface_state.just_grabbed_a_surface = true
     else:
         surface_state.is_grabbing_a_surface = false
+
 
 # Updates some basic surface-related state for player's actions and environment
 # of the current frame.
@@ -616,6 +640,7 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     _update_which_side_is_grabbed(preserves_just_changed_state)
     _update_which_surface_is_grabbed(preserves_just_changed_state)
 
+
 func _update_which_side_is_grabbed(
         preserves_just_changed_state := false) -> void:
     var next_is_grabbing_floor := false
@@ -699,6 +724,7 @@ func _update_which_side_is_grabbed(
             surface_state.grabbed_surface_normal = Gs.geometry.RIGHT
         SurfaceSide.RIGHT_WALL:
             surface_state.grabbed_surface_normal = Gs.geometry.LEFT
+
 
 func _update_which_surface_is_grabbed(
         preserves_just_changed_state := false) -> void:
@@ -804,6 +830,7 @@ func _update_which_surface_is_grabbed(
         surface_state.grabbed_surface = null
         surface_state.center_position_along_surface.reset()
 
+
 func _update_grab_state_from_expected_navigation(
         preserves_just_changed_state: bool) -> void:
     var position_along_surface := \
@@ -827,11 +854,13 @@ func _update_grab_state_from_expected_navigation(
                             surface_state.grabbed_tile_map)
     surface_state.grabbed_tile_map = next_grabbed_tile_map
 
+
 func _get_expected_position_for_bypassing_runtime_physics() -> \
         PositionAlongSurface:
     return navigator.navigation_state.expected_position_along_surface if \
             navigator.is_currently_navigating else \
             navigator.get_previous_destination()
+
 
 func _update_grab_state_from_collision(
         preserves_just_changed_state: bool) -> void:
@@ -857,6 +886,7 @@ func _update_grab_state_from_collision(
                             surface_state.grabbed_tile_map)
     surface_state.grabbed_tile_map = next_grabbed_tile_map
 
+
 # Update whether or not we should currently consider collisions with
 # fall-through floors and walk-through walls.
 func _update_collision_mask() -> void:
@@ -866,6 +896,7 @@ func _update_collision_mask() -> void:
     set_collision_mask_bit(
             Surfacer.WALK_THROUGH_WALLS_COLLISION_MASK_BIT,
             surface_state.is_grabbing_walk_through_walls)
+
 
 static func _get_attached_surface_collision(
         body: KinematicBody2D,
@@ -896,6 +927,7 @@ static func _get_attached_surface_collision(
             closest_collision = current_collision
     
     return closest_collision
+
 
 func start_dash(horizontal_acceleration_sign: int) -> void:
     if !_can_dash:
@@ -943,6 +975,7 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
     
     _can_dash = false
 
+
 # Conditionally prints the given message, depending on the Player's
 # configuration.
 func print_msg(
@@ -957,11 +990,14 @@ func print_msg(
         else:
             Gs.logger.print(message_template)
 
+
 func set_is_sprite_visible(is_visible: bool) -> void:
     animator.visible = is_visible
 
+
 func get_is_sprite_visible() -> bool:
     return animator.visible
+
 
 func set_position(position: Vector2) -> void:
     self.position = position
@@ -969,6 +1005,7 @@ func set_position(position: Vector2) -> void:
     surface_state.center_position_along_surface.match_current_grab(
             surface_state.grabbed_surface,
             surface_state.center_position)
+
 
 func get_current_animation_state(result: PlayerAnimationState) -> void:
     result.player_position = position

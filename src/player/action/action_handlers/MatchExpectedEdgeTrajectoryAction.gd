@@ -6,12 +6,14 @@ const TYPE := SurfaceType.OTHER
 const USES_RUNTIME_PHYSICS := false
 const PRIORITY := 10010
 
+
 func _init().(
         NAME,
         TYPE,
         USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass
+
 
 func process(player: Player) -> bool:
     var current_edge := player.navigator.edge
@@ -51,6 +53,7 @@ func process(player: Player) -> bool:
         return synced_positions or synced_velocities
     
     return false
+
 
 static func _get_has_trajectory_index_changed(
         previous_time: float,

@@ -24,6 +24,7 @@ var path_beats_time_start := INF
 # Array<PathBeatPrediction>
 var path_beats: Array
 
+
 func _init(player) -> void:
     self._player = player
     var surface_to_air_jump_distance_threshold: float = \
@@ -35,6 +36,7 @@ func _init(player) -> void:
     self._pointer_to_surface_distance_squared_threshold = \
             POINTER_TO_SURFACE_SELECTION_THRESHOLD * \
             POINTER_TO_SURFACE_SELECTION_THRESHOLD
+
 
 func update_pointer_position(pointer_position: Vector2) -> void:
     self.pointer_position = pointer_position
@@ -91,6 +93,7 @@ func update_pointer_position(pointer_position: Vector2) -> void:
         self.path_beats = []
         self.nearby_position_along_surface = null
 
+
 func _update_path_for_in_air_destination(
         nearby_positions_along_surface: Array) -> void:
     for nearby_position_along_surface in nearby_positions_along_surface:
@@ -119,11 +122,14 @@ func _update_path_for_in_air_destination(
     self.path_beats = []
     self.nearby_position_along_surface = null
 
+
 func get_has_selection() -> bool:
     return pointer_position != Vector2.INF
 
+
 func get_is_selection_navigatable() -> bool:
     return path != null
+
 
 func update_beats() -> void:
     if path != null:
@@ -133,6 +139,7 @@ func update_beats() -> void:
                         path,
                         path_beats_time_start)
 
+
 func clear() -> void:
     self.pointer_position = Vector2.INF
     self.navigation_destination = null
@@ -140,6 +147,7 @@ func clear() -> void:
     self.path_beats_time_start = INF
     self.path_beats = []
     self.nearby_position_along_surface = null
+
 
 func copy(other) -> void:
     self.pointer_position = other.pointer_position

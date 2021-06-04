@@ -18,6 +18,7 @@ var edge_type: int
 
 var is_a_jump_calculator: bool
 
+
 func _init(
         name: String,
         edge_type: int,
@@ -26,11 +27,13 @@ func _init(
     self.edge_type = edge_type
     self.is_a_jump_calculator = is_a_jump_calculator
 
+
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     Gs.logger.error(
             "Abstract EdgeCalculator.get_can_traverse_from_surface is not " +
             "implemented")
     return false
+
 
 func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
@@ -41,6 +44,7 @@ func get_all_inter_surface_edges_from_surface(
     Gs.logger.error(
             "Abstract EdgeCalculator" +
             ".get_all_inter_surface_edges_from_surface is not implemented")
+
 
 func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
@@ -53,6 +57,7 @@ func calculate_edge(
     Gs.logger.error("Abstract EdgeCalculator.calculate_edge is not implemented")
     return null
 
+
 func optimize_edge_jump_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
@@ -63,6 +68,7 @@ func optimize_edge_jump_position_for_path(
     # Do nothing by default. Sub-classes implement this as needed.
     pass
 
+
 func optimize_edge_land_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
@@ -71,6 +77,7 @@ func optimize_edge_land_position_for_path(
         next_edge: IntraSurfaceEdge) -> void:
     # Do nothing by default. Sub-classes implement this as needed.
     pass
+
 
 static func create_edge_calc_params(
         edge_result_metadata: EdgeCalcResultMetadata,
@@ -140,6 +147,7 @@ static func create_edge_calc_params(
             edge_result_metadata)
     return edge_calc_params
 
+
 # Does some cheap checks to see if we should more expensive edge calculations
 # for the given jump/land pair.
 static func broad_phase_check(
@@ -198,6 +206,7 @@ static func broad_phase_check(
             "edge_calc_broad_phase_check",
             collision_params.thread_id)
     return true
+
 
 static func should_skip_edge_calculation(
         debug_params: Dictionary,
@@ -306,6 +315,7 @@ static func should_skip_edge_calculation(
                     return true
     
     return false
+
 
 static func optimize_edge_jump_position_for_path_helper(
         collision_params: CollisionCalcParams,
@@ -437,6 +447,7 @@ static func optimize_edge_jump_position_for_path_helper(
                 path.edges[edge_index] = optimized_edge
                 
                 return
+
 
 static func optimize_edge_land_position_for_path_helper(
         collision_params: CollisionCalcParams,

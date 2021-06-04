@@ -5,14 +5,17 @@ const NAME := "JumpFromSurfaceCalculator"
 const EDGE_TYPE := EdgeType.JUMP_FROM_SURFACE_EDGE
 const IS_A_JUMP_CALCULATOR := true
 
+
 func _init().(
         NAME,
         EDGE_TYPE,
         IS_A_JUMP_CALCULATOR) -> void:
     pass
 
+
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null
+
 
 func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
@@ -119,6 +122,7 @@ func get_all_inter_surface_edges_from_surface(
                 inter_surface_edges_result.failed_edge_attempts.push_back(
                         failed_attempt)
 
+
 func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
@@ -163,6 +167,7 @@ func calculate_edge(
             edge_result_metadata)
     return edge
 
+
 func optimize_edge_jump_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
@@ -181,6 +186,7 @@ func optimize_edge_jump_position_for_path(
             edge,
             self)
 
+
 func optimize_edge_land_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
@@ -196,6 +202,7 @@ func optimize_edge_land_position_for_path(
             edge,
             next_edge,
             self)
+
 
 func create_edge_from_edge_calc_params(
         edge_result_metadata: EdgeCalcResultMetadata,

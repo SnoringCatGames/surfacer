@@ -21,6 +21,7 @@ const IN_AIR_DESTINATION_INDICATOR_SIZE_RATIO := 0.8
 
 const ADJACENT_VERTEX_TOO_CLOSE_DISTANCE_SQUARED_THRESHOLD := 0.25
 
+
 static func draw_origin_marker(
         canvas: CanvasItem,
         target: Vector2,
@@ -35,6 +36,7 @@ static func draw_origin_marker(
             color,
             border_width,
             sector_arc_length)
+
 
 static func draw_destination_marker(
         canvas: CanvasItem,
@@ -108,6 +110,7 @@ static func draw_destination_marker(
                     border_width,
                     sector_arc_length)
 
+
 static func draw_path(
         canvas: CanvasItem,
         path: PlatformGraphPath,
@@ -134,6 +137,7 @@ static func draw_path(
             vertices,
             color,
             stroke_width)
+
 
 # NOTE: Calculating a distance-based segment instead of a duration-based
 #       segment may be more intuitive, but it's a much more expensive
@@ -294,6 +298,7 @@ static func draw_path_duration_segment(
             color,
             stroke_width)
 
+
 static func _trim_front_end(
         vertices: PoolVector2Array,
         trim_radius: float) -> PoolVector2Array:
@@ -329,6 +334,7 @@ static func _trim_front_end(
     vertices[0] = start_replacement
     
     return vertices
+
 
 static func _trim_back_end(
         vertices: PoolVector2Array,
@@ -369,6 +375,7 @@ static func _trim_back_end(
     
     return vertices
 
+
 static func draw_beat_hashes(
         canvas: CanvasItem,
         beats: Array,
@@ -403,6 +410,7 @@ static func draw_beat_hashes(
                 stroke_width,
                 false)
 
+
 static func draw_edge(
         canvas: CanvasItem,
         edge: Edge,
@@ -434,6 +442,7 @@ static func draw_edge(
                 base_color,
                 includes_waypoints,
                 includes_instruction_indicators)
+
 
 static func _draw_edge_from_end_points(
         canvas: CanvasItem,
@@ -471,6 +480,7 @@ static func _draw_edge_from_end_points(
         instruction_color.a = base_color.a
         
         # TODO: Draw instruction indicators.
+
 
 static func _draw_edge_from_instructions_positions(
         canvas: CanvasItem,
@@ -567,6 +577,7 @@ static func _draw_edge_from_instructions_positions(
                     EDGE_INSTRUCTION_INDICATOR_LENGTH,
                     instruction_color)
 
+
 static func _get_edge_trajectory_vertices(
         edge: Edge,
         includes_end_points := true,
@@ -589,6 +600,7 @@ static func _get_edge_trajectory_vertices(
             edge.get_start(),
             edge.get_end(),
         ])
+
 
 static func _remove_too_close_neighbors(
         vertices: PoolVector2Array) -> PoolVector2Array:

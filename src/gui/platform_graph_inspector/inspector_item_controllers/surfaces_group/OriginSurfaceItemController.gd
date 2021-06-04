@@ -27,6 +27,7 @@ var valid_edges_count_item_controller: DescriptionItemController
 var fall_range_description_item_controller: DescriptionItemController
 var jump_range_description_item_controller: DescriptionItemController
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -45,6 +46,7 @@ func _init(
             destination_surfaces_to_edge_types_to_edges_results
     _calculate_metadata()
     _post_init()
+
 
 func _calculate_metadata() -> void:
     # Count the valid and failed edges from this surface.
@@ -91,6 +93,7 @@ func _calculate_metadata() -> void:
     surfaces_in_fall_range = surfaces_in_fall_range_result_set.keys()
     surfaces_in_jump_range = surfaces_in_jump_range_result_set.keys()
 
+
 func to_string() -> String:
     return "%s{ [%s, %s] }" % [
         InspectorItemType.get_string(TYPE),
@@ -98,11 +101,13 @@ func to_string() -> String:
         str(origin_surface.last_point),
     ]
 
+
 func get_text() -> String:
     return "[%s, %s]" % [
         str(origin_surface.first_point),
         str(origin_surface.last_point),
     ]
+
 
 func get_description() -> String:
     return ("There are %s valid outbound edges from this %s surface.") % [
@@ -110,8 +115,10 @@ func get_description() -> String:
         SurfaceSide.get_string(origin_surface.side),
     ]
 
+
 func get_has_children() -> bool:
     return destination_surfaces_to_edge_types_to_edges_results.size() > 0
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -138,6 +145,7 @@ func find_and_expand_controller(
             Gs.logger.error()
             return false
 
+
 func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
@@ -153,6 +161,7 @@ func _find_and_expand_controller_recursive(
             return
         child = child.get_next()
     select()
+
 
 func _create_children_inner() -> void:
     valid_edges_count_item_controller = DescriptionItemController.new(
@@ -200,10 +209,12 @@ func _create_children_inner() -> void:
                 destination_surface,
                 edge_types_to_edges_results)
 
+
 func _destroy_children_inner() -> void:
     valid_edges_count_item_controller = null
     fall_range_description_item_controller = null
     jump_range_description_item_controller = null
+
 
 func get_annotation_elements() -> Array:
     var elements := _get_jump_fall_range_annotation_elements(
@@ -219,9 +230,11 @@ func get_annotation_elements() -> Array:
     
     return elements
 
+
 func _get_annotation_elements_for_valid_edges_count_description_item() -> \
         Array:
     return _get_valid_edges_annotation_elements()
+
 
 func _get_annotation_elements_for_destination_surfaces_description_item() -> \
         Array:
@@ -231,6 +244,7 @@ func _get_annotation_elements_for_destination_surfaces_description_item() -> \
         element = DestinationSurfaceAnnotationElement.new(destination_surface)
         elements.push_back(element)
     return elements
+
 
 func _get_annotation_elements_for_fall_range_description_item() -> Array:
     var elements := _get_jump_fall_range_annotation_elements(
@@ -246,6 +260,7 @@ func _get_annotation_elements_for_fall_range_description_item() -> Array:
         elements.push_back(element)
     return elements
 
+
 func _get_annotation_elements_for_jump_range_description_item() -> Array:
     var elements := _get_jump_fall_range_annotation_elements(
             false,
@@ -259,6 +274,7 @@ func _get_annotation_elements_for_jump_range_description_item() -> Array:
             element = OriginSurfaceAnnotationElement.new(origin_surface)
         elements.push_back(element)
     return elements
+
 
 func _get_jump_fall_range_annotation_elements(
         includes_fall_range: bool,
@@ -295,6 +311,7 @@ func _get_jump_fall_range_annotation_elements(
     
     return elements
 
+
 func _get_valid_edges_annotation_elements() -> Array:
     var elements := []
     var element: EdgeAnnotationElement
@@ -315,6 +332,7 @@ func _get_valid_edges_annotation_elements() -> Array:
                             false)
                     elements.push_back(element)
     return elements
+
 
 class SurfaceHorizontalPositionComparator:
     static func sort(

@@ -17,6 +17,7 @@ var dash_length: float
 var dash_gap: float
 var stroke_width: float
 
+
 func _init(
         type: int,
         text: String,
@@ -36,6 +37,7 @@ func _init(
     self.dash_length = dash_length
     self.dash_gap = dash_gap
     self.stroke_width = stroke_width
+
 
 func _draw_shape(
         center: Vector2,

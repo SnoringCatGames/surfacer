@@ -9,6 +9,7 @@ var is_pressed: bool
 # Optional
 var position := Vector2.INF
 
+
 func _init(
         input_key := "",
         time := INF,
@@ -23,6 +24,7 @@ func _init(
     self.is_pressed = is_pressed
     self.position = position
 
+
 func to_string() -> String:
     return "EdgeInstruction{ %s, %.2f, %s%s }" % [
             input_key,
@@ -30,6 +32,7 @@ func to_string() -> String:
             is_pressed,
             ", %s" % position if position != Vector2.INF else ""
         ]
+
 
 func load_from_json_object(
         json_object: Dictionary,
@@ -39,6 +42,7 @@ func load_from_json_object(
     is_pressed = json_object.i
     if json_object.has("p"):
         position = Gs.utils.decode_vector2(json_object.p)
+
 
 func to_json_object() -> Dictionary:
     var json_object := {

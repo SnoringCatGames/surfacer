@@ -11,6 +11,7 @@ var end_waypoint: Waypoint
 # The single vertical step for this overall jump movement.
 var vertical_step: VerticalEdgeStep
 
+
 func _init(
         start_waypoint: Waypoint,
         end_waypoint: Waypoint,

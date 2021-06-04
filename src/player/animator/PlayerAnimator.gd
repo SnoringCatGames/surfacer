@@ -11,10 +11,12 @@ var is_desaturatable: bool
 var _animation_type := PlayerAnimationType.UNKNOWN
 var _base_rate := 1.0
 
+
 func set_up(player, is_desaturatable: bool) -> void:
     self.is_desaturatable = is_desaturatable
     self.animator_params = player.movement_params.animator_params
     _initialize()
+
 
 func _initialize() -> void:
     var animation_players: Array = \
@@ -28,6 +30,7 @@ func _initialize() -> void:
         for sprite in sprites:
             sprite.add_to_group(Surfacer.group_name_desaturatable)
 
+
 func _get_animation_player() -> AnimationPlayer:
     Gs.logger.error(
             "Abstract PlayerAnimator._get_animation_player is not implemented")
@@ -40,6 +43,7 @@ func face_left() -> void:
             UNFLIPPED_HORIZONTAL_SCALE
     self.scale = scale
 
+
 func face_right() -> void:
     var scale := \
             UNFLIPPED_HORIZONTAL_SCALE if \
@@ -47,8 +51,10 @@ func face_right() -> void:
             FLIPPED_HORIZONTAL_SCALE
     self.scale = scale
 
+
 func play(animation_type: int) -> void:
     _play_animation(animation_type)
+
 
 func set_static_frame(animation_state: PlayerAnimationState) -> void:
     _animation_type = animation_state.animation_type
@@ -66,19 +72,24 @@ func set_static_frame(animation_state: PlayerAnimationState) -> void:
     animation_player.seek(position, true)
     animation_player.stop(false)
 
+
 func set_static_frame_position(animation_position: float) -> void:
     var playback_rate := animation_type_to_playback_rate(_animation_type)
     var position := animation_position * playback_rate
     animation_player.seek(position, true)
 
+
 func match_rate_to_time_scale() -> void:
     animation_player.playback_speed = _base_rate * Gs.time.get_combined_scale()
+
 
 func get_current_animation_type() -> int:
     return _animation_type
 
+
 func set_modulation(modulation: Color) -> void:
     self.modulate = modulation
+
 
 func _play_animation(
         animation_type: int,
@@ -106,6 +117,7 @@ func _play_animation(
     else:
         return false
 
+
 func animation_type_to_name(animation_type: int) -> String:
     match animation_type:
         PlayerAnimationType.REST:
@@ -126,6 +138,7 @@ func animation_type_to_name(animation_type: int) -> String:
             Gs.utils.error(
                     "Unrecognized PlayerAnimationType: %s" % animation_type)
             return ""
+
 
 func animation_type_to_playback_rate(animation_type: int) -> float:
     match animation_type:

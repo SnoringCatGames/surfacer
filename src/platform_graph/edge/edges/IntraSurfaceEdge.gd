@@ -16,6 +16,7 @@ const REACHED_DESTINATION_DISTANCE_THRESHOLD := 3.0
 var stopping_distance := INF
 var is_backtracking_to_not_protrude_past_surface_end := false
 
+
 func _init(
         start: PositionAlongSurface = null,
         end: PositionAlongSurface = null,
@@ -45,6 +46,7 @@ func _init(
     # Intra-surface edges are never calculated and stored ahead of time;
     # they're only calculated at run time when navigating a specific path.
     self.is_optimized_for_path = true
+
 
 func update_terminal(
         is_start: bool,
@@ -78,6 +80,7 @@ func update_terminal(
             instructions,
             distance)
 
+
 func update_for_surface_state(
         surface_state: PlayerSurfaceState,
         is_final_edge: bool) -> void:
@@ -98,6 +101,7 @@ func update_for_surface_state(
     else:
         stopping_distance = 0.0
 
+
 func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
@@ -106,6 +110,7 @@ func _calculate_distance(
         return 0.00001
     else:
         return start.target_point.distance_to(end.target_point)
+
 
 func _calculate_duration(
         start: PositionAlongSurface,
@@ -120,6 +125,7 @@ func _calculate_duration(
                 start,
                 end,
                 distance)
+
 
 func get_position_at_time(edge_time: float) -> Vector2:
     if edge_time > duration:
@@ -159,6 +165,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
         _:
             Gs.logger.error()
             return Vector2.INF
+
 
 func get_velocity_at_time(edge_time: float) -> Vector2:
     if edge_time > duration:
@@ -204,6 +211,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
             Gs.logger.error()
             return Vector2.INF
 
+
 func get_animation_state_at_time(
         result: PlayerAnimationState,
         edge_time: float) -> void:
@@ -227,6 +235,7 @@ func get_animation_state_at_time(
             result.facing_left = side == SurfaceSide.LEFT_WALL
         _:
             Gs.logger.error()
+
 
 func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,
@@ -281,6 +290,7 @@ func _check_did_just_reach_surface_destination(
                 is_close_to_destination or \
                 is_moving_away_from_destination
 
+
 static func _calculate_instructions(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
@@ -309,6 +319,7 @@ static func _calculate_instructions(
     return EdgeInstructions.new(
             [instruction],
             duration)
+
 
 static func _calculate_velocity_end(
         start: PositionAlongSurface,
@@ -339,6 +350,7 @@ static func _calculate_velocity_end(
                 displacement.y < 0.0 else \
                 movement_params.climb_down_speed
         return Vector2(0.0, velocity_end_y)
+
 
 # Calculate the distance from the end position at which the move button should
 # be released, so that the player comes to rest at the desired end position
@@ -381,6 +393,7 @@ static func _calculate_stopping_distance(
             return climb_speed * Time.PHYSICS_TIME_STEP + 0.01
         
         return 0.0
+
 
 static func calculate_duration_to_move_along_surface(
         movement_params: MovementParams,

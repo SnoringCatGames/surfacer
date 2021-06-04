@@ -15,6 +15,7 @@ var _throttled_update_preselection_beats: FuncRef = Gs.time.throttle(
         BEAT_UPDATE_THROTTLE_INTERVAL)
 var _last_pointer_drag_position := Vector2.INF
 
+
 func _init(player) -> void:
     self._player = player
     var nearby_surface_distance_threshold: float = \
@@ -24,9 +25,11 @@ func _init(player) -> void:
             nearby_surface_distance_threshold * \
             nearby_surface_distance_threshold
 
+
 func _process(_delta: float) -> void:
     if _last_pointer_drag_position != Vector2.INF:
         _throttled_update_preselection_beats.call_func()
+
 
 func _unhandled_input(event: InputEvent) -> void:
     if !Gs.is_user_interaction_enabled or \
@@ -100,14 +103,17 @@ func _unhandled_input(event: InputEvent) -> void:
     elif pointer_drag_position != Vector2.INF:
         _on_pointer_moved(pointer_drag_position)
 
+
 func _update_preselection_path() -> void:
     _is_preselection_path_update_pending = false
     _player.pre_selection.update_pointer_position(_last_pointer_drag_position)
+
 
 func _update_preselection_beats() -> void:
     # Skip the beat update if we're already going to the the whole path update.
     if !_is_preselection_path_update_pending:
         _player.pre_selection.update_beats()
+
 
 func _on_pointer_released(pointer_position: Vector2) -> void:
     _last_pointer_drag_position = Vector2.INF
@@ -127,11 +133,13 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
             selected_surface,
             is_surface_navigatable))
 
+
 func _on_pointer_moved(pointer_position: Vector2) -> void:
     _last_pointer_drag_position = pointer_position
     Surfacer.slow_motion.set_slow_motion_enabled(true)
     _is_preselection_path_update_pending = true
     _throttled_update_preselection_path.call_func()
+
 
 func on_player_moved() -> void:
     if _last_pointer_drag_position != Vector2.INF:

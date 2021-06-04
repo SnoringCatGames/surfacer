@@ -23,8 +23,10 @@ const COLLIDER_THICKNESS := 4.0
 var player: Player
 var previous_position: Vector2
 
+
 func _init(player: Player) -> void:
     self.player = player
+
 
 func _draw() -> void:
     _draw_player_position()
@@ -33,11 +35,13 @@ func _draw() -> void:
         _draw_grab_position()
         _draw_position_along_surface()
 
+
 func _draw_player_position() -> void:
     draw_circle(
             player.surface_state.center_position,
             PLAYER_POSITION_RADIUS,
             PLAYER_POSITION_COLOR)
+
 
 func _draw_grab_position() -> void:
     var from := player.surface_state.grab_position
@@ -50,6 +54,7 @@ func _draw_grab_position() -> void:
             to,
             GRAB_POSITION_COLOR,
             GRAB_POSITION_LINE_WIDTH)
+
 
 func _draw_position_along_surface() -> void:
     Gs.draw_utils.draw_position_along_surface(
@@ -65,6 +70,7 @@ func _draw_position_along_surface() -> void:
             false,
             false)
 
+
 func _draw_collider_outline() -> void:
     Gs.draw_utils.draw_shape_outline(
             self,
@@ -73,6 +79,7 @@ func _draw_collider_outline() -> void:
             player.movement_params.collider_rotation,
             COLLIDER_COLOR,
             COLLIDER_THICKNESS)
+
 
 func check_for_update() -> void:
     if !Gs.geometry.are_points_equal_with_epsilon(

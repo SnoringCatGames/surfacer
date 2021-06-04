@@ -12,12 +12,14 @@ var surface_annotator: PlayerSurfaceAnnotator
 var position_annotator: PlayerPositionAnnotator
 var tile_annotator: PlayerTileAnnotator
 
+
 func _init(
         player: Player,
         is_human_player: bool) -> void:
     self.player = player
     self.is_human_player = is_human_player
     self.z_index = 2
+
 
 func _physics_process(_delta: float) -> void:
     if recent_movement_annotator != null:
@@ -36,6 +38,7 @@ func _physics_process(_delta: float) -> void:
         if tile_annotator != null:
             tile_annotator.check_for_update()
 
+
 func set_annotator_enabled(
         annotator_type: int,
         is_enabled: bool) -> void:
@@ -47,6 +50,7 @@ func set_annotator_enabled(
         _create_annotator(annotator_type)
     else:
         _destroy_annotator(annotator_type)
+
 
 func is_annotator_enabled(annotator_type: int) -> bool:
     match annotator_type:
@@ -61,6 +65,7 @@ func is_annotator_enabled(annotator_type: int) -> bool:
         _:
             Gs.logger.error()
             return false
+
 
 func _create_annotator(annotator_type: int) -> void:
     assert(!is_annotator_enabled(annotator_type))
@@ -83,6 +88,7 @@ func _create_annotator(annotator_type: int) -> void:
             add_child(navigator_annotator)
         _:
             Gs.logger.error()
+
 
 func _destroy_annotator(annotator_type: int) -> void:
     assert(is_annotator_enabled(annotator_type))

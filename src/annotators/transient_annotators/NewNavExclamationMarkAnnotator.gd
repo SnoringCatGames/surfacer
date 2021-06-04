@@ -14,9 +14,11 @@ var player
 var mark_scale: float
 var opacity: float
 
+
 func _init(player).(EXCLAMATION_MARK_DURATION) -> void:
     self.player = player
     _update()
+
 
 func _update() -> void:
     ._update()
@@ -48,6 +50,7 @@ func _update() -> void:
             1.0,
             0.0,
             opacity_progress)
+
 
 func _draw() -> void:
     var width := EXCLAMATION_MARK_WIDTH_START * mark_scale

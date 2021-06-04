@@ -26,6 +26,7 @@ var combined_tile_map_rect: Rect2
 # Dictionary<SurfacesTileMap, Dictionary<String, Dictionary<int, Surface>>>
 var _tile_map_index_to_surface_maps := {}
 
+
 func calculate(tile_maps: Array) -> void:
     assert(!tile_maps.empty())
     
@@ -39,6 +40,7 @@ func calculate(tile_maps: Array) -> void:
     for tile_map in tile_maps:
         _parse_tile_map(tile_map)
 
+
 # Gets the surface corresponding to the given side of the given tile in the
 # given TileMap.
 func get_surface_for_tile(
@@ -47,11 +49,13 @@ func get_surface_for_tile(
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side][tile_map_index]
 
+
 func has_surface_for_tile(
         tile_map: SurfacesTileMap,
         tile_map_index: int,
         side: int) -> Surface:
     return _tile_map_index_to_surface_maps[tile_map][side].has(tile_map_index)
+
 
 func get_subset_of_surfaces(
         include_walls: bool,
@@ -80,6 +84,7 @@ func get_subset_of_surfaces(
             else:
                 return []
 
+
 func _calculate_max_tile_map_cell_size(tile_maps: Array) -> void:
     max_tile_map_cell_size = Vector2.ZERO
     for tile_map in tile_maps:
@@ -87,12 +92,14 @@ func _calculate_max_tile_map_cell_size(tile_maps: Array) -> void:
                 max_tile_map_cell_size.x + max_tile_map_cell_size.y:
             max_tile_map_cell_size = tile_map.cell_size
 
+
 func _calculate_combined_tile_map_rect(tile_maps: Array) -> void:
     combined_tile_map_rect = \
             Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_maps[0])
     for tile_map in tile_maps:
         combined_tile_map_rect = combined_tile_map_rect.merge(
                 Gs.geometry.get_tile_map_bounds_in_world_coordinates(tile_map))
+
 
 # Parses the given TileMap into a set of nodes for the platform graph.
 # 
@@ -180,6 +187,7 @@ func _parse_tile_map(tile_map: SurfacesTileMap) -> void:
     _assert_surfaces_fully_calculated(self.right_walls)
     Gs.profiler.stop("assert_surfaces_fully_calculated_duration")
 
+
 func _store_surfaces(
         tile_map: SurfacesTileMap,
         floors: Array,
@@ -216,6 +224,7 @@ func _store_surfaces(
     _free_objects(ceilings)
     _free_objects(left_walls)
     _free_objects(right_walls)
+
 
 func _populate_derivative_collections(tile_map: SurfacesTileMap) -> void:
     # TODO: This is broken with multiple tilemaps.
@@ -281,6 +290,7 @@ func _populate_derivative_collections(tile_map: SurfacesTileMap) -> void:
         SurfaceSide.RIGHT_WALL: right_wall_mapping,
     }
 
+
 # Parses the tiles of given TileMap into their constituent top-sides,
 # left-sides, and right-sides.
 static func _parse_tile_map_into_sides(
@@ -329,6 +339,7 @@ static func _parse_tile_map_into_sides(
                 right_walls,
                 tile_map,
                 tile_map_index)
+
 
 # Parses the given polygon into separate polylines corresponding to the
 # top-side, left-side, and right-side of the shape. Each of these polylines
@@ -524,6 +535,7 @@ static func _parse_polygon_into_sides(
     left_walls.push_back(left_side_surface)
     right_walls.push_back(right_side_surface)
 
+
 # Removes some "internal" surfaces.
 # 
 # Specifically, this checks for pairs of floor+ceiling segments or
@@ -587,6 +599,7 @@ static func _remove_internal_surfaces(
             j += 1
         
         i += 1
+
 
 # Merges adjacent continuous surfaces.
 static func _merge_continuous_surfaces(surfaces: Array) -> void:
@@ -664,6 +677,7 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
             
             i += 1
 
+
 static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
     for surface in surfaces:
         var vertices: Array = surface.vertices_array
@@ -678,6 +692,7 @@ static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
                 i -= 1
                 count -= 1
             i += 1
+
 
 static func _assign_neighbor_surfaces(
         floors: Array,
@@ -843,6 +858,7 @@ static func _assign_neighbor_surfaces(
                         ceiling.clockwise_convex_neighbor != null:
                     break
 
+
 static func _calculate_shape_bounding_boxes_for_surfaces(
         surfaces: Array) -> void:
     for surface in surfaces:
@@ -876,6 +892,7 @@ static func _calculate_shape_bounding_boxes_for_surfaces(
                     connected_surface.clockwise_concave_neighbor != null else \
                     connected_surface.clockwise_convex_neighbor
 
+
 static func _assert_surfaces_fully_calculated(surfaces: Array) -> void:
     for surface in surfaces:
         assert(surface.clockwise_concave_neighbor != null or \
@@ -885,6 +902,7 @@ static func _assert_surfaces_fully_calculated(surfaces: Array) -> void:
         assert(surface.connected_region_bounding_box.position != \
                 Vector2.INF and \
                 surface.connected_region_bounding_box.size != Vector2.INF)
+
 
 static func _populate_surface_objects(
         tmp_surfaces: Array,
@@ -896,11 +914,13 @@ static func _populate_surface_objects(
                 tmp_surface.tile_map,
                 tmp_surface.tile_map_indices)
 
+
 static func _copy_surfaces_to_main_collection(
         tmp_surfaces: Array,
         main_collection: Array) -> void:
     for tmp_surface in tmp_surfaces:
         main_collection.push_back(tmp_surface.surface)
+
 
 static func _create_tile_map_mapping_from_surfaces(
         surfaces: Array) -> Dictionary:
@@ -910,9 +930,11 @@ static func _create_tile_map_mapping_from_surfaces(
             result[tile_map_index] = surface
     return result
 
+
 static func _free_objects(objects: Array) -> void:
     for object in objects:
         object.free()
+
 
 class _TmpSurface extends Object:
     # Array<Vector2>
@@ -921,6 +943,7 @@ class _TmpSurface extends Object:
     # Array<int>
     var tile_map_indices: Array
     var surface: Surface
+
 
 static func find_closest_position_on_a_surface(
         target: Vector2,
@@ -937,6 +960,7 @@ static func find_closest_position_on_a_surface(
         return null
     else:
         return positions[0]
+
 
 static func find_closest_positions_on_a_surface(
         target: Vector2,
@@ -965,6 +989,7 @@ static func find_closest_positions_on_a_surface(
         closest_positions[i] = position
     
     return closest_positions
+
 
 # Gets the closest surface to the given point.
 static func get_closest_surfaces(
@@ -1074,6 +1099,7 @@ static func get_closest_surfaces(
     
     return closest_surfaces
 
+
 static func maybe_add_surface_to_closest_n_collection(
         collection: Array,
         surface_and_distance: Array,
@@ -1090,11 +1116,13 @@ static func maybe_add_surface_to_closest_n_collection(
             return true
     return false
 
+
 class _SurfaceAndDistanceComparator:
     static func sort_ascending(a: Array, b: Array):
         if a[1] < b[1]:
             return true
         return false
+
 
 func load_from_json_object(
         json_object: Dictionary,
@@ -1129,6 +1157,7 @@ func load_from_json_object(
                 json_object.right_walls[i],
                 context)
 
+
 func to_json_object() -> Dictionary:
     return {
         floors = _surface_array_to_json_object(floors),
@@ -1136,6 +1165,7 @@ func to_json_object() -> Dictionary:
         left_walls = _surface_array_to_json_object(left_walls),
         right_walls = _surface_array_to_json_object(right_walls),
     }
+
 
 func _json_object_to_surface_array(
         json_object: Array,
@@ -1149,6 +1179,7 @@ func _json_object_to_surface_array(
                 context)
         result[i] = surface
     return result
+
 
 func _surface_array_to_json_object(surfaces: Array) -> Array:
     var result := []

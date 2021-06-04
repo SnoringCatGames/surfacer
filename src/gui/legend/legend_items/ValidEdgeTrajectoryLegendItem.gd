@@ -16,6 +16,7 @@ const SCALE := 0.8
 
 var color_params: ColorParams
 
+
 func _init(
         type: int,
         text: String,
@@ -24,6 +25,7 @@ func _init(
         type,
         text) -> void:
     self.color_params = color_params
+
 
 func _draw_shape(
         center: Vector2,

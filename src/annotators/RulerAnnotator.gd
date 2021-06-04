@@ -14,6 +14,7 @@ var viewport_size: Vector2
 var previous_camera_position := Vector2.ZERO
 var previous_camera_zoom := 1.0
 
+
 func _enter_tree() -> void:
     viewport = get_viewport()
     viewport_size = viewport.get_visible_rect().size
@@ -21,6 +22,7 @@ func _enter_tree() -> void:
             "size_changed",
             self,
             "_on_viewport_size_changed")
+
 
 func _process(_delta: float) -> void:
     var next_camera_position: Vector2 = Gs.camera_controller.get_position()
@@ -32,6 +34,7 @@ func _process(_delta: float) -> void:
         previous_camera_position = next_camera_position
         previous_camera_zoom = next_camera_zoom
         update()
+
 
 func _draw() -> void:
     var grid_spacing: Vector2 = Gs.cell_size / previous_camera_zoom
@@ -95,6 +98,7 @@ func _draw() -> void:
                 Vector2(2, start_position.y + 14),
                 text,
                 TEXT_COLOR)
+
 
 func _on_viewport_size_changed() -> void:
     viewport_size = viewport.get_visible_rect().size

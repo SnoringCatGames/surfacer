@@ -12,6 +12,7 @@ const SURFACE_TYPE := SurfaceType.FLOOR
 const ENTERS_AIR := false
 const INCLUDES_AIR_TRAJECTORY := false
 
+
 func _init(
         calculator = null,
         start: PositionAlongSurface = null,
@@ -37,6 +38,7 @@ func _init(
         0.0) -> void:
     pass
 
+
 func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
@@ -44,6 +46,7 @@ func _calculate_distance(
     return Gs.geometry.calculate_manhattan_distance(
             start.target_point,
             end.target_point)
+
 
 func _calculate_duration(
         start: PositionAlongSurface,
@@ -54,6 +57,7 @@ func _calculate_duration(
             distance,
             0.0,
             movement_params)
+
 
 func get_position_at_time(edge_time: float) -> Vector2:
     if edge_time > duration:
@@ -76,6 +80,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
             Vector2(position_x, 0.0),
             surface,
             movement_params.collider_half_width_height)
+
 
 func get_velocity_at_time(edge_time: float) -> Vector2:
     if edge_time > duration:
@@ -100,6 +105,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
     velocity_y /= Gs.time.get_combined_scale()
     return Vector2(velocity_x, velocity_y)
 
+
 func get_animation_state_at_time(
         result: PlayerAnimationState,
         edge_time: float) -> void:
@@ -107,6 +113,7 @@ func get_animation_state_at_time(
     result.animation_type = PlayerAnimationType.WALK
     result.animation_position = edge_time
     result.facing_left = get_end_surface().side == SurfaceSide.LEFT_WALL
+
 
 func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,
@@ -117,6 +124,7 @@ func _check_did_just_reach_surface_destination(
     else:
         return surface_state.just_grabbed_left_wall or \
                 surface_state.just_grabbed_right_wall
+
 
 static func _calculate_instructions(
         start: PositionAlongSurface,

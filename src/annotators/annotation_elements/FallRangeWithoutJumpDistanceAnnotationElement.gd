@@ -4,6 +4,7 @@ extends PolylineAnnotationElement
 const TYPE := AnnotationElementType.FALL_RANGE_WITHOUT_JUMP_DISTANCE
 const LEGEND_ITEM_CLASS_REFERENCE := FallRangeWithoutJumpDistanceLegendItem
 
+
 func _init(
         vertices: Array,
         color_params := Surfacer.ann_defaults \

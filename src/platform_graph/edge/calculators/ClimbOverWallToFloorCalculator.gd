@@ -5,11 +5,13 @@ const NAME := "ClimbOverWallToFloorCalculator"
 const EDGE_TYPE := EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE
 const IS_A_JUMP_CALCULATOR := false
 
+
 func _init().(
         NAME,
         EDGE_TYPE,
         IS_A_JUMP_CALCULATOR) -> void:
     pass
+
 
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null and \
@@ -17,6 +19,7 @@ func get_can_traverse_from_surface(surface: Surface) -> bool:
                     surface.counter_clockwise_convex_neighbor != null) or \
             (surface.side == SurfaceSide.RIGHT_WALL and \
                     surface.clockwise_convex_neighbor != null))
+
 
 func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
@@ -86,6 +89,7 @@ func get_all_inter_surface_edges_from_surface(
             end_position)
     inter_surface_edges_result.valid_edges.push_back(edge)
 
+
 func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
@@ -109,6 +113,7 @@ func calculate_edge(
             position_end,
             collision_params.movement_params,
             trajectory)
+
 
 static func _calculate_trajectory(
         movement_params: MovementParams,
@@ -201,6 +206,7 @@ static func _calculate_trajectory(
             frame_discrete_positions_from_test
     return trajectory
 
+
 static func _calculate_displacement_x_for_vertical_distance_past_edge( \
         distance_past_edge: float,
         is_left_wall: bool,
@@ -261,6 +267,7 @@ static func _calculate_displacement_x_for_vertical_distance_past_edge( \
                 "RectangleShape2D.") % \
                 collider_shape)
         return INF
+
 
 static func _calculate_circular_displacement_x_for_vertical_distance_past_edge(
         distance_past_edge: float,

@@ -64,9 +64,11 @@ var _initial_time_scale: float
 var _current_zoom: float
 var _current_time_scale: float
 
+
 func _enter_tree() -> void:
     _tween = ScaffolderTween.new()
     add_child(_tween)
+
 
 func configure(
         sequence: Array,
@@ -75,6 +77,7 @@ func configure(
     self.sequence = sequence
     self.player = player
     self.level = level
+
 
 func start() -> void:
     assert(!sequence.empty())
@@ -106,6 +109,7 @@ func start() -> void:
     if !Surfacer.is_intro_choreography_shown:
         skip()
 
+
 func _on_finished() -> void:
     _tween.stop_all()
     player.navigator.disconnect(
@@ -122,6 +126,7 @@ func _on_finished() -> void:
     Gs.camera_controller.zoom_factor = _initial_zoom
     Gs.time.time_scale = _initial_time_scale
     emit_signal("finished")
+
 
 func _execute_next_step() -> void:
     index += 1
@@ -235,9 +240,11 @@ func _execute_next_step() -> void:
         else:
             _execute_next_step()
 
+
 func on_interaction() -> void:
     if is_skippable:
         skip()
+
 
 func skip() -> void:
     if _is_skipped:

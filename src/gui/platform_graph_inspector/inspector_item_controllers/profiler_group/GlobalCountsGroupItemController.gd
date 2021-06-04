@@ -6,6 +6,7 @@ const IS_LEAF := false
 const STARTS_COLLAPSED := false
 const PREFIX := "Global counts"
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -19,14 +20,17 @@ func _init(
         graph) -> void:
     _post_init()
 
+
 func get_text() -> String:
     return PREFIX
+
 
 func get_description() -> String:
     return ("Some stats on the overall platform graph for the %s " +
             "player.") % [
         graph.movement_params.name,
     ]
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -35,6 +39,7 @@ func find_and_expand_controller(
             "find_and_expand_controller should not be called for " +
             "GLOBAL_COUNTS_GROUP.")
     return false
+
 
 func _create_children_inner() -> void:
     var text: String = "%s total surfaces" % graph.counts.total_surfaces
@@ -74,9 +79,11 @@ func _create_children_inner() -> void:
                 funcref(self, "_get_annotation_elements_for_edge_type_description_item"),
                 edge_type)
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func get_annotation_elements() -> Array:
     var result := SurfacesGroupItemController.get_annotation_elements_from_graph(graph)
@@ -85,11 +92,14 @@ func get_annotation_elements() -> Array:
             EdgesGroupItemController.get_annotation_elements_from_graph(graph))
     return result
 
+
 func _get_annotation_elements_for_surfaces_description_item() -> Array:
     return SurfacesGroupItemController.get_annotation_elements_from_graph(graph)
 
+
 func _get_annotation_elements_for_edges_description_item() -> Array:
     return EdgesGroupItemController.get_annotation_elements_from_graph(graph)
+
 
 func _get_annotation_elements_for_edge_type_description_item(edge_type: int) -> Array:
     return EdgeTypeInEdgesGroupItemController.get_annotation_elements_from_graph_and_type(

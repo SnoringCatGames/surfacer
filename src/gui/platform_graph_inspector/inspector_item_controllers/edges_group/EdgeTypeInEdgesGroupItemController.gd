@@ -10,6 +10,7 @@ var edge_type := EdgeType.UNKNOWN
 # Array<Edge>
 var edges: Array
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -29,6 +30,7 @@ func _init(
     self.edges = edges
     _post_init()
 
+
 func to_string() -> String:
     return ("%s { " +
             "edge_calc_result_type=%s, " +
@@ -41,17 +43,21 @@ func to_string() -> String:
         edges.size(),
     ]
 
+
 func get_text() -> String:
     return "%ss [%s]" % [
         EdgeType.get_string(edge_type),
         edges.size(),
     ]
 
+
 func get_description() -> String:
     return EdgeType.get_description(edge_type)
 
+
 func get_has_children() -> bool:
     return !edges.empty()
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -61,6 +67,7 @@ func find_and_expand_controller(
             "EDGE_TYPE_IN_EDGES_GROUP.")
     return false
 
+
 func _create_children_inner() -> void:
     for edge in edges:
         ValidEdgeItemController.new(
@@ -69,9 +76,11 @@ func _create_children_inner() -> void:
                 graph,
                 edge)
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func get_annotation_elements() -> Array:
     var elements := []
@@ -84,6 +93,7 @@ func get_annotation_elements() -> Array:
                 false)
         elements.push_back(element)
     return elements
+
 
 static func get_annotation_elements_from_graph_and_type(
         graph: PlatformGraph,

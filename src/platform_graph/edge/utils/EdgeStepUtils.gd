@@ -3,6 +3,7 @@ extends Reference
 # A collection of utility functions for calculating state related to
 # MovementCalcSteps.
 
+
 # Calculates movement steps to reach the given destination.
 # 
 # This first calculates the one vertical step of the overall movement, using
@@ -56,6 +57,7 @@ static func calculate_steps_with_new_jump_height(
                 edge_result_metadata.edge_calc_result_type
     
     return calc_result
+
 
 # Recursively calculates a list of movement steps to reach the given
 # destination.
@@ -270,6 +272,7 @@ static func calculate_steps_between_waypoints(
     
     return calc_result
 
+
 # Check whether either waypoint can be satisfied with our current max jump
 # height.
 static func calculate_steps_between_waypoints_without_backtracking_on_height(
@@ -412,6 +415,7 @@ static func calculate_steps_between_waypoints_without_backtracking_on_height(
     edge_calc_params.destination_waypoint = destination_original
     
     return result
+
 
 # Considers whether an increased jump height would enable movement through
 # either of the given waypoints around a colliding surface. If so, then the
@@ -606,6 +610,7 @@ static func calculate_steps_between_waypoints_with_increasing_jump_height(
     edge_calc_params.destination_waypoint = destination_original
     
     return previous_calc_results
+
 
 # Check whether either waypoint can be satisfied if we backtrack to
 # re-calculate the initial vertical step with a higher max jump height. This

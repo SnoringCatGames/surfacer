@@ -12,6 +12,7 @@ const SURFACE_TYPE := SurfaceType.WALL
 const ENTERS_AIR := true
 const INCLUDES_AIR_TRAJECTORY := true
 
+
 func _init(
         calculator = null,
         start: PositionAlongSurface = null,
@@ -37,11 +38,13 @@ func _init(
         0.0) -> void:
     pass
 
+
 func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     return trajectory.distance_from_continuous_frames
+
 
 func _calculate_duration(
         start: PositionAlongSurface,
@@ -54,6 +57,7 @@ func _calculate_duration(
             true,
             movement_params)
 
+
 func get_animation_state_at_time(
         result: PlayerAnimationState,
         edge_time: float) -> void:
@@ -61,6 +65,7 @@ func get_animation_state_at_time(
     result.animation_type = PlayerAnimationType.CLIMB_UP
     result.animation_position = edge_time
     result.facing_left = get_start_surface().side == SurfaceSide.LEFT_WALL
+
 
 func _update_expected_position_along_surface(
         navigation_state: PlayerNavigationState,
@@ -76,6 +81,7 @@ func _update_expected_position_along_surface(
     else:
         position.target_projection_onto_surface = Vector2.INF
 
+
 func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
@@ -85,8 +91,10 @@ func _check_did_just_reach_surface_destination(
     else:
         return surface_state.just_grabbed_floor
 
+
 func _get_weight_multiplier() -> float:
     return movement_params.walking_edge_weight_multiplier
+
 
 static func _calculate_instructions(
         start: PositionAlongSurface,
@@ -116,6 +124,7 @@ static func _calculate_instructions(
     return EdgeInstructions.new(
             [inward_instruction, upward_instruction],
             duration)
+
 
 # This edge needs to override this function, since Godot's collision engine
 # generates many false-positive departures and collisions when rounding the

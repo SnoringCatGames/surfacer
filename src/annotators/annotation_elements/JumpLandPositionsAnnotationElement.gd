@@ -10,6 +10,7 @@ var dash_length: float
 var dash_gap: float
 var dash_stroke_width: float
 
+
 func _init(
         jump_land_positions: JumpLandPositions,
         color_params := \
@@ -27,6 +28,7 @@ func _init(
     self.dash_gap = dash_gap
     self.dash_stroke_width = dash_stroke_width
     self.radius = radius
+
 
 func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
@@ -50,6 +52,7 @@ func draw(canvas: CanvasItem) -> void:
             jump_land_positions.land_position,
             true,
             color)
+
 
 func _create_legend_items() -> Array:
     var hypothetical_edge_item := HypotheticalEdgeTrajectoryLegendItem.new()

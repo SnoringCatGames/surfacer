@@ -1,6 +1,7 @@
 class_name CollisionCheckUtils
 extends Reference
 
+
 # Checks whether a collision would occur with any surface during the given
 # instructions.
 # 
@@ -206,6 +207,7 @@ static func check_instructions_discrete_frame_state(
     
     return null
 
+
 # Checks whether a collision would occur with any surface during the given
 # horizontal step. This is calculated by considering the continuous physics
 # state according to the parabolic equations of motion. This does not
@@ -343,6 +345,7 @@ static func check_continuous_horizontal_step_for_collision(
             edge_result_metadata)
     
     return collision
+
 
 # Determines whether the given motion of the given shape would collide with a
 # surface.

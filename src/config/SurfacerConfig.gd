@@ -215,6 +215,7 @@ var player_param_classes: Array
 
 # ---
 
+
 func amend_app_manifest(manifest: Dictionary) -> void:
     manifest.must_restart_level_to_change_settings = \
             _must_restart_level_to_change_settings
@@ -249,6 +250,7 @@ func amend_app_manifest(manifest: Dictionary) -> void:
         if !manifest.settings_details_item_class_inclusions.has(inclusion) and \
                 !manifest.settings_details_item_class_exclusions.has(inclusion):
             manifest.settings_details_item_class_inclusions.push_back(inclusion)
+
 
 func register_app_manifest(manifest: Dictionary) -> void:
     self.manifest = manifest
@@ -359,6 +361,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.is_computer_prediction_shown = \
                 manifest.is_computer_prediction_shown
 
+
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
@@ -396,6 +399,7 @@ func initialize() -> void:
     ann_defaults = AnnotationElementDefaults.new()
     annotators = Annotators.new()
     add_child(Surfacer.annotators)
+
 
 func get_is_inspector_panel_open() -> bool:
     return is_instance_valid(inspector_panel) and inspector_panel.is_open

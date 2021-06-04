@@ -20,14 +20,17 @@ var target_projection_onto_surface := Vector2.INF
 
 var side: int setget ,_get_side
 
+
 func _init(position_to_copy = null) -> void:
     if position_to_copy != null:
         copy(self, position_to_copy)
+
 
 func reset() -> void:
     self.surface = null
     self.target_point = Vector2.INF
     self.target_projection_onto_surface = Vector2.INF
+
 
 func match_current_grab(
         surface: Surface,
@@ -35,6 +38,7 @@ func match_current_grab(
     self.surface = surface
     self.target_point = player_center
     self.target_projection_onto_surface = Vector2.INF
+
 
 func match_surface_target_and_collider(
         surface: Surface,
@@ -51,9 +55,11 @@ func match_surface_target_and_collider(
                     clips_to_surface_bounds,
                     matches_target_to_player_dimensions)
 
+
 func update_target_projection_onto_surface() -> void:
     self.target_projection_onto_surface = \
             Gs.geometry.project_point_onto_surface(target_point, surface)
+
 
 func _clip_and_project_target_point_for_center_of_collider(
         surface: Surface,
@@ -96,6 +102,7 @@ func _clip_and_project_target_point_for_center_of_collider(
                         target_point.y) + \
                     target_offset_from_surface
 
+
 func to_string() -> String:
     return "PositionAlongSurface{ %s, %s }" % [
             target_point,
@@ -104,10 +111,12 @@ func to_string() -> String:
                     "NULL SURFACE",
         ]
 
+
 func _get_side() -> int:
     return surface.side if \
             surface != null else \
             SurfaceSide.NONE
+
 
 static func copy(
         destination: PositionAlongSurface,
@@ -117,12 +126,14 @@ static func copy(
     destination.target_projection_onto_surface = \
             source.target_projection_onto_surface
 
+
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     surface = context.id_to_surface[int(json_object.s)]
     target_point = Gs.utils.decode_vector2(json_object.t)
     target_projection_onto_surface = Gs.utils.decode_vector2(json_object.p)
+
 
 func to_json_object() -> Dictionary:
     return {

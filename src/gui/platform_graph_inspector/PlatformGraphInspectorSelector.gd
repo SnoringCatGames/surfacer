@@ -24,13 +24,16 @@ var current_annotation_elements := []
 
 var selection_time := -1.0
 
+
 func _init(inspector) -> void:
     self.inspector = inspector
+
 
 func _process(_delta: float) -> void:
     if first_target != previous_first_target:
         previous_first_target = first_target
         update()
+
 
 func _unhandled_input(event: InputEvent) -> void:
     if Gs.is_user_interaction_enabled and \
@@ -76,6 +79,7 @@ func _unhandled_input(event: InputEvent) -> void:
         # The user is releasing the ctrl key.
         first_target = null
 
+
 func _draw() -> void:
     Surfacer.annotators.element_annotator \
             .erase_all(current_annotation_elements)
@@ -86,6 +90,7 @@ func _draw() -> void:
         _draw_selected_origin()
     else:
         _draw_possible_jump_land_positions()
+
 
 func _draw_selected_origin() -> void:
     Gs.draw_utils.draw_dashed_polyline(
@@ -103,6 +108,7 @@ func _draw_selected_origin() -> void:
             ORIGIN_SURFACE_SELECTION_COLOR,
             ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
 
+
 func _draw_possible_jump_land_positions() -> void:
     for jump_land_positions in possible_jump_land_positions:
         current_annotation_elements.push_back(
@@ -111,11 +117,13 @@ func _draw_possible_jump_land_positions() -> void:
     Surfacer.annotators.element_annotator \
             .add_all(current_annotation_elements)
 
+
 func clear() -> void:
     first_target = null
     possible_jump_land_positions = []
     update()
     selection_time = -1.0
+
 
 func should_selection_have_been_handled_in_tree_by_now() -> bool:
     return selection_time + \

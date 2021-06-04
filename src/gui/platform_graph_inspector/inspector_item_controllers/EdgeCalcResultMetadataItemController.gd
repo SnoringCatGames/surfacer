@@ -9,6 +9,7 @@ const PREFIX := "Calculation"
 var edge_attempt: EdgeAttempt
 var edge_result_metadata: EdgeCalcResultMetadata
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -28,6 +29,7 @@ func _init(
     self.edge_result_metadata = edge_result_metadata
     _post_init()
 
+
 func to_string() -> String:
     return ("%s { " +
             "edge_calc_result_type=%s, " +
@@ -42,6 +44,7 @@ func to_string() -> String:
         edge_result_metadata.total_step_count,
     ]
 
+
 func get_text() -> String:
     return "%s (%s) [%s]" % [
         PREFIX,
@@ -54,6 +57,7 @@ func get_text() -> String:
         edge_result_metadata.total_step_count,
     ]
 
+
 func get_description() -> String:
     return "Calculation details for this edge. " + \
             (EdgeCalcResultType.get_description(
@@ -63,6 +67,7 @@ func get_description() -> String:
             WaypointValidity.get_description(
                     edge_result_metadata.waypoint_validity))
 
+
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
@@ -71,8 +76,10 @@ func find_and_expand_controller(
             "EDGE_CALC_RESULT_METADATA.")
     return false
 
+
 func get_has_children() -> bool:
     return !edge_result_metadata.failed_before_creating_steps
+
 
 func _create_children_inner() -> void:
     for step_result_metadata in edge_result_metadata.children_step_attempts:
@@ -84,9 +91,11 @@ func _create_children_inner() -> void:
                 step_result_metadata,
                 EdgeStepCalcResultMetadataItemControllerFactory)
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func get_annotation_elements() -> Array:
     var elements := []

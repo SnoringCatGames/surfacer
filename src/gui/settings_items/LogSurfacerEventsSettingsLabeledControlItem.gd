@@ -8,11 +8,13 @@ const DESCRIPTION := (
         "won't care. " +
         "These logs would be shown in the debug panel.")
 
+
 func _init(__ = null).(
         LABEL,
         DESCRIPTION \
         ) -> void:
     pass
+
 
 func on_pressed(pressed: bool) -> void:
     Surfacer.is_surfacer_logging = pressed
@@ -20,8 +22,10 @@ func on_pressed(pressed: bool) -> void:
             Surfacer.IS_SURFACER_LOGGING_SETTINGS_KEY,
             pressed)
 
+
 func get_is_pressed() -> bool:
     return Surfacer.is_surfacer_logging
+
 
 func get_is_enabled() -> bool:
     return true

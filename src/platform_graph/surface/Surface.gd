@@ -30,6 +30,7 @@ var center: Vector2 setget ,_get_center
 var clockwise_neighbor: Surface setget ,_get_clockwise_neighbor
 var counter_clockwise_neighbor: Surface setget ,_get_counter_clockwise_neighbor
 
+
 func _init(
         vertices := [],
         side := SurfaceSide.NONE,
@@ -44,6 +45,7 @@ func _init(
     if side != SurfaceSide.NONE:
         self.normal = SurfaceSide.get_normal(side)
 
+
 func to_string() -> String:
     return "Surface{ %s, [ %s, %s ] }" % [
             SurfaceSide.get_string(side),
@@ -51,24 +53,30 @@ func to_string() -> String:
             vertices[vertices.size() - 1],
         ]
 
+
 func _get_first_point() -> Vector2:
     return vertices[0]
+
 
 func _get_last_point() -> Vector2:
     return vertices[vertices.size() - 1]
 
+
 func _get_center() -> Vector2:
     return bounding_box.position + (bounding_box.end - bounding_box.position) / 2.0
+
 
 func _get_clockwise_neighbor() -> Surface:
     return clockwise_convex_neighbor if \
             clockwise_convex_neighbor != null else \
             clockwise_concave_neighbor
 
+
 func _get_counter_clockwise_neighbor() -> Surface:
     return counter_clockwise_convex_neighbor if \
             counter_clockwise_convex_neighbor != null else \
             counter_clockwise_concave_neighbor
+
 
 func probably_equal(other: Surface) -> bool:
     if self.side != other.side:
@@ -122,6 +130,7 @@ func probably_equal(other: Surface) -> bool:
     
     return true
 
+
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
@@ -131,6 +140,7 @@ func load_from_json_object(
     tile_map_indices = to_int_array(json_object.i)
     bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
     normal = SurfaceSide.get_normal(side)
+
 
 func load_references_from_json_context(
         json_object: Dictionary,
@@ -146,6 +156,7 @@ func load_references_from_json_context(
     counter_clockwise_concave_neighbor = \
             _get_surface_from_id(json_object.ccwc, context.id_to_surface)
 
+
 func to_json_object() -> Dictionary:
     return {
         d = self.get_instance_id(),
@@ -160,12 +171,14 @@ func to_json_object() -> Dictionary:
         ccwc = Gs.utils.get_instance_id_or_not(counter_clockwise_concave_neighbor),
     }
 
+
 func _get_surface_from_id(
         id: int,
         id_to_surface: Dictionary) -> Surface:
     return id_to_surface[id] if \
             id >= 0 else \
             null
+
 
 func to_int_array(source: Array) -> Array:
     var result := []

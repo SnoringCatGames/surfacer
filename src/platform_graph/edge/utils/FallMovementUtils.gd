@@ -9,6 +9,7 @@ const FALL_DISTANCE_TO_CHECK_FOR_INPUTLESS_LANDING := 1000.0
 #       failed_edge_attempts_result and
 #       find_landing_trajectory_between_positions.
 
+
 # Finds all possible landing trajectories from the given start state.
 static func find_landing_trajectories_to_any_surface(
         inter_surface_edges_results: Array,
@@ -140,6 +141,7 @@ static func find_landing_trajectories_to_any_surface(
                 inter_surface_edges_result.failed_edge_attempts.push_back(
                         failed_attempt)
 
+
 static func find_landing_trajectory_between_positions(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
@@ -260,6 +262,7 @@ static func find_landing_trajectory_between_positions(
     
     return calc_result
 
+
 static func find_surfaces_in_fall_range_from_point(
         movement_params: MovementParams,
         all_possible_surfaces_set: Dictionary,
@@ -306,6 +309,7 @@ static func find_surfaces_in_fall_range_from_point(
             [top_left, top_right, bottom_right, bottom_left, top_left],
             all_possible_surfaces_set)
 
+
 static func find_surfaces_in_fall_range_from_surface(
         movement_params: MovementParams,
         all_possible_surfaces_set: Dictionary,
@@ -347,6 +351,7 @@ static func find_surfaces_in_fall_range_from_surface(
             surfaces_in_fall_range_without_jump_distance_result_set,
             fall_range_polygon_without_jump_distance,
             all_possible_surfaces_set)
+
 
 static func calculate_jump_or_fall_range_polygon_from_surface(
         movement_params: MovementParams,
@@ -500,6 +505,7 @@ static func calculate_jump_or_fall_range_polygon_from_surface(
     
     return [top_left, top_right, bottom_right, bottom_left, top_left]
 
+
 # This is only an approximation, since it only considers the end points of the
 # surface rather than each segment of the surface polyline.
 static func _get_surfaces_intersecting_triangle(
@@ -517,6 +523,7 @@ static func _get_surfaces_intersecting_triangle(
                 triangle_c):
             result.push_back(surface)
     return result
+
 
 # This is only an approximation, since it only considers the end points of the
 # surface rather than each segment of the surface polyline.

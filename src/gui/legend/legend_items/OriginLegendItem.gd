@@ -7,10 +7,12 @@ const TEXT := "Origin"
 const SCALE := 0.8
 const SECTOR_ARC_LENGTH := 2.2
 
+
 func _init().(
         TYPE,
         TEXT) -> void:
     pass
+
 
 func _draw_shape(
         center: Vector2,

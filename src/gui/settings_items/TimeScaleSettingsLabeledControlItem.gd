@@ -14,6 +14,7 @@ const MIN_SCALE_VALUE := 0.25
 const MAX_SCALE_VALUE := 4.0
 const MID_SCALE_VALUE := 1.0
 
+
 func _init(__ = null).(
         LABEL,
         DESCRIPTION,
@@ -25,6 +26,7 @@ func _init(__ = null).(
         ) -> void:
     pass
 
+
 func on_value_changed(control_value: float) -> void:
     var scale_value := _control_value_to_scale_value(control_value)
     Gs.time.additional_debug_time_scale = scale_value
@@ -32,11 +34,14 @@ func on_value_changed(control_value: float) -> void:
             ScaffolderConfig.ADDITIONAL_DEBUG_TIME_SCALE_SETTINGS_KEY,
             scale_value)
 
+
 func get_value() -> float:
     return _scale_value_to_control_value(Gs.time.additional_debug_time_scale)
 
+
 func get_is_enabled() -> bool:
     return true
+
 
 func _control_value_to_scale_value(control_value: float) -> float:
     if control_value < MID_CONTROL_VALUE:
@@ -49,6 +54,7 @@ func _control_value_to_scale_value(control_value: float) -> float:
                 (control_value - MID_CONTROL_VALUE) / \
                 (MAX_CONTROL_VALUE - MID_CONTROL_VALUE)
         return lerp(MID_SCALE_VALUE, MAX_SCALE_VALUE, weight)
+
 
 func _scale_value_to_control_value(scale_value: float) -> float:
     if scale_value < MID_SCALE_VALUE:

@@ -6,6 +6,7 @@ const TEXT := "Edge trajectory\n(continuous)"
 var COLOR_PARAMS: ColorParams = Surfacer.ann_defaults \
         .DEFAULT_EDGE_CONTINUOUS_TRAJECTORY_COLOR_PARAMS
 
+
 func _init().(
         TYPE,
         TEXT,

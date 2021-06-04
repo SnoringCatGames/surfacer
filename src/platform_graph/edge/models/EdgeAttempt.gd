@@ -19,6 +19,7 @@ var includes_extra_wall_land_horizontal_speed: bool
 
 var calculator
 
+
 func _init(
         edge_type: int,
         edge_calc_result_type: int,
@@ -38,15 +39,18 @@ func _init(
             includes_extra_wall_land_horizontal_speed
     self.calculator = calculator
 
+
 func get_start() -> Vector2:
     return start_position_along_surface.target_point
 func get_end() -> Vector2:
     return end_position_along_surface.target_point
 
+
 func get_start_surface() -> Surface:
     return start_position_along_surface.surface
 func get_end_surface() -> Surface:
     return end_position_along_surface.surface
+
 
 func load_from_json_object(
         json_object: Dictionary,
@@ -54,9 +58,11 @@ func load_from_json_object(
     Gs.logger.error(
             "Abstract EdgeAttempt.load_from_json_object is not implemented")
 
+
 func to_json_object() -> Dictionary:
     Gs.logger.error("Abstract EdgeAttempt.to_json_object is not implemented")
     return {}
+
 
 func _load_edge_attempt_state_from_json_object(
         json_object: Dictionary,
@@ -71,6 +77,7 @@ func _load_edge_attempt_state_from_json_object(
     includes_extra_jump_duration = json_object.d
     includes_extra_wall_land_horizontal_speed = json_object.h
     calculator = Surfacer.edge_movements[json_object.c]
+
 
 func _edge_attempt_state_to_json_object(json_object: Dictionary) -> void:
     json_object.t = edge_type

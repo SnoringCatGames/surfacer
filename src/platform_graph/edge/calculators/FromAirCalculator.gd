@@ -5,14 +5,17 @@ const NAME := "FromAirCalculator"
 const EDGE_TYPE := EdgeType.FROM_AIR_EDGE
 const IS_A_JUMP_CALCULATOR := false
 
+
 func _init().(
         NAME,
         EDGE_TYPE,
         IS_A_JUMP_CALCULATOR) -> void:
     pass
 
+
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface == null
+
 
 func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
@@ -23,6 +26,7 @@ func get_all_inter_surface_edges_from_surface(
     Gs.logger.error(
             "FromAirCalculator." +
             "get_all_inter_surface_edges_from_surface should not be called")
+
 
 func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
@@ -46,6 +50,7 @@ func calculate_edge(
             position_end,
             needs_extra_wall_land_horizontal_speed)
 
+
 func optimize_edge_land_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
@@ -61,6 +66,7 @@ func optimize_edge_land_position_for_path(
             edge,
             next_edge,
             self)
+
 
 # Finds a movement step that will result in landing on a surface, with an
 # attempt to minimize the path the player would then have to travel between
@@ -159,6 +165,7 @@ func find_a_landing_trajectory(
             calc_result.edge_calc_result_type,
             calc_result.vertical_step.time_peak_height)
 
+
 func create_edge_from_part_of_other_edge(
         other_edge: Edge,
         start_time: float,
@@ -191,6 +198,7 @@ func create_edge_from_part_of_other_edge(
             trajectory,
             other_edge.edge_calc_result_type,
             time_peak_height)
+
 
 class SurfaceMaxYComparator:
     static func sort(a: Surface, b: Surface) -> bool:

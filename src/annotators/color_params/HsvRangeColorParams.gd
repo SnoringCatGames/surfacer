@@ -12,6 +12,7 @@ var value_max: float
 var alpha_min: float
 var alpha_max: float
 
+
 func _init(
         hue_min: float,
         hue_max: float,
@@ -30,6 +31,7 @@ func _init(
     self.value_max = value_max
     self.alpha_min = alpha_min
     self.alpha_max = alpha_max
+
 
 func get_color() -> Color:
     var hue := randf() * (hue_max - hue_min) + hue_min

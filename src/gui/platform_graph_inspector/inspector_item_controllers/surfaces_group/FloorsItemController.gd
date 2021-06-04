@@ -5,6 +5,7 @@ const TYPE := InspectorItemType.FLOORS
 const STARTS_COLLAPSED := true
 const SIDE := SurfaceSide.FLOOR
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -19,6 +20,7 @@ func _init(
         SIDE,
         surfaces_to_surfaces_to_edge_types_to_edges_results) -> void:
     pass
+
 
 func get_description() -> String:
     return ("There are %s floor surfaces in the plaform graph for the %s " +

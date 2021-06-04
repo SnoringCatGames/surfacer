@@ -15,6 +15,7 @@ var left_walls_item_controller: LeftWallsItemController
 var right_walls_item_controller: RightWallsItemController
 var ceilings_item_controller: CeilingsItemController
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -31,11 +32,13 @@ func _init(
             surfaces_to_surfaces_to_edge_types_to_edges_results
     _post_init()
 
+
 func get_text() -> String:
     return "%s [%s]" % [
         PREFIX,
         graph.counts.total_surfaces,
     ]
+
 
 func get_description() -> String:
     return ("A surface is a distinct floor, wall, or ceiling segment " +
@@ -45,11 +48,13 @@ func get_description() -> String:
         graph.movement_params.name,
     ]
 
+
 func to_string() -> String:
     return "%s { count=%s }" % [
         InspectorItemType.get_string(type),
         graph.counts.total_surfaces,
     ]
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -59,6 +64,7 @@ func find_and_expand_controller(
             search_type,
             metadata)
     return true
+
 
 func _find_and_expand_controller_recursive(
         search_type: int,
@@ -85,6 +91,7 @@ func _find_and_expand_controller_recursive(
             Gs.logger.error("Invalid SurfaceSide: %s" % \
                     SurfaceSide.get_string(side))
 
+
 func _create_children_inner() -> void:
     floors_item_controller = FloorsItemController.new(
             tree_item,
@@ -107,6 +114,7 @@ func _create_children_inner() -> void:
             graph,
             surfaces_to_surfaces_to_edge_types_to_edges_results)
 
+
 func _destroy_children_inner() -> void:
     floors_item_controller.destroy()
     floors_item_controller = null
@@ -117,8 +125,10 @@ func _destroy_children_inner() -> void:
     ceilings_item_controller.destroy()
     ceilings_item_controller = null
 
+
 func get_annotation_elements() -> Array:
     return get_annotation_elements_from_graph(graph)
+
 
 static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var elements := []

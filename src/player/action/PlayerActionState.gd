@@ -37,6 +37,7 @@ var just_released_face_right := false
 
 var start_dash := false
 
+
 func clear() -> void:
     self.delta_scaled = INF
     
@@ -74,6 +75,7 @@ func clear() -> void:
     
     self.start_dash = false
 
+
 func copy(other: PlayerActionState) -> void:
     self.delta_scaled = other.delta_scaled
     
@@ -110,6 +112,7 @@ func copy(other: PlayerActionState) -> void:
     self.just_released_face_right = other.just_released_face_right
     
     self.start_dash = other.start_dash
+
 
 func log_new_presses_and_releases(
         player,
@@ -168,6 +171,7 @@ func log_new_presses_and_releases(
             start_dash,
             false,
             time)
+
 
 static func _log_new_press_or_release(
         player,

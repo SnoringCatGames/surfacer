@@ -17,6 +17,7 @@ const JUMP_DURATION_INCREASE_EPSILON := Time.PHYSICS_TIME_STEP * 0.5
 const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := \
         Time.PHYSICS_TIME_STEP * 2.5
 
+
 # Translates movement data from a form that is more useful when calculating
 # the movement to a form that is more useful when executing the movement.
 static func convert_calculation_steps_to_movement_instructions(
@@ -127,6 +128,7 @@ static func convert_calculation_steps_to_movement_instructions(
             records_profile_or_edge_result_metadata)
     
     return instructions_wrapper
+
 
 static func sub_instructions(
         base_instructions: EdgeInstructions,

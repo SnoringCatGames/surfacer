@@ -1,5 +1,6 @@
 class_name PlayerParamsUtils
 
+
 static func create_player_params(param_class) -> PlayerParams:
     var movement_params: MovementParams = param_class.new()
     
@@ -15,6 +16,7 @@ static func create_player_params(param_class) -> PlayerParams:
             edge_calculators,
             action_handlers)
 
+
 # Array<PlayerActionHandler>
 static func _get_action_handlers(movement_params: MovementParams) -> Array:
     var names := movement_params.action_handler_names
@@ -29,6 +31,7 @@ static func _get_action_handlers(movement_params: MovementParams) -> Array:
     
     return action_handlers
 
+
 # Array<Movement>
 static func _get_edge_calculators(movement_params: MovementParams) -> Array:
     var names := movement_params.edge_calculator_names
@@ -40,6 +43,7 @@ static func _get_edge_calculators(movement_params: MovementParams) -> Array:
         edge_calculators[i] = Surfacer.edge_movements[names[i]]
     
     return edge_calculators
+
 
 static func _calculate_dependent_movement_params(
         movement_params: MovementParams) -> void:
@@ -104,6 +108,7 @@ static func _calculate_dependent_movement_params(
         movement_params.action_handler_names.push_back(
                 MatchExpectedEdgeTrajectoryAction.NAME)
 
+
 static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.gravity_fast_fall >= 0)
     assert(movement_params.slow_rise_gravity_multiplier >= 0)
@@ -147,6 +152,7 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     
     _check_animator_params(movement_params.animator_params)
 
+
 static func _check_animator_params(
         animator_params: PlayerAnimatorParams) -> void:
     assert(animator_params.rest_name != "")
@@ -171,6 +177,7 @@ static func _check_animator_params(
             !is_inf(animator_params.climb_up_playback_rate))
     assert(animator_params.climb_down_playback_rate != 0.0 and \
             !is_inf(animator_params.climb_down_playback_rate))
+
 
 class ActionHandlersComparator:
     static func sort(

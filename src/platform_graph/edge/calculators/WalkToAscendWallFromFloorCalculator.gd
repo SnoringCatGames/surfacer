@@ -7,17 +7,20 @@ const IS_A_JUMP_CALCULATOR := false
 
 const END_POINT_OFFSET := ClimbDownWallToFloorCalculator.END_POINT_OFFSET
 
+
 func _init().(
         NAME,
         EDGE_TYPE,
         IS_A_JUMP_CALCULATOR) -> void:
     pass
 
+
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null and \
             surface.side == SurfaceSide.FLOOR and \
             (surface.counter_clockwise_concave_neighbor != null or \
             surface.clockwise_concave_neighbor != null)
+
 
 func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
@@ -104,6 +107,7 @@ func get_all_inter_surface_edges_from_surface(
                 false,
                 false)
         inter_surface_edges_result.valid_edges.push_back(edge)
+
 
 func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,

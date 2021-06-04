@@ -15,15 +15,18 @@ var duration: float
 
 var is_optimized := false
 
+
 func _init(edges: Array) -> void:
     self.edges = edges
     self.origin = edges.front().start_position_along_surface
     self.destination = edges.back().end_position_along_surface
     update_distance_and_duration()
 
+
 func update_distance_and_duration() -> void:
     self.distance = _calculate_distance()
     self.duration = _calculate_duration()
+
 
 func _calculate_distance() -> float:
     var distance := 0.0
@@ -31,11 +34,13 @@ func _calculate_distance() -> float:
         distance += edge.distance
     return distance
 
+
 func _calculate_duration() -> float:
     var duration := 0.0
     for edge in edges:
         duration += edge.duration
     return duration
+
 
 func push_front(edge: Edge) -> void:
     assert(Gs.geometry.are_points_equal_with_epsilon(
@@ -44,12 +49,14 @@ func push_front(edge: Edge) -> void:
     self.edges.push_front(edge)
     self.origin = edge.start_position_along_surface
 
+
 func push_back(edge: Edge) -> void:
     assert(Gs.geometry.are_points_equal_with_epsilon(
             edge.start_position_along_surface.target_point,
             destination.target_point))
     self.edges.push_back(edge)
     self.destination = edge.end_position_along_surface
+
 
 func predict_animation_state(
         result: PlayerAnimationState,
@@ -87,6 +94,7 @@ func predict_animation_state(
     prediction_edge.get_animation_state_at_time(result, prediction_edge_time)
     
     return true
+
 
 func to_string_with_newlines(indent_level := 0) -> String:
     var indent_level_str := ""

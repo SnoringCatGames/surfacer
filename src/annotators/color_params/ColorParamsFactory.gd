@@ -1,5 +1,6 @@
 class_name ColorParamsFactory
 
+
 static func create_hsv_range_color_params_with_constant_sva(
         hue_min: float,
         hue_max: float,

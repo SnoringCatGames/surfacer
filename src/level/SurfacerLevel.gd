@@ -14,9 +14,11 @@ var inspector_panel: InspectorPanel
 var pause_button: PauseButton
 var intro_choreographer: Choreographer
 
+
 func _init() -> void:
     graph_parser = PlatformGraphParser.new()
     add_child(graph_parser)
+
 
 func _load() -> void:
     ._load()
@@ -35,6 +37,7 @@ func _load() -> void:
     
     graph_parser.parse(_id)
 
+
 func _start() -> void:
     ._start()
     
@@ -50,6 +53,7 @@ func _start() -> void:
     
     set_hud_visibility(true)
     call_deferred("_initialize_annotators")
+
 
 func _destroy() -> void:
     for group in [
@@ -67,8 +71,10 @@ func _destroy() -> void:
     
     ._destroy()
 
+
 func quit(immediately := true) -> void:
     .quit(immediately)
+
 
 func _input(event: InputEvent) -> void:
     if _get_level_play_time_unscaled() > min_controls_display_time and \
@@ -78,6 +84,7 @@ func _input(event: InputEvent) -> void:
             _get_is_started():
         if intro_choreographer != null:
             intro_choreographer.on_interaction()
+
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseButton or \
@@ -95,6 +102,7 @@ func _unhandled_input(event: InputEvent) -> void:
 #func on_unpause() -> void:
 #    .on_unpause()
 
+
 # Execute any intro cut-scene or initial navigation.
 func _execute_intro_choreography() -> void:
     intro_choreographer = \
@@ -104,14 +112,17 @@ func _execute_intro_choreography() -> void:
     add_child(intro_choreographer)
     intro_choreographer.start()
 
+
 func _on_intro_choreography_finished() -> void:
     Gs.logger.print("Intro choreography finished")
     intro_choreographer.queue_free()
     intro_choreographer = null
     _show_welcome_panel()
 
+
 func get_slow_motion_music_name() -> String:
     return ""
+
 
 func _initialize_annotators() -> void:
     set_tile_map_visibility(false)
@@ -121,6 +132,7 @@ func _initialize_annotators() -> void:
             Surfacer.group_name_computer_players]:
         for player in Gs.utils.get_all_nodes_in_group(group):
             player._on_annotators_ready()
+
 
 func add_player(
         resource_path: String,
@@ -157,6 +169,7 @@ func add_player(
     
     return player
 
+
 func set_tile_map_visibility(is_visible: bool) -> void:
     # TODO: Also show/hide background. Parallax doesn't extend from CanvasItem
     #       or have the `visible` field though.
@@ -169,14 +182,17 @@ func set_tile_map_visibility(is_visible: bool) -> void:
     for node in foregrounds:
         node.visible = is_visible
 
+
 func set_hud_visibility(is_visible: bool) -> void:
     if is_instance_valid(inspector_panel):
         inspector_panel.visible = is_visible
     if is_instance_valid(pause_button):
         pause_button.visible = is_visible
 
+
 func _get_platform_graph_for_player(player_name: String) -> PlatformGraph:
     return graph_parser.platform_graphs[player_name]
+
 
 func get_player_start_position() -> Vector2:
     var nodes := Gs.utils.get_all_nodes_in_group(
@@ -185,6 +201,7 @@ func get_player_start_position() -> Vector2:
         return Vector2.ZERO
     else:
         return nodes[0].position
+
 
 func get_is_intro_choreography_running() -> bool:
     return intro_choreographer != null

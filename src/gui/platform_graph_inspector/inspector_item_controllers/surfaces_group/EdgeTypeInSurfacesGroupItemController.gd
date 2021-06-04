@@ -12,6 +12,7 @@ var edges_results: InterSurfaceEdgesResult
 
 var failed_edges_controller: FailedEdgesGroupItemController
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -33,6 +34,7 @@ func _init(
     self.edges_results = edges_results
     _post_init()
 
+
 func to_string() -> String:
     return "%s { edge_type=%s, valid_edge_count=%s }" % [
         InspectorItemType.get_string(type),
@@ -40,18 +42,22 @@ func to_string() -> String:
         edges_results.valid_edges.size(),
     ]
 
+
 func get_text() -> String:
     return "%ss [%s]" % [
         EdgeType.get_string(edge_type),
         edges_results.valid_edges.size(),
     ]
 
+
 func get_description() -> String:
     return EdgeType.get_description(edge_type)
+
 
 func get_has_children() -> bool:
     return !edges_results.valid_edges.empty() or \
             !edges_results.failed_edge_attempts.empty()
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -65,6 +71,7 @@ func find_and_expand_controller(
         return true
     else:
         return false
+
 
 func _find_and_expand_controller_recursive(
         search_type: int,
@@ -80,6 +87,7 @@ func _find_and_expand_controller_recursive(
             return
         child = child.get_next()
     select()
+
 
 func _create_children_inner() -> void:
     for valid_edge in edges_results.valid_edges:
@@ -98,8 +106,10 @@ func _create_children_inner() -> void:
             edge_type,
             edges_results)
 
+
 func _destroy_children_inner() -> void:
     failed_edges_controller = null
+
 
 func get_annotation_elements() -> Array:
     var elements := []
