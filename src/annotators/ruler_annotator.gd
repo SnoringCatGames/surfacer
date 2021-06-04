@@ -19,10 +19,14 @@ var previous_camera_zoom := 1.0
 func _enter_tree() -> void:
     viewport = get_viewport()
     viewport_size = viewport.get_visible_rect().size
-    get_tree().get_root().connect(
+    if !viewport.is_connected(
             "size_changed",
             self,
-            "_on_viewport_size_changed")
+            "_on_viewport_size_changed"):
+        viewport.connect(
+                "size_changed",
+                self,
+                "_on_viewport_size_changed")
 
 
 func _process(_delta: float) -> void:

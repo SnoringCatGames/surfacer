@@ -5,7 +5,7 @@ extends Node
 signal slow_motion_toggled(is_enabled)
 
 const DESATURATION_SHADER := \
-        preload("res://addons/surfacer/src/Desaturation.shader")
+        preload("res://addons/surfacer/src/desaturation.shader")
 
 const ENABLE_SLOW_MOTION_DURATION := 0.3
 const DISABLE_SLOW_MOTION_DURATION := 0.2
