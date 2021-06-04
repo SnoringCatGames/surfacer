@@ -27,7 +27,7 @@ static func _get_action_handlers(movement_params: MovementParams) -> Array:
     for i in names.size():
         action_handlers[i] = Surfacer.player_actions[names[i]]
     
-    action_handlers.sort_custom(ActionHandlersComparator, "sort")
+    action_handlers.sort_custom(_ActionHandlersComparator, "sort")
     
     return action_handlers
 
@@ -137,6 +137,12 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.dash_fade_duration >= 0)
     assert(movement_params.dash_cooldown >= 0)
     assert(movement_params.dash_vertical_boost <= 0)
+    # If we're tracking beats, then we need the preselection trajectories to
+    # match the resulting navigation trajectories.
+    assert(!Surfacer.are_beats_tracked or \
+            movement_params.also_optimizes_preselection_path or \
+            !movement_params.optimizes_edge_jump_positions_at_run_time and \
+            !movement_params.optimizes_edge_land_positions_at_run_time)
     assert(!movement_params \
             .stops_after_finding_first_valid_edge_for_a_surface_pair or \
             !movement_params.calculates_all_valid_edges_for_a_surface_pair)
@@ -179,7 +185,7 @@ static func _check_animator_params(
             !is_inf(animator_params.climb_down_playback_rate))
 
 
-class ActionHandlersComparator:
+class _ActionHandlersComparator:
     static func sort(
             a: PlayerActionHandler,
             b: PlayerActionHandler) -> bool:
