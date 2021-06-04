@@ -15,6 +15,7 @@ var valid_edges := []
 # Array<EdgeCalcResult>
 var edge_calc_results := []
 
+
 func _init(
         origin_surface: Surface = null,
         destination_surface: Surface = null,
@@ -24,6 +25,7 @@ func _init(
     self.destination_surface = destination_surface
     self.edge_type = edge_type
     self.all_jump_land_positions = all_jump_land_positions
+
 
 func merge(other) -> void:
     Gs.utils.concat(
@@ -38,6 +40,7 @@ func merge(other) -> void:
     Gs.utils.concat(
             self.edge_calc_results,
             other.edge_calc_results)
+
 
 static func merge_results_with_matching_destination_surfaces(
         inter_surface_edges_results: Array) -> void:
@@ -60,6 +63,7 @@ static func merge_results_with_matching_destination_surfaces(
             i -= 1
         i += 1
 
+
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
@@ -72,6 +76,7 @@ func load_from_json_object(
             _load_failed_edge_attempts_json_array(json_object.f, context)
     valid_edges = _load_valid_edges_json_array(json_object.v, context)
 
+
 func _load_all_jump_land_positions_json_array(
         json_object: Array,
         context: Dictionary) -> Array:
@@ -80,6 +85,7 @@ func _load_all_jump_land_positions_json_array(
     for i in json_object.size():
         result[i] = context.id_to_jump_land_positions[int(json_object[i])]
     return result
+
 
 func _load_failed_edge_attempts_json_array(
         json_object: Array,
@@ -92,6 +98,7 @@ func _load_failed_edge_attempts_json_array(
         result[i] = failed_edge_attempt
     return result
 
+
 func _load_valid_edges_json_array(
         json_object: Array,
         context: Dictionary) -> Array:
@@ -101,6 +108,7 @@ func _load_valid_edges_json_array(
         result[i] = \
                 Surfacer.edge_from_json_factory.create(json_object[i], context)
     return result
+
 
 func to_json_object() -> Dictionary:
     return {
@@ -112,6 +120,7 @@ func to_json_object() -> Dictionary:
         v = _get_valid_edges_json_array(),
     }
 
+
 func _get_all_jump_land_positions_json_array() -> Array:
     var result := []
     result.resize(all_jump_land_positions.size())
@@ -119,12 +128,14 @@ func _get_all_jump_land_positions_json_array() -> Array:
         result[i] = all_jump_land_positions[i].get_instance_id()
     return result
 
+
 func _get_failed_edge_attempts_json_array() -> Array:
     var result := []
     result.resize(failed_edge_attempts.size())
     for i in failed_edge_attempts.size():
         result[i] = failed_edge_attempts[i].to_json_object()
     return result
+
 
 func _get_valid_edges_json_array() -> Array:
     var result := []

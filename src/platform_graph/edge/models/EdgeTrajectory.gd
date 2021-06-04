@@ -33,6 +33,7 @@ var jump_instruction_end: EdgeInstruction
 
 var distance_from_continuous_frames: float
 
+
 func _init(frame_continuous_positions_from_steps := PoolVector2Array(),
             frame_continuous_velocities_from_steps := PoolVector2Array(),
             waypoint_positions := [],
@@ -43,6 +44,7 @@ func _init(frame_continuous_positions_from_steps := PoolVector2Array(),
             frame_continuous_velocities_from_steps
     self.waypoint_positions = waypoint_positions
     self.distance_from_continuous_frames = distance_from_continuous_frames
+
 
 func load_from_json_object(
         json_object: Dictionary,
@@ -66,6 +68,7 @@ func load_from_json_object(
         jump_instruction_end.load_from_json_object(json_object.j, context)
     distance_from_continuous_frames = json_object.f
 
+
 func _load_horizontal_instructions_json_array(
         json_object: Array,
         context: Dictionary) -> Array:
@@ -76,6 +79,7 @@ func _load_horizontal_instructions_json_array(
         instruction.load_from_json_object(json_object[i], context)
         result[i] = instruction
     return result
+
 
 func to_json_object() -> Dictionary:
     var json_object := {
@@ -99,6 +103,7 @@ func to_json_object() -> Dictionary:
     if jump_instruction_end != null:
         json_object.j = jump_instruction_end.to_json_object()
     return json_object
+
 
 func _get_horizontal_instructions_json_array() -> Array:
     var result := []

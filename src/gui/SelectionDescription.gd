@@ -11,5 +11,6 @@ const NO_POSITIONS_PASSING_BROAD_PHASE := (
         "No jump/land positions passed broad-phase checks of edge " +
         "calculation for that selection.")
 
+
 func set_text(text: String) -> void:
     $Label.text = text

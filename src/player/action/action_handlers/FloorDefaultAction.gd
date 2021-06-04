@@ -6,12 +6,14 @@ const TYPE := SurfaceType.FLOOR
 const USES_RUNTIME_PHYSICS := true
 const PRIORITY := 210
 
+
 func _init().(
         NAME,
         TYPE,
         USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass
+
 
 func process(player: Player) -> bool:
     player.jump_count = 0

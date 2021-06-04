@@ -17,6 +17,7 @@ var tree: Tree
 var graph: PlatformGraph
 var are_children_ready: bool
 
+
 func _init(
         type: int,
         is_leaf: bool,
@@ -39,6 +40,7 @@ func _init(
     
     self.are_children_ready = false
 
+
 func _post_init() -> void:
     _update_text()
     
@@ -46,6 +48,7 @@ func _post_init() -> void:
         _create_placeholder_item()
         if !starts_collapsed:
             self.call_deferred("_create_children_if_needed")
+
 
 func destroy() -> void:
     if !is_instance_valid(tree_item):
@@ -62,16 +65,19 @@ func destroy() -> void:
     tree_item = null
     parent_item = null
 
+
 func on_item_selected() -> void:
     if Surfacer.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
         print_msg("Inspector item selected: %s", to_string())
+
 
 func on_item_expanded() -> void:
     _create_children_if_needed()
     if Surfacer.get_is_inspector_panel_open() and \
             !tree.get_is_find_and_expand_in_progress():
         print_msg("Inspector item expanded: %s", to_string())
+
 
 func on_item_collapsed() -> void:
     _destroy_children_if_needed()
@@ -80,11 +86,13 @@ func on_item_collapsed() -> void:
             get_has_children():
         print_msg("Inspector item collapsed: %s", to_string())
 
+
 func expand() -> void:
     var was_collapsed := tree_item.collapsed
     tree_item.collapsed = false
     if was_collapsed:
         on_item_expanded()
+
 
 func collapse() -> void:
     if !is_instance_valid(tree_item):
@@ -93,6 +101,7 @@ func collapse() -> void:
     tree_item.collapsed = true
     if !was_collapsed:
         on_item_collapsed()
+
 
 func select() -> void:
     tree_item.select(0)
@@ -106,6 +115,7 @@ func select() -> void:
     var scrolled_down := after_scroll > before_scroll
     # TODO: Godot doesn't seem to expose any way to assign the scroll position.
 
+
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
@@ -113,6 +123,7 @@ func find_and_expand_controller(
             "Abstract InspectorItemController" +
             ".find_and_expand_controller is not implemented")
     return false
+
 
 func _trigger_find_and_expand_controller_recursive(
         search_type: int,
@@ -123,6 +134,7 @@ func _trigger_find_and_expand_controller_recursive(
             search_type,
             metadata)
 
+
 func _find_and_expand_controller_recursive_wrapper(
         search_type: int,
         metadata: Dictionary) -> void:
@@ -131,6 +143,7 @@ func _find_and_expand_controller_recursive_wrapper(
             metadata)
     tree.call_deferred("_decrement_find_and_expand_controller_recursive_count")
 
+
 func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
@@ -138,9 +151,11 @@ func _find_and_expand_controller_recursive(
             "Abstract InspectorItemController" +
             "._find_and_expand_controller_recursive is not implemented")
 
+
 func get_text() -> String:
     Gs.logger.error("Abstract InspectorItemController.get_text is not implemented")
     return ""
+
 
 func get_description() -> String:
     Gs.logger.error(
@@ -148,11 +163,14 @@ func get_description() -> String:
             "implemented")
     return ""
 
+
 func to_string() -> String:
     return "%s {}" % InspectorItemType.get_string(type)
 
+
 func get_has_children() -> bool:
     return !is_leaf
+
 
 func _create_children_if_needed() -> void:
     if !are_children_ready:
@@ -160,6 +178,7 @@ func _create_children_if_needed() -> void:
         if get_has_children():
             _destroy_placeholder_item()
     are_children_ready = true
+
 
 func _destroy_children_if_needed() -> void:
     if are_children_ready:
@@ -177,8 +196,10 @@ func _destroy_children_if_needed() -> void:
     
     are_children_ready = false
 
+
 func _create_placeholder_item() -> void:
     placeholder_item = tree.create_item(tree_item)
+
 
 func _destroy_placeholder_item() -> void:
     if placeholder_item == null:
@@ -187,20 +208,25 @@ func _destroy_placeholder_item() -> void:
     tree_item.remove_child(placeholder_item)
     placeholder_item = null
 
+
 func _update_text() -> void:
     tree_item.set_text(
             0,
             get_text())
 
+
 func _create_children_inner() -> void:
     Gs.logger.error("Abstract InspectorItemController._create_children_inner is not implemented")
+
 
 func _destroy_children_inner() -> void:
     Gs.logger.error("Abstract InspectorItemController._destroy_children_inner is not implemented")
 
+
 func get_annotation_elements() -> Array:
     Gs.logger.error("Abstract InspectorItemController.get_annotation_elements is not implemented")
     return []
+
 
 # Conditionally prints the given message, depending on the Player's
 # configuration.

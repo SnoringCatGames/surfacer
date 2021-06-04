@@ -11,6 +11,7 @@ var destination_surface: Surface
 var edge_type := EdgeType.UNKNOWN
 var edges_results: InterSurfaceEdgesResult
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -32,11 +33,13 @@ func _init(
     self.edges_results = edges_results
     _post_init()
 
+
 func to_string() -> String:
     return "%s { failed_count=%s }" % [
         InspectorItemType.get_string(type),
         edges_results.failed_edge_attempts.size(),
     ]
+
 
 func get_text() -> String:
     return "%s [%s]" % [
@@ -44,11 +47,14 @@ func get_text() -> String:
         edges_results.failed_edge_attempts.size(),
     ]
 
+
 func get_description() -> String:
     return "These edge calculations failed."
 
+
 func get_has_children() -> bool:
     return !edges_results.failed_edge_attempts.empty()
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -72,6 +78,7 @@ func find_and_expand_controller(
             return true
     return false
 
+
 func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
@@ -88,6 +95,7 @@ func _find_and_expand_controller_recursive(
     if !metadata.were_children_ready_before:
         _destroy_children_if_needed()
 
+
 func _create_children_inner() -> void:
     for failed_edge_attempt in edges_results.failed_edge_attempts:
         FailedEdgeItemController.new(
@@ -96,9 +104,11 @@ func _create_children_inner() -> void:
                 graph,
                 failed_edge_attempt)
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func get_annotation_elements() -> Array:
     var elements := []

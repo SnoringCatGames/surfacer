@@ -21,6 +21,7 @@ var previous_path_back_end_trim_radius: float
 var pulse_annotator: NavigationPulseAnnotator
 var fade_tween: ScaffolderTween
 
+
 func _init(navigator: Navigator) -> void:
     self.navigator = navigator
     self.previous_path_back_end_trim_radius = min(
@@ -32,6 +33,7 @@ func _init(navigator: Navigator) -> void:
     
     self.fade_tween = ScaffolderTween.new()
     add_child(fade_tween)
+
 
 func _process(_delta: float) -> void:
     is_fade_in_progress = fade_progress != previous_fade_progress
@@ -73,6 +75,7 @@ func _process(_delta: float) -> void:
             if next_navigator_beat != null:
                 _trigger_beat_hash_animation(next_navigator_beat)
 
+
 func _draw() -> void:
     if !is_enabled and \
             !is_fade_in_progress:
@@ -85,6 +88,7 @@ func _draw() -> void:
             Surfacer.is_previous_trajectory_shown and \
             navigator.player.is_human_player:
         _draw_previous_path()
+
 
 func _draw_current_path(current_path: PlatformGraphPath) -> void:
     if Surfacer.is_active_trajectory_shown:
@@ -188,6 +192,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 AnnotationElementDefaults.NAVIGATOR_INDICATOR_STROKE_WIDTH,
                 4.0)
 
+
 func _draw_previous_path() -> void:
     var previous_path_color: Color = \
             Surfacer.ann_defaults.HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR if \
@@ -209,6 +214,7 @@ func _draw_previous_path() -> void:
             previous_path_beats,
             previous_path_color)
 
+
 func _draw_beat_hashes(
         beats: Array,
         color: Color) -> void:
@@ -226,6 +232,7 @@ func _draw_beat_hashes(
             color,
             color)
 
+
 func _get_is_enabled() -> bool:
     if navigator.player.is_human_player:
         if is_slow_motion_enabled:
@@ -242,10 +249,12 @@ func _get_is_enabled() -> bool:
             return Surfacer \
                     .is_computer_current_nav_trajectory_shown_without_slow_mo
 
+
 func _get_is_exclamation_mark_shown() -> bool:
     return Surfacer.is_human_new_nav_exclamation_mark_shown if \
             navigator.player.is_human_player else \
             Surfacer.is_computer_new_nav_exclamation_mark_shown
+
 
 func _get_last_beat_from_navigator() -> PathBeatPrediction:
     if !navigator.is_currently_navigating:
@@ -260,6 +269,7 @@ func _get_last_beat_from_navigator() -> PathBeatPrediction:
         last_beat = next_beat
     return last_beat
 
+
 func _trigger_fade_in(is_fade_in := true) -> void:
     fade_tween.stop_all()
     fade_tween.interpolate_property(
@@ -272,6 +282,7 @@ func _trigger_fade_in(is_fade_in := true) -> void:
             0.0,
             TimeType.PLAY_PHYSICS)
     fade_tween.start()
+
 
 func _trigger_beat_hash_animation(beat: PathBeatPrediction) -> void:
     var current_path_color: Color = \

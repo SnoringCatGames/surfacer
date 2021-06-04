@@ -72,6 +72,7 @@ var _should_be_populated := false
 
 var _find_and_expand_controller_recursive_count := 0
 
+
 func _init() -> void:
     hide_root = true
     hide_folding = false
@@ -84,6 +85,7 @@ func _init() -> void:
             self,
             "_on_tree_item_expansion_toggled")
 
+
 func _ready() -> void:
     assert(Surfacer.is_inspector_enabled)
     
@@ -93,11 +95,13 @@ func _ready() -> void:
     
     _populate()
 
+
 func _gui_input(event: InputEvent) -> void:
     # Godot seems to have a bug where many clicks in the tree are
     # false-negatives. This at least prevents them from being consumed as
     # clicks within the level.
     accept_event()
+
 
 func _populate() -> void:
     _should_be_populated = true
@@ -115,11 +119,13 @@ func _populate() -> void:
     if !graphs.empty():
         call_deferred("_select_initial_item")
 
+
 func clear() -> void:
     Gs.utils.release_focus(self)
     _clear_selection()
     _should_be_populated = false
     .clear()
+
 
 func collapse() -> void:
     for graph_item_controller in graph_item_controllers.values():
@@ -128,6 +134,7 @@ func collapse() -> void:
     Gs.utils.release_focus(self)
     _clear_selection()
 
+
 func set_graphs(graphs: Array) -> void:
     self.graphs = graphs
     if _should_be_populated:
@@ -135,10 +142,12 @@ func set_graphs(graphs: Array) -> void:
             clear()
         _populate()
 
+
 func select_first_item() -> void:
     if !graph_item_controllers.empty():
         graph_item_controllers.values().front().expand()
         graph_item_controllers.values().front().select()
+
 
 func _select_initial_item() -> void:
     if !Surfacer.get_is_inspector_panel_open():
@@ -243,6 +252,7 @@ func _select_initial_item() -> void:
                 InspectorSearchType.EDGES_GROUP,
                 {})
 
+
 func _find_matching_surface(
         start_vertex: Vector2,
         end_vertex: Vector2,
@@ -267,6 +277,7 @@ func _find_matching_surface(
                 return surface
     return null
 
+
 func _on_tree_item_selected() -> void:
     var item := get_selected()
     var controller: InspectorItemController = item.get_metadata(0)
@@ -286,6 +297,7 @@ func _on_tree_item_selected() -> void:
     if inspector_selector.should_selection_have_been_handled_in_tree_by_now():
         inspector_selector.clear()
 
+
 func _on_tree_item_expansion_toggled(item: TreeItem) -> void:
     var controller: InspectorItemController = item.get_metadata(0)
     assert(controller != null)
@@ -293,6 +305,7 @@ func _on_tree_item_expansion_toggled(item: TreeItem) -> void:
         controller.call_deferred("on_item_collapsed")
     else:
         controller.call_deferred("on_item_expanded")
+
 
 func select_edge_or_surface(
         start_position: PositionAlongSurface,
@@ -315,6 +328,7 @@ func select_edge_or_surface(
                 edge_type,
                 graph)
 
+
 func _select_canonical_origin_surface_item_controller(
         origin_surface: Surface,
         graph: PlatformGraph) -> void:
@@ -326,6 +340,7 @@ func _select_canonical_origin_surface_item_controller(
                 graph.movement_params.name,
                 InspectorSearchType.ORIGIN_SURFACE,
                 metadata)
+
 
 func _select_canonical_destination_surface_item_controller(
         origin_surface: Surface,
@@ -340,6 +355,7 @@ func _select_canonical_destination_surface_item_controller(
                 graph.movement_params.name,
                 InspectorSearchType.DESTINATION_SURFACE,
                 metadata)
+
 
 func _select_canonical_edge_or_edge_attempt_item_controller(
         start_surface: Surface,
@@ -403,6 +419,7 @@ func _select_canonical_edge_or_edge_attempt_item_controller(
                 InspectorSearchType.EDGE,
                 metadata)
 
+
 func _trigger_find_and_expand_controller(
         player_name: String,
         search_type: int,
@@ -416,6 +433,7 @@ func _trigger_find_and_expand_controller(
             player_name,
             search_type,
             metadata)
+
 
 func _on_find_and_expand_complete(
         player_name: String,
@@ -455,14 +473,18 @@ func _on_find_and_expand_complete(
     else:
         Surfacer.selection_description.set_text(controller.get_description())
 
+
 func get_is_find_and_expand_in_progress() -> bool:
     return _find_and_expand_controller_recursive_count > 0
+
 
 func _increment_find_and_expand_controller_recursive_count() -> void:
     _find_and_expand_controller_recursive_count += 1
 
+
 func _decrement_find_and_expand_controller_recursive_count() -> void:
     _find_and_expand_controller_recursive_count -= 1
+
 
 func _poll_is_find_and_expand_in_progress(
         player_name: String,
@@ -480,6 +502,7 @@ func _poll_is_find_and_expand_in_progress(
                 search_type,
                 metadata)
 
+
 func _clear_selection() -> void:
     # Deselect the current TreeItem selection.
     var item := get_selected()
@@ -490,6 +513,7 @@ func _clear_selection() -> void:
     Surfacer.annotators.element_annotator \
             .erase_all(current_annotation_elements)
     current_annotation_elements = []
+
 
 static func _find_closest_jump_land_positions(
         target_jump_position: Vector2,
@@ -509,6 +533,7 @@ static func _find_closest_jump_land_positions(
             closest_distance_sum = current_distance_sum
     
     return closest_jump_land_positions
+
 
 # Conditionally prints the given message, depending on the Player's
 # configuration.

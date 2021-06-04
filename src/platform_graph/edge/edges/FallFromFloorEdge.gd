@@ -19,6 +19,7 @@ var falls_on_left_side: bool
 var fall_off_position: PositionAlongSurface
 var time_fall_off: float
 
+
 func _init(
         calculator = null,
         start: PositionAlongSurface = null,
@@ -54,11 +55,13 @@ func _init(
     self.fall_off_position = fall_off_position
     self.time_fall_off = time_fall_off
 
+
 func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     return trajectory.distance_from_continuous_frames
+
 
 func _calculate_duration(
         start: PositionAlongSurface,
@@ -66,6 +69,7 @@ func _calculate_duration(
         instructions: EdgeInstructions,
         distance: float) -> float:
     return instructions.duration
+
 
 func get_animation_state_at_time(
         result: PlayerAnimationState,
@@ -78,6 +82,7 @@ func get_animation_state_at_time(
                     edge_time, falls_on_left_side) if \
             edge_time > time_fall_off else \
             falls_on_left_side
+
 
 func _update_expected_position_along_surface(
         navigation_state: PlayerNavigationState,
@@ -92,6 +97,7 @@ func _update_expected_position_along_surface(
                 navigation_state,
                 edge_time)
 
+
 func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
@@ -100,6 +106,7 @@ func _check_did_just_reach_surface_destination(
             surface_state,
             self.get_end_surface(),
             playback)
+
 
 # When walking off the end of a surface, Godot's underlying collision engine
 # can trigger multiple extraneous launch/land events if the player's collision
@@ -127,12 +134,14 @@ func _update_navigation_state_expected_surface_air_helper(
             !is_grabbed_surface_expected and \
             surface_state.collision_count > 0
 
+
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_state_from_json_object(json_object, context)
     falls_on_left_side = json_object.fl
     fall_off_position = context.id_to_position_along_surface[int(json_object.fp)]
+
 
 func to_json_object() -> Dictionary:
     var json_object := {

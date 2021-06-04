@@ -13,6 +13,7 @@ enum {
     UNKNOWN,
 }
 
+
 static func get_string(type: int) -> String:
     match type:
         RULER:
@@ -38,6 +39,7 @@ static func get_string(type: int) -> String:
         _:
             Gs.logger.error("Invalid AnnotatorType: %s" % type)
             return "???"
+
 
 static func get_settings_key(type: int) -> String:
     return get_string(type) + "_enabled"

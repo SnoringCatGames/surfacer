@@ -16,6 +16,7 @@ var source_type_prefix: String
 var player
 var is_additive: bool
 
+
 func _init(
         source_type_prefix: String,
         player,
@@ -23,6 +24,7 @@ func _init(
     self.source_type_prefix = source_type_prefix
     self.player = player
     self.is_additive = is_additive
+
 
 # Calculates actions for the current frame.
 func update(
@@ -32,6 +34,7 @@ func update(
         delta_scaled: float,
         navigation_state: PlayerNavigationState) -> void:
     Gs.logger.error("Abstract PlayerActionSource.update is not implemented")
+
 
 static func update_for_key_press(
         actions: PlayerActionState,

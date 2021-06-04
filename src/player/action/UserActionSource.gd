@@ -12,6 +12,7 @@ const ACTIONS_TO_INPUT_KEYS := {
   "face_right": "fr",
 }
 
+
 func _init(
         player,
         is_additive: bool) \
@@ -20,6 +21,7 @@ func _init(
         player,
         is_additive) -> void:
     pass
+
 
 # Calculates actions for the current frame.
 func update(
@@ -39,6 +41,7 @@ func update(
                     is_pressed,
                     time_scaled,
                     is_additive)
+
 
 static func get_is_some_user_action_pressed() -> bool:
     for action in ACTIONS_TO_INPUT_KEYS:

@@ -3,8 +3,10 @@ extends Reference
 
 var type := ColorParamsType.UNKNOWN
 
+
 func _init(type: int) -> void:
     self.type = type
+
 
 func get_color() -> Color:
     Gs.logger.error("Abstract ColorParams.get_color is not implemented")

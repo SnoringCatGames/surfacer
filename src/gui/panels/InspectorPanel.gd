@@ -27,6 +27,7 @@ var _annotator_control_item_classes := [
     MetronomeSettingsLabeledControlItem,
 ]
 
+
 func _ready() -> void:
     assert(Surfacer.is_inspector_enabled)
     
@@ -55,6 +56,7 @@ func _ready() -> void:
     
     call_deferred("update_gui_scale", 1.0)
 
+
 func _exit_tree() -> void:
     Gs.remove_gui_to_scale(self)
     Gs.active_overlays.erase(self)
@@ -62,12 +64,14 @@ func _exit_tree() -> void:
     Surfacer.legend = null
     Surfacer.selection_description = null
 
+
 func update_gui_scale(gui_scale: float) -> bool:
     update_gui_scale_helper(gui_scale)
     update_gui_scale_helper(1.0)
     Gs.time.set_timeout(funcref(self, "update_gui_scale_helper"), 1.0, [1.0])
     _initialize_annotator_checkboxes()
     return true
+
 
 func update_gui_scale_helper(gui_scale: float) -> void:
     for child in get_children():
@@ -83,6 +87,7 @@ func update_gui_scale_helper(gui_scale: float) -> void:
             0.0 if \
             is_open else \
             _get_closed_position_y()
+
 
 func _initialize_annotator_checkboxes() -> void:
     var empty_style := StyleBoxEmpty.new()
@@ -124,15 +129,19 @@ func _initialize_annotator_checkboxes() -> void:
         
         annotators.add_child(row)
 
+
 func _get_closed_position_y() -> float:
     return -$PanelContainer.rect_size.y - 1.0
+
 
 func _set_is_open(value: bool) -> void:
     if is_open != value:
         _toggle_open()
 
+
 func _get_is_open() -> bool:
     return is_open
+
 
 func _toggle_open() -> void:
     is_open = !is_open
@@ -171,6 +180,7 @@ func _toggle_open() -> void:
     
     Gs.utils.release_focus()
 
+
 func _set_footer_visibility(is_visible: bool) -> void:
     $Spacer.visible = is_visible
     $Footer.visible = is_visible
@@ -181,9 +191,11 @@ func _set_footer_visibility(is_visible: bool) -> void:
             is_visible else \
             $PanelContainer.rect_size.y
 
+
 func _on_GearButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()
     _toggle_open()
+
 
 func _on_PauseButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()

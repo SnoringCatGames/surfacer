@@ -18,6 +18,7 @@ var color: Color
 var step_label: Label
 var previous_out_of_reach_waypoint_label: Label
 
+
 func _init(
         step_result_metadata: EdgeStepCalcResultMetadata,
         renders_faintly: bool) \
@@ -58,6 +59,7 @@ func _init(
     
     _create_labels()
 
+
 func _calculate_color(renders_faintly: bool) -> Color:
     # Hue transitions evenly from start to end.
     var total_step_count := \
@@ -77,6 +79,7 @@ func _calculate_color(renders_faintly: bool) -> Color:
             AnnotationElementDefaults.STEP_VALUE,
             opacity)
 
+
 func _create_labels() -> void:
     step_label = Label.new()
     step_label.add_font_override("font", Gs.fonts.main_xs)
@@ -88,6 +91,7 @@ func _create_labels() -> void:
     previous_out_of_reach_waypoint_label.rect_scale = \
             Vector2(LABEL_SCALE, LABEL_SCALE)
 
+
 func draw(canvas: CanvasItem) -> void:
     _attach_labels(canvas)
     _draw_trajectory(canvas)
@@ -96,11 +100,13 @@ func draw(canvas: CanvasItem) -> void:
     _draw_backtracking_waypoint(canvas)
     _draw_description(canvas)
 
+
 func clear() -> void:
     var parent := step_label.get_parent()
     if parent != null:
         parent.remove_child(step_label)
         parent.remove_child(previous_out_of_reach_waypoint_label)
+
 
 func _draw_trajectory(canvas: CanvasItem) -> void:
     var step := step_result_metadata.step
@@ -118,6 +124,7 @@ func _draw_trajectory(canvas: CanvasItem) -> void:
         # The calculation failed before a step object could be created.
         _draw_invalid_trajectory(canvas)
 
+
 func _draw_step_end_points(canvas: CanvasItem) -> void:
     # Draw the step end points.
     Gs.draw_utils.draw_circle_outline(
@@ -134,6 +141,7 @@ func _draw_step_end_points(canvas: CanvasItem) -> void:
             color,
             waypoint_stroke_width,
             4.0)
+
 
 func _draw_collision(canvas: CanvasItem) -> void:
     var collision_result_metadata := \
@@ -212,6 +220,7 @@ func _draw_collision(canvas: CanvasItem) -> void:
                     collision_result_metadata.frame_previous_position,
                     Surfacer.ann_defaults.COLLISION_FRAME_PREVIOUS_COLOR)
 
+
 func _draw_bounding_box_and_margin(
         canvas: CanvasItem,
         center: Vector2,
@@ -238,6 +247,7 @@ func _draw_bounding_box_and_margin(
             0.0,
             AnnotationElementDefaults.COLLISION_MARGIN_STROKE_WIDTH,
             false)
+
 
 func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
     # For new backtracking steps, draw and label the waypoint that was used as
@@ -270,6 +280,7 @@ func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
     else:
         previous_out_of_reach_waypoint_label.text = ""
 
+
 func _draw_description(canvas: CanvasItem) -> void:
     if !renders_faintly:
         # Draw some text describing the current step.
@@ -300,6 +311,7 @@ func _draw_description(canvas: CanvasItem) -> void:
     else:
         step_label.text = ""
 
+
 func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
     var start := step_result_metadata.get_start().position
     var end := step_result_metadata.get_end().position
@@ -324,6 +336,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             Surfacer.ann_defaults.INVALID_EDGE_COLOR_PARAMS.get_color(),
             AnnotationElementDefaults.INVALID_EDGE_DASH_STROKE_WIDTH)
 
+
 func _attach_labels(canvas: CanvasItem) -> void:
     var old_parent := step_label.get_parent()
     if old_parent != canvas:
@@ -332,6 +345,7 @@ func _attach_labels(canvas: CanvasItem) -> void:
             old_parent.remove_child(previous_out_of_reach_waypoint_label)
         canvas.add_child(step_label)
         canvas.add_child(previous_out_of_reach_waypoint_label)
+
 
 func _create_legend_items() -> Array:
     # TODO

@@ -2,6 +2,7 @@ class_name MovementUtils
 extends Reference
 # A collection of utility functions for calculating state related to movement.
 
+
 # Calculates the duration to reach the destination with the given movement
 # parameters.
 #
@@ -84,6 +85,7 @@ static func calculate_movement_duration(
         else:
             return max(t1, t2)
 
+
 # Calculates the duration to accelerate over in order to reach the destination
 # at the given time, given that velocity continues after acceleration stops and
 # a new backward acceleration is applied.
@@ -145,6 +147,7 @@ static func calculate_time_to_release_acceleration(
             return min(t1, t2)
         else:
             return max(t1, t2)
+
 
 # Calculates the minimum required duration to reach the displacement,
 # considering a maximum velocity.
@@ -225,6 +228,7 @@ static func calculate_duration_for_displacement(
         
         return duration if duration > 0.0 else INF
 
+
 static func calculate_velocity_end_for_displacement(
         displacement: float,
         velocity_start: float,
@@ -291,6 +295,7 @@ static func calculate_velocity_end_for_displacement(
         # We reach max speed before we reach the displacement.
         return velocity_at_max_speed
 
+
 static func calculate_displacement_for_duration(
         duration: float,
         velocity_start: float,
@@ -353,6 +358,7 @@ static func calculate_displacement_for_duration(
         
         return displacement_during_acceleration + displacement_at_max_speed
 
+
 static func update_velocity_in_air(
         velocity: Vector2,
         delta: float,
@@ -385,6 +391,7 @@ static func update_velocity_in_air(
     
     return velocity
 
+
 static func cap_velocity(
         velocity: Vector2,
         movement_params: MovementParams,
@@ -413,6 +420,7 @@ static func cap_velocity(
     
     return velocity
 
+
 static func calculate_time_to_climb(
         distance: float,
         is_climbing_upward: bool,
@@ -427,6 +435,7 @@ static func calculate_time_to_climb(
     #     t = (s - s_0) / v
     return abs(distance / speed)
 
+
 static func calculate_time_to_walk(
         distance: float,
         v_0: float,
@@ -436,6 +445,7 @@ static func calculate_time_to_walk(
             v_0,
             movement_params.walk_acceleration,
             movement_params.max_horizontal_speed_default)
+
 
 static func calculate_distance_to_stop_from_friction(
         movement_params: MovementParams,
@@ -458,6 +468,7 @@ static func calculate_distance_to_stop_from_friction(
         distance += speed * Time.PHYSICS_TIME_STEP
         speed -= friction_deceleration_per_frame
     return distance
+
 
 static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_max_speed(
         movement_params: MovementParams,

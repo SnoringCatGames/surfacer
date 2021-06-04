@@ -17,11 +17,13 @@ var active_key_presses: Dictionary
 # Dictionary<String, boolean>
 var _next_active_key_presses: Dictionary
 
+
 func _init(
         edge: Edge,
         is_additive: bool) -> void:
     self.edge = edge
     self.is_additive = is_additive
+
 
 func start(scaled_time: float) -> void:
     start_time_scaled = scaled_time
@@ -36,6 +38,7 @@ func start(scaled_time: float) -> void:
     is_finished = is_on_last_instruction
     active_key_presses = {}
     _next_active_key_presses = {}
+
 
 func update(
         scaled_time: float,
@@ -56,6 +59,7 @@ func update(
             new_instructions.push_back(next_instruction)
         increment()
     return new_instructions
+
 
 func increment() -> void:
     is_finished = is_on_last_instruction
@@ -82,11 +86,14 @@ func increment() -> void:
             null
     is_on_last_instruction = next_instruction == null
 
+
 func get_previous_elapsed_time_scaled() -> float:
     return previous_time_scaled - start_time_scaled
 
+
 func get_elapsed_time_scaled() -> float:
     return Gs.time.get_scaled_play_time() - start_time_scaled
+
 
 func _get_start_time_scaled_for_next_instruction() -> float:
     assert(!is_finished)

@@ -5,6 +5,7 @@ const TYPE := InspectorItemType.EDGES_WITH_ONE_STEP_GROUP
 const EDGE_CALC_RESULT_TYPE := EdgeCalcResultType.EDGE_VALID_WITH_ONE_STEP
 const TEXT := "Edges calculated with one step"
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -17,6 +18,7 @@ func _init(
         EDGE_CALC_RESULT_TYPE,
         TEXT) -> void:
     pass
+
 
 func get_description() -> String:
     return ("Some edges can be calculated with only a single horizontal " +

@@ -14,6 +14,7 @@ const MARGIN_FROM_CONCAVE_NEIGHBOR := 1.0
 # short and missing the bottom corner of the land surface.
 const MIN_LAND_DISTANCE_FROM_WALL_BOTTOM := 12.0
 
+
 # Calculates "good" combinations of jump position, land position, and start
 # velocity for movement between the given pair of surfaces.
 # 
@@ -2274,6 +2275,7 @@ static func calculate_jump_land_positions_for_surface_pair(
     
     return all_jump_land_positions
 
+
 static func calculate_land_positions_on_surface(
         movement_params: MovementParams,
         land_surface: Surface,
@@ -2504,6 +2506,7 @@ static func calculate_land_positions_on_surface(
             Gs.logger.error("Unknown land surface side")
             return []
 
+
 static func get_velocity_start(
         movement_params: MovementParams,
         origin_surface: Surface,
@@ -2536,6 +2539,7 @@ static func get_velocity_start(
                 return Vector2.INF
     
     return Vector2(velocity_start_x, velocity_start_y)
+
 
 static func get_horizontal_velocity_start(
         movement_params: MovementParams,
@@ -2572,6 +2576,7 @@ static func get_horizontal_velocity_start(
         _:
             Gs.logger.error()
             return INF
+
 
 # This returns a PositionAlongSurface instance for the given x/y coordinate
 # along the given surface. If the coordinate isn't actually within the bounds
@@ -2629,6 +2634,7 @@ static func _create_surface_interior_position(
                         surface,
                         collider_half_width_height,
                         true)
+
 
 # Checks whether the given jump/land positions are far enough away from all
 # other previous jump/land positions, and records it in the given results
@@ -2711,6 +2717,7 @@ static func _record_if_distinct(
             results.push_back(jump_land_positions)
     return jump_land_positions
 
+
 # Calculates a representative horizontal distance between jump and land
 #  positions.
 # 
@@ -2762,6 +2769,7 @@ static func _calculate_horizontal_movement_distance(
                 horizontal_movement_distance_partial_decrease
     
     return horizontal_movement_distance
+
 
 # Calculates a representative vertical distance between the given jump and land
 # positions.
@@ -2834,6 +2842,7 @@ static func _calculate_vertical_movement_displacement(
         # the basis jump/land points, and since that displacemnt is within the
         # possible range, we can use it.
         return displacement.y
+
 
 # Calculates a jump/land pair between two walls that face each other.
 # 
@@ -2919,6 +2928,7 @@ static func _calculate_jump_land_points_for_walls_facing_each_other(
             other_jump_land_positions_1,
             other_jump_land_positions_2)
 
+
 static func _create_jump_land_positions(
         movement_params: MovementParams,
         jump_position: PositionAlongSurface,
@@ -2957,6 +2967,7 @@ static func _create_jump_land_positions(
     if results_collection != null:
         results_collection.push_back(result)
     return result
+
 
 # Returns false if there is not enough room for the player on the surface.
 static func ensure_position_is_not_too_close_to_concave_neighbor(
@@ -3073,6 +3084,7 @@ static func ensure_position_is_not_too_close_to_concave_neighbor(
     
     return true
 
+
 # Ensure a min distance up from wall bottom ends to prevent the player from
 # falling slightly short and missing the bottom corner of the land surface.
 static func _possibly_offset_wall_bottom_land_position(
@@ -3090,6 +3102,7 @@ static func _possibly_offset_wall_bottom_land_position(
                 true)
         return true
     return false
+
 
 static func is_land_position_close_to_wall_bottom(
         land_position: PositionAlongSurface) -> bool:

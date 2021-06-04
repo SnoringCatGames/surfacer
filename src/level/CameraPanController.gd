@@ -17,9 +17,11 @@ var _target_zoom_multiplier := 1.0
 var _tween_offset := Vector2.ZERO
 var _tween_zoom_multiplier := 1.0
 
+
 func _init() -> void:
     _tween = ScaffolderTween.new()
     add_child(_tween)
+
 
 func _unhandled_input(event: InputEvent) -> void:
     if !Gs.is_user_interaction_enabled:
@@ -51,6 +53,7 @@ func _unhandled_input(event: InputEvent) -> void:
     if pointer_drag_position != Vector2.INF:
         _update_drag(pointer_drag_position)
 
+
 func _validate() -> void:
     assert(Surfacer.max_zoom_multiplier_from_pointer >= 1.0)
     assert(Surfacer.max_pan_distance_from_pointer >= 0.0)
@@ -58,6 +61,7 @@ func _validate() -> void:
             0.5 and \
             Surfacer.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer > \
             0.0)
+
 
 func _stop_drag() -> void:
     Gs.time.clear_interval(_interval_id)
@@ -69,12 +73,14 @@ func _stop_drag() -> void:
     if Surfacer.snaps_camera_back_to_player:
         _update_camera(Vector2.ZERO, 1.0)
 
+
 func _update_drag(pointer_position: Vector2) -> void:
     _update_pan_and_zoom_delta_from_pointer(pointer_position)
     if _interval_id < 0:
         _interval_id = Gs.time.set_interval(
                 funcref(self, "_update_camera_from_deltas"),
                 _PAN_AND_ZOOM_INTERVAL)
+
 
 func _update_pan_and_zoom_delta_from_pointer(
         pointer_position: Vector2) -> void:
@@ -164,6 +170,7 @@ func _update_pan_and_zoom_delta_from_pointer(
                 abs(pan_zoom_control_weight_y)) * \
             max_zoom_delta_per_frame
 
+
 func _update_camera_from_deltas() -> void:
     assert(_delta_offset != Vector2.INF)
     assert(_delta_zoom_multiplier != INF)
@@ -194,6 +201,7 @@ func _update_camera_from_deltas() -> void:
     
     _update_camera(next_offset, next_zoom_multiplier)
 
+
 func _update_camera(
         next_offset: Vector2,
         next_zoom_multiplier: float) -> void:
@@ -222,10 +230,12 @@ func _update_camera(
             TimeType.PLAY_PHYSICS)
     _tween.start()
 
+
 func _update_pan(offset: Vector2) -> void:
     var delta := offset - self._tween_offset
     self._tween_offset = offset
     Gs.camera_controller.offset += delta
+
 
 func _update_zoom(zoom_multiplier: float) -> void:
     var delta := zoom_multiplier - self._tween_zoom_multiplier

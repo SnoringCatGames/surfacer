@@ -6,10 +6,12 @@ const TEXT := "Instruction\nstart"
 
 const SCALE := 0.7
 
+
 func _init().(
         TYPE,
         TEXT) -> void:
     pass
+
 
 func _draw_shape(
         center: Vector2,

@@ -10,10 +10,12 @@ const DASH_LENGTH := 3.0
 const DASH_GAP := 4.0
 const STROKE_WIDTH := 1.3
 
+
 func _init().(
         TYPE,
         TEXT) -> void:
     pass
+
 
 func _draw_shape(
         center: Vector2,

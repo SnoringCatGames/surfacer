@@ -7,17 +7,20 @@ const IS_A_JUMP_CALCULATOR := false
 
 const EXTRA_FALL_OFF_POSITION_MARGIN := 2.0
 
+
 func _init().(
         NAME,
         EDGE_TYPE,
         IS_A_JUMP_CALCULATOR) -> void:
     pass
 
+
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null and \
             surface.side == SurfaceSide.FLOOR and \
             (surface.counter_clockwise_concave_neighbor == null or \
             surface.clockwise_concave_neighbor == null)
+
 
 func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
@@ -51,6 +54,7 @@ func get_all_inter_surface_edges_from_surface(
     
     InterSurfaceEdgesResult.merge_results_with_matching_destination_surfaces(
             inter_surface_edges_results)
+
 
 func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
@@ -88,6 +92,7 @@ func calculate_edge(
     else:
         return null
 
+
 func optimize_edge_land_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
@@ -103,6 +108,7 @@ func optimize_edge_land_position_for_path(
             edge,
             next_edge,
             self)
+
 
 func _get_all_edges_from_one_side(
         inter_surface_edges_results: Array,
@@ -306,6 +312,7 @@ func _get_all_edges_from_one_side(
                     time_fall_off)
             inter_surface_edges_result.valid_edges.push_back(edge)
 
+
 static func _prepend_walk_to_fall_off_portion(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
@@ -430,6 +437,7 @@ static func _prepend_walk_to_fall_off_portion(
                 -movement_params.max_horizontal_speed_default,
                 movement_params.max_horizontal_speed_default)
 
+
 static func _calculate_player_center_at_fall_off_point(
         edge_point: Vector2,
         falls_on_left_side: bool,
@@ -482,6 +490,7 @@ static func _calculate_player_center_at_fall_off_point(
                     right_side_fall_off_displacement_x,
             fall_off_displacement_y)
 
+
 static func _calculate_displacement_y_for_horizontal_distance_past_edge( \
         distance_past_edge: float,
         collider_shape: Shape2D,
@@ -528,6 +537,7 @@ static func _calculate_displacement_y_for_horizontal_distance_past_edge( \
                 "RectangleShape2D.") % \
                 collider_shape)
         return INF
+
 
 static func _calculate_circular_displacement_y_for_horizontal_distance_past_edge(
         distance_past_edge: float,

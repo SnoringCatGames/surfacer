@@ -22,6 +22,7 @@ var inner_progress: float
 var outer_progress: float
 var surface_progress: float
 
+
 func _init(
         click_position: Vector2,
         selected_surface: Surface,
@@ -37,6 +38,7 @@ func _init(
     self.is_surface_navigatable = is_surface_navigatable
     _update()
 
+
 func _update() -> void:
     ._update()
     
@@ -48,6 +50,7 @@ func _update() -> void:
     
     surface_progress = (current_time - start_time) / SURFACE_DURATION
     surface_progress = Gs.utils.ease_by_name(surface_progress, "ease_out")
+
 
 func _draw() -> void:
     var is_inner_animation_complete := inner_progress >= 1.0

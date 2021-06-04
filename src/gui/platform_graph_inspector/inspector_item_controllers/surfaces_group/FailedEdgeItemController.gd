@@ -12,6 +12,7 @@ const NARROW_PHASE_DESCRIPTION := (
 
 var failed_edge_attempt: FailedEdgeAttempt
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -26,6 +27,7 @@ func _init(
     assert(failed_edge_attempt != null)
     self.failed_edge_attempt = failed_edge_attempt
     _post_init()
+
 
 func to_string() -> String:
     return "%s { %s; [%s] %s; [%s, %s] }" % [
@@ -44,6 +46,7 @@ func to_string() -> String:
         str(failed_edge_attempt.get_end()),
     ]
 
+
 func get_text() -> String:
     return "[%s] %s [%s, %s]" % [
         "BP" if \
@@ -59,6 +62,7 @@ func get_text() -> String:
         str(failed_edge_attempt.get_end()),
     ]
 
+
 func get_description() -> String:
     return ("This jump/land pair was calculated as possibly corresponding " +
                 "to a valid edge, but later calculations failed. %s") % \
@@ -66,8 +70,10 @@ func get_description() -> String:
                 failed_edge_attempt.is_broad_phase_failure else \
                 NARROW_PHASE_DESCRIPTION)
 
+
 func get_has_children() -> bool:
     return !failed_edge_attempt.is_broad_phase_failure
+
 
 func get_annotation_elements() -> Array:
     var element := FailedEdgeAttemptAnnotationElement.new(

@@ -37,6 +37,7 @@ var distance: float
 # In seconds.
 var duration: float
 
+
 func _init(
         edge_type: int,
         is_time_based: bool,
@@ -115,11 +116,13 @@ func _init(
             trajectory.frame_continuous_positions_from_steps.size() <= \
                     expected_frame_count_for_duration + 8))
 
+
 func update_for_surface_state(
         surface_state: PlayerSurfaceState,
         is_final_edge: bool) -> void:
     # Do nothing unless the sub-class implements this.
     pass
+
 
 func update_navigation_state(
         navigation_state: PlayerNavigationState,
@@ -194,6 +197,7 @@ func update_navigation_state(
                         surface_state,
                         playback)
 
+
 # This enables sub-classes to provide custom logic regarding how and when a
 # surface collision may or may not be expected.
 func _update_navigation_state_expected_surface_air_helper(
@@ -202,12 +206,14 @@ func _update_navigation_state_expected_surface_air_helper(
         is_starting_navigation_retry: bool) -> void:
     pass
 
+
 func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     Gs.logger.error("Abstract Edge._calculate_distance is not implemented")
     return INF
+
 
 func _calculate_duration(
         start: PositionAlongSurface,
@@ -217,6 +223,7 @@ func _calculate_duration(
     Gs.logger.error("Abstract Edge._calculate_duration is not implemented")
     return INF
 
+
 static func _calculate_instructions(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
@@ -224,11 +231,13 @@ static func _calculate_instructions(
     Gs.logger.error("Abstract Edge._calculate_instructions is not implemented")
     return null
 
+
 func get_position_at_time(edge_time: float) -> Vector2:
     var index := int(edge_time / Time.PHYSICS_TIME_STEP)
     if index >= trajectory.frame_continuous_positions_from_steps.size():
         return Vector2.INF
     return trajectory.frame_continuous_positions_from_steps[index]
+
 
 func get_velocity_at_time(edge_time: float) -> Vector2:
     var index := int(edge_time / Time.PHYSICS_TIME_STEP)
@@ -236,11 +245,13 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
         return Vector2.INF
     return trajectory.frame_continuous_velocities_from_steps[index]
 
+
 func get_animation_state_at_time(
         result: PlayerAnimationState,
         edge_time: float) -> void:
     Gs.logger.error(
             "Abstract Edge.get_animation_state_at_time is not implemented")
+
 
 func _update_expected_position_along_surface(
         navigation_state: PlayerNavigationState,
@@ -257,6 +268,7 @@ func _update_expected_position_along_surface(
     else:
         position.target_projection_onto_surface = Vector2.INF
 
+
 func _check_did_just_reach_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
@@ -272,6 +284,7 @@ func _check_did_just_reach_destination(
                 surface_state,
                 playback)
 
+
 func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
@@ -281,6 +294,7 @@ func _check_did_just_reach_surface_destination(
             "implemented")
     return false
 
+
 func _check_did_just_reach_in_air_destination(
         navigation_state: PlayerNavigationState,
         surface_state: PlayerSurfaceState,
@@ -289,6 +303,7 @@ func _check_did_just_reach_in_air_destination(
             end_position_along_surface.target_point) < \
             movement_params \
                     .reached_in_air_destination_distance_squared_threshold
+
 
 func get_weight() -> float:
     # Use either the distance or the duration as the weight for the edge.
@@ -305,6 +320,7 @@ func get_weight() -> float:
     
     return weight
 
+
 func _get_weight_multiplier() -> float:
     match surface_type:
         SurfaceType.FLOOR:
@@ -317,18 +333,22 @@ func _get_weight_multiplier() -> float:
             Gs.logger.error()
             return INF
 
+
 func _get_start_string() -> String:
     return start_position_along_surface.to_string()
 func _get_end_string() -> String:
     return end_position_along_surface.to_string()
 
+
 func get_name() -> String:
     return EdgeType.get_string(edge_type)
+
 
 func get_should_end_by_colliding_with_surface() -> bool:
     return end_position_along_surface.surface != \
             start_position_along_surface.surface and \
             end_position_along_surface.surface != null
+
 
 func to_string() -> String:
     var format_string_template := (
@@ -354,6 +374,7 @@ func to_string() -> String:
             instructions.to_string(),
         ]
     return format_string_template % format_string_arguments
+
 
 func to_string_with_newlines(indent_level: int) -> String:
     var indent_level_str := ""
@@ -393,6 +414,7 @@ func to_string_with_newlines(indent_level: int) -> String:
     
     return format_string_template % format_string_arguments
 
+
 # This creates a PositionAlongSurface object with the given target point and a
 # null Surface.
 static func vector2_to_position_along_surface(target_point: Vector2) -> \
@@ -400,6 +422,7 @@ static func vector2_to_position_along_surface(target_point: Vector2) -> \
     var position_along_surface := PositionAlongSurface.new()
     position_along_surface.target_point = target_point
     return position_along_surface
+
 
 func check_just_landed_on_expected_surface(
         surface_state: PlayerSurfaceState,
@@ -411,15 +434,18 @@ func check_just_landed_on_expected_surface(
         return surface_state.just_left_air and \
                 surface_state.grabbed_surface == end_surface
 
+
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     _load_edge_state_from_json_object(json_object, context)
 
+
 func to_json_object() -> Dictionary:
     var json_object := {}
     _edge_state_to_json_object(json_object)
     return json_object
+
 
 func _load_edge_state_from_json_object(
         json_object: Dictionary,
@@ -435,6 +461,7 @@ func _load_edge_state_from_json_object(
     velocity_end = Gs.utils.decode_vector2(json_object.ve)
     distance = json_object.di
     duration = json_object.du
+
 
 func _edge_state_to_json_object(json_object: Dictionary) -> void:
     _edge_attempt_state_to_json_object(json_object)

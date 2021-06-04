@@ -14,6 +14,7 @@ var edges_item_controller: EdgesGroupItemController
 var surfaces_item_controller: SurfacesGroupItemController
 var profiler_item_controller: ProfilerGroupItemController
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -28,11 +29,13 @@ func _init(
     _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings()
     _post_init()
 
+
 func get_text() -> String:
     return "%s [%s]" % [
         PREFIX,
         graph.movement_params.name,
     ]
+
 
 func get_description() -> String:
     return ("A platform graph consists of nodes, which are positions " +
@@ -40,11 +43,13 @@ func get_description() -> String:
             "surface positions. Since different players have different " +
             "movement parameters, a graph is specific to a given player.")
 
+
 func to_string() -> String:
     return "%s { player_name=%s }" % [
         InspectorItemType.get_string(type),
         graph.movement_params.name,
     ]
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -54,6 +59,7 @@ func find_and_expand_controller(
             search_type,
             metadata)
     return true
+
 
 func _find_and_expand_controller_recursive(
         search_type: int,
@@ -89,6 +95,7 @@ func _find_and_expand_controller_recursive(
             Gs.logger.error("Invalid InspectorSearchType: %s" % \
                     InspectorSearchType.get_string(search_type))
 
+
 func _create_children_inner() -> void:
     edges_item_controller = EdgesGroupItemController.new(
             tree_item,
@@ -104,6 +111,7 @@ func _create_children_inner() -> void:
             tree_item,
             tree,
             graph)
+
 
 # Parse the inter-surface edge-calculation results into a structure that's
 # easier to use from the inspector.
@@ -149,6 +157,7 @@ func _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings() -> 
             
             edges_results.push_back(inter_surface_edges_results)
 
+
 func _destroy_children_inner() -> void:
     edges_item_controller.destroy()
     edges_item_controller = null
@@ -157,8 +166,10 @@ func _destroy_children_inner() -> void:
     profiler_item_controller.destroy()
     profiler_item_controller = null
 
+
 func get_annotation_elements() -> Array:
     return get_annotation_elements_from_graph(graph)
+
 
 static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var result := SurfacesGroupItemController \

@@ -13,6 +13,7 @@ var EDGE_TYPE_TO_CLASS := {
             WalkToAscendWallFromFloorEdge,
 }
 
+
 func create(
         json_object: Dictionary,
         context: Dictionary) -> Edge:

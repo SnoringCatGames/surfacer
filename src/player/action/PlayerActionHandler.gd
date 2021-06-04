@@ -10,6 +10,7 @@ var type: int
 var uses_runtime_physics: bool
 var priority: int
 
+
 func _init(
         name: String,
         type: int,
@@ -19,6 +20,7 @@ func _init(
     self.type = type
     self.uses_runtime_physics = uses_runtime_physics
     self.priority = priority
+
 
 func process(player) -> bool:
     Gs.logger.error("abstract PlayerActionHandler.process is not implemented")

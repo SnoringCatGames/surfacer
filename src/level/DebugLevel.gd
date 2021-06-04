@@ -2,6 +2,7 @@ tool
 class_name DebugLevel
 extends SurfacerLevel
 
+
 func _start() -> void:
     ._start()
     
@@ -14,6 +15,7 @@ func _start() -> void:
                     .movement_params.player_resource_path,
             Vector2.ZERO,
             true)
+
 
 func get_music_name() -> String:
     return "on_a_quest"

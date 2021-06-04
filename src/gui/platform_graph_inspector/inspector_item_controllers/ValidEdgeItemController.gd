@@ -5,6 +5,7 @@ const TYPE := InspectorItemType.VALID_EDGE
 
 var edge: Edge
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -20,6 +21,7 @@ func _init(
     self.edge = edge
     _post_init()
 
+
 func to_string() -> String:
     return "%s { %s [%s, %s] }" % [
         InspectorItemType.get_string(type),
@@ -28,11 +30,13 @@ func to_string() -> String:
         str(edge.get_end()),
     ]
 
+
 func get_text() -> String:
     return "[%s, %s]" % [
         str(edge.get_start()),
         str(edge.get_end()),
     ]
+
 
 func get_description() -> String:
     return ("This %s consists of %s horizontal instructions.") % [
@@ -41,6 +45,7 @@ func get_description() -> String:
         edge.trajectory != null else \
         1,
     ]
+
 
 func get_annotation_elements() -> Array:
     var element := EdgeAnnotationElement.new(

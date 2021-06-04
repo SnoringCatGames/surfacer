@@ -10,6 +10,7 @@ var waypoint_validity := WaypointValidity.UNKNOWN
 
 var is_broad_phase_failure: bool
 
+
 func _init(
         jump_land_positions: JumpLandPositions = null,
         edge_result_metadata: EdgeCalcResultMetadata = null,
@@ -47,6 +48,7 @@ func _init(
             EdgeCalcResultType.get_is_broad_phase_failure(
                     edge_calc_result_type)
 
+
 func to_string() -> String:
     return ("FailedEdgeAttempt{ " +
                 "%s, " +
@@ -63,6 +65,7 @@ func to_string() -> String:
                 str(jump_land_positions.land_position.target_point),
             ]
 
+
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
@@ -71,6 +74,7 @@ func load_from_json_object(
     waypoint_validity = json_object.w
     is_broad_phase_failure = EdgeCalcResultType.get_is_broad_phase_failure(
             edge_calc_result_type)
+
 
 func to_json_object() -> Dictionary:
     var json_object := {

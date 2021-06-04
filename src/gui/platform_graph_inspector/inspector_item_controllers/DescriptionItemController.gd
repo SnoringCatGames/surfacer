@@ -10,6 +10,7 @@ var description_text: String
 var get_annotation_elements_funcref: FuncRef
 var get_annotation_elements_arg
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -38,30 +39,37 @@ func _init(
             background_color)
     _post_init()
 
+
 func to_string() -> String:
     return "%s { text=%s }" % [
         InspectorItemType.get_string(type),
         text,
     ]
 
+
 func get_text() -> String:
     return text
 
+
 func get_description() -> String:
     return description_text
+
 
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
     return false
 
+
 func _create_children_inner() -> void:
     # Do nothing.
     pass
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func get_annotation_elements() -> Array:
     if get_annotation_elements_arg != null:

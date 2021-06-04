@@ -15,6 +15,7 @@ enum {
     UNKNOWN,
 }
 
+
 static func get_string(result: int) -> String:
     match result:
         MOVEMENT_VALID:
@@ -44,6 +45,7 @@ static func get_string(result: int) -> String:
         _:
             Gs.logger.error("Invalid EdgeStepCalcResultType: %s" % result)
             return "UNKNOWN"
+
 
 static func to_description_list(result: int) -> Array:
     match result:

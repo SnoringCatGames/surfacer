@@ -12,6 +12,7 @@ enum {
     UNKNOWN,
 }
 
+
 static func get_string(type: int) -> String:
     match type:
         FROM_AIR_EDGE:
@@ -35,6 +36,7 @@ static func get_string(type: int) -> String:
         _:
             Gs.logger.error("Invalid EdgeType: %s" % type)
             return "???"
+
 
 static func get_description(type: int) -> String:
     match type:

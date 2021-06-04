@@ -18,6 +18,7 @@ var music: SlowMotionMusic
 var _tween: ScaffolderTween
 var _desaturation_material: ShaderMaterial
 
+
 func _init() -> void:
     Gs.logger.print("SlowMotionController._init")
     
@@ -32,6 +33,7 @@ func _init() -> void:
     _set_saturation(1.0)
     
     music.connect("transition_completed", self, "_on_music_transition_complete")
+
 
 func set_slow_motion_enabled(value: bool) -> void:
     if value == is_enabled:
@@ -99,14 +101,18 @@ func set_slow_motion_enabled(value: bool) -> void:
     
     emit_signal("slow_motion_toggled", is_enabled)
 
+
 func _get_saturation() -> float:
     return _desaturation_material.get_shader_param("saturation")
+
 
 func _set_saturation(saturation: float) -> void:
     _desaturation_material.set_shader_param("saturation", saturation)
 
+
 func _get_time_scale() -> float:
     return Gs.time.time_scale
+
 
 func _set_time_scale(value: float) -> void:
     # Update the main time_scale.
@@ -120,8 +126,10 @@ func _set_time_scale(value: float) -> void:
         for player in players:
             player.animator.match_rate_to_time_scale()
 
+
 func _on_music_transition_complete(is_active: bool) -> void:
     is_transitioning = false
+
 
 func get_is_enabled_or_transitioning() -> bool:
     return is_enabled or is_transitioning

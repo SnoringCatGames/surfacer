@@ -9,6 +9,7 @@ const SURFACE_TYPE := SurfaceType.AIR
 const ENTERS_AIR := true
 const INCLUDES_AIR_TRAJECTORY := true
 
+
 func _init(
         calculator = null,
         start: PositionAlongSurface = null,
@@ -41,11 +42,13 @@ func _init(
         time_peak_height) -> void:
     pass
 
+
 func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
     return trajectory.distance_from_continuous_frames
+
 
 func _calculate_duration(
         start: PositionAlongSurface,
@@ -53,6 +56,7 @@ func _calculate_duration(
         instructions: EdgeInstructions,
         distance: float) -> float:
     return instructions.duration
+
 
 func get_animation_state_at_time(
         result: PlayerAnimationState,
@@ -66,6 +70,7 @@ func get_animation_state_at_time(
         result.animation_position = edge_time - time_peak_height
     result.facing_left = instructions.get_is_facing_left_at_time(
             edge_time, velocity_start.x < 0.0)
+
 
 func _check_did_just_reach_surface_destination(
         navigation_state: PlayerNavigationState,

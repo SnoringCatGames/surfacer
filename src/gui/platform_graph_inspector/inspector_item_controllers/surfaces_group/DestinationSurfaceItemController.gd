@@ -12,6 +12,7 @@ var edge_types_to_edges_results: Dictionary
 var valid_edge_count: int
 var failed_edge_count: int
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -32,12 +33,14 @@ func _init(
     _count_edges()
     _post_init()
 
+
 func to_string() -> String:
     return "%s{ [%s, %s] }" % [
         InspectorItemType.get_string(TYPE),
         str(destination_surface.first_point),
         str(destination_surface.last_point),
     ]
+
 
 func get_text() -> String:
     return "%s [%s, %s]" % [
@@ -46,12 +49,14 @@ func get_text() -> String:
         str(destination_surface.last_point),
     ]
 
+
 func get_description() -> String:
     return ("There are %s valid edges from this %s to this %s.") % [
         valid_edge_count,
         SurfaceSide.get_string(origin_surface.side),
         SurfaceSide.get_string(destination_surface.side),
     ]
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -77,6 +82,7 @@ func find_and_expand_controller(
             Gs.logger.error()
             return false
 
+
 func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
@@ -91,6 +97,7 @@ func _find_and_expand_controller_recursive(
             return
         child = child.get_next()
     select()
+
 
 func _create_children_inner() -> void:
     for edge_type in EdgeType.values():
@@ -108,9 +115,11 @@ func _create_children_inner() -> void:
                         edge_type,
                         edges_result)
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func get_annotation_elements() -> Array:
     var elements := []
@@ -133,6 +142,7 @@ func get_annotation_elements() -> Array:
                 elements.push_back(edge_element)
     
     return elements
+
 
 func _count_edges() -> void:
     valid_edge_count = 0

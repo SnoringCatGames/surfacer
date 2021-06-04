@@ -16,11 +16,13 @@ var type := LegendItemType.UNKNOWN
 var text: String
 var label: Label
 
+
 func _init(
         type: int,
         text: String) -> void:
     self.type = type
     self.text = text
+
 
 func _enter_tree() -> void:
     size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -36,6 +38,7 @@ func _enter_tree() -> void:
     
     update()
 
+
 func update() -> void:
     rect_min_size.y = HEIGHT * Gs.gui_scale
     
@@ -44,10 +47,12 @@ func update() -> void:
     label.margin_top = MARGIN_VERTICAL * Gs.gui_scale
     label.rect_size.y = SHAPE_REGION_HEIGHT * Gs.gui_scale
 
+
 func _draw() -> void:
     _draw_shape(
             SHAPE_REGION_CENTER * Gs.gui_scale,
             Vector2(SHAPE_REGION_WIDTH, SHAPE_REGION_HEIGHT) * Gs.gui_scale)
+
 
 func _draw_shape(
         center: Vector2,

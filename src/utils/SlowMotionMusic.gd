@@ -23,12 +23,15 @@ var _start_music_name := ""
 var _music_bpm_unscaled := INF
 var _is_transition_complete_timeout_id := -1
 
+
 func _init() -> void:
     Gs.audio.connect("music_changed", self, "_on_music_changed")
+
 
 func _process(_delta: float) -> void:
     if _is_active:
         _update_playback_state()
+
 
 func start(time_scale_duration: float) -> void:
     _is_active = true
@@ -63,6 +66,7 @@ func start(time_scale_duration: float) -> void:
             funcref(self, "_on_transition_complete"),
             time_scale_duration)
 
+
 func stop(time_scale_duration: float) -> void:
     _is_transition_complete = false
     Gs.time.clear_timeout(_is_transition_complete_timeout_id)
@@ -73,6 +77,7 @@ func stop(time_scale_duration: float) -> void:
     Gs.audio.play_sound("speed_up")
     
     _is_active = false
+
 
 func _on_transition_complete() -> void:
     _is_transition_complete = true
@@ -107,6 +112,7 @@ func _on_transition_complete() -> void:
         next_tick_tock_beat_index = -1
     
     emit_signal("transition_completed", _is_active)
+
 
 func _update_playback_state() -> void:
     Gs.audio._update_scaled_speed()
@@ -158,6 +164,7 @@ func _update_playback_state() -> void:
                     next_tick_tock_beat_index - 1,
                     meter)
 
+
 func _on_tick_tock_beat(
         is_downbeat: bool,
         beat_index: int) -> void:
@@ -179,6 +186,7 @@ func _on_tick_tock_beat(
             -16.0
     
     Gs.audio.play_sound(sound_name, volume_offset)
+
 
 func _on_music_changed(music_name: String) -> void:
     # Changing the music while slow-motion is active isn't supported.

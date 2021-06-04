@@ -7,6 +7,7 @@ var animator: PlayerAnimator
 var _tween: ScaffolderTween
 var _tween_animation_state := PlayerAnimationState.new()
 
+
 func set_up(player) -> void:
     animator = Gs.utils.add_scene(
             self,
@@ -15,6 +16,7 @@ func set_up(player) -> void:
     
     _tween = ScaffolderTween.new()
     add_child(_tween)
+
 
 func match_navigator_or_path(
         navigator_or_path,
@@ -25,6 +27,7 @@ func match_navigator_or_path(
             animation_state,
             elapsed_time_from_now)
     _update(tweens_player_position, tweens_animation_position)
+
 
 func _update(
         tweens_player_position: bool,
@@ -80,6 +83,7 @@ func _update(
     
     _tween.start()
 
+
 func _mod_animation_position_by_length() -> void:
     var animation_name := \
             animator.animation_type_to_name(animation_state.animation_type)
@@ -87,9 +91,11 @@ func _mod_animation_position_by_length() -> void:
             animation_state.animation_position,
             animator.animation_player.get_animation(animation_name).length)
 
+
 func _interpolate_player_position(player_position: Vector2) -> void:
     _tween_animation_state.player_position = player_position
     position = player_position
+
 
 func _interpolate_animation_position(animation_position: float) -> void:
     _tween_animation_state.animation_position = animation_position

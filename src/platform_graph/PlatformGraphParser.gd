@@ -24,11 +24,14 @@ var platform_graphs: Dictionary
 var is_loaded_from_file := false
 var is_parse_finished := false
 
+
 func _enter_tree() -> void:
     Surfacer.graph_parser = self
 
+
 func _exit_tree() -> void:
     Surfacer.graph_parser = null
+
 
 func parse(
         level_id: String,
@@ -40,6 +43,7 @@ func parse(
             force_calculation_from_tile_maps or \
             Surfacer.ignores_platform_graph_save_files
     _instantiate_platform_graphs(force_calculation_from_tile_maps)
+
 
 # Get references to the TileMaps that define the collision boundaries of this
 # level.
@@ -57,6 +61,7 @@ func _record_tile_maps() -> void:
             assert(!tile_map_ids.has(tile_map.id))
             tile_map_ids[tile_map.id] = true
 
+
 func _create_fake_players_for_collision_calculations() -> void:
     for player_name in _get_player_names():
         var movement_params: MovementParams = \
@@ -72,6 +77,7 @@ func _create_fake_players_for_collision_calculations() -> void:
                 movement_params.collision_margin_for_edge_calculations)
         add_child(fake_player)
         fake_players[fake_player.player_name] = fake_player
+
 
 func _instantiate_platform_graphs(
         force_calculation_from_tile_maps := false) -> void:
@@ -91,6 +97,7 @@ func _instantiate_platform_graphs(
         assert(!Surfacer.player_params.empty())
         emit_signal("calculation_started")
         _defer_calculate_next_platform_graph(-1)
+
 
 func _on_graphs_parsed() -> void:
     if Surfacer.is_inspector_enabled:
@@ -117,6 +124,7 @@ func _on_graphs_parsed() -> void:
     is_parse_finished = true
     
     emit_signal("parse_finished")
+
 
 func _calculate_next_platform_graph(player_index: int) -> void:
     var player_names: Array = _get_player_names()
@@ -151,6 +159,7 @@ func _calculate_next_platform_graph(player_index: int) -> void:
         else:
             _on_graphs_parsed()
 
+
 func _on_graph_calculation_progress(
         origin_surface_index,
         surface_count,
@@ -164,6 +173,7 @@ func _on_graph_calculation_progress(
             origin_surface_index,
             surface_count)
 
+
 func _on_graph_calculation_finished(
         player_index: int,
         was_last_player: bool) -> void:
@@ -172,11 +182,13 @@ func _on_graph_calculation_finished(
     else:
         _on_graphs_parsed()
 
+
 func _defer_calculate_next_platform_graph(last_player_index: int) -> void:
     Gs.time.set_timeout(
             funcref(self, "_calculate_next_platform_graph"),
             0.01,
             [last_player_index + 1])
+
 
 func _load_platform_graphs() -> void:
     var platform_graphs_path := _get_resource_path()
@@ -228,6 +240,7 @@ func _load_platform_graphs() -> void:
     
     _on_graphs_parsed()
 
+
 func _validate_tile_maps(json_object: Dictionary) -> void:
     var expected_id_set := {}
     for tile_map in surface_tile_maps:
@@ -238,6 +251,7 @@ func _validate_tile_maps(json_object: Dictionary) -> void:
         expected_id_set.erase(id)
     assert(expected_id_set.empty())
 
+
 func _validate_players(json_object: Dictionary) -> void:
     var expected_name_set := {}
     for player_name in _get_player_names():
@@ -247,6 +261,7 @@ func _validate_players(json_object: Dictionary) -> void:
         assert(expected_name_set.has(name))
         expected_name_set.erase(name)
     assert(expected_name_set.empty())
+
 
 func _validate_surfaces(surface_parser: SurfaceParser) -> void:
     var expected_id_set := {}
@@ -292,6 +307,7 @@ func _validate_surfaces(surface_parser: SurfaceParser) -> void:
             assert(surface_parser.right_walls[i].probably_equal(
                     expected_surface_parser.right_walls[i]))
 
+
 func _validate_platform_graphs(json_object: Dictionary) -> void:
     var expected_name_set := {}
     for player_name in _get_player_names():
@@ -302,6 +318,7 @@ func _validate_platform_graphs(json_object: Dictionary) -> void:
         expected_name_set.erase(graph_json_object.player_name)
     
     assert(expected_name_set.empty())
+
 
 func save_platform_graphs() -> void:
     assert(Gs.utils.get_is_pc_device())
@@ -322,6 +339,7 @@ func save_platform_graphs() -> void:
     file.store_string(serialized_string)
     file.close()
 
+
 func to_json_object() -> Dictionary:
     return {
         level_id = level_id,
@@ -331,6 +349,7 @@ func to_json_object() -> Dictionary:
         platform_graphs = _serialize_platform_graphs(),
     }
 
+
 func _get_surfaces_tile_map_ids() -> Array:
     var result := []
     result.resize(surface_tile_maps.size())
@@ -338,8 +357,10 @@ func _get_surfaces_tile_map_ids() -> Array:
         result[i] = surface_tile_maps[i].id
     return result
 
+
 func _get_player_names() -> Array:
     return Gs.level_config.get_level_config(level_id).player_names
+
 
 func _serialize_platform_graphs() -> Array:
     var result := []
@@ -347,11 +368,13 @@ func _serialize_platform_graphs() -> Array:
         result.push_back(platform_graphs[player_name].to_json_object())
     return result
 
+
 func _get_resource_path() -> String:
     return "res://%s/level_%s.json" % [
         PLATFORM_GRAPHS_DIRECTORY_NAME,
         level_id,
     ]
+
 
 static func get_directory_path() -> String:
     return ProjectSettings.globalize_path("res://") + \

@@ -3,6 +3,7 @@ extends Reference
 # A collection of utility functions for calculating state related to
 # EdgeTrajectory.
 
+
 # Calculates trajectory state for the movement represented by the given
 # calculation results.
 static func calculate_trajectory_from_calculation_steps(
@@ -62,6 +63,7 @@ static func calculate_trajectory_from_calculation_steps(
     
     return trajectory
 
+
 static func _concatenate_step_frame_positions(
         steps: Array) -> PoolVector2Array:
     var combined_positions := []
@@ -76,6 +78,7 @@ static func _concatenate_step_frame_positions(
     combined_positions.push_back(steps.back().frame_positions.back())
     
     return PoolVector2Array(combined_positions)
+
 
 static func _concatenate_step_frame_velocities(
         steps: Array) -> PoolVector2Array:
@@ -92,6 +95,7 @@ static func _concatenate_step_frame_velocities(
     
     return PoolVector2Array(combined_velocities)
 
+
 static func sum_distance_between_frames(
         frame_positions: PoolVector2Array) -> float:
     if frame_positions.size() < 2:
@@ -104,6 +108,7 @@ static func sum_distance_between_frames(
         sum += previous_position.distance_to(next_position)
         previous_position = next_position
     return sum
+
 
 static func sub_trajectory(
         base_trajectory: EdgeTrajectory,

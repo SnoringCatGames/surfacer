@@ -3,6 +3,7 @@ class_name EdgeStepCalcResultMetadataItemControllerFactory
 # cannot reference itself. Ideally, this factory would just be a static function within
 # EdgeStepCalcResultMetadataItemController.
 
+
 static func create(
         tree_item: TreeItem,
         tree: Tree,

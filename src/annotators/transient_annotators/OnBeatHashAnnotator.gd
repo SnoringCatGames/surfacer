@@ -28,6 +28,7 @@ var width_end: float
 var length: float
 var width: float
 
+
 func _init(
         beat: PathBeatPrediction,
         downbeat_hash_length := SurfacerDrawUtils.PATH_DOWNBEAT_HASH_LENGTH,
@@ -56,12 +57,14 @@ func _init(
     
     _update()
 
+
 func _update() -> void:
     ._update()
     
     length = lerp(length_start, length_end, progress)
     width = lerp(width_start, width_end, progress)
     color.a = lerp(OPACITY_START, OPACITY_END, progress)
+
 
 func _draw() -> void:
     var half_displacement: Vector2 = \

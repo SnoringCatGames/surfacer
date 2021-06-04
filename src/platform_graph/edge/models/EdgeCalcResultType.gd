@@ -18,6 +18,7 @@ enum {
     UNKNOWN,
 }
 
+
 static func get_string(result_type: int) -> String:
     match result_type:
         EDGE_VALID_WITH_ONE_STEP:
@@ -43,6 +44,7 @@ static func get_string(result_type: int) -> String:
         _:
             Gs.logger.error("Invalid EdgeCalcResultType: %s" % result_type)
             return "UNKNOWN"
+
 
 static func get_description(result_type: int) -> String:
     match result_type:
@@ -81,11 +83,13 @@ static func get_description(result_type: int) -> String:
             Gs.logger.error("Invalid EdgeCalcResultType: %s" % result_type)
             return "UNKNOWN"
 
+
 static func get_is_broad_phase_failure(result_type: int) -> bool:
     return result_type != FAILED_WHEN_CALCULATING_HORIZONTAL_STEPS and \
             result_type != EDGE_VALID_WITH_ONE_STEP and \
             result_type != EDGE_VALID_WITHOUT_INCREASING_JUMP_HEIGHT and \
             result_type != EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT
+
 
 static func get_is_valid(result_type: int) -> bool:
     return result_type == EDGE_VALID_WITH_ONE_STEP or \

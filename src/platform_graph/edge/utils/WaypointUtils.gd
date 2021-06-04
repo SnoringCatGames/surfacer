@@ -12,6 +12,7 @@ const FAKE_REPLACEMENT_SEARCH_MAX_ITERATIONS := 6
 const CALCULATE_TIME_TO_REACH_DESTINATION_FROM_NEW_WAYPOINT_V_X_MAX_SPEED_MULTIPLIER := \
         0.5
 
+
 static func create_terminal_waypoints(
         edge_result_metadata: EdgeCalcResultMetadata,
         origin_position: PositionAlongSurface,
@@ -84,6 +85,7 @@ static func create_terminal_waypoints(
                 !destination.is_valid else \
                 origin.validity
         return []
+
 
 # Assuming movement would otherwise collide with the given surface, this
 # calculates positions along the edges of the surface that the movement could
@@ -290,6 +292,7 @@ static func calculate_waypoints_around_surface(
             edge_result_metadata)
     return waypoints
 
+
 # Use some basic heuristics to sort the waypoints. We try to attempt
 # calculations for the waypoint that's most likely to be successful first.
 static func _compare_waypoints_by_more_likely_to_be_valid(
@@ -336,6 +339,7 @@ static func _compare_waypoints_by_more_likely_to_be_valid(
             # which would then invalidate the rest of the movement to the
             # destination.
             return a_original.position.y <= b_original.position.y
+
 
 # Calculates and records various state on the given waypoint.
 # 
@@ -410,6 +414,7 @@ static func update_waypoint(
                 can_hold_jump_button_at_origin,
                 vertical_step,
                 additional_high_waypoint_position)
+
 
 # Calculates and records various state on the given waypoint.
 # 
@@ -773,6 +778,7 @@ static func _update_waypoint_velocity_and_time(
     
     return WaypointValidity.WAYPOINT_VALID
 
+
 # This only considers the time to move horizontally and the time to fall; this
 # does not consider the time to rise from the new waypoint to the destination.
 # 
@@ -829,6 +835,7 @@ static func _calculate_time_to_reach_destination_from_new_waypoint(
     return max(
             time_to_reach_horizontal_displacement,
             time_to_reach_fall_displacement)
+
 
 static func _assign_horizontal_movement_sign(
         waypoint: Waypoint,
@@ -907,6 +914,7 @@ static func _assign_horizontal_movement_sign(
     waypoint.horizontal_movement_sign = horizontal_movement_sign
     waypoint.horizontal_movement_sign_from_displacement = \
             horizontal_movement_sign_from_displacement
+
 
 # This calculates the range of possible x velocities at the start of a movement
 # step.
@@ -1220,6 +1228,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(
     
     return [v_0_min, v_0_max]
 
+
 # Accelerating over the whole interval would result in an end velocity that
 # exceeds the max speed. So instead, we assume a 2-part movement profile with
 # constant velocity in the first part and constant acceleration in the second
@@ -1275,6 +1284,7 @@ static func _calculate_v_1_with_v_0_limit(
         return min(result_1, result_2)
     else:
         return max(result_1, result_2)
+
 
 static func _solve_for_start_velocity(
         displacement: float,
@@ -1383,6 +1393,7 @@ static func _solve_for_start_velocity(
         return min(result_1, result_2)
     else:
         return max(result_1, result_2)
+
 
 # This calculates the range of possible x velocities at the end of a movement
 # step.
@@ -1695,6 +1706,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     
     return [v_1_min, v_1_max]
 
+
 # Accelerating over the whole interval would result in an end velocity that
 # exceeds the max speed. So instead, we assume a 2-part movement profile with
 # constant acceleration in the first part and constant velocity in the second
@@ -1751,6 +1763,7 @@ static func _calculate_v_0_with_v_1_limit(
         return min(result_1, result_2)
     else:
         return max(result_1, result_2)
+
 
 static func _solve_for_end_velocity(
         displacement: float,
@@ -1860,6 +1873,7 @@ static func _solve_for_end_velocity(
     else:
         return max(result_1, result_2)
 
+
 static func update_neighbors_for_new_waypoint(
         waypoint: Waypoint,
         previous_waypoint: Waypoint,
@@ -1882,6 +1896,7 @@ static func update_neighbors_for_new_waypoint(
             vertical_step.can_hold_jump_button,
             vertical_step,
             Vector2.INF)
+
 
 static func _calculate_replacement_for_fake_waypoint(
         fake_waypoint: Waypoint,
@@ -1992,6 +2007,7 @@ static func _calculate_replacement_for_fake_waypoint(
     replacement.replaced_a_fake = true
     return replacement
 
+
 static func clone_waypoint(original: Waypoint) -> Waypoint:
     var clone := Waypoint.new(
             original.surface,
@@ -2002,6 +2018,7 @@ static func clone_waypoint(original: Waypoint) -> Waypoint:
             original.next_waypoint)
     copy_waypoint(clone, original)
     return clone
+
 
 static func copy_waypoint(
         destination: Waypoint,

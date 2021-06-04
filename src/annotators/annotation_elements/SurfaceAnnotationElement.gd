@@ -9,6 +9,7 @@ var color_params: ColorParams
 var is_origin: bool
 var is_destination: bool
 
+
 func _init(
         surface: Surface,
         depth := AnnotationElementDefaults.SURFACE_DEPTH,
@@ -24,12 +25,14 @@ func _init(
     self.is_origin = is_origin
     self.is_destination = is_destination
 
+
 func draw(canvas: CanvasItem) -> void:
     draw_from_surface(
             canvas,
             surface,
             color_params,
             depth)
+
 
 static func draw_from_surface(
         canvas: CanvasItem,
@@ -42,6 +45,7 @@ static func draw_from_surface(
             surface,
             color,
             depth)
+
 
 func _create_legend_items() -> Array:
     var surface_item := SurfaceLegendItem.new()

@@ -8,6 +8,7 @@ enum {
     RIGHT_WALL,
 }
 
+
 static func get_string(side: int) -> String:
     match side:
         NONE:
@@ -24,6 +25,7 @@ static func get_string(side: int) -> String:
             Gs.logger.error("Invalid SurfaceSide: %s" % side)
             return "???"
 
+
 static func get_prefix(side: int) -> String:
     match side:
         NONE:
@@ -39,6 +41,7 @@ static func get_prefix(side: int) -> String:
         _:
             Gs.logger.error("Invalid SurfaceSide: %s" % side)
             return "???"
+
 
 static func get_normal(side: int) -> Vector2:
     return \

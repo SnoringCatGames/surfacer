@@ -5,15 +5,18 @@ const NAME := "FallFromWallCalculator"
 const EDGE_TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_A_JUMP_CALCULATOR := false
 
+
 func _init().(
         NAME,
         EDGE_TYPE,
         IS_A_JUMP_CALCULATOR) -> void:
     pass
 
+
 func get_can_traverse_from_surface(surface: Surface) -> bool:
     return surface != null and (surface.side == SurfaceSide.LEFT_WALL or \
             surface.side == SurfaceSide.RIGHT_WALL)
+
 
 func get_all_inter_surface_edges_from_surface(
         inter_surface_edges_results: Array,
@@ -61,6 +64,7 @@ func get_all_inter_surface_edges_from_surface(
     InterSurfaceEdgesResult.merge_results_with_matching_destination_surfaces(
             inter_surface_edges_results)
 
+
 func calculate_edge(
         edge_result_metadata: EdgeCalcResultMetadata,
         collision_params: CollisionCalcParams,
@@ -89,6 +93,7 @@ func calculate_edge(
     else:
         return null
 
+
 func optimize_edge_jump_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
@@ -113,6 +118,7 @@ func optimize_edge_jump_position_for_path(
             edge,
             self)
 
+
 func optimize_edge_land_position_for_path(
         collision_params: CollisionCalcParams,
         path: PlatformGraphPath,
@@ -128,6 +134,7 @@ func optimize_edge_land_position_for_path(
             edge,
             next_edge,
             self)
+
 
 func _create_edge_from_calc_results(
         collision_params: CollisionCalcParams,
@@ -165,6 +172,7 @@ func _create_edge_from_calc_results(
             trajectory,
             calc_result.edge_calc_result_type)
 
+
 static func _get_start_velocity(
         movement_params: MovementParams,
         origin_surface: Surface) -> Vector2:
@@ -172,6 +180,7 @@ static func _get_start_velocity(
             movement_params.wall_fall_horizontal_boost * \
                     origin_surface.normal.x,
             0.0)
+
 
 static func _get_jump_positions(
         movement_params: MovementParams,
@@ -213,6 +222,7 @@ static func _get_jump_positions(
         positions.push_back(bottom_jump_position)
     
     return positions
+
 
 static func _calculate_instructions(
         collision_params: CollisionCalcParams,

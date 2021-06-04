@@ -8,6 +8,7 @@ const PREFIX := "Profiler"
 
 var edge_result_metadata: EdgeCalcResultMetadata
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -23,11 +24,14 @@ func _init(
     self.edge_result_metadata = edge_result_metadata
     _post_init()
 
+
 func get_text() -> String:
     return PREFIX
 
+
 func get_description() -> String:
     return "Some stats on the time to calculate this edge."
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -36,6 +40,7 @@ func find_and_expand_controller(
             "find_and_expand_controller should not be called for " +
             "EDGE_CALC_PROFILER_GROUP.")
     return false
+
 
 func _create_children_inner() -> void:
     for metric in Gs.profiler.get_preregistered_metric_keys():
@@ -57,13 +62,16 @@ func _create_children_inner() -> void:
                     metric,
                     edge_result_metadata)
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
 
+
 func get_annotation_elements() -> Array:
     # Do nothing.
     return []
+
 
 func _get_annotation_elements_for_description_item() -> Array:
     # Do nothing.

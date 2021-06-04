@@ -1,6 +1,7 @@
 class_name PositionAlongSurfaceFactory
 extends Node
 
+
 static func create_position_offset_from_target_point(
         target_point: Vector2,
         surface: Surface,
@@ -15,6 +16,7 @@ static func create_position_offset_from_target_point(
             true)
     return position
 
+
 static func create_position_from_unmodified_target_point(
         target_point: Vector2,
         surface: Surface,
@@ -28,6 +30,7 @@ static func create_position_from_unmodified_target_point(
             false,
             false)
     return position
+
 
 static func create_position_without_surface(
         target_point: Vector2) -> PositionAlongSurface:

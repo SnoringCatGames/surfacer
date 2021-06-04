@@ -10,6 +10,7 @@ var includes_continuous_positions: bool
 var includes_discrete_positions: bool
 var color_params: ColorParams
 
+
 func _init(
         edge: Edge,
         includes_waypoints := \
@@ -30,6 +31,7 @@ func _init(
     self.includes_discrete_positions = includes_discrete_positions
     self.color_params = color_params
 
+
 func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
     Gs.draw_utils.draw_edge(
@@ -41,6 +43,7 @@ func draw(canvas: CanvasItem) -> void:
             includes_instruction_indicators,
             includes_continuous_positions,
             includes_discrete_positions)
+
 
 func _create_legend_items() -> Array:
     var items := []

@@ -41,6 +41,7 @@ var _surfacer_defaults := {
 
 # ---
 
+
 func register_colors(manifest: Dictionary) -> void:
     for key in _surfacer_defaults:
         var value = \

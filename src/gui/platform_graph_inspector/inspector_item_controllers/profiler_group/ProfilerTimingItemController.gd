@@ -8,6 +8,7 @@ const STARTS_COLLAPSED := true
 var metric: String
 var metadata_container: EdgeCalcResultMetadata
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -25,11 +26,13 @@ func _init(
     self.metadata_container = metadata_container
     _post_init()
 
+
 func get_text() -> String:
     return "%sms: %s" % [
         Gs.profiler.get_sum(metric, metadata_container),
         metric,
     ]
+
 
 func get_description() -> String:
     return ("The total time spent on the %s stage while parsing the " +
@@ -38,8 +41,10 @@ func get_description() -> String:
         graph.movement_params.name,
     ]
 
+
 func get_has_children() -> bool:
     return Gs.profiler.get_count(metric, metadata_container) > 1
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -48,6 +53,7 @@ func find_and_expand_controller(
             "find_and_expand_controller should not be called for " +
             "PROFILER_TIMING.")
     return false
+
 
 func _create_children_inner() -> void:
     if !get_has_children():
@@ -70,6 +76,7 @@ func _create_children_inner() -> void:
             "Max",
             Gs.profiler.get_max(metric, metadata_container))
 
+
 func _create_child(
         label: String,
         value: float,
@@ -89,13 +96,16 @@ func _create_child(
             funcref(self,
                     "_get_annotation_elements_for_description_item"))
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
 
+
 func get_annotation_elements() -> Array:
     # Do nothing.
     return []
+
 
 func _get_annotation_elements_for_description_item() -> Array:
     # Do nothing.

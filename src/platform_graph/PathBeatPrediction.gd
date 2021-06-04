@@ -6,6 +6,7 @@ var position: Vector2
 var direction: Vector2
 var is_downbeat: bool
 
+
 func _init(
         time: float,
         position: Vector2,

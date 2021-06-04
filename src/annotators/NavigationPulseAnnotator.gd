@@ -11,8 +11,10 @@ var is_enabled := false
 var is_pulse_active := false
 var does_pulse_grow := false
 
+
 func _init(navigator: Navigator) -> void:
     self.navigator = navigator
+
 
 func _physics_process(_delta: float) -> void:
     if navigator.path != current_path:
@@ -42,6 +44,7 @@ func _physics_process(_delta: float) -> void:
         is_pulse_active = \
                 current_path_elapsed_time < current_path_pulse_duration
         update()
+
 
 func _draw() -> void:
     if current_path == null or \
@@ -97,6 +100,7 @@ func _draw() -> void:
             path_color,
             trim_front_end_radius,
             trim_back_end_radius)
+
 
 func _get_is_pulse_enabled() -> bool:
     if navigator.player.is_human_player:

@@ -35,6 +35,7 @@ var current_position_index := -1
 
 var total_position_count := 0
 
+
 func _init(player: Player) -> void:
     self.player = player
     self.recent_positions = PoolVector2Array()
@@ -49,14 +50,17 @@ func _init(player: Player) -> void:
     
     Gs.audio.connect("music_changed", self, "_on_music_changed")
 
+
 func _on_beat(
         is_downbeat: bool,
         beat_index: int,
         meter: int) -> void:
     recent_beats[current_position_index] = beat_index
 
+
 func _on_music_changed(music_name: String) -> void:
     pass
+
 
 func check_for_update() -> void:
     # Record the action as belonging to the previous frame.
@@ -119,6 +123,7 @@ func check_for_update() -> void:
     
     update()
 
+
 func _draw() -> void:
     if total_position_count < 2:
         # Don't try to draw the starting position by itself.
@@ -175,6 +180,7 @@ func _draw() -> void:
         
         previous_position = next_position
 
+
 # Draw an indicator for the action that happened at this point.
 func _draw_action_indicator(
         action: int,
@@ -228,6 +234,7 @@ func _draw_action_indicator(
                 position,
                 SurfacerDrawUtils.EDGE_INSTRUCTION_INDICATOR_LENGTH,
                 color)
+
 
 func _draw_beat_hash(
         beat_index: int,

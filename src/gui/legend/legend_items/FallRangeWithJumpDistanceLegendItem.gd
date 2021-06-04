@@ -4,6 +4,7 @@ extends PolylineLegendItem
 const TYPE := LegendItemType.FALL_RANGE_WITH_JUMP_DISTANCE
 const TEXT := "Fall range with\njump distance"
 
+
 func _init(
         color_params := Surfacer.ann_defaults \
                 .DEFAULT_POLYLINE_COLOR_PARAMS,

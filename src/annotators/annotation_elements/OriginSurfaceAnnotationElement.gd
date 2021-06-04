@@ -3,6 +3,7 @@ extends SurfaceAnnotationElement
 
 const TYPE := AnnotationElementType.ORIGIN_SURFACE
 
+
 func _init(
         surface: Surface,
         depth := AnnotationElementDefaults.SURFACE_DEPTH) \
@@ -14,6 +15,7 @@ func _init(
         false,
         TYPE) -> void:
     pass
+
 
 func _create_legend_items() -> Array:
     var surface_item := OriginSurfaceLegendItem.new()

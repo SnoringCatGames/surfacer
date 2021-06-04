@@ -11,6 +11,7 @@ var just_reached_end_of_edge := false
 var is_stalling_one_frame_before_reaching_end := false
 var expected_position_along_surface := PositionAlongSurface.new()
 
+
 func reset() -> void:
     self.is_expecting_to_enter_air = false
     self.just_interrupted_navigation = false

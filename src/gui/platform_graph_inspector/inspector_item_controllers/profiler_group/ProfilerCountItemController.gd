@@ -8,6 +8,7 @@ const STARTS_COLLAPSED := true
 var metric: String
 var metadata_container: EdgeCalcResultMetadata
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -25,11 +26,13 @@ func _init(
     self.metadata_container = metadata_container
     _post_init()
 
+
 func get_text() -> String:
     return "%s: %s" % [
         Gs.profiler.get_count(metric, metadata_container),
         metric,
     ]
+
 
 func get_description() -> String:
     return ("The total number of times the %s event happened while " +
@@ -38,8 +41,10 @@ func get_description() -> String:
         graph.movement_params.name,
     ]
 
+
 func get_has_children() -> bool:
     return false
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -49,17 +54,21 @@ func find_and_expand_controller(
             "PROFILER_COUNT.")
     return false
 
+
 func _create_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
 
+
 func get_annotation_elements() -> Array:
     # Do nothing.
     return []
+
 
 func _get_annotation_elements_for_description_item() -> Array:
     # Do nothing.

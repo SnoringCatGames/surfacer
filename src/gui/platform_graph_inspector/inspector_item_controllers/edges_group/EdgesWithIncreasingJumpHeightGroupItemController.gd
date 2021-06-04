@@ -6,6 +6,7 @@ const EDGE_CALC_RESULT_TYPE := \
         EdgeCalcResultType.EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT
 const TEXT := "Edges calculated with increasing jump height"
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -18,6 +19,7 @@ func _init(
         EDGE_CALC_RESULT_TYPE,
         TEXT) -> void:
     pass
+
 
 func get_description() -> String:
     return ("Some edge calculations need to backtrack and consider a " +

@@ -27,6 +27,7 @@ var level_id: String
 var platform_graph_parser: PlatformGraphParser
 var level: SurfacerLevel
 
+
 func _init().(
         NAME,
         LAYER_NAME,
@@ -37,9 +38,11 @@ func _init().(
         ) -> void:
     pass
 
+
 func _on_activated(previous_screen_name: String) -> void:
     ._on_activated(previous_screen_name) 
     Gs.time.set_timeout(funcref(self, "_compute"), 0.2)
+
 
 func _compute() -> void:
     assert(Gs.debug)
@@ -53,6 +56,7 @@ func _compute() -> void:
     
     precompute_level_index = 0
     defer("_initialize_next")
+
 
 func _initialize_metrics() -> void:
     start_time = Gs.time.get_clock_time()
@@ -75,6 +79,7 @@ func _initialize_metrics() -> void:
             CenterContainer/VBoxContainer/Metrics/MetricsList.items = \
             metrics_items
 
+
 func _initialize_next() -> void:
     Gs.profiler.start("initialize")
     level_id = Surfacer.precompute_platform_graph_for_levels[ \
@@ -94,6 +99,7 @@ func _initialize_next() -> void:
     _on_stage_progress("initialize")
     defer("_parse_next")
 
+
 func _parse_next() -> void:
     Gs.profiler.start("parse")
     platform_graph_parser.connect(
@@ -106,10 +112,12 @@ func _parse_next() -> void:
             "_on_calculation_finished")
     platform_graph_parser.parse(level_id, true)
 
+
 func _on_calculation_finished() -> void:
     Gs.profiler.stop("parse")
     _on_stage_progress("parse")
     defer("_save_next")
+
 
 func _save_next() -> void:
     Gs.profiler.start("save")
@@ -117,6 +125,7 @@ func _save_next() -> void:
     Gs.profiler.stop("save")
     _on_stage_progress("save")
     defer("_clean_up_next")
+
 
 func _clean_up_next() -> void:
     Gs.profiler.start("clean_up")
@@ -134,8 +143,10 @@ func _clean_up_next() -> void:
     else:
         defer("_initialize_next")
 
+
 func defer(method: String) -> void:
     Gs.time.set_timeout(funcref(self, method), 0.01)
+
 
 func _on_graph_parse_progress(
         player_index: int,
@@ -178,6 +189,7 @@ func _on_graph_parse_progress(
     ]
     
     _set_progress(progress, label_1, label_2, label_3, label_4)
+
 
 func _on_stage_progress(
         step: String,
@@ -237,6 +249,7 @@ func _on_stage_progress(
     
     _set_progress(progress, label_1, label_2)
 
+
 func _set_progress(
         progress: float,
         label_1: String,
@@ -259,6 +272,7 @@ func _set_progress(
             [label_1, label_2, label_3, label_4])
     
     _update_metrics()
+
 
 func _update_metrics() -> void:
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
@@ -299,22 +313,26 @@ func _update_metrics() -> void:
                         false)
         stage_to_metric_items[stage][4].update_item()
 
+
 func _on_finished() -> void:
     Gs.audio.play_sound("achievement")
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/OpenFolderButton \
             .visible = true
 
+
 func _get_focused_button() -> ShinyButton:
     return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/CloseButton as \
             ShinyButton
+
 
 func _on_OpenFolderButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()
     var path := PlatformGraphParser.get_directory_path()
     Gs.logger.print("Opening platform-graph folder: " + path)
     OS.shell_open(path)
+
 
 func _on_CloseButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()

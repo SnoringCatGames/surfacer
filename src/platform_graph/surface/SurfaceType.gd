@@ -7,6 +7,7 @@ enum {
     OTHER,
 }
 
+
 static func get_type_from_side(side: int) -> int:
     match side:
         SurfaceSide.FLOOR:

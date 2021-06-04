@@ -10,6 +10,7 @@ var step_result_metadata: EdgeStepCalcResultMetadata
 var step_item_factory
 var background_color: Color
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -34,6 +35,7 @@ func _init(
             background_color)
     _post_init()
 
+
 func to_string() -> String:
     return "%s { edge_step_calc_result_type=%s }" % [
         InspectorItemType.get_string(type),
@@ -41,8 +43,10 @@ func to_string() -> String:
                 step_result_metadata.edge_step_calc_result_type),
     ]
 
+
 func get_text() -> String:
     return _get_text_for_description_index(0)
+
 
 func get_description() -> String:
     var description := ""
@@ -66,6 +70,7 @@ func get_description() -> String:
                 "following waypoint). ")
     
     return description
+
 
 func _get_text_for_description_index(description_index: int) -> String:
     match description_index:
@@ -91,6 +96,7 @@ func _get_text_for_description_index(description_index: int) -> String:
             Gs.logger.error()
             return ""
 
+
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
@@ -99,8 +105,10 @@ func find_and_expand_controller(
             "EDGE_STEP_CALC_RESULT_METADATA.")
     return false
 
+
 func get_has_children() -> bool:
     return !step_result_metadata.children_step_attempts.empty()
+
 
 func _create_children_inner() -> void:
     for child_step_result_metadata in \
@@ -124,15 +132,18 @@ func _create_children_inner() -> void:
                 null,
                 background_color)
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func get_annotation_elements() -> Array:
     var element := EdgeStepAnnotationElement.new(
             step_result_metadata,
             false)
     return [element]
+
 
 static func _calculate_background_color(
         step_result_metadata: EdgeStepCalcResultMetadata) -> Color:

@@ -4,6 +4,7 @@ extends PlayerActionSource
 # Array<InstructionsPlayback>
 var _all_playback := []
 
+
 func _init(
         player,
         is_additive: bool) \
@@ -12,6 +13,7 @@ func _init(
         player,
         is_additive) -> void:
     pass
+
 
 # Calculates actions for the current frame.
 func update(
@@ -55,6 +57,7 @@ func update(
             i -= 1
         i += 1
 
+
 func start_instructions(
         edge: Edge,
         time_scaled: float) -> InstructionsPlayback:
@@ -64,6 +67,7 @@ func start_instructions(
     playback.start(time_scaled)
     _all_playback.push_back(playback)
     return playback
+
 
 func cancel_playback(
         playback: InstructionsPlayback,
@@ -75,6 +79,7 @@ func cancel_playback(
     else:
         _all_playback.remove(index)
         return true
+
 
 func cancel_all_playback() -> void:
     _all_playback.clear()

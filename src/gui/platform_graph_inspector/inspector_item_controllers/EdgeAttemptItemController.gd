@@ -7,6 +7,7 @@ const STARTS_COLLAPSED := true
 var edge_attempt: EdgeAttempt
 var edge_result_metadata: EdgeCalcResultMetadata
 
+
 func _init(
         type,
         parent_item: TreeItem,
@@ -22,6 +23,7 @@ func _init(
         graph) -> void:
     assert(edge_attempt != null)
     self.edge_attempt = edge_attempt
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -42,6 +44,7 @@ func find_and_expand_controller(
         return true
     else:
         return false
+
 
 func _create_children_inner() -> void:
     if edge_result_metadata == null:
@@ -115,6 +118,7 @@ func _create_children_inner() -> void:
             graph,
             edge_result_metadata)
 
+
 static func _calculate_edge_calc_result_metadata(
         edge_attempt: EdgeAttempt,
         graph: PlatformGraph) -> EdgeCalcResultMetadata:
@@ -128,6 +132,7 @@ static func _calculate_edge_calc_result_metadata(
             edge_attempt.includes_extra_jump_duration,
             edge_attempt.includes_extra_wall_land_horizontal_speed)
     return edge_result_metadata
+
 
 func _destroy_children_inner() -> void:
     # Do nothing.

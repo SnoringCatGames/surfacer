@@ -191,16 +191,20 @@ var walking_edge_weight_multiplier := 1.0
 var climbing_edge_weight_multiplier := 1.0
 var air_edge_weight_multiplier := 1.0
 
+
 func _init() -> void:
     _init_params()
     _init_animator_params()
 
+
 func _init_params() -> void:
     Gs.logger.error("Abstract MovementParams._init_params is not implemented")
+
 
 func _init_animator_params() -> void:
     Gs.logger.error(
             "Abstract MovementParams._init_animator_params is not implemented")
+
 
 func get_max_horizontal_jump_distance(surface_side: int) -> float:
     return wall_jump_max_horizontal_jump_distance if \

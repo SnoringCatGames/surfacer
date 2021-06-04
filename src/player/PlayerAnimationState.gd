@@ -11,12 +11,14 @@ var animation_position := 0.0
 var facing_left := false
 var confidence_multiplier := 0.0
 
+
 func reset() -> void:
     self.player_position = Vector2.INF
     self.animation_type = PlayerAnimationType.UNKNOWN
     self.animation_position = 0.0
     self.facing_left = false
     self.confidence_multiplier = 0.0
+
 
 func copy(other: PlayerAnimationState) -> void:
     self.player_position = other.player_position

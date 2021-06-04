@@ -14,6 +14,7 @@ var start_time: float
 var current_time: float
 var progress := 0.0
 
+
 func _init(
         duration: float,
         delay := 0.0,
@@ -26,8 +27,10 @@ func _init(
     self.ease_name = ease_name
     self.time_type = time_type
 
+
 func _process(_delta: float) -> void:
     _update()
+
 
 func _update() -> void:
     current_time = Gs.time.get_elapsed_time(time_type)

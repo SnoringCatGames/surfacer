@@ -15,6 +15,7 @@ enum {
     UNKNOWN,
 }
 
+
 static func get_string(validity: int) -> String:
     match validity:
         WAYPOINT_VALID:
@@ -44,6 +45,7 @@ static func get_string(validity: int) -> String:
         _:
             Gs.logger.error("Invalid WaypointValidity: %s" % validity)
             return "UNKNOWN"
+
 
 static func get_description(validity: int) -> String:
     match validity:

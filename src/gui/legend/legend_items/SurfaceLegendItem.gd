@@ -9,6 +9,7 @@ const SURFACE_DEPTH := 8.1
 
 var color_params: ColorParams
 
+
 func _init(
         type := DEFAULT_TYPE,
         text := DEFAULT_TEXT,
@@ -17,6 +18,7 @@ func _init(
         type,
         text) -> void:
     self.color_params = color_params
+
 
 func _draw_shape(
         center: Vector2,

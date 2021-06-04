@@ -10,6 +10,7 @@ var text: String
 var edge_types_to_filtered_edges: Dictionary
 var filtered_edge_count: int
 
+
 func _init(
         type: int,
         parent_item: TreeItem,
@@ -30,6 +31,7 @@ func _init(
             graph,
             edge_calc_result_type)
     _post_init()
+
 
 func _init_edge_types_to_filtered_edges(
         graph: PlatformGraph,
@@ -54,17 +56,20 @@ func _init_edge_types_to_filtered_edges(
             edge_types_to_filtered_edges[edge.edge_type] = []
         edge_types_to_filtered_edges[edge.edge_type].push_back(edge)
 
+
 func get_text() -> String:
     return "[%s] %s" % [
         filtered_edge_count,
         text,
     ]
 
+
 func to_string() -> String:
     return "%s { count=%s }" % [
         InspectorItemType.get_string(type),
         filtered_edge_count,
     ]
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -73,6 +78,7 @@ func find_and_expand_controller(
             "find_and_expand_controller should not be called for " +
             "%s.") % InspectorItemType.get_string(type))
     return false
+
 
 func _create_children_inner() -> void:
     for edge_type in edge_types_to_filtered_edges:
@@ -84,9 +90,11 @@ func _create_children_inner() -> void:
                 edge_type,
                 edge_types_to_filtered_edges[edge_type])
 
+
 func _destroy_children_inner() -> void:
     # Do nothing.
     pass
+
 
 func get_annotation_elements() -> Array:
     var elements := []

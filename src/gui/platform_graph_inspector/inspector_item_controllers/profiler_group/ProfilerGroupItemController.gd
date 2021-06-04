@@ -9,6 +9,7 @@ const PREFIX := "Profiler"
 var surface_parser_item_controller: SurfaceParserGroupItemController
 var global_counts_item_controller: GlobalCountsGroupItemController
 
+
 func _init(
         parent_item: TreeItem,
         tree: Tree,
@@ -22,14 +23,17 @@ func _init(
         graph) -> void:
     _post_init()
 
+
 func get_text() -> String:
     return PREFIX
+
 
 func get_description() -> String:
     return ("Some stats on the time to parse the platform graph for the " +
             "%s player.") % [
         graph.movement_params.name,
     ]
+
 
 func find_and_expand_controller(
         search_type: int,
@@ -38,6 +42,7 @@ func find_and_expand_controller(
             "find_and_expand_controller should not be called for " +
             "PROFILER_GROUP.")
     return false
+
 
 func _create_children_inner() -> void:
     for metric in Gs.profiler.get_preregistered_metric_keys():
@@ -68,13 +73,16 @@ func _create_children_inner() -> void:
                     tree,
                     graph)
 
+
 func _destroy_children_inner() -> void:
     surface_parser_item_controller = null
     global_counts_item_controller = null
 
+
 func get_annotation_elements() -> Array:
     # Do nothing.
     return []
+
 
 func _get_annotation_elements_for_description_item() -> Array:
     # Do nothing.

@@ -3,6 +3,7 @@ extends Reference
 # A collection of utility functions for calculating state related to vertical
 # movement.
 
+
 # Calculates a new step for the vertical part of the movement and the
 # corresponding total jump duration.
 static func calculate_vertical_step(
@@ -123,6 +124,7 @@ static func calculate_vertical_step(
             edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
     return step
+
 
 # Calculates the minimum possible time it would take to jump between the given
 # positions.
@@ -368,6 +370,7 @@ static func calculate_time_to_jump_to_waypoint(
                 false,
                 true)
 
+
 # Given the total duration, calculate the time to release the jump button.
 static func calculate_time_to_release_jump_button(
         movement_params: MovementParams,
@@ -418,6 +421,7 @@ static func calculate_time_to_release_jump_button(
         return INF
     
     return time_to_release_jump_button
+
 
 # Calculates the time at which the movement would travel through the given
 # position with the given vertical_step.
@@ -530,6 +534,7 @@ static func calculate_time_for_passing_through_waypoint(
     
     return duration_of_fast_fall + duration_of_slow_rise
 
+
 static func calculate_vertical_state_for_time_from_step(
         movement_params: MovementParams,
         step: VerticalEdgeStep,
@@ -540,6 +545,7 @@ static func calculate_vertical_state_for_time_from_step(
             step.position_step_start.y,
             step.velocity_step_start.y,
             step.time_instruction_end)
+
 
 # Calculates the vertical component of position and velocity according to the
 # given vertical movement state and the given time. These are then returned in
@@ -583,6 +589,7 @@ static func calculate_vertical_state_for_time(
                 movement_params.gravity_fast_fall * fast_fall_duration
     
     return [position, velocity]
+
 
 # Calculates the vertical displacement with the given duration if using
 # slow-rise gravity as long as possible.
@@ -634,6 +641,7 @@ static func calculate_vertical_displacement_from_duration_with_max_slow_rise_gra
         
         return rise_displacement + fall_displacement
 
+
 # Calculates the maximum possible jump height--that is, the jump height using
 # slow-rise gravity until hitting the peak.
 # 
@@ -650,6 +658,7 @@ static func calculate_max_upward_distance(
     #     s = -v_0^2 / 2 / a
     return (movement_params.jump_boost * movement_params.jump_boost) / 2.0 / \
             movement_params.gravity_slow_rise
+
 
 # Calculates the minimum possible jump height--that is, the jump height using
 # fast-fall gravity from the very start.

@@ -90,6 +90,7 @@ var is_valid: bool setget ,_get_is_valid
 
 var side: int setget ,_get_side
 
+
 func _init(
         surface: Surface,
         position: Vector2,
@@ -104,6 +105,7 @@ func _init(
     self.previous_waypoint = previous_waypoint
     self.next_waypoint = next_waypoint
 
+
 func to_string() -> String:
     return "Waypoint{ %s, passing_vertically: %s, should_stay_on_min_side: %s, surface: %s }" % [
         str(position),
@@ -112,8 +114,10 @@ func to_string() -> String:
         surface.to_string(),
     ]
 
+
 func _get_is_valid() -> bool:
     return validity == WaypointValidity.WAYPOINT_VALID
+
 
 func _get_side() -> int:
     return surface.side if \

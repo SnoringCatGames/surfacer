@@ -6,12 +6,14 @@ const TYPE := SurfaceType.AIR
 const USES_RUNTIME_PHYSICS := true
 const PRIORITY := 320
 
+
 func _init().(
         NAME,
         TYPE,
         USES_RUNTIME_PHYSICS,
         PRIORITY) -> void:
     pass
+
 
 func process(player: Player) -> bool:
     if player.actions.just_pressed_jump and \

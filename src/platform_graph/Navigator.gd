@@ -35,6 +35,7 @@ var current_navigation_attempt_count := 0
 
 var navigation_state := PlayerNavigationState.new()
 
+
 func _init(
         player,
         graph: PlatformGraph) -> void:
@@ -46,6 +47,7 @@ func _init(
             InstructionsActionSource.new(player, true)
     self.from_air_calculator = FromAirCalculator.new()
     self.surface_to_air_calculator = JumpFromSurfaceCalculator.new()
+
 
 func navigate_path(
         path: PlatformGraphPath,
@@ -122,6 +124,7 @@ func navigate_path(
         
         return true
 
+
 # Starts a new navigation to the given destination.
 func navigate_to_position(
         destination: PositionAlongSurface,
@@ -149,6 +152,7 @@ func navigate_to_position(
             destination, graph_destination_for_in_air_destination)
     
     return navigate_path(path, is_retry)
+
 
 func find_path(
         destination: PositionAlongSurface,
@@ -258,6 +262,7 @@ func find_path(
     
     return path
 
+
 func _calculate_surface_to_air_edge(
         start: PositionAlongSurface,
         end: PositionAlongSurface) -> JumpFromSurfaceEdge:
@@ -276,8 +281,10 @@ func _calculate_surface_to_air_edge(
             false,
             false) as JumpFromSurfaceEdge
 
+
 func stop() -> void:
     _reset()
+
 
 func _set_reached_destination() -> void:
     if player.movement_params.forces_player_position_to_match_path_at_end:
@@ -300,6 +307,7 @@ func _set_reached_destination() -> void:
     
     emit_signal("destination_reached")
 
+
 func _reset() -> void:
     if path != null:
         previous_path = path
@@ -319,6 +327,7 @@ func _reset() -> void:
     actions_might_be_dirty = true
     current_navigation_attempt_count = 0
     navigation_state.reset()
+
 
 func _start_edge(
         index: int,
@@ -360,6 +369,7 @@ func _start_edge(
     update(
             true,
             is_starting_navigation_retry)
+
 
 func update(
         just_started_new_edge := false,
@@ -449,6 +459,7 @@ func update(
         else:
             _start_edge(next_edge_index)
 
+
 func predict_animation_state(
         result: PlayerAnimationState,
         elapsed_time_from_now: float) -> bool:
@@ -474,15 +485,18 @@ func predict_animation_state(
     
     return path.predict_animation_state(result, prediction_path_time)
 
+
 func get_destination() -> PositionAlongSurface:
     return path.destination if \
             path != null else \
             null
 
+
 func get_previous_destination() -> PositionAlongSurface:
     return previous_path.destination if \
             previous_path != null else \
             null
+
 
 # Conditionally prints the given message, depending on the Player's
 # configuration.
@@ -497,6 +511,7 @@ func print_msg(
             Gs.logger.print(message_template % message_args)
         else:
             Gs.logger.print(message_template)
+
 
 static func _possibly_backtrack_to_not_protrude_past_surface_end(
         movement_params: MovementParams,
@@ -636,6 +651,7 @@ static func _possibly_backtrack_to_not_protrude_past_surface_end(
             movement_params)
     backtracking_edge.is_backtracking_to_not_protrude_past_surface_end = true
     return backtracking_edge
+
 
 # Tries to update each jump edge to jump from the earliest point possible along
 # the surface rather than from the safe end/closest point that was used at
@@ -842,6 +858,7 @@ func _optimize_edges_for_approach(
     
     Gs.profiler.stop("navigator_optimize_edges_for_approach")
 
+
 # Inserts extra intra-surface between any edges that land and then immediately
 # jump from the same position, since the land position could be off due to
 # movement error at runtime.
@@ -877,6 +894,7 @@ static func _interleave_intra_surface_edges(
                 count += 1
         i += 1
 
+
 func calculate_path_beat_hashes_for_current_mode(
         path: PlatformGraphPath,
         path_start_time_scaled: float) -> Array:
@@ -899,6 +917,7 @@ func calculate_path_beat_hashes_for_current_mode(
                 Gs.audio.next_beat_index,
                 Gs.audio.get_beat_duration_unscaled(),
                 Gs.audio.get_meter())
+
 
 static func calculate_path_beat_hashes(
         path: PlatformGraphPath,

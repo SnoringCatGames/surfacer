@@ -3,6 +3,7 @@ extends Reference
 # A collection of utility functions for calculating state related to horizontal
 # movement.
 
+
 # Calculates a new step for the current horizontal part of the movement.
 static func calculate_horizontal_step(
         edge_result_metadata: EdgeCalcResultMetadata,
@@ -182,6 +183,7 @@ static func calculate_horizontal_step(
     
     return step
 
+
 # Calculate the times that accelaration starts and stops in order for movement
 # to match the given parameters.
 # 
@@ -245,6 +247,7 @@ static func _calculate_acceleration_start_and_end_time(
     
     return [time_acceleration_start, time_acceleration_end]
 
+
 # Calculates the horizontal component of position and velocity according to the
 # given horizontal movement state and the given time. These are then returned
 # in an Array: [0] is position and [1] is velocity.
@@ -291,6 +294,7 @@ static func calculate_horizontal_state_for_time(
     
     return [position, velocity]
 
+
 static func calculate_max_horizontal_displacement_before_returning_to_starting_height(
         velocity_start_x: float,
         velocity_start_y: float,
@@ -320,6 +324,7 @@ static func calculate_max_horizontal_displacement_before_returning_to_starting_h
             max_time_to_peak + max_time_for_fall_from_peak_to_starting_height
     # s = s_0 + v * t
     return max_time_to_starting_height * max_horizontal_speed_default
+
 
 static func _calculate_min_and_max_x_velocity_at_end_of_interval(
         displacement: float,

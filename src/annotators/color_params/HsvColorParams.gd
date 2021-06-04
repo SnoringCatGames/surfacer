@@ -8,6 +8,7 @@ var saturation: float
 var value: float
 var alpha: float
 
+
 func _init(
         hue: float,
         saturation: float,
@@ -18,6 +19,7 @@ func _init(
     self.saturation = saturation
     self.value = value
     self.alpha = alpha
+
 
 func get_color() -> Color:
     return Color.from_hsv(

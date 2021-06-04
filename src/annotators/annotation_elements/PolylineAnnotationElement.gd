@@ -10,6 +10,7 @@ var dash_length: float
 var dash_gap: float
 var stroke_width: float
 
+
 func _init(
         type: int,
         legend_item_class_reference,
@@ -31,6 +32,7 @@ func _init(
     self.dash_gap = dash_gap
     self.stroke_width = stroke_width
 
+
 func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
     if is_filled:
@@ -51,6 +53,7 @@ func draw(canvas: CanvasItem) -> void:
                 PoolVector2Array(vertices),
                 color,
                 stroke_width)
+
 
 func _create_legend_items() -> Array:
     var legend_item: PolylineLegendItem = legend_item_class_reference.new(
