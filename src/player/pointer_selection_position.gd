@@ -78,8 +78,8 @@ func update_pointer_position(pointer_position: Vector2) -> void:
             self.path = _player.navigator.find_path(navigation_destination)
             if path != null:
                 self.path_beats_time_start = Gs.time.get_scaled_play_time()
-                self.path_beats = _player.navigator \
-                        .calculate_path_beat_hashes_for_current_mode(
+                self.path_beats = \
+                        Gs.beats.calculate_path_beat_hashes_for_current_mode(
                                 path,
                                 path_beats_time_start)
             else:
@@ -109,8 +109,8 @@ func _update_path_for_in_air_destination(
         if path != null:
             self.path = path
             self.path_beats_time_start = Gs.time.get_scaled_play_time()
-            self.path_beats = _player.navigator \
-                    .calculate_path_beat_hashes_for_current_mode(
+            self.path_beats = \
+                    Gs.beats.calculate_path_beat_hashes_for_current_mode(
                             path,
                             path_beats_time_start)
             self.nearby_position_along_surface = nearby_position_along_surface
@@ -135,8 +135,8 @@ func get_is_selection_navigatable() -> bool:
 func update_beats() -> void:
     if path != null:
         self.path_beats_time_start = Gs.time.get_scaled_play_time()
-        self.path_beats = _player.navigator \
-                .calculate_path_beat_hashes_for_current_mode(
+        self.path_beats = \
+                Gs.beats.calculate_path_beat_hashes_for_current_mode(
                         path,
                         path_beats_time_start)
 

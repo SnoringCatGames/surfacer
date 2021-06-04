@@ -102,7 +102,6 @@ var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
 var is_precomputing_platform_graphs: bool
 var is_intro_choreography_shown: bool
-var are_beats_tracked: bool
 
 var default_player_name: String
 
@@ -209,7 +208,6 @@ var inspector_panel: InspectorPanel
 var annotators: Annotators
 var ann_defaults: AnnotationElementDefaults
 var edge_from_json_factory := EdgeFromJsonFactory.new()
-var slow_motion: SlowMotionController
 
 var player_action_classes: Array
 var edge_movement_classes: Array
@@ -261,7 +259,6 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.inspector_panel_starts_open = manifest.inspector_panel_starts_open
     self.uses_threads_for_platform_graph_calculation = \
             manifest.uses_threads_for_platform_graph_calculation
-    self.are_beats_tracked = manifest.are_beats_tracked
     self.player_action_classes = manifest.player_action_classes
     self.edge_movement_classes = manifest.edge_movement_classes
     self.player_param_classes = manifest.player_param_classes
@@ -393,11 +390,6 @@ func initialize() -> void:
     
     Gs.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
     Gs.profiler.preregister_metric_keys(surface_parser_metric_keys)
-    
-    Gs.audio.is_tracking_beat = Surfacer.are_beats_tracked
-    
-    slow_motion = SlowMotionController.new()
-    add_child(slow_motion)
     
     ann_defaults = AnnotationElementDefaults.new()
     annotators = Annotators.new()

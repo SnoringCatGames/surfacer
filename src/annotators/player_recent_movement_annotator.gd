@@ -46,8 +46,8 @@ func _init(player: Player) -> void:
     self.recent_beats = PoolIntArray()
     self.recent_beats.resize(RECENT_POSITIONS_BUFFER_SIZE)
     
-    Gs.audio.connect("beat", self, "_on_beat")
-    Surfacer.slow_motion.music.connect("music_beat", self, "_on_beat")
+    Gs.beats.connect("beat", self, "_on_beat")
+    Gs.slow_motion.music.connect("music_beat", self, "_on_beat")
     
     Gs.audio.connect("music_changed", self, "_on_music_changed")
 
@@ -242,7 +242,7 @@ func _draw_beat_hash(
         previous_position: Vector2,
         next_position: Vector2,
         opacity: float) -> void:
-    var is_downbeat := beat_index % Gs.audio.get_meter() == 0
+    var is_downbeat := beat_index % Gs.beats.get_meter() == 0
     var hash_length: float
     var stroke_width: float
     if is_downbeat:

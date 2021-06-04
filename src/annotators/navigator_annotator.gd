@@ -57,10 +57,10 @@ func _process(_delta: float) -> void:
         previous_path_beats = navigator.previous_path_beats
         update()
     
-    if Surfacer.slow_motion.get_is_enabled_or_transitioning() != \
+    if Gs.slow_motion.get_is_enabled_or_transitioning() != \
             is_slow_motion_enabled:
         is_slow_motion_enabled = \
-                Surfacer.slow_motion.get_is_enabled_or_transitioning()
+                Gs.slow_motion.get_is_enabled_or_transitioning()
         is_enabled = _get_is_enabled()
         _trigger_fade_in(is_enabled)
         update()

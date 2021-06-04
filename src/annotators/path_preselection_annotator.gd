@@ -71,9 +71,9 @@ func _init(player: Player) -> void:
     _predictions_container.modulate.a = \
             Surfacer.nav_selection_prediction_opacity
     add_child(_predictions_container)
-    Surfacer.slow_motion.connect(
+    Gs.slow_motion.connect(
             "slow_motion_toggled", self, "_on_slow_motion_toggled")
-    Surfacer.slow_motion.music.connect(
+    Gs.slow_motion.music.connect(
             "tick_tock_beat", self, "_on_slow_motion_tick_tock_beat")
 
 
@@ -156,12 +156,12 @@ func _process(_delta: float) -> void:
     
     if preselection_destination != null:
         var preselection_duration: float = \
-                Surfacer.slow_motion.music \
+                Gs.slow_motion.music \
                         .tick_tock_beat_duration_unscaled * \
                     Surfacer \
                         .nav_selection_slow_mo_tick_tock_tempo_multiplier * \
                     2.0 if \
-                Surfacer.slow_motion.is_enabled else \
+                Gs.slow_motion.is_enabled else \
                 PRESELECTION_DEFAULT_DURATION
         animation_progress = fmod((current_time - animation_start_time) / \
                 preselection_duration, 1.0)
