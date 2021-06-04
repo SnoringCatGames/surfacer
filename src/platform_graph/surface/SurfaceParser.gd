@@ -346,8 +346,6 @@ static func _parse_polygon_into_sides(
     
     # Find the left-most, right-most, and bottom-most vertices.
     
-    var vertex_x: float
-    var vertex_y: float
     var left_most_vertex_x: float = vertices[0].x
     var right_most_vertex_x: float = vertices[0].x
     var bottom_most_vertex_y: float = vertices[0].y
@@ -358,19 +356,18 @@ static func _parse_polygon_into_sides(
     var top_most_vertex_index := 0
     
     for i in range(1, vertex_count):
-        vertex_x = vertices[i].x
-        vertex_y = vertices[i].y
-        if vertex_x < left_most_vertex_x:
-            left_most_vertex_x = vertex_x
+        var vertex: Vector2 = vertices[i]
+        if vertex.x < left_most_vertex_x:
+            left_most_vertex_x = vertex.x
             left_most_vertex_index = i
-        if vertex_x > right_most_vertex_x:
-            right_most_vertex_x = vertex_x
+        if vertex.x > right_most_vertex_x:
+            right_most_vertex_x = vertex.x
             right_most_vertex_index = i
-        if vertex_y > bottom_most_vertex_y:
-            bottom_most_vertex_y = vertex_y
+        if vertex.y > bottom_most_vertex_y:
+            bottom_most_vertex_y = vertex.y
             bottom_most_vertex_index = i
-        if vertex_y < top_most_vertex_y:
-            top_most_vertex_y = vertex_y
+        if vertex.y < top_most_vertex_y:
+            top_most_vertex_y = vertex.y
             top_most_vertex_index = i
     
     # Iterate across the edges in a clockwise direction, regardless of the
@@ -537,50 +534,35 @@ static func _parse_polygon_into_sides(
 static func _remove_internal_surfaces(
         surfaces: Array,
         opposite_surfaces: Array) -> void:
-    var i: int
-    var j: int
-    var count_i: int
-    var count_j: int
-    var surface1: _TmpSurface
-    var surface2: _TmpSurface
-    var surface1_front := Vector2.INF
-    var surface1_back := Vector2.INF
-    var surface2_front := Vector2.INF
-    var surface2_back := Vector2.INF
-    var front_back_diff_x: float
-    var front_back_diff_y: float
-    var back_front_diff_x: float
-    var back_front_diff_y: float
-    
-    count_i = surfaces.size()
-    count_j = opposite_surfaces.size()
-    i = 0
+    var count_i := surfaces.size()
+    var count_j := opposite_surfaces.size()
+    var i := 0
     while i < count_i:
-        surface1 = surfaces[i]
+        var surface1: _TmpSurface = surfaces[i]
         
         if surface1.vertices_array.size() > 2:
             i += 1
             continue
         
-        surface1_front = surface1.vertices_array.front()
-        surface1_back = surface1.vertices_array.back()
+        var surface1_front: Vector2 = surface1.vertices_array.front()
+        var surface1_back: Vector2 = surface1.vertices_array.back()
         
-        j = 0
+        var j := 0
         while j < count_j:
-            surface2 = opposite_surfaces[j]
+            var surface2: _TmpSurface = opposite_surfaces[j]
             
             if surface2.vertices_array.size() > 2:
                 j += 1
                 continue
             
-            surface2_front = surface2.vertices_array.front()
-            surface2_back = surface2.vertices_array.back()
+            var surface2_front: Vector2 = surface2.vertices_array.front()
+            var surface2_back: Vector2 = surface2.vertices_array.back()
             
             # Vector equality checks, allowing for some round-off error.
-            front_back_diff_x = surface1_front.x - surface2_back.x
-            front_back_diff_y = surface1_front.y - surface2_back.y
-            back_front_diff_x = surface1_back.x - surface2_front.x
-            back_front_diff_y = surface1_back.y - surface2_front.y
+            var front_back_diff_x := surface1_front.x - surface2_back.x
+            var front_back_diff_y := surface1_front.y - surface2_back.y
+            var back_front_diff_x := surface1_back.x - surface2_front.x
+            var back_front_diff_y := surface1_back.y - surface2_front.y
             if front_back_diff_x < Gs.geometry.FLOAT_EPSILON and \
                     front_back_diff_x > -Gs.geometry.FLOAT_EPSILON and \
                     front_back_diff_y < Gs.geometry.FLOAT_EPSILON and \
@@ -608,43 +590,27 @@ static func _remove_internal_surfaces(
 
 # Merges adjacent continuous surfaces.
 static func _merge_continuous_surfaces(surfaces: Array) -> void:
-    var i: int
-    var j: int
-    var count: int
-    var surface1: _TmpSurface
-    var surface2: _TmpSurface
-    var surface1_front := Vector2.INF
-    var surface1_back := Vector2.INF
-    var surface2_front := Vector2.INF
-    var surface2_back := Vector2.INF
-    var front_back_diff_x: float
-    var front_back_diff_y: float
-    var back_front_diff_x: float
-    var back_front_diff_y: float
-    var tile_map_index_1: int
-    var tile_map_index_2: int
-    
     var merge_count := 1
     while merge_count > 0:
         merge_count = 0
-        count = surfaces.size()
-        i = 0
+        var count := surfaces.size()
+        var i := 0
         while i < count:
-            surface1 = surfaces[i]
-            surface1_front = surface1.vertices_array.front()
-            surface1_back = surface1.vertices_array.back()
+            var surface1: _TmpSurface = surfaces[i]
+            var surface1_front: Vector2 = surface1.vertices_array.front()
+            var surface1_back: Vector2 = surface1.vertices_array.back()
             
-            j = i + 1
+            var j := i + 1
             while j < count:
-                surface2 = surfaces[j]
-                surface2_front = surface2.vertices_array.front()
-                surface2_back = surface2.vertices_array.back()
+                var surface2: _TmpSurface = surfaces[j]
+                var surface2_front: Vector2 = surface2.vertices_array.front()
+                var surface2_back: Vector2 = surface2.vertices_array.back()
                 
                 # Vector equality checks, allowing for some round-off error.
-                front_back_diff_x = surface1_front.x - surface2_back.x
-                front_back_diff_y = surface1_front.y - surface2_back.y
-                back_front_diff_x = surface1_back.x - surface2_front.x
-                back_front_diff_y = surface1_back.y - surface2_front.y
+                var front_back_diff_x := surface1_front.x - surface2_back.x
+                var front_back_diff_y := surface1_front.y - surface2_back.y
+                var back_front_diff_x := surface1_back.x - surface2_front.x
+                var back_front_diff_y := surface1_back.y - surface2_front.y
                 if front_back_diff_x < Gs.geometry.FLOAT_EPSILON and \
                         front_back_diff_x > -Gs.geometry.FLOAT_EPSILON and \
                         front_back_diff_y < Gs.geometry.FLOAT_EPSILON and \
@@ -699,13 +665,10 @@ static func _merge_continuous_surfaces(surfaces: Array) -> void:
             i += 1
 
 static func _remove_internal_collinear_vertices(surfaces: Array) -> void:
-    var i: int
-    var count: int
-    var vertices: Array
     for surface in surfaces:
-        vertices = surface.vertices_array
-        i = 0
-        count = vertices.size()
+        var vertices: Array = surface.vertices_array
+        var i := 0
+        var count := vertices.size()
         while i + 2 < count:
             if Gs.geometry.are_points_collinear(
                     vertices[i],
@@ -882,14 +845,11 @@ static func _assign_neighbor_surfaces(
 
 static func _calculate_shape_bounding_boxes_for_surfaces(
         surfaces: Array) -> void:
-    var connected_region_bounding_box: Rect2
-    var connected_surface: Surface
-    
     for surface in surfaces:
         # Calculate the combined bounding box for the overall collection of
         # transitively connected surfaces.
-        connected_region_bounding_box = surface.bounding_box
-        connected_surface = \
+        var connected_region_bounding_box: Rect2 = surface.bounding_box
+        var connected_surface: Surface = \
                 surface.clockwise_concave_neighbor if \
                 surface.clockwise_concave_neighbor != null else \
                 surface.clockwise_convex_neighbor
@@ -1014,43 +974,39 @@ static func get_closest_surfaces(
         max_distance_squared_threshold := INF) -> Array:
     assert(!surfaces.empty())
     
-    var closest_point: Vector2
-    var is_closest_to_first_point: bool
-    var is_closest_to_last_point: bool
-    var first_point_diff: Vector2
-    var last_point_diff: Vector2
-    var is_more_than_45_deg_from_normal_from_corner: bool
-    var current_distance_squared: float
     var next_distance_squared_to_beat := max_distance_squared_threshold
-    
     var closest_surfaces_and_distances := []
     
     for current_surface in surfaces:
-        current_distance_squared = \
+        var current_distance_squared: float = \
                 Gs.geometry.distance_squared_from_point_to_rect(
                         target,
                         current_surface.bounding_box)
         if current_distance_squared < next_distance_squared_to_beat:
-            closest_point = Gs.geometry.get_closest_point_on_polyline_to_point(
-                    target,
-                    current_surface.vertices)
+            var closest_point: Vector2 = \
+                    Gs.geometry.get_closest_point_on_polyline_to_point(
+                            target,
+                            current_surface.vertices)
             current_distance_squared = \
                     target.distance_squared_to(closest_point)
             if current_distance_squared < next_distance_squared_to_beat:
-                is_closest_to_first_point = \
+                var is_closest_to_first_point: bool = \
                         Gs.geometry.are_points_equal_with_epsilon(
                                 closest_point,
                                 current_surface.first_point,
                                 0.01)
-                is_closest_to_last_point = \
+                var is_closest_to_last_point: bool = \
                         Gs.geometry.are_points_equal_with_epsilon(
                                 closest_point,
                                 current_surface.last_point,
                                 0.01)
                 if is_closest_to_first_point or is_closest_to_last_point:
-                    first_point_diff = target - current_surface.first_point
-                    last_point_diff = target - current_surface.last_point
+                    var first_point_diff: Vector2 = \
+                            target - current_surface.first_point
+                    var last_point_diff: Vector2 = \
+                            target - current_surface.last_point
                     
+                    var is_more_than_45_deg_from_normal_from_corner: bool
                     match current_surface.side:
                         SurfaceSide.FLOOR:
                             if is_closest_to_first_point:

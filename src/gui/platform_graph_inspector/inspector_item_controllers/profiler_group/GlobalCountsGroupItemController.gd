@@ -56,12 +56,11 @@ func _create_children_inner() -> void:
             funcref(self,
                     "_get_annotation_elements_for_edges_description_item"))
     
-    var type_name: String
     for edge_type in EdgeType.values():
         if InspectorItemController.EDGE_TYPES_TO_SKIP.find(edge_type) >= 0:
             continue
         
-        type_name = EdgeType.get_string(edge_type)
+        var type_name := EdgeType.get_string(edge_type)
         text = "%s %ss" % [
             graph.counts[type_name],
             type_name,

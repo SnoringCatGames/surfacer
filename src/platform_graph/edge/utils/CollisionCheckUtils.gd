@@ -34,10 +34,7 @@ static func check_instructions_discrete_frame_state(
     
     var current_horizontal_step_index := 0
     var current_horizontal_step: EdgeStep = horizontal_steps[0]
-    var continuous_horizontal_state: Array
-    var continuous_vertical_state: Array
     var continuous_position := Vector2.INF
-    var instruction_with_position: EdgeInstruction
     
     # Record positions for edge annotation debugging.
     var frame_discrete_positions := []
@@ -58,12 +55,12 @@ static func check_instructions_discrete_frame_state(
             current_horizontal_step_index += 1
             current_horizontal_step = \
                     horizontal_steps[current_horizontal_step_index]
-        continuous_horizontal_state = \
+        var continuous_horizontal_state := \
                 HorizontalMovementUtils.calculate_horizontal_state_for_time(
                         movement_params,
                         current_horizontal_step,
                         current_time)
-        continuous_vertical_state = VerticalMovementUtils \
+        var continuous_vertical_state := VerticalMovementUtils \
                 .calculate_vertical_state_for_time_from_step(
                         movement_params,
                         vertical_step,
@@ -112,7 +109,7 @@ static func check_instructions_discrete_frame_state(
             # - Does it reflect actual playback?
             # - Should initial jump_boost happen sooner?
             
-            instruction_with_position = EdgeInstruction.new(
+            var instruction_with_position := EdgeInstruction.new(
                     next_instruction.input_key,
                     next_instruction.time,
                     next_instruction.is_pressed,
@@ -234,8 +231,6 @@ static func check_continuous_horizontal_step_for_collision(
     var current_position := previous_position
     var current_velocity := horizontal_step.velocity_step_start
     var displacement: Vector2
-    var horizontal_state: Array
-    var vertical_state: Array
     var collision: SurfaceCollision
     
     ###########################################################################
@@ -259,12 +254,12 @@ static func check_continuous_horizontal_step_for_collision(
     # Iterate through each physics frame, checking each for a collision.
     while current_time < step_end_time:
         # Update state for the current frame.
-        horizontal_state = \
+        var horizontal_state := \
                 HorizontalMovementUtils.calculate_horizontal_state_for_time(
                         movement_params,
                         horizontal_step,
                         current_time)
-        vertical_state = VerticalMovementUtils \
+        var vertical_state := VerticalMovementUtils \
                 .calculate_vertical_state_for_time_from_step(
                         movement_params,
                         vertical_step,
@@ -299,12 +294,12 @@ static func check_continuous_horizontal_step_for_collision(
             !Gs.geometry.are_floats_equal_with_epsilon(
                     previous_time,
                     current_time):
-        horizontal_state = \
+        var horizontal_state := \
                 HorizontalMovementUtils.calculate_horizontal_state_for_time(
                         movement_params,
                         horizontal_step,
                         current_time)
-        vertical_state = VerticalMovementUtils \
+        var vertical_state := VerticalMovementUtils \
                 .calculate_vertical_state_for_time_from_step(
                         movement_params,
                         vertical_step,

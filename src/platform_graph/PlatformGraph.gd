@@ -99,15 +99,10 @@ func find_path(
     var frontier := PriorityQueue.new()
     frontier.insert(0.0, origin)
     
-    var nodes_to_edges_for_current_node: Dictionary
-    var current_node: PositionAlongSurface
-    var current_weight: float
-    var new_actual_weight: float
-    
     # Determine the cheapest path.
     while !frontier.is_empty:
-        current_node = frontier.remove_root()
-        current_weight = nodes_to_weights[current_node]
+        var current_node: PositionAlongSurface = frontier.remove_root()
+        var current_weight: float = nodes_to_weights[current_node]
         
         if current_node == destination:
             # We found the shortest path.
@@ -119,7 +114,7 @@ func find_path(
         # intra-surface edge to the destination from this current_node.
         if current_node.surface == destination_surface:
             var next_node := destination
-            new_actual_weight = \
+            var new_actual_weight := \
                     current_weight + \
                     _calculate_intra_surface_edge_weight(
                             movement_params,
@@ -147,7 +142,7 @@ func find_path(
             # Record temporary intra-surface edges from the current node to
             # each other node on the same surface.
             for next_node in surfaces_to_outbound_nodes[current_node.surface]:
-                new_actual_weight = \
+                var new_actual_weight := \
                         current_weight + \
                         _calculate_intra_surface_edge_weight(
                                 movement_params,
@@ -170,10 +165,12 @@ func find_path(
         
         # Iterate through each inter-surface neighbor node, and record their
         # weights, paths, and priorities.
-        nodes_to_edges_for_current_node = nodes_to_nodes_to_edges[current_node]
+        var nodes_to_edges_for_current_node: Dictionary = \
+                nodes_to_nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
             for next_edge in nodes_to_edges_for_current_node[next_node]:
-                new_actual_weight = current_weight + next_edge.get_weight()
+                var new_actual_weight: float = \
+                        current_weight + next_edge.get_weight()
                 _record_frontier(
                         current_node,
                         next_node,
@@ -186,7 +183,7 @@ func find_path(
     # Collect the edges for the cheapest path.
     
     var edges := []
-    current_node = destination
+    var current_node := destination
     var previous_node: PositionAlongSurface = \
             nodes_to_previous_nodes.get(current_node)
     
@@ -286,9 +283,8 @@ func _get_cheapest_edge_between_nodes(
         destination: PositionAlongSurface) -> Edge:
     var cheapest_edge: Edge
     var cheapest_weight := INF
-    var current_weight: float
     for current_edge in nodes_to_nodes_to_edges[origin][destination]:
-        current_weight = current_edge.get_weight()
+        var current_weight: float = current_edge.get_weight()
         if current_weight < cheapest_weight:
             cheapest_edge = current_edge
             cheapest_weight = current_weight
@@ -484,7 +480,6 @@ func _dedup_nodes() -> void:
 func _derive_surfaces_to_outbound_nodes() -> void:
     # Record mappings from surfaces to nodes.
     var nodes_set := {}
-    var cell_id: String
     for surface in surfaces_to_inter_surface_edges_results:
         nodes_set.clear()
         
@@ -492,7 +487,8 @@ func _derive_surfaces_to_outbound_nodes() -> void:
         for inter_surface_edges_results in \
                 surfaces_to_inter_surface_edges_results[surface]:
             for edge in inter_surface_edges_results.valid_edges:
-                cell_id = _node_to_cell_id(edge.start_position_along_surface)
+                var cell_id: String = \
+                        _node_to_cell_id(edge.start_position_along_surface)
                 nodes_set[cell_id] = edge.start_position_along_surface
         
         surfaces_to_outbound_nodes[surface] = nodes_set.values()
@@ -722,10 +718,11 @@ func to_json_object() -> Dictionary:
 
 func _get_position_along_surface_id_to_json_object() -> Dictionary:
     var results := {}
-    var node: PositionAlongSurface
     for surface in surfaces_to_inter_surface_edges_results:
         for inter_surface_edges_result in \
                 surfaces_to_inter_surface_edges_results[surface]:
+            var node: PositionAlongSurface
+            
             for jump_land_positions in \
                     inter_surface_edges_result.all_jump_land_positions:
                 node = jump_land_positions.jump_position

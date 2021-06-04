@@ -90,16 +90,15 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     var elements := []
-    var element: AnnotationElement
     if !edge_result_metadata.failed_before_creating_steps:
         for step_result_metadata in \
                 edge_result_metadata.children_step_attempts:
-            element = EdgeStepAnnotationElement.new(
+            var element := EdgeStepAnnotationElement.new(
                     step_result_metadata,
                     true)
             elements.push_back(element)
     elif edge_attempt is FailedEdgeAttempt:
-        element = FailedEdgeAttemptAnnotationElement.new(
+        var element := FailedEdgeAttemptAnnotationElement.new(
                 edge_attempt,
                 Surfacer.ann_defaults \
                         .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,

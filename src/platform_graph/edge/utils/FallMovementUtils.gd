@@ -42,11 +42,6 @@ static func find_landing_trajectories_to_any_surface(
                 collision_params.thread_id,
                 records_profile)
     
-    var jump_land_positions_to_consider: Array
-    var inter_surface_edges_result: InterSurfaceEdgesResult
-    var edge_result_metadata: EdgeCalcResultMetadata
-    var calc_result: EdgeCalcResult
-    var failed_attempt: FailedEdgeAttempt
     var jump_land_position_results_for_destination_surface := []
     
     # Find the first possible edge to a landing surface.
@@ -70,7 +65,7 @@ static func find_landing_trajectories_to_any_surface(
         Gs.profiler.start(
                 "calculate_land_positions_on_surface",
                 collision_params.thread_id)
-        jump_land_positions_to_consider = \
+        var jump_land_positions_to_consider := \
                 JumpLandPositionsUtils.calculate_land_positions_on_surface(
                         movement_params,
                         destination_surface,
@@ -81,7 +76,7 @@ static func find_landing_trajectories_to_any_surface(
                 collision_params.thread_id,
                 records_profile)
         
-        inter_surface_edges_result = InterSurfaceEdgesResult.new(
+        var inter_surface_edges_result := InterSurfaceEdgesResult.new(
                 origin_position.surface,
                 destination_surface,
                 calculator.edge_type,
@@ -102,7 +97,7 @@ static func find_landing_trajectories_to_any_surface(
                     debug_params.limit_parsing.edge.destination.has("position")
             ###################################################################
             
-            edge_result_metadata = EdgeCalcResultMetadata.new(
+            var edge_result_metadata := EdgeCalcResultMetadata.new(
                     records_calc_details,
                     records_profile)
             
@@ -112,7 +107,7 @@ static func find_landing_trajectories_to_any_surface(
                     jump_land_positions,
                     jump_land_position_results_for_destination_surface,
                     true):
-                failed_attempt = FailedEdgeAttempt.new(
+                var failed_attempt := FailedEdgeAttempt.new(
                         jump_land_positions,
                         edge_result_metadata,
                         calculator)
@@ -120,7 +115,7 @@ static func find_landing_trajectories_to_any_surface(
                         failed_attempt)
                 continue
             
-            calc_result = find_landing_trajectory_between_positions(
+            var calc_result := find_landing_trajectory_between_positions(
                     edge_result_metadata,
                     collision_params,
                     jump_land_positions.jump_position,
@@ -138,7 +133,7 @@ static func find_landing_trajectories_to_any_surface(
                 if only_returns_first_result:
                     return
             else:
-                failed_attempt = FailedEdgeAttempt.new(
+                var failed_attempt := FailedEdgeAttempt.new(
                         jump_land_positions,
                         edge_result_metadata,
                         calculator)

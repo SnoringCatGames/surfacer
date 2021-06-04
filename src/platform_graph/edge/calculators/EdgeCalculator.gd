@@ -344,10 +344,8 @@ static func optimize_edge_jump_position_for_path_helper(
                 previous_edge_displacement.x >= 0.0 else \
                 -movement_params.walk_acceleration
         
-        var jump_position: PositionAlongSurface
-        var optimized_edge: Edge
-        
         for i in jump_ratios.size():
+            var jump_position: PositionAlongSurface
             if jump_ratios[i] == 0.0:
                 jump_position = previous_edge.start_position_along_surface
             else:
@@ -372,7 +370,7 @@ static func optimize_edge_jump_position_for_path_helper(
             var velocity_start_y := movement_params.jump_boost
             var velocity_start = Vector2(velocity_start_x, velocity_start_y)
             
-            optimized_edge = edge_calculator.calculate_edge(
+            var optimized_edge := edge_calculator.calculate_edge(
                     null,
                     collision_params,
                     jump_position,
@@ -398,11 +396,8 @@ static func optimize_edge_jump_position_for_path_helper(
     else:
         # Jumping from a wall.
         
-        var jump_position: PositionAlongSurface
-        var velocity_start: Vector2
-        var optimized_edge: Edge
-        
         for i in jump_ratios.size():
+            var jump_position: PositionAlongSurface
             if jump_ratios[i] == 0.0:
                 jump_position = previous_edge.start_position_along_surface
             else:
@@ -415,12 +410,12 @@ static func optimize_edge_jump_position_for_path_helper(
                                 previous_edge.get_start_surface(),
                                 movement_params.collider_half_width_height)
             
-            velocity_start = JumpLandPositionsUtils.get_velocity_start(
+            var velocity_start := JumpLandPositionsUtils.get_velocity_start(
                     movement_params,
                     jump_position.surface,
                     edge_calculator.is_a_jump_calculator)
             
-            optimized_edge = edge_calculator.calculate_edge(
+            var optimized_edge := edge_calculator.calculate_edge(
                     null,
                     collision_params,
                     jump_position,
@@ -466,11 +461,8 @@ static func optimize_edge_land_position_for_path_helper(
     if is_horizontal_surface:
         # Landing on a floor or ceiling.
         
-        var land_position: PositionAlongSurface
-        var calc_result: EdgeCalcResult
-        var optimized_edge: Edge
-        
         for i in land_ratios.size():
+            var land_position: PositionAlongSurface
             if land_ratios[i] == 1.0:
                 land_position = next_edge.end_position_along_surface
             else:
@@ -483,7 +475,7 @@ static func optimize_edge_land_position_for_path_helper(
                                 next_edge.get_start_surface(),
                                 movement_params.collider_half_width_height)
             
-            optimized_edge = edge_calculator.calculate_edge(
+            var optimized_edge := edge_calculator.calculate_edge(
                     null,
                     collision_params,
                     edge.start_position_along_surface,
@@ -509,11 +501,8 @@ static func optimize_edge_land_position_for_path_helper(
     else:
         # Landing on a wall.
         
-        var land_position: PositionAlongSurface
-        var calc_result: EdgeCalcResult
-        var optimized_edge: Edge
-        
         for i in land_ratios.size():
+            var land_position: PositionAlongSurface
             if land_ratios[i] == 1.0:
                 land_position = next_edge.end_position_along_surface
             else:
@@ -531,7 +520,7 @@ static func optimize_edge_land_position_for_path_helper(
                 # possible optimized land positions aren't valid.
                 return
             
-            optimized_edge = edge_calculator.calculate_edge(
+            var optimized_edge := edge_calculator.calculate_edge(
                     null,
                     collision_params,
                     edge.start_position_along_surface,

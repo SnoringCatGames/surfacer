@@ -98,10 +98,9 @@ static func sum_distance_between_frames(
         return 0.0
     
     var previous_position := frame_positions[0]
-    var next_position: Vector2
     var sum := 0.0
     for i in range(1, frame_positions.size()):
-        next_position = frame_positions[i]
+        var next_position := frame_positions[i]
         sum += previous_position.distance_to(next_position)
         previous_position = next_position
     return sum

@@ -251,21 +251,16 @@ func _get_all_edges_from_one_side(
                 self,
                 records_profile)
     
-    var inter_surface_edges_result: InterSurfaceEdgesResult
-    var position_end: PositionAlongSurface
-    var instructions: EdgeInstructions
-    var trajectory: EdgeTrajectory
-    var velocity_end: Vector2
-    var edge: FallFromFloorEdge
-    
     for i in range(
             new_inter_surface_edges_results_start_index,
             inter_surface_edges_results.size()):
-        inter_surface_edges_result = inter_surface_edges_results[i]
+        var inter_surface_edges_result: InterSurfaceEdgesResult = \
+                        inter_surface_edges_results[i]
         for calc_result in inter_surface_edges_result.edge_calc_results:
-            position_end = calc_result.edge_calc_params.destination_position
+            var position_end: PositionAlongSurface \
+                        = calc_result.edge_calc_params.destination_position
             
-            instructions = EdgeInstructionsUtils \
+            var instructions := EdgeInstructionsUtils \
                     .convert_calculation_steps_to_movement_instructions(
                             records_profile,
                             collision_params,
@@ -273,7 +268,7 @@ func _get_all_edges_from_one_side(
                             false,
                             position_end.side)
             
-            trajectory = EdgeTrajectoryUtils \
+            var trajectory := EdgeTrajectoryUtils \
                     .calculate_trajectory_from_calculation_steps(
                             records_profile,
                             collision_params,
@@ -291,10 +286,10 @@ func _get_all_edges_from_one_side(
                     movement_params,
                     falls_on_left_side)
             
-            velocity_end = \
+            var velocity_end: Vector2 = \
                     calc_result.horizontal_steps.back().velocity_step_end
             
-            edge = FallFromFloorEdge.new(
+            var edge := FallFromFloorEdge.new(
                     self,
                     position_start,
                     position_end,

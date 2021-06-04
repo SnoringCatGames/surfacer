@@ -6,19 +6,19 @@ extends Reference
 # FIXME:
 # - Should I remove this and force a slightly higher offset to target jump
 #   position directly? What about passing through waypoints? Would the
-#   increased time to get to the position for a wall-top waypoint result in too
-#   much downward velocity into the ceiling?
-# - Or what about the waypoint offset margins? Shouldn't those actually address
-#   any needed jump-height epsilon? Is this needlessly redundant with that
-#   mechanism?
+#   increased time to get to the position for a wall-top waypoint result in
+#   too much downward velocity into the ceiling?
+# - Or what about the waypoint offset margins? Shouldn't those actually
+#   address any needed jump-height epsilon? Is this needlessly redundant with
+#   that mechanism?
 # - Though I may need to always at least have _some_ small value here...
 # FIXME: Tweak this.
 const JUMP_DURATION_INCREASE_EPSILON := Time.PHYSICS_TIME_STEP * 0.5
 const MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON := \
         Time.PHYSICS_TIME_STEP * 2.5
 
-# Translates movement data from a form that is more useful when calculating the
-# movement to a form that is more useful when executing the movement.
+# Translates movement data from a form that is more useful when calculating
+# the movement to a form that is more useful when executing the movement.
 static func convert_calculation_steps_to_movement_instructions(
         records_profile_or_edge_result_metadata,
         collision_params: CollisionCalcParams,
@@ -35,20 +35,14 @@ static func convert_calculation_steps_to_movement_instructions(
     var instructions := []
     instructions.resize(steps.size() * 2)
     
-    var step: EdgeStep
-    var input_key: String
-    var time_instruction_end: float
-    var press: EdgeInstruction
-    var release: EdgeInstruction
-
     # Record the various sideways movement instructions.
     for i in steps.size():
-        step = steps[i]
-        input_key = \
+        var step: EdgeStep = steps[i]
+        var input_key := \
                 "ml" if \
                 step.horizontal_acceleration_sign < 0 else \
                 "mr"
-        time_instruction_end = \
+        var time_instruction_end := \
                 step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON
         if i + 1 < steps.size():
@@ -59,11 +53,11 @@ static func convert_calculation_steps_to_movement_instructions(
                             time_instruction_end,
                             steps[i + 1].time_instruction_start - 0.0001),
                     0.0)
-        press = EdgeInstruction.new(
+        var press := EdgeInstruction.new(
                 input_key,
                 step.time_instruction_start,
                 true)
-        release = EdgeInstruction.new(
+        var release := EdgeInstruction.new(
                 input_key,
                 time_instruction_end,
                 false)
@@ -76,12 +70,12 @@ static func convert_calculation_steps_to_movement_instructions(
     
     # Record the jump instruction.
     if includes_jump:
-        input_key = "j"
-        press = EdgeInstruction.new(
+        var input_key := "j"
+        var press := EdgeInstruction.new(
                 input_key,
                 vertical_step.time_instruction_start,
                 true)
-        release = EdgeInstruction.new(
+        var release := EdgeInstruction.new(
                 input_key,
                 vertical_step.time_instruction_end + \
                         JUMP_DURATION_INCREASE_EPSILON,
@@ -99,8 +93,8 @@ static func convert_calculation_steps_to_movement_instructions(
         var time_step_start := last_step.time_instruction_end + \
                 MOVE_SIDEWAYS_DURATION_INCREASE_EPSILON * 2
         
-        input_key = "gw"
-        press = EdgeInstruction.new(
+        var input_key := "gw"
+        var press := EdgeInstruction.new(
                 input_key,
                 time_step_start,
                 true)
@@ -140,12 +134,12 @@ static func sub_instructions(
     # Dictionary<String, EdgeInstruction>
     var active_key_presses := {}
     var start_index := base_instructions.instructions.size()
-    var instruction: EdgeInstruction
     
     # Determine what index the start time corresponds to, and what instructions
     # are currently being pressed at that point.
     for index in base_instructions.instructions.size():
-        instruction = base_instructions.instructions[index]
+        var instruction: EdgeInstruction = \
+                        base_instructions.instructions[index]
         if instruction.time >= start_time:
             start_index = index
             break
@@ -157,7 +151,7 @@ static func sub_instructions(
     # Record any already-active instructions.
     var instructions := []
     for active_key_press in active_key_presses:
-        instruction = EdgeInstruction.new(
+        var instruction := EdgeInstruction.new(
                 active_key_press,
                 0.0,
                 true,
@@ -169,9 +163,9 @@ static func sub_instructions(
     var remaining_instructions_size := \
             base_instructions.instructions.size() - start_index
     remaining_instructions.resize(remaining_instructions_size)
-    var base_instruction: EdgeInstruction
     for i in remaining_instructions_size:
-        base_instruction = base_instructions.instructions[i + start_index]
+        var base_instruction: EdgeInstruction = \
+                        base_instructions.instructions[i + start_index]
         remaining_instructions[i] = EdgeInstruction.new(
                 base_instruction.input_key,
                 base_instruction.time - start_time,

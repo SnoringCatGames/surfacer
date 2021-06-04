@@ -20,7 +20,6 @@ func update(
         time_scaled: float,
         _delta_scaled: float,
         navigation_state: PlayerNavigationState) -> void:
-    var is_pressed: bool
     var non_pressed_keys := []
     
     for playback in _all_playback:
@@ -33,7 +32,7 @@ func update(
         
         # Handle all previously started keys that are still pressed.
         for input_key in playback.active_key_presses:
-            is_pressed = playback.active_key_presses[input_key]
+            var is_pressed: bool = playback.active_key_presses[input_key]
             PlayerActionSource.update_for_key_press(
                     actions,
                     previous_actions,

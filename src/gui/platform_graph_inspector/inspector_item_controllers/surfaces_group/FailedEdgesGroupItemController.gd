@@ -75,12 +75,12 @@ func find_and_expand_controller(
 func _find_and_expand_controller_recursive(
         search_type: int,
         metadata: Dictionary) -> void:
-    var is_subtree_found: bool
     var child := tree_item.get_children()
     while child != null:
-        is_subtree_found = child.get_metadata(0).find_and_expand_controller(
-                search_type,
-                metadata)
+        var is_subtree_found: bool = \
+                child.get_metadata(0).find_and_expand_controller(
+                        search_type,
+                        metadata)
         if is_subtree_found:
             expand()
             return
@@ -102,9 +102,8 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     var elements := []
-    var element: FailedEdgeAttemptAnnotationElement
     for failed_edge_attempt in edges_results.failed_edge_attempts:
-        element = FailedEdgeAttemptAnnotationElement.new(
+        var element := FailedEdgeAttemptAnnotationElement.new(
                 failed_edge_attempt,
                 Surfacer.ann_defaults \
                         .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,

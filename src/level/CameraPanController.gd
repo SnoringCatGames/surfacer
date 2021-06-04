@@ -83,11 +83,11 @@ func _update_pan_and_zoom_delta_from_pointer(
     var camera_center := \
             pointer_max_control_bounds.position + \
             pointer_max_control_bounds.size / 2.0
-    var min_control_bounds_size := \
+    var min_control_bounds_size: Vector2 = \
             pointer_max_control_bounds.size * \
             (1 - \
             Surfacer.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer * 2)
-    var min_control_bounds_position := \
+    var min_control_bounds_position: Vector2 = \
             pointer_max_control_bounds.position + \
             pointer_max_control_bounds.size * \
             Surfacer.screen_size_ratio_distance_from_edge_to_start_pan_from_pointer
@@ -146,15 +146,15 @@ func _update_pan_and_zoom_delta_from_pointer(
                             pointer_min_control_bounds.end.y)
     
     # Calcute the pan and zoom deltas for the current frame and drag weight.
-    var per_frame_pan_ratio := \
+    var per_frame_pan_ratio: float = \
             _PAN_AND_ZOOM_INTERVAL / \
             Surfacer.duration_to_max_pan_from_pointer_at_max_control
-    var per_frame_zoom_ratio := \
+    var per_frame_zoom_ratio: float = \
             _PAN_AND_ZOOM_INTERVAL / \
             Surfacer.duration_to_max_zoom_from_pointer_at_max_control
-    var max_pan_distance_per_frame := \
+    var max_pan_distance_per_frame: float = \
             Surfacer.max_pan_distance_from_pointer * per_frame_pan_ratio
-    var max_zoom_delta_per_frame := \
+    var max_zoom_delta_per_frame: float = \
             Surfacer.max_zoom_multiplier_from_pointer * per_frame_zoom_ratio
     _delta_offset = Vector2(
             pan_zoom_control_weight_x * max_pan_distance_per_frame,

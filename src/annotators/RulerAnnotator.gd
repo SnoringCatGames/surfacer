@@ -53,23 +53,20 @@ func _draw() -> void:
     
     var start_x: float
     var start_y: float
-    var start_position: Vector2
-    var end_position: Vector2
-    var text: String
     
     # Draw the vertical lines.
     start_y = ruler_start_position.y
     for i in vertical_line_count:
         start_x = ruler_start_position.x + grid_spacing.x * i
-        start_position = Vector2(start_x, start_y)
-        end_position = Vector2(start_x, start_y + ruler_size.y)
+        var start_position := Vector2(start_x, start_y)
+        var end_position := Vector2(start_x, start_y + ruler_size.y)
         draw_line(
                 start_position,
                 end_position,
                 LINE_COLOR,
                 LINE_WIDTH)
         
-        text = str(round((screen_start_position.x + start_x) * \
+        var text := str(round((screen_start_position.x + start_x) * \
                 previous_camera_zoom))
         text = "0" if text == "-0" else text
         draw_string(
@@ -82,15 +79,15 @@ func _draw() -> void:
     start_x = ruler_start_position.x
     for i in range(1, horizontal_line_count):
         start_y = ruler_start_position.y + grid_spacing.y * i
-        start_position = Vector2(start_x, start_y)
-        end_position = Vector2(start_x + ruler_size.x, start_y)
+        var start_position := Vector2(start_x, start_y)
+        var end_position := Vector2(start_x + ruler_size.x, start_y)
         draw_line(
                 start_position,
                 end_position,
                 LINE_COLOR,
                 LINE_WIDTH)
         
-        text = str(round((screen_start_position.y + start_y) * \
+        var text := str(round((screen_start_position.y + start_y) * \
                 previous_camera_zoom))
         text = "0" if text == "-0" else text
         draw_string(

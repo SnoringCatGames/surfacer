@@ -82,7 +82,6 @@ func find_a_landing_trajectory(
             exclusive_land_position != null)
     
     var calc_result: EdgeCalcResult
-    
     if exclusive_land_position != null:
         calc_result = \
                 FallMovementUtils.find_landing_trajectory_between_positions(

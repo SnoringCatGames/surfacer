@@ -46,7 +46,6 @@ func is_instruction_in_range(
         min_time: float,
         max_time: float) -> bool:
     var instruction_count := instructions.size()
-    var possible_match: EdgeInstruction
     instruction.time = min_time
     var index := instructions.bsearch_custom(
             instruction,
@@ -55,7 +54,7 @@ func is_instruction_in_range(
     
     if index >= instruction_count:
         return false
-    possible_match = instructions[index]
+    var possible_match: EdgeInstruction = instructions[index]
     
     # Make sure that we don't consider a possible match if it's time is less
     # than min_time.

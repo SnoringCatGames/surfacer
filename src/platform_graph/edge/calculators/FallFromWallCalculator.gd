@@ -30,9 +30,6 @@ func get_all_inter_surface_edges_from_surface(
             movement_params,
             origin_surface)
     
-    var landing_trajectories: Array
-    var edge: FallFromWallEdge
-    
     for jump_position in jump_positions:
         #######################################################################
         # Allow for debug mode to limit the scope of what's calculated.
@@ -55,7 +52,7 @@ func get_all_inter_surface_edges_from_surface(
         
         for inter_surface_edges_result in inter_surface_edges_results:
             for calc_result in inter_surface_edges_result.edge_calc_results:
-                edge = _create_edge_from_calc_results(
+                var edge := _create_edge_from_calc_results(
                         collision_params,
                         true,
                         calc_result)
