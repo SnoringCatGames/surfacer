@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://addons/surfacer/src/gui/legend/Legend.gd" type="Script" id=1]
+[ext_resource path="res://addons/surfacer/src/gui/legend/legend.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffolder/assets/fonts/main_font_xs_italic.tres" type="DynamicFont" id=2]
 
 [node name="Legend" type="VBoxContainer"]
