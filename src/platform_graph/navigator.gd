@@ -908,6 +908,9 @@ static func _interleave_intra_surface_edges(
 func calculate_path_beat_hashes_for_current_mode(
         path: PlatformGraphPath,
         path_start_time_scaled: float) -> Array:
+    if !Surfacer.are_beats_tracked:
+        return []
+    
     var elapsed_path_time := \
             Gs.time.get_scaled_play_time() - path_start_time_scaled
     

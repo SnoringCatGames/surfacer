@@ -30,8 +30,9 @@ func _init() -> void:
 
 
 func _process(_delta: float) -> void:
-    if _is_active:
-        _update_playback_state()
+    if _is_active and \
+            Surfacer.are_beats_tracked:
+        _update_beat_state()
 
 
 func start(time_scale_duration: float) -> void:
@@ -59,7 +60,8 @@ func start(time_scale_duration: float) -> void:
     
     Gs.audio.play_sound("slow_down")
     
-    _update_playback_state()
+    if Surfacer.are_beats_tracked:
+        _update_beat_state()
     
     _is_transition_complete = false
     Gs.time.clear_timeout(_is_transition_complete_timeout_id)
@@ -115,7 +117,7 @@ func _on_transition_complete() -> void:
     emit_signal("transition_completed", _is_active)
 
 
-func _update_playback_state() -> void:
+func _update_beat_state() -> void:
     Gs.audio._update_scaled_speed()
     
     music_beat_duration_unscaled = \
