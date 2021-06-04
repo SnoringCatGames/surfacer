@@ -3,6 +3,7 @@ extends EdgeAttempt
 # This class records some state for failed edge calculations, including why
 # the calculation failed.
 
+
 var jump_land_positions: JumpLandPositions
 
 # WaypointValidity

@@ -2,6 +2,7 @@ class_name Edge
 extends EdgeAttempt
 # Information for how to move from a start position to an end position.
 
+
 # Whether the instructions for moving along this edge are updated according to
 # traversal time (vs according to surface state).
 var is_time_based: bool

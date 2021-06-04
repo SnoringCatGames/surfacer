@@ -2,6 +2,7 @@ class_name EdgeInstruction
 extends Reference
 # An input event to trigger (or untrigger) at a specific time.
 
+
 var input_key: String
 var time: float
 # Optional

@@ -9,6 +9,7 @@ extends Edge
 #     to the fall-off point, and then another portion for falling from the
 #     fall-off point to the landing point.
 
+
 const TYPE := EdgeType.FALL_FROM_FLOOR_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.AIR

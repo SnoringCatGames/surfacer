@@ -1,6 +1,7 @@
 class_name ProfilerCountItemController
 extends InspectorItemController
 
+
 const TYPE := InspectorItemType.PROFILER_COUNT
 const IS_LEAF := true
 const STARTS_COLLAPSED := true

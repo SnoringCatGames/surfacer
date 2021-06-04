@@ -1,6 +1,7 @@
 class_name EdgesWithIncreasingJumpHeightGroupItemController
 extends EdgesFilteredByResultTypeGroupItemController
 
+
 const TYPE := InspectorItemType.EDGES_WITH_INCREASING_JUMP_HEIGHT_GROUP
 const EDGE_CALC_RESULT_TYPE := \
         EdgeCalcResultType.EDGE_VALID_WITH_INCREASING_JUMP_HEIGHT

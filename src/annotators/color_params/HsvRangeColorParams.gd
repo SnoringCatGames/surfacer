@@ -1,6 +1,7 @@
 class_name HsvRangeColorParams
 extends ColorParams
 
+
 const TYPE := ColorParamsType.HSV_RANGE
 
 var hue_min: float

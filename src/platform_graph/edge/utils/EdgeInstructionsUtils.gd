@@ -3,6 +3,7 @@ extends Reference
 # A collection of utility functions for calculating state related to
 # EdgeInstructions.
 
+
 # FIXME:
 # - Should I remove this and force a slightly higher offset to target jump
 #   position directly? What about passing through waypoints? Would the

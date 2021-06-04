@@ -1,6 +1,7 @@
 class_name SurfacerThirdPartyLicenses
 extends Node
 
+
 const TEXT := """
 -------------------------------------------------------------------------------
 --- Segment-polygon intersection calculation is based on the

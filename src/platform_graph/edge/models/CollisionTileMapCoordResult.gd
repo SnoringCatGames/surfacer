@@ -1,6 +1,7 @@
 class_name CollisionTileMapCoordResult
 extends Reference
 
+
 # Sometimes Godot's collision engine can generate incorrect (opposite
 # direction) results for is_on_floor/is_on_ceiling when the player is sliding
 # along a corner. We attempt to detect such cases and record them here.

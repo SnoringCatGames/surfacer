@@ -2,6 +2,7 @@ class_name EdgeCalcParams
 extends Reference
 # Parameters that are used for calculating edge instructions.
 
+
 var collision_params: CollisionCalcParams
 
 var movement_params: MovementParams

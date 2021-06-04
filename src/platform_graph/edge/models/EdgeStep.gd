@@ -29,6 +29,7 @@ extends Reference
 #   the step starts using fast-fall gravity. If this is a horizontal step, then this is the point
 #   at which horizontal acceleration stops.
 
+
 var input_key: String
 
 var horizontal_acceleration_sign: int

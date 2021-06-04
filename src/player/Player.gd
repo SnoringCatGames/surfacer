@@ -1,6 +1,7 @@
 class_name Player
 extends KinematicBody2D
 
+
 const GROUP_NAME_HUMAN_PLAYERS := "human_players"
 const GROUP_NAME_COMPUTER_PLAYERS := "computer_players"
 

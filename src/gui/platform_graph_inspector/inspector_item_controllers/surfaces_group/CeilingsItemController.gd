@@ -1,6 +1,7 @@
 class_name CeilingsItemController
 extends SurfacesOfSideGroupItemController
 
+
 const TYPE := InspectorItemType.CEILINGS
 const STARTS_COLLAPSED := true
 const SIDE := SurfaceSide.CEILING

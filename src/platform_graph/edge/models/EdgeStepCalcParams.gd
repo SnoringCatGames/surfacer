@@ -2,6 +2,7 @@ class_name EdgeStepCalcParams
 extends Reference
 # Parameters that are used for calculating edge instructions.
 
+
 # The start position of this local branch of movement.
 var start_waypoint: Waypoint
 

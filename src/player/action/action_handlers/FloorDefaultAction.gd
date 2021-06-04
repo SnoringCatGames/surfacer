@@ -1,6 +1,7 @@
 class_name FloorDefaultAction
 extends PlayerActionHandler
 
+
 const NAME := "FloorDefaultAction"
 const TYPE := SurfaceType.FLOOR
 const USES_RUNTIME_PHYSICS := true

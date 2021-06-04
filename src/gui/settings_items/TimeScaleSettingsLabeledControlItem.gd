@@ -1,6 +1,7 @@
 class_name TimeScaleSettingsLabeledControlItem
 extends SliderLabeledControlItem
 
+
 const LABEL := "Time scale"
 const DESCRIPTION := ""
 const MIN_CONTROL_VALUE := -1.0

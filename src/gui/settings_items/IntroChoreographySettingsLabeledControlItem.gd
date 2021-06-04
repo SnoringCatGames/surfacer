@@ -1,6 +1,7 @@
 class_name IntroChoreographySettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Intro cutscene"
 const DESCRIPTION := (
         "This toggles whether some brief automatic player movement is " +

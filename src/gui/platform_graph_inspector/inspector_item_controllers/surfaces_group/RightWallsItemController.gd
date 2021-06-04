@@ -1,6 +1,7 @@
 class_name RightWallsItemController
 extends SurfacesOfSideGroupItemController
 
+
 const TYPE := InspectorItemType.RIGHT_WALLS
 const STARTS_COLLAPSED := true
 const SIDE := SurfaceSide.RIGHT_WALL

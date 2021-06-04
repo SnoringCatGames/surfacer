@@ -5,6 +5,7 @@ extends Edge
 # The instructions for this edge consist of a single sideways key press, with
 # no corresponding release.
 
+
 const TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.AIR

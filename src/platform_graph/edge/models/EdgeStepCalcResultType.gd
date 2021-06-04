@@ -1,5 +1,6 @@
 class_name EdgeStepCalcResultType
 
+
 enum {
     MOVEMENT_VALID,
     TARGET_OUT_OF_REACH,

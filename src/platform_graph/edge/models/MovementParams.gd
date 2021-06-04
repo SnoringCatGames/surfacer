@@ -1,6 +1,7 @@
 class_name MovementParams
 extends Reference
 
+
 # TODO: Add defaults for some of these
 
 var name: String

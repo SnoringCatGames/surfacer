@@ -1,6 +1,7 @@
 class_name ValidEdgeItemController
 extends EdgeAttemptItemController
 
+
 const TYPE := InspectorItemType.VALID_EDGE
 
 var edge: Edge

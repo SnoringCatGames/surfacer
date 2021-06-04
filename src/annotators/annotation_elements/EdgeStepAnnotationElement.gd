@@ -1,6 +1,7 @@
 class_name EdgeStepAnnotationElement
 extends AnnotationElement
 
+
 const TYPE := AnnotationElementType.EDGE_STEP
 
 const LABEL_SCALE := 0.5

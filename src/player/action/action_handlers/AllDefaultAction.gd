@@ -1,6 +1,7 @@
 class_name AllDefaultAction
 extends PlayerActionHandler
 
+
 const NAME := "AllDefaultAction"
 const TYPE := SurfaceType.OTHER
 const USES_RUNTIME_PHYSICS := true

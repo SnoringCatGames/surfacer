@@ -1,6 +1,7 @@
 class_name FloorFrictionAction
 extends PlayerActionHandler
 
+
 const NAME := "FloorFrictionAction"
 const TYPE := SurfaceType.FLOOR
 const USES_RUNTIME_PHYSICS := true

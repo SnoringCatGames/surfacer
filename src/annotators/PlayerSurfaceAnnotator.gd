@@ -1,6 +1,7 @@
 class_name PlayerSurfaceAnnotator
 extends Node2D
 
+
 var player: Player
 
 var COLOR := Gs.colors.opacify(

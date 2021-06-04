@@ -1,6 +1,7 @@
 class_name FallRangeWithoutJumpDistanceLegendItem
 extends PolylineLegendItem
 
+
 const TYPE := LegendItemType.FALL_RANGE_WITHOUT_JUMP_DISTANCE
 const TEXT := "Fall range without\njump distance"
 

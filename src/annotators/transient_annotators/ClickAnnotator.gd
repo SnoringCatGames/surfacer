@@ -1,6 +1,7 @@
 class_name ClickAnnotator
 extends TransientAnnotator
 
+
 const CLICK_INNER_END_RADIUS := 58.0
 const CLICK_OUTER_END_RADIUS := 100.0
 

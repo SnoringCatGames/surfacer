@@ -2,6 +2,7 @@ class_name EdgeAttempt
 extends Reference
 # Basic information for a hypothetical edge.
 
+
 var edge_type := EdgeType.UNKNOWN
 
 var edge_calc_result_type := EdgeCalcResultType.UNKNOWN

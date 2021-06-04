@@ -1,6 +1,7 @@
 class_name FailedEdgeItemController
 extends EdgeAttemptItemController
 
+
 const TYPE := InspectorItemType.FAILED_EDGE
 
 const BROAD_PHASE_DESCRIPTION := (

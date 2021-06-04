@@ -1,6 +1,7 @@
 class_name CameraPanController
 extends Node2D
 
+
 const _PAN_AND_ZOOM_INTERVAL := 0.05
 const _TWEEN_DURATION := 0.1
 

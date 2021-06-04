@@ -6,6 +6,7 @@ extends Edge
 # release. This will cause the player to climb down the wall, then grab the floor once they reach
 # it.
 
+
 const TYPE := EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.WALL

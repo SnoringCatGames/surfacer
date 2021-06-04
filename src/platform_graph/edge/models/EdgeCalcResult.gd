@@ -2,6 +2,7 @@ class_name EdgeCalcResult
 extends Reference
 # Parameters that are used for calculating edge instructions.
 
+
 # All of the horizontal steps for this local branch of movement.
 # Array<EdgeStep>
 var horizontal_steps: Array

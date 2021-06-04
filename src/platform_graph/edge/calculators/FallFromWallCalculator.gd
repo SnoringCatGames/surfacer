@@ -1,6 +1,7 @@
 class_name FallFromWallCalculator
 extends EdgeCalculator
 
+
 const NAME := "FallFromWallCalculator"
 const EDGE_TYPE := EdgeType.FALL_FROM_WALL_EDGE
 const IS_A_JUMP_CALCULATOR := false

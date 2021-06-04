@@ -2,6 +2,7 @@ class_name CollisionCalcParams
 extends Reference
 # Parameters that are used for calculating edge-movement collisions.
 
+
 var debug_params: Dictionary
 var movement_params: MovementParams
 var surface_parser: SurfaceParser

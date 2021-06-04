@@ -3,6 +3,7 @@ extends Reference
 # A collection of utility functions for calculating state related to jump/land
 # positions.
 
+
 const EXTRA_JUMP_LAND_POSITION_MARGIN := 2.0
 const PLAYER_HEIGHT_VERTICAL_CLEARANCE_RATIO := 2.0
 const JUMP_LAND_SURFACE_INTERIOR_POINT_MIN_DISTANCE_FROM_END_PLAYER_WIDTH_HEIGHT_RATIO := 0.3

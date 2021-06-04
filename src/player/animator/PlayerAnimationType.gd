@@ -1,5 +1,6 @@
 class_name PlayerAnimationType
 
+
 enum {
     UNKNOWN,
     REST,

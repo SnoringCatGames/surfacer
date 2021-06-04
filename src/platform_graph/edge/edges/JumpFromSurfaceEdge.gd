@@ -3,6 +3,7 @@ extends Edge
 # Information for how to move through the air from a start (jump) position on
 # one surface to an end (landing) position on another surface.
 
+
 const TYPE := EdgeType.JUMP_FROM_SURFACE_EDGE
 const IS_TIME_BASED := true
 const SURFACE_TYPE := SurfaceType.AIR

@@ -1,6 +1,7 @@
 class_name AnnotationElement
 extends Reference
 
+
 var type := AnnotationElementType.UNKNOWN
 
 # Array<LegendItem>

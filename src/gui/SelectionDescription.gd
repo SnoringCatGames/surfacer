@@ -1,6 +1,7 @@
 class_name SelectionDescription
 extends MarginContainer
 
+
 const MATCHING_SURFACE := "Selected a surface."
 const MATCHING_VALID_EDGE := "A valid edge matches that selection."
 const MATCHING_FAILED_EDGE := \

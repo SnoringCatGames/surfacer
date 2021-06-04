@@ -1,6 +1,7 @@
 class_name NavigationPulseAnnotator
 extends Node2D
 
+
 var navigator: Navigator
 var current_path: PlatformGraphPath
 var is_slow_motion_enabled := false

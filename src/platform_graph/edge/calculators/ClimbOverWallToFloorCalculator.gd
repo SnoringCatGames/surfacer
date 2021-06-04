@@ -1,6 +1,7 @@
 class_name ClimbOverWallToFloorCalculator
 extends EdgeCalculator
 
+
 const NAME := "ClimbOverWallToFloorCalculator"
 const EDGE_TYPE := EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE
 const IS_A_JUMP_CALCULATOR := false

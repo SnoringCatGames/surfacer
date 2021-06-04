@@ -1,6 +1,7 @@
 class_name SurfacesAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Surfaces"
 const DESCRIPTION := ""
 

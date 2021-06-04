@@ -1,6 +1,7 @@
 class_name PlayerAnimationState
 extends Reference
 
+
 const POST_PATH_DURATION_TO_MIN_CONFIDENCE := 1.0
 const MIN_POST_PATH_CONFIDENCE_OPACITY := 0.3
 const LOW_CONFIDENCE_MODULATE_MASK := Color("cccc22")

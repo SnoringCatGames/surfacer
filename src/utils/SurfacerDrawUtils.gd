@@ -1,6 +1,7 @@
 class_name SurfacerDrawUtils
 extends DrawUtils
 
+
 const SQRT_TWO := sqrt(2.0)
 
 const EDGE_TRAJECTORY_WIDTH := 1.0

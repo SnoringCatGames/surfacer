@@ -1,6 +1,7 @@
 class_name NewNavExclamationMarkAnnotator
 extends TransientAnnotator
 
+
 var EXCLAMATION_MARK_WIDTH_START := 8.0
 var EXCLAMATION_MARK_LENGTH_START := 48.0
 var EXCLAMATION_MARK_STROKE_WIDTH_START := 3.0

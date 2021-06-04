@@ -1,6 +1,7 @@
 class_name SlowMotionController
 extends Node
 
+
 signal slow_motion_toggled(is_enabled)
 
 const DESATURATION_SHADER := \

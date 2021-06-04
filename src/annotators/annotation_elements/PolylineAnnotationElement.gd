@@ -1,6 +1,7 @@
 class_name PolylineAnnotationElement
 extends AnnotationElement
 
+
 var legend_item_class_reference
 var vertices: Array
 var color_params: ColorParams

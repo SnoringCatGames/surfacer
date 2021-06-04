@@ -3,6 +3,7 @@ extends Reference
 # Metadata that captures internal calculation information for a single edge in
 # order to help with debugging.
 
+
 var records_calc_details: bool
 var records_profile: bool
 

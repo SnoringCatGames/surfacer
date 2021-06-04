@@ -1,6 +1,7 @@
 class_name RulerAnnotator
 extends Node2D
 
+
 const LINE_WIDTH := 1.0
 
 var LINE_COLOR := Gs.colors.opacify(

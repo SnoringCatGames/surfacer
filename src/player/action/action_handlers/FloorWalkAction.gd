@@ -1,6 +1,7 @@
 class_name FloorWalkAction
 extends PlayerActionHandler
 
+
 const NAME := "FloorWalkAction"
 const TYPE := SurfaceType.FLOOR
 const USES_RUNTIME_PHYSICS := true

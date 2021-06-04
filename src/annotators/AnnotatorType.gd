@@ -1,5 +1,6 @@
 class_name AnnotatorType
 
+
 enum {
     RULER,
     SURFACES,

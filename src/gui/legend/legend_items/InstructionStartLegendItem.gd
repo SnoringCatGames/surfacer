@@ -1,6 +1,7 @@
 class_name InstructionStartLegendItem
 extends LegendItem
 
+
 const TYPE := LegendItemType.INSTRUCTION_START
 const TEXT := "Instruction\nstart"
 

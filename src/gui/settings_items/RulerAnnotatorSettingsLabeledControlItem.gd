@@ -1,6 +1,7 @@
 class_name RulerAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Ruler"
 const DESCRIPTION := ""
 

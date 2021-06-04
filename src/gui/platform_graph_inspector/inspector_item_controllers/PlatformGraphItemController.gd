@@ -1,6 +1,7 @@
 class_name PlatformGraphItemController
 extends InspectorItemController
 
+
 const TYPE := InspectorItemType.PLATFORM_GRAPH
 const IS_LEAF := false
 const STARTS_COLLAPSED := false

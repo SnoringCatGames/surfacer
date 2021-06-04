@@ -1,6 +1,7 @@
 class_name FailedEdgeAttemptAnnotationElement
 extends AnnotationElement
 
+
 const TYPE := AnnotationElementType.FAILED_EDGE_ATTEMPT
 
 var failed_edge_attempt: FailedEdgeAttempt

@@ -1,5 +1,6 @@
 class_name EdgeType
 
+
 enum {
     FROM_AIR_EDGE,
     CLIMB_DOWN_WALL_TO_FLOOR_EDGE,

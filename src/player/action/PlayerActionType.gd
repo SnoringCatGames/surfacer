@@ -1,5 +1,6 @@
 class_name PlayerActionType
 
+
 enum {
     NONE,
     PRESSED_JUMP,

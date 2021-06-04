@@ -1,6 +1,7 @@
 class_name PlayerPositionAnnotator
 extends Node2D
 
+
 var PLAYER_POSITION_COLOR := Gs.colors.opacify(
         Gs.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
 var GRAB_POSITION_COLOR := Gs.colors.opacify(

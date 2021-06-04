@@ -6,6 +6,7 @@ extends Edge
 # The instructions for an intra-surface edge consist of a single
 # directional-key press step, with no corresponding release.
 
+
 const TYPE := EdgeType.INTRA_SURFACE_EDGE
 const IS_TIME_BASED := false
 const ENTERS_AIR := false

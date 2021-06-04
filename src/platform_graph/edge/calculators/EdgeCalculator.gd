@@ -1,6 +1,7 @@
 class_name EdgeCalculator
 extends Reference
 
+
 # This is the minimum speed that we require edge calculations to have at the
 # end of their jump trajectory when landing on a wall surface.
 const MIN_LAND_ON_WALL_SPEED := 50.0

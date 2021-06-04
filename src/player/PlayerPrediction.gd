@@ -1,6 +1,7 @@
 class_name PlayerPrediction
 extends Node2D
 
+
 var animation_state := PlayerAnimationState.new()
 var animator: PlayerAnimator
 

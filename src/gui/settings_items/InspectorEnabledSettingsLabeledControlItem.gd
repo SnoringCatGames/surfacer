@@ -1,6 +1,7 @@
 class_name InspectorEnabledSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Inspector"
 const DESCRIPTION := (
         "The platform-graph inspector helps to visualize and debug the " +

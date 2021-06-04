@@ -1,6 +1,7 @@
 class_name PointerSelectionPosition
 extends Reference
 
+
 const SURFACE_TO_AIR_THRESHOLD_MAX_JUMP_RATIO := 0.85
 const POINTER_TO_SURFACE_SELECTION_THRESHOLD := 84.0
 const NEARBY_POSITIONS_TO_CALCULATE_COUNT := 6

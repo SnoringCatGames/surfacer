@@ -1,6 +1,7 @@
 class_name JumpLandPositionsAnnotationElement
 extends AnnotationElement
 
+
 const TYPE := AnnotationElementType.JUMP_LAND_POSITIONS
 
 var jump_land_positions: JumpLandPositions

@@ -1,6 +1,7 @@
 class_name PlayerSurfaceState
 extends Reference
 
+
 var is_touching_floor := false
 var is_touching_ceiling := false
 var is_touching_left_wall := false

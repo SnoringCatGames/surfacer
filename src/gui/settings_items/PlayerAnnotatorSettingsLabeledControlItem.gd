@@ -1,6 +1,7 @@
 class_name PlayerAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
+
 const LABEL := "Player sprites"
 const DESCRIPTION := ""
 

@@ -1,6 +1,7 @@
 class_name DestinationSurfaceItemController
 extends InspectorItemController
 
+
 const TYPE := InspectorItemType.DESTINATION_SURFACE
 const IS_LEAF := false
 const STARTS_COLLAPSED := true

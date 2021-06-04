@@ -6,6 +6,7 @@ extends Edge
 # The instructions for this edge consist of two consecutive directional-key
 # presses (toward the wall, and upward), with no corresponding release.
 
+
 const TYPE := EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE
 const IS_TIME_BASED := false
 const SURFACE_TYPE := SurfaceType.FLOOR
