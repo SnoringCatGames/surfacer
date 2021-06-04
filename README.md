@@ -17,7 +17,11 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 
 --------
 
-> **NOTE:** _This framework is still in development._
+> **NOTE:** _This framework depends the separate [Scaffolder](https://github.com/snoringcatgames/scaffolder/) library. You'll need to add both of these libraries to your `addons/` folder._
+
+--------
+
+> **NOTE:** _Consider this an alpha release. This framework is still in development and still has some rough edges._
 
 --------
 
