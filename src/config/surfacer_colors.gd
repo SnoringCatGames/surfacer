@@ -53,5 +53,6 @@ func register_colors(manifest: Dictionary) -> void:
     
     .register_colors(manifest)
 
+
 #func _derive_colors() -> void:
 #    ._derive_colors()
