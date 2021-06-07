@@ -26,26 +26,26 @@ static func calculate_trajectory_from_calculation_steps(
     
     var frame_continuous_positions_from_steps := \
             _concatenate_step_frame_positions(steps)
-    var distance_from_continuous_frames := \
+    var distance_from_continuous_trajectory := \
             sum_distance_between_frames(frame_continuous_positions_from_steps)
-    if !collision_params.movement_params.includes_continuous_frame_positions:
+    if !collision_params.movement_params.includes_continuous_trajectory_positions:
         frame_continuous_positions_from_steps = PoolVector2Array()
     
     var frame_continuous_velocities_from_steps := \
             _concatenate_step_frame_velocities(steps) if \
             collision_params.movement_params \
-                    .includes_continuous_frame_velocities else \
+                    .includes_continuous_trajectory_velocities else \
             PoolVector2Array()
     
     var trajectory := EdgeTrajectory.new(
             frame_continuous_positions_from_steps,
             frame_continuous_velocities_from_steps,
             waypoint_positions,
-            distance_from_continuous_frames)
+            distance_from_continuous_trajectory)
     
-    if collision_params.movement_params.includes_discrete_frame_state:
-        var collision := \
-                CollisionCheckUtils.check_instructions_discrete_frame_state(
+    if collision_params.movement_params.includes_discrete_trajectory_state:
+        var collision := CollisionCheckUtils \
+                .check_instructions_discrete_trajectory_state(
                         edge_calc_params,
                         instructions,
                         vertical_step,
@@ -144,14 +144,14 @@ static func sub_trajectory(
     
     # TODO: Calculate a more accurate value for this distance when we aren't
     #       saving continuous frame state.
-    var distance_from_continuous_frames := \
+    var distance_from_continuous_trajectory := \
             sum_distance_between_frames(
                     frame_continuous_positions_from_steps) if \
             includes_continuous_positions else \
-            base_trajectory.distance_from_continuous_frames
+            base_trajectory.distance_from_continuous_trajectory
     
     return EdgeTrajectory.new(
             frame_continuous_positions_from_steps,
             frame_continuous_velocities_from_steps,
             waypoint_positions,
-            distance_from_continuous_frames)
+            distance_from_continuous_trajectory)

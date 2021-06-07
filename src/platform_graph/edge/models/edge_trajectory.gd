@@ -32,19 +32,19 @@ var horizontal_instructions: Array
 
 var jump_instruction_end: EdgeInstruction
 
-var distance_from_continuous_frames: float
+var distance_from_continuous_trajectory: float
 
 
 func _init(frame_continuous_positions_from_steps := PoolVector2Array(),
             frame_continuous_velocities_from_steps := PoolVector2Array(),
             waypoint_positions := [],
-            distance_from_continuous_frames := INF) -> void:
+            distance_from_continuous_trajectory := INF) -> void:
     self.frame_continuous_positions_from_steps = \
             frame_continuous_positions_from_steps
     self.frame_continuous_velocities_from_steps = \
             frame_continuous_velocities_from_steps
     self.waypoint_positions = waypoint_positions
-    self.distance_from_continuous_frames = distance_from_continuous_frames
+    self.distance_from_continuous_trajectory = distance_from_continuous_trajectory
 
 
 func load_from_json_object(
@@ -67,7 +67,7 @@ func load_from_json_object(
     if json_object.has("j"):
         jump_instruction_end = EdgeInstruction.new()
         jump_instruction_end.load_from_json_object(json_object.j, context)
-    distance_from_continuous_frames = json_object.f
+    distance_from_continuous_trajectory = json_object.f
 
 
 func _load_horizontal_instructions_json_array(
@@ -84,7 +84,7 @@ func _load_horizontal_instructions_json_array(
 
 func to_json_object() -> Dictionary:
     var json_object := {
-        f = distance_from_continuous_frames,
+        f = distance_from_continuous_trajectory,
     }
     if !frame_discrete_positions_from_test.empty():
         json_object.d = Gs.utils.encode_vector2_array(

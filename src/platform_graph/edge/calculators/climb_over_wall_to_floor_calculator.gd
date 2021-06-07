@@ -136,10 +136,10 @@ static func _calculate_trajectory(
     
     # Insert frame state for the walk-to-fall-off portion of the trajectory.
     
-    if !movement_params.includes_discrete_frame_state and \
+    if !movement_params.includes_discrete_trajectory_state and \
             !movement_params \
-                    .includes_continuous_frame_positions and \
-            !movement_params.includes_continuous_frame_velocities:
+                    .includes_continuous_trajectory_positions and \
+            !movement_params.includes_continuous_trajectory_velocities:
         return EdgeTrajectory.new(
                 PoolVector2Array(),
                 PoolVector2Array(),
@@ -148,17 +148,17 @@ static func _calculate_trajectory(
                         start.target_point, end.target_point))
     
     var frame_discrete_positions_from_test: PoolVector2Array
-    if movement_params.includes_discrete_frame_state:
+    if movement_params.includes_discrete_trajectory_state:
         frame_discrete_positions_from_test = PoolVector2Array()
         frame_discrete_positions_from_test.resize(frame_count)
     
     var frame_continuous_positions_from_steps: PoolVector2Array
-    if movement_params.includes_continuous_frame_positions:
+    if movement_params.includes_continuous_trajectory_positions:
         frame_continuous_positions_from_steps = PoolVector2Array()
         frame_continuous_positions_from_steps.resize(frame_count)
     
     var frame_continuous_velocities_from_steps: PoolVector2Array
-    if movement_params.includes_continuous_frame_velocities:
+    if movement_params.includes_continuous_trajectory_velocities:
         frame_continuous_velocities_from_steps = PoolVector2Array()
         frame_continuous_velocities_from_steps.resize(frame_count)
     
@@ -169,13 +169,13 @@ static func _calculate_trajectory(
     var current_frame_position := start.target_point
     
     for frame_index in frame_count:
-        if movement_params.includes_discrete_frame_state:
+        if movement_params.includes_discrete_trajectory_state:
             frame_discrete_positions_from_test[frame_index] = \
                     current_frame_position
-        if movement_params.includes_continuous_frame_positions:
+        if movement_params.includes_continuous_trajectory_positions:
             frame_continuous_positions_from_steps[frame_index] = \
                     current_frame_position
-        if movement_params.includes_continuous_frame_velocities:
+        if movement_params.includes_continuous_trajectory_velocities:
             frame_continuous_velocities_from_steps[frame_index] = \
                     velocity
         
@@ -196,13 +196,13 @@ static func _calculate_trajectory(
         current_frame_position.y = frame_position_y
     
     
-    var distance_from_continuous_frames := EdgeTrajectoryUtils \
+    var distance_from_continuous_trajectory := EdgeTrajectoryUtils \
             .sum_distance_between_frames(frame_continuous_positions_from_steps)
     var trajectory := EdgeTrajectory.new(
             frame_continuous_positions_from_steps,
             frame_continuous_velocities_from_steps,
             [],
-            distance_from_continuous_frames)
+            distance_from_continuous_trajectory)
     trajectory.frame_discrete_positions_from_test = \
             frame_discrete_positions_from_test
     return trajectory

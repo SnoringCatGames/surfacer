@@ -356,13 +356,13 @@ static func _prepend_walk_to_fall_off_portion(
     
     # Insert frame state for the walk-to-fall-off portion of the trajectory.
     
-    if !movement_params.includes_discrete_frame_state and \
+    if !movement_params.includes_discrete_trajectory_state and \
             !movement_params \
-                    .includes_continuous_frame_positions and \
-            !movement_params.includes_continuous_frame_velocities:
+                    .includes_continuous_trajectory_positions and \
+            !movement_params.includes_continuous_trajectory_velocities:
         return
     
-    if movement_params.includes_discrete_frame_state:
+    if movement_params.includes_discrete_trajectory_state:
         var walking_and_falling_frame_discrete_positions_from_test = \
                 PoolVector2Array()
         walking_and_falling_frame_discrete_positions_from_test.resize(
@@ -372,7 +372,7 @@ static func _prepend_walk_to_fall_off_portion(
         trajectory.frame_discrete_positions_from_test = \
                 walking_and_falling_frame_discrete_positions_from_test
     
-    if movement_params.includes_continuous_frame_positions:
+    if movement_params.includes_continuous_trajectory_positions:
         var walking_and_falling_frame_continuous_positions_from_steps = \
                 PoolVector2Array()
         walking_and_falling_frame_continuous_positions_from_steps.resize(
@@ -383,7 +383,7 @@ static func _prepend_walk_to_fall_off_portion(
         trajectory.frame_continuous_positions_from_steps = \
                 walking_and_falling_frame_continuous_positions_from_steps
     
-    if movement_params.includes_continuous_frame_velocities:
+    if movement_params.includes_continuous_trajectory_velocities:
         var walking_and_falling_frame_continuous_velocities_from_steps = \
                 PoolVector2Array()
         walking_and_falling_frame_continuous_velocities_from_steps.resize(
@@ -406,13 +406,13 @@ static func _prepend_walk_to_fall_off_portion(
             PlayerActionHandler.MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION)
     
     for frame_index in frame_count_before_fall_off:
-        if movement_params.includes_discrete_frame_state:
+        if movement_params.includes_discrete_trajectory_state:
             trajectory.frame_discrete_positions_from_test[frame_index] = \
                     current_frame_position
-        if movement_params.includes_continuous_frame_positions:
+        if movement_params.includes_continuous_trajectory_positions:
             trajectory.frame_continuous_positions_from_steps[frame_index] = \
                     current_frame_position
-        if movement_params.includes_continuous_frame_velocities:
+        if movement_params.includes_continuous_trajectory_velocities:
             trajectory.frame_continuous_velocities_from_steps[frame_index] = \
                     current_frame_velocity
         

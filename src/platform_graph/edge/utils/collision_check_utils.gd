@@ -8,7 +8,7 @@ extends Reference
 # -   This is calculated by stepping through each discrete physics frame, which
 #     should exactly emulate the actual Player trajectory that would be used.
 # -   This also records some trajectory state.
-static func check_instructions_discrete_frame_state(
+static func check_instructions_discrete_trajectory_state(
         edge_calc_params: EdgeCalcParams,
         instructions: EdgeInstructions,
         vertical_step: VerticalEdgeStep,

@@ -46,7 +46,7 @@ func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
-    return trajectory.distance_from_continuous_frames
+    return trajectory.distance_from_continuous_trajectory
 
 
 func _calculate_duration(
