@@ -11,6 +11,7 @@ const PROTRUSION_PREVENTION_SURFACE_END_WALL_OFFSET := 1.0
 var player
 var graph: PlatformGraph
 var surface_state: PlayerSurfaceState
+var movement_params: MovementParams
 var instructions_action_source: InstructionsActionSource
 var from_air_calculator: FromAirCalculator
 var surface_to_air_calculator: JumpFromSurfaceCalculator
@@ -43,6 +44,7 @@ func _init(
     self.player = player
     self.graph = graph
     self.surface_state = player.surface_state
+    self.movement_params = player.movement_params
     self.navigation_state.is_human_player = player.is_human_player
     self.instructions_action_source = \
             InstructionsActionSource.new(player, true)
@@ -88,6 +90,10 @@ func navigate_path(
                 graph.collision_params,
                 path,
                 player.velocity)
+        
+        _ensure_edges_have_trajectory_state(
+                graph.collision_params,
+                path)
         
         self.path = path
         self.path_start_time_scaled = Gs.time.get_scaled_play_time()
@@ -136,7 +142,7 @@ func navigate_to_position(
     destination = PositionAlongSurface.new(destination)
     JumpLandPositionsUtils \
             .ensure_position_is_not_too_close_to_concave_neighbor(
-                    player.movement_params,
+                    movement_params,
                     destination)
     
     if graph_destination_for_in_air_destination != null:    
@@ -146,7 +152,7 @@ func navigate_to_position(
                 graph_destination_for_in_air_destination)
         JumpLandPositionsUtils \
                 .ensure_position_is_not_too_close_to_concave_neighbor(
-                        player.movement_params,
+                        movement_params,
                         graph_destination_for_in_air_destination)
     
     var path := find_path(
@@ -254,12 +260,16 @@ func find_path(
     
     Gs.profiler.stop("navigator_find_path")
     
-    if path != null and \
-            player.movement_params.also_optimizes_preselection_path:
-        _optimize_edges_for_approach(
+    if path != null:
+        if movement_params.also_optimizes_preselection_path:
+            _optimize_edges_for_approach(
+                    graph.collision_params,
+                    path,
+                    player.velocity)
+        
+        _ensure_edges_have_trajectory_state(
                 graph.collision_params,
-                path,
-                player.velocity)
+                path)
     
     return path
 
@@ -268,7 +278,7 @@ func _calculate_surface_to_air_edge(
         start: PositionAlongSurface,
         end: PositionAlongSurface) -> JumpFromSurfaceEdge:
     var velocity_start := JumpLandPositionsUtils.get_velocity_start(
-            player.movement_params,
+            movement_params,
             start.surface,
             surface_to_air_calculator.is_a_jump_calculator,
             false,
@@ -288,9 +298,9 @@ func stop() -> void:
 
 
 func _set_reached_destination() -> void:
-    if player.movement_params.forces_player_position_to_match_path_at_end:
+    if movement_params.forces_player_position_to_match_path_at_end:
         player.set_position(edge.get_end())
-    if player.movement_params.forces_player_velocity_to_zero_at_path_end and \
+    if movement_params.forces_player_velocity_to_zero_at_path_end and \
             edge.get_end_surface() != null:
         match edge.get_end_surface().side:
             SurfaceSide.FLOOR, SurfaceSide.CEILING:
@@ -338,9 +348,9 @@ func _start_edge(
     edge_index = index
     edge = path.edges[index]
     
-    if player.movement_params.forces_player_position_to_match_edge_at_start:
+    if movement_params.forces_player_position_to_match_edge_at_start:
         player.set_position(edge.get_start())
-    if player.movement_params.forces_player_velocity_to_match_edge_at_start:
+    if movement_params.forces_player_velocity_to_match_edge_at_start:
         player.velocity = edge.velocity_start
         surface_state.horizontal_acceleration_sign = 0
     
@@ -403,7 +413,7 @@ func update(
         print_msg("EDGE MVT INTERRUPTED:%8.3fs; %s",
                 [Gs.time.get_play_time(), interruption_type_label])
         
-        if player.movement_params.retries_navigation_when_interrupted:
+        if movement_params.retries_navigation_when_interrupted:
             navigate_to_position(
                     path.destination,
                     path.graph_destination_for_in_air_destination,
@@ -440,7 +450,7 @@ func update(
         if was_last_edge:
             var backtracking_edge := \
                     _possibly_backtrack_to_not_protrude_past_surface_end(
-                            player.movement_params,
+                            movement_params,
                             edge,
                             player.position,
                             player.velocity)
@@ -505,9 +515,9 @@ func print_msg(
         message_template: String,
         message_args = null) -> void:
     if Surfacer.is_surfacer_logging and \
-            player.movement_params.logs_navigator_events and \
+            movement_params.logs_navigator_events and \
             (player.is_human_player or \
-                    player.movement_params.logs_computer_player_events):
+                    movement_params.logs_computer_player_events):
         if message_args != null:
             Gs.logger.print(message_template % message_args)
         else:
@@ -867,6 +877,45 @@ func _optimize_edges_for_approach(
     path.is_optimized = true
     
     Gs.profiler.stop("navigator_optimize_edges_for_approach")
+
+
+func _ensure_edges_have_trajectory_state(
+        collision_params: CollisionCalcParams,
+        path: PlatformGraphPath) -> void:
+    if collision_params.movement_params \
+            .is_trajectory_state_stored_at_build_time:
+        # Edges in the path should already contain trajectory state.
+        return
+    
+    Gs.profiler.start("navigator_ensure_edges_have_trajectory_state")
+    
+    for i in path.edges.size():
+        var edge: Edge = path.edges[i]
+        
+        if edge.trajectory != null or \
+                edge.calculator == null:
+            continue
+        
+        var edge_with_trajectory: Edge = edge.calculator.calculate_edge(
+                null,
+                collision_params,
+                edge.start_position_along_surface,
+                edge.end_position_along_surface,
+                edge.velocity_start,
+                edge.includes_extra_jump_duration,
+                edge.includes_extra_wall_land_horizontal_speed)
+        assert(edge_with_trajectory != null and 
+                Gs.geometry.are_floats_equal_with_epsilon(
+                        edge_with_trajectory.duration,
+                        edge.duration,
+                        0.000001) and \
+                Gs.geometry.are_floats_equal_with_epsilon(
+                        edge_with_trajectory.distance,
+                        edge.distance,
+                        0.000001))
+        path.edges[i] = edge_with_trajectory
+    
+    Gs.profiler.stop("navigator_ensure_edges_have_trajectory_state")
 
 
 # Inserts extra intra-surface between any edges that land and then immediately

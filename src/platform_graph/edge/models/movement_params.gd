@@ -109,6 +109,14 @@ var includes_continuous_trajectory_velocities := true
 #     which doesn't take into account the error due to the calculation sampling
 #     interval.
 var includes_discrete_trajectory_state := true
+# -   If false, then any trajectory state that would have otherwise been stored
+#     (according to other MovementParams flags), will not be stored in either
+#     the runtime PlatformGraph or in the build-time platform-graph save files.
+# -   Omitting this trajectory state from a save file can significantly reduce
+#     its size.
+# -   If trajectory state is omitted at build time, and is still needed at
+#     runtime, then it will be calculated on-the-fly as needed.
+var is_trajectory_state_stored_at_build_time := true
 # -   If true, then the player position will be updated according to
 #     pre-calculated edge trajectories, and Godot's physics and collision
 #     engine will not be used to update player state.

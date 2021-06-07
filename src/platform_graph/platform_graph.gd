@@ -46,26 +46,16 @@ var debug_params := {}
 
 
 # FIXME: LEFT OFF HERE: -------------------------------------------
-# - Create a flag in MovementParams.
-#   - is_trajectory_state_stored_at_build_time
-# - Update logic in edge-calculator and edge classes to not calculate and/or
-#   store the bits of state that we no longer want to keep.
-#   - Enumerate those bits:
-#     - 
-# - Create a flag in Surfacer to ignore any of the newly-optional fields that
-#   may be present in the save-files when loading the graph.
-# - Update graph saving/loading logic to allow omission of more fields, and to
-#   check this new Surfacer field.
+# - MovementParams.is_trajectory_state_stored_at_build_time
+# - Surfacer.ignores_platform_graph_save_file_trajectory_state
+# 
 # - Add a new method to Navigator that populates any newly-omitted state, if
 #   optimization is disabled.
-# - If optimization is enabled, check if there is anything I need to update to
-#   ensure this state is present in the resulting path.
-# - Add additional logic to force state syncing at expected edge start/end
-#   times/positions (regardless of ...).
+# - Update inspector to dynamically populate trajectories as needed.
 # - Test all of this with various configurations of enabled/disabled
 #   MovementParams--e.g., bypass-physics, matches position/velocity, optimizes,
 #   ...
-# - 
+# 
 
 
 func calculate(player_name: String) -> void:
@@ -554,14 +544,24 @@ func _derive_nodes_to_nodes_to_edges() -> void:
 func _cleanup_edge_calc_results() -> void:
     if !Surfacer.is_inspector_enabled and \
             !Surfacer.is_precomputing_platform_graphs:
-        # Free-up this memory if we don't need to display the graph state in
-        # the inspector.
+        # Free-up all calculation-debugging state from local memory if we don't
+        # need to display the graph state in the inspector.
         surfaces_to_inter_surface_edges_results.clear()
     else:
+        # Free-up all temporary edge-calculation state, which has now been
+        # processed into more useful forms.
         for surface in surfaces_to_inter_surface_edges_results:
             for inter_surface_edges_results in \
                     surfaces_to_inter_surface_edges_results[surface]:
                 inter_surface_edges_results.edge_calc_results.clear()
+    
+    if !movement_params.is_trajectory_state_stored_at_build_time:
+        # Free-up all trajectory state from local memory.
+        for origin_node in nodes_to_nodes_to_edges:
+            for destination_node in nodes_to_nodes_to_edges[origin_node]:
+                for edge in \
+                        nodes_to_nodes_to_edges[origin_node][destination_node]:
+                    edge.trajectory = null
 
 
 # Checks whether a previous node with the same position has already been seen.

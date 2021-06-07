@@ -531,9 +531,12 @@ static func _draw_edge_from_instructions_positions(
     
     if includes_waypoints:
         # Draw the intermediate waypoints.
-        for i in edge.trajectory.waypoint_positions.size() - 1:
-            var waypoint_position: Vector2 = \
-                    edge.trajectory.waypoint_positions[i]
+        var waypoint_positions := \
+                edge.trajectory.waypoint_positions if \
+                edge.trajectory != null else \
+                []
+        for i in waypoint_positions.size() - 1:
+            var waypoint_position: Vector2 = waypoint_positions[i]
             draw_circle_outline(
                     canvas,
                     waypoint_position,
@@ -557,7 +560,8 @@ static func _draw_edge_from_instructions_positions(
                 origin_position,
                 waypoint_color)
     
-    if includes_instruction_indicators:
+    if includes_instruction_indicators and \
+            edge.trajectory != null:
         # Draw the horizontal instruction positions.
         for instruction in edge.trajectory.horizontal_instructions:
             draw_instruction_indicator(
