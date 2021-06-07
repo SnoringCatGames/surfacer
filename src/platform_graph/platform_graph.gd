@@ -45,19 +45,6 @@ var counts := {}
 var debug_params := {}
 
 
-# FIXME: LEFT OFF HERE: -------------------------------------------
-# - MovementParams.is_trajectory_state_stored_at_build_time
-# - Surfacer.ignores_platform_graph_save_file_trajectory_state
-# 
-# - Add a new method to Navigator that populates any newly-omitted state, if
-#   optimization is disabled.
-# - Update inspector to dynamically populate trajectories as needed.
-# - Test all of this with various configurations of enabled/disabled
-#   MovementParams--e.g., bypass-physics, matches position/velocity, optimizes,
-#   ...
-# 
-
-
 func calculate(player_name: String) -> void:
     self.player_params = Surfacer.player_params[player_name]
     self.movement_params = player_params.movement_params
@@ -719,14 +706,15 @@ func _load_position_along_surfaces_from_json_object(
 func _load_jump_land_positions_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
-    for id in json_object.jump_land_positions_id_to_json_object:
-        var jump_land_positions_json_object: Dictionary = \
-                json_object.jump_land_positions_id_to_json_object[id]
-        var jump_land_positions := JumpLandPositions.new()
-        jump_land_positions.load_from_json_object(
-                jump_land_positions_json_object,
-                context)
-        context.id_to_jump_land_positions[int(id)] = jump_land_positions
+    if json_object.has("jump_land_positions_id_to_json_object"):
+        for id in json_object.jump_land_positions_id_to_json_object:
+            var jump_land_positions_json_object: Dictionary = \
+                    json_object.jump_land_positions_id_to_json_object[id]
+            var jump_land_positions := JumpLandPositions.new()
+            jump_land_positions.load_from_json_object(
+                    jump_land_positions_json_object,
+                    context)
+            context.id_to_jump_land_positions[int(id)] = jump_land_positions
 
 
 func _load_surfaces_to_inter_surface_edges_results_from_json_object(
@@ -753,15 +741,17 @@ func _load_surfaces_to_inter_surface_edges_results_from_json_object(
 
 
 func to_json_object() -> Dictionary:
-    return {
+    var json_object := {
         player_name = player_params.name,
         position_along_surface_id_to_json_object = \
                 _get_position_along_surface_id_to_json_object(),
-        jump_land_positions_id_to_json_object = \
-                _get_jump_land_positions_id_to_json_object(),
         surface_id_to_inter_surface_edges_results = \
                 _get_surface_id_to_inter_surface_edges_results_json_object(),
     }
+    if Surfacer.is_debug_only_platform_graph_state_included:
+        json_object.jump_land_positions_id_to_json_object = \
+                _get_jump_land_positions_id_to_json_object()
+    return json_object
 
 
 func _get_position_along_surface_id_to_json_object() -> Dictionary:
@@ -770,13 +760,6 @@ func _get_position_along_surface_id_to_json_object() -> Dictionary:
         for inter_surface_edges_result in \
                 surfaces_to_inter_surface_edges_results[surface]:
             var node: PositionAlongSurface
-            
-            for jump_land_positions in \
-                    inter_surface_edges_result.all_jump_land_positions:
-                node = jump_land_positions.jump_position
-                results[node.get_instance_id()] = node.to_json_object()
-                node = jump_land_positions.land_position
-                results[node.get_instance_id()] = node.to_json_object()
             
             for edge in inter_surface_edges_result.valid_edges:
                 node = edge.start_position_along_surface
@@ -787,12 +770,20 @@ func _get_position_along_surface_id_to_json_object() -> Dictionary:
                     node = edge.fall_off_position
                     results[node.get_instance_id()] = node.to_json_object()
             
-            for failed_attempt in \
-                    inter_surface_edges_result.failed_edge_attempts:
-                assert(results.has(failed_attempt \
-                        .start_position_along_surface.get_instance_id()))
-                assert(results.has(failed_attempt \
-                        .end_position_along_surface.get_instance_id()))
+            if Surfacer.is_debug_only_platform_graph_state_included:
+                for jump_land_positions in \
+                        inter_surface_edges_result.all_jump_land_positions:
+                    node = jump_land_positions.jump_position
+                    results[node.get_instance_id()] = node.to_json_object()
+                    node = jump_land_positions.land_position
+                    results[node.get_instance_id()] = node.to_json_object()
+                
+                for failed_attempt in \
+                        inter_surface_edges_result.failed_edge_attempts:
+                    assert(results.has(failed_attempt \
+                            .start_position_along_surface.get_instance_id()))
+                    assert(results.has(failed_attempt \
+                            .end_position_along_surface.get_instance_id()))
     return results
 
 
