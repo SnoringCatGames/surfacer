@@ -5,14 +5,21 @@ extends Reference
 var origin_surface: Surface
 var destination_surface: Surface
 var edge_type := EdgeType.UNKNOWN
-# Array<JumpLandPositions>
-var all_jump_land_positions := []
-# Array<FailedEdgeAttempt>
-var failed_edge_attempts := []
+
 # Array<Edge>
 var valid_edges := []
-# This field is cleared after the PlatfromGraph is done calculating the graph
-# from tile maps.
+
+# If the app isn't configured to use extra debug state, then this field is
+# cleared after calculating the platform graph.
+# Array<JumpLandPositions>
+var all_jump_land_positions := []
+
+# If the app isn't configured to use extra debug state, then this field is
+# cleared after calculating the platform graph.
+# Array<FailedEdgeAttempt>
+var failed_edge_attempts := []
+
+# This field is cleared after calculating the platform graph.
 # Array<EdgeCalcResult>
 var edge_calc_results := []
 
@@ -71,10 +78,12 @@ func load_from_json_object(
     origin_surface = context.id_to_surface[int(json_object.o)]
     destination_surface = context.id_to_surface[int(json_object.d)]
     edge_type = json_object.t
-    all_jump_land_positions = \
-            _load_all_jump_land_positions_json_array(json_object.p, context)
-    failed_edge_attempts = \
-            _load_failed_edge_attempts_json_array(json_object.f, context)
+    if json_object.has("p"):
+        all_jump_land_positions = _load_all_jump_land_positions_json_array(
+                json_object.p, context)
+    if json_object.has("f"):
+        failed_edge_attempts = \
+                _load_failed_edge_attempts_json_array(json_object.f, context)
     valid_edges = _load_valid_edges_json_array(json_object.v, context)
 
 
@@ -112,14 +121,16 @@ func _load_valid_edges_json_array(
 
 
 func to_json_object() -> Dictionary:
-    return {
+    var json_object := {
         o = origin_surface.get_instance_id(),
         d = destination_surface.get_instance_id(),
         t = edge_type,
-        p = _get_all_jump_land_positions_json_array(),
-        f = _get_failed_edge_attempts_json_array(),
         v = _get_valid_edges_json_array(),
     }
+    if Surfacer.is_debug_only_platform_graph_state_included:
+        json_object.p = _get_all_jump_land_positions_json_array()
+        json_object.f = _get_failed_edge_attempts_json_array()
+    return json_object
 
 
 func _get_all_jump_land_positions_json_array() -> Array:

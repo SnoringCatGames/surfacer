@@ -185,7 +185,7 @@ func _on_graph_parse_progress(
         player_count,
     ]
     var label_4 := "Out-bound surface %s of %s" % [
-        origin_surface_index,
+        origin_surface_index + 1,
         surface_count,
     ]
     
