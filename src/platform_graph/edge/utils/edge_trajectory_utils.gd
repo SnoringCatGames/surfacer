@@ -28,7 +28,8 @@ static func calculate_trajectory_from_calculation_steps(
             _concatenate_step_frame_positions(steps)
     var distance_from_continuous_trajectory := \
             sum_distance_between_frames(frame_continuous_positions_from_steps)
-    if !collision_params.movement_params.includes_continuous_trajectory_positions:
+    if !collision_params.movement_params \
+            .includes_continuous_trajectory_positions:
         frame_continuous_positions_from_steps = PoolVector2Array()
     
     var frame_continuous_velocities_from_steps := \

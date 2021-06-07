@@ -155,8 +155,6 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
             movement_params.includes_continuous_trajectory_velocities)
     assert(!movement_params.bypasses_runtime_physics or \
             movement_params.syncs_player_position_to_edge_trajectory)
-    # FIXME: -----------------
-    assert(movement_params.syncs_player_position_to_edge_trajectory)
     
     _check_animator_params(movement_params.animator_params)
 

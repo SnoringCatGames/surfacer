@@ -100,6 +100,7 @@ var inspector_panel_starts_open: bool
 var uses_threads_for_platform_graph_calculation: bool
 var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
+var ignores_platform_graph_save_file_trajectory_state := false
 var is_precomputing_platform_graphs: bool
 var is_intro_choreography_shown: bool
 
@@ -177,6 +178,7 @@ var non_surface_parser_metric_keys := [
     "navigator_navigate_path",
     "navigator_find_path",
     "navigator_optimize_edges_for_approach",
+    "navigator_ensure_edges_have_trajectory_state",
     "navigator_start_edge",
 ]
 
@@ -275,6 +277,9 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("ignores_platform_graph_save_files"):
         self.ignores_platform_graph_save_files = \
                 manifest.ignores_platform_graph_save_files
+    if manifest.has("ignores_platform_graph_save_file_trajectory_state"):
+        self.ignores_platform_graph_save_file_trajectory_state = \
+                manifest.ignores_platform_graph_save_file_trajectory_state
     
     if manifest.has("nav_selection_slow_mo_time_scale"):
         self.nav_selection_slow_mo_time_scale = \
