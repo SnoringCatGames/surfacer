@@ -79,7 +79,7 @@ func _init(
     
     assert(trajectory == null or \
             (!trajectory.frame_continuous_positions_from_steps.empty() or \
-            !movement_params.includes_continuous_frame_positions))
+            !movement_params.includes_continuous_trajectory_positions))
     
     if start_position_along_surface != null:
         self.is_degenerate = Gs.geometry.are_points_equal_with_epsilon(

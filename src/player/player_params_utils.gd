@@ -9,7 +9,7 @@ static func create_player_params(param_class) -> PlayerParams:
     
     var edge_calculators := _get_edge_calculators(movement_params)
     var action_handlers := _get_action_handlers(movement_params)
-
+    
     return PlayerParams.new(
             movement_params.name,
             movement_params,
@@ -150,11 +150,13 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
             !movement_params \
                     .prevents_path_end_points_from_protruding_past_surface_ends_with_extra_offsets)
     assert(!movement_params.syncs_player_position_to_edge_trajectory or \
-            movement_params.includes_continuous_frame_positions)
+            movement_params.includes_continuous_trajectory_positions)
     assert(!movement_params.syncs_player_velocity_to_edge_trajectory or \
-            movement_params.includes_continuous_frame_velocities)
+            movement_params.includes_continuous_trajectory_velocities)
     assert(!movement_params.bypasses_runtime_physics or \
             movement_params.syncs_player_position_to_edge_trajectory)
+    # FIXME: -----------------
+    assert(movement_params.syncs_player_position_to_edge_trajectory)
     
     _check_animator_params(movement_params.animator_params)
 

@@ -45,6 +45,29 @@ var counts := {}
 var debug_params := {}
 
 
+# FIXME: LEFT OFF HERE: -------------------------------------------
+# - Create a flag in MovementParams.
+#   - is_trajectory_state_stored_at_build_time
+# - Update logic in edge-calculator and edge classes to not calculate and/or
+#   store the bits of state that we no longer want to keep.
+#   - Enumerate those bits:
+#     - 
+# - Create a flag in Surfacer to ignore any of the newly-optional fields that
+#   may be present in the save-files when loading the graph.
+# - Update graph saving/loading logic to allow omission of more fields, and to
+#   check this new Surfacer field.
+# - Add a new method to Navigator that populates any newly-omitted state, if
+#   optimization is disabled.
+# - If optimization is enabled, check if there is anything I need to update to
+#   ensure this state is present in the resulting path.
+# - Add additional logic to force state syncing at expected edge start/end
+#   times/positions (regardless of ...).
+# - Test all of this with various configurations of enabled/disabled
+#   MovementParams--e.g., bypass-physics, matches position/velocity, optimizes,
+#   ...
+# - 
+
+
 func calculate(player_name: String) -> void:
     self.player_params = Surfacer.player_params[player_name]
     self.movement_params = player_params.movement_params
