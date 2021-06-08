@@ -36,7 +36,9 @@ func _load() -> void:
     
     set_hud_visibility(false)
     
-    graph_parser.parse(_id)
+    graph_parser.parse(
+            _id,
+            Surfacer.is_debug_only_platform_graph_state_included)
 
 
 func _start() -> void:

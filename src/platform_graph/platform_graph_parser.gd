@@ -36,6 +36,7 @@ func _exit_tree() -> void:
 
 func parse(
         level_id: String,
+        includes_debug_only_state: bool,
         force_calculation_from_tile_maps := false) -> void:
     self.level_id = level_id
     _record_tile_maps()
@@ -43,7 +44,9 @@ func parse(
     force_calculation_from_tile_maps = \
             force_calculation_from_tile_maps or \
             Surfacer.ignores_platform_graph_save_files
-    _instantiate_platform_graphs(force_calculation_from_tile_maps)
+    _instantiate_platform_graphs(
+            includes_debug_only_state,
+            force_calculation_from_tile_maps)
 
 
 # Get references to the TileMaps that define the collision boundaries of this
@@ -81,15 +84,18 @@ func _create_fake_players_for_collision_calculations() -> void:
 
 
 func _instantiate_platform_graphs(
-        force_calculation_from_tile_maps := false) -> void:
+        includes_debug_only_state: bool,
+        force_calculation_from_tile_maps: bool) -> void:
     is_loaded_from_file = \
             !force_calculation_from_tile_maps and \
-            File.new().file_exists(_get_resource_path())
+            File.new().file_exists(
+                    _get_resource_path(includes_debug_only_state))
     if is_loaded_from_file:
         emit_signal("load_started")
         Gs.time.set_timeout(
                 funcref(self, "_load_platform_graphs"),
-                0.3)
+                0.3,
+                [includes_debug_only_state])
     else:
         # Set up the PlatformGraphs for this level.
         surface_parser = SurfaceParser.new()
@@ -191,8 +197,8 @@ func _defer_calculate_next_platform_graph(last_player_index: int) -> void:
             [last_player_index + 1])
 
 
-func _load_platform_graphs() -> void:
-    var platform_graphs_path := _get_resource_path()
+func _load_platform_graphs(includes_debug_only_state: bool) -> void:
+    var platform_graphs_path := _get_resource_path(includes_debug_only_state)
     
     var file := File.new()
     var status := file.open(platform_graphs_path, File.READ)
@@ -325,30 +331,30 @@ func _validate_platform_graphs(json_object: Dictionary) -> void:
 func save_platform_graphs() -> void:
     assert(Gs.utils.get_is_pc_device())
     
-    if !Gs.utils.ensure_directory_exists(get_directory_path()):
+    if !Gs.utils.ensure_directory_exists(get_os_directory_path()):
         return
     
-    var json_object := to_json_object()
-    var serialized_string := JSON.print(json_object)
-    
-    var file_name: String = "level_%s.json" % level_id
-    var path := get_directory_path() + "/" + file_name
-    
-    var file := File.new()
-    var status := file.open(path, File.WRITE)
-    if status != OK:
-        Gs.logger.error("Unable to open file: " + path)
-    file.store_string(serialized_string)
-    file.close()
+    for includes_debug_only_state in [true, false]:
+        var json_object := to_json_object(includes_debug_only_state)
+        var serialized_string := JSON.print(json_object)
+        
+        var path := _get_os_path(includes_debug_only_state)
+        
+        var file := File.new()
+        var status := file.open(path, File.WRITE)
+        if status != OK:
+            Gs.logger.error("Unable to open file: " + path)
+        file.store_string(serialized_string)
+        file.close()
 
 
-func to_json_object() -> Dictionary:
+func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     return {
         level_id = level_id,
         surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
         player_names = _get_player_names(),
         surface_parser = surface_parser.to_json_object(),
-        platform_graphs = _serialize_platform_graphs(),
+        platform_graphs = _serialize_platform_graphs(includes_debug_only_state),
     }
 
 
@@ -364,20 +370,36 @@ func _get_player_names() -> Array:
     return Gs.level_config.get_level_config(level_id).player_names
 
 
-func _serialize_platform_graphs() -> Array:
+func _serialize_platform_graphs(includes_debug_only_state: bool) -> Array:
     var result := []
     for player_name in platform_graphs:
-        result.push_back(platform_graphs[player_name].to_json_object())
+        result.push_back(platform_graphs[player_name] \
+                .to_json_object(includes_debug_only_state))
     return result
 
 
-func _get_resource_path() -> String:
-    return "res://%s/level_%s.json" % [
-        PLATFORM_GRAPHS_DIRECTORY_NAME,
+func _get_resource_path(includes_debug_only_state: bool) -> String:
+    var file_name: String = "level_%s%s.json" % [
         level_id,
+        ".debug" if includes_debug_only_state else "",
+    ]
+    return "res://%s/%s" % [
+        PLATFORM_GRAPHS_DIRECTORY_NAME,
+        file_name,
     ]
 
 
-static func get_directory_path() -> String:
+func _get_os_path(includes_debug_only_state: bool) -> String:
+    var file_name: String = "level_%s%s.json" % [
+        level_id,
+        ".debug" if includes_debug_only_state else "",
+    ]
+    return "%s/%s" % [
+        get_os_directory_path(),
+        file_name,
+    ]
+
+
+static func get_os_directory_path() -> String:
     return ProjectSettings.globalize_path("res://") + \
             PLATFORM_GRAPHS_DIRECTORY_NAME

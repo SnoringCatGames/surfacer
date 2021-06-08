@@ -111,7 +111,10 @@ func _parse_next() -> void:
             "parse_finished",
             self,
             "_on_calculation_finished")
-    platform_graph_parser.parse(level_id, true)
+    platform_graph_parser.parse(
+            level_id,
+            Surfacer.is_debug_only_platform_graph_state_included,
+            true)
 
 
 func _on_calculation_finished() -> void:
@@ -330,7 +333,7 @@ func _get_focused_button() -> ShinyButton:
 
 func _on_OpenFolderButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()
-    var path := PlatformGraphParser.get_directory_path()
+    var path := PlatformGraphParser.get_os_directory_path()
     Gs.logger.print("Opening platform-graph folder: " + path)
     OS.shell_open(path)
 

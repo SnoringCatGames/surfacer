@@ -120,14 +120,14 @@ func _load_valid_edges_json_array(
     return result
 
 
-func to_json_object() -> Dictionary:
+func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     var json_object := {
         o = origin_surface.get_instance_id(),
         d = destination_surface.get_instance_id(),
         t = edge_type,
         v = _get_valid_edges_json_array(),
     }
-    if Surfacer.is_debug_only_platform_graph_state_included:
+    if includes_debug_only_state:
         json_object.p = _get_all_jump_land_positions_json_array()
         json_object.f = _get_failed_edge_attempts_json_array()
     return json_object
