@@ -574,11 +574,12 @@ static func _dedup_node(
 # Get a string representation for the grid cell that the given node corresponds
 # to.
 #
-# - Before considering each position, subtract x and y by
-#   CLUSTER_CELL_HALF_SIZE, since positions are likely to be aligned with cell
-#   boundaries, which would make cell assignment less predictable.
-# - False negatives for node deduplication should be unlikely, but it should
-#   also be ok when it does happen. It'll just result in a little more storage.
+# -   Before considering each position, subtract x and y by
+#     CLUSTER_CELL_HALF_SIZE, since positions are likely to be aligned with
+#     cell boundaries, which would make cell assignment less predictable.
+# -   False-negatives for node deduplication should be unlikely, but it should
+#     also be ok when it does happen. It'll just result in a little more
+#     storage.
 static func _node_to_cell_id(node: PositionAlongSurface) -> String:
     return "%s,%s,%s" % [node.side,
             floor((node.target_point.x - CLUSTER_CELL_HALF_SIZE) / \
