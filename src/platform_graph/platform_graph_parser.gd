@@ -199,8 +199,9 @@ func _load_platform_graphs() -> void:
     if status != OK:
         Gs.logger.error("Unable to open file: " + platform_graphs_path)
         return
-    
     var serialized_string := file.get_as_text()
+    file.close()
+
     var parse_result := JSON.parse(serialized_string)
     if parse_result.error != OK:
         Gs.logger.error("Unable to parse JSON: %s; %s:%s:%s" % [
@@ -324,11 +325,11 @@ func _validate_platform_graphs(json_object: Dictionary) -> void:
 func save_platform_graphs() -> void:
     assert(Gs.utils.get_is_pc_device())
     
-    var json_object := to_json_object()
-    var serialized_string := JSON.print(json_object)
-    
     if !Gs.utils.ensure_directory_exists(get_directory_path()):
         return
+    
+    var json_object := to_json_object()
+    var serialized_string := JSON.print(json_object)
     
     var file_name: String = "level_%s.json" % level_id
     var path := get_directory_path() + "/" + file_name
