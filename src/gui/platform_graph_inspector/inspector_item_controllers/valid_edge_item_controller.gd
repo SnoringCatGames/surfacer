@@ -20,6 +20,8 @@ func _init(
         edge) -> void:
     assert(edge != null)
     self.edge = edge
+    # Ensure detailed trajectory state is ready for use.
+    edge.populate_trajectory(graph.collision_params)
     _post_init()
 
 
