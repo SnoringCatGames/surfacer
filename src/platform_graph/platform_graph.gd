@@ -741,21 +741,24 @@ func _load_surfaces_to_inter_surface_edges_results_from_json_object(
             inter_surface_edges_results[i] = inter_surface_edges_result
 
 
-func to_json_object() -> Dictionary:
+func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     var json_object := {
         player_name = player_params.name,
         position_along_surface_id_to_json_object = \
-                _get_position_along_surface_id_to_json_object(),
+                _get_position_along_surface_id_to_json_object(
+                        includes_debug_only_state),
         surface_id_to_inter_surface_edges_results = \
-                _get_surface_id_to_inter_surface_edges_results_json_object(),
+                _get_surface_id_to_inter_surface_edges_results_json_object(
+                        includes_debug_only_state),
     }
-    if Surfacer.is_debug_only_platform_graph_state_included:
+    if includes_debug_only_state:
         json_object.jump_land_positions_id_to_json_object = \
                 _get_jump_land_positions_id_to_json_object()
     return json_object
 
 
-func _get_position_along_surface_id_to_json_object() -> Dictionary:
+func _get_position_along_surface_id_to_json_object(
+        includes_debug_only_state: bool) -> Dictionary:
     var results := {}
     for surface in surfaces_to_inter_surface_edges_results:
         for inter_surface_edges_result in \
@@ -771,7 +774,7 @@ func _get_position_along_surface_id_to_json_object() -> Dictionary:
                     node = edge.fall_off_position
                     results[node.get_instance_id()] = node.to_json_object()
             
-            if Surfacer.is_debug_only_platform_graph_state_included:
+            if includes_debug_only_state:
                 for jump_land_positions in \
                         inter_surface_edges_result.all_jump_land_positions:
                     node = jump_land_positions.jump_position
@@ -805,7 +808,8 @@ func _get_jump_land_positions_id_to_json_object() -> Dictionary:
     return results
 
 
-func _get_surface_id_to_inter_surface_edges_results_json_object() -> Dictionary:
+func _get_surface_id_to_inter_surface_edges_results_json_object(
+        includes_debug_only_state: bool) -> Dictionary:
     var results := {}
     for surface in surfaces_to_inter_surface_edges_results:
         var inter_surface_edges_results: Array = \
@@ -821,5 +825,6 @@ func _get_surface_id_to_inter_surface_edges_results_json_object() -> Dictionary:
             var inter_surface_edges_result: InterSurfaceEdgesResult = \
                     inter_surface_edges_results[i]
             inter_surface_edges_results_json_object[i] = \
-                    inter_surface_edges_result.to_json_object()
+                    inter_surface_edges_result.to_json_object(
+                            includes_debug_only_state)
     return results
