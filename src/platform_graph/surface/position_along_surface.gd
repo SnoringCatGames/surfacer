@@ -132,13 +132,13 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     surface = context.id_to_surface[int(json_object.s)]
-    target_point = Gs.utils.decode_vector2(json_object.t)
-    target_projection_onto_surface = Gs.utils.decode_vector2(json_object.p)
+    target_point = Gs.json.decode_vector2(json_object.t)
+    target_projection_onto_surface = Gs.json.decode_vector2(json_object.p)
 
 
 func to_json_object() -> Dictionary:
     return {
         s = surface.get_instance_id(),
-        t = Gs.utils.encode_vector2(target_point),
-        p = Gs.utils.encode_vector2(target_projection_onto_surface),
+        t = Gs.json.encode_vector2(target_point),
+        p = Gs.json.encode_vector2(target_projection_onto_surface),
     }

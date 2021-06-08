@@ -136,7 +136,7 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     context.id_to_surface[int(json_object.d)] = self
-    vertices = PoolVector2Array(Gs.utils.decode_vector2_array(json_object.v))
+    vertices = PoolVector2Array(Gs.json.decode_vector2_array(json_object.v))
     side = json_object.s
     tile_map_indices = to_int_array(json_object.i)
     bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
@@ -147,7 +147,7 @@ func load_references_from_json_context(
         json_object: Dictionary,
         context: Dictionary) -> void:
     tile_map = context.id_to_tile_map[json_object.t]
-    connected_region_bounding_box = Gs.utils.decode_rect2(json_object.crbb)
+    connected_region_bounding_box = Gs.json.decode_rect2(json_object.crbb)
     clockwise_convex_neighbor = \
             _get_surface_from_id(json_object.cwv, context.id_to_surface)
     counter_clockwise_convex_neighbor = \
@@ -161,11 +161,11 @@ func load_references_from_json_context(
 func to_json_object() -> Dictionary:
     return {
         d = self.get_instance_id(),
-        v = Gs.utils.encode_vector2_array(vertices),
+        v = Gs.json.encode_vector2_array(vertices),
         s = side,
         t = tile_map.id,
         i = tile_map_indices,
-        crbb = Gs.utils.encode_rect2(connected_region_bounding_box),
+        crbb = Gs.json.encode_rect2(connected_region_bounding_box),
         cwv = Gs.utils.get_instance_id_or_not(clockwise_convex_neighbor),
         ccwv = Gs.utils.get_instance_id_or_not(counter_clockwise_convex_neighbor),
         cwc = Gs.utils.get_instance_id_or_not(clockwise_concave_neighbor),
