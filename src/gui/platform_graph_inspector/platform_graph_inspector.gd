@@ -97,6 +97,11 @@ func _ready() -> void:
     _populate()
 
 
+func _destroy() -> void:
+    Gs.canvas_layers.layers.annotation \
+            .remove_child(inspector_selector)
+
+
 func _gui_input(event: InputEvent) -> void:
     # Godot seems to have a bug where many clicks in the tree are
     # false-negatives. This at least prevents them from being consumed as
@@ -109,6 +114,9 @@ func _populate() -> void:
     
     if root == null:
         root = create_item()
+    
+    # NOTE: This is a hack. See it's doc comment.
+    var dummy := DummyItemController.new(root, self, null)
     
     for graph in graphs:
         graph_item_controllers[graph.movement_params.name] = \

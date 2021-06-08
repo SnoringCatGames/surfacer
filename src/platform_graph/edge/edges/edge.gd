@@ -233,6 +233,24 @@ static func _calculate_instructions(
     return null
 
 
+# This should probably only be used during debugging. Otherwise, local memory
+# usage could potentially grow quite large.
+func populate_trajectory(collision_params: CollisionCalcParams) -> void:
+    if trajectory != null or \
+            calculator == null:
+        return
+    
+    var edge_with_trajectory: Edge = calculator.calculate_edge(
+            null,
+            collision_params,
+            start_position_along_surface,
+            end_position_along_surface,
+            velocity_start,
+            includes_extra_jump_duration,
+            includes_extra_wall_land_horizontal_speed)
+    self.trajectory = edge_with_trajectory.trajectory
+
+
 func get_position_at_time(edge_time: float) -> Vector2:
     var index := int(edge_time / Time.PHYSICS_TIME_STEP)
     if index >= trajectory.frame_continuous_positions_from_steps.size():

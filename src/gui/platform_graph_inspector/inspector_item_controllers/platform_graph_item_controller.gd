@@ -4,7 +4,7 @@ extends InspectorItemController
 
 const TYPE := InspectorItemType.PLATFORM_GRAPH
 const IS_LEAF := false
-const STARTS_COLLAPSED := false
+const STARTS_COLLAPSED := true
 const PREFIX := "Platform graph"
 
 # Dictionary<Surface, Dictionary<Surface, Dictionary<int,
@@ -50,6 +50,18 @@ func to_string() -> String:
         InspectorItemType.get_string(type),
         graph.movement_params.name,
     ]
+
+
+func on_item_expanded() -> void:
+    _populate_trajectories()
+    .on_item_expanded()
+
+
+func _populate_trajectories() -> void:
+    for origin_node in graph.nodes_to_nodes_to_edges:
+        for edges in graph.nodes_to_nodes_to_edges[origin_node].values():
+            for edge in edges:
+                edge.populate_trajectory(graph.collision_params)
 
 
 func find_and_expand_controller(
