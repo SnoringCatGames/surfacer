@@ -447,8 +447,8 @@ func _on_inter_surface_edges_calculated() -> void:
     _dedup_nodes()
     _derive_surfaces_to_outbound_nodes()
     _derive_nodes_to_nodes_to_edges()
-    _cleanup_edge_calc_results()
     _update_counts()
+    _cleanup_edge_calc_results()
     collision_params.player.set_platform_graph(self)
     emit_signal("calculation_finished")
 
@@ -536,12 +536,15 @@ func _cleanup_edge_calc_results() -> void:
         # need to display the graph state in the inspector.
         surfaces_to_inter_surface_edges_results.clear()
     else:
-        # Free-up all temporary edge-calculation state, which has now been
-        # processed into more useful forms.
+        # Free-up all temporary or debug-only edge-calculation state, which has
+        # now been processed into more useful forms and/or can be re-calculated
+        # as needed from within the inspector.
         for surface in surfaces_to_inter_surface_edges_results:
-            for inter_surface_edges_results in \
+            for inter_surface_edges_result in \
                     surfaces_to_inter_surface_edges_results[surface]:
-                inter_surface_edges_results.edge_calc_results.clear()
+                inter_surface_edges_result.edge_calc_results.clear()
+                inter_surface_edges_result.all_jump_land_positions.clear()
+                inter_surface_edges_result.failed_edge_attempts.clear()
     
     if !movement_params.is_trajectory_state_stored_at_build_time:
         # Free-up all trajectory state from local memory.
@@ -686,8 +689,8 @@ func load_from_json_object(
     
     _derive_surfaces_to_outbound_nodes()
     _derive_nodes_to_nodes_to_edges()
-    _cleanup_edge_calc_results()
     _update_counts()
+    _cleanup_edge_calc_results()
     
     fake_player.set_platform_graph(self)
 

@@ -334,18 +334,18 @@ func save_platform_graphs() -> void:
     if !Gs.utils.ensure_directory_exists(get_os_directory_path()):
         return
     
-    for includes_debug_only_state in [true, false]:
-        var json_object := to_json_object(includes_debug_only_state)
-        var serialized_string := JSON.print(json_object)
-        
-        var path := _get_os_path(includes_debug_only_state)
-        
-        var file := File.new()
-        var status := file.open(path, File.WRITE)
-        if status != OK:
-            Gs.logger.error("Unable to open file: " + path)
-        file.store_string(serialized_string)
-        file.close()
+    var includes_debug_only_state := false
+    var json_object := to_json_object(includes_debug_only_state)
+    var serialized_string := JSON.print(json_object)
+    
+    var path := _get_os_path(includes_debug_only_state)
+    
+    var file := File.new()
+    var status := file.open(path, File.WRITE)
+    if status != OK:
+        Gs.logger.error("Unable to open file: " + path)
+    file.store_string(serialized_string)
+    file.close()
 
 
 func to_json_object(includes_debug_only_state: bool) -> Dictionary:
