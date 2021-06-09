@@ -135,6 +135,9 @@ var nav_selection_prediction_tween_duration := 0.15
 var new_path_pulse_duration_multiplier := 0.4
 var new_path_pulse_time_length := 1.0
 
+var path_drag_update_throttle_interval := 0.2
+var path_beat_update_throttle_interval := 0.2
+
 # Params for CameraPanController.
 var snaps_camera_back_to_player := true
 var max_zoom_multiplier_from_pointer := 1.5
@@ -295,68 +298,60 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("is_human_current_nav_trajectory_shown_with_slow_mo"):
         self.is_human_current_nav_trajectory_shown_with_slow_mo = \
                 manifest.is_human_current_nav_trajectory_shown_with_slow_mo
-    
     if manifest.has("is_computer_current_nav_trajectory_shown_with_slow_mo"):
         self.is_computer_current_nav_trajectory_shown_with_slow_mo = \
                 manifest.is_computer_current_nav_trajectory_shown_with_slow_mo
-    
     if manifest.has("is_human_current_nav_trajectory_shown_without_slow_mo"):
         self.is_human_current_nav_trajectory_shown_without_slow_mo = \
                 manifest.is_human_current_nav_trajectory_shown_without_slow_mo
-    
     if manifest.has(
             "is_computer_current_nav_trajectory_shown_without_slow_mo"):
         self.is_computer_current_nav_trajectory_shown_without_slow_mo = \
                 manifest \
                     .is_computer_current_nav_trajectory_shown_without_slow_mo
-    
     if manifest.has("is_human_nav_pulse_shown_with_slow_mo"):
         self.is_human_nav_pulse_shown_with_slow_mo = \
                 manifest.is_human_nav_pulse_shown_with_slow_mo
-    
     if manifest.has("is_computer_nav_pulse_shown_with_slow_mo"):
         self.is_computer_nav_pulse_shown_with_slow_mo = \
                 manifest.is_computer_nav_pulse_shown_with_slow_mo
-    
     if manifest.has("is_human_nav_pulse_shown_without_slow_mo"):
         self.is_human_nav_pulse_shown_without_slow_mo = \
                 manifest.is_human_nav_pulse_shown_without_slow_mo
-    
     if manifest.has("is_computer_nav_pulse_shown_without_slow_mo"):
         self.is_computer_nav_pulse_shown_without_slow_mo = \
                 manifest.is_computer_nav_pulse_shown_without_slow_mo
-    
     if manifest.has("is_human_new_nav_exclamation_mark_shown"):
         self.is_human_new_nav_exclamation_mark_shown = \
                 manifest.is_human_new_nav_exclamation_mark_shown
-    
     if manifest.has("is_computer_new_nav_exclamation_mark_shown"):
         self.is_computer_new_nav_exclamation_mark_shown = \
                 manifest.is_computer_new_nav_exclamation_mark_shown
-    
     if manifest.has("does_human_nav_pulse_grow"):
         self.does_human_nav_pulse_grow = \
                 manifest.does_human_nav_pulse_grow
-    
     if manifest.has("does_computer_nav_pulse_grow"):
         self.does_computer_nav_pulse_grow = \
                 manifest.does_computer_nav_pulse_grow
-    
     if manifest.has("nav_selection_slow_mo_saturation"):
         self.nav_selection_slow_mo_saturation = \
                 manifest.nav_selection_slow_mo_saturation
-    
     if manifest.has("nav_selection_prediction_opacity"):
         self.nav_selection_prediction_opacity = \
                 manifest.nav_selection_prediction_opacity
-    
     if manifest.has("new_path_pulse_duration_multiplier"):
         self.new_path_pulse_duration_multiplier = \
                 manifest.new_path_pulse_duration_multiplier
-    
     if manifest.has("new_path_pulse_time_length"):
         self.new_path_pulse_time_length = \
                 manifest.new_path_pulse_time_length
+    
+    if manifest.has("path_drag_update_throttle_interval"):
+        self.path_drag_update_throttle_interval = \
+                manifest.path_drag_update_throttle_interval
+    if manifest.has("path_beat_update_throttle_interval"):
+        self.path_beat_update_throttle_interval = \
+                manifest.path_beat_update_throttle_interval
     
     if manifest.has("nav_selection_prediction_tween_duration"):
         self.nav_selection_prediction_tween_duration = \
@@ -365,7 +360,6 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("is_human_prediction_shown"):
         self.is_human_prediction_shown = \
                 manifest.is_human_prediction_shown
-    
     if manifest.has("is_computer_prediction_shown"):
         self.is_computer_prediction_shown = \
                 manifest.is_computer_prediction_shown

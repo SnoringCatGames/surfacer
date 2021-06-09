@@ -2,18 +2,15 @@ class_name PlayerPointerListener
 extends Node2D
 
 
-const DRAG_UPDATE_THROTTLE_INTERVAL := 0.1
-const BEAT_UPDATE_THROTTLE_INTERVAL := 0.1
-
 var _player
 var _nearby_surface_distance_squared_threshold: float
 var _is_preselection_path_update_pending := false
 var _throttled_update_preselection_path: FuncRef = Gs.time.throttle(
         funcref(self, "_update_preselection_path"),
-        DRAG_UPDATE_THROTTLE_INTERVAL)
+        Surfacer.path_drag_update_throttle_interval)
 var _throttled_update_preselection_beats: FuncRef = Gs.time.throttle(
         funcref(self, "_update_preselection_beats"),
-        BEAT_UPDATE_THROTTLE_INTERVAL)
+        Surfacer.path_beat_update_throttle_interval)
 var _last_pointer_drag_position := Vector2.INF
 
 
