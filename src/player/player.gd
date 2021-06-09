@@ -499,7 +499,7 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
                 expected_surface.side == SurfaceSide.RIGHT_WALL)
         surface_state.which_wall = \
                 SurfaceSide.NONE if \
-                !surface_state.is_touching_wall else \
+                !next_is_touching_wall else \
                 expected_surface.side
     else:
         # Note: These might give false negatives when colliding with a corner.

@@ -355,9 +355,6 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
     collision_params_for_thread.copy(collision_params)
     collision_params_for_thread.thread_id = thread_id
     
-    var surfaces_in_fall_range_set := {}
-    var surfaces_in_jump_range_set := {}
-    
     var surfaces := surfaces_set.keys()
     
     # Calculate all inter-surface edges.
@@ -365,18 +362,14 @@ func _calculate_inter_surface_edges_subset(thread_index: int) -> void:
             0,
             surfaces,
             thread_index,
-            collision_params_for_thread,
-            surfaces_in_fall_range_set,
-            surfaces_in_jump_range_set)
+            collision_params_for_thread)
 
 
 func _calculate_inter_surface_edges_for_next_origin(
         origin_index: int,
         surfaces: Array,
         thread_index: int,
-        collision_params: CollisionCalcParams,
-        surfaces_in_fall_range_set: Dictionary,
-        surfaces_in_jump_range_set: Dictionary) -> void:
+        collision_params: CollisionCalcParams) -> void:
     # Divide the origin surfaces across threads.
     if thread_index < 0 or \
             origin_index % Gs.thread_count == thread_index:
@@ -384,33 +377,11 @@ func _calculate_inter_surface_edges_for_next_origin(
         # Array<InterSurfaceEdgesResult>
         var inter_surface_edges_results: Array = \
                 surfaces_to_inter_surface_edges_results[origin_surface]
-        surfaces_in_fall_range_set.clear()
-        surfaces_in_jump_range_set.clear()
-        
-        get_surfaces_in_jump_and_fall_range(
-                collision_params,
-                surfaces_in_fall_range_set,
-                surfaces_in_jump_range_set,
-                origin_surface)
-        
-        for edge_calculator in player_params.edge_calculators:
-            ###################################################################
-            # Allow for debug mode to limit the scope of what's calculated.
-            if debug_params.has("limit_parsing") and \
-                    debug_params.limit_parsing.has("edge_type") and \
-                    edge_calculator.edge_type != \
-                            debug_params.limit_parsing.edge_type:
-                continue
-            ###################################################################
-            
-            if edge_calculator.get_can_traverse_from_surface(origin_surface):
-                # Calculate the inter-surface edges.
-                edge_calculator.get_all_inter_surface_edges_from_surface(
-                        inter_surface_edges_results,
-                        collision_params,
-                        origin_surface,
-                        surfaces_in_fall_range_set,
-                        surfaces_in_jump_range_set)
+        calculate_inter_surface_edges_for_origin(
+                inter_surface_edges_results,
+                origin_surface,
+                surfaces,
+                collision_params)
     
     var was_last_iteration := origin_index == surfaces.size() - 1
     
@@ -426,8 +397,6 @@ func _calculate_inter_surface_edges_for_next_origin(
                         surfaces,
                         thread_index,
                         collision_params,
-                        surfaces_in_fall_range_set,
-                        surfaces_in_jump_range_set,
                     ])
         else:
             _on_inter_surface_edges_calculated()
@@ -437,7 +406,39 @@ func _calculate_inter_surface_edges_for_next_origin(
                     origin_index + 1,
                     surfaces,
                     thread_index,
+                    collision_params)
+
+
+func calculate_inter_surface_edges_for_origin(
+        inter_surface_edges_results: Array,
+        origin_surface: Surface,
+        surfaces: Array,
+        collision_params: CollisionCalcParams) -> void:
+    var surfaces_in_fall_range_set := {}
+    var surfaces_in_jump_range_set := {}
+    
+    get_surfaces_in_jump_and_fall_range(
+            collision_params,
+            surfaces_in_fall_range_set,
+            surfaces_in_jump_range_set,
+            origin_surface)
+    
+    for edge_calculator in player_params.edge_calculators:
+        #######################################################################
+        # Allow for debug mode to limit the scope of what's calculated.
+        if debug_params.has("limit_parsing") and \
+                debug_params.limit_parsing.has("edge_type") and \
+                edge_calculator.edge_type != \
+                        debug_params.limit_parsing.edge_type:
+            continue
+        #######################################################################
+        
+        if edge_calculator.get_can_traverse_from_surface(origin_surface):
+            # Calculate the inter-surface edges.
+            edge_calculator.get_all_inter_surface_edges_from_surface(
+                    inter_surface_edges_results,
                     collision_params,
+                    origin_surface,
                     surfaces_in_fall_range_set,
                     surfaces_in_jump_range_set)
 
