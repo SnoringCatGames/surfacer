@@ -13,6 +13,7 @@ var destination_surfaces_to_edge_types_to_edges_results := {}
 var attempted_destination_surfaces := []
 var valid_edge_count := 0
 var failed_edge_count := 0
+var is_debug_only_state_populated := false
 
 # Array<Vector2>
 var fall_range_polygon_without_jump_distance: Array
@@ -132,9 +133,43 @@ func on_item_expanded() -> void:
 
 
 func _populate_debug_only_state() -> void:
-    # FIXME: ------------------------------------------
-    # - make sure to not repeat effort if the state already exists.
-    pass
+    if is_debug_only_state_populated:
+        return
+    
+    var inter_surface_edges_results := []
+    graph.calculate_inter_surface_edges_for_origin(
+            inter_surface_edges_results,
+            origin_surface,
+            surfaces_in_jump_range,
+            graph.collision_params)
+    
+    for inter_surface_edges_result in inter_surface_edges_results:
+        var destination_surface: Surface = \
+                inter_surface_edges_result.destination_surface
+        var edge_type: int = inter_surface_edges_result.edge_type
+        
+        var edge_types_to_edges_results: Dictionary
+        if !destination_surfaces_to_edge_types_to_edges_results.has(
+                destination_surface):
+            edge_types_to_edges_results = {}
+            destination_surfaces_to_edge_types_to_edges_results \
+                    [destination_surface] = \
+                    edge_types_to_edges_results
+        else:
+            edge_types_to_edges_results = \
+                    destination_surfaces_to_edge_types_to_edges_results \
+                            [destination_surface]
+        
+        var edges_results: Array
+        if !edge_types_to_edges_results.has(edge_type):
+            edges_results = []
+            edge_types_to_edges_results[edge_type] = edges_results
+        else:
+            edges_results = edge_types_to_edges_results[edge_type]
+        
+        edges_results.push_back(inter_surface_edges_result)
+    
+    is_debug_only_state_populated = true
 
 
 func find_and_expand_controller(
