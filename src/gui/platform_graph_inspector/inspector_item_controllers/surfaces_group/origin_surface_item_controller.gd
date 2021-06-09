@@ -121,6 +121,22 @@ func get_has_children() -> bool:
     return destination_surfaces_to_edge_types_to_edges_results.size() > 0
 
 
+func on_item_selected() -> void:
+    _populate_debug_only_state()
+    .on_item_selected()
+
+
+func on_item_expanded() -> void:
+    _populate_debug_only_state()
+    .on_item_expanded()
+
+
+func _populate_debug_only_state() -> void:
+    # FIXME: ------------------------------------------
+    # - make sure to not repeat effort if the state already exists.
+    pass
+
+
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
