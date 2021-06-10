@@ -44,6 +44,9 @@ var counts := {}
 
 var debug_params := {}
 
+# Dictionary<Surface, bool>
+var surface_exclusion_list := {}
+
 
 func calculate(player_name: String) -> void:
     self.player_params = Surfacer.player_params[player_name]
@@ -82,6 +85,11 @@ func find_path(
     if origin_surface == null or \
             destination_surface == null:
         # The graph only handles nodes along surfaces.
+        return null
+    
+    if surface_exclusion_list.has(origin_surface) or \
+            surface_exclusion_list.has(destination_surface):
+        # One of the surfaces is marked as non-navigable.
         return null
     
     if origin_surface == destination_surface:
@@ -171,6 +179,9 @@ func find_path(
         var nodes_to_edges_for_current_node: Dictionary = \
                 nodes_to_nodes_to_edges[current_node]
         for next_node in nodes_to_edges_for_current_node:
+            if surface_exclusion_list.has(next_node.surface):
+                # This surface is marked as non-navigable.
+                continue
             for next_edge in nodes_to_edges_for_current_node[next_node]:
                 var new_actual_weight: float = \
                         current_weight + next_edge.get_weight()
