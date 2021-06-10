@@ -8,6 +8,8 @@
 > _**[Live demo](https://snoringcat.games/play/squirrel-away)**_
 > 
 > _**[Demo source](https://github.com/snoringcatgames/squirrel-away)**_
+> 
+> _**[Godot Asset Library](https://godotengine.org/asset-library/asset/968)**_
 
 _Point-and-click platformers!_
 
@@ -21,7 +23,7 @@ _"Surfacer": Like a platformer, but with walking, climbing, and jumping on all s
 
 --------
 
-> **NOTE:** _Consider this an alpha release. This framework is still in development and still has some rough edges._
+> **NOTE:** _Consider this an alpha release. This framework is still in development and still has many rough edges._
 
 --------
 
