@@ -132,7 +132,8 @@ var nav_selection_slow_mo_tick_tock_tempo_multiplier := 25
 var nav_selection_slow_mo_saturation := 0.2
 var nav_selection_prediction_opacity := 0.5
 var nav_selection_prediction_tween_duration := 0.15
-var new_path_pulse_duration_multiplier := 0.4
+var nav_path_fade_in_duration := 0.2
+var new_path_pulse_duration := 0.7
 var new_path_pulse_time_length := 1.0
 
 var path_drag_update_throttle_interval := 0.2
@@ -339,9 +340,10 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("nav_selection_prediction_opacity"):
         self.nav_selection_prediction_opacity = \
                 manifest.nav_selection_prediction_opacity
-    if manifest.has("new_path_pulse_duration_multiplier"):
-        self.new_path_pulse_duration_multiplier = \
-                manifest.new_path_pulse_duration_multiplier
+    if manifest.has("nav_path_fade_in_duration"):
+        self.nav_path_fade_in_duration = manifest.nav_path_fade_in_duration
+    if manifest.has("new_path_pulse_duration"):
+        self.new_path_pulse_duration = manifest.new_path_pulse_duration
     if manifest.has("new_path_pulse_time_length"):
         self.new_path_pulse_time_length = \
                 manifest.new_path_pulse_time_length
