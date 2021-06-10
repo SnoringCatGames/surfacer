@@ -8,6 +8,7 @@ var is_slow_motion_enabled := false
 var current_path_start_time := -INF
 var current_path_elapsed_time := INF
 var current_path_pulse_duration := 0.0
+var current_path_pulse_delay := 0.0
 var is_enabled := false
 var is_pulse_active := false
 var does_pulse_grow := false
@@ -23,9 +24,11 @@ func _physics_process(_delta: float) -> void:
         if current_path != null:
             current_path_start_time = Gs.time.get_play_time()
             is_pulse_active = true
-            current_path_pulse_duration = \
-                    current_path.duration * \
-                    Surfacer.new_path_pulse_duration_multiplier
+            current_path_pulse_delay = \
+                    Surfacer.nav_path_fade_in_duration * 0.85
+            current_path_pulse_duration = max(
+                    Surfacer.new_path_pulse_duration,
+                    current_path.duration * 0.5)
             does_pulse_grow = \
                     Surfacer.does_human_nav_pulse_grow if \
                     navigator.player.is_human_player else \
@@ -43,7 +46,8 @@ func _physics_process(_delta: float) -> void:
         current_path_elapsed_time = \
                 Gs.time.get_play_time() - current_path_start_time
         is_pulse_active = \
-                current_path_elapsed_time < current_path_pulse_duration
+                current_path_elapsed_time < \
+                current_path_pulse_duration + current_path_pulse_delay
         update()
 
 
@@ -54,7 +58,10 @@ func _draw() -> void:
             Gs.level.get_is_intro_choreography_running():
         return
     
-    var progress := current_path_elapsed_time / current_path_pulse_duration
+    var progress := max(
+            (current_path_elapsed_time - current_path_pulse_delay) / \
+            (current_path_pulse_duration - current_path_pulse_delay),
+            0.0)
     
     var opacity_multiplier := \
             1.0 - Gs.utils.ease_by_name(progress, "ease_in_strong")

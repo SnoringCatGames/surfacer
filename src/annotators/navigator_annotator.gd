@@ -2,8 +2,6 @@ class_name NavigatorAnnotator
 extends Node2D
 
 
-var FADE_IN_DURATION := 0.2
-
 var navigator: Navigator
 var previous_path: PlatformGraphPath
 var current_path: PlatformGraphPath
@@ -278,7 +276,7 @@ func _trigger_fade_in(is_fade_in := true) -> void:
             "fade_progress",
             0.0 if is_fade_in else 1.0,
             1.0 if is_fade_in else 0.0,
-            FADE_IN_DURATION,
+            Surfacer.nav_path_fade_in_duration,
             "ease_out",
             0.0,
             TimeType.PLAY_PHYSICS)
