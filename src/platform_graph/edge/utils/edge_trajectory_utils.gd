@@ -156,3 +156,69 @@ static func sub_trajectory(
             frame_continuous_velocities_from_steps,
             waypoint_positions,
             distance_from_continuous_trajectory)
+
+static func create_trajectory_placeholder_hack(edge: Edge) -> EdgeTrajectory:
+    var position_start := edge.start_position_along_surface.target_point
+    var position_end := edge.end_position_along_surface.target_point
+    var velocity_start := edge.velocity_start
+    var velocity_end := edge.velocity_end
+    var frame_count := \
+            int(ceil(edge.duration / Time.PHYSICS_TIME_STEP))
+    
+    var positions := PoolVector2Array()
+    if edge.movement_params.includes_continuous_trajectory_positions:
+        positions.resize(frame_count)
+        for i in frame_count:
+            positions[i] = position_start
+        positions[frame_count - 1] = position_end
+        if frame_count > 2:
+            positions[frame_count - 2] = position_end
+    
+    var velocities := PoolVector2Array()
+    if edge.movement_params.includes_continuous_trajectory_velocities:
+        velocities.resize(frame_count)
+        for i in frame_count:
+            velocities[i] = velocity_start
+        velocities[frame_count - 1] = velocity_end
+        if frame_count > 2:
+            velocities[frame_count - 2] = velocity_end
+    
+    var waypoint_positions := [position_end]
+    
+    var distance := edge.distance
+    
+    var trajectory := EdgeTrajectory.new(
+            positions,
+            velocities,
+            waypoint_positions,
+            distance)
+    
+    return trajectory
+
+## - This is rendered by the annotator as the _lighter_ path.
+## - This more accurately reflects actual run-time movement.
+#var frame_discrete_positions_from_test: PoolVector2Array
+#
+## The positions of each frame of movement according to the continous per-frame
+## movement calculations of the underlying horizontal step calculations.
+## 
+## - This is rendered by the annotator as the _darker_ path.
+## - This less accurately reflects actual run-time movement.
+#var frame_continuous_positions_from_steps: PoolVector2Array
+#
+## The velocities of each frame of movement according to the continous per-frame
+## movement calculations of the underlying horizontal step calculations.
+#var frame_continuous_velocities_from_steps: PoolVector2Array
+#
+## The end positions of each EdgeStep. These correspond to
+## intermediate-surface waypoints and the destination position. This is used for
+## annotation debugging.
+## Array<Vector2>
+#var waypoint_positions: Array
+#
+## Array<EdgeInstruction>
+#var horizontal_instructions: Array
+#
+#var jump_instruction_end: EdgeInstruction
+#
+#var distance_from_continuous_trajectory: float
