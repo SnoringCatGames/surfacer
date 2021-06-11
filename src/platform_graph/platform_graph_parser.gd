@@ -134,9 +134,9 @@ func _on_graphs_parsed() -> void:
 
 
 func _calculate_next_platform_graph(player_index: int) -> void:
-    var player_names: Array = _get_player_names()
-    var player_name: String = player_names[player_index]
-    var is_last_player := player_index == player_names.size() - 1
+    var platform_graph_player_names: Array = _get_player_names()
+    var player_name: String = platform_graph_player_names[player_index]
+    var is_last_player := player_index == platform_graph_player_names.size() - 1
     
     #######################################################################
     # Allow for debug mode to limit the scope of what's calculated.
@@ -265,7 +265,7 @@ func _validate_players(json_object: Dictionary) -> void:
     for player_name in _get_player_names():
         expected_name_set[player_name] = true
     
-    for name in json_object.player_names:
+    for name in json_object.platform_graph_player_names:
         assert(expected_name_set.has(name))
         expected_name_set.erase(name)
     assert(expected_name_set.empty())
@@ -352,7 +352,7 @@ func to_json_object(includes_debug_only_state: bool) -> Dictionary:
     return {
         level_id = level_id,
         surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
-        player_names = _get_player_names(),
+        platform_graph_player_names = _get_player_names(),
         surface_parser = surface_parser.to_json_object(),
         platform_graphs = _serialize_platform_graphs(includes_debug_only_state),
     }
@@ -367,7 +367,7 @@ func _get_surfaces_tile_map_ids() -> Array:
 
 
 func _get_player_names() -> Array:
-    return Gs.level_config.get_level_config(level_id).player_names
+    return Gs.level_config.get_level_config(level_id).platform_graph_player_names
 
 
 func _serialize_platform_graphs(includes_debug_only_state: bool) -> Array:

@@ -617,10 +617,12 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     
     # Whether we are grabbing a wall.
     surface_state.is_grabbing_wall = \
-            surface_state.is_touching_wall and \
-            (surface_state.is_grabbing_wall or \
-                    surface_state.is_triggering_wall_grab) and \
-            !touching_floor_and_pressing_down
+            movement_params.can_grab_walls and (
+                surface_state.is_touching_wall and \
+                (surface_state.is_grabbing_wall or \
+                        surface_state.is_triggering_wall_grab) and \
+                !touching_floor_and_pressing_down
+            )
     
     # Whether we should fall through fall-through floors.
     if surface_state.is_grabbing_wall:
@@ -633,8 +635,10 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
     
     # Whether we should fall through fall-through floors.
     surface_state.is_grabbing_walk_through_walls = \
-            surface_state.is_grabbing_wall or \
-            actions.pressed_up
+            movement_params.can_grab_walls and (
+                surface_state.is_grabbing_wall or \
+                actions.pressed_up
+            )
     
     surface_state.velocity = velocity
     

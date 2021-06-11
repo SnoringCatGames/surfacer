@@ -13,7 +13,8 @@ func _init(are_levels_scene_based: bool).(are_levels_scene_based) -> void:
 
 func _sanitize_level_config(config: Dictionary) -> void:
     ._sanitize_level_config(config)
-    assert(config.has("player_names") and config.player_names is Array)
+    assert(config.has("platform_graph_player_names") and \
+            config.platform_graph_player_names is Array)
 
 
 func get_intro_choreographer(player: Player) -> Choreographer:
