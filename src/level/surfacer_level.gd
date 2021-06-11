@@ -176,6 +176,16 @@ func add_player(
     return player
 
 
+func remove_player(player: Player) -> void:
+    var group: String = \
+            Surfacer.group_name_human_players if \
+            player.is_human_player else \
+            Surfacer.group_name_computer_players
+    player.remove_from_group(group)
+    Surfacer.annotators.destroy_player_annotator(player)
+    player.queue_free()
+
+
 func set_tile_map_visibility(is_visible: bool) -> void:
     # TODO: Also show/hide background. Parallax doesn't extend from CanvasItem
     #       or have the `visible` field though.

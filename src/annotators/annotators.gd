@@ -120,6 +120,10 @@ func destroy_player_annotator(player: Player) -> void:
     player_annotators.erase(player)
 
 
+func get_player_annotator(player: Player) -> PlayerAnnotator:
+    return player_annotators[player]
+
+
 func set_annotator_enabled(
         annotator_type: int,
         is_enabled: bool) -> void:
