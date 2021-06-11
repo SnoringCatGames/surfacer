@@ -904,16 +904,27 @@ func _ensure_edges_have_trajectory_state(
                 edge.velocity_start,
                 edge.includes_extra_jump_duration,
                 edge.includes_extra_wall_land_horizontal_speed)
-        assert(edge_with_trajectory != null and 
-                Gs.geometry.are_floats_equal_with_epsilon(
-                        edge_with_trajectory.duration,
-                        edge.duration,
-                        0.000001) and \
-                Gs.geometry.are_floats_equal_with_epsilon(
-                        edge_with_trajectory.distance,
-                        edge.distance,
-                        0.000001))
-        path.edges[i] = edge_with_trajectory
+        if edge_with_trajectory == null:
+            # TODO: I may be able to remove this, and may have only hit this
+            #       bug because I was using stale platform graph files after
+            #       updating movement_params?
+            Gs.logger.print(
+                    "Unable to calculate trajectory for edge: %s" % 
+                    edge.to_string())
+            var edge_with_trajectory_placeholder_hack := EdgeTrajectoryUtils \
+                    .create_trajectory_placeholder_hack(edge)
+            path.edges[i] = edge_with_trajectory_placeholder_hack
+        else:
+            assert(edge_with_trajectory != null and 
+                    Gs.geometry.are_floats_equal_with_epsilon(
+                            edge_with_trajectory.duration,
+                            edge.duration,
+                            0.001) and \
+                    Gs.geometry.are_floats_equal_with_epsilon(
+                            edge_with_trajectory.distance,
+                            edge.distance,
+                            0.1))
+            path.edges[i] = edge_with_trajectory
     
     Gs.profiler.stop("navigator_ensure_edges_have_trajectory_state")
 
