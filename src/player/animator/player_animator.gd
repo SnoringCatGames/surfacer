@@ -13,9 +13,14 @@ var _animation_type := PlayerAnimationType.UNKNOWN
 var _base_rate := 1.0
 
 
-func set_up(player, is_desaturatable: bool) -> void:
+func set_up(
+        player_on_animator_params,
+        is_desaturatable: bool) -> void:
     self.is_desaturatable = is_desaturatable
-    self.animator_params = player.movement_params.animator_params
+    self.animator_params = \
+            player_on_animator_params if \
+            player_on_animator_params is PlayerAnimatorParams else \
+            player_on_animator_params.movement_params.animator_params
     _initialize()
 
 

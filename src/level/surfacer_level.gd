@@ -147,9 +147,10 @@ func add_player(
     var player: Player = Gs.utils.add_scene(
             self,
             resource_path,
-            true,
+            false,
             true)
     player.set_position(position)
+    add_child(player)
     
     var group: String = \
             Surfacer.group_name_human_players if \
