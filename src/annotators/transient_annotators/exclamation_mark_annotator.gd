@@ -1,4 +1,4 @@
-class_name NewNavExclamationMarkAnnotator
+class_name ExclamationMarkAnnotator
 extends TransientAnnotator
 
 
