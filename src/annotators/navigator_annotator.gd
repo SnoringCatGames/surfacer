@@ -44,7 +44,7 @@ func _process(_delta: float) -> void:
         if current_path != null:
             if _get_is_exclamation_mark_shown():
                 Surfacer.annotators.add_transient(
-                        NewNavExclamationMarkAnnotator.new(
+                        ExclamationMarkAnnotator.new(
                                 navigator.player))
             if is_enabled:
                 _trigger_fade_in(true)

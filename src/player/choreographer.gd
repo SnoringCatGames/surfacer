@@ -43,7 +43,6 @@ signal finished
 #         -   Arguments to pass to level_callback.
 
 const _DEFAULT_EASE_NAME := "ease_in_out"
-const _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER := 10.0
 
 # Array<Dictionary>
 var sequence: Array
@@ -149,7 +148,7 @@ func _execute_next_step() -> void:
             step.has("duration") else \
             0.0
     if !Surfacer.is_intro_choreography_shown:
-        duration /= _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
+        duration /= Surfacer.skip_choreography_framerate_multiplier
     var is_step_immediate := duration == 0.0
     
     var is_tween_registered := false
@@ -187,7 +186,7 @@ func _execute_next_step() -> void:
                         step.time_scale
                 if Surfacer.is_intro_choreography_shown:
                     _current_time_scale *= \
-                            _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
+                            Surfacer.skip_choreography_framerate_multiplier
                 if is_step_immediate:
                     Gs.time.time_scale = \
                             _current_time_scale
@@ -252,7 +251,7 @@ func skip() -> void:
         return
     Gs.logger.print("Skipping choreography")
     _is_skipped = true
-    _current_time_scale *= _SKIP_CHOREOGRAPHY_FRAMERATE_MULTIPLIER
+    _current_time_scale *= Surfacer.skip_choreography_framerate_multiplier
     _tween.stop_all()
     # TODO: Consider tweening these very quickly instead of setting them
     #       immediately.

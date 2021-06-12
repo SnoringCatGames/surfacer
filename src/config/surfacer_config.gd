@@ -147,6 +147,8 @@ var duration_to_max_pan_from_pointer_at_max_control := 0.67
 var duration_to_max_zoom_from_pointer_at_max_control := 3.0
 var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.3
 
+var skip_choreography_framerate_multiplier := 10.0
+
 var debug_params: Dictionary
 
 var group_name_human_players := Player.GROUP_NAME_HUMAN_PLAYERS
@@ -365,6 +367,10 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if manifest.has("is_computer_prediction_shown"):
         self.is_computer_prediction_shown = \
                 manifest.is_computer_prediction_shown
+    
+    if manifest.has("skip_choreography_framerate_multiplier"):
+        self.skip_choreography_framerate_multiplier = \
+                manifest.skip_choreography_framerate_multiplier
 
 
 func initialize() -> void:
