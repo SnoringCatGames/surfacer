@@ -52,6 +52,8 @@ var just_triggered_jump := false
 var is_rising_from_jump := false
 var jump_count := 0
 
+var did_move_last_frame := false
+
 var current_max_horizontal_speed: float
 var _can_dash := true
 var _dash_cooldown_timeout: int
@@ -322,10 +324,10 @@ func _physics_process(delta: float) -> void:
     surface_state.previous_center_position = surface_state.center_position
     surface_state.center_position = self.position
     
-    var moved := \
+    did_move_last_frame = \
             surface_state.previous_center_position != \
             surface_state.center_position
-    if moved:
+    if did_move_last_frame:
         pointer_listener.on_player_moved()
 
 

@@ -19,6 +19,7 @@ var surface_to_air_calculator: JumpFromSurfaceCalculator
 var is_currently_navigating := false
 var has_reached_destination := false
 var just_reached_destination := false
+var just_started_navigating := false
 
 var path: PlatformGraphPath
 var previous_path: PlatformGraphPath
@@ -100,6 +101,7 @@ func navigate_path(
         self.path_beats = Gs.beats.calculate_path_beat_hashes_for_current_mode(
                 path, path_start_time_scaled)
         is_currently_navigating = true
+        just_started_navigating = true
         has_reached_destination = false
         just_reached_destination = false
         current_navigation_attempt_count += 1
@@ -126,6 +128,8 @@ func navigate_path(
         _start_edge(
                 0,
                 is_retry)
+        
+        just_started_navigating = false
         
         emit_signal("navigation_started")
         
@@ -331,6 +335,7 @@ func _reset() -> void:
     edge = null
     edge_index = -1
     is_currently_navigating = false
+    just_started_navigating = false
     has_reached_destination = false
     just_reached_destination = false
     playback = null
@@ -391,6 +396,24 @@ func update(
     
     if !is_currently_navigating:
         return
+    
+    # FIXME: ------ This can result in player's getting stuck in mid-air in a
+    #        continuous, new-nav-every-frame loop.
+#    if !player.did_move_last_frame and \
+#            !just_started_navigating:
+#        # FIXME: ------------
+#        # - This work-around shouldn't be needed. What's the underlying problem?
+#        Gs.logger.print(
+#                "Navigator.is_currently_navigating and " +
+#                "!Player.did_move_last_frame")
+#        var destination := path.destination
+#        var graph_destination_for_in_air_destination := \
+#                path.graph_destination_for_in_air_destination
+#        stop()
+#        navigate_to_position(
+#                destination,
+#                graph_destination_for_in_air_destination)
+#        return
     
     edge.update_navigation_state(
             navigation_state,
