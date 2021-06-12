@@ -379,8 +379,9 @@ func _update_actions(delta_scaled: float) -> void:
                 navigation_state)
     
     actions.start_dash = \
-            _can_dash and \
-            Gs.level_input.is_action_just_pressed("dash")
+            Gs.level_input.is_action_just_pressed("dash") and \
+            movement_params.can_dash and \
+            _can_dash
 
 
 # Updates physics and player states in response to the current actions.
@@ -935,7 +936,8 @@ static func _get_attached_surface_collision(
 
 
 func start_dash(horizontal_acceleration_sign: int) -> void:
-    if !_can_dash:
+    if !_can_dash or \
+            !movement_params.can_dash:
         return
     
     var start_max_speed := \

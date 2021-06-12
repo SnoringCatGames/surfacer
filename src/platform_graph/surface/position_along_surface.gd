@@ -39,6 +39,9 @@ func match_current_grab(
     self.surface = surface
     self.target_point = player_center
     self.target_projection_onto_surface = Vector2.INF
+    if surface != null and \
+            target_point != Vector2.INF:
+        update_target_projection_onto_surface()
 
 
 func match_surface_target_and_collider(
