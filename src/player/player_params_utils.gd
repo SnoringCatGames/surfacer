@@ -156,6 +156,54 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(!movement_params.bypasses_runtime_physics or \
             movement_params.syncs_player_position_to_edge_trajectory)
     
+    assert(movement_params.can_grab_walls or (
+                !movement_params.edge_calculator_names.has(
+                        ClimbOverWallToFloorCalculator.NAME) and \
+                !movement_params.edge_calculator_names.has(
+                        FallFromWallCalculator.NAME) and \
+                !movement_params.edge_calculator_names.has(
+                        ClimbDownWallToFloorCalculator.NAME) and \
+                !movement_params.edge_calculator_names.has(
+                        WalkToAscendWallFromFloorCalculator.NAME) and \
+                
+                !movement_params.action_handler_names.has(
+                        WallClimbAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        WallDashAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        WallDefaultAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        WallFallAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        WallJumpAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        WallWalkAction.NAME)
+            ))
+    
+    assert(movement_params.can_jump or (
+                !movement_params.edge_calculator_names.has(
+                        FallFromFloorCalculator.NAME) and \
+                !movement_params.edge_calculator_names.has(
+                        FallFromWallCalculator.NAME) and \
+                !movement_params.edge_calculator_names.has(
+                        JumpFromSurfaceCalculator.NAME) and \
+                
+                !movement_params.action_handler_names.has(
+                        AirDashAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        AirDefaultAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        AirJumpAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        FloorFallThroughAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        FloorJumpAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        WallFallAction.NAME) and \
+                !movement_params.action_handler_names.has(
+                        WallJumpAction.NAME)
+            ))
+    
     _check_animator_params(movement_params.animator_params)
 
 

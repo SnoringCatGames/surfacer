@@ -16,6 +16,7 @@ var animator_params: PlayerAnimatorParams
 var can_grab_walls: bool
 var can_grab_ceilings: bool
 var can_grab_floors: bool
+var can_jump: bool
 var can_dash: bool
 
 var collider_shape: Shape2D

@@ -915,6 +915,8 @@ func _ensure_edges_have_trajectory_state(
                     .create_trajectory_placeholder_hack(edge)
             path.edges[i] = edge_with_trajectory_placeholder_hack
         else:
+            # **Did you change the tile map or movement params and forget to
+            #   update the platform graph??**
             assert(edge_with_trajectory != null and 
                     Gs.geometry.are_floats_equal_with_epsilon(
                             edge_with_trajectory.duration,
