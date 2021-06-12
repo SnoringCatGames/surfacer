@@ -189,10 +189,6 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
                         JumpFromSurfaceCalculator.NAME) and \
                 
                 !movement_params.action_handler_names.has(
-                        AirDashAction.NAME) and \
-                !movement_params.action_handler_names.has(
-                        AirDefaultAction.NAME) and \
-                !movement_params.action_handler_names.has(
                         AirJumpAction.NAME) and \
                 !movement_params.action_handler_names.has(
                         FloorFallThroughAction.NAME) and \
