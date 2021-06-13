@@ -46,7 +46,6 @@ func _on_activated(previous_screen_name: String) -> void:
 
 
 func _compute() -> void:
-    assert(Gs.debug)
     assert(Gs.utils.get_is_pc_device())
     assert(Surfacer.is_precomputing_platform_graphs)
     assert(!Surfacer.precompute_platform_graph_for_levels.empty())
