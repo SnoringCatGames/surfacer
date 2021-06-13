@@ -12,6 +12,11 @@ func add(annotator: TransientAnnotator) -> void:
             self,
             "remove",
             [annotator])
+    annotator.connect(
+            "stopped",
+            self,
+            "remove",
+            [annotator])
     _annotators[annotator] = true
     add_child(annotator)
 

@@ -3,6 +3,7 @@ extends Node2D
 
 
 signal completed
+signal stopped
 
 var duration: float
 var delay: float
@@ -46,3 +47,7 @@ func _update() -> void:
     
     if updates_every_frame:
         update()
+
+
+func stop() -> void:
+    emit_signal("stopped")

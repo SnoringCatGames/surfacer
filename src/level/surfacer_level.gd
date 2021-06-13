@@ -184,7 +184,7 @@ func remove_player(player: Player) -> void:
             Surfacer.group_name_computer_players
     player.remove_from_group(group)
     Surfacer.annotators.destroy_player_annotator(player)
-    player.queue_free()
+    player._destroy()
 
 
 func set_tile_map_visibility(is_visible: bool) -> void:
