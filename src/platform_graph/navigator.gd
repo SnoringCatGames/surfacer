@@ -948,7 +948,7 @@ func _ensure_edges_have_trajectory_state(
                     Gs.geometry.are_floats_equal_with_epsilon(
                             edge_with_trajectory.distance,
                             edge.distance,
-                            0.1))
+                            1.0))
             path.edges[i] = edge_with_trajectory
     
     Gs.profiler.stop("navigator_ensure_edges_have_trajectory_state")
