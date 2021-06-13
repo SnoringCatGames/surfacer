@@ -11,6 +11,8 @@ var DURATION := 1.0
 var OPACITY_DELAY := 0.3
 
 var player
+var player_half_height: float
+var color: Color
 var width_start: float
 var length_start: float
 var stroke_width_start: float
@@ -23,7 +25,9 @@ var opacity: float
 
 
 func _init(
-        player, 
+        player,
+        player_half_height := INF,
+        color := Color.white,
         width_start := WIDTH_START,
         length_start := LENGTH_START,
         stroke_width_start := STROKE_WIDTH_START,
@@ -32,6 +36,15 @@ func _init(
         vertical_offset := VERTICAL_OFFSET,
         opacity_delay := OPACITY_DELAY).(duration) -> void:
     self.player = player
+    self.player_half_height = player_half_height
+    if player_half_height == INF:
+        player_half_height = \
+                player.movement_params.collider_half_width_height.y
+    self.color = color
+    if color == Color.white:
+        Surfacer.ann_defaults.HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
+        player.is_human_player else \
+        Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
     self.width_start = width_start
     self.length_start = length_start
     self.stroke_width_start = stroke_width_start
@@ -42,6 +55,10 @@ func _init(
 
 
 func _update() -> void:
+    if !is_instance_valid(player):
+        emit_signal("stopped")
+        return
+    
     ._update()
     
     var scale_progress := (current_time - start_time) / duration
@@ -69,20 +86,20 @@ func _update() -> void:
 
 
 func _draw() -> void:
+    if !is_instance_valid(player):
+        return
+    
     var width := width_start * mark_scale
     var length := length_start * mark_scale
     var stroke_width := stroke_width_start * mark_scale
     
     var center: Vector2 = player.position + Vector2(
             0.0,
-            -player.movement_params.collider_half_width_height.y - \
+            -player_half_height - \
             length_start * scale_end / 2.0 + \
             vertical_offset)
     
-    var fill_color: Color = \
-            Surfacer.ann_defaults.HUMAN_NAVIGATOR_CURRENT_PATH_COLOR if \
-            player.is_human_player else \
-            Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
+    var fill_color: Color = color
     fill_color.a = opacity
     
     var stroke_color: Color = Color.white

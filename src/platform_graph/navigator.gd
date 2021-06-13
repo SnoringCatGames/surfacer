@@ -934,9 +934,9 @@ func _ensure_edges_have_trajectory_state(
             Gs.logger.print(
                     "Unable to calculate trajectory for edge: %s" % 
                     edge.to_string())
-            var edge_with_trajectory_placeholder_hack := EdgeTrajectoryUtils \
+            var placeholder_trajectory_hack := EdgeTrajectoryUtils \
                     .create_trajectory_placeholder_hack(edge)
-            path.edges[i] = edge_with_trajectory_placeholder_hack
+            path.edges[i].trajectory = placeholder_trajectory_hack
         else:
             # **Did you change the tile map or movement params and forget to
             #   update the platform graph??**
