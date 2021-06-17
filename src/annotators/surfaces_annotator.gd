@@ -16,8 +16,7 @@ func _init(surface_parser: SurfaceParser) -> void:
 
 func _process(_delta: float) -> void:
     var is_inspector_open: bool = \
-            is_instance_valid(Surfacer.inspector_panel) and \
-            Surfacer.inspector_panel.is_open
+            Gs.hud.inspector_panel.get_is_inspector_panel_open()
     if is_inspector_open != was_inspector_open:
         was_inspector_open = is_inspector_open
         update()

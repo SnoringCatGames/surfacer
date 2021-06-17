@@ -159,7 +159,7 @@ func select_first_item() -> void:
 
 
 func _select_initial_item() -> void:
-    if !Surfacer.get_is_inspector_panel_open():
+    if !Gs.hud.get_is_inspector_panel_open():
         # Don't auto-select anything if the panel isn't open.
         return
     
@@ -322,7 +322,7 @@ func select_edge_or_surface(
         edge_type: int,
         graph: PlatformGraph) -> void:
     # Ensure that the inspector panel is open.
-    Surfacer.inspector_panel.is_open = true
+    Gs.hud.inspector_panel.is_open = true
     
     if start_position.surface == end_position.surface:
         _select_canonical_origin_surface_item_controller(

@@ -2,17 +2,10 @@ class_name SurfacerLevel
 extends ScaffolderLevel
 
 
-const _UTILITY_PANEL_RESOURCE_PATH := \
-        "res://addons/surfacer/src/gui/panels/inspector_panel.tscn"
-const _PAUSE_BUTTON_RESOURCE_PATH := \
-        "res://addons/surfacer/src/gui/pause_button.tscn"
-
 # Array<Player>
 var all_players: Array
 var graph_parser: PlatformGraphParser
 var camera_pan_controller: CameraPanController
-var inspector_panel: InspectorPanel
-var pause_button: PauseButton
 var intro_choreographer: Choreographer
 
 
@@ -24,17 +17,7 @@ func _init() -> void:
 func _load() -> void:
     ._load()
     
-    if Surfacer.is_inspector_enabled:
-        inspector_panel = Gs.utils.add_scene(
-                Gs.canvas_layers.layers.hud,
-                _UTILITY_PANEL_RESOURCE_PATH)
-        Surfacer.inspector_panel = inspector_panel
-    else:
-        pause_button = Gs.utils.add_scene(
-                Gs.canvas_layers.layers.hud,
-                _PAUSE_BUTTON_RESOURCE_PATH)
-    
-    set_hud_visibility(false)
+    Gs.hud.create_inspector()
     
     graph_parser.parse(
             _id,
@@ -54,7 +37,6 @@ func _start() -> void:
             true)
     _execute_intro_choreography()
     
-    set_hud_visibility(true)
     call_deferred("_initialize_annotators")
 
 
@@ -65,10 +47,6 @@ func _destroy() -> void:
         for player in Gs.utils.get_all_nodes_in_group(group):
             player._destroy()
     
-    if is_instance_valid(inspector_panel):
-        inspector_panel.queue_free()
-    if is_instance_valid(pause_button):
-        pause_button.queue_free()
     Surfacer.annotators.on_level_destroyed()
     Surfacer.human_player = null
     
@@ -198,13 +176,6 @@ func set_tile_map_visibility(is_visible: bool) -> void:
             TileMap)
     for node in foregrounds:
         node.visible = is_visible
-
-
-func set_hud_visibility(is_visible: bool) -> void:
-    if is_instance_valid(inspector_panel):
-        inspector_panel.visible = is_visible
-    if is_instance_valid(pause_button):
-        pause_button.visible = is_visible
 
 
 func _get_platform_graph_for_player(player_name: String) -> PlatformGraph:

@@ -96,7 +96,6 @@ var is_inspector_enabled: bool
 var are_loaded_surfaces_deeply_validated: bool
 var is_surfacer_logging: bool
 var is_metronome_enabled: bool
-var inspector_panel_starts_open: bool
 var uses_threads_for_platform_graph_calculation: bool
 var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
@@ -213,7 +212,6 @@ var graph_parser: PlatformGraphParser
 var graph_inspector: PlatformGraphInspector
 var legend: Legend
 var selection_description: SelectionDescription
-var inspector_panel: InspectorPanel
 var annotators: Annotators
 var ann_defaults: AnnotationElementDefaults
 var edge_from_json_factory := EdgeFromJsonFactory.new()
@@ -265,7 +263,6 @@ func register_app_manifest(manifest: Dictionary) -> void:
     self.manifest = manifest
     self.are_loaded_surfaces_deeply_validated = \
             are_loaded_surfaces_deeply_validated
-    self.inspector_panel_starts_open = manifest.inspector_panel_starts_open
     self.uses_threads_for_platform_graph_calculation = \
             manifest.uses_threads_for_platform_graph_calculation
     self.player_action_classes = manifest.player_action_classes
@@ -376,7 +373,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
-            manifest.is_inspector_enabled_default)
+            manifest.hud_manifest.is_inspector_enabled_default)
     self.is_surfacer_logging = Gs.save_state.get_setting(
             IS_SURFACER_LOGGING_SETTINGS_KEY,
             false)
@@ -405,7 +402,3 @@ func initialize() -> void:
     ann_defaults = AnnotationElementDefaults.new()
     annotators = Annotators.new()
     add_child(Surfacer.annotators)
-
-
-func get_is_inspector_panel_open() -> bool:
-    return is_instance_valid(inspector_panel) and inspector_panel.is_open
