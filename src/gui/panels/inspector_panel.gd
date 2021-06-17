@@ -46,8 +46,8 @@ func _ready() -> void:
     Surfacer.selection_description = \
             $PanelContainer/VBoxContainer/Sections/SelectionDescription
     
-    if (Surfacer.inspector_panel_starts_open or \
-                    Surfacer.debug_params.has("limit_parsing")) and \
+    if (Gs.hud_manifest.inspector_panel_starts_open or \
+                Surfacer.debug_params.has("limit_parsing")) and \
             !OS.has_touchscreen_ui_hint():
         _set_is_open(true)
     
