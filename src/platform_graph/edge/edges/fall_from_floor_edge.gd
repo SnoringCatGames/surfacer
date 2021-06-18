@@ -141,7 +141,8 @@ func load_from_json_object(
         context: Dictionary) -> void:
     _load_edge_state_from_json_object(json_object, context)
     falls_on_left_side = json_object.fl
-    fall_off_position = context.id_to_position_along_surface[int(json_object.fp)]
+    fall_off_position = \
+            context.id_to_position_along_surface[int(json_object.fp)]
 
 
 func to_json_object() -> Dictionary:

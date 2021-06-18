@@ -527,4 +527,5 @@ static func calculate_distance_to_stop_from_friction_with_acceleration_to_non_ma
 #                (movement_params.walk_acceleration - friction_deceleration)
 #        return distance_from_end - distance_to_instruction_end
         
-        return movement_params.stopping_distance_on_default_floor_from_max_speed
+        return movement_params \
+                .stopping_distance_on_default_floor_from_max_speed

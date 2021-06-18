@@ -55,7 +55,8 @@ func calculate_edge(
         velocity_start := Vector2.INF,
         needs_extra_jump_duration := false,
         needs_extra_wall_land_horizontal_speed := false) -> Edge:
-    Gs.logger.error("Abstract EdgeCalculator.calculate_edge is not implemented")
+    Gs.logger.error(
+            "Abstract EdgeCalculator.calculate_edge is not implemented")
     return null
 
 
@@ -280,7 +281,8 @@ static func should_skip_edge_calculation(
             # Ignore this if we expect to know the land surface, but don't.
             if land_surface != null:
                 if (debug_destination.has("surface_side") and \
-                        debug_destination.surface_side != land_surface.side) or \
+                        debug_destination.surface_side != \
+                                land_surface.side) or \
                         (debug_destination.has("surface_start_vertex") and \
                                 !Gs.geometry.are_points_equal_with_epsilon(
                                         debug_destination.surface_start_vertex,

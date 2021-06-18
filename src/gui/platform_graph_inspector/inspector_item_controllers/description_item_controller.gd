@@ -74,6 +74,7 @@ func _destroy_children_inner() -> void:
 
 func get_annotation_elements() -> Array:
     if get_annotation_elements_arg != null:
-        return get_annotation_elements_funcref.call_func(get_annotation_elements_arg)
+        return get_annotation_elements_funcref.call_func(
+                get_annotation_elements_arg)
     else:
         return get_annotation_elements_funcref.call_func()

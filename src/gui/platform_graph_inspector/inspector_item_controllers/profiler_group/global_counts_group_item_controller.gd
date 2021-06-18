@@ -77,7 +77,8 @@ func _create_children_inner() -> void:
                 graph,
                 text,
                 text,
-                funcref(self, "_get_annotation_elements_for_edge_type_description_item"),
+                funcref(self, 
+                        "_get_annotation_elements_for_edge_type_description_item"),
                 edge_type)
 
 
@@ -87,7 +88,8 @@ func _destroy_children_inner() -> void:
 
 
 func get_annotation_elements() -> Array:
-    var result := SurfacesGroupItemController.get_annotation_elements_from_graph(graph)
+    var result := SurfacesGroupItemController \
+            .get_annotation_elements_from_graph(graph)
     Gs.utils.concat(
             result,
             EdgesGroupItemController.get_annotation_elements_from_graph(graph))
@@ -95,7 +97,8 @@ func get_annotation_elements() -> Array:
 
 
 func _get_annotation_elements_for_surfaces_description_item() -> Array:
-    return SurfacesGroupItemController.get_annotation_elements_from_graph(graph)
+    return SurfacesGroupItemController \
+            .get_annotation_elements_from_graph(graph)
 
 
 func _get_annotation_elements_for_edges_description_item() -> Array:
@@ -103,6 +106,7 @@ func _get_annotation_elements_for_edges_description_item() -> Array:
 
 
 func _get_annotation_elements_for_edge_type_description_item(edge_type: int) -> Array:
-    return EdgeTypeInEdgesGroupItemController.get_annotation_elements_from_graph_and_type(
-            graph,
-            edge_type)
+    return EdgeTypeInEdgesGroupItemController \
+            .get_annotation_elements_from_graph_and_type(
+                    graph,
+                    edge_type)

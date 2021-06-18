@@ -154,7 +154,8 @@ func _find_and_expand_controller_recursive(
 
 
 func get_text() -> String:
-    Gs.logger.error("Abstract InspectorItemController.get_text is not implemented")
+    Gs.logger.error(
+            "Abstract InspectorItemController.get_text is not implemented")
     return ""
 
 
@@ -217,15 +218,21 @@ func _update_text() -> void:
 
 
 func _create_children_inner() -> void:
-    Gs.logger.error("Abstract InspectorItemController._create_children_inner is not implemented")
+    Gs.logger.error(
+            "Abstract InspectorItemController._create_children_inner is " +
+            "not implemented")
 
 
 func _destroy_children_inner() -> void:
-    Gs.logger.error("Abstract InspectorItemController._destroy_children_inner is not implemented")
+    Gs.logger.error(
+            "Abstract InspectorItemController._destroy_children_inner is " +
+            "not implemented")
 
 
 func get_annotation_elements() -> Array:
-    Gs.logger.error("Abstract InspectorItemController.get_annotation_elements is not implemented")
+    Gs.logger.error(
+            "Abstract InspectorItemController.get_annotation_elements is " +
+            "not implemented")
     return []
 
 

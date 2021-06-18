@@ -172,7 +172,8 @@ func _select_initial_item() -> void:
         
         if limit_parsing.has("edge") and \
                 limit_parsing.edge.has("origin"):
-            var graph: PlatformGraph = graph_item_controllers[player_name].graph
+            var graph: PlatformGraph = \
+                    graph_item_controllers[player_name].graph
             var debug_edge: Dictionary = limit_parsing.edge
             var debug_origin: Dictionary = debug_edge.origin
             

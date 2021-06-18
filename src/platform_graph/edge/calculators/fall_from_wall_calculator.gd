@@ -106,7 +106,8 @@ func optimize_edge_jump_position_for_path(
     
     var is_wall_surface := \
             previous_edge.get_start_surface() != null and \
-            (previous_edge.get_start_surface().side == SurfaceSide.LEFT_WALL or \
+            (previous_edge.get_start_surface().side == \
+                    SurfaceSide.LEFT_WALL or \
             previous_edge.get_start_surface().side == SurfaceSide.RIGHT_WALL)
     assert(is_wall_surface)
     

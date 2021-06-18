@@ -13,7 +13,8 @@ var tile_map: SurfacesTileMap
 var tile_map_indices: Array
 
 var bounding_box: Rect2
-# The combined bounding box for the overall collection of transitively connected surfaces.
+# The combined bounding box for the overall collection of transitively
+# connected surfaces.
 var connected_region_bounding_box := Rect2(Vector2.INF, Vector2.INF)
 
 var normal := Vector2.INF
@@ -64,7 +65,8 @@ func _get_last_point() -> Vector2:
 
 
 func _get_center() -> Vector2:
-    return bounding_box.position + (bounding_box.end - bounding_box.position) / 2.0
+    return bounding_box.position + \
+            (bounding_box.end - bounding_box.position) / 2.0
 
 
 func _get_clockwise_neighbor() -> Surface:
@@ -167,9 +169,11 @@ func to_json_object() -> Dictionary:
         i = tile_map_indices,
         crbb = Gs.json.encode_rect2(connected_region_bounding_box),
         cwv = Gs.utils.get_instance_id_or_not(clockwise_convex_neighbor),
-        ccwv = Gs.utils.get_instance_id_or_not(counter_clockwise_convex_neighbor),
+        ccwv = Gs.utils.get_instance_id_or_not(
+                counter_clockwise_convex_neighbor),
         cwc = Gs.utils.get_instance_id_or_not(clockwise_concave_neighbor),
-        ccwc = Gs.utils.get_instance_id_or_not(counter_clockwise_concave_neighbor),
+        ccwc = Gs.utils.get_instance_id_or_not(
+                counter_clockwise_concave_neighbor),
     }
 
 

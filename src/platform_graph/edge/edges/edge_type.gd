@@ -58,7 +58,8 @@ static func get_description(type: int) -> String:
                     "some other surface.")
         FALL_FROM_WALL_EDGE:
             return ("A FALL_FROM_WALL_EDGE represents movement from " +
-                    "falling off a wall surface to land on some other surface.")
+                    "falling off a wall surface to land on some other " +
+                    "surface.")
         INTRA_SURFACE_EDGE:
             return ("An INTRA_SURFACE_EDGE represents movement between two " +
                     "points along the same surface.")
