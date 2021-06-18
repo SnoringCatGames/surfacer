@@ -329,9 +329,12 @@ func amend_app_manifest(manifest: Dictionary) -> void:
             false)
     
     for inclusion in _screen_path_inclusions:
-        if !manifest.gui_manifest.screen_path_exclusions.has(inclusion) and \
-                !manifest.gui_manifest.screen_path_inclusions.has(inclusion):
-            manifest.gui_manifest.screen_path_inclusions.push_back(inclusion)
+        if !manifest.gui_manifest.screen_manifest.path_exclusions \
+                .has(inclusion) and \
+                !manifest.gui_manifest.screen_manifest.path_inclusions \
+                .has(inclusion):
+            manifest.gui_manifest.screen_manifest.path_inclusions \
+                    .push_back(inclusion)
     
     if !manifest.has("settings_item_manifest"):
         manifest.gui_manifest.settings_item_manifest = \
