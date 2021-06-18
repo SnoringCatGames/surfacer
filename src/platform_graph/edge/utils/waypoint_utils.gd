@@ -687,7 +687,8 @@ static func _update_waypoint_velocity_and_time(
                 return WaypointValidity \
                         .TRYING_TO_PASS_UNDER_WALL_WHILE_ASCENDING
             else:
-                # We should never hit a floor while still holding the jump button.
+                # We should never hit a floor while still holding the jump
+                # button.
                 assert(!(waypoint.side == SurfaceSide.FLOOR and \
                         still_ascending))
             

@@ -2,6 +2,8 @@ class_name SurfacerConfig
 extends Node
 
 
+# --- Constants ---
+
 const WALLS_AND_FLOORS_COLLISION_MASK_BIT := 0
 const FALL_THROUGH_FLOORS_COLLISION_MASK_BIT := 1
 const WALK_THROUGH_WALLS_COLLISION_MASK_BIT := 2
@@ -99,8 +101,6 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
 
 # --- Manifest additions ---
 
-var _must_restart_level_to_change_settings := true
-
 var _screen_path_inclusions := [
     "res://addons/surfacer/src/gui/precompute_platform_graphs_screen.tscn",
 ]
@@ -148,7 +148,7 @@ var _surfacer_sounds := [
     },
 ]
 
-# ---
+# --- Global state ---
 
 var manifest: Dictionary
 var is_inspector_enabled: bool
@@ -311,10 +311,11 @@ var player_param_classes: Array
 # ---
 
 
+func _ready() -> void:
+    Gs.logger.print("SurfacerConfig._ready")
+
+
 func amend_app_manifest(manifest: Dictionary) -> void:
-    manifest.must_restart_level_to_change_settings = \
-            _must_restart_level_to_change_settings
-    
     var is_precomputing_platform_graphs: bool = \
             manifest.has("precompute_platform_graph_for_levels") and \
             !manifest.precompute_platform_graph_for_levels.empty()
@@ -460,6 +461,8 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if surfacer_manifest.has("skip_choreography_framerate_multiplier"):
         self.skip_choreography_framerate_multiplier = \
                 surfacer_manifest.skip_choreography_framerate_multiplier
+    
+    assert(Gs.manifest.app_metadata.must_restart_level_to_change_settings)
 
 
 func initialize() -> void:

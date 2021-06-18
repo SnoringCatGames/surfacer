@@ -234,7 +234,9 @@ static func _calculate_acceleration_start_and_end_time(
     var time_acceleration_end := \
             time_acceleration_start + duration_during_acceleration
     
-    if Gs.geometry.are_floats_equal_with_epsilon(time_acceleration_end, duration):
+    if Gs.geometry.are_floats_equal_with_epsilon(
+            time_acceleration_end,
+            duration):
         time_acceleration_end = duration
     
     if duration_during_acceleration < 0 or \

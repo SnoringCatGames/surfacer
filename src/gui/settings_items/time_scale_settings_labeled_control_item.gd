@@ -32,7 +32,7 @@ func on_value_changed(control_value: float) -> void:
     var scale_value := _control_value_to_scale_value(control_value)
     Gs.time.additional_debug_time_scale = scale_value
     Gs.save_state.set_setting(
-            Gs.ADDITIONAL_DEBUG_TIME_SCALE_SETTINGS_KEY,
+            SaveState.ADDITIONAL_DEBUG_TIME_SCALE_SETTINGS_KEY,
             scale_value)
 
 

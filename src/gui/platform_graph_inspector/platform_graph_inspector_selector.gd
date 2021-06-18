@@ -87,7 +87,8 @@ func _draw() -> void:
     current_annotation_elements.clear()
     
     if first_target != null:
-        # So far, the user has only selected the first surface in the edge pair.
+        # So far, the user has only selected the first surface in the edge
+        # pair.
         _draw_selected_origin()
     else:
         _draw_possible_jump_land_positions()

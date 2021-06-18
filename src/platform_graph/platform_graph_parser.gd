@@ -58,7 +58,7 @@ func _record_tile_maps() -> void:
             Gs.utils.get_all_nodes_in_group(Surfacer.group_name_surfaces)
     
     # Validate the TileMaps.
-    if Gs.debug or Gs.playtest:
+    if Gs.app_metadata.debug or Gs.app_metadata.playtest:
         assert(surface_tile_maps.size() > 0)
         var tile_map_ids := {}
         for tile_map in surface_tile_maps:
@@ -140,7 +140,8 @@ func _on_graphs_parsed() -> void:
 func _calculate_next_platform_graph(player_index: int) -> void:
     var platform_graph_player_names: Array = _get_player_names()
     var player_name: String = platform_graph_player_names[player_index]
-    var is_last_player := player_index == platform_graph_player_names.size() - 1
+    var is_last_player := \
+            player_index == platform_graph_player_names.size() - 1
     
     #######################################################################
     # Allow for debug mode to limit the scope of what's calculated.
@@ -237,7 +238,7 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
             json_object.surface_parser,
             context)
     
-    if Gs.debug or Gs.playtest:
+    if Gs.app_metadata.debug or Gs.app_metadata.playtest:
         _validate_tile_maps(json_object)
         _validate_players(json_object)
         _validate_surfaces(surface_parser)
@@ -358,7 +359,8 @@ func to_json_object(includes_debug_only_state: bool) -> Dictionary:
         surfaces_tile_map_ids = _get_surfaces_tile_map_ids(),
         platform_graph_player_names = _get_player_names(),
         surface_parser = surface_parser.to_json_object(),
-        platform_graphs = _serialize_platform_graphs(includes_debug_only_state),
+        platform_graphs = \
+                _serialize_platform_graphs(includes_debug_only_state),
     }
 
 
@@ -371,7 +373,8 @@ func _get_surfaces_tile_map_ids() -> Array:
 
 
 func _get_player_names() -> Array:
-    return Gs.level_config.get_level_config(level_id).platform_graph_player_names
+    return Gs.level_config.get_level_config(level_id) \
+            .platform_graph_player_names
 
 
 func _serialize_platform_graphs(includes_debug_only_state: bool) -> Array:

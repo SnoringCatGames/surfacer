@@ -131,8 +131,8 @@ func update_navigation_state(
         playback,
         just_started_new_edge: bool,
         is_starting_navigation_retry: bool) -> void:
-    # When retrying navigation, we need to ignore whatever surface state in the 
-    # current frame led to the previous navigation being interrupted.
+    # When retrying navigation, we need to ignore whatever surface state in
+    # the current frame led to the previous navigation being interrupted.
     if is_starting_navigation_retry:
         navigation_state.just_left_air_unexpectedly = false
         navigation_state.just_entered_air_unexpectedly = false

@@ -44,7 +44,8 @@ func _init(frame_continuous_positions_from_steps := PoolVector2Array(),
     self.frame_continuous_velocities_from_steps = \
             frame_continuous_velocities_from_steps
     self.waypoint_positions = waypoint_positions
-    self.distance_from_continuous_trajectory = distance_from_continuous_trajectory
+    self.distance_from_continuous_trajectory = \
+            distance_from_continuous_trajectory
 
 
 func load_from_json_object(

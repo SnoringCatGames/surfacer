@@ -36,7 +36,8 @@ func _init(
 
 func get_color() -> Color:
     var hue := randf() * (hue_max - hue_min) + hue_min
-    var saturation := randf() * (saturation_max - saturation_min) + saturation_min
+    var saturation := \
+            randf() * (saturation_max - saturation_min) + saturation_min
     var value := randf() * (value_max - value_min) + value_min
     var alpha := randf() * (alpha_max - alpha_min) + alpha_min
     return Color.from_hsv(

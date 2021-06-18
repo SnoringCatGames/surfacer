@@ -383,7 +383,8 @@ static func _calculate_stopping_distance(
                         REACHED_DESTINATION_DISTANCE_THRESHOLD - 2.0, 0.0)
         
     else:
-        # TODO: Add support for acceleration and friction alongs walls and ceilings.
+        # TODO: Add support for acceleration and friction alongs walls and
+        #       ceilings.
         
         if edge.get_end_surface().side == SurfaceSide.LEFT_WALL or \
                 edge.get_end_surface().side == SurfaceSide.RIGHT_WALL:
