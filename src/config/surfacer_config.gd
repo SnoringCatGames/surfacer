@@ -17,33 +17,61 @@ const PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY := \
 const NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
         "is_navigation_destination_shown"
 
+var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
+    groups = {
+        main = {
+            label = "",
+            is_collapsible = false,
+            item_classes = [
+                MusicSettingsLabeledControlItem,
+                SoundEffectsSettingsLabeledControlItem,
+                HapticFeedbackSettingsLabeledControlItem,
+            ],
+        },
+        annotations = {
+            label = "Rendering",
+            is_collapsible = true,
+            item_classes = [
+                RulerAnnotatorSettingsLabeledControlItem,
+                PreselectionTrajectoryAnnotatorSettingsLabeledControlItem,
+                ActiveTrajectoryAnnotatorSettingsLabeledControlItem,
+                PreviousTrajectoryAnnotatorSettingsLabeledControlItem,
+                NavigationDestinationAnnotatorSettingsLabeledControlItem,
+                RecentMovementAnnotatorSettingsLabeledControlItem,
+                SurfacesAnnotatorSettingsLabeledControlItem,
+                PlayerPositionAnnotatorSettingsLabeledControlItem,
+                PlayerAnnotatorSettingsLabeledControlItem,
+                LevelAnnotatorSettingsLabeledControlItem,
+            ],
+        },
+        hud = {
+            label = "HUD",
+            is_collapsible = true,
+            item_classes = [
+                DebugPanelSettingsLabeledControlItem,
+            ],
+        },
+        miscellaneous = {
+            label = "Miscellaneous",
+            is_collapsible = true,
+            item_classes = [
+                WelcomePanelSettingsLabeledControlItem,
+                IntroChoreographySettingsLabeledControlItem,
+                InspectorEnabledSettingsLabeledControlItem,
+                TimeScaleSettingsLabeledControlItem,
+                MetronomeSettingsLabeledControlItem,
+                LogSurfacerEventsSettingsLabeledControlItem,
+            ],
+        },
+    },
+}
+
 # --- Manifest additions ---
 
 var _must_restart_level_to_change_settings := true
 
 var _screen_path_inclusions := [
     "res://addons/surfacer/src/gui/precompute_platform_graphs_screen.tscn",
-]
-
-var _settings_main_item_class_exclusions := []
-var _settings_main_item_class_inclusions := []
-var _settings_details_item_class_exclusions := []
-var _settings_details_item_class_inclusions := [
-    TimeScaleSettingsLabeledControlItem,
-    IntroChoreographySettingsLabeledControlItem,
-    InspectorEnabledSettingsLabeledControlItem,
-    PreselectionTrajectoryAnnotatorSettingsLabeledControlItem,
-    ActiveTrajectoryAnnotatorSettingsLabeledControlItem,
-    PreviousTrajectoryAnnotatorSettingsLabeledControlItem,
-    NavigationDestinationAnnotatorSettingsLabeledControlItem,
-    PlayerPositionAnnotatorSettingsLabeledControlItem,
-    RecentMovementAnnotatorSettingsLabeledControlItem,
-    PlayerAnnotatorSettingsLabeledControlItem,
-    LevelAnnotatorSettingsLabeledControlItem,
-    SurfacesAnnotatorSettingsLabeledControlItem,
-    RulerAnnotatorSettingsLabeledControlItem,
-    LogSurfacerEventsSettingsLabeledControlItem,
-    MetronomeSettingsLabeledControlItem,
 ]
 
 var _sounds_manifest := [
@@ -241,22 +269,9 @@ func amend_app_manifest(manifest: Dictionary) -> void:
                 !manifest.screen_path_inclusions.has(inclusion):
             manifest.screen_path_inclusions.push_back(inclusion)
     
-    for exclusion in _settings_main_item_class_exclusions:
-        if !manifest.settings_main_item_class_exclusions.has(exclusion) and \
-                !manifest.settings_main_item_class_inclusions.has(exclusion):
-            manifest.settings_main_item_class_exclusions.push_back(exclusion)
-    for inclusion in _settings_main_item_class_inclusions:
-        if !manifest.settings_main_item_class_inclusions.has(inclusion) and \
-                !manifest.settings_main_item_class_exclusions.has(inclusion):
-            manifest.settings_main_item_class_inclusions.push_back(inclusion)
-    for exclusion in _settings_details_item_class_exclusions:
-        if !manifest.settings_details_item_class_exclusions.has(exclusion) and \
-                !manifest.settings_details_item_class_inclusions.has(exclusion):
-            manifest.settings_details_item_class_exclusions.push_back(exclusion)
-    for inclusion in _settings_details_item_class_inclusions:
-        if !manifest.settings_details_item_class_inclusions.has(inclusion) and \
-                !manifest.settings_details_item_class_exclusions.has(inclusion):
-            manifest.settings_details_item_class_inclusions.push_back(inclusion)
+    if !manifest.has("settings_item_manifest"):
+        manifest.settings_item_manifest = \
+                DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
 func register_app_manifest(manifest: Dictionary) -> void:

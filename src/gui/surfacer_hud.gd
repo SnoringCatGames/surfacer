@@ -14,12 +14,12 @@ var pause_button: PauseButton
 func create_inspector() -> void:
     if Surfacer.is_inspector_enabled:
         inspector_panel = Gs.utils.add_scene(
-                Gs.canvas_layers.layers.hud,
+                self,
                 _INSPECTOR_PANEL_RESOURCE_PATH)
         Gs.hud.inspector_panel = inspector_panel
     else:
         pause_button = Gs.utils.add_scene(
-                Gs.canvas_layers.layers.hud,
+                self,
                 _PAUSE_BUTTON_RESOURCE_PATH)
 
 
