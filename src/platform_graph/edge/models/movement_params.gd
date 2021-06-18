@@ -4,7 +4,7 @@ extends Reference
 
 var name: String
 
-var player_resource_path: String
+var player_path: String
 
 # Array<String>
 var edge_calculator_names: Array

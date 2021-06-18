@@ -32,9 +32,9 @@ var _annotator_control_item_classes := [
 func _ready() -> void:
     assert(Surfacer.is_inspector_enabled)
     
-    theme = Gs.theme
+    theme = Gs.gui.theme
     
-    Gs.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
+    Gs.gui.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
     
     _set_footer_visibility(!is_open)
     
@@ -46,7 +46,7 @@ func _ready() -> void:
     Surfacer.selection_description = \
             $PanelContainer/VBoxContainer/Sections/SelectionDescription
     
-    if (Gs.hud_manifest.inspector_panel_starts_open or \
+    if (Gs.gui.hud_manifest.inspector_panel_starts_open or \
                 Surfacer.debug_params.has("limit_parsing")) and \
             !OS.has_touchscreen_ui_hint():
         _set_is_open(true)
@@ -59,8 +59,8 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-    Gs.remove_gui_to_scale(self)
-    Gs.active_overlays.erase(self)
+    Gs.gui.remove_gui_to_scale(self)
+    Gs.gui.active_overlays.erase(self)
     Surfacer.graph_inspector = null
     Surfacer.legend = null
     Surfacer.selection_description = null
@@ -83,7 +83,7 @@ func update_gui_scale_helper(gui_scale: float) -> void:
     rect_position.x = \
             get_viewport().size.x - \
             rect_size.x - \
-            PANEL_MARGIN_RIGHT * Gs.gui_scale
+            PANEL_MARGIN_RIGHT * Gs.gui.scale
     rect_position.y = \
             0.0 if \
             is_open else \
@@ -116,7 +116,7 @@ func _initialize_annotator_checkboxes() -> void:
         row.rect_min_size.x = item_width
         
         for label in Gs.utils.get_children_by_type(row, Label, true):
-            label.add_font_override("font", Gs.fonts.main_xs)
+            label.add_font_override("font", Gs.gui.fonts.main_xs)
         
         if item.type == LabeledControlItem.CHECKBOX:
             # TODO: These values are a hacky fix.
@@ -175,9 +175,9 @@ func _toggle_open() -> void:
     else:
         Surfacer.graph_inspector.collapse()
     
-    Gs.active_overlays.erase(self)
+    Gs.gui.active_overlays.erase(self)
     if is_open:
-        Gs.active_overlays.push_back(self)
+        Gs.gui.active_overlays.push_back(self)
     
     Gs.utils.release_focus()
 

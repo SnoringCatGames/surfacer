@@ -42,7 +42,7 @@ func _process(_delta: float) -> void:
 
 
 func _draw() -> void:
-    var grid_spacing: Vector2 = Gs.cell_size / previous_camera_zoom
+    var grid_spacing: Vector2 = Gs.gui.cell_size / previous_camera_zoom
     var screen_start_position: Vector2 = \
             previous_camera_position / previous_camera_zoom - \
             viewport_size / 2.0
@@ -78,7 +78,7 @@ func _draw() -> void:
                 previous_camera_zoom))
         text = "0" if text == "-0" else text
         draw_string(
-                Gs.fonts.main_xs,
+                Gs.gui.fonts.main_xs,
                 Vector2(start_position.x + 2, 14),
                 text,
                 TEXT_COLOR)
@@ -99,7 +99,7 @@ func _draw() -> void:
                 previous_camera_zoom))
         text = "0" if text == "-0" else text
         draw_string(
-                Gs.fonts.main_xs,
+                Gs.gui.fonts.main_xs,
                 Vector2(2, start_position.y + 14),
                 text,
                 TEXT_COLOR)

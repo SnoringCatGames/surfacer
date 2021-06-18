@@ -30,7 +30,7 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if !Gs.is_user_interaction_enabled or \
+    if !Gs.gui.is_user_interaction_enabled or \
             Surfacer.human_player != _player:
         return
     

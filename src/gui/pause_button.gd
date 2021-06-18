@@ -3,7 +3,7 @@ extends Node2D
 
 
 func _ready() -> void:
-    update_gui_scale(Gs.gui_scale)
+    update_gui_scale(Gs.gui.scale)
 
 
 func update_gui_scale(gui_scale: float) -> bool:
@@ -11,8 +11,8 @@ func update_gui_scale(gui_scale: float) -> bool:
     position.x = \
             get_viewport().size.x - \
             $ScaffolderTextureButton.rect_size.x - \
-            InspectorPanel.PANEL_MARGIN_RIGHT * Gs.gui_scale
-    position.y = InspectorPanel.PANEL_MARGIN_RIGHT * Gs.gui_scale
+            InspectorPanel.PANEL_MARGIN_RIGHT * Gs.gui.scale
+    position.y = InspectorPanel.PANEL_MARGIN_RIGHT * Gs.gui.scale
     return true
 
 

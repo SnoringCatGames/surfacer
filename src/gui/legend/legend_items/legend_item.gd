@@ -32,7 +32,7 @@ func _enter_tree() -> void:
     label = Label.new()
     label.valign = Label.VALIGN_CENTER
     label.max_lines_visible = 2
-    label.add_font_override("font", Gs.fonts.main_xs)
+    label.add_font_override("font", Gs.gui.fonts.main_xs)
     label.add_constant_override("line_spacing", LINE_SPACING)
     label.text = text
     add_child(label)
@@ -41,18 +41,18 @@ func _enter_tree() -> void:
 
 
 func update() -> void:
-    rect_min_size.y = HEIGHT * Gs.gui_scale
+    rect_min_size.y = HEIGHT * Gs.gui.scale
     
     label.margin_left = \
-            (SHAPE_REGION_WIDTH + MARGIN_HORIZONTAL * 2.0) * Gs.gui_scale
-    label.margin_top = MARGIN_VERTICAL * Gs.gui_scale
-    label.rect_size.y = SHAPE_REGION_HEIGHT * Gs.gui_scale
+            (SHAPE_REGION_WIDTH + MARGIN_HORIZONTAL * 2.0) * Gs.gui.scale
+    label.margin_top = MARGIN_VERTICAL * Gs.gui.scale
+    label.rect_size.y = SHAPE_REGION_HEIGHT * Gs.gui.scale
 
 
 func _draw() -> void:
     _draw_shape(
-            SHAPE_REGION_CENTER * Gs.gui_scale,
-            Vector2(SHAPE_REGION_WIDTH, SHAPE_REGION_HEIGHT) * Gs.gui_scale)
+            SHAPE_REGION_CENTER * Gs.gui.scale,
+            Vector2(SHAPE_REGION_WIDTH, SHAPE_REGION_HEIGHT) * Gs.gui.scale)
 
 
 func _draw_shape(

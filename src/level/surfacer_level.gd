@@ -17,7 +17,7 @@ func _init() -> void:
 func _load() -> void:
     ._load()
     
-    Gs.hud.create_inspector()
+    Gs.gui.hud.create_inspector()
     
     graph_parser.parse(
             _id,
@@ -32,7 +32,7 @@ func _start() -> void:
     
     add_player(
             Surfacer.player_params[Surfacer.default_player_name] \
-                    .movement_params.player_resource_path,
+                    .movement_params.player_path,
             get_player_start_position(),
             true)
     _execute_intro_choreography()
@@ -119,12 +119,12 @@ func _initialize_annotators() -> void:
 
 
 func add_player(
-        resource_path: String,
+        path: String,
         position: Vector2,
         is_human_player: bool) -> Player:
     var player: Player = Gs.utils.add_scene(
             self,
-            resource_path,
+            path,
             false,
             true)
     player.set_position(position)

@@ -37,7 +37,7 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if Gs.is_user_interaction_enabled and \
+    if Gs.gui.is_user_interaction_enabled and \
             event is InputEventMouseButton and \
             event.button_index == BUTTON_LEFT and \
             !event.pressed and event.control:

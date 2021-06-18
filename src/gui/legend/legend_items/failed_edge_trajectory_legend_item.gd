@@ -21,7 +21,7 @@ func _init().(
 func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
-    var offset_from_center := size * 0.35 - Vector2(0.0, 6.0) * Gs.gui_scale
+    var offset_from_center := size * 0.35 - Vector2(0.0, 6.0) * Gs.gui.scale
     var start := center - offset_from_center
     var end := center + offset_from_center
     var color: Color = Surfacer.ann_defaults \

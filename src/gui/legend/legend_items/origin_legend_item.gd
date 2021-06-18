@@ -21,7 +21,7 @@ func _draw_shape(
     var color: Color = \
             Surfacer.ann_defaults.DEFAULT_WAYPOINT_COLOR_PARAMS.get_color()
     var radius: float = \
-            SurfacerDrawUtils.EDGE_START_RADIUS * SCALE * Gs.gui_scale
+            SurfacerDrawUtils.EDGE_START_RADIUS * SCALE * Gs.gui.scale
     Gs.draw_utils.draw_origin_marker(
             self,
             center,

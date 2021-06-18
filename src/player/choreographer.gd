@@ -200,7 +200,7 @@ func _execute_next_step() -> void:
                             ease_name)
                     is_tween_registered = true
             "is_user_interaction_enabled":
-                Gs.is_user_interaction_enabled = \
+                Gs.gui.is_user_interaction_enabled = \
                         step.is_user_interaction_enabled
             "sound":
                 Gs.audio.play_sound(step.sound)
