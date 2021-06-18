@@ -139,7 +139,7 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.dash_vertical_boost <= 0)
     # If we're tracking beats, then we need the preselection trajectories to
     # match the resulting navigation trajectories.
-    assert(!Gs.are_beats_tracked_by_default or \
+    assert(!Gs.audio_manifest.are_beats_tracked_by_default or \
             movement_params.also_optimizes_preselection_path or \
             !movement_params.optimizes_edge_jump_positions_at_run_time and \
             !movement_params.optimizes_edge_land_positions_at_run_time)

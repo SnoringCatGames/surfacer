@@ -74,7 +74,7 @@ var _screen_path_inclusions := [
     "res://addons/surfacer/src/gui/precompute_platform_graphs_screen.tscn",
 ]
 
-var _sounds_manifest := [
+var _surfacer_sounds := [
     {
         name = "nav_select_fail",
         volume_db = 0.0,
@@ -262,7 +262,10 @@ func amend_app_manifest(manifest: Dictionary) -> void:
         manifest.is_splash_skipped = true
     
     # Add Surfacer sounds to the front, so they can be overridden by the app.
-    Gs.utils.concat(manifest.sounds_manifest, _sounds_manifest, false)
+    Gs.utils.concat(
+            manifest.audio_manifest.sounds_manifest,
+            _surfacer_sounds,
+            false)
     
     for inclusion in _screen_path_inclusions:
         if !manifest.screen_path_exclusions.has(inclusion) and \
