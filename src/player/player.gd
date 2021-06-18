@@ -182,7 +182,7 @@ func _destroy() -> void:
 func _unhandled_input(event: InputEvent) -> void:
     if _is_initialized and \
             !_is_destroyed and \
-            Gs.is_user_interaction_enabled and \
+            Gs.gui.is_user_interaction_enabled and \
             navigator.is_currently_navigating and \
             event is InputEventKey:
         navigator.stop()
@@ -226,7 +226,7 @@ func _check_for_initialization_complete() -> void:
 func _set_camera() -> void:
     var camera := Camera2D.new()
     camera.smoothing_enabled = true
-    camera.smoothing_speed = Gs.camera_smoothing_speed
+    camera.smoothing_speed = Gs.gui.camera_smoothing_speed
     add_child(camera)
     # Register the current camera, so it's globally accessible.
     Gs.camera_controller.set_current_camera(camera, self)

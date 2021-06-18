@@ -25,7 +25,7 @@ func _init() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if !Gs.is_user_interaction_enabled:
+    if !Gs.gui.is_user_interaction_enabled:
         return
     
     var is_control_pressed := \

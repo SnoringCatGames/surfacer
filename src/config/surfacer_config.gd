@@ -268,130 +268,144 @@ func amend_app_manifest(manifest: Dictionary) -> void:
             false)
     
     for inclusion in _screen_path_inclusions:
-        if !manifest.screen_path_exclusions.has(inclusion) and \
-                !manifest.screen_path_inclusions.has(inclusion):
-            manifest.screen_path_inclusions.push_back(inclusion)
+        if !manifest.gui_manifest.screen_path_exclusions.has(inclusion) and \
+                !manifest.gui_manifest.screen_path_inclusions.has(inclusion):
+            manifest.gui_manifest.screen_path_inclusions.push_back(inclusion)
     
     if !manifest.has("settings_item_manifest"):
-        manifest.settings_item_manifest = \
+        manifest.gui_manifest.settings_item_manifest = \
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
 
 func register_app_manifest(manifest: Dictionary) -> void:
     self.manifest = manifest
+    var surfacer_manifest: Dictionary = manifest.surfacer_manifest
+    
     self.are_loaded_surfaces_deeply_validated = \
-            are_loaded_surfaces_deeply_validated
+            surfacer_manifest.are_loaded_surfaces_deeply_validated
     self.uses_threads_for_platform_graph_calculation = \
-            manifest.uses_threads_for_platform_graph_calculation
-    self.player_action_classes = manifest.player_action_classes
-    self.edge_movement_classes = manifest.edge_movement_classes
-    self.player_param_classes = manifest.player_param_classes
-    self.debug_params = manifest.debug_params
-    self.default_player_name = manifest.default_player_name
+            surfacer_manifest.uses_threads_for_platform_graph_calculation
+    self.player_action_classes = surfacer_manifest.player_action_classes
+    self.edge_movement_classes = surfacer_manifest.edge_movement_classes
+    self.player_param_classes = surfacer_manifest.player_param_classes
+    self.debug_params = surfacer_manifest.debug_params
+    self.default_player_name = surfacer_manifest.default_player_name
     
     self.is_precomputing_platform_graphs = \
-            manifest.has("precompute_platform_graph_for_levels") and \
-            !manifest.precompute_platform_graph_for_levels.empty()
+            surfacer_manifest.has("precompute_platform_graph_for_levels") and \
+            !surfacer_manifest.precompute_platform_graph_for_levels.empty()
     if self.is_precomputing_platform_graphs:
         self.precompute_platform_graph_for_levels = \
-                manifest.precompute_platform_graph_for_levels
+                surfacer_manifest.precompute_platform_graph_for_levels
     
-    if manifest.has("ignores_platform_graph_save_files"):
+    if surfacer_manifest.has("ignores_platform_graph_save_files"):
         self.ignores_platform_graph_save_files = \
-                manifest.ignores_platform_graph_save_files
-    if manifest.has("ignores_platform_graph_save_file_trajectory_state"):
+                surfacer_manifest.ignores_platform_graph_save_files
+    if surfacer_manifest.has(
+            "ignores_platform_graph_save_file_trajectory_state"):
         self.ignores_platform_graph_save_file_trajectory_state = \
-                manifest.ignores_platform_graph_save_file_trajectory_state
-    if manifest.has("is_debug_only_platform_graph_state_included"):
+                surfacer_manifest \
+                        .ignores_platform_graph_save_file_trajectory_state
+    if surfacer_manifest.has("is_debug_only_platform_graph_state_included"):
         self.is_debug_only_platform_graph_state_included = \
-                manifest.is_debug_only_platform_graph_state_included
+                surfacer_manifest.is_debug_only_platform_graph_state_included
     
-    if manifest.has("nav_selection_slow_mo_time_scale"):
+    if surfacer_manifest.has("nav_selection_slow_mo_time_scale"):
         self.nav_selection_slow_mo_time_scale = \
-                manifest.nav_selection_slow_mo_time_scale
-    if manifest.has("nav_selection_slow_mo_tick_tock_tempo_multiplier"):
+                surfacer_manifest.nav_selection_slow_mo_time_scale
+    if surfacer_manifest.has(
+            "nav_selection_slow_mo_tick_tock_tempo_multiplier"):
         self.nav_selection_slow_mo_tick_tock_tempo_multiplier = \
-                manifest.nav_selection_slow_mo_tick_tock_tempo_multiplier
+                surfacer_manifest \
+                        .nav_selection_slow_mo_tick_tock_tempo_multiplier
     
-    if manifest.has("is_human_current_nav_trajectory_shown_with_slow_mo"):
+    if surfacer_manifest.has(
+            "is_human_current_nav_trajectory_shown_with_slow_mo"):
         self.is_human_current_nav_trajectory_shown_with_slow_mo = \
-                manifest.is_human_current_nav_trajectory_shown_with_slow_mo
-    if manifest.has("is_computer_current_nav_trajectory_shown_with_slow_mo"):
+                surfacer_manifest \
+                        .is_human_current_nav_trajectory_shown_with_slow_mo
+    if surfacer_manifest.has(
+            "is_computer_current_nav_trajectory_shown_with_slow_mo"):
         self.is_computer_current_nav_trajectory_shown_with_slow_mo = \
-                manifest.is_computer_current_nav_trajectory_shown_with_slow_mo
-    if manifest.has("is_human_current_nav_trajectory_shown_without_slow_mo"):
+                surfacer_manifest \
+                        .is_computer_current_nav_trajectory_shown_with_slow_mo
+    if surfacer_manifest.has(
+            "is_human_current_nav_trajectory_shown_without_slow_mo"):
         self.is_human_current_nav_trajectory_shown_without_slow_mo = \
-                manifest.is_human_current_nav_trajectory_shown_without_slow_mo
-    if manifest.has(
+                surfacer_manifest \
+                        .is_human_current_nav_trajectory_shown_without_slow_mo
+    if surfacer_manifest.has(
             "is_computer_current_nav_trajectory_shown_without_slow_mo"):
         self.is_computer_current_nav_trajectory_shown_without_slow_mo = \
-                manifest \
+                surfacer_manifest \
                     .is_computer_current_nav_trajectory_shown_without_slow_mo
-    if manifest.has("is_human_nav_pulse_shown_with_slow_mo"):
+    if surfacer_manifest.has("is_human_nav_pulse_shown_with_slow_mo"):
         self.is_human_nav_pulse_shown_with_slow_mo = \
-                manifest.is_human_nav_pulse_shown_with_slow_mo
-    if manifest.has("is_computer_nav_pulse_shown_with_slow_mo"):
+                surfacer_manifest.is_human_nav_pulse_shown_with_slow_mo
+    if surfacer_manifest.has("is_computer_nav_pulse_shown_with_slow_mo"):
         self.is_computer_nav_pulse_shown_with_slow_mo = \
-                manifest.is_computer_nav_pulse_shown_with_slow_mo
-    if manifest.has("is_human_nav_pulse_shown_without_slow_mo"):
+                surfacer_manifest.is_computer_nav_pulse_shown_with_slow_mo
+    if surfacer_manifest.has("is_human_nav_pulse_shown_without_slow_mo"):
         self.is_human_nav_pulse_shown_without_slow_mo = \
-                manifest.is_human_nav_pulse_shown_without_slow_mo
-    if manifest.has("is_computer_nav_pulse_shown_without_slow_mo"):
+                surfacer_manifest.is_human_nav_pulse_shown_without_slow_mo
+    if surfacer_manifest.has("is_computer_nav_pulse_shown_without_slow_mo"):
         self.is_computer_nav_pulse_shown_without_slow_mo = \
-                manifest.is_computer_nav_pulse_shown_without_slow_mo
-    if manifest.has("is_human_new_nav_exclamation_mark_shown"):
+                surfacer_manifest.is_computer_nav_pulse_shown_without_slow_mo
+    if surfacer_manifest.has("is_human_new_nav_exclamation_mark_shown"):
         self.is_human_new_nav_exclamation_mark_shown = \
-                manifest.is_human_new_nav_exclamation_mark_shown
-    if manifest.has("is_computer_new_nav_exclamation_mark_shown"):
+                surfacer_manifest.is_human_new_nav_exclamation_mark_shown
+    if surfacer_manifest.has("is_computer_new_nav_exclamation_mark_shown"):
         self.is_computer_new_nav_exclamation_mark_shown = \
-                manifest.is_computer_new_nav_exclamation_mark_shown
-    if manifest.has("does_human_nav_pulse_grow"):
+                surfacer_manifest.is_computer_new_nav_exclamation_mark_shown
+    if surfacer_manifest.has("does_human_nav_pulse_grow"):
         self.does_human_nav_pulse_grow = \
-                manifest.does_human_nav_pulse_grow
-    if manifest.has("does_computer_nav_pulse_grow"):
+                surfacer_manifest.does_human_nav_pulse_grow
+    if surfacer_manifest.has("does_computer_nav_pulse_grow"):
         self.does_computer_nav_pulse_grow = \
-                manifest.does_computer_nav_pulse_grow
-    if manifest.has("nav_selection_slow_mo_saturation"):
+                surfacer_manifest.does_computer_nav_pulse_grow
+    if surfacer_manifest.has("nav_selection_slow_mo_saturation"):
         self.nav_selection_slow_mo_saturation = \
-                manifest.nav_selection_slow_mo_saturation
-    if manifest.has("nav_selection_prediction_opacity"):
+                surfacer_manifest.nav_selection_slow_mo_saturation
+    if surfacer_manifest.has("nav_selection_prediction_opacity"):
         self.nav_selection_prediction_opacity = \
-                manifest.nav_selection_prediction_opacity
-    if manifest.has("nav_path_fade_in_duration"):
-        self.nav_path_fade_in_duration = manifest.nav_path_fade_in_duration
-    if manifest.has("new_path_pulse_duration"):
-        self.new_path_pulse_duration = manifest.new_path_pulse_duration
-    if manifest.has("new_path_pulse_time_length"):
+                surfacer_manifest.nav_selection_prediction_opacity
+    if surfacer_manifest.has("nav_path_fade_in_duration"):
+        self.nav_path_fade_in_duration = \
+                surfacer_manifest.nav_path_fade_in_duration
+    if surfacer_manifest.has("new_path_pulse_duration"):
+        self.new_path_pulse_duration = \
+                surfacer_manifest.new_path_pulse_duration
+    if surfacer_manifest.has("new_path_pulse_time_length"):
         self.new_path_pulse_time_length = \
-                manifest.new_path_pulse_time_length
+                surfacer_manifest.new_path_pulse_time_length
     
-    if manifest.has("path_drag_update_throttle_interval"):
+    if surfacer_manifest.has("path_drag_update_throttle_interval"):
         self.path_drag_update_throttle_interval = \
-                manifest.path_drag_update_throttle_interval
-    if manifest.has("path_beat_update_throttle_interval"):
+                surfacer_manifest.path_drag_update_throttle_interval
+    if surfacer_manifest.has("path_beat_update_throttle_interval"):
         self.path_beat_update_throttle_interval = \
-                manifest.path_beat_update_throttle_interval
+                surfacer_manifest.path_beat_update_throttle_interval
     
-    if manifest.has("nav_selection_prediction_tween_duration"):
+    if surfacer_manifest.has("nav_selection_prediction_tween_duration"):
         self.nav_selection_prediction_tween_duration = \
-                manifest.nav_selection_prediction_tween_duration
+                surfacer_manifest.nav_selection_prediction_tween_duration
     
-    if manifest.has("is_human_prediction_shown"):
+    if surfacer_manifest.has("is_human_prediction_shown"):
         self.is_human_prediction_shown = \
-                manifest.is_human_prediction_shown
-    if manifest.has("is_computer_prediction_shown"):
+                surfacer_manifest.is_human_prediction_shown
+    if surfacer_manifest.has("is_computer_prediction_shown"):
         self.is_computer_prediction_shown = \
-                manifest.is_computer_prediction_shown
+                surfacer_manifest.is_computer_prediction_shown
     
-    if manifest.has("skip_choreography_framerate_multiplier"):
+    if surfacer_manifest.has("skip_choreography_framerate_multiplier"):
         self.skip_choreography_framerate_multiplier = \
-                manifest.skip_choreography_framerate_multiplier
+                surfacer_manifest.skip_choreography_framerate_multiplier
 
 
 func initialize() -> void:
     self.is_inspector_enabled = Gs.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
-            manifest.hud_manifest.is_inspector_enabled_default)
+            Gs.gui.hud_manifest.is_inspector_enabled_default)
     self.is_surfacer_logging = Gs.save_state.get_setting(
             IS_SURFACER_LOGGING_SETTINGS_KEY,
             false)

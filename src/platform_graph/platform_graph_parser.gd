@@ -74,7 +74,7 @@ func _create_fake_players_for_collision_calculations() -> void:
                 Surfacer.player_params[player_name].movement_params
         var fake_player: Player = Gs.utils.add_scene(
                 self,
-                movement_params.player_resource_path,
+                movement_params.player_path,
                 false,
                 false)
         fake_player.is_fake = true
@@ -93,7 +93,7 @@ func _instantiate_platform_graphs(
     is_loaded_from_file = \
             !force_calculation_from_tile_maps and \
             File.new().file_exists(
-                    _get_resource_path(includes_debug_only_state))
+                    _get_path(includes_debug_only_state))
     if is_loaded_from_file:
         emit_signal("load_started")
         Gs.time.set_timeout(
@@ -202,7 +202,7 @@ func _defer_calculate_next_platform_graph(last_player_index: int) -> void:
 
 
 func _load_platform_graphs(includes_debug_only_state: bool) -> void:
-    var platform_graphs_path := _get_resource_path(includes_debug_only_state)
+    var platform_graphs_path := _get_path(includes_debug_only_state)
     
     var file := File.new()
     var status := file.open(platform_graphs_path, File.READ)
@@ -382,7 +382,7 @@ func _serialize_platform_graphs(includes_debug_only_state: bool) -> Array:
     return result
 
 
-func _get_resource_path(includes_debug_only_state: bool) -> String:
+func _get_path(includes_debug_only_state: bool) -> String:
     var file_name: String = "level_%s%s.json" % [
         level_id,
         ".debug" if includes_debug_only_state else "",

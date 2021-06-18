@@ -12,7 +12,7 @@ func _start() -> void:
     # will track the player, which makes the loading screen look offset.
     add_player(
             Surfacer.player_params[Surfacer.default_player_name] \
-                    .movement_params.player_resource_path,
+                    .movement_params.player_path,
             Vector2.ZERO,
             true)
 

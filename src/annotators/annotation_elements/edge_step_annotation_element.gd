@@ -83,12 +83,12 @@ func _calculate_color(renders_faintly: bool) -> Color:
 
 func _create_labels() -> void:
     step_label = Label.new()
-    step_label.add_font_override("font", Gs.fonts.main_xs)
+    step_label.add_font_override("font", Gs.gui.fonts.main_xs)
     step_label.rect_scale = Vector2(LABEL_SCALE, LABEL_SCALE)
     
     previous_out_of_reach_waypoint_label = Label.new()
     previous_out_of_reach_waypoint_label \
-            .add_font_override("font", Gs.fonts.main_xs)
+            .add_font_override("font", Gs.gui.fonts.main_xs)
     previous_out_of_reach_waypoint_label.rect_scale = \
             Vector2(LABEL_SCALE, LABEL_SCALE)
 
