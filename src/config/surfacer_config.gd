@@ -17,6 +17,37 @@ const PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY := \
 const NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY := \
         "is_navigation_destination_shown"
 
+const DEFAULT_PLAYER_ACTION_CLASSES := [
+    preload("res://addons/surfacer/src/player/action/action_handlers/air_dash_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/air_default_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/air_jump_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/all_default_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/cap_velocity_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/floor_dash_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/floor_default_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/fall_through_floor_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/floor_friction_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/floor_jump_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/floor_walk_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/match_expected_edge_trajectory_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/wall_climb_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/wall_dash_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/wall_default_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/wall_fall_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/wall_jump_action.gd"),
+    preload("res://addons/surfacer/src/player/action/action_handlers/wall_walk_action.gd"),
+]
+
+const DEFAULT_EDGE_MOVEMENT_CLASSES := [
+    preload("res://addons/surfacer/src/platform_graph/edge/calculators/from_air_calculator.gd"),
+    preload("res://addons/surfacer/src/platform_graph/edge/calculators/climb_down_wall_to_floor_calculator.gd"),
+    preload("res://addons/surfacer/src/platform_graph/edge/calculators/climb_over_wall_to_floor_calculator.gd"),
+    preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_floor_calculator.gd"),
+    preload("res://addons/surfacer/src/platform_graph/edge/calculators/fall_from_wall_calculator.gd"),
+    preload("res://addons/surfacer/src/platform_graph/edge/calculators/jump_from_surface_calculator.gd"),
+    preload("res://addons/surfacer/src/platform_graph/edge/calculators/walk_to_ascend_wall_from_floor_calculator.gd"),
+]
+
 var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
     groups = {
         main = {
@@ -176,6 +207,35 @@ var screen_size_ratio_distance_from_edge_to_start_pan_from_pointer := 0.3
 
 var skip_choreography_framerate_multiplier := 10.0
 
+# Here are some example fields for these debug params:
+#{
+#    limit_parsing = {
+#        player_name = "momma",
+#
+#        edge_type = EdgeType.JUMP_INTER_SURFACE_EDGE,
+##        edge_type = EdgeType.CLIMB_OVER_WALL_TO_FLOOR_EDGE,
+##        edge_type = EdgeType.FALL_FROM_WALL_EDGE,
+##        edge_type = EdgeType.FALL_FROM_FLOOR_EDGE,
+##        edge_type = EdgeType.CLIMB_DOWN_WALL_TO_FLOOR_EDGE,
+##        edge_type = EdgeType.WALK_TO_ASCEND_WALL_FROM_FLOOR_EDGE,
+#
+#        edge = {
+#            origin = {
+#                surface_side = SurfaceSide.FLOOR,
+#                surface_start_vertex = Vector2(-64, 64),
+#                position = Vector2(64, 64),
+#                epsilon = 10,
+#            },
+#            destination = {
+#                surface_side = SurfaceSide.FLOOR,
+#                surface_start_vertex = Vector2(128, -128),
+#                position = Vector2(128, -128),
+#                epsilon = 10,
+#            },
+#            #velocity_start = Vector2(0, -1000),
+#        },
+#    },
+#}
 var debug_params: Dictionary
 
 var group_name_human_players := Player.GROUP_NAME_HUMAN_PLAYERS
