@@ -53,8 +53,10 @@ func _destroy() -> void:
     ._destroy()
 
 
-func quit(immediately := true) -> void:
-    .quit(immediately)
+func quit(
+        has_finished: bool,
+        immediately: bool) -> void:
+    .quit(has_finished, immediately)
 
 
 func _input(event: InputEvent) -> void:
