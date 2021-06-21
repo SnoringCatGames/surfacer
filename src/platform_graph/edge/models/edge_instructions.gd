@@ -166,7 +166,7 @@ func _load_instructions_json_array(
 func to_json_object() -> Dictionary:
     return {
         i = _get_instructions_json_array(),
-        d = duration if duration != INF else -1,
+        d = duration if !is_inf(duration) else -1,
     }
 
 

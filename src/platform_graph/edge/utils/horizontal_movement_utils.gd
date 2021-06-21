@@ -354,7 +354,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
             velocity_start,
             should_accelerate_at_start_for_min,
             true)
-    if min_velocity_end == INF:
+    if is_inf(min_velocity_end):
         min_velocity_end = WaypointUtils._solve_for_end_velocity(
                 displacement,
                 duration,
@@ -367,7 +367,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     if min_velocity_end < max_velocity_end_for_valid_next_step + 0.0001:
         min_velocity_end = \
                 min(min_velocity_end, max_velocity_end_for_valid_next_step)
-    if min_velocity_end == INF or \
+    if is_inf(min_velocity_end) or \
             min_velocity_end > max_velocity_end_for_valid_next_step:
         # Movement cannot reach across this interval.
         return []
@@ -391,7 +391,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
             velocity_start,
             should_accelerate_at_start_for_max,
             false)
-    if max_velocity_end == INF:
+    if is_inf(max_velocity_end):
         max_velocity_end = WaypointUtils._solve_for_end_velocity(
                 displacement,
                 duration,
@@ -404,7 +404,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     if max_velocity_end > min_velocity_end_for_valid_next_step - 0.0001:
         max_velocity_end = \
                 max(max_velocity_end, min_velocity_end_for_valid_next_step)
-    if max_velocity_end == INF:
+    if is_inf(max_velocity_end):
         # It can rarely happen that our logic thinks a min_velocity_end result
         # is just barely valid, while a max_velocity_end result is just barely
         # invalid.

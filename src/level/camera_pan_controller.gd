@@ -174,7 +174,7 @@ func _update_pan_and_zoom_delta_from_pointer(
 
 func _update_camera_from_deltas() -> void:
     assert(_delta_offset != Vector2.INF)
-    assert(_delta_zoom_multiplier != INF)
+    assert(!is_inf(_delta_zoom_multiplier))
     
     # Calculate the next values.
     var next_offset: Vector2

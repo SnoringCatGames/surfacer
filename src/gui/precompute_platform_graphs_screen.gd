@@ -89,7 +89,7 @@ func _initialize_next() -> void:
             Gs.level_config.get_level_config(level_id).scene_path,
             false,
             true)
-    level.id = level_id
+    Gs.level_session.reset(level_id)
     $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/LevelWrapper/Viewport \
             .add_child(level)
