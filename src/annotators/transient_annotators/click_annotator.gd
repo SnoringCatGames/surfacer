@@ -8,7 +8,7 @@ const CLICK_OUTER_END_RADIUS := 100.0
 var CLICK_INNER_COLOR: Color = Gs.colors.click
 var CLICK_OUTER_COLOR: Color = Gs.colors.click
 var VALID_SURFACE_COLOR: Color = Gs.colors.surface_click_selection
-var INVALID_SURFACE_COLOR := Gs.colors.opacify(
+var INVALID_SURFACE_COLOR: Color = Gs.colors.opacify(
         Gs.colors.invalid, ScaffolderColors.ALPHA_SOLID)
 
 const CLICK_INNER_DURATION := 0.27

@@ -16,7 +16,7 @@ func _init().(
     pass
 
 
-func process(player: Player) -> bool:
+func process(player) -> bool:
     # If the player falls off a wall or ledge, then that's considered the first
     # jump.
     player.jump_count = max(player.jump_count, 1)

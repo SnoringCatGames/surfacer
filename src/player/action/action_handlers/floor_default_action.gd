@@ -16,7 +16,7 @@ func _init().(
     pass
 
 
-func process(player: Player) -> bool:
+func process(player) -> bool:
     player.jump_count = 0
     player.is_rising_from_jump = false
 

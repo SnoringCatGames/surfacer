@@ -16,7 +16,7 @@ func _init().(
     pass
 
 
-func process(player: Player) -> bool:
+func process(player) -> bool:
     if !player.processed_action(WallJumpAction.NAME) and \
             player.surface_state.is_pressing_away_from_wall:
         player.release_wall()

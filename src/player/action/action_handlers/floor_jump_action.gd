@@ -16,7 +16,7 @@ func _init().(
     pass
 
 
-func process(player: Player) -> bool:
+func process(player) -> bool:
     if !player.processed_action(FloorFallThroughAction.NAME) and \
             player.actions.just_pressed_jump:
         player.jump_count = 1

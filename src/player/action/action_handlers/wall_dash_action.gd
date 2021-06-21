@@ -16,7 +16,7 @@ func _init().(
     pass
 
 
-func process(player: Player) -> bool:
+func process(player) -> bool:
     if player.actions.start_dash:
         player.start_dash(-player.surface_state.toward_wall_sign)
         return true

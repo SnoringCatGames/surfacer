@@ -65,7 +65,7 @@ func _unhandled_input(event: InputEvent) -> void:
 #        pointer_drag_position = \
 #                Gs.utils.get_level_touch_position(event)
     
-    var is_control_pressed := \
+    var is_control_pressed: bool = \
             Gs.level_input.is_key_pressed(KEY_CONTROL) or \
             Gs.level_input.is_key_pressed(KEY_META)
     

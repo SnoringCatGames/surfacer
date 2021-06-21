@@ -16,7 +16,7 @@ func _init().(
     pass
 
 
-func process(player: Player) -> bool:
+func process(player) -> bool:
     if !player.processed_action(FloorJumpAction.NAME):
         # Horizontal movement.
         player.velocity.x += \
