@@ -37,7 +37,7 @@ func _init(
         opacity_delay := OPACITY_DELAY).(duration) -> void:
     self.player = player
     self.player_half_height = player_half_height
-    if player_half_height == INF:
+    if is_inf(player_half_height):
         player_half_height = \
                 player.movement_params.collider_half_width_height.y
     self.color = color

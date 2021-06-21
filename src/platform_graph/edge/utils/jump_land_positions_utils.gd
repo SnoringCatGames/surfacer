@@ -2008,7 +2008,7 @@ static func calculate_jump_land_positions_for_surface_pair(
                                                 velocity_start.x,
                                                 acceleration_x,
                                                 movement_params.max_horizontal_speed_default)
-                                assert(duration != INF)
+                                assert(!is_inf(duration))
                                 if duration < movement_params.time_to_max_upward_jump_distance:
                                     # We can reach the land position on the rise of the jump.
                                     vertical_movement_displacement = VerticalMovementUtils \
@@ -2742,7 +2742,7 @@ static func _calculate_horizontal_movement_distance(
                     velocity_start,
                     is_a_jump_calculator,
                     must_reach_destination_on_fall)
-    if duration == INF:
+    if is_inf(duration):
         # We cannot reach the land position from the start position.
         return INF
     
@@ -2804,7 +2804,7 @@ static func _calculate_vertical_movement_displacement(
             velocity_start.x,
             acceleration_x,
             movement_params.max_horizontal_speed_default)
-    assert(duration != INF)
+    assert(!is_inf(duration))
     
     var vertical_displacement_with_fast_fall_gravity: float = \
             MovementUtils.calculate_displacement_for_duration(

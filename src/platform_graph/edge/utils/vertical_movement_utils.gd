@@ -38,7 +38,7 @@ static func calculate_vertical_step(
                 time_step_end,
                 displacement.y,
                 velocity_start.y)
-        if time_instruction_end == INF:
+        if is_inf(time_instruction_end):
             # We can't reach the given displacement with the given duration.
             edge_result_metadata.edge_calc_result_type = EdgeCalcResultType \
                     .OUT_OF_REACH_WHEN_CALCULATING_VERTICAL_STEP
@@ -194,7 +194,7 @@ static func calculate_time_to_jump_to_waypoint(
                                 true,
                                 0.0,
                                 false)
-                assert(time_to_release_jump_button != INF)
+                assert(!is_inf(time_to_release_jump_button))
             
                 # From a basic equation of motion:
                 #     v = v_0 + a*t
@@ -244,7 +244,7 @@ static func calculate_time_to_jump_to_waypoint(
                             false,
                             0.0,
                             true)
-            assert(duration_to_reach_downward_displacement != INF)
+            assert(!is_inf(duration_to_reach_downward_displacement))
         else:
             duration_to_reach_downward_displacement = 0.0
         
@@ -265,7 +265,7 @@ static func calculate_time_to_jump_to_waypoint(
                         movement_params.in_air_horizontal_acceleration * \
                         horizontal_acceleration_sign,
                         movement_params.max_horizontal_speed_default)
-        if duration_to_reach_horizontal_displacement == INF:
+        if is_inf(duration_to_reach_horizontal_displacement):
             # If we can't reach the destination with that acceleration
             # direction, try the other direction.
             horizontal_acceleration_sign = -horizontal_acceleration_sign
@@ -276,7 +276,7 @@ static func calculate_time_to_jump_to_waypoint(
                             movement_params.in_air_horizontal_acceleration * \
                             horizontal_acceleration_sign,
                             movement_params.max_horizontal_speed_default)
-        assert(duration_to_reach_horizontal_displacement != INF)
+        assert(!is_inf(duration_to_reach_horizontal_displacement))
         
         # From a basic equation of motion:
         #   v = v_0 + a*t
@@ -334,7 +334,7 @@ static func calculate_time_to_jump_to_waypoint(
                                 false,
                                 0.0,
                                 false)
-                assert(duration_to_reach_upward_displacement_on_fall != INF)
+                assert(!is_inf(duration_to_reach_upward_displacement_on_fall))
         
         ### Use the max of each aspect of jump movement.
         
@@ -513,7 +513,7 @@ static func calculate_time_for_passing_through_waypoint(
                 min_end_time,
                 false,
                 true)
-        if duration_of_slow_rise == INF:
+        if is_inf(duration_of_slow_rise):
             return INF
         duration_of_fast_fall = 0.0
     else:
@@ -529,7 +529,7 @@ static func calculate_time_for_passing_through_waypoint(
                 min_end_time,
                 false,
                 true)
-        if duration_of_fast_fall == INF:
+        if is_inf(duration_of_fast_fall):
             return INF
     
     return duration_of_fast_fall + duration_of_slow_rise

@@ -316,6 +316,11 @@ func _ready() -> void:
 
 
 func amend_app_manifest(manifest: Dictionary) -> void:
+    if !manifest.has("colors_class"):
+            manifest.colors_class = SurfacerColors
+    if !manifest.has("draw_utils_class"):
+            manifest.draw_utils_class = SurfacerDrawUtils
+    
     var is_precomputing_platform_graphs: bool = \
             manifest.has("precompute_platform_graph_for_levels") and \
             !manifest.precompute_platform_graph_for_levels.empty()
@@ -469,6 +474,11 @@ func register_app_manifest(manifest: Dictionary) -> void:
 
 
 func initialize() -> void:
+    assert(Gs.colors is SurfacerColors)
+    assert(Gs.draw_utils is SurfacerDrawUtils)
+    assert(Gs.level_config is MommaDuckLevelConfig)
+    assert(Gs.level_session is MommaDuckLevelSession)
+    
     self.is_inspector_enabled = Gs.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
             Gs.gui.hud_manifest.is_inspector_enabled_default)

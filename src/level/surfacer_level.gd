@@ -20,7 +20,7 @@ func _load() -> void:
     Gs.gui.hud.create_inspector()
     
     graph_parser.parse(
-            _id,
+            Gs.level_session.id,
             Surfacer.is_debug_only_platform_graph_state_included)
 
 
@@ -53,20 +53,10 @@ func _destroy() -> void:
     ._destroy()
 
 
-func quit(
-        has_finished: bool,
-        immediately: bool) -> void:
-    .quit(has_finished, immediately)
-
-
-func _input(event: InputEvent) -> void:
-    if _get_level_play_time_unscaled() > min_controls_display_time and \
-            (event is InputEventMouseButton or \
-                    event is InputEventScreenTouch or \
-                    event is InputEventKey) and \
-            _get_is_started():
-        if intro_choreographer != null:
-            intro_choreographer.on_interaction()
+#func quit(
+#        has_finished: bool,
+#        immediately: bool) -> void:
+#    .quit(has_finished, immediately)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -77,8 +67,11 @@ func _unhandled_input(event: InputEvent) -> void:
         Gs.utils.release_focus()
 
 
-#func _on_initial_input() -> void:
-#    ._on_initial_input()
+func _on_initial_input() -> void:
+    ._on_initial_input()
+
+    if is_instance_valid(intro_choreographer):
+        intro_choreographer.on_interaction()
 
 
 #func pause() -> void:

@@ -54,7 +54,7 @@ static func create_terminal_waypoints(
     destination.previous_waypoint = origin
     destination.needs_extra_jump_duration = needs_extra_jump_duration
     
-    if velocity_end_min_x != INF or velocity_end_max_x != INF:
+    if !is_inf(velocity_end_min_x) or !is_inf(velocity_end_max_x):
         destination.min_velocity_x = velocity_end_min_x
         destination.max_velocity_x = velocity_end_max_x
     
@@ -503,7 +503,7 @@ static func _update_waypoint_velocity_and_time(
                                         can_hold_jump_button_at_origin,
                                         additional_high_waypoint_position != \
                                                 Vector2.INF)
-                if time_to_pass_through_waypoint_ignoring_others == INF:
+                if is_inf(time_to_pass_through_waypoint_ignoring_others):
                     # We can't reach this waypoint.
                     return WaypointValidity.OUT_OF_REACH_FROM_ORIGIN
                 
@@ -538,7 +538,7 @@ static func _update_waypoint_velocity_and_time(
                                 movement_params,
                                 additional_high_waypoint_position,
                                 waypoint)
-                if time_to_get_to_destination_from_waypoint == INF:
+                if is_inf(time_to_get_to_destination_from_waypoint):
                     # We can't reach the destination from this waypoint.
                     return WaypointValidity \
                             .OUT_OF_REACH_FROM_ADDITIONAL_HIGH_WAYPOINT
@@ -642,11 +642,11 @@ static func _update_waypoint_velocity_and_time(
             # otherwise, use max possible speed values.
             min_velocity_x = \
                     waypoint.min_velocity_x if \
-                    waypoint.min_velocity_x != INF else \
+                    !is_inf(waypoint.min_velocity_x) else \
                     -movement_params.max_horizontal_speed_default
             max_velocity_x = \
                     waypoint.max_velocity_x if \
-                    waypoint.max_velocity_x != INF else \
+                    !is_inf(waypoint.max_velocity_x) else \
                     movement_params.max_horizontal_speed_default
             
         else:
@@ -663,7 +663,7 @@ static func _update_waypoint_velocity_and_time(
                             vertical_step.time_instruction_end,
                             vertical_step.position_instruction_end.y,
                             vertical_step.velocity_instruction_end.y)
-            if time_passing_through == INF:
+            if is_inf(time_passing_through):
                 # We can't reach this waypoint from the previous waypoint.
                 return WaypointValidity \
                         .THIS_WAYPOINT_OUT_OF_REACH_FROM_PREVIOUS_WAYPOINT
@@ -880,7 +880,7 @@ static func _assign_horizontal_movement_sign(
             # through the previous, then we're going to need to backtrack in
             # the opposition direction to reach the destination.
             (-neighbor_horizontal_movement_sign if \
-            neighbor_horizontal_movement_sign != INF else \
+            !is_inf(neighbor_horizontal_movement_sign) else \
             # For straight vertical steps from the origin, we don't have much
             # to go off of for picking the horizontal movement direction, so
             # just default to rightward for now.
@@ -1003,7 +1003,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(
                         v_0,
                         acceleration,
                         true)
-        if min_v_1_from_partial_acc_and_no_max_speed_at_v_1 == INF:
+        if is_inf(min_v_1_from_partial_acc_and_no_max_speed_at_v_1):
             # We cannot reach this waypoint from the previous waypoint.
             return []
     else:
@@ -1027,7 +1027,7 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(
                         v_0,
                         acceleration,
                         false)
-        if max_v_1_from_partial_acc_and_no_max_speed_at_v_1 == INF:
+        if is_inf(max_v_1_from_partial_acc_and_no_max_speed_at_v_1):
             # We cannot reach this waypoint from the previous waypoint.
             return []
     else:
@@ -1128,10 +1128,10 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(
         # positive/negative acceleration at the start/end.
         v_0_max = \
                 max(v_0_max_neg_acc_at_start, v_0_max_pos_acc_at_end) if \
-                        v_0_max_neg_acc_at_start != INF and \
-                        v_0_max_pos_acc_at_end != INF else \
+                        !is_inf(v_0_max_neg_acc_at_start) and \
+                        !is_inf(v_0_max_pos_acc_at_end) else \
                 (v_0_max_neg_acc_at_start if \
-                v_0_max_neg_acc_at_start != INF else \
+                !is_inf(v_0_max_neg_acc_at_start) else \
                 v_0_max_pos_acc_at_end)
     else:
         # FIXME: LEFT OFF HERE: Does this need to account for accurate
@@ -1171,10 +1171,10 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(
         # positive/negative acceleration at the start/end.
         v_0_min = \
                 min(v_0_min_pos_acc_at_start, v_0_min_neg_acc_at_end) if \
-                        v_0_min_pos_acc_at_start != INF and \
-                        v_0_min_neg_acc_at_end != INF else \
+                        !is_inf(v_0_min_pos_acc_at_start) and \
+                        !is_inf(v_0_min_neg_acc_at_end) else \
                 (v_0_min_pos_acc_at_start if \
-                v_0_min_pos_acc_at_start != INF else \
+                !is_inf(v_0_min_pos_acc_at_start) else \
                 v_0_min_neg_acc_at_end)
     else:
         # FIXME: LEFT OFF HERE: Does this need to account for accurate
@@ -1190,8 +1190,8 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(
     
     # If we found valid v_1_min/v_1_max values, then there must be valid
     # corresponding v_0_min/v_0_max values.
-    assert(v_0_max != INF)
-    assert(v_0_min != INF)
+    assert(!is_inf(v_0_max))
+    assert(!is_inf(v_0_min))
     assert(v_0_max >= v_0_min)
     
     # Add a small offset to the min and max to help with round-off errors.
@@ -1481,7 +1481,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
                         v_1,
                         acceleration,
                         true)
-        if min_v_0_from_partial_acc_and_no_max_speed_at_v_0 == INF:
+        if is_inf(min_v_0_from_partial_acc_and_no_max_speed_at_v_0):
             # We cannot reach this waypoint from the previous waypoint.
             return []
     else:
@@ -1505,7 +1505,7 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
                         v_1,
                         acceleration,
                         false)
-        if max_v_0_from_partial_acc_and_no_max_speed_at_v_0 == INF:
+        if is_inf(max_v_0_from_partial_acc_and_no_max_speed_at_v_0):
             # We cannot reach this waypoint from the previous waypoint.
             return []
     else:
@@ -1606,10 +1606,10 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
         # positive/negative acceleration at the start/end.
         v_1_max = \
                 max(v_1_max_neg_acc_at_start, v_1_max_pos_acc_at_end) if \
-                        v_1_max_neg_acc_at_start != INF and \
-                        v_1_max_pos_acc_at_end != INF else \
+                        !is_inf(v_1_max_neg_acc_at_start) and \
+                        !is_inf(v_1_max_pos_acc_at_end) else \
                 (v_1_max_neg_acc_at_start if \
-                v_1_max_neg_acc_at_start != INF else \
+                !is_inf(v_1_max_neg_acc_at_start) else \
                 v_1_max_pos_acc_at_end)
     else:
         # FIXME: LEFT OFF HERE: Does this need to account for accurate
@@ -1649,10 +1649,10 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
         # positive/negative acceleration at the start/end.
         v_1_min = \
                 min(v_1_min_pos_acc_at_start, v_1_min_neg_acc_at_end) if \
-                        v_1_min_pos_acc_at_start != INF and \
-                        v_1_min_neg_acc_at_end != INF else \
+                        !is_inf(v_1_min_pos_acc_at_start) and \
+                        !is_inf(v_1_min_neg_acc_at_end) else \
                 (v_1_min_pos_acc_at_start if \
-                v_1_min_pos_acc_at_start != INF else \
+                !is_inf(v_1_min_pos_acc_at_start) else \
                 v_1_min_neg_acc_at_end)
     else:
         # FIXME: LEFT OFF HERE: Does this need to account for accurate
@@ -1668,8 +1668,8 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     
     # If we found valid v_1_min/v_1_max values, then there must be valid
     # corresponding v_1_min/v_1_max values.
-    assert(v_1_max != INF)
-    assert(v_1_min != INF)
+    assert(!is_inf(v_1_max))
+    assert(!is_inf(v_1_min))
     assert(v_1_max >= v_1_min)
     
     # Add a small offset to the min and max to help with round-off errors.
