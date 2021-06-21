@@ -7,7 +7,11 @@ const INTRO_CHOREOGRAPHY_DESTINATION_GROUP_NAME := \
         "intro_choreography_destination"
 
 
-func _init(are_levels_scene_based: bool).(are_levels_scene_based) -> void:
+func _init(
+        are_levels_scene_based: bool,
+        level_manifest: Dictionary).(
+        are_levels_scene_based,
+        level_manifest) -> void:
     pass
 
 
