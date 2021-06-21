@@ -16,7 +16,7 @@ func _init().(
     pass
 
 
-func process(player: Player) -> bool:
+func process(player) -> bool:
     player.velocity = MovementUtils.cap_velocity(
             player.velocity,
             player.movement_params,

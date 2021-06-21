@@ -16,7 +16,7 @@ func _init().(
     pass
 
 
-func process(player: Player) -> bool:
+func process(player) -> bool:
     player.just_triggered_jump = false
     
     # Cancel any horizontal velocity when bumping into a wall.

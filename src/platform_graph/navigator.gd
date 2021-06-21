@@ -511,7 +511,7 @@ func predict_animation_state(
         
         return false
     
-    var current_path_elapsed_time := \
+    var current_path_elapsed_time: float = \
             Gs.time.get_scaled_play_time() - \
             path_start_time_scaled
     var prediction_path_time := \

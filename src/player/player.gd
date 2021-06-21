@@ -250,7 +250,7 @@ func _physics_process(delta: float) -> void:
         # hood.
         return
     
-    var delta_scaled := Gs.time.scale_delta(delta)
+    var delta_scaled: float = Gs.time.scale_delta(delta)
     
     _update_actions(delta_scaled)
     _update_surface_state()

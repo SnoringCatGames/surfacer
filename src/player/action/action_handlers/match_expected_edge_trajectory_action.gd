@@ -16,10 +16,10 @@ func _init().(
     pass
 
 
-func process(player: Player) -> bool:
-    var current_edge := player.navigator.edge
+func process(player) -> bool:
+    var current_edge: Edge = player.navigator.edge
     if current_edge != null:
-        var playback := player.navigator.playback
+        var playback: InstructionsPlayback = player.navigator.playback
         var playback_previous_elapsed_time: float = \
                 playback.get_previous_elapsed_time_scaled()
         var playback_elapsed_time: float = playback.get_elapsed_time_scaled()

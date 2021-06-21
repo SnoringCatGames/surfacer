@@ -32,7 +32,7 @@ func _initialize() -> void:
     
     if is_desaturatable:
         # Register these as desaturatable for the slow-motion effect.
-        var sprites := Gs.utils.get_children_by_type(self, Sprite, true)
+        var sprites: Array = Gs.utils.get_children_by_type(self, Sprite, true)
         for sprite in sprites:
             sprite.add_to_group(Surfacer.group_name_desaturatable)
 

@@ -377,7 +377,7 @@ static func check_frame_for_collision(
             position_start + kinematic_collision.travel
     
     var tile_map: SurfacesTileMap = kinematic_collision.collider
-    var surface_side := \
+    var surface_side: int = \
             Gs.utils.get_which_surface_side_collided(kinematic_collision)
     var tile_map_result := CollisionTileMapCoordResult.new()
     

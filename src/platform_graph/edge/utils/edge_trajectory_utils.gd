@@ -126,13 +126,13 @@ static func sub_trajectory(
     
     var start_index := int(start_time / Time.PHYSICS_TIME_STEP)
     
-    var frame_continuous_positions_from_steps := \
+    var frame_continuous_positions_from_steps: PoolVector2Array = \
                 Gs.utils.sub_pool_vector2_array(
                         base_trajectory.frame_continuous_positions_from_steps,
                         start_index) if \
                 includes_continuous_positions else \
                 PoolVector2Array()
-    var frame_continuous_velocities_from_steps := \
+    var frame_continuous_velocities_from_steps: PoolVector2Array = \
             Gs.utils.sub_pool_vector2_array(
                     base_trajectory.frame_continuous_velocities_from_steps,
                     start_index) if \
