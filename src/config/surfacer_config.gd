@@ -322,10 +322,12 @@ func amend_app_manifest(manifest: Dictionary) -> void:
             manifest.draw_utils_class = SurfacerDrawUtils
     
     var is_precomputing_platform_graphs: bool = \
-            manifest.has("precompute_platform_graph_for_levels") and \
-            !manifest.precompute_platform_graph_for_levels.empty()
+            manifest.surfacer_manifest \
+                    .has("precompute_platform_graph_for_levels") and \
+            !manifest.surfacer_manifest \
+                    .precompute_platform_graph_for_levels.empty()
     if is_precomputing_platform_graphs:
-        manifest.is_splash_skipped = true
+        manifest.app_metadata.is_splash_skipped = true
     
     # Add Surfacer sounds to the front, so they can be overridden by the app.
     Gs.utils.concat(
@@ -341,7 +343,7 @@ func amend_app_manifest(manifest: Dictionary) -> void:
             manifest.gui_manifest.screen_manifest.path_inclusions \
                     .push_back(inclusion)
     
-    if !manifest.has("settings_item_manifest"):
+    if !manifest.gui_manifest.has("settings_item_manifest"):
         manifest.gui_manifest.settings_item_manifest = \
                 DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST
 
