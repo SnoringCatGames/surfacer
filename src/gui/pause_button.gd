@@ -3,11 +3,11 @@ extends Node2D
 
 
 func _ready() -> void:
-    update_gui_scale(Gs.gui.scale)
+    update_gui_scale()
 
 
-func update_gui_scale(gui_scale: float) -> bool:
-    $ScaffolderTextureButton.update_gui_scale(gui_scale)
+func update_gui_scale() -> bool:
+    $ScaffolderTextureButton.update_gui_scale()
     position.x = \
             get_viewport().size.x - \
             $ScaffolderTextureButton.rect_size.x - \
