@@ -4,7 +4,6 @@ extends VBoxContainer
 
 const PANEL_MARGIN_RIGHT := 20.0
 const TOGGLE_DURATION := 0.2
-const DEFAULT_GUI_SCALE := 1.0
 const ANNOTATOR_ROW_HEIGHT := 21.0
 const SLIDER_WIDTH := 128.0
 
@@ -34,7 +33,7 @@ func _ready() -> void:
     
     theme = Gs.gui.theme
     
-    Gs.gui.add_gui_to_scale(self, DEFAULT_GUI_SCALE)
+    Gs.gui.add_gui_to_scale(self)
     
     _set_footer_visibility(!is_open)
     
@@ -55,7 +54,7 @@ func _ready() -> void:
     # available.
     Surfacer.annotators.element_annotator.update()
     
-    call_deferred("update_gui_scale", 1.0)
+    update_gui_scale()
 
 
 func _exit_tree() -> void:
@@ -66,18 +65,10 @@ func _exit_tree() -> void:
     Surfacer.selection_description = null
 
 
-func update_gui_scale(gui_scale: float) -> bool:
-    update_gui_scale_helper(gui_scale)
-    update_gui_scale_helper(1.0)
-    Gs.time.set_timeout(funcref(self, "update_gui_scale_helper"), 1.0, [1.0])
-    _initialize_annotator_checkboxes()
-    return true
-
-
-func update_gui_scale_helper(gui_scale: float) -> void:
+func update_gui_scale() -> bool:
     for child in get_children():
         if child is Control:
-            Gs.utils._scale_gui_recursively(child, gui_scale)
+            Gs.utils._scale_gui_recursively(child)
     rect_size.x = $PanelContainer.rect_size.x
     _set_footer_visibility(!is_open)
     rect_position.x = \
@@ -88,6 +79,8 @@ func update_gui_scale_helper(gui_scale: float) -> void:
             0.0 if \
             is_open else \
             _get_closed_position_y()
+    _initialize_annotator_checkboxes()
+    return true
 
 
 func _initialize_annotator_checkboxes() -> void:
