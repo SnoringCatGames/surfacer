@@ -1,11 +1,11 @@
 [gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/inspector_panel.gd" type="Script" id=1]
-[ext_resource path="res://addons/scaffolder/assets/fonts/main_font_s.tres" type="DynamicFont" id=2]
+[ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_s.tres" type="DynamicFont" id=2]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/gear_icon_hover_large.png" type="Texture" id=3]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/gear_icon_active_large.png" type="Texture" id=4]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/gear_icon_normal_large.png" type="Texture" id=5]
-[ext_resource path="res://addons/scaffolder/assets/fonts/main_font_xs.tres" type="DynamicFont" id=6]
+[ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_xs.tres" type="DynamicFont" id=6]
 [ext_resource path="res://addons/surfacer/src/gui/panels/panel_header_stylebox.tres" type="StyleBox" id=7]
 [ext_resource path="res://addons/surfacer/src/gui/panels/panel_body_stylebox.tres" type="StyleBox" id=8]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/pause_icon_hover_large.png" type="Texture" id=9]
@@ -18,7 +18,7 @@
 [ext_resource path="res://addons/scaffolder/assets/images/gui/close_active.png" type="Texture" id=16]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/close_hover.png" type="Texture" id=17]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/pause_icon_active_large.png" type="Texture" id=18]
-[ext_resource path="res://addons/scaffolder/assets/fonts/header_font_s.tres" type="DynamicFont" id=19]
+[ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_s.tres" type="DynamicFont" id=19]
 
 [node name="InspectorPanel" type="VBoxContainer"]
 margin_right = 360.0
