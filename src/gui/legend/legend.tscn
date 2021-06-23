@@ -13,7 +13,7 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="."]
-margin_right = 172.0
+margin_right = 189.0
 margin_bottom = 20.0
 rect_min_size = Vector2( 0, 20 )
 size_flags_horizontal = 3
@@ -24,7 +24,7 @@ valign = 1
 
 [node name="GridContainer" type="GridContainer" parent="."]
 margin_top = 20.0
-margin_right = 172.0
+margin_right = 189.0
 margin_bottom = 20.0
 custom_constants/vseparation = 0
 custom_constants/hseparation = 0

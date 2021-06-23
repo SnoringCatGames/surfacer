@@ -17,20 +17,21 @@ func _ready() -> void:
 
 
 func update_gui_scale() -> bool:
+    _deferred_update_gui_scale()
+    call_deferred("_deferred_update_gui_scale")
+    return true
+
+
+func _deferred_update_gui_scale() -> void:
     if !has_meta("gs_rect_size"):
         set_meta("gs_rect_size", rect_size)
     var original_rect_size: Vector2 = get_meta("gs_rect_size")
     
-    var next_rect_size := original_rect_size * Gs.gui.scale
-    rect_size = next_rect_size
+    for child in get_children():
+        Gs.utils._scale_gui_recursively(child)
     for item in _items.values():
         if is_instance_valid(item):
             item.update()
-    for child in get_children():
-        Gs.utils._scale_gui_recursively(child)
-    rect_size = next_rect_size
-    
-    return true
 
 
 func add(item: LegendItem) -> void:

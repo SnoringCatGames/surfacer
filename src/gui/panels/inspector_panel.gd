@@ -6,7 +6,7 @@ const PANEL_MARGIN_RIGHT := 20.0
 const TOGGLE_DURATION := 0.2
 const ANNOTATOR_ROW_HEIGHT := 21.0
 const CHECK_BOX_SCALE := 0.5
-const SLIDER_WIDTH := 90.0
+const SLIDER_WIDTH := 72.0
 
 var is_open := false setget _set_is_open,_get_is_open
 
@@ -118,8 +118,6 @@ func _initialize_annotator_checkboxes() -> void:
             label.add_font_override("font", Gs.gui.fonts.main_xs)
         
         if item.type == LabeledControlItem.CHECKBOX:
-            var size := Gs.gui.default_checkbox_icon_size
-            item.control.set_original_size(Vector2(size, size))
             item.set_check_box_scale(CHECK_BOX_SCALE)
         
         if item.type == LabeledControlItem.SLIDER:
