@@ -5,7 +5,8 @@ extends VBoxContainer
 const PANEL_MARGIN_RIGHT := 20.0
 const TOGGLE_DURATION := 0.2
 const ANNOTATOR_ROW_HEIGHT := 21.0
-const SLIDER_WIDTH := 128.0
+const CHECK_BOX_SCALE := 0.5
+const SLIDER_WIDTH := 90.0
 
 var is_open := false setget _set_is_open,_get_is_open
 
@@ -54,6 +55,8 @@ func _ready() -> void:
     # available.
     Surfacer.annotators.element_annotator.update()
     
+    _initialize_annotator_checkboxes()
+    
     update_gui_scale()
 
 
@@ -66,6 +69,11 @@ func _exit_tree() -> void:
 
 
 func update_gui_scale() -> bool:
+    call_deferred("_deferred_update_gui_scale")
+    return true
+
+
+func _deferred_update_gui_scale() -> void:
     for child in get_children():
         if child is Control:
             Gs.utils._scale_gui_recursively(child)
@@ -79,8 +87,6 @@ func update_gui_scale() -> bool:
             0.0 if \
             is_open else \
             _get_closed_position_y()
-    _initialize_annotator_checkboxes()
-    return true
 
 
 func _initialize_annotator_checkboxes() -> void:
@@ -112,16 +118,18 @@ func _initialize_annotator_checkboxes() -> void:
             label.add_font_override("font", Gs.gui.fonts.main_xs)
         
         if item.type == LabeledControlItem.CHECKBOX:
-            # TODO: These values are a hacky fix.
-            item.set_check_box_scale(0.5)
-            item.control.rect_min_size.x *= 0.35
-            item.control.rect_size.x *= 0.35
+            var size := Gs.gui.default_checkbox_icon_size
+            item.control.set_original_size(Vector2(size, size))
+            item.set_check_box_scale(CHECK_BOX_SCALE)
         
         if item.type == LabeledControlItem.SLIDER:
-            item.width = SLIDER_WIDTH
-            item.control.rect_min_size.x = SLIDER_WIDTH
+            item.set_original_size(
+                    Vector2(SLIDER_WIDTH, item.control.rect_size.y))
         
         annotators.add_child(row)
+    
+    for child in annotators.get_children():
+        Gs.utils._scale_gui_recursively(child)
 
 
 func _get_closed_position_y() -> float:
