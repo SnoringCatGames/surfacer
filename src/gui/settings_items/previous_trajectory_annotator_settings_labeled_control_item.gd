@@ -2,7 +2,7 @@ class_name PreviousTrajectoryAnnotatorSettingsLabeledControlItem
 extends CheckboxLabeledControlItem
 
 
-const LABEL := "Previous trajectory"
+const LABEL := "Prev. trajectory"
 const DESCRIPTION := ("")
 
 
