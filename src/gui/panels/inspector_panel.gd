@@ -109,8 +109,8 @@ func _initialize_annotator_checkboxes() -> void:
         var row := item.create_row(
                 empty_style,
                 ANNOTATOR_ROW_HEIGHT,
-                2.0,
-                2.0,
+                4.0,
+                4.0,
                 false)
         row.rect_min_size.x = item_width
         
