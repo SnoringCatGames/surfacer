@@ -17,6 +17,7 @@ func _ready() -> void:
     grid = $GridContainer
     label = $Label
     label.visible = true
+    set_meta("gs_rect_size", rect_size)
     update_gui_scale()
 
 
@@ -30,8 +31,6 @@ func update_gui_scale() -> bool:
 
 
 func _update_gui_scale_helper() -> void:
-    if !has_meta("gs_rect_size"):
-        set_meta("gs_rect_size", rect_size)
     var original_rect_size: Vector2 = get_meta("gs_rect_size")
     
     for item in _items.values():
