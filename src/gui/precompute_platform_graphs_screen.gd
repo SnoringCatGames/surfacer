@@ -324,10 +324,10 @@ func _on_finished() -> void:
             .visible = true
 
 
-func _get_focused_button() -> ShinyButton:
+func _get_focused_button() -> ScaffolderButton:
     return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
             CenterContainer/VBoxContainer/CloseButton as \
-            ShinyButton
+            ScaffolderButton
 
 
 func _on_OpenFolderButton_pressed() -> void:
