@@ -8,6 +8,10 @@ var _items := {}
 var grid: GridContainer
 var label: Label
 
+var _debounced_update_gui_scale: FuncRef = Gs.time.debounce(
+        funcref(self, "_update_gui_scale_helper"),
+        0.05)
+
 
 func _ready() -> void:
     grid = $GridContainer
@@ -16,19 +20,20 @@ func _ready() -> void:
     update_gui_scale()
 
 
+func _exit_tree() -> void:
+    Gs.time.clear_debounce(_debounced_update_gui_scale)
+
+
 func update_gui_scale() -> bool:
-    _deferred_update_gui_scale()
-    call_deferred("_deferred_update_gui_scale")
+    _debounced_update_gui_scale.call_deferred("call_func")
     return true
 
 
-func _deferred_update_gui_scale() -> void:
+func _update_gui_scale_helper() -> void:
     if !has_meta("gs_rect_size"):
         set_meta("gs_rect_size", rect_size)
     var original_rect_size: Vector2 = get_meta("gs_rect_size")
     
-    for child in get_children():
-        Gs.utils._scale_gui_recursively(child)
     for item in _items.values():
         if is_instance_valid(item):
             item.update()
