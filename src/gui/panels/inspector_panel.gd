@@ -34,6 +34,9 @@ func _ready() -> void:
     
     theme = Gs.gui.theme
     
+    var x_button := $PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton
+    x_button.set_meta("gs_rect_position", x_button.rect_position)
+    
     Gs.gui.add_gui_to_scale(self)
     
     _set_footer_visibility(!is_open)
@@ -74,6 +77,9 @@ func update_gui_scale() -> bool:
 
 
 func _deferred_update_gui_scale() -> void:
+    var x_button := $PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton
+    x_button.rect_position = \
+            x_button.get_meta("gs_rect_position") * Gs.gui.scale
     for child in get_children():
         if child is Control:
             Gs.utils._scale_gui_recursively(child)
