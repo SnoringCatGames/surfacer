@@ -117,8 +117,8 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
     _last_pointer_drag_position = Vector2.INF
     Gs.slow_motion.set_slow_motion_enabled(false)
     _is_preselection_path_update_pending = false
-    Gs.time.cancel_pending_throttle(_throttled_update_preselection_path)
-    Gs.time.cancel_pending_throttle(_throttled_update_preselection_beats)
+    Gs.time.clear_throttle(_throttled_update_preselection_path)
+    Gs.time.clear_throttle(_throttled_update_preselection_beats)
     _player.new_selection.update_pointer_position(pointer_position)
     
     var selected_surface: Surface = \
