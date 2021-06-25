@@ -28,7 +28,7 @@ func _unhandled_input(event: InputEvent) -> void:
     if !Gs.gui.is_user_interaction_enabled:
         return
     
-    var is_control_pressed := \
+    var is_control_pressed: bool = \
             Gs.level_input.is_key_pressed(KEY_CONTROL) or \
             Gs.level_input.is_key_pressed(KEY_META)
     
@@ -86,7 +86,7 @@ func _update_drag(pointer_position: Vector2) -> void:
 func _update_pan_and_zoom_delta_from_pointer(
         pointer_position: Vector2) -> void:
     # Calculate the camera bounds and the region that controls pan and zoom.
-    var pointer_max_control_bounds := Gs.camera_controller.get_bounds()
+    var pointer_max_control_bounds: Rect2 = Gs.camera_controller.get_bounds()
     var camera_center := \
             pointer_max_control_bounds.position + \
             pointer_max_control_bounds.size / 2.0

@@ -9,7 +9,7 @@ var grid: GridContainer
 var label: Label
 
 var _debounced_update_gui_scale: FuncRef = Gs.time.debounce(
-        funcref(self, "_update_gui_scale_helper"),
+        funcref(self, "_update_gui_scale_debounced"),
         0.05)
 
 
@@ -30,7 +30,7 @@ func update_gui_scale() -> bool:
     return true
 
 
-func _update_gui_scale_helper() -> void:
+func _update_gui_scale_debounced() -> void:
     var original_rect_size: Vector2 = get_meta("gs_rect_size")
     
     for item in _items.values():

@@ -101,8 +101,8 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
 
 # --- Manifest additions ---
 
-var _screen_path_inclusions := [
-    "res://addons/surfacer/src/gui/precompute_platform_graphs_screen.tscn",
+var _screen_inclusions := [
+    preload("res://addons/surfacer/src/gui/precompute_platform_graphs_screen.tscn"),
 ]
 
 var _surfacer_sounds := [
@@ -335,12 +335,12 @@ func amend_app_manifest(manifest: Dictionary) -> void:
             _surfacer_sounds,
             false)
     
-    for inclusion in _screen_path_inclusions:
-        if !manifest.gui_manifest.screen_manifest.path_exclusions \
+    for inclusion in _screen_inclusions:
+        if !manifest.gui_manifest.screen_manifest.exclusions \
                 .has(inclusion) and \
-                !manifest.gui_manifest.screen_manifest.path_inclusions \
+                !manifest.gui_manifest.screen_manifest.inclusions \
                 .has(inclusion):
-            manifest.gui_manifest.screen_manifest.path_inclusions \
+            manifest.gui_manifest.screen_manifest.inclusions \
                     .push_back(inclusion)
     
     if !manifest.gui_manifest.has("settings_item_manifest"):

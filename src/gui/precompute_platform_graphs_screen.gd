@@ -4,6 +4,7 @@ extends Screen
 
 const NAME := "precompute_platform_graphs"
 const LAYER_NAME := "menu_screen"
+const IS_ALWAYS_ALIVE := false
 const AUTO_ADAPTS_GUI_SCALE := true
 const INCLUDES_STANDARD_HIERARCHY := true
 const INCLUDES_NAV_BAR := true
@@ -32,6 +33,7 @@ var level: SurfacerLevel
 func _init().(
         NAME,
         LAYER_NAME,
+        IS_ALWAYS_ALIVE,
         AUTO_ADAPTS_GUI_SCALE,
         INCLUDES_STANDARD_HIERARCHY,
         INCLUDES_NAV_BAR,
@@ -40,8 +42,8 @@ func _init().(
     pass
 
 
-func _on_activated(previous_screen_name: String) -> void:
-    ._on_activated(previous_screen_name) 
+func _on_activated(previous_screen: Screen) -> void:
+    ._on_activated(previous_screen) 
     Gs.time.set_timeout(funcref(self, "_compute"), 0.2)
 
 
@@ -136,7 +138,7 @@ func _clean_up_next() -> void:
     level.queue_free()
     Gs.profiler.stop("clean_up")
     
-    var finished := precompute_level_index == \
+    var finished: bool = precompute_level_index == \
             Surfacer.precompute_platform_graph_for_levels.size() - 1
     _on_stage_progress("clean_up", finished)
     
@@ -167,7 +169,7 @@ func _on_graph_parse_progress(
                     PARSE_SUB_STEP_PROGRESS_RATIO) / \
             PROGRESS_RATIO_TOTAL
     
-    var progress := \
+    var progress: float = \
             (precompute_level_index + sub_step_progress) / \
             Surfacer.precompute_platform_graph_for_levels.size() * \
             100.0
@@ -224,7 +226,7 @@ func _on_stage_progress(
         _:
             Utils.error()
     
-    var progress := \
+    var progress: float = \
             (precompute_level_index + sub_step_progress) / \
             Surfacer.precompute_platform_graph_for_levels.size() * \
             100.0

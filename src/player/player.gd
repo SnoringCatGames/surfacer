@@ -309,7 +309,7 @@ func _physics_process(delta: float) -> void:
     if !movement_params.bypasses_runtime_physics:
         # Since move_and_slide automatically accounts for delta, we need to
         # compensate for that in order to support our modified framerate.
-        var modified_velocity := velocity * Gs.time.get_combined_scale()
+        var modified_velocity: Vector2 = velocity * Gs.time.get_combined_scale()
         
         # TODO: Use the remaining pre-collision movement that move_and_slide
         #       returns. This might be needed in order to move along slopes?
@@ -946,10 +946,10 @@ func start_dash(horizontal_acceleration_sign: int) -> void:
             movement_params.max_horizontal_speed_default * \
             movement_params.dash_speed_multiplier
     var end_max_speed := movement_params.max_horizontal_speed_default
-    var duration := \
+    var duration: float = \
             movement_params.dash_fade_duration / \
             Gs.time.get_combined_scale()
-    var delay := \
+    var delay: float = \
             (movement_params.dash_duration - 
             movement_params.dash_fade_duration) / \
             Gs.time.get_combined_scale()
