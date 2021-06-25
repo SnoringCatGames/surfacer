@@ -166,7 +166,7 @@ func set_tile_map_visibility(is_visible: bool) -> void:
 #    var backgrounds := Gs.utils.get_children_by_type(
 #            self,
 #            ParallaxBackground)
-    var foregrounds := Gs.utils.get_children_by_type(
+    var foregrounds: Array = Gs.utils.get_children_by_type(
             self,
             TileMap)
     for node in foregrounds:
@@ -178,7 +178,7 @@ func _get_platform_graph_for_player(player_name: String) -> PlatformGraph:
 
 
 func get_player_start_position() -> Vector2:
-    var nodes := Gs.utils.get_all_nodes_in_group(
+    var nodes: Array = Gs.utils.get_all_nodes_in_group(
             SurfacerLevelConfig.PLAYER_START_POSITION_GROUP_NAME)
     if nodes.empty():
         return Vector2.ZERO
