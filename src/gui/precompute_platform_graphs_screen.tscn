@@ -168,7 +168,7 @@ margin_bottom = 330.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 custom_fonts/font = ExtResource( 6 )
-text = "Open folder"
+label = "Open folder"
 
 [node name="CloseButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 7 )]
 margin_left = 135.0
@@ -178,7 +178,7 @@ margin_bottom = 313.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 custom_fonts/font = ExtResource( 6 )
-text = "Close"
+label = "Close"
 
 [node name="LevelWrapper" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
