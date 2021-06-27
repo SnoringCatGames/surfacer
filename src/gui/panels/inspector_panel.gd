@@ -199,10 +199,18 @@ func _set_footer_visibility(is_visible: bool) -> void:
 
 
 func _on_GearButton_pressed() -> void:
+    _toggle_open()
+
+
+func _on_FooterPauseButton_pressed() -> void:
+    Gs.level.pause()
+
+
+func _on_HeaderXButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()
     _toggle_open()
 
 
-func _on_PauseButton_pressed() -> void:
+func _on_HeaderPauseButton_pressed() -> void:
     Gs.utils.give_button_press_feedback()
     Gs.level.pause()
