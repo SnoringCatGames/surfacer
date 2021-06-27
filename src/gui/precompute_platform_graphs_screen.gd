@@ -333,12 +333,10 @@ func _get_focused_button() -> ScaffolderButton:
 
 
 func _on_OpenFolderButton_pressed() -> void:
-    Gs.utils.give_button_press_feedback()
     var path := PlatformGraphParser.get_os_directory_path()
     Gs.logger.print("Opening platform-graph folder: " + path)
     OS.shell_open(path)
 
 
 func _on_CloseButton_pressed() -> void:
-    Gs.utils.give_button_press_feedback()
     Gs.time.set_timeout(funcref(Gs.nav, "close_app"), 0.4)

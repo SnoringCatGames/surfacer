@@ -17,5 +17,4 @@ func update_gui_scale() -> bool:
 
 
 func _on_ScaffolderTextureButton_pressed() -> void:
-    Gs.utils.give_button_press_feedback()
     Gs.level.pause()
