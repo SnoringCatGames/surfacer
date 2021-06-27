@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://addons/scaffolder/src/gui/centered_panel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/scaffolder/src/gui/labeled_control_list/labeled_control_list.tscn" type="PackedScene" id=2]
@@ -8,14 +8,15 @@
 [ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_s.tres" type="DynamicFont" id=6]
 [ext_resource path="res://addons/scaffolder/src/gui/scaffolder_button.tscn" type="PackedScene" id=7]
 [ext_resource path="res://src/gui/loading_image.tscn" type="PackedScene" id=8]
+[ext_resource path="res://addons/scaffolder/src/gui/spacer.tscn" type="PackedScene" id=9]
 [ext_resource path="res://addons/scaffolder/src/gui/nav_bar.tscn" type="PackedScene" id=12]
 
 [node name="PrecomputePlatformGraphsScreen" type="Node2D"]
 script = ExtResource( 4 )
 
 [node name="FullScreenPanel" parent="." instance=ExtResource( 3 )]
-margin_right = 960.0
-margin_bottom = 960.0
+margin_right = 974.0
+margin_bottom = 1184.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel"]
 margin_left = 7.0
@@ -121,13 +122,13 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 6 )
 align = 1
 
-[node name="Spacer" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
+[node name="Spacer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 9 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 160.0
 margin_top = 210.0
 margin_right = 160.0
 margin_bottom = 210.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
 
 [node name="Metrics" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 80.0
@@ -171,9 +172,9 @@ custom_fonts/font = ExtResource( 6 )
 label = "Open folder"
 
 [node name="CloseButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 7 )]
-margin_left = 135.0
+margin_left = 160.0
 margin_top = 290.0
-margin_right = 185.0
+margin_right = 160.0
 margin_bottom = 313.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
