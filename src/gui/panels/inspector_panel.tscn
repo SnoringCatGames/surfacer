@@ -1,6 +1,7 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/inspector_panel.gd" type="Script" id=1]
+[ext_resource path="res://addons/scaffolder/src/gui/spacer.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/gear_icon_hover_large.png" type="Texture" id=3]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/gear_icon_active_large.png" type="Texture" id=4]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/gear_icon_normal_large.png" type="Texture" id=5]
@@ -46,33 +47,29 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Spacer" type="Control" parent="PanelContainer/VBoxContainer"]
+[node name="Spacer" parent="PanelContainer/VBoxContainer" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 180.0
 margin_right = 180.0
-margin_bottom = 8.0
-rect_min_size = Vector2( 0, 8 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size = Vector2( 0, 8 )
 
 [node name="Header" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
-margin_top = 8.0
 margin_right = 360.0
-margin_bottom = 37.0
+margin_bottom = 29.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
 custom_constants/separation = 0
 
-[node name="Spacer" type="Control" parent="PanelContainer/VBoxContainer/Header"]
+[node name="Spacer" parent="PanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_top = 14.0
-margin_right = 8.0
 margin_bottom = 14.0
-rect_min_size = Vector2( 8, 0 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size = Vector2( 8, 0 )
 
 [node name="PauseButton" type="Button" parent="PanelContainer/VBoxContainer/Header"]
-margin_left = 8.0
-margin_right = 148.0
+margin_right = 140.0
 margin_bottom = 29.0
 rect_min_size = Vector2( 140, 0 )
 size_flags_horizontal = 4
@@ -80,11 +77,14 @@ size_flags_vertical = 4
 custom_fonts/font = ExtResource( 19 )
 text = "Pause"
 
-[node name="Spacer2" type="Control" parent="PanelContainer/VBoxContainer/Header"]
-margin_left = 148.0
+[node name="Spacer5" parent="PanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 140.0
 margin_right = 360.0
 margin_bottom = 29.0
 size_flags_horizontal = 3
+size_flags_vertical = 1
 
 [node name="XButtonWrapper" type="Control" parent="PanelContainer/VBoxContainer/Header"]
 margin_left = 360.0
@@ -105,88 +105,86 @@ texture_pressed = ExtResource( 16 )
 texture_hover = ExtResource( 17 )
 texture_scale = Vector2( 0.75, 0.75 )
 
-[node name="Spacer3" type="Control" parent="PanelContainer/VBoxContainer/Header"]
+[node name="Spacer6" parent="PanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 360.0
 margin_top = 14.0
 margin_right = 360.0
 margin_bottom = 14.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
 
 [node name="Sections" type="VBoxContainer" parent="PanelContainer/VBoxContainer"]
-margin_top = 37.0
+margin_top = 29.0
 margin_right = 360.0
 margin_bottom = 600.0
 rect_min_size = Vector2( 0, 300 )
 size_flags_vertical = 3
 custom_constants/separation = 0
 
-[node name="Spacer" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
+[node name="Spacer" parent="PanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 180.0
 margin_right = 180.0
-margin_bottom = 4.0
-rect_min_size = Vector2( 0, 4 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size = Vector2( 0, 4 )
 
 [node name="SelectionDescription" parent="PanelContainer/VBoxContainer/Sections" instance=ExtResource( 10 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 4.0
 margin_right = 360.0
-margin_bottom = 44.0
+margin_bottom = 40.0
 size_flags_vertical = 4
 custom_constants/margin_right = 8
 custom_constants/margin_top = 12
 custom_constants/margin_left = 8
 custom_constants/margin_bottom = 8
 
-[node name="Spacer3" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
+[node name="Spacer8" parent="PanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 180.0
-margin_top = 44.0
+margin_top = 40.0
 margin_right = 180.0
-margin_bottom = 48.0
-rect_min_size = Vector2( 0, 4 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
+margin_bottom = 40.0
+size = Vector2( 0, 4 )
 
 [node name="LegendHeader" type="Label" parent="PanelContainer/VBoxContainer/Sections"]
-margin_top = 48.0
+margin_top = 40.0
 margin_right = 360.0
-margin_bottom = 71.0
+margin_bottom = 63.0
 custom_styles/normal = ExtResource( 7 )
 custom_fonts/font = ExtResource( 19 )
 text = "Legend"
 align = 1
 
-[node name="Spacer4" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
+[node name="Spacer9" parent="PanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 180.0
-margin_top = 71.0
+margin_top = 63.0
 margin_right = 180.0
-margin_bottom = 75.0
-rect_min_size = Vector2( 0, 4 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
+margin_bottom = 63.0
+size = Vector2( 0, 4 )
 
 [node name="Legend" parent="PanelContainer/VBoxContainer/Sections" instance=ExtResource( 11 )]
-margin_top = 75.0
+margin_top = 63.0
 margin_right = 360.0
-margin_bottom = 95.0
+margin_bottom = 83.0
 size_flags_vertical = 4
 
-[node name="Spacer2" type="Control" parent="PanelContainer/VBoxContainer/Sections"]
+[node name="Spacer10" parent="PanelContainer/VBoxContainer/Sections" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 180.0
-margin_top = 95.0
+margin_top = 83.0
 margin_right = 180.0
-margin_bottom = 99.0
-rect_min_size = Vector2( 0, 4 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
+margin_bottom = 83.0
+size = Vector2( 0, 4 )
 
 [node name="InspectorContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Sections"]
-margin_top = 99.0
+margin_top = 83.0
 margin_right = 360.0
-margin_bottom = 555.0
+margin_bottom = 563.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 custom_constants/separation = 0
@@ -204,15 +202,15 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 23.0
 margin_right = 360.0
-margin_bottom = 456.0
+margin_bottom = 480.0
 size_flags_vertical = 3
 custom_styles/bg = ExtResource( 8 )
 custom_fonts/font = ExtResource( 6 )
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer/Sections"]
-margin_top = 555.0
+margin_top = 563.0
 margin_right = 360.0
-margin_bottom = 563.0
+margin_bottom = 571.0
 custom_constants/margin_right = 4
 custom_constants/margin_top = 4
 custom_constants/margin_left = 4
@@ -229,24 +227,20 @@ custom_constants/vseparation = 2
 custom_constants/hseparation = 16
 columns = 2
 
-[node name="Spacer" type="Control" parent="."]
+[node name="Spacer" parent="." instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 180.0
 margin_top = 600.0
 margin_right = 180.0
-margin_bottom = 620.0
-rect_min_size = Vector2( 0, 20 )
-mouse_filter = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_bottom = 600.0
+size = Vector2( 0, 20 )
 
 [node name="Footer" type="HBoxContainer" parent="."]
-margin_left = 180.0
-margin_top = 620.0
+margin_left = 232.0
+margin_top = 600.0
 margin_right = 360.0
-margin_bottom = 684.0
+margin_bottom = 664.0
 rect_min_size = Vector2( 0, 64 )
 mouse_filter = 2
 size_flags_horizontal = 8
@@ -256,20 +250,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Spacer" type="Control" parent="Footer"]
+[node name="Spacer" parent="Footer" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_top = 32.0
-margin_right = 32.0
 margin_bottom = 32.0
-rect_min_size = Vector2( 32, 0 )
-mouse_filter = 2
 size_flags_horizontal = 3
-size_flags_vertical = 4
+size = Vector2( 32, 0 )
 
 [node name="GearButton" parent="Footer" instance=ExtResource( 14 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 32.0
-margin_right = 96.0
+margin_right = 64.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
 size_flags_horizontal = 4
@@ -278,21 +270,20 @@ texture_normal = ExtResource( 5 )
 texture_pressed = ExtResource( 4 )
 texture_hover = ExtResource( 3 )
 
-[node name="Spacer2" type="Control" parent="Footer"]
-margin_left = 96.0
+[node name="Spacer13" parent="Footer" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 64.0
 margin_top = 32.0
-margin_right = 116.0
+margin_right = 64.0
 margin_bottom = 32.0
-rect_min_size = Vector2( 20, 0 )
-mouse_filter = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size = Vector2( 20, 0 )
 
 [node name="PauseButton" parent="Footer" instance=ExtResource( 14 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 116.0
-margin_right = 180.0
+margin_left = 64.0
+margin_right = 128.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
 size_flags_horizontal = 4
@@ -301,14 +292,13 @@ texture_normal = ExtResource( 12 )
 texture_pressed = ExtResource( 18 )
 texture_hover = ExtResource( 9 )
 
-[node name="Spacer3" type="Control" parent="Footer"]
-margin_left = 180.0
+[node name="Spacer4" parent="Footer" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 128.0
 margin_top = 32.0
-margin_right = 180.0
+margin_right = 128.0
 margin_bottom = 32.0
-mouse_filter = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
 
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Header/PauseButton" to="." method="_on_PauseButton_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton" to="." method="_toggle_open"]
