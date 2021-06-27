@@ -1,7 +1,7 @@
 [gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/inspector_panel.gd" type="Script" id=1]
-[ext_resource path="res://addons/scaffolder/src/gui/spacer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/scaffolder/src/gui/widgets/spacer.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/gear_icon_hover_large.png" type="Texture" id=3]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/gear_icon_active_large.png" type="Texture" id=4]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/gear_icon_normal_large.png" type="Texture" id=5]
@@ -13,7 +13,7 @@
 [ext_resource path="res://addons/surfacer/src/gui/legend/legend.tscn" type="PackedScene" id=11]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/pause_icon_normal_large.png" type="Texture" id=12]
 [ext_resource path="res://addons/surfacer/src/gui/platform_graph_inspector/platform_graph_inspector.tscn" type="PackedScene" id=13]
-[ext_resource path="res://addons/scaffolder/src/gui/scaffolder_texture_button.tscn" type="PackedScene" id=14]
+[ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_texture_button.tscn" type="PackedScene" id=14]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/close_normal.png" type="Texture" id=15]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/close_active.png" type="Texture" id=16]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/close_hover.png" type="Texture" id=17]
@@ -301,6 +301,3 @@ margin_right = 128.0
 margin_bottom = 32.0
 
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Header/PauseButton" to="." method="_on_HeaderPauseButton_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton" to="." method="_on_HeaderXButton_pressed"]
-[connection signal="pressed" from="Footer/GearButton" to="." method="_on_GearButton_pressed"]
-[connection signal="pressed" from="Footer/PauseButton" to="." method="_on_FooterPauseButton_pressed"]

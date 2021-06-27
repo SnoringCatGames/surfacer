@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://addons/scaffolder/src/gui/scaffolder_texture_button.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_texture_button.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/pause_icon_hover_large.png" type="Texture" id=2]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/pause_icon_normal_large.png" type="Texture" id=3]
 [ext_resource path="res://addons/scaffolder/assets/images/gui/pause_icon_active_large.png" type="Texture" id=4]
