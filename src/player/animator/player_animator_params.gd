@@ -2,7 +2,8 @@ class_name PlayerAnimatorParams
 extends Reference
 
 
-var player_animator_scene_path: String
+# String|PackedScene
+var player_animator_path_or_scene
 
 var faces_right_by_default: bool
 

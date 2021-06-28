@@ -4,7 +4,8 @@ extends Reference
 
 var name: String
 
-var player_path: String
+# String|PackedScene
+var player_path_or_scene
 
 # Array<String>
 var edge_calculator_names: Array

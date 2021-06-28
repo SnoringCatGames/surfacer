@@ -74,7 +74,7 @@ func _create_fake_players_for_collision_calculations() -> void:
                 Surfacer.player_params[player_name].movement_params
         var fake_player: Player = Gs.utils.add_scene(
                 self,
-                movement_params.player_path,
+                movement_params.player_path_or_scene,
                 false,
                 false)
         fake_player.is_fake = true
