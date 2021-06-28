@@ -24,6 +24,10 @@ func _init() -> void:
     add_child(_tween)
 
 
+func _exit_tree() -> void:
+    Gs.time.clear_interval(_interval_id)
+
+
 func _unhandled_input(event: InputEvent) -> void:
     if !Gs.gui.is_user_interaction_enabled:
         return
