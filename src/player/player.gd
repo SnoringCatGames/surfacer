@@ -132,7 +132,7 @@ func _ready() -> void:
     if animators.empty():
         animator = Gs.utils.add_scene(
                 self,
-                movement_params.animator_params.player_animator_scene_path)
+                movement_params.animator_params.player_animator_path_or_scene)
     else:
         animator = animators[0]
     animator.set_up(self, true)

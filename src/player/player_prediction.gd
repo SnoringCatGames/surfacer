@@ -12,7 +12,7 @@ var _tween_animation_state := PlayerAnimationState.new()
 func set_up(player) -> void:
     animator = Gs.utils.add_scene(
             self,
-            player.movement_params.animator_params.player_animator_scene_path)
+            player.movement_params.animator_params.player_animator_path_or_scene)
     animator.set_up(player, false)
     
     _tween = ScaffolderTween.new()

@@ -32,7 +32,7 @@ func _start() -> void:
     
     add_player(
             Surfacer.player_params[Surfacer.default_player_name] \
-                    .movement_params.player_path,
+                    .movement_params.player_path_or_scene,
             get_player_start_position(),
             true)
     _execute_intro_choreography()
@@ -114,12 +114,12 @@ func _initialize_annotators() -> void:
 
 
 func add_player(
-        path: String,
+        path_or_packed_scene,
         position: Vector2,
         is_human_player: bool) -> Player:
     var player: Player = Gs.utils.add_scene(
             self,
-            path,
+            path_or_packed_scene,
             false,
             true)
     player.set_position(position)
