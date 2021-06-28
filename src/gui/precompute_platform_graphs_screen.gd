@@ -42,6 +42,17 @@ func _init().(
     pass
 
 
+func _ready() -> void:
+    if Gs.gui.is_loading_image_shown:
+        var loading_image: ScaffolderConfiguredImage = Gs.utils.add_scene(
+                inner_vbox,
+                Gs.gui.is_loading_image_shown,
+                true,
+                true,
+                0)
+        loading_image.original_scale = Gs.gui.loading_image_scale
+
+
 func _on_activated(previous_screen: Screen) -> void:
     ._on_activated(previous_screen) 
     Gs.time.set_timeout(funcref(self, "_compute"), 0.2)
