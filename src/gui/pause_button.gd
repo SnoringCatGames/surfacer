@@ -1,4 +1,4 @@
-class_name PauseButton
+class_name PauseButton, "res://addons/scaffolder/assets/images/editor_icons/scaffolder_placeholder.png"
 extends Node2D
 
 

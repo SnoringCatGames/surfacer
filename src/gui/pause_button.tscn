@@ -12,12 +12,12 @@ script = ExtResource( 5 )
 [node name="ScaffolderTextureButton" parent="." instance=ExtResource( 1 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 64.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 64, 64 )
+margin_right = 0.0
+margin_bottom = 0.0
 texture_normal = ExtResource( 3 )
 texture_pressed = ExtResource( 4 )
 texture_hover = ExtResource( 2 )
 expands_texture = false
+size_override = Vector2( 64, 64 )
 
 [connection signal="pressed" from="ScaffolderTextureButton" to="." method="_on_ScaffolderTextureButton_pressed"]
