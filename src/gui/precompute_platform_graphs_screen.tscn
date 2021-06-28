@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/centered_panel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/scaffolder/src/gui/labeled_control_list/labeled_control_list.tscn" type="PackedScene" id=2]
@@ -7,7 +7,6 @@
 [ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_xs.tres" type="DynamicFont" id=5]
 [ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_s.tres" type="DynamicFont" id=6]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_button.tscn" type="PackedScene" id=7]
-[ext_resource path="res://src/gui/loading_image.tscn" type="PackedScene" id=8]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/spacer.tscn" type="PackedScene" id=9]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_progress_bar.tscn" type="PackedScene" id=10]
 [ext_resource path="res://addons/scaffolder/src/gui/nav_bar.tscn" type="PackedScene" id=12]
@@ -61,38 +60,24 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer"]
 margin_left = 333.0
-margin_top = 308.0
+margin_top = 338.0
 margin_right = 613.0
-margin_bottom = 637.0
+margin_bottom = 607.0
 rect_min_size = Vector2( 280, 0 )
 custom_constants/separation = 16
-
-[node name="LoadingImageWrapper" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
-margin_left = 100.0
-margin_right = 180.0
-margin_bottom = 44.0
-rect_min_size = Vector2( 80, 44 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="LoadingImage" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/LoadingImageWrapper" instance=ExtResource( 8 )]
-rect_scale = Vector2( 0.25, 0.25 )
 
 [node name="ScaffolderProgressBar" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 10 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 138.0
-margin_top = 60.0
 margin_right = 142.0
-margin_bottom = 74.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
+margin_bottom = 14.0
 size_override = Vector2( 320, 0 )
 
 [node name="Labels" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
-margin_top = 90.0
+margin_top = 30.0
 margin_right = 280.0
-margin_bottom = 194.0
+margin_bottom = 134.0
 
 [node name="Label1" type="Label" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer/Labels"]
 margin_right = 280.0
@@ -130,15 +115,15 @@ align = 1
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 140.0
-margin_top = 210.0
+margin_top = 150.0
 margin_right = 140.0
-margin_bottom = 210.0
+margin_bottom = 150.0
 
 [node name="Metrics" type="VBoxContainer" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 margin_left = 60.0
-margin_top = 226.0
+margin_top = 166.0
 margin_right = 220.0
-margin_bottom = 274.0
+margin_bottom = 214.0
 rect_min_size = Vector2( 160, 0 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -170,27 +155,23 @@ margin_left = 70.0
 margin_top = 290.0
 margin_right = 250.0
 margin_bottom = 330.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
 custom_fonts/font = ExtResource( 6 )
 label = "Open folder"
 
 [node name="CloseButton" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer" instance=ExtResource( 7 )]
 margin_left = 140.0
-margin_top = 290.0
+margin_top = 230.0
 margin_right = 140.0
-margin_bottom = 313.0
-size_flags_horizontal = 4
-size_flags_vertical = 4
+margin_bottom = 253.0
 custom_fonts/font = ExtResource( 6 )
 label = "Close"
 
 [node name="LevelWrapper" type="Control" parent="FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/CenterContainer/VBoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
 margin_left = 140.0
-margin_top = 329.0
+margin_top = 269.0
 margin_right = 140.0
-margin_bottom = 329.0
+margin_bottom = 269.0
 rect_clip_content = true
 size_flags_horizontal = 4
 size_flags_vertical = 4
