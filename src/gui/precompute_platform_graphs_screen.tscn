@@ -8,7 +8,7 @@
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/spacer.tscn" type="PackedScene" id=9]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_progress_bar.tscn" type="PackedScene" id=10]
 
-[node name="PrecomputePlatformGraphsScreen" type="Control"]
+[node name="PrecomputePlatformGraphsScreen" type="VBoxContainer"]
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
