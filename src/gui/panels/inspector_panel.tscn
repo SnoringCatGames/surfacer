@@ -294,3 +294,6 @@ margin_top = 32.0
 margin_bottom = 32.0
 
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Header/PauseButton" to="." method="_on_HeaderPauseButton_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton" to="." method="_on_HeaderXButton_pressed"]
+[connection signal="pressed" from="Footer/GearButton" to="." method="_on_GearButton_pressed"]
+[connection signal="pressed" from="Footer/PauseButton" to="." method="_on_FooterPauseButton_pressed"]
