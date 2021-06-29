@@ -14,6 +14,9 @@ var _debounced_update_gui_scale: FuncRef = Gs.time.debounce(
 
 
 func _ready() -> void:
+    if Engine.editor_hint:
+        return
+    
     grid = $GridContainer
     label = $Label
     label.visible = true
@@ -22,6 +25,9 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+    if Engine.editor_hint:
+        return
+    
     Gs.time.clear_debounce(_debounced_update_gui_scale)
 
 
