@@ -2,14 +2,6 @@ class_name PrecomputePlatformGraphsScreen
 extends Screen
 
 
-const NAME := "precompute_platform_graphs"
-const LAYER_NAME := "menu_screen"
-const IS_ALWAYS_ALIVE := false
-const AUTO_ADAPTS_GUI_SCALE := true
-const INCLUDES_STANDARD_HIERARCHY := true
-const INCLUDES_NAV_BAR := true
-const INCLUDES_CENTER_CONTAINER := true
-
 const INITIALIZE_SUB_STEP_PROGRESS_RATIO := 0.04
 const PARSE_SUB_STEP_PROGRESS_RATIO := 0.85
 const SAVE_SUB_STEP_PROGRESS_RATIO := 0.1
@@ -30,22 +22,10 @@ var platform_graph_parser: PlatformGraphParser
 var level: SurfacerLevel
 
 
-func _init().(
-        NAME,
-        LAYER_NAME,
-        IS_ALWAYS_ALIVE,
-        AUTO_ADAPTS_GUI_SCALE,
-        INCLUDES_STANDARD_HIERARCHY,
-        INCLUDES_NAV_BAR,
-        INCLUDES_CENTER_CONTAINER \
-        ) -> void:
-    pass
-
-
 func _ready() -> void:
     if Gs.gui.is_loading_image_shown:
         var loading_image: ScaffolderConfiguredImage = Gs.utils.add_scene(
-                inner_vbox,
+                $VBoxContainer,
                 Gs.gui.is_loading_image_shown,
                 true,
                 true,
@@ -88,9 +68,7 @@ func _initialize_metrics() -> void:
         for item in stage_to_metric_items[stage]:
             metrics_items.push_back(item)
     
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Metrics/MetricsList.items = \
-            metrics_items
+    $VBoxContainer/Metrics/MetricsList.items = metrics_items
 
 
 func _initialize_next() -> void:
@@ -103,9 +81,7 @@ func _initialize_next() -> void:
             false,
             true)
     Gs.level_session.reset(level_id)
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/LevelWrapper/Viewport \
-            .add_child(level)
+    $VBoxContainer/LevelWrapper/Viewport.add_child(level)
     platform_graph_parser = PlatformGraphParser.new()
     level.add_child(platform_graph_parser)
     Gs.profiler.stop("initialize")
@@ -272,17 +248,12 @@ func _set_progress(
         label_2: String,
         label_3 := "",
         label_4 := "") -> void:
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/ProgressBar.value = round(progress)
+    $VBoxContainer/ProgressBar.value = round(progress)
     
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Labels/Label1.text = label_1
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Labels/Label2.text = label_2
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Labels/Label3.text = label_3
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Labels/Label4.text = label_4
+    $VBoxContainer/Labels/Label1.text = label_1
+    $VBoxContainer/Labels/Label2.text = label_2
+    $VBoxContainer/Labels/Label3.text = label_3
+    $VBoxContainer/Labels/Label4.text = label_4
     
     Gs.logger.print("Precompute progress: %s | %s | %s | %s" % \
             [label_1, label_2, label_3, label_4])
@@ -291,8 +262,7 @@ func _set_progress(
 
 
 func _update_metrics() -> void:
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/Metrics/DurationLabel.text = \
+    $VBoxContainer/Metrics/DurationLabel.text = \
             Gs.utils.get_time_string_from_seconds( \
                     Gs.time.get_clock_time() - start_time, \
                     false, \
@@ -332,15 +302,11 @@ func _update_metrics() -> void:
 
 func _on_finished() -> void:
     Gs.audio.play_sound("achievement")
-    $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/OpenFolderButton \
-            .visible = true
+    $VBoxContainer/OpenFolderButton.visible = true
 
 
 func _get_focused_button() -> ScaffolderButton:
-    return $FullScreenPanel/VBoxContainer/CenteredPanel/ScrollContainer/ \
-            CenterContainer/VBoxContainer/CloseButton as \
-            ScaffolderButton
+    return $VBoxContainer/CloseButton as ScaffolderButton
 
 
 func _on_OpenFolderButton_pressed() -> void:
