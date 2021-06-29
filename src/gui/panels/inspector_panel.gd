@@ -30,6 +30,9 @@ var _annotator_control_item_classes := [
 
 
 func _ready() -> void:
+    if Engine.editor_hint:
+        return
+    
     assert(Surfacer.is_inspector_enabled)
     
     theme = Gs.gui.theme
@@ -64,6 +67,9 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+    if Engine.editor_hint:
+        return
+    
     Gs.gui.remove_gui_to_scale(self)
     Gs.gui.active_overlays.erase(self)
     Surfacer.graph_inspector = null
