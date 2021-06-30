@@ -23,6 +23,7 @@
 [node name="InspectorPanel" type="VBoxContainer"]
 margin_right = 360.0
 margin_bottom = 684.0
+rect_min_size = Vector2( 360, 0 )
 mouse_filter = 2
 custom_constants/separation = 0
 script = ExtResource( 1 )
@@ -81,10 +82,10 @@ text = "Pause"
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 140.0
+margin_top = 14.0
 margin_right = 360.0
-margin_bottom = 29.0
+margin_bottom = 14.0
 size_flags_horizontal = 3
-size_flags_vertical = 1
 
 [node name="XButtonWrapper" type="Control" parent="PanelContainer/VBoxContainer/Header"]
 margin_left = 360.0
