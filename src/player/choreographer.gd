@@ -168,7 +168,10 @@ func _execute_next_step() -> void:
                         player.navigator.navigate_to_position(destination)
                 assert(is_navigation_valid)
             "zoom":
-                _current_zoom = step.zoom
+                _current_zoom = \
+                        step.zoom if \
+                        !is_inf(step.zoom) else \
+                        _initial_zoom
                 if is_step_immediate:
                     Gs.camera_controller.zoom_factor = _current_zoom
                 else:
@@ -258,4 +261,4 @@ func skip() -> void:
     if Gs.time.time_scale != _current_time_scale:
         Gs.time.time_scale = _current_time_scale
     if Gs.camera_controller.zoom_factor != _current_zoom:
-        Gs.camera_controller.zoom_factor
+        Gs.camera_controller.zoom_factor = _current_zoom

@@ -24,8 +24,9 @@ var _annotator_control_item_classes := [
     ActiveTrajectoryAnnotatorSettingsLabeledControlItem,
     NavigationDestinationAnnotatorSettingsLabeledControlItem,
     TimeScaleSettingsLabeledControlItem,
-    LogSurfacerEventsSettingsLabeledControlItem,
+    CameraZoomSettingsLabeledControlItem,
     MetronomeSettingsLabeledControlItem,
+    LogSurfacerEventsSettingsLabeledControlItem,
 ]
 
 
