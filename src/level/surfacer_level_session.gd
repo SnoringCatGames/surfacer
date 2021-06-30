@@ -5,5 +5,5 @@ extends ScaffolderLevelSession
 #       destroyed.
 
 
-# func reset() -> void:
-#     .reset()
+# func reset(id: String) -> void:
+#     .reset(id)
