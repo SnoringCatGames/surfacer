@@ -117,7 +117,6 @@ margin_bottom = 14.0
 margin_top = 29.0
 margin_right = 360.0
 margin_bottom = 600.0
-rect_min_size = Vector2( 0, 300 )
 size_flags_vertical = 3
 custom_constants/separation = 0
 
@@ -240,8 +239,7 @@ size = Vector2( 0, 20 )
 margin_left = 360.0
 margin_top = 600.0
 margin_right = 360.0
-margin_bottom = 664.0
-rect_min_size = Vector2( 0, 64 )
+margin_bottom = 600.0
 mouse_filter = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
@@ -253,17 +251,14 @@ __meta__ = {
 [node name="Spacer" parent="Footer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 32.0
-margin_bottom = 32.0
 size_flags_horizontal = 3
 size = Vector2( 32, 0 )
 
 [node name="GearButton" parent="Footer" instance=ExtResource( 14 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 32.0
 margin_right = 0.0
-margin_bottom = 32.0
+margin_bottom = 0.0
 texture_normal = ExtResource( 5 )
 texture_pressed = ExtResource( 4 )
 texture_hover = ExtResource( 3 )
@@ -272,16 +267,13 @@ size_override = Vector2( 64, 64 )
 [node name="Spacer13" parent="Footer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 32.0
-margin_bottom = 32.0
 size = Vector2( 20, 0 )
 
 [node name="PauseButton" parent="Footer" instance=ExtResource( 14 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 32.0
 margin_right = 0.0
-margin_bottom = 32.0
+margin_bottom = 0.0
 texture_normal = ExtResource( 12 )
 texture_pressed = ExtResource( 18 )
 texture_hover = ExtResource( 9 )
@@ -290,8 +282,6 @@ size_override = Vector2( 64, 64 )
 [node name="Spacer4" parent="Footer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 32.0
-margin_bottom = 32.0
 
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Header/PauseButton" to="." method="_on_HeaderPauseButton_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton" to="." method="_on_HeaderXButton_pressed"]
