@@ -5,7 +5,8 @@
 
 [node name="Legend" type="VBoxContainer"]
 margin_top = 0.519775
-margin_bottom = 0.519775
+margin_right = 189.0
+margin_bottom = 20.5198
 custom_constants/separation = 0
 script = ExtResource( 1 )
 __meta__ = {
@@ -15,7 +16,6 @@ __meta__ = {
 [node name="Label" type="Label" parent="."]
 margin_right = 189.0
 margin_bottom = 20.0
-rect_min_size = Vector2( 0, 20 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
 text = "(No annotations rendered)"

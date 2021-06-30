@@ -33,6 +33,8 @@ func _ready() -> void:
     if Engine.editor_hint:
         return
     
+    Gs.utils.record_gui_original_min_rect_size_recursively(self)
+    
     assert(Surfacer.is_inspector_enabled)
     
     theme = Gs.gui.theme
@@ -88,7 +90,7 @@ func _deferred_update_gui_scale() -> void:
             x_button.get_meta("gs_rect_position") * Gs.gui.scale
     for child in get_children():
         if child is Control:
-            Gs.utils._scale_gui_recursively(child)
+            Gs.utils.scale_gui_recursively(child)
     rect_size.x = $PanelContainer.rect_size.x
     _set_footer_visibility(!is_open)
     rect_position.x = \
@@ -139,7 +141,7 @@ func _initialize_annotator_checkboxes() -> void:
         annotators.add_child(row)
     
     for child in annotators.get_children():
-        Gs.utils._scale_gui_recursively(child)
+        Gs.utils.scale_gui_recursively(child)
 
 
 func _get_closed_position_y() -> float:
