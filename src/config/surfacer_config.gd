@@ -91,6 +91,7 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
                 WelcomePanelSettingsLabeledControlItem,
                 IntroChoreographySettingsLabeledControlItem,
                 InspectorEnabledSettingsLabeledControlItem,
+                CameraZoomSettingsLabeledControlItem,
                 TimeScaleSettingsLabeledControlItem,
                 MetronomeSettingsLabeledControlItem,
                 LogSurfacerEventsSettingsLabeledControlItem,
