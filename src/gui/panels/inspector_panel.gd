@@ -33,7 +33,7 @@ func _ready() -> void:
     if Engine.editor_hint:
         return
     
-    Gs.utils.record_gui_original_min_rect_size_recursively(self)
+    Gs.utils.record_gui_original_size_recursively(self)
     
     assert(Surfacer.is_inspector_enabled)
     
