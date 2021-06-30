@@ -98,16 +98,13 @@ func _instantiate_platform_graphs(
         emit_signal("load_started")
         Gs.time.set_timeout(
                 funcref(self, "_load_platform_graphs"),
-                0.3,
+                0.01,
                 [includes_debug_only_state])
     else:
-        # Set up the PlatformGraphs for this level.
-        surface_parser = SurfaceParser.new()
-        surface_parser.calculate(surface_tile_maps)
-        platform_graphs = {}
-        assert(!Surfacer.player_params.empty())
         emit_signal("calculation_started")
-        _defer_calculate_next_platform_graph(-1)
+        Gs.time.set_timeout(
+                funcref(self, "_calculate_platform_graphs"),
+                0.01)
 
 
 func _on_graphs_parsed() -> void:
@@ -135,6 +132,14 @@ func _on_graphs_parsed() -> void:
     is_parse_finished = true
     
     emit_signal("parse_finished")
+
+
+func _calculate_platform_graphs() -> void:
+    surface_parser = SurfaceParser.new()
+    surface_parser.calculate(surface_tile_maps)
+    platform_graphs = {}
+    assert(!Surfacer.player_params.empty())
+    _defer_calculate_next_platform_graph(-1)
 
 
 func _calculate_next_platform_graph(player_index: int) -> void:
