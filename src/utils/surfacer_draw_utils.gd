@@ -126,6 +126,7 @@ static func draw_path(
     var vertices := PoolVector2Array()
     for edge in path.edges:
         vertices.append_array(_get_edge_trajectory_vertices(edge))
+    
     if trim_front_end_radius > 0.0:
         vertices = _trim_front_end(
                 vertices,
@@ -134,6 +135,10 @@ static func draw_path(
         vertices = _trim_back_end(
                 vertices,
                 trim_back_end_radius)
+    
+    if vertices.size() < 2:
+        return
+    
     canvas.draw_polyline(
             vertices,
             color,
@@ -513,9 +518,10 @@ static func _draw_edge_from_instructions_positions(
                 edge,
                 true,
                 includes_continuous_positions)
-        canvas.draw_polyline(
-                vertices,
-                continuous_trajectory_color,
+        if vertices.size() >= 2:
+            canvas.draw_polyline(
+                    vertices,
+                    continuous_trajectory_color,
                 stroke_width)
     if includes_discrete_positions:
         # Draw the trajectory (as approximated via discrete time steps during
@@ -524,10 +530,11 @@ static func _draw_edge_from_instructions_positions(
                 edge,
                 true,
                 includes_discrete_positions)
-        canvas.draw_polyline(
-                vertices,
-                discrete_trajectory_color,
-                stroke_width)
+        if vertices.size() >= 2:
+            canvas.draw_polyline(
+                    vertices,
+                    discrete_trajectory_color,
+                    stroke_width)
     
     if includes_waypoints:
         # Draw the intermediate waypoints.
