@@ -174,8 +174,7 @@ func _on_annotators_ready() -> void:
 func _destroy() -> void:
     _is_destroyed = true
     if is_instance_valid(prediction):
-        Surfacer.annotators.path_preselection_annotator \
-                .remove_prediction(prediction)
+        prediction.queue_free()
     queue_free()
 
 

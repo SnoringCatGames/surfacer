@@ -18,7 +18,7 @@ func add_all(elements: Array) -> void:
 
 func clear() -> void:
     for element in _elements_set:
-        element.clear()
+        element._destroy()
     _elements_set.clear()
     update()
 

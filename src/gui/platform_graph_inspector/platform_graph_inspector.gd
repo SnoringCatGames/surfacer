@@ -97,9 +97,15 @@ func _ready() -> void:
     _populate()
 
 
+func _exit_tree() -> void:
+    _destroy()
+
+
 func _destroy() -> void:
-    Gs.canvas_layers.layers.annotation \
-            .remove_child(inspector_selector)
+    if is_instance_valid(inspector_selector):
+        inspector_selector.queue_free()
+    if !is_queued_for_deletion():
+        queue_free()
 
 
 func _gui_input(event: InputEvent) -> void:

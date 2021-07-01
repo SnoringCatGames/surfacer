@@ -31,7 +31,7 @@ func _ready() -> void:
     if Gs.gui.is_loading_image_shown:
         var loading_image: ScaffolderConfiguredImage = Gs.utils.add_scene(
                 $VBoxContainer,
-                Gs.gui.is_loading_image_shown,
+                Gs.gui.loading_image_scene,
                 true,
                 true,
                 0)
@@ -242,7 +242,7 @@ func _on_stage_progress(
             precompute_level_index + 1,
             Surfacer.precompute_platform_graph_for_levels.size(),
         ]
-        label_2 = next_step_label
+        label_2 = "--- %s ---" % next_step_label
     
     _set_progress(progress, label_1, label_2)
 
@@ -253,7 +253,7 @@ func _set_progress(
         label_2: String,
         label_3 := "",
         label_4 := "") -> void:
-    $VBoxContainer/ProgressBar.value = round(progress)
+    $VBoxContainer/ScaffolderProgressBar.value = round(progress)
     
     $VBoxContainer/Labels/Label1.text = label_1
     $VBoxContainer/Labels/Label2.text = label_2

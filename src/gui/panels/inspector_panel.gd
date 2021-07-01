@@ -109,7 +109,6 @@ func _initialize_annotator_checkboxes() -> void:
     var annotators := \
             $PanelContainer/VBoxContainer/Sections/MarginContainer/Annotators
     for child in annotators.get_children():
-        annotators.remove_child(child)
         child.queue_free()
     var item_width: float = \
             (annotators.rect_size.x - \
