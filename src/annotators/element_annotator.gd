@@ -24,7 +24,7 @@ func clear() -> void:
 
 
 func erase(element: AnnotationElement) -> bool:
-    element.clear()
+    element._destroy()
     update()
     return _elements_set.erase(element)
 
