@@ -29,6 +29,6 @@ func draw(canvas: CanvasItem) -> void:
     Gs.logger.error("Abstract AnnotationElement.draw is not implemented")
 
 
-func clear() -> void:
+func _destroy() -> void:
     # Do nothing unless the sub-class implements this.
     pass

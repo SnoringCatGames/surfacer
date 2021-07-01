@@ -15,12 +15,14 @@ __meta__ = {
 }
 screen_name = "precompute_platform_graphs"
 nav_bar_text = "Calculating platform graphs"
+is_back_button_shown = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 margin_right = 160.0
-margin_bottom = 209.0
+margin_bottom = 249.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+custom_constants/separation = 12
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -34,9 +36,9 @@ margin_bottom = 14.0
 size_override = Vector2( 320, 0 )
 
 [node name="Labels" type="VBoxContainer" parent="VBoxContainer"]
-margin_top = 18.0
+margin_top = 26.0
 margin_right = 160.0
-margin_bottom = 122.0
+margin_bottom = 130.0
 
 [node name="Label1" type="Label" parent="VBoxContainer/Labels"]
 margin_right = 160.0
@@ -74,14 +76,14 @@ align = 1
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 80.0
-margin_top = 126.0
+margin_top = 142.0
 margin_right = 80.0
-margin_bottom = 126.0
+margin_bottom = 142.0
 
 [node name="Metrics" type="VBoxContainer" parent="VBoxContainer"]
-margin_top = 130.0
+margin_top = 154.0
 margin_right = 160.0
-margin_bottom = 178.0
+margin_bottom = 202.0
 rect_min_size = Vector2( 160, 0 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -118,18 +120,18 @@ label = "Open folder"
 
 [node name="CloseButton" parent="VBoxContainer" instance=ExtResource( 7 )]
 margin_left = 80.0
-margin_top = 182.0
+margin_top = 214.0
 margin_right = 80.0
-margin_bottom = 205.0
+margin_bottom = 237.0
 custom_fonts/font = ExtResource( 6 )
 label = "Close"
 
 [node name="LevelWrapper" type="Control" parent="VBoxContainer"]
 modulate = Color( 1, 1, 1, 0 )
 margin_left = 80.0
-margin_top = 209.0
+margin_top = 249.0
 margin_right = 80.0
-margin_bottom = 209.0
+margin_bottom = 249.0
 rect_clip_content = true
 size_flags_horizontal = 4
 size_flags_vertical = 4

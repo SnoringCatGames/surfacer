@@ -310,6 +310,8 @@ static func _parse_tile_map_into_sides(
                         position,
                         tile_map)
         var tile_set_index := tile_map.get_cellv(position)
+        if tile_set_index < 0:
+            print("break")
         var shapes := tile_set.tile_get_shapes(tile_set_index)
         if shapes.empty():
             # This is a non-collidable tile (usually a background tile).

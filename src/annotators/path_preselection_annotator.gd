@@ -94,10 +94,6 @@ func add_prediction(prediction: PlayerPrediction) -> void:
     _predictions_container.add_child(prediction)
 
 
-func remove_prediction(prediction: PlayerPrediction) -> void:
-    _predictions_container.remove_child(prediction)
-
-
 func _process(_delta: float) -> void:
     var current_time: float = Gs.time.get_play_time()
     

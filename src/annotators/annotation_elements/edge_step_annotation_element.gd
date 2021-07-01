@@ -102,11 +102,9 @@ func draw(canvas: CanvasItem) -> void:
     _draw_description(canvas)
 
 
-func clear() -> void:
-    var parent := step_label.get_parent()
-    if parent != null:
-        parent.remove_child(step_label)
-        parent.remove_child(previous_out_of_reach_waypoint_label)
+func _destroy() -> void:
+    step_label.queue_free()
+    previous_out_of_reach_waypoint_label.queue_free()
 
 
 func _draw_trajectory(canvas: CanvasItem) -> void:

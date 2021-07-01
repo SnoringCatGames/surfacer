@@ -61,8 +61,7 @@ func destroy() -> void:
     tree_item.set_metadata(
             0,
             null)
-    if is_instance_valid(parent_item):
-        parent_item.remove_child(tree_item)
+    tree_item.queue_free()
     tree_item = null
     parent_item = null
 
@@ -207,7 +206,7 @@ func _destroy_placeholder_item() -> void:
     if placeholder_item == null:
         # Already destroyed.
         return
-    tree_item.remove_child(placeholder_item)
+    placeholder_item.queue_free()
     placeholder_item = null
 
 
