@@ -61,7 +61,7 @@ func destroy() -> void:
     tree_item.set_metadata(
             0,
             null)
-    tree_item.queue_free()
+    tree_item.free()
     tree_item = null
     parent_item = null
 
@@ -184,11 +184,16 @@ func _create_children_if_needed() -> void:
 func _destroy_children_if_needed() -> void:
     if are_children_ready:
         var child := tree_item.get_children()
-        while child != null:
-            var metadata: InspectorItemController = child.get_metadata(0)
+        var children := []
+        
+        while is_instance_valid(child):
+            children.push_back(child)
+            child = child.get_next()
+        
+        for c in children:
+            var metadata: InspectorItemController = c.get_metadata(0)
             if is_instance_valid(metadata):
                 metadata.destroy()
-            child = child.get_next()
         
         _destroy_children_inner()
         
@@ -203,10 +208,10 @@ func _create_placeholder_item() -> void:
 
 
 func _destroy_placeholder_item() -> void:
-    if placeholder_item == null:
+    if !is_instance_valid(placeholder_item):
         # Already destroyed.
         return
-    placeholder_item.queue_free()
+    placeholder_item.free()
     placeholder_item = null
 
 
