@@ -33,6 +33,10 @@ func _on_splash_finished() -> void:
         Gs.nav.open("precompute_platform_graphs")
 
 
+#func _on_app_quit() -> void:
+#    ._on_app_quit()
+
+
 func _register_player_actions(player_action_classes: Array) -> void:
     # Instantiate the various PlayerActions.
     for player_action_class in player_action_classes:
