@@ -10,6 +10,7 @@ var _PLAYER_SUB_ANNOTATORS := [
 ]
 
 var _LEVEL_SPECIFIC_ANNOTATORS := [
+    AnnotatorType.RULER,
     AnnotatorType.LEVEL,
     AnnotatorType.SURFACES,
     AnnotatorType.GRID_INDICES,
@@ -155,8 +156,9 @@ func _create_annotator(annotator_type: int) -> void:
     assert(!is_annotator_enabled(annotator_type))
     match annotator_type:
         AnnotatorType.RULER:
-            ruler_annotator = RulerAnnotator.new()
-            ruler_layer.add_child(ruler_annotator)
+            if Gs.level != null:
+                ruler_annotator = RulerAnnotator.new()
+                ruler_layer.add_child(ruler_annotator)
         AnnotatorType.SURFACES:
             if Gs.level != null and \
                     Surfacer.graph_parser.surface_parser != null:

@@ -81,6 +81,7 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
             label = "HUD",
             is_collapsible = true,
             item_classes = [
+                InspectorEnabledSettingsLabeledControlItem,
                 DebugPanelSettingsLabeledControlItem,
             ],
         },
@@ -90,7 +91,6 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
             item_classes = [
                 WelcomePanelSettingsLabeledControlItem,
                 IntroChoreographySettingsLabeledControlItem,
-                InspectorEnabledSettingsLabeledControlItem,
                 CameraZoomSettingsLabeledControlItem,
                 TimeScaleSettingsLabeledControlItem,
                 MetronomeSettingsLabeledControlItem,
