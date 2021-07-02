@@ -8,7 +8,8 @@ const ANNOTATOR_ROW_HEIGHT := 21.0
 const CHECK_BOX_SCALE := 0.5
 const SLIDER_WIDTH := 72.0
 
-var is_open := false setget _set_is_open,_get_is_open
+var is_open := false setget _set_is_open
+var tree_font_size := "Xs" setget _set_tree_font_size
 
 var _annotator_control_items := []
 
@@ -33,6 +34,8 @@ var _annotator_control_item_classes := [
 func _ready() -> void:
     if Engine.editor_hint:
         return
+    
+    _set_tree_font_size(tree_font_size)
     
     Gs.utils.record_gui_original_size_recursively(self)
     
@@ -116,6 +119,7 @@ func _initialize_annotator_checkboxes() -> void:
             4.0
     for item_class in _annotator_control_item_classes:
         var item: LabeledControlItem = item_class.new()
+        item.font_size = tree_font_size
         item.is_control_on_right_side = false
         item.update_item()
         _annotator_control_items.push_back(item)
@@ -153,8 +157,16 @@ func _set_is_open(value: bool) -> void:
         _toggle_open()
 
 
-func _get_is_open() -> bool:
-    return is_open
+func _set_tree_font_size(value: String) -> void:
+    tree_font_size = value
+    var font: Font = Gs.gui.get_font(tree_font_size)
+    $PanelContainer/VBoxContainer/Header/PauseButton \
+            .add_font_override("font", font)
+    $PanelContainer/VBoxContainer/Sections/InspectorContainer/ \
+            PlatformGraphInspector \
+            .add_font_override("font", font)
+    for item in _annotator_control_items:
+        item.font_size = tree_font_size
 
 
 func _toggle_open() -> void:

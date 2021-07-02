@@ -16,8 +16,8 @@ var collision_x_stroke_width: float
 var collision_player_boundary_stroke_width: float
 var color: Color
 
-var step_label: Label
-var previous_out_of_reach_waypoint_label: Label
+var step_label: ScaffolderLabel
+var previous_out_of_reach_waypoint_label: ScaffolderLabel
 
 
 func _init(
@@ -82,15 +82,18 @@ func _calculate_color(renders_faintly: bool) -> Color:
 
 
 func _create_labels() -> void:
-    step_label = Label.new()
-    step_label.add_font_override("font", Gs.gui.fonts.main_xs)
+    step_label = Gs.utils.add_scene(
+            null, Gs.gui.SCAFFOLDER_LABEL_SCENE, false, true)
+    step_label.font_size = "Xs"
     step_label.rect_scale = Vector2(LABEL_SCALE, LABEL_SCALE)
+    step_label.align = Label.ALIGN_LEFT
     
-    previous_out_of_reach_waypoint_label = Label.new()
-    previous_out_of_reach_waypoint_label \
-            .add_font_override("font", Gs.gui.fonts.main_xs)
+    previous_out_of_reach_waypoint_label = Gs.utils.add_scene(
+            null, Gs.gui.SCAFFOLDER_LABEL_SCENE, false, true)
+    previous_out_of_reach_waypoint_label.font_size = "Xs"
     previous_out_of_reach_waypoint_label.rect_scale = \
             Vector2(LABEL_SCALE, LABEL_SCALE)
+    previous_out_of_reach_waypoint_label.align = Label.ALIGN_LEFT
 
 
 func draw(canvas: CanvasItem) -> void:

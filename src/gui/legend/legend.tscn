@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/legend/legend.gd" type="Script" id=1]
-[ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_xs.tres" type="DynamicFont" id=2]
+[ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_label.tscn" type="PackedScene" id=3]
 
 [node name="Legend" type="VBoxContainer"]
 margin_top = 0.519775
@@ -13,19 +13,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" parent="." instance=ExtResource( 3 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_right = 189.0
-margin_bottom = 20.0
+margin_bottom = 14.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 2 )
 text = "(No annotations rendered)"
-align = 1
-valign = 1
+font_size = "Xs"
 
 [node name="GridContainer" type="GridContainer" parent="."]
-margin_top = 20.0
+margin_top = 14.0
 margin_right = 189.0
-margin_bottom = 20.0
+margin_bottom = 14.0
 custom_constants/vseparation = 0
 custom_constants/hseparation = 0
 columns = 2
