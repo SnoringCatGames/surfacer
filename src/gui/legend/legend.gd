@@ -6,7 +6,7 @@ extends VBoxContainer
 var _items := {}
 
 var grid: GridContainer
-var label: Label
+var label: ScaffolderLabel
 
 var _debounced_update_gui_scale: FuncRef = Gs.time.debounce(
         funcref(self, "_update_gui_scale_debounced"),
