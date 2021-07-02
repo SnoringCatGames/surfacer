@@ -35,6 +35,11 @@ func _ready() -> void:
     if Engine.editor_hint:
         return
     
+    # Make the panel style unique, so that we can change the border width
+    # without changing other things.
+    $PanelContainer.add_stylebox_override(
+            "panel", $PanelContainer.get_stylebox("panel").duplicate())
+    
     _set_tree_font_size(tree_font_size)
     
     Gs.utils.record_gui_original_size_recursively(self)
@@ -92,11 +97,15 @@ func _deferred_update_gui_scale() -> void:
     var x_button := $PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton
     x_button.rect_position = \
             x_button.get_meta("gs_rect_position") * Gs.gui.scale
+    
     for child in get_children():
         if child is Control:
             Gs.utils.scale_gui_recursively(child)
+    
     rect_size.x = $PanelContainer.rect_size.x
+    
     _set_footer_visibility(!is_open)
+    
     rect_position.x = \
             get_viewport().size.x - \
             rect_size.x - \
@@ -105,6 +114,23 @@ func _deferred_update_gui_scale() -> void:
             0.0 if \
             is_open else \
             _get_closed_position_y()
+    
+    var border_color: Color = Gs.colors.overlay_panel_border
+    var border_width: float = \
+            Gs.styles.overlay_panel_border_width * Gs.gui.scale
+    
+    var panel_stylebox: StyleBoxFlat = $PanelContainer.get_stylebox("panel")
+    panel_stylebox.border_color = border_color
+    panel_stylebox.border_width_left = border_width
+    panel_stylebox.border_width_top = 0.0
+    panel_stylebox.border_width_right = border_width
+    panel_stylebox.border_width_bottom = border_width
+    
+    var separator_stylebox: StyleBoxLine = \
+            $PanelContainer/VBoxContainer/Sections/HSeparator \
+            .get_stylebox("separator")
+    separator_stylebox.color = border_color
+    separator_stylebox.thickness = border_width
 
 
 func _initialize_annotator_checkboxes() -> void:
