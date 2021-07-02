@@ -15,7 +15,7 @@ const SHAPE_REGION_CENTER := Vector2(
 
 var type := LegendItemType.UNKNOWN
 var text: String
-var label: Label
+var label: ScaffolderLabel
 
 
 func _init(
@@ -29,10 +29,12 @@ func _enter_tree() -> void:
     size_flags_horizontal = Control.SIZE_EXPAND_FILL
     size_flags_vertical = Control.SIZE_EXPAND_FILL
     
-    label = Label.new()
+    label = Gs.utils.add_scene(
+            null, Gs.gui.SCAFFOLDER_LABEL_SCENE, false, true)
+    label.align = Label.ALIGN_LEFT
     label.valign = Label.VALIGN_CENTER
     label.max_lines_visible = 2
-    label.add_font_override("font", Gs.gui.fonts.main_xs)
+    label.font_size = "Xs"
     label.add_constant_override("line_spacing", LINE_SPACING)
     label.text = text
     add_child(label)

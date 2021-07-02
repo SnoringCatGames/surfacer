@@ -1,15 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/selection_description.gd" type="Script" id=1]
-[ext_resource path="res://addons/scaffolder/assets/fonts/pxlzr_font_xs.tres" type="DynamicFont" id=3]
-
-
-
-
-
-
-
-
+[ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_label.tscn" type="PackedScene" id=2]
 
 [node name="SelectionDescription" type="MarginContainer"]
 anchor_right = 1.0
@@ -23,10 +15,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" parent="." instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_left = 4.0
-margin_top = 296.0
+margin_top = 378.0
 margin_right = 1020.0
-margin_bottom = 306.0
-custom_fonts/font = ExtResource( 3 )
+margin_bottom = 392.0
+align = 0
+valign = 0
 autowrap = true
+font_size = "Xs"
