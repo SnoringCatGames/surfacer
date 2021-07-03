@@ -67,7 +67,7 @@ func _draw() -> void:
         var alpha := color.a * (1 - surface_progress)
         color.a = alpha
         
-        Gs.draw_utils.draw_surface(
+        Gs.draw.draw_surface(
                 self,
                 selected_surface,
                 color)

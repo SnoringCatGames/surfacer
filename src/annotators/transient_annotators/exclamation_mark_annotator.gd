@@ -105,7 +105,7 @@ func _draw() -> void:
     var stroke_color: Color = Color.white
     stroke_color.a = opacity
     
-    Gs.draw_utils.draw_exclamation_mark(
+    Gs.draw.draw_exclamation_mark(
             self,
             center,
             width,
@@ -113,7 +113,7 @@ func _draw() -> void:
             stroke_color,
             false,
             stroke_width)
-    Gs.draw_utils.draw_exclamation_mark(
+    Gs.draw.draw_exclamation_mark(
             self,
             center,
             width,

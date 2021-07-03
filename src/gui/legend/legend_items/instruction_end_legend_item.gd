@@ -17,7 +17,7 @@ func _init().(
 func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
-    Gs.draw_utils.draw_instruction_indicator(
+    Gs.draw.draw_instruction_indicator(
             self,
             "mr",
             false,

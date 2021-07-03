@@ -33,7 +33,7 @@ func _draw_shape(
             SurfaceSide.FLOOR,
             null,
             [])
-    Gs.draw_utils.draw_surface(
+    Gs.draw.draw_surface(
             self,
             surface,
             color_params.get_color(),

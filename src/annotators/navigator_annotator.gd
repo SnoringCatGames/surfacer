@@ -97,7 +97,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 navigator.player.is_human_player else \
                 Surfacer.ann_defaults.COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR
         current_path_color.a *= fade_progress
-        Gs.draw_utils.draw_path(
+        Gs.draw.draw_path(
                 self,
                 current_path,
                 AnnotationElementDefaults \
@@ -139,7 +139,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 Surfacer.ann_defaults \
                         .COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_STROKE_COLOR
         origin_indicator_stroke_color.a *= fade_progress
-        Gs.draw_utils.draw_circle_outline(
+        Gs.draw.draw_circle_outline(
                 self,
                 current_path.origin.target_point,
                 AnnotationElementDefaults.NAVIGATOR_ORIGIN_INDICATOR_RADIUS,
@@ -161,7 +161,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 Surfacer.ann_defaults \
                         .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
         destination_indicator_fill_color.a *= fade_progress
-        Gs.draw_utils.draw_destination_marker(
+        Gs.draw.draw_destination_marker(
                 self,
                 current_path.destination,
                 false,
@@ -179,7 +179,7 @@ func _draw_current_path(current_path: PlatformGraphPath) -> void:
                 Surfacer.ann_defaults \
                         .COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR
         destination_indicator_stroke_color *= fade_progress
-        Gs.draw_utils.draw_destination_marker(
+        Gs.draw.draw_destination_marker(
                 self,
                 current_path.destination,
                 false,
@@ -197,7 +197,7 @@ func _draw_previous_path() -> void:
             Surfacer.ann_defaults.HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR if \
             navigator.player.is_human_player else \
             Surfacer.ann_defaults.COMPUTER_NAVIGATOR_PREVIOUS_PATH_COLOR
-    Gs.draw_utils.draw_path(
+    Gs.draw.draw_path(
             self,
             previous_path,
             AnnotationElementDefaults \
@@ -217,7 +217,7 @@ func _draw_previous_path() -> void:
 func _draw_beat_hashes(
         beats: Array,
         color: Color) -> void:
-    Gs.draw_utils.draw_beat_hashes(
+    Gs.draw.draw_beat_hashes(
             self,
             beats,
             AnnotationElementDefaults \

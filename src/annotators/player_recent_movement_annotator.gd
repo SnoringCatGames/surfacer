@@ -228,7 +228,7 @@ func _draw_action_indicator(
                     PlayerActionType.get_string(action))
     
     if input_key != "":
-        Gs.draw_utils.draw_instruction_indicator(
+        Gs.draw.draw_instruction_indicator(
                 self,
                 input_key,
                 is_pressed,
