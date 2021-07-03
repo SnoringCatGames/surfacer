@@ -339,7 +339,7 @@ func _validate_platform_graphs(json_object: Dictionary) -> void:
 
 
 func save_platform_graphs() -> void:
-    assert(Gs.utils.get_is_pc_device())
+    assert(Gs.device.get_is_pc_app())
     
     if !Gs.utils.ensure_directory_exists(get_os_directory_path()):
         return
