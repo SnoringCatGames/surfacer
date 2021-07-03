@@ -35,7 +35,7 @@ func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
     var start := jump_land_positions.jump_position.target_point
     var end := jump_land_positions.land_position.target_point
-    Gs.draw_utils.draw_dashed_line(
+    Gs.draw.draw_dashed_line(
             canvas,
             start,
             end,
@@ -44,11 +44,11 @@ func draw(canvas: CanvasItem) -> void:
             dash_gap,
             0.0,
             dash_stroke_width)
-    Gs.draw_utils.draw_origin_marker(
+    Gs.draw.draw_origin_marker(
             canvas,
             start,
             color)
-    Gs.draw_utils.draw_destination_marker(
+    Gs.draw.draw_destination_marker(
             canvas,
             jump_land_positions.land_position,
             true,

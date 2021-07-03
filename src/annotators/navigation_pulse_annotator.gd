@@ -99,7 +99,7 @@ func _draw() -> void:
     var trim_front_end_radius := 0.0
     var trim_back_end_radius := 0.0
     
-    Gs.draw_utils.draw_path_duration_segment(
+    Gs.draw.draw_path_duration_segment(
             self,
             current_path,
             path_segment_time_start,

@@ -35,7 +35,7 @@ func _init(
 
 func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
-    Gs.draw_utils.draw_edge(
+    Gs.draw.draw_edge(
             canvas,
             edge,
             SurfacerDrawUtils.EDGE_TRAJECTORY_WIDTH,

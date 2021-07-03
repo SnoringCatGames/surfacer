@@ -26,7 +26,7 @@ func _draw_shape(
     var end := center + offset_from_center
     var color: Color = Surfacer.ann_defaults \
             .FAILED_EDGE_ATTEMPT_COLOR_PARAMS.get_color()
-    Gs.draw_utils.draw_dashed_line(
+    Gs.draw.draw_dashed_line(
             self,
             start,
             end,
@@ -35,7 +35,7 @@ func _draw_shape(
             DASH_GAP,
             0.0,
             STROKE_WIDTH)
-    Gs.draw_utils.draw_x(
+    Gs.draw.draw_x(
             self,
             center,
             X_WIDTH,

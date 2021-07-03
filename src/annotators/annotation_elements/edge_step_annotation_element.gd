@@ -114,7 +114,7 @@ func _draw_trajectory(canvas: CanvasItem) -> void:
     var step := step_result_metadata.step
     if step != null and step.frame_positions.size() > 1:
         # Draw the valid step trajectory.
-        Gs.draw_utils.draw_dashed_polyline(
+        Gs.draw.draw_dashed_polyline(
                 canvas,
                 PoolVector2Array(step.frame_positions),
                 color,
@@ -129,14 +129,14 @@ func _draw_trajectory(canvas: CanvasItem) -> void:
 
 func _draw_step_end_points(canvas: CanvasItem) -> void:
     # Draw the step end points.
-    Gs.draw_utils.draw_circle_outline(
+    Gs.draw.draw_circle_outline(
             canvas,
             step_result_metadata.get_start().position,
             AnnotationElementDefaults.WAYPOINT_RADIUS,
             color,
             waypoint_stroke_width,
             4.0)
-    Gs.draw_utils.draw_circle_outline(
+    Gs.draw.draw_circle_outline(
             canvas,
             step_result_metadata.get_end().position,
             AnnotationElementDefaults.WAYPOINT_RADIUS,
@@ -155,7 +155,7 @@ func _draw_collision(canvas: CanvasItem) -> void:
         var collision := collision_result_metadata.collision
         if collision.position != Vector2.INF:
             # Draw an X at the actual point of collision.
-            Gs.draw_utils.draw_x(
+            Gs.draw.draw_x(
                     canvas,
                     collision.position,
                     AnnotationElementDefaults.COLLISION_X_WIDTH_HEIGHT.x,
@@ -165,14 +165,14 @@ func _draw_collision(canvas: CanvasItem) -> void:
         
         if !renders_faintly and collision.surface != null:
             # Draw the surface that was collided with.
-            Gs.draw_utils.draw_surface(
+            Gs.draw.draw_surface(
                     canvas,
                     collision.surface,
                     collision_color)
         
         # Draw an outline of the player's collision boundary at the point of
         # collision.
-        Gs.draw_utils.draw_shape_outline(
+        Gs.draw.draw_shape_outline(
                 canvas,
                 collision.player_position,
                 collision_result_metadata.collider_shape,
@@ -190,7 +190,7 @@ func _draw_collision(canvas: CanvasItem) -> void:
             # Draw the upcoming waypoints, around the collision.
             for upcoming_waypoint in step_result_metadata.upcoming_waypoints:
                 if upcoming_waypoint.is_valid:
-                    Gs.draw_utils.draw_checkmark(
+                    Gs.draw.draw_checkmark(
                             canvas,
                             upcoming_waypoint.position,
                             AnnotationElementDefaults.VALID_WAYPOINT_WIDTH,
@@ -198,7 +198,7 @@ func _draw_collision(canvas: CanvasItem) -> void:
                             AnnotationElementDefaults \
                                     .VALID_WAYPOINT_STROKE_WIDTH)
                 else:
-                    Gs.draw_utils.draw_x(
+                    Gs.draw.draw_x(
                             canvas,
                             upcoming_waypoint.position,
                             AnnotationElementDefaults.INVALID_WAYPOINT_WIDTH,
@@ -229,14 +229,14 @@ func _draw_bounding_box_and_margin(
         color: Color) -> void:
     var collision_result_metadata := \
             step_result_metadata.collision_result_metadata
-    Gs.draw_utils.draw_rectangle_outline(
+    Gs.draw.draw_rectangle_outline(
             canvas,
             center,
             collision_result_metadata.collider_half_width_height,
             false,
             color,
             AnnotationElementDefaults.COLLISION_BOUNDING_BOX_STROKE_WIDTH)
-    Gs.draw_utils.draw_dashed_rectangle(
+    Gs.draw.draw_dashed_rectangle(
             canvas,
             center,
             collision_result_metadata.collider_half_width_height + \
@@ -258,7 +258,7 @@ func _draw_backtracking_waypoint(canvas: CanvasItem) -> void:
     if step_result_metadata.get_is_backtracking() and \
             !renders_faintly:
         # Draw the waypoint position.
-        Gs.draw_utils.draw_diamond_outline(
+        Gs.draw.draw_diamond_outline(
                 canvas,
                 step_result_metadata.previous_out_of_reach_waypoint.position,
                 AnnotationElementDefaults \
@@ -321,7 +321,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
     
     # Render a dotted straight line with a bigger x in the middle for invalid
     # steps.
-    Gs.draw_utils.draw_dashed_line(
+    Gs.draw.draw_dashed_line(
             canvas,
             start,
             end,
@@ -330,7 +330,7 @@ func _draw_invalid_trajectory(canvas: CanvasItem) -> void:
             AnnotationElementDefaults.INVALID_EDGE_DASH_GAP,
             0.0,
             AnnotationElementDefaults.INVALID_EDGE_DASH_STROKE_WIDTH)
-    Gs.draw_utils.draw_x(
+    Gs.draw.draw_x(
             canvas,
             middle,
             AnnotationElementDefaults.INVALID_EDGE_X_WIDTH,

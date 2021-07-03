@@ -46,7 +46,7 @@ func draw(canvas: CanvasItem) -> void:
     var start := failed_edge_attempt.get_start()
     var end := failed_edge_attempt.get_end()
     var middle: Vector2 = start.linear_interpolate(end, 0.5)
-    Gs.draw_utils.draw_dashed_line(
+    Gs.draw.draw_dashed_line(
             canvas,
             start,
             end,
@@ -55,18 +55,18 @@ func draw(canvas: CanvasItem) -> void:
             dash_gap,
             0.0,
             dash_stroke_width)
-    Gs.draw_utils.draw_x(
+    Gs.draw.draw_x(
             canvas,
             middle,
             AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_WIDTH,
             AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_X_HEIGHT,
             line_color,
             dash_stroke_width)
-    Gs.draw_utils.draw_origin_marker(
+    Gs.draw.draw_origin_marker(
             canvas,
             start,
             end_color)
-    Gs.draw_utils.draw_destination_marker(
+    Gs.draw.draw_destination_marker(
             canvas,
             failed_edge_attempt.end_position_along_surface,
             true,

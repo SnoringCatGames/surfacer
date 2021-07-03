@@ -58,7 +58,7 @@ func _draw_grab_position() -> void:
 
 
 func _draw_position_along_surface() -> void:
-    Gs.draw_utils.draw_position_along_surface(
+    Gs.draw.draw_position_along_surface(
             self,
             player.surface_state.center_position_along_surface,
             POSITION_ALONG_SURFACE_COLOR,
@@ -73,7 +73,7 @@ func _draw_position_along_surface() -> void:
 
 
 func _draw_collider_outline() -> void:
-    Gs.draw_utils.draw_shape_outline(
+    Gs.draw.draw_shape_outline(
             self,
             player.position,
             player.movement_params.collider_shape,

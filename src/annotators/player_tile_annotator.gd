@@ -27,7 +27,7 @@ func _draw_tile_border() -> void:
     var coord := player.surface_state.grab_position_tile_map_coord
     var center := (coord + Vector2(0.5, 0.5)) * cell_size
     
-    Gs.draw_utils.draw_rectangle_outline(
+    Gs.draw.draw_rectangle_outline(
             self,
             center,
             cell_size / 2.0,

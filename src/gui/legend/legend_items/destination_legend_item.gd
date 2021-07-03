@@ -34,7 +34,7 @@ func _draw_shape(
     position.surface = surface
     position.target_projection_onto_surface = cone_end_point
     
-    Gs.draw_utils.draw_destination_marker(
+    Gs.draw.draw_destination_marker(
             self,
             position,
             false,

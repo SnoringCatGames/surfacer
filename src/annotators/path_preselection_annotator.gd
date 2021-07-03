@@ -202,7 +202,7 @@ func _draw() -> void:
                     path_base_color.g,
                     path_base_color.b,
                     path_alpha)
-            Gs.draw_utils.draw_path(
+            Gs.draw.draw_path(
                     self,
                     preselection_path,
                     PRESELECTION_PATH_STROKE_WIDTH,
@@ -214,7 +214,7 @@ func _draw() -> void:
                     true,
                     false)
             
-            Gs.draw_utils.draw_beat_hashes(
+            Gs.draw.draw_beat_hashes(
                     self,
                     preselection_path_beats,
                     PRESELECTION_PATH_DOWNBEAT_HASH_LENGTH,
@@ -232,7 +232,7 @@ func _draw() -> void:
                     surface_base_color.g,
                     surface_base_color.b,
                     surface_alpha)
-            Gs.draw_utils.draw_surface(
+            Gs.draw.draw_surface(
                     self,
                     phantom_surface,
                     surface_color,
@@ -249,7 +249,7 @@ func _draw() -> void:
                 position_indicator_alpha)
         var cone_length := PRESELECTION_POSITION_INDICATOR_LENGTH - \
                 PRESELECTION_POSITION_INDICATOR_RADIUS
-        Gs.draw_utils.draw_destination_marker(
+        Gs.draw.draw_destination_marker(
                 self,
                 phantom_position_along_surface,
                 false,

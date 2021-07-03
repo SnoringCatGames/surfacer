@@ -478,7 +478,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
 
 func initialize() -> void:
     assert(Gs.colors is SurfacerColors)
-    assert(Gs.draw_utils is SurfacerDrawUtils)
+    assert(Gs.draw is SurfacerDrawUtils)
     assert(Gs.level_config is MommaDuckLevelConfig)
     assert(Gs.level_session is MommaDuckLevelSession)
     
