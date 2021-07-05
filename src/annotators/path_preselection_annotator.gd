@@ -30,7 +30,7 @@ var INVALID_POSITION_INDICATOR_COLOR := Gs.colors.opacify(
 const PRESELECTION_MIN_OPACITY := 0.5
 const PRESELECTION_MAX_OPACITY := 1.0
 const PRESELECTION_DEFAULT_DURATION := 0.6
-var PRESELECTION_SURFACE_DEPTH: float = DrawUtils.SURFACE_DEPTH + 4.0
+var PRESELECTION_SURFACE_DEPTH: float = SurfacerDrawUtils.SURFACE_DEPTH + 4.0
 const PRESELECTION_SURFACE_OUTWARD_OFFSET := 4.0
 const PRESELECTION_SURFACE_LENGTH_PADDING := 4.0
 const PRESELECTION_POSITION_INDICATOR_LENGTH := 128.0
@@ -154,8 +154,7 @@ func _process(_delta: float) -> void:
         var preselection_duration: float = \
                 Gs.slow_motion.music \
                         .tick_tock_beat_duration_unscaled * \
-                    Surfacer \
-                        .nav_selection_slow_mo_tick_tock_tempo_multiplier * \
+                    Gs.slow_motion.tick_tock_tempo_multiplier * \
                     2.0 if \
                 Gs.slow_motion.is_enabled else \
                 PRESELECTION_DEFAULT_DURATION

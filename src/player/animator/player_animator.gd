@@ -21,10 +21,7 @@ func set_up(
             player_on_animator_params if \
             player_on_animator_params is PlayerAnimatorParams else \
             player_on_animator_params.movement_params.animator_params
-    _initialize()
-
-
-func _initialize() -> void:
+    
     var animation_players: Array = \
             Gs.utils.get_children_by_type(self, AnimationPlayer)
     assert(animation_players.size() == 1)
@@ -34,7 +31,15 @@ func _initialize() -> void:
         # Register these as desaturatable for the slow-motion effect.
         var sprites: Array = Gs.utils.get_children_by_type(self, Sprite, true)
         for sprite in sprites:
-            sprite.add_to_group(Surfacer.group_name_desaturatable)
+            sprite.add_to_group(Gs.slow_motion.GROUP_NAME_DESATURATABLES)
+    
+    Gs.slow_motion.add_animator(self)
+
+
+func _destroy() -> void:
+    Gs.slow_motion.remove_animator(self)
+    if !is_queued_for_deletion():
+        queue_free()
 
 
 func _get_animation_player() -> AnimationPlayer:

@@ -10,7 +10,6 @@ const WALK_THROUGH_WALLS_COLLISION_MASK_BIT := 2
 
 const IS_INSPECTOR_ENABLED_SETTINGS_KEY := "is_inspector_enabled"
 const IS_SURFACER_LOGGING_SETTINGS_KEY := "is_surfacer_logging"
-const IS_METRONOME_ENABLED_SETTINGS_KEY := "is_metronome_enabled"
 const IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY := "is_intro_choreography_shown"
 const ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_active_trajectory_shown"
 const PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY := "is_previous_trajectory_shown"
@@ -103,7 +102,12 @@ var DEFAULT_SURFACER_SETTINGS_ITEM_MANIFEST := {
 # --- Manifest additions ---
 
 var _screen_inclusions := [
-    preload("res://addons/surfacer/src/gui/precompute_platform_graphs_screen.tscn"),
+    preload("res://addons/surfacer/src/gui/screens/precompute_platform_graphs_screen.tscn"),
+    preload("res://addons/surfacer/src/gui/screens/surfacer_loading_screen.tscn"),
+]
+
+var _screen_exclusions := [
+    preload("res://addons/scaffolder/src/gui/screens/scaffolder_loading_screen.tscn"),
 ]
 
 var _surfacer_sounds := [
@@ -155,7 +159,6 @@ var manifest: Dictionary
 var is_inspector_enabled: bool
 var are_loaded_surfaces_deeply_validated: bool
 var is_surfacer_logging: bool
-var is_metronome_enabled: bool
 var uses_threads_for_platform_graph_calculation: bool
 var precompute_platform_graph_for_levels: Array
 var ignores_platform_graph_save_files := false
@@ -186,9 +189,6 @@ var does_human_nav_pulse_grow := false
 var does_computer_nav_pulse_grow := true
 var is_human_prediction_shown := true
 var is_computer_prediction_shown := true
-var nav_selection_slow_mo_time_scale := 0.02
-var nav_selection_slow_mo_tick_tock_tempo_multiplier := 25
-var nav_selection_slow_mo_saturation := 0.2
 var nav_selection_prediction_opacity := 0.5
 var nav_selection_prediction_tween_duration := 0.15
 var nav_path_fade_in_duration := 0.2
@@ -242,7 +242,6 @@ var debug_params: Dictionary
 var group_name_human_players := Player.GROUP_NAME_HUMAN_PLAYERS
 var group_name_computer_players := Player.GROUP_NAME_COMPUTER_PLAYERS
 var group_name_surfaces := SurfacesTileMap.GROUP_NAME_SURFACES
-var group_name_desaturatable := "desaturatables"
 
 var non_surface_parser_metric_keys := [
     "find_surfaces_in_jump_fall_range_from_surface",
@@ -319,6 +318,8 @@ func _ready() -> void:
 func amend_app_manifest(manifest: Dictionary) -> void:
     if !manifest.has("colors_class"):
             manifest.colors_class = SurfacerColors
+    if !manifest.has("geometry_class"):
+            manifest.geometry_class = SurfacerGeometry
     if !manifest.has("draw_utils_class"):
             manifest.draw_utils_class = SurfacerDrawUtils
     
@@ -343,6 +344,13 @@ func amend_app_manifest(manifest: Dictionary) -> void:
                 .has(inclusion):
             manifest.gui_manifest.screen_manifest.inclusions \
                     .push_back(inclusion)
+    for exclusion in _screen_exclusions:
+        if !manifest.gui_manifest.screen_manifest.exclusions \
+                .has(exclusion) and \
+                !manifest.gui_manifest.screen_manifest.inclusions \
+                .has(exclusion):
+            manifest.gui_manifest.screen_manifest.exclusions \
+                    .push_back(exclusion)
     
     if !manifest.gui_manifest.has("settings_item_manifest"):
         manifest.gui_manifest.settings_item_manifest = \
@@ -381,15 +389,6 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if surfacer_manifest.has("is_debug_only_platform_graph_state_included"):
         self.is_debug_only_platform_graph_state_included = \
                 surfacer_manifest.is_debug_only_platform_graph_state_included
-    
-    if surfacer_manifest.has("nav_selection_slow_mo_time_scale"):
-        self.nav_selection_slow_mo_time_scale = \
-                surfacer_manifest.nav_selection_slow_mo_time_scale
-    if surfacer_manifest.has(
-            "nav_selection_slow_mo_tick_tock_tempo_multiplier"):
-        self.nav_selection_slow_mo_tick_tock_tempo_multiplier = \
-                surfacer_manifest \
-                        .nav_selection_slow_mo_tick_tock_tempo_multiplier
     
     if surfacer_manifest.has(
             "is_human_current_nav_trajectory_shown_with_slow_mo"):
@@ -435,9 +434,6 @@ func register_app_manifest(manifest: Dictionary) -> void:
     if surfacer_manifest.has("does_computer_nav_pulse_grow"):
         self.does_computer_nav_pulse_grow = \
                 surfacer_manifest.does_computer_nav_pulse_grow
-    if surfacer_manifest.has("nav_selection_slow_mo_saturation"):
-        self.nav_selection_slow_mo_saturation = \
-                surfacer_manifest.nav_selection_slow_mo_saturation
     if surfacer_manifest.has("nav_selection_prediction_opacity"):
         self.nav_selection_prediction_opacity = \
                 surfacer_manifest.nav_selection_prediction_opacity
@@ -487,9 +483,6 @@ func initialize() -> void:
             Gs.gui.hud_manifest.is_inspector_enabled_default)
     self.is_surfacer_logging = Gs.save_state.get_setting(
             IS_SURFACER_LOGGING_SETTINGS_KEY,
-            false)
-    self.is_metronome_enabled = Gs.save_state.get_setting(
-            IS_METRONOME_ENABLED_SETTINGS_KEY,
             false)
     self.is_intro_choreography_shown = Gs.save_state.get_setting(
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,

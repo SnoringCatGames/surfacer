@@ -1,8 +1,17 @@
 class_name SurfacerDrawUtils
-extends DrawUtils
+extends ScaffolderDrawUtils
 
 
 const SQRT_TWO := sqrt(2.0)
+
+const SURFACE_DEPTH := 16.0
+const SURFACE_DEPTH_DIVISIONS_COUNT := 8
+const SURFACE_ALPHA_END_RATIO := .2
+
+const INSTRUCTION_INDICATOR_HEAD_LENGTH_RATIO := 0.35
+const INSTRUCTION_INDICATOR_HEAD_WIDTH_RATIO := 0.3
+const INSTRUCTION_INDICATOR_STRIKE_THROUGH_LENGTH_RATIO := 0.8
+const INSTRUCTION_INDICATOR_STROKE_WIDTH := 1.0
 
 const EDGE_TRAJECTORY_WIDTH := 1.0
 
@@ -21,6 +30,83 @@ const IN_AIR_DESTINATION_INDICATOR_CONE_COUNT := 3
 const IN_AIR_DESTINATION_INDICATOR_SIZE_RATIO := 0.8
 
 const ADJACENT_VERTEX_TOO_CLOSE_DISTANCE_SQUARED_THRESHOLD := 0.25
+
+
+static func draw_surface(
+        canvas: CanvasItem,
+        surface: Surface,
+        color: Color,
+        depth := SURFACE_DEPTH) -> void:
+    var surface_depth_division_size := depth / SURFACE_DEPTH_DIVISIONS_COUNT
+    
+    var vertices := surface.vertices
+    var surface_depth_division_offset := \
+            surface.normal * -surface_depth_division_size
+    var alpha_start := color.a
+    var alpha_end := alpha_start * SURFACE_ALPHA_END_RATIO
+    
+    # "Surfaces" can single vertices in the degenerate case.
+    if vertices.size() > 1:
+        for i in SURFACE_DEPTH_DIVISIONS_COUNT:
+            var translation: Vector2 = surface_depth_division_offset * i
+            var polyline: PoolVector2Array = \
+                    Gs.utils.translate_polyline(vertices, translation)
+            var progress: float = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
+            color.a = alpha_start + progress * (alpha_end - alpha_start)
+            canvas.draw_polyline(
+                    polyline,
+                    color,
+                    surface_depth_division_size)
+    else:
+        canvas.draw_circle(
+                vertices[0],
+                6.0,
+                color)
+
+
+static func draw_position_along_surface(
+        canvas: CanvasItem,
+        position: PositionAlongSurface,
+        target_point_color: Color,
+        t_color: Color,
+        target_point_radius := 4.0,
+        t_length_in_surface := 8.0,
+        t_length_out_of_surface := 8.0,
+        t_width := 4.0,
+        t_value_drawn := true,
+        target_point_drawn := false,
+        surface_drawn := false) -> void:
+    # Optionally, annotate the t value.
+    if t_value_drawn:
+        if position.target_projection_onto_surface == Vector2.INF:
+            position.target_projection_onto_surface = \
+                    Gs.geometry.project_point_onto_surface(
+                            position.target_point,
+                            position.surface)
+        var normal := position.surface.normal
+        var start := position.target_projection_onto_surface + \
+                normal * t_length_out_of_surface
+        var end := position.target_projection_onto_surface - \
+                normal * t_length_in_surface
+        canvas.draw_line(
+                start,
+                end,
+                t_color,
+                t_width)
+    
+    # Optionally, annotate the target point.
+    if target_point_drawn:
+        canvas.draw_circle(
+                position.target_point,
+                target_point_radius,
+                target_point_color)
+    
+    # Optionally, annotate the surface.
+    if surface_drawn:
+        draw_surface(
+                canvas,
+                position.surface,
+                target_point_color)
 
 
 static func draw_origin_marker(
@@ -110,6 +196,45 @@ static func draw_destination_marker(
                     is_filled,
                     border_width,
                     sector_arc_length)
+
+
+static func draw_instruction_indicator(
+        canvas: CanvasItem,
+        input_key: String,
+        is_pressed: bool,
+        position: Vector2,
+        length: float,
+        color: Color) -> void:
+    var half_length := length / 2.0
+    var end_offset_from_mid: Vector2
+    match input_key:
+        "j":
+            end_offset_from_mid = Vector2(0.0, -half_length)
+        "ml":
+            end_offset_from_mid = Vector2(-half_length, 0.0)
+        "mr":
+            end_offset_from_mid = Vector2(half_length, 0.0)
+        _:
+            Gs.logger.error("Invalid input_key: %s" % input_key)
+    
+    var start := position - end_offset_from_mid
+    var end := position + end_offset_from_mid
+    var head_length := length * INSTRUCTION_INDICATOR_HEAD_LENGTH_RATIO
+    var head_width := length * INSTRUCTION_INDICATOR_HEAD_WIDTH_RATIO
+    var strike_through_length := \
+            INF if \
+            is_pressed else \
+            length * INSTRUCTION_INDICATOR_STRIKE_THROUGH_LENGTH_RATIO
+    
+    draw_strike_through_arrow(
+            canvas,
+            start,
+            end,
+            head_length,
+            head_width,
+            strike_through_length,
+            color,
+            INSTRUCTION_INDICATOR_STROKE_WIDTH)
 
 
 static func draw_path(
