@@ -175,7 +175,10 @@ func _destroy() -> void:
     _is_destroyed = true
     if is_instance_valid(prediction):
         prediction.queue_free()
-    queue_free()
+    if is_instance_valid(animator):
+        animator._destroy()
+    if !is_queued_for_deletion():
+        queue_free()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -513,7 +516,7 @@ func _update_surface_state(preserves_just_changed_state := false) -> void:
         next_is_touching_ceiling = is_on_ceiling()
         next_is_touching_wall = is_on_wall()
         surface_state.which_wall = \
-                Gs.utils.get_which_wall_collided_for_body(self)
+                Gs.geometry.get_which_wall_collided_for_body(self)
     
     surface_state.is_touching_left_wall = \
             surface_state.which_wall == SurfaceSide.LEFT_WALL
