@@ -8,8 +8,8 @@ var _items := {}
 var grid: GridContainer
 var label: ScaffolderLabel
 
-var _debounced_update_gui_scale: FuncRef = Gs.time.debounce(
-        funcref(self, "_update_gui_scale_debounced"),
+var _debounced_on_gui_scale_changed: FuncRef = Gs.time.debounce(
+        funcref(self, "_on_gui_scale_changed_debounced"),
         0.05)
 
 
@@ -21,22 +21,22 @@ func _ready() -> void:
     label = $Label
     label.visible = true
     set_meta("gs_rect_size", rect_size)
-    update_gui_scale()
+    _on_gui_scale_changed()
 
 
 func _exit_tree() -> void:
     if Engine.editor_hint:
         return
     
-    Gs.time.clear_debounce(_debounced_update_gui_scale)
+    Gs.time.clear_debounce(_debounced_on_gui_scale_changed)
 
 
-func update_gui_scale() -> bool:
-    _debounced_update_gui_scale.call_deferred("call_func")
+func _on_gui_scale_changed() -> bool:
+    _debounced_on_gui_scale_changed.call_deferred("call_func")
     return true
 
 
-func _update_gui_scale_debounced() -> void:
+func _on_gui_scale_changed_debounced() -> void:
     var original_rect_size: Vector2 = get_meta("gs_rect_size")
     
     for item in _items.values():
@@ -49,7 +49,7 @@ func add(item: LegendItem) -> void:
     _items[item.type] = item
     grid.add_child(item)
     label.visible = false
-    update_gui_scale()
+    _on_gui_scale_changed()
 
 
 func erase(item: LegendItem) -> bool:
