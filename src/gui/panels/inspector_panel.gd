@@ -74,7 +74,7 @@ func _ready() -> void:
     
     _initialize_annotator_checkboxes()
     
-    update_gui_scale()
+    _on_gui_scale_changed()
 
 
 func _exit_tree() -> void:
@@ -88,12 +88,12 @@ func _exit_tree() -> void:
     Surfacer.selection_description = null
 
 
-func update_gui_scale() -> bool:
-    call_deferred("_deferred_update_gui_scale")
+func _on_gui_scale_changed() -> bool:
+    call_deferred("_deferred_on_gui_scale_changed")
     return true
 
 
-func _deferred_update_gui_scale() -> void:
+func _deferred_on_gui_scale_changed() -> void:
     var x_button := $PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton
     x_button.rect_position = \
             x_button.get_meta("gs_rect_position") * Gs.gui.scale
