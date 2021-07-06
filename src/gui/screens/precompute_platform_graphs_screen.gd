@@ -38,8 +38,8 @@ func _ready() -> void:
         loading_image.original_scale = Gs.gui.loading_image_scale
 
 
-func _on_activated(previous_screen: Screen) -> void:
-    ._on_activated(previous_screen) 
+func _on_transition_in_ended(previous_screen: Screen) -> void:
+    ._on_transition_in_ended(previous_screen) 
     Gs.time.set_timeout(funcref(self, "_compute"), 0.2)
 
 
