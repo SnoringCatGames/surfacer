@@ -160,8 +160,8 @@ func _on_graph_parse_finished() -> void:
             Gs.level_config.get_level_version_string(Gs.level_session.id),
             Gs.time.get_clock_time() - graph_load_start_time)
     
-    Gs.nav.open("game", true)
+    Gs.nav.open("game", ScreenTransition.FANCY)
     
     Gs.time.set_timeout( \
             funcref(Gs.level, "_start"), \
-            Gs.nav.fade_transition.duration / 2.0)
+            Gs.nav.transition_handler._overlay_mask_transition.duration / 2.0)
