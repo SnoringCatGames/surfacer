@@ -3,6 +3,13 @@ extends Node2D
 
 
 func _ready() -> void:
+    $ScaffolderTextureButton \
+            .texture_pressed = Gs.icons.pause_circle_active
+    $ScaffolderTextureButton \
+            .texture_hover = Gs.icons.pause_circle_hover
+    $ScaffolderTextureButton \
+            .texture_normal = Gs.icons.pause_circle_normal
+    $ScaffolderTextureButton.texture_scale = Vector2(4.0, 4.0)
     _on_gui_scale_changed()
 
 
