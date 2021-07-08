@@ -104,7 +104,7 @@ func get_is_facing_left_at_time(
                 # This input does not affect the direction the player faces.
                 pass
             _:
-                Utils.error()
+                Gs.logger.error()
     return is_facing_left
 
 

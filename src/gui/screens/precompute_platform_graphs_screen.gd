@@ -216,7 +216,7 @@ func _on_stage_progress(
                     CLEAN_UP_SUB_STEP_PROGRESS_RATIO) / \
                     PROGRESS_RATIO_TOTAL
         _:
-            Utils.error()
+            Gs.logger.error()
     
     var progress: float = \
             (precompute_level_index + sub_step_progress) / \
