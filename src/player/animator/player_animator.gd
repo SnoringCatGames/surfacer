@@ -146,7 +146,7 @@ func animation_type_to_name(animation_type: int) -> String:
         PlayerAnimationType.CLIMB_DOWN:
             return animator_params.climb_down_name
         _:
-            Gs.utils.error(
+            Gs.logger.error(
                     "Unrecognized PlayerAnimationType: %s" % animation_type)
             return ""
 
@@ -168,6 +168,6 @@ func animation_type_to_playback_rate(animation_type: int) -> float:
         PlayerAnimationType.CLIMB_DOWN:
             return animator_params.climb_down_playback_rate
         _:
-            Gs.utils.error(
+            Gs.logger.error(
                     "Unrecognized PlayerAnimationType: %s" % animation_type)
             return 0.0
