@@ -35,6 +35,25 @@ func _ready() -> void:
     if Engine.editor_hint:
         return
     
+    $PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton \
+            .texture_pressed = Gs.icons.close_active
+    $PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton \
+            .texture_hover = Gs.icons.close_hover
+    $PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton \
+            .texture_normal = Gs.icons.close_normal
+    $PanelContainer/VBoxContainer/Header/XButtonWrapper/XButton \
+            .texture_scale = Vector2(2.0, 2.0)
+    
+    $Footer/GearButton.texture_pressed = Gs.icons.gear_circle_active
+    $Footer/GearButton.texture_hover = Gs.icons.gear_circle_hover
+    $Footer/GearButton.texture_normal = Gs.icons.gear_circle_normal
+    $Footer/GearButton.texture_scale = Vector2(4.0, 4.0)
+    
+    $Footer/PauseButton.texture_pressed = Gs.icons.pause_circle_active
+    $Footer/PauseButton.texture_hover = Gs.icons.pause_circle_hover
+    $Footer/PauseButton.texture_normal = Gs.icons.pause_circle_normal
+    $Footer/PauseButton.texture_scale = Vector2(4.0, 4.0)
+    
     # Make the panel style unique, so that we can change the border width
     # without changing other things.
     $PanelContainer.add_stylebox_override(

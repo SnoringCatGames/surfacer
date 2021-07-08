@@ -1,22 +1,13 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://addons/surfacer/src/gui/panels/inspector_panel.gd" type="Script" id=1]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/spacer.tscn" type="PackedScene" id=2]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/gear_circle_icon_hover.png" type="Texture" id=3]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/gear_circle_icon_active.png" type="Texture" id=4]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/gear_circle_icon_normal.png" type="Texture" id=5]
 [ext_resource path="res://addons/scaffolder/src/gui/overlay_panel_header_stylebox.tres" type="StyleBox" id=7]
 [ext_resource path="res://addons/scaffolder/src/gui/overlay_panel_body_stylebox.tres" type="StyleBox" id=8]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/pause_circle_icon_hover.png" type="Texture" id=9]
 [ext_resource path="res://addons/surfacer/src/gui/selection_description.tscn" type="PackedScene" id=10]
 [ext_resource path="res://addons/surfacer/src/gui/legend/legend.tscn" type="PackedScene" id=11]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/pause_circle_icon_normal.png" type="Texture" id=12]
 [ext_resource path="res://addons/surfacer/src/gui/platform_graph_inspector/platform_graph_inspector.tscn" type="PackedScene" id=13]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_texture_button.tscn" type="PackedScene" id=14]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/close_normal.png" type="Texture" id=15]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/close_active.png" type="Texture" id=16]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/close_hover.png" type="Texture" id=17]
-[ext_resource path="res://addons/scaffolder/assets/images/gui/pause_circle_icon_active.png" type="Texture" id=18]
 [ext_resource path="res://addons/scaffolder/src/gui/widgets/scaffolder_label.tscn" type="PackedScene" id=20]
 
 [sub_resource type="StyleBoxLine" id=1]
@@ -100,10 +91,6 @@ margin_left = -30.0
 margin_top = -12.0
 margin_right = -30.0
 margin_bottom = -12.0
-texture_normal = ExtResource( 15 )
-texture_pressed = ExtResource( 16 )
-texture_hover = ExtResource( 17 )
-texture_scale = Vector2( 2, 2 )
 size_override = Vector2( 24, 24 )
 
 [node name="Spacer6" parent="PanelContainer/VBoxContainer/Header" instance=ExtResource( 2 )]
@@ -269,10 +256,6 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 0.0
 margin_bottom = 0.0
-texture_normal = ExtResource( 5 )
-texture_pressed = ExtResource( 4 )
-texture_hover = ExtResource( 3 )
-texture_scale = Vector2( 4, 4 )
 size_override = Vector2( 64, 64 )
 
 [node name="Spacer13" parent="Footer" instance=ExtResource( 2 )]
@@ -285,10 +268,6 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 0.0
 margin_bottom = 0.0
-texture_normal = ExtResource( 12 )
-texture_pressed = ExtResource( 18 )
-texture_hover = ExtResource( 9 )
-texture_scale = Vector2( 4, 4 )
 size_override = Vector2( 64, 64 )
 
 [node name="Spacer4" parent="Footer" instance=ExtResource( 2 )]
