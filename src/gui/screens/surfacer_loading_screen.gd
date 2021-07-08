@@ -154,10 +154,17 @@ func _on_graph_parse_finished() -> void:
     if !Gs.level.graph_parser.is_loaded_from_file:
         Gs.utils.give_button_press_feedback()
     
+    $VBoxContainer/ProgressBar.value = 100
+    $VBoxContainer/Duration.text = Gs.utils.get_time_string_from_seconds( \
+            Gs.time.get_clock_time() - graph_load_start_time, \
+            false, \
+            false, \
+            true)
+    
     Gs.analytics.event(
             "graphs",
             "loaded",
             Gs.level_config.get_level_version_string(Gs.level_session.id),
             Gs.time.get_clock_time() - graph_load_start_time)
     
-    Gs.nav.open("game", ScreenTransition.FANCY)
+    Gs.nav.call_deferred("open", "game", ScreenTransition.FANCY)
