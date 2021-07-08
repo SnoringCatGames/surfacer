@@ -37,20 +37,38 @@ static func draw_surface(
         surface: Surface,
         color: Color,
         depth := SURFACE_DEPTH) -> void:
-    var surface_depth_division_size := depth / SURFACE_DEPTH_DIVISIONS_COUNT
-    
     var vertices := surface.vertices
-    var surface_depth_division_offset := \
+    assert(!vertices.empty())
+    
+    if vertices.size() == 1:
+        # Handle the degenerate case.
+        canvas.draw_circle(vertices[0], depth / 2.0, color)
+        return
+    
+    var surface_depth_division_size := depth / SURFACE_DEPTH_DIVISIONS_COUNT
+    var surface_depth_division_perpendicular_offset := \
             surface.normal * -surface_depth_division_size
+    var surface_depth_division_parallel_start_offset = \
+            surface_depth_division_perpendicular_offset.rotated(-PI / 2.0)
+    var surface_depth_division_parallel_end_offset = \
+            surface_depth_division_perpendicular_offset.rotated(PI / 2.0)
     var alpha_start := color.a
     var alpha_end := alpha_start * SURFACE_ALPHA_END_RATIO
     
     # "Surfaces" can single vertices in the degenerate case.
     if vertices.size() > 1:
         for i in SURFACE_DEPTH_DIVISIONS_COUNT:
-            var translation: Vector2 = surface_depth_division_offset * i
+            var translation: Vector2 = \
+                    surface_depth_division_perpendicular_offset * i
             var polyline: PoolVector2Array = \
                     Gs.utils.translate_polyline(vertices, translation)
+            
+            # TODO: Update this to consider non-axially-aligned surface
+            #       segments.
+            polyline[0] += surface_depth_division_parallel_start_offset * i
+            polyline[polyline.size() - 1] += \
+                    surface_depth_division_parallel_end_offset * i
+            
             var progress: float = i / (SURFACE_DEPTH_DIVISIONS_COUNT - 1.0)
             color.a = alpha_start + progress * (alpha_end - alpha_start)
             canvas.draw_polyline(
