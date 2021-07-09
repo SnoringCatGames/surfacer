@@ -62,7 +62,7 @@ func _ready() -> void:
     
     _set_tree_font_size(tree_font_size)
     
-    Gs.utils.record_gui_original_size_recursively(self)
+    Gs.gui.record_gui_original_size_recursively(self)
     
     assert(Surfacer.is_inspector_enabled)
     
@@ -120,7 +120,7 @@ func _deferred_on_gui_scale_changed() -> void:
     
     for child in get_children():
         if child is Control:
-            Gs.utils.scale_gui_recursively(child)
+            Gs.gui.scale_gui_recursively(child)
     
     rect_size.x = $PanelContainer.rect_size.x
     
@@ -191,7 +191,7 @@ func _initialize_annotator_checkboxes() -> void:
         annotators.add_child(row)
     
     for child in annotators.get_children():
-        Gs.utils.scale_gui_recursively(child)
+        Gs.gui.scale_gui_recursively(child)
 
 
 func _get_closed_position_y() -> float:

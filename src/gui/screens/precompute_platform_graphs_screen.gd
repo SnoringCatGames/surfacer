@@ -26,7 +26,7 @@ func _ready() -> void:
     if Engine.editor_hint:
         return
     
-    Gs.utils.record_gui_original_size_recursively(self)
+    Gs.gui.record_gui_original_size_recursively(self)
     
     if Gs.gui.is_loading_image_shown:
         var loading_image: ScaffolderConfiguredImage = Gs.utils.add_scene(
