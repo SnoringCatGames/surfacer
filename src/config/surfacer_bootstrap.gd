@@ -2,19 +2,12 @@ class_name SurfacerBootstrap
 extends ScaffolderBootstrap
 
 
-func _amend_app_manifest() -> void:
-    ._amend_app_manifest()
-    Surfacer.amend_app_manifest(app_manifest)
-
-
-func _register_app_manifest() -> void:
-    ._register_app_manifest()
-    Surfacer.register_app_manifest(app_manifest)
+func _init() -> void:
+    _framework_configs.push_back(Surfacer)
 
 
 func _initialize_framework() -> void:
     ._initialize_framework()
-    Surfacer.initialize()
     
     _register_player_actions(Surfacer.player_action_classes)
     _register_edge_movements(Surfacer.edge_movement_classes)
@@ -31,10 +24,6 @@ func _on_splash_finished() -> void:
         ._on_splash_finished()
     else:
         Gs.nav.open("precompute_platform_graphs")
-
-
-#func _on_app_quit() -> void:
-#    ._on_app_quit()
 
 
 func _register_player_actions(player_action_classes: Array) -> void:
