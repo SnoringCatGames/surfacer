@@ -58,7 +58,7 @@ func _record_tile_maps() -> void:
             Gs.utils.get_all_nodes_in_group(Surfacer.group_name_surfaces)
     
     # Validate the TileMaps.
-    if Gs.app_metadata.debug or Gs.app_metadata.playtest:
+    if Gs.metadata.debug or Gs.metadata.playtest:
         assert(surface_tile_maps.size() > 0)
         var tile_map_ids := {}
         for tile_map in surface_tile_maps:
@@ -243,7 +243,7 @@ func _load_platform_graphs(includes_debug_only_state: bool) -> void:
             json_object.surface_parser,
             context)
     
-    if Gs.app_metadata.debug or Gs.app_metadata.playtest:
+    if Gs.metadata.debug or Gs.metadata.playtest:
         _validate_tile_maps(json_object)
         _validate_players(json_object)
         _validate_surfaces(surface_parser)
