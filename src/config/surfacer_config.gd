@@ -1,5 +1,6 @@
+tool
 class_name SurfacerConfig
-extends Node
+extends FrameworkConfig
 
 
 # --- Constants ---
@@ -311,8 +312,14 @@ var player_param_classes: Array
 # ---
 
 
-func _ready() -> void:
-    Gs.logger.print("SurfacerConfig._ready")
+func _enter_tree() -> void:
+    assert(is_instance_valid(Gs),
+            "The Scaffolder AutoLoad must be declared first.")
+    
+    Gs.logger.on_global_init(self, "SurfacerConfig")
+    Gs.register_framework_config(self)
+    
+    Gs._bootstrap = SurfacerBootstrap.new()
 
 
 func amend_app_manifest(manifest: Dictionary) -> void:
@@ -469,7 +476,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.skip_choreography_framerate_multiplier = \
                 surfacer_manifest.skip_choreography_framerate_multiplier
     
-    assert(Gs.manifest.app_metadata.must_restart_level_to_change_settings)
+    assert(Gs._manifest.app_metadata.must_restart_level_to_change_settings)
 
 
 func initialize() -> void:

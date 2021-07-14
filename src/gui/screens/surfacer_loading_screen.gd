@@ -7,9 +7,6 @@ var graph_load_start_time := INF
 
 
 func _ready() -> void:
-    if Engine.editor_hint:
-        return
-    
     var loading_image_wrapper := $VBoxContainer/LoadingImageWrapper
     loading_image_wrapper.visible = Gs.gui.is_loading_image_shown
     if Gs.gui.is_loading_image_shown:

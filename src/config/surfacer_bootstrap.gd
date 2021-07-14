@@ -2,8 +2,8 @@ class_name SurfacerBootstrap
 extends ScaffolderBootstrap
 
 
-func _init() -> void:
-    _framework_configs.push_back(Surfacer)
+func _init().("SurfacerBootstrap") -> void:
+    pass
 
 
 func _initialize_framework() -> void:
@@ -17,6 +17,10 @@ func _initialize_framework() -> void:
 func _on_app_initialized() -> void:
     ._on_app_initialized()
     Surfacer.annotators._on_app_initialized()
+    # Hide this annotator by default.
+    Surfacer.annotators.set_annotator_enabled(
+            AnnotatorType.RECENT_MOVEMENT,
+            false)
 
 
 func _on_splash_finished() -> void:
