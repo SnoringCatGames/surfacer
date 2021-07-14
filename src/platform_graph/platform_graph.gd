@@ -331,10 +331,10 @@ func _calculate_nodes_and_edges() -> void:
     
     if Surfacer.uses_threads_for_platform_graph_calculation:
         var threads := []
-        threads.resize(Gs.app_metadata.thread_count)
+        threads.resize(Gs.metadata.thread_count)
         
         # Use child threads to parallelize graph parsing.
-        for i in Gs.app_metadata.thread_count:
+        for i in Gs.metadata.thread_count:
             var thread := Thread.new()
             Gs.profiler.init_thread("parse_edges:" + str(i))
             threads[i] = thread
@@ -383,7 +383,7 @@ func _calculate_inter_surface_edges_for_next_origin(
         collision_params: CollisionCalcParams) -> void:
     # Divide the origin surfaces across threads.
     if thread_index < 0 or \
-            origin_index % Gs.app_metadata.thread_count == thread_index:
+            origin_index % Gs.metadata.thread_count == thread_index:
         var origin_surface: Surface = surfaces[origin_index]
         # Array<InterSurfaceEdgesResult>
         var inter_surface_edges_results: Array = \

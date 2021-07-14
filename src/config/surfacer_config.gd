@@ -336,7 +336,7 @@ func amend_app_manifest(manifest: Dictionary) -> void:
             !manifest.surfacer_manifest \
                     .precompute_platform_graph_for_levels.empty()
     if is_precomputing_platform_graphs:
-        manifest.app_metadata.is_splash_skipped = true
+        manifest.metadata.is_splash_skipped = true
     
     # Add Surfacer sounds to the front, so they can be overridden by the app.
     Gs.utils.concat(
@@ -476,7 +476,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.skip_choreography_framerate_multiplier = \
                 surfacer_manifest.skip_choreography_framerate_multiplier
     
-    assert(Gs._manifest.app_metadata.must_restart_level_to_change_settings)
+    assert(Gs._manifest.metadata.must_restart_level_to_change_settings)
 
 
 func initialize() -> void:

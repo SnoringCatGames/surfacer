@@ -158,7 +158,7 @@ func _ready() -> void:
     surface_state.previous_center_position = self.position
     surface_state.center_position = self.position
     
-    Gs.utils.connect(
+    Gs.device.connect(
             "display_resized",
             self,
             "_on_resized")
