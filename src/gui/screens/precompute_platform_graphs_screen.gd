@@ -23,9 +23,6 @@ var level: SurfacerLevel
 
 
 func _ready() -> void:
-    if Engine.editor_hint:
-        return
-    
     Gs.gui.record_gui_original_size_recursively(self)
     
     if Gs.gui.is_loading_image_shown:

@@ -49,11 +49,16 @@ var ruler_layer: CanvasLayer
 
 
 func _init() -> void:
-    name = "Annotators"
+    Gs.logger.on_global_init(self, "Annotators")
+    if Engine.editor_hint:
+        return
     annotation_layer = Gs.canvas_layers.layers.annotation
 
 
 func _enter_tree() -> void:
+    if Engine.editor_hint:
+        return
+    
     ruler_layer = Gs.canvas_layers.create_layer(
             "ruler",
             annotation_layer.layer + 5,
@@ -75,6 +80,9 @@ func _enter_tree() -> void:
 
 
 func _on_app_initialized() -> void:
+    if Engine.editor_hint:
+        return
+    
     Gs.nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
 
 
