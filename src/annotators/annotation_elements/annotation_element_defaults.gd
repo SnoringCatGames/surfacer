@@ -316,17 +316,17 @@ var DEFAULT_JUMP_LAND_POSITIONS_COLOR_PARAMS := \
                 JUMP_LAND_POSITIONS_VALUE,
                 JUMP_LAND_POSITIONS_ALPHA)
 
-var HUMAN_NAVIGATOR_CURRENT_PATH_COLOR := Gs.colors.opacify(
-        Gs.colors.human_navigation,
+var HUMAN_NAVIGATOR_CURRENT_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.human_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR := Gs.colors.opacify(
-        Gs.colors.human_navigation,
+var HUMAN_NAVIGATOR_PREVIOUS_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.human_navigation,
         ScaffolderColors.ALPHA_XXFAINT)
-var HUMAN_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Gs.colors.opacify(
-        Gs.colors.human_navigation,
+var HUMAN_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Sc.colors.opacify(
+        Sc.colors.human_navigation,
         ScaffolderColors.ALPHA_XXFAINT)
-var HUMAN_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Gs.colors.opacify(
-        Gs.colors.human_navigation,
+var HUMAN_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Sc.colors.opacify(
+        Sc.colors.human_navigation,
         ScaffolderColors.ALPHA_SLIGHTLY_FAINT)
 var HUMAN_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
         HUMAN_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR
@@ -338,17 +338,17 @@ var HUMAN_NAVIGATOR_PULSE_PATH_COLOR := Color.from_hsv(
         0.99,
         0.4)
 
-var COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR := Gs.colors.opacify(
-        Gs.colors.computer_navigation,
+var COMPUTER_NAVIGATOR_CURRENT_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.computer_navigation,
         ScaffolderColors.ALPHA_XFAINT)
-var COMPUTER_NAVIGATOR_PREVIOUS_PATH_COLOR := Gs.colors.opacify(
-        Gs.colors.computer_navigation,
+var COMPUTER_NAVIGATOR_PREVIOUS_PATH_COLOR := Sc.colors.opacify(
+        Sc.colors.computer_navigation,
         ScaffolderColors.ALPHA_XXFAINT)
-var COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Gs.colors.opacify(
-        Gs.colors.computer_navigation,
+var COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR := Sc.colors.opacify(
+        Sc.colors.computer_navigation,
         ScaffolderColors.ALPHA_XXFAINT)
-var COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Gs.colors.opacify(
-        Gs.colors.computer_navigation,
+var COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_STROKE_COLOR := Sc.colors.opacify(
+        Sc.colors.computer_navigation,
         ScaffolderColors.ALPHA_SLIGHTLY_FAINT)
 var COMPUTER_NAVIGATOR_ORIGIN_INDICATOR_FILL_COLOR := \
         COMPUTER_NAVIGATOR_DESTINATION_INDICATOR_FILL_COLOR

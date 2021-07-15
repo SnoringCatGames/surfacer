@@ -11,7 +11,7 @@ func _init(
         .(
         surface,
         depth,
-        Surfacer.ann_defaults.ORIGIN_SURFACE_COLOR_PARAMS,
+        Su.ann_defaults.ORIGIN_SURFACE_COLOR_PARAMS,
         true,
         false,
         TYPE) -> void:

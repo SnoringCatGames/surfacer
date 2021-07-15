@@ -25,7 +25,7 @@ static func _get_action_handlers(movement_params: MovementParams) -> Array:
     action_handlers.resize(names.size())
     
     for i in names.size():
-        action_handlers[i] = Surfacer.player_actions[names[i]]
+        action_handlers[i] = Su.player_actions[names[i]]
     
     action_handlers.sort_custom(_ActionHandlersComparator, "sort")
     
@@ -40,7 +40,7 @@ static func _get_edge_calculators(movement_params: MovementParams) -> Array:
     edge_calculators.resize(names.size())
     
     for i in names.size():
-        edge_calculators[i] = Surfacer.edge_movements[names[i]]
+        edge_calculators[i] = Su.edge_movements[names[i]]
     
     return edge_calculators
 
@@ -51,7 +51,7 @@ static func _calculate_dependent_movement_params(
             movement_params.gravity_fast_fall * \
             movement_params.slow_rise_gravity_multiplier
     movement_params.collider_half_width_height = \
-            Gs.geometry.calculate_half_width_height(
+            Sc.geometry.calculate_half_width_height(
                     movement_params.collider_shape,
                     movement_params.collider_rotation)
     movement_params.min_upward_jump_distance = VerticalMovementUtils \
@@ -139,7 +139,7 @@ static func _check_movement_params(movement_params: MovementParams) -> void:
     assert(movement_params.dash_vertical_boost <= 0)
     # If we're tracking beats, then we need the preselection trajectories to
     # match the resulting navigation trajectories.
-    assert(!Gs.audio_manifest.are_beats_tracked_by_default or \
+    assert(!Sc.audio_manifest.are_beats_tracked_by_default or \
             movement_params.also_optimizes_preselection_path or \
             !movement_params.optimizes_edge_jump_positions_at_run_time and \
             !movement_params.optimizes_edge_land_positions_at_run_time)

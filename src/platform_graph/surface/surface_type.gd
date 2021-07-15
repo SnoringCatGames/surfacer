@@ -20,5 +20,5 @@ static func get_type_from_side(side: int) -> int:
         SurfaceSide.NONE:
             return AIR
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return INF as int

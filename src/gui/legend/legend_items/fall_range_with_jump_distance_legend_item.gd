@@ -7,7 +7,7 @@ const TEXT := "Fall range with\njump distance"
 
 
 func _init(
-        color_params := Surfacer.ann_defaults \
+        color_params := Su.ann_defaults \
                 .DEFAULT_POLYLINE_COLOR_PARAMS,
         is_filled := false,
         is_dashed := false,

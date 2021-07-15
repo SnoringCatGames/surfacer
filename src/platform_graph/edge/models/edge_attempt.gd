@@ -56,12 +56,12 @@ func get_end_surface() -> Surface:
 func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract EdgeAttempt.load_from_json_object is not implemented")
 
 
 func to_json_object() -> Dictionary:
-    Gs.logger.error("Abstract EdgeAttempt.to_json_object is not implemented")
+    Sc.logger.error("Abstract EdgeAttempt.to_json_object is not implemented")
     return {}
 
 
@@ -74,10 +74,10 @@ func _load_edge_attempt_state_from_json_object(
             context.id_to_position_along_surface[int(json_object.s)]
     end_position_along_surface = \
             context.id_to_position_along_surface[int(json_object.e)]
-    velocity_start = Gs.json.decode_vector2(json_object.v)
+    velocity_start = Sc.json.decode_vector2(json_object.v)
     includes_extra_jump_duration = json_object.d
     includes_extra_wall_land_horizontal_speed = json_object.h
-    calculator = Surfacer.edge_movements[json_object.c]
+    calculator = Su.edge_movements[json_object.c]
 
 
 func _edge_attempt_state_to_json_object(json_object: Dictionary) -> void:
@@ -85,7 +85,7 @@ func _edge_attempt_state_to_json_object(json_object: Dictionary) -> void:
     json_object.r = edge_calc_result_type
     json_object.s = start_position_along_surface.get_instance_id()
     json_object.e = end_position_along_surface.get_instance_id()
-    json_object.v = Gs.json.encode_vector2(velocity_start)
+    json_object.v = Sc.json.encode_vector2(velocity_start)
     json_object.d = includes_extra_jump_duration
     json_object.h = includes_extra_wall_land_horizontal_speed
     json_object.c = calculator.name

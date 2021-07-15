@@ -23,5 +23,5 @@ static func get_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.logger.error("Invalid InspectorSearchType: %s" % type)
+            Sc.logger.error("Invalid InspectorSearchType: %s" % type)
             return ""

@@ -43,7 +43,7 @@ func _init(
     self.tile_map = tile_map
     self.tile_map_indices = tile_map_indices
     if !vertices.empty():
-        self.bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
+        self.bounding_box = Sc.geometry.get_bounding_box_for_points(vertices)
     if side != SurfaceSide.NONE:
         self.normal = SurfaceSide.get_normal(side)
 
@@ -91,7 +91,7 @@ func probably_equal(other: Surface) -> bool:
     if self.vertices.size() != other.vertices.size():
         return false
     for i in self.vertices.size():
-        if !Gs.geometry.are_points_equal_with_epsilon(
+        if !Sc.geometry.are_points_equal_with_epsilon(
                 self.vertices[i],
                 other.vertices[i],
                 0.0001):
@@ -103,13 +103,13 @@ func probably_equal(other: Surface) -> bool:
         if self.tile_map_indices[i] != other.tile_map_indices[i]:
             return false
     
-    if !Gs.geometry.are_rects_equal_with_epsilon(
+    if !Sc.geometry.are_rects_equal_with_epsilon(
             self.bounding_box,
             other.bounding_box,
             0.0001):
         return false
     
-    if !Gs.geometry.are_rects_equal_with_epsilon(
+    if !Sc.geometry.are_rects_equal_with_epsilon(
             self.connected_region_bounding_box,
             other.connected_region_bounding_box,
             0.0001):
@@ -138,10 +138,10 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     context.id_to_surface[int(json_object.d)] = self
-    vertices = PoolVector2Array(Gs.json.decode_vector2_array(json_object.v))
+    vertices = PoolVector2Array(Sc.json.decode_vector2_array(json_object.v))
     side = json_object.s
     tile_map_indices = to_int_array(json_object.i)
-    bounding_box = Gs.geometry.get_bounding_box_for_points(vertices)
+    bounding_box = Sc.geometry.get_bounding_box_for_points(vertices)
     normal = SurfaceSide.get_normal(side)
 
 
@@ -149,7 +149,7 @@ func load_references_from_json_context(
         json_object: Dictionary,
         context: Dictionary) -> void:
     tile_map = context.id_to_tile_map[json_object.t]
-    connected_region_bounding_box = Gs.json.decode_rect2(json_object.crbb)
+    connected_region_bounding_box = Sc.json.decode_rect2(json_object.crbb)
     clockwise_convex_neighbor = \
             _get_surface_from_id(json_object.cwv, context.id_to_surface)
     counter_clockwise_convex_neighbor = \
@@ -163,16 +163,16 @@ func load_references_from_json_context(
 func to_json_object() -> Dictionary:
     return {
         d = self.get_instance_id(),
-        v = Gs.json.encode_vector2_array(vertices),
+        v = Sc.json.encode_vector2_array(vertices),
         s = side,
         t = tile_map.id,
         i = tile_map_indices,
-        crbb = Gs.json.encode_rect2(connected_region_bounding_box),
-        cwv = Gs.utils.get_instance_id_or_not(clockwise_convex_neighbor),
-        ccwv = Gs.utils.get_instance_id_or_not(
+        crbb = Sc.json.encode_rect2(connected_region_bounding_box),
+        cwv = Sc.utils.get_instance_id_or_not(clockwise_convex_neighbor),
+        ccwv = Sc.utils.get_instance_id_or_not(
                 counter_clockwise_convex_neighbor),
-        cwc = Gs.utils.get_instance_id_or_not(clockwise_concave_neighbor),
-        ccwc = Gs.utils.get_instance_id_or_not(
+        cwc = Sc.utils.get_instance_id_or_not(clockwise_concave_neighbor),
+        ccwc = Sc.utils.get_instance_id_or_not(
                 counter_clockwise_concave_neighbor),
     }
 

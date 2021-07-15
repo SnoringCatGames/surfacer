@@ -101,5 +101,5 @@ static func get_string(type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.logger.error("Invalid InspectorItemType: %s" % type)
+            Sc.logger.error("Invalid InspectorItemType: %s" % type)
             return ""

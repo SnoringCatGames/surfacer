@@ -21,12 +21,12 @@ func _init().(
 func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
-    var offset_from_center := size * 0.35 - Vector2(0.0, 6.0) * Gs.gui.scale
+    var offset_from_center := size * 0.35 - Vector2(0.0, 6.0) * Sc.gui.scale
     var start := center - offset_from_center
     var end := center + offset_from_center
-    var color: Color = Surfacer.ann_defaults \
+    var color: Color = Su.ann_defaults \
             .FAILED_EDGE_ATTEMPT_COLOR_PARAMS.get_color()
-    Gs.draw.draw_dashed_line(
+    Sc.draw.draw_dashed_line(
             self,
             start,
             end,
@@ -35,7 +35,7 @@ func _draw_shape(
             DASH_GAP,
             0.0,
             STROKE_WIDTH)
-    Gs.draw.draw_x(
+    Sc.draw.draw_x(
             self,
             center,
             X_WIDTH,

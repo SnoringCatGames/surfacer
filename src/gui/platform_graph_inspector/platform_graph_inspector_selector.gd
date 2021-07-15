@@ -2,7 +2,7 @@ class_name PlatformGraphInspectorSelector
 extends Node2D
 
 
-var ORIGIN_SURFACE_SELECTION_COLOR: Color = Gs.colors.inspector_origin
+var ORIGIN_SURFACE_SELECTION_COLOR: Color = Sc.colors.inspector_origin
 
 const ORIGIN_SURFACE_SELECTION_DASH_LENGTH := 6.0
 const ORIGIN_SURFACE_SELECTION_DASH_GAP := 8.0
@@ -37,18 +37,18 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if Gs.gui.is_user_interaction_enabled and \
+    if Sc.gui.is_user_interaction_enabled and \
             event is InputEventMouseButton and \
             event.button_index == BUTTON_LEFT and \
             !event.pressed and event.control:
         # The user is ctrl+clicking.
         
         var click_position: Vector2 = \
-                Gs.utils.get_level_touch_position(event)
+                Sc.utils.get_level_touch_position(event)
         var surface_position := \
                 SurfaceParser.find_closest_position_on_a_surface(
                         click_position,
-                        Surfacer.human_player)
+                        Su.human_player)
         
         if first_target == null:
             # Selecting the jump position.
@@ -59,11 +59,11 @@ func _unhandled_input(event: InputEvent) -> void:
             
             possible_jump_land_positions = JumpLandPositionsUtils \
                     .calculate_jump_land_positions_for_surface_pair(
-                            Surfacer.human_player.movement_params,
+                            Su.human_player.movement_params,
                             first_target.surface,
                             surface_position.surface)
             
-            selection_time = Gs.time.get_play_time()
+            selection_time = Sc.time.get_play_time()
             
             # TODO: Add support for configuring edge type and graph from radio
             #       buttons in the inspector.
@@ -71,7 +71,7 @@ func _unhandled_input(event: InputEvent) -> void:
                     first_target,
                     surface_position,
                     EdgeType.JUMP_FROM_SURFACE_EDGE,
-                    Surfacer.human_player.graph)
+                    Su.human_player.graph)
             first_target = null
         
     elif event is InputEventKey and \
@@ -82,7 +82,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _draw() -> void:
-    Surfacer.annotators.element_annotator \
+    Su.annotators.element_annotator \
             .erase_all(current_annotation_elements)
     current_annotation_elements.clear()
     
@@ -95,7 +95,7 @@ func _draw() -> void:
 
 
 func _draw_selected_origin() -> void:
-    Gs.draw.draw_dashed_polyline(
+    Sc.draw.draw_dashed_polyline(
             self,
             first_target.surface.vertices,
             ORIGIN_SURFACE_SELECTION_COLOR,
@@ -103,7 +103,7 @@ func _draw_selected_origin() -> void:
             ORIGIN_SURFACE_SELECTION_DASH_GAP,
             0.0,
             ORIGIN_SURFACE_SELECTION_DASH_STROKE_WIDTH)
-    Gs.draw.draw_circle_outline(
+    Sc.draw.draw_circle_outline(
             self,
             first_target.target_point,
             ORIGIN_POSITION_RADIUS,
@@ -116,7 +116,7 @@ func _draw_possible_jump_land_positions() -> void:
         current_annotation_elements.push_back(
                 JumpLandPositionsAnnotationElement.new(jump_land_positions))
     
-    Surfacer.annotators.element_annotator \
+    Su.annotators.element_annotator \
             .add_all(current_annotation_elements)
 
 
@@ -130,4 +130,4 @@ func clear() -> void:
 func should_selection_have_been_handled_in_tree_by_now() -> bool:
     return selection_time + \
             DELAY_FOR_TREE_TO_HANDLE_SELECTION_THRESHOLD < \
-            Gs.time.get_play_time()
+            Sc.time.get_play_time()

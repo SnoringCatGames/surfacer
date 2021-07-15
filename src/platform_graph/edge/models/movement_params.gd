@@ -257,11 +257,11 @@ func _init() -> void:
 
 
 func _init_params() -> void:
-    Gs.logger.error("Abstract MovementParams._init_params is not implemented")
+    Sc.logger.error("Abstract MovementParams._init_params is not implemented")
 
 
 func _init_animator_params() -> void:
-    Gs.logger.error(
+    Sc.logger.error(
             "Abstract MovementParams._init_animator_params is not implemented")
 
 

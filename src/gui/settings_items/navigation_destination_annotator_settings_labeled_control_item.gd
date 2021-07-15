@@ -14,14 +14,14 @@ func _init(__ = null).(
 
 
 func on_pressed(pressed: bool) -> void:
-    Surfacer.is_navigation_destination_shown = pressed
-    Gs.save_state.set_setting(
-            Surfacer.NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
+    Su.is_navigation_destination_shown = pressed
+    Sc.save_state.set_setting(
+            Su.NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
             pressed)
 
 
 func get_is_pressed() -> bool:
-    return Surfacer.is_navigation_destination_shown
+    return Su.is_navigation_destination_shown
 
 
 func get_is_enabled() -> bool:

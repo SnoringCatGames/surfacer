@@ -15,7 +15,7 @@ var dash_stroke_width: float
 func _init(
         jump_land_positions: JumpLandPositions,
         color_params := \
-                Surfacer.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS,
+                Su.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS,
         dash_length := \
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH,
         dash_gap := \
@@ -35,7 +35,7 @@ func draw(canvas: CanvasItem) -> void:
     var color := color_params.get_color()
     var start := jump_land_positions.jump_position.target_point
     var end := jump_land_positions.land_position.target_point
-    Gs.draw.draw_dashed_line(
+    Sc.draw.draw_dashed_line(
             canvas,
             start,
             end,
@@ -44,11 +44,11 @@ func draw(canvas: CanvasItem) -> void:
             dash_gap,
             0.0,
             dash_stroke_width)
-    Gs.draw.draw_origin_marker(
+    Sc.draw.draw_origin_marker(
             canvas,
             start,
             color)
-    Gs.draw.draw_destination_marker(
+    Sc.draw.draw_destination_marker(
             canvas,
             jump_land_positions.land_position,
             true,

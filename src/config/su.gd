@@ -1,5 +1,4 @@
 tool
-class_name SurfacerConfig
 extends FrameworkConfig
 
 
@@ -313,13 +312,13 @@ var player_param_classes: Array
 
 
 func _ready() -> void:
-    assert(is_instance_valid(Gs),
-            "The Scaffolder AutoLoad must be declared first.")
+    assert(is_instance_valid(Sc),
+            "The Sc (Scaffolder) AutoLoad must be declared first.")
     
-    Gs.logger.on_global_init(self, "SurfacerConfig")
-    Gs.register_framework_config(self)
+    Sc.logger.on_global_init(self, "Su")
+    Sc.register_framework_config(self)
     
-    Gs._bootstrap = SurfacerBootstrap.new()
+    Sc._bootstrap = SurfacerBootstrap.new()
 
 
 func amend_app_manifest(manifest: Dictionary) -> void:
@@ -339,7 +338,7 @@ func amend_app_manifest(manifest: Dictionary) -> void:
         manifest.metadata.is_splash_skipped = true
     
     # Add Surfacer sounds to the front, so they can be overridden by the app.
-    Gs.utils.concat(
+    Sc.utils.concat(
             manifest.audio_manifest.sounds_manifest,
             _surfacer_sounds,
             false)
@@ -476,40 +475,40 @@ func register_app_manifest(manifest: Dictionary) -> void:
         self.skip_choreography_framerate_multiplier = \
                 surfacer_manifest.skip_choreography_framerate_multiplier
     
-    assert(Gs._manifest.metadata.must_restart_level_to_change_settings)
+    assert(Sc._manifest.metadata.must_restart_level_to_change_settings)
 
 
 func set_up() -> void:
-    assert(Gs.colors is SurfacerColors)
-    assert(Gs.draw is SurfacerDrawUtils)
-    assert(Gs.level_config is MommaDuckLevelConfig)
-    assert(Gs.level_session is MommaDuckLevelSession)
+    assert(Sc.colors is SurfacerColors)
+    assert(Sc.draw is SurfacerDrawUtils)
+    assert(Sc.level_config is MommaDuckLevelConfig)
+    assert(Sc.level_session is MommaDuckLevelSession)
     
-    self.is_inspector_enabled = Gs.save_state.get_setting(
+    self.is_inspector_enabled = Sc.save_state.get_setting(
             IS_INSPECTOR_ENABLED_SETTINGS_KEY,
-            Gs.gui.hud_manifest.is_inspector_enabled_default)
-    self.is_surfacer_logging = Gs.save_state.get_setting(
+            Sc.gui.hud_manifest.is_inspector_enabled_default)
+    self.is_surfacer_logging = Sc.save_state.get_setting(
             IS_SURFACER_LOGGING_SETTINGS_KEY,
             false)
-    self.is_intro_choreography_shown = Gs.save_state.get_setting(
+    self.is_intro_choreography_shown = Sc.save_state.get_setting(
             IS_INTRO_CHOREOGRAPHY_SHOWN_SETTINGS_KEY,
             true)
-    self.is_active_trajectory_shown = Gs.save_state.get_setting(
+    self.is_active_trajectory_shown = Sc.save_state.get_setting(
             ACTIVE_TRAJECTORY_SHOWN_SETTINGS_KEY,
             true)
-    self.is_previous_trajectory_shown = Gs.save_state.get_setting(
+    self.is_previous_trajectory_shown = Sc.save_state.get_setting(
             PREVIOUS_TRAJECTORY_SHOWN_SETTINGS_KEY,
             false)
-    self.is_preselection_trajectory_shown = Gs.save_state.get_setting(
+    self.is_preselection_trajectory_shown = Sc.save_state.get_setting(
             PRESELECTION_TRAJECTORY_SHOWN_SETTINGS_KEY,
             true)
-    self.is_navigation_destination_shown = Gs.save_state.get_setting(
+    self.is_navigation_destination_shown = Sc.save_state.get_setting(
             NAVIGATION_DESTINATION_SHOWN_SETTINGS_KEY,
             true)
     
-    Gs.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
-    Gs.profiler.preregister_metric_keys(surface_parser_metric_keys)
+    Sc.profiler.preregister_metric_keys(non_surface_parser_metric_keys)
+    Sc.profiler.preregister_metric_keys(surface_parser_metric_keys)
     
     ann_defaults = AnnotationElementDefaults.new()
     annotators = Annotators.new()
-    add_child(Surfacer.annotators)
+    add_child(Su.annotators)

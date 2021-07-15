@@ -39,17 +39,17 @@ func get_description() -> String:
 func find_and_expand_controller(
         search_type: int,
         metadata: Dictionary) -> bool:
-    Gs.logger.error(
+    Sc.logger.error(
             "find_and_expand_controller should not be called for " +
             "PROFILER_GROUP.")
     return false
 
 
 func _create_children_inner() -> void:
-    for metric in Gs.profiler.get_preregistered_metric_keys():
-        if Surfacer.surface_parser_metric_keys.find(metric) >= 0:
+    for metric in Sc.profiler.get_preregistered_metric_keys():
+        if Su.surface_parser_metric_keys.find(metric) >= 0:
             continue
-        if Gs.profiler.is_timing(metric):
+        if Sc.profiler.is_timing(metric):
             ProfilerTimingItemController.new(
                     tree_item,
                     tree,

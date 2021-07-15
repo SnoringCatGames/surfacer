@@ -22,7 +22,7 @@ func _sanitize_level_config(config: Dictionary) -> void:
 
 
 func get_intro_choreographer(player: Player) -> Choreographer:
-    var config := get_level_config(Gs.level_session.id)
+    var config := get_level_config(Sc.level_session.id)
     
     var sequence: Array
     if config.has("intro_choreography"):
@@ -42,5 +42,5 @@ func get_intro_choreographer(player: Player) -> Choreographer:
         ]
     
     var choreographer := Choreographer.new()
-    choreographer.configure(sequence, player, Gs.level)
+    choreographer.configure(sequence, player, Sc.level)
     return choreographer

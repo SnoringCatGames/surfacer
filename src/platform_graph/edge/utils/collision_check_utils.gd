@@ -148,7 +148,7 @@ static func check_instructions_discrete_trajectory_state(
                 "fr":
                     pass
                 _:
-                    Gs.logger.error()
+                    Sc.logger.error()
             
             next_instruction = \
                     instructions.instructions \
@@ -218,7 +218,7 @@ static func check_continuous_horizontal_step_for_collision(
         edge_calc_params: EdgeCalcParams,
         step_calc_params: EdgeStepCalcParams,
         horizontal_step: EdgeStep) -> SurfaceCollision:
-    Gs.profiler.start(
+    Sc.profiler.start(
             "check_continuous_horizontal_step_for_collision",
             edge_calc_params.collision_params.thread_id)
     
@@ -293,7 +293,7 @@ static func check_continuous_horizontal_step_for_collision(
     # Check the last frame that puts us up to end_time.
     current_time = step_end_time
     if collision == null and \
-            !Gs.geometry.are_floats_equal_with_epsilon(
+            !Sc.geometry.are_floats_equal_with_epsilon(
                     previous_time,
                     current_time):
         var horizontal_state := \
@@ -339,7 +339,7 @@ static func check_continuous_horizontal_step_for_collision(
             step_result_metadata.edge_result_metadata if \
             step_result_metadata != null else \
             null
-    Gs.profiler.stop_with_optional_metadata(
+    Sc.profiler.stop_with_optional_metadata(
             "check_continuous_horizontal_step_for_collision",
             edge_calc_params.collision_params.thread_id,
             edge_result_metadata)
@@ -378,7 +378,7 @@ static func check_frame_for_collision(
     
     var tile_map: SurfacesTileMap = kinematic_collision.collider
     var surface_side: int = \
-            Gs.geometry.get_which_surface_side_collided(kinematic_collision)
+            Sc.geometry.get_which_surface_side_collided(kinematic_collision)
     var tile_map_result := CollisionTileMapCoordResult.new()
     
     # Is this collision with a surface that we're actually moving away from?
@@ -393,7 +393,7 @@ static func check_frame_for_collision(
         SurfaceSide.CEILING:
             is_moving_away_from_surface = displacement.y > 0.0
         _:
-            Gs.logger.error()
+            Sc.logger.error()
     
     # Are we likely to be looking at the wrong intersection point, according to
     # how oblique movement is relative to the surface tangent?
@@ -492,7 +492,7 @@ static func check_frame_for_collision(
                 var expected_touching_right_wall := \
                         expected_surface_side_for_displacement == \
                         SurfaceSide.RIGHT_WALL
-                Gs.geometry.get_collision_tile_map_coord(
+                Sc.geometry.get_collision_tile_map_coord(
                         tile_map_result,
                         most_likely_collision_point,
                         tile_map,
@@ -517,7 +517,7 @@ static func check_frame_for_collision(
         var is_touching_ceiling := surface_side == SurfaceSide.CEILING
         var is_touching_left_wall := surface_side == SurfaceSide.LEFT_WALL
         var is_touching_right_wall := surface_side == SurfaceSide.RIGHT_WALL
-        Gs.geometry.get_collision_tile_map_coord(
+        Sc.geometry.get_collision_tile_map_coord(
                 tile_map_result,
                 kinematic_collision.position,
                 tile_map,
@@ -535,7 +535,7 @@ static func check_frame_for_collision(
             # Invalid collision state.
             if collision_params.movement_params \
                     .asserts_no_preexisting_collisions_during_edge_calculations:
-                Gs.logger.error()
+                Sc.logger.error()
             surface_collision.is_valid_collision_state = false
             return null
     
@@ -543,7 +543,7 @@ static func check_frame_for_collision(
         # Put-together the return result.
         
         var tile_map_index: int = \
-                Gs.geometry.get_tile_map_index_from_grid_coord(
+                Sc.geometry.get_tile_map_index_from_grid_coord(
                         tile_map_result.tile_map_coord,
                         tile_map)
         if !collision_params.surface_parser.has_surface_for_tile(
@@ -554,7 +554,7 @@ static func check_frame_for_collision(
             # corresponds to a tile that isn't open on the expected side.
             if collision_params.movement_params \
                     .asserts_no_preexisting_collisions_during_edge_calculations:
-                Gs.logger.error()
+                Sc.logger.error()
             surface_collision.is_valid_collision_state = false
             return null
         
@@ -578,7 +578,7 @@ static func check_frame_for_collision(
             SurfaceSide.CEILING:
                 is_moving_away_from_surface = displacement.y > 0.0
             _:
-                Gs.logger.error()
+                Sc.logger.error()
     
     if is_moving_away_from_surface:
         # The player is moving away from the collision point.
@@ -592,7 +592,7 @@ static func check_frame_for_collision(
             # Invalid collision state: Happens infrequently.
             if collision_params.movement_params \
                     .asserts_no_preexisting_collisions_during_edge_calculations:
-                Gs.logger.error()
+                Sc.logger.error()
             surface_collision.is_valid_collision_state = false
             return null
         
@@ -607,7 +607,7 @@ static func check_frame_for_collision(
             SurfaceSide.CEILING:
                 surface_normal = Vector2.DOWN
             _:
-                Gs.logger.error()
+                Sc.logger.error()
         
         # Try the collision check again with a reduced margin and a slight
         # offset.

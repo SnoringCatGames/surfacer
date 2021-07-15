@@ -48,7 +48,7 @@ static func project_point_onto_surface(
             segment_b = Vector2(surface.bounding_box.end.x, point.y)
         
         var intersection: Vector2 = \
-                Gs.geometry.get_intersection_of_segment_and_polyline(
+                Sc.geometry.get_intersection_of_segment_and_polyline(
                         segment_a,
                         segment_b,
                         surface.vertices)
@@ -109,11 +109,11 @@ static func get_which_wall_collided_for_body(body: KinematicBody2D) -> int:
 
 static func get_which_surface_side_collided(
         collision: KinematicCollision2D) -> int:
-    if abs(collision.normal.angle_to(Gs.geometry.UP)) <= \
-            Gs.geometry.FLOOR_MAX_ANGLE:
+    if abs(collision.normal.angle_to(Sc.geometry.UP)) <= \
+            Sc.geometry.FLOOR_MAX_ANGLE:
         return SurfaceSide.FLOOR
-    elif abs(collision.normal.angle_to(Gs.geometry.DOWN)) <= \
-            Gs.geometry.FLOOR_MAX_ANGLE:
+    elif abs(collision.normal.angle_to(Sc.geometry.DOWN)) <= \
+            Sc.geometry.FLOOR_MAX_ANGLE:
         return SurfaceSide.CEILING
     elif collision.normal.x > 0:
         return SurfaceSide.LEFT_WALL
@@ -558,6 +558,6 @@ static func get_collision_tile_map_coord(
             ]
         if !error_message.empty() and \
                 !allows_errors:
-            Gs.logger.error(print_message)
+            Sc.logger.error(print_message)
         else:
-            Gs.logger.print(print_message)
+            Sc.logger.print(print_message)

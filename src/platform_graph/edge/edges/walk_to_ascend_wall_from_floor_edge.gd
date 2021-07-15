@@ -44,7 +44,7 @@ func _calculate_distance(
         start: PositionAlongSurface,
         end: PositionAlongSurface,
         trajectory: EdgeTrajectory) -> float:
-    return Gs.geometry.calculate_manhattan_distance(
+    return Sc.geometry.calculate_manhattan_distance(
             start.target_point,
             end.target_point)
 
@@ -77,7 +77,7 @@ func get_position_at_time(edge_time: float) -> Vector2:
                     acceleration_x,
                     movement_params.max_horizontal_speed_default)
     var position_x := start.x + displacement_x
-    return Gs.geometry.project_point_onto_surface_with_offset(
+    return Sc.geometry.project_point_onto_surface_with_offset(
             Vector2(position_x, 0.0),
             surface,
             movement_params.collider_half_width_height)
@@ -103,7 +103,7 @@ func get_velocity_at_time(edge_time: float) -> Vector2:
             get_start_surface().side == SurfaceSide.FLOOR else \
             -PlayerActionHandler \
                     .MIN_SPEED_TO_MAINTAIN_VERTICAL_COLLISION
-    velocity_y /= Gs.time.get_combined_scale()
+    velocity_y /= Sc.time.get_combined_scale()
     return Vector2(velocity_x, velocity_y)
 
 

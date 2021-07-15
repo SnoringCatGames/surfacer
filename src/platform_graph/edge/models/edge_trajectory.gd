@@ -53,15 +53,15 @@ func load_from_json_object(
         context: Dictionary) -> void:
     if json_object.has("d"):
         frame_discrete_positions_from_test = \
-                Gs.json.decode_vector2_array(json_object.d)
+                Sc.json.decode_vector2_array(json_object.d)
     if json_object.has("p"):
         frame_continuous_positions_from_steps = \
-                Gs.json.decode_vector2_array(json_object.p)
+                Sc.json.decode_vector2_array(json_object.p)
     if json_object.has("v"):
         frame_continuous_velocities_from_steps = \
-                Gs.json.decode_vector2_array(json_object.v)
+                Sc.json.decode_vector2_array(json_object.v)
     if json_object.has("w"):
-        waypoint_positions = Gs.json.decode_vector2_array(json_object.w)
+        waypoint_positions = Sc.json.decode_vector2_array(json_object.w)
     if json_object.has("h"):
         horizontal_instructions = _load_horizontal_instructions_json_array(
                 json_object.h, context)
@@ -88,16 +88,16 @@ func to_json_object() -> Dictionary:
         f = distance_from_continuous_trajectory,
     }
     if !frame_discrete_positions_from_test.empty():
-        json_object.d = Gs.json.encode_vector2_array(
+        json_object.d = Sc.json.encode_vector2_array(
                 frame_discrete_positions_from_test)
     if !frame_continuous_positions_from_steps.empty():
-        json_object.p = Gs.json.encode_vector2_array(
+        json_object.p = Sc.json.encode_vector2_array(
                 frame_continuous_positions_from_steps)
     if !frame_continuous_velocities_from_steps.empty():
-        json_object.v = Gs.json.encode_vector2_array(
+        json_object.v = Sc.json.encode_vector2_array(
                 frame_continuous_velocities_from_steps)
     if !waypoint_positions.empty():
-        json_object.w = Gs.json.encode_vector2_array(waypoint_positions)
+        json_object.w = Sc.json.encode_vector2_array(waypoint_positions)
     var horizontal_instructions_json_object := \
             _get_horizontal_instructions_json_array()
     if !horizontal_instructions_json_object.empty():

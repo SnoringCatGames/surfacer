@@ -194,7 +194,7 @@ func find_and_expand_controller(
             else:
                 return false
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return false
 
 
@@ -275,7 +275,7 @@ func get_annotation_elements() -> Array:
     
     var valid_edges_annotation_elements := \
             _get_valid_edges_annotation_elements()
-    Gs.utils.concat(elements, valid_edges_annotation_elements)
+    Sc.utils.concat(elements, valid_edges_annotation_elements)
     
     var origin_element := OriginSurfaceAnnotationElement.new(origin_surface)
     elements.push_back(origin_element)
@@ -337,7 +337,7 @@ func _get_jump_fall_range_annotation_elements(
         var fall_range_without_jump_distance_element := \
                 FallRangeWithoutJumpDistanceAnnotationElement.new(
                         fall_range_polygon_without_jump_distance,
-                        Surfacer.ann_defaults \
+                        Su.ann_defaults \
                                 .FALL_RANGE_POLYGON_COLOR_PARAMS,
                         false,
                         false,
@@ -351,7 +351,7 @@ func _get_jump_fall_range_annotation_elements(
         var fall_range_with_jump_distance_element := \
                 FallRangeWithJumpDistanceAnnotationElement.new(
                         fall_range_polygon_with_jump_distance,
-                        Surfacer.ann_defaults \
+                        Su.ann_defaults \
                                 .FALL_RANGE_POLYGON_COLOR_PARAMS,
                         false,
                         false,

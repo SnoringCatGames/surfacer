@@ -2,7 +2,7 @@ class_name GridIndicesAnnotator
 extends Node2D
 
 
-var TILE_INDICES_COLOR: Color = Gs.colors.grid_indices
+var TILE_INDICES_COLOR: Color = Sc.colors.grid_indices
 
 var surface_parser: SurfaceParser
 
@@ -40,11 +40,11 @@ func _draw_tile_indices(only_render_used_indices := false) -> void:
             var cell_top_left_corner: Vector2 = tile_map.map_to_world(position)
             var cell_center := cell_top_left_corner + half_cell_size
             var tile_map_index := \
-                    Gs.geometry.get_tile_map_index_from_grid_coord(
+                    Sc.geometry.get_tile_map_index_from_grid_coord(
                             position,
                             tile_map)
             draw_string(
-                    Gs.gui.fonts.main_xs,
+                    Sc.gui.fonts.main_xs,
                     cell_center,
                     str(tile_map_index),
                     TILE_INDICES_COLOR)

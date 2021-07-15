@@ -2,8 +2,8 @@ class_name PlayerTileAnnotator
 extends Node2D
 
 
-var TILE_BORDER_COLOR := Gs.colors.opacify(
-        Gs.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
+var TILE_BORDER_COLOR := Sc.colors.opacify(
+        Sc.colors.player_position, ScaffolderColors.ALPHA_XXFAINT)
 const TILE_BORDER_WIDTH := 6.0
 
 var player: Player
@@ -27,7 +27,7 @@ func _draw_tile_border() -> void:
     var coord := player.surface_state.grab_position_tile_map_coord
     var center := (coord + Vector2(0.5, 0.5)) * cell_size
     
-    Gs.draw.draw_rectangle_outline(
+    Sc.draw.draw_rectangle_outline(
             self,
             center,
             cell_size / 2.0,

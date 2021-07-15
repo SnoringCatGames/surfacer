@@ -11,7 +11,7 @@ static func calculate_trajectory_from_calculation_steps(
         collision_params: CollisionCalcParams,
         calc_result: EdgeCalcResult,
         instructions: EdgeInstructions) -> EdgeTrajectory:
-    Gs.profiler.start(
+    Sc.profiler.start(
             "calculate_trajectory_from_calculation_steps",
             collision_params.thread_id)
     
@@ -57,7 +57,7 @@ static func calculate_trajectory_from_calculation_steps(
                 collision.surface == \
                         edge_calc_params.destination_waypoint.surface))
     
-    Gs.profiler.stop_with_optional_metadata(
+    Sc.profiler.stop_with_optional_metadata(
             "calculate_trajectory_from_calculation_steps",
             collision_params.thread_id,
             records_profile_or_edge_result_metadata)
@@ -70,7 +70,7 @@ static func _concatenate_step_frame_positions(
     var combined_positions := []
     
     for step in steps:
-        Gs.utils.concat(combined_positions, step.frame_positions)
+        Sc.utils.concat(combined_positions, step.frame_positions)
         # Since the start-position of the next step is always the same as the
         # end-position of the previous step, we can de-dup them here.
         combined_positions.remove(combined_positions.size() - 1)
@@ -86,7 +86,7 @@ static func _concatenate_step_frame_velocities(
     var combined_velocities := []
     
     for step in steps:
-        Gs.utils.concat(combined_velocities, step.frame_velocities)
+        Sc.utils.concat(combined_velocities, step.frame_velocities)
         # Since the start-position of the next step is always the same as the
         # end-position of the previous step, we can de-dup them here.
         combined_velocities.remove(combined_velocities.size() - 1)
@@ -127,13 +127,13 @@ static func sub_trajectory(
     var start_index := int(start_time / Time.PHYSICS_TIME_STEP)
     
     var frame_continuous_positions_from_steps: PoolVector2Array = \
-                Gs.utils.sub_pool_vector2_array(
+                Sc.utils.sub_pool_vector2_array(
                         base_trajectory.frame_continuous_positions_from_steps,
                         start_index) if \
                 includes_continuous_positions else \
                 PoolVector2Array()
     var frame_continuous_velocities_from_steps: PoolVector2Array = \
-            Gs.utils.sub_pool_vector2_array(
+            Sc.utils.sub_pool_vector2_array(
                     base_trajectory.frame_continuous_velocities_from_steps,
                     start_index) if \
                 includes_continuous_velocities else \

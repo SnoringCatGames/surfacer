@@ -125,7 +125,7 @@ func get_annotation_elements() -> Array:
     for jump_land_positions in edges_results.all_jump_land_positions:
         element = JumpLandPositionsAnnotationElement.new(
                 jump_land_positions,
-                Surfacer.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS,
+                Su.ann_defaults.JUMP_LAND_POSITIONS_COLOR_PARAMS,
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_LENGTH,
                 AnnotationElementDefaults.JUMP_LAND_POSITIONS_DASH_GAP,
                 AnnotationElementDefaults \

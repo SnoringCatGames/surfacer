@@ -62,7 +62,7 @@ func match_surface_target_and_collider(
 
 func update_target_projection_onto_surface() -> void:
     self.target_projection_onto_surface = \
-            Gs.geometry.project_point_onto_surface(target_point, surface)
+            Sc.geometry.project_point_onto_surface(target_point, surface)
 
 
 func _clip_and_project_target_point_for_center_of_collider(
@@ -72,7 +72,7 @@ func _clip_and_project_target_point_for_center_of_collider(
         clips_to_surface_bounds: bool,
         matches_target_to_player_dimensions: bool) -> Vector2:
     self.target_projection_onto_surface = \
-            Gs.geometry.project_point_onto_surface(target_point, surface)
+            Sc.geometry.project_point_onto_surface(target_point, surface)
     
     var is_surface_horizontal = \
             surface.side == SurfaceSide.FLOOR or \
@@ -135,13 +135,13 @@ func load_from_json_object(
         json_object: Dictionary,
         context: Dictionary) -> void:
     surface = context.id_to_surface[int(json_object.s)]
-    target_point = Gs.json.decode_vector2(json_object.t)
-    target_projection_onto_surface = Gs.json.decode_vector2(json_object.p)
+    target_point = Sc.json.decode_vector2(json_object.t)
+    target_projection_onto_surface = Sc.json.decode_vector2(json_object.p)
 
 
 func to_json_object() -> Dictionary:
     return {
         s = surface.get_instance_id(),
-        t = Gs.json.encode_vector2(target_point),
-        p = Gs.json.encode_vector2(target_projection_onto_surface),
+        t = Sc.json.encode_vector2(target_point),
+        p = Sc.json.encode_vector2(target_projection_onto_surface),
     }

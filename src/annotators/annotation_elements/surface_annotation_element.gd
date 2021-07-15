@@ -15,7 +15,7 @@ func _init(
         surface: Surface,
         depth := AnnotationElementDefaults.SURFACE_DEPTH,
         color_params: ColorParams = \
-                Surfacer.ann_defaults.SURFACE_COLOR_PARAMS,
+                Su.ann_defaults.SURFACE_COLOR_PARAMS,
         is_origin := false,
         is_destination := false,
         type := DEFAULT_TYPE) \
@@ -41,7 +41,7 @@ static func draw_from_surface(
         color_params: ColorParams,
         depth := AnnotationElementDefaults.SURFACE_DEPTH) -> void:
     var color := color_params.get_color()
-    Gs.draw.draw_surface(
+    Sc.draw.draw_surface(
             canvas,
             surface,
             color,

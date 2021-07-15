@@ -89,7 +89,7 @@ func _find_and_expand_controller_recursive(
                     search_type,
                     metadata)
         _:
-            Gs.logger.error("Invalid SurfaceSide: %s" % \
+            Sc.logger.error("Invalid SurfaceSide: %s" % \
                     SurfaceSide.get_string(side))
 
 

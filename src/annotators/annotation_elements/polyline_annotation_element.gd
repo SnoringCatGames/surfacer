@@ -41,7 +41,7 @@ func draw(canvas: CanvasItem) -> void:
                 PoolVector2Array(vertices),
                 color)
     elif is_dashed:
-        Gs.draw.draw_dashed_polyline(
+        Sc.draw.draw_dashed_polyline(
                 canvas,
                 vertices,
                 color,

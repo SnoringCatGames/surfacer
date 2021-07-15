@@ -68,11 +68,11 @@ func find_and_expand_controller(
             search_type,
             metadata)
     for failed_edge_attempt in edges_results.failed_edge_attempts:
-        if Gs.geometry.are_points_equal_with_epsilon(
+        if Sc.geometry.are_points_equal_with_epsilon(
                         failed_edge_attempt.get_start(),
                         metadata.start,
                         0.01) and \
-                Gs.geometry.are_points_equal_with_epsilon(
+                Sc.geometry.are_points_equal_with_epsilon(
                         failed_edge_attempt.get_end(),
                         metadata.end,
                         0.01):
@@ -116,9 +116,9 @@ func get_annotation_elements() -> Array:
     for failed_edge_attempt in edges_results.failed_edge_attempts:
         var element := FailedEdgeAttemptAnnotationElement.new(
                 failed_edge_attempt,
-                Surfacer.ann_defaults \
+                Su.ann_defaults \
                         .EDGE_DISCRETE_TRAJECTORY_COLOR_PARAMS,
-                Surfacer.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS,
+                Su.ann_defaults.FAILED_EDGE_ATTEMPT_COLOR_PARAMS,
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_LENGTH,
                 AnnotationElementDefaults.FAILED_EDGE_ATTEMPT_DASH_GAP,
                 AnnotationElementDefaults \

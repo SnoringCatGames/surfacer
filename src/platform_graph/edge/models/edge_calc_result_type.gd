@@ -43,7 +43,7 @@ static func get_string(result_type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.logger.error("Invalid EdgeCalcResultType: %s" % result_type)
+            Sc.logger.error("Invalid EdgeCalcResultType: %s" % result_type)
             return "UNKNOWN"
 
 
@@ -81,7 +81,7 @@ static func get_description(result_type: int) -> String:
         UNKNOWN:
             return "UNKNOWN"
         _:
-            Gs.logger.error("Invalid EdgeCalcResultType: %s" % result_type)
+            Sc.logger.error("Invalid EdgeCalcResultType: %s" % result_type)
             return "UNKNOWN"
 
 

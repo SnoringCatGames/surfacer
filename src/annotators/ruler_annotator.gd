@@ -4,10 +4,10 @@ extends Node2D
 
 const LINE_WIDTH := 1.0
 
-var LINE_COLOR := Gs.colors.opacify(
-        Gs.colors.ruler, ScaffolderColors.ALPHA_XXFAINT)
-var TEXT_COLOR := Gs.colors.opacify(
-        Gs.colors.ruler, ScaffolderColors.ALPHA_XFAINT)
+var LINE_COLOR := Sc.colors.opacify(
+        Sc.colors.ruler, ScaffolderColors.ALPHA_XXFAINT)
+var TEXT_COLOR := Sc.colors.opacify(
+        Sc.colors.ruler, ScaffolderColors.ALPHA_XFAINT)
 
 var viewport: Viewport
 
@@ -30,8 +30,8 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-    var next_camera_position: Vector2 = Gs.camera_controller.get_position()
-    var next_camera_zoom: float = Gs.camera_controller.get_derived_zoom()
+    var next_camera_position: Vector2 = Sc.camera_controller.get_position()
+    var next_camera_zoom: float = Sc.camera_controller.get_derived_zoom()
     
     if next_camera_position != previous_camera_position or \
             next_camera_zoom != previous_camera_zoom:
@@ -42,7 +42,7 @@ func _process(_delta: float) -> void:
 
 
 func _draw() -> void:
-    var grid_spacing: Vector2 = Gs.gui.cell_size / previous_camera_zoom
+    var grid_spacing: Vector2 = Sc.gui.cell_size / previous_camera_zoom
     var screen_start_position: Vector2 = \
             previous_camera_position / previous_camera_zoom - \
             viewport_size / 2.0
@@ -78,7 +78,7 @@ func _draw() -> void:
                 previous_camera_zoom))
         text = "0" if text == "-0" else text
         draw_string(
-                Gs.gui.fonts.main_xs,
+                Sc.gui.fonts.main_xs,
                 Vector2(start_position.x + 2, 14),
                 text,
                 TEXT_COLOR)
@@ -99,7 +99,7 @@ func _draw() -> void:
                 previous_camera_zoom))
         text = "0" if text == "-0" else text
         draw_string(
-                Gs.gui.fonts.main_xs,
+                Sc.gui.fonts.main_xs,
                 Vector2(2, start_position.y + 14),
                 text,
                 TEXT_COLOR)

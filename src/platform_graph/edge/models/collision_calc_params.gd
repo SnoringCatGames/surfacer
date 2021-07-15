@@ -7,7 +7,7 @@ var debug_params: Dictionary
 var movement_params: MovementParams
 var surface_parser: SurfaceParser
 var player: KinematicBody2D
-var thread_id: String = Gs.profiler.DEFAULT_THREAD_ID
+var thread_id: String = Sc.profiler.DEFAULT_THREAD_ID
 
 
 func _init(

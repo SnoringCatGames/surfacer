@@ -26,7 +26,7 @@ func _physics_process(_delta: float) -> void:
     if recent_movement_annotator != null:
         recent_movement_annotator.check_for_update()
     
-    if !Gs.geometry.are_points_equal_with_epsilon(
+    if !Sc.geometry.are_points_equal_with_epsilon(
             player.position,
             previous_position,
             0.01):
@@ -64,7 +64,7 @@ func is_annotator_enabled(annotator_type: int) -> bool:
         AnnotatorType.NAVIGATOR:
             return navigator_annotator != null
         _:
-            Gs.logger.error()
+            Sc.logger.error()
             return false
 
 
@@ -88,7 +88,7 @@ func _create_annotator(annotator_type: int) -> void:
             navigator_annotator = NavigatorAnnotator.new(player.navigator)
             add_child(navigator_annotator)
         _:
-            Gs.logger.error()
+            Sc.logger.error()
 
 
 func _destroy_annotator(annotator_type: int) -> void:
@@ -110,4 +110,4 @@ func _destroy_annotator(annotator_type: int) -> void:
             navigator_annotator.queue_free()
             navigator_annotator = null
         _:
-            Gs.logger.error()
+            Sc.logger.error()

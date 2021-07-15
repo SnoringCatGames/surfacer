@@ -98,14 +98,14 @@ func _find_and_expand_controller_recursive(
                         search_type,
                         metadata)
             else:
-                Gs.logger.error("Invalid Surface: %s" % \
+                Sc.logger.error("Invalid Surface: %s" % \
                         metadata.origin_surface.to_string())
           
         InspectorSearchType.EDGES_GROUP:
             edges_item_controller.select()
         
         _:
-            Gs.logger.error("Invalid InspectorSearchType: %s" % \
+            Sc.logger.error("Invalid InspectorSearchType: %s" % \
                     InspectorSearchType.get_string(search_type))
 
 
@@ -187,7 +187,7 @@ func get_annotation_elements() -> Array:
 static func get_annotation_elements_from_graph(graph: PlatformGraph) -> Array:
     var result := SurfacesGroupItemController \
             .get_annotation_elements_from_graph(graph)
-    Gs.utils.concat(
+    Sc.utils.concat(
             result,
             EdgesGroupItemController \
                     .get_annotation_elements_from_graph(graph))

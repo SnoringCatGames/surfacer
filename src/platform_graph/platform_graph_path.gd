@@ -44,7 +44,7 @@ func _calculate_duration() -> float:
 
 
 func push_front(edge: Edge) -> void:
-    assert(Gs.geometry.are_points_equal_with_epsilon(
+    assert(Sc.geometry.are_points_equal_with_epsilon(
             edge.end_position_along_surface.target_point,
             origin.target_point))
     self.edges.push_front(edge)
@@ -52,7 +52,7 @@ func push_front(edge: Edge) -> void:
 
 
 func push_back(edge: Edge) -> void:
-    assert(Gs.geometry.are_points_equal_with_epsilon(
+    assert(Sc.geometry.are_points_equal_with_epsilon(
             edge.start_position_along_surface.target_point,
             destination.target_point))
     self.edges.push_back(edge)

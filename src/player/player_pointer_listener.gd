@@ -5,12 +5,12 @@ extends Node2D
 var _player
 var _nearby_surface_distance_squared_threshold: float
 var _is_preselection_path_update_pending := false
-var _throttled_update_preselection_path: FuncRef = Gs.time.throttle(
+var _throttled_update_preselection_path: FuncRef = Sc.time.throttle(
         funcref(self, "_update_preselection_path"),
-        Surfacer.path_drag_update_throttle_interval)
-var _throttled_update_preselection_beats: FuncRef = Gs.time.throttle(
+        Su.path_drag_update_throttle_interval)
+var _throttled_update_preselection_beats: FuncRef = Sc.time.throttle(
         funcref(self, "_update_preselection_beats"),
-        Surfacer.path_beat_update_throttle_interval)
+        Su.path_beat_update_throttle_interval)
 var _last_pointer_drag_position := Vector2.INF
 
 
@@ -30,8 +30,8 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if !Gs.gui.is_user_interaction_enabled or \
-            Surfacer.human_player != _player:
+    if !Sc.gui.is_user_interaction_enabled or \
+            Su.human_player != _player:
         return
     
     var pointer_up_position := Vector2.INF
@@ -47,7 +47,7 @@ func _unhandled_input(event: InputEvent) -> void:
 #            !event.pressed and \
 #            !event.control:
 #        event_type = "MOUSE_UP   "
-#        pointer_up_position = Gs.utils.get_level_touch_position(event)
+#        pointer_up_position = Sc.utils.get_level_touch_position(event)
 #
 #    # Mouse-down: Position pre-selection.
 #    if event is InputEventMouseButton and \
@@ -56,44 +56,44 @@ func _unhandled_input(event: InputEvent) -> void:
 #            !event.control:
 #        event_type = "MOUSE_DOWN "
 #        pointer_drag_position = \
-#                Gs.utils.get_level_touch_position(event)
+#                Sc.utils.get_level_touch_position(event)
 #
 #    # Mouse-move: Position pre-selection.
 #    if event is InputEventMouseMotion and \
 #            _last_pointer_drag_position != Vector2.INF:
 #        event_type = "MOUSE_DRAG "
 #        pointer_drag_position = \
-#                Gs.utils.get_level_touch_position(event)
+#                Sc.utils.get_level_touch_position(event)
     
     var is_control_pressed: bool = \
-            Gs.level_input.is_key_pressed(KEY_CONTROL) or \
-            Gs.level_input.is_key_pressed(KEY_META)
+            Sc.level_input.is_key_pressed(KEY_CONTROL) or \
+            Sc.level_input.is_key_pressed(KEY_META)
     
     # Touch-up: Position selection.
     if event is InputEventScreenTouch and \
             !event.pressed and \
             !is_control_pressed:
         event_type = "TOUCH_UP   "
-        pointer_up_position = Gs.utils.get_level_touch_position(event)
+        pointer_up_position = Sc.utils.get_level_touch_position(event)
     
     # Touch-down: Position pre-selection.
     if event is InputEventScreenTouch and \
             event.pressed and \
             !is_control_pressed:
         event_type = "TOUCH_DOWN "
-        pointer_drag_position = Gs.utils.get_level_touch_position(event)
+        pointer_drag_position = Sc.utils.get_level_touch_position(event)
     
     # Touch-move: Position pre-selection.
     if event is InputEventScreenDrag and \
             !is_control_pressed:
         event_type = "TOUCH_DRAG "
-        pointer_drag_position = Gs.utils.get_level_touch_position(event)
+        pointer_drag_position = Sc.utils.get_level_touch_position(event)
     
 #    if pointer_up_position != Vector2.INF or \
 #            pointer_drag_position != Vector2.INF:
 #        _player.print_msg("%s:         %8.3fs", [
 #                event_type,
-#                Gs.time.get_play_time(),
+#                Sc.time.get_play_time(),
 #            ])
     
     if pointer_up_position != Vector2.INF:
@@ -115,10 +115,10 @@ func _update_preselection_beats() -> void:
 
 func _on_pointer_released(pointer_position: Vector2) -> void:
     _last_pointer_drag_position = Vector2.INF
-    Gs.slow_motion.set_slow_motion_enabled(false)
+    Sc.slow_motion.set_slow_motion_enabled(false)
     _is_preselection_path_update_pending = false
-    Gs.time.clear_throttle(_throttled_update_preselection_path)
-    Gs.time.clear_throttle(_throttled_update_preselection_beats)
+    Sc.time.clear_throttle(_throttled_update_preselection_path)
+    Sc.time.clear_throttle(_throttled_update_preselection_beats)
     _player.new_selection.update_pointer_position(pointer_position)
     
     var selected_surface: Surface = \
@@ -126,7 +126,7 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
             _player.new_selection.navigation_destination != null else \
             null
     var is_surface_navigatable: bool = _player.new_selection.path != null
-    Surfacer.annotators.add_transient(ClickAnnotator.new(
+    Su.annotators.add_transient(ClickAnnotator.new(
             pointer_position,
             selected_surface,
             is_surface_navigatable))
@@ -134,12 +134,12 @@ func _on_pointer_released(pointer_position: Vector2) -> void:
 
 func _on_pointer_moved(pointer_position: Vector2) -> void:
     _last_pointer_drag_position = pointer_position
-    Gs.slow_motion.set_slow_motion_enabled(true)
+    Sc.slow_motion.set_slow_motion_enabled(true)
     _is_preselection_path_update_pending = true
     _throttled_update_preselection_path.call_func()
 
 
 func on_player_moved() -> void:
     if _last_pointer_drag_position != Vector2.INF:
-        Gs.slow_motion.set_slow_motion_enabled(true)
+        Sc.slow_motion.set_slow_motion_enabled(true)
         _throttled_update_preselection_path.call_func()

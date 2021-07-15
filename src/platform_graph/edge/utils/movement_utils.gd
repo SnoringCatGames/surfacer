@@ -67,7 +67,7 @@ static func calculate_movement_duration(
     # actually happening within expected values, but for calculations that just
     # expect any value over 0.0, we don't need the epsilon.
     if min_duration != 0.0:
-        min_duration += Gs.geometry.FLOAT_EPSILON
+        min_duration += Sc.geometry.FLOAT_EPSILON
     
     if t1 < min_duration:
         if t2 < min_duration:

@@ -4,7 +4,7 @@ extends Node2D
 
 const RECENT_POSITIONS_BUFFER_SIZE := 150
 
-var MOVEMENT_HUE: float = Gs.colors.recent_movement.h
+var MOVEMENT_HUE: float = Sc.colors.recent_movement.h
 const MOVEMENT_OPACITY_NEWEST := 0.7
 const MOVEMENT_OPACITY_OLDEST := 0.01
 const MOVEMENT_STROKE_WIDTH := 1
@@ -46,10 +46,10 @@ func _init(player: Player) -> void:
     self.recent_beats = PoolIntArray()
     self.recent_beats.resize(RECENT_POSITIONS_BUFFER_SIZE)
     
-    Gs.beats.connect("beat", self, "_on_beat")
-    Gs.slow_motion.music.connect("music_beat", self, "_on_beat")
+    Sc.beats.connect("beat", self, "_on_beat")
+    Sc.slow_motion.music.connect("music_beat", self, "_on_beat")
     
-    Gs.audio.connect("music_changed", self, "_on_music_changed")
+    Sc.audio.connect("music_changed", self, "_on_music_changed")
 
 
 func _on_beat(
@@ -101,7 +101,7 @@ func check_for_update() -> void:
     elif player.actions.just_released_face_right:
         recent_actions[current_position_index] = \
                 PlayerActionType.RELEASED_FACE_RIGHT
-    elif !Gs.geometry.are_points_equal_with_epsilon(
+    elif !Sc.geometry.are_points_equal_with_epsilon(
             player.position,
             recent_positions[current_position_index],
             0.01):
@@ -222,13 +222,13 @@ func _draw_action_indicator(
         PlayerActionType.RELEASED_FACE_RIGHT:
             pass
         _:
-            Gs.logger.error(
+            Sc.logger.error(
                     ("Unknown PlayerActionType passed to " +
                     "_draw_action_indicator: %s") % \
                     PlayerActionType.get_string(action))
     
     if input_key != "":
-        Gs.draw.draw_instruction_indicator(
+        Sc.draw.draw_instruction_indicator(
                 self,
                 input_key,
                 is_pressed,
@@ -242,7 +242,7 @@ func _draw_beat_hash(
         previous_position: Vector2,
         next_position: Vector2,
         opacity: float) -> void:
-    var is_downbeat := beat_index % Gs.beats.get_meter() == 0
+    var is_downbeat := beat_index % Sc.beats.get_meter() == 0
     var hash_length: float
     var stroke_width: float
     if is_downbeat:

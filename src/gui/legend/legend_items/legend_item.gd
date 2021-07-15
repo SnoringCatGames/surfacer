@@ -29,8 +29,8 @@ func _ready() -> void:
     size_flags_horizontal = Control.SIZE_EXPAND_FILL
     size_flags_vertical = Control.SIZE_EXPAND_FILL
     
-    label = Gs.utils.add_scene(
-            null, Gs.gui.SCAFFOLDER_LABEL_SCENE, false, true)
+    label = Sc.utils.add_scene(
+            null, Sc.gui.SCAFFOLDER_LABEL_SCENE, false, true)
     label.align = Label.ALIGN_LEFT
     label.valign = Label.VALIGN_CENTER
     label.max_lines_visible = 2
@@ -43,21 +43,21 @@ func _ready() -> void:
 
 
 func update() -> void:
-    rect_min_size.y = HEIGHT * Gs.gui.scale
+    rect_min_size.y = HEIGHT * Sc.gui.scale
     
     label.margin_left = \
-            (SHAPE_REGION_WIDTH + MARGIN_HORIZONTAL * 2.0) * Gs.gui.scale
-    label.margin_top = MARGIN_VERTICAL * Gs.gui.scale
-    label.rect_size.y = SHAPE_REGION_HEIGHT * Gs.gui.scale
+            (SHAPE_REGION_WIDTH + MARGIN_HORIZONTAL * 2.0) * Sc.gui.scale
+    label.margin_top = MARGIN_VERTICAL * Sc.gui.scale
+    label.rect_size.y = SHAPE_REGION_HEIGHT * Sc.gui.scale
 
 
 func _draw() -> void:
     _draw_shape(
-            SHAPE_REGION_CENTER * Gs.gui.scale,
-            Vector2(SHAPE_REGION_WIDTH, SHAPE_REGION_HEIGHT) * Gs.gui.scale)
+            SHAPE_REGION_CENTER * Sc.gui.scale,
+            Vector2(SHAPE_REGION_WIDTH, SHAPE_REGION_HEIGHT) * Sc.gui.scale)
 
 
 func _draw_shape(
         center: Vector2,
         size: Vector2) -> void:
-    Gs.logger.error("Abstract LegendItem._draw_shape is not implemented")
+    Sc.logger.error("Abstract LegendItem._draw_shape is not implemented")

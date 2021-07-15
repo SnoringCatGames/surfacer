@@ -49,17 +49,17 @@ var ruler_layer: CanvasLayer
 
 
 func _init() -> void:
-    Gs.logger.on_global_init(self, "Annotators")
+    Sc.logger.on_global_init(self, "Annotators")
     if Engine.editor_hint:
         return
-    annotation_layer = Gs.canvas_layers.layers.annotation
+    annotation_layer = Sc.canvas_layers.layers.annotation
 
 
 func _ready() -> void:
     if Engine.editor_hint:
         return
     
-    ruler_layer = Gs.canvas_layers.create_layer(
+    ruler_layer = Sc.canvas_layers.create_layer(
             "ruler",
             annotation_layer.layer + 5,
             Node.PAUSE_MODE_STOP)
@@ -71,7 +71,7 @@ func _ready() -> void:
     annotation_layer.add_child(transient_annotator_registry)
     
     for annotator_type in _DEFAULT_ENABLEMENT:
-        var is_enabled: bool = Gs.save_state.get_setting(
+        var is_enabled: bool = Sc.save_state.get_setting(
                 AnnotatorType.get_settings_key(annotator_type),
                 _DEFAULT_ENABLEMENT[annotator_type])
         set_annotator_enabled(
@@ -83,7 +83,7 @@ func _on_app_initialized() -> void:
     if Engine.editor_hint:
         return
     
-    Gs.nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
+    Sc.nav.screens["game"].move_canvas_layer_to_game_viewport("ruler")
 
 
 func on_level_ready() -> void:
@@ -164,31 +164,31 @@ func _create_annotator(annotator_type: int) -> void:
     assert(!is_annotator_enabled(annotator_type))
     match annotator_type:
         AnnotatorType.RULER:
-            if Gs.level != null:
+            if Sc.level != null:
                 ruler_annotator = RulerAnnotator.new()
                 ruler_layer.add_child(ruler_annotator)
         AnnotatorType.SURFACES:
-            if Gs.level != null and \
-                    Surfacer.graph_parser.surface_parser != null:
+            if Sc.level != null and \
+                    Su.graph_parser.surface_parser != null:
                 surfaces_annotator = SurfacesAnnotator.new( \
-                        Surfacer.graph_parser.surface_parser)
+                        Su.graph_parser.surface_parser)
                 annotation_layer.add_child(surfaces_annotator)
         AnnotatorType.GRID_INDICES:
-            if Gs.level != null and \
-                    Surfacer.graph_parser.surface_parser != null:
+            if Sc.level != null and \
+                    Su.graph_parser.surface_parser != null:
                 grid_indices_annotator = GridIndicesAnnotator.new(
-                        Surfacer.graph_parser.surface_parser)
+                        Su.graph_parser.surface_parser)
                 annotation_layer.add_child(grid_indices_annotator)
         AnnotatorType.PATH_PRESELECTION:
-            if Surfacer.human_player != null:
+            if Su.human_player != null:
                 path_preselection_annotator = \
-                        PathPreselectionAnnotator.new(Surfacer.human_player)
+                        PathPreselectionAnnotator.new(Su.human_player)
                 annotation_layer.add_child(path_preselection_annotator)
         AnnotatorType.LEVEL:
-            if Gs.level != null:
-                Gs.level.set_tile_map_visibility(true)
+            if Sc.level != null:
+                Sc.level.set_tile_map_visibility(true)
         _:
-            Gs.logger.error()
+            Sc.logger.error()
 
 
 func _destroy_annotator(annotator_type: int) -> void:
@@ -211,10 +211,10 @@ func _destroy_annotator(annotator_type: int) -> void:
                 path_preselection_annotator.queue_free()
                 path_preselection_annotator = null
         AnnotatorType.LEVEL:
-            if Gs.level != null:
-                Gs.level.set_tile_map_visibility(false)
+            if Sc.level != null:
+                Sc.level.set_tile_map_visibility(false)
         _:
-            Gs.logger.error()
+            Sc.logger.error()
 
 
 func add_transient(annotator: TransientAnnotator) -> void:

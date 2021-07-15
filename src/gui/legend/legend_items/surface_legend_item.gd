@@ -5,7 +5,7 @@ extends LegendItem
 const DEFAULT_TYPE := LegendItemType.SURFACE
 const DEFAULT_TEXT := "Surface"
 var DEFAULT_COLOR_PARAMS: ColorParams = \
-        Surfacer.ann_defaults.DEFAULT_SURFACE_COLOR_PARAMS
+        Su.ann_defaults.DEFAULT_SURFACE_COLOR_PARAMS
 const SURFACE_DEPTH := 8.1
 
 var color_params: ColorParams
@@ -33,7 +33,7 @@ func _draw_shape(
             SurfaceSide.FLOOR,
             null,
             [])
-    Gs.draw.draw_surface(
+    Sc.draw.draw_surface(
             self,
             surface,
             color_params.get_color(),

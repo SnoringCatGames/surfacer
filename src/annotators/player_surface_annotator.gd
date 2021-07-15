@@ -4,8 +4,8 @@ extends Node2D
 
 var player: Player
 
-var COLOR := Gs.colors.opacify(
-        Gs.colors.player_position, ScaffolderColors.ALPHA_XFAINT)
+var COLOR := Sc.colors.opacify(
+        Sc.colors.player_position, ScaffolderColors.ALPHA_XFAINT)
 
 
 func _init(player: Player) -> void:
@@ -14,7 +14,7 @@ func _init(player: Player) -> void:
 
 func _draw() -> void:
     if player.surface_state.is_grabbing_a_surface:
-        Gs.draw.draw_surface(
+        Sc.draw.draw_surface(
                 self,
                 player.surface_state.grabbed_surface,
                 COLOR)

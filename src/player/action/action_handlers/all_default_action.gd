@@ -30,7 +30,7 @@ func process(player) -> bool:
                 PlayerActionHandler \
                         .MIN_SPEED_TO_MAINTAIN_HORIZONTAL_COLLISION * \
                 player.surface_state.toward_wall_sign / \
-                Gs.time.get_combined_scale()
+                Sc.time.get_combined_scale()
         return true
     else:
         return false

@@ -8,17 +8,17 @@ var graph_load_start_time := INF
 
 func _ready() -> void:
     var loading_image_wrapper := $VBoxContainer/LoadingImageWrapper
-    loading_image_wrapper.visible = Gs.gui.is_loading_image_shown
-    if Gs.gui.is_loading_image_shown:
-        var loading_image: ScaffolderConfiguredImage = Gs.utils.add_scene(
+    loading_image_wrapper.visible = Sc.gui.is_loading_image_shown
+    if Sc.gui.is_loading_image_shown:
+        var loading_image: ScaffolderConfiguredImage = Sc.utils.add_scene(
                 loading_image_wrapper,
-                Gs.gui.loading_image_scene,
+                Sc.gui.loading_image_scene,
                 true,
                 true, \
                 0)
-        loading_image.original_scale = Gs.gui.loading_image_scale
+        loading_image.original_scale = Sc.gui.loading_image_scale
     
-    $VBoxContainer.rect_min_size.x = Gs.gui.screen_body_width
+    $VBoxContainer.rect_min_size.x = Sc.gui.screen_body_width
     
     _on_resized()
 
@@ -37,50 +37,50 @@ func get_is_nav_bar_shown() -> bool:
 
 func _on_transition_in_ended(previous_screen: Screen) -> void:
     ._on_transition_in_ended(previous_screen)
-    if Gs.device.get_is_browser_app():
-        Gs.audio.stop_music()
-    Gs.time.set_timeout(funcref(self, "_load_level"), 0.05)
+    if Sc.device.get_is_browser_app():
+        Sc.audio.stop_music()
+    Sc.time.set_timeout(funcref(self, "_load_level"), 0.05)
 
 
 func _load_level() -> void:
-    Gs.level_session.reset(level_id)
-    Gs.save_state.set_last_level_played(level_id)
+    Sc.level_session.reset(level_id)
+    Sc.save_state.set_last_level_played(level_id)
     
     $VBoxContainer/ProgressBar.value = 0.0
     $VBoxContainer/Label1.text = ""
     $VBoxContainer/Label2.text = ""
     
-    var level: SurfacerLevel = Gs.utils.add_scene(
+    var level: SurfacerLevel = Sc.utils.add_scene(
             null,
-            Gs.level_config.get_level_config(level_id).scene_path,
+            Sc.level_config.get_level_config(level_id).scene_path,
             false,
             true)
-    if Surfacer.debug_params.has("limit_parsing"):
+    if Su.debug_params.has("limit_parsing"):
         level.script = DebugLevel
-    Gs.nav.screens["game"].add_level(level)
-    Surfacer.graph_parser.connect(
+    Sc.nav.screens["game"].add_level(level)
+    Su.graph_parser.connect(
             "calculation_started",
             self,
             "_on_calculation_started")
-    Surfacer.graph_parser.connect(
+    Su.graph_parser.connect(
             "load_started",
             self,
             "_on_load_started")
-    Surfacer.graph_parser.connect(
+    Su.graph_parser.connect(
             "calculation_progressed",
             self,
             "_on_graph_parse_progress")
-    Surfacer.graph_parser.connect(
+    Su.graph_parser.connect(
             "parse_finished",
             self,
             "_on_graph_parse_finished")
-    graph_load_start_time = Gs.time.get_clock_time()
+    graph_load_start_time = Sc.time.get_clock_time()
     level._load()
 
 
 func _on_calculation_started() -> void:
     container.nav_bar.text = "Calculating platform graphs"
-    $VBoxContainer/Duration.text = Gs.utils.get_time_string_from_seconds( \
+    $VBoxContainer/Duration.text = Sc.utils.get_time_string_from_seconds( \
             0.0, \
             false, \
             false, \
@@ -106,7 +106,7 @@ func _on_graph_parse_progress(
             100.0
     
     var player_name: String = \
-            Gs.level_config.get_level_config(Gs.level_session.id) \
+            Sc.level_config.get_level_config(Sc.level_session.id) \
             .platform_graph_player_names[player_index]
     var label_1 := "Player %s (%s of %s)" % [
         player_name,
@@ -119,8 +119,8 @@ func _on_graph_parse_progress(
     ]
     
     $VBoxContainer/ProgressBar.value = progress
-    $VBoxContainer/Duration.text = Gs.utils.get_time_string_from_seconds( \
-            Gs.time.get_clock_time() - graph_load_start_time, \
+    $VBoxContainer/Duration.text = Sc.utils.get_time_string_from_seconds( \
+            Sc.time.get_clock_time() - graph_load_start_time, \
             false, \
             false, \
             true)
@@ -131,37 +131,37 @@ func _on_graph_parse_progress(
 # This is called when the graphs are ready, regardless of whether they were
 # calculated-on-demand or loaded from a file.
 func _on_graph_parse_finished() -> void:
-    Surfacer.graph_parser.disconnect(
+    Su.graph_parser.disconnect(
             "calculation_started",
             self,
             "_on_calculation_started")
-    Surfacer.graph_parser.disconnect(
+    Su.graph_parser.disconnect(
             "load_started",
             self,
             "_on_load_started")
-    Surfacer.graph_parser.disconnect(
+    Su.graph_parser.disconnect(
             "calculation_progressed",
             self,
             "_on_graph_parse_progress")
-    Surfacer.graph_parser.disconnect(
+    Su.graph_parser.disconnect(
             "parse_finished",
             self,
             "_on_graph_parse_finished")
     
-    if !Surfacer.graph_parser.is_loaded_from_file:
-        Gs.utils.give_button_press_feedback()
+    if !Su.graph_parser.is_loaded_from_file:
+        Sc.utils.give_button_press_feedback()
     
     $VBoxContainer/ProgressBar.value = 100
-    $VBoxContainer/Duration.text = Gs.utils.get_time_string_from_seconds( \
-            Gs.time.get_clock_time() - graph_load_start_time, \
+    $VBoxContainer/Duration.text = Sc.utils.get_time_string_from_seconds( \
+            Sc.time.get_clock_time() - graph_load_start_time, \
             false, \
             false, \
             true)
     
-    Gs.analytics.event(
+    Sc.analytics.event(
             "graphs",
             "loaded",
-            Gs.level_config.get_level_version_string(Gs.level_session.id),
-            Gs.time.get_clock_time() - graph_load_start_time)
+            Sc.level_config.get_level_version_string(Sc.level_session.id),
+            Sc.time.get_clock_time() - graph_load_start_time)
     
-    Gs.nav.call_deferred("open", "game", ScreenTransition.FANCY)
+    Sc.nav.call_deferred("open", "game", ScreenTransition.FANCY)

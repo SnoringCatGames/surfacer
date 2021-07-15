@@ -33,7 +33,7 @@ func _init(
     self.get_annotation_elements_funcref = get_annotation_elements_funcref
     self.get_annotation_elements_arg = get_annotation_elements_arg
     if background_color == null:
-        background_color = Surfacer.ann_defaults \
+        background_color = Su.ann_defaults \
                     .INSPECTOR_DESCRIPTION_ITEM_BACKGROUND_COLOR
     self.tree_item.set_custom_bg_color(
             0,

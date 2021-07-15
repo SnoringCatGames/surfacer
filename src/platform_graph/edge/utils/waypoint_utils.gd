@@ -102,7 +102,7 @@ static func calculate_waypoints_around_surface(
         destination_waypoint: Waypoint,
         colliding_surface: Surface,
         waypoint_offset: Vector2) -> Array:
-    Gs.profiler.start(
+    Sc.profiler.start(
             "calculate_waypoints_around_surface",
             collision_params.thread_id)
     
@@ -175,13 +175,13 @@ static func calculate_waypoints_around_surface(
     # an error.
     if position_a == next_waypoint.position:
         should_skip_a = true
-        Gs.logger.error(
+        Sc.logger.error(
                 "Calculated a rendundant waypoint (same position as the " +
                 "next waypoint)",
                 false)
     if position_b == next_waypoint.position:
         should_skip_b = true
-        Gs.logger.error(
+        Sc.logger.error(
                 "Calculated a rendundant waypoint (same position as the " +
                 "next waypoint)",
                 false)
@@ -284,10 +284,10 @@ static func calculate_waypoints_around_surface(
         waypoints = [waypoint_b_final]
     else:
         if should_skip_a and should_skip_b:
-            Gs.logger.error()
+            Sc.logger.error()
         waypoints = []
     
-    Gs.profiler.stop_with_optional_metadata(
+    Sc.profiler.stop_with_optional_metadata(
             "calculate_waypoints_around_surface",
             collision_params.thread_id,
             edge_result_metadata)
@@ -863,7 +863,7 @@ static func _assign_horizontal_movement_sign(
     
     var displacement_sign := \
             0 if \
-            Gs.geometry.are_floats_equal_with_epsilon(
+            Sc.geometry.are_floats_equal_with_epsilon(
                     displacement.x,
                     0.0,
                     0.1) else \
@@ -1199,12 +1199,12 @@ static func _calculate_min_and_max_x_velocity_at_start_of_interval(
     v_0_max -= MIN_MAX_VELOCITY_X_OFFSET
     
     # Correct small floating-point errors around zero.
-    if Gs.geometry.are_floats_equal_with_epsilon(
+    if Sc.geometry.are_floats_equal_with_epsilon(
             v_0_min,
             0.0,
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_0_min = 0.0
-    if Gs.geometry.are_floats_equal_with_epsilon(
+    if Sc.geometry.are_floats_equal_with_epsilon(
             v_0_max,
             0.0,
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
@@ -1677,12 +1677,12 @@ static func _calculate_min_and_max_x_velocity_at_end_of_interval(
     v_1_max -= MIN_MAX_VELOCITY_X_OFFSET
     
     # Correct small floating-point errors around zero.
-    if Gs.geometry.are_floats_equal_with_epsilon(
+    if Sc.geometry.are_floats_equal_with_epsilon(
             v_1_min,
             0.0,
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
         v_1_min = 0.0
-    if Gs.geometry.are_floats_equal_with_epsilon(
+    if Sc.geometry.are_floats_equal_with_epsilon(
             v_1_max,
             0.0,
             MIN_MAX_VELOCITY_X_OFFSET * 1.1):
@@ -1993,7 +1993,7 @@ static func _calculate_replacement_for_fake_waypoint(
                     iterations += 1
             
         _:
-            Gs.logger.error()
+            Sc.logger.error()
     
     if replacement_surface == null:
         # We didn't find a replacement.
