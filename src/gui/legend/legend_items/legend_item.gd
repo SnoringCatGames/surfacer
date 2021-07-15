@@ -25,7 +25,7 @@ func _init(
     self.text = text
 
 
-func _enter_tree() -> void:
+func _ready() -> void:
     size_flags_horizontal = Control.SIZE_EXPAND_FILL
     size_flags_vertical = Control.SIZE_EXPAND_FILL
     

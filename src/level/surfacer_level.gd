@@ -4,13 +4,12 @@ extends ScaffolderLevel
 
 # Array<Player>
 var all_players: Array
-var graph_parser: PlatformGraphParser
 var camera_pan_controller: CameraPanController
 var intro_choreographer: Choreographer
 
 
 func _init() -> void:
-    graph_parser = PlatformGraphParser.new()
+    var graph_parser := PlatformGraphParser.new()
     add_child(graph_parser)
 
 
@@ -19,7 +18,7 @@ func _load() -> void:
     
     Gs.gui.hud.create_inspector()
     
-    graph_parser.parse(
+    Surfacer.graph_parser.parse(
             Gs.level_session.id,
             Surfacer.is_debug_only_platform_graph_state_included)
 
@@ -49,6 +48,9 @@ func _destroy() -> void:
     
     Surfacer.annotators.on_level_destroyed()
     Surfacer.human_player = null
+    
+    if is_instance_valid(camera_pan_controller):
+        camera_pan_controller._destroy()
     
     ._destroy()
 
@@ -174,7 +176,7 @@ func set_tile_map_visibility(is_visible: bool) -> void:
 
 
 func _get_platform_graph_for_player(player_name: String) -> PlatformGraph:
-    return graph_parser.platform_graphs[player_name]
+    return Surfacer.graph_parser.platform_graphs[player_name]
 
 
 func get_player_start_position() -> Vector2:

@@ -92,10 +92,14 @@ func _ready() -> void:
     _on_gui_scale_changed()
 
 
-func _exit_tree() -> void:
+func _destroy() -> void:
     Gs.gui.remove_gui_to_scale(self)
     Gs.gui.active_overlays.erase(self)
+    if is_instance_valid(Surfacer.graph_inspector):
+        Surfacer.graph_inspector._destroy()
     Surfacer.graph_inspector = null
+    if is_instance_valid(Surfacer.legend):
+        Surfacer.legend._destroy()
     Surfacer.legend = null
     Surfacer.selection_description = null
 

@@ -21,7 +21,7 @@ func _ready() -> void:
     _on_gui_scale_changed()
 
 
-func _exit_tree() -> void:
+func _destroy() -> void:
     Gs.time.clear_debounce(_debounced_on_gui_scale_changed)
 
 

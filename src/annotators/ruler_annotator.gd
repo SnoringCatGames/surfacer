@@ -16,7 +16,7 @@ var previous_camera_position := Vector2.ZERO
 var previous_camera_zoom := 1.0
 
 
-func _enter_tree() -> void:
+func _ready() -> void:
     viewport = get_viewport()
     viewport_size = viewport.get_visible_rect().size
     if !viewport.is_connected(

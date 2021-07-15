@@ -117,13 +117,13 @@ func _create_children_inner() -> void:
 
 
 func _destroy_children_inner() -> void:
-    floors_item_controller.destroy()
+    floors_item_controller._destroy()
     floors_item_controller = null
-    left_walls_item_controller.destroy()
+    left_walls_item_controller._destroy()
     left_walls_item_controller = null
-    right_walls_item_controller.destroy()
+    right_walls_item_controller._destroy()
     right_walls_item_controller = null
-    ceilings_item_controller.destroy()
+    ceilings_item_controller._destroy()
     ceilings_item_controller = null
 
 
