@@ -479,7 +479,7 @@ func register_app_manifest(manifest: Dictionary) -> void:
     assert(Gs._manifest.metadata.must_restart_level_to_change_settings)
 
 
-func initialize() -> void:
+func set_up() -> void:
     assert(Gs.colors is SurfacerColors)
     assert(Gs.draw is SurfacerDrawUtils)
     assert(Gs.level_config is MommaDuckLevelConfig)
