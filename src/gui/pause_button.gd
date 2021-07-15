@@ -17,7 +17,7 @@ func _ready() -> void:
 func _on_gui_scale_changed() -> bool:
     $ScaffolderTextureButton._on_gui_scale_changed()
     position.x = \
-            get_viewport().size.x - \
+            Gs.device.get_viewport_size().x - \
             $ScaffolderTextureButton.rect_size.x - \
             InspectorPanel.PANEL_MARGIN_RIGHT * Gs.gui.scale
     position.y = InspectorPanel.PANEL_MARGIN_RIGHT * Gs.gui.scale

@@ -125,7 +125,7 @@ func _deferred_on_gui_scale_changed() -> void:
     _set_footer_visibility(!is_open)
     
     rect_position.x = \
-            get_viewport().size.x - \
+            Gs.device.get_viewport_size().x - \
             rect_size.x - \
             PANEL_MARGIN_RIGHT * Gs.gui.scale
     rect_position.y = \
