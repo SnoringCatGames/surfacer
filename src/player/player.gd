@@ -80,16 +80,6 @@ func _init(player_name: String) -> void:
     self.pre_selection = PointerSelectionPosition.new(self)
 
 
-func _enter_tree() -> void:
-    if is_fake:
-        # Fake players are only used for testing potential collisions under the
-        # hood.
-        return
-    
-    self.pointer_listener = PlayerPointerListener.new(self)
-    add_child(pointer_listener)
-
-
 func _ready() -> void:
     if is_fake:
         # Fake players are only used for testing potential collisions under the
@@ -124,6 +114,9 @@ func _ready() -> void:
     
 #    shape_owner_clear_shapes(owner_id)
 #    shape_owner_add_shape(owner_id, movement_params.collider_shape)
+    
+    self.pointer_listener = PlayerPointerListener.new(self)
+    add_child(pointer_listener)
     
     var animators: Array = Gs.utils.get_children_by_type(
             self,

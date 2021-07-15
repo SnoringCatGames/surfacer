@@ -18,7 +18,6 @@ var stage_to_metric_items := {}
 var start_time := -INF
 var precompute_level_index := -1
 var level_id: String
-var platform_graph_parser: PlatformGraphParser
 var level: SurfacerLevel
 
 
@@ -84,8 +83,8 @@ func _initialize_next() -> void:
             true)
     Gs.level_session.reset(level_id)
     $VBoxContainer/LevelWrapper/Viewport.add_child(level)
-    platform_graph_parser = PlatformGraphParser.new()
-    level.add_child(platform_graph_parser)
+    var graph_parser := PlatformGraphParser.new()
+    level.add_child(graph_parser)
     Gs.profiler.stop("initialize")
     _on_stage_progress("initialize")
     defer("_parse_next")
@@ -93,15 +92,15 @@ func _initialize_next() -> void:
 
 func _parse_next() -> void:
     Gs.profiler.start("parse")
-    platform_graph_parser.connect(
+    Surfacer.graph_parser.connect(
             "calculation_progressed",
             self,
             "_on_graph_parse_progress")
-    platform_graph_parser.connect(
+    Surfacer.graph_parser.connect(
             "parse_finished",
             self,
             "_on_calculation_finished")
-    platform_graph_parser.parse(
+    Surfacer.graph_parser.parse(
             level_id,
             Surfacer.is_debug_only_platform_graph_state_included,
             true)
@@ -115,7 +114,7 @@ func _on_calculation_finished() -> void:
 
 func _save_next() -> void:
     Gs.profiler.start("save")
-    platform_graph_parser.save_platform_graphs()
+    Surfacer.graph_parser.save_platform_graphs()
     Gs.profiler.stop("save")
     _on_stage_progress("save")
     defer("_clean_up_next")
@@ -123,8 +122,8 @@ func _save_next() -> void:
 
 func _clean_up_next() -> void:
     Gs.profiler.start("clean_up")
-    platform_graph_parser.queue_free()
-    level.queue_free()
+    Surfacer.graph_parser.queue_free()
+    level._destroy()
     Gs.profiler.stop("clean_up")
     
     var finished: bool = precompute_level_index == \

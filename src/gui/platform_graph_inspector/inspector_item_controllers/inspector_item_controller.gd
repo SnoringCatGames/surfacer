@@ -51,7 +51,7 @@ func _post_init() -> void:
             self.call_deferred("_create_children_if_needed")
 
 
-func destroy() -> void:
+func _destroy() -> void:
     if !is_instance_valid(tree_item):
         # Already destroyed.
         return
@@ -193,7 +193,7 @@ func _destroy_children_if_needed() -> void:
         for c in children:
             var metadata: InspectorItemController = c.get_metadata(0)
             if is_instance_valid(metadata):
-                metadata.destroy()
+                metadata._destroy()
         
         _destroy_children_inner()
         

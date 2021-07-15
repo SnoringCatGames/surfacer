@@ -312,7 +312,7 @@ var player_param_classes: Array
 # ---
 
 
-func _enter_tree() -> void:
+func _ready() -> void:
     assert(is_instance_valid(Gs),
             "The Scaffolder AutoLoad must be declared first.")
     

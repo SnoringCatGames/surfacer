@@ -65,7 +65,7 @@ var _current_zoom: float
 var _current_time_scale: float
 
 
-func _enter_tree() -> void:
+func _ready() -> void:
     _tween = ScaffolderTween.new()
     add_child(_tween)
 

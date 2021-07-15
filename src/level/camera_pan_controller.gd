@@ -24,7 +24,7 @@ func _init() -> void:
     add_child(_tween)
 
 
-func _exit_tree() -> void:
+func _destroy() -> void:
     Gs.time.clear_interval(_interval_id)
 
 

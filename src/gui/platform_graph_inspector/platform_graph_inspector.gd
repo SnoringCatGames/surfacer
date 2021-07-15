@@ -97,10 +97,6 @@ func _ready() -> void:
     _populate()
 
 
-func _exit_tree() -> void:
-    _destroy()
-
-
 func _destroy() -> void:
     if is_instance_valid(inspector_selector):
         inspector_selector.queue_free()

@@ -172,11 +172,11 @@ func _populate_surfaces_to_surfaces_to_edge_types_to_edge_results_mappings() -> 
 
 
 func _destroy_children_inner() -> void:
-    edges_item_controller.destroy()
+    edges_item_controller._destroy()
     edges_item_controller = null
-    surfaces_item_controller.destroy()
+    surfaces_item_controller._destroy()
     surfaces_item_controller = null
-    profiler_item_controller.destroy()
+    profiler_item_controller._destroy()
     profiler_item_controller = null
 
 

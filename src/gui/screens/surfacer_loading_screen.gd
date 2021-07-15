@@ -58,19 +58,19 @@ func _load_level() -> void:
     if Surfacer.debug_params.has("limit_parsing"):
         level.script = DebugLevel
     Gs.nav.screens["game"].add_level(level)
-    level.graph_parser.connect(
+    Surfacer.graph_parser.connect(
             "calculation_started",
             self,
             "_on_calculation_started")
-    level.graph_parser.connect(
+    Surfacer.graph_parser.connect(
             "load_started",
             self,
             "_on_load_started")
-    level.graph_parser.connect(
+    Surfacer.graph_parser.connect(
             "calculation_progressed",
             self,
             "_on_graph_parse_progress")
-    level.graph_parser.connect(
+    Surfacer.graph_parser.connect(
             "parse_finished",
             self,
             "_on_graph_parse_finished")
@@ -131,24 +131,24 @@ func _on_graph_parse_progress(
 # This is called when the graphs are ready, regardless of whether they were
 # calculated-on-demand or loaded from a file.
 func _on_graph_parse_finished() -> void:
-    Gs.level.graph_parser.disconnect(
+    Surfacer.graph_parser.disconnect(
             "calculation_started",
             self,
             "_on_calculation_started")
-    Gs.level.graph_parser.disconnect(
+    Surfacer.graph_parser.disconnect(
             "load_started",
             self,
             "_on_load_started")
-    Gs.level.graph_parser.disconnect(
+    Surfacer.graph_parser.disconnect(
             "calculation_progressed",
             self,
             "_on_graph_parse_progress")
-    Gs.level.graph_parser.disconnect(
+    Surfacer.graph_parser.disconnect(
             "parse_finished",
             self,
             "_on_graph_parse_finished")
     
-    if !Gs.level.graph_parser.is_loaded_from_file:
+    if !Surfacer.graph_parser.is_loaded_from_file:
         Gs.utils.give_button_press_feedback()
     
     $VBoxContainer/ProgressBar.value = 100

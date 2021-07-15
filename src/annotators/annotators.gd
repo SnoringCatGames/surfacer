@@ -55,7 +55,7 @@ func _init() -> void:
     annotation_layer = Gs.canvas_layers.layers.annotation
 
 
-func _enter_tree() -> void:
+func _ready() -> void:
     if Engine.editor_hint:
         return
     

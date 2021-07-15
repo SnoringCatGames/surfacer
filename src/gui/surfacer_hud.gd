@@ -26,3 +26,9 @@ func create_inspector() -> void:
 func get_is_inspector_panel_open() -> bool:
     return is_instance_valid(inspector_panel) and \
             inspector_panel.is_open
+
+
+func _destroy() -> void:
+    ._destroy()
+    if is_instance_valid(inspector_panel):
+        inspector_panel._destroy()
